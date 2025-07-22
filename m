@@ -1,210 +1,354 @@
-Return-Path: <linux-kernel+bounces-740866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41C3B0DA36
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F32B0DA5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CDA547015
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45FB16B75B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9602E9EB3;
-	Tue, 22 Jul 2025 12:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7A82E975D;
+	Tue, 22 Jul 2025 13:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="d51c9IbV"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013004.outbound.protection.outlook.com [52.101.83.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GLjIIlYK"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2971A0712;
-	Tue, 22 Jul 2025 12:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189056; cv=fail; b=XaXYU62DXAxmzoUyIPISLaQgC++HG2BDnm2+12XRiGn394YXZydBlPYbCm8vQeQzgbtU8XCyhcaPYUe66DNlez1+BLwxuTT4ZWLqCs52jnwYoO8ZaBu9Zru7FnDvXifGd+xQPiUGyB7Sp7ifLFXVzpVPJ7/6zGpSttpmep3D7U4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189056; c=relaxed/simple;
-	bh=eY1z1dQgbEhDX6cvqhHOKqn65OGZJ6vFLW4RG6cNb2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jW9vsOSaqMUa1vMKdwfvZzqWLjyt2wDSAFGoFId3dwxm4MrVTKKPYIQlUcMXxL7VPwTPPTs/RYES8aB2Vv3m7MwtzMPVRNAEU1D/hQ1l4XvcKQqxOgfWaG+o4LKEkz+xQy0gc6lmRPM8ShrJXf9wHOCGc3QNEEoPh9AYNmzySk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=d51c9IbV; arc=fail smtp.client-ip=52.101.83.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZWTxekk4MMPfA3WQ+mUSD3jqG5Ee0q08c9HBB1LcczxaXDY5kc2ig8f/TCyUFQyHhCGEt8mavf+Nvpxdkyn5a1rEGdxzG13JasnhNtMxvQjNdi1huovpzG23rQZw3T4ZZ9Z/bxgDytRDmwul/TIaflYXAl6j/07cDTDqT7cON978yBcGOOGAD0NVaZZiLi6ASYLpAuMWoLimGBQoW6xOqdGLCLd4rLHbwvZp+URiRhwaVrYXKyxjftD6/kv7z/VekNP9mltSjL39soesO90Oovc3+serv2bxO24q0g2EB0Chhi0Rkq+7CcwDfENiNsEIwvA9bkN4MZ45rEwjgwHCcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ks1dgIkEU8bQYMIfrLVnf94jaVk/5VGg897dP+bJ7Vs=;
- b=o04OuwnLTvWFeMhaxT/1E/05YvhHKj2ZS8VOpnvYKiKOTVk+xDw1YU7f2eZS/FiIdwX5dJu+7GTJDAUge8FDMJWt4sQ/MgzD+M3HUWUgvqZNgbobipVOU7M18/1zaFJbzibh7PWFmY/fQs/Y7cUTqKRJ49XvH/L2HO51sOU995A4SPicn6/OdyAKqbCe26ES5hXuNRWfOm9/5CIub5GWTkLmolqm/nTRCGtrZ3ccse1u2OUfO5YSKk2Jm5fkgXcDh00XmxVCJb/cSEdS6Gf7s9nXdCqeXCfm1Hnu0EkWNGR2h56dFAOEJtZIteYkO30uTGdMWWgCd3NPcGZ7mOMpVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ks1dgIkEU8bQYMIfrLVnf94jaVk/5VGg897dP+bJ7Vs=;
- b=d51c9IbVv2bfRRlMxzeVHaHYGSiIpHMNBCWYPEJlkKpgU0ebqDaFieeIjcAbenH7V1A38FLjt5RgZwFZ0RcB4MZZrgHJwxAf5kKflEkkB5M/Xd9NzLvtVNSP0zMIPqPJQXAFjaQUw5Jqe+moyjG0yl81EYrjYmbvfyH8xvzZwZKaFHaRUNt+UIoCd6tYsm7O46TTCCtyN3uNNcjJLrd4mIubiUzcHRJt9AUt/pAJP2y5PZm3fXbBjd1IvG0jOLdJc76OajuUa3DjgpfM1AfFC3ImM2J5xfIjQhgyjJ2HhV1Mfg7/BezQbFlO3ErqkPHag4HSiFKicrzcNE2Hto8pyA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
- by DU4PR04MB11435.eurprd04.prod.outlook.com (2603:10a6:10:5ee::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 12:57:31 +0000
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc]) by PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
- 12:57:31 +0000
-Date: Tue, 22 Jul 2025 15:57:28 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 net-next 12/14] net: enetc: add PTP synchronization
- support for ENETC v4
-Message-ID: <20250722125728.qut45qn5uia6pj4f@skbuf>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-13-wei.fang@nxp.com>
- <aHgTG1hIXoN45cQo@lizhi-Precision-Tower-5810>
- <PAXPR04MB85104A1A15F6BD7399E746718851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <aHl0KvQwLC9ZCdtM@lizhi-Precision-Tower-5810>
- <PAXPR04MB8510D86B82F03530769569958850A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510D86B82F03530769569958850A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: VI1P189CA0029.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:802:2a::42) To PA4PR04MB7790.eurprd04.prod.outlook.com
- (2603:10a6:102:cc::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396E08F40
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753189256; cv=none; b=Z20e59Ce9v+LnnEwTLLmbVyr09uTfYLu1Jy5Ef8myfy5RNT2WR5Bj2Iv2qcD9AB7WldgCfIdF24ZRFHGHXhi+CW3r4bjI+vV+Clwkmnr9Ro+mMaPdAYJ3EuqG/MAC/BpuS78fxlu/B8R+Is441OA9mbU3+l4WLDGoDXQEldJvO4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753189256; c=relaxed/simple;
+	bh=WjhXQvfg1MJPWNOejVjsSuvC08OH8KAvMfmy13OlWLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iDUObl2I08Stq+DwXD0ndv4jD4E+q8mXCu574REwHz9eDiewMK0owgOjvlU9SpFvSmoZ9ObAnQYRXpGYPkYxyFUJ6xo4w+OQtIwP/sToOS+xKaSreyaWYAtHSIM+jChW5wjvApNtTlsfSnjS8vZ/gfuFU+SfjSltP1fo86swT2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GLjIIlYK; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-302effd5978so1307175fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753189252; x=1753794052; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HMcsMF9k1slr1QbFQOJC8G2xDwN8Orda2DHqp1vpPFg=;
+        b=GLjIIlYK7QDAvccAmNcLXDQ1Fa0pIs2ESwr3gYS74pjOTrYlhc2J8sC08hmUrawRDw
+         cfnHoA9ULnSCsLjOOhBjyyehu7fmej5I3xY1n9eEk7wGY8Q9wIrorO5kTosVzdEwUh02
+         h0yUDW9ammB6zVP/OCq+us83WQbLNv07OSZvdev0nLL53Tq5onLXMCUVaj+DpCz9tDEF
+         W6ijrzX81csRN9JDCrpF05ql5h5Gm4qsv5fF7c+b2JCAYCxNXUYPgoX2nbMp99IfHx4p
+         ++TKBs16Uun/s6hlshbz1HoILadc1nzvAi+BNCDElD3dQBty/Xkxhp0lM/Mfe3l4Y5bK
+         PgQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753189252; x=1753794052;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HMcsMF9k1slr1QbFQOJC8G2xDwN8Orda2DHqp1vpPFg=;
+        b=mu4h+C6VS11O+SdvCqAiiYRcbaSl0dIPkbZiiQnJCipCdUM4svSMhvlFYUL0XKw+Am
+         KVcqhZ4a2nBvTGbusfau42Na6vlsxDS1UYooOaMXNc5klAoplsBvH+2O3aZQLpYLSmgu
+         SDpD0iXFFDzr6wZ4qJykL4fJtJe4N3Wi8xiQhXQBBT5BypbNUEycc+iCf6DeadOE0CGZ
+         hGRrJhrmp4UVy8QmVR25ybCXp8Cq1IEuq9cjlf+vQGzVOQWfpMJ4X/Ftc9dkPkR5YqtZ
+         EuxFZ1nYb+kOnGz6DobJF3hv9EMdQU1bak3JLl4JtxDAB2Q6miE2ZcoaZJdbPREN6LQK
+         4nqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhi2nzCue+WnBHVBZKo7oOhZrnCy2DdnxhwvFOod3gX0sCRTr7iYxyIeDq8HflpS+22Fw3tMCLuoe0BdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKS+ykURoQI3PgUDNNJROOtRQFmWv88MG5cwlZ2lCg845UGjBx
+	e3FR+DdpB+XGjazS02ug4biIAMABVdj2NUhngYZ80ePUKoxt7yM+bVtlVtFo8ORdPWFC8kFfTvZ
+	a82T4
+X-Gm-Gg: ASbGnctlF+icQQJR3ViBPCbUtOawo6yWG+8KOOAHLFEIl50a0mCX+3+MJkTrq6hPNFe
+	Ohnf6bqZ2mwokvgAxL+IHCMYIW8zBJ4+sgD2paiYR2ia1cyz04o9T9A5ndGhg7OcIT4/2jQrIKL
+	c16eLoIYmGb+fxWvM0e5rQFHHFOOzW7w629FmA6JAlD2mZ00utfEXlNZ0oHOWUf65MJl9+imlQM
+	bvM/n5s9xDdEWH4YkS+CYKxcTwvtceFhcv6RoiHmeQn5l/pDlx8JaLiVSpL75u3G964BL7/hMNc
+	i2idO1o1IRqPZaEHSPVLU8JmPZ4MOze0jJhOr0ILKcPszPkcdhIqSKdfYYZc3NtKyhgIZd7fWYy
+	WB/Eqw/ihr4bMJyxj4H8=
+X-Google-Smtp-Source: AGHT+IHPeOHF2gIHh++qvuHaSZFmcB7BsWRyjN14L/aRGhFjgvqYB6fc5PmJ/raaJb2e0GX6eF4wig==
+X-Received: by 2002:a05:6e02:220d:b0:3e2:c350:2e61 with SMTP id e9e14a558f8ab-3e2c35031fdmr22792935ab.20.1753189239444;
+        Tue, 22 Jul 2025 06:00:39 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e2982d14f8sm30774605ab.62.2025.07.22.06.00.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 06:00:38 -0700 (PDT)
+Message-ID: <e029eef8-2c2b-4dfe-a01f-9903f309e39e@kernel.dk>
+Date: Tue, 22 Jul 2025 07:00:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7790:EE_|DU4PR04MB11435:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5543e214-5e54-41b5-ddbb-08ddc91f51e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|19092799006|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vgSElaoNwQlufWuFiKN6WBgpERhkLR3LOtnV3SRsWCX/Va68BXzBLUcW+G4n?=
- =?us-ascii?Q?GZZkK/fAlNv16oyZHY/kfx3Je7C0tWw4z5OLVVTm8OB/4jmu0Oo4HIQxLn38?=
- =?us-ascii?Q?VzXgN6yAnkSOUpcYoq7uIapMl/G57YDRJ8sQ92BtpEgQppOTpwI191M5c11p?=
- =?us-ascii?Q?42sN3UeIpXazF/W2NJyyZXZLjSFc9etqmisgJ0xUnsLBX03BSShCLtXmDbao?=
- =?us-ascii?Q?xz/P/Md56OoYnPrCZNCfnntCVBdIIcxGP6wLUZxHQfK1Mdx7ve/3tnrqVpq3?=
- =?us-ascii?Q?7S2McoN4oG3Gc8PL/ksur5Iad8HEcEKfnt1xhYB1Jn1AN5XiGuQ9jorqWbhY?=
- =?us-ascii?Q?es+SoJ6REAifj7Oe3KC107AukTiwcQr+BCzPGY+2AxxE8yYtvt8dbGIKJch7?=
- =?us-ascii?Q?KbiQRrUvunY28g8XUQxIVqRDUnu0PkXnJZwyauP6VWChmPz/Bk8HGZOlPyZq?=
- =?us-ascii?Q?M5kRk1bamLxePpaim+Al1qsTb2rBSqHdQk6dQ1rG8pY3KfsOYtrSkDAdnW8a?=
- =?us-ascii?Q?y/ZwzBAimmJNihc5ORBJrUBLoDirxhUNUyWmZmLbHJPiDHvjokaMUX6Xm3CL?=
- =?us-ascii?Q?4xq2QXRQyoTZb6oIe25yDJ8diVlA14tfqDZYvMVnjJwU6RL1uz/kGq7U4n7X?=
- =?us-ascii?Q?jWNeSrHL44kD4vI1kNNkhxKTk53ffWrujmGjwarFAVz5lWfvfpLu6VeJUDWD?=
- =?us-ascii?Q?ut/gSomZmcKvRoO0hm+EMOhP5pDG6oV8U6+mQClyO/My7yB0B/XnpKXYwbB9?=
- =?us-ascii?Q?M/SIJpWRyGmRgmiLpJHvUSxZDuHJdP6XQIgbMOj0r6oaMGMqHuC6RuABdjlP?=
- =?us-ascii?Q?h81CLVvPAAVq0sqzdXfn4ukQgjwSIhESFotU2ItlpgFf6q5DenMe3oKzyQDy?=
- =?us-ascii?Q?RHaZO+ZB+oNTPg8DvaiE1ZN6TK7lMtly8c6QRGTIXV15mCJVpyDgwtK83VD7?=
- =?us-ascii?Q?sYGSYFQkKF6tmwNxLqEBUSSddTmc3e5KaM457wFUcddlv2wRN+Tq/3vGXwXp?=
- =?us-ascii?Q?lng9gwgK601fnqASmv5yyA1CogRur3lYb01PM7lKr6YO+dNJpLm/ah2YOyNA?=
- =?us-ascii?Q?1Pl8NFqsWbrwH6e6bbZahOvn9d2IILbQOSptnK/IzZ3TJ6Vc8/rIm9AVT7oj?=
- =?us-ascii?Q?XiwRZ3GKmoX7G3zrSRW7H8pouQLCKDjbLTtLVJ8jzQPfmVKVh53ofVNGW91P?=
- =?us-ascii?Q?NgaqsOoVJO/CdN834QtId/RcJ5lrWjQhfwUp3+dWdEuJz5MwihFpkDABL6Jx?=
- =?us-ascii?Q?JYSHoX5WgS18DmoEUlKbnUm/baxB7idCsjil/CbSHWpFGOaNWEQmH+PvB4Xg?=
- =?us-ascii?Q?s4uC1i4mG9AmSppVQxDJkagGOfLwOeB3eKbqafM4nbzrhVpS363uhxAluKAy?=
- =?us-ascii?Q?aU2d9C9e6G/zew1W110fi8Q3nYQWXWwPt85X5OyXWMdK3Plcb/g2nkYSzxCW?=
- =?us-ascii?Q?Kx+uzTsZD6o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7790.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(19092799006)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ar2FNcFFmMeI5xeo7dpzO481r6Wdqj3uolQdU7DL+8/K+X7v/JRMzZJf91ci?=
- =?us-ascii?Q?13cP0pYnh1GeJYhw7o4Zoh0nigmj8CeeK5keopqTjWlLQ21STkuoJxEBy/B0?=
- =?us-ascii?Q?Ia8NVxViRj1VvUusFrhs20bZTnwZDMdKf2N7xbIMi/AP8uSFRZYvozwEvhMV?=
- =?us-ascii?Q?nl+swMoKwhNDTCw+HgFeSDt5Yy0WckgM01B5aYNGGfLrGMaQy/2EoQV9Vh3q?=
- =?us-ascii?Q?5s0aDT6b+IbHTiDkDh7F0TiVp/T2LLftd6otLf5rW3bnY6Zt/6jsWAH7TinF?=
- =?us-ascii?Q?Y1Z9sTfoDfBWKZPX9rfNlZNqA4PgQYnR5xCtkdm8zuMo7eyVzRc7SE7EkkgW?=
- =?us-ascii?Q?8B8GJGu2uBwE5Xme9S9rbt1ST/DkRBt06i374mWqVbYpK5ed8PIfYSn9Ujfh?=
- =?us-ascii?Q?8VT54XRl+0vnh8lycwWtJQjztmkiMp3kxZNcMcsQtZfrLC9FQgRzdK8QJi85?=
- =?us-ascii?Q?e1qBT+dvwjq8TvTS3A/ACjtV3lBkLjPaz0U1lg0Zxd7wOHAAALDEIoOQZvnT?=
- =?us-ascii?Q?058X2z0p+/hj/s5ldHNXol4b4jmEBuIVLSv4pk5dJkrJPuaP1U0nxs7eK/4X?=
- =?us-ascii?Q?N5GWXkYXhPq0Hxh9VZJ8q46DVcG7cDy0I0ZV3os1NP8FN0p9DWpdCJ56A0Ow?=
- =?us-ascii?Q?a32svovEkad7S7vWjHCDhJgfAUZHLHHLApzpsQhXs8VMKPBy9qjXGaTTLBf5?=
- =?us-ascii?Q?FnSTRydqmlxOL4m6QrwUQG0nBAl7xg3IPIp6oyhDv/itBQ8BCzL5tpDYQBEg?=
- =?us-ascii?Q?kFU2EpC7Ao7VJmrHsxnUQv0D6Ym+deKxCM3xy0srXZ4uS8KCjJWsaT/V6mUY?=
- =?us-ascii?Q?W4La7mVQ+12OZQFsChxiyw93zSpejgNGr1qEZVhX9aW0TS0bo+oaIhIL3ydx?=
- =?us-ascii?Q?e6OuhueGPu7SXCyczlv1asnhxXK/KhXKHoyFcfal3Y669fZKJrw15PSNin1v?=
- =?us-ascii?Q?QUTz57ECENZbDFZrMkj7rQZzCi7RK1yUkwosV2UiXGXZp53+8/+Iyo+ZK5gb?=
- =?us-ascii?Q?VWGIZZrbTtkujTYU0XobF7DGT8dPkkpQj7+uW0H4Sb3yTS0kYTlXB8bGZdXx?=
- =?us-ascii?Q?1uJ9sTPqbCts857DNbnMrBAkEpI5JhlYegcRZNAUGQFC+Sx5RTP0/mZEL3vf?=
- =?us-ascii?Q?w8y8oXUzqPR37J/MQttZ/nA+/WEGtSLvlo+C+bwNZ4t7j5cawmYghHNv5Khh?=
- =?us-ascii?Q?UrpApqEYgektv3tGQvQcJJ/SNcNVSiW/tVEPPjgCUt4Tb7h9BskvAecevrcj?=
- =?us-ascii?Q?J8JbLqv5aCeT6jgOXaOGlj1IisWspcVxZniQ5wXh/gR5KmplJiyCXBKqtKKG?=
- =?us-ascii?Q?RB61Y6SKLyJXLfnvYvKGQxEfQyn0cd1UOTx9eiTK3qmvsu5BKKkbxItC1rHs?=
- =?us-ascii?Q?QA+GADr+er9clLEBLs2cjIdsfi+/aFWqljR4bpmptdgIQ7wYwo7GYgUR/qAq?=
- =?us-ascii?Q?xY8zelncPMUXlE1kChT52deRyR6FDZL7s2LeLOioumk00X0lx8wZJIi7V54O?=
- =?us-ascii?Q?8KwLG5CRotkX8XtuJPN/wW5Kcm+sJe23AE1xXb/CBYb1zZapaMWtirMpF/FO?=
- =?us-ascii?Q?EnZrb8SV5rW6zho5IHhK2GDeHy+x/xDHPLP4wFM5z6dS/n+lgfCJJ3owjMh7?=
- =?us-ascii?Q?bYY8h2uZ/Qi8rhNYkWT8/7RwAAmSzyHCnh1nQmKn4+CGItx61/mxdjbcrwzU?=
- =?us-ascii?Q?ALZN9Q=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5543e214-5e54-41b5-ddbb-08ddc91f51e9
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7790.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 12:57:31.3705
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eAvF+0NYgb5UgwI53q9qOMFe9lhPL6qV1oE6qOSBkBgp89FC2dpRRXofiolQXPZKNRlAKDmNa+Kp6eJdQvKg6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11435
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
+ io_poll_remove_entries
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, hsweeten@visionengravers.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
+ <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
+ <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
+ <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
+ <20250722134724.6671e45b@ian-deb>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250722134724.6671e45b@ian-deb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 18, 2025 at 05:08:09AM +0300, Wei Fang wrote:
-> > > > > +static inline bool enetc_ptp_clock_is_enabled(struct enetc_si *si) {
-> > > > > +	if (is_enetc_rev1(si))
-> > > > > +		return IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK);
-> > > > > +
-> > > > > +	return IS_ENABLED(CONFIG_PTP_1588_CLOCK_NETC);
-> > > > > +}
-> > > > > +
-> > > >
-> > > > why v1 check CONFIG_FSL_ENETC_PTP_CLOCK and other check
-> > > > CONFIG_PTP_1588_CLOCK_NETC
-> > >
-> > > Because they use different PTP drivers, so the configs are different.
-> > 
-> > But name CONFIG_FSL_ENETC_PTP_CLOCK and
-> > CONFIG_PTP_1588_CLOCK_NETC is quite
-> > similar, suppose CONFIG_PTP_1588_CLOCK_NETC should be
-> > CONFIG_PTP_1588_CLOCK_NETC_V4
-> > 
-> Okay, it looks good
+On 7/22/25 6:47 AM, Ian Abbott wrote:
+> On Sun, 20 Jul 2025 13:00:59 -0600
+> Jens Axboe <axboe@kernel.dk> wrote:
+> 
+>> On 7/20/25 12:49 PM, Jens Axboe wrote:
+>>> On 7/20/25 12:24 PM, Jens Axboe wrote:  
+>>>> On 7/19/25 11:29 AM, syzbot wrote:  
+>>>>> Hello,
+>>>>>
+>>>>> syzbot found the following issue on:
+>>>>>
+>>>>> HEAD commit:    4871b7cb27f4 Merge tag
+>>>>> 'v6.16-rc6-smb3-client-fixes' of gi.. git tree:       upstream
+>>>>> console output:
+>>>>> https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000 kernel
+>>>>> config:
+>>>>> https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
+>>>>> dashboard link:
+>>>>> https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
+>>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU
+>>>>> Binutils for Debian) 2.40 syz repro:
+>>>>> https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000 C
+>>>>> reproducer:
+>>>>> https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
+>>>>>
+>>>>> Downloadable assets:
+>>>>> disk image (non-bootable):
+>>>>> https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
+>>>>> vmlinux:
+>>>>> https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
+>>>>> kernel image:
+>>>>> https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
+>>>>>
+>>>>> IMPORTANT: if you fix the issue, please add the following tag to
+>>>>> the commit: Reported-by:
+>>>>> syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
+>>>>>
+>>>>> ==================================================================
+>>>>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq
+>>>>> include/linux/spinlock_api_smp.h:119 [inline] BUG: KASAN:
+>>>>> slab-use-after-free in _raw_spin_lock_irq+0x36/0x50
+>>>>> kernel/locking/spinlock.c:170 Read of size 1 at addr
+>>>>> ffff88803c6f42b0 by task kworker/2:2/1339
+>>>>>
+>>>>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted
+>>>>> 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full)
+>>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
+>>>>> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014 Workqueue: events
+>>>>> io_fallback_req_func Call Trace: <TASK>
+>>>>>  __dump_stack lib/dump_stack.c:94 [inline]
+>>>>>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>>>>>  print_address_description mm/kasan/report.c:378 [inline]
+>>>>>  print_report+0xcd/0x610 mm/kasan/report.c:480
+>>>>>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
+>>>>>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
+>>>>>  kasan_check_byte include/linux/kasan.h:399 [inline]
+>>>>>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
+>>>>>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
+>>>>>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+>>>>>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+>>>>>  spin_lock_irq include/linux/spinlock.h:376 [inline]
+>>>>>  io_poll_remove_entry io_uring/poll.c:146 [inline]
+>>>>>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
+>>>>>  io_poll_remove_entries io_uring/poll.c:159 [inline]
+>>>>>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
+>>>>>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
+>>>>>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+>>>>>  process_scheduled_works kernel/workqueue.c:3321 [inline]
+>>>>>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+>>>>>  kthread+0x3c5/0x780 kernel/kthread.c:464
+>>>>>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+>>>>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>>>>  </TASK>
+>>>>>
+>>>>> Allocated by task 6154:
+>>>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>>>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>>>>>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>>>>>  kmalloc_noprof include/linux/slab.h:905 [inline]
+>>>>>  kzalloc_noprof include/linux/slab.h:1039 [inline]
+>>>>>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664
+>>>>> [inline] __comedi_device_postconfig drivers/comedi/drivers.c:721
+>>>>> [inline] comedi_device_postconfig+0x2cb/0xc80
+>>>>> drivers/comedi/drivers.c:756 comedi_device_attach+0x3cf/0x900
+>>>>> drivers/comedi/drivers.c:998 do_devconfig_ioctl+0x1a7/0x580
+>>>>> drivers/comedi/comedi_fops.c:855
+>>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
+>>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
+>>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
+>>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>>
+>>>>> Freed by task 6156:
+>>>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>>>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+>>>>>  poison_slab_object mm/kasan/common.c:247 [inline]
+>>>>>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+>>>>>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>>>>>  slab_free_hook mm/slub.c:2381 [inline]
+>>>>>  slab_free mm/slub.c:4643 [inline]
+>>>>>  kfree+0x2b4/0x4d0 mm/slub.c:4842
+>>>>>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171
+>>>>> [inline] comedi_device_detach+0x2a4/0x9e0
+>>>>> drivers/comedi/drivers.c:208 do_devconfig_ioctl+0x46c/0x580
+>>>>> drivers/comedi/comedi_fops.c:833
+>>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
+>>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
+>>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
+>>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f  
+>>>>
+>>>> I took a quick look at this, and surely looks like a comedi bug.
+>>>> If you call the ioctl part (do_devconfig_ioctl()) with a NULL arg,
+>>>> it just does a detach and frees the device, regardless of whether
+>>>> anyone has it opened or not?! It's got some odd notion of checking
+>>>> whether it's busy or not. For this case, someone has a poll active
+>>>> on the device, yet it still happily frees it.
+>>>>
+>>>> CC'ing some folks, as this looks utterly broken.  
+>>>
+>>> Case in point, I added:
+>>>
+>>> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+>>> index 376130bfba8a..4d5fde012558 100644
+>>> --- a/drivers/comedi/drivers.c
+>>> +++ b/drivers/comedi/drivers.c
+>>> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct
+>>> comedi_device *dev) kfree(s->private);
+>>>  			comedi_free_subdevice_minor(s);
+>>>  			if (s->async) {
+>>> +
+>>> WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
+>>> comedi_buf_alloc(dev, s, 0); kfree(s->async);
+>>>  			}
+>>>
+>>> and this is the first thing that triggers:
+>>>
+>>> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170
+>>> comedi_device_detach+0x510/0x720 Modules linked in:
+>>> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted
+>>> 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE Hardware name:
+>>> linux,dummy-virt (DT) pstate: 21400005 (nzCv daif +PAN -UAO -TCO
+>>> +DIT -SSBS BTYPE=--) pc : comedi_device_detach+0x510/0x720
+>>> lr : comedi_device_detach+0x1dc/0x720
+>>> sp : ffff80008aeb7880
+>>> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
+>>> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
+>>> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
+>>> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
+>>> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
+>>> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
+>>> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
+>>> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
+>>> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
+>>> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
+>>> Call trace:
+>>>  comedi_device_detach+0x510/0x720 (P)
+>>>  do_devconfig_ioctl+0x37c/0x4b8
+>>>  comedi_unlocked_ioctl+0x33c/0x2bd8
+>>>  __arm64_sys_ioctl+0x124/0x1a0
+>>>  invoke_syscall.constprop.0+0x60/0x2a0
+>>>  el0_svc_common.constprop.0+0x148/0x240
+>>>  do_el0_svc+0x40/0x60
+>>>  el0_svc+0x44/0xe0
+>>>  el0t_64_sync_handler+0x104/0x130
+>>>  el0t_64_sync+0x170/0x178
+>>>
+>>> Not sure what the right fix for comedi is here, it'd probably be at
+>>> least somewhat saner if it only allowed removal of the device when
+>>> the ref count would be 1 (for the ioctl itself). Just ignoring the
+>>> file ref and allowing blanket removal seems highly suspicious /
+>>> broken.
+>>>
+>>> As there's no comedi subsystem in syzbot, moving it to kernel:
+>>>
+>>> #syz set subsystems: kernel  
+>>
+>> Something like the below may help, at least it'll tell us the device
+>> is busy if there's a poll active on it.
+>>
+>> #syz test:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>> master
+>>
+>>
+>> diff --git a/drivers/comedi/comedi_fops.c
+>> b/drivers/comedi/comedi_fops.c index 3383a7ce27ff..ea96bc4b818e 100644
+>> --- a/drivers/comedi/comedi_fops.c
+>> +++ b/drivers/comedi/comedi_fops.c
+>> @@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct
+>> comedi_device *dev) static int is_device_busy(struct comedi_device
+>> *dev) {
+>>  	struct comedi_subdevice *s;
+>> -	int i;
+>> +	int i, is_busy = 0;
+>>  
+>>  	lockdep_assert_held(&dev->mutex);
+>>  	if (!dev->attached)
+>>  		return 0;
+>>  
+>> +	/* prevent new polls */
+>> +	down_write(&dev->attach_lock);
+>> +
+>>  	for (i = 0; i < dev->n_subdevices; i++) {
+>>  		s = &dev->subdevices[i];
+>> -		if (s->busy)
+>> -			return 1;
+>> -		if (s->async && comedi_buf_is_mmapped(s))
+>> -			return 1;
+>> +		if (s->busy) {
+>> +			is_busy = 1;
+>> +			break;
+>> +		}
+>> +		if (!s->async)
+>> +			continue;
+>> +		if (comedi_buf_is_mmapped(s) ||
+>> +		    waitqueue_active(&s->async->wait_head)) {
+>> +			is_busy = 1;
+>> +			break;
+>> +		}
+>>  	}
+>> -
+>> -	return 0;
+>> +	up_write(&dev->attach_lock);
+>> +	return is_busy;
+>>  }
+>>  
+>>  /*
+>>
+> 
+> Thanks for your investigation and initial fix. I think dev->attach_lock
+> needs to be write-locked before calling is_device_busy() and released
+> after comedi_device_detach() (although that also write-locks it, so we
+> need to refactor that). Otherwise, someone could get added to the
+> wait_head after is_device_busy() returns.
 
-The help text is also very confusing, nowhere is it specified that the
-new driver is for NETCv4, the reader can just as well interpret it that
-the LS1028A ENETC can use this PTP timer driver.
+That's fine too, this is what my v2 addressed as well. I don't know
+comedi well enough so I was worried about having ->attach_lock held over
+comedi_device_cancel_all() -> do_cancel() -> s->cancel() as that appears
+to be a new pattern. If you know this is fine, then yes by all means, we
+should just hold ->attach_lock over the whole thing and not need a
+detaching state.
 
-+         This driver adds support for using the NXP NETC Timer as a PTP
-+         clock. This clock is used by ENETC MAC or NETC Switch for PTP
-+         synchronization. It also supports periodic output signal (e.g.
-+         PPS) and external trigger timestamping.
+-- 
+Jens Axboe
 
