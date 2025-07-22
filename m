@@ -1,320 +1,274 @@
-Return-Path: <linux-kernel+bounces-741473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CBFB0E497
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504A9B0E49B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7824565838
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599EF6C4632
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA63285061;
-	Tue, 22 Jul 2025 20:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C71728506B;
+	Tue, 22 Jul 2025 20:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d5T42J4A"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2041.outbound.protection.outlook.com [40.107.100.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G7ACjVcf"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C663D4A2D;
-	Tue, 22 Jul 2025 20:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753215129; cv=fail; b=nruMR2/IYBG9qxyStp056ExNAaUTJZPhgnneA6nmH3foikcZxiuw0vPTvBBgwmcGcjC81xajYNYKUCGzLR0MJzHEGxxNFa2ysh4H2pOfjNxUvEzer0mNE9wWexvAtJi8BPdXVVmueTsYPIpJaHqUQ2wKICrxeISYLOcEIfMBN2Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753215129; c=relaxed/simple;
-	bh=MGQ0SgVcH6u5A22peEfGa8NcJxZsH/gMrFf3dBIaIrk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=p7pjfarNi33WRJWFZ+WmzOZPORjbwauHCKXxlmgidOQDkfDWstAeTzV5ywX9mvy7Fhwv8yMffplSJbVMi1LJPitcE3KWeAgHgb2+1BL/8R0ubf47kBNmOxahfApZ0lqQNYwWjYkztPFi4W5KlNIErCotA/tAXXUcY/KXJ4uLuOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d5T42J4A; arc=fail smtp.client-ip=40.107.100.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ite4Lldo3OaNkmMa4ToXZ/xnvpWMU9M6bO68tTUYNn4O+528sxIbQR99f48Dro6kKy08yd7YUDM5fUnqXnFIZNdFEt19h8V2kWJVUZTXkfAPfQrXdSB9mPPtwzu6NwFHZZECU0Ppo2oGnwfnD2SkNHQy+vl1EdygV+YQcVgfFcIJ8lwwi1MfD/vvFrPWIb5An5KYfVBDZD9Fw0UeKih3O15U9o9r1BiGxRTRDMEjYpL6CS8Pu90qKsza/k5Y25qA3abbEMMtBwj1FXNohEYunXJYwORy5p0DEOUCRXq1N0zW9N4cGpuUcYHvTKe95j+i+DS4+KF/SgbrtZYygCQJlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5BzYUYdWa9WVCUBDXgzU1sMFmUxGzSMLdZT4DhWyWK8=;
- b=FbfEFZ02lHDFWchvaoFuVcnY8/zz7F8OICvhipmxnGlfXBNXVJaYTihMEuzjuiyl7uTG3TmIvq/ADv7YWM4i+n8YKSyv7psg14J8nP1nuBg4mZBWUL4nrYLsXqSU8wBkzyCOwhrG3Hxes7ColOFFLbxC72TliSOoP2C4mkFZfglXOThetJYzATSCTrHRRIiJOcDAUQmWw/YmBJoibzQAzDrIYdQH/dOCSROCj047zeTMf1QPQTkXDeAVKWCCPQulQud/i9mznH3ipbv3Q6Gve0hedV14iTpgK20NXdhB4FoKPXDweqBQAOPpmWQ1zM7Rxba08Zzf4XJE/qdRyeHiSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BzYUYdWa9WVCUBDXgzU1sMFmUxGzSMLdZT4DhWyWK8=;
- b=d5T42J4ALZE32qGNXAJ40SgLN5rJfB39Bq/W0k6MH4gUUMTqluQQ9DLNeJ0S3Nh+WogYSWNzWLmO3orlWnuvjMD9ntoQyYi0kT3COIBfpjUWKUaI5DWC8YKr+qDwUP6dUNAcOkGaZSV3F1tA4ftKyWt7a51Eni+4ODutVpup4ik=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by IA1PR12MB6284.namprd12.prod.outlook.com (2603:10b6:208:3e4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 20:12:04 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%3]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 20:12:04 +0000
-Message-ID: <7ecd5229-9966-4983-b053-09c8bc560aa8@amd.com>
-Date: Tue, 22 Jul 2025 15:11:59 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v15 26/34] fs/resctrl: Add event configuration directory
- under info/L3_MON/
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
- akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
- seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
- sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
- mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
- gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1752013061.git.babu.moger@amd.com>
- <0fda2f958001dec07827f803f0e31158a2b77a8f.1752013061.git.babu.moger@amd.com>
- <2028b020-bb31-421c-b7d8-acb9ac7e9f77@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <2028b020-bb31-421c-b7d8-acb9ac7e9f77@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0163.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c3::22) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E59A4A2D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753215232; cv=none; b=ka0dDf9LHYdGhhlHc1XVVWxlT5PRYqxeQJEu4G8Kpj+31svoRDCwDe7of/IoWhEVdi4SDV85tc7410v0tyaUra+QInKm6TqB8+Q2pWBfEl1oSeqqc9i1nbMU4nS0HLSQIbYmTi9Xx32ajevRQXdh/FEueWwmW1wnkoa6w80Xlv8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753215232; c=relaxed/simple;
+	bh=rDAIMQYH6dvCuGp+VBPWuSK7uca+XrXAS3NCKTDNgSQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rDRlyqu5qZ/xR/FhibN/gFzr5Ad6crPu85sc59c0fI9ztSOVEgTJnjg0vEAVxFrEhSZWBC7BFir63+p6tdExA4mrhP27URuxTV74t+/Z1LIFSBbZJOKa/0YtHUb/A5lMBlahP7iGZJwECAq6xdQ5Rcv8Xgay99Ry0vBe1IebQhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G7ACjVcf; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31215090074so8682401a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753215230; x=1753820030; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xBZDX9JIee77RQPW7HLVLrza5s/GtaJTWmqzTatpclI=;
+        b=G7ACjVcfKSqEKx/nanVOLZkcVxuI2vFez9w6Q6FXRYsVMMGeSNrAWF585/jBxKETrg
+         2g9iGdRXTPY1vzxjfUrowSblA1I86U3IWVmLsF+1nJdXMOsq3azhzmag/IAvBnm7AoVz
+         AZeIAAvkgYysHPUcxzbJc/uOc8ZP5ffvUZyod+pD3qWhls66VIf4DCGhgGbdpcyFw2y/
+         yqKP6X+svGJB1QXlahccOPZuB47A+zIQHx8f/UYYFQPfGHZbyG/McmUmZ7Pnyi97BDyr
+         Gisf7gMEvHoRvVMYk/uU/XO9mUG60SR3cIuG+AKIJr6ym6441WTKclFUpsx6n/w38hlI
+         bIcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753215230; x=1753820030;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xBZDX9JIee77RQPW7HLVLrza5s/GtaJTWmqzTatpclI=;
+        b=H2rklh+bGf5rqp/3CmJmw17LhMJs394bvPre/OOIpz8idj3rDwoMA7bQ67xEXTTRaL
+         zorVI1Te4qjiVziga7Vg3+B8x22d4aW72unuisWSy3WIrKPfbF3jKC15/JIrJ105I09I
+         UPhmx6h+nnmiXYuH9p551QQL4LX1g/bqua9px9yQle8nJDnhAxrVJs566PS8RHaj6mtl
+         Spvn/xPMuUsLL/0ol1qm5pmJlwqzkMRIiLn+ots1nZx8rBdCrfG5rmh9GR64hADngAl4
+         9AFS8GJmqG1/iG9kop6ncfbbL6e4lJnEhOQLP152nbtubDyX6/uSb/JNoLBKBsi/PIeq
+         GwgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfiH5JLrDEQnIPJRTXufv9nDnBJTR9BW9EUfEhfyeQhbAI8KsmTNkblzlrD8RW/08P8mYaZnZbXOpHlEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBzw+258KhQUZHyDiibstdv9Za2ZIUBrinspbrHh+rDC+4Aq39
+	yrNYhBfedTN6PH1OFg9OEb1SZy3/CgpoF8BH2vfpGm4lgT2FdbhmMtodQ+Fmldcnw6sabixdvbd
+	01U90l8Z0DwEfFixVbXQ3UA==
+X-Google-Smtp-Source: AGHT+IF5q8b3RmoFGeHuTYWqFnv7gSNOHPsiPLeuKaV8BZVe3hAaky1fBqwSqHXcodyVUYnPVMSXk3hR+bTzOblV
+X-Received: from pjbpm18.prod.google.com ([2002:a17:90b:3c52:b0:314:626:7b97])
+ (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3c88:b0:312:eaea:afa1 with SMTP id 98e67ed59e1d1-31e507e27e2mr915829a91.29.1753215230358;
+ Tue, 22 Jul 2025 13:13:50 -0700 (PDT)
+Date: Tue, 22 Jul 2025 13:13:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|IA1PR12MB6284:EE_
-X-MS-Office365-Filtering-Correlation-Id: 630a3c05-d026-4348-7da4-08ddc95c0655
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Uk9tSTlvQ1FjRzR0T3lnSUtPOGxuVWMyci9rTXZRcDhpcUNVa1pmQVQyenBt?=
- =?utf-8?B?Vll2Q3NYMWdXNGM3elBNa0UxbE4rQ2tyUDlvQVFxWktrNjRaVnRrWkJJcXBQ?=
- =?utf-8?B?SEZUcTYxWGNoZm5yTTVQa1hvRVdaTlpsMnoxbzFvdDhBOXpwVGJRTEdhSHpy?=
- =?utf-8?B?aEFRaTEzd0hQS2tEbk90ZmtzV2JvdlNyREZIRzRXVG9MWnA1d3dIU0lmU2ow?=
- =?utf-8?B?RGJ0SU8yeDJRdVJLV2c3TmRnVUJsYzVESlhSaDBrUm44OXE2VTcvbTVZd0NV?=
- =?utf-8?B?WmFkSkpZRjVXTEptNlBpUEhWTDNtenEweVdHRy94R2NsVHZ6UWpuKzQyMUFU?=
- =?utf-8?B?QTJuUXNpbVpBeXk3MkRzQU94Z1pNM294QjRBQm5GcEFDQklQSXJKRlRwN2du?=
- =?utf-8?B?b0duOTNIbmEzK0w1WFZRZExqMjNuZlpYaUNJRmI4ZUxQQW1KOVU1eVBNWWgx?=
- =?utf-8?B?MWZCdDdlMmNMYTZhM0t6Y3BLaE9qSnpKNWVRVS9lNkRtZ05lSDNiYWJKTHdJ?=
- =?utf-8?B?RjlOSHljTkRSQVd0VU9OUFkvQVN1YzFJcDZsd05UdjNxd1RUZENualcvczBz?=
- =?utf-8?B?UGFuZGdLMUJud2d4dEhpTzZzZjM3c2k0ZzVHSXpNU1F2a1NtNzYwK0o0MkhJ?=
- =?utf-8?B?VXM1NW43OGZWYVJNa3owTTdwb28yTmZBSzZqN0JWejduOVNrZWljcWtnNFhj?=
- =?utf-8?B?OEc0MkxxVGRIakV6SzY1R0RTV1JZR2t4NS9GN2Q4QUZUTzVOenJHQllVYXdv?=
- =?utf-8?B?NU1JUUtIYkUrNFJROGloYTBOTzJsaDU3NXNIck1PQnJ2SFA4TmlIR2sycnRq?=
- =?utf-8?B?Wm95WGRQYUJHQ2Vzd3UvdUltRE9KWmlPL1lCZ09sTmRESGNWTkczWjNwNGR3?=
- =?utf-8?B?VVBlUDVNS2tFcVloQTRXaUJ0V21EM0JhSVJqbXU4M0JBVHpsWnhQRENmcmdY?=
- =?utf-8?B?M01VMDJXUnk1K3ptbmEwbE1IczB6OUgxdm9xRFh3Qm1kYTZXQ00xVUVURWR1?=
- =?utf-8?B?aTdlVlBrL0k1eUJWQ0txOW5ncHlMOXNZM3BUc2IyeXFJOVJnbnlQY20xVWhE?=
- =?utf-8?B?T1BCSUNkUEFQMTF0U0VhWjUwbytiTDdzbXlYNFVXMlZCZUpZcDhIVVAwV3J1?=
- =?utf-8?B?R3NHMzVXT0c0aVAvV3E0NXZuNkt0N0xyUW1mVTNxTnJSWWl6YWpycm53RUhD?=
- =?utf-8?B?eUlBeTFnK2FPY0RmRmVUa0FCTUVubnpIMVh1YkJJVXBEOEQ2ajRMTHltSlRG?=
- =?utf-8?B?TFNpRFAxeDBBL2NDN1ZaVEVIemk4ZkVGZW9vVVhnbGlDeHA5cHFPYk5KMjcw?=
- =?utf-8?B?WGNPdzVPVlVmUTdFVnJpUUlkNm1nbW1iT2J5QWZHQm1Od0pkaS82YU9LZFBx?=
- =?utf-8?B?VDFLUHE0UEV4aTAvbWJqQlZSLzRZK1NkZmxaNHljMzh4Qjh1eUVyU2dZOXIx?=
- =?utf-8?B?TFZWSlR6TWNPTFJHQkY5cjRsaHUrLzBzZU5Uc2MreCtUYkxTRnBRTElnem5B?=
- =?utf-8?B?aW1ydDFwbi81bWxoQ2xGUTdIYVBxTTFCdWp0SFBvZkpIYjFKaERRV3NGRDRY?=
- =?utf-8?B?clJPb0tEN252UVVidmpnUkNmeS9VaXpKMzZQZWRkVXhoUHpxU3M2WUJOTmdB?=
- =?utf-8?B?ZlMrU2hTaWMrUHVML3YwbW9zS0xFdmxjU1dQanlwdmc0cHkyRHZkU2VDNm5X?=
- =?utf-8?B?YmZScFBpOGpKb0s5YTcxZDV6Z2RqVWkxM2w1NHZ2Ym1QekNDWUNRTDJIUTBT?=
- =?utf-8?B?THpJRHBxbVR3ZzNqUHVoTm8zcEJraXVkVi9nWnFsMHEyQjN5d1N6V3ovV0Fz?=
- =?utf-8?B?V1JDRXFqVUYvWkpHc2pKbGh0cTI5UUR3bkhFRi8rb1Rra00ySDlMVngycjlQ?=
- =?utf-8?B?eGNxaGdCL2RKZ1UxYlZja1BDM0VpS1V5dDNncWFpYkRVSWtoSVREM2lRU1ZG?=
- =?utf-8?Q?fuIbnjWmQpQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dUxjaXVCelFZVlVYQ2FCVkEvQlZybnRaT00ydlg4cEtXYUVlS1JmV0h2emVo?=
- =?utf-8?B?V1ZOQ0ZFaW5WTGdzTExRMkZQWlA0RjhOVGxPdHRScEc0S212V21xdjBQQ2VN?=
- =?utf-8?B?SnJ2OXBRNjMzNURvN1dPM3Z6NDRHbFpSRlh5eFNVQ3YwTWZwTmJ6bnZhbjdI?=
- =?utf-8?B?NmpNSTlkcm50bW9DKzNwUkFBNGZOZ3lhdGVNdVlmVXh6QXdRRmVHTnJvK3ky?=
- =?utf-8?B?SDlRa2xiL1M0K3diS2J4RlNTN3dkbUNTMkZvTG1aYndrS1liMnkvSk95Sy9Q?=
- =?utf-8?B?QVJLMXpOMGZSdGN0RzR5a3dySEhjMUpxSG9HZ2laV2lFWHlxeUh3OXg1NVpG?=
- =?utf-8?B?M2krejBYUEZoZEJWVkhUZmllU1VkZUorM2dNNW1PeVE2Qy9xeDIyMEIvUncv?=
- =?utf-8?B?ckR1QUNUakx5U3dldWQ4RDVPNG54Mmp5UEpNK1liTFY1NFgzRmdXd2JxQm4w?=
- =?utf-8?B?ZkZKbTA3bVNQQ0I5bG5Velo4RStQOWQrb2NudE1LeHJsdlhISy8xSk92R1lZ?=
- =?utf-8?B?UUVGS2hsdkUvbkQrZ2dXenZsS0dHWDR2ZHV6Vi9zMnZtTTNZNWNuRXVGd051?=
- =?utf-8?B?blJDaVRpSnhHUE5tTWdjVnR3anlzMTJZRXQ0bUJBUUxaRDZqK2NJTXdlQVp5?=
- =?utf-8?B?bjZ2RHYwNlAxanV4WXFPOVVtT0d0aTRFY05WQWowM3JFYTZseC9qNnRVS3Z6?=
- =?utf-8?B?cTBuc1M2dUpqblNucnpTR01wL2loV0NILzhyRkJIa2U4UGNOQS9rSXNXd1E5?=
- =?utf-8?B?TW1jQnliendHcVRrVExiMDY3clA3WnQzOXR3cHlGWUp3VUNuR04rb3ROWXU5?=
- =?utf-8?B?RmdxQ3Rsb0oyTVByS1V4WUg5YXVpTTB1NFFHUHpxb0xVYTJoek4ycXZrd3k1?=
- =?utf-8?B?bU15ZjVUUWMrVTd0cUcwY2VVYUtyKyttdWFiS2pDUHZUYXRFVm5qVGVWbXB1?=
- =?utf-8?B?T0MyUTRMR3p1b01SWWNKMko0ZlpPaDdpV0xjbnM5S2V1T1dHa2IrcGNYcndn?=
- =?utf-8?B?aFd1Um1hWlpkbHE4WG9TclNJRDRrSXRldys2MG80bTlENWRkdlhidkEvNXFz?=
- =?utf-8?B?cXY3YnN3WStkTm5OSFV4N3pjdHNTdHRZQ0N5SGtIdE5YNUsybnZrbitKandY?=
- =?utf-8?B?K3Awd29oUStRcGthWW5oNnEzR0RmRTdxQnZ6L1Q0Qm9yeWJnbUxGVDQyak1D?=
- =?utf-8?B?NUFYOHdqY2o1d2loVVN1QXhoUW5FanVuR012aW9SeFVWazdYalExa2I0Qm85?=
- =?utf-8?B?VjRIM20xMWVycmZtNDFiQVRKdlVWZlgwVFVjb0ZjME00ZE13UmFsd0Q1M1JS?=
- =?utf-8?B?VzdOdVp6dkU1UDk0clRibjNpTTNkQVBTbEVabnZWS0dRZncxektSZ3F3U08v?=
- =?utf-8?B?N2h5NFpyNlJ3RUlpdXl4c3VoRDdKY0xDb1hocXZrQ2tNNlVnbUozdStkdFlt?=
- =?utf-8?B?Q0hkS3ArOFZnZTVEYnlSa0MwNXpZNDhvVmtXdEZHOFZKOGExUlc3U2NsQnBq?=
- =?utf-8?B?YlAyVW9xZE52V2ZXMjVZOE8vUktVL3QxSjZid3FwMStudDNOSWhmZHBpZzBX?=
- =?utf-8?B?ZnRUSGRScGZ4dHFTZDZiOUdURFJsZ1EvcWVvQmgwalFMR3VyRitaZUt1Y2R2?=
- =?utf-8?B?ZG1JMFkwWHJlZ1Z3Vi9yZllVTEpEMm5lWExoVktJeHAwK3hmU3NvbHBpVVlk?=
- =?utf-8?B?OGpETFl5M1RiTnBJWHNEeGFhRlhDZ1pvbnN1NmovenZ6cklBckwxRElpV0dk?=
- =?utf-8?B?Q0dJOEFzQ2hYa1A2VC9IVVdDWEJBMXovWFRxUjNMTkxYVjA3Zm0zUmlqcTky?=
- =?utf-8?B?U2h3dng5bHRCcGUrVnJEQUh3SkhsU0dsaGRaWWV2c3pmNmdFbDBvczBPMmdM?=
- =?utf-8?B?Rk91RmFEVFBxZXNtS2xHalFIWHQyaUFwTUxXM2loWUN3TTFVWVMvWjJrS0VE?=
- =?utf-8?B?V3lsRmJSbDZndWZTZzZzaVd0OHAyQ2hOQ0M2ZUM2dkJOdDIrQmxGRE5od1Bm?=
- =?utf-8?B?UDVzeHBSdEhTbGxMaWxianpnb2ptS3M5aE9idXNVY09jSDBkaEYySEl0WVdm?=
- =?utf-8?B?ZHZndzJMeWNMalJnUWFCOHVFVmU2bGpHRlIrR3diT3BScWdGYk1qa3hoQUEy?=
- =?utf-8?Q?HHn4=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 630a3c05-d026-4348-7da4-08ddc95c0655
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 20:12:03.9837
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 34Biiext2mpRF9Sa1CdHPJgY16/8GNCXO/oVUBq3qhOfxY8HKNQzT2GuuLd3OQIT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6284
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250722201339.1198239-1-blakejones@google.com>
+Subject: [PATCH] Reorder some fields in struct rq.
+From: Blake Jones <blakejones@google.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Josh Don <joshdon@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Blake Jones <blakejones@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Reinette,
+This colocates some hot fields in "struct rq" to be on the same cache line
+as others that are often accessed at the same time or in similar ways.
 
-On 7/17/25 22:54, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/8/25 3:17 PM, Babu Moger wrote:
->> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
->> index 15d10c346307..bb28ef7e4600 100644
->> --- a/fs/resctrl/rdtgroup.c
->> +++ b/fs/resctrl/rdtgroup.c
->> @@ -86,6 +86,8 @@ enum resctrl_event_id mba_mbps_default_event;
->>  
->>  static bool resctrl_debug;
->>  
->> +extern struct mbm_transaction mbm_transactions[NUM_MBM_TRANSACTIONS];
->> +
-> 
-> Please move this extern to fs/resctrl/internal.h.
+Using data from a Google-internal fleet-scale profiler, I found three
+distinct groups of hot fields in struct rq:
 
-No required anymore as event_filter_show() is moved to monitor.c
+- (1) The runqueue lock: __lock.
 
-> 
->>  void rdt_last_cmd_clear(void)
->>  {
->>  	lockdep_assert_held(&rdtgroup_mutex);
->> @@ -1895,6 +1897,25 @@ static int resctrl_available_mbm_cntrs_show(struct kernfs_open_file *of,
->>  	return ret;
->>  }
->>  
->> +static int event_filter_show(struct kernfs_open_file *of, struct seq_file *seq, void *v)
->> +{
->> +	struct mon_evt *mevt = rdt_kn_parent_priv(of->kn);
->> +	bool sep = false;
->> +	int i;
->> +
->> +	for (i = 0; i < NUM_MBM_TRANSACTIONS; i++) {
->> +		if (mevt->evt_cfg & mbm_transactions[i].val) {
-> 
-> mevt->evt_cfg could possibly be changed concurrently. This should
-> be protected with the rdtgroup_mutex.
+- (2) Those accessed from hot code in pick_next_task_fair():
+      nr_running, nr_numa_running, nr_preferred_running,
+      ttwu_pending, cpu_capacity, curr, idle.
 
-Sure.
+- (3) Those accessed from some other hot codepaths, e.g.
+      update_curr(), update_rq_clock(), and scheduler_tick():
+      clock_task, clock_pelt, clock, lost_idle_time,
+      clock_update_flags, clock_pelt_idle, clock_idle.
 
-> 
->> +			if (sep)
->> +				seq_putc(seq, ',');
->> +			seq_printf(seq, "%s", mbm_transactions[i].name);
->> +			sep = true;
->> +		}
->> +	}
->> +	seq_putc(seq, '\n');
->> +
->> +	return 0;
->> +}
->> +
->>  /* rdtgroup information files for one cache resource. */
->>  static struct rftype res_common_files[] = {
->>  	{
->> @@ -2019,6 +2040,12 @@ static struct rftype res_common_files[] = {
->>  		.seq_show	= mbm_local_bytes_config_show,
->>  		.write		= mbm_local_bytes_config_write,
->>  	},
->> +	{
->> +		.name		= "event_filter",
->> +		.mode		= 0444,
->> +		.kf_ops		= &rdtgroup_kf_single_ops,
->> +		.seq_show	= event_filter_show,
->> +	},
->>  	{
->>  		.name		= "mbm_assign_mode",
->>  		.mode		= 0444,
->> @@ -2279,10 +2306,48 @@ int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name,
->>  	return ret;
->>  }
->>  
->> +static int resctrl_mkdir_event_configs(struct rdt_resource *r, struct kernfs_node *l3_mon_kn)
->> +{
->> +	struct kernfs_node *kn_subdir, *kn_subdir2;
->> +	struct mon_evt *mevt;
->> +	int ret;
->> +
->> +	kn_subdir = kernfs_create_dir(l3_mon_kn, "event_configs", l3_mon_kn->mode, NULL);
->> +	if (IS_ERR(kn_subdir))
->> +		return PTR_ERR(kn_subdir);
->> +
->> +	ret = rdtgroup_kn_set_ugid(kn_subdir);
->> +	if (ret)
->> +		return ret;
->> +
->> +	for_each_mon_event(mevt) {
->> +		if (mevt->rid != r->rid || !mevt->enabled || !resctrl_is_mbm_event(mevt->evtid))
->> +			continue;
->> +
->> +		kn_subdir2 = kernfs_create_dir(kn_subdir, mevt->name, kn_subdir->mode, mevt);
->> +		if (IS_ERR(kn_subdir2)) {
->> +			ret = PTR_ERR(kn_subdir2);
->> +			goto out_config;
->> +		}
->> +
->> +		ret = rdtgroup_kn_set_ugid(kn_subdir2);
->> +		if (ret)
->> +			goto out_config;
->> +
->> +		ret = rdtgroup_add_files(kn_subdir2, RFTYPE_ASSIGN_CONFIG);
->> +		if (ret)
->> +			break;
->> +	}
->> +
->> +out_config:
->> +	return ret;
-> 
-> No "config" is happening here so the goto label can just be "out".
-> 
+The cycles spent on accessing these different groups of fields broke down
+roughly as follows:
 
-Sure.
+- 50% on group (1) (the runqueue lock, always read-write)
+- 39% on group (2) (load:store ratio around 38:1)
+-  8% on group (3) (load:store ratio around 5:1)
+-  3% on all the other fields
 
->> +}
->> +
->>  static int rdtgroup_mkdir_info_resdir(void *priv, char *name,
->>  				      unsigned long fflags)
->>  {
->>  	struct kernfs_node *kn_subdir;
->> +	struct rdt_resource *r;
->>  	int ret;
->>  
->>  	kn_subdir = kernfs_create_dir(kn_info, name,
->   
-> 
-> Reinette
-> 
+Most of the fields in group (3) are already in a cache line grouping; this
+patch just adds "clock" and "clock_update_flags" to that group. The fields
+in group (2) are scattered across several cache lines; the main effect of
+this patch is to group them together, on a single line at the beginning of
+the structure. A few other less performance-critical fields (nr_switches,
+numa_migrate_on, has_blocked_load, nohz_csd, last_blocked_load_update_tick)
+were also reordered to reduce holes in the data structure.
 
+Since the runqueue lock is acquired from so many different contexts, and is
+basically always accessed using an atomic operation, putting it on either
+of the cache lines for groups (2) or (3) would slow down accesses to those
+fields dramatically, since those groups are read-mostly accesses.
+
+This patch does not change the size of "struct rq" on machines with 64-byte
+cache lines. The additional "____cacheline_aligned" to put the runqueue
+lock on the next cache line will add an additional 64 bytes of padding on
+machines with 128-byte cache lines; although this is unfortunate, it seemed
+more likely to lead to stably good performance than e.g. by just putting
+the runqueue lock somewhere in the middle of the structure and hoping it
+wasn't on an otherwise busy cache line.
+
+I ran "hackbench" to test this change, but it didn't show very conclusive
+results.  Looking at a profile of the hackbench run, it was spending 95% of
+its cycles inside __alloc_skb(), __kfree_skb(), or kmem_cache_free() -
+almost all of which was spent updating memcg counters or contending on the
+list_lock in kmem_cache_node. In contrast, it spent less than 0.5% of its
+cycles inside either schedule() or try_to_wake_up(). So it's not surprising
+that it didn't show useful results here.
+
+Instead, to test this, I wrote a focused load test that would put load on
+the pick_next_task_fair() path. A parent process would fork many child
+processes, and each child would nanosleep() for 1 msec many times in a
+loop. The load test was monitored with "perf", and I looked at the amount
+of cycles that were spent with sched_balance_rq() on the stack. The test
+reliably showed 15-25% of all cycles were spent there. I ran it 80 times on
+a pair of 2-socket Intel GNR machines (480 vCPUs per machine) - one running
+6.16-rc7, the other running this change - using 4800 child processes and
+8000 1-msec sleeps per child.  The mean cycle count dropped from 405.4B to
+387.6B, or a 4.4% decrease.
+
+More importantly, given that this change reduces cache misses in a very hot
+kernel codepath, there's likely to be additional application performance
+improvement due to reduced cache conflicts from kernel data structures.
+
+Signed-off-by: Blake Jones <blakejones@google.com>
+---
+ kernel/sched/sched.h | 59 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 37 insertions(+), 22 deletions(-)
+
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 83e3aa9171429..b21be28823609 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1097,30 +1097,45 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+  * acquire operations must be ordered by ascending &runqueue.
+  */
+ struct rq {
+-	/* runqueue lock: */
+-	raw_spinlock_t		__lock;
+-
++	/*
++	 * The following members are loaded together from pick_next_task(),
++	 * and should be on an isolated cache line to avoid cache pollution.
++	 */
+ 	unsigned int		nr_running;
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int		nr_numa_running;
+ 	unsigned int		nr_preferred_running;
+-	unsigned int		numa_migrate_on;
+ #endif
++#ifdef CONFIG_SMP
++	unsigned int		ttwu_pending;
++	unsigned long		cpu_capacity;
++#endif
++	union {
++		struct task_struct __rcu *donor; /* Scheduler context */
++		struct task_struct __rcu *curr;  /* Execution context */
++	};
++	struct task_struct	*idle;
++	/* padding left here deliberately */
++
++	/*
++	 * The next cacheline holds the runqueue lock, as well as some
++	 * other less performance-critical fields.
++	 */
++	u64			nr_switches	____cacheline_aligned;
++
++	/* runqueue lock: */
++	raw_spinlock_t		__lock;
++
+ #ifdef CONFIG_NO_HZ_COMMON
++	unsigned int		nohz_tick_stopped;
++	atomic_t		nohz_flags;
+ #ifdef CONFIG_SMP
+-	unsigned long		last_blocked_load_update_tick;
+ 	unsigned int		has_blocked_load;
++	unsigned long		last_blocked_load_update_tick;
+ 	call_single_data_t	nohz_csd;
+ #endif /* CONFIG_SMP */
+-	unsigned int		nohz_tick_stopped;
+-	atomic_t		nohz_flags;
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+-#ifdef CONFIG_SMP
+-	unsigned int		ttwu_pending;
+-#endif
+-	u64			nr_switches;
+-
+ #ifdef CONFIG_UCLAMP_TASK
+ 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+ 	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+@@ -1143,6 +1158,9 @@ struct rq {
+ 	struct list_head	*tmp_alone_branch;
+ #endif /* CONFIG_FAIR_GROUP_SCHED */
+ 
++#ifdef CONFIG_NUMA_BALANCING
++	unsigned int		numa_migrate_on;
++#endif
+ 	/*
+ 	 * This is part of a global counter where only the total sum
+ 	 * over all CPUs matters. A task can increase this counter on
+@@ -1151,24 +1169,23 @@ struct rq {
+ 	 */
+ 	unsigned long 		nr_uninterruptible;
+ 
+-	union {
+-		struct task_struct __rcu *donor; /* Scheduler context */
+-		struct task_struct __rcu *curr;  /* Execution context */
+-	};
+ 	struct sched_dl_entity	*dl_server;
+-	struct task_struct	*idle;
+ 	struct task_struct	*stop;
+ 	unsigned long		next_balance;
+ 	struct mm_struct	*prev_mm;
+ 
+-	unsigned int		clock_update_flags;
+-	u64			clock;
+-	/* Ensure that all clocks are in the same cache line */
++	/*
++	 * The following fields of clock data are frequently referenced
++	 * and updated together, and should go on their own cache line.
++	 */
+ 	u64			clock_task ____cacheline_aligned;
+ 	u64			clock_pelt;
++	u64			clock;
+ 	unsigned long		lost_idle_time;
++	unsigned int		clock_update_flags;
+ 	u64			clock_pelt_idle;
+ 	u64			clock_idle;
++
+ #ifndef CONFIG_64BIT
+ 	u64			clock_pelt_idle_copy;
+ 	u64			clock_idle_copy;
+@@ -1187,8 +1204,6 @@ struct rq {
+ 	struct root_domain		*rd;
+ 	struct sched_domain __rcu	*sd;
+ 
+-	unsigned long		cpu_capacity;
+-
+ 	struct balance_callback *balance_callback;
+ 
+ 	unsigned char		nohz_idle_balance;
 -- 
-Thanks
-Babu Moger
+2.50.0.727.gbf7dc18ff4-goog
+
 
