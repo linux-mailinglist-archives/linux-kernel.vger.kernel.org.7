@@ -1,161 +1,125 @@
-Return-Path: <linux-kernel+bounces-741198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70969B0E157
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFE4B0E169
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9467B2637
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104991C84E81
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9957F27A90A;
-	Tue, 22 Jul 2025 16:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CAA27E054;
+	Tue, 22 Jul 2025 16:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XxBLjvhf"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M7Uf0uH7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35ADF277814
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6D927AC3C;
+	Tue, 22 Jul 2025 16:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753200670; cv=none; b=Oc1Nl80T8kvbYv0d9NDZnMIM80p6XzzuTYttKXcloLexHzghdizpF5M/E3DDPuEB64aC/Zn/9nus4zVtGLw1TxbeATcXGsTwGyuna3tpZb9cohzHEgdkx0pmZz4sYTAQ4a8Q+RVwTp8TBMcQ/jj/MEQD7KIqQQedr7i1EWA5HjM=
+	t=1753200736; cv=none; b=qK58ICuTkFnPPpHM9c9Ve1UVj815aozcSLXZDCTF+p831bY/GNaGqJQ8KyOmX45bDFuTwOdVolY76FrkcT0aWHohdLU/EA0rITAm1JNgQIDPbtB6aZHov3xtuQdI/Eb13/36h2b1C06NgxhlDsl+sywPRqUOQz0vF07DYRLtwyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753200670; c=relaxed/simple;
-	bh=yzgMOc1JqPvse/2WCjNPKlC8bdQPxErL7KFyqlOB8RM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZuoCKyP7uG0/bh9yMInBlfi17KPrNJuC/LEgdefuf1+gLDjsZqtwbGCUhG0+Sl7Yp2TolFnGpXZHWo3ahLoTrguAUW47wj/ZzdrKW8acnYVrj6qQEFWofkgM2LB/s4A0SrTakvLNw7qa+eP4dXfmnypFJpKOb3dDoYaXQkGY0ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XxBLjvhf; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <dbc46a1a-9363-4ef7-ae70-d02fca6ecd37@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753200666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQ2Wt/wnzLVk2kOpzHZkebHiwy8smKpH0cZX7371W9M=;
-	b=XxBLjvhfL+sLo0qId3z5iZM8W5TwjKDDKi+M8gxV64bl86GGoEXgbJ10KM4o04Kdm40ph7
-	pnwj4kchOBRBvUVsBJ8ICTdHwvK2hajM00+FyM8pTH3LpgbMmGgqwm+chGikUxIqunTd3/
-	2RL9Hi5Rou6ELHix7LcfEJxvWIUedB0=
-Date: Wed, 23 Jul 2025 00:10:55 +0800
+	s=arc-20240116; t=1753200736; c=relaxed/simple;
+	bh=gqE9akrcTQLmBGXEPjMyaqrh0buo6nROJHb/arvrtgc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XEfOapdGdfsLuoXH3qflF9cX1A9IACRrSeVY7tFlc3L1/v6mjfSFjAPNr8I31+2WVm06L7pcwJAOdgDJkan3m8Fb9wnkiSxXUJ1OPY3UgKaRoB44FoOkSSAVbtR7mTP/XXkogydDJJsYXxNIlOKP1dbN54A1DfjM9vMnMAG3qbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M7Uf0uH7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MEWNGQ018251;
+	Tue, 22 Jul 2025 16:11:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PqUX0Q1pPArlKrYsn9yFtC
+	IatEN0VFo0SDEd/0ZFp9k=; b=M7Uf0uH74eXPSXg7gqbIjwKLsgOdf/44ogDGdX
+	YI92P2IudtdzEfxz+WSGnh+TcfzgROocGyHkNkyXo9cy8g/z3TApr53D+MzIHtDA
+	CER/KBR00JAG0zaKiCoeUD4ykuqojMLjw3Vsm/DKQe3gEhjs/D01+Ch9XhALrcGf
+	gi8m3sNAWsGUsJfK76GAd/k74dfoEFwGzQT3QStgByZ4Z9g43dZnWLyb1N4Qs7yv
+	oUEPt26ahwZTJ9FAqH8avFhD7QAlkt7wqttEDSc/Fh8Y5ifTYcUHgxbVSjjcIG+A
+	ultQUKfHZ+15miBOKZkB2ekksYSE5tgdBTPLlmv2brUhL3TA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na0gv2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 16:11:19 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56MGBJhf018485
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 16:11:19 GMT
+Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 22 Jul 2025 09:11:14 -0700
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+To: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <James.Bottomley@HansenPartnership.com>,
+        <martin.petersen@oracle.com>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V1 0/3] Add DT-based gear and rate limiting support
+Date: Tue, 22 Jul 2025 21:41:00 +0530
+Message-ID: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 1/3] bpftool: Add bpf_token show
-To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20250722115815.1390761-1-chen.dylane@linux.dev>
- <4dcd2d25-5955-4364-9b6a-42d66dee0a6b@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <4dcd2d25-5955-4364-9b6a-42d66dee0a6b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dTs-IxOs5iupgzl39bDIfZsqYA_sen1A
+X-Proofpoint-ORIG-GUID: dTs-IxOs5iupgzl39bDIfZsqYA_sen1A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDEzNCBTYWx0ZWRfXzdbo8nyt63ie
+ T3pw0Gvo3cP4BDEWVNvBwOkgLw4BqtLSvsL3ojR2VvHBC91CsqbdI7IdmaZ0TXxCVAY2wjpY8VZ
+ 8iKvDgGOAwZ1zE7tx4nQMkEWDoHxYvyaoKM95CAjPSgwFu3TI2999qvVx+91mhKS/hFTUEGHKFb
+ qH1xyN+Wn9wLfaK/+CsMZTotZbdRrY4LCGm8H3ClqLezTDhzv48y/kZjnc4bZa05aY7c+2zhGy3
+ 86Yd0gvo2+98NUe3KgisP8BoD6TscAOBWzpUNahuJ1RnP2yDUSIX9rF3WABdOZSLK8DtrX6pb2E
+ zmZaEyjejzOdda4rrC9HIYtuHOwx+mUoF15YfOazHWu+Y7VyrijFghd20PIHavzPef1T374ezbR
+ b0YgomVP6Pr71KOl4/EuCMyIR4cSBScdVSkg6BV3LkiX39aCWj4r6hXH4joGhaGfmI55EgaE
+X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=687fb827 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=Uq_XN3muvx71_ABf9fcA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
+ bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507220134
 
-在 2025/7/22 23:01, Quentin Monnet 写道:
-> 2025-07-22 19:58 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
->> Add `bpftool token show` command to get token info
->> from bpffs in /proc/mounts.
->>
->> Example plain output for `token show`:
->> token_info  /sys/fs/bpf/token
->> 	allowed_cmds:
->> 	  map_create          prog_load
->> 	allowed_maps:
->> 	allowed_progs:
->> 	  kprobe
->> 	allowed_attachs:
->> 	  xdp
->> token_info  /sys/fs/bpf/token2
->> 	allowed_cmds:
->> 	  map_create          prog_load
->> 	allowed_maps:
->> 	allowed_progs:
->> 	  kprobe
->> 	allowed_attachs:
->> 	  xdp
->>
->> Example json output for `token show`:
->> [{
->> 	"token_info": "/sys/fs/bpf/token",
->> 	"allowed_cmds": ["map_create", "prog_load"],
->> 	"allowed_maps": [],
->> 	"allowed_progs": ["kprobe"],
->> 	"allowed_attachs": ["xdp"]
->> }, {
->> 	"token_info": "/sys/fs/bpf/token2",
->> 	"allowed_cmds": ["map_create", "prog_load"],
->> 	"allowed_maps": [],
->> 	"allowed_progs": ["kprobe"],
->> 	"allowed_attachs": ["xdp"]
->> }]
->>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
-> 
->> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
->> new file mode 100644
->> index 00000000000..f72a116f9c6
->> --- /dev/null
->> +++ b/tools/bpf/bpftool/token.c
-> 
->> +static int show_token_info(void)
->> +{
->> +	FILE *fp;
->> +	struct mntent *ent;
->> +	bool hit = false;
->> +
->> +	fp = setmntent(MOUNTS_FILE, "r");
->> +	if (!fp) {
->> +		p_err("Failed to open: %s", MOUNTS_FILE);
->> +		return -1;
->> +	}
->> +
->> +	if (json_output)
->> +		jsonw_start_array(json_wtr);
->> +
->> +	while ((ent = getmntent(fp)) != NULL) {
->> +		if (strncmp(ent->mnt_type, "bpf", 3) == 0) {
->> +			if (has_delegate_options(ent->mnt_opts)) {
->> +				__show_token_info(ent);
->> +				hit = true;
->> +			}
->> +		}
->> +	}
->> +
->> +	if (json_output)
->> +		jsonw_end_array(json_wtr);
->> +
->> +	if (!hit)
->> +		p_info("Token info not found");
-> 
-> Woops I take this one back. It made sense to have a p_info() message in
-> your v1 because you were only looking at one bpffs mount point, but now
-> we list all the ones we find, we should remove this message and silently
-> ignore mount points without token info (and I think we can remove the
-> "hit" variable entirely). Sorry! :)
-> 
+This patch series adds support for limiting the maximum high-speed
+gear and rate used by the UFS controller on Qualcomm platforms via
+device tree.
 
-It‘s okay, i will remove it in v3, thanks anyway.
+Some automotive platforms, such as SA8155, require restricting the
+maximum gear or rate due to hardware limitations. To support this,
+the driver is extended to parse two new optional DT properties and
+apply them during initialization. The default behavior remains
+unchanged if these properties are not specified.
 
-> The rest of this patch looks good to me, thank you
-> 
-> Quentin
+Ram Kumar Dwivedi (3):
+  scsi: ufs: qcom: Add support for DT-based gear and rate limiting
+  arm64: dts: qcom: sa8155: Add gear and rate limit properties to UFS
+  dt-bindings: ufs: qcom: Document HS gear and rate limit properties
 
+ .../devicetree/bindings/ufs/qcom,ufs.yaml     | 10 +++++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          |  3 ++
+ drivers/ufs/host/ufs-qcom.c                   | 29 +++++++++++++++----
+ 3 files changed, 36 insertions(+), 6 deletions(-)
 
 -- 
-Best Regards
-Tao Chen
+2.50.1
+
 
