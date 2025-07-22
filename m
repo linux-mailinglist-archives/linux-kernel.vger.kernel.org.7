@@ -1,287 +1,119 @@
-Return-Path: <linux-kernel+bounces-741182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52F3B0E121
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A933B0E126
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85CC9AC2274
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7905811A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89115273806;
-	Tue, 22 Jul 2025 16:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4234C1DE2B5;
+	Tue, 22 Jul 2025 16:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIE5KH0B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xt3xVbJs"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90E288D2;
-	Tue, 22 Jul 2025 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BCF433A8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753200053; cv=none; b=OBJDidsEIbfP4opJfGUaMJAFip2e8/L4h5s1WDleNiVnmINZ4o4CxXf+d3A3S6JZW2M29Ebgk9afJQmpSIlW5p2KTE6byWWEAen1GxQEL4ygwc3AZUtlWuNY6BUXMk6SRHIiLaeS84k9NCxcTI+PPfV4PIiV6C7yz5I1vL7fhNg=
+	t=1753200159; cv=none; b=o9Me5cVgI3WvjAxGTtCx1LU7WqRIg0T1MWc9mUrvLIKbWudcMWT1IXhtBcXKRk0yKy9vbsNbVHTU2io/08A6foUMi8qiQ3IWYuDbozi0B/C/dSS0JYZnGfPFBTxxgCwLH5eAVEXcrTHCWc2SFp0EsAqxKJ0SPy5vZVUqD88/xmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753200053; c=relaxed/simple;
-	bh=ZfUcciwVgnlfjhjMBuKB6y9OEMBDUN0nvSVkl8Ymh/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhSRuQ8AwrGb91/IHnF/8KRm/ITiOcnz1yshHp8H4oSrYVtul64t+y+GBxsknAJhvVhY405Ho7rU3GLCbt7BiwHkp5XaF3FWXPVYTcAolotXK0v6EFXhMo08D0JJdWj/1JtlNqqP6a62JLBLhVo2qTRoUjaGq4VKAr9m1b906ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIE5KH0B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12EECC4CEEB;
-	Tue, 22 Jul 2025 16:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753200053;
-	bh=ZfUcciwVgnlfjhjMBuKB6y9OEMBDUN0nvSVkl8Ymh/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XIE5KH0Bx4MvTH/jCH+qLhoYLunZlawbLiuGWxul0vhqetUIjltknPKgVJyD/vMwx
-	 ekWkg2ensjx2SbbnCVe1y84rKjbOnCnRYCQ524AyNQ/1qQN+rfXDHsQurjdDkpzTxQ
-	 ypnSaVFRZvFeRhg7j5h6jPUkHNi060LwyKvGVTWl4NHQWRn4U8OXb5KRUvTOjlNPSf
-	 /t1VrPLmSJ/nqxBPkEQDaAOAIiWnPjHMeMBFaQ+i4AE6qeqsyfFkjw9lXb29xNRFTo
-	 YlkAa58+cH9zTEjwZJqyHLEiI19D4to66bh2dxX4j/jOMvDkyEIvXdHJ18/lAh2xQC
-	 21Ogt0f6uFg3g==
-Date: Tue, 22 Jul 2025 21:30:42 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, Daniel Dadap <ddadap@nvidia.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v4 1/1] PCI: Move boot display attribute to DRM
-Message-ID: <ab7r6nngsez44ogixmbc4lbucjam3bhnwidnoo3luv5xancsa7@gltpd5fkkvie>
-References: <20250721185726.1264909-1-superm1@kernel.org>
- <20250721185726.1264909-2-superm1@kernel.org>
+	s=arc-20240116; t=1753200159; c=relaxed/simple;
+	bh=noCp+eXK33xOruhl37s/mqn60tBI6l0AIHoZYe0gMCk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pJvvThpp6COIRRmjN8tSxuJ1+8r5rEDj96g5h+f7Wjdksi7NAhh5RRY8viMPKfrE7l0YxmdDpCz+Vtfxy9kRjNnjl+nEF5cPpCSfUA79/BZP4C3ahNfWRLIf5yJcOq4vs2JShSB5d8zAtnlToV+QZgJmMi+4HL+yFFrAw4orJTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xt3xVbJs; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-875dd57d63bso1829639f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753200156; x=1753804956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dBDUtHjG8WwK4Nzt7OVo+JKFrKxCJS3/depqRx3MmAo=;
+        b=xt3xVbJsXEzkPhPitoRtfx5sqT2K6sM94IayNFRZvpJe538HdUludl83xXLiAiaPbI
+         Y+DTlJBMwcLQrv3bHNIiwMNS0qnBgk7Xd4BH81HI3fOlhhkoeNfLRJDBCbljhjedtxi8
+         ly6ura0OF04Jsc799gZ8ZEmzRJ6R8akr3Bl3v/czMOyA2Pf9n+NJb/5fzjXnYZ1Ko0Yj
+         M/X9hccYU/7e/aJE3bFdYuJTL8E9g1XEAGGpBbl1isaykTzDpSH5ghfBGIv/bzK0QPph
+         6+aXJgEOh4erjwbahzyOonudSopGu0r8fuz0ten8Yr/mnYl4pfhEJAGoTjq44+JG74jC
+         tNVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753200156; x=1753804956;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dBDUtHjG8WwK4Nzt7OVo+JKFrKxCJS3/depqRx3MmAo=;
+        b=sIw9z+caOi6veY3m4tgv4iIc/rDktxDGGiVy5wgY3BDBVvl5JDmOyVrViljOMolg9p
+         n/TTeKzdzaGCld1CwJAYzFpO2upu4QImYgdtjggNv8oJzvpXLmFGAArxV40xqqBdJO3G
+         t9FcFH7RnEJqu+mDr+Jo00d88P7TqlUVIJVhSzOjPt+Z8BmeMvkV8AYU4icECI5rxSKO
+         Ah5LQIBicAm0fhDaa+qSplRchB52WZthyQU9YtSohMtqtoxNb01XODyePSfEwNkZU1K+
+         Om+WPIXVK8lnQnVh3pub+VKfPxepRtuasXQML0Gd0PEGwnsxmpvRRk0I/ya4XFNgZ2Vm
+         TOWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3566gyKAc21caKqn5I1Ip9OHlcIRsON6fioYXiwbJESwMqO2Ok2uaKBAmOOtwKJW8IMh/DfR1cBnvrWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNCPf5wNcrcYTCvlHA9X6nNKlLOhWPKKEaQdCFjEB35ZC4y295
+	vPPxl9uSoeEPqNIrFnt4ecuYKBqX9CKjEYdA308EwxYawlKIwdQF+jJJidIYf5PZysc=
+X-Gm-Gg: ASbGncvy+3eHVYMnfQaSej/wfmqMRuI9ScOn3ach68Bw6iQF0W7Kk6j7iFHwBkPaZ+W
+	SpuiAS1zWhk7AWYXv0bqnERpzVvD8F+fjWsndZaGICGj7idsl2iK6snB9N7zrmk7D2wIZWRFLr3
+	W6lo+fFup1H/U4yqKbX18WZOgv1JGNmWLfri0yL3Z1X9TjvXin2N5NY65w+PO8UAue45UNREgjY
+	88v0OtO9OMlE/h6xtTGsUlummcALr387n33TfM7NkmlFcnz6rGLHZvmkEtfddwt2PNa8yzz37/8
+	Fo1l2Ckwf6ffnYgLw1LLsHYTIYeB8EtIrWDu3DXzpzw5Bq5NPbiTTlSc5gca+iMifRvENBbqPZO
+	ZzKeMazNya/8K
+X-Google-Smtp-Source: AGHT+IGwFeinDrd1apvfPiLCe115kkPKtu21yo+ZtYpYX23SlO5YPHk6OgHUI5gPbzer2SUz6HNeAQ==
+X-Received: by 2002:a05:6602:7417:b0:873:1e91:210e with SMTP id ca18e2360f4ac-87c538883bcmr676458339f.4.1753200151901;
+        Tue, 22 Jul 2025 09:02:31 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084ca62884sm2493638173.123.2025.07.22.09.02.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 09:02:31 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jim.Quigley@oracle.com, davem@davemloft.net, sln@onemain.com, 
+ alexandre.chartre@oracle.com, aaron.young@oracle.com, 
+ Ma Ke <make24@iscas.ac.cn>
+Cc: akpm@linux-foundation.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250719075856.3447953-1-make24@iscas.ac.cn>
+References: <20250719075856.3447953-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] sunvdc: Balance device refcount in
+ vdc_port_mpgroup_check
+Message-Id: <175320015081.186214.5828107139805643955.b4-ty@kernel.dk>
+Date: Tue, 22 Jul 2025 10:02:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721185726.1264909-2-superm1@kernel.org>
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On Mon, Jul 21, 2025 at 01:57:26PM GMT, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+
+On Sat, 19 Jul 2025 15:58:56 +0800, Ma Ke wrote:
+> Using device_find_child() to locate a probed virtual-device-port node
+> causes a device refcount imbalance, as device_find_child() internally
+> calls get_device() to increment the device’s reference count before
+> returning its pointer. vdc_port_mpgroup_check() directly returns true
+> upon finding a matching device without releasing the reference via
+> put_device(). We should call put_device() to decrement refcount.
 > 
-> The boot_display attribute is currently created by PCI core, but the
-> main reason it exists is for userspace software that interacts with
-> drm to make decisions. Move the attribute to DRM.
-> 
-> This also fixes a compilation failure when compiled without
-> CONFIG_VIDEO on sparc.
-> 
-> Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250718224118.5b3f22b0@canb.auug.org.au/
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> [...]
 
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
+Applied, thanks!
 
-Thanks Mario!
+[1/1] sunvdc: Balance device refcount in vdc_port_mpgroup_check
+      commit: 63ce53724637e2e7ba51fe3a4f78351715049905
 
-- Mani
-
-> ---
->  Documentation/ABI/testing/sysfs-bus-pci   |  9 -----
->  Documentation/ABI/testing/sysfs-class-drm |  8 ++++
->  drivers/gpu/drm/drm_sysfs.c               | 41 +++++++++++++++++++++
->  drivers/pci/pci-sysfs.c                   | 45 -----------------------
->  4 files changed, 49 insertions(+), 54 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-class-drm
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-> index a2c74d4ebeadd..69f952fffec72 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> @@ -612,12 +612,3 @@ Description:
->  
->  		  # ls doe_features
->  		  0001:01        0001:02        doe_discovery
-> -
-> -What:		/sys/bus/pci/devices/.../boot_display
-> -Date:		October 2025
-> -Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
-> -Description:
-> -		This file indicates that displays connected to the device were
-> -		used to display the boot sequence.  If a display connected to
-> -		the device was used to display the boot sequence the file will
-> -		be present and contain "1".
-> diff --git a/Documentation/ABI/testing/sysfs-class-drm b/Documentation/ABI/testing/sysfs-class-drm
-> new file mode 100644
-> index 0000000000000..536820afca05b
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-drm
-> @@ -0,0 +1,8 @@
-> +What:		/sys/class/drm/.../boot_display
-> +Date:		October 2025
-> +Contact:	Linux DRI developers <dri-devel@vger.kernel.org>
-> +Description:
-> +		This file indicates that displays connected to the device were
-> +		used to display the boot sequence.  If a display connected to
-> +		the device was used to display the boot sequence the file will
-> +		be present and contain "1".
-> diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-> index 60c1f26edb6fa..1bc2e6abaa1a9 100644
-> --- a/drivers/gpu/drm/drm_sysfs.c
-> +++ b/drivers/gpu/drm/drm_sysfs.c
-> @@ -18,6 +18,7 @@
->  #include <linux/gfp.h>
->  #include <linux/i2c.h>
->  #include <linux/kdev_t.h>
-> +#include <linux/pci.h>
->  #include <linux/property.h>
->  #include <linux/slab.h>
->  
-> @@ -30,6 +31,8 @@
->  #include <drm/drm_property.h>
->  #include <drm/drm_sysfs.h>
->  
-> +#include <asm/video.h>
-> +
->  #include "drm_internal.h"
->  #include "drm_crtc_internal.h"
->  
-> @@ -508,6 +511,43 @@ void drm_sysfs_connector_property_event(struct drm_connector *connector,
->  }
->  EXPORT_SYMBOL(drm_sysfs_connector_property_event);
->  
-> +static ssize_t boot_display_show(struct device *dev, struct device_attribute *attr,
-> +				 char *buf)
-> +{
-> +	return sysfs_emit(buf, "1\n");
-> +}
-> +static DEVICE_ATTR_RO(boot_display);
-> +
-> +static struct attribute *display_attrs[] = {
-> +	&dev_attr_boot_display.attr,
-> +	NULL
-> +};
-> +
-> +static umode_t boot_display_visible(struct kobject *kobj,
-> +				    struct attribute *a, int n)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj)->parent;
-> +
-> +	if (dev_is_pci(dev)) {
-> +		struct pci_dev *pdev = to_pci_dev(dev);
-> +
-> +		if (video_is_primary_device(&pdev->dev))
-> +			return a->mode;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct attribute_group display_attr_group = {
-> +	.attrs = display_attrs,
-> +	.is_visible = boot_display_visible,
-> +};
-> +
-> +static const struct attribute_group *card_dev_groups[] = {
-> +	&display_attr_group,
-> +	NULL
-> +};
-> +
->  struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
->  {
->  	const char *minor_str;
-> @@ -531,6 +571,7 @@ struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
->  
->  		kdev->devt = MKDEV(DRM_MAJOR, minor->index);
->  		kdev->class = drm_class;
-> +		kdev->groups = card_dev_groups;
->  		kdev->type = &drm_sysfs_device_minor;
->  	}
->  
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 6ccd65f5b1051..b3fb6024e0ba7 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -680,13 +680,6 @@ const struct attribute_group *pcibus_groups[] = {
->  	NULL,
->  };
->  
-> -static ssize_t boot_display_show(struct device *dev,
-> -				 struct device_attribute *attr, char *buf)
-> -{
-> -	return sysfs_emit(buf, "1\n");
-> -}
-> -static DEVICE_ATTR_RO(boot_display);
-> -
->  static ssize_t boot_vga_show(struct device *dev, struct device_attribute *attr,
->  			     char *buf)
->  {
-> @@ -1059,37 +1052,6 @@ void pci_remove_legacy_files(struct pci_bus *b)
->  }
->  #endif /* HAVE_PCI_LEGACY */
->  
-> -/**
-> - * pci_create_boot_display_file - create "boot_display"
-> - * @pdev: dev in question
-> - *
-> - * Create "boot_display" in sysfs for the PCI device @pdev if it is the
-> - * boot display device.
-> - */
-> -static int pci_create_boot_display_file(struct pci_dev *pdev)
-> -{
-> -#ifdef CONFIG_VIDEO
-> -	if (video_is_primary_device(&pdev->dev))
-> -		return sysfs_create_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
-> -#endif
-> -	return 0;
-> -}
-> -
-> -/**
-> - * pci_remove_boot_display_file - remove "boot_display"
-> - * @pdev: dev in question
-> - *
-> - * Remove "boot_display" in sysfs for the PCI device @pdev if it is the
-> - * boot display device.
-> - */
-> -static void pci_remove_boot_display_file(struct pci_dev *pdev)
-> -{
-> -#ifdef CONFIG_VIDEO
-> -	if (video_is_primary_device(&pdev->dev))
-> -		sysfs_remove_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
-> -#endif
-> -}
-> -
->  #if defined(HAVE_PCI_MMAP) || defined(ARCH_GENERIC_PCI_MMAP_RESOURCE)
->  /**
->   * pci_mmap_resource - map a PCI resource into user memory space
-> @@ -1693,15 +1655,9 @@ static const struct attribute_group pci_dev_resource_resize_group = {
->  
->  int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
->  {
-> -	int retval;
-> -
->  	if (!sysfs_initialized)
->  		return -EACCES;
->  
-> -	retval = pci_create_boot_display_file(pdev);
-> -	if (retval)
-> -		return retval;
-> -
->  	return pci_create_resource_files(pdev);
->  }
->  
-> @@ -1716,7 +1672,6 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
->  	if (!sysfs_initialized)
->  		return;
->  
-> -	pci_remove_boot_display_file(pdev);
->  	pci_remove_resource_files(pdev);
->  }
->  
-> -- 
-> 2.43.0
-> 
-
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Jens Axboe
+
+
+
 
