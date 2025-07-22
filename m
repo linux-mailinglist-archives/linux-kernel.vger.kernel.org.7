@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-740021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63C6B0CEBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3182EB0CEC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E512B188A807
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624CA16F647
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301B94690;
-	Tue, 22 Jul 2025 00:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E6213D539;
+	Tue, 22 Jul 2025 00:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsLz5ND2"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNvVM2IL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3821C323D;
-	Tue, 22 Jul 2025 00:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B42A2AEFD;
+	Tue, 22 Jul 2025 00:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753144145; cv=none; b=W7BPF+YiPvmfr+1fDOBi+D5u2oGqR3ScGUKcJrQHG97CUixGuK8csrQPWuWbErbTqA364gAhdc0fKSS03kaznKJkoUDaA3A/lvBMWhaO2Tta8zztCKdfYZh/wJXY0Cra5m/vdAwwGpl02aeVmT7h9rN0tH5p14WfaOoHQ3n45C0=
+	t=1753144208; cv=none; b=VZGM0d3IPaDQhu3x379odcmK+bVMjmTYUWDTU7HMM1V6H2BCa8hESk0rElXUrHl0JDIfP0L1I3/60pzYkBaRVL1C/HTjgFLf83Y7q+hWZcb/+MSshL+7N/mN6kEttx+m58bzOz77+8yU5dbx8FGDAGnZaeA6ilOuWSLFpnyKwgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753144145; c=relaxed/simple;
-	bh=1oSCdNX7DQYIk3n3ZJ1VeGj/LdIxW93xsqtNV72FQrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I8zJlPo1IbOFJo21NBgv0x9Naf0BOwxZH3dTuS/3axS1GBCoFTkCO12N1uAb22P/LDxhQSt9xRLZKWhmBwwXUY4Imz70HSqXxZfuzucKqRiC3OTc35Q4nAdI+VzzhABpQkAF/mJCMayiGafkZK06VbZgo5y/4TWoqARI/0u1HDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsLz5ND2; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23aeac7d77aso41110845ad.3;
-        Mon, 21 Jul 2025 17:29:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753144143; x=1753748943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oq4jdal9TquQDBj2libt0/0yRkNmtdQsAFlZRWxtTdo=;
-        b=LsLz5ND2jMQtkHZK0g/hNw71qQpwa7L9nxm/Qf0pCktCIERgLjLP1wP6o4CT77u5nj
-         6po2RAVyVSQEhSrMrckBztjtPaYk1gNEC2/KdznHRs1NGzP/dA9kgpRwjKv4uiWVCxoX
-         KVO8LU1sVOdk3Y+LjH1Pqna9+YSFeaEZ3yPG9g7xqp5waKiXeUCimI/lAs702zDCfYPx
-         Bf1PiD28p+VijlE9r6R1qgGdhSYw2fSq4CmiVNBVlkV3aHpK4QSD8fJcOSmye4vQsaSj
-         dp1wSz0x/ljwcMg24LsLYdnI+ZuO2ba2sM/5/olElB143BI6MHVnJg2kKgIocDzyMBSB
-         s7jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753144143; x=1753748943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oq4jdal9TquQDBj2libt0/0yRkNmtdQsAFlZRWxtTdo=;
-        b=ef/L/Ld+sKFwUPgjFmxDSk3rUv5i/CgSYS4Mxu3N7g34KV0afYOb2+bTvMRd1ZtWLd
-         MdqyEBZ7ICBXrjAFHN1zZJrxW6IMVkQquTILxJiTyUAoD34rKpGpUTFnpdd1lC0sUirq
-         zEldtNXiw0yguzdIbBhIg+KM3BsBh2Vc8s5QbzsC0OfYxjoDmP8uPEwP1Ngz/r6Yj1uD
-         PTPWkzuYAfqhL+B/xzHR5OziMNN8c5BTc4+848nIuVgnQIGmB8gnxQGB4rrKG3dB651g
-         +5Q0I/hX3fjx7XsO5gonv221Pjrj0jfGVASCNpcGWSQgSbO4+3Sqda7d+f5Ph+bEmNM9
-         zlkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPQaM/beLBEUZ7pveqJX3YbYDVivDjKP1TBpUfMQ5YnQvXArlPGBrI+I0wJxJIhNDJii8AzFwFuD0DNbaG@vger.kernel.org, AJvYcCWt0KY08m6OIoYUqLkc+UccoO9zFcdeVw0SNYwtklzgy3kNcSUr/xrQCTS31SNlzlPhwj8okXKR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvRjTOFsn2noua8dpf/oIwGb9cTDsn6PlhMWmptNmmWnEuGlZm
-	UIw0G5OqtMI2X+ta4Z9eLAm3vyAZoA9YIq+9sibmo/1zuE0Q73bRsooS
-X-Gm-Gg: ASbGncs2nc2YnlKbG4dShctsgUAQMJHPPrlPcI3lh45ExcVhmW9HYZfo8O9Cs2mthkX
-	TE3kkNoIgPQTPlll0DvNOFOXNU3z7Sd1+9NT8v23BGbw5MrvOUsekxjfn/tzDDU05Xio+Z2O5TQ
-	bwEzFAHj42XUJc5317dgug4r0pUtL1aMbpUH8N7CR8AFoRcQ2CmH2DSj75sHzIeJJdcBGL03NP8
-	2H9H9NtYX+J/k1jtkNLLIj61yWWXE2+05K3pdiiV+U+Hquv6uofZkez3rboLdMmAKuijN7lbrEA
-	efQ9rL/+/7SHbK6CKCl3NtFn+YwUKbVQ/K6+AdFodZAbNARMgtqM08uw1r0yoYqLDHCNBy5ZJYb
-	NgBbR6bSKEo74aNrvHOz1LUrue/do9Kg=
-X-Google-Smtp-Source: AGHT+IHNF7BKZ99z9zCYMqDZ4VD0vwvR9MiC03EI2F3fyhR2Q0qcVIHpxTmg4IiArxwEH3HbEViX9A==
-X-Received: by 2002:a17:902:e804:b0:235:f632:a4d5 with SMTP id d9443c01a7336-23e24f363b1mr274426545ad.9.1753144143405;
-        Mon, 21 Jul 2025 17:29:03 -0700 (PDT)
-Received: from [192.168.1.117] ([73.222.117.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d672asm63820045ad.178.2025.07.21.17.29.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 17:29:02 -0700 (PDT)
-Message-ID: <e938953c-8735-4276-8f45-543ade5cc515@gmail.com>
-Date: Mon, 21 Jul 2025 17:29:01 -0700
+	s=arc-20240116; t=1753144208; c=relaxed/simple;
+	bh=EuXF+5F3Ni9nk0OZtht9On3rD4KnpjFnW5CiFlFPJ4U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=hqa3FjlFckMqaCMnhW7J6VMlRX9NGOihisqqslpHLZ8ZrmYU9Cr4P9X0sgPmik5dY1Y215KmFKHIKOm6ut0rueI5Ue9IWogtczVx5+9kNVrCpnsFxKlpu8eQiujCKHuD6wFE4WTscypIgXU+1Hj4x5KCt72dAM300paYa8A54PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNvVM2IL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B36C4CEF7;
+	Tue, 22 Jul 2025 00:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753144208;
+	bh=EuXF+5F3Ni9nk0OZtht9On3rD4KnpjFnW5CiFlFPJ4U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hNvVM2ILTkgT2tJhvZUztstWQeW8RdLLShELouOYs4IMW5F81FnEhAePJrVZN1iZA
+	 LnRxGkRwfNx1V3F+vHpPpLbycJ52oZx4as5KD1Mq/OP2a3Mp8141w1YZdOnd6DVZsv
+	 V7ml8aNpHm+5fYhrOWAfCYOCD8sVDD/1+RTYoz8DZFh9IrkYDIgCQCH65Mte84SzNq
+	 LvYA3Xp8xB8zNX49Dx0UTdQhQup4aNiOkynqE5qbV7M+m/hZ8ufSOrMG6F1QJYTJjD
+	 ulTMxFwpCH14Ze7CDqzNDZkRO9nxNX9K8ycX14X03wId75FQ0nHQNR6aiNoKXTLf+J
+	 xYHdQ/G1KxnzQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE02383B267;
+	Tue, 22 Jul 2025 00:30:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [cgroups?] WARNING in css_rstat_exit
-To: Shakeel Butt <shakeel.butt@linux.dev>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: syzbot <syzbot+8d052e8b99e40bc625ed@syzkaller.appspotmail.com>,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tj@kernel.org
-References: <6874b1d8.a70a0220.3b380f.0051.GAE@google.com>
- <2b10ba94-7113-4b27-80bb-fd4ef7508fda@gmail.com>
- <ammabsnegvc5m5qdj3xmydq3vhzw5igiy4fofpzyyzcwz5y7ib@rgbbbvxfxrf3>
- <uenvth6s5pfulsz36nxfgg7s2nfi4wm5334edyogiicq4x54mg@kh7keqfyrihh>
-Content-Language: en-US
-From: JP Kobryn <inwardvessel@gmail.com>
-In-Reply-To: <uenvth6s5pfulsz36nxfgg7s2nfi4wm5334edyogiicq4x54mg@kh7keqfyrihh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] net: stmmac: dwmac-renesas-gbeth: Add PM
+ suspend/resume callbacks
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175314422650.243210.16859795582435366531.git-patchwork-notify@kernel.org>
+Date: Tue, 22 Jul 2025 00:30:26 +0000
+References: <20250717071109.8213-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250717071109.8213-1-biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ geert+renesas@glider.be, biju.das.au@gmail.com, rmk+kernel@armlinux.org.uk
 
-Thanks Michal and Shakeel for the input on this. I will be sending out a
-series to harden css_create(). I was able to open a small window for the
-placement of css_rstat_init() that satisfies existing constraints and
-allows for error handling before refcounts come into play.
+Hello:
 
-On 7/17/25 11:46 AM, Shakeel Butt wrote:
-> On Thu, Jul 17, 2025 at 03:28:27PM +0200, Michal Koutný wrote:
->> Thanks for looking into this JP.
->> You seem to tracked down the cause with uncleaned rstat, beware that the
->> approach in the patch would leave reference imbalance after
->> init_and_link_css() though.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 17 Jul 2025 08:11:06 +0100 you wrote:
+> Add PM suspend/resume callbacks for RZ/G3E SMARC EVK.
 > 
-> Yeah I discussed the same with JP and I think JP is planning to move the
-> css_rstat_init() before init_and_link_css() and a second param to
-> css_rstat_init() to differentiate between css_is_self() or not.
+> The PM deep entry is executed by pressing the SLEEP button and exit from
+> entry is by pressing the power button.
+> 
+> Logs:
+> root@smarc-rzg3e:~# PM: suspend entry (deep)
+> Filesystems sync: 0.115 seconds
+> Freezing user space processes
+> Freezing user space processes completed (elapsed 0.002 seconds)
+> OOM killer disabled.
+> Freezing remaining freezable tasks
+> Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> printk: Suspending console(s) (use no_console_suspend to debug)
+> NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-162-g7148ba838
+> NOTICE:  BL2: Built : 14:23:58, Jul  5 2025
+> NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+> NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+> NOTICE:  BL2: SYS_LSI_PRR: 0x0
+> NOTICE:  BL2: Booting BL31
+> renesas-gbeth 15c30000.ethernet end0: Link is Down
+> Disabling non-boot CPUs ...
+> psci: CPU3 killed (polled 0 ms)
+> psci: CPU2 killed (polled 0 ms)
+> psci: CPU1 killed (polled 0 ms)
+> Enabling non-boot CPUs ...
+> Detected VIPT I-cache on CPU1
+> GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+> CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+> CPU1 is up
+> Detected VIPT I-cache on CPU2
+> GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+> CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+> CPU2 is up
+> Detected VIPT I-cache on CPU3
+> GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+> CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+> CPU3 is up
+> dwmac4: Master AXI performs fixed burst length
+> 15c30000.ethernet end0: No Safety Features support found
+> 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+> 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+> dwmac4: Master AXI performs fixed burst length
+> 15c40000.ethernet end1: No Safety Features support found
+> 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+> 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+> OOM killer enabled.
+> Restarting tasks: Starting
+> Restarting tasks: Done
+> random: crng reseeded on system resumption
+> PM: suspend exit
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2] net: stmmac: dwmac-renesas-gbeth: Add PM suspend/resume callbacks
+    https://git.kernel.org/netdev/net-next/c/72b4612af36f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
