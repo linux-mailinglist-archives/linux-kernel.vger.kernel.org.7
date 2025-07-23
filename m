@@ -1,140 +1,219 @@
-Return-Path: <linux-kernel+bounces-741750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C689DB0E883
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BE4B0E888
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7B018900D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96F65642A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E7819E81F;
-	Wed, 23 Jul 2025 02:16:51 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE551D6195;
+	Wed, 23 Jul 2025 02:17:25 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555BF2F43;
-	Wed, 23 Jul 2025 02:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CCB1C28E;
+	Wed, 23 Jul 2025 02:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753237011; cv=none; b=UZ2PuM7Dotfv9XYPdkDgj1m4UY/eCaZZMmjivNu1izZftfPYr9XNUqptdNbBWRJaUWcg0EEH6iI7eIYwV5fwxAMQImJke1gXbo3dZVPPwd6WfL/ZuGeu5glzLUd79xXqIA3xC5rn7/hDpi73Xc21a4ZM0u4OY9PUef2cGnv0ziU=
+	t=1753237045; cv=none; b=Ok+01oHjZpzosXYK0sWwM/DvsDpYrQOQukWmqNGCDaL8798B778t61HnLJb7zrjKjKWx8MMgPI3hSDJvb6yFFkF0Tq88syzge9FVoPs7Cw6Hjsqsf8d1hj09sPEFc/8vGUY1VYCKoPZqyVUISWWLNBPro9m9Jwo55NWLUeOct/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753237011; c=relaxed/simple;
-	bh=pvxWFil2B7sifCFp7k+cVtk0exx8QZ8fKoaj5BURZ6k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oqh720SNmNtgG6lqyMmnJV6eni7PciYO7NIuFxPL5Rq5hbs/sVknEcHp7N/6j4w3fnfWVjCws+MS7g008eLWvJt5/FLNatbRmfejABgK2/CZWnQbq0MDPWL2B9HpAufTn/49cGYg+RbbR7WfEB9pgydPFXWWxD/dqoXedI5UKH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56N2GRY0001481;
-	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56N2GRAG001477
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 23 Jul 2025 11:16:27 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
-Date: Wed, 23 Jul 2025 11:16:28 +0900
+	s=arc-20240116; t=1753237045; c=relaxed/simple;
+	bh=L4JOIKNIJQWbAoqbdXDgLEpJKp0DTL4rUMWYGkezsv4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cous75mXR46RuTvS+9ytPNqp4Ys+xildMjKKAEvAcZeFfv3dLCXsIh2hBZaal70cE13xVZP0/1o09yZZMjz0929T9gPPUTIb7JBKlY2xGux2F2BoZyttSmX2A2UrPHx6vV0lZsFDoVWwst0g7aqPCGYeeI0Gxh7k9VE16sb0F1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bmySw005NzYQtpy;
+	Wed, 23 Jul 2025 10:17:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B0F961A172C;
+	Wed, 23 Jul 2025 10:17:18 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3chMsRoBoZF+1BA--.15135S3;
+	Wed, 23 Jul 2025 10:17:18 +0800 (CST)
+Subject: Re: [PATCH 4/6] elevator: factor elevator lock out of
+ dispatch_request method
+To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hare@suse.de, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
+ <20250722072431.610354-5-yukuai1@huaweicloud.com>
+ <08c989bd-20d8-476c-af99-c9eb8065349d@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <cc6f72cb-3782-4426-57c2-4d54fc4f38f2@huaweicloud.com>
+Date: Wed, 23 Jul 2025 10:17:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
- <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
- <aHlQkTHYxnZ1wrhF@casper.infradead.org>
- <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
- <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
- <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
- <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
- <aH-enGSS7zWq0jFf@casper.infradead.org>
- <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
-X-Virus-Status: clean
+In-Reply-To: <08c989bd-20d8-476c-af99-c9eb8065349d@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3chMsRoBoZF+1BA--.15135S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw1UJw47Gr1fJF45Jw4rAFb_yoWrur1DpF
+	48GF4aya10qF1jgF97uanxXr1ftw47Ar97GrnrKF4ftF9rXFn3GFn5tFyUZFWxZrn3CFsF
+	gr1jq3s3Zw12qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUpwZcUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-With below change, legitimate HFS filesystem images can be mounted.
+Hi,
 
-But is crafted HFS filesystem images can not be mounted expected result?
+在 2025/07/23 9:59, Damien Le Moal 写道:
+> On 7/22/25 4:24 PM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Currently, both mq-deadline and bfq have global spin lock that will be
+>> grabbed inside elevator methods like dispatch_request, insert_requests,
+>> and bio_merge. And the global lock is the main reason mq-deadline and
+>> bfq can't scale very well.
+>>
+>> For dispatch_request method, current behavior is dispatching one request at
+> 
+> s/current/the current
+> 
+>> a time. In the case of multiple dispatching contexts, this behavior will
+>> cause huge lock contention and messing up the requests dispatching
+> 
+> s/messing up/change
+> 
+>> order. And folloiwng patches will support requests batch dispatching to
+> 
+> s/folloiwng/following
+> 
+>> fix thoses problems.
+>>
+>> While dispatching request, blk_mq_get_disatpch_budget() and
+>> blk_mq_get_driver_tag() must be called, and they are not ready to be
+>> called inside elevator methods, hence introduce a new method like
+>> dispatch_requests is not possible.
+>>
+>> In conclusion, this patch factor the global lock out of dispatch_request
+>> method, and following patches will support request batch dispatch by
+>> calling the methods multiple time while holding the lock.
+> 
+> You are creating a bisect problem here. This patch breaks the schedulers
+> dispatch atomicity without the changes to the calls to the elevator methods in
+> the block layer.
 
-  # losetup -a
-  /dev/loop0: [0001]:7185 (/memfd:syzkaller (deleted))
-  # mount -t hfs /dev/loop0 /mnt/
-  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
-  # fsck.hfs /dev/loop0
-  ** /dev/loop0
-     Executing fsck_hfs (version 540.1-Linux).
-  ** Checking HFS volume.
-     Invalid extent entry
-  (3, 0)
-  ** The volume   could not be verified completely.
-  # mount -t hfs /dev/loop0 /mnt/
-  mount: /mnt: filesystem was mounted, but any subsequent operation failed: Operation not permitted.
+I'm not sure why there will be bisect problem, I think git checkout to
+any patch in this set should work just fine. Can you please explain a
+bit more?
+> 
+> So maybe reorganize these patches to have the block layer changes first, and
+> move patch 1 and 3 after these to switch mq-deadline and bfq to using the
+> higher level lock correctly, removing the locking from bfq_dispatch_request()
+> and dd_dispatch_request().
 
-Also, are IDs which should be excluded from make_bad_inode() conditions
-same for HFS_CDR_FIL and HFS_CDR_DIR ?
+Sure, I can to the reorganize.
 
+Thanks,
+Kuai
 
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -358,6 +358,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
-                inode->i_op = &hfs_file_inode_operations;
-                inode->i_fop = &hfs_file_operations;
-                inode->i_mapping->a_ops = &hfs_aops;
-+               if (inode->i_ino < HFS_FIRSTUSER_CNID)
-+                       goto check_reserved_ino;
-                break;
-        case HFS_CDR_DIR:
-                inode->i_ino = be32_to_cpu(rec->dir.DirID);
-@@ -368,6 +370,24 @@ static int hfs_read_inode(struct inode *inode, void *data)
-                                      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, hfs_m_to_utime(rec->dir.MdDat))));
-                inode->i_op = &hfs_dir_inode_operations;
-                inode->i_fop = &hfs_dir_operations;
-+               if (inode->i_ino < HFS_FIRSTUSER_CNID)
-+                       goto check_reserved_ino;
-+               break;
-+       default:
-+               make_bad_inode(inode);
-+       }
-+       return 0;
-+check_reserved_ino:
-+       switch (inode->i_ino) {
-+       case HFS_POR_CNID:
-+       case HFS_ROOT_CNID:
-+       case HFS_EXT_CNID:
-+       case HFS_CAT_CNID:
-+       case HFS_BAD_CNID:
-+       case HFS_ALLOC_CNID:
-+       case HFS_START_CNID:
-+       case HFS_ATTR_CNID:
-+       case HFS_EXCH_CNID:
-                break;
-        default:
-                make_bad_inode(inode);
+> 
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   block/bfq-iosched.c  | 3 ---
+>>   block/blk-mq-sched.c | 6 ++++++
+>>   block/mq-deadline.c  | 5 +----
+>>   3 files changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>> index 11b81b11242c..9f8a256e43f2 100644
+>> --- a/block/bfq-iosched.c
+>> +++ b/block/bfq-iosched.c
+>> @@ -5307,8 +5307,6 @@ static struct request *bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>>   	struct bfq_queue *in_serv_queue;
+>>   	bool waiting_rq, idle_timer_disabled = false;
+>>   
+>> -	spin_lock_irq(bfqd->lock);
+>> -
+>>   	in_serv_queue = bfqd->in_service_queue;
+>>   	waiting_rq = in_serv_queue && bfq_bfqq_wait_request(in_serv_queue);
+>>   
+>> @@ -5318,7 +5316,6 @@ static struct request *bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>>   			waiting_rq && !bfq_bfqq_wait_request(in_serv_queue);
+>>   	}
+>>   
+>> -	spin_unlock_irq(bfqd->lock);
+>>   	bfq_update_dispatch_stats(hctx->queue, rq,
+>>   			idle_timer_disabled ? in_serv_queue : NULL,
+>>   				idle_timer_disabled);
+>> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+>> index 55a0fd105147..82c4f4eef9ed 100644
+>> --- a/block/blk-mq-sched.c
+>> +++ b/block/blk-mq-sched.c
+>> @@ -98,6 +98,7 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+>>   		max_dispatch = hctx->queue->nr_requests;
+>>   
+>>   	do {
+>> +		bool sq_sched = blk_queue_sq_sched(q);
+>>   		struct request *rq;
+>>   		int budget_token;
+>>   
+>> @@ -113,7 +114,12 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+>>   		if (budget_token < 0)
+>>   			break;
+>>   
+>> +		if (sq_sched)
+>> +			spin_lock_irq(&e->lock);
+>>   		rq = e->type->ops.dispatch_request(hctx);
+>> +		if (sq_sched)
+>> +			spin_unlock_irq(&e->lock);
+>> +
+>>   		if (!rq) {
+>>   			blk_mq_put_dispatch_budget(q, budget_token);
+>>   			/*
+>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+>> index e31da6de7764..a008e41bc861 100644
+>> --- a/block/mq-deadline.c
+>> +++ b/block/mq-deadline.c
+>> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>>   	struct request *rq;
+>>   	enum dd_prio prio;
+>>   
+>> -	spin_lock(dd->lock);
+>>   	rq = dd_dispatch_prio_aged_requests(dd, now);
+>>   	if (rq)
+>> -		goto unlock;
+>> +		return rq;
+>>   
+>>   	/*
+>>   	 * Next, dispatch requests in priority order. Ignore lower priority
+>> @@ -481,8 +480,6 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>>   			break;
+>>   	}
+>>   
+>> -unlock:
+>> -	spin_unlock(dd->lock);
+>>   	return rq;
+>>   }
+>>   
+> 
+> 
 
 
