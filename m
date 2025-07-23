@@ -1,215 +1,206 @@
-Return-Path: <linux-kernel+bounces-742398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F77DB0F13A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:32:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44DEB0F13D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6DBF1C83C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:32:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F03454606A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8312DCBE2;
-	Wed, 23 Jul 2025 11:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1FB212D83;
+	Wed, 23 Jul 2025 11:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MqqsE0j5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BpYID8r8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5448A299A84
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FE02DA743
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753270312; cv=none; b=he+l3Y2flVYHbmdxDUVO3MktROGQMBP11RWxMt3LUzumRazvgTH3cH31rIvfO/XVR78eqZR5uo2gd/vyZO+HQ8B7IhLGF+rCRUjyH3cRxFVNA1Oo/KurR3PurQPsxOARVoTiaAdpFkxCQ2C0CTeGLZbaYsiAy86bb19WkF0Avlg=
+	t=1753270368; cv=none; b=exlwH0Ht8LnQXIlCeZuV2U/ccfJATwKBaz4j9JA+VhakCN0poNHw5JF+Ezt8RYtPBVI6gbz96F8bvmJY592JX58gbt0dUaLVdU6w+pWZMB0FLvQSBdgN2/JCuQxnEsJyBQYrr9pXy/Fgm8YAYD6RyzysrJordXhBuBTl6CL3U9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753270312; c=relaxed/simple;
-	bh=pV0VD1Ve0EwcnOI6Dsn5yVqFhYxL60jCXm0cCBSm0b0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9muAm/PFpuZwVMSqw02VDwaKWuAiHO4ohsTFkEboHBAj3OW54TO4XdZIcz6VSBkr97L8/TfOS89Yu5mFLPEcc5t3Yboq/B9SbWBX0C+Rk+w7O6K8aR+/pMahO0cRrUD9/fR+wNEI2XsLHIjshaA01F1h7zTYOv13aPeGUtTZ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MqqsE0j5; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1753270368; c=relaxed/simple;
+	bh=9rj1cVhx4thgC/2OWJ4kbD+Kw0LtrOjEdbA4NWu6Chg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=St0hCc4RPJiJX0780zLWyJZ7ri7YWO9dGZzq7N/OYjoQb9Dzfr7zllIf8m35MWHl/f+gJ5q4hzl2mCqD5IWdwvztIk77qTeSS7GS+js5LrXwy+IhBL73uGKiPn3guXBXxB/+kN8u3ZIJK4Xg3XtyH20IlDNYIMiRLc5L8r2WZQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BpYID8r8; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9LhOH001765
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:50 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9pHRv019472
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:32:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tK5Pqy7KQu9d9+qheXVruzD1mIXvjyuacLXlsOVg6YA=; b=MqqsE0j5IWELOehA
-	GF5/LC2Y3Ya9EmwnMJIku3INqfBLrqTgaHa0vnfsP3w27DRp/iPY3R/aN0+cuKh5
-	wsSXJUV+bkJ6h4H0b93WSG62VBUDl2DCUA2njpfsDfxMPjKEmIQUV66pLl9faq69
-	6cZpPMArjo4bGfEP/d2ImpT9RlpwJGJ8d4o862zkkMRQgjgaeyYl3d8Fzg2mqnsH
-	33a2U0RKSx0kwsLBC6i77AVH5Tl7xzPgJYeqsEpubAqTTJ8twclq55DdZyLap4A7
-	W3xjBH2GGp5M6/ByxlI3c6KE81TtH+zCwqO8jI3hx2L1/o4M6C50J6UXXUOk0eBR
-	ubErGQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481t6w6407-1
+	gEq8YYhXL7FoLLBpSRO5bvtuwnmRSOR3fjHvCA+iHcM=; b=BpYID8r85zvNYYr8
+	CnQdseHOG2/afwfYo9JkfUfV9U4SUMSGXRDBF5k9gdR+yg9SdSMuglXPr16l6Vb2
+	mcJQUtUvQAqCA4OHOhq694bkKimwBMh1sAfKpvG89CH7x4OPlvIKm95E1nenZmiW
+	k0rLAZEzbCnBqCUSK3PFLTnTA3Uh2yGurttAbvn1zKt82FDer4tPUjPktaNKm6Xj
+	vs4bh0clF+Qi5hB58ggXfwbFykkW8ZAM/9VSD/VYeG29Wc5EABXIxzBCTroTvuOm
+	CzEUitSBoLJO6cbM4bMEcxNGCoQ4w+48T3QQOQ/NKM70inypUCJpQTO9fveh84N6
+	gpXDKg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6q5d7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:50 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fb5720eb48so14829276d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:31:50 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:32:45 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab3ab7f74bso22554641cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:32:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753270309; x=1753875109;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1753270344; x=1753875144;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tK5Pqy7KQu9d9+qheXVruzD1mIXvjyuacLXlsOVg6YA=;
-        b=wPmoBBWx70KkJpWPpMwhVFVU4zg/jOJumPaaYMY1/RBPZQucmo7UuryAQIkEuYvocd
-         HxJmZxRZLF+Ma6sJOVjSxPyQbYwaD3u2ag1q4EFwwDx/Nf0+9z6qxpsMfjMItnAaKCZj
-         c25WtNCt0O0eoMgF7WcnXvJP6UdlUh9p17jifWh+wG9wBUk4ITH9ryg4V6ONWykP4nIO
-         c9s7vT3y18nQCmnkaAdFIX48b1cOSxhIihBVq1j8+2N0gWlUKZd+kvFOcQTqOwXJUeQR
-         ALbjmYDA9cUGNVonPjGxNLUHVAtvhLbC7+fHCdFkK/sb0fIJwDPavjmOw82bOgx8L4dE
-         xxGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcpaMFiqI7mDMFWE+XOXUV/lKWoaIRQvsw0uFjwOfvjSZv0l/gAXq+goE46tl6t+7sGn5HQDqqZL3y8Gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd2kd0DUwkZ3cRzwUAeVZzK+7ZvsVM4Esu2PFOUuomPXClulM2
-	LTcKxu/n+B5Jo5hpxZlwPk7j+mXN//Fs4AryVcMCsm2XIRoGZfqTtRtYeKNbHpaTYzGnK/nX3mc
-	7CLX93w9pTP7lGKZn18yQ56D7vy0rgupDtmq8+BcJMR3S9pDHLTvb650JjdfXKqvEvG8=
-X-Gm-Gg: ASbGnct/QYjIHvWcXI3yj9qyS71jKEXn1DoHGfsVb3rBthS/JcRHyEfnoo9eZMKq2TH
-	L1JLKgXtZ0ec2vP2tBX0C+9p97WkvBboMOPNo18bqEGNYhU739o7trRHeBzzqKFrrQtRW2De9/n
-	9XUezFlVeISYIoiXvvDu+kGWV1y4wL38bdW6/Ygnz/+1lnFH8vZn+13t6hqMwHzPUMd/c0T4GiN
-	3wwPUGyEBISBxIJ6VaZmq8XVYZYEU1VtQ/lJo0V51Bvqqv1w6yFMPSylkAtFNYrevAOpHQAcAwX
-	73XOjzF6S+lwBgTHPciL0nn9q7ZHcYfU9i9AU55zdRFaYH4PzHvt4xhk5uf8AB5lkKIsatsucZ9
-	tcyjjIYJPsE0Qyiq2Y5Ry8T6wHUfIGO1JTY7cAhSYAyvuVfnybcLw
-X-Received: by 2002:a05:6214:20a6:b0:702:c3af:2f44 with SMTP id 6a1803df08f44-706eb94119dmr97079706d6.20.1753270308790;
-        Wed, 23 Jul 2025 04:31:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIZMlMLWLJLVR9CzSUMPV/Lcdv53v0D6YQdORkgTfSC5CVTA/SCOyvECPkVGx3vpwvKDNjmQ==
-X-Received: by 2002:a05:6214:20a6:b0:702:c3af:2f44 with SMTP id 6a1803df08f44-706eb94119dmr97079086d6.20.1753270308258;
-        Wed, 23 Jul 2025 04:31:48 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91d9747sm19241091fa.78.2025.07.23.04.31.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:31:47 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:31:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs615-ride: add WiFi/BT nodes
-Message-ID: <fym6hgenzzpct3kbat4iz42o6nyavfkrp6z5jkf6vjfnwo2u55@of7pgzoxbgej>
-References: <20250707-615-v4-0-1a2f74d167d7@oss.qualcomm.com>
- <20250707-615-v4-2-1a2f74d167d7@oss.qualcomm.com>
- <smnw6whsw5todddsoveeanohcaesfip27udzkbw5wk5dwlztzz@ic3xemwrbjwg>
- <a63cab56-2d32-4d38-83f9-911561807e9d@oss.qualcomm.com>
- <7117b159-6743-4db3-9ae5-1cf4ae051601@oss.qualcomm.com>
- <469e2e9c-b950-4ecc-bfa9-82aa9178b65d@oss.qualcomm.com>
+        bh=gEq8YYhXL7FoLLBpSRO5bvtuwnmRSOR3fjHvCA+iHcM=;
+        b=UZPXoa2enN+3vbXVEfY6+ANEfXtGEP2avRpbVe4eVZKk2PVmb6OxTxvXh74vmaoTot
+         phCIXPyY4rQZpU1EZLTGeObeJtrowEizV8pBFKxMJzJY/K0s1jKxpGey6axkRq43jFRM
+         y/E3A96N4zcyWlayyLeC483a7a3Oa50PW8Af6oG/nYs7MZ0cCCze8vjTScUB4iiQ7VzP
+         n8TRu53nwf7/yjrSoIEDwY1UDB50T/FOna4/dg/j3CvXWu0syFbzohzJtnf01p/bHrth
+         Vrm7EbvHjPqlY8UhACv/4KJrWo3o8B6+cAUFaBRrbDQUirXdgMGff8pfuGNb3p2PTYSf
+         0EhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Edhpum6bTnfYjWtfzdAtWX6i64H6azDYOT3PVprpThi0SuEJzrCoX0BujQrHyASIrBkpnr+R44E4wOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpu5fQM6y4qxIZ4tHdKeUW0DmMyzL5jtl87dHAPJsUOjaoj9Dd
+	KX+lxx46beu6cV9vKVt179UprjoJ3/RuZWIN3hIc6R1/2gOnP+u8cONhX6CxyXS8dyFWtWqiN6Y
+	wZU8WryPcY4iLigH51r9+LZS/vmXjqaBL9zUm7H8Zz9SLNdNxAYchLFWmwfWoArGpCAY=
+X-Gm-Gg: ASbGncsMVE5iRFB2taBkeR/fz4wLGVHFdOC8Yn0uyDS3urUg5n74mFByZpZob3hwGbO
+	3ppohya+IpLuGt9RZrnqAxdSE2rCdSPan5FhPPTHckXHRcu/VDoh0azmtrj8rKu6lwB3Jjl6GXX
+	ZZygiZDjsN7ztsP/hKHO5z5mjQkPwKE4QrRsf8wQNPAIyY+7ttgePORZM5MFfkA7XdES8bEqz/n
+	E+aXeGbc+NdubIiyn7/pZ5B3C0G+1Nl8JzFMi8ePgD2VEaNNnSd0tymv7c1wuDrLY+bFoaBjLwH
+	FsRkS+UvaujLXveQB/xO6wY+gyXd9SXHWPs2gIy1Jk7hPsBPXVdFzR5tp1FHLsutDR8XSEMCTBf
+	P2zcX3zrdXsx21+XKlA==
+X-Received: by 2002:a05:622a:1485:b0:4ab:5d26:db92 with SMTP id d75a77b69052e-4ae6df26e46mr14600021cf.10.1753270343606;
+        Wed, 23 Jul 2025 04:32:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8bELZd2/Tj5DlsN6hPJW9HVlRJ0K7QJZgVKD+12MwYax4hBvWftddN6G7Ot0hdS4s12N1Tw==
+X-Received: by 2002:a05:622a:1485:b0:4ab:5d26:db92 with SMTP id d75a77b69052e-4ae6df26e46mr14599761cf.10.1753270343048;
+        Wed, 23 Jul 2025 04:32:23 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c907a5b1sm8427012a12.53.2025.07.23.04.32.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 04:32:22 -0700 (PDT)
+Message-ID: <d80ebfbb-5fb5-4dde-a79b-adb22231a63e@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 13:32:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <469e2e9c-b950-4ecc-bfa9-82aa9178b65d@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=SPpCVPvH c=1 sm=1 tr=0 ts=6880c826 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=yc11P9gDo9Jt-TL_Xg0A:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NyBTYWx0ZWRfX8kFsLJ5/3ene
- XTLYfqE+0kHDWFMBA2X5s50yezpn8wfH9mWQuSfx72t5UVxTb3aIQHdVd2ceM7td7pCMl84473j
- ZxZwZHNDP3A+4N6GTcEaBj1zcCQ+QRZb/RslMFfR9uHGpjio+X2sXAXAoTvI1Y56+buSCPU5ayq
- 0eMB7VQnrH2OPNFJOtPwbMrEgqK3BIrtbf/KytLWbpeuHCq/5Zl5+YxvuPvbTg3GYN6jfagWRDN
- urhdL/GwhGjssPuQmlHt6rsdgmt7Bw9w4ubhSv1Kf1h8h/K7+mfnzxZ2dTsR1f+MEuFvqPH85I1
- PKr7Q4SVFGfEQUAGJDoY+2GMNOzgkL5I/5vxuyUldDi8bkkf9y6YoJIj7fGfC1BYe1v4u2O6E4b
- gCfxvTqrsVAG1x9hRCr/S+Amnv2g6WlptJ0gxxbKwuVER7as+I4HCQbv8E0oAY2ZC15yqIJM
-X-Proofpoint-ORIG-GUID: rUPjMW4TCv8galPQaPcETPKOrPeGjUCF
-X-Proofpoint-GUID: rUPjMW4TCv8galPQaPcETPKOrPeGjUCF
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: Add initial interconnect framework abstractions
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+        Benno Lossin <lossin@kernel.org>,
+        Andreas Hindborg <a.hindborg@kernel.org>,
+        Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+        Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
+ <20250722-topic-icc_rs-v1-1-9da731c14603@oss.qualcomm.com>
+ <CANiq72nPLn+3V_DhN9_dmKnRrb5mfjzQ67Utz7HdtOY3McpweA@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CANiq72nPLn+3V_DhN9_dmKnRrb5mfjzQ67Utz7HdtOY3McpweA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=6880c85d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=PfD2oos9AAAA:8 a=n7DJBcn5hHOibpQQY_QA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=oXWlT9oWAVMySZ1Hvsws:22
+X-Proofpoint-ORIG-GUID: lOgrmLzC8ZzeFt4pyy_ZCu52i3THkEvg
+X-Proofpoint-GUID: lOgrmLzC8ZzeFt4pyy_ZCu52i3THkEvg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5OCBTYWx0ZWRfX3FtSMw394Ka6
+ 4G3QE+26xeb4hgOKph6vafpToB6PgxD2rsDAuNtvnytVCejZflKYe/RlEMfEC/wf7MiSfBVbaVz
+ tPCYyzPgRucYJkhHpEr5haGju1WrWsvYMDiLEywdrKNTFIe6/ZvNO1pANvjTsitgb3bvx2IkL0u
+ JqaRULLBtBMmruDOUtcl/w1ZDMaL5HJPDA+WjbhBSICZr1LI9M71XWM5deDslz4njoregb2bC2K
+ BEj+MaoSx2ZoCUc2McFHIgeh5uyqFWZBq+sZQ5sOlj6YYMPNR8WmErh8h9x9p5strdGRmqwKuIe
+ 6f5UcC1gpBA0aHODlATrdl3PjAyw42guuZZ2Y5n7ymbVLun3uFjRRi3xAbXDgvOlElcsXGpj3KL
+ ctL4m/zFtgABxl+7SadeunBX0/9Dw/FoCVHfDBCQ3yPAxG+J1npGmW51+wQZH9CJW8RFPcrb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
  authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230097
+ engine=8.19.0-2505280000 definitions=main-2507230098
 
-On Wed, Jul 23, 2025 at 10:02:36AM +0800, Yu Zhang(Yuriy) wrote:
+On 7/23/25 12:42 PM, Miguel Ojeda wrote:
+> Hi Konrad,
 > 
-> 
-> On 7/23/2025 1:36 AM, Dmitry Baryshkov wrote:
-> > On 22/07/2025 18:58, Yu Zhang(Yuriy) wrote:
-> > > 
-> > > 
-> > > On 7/19/2025 6:13 PM, Dmitry Baryshkov wrote:
-> > > > On Mon, Jul 07, 2025 at 10:51:06AM +0800, Yu Zhang(Yuriy) wrote:
-> > > > > Add a node for the PMU module of the WCN6855 present on the qcs615 ride
-> > > > > board. Assign its LDO power outputs to the existing WiFi/BT module.
-> > > > 
-> > > > 
-> > > > What is "existing WiFI/BT module"? There is no module in the DT. Not to
-> > > > mention that PMU is a part of the WCN6855.
-> > > > 
-> > > > > 
-> > > > > Signed-off-by: Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com>
-> > > > > ---
-> > > > >   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 135
-> > > > > +++++++++++++++++++ + +++++++++++
-> > > > >   1 file changed, 135 insertions(+)
-> > > > > 
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> > > > > b/arch/arm64/ boot/dts/qcom/qcs615-ride.dts
-> > > > > index 011f8ae077c256f079ce1b07720374a9bf721488..2df8e7e3c1d3b6d6353a6753b8387c7411edd927
-> > > > > 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> > > > > +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> > > > > @@ -18,6 +18,7 @@ aliases {
-> > > > >           mmc0 = &sdhc_1;
-> > > > >           mmc1 = &sdhc_2;
-> > > > >           serial0 = &uart0;
-> > > > > +        serial1 = &uart7;
-> > > > >       };
-> > > > >       chosen {
-> > > > > @@ -47,6 +48,85 @@ regulator-usb2-vbus {
-> > > > >           enable-active-high;
-> > > > >           regulator-always-on;
-> > > > >       };
-> > > > > +
-> > > > > +    vreg_conn_1p8: vreg_conn_1p8 {
-> > > > 
-> > > > No improvement. Please try again.
-> > > > 
-> > > you mean should be "vreg_conn_1p8: vreg-conn-1p8",right? I'll update
-> > > it,
-> > 
-> > What is the node name for the previous regulator device? Anything
-> > preventing you from following the pattern?
-> > 
-> Do you mean the prefix 'regulator'?
-> I just want to keep 'vreg_conn_1p8' and 'vreg_conn_pa' the same as in
-> sa8775p-ride.dtsi, because they're using the same module.
+> Some quick mostly doc-related comments...
 
-That's a different device. Please use the style of the file that you are
-patching.
+[...]
+
+>> +    /// Create a new instance from gigabytes (GB) per second
+>> +    pub const fn from_gigabytes_per_sec(gbps: u32) -> Self {
+>> +        Self(gbps * 1000 * 1000)
+>> +    }
+> 
+> I guess this means callers must call this with reasonable numbers and
+> otherwise it is considered a bug, right? i.e. this could overflow, and
+> thus panic under `CONFIG_RUST_OVERFLOW_CHECKS=y`.
+
+The C framework makes no effort to check for that, so panicking is at
+least something.. That said, what would you suggest to do here?
+
+[...]
+
+>> +#[cfg(CONFIG_INTERCONNECT)]
+>> +mod icc_path {
+> 
+> Maybe a different file?
+
+I was debating that. icc_path represents the interconnect consumer part
+(i.e. used in device drivers that just need to toggle a bus endpoint),
+whereas the corresponding provider part (which manages said bus) is not
+yet abstracted.
+
+It would make logical sense to split these two.. with the latter going
+to icc_provider.rs, perhaps?
+
+[...]
+
+>> +// SAFETY: An `IccPath` is always reference-counted and can be released from any thread.
+>> +unsafe impl Send for IccPath {}
+> 
+> This gives an error, right? Was it meant to be inside the other Rust module?
+
+No, it compiles fine here.. Strangely, I didn't get any warnings or 
+errors with this patch. Maybe because the struct is pub and within the
+same file?
+
+Should I move it into the module scope for sanity?
 
 > 
-> > > thanks.>> +        compatible = "regulator-fixed";
-> > > > > +        regulator-name = "vreg_conn_1p8";
-> > > > > +        startup-delay-us = <4000>;
-> > > > > +        enable-active-high;
-> > > > > +        gpio = <&pm8150_gpios 1 GPIO_ACTIVE_HIGH>;
-> > > > > +    };
-> > > > > +
-> > > > > +    vreg_conn_pa: vreg_conn_pa {
-> > > > > +        compatible = "regulator-fixed";
-> > > > > +        regulator-name = "vreg_conn_pa";
-> > > > > +        startup-delay-us = <4000>;
-> > > > > +        enable-active-high;
-> > > > > +        gpio = <&pm8150_gpios 6 GPIO_ACTIVE_HIGH>;
-> > > > > +    };
-> > > > > +
-> > > > 
-> > > 
-> > 
-> > 
+> Also, please also run `make .... rustfmt`.
 > 
+> Finally, the examples in the docs are converted automatically into
+> KUnit tests (under `CONFIG_RUST_KERNEL_DOCTESTS=y`) -- the examples
+> currently have build errors.
 
--- 
-With best wishes
-Dmitry
+I was missing this config, yeah..
+
+> 
+> We have some extra notes at:
+> 
+>     https://rust-for-linux.com/contributing#submit-checklist-addendum
+> 
+> on things that are useful to test/check.
+
+I almost wanna say `make rustfmt` produced slightly different results
+(one or two lines of difference) than make rust-analyzer + vscode
+extension.. hmm.. Perhaps PEBKAC..
+
+Konrad
 
