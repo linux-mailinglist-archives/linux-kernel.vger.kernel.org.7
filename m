@@ -1,86 +1,259 @@
-Return-Path: <linux-kernel+bounces-742669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D499B0F521
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:23:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6F5B0F524
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C4427AEFBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11548AC16DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122752EBDE0;
-	Wed, 23 Jul 2025 14:22:53 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997112EE274;
+	Wed, 23 Jul 2025 14:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGZTlqQ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB42E5415
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59E62E5415;
+	Wed, 23 Jul 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280572; cv=none; b=f1qnwUvWG9EobOo85C7iwqy3R5ee7p2d5FT41+XM6M5rf3sKcZUPSaUVoJKk4h8zj7gZmp3z6m4p9HwEIi9CL18po3csr/yjtG1+WUpK7IGSZuncwaMiQMqmQdejLs+uAlLAWZGhcFgH5w+KvrmXPvTadeZt9ZDFtHAcl035ef0=
+	t=1753280578; cv=none; b=p+TtoA8H1MjecYTtquS1tvrdUI23W1lETZt5UvlcDTyfKAyJUd+2kO8IEXIvVFSHf1OA75nZd5ogxbcSynrz4VEBxAyUOQLInKs8EvBC0NNuOcQCRYNC4UEePldbc7a6aybcpj+EiSJnRoFEZqEkzLzsq9vSNlSuS5jLwDh8vss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280572; c=relaxed/simple;
-	bh=VrQ6bCUXf7qU+LdSRfvEhWSEonk7Kvo1rpyBqHfvezQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TbrNcoE7IgK9iioxo8L6Bkeyh3bG04g3TIaX8REUy4iCa9TCVihTMbp3b/OmABoWhy/9+6aJhASXHWMvPUTSlYjgpfvGhL3VpEoWCjA5i6Yi/3o5wV54NoxgyG6XTcq+lfsYaAOf3MspeoFInYRU6N4e6ZOZi8qXC7r6b+foNVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 772CEBAD60;
-	Wed, 23 Jul 2025 14:22:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 3E9A480011;
-	Wed, 23 Jul 2025 14:22:46 +0000 (UTC)
-Date: Wed, 23 Jul 2025 10:22:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v4 00/14] rv: Add monitors to validate task switch
-Message-ID: <20250723102245.75631501@batman.local.home>
-In-Reply-To: <374df509738db8314aa45971ba8b5469fa4e673e.camel@redhat.com>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
-	<20250722205047.621efa7e@gandalf.local.home>
-	<374df509738db8314aa45971ba8b5469fa4e673e.camel@redhat.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753280578; c=relaxed/simple;
+	bh=cYT83ItX8i0zQEyyAAKccpe8aP2G3UA6P+4s88looH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUP0RLOjxOOe9bZL4s3pY53FGS4ZDSz4GnEDaJt3qgows6XlE695ANeYuYEe5BB05ar1bEDSIC4GqK7g6fjHFyB57PX4qupSCO6Y7+4DOejkNlDoJ5AorkvxqF0Gm9h5iKq8ighf9zb4v3U0+ZbVDkeCYshxEDuU3dQOxU6rKJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGZTlqQ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804C5C4CEE7;
+	Wed, 23 Jul 2025 14:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753280578;
+	bh=cYT83ItX8i0zQEyyAAKccpe8aP2G3UA6P+4s88looH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CGZTlqQ3fprVmpxMhYFaeGXDOwnsK2fIrIFXA5QycJ6N8mbZA44NkQk5NX4qhz9NI
+	 rz6x8cvMJ7dBBGTfDcyxWcT+xW7t63EJ444vmoPkhnigjSp/AT+U3u+RtV3hF2AQVV
+	 1yS21MLJ3c0vvChOSKKnWwXEquTznIn25vFDn6aADSUaEGmYY//1EK95N/elrP9enh
+	 2gekE1WJmRgt79l7UmSN3QPGMoY20+xefpx0MtXp/pgTcgNtPsW/HMAHUJ/ogah5C+
+	 tQsOeblnTDo13uAuge1mhZc1OHpwTQwKLFTiA8yhRoaVA6ra3UcdMEpAM6DI/hYHAD
+	 kLyqci7puio1Q==
+Date: Wed, 23 Jul 2025 19:52:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Sai Krishna Musham <sai.krishna.musham@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	michal.simek@amd.com, bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
+Subject: Re: [PATCH v6 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
+ signal handling
+Message-ID: <bozkhw7eebaxj7odsilphvlbfzfo7xmdfteng5dq5mtznroefi@trlegpl6fkcf>
+References: <20250719030951.3616385-1-sai.krishna.musham@amd.com>
+ <20250719030951.3616385-3-sai.krishna.musham@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: f57doe1apw9dqk3bhdrntk8okwjbwyqb
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 3E9A480011
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX182jORDrkAEZC28WiUNytXNXFi8Rmy1THY=
-X-HE-Tag: 1753280566-380829
-X-HE-Meta: U2FsdGVkX1+hvXNO4qMmG0yFhgT3nBQyKo+5GyN/2Ib1fVeGdvykXO6T98nYOT1wdzmdd8aY+zIo2AW7zoUd9uMb+d4TMlZTBMTnbsXzGP4XCCRCuvutWvPoOtvG5u0J4MX/jMqp6+vw6A0WHCh1H5X+OH/SPT1LZFsO99Llm9JIslBQGUYvZlDfz/Gm529y6qcn8SVMNDZfnADaYvMg379mDDSbvnKolmMZUXLwwikC/fP4BuWS8V1pxxMS1V2pHE8WyPO1x8wXRAzHZmXH9Z+7OKHs67xVk0LHeoLwf3M50qbOkPUi6LKA+ysJQpA8RD9EEj4VGbQqhAqpl5YksKL+6Ua/XxfS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250719030951.3616385-3-sai.krishna.musham@amd.com>
 
-On Wed, 23 Jul 2025 11:55:50 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+On Sat, Jul 19, 2025 at 08:39:51AM GMT, Sai Krishna Musham wrote:
+> Add support for handling the AMD Versal Gen 2 MDB PCIe Root Port PERST#
+> signal via a GPIO by parsing the new PCIe bridge node to acquire the
+> reset GPIO. If the bridge node is not found, fall back to acquiring it
+> from the PCIe node.
+> 
+> As part of this, update the interrupt controller node parsing to use
+> of_get_child_by_name() instead of of_get_next_child(), since the PCIe
+> node now has multiple children. This ensures the correct node is
+> selected during initialization.
+> 
+> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
+> ---
+> Changes in v6:
+> - Simplified error checking condition logic.
+> - Removed unnecessary fallback message.
+> 
+> Changes in v5:
+> - Add fall back mechanism to acquire reset GPIO from PCIe node when PCIe Bridge
+> node is not present.
+> 
+> Changes in v4:
+> - Resolve kernel test robot warning.
+> https://lore.kernel.org/oe-kbuild-all/202506241020.rPD1a2Vr-lkp@intel.com/
+> - Update commit message.
+> 
+> Changes in v3:
+> - Implement amd_mdb_parse_pcie_port to parse bridge node for reset-gpios property.
+> 
+> Changes in v2:
+> - Change delay to PCIE_T_PVPERL_MS
+> 
+> v5 https://lore.kernel.org/all/20250711052357.3859719-1-sai.krishna.musham@amd.com/
+> v4 https://lore.kernel.org/all/20250626054906.3277029-1-sai.krishna.musham@amd.com/
+> v3 https://lore.kernel.org/r/20250618080931.2472366-1-sai.krishna.musham@amd.com/
+> v2 https://lore.kernel.org/r/20250429090046.1512000-1-sai.krishna.musham@amd.com/
+> v1 https://lore.kernel.org/r/20250326041507.98232-1-sai.krishna.musham@amd.com/
+> ---
+>  drivers/pci/controller/dwc/pcie-amd-mdb.c | 62 ++++++++++++++++++++++-
+>  1 file changed, 61 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-amd-mdb.c b/drivers/pci/controller/dwc/pcie-amd-mdb.c
+> index 9f7251a16d32..697f5b3fc75e 100644
+> --- a/drivers/pci/controller/dwc/pcie-amd-mdb.c
+> +++ b/drivers/pci/controller/dwc/pcie-amd-mdb.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/resource.h>
+>  #include <linux/types.h>
+>  
+> +#include "../../pci.h"
+>  #include "pcie-designware.h"
+>  
+>  #define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
+> @@ -56,6 +57,7 @@
+>   * @slcr: MDB System Level Control and Status Register (SLCR) base
+>   * @intx_domain: INTx IRQ domain pointer
+>   * @mdb_domain: MDB IRQ domain pointer
+> + * @perst_gpio: GPIO descriptor for PERST# signal handling
+>   * @intx_irq: INTx IRQ interrupt number
+>   */
+>  struct amd_mdb_pcie {
+> @@ -63,6 +65,7 @@ struct amd_mdb_pcie {
+>  	void __iomem			*slcr;
+>  	struct irq_domain		*intx_domain;
+>  	struct irq_domain		*mdb_domain;
+> +	struct gpio_desc		*perst_gpio;
+>  	int				intx_irq;
+>  };
+>  
+> @@ -284,7 +287,7 @@ static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
+>  	struct device_node *pcie_intc_node;
+>  	int err;
+>  
+> -	pcie_intc_node = of_get_next_child(node, NULL);
+> +	pcie_intc_node = of_get_child_by_name(node, "interrupt-controller");
+>  	if (!pcie_intc_node) {
+>  		dev_err(dev, "No PCIe Intc node found\n");
+>  		return -ENODEV;
+> @@ -402,6 +405,34 @@ static int amd_mdb_setup_irq(struct amd_mdb_pcie *pcie,
+>  	return 0;
+>  }
+>  
+> +static int amd_mdb_parse_pcie_port(struct amd_mdb_pcie *pcie)
+> +{
+> +	struct device *dev = pcie->pci.dev;
+> +	struct device_node *pcie_port_node;
+> +
+> +	pcie_port_node = of_get_next_child_with_prefix(dev->of_node, NULL, "pcie");
+> +	if (!pcie_port_node) {
+> +		dev_err(dev, "No PCIe Bridge node found\n");
+> +		return -ENODEV;
+> +	}
+> +
 
-> The rationale is that tools files changed in the kernel patches are not
-> really tool stuff (dot models). And kernel stuff changed in the tools
-> are something that the tools generate, and to test them a build should
-> suffice (kernel robot would do that). Having them together eases
-> testing the tool, I believe.
+Please use for_each_child_of_node_with_prefix() and get rid of the above check.
+Since this is a scoped variant, you do not need to care about OF node refcount.
 
-Yes, I agree with the above.
+If your platform supports only one Root Port, you can add a comment on top that
+the loop will execute only once. Maybe you can also add a TODO so that someone
+could prepare the driver to handle multi Root Ports in the future.
 
-If you make kernel changes that a new dot file is going to use, then
-sure, keep that in the kernel side.
+> +	/* Request the GPIO for PCIe reset signal and assert */
 
-I'm basically saying that any tools enhancements beyond adding new
-models and such should be in their own series.
+Drop the comment.
 
-Thanks,
+> +	pcie->perst_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(pcie_port_node),
+> +						 "reset", GPIOD_OUT_HIGH, NULL);
+> +	if (IS_ERR(pcie->perst_gpio)) {
+> +		if (PTR_ERR(pcie->perst_gpio) != -ENOENT) {
+> +			of_node_put(pcie_port_node);
+> +			return dev_err_probe(dev, PTR_ERR(pcie->perst_gpio),
+> +					     "Failed to request reset GPIO\n");
+> +		}
+> +		pcie->perst_gpio = NULL;
 
--- Steve
+Not required.
+
+> +	}
+> +
+> +	of_node_put(pcie_port_node);
+> +
+> +	return 0;
+> +}
+> +
+>  static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
+>  				 struct platform_device *pdev)
+>  {
+> @@ -426,6 +457,14 @@ static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
+>  
+>  	pp->ops = &amd_mdb_pcie_host_ops;
+>  
+> +	if (pcie->perst_gpio) {
+> +		mdelay(PCIE_T_PVPERL_MS);
+> +
+> +		/* Deassert the reset signal */
+> +		gpiod_set_value_cansleep(pcie->perst_gpio, 0);
+> +		mdelay(PCIE_T_RRS_READY_MS);
+> +	}
+> +
+>  	err = dw_pcie_host_init(pp);
+>  	if (err) {
+>  		dev_err(dev, "Failed to initialize host, err=%d\n", err);
+> @@ -444,6 +483,7 @@ static int amd_mdb_pcie_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct amd_mdb_pcie *pcie;
+>  	struct dw_pcie *pci;
+> +	int ret;
+>  
+>  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>  	if (!pcie)
+> @@ -454,6 +494,26 @@ static int amd_mdb_pcie_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, pcie);
+>  
+> +	ret = amd_mdb_parse_pcie_port(pcie);
+> +
+
+Spurious newline
+
+> +	/*
+> +	 * If amd_mdb_parse_pcie_port returns -ENODEV, it indicates that the
+> +	 * PCIe Bridge node was not found in the device tree. This is not
+> +	 * considered a fatal error and will trigger a fallback where the
+> +	 * reset GPIO is acquired directly from the PCIe node.
+
+s/PCIe node/PCIe Host Bridge node
+
+> +	 */
+> +	if (ret == -ENODEV) {
+
+Please use the below pattern:
+
+	if (ret) {
+		if (ret != -ENODEV) {
+			dev_err();
+			return ret;
+		}
+
+		pcie->perst_gpio = devm_gpiod_get_optional()...
+	}
+
+> +
+
+Spurious newline
+
+> +		/* Request the GPIO for PCIe reset signal and assert */
+
+Drop the comment
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
