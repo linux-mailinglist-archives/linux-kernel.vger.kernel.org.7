@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-741921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93032B0EAAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D5CB0EAAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A5C544984
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30A53B147F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D820526CE05;
-	Wed, 23 Jul 2025 06:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0097626E6F6;
+	Wed, 23 Jul 2025 06:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a9Od9cWb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N58Frue8"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCEE248873;
-	Wed, 23 Jul 2025 06:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D84126E158;
+	Wed, 23 Jul 2025 06:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753252266; cv=none; b=F6EekzSUyoyS55MwCsV7U9F9kgQiTEvMzHV8bTdnJuIfuY+ZW+ys6CdQRTWMVVKAYsioTu4/ySQ1do2fl+8GSkSX+hPSOVX7/AfrjGzC1AnZqkHCv8DRn9AL8q+gFv7BfSNrkffaYlyVZu7RlGxyFJQgthKyxA0hzhB4iTpwLLg=
+	t=1753252312; cv=none; b=LE4KgfUiHohSmO4yZxG2AXq+uT7PBlg94ohiRL/gQzU7+SI0+HCJwRYlb3RY0j1ROb39OK2WwioJB0rS76bmP0m8X5Qsp+ql18EiUeV0Y93k12yQBQ+Ui1Dau/cMV7d1KdrL/P279xyjcopgyMQpxoVRhUF8CRjjwczuucXBMqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753252266; c=relaxed/simple;
-	bh=9nvMvBGs6JMLEfhugYRVg7nfMGizUadRYQsyGSOwFbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGWqq3lKUSSIuEVWOckUgg4Tsm9JNtTrbGT62/obOTJn0MNtnNxxWoW/7M9W3rlIBNma4RuPNw+eaO7o95g01xO7PCTZ/t1Qmx9qfZWgLoSaMb1N/BIVOorQ9RtHvTbrfc0BR8vewwQO8MeermPyU4KvP088ehdtJ5Hg1hOVBUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a9Od9cWb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N66vgV027701;
-	Wed, 23 Jul 2025 06:30:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=UUEGT/sUYkFf4gih7YaF2crredDSL9
-	YO30q2Z/pvqo8=; b=a9Od9cWbrb2SLn/u9nQtVJTN9qT3S70fCBMtqpvIheoacn
-	9F1AEPHSTxJt0k4/zNDB6Ll9GwBwq/jsWY4q5HafywAmgdFYxbehKpd4a9oyiq4o
-	xXu08uxkliLZyljzSoE18S7ByC1A6kVZQvvqEm7JKN1AY0migz83xZp60VTSFj0N
-	cNX7Cl8Ku8MKfu7HuM3Vh02h0sXiZh77P6SFbCHkiX0g1VJ8JcYW7dKCiZPIBMQK
-	LysLz8mDSS2JwucueNswqOZCEyBn5QKI2M/nvFjTMiybjcZLqmAr991I/USW5l/h
-	ATjTV8pJO/+inOWNMfAC3y5dgaLexYe0LVGLddcg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff5k08r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 06:30:56 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56N6N8ht018047;
-	Wed, 23 Jul 2025 06:30:56 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff5k08m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 06:30:56 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56N3M58L012823;
-	Wed, 23 Jul 2025 06:30:55 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480p306rbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 06:30:55 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56N6UrSi57213290
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 06:30:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4037220040;
-	Wed, 23 Jul 2025 06:30:53 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C486620043;
-	Wed, 23 Jul 2025 06:30:50 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.209.114])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Jul 2025 06:30:50 +0000 (GMT)
-Date: Wed, 23 Jul 2025 12:00:48 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 08/13] generic/1229: Stress fsx with atomic writes
- enabled
-Message-ID: <aICBYrgdwZUcm2C7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <1e1e7d552e91fab58037b7b35ffbf8b2e7070be5.1752329098.git.ojaswin@linux.ibm.com>
- <20250717162230.GH2672039@frogsfrogsfrogs>
+	s=arc-20240116; t=1753252312; c=relaxed/simple;
+	bh=7wPZzKUCutOWSDrN29iZqd2GuvbH5yGyfWNh7XiSoc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mBqnfb25dDKZHdxcKrcDtWqua2GRBEO/ium/qgPjFEtKWKsfsRTNs5i3CkCKkQWxIxL9CPROpPxgLXA4K9bDDzD+EA6TooDx+jD8kDc7lB0d1nYr9Cpn3cdG9SZ80vfM/mUJaaE8b+S8hU7ZBmxky7HZsgOzTzeDx7nRC3RGoyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N58Frue8; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234fcadde3eso73562175ad.0;
+        Tue, 22 Jul 2025 23:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753252310; x=1753857110; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SlOsoYRFjhvvw2blQM4GdnqtjksdBcf86gL/ylrDtaA=;
+        b=N58Frue8GpAggNLVNNrJ4SWu8aeRS8WVsuI+2HTExogOfLd2g8ZNEXBDDUVkFR3Xmr
+         0ONizAHxer8YFl+/mYd3nC5t6G0AVElFHLrutMN8YGAuIHrPz/NEtHKqyI4hHpWkEDrl
+         VCoWLMuSjm9xujJDAw3lT2V0ueKmcO20iX7vNrIAupq2UVE2qfQBIk8JRl2TmVFla/9C
+         62zrTxx7nav+6IEZzLHVXqtM7Zz43L1CInVE5GL4AUMqVMxN0wtvzsmM4V8RncbiH1W9
+         /cpszdq4QxxoWTVJD97syvz541FRB8zivbUjgig9yVASRwmAJVCe0T7uKJ2fJV//EosR
+         Ygsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753252310; x=1753857110;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SlOsoYRFjhvvw2blQM4GdnqtjksdBcf86gL/ylrDtaA=;
+        b=ios4hnOID97vdERshrY051ikEQ+Gk0juofFU+MGCZbShGjSoBCX7ew4TyLs3dbDuy5
+         wY9IX1PzsUmrroig3l75XnSbDr7v81g0YzeQwdpjmNnHfoZ/EkM5CzETBcnZbk8DmgLt
+         57H/F1iMa0PZYYHPm348l3WWc2rqOC9AFzKzTIBcS+btxh7B9OhYqNi1VzDeEeggDaAm
+         4l/l8/XDlyYMikfQ8cHG1bpMROiJJT0QSZV7YIz43BUo9J657XvPL8hpFmcIWTfRaIkX
+         braIRpjAKSwTtlcmd369rJKu59Cn09XzhtpdrzY0vNPN5F1AlRv8YosvmHWFuniZGfq1
+         INxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNCiGG7chuIXoElEdYjciccgVD8llwtmnsiDClxGFT+Z+yagSgpnmC+owik51luixSnRGJnt0Bph8Ay90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO6sYfWoCHeddb6oAbiHVUuQCByA5olMnH7f4yZon38vp0JZBO
+	TKXGVXz80qKcdWdzHWHZK+BmvNM7f170Hb9zHmdC4/Aafq23llsLWd5I
+X-Gm-Gg: ASbGncu2fxq9fzO1uNCMJ4vYbw6BwkY6vYe88mAIl3w0ibAgh23KeFeojvpVOPa9Xc6
+	szL0z4n5m9NyrMHE68GoSTgsiDPqg4N9QQdo0FGSLFitPVSTKmlHebKWqId1jy1MJ94j5fWYvww
+	Ynr9ZjHtzVjzJrdBeQpA7gC/QBejiaRrDSDOYK+UEuqQaPrpUyI7ih3/xXlQ+UHYQW4Kj0/PFj/
+	jCPBcRiFQIGH/N58InpavKC9FY4wzopTHM6IR+n5n/dZBN3lM5IyHrNy/YcHyTzBbSbSpawvGRG
+	v/pkyvxhkioaeDMWtl5iMtWY2TgyC3/6PWUFg4ftMdBETFw1L2kZUXoy8bB/te27pvy96cvQZek
+	DWygilgYRFB57lR6xFjJ9fPVpUCIUxVT46C0o3w==
+X-Google-Smtp-Source: AGHT+IF0erTYwksmGNUunkkGnj1FdxqYP5O20Sfan0hwnByjnUy7hQyyvyetFe4ESFwRrHY3wjoU6g==
+X-Received: by 2002:a17:902:e845:b0:235:1966:93a9 with SMTP id d9443c01a7336-23f9812b4c5mr28540155ad.3.1753252310276;
+        Tue, 22 Jul 2025 23:31:50 -0700 (PDT)
+Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e2ccbsm89826735ad.4.2025.07.22.23.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 23:31:49 -0700 (PDT)
+From: Pengtao He <hept.hept.hept@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Michal Luczaj <mhal@rbox.co>,
+	Eric Biggers <ebiggers@google.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengtao He <hept.hept.hept@gmail.com>
+Subject: [PATCH] net/core: fix wrong return value in __splice_segment
+Date: Wed, 23 Jul 2025 14:31:19 +0800
+Message-ID: <20250723063119.24059-1-hept.hept.hept@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717162230.GH2672039@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA1MCBTYWx0ZWRfXzRIi3k0Ck60u
- ROtC2tLWO4rDlDCbiJn1+oySVcRKYekYdhRU+49UKPUxFZuAEjv+8DwhqyzJT4j5sxn+7nBE99J
- A2Drrnd6c1qL525qTQvea2dmB5ciNu2Q6yGNV1icG5aW6DgrmflQzNXkkQKpBQtnjRWzTTCF3qm
- NDG4AKEXr1F4zoG0t01HBF1zGCeq36uNE6W7LQngiSJe5soJaBEr9E45mI15MxJ1OR5YfZn/7s0
- PX/xWZdag8AfNiCC3RRViJ+OUtrShYpgiAqheYcPeVQExLttBM9DDsKmFkvtHsv7Z8bgTVVe1EY
- MdOvbwOov2PZB6S0MRh+ofKcQwPrZVdfLoGAT9Ym2rkxGgQ6hfAoGNnUSXK4NrKH/aD8YZ7rUnh
- O6vQf4Y6jxAktUry1gBpJURcjWlr+mQumyDvQpTceOPsXWK3wQC/9YJGjjMtm+4ZFhmR+TAB
-X-Authority-Analysis: v=2.4 cv=evLfzppX c=1 sm=1 tr=0 ts=688081a0 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=2tcgm7eZke0umGGLaFsA:9 a=CjuIK1q_8ugA:10 a=U1FKsahkfWQA:10
-X-Proofpoint-GUID: ll9oNXlQFTwHByoXRp7lyJgKlcguFbKj
-X-Proofpoint-ORIG-GUID: jqjavEVRMWN2MgiUEZvGwLUG6tXpxoqK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=542 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230050
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 17, 2025 at 09:22:30AM -0700, Darrick J. Wong wrote:
-> On Sat, Jul 12, 2025 at 07:42:50PM +0530, Ojaswin Mujoo wrote:
-> > Stress file with atomic writes to ensure we excercise codepaths
-> > where we are mixing different FS operations with atomic writes
-> > 
-> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Hrm, doesn't generic/521 test this already if the fs happens to support
-> atomic writes?
-> 
-> --D
+Return true immediately when the last segment is processed,
+without waiting for the next segment.
 
-Hi Darrick,
+Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
+---
+ net/core/skbuff.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yes but I wanted one with _require_scratch_write_atomic and writes going
-to SCRATCH fs to explicitly test atomic writes as that can get missed in
-g/521. 
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index ee0274417948..cc3339ab829a 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3114,6 +3114,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
+ 		*len -= flen;
+ 	} while (*len && plen);
+ 
++	if (!*len)
++		return true;
++
+ 	return false;
+ }
+ 
+-- 
+2.49.0
 
-Would you instead prefer to have those changes in g/521?
-
-Regards,
-Ojaswin
 
