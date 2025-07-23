@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-742446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD2EB0F1CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:02:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC21B0F3CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D607AE6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1625826B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D122A2E54B9;
-	Wed, 23 Jul 2025 12:02:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E946C2E8DED;
+	Wed, 23 Jul 2025 13:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=gztozed.com header.i=@gztozed.com header.b="AYXMEE22"
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0AD24888C;
-	Wed, 23 Jul 2025 12:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB112E7BCA;
+	Wed, 23 Jul 2025 13:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272122; cv=none; b=ceQ/nILHfJQBtWi9TGWU1ZqTuJzywwfESPPG3ZmWw7STwsn+NjqpBKcWsuznmK+CGcd+Rw/eNmHo4CGjSV2diNunIOMZwVD3vxtjjBmOFTR+6ve+cubqS8ZSIiTuYTMq9wQYd3Y8yzRtpK9+RF7HUx8+ptBP8/Kuv26BVh5tyVo=
+	t=1753276508; cv=none; b=VDuF6YsRimf1iNM30i5WWTJXZM6pNIza23diWEESt1D1xOU/Zr0cNA/MPHw3kmv0bMhYS2GDhGSBXgxHqySHsGxXsRgaJYDWOVoztkI/oARq5h+9W6Vo/voslMLvegO9qpCFehkvkmojYMkfSyr7I23n0XixN+yd6sMeelBTHwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272122; c=relaxed/simple;
-	bh=PjryDDK5qPTp8dCMfOz6hzHAQURUAXKfBOOjhQl8K+Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PEq/GU14ftpEri1zw4r9/1JE184ejOByJD9/Cwzp72Y41QBwt4N40hIRLdzVrHUogVz4DkmPy9C2CiGXcNpHjuj/ReUWH+d9xbnRMxGce6eT1pv+3FADUVjcJYHK7LZ6/bNuCPEKkWAtYvV3r20KSlp2BTD7wH0tAGEmeUdNj5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bnCQF4vJHztScj;
-	Wed, 23 Jul 2025 20:00:53 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id AA1DD1401F3;
-	Wed, 23 Jul 2025 20:01:57 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 23 Jul
- 2025 20:01:56 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <dhowells@redhat.com>, <pc@manguebit.org>, <brauner@kernel.org>
-CC: <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] netfs: Remove unused declaration netfs_queue_write_request()
-Date: Wed, 23 Jul 2025 20:23:29 +0800
-Message-ID: <20250723122329.923223-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753276508; c=relaxed/simple;
+	bh=KpTG27xj119EH8QPiH6w84Q+rjHasCFnEYYnEixwibU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rRLuMBq7mqetYbSao9zZ3rUGohzfdJNcH2Gb8Nx/4+CYBS7LJLrA2ZKIEs1yqtxa7WLGExom2euReYG8sVmHVqw101+L4RdldsOVjq6cYq96lkyerz3dHe8/CCN/ttBK/I1oNQ4l4edYnrwSTtRKKnRR3qMZJIMHGTn61QVqvAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gztozed.com; spf=pass smtp.mailfrom=gztozed.com; dkim=pass (1024-bit key) header.d=gztozed.com header.i=@gztozed.com header.b=AYXMEE22; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gztozed.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gztozed.com
+Received: from localhost.localdomain (unknown [IPV6:240e:6b0:200:4::42])
+	by smtp.qiye.163.com (Hmail) with ESMTP id d845d995;
+	Wed, 23 Jul 2025 16:38:55 +0800 (GMT+08:00)
+From: wangyongyong@gztozed.com
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyongyong <wangyongyong@gztozed.com>
+Subject: [PATCH] net: clear offline CPU backlog.state in dev_cpu_dead()
+Date: Wed, 23 Jul 2025 16:38:08 +0800
+Message-Id: <20250723083808.1220363-1-wangyongyong@gztozed.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,31 +52,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQhoYVklCHklMS0tNSB9NS1YVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJT0seQU0ZS0FJS0tBT0FBT0lZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+X-HM-Tid: 0a98366f86a30230kunmbbad5f211f61de
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NQg6NAw5CTdILT1WHEs2LEIS
+	MyoaFAhVSlVKTE5ISU5CQkhNQ09JVTMWGhIXVQwaFRwCFBUcAhQVHDscAQ8UAR4fVRgUFkVZV1kS
+	C1lBWUlPSx5BTRlLQUlLS0FPQUFPSVlXWQgBWUFKQ0NDNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=AYXMEE22DZ9ZBdaZAEiAM1TbkVL0cu0sG/qV2u2lK5AETvhLAS6AgcFscu6APxea5fQ8rOQpi3rmxj3DHHJkSAdzjUbyDkGUVGg/bbOglRruv9E1uYIXPAwYG/mKR9qNL4Q0fL5AnZRVuQbhXTfEzs2K2kObwJiOdFMC5uehEFI=; s=default; c=relaxed/relaxed; d=gztozed.com; v=1;
+	bh=0afn1/VAo7T4OfiA7X9buT9b9SNPrb22VYySrI//Ito=;
+	h=date:mime-version:subject:message-id:from;
 
-Commit c245868524cc ("netfs: Remove the old writeback code") removed
-the implementation but leave declaration.
+From: wangyongyong <wangyongyong@gztozed.com>
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+When a packet is enqueued to a remote CPU's backlog queue via enqueue_to_backlog(),
+the following race condition can occur with CPU hotplug:
+
+1. Source CPU sets NAPI_STATE_SCHED on target CPU's softnet_data->backlog.state
+2. Source CPU raises NET_RX_SOFTIRQ to schedule NAPI polling
+3. Target CPU is taken offline before the IPI arrives
+4. dev_cpu_dead() fails to clear NAPI_STATE_SCHED because backlog isn't in poll_list
+
+This results in:
+- Stale NAPI_STATE_SCHED flag on offline CPU's backlog.state
+- When the target CPU comes back online, the persistent NAPI_STATE_SCHED flag
+  prevents the backlog from being properly added to poll_list, causing packet
+  processing stalls
+Signed-off-by: wangyongyong <wangyongyong@gztozed.com>
 ---
- include/linux/netfs.h | 1 -
- 1 file changed, 1 deletion(-)
+ net/core/dev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index f43f075852c0..185bd8196503 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -442,7 +442,6 @@ size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
- 			size_t max_size, size_t max_segs);
- void netfs_prepare_write_failed(struct netfs_io_subrequest *subreq);
- void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error);
--void netfs_queue_write_request(struct netfs_io_subrequest *subreq);
+diff --git a/net/core/dev.c b/net/core/dev.c
+index be97c440ecd5..fd92ab79c02a 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -12385,6 +12385,7 @@ static int dev_cpu_dead(unsigned int oldcpu)
+ 		else
+ 			____napi_schedule(sd, napi);
+ 	}
++	oldsd->backlog.state &= NAPIF_STATE_THREADED;
  
- int netfs_start_io_read(struct inode *inode);
- void netfs_end_io_read(struct inode *inode);
+ 	raise_softirq_irqoff(NET_TX_SOFTIRQ);
+ 	local_irq_enable();
 -- 
-2.34.1
+2.25.1
 
 
