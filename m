@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-741891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC78DB0EA50
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:09:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C11B0EA54
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BDE3AE2DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236B75672AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D074248F50;
-	Wed, 23 Jul 2025 06:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8869D248F5E;
+	Wed, 23 Jul 2025 06:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jm7LvRfV"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9Sic9Q0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10920D517;
-	Wed, 23 Jul 2025 06:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66761DF270;
+	Wed, 23 Jul 2025 06:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753250958; cv=none; b=pXj+10MGdhQrggO7Zr49iDH+WQkfMMTTLnix9BlA2KQdEgh35Ko25Ayu8jrXzUxJA7Kkmmpsz/zcBtOo+GfH7Ix7Vy+VvbKjW8tdlFB9nkTD7kPsm12Knn8pvCa2IzVo9cCB5taXqOxw5FKMRPp02IQfnMP7Nc8oXV9/QNjmAdw=
+	t=1753250985; cv=none; b=Lr/DBnA49eteDi7kzCR3Q1RUm3vrI469H85dhwvkhLfN4NvEe40BIV7XuK7zIdCFoyi8q4cOS0sLgkx4qJ51GrowHJe2VTuZEm8blZmYXK10WLIYk4hwoJQIHDcHY+HKVTFAgRLAWW2RBgsh8eX+tIGNV81Ot/UIR9NIfK3XPSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753250958; c=relaxed/simple;
-	bh=18W9NYETu+o1FTtCXbfu0Hspkb64WessU+rabhwWnTU=;
+	s=arc-20240116; t=1753250985; c=relaxed/simple;
+	bh=yeOS69AHCtLgXhVGSxn5RYqgot+67kfHP3kAGczl9cY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P5C2K+fy3Uw9m+SKORo0uxZ5T9IT4SSW1cfi5SxFHIC7bVIOcOiYMRObqryyONR+Ysco/s7NzWNghjD3QRl+PdqXXxHacYODFA848478Motipv6Llx4wxXOsjUpOBqNu+krTOE8RKFVJGdVuYOYojgjJe+s9lAsxSLo5w4fFNCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=jm7LvRfV; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b611665b96so3532606f8f.2;
-        Tue, 22 Jul 2025 23:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1753250955; x=1753855755; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S5hyH8mAVdQ/h1Za7Ty1QmGUR3EU99QudQ/Z9Zpd/LM=;
-        b=jm7LvRfVqO3QgfReNsbu3i+W8+8SYIIC4ghBPrUKKCEo22OaA/12567Fuli05Tv7zu
-         ZuZP2qb5Qs5FyZXLubDxmdhhficm6Wt7LxquqKxmqY+Wy3NlYTcXqjL5+imM6Hi3zdUf
-         l9ZLthYjxP/Oe5ySU/TZRFHKgP9L+0wOyiLaVep3fuyfWJ5K5AXAGCj7z/spZ+8tIU+u
-         TcwMvYCXVcWG9d/J1vjvAHV4FhY1Xs44WNfgrYFqPJzbIYbwFbNnkie6f+YTOy3OiERm
-         g3ECcp2CJeicQYKx+AKGM04rrNWuToPr+6nS6bV9V7E5Y1I60IyaixpEcu80i4cUYCLH
-         a1/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753250955; x=1753855755;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5hyH8mAVdQ/h1Za7Ty1QmGUR3EU99QudQ/Z9Zpd/LM=;
-        b=r8WNUPFAiA44eqn5hneh8NOc0WLB1yUEUH8Emu8GRLuzO8v2dzq7S2uYN5Kku554KZ
-         kfC6H4fLl+T5Iz3Rhz0iczyzsoToos/aNBhfgUHpR0aBCjtWnKe5ap1AgJwvM7e/M/m3
-         dZtA+hze7O8YjdNuc44ORRAB3eMT2u3umGuM3NIhB/yxm4MeOdXRXw7j4AQ2Nt6/Fxjt
-         zqel22I63q6QQeh+mgD20qYhn0jCKmXssnq/AQh8CCLD/EzjQlJR/KE6DFCh41OnHqq5
-         xZIcXXD0EzyjkA1FBSJv2gZI5yrJwKh76OdN2ez6hYd0sZqg9irha3cpXqb6YkvJzbb4
-         v4Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaMUCU2yFKHie3K8l89NY1u5hMQPwh6dvIRscb0KMW5LvSIm3bxG1vtJBqK1aAMzgO174qkwQz6JxNITE=@vger.kernel.org, AJvYcCW5pUcKkaBQ+erJ0K0vkrDGlQWcbI9Rr3VbmiHGifPdVSry/S/fImysMrYFj6xgAi4jKp36/Hu3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI/1kz2idRDRvNw8KlHsFL+p5Vrx5pZO24Qbb8cFkeha9K7Xva
-	oXZIzhZARhAuoAs52YPqDskG90Hr7DN5Im6Ybe01WKJrDWksUxBSlnQ=
-X-Gm-Gg: ASbGncvonSlZinPnkPrKe3wVF8ahZLZMqU+TABtsMxgcB7I9NDSLgfPsFWV1/m0+uXz
-	b8pdVzgtjrdVpx01MtOnEThhUocUt43Pv0pjQvoiF8mDOawHy3y0Pg5YPoTVVDfPDblfyTbxZSG
-	/VevQZ3wYSbrNQLO9O20sUKv7s12wcrnZaZRbWOTBm+3M7Nh9mZXzsvnciZqPkEfRYWF5DK82Ue
-	rX9eevsiiwtJDHgBW8ViZQtyKVLlbJ73uf0KlRK+I/Ly2G1HoQ0flh8BHu0Hz60kXUZN3Dfxlrf
-	ohLb6nK2Go25hdq0Z3jJoZuwlPg0jrIY0aVCjA5QdxMx+upcqUpsXiuCnGHqp3yzcmOyKI66zrj
-	azfpy/QMM2LgFNVKI7SOfkNqtJJnfdm9uB1HkArXJOHDXigzTsoCfVUghFE3runE8paj9ktcuXG
-	gJ
-X-Google-Smtp-Source: AGHT+IFItRiz5qph4V+LyeVHINY5CxZH4aTFO7Eq4z71uFasfv2pqOzNSspL7yNZ+s7Le9ULr6mMUA==
-X-Received: by 2002:a05:6000:290c:b0:3b4:990b:9ee7 with SMTP id ffacd0b85a97d-3b768cb1b11mr1166177f8f.22.1753250954802;
-        Tue, 22 Jul 2025 23:09:14 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac7d3.dip0.t-ipconnect.de. [91.42.199.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691a1afasm11873505e9.21.2025.07.22.23.09.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 23:09:14 -0700 (PDT)
-Message-ID: <47f2ade6-c86b-4408-be19-d8db81f3c6fb@googlemail.com>
-Date: Wed, 23 Jul 2025 08:09:13 +0200
+	 In-Reply-To:Content-Type; b=HAns6r/RrudJ8BFNwc4Etb2PHFRDpChAD6WZ7ezt5y5LSOPs8O96k+qeN1wxjW1lZ5Vi+xbk0P6xL2ZvEsWoK6BIJVcyJmpgXygp03z8FqwonDRXObOnuAOvx4ulrDRG89Qd0gjmGhnJc0jFzRACTRjDeQZdf/H2/tKVKoaDffw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9Sic9Q0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15403C4CEE7;
+	Wed, 23 Jul 2025 06:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753250985;
+	bh=yeOS69AHCtLgXhVGSxn5RYqgot+67kfHP3kAGczl9cY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s9Sic9Q0tQ1hek+AJ6SMXi8CAYjRzZhjJdaGBe2A07HLNQLChHYD5iBiUrBB4dj52
+	 PbxmTmDLJTULAtj8ryHWH96NZVN+ykwAUPV08y7t8YRJon9UbpZBH+EeevWWorv1Qb
+	 rKJA7glwUtGkdRYwKQmGVOuMK8YzS/+/LtRBQmS9GJfFOmn8ClGtqIdBMNm/6TszAj
+	 uiYKOupRYs2iH6/0tnGkORSkEd+9BCQGOLnnioAPAPw0NzDxgH2Mfa34aB6MnT1UkQ
+	 7z+xNRGcPp8P/MtweajG6TRPL8LQHAVhkMtmpoPR6mT/8/fxu/5ED2L8GHkBTRXwG2
+	 Q+pEk+ISOnsKw==
+Message-ID: <0ec295d5-19a2-4a3e-b246-1eb5860560ac@kernel.org>
+Date: Wed, 23 Jul 2025 08:09:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/111] 6.6.100-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250722134333.375479548@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250722134333.375479548@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -resend] drm/msm: use dev_fwnode()
+To: Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org
+References: <20250723055512.1800438-1-jirislaby@kernel.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250723055512.1800438-1-jirislaby@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Am 22.07.2025 um 15:43 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.100 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hmm, I got: "Dmitry Baryshkov no longer works for Linaro.". "To:" field 
+fixed using @kernel.org address (was in Cc).
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+On 23. 07. 25, 7:55, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Cc: Dmitry Baryshkov <lumag@kernel.org>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: Marijn Suijten <marijn.suijten@somainline.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> 
+> ---
+> 
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> ---
+>   drivers/gpu/drm/msm/msm_mdss.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+> index 1f5fe7811e01..ec7d83831b83 100644
+> --- a/drivers/gpu/drm/msm/msm_mdss.c
+> +++ b/drivers/gpu/drm/msm/msm_mdss.c
+> @@ -154,8 +154,7 @@ static int _msm_mdss_irq_domain_add(struct msm_mdss *msm_mdss)
+>   
+>   	dev = msm_mdss->dev;
+>   
+> -	domain = irq_domain_create_linear(of_fwnode_handle(dev->of_node), 32,
+> -			&msm_mdss_irqdomain_ops, msm_mdss);
+> +	domain = irq_domain_create_linear(dev_fwnode(dev), 32, &msm_mdss_irqdomain_ops, msm_mdss);
+>   	if (!domain) {
+>   		dev_err(dev, "failed to add irq_domain\n");
+>   		return -EINVAL;
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-
-Beste Grüße,
-Peter Schneider
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+js
+suse labs
 
