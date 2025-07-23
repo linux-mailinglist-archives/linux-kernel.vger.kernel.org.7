@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-743252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A2B0FC93
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BBDB0FC96
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A6A585417
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87421CC074E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F68D2727F0;
-	Wed, 23 Jul 2025 22:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0767F27146E;
+	Wed, 23 Jul 2025 22:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UzAtPbF9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ja846Zfs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADE71C84D0;
-	Wed, 23 Jul 2025 22:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9641C84D0;
+	Wed, 23 Jul 2025 22:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753308962; cv=none; b=Wq2fA0LvwoC0dSmJcZ2FKLvRZ8O55Bck2mGk3sjm/jwlInEM2EAuTQ6XmvZ1tBPy+DS1G7uUfBeKoZs6mRxEPB43lYdW86I0WH90kMiQq+OqNGfRFAqNQ8v1g7uS13t30rdLNG9TdbfKbXt+h6S9qsgl9wrekTqgBg0o/EZegX0=
+	t=1753308984; cv=none; b=R7ydsmyEail1pd2aTr2BJftsqD49dDusl5eK0yHEi9wFIitBJu5Cs7hZsyKN/46TvzQjzMgHyNDjmmqfPaPcSGnHm06efAUiRsJ5uFs4wwzX5yPJ+cl23ru2UG9DE3sRC0NJWtgFIJ+80vIWhL3qL8Yo71uEbzzBMf3L0xLaV8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753308962; c=relaxed/simple;
-	bh=6Uh2ZoT+nzrN+UxFuEeO4jkzeN5g5kZnBtnFt9jWryI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JDFduneyck1Lo9J2SHKg+O6qHuelxviCzb/nuHz/CkVgoIgEzTsl5qFS83acgCVUTss1PJdMZqSm6MPfFxiD+ziZsoVvTQc1GxJm8ptjNixwW7o6al/1ctTTl7YNXG1Z3f2XTayGaVdMErLEyw8MsI6BxcrqT9iqtB8GzaBqOrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UzAtPbF9; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753308961; x=1784844961;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6Uh2ZoT+nzrN+UxFuEeO4jkzeN5g5kZnBtnFt9jWryI=;
-  b=UzAtPbF9svJ9Qk5oVN4l6t2uL3EPzrLH6AtO6Afq5lWpUF2vdgQe1Ur9
-   fST0LaJ/eF01caNE6JUqExtB3Vy89pIlhIqliCFXlJxADuqmBkYlbhyVV
-   hSTCZ/b85aBDbE/nM9bGM6yEsCtSGdbi+RkoakGy8/PhHCCaMKkpQPTH1
-   Hrr8P1ipvFEQ0jbHwiNKGycJiLMDsWSnLY3RqPSQGY8q7zwCUnKTwpzWn
-   uaKid/ctTEdjeTzhDzelKPJ8WgdZ2zab1Uu/sPvvV5BjbLm4pnkotaPld
-   6MjTflJArC19y8hrunwg75i7Nu+0UwhHU/ICyViQiQpTA9BbqrLu1LEND
-   A==;
-X-CSE-ConnectionGUID: qxlSzH7NTi697NcgOXksYQ==
-X-CSE-MsgGUID: e9Trq0BPTsmj9/NG3deAEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59410217"
-X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
-   d="scan'208";a="59410217"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 15:16:00 -0700
-X-CSE-ConnectionGUID: v+LFLybnQ9+S2TzEPWDA7Q==
-X-CSE-MsgGUID: K2dhdmlzTPiSs/No4zmq8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
-   d="scan'208";a="160492501"
-Received: from dustinle-mobl1.gar.corp.intel.com (HELO [10.247.118.179]) ([10.247.118.179])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 15:15:50 -0700
-Message-ID: <9fe4744e-390a-4cf8-827b-a6299b50afce@intel.com>
-Date: Wed, 23 Jul 2025 15:15:45 -0700
+	s=arc-20240116; t=1753308984; c=relaxed/simple;
+	bh=CXlQbWCod255PhLjLd1pnNzqKBTQAnCUYfPIJDFXxt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kvhq3zNhisEVqOqIZEBZmAAY8+l3qIpaqR0gTBFr3OIjCHityjkZXBZaPVyyV/3GQBk0OML+U9EI4ohX4n/bWwq9/x3vuvGDqApDIHL6v1A7jTAeQSfpgmR8sGLoQZY1p49LP3yAVaSJwKW7lMT9LpzmR2Oqgeb8G4S53pimYkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ja846Zfs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22114C4CEE7;
+	Wed, 23 Jul 2025 22:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753308983;
+	bh=CXlQbWCod255PhLjLd1pnNzqKBTQAnCUYfPIJDFXxt0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ja846ZfsobSHMLatLtSKRrWuSKOfxaPHfEzAJ34f28njgLINmFZpWB/AjV/gmY35L
+	 05R9wcQt0M0eaz4Ej+W1Nulw2AcV/ZCmlAG+au9iJF42KHCqSzuXNX1ABrJQu1pTEW
+	 gOYTD2urcBwM9xxiKbhmfzXNxkIUMaxv7K+IW9vSouCKr7iMhl98zcI+CbGigWt6gP
+	 A00BFuSB789iM+Xisadpw40OzfJVgO96vKeXmcNvXSsSmIEaY/wIU8kC7suxC2EKcX
+	 QiP/oE5cbZz+zWTTTfxfq8Bcqb/e3lXDGGJH7QlyhsM57ijbT7IeqvDPBgT6edEzQ1
+	 YiM9AbxQQUZaw==
+Date: Wed, 23 Jul 2025 15:16:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Jason Wang <jasowang@redhat.com>, Stephen Hemminger
+ <stephen@networkplumber.org>, Cindy Lu <lulu@redhat.com>, KY Srinivasan
+ <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Michael Kelley
+ <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki
+ Iwashima <kuniyu@google.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, Joe
+ Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, "open
+ list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
+ list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+Message-ID: <20250723151622.0606cc99@kernel.org>
+In-Reply-To: <SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
+References: <20250718061812.238412-1-lulu@redhat.com>
+	<20250721162834.484d352a@kernel.org>
+	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+	<20250721181807.752af6a4@kernel.org>
+	<CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
+	<20250723080532.53ecc4f1@kernel.org>
+	<SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/17] cxl/pci: Remove unnecessary CXL Endpoint
- handling helper functions
-To: dan.j.williams@intel.com, Terry Bowman <terry.bowman@amd.com>,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
- Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
- dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
- lukas@wunner.de, Benjamin.Cheatham@amd.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
- <20250626224252.1415009-2-terry.bowman@amd.com>
- <68815b0f224d6_134cc7100e7@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <68815b0f224d6_134cc7100e7@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-
-
-On 7/23/25 2:58 PM, dan.j.williams@intel.com wrote:
-> Terry Bowman wrote:
->> The CXL driver's cxl_handle_endpoint_cor_ras()/cxl_handle_endpoint_ras()
->> are unnecessary helper functions used only for Endpoints. Remove these
->> functions as they are not common for all CXL devices and do not provide
->> value for EP handling.
->>
->> Rename __cxl_handle_ras to cxl_handle_ras() and __cxl_handle_cor_ras()
->> to cxl_handle_cor_ras().
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+On Wed, 23 Jul 2025 20:18:03 +0000 Haiyang Zhang wrote:
+> > > Btw, if I understand this correctly. This is for future development so
+> > > it's not a blocker for this patch?  
+> >
+> > Not a blocker, I'm just giving an example of the netvsc auto-weirdness
+> > being a source of tech debt and bugs. Commit d7501e076d859d is another
+> > recent one off the top of my head. IIUC systemd-networkd is broadly
+> > deployed now. It'd be great if there was some migration plan for moving
+> > this sort of VM auto-bonding to user space (with the use of the common
+> > bonding driver, not each hypervisor rolling its own).  
 > 
-> Looks good to me:
+> Actually, we had used the common bonding driver 9 years ago. But it's
+> replaced by this kernel/netvsc based "transparent" bonding mode. See
+> the patches listed below.
 > 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> Perhaps this and any other pure cleanups can go into a topic branch for
-> 6.17 so that it does not need to be sent again if this set gets respun.
-> Dave?
+> The user mode bonding scripts were unstable, and difficult to deliver
+> & update for various distros. So Stephen developed the new "transparent"
+> bonding mode, which greatly improves the situation.
 
-Sure. I can pick them up once you are done reviewing this series. Probably should cut things off by end of this week though. 
+I specifically highlighted systemd-networkd as the change in the user
+space landscape.
 
