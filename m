@@ -1,195 +1,119 @@
-Return-Path: <linux-kernel+bounces-742564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9C2B0F3BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:19:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751DBB0F3B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2861884D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA30564D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEE62E9754;
-	Wed, 23 Jul 2025 13:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169EB2E7BDD;
+	Wed, 23 Jul 2025 13:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TR1vvldA"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="pIHmasZB"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6262E62BF;
-	Wed, 23 Jul 2025 13:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276256; cv=pass; b=PFjeWGzH4lc6wRzNYCVWMt2ChaU9rj0ullxZrtrWBh5ewYViBKOPvIGdhGLD0JkmlbWDdD+HEGrkezQ1n1C+XGwEI/5e5l6Uk6NioKaGLwL1iUCRYdb7hsRryoEpBKlxjeQQX8OXXgw6WxOAXu1+bqRvl7t4Ei4ZzZV6/5hnZjQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276256; c=relaxed/simple;
-	bh=0U1Q/u+P1mj4MA8GrUnzY4NHmbwMmWBD7ByV0TXrpH4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=OvhrpdmBwW6mTu1X3zTj44izH4dcohbSV0EKYai5A3KrNohM8FDJKWF404pnKQbQyToU+FAc8GYxGIYxxiZ8nLmlKanUKHiUNVRCB7hKPCXOvaZC5ecLMdoBQ0uZdBOqoFWnXxfhuP7ooVSBiePvpHUQA8hEIYq4HImeXTNmo5I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TR1vvldA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753276232; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lNBNyl5wYWooYKkbrhOixWegEBifPHVw8i7gwW1VGMakE+CMaIS9Nnm62orWFx8h5MKJTm3LvTcwwsHKHuuEvxrNXETsPjywWOH/6S4clm7b9lHaW3pNL4UoXGTT+CGdfvfdDOFaOHSV3AvJqEnkcEDUuTKBkGnDRqLnNWsFcuo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753276232; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TMczoe+e+KJzKyIyNO1Op+f8ixd6FDizNqpLQ3VCsIc=; 
-	b=MX7TTGpVP4tg1kO3GM0Q5xD230GAmjm50idk5oVynneCYrw8Nd7KRQiDQY27uKBUlL9D1SwTO+JV+jO9d8hY720xsefpBQk6k1LQ5oSjlPgGSPsBDWfXjzfIj0FwRy8gRBD4cygS/k9o8wPRkWN5+FwdfXOuqefKotr88HnxvQA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753276232;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=TMczoe+e+KJzKyIyNO1Op+f8ixd6FDizNqpLQ3VCsIc=;
-	b=TR1vvldAo+Nm9WopdMLG3p/b7vpsEnoEXXE0hUyAkjJddEeNhDFkM1m214/8GFnN
-	Oz9h7QNg9uEZaoocY8fUCKPQiD6OYVk/l+b1F7WirNAz7edbMzQn2VzSh9doFcOY918
-	84LxDOtvi+o0EbJNqpe0V6BXh98JpyQ3lMqdoKrI=
-Received: by mx.zohomail.com with SMTPS id 1753276229366928.9630389473049;
-	Wed, 23 Jul 2025 06:10:29 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056EC2E762A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753276228; cv=none; b=mTM8JuuwPeBlBK9z/yYyxswA9IJA/hXVGxuXTqrt8u4n/bxIu0iQT3crsOakBfj7QlI2J9b2LlDokG/nQVzkNcnRM6PdG+6nV4YVWKbL3SPK+fL5GH5ZsXnoB78rtjyu5HeSsptKHDU2g6Er/TPKadYU6qzocF3hPNiaZ3KUNvc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753276228; c=relaxed/simple;
+	bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a3a+NFgYAMqXKXkARayfK3Zgd/Ac7pQshr1x0wxluQEgSH7jwHrVua1qL7699WfP/nUcEPBy103sdYOc1U+DGf4ap9m6H4hhWyFtQ5aZ13RgvQxOrHTqPCKQ1i3OH8Tg8lEKULx1mp94su+K/yrG4xtQtzk/Qa4YFciVU3AROfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=pIHmasZB; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a53359dea5so3216673f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1753276224; x=1753881024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
+        b=pIHmasZBcQ74ijjsISLBNbNCOz53btNAxANZfw66j3L2LkNuGcfR2DrQFNtLXsBQwD
+         VHNy38J5cr3iwKR29fa/BQZXz8P9XEq5NA5EWr9fmPhClXmBWFLxPpbWhAk6hn5TOoeU
+         s77tnfton5cD9h0NxX9sGNATlGU15cKyAY53l8jdOu86e8SG5f0Zl1ktAqPx7xUWeB+g
+         N0qK0CeWNDfSZU1v4dNQIF1CXDX5dEObdKUWXeDv/8rUCcXsXDVr7WjgzJh7w4HATBxM
+         sqS0a8Jai4OfHpaCbNM+1wf2hMkZlks83DkytfKCx/95sRkomREJJGUUYIX5VB2t30Lx
+         3DaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753276224; x=1753881024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vhBAalWa5gqDwmnSu/rBsFgFjTeJbqxDSovXVqBa20A=;
+        b=va1rqbbJsnRoDO5qzOgFt/e1Jo0ReFVWUGDVyIz0cBnsWewxbkgxPoAcsiO2r8UU0M
+         mH8Y1oJlffQaCT7GzrKQt3Cj+PQUo6FasVX6V6ZgvhgAIKs9oXb7OtTca4efxh/1JliQ
+         N+OFOaQnre3+7sfYhKgXszQf28KhOuQ4tIZLGn/pwG9WCZV6OFxNoDxusI4xvxnNaR0E
+         /tP57JxSRxq+L0FrOfglFTrbE+GZoAQUx1gdcBy8Vd7oiydd7DYIaRufP0Nu6mglYf+W
+         bs/5I2l7qf0z78lfyHth2FoJIa9tRkRQCePodFIoyffqgQRpZWokW2FtWf4InX3v4/K4
+         6x/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXzvRS5M2o2B3fkfSqO7aGuwkj7lG85b2mFsjPxwSp6ZhgvL1h4b6IjwFDvxm2FIhrIomQBePY+UW/W/Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxV91lZ6zC9juYvFKClrlVMpS33D9plTNvd5boBqpr8akhaBRW
+	JTEaylloVhxKl5k5Gk0+6eU3qgo+mOnX0nw1jmSlfcKg+eYKFSX4IfZ2MIw7lDbGN8jU5gi6FXC
+	Vm/jNEAzp0A==
+X-Gm-Gg: ASbGnctgk1AgHlUelyOxNia0T8bj8D7OZq3Sv+E2+S62XMBVg89unST+7GviLwQ/YRt
+	IFDtpEHci081AOcYXabdGCuJRAbrMBimZ0uteIVdyKHKH1jvipJTfWYUTeXBab4mHk9ooIFZvOM
+	Hd9vSjirVqP4GYvNiwG7odUZcDTDIgBDNIZ4SW5aeJnAUJaV6wtWq+sUEtqYuxKamYg+DY8PQ24
+	I4nZpiqBv1+ZJhWj1HQ6hl0mp8dcmgzuTfCrsPwm329ISNN1WoRJQEw+VClIfj3vkNyVRFNhBAf
+	IJFiiZRVVGXrTRwCyTMZk6ytY98mEzS2jktByOMOvDFo4KS2uJAQrK3j7l29nydZhFvp/0eEHgt
+	u9UZ5gy7PLR6B1dqhI/nsWbGZ5+BEOFacV+nhq0fA4hthPDPIJyMV2gWTDjCn6l1s7/r41co+u5
+	V7MpUhGWL/PipI
+X-Google-Smtp-Source: AGHT+IHaikAjtXSOK7TzkgieFuqf48w0q0zzAkHwiGU+rMcHAorrKzxT8fl3tGpNBEzEAzrmfTi+OA==
+X-Received: by 2002:a05:6000:40da:b0:3a4:eae1:a79f with SMTP id ffacd0b85a97d-3b768ef3c90mr2447676f8f.33.1753276224129;
+        Wed, 23 Jul 2025 06:10:24 -0700 (PDT)
+Received: from ?IPV6:2a02:1807:2a00:3400:7fcb:5e01:8f11:1009? ([2a02:1807:2a00:3400:7fcb:5e01:8f11:1009])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c813sm16511400f8f.84.2025.07.23.06.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 06:10:23 -0700 (PDT)
+Message-ID: <fd4eba94-50f5-46c9-8675-cc0aaa4601c6@hammernet.be>
+Date: Wed, 23 Jul 2025 15:10:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH DNM 2/2] interconnect: Add a test Rust consumer driver
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250722-topic-icc_rs-v1-2-9da731c14603@oss.qualcomm.com>
-Date: Wed, 23 Jul 2025 10:10:13 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Georgi Djakov <djakov@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D4552EF5-21DB-44AF-8E45-F57B0B8CB853@collabora.com>
-References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
- <20250722-topic-icc_rs-v1-2-9da731c14603@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: spacemit: fix resource leak in
+ spacemit_ccu_reset_register
+To: Yixun Lan <dlan@gentoo.org>
+Cc: sboyd@kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250723124020.60897-1-hendrik.hamerlinck@hammernet.be>
+ <20250723125416-GYA738759@gentoo>
+Content-Language: en-US
+From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+In-Reply-To: <20250723125416-GYA738759@gentoo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Konrad, commenting in case this driver goes forward.
+Hello Yixun,
 
-> On 22 Jul 2025, at 18:14, Konrad Dybcio <konradybcio@kernel.org> =
-wrote:
->=20
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->=20
-> Do not merge, this is for illustration / CI purposes only.
->=20
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> drivers/interconnect/Makefile |  1 +
-> drivers/interconnect/test.rs  | 47 =
-+++++++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 48 insertions(+)
->=20
-> diff --git a/drivers/interconnect/Makefile =
-b/drivers/interconnect/Makefile
-> index =
-b0a9a6753b9dc30083781163ccc01dafcfcd0485..913b92080cc0b79846b74c239e14959b=
-45b5450c 100644
-> --- a/drivers/interconnect/Makefile
-> +++ b/drivers/interconnect/Makefile
-> @@ -2,6 +2,7 @@
->=20
-> CFLAGS_core.o :=3D -I$(src)
-> icc-core-objs :=3D core.o bulk.o debugfs-client.o
-> +icc-core-$(CONFIG_RUST) +=3D test.o
->=20
-> obj-$(CONFIG_INTERCONNECT) +=3D icc-core.o
-> obj-$(CONFIG_INTERCONNECT_IMX) +=3D imx/
-> diff --git a/drivers/interconnect/test.rs =
-b/drivers/interconnect/test.rs
-> new file mode 100644
-> index =
-0000000000000000000000000000000000000000..f4ba2000d0f1fd2d91aedf8aace0b0b5=
-4bfd48f2
-> --- /dev/null
-> +++ b/drivers/interconnect/test.rs
-> @@ -0,0 +1,47 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> +
-> +//! Test interconnect consumer driver
-> +use kernel::{
-> +    c_str, device::Core, icc::*, module_platform_driver, of, =
-of::DeviceId, platform, prelude::*,
-> +};
-> +
-> +#[pin_data]
-> +struct IccTestConsumerDriver {
-> +    #[pin]
-> +    path: IccPath,
-> +}
+Thank you for the review.
 
-I don=E2=80=99t think this does anything useful without PhantomPinned, =
-but Benno is
-the right person to chime in here.
-
-More importantly though, why do you have #[pin] on IccPath?
-
-> +
-> +kernel::of_device_table!(
-> +    OF_TABLE,
-> +    MODULE_OF_TABLE,
-> +    <IccTestConsumerDriver as platform::Driver>::IdInfo,
-> +    [(DeviceId::new(c_str!("linux,icc-consumer-test")), ())]
-> +);
-> +
-> +impl platform::Driver for IccTestConsumerDriver {
-> +    type IdInfo =3D ();
-> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D =
-Some(&OF_TABLE);
-> +
-> +    fn probe(
-> +        pdev: &platform::Device<Core>,
-> +        _id_info: Option<&Self::IdInfo>,
-> +    ) -> Result<Pin<KBox<Self>>> {
-> +        let path =3D IccPath::of_get(pdev.as_ref(), None)?;
-> +
-> +        path.set_bw(
-> +            IccBwUnit::from_megabits_per_sec(400),
-> +            IccBwUnit::from_megabits_per_sec(800),
-> +        )?;
-> +
-> +        Ok(KBox::pin_init(Self { path }, GFP_KERNEL)?.into())
-> +    }
-> +}
-> +
-> +module_platform_driver! {
-> +    type: IccTestConsumerDriver,
-> +    name: "icc-test-consumer",
-> +    authors: ["Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>"],
-> +    description: "Test interconnect consumer driver",
-> +    license: "GPL",
-> +}
->=20
-> --=20
-> 2.50.1
->=20
->=20
-
-=E2=80=94 Daniel
+On 7/23/25 14:54, Yixun Lan wrote:
+>> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+>> Fixes: 988543522ebd ("clk: spacemit: set up reset auxiliary devices")
+> Can you put Fixes tag before SoB? I'd suggest to follow tip tree's docs
+>
+> https://docs.kernel.org/process/maintainer-tip.html
+> 4.2.6. Ordering of commit tags
+>
+> otherwise, looks good
+Thanks for pointing that out. I'll send the corrected version in the v2
+and make sure to follow the guidelines in the future.
+>
+> Reviewed-by: Yixun Lan <dlan@gentoo.org>
 
 
