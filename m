@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-741882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA195B0EA2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:49:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86ECCB0EA31
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969A11AA34E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0464561856
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11EA2472B9;
-	Wed, 23 Jul 2025 05:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE104248867;
+	Wed, 23 Jul 2025 05:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="i1Xaz+Xn"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fy6FkpZn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97970182D3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1574D220F4B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753249772; cv=none; b=B2w361ra0etOizcHwOkAkyfLivXCB/V9RTGnlZguDMZCtUHzbqGJxyCL3EYsihz23Hd5k7ioY19+qXvPo8yhbZXObRQXzLDVC2G/SJPitIgFngAkxe8bhmC/eUMU87RjL1n1YSgPTcaVRu2ZdmHRO3nafnGhT8tlxs6thmBsQiU=
+	t=1753250009; cv=none; b=rqgLQdNClckFElSmHnAGCAj1DvwLYccT+dXTzTifZtPLwxjdHTHvzoNMVbeX6lyc+rbKGx4CjTqb6O8WfELMMDfMMZkEft6HxKvGSLYVhn0TvgPonsXrNxQB+ajfBtfPxpoQCumDpzj3Zy0pq/47o1nD9W/IRJHDEEV9GkVKmmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753249772; c=relaxed/simple;
-	bh=73p836xKCRq3dwX2rUQysnZdyHxBMQ5vD/ZoRQqOK+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZUeClSAxe3BLQd7ABgUpJYhKHtnNv/gNde/KhhMBWHsQ0i9rGEhx39f1BhnP+4yfeKJmt+4/JKc1Nmrp2+oYP/eabFB8lUoUUM4Vb1bmVynyqVqfYzB2ilJveqRBRX5hlmti0CV6TQxqOP2m6aS08+2cx1qLL+CPWE3XEcxP0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=i1Xaz+Xn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=73p8
-	36xKCRq3dwX2rUQysnZdyHxBMQ5vD/ZoRQqOK+w=; b=i1Xaz+XnY5yNlqafx5uS
-	Zo89+wS8+ch0sYXvAO0fpmomiujxw086W3rw4aaJLXoR6IW7eryoNVG0pgQsJbFL
-	GQfu0FQhJxDEdZkLXx3a7XvlkuAlFzWCRkshEe9RTtpjSChklONJGhZtrQAxJVx0
-	IYDVA4s7asSgnxSbU5xz8wOODWyFW3jYS3haUnilc90MCC1aRcIU0zJcfW9qn7Fl
-	o1Ayns88kPQIomuaUeXeHQy5VmfEgnYtUm+t13pVleGjSIoOSKos2xRQ6uDm/IfQ
-	qPOfAK7+hqbYnd2Fmb6z5bL28CgHSlg3eWb+vPgG5zG4KG8DReZhntEMMYyNf2dO
-	Iw==
-Received: (qmail 1581928 invoked from network); 23 Jul 2025 07:49:23 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Jul 2025 07:49:23 +0200
-X-UD-Smtp-Session: l3s3148p1@M/5YRZI61FJtKPJT
-Date: Wed, 23 Jul 2025 07:49:23 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH -resend] misc: ti_fpc202: Switch to of_fwnode_handle()
-Message-ID: <aIB345FIxUqpWWio@shikoro>
-References: <20250723053516.1796097-1-jirislaby@kernel.org>
+	s=arc-20240116; t=1753250009; c=relaxed/simple;
+	bh=g966sWWmsGRdB6+1CU+LZVfrII3EUcFbPhJpBPPWABg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dnWZwwnok33Nlt02SeBgNP6TiaQcmeeuReMcTLVGR0loV4Z5rdr59HaITUiHsp6qXLZfsFWm2Ek2SQRtZhXW9aVZXJM2H2UXp+/FcdJ6UXU+cvhUUTWbxzbiKm6dXgT3jszqwJSSlNA6xfHZAnw1Z89s63K2f0+Y6JOFJoefM4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fy6FkpZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 549AAC4CEE7;
+	Wed, 23 Jul 2025 05:53:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753250008;
+	bh=g966sWWmsGRdB6+1CU+LZVfrII3EUcFbPhJpBPPWABg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fy6FkpZnHyMf/2H0VrSxLYCv/aRnoiDK1W+LdIEKDliufmWXK7IIPuhCGmXp9Bvqi
+	 sq6YB4ItVp2ILbwA2+sSnI29Bb5af2D6s1obxIDPM4QawNfNb+m8bB5rVs62MKiokt
+	 U6onllJGDt5mY/fSEQRB4nnR8/3VF53Voj5oLzQ74M5ZollS8sl5wCgAw1+UyyDbzn
+	 9IWL9JBQpJKydwbz3J/GxoJ3K91cyZ9OLr00LjqYD9dRyisNpVMp5SvgmXa+ANGMwY
+	 b00pPlks3es+aG3IIYbfq0FFIjNnY8c3MG3K7xxDeJDiaEx2/8lfWrT0w/pPaA0mz0
+	 4twbYmjou+1Pg==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	tglx@linutronix.de,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Subject: [PATCH -resend] bus: moxtet: Use dev_fwnode()
+Date: Wed, 23 Jul 2025 07:53:25 +0200
+Message-ID: <20250723055325.1800024-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ejw6P1Wqjqbd2cux"
-Content-Disposition: inline
-In-Reply-To: <20250723053516.1796097-1-jirislaby@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+irq_domain_create_simple() takes fwnode as the first argument. It can be
+extracted from the struct device using dev_fwnode() helper instead of
+using of_node with of_fwnode_handle().
 
---ejw6P1Wqjqbd2cux
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So use the dev_fwnode() helper.
 
-On Wed, Jul 23, 2025 at 07:35:16AM +0200, Jiri Slaby (SUSE) wrote:
-> of_node_to_fwnode() is an irqdomain's reimplementation of the
-> "officially" defined of_fwnode_handle(). The former is in the process of
-> being removed, so use the latter instead.
->=20
-> This is the last in-tree user.
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Reviewed-by: Marek Behún <kabel@kernel.org>
+---
+ drivers/bus/moxtet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+diff --git a/drivers/bus/moxtet.c b/drivers/bus/moxtet.c
+index 6c3e5c5dae10..7ce61d629a87 100644
+--- a/drivers/bus/moxtet.c
++++ b/drivers/bus/moxtet.c
+@@ -737,8 +737,7 @@ static int moxtet_irq_setup(struct moxtet *moxtet)
+ {
+ 	int i, ret;
+ 
+-	moxtet->irq.domain = irq_domain_create_simple(of_fwnode_handle(moxtet->dev->of_node),
+-						      MOXTET_NIRQS, 0,
++	moxtet->irq.domain = irq_domain_create_simple(dev_fwnode(moxtet->dev), MOXTET_NIRQS, 0,
+ 						      &moxtet_irq_domain, moxtet);
+ 	if (moxtet->irq.domain == NULL) {
+ 		dev_err(moxtet->dev, "Could not add IRQ domain\n");
+-- 
+2.50.1
 
-
---ejw6P1Wqjqbd2cux
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiAd94ACgkQFA3kzBSg
-Kbaaxw//c+TnPBzyEh80qXzPrZStHmRcWEIIBDifYbDcS0XD8g5lQg17MibOT+p9
-giNU1sp27Mok97xy9EVHw7KowYsVTNQx8NYEXdlvzyfHJ2SnFedOZwfTc/P2sfTT
-UZpqpSPB85nys1dCzqqrqqSlLWVhUQzSUJrsNnkfo5Lj792Q6VRRd1Gg4I01MWRb
-MOzUFVbL/wRYmK5uPllhm8vCB1jGhmGT2h63nQkEcPG+Aks1DrUBIOzwnIFSJSDe
-iW13xFDsm5GLsODbTOPt/1mTRV0v9VTVeTfwoCTdpchSR+D9k64j38EoTIbhx4Ri
-YlLj34W4XRz+QSG/rgoj2OGcnmM76lcX9sawjqsMSq4UT0U3u3dQydeG8AkCPRCD
-J0fzlPYhCdXTZhj61yR7kUT4iHL2uscGf1l5V7lOYhOZopuRZTVL3oQE6VSbXMYp
-W/bISmHxRLKsvJdHG8edVYAPg3EYEHlvk4VeQ3wwFII2OgytkWgP92mhcnD/0wDE
-6E+FG8dHeKMuq430OZgzgxLyiuB+fMOaUbwipBYh4ePuZ3+A3mRPTu6aqgxxXeOo
-+IqOGSEiglI6ByISWA0PFnrvhk1+uEfx+zco44n7XARCRMKPFg5IvEsF6XkelKOk
-b+H4jALU5OBMP5rRugFzUB79LDqIA9g0cKImH0vyvv5lbJMThwY=
-=a/If
------END PGP SIGNATURE-----
-
---ejw6P1Wqjqbd2cux--
 
