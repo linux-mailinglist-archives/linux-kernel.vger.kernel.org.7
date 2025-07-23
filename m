@@ -1,223 +1,149 @@
-Return-Path: <linux-kernel+bounces-743119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27FCB0FAD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA060B0FAC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA885681BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C59566946
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1660A208994;
-	Wed, 23 Jul 2025 19:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE4022D786;
+	Wed, 23 Jul 2025 19:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="SNMkLQUP"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Om/d6bmD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C67522DF95;
-	Wed, 23 Jul 2025 19:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C567226D00
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297769; cv=none; b=EgchgCELa251xWo31QQsU6NLHWdmywOTfz2Cu/KobGVW6xpyZD0+mmMEzmlgSCDzUXJBBnW3wFFUN2PHs4VY8DbCN0+TH7YELN5OjGnegGAbvjwA71S4nxxaUaT+wGDt3gnAsvfRpUgq/wRKCRIfSij5LY+vpqS/LG0tReJSmeQ=
+	t=1753297757; cv=none; b=JbH1xE3RvahzBnTjbmYAQkMC8xavVLfJDmxyp+/MJ6CptJWQ+9nXkyAdRtdsWBTmgFbShiDWUfxcXRbQEbyB529mzT5CW3brNu0Pg1EUNB+icS6sGf7iAxR8SVgFPsaujyCZvNcwy+2oATZIb4H1VJeK8SwrN/5/E6223u6DaZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297769; c=relaxed/simple;
-	bh=EqnQS3pdLe9lVyvht1V5158PQzo2LAsPB5SdLoAewO4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dCOvM3qaHh/4HuhqrjN2XIW3td5Uw0FG9y9RCLARCFmvlRLk6WhZI7hhMsV/MrEGGewXyPEQp2HDwWae9dSPYSs5nf9w64z8qrdwxiDTvt/G2WARVhtppsVUzXkqGm94U3xLHEUMPZ0kNUGXpnxiDwAIl9Ez4lmmxRAQKCWqi1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=SNMkLQUP; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=tdrUjybWdgGgWiceS53q5t4Jfab18qZEI3ZHbcKrC6w=; b=SNMkLQUPhwUHCbJci3nswprMPt
-	S79mppNui8kWpR3h/OhtXin11vAiz4vNLj69pwW4s3d1zysvVswFvPEVsslXoXL63z1pt+PERZp5X
-	pxLx4u0GwRSCC/cc6h6grQBmzpvPD9OGaPv3knKJIjjVzIy6wa+qz3A/zM44EnEyqlva0eOTqJOdn
-	iinCn+QYLNcZMCgMtZtIHxkxrT2nAoRzPfRnAz8XGQse3Gmx5HGjTbfdGDpKFdO+n4Mi+iCvkf2q6
-	DuQ4qA3kDnSf8DPeZzH4XfBJGFoTmKx7YW76dv727A9yir1wssJ44JOhuNlQXoNWGozv0/XVdYXaM
-	UAMI6DlQ==;
-Received: from i53875aba.versanet.de ([83.135.90.186] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ueeq1-0007Mn-VE; Wed, 23 Jul 2025 21:09:14 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	quentin.schulz@cherry.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	damon.ding@rock-chips.com,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: add RK3588 DP carrier from Theobroma Systems
-Date: Wed, 23 Jul 2025 21:09:04 +0200
-Message-ID: <20250723190904.37792-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250723190904.37792-1-heiko@sntech.de>
-References: <20250723190904.37792-1-heiko@sntech.de>
+	s=arc-20240116; t=1753297757; c=relaxed/simple;
+	bh=3B7KaJqSrv2chwlSfqXIDfQzdlTLnHpAn7BnAunObZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hug+MacEVTcVAhTnXqJBO2S0OgG8lcwEaxJzO+9AIZbfUTblcaHpsyAdQI2jIuAef843PYvbQt2XuhtdJ1XInBCbR68G/PV6Pprmn9Xi4AYL0zfMqM8m1kiMMcC+9v+RSFlHdtB6BgdOZGsa5KtcZkHmON5WTIjqynb9AMVXe14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Om/d6bmD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NIFl5D020008
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:09:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=j1sHXonKOMWdbcMuR27sQzHS
+	dCXJJsBCxb0JuCOVz3o=; b=Om/d6bmDKaNbevN24EC86atL7mu2tvXwDS/c2Zq3
+	5aWI3lsp27s5UKzZawXDa5Z4ZGpSeYCnthFY99g/FyWpqwYweXMETvuuw17fv0ni
+	G0UbGcnROMQZueOOMhuJQTgqeo4vaZFPBWvhNuoIupjBT0I9AV5mJwidbU67rrad
+	7fWfo1FiQD1tHsPuK9tJzdGdUe8eBuX+gSXcjxYS/JZpNPX5C2ZK66KuwfLGlmcX
+	jIFaEgg2y9x6r8iLK88pt8to0+fG4zrPYbAfrw66OuHbr+RhL+LpegSWO4SJzWuX
+	GptxFiWB+41KPfYlpg7R3b22sQuCekLX6J3+AT7RnsBEmw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3es46n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:09:15 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e33d32c501so52263085a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:09:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753297753; x=1753902553;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j1sHXonKOMWdbcMuR27sQzHSdCXJJsBCxb0JuCOVz3o=;
+        b=kh7TLvZWtEdtBiDs7kTSiDmxdKW/gosEDch2OlS1w3WuTdfil5PB8etAc8lL3kj6y1
+         f3yvmYpQbk6h975CdgrIYd8anZwFk4afxIMCpzizgf/TcyF9VJamr6+W1EgkoWww/0Rz
+         FgHkCKB84lOIutr8fxOtHvj0Jt0V5GnpemUh6pM5f8ZFQKPBWOKJI56Fb+355HtiLJAt
+         tDcRhMfPvgdSGChcfqB9pwZ/IFycnzuPRzTYg8HVbpseSpDWliHUdiE0Jc/UnMcmgMhM
+         biZmQevQEwgdhAi5cZtSpDH6lkxbl0mMDrRLa8LVeUeUEHYTOOKu8BGlfolldR+vi3AD
+         oJBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8t5aFZuNjJxm8CCuCCW7/LWypECJJHAYQw/DRFSolCqAePSkwt4+aAzy0EQ009OkazYJHbBlJ8M+uiDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1i6ApNXDAUgYDu2w01Is+wGnVk7O7nCg7I0opmss5opA/2YLq
+	gPaZ2ETspzwpKjVog3IOf5Zv0Q7FyWwHLcQs5C8KCUYQgNrKb/U6MPskv4k7ZMuirki7mysuDdZ
+	pbwsn0GjcrTjZky2hzGJHR7nWoVuvq0HGRnLydbNT0I08m7peoFGFZOZiaMT1xS14Y06Y1ZU6i7
+	U=
+X-Gm-Gg: ASbGnctIgqcWUPYkS+wTak5n1/uR3SCkQjq99eh0Q+DiMgs7ridr5TNTZfkVLhzr2p9
+	BOc1VtUxnuqLjCHfXd4LzECZZ0CL+1OqPWuuTbHMsBoci//lhasU0lvDx3ozXXsb6Y0Z8TsQDRa
+	AyCWCJed4c5f40XNb6vWJKvPpf9zJ9R7VjAQnHv+Q+CSI2zXBu3tCDLgtlJs+eFboGxq6bSgOC/
+	R5/1/Vn/h0v0oT95+L4yALab+6SIu4gXoqtjbAs6lANhFnYVpuru9sur4Ma8v6l0Zahdtx/njpe
+	QjZU1hYJg3YI8PPeadgaUKqmBLOcZVeQauYocTXcSkvZej6w4hm5BAbNxy7AJ5HJ65Mf9cbtCYc
+	durnFpwEbayqEyw/Hdy15HiaJ5haZpz95PVeYdCj6gZOi261QQrEJ
+X-Received: by 2002:a05:6214:762:b0:706:c9e5:c97c with SMTP id 6a1803df08f44-707005453a5mr66358156d6.19.1753297753266;
+        Wed, 23 Jul 2025 12:09:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0aluluxVX5KIz2Yfb88Pr9rAwoRTR4Vc9qZoIaEKErrjlJf7+1PA2sa8Ohif0ct8DwkgssQ==
+X-Received: by 2002:a05:6214:762:b0:706:c9e5:c97c with SMTP id 6a1803df08f44-707005453a5mr66357546d6.19.1753297752657;
+        Wed, 23 Jul 2025 12:09:12 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a4be6fc33sm621403e87.209.2025.07.23.12.09.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 12:09:11 -0700 (PDT)
+Date: Wed, 23 Jul 2025 22:09:10 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH -resend] gpu: ipu-v3: Use dev_fwnode()
+Message-ID: <vfruvb3z4i2daywolh42nyqkgnoxu2shminslq2rshtkhrlnud@ggjdp7z2r4pv>
+References: <20250723062737.1831015-1-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723062737.1831015-1-jirislaby@kernel.org>
+X-Proofpoint-ORIG-GUID: EJRudzpMbLdQrPD0_4g3Lzvlgjlsz2ss
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE2MiBTYWx0ZWRfX2mSftyv5JGqD
+ hMthEeacXgxqSl02wT5zKEUPGGfDBp2NiOoQZG0nxlUKnfk1sywh6Gg4Z8jcaNE7Mu47f1aHRCS
+ z7ZZOtzM7pDgcIyshBYYvLNAjFjgeT/4YrVwI48UkMNzYzzrP1ZQF3otc64g5xg65WrbFODOsks
+ Flr1SI6xcFSW29FSVtljI9CQl/mzGWHCPLF65hGD6YwrX7ZVYbNyaqAvBUYoSRWNAZUiDf31XAL
+ hMsc7RPfdKhqtNgLtafuMZUYo0kKOg7w+fc6FhWiTK6KrJGZatpYy9lZ5upmCFpgvUkS+Y4O6fo
+ NvJij28wLn6bx+mERPd02zrPhLF7BE19sXfHfcN9Tx/nCr36uQlv8udpA1IbcjEISzuUl5xw9b3
+ D0HljuqXAeZJZXh5GQIRe6KzkoSvZ7zPQrcHPeEqanl92uwASCyVSiJY4cmySTlD5GcyDrLu
+X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=6881335b cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=e5mUnYsNAAAA:8
+ a=EUspDBNiAAAA:8 a=ElOPiJf0bgOxSbpTRk8A:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-GUID: EJRudzpMbLdQrPD0_4g3Lzvlgjlsz2ss
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=516 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230162
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+On Wed, Jul 23, 2025 at 08:27:37AM +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org
+> Link: https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
+> ---
+>  drivers/gpu/ipu-v3/ipu-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-The DisplayPort carrier is a very simple baseboard only providing serial,
-ethernet and a displayport output.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-But its main functionality is that it routes the Analogix eDP controller
-to this DisplayPort output, which allows to test that controller simply
-by hooking it up to a suitable monitor.
 
-The Analogix-DP controller supports eDP 1.3 and DP 1.2, so can drive
-both eDP displays as well as full DP monitors. It does not support DP+
-so passive DP-to-HDMI adapters won't work.
-
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../rk3588-tiger-displayport-carrier.dts      | 109 ++++++++++++++++++
- 2 files changed, 110 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
-
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 7946bec10670..a1acde3c23fa 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -176,6 +176,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-dsi1-fhd10.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-plus.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-displayport-carrier.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts b/arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
-new file mode 100644
-index 000000000000..025b2853c708
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2024 Cherry Embedded Solutions GmbH
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+#include "rk3588-tiger.dtsi"
-+
-+/ {
-+	model = "Theobroma Systems RK3588-Q7 SoM on Tiger Displayport Carrier v1";
-+	compatible = "tsd,rk3588-tiger-displayport-carrier", "tsd,rk3588-tiger", "rockchip,rk3588";
-+
-+	aliases {
-+		ethernet0 = &gmac0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:115200n8";
-+	};
-+
-+	dp-connector {
-+		compatible = "dp-connector";
-+		dp-pwr-supply = <&vcc3v3_baseboard>;
-+		/* Q7_DP_HPD# but Q7_HDMI_HPD# could be used too */
-+		hpd-gpios = <&gpio4 RK_PB5 GPIO_ACTIVE_LOW>;
-+		label = "dp0";
-+		pinctrl-0 = <&edp0_hpd_l>;
-+		pinctrl-names = "default";
-+		type = "full-size";
-+
-+		port {
-+			dp_con_in: endpoint {
-+				remote-endpoint = <&edp0_out_con>;
-+			};
-+		};
-+	};
-+
-+	vcc3v3_baseboard: regulator-vcc3v3-baseboard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3_baseboard";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc5v0_baseboard>;
-+	};
-+
-+	vcc5v0_baseboard: regulator-vcc5v0-baseboard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_baseboard";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+	};
-+};
-+
-+&edp0 {
-+	status = "okay";
-+};
-+
-+&edp0_in {
-+	edp0_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_edp0>;
-+	};
-+};
-+
-+&edp0_out {
-+	edp0_out_con: endpoint {
-+		remote-endpoint = <&dp_con_in>;
-+	};
-+};
-+
-+&gmac0 {
-+	status = "okay";
-+};
-+
-+&hdptxphy0 {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	edp0 {
-+		edp0_hpd_l: edp0-hpd-l-pin {
-+			rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
-+};
-+
-+&uart2 {
-+	pinctrl-0 = <&uart2m2_xfer>;
-+	status = "okay";
-+};
-+
-+&vop {
-+	status = "okay";
-+};
-+
-+&vop_mmu {
-+	status = "okay";
-+};
-+
-+&vp2 {
-+	vp2_out_edp0: endpoint@ROCKCHIP_VOP2_EP_EDP0 {
-+		reg = <ROCKCHIP_VOP2_EP_EDP0>;
-+		remote-endpoint = <&edp0_in_vp2>;
-+	};
-+};
 -- 
-2.47.2
-
+With best wishes
+Dmitry
 
