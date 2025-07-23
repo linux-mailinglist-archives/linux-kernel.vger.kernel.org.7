@@ -1,368 +1,422 @@
-Return-Path: <linux-kernel+bounces-742715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999C6B0F5A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:44:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324D6B0F5AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDC9177B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C638540526
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4A72F49FA;
-	Wed, 23 Jul 2025 14:44:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4F02EA720;
+	Wed, 23 Jul 2025 14:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DSouVp+B"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41163A937
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6617E2EF2BC
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753281871; cv=none; b=KDN02li8TN5PPapIGCN9ONw6CP0Dj8LZXTcxj79kMFMv0kYtCMeAHnI0VxLMf7zsS6IjKa1RllLZYyRA/75pI/LLWsgAmkPUgcXiBJUyUdAzmjzoR/KglnPuczjRzGUxODoYU3euKWMD7QeqaBv3wlxQBM3+qtqxsf7ImDTEe8w=
+	t=1753281915; cv=none; b=reMprIPhWBiY8f4EfbogNA03iPISwqO3qEnDOOzlHU+dZzVg8hyv6EDlkCwZzXRuM0dLjkizKFwSbH2cWSmCpWgeATGi8RzqFwuj+d75oXoCrZ5JfWLFDYoIe3SdfqO8eJV8OGQcZx3wPvwd0VKd2MjkSiJJYdmk9FQrdF+LkjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753281871; c=relaxed/simple;
-	bh=J2EzqFZiiazR3AYyUaJbyQwZKjPi0p1xA1cEQ3mj0rM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qPBErt86hJUx6NQBtVmkpshHDm1RBgiyF4TzT+0Il5yNqOsTrom5du8LaccJ87p+5BKvL99Xg/tNB+PJPzDfr4s19Jxan6yMM4qQ6BnaNc9PoE2BNQSXv+mVYRdjovPqjFyNhL69x5PPgQ/rAEbpLpcK2vl045WRjwfhq82ree0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86d07ccc9ecso512281139f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:44:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753281868; x=1753886668;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f/Qo5veLzhQrZbJCtv8Yg+XwBjjhyIBA5terVLyQjJ0=;
-        b=hNsEfK+e6/mRMnxQv3ccGfY6MP/tRSp+QA+5gujTzqjPcSggm3I9gKJmm+qSzUnxBF
-         oCBB/e7AMTAc+otMHzIPmiHVzFSIkiUBwVKD0LQ6tWaqMS8LQlryPGqI62Lg5d85XwAP
-         dVQcaPobLTEE/WYedzXRT6eiUf5l23ANnmwdT7OCoSMAUXTPzdFNTnKH8CLVZxOyuThi
-         CnIlvkDcr6wmbTudZ/9sVB05lCXrSsU8qhrQdtTCP8MQawc9MPWDCSQpdDw6U72paW/e
-         pvjDQIq1AcuxImKFR8jXdYXElaERztEHSxMn/nfKCGwKcaAx7oZoBFNyXnrAAIs2Kz28
-         gsTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpseBs4p0LADiQ4Mn6yuEFnbmFC/p0X/woyIyw1BZbGLUbajLuY7FfmOQl90I2v8wM9k6olV7ucyaFE5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfUXVK6Fj+SsaULnzzRBxiko23HRtMZsZFgWiG8W9tpKI5JTkp
-	or9sQAfPD/xx1VN0V5kbdguvitGiYk4BcmJvfvpx6bRHSHA0zHxM8AQFvVG2VzasGNP73ZFOuiJ
-	mwvHSQYNLeX5JxpgWGk3tZBrqVvQE+lQULzlq6jgJUYW5Uak0cYYk3V70+I0=
-X-Google-Smtp-Source: AGHT+IH/bZTUXapN1C1WSSJ/Htyw/UOAPNqevCYm/BxY8VWa2dOwisSPsMgrFat4dA0UVlS9ncc3O1T5FlPXRF2tD+k8kj43UuXR
+	s=arc-20240116; t=1753281915; c=relaxed/simple;
+	bh=KaqeEl9b5LntEQE7UsVYmlDTeZRAOCuVvkoAMngrfVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qnv2K+nTwsxLS9iVBtyQsVoYS7FukeYgbHc0m/H/udnXPueN/Z+llf6aqYSN4qrJe9VwNiY08TBCWt1d6xhPKyyAJCNQ7SKRlR9vwa9SuaLiu6Nn5odXbLGBctvxwpAeEIG78EZv9G0vcWfftCeViOl/ULwvaY3b4wGLaAEXl3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DSouVp+B; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753281908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bUa5CYWqKxWBN0mGvyl5+J333f/QeRW3CbgdWRbd6f4=;
+	b=DSouVp+BnVYg+LYWCPmfqXgxYheeKTC9pdTVhemIHYP7h0uZzwD6j/IGF0wCcAHA3r7lsj
+	6t2jxSUMxt+T6R0f/jpwWp/PrDiC9vmyePLejNP8TS+N86YJsXw+4+FmXk6BAXaga5S0zw
+	fJhjF7SSnVBqHjsnXOr/Lw3Q+6IDrrA=
+From: Tao Chen <chen.dylane@linux.dev>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v4 1/3] bpftool: Add bpf_token show
+Date: Wed, 23 Jul 2025 22:44:40 +0800
+Message-ID: <20250723144442.1427943-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3fcc:b0:87c:3872:6787 with SMTP id
- ca18e2360f4ac-87c64f3ff78mr602917039f.1.1753281868315; Wed, 23 Jul 2025
- 07:44:28 -0700 (PDT)
-Date: Wed, 23 Jul 2025 07:44:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6880f54c.050a0220.248954.0000.GAE@google.com>
-Subject: [syzbot] [input?] [usb?] [io-uring?] INFO: task hung in
- io_wq_put_and_exit (5)
-From: syzbot <syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, asml.silence@gmail.com, axboe@kernel.dk, 
-	frederic@kernel.org, io-uring@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+Add `bpftool token show` command to get token info
+from bpffs in /proc/mounts.
 
-syzbot found the following issue on:
+Example plain output for `token show`:
+token_info  /sys/fs/bpf/token
+	allowed_cmds:
+	  map_create          prog_load
+	allowed_maps:
+	allowed_progs:
+	  kprobe
+	allowed_attachs:
+	  xdp
+token_info  /sys/fs/bpf/token2
+	allowed_cmds:
+	  map_create          prog_load
+	allowed_maps:
+	allowed_progs:
+	  kprobe
+	allowed_attachs:
+	  xdp
 
-HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12b877d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=415e83411fefd73f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e328767eafd849df0a78
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110b938c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1622a38c580000
+Example json output for `token show`:
+[{
+	"token_info": "/sys/fs/bpf/token",
+	"allowed_cmds": ["map_create", "prog_load"],
+	"allowed_maps": [],
+	"allowed_progs": ["kprobe"],
+	"allowed_attachs": ["xdp"]
+}, {
+	"token_info": "/sys/fs/bpf/token2",
+	"allowed_cmds": ["map_create", "prog_load"],
+	"allowed_maps": [],
+	"allowed_progs": ["kprobe"],
+	"allowed_attachs": ["xdp"]
+}]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/22c5f1286a72/disk-bf61759d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cc79af4d966c/vmlinux-bf61759d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b2e6d621f424/bzImage-bf61759d.xz
-
-The issue was bisected to:
-
-commit e5598d6ae62626d261b046a2f19347c38681ff51
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Thu Aug 24 22:53:31 2023 +0000
-
-    io_uring: compact SQ/CQ heads/tails
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c92b82580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c92b82580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c92b82580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com
-Fixes: e5598d6ae626 ("io_uring: compact SQ/CQ heads/tails")
-
-INFO: task syz-executor971:5849 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor971 state:D stack:26488 pid:5849  tgid:5849  ppid:5844   task_flags:0x400148 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6879
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
- io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
- io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
- io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
- io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x2ce/0x2bd0 kernel/exit.c:911
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
- __do_sys_exit_group kernel/exit.c:1116 [inline]
- __se_sys_exit_group kernel/exit.c:1114 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f141ec08e39
-RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
- </TASK>
-INFO: task syz-executor971:5850 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor971 state:D stack:26488 pid:5850  tgid:5850  ppid:5846   task_flags:0x400148 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6879
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
- io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
- io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
- io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
- io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x2ce/0x2bd0 kernel/exit.c:911
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
- __do_sys_exit_group kernel/exit.c:1116 [inline]
- __se_sys_exit_group kernel/exit.c:1114 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f141ec08e39
-RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
- </TASK>
-INFO: task syz-executor971:5851 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor971 state:D stack:27256 pid:5851  tgid:5851  ppid:5845   task_flags:0x400148 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6879
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
- io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
- io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
- io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
- io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x2ce/0x2bd0 kernel/exit.c:911
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
- __do_sys_exit_group kernel/exit.c:1116 [inline]
- __se_sys_exit_group kernel/exit.c:1114 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f141ec08e39
-RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
- </TASK>
-INFO: task syz-executor971:5852 blocked for more than 144 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor971 state:D stack:26312 pid:5852  tgid:5852  ppid:5848   task_flags:0x400148 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6879
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
- io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
- io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
- io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
- io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x2ce/0x2bd0 kernel/exit.c:911
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
- __do_sys_exit_group kernel/exit.c:1116 [inline]
- __se_sys_exit_group kernel/exit.c:1114 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f141ec08e39
-RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
- </TASK>
-INFO: task syz-executor971:5853 blocked for more than 144 seconds.
-      Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
-      Blocked by coredump.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor971 state:D stack:27080 pid:5853  tgid:5853  ppid:5847   task_flags:0x400148 flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6879
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
- io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
- io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
- io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
- io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
- io_uring_files_cancel include/linux/io_uring.h:19 [inline]
- do_exit+0x2ce/0x2bd0 kernel/exit.c:911
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
- __do_sys_exit_group kernel/exit.c:1116 [inline]
- __se_sys_exit_group kernel/exit.c:1114 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f141ec08e39
-RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e5c4e00 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6770
-2 locks held by getty/5594:
- #0: ffff888032cc90a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900036cb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xf70/0x12c0 kernel/hung_task.c:470
- kthread+0x3c5/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
-Code: 7b 6d 02 e9 83 fb 02 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 43 99 23 00 fb f4 <c3> cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
-RSP: 0018:ffffffff8e207e08 EFLAGS: 000002c6
-RAX: 00000000000d6725 RBX: 0000000000000000 RCX: ffffffff8b867c99
-RDX: 0000000000000000 RSI: ffffffff8de2fff6 RDI: ffffffff8c157460
-RBP: fffffbfff1c52ef0 R08: 0000000000000001 R09: ffffed1017086645
-R10: ffff8880b843322b R11: 0000000000000001 R12: 0000000000000000
-R13: ffffffff8e297780 R14: ffffffff90a94550 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888124720000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e50c02d168 CR3: 000000000e382000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:749
- default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
- cpuidle_idle_call kernel/sched/idle.c:185 [inline]
- do_idle+0x391/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
- rest_init+0x16b/0x2b0 init/main.c:745
- start_kernel+0x3ee/0x4d0 init/main.c:1102
- x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:307
- x86_64_start_kernel+0x130/0x190 arch/x86/kernel/head64.c:288
- common_startup_64+0x13e/0x148
- </TASK>
-
-
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ tools/bpf/bpftool/main.c  |   3 +-
+ tools/bpf/bpftool/main.h  |   1 +
+ tools/bpf/bpftool/token.c | 225 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 228 insertions(+), 1 deletion(-)
+ create mode 100644 tools/bpf/bpftool/token.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Change list:
+ v3 -> v4:
+  - patch1
+   - fix CHECK coding style with 'checkpatch.pl --strict'
+   - repalce [tab] with space when show help information
+  - patchset reviewed-by Quentin
+ v3: https://lore.kernel.org/bpf/20250723033107.1411154-1-chen.dylane@linux.dev
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ v2 -> v3:
+  Quentin suggested:
+  - patch1
+   - remove print when token not found.
+  - patch2
+   - refactor description message.
+  - patch3
+   - update commit message.
+ v2: https://lore.kernel.org/bpf/20250722115815.1390761-1-chen.dylane@linux.dev
+     https://lore.kernel.org/bpf/20250722120912.1391604-2-chen.dylane@linux.dev
+  
+ v1 -> v2:
+  Quentin suggested:
+  - patch1
+   - remove zclose macro.
+   - rename __json_array_str to split_json_array_str
+   - print empty array when value is null for json format.
+   - show all tokens info and format plain output for readable.
+   - add info when token not found.
+   - add copyright in token.c
+  - patch2
+   - update 'eBPF progs' to 'eBPF tokens'.
+   - update description.
+  - patch3
+   - add bash-completion.
+ v1: https://lore.kernel.org/bpf/20250720173310.1334483-1-chen.dylane@linux.dev
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+index 2b7f2bd3a7d..0f1183b2ed0 100644
+--- a/tools/bpf/bpftool/main.c
++++ b/tools/bpf/bpftool/main.c
+@@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
+ 		"       %s batch file FILE\n"
+ 		"       %s version\n"
+ 		"\n"
+-		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
++		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
+ 		"       " HELP_SPEC_OPTIONS " |\n"
+ 		"                    {-V|--version} }\n"
+ 		"",
+@@ -87,6 +87,7 @@ static const struct cmd commands[] = {
+ 	{ "gen",	do_gen },
+ 	{ "struct_ops",	do_struct_ops },
+ 	{ "iter",	do_iter },
++	{ "token",	do_token },
+ 	{ "version",	do_version },
+ 	{ 0 }
+ };
+diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+index 6db704fda5c..a2bb0714b3d 100644
+--- a/tools/bpf/bpftool/main.h
++++ b/tools/bpf/bpftool/main.h
+@@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
+ int do_feature(int argc, char **argv) __weak;
+ int do_struct_ops(int argc, char **argv) __weak;
+ int do_iter(int argc, char **argv) __weak;
++int do_token(int argc, char **argv) __weak;
+ 
+ int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
+ int prog_parse_fd(int *argc, char ***argv);
+diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+new file mode 100644
+index 00000000000..6312e662a12
+--- /dev/null
++++ b/tools/bpf/bpftool/token.c
+@@ -0,0 +1,225 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/* Copyright (C) 2025 Didi Technology Co., Tao Chen */
++
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE
++#endif
++#include <errno.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <mntent.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
++#include "json_writer.h"
++#include "main.h"
++
++#define MOUNTS_FILE "/proc/mounts"
++
++static bool has_delegate_options(const char *mnt_ops)
++{
++	return strstr(mnt_ops, "delegate_cmds") ||
++	       strstr(mnt_ops, "delegate_maps") ||
++	       strstr(mnt_ops, "delegate_progs") ||
++	       strstr(mnt_ops, "delegate_attachs");
++}
++
++static char *get_delegate_value(const char *opts, const char *key)
++{
++	char *token, *rest, *ret = NULL;
++	char *opts_copy = strdup(opts);
++
++	if (!opts_copy)
++		return NULL;
++
++	for (token = strtok_r(opts_copy, ",", &rest); token;
++			token = strtok_r(NULL, ",", &rest)) {
++		if (strncmp(token, key, strlen(key)) == 0 &&
++		    token[strlen(key)] == '=') {
++			ret = token + strlen(key) + 1;
++			break;
++		}
++	}
++	free(opts_copy);
++
++	return ret;
++}
++
++static void print_items_per_line(const char *input, int items_per_line)
++{
++	char *str, *rest, *strs;
++	int cnt = 0;
++
++	if (!input)
++		return;
++
++	strs = strdup(input);
++	if (!strs)
++		return;
++
++	for (str = strtok_r(strs, ":", &rest); str;
++			str = strtok_r(NULL, ":", &rest)) {
++		if (cnt % items_per_line == 0)
++			printf("\n\t  ");
++
++		printf("%-20s", str);
++		cnt++;
++	}
++
++	free(strs);
++}
++
++#define ITEMS_PER_LINE 4
++static void show_token_info_plain(struct mntent *mntent)
++{
++	char *value;
++
++	printf("token_info  %s", mntent->mnt_dir);
++
++	printf("\n\tallowed_cmds:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_maps:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_progs:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_attachs:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
++	print_items_per_line(value, ITEMS_PER_LINE);
++	printf("\n");
++}
++
++static void split_json_array_str(const char *input)
++{
++	char *str, *rest, *strs;
++
++	if (!input) {
++		jsonw_start_array(json_wtr);
++		jsonw_end_array(json_wtr);
++		return;
++	}
++
++	strs = strdup(input);
++	if (!strs)
++		return;
++
++	jsonw_start_array(json_wtr);
++	for (str = strtok_r(strs, ":", &rest); str;
++			str = strtok_r(NULL, ":", &rest)) {
++		jsonw_string(json_wtr, str);
++	}
++	jsonw_end_array(json_wtr);
++
++	free(strs);
++}
++
++static void show_token_info_json(struct mntent *mntent)
++{
++	char *value;
++
++	jsonw_start_object(json_wtr);
++
++	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
++
++	jsonw_name(json_wtr, "allowed_cmds");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_maps");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_progs");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_attachs");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
++	split_json_array_str(value);
++
++	jsonw_end_object(json_wtr);
++}
++
++static int __show_token_info(struct mntent *mntent)
++{
++	if (json_output)
++		show_token_info_json(mntent);
++	else
++		show_token_info_plain(mntent);
++
++	return 0;
++}
++
++static int show_token_info(void)
++{
++	FILE *fp;
++	struct mntent *ent;
++
++	fp = setmntent(MOUNTS_FILE, "r");
++	if (!fp) {
++		p_err("Failed to open: %s", MOUNTS_FILE);
++		return -1;
++	}
++
++	if (json_output)
++		jsonw_start_array(json_wtr);
++
++	while ((ent = getmntent(fp)) != NULL) {
++		if (strncmp(ent->mnt_type, "bpf", 3) == 0) {
++			if (has_delegate_options(ent->mnt_opts))
++				__show_token_info(ent);
++		}
++	}
++
++	if (json_output)
++		jsonw_end_array(json_wtr);
++
++	endmntent(fp);
++
++	return 0;
++}
++
++static int do_show(int argc, char **argv)
++{
++	if (argc)
++		return BAD_ARG();
++
++	return show_token_info();
++}
++
++static int do_help(int argc, char **argv)
++{
++	if (json_output) {
++		jsonw_null(json_wtr);
++		return 0;
++	}
++
++	fprintf(stderr,
++		"Usage: %1$s %2$s { show | list }\n"
++		"       %1$s %2$s help\n"
++		"\n"
++		"",
++		bin_name, argv[-2]);
++	return 0;
++}
++
++static const struct cmd cmds[] = {
++	{ "show",	do_show },
++	{ "list",	do_show },
++	{ "help",	do_help },
++	{ 0 }
++};
++
++int do_token(int argc, char **argv)
++{
++	return cmd_select(cmds, argc, argv, do_help);
++}
+-- 
+2.48.1
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
