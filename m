@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-742773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E63DB0F67B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D086AB0F67A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B687B4AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9513B166800
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E52D303DFC;
-	Wed, 23 Jul 2025 14:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C3330112C;
+	Wed, 23 Jul 2025 14:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kpzOOdKp"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9rY3M5H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3CF286880;
-	Wed, 23 Jul 2025 14:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282673; cv=pass; b=lSy5DpCoW6PpwhLIvkFcMLBeYsPu0TF5RnuQEijSerVyN3HwqujEGk6iKGBH7TDWjbimsuI9XJ0Tl89trcfrfEcEXJOUdCXKLLnfy+WVtF3Gp7e3EmLm8xK29KlpxwEhbMPjB+FlvGhpVmdpcdixIYiTEySQFr3GS35YgcRM5QI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282673; c=relaxed/simple;
-	bh=93tYYtpwGCS2CavJKfyj8zfhTq9hJX4RCX5dMS3I4bw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=p9tsRXbEqGQlvV8NQTf8W/uGhmresA7+2DOHhPqTpg+N9XL2RryATyTH0oX9PTNFmCUP+rsy/lq/kFV4eZ/+ze+1nMgk7k0F7BioZdeLtjKBkjNWgfsUzB8vU2Sw4SGAqlmZpVnjHOUoyTR3upQm+otptDtX0El/N/cEmk+ZcwA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kpzOOdKp; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753282619; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eAaQE2jKp1gxGdO98JQjDgGFPVe8zalXpPAQI2Ja8Py69P0AaQJccIGqk/bnNDkjEvwYBrjXRnNxRJAYUAqy7ZdL3TunC9xsiv556dQMH8+c/umtC0R76uRp0MoBSBBbvOSupmVTSIJX5glDDYaYsvlycdbysCltyDl3p1hm8lU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753282619; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=93tYYtpwGCS2CavJKfyj8zfhTq9hJX4RCX5dMS3I4bw=; 
-	b=c8KaF9uHHh/Nf25tjZbEOipg3AZzNygZCx7b4dqM0ri+1MVlvoBH1Exyt8KWwtxphlDmCHvewCMbRkTv7ijrIYvSICx5d36WcOVXokSgmi/Be1xg3MHiR10Vo1TkiWHvKAmzD+7PAipRg8nboTEnMHehQCkMkY/s0TLlJf0ydtw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753282619;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=93tYYtpwGCS2CavJKfyj8zfhTq9hJX4RCX5dMS3I4bw=;
-	b=kpzOOdKpfDWJJl4HlrJH7ghkAmSVNJdUNbR3ZjozbBPvAbl6xb/cze5BxwrEhaaO
-	GbpPDtHils3OWXGtwgkcOrinZrNladhzLgtF3l5w5B0zoT6TthvN5YKTlyyL1FukWVx
-	kqzUo9/Qo+B0LxuftwdhdQE28Y3z1w6QohAofym0=
-Received: by mx.zohomail.com with SMTPS id 1753282617127332.3516121893997;
-	Wed, 23 Jul 2025 07:56:57 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9262F6F9D;
+	Wed, 23 Jul 2025 14:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753282605; cv=none; b=DV/eTIK4BYd+Zf9RbliyxKDWjg7KYREKb+MzLRWMEqudnelsG6OfUQvXa/9GZQaGDCDnZKTSmV0Q/ZoC7ZU+DbpMt+U698bXja2qHAe+juXhpimqJBYA3+CTA/mozdiy8Un/QQ6sYE3m4IBwqewJlC7WcoOUlEDlJM4+pTLxG8s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753282605; c=relaxed/simple;
+	bh=RCGWcT8sG+CixnkMWkTnAWoF9wzChICSk12UfBIsilA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4bvoQBvll7LI02wMwpZJ8JuvXRTlxQhlFSgqLdsCMfn9A4cYkln5B2RnPHYcTkGDqRxe0JeLSzMu2dr3cOStGkVFE80DUN2G3Ih8pAr2+t8O/Ui01PC2AcLtaLBT68r3w/MXHoHNtZL4WrBwMLngzG68tMDsTE4niqrrK29UVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9rY3M5H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01FA5C4CEFA;
+	Wed, 23 Jul 2025 14:56:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753282604;
+	bh=RCGWcT8sG+CixnkMWkTnAWoF9wzChICSk12UfBIsilA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F9rY3M5H05rUTbZaTuSMHgNFjtEiXBCWkW2yXssy7aHeaZ1T9z6bNj4xe3MHCw8dW
+	 bEYtUYQSlcqsXzFg88uAfg5aTY7X3ZW1tlagHwJ00a+swMJHjQEadW/AvKnO4AV5Sr
+	 KZqlhu370CyGfpUYrctgZrURRa4YUs3YYuMQWGPucY8sjQ2vsvzmZwIUlEJAZGh7uG
+	 6Ptoi+eztsLu0Ca6rsROWdGgaiUewZj44VvqL9t/V+tiOZ4TaVCbXUvCz1J5DruLV0
+	 q4FHutlRICT14gUdgAt49zu6bLodmHQr8fZx6Gva/bgjvHVqid9ySmV9UEFZmlbi9+
+	 /hA4h64HCsuww==
+Date: Wed, 23 Jul 2025 07:56:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 08/13] generic/1229: Stress fsx with atomic writes
+ enabled
+Message-ID: <20250723145643.GO2672039@frogsfrogsfrogs>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <1e1e7d552e91fab58037b7b35ffbf8b2e7070be5.1752329098.git.ojaswin@linux.ibm.com>
+ <20250717162230.GH2672039@frogsfrogsfrogs>
+ <aICBYrgdwZUcm2C7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org>
-Date: Wed, 23 Jul 2025 11:56:42 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com>
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
- <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <aIBl6JPh4MQq-0gu@tardis-2.local>
- <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
- <aIDxFoQV_fRLjt3h@tardis-2.local>
- <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aICBYrgdwZUcm2C7@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+
+On Wed, Jul 23, 2025 at 12:00:48PM +0530, Ojaswin Mujoo wrote:
+> On Thu, Jul 17, 2025 at 09:22:30AM -0700, Darrick J. Wong wrote:
+> > On Sat, Jul 12, 2025 at 07:42:50PM +0530, Ojaswin Mujoo wrote:
+> > > Stress file with atomic writes to ensure we excercise codepaths
+> > > where we are mixing different FS operations with atomic writes
+> > > 
+> > > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > 
+> > Hrm, doesn't generic/521 test this already if the fs happens to support
+> > atomic writes?
+> > 
+> > --D
+> 
+> Hi Darrick,
+> 
+> Yes but I wanted one with _require_scratch_write_atomic and writes going
+> to SCRATCH fs to explicitly test atomic writes as that can get missed in
+> g/521. 
+> 
+> Would you instead prefer to have those changes in g/521?
+
+Oh, I see.  You're setting the opsize to awu_max so that you're
+guaranteed to get maximally sized atomic writes, which might not happen
+with regular g521.
+
+Ok I'm convinced,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
 
 
-
-> On 23 Jul 2025, at 11:35, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On 7/23/25 4:26 PM, Boqun Feng wrote:
->> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
->> But sure, this and the handler pinned initializer thing is not a =
-blocker
->> issue. However, I would like to see them resolved as soon as possible
->> once merged.
->=20
-> I think it would be trivial to make the T an impl PinInit<T, E> and =
-use a
-> completion as example instead of an atomic. So, we should do it right =
-away.
->=20
-> - Danilo
-
-
-I agree that this is a trivial change to make. My point here is not to =
-postpone
-the work; I am actually somewhat against switching to completions, as =
-per the
-reasoning I provided in my latest reply to Boqun. My plan is to switch =
-directly
-to whatever will substitute AtomicU32.
-
-The switch to impl PinInit is fine.
-
-=E2=80=94 Daniel=
+> Regards,
+> Ojaswin
+> 
 
