@@ -1,162 +1,261 @@
-Return-Path: <linux-kernel+bounces-742397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81977B0F136
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4471B0F13B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD8F7AE68F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CC23AC4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B52E49A3;
-	Wed, 23 Jul 2025 11:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9722D94B9;
+	Wed, 23 Jul 2025 11:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y1/Q8lel"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OkXkdk/F"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD3C28CF7C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05DA299A84
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753270267; cv=none; b=ZY0wY8+lH5ZDjvtuBEW+WetLZWndYw+FBFJ5QROc19SuKzhnMmczRJkSNcBFkq39HF4Q1RNAUHgrefkXxkDISoDFErhVOoW3kzUYVullqDPEnN99bNv3bdecvOiCXSoIVmaXgPo3N7mIsMaRd1xD2R87PJ7hX1Eun8WTt9aUdV0=
+	t=1753270319; cv=none; b=OjfZyIcWt+MpjtAcqaVSq+Oy+nSJvy3f9X7+bP1YcQW6CKwtDf9xb6THmhEwSLDGFKXYBK1fRc0VQiovH/QIJWLU7nIbr4OSqPkrxqbb7OXQGX9dFSSxOlxRmsuuH9V5hOVFiXbSPz3b4H1EfTk2UcmA/lt9g/1491Z0p4cTp88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753270267; c=relaxed/simple;
-	bh=8R/2LqL8EYjHk+vjnbWhMiilF7QLr2f1y5Aen+tPoN4=;
+	s=arc-20240116; t=1753270319; c=relaxed/simple;
+	bh=MzfCHmBha6Q99Kkz33+/BuRWFNKt27I2lSXdNRhOn7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdfx+0lugbg91we3N+zmfaUNqSOgZ5gObCzS4WBNwBTarYdvSwm+PpGCXFjYRDDqO69s5q/o5uVaVGZN5XSmMpAiC99JaNuyfLa7qjuc6PVghMQ85yKM41faaQ+z7aThfsSfLI/PEau0I8ZwtaUumgPbRv6HKDpuEfVG8xCXQi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y1/Q8lel; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9RcLX014861
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=LEy+cd4XZeFNsCcKEQ8NGnzC
-	xyrPqaqP08OMrM8m9/E=; b=Y1/Q8lelxaYHM9CS8hCLfOfC/sejyZRu/Dxaw2jJ
-	RSNy+cchs6J90LtctQBth+U+2BGHsnG49Skhsl2l62LDgYfp6WTbFrMVKwIyuQx2
-	5MC/PLU3SIYZz8ViUCBocs3O6sIRYaIdDZO4BMtnrLqiYNHPicHtyseQCyHr/IKK
-	DPgyieLj/j4Vxx70j1K57/N4+p2tp34640qRP8X9Rzfk6HgYD4QqI+pyfy0mVVz3
-	W3UpLIa5/oVd72s9LENFDcgLx+NH3WOckYKMmblhNdzTPTgOzJp8ze4pl4CxwPxu
-	Tcxy1aaowmU0rRAShauvgGZ1P6XFzne/iW4YS0q8yEFuKw==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048vbac4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:31:05 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-4e7f9ad4deeso446006137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:31:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753270264; x=1753875064;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LEy+cd4XZeFNsCcKEQ8NGnzCxyrPqaqP08OMrM8m9/E=;
-        b=OccPr7cAPm+2J6XkezbArzKQz/yU1XKxJ1RMjGP1yNavHNgvZ5RgRQno1hTzQUBD9Y
-         EFmzZ+75d7XNMd/qY7dxIGBtGwUECMjInOkrvOnXIDEr+W4N7LEN+8oKymTJSLpGIVGP
-         3oxC9pIAKkzBjE6fxFI1j83tYjExEGroCwvw0wR8MGRPDmZ5if9A+KAIIHCNIVL2KlXM
-         gGzYrlr9nkxHUCo6E9F9Sn1rHNBqgKjOeH67Kjhhw9LxU/WB3KtEsulP/5lj9KGwcvUR
-         3EHU57qRih5UijIEgZn/y+iI7kTK5Bzxqi9QaolW35DG7CBIJW0VZFzq74ZZjKuQdhsa
-         P70w==
-X-Forwarded-Encrypted: i=1; AJvYcCUu2BtZmAPRK2JIWGGTrm8SL/71bdzN3llNTeDp0ihF9mQkf7iM+Ph7tN5ibCA20BiRcStjBG6n+BpN/AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+B1/BuJvPJknDhphdbyrbim5sxSTyD+FIypQ5Pr93Cij+Kvcu
-	zcsShqLLgi5JGzlLMldjQ9DFOD3lQGctSRT3PDjBfLVfX3hD6VmNyXE4OpiYjvfXLPrOKHYTysh
-	IzSVc7aSI5Nwfe5B4C6k58ImMIeJ+dT6MN5WDbSa5pjc+zPkYofLucMJPvpCvK1yYru8=
-X-Gm-Gg: ASbGncuA7k32qnJCUfvlpswk//ObszJiEE6fTlwVfzgOH9bA1HanFlhgSeGHZcimpWz
-	RAMMTWkfjpzMUAHsKcQRh7TI5zb8vKldrbCjKbpdS6TsZSWM+7Dvqmyj2aIaEAzWw0z4JVU9oCX
-	MnjkSEsVxoXXNOo9yBXdZfXjnNPzqole3gPpcbICwZHhczJo3y04pgUG2D8A6nkhGTGSm+kfdLN
-	GECmChPcnPsjDWhZh8AIaEpFqmIUo9Gcv/J07mFuBVyN3y85DmNRpGU/OT5lP38hjiFtz0Rzi4x
-	lU3metmqTGquJGLIpQ+/9OjYiYhvIfcRZJ2EykgEW1EO61JWVxIShUpnK4aI/l0hp7fkzznDiqK
-	gEXU71pB3rVvuDmD/XVhPgzPo9Tfo74GbyU2Fuzx5bAP9O2yBID2S
-X-Received: by 2002:a05:6102:6d2:b0:4e5:9323:d2b9 with SMTP id ada2fe7eead31-4fa14ff205amr839587137.2.1753270264133;
-        Wed, 23 Jul 2025 04:31:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElI+nLaRgSNGVDgEVXqwotYLUYVXhaufngd/MK3e1G8/fbHHtEjIQSDAJaJfnpO2XvBgiojA==
-X-Received: by 2002:a05:6102:6d2:b0:4e5:9323:d2b9 with SMTP id ada2fe7eead31-4fa14ff205amr839574137.2.1753270263645;
-        Wed, 23 Jul 2025 04:31:03 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d92160sm2268566e87.162.2025.07.23.04.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:31:02 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:31:01 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH -resend] drm/msm: use dev_fwnode()
-Message-ID: <6newddw6tnus7yhzd4d2sin7czbr5x77qdhlxwpjuulnq27jxq@vfntrc6tffit>
-References: <20250723055512.1800438-1-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wszg3MIFstK+CWrq8wO9AdXIkaeTlQYFlNtw6C+G5smy3i8LAHl7OtJBWKHaJ7nYw4XqeaFXk89znwqtq5U/m0MFM7cFTdczaDfzCRNXovzL3E7XG9lI++R0dZYLbVEOlMqvrPowCUBFQQyoySsRi3BPhiP4Kehg71TG5EwOQJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OkXkdk/F; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 23 Jul 2025 07:31:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753270305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMn280ldD7P7MRnOeYtZF4M3wweQEZD57ZL/8Ws818w=;
+	b=OkXkdk/FtIFnnKaGse7LcZVWp4SopXeSozhXITgV7qc4rKYRGSeqCK0+u1E8ExbwCiPdWm
+	BYD0elvIj5+ElXkmTLbmDqoD3HOaQ8k0Rlx1Ftw56zww+CgMaN3RpbSZn6aEHAbmWsENzN
+	Y5FcFa0vF7hl67O/zBcziDYH050HTeg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Cc: rientjes@google.com, vbabka@suse.cz, cl@gentwo.org, 
+	roman.gushchin@linux.dev, harry.yoo@oracle.com, surenb@google.com, 
+	pasha.tatashin@soleen.com, akpm@linux-foundation.org, corbet@lwn.net, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com
+Subject: Re: [PATCH 1/1] mm: slub: Introduce one knob to control the track of
+ slub object
+Message-ID: <mw52yqm7wfe5afb5ybvfkpdgo4pm4wobmzv3um2cov3amekzmi@ye5drijf7njj>
+References: <20250723080328.4012263-1-quic_zhenhuah@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250723055512.1800438-1-jirislaby@kernel.org>
-X-Proofpoint-GUID: PVS2B-38zmUYDFJXPQgf0r8ha-mXDnys
-X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=6880c7f9 cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8
- a=tVI0ZWmoAAAA:8 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8 a=-sS6WOwEsJUFamFQ3l4A:9
- a=CjuIK1q_8ugA:10 a=crWF4MFLhNY0qMRaF8an:22 a=TjNXssC_j7lpFel5tvFf:22
- a=-BPWgnxRz2uhmvdm1NTO:22 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NyBTYWx0ZWRfX0G0yZQZU1Y2i
- v7uiYkXHNbJsA2FiABLlBa5cUVP8YAL8qo6DaGZRC+H7iDayqKV2zbm7HLfKQKatypbUB5/ht0q
- sCtxoIy9rIRWKjtXqSMyiNIo3dco3/8OEbofd/WJyVUoMO3Ki2DmAXvC9rtXMp0H2tGxnoo+/gd
- 7xr1GSLERE/bijKrAUZA+3Hn/Zv03VAusqMmlR5Ky0oLmRkfUdPgV4TsEAhnS3smYjxeJLeoNrb
- /PqNgcBjJaYw9QnjHfps6GuI2Yp8eutVY2/3dGmMwctWDeurNwu04yBEL2qDs3uDVfmBlWyC3IO
- 2/Rl30nARxOSM+b/mJpTrCNxvnBPViIgxaIzyanVTz2MdqMpYy6r53S46RXajbblc6+44bJPr8D
- E8SLOBlqJFFoH/JWBui9kVrFIHw/TNZBxWLvvVF2IL9pBbxyEeiUj7YcuJ178CQarixax+1p
-X-Proofpoint-ORIG-GUID: PVS2B-38zmUYDFJXPQgf0r8ha-mXDnys
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=762
- lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230097
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250723080328.4012263-1-quic_zhenhuah@quicinc.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 23, 2025 at 07:55:12AM +0200, Jiri Slaby (SUSE) wrote:
-> irq_domain_create_simple() takes fwnode as the first argument. It can be
-> extracted from the struct device using dev_fwnode() helper instead of
-> using of_node with of_fwnode_handle().
+On Wed, Jul 23, 2025 at 04:03:28PM +0800, Zhenhua Huang wrote:
+> Mem profiling feature tracks both "alloc_slab_page"(page level) and slub
+> object level allocations. To track object level allocations,
+> slabobj_ext consumes 16 bytes per object for profiling slub object if
+> CONFIG_MEMCG is set.
+> Based on the data I've collected, this overhead accounts for approximately
+> 5.7% of slub memory usage — a considerable cost.
+> w/ noslub  slub_debug=-
+> Slab:              87520 kB
+> w/o noslub slub_debug=-
+> Slab:              92812 kB
 > 
-> So use the dev_fwnode() helper.
+> While In some scenarios, we may choose not to delve into SLUB allocation
+> details if initial triage indicates that SLUB memory usage is within
+> acceptable limits. To support this, a control knob is introduced to enable
+> or disable SLUB object tracking.
+> The "noslub" knob disables SLUB tracking, preventing further allocation of
+> slabobj_ext structures.
+
+...Have there been actual scenarios where this would be useful?
+
+We've already got a knob for memory allocation profiling as a whole;
+most allocations are slub allocations, so if you're looking at memory
+allocation profiling you probably want slub.
+
 > 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Cc: Dmitry Baryshkov <lumag@kernel.org>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: Marijn Suijten <marijn.suijten@somainline.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> 
+> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
 > ---
+>  Documentation/mm/allocation-profiling.rst |  7 +++++-
+>  include/linux/alloc_tag.h                 |  8 +++++++
+>  lib/alloc_tag.c                           | 26 +++++++++++++++++------
+>  mm/slub.c                                 | 10 ++++-----
+>  4 files changed, 38 insertions(+), 13 deletions(-)
 > 
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: freedreno@lists.freedesktop.org
-> ---
->  drivers/gpu/drm/msm/msm_mdss.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm/allocation-profiling.rst
+> index 316311240e6a..9ecae74e0365 100644
+> --- a/Documentation/mm/allocation-profiling.rst
+> +++ b/Documentation/mm/allocation-profiling.rst
+> @@ -18,7 +18,7 @@ kconfig options:
+>    missing annotation
+>  
+>  Boot parameter:
+> -  sysctl.vm.mem_profiling={0|1|never}[,compressed]
+> +  sysctl.vm.mem_profiling={0|1|never}[,compressed][,noslub]
+>  
+>    When set to "never", memory allocation profiling overhead is minimized and it
+>    cannot be enabled at runtime (sysctl becomes read-only).
+> @@ -30,6 +30,11 @@ Boot parameter:
+>    If compression fails, a warning is issued and memory allocation profiling gets
+>    disabled.
+>  
+> +  The optional noslub parameter disables tracking of individual SLUB objects. This
+> +  approach, similar to how page owner tracking works, relies on slub_debug for SLUB
+> +  object insights instead. While this reduces memory overhead, it also limits the
+> +  ability to observe detailed SLUB allocation behavior.
+> +
+>  sysctl:
+>    /proc/sys/vm/mem_profiling
+>  
+> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> index 8f7931eb7d16..af3c139712ce 100644
+> --- a/include/linux/alloc_tag.h
+> +++ b/include/linux/alloc_tag.h
+> @@ -134,6 +134,13 @@ static inline bool mem_alloc_profiling_enabled(void)
+>  				   &mem_alloc_profiling_key);
+>  }
+>  
+> +DECLARE_STATIC_KEY_TRUE(slub_mem_alloc_profiling_key);
+> +
+> +static inline bool slub_mem_alloc_profiling_enabled(void)
+> +{
+> +	return static_key_enabled(&slub_mem_alloc_profiling_key);
+> +}
+> +
+>  static inline struct alloc_tag_counters alloc_tag_read(struct alloc_tag *tag)
+>  {
+>  	struct alloc_tag_counters v = { 0, 0 };
+> @@ -227,6 +234,7 @@ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
+>  
+>  #define DEFINE_ALLOC_TAG(_alloc_tag)
+>  static inline bool mem_alloc_profiling_enabled(void) { return false; }
+> +static inline bool slub_mem_alloc_profiling_enabled(void) { return false; }
+>  static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
+>  				 size_t bytes) {}
+>  static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes) {}
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 0142bc916f73..b79b0d987427 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -33,6 +33,8 @@ DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+>  EXPORT_SYMBOL(mem_alloc_profiling_key);
+>  
+>  DEFINE_STATIC_KEY_FALSE(mem_profiling_compressed);
+> +DEFINE_STATIC_KEY_TRUE(slub_mem_alloc_profiling_key);
+> +EXPORT_SYMBOL(slub_mem_alloc_profiling_key);
+>  
+>  struct alloc_tag_kernel_section kernel_tags = { NULL, 0 };
+>  unsigned long alloc_tag_ref_mask;
+> @@ -710,6 +712,7 @@ static inline void free_mod_tags_mem(void) {}
+>  static int __init setup_early_mem_profiling(char *str)
+>  {
+>  	bool compressed = false;
+> +	bool noslub = false;
+>  	bool enable;
+>  
+>  	if (!str || !str[0])
+> @@ -725,16 +728,19 @@ static int __init setup_early_mem_profiling(char *str)
+>  		if (kstrtobool(token, &enable))
+>  			return -EINVAL;
+>  
+> -		if (str) {
+> -
+> -			if (strcmp(str, "compressed"))
+> +		while ((token = strsep(&str, ",")) != NULL) {
+> +			if (strcmp(token, "compressed") == 0)
+> +				compressed = true;
+> +			else if (strcmp(token, "noslub") == 0)
+> +				noslub = true;
+> +			else
+>  				return -EINVAL;
+> -
+> -			compressed = true;
+>  		}
+>  		mem_profiling_support = true;
+> -		pr_info("Memory allocation profiling is enabled %s compression and is turned %s!\n",
+> -			compressed ? "with" : "without", enable ? "on" : "off");
+> +		pr_info("Memory allocation profiling is enabled %s compression, %s slub track and is turned %s!\n",
+> +			compressed ? "with" : "without",
+> +			noslub ? "without" : "with",
+> +			enable ? "on" : "off");
+>  	}
+>  
+>  	if (enable != mem_alloc_profiling_enabled()) {
+> @@ -749,6 +755,12 @@ static int __init setup_early_mem_profiling(char *str)
+>  		else
+>  			static_branch_disable(&mem_profiling_compressed);
+>  	}
+> +	if (noslub == static_key_enabled(&slub_mem_alloc_profiling_key)) {
+> +		if (noslub)
+> +			static_branch_disable(&slub_mem_alloc_profiling_key);
+> +		else
+> +			static_branch_enable(&slub_mem_alloc_profiling_key);
+> +	}
+>  
+>  	return 0;
+>  }
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 31e11ef256f9..e8378b092b30 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2093,7 +2093,7 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+>  	return slab_obj_exts(slab) + obj_to_index(s, slab, p);
+>  }
+>  
+> -/* Should be called only if mem_alloc_profiling_enabled() */
+> +/* Should be called only if slub_mem_alloc_profiling_enabled() */
+>  static noinline void
+>  __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
+>  {
+> @@ -2102,7 +2102,7 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
+>  	obj_exts = prepare_slab_obj_exts_hook(s, flags, object);
+>  	/*
+>  	 * Currently obj_exts is used only for allocation profiling.
+> -	 * If other users appear then mem_alloc_profiling_enabled()
+> +	 * If other users appear then slub_mem_alloc_profiling_enabled()
+>  	 * check should be added before alloc_tag_add().
+>  	 */
+>  	if (likely(obj_exts))
+> @@ -2112,11 +2112,11 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
+>  static inline void
+>  alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
+>  {
+> -	if (mem_alloc_profiling_enabled())
+> +	if (slub_mem_alloc_profiling_enabled())
+>  		__alloc_tagging_slab_alloc_hook(s, object, flags);
+>  }
+>  
+> -/* Should be called only if mem_alloc_profiling_enabled() */
+> +/* Should be called only if slub_mem_alloc_profiling_enabled() */
+>  static noinline void
+>  __alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+>  			       int objects)
+> @@ -2143,7 +2143,7 @@ static inline void
+>  alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+>  			     int objects)
+>  {
+> -	if (mem_alloc_profiling_enabled())
+> +	if (slub_mem_alloc_profiling_enabled())
+>  		__alloc_tagging_slab_free_hook(s, slab, p, objects);
+>  }
+>  
+> -- 
+> 2.34.1
 > 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
 
