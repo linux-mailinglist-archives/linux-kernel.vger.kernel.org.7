@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-741930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCC1B0EAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E078FB0EAD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690E36C7113
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3C31C81C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B320F2701D1;
-	Wed, 23 Jul 2025 06:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19908271443;
+	Wed, 23 Jul 2025 06:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c51LQugO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A+vlDRKI"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XQ5joO+Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bYG8qZx+"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3426E71D;
-	Wed, 23 Jul 2025 06:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3D9270542;
+	Wed, 23 Jul 2025 06:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753253080; cv=none; b=qGXqr3hiIwYPs9yXYz29m4o+p1vmx6P16+obWmtNACqGkFEaHt+VHq6N/94AIK8qV6WoaC+MtR+mEtf7SW0vm8/YbhiZD5R+nf5v93eTLJGtg6uR2oBe4+k8O/q9CqGiXWNhgQ+1ce1f9ZnO7oXSku9EcktR9WPWfFNwLfus3j4=
+	t=1753253082; cv=none; b=Beo358on0LBHXmn/zRj30DGx9eJ62J68nHO/InhHivMbNydFuQGb8xVUiDKBFVSPle5gek+zKtWoQSYMzFqp04O63sHz03DhGL7K5n1ZP0eZQLm5XOnOhOTdL6i1L64gdoFFSL+eBJ6D+clwz0Xi77Yc8Y+pwmsIPmDf6/LOrfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753253080; c=relaxed/simple;
-	bh=mBQVPl7JAjPOSJhd1xdQLLBIM9bxDfTYBlRqNgAFhu0=;
+	s=arc-20240116; t=1753253082; c=relaxed/simple;
+	bh=I+lXNbsZC1+8aPUONGXG5X+OuKuy1oMTiTHgi5RyqSg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gA0IoHcOcIb+LOR0Q8rBM1Xe6zIDuFYrVlWpKgxQGCHmXNedLCEQ6UOKzZK4jU7AsxkmhLLudqBsQRWBZPHfFA1GI00C3Z2uKC1RSQfuPgXO59bvqAer2lfmBpW2Vp5lrd8PFrTkQqP+R+jFmh+/eQMtfU82L9pPytXjkD6rxcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c51LQugO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A+vlDRKI; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=rvSIVhPN4LOJnBNTxd+19EWiYKNSYu+6yjscr/Ff/NioF6Zt4DyFwio03rWwDjQ2V3lk2Low7DJNYSXX9hGPF2oeWwfOzDDa9lsdKfor4L1nhYRm7evAYEZk+G+mWausbHx8CNql56oOr88N/TrC/Z9eAjTC1dFbG6mZV0pYLkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XQ5joO+Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bYG8qZx+; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KNMUTIOA+qbltZS8qJvlxIX27Ykzw+CVnRnBk7Jub+k=;
-	b=c51LQugOQHzp3JgsjzN7UeOChz6monP3uyfXhM6cMkHFxMJOO//M/VWUfj0sKeWNJdXbtP
-	0G+HMRFWGor23SQqAhRiWxTfyhr1tqqpBpTX88zsVWKBmueO/e0h+WYlK/VayfWNgY24SJ
-	TYeWNagLOjkEyFj57+9ewXNG1uqb/FWGCBjDUBm/tcs/xVy1+j/lO3ekkU6orZRODu+SOu
-	+b+3gWeSeJW4C8jABpSiaNWgQaC8tdhX5fy801ev5StMr8an5LpNmuPAowDA+JMRc7USDp
-	qTtBTwieWtQB7cNxvntEIabqhaqhQWIr1EFqypSLsYKKwT8o8gUeZbET55xJcA==
+	bh=fTq1AUkVqTkyuHLcR0Lq3ieETcyGVgvTh7SphrDjMDs=;
+	b=XQ5joO+YFa0fX4S+Rm9UTddyutio3qWnxvdwjM4IF+Ds27QlOz47m4gwUl+B3XjwhbamUN
+	iNfStfHws6VSU/GPJv0zqPknnT87peAX8uKctqwYOKd9d/xeSHtY1yve8nKw4ole6Qi1M1
+	hQ7cgcTIjblNNmootEwLKsc07DTkjw/qElQu+c2GA+ff1nRRK8LJ7OtvC9d/ZQrtmckl7J
+	mrmf5DK16vHHK1zoUG04SUlppzy0ODAbUoQ/xMx5RhOLQB+kLB2UM5+cBYNdKbmDsyjZGL
+	pGxzXRfCVHBXboG8Xd57/5Ezxl2XVV/J/6EQwa4t0auSijCdWjuYj0FM/CWTtA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1753253071;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KNMUTIOA+qbltZS8qJvlxIX27Ykzw+CVnRnBk7Jub+k=;
-	b=A+vlDRKITbPvqdl/KaITadaVphTUBS9+/1eBZBk1q62s40J8HSquR/v/fvtyaTEoI3zCws
-	ChOhCxZyP+0gGpBQ==
+	bh=fTq1AUkVqTkyuHLcR0Lq3ieETcyGVgvTh7SphrDjMDs=;
+	b=bYG8qZx+YNlZplO3GH5WFWfQNRvaF5SJcmO7gTX5DWQoR6cd+/2vvcmA7arKDfeEjJme38
+	1waQImuZTKJBBPBA==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
@@ -60,9 +60,9 @@ To: Steven Rostedt <rostedt@goodmis.org>,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v2 4/5] rv: Remove rv_reactor's reference counter
-Date: Wed, 23 Jul 2025 08:44:22 +0200
-Message-Id: <e4683be28e62a899fe4528b9e7624edf0eac4393.1753252872.git.namcao@linutronix.de>
+Subject: [PATCH v2 5/5] rv: Remove struct rv_monitor::reacting
+Date: Wed, 23 Jul 2025 08:44:23 +0200
+Message-Id: <58c63faec76ffb36552fcd1fdcc4b9dd841efd94.1753252872.git.namcao@linutronix.de>
 In-Reply-To: <cover.1753252872.git.namcao@linutronix.de>
 References: <cover.1753252872.git.namcao@linutronix.de>
 Precedence: bulk
@@ -73,147 +73,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-rv_reactor has a reference counter to ensure it is not removed while
-monitors are still using it.
-
-However, this is futile, as __exit functions are not expected to fail and
-will proceed normally despite rv_unregister_reactor() returning an error.
-
-At the moment, reactors do not support being built as modules, therefore
-they are never removed and the reference counters are not necessary.
-
-If we support building RV reactors as modules in the future, kernel
-module's centralized facilities such as try_module_get(), module_put() or
-MODULE_SOFTDEP should be used instead of this custom implementation.
-
-Remove this reference counter.
+The field 'reacting' in struct rv_monitor is set but never used. Delete it.
 
 Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- include/linux/rv.h            |  2 --
- kernel/trace/rv/rv.c          |  1 -
- kernel/trace/rv/rv.h          |  6 ------
- kernel/trace/rv/rv_reactors.c | 33 ++-------------------------------
- 4 files changed, 2 insertions(+), 40 deletions(-)
+ include/linux/rv.h            |  1 -
+ kernel/trace/rv/rv_reactors.c | 13 +++++--------
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/rv.h b/include/linux/rv.h
-index c22c9b8c1567..2f867d6f72ba 100644
+index 2f867d6f72ba..80731242fe60 100644
 --- a/include/linux/rv.h
 +++ b/include/linux/rv.h
-@@ -91,8 +91,6 @@ struct rv_reactor {
- 	const char		*description;
- 	__printf(1, 2) void	(*react)(const char *msg, ...);
- 	struct list_head	list;
--	/* protected by the monitor interface lock */
--	int			counter;
- };
- #endif
-=20
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 6c0be2fdc52d..6c8498743b98 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -769,7 +769,6 @@ static const struct file_operations monitoring_on_fops =
-=3D {
-=20
- static void destroy_monitor_dir(struct rv_monitor *mon)
- {
--	reactor_cleanup_monitor(mon);
- 	rv_remove(mon->root_d);
- }
-=20
-diff --git a/kernel/trace/rv/rv.h b/kernel/trace/rv/rv.h
-index 8c38f9dd41bc..1485a70c1bf4 100644
---- a/kernel/trace/rv/rv.h
-+++ b/kernel/trace/rv/rv.h
-@@ -31,7 +31,6 @@ bool rv_is_nested_monitor(struct rv_monitor *mon);
-=20
+@@ -104,7 +104,6 @@ struct rv_monitor {
  #ifdef CONFIG_RV_REACTORS
- int reactor_populate_monitor(struct rv_monitor *mon);
--void reactor_cleanup_monitor(struct rv_monitor *mon);
- int init_rv_reactors(struct dentry *root_dir);
- #else
- static inline int reactor_populate_monitor(struct rv_monitor *mon)
-@@ -39,11 +38,6 @@ static inline int reactor_populate_monitor(struct rv_mon=
-itor *mon)
- 	return 0;
- }
-=20
--static inline void reactor_cleanup_monitor(struct rv_monitor *mon)
--{
--	return;
--}
--
- static inline int init_rv_reactors(struct dentry *root_dir)
- {
- 	return 0;
+ 	struct rv_reactor	*reactor;
+ 	__printf(1, 2) void	(*react)(const char *msg, ...);
+-	bool			reacting;
+ #endif
+ 	struct list_head	list;
+ 	struct rv_monitor	*parent;
 diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.c
-index 2c7909e6d0e7..a8e849e6cd85 100644
+index a8e849e6cd85..5e52886b4511 100644
 --- a/kernel/trace/rv/rv_reactors.c
 +++ b/kernel/trace/rv/rv_reactors.c
-@@ -172,10 +172,6 @@ static void monitor_swap_reactors_single(struct rv_mon=
-itor *mon,
- 	if (monitor_enabled)
+@@ -160,7 +160,7 @@ static const struct seq_operations monitor_reactors_seq=
+_ops =3D {
+=20
+ static void monitor_swap_reactors_single(struct rv_monitor *mon,
+ 					 struct rv_reactor *reactor,
+-					 bool reacting, bool nested)
++					 bool nested)
+ {
+ 	bool monitor_enabled;
+=20
+@@ -173,7 +173,6 @@ static void monitor_swap_reactors_single(struct rv_moni=
+tor *mon,
  		rv_disable_monitor(mon);
 =20
--	/* swap reactor's usage */
--	mon->reactor->counter--;
--	reactor->counter++;
--
  	mon->reactor =3D reactor;
- 	mon->reacting =3D reacting;
+-	mon->reacting =3D reacting;
  	mon->react =3D reactor->react;
-@@ -343,23 +339,10 @@ int rv_register_reactor(struct rv_reactor *reactor)
-  */
- int rv_unregister_reactor(struct rv_reactor *reactor)
- {
--	int ret =3D 0;
--
- 	mutex_lock(&rv_interface_lock);
--
--	if (!reactor->counter) {
--		list_del(&reactor->list);
--	} else {
--		printk(KERN_WARNING
--		       "rv: the rv_reactor %s is in use by %d monitor(s)\n",
--		       reactor->name, reactor->counter);
--		printk(KERN_WARNING "rv: the rv_reactor %s cannot be removed\n",
--		       reactor->name);
--		ret =3D -EBUSY;
--	}
--
-+	list_del(&reactor->list);
- 	mutex_unlock(&rv_interface_lock);
--	return ret;
-+	return 0;
+=20
+ 	/* enable only once if iterating through a container */
+@@ -181,8 +180,7 @@ static void monitor_swap_reactors_single(struct rv_moni=
+tor *mon,
+ 		rv_enable_monitor(mon);
  }
 =20
- /*
-@@ -456,23 +439,11 @@ int reactor_populate_monitor(struct rv_monitor *mon)
+-static void monitor_swap_reactors(struct rv_monitor *mon,
+-				  struct rv_reactor *reactor, bool reacting)
++static void monitor_swap_reactors(struct rv_monitor *mon, struct rv_reacto=
+r *reactor)
+ {
+ 	struct rv_monitor *p =3D mon;
+=20
+@@ -190,7 +188,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
+n,
+ 		list_for_each_entry_continue(p, &rv_monitors_list, list) {
+ 			if (p->parent !=3D mon)
+ 				break;
+-			monitor_swap_reactors_single(p, reactor, reacting, true);
++			monitor_swap_reactors_single(p, reactor, true);
+ 		}
+ 	/*
+ 	 * This call enables and disables the monitor if they were active.
+@@ -198,7 +196,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
+n,
+ 	 * All nested monitors are enabled also if they were off, we may refine
+ 	 * this logic in the future.
+ 	 */
+-	monitor_swap_reactors_single(mon, reactor, reacting, false);
++	monitor_swap_reactors_single(mon, reactor, false);
+ }
+=20
+ static ssize_t
+@@ -248,7 +246,7 @@ monitor_reactors_write(struct file *file, const char __=
+user *user_buf,
+ 		else
+ 			enable =3D true;
+=20
+-		monitor_swap_reactors(mon, reactor, enable);
++		monitor_swap_reactors(mon, reactor);
+=20
+ 		retval =3D count;
+ 		break;
+@@ -439,7 +437,6 @@ int reactor_populate_monitor(struct rv_monitor *mon)
  	 * Configure as the rv_nop reactor.
  	 */
  	mon->reactor =3D get_reactor_rdef_by_name("nop");
--	mon->reactor->counter++;
- 	mon->reacting =3D false;
+-	mon->reacting =3D false;
 =20
  	return 0;
  }
-=20
--/**
-- * reactor_cleanup_monitor - cleanup a monitor reference
-- * @mon:       the monitor.
-- */
--void reactor_cleanup_monitor(struct rv_monitor *mon)
--{
--	lockdep_assert_held(&rv_interface_lock);
--	mon->reactor->counter--;
--	WARN_ON_ONCE(mon->reactor->counter < 0);
--}
--
- /*
-  * Nop reactor register
-  */
 --=20
 2.39.5
 
