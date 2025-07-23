@@ -1,182 +1,306 @@
-Return-Path: <linux-kernel+bounces-742379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA0AB0F0EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:11:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F20B0F0EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FE23AC0CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E151AA1C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EE62DC347;
-	Wed, 23 Jul 2025 11:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED9289810;
+	Wed, 23 Jul 2025 11:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ROB5W2Ny"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UJdXaofc"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433528F531
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0A8289E33
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269100; cv=none; b=isr2NpAsZ4wuV4SY6f822iDF3GKYiQmqT23GuqdcX5ud+/hHPSOj0zSTK/CNScEOpnZtm29tbENJrauTZ7xoZDbr1b3ny1uRUYIId8kZ6jjN2jgeahj3dG0PTj3SdCYo5z03SfHgsreqWwVBH5aNwz6tVqK+RBtATWAp2O2u+9g=
+	t=1753269126; cv=none; b=diI5BvdLDdWSFngKuN094bjSd+OR836DKxvKXMU09NCozJnykcAaFHiDir2Td9Q425jvnVP6AV7Amz6PkZ/fDAqb0akyL2/JEOPEATK9PpMUrAXM/cNi5kHFRYtfa7BOgvGZLoBX/sonPCIqxho3Aa3FYRpPjVDxr3g0cM4igZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269100; c=relaxed/simple;
-	bh=hCquMW8hz+iGzu9b5ro7FBBb12naHRGKWpeOqXGXr+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=de5JJk/ZCYUTREVasHKJdEXtSssHt7dRJWy6KrVCmLKdfucI8mQ5uBrUvUeJo3evKgcqSAKZAkdqSQoXBZZe5HkO1PLm2ajOsoA4zW0gZyMymyS79sztt9yzyJUroTAiA6m5udrCrdlEfiRwPcb5fQvMk+ZZ8W5P+jQQ49aDBp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ROB5W2Ny; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1753269126; c=relaxed/simple;
+	bh=hkdvBYSna1oG7Wdu8iY66NJUXKxJm4xL6CepgrPl/gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wq9Gc5fl2dcBMIxYf6dGkzxfYXgYjkUq2boJyGMLEQviqlb3WcsJyb6CDpz7eaxWLRbm+hROPPF1XAplrQRwDemWpKcI1wYmvSEj8jjCKMiicpQAzNFZJOAPpZgZ3P2t8gRRqm0LQWcSWZ89CRIxeCz+fbdYlrTYHa6E9HSYJIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UJdXaofc; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9QnBr025715
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:37 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9LhMP001765
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:58 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=LjfOncO1vv2+YN0yh1RQX1suHT8F+x0/La6
-	1z5ZuOPs=; b=ROB5W2NyRYVBz0VN44Oavxo+AXMs9X1Hi6gLpmZO0qDBjtGP020
-	sop6q57ZlOcEgb4GO/UKjXpO2fS8UsqUdyNaEcP29HRjCI/lKaATMMuJ2G11ajHx
-	XHoEs+U5Xq/57VBXycXYdFzIfyIe90rEp+oA6eNo/kj6wdtY9l4E4YH2sh9JlhEJ
-	bLtXVyDDTe0Ll0YjoB5YV/AbK6+FcmIuPGf9l8lt96YAQKjyuPLZCRYMt258vhmn
-	y+eXmAbKCNAenUVnI8PMAswfPQU4Y9McQ/V1xTQ34JYb8gToKS2pRGGFCfXATk/q
-	NdkBa/K1P2aNbejyYFYJl1uwV0AkMGQKenw==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482b1ubf6u-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	j0VjeMPx+hhfBKfjETGJRw+SMh95RYSVHKRWrlXnn5U=; b=UJdXaofcZgDwAeKu
+	407OxHvK8Hn4sEdJ/xm62+w+A/vqZJjj7WeKbRoDIKYBpH6yrBJ79INmCWRN/80H
+	ZQiKvYfq7RnY9QSNnZpOSflOEXo85aHY/SxxUFxIIhsbUHhs8MOumIhNgU8JWR9h
+	1K6fjbW9z4jH3vmktzwu61nA0KuCMCb+HxDbySZm4BcMVFWi04/zmBv0IDmKYY3z
+	Nlrr1Zolhc610X7RjsFzLV+N7ph+fU4cQGUCai/dvfVeHiTJTi/ax9A3mMWH8Cd4
+	bFU3MtqYgZPIxTDfJRI9pVGmpl71uwXOjBMiyxyQky6B/go1jjYinFO4R7eNdgTq
+	FGgpXg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481t6w62gb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:37 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso5667549b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:11:37 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:57 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-706edda34f6so28088246d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:11:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753269096; x=1753873896;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LjfOncO1vv2+YN0yh1RQX1suHT8F+x0/La61z5ZuOPs=;
-        b=CUrSvnJn6+GXb52JWysnc1OWqHuHCM6MyNkbigJBUHPFGf8Ci4SBSiWzOZmA1/GCVj
-         xmW0tORQDMSC68BY+AHRL2N87bPCKdivN49DWxRYCCFGD3uT8tVLz8ukwA/RzC7dTvfW
-         95ulXnRJ4jBuMevNGlg9c7ajcK2YYhLMEur+GWNaOUKlNs7J5zbF1Uen+ejuaq0PvYc5
-         6aTQYxpqSXhxuG6YLvsoGRaGtq7WnRxx1sCOZwvLnhfLkJEvDC9X8uzNTVyc+sXmyjRD
-         LfmqfTl7MpyW663fNTWvT8D4+YyIgejdpLzt4saHSUrnngmgkb60NvuHpzcLU2kZbRwk
-         p0Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8HjWl7d3BY3nenku4G3jU0Dh3PtwjMk/ZTTqdB9RfRg/39ZltiOVOqsgyDSHlVzswOzBJQ3dkw7OlOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+cCEfAItcgfFU7pdaIjVd4hPlIM0WV4S2AlRRYXwoLW9c4syp
-	ItMSeFILJFe3qjcgnzszsrc+9ZAmpGhbbqRoExZO79mensKGbZfaHFNuCXLGJOo1Q+n6Gez7JsD
-	z8tUIF6K5sSCRwqvq1CI6KbxT/FJNycL+MTA9adBm+sOw+WCBfmzuBZHlNHPGgalxKmM=
-X-Gm-Gg: ASbGnctaMwzGRqzRd7r6QWmyYEl1hkCMavMMft9VDs1dMOMU1hJACm23RzoZQpqLyAp
-	i4qLM7wZBL+xzRkaGy//nHFAzNTiuHSbJeskED748L7Wk/7GJCKqzYkkzhpHbAuACr5uahsIzTC
-	NYTnQ0oPh5DTsRLWzqg7EnkGbN6M8lM0N4MMb+tG0YO8weLyS2PRAlwZauzto8TzGTzun1n5Ucu
-	Hs4HbkNiTH3galuqKtrKlIrQbcrA1Yv7BFlnSRx0BQKD3rcnMtcVM0ACW88yZGADtNFYKaLZVaa
-	ksKz/fwt3J9Vpy+1ohjZGqqu2M2MS3w/jIIBPmD3X3KuqiuR/k+DLBI=
-X-Received: by 2002:a05:6a20:1584:b0:220:e5e:5909 with SMTP id adf61e73a8af0-23d4906e5d7mr4082929637.20.1753269096491;
-        Wed, 23 Jul 2025 04:11:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEh3QrEmtBPfOc+uqORMvCzZ0j+Ls2REYh19xcaNQaRKIguYCvkAOkdIMlzRkqSP0UAb/qhgg==
-X-Received: by 2002:a05:6a20:1584:b0:220:e5e:5909 with SMTP id adf61e73a8af0-23d4906e5d7mr4082892637.20.1753269096075;
-        Wed, 23 Jul 2025 04:11:36 -0700 (PDT)
-Received: from work.. ([61.2.112.87])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e519f69ddsm1431836a91.11.2025.07.23.04.11.33
+        d=1e100.net; s=20230601; t=1753269116; x=1753873916;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j0VjeMPx+hhfBKfjETGJRw+SMh95RYSVHKRWrlXnn5U=;
+        b=p75Q1dBbcE4Gj9ZVeoX4+8tkQCi3E45BlpHumdSkRx+qlg92BKPI5C3ycFyfjuO5Wj
+         wrYMxoOqVgejcyRtMlKbdRaX+GDbe4v1ABIhAax8HLzgreiA760oe22jczMD0/6UJL+M
+         gHH0lOxbya6tWgS5dCv3rI+bD71UdqUaunVanMvcAnUEcYSAKsnBmq6KB5dgCd5pgxOW
+         6mVe3xMcdhL+HwQyh3KmHQOY+Ww914F0JznTLgC2TCcTxdoqZKoNuHLukDwrkL3dzq+Y
+         ruGil8ZeYa6AMaxaj2MviJgbzM4Sv+wTARMDpOePEqp9WV0+f8XPhDaiXqXH+r1NBN9N
+         ld9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWiB+a4KBaTc3c10ViZF6jC1ZWpib/39ERa/KLDrHxej+ZBdnlnOJmZmLrNMHIbc1GLVBKxC/flab6pmzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztqXwfExVRReK/OVdmljE+Ul3SzxuFNl4nCfDRXjWi5YPj/Wef
+	gsPmaL4qzIfiP8A4MZut9U/9xBTXAH+SG3bewq1NGaILrba0AmsjlmtOVDSknpXWtEgu+tNfRfn
+	YuURUPG8+PkRS5EkXuqn0ciIDBAl3Kl49SxgVbEOjcjCb+zzQD8CqyRh3RYpBp3e+Jbg=
+X-Gm-Gg: ASbGncsK9zvHPScZneSCy+y6F9KjJ4roTOVOO+h2mW/InXdICOIuSpx4x5Zm0VWLTML
+	k0o9eauZdJgQbsfBQzxe1rwwP6/5uGEvNBwml/RV0YYtgipsmYXjSO+LlUapeKqBiSELZPa/o0Q
+	Oue/gbewYysGtwFlW7HS2gpPJia0js0vxuVhldpvPITkatvplFnlS4N4dMV1MNVeTjKG4cDBdYR
+	JcZRMzKVFsq2LaJlIg0Kf1Qk5WeB1dpVIrrvdQSlxAFy03yJZklko4pCHEwGr4anzk0VFuFG4LV
+	kAyMBH6C/1EhaFuU4zsmvPpkG+EAc2nF0+auaXCAdKW6Dom1MQBuxfZbgBTunL3Eo2oU2Mxgb20
+	+RPIsvIi9aiKTZehX6rXdPWTkow6yMgbu9Qm9RirKRymF8IcakRhJ
+X-Received: by 2002:a05:6214:202e:b0:6fa:d9de:a3fc with SMTP id 6a1803df08f44-70700722b9bmr33142966d6.34.1753269116172;
+        Wed, 23 Jul 2025 04:11:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAliv5sNvk+3b+28VgVbpH434Z10+GwNfxjx4Yw8Dl6zlfkQH4ukDRejh6Shv9GMsLPiMb9Q==
+X-Received: by 2002:a05:6214:202e:b0:6fa:d9de:a3fc with SMTP id 6a1803df08f44-70700722b9bmr33142086d6.34.1753269115418;
+        Wed, 23 Jul 2025 04:11:55 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d7c54asm2285330e87.100.2025.07.23.04.11.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:11:35 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-        Shuan He <heshuan@bytedance.com>
-Subject: [PATCH] PCI: Remove redudant calls to pci_create_sysfs_dev_files() and pci_proc_attach_device()
-Date: Wed, 23 Jul 2025 16:41:24 +0530
-Message-ID: <20250723111124.13694-1-manivannan.sadhasivam@oss.qualcomm.com>
-X-Mailer: git-send-email 2.45.2
+        Wed, 23 Jul 2025 04:11:54 -0700 (PDT)
+Date: Wed, 23 Jul 2025 14:11:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: rob.clark@oss.qualcomm.com, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/17] drm/msm/a6xx: Fix PDC sleep sequence
+Message-ID: <rr6zxamm5oqebfc3zq7qzfjt327owlsjvh3todjzfzkqn6cd2b@sgsrdg7kfqa4>
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com>
+ <avni4utnzdmmafc2mf7aqgva3osbhuiqtia7gdngqswk5cmtn6@zo65ir7gyj6y>
+ <CACSVV0346j2y-1Jkj=wasekYy5syax_E495AQZv0bvrrqwCSRw@mail.gmail.com>
+ <f1070069-7220-4351-845a-2929d1e65a71@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=LdY86ifi c=1 sm=1 tr=0 ts=6880c369 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=L2vWZV9GmkZVUxua0bORKQ==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=968KyxNXAAAA:8 a=EUspDBNiAAAA:8
- a=vtPyk3adPmH_jGOTQ7gA:9 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfX3HdxyerK3dkw
- ryzh4qVxpVgWDSxWYhvMOcAZRNbn/IrV3EHdkF7JgVt0AQpojX7HnENq0dRC++ubDTYkk2Ws8do
- XXISYhmMM8gzWtNJHhhdTxTi4DEOJtup87IuLww2/KhQMPmgPlWVvwcXLCqNfEy0S+kY0wngMRL
- yYFso6g9VrvLTzJzwvwqv0LP76pEorPXwFuy5iN4dPQuiej34934zoWfskwetlV4opTQ9PbwmW5
- hTvuQ+/5yFLnxFRnT0CkXKt+VIhwCd/L8Hlc2+KnB80wYxXKpJ57vpiTkqJrOOCd1oEh8Ih16HR
- 4IcQtZuKMVxjVqHrQ5eTT0hqFDDSqw00/zdb1A620q/dqRU/Bo8zaQztUca46dz+gZNAGW3vp6u
- xPUUKJn0H1tWslDpQOaV9MdB2IKpYHmhOCvBZLCzjexUItMKS5EfJ2AjrqxuCbwmwxDMALrC
-X-Proofpoint-ORIG-GUID: tHDFOwcap0E8E2ztCRWG8tMpMr-YYt8s
-X-Proofpoint-GUID: tHDFOwcap0E8E2ztCRWG8tMpMr-YYt8s
+In-Reply-To: <f1070069-7220-4351-845a-2929d1e65a71@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=SPpCVPvH c=1 sm=1 tr=0 ts=6880c37d cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=wNNrqZBiHP9T-vZZJccA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfXzYAwly7R/amM
+ rlY7vqJzg3+GoGGm2xq+9dcF1YRTGoox5P9forelv0570BNjEynmdXlwnh2ltfZNcQyM9Tc49TT
+ bTmjQiwTc+xmLFrcQ/VnJe4L+BpmpL4I2w2vcYq+0bZAxReM3AH72vq6/uQImpndQSkePeeqmav
+ U8LA49urLuD6H3ES26Tod6kjXtMMjj5GUHrgRKPXaXEPnX/+cJkml9Zxv2E+Qy7Qv4zFjmLSoY7
+ 3abEeASpHosQD6sXp1VwNnypllqV+dyGytRhUXGBUGPg6RUcYZhW2PW4voFdhhxC4522CeOXo7f
+ DVAiS0l/B1sRmaO1cuhqG8M9oi02VnseL7kPhRLFcyqs0knBZADfwp59MVqVPqcXAn/aR23uzlO
+ Ava4HJ0iGAxPdlKHCtqHFZ/jD5GiMwNZsS4UaEVVz85sHWCOfRsP30+jcVqXGrFFIboHztMk
+X-Proofpoint-ORIG-GUID: -2Ek8bVG-Bz_NMErr7uCM2VA2Ze2PDeu
+X-Proofpoint-GUID: -2Ek8bVG-Bz_NMErr7uCM2VA2Ze2PDeu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=766 bulkscore=0 spamscore=0
- suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230094
+ spamscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230094
 
-Both pci_create_sysfs_dev_files() and pci_proc_attach_device() are called
-from pci_bus_add_device(). Calling these APIs from other places is prone to
-a race condition as nothing prevents the callers from racing against
-each other.
+On Wed, Jul 23, 2025 at 02:35:31AM +0530, Akhil P Oommen wrote:
+> On 7/22/2025 10:56 PM, Rob Clark wrote:
+> > On Tue, Jul 22, 2025 at 6:33 AM Dmitry Baryshkov
+> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >>
+> >> On Sun, Jul 20, 2025 at 05:46:06PM +0530, Akhil P Oommen wrote:
+> >>> Since the PDC resides out of the GPU subsystem and cannot be reset in
+> >>> case it enters bad state, utmost care must be taken to trigger the PDC
+> >>> wake/sleep routines in the correct order.
+> >>>
+> >>> The PDC wake sequence can be exercised only after a PDC sleep sequence.
+> >>> Additionally, GMU firmware should initialize a few registers before the
+> >>> KMD can trigger a PDC sleep sequence. So PDC sleep can't be done if the
+> >>
+> >> s/KMD/the driver/
+> > 
+> > IMHO for gpu things "KMD" makes sense, to differentiate between kernel
+> > and user mode (UMD).. this is perhaps different from other areas where
+> > there isn't a userspace component to the driver stack
+> 
+> Ack
+> 
+> > 
+> > BR,
+> > -R
+> > 
+> >>> GMU firmware has not initialized. Track these dependencies using a new
+> >>> status variable and trigger PDC sleep/wake sequences appropriately.
+> >>
+> >> Again, it looks like there should be a Fixes tag here.
+> 
+> Ack. I guess it is not a bad idea to backport this one too.
 
-Moreover, the proper place to create SYSFS and PROCFS entries is during
-the 'pci_dev' creation. So there is no real need to call these APIs
-elsewhere.
+Please add cc:stable to the patches that need to be backported and make
+sure that all Fixes are at the start of the series.
 
-Hence, remove the calls from pci_sysfs_init() and pci_proc_init().
+> 
+> >>
+> >>>
+> >>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> >>> ---
+> >>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 30 +++++++++++++++++++-----------
+> >>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  6 ++++++
+> >>>  2 files changed, 25 insertions(+), 11 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> >>> index 3bebb6dd7059782ceca29f2efd2acee24d3fc930..4d6c70735e0892ed87d6a68d64f24bda844e5e16 100644
+> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> >>> @@ -279,6 +279,8 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
+> >>>       if (ret)
+> >>>               DRM_DEV_ERROR(gmu->dev, "GMU firmware initialization timed out\n");
+> >>>
+> >>> +     set_bit(GMU_STATUS_FW_START, &gmu->status);
+> >>> +
+> >>>       return ret;
+> >>>  }
+> >>>
+> >>> @@ -528,6 +530,9 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
+> >>>       int ret;
+> >>>       u32 val;
+> >>>
+> >>> +     if (!test_and_clear_bit(GMU_STATUS_PDC_SLEEP, &gmu->status))
+> >>> +             return 0;
+> >>> +
+> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
+> >>>
+> >>>       ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
+> >>> @@ -555,6 +560,11 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
+> >>>       int ret;
+> >>>       u32 val;
+> >>>
+> >>> +     if (test_and_clear_bit(GMU_STATUS_FW_START, &gmu->status))
+> >>> +             return;
+> >>> +
+> >>> +     /* TODO: should we skip if IFPC is not enabled */
+> >>
+> >> Is this a question or a statement?
+> 
+> It was a reminder to myself which I forgot to revisit later. Will
+> addresss this in the next revision.
+> 
+> -Akhil.
+> 
+> >>
+> >>> +
+> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1);
+> >>>
+> >>>       ret = gmu_poll_timeout_rscc(gmu, REG_A6XX_GPU_RSCC_RSC_STATUS0_DRV0,
+> >>> @@ -563,6 +573,8 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
+> >>>               DRM_DEV_ERROR(gmu->dev, "Unable to power off the GPU RSC\n");
+> >>>
+> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 0);
+> >>> +
+> >>> +     set_bit(GMU_STATUS_PDC_SLEEP, &gmu->status);
+> >>>  }
+> >>>
+> >>>  static inline void pdc_write(void __iomem *ptr, u32 offset, u32 value)
+> >>> @@ -691,8 +703,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+> >>>       /* ensure no writes happen before the uCode is fully written */
+> >>>       wmb();
+> >>>
+> >>> -     a6xx_rpmh_stop(gmu);
+> >>> -
+> >>>  err:
+> >>>       if (!IS_ERR_OR_NULL(pdcptr))
+> >>>               iounmap(pdcptr);
+> >>> @@ -852,19 +862,15 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
+> >>>       else
+> >>>               gmu_write(gmu, REG_A6XX_GMU_GENERAL_7, 1);
+> >>>
+> >>> -     if (state == GMU_WARM_BOOT) {
+> >>> -             ret = a6xx_rpmh_start(gmu);
+> >>> -             if (ret)
+> >>> -                     return ret;
+> >>> -     } else {
+> >>> +     ret = a6xx_rpmh_start(gmu);
+> >>> +     if (ret)
+> >>> +             return ret;
+> >>> +
+> >>> +     if (state == GMU_COLD_BOOT) {
+> >>>               if (WARN(!adreno_gpu->fw[ADRENO_FW_GMU],
+> >>>                       "GMU firmware is not loaded\n"))
+> >>>                       return -ENOENT;
+> >>>
+> >>> -             ret = a6xx_rpmh_start(gmu);
+> >>> -             if (ret)
+> >>> -                     return ret;
+> >>> -
+> >>>               ret = a6xx_gmu_fw_load(gmu);
+> >>>               if (ret)
+> >>>                       return ret;
+> >>> @@ -1046,6 +1052,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *gmu)
+> >>>
+> >>>       /* Reset GPU core blocks */
+> >>>       a6xx_gpu_sw_reset(gpu, true);
+> >>> +
+> >>> +     a6xx_rpmh_stop(gmu);
+> >>>  }
+> >>>
+> >>>  static void a6xx_gmu_set_initial_freq(struct msm_gpu *gpu, struct a6xx_gmu *gmu)
+> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>> index b2d4489b40249b1916ab4a42c89e3f4bdc5c4af9..034f1b4e5a3fb9cd601bfbe6d06d64e5ace3b6e7 100644
+> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>> @@ -117,6 +117,12 @@ struct a6xx_gmu {
+> >>>
+> >>>       struct qmp *qmp;
+> >>>       struct a6xx_hfi_msg_bw_table *bw_table;
+> >>> +
+> >>> +/* To check if we can trigger sleep seq at PDC. Cleared in a6xx_rpmh_stop() */
+> >>> +#define GMU_STATUS_FW_START  0
+> >>> +/* To track if PDC sleep seq was done */
+> >>> +#define GMU_STATUS_PDC_SLEEP 1
+> >>> +     unsigned long status;
+> >>>  };
+> >>>
+> >>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+> >>>
+> >>> --
+> >>> 2.50.1
+> >>>
+> >>
+> >> --
+> >> With best wishes
+> >> Dmitry
+> 
 
-Reported-by: Shuan He <heshuan@bytedance.com>
-Closes: https://lore.kernel.org/linux-pci/20250702155112.40124-1-heshuan@bytedance.com
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
----
- drivers/pci/pci-sysfs.c | 9 ---------
- drivers/pci/proc.c      | 3 ---
- 2 files changed, 12 deletions(-)
-
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 268c69daa4d5..8e712c14e6ea 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1676,18 +1676,9 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
- 
- static int __init pci_sysfs_init(void)
- {
--	struct pci_dev *pdev = NULL;
- 	struct pci_bus *pbus = NULL;
--	int retval;
- 
- 	sysfs_initialized = 1;
--	for_each_pci_dev(pdev) {
--		retval = pci_create_sysfs_dev_files(pdev);
--		if (retval) {
--			pci_dev_put(pdev);
--			return retval;
--		}
--	}
- 
- 	while ((pbus = pci_find_next_bus(pbus)))
- 		pci_create_legacy_files(pbus);
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index 9348a0fb8084..b78286afe18e 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -463,13 +463,10 @@ int pci_proc_detach_bus(struct pci_bus *bus)
- 
- static int __init pci_proc_init(void)
- {
--	struct pci_dev *dev = NULL;
- 	proc_bus_pci_dir = proc_mkdir("bus/pci", NULL);
- 	proc_create_seq("devices", 0, proc_bus_pci_dir,
- 		    &proc_bus_pci_devices_op);
- 	proc_initialized = 1;
--	for_each_pci_dev(dev)
--		pci_proc_attach_device(dev);
- 
- 	return 0;
- }
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
