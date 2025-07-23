@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-741952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A54B0EB26
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:01:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86755B0EB30
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441E718915A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:01:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082A57B4D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEA726E70E;
-	Wed, 23 Jul 2025 07:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0411B272E5A;
+	Wed, 23 Jul 2025 07:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wxevrJkT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kupMY7K6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE53A95E;
-	Wed, 23 Jul 2025 07:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FCUIMrnu"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEE32571B4;
+	Wed, 23 Jul 2025 07:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753254080; cv=none; b=pHZhEMnInA1nGx8TxdDBD9KpSioOuy2TyzPtYJeAOIYBCtQNuoyJ6D0GOk4QytaqOIUridN4SS93dYtI0D8INptU0rdBvnupLFoEJSi0cdeIHb4Tncf7lK7DY25Ott7EFzOf9UL3vm49Xbyu9Y5GpTA/BNqXGVOOkO4Lv1Bv5Vc=
+	t=1753254133; cv=none; b=bmTqALL1jTpBdPLN2c1UbTGtIN4Y21a5YHkNxs4qZ9mjxXDh43qItHdL9Gd2YRvMRGqFnP1AB46U4KN08gTPBwXYCIIRdAuHAkYkgrDZ6e/GOu8u5nn+7tsgdAQ5vBuhiXLB+lS2k1PALID2Y6QsIGaWkSFA7HCkx3Q64+ZIvl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753254080; c=relaxed/simple;
-	bh=ScqvYgbymO3m78bqK9XGtJqDp5QxplxAOaGw7+GHFtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdY7wAx9JeYlw3BhSfp98BQ/yBNcH4IYlCp0ONVYyL09fGiVzD/vUb3CFOQSnY9iyywD320gi2buvwUvhD1+82iOMVVAv+lhhjNKvcBpF67GhKCRJN/TfNhomrYIcv5S0GpEMZsMtTRHYHvpfhTNuQxCzeFrMdm32J0qBvF314c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wxevrJkT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kupMY7K6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 23 Jul 2025 09:01:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753254077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TToHOnGqv2s0a3u8OKmvaBii3a4hbe31bdd/QLS36jk=;
-	b=wxevrJkT2nLNlqpE2PFKLBEhHJlTkhngGnk9al0JB+6dUGkiExXWYgl+kmPqNJWNsaPs3M
-	rDZ07q8KTt0K77e8aTTZ3+lsqwcFmF9SYt2/49QAo/wEdnIgj0sK7CrLJYYeVo7RWJPI4c
-	LgKKzx/Js4CSMO0X9RQrswSMAPuWykFbSdia9NI7WP0TukVEhkCCWEvjzotqBy8kxppQjB
-	PScdX+WtFOGsUFZDZ598MVDz+w+UMKS9brwsHdf0PODWG1+b5nl+hHHLCC7vJz7tLJJeYK
-	i6S5dCVrgu4ujPWpIcT6kwA2auWHsEdaRU1g0SPFJgYBias6A5Tho/DFBqw/7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753254077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TToHOnGqv2s0a3u8OKmvaBii3a4hbe31bdd/QLS36jk=;
-	b=kupMY7K6MiIEw6pWVxKTRQONeoUxlb75II01maVF5QzKFlYPBVqxVVdwWpeGmMtoYP7RGN
-	ifPZwQMmhgEuBeDg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	s=arc-20240116; t=1753254133; c=relaxed/simple;
+	bh=sMSWpuL3NbrBKZm2iT8FUES5vNyP6oZOFwZ2CCguIug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dTy82wvl7RWqF0xOODKGjH/A6gEsMVmv1Q/7IdnXkfBQZBP6T5kBhK+vZm6tgnqwzWF7vfjv/In7JdTUVNCbmHyYtKpSqfhjzFF0V9PJ3YV+No1wBMA5HNDgS2BvXshsq6+126QLEdvx+Lb86y43ADDF994PgWI+05WZIMMfpBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FCUIMrnu; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from namjain-Virtual-Machine.mshome.net (unknown [4.213.232.43])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1FFCE2126891;
+	Wed, 23 Jul 2025 00:02:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1FFCE2126891
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753254131;
+	bh=AdQWIoxaEDYaHE+B2o2jADCLoSIJqb1hT+F8ZeUMGxI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FCUIMrnu7EVKAlnkmu5sGdSICICeMJrXUdbDxxlFtJg74YedEr/DpiJzGLgH0yjdA
+	 53+KhXnmDY7aEi2CogctNOpXtxaAdRvyW6AyAxaeGuvonK7r0v79fqSo4icL+J1C+X
+	 v8pORf8PhKBFwKiBRNdwbkmxmJnZwPi+M/pcUIBc=
+From: Naman Jain <namjain@linux.microsoft.com>
+To: stable@vger.kernel.org,
+	Michael Kelley <mhklinux@outlook.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux@weissschuh.net,
+	linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
-Message-ID: <20250723090039-b619abd2-ecd2-4e40-aef9-d0bbb1e5875e@linutronix.de>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
- <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
- <20250722063411.GC15403@lst.de>
+Subject: [PATCH 6.12] Drivers: hv: Make the sysfs node size for the ring buffer dynamic
+Date: Wed, 23 Jul 2025 12:32:00 +0530
+Message-Id: <20250723070200.2775-1-namjain@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250722063411.GC15403@lst.de>
 
-On Tue, Jul 22, 2025 at 08:34:11AM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
-> > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
-> 
-> Overly long commit message here.
+The ring buffer size varies across VMBus channels. The size of sysfs
+node for the ring buffer is currently hardcoded to 4 MB. Userspace
+clients either use fstat() or hardcode this size for doing mmap().
+To address this, make the sysfs node size dynamic to reflect the
+actual ring buffer size for each channel. This will ensure that
+fstat() on ring sysfs node always returns the correct size of
+ring buffer.
 
-75 characters are allowed, no?
+This is a backport of the upstream commit
+65995e97a1ca ("Drivers: hv: Make the sysfs node size for the ring buffer dynamic")
+with modifications, as the original patch has missing dependencies on
+kernel v6.12.x. The structure "struct attribute_group" does not have
+bin_size field in v6.12.x kernel so the logic of configuring size of
+sysfs node for ring buffer has been moved to
+vmbus_chan_bin_attr_is_visible().
 
-> > remove it.
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Original change was not a fix, but it needs to be backported to fix size
+related discrepancy caused by the commit mentioned in Fixes tag.
 
-Thanks!
+Fixes: bf1299797c3c ("uio_hv_generic: Align ring size to system page")
+Cc: <stable@vger.kernel.org> # 6.12.x
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+---
+
+This change won't apply on older kernels currently due to missing
+dependencies. I will take care of them after this goes in.
+
+I did not retain any Reviewed-by or Tested-by tags, since the code has
+changed completely, while the functionality remains same.
+Requesting Michael, Dexuan, Wei to please review again.
+
+---
+ drivers/hv/vmbus_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 1f519e925f06..616e63fb2f15 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -1810,7 +1810,6 @@ static struct bin_attribute chan_attr_ring_buffer = {
+ 		.name = "ring",
+ 		.mode = 0600,
+ 	},
+-	.size = 2 * SZ_2M,
+ 	.mmap = hv_mmap_ring_buffer_wrapper,
+ };
+ static struct attribute *vmbus_chan_attrs[] = {
+@@ -1866,6 +1865,7 @@ static umode_t vmbus_chan_bin_attr_is_visible(struct kobject *kobj,
+ 	/* Hide ring attribute if channel's ring_sysfs_visible is set to false */
+ 	if (attr ==  &chan_attr_ring_buffer && !channel->ring_sysfs_visible)
+ 		return 0;
++	attr->size = channel->ringbuffer_pagecount << PAGE_SHIFT;
+ 
+ 	return attr->attr.mode;
+ }
+-- 
+2.34.1
+
 
