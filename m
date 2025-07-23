@@ -1,309 +1,236 @@
-Return-Path: <linux-kernel+bounces-742070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FCFB0ECBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FCCB0ECC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597194E1E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905C06C2473
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A45D27990C;
-	Wed, 23 Jul 2025 08:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c/ApPuz6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12362797A4;
-	Wed, 23 Jul 2025 08:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB72279DA8;
+	Wed, 23 Jul 2025 08:07:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C65278E41
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258005; cv=none; b=VXv7DWPthCBIydKhIFWuB/sttzYbGZMMdF6gzQG5VJhG8sznXpmwAG3IxUy+yPMgrHIH67S/rlI5DhB62YgaDl/YzloZyPcJNYk85J4gGucipxLNwK1gCTbYmZHsTWpIdb3MteepBT/uLaBmxWXQqw8zXnZ4eCnBud9oWyPjLl0=
+	t=1753258019; cv=none; b=u7KEZbQGzbXfmZ0sJ/oZHvKZSQs85W/Be9a5cTwlyjcmnLYpvCmnC+1xrcnjXvdNKObOojGmBE7ouiJC2/SzNlSJYVr5ekEhFCTzjOZGsdiYb9paXblHGkEYOdkysfRoj5fHMSL+MV7RxEmIOcFkikrF8JCjNpksFS64lMjWgF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258005; c=relaxed/simple;
-	bh=7wxD8Yrjg6ZlsoNeZb1eFvzqUhJjLEB9d0SVb221OC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLdjmxlLgnFO4ZQMyvpNdnIoL0H2ydGg11wM6S9aJ5/S1jLmMKGxv4czOh+Jx4Iod3nbZlJFi+7DdgpGRe/e0VM+sHpmi0zvB9qLHZy2EPjzgGARyT0+PQmXhuH/0k3lP5NCHoDp5yfxlDsMhEyk+5WOOusNZLdcVfWPAqnFy8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c/ApPuz6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N5LmIv021999;
-	Wed, 23 Jul 2025 08:06:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=58wkRkSKcLcDEF5ZpxWaTthSD+CKaD
-	ykasPLRcT80yk=; b=c/ApPuz6OliBbckWbDjKtnmlPUcms020Ik98ZSaVtLrV/w
-	GoJG8rTwwk9QieM14bFJokKaUQMo9RFIuCc9z5nYu+B565O0P0mWYuRZ6XuQ0o7y
-	TcSd4qgXaCK+nvVkZECN/ekec2JwGutHNDPi7NszWNncFTsK2Pu8GRK1DMJ9f3JR
-	Q4WG+8Avv21eQfnSfx5Mv5qsaroL+K1o6mvyfhFZu+MM86tJLn+zlsLUaZ96kQ5u
-	TeVyXfmwcPVJDd7CNB3g41e7QQq5qyK4ggNtZrvSxSlRnxSi9L6MNmhaYFwcNGXM
-	t++5GaeUXo1QbzRYuyjrllXGG2ncG3bGXMfkIa/A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ffbbfk8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 08:06:32 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56N86VBJ030152;
-	Wed, 23 Jul 2025 08:06:31 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ffbbfk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 08:06:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56N418eo014301;
-	Wed, 23 Jul 2025 08:06:30 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480ppp6x8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 08:06:30 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56N86Sj754722954
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 08:06:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 773FA2004E;
-	Wed, 23 Jul 2025 08:06:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E7ADC20040;
-	Wed, 23 Jul 2025 08:06:27 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.19.130])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Jul 2025 08:06:27 +0000 (GMT)
-Date: Wed, 23 Jul 2025 10:06:26 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-        irogers@google.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, eranian@google.com,
-        ctshao@google.com, tmricht@linux.ibm.com, leo.yan@arm.com,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH V4 07/16] s390/perf: Remove driver-specific throttle
- support
-Message-ID: <aICYAqM5EQUlTqtX@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <20250520181644.2673067-1-kan.liang@linux.intel.com>
- <20250520181644.2673067-8-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1753258019; c=relaxed/simple;
+	bh=dJpqAdH66+jKlXtR6LH6dbpmazKnzwo4yl0JhrdgI2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kdqBvEJ9VIYGIGOvav0dy5PDAu7b8K4E4aVTOiVKq5yFUQcRG112ZI7/eBFxL1gzZPjyQu7/zYpuocZWqcOT0//h81eLx18UY8gaEQfsA+64/FJWkPO7DDKmDOjzjWg6G3WqzXg0hmzOo3YaQ5VsvU4ciyVGXpi6hnD+JHaxlSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8AxQK0SmIBoYyowAQ--.14846S3;
+	Wed, 23 Jul 2025 16:06:42 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJCxdOQQmIBoO+kiAA--.49850S2;
+	Wed, 23 Jul 2025 16:06:41 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	Xi Ruoyao <xry111@xry111.site>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] LoongArch: Implement physical address with ELF program header
+Date: Wed, 23 Jul 2025 16:06:40 +0800
+Message-Id: <20250723080640.442339-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520181644.2673067-8-kan.liang@linux.intel.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UTGLOoyD7eJ7cIMYlST5sCU3mdpQlqP1
-X-Authority-Analysis: v=2.4 cv=De8XqutW c=1 sm=1 tr=0 ts=68809808 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=QyXUC8HyAAAA:8 a=VnNF1IyMAAAA:8
- a=VwQbUJbxAAAA:8 a=k1CFeq3D6HfWPww2QuQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: k3aRQo9I_5iPyc5ns6G-HrgSk84Jim1i
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA2NCBTYWx0ZWRfXz4XBSkNWq/nF
- AtnF7eFSlj+Xvytj4a/39E60iU3A65LOzhQE8mL8nCPQ2rNMgQPzsqlkRjrD1sPmfZk0GSGqXrw
- ogTLsDLFX+1gT9/F094rseC2aE4Z+D06wz4saj4aP2UulT+nJI6hOoSFbpJDmgL8PG8NSbmiEXI
- XoJqy/FAkJ390bnTZbv7zEylXziEJ2zgBut5FgPBhHfp4ROWNMm4dvWGrpP6jn42nKryIi/oTjh
- z49UZjyPlCQbFs0i2MPjwBU50obx4EiPyQUolwa9WByxOyD3pT2VRcRiIBW79X64EguE/glPxh7
- hKSkraIoFQUJ1jjclHvD0/KGQhLeND0KJzHSjMYaaUZgrohuZHB/GqOtBg29i/DLIyip/VQlDbv
- fvNgBhfoJGyD54UFH7MHWBbapUTIATTRgYwSXelhBG48MmAGsO1Zpzc6Fp9DbBwAjw2uyHUw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 clxscore=1011 phishscore=0 adultscore=0
- malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230064
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxdOQQmIBoO+kiAA--.49850S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Tue, May 20, 2025 at 11:16:35AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The throttle support has been added in the generic code. Remove
-> the driver-specific throttle support.
-> 
-> Besides the throttle, perf_event_overflow may return true because of
-> event_limit. It already does an inatomic event disable. The pmu->stop
-> is not required either.
-> 
-> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Thomas Richter <tmricht@linux.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> ---
->  arch/s390/kernel/perf_cpum_cf.c | 2 --
->  arch/s390/kernel/perf_cpum_sf.c | 5 +----
->  2 files changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-> index e657fad7e376..6a262e198e35 100644
-> --- a/arch/s390/kernel/perf_cpum_cf.c
-> +++ b/arch/s390/kernel/perf_cpum_cf.c
-> @@ -980,8 +980,6 @@ static int cfdiag_push_sample(struct perf_event *event,
->  	}
->  
->  	overflow = perf_event_overflow(event, &data, &regs);
-> -	if (overflow)
-> -		event->pmu->stop(event, 0);
->  
->  	perf_event_update_userpage(event);
->  	return overflow;
-> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-> index ad22799d8a7d..91469401f2c9 100644
-> --- a/arch/s390/kernel/perf_cpum_sf.c
-> +++ b/arch/s390/kernel/perf_cpum_sf.c
-> @@ -1072,10 +1072,7 @@ static int perf_push_sample(struct perf_event *event,
->  	overflow = 0;
->  	if (perf_event_exclude(event, &regs, sde_regs))
->  		goto out;
-> -	if (perf_event_overflow(event, &data, &regs)) {
-> -		overflow = 1;
-> -		event->pmu->stop(event, 0);
-> -	}
-> +	overflow = perf_event_overflow(event, &data, &regs);
->  	perf_event_update_userpage(event);
->  out:
->  	return overflow;
-> -- 
-> 2.38.1
+With structure elf64_phdr, field p_paddr is physical address of the
+segment. And it is convenient for qemu to calculate the physical
+address when directly boot ELF kernel image.
 
-Hi all,
+Otherwise QEMU needs convert virtual address p_vaddr into physical
+address, the conversion logic assumes that DMW method is used where
+48 bit physical address is supported. However with direct MMU mapping
+method with start address from 0xFFFF800000000000, only 47 bit physical
+address is supported. QEMU cannot assume the kernel behavior at kernel
+loading stage.
 
-This seems to break POLL_HUP delivery to userspace - when event_limit reaches 0
+Here add physical address indication in ELF program header, it is
+convenient to get physical kernel loading address.
 
-From perf_event_open man page:
-PERF_EVENT_IOC_REFRESH
-              Non-inherited overflow counters can use this to enable a
-              counter for a number of overflows specified by the
-              argument, after which it is disabled.  Subsequent calls of
-              this ioctl add the argument value to the current count.  An
-              overflow notification with POLL_IN set will happen on each
-              overflow until the count reaches 0; when that happens a
-              notification with POLL_HUP set is sent and the event is
-              disabled.
+Here is output with command readelf -l vmlinux with patch:
+  Elf file type is EXEC (Executable file)
+  Entry point 0x90000000015f5000
+  There are 2 program headers, starting at offset 64
+  Program Headers:
+    Type           Offset             VirtAddr           PhysAddr
+                   FileSiz            MemSiz              Flags  Align
+    LOAD           0x0000000000010000 0x9000000000200000 0x0000000000200000
+                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
 
-When the event_limit reaches 0, the POLL_HUP signal is expected to be
-sent. Prior to this patch, an explicit call to event->stop() was made,
-which may have contributed to ensuring that the POLL_HUP signal was
-ultimately delivered. However, after  this change, I often did not
-observe the POLL_HUP signal being delivered as expected in the end
+And output with command readelf -l vmlinux without the patch:
+  Elf file type is EXEC (Executable file)
+  Entry point 0x90000000015f5000
+  There are 2 program headers, starting at offset 64
+  Program Headers:
+    Type           Offset             VirtAddr           PhysAddr
+                   FileSiz            MemSiz              Flags  Align
+    LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
+                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
 
-Example program:
-output:
-Computation result: 49951804672
-count.hup: 0 count.pollin: 22
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+v2 ... v3:
+  1. Fix compile issue where macro PHYS_OFFSET is not defined with assemble
+     code.
+v1 ... v2:
+  1. Set LOAD_OFFSET with PAGE_OFFSET rather than CACHE_BASE, since it
+     is generic with PAGE_OFFSET.
+  2. Add AT information with missing edata_padding section.
+---
+ arch/loongarch/include/asm/addrspace.h |  2 +-
+ arch/loongarch/kernel/vmlinux.lds.S    | 36 +++++++++++++++++---------
+ 2 files changed, 25 insertions(+), 13 deletions(-)
 
-Expected output should be:
-count.hup: 1 in the end
+diff --git a/arch/loongarch/include/asm/addrspace.h b/arch/loongarch/include/asm/addrspace.h
+index e739dbc6329d..18f6c2b469bb 100644
+--- a/arch/loongarch/include/asm/addrspace.h
++++ b/arch/loongarch/include/asm/addrspace.h
+@@ -18,10 +18,10 @@
+ /*
+  * This gives the physical RAM offset.
+  */
+-#ifndef __ASSEMBLER__
+ #ifndef PHYS_OFFSET
+ #define PHYS_OFFSET	_UL(0)
+ #endif
++#ifndef __ASSEMBLER__
+ extern unsigned long vm_map_base;
+ #endif /* __ASSEMBLER__ */
+ 
+diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
+index 08ea921cdec1..8ce6b0d948f4 100644
+--- a/arch/loongarch/kernel/vmlinux.lds.S
++++ b/arch/loongarch/kernel/vmlinux.lds.S
+@@ -3,10 +3,12 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/thread_info.h>
+ #include <asm/orc_lookup.h>
++#include <asm/addrspace.h>
+ 
+ #define PAGE_SIZE _PAGE_SIZE
+ #define RO_EXCEPTION_TABLE_ALIGN	4
+ #define PHYSADDR_MASK			0xffffffffffff /* 48-bit */
++#define LOAD_OFFSET			PAGE_OFFSET
+ 
+ /*
+  * Put .bss..swapper_pg_dir as the first thing in .bss. This will
+@@ -42,7 +44,7 @@ SECTIONS
+ 
+ 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+ 	_stext = .;
+-	.text : {
++	.text : AT(ADDR(.text) - LOAD_OFFSET) {
+ 		TEXT_TEXT
+ 		SCHED_TEXT
+ 		LOCK_TEXT
+@@ -60,7 +62,7 @@ SECTIONS
+ 	__inittext_begin = .;
+ 
+ 	INIT_TEXT_SECTION(PAGE_SIZE)
+-	.exit.text : {
++	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
+ 		EXIT_TEXT
+ 	}
+ 
+@@ -82,7 +84,7 @@ SECTIONS
+ 	}
+ 
+ 	INIT_DATA_SECTION(16)
+-	.exit.data : {
++	.exit.data : AT(ADDR(.exit.data) - LOAD_OFFSET) {
+ 		EXIT_DATA
+ 	}
+ 
+@@ -90,7 +92,7 @@ SECTIONS
+ 	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
+ #endif
+ 
+-	.init.bss : {
++	.init.bss : AT(ADDR(.init.bss) - LOAD_OFFSET) {
+ 		*(.init.bss)
+ 	}
+ 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+@@ -101,27 +103,34 @@ SECTIONS
+ 	_sdata = .;
+ 	RO_DATA(4096)
+ 
+-	.got : ALIGN(16) { *(.got) }
+-	.plt : ALIGN(16) { *(.plt) }
+-	.got.plt : ALIGN(16) { *(.got.plt) }
++	. =  ALIGN(16);
++	.got : AT(ADDR(.got) - LOAD_OFFSET) { *(.got) }
++	. =  ALIGN(16);
++	.plt : AT(ADDR(.plt) - LOAD_OFFSET) { *(.plt) }
++	. =  ALIGN(16);
++	.got.plt : AT(ADDR(.got.plt) - LOAD_OFFSET) { *(.got.plt) }
+ 
+ 	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
+ 
+-	.rela.dyn : ALIGN(8) {
++	. = ALIGN(8);
++	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET) {
+ 		__rela_dyn_begin = .;
+ 		 *(.rela.dyn) *(.rela*)
+ 		__rela_dyn_end = .;
+ 	}
+ 
+ #ifdef CONFIG_RELR
+-	.relr.dyn : ALIGN(8) {
++	. = ALIGN(8);
++	.relr.dyn : AT(ADDR(.relr.dyn) - LOAD_OFFSET) {
+ 		__relr_dyn_begin = .;
+ 		 *(.relr.dyn)
+ 		__relr_dyn_end = .;
+ 	}
+ #endif
+ 
+-	.data.rel : { *(.data.rel*) }
++	.data.rel : AT(ADDR(.data.rel) - LOAD_OFFSET) {
++		*(.data.rel*)
++	}
+ 
+ #ifdef CONFIG_RELOCATABLE
+ 	. = ALIGN(8);
+@@ -134,10 +143,13 @@ SECTIONS
+ 
+ 	ORC_UNWIND_TABLE
+ 
+-	.sdata : {
++	.sdata : AT(ADDR(.sdata) - LOAD_OFFSET) {
+ 		*(.sdata)
+ 	}
+-	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
++	.edata_padding : AT(ADDR(.edata_padding) - LOAD_OFFSET) {
++		BYTE(0);
++		. = ALIGN(PECOFF_FILE_ALIGN);
++	}
+ 	_edata =  .;
+ 
+ 	BSS_SECTION(0, SZ_64K, 8)
 
-#define _GNU_SOURCE
-#include <time.h>
-#include <stdbool.h>
-#include <signal.h>
-#include <poll.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+-- 
+2.39.3
 
-#include <sys/ioctl.h>
-#include <sys/syscall.h>
-#include <linux/perf_event.h>
-
-static struct signal_counts {
-        int in;
-	int out;
-	int hup;
-	int unknown;
-} count;
-
-
-static unsigned long sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID |
-		PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR | PERF_SAMPLE_READ |
-		PERF_SAMPLE_ID | PERF_SAMPLE_CPU |
-		PERF_SAMPLE_PERIOD | PERF_SAMPLE_STREAM_ID | PERF_SAMPLE_RAW;
-
-static void sighandler(int signum, siginfo_t *info, void *uc)
-{
-	switch(info->si_code) {
-                case POLL_IN:  count.in++;  break;
-                case POLL_OUT: count.out++; break;
-                case POLL_HUP: count.hup++; break;
-                default: count.unknown++; break;
-        }
-}
-
-void generate_load(unsigned long long iterations) {
-    unsigned long long sum = 0;
-    srand(time(0));
-
-    for (unsigned long long i = 0; i < iterations; ++i) {
-        int rnd = rand();
-        sum += (rnd ^ (rnd >> 3)) % 1000;
-    }
-    printf("Computation result: %llu\n", sum);
-}
-
-void perf_attr(struct perf_event_attr *pe,
-		       unsigned long config, unsigned long period, bool freq,
-		       unsigned long bits)
-{
-	memset(pe, 0, sizeof(struct perf_event_attr));
-	pe->size = sizeof(struct perf_event_attr);
-	pe->type = PERF_TYPE_HARDWARE;
-	pe->config = PERF_COUNT_HW_CPU_CYCLES;
-	pe->exclude_kernel = 0;
-	pe->sample_period = 50000;
-	pe->freq = 1;
-	pe->disabled = 1;
-	pe->config = config;
-	pe->freq = freq;
-	pe->sample_type = bits;
-}
-
-int main(int argc, char **argv)
-{
-	int fd, signo = SIGIO, rc = -1;
-	struct sigaction sa, sa_old;
-	struct perf_event_attr pe;
-
-	perf_attr(&pe, PERF_COUNT_HW_CPU_CYCLES, 50000, 1, sample_type);
-	/* Set up overflow handler */
-	memset(&sa, 0, sizeof(struct sigaction));
-	memset(&sa_old, 0, sizeof(struct sigaction));
-	sa.sa_sigaction = sighandler;
-	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(signo, &sa, &sa_old) < 0)
-		goto out;
-
-	fd = syscall(__NR_perf_event_open, &pe, 0, -1, -1, 0);
-	if (fd < 0)
-		return rc;
-
-	rc = fcntl(fd, F_SETFL, O_RDWR | O_NONBLOCK | O_ASYNC);
-	rc |= fcntl(fd, F_SETSIG, signo);
-	rc |= fcntl(fd, F_SETOWN, getpid());
-	if (rc)
-		goto out;
-
-	rc = ioctl(fd, PERF_EVENT_IOC_REFRESH, 2500);
-	if (rc)
-		goto out;
-
-	generate_load(100000000ULL);
-	sigaction(signo, &sa_old, NULL);
-	printf("count.hup: %d count.pollin: %d\n", count.hup, count.in);
-	close(fd);
-	return 0;
-out:
-	return rc;
-}
-
-Thank you,
-Sumanth
 
