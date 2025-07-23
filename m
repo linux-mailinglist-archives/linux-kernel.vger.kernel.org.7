@@ -1,70 +1,99 @@
-Return-Path: <linux-kernel+bounces-742154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9282DB0EE0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97396B0EE13
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6F96594D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5340E188246E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94E4283FC2;
-	Wed, 23 Jul 2025 09:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41502283FC2;
+	Wed, 23 Jul 2025 09:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="u6gZzA5G"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YeiT/rU7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jBmcLNrk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YeiT/rU7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jBmcLNrk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386229408;
-	Wed, 23 Jul 2025 09:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7B7276050
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261726; cv=none; b=t2oh9hHEjNsD9nbVA2xMExoa9k1EIpbBKO8rc/KyR1bUnKa2KZzFhGgNcZapWNuHj45IyHvBHLBGIOauDX/1JHcAyoo1Q0aSs0sew0Yaw4UQm3A7kYpkfYr82J0nqhlQOwfXFyYLiHyqBKy/mLhdXreP9gGXL/z1NJtvI5SIDYA=
+	t=1753261741; cv=none; b=YYcVPId7hhfo2/FRYEntMDMPS21Lfs9WlGVuJaEmdnQWthji8369sojueYE3P4Yjj4fPflCKvw/HcvI0GhqXxQzPsspSm4mJ+AO8gEWhzldGsAmxLCs/tC/ETzZ+1H3Z9BQwdyD66Ks1BFu/qM9NxNytrWxyvk0P6Q1HAJ9XVUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261726; c=relaxed/simple;
-	bh=1CIic0hpNip2B7QAdnbKaQVtpQHY9JGyHE2umzIOkvI=;
+	s=arc-20240116; t=1753261741; c=relaxed/simple;
+	bh=UGlIpk7fw2tJBs2nSGjmlKEhq+U4olq2Tq9e/0HS/28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmdTZce+7DBRi5qTLfzrfFwVKUQ+zwzRDdQiP//jLsf9t7ROy3IpFBO7lZDFJ3yWEQnXnXO0e/qx/DTL8ep1sgXP+2C5rYwgjDoUEJLRv9UnX7SMANLi1mMu1g8a5AECFwhmSD1yde/Nf46KPwneC55UP+4AthSneiVKnsWfHvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=u6gZzA5G; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnCmEaKgUgrIhxQFqprZgeHiccIOlKTDCHsIiZVRRdm6/D2dDTgN/huSXTAO230953PwiBwZGHM34meHAoT/RTE9gD0r9o45bld4Ykl6cUyhVuVyA+VeE4ogjpPEJnZmch79HEuk5l5bHPylyndqDUQvlvO5YzjbZ2z6bF0BnWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YeiT/rU7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jBmcLNrk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YeiT/rU7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jBmcLNrk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bn7bW451Pz9t8S;
-	Wed, 23 Jul 2025 11:08:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1753261719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B036A1F449;
+	Wed, 23 Jul 2025 09:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753261737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oOKShWyoy6jXvtzkZANxNISGUx+8cVqAN/UfQ1f8cYY=;
-	b=u6gZzA5GksvaoP9cxb48nlrs5FpzaMj2hPOcyVcmBc8EuIohxGTkhBQXTKG56Op47pBC48
-	7oz+I7hsf/5RDixMmvJVA/p0LAnpsP7+ejws+6mTe3h22Vl4U2mXAB/UPTWLgMONAas2Aw
-	7N4+p+P1awZLT3fdaFBZ9t+3YXqQYDXqzw3Skz+rGH1jQIqLRPrLua+sTvaHMFcrNN9Gns
-	n5aoWmp6B+USvzhS0fjCdvrKXj65/jvJWIkngC1gyFZyyZq4QFoizpEI3E6nu2n2jLMTEX
-	KMGUTHsMyxtqKoBFbeugz7JNoRvEfhHxhUFrx9I8gatwbK6qeb0r5fL4qEG7wA==
-Date: Wed, 23 Jul 2025 11:08:23 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC 0/4] add static huge zero folio support
-Message-ID: <vocblxknnal2t4756bkqcdajt2gkctp2wdjhfg3xkp66j47qk3@saj77wmrflqz>
-References: <20250722094215.448132-1-kernel@pankajraghav.com>
- <e6648680-da88-4f01-9811-00229da858e6@redhat.com>
+	bh=ZZ86HXKj+U1sD3fGSIbwoOwgbbHNQx55VC+m5L7A/uA=;
+	b=YeiT/rU7Mq2AECRYUXA2dMhab4893cj2Kh1z58Ucc7IgyBhPjriu8GZ34TNjx6D1Pu0Rj7
+	+JABaDlFKYPd+Zyo4Xzp5FcDl3ov58Z323A62OaAHPJutyvU5XdtAjZwq+eJx+zp4Lps5z
+	3mK3/V/9N3i1Y43XJ3pkxX9Wvkja4Xw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753261737;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZZ86HXKj+U1sD3fGSIbwoOwgbbHNQx55VC+m5L7A/uA=;
+	b=jBmcLNrkTaZlYfeIVXKMPUCkuXXeoj0V4c/iz0TytTHhd+4IbLZmEfRvisCQGvD3kGHJUX
+	ohfhuTmDUJKMDMBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="YeiT/rU7";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jBmcLNrk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753261737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZZ86HXKj+U1sD3fGSIbwoOwgbbHNQx55VC+m5L7A/uA=;
+	b=YeiT/rU7Mq2AECRYUXA2dMhab4893cj2Kh1z58Ucc7IgyBhPjriu8GZ34TNjx6D1Pu0Rj7
+	+JABaDlFKYPd+Zyo4Xzp5FcDl3ov58Z323A62OaAHPJutyvU5XdtAjZwq+eJx+zp4Lps5z
+	3mK3/V/9N3i1Y43XJ3pkxX9Wvkja4Xw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753261737;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZZ86HXKj+U1sD3fGSIbwoOwgbbHNQx55VC+m5L7A/uA=;
+	b=jBmcLNrkTaZlYfeIVXKMPUCkuXXeoj0V4c/iz0TytTHhd+4IbLZmEfRvisCQGvD3kGHJUX
+	ohfhuTmDUJKMDMBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3241A13302;
+	Wed, 23 Jul 2025 09:08:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HHsUCammgGh/UQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 23 Jul 2025 09:08:57 +0000
+Date: Wed, 23 Jul 2025 10:08:55 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] MAINTAINERS: add missing interval_tree.c to memory
+ mapping section
+Message-ID: <567llsbwcwl4v4awyiykqw57f4msuclwrjgp4bivbkyrygogpv@evlqgd3bza7s>
+References: <20250722171528.141083-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,27 +102,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e6648680-da88-4f01-9811-00229da858e6@redhat.com>
+In-Reply-To: <20250722171528.141083-1-lorenzo.stoakes@oracle.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B036A1F449
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.01
 
-> > 
-> > I will send patches to individual subsystems using the huge_zero_folio
-> > once this gets upstreamed.
-> > 
-> > Looking forward to some feedback.
+On Tue, Jul 22, 2025 at 06:15:28PM +0100, Lorenzo Stoakes wrote:
+> This seems to be the best place for this file.
+
+Honestly, calling this "MISC" and going on with life is also ok.
+But:
+
 > 
-> Please run scripts/checkpatch.pl on your patches.
-> 
-> There are quite some warning for patch #2 and #3, in particular, around
-> using spaces vs. tabs.
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Ah, you are right. I usually run it as a post-commit hook but I forgot
-to add it when I changed my workflow.
+Acked-by: Pedro Falcato <pfalcato@suse.de>
 
-Thanks for pointing it out. I also got a unused variable warning for huge_zero_static_fail_count
-as we don't use it when CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled.
-
-I will change them in the new version.
-
---
-Pankaj
+-- 
+Pedro
 
