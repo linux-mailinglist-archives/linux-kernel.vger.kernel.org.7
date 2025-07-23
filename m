@@ -1,82 +1,76 @@
-Return-Path: <linux-kernel+bounces-741697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83191B0E7FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFD9B0E7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825FB1783F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771944E5D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F4417333F;
-	Wed, 23 Jul 2025 01:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="yjGek5gU"
-Received: from smtp153-171.sina.com.cn (smtp153-171.sina.com.cn [61.135.153.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2862BB1D;
+	Wed, 23 Jul 2025 01:17:20 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B9A1BC41
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219C31853
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753233403; cv=none; b=sV8Wf1M63ul2yTK5HINgzNCszdMIzG6Wz5I+dxmRJ13lKHHg95OoyfetVeDkUsoFj6h9eI7akkaflotU5u635MYHxa9eAQwO7qlOhcm3NKL9EcKTd+X8eJMOTsfKFztEk9cBB7EwzXZhAQZRI05xHNl0j3WRWm8uIAadqiBd/0w=
+	t=1753233440; cv=none; b=km98q9kGyOUKThVKdmqtHc5yV81rcy/aPVpRNxS9otLBU6CrWBNgaXZgAoOrF55ykkqaMbUUOMskKb11+nv6ya6BcPUepqWunRAI/Lg0PQ7OGxqttNzTETe9ahwgn+NS46ppOeUxsFfXVkZVD+ObBTeYaS/LR0+sTdfX6EssdzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753233403; c=relaxed/simple;
-	bh=HpWAxKz6dfEx2qW8PsoDIuxoAlc/svq1hqnRyFq7Tqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lY6Sm9HgQCLpfIP4BMq2tah38Q+AcSGJNamvqa1u9X8i8ja2QWAjNmDMBRo0SoG4laWqnnh/pDeTiZt4nQ/Z6l1Z/+mxR8sdD1eGurchXl/9RlfsEmi/BpfrWTqhSThiPPAY3P/66ssRNP6sxgGt6D+zEvcQOdhbsWcEPJK+kXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=yjGek5gU; arc=none smtp.client-ip=61.135.153.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753233396;
-	bh=UdnmmYRw0AJu5tW+PGAvB+7PLFGNJroJtC9cg2Qz3GQ=;
-	h=From:Subject:Date:Message-ID;
-	b=yjGek5gUDUiDjMMgHIWNLKPSEuwz3XvuMYMC3qfj4eN8u+spHjYoE3qM1YU1k8R15
-	 Kze2/TH7Tv6N66PKZHpKn98HMMnhp+pmu4fO/8N3g8vX7BJdIEnUrbrxMBdtwkT+Aw
-	 wnq+bsu8l5i8YkJQ4+h6k0f0/fi2UOVjcTCzNxjY=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 688037E800006558; Wed, 23 Jul 2025 09:16:26 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6659856291967
-X-SMAIL-UIID: 56B947E8854B457CB095FF38F41598FD-20250723-091626-1
-From: Hillf Danton <hdanton@sina.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	thomas.hellstrom@linux.intel.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>,
-	regressions@lists.linux.dev
-Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking dependency detected when plugging USB stick after ffa1e7ada456
-Date: Wed, 23 Jul 2025 09:16:13 +0800
-Message-ID: <20250723011614.2812-1-hdanton@sina.com>
-In-Reply-To: <8acbc346-98f8-44fc-9675-0c3a7da87d21@kernel.dk>
-References: <20250722005125.2765-1-hdanton@sina.com>
+	s=arc-20240116; t=1753233440; c=relaxed/simple;
+	bh=9OlrydaUpg3OwHFmFhJUEKn5dj8ZSZkg1QuWWVFtY0w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S4snmmZIFz0uU8BqpDcWFKIhSKZqKS0f5tz4oqcojqXCPzyX7G8BPiHAF9ELY9TPDTQ/7x9Oq2LTt/YkujEr/njEjUqfEXHSSQ9f/wF63IPP6pGFMF/rpH72hc9AXy5fsuAQZyz7vZ0lGWQq3v+JE7wSiFJ0Byhkh3Mvf64ANPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c306a1b38so313562039f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:17:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753233438; x=1753838238;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aep9h97yzq8BxK3rUKzUgGRp8xlimpOzQ2+X26fDUzI=;
+        b=iHsaa/KFSc90Gghcg9mVoM36FD8ez0dc+3K0egbp5qeUX81FgbzVfXHHWIbpuLtNYs
+         ui90eB5McFYggvnThXVJG3jbdwTSlUO1NvlVROBs9EPmCPtMmGnrnokEYBJjoDKz7Ecx
+         jqxwuH+Q38kn/PZoB0719UGBPum56RqJ1gHTOamA4+4GJKEL+zMotfkXpiapjgGxwIfK
+         89h25rrfsUpImZA5SGkr5a3hGvwvqdeCOdHHYKgHjer2cuhRMrhfCF/2UkhsK8tyfe0/
+         WJFm69hJTiK5iGjmik2lEkgLuYOKxy+3ffsN4HEoAKj7MKO73l8crlRNTskrWbD6n0/P
+         rczg==
+X-Gm-Message-State: AOJu0Yy2X0O8yfH/7h6oMrf8vOb4iqBIVDBHc8Q4gJRc/rSNHLqnyvFJ
+	ek5dfShir81rMhe6wMYQCXl+RXA067mDTo/27BWeHHxUFvI/GmXLsaxJ+KgCvxzKqEfnKKwEYOu
+	/6jJQIldAIzvs4vIEAS3QCRQf93o4qswcZODvQLge9WueZq3dDl0Gg41EqxM=
+X-Google-Smtp-Source: AGHT+IEmi1ki6mPidxS9aJGw/Veo/WINjD24WG34z1DrX8GAXU9BMYZKgmqwx0JiwMc0jXF2zRqD0CKoj6M7HF0kkYknwDw9Jgbo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2cd5:b0:87c:41a8:6e19 with SMTP id
+ ca18e2360f4ac-87c650295d0mr268311239f.11.1753233438252; Tue, 22 Jul 2025
+ 18:17:18 -0700 (PDT)
+Date: Tue, 22 Jul 2025 18:17:18 -0700
+In-Reply-To: <0000000000006304400619bbfae2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6880381e.a70a0220.21b99c.0016.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+c6fd966ebbdea1e8ff08@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 22 Jul 2025 06:14:18 -0600 Jens Axboe wrote:
-> On 7/21/25 6:51 PM, Hillf Danton wrote:
-> > Try the diff that serializes elevator_change() with q->elevator_lock if
-> > reproducer is available.
-> 
-> Hillf, these seemingly random and not tested or thought through patches
-> flung out in response to reports is not useful. It just wastes peoples
-> time and resources.
-> 
-Interesting, if you are right, so does the guy who created the deadlock, no?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: 
+Author: kent.overstreet@linux.dev
+
+#syz fix: bcachefs: Increase BCH_MIN_NR_NBUCKETS
 
