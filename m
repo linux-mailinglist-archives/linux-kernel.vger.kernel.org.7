@@ -1,334 +1,126 @@
-Return-Path: <linux-kernel+bounces-743028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D67B0F9B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:56:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946A4B0F9E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44301CC1A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB473BC0D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C700F238C33;
-	Wed, 23 Jul 2025 17:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1CE22A80D;
+	Wed, 23 Jul 2025 17:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jyV49IEG"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fTzvHWit"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1F623182D;
-	Wed, 23 Jul 2025 17:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D2F229B2E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 17:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293263; cv=none; b=iZZI7sBjbCqd9a4OmdNEY6YL4RsJ6Xv17KdsPYZyypXPuMWgHyWEwi7t9hLf/iBD9CMmOTws0j8ejrtPfSm4TkMWdo+m5+RckF4FkorypDuc+yu1MeSoW/v8FtXmvwto5cKz5hu3TxUf9IGQlDZmqEKXAWo8iX/n7Kd1+oIJOeg=
+	t=1753293320; cv=none; b=qTvmvh0wntiwJMbB+ukWf9zkWqMBTIsRjG5lIT1hjPbphwLK0v6ZF9seW/4R3AmsV2yq2WiMY1eCLDJrKP7HHjR73y0PE3zol/odkAgc3yMJvb0dh0XeRYkABpsjapPDb+0am8/OdHS5QNtG2mGScAr+FqZAGuRD+kjtJar+kDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293263; c=relaxed/simple;
-	bh=9A4Q42upgg66IrTK5yoJS98/5wWKyZ4SWNrLAsUlKtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mo78LsgGHkhvWyZmqG0jT+z2oDekDYnhS535AqppOKRBYxBR1dAw6OJqV/sliI3j9QrBS4ODRccgMhNvCw/tpGsxiLNHs1jXeObvyVIMh7UCMAAHwH8iiui2cU0ZUUdpoLGhlztwOAwrqewl7UoUFEJvBQcL5SLBpb5s4nlEwoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jyV49IEG; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56NHrf0D1284522
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 23 Jul 2025 10:54:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56NHrf0D1284522
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1753293247;
-	bh=cB0qFffZfZC4uW/TD2Ynm34XI3kmi421N2abXu5XwFg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jyV49IEGEIlnRGMT9Zfu5K7CNCpzQigjLdBDAWcOFss9/r6pwSQXuE/2dPnNrhoXP
-	 eGTGSNZ0lgBiV3BzYEfaMX/hKcG58T+sxTp/l+QN0qyfpgaXlWpUHuK8DkMViWkXMB
-	 xlBmIdlx7rpghmV+LhJdKQ7M7qAqwGKMI7YkJ3JO2QdntpJzFkPM2vv80swDBaYsDN
-	 Sha4+5ituj4Uv0XyL384aFHIIx1i/Ftd5Jb22ukR2bbUMCoOWwbrkA0A1V1/cevrur
-	 x9ZesNd5+eM62GZvGtjMNLCnfEfTgm+kQiSxzbYC2bRuh3RYwF88fbCXniDYyZxrUG
-	 U6c3QLL+esGnA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, xin@zytor.com, luto@kernel.org,
-        peterz@infradead.org, andrew.cooper3@citrix.com, chao.gao@intel.com,
-        hch@infradead.org
-Subject: [PATCH v5 23/23] KVM: nVMX: Add prerequisites to SHADOW_FIELD_R[OW] macros
-Date: Wed, 23 Jul 2025 10:53:41 -0700
-Message-ID: <20250723175341.1284463-24-xin@zytor.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250723175341.1284463-1-xin@zytor.com>
-References: <20250723175341.1284463-1-xin@zytor.com>
+	s=arc-20240116; t=1753293320; c=relaxed/simple;
+	bh=5lIGGRFfecz/Eoh8rfRoSoukLF8S9VnoZ3Vch/Zqav0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UlXoCgw02hI8YC47kkjc5f+0gxZrnTQwY/Irf7onZ2jL7wF0ospCfTc1uaktWaVLXhytebmQ8O2qU7l8p7UouCBa3G5DDNiQof4rDcYgxi/4A+/yIPzZ92wzfL9EnUsGeuK0xRgiMEQc6CIQNsHx9NKFg5Fr1vmzcrWeOhLYHjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fTzvHWit; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab86a29c98so42891cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753293317; x=1753898117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5lIGGRFfecz/Eoh8rfRoSoukLF8S9VnoZ3Vch/Zqav0=;
+        b=fTzvHWitfvYJLj7h+NPreynoTZz2ef73fDFvLDBBMJjtffHw+Vt5eNEUZZTA1JUCUx
+         7BTGuYnuSXPjVeRmxCshNye+iPU1+4PddY1lAImpJ0RuaPKINirNmoJhczJVm1xl1p+c
+         uwzeguU4SEQtcyxJLEy7a9Qkzh7u2euYUB2qwp4KhxhQPuoKqCVfw6yEf91Z4tN1KqQW
+         3gnCgkIqyNO7BM3YQKVs2jS1BVii6une/rN74xEdxSIkGC9QumFh8O85uI9eOP3AZbgF
+         P/4x1vGko7VEJbaiT792aiHSf20Eq1jH88ekylpGCEWX+0z78K8vLTOD+yhG1C+otKRv
+         DBtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753293317; x=1753898117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5lIGGRFfecz/Eoh8rfRoSoukLF8S9VnoZ3Vch/Zqav0=;
+        b=H2C91JKGX1M0IDOjYfI1zopjxppLeiB66W3EcHvbVmZcJ4kA7w1UVbjkJuv1iDNc3h
+         NzdCp52skU85dk4Pik/8ootNsljB8q4EbQrrUkOVbsmx6zAXJoMUvrYjxuELetD6lK8o
+         /Md3PqAvcOLpz3IaNa5gH2ilq5/ZfLaIKvUX3WyeF5F8Ow/o3tfzTsCnFwvRP6iqSR9R
+         vp7vZYk3nr3Kfot665Dqh7tZPbgBBEuKizxGAvQbkggLVX1Oqg9anZVO+AR7TnoVLbbL
+         8r83m+1UhnS2wRhtOKv5tgKO+zIpcpztPazF8ut0f/mE3ZBtDN6+VMrQE5m9676A0YRp
+         i4QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVeFWci/Urp5i88T+npap/3qOFCVPdHlaMHa+2TSNM9ud/c1cZxLGUynGh3pJ9jPtQHnT6r7+1NhPOVMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKg1MZsJwYvcUxj3VLONGCQS70Rs/oxzbQQGQ0+1hb2TAsrP02
+	88IlJNXa95SaqnVvk4F38DTQQ3TI/2ZRpcw7UU7qjI45luOODHkXtfIkh9feXsYFCFbcX+xJ8wm
+	ThRL1fjKKF5Bss7eR/S7eNPTBxgZ68ADKtDkgXIbV
+X-Gm-Gg: ASbGncus+iooqq/c8se2coQ+c5z3t//ouO4r/VfFdSiMJhijG7CdCZwGjRGtbE5vrl6
+	X/P/v+t8BYlQlOiVimEAZ9ztNttVgqeHCkIeQM/ifav6b+dS/UVGsH2xaA2YRTmYvOwlqTUvx0T
+	ajB9ZNQaIxDL6CqrOfFrf7Pxfvm3QN2sv73nCTVwWAR6OoFJlj18tbTZ5/tzjx2hdwvNhP725WC
+	anxUom13xipwJhy41wJq9gXb9b6RiJymBqO
+X-Google-Smtp-Source: AGHT+IHIKb31VYdVn/B6IVZUU3PWhb2/5MfZYxh690PVLsXGE19hQzPxB6Xh1gdfAV/1uPW5r9M8TtfzZfISYoj9Mso=
+X-Received: by 2002:a05:622a:111:b0:48a:ba32:370 with SMTP id
+ d75a77b69052e-4ae7ca859bcmr114781cf.10.1753293317052; Wed, 23 Jul 2025
+ 10:55:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+ <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz> <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
+In-Reply-To: <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 23 Jul 2025 10:55:06 -0700
+X-Gm-Features: Ac12FXzYuz8rR2OGf5wlGnp-T-d0ODjwT1WWx2V0IdyNNVzpMhdL1wsVFoFEQ-Y
+Message-ID: <CAJuCfpG5VeW5+GdceeRCLDgX4CuFm2xQUG6UAAoLwF7oW8aU_g@mail.gmail.com>
+Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
+ vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
+To: Jann Horn <jannh@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>, 
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xin Li <xin3.li@intel.com>
+On Wed, Jul 23, 2025 at 10:50=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+>
+> On Wed, Jul 23, 2025 at 7:32=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> =
+wrote:
+> > On 7/23/25 18:26, Jann Horn wrote:
+> > > There's a racy UAF in `vma_refcount_put()` when called on the
+> > > `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
+> > > without sufficient protection against concurrent object reuse:
+> >
+> > Oof.
 
-Add VMX feature checks before accessing VMCS fields via SHADOW_FIELD_R[OW]
-macros, as some fields may not be supported on all CPUs.
+Thanks for analyzing this Jann. Yeah, I missed the fact that
+vma_refcount_put() uses vma->vm_mm.
 
-Functions like copy_shadow_to_vmcs12() and copy_vmcs12_to_shadow() access
-VMCS fields that may not exist on certain hardware, such as
-INJECTED_EVENT_DATA.  To avoid VMREAD/VMWRITE warnings, skip syncing fields
-tied to unsupported VMX features.
+> >
+> > > I'm not sure what the right fix is; I guess one approach would be to
+> > > have a special version of vma_refcount_put() for cases where the VMA
+> > > has been recycled by another MM that grabs an extra reference to the
+> > > MM? But then dropping a reference to the MM afterwards might be a bit
+> > > annoying and might require something like mmdrop_async()...
+> >
+> > Would we need mmdrop_async()? Isn't this the case for mmget_not_zero() =
+and
+> > mmput_async()?
+>
+> Now I'm not sure anymore if either of those approaches would work,
+> because they rely on the task that's removing the VMA to wait until we
+> do __refcount_dec_and_test() before deleting the MM... but I don't
+> think we have any such guarantee...
 
-Signed-off-by: Xin Li <xin3.li@intel.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Tested-by: Shan Kang <shan.kang@intel.com>
-Tested-by: Xuelian Guo <xuelian.guo@intel.com>
----
-
-Change in v5:
-* Add TB from Xuelian Guo.
-
-Change since v2:
-* Add __SHADOW_FIELD_R[OW] for better readability or maintability (Sean).
----
- arch/x86/kvm/vmx/nested.c             | 79 +++++++++++++++++++--------
- arch/x86/kvm/vmx/vmcs_shadow_fields.h | 41 +++++++++-----
- 2 files changed, 83 insertions(+), 37 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 3554701ec43b..72c23f7267d3 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -55,14 +55,14 @@ struct shadow_vmcs_field {
- 	u16	offset;
- };
- static struct shadow_vmcs_field shadow_read_only_fields[] = {
--#define SHADOW_FIELD_RO(x, y) { x, offsetof(struct vmcs12, y) },
-+#define __SHADOW_FIELD_RO(x, y, c) { x, offsetof(struct vmcs12, y) },
- #include "vmcs_shadow_fields.h"
- };
- static int max_shadow_read_only_fields =
- 	ARRAY_SIZE(shadow_read_only_fields);
- 
- static struct shadow_vmcs_field shadow_read_write_fields[] = {
--#define SHADOW_FIELD_RW(x, y) { x, offsetof(struct vmcs12, y) },
-+#define __SHADOW_FIELD_RW(x, y, c) { x, offsetof(struct vmcs12, y) },
- #include "vmcs_shadow_fields.h"
- };
- static int max_shadow_read_write_fields =
-@@ -85,6 +85,17 @@ static void init_vmcs_shadow_fields(void)
- 			pr_err("Missing field from shadow_read_only_field %x\n",
- 			       field + 1);
- 
-+		switch (field) {
-+#define __SHADOW_FIELD_RO(x, y, c)		\
-+		case x:				\
-+			if (!(c))		\
-+				continue;	\
-+			break;
-+#include "vmcs_shadow_fields.h"
-+		default:
-+			break;
-+		}
-+
- 		clear_bit(field, vmx_vmread_bitmap);
- 		if (field & 1)
- #ifdef CONFIG_X86_64
-@@ -110,24 +121,13 @@ static void init_vmcs_shadow_fields(void)
- 			  field <= GUEST_TR_AR_BYTES,
- 			  "Update vmcs12_write_any() to drop reserved bits from AR_BYTES");
- 
--		/*
--		 * PML and the preemption timer can be emulated, but the
--		 * processor cannot vmwrite to fields that don't exist
--		 * on bare metal.
--		 */
- 		switch (field) {
--		case GUEST_PML_INDEX:
--			if (!cpu_has_vmx_pml())
--				continue;
--			break;
--		case VMX_PREEMPTION_TIMER_VALUE:
--			if (!cpu_has_vmx_preemption_timer())
--				continue;
--			break;
--		case GUEST_INTR_STATUS:
--			if (!cpu_has_vmx_apicv())
--				continue;
-+#define __SHADOW_FIELD_RW(x, y, c)		\
-+		case x:				\
-+			if (!(c))		\
-+				continue;	\
- 			break;
-+#include "vmcs_shadow_fields.h"
- 		default:
- 			break;
- 		}
-@@ -1617,8 +1617,8 @@ int vmx_get_vmx_msr(struct nested_vmx_msrs *msrs, u32 msr_index, u64 *pdata)
- /*
-  * Copy the writable VMCS shadow fields back to the VMCS12, in case they have
-  * been modified by the L1 guest.  Note, "writable" in this context means
-- * "writable by the guest", i.e. tagged SHADOW_FIELD_RW; the set of
-- * fields tagged SHADOW_FIELD_RO may or may not align with the "read-only"
-+ * "writable by the guest", i.e. tagged __SHADOW_FIELD_RW; the set of
-+ * fields tagged __SHADOW_FIELD_RO may or may not align with the "read-only"
-  * VM-exit information fields (which are actually writable if the vCPU is
-  * configured to support "VMWRITE to any supported field in the VMCS").
-  */
-@@ -1639,6 +1639,18 @@ static void copy_shadow_to_vmcs12(struct vcpu_vmx *vmx)
- 
- 	for (i = 0; i < max_shadow_read_write_fields; i++) {
- 		field = shadow_read_write_fields[i];
-+
-+		switch (field.encoding) {
-+#define __SHADOW_FIELD_RW(x, y, c)		\
-+		case x:				\
-+			if (!(c))		\
-+				continue;	\
-+			break;
-+#include "vmcs_shadow_fields.h"
-+		default:
-+			break;
-+		}
-+
- 		val = __vmcs_readl(field.encoding);
- 		vmcs12_write_any(vmcs12, field.encoding, field.offset, val);
- 	}
-@@ -1673,6 +1685,23 @@ static void copy_vmcs12_to_shadow(struct vcpu_vmx *vmx)
- 	for (q = 0; q < ARRAY_SIZE(fields); q++) {
- 		for (i = 0; i < max_fields[q]; i++) {
- 			field = fields[q][i];
-+
-+			switch (field.encoding) {
-+#define __SHADOW_FIELD_RO(x, y, c)			\
-+			case x:				\
-+				if (!(c))		\
-+					continue;	\
-+				break;
-+#define __SHADOW_FIELD_RW(x, y, c)			\
-+			case x:				\
-+				if (!(c))		\
-+					continue;	\
-+				break;
-+#include "vmcs_shadow_fields.h"
-+			default:
-+				break;
-+			}
-+
- 			val = vmcs12_read_any(vmcs12, field.encoding,
- 					      field.offset);
- 			__vmcs_writel(field.encoding, val);
-@@ -5815,9 +5844,10 @@ static int handle_vmread(struct kvm_vcpu *vcpu)
- static bool is_shadow_field_rw(unsigned long field)
- {
- 	switch (field) {
--#define SHADOW_FIELD_RW(x, y) case x:
-+#define __SHADOW_FIELD_RW(x, y, c)	\
-+	case x:				\
-+		return c;
- #include "vmcs_shadow_fields.h"
--		return true;
- 	default:
- 		break;
- 	}
-@@ -5827,9 +5857,10 @@ static bool is_shadow_field_rw(unsigned long field)
- static bool is_shadow_field_ro(unsigned long field)
- {
- 	switch (field) {
--#define SHADOW_FIELD_RO(x, y) case x:
-+#define __SHADOW_FIELD_RO(x, y, c)	\
-+	case x:				\
-+		return c;
- #include "vmcs_shadow_fields.h"
--		return true;
- 	default:
- 		break;
- 	}
-diff --git a/arch/x86/kvm/vmx/vmcs_shadow_fields.h b/arch/x86/kvm/vmx/vmcs_shadow_fields.h
-index da338327c2b3..607945ada35f 100644
---- a/arch/x86/kvm/vmx/vmcs_shadow_fields.h
-+++ b/arch/x86/kvm/vmx/vmcs_shadow_fields.h
-@@ -1,14 +1,17 @@
--#if !defined(SHADOW_FIELD_RO) && !defined(SHADOW_FIELD_RW)
-+#if !defined(__SHADOW_FIELD_RO) && !defined(__SHADOW_FIELD_RW)
- BUILD_BUG_ON(1)
- #endif
- 
--#ifndef SHADOW_FIELD_RO
--#define SHADOW_FIELD_RO(x, y)
-+#ifndef __SHADOW_FIELD_RO
-+#define __SHADOW_FIELD_RO(x, y, c)
- #endif
--#ifndef SHADOW_FIELD_RW
--#define SHADOW_FIELD_RW(x, y)
-+#ifndef __SHADOW_FIELD_RW
-+#define __SHADOW_FIELD_RW(x, y, c)
- #endif
- 
-+#define SHADOW_FIELD_RO(x, y) __SHADOW_FIELD_RO(x, y, true)
-+#define SHADOW_FIELD_RW(x, y) __SHADOW_FIELD_RW(x, y, true)
-+
- /*
-  * We do NOT shadow fields that are modified when L0
-  * traps and emulates any vmx instruction (e.g. VMPTRLD,
-@@ -32,8 +35,12 @@ BUILD_BUG_ON(1)
-  */
- 
- /* 16-bits */
--SHADOW_FIELD_RW(GUEST_INTR_STATUS, guest_intr_status)
--SHADOW_FIELD_RW(GUEST_PML_INDEX, guest_pml_index)
-+__SHADOW_FIELD_RW(GUEST_INTR_STATUS, guest_intr_status, cpu_has_vmx_apicv())
-+/*
-+ * PML can be emulated, but the processor cannot vmwrite to the VMCS field
-+ * GUEST_PML_INDEX that doesn't exist on bare metal.
-+ */
-+__SHADOW_FIELD_RW(GUEST_PML_INDEX, guest_pml_index, cpu_has_vmx_pml())
- SHADOW_FIELD_RW(HOST_FS_SELECTOR, host_fs_selector)
- SHADOW_FIELD_RW(HOST_GS_SELECTOR, host_gs_selector)
- 
-@@ -41,9 +48,9 @@ SHADOW_FIELD_RW(HOST_GS_SELECTOR, host_gs_selector)
- SHADOW_FIELD_RO(VM_EXIT_REASON, vm_exit_reason)
- SHADOW_FIELD_RO(VM_EXIT_INTR_INFO, vm_exit_intr_info)
- SHADOW_FIELD_RO(VM_EXIT_INSTRUCTION_LEN, vm_exit_instruction_len)
-+SHADOW_FIELD_RO(VM_EXIT_INTR_ERROR_CODE, vm_exit_intr_error_code)
- SHADOW_FIELD_RO(IDT_VECTORING_INFO_FIELD, idt_vectoring_info_field)
- SHADOW_FIELD_RO(IDT_VECTORING_ERROR_CODE, idt_vectoring_error_code)
--SHADOW_FIELD_RO(VM_EXIT_INTR_ERROR_CODE, vm_exit_intr_error_code)
- SHADOW_FIELD_RO(GUEST_CS_AR_BYTES, guest_cs_ar_bytes)
- SHADOW_FIELD_RO(GUEST_SS_AR_BYTES, guest_ss_ar_bytes)
- SHADOW_FIELD_RW(CPU_BASED_VM_EXEC_CONTROL, cpu_based_vm_exec_control)
-@@ -54,7 +61,12 @@ SHADOW_FIELD_RW(VM_ENTRY_INTR_INFO_FIELD, vm_entry_intr_info_field)
- SHADOW_FIELD_RW(VM_ENTRY_INSTRUCTION_LEN, vm_entry_instruction_len)
- SHADOW_FIELD_RW(TPR_THRESHOLD, tpr_threshold)
- SHADOW_FIELD_RW(GUEST_INTERRUPTIBILITY_INFO, guest_interruptibility_info)
--SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE, vmx_preemption_timer_value)
-+/*
-+ * The preemption timer can be emulated, but the processor cannot vmwrite to
-+ * the VMCS field VMX_PREEMPTION_TIMER_VALUE that doesn't exist on bare metal.
-+ */
-+__SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE, vmx_preemption_timer_value,
-+		  cpu_has_vmx_preemption_timer())
- 
- /* Natural width */
- SHADOW_FIELD_RO(EXIT_QUALIFICATION, exit_qualification)
-@@ -74,10 +86,13 @@ SHADOW_FIELD_RW(HOST_GS_BASE, host_gs_base)
- /* 64-bit */
- SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS, guest_physical_address)
- SHADOW_FIELD_RO(GUEST_PHYSICAL_ADDRESS_HIGH, guest_physical_address)
--SHADOW_FIELD_RO(ORIGINAL_EVENT_DATA, original_event_data)
--SHADOW_FIELD_RO(ORIGINAL_EVENT_DATA_HIGH, original_event_data)
--SHADOW_FIELD_RW(INJECTED_EVENT_DATA, injected_event_data)
--SHADOW_FIELD_RW(INJECTED_EVENT_DATA_HIGH, injected_event_data)
-+__SHADOW_FIELD_RO(ORIGINAL_EVENT_DATA, original_event_data, cpu_has_vmx_fred())
-+__SHADOW_FIELD_RO(ORIGINAL_EVENT_DATA_HIGH, original_event_data, cpu_has_vmx_fred())
-+__SHADOW_FIELD_RW(INJECTED_EVENT_DATA, injected_event_data, cpu_has_vmx_fred())
-+__SHADOW_FIELD_RW(INJECTED_EVENT_DATA_HIGH, injected_event_data, cpu_has_vmx_fred())
- 
- #undef SHADOW_FIELD_RO
- #undef SHADOW_FIELD_RW
-+
-+#undef __SHADOW_FIELD_RO
-+#undef __SHADOW_FIELD_RW
--- 
-2.50.1
-
+This is tricky. Let me look into it some more before suggesting any fixes.
 
