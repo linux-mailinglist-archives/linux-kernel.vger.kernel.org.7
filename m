@@ -1,132 +1,162 @@
-Return-Path: <linux-kernel+bounces-742862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427B3B0F77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A804B0F781
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4693B7738
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6696170392
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5928C1E500C;
-	Wed, 23 Jul 2025 15:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F918A95C;
+	Wed, 23 Jul 2025 15:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPEe0uZc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tbw5DceG"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2158A95C;
-	Wed, 23 Jul 2025 15:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A8C1E3DFE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285927; cv=none; b=MH7OirecaDo+BxVXq7uwlZMtu3d9OyddliaP2Av01n+1Ki0CSzaLn1gzNy8Ks320M/QuvyEPxZfxDKWTzCbl5qQdC3S5xt4695frwrSmfe6vLOPX900dAZqgyBWLsN5pbwfski0cQkl9qdC25fFxns8GzU5IXv1Wbkgtg/QfP+E=
+	t=1753285970; cv=none; b=Zu5ifOERKAoG+0hX89U/iHt0SdOp7oQA1yAG9arR2Kqn6KoHD5Cqq30jrDm/C2XKYtQ0VByTbIBsFD/WthSs5HwWXjnM/rTCZIrT0lq+3KaImKQNauK4r/8j0QWQznfFIay8qbrdokflW0K6NppDekcpv55ge9u5blfyWvAXXHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285927; c=relaxed/simple;
-	bh=qmx86GClRdTh+GmCFQ9s0XfZC0/2nNXkeIbHp8gEHAY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=SuTRk8kFiHpLm91agQqPMsloVeZcomoQm25hlek/f7iqKKiahGjrlO+P+YR05vNyt4Xtww5P2LxKGQE2OG2QvMQl7wo9zayLcWtRlxjeUeCWBi1b+t6ukv0D7vlA55r/jUemdDDrdQ/LJiGW2Mvm3GUYXdwgMV7ktAU8DTEmuGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPEe0uZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C864BC4CEE7;
-	Wed, 23 Jul 2025 15:52:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753285927;
-	bh=qmx86GClRdTh+GmCFQ9s0XfZC0/2nNXkeIbHp8gEHAY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=CPEe0uZchNTvxnafRpM7AFxu2Ioxl0xOwyIGJ3HBtJ3Xd4Yrc6TrlYeCTqLeemfvO
-	 2lHysHKURYajjzIDRE4LKHb04FVpOyqneT5a6Unoq05VmunQL1lYhjDB3s3/duoIH8
-	 q0eTkUvtOY98JL9IeXWiK+vLwGemTxAQ7pnZp5QTE5HopPWjqiEAswhtpFejkGJEMK
-	 vxwfo/om7nuVXa0F8GlQDuHb0KQnebXQZhSC3LZTtKU/qiuOzESxL0hYCnHsE3V86e
-	 BViQOMsbu198ff6bub+F2xKkGffbzJIM77Y8d8Ik4+RU6K8ZR+T5+4tTU7HkVUV+jU
-	 lkxaxSzLVESIQ==
+	s=arc-20240116; t=1753285970; c=relaxed/simple;
+	bh=DiBOvH++NZsUHSC2Dr6hotPOdDYDVFXQoekPTVW6LfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jvLMwYNSdv9Z74Y429kyUuMpEPBp1zYyylOXQULTyBEhlzpuEEjyhTg+jZrXGUiI86wYxZMxyS99Du0IkTikrtn7johg63e8F3Jj9nEGBiFb61gXCNWcaQvv6yYb/9qR1t3kA5Ulm255E+YAKqJwJlpHX2t+tDCV+YsevNQPPLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tbw5DceG; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <74709a08-4536-4c5a-8140-12d8b42e97c0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753285957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4n+zG0TX4zRTGBk8jZsFMT6r7aY4KxsTCaDB/5pV6qw=;
+	b=Tbw5DceGwh3X7jnj4xTXQTxMUpSMwoXsp/qExD1BzgnhP/Ux1hTxJXBzCnriV6Uv15Bqnk
+	JZb8742QhCajE7ZL3fSj0D8Fi/3PeKthI1kpXDGn5DDszDqLI5PQjaTAVBwfTHSxsgXeVT
+	xSih5pywZe7x8WOpescejqu4Yz2GIp4=
+Date: Wed, 23 Jul 2025 08:52:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 23 Jul 2025 17:52:02 +0200
-Message-Id: <DBJJZL9MXYSJ.3S4JQ14MK6N3B@kernel.org>
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?=
- <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com> <aIBl6JPh4MQq-0gu@tardis-2.local> <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com> <aIDxFoQV_fRLjt3h@tardis-2.local> <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org> <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com> <DBJIY7IKSNVH.1Q2QD6X30GIRC@kernel.org> <aIEDbB_FcgHgzfKd@google.com>
-In-Reply-To: <aIEDbB_FcgHgzfKd@google.com>
+MIME-Version: 1.0
+Subject: Re: [PATCH v5] bpftool: Add CET-aware symbol matching for x86_64
+ architectures
+Content-Language: en-GB
+To: Jiri Olsa <olsajiri@gmail.com>,
+ aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yuan Chen <chenyuan@kylinos.cn>
+References: <20250723022043.20503-1-chenyuan_fl@163.com>
+ <aIDe3IR2SR6S0WM9@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <aIDe3IR2SR6S0WM9@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed Jul 23, 2025 at 5:44 PM CEST, Alice Ryhl wrote:
-> On Wed, Jul 23, 2025 at 05:03:12PM +0200, Danilo Krummrich wrote:
->> On Wed Jul 23, 2025 at 4:56 PM CEST, Daniel Almeida wrote:
->> >> On 23 Jul 2025, at 11:35, Danilo Krummrich <dakr@kernel.org> wrote:
->> >> On 7/23/25 4:26 PM, Boqun Feng wrote:
->> >>> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
->> >>> But sure, this and the handler pinned initializer thing is not a blo=
-cker
->> >>> issue. However, I would like to see them resolved as soon as possibl=
-e
->> >>> once merged.
->> >>=20
->> >> I think it would be trivial to make the T an impl PinInit<T, E> and u=
-se a
->> >> completion as example instead of an atomic. So, we should do it right=
- away.
->> >>=20
->> >> - Danilo
->> >
->> >
->> > I agree that this is a trivial change to make. My point here is not to=
- postpone
->> > the work; I am actually somewhat against switching to completions, as =
-per the
->> > reasoning I provided in my latest reply to Boqun. My plan is to switch=
- directly
->> > to whatever will substitute AtomicU32.
->>=20
->> I mean, Boqun has a point. AFAIK, the Rust atomics are UB in the kernel.
->>=20
->> So, this is a bit as if we would use spin_lock() instead of spin_lock_ir=
-q(),
->> it's just not correct. Hence, we may not want to showcase it until it's =
-actually
->> resolved.
->>=20
->> The plain truth is, currently there's no synchronization primitive for g=
-etting
->> interior mutability in interrupts.
+
+
+On 7/23/25 6:08 AM, Jiri Olsa wrote:
+> On Wed, Jul 23, 2025 at 10:20:43AM +0800, chenyuan_fl@163.com wrote:
+>> From: Yuan Chen <chenyuan@kylinos.cn>
+>>
+>> Adjust symbol matching logic to account for Control-flow Enforcement
+>> Technology (CET) on x86_64 systems. CET prefixes functions with
+>> a 4-byte 'endbr' instruction, shifting the actual hook entry point to
+>> symbol + 4.
+>>
+>> Changed in PATCH v4:
+>> * Refactor repeated code into a function.
+>> * Add detection for the x86 architecture.
+>>
+>> Changed int PATH v5:
+>> * Remove detection for the x86 architecture.
+>>
+>> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
+>> ---
+>>   tools/bpf/bpftool/link.c | 26 ++++++++++++++++++++++++--
+>>   1 file changed, 24 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
+>> index a773e05d5ade..288bf9a032a5 100644
+>> --- a/tools/bpf/bpftool/link.c
+>> +++ b/tools/bpf/bpftool/link.c
+>> @@ -282,6 +282,28 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
+>>   	return data;
+>>   }
+>>   
+>> +static bool
+>> +symbol_matches_target(__u64 sym_addr, __u64 target_addr)
+>> +{
+>> +	if (sym_addr == target_addr)
+>> +		return true;
+>> +
+>> +#if defined(__x86_64__)
+>> +	/*
+>> +	 * On x86_64 architectures with CET (Control-flow Enforcement Technology),
+>> +	 * function entry points have a 4-byte 'endbr' instruction prefix.
+>> +	 * This causes kprobe hooks to target the address *after* 'endbr'
+>> +	 * (symbol address + 4), preserving the CET instruction.
+>> +	 * Here we check if the symbol address matches the hook target address
+>> +	 * minus 4, indicating a CET-enabled function entry point.
+>> +	 */
+>> +	if (sym_addr == target_addr - 4)
+>> +		return true;
+>> +#endif
+> looks good.. perhaps it might be too much, but should we try to read
+> CONFIG_X86_KERNEL_IBT value and do the check based on that? there's
+> already some code reading options in probe_kernel_image_config
+
+Sounds a good idea. Maybe we can abstract out a helper function
+based on probe_kernel_image_config() so it can be used in
+both probe_kernel_image_config() and for this symbol_matches_target
+case. We can have a variable like 'ibt_supported = ...' outside
+the loop. In the above we can do
+	if (ibt_supported && sym_addr == target_addr - 4)
+		return true;
+
 >
-> Is the actual argument here "we are getting rid of Rust atomics in the
-> next cycle, so please don't introduce any more users during the next
-> cycle because if you do it will take one cycle longer to get rid of
-> all Rust atomics"?
+> jirka
+>
+>> +
+>> +	return false;
+>> +}
+>> +
+>>   static void
+>>   show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+>>   {
+>> @@ -307,7 +329,7 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+>>   		goto error;
+>>   
+>>   	for (i = 0; i < dd.sym_count; i++) {
+>> -		if (dd.sym_mapping[i].address != data[j].addr)
+>> +		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
+>>   			continue;
+>>   		jsonw_start_object(json_wtr);
+>>   		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
+>> @@ -744,7 +766,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
+>>   
+>>   	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
+>>   	for (i = 0; i < dd.sym_count; i++) {
+>> -		if (dd.sym_mapping[i].address != data[j].addr)
+>> +		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
+>>   			continue;
+>>   		printf("\n\t%016lx %-16llx %s",
+>>   		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
+>> -- 
+>> 2.25.1
+>>
+>>
 
-That's an argument as well, I guess.
-
-> I can accept that argument. But I don't accept the argument that we
-> shouldn't use them here because of the UB technicality. That is an
-> isolated demand for rigor and I think it is unreasonable. Using Rust
-> atomics is an accepted workaround until the LKMM atomics land.
-
-I think there's a difference between actually needing them and using them t=
-o
-showcase something. Or in other words, limiting workarounds to only those p=
-laces
-where we can't avoid them seems like the correct thing to do.
-
-Using a completion in the hard IRQ and showing a spinlock or mutex example =
-in
-the threaded handler seems like a good mix to me.
 
