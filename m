@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-741782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB0EB0E8DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D368B0E8EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57C81CC1513
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5595F1749CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEA31E991B;
-	Wed, 23 Jul 2025 02:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KpUkCLqP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1151E9906;
+	Wed, 23 Jul 2025 03:02:29 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10735184;
-	Wed, 23 Jul 2025 02:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB1D1DE3CA;
+	Wed, 23 Jul 2025 03:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753239499; cv=none; b=sUl1eWQplMAB8S+9bWKGyl9ZcsPBVkkNOUgLV0MOujx1IYhPnPx2L106qzh2/ekamxSqhZL1yuFR+nvwpNw5/mgNisR72KkSlrQsW/0btvgpqnCCdiaFlerC9tiC3x5Ughm+empeEfS6yVe//EFyw6PxkdzxMyIqxII0OydZ3XA=
+	t=1753239749; cv=none; b=u6w774CCcFE9pykblIMzs1/kh8hfQSWTnGXMXQPmxqEFHi1f1pTwm1MpVoLFEPZJ50izSYGUx3ajbf5BJksIWsLleq+UC/0EIr+pnH+36bPP1KznPRxPeSyMdIy2n5T8mwx+sOqlj9d8+SaLKi6W1ZBinM2Iv+N531iY/+Q+IaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753239499; c=relaxed/simple;
-	bh=EAvfpVXBg/s7LE1f/r9TEmhahpc2eSJyn/1aSVG7P74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Bc2DtjI6QM5N8+JILkBGNYoAvOOkPm/jumxRpr1ffGyAFuCcLBRItkYymgegYBZFbQTrLwuZiOZLcJb31utnxiAw09cUPEfdmDMA/z4a/j9Dn9hem0gzDlleGBOeMO0jgr8vhgZo6eCx624eAnr/ST2+ywSGedYNOPSs4uDEnTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KpUkCLqP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMPJ0T031583;
-	Wed, 23 Jul 2025 02:58:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FB3rPM3yt3uXhH5VZX+ye+pyPNsVLbKVwD9d2WguCtM=; b=KpUkCLqP5ZcyoIpO
-	OeL3ZxGAKi9fu2eiH2tamDOWdPnVGkPMRG9kcSFoUwBTJzsK0UsbNDG8GgB7Z8hU
-	0/BW5KC0bj642kUPVWqx9xq2AKpiDz2uPDHVrrRInn/HWxomZSj3yoS6DTZKrB6d
-	32ZJMvHBjjfPo92UFVnypcqOti9BZkEoU8Lg7ezwR5KnUPC5DmfjMmeV/rWMcQBH
-	kwxBTz+IgplYvOXlOfFdzVWaBvwUs3whGTEHA0nVgX+BqsYiKdYYXow4/gW2CJNz
-	thZbRXwBkgCq9igbmtFGwvh6GBr9OYWbG74JsLj+LnZHKMRZN4C2W2lBLUahG0No
-	2RPuZw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048s3m4u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 02:58:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56N2w1M7007736
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 02:58:01 GMT
-Received: from [10.133.33.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 22 Jul
- 2025 19:57:57 -0700
-Message-ID: <de702854-aca1-4c78-9555-f2139d5376af@quicinc.com>
-Date: Wed, 23 Jul 2025 10:57:55 +0800
+	s=arc-20240116; t=1753239749; c=relaxed/simple;
+	bh=M/evPR0svUbE7leAMZM+BaBttls2euCF4BVwatvjvI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcUrI7JyZ8dGQespaLrZnxEByeR1MVazoW0XCkIMiy8SWTIULYVnhViqF/vZwUMVSqsW/k2z7oe9nbe8P0VJq57T7pj31s91MWlXGLWOdrTFQQHBOPFOF3mitZxcFmjjVhsp1jY8Q+PJRrzgFMNoDJukikloB88OIi7pKJkliiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz19t1753239673t6fcb271e
+X-QQ-Originating-IP: h6+YcNk6wtGkCE8eMFp3AqG3T77X+yNwoyDRkGfMTO8=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 23 Jul 2025 11:01:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12358391869417309562
+Date: Wed, 23 Jul 2025 11:01:11 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Simon Horman <horms@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
+Message-ID: <0E9C9DD4FB65EC52+20250723030111.GA169181@nic-Precision-5820-Tower>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-2-dong100@mucse.com>
+ <20250722112909.GF2459@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: Add Qualcomm extended CTI
-To: Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@arm.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Yingchao Deng
-	<quic_yingdeng@quicinc.com>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20250722081405.2947294-1-quic_jinlmao@quicinc.com>
- <20250722081405.2947294-2-quic_jinlmao@quicinc.com>
- <727fa9f4-fe25-495e-9d8d-48e504fbe6b0@arm.com>
- <20250722091425.GH3137075@e132581.arm.com>
- <CAJ9a7VhLLgAak_4FB=iW0izXprM4W+RsKfHUeo=XUHh9LwtUsA@mail.gmail.com>
- <20250722140659.GI3137075@e132581.arm.com>
- <CAJ9a7ViUoSMV_HHKKRMhcQX=isU+feJvwCaVhu-6EBK4QXJbVg@mail.gmail.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <CAJ9a7ViUoSMV_HHKKRMhcQX=isU+feJvwCaVhu-6EBK4QXJbVg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDAyMyBTYWx0ZWRfX6ykturwn5DWU
- S1F3fn7b+5ugIj++HFmL0rkYApWdxBqwkzagH5u4p1Jb2oMDsz9/v/+H3jF94T2JDLsWpmsiz+Z
- Pqvd82kfQ4x16N9XDjcbcDHtOHkX2TSEWq4xLms4gpVtAOarKGjrN1u898DmO7sGtt0uOt+YmpT
- 3hwnv8KBTC/X+rSNKlPb+44/Tgh+rGDqDMPzRmOg9ISMQlbZP2sWDYcxilcvIxZt4wh7IkI0t3x
- QWGBGlO+2LxDKzAoZHO3aZpFa9QI9JBGqAyM8Z/kyEaQX8eVEn+ErqezWRzEtrkJRAehwRpFiqC
- GKYCt8ersPSuYmm48VbOo6EZaqxnSjhyFP1aIPg3nOKcZYtg3EOlTe1PWT6oQ6rNtwPSWHikFrJ
- EkOb2VukRKPEPSdfIYBLaEiLonKvkmA36XLXz3Pl07pNgYa8HJ8WdqaonZzTxfNYDoDgrRmG
-X-Proofpoint-ORIG-GUID: vVA81xI4G2ll7kSGqawiKMrZIIMs25EQ
-X-Proofpoint-GUID: vVA81xI4G2ll7kSGqawiKMrZIIMs25EQ
-X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=68804fba cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7CQSdrXTAAAA:8
- a=BpXFY5eAunnYVu0cvbAA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
- spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722112909.GF2459@horms.kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MvyKdZyVtFx3iDqIOOqiI+R6sLCE+t2jMOk4OK539kaJ9/u1j6/h2grf
+	Rgy2tNSMffv4T/gAAzgDq+EYY/P2yiHpa+ldqcvDiUe09M60SYtTATEYMPKNZU3PMIDvkZH
+	6qJcuARg4Xzau/nH7DJiP4ySkEdza6WYuDkTaT40FrT+aQ6mrJqesP+RCcnBrZMHBb2kt5F
+	XuSYG95Iinpq2h9cniaMQbuMClyhs6DXaApc14kAEe2SVp9vwc5nmg24Zlf+sGVJ/YgNV/M
+	n8oV71faRgN9YE+PdW+lrZ2/bkfpLv2kWwt9xRasuuhPEMPPo8dHP0XDE7iiRyWkrZqwzOK
+	KCXCsL+ROaF9i1W8yhz6JHemCkyPMdUt/nTf+4kGb2YGWH6Vr4XQsYrDeT83Xwd9n3yGcbY
+	DSsi7pmCAsR9L4bHuecKj2mX7/IaLXB2jPfkigBu0hzz++pXf5AxrC+q0j+cxWwiPQO9E/m
+	f/APh/Y8Oa+h/KpXmsAjn4Pdu7cBADCAWMsZZx8eGq886yMLbKA4A+WnLrxesc6QsRQmvlZ
+	afgFNei527OUjBGnM4QZbXdTmv7kvPwePL1Jwo/h0gK3lU7zFIgj7CKmSR7sS10le+eGl5X
+	IzqFq4MKwNSz1ae68lUF077mJjUyrsM/9uiA9D+C08XD39TQxjtXt0ra2BEjSQBiB/41SZF
+	JhABcX885n2JElZ4lJvwPjX9LrmeSqt/w1dy+7qEmv7pagGJizYyUQCu0qOOEWbJkcCwBdh
+	IFmi0uIw6A02t42LB0JqQWrbwYtJUqJWymFAl3PvkrJbzNFbghclRSvQEktTND8432Wi7Ai
+	EDFuThRqqAsu3XJLRlQHB1B4g/Jxl8+bEdoP4KaQf8Et5xmn09MZ1Umd6iQgIekaolCOZ/m
+	+m6Xmq+gMc16cnzZXm0Eph8U9y7r0RtXvXU3oXcRPn2Mzdc4SbIrOO//yvURoXJ64nPq8wx
+	IP4FSJX3cCvGPmh2jV5cXkWMqN2LzUfMOa4xuGEZN8qOU1bUZPX7Q/WWdxv2pwVkhRaZlvk
+	9xFPjF3Q==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 7/22/2025 10:56 PM, Mike Leach wrote:
-> On Tue, 22 Jul 2025 at 15:07, Leo Yan <leo.yan@arm.com> wrote:
->>
->> On Tue, Jul 22, 2025 at 01:00:18PM +0100, Mike Leach wrote:
->>
->> [...]
->>
->>> For a change of this magnitude to a CS component, that the ID
->>> registers will also have to change. This is a requirement of the
->>> Visible Component Architecture in the CoreSight specification.
->>> External tools cannot see the device tree.
->>>
->>> This is effectively no longer an ARM designed component, so the
->>> CoreSight specification requires that the DEVARCH register change to
->>> show qualcomm as the designer, and the architecture value change to
->>> represent this component.
->>> DEVID should be used to allow the driver to pick up parameters such as
->>> number of triggers as per the existing CTI component.
->>>
->>> If this component is Coresight compliant then the driver can use the
->>> ID registers to configure to the extended trigger architecture.
->>>
->>> With complete remapping of most of the registers, and the dropping of
->>> claim tag compatibility - which appears to be a breach of the
->>> CoreSight specification - it may be better to have a completely
->>> separate driver for this component.
->>
->> Good point. I'd like to confirm with the Qualcomm team: apart from the
->> differences in register offsets and claim bits, does this CTI module
->> have exactly the same bit layout and usage as CTI standard
->> implementation?
->>
->> If yes, then from a maintenance perspective, we probably don't want to
->> have two CTI drivers with identical register settings. It seems plausible
->> to encapsulate register access and claim logic into several functions.
->>
->>    void cti_reg_writel(u32 val, struct cti_drvdata *drvdata, bool relax);
->>    u32 cti_reg_readl(struct cti_drvdata *drvdata, bool relax);
->>    int cti_claim_device(struct cti_drvdata *drvdata);
->>    int cti_disclaim_device(struct cti_drvdata *drvdata, bool unlocked);
->>
->> Thanks,
->> Leo
+On Tue, Jul 22, 2025 at 12:29:09PM +0100, Simon Horman wrote:
+> On Mon, Jul 21, 2025 at 07:32:24PM +0800, Dong Yibo wrote:
+> > Add build options and doc for mucse.
+> > Initialize pci device access for MUCSE devices.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
 > 
-> The CTI supports 128 triggers  - which means many more registers to
-> enable / connect etc.
-> I need to study the changes to determine if there are functional
-> differences too.
+> ...
 > 
-> It might be feasible to divide the code into a common file and a pair
-> of variants so some is reused.
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > new file mode 100644
+> > index 000000000000..13b49875006b
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > @@ -0,0 +1,226 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> > +
+> > +#include <linux/types.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/netdevice.h>
+> > +#include <linux/string.h>
+> > +#include <linux/etherdevice.h>
+> > +
+> > +#include "rnpgbe.h"
+> > +
+> > +char rnpgbe_driver_name[] = "rnpgbe";
 > 
-> Mike
-Thanks Mike & Leo & Suzuki.
+> At least with (only) this patch applied, rnpgbe_driver_name
+> appears to only be used in this file. So it should be static.
+> 
+> Flagged by Sparse.
+> 
+> Please make sure that when each patch in the series is applied in turn,
+> no new Sparse warnings are introduced. Likewise for build errors.
+> And ideally warnings for W=1 builds.
+> 
+> ...
+> 
 
-There is no register to show the version ID to distinguish between ARM
-CTI and QCOM extended CTI.I will double confirm with internal HW team.
-
-For extended CTI, only trigger number changes and claim logic. Other
-functions are the same as ARM CTI(bit layout of the register and usage)
-
-Thanks
-Jinlong Mao>
-
+Got it, I will fix this.
+But I can't get this warning follow steps in my local:
+---
+- make x86_64_defconfig
+- make menuconfig  (select my driver rnpgbe to *)
+- make W=1 -j 20
+---
+if I compile it with 'make W=1 C=1 -j 20', some errors like this:
+---
+./include/linux/skbuff.h:978:1: error: directive in macro's argument list
+./include/linux/skbuff.h:981:1: error: directive in macro's argument list
+........
+Segmentation fault
+---
+I also tried to use nipa/tests/patch/build_allmodconfig_warn
+/build_allmodconfig.sh (not run the bot, just copy this sh to source
+code). It seems the same with 'make W=1 C=1 -j 20'.
+Is there something wrong for me? I want to get the warnings locally,
+then I can check it before sending patches. Any suggestions to me, please?
+Thanks for your feedback.
 
 
