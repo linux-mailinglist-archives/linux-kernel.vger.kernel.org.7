@@ -1,586 +1,786 @@
-Return-Path: <linux-kernel+bounces-741677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF879B0E7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC5AB0E7AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76026C50A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFDCF169347
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E213C816;
-	Wed, 23 Jul 2025 00:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA821519B4;
+	Wed, 23 Jul 2025 00:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyqQwFAh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="PkAqea0v"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5268472;
-	Wed, 23 Jul 2025 00:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753231397; cv=none; b=RX9sjddMG9MJeN3B9sTKR0UHuAzD217HyZ4h+9gPw3Rn2TlQKq/pOMoY91YYtDLUJjCwta7dvsW2uQSvzAPoQDjLzezDc+/yKzsXmSbVhy9lydU+EE8gG9mGV5JCtpOkde+JJd2sgXGoExdRaOBalydLFAwIVMlxqqTNOXtK4QM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753231397; c=relaxed/simple;
-	bh=nAEF7ePfhhwZdfBf+TaCKYd86bXhGrrJieY/d3oV8+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwLz6YR3gJSQCF0H93YZUNyasyYoeDHkcd2lRBkPfyWsnznJjDEEaZqUeYo+bvD1m2E1jXx252EwOMQcfdFlC8AeKputYWFELF2+WJOmMaziFF2MRV6Lv2cW9S6D9vSw/iB1uWLEzpyNQUwUXKYiCFCdftVnX6R3ay2OvdlIPII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyqQwFAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE2AC4CEEB;
-	Wed, 23 Jul 2025 00:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753231396;
-	bh=nAEF7ePfhhwZdfBf+TaCKYd86bXhGrrJieY/d3oV8+4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=WyqQwFAhev+zOidJYf7rLOaSA77kabBtJtGQMEIS7VLUof87F0+QLdclsPS11A/NN
-	 BwntfrrbmY1pxO0VlBjEY1BDDTUDgV0Ru+lYvkIZ2nwaqQLA/eWerYZ+avcGB5GoF3
-	 lkkEwZvhpM/YqEZyA4+Cwb+2pAvIpY3RfWF+ZlkN7XDX09lKXZSYkaweD55uqgZ9Cs
-	 YBTPGkO2AtgrXqwsaIweca450Orq2rQEkfnK7LUtlTb3RBZf3FUxI77holwnjohIA4
-	 wBewv8V6ReLlVM7YQ5vYWFsl74+8ijYPgMROMhSz8G93n2fUvBf02znjNE54GPYF3c
-	 IhfRPg//I31qA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 898D6CE0DEC; Tue, 22 Jul 2025 17:43:16 -0700 (PDT)
-Date: Tue, 22 Jul 2025 17:43:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	hernan.poncedeleon@huaweicloud.com
-Subject: Re: [RFC] tools/memory-model: Rule out OOTA
-Message-ID: <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3338C78F26;
+	Wed, 23 Jul 2025 00:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753231559; cv=pass; b=mn2JCwsdQmZC2cyUv6dUjl7J2Y9egoyHWdBWs+XToKEhF35sqCluGeJbUIphoGu+K3pY5rULtMO//cxzHJerNqusTZYxS8UqF+Pdb3xZcVNm8kfhgMcn4uaCJYRW/WjzPT055pH5liFMxgcfKiI6BxBJprY3sMmSzeyqpPgAqJI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753231559; c=relaxed/simple;
+	bh=YkEQiUosvcK8XA37iDMYpyYrYggceyNgpIhQ3gg4PUA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=vAgJQeIildGwH6E6v5WLTET5LbGkAlB+zc1t+dgzPHujAcSGnPy6PRn5ADhxel8XndFQ8ytj2eSsTbvfQKOQLPlXaoaOkMuIf41s+sXypYjqv4CshOy83i22eEEZB9wMsdtyxFSrQ9NSu9An/icSsHL5qitH6yNvpoeyd4/9mgU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=PkAqea0v; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753231501; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AoY9r0kZNzmY+7I5ME1iBkgDoB8Aje5DEIxLdtLJOjKLyp3Os9E2HKQw+a6GZIHcuFa8dvYJ1DE2+BuPYaADeA15wLLjrZcEpRbq5rFRnCaVeQeIkpqe461i1WZm/kHUEOuvoWEcgaqKE2Mb98c+W4shiBLJrx5zGeazIdmWyZs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753231501; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Y/8TA8iXa+swpxja+BCip3f75Ikfe8JgOIrMXP2uKLk=; 
+	b=SyzV4TC9WLhj07pbdtBOhebYyDcAnFhHGQY2eFy259zsOF3dvJ08yeiW/LVVQQGVgsqgm0JW0p8fc+LOP6s+rGoDsanAoaKPCo7ryC1ey4gujfinYNtY+KjwkEUWShbyAjKj6HvEI0ttQ64azYrrb0wqrpaRO1vmaaEdlErNSt0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753231501;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Y/8TA8iXa+swpxja+BCip3f75Ikfe8JgOIrMXP2uKLk=;
+	b=PkAqea0vJS5hMQka0mF95mVBEVA6RnsHV/6VKBrMWKqJh7kTupblImbulmr65/ZZ
+	xdtX/1ZfNpyJkwCCyN7gSBPYMXNOw2PxkLysWnGUruEgklF2BjWYTLBB+wNY7coF57P
+	fraShl9mywcncC8BbGfdfjGiSYLL+t6MSctDJGAg=
+Received: by mx.zohomail.com with SMTPS id 1753231497812613.8647771954251;
+	Tue, 22 Jul 2025 17:44:57 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 1/2] rust: add initial scatterlist abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
+Date: Tue, 22 Jul 2025 21:44:39 -0300
+Cc: acourbot@nvidia.com,
+ dakr@kernel.org,
+ jgg@ziepe.ca,
+ lyude@redhat.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Tamir Duberstein <tamird@gmail.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Petr Tesarik <petr@tesarici.cz>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E999B1A2-B1F6-4625-B784-08016672F4E0@collabora.com>
+References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
+ <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, Jan 06, 2025 at 10:40:03PM +0100, Jonas Oberhauser wrote:
-> The current LKMM allows out-of-thin-air (OOTA), as evidenced in the following
-> example shared on this list a few years ago:
+Hi Abdiel, Alex,
 
-Apologies for being slow, but I have finally added the litmus tests in
-this email thread to the https://github.com/paulmckrcu/litmus repo.
 
-It is quite likely that I have incorrectly intuited the missing portions
-of the litmus tests, especially the two called out in the commit log
-below.  If you have time, please do double-check.
+This overall looks good, a few minor comments below.
 
-And the updated (and condensed!) version of the C++ OOTA paper may be
-found here, this time with a proposed change to the standard:
+> On 18 Jul 2025, at 07:33, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
+wrote:
+>=20
+> Add the rust abstraction for scatterlist. This allows use of the C
+> scatterlist within Rust code which the caller can allocate themselves
+> or to wrap existing kernel sg_table objects.
+>=20
+> Co-developed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+> rust/bindings/bindings_helper.h |   1 +
+> rust/helpers/helpers.c          |   1 +
+> rust/helpers/scatterlist.c      |  30 +++
+> rust/kernel/dma.rs              |  18 ++
+> rust/kernel/lib.rs              |   1 +
+> rust/kernel/scatterlist.rs      | 405 ++++++++++++++++++++++++++++++++
+> 6 files changed, 456 insertions(+)
+> create mode 100644 rust/helpers/scatterlist.c
+> create mode 100644 rust/kernel/scatterlist.rs
+>=20
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index 8cbb660e2ec2..e1e289284ce8 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -47,6 +47,7 @@
+> #include <linux/cred.h>
+> #include <linux/device/faux.h>
+> #include <linux/dma-mapping.h>
+> +#include <linux/dma-direction.h>
+> #include <linux/errname.h>
+> #include <linux/ethtool.h>
+> #include <linux/file.h>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 0683fffdbde2..7b18bde78844 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -35,6 +35,7 @@
+> #include "rbtree.c"
+> #include "rcu.c"
+> #include "refcount.c"
+> +#include "scatterlist.c"
+> #include "security.c"
+> #include "signal.c"
+> #include "slab.c"
+> diff --git a/rust/helpers/scatterlist.c b/rust/helpers/scatterlist.c
+> new file mode 100644
+> index 000000000000..c871de853539
+> --- /dev/null
+> +++ b/rust/helpers/scatterlist.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/dma-direction.h>
+> +
+> +void rust_helper_sg_set_page(struct scatterlist *sg, struct page =
+*page,
+> +     unsigned int len, unsigned int offset)
+> +{
+> + return sg_set_page(sg, page, len, offset);
+> +}
+> +
+> +dma_addr_t rust_helper_sg_dma_address(struct scatterlist *sg)
+> +{
+> + return sg_dma_address(sg);
+> +}
+> +
+> +unsigned int rust_helper_sg_dma_len(struct scatterlist *sg)
+> +{
+> + return sg_dma_len(sg);
+> +}
+> +
+> +struct scatterlist *rust_helper_sg_next(struct scatterlist *sg)
+> +{
+> + return sg_next(sg);
+> +}
+> +
+> +void rust_helper_dma_unmap_sgtable(struct device *dev, struct =
+sg_table *sgt,
+> +   enum dma_data_direction dir, unsigned long attrs)
+> +{
+> + return dma_unmap_sgtable(dev, sgt, dir, attrs);
+> +}
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 1f7bae643416..598fa50e878d 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -102,6 +102,24 @@ pub mod attrs {
+>     pub const DMA_ATTR_PRIVILEGED: Attrs =3D =
+Attrs(bindings::DMA_ATTR_PRIVILEGED);
+> }
+>=20
+> +/// DMA mapping direction.
+> +///
+> +/// Corresponds to the kernel's [`enum dma_data_direction`].
+> +///
+> +/// [`enum dma_data_direction`]: =
+srctree/include/linux/dma-direction.h
+> +#[derive(Copy, Clone, PartialEq, Eq)]
+> +#[repr(i32)]
+> +pub enum DmaDataDirection {
+> +    /// Direction isn't known.
+> +    DmaBidirectional =3D =
+bindings::dma_data_direction_DMA_BIDIRECTIONAL,
+> +    /// Data is going from the memory to the device.
+> +    DmaToDevice =3D bindings::dma_data_direction_DMA_TO_DEVICE,
+> +    /// Data is coming from the device to the memory.
+> +    DmaFromDevice =3D bindings::dma_data_direction_DMA_FROM_DEVICE,
+> +    /// No direction (used for debugging).
+> +    DmaNone =3D bindings::dma_data_direction_DMA_NONE,
+> +}
+> +
+> /// An abstraction of the `dma_alloc_coherent` API.
+> ///
+> /// This is an abstraction around the `dma_alloc_coherent` API which =
+is used to allocate and map
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index f61ac6f81f5d..48391a75bb62 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -101,6 +101,7 @@
+> pub mod print;
+> pub mod rbtree;
+> pub mod revocable;
+> +pub mod scatterlist;
+> pub mod security;
+> pub mod seq_file;
+> pub mod sizes;
+> diff --git a/rust/kernel/scatterlist.rs b/rust/kernel/scatterlist.rs
+> new file mode 100644
+> index 000000000000..0242884bf9fd
+> --- /dev/null
+> +++ b/rust/kernel/scatterlist.rs
+> @@ -0,0 +1,405 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Scatterlist
+> +//!
+> +//! C header: =
+[`include/linux/scatterlist.h`](srctree/include/linux/scatterlist.h)
+> +
+> +use core::borrow::{Borrow, BorrowMut};
+> +
+> +use crate::{
+> +    bindings,
+> +    device::{Bound, Device},
+> +    dma::DmaDataDirection,
+> +    error::{Error, Result},
+> +    page::Page,
+> +    types::{ARef, Opaque},
+> +};
+> +
+> +/// A single scatter-gather entry, representing a span of pages in =
+the device's DMA address space.
+> +///
+> +/// This interface is accessible only via the `SGTable` iterators. =
+When using the API safely, certain
+> +/// methods are only available depending on a specific state of =
+operation of the scatter-gather table,
+> +/// i.e. setting page entries is done internally only during =
+construction while retrieving the DMA address
+> +/// is only possible when the `SGTable` is already mapped for DMA via =
+a device.
+> +///
+> +/// # Invariants
+> +///
+> +/// The `scatterlist` pointer is valid for the lifetime of an SGEntry =
+instance.
+> +#[repr(transparent)]
+> +pub struct SGEntry(Opaque<bindings::scatterlist>);
+> +
+> +impl SGEntry {
+> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
+> +    ///
+> +    /// This is meant as a helper for other kernel subsystems and not =
+to be used by device drivers directly.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that the `struct scatterlist` pointed to =
+by `ptr` is valid for the lifetime
+> +    /// of the returned reference.
+> +    pub(crate) unsafe fn as_ref<'a>(ptr: *mut bindings::scatterlist) =
+-> &'a Self {
+> +        // SAFETY: The pointer is valid and guaranteed by the safety =
+requirements of the function.
+> +        unsafe { &*ptr.cast() }
+> +    }
 
-https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3692r1.pdf
+Did you see this? [0]
 
-							Thanx, Paul
 
-------------------------------------------------------------------------
+> +
+> +    /// Convert a raw `struct scatterlist *` to a `&'a mut SGEntry`.
+> +    ///
+> +    /// This is meant as a helper for other kernel subsystems and not =
+to be used by device drivers directly.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// See safety requirements of [`SGEntry::as_ref`]. In addition, =
+callers must ensure that only
+> +    /// a single mutable reference can be taken from the same raw =
+pointer, i.e. for the lifetime of the
+> +    /// returned reference, no other call to this function on the =
+same `struct scatterlist *` should
+> +    /// be permitted.
+> +    pub(crate) unsafe fn as_mut<'a>(ptr: *mut bindings::scatterlist) =
+-> &'a mut Self {
+> +        // SAFETY: The pointer is valid and guaranteed by the safety =
+requirements of the function.
+> +        unsafe { &mut *ptr.cast() }
+> +    }
+> +
+> +    /// Obtain the raw `struct scatterlist *`.
+> +    pub(crate) fn as_raw(&self) -> *mut bindings::scatterlist {
+> +        self.0.get()
+> +    }
+> +
+> +    /// Returns the DMA address of this SG entry.
+> +    pub fn dma_address(&self) -> bindings::dma_addr_t {
+> +        // SAFETY: By the type invariant of `SGEntry`, ptr is valid.
+> +        unsafe { bindings::sg_dma_address(self.0.get()) }
+> +    }
+> +
+> +    /// Returns the length of this SG entry.
+> +    pub fn dma_len(&self) -> u32 {
+> +        // SAFETY: By the type invariant of `SGEntry`, ptr is valid.
+> +        unsafe { bindings::sg_dma_len(self.0.get()) }
+> +    }
+> +
+> +    /// Internal constructor helper to set this entry to point at a =
+given page. Not to be used directly.
+> +    fn set_page(&mut self, page: &Page, length: u32, offset: u32) {
+> +        let c: *mut bindings::scatterlist =3D self.0.get();
+> +        // SAFETY: according to the `SGEntry` invariant, the =
+scatterlist pointer is valid.
+> +        // `Page` invariant also ensure the pointer is valid.
+> +        unsafe { bindings::sg_set_page(c, page.as_ptr(), length, =
+offset) };
+> +    }
+> +}
+> +
+> +/// Trait implemented by all mapping states.
+> +pub trait MappingState {}
+> +
+> +/// Trait implemented by all mapping states representing the fact =
+that a `struct sg_table` is
+> +/// mapped (and thus its DMA addresses are valid).
+> +pub trait MappedState: MappingState {}
+> +
+> +/// Represents the fact that a `struct sg_table` is not DMA-mapped.
+> +pub struct Unmapped;
+> +impl MappingState for Unmapped {}
+> +
+> +/// Represents the fact that a `struct sg_table` is DMA-mapped by an =
+external entity.
 
-commit fd17e8fceb75326e159ba3aa6fdb344f74f5c7a5
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Tue Jul 22 17:21:19 2025 -0700
+Perhaps it would be nice to define what an =E2=80=9Cexternal entity=E2=80=9D=
+ means?
 
-    manual/oota:  Add Jonas and Alan OOTA examples
-    
-    Each of these new litmus tests contains the URL of the email message
-    that I took it from.
-    
-    Please note that I had to tweak the example leading up to
-    C-JO-OOTA-4.litmus, and I might well have misinterpreted Jonas's "~"
-    operator.
-    
-    Also, C-JO-OOTA-7.litmus includes a "*r2 = a" statement that makes herd7
-    very unhappy.  On the other hand, initializing registers to the address
-    of a variable is straight forward, as shown in the resulting litmus test.
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> +pub struct BorrowedMapping;
+> +impl MappingState for BorrowedMapping {}
+> +impl MappedState for BorrowedMapping {}
+> +
+> +/// A managed DMA mapping of a `struct sg_table` to a given device.
+> +///
+> +/// The mapping is cleared when this object is dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// - The `scatterlist` pointer is valid for the lifetime of a =
+`ManagedMapping` instance.
+> +/// - The `Device` instance is within a [`kernel::device::Bound`] =
+context.
+> +pub struct ManagedMapping {
+> +    dev: ARef<Device>,
+> +    dir: DmaDataDirection,
+> +    // This works because the `sgl` member of `struct sg_table` never =
+moves, and the fact we can
+> +    // build this implies that we have an exclusive reference to the =
+`sg_table`, thus it cannot be
+> +    // modified by anyone else.
+> +    sgl: *mut bindings::scatterlist,
+> +    orig_nents: ffi::c_uint,
+> +}
+> +
+> +/// SAFETY: An `ManagedMapping` object is an immutable interface and =
+should be safe to `Send` across threads.
+> +unsafe impl Send for ManagedMapping {}
+> +impl MappingState for ManagedMapping {}
+> +impl MappedState for ManagedMapping {}
+> +
+> +impl Drop for ManagedMapping {
+> +    fn drop(&mut self) {
+> +        // SAFETY: Invariants on `Device<Bound>` and `Self` ensures =
+that the `self.dev` and `self.sgl`
+> +        // are valid.
+> +        unsafe {
+> +            bindings::dma_unmap_sg_attrs(
+> +                self.dev.as_raw(),
+> +                self.sgl,
+> +                self.orig_nents as i32,
+> +                self.dir as i32,
+> +                0,
+> +            )
+> +        };
+> +    }
+> +}
+> +
+> +/// A scatter-gather table of DMA address spans.
+> +///
+> +/// This structure represents the Rust abstraction for a C `struct =
+sg_table`. This implementation
+> +/// abstracts the usage of an already existing C `struct sg_table` =
+within Rust code that we get
+> +/// passed from the C side.
+> +pub struct SGTable<T: Borrow<bindings::sg_table>, M: MappingState> {
+> +    /// Mapping state of the underlying `struct sg_table`.
+> +    ///
+> +    /// This defines which methods of `SGTable` are available.
+> +    ///
+> +    /// Declared first so it is dropped before `table`, so we remove =
+the mapping before freeing the
+> +    /// SG table if the latter is owned.
+> +    _mapping: M,
+> +
+> +    /// Something that can borrow the underlying `struct sg_table`.
+> +    table: T,
+> +}
+> +
+> +impl<T> SGTable<T, Unmapped>
+> +where
+> +    T: Borrow<bindings::sg_table>,
+> +{
+> +    /// Create a new unmapped `SGTable` from an already-existing =
+`struct sg_table`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that the `struct sg_table` borrowed by =
+`r` is initialized, valid for
+> +    /// the lifetime of the returned reference, and is not mapped.
+> +    pub unsafe fn new_unmapped(r: T) -> Self {
+> +        Self {
+> +            table: r,
+> +            _mapping: Unmapped,
+> +        }
+> +    }
+> +}
+> +
+> +impl<T> SGTable<T, BorrowedMapping>
+> +where
+> +    T: Borrow<bindings::sg_table>,
+> +{
+> +    /// Create a new mapped `SGTable` from an already-existing =
+`struct sg_table`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that the `struct sg_table` borrowed by =
+`r` is initialized, valid for
+> +    /// the lifetime of the returned reference, and is DMA-mapped.
+> +    pub unsafe fn new_mapped(r: T) -> Self {
+> +        Self {
+> +            table: r,
+> +            _mapping: BorrowedMapping,
+> +        }
+> +    }
+> +}
+> +
+> +impl<T, M> SGTable<T, M>
+> +where
+> +    T: Borrow<bindings::sg_table>,
+> +    M: MappedState,
+> +{
+> +    /// Returns an immutable iterator over the scatter-gather table.
+> +    pub fn iter(&self) -> SGTableIter<'_> {
+> +        SGTableIter {
+> +            // SAFETY: dereferenced pointer is valid due to the type =
+invariants on `SGTable`.
+> +            pos: Some(unsafe { =
+SGEntry::as_ref(self.table.borrow().sgl) }),
+> +        }
+> +    }
+> +}
+> +
+> +/// Provides a list of pages that can be used to build a `SGTable`.
+> +pub trait SGTablePages {
 
-diff --git a/manual/oota/C-AS-OOTA-1.litmus b/manual/oota/C-AS-OOTA-1.litmus
-new file mode 100644
-index 00000000..81a873a7
---- /dev/null
-+++ b/manual/oota/C-AS-OOTA-1.litmus
-@@ -0,0 +1,40 @@
-+C C-AS-OOTA-1
-+
-+(*
-+ * Result: Sometimes
-+ *
-+ * Because smp_rmb() combined with smp_wmb() does not order earlier
-+ * reads against later writes.
-+ *
-+ * https://lore.kernel.org/all/a3bf910f-509a-4ad3-a1cc-4b14ef9b3259@rowland.harvard.edu
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		*a = *b;
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		*b = *a;
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-AS-OOTA-2.litmus b/manual/oota/C-AS-OOTA-2.litmus
-new file mode 100644
-index 00000000..c672b0e7
---- /dev/null
-+++ b/manual/oota/C-AS-OOTA-2.litmus
-@@ -0,0 +1,33 @@
-+C C-AS-OOTA-2
-+
-+(*
-+ * Result: Always
-+ *
-+ * If we were using C-language relaxed atomics instead of volatiles,
-+ * the compiler *could* eliminate the first WRITE_ONCE() in each process,
-+ * then also each process's local variable, thus having an undefined value
-+ * for each of those local variables.  But this cannot happen given that
-+ * we are using Linux-kernel _ONCE() primitives.
-+ *
-+ * https://lore.kernel.org/all/c2ae9bca-8526-425e-b9b5-135004ad59ad@rowland.harvard.edu/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b)
-+{
-+	int r0 = READ_ONCE(*a);
-+
-+	WRITE_ONCE(*b, r0);
-+	WRITE_ONCE(*b, 2);
-+}
-+
-+P1(int *a, int *b)
-+{
-+	int r1 = READ_ONCE(*b);
-+
-+	WRITE_ONCE(*a, r0);
-+	WRITE_ONCE(*a, 2);
-+}
-+
-+exists ((0:r0=0 \/ 0:r0=2) /\ (1:r1=0 \/ 1:r1=2))
-diff --git a/manual/oota/C-JO-OOTA-1.litmus b/manual/oota/C-JO-OOTA-1.litmus
-new file mode 100644
-index 00000000..6ab437b4
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-1.litmus
-@@ -0,0 +1,40 @@
-+C C-JO-OOTA-1
-+
-+(*
-+ * Result: Never
-+ *
-+ * But Sometimes in LKMM as of early 2025, given that 42 is a possible
-+ * value for things like S19..
-+ *
-+ * https://lore.kernel.org/all/20250106214003.504664-1-jonas.oberhauser@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		*a = *b;
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		*b = *a;
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists (b=42)
-diff --git a/manual/oota/C-JO-OOTA-2.litmus b/manual/oota/C-JO-OOTA-2.litmus
-new file mode 100644
-index 00000000..ad708c60
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-2.litmus
-@@ -0,0 +1,44 @@
-+C C-JO-OOTA-2
-+
-+(*
-+ * Result: Never
-+ *
-+ * But Sometimes in LKMM as of early 2025, given that 42 is a possible
-+ * value for things like S23.
-+ *
-+ * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2 = 0;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = *b;
-+	}
-+	WRITE_ONCE(*a, r2);
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2 = 0;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = *a;
-+	}
-+	WRITE_ONCE(*b, r2);
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists (b=42)
-diff --git a/manual/oota/C-JO-OOTA-3.litmus b/manual/oota/C-JO-OOTA-3.litmus
-new file mode 100644
-index 00000000..633b8334
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-3.litmus
-@@ -0,0 +1,46 @@
-+C C-JO-OOTA-3
-+
-+(*
-+ * Result: Never
-+ *
-+ * But LKMM finds the all-ones result, perhaps due to not tracking
-+ * control dependencies out of the "if" statement.
-+ *
-+ * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	r2 = READ_ONCE(*b);
-+	if (r1 == 1) {
-+		r2 = *b;
-+	}
-+	WRITE_ONCE(*a, r2);
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	r2 = READ_ONCE(*a);
-+	if (r1 == 1) {
-+		r2 = *a;
-+	}
-+	WRITE_ONCE(*b, r2);
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-JO-OOTA-4.litmus b/manual/oota/C-JO-OOTA-4.litmus
-new file mode 100644
-index 00000000..cab7ebb6
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-4.litmus
-@@ -0,0 +1,43 @@
-+C C-JO-OOTA-4
-+
-+(*
-+ * Result: Never
-+ *
-+ * And LKMM agrees, which might be a surprise.
-+ *
-+ * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+	int r3;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	r2 = *b;
-+	r3 = r1 == 0;
-+	WRITE_ONCE(*a, (r3 + 1) & r2);
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+	int r3;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	r2 = *a;
-+	r3 = r1 == 0;
-+	WRITE_ONCE(*b, (r3 + 1) & r2);
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-JO-OOTA-5.litmus b/manual/oota/C-JO-OOTA-5.litmus
-new file mode 100644
-index 00000000..145c8378
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-5.litmus
-@@ -0,0 +1,44 @@
-+C C-JO-OOTA-5
-+
-+(*
-+ * Result: Never
-+ *
-+ * But LKMM finds the all-ones result, perhaps due r2 being unused.
-+ *
-+ * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*a);
-+	}
-+	*b = 1;
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*b);
-+	}
-+	*a = 1;
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+locations [0:r2;1:r2]
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-JO-OOTA-6.litmus b/manual/oota/C-JO-OOTA-6.litmus
-new file mode 100644
-index 00000000..942e6c82
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-6.litmus
-@@ -0,0 +1,44 @@
-+C C-JO-OOTA-6
-+
-+(*
-+ * Result: Never
-+ *
-+ * But LKMM finds the all-ones result, due to OOTA on r2.
-+ *
-+ * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*a);
-+	}
-+	*b = r2;
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*b);
-+	}
-+	*a = r2;
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+locations [0:r2;1:r2]
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
-new file mode 100644
-index 00000000..31c0b8ae
---- /dev/null
-+++ b/manual/oota/C-JO-OOTA-7.litmus
-@@ -0,0 +1,47 @@
-+C C-JO-OOTA-7
-+
-+(*
-+ * Result: Never
-+ *
-+ * But LKMM finds the all-ones result, due to OOTA on r2.
-+ *
-+ * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
-+ *)
-+
-+{
-+	0:r2=a;
-+	1:r2=b;
-+}
-+
-+P0(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*a);
-+	}
-+	*r2 = a;
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y)
-+{
-+	int r1;
-+	int r2;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		r2 = READ_ONCE(*b);
-+	}
-+	*r2 = b;
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+locations [0:r2;1:r2]
-+exists (0:r1=1 /\ 1:r1=1)
-diff --git a/manual/oota/C-PM-OOTA-1.litmus b/manual/oota/C-PM-OOTA-1.litmus
-new file mode 100644
-index 00000000..e771e3c9
---- /dev/null
-+++ b/manual/oota/C-PM-OOTA-1.litmus
-@@ -0,0 +1,37 @@
-+C C-PM-OOTA-1
-+
-+(*
-+ * Result: Never
-+ *
-+ * LKMM agrees.
-+ *
-+ * https://lore.kernel.org/all/9a0dccbb-bfa7-4b33-ac1a-daa9841b609a@paulmck-laptop/
-+ *)
-+
-+{}
-+
-+P0(int *a, int *b, int *x, int *y) {
-+	int r1;
-+
-+	r1 = READ_ONCE(*x);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		WRITE_ONCE(*a, *b);
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*y, 1);
-+}
-+
-+P1(int *a, int *b, int *x, int *y) {
-+	int r1;
-+
-+	r1 = READ_ONCE(*y);
-+	smp_rmb();
-+	if (r1 == 1) {
-+		WRITE_ONCE(*b, *a);
-+	}
-+	smp_wmb();
-+	WRITE_ONCE(*x, 1);
-+}
-+
-+exists b=42
+I feel like this could be defined closer to where it is used.
+
+> +    /// Returns an iterator to the pages providing the backing memory =
+of `self`.
+> +    ///
+> +    /// Implementers should return an iterator which provides =
+information regarding each page entry to
+> +    /// build the `SGTable`. The first element in the tuple is a =
+reference to the Page, the second element
+> +    /// as the offset into the page, and the third as the length of =
+data. The fields correspond to the
+> +    /// first three fields of the C `struct scatterlist`.
+
+I feel like the above could be replaced by simply defining a struct with =
+the
+right field names.
+
+> +    fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a Page, usize, =
+usize)>;
+> +
+> +    /// Returns the number of pages in the list.
+> +    fn entries(&self) -> usize;
+> +}
+> +
+> +/// An iterator through `SGTable` entries.
+> +pub struct SGTableIter<'a> {
+> +    pos: Option<&'a SGEntry>,
+> +}
+> +
+> +impl<'a> Iterator for SGTableIter<'a> {
+> +    type Item =3D &'a SGEntry;
+> +
+> +    fn next(&mut self) -> Option<Self::Item> {
+> +        let entry =3D self.pos;
+> +        // SAFETY: `sg` is an immutable reference and is equivalent =
+to `scatterlist` via its type
+> +        // invariants, so its safe to use with sg_next.
+> +        let next =3D unsafe { bindings::sg_next(self.pos?.as_raw()) =
+};
+> +
+> +        // SAFETY: `sg_next` returns either a valid pointer to a =
+`scatterlist`, or null if we
+> +        // are at the end of the scatterlist.
+> +        self.pos =3D (!next.is_null()).then(|| unsafe { =
+SGEntry::as_ref(next) });
+> +        entry
+> +    }
+> +}
+> +
+> +impl<'a, T, M> IntoIterator for &'a SGTable<T, M>
+> +where
+> +    T: Borrow<bindings::sg_table>,
+> +    M: MappedState,
+> +{
+> +    type Item =3D &'a SGEntry;
+> +    type IntoIter =3D SGTableIter<'a>;
+> +
+> +    fn into_iter(self) -> Self::IntoIter {
+> +        self.iter()
+> +    }
+> +}
+> +
+> +impl<T> SGTable<T, Unmapped>
+> +where
+> +    T: BorrowMut<bindings::sg_table>,
+> +{
+> +    /// Map this scatter-gather table describing a buffer for DMA by =
+the `Device`.
+> +    ///
+> +    /// To prevent the table from being mapped more than once, this =
+call consumes `self` and transfers
+> +    /// ownership of resources to the new `SGTable<_, =
+ManagedMapping>` object.
+> +    pub fn dma_map(
+> +        mut self,
+> +        dev: &Device<Bound>,
+> +        dir: DmaDataDirection,
+> +    ) -> Result<SGTable<T, ManagedMapping>> {
+> +        // SAFETY: Invariants on `Device<Bound>` and `SGTable` =
+ensures that the pointers are valid.
+> +        let ret =3D unsafe {
+> +            bindings::dma_map_sgtable(
+> +                dev.as_raw(),
+> +                self.table.borrow_mut(),
+> +                dir as i32,
+> +                bindings::DMA_ATTR_NO_WARN as usize,
+> +            )
+> +        };
+> +        if ret !=3D 0 {
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +
+> +        let sgl =3D self.table.borrow_mut().sgl;
+> +        let orig_nents =3D self.table.borrow().orig_nents;
+> +
+> +        Ok(SGTable {
+> +            table: self.table,
+> +            // INVARIANT:
+> +            // - `sgl` is valid by the type invariant of `OwnedSgt`.
+
+How is `OwnedSgt` relevant here? I see self, which is SGTable, then =
+table,
+which is T: Borrow<bindings::sg_table>, and then borrow(), which is
+bindings::sg_table.
+
+> +            // - `dev` is a reference to Device<Bound>.
+> +            _mapping: ManagedMapping {
+> +                dev: dev.into(),
+> +                dir,
+> +                sgl,
+> +                orig_nents,
+> +            },
+> +        })
+> +    }
+> +}
+> +
+> +/// An owned `struct sg_table`, which lifetime is tied to this =
+object.
+
+s/which/whose ? Although I am not a native English speaker.
+
+> +///
+> +/// # Invariants
+> +///
+> +/// The `sg_table` is valid and initialized for the lifetime of an =
+`OwnedSgt` instance.
+> +pub struct OwnedSgt<P: SGTablePages> {
+> +    sgt: bindings::sg_table,
+> +    /// Used to keep the memory pointed to by `sgt` alive.
+> +    _pages: P,
+> +}
+> +
+> +/// SAFETY: An `OwnedSgt` object is constructed internally by =
+`SGTable` and no interface is exposed to
+> +/// the user to modify its state after construction, except =
+[`SGTable::dma_map`] which transfers
+> +/// ownership of the object, hence should be safe to `Send` across =
+threads.
+> +unsafe impl<P: SGTablePages> Send for OwnedSgt<P> {}
+> +
+> +impl<P> Drop for OwnedSgt<P>
+> +where
+> +    P: SGTablePages,
+> +{
+> +    fn drop(&mut self) {
+> +        // SAFETY: Invariant on `OwnedSgt` ensures that the sg_table =
+is valid.
+> +        unsafe { bindings::sg_free_table(&mut self.sgt) };
+> +    }
+> +}
+> +
+> +impl<P> Borrow<bindings::sg_table> for OwnedSgt<P>
+> +where
+> +    P: SGTablePages,
+> +{
+> +    fn borrow(&self) -> &bindings::sg_table {
+> +        &self.sgt
+> +    }
+> +}
+> +
+> +// To allow mapping the state!
+
+Can you expand this comment a bit?
+
+> +impl<P> BorrowMut<bindings::sg_table> for OwnedSgt<P>
+> +where
+> +    P: SGTablePages,
+> +{
+> +    fn borrow_mut(&mut self) -> &mut bindings::sg_table {
+> +        &mut self.sgt
+> +    }
+> +}
+> +
+> +impl<P: SGTablePages> SGTable<OwnedSgt<P>, Unmapped> {
+
+Oh, I now see that you can have SGTable<OwnedSgt<..>, =E2=80=A6>. In any =
+case, when
+I said in my previous comment that "I don't see how OwnedSGTable is =
+relevant
+here=E2=80=9D, T was unconstrained.
+
+I am mentioning this on the off-chance that it's a mistaken assumption =
+instead
+of a typo.
+
+> +    /// Allocate and build a new `SGTable` from an existing list of =
+`pages`. This method moves the
+> +    /// ownership of `pages` to the table.
+> +    ///
+> +    /// To build a scatter-gather table, provide the `pages` object =
+which must implement the
+> +    /// `SGTablePages` trait.
+> +    ///
+> +    ///# Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::{device::Device, scatterlist::*, page::*, =
+prelude::*};
+> +    ///
+> +    /// struct PagesArray(KVec<Page>);
+
+A blank line would be welcome here, IMHO.
+
+> +    /// impl SGTablePages for PagesArray {
+> +    ///     fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a =
+Page, usize, usize)> {
+
+See, it's hard to figure out what is going on here. I had to go back up =
+to the
+comment that explains what each field means in the tuple. This could be =
+fixed
+if this thing was its own struct with named fields.
+
+> +    ///         self.0.iter().map(|page| (page, =
+kernel::page::PAGE_SIZE, 0))
+
+By the way, ironically, the order seems to be inverted here :)
+
+> +    ///     }
+> +    ///
+> +    ///     fn entries(&self) -> usize {
+> +    ///         self.0.len()
+> +    ///     }
+> +    /// }
+> +    ///
+> +    /// let mut pages =3D KVec::new();
+> +    /// let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
+GFP_KERNEL);
+> +    /// let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
+GFP_KERNEL);
+> +    /// let sgt =3D SGTable::new_owned(PagesArray(pages), =
+GFP_KERNEL)?;
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn new_owned(pages: P, flags: kernel::alloc::Flags) -> =
+Result<Self> {
+> +        // SAFETY: `sgt` is not a reference.
+> +        let mut sgt: bindings::sg_table =3D unsafe { =
+core::mem::zeroed() };
+> +
+> +        // SAFETY: The sgt pointer is from the Opaque-wrapped =
+`sg_table` object hence is valid.
+
+IMHO the sentence above does not read very well.
+
+> +        let ret =3D
+> +            unsafe { bindings::sg_alloc_table(&mut sgt, =
+pages.entries() as u32, flags.as_raw()) };
+> +        if ret !=3D 0 {
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +        // SAFETY: We just successfully allocated `sgt`, hence the =
+pointer is valid and have sole access to
+> +        // it at this point.
+> +        let sgentries =3D unsafe { =
+core::slice::from_raw_parts_mut(sgt.sgl, pages.entries()) };
+> +        for (entry, page) in sgentries
+> +            .iter_mut()
+> +            .map(|e|
+> +                 // SAFETY: `SGEntry::as_mut` is called on the =
+pointer only once, which is valid and non-NULL
+> +                 // while inside the closure.
+> +                 unsafe { SGEntry::as_mut(e) })
+> +            .zip(pages.iter())
+> +        {
+> +            entry.set_page(page.0, page.1 as u32, page.2 as u32)
+> +        }
+> +
+> +        Ok(Self {
+> +            // INVARIANT: We just successfully allocated and built =
+the table from the page entries.
+> +            table: OwnedSgt { sgt, _pages: pages },
+> +            _mapping: Unmapped,
+> +        })
+> +    }
+> +}
+> --=20
+> 2.43.0
+>=20
+>=20
+
+If you give me a couple of days I can test this on Tyr and see if the =
+MCU still boots :)
+
+=E2=80=94 Daniel
+
+[0] =
+https://lore.kernel.org/rust-for-linux/20250711-device-as-ref-v2-0-1b16ab6=
+402d7@google.com/
+
 
