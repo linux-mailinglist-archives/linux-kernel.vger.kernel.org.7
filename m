@@ -1,205 +1,95 @@
-Return-Path: <linux-kernel+bounces-742625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F070B0F472
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:49:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE09B0F475
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2AA3BD9AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:47:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676371885FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98DC2E88A7;
-	Wed, 23 Jul 2025 13:48:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B9E2E88AB;
+	Wed, 23 Jul 2025 13:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqG+yF9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A022E7F25
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0F12E6114;
+	Wed, 23 Jul 2025 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278502; cv=none; b=YdmXXQAsbvsEXKumbNjuqtHPycCkJWyIqvh1slXgKjzkz2O2/np1mDf7URdY3e6agauGtOLgWNiXyhlNkYS9e3oalTCoAROrPiOH+Ll3alXrWCEpzCO8tjI+BJ/ONBkQL5DvINIu0k4PCPJ5Jcjgqv0fnXz5iMW7apQ361mu26Q=
+	t=1753278543; cv=none; b=fl9tvnX7NHNWMHcsLb7KtVXI3a6hf3GjbuDNk/bAAj9uECarCbzVEHV2bluUFLlhb0s6HXSYsRCIp32S+JG43H9Gsd68T0rSnvuBbm1VZEq3GMKinZA/XoWi2nWRXcNa9lq0ml3q+6c5EjXa86b0yAlCJkBir6ULXp1vD9w1qVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278502; c=relaxed/simple;
-	bh=/+0+g8aDBMl+cpTpMeTuPc0fakIIDxsbYnyjeKL31FY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFbJUYwxuSMEWd2Ok20WKgO5Jkcmr48gPFeWgMOT+AMQZzv2lHWMNeynMx8wO6TMBM7kPdXOVhziPV+h6OuCugmV2XPWVcO5W7smy7IZrLz1cp83WQbm8hu00ufy56kOotB9CLdtW691zi1vZM+lJ2ae6WaAqvQxQRwxJFTP7a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <f.pfitzner@pengutronix.de>)
-	id 1ueZpM-0003zw-SL; Wed, 23 Jul 2025 15:48:12 +0200
-Message-ID: <a89dbe5d-a30b-455d-adaf-31eadf2b3751@pengutronix.de>
-Date: Wed, 23 Jul 2025 15:48:11 +0200
+	s=arc-20240116; t=1753278543; c=relaxed/simple;
+	bh=gpofvUdCvafEi9/Yz7WQuqJNoF8dDZ2uzd6/+Lg4OuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tF0gTbrf8lbr41Ps6Zw4+lRRYkns+V8fMXdiaZVUXIroVS+kRCevXKIAFS/tNXLHFwuSuUkS2CoZUuO8wXGymxDXTXTgkuw0DoxBIJUJicU+3ICauZseMmsvfZ5zkQmxPx8ZFHc4fqsvjLU2uZEzJi58UlAhbXrC4AxO11G5Hks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqG+yF9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F177C4CEE7;
+	Wed, 23 Jul 2025 13:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753278543;
+	bh=gpofvUdCvafEi9/Yz7WQuqJNoF8dDZ2uzd6/+Lg4OuY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eqG+yF9vGnyPwsKROpDhc4vfaUIwMNG9rE6vCOfRZVVpYeEE2bUgWTYDUlJOi99MA
+	 +EBJt3gVHRkRBksLk+Lje0BQC5Ua1wtHXeKtWLK8LtqCvl55M9bBHXtu3TiYReajNa
+	 f6RaOgTW6k3KEGmidaDlRwc7biL2cF94l/CbwSfQMo2dl7fbfEDIf/JzO41V3zHTg8
+	 CCjmuzrn4jhTgA/QpGfQWCyjsJHo464cpB4tGF15NDc4b+K3kXcYDHDdshUfiUNWhw
+	 dmBimZQ8TDdYTJH3h0DUzHOIem1prD3+ipds1isrmNp2ngbxhRaZe8bzdn60Gt7R2x
+	 uxlaHyrY2zwlw==
+Date: Wed, 23 Jul 2025 06:49:01 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: MD Danish Anwar <danishanwar@ti.com>, Julia Lawall
+ <Julia.Lawall@inria.fr>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Mengyuan Lou <mengyuanlou@net-swift.com>, Michael
+ Ellerman <mpe@ellerman.id.au>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Fan Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, cocci@inria.fr, Nicolas Palix
+ <nicolas.palix@imag.fr>
+Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
+ RPMSG-ETH Driver
+Message-ID: <20250723064901.0b7ec997@kernel.org>
+In-Reply-To: <20250723080322.3047826-2-danishanwar@ti.com>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+	<20250723080322.3047826-2-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] parse horizontal/vertical flip properties
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>,
- linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>,
- entwicklung@pengutronix.de, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- hansg@kernel.org
-References: <20250718-fpf-media-dt-flip-v1-0-75b3a938b4be@pengutronix.de>
- <ryuew3kxnocj6uqq4nadp3kyaxg27rxlrgnaieyy2hlpz5jkd3@iyetnsbfanee>
- <35debf21-bca7-480f-a61e-7b0494f10ca5@pengutronix.de>
- <mljx67lkcw4kh3cs344iprik244cm7hqfckmg4bj5j5atuyt62@lh2ht4mrtkjq>
- <3ac271c7-a67a-4f6f-935d-256937516068@pengutronix.de>
- <ffzxxsplmivvj7pib7n7lkutbyohl5npofdaxdxtoffo43yatw@gqm64zdgb4iy>
- <CAPY8ntDLPDmgmE8+VQ4jchfNKLLEK5bZ10ftham9bK-x_HL8Xw@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Fabian Pfitzner <f.pfitzner@pengutronix.de>
-In-Reply-To: <CAPY8ntDLPDmgmE8+VQ4jchfNKLLEK5bZ10ftham9bK-x_HL8Xw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: f.pfitzner@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 7/23/25 15:00, Dave Stevenson wrote:
-> Hi Jacopo and Fabian
->
-> On Wed, 23 Jul 2025 at 13:21, Jacopo Mondi
-> <jacopo.mondi@ideasonboard.com> wrote:
->> Hi Fabian
->>
->> On Wed, Jul 23, 2025 at 12:09:58PM +0200, Fabian Pfitzner wrote:
->>> On 7/23/25 11:44, Jacopo Mondi wrote:
->>>> On Wed, Jul 23, 2025 at 11:29:27AM +0200, Fabian Pfitzner wrote:
->>>>> On 7/23/25 11:17, Jacopo Mondi wrote:
->>>>>> Hi Fabian
->>>>>>
->>>>>> On Wed, Jul 23, 2025 at 10:58:28AM +0200, Fabian Pfitzner wrote:
->>>>>>> There are cameras containing a mirror on their optical path e. g. when
->>>>>>> mounted upside down.
->>>>>> How is this different from 'rotation = 180' ?
->>>>> If you simply want to flip the output (e. g. horizontally), you cannot do
->>>>> this with a rotation.
->>>>> The camera I'm referring to is not only upside down, but also flipped
->>>>> horizontally.
->>>> 180 degress rotation = HFLIP + VFLIP
->>> I do not want to do both. Only one of them.
->>>> Yes, you can't express 'mirror' in DTS, because DTS are about the
->>>> physical mounting rotation of the camera. Sensor drivers shall not
->>>> apply any flip control automatically, it's userspace that by parsing
->>>> the rotation property through the associated v4l2 controls should decide
->>>> if it has to apply flips or not to correct the images.
->>>>
->>>> What is the use case you had in mind ? Tell the driver through a DTS
->>>> property it has to apply flips to auto-compensate ? Because I think we
->>>> shouldn't and if I'm not mistaken we also document it:
->>>> https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera-sensor.html#rotation-orientation-and-flipping
->>> I have a camera that does a horizontal flip in its hardware, so the output
->> Sorry, I don't want to be annoying, but what does it mean "does a
->> horizontal flip in the hardware" ?
->>
->> In my understanding either "in hardware" means you can't control it
->> from software (and so there's no point in telling drivers what to do)
->> or you can control it from software and it's a regular HFLIP.
-> Can you say what this sensor/module is?
-ClairPixel 8320
->
-> To change flips due to physical sensor orientation is a very unusual
-> one. That would imply some weird mechanics in the sensor to add the
-> mirror and some form of orientation sensor being built in.
-Really? Imagine a door bell where an arbitrary camera is mounted such 
-that it faces upwards (e. g. due to space limitations).
-Then you need a mirror in order to point into the "correct" direction. 
-Fixing the driver for an arbitrary camera driver does not seem to be a 
-good solution.
->
-> The closest instance I can think of would be ov5647 where the sense of
-> the H & V flip register bits are in opposition, but that doesn't
-> change based on how the sensor is mounted.
-> In that case the driver just needs to account for it when programming
-> those registers [1]. And I now note that I haven't upstreamed the
-> patch adding flip controls - another one for the to-do list. The
-> hardcoded register set in the mainline driver sets HFLIP (0x3821 bit
-> 2) but not VFLIP (0x3820 bit 2) [2].
->
->    Dave
->
-> [1] https://github.com/raspberrypi/linux/commit/9e5d3fd3f47e91806a5c26f96732284f39098a58
-> [2] https://elixir.bootlin.com/linux/v6.15.7/source/drivers/media/i2c/ov5647.c#L153
->
->>> is not what I want. My example above was misleading. The rotation fixes the
->>> "upside down" problem, but does not fix the flip.
->>>
->>> Doing that in userspace might be a solution, but in my opinion it is a bit
->>> ugly to write a script that always sets the flip property from userspace
->>> when the device was started.
->>> A much cleaner way would be to simply set this property in the device tree
->>> such that the driver can be initially configured with the proper values.
->> Sorry, don't agree here. What if a sensor is mounted 90/270 degrees
->> rotated (typical for mobile devices in example) ? You can't compensate
->> it completely with flips, would you 270+HFLIP=90 ? would you leave it
->> unmodified ? Userspace has to know and act accordingly, doing things
->> in driver (will all drivers behave the same ? Will some compensate or
->> other won't ?) is a recipe for more complex behaviours to handle.
->>
->>> PS: I have to send this email twice. The first one contained HTML parts that
->>> were rejected by some receivers...
->>>
->>>> TL;DR drivers shall not flip, userspace should. Mirroring is an effect
->>>> of drivers applying an HFLIP, because unless I'm missing something
->>>> obvious, 'mirror' is not a physical mounting configuration of the camera
->>>> sensor.
->>>>
->>>> FIY we're talking about something similar in libcamera
->>>> https://lists.libcamera.org/pipermail/libcamera-devel/2025-July/051533.html
->>>>
->>>>>>> Introduce two options to change the device's flip property via device tree.
->>>>>>>
->>>>>>> As there is already support for the panel-common driver [1], add it for cameras in the same way.
->>>>>>>
->>>>>>> [1] commit 3c0ecd83eee9 ("dt-bindings: display: panel: Move flip properties to panel-common")
->>>>>>>
->>>>>>> Signed-off-by: Fabian Pfitzner <f.pfitzner@pengutronix.de>
->>>>>>> ---
->>>>>>> Fabian Pfitzner (2):
->>>>>>>          media: dt-bindings: add flip properties
->>>>>>>          media: v4l: fwnode: parse horizontal/vertical flip properties
->>>>>>>
->>>>>>>     .../devicetree/bindings/media/video-interface-devices.yaml        | 8 ++++++++
->>>>>>>     drivers/media/v4l2-core/v4l2-fwnode.c                             | 3 +++
->>>>>>>     include/media/v4l2-fwnode.h                                       | 4 ++++
->>>>>>>     3 files changed, 15 insertions(+)
->>>>>>> ---
->>>>>>> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
->>>>>>> change-id: 20250718-fpf-media-dt-flip-7fcad30bcfb7
->>>>>>>
->>>>>>> Best regards,
->>>>>>> --
->>>>>>> Fabian Pfitzner <f.pfitzner@pengutronix.de>
->>>>>>>
->>>>> --
->>>>> Pengutronix e.K.                           | Fabian Pfitzner             |
->>>>> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
->>>>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->>>>> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
->>>>>
->>> --
->>> Pengutronix e.K.                           | Fabian Pfitzner             |
->>> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
->>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->>> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
->>>
->
+On Wed, 23 Jul 2025 13:33:18 +0530 MD Danish Anwar wrote:
+> +   - Vendors must ensure the magic number matches the value expected by the
+> +     Linux driver (see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
+> +     source).
+
+For some reason this trips up make coccicheck:
+
+EXN: Failure("unexpected paren order") in /home/cocci/testing/Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
+
+If I replace the brackets with a comma it works:
+
+   - Vendors must ensure the magic number matches the value expected by the
+     Linux driver, see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
+     source.
+
+Could you make that change in the next revision to avoid the problem?
+
+Julia, is there an easy way to make coccinelle ignore files which
+don't end with .c or .h when using --use-patch-diff ?
 -- 
-Pengutronix e.K.                           | Fabian Pfitzner             |
-Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
-
+pw-bot: cr
 
