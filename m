@@ -1,317 +1,363 @@
-Return-Path: <linux-kernel+bounces-741871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E61B0EA10
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:30:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5C3B0EA15
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB563B27E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC653546AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E567248195;
-	Wed, 23 Jul 2025 05:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2BE2475C7;
+	Wed, 23 Jul 2025 05:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nFZmNC4d"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2078.outbound.protection.outlook.com [40.107.212.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHxfGNyo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55451B87E9;
-	Wed, 23 Jul 2025 05:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39E523A;
+	Wed, 23 Jul 2025 05:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753248609; cv=fail; b=fB9A+rq7DjgpSSTpb2DuvFALy1L5IBdc5q6WG+oMkQLO3mNeh0Ygnt0HXLv8X3iLtleichPFQSaTdUdPN9nQQD1qMStRFwHCRFO4F16o7m5RpaTZbYHQuy42IkIMZD/pe8mUoPPhgnP1sZ859Fnr0s/lFw0EQyEr5+eheCj8O6U=
+	t=1753248836; cv=fail; b=pS6mkFiB+qhyKzjCfK+MwjalbiIZQpkomheutVKRkMpf4mSh3udtBSZrq0HDhSl/9QeqGMD+EGAgqtQR9LwgNiSB05LIowTAnW2J9iMdDWOaHrqx7VMyFPcS4KP2LuQxKvQ1IyL3vvkuqxMNnlS7HMRZrg/AndzZWS/zR40vb44=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753248609; c=relaxed/simple;
-	bh=hj+/75c1dU1ok4fEcIOpG69NzlKfdcyDY0sb04jqkCA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=inY36yM51Ry0wYfZfAZH27ogcda4bfMRI3oKkifc9ECnBuXNbWvQA/WFMMk3FCbvWC4L8JuhJnzqiUZpTy0uUnYZpvrJ4LTlbYm8AlKqLuMQSuueyIE5ZbVN1JJ3BIII3UjF33hr+f3ncz9InXAZ820I8sdBlPjLJciY+d1DPys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nFZmNC4d; arc=fail smtp.client-ip=40.107.212.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1753248836; c=relaxed/simple;
+	bh=PQMwPlAKdPZx1FUx+KyG6l1HbaC9nBgwdGxaRTd/QXc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=J+H/qjEeW9m9VYWbYWCJ6VIC+X100FAwxQnCPqPEHbhP993x+rhXZ1Qk7kJCKlsgPhuNFnTWMM0s5HacKRva2+Q1pK0wsBv6C9CyDLFJ4YLwoVmyLRhpahNYBiGLyP1r+AR4NK3CnKjwoCH96wWb9bSVb0XYYca+6VLe3yRB/sA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHxfGNyo; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753248833; x=1784784833;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PQMwPlAKdPZx1FUx+KyG6l1HbaC9nBgwdGxaRTd/QXc=;
+  b=nHxfGNyozyIy44xOv1epZtBEYsCznFtxi9A5z9mQ+I8H9IBQ9k/VB8+n
+   J0VbVnp1syXYQVP3TGLYQfhkgtGj5DKx2cyzT9ZjYsJk5U9MgDhe/4jxe
+   2FhkkrXLJ7j6eq+iYZlkfEi6Ko2NLfURRXXacIXV3CT9/CTF30GYgmiAS
+   XNqy2Utp/1ndfy9tQezRlt2FSgKQ7z0/QM2xB+fIKbtB1e1FZu/1B5rSR
+   eA5Jf7EycJCKpuknYbMzTMpRLbnptV92Uedu/ZXgZiiiUgEIleC1RWleS
+   1fsFjNbMUaeX5VthNhKPfOzNL+qMAaDW/2nLF3M25LMBWoXJEGRfcgAaG
+   w==;
+X-CSE-ConnectionGUID: GeVk77szRa6bJGiXmD1LgA==
+X-CSE-MsgGUID: zQCqRnvATMSOxE2yJaihrw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="58135188"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="58135188"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 22:33:52 -0700
+X-CSE-ConnectionGUID: D+qbN+hJQ6y61RQGnlM4YQ==
+X-CSE-MsgGUID: Vtan6JRlT0+oCUUeDuJHbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="190296378"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 22:33:53 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 22 Jul 2025 22:33:52 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 22 Jul 2025 22:33:52 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.84)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 22 Jul 2025 22:33:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yWLNHY4W/9FOaxgQmxqHD1EXsSwdNBvjeiI5Rrf1BTEXl1TINW/VUBKBtb2DhWBK4p0+dqaEPAAVNOBPyxw36IFwf4XWTJLQjDziNYCPmVjJC/wrpophHHZtOqOabJ1WNxCXcluCc54fFW4QmNGJY/k4bIhLApdLv26C+ES8Dy0qiiLkD9IF+oEdKZDNHCI5g7PbqK6NjBcTGdNgy7h1Y4g8MJRRvFyEIOXMDwkWt6ymMMCbUSB5vfGR2FJuquGDptDOaHa5mUDlOejduLVGNVNj61A3lLZ7eMyuH/OEx+nI8xLD0tDrCM+wFF7yPrGS7/+YgfZl5RNnhKYOhJyDWA==
+ b=R15EGVSmYsLbEydBQD+agmbld6xw2FlRB6cvPm4AgQ73/1Mmqd+iT+trpdMzyIEGLyBrjBAnpZKbBj1QjtpraW45LZ/qAa5g0ZO/4R2bAzGm2hjhDLXz/CIHcEWz9A7KaUK43az7nX/8ITeaFheWYRo0FJDFzdVwmht5BJWzQjvKFrmfS8Ul18ooeD9+4EHEkTbmT6U9Bz51mUOITOcKoTwbZvLhhFYgLBE4yy0LAYaIfCu/3T7Bt+kMvHPhq1iW7/N4rB5uhHKD8axEITJaE24jUGodC1nauSHsI7Ftnn9HoNdF2ewJFrmSsYeJLUgO8LuirRXdrHd8LSTaMU3r8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3DEY73vkht6uWgTVx2X7C54h1Bsi7U8n0brSaHtHvAM=;
- b=aOZ44jhydqy3/eXyXFUKe0K9KIRM9/Cmchl/b4fcS1g2VXX+ldVfUUPohf9giN1YxiLNBmydyTTZ9ODSJSj4F9vSLdYvjMlOkIX9HqDDw0K+eYpa5db9ZDIR86+6GuYzdod72vEV9/1MxouMu9DHrKuWvIfiRhKk9gUsUdht56gHhwup+nUB0W1HTKY3QwwuwRzw7DtDbfI2F4jCofr4nvSLtXBa4Yn6su6WNxVtMMw54W5ESi5mLcO57uj8F3JIMx6RnGoYSzMRFs/uopqUhI6zUB6uSv1myeUjpWaBqBKabxN25KAcjoCcUKnnzGoVjxUvhO2TQ4qiWKDm/woITA==
+ bh=qZr1fCZGfxQhnze7QP03MSIFL1tf6ZeNQjhFH9p76ig=;
+ b=C+4ENRvJ8Fb/Ovl+Y41f0SMcEzs49u5S3l1c26sI59I8TFW7Vj4NPaDHZkGKsssdnR48jvyl4gDl4EYz9wSUTPghmP+uDL/p1Q3dzJrgbrX1Pto2oIw2KX+Ax2foQlwg4B5/jEC+Vmh9PCNwmNVO+5B3i8ccZ/nG69fDHCnneg8KZbtw0/OcAZkumw1lclg7++c/X0yEK6/OFUc2Aed90wPd8QsAVaJFz1Dyb5c4AZvGCbL9kRQHmva3TsiF2Vtui+57lVAzbFLXHQcf6wU4mTlCDFd1CDjmiVVSXB6fQ+BrAZoQRxJvdBXke0kwk/E3qnbC/wkxw43mq356o4s8Rg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3DEY73vkht6uWgTVx2X7C54h1Bsi7U8n0brSaHtHvAM=;
- b=nFZmNC4dWe5Y3XoneJmlgoue+K51PtN4fppN0nfMyyOQCS6x0lYVCvEsyw8AnmVqZTSPNxuGv+iZux/3jOn60g+U8YfiSbW+mINDVByhls37oZzY+i6oo9Zzzgy57p89Wwqkia4cXGWXq9Vw7fGKl/3QEdjC/6rptxTFHEQOlUU=
-Received: from DM4PR12MB6158.namprd12.prod.outlook.com (2603:10b6:8:a9::20) by
- DM6PR12MB4266.namprd12.prod.outlook.com (2603:10b6:5:21a::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.28; Wed, 23 Jul 2025 05:30:04 +0000
-Received: from DM4PR12MB6158.namprd12.prod.outlook.com
- ([fe80::b639:7db5:e0cc:be5e]) by DM4PR12MB6158.namprd12.prod.outlook.com
- ([fe80::b639:7db5:e0cc:be5e%6]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
- 05:30:04 +0000
-From: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "mani@kernel.org"
-	<mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"cassel@kernel.org" <cassel@kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>, "Havalige, Thippeswamy"
-	<thippeswamy.havalige@amd.com>
-Subject: RE: [PATCH v6 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Thread-Topic: [PATCH v6 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Thread-Index: AQHb+Fqp7orOAj6ukEWcrZvP+mNzCLQ9I3yAgAILoZA=
-Date: Wed, 23 Jul 2025 05:30:04 +0000
-Message-ID:
- <DM4PR12MB6158E76993108CAC83D127EFCD5FA@DM4PR12MB6158.namprd12.prod.outlook.com>
-References: <20250719030951.3616385-3-sai.krishna.musham@amd.com>
- <20250721215457.GA2756536@bhelgaas>
-In-Reply-To: <20250721215457.GA2756536@bhelgaas>
-Accept-Language: en-US
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by MN0PR11MB6136.namprd11.prod.outlook.com (2603:10b6:208:3c8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Wed, 23 Jul
+ 2025 05:33:36 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905%4]) with mapi id 15.20.8922.037; Wed, 23 Jul 2025
+ 05:33:36 +0000
+Message-ID: <99899915-2730-41c7-b71a-f8d97bb6e59c@intel.com>
+Date: Wed, 23 Jul 2025 08:33:29 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/8] mmc: sdhci-of-dwcmshc: add common bulk optional
+ clocks support
+To: Robin Murphy <robin.murphy@arm.com>, Chen Wang <unicornxw@gmail.com>,
+	<aou@eecs.berkeley.edu>, <conor+dt@kernel.org>, <guoren@kernel.org>,
+	<inochiama@outlook.com>, <jszhang@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <palmer@dabbelt.com>,
+	<paul.walmsley@sifive.com>, <robh@kernel.org>, <ulf.hansson@linaro.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mmc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<chao.wei@sophgo.com>, <haijiao.liu@sophgo.com>, <xiaoguang.xing@sophgo.com>,
+	<tingzhu.wang@sophgo.com>
+CC: Chen Wang <unicorn_wang@outlook.com>, Drew Fustini <drew@pdp7.com>,
+	Diederik de Haas <didi.debian@cknow.org>, "open list:ARM/Rockchip SoC..."
+	<linux-rockchip@lists.infradead.org>
+References: <cover.1722847198.git.unicorn_wang@outlook.com>
+ <e57e8c51da81f176b49608269a884f840903e78e.1722847198.git.unicorn_wang@outlook.com>
+ <f81b88df-9959-4968-a60a-b7efd3d5ea24@arm.com>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-07-23T05:09:05.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB6158:EE_|DM6PR12MB4266:EE_
-x-ms-office365-filtering-correlation-id: 67d9e8f7-aea5-476a-a54e-08ddc9a9fa80
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?GM3XxTM4SsFhJsGl/kHz54r8YRz7YhEwXoX3PR3VIjNv2YS6G9l/gcTOOdRr?=
- =?us-ascii?Q?VwA8qDOJYCt11GtPE9qYRPgnz1VdZsCb1gKg3cXrnCCc7GlUth1JgwGKk86M?=
- =?us-ascii?Q?nM1YGvxYxjVGooh9LXo51kX4zuRzhPVSZSuW3oJkTLOcvD1Kf7H/CGpoTLR7?=
- =?us-ascii?Q?Rk8zWXm2UPmSErZnNf4dafPB741Xvj2E7AK1MhLe3lyxdrRiog9bisM9Y5JH?=
- =?us-ascii?Q?/zhvtgax6CrMnyV4Gj8z+0AcsOacIYTIgkWO5OkyKop5fQMGrqyszFxCU5Q8?=
- =?us-ascii?Q?GP3U5tOFl3AG/J97mXIsWIzSeAD2o0HlXLxwr+vH6BoMYeXuWgQe8DiYIonl?=
- =?us-ascii?Q?j3VcMJykE+VB1nZ9AUer30d11hV6XRzK1gV8EiHW558x3luO79n3/AI0Zig8?=
- =?us-ascii?Q?Fvtyp/WZKMu5LqIQ271yFOnq5hMZ1NWN37tDf8SRNynOcr6zyl9+F/+Jn88/?=
- =?us-ascii?Q?aDhlC+j+XNJV8rtAgbr/VtbCLQYkuF+VP/zfMKZMona3VQ8yu423VBcsaZwt?=
- =?us-ascii?Q?0jmdVMmWjscBc5T0HYE3MNlbdszriFhKTlu7OijMHl7Urc3mJboLVbU1dBQs?=
- =?us-ascii?Q?CeZsUFbb/kqTg1NP7RkXGAcrplrYrJTteKPgeglwrbdzTmwO/FzM1jlK+93u?=
- =?us-ascii?Q?ar2eJinxJL4hncI9I16q8qLhVjBdSDr65C/huvqaI7lQ0bbtu0dkY9BNVYVa?=
- =?us-ascii?Q?FoXDhlzVGJnTDTF77p46JY0l0veYf0FHYfSotqplnpIliyVmqWdRn7syTzXd?=
- =?us-ascii?Q?9j1ohx7uSEvrXEz3Ltegp/mqB/LXSQ+8ldjU9JVjZRvWRXYBjXF0qav3eMTd?=
- =?us-ascii?Q?5ANjXROqZBpO18SE+yMXwZ89GfQIfEplbRTKES4+m2lBxosDiiT8PgZ7AB1e?=
- =?us-ascii?Q?nADG0f0sXvwGWO48EkgZOEyZhjFcM94MxxoVm3YgyhUkaW/0qPWr8SffQeIr?=
- =?us-ascii?Q?c0djvhQO1lrLvTqSqO/f+u98pFuc0oTp/Z8Bu65YeOOxg18OUKG898JMH8EE?=
- =?us-ascii?Q?wb7lsiDAA0gOJIkeoG5sBMElHG/Vg+9mwUAP5a9xYRPkK74Jf07h5/vSqtXe?=
- =?us-ascii?Q?boYRUnPFinvfYHqihOGa2zQmTfJ3mOQu/nQCREHPYO1/GN8XKx6sxTBNPmLu?=
- =?us-ascii?Q?IXn8jnDfp/27+ANSe24UEar/iOILvfJhRp63ASoGXG/WSnbri5SyPfEikqZH?=
- =?us-ascii?Q?cH8JRKuZn3GsSxVcrAlpD0YiEWDRnPQlIs0lMLiHP4L7GBoLbMuxZZzodY4Y?=
- =?us-ascii?Q?3Afivzb788GUGzfZRE2rTMqb9GAgrrxYe/g62b32a/y7jJCLcAwsNetd94Q9?=
- =?us-ascii?Q?NDu6CjawswAfTpGSe4/d8ey2TXD27O6U7BT2kcF5M4d6S+I9iIdvKgK8H+3L?=
- =?us-ascii?Q?lIDJ/6nXtycM58U+zYzW36e2tPQZo7IbTModYETW134WdJG4uExDGwG+/LVJ?=
- =?us-ascii?Q?4WlTk5S8rbNKJGMJkcnjR21ZqnFnoqO+bqZAzcl1kARY2htw5DBh4Q=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6158.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?92WzqRs2UgG34Ui/LiZOWIiaKgz1Cr7DZaZTIShusZwgs+Rz6p651zfqBQbK?=
- =?us-ascii?Q?rnXWSIIN3nQuxzVLHMNcjFWIQvtkaU4VwsfPKhwYjjKl8UOpBZ6rtDRrReiz?=
- =?us-ascii?Q?MgHOiMecKVCy7u9LknJmVyS4Jgb5kr6c2ConYcDAp97Pikx7wQf9pSA/fB8f?=
- =?us-ascii?Q?ugz5CNC7+8q+wtfARKrpe+s0StC+3+uZSySgVMD+LVOOshGCf92pefzEhv9Y?=
- =?us-ascii?Q?Sonn0HtJL45Ju4r8fnqi41sAiDzA4YhicI5KAOnulfxUJFLaDkA+wTRsczwg?=
- =?us-ascii?Q?IFV9T/7Q9RBPqOQZWe7/FUaMunbQ/XJ7IxjdKexNoTKGauVfkQVHlaX6hP1u?=
- =?us-ascii?Q?EZtE0m3HEmSpxBIu46SbHV+3xQrm/KxwQnkVsBTITDgA53xtPeAeq10kRtjF?=
- =?us-ascii?Q?rbtybmsMAj9McPlSjP2Ej+/H52BbEfOOqBb/qN8+y3q4aA4pMQMIdL2qJfJ/?=
- =?us-ascii?Q?QusIOI8gEvgbBTiyY6oKr36DFhe9awOWLT9uu7QeFeMjRmVm83N1adicpXWy?=
- =?us-ascii?Q?s7B3hEHJPFdLshptmswZHrBihM9YXtZ1H5bz0FKWgbgwCyO05ur+yodVl3A3?=
- =?us-ascii?Q?Hc12dwunEzGk9P7eUhKKaR080ZBmAygOCZzejbRO6IJ6oUTC7V/4mE6IHy4k?=
- =?us-ascii?Q?zrfmT0symWRFSk3XjB3b96aTf9SHONmNrale1+Jr7c+kKowYJ+NWzyV2TwUn?=
- =?us-ascii?Q?ZX+WLNgW1P7oZ8SIQsaJsCQM2sSogWvo50oK3BEXs9mTLxIg6MXCNSIRk457?=
- =?us-ascii?Q?DCZXJerthTNGLVx1v6nQzlkjRVfb741/Bwb+Ds/rvcv2wz+dKiUNytRz+YPm?=
- =?us-ascii?Q?cn+KyUY2OBsL9/wLi88aLVDVf7i3IM+b8kUH/lyIMKBdrqVu+BXzMsSqcPeK?=
- =?us-ascii?Q?8vstoM3+2dgQ+RsL5/ml46gCxmVpLJbc2iu8mnIQDELW6byqlcZxRrkt/xEz?=
- =?us-ascii?Q?8z/dYiDkO1wwg6XqrFzL6LuaS3f3bSt9uGVc3c98RzBaXabqd2nra9haxvTk?=
- =?us-ascii?Q?1bVRi1NS/njSCxYPUzStMhmADF3eC1v+xmI/oAaDbN/a5OsAVvcwkHmnmWAe?=
- =?us-ascii?Q?GCWsAdBvWtJHURkVypQXJ8/DvMRF44NZZ1g+pLYgLtBHNpxQCz2busSE6eh4?=
- =?us-ascii?Q?qN6Ukg+DqC3UJxn1rKu2ztuYN4icOvgRz+ZeJSAezg7ljGOqJ8emk8ZaSqyF?=
- =?us-ascii?Q?IamL/kZvt/QLJIg0hK08J6sPjqogsyM21XvCyzbg++QVYegSPux9WiJJ6aBD?=
- =?us-ascii?Q?blUm5k7wtDSJq8o59LUceas+YlOYtfn66/xXiyC2sgiYhtiUfYwmQiGg3A0L?=
- =?us-ascii?Q?LaoB7u7HuiQx3UJmZWLKCB7GdYUo7RpnIJ7PoXBFxEQDx0g7tKXQa3rrCxhF?=
- =?us-ascii?Q?0QQAFqjlufJYl/CGOaELg+cVSfPhBObIMG14rcw8sssmV0pUGmqY/JVNw3cT?=
- =?us-ascii?Q?XcVuEO36PpOk/K8ymcVdmM8Vw4RzCSNS84/dK7HXIhocGyD/Tf1x+V5dzNdz?=
- =?us-ascii?Q?OqaHue9gR6om0fCcPztlCLOyR4l7wS04L3qELv0zFSFVUogKYT9j/norc4xx?=
- =?us-ascii?Q?p2bIHXWhd9dWLykqQ6g=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <f81b88df-9959-4968-a60a-b7efd3d5ea24@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DUZPR01CA0228.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b4::23) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|MN0PR11MB6136:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c008b3b-3a2c-424b-432d-08ddc9aa784b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NzBPQlkzUlc3djlJZzQwb2FFMEtSM0ZVTkdCSUxjNjZBUGRyeksvcUZoOTZa?=
+ =?utf-8?B?TzQrZytqZTJ3TTJUMUdxNmFxVGFIcDE2ck96M05GdkJMM3VwUi9VTXZzWC84?=
+ =?utf-8?B?NGlRQXZWYUViRGJVSkJGRDBmdDlCdElyN0ZSdTA1ZytQSFFpU1hhSG5zQkJZ?=
+ =?utf-8?B?OUtGSzk4bGlzL3d1ZE9yNXp4a3JhUjZUZzVOR0FWclJYUEp2KzVObUMxSUtC?=
+ =?utf-8?B?b1dncFNEK09jZEZaWnRnQzVPbkIxR1FjdXl6WjhBNDZSbmxFeU9nYVhYRTlo?=
+ =?utf-8?B?UVg1RjVHUW5nSzc0TjcvV2w5eVVMUVZvVlZ2SEx0cGJveCtpSzIxOUlMODcz?=
+ =?utf-8?B?NkFxUEVlMDBSc3N5L1BYbFNZMzNFdjlRaXB5U0xIc1doSVVEbzNVZjJYQng1?=
+ =?utf-8?B?Y3lJM0RtUlp5WWwzZzNVRzM2bUxBNk0zTzRCbzl2aHozL3RUMHNFc2JEQ2Fy?=
+ =?utf-8?B?SnRrOFRJdkpvdWVodjdJWnBOR1ZidGdRb3BFSFA0QnV0WTJId0U4dG1ZZy9q?=
+ =?utf-8?B?elhtcDh6QTl1ODh2QkNnQUV6ZHlLRXZXcGY1UUlpRjVHSWVXWnRCWTlxTVc4?=
+ =?utf-8?B?a1JSck5lTTQxRzJweEVIbGlPUkVLMEhRK0pwc3dSTkxHeFRMMlF4OWt1Y0JE?=
+ =?utf-8?B?dkdjNVlsa3N6aGFUSGQ3MWFOb1hqdnQraGNRL1lXYVk5b1lSU2FXaDdxaDBK?=
+ =?utf-8?B?UHJQZjBOelpNaUpFYmN2WGpPZFJIM3BHU095TVJBSXIwSGp0QkhEcmUyVDRV?=
+ =?utf-8?B?d1hvMmU2K1NsN2ttSGdSMFFBMFVNejlBQ2liTzdVc2VoUUhrdU9ZRDhYakxU?=
+ =?utf-8?B?S0JRQXQ1K2hDV2NHam43d1NlbnJiTkJQaU1XZjI4R2srbU1UcGowL1ptUHRx?=
+ =?utf-8?B?c09sZ0psSlM5T2hvakV5QVBRTXZEdDZoUWFtNEJuWm9CN1MyQjdKMVZyMDVR?=
+ =?utf-8?B?VGg0REJqbU5MdUV1Q08yRjFEd2V3blJ6Ly94VlRoRmFVRThSbVF2QUdWckRn?=
+ =?utf-8?B?MkEwUzVsZjVyd0FLU21uUk5DUjRhWXFmZVllQ2VwTDNOM0NkNVJIRjBpR1Nx?=
+ =?utf-8?B?WEc0ZWUvcXNSUG5LN1NYSGtNOTQyL3FGRmtRNVVpYnEwZ3IwcHgxSUEzaWR4?=
+ =?utf-8?B?SllSQThGOTIyV1JiSmJrYWtIWXpKc2ZhODVhU1pucXQwSnp6S1VOelExdmZP?=
+ =?utf-8?B?emluaytESjVYYm9qMXVRQ2dDNnh4QmE5K2NtYWI1UUNhajZUTFpCNkZCbnJv?=
+ =?utf-8?B?Q2RJbHBqeFVFOUlsK0U5ajdnSFJhcmlpN0o5b0dJMTJxc3R1ay9QLzczQlJU?=
+ =?utf-8?B?MFNEZDAzSDc0VUtrT1BubG9xYW9uZkxVVnB3eXlqUm9DYmlYWDFyWUdVQ3FL?=
+ =?utf-8?B?cGZVeWNqbFpnekphcEJ6SXU1eTVqOHUwT1Bsb1FWYzZVMzZBWUNpWUtpeEo4?=
+ =?utf-8?B?dFNwTGQrSnFqSmcva0VhODBQM2VEelRTN3B2UWxLWE40RmpWRk5wSFdvZlk3?=
+ =?utf-8?B?akYvajdNWGRQeFpOQjJraFlqUzVYMC8wZGRWcXI5eTVyN0orWitaZjc4cHk4?=
+ =?utf-8?B?MnEzNVpkUnc0NDNBU0tWQnNTazdxODZPcVQ1SzdHcC9EcHAreGc5bWgycG5K?=
+ =?utf-8?B?a0xibEdWUE1nTks3UVdjcTBDODl0TlF1SkZSZ0w1RnNORXo4MTdnMzhhMURa?=
+ =?utf-8?B?QkR0bHE1QXI4a3N0YUhBQnRRcW5GcUhacFlOd012VVdSTFRkYVVzcmNBU2hO?=
+ =?utf-8?B?T3hjN2hIWmxaaHFvNnRtYmRGZ0NJa28yakd2aS9sblg1SUZUbkVjYldHTmh0?=
+ =?utf-8?B?YzBweGE1LzJSL3YyYWJsVURCQjRBUHBnSFNHRFJ5czBRRS9tT1E2ZGkzYXJp?=
+ =?utf-8?B?Yms5eXFuNGUxS3ZzMkhDeVFIVm5ESHZzZDFPM2EvNkM5a2ltKzFFQVRhSE13?=
+ =?utf-8?B?Q05FMzN6YlRndFVTNTdnUXl6bzY3cDFoMEMrQVVsd2lTQUtHT3luS2U0WE5F?=
+ =?utf-8?B?T3FYSm55bGtBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkxDajFISG8wT2Jqb2hPNU5pTENaYVFuN3ladzVPOE9CRUxKZTFGcjlnelVl?=
+ =?utf-8?B?OVpWM0REN2R4S3plMThndlhJWXlvSjVQZzV3Y2gzcmtlZEpzWjhSeHR3TkNO?=
+ =?utf-8?B?Y3EyZTZkVDN2ZmhKU0ZUTkhDUi92TDFBTUVRRTIwelVjYlNUSEQ0MG9BdjBa?=
+ =?utf-8?B?bHBXdi9DT29lZUxPa3JFVk82dmZ6TjIxMmpwdTR2OTJ0NzB4c2RsdEtOWHFq?=
+ =?utf-8?B?eFJxdW9ibFl2SFJqdVNVNVQ3M3lpUVQ4WC9TcTdELzQ5ZUgycmpSV2FFVytM?=
+ =?utf-8?B?ZmtnWnZjWEtFVmpGWTZhY1FEaFM3THExMGVOcXFrOWRveG1qL25RdFRqU3Bs?=
+ =?utf-8?B?VkoxWXlpTUNDVXB4RmN3MVNocHJ6VmxRT2kzUjlrWUFMNC9yUEI2dVhicnBE?=
+ =?utf-8?B?d1pPWE1CWVh0Zi9MYlJ6QWsxWE5FMlU3NHcxL3BIN0FtS0NqSTA4c0ZLaloz?=
+ =?utf-8?B?QkQrWm5sS0o3cjZLL3BpMndwZk9VeDNBY09qd1llNlZUNzMzYndJUmdyVHM1?=
+ =?utf-8?B?RVcyQ1grY05NcmFRdVlwYmg3U3ZIN2xSLzNqOXNpZkEzTElDMlVDWTVNckhj?=
+ =?utf-8?B?WVlGeWZjdE1BMDJDaVJqMi9TalRpbVN0UThURDR2RDhqUmg5ZkRoekZ1OUhJ?=
+ =?utf-8?B?L2RjSkpqU2IwUTVtT1BHcE5QcTIxNytBT2hWeldSSkg5cGNoVnl4V21jRW5a?=
+ =?utf-8?B?ai9Kdm9Mc2VPbFREY2wzWmdCbnFyUHlLRlJmeUgrQ3pwZXhxWm1pZ01CUndp?=
+ =?utf-8?B?OTc0anloOGlWdDlic203NlB1bmNXL2hzc2ZudXovT1BmVWdOSGE5VmRCNDJV?=
+ =?utf-8?B?cXhaVkRrQUhyVzhDd0FWMkxhZHlzZE9GR3JtTEhPYVZ2YmR6THJIUFFlUTBm?=
+ =?utf-8?B?SVpQNnFlZFA2c1JDSXJ0ZXJLbmxoRk9wQStKT2hLOGRBOHo4NndjalZXcmlx?=
+ =?utf-8?B?eUoyOGVnTHBJU2ZUOU9QemZ3aVRqbU9yQnlzM0VXSWE5UXRhalo4YVpqM1ly?=
+ =?utf-8?B?UFF1OHBQenZxbTBOQ1l0WFFUQVVUU3psRUlacGZLc1J3b3pZamErRGlkbndx?=
+ =?utf-8?B?YW54ZGhaSUNrWEpHbGQ1SldFaW4raWlxWHdDSVZlMCtmdDdVT0VpTm9lU0px?=
+ =?utf-8?B?VXVtSVNqc202SUVyS3g1RFBjbGwvdDJNN1hEbDlsWko2VDFOL09UZTdoSWNu?=
+ =?utf-8?B?YTFja2xLVml2RGhiczZEWHZIWmpJRU5HamwzTDh2Z3JzdWNtQ21vL2lGa0Zs?=
+ =?utf-8?B?UklQNTVDKytOWE91WWY3Z2RqNmhVUUlLNjZkZDh6bHdGYVM5U1FGNUFIQ2l0?=
+ =?utf-8?B?YUZTK3JRMmpURVIzV3NwL2xXZ3pXRFM2QTlnSlZCVnB2eDRxaE1EV3N5YmY4?=
+ =?utf-8?B?SkVkZHhlREFYM0tHbkQwcUdQaHh6bENlZzRKZUxVbG1WR29RVFJReExQaTlO?=
+ =?utf-8?B?dWlkbEhia2J5Qzh6VVhsRXRKL2xFVDd6ZVpmVkp1ZU9QWFhNUi9FdlZ0Rlhs?=
+ =?utf-8?B?L3JONHdJTHJkdU9lMHFKd3NubGJTUHdoTytJZWpMU0ZzWFpwczEyWUtVZkgr?=
+ =?utf-8?B?UUdZdXh4dUx3ZGtsb29jenhjUGlMMnJhbDlKTU5oS0wvSmc4N2lJcFRMdGN1?=
+ =?utf-8?B?Vnk1TXVKWEZTOUhDNWFvN3lsYzRRa3Z6YzZqMlhmR1dIUWxwc1loU2VUa1pD?=
+ =?utf-8?B?WWhRSWRFQWhpMWpDOVVqRjBMRUxzcDBBa21rZ1NvVHo4MzdRdjUyMlJxdzh4?=
+ =?utf-8?B?YVQvM3JTQVdGV3hwWkNKYUdUcEJieVRaL3pVeUtXSThaUW5oUitucitGVnhJ?=
+ =?utf-8?B?SGdyVFQ0cUNQWWNGYmphblVnaDBFdnFKMjgra0pYUkNpVTN6VUJUTXN3WGpV?=
+ =?utf-8?B?Rm0yWllEQmsxY05GUFhjRTI0bmNDQ1pmT2lvWGZkdEhqcmVPdjVDMjNoaGZj?=
+ =?utf-8?B?Zm8rRHNTRlAzaFNiK29ReGthUzdjZTMrRG5tdUxoVkcrSHBlbUYxR3ZnQjVG?=
+ =?utf-8?B?TUVieVpUd1hoMVdHUUNxL0Evei9scDd4aEJmeEJrUG13VzNGcGVMbWN3TXFT?=
+ =?utf-8?B?SFhlZHFCVlpaWVV6RjdoZ3R3SitqODUxdjRiS25qN1AyNkhCN1ZabXdiekpv?=
+ =?utf-8?B?Yit4TXA2N1FjdFppalFGMEVEK2tWTSttZXg3d3BtWGp6U0NteXBlMjdzbFdv?=
+ =?utf-8?B?aGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c008b3b-3a2c-424b-432d-08ddc9aa784b
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6158.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67d9e8f7-aea5-476a-a54e-08ddc9a9fa80
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 05:30:04.5314
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 05:33:36.1965
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BpgArszVkw00z1v6uU4WthmLoMCFA3BlDFmhS73xU4XU3ogT/0lDfMAWU/cxXTi3EneDqxtz2b91PbfHV3UgIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4266
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g/YKeKLN7S9Popx/dUPiY1IL5+9T29ermtO7+j4+GB8HJNjRMm6relkGqMSRxWwdFfkk3GVVDBvOf0UmzWTQMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6136
+X-OriginatorOrg: intel.com
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On 22/07/2025 21:33, Robin Murphy wrote:
+> A bit late for a "review", but Diederik and I have just been
+> IRC-debugging a crash on RK3568 which by inspection seems to be caused
+> by this patch:
+> 
+> On 2024-08-05 10:17 am, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> In addition to the required core clock and optional
+>> bus clock, the soc will expand its own clocks, so
+>> the bulk clock mechanism is abstracted.
+>>
+>> Note, I call the bulk clocks as "other clocks" due
+>> to the bus clock has been called as "optional".
+>>
+>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>> Tested-by: Drew Fustini <drew@pdp7.com> # TH1520
+>> Tested-by: Inochi Amaoto <inochiama@outlook.com> # Duo and Huashan Pi
+>> ---
+> [...]
+>> +static int dwcmshc_get_enable_other_clks(struct device *dev,
+>> +                     struct dwcmshc_priv *priv,
+>> +                     int num_clks,
+>> +                     const char * const clk_ids[])
+>> +{
+>> +    int err;
+>> +
+>> +    if (num_clks > DWCMSHC_MAX_OTHER_CLKS)
+>> +        return -EINVAL;
+>> +
+>> +    for (int i = 0; i < num_clks; i++)
+>> +        priv->other_clks[i].id = clk_ids[i];
+>> +
+>> +    err = devm_clk_bulk_get_optional(dev, num_clks, priv->other_clks);
+> 
+> This leaves a pointer into "priv" in the devres list...
+> 
+>> +    if (err) {
+>> +        dev_err(dev, "failed to get clocks %d\n", err);
+>> +        return err;
+>> +    }
+>> +
+>> +    err = clk_bulk_prepare_enable(num_clks, priv->other_clks);
+>> +    if (err)
+>> +        dev_err(dev, "failed to enable clocks %d\n", err);
+>> +
+>> +    priv->num_other_clks = num_clks;
+>> +
+>> +    return err;
+>> +}
+>> +
+>>   /*
+>>    * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+>>    * so that each DMA transfer doesn't exceed the boundary.
+> [...]
+>> @@ -1280,9 +1300,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
+>>   err_clk:
+>>       clk_disable_unprepare(pltfm_host->clk);
+>>       clk_disable_unprepare(priv->bus_clk);
+>> -    if (rk_priv)
+>> -        clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
+>> -                       rk_priv->rockchip_clks);
+>> +    clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
+>>   free_pltfm:
+>>       sdhci_pltfm_free(pdev);
+> 
+> ...but upon, say, -EPROBE_DEFER from sdhci_setup_host() because a
+> regulator isn't ready yet, that "priv" is freed here, so by the time the
+> devres callbacks eventually run, that "devres->clks" pointer which used
+> to represent "priv->other_clocks" points to who knows what, and this
+> sort of thing happens:
+> 
+> [   12.470827] Unable to handle kernel paging request at virtual address 002df7b378917664
+> [   12.472104] Mem abort info:
+> [   12.472471]   ESR = 0x0000000096000004
+> [   12.475991]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [   12.476657]   SET = 0, FnV = 0
+> [   12.477146]   EA = 0, S1PTW = 0
+> [   12.477547]   FSC = 0x04: level 0 translation fault
+> [   12.478127] Data abort info:
+> [   12.478126] rockchip-gpio fdd60000.gpio: probed /pinctrl/gpio@fdd60000
+> [   12.478413]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [   12.479826]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [   12.480418]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [   12.481282] [002df7b378917664] address between user and kernel address ranges
+> [   12.482421] Internal error: Oops: 0000000096000004 [#1]  SMP
+> [   12.482980] Modules linked in: sdhci_of_dwcmshc drm_dp_aux_bus gpio_rockchip(+) drm_display_helper dw_mmc_rockchip drm_client_lib sdhci_pltfm drm_dma_helper fwnode_mdio sdhci dw_mmc_pltf
+> m libphy fixed rockchip_dfi drm_kms_helper cqhci pl330(+) phy_rockchip_naneng_combphy dw_wdt phy_rockchip_snps_pcie3 phy_rockchip_inno_usb2 dw_mmc mdio_bus dwc3 ehci_platform ohci_platform
+> ehci_hcd drm ohci_hcd udc_core io_domain i2c_rk3x usbcore ulpi usb_common
+> [   12.486871] CPU: 0 UID: 0 PID: 64 Comm: kworker/u16:3 Not tainted 6.16-rc7-arm64-cknow #1 PREEMPTLAZY  Debian 6.16~rc7-1
+> [   12.487901] Hardware name: FriendlyElec NanoPi R5S (DT)
+> [   12.488412] Workqueue: async async_run_entry_fn
+> [   12.488879] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   12.489539] pc : __clk_put+0x2c/0x138
+> [   12.489913] lr : __clk_put+0x2c/0x138
+> [   12.490281] sp : ffff800080713b10
+> [   12.490607] x29: ffff800080713b10 x28: ffff0001f001a120 x27: 0000000000000000
+> [   12.491302] x26: ffff0001f98e01a0 x25: 0000000000000000 x24: ffff0001f0f35408
+> [   12.491995] x23: ffffa8da199b4b40 x22: ffff800080713bb0 x21: ffff0001f0f35010
+> [   12.492689] x20: ffff0001f94aafd0 x19: 0a2df7b378917634 x18: 00000000ffffffff
+> [   12.493381] x17: 3d4d455453595342 x16: 555300307075656b x15: ffff0001f4885650
+> [   12.494075] x14: 0000000000000000 x13: ffff0001f025b810 x12: 0000000000008000
+> [   12.494765] x11: ffffa8da1a73ef98 x10: ffffa8da1a460000 x9 : 0000000000000078
+> [   12.495454] x8 : 0000000000000049 x7 : ffffa8da18c2fbe0 x6 : 0000000000000001
+> [   12.496145] x5 : 0000000000000004 x4 : 000000006cb6bb63 x3 : 0000000000000000
+> [   12.496833] x2 : 0000000000000000 x1 : ffff0001f1365ac0 x0 : 0000000000000001
+> [   12.497524] Call trace:
+> [   12.497776]  __clk_put+0x2c/0x138 (P)
+> [   12.498154]  clk_put+0x18/0x30
+> [   12.498471]  clk_bulk_put+0x40/0x68
+> [   12.498825]  devm_clk_bulk_release+0x24/0x40
+> [   12.499248]  release_nodes+0x64/0xa0
+> [   12.499608]  devres_release_all+0x98/0xf8
+> [   12.500004]  device_unbind_cleanup+0x20/0x70
+> [   12.500426]  really_probe+0x1e8/0x3a0
+> [   12.500793]  __driver_probe_device+0x84/0x160
+> [   12.501225]  driver_probe_device+0x44/0x128
+> [   12.501640]  __driver_attach_async_helper+0x5c/0x108
+> [   12.502125]  async_run_entry_fn+0x40/0x180
+> [   12.502535]  process_one_work+0x23c/0x640
+> [   12.502939]  worker_thread+0x1b4/0x360
+> [   12.503315]  kthread+0x150/0x250
+> [   12.503646]  ret_from_fork+0x10/0x20
+> [   12.504015] Code: aa0003f3 b140041f 540006c8 97ffd9c4 (b9403260)
+> [   12.504598] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> TBH I'm not sure what to do as a straight revert seems impractical by
+> now, so we hope someone else might have a good idea.
 
-Hi Bjorn,
+Presumably the problem has gone away with:
 
+	commit 91a001a1a0749e5d24606d46ac5dfd4433c00956
+	Author: Binbin Zhou <zhoubinbin@loongson.cn>
+	Date:   Sat Jun 7 15:39:01 2025 +0800
 
-> -----Original Message-----
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Sent: Tuesday, July 22, 2025 3:25 AM
-> To: Musham, Sai Krishna <sai.krishna.musham@amd.com>
-> Cc: bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com; mani@kernel=
-.org;
-> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; cassel@kernel.o=
-rg;
-> linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>; Gogada, Bha=
-rat
-> Kumar <bharat.kumar.gogada@amd.com>; Havalige, Thippeswamy
-> <thippeswamy.havalige@amd.com>
-> Subject: Re: [PATCH v6 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
-> signal handling
->
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->
->
-> On Sat, Jul 19, 2025 at 08:39:51AM +0530, Sai Krishna Musham wrote:
-> > Add support for handling the AMD Versal Gen 2 MDB PCIe Root Port PERST#
-> > signal via a GPIO by parsing the new PCIe bridge node to acquire the
-> > reset GPIO. If the bridge node is not found, fall back to acquiring it
-> > from the PCIe node.
-> >
-> > As part of this, update the interrupt controller node parsing to use
-> > of_get_child_by_name() instead of of_get_next_child(), since the PCIe
-> > node now has multiple children. This ensures the correct node is
-> > selected during initialization.
->
-> > +static int amd_mdb_parse_pcie_port(struct amd_mdb_pcie *pcie)
-> > +{
-> > +     struct device *dev =3D pcie->pci.dev;
-> > +     struct device_node *pcie_port_node;
-> > +
-> > +     pcie_port_node =3D of_get_next_child_with_prefix(dev->of_node, NU=
-LL, "pcie");
-> > +     if (!pcie_port_node) {
-> > +             dev_err(dev, "No PCIe Bridge node found\n");
-> > +             return -ENODEV;
-> > +     }
->
-> Sorry I didn't notice this before.   I don't think we want to emit a
-> message here either because existing DTs in the field will not have a
-> Root Port node, and we will just fall back to the 'reset' in the PCIe
-> node.
->
-> There's really nothing wrong in that case, so no need to annoy users
-> with messages they can't fix.
->
-> IIUC, PERST# in the DT is optional anyway (you use
-> devm_gpiod_get_optional() below).
->
+	    mmc: sdhci-of-dwcmshc: Drop the use of sdhci_pltfm_free()
 
-Thanks for pointing that out - you're right. There's no need to emit
-a message when the PCIe bridge node is missing. I'll remove it
-to avoid unnecessary logs during fall back to the 'reset' in the
-PCIe node.
+which is in next.
 
-Regarding the use of devm_gpiod_get_optional(): since the optional
-variant for fwnode isn't available in gpiolib-devres.c, using
-devm_gpiod_get_optional() would only check the PCIe node itself,
-not its child. That's why I opted for devm_fwnode_gpiod_get() and
-handled the optional reset GPIO manually by assigning NULL when
-'reset-gpios' is not present in bridge node - please correct me if I'm
-missing anything here. Thanks.
+In which case a separate fix is needed for stable.
 
-> > +     /* Request the GPIO for PCIe reset signal and assert */
-> > +     pcie->perst_gpio =3D devm_fwnode_gpiod_get(dev,
-> of_fwnode_handle(pcie_port_node),
-> > +                                              "reset", GPIOD_OUT_HIGH,=
- NULL);
-> > +     if (IS_ERR(pcie->perst_gpio)) {
-> > +             if (PTR_ERR(pcie->perst_gpio) !=3D -ENOENT) {
-> > +                     of_node_put(pcie_port_node);
-> > +                     return dev_err_probe(dev, PTR_ERR(pcie->perst_gpi=
-o),
-> > +                                          "Failed to request reset GPI=
-O\n");
-> > +             }
-> > +             pcie->perst_gpio =3D NULL;
-> > +     }
-> > +
-> > +     of_node_put(pcie_port_node);
-> > +
-> > +     return 0;
-> > +}
->
-> > @@ -444,6 +483,7 @@ static int amd_mdb_pcie_probe(struct platform_devic=
-e
-> *pdev)
-> >       struct device *dev =3D &pdev->dev;
-> >       struct amd_mdb_pcie *pcie;
-> >       struct dw_pcie *pci;
-> > +     int ret;
-> >
-> >       pcie =3D devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> >       if (!pcie)
-> > @@ -454,6 +494,26 @@ static int amd_mdb_pcie_probe(struct platform_devi=
-ce
-> *pdev)
-> >
-> >       platform_set_drvdata(pdev, pcie);
-> >
-> > +     ret =3D amd_mdb_parse_pcie_port(pcie);
-> > +
-> > +     /*
-> > +      * If amd_mdb_parse_pcie_port returns -ENODEV, it indicates that =
-the
-> > +      * PCIe Bridge node was not found in the device tree. This is not
-> > +      * considered a fatal error and will trigger a fallback where the
-> > +      * reset GPIO is acquired directly from the PCIe node.
-> > +      */
-> > +     if (ret =3D=3D -ENODEV) {
-> > +
-> > +             /* Request the GPIO for PCIe reset signal and assert */
-> > +             pcie->perst_gpio =3D devm_gpiod_get_optional(dev, "reset"=
-,
-> > +                                                        GPIOD_OUT_HIGH=
-);
-> > +             if (IS_ERR(pcie->perst_gpio))
-> > +                     return dev_err_probe(dev, PTR_ERR(pcie->perst_gpi=
-o),
-> > +                                          "Failed to request reset GPI=
-O\n");
-> > +     } else if (ret) {
-> > +             return ret;
-> > +     }
-> > +
-> >       return amd_mdb_add_pcie_port(pcie, pdev);
-> >  }
-> >
-> > --
-> > 2.44.1
-> >
-
-Regards,
-Sai Krishna
 
