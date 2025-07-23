@@ -1,198 +1,190 @@
-Return-Path: <linux-kernel+bounces-742233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316EDB0EEF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C57B0EEEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C7F3B04F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D5C1C83DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5529728C2B9;
-	Wed, 23 Jul 2025 09:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C052228A721;
+	Wed, 23 Jul 2025 09:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bwam1cvc"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WahhgIWS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0162E28B4FB
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C4E28A1DA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264533; cv=none; b=FMVpRFeAsIdQ4reAiJvKvcVh9qxJ6y9BxLsuexvo5nB+YeF/NW++XGfK7K0Cpsk86/TEM7zy39WuWZTkbr8JGgx7YqmakDw0GxODPttcOtKgEEupH40L54IiRIleg3Yq6GNLXEVX7SWm2W8n83XWuSnw5amJ4vwFFp54dRnuL8M=
+	t=1753264560; cv=none; b=FuIB4miEB+4/9uVOnMye6AHGRuv8E4AIb8NsUZgYGAKZj2QrLKQgXYvmKsOTCh7IfwNDwrkfxfRLPIROoyXkf3TPM62ivf9z692T5ZSeTw0xXUFP5FAVCSthJstZMhFS/gpTP0AUQbDB+HM2lt6D/GV9IZBTUl9tYok6tULlQ1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264533; c=relaxed/simple;
-	bh=0vvfPXGHEFG98Ag5o31G1s1VYGibi2w9+aiyWj1saOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTw08pp2kN7FLNKXJOtaeVHyrEqijctSgR5HvXAR9E+kTiJMzsJnOoPz9o2d7j18f7WZOdgHuKU6DwXkmLE6jdBfCk+j7d1PyvI8lKbQQh4GDPtPw+vTfmRWDPWd0bPpy0nIDHYNPfv1OPHY2z+HYaK7ersfV5CZxnYZvr2u4Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bwam1cvc; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so5519477a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753264531; x=1753869331; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hd6rXiOBPeBRqy+UZln4kdfreIy7HXtQe2f2tk4TaUs=;
-        b=Bwam1cvchztYNCbdhkWjNlqrJMUd1VeFoQZ92v1s/47kDxc6u7rOsUseVlGIB8ffaI
-         5UT9icVc4h07HEo+d6DKunVUCLK3ARvoSlVV5EFptaIv4LxveEDMz2NTTbN5LYwlHIkl
-         YYYw6eufZ9oMtfR2IW/bfQHGJ6rtcfyqocCApBuC6q5YDq5sGeOWiA5At35JfrwfvHAs
-         rwZ2ipxSWXMfPjGexO+kvVNHy2VYXeofMOYGvIE6IytU83grt/Kr8S2SG+8bOYzHwRBT
-         h8oqJy32yrgiH/xFw4I3eo3YdwVNwUISGGXsGChzJF0SN3FmZ8UhcWPHMugAiZ7SEALH
-         +auw==
+	s=arc-20240116; t=1753264560; c=relaxed/simple;
+	bh=EWdwMvmStBaO1a+iyDKhgcucZLPmEmD/21+U6+CW2K0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Uemeo5c6hL9vPj7CV62KxCJ9El8UKXPsunA/eS9/jxBM9OXWXo2OeIXpYP/G4RFTeQtLtYFQG3xcJYpUUFW3HB9/F9l+LigQNS+1fCb3qmfeIYEUkhW7UoKZ+ESB0+uPBhONw/2FdPoYp1HP4dF/vv5jg3DgFtx0eetPAz3vz/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WahhgIWS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753264556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xCYGDLksS0O5txynkhqef6RP3rgDM3Y/Sulv790AyW0=;
+	b=WahhgIWSdWIwlAstF/T6iFCcWW4abrPy395yEH+B6QRHV07IWArXVCdIr+OsEaf69aGs3o
+	8rLzW1eNlHAI7qRIOwZcFwhqNe1f5m6+Vb0mSr6zBAIzmcCjaDLDNdgPuYrC0pY4gG3Enn
+	T17HagxamCNTq7bbb0k/63S+nFmI6AM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-XW14VlrYMkmbyTV-wodKcw-1; Wed, 23 Jul 2025 05:55:54 -0400
+X-MC-Unique: XW14VlrYMkmbyTV-wodKcw-1
+X-Mimecast-MFC-AGG-ID: XW14VlrYMkmbyTV-wodKcw_1753264553
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45597cc95d5so34467175e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:55:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753264531; x=1753869331;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hd6rXiOBPeBRqy+UZln4kdfreIy7HXtQe2f2tk4TaUs=;
-        b=l1TvYubqdkldCbJSHmqqsOjy7cBdiMLE+Wxp60SFVurrRxjZqfehHtoPAtE0NuF21b
-         xMUTrf8DIk0K8fMNNeH0mO5ZQYbJqwvnoEKCr3FAgCh9Yew+/TiN/zfc5xaWv6BL+RFI
-         QtAbTFIA9xWcNGUEG+oXQe7IJ9hI2bKq0w6PskwOzCpwvbxuyyTLAhFQkiuUzcBGGCAX
-         KcM+btdGPbfNttuPJOYOx8J5cuYIw6e9usD+BUJX8XBFXjXuzWQKxU/fiDzpES1zz5QA
-         7MyVDXFj9Id7Cnvg9z0uAN/Als05IV2XJL+b7tewjwRRAx6ViFkc6w4H5mYJ/g0GEf4f
-         kNxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYDye5g2xPeJ25EMiMgSHx6HTNKDoEyBlg3zCFNaUIKs6LAwPaq6Y+IvApDpUr0yRt5m+KHqjKlwGc/5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxhCTMVdybiVPNTbLG1ONtzCwCKkSdWIVNlUeIToyIVtNoADDS
-	utPX/gTBthYChG/RKlwRC+y3bZby2Y2P7NtQfqrXemvea/rfEcE7Jctyfbzcd4TRFqE=
-X-Gm-Gg: ASbGncvL1tM4jCA0DnJWAk/2keybRtkB4ocPGd6arpI/9cTpXld3VP/0+zrhh1Xt4uu
-	FxIFtDtdzfcNNmxtpx0K2Pu9N88/6SSi9DlCStcTKvQ6GnC7Au4G7Eel5HZrNbFox9CNWpv1gX/
-	YQ0MHYKBCUUKBDIjAKV9I54LujzFluc92FDyGRGvEeLNyCwRa0iG2Y+pA83Hy97IYJ9kw9qpzQx
-	3Syv2NKH1CA1wu4EytQs4YS6BTv4wKJNzK7pBJGJXSiKGTwHjkogo4MIeh3pLV/TBC4nyfkiwVf
-	xSwrAYB7waKEvBAVSrCznRiBys4SdWBgEpJj4UL9sclSnl1//l4qoWRWj/r1YBCXgVlAoeINLyp
-	fa41XCQFERZDX9mgaOOG+9Gbk/TDmVA==
-X-Google-Smtp-Source: AGHT+IEy80RkSpEFCjt6dLV8dYRTl7/n58WYY/PKqcH07FaexSQyl0nLPqJIfP2mNhzanEi+2lmnNw==
-X-Received: by 2002:a17:903:2412:b0:23d:dcf5:4803 with SMTP id d9443c01a7336-23f981cd401mr38148365ad.38.1753264531191;
-        Wed, 23 Jul 2025 02:55:31 -0700 (PDT)
-Received: from localhost ([36.110.106.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d239dsm93835205ad.155.2025.07.23.02.55.29
+        d=1e100.net; s=20230601; t=1753264553; x=1753869353;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCYGDLksS0O5txynkhqef6RP3rgDM3Y/Sulv790AyW0=;
+        b=KmUXesBtIvanBNJwQeVv0fODd8qq4v9/F5KEFmUflSQzkts90KgHQcZmCZkLypvW/t
+         qE916SBLiRAmCaQfS9YMjj+sI8+DKI+Ks70RxZEEyLP/ZY8vNxIZiWMWj+BuS5sif9Wt
+         uKNWVWxPvmMfq/iMsNjyBMBKldToAb5GFTLM3VPMrQTuVoLC3X9wlWIDXM3l97pbExe/
+         +mucxaHYUKYGaUuyBxGI2SYDaEyRQ2qZMm0p9ZIdDMKEib7P7kGsxqt1bof00jcfIjD/
+         dmjuic7ExR5CX3Q5SQO/Qx1zxcyHsl30y89qDXjMUIXrJZPUCig2xf0TWCfhC4vUPgrs
+         4qGw==
+X-Gm-Message-State: AOJu0YxixuYdCwcj/GO9z3j2um2PNmxAcnqYKw0M93n/oJgWdhcftxK3
+	yAgrh3r5qi/cDwe+BZRMtkUHJgbah5wzFsTtDI3BSQ2Etqzxv+Hmqgwrh+NCAddD/r7u+ESS9D+
+	wQ32PawyoS74m9wA3BeVoY8U/dgw1wTgKLWDdCyMjlRtHv6BgAVBLwvV3a5hPyi4Q2Q==
+X-Gm-Gg: ASbGncua3OHQ2xZIfDm+FJMpYDdDenIJoYfRXhObaQjPHbtAuFDvDVWavDX7AgKaWn+
+	F350dJnL0GlHjzAtVXqGZjrtZuaRjInd5MHYCrw9IylO4C2uYoa3n15+OEDD07NyP44vXYU8y0q
+	vLKFgK3kVfr4m8ib6JrCnaPhCRyr1Rb92DI67HxfXLq+9BWLhUoovT2jrfV7PIwFuRh/2oYPGC2
+	rCmV8qgL4D5pZ76ydEYKbLB2Bl8+3MOA51lLYA8vZ/31gwpPNw+x5niOsmK7l3RXvSq+FV+1wi6
+	mEP/DDz+a51zUIDPKgnNx10+wusZoOAa4aOSNbO55gOuGCQUGYK7jln2uETD48E7pg==
+X-Received: by 2002:a05:600c:8208:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-45868cff3b7mr19965795e9.19.1753264553388;
+        Wed, 23 Jul 2025 02:55:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTjgOJZVpaL+eLQNTWcsZ0UxHyFvUNcsK/FPxCxG6O1mvq/jozX32Hpwd7+Znzwfcaz4qzSw==
+X-Received: by 2002:a05:600c:8208:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-45868cff3b7mr19965485e9.19.1753264552906;
+        Wed, 23 Jul 2025 02:55:52 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586918b65dsm17828015e9.10.2025.07.23.02.55.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 02:55:30 -0700 (PDT)
-Date: Wed, 23 Jul 2025 17:55:26 +0800
-From: Weikang Guo <guoweikang.kernel@gmail.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: Ensure phys_to_ttbr on pgdir for
- idmap_cpu_replace_ttbr1
-Message-ID: <20250723095526.GA1992810@ubuntu-virtual-machine>
-References: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
- <aH-mlN88NrTzahfM@J2N7QTR9R3>
- <20250723024923.GA1884099@ubuntu-virtual-machine>
- <aICh9Z3dsEQj_79y@J2N7QTR9R3>
+        Wed, 23 Jul 2025 02:55:52 -0700 (PDT)
+Message-ID: <374df509738db8314aa45971ba8b5469fa4e673e.camel@redhat.com>
+Subject: Re: [PATCH v4 00/14] rv: Add monitors to validate task switch
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Nam Cao <namcao@linutronix.de>, Tomas
+ Glozar <tglozar@redhat.com>,  Juri Lelli <jlelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Wed, 23 Jul 2025 11:55:50 +0200
+In-Reply-To: <20250722205047.621efa7e@gandalf.local.home>
+References: <20250721082325.71554-1-gmonaco@redhat.com>
+	 <20250722205047.621efa7e@gandalf.local.home>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aICh9Z3dsEQj_79y@J2N7QTR9R3>
 
-On Wed, Jul 23, 2025 at 09:48:53AM +0100, Mark Rutland wrote:
-> On Wed, Jul 23, 2025 at 10:50:55AM +0800, Weikang Guo wrote:
-> > On Tue, Jul 22, 2025 at 03:56:20PM +0100, Mark Rutland wrote:
-> > > On Tue, Jul 22, 2025 at 04:21:13PM +0800, Weikang Guo wrote:
-> > > > Commit 5ffdfaedfa0a ("arm64: mm: Support Common Not Private translations")
-> > > > changed the contract of idmap_cpu_replace_ttbr1, requiring that the TTBR
-> > > > argument passed in should already be processed by phys_to_ttbr (i.e., in
-> > > > TTBR format, not just a raw physical address).
-> > > > 
-> > > > However, the current map_kernel implementation does not always convert the
-> > > > pgdir/ttbr argument via phys_to_ttbr before calling
-> > > > idmap_cpu_replace_ttbr1. This can lead to issues on systems with
-> > > > CONFIG_ARM64_PA_BITS_52 enabled, as the TTBR would not be properly folded
-> > > > per the ARMv8.2+ requirements.
-> > > 
-> > > For the cases below I don't believe that this is actually a problem.
-> > > Since commit:
-> > > 
-> > >   453dfcee70c5c344 ("arm64: booting: Require placement within 48-bit addressable memory")
-> > > 
-> > > ... we require that the kernel Image (including any trailing unallocated
-> > > bytes accounted for in image_size) are below the 48-bit address limit,
-> > > and so there should be no difference between the PA and TTBR format.
-> > > 
-> > > We could probably test and enforce that in the early boot code somehow,
-> > > if we're not doing that already.
-> > > 
-> > > If we were going to change things to avoid accidents in future, I think
-> > > it would be better to enforce this with the type system. e.g. we could
-> > > have a ttbr_val type that's distinct from phys_addr_t. Even then, for
-> > > the idmap code I think it's better to avoid the phys_to_ttbr() dance,
-> > > since that has runtime patching.
-> > > 
-> > > Mark.
-> > >
-> > 
-> > Thank you for your detailed explanation.
-> > 
-> > As you mentioned, if we can guarantee that the kernel image is always within
-> > the 48-bit PA range,then there is indeed no real difference between the PA
-> > and TTBR formats in this context.
-> 
-> Yep.
-> 
-> To be clear, I'm saying that there's no functional problem in practice,
-> and hence the description in the commit message is more alarming than
-> necessary.
+On Tue, 2025-07-22 at 20:50 -0400, Steven Rostedt wrote:
+>=20
+> Can you break this up into two patch series? One that modifies the
+> kernel and one that modifies the tools directory. Linus prefers
+> changes to tools come in separately to changes in the kernel. So do I
+> as I test them differently.
 
-Okay, I understand what you mean! and this is clear if the image is always
-guaranteed to be within the 48-bit address range, phys_to_ttbr will not change
-anything.
+Mmh, I see. The problem with splitting those patches that strictly is
+that patches changing the generating tools also include the adaptation
+of kernel files, I could create something like:
 
-> 
-> Since the conversion is trivial I'm not against applying the conversion
-> consistently, but if we do that I think we should enforce that through
-> the type system so that missing conversions will be identified by the
-> compiler.
+  verification/rvgen: Organise Kconfig entries for nested monitors
 
-For a function call it should work.
+  Do the tools/ stuff...
+  The kernel changes are required to test this!
 
-> 
-> > In that case, does it mean that the conversion of `reserved_pg_dir`here is
-> > also redundant? (There may be other similar cases.)
-> 
-> Yes, 'reserved_pg_dir' should be part of the kernel Image and hence
-> below the 48-bit limit.
-> 
-> > If we already ensure the kernel is always mapped below 48 bits, it does
-> > seem safe to remove `phys_to_ttbr`here as well.
-> 
-> I assume for both instances of 'here' above you're referring to the
-> macro below.
 
-Yes, I meant the `__idmap_cpu_set_reserved_ttbr1` macro.
+  rv: Organise Kconfig entries for nested monitors
 
-> 
-> > .macro  __idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
-> >     adrp    \tmp1, reserved_pg_dir
-> >     phys_to_ttbr \tmp2, \tmp1    // This might not be needed either?
-> >     offset_ttbr1 \tmp2, \tmp1
-> >     msr ttbr1_el1, \tmp2
-> >     isb
-> >     tlbi    vmalle1
-> >     dsb nsh
-> >     isb
-> > .endm
-> 
-> Yes, the phys_to_ttbr conversion above isn't strictly necessary today.
+  As introduced in commit XYZ, adapt the Kconfig...
 
-Thanks for confirming this!
-> 
-> Mark.
 
-Mark, finally, would you prefer that we introduce a new type to ensure we
-always get a properly converted TTBR, or keep things as they are, or perhaps
-explicitly state that we do not support kernel images above the 48-bit range
-and remove those unnecessary conversions?
+And send them in separate series, but it doesn't look too clean to me
+as the tool change requires the kernel change or, in general (see the
+other patch about line length), the two things belong with each other.
 
-Weikang
+Likewise, patches about monitors touch the dot models in tools/ but
+those definitely belong in the same patch, otherwise we lose context.
+
+What about keeping the patches as they are right now and send them
+separately like this:
+
+kernel series:
+
+    rv: Add opid per-cpu monitor
+     tools/verification/models/sched/opid.dot   |  35 ++++++
+    rv: Add nrp and sssw per-task monitors
+     tools/verification/models/sched/nrp.dot    |  29 +++++
+     tools/verification/models/sched/sssw.dot   |  30 ++++++
+    rv: Replace tss and sncid monitors with more complete sts
+     tools/verification/models/sched/sncid.dot          |  18 ---
+     tools/verification/models/sched/sts.dot            |  38 +++++
+     tools/verification/models/sched/tss.dot            |  18 ---
+    sched: Adapt sched tracepoints for RV task model
+    rv: Retry when da monitor detects race conditions
+    rv: Adjust monitor dependencies
+    rv: Use strings in da monitors tracepoints
+    rv: Remove trailing whitespace from tracepoint string
+    rv: Add da_handle_start_run_event_ to per-task monitors
+
+tools series:
+
+    tools/dot2c: Fix generated files going over 100 column limit
+     kernel/trace/rv/monitors/snep/snep.h    | 14 ++++++++++++--
+    verification/rvgen: Organise Kconfig entries for nested monitors
+     kernel/trace/rv/Kconfig                     |  5 +++++
+    rv: Return init error when registering monitors
+     tools/verification/rvgen/rvgen/templates/container/main.c | 3 +--
+     tools/verification/rvgen/rvgen/templates/dot2k/main.c     | 3 +--
+     kernel/trace/rv/monitors/sched/sched.c | 3 +--
+     kernel/trace/rv/monitors/sco/sco.c     | 3 +--
+     ...
+     kernel/trace/rv/monitors/wwnr/wwnr.c   | 3 +--
+    tools/rv: Stop gracefully also on SIGTERM
+    tools/rv: Do not skip idle in trace
+
+The rationale is that tools files changed in the kernel patches are not
+really tool stuff (dot models). And kernel stuff changed in the tools
+are something that the tools generate, and to test them a build should
+suffice (kernel robot would do that). Having them together eases
+testing the tool, I believe.
+
+Note: I missed the tools templates from "rv: Return init error when
+registering monitors" (now in the tools series with added files), I
+believe that belongs more to tools but I could also move it or split
+them in two if you prefer.
+
+Does it make sense to you?
+
+Thanks,
+Gabriele
+
 
