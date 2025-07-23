@@ -1,220 +1,113 @@
-Return-Path: <linux-kernel+bounces-742454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FFAB0F1E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:06:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646ACB0F1E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19331C20BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:07:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA7F1C2387A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC7F2E6137;
-	Wed, 23 Jul 2025 12:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61402E54C9;
+	Wed, 23 Jul 2025 12:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FPkURVq6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDuDHOtX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8373915A87C;
-	Wed, 23 Jul 2025 12:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3074115A87C;
+	Wed, 23 Jul 2025 12:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272370; cv=none; b=pTKHZhOsamkncOfxwr31UduHJuICM4SpwwaDI4z2B1S5jes+7VnWKUw4Hict7aItMoDEkTl4TO9aOQHmV67EaCWFX7Px9Dxx/xSLZ8F6yWEYuGd97CGomQYs9vHz4h7M5ZUrXeIwAtXvpVrgKDvTsqC+cu1wGRlhgsQCMGyNxgg=
+	t=1753272398; cv=none; b=NYfdwsbGFQeIGu565lXWviR2paiSt+CQGfeX/+3km31H39yxD+lrdnG9X8ACjJRMFR9uG5s+t9rus8Thcz+y8JaXCOssJev87xvEc4GYok/TVuMRDrqPt/gh0q3wP7xuaMLHTtJ8CLr12mjR9eK6vMsliToDhuqULp6vN/rKvJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272370; c=relaxed/simple;
-	bh=/9n0S5FgjbRyGnDRtDDMcjGyregtqteT5rOHncZ3YCQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W16QsKt6aQgcmTnOIJExxL7E0vbqY5f3EWUd9ZjxBEdKmBtFAtJQPLtiKIsRttsa0vfu43GlgmnpP+h5Zv9W13w1usPMlk71Hc1eQ94Lqf/KHdCUXfvB+uhufdDbnyqRg6yUaItiZ6R5Jnr68hbzHkiOwlTTjApdJ/NHTgFnoow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FPkURVq6; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753272368; x=1784808368;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/9n0S5FgjbRyGnDRtDDMcjGyregtqteT5rOHncZ3YCQ=;
-  b=FPkURVq6WeiiHH3iVepm3OCoYztUh537JHFkjxaEQqkIKzALLuEPGxVl
-   G/6VSOOePVWSRDPCV1Hb4VkyPqh8JjqbSTKnhNfGxHE37TCpgMtljH3T8
-   mzMtThyowCZ8PLCmpO94DO682VdaJ6H8UkujhyKZjuWoMBGVlZQtY07Eh
-   PDLz7jbEj693hPV/q3ryYettIpsA+WZlZw2Q+Ch1Xv0IW+xeWzHpoX2Fp
-   LZDK6GarT1MdAO39WzGg2o95CA5XSPd/2bauXxLBh/hS3e4LnCRA6OKKz
-   ULY5a8qJ8mjyXmMlTTvjada2tc2TBOO33e7P+fel6TvkIyNbP0kAjZ1BD
-   A==;
-X-CSE-ConnectionGUID: 3WnsD2kNSHeXK9CxEtSR7w==
-X-CSE-MsgGUID: 30i8B5qyQHe69KHuD5E4xQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66249222"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="66249222"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:06:08 -0700
-X-CSE-ConnectionGUID: 8c/imgeKShioQwTXIofd4A==
-X-CSE-MsgGUID: Qw10bN32T9mx0sQVepYviw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="183154081"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.72])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:06:02 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	vannapurve@google.com
-Cc: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org,
-	H Peter Anvin <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	kas@kernel.org,
-	kai.huang@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@linux.intel.com,
-	binbin.wu@linux.intel.com,
-	isaku.yamahata@intel.com,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com
-Subject: [PATCH V4 2/2] x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
-Date: Wed, 23 Jul 2025 15:05:39 +0300
-Message-ID: <20250723120539.122752-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250723120539.122752-1-adrian.hunter@intel.com>
-References: <20250723120539.122752-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1753272398; c=relaxed/simple;
+	bh=Ki0wS+eLFaawMwxNorwdBa8X/r8ESGBorw2LEHlzP64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSl+7K1o/4PS9rVFeEv1BbQaLkHxbvQoZHGLlU8v8y97rXyTCvuLeawcrzJ3em4+Uy6/jjYUOPz1inax3LjFDAsnHw1CHjid+PLtRnFe57gxPMNV16WacKtRjFgSVqGWexddq/Bn7K75TRjcB6GcriGtEMBzxO8NTex8EqJTZ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDuDHOtX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D065C4CEE7;
+	Wed, 23 Jul 2025 12:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753272396;
+	bh=Ki0wS+eLFaawMwxNorwdBa8X/r8ESGBorw2LEHlzP64=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vDuDHOtXLjH2SJhmmCSo7ZDFdRpQ+zKISQBN24mNxe0C6UutefOLuuyLt7TVdpu4l
+	 sSSsEbLDGqA8/FkUROyO8q2DI4NoR3pQ9rJzRbJAxStkxhAfsWqGc1A8scHQQBrjCN
+	 oIxCzHhci60unI5k+iHROJosSb9f/g/O6AtU++jUDSPEe0NMX7kyUPRIGiWBBcfsGW
+	 XDQORnlYoMjzOumNyFNSjJ4yQOFr0E/gP7dYhVs/cy0eZ2rHu6OfIsHSn7YKNEdPpx
+	 i8T3hjk7bh1UpTQIzb8ImtfPRhrSzDqdlPeapvqWvhDsTGBZ9HDfkjTgEcR5awsYn/
+	 wrLfr/55W7RnQ==
+Date: Wed, 23 Jul 2025 17:36:32 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: nbpfaxi:  Add missing check after DMA map
+Message-ID: <aIDQSA3JFbyyaWkM@vaman>
+References: <20250707075752.28674-2-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707075752.28674-2-fourier.thomas@gmail.com>
 
-Avoid clearing reclaimed TDX private pages unless the platform is affected
-by the X86_BUG_TDX_PW_MCE erratum. This significantly reduces VM shutdown
-time on unaffected systems.
+On 07-07-25, 09:57, Thomas Fourier wrote:
+> The DMA map functions can fail and should be tested for errors.
+> If the mapping fails, unmap and return an error.
 
-Background
+Pls change this to dmaengine: xxx that is the subsystem name as show in
+the Fixes tag that you picked up below
 
-KVM currently clears reclaimed TDX private pages using MOVDIR64B, which:
+Meanwhile this does not apply for me, pls rebase
 
-   - Clears the TD Owner bit (which identifies TDX private memory) and
-     integrity metadata without triggering integrity violations.
-   - Clears poison from cache lines without consuming it, avoiding MCEs on
-     access (refer TDX Module Base spec. 1348549-006US section 6.5.
-     Handling Machine Check Events during Guest TD Operation).
+> 
+> Fixes: b45b262cefd5 ("dmaengine: add a driver for AMBA AXI NBPF DMAC IP cores")
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> ---
+>  drivers/dma/nbpfaxi.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
+> index 0d6324c4e2be..0b75bb122898 100644
+> --- a/drivers/dma/nbpfaxi.c
+> +++ b/drivers/dma/nbpfaxi.c
+> @@ -711,6 +711,9 @@ static int nbpf_desc_page_alloc(struct nbpf_channel *chan)
+>  		list_add_tail(&ldesc->node, &lhead);
+>  		ldesc->hwdesc_dma_addr = dma_map_single(dchan->device->dev,
+>  					hwdesc, sizeof(*hwdesc), DMA_TO_DEVICE);
+> +		if (dma_mapping_error(dchan->device->dev,
+> +				      ldesc->hwdesc_dma_addr))
+> +			goto unmap_error;
+>  
+>  		dev_dbg(dev, "%s(): mapped 0x%p to %pad\n", __func__,
+>  			hwdesc, &ldesc->hwdesc_dma_addr);
+> @@ -737,6 +740,16 @@ static int nbpf_desc_page_alloc(struct nbpf_channel *chan)
+>  	spin_unlock_irq(&chan->lock);
+>  
+>  	return ARRAY_SIZE(dpage->desc);
+> +
+> +unmap_error:
+> +	while (i--) {
+> +		ldesc--; hwdesc--;
+> +
+> +		dma_unmap_single(dchan->device->dev, ldesc->hwdesc_dma_addr,
+> +				 sizeof(hwdesc), DMA_TO_DEVICE);
+> +	}
+> +
+> +	return -ENOMEM;
+>  }
+>  
+>  static void nbpf_desc_put(struct nbpf_desc *desc)
+> -- 
+> 2.43.0
 
-The TDX module also uses MOVDIR64B to initialize private pages before use.
-If cache flushing is needed, it sets TDX_FEATURES.CLFLUSH_BEFORE_ALLOC.
-However, KVM currently flushes unconditionally, refer commit 94c477a751c7b
-("x86/virt/tdx: Add SEAMCALL wrappers to add TD private pages")
-
-In contrast, when private pages are reclaimed, the TDX Module handles
-flushing via the TDH.PHYMEM.CACHE.WB SEAMCALL.
-
-Problem
-
-Clearing all private pages during VM shutdown is costly. For guests
-with a large amount of memory it can take minutes.
-
-Solution
-
-TDX Module Base Architecture spec. documents that private pages reclaimed
-from a TD should be initialized using MOVDIR64B, in order to avoid
-integrity violation or TD bit mismatch detection when later being read
-using a shared HKID, refer April 2025 spec. "Page Initialization" in
-section "8.6.2. Platforms not Using ACT: Required Cache Flush and
-Initialization by the Host VMM"
-
-That is an overstatement and will be clarified in coming versions of the
-spec. In fact, as outlined in "Table 16.2: Non-ACT Platforms Checks on
-Memory" and "Table 16.3: Non-ACT Platforms Checks on Memory Reads in Li
-Mode" in the same spec, there is no issue accessing such reclaimed pages
-using a shared key that does not have integrity enabled. Linux always uses
-KeyID 0 which never has integrity enabled. KeyID 0 is also the TME KeyID
-which disallows integrity, refer "TME Policy/Encryption Algorithm" bit
-description in "Intel Architecture Memory Encryption Technologies" spec
-version 1.6 April 2025. So there is no need to clear pages to avoid
-integrity violations.
-
-There remains a risk of poison consumption. However, in the context of
-TDX, it is expected that there would be a machine check associated with the
-original poisoning. On some platforms that results in a panic. However
-platforms may support "SEAM_NR" Machine Check capability, in which case
-Linux machine check handler marks the page as poisoned, which prevents it
-from being allocated anymore, refer commit 7911f145de5fe ("x86/mce:
-Implement recovery for errors in TDX/SEAM non-root mode")
-
-Improvement
-
-By skipping the clearing step on unaffected platforms, shutdown time
-can improve by up to 40%.
-
-On platforms with the X86_BUG_TDX_PW_MCE erratum (SPR and EMR), continue
-clearing because these platforms may trigger poison on partial writes to
-previously-private pages, even with KeyID 0, refer commit 1e536e1068970
-("x86/cpu: Detect TDX partial write machine check erratum")
-
-Reviewed-by: Kirill A. Shutemov <kas@kernel.org>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
-
-
-Changes in V4:
-
-	Add TDX Module Base spec. version (Rick)
-	Add Rick's Rev'd-by
-
-Changes in V3:
-
-	Remove "flush cache" comments (Rick)
-	Update function comment to better relate to "quirk" naming (Rick)
-	Add "via MOVDIR64B" to comment (Xiaoyao)
-	Add Rev'd-by, Ack'd-by tags
-
-Changes in V2:
-
-	Improve the comment
-
-
- arch/x86/virt/vmx/tdx/tdx.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index fc8d8e444f15..ef22fc2b9af0 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -633,15 +633,19 @@ static int tdmrs_set_up_pamt_all(struct tdmr_info_list *tdmr_list,
- }
- 
- /*
-- * Convert TDX private pages back to normal by using MOVDIR64B to
-- * clear these pages.  Note this function doesn't flush cache of
-- * these TDX private pages.  The caller should make sure of that.
-+ * Convert TDX private pages back to normal by using MOVDIR64B to clear these
-+ * pages. Typically, any write to the page will convert it from TDX private back
-+ * to normal kernel memory. Systems with the X86_BUG_TDX_PW_MCE erratum need to
-+ * do the conversion explicitly via MOVDIR64B.
-  */
- static void tdx_quirk_reset_paddr(unsigned long base, unsigned long size)
- {
- 	const void *zero_page = (const void *)page_address(ZERO_PAGE(0));
- 	unsigned long phys, end;
- 
-+	if (!boot_cpu_has_bug(X86_BUG_TDX_PW_MCE))
-+		return;
-+
- 	end = base + size;
- 	for (phys = base; phys < end; phys += 64)
- 		movdir64b(__va(phys), zero_page);
 -- 
-2.48.1
-
+~Vinod
 
