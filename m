@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-741666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8411B0E773
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:04:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15342B0E775
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674831C2175B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45CD0547A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C638D1FDA;
-	Wed, 23 Jul 2025 00:04:20 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26688139E;
+	Wed, 23 Jul 2025 00:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVj8/JYZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092DF184;
-	Wed, 23 Jul 2025 00:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772A9184;
+	Wed, 23 Jul 2025 00:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753229060; cv=none; b=l8TL3NSINgkdw1d6KwS9yAMO2KK2E/yyaCbWq4XZFMcppvWzvi2cW0ugG6YKR+YtXIRzKfUs/eUJgXqqaJaRiZxLjGxNQ63C0dXSbufSRPVtBs+3mqjsxuyKlH+jBAvj/b/N8jnV/Gn56LEu/N2UU1Rr3Onr2Ds+6BtFqk8Jp4U=
+	t=1753229229; cv=none; b=FYog+76wDr4a/dReX+hs6DQKD5Rc8X9oiOHboGoVbrirNdhclWJjhYKCoU8wzbNVu2ZcJcxw7uvUmBx1F4MHjjClIHCt1/PW4YnO9n8CWndXYYnHX2Jk0LfaSNMBB7K4F1p4Nr4prKfI1QMlIo/nG0mgZQZVYCyCoQOq3eU6lYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753229060; c=relaxed/simple;
-	bh=zvxTzCeRO9oJWT1wPdAA781sDAx6+luKMQxGe/Qy99A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RmS8nD5r/wN6fOMYOdcKSRS4K+N4//Tf/9fjPniZPvAh85UmRxCeif57/2SxPYZDobEUk+DhCTpoda/FWdNie77TcCL7qc8x/rwCxwIR2EQxwmbJ/M6HlvkjYnv7Gg7eNx9USBHRyX4H72aWj3RXUXHEFmVWCSXjHPe/cLhJr7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 4FC5F132BF7;
-	Wed, 23 Jul 2025 00:04:16 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 0229B8000F;
-	Wed, 23 Jul 2025 00:04:13 +0000 (UTC)
-Date: Tue, 22 Jul 2025 20:04:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Tomas Glozar <tglozar@redhat.com>, John Kacur <jkacur@redhat.com>, Eder
- Zulian <ezulian@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Gabriele Monaco <gmonaco@redhat.com>, Jan Stancek <jstancek@redhat.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH v1] tools/rtla: Consolidate common parameters into
- shared structure
-Message-ID: <20250722200413.4a3b3777@gandalf.local.home>
-In-Reply-To: <20250701060337.648475-1-costa.shul@redhat.com>
-References: <20250701060337.648475-1-costa.shul@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753229229; c=relaxed/simple;
+	bh=T1uMkldXB60o/GHBIhUkrUgZ400UoTd0hvAVPNTV9ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfD/axMyzCp63TrK47lNOk7bow8eP+5x2+oNWZoUCIP4BT5G6IEYCReA8unFjri5u7MSfEfVnxTCBWOU0zTezpT/1a4qwgV7XnuYvUwagdkRUOyBjvjQbsla5FQMvnc7jV/p7YF/wh+6E/C6HBMXQQhRTavZAzWeV5vVfgl52Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVj8/JYZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C438DC4CEEB;
+	Wed, 23 Jul 2025 00:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753229228;
+	bh=T1uMkldXB60o/GHBIhUkrUgZ400UoTd0hvAVPNTV9ws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PVj8/JYZUEDetgHxhIHVqgIK0ZRtqkmctDXvOOHBi7tCxiclLISeODTJ4LvOiJsEw
+	 mFH5c2MlJXA1THON4u2Or7reHLvLQqFW5oZa3MtGNaDvtMwQH4y1wbooVj2fy8TeKS
+	 bCpnfKPasQpjB+K3jgJhIvozcDXDs+r48J1+FuCrI856C3wtwydwPIbzRW1nclcfOB
+	 xVYnmWe7CBuYdM1yCdduVD1qwjH3PfXycg2pu88nET9VKfen+tqcdyWXXqbHMoQWj1
+	 9E0s3szUZwu6huiwCd+Dfjq4RkFhP10qObqmWAyoWhpRHxXkb6VOoEGxp8yiMl7TB+
+	 SEyYyDRXe8gaA==
+Date: Tue, 22 Jul 2025 17:07:07 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: thead: th1520-ap: Describe mux clocks with
+ clk_mux
+Message-ID: <aIAnq5jWARhj8XuO@x1>
+References: <20250722080535.60027-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0229B8000F
-X-Stat-Signature: r8oqwtdgrf5jjr1j8ijn7iukmsneamyg
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18aoILLA/5Z71EuoA872FLboiUcOjUo/0U=
-X-HE-Tag: 1753229053-332301
-X-HE-Meta: U2FsdGVkX1+n95+cqcJqYJt+KVhQRkttmDltb3nGvZXVl2u6Zx/w8I99T0e+xccKmiMSyTWZMLDknjTjGLUBrW5l81JKKWMzA1LftUK3Cme7SjRDxSjWxx6CzGf8U/yDNj3y8enkY1042o+cDnqjaWxoeQ6EgcXvVtvw+GGIaw8ymS45SC+nS8tJmtLDWGFEb1fJeRXftv1gsnOLaMLXUm8PrTO0R3SkEKZUYcNVKbV2Se1shNFYMuv2VqXuyXnentOZOvmH9jWL6Zl/HtyJf3IVN0wqCXRhZyXMcA8acI8Ok4k9U54Qwm1P2S2vBpJ+Wcunif+Xpbz52j90m46KWinvJZKeZlkU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722080535.60027-2-ziyao@disroot.org>
 
-On Tue,  1 Jul 2025 09:03:14 +0300
-Costa Shulyupin <costa.shul@redhat.com> wrote:
-
-> timerlat_params and osnoise_params structures contain 17 identical
-> fields.
+On Tue, Jul 22, 2025 at 08:05:36AM +0000, Yao Zi wrote:
+> Mux clocks are now described with a customized ccu_mux structure
+> consisting of ccu_internal and ccu_common substructures, and registered
+> later with devm_clk_hw_register_mux_parent_data_table(). As this helper
+> always allocates a new clk_hw structure, it's extremely hard to use mux
+> clocks as parents statically by clk_hw pointers, since CCF has no
+> knowledge about the clk_hw structure embedded in ccu_mux.
 > 
-> Introduce a common_params structure and move those fields into it to
-> eliminate the code duplication and improve maintainability.
+> This scheme already causes issues for clock c910, which takes a mux
+> clock, c910-i0, as a possible parent. With mainline U-Boot that
+> reparents c910 to c910-i0 at boottime, c910 is considered as an orphan
+> by CCF.
+> 
+> This patch refactors handling of mux clocks, embeds a clk_mux structure
+> in ccu_mux directly. Instead of calling devm_clk_hw_register_mux_*(),
+> we could register mux clocks on our own without allocating any new
+> clk_hw pointer, fixing c910 clock's issue.
+> 
+> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+> 
+> This replaces the second patch in v2 of series "Fix orphan clocks in
+> clk-th1520-ap driver".
+> 
+> Note that the c910's issue cannot be reproduced with vendor U-Boot,
+> which always reparents c910 to its second parent, cpu-pll1. Another way
+> to confirm the bug is to examine
+> /sys/kernel/debug/clk/c910/clk_possible_parents, which obviously doesn't
+> match c910's definition. There's another patch[1] explaining and fixing
+> the issue that the unknown parent isn't shown as "(missing)" in debugfs.
 
-I have no preference about this patch, but would like an acked-by or
-reviewed-by from Tomas and/or Gabriele.
+Reviewed-by: Drew Fustini <dfustini@kernel.org>
+
+Thank you for refactoring the c910_i0 parent fix without using strings
+in the parent data.
+
+Before: 
+
+==> /sys/kernel/debug/clk/c910/clk_possible_parents <==
+osc_24m cpu-pll1
+
+After:
+
+==> /sys/kernel/debug/clk/c910/clk_possible_parents <==
+c910-i0 cpu-pll1
+
+The system still boots okay without clk_ignore_unused and peripherals
+like serial, emmc and ethernet are functional.
 
 Thanks,
-
--- Steve
-
-
-> 
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-> ---
->  tools/tracing/rtla/src/osnoise.c       |  24 ++---
->  tools/tracing/rtla/src/osnoise.h       |  19 +---
->  tools/tracing/rtla/src/osnoise_hist.c  | 112 ++++++++++-----------
->  tools/tracing/rtla/src/osnoise_top.c   | 102 +++++++++----------
->  tools/tracing/rtla/src/timerlat.c      |  24 ++---
->  tools/tracing/rtla/src/timerlat.h      |  19 +---
->  tools/tracing/rtla/src/timerlat_bpf.c  |   4 +-
->  tools/tracing/rtla/src/timerlat_hist.c | 129 +++++++++++++------------
->  tools/tracing/rtla/src/timerlat_top.c  | 121 +++++++++++------------
->  tools/tracing/rtla/src/utils.h         |  31 ++++++
->  10 files changed, 292 insertions(+), 293 deletions(-)
-> 
+Drew
 
