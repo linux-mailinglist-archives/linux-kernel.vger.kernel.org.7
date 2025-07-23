@@ -1,233 +1,118 @@
-Return-Path: <linux-kernel+bounces-742461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A563B0F1F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:11:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF513B0F1F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2317ACBCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A58A3B72A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3026F2E5B14;
-	Wed, 23 Jul 2025 12:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A2C2E5B19;
+	Wed, 23 Jul 2025 12:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d3EGE1qc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="IgpSw4gk"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE74B28EA5A;
-	Wed, 23 Jul 2025 12:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272691; cv=none; b=epMLlbUhonwlmcawagJQXdll5KzTPZe8JDKuJ/RarhHXsf8TYgU0U29KVqr1js4umLIHkxXNb1xg7YjHYghuTa6cQpD/MAn1kGJmPbY2FZee1wsxulOYLAwoBt8unUgb0gWwC5s7AF+YSuZiXYUPGDPvd7wEicylxeP9VzwOuDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272691; c=relaxed/simple;
-	bh=BVQkkx4ks1jCz7SnnAYL8Ss31m2IY6B7ZDDOVJBjsCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DC3LHDMjQP4W4NdaVkoFsAmSUhHl9zD3C9P4cmq/bX6GdF1qVWSL6NvOggW/eOfn9ghcVYKYOro44BbWgQGzeONulPOjt/J4dT8TlU/PzF15cIvwvS1XjBovBkNv2wTdunAH8xR4XjX4lB2egOXBd3HgyvWIuATSRH/p95hta2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d3EGE1qc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9F4JA010846;
-	Wed, 23 Jul 2025 12:11:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cqYFYAC+mWsNWpnVtRJZAS2RKfDItLqPBiJ8RjaetMg=; b=d3EGE1qcToRKKSQn
-	UuGHwvmlRkSQR11z5geEYtXN710cY95A3zB4eezwtLCWcaJrQ+UOkpoTIbnRPSIa
-	QCStng8lYZE9IoleHJuTGSn7dKLKi2QuEc7eRTX+WmVMAsV2nINkYSXSPZPWJw14
-	7KhaYiJi3Em4RP8afmdkZAu8Jkxf95MvzJ+58i3PWf5kTAkbBA9pczWmLmtgWnsF
-	uXwKldBBQtJIn3vydXWkKcsxzlCFhvMqZKgzeQGA+YAkDGJfEldRzGQY0+Q/PoEr
-	Mx8iYLCxD3BmYGamiMxr9JJuZmYnVE+skdibCr5i16H1bcOwEwo87MkosQ6T4WQj
-	twEt1w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na3fru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 12:11:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56NCBQXR011268
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 12:11:26 GMT
-Received: from [10.218.37.132] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 23 Jul
- 2025 05:11:24 -0700
-Message-ID: <43424518-e73c-4136-bb0c-d4cb30062d7b@quicinc.com>
-Date: Wed, 23 Jul 2025 17:41:00 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FA52E54D9;
+	Wed, 23 Jul 2025 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753272734; cv=pass; b=nexantpOqwnPBzAhUEmKHpBlOenR/5JAw2Al1CfjXnoZtG1/qlbxEyjgM9z9p9tszE+Bgpbjv/Cdwldb+aqWnCu+Nvy9jTiCluKRdEiUzttCrUHSCDKL/qt1uvP7qNh9H8dYHWnpiU494ByxSlO5Hf1x7hIddL/Gv1TFk4mSCQo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753272734; c=relaxed/simple;
+	bh=sjFQxIj61JDLMwhDe5OPXuFmiX3XUxnM+/kq9zkvwTw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WkZoJarn61Y/SlSzIEeJESjIFTyRA7uJkCl3vcf/D/v4JQFHJwl4U3slzwpxMFwmLyd7etKE4S+yrVV5517whJulNU261qosMdeWnYeCvIC8JrB3JsnvXdEWCFrZ96CWeCwB17I3LkTsZq0ehjvg44BOAoGt8B8OAi9Ib3SFZXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=IgpSw4gk; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753272718; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DB8pDu0SWwcTP45d2OpQHGGU+/RCcO8z506I521PJj/TesQYoCo3QBbVkhzurS2+8RjMeANt3JBptilqGMjeIzS2PLxhUjOuriAFBjxu82uZXCvWFYDvot3s4a9oj0tBP2vChCcDfS0/ZOJKD9FGd8jrB7mi+qvw6Q0BoTmTDgg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753272718; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OO7YUegIWrJgxs5c9U4V8z+lHWXerzMa7nTmg8y0I9Q=; 
+	b=WpLwVDG7hI8kQFRhXd5t8Ib/aWOmizKtrab+awmm60NWyEAp4ebha2hXVrrD/9l5XcGdKf0hlUb4x4jqhW+jXCdUILqow8wpdpHQy1V23cJMesyQNJqdqLa6vpDgYm5DeMXhMJ85y6YZPy6Rc2PdrFMcZql9aM3QdQubvV0Mru8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753272718;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=OO7YUegIWrJgxs5c9U4V8z+lHWXerzMa7nTmg8y0I9Q=;
+	b=IgpSw4gkvkZaay/5sR+M93C0YsSsyO7Q7lM9Lyh/aqP1WznKptBO5ks7b1/iv2Q3
+	MDeGQt3awKZNlk4TgjgaC317DdSUPgaJKG6ZQVQJEgbxMLOmJe8KxfAZcP4/g631m9j
+	1blyRqQVJWKpcqSjhH1XHgcU8b5Gf3i+fYhaG9bI=
+Received: by mx.zohomail.com with SMTPS id 175327271587516.38887700809562;
+	Wed, 23 Jul 2025 05:11:55 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] bus: mhi: host: pci_generic: Remove MHI driver and
- ensure graceful device recovery
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <Vivek.Pernamitta@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
- <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
- <68f18f09-913d-4ef9-bd13-ad32c1d5f8ca@oss.qualcomm.com>
-Content-Language: en-US
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-In-Reply-To: <68f18f09-913d-4ef9-bd13-ad32c1d5f8ca@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VoWv5eBGznUOkmRGoidG1-Hd4OtOtALh
-X-Proofpoint-ORIG-GUID: VoWv5eBGznUOkmRGoidG1-Hd4OtOtALh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDEwMiBTYWx0ZWRfXzPgNtTHK3uov
- yMPHyGS7iy1hofKWNDS9P369n0o3mVo/B3HlDr50B9cw9xgS33o1j20trYeYxfxopzvrqOnQg1X
- nWaeJUnLoUw94ovATOtKXbPBVrfn7cUHNHlNVy9TQe0KR7Oc8gkYclqotUM8mX211kL4L8tdP3U
- AM6u+Cm9ZlvQ7vRqsyxUq3iklOcfcYMbLVtRIbftz1Tog7pZrYrA/sUf8uG6lCpkn9ma9Q5mP+H
- VCKh/FnykhpiErsISZxaty/lEDPnaSeyEoWi8S9iiDeM3/oqq9F6JjPBDOtBOI6Ixht4u2v2Cg7
- R8NMs6rL5TnQs7Zs0MkOVBP8jDtQW21autjFiOTqExtEEWbQH/whu2/AdbK/Oc3UOAfapd0m9mk
- 4F1VX32usAsnZnIDI/IvvMlK6gInfdMxylyUMch+fPgFfRwUQ/wfZyV/MCbpRDCY05EMSIzT
-X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=6880d16f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=sMkw372tbV0BwNLCCAcA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230102
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH 0/2] Clean up Rust LockClassKey
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
+Date: Wed, 23 Jul 2025 09:11:41 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <789725BF-8D13-4334-A498-F2C51B546B6F@collabora.com>
+References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
+
+Hi Alice,
+
+> On 23 Jul 2025, at 08:49, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> This series applies the suggestion from Benno [1] and various other
+> improvements I found when looking over the LockClassKey =
+implementation.
+>=20
+> Based on rust-next.
+>=20
+> [1]: =
+https://lore.kernel.org/all/DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org/
+>=20
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Alice Ryhl (2):
+>      rust: sync: refactor static_lock_class!() macro
+>      rust: sync: clean up LockClassKey and its docs
+>=20
+> rust/kernel/sync.rs | 77 =
++++++++++++++++++++++++++++++++++++++++--------------
+> 1 file changed, 57 insertions(+), 20 deletions(-)
+> ---
+> base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
+> change-id: 20250723-lock-class-key-cleanup-a3baf53b123a
+>=20
+> Best regards,
+> --=20
+> Alice Ryhl <aliceryhl@google.com>
+>=20
+>=20
 
 
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-On 7/10/2025 6:12 PM, Konrad Dybcio wrote:
-> On 7/10/25 10:58 AM, Vivek.Pernamitta@quicinc.com wrote:
->> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
->>
->> When the MHI driver is removed from the host side, it is crucial to ensure
->> graceful recovery of the device. To achieve this, the host driver will
->> perform the following steps:
->>
->> 1. Disable SRIOV for any SRIOV-enabled devices on the Physical Function.
->> 2. Perform a SOC_RESET on Physical Function (PF).
->>
->> Disabling SRIOV ensures that all virtual functions are properly shut down,
->> preventing any potential issues during the reset process. Performing
->> SOC_RESET on each physical function guarantees that the device is fully
->> reset and ready for subsequent operations.
->>
->> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
->> ---
->>   drivers/bus/mhi/host/pci_generic.c | 26 +++++++++++++++++++++++++-
->>   1 file changed, 25 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
->> index 4bafe93b56c54e2b091786e7fcd68a36c8247b8e..2d1381006293412fbc593316e5c7f0f59ac74da8 100644
->> --- a/drivers/bus/mhi/host/pci_generic.c
->> +++ b/drivers/bus/mhi/host/pci_generic.c
->> @@ -45,6 +45,8 @@
->>    * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
->>    *		   of inband wake support (such as sdx24)
->>    * @no_m3: M3 not supported
->> + * @reset_on_driver_unbind: Set true for devices support SOC reset and
->> + *				 perform it when unbinding driver
->>    */
->>   struct mhi_pci_dev_info {
->>   	const struct mhi_controller_config *config;
->> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
->>   	unsigned int mru_default;
->>   	bool sideband_wake;
->>   	bool no_m3;
->> +	bool reset_on_driver_unbind;
->>   };
->>   
->>   #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
->> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
->>   	.dma_data_width = 32,
->>   	.sideband_wake = false,
->>   	.no_m3 = true,
->> +	.reset_on_driver_unbind = true,
-> 
-> It seems rather unlikely that out off all MHI devices, only QDU100
-> needs this quirk when working under SR-IOV
-The reset_on_driver_unbind flag has been explicitly added for the QDU100
-device. While other devices might enter RAMDUMP mode and wait when a SOC
-reset is issued, the QDU100 device will pass through without entering
-RAMDUMP mode
-> 
->>   };
->>   
->>   static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
->> @@ -970,6 +974,7 @@ struct mhi_pci_device {
->>   	struct work_struct recovery_work;
->>   	struct timer_list health_check_timer;
->>   	unsigned long status;
->> +	bool reset_on_driver_unbind;
->>   };
->>   
->>   static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
->> @@ -1270,6 +1275,11 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>   	mhi_cntrl->mru = info->mru_default;
->>   	mhi_cntrl->name = info->name;
->>   
->> +	/* Assign reset functionalities only for PF */
->> +	if (pdev->is_physfn)
->> +		mhi_pdev->reset_on_driver_unbind = info->reset_on_driver_unbind;
->> +
->> +
-> 
-> Double \n
-sure will correct in next patchset
-> 
->>   	if (info->edl_trigger)
->>   		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
->>   
->> @@ -1336,7 +1346,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>   	return err;
->>   }
->>   
->> -static void mhi_pci_remove(struct pci_dev *pdev)
->> +static void mhi_pci_resource_deinit(struct pci_dev *pdev)
->>   {
->>   	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
->>   	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
->> @@ -1352,6 +1362,20 @@ static void mhi_pci_remove(struct pci_dev *pdev)
->>   	/* balancing probe put_noidle */
->>   	if (pci_pme_capable(pdev, PCI_D3hot))
->>   		pm_runtime_get_noresume(&pdev->dev);
->> +}
->> +
->> +static void mhi_pci_remove(struct pci_dev *pdev)
->> +{
->> +	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
->> +	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
->> +
->> +	/* Disable SRIOV */
->> +	pci_disable_sriov(pdev);
->> +	mhi_pci_resource_deinit(pdev);
->> +	if (mhi_pdev->reset_on_driver_unbind) {
-> 
-> Can we not simply check for pdev->is_physfn?
-The reset_on_driver_unbind flag has been explicitly added for the QDU100 
-device. While other devices might enter RAMDUMP mode and wait when a SOC 
-reset is issued, the QDU100 device will pass through without entering 
-RAMDUMP mode.
-> 
->> +		dev_info(&pdev->dev, "perform SOC reset\n");
-> 
-> Is the logspam really necessary?
-> 
->> +		mhi_soc_reset(mhi_cntrl);
->> +	}
-> 
-> Konrad
-
+=E2=80=94 Daniel=
 
