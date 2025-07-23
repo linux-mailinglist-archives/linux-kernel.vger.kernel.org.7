@@ -1,157 +1,173 @@
-Return-Path: <linux-kernel+bounces-742971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2025EB0F8F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDB1B0F8F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94E51CC30C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639E29632AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AA22DFB6;
-	Wed, 23 Jul 2025 17:21:07 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B13321FF58;
+	Wed, 23 Jul 2025 17:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4j1BZKS"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC0D228CB8;
-	Wed, 23 Jul 2025 17:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB082101B3;
+	Wed, 23 Jul 2025 17:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753291267; cv=none; b=UplDdYTTCsjJc1BMR7QtEPnienpGZ9vr/OwmCIMJO4CPES09TDzEAp+zWduWzdlMQtp0wfuiIv0TAxw3f3nCzn++LDiznS6Mc7Ad93DzvczjSUkC9tCKDOiHV+234/j0uVTBvEjlQb9Ttvc5Jp9/zeaNJ2EDYYPE0fFsXkiXgjc=
+	t=1753291280; cv=none; b=vGfTTEAvk4jHo7lfe2zW4V4c4Sn7/kI5TBwHphB8/47lYIY9gfWV3GsI6qTAkINefe0QJfns/xvdW0Dors6PcIxobBt4x91sP+uM+Z9fFvARGa9fpURceqKaQ7TuZs7JSXfneHHowLRSu7lMoRz6dgeZB2G4RQ3gidLbblIXGYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753291267; c=relaxed/simple;
-	bh=nguDrM0leEHBq0w7xffcJG4/xal3jI5Q+mFldOTxOoc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D5dG5Q/vt7gXGNXcLji2Ft9C76QP3tSDTz12ObrwhaVPtmdEEl/ntyVEDo7RX3etpnXOMGPXCDdlLOOrZPrM4lmHt5Ful954ip8wk7/g8iGjcdiOrzO2SASxhSTbL47D256cjwHalpPuXQNAJL9xHCS475Gr0gdPL6wguwZ658U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1753291280; c=relaxed/simple;
+	bh=xtv1v1vs8h+55gbAe/7DHcO2riCXUkdqyinSc/Mz4k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DTeWvCoQBYuIOrtIornFO8ndagq36MdYX7QHhpsT50jGXyfpZgTVLkzAfIRsF7vLfjMOg8GWIg0a3eibkXxI+9l6iO9ZlNPffF9/Aw25wihqKjYukQE0VZmX06yRHDxFuFKBvTQkDqP81GhVUgtQP1usIeRDCd/g0U0ls0NHgi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4j1BZKS; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so14973666b.1;
-        Wed, 23 Jul 2025 10:21:05 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-311bd8ce7e4so64321a91.3;
+        Wed, 23 Jul 2025 10:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753291279; x=1753896079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JdHhJehaOGGRyz1yZkMniHUZHHY/gtuGeETDNFE6Evk=;
+        b=B4j1BZKSlmyh4jINlQz3FHIhl7PND+tvxMmrJUQ9LFcQneXgsH2kCFGtPAn/T+/VhJ
+         u7u6V3dtIDug3865IRz6NVvTpy/XgY1YvHfUwMMoaNj+GRUooqhyR5cGG8N2BrldFugB
+         x1gvgDGJzlgGNlttH1IAuJ2nna6/vIR6ECOP/Egk7aNnfbvOzXZGR08C7DRLBhJOsJl7
+         Qo8X0uKVcS6H8GGeklpduwec1gm/3R3Sw30xLVC/t6U4Yhi9+6HOwEGkaLyl9XSn/93m
+         txFbjA4hu7hdnGnlOleOMPWRsz/MKMuLXeLcJpgfu4/hy8ZaME+gufXaSB/trbRo6p9L
+         8QnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753291264; x=1753896064;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753291279; x=1753896079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UganVJsRCwC7ZF0STQTZO3KVXTs10kIxoj5lxh6bhws=;
-        b=AhKQsVuuAjsciVUSS9N5fFo9w4MzjQ9+pES4KCAFAe23UBhKzbzc6rKVfUNKoDjVzY
-         Q5YfZphBKcrXzP3y44aZdlXpdGo5+MwqE+xtzIZGyzztaILgJEvJRZXim3/msLsOqutV
-         Z6oRjMcP5ok0zji/GqeUAue1bM26BXYNX19ATvvF36uORoxLCgpVOazI6thhUdF31SG4
-         pSHCKjddyvncTGlvO3Da/Liv29Xz0BeL4uiGKI+d3IfRV2XwoQ1NP8LJ3qqQjjoYhOra
-         06twCZ8RsiqWn/OzIon5023RgDozLffjz3hNzgWsr7RClHE3wdmdV1SrN/tNnt7fAVYd
-         wL9g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Q+jbZqzRTl4iNJp+kwxQ87cDtuOMmESmyrEop3PaWy59ZtyqNIt5MLMLTQU9PP9puaw37gwcJ2Bcgxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGGI/X5xvgIklFvKKM6OvSSOpbBJOBpHqakLfwsyxe9Q4b0n/m
-	Q6Fr7luz+tMtIEBOKtNjBQRG3NqcS7RPV621ApGwTCT+C3Q2YhuFZQN6
-X-Gm-Gg: ASbGncu+pS5biXo4dVyKs21GTVDN5qQsqj8XChLJqx7isOPC2b6ZCYgJ4NVvsWjyOnK
-	OkTH+Xr2RSS39U5rD+oA5x0uiYaqWn6kRh+Zy6Qq/265orQaIXKEVWug0gs6DLwPVzSPmVZfnvb
-	cPz0JlWtty24dAGQK1Jr23p3IUhk+cKXsKxUORGs97BUfUvgJd+9pUA29VI3qr65sa6Ql0pukl0
-	7aANJTiagmvHpU3+emS3qgfXk+IIcrc+iXdI7h55WK4Tf8TMzW4+vRrHCLrGhhCZiIq6byp/Yim
-	PZL6SwnGlbSESzBBYOM3Qj/w+hlmNRi+UDoms87iCKmd/3rb3DCncgKdMxp01+kMfSTF39VG2QE
-	TZs8BwLeWJ4+9
-X-Google-Smtp-Source: AGHT+IFb1L7Q/2kG8/sUIMK7WmvK4HQLRZ483cU1yV4JWbXeLbcQus3B/CI2hqSW6KzG0eZ4kJM4zw==
-X-Received: by 2002:a17:907:9409:b0:ae8:e6f9:7cf with SMTP id a640c23a62f3a-af2f6c0af6amr378904666b.23.1753291263715;
-        Wed, 23 Jul 2025 10:21:03 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79d6c6sm1082551266b.32.2025.07.23.10.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 10:21:03 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 23 Jul 2025 10:20:33 -0700
-Subject: [PATCH net-next v3 5/5] netconsole: use netpoll_parse_ip_addr in
- local_ip_store
+        bh=JdHhJehaOGGRyz1yZkMniHUZHHY/gtuGeETDNFE6Evk=;
+        b=llYaxyjt/LxBH22tcU6jQV2WOfVU8dC1FI8Kw+l2f1we3aHBMkJQPwWSX+j/XztjHO
+         e1biIVlpi0oJ79/oLMd4fqPqbgl1+4sbIlf9vjHBJ38Kqeu9rAlzRUCgn/xxsWArTsTC
+         /IX+wOZISdnvJg5FxcZpn91LM85L+SbEhFdcfblijPx7h2QkXh0kUlBBpbrvtbhf4Jyd
+         392Da3S3hk+4mHMpJs64/jUvtBHNixjAedt+NC4aCd4b1lCIiw+AwVseF9rvkiBLzYZZ
+         hp2pDxUuOjkRGowwqDqEFhe9oM4jcUfWcIpIy0uef0LC1DzHnvsOZ1G093ISK6Bo1avg
+         JHJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ6dpITcp6Xh3iUaCxo1RXCTc7vdygSeZpRpg4LmjEw9KAeavmY2oUszNSJbVh2wOVyNAQxpSDzExy@vger.kernel.org, AJvYcCWt0Bqqg6In1jfuABVmUt5iEB6r1IXzkqhpSpvSTbuzNSWlf00yBgJshxLJiI71POZQ2joHK96LFYQ=@vger.kernel.org, AJvYcCXpebgsMDs8Ksswz/Vgg8doyyi5x9g6Ib2snksfbrCKov2SK1jzbwLi4sLRdJFb8RoPeylUEqIPq99cjSzk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1lNfvU4+MQecf9hSS2vyXr4VDb2FcMoWtuBq0tgh4r2FGv67s
+	WXRRdxX1q4DFcXXCw+7p0TqqwljRYYewzrOlHyv0HV4nnblJY1TxWafzi/WyVxGILdYd7sUXoAU
+	jphFrDlTFwnZu90Mc5PY29iOeCPZ5jfw=
+X-Gm-Gg: ASbGncuPJKpl88TKSYCeNZruCSHm44idNfcWHk6Sw8H6LWbkhyvmhTOHgo4o4dLDbCY
+	1H6CbS6RgvfagB1oA0lz9bgtN1uhBDZhef1grD6/KsyqsXJKTpApSPXmwD/SItZuGp8RIb7yel2
+	E244KKA5gtm27bAn7RJTOVkX6T7dpFSRZyrYDIGnLCreINvurHhjTND3ASe2U6KVmnUm5wDYiYd
+	SZm/K7gYe3kK+LnOA==
+X-Google-Smtp-Source: AGHT+IGhqjYs4ux4jfZuva5tLAnfpmMqHOkhr1wVS9VTWIb8RSO5zHmqE5yUvKlSgMgvOyzAgKijetY+zLxjWE6uaW0=
+X-Received: by 2002:a17:90b:4e83:b0:31c:15d9:8aa with SMTP id
+ 98e67ed59e1d1-31e507fe866mr5141730a91.34.1753291278497; Wed, 23 Jul 2025
+ 10:21:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-netconsole_ref-v3-5-8be9b24e4a99@debian.org>
-References: <20250723-netconsole_ref-v3-0-8be9b24e4a99@debian.org>
-In-Reply-To: <20250723-netconsole_ref-v3-0-8be9b24e4a99@debian.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1642; i=leitao@debian.org;
- h=from:subject:message-id; bh=nguDrM0leEHBq0w7xffcJG4/xal3jI5Q+mFldOTxOoc=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBogRn3ZmHdjG+Ae3bE9OD0bm2x1cP2UjX22/c0k
- NocQK2J/6CJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaIEZ9wAKCRA1o5Of/Hh3
- bVDMD/9DYWYpodEJDjKbWknVtvuQazGZpnIsRMz4WBM4mWS/njRSRVsKdv//lrX5qed+ZpjDUbH
- 3C5i2ebPXX2ssaaZuKDfGJNFD2vOBHVLzPtZIVBSjR1Cv9cioZW9b2J58iK/Dzij0m/FAS5dFiJ
- 5CBv8louQ6jNTqTIDtVYR52BZD4sgUNdxqhVgkvZi98Zg3JLKDXRyQP7PIrcJMiIwg4/Q2XxK6z
- d2v9Ftv+YOxpBBz7tg/CXFZzvF6pq9TIaWFehiiJ+YTWhuMGm32zRjhW7FQC1klUqoEzCDrdR94
- kOoXtU3EIGr7xdk94T31RuFeTKPnwPFhGxwomIoU1Wxx+l9xJeKucgATPDoAUYN5l19o+bDpusA
- hTCdQ/QUNpqtPmtVoFC7Qni8WFGksyByKGd0k2wWzc1aF8v02sZRF8Szw4Dv3ZbHccs6SazbiHM
- 7JSj2txk1THF7BbQ+n2wYJBDU1/z8LmCPSSqV3kMZnwUieymE57vEHsq90DbIZD/YP5g3ZBcr/o
- d/If8KpdMUrK1gJ3Gw36vlmIvY5/aBCVXypsOq0lurlsu/F5pEPSdFvSUh6otqDIKLZcdnVZKWf
- klHtIApjrJe2oOh5Q4sX/vl+oXp/WJrgVA9XONu6P81uZWYOPtVhfvtMTuKf3aKOQBxHqtMQNZN
- 5uG64v+i3LiN+/g==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20220706234757.3162307-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20220706234757.3162307-1-peng.fan@oss.nxp.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 23 Jul 2025 12:21:07 -0500
+X-Gm-Features: Ac12FXyiprxe_LGZo-24j2NghrBhcu3HCth78UZ6f-ppwtBUf5rP10c3ImRmsyI
+Message-ID: <CAHCN7xJts7ki+wHGxwMw8eEa4hXkyOwZComzEf_JXiZUBhpkaw@mail.gmail.com>
+Subject: Re: [PATCH V4] arm64: dts: imx8mp: add NoC node
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: djakov@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	festevam@gmail.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	abel.vesa@nxp.com, abailon@baylibre.com, l.stach@pengutronix.de, 
+	laurent.pinchart@ideasonboard.com, marex@denx.de, paul.elder@ideasonboard.com, 
+	Markus.Niebel@ew.tq-group.com, kernel@pengutronix.de, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-imx@nxp.com, abelvesa@kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace manual IP address parsing with a call to netpoll_parse_ip_addr
-in remote_ip_store(), simplifying the code and reducing the chance of
-errors.
+On Wed, Jul 6, 2022 at 6:46=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Add i.MX8MP NoC node to make the interconnect i.MX8MP driver could work.
+> Currently dynamic frequency scaling of the i.MX8MP NoC has not been
+> supported, only NoC initial settings are configured by interconnect
+> driver.
 
-The error message got removed, since it is not a good practice to
-pr_err() if used pass a wrong value in configfs.
+Peng,
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- drivers/net/netconsole.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+I noticed the Mini and Nano are both supported by the same NoC driver,
+but only the 8MP has a DT node.  Looking through the TRM on the Mini,
+I don't see the operating points listed.  Would they be the same 200M
+and 1000M on the Mini and Nano?
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 358db590a5046..ef7d385a28151 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -775,6 +775,7 @@ static ssize_t remote_ip_store(struct config_item *item, const char *buf,
- {
- 	struct netconsole_target *nt = to_target(item);
- 	ssize_t ret = -EINVAL;
-+	int ipv6;
- 
- 	mutex_lock(&dynamic_netconsole_mutex);
- 	if (nt->enabled) {
-@@ -783,23 +784,10 @@ static ssize_t remote_ip_store(struct config_item *item, const char *buf,
- 		goto out_unlock;
- 	}
- 
--	if (strnchr(buf, count, ':')) {
--		const char *end;
--
--		if (in6_pton(buf, count, nt->np.remote_ip.in6.s6_addr, -1, &end) > 0) {
--			if (*end && *end != '\n') {
--				pr_err("invalid IPv6 address at: <%c>\n", *end);
--				goto out_unlock;
--			}
--			nt->np.ipv6 = true;
--		} else
--			goto out_unlock;
--	} else {
--		if (!nt->np.ipv6)
--			nt->np.remote_ip.ip = in_aton(buf);
--		else
--			goto out_unlock;
--	}
-+	ipv6 = netpoll_parse_ip_addr(buf, &nt->np.remote_ip);
-+	if (ipv6 == -1)
-+		goto out_unlock;
-+	nt->np.ipv6 = !!ipv6;
- 
- 	ret = strnlen(buf, count);
- out_unlock:
-
--- 
-2.47.1
-
+adam
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>
+> V4:
+>  Georgi has merged the V3 driver and bindings patches. So only resend
+>  this patch. Per Georgi's comments:
+>   - Drop syscon from compatbile
+>   - Drop the header inclusion
+>
+>  Seems I not see this patch in patchwork or mailist, maybe sent failed.
+>  So gave a resend of V4.
+>
+>  V3:
+>   https://lore.kernel.org/linux-arm-kernel/20220703091132.1412063-1-peng.=
+fan@oss.nxp.com/
+>
+>  I not list the full change log, since this is only a minor patch
+>
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index eb2d516278eb..42ed8ee08548 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -1019,6 +1019,27 @@ eqos: ethernet@30bf0000 {
+>                         };
+>                 };
+>
+> +               noc: interconnect@32700000 {
+> +                       compatible =3D "fsl,imx8mp-noc", "fsl,imx8m-noc";
+> +                       reg =3D <0x32700000 0x100000>;
+> +                       clocks =3D <&clk IMX8MP_CLK_NOC>;
+> +                       #interconnect-cells =3D <1>;
+> +
+> +                       operating-points-v2 =3D <&noc_opp_table>;
+> +
+> +                       noc_opp_table: opp-table {
+> +                               compatible =3D "operating-points-v2";
+> +
+> +                               opp-200M {
+> +                                       opp-hz =3D /bits/ 64 <200000000>;
+> +                               };
+> +
+> +                               opp-1000M {
+> +                                       opp-hz =3D /bits/ 64 <1000000000>=
+;
+> +                               };
+> +                       };
+> +               };
+> +
+>                 aips4: bus@32c00000 {
+>                         compatible =3D "fsl,aips-bus", "simple-bus";
+>                         reg =3D <0x32c00000 0x400000>;
+> --
+> 2.25.1
+>
 
