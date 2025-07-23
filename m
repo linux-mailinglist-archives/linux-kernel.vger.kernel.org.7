@@ -1,122 +1,225 @@
-Return-Path: <linux-kernel+bounces-742712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A82B0F5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:43:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65489B0F5A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90DE171C50
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61259189E071
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA32B2E92D7;
-	Wed, 23 Jul 2025 14:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WzUqI9LT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603CB2EF29B;
-	Wed, 23 Jul 2025 14:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB14C2EF9BD;
+	Wed, 23 Jul 2025 14:43:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8852EACEB
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753281756; cv=none; b=AJ/6g4gw3Obqaq1OjTKO2o6xF3FgflVPXEVXIu2Z/E7iKDxpjVF3LAiCbZyCv+MJ1cL8PQ4GDUuWm6lP/uK5wUXqVNfVHLA4dQuBTxfsrf0li4/KhKmqyUDSyN0l9RASpVpA6ebCJgf3B4DIHXbbQN9mbL7MW/MV7qOFI8Eo3GA=
+	t=1753281781; cv=none; b=XODrzOBgIqoZSPI8syjtVvBcobFUKosAHo/MyjAfhaRl5Wgg4CbYyor/6WXpP2xAGBItaiwauv+P/qe57QzDVxFBCxK/xsYFWfETSpPq+o0m98kgG01kbQFyUMZiEbsNVoPh8stt0sjPhCbzLQzR7n9wHgFuysx0bV6832TS3qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753281756; c=relaxed/simple;
-	bh=EixATOmvq6d/Vv+wlPKnzbFFsh7ZcTMGBLQS273gUj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsFlpzOJ6cYNZHeJQyGCQ//P5+EEOl4ruCdsnzrb0BZkpBVL6+kze2h3b4Zccgev5jAwhFq88hEW3uOEy2F7o+BRgcf2xXPN/wZ+J3d55ZI/Vhtl05AH6URrSFXwaI0DIb2qWt2cdxsWsMuvkjwtTO9+SnrYXwVYXI0WE1J0/N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WzUqI9LT; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753281754; x=1784817754;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EixATOmvq6d/Vv+wlPKnzbFFsh7ZcTMGBLQS273gUj8=;
-  b=WzUqI9LTgAoxdFLQ8i52jtIfnPCbu38QlQuqM3qHL5JUQfkYML17/Y12
-   kYykGDLXSklFU9NEXIPRw/LjP6jhjntndBh2gj+3CvVuQRLCA8wptU9FW
-   BGmB8KwfPJtAvnREMiQD5xqo4xKM0EfCZ255xrcuX1hjKyGWrKIzSNMf0
-   5EjRz0/I9yuenFHjLmnxvm+StV1dsQr676rGcrKIeQfsvtonJSaLIJiwd
-   SPzwFob9MzCU5ypJnHvUVxlwW/lCr7AKqrRoGet0aKkHh9dldyqyHgNZe
-   ygEhXx3SYZmh8GZCyKeo0vCs45RTciq7Y5hwZV7ogTRKeayGi+k5qqWqc
-   Q==;
-X-CSE-ConnectionGUID: F5nYzJM6Rje4fh962ml7bA==
-X-CSE-MsgGUID: BzcryFWDS6KIMkbaxIk1Pw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59380916"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="59380916"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:42:34 -0700
-X-CSE-ConnectionGUID: 073E5ZBqT/2LTIIiW0yMZQ==
-X-CSE-MsgGUID: C9oyC7lPTZeMSwWIXj4f1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="158821994"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:42:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ueafs-00000000JdJ-1Mzt;
-	Wed, 23 Jul 2025 17:42:28 +0300
-Date: Wed, 23 Jul 2025 17:42:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akshay Bansod <akbansd@gmail.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-Message-ID: <aID01DxC1Hf2PK0i@smile.fi.intel.com>
-References: <20250723141359.11723-1-akbansd@gmail.com>
+	s=arc-20240116; t=1753281781; c=relaxed/simple;
+	bh=cZVJdqISuNtVSBtCpF4gTBANkXKezdqpPPpxrmuXEI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YzQ0kUbDGHYAJDKAYkKv7ijntc7lGJmLuPjLbWRTql3f4B2MFinQquPFLplZaJWMHkpJa/0cQX8+qhHcwinMRu25pUC/gDCQNh+ulYTPUl5I965nxCBH4kpZVVE2pt/doysJtDKcAL906otDDIoJauT6aMyMVRTgVSOC24vm5u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6394322C7;
+	Wed, 23 Jul 2025 07:42:52 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C6003F6A8;
+	Wed, 23 Jul 2025 07:42:54 -0700 (PDT)
+Message-ID: <46e3ead8-411d-4e51-b38b-da791e568b94@arm.com>
+Date: Wed, 23 Jul 2025 15:42:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723141359.11723-1-akbansd@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 05/36] ACPI / PPTT: Add a helper to fill a cpumask
+ from a processor container
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-6-james.morse@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-6-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 07:43:59PM +0530, Akshay Bansod wrote:
-> Update the sysfs interface for sampling frequency and scale attributes.
-> Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
-> and recommended for use in sysfs.
+Hi James,
 
-...
-
->  	fs_table = &hw->settings->fs_table[sensor->id];
->  	for (i = 0; i < fs_table->fs_len; i++)
-> -		len += scnprintf(buf + len, PAGE_SIZE - len, "0.%09u ",
-> -				 fs_table->fs_avl[i].gain);
-> -	buf[len - 1] = '\n';
-> +		len += sysfs_emit_at(buf, len, "0.%09u ",
-> +				     fs_table->fs_avl[i].gain);
+On 7/11/25 19:36, James Morse wrote:
+> The PPTT describes CPUs and caches, as well as processor containers.
+> The ACPI table for MPAM describes the set of CPUs that can access an MSC
+> with the UID of a processor container.
+> 
+> Add a helper to find the processor container by its id, then walk
+> the possible CPUs to fill a cpumask with the CPUs that have this
+> processor container as a parent.
+> 
+> CC: Dave Martin <dave.martin@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>   drivers/acpi/pptt.c  | 93 ++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/acpi.h |  6 +++
+>   2 files changed, 99 insertions(+)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 54676e3d82dd..13619b1b821b 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -298,6 +298,99 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
+>   	return NULL;
+>   }
+>   
+> +/**
+> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT processor node
+> + * @table_hdr:		A reference to the PPTT table.
+> + * @parent_node:	A pointer to the processor node in the @table_hdr.
+> + * @cpus:		A cpumask to fill with the CPUs below @parent_node.
+> + *
+> + * Walks up the PPTT from every possible CPU to find if the provided
+> + * @parent_node is a parent of this CPU.
+> + */
+> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
+> +				     struct acpi_pptt_processor *parent_node,
+> +				     cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	u32 acpi_id;
+> +	int cpu;
 > +
-> +	sysfs_emit_at(buf, len - 1, "\n");
+> +	cpumask_clear(cpus);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		acpi_id = get_acpi_id_for_cpu(cpu);
+> +		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
+> +
+> +		while (cpu_node) {
+> +			if (cpu_node == parent_node) {
+> +				cpumask_set_cpu(cpu, cpus);
+> +				break;
+> +			}
+> +			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+> + *                                       processor containers
+> + * @acpi_cpu_id:	The UID of the processor container.
+> + * @cpus		The resulting CPU mask.
+> + *
+> + * Find the specified Processor Container, and fill @cpus with all the cpus
+> + * below it.
+> + *
+> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
+> + * Container, they may exist purely to describe a Private resource. CPUs
+> + * have to be leaves, so a Processor Container is a non-leaf that has the
+> + * 'ACPI Processor ID valid' flag set.
+> + *
+> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> + */
+> +int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	struct acpi_table_header *table_hdr;
+> +	struct acpi_subtable_header *entry;
+> +	bool leaf_flag, has_leaf_flag = false;
+> +	unsigned long table_end;
+> +	acpi_status status;
+> +	u32 proc_sz;
+> +	int ret = 0;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table_hdr);
+> +	if (ACPI_FAILURE(status))
+> +		return 0;
+> +
+> +	if (table_hdr->revision > 1)
+> +		has_leaf_flag = true;
+> +
+> +	table_end = (unsigned long)table_hdr + table_hdr->length;
+> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+> +			     sizeof(struct acpi_table_pptt));
+> +	proc_sz = sizeof(struct acpi_pptt_processor);
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+> +		cpu_node = (struct acpi_pptt_processor *)entry;
+> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
+> +			leaf_flag = cpu_node->flags & ACPI_PPTT_ACPI_LEAF_NODE;
+> +			if ((has_leaf_flag && !leaf_flag) ||
+> +			    (!has_leaf_flag && !acpi_pptt_leaf_node(table_hdr, cpu_node))) {
+> +				if (cpu_node->acpi_processor_id == acpi_cpu_id)
+> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+> +			}
+acpi_pptt_leaf_node() returns early based on the leaf flag so you can 
+just rely on that here; remove has_leaf_flag and the corresponding extra 
+logic.
+> +		}
+> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> +				     entry->length);
+> +	}
+> +
+> +	acpi_put_table(table_hdr);
+> +
+> +	return ret;
+> +}
+> +
+>   static u8 acpi_cache_type(enum cache_type type)
+>   {
+>   	switch (type) {
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index f102c0fe3431..8c3165c2b083 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
+>   int find_acpi_cpu_topology_cluster(unsigned int cpu);
+>   int find_acpi_cpu_topology_package(unsigned int cpu);
+>   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+> +int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+>   #else
+>   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+>   {
+> @@ -1562,6 +1563,11 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+>   {
+>   	return -EINVAL;
+>   }
+> +static inline int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
+> +						    cpumask_t *cpus)
+> +{
+> +	return -EINVAL;
+> +}
+>   #endif
+>   
+>   void acpi_arch_init(void);
 
-Still looks a bit weird (while working).
 
->  	return len;
+Thanks,
 
-I deally we should have a helper doing all this under the hood for plenty of
-the (existing) users in the kernel.
-
-In any case, I leave this change to others to comment, I don't object pushing
-it in this form, either way len - 1 is simply weird.
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Ben
 
 
