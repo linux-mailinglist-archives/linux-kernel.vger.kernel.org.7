@@ -1,93 +1,134 @@
-Return-Path: <linux-kernel+bounces-742043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDB9B0EC4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3C8B0EC7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E726C1C249CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082AD1C269EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9744B272E61;
-	Wed, 23 Jul 2025 07:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqmUo9BC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF60F278146;
+	Wed, 23 Jul 2025 07:55:59 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A0B248F5F;
-	Wed, 23 Jul 2025 07:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16404191493;
+	Wed, 23 Jul 2025 07:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753256880; cv=none; b=Kp6jtv+jtYneVSzvFjst0/KEKMM23/2IoklKSf+kPDUN7MihCaytl0piQeGtEa0Kt5vviG66mufO2Ef/F9K4+Ay0nWNAfLhTiz4ePxEA80f+ADjEfRI9z3ChbyUkhr2SFbfBgRvHYJQpjW5ELe3q5kcZ3VfABPqN5kYzfS22XV8=
+	t=1753257359; cv=none; b=KE8naGccEI0iTCBZTAJ7VFcZhc8e+AKVTBR3tvi2Qig8pIQ7VOOvAfAZ1MkCZgyM+MP2SqvuSZweRLuTdu4huX2mF8Bci3sxJJeTzran4SXbDeqRHFwy/HrMsroYQd3oqqf6G8M1s86MGz+bqcItWv/WZ1wxv80n0KNtADnQ2eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753256880; c=relaxed/simple;
-	bh=KKn1BH2pU5ZMIp/brMQbOxv6/eE2JB3+FPK/EVwTJEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mg+SPfTBsr3qJgVo+tKV5R3h9Rt+aLLXtHPsBEwm9il+rFY+Dy+i0LaqPTVkArdrVwnMHX/4hj4T9mf9Te7G+gY7bX94o/yG41KSaziuf2lI+k3JjUqa2LyK109JAnLJhv3ggwspPbMPb/ZwPnTEwMvyB1cQYsKcqxyEfuPWI2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqmUo9BC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15CF4C4CEE7;
-	Wed, 23 Jul 2025 07:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753256879;
-	bh=KKn1BH2pU5ZMIp/brMQbOxv6/eE2JB3+FPK/EVwTJEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqmUo9BC2wb+EIBkEj8YcSNMz6GCFUmCrc/X+6TbLnXqwuG2OKYA8oFA15SguPS+j
-	 MAVtyLPjoQZJmRYejaeYEXCPsiCL5JLtfD/GtS/gGyTrJtH0Rabg72Mheklyh750PG
-	 6f97AynZ9MvkAXWSYEiVjEa9Z7lSNgRxjA5AG1nTmnuBmR3vek8kVlBFkmkJPSvE1j
-	 Ii2/ZCsl0Rqnr2yayr3BX7b/8wAr/DEj4Tq/5Mw7a53di50DSTJfs/nzLRgcYOacU7
-	 ozH30cEGU4Xmy+4bocX68Nvanhfcwwlsn2mLtgNZ9R88YAojlIg2zLFqveVFZAn243
-	 eWi48zyMYS2xQ==
-Date: Wed, 23 Jul 2025 09:47:56 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: muhammed.efecetin.67@gmail.com
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, heiko@sntech.de, neil.armstrong@linaro.org, lee@kernel.org, 
-	rafael@kernel.org, efectn@protonmail.com, daniel.lezcano@linaro.org
-Subject: Re: [PATCH v2 3/5] mfd: add Khadas Edge 2 registers to khadas-mcu.
-Message-ID: <20250723-adamant-smiling-markhor-a8ebee@kuoka>
-References: <cover.1753179491.git.efectn@protonmail.com>
- <41993cb8130fc206ee6820866154baef7db804e8.1753179491.git.efectn@protonmail.com>
+	s=arc-20240116; t=1753257359; c=relaxed/simple;
+	bh=ZTN5RivIRx/H0a44pKKMap2YEHiLVsrsyyjMHCenDUk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SrWGp6FRV6OJJwUYFm0KlaCRRANxoRTaijagnqDW4YibHqEw3VjF9OE1Ae5ZD5d9a8nEiknx4F4+cwHdalUDDut67ZXjZ1HlwmK7mL2c7MJQkyKmwCIOHnoPG93SoY+RUPoaRAiRA0IO4uvCgCBStJIrB79dQlhfkITmtgqSWmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bn5sr3Tcjz14M3V;
+	Wed, 23 Jul 2025 15:50:56 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5FDCB1402CC;
+	Wed, 23 Jul 2025 15:55:46 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 23 Jul 2025 15:55:45 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<shaojijie@huawei.com>
+Subject: [PATCH net-next] net: hibmcge: support for statistics of reset failures
+Date: Wed, 23 Jul 2025 15:48:26 +0800
+Message-ID: <20250723074826.2756135-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <41993cb8130fc206ee6820866154baef7db804e8.1753179491.git.efectn@protonmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Tue, Jul 22, 2025 at 03:38:13PM +0300, muhammed.efecetin.67@gmail.com wrote:
->  	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-> @@ -94,7 +130,11 @@ static int khadas_mcu_probe(struct i2c_client *client)
->  
->  	ddata->dev = dev;
->  
-> -	ddata->regmap = devm_regmap_init_i2c(client, &khadas_mcu_regmap_config);
-> +	if (of_device_is_compatible(dev->of_node, "khadas,mcu-v2"))
+Add a statistical item to count the number of reset failures.
+This statistical item can be queried using ethtool -S or
+reported through diagnose information.
 
-This does not scale. Use device match data for exactly this purpose.
+Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h   | 1 +
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c | 1 +
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c      | 2 ++
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c  | 1 +
+ 4 files changed, 5 insertions(+)
 
-> +		regmap_config = &khadas_mcu_regmap_config_v2;
-> +	else
-> +		regmap_config = &khadas_mcu_regmap_config;
-> +	ddata->regmap = devm_regmap_init_i2c(client, regmap_config);
->  	if (IS_ERR(ddata->regmap)) {
->  		ret = PTR_ERR(ddata->regmap);
->  		dev_err(dev, "Failed to allocate register map: %d\n", ret);
-> @@ -113,6 +153,7 @@ static int khadas_mcu_probe(struct i2c_client *client)
->  #ifdef CONFIG_OF
->  static const struct of_device_id khadas_mcu_of_match[] = {
->  	{ .compatible = "khadas,mcu", },
-> +	{ .compatible = "khadas,mcu-v2", },
-
-So devices are 100% compatible? Empty match data suggests that...
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+index 7725cb0c5c8a..ea09a09c451b 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+@@ -258,6 +258,7 @@ struct hbg_stats {
+ 	u64 tx_dma_err_cnt;
+ 
+ 	u64 np_link_fail_cnt;
++	u64 reset_fail_cnt;
+ };
+ 
+ struct hbg_priv {
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c
+index f23fb5920c3c..c0ce74cf7382 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_diagnose.c
+@@ -156,6 +156,7 @@ static const struct hbg_push_stats_info hbg_push_stats_list[] = {
+ 	HBG_PUSH_STATS_I(tx_drop_cnt, 84),
+ 	HBG_PUSH_STATS_I(tx_excessive_length_drop_cnt, 85),
+ 	HBG_PUSH_STATS_I(tx_dma_err_cnt, 86),
++	HBG_PUSH_STATS_I(reset_fail_cnt, 87),
+ };
+ 
+ static int hbg_push_msg_send(struct hbg_priv *priv,
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+index ff3295b60a69..503cfbfb4a8a 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+@@ -68,6 +68,7 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
+ 	clear_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+ 	ret = hbg_hw_event_notify(priv, HBG_HW_EVENT_RESET);
+ 	if (ret) {
++		priv->stats.reset_fail_cnt++;
+ 		set_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+ 		clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+ 	}
+@@ -88,6 +89,7 @@ static int hbg_reset_done(struct hbg_priv *priv, enum hbg_reset_type type)
+ 	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+ 	ret = hbg_rebuild(priv);
+ 	if (ret) {
++		priv->stats.reset_fail_cnt++;
+ 		set_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+ 		dev_err(&priv->pdev->dev, "failed to rebuild after reset\n");
+ 		return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+index 55520053270a..1d62ff913737 100644
+--- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+@@ -84,6 +84,7 @@ static const struct hbg_ethtool_stats hbg_ethtool_stats_info[] = {
+ 			HBG_REG_TX_EXCESSIVE_LENGTH_DROP_ADDR),
+ 	HBG_STATS_I(tx_dma_err_cnt),
+ 	HBG_STATS_I(tx_timeout_cnt),
++	HBG_STATS_I(reset_fail_cnt),
+ };
+ 
+ static const struct hbg_ethtool_stats hbg_ethtool_rmon_stats_info[] = {
+-- 
+2.33.0
 
 
