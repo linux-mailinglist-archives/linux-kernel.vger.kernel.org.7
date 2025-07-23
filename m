@@ -1,240 +1,163 @@
-Return-Path: <linux-kernel+bounces-743294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B859B0FCFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:37:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EED1B0FCFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8DDA16D700
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365BD5445DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA23272E55;
-	Wed, 23 Jul 2025 22:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B44271A6A;
+	Wed, 23 Jul 2025 22:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdAq5s+X"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0WB83ER"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E3C2AD25;
-	Wed, 23 Jul 2025 22:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AC31D54D8;
+	Wed, 23 Jul 2025 22:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753310236; cv=none; b=Cfia7TwYknWhf0j8z2srl6AiJrZloCRVaJ52ZewnTSotX1Ji7A0s4+w7wt5K3cBobaOmOwOjnIqqlqEsHhd6u8ad/rsShw+V8joifxIvrColeiaAsFzeaa2jX6mWqUQQ9xXVNeOybk/c3MrY7q+bkEPsNligXgs2/+A+cDvV0tI=
+	t=1753310328; cv=none; b=GTZ8l2qRkH6tJjZvKkD3opy1ZveQWYhOJFZDlrVjcaS+cWb9ZQk5Qu8LZ2f5E1crb/cnBRGR/4qVzRFQtIKmQVEgExlnLb4o1R+Y0y8iGYfT3OMmiA5MykIVmHOgJiSh3psE2laA+gLGkQdlSQWDaE2Fay/MfnHn57PNCmUstJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753310236; c=relaxed/simple;
-	bh=WLpZVFL6i45G9hsEsT96Tgw98VbKC0ZlhUqwjUtaJEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/giLVBaTNYp3IWUWVxjU/fvJ34MevuY+tDgFoPxFrLNdGIQupn3Fgll33t5kfMHD3egiRu97FwepchrzEBQ9yPjHSqBhD/s40s2AtVQ6KtBa0Pq+eQZBf6Q8fEVjD2rq7kqCnurqcUXEMvlrPTE4tnDiLedNJ7IA19kUmzbFcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdAq5s+X; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1753310328; c=relaxed/simple;
+	bh=rllKm6oEcsaGEQDno4+nOwkZcdrVP5eCwS1QXpejhk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MPmmIwmFdOJUV1s+KGs3M/1nf8wr6rRB+OBfOM3KSfssMNWusXDRF9tnsUm0kjJJ4i0FS/tuHDfoSZkJQgkb6B9uIi2lIYZhHWeuRsEJNTtWRg+xpwUlCTCQBkZDDU85tqfJl195lAku1qIg2bPLugBKA15F1gv2nhz0a4RWXzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0WB83ER; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4abc006bcadso6037111cf.0;
-        Wed, 23 Jul 2025 15:37:14 -0700 (PDT)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b34ab678931so376771a12.0;
+        Wed, 23 Jul 2025 15:38:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753310234; x=1753915034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XT3gZgJcKjgQhhv2BAHSv1vm9Q9R1YzcsGLhzAhjs4M=;
-        b=YdAq5s+XWsHw/Gyb2iWzs+s7Ms0p3qntRun+0MjKdT2zRTStqjoPxgffLTnbyTwQCU
-         0PxVsBcqDM4zzbBWIKH5z+TC3zWVAc3l/J3RQP9kIjgcA07frPVmr51pHk2oyjuHhDFi
-         K7xlCOI/D3lyRUkcwvQnfrB+FGnwOXhGO6koON3lWRUO/JtaDaY98FxycPnFPde4l/aH
-         5YK3g7wxL6WcURDAWT/+wRf6vIJtUMp3WtGWG2C1C/WETdennqkt1l50OPQ7m8Q/gbaC
-         tUsHbClNyDOu/TydAHTLWt+G8iwXpb0eqe2iIlTaEN8KA1ibxoCtbAZjB3KZ+jDw8wxA
-         dC9Q==
+        d=gmail.com; s=20230601; t=1753310326; x=1753915126; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=httEGtEqD2JKhBONVOlAdsuEcxaTZjP6OdJ8FhoZGUc=;
+        b=d0WB83ER+trZWLbQAbCMJ73d3AIWjRklUJLD9IyBQTiBKo1hoh4gOqk7AGar6LjuKe
+         Im6QJUj7obENSmH7IuJoodEd0YyG7FDyt0Dfx5qudlbzoXBRVm/Wu07eNQ7fkcmnBjCa
+         yzOssOvWUQeKfc3ypn6dzp/5yfW0jiULW6zaL1neo1WuIibs64E69IYqxAl0xLg2QnLs
+         kJPRhHnOkg+UdxR+EmrsR6gfPFnSPUuQDv4vzP+8WO2By6p/CxE0LvKgaYhT7lO/91KF
+         UD9tgq/iY/06m7DEVsMuneT1sNeymcxUcG4Rd/VFc0wTBxoE0VixdkiTn7BcISOVJpAD
+         tu5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753310234; x=1753915034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XT3gZgJcKjgQhhv2BAHSv1vm9Q9R1YzcsGLhzAhjs4M=;
-        b=YRMEMbklkgwKbzGfWdG4iDAMQJ5LSJwHUkiWEfGRqD+2v8879mgh8HjAhtKPj5fjMq
-         Qxlm0oZSFfPiZfMV2WHEaSUKQhnMzHWIuglC9iW1OnlinaNb1cGRKmwKB4eM14CZ8ks1
-         tFCpYU+BljpYqUjIoSAdFEzVxgzCBZ1gQpYnYFszb4FgnYI/B/83caVowA0rNq3SHxlg
-         fN5erJ+/UIuqs3jvpHF70yBVeJDK06RsBI3lF92rmWY6ElfAoK+hUrDL4U9oofZFLrRE
-         hZBLuWDtXx12JDcA80dyn2p/ZhOMDAxkrN2UuwB5gPyumysZidSFkJOABipzSbnzvfNZ
-         crwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/9Hs0sZ+p6d/BZnkbkEHtNmkApYCl7ZchFUlUdp9Eg9DA3zvBYaTAOmO338bH+n31Uivd4IijAcFP@vger.kernel.org, AJvYcCU3EawI2BkLFSXaFdxjeprnt8U/SXd+iYcwUd7mTrrW5Xux/qewaekSQDkF3RPnNKe+c62jfElnQLsyibjn@vger.kernel.org, AJvYcCVTmmwGAujdT0TR9pB+262Y/trtqhPxIR+N9OMs+y768g5tKVa+z2FxAXEjEkrhGjGjBgC4vjMQxo97fjdF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAeMud94dw2dOxxjo/Zbe/wOR9TGQlo3TdPDF2Ah2rMf8AAkae
-	7CSTL+hy/YaM2urXn8hL+yiyfHakRYjHilTvKWxKU9Oguz3BO9I8pk46/fr+vXDMpYo8DyjRCn9
-	753BLwPN4YVs7lZssjWkJy8lHYVxJWsQ=
-X-Gm-Gg: ASbGnctlanuhxgAeZxWDr4inFL6NO7CYlSNDwixy/hsKJNcX4elqaQ9So9g7evz1TaT
-	Pawv7UUA1peZ4GdTpMzxMtWNA/FEha79anbQD9o2WvO3suwv6GGeuFQOIyAU9WfBwxUnCTiCYle
-	UCqwS8rgljGuYYtUHZ9weacHu2uxFhs7E2N0mxNXNSyukJ218QbEvyOJXXx4DsbdSLpQvxMordB
-	ORZ84Q=
-X-Google-Smtp-Source: AGHT+IGOOacVYve6Wp+wqewcosy47JZTFuo3iGif5RJJGfqv8oqYJZjY5NKLG8Zii4YSxCooRAydaaLV3uIN+qEser8=
-X-Received: by 2002:a05:622a:591:b0:4a9:c8e3:a38 with SMTP id
- d75a77b69052e-4ae6df7f8a5mr66874731cf.30.1753310233670; Wed, 23 Jul 2025
- 15:37:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753310326; x=1753915126;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=httEGtEqD2JKhBONVOlAdsuEcxaTZjP6OdJ8FhoZGUc=;
+        b=XsO6LM5TdN5y0HvuVpIPrJmogjqxtpOY2t6s0VkpaoiT5oVj7hsYMypWeuIj6gn8Yr
+         KE5uIm/2QcZoptFBriNi6rEdhJY5/lait0ZZNbrpYiH5BHDr0bRSLQcdD6GUAhMNUXpd
+         +dKhfAimBTQ1dbp70ih15B31WmLl2Q+oblH3kehQSb8CHgAxbxvG95oOlJv8P8QB1rQ1
+         AKvDIklNCGDlM13iVevYz7ES9t6hQoBb63WY5FlhMFSEWd5i/cfLLCXZqq7MI4LDDPBv
+         dnyOw1p/z9wKybrdwlgVZheJT0IvA5YU5O2BYmuzS6zysCA4AVJP38UZC4zElGGJe+Y4
+         +s0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUM5AG0MG04+88PssDIGl/+yiJfnIS5QMMt05PybJch0mvJOBvG0waamdXh0pEOqGtOSSuGMsl/z3r6mSM=@vger.kernel.org, AJvYcCUog1EZFO3osS5iOWHS5lAw9SwrxnTHikvjxju9qAOfEbWxHLocjh5faZezJbGrtbpZ7xaMAoPO+b3Ivrz/@vger.kernel.org, AJvYcCXOwHWEkgScHbIj3NxsO6+6yiuJP/dU3SBXMN4K/W5dcck0hRxXGNI4E+zV/6x2+L4JdiOU2lK67fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlT/NAy2IDPCZm+6yx27sxatBrp0+6PBwPeSRu/VUIIzW7S1dv
+	T2MtRq+vWmdbCuS3Qj9JVKgs7FfQXjXRIBc2IH8KCg3aMIxynqVPgBf2cfJ8Gw==
+X-Gm-Gg: ASbGncssx/jSN++Em8U07erLJ9l4vZTr5DL3D2N8mWZTh2OqnwI+FI5hraWpx68BdZV
+	58xffDLnb8vlRi6UV0TZIjQLIJV3Zlm60sTpDn84dtQQ6dOuIF3huTxQEzIXo4QayM/YiRY2t4J
+	rbQU1y97VSVv3yHJmX1rpRgiRpDYAEqXdR+tInEoKM2D0xb8KwfB5SMsYJwaKhdbkzXGCE9Y6MW
+	RPvTBUzS22EcYYb5uiCH5cyX0etc3maq6kXYOCkVsM4o+mu6E355F6SeK3PW1nd875DbB+SW1Ak
+	mDziACWbeSWIpwnqnXL50RtGTLHYOAi44FHH+US+Onr23l78mJx8/YiEHU5gGJQcGAJrpkRir1I
+	mCKEWn65mtCZ1lApFN8NEYe2pM4yAfpBPzevHY2GiMiuGCjxm9guvLcGYZbn3Ku+G25dl3kAIng
+	aOWoy2lw==
+X-Google-Smtp-Source: AGHT+IHakvZZ3TUObRGKro7UVd2Yr8Ej1rtAPvox7bw0ZmXr5fCcKBn4M0OqVIvJGwFyJ7+j8EsOoQ==
+X-Received: by 2002:a05:6a20:430f:b0:225:7617:66ff with SMTP id adf61e73a8af0-23d4905c6fdmr6898282637.20.1753310325853;
+        Wed, 23 Jul 2025 15:38:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f6c09baecsm73443a12.24.2025.07.23.15.38.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 15:38:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <039cc421-eac2-4fc3-ac51-b1e5d5faa54b@roeck-us.net>
+Date: Wed, 23 Jul 2025 15:38:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
- <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
- <20250723212020.GY2672070@frogsfrogsfrogs>
-In-Reply-To: <20250723212020.GY2672070@frogsfrogsfrogs>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 23 Jul 2025 15:37:02 -0700
-X-Gm-Features: Ac12FXxB2nVp9FqI1vea6XZQcEtWGsAFL1VZb8QhxAb5VxOs6Ul814N4-7dsOH4
-Message-ID: <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
-Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
- at fuse_iomap_writeback_range
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] hwmon: add support for MC33XS2410 hardware
+ monitoring
+To: dimitri.fedrau@liebherr.com, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+References: <20250723-mc33xs2410-hwmon-v5-0-f62aab71cd59@liebherr.com>
+ <20250723-mc33xs2410-hwmon-v5-2-f62aab71cd59@liebherr.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250723-mc33xs2410-hwmon-v5-2-f62aab71cd59@liebherr.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
-> > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> > >
-> > > [cc Joanne]
-> > >
-> > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
-> > > > Regressions found while running LTP msync04 tests on qemu-arm64 run=
-ning
-> > > > Linux next-20250721, next-20250722 and next-20250723 with 16K and 6=
-4K
-> > > > page size enabled builds.
-> > > >
-> > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
-> > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
-> > > >
-> > > > No warning noticed with 4K page size.
-> > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
-> > >
-> > > You might want to cc Joanne since she's been working on large folio
-> > > support in fuse.
-> > >
-> > > > First seen on the tag next-20250721.
-> > > > Good: next-20250718
-> > > > Bad:  next-20250721 to next-20250723
-> >
-> > Thanks for the report. Is there a link to the script that mounts the
-> > fuse server for these tests? I'm curious whether this was mounted as a
-> > fuseblk filesystem.
-> >
-> > > >
-> > > > Regression Analysis:
-> > > > - New regression? Yes
-> > > > - Reproducibility? Yes
-> > > >
-> > > > Test regression: next-20250721 arm64 16K and 64K page size WARNING =
-fs
-> > > > fuse file.c at fuse_iomap_writeback_range
-> > > >
-> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > >
-> > > > ## Test log
-> > > > ------------[ cut here ]------------
-> > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
-> > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/4190
-> > >
-> > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
-> > >
-> > > /me speculates that this might be triggered by an attempt to write ba=
-ck
-> > > some 4k fsblock within a 16/64k base page?
-> > >
-> >
-> > I think this can happen on 4k base pages as well actually. On the
-> > iomap side, the length passed is always block-aligned and in fuse, we
-> > set blkbits to be PAGE_SHIFT so theoretically block-aligned is always
-> > page-aligned, but I missed that if it's a "fuseblk" filesystem, that
-> > isn't true and the blocksize is initialized to a default size of 512
-> > or whatever block size is passed in when it's mounted.
->
-> <nod> I think you're correct.
->
-> > I'll send out a patch to remove this line. It doesn't make any
-> > difference for fuse_iomap_writeback_range() logic whether len is
-> > page-aligned or not; I had added it as a sanity-check against sketchy
-> > ranges.
-> >
-> > Also, I just noticed that apparently the blocksize can change
-> > dynamically for an inode in fuse through getattr replies from the
-> > server (see fuse_change_attributes_common()). This is a problem since
-> > the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
-> > think we will have to cache the inode blkbits in the iomap_folio_state
-> > struct unfortunately :( I'll think about this some more and send out a
-> > patch for this.
->
-> From my understanding of the iomap code, it's possible to do that if you
-> flush and unmap the entire pagecache (whilst holding i_rwsem and
-> mmap_invalidate_lock) before you change i_blkbits.  Nobody *does* this
-> so I have no idea if it actually works, however.  Note that even I don't
-> implement the flush and unmap bit; I just scream loudly and do nothing:
+On 7/23/25 10:34, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> 
+> The device is able to monitor temperature, voltage and current of each of
+> the four outputs. Add basic support for monitoring the temperature of the
+> four outputs and the die temperature.
+> 
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
-lol! i wish I could scream loudly and do nothing too for my case.
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-AFAICT, I think I just need to flush and unmap that file and can leave
-the rest of the files/folios in the pagecache as is? But then if the
-file has active refcounts on it or has been pinned into memory, can I
-still unmap and remove it from the page cache? I see the
-invalidate_inode_pages2() function but my understanding is that the
-page still stays in the cache if it has has active references, and if
-the page gets mmaped and there's a page fault on it, it'll end up
-using the preexisting old page in the page cache.
+I am not sure what the plan is, but for now I'll assume that
+the series will be applied through the pwm subsystem.
 
-I don't think I really need to have it removed from the page cache so
-much as just have the ifs state for all the folios in the file freed
-(after flushing the file) so that it can start over with a new ifs.
-Ideally we could just flush the file, then iterate through all the
-folios in the mapping in order of ascending index, and kfree their
-->private, but I'm not seeing how we can prevent the case of new
-writes / a new ifs getting allocated for folios at previous indexes
-while we're trying to do the iteration/kfreeing.
+Thanks,
+Guenter
 
->
-> void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits)
-> {
->         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
->
->         if (inode->i_blkbits =3D=3D new_blkbits)
->                 return;
->
->         if (!S_ISREG(inode->i_mode))
->                 goto set_it;
->
->         /*
->          * iomap attaches per-block state to each folio, so we cannot all=
-ow
->          * the file block size to change if there's anything in the page =
-cache.
->          * In theory, fuse servers should never be doing this.
->          */
->         if (inode->i_mapping->nrpages > 0) {
->                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
->                         inode->i_mapping->nrpages > 0);
->                 return;
->         }
->
-> set_it:
->         inode->i_blkbits =3D new_blkbits;
-> }
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/comm=
-it/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c884
->
-> --D
->
-> >
-> > Thanks,
-> > Joanne
-> >
 
