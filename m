@@ -1,133 +1,103 @@
-Return-Path: <linux-kernel+bounces-742850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D77B0F759
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C26B0F75E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9139547841
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D761C85058
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F0720DD52;
-	Wed, 23 Jul 2025 15:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A713BB48;
+	Wed, 23 Jul 2025 15:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p/9NUzJX"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQtwpykz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0C91EB193
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7673E2E370E;
+	Wed, 23 Jul 2025 15:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285489; cv=none; b=AJo/EY1Fxcof+hF3GH0Hjva4+pvT/SZQDTfrmFevQxBNRPsmOrJ1GdvEnCHGyDbitEoQJnrX9lTQCWwsRmySFjI2qFvZU3L6vRnsl3cR0X31tT7owVWa4pgrhTBiinxzmNlupPo0mStsDj4S4tzN5+OQd4lkzyUz0RjgMIIWC0U=
+	t=1753285574; cv=none; b=ecCifr9moOBq4VW6Efq4ONKHOqaWqmqz15GskT/J0AYkZC1rrva37YZxDYMeGQV/g0v6xVEUr5RNRofeyfqvO6Oz1d/Ni+/Kxp7jTE89fBgp1k4OtcSq5pIoHa46WoDi57RzqVbidBoI+/1ZF0Zs6HvwXg/IZhOUm2sV+pdasS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285489; c=relaxed/simple;
-	bh=jw8TYEc+nEulyIXXXRJnf41j1zUMTr8e6BxmktkG7aA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LPkdKYOjXaspOsSII2d8V7PsXAUHD35r46jeiTMpGpR0Diyz1NrJwFQ2/j1zTP2fUTxSoh8gakta77wUcYwNzvgM0N0LPEZU5srrKq3e7XvVNydU+CL2fRCNcWrXCJYeJQrnh7TnZLw8H1Wcy2q8AiN1wfyUlj0QNHwO4sASKK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p/9NUzJX; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45639e6a320so36952775e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753285485; x=1753890285; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXOWdiJ76aqzcJ+Nx0mm5z+V0JOAweMr48E8iTDuzpU=;
-        b=p/9NUzJXXGYRbf6U65h2jUYjvU2/9BcBSNGu6hYgJDHNA4yUQGUuM2AzrgU7rRbHq7
-         axy60rbgg9Iy42qWct9K5QERjhzOjVvXMk+tsaHNnGqAEwjo6/nkaCyVu3rI+Yhc+eqO
-         79uM4Ln7r5B0OCbsAkPbfbLMPe2piv1M5IheC408Z1jFq1zX/EKl1tVoJTmDapfFiV5q
-         87wTCsvJp4SS3phsd6fMxkHfh/topuaKzkt0Qm9v1mv3r1BADFwnfQZgrxKxoplDNvdG
-         C8WAs+bAKXeIuCtj7S1hyja3sY60w/yGe1KGIbq/bjT2Ok5sEmJRejZ2ubN1ONztaQmh
-         3Ung==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753285485; x=1753890285;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXOWdiJ76aqzcJ+Nx0mm5z+V0JOAweMr48E8iTDuzpU=;
-        b=loHqf5NWqp+1jLZAazkd1+wKkESGMwIAvUiFaTr5D0y8Gu5xFrVXX46RdYHFtu7HOv
-         D56ziBq0pIY8RMBuKbAQtKwyyovSGjoprS5NeFJII8NutWFztMhYHdlRgVHo6MHFXw0G
-         G9xrEhsc5BpEODzgYrYyq2AtTXlB9bADrWyPJAwqmKrSacdu3EcdIiR5ytB002GkOuc4
-         3sdh0H03QveqGYFF0EFM5Hzi7f5QDWSFrcV4pgGfnhsTZQsKB096ZvpytIFYErecF5lg
-         R4NhWUJOD8Zm+zZoUWRfSsAJrHfuEjrBDmbZNsv4FOpM54HeRlkuxqqTgYeFIyARxm9l
-         kELQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9tqsiNDAjRzto/nk9h3pLTdZFqLarR2KINT/nWzAT9vushLgVP2yaWfL1keXan0ZMgM4DDYHNN4N6d0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB7vq/BpxuCLeWYSc0AioRvDvWgyqvg5jgPtt//5l7zEKU6p9X
-	tSmP49MAGc+YvO+WNJ8xCyGsR2pTggdFz5VjZoVYLcvJ9VkS3uoE0RN4newWMLSrHNWbtqMHHWq
-	W/bjpb2sSntOfNH5jgw==
-X-Google-Smtp-Source: AGHT+IGLuQqTAZTG3JChYcwGQ8hLmPMgRGjl4gGVAS2ZTeeJTYCoACcyAvpCSpgWDQ01q31ft1GIqKLJobK8w8U=
-X-Received: from wmqb11.prod.google.com ([2002:a05:600c:4e0b:b0:456:d19:9bcb])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e4a:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-45868d4e7e0mr27932955e9.23.1753285485308;
- Wed, 23 Jul 2025 08:44:45 -0700 (PDT)
-Date: Wed, 23 Jul 2025 15:44:44 +0000
-In-Reply-To: <DBJIY7IKSNVH.1Q2QD6X30GIRC@kernel.org>
+	s=arc-20240116; t=1753285574; c=relaxed/simple;
+	bh=4w/DFJ98GqBXik4ktnB0SRascaFEgXt2MIn7gcFChYU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NgzQGSfxSndMQ9q3lH2oyRh9kNFUxl4bo+xfv73HNUBDLJ+CEHbr8bCNfxHwFpLc/8NX2OAi9WBsPwaF2/3EzLA5lwxdXhyIJ/5jyDjAqAZUhEHuV/WCPhqaa3mAm2y2c10JeY8ojpFEdCMDxyD6apqCe0+WZNkEdyuelkrHI9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQtwpykz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DAB2C4CEE7;
+	Wed, 23 Jul 2025 15:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753285574;
+	bh=4w/DFJ98GqBXik4ktnB0SRascaFEgXt2MIn7gcFChYU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KQtwpykzYKBAPyRedO8oA60/BQztUEakB3SEMvcWNkLTVko5PQX+3z4id96rdb5zt
+	 iiIUdqaVUu8/tb7UyqtHrF+mADIvxx68UPfpT2n1esR4ZrHHx1/NrmSadOM5FceXbR
+	 ifbmkjahdVe35RT9HmOHNKnkAYS8EEPpLAVCKPrVNeQYk9dqaXfNNbFu7itHJbREWw
+	 SFeJkhia+u0NX/WQ4lv5Sqz7UEld3Tph8kK5kJreFpDKeAmaSpE5F/BIUv7ogwXbwx
+	 PRARSDr4tuYXragutpamxpNM0OtankWNCL4yb5N0OaHkYr7MEHXaprn9W05OqPKUqf
+	 ztM/4H2/QwoLQ==
+From: Mark Brown <broonie@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Gabor Juhos <j4g8y7@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250723-qpic-snand-fix-steps-v1-1-d800695dde4c@gmail.com>
+References: <20250723-qpic-snand-fix-steps-v1-1-d800695dde4c@gmail.com>
+Subject: Re: [PATCH] spi: spi-qpic-snand: don't hardcode ECC steps
+Message-Id: <175328557230.71989.15440098582685138436.b4-ty@kernel.org>
+Date: Wed, 23 Jul 2025 16:46:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
- <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <aIBl6JPh4MQq-0gu@tardis-2.local> <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
- <aIDxFoQV_fRLjt3h@tardis-2.local> <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org>
- <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com> <DBJIY7IKSNVH.1Q2QD6X30GIRC@kernel.org>
-Message-ID: <aIEDbB_FcgHgzfKd@google.com>
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and handlers
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C2=B4nski?=" <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On Wed, Jul 23, 2025 at 05:03:12PM +0200, Danilo Krummrich wrote:
-> On Wed Jul 23, 2025 at 4:56 PM CEST, Daniel Almeida wrote:
-> >> On 23 Jul 2025, at 11:35, Danilo Krummrich <dakr@kernel.org> wrote:
-> >> On 7/23/25 4:26 PM, Boqun Feng wrote:
-> >>> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
-> >>> But sure, this and the handler pinned initializer thing is not a blocker
-> >>> issue. However, I would like to see them resolved as soon as possible
-> >>> once merged.
-> >> 
-> >> I think it would be trivial to make the T an impl PinInit<T, E> and use a
-> >> completion as example instead of an atomic. So, we should do it right away.
-> >> 
-> >> - Danilo
-> >
-> >
-> > I agree that this is a trivial change to make. My point here is not to postpone
-> > the work; I am actually somewhat against switching to completions, as per the
-> > reasoning I provided in my latest reply to Boqun. My plan is to switch directly
-> > to whatever will substitute AtomicU32.
+On Wed, 23 Jul 2025 10:06:43 +0200, Gabor Juhos wrote:
+> NAND devices with different page sizes requires different number
+> of ECC steps, yet the qcom_spi_ecc_init_ctx_pipelined() function
+> sets 4 steps in 'ecc_cfg' unconditionally.
 > 
-> I mean, Boqun has a point. AFAIK, the Rust atomics are UB in the kernel.
+> The correct number of the steps is calculated earlier in the
+> function already, so use that instead of the hardcoded value.
 > 
-> So, this is a bit as if we would use spin_lock() instead of spin_lock_irq(),
-> it's just not correct. Hence, we may not want to showcase it until it's actually
-> resolved.
-> 
-> The plain truth is, currently there's no synchronization primitive for getting
-> interior mutability in interrupts.
+> [...]
 
-Is the actual argument here "we are getting rid of Rust atomics in the
-next cycle, so please don't introduce any more users during the next
-cycle because if you do it will take one cycle longer to get rid of
-all Rust atomics"?
+Applied to
 
-I can accept that argument. But I don't accept the argument that we
-shouldn't use them here because of the UB technicality. That is an
-isolated demand for rigor and I think it is unreasonable. Using Rust
-atomics is an accepted workaround until the LKMM atomics land.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Alice
+Thanks!
+
+[1/1] spi: spi-qpic-snand: don't hardcode ECC steps
+      commit: f820034864dd463cdcd2bebe7940f2eca0eb4223
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
