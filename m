@@ -1,87 +1,243 @@
-Return-Path: <linux-kernel+bounces-741867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28526B0EA03
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:19:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0629B0EA05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3CA1691FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DD0188D1C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145F2238C2A;
-	Wed, 23 Jul 2025 05:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55283246332;
+	Wed, 23 Jul 2025 05:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T2PyQ4jg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="EIo+S+MP"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011055.outbound.protection.outlook.com [40.107.74.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462921D95A3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753247937; cv=none; b=n4qhZIt2Ut4P3rvr0REka/uly8PTB4yl6Zqkci8xnUQ+R3U3XW8zeqhSnbS7wXcXw8QQgNKN0C34XrP6okW4//zxvJ8sVaiRwuTg6J9Kr5VRSO4dk6k8uZ0COeRw3U3iAY+BtkJapaHI3lOeG3xVoeRT+VWf20spixJimVujpbs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753247937; c=relaxed/simple;
-	bh=nsMPUH293s6jOxlTalukz1fcTlX61DdMXB/NAPO47rM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtMzw3E2mFou33ozP6MfCnuudYq17nQpxilRzqQ1P2cNckNCqoLMfhjnwdy3c5JjIZp/wASyPDXQ3xJKxjKfh4bJ3UvZPf295rLvItPBDvBOsmJiPTsCuRUQebymR7RsPc9YnWG9fKPlEaes8Q2AaGl//pWZ+n+pz06X+eWHEQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T2PyQ4jg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692E5C4CEE7;
-	Wed, 23 Jul 2025 05:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753247935;
-	bh=nsMPUH293s6jOxlTalukz1fcTlX61DdMXB/NAPO47rM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T2PyQ4jgsFkM9vH2+g0KgTZtJxJkiGkJVXhDN8R9WxfJ1fXsyPZeUklOP/VUJzJ5P
-	 rOXvaKWXYjXgdzbwrZOosPgP+W5lVf61NgFvEYYYwBbkVLcpGtTXK8jl0Wd1U0tlKp
-	 AkfODj5/NxHZGt8XchBzZp8IX/9Dpj1ryvY2Mm+U=
-Date: Wed, 23 Jul 2025 07:18:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ignacio =?iso-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
-Cc: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] checkpatch: enforce 12-char SHA for Fixes tags
-Message-ID: <2025072354-spruce-step-4433@gregkh>
-References: <20250721162437.6691-1-ignacio.pena87@gmail.com>
- <20250723030257.66560-1-ignacio.pena87@gmail.com>
- <20250723030257.66560-2-ignacio.pena87@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E156074420
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753247958; cv=fail; b=VojhIFeyLHlc1Ma7WpZr/PZPTAcMPMLELV3GqFs/USpntRCFs/LfbvLE3oga1wpBrY1ueIpjFmu9BvcQq41CyW8tQE/WfXj5UWRxQnWWo3HIT2//gL9blI2Cd8/qQAPShLRyd5ujEI7AVeOsLjmuwK045cVLtEj4M6TZ4E2mJ2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753247958; c=relaxed/simple;
+	bh=03UHvnfTiqfUpkM/IwYECVijQ4wYbYN8pZnxXn4sQks=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bxo2bWYeY9XeWLCuLlp2Uf6oHhjEEfBrmyUqVeAnOJRMIwUu/+0aODyiJz4ADOI3ihVwZnio5SXpNufBGdMY6nG30jGukdvNh9WyOxlPc3Sqg5pVywp5j1xNupGuVxpOEJOsDt9N3MGdkgjbRNUbdglriEuKQd1t7KSEGHIoUac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=EIo+S+MP; arc=fail smtp.client-ip=40.107.74.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lx88MjHVW/ZZVRm8XUOgLrfAwAPRKlw6oFbup0PB01Rl+DWEhmnc4VkALtSscWeZJjtfNpUtZcTQJpNK2nyxdvDgCk7bTl5gtoFjreI+eBV+V9WPy+gfDPnXa80Pe8o6kx8UkPudtscUeiRLA8XLSMcwuQmexiGu5YfUEYNNHFpY5ehiOcfM1CQPNKqD2JPB+jOAWh9Lli5GqdQhFpvumOHdjQfB16gsPwIRHuIlhAxyM0SGnB1XTqHijFvNnM5Z79n3nfA343Ugpyg0a4/HY83upRzJNzWQ8va6hItcbD3ytMabsWnMqxuJqmpDNDS+3eXsNPerv9MT9I1bOhW6zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MvKUcmtTCknqOAuu/oHS2/6taaPTHgXm62g2vLcy2UI=;
+ b=kFq3gNNvPr0JMs7A3BYOfmmMS9cLpsJPmxwNBzQ5spwSZJsm+/rIIG0ct/MvTCDqNkhbqw+V/4Jek6OorOjfyO+H2XLTaYbhtb9xO45He2+mv5e6NJSZ+SRmCtGd/pGeOz6JvNfy+NCzUkjkLsQXcc8REBNbWP7WGdN1XRwL+X+RqgpFkkt1llDAu0T45EG/0ACitItcZ5SY3cu15dOIcnKdwqVr6cqN5rij1FRpPWFZbpjrIUzI9ozjGJh+yPQ27od9c3K+1GnmdbP6loaQI4ufQc3tJ9E6Qf3VoOpdrbV1Pri/moXV3ANUd8y/IoLA1PkmvLgCMSIs/w3ahtEGRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MvKUcmtTCknqOAuu/oHS2/6taaPTHgXm62g2vLcy2UI=;
+ b=EIo+S+MPDGJDZHOlWufkTOJUDvq1ZzUCpHM/yIhamP6eodFzlDy0unUWsXLo7DN3Skg8EzgYy3ZWGF2tVdzvjU4lI8Qq5stWryI2dCxrUPSgg2kv+4gK6UA5mK1c3rH/47NOYsMortiU+4NE6qkitAicKZ3WqiPiy9yWn2BIqQE=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OSRPR01MB12002.jpnprd01.prod.outlook.com (2603:1096:604:22d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 05:19:10 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
+ 05:19:10 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>, "victor.liu@nxp.com"
+	<victor.liu@nxp.com>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org"
+	<rfoss@kernel.org>, laurent.pinchart <laurent.pinchart@ideasonboard.com>,
+	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com"
+	<jernej.skrabec@gmail.com>, "maarten.lankhorst@linux.intel.com"
+	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
+	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
+	"lumag@kernel.org" <lumag@kernel.org>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
+Thread-Topic: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
+Thread-Index: AQHb+0j82gVjHGc0O0C3m8cqDxBV/rQ/Kn1w
+Date: Wed, 23 Jul 2025 05:19:10 +0000
+Message-ID:
+ <TY3PR01MB11346BB82F5A3EBA93493C125865FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250722204114.3340516-1-chenyuan0y@gmail.com>
+In-Reply-To: <20250722204114.3340516-1-chenyuan0y@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSRPR01MB12002:EE_
+x-ms-office365-filtering-correlation-id: 182a853b-9b52-45ed-92a5-08ddc9a87478
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?9Crsgnyb9BVLvZsTywiTR8orwRWf7BIwpJxiaqwJMMU370ydCUQt/58TPe67?=
+ =?us-ascii?Q?k7C+Wqi5hhS0e8OZScPHEKx6c8xOlH3YTjgnDBQcGQ8zMsa5QAN2VbmsnL7A?=
+ =?us-ascii?Q?v+OqY9DdbzBKOjhAfFiC2Y11NXvWNmwlmHxRusYfeqcxiUHEgNe8VQB4j5+z?=
+ =?us-ascii?Q?QDCjax7UUCRxZyhLAfNxcWNF1w+E5wfC/HGNlnHKti0KnSwiDEvFy4Pslj4o?=
+ =?us-ascii?Q?bZkAXJWQe7tSsKie1hCgeQLy9NInxtU2IDTA6ugznrlS0klb/mKIF7LNGth5?=
+ =?us-ascii?Q?7xQwnn9pC96NIhbkHlYgmR13jhlWCJ9cT+MVGMKO7w/rWvis0XEwqC74Q3xq?=
+ =?us-ascii?Q?iJfHbzojzbvhk1WW65/eypRav/cgeMo679CLNg0dE+r/6J59MDtgfI9zElqc?=
+ =?us-ascii?Q?KVZQYt9xd6L4722NP+JfDVCOe2PP3Jd9ODCbsaCyWgwgMJiNYiIB/MxMj1LF?=
+ =?us-ascii?Q?4TsDnL2Tr0cXW69UPFpV/M02B4msvKw6jTCtSFLI8H8InnuVY0MgV9dt1P+f?=
+ =?us-ascii?Q?jM6Lu4EqfePw9Ck8w6jNSMYw/424EphhulEB1zMh0LzGQ9XoQO0jq3cSMHNR?=
+ =?us-ascii?Q?FfitbcsdzYu1YZ2/h9jHDxAG/x9OeVmK9ucwk4Og4qxMMpdYZbu10Q6hsi5i?=
+ =?us-ascii?Q?ZB9eV99SOcbR2DHvTbFCJayisxI62QezGZFOkbm8W+9aUmYEw18dDmnkgnqT?=
+ =?us-ascii?Q?pSYMoKETZgIuvTUHBgoSpP+2sR1jCPdfTO46gjL9ZFJHFQszlY0KEATE990n?=
+ =?us-ascii?Q?pesBaYxFdNbOmnS3ukDD749RLPCedf7FCfzrSG8ekmgVQ4pn+AP9o2s4Vwv3?=
+ =?us-ascii?Q?pPIiVHQPS9Re1b4LFgKYddHhJtvL3vXdJSKBT0yCoZ4/4LVpW/ffMECv3ZrW?=
+ =?us-ascii?Q?wlr/aPlaL4xwaHVExvdRzudh2BcbOlh8ZTQHL5qVNM9GAKMcBEzvLUsOX3Tb?=
+ =?us-ascii?Q?BH7wUNiIxmFFrMjM6Gkpz0lpzoOZWD6mbmMe/b189HgzpwoSfFGOEYG+QCzv?=
+ =?us-ascii?Q?KCzmlXHGB07rEBRZAekMSDNzX/QsPsqiCGVt/88uS+GEEKSwvrrxwdoyju/c?=
+ =?us-ascii?Q?eGRBCHAQvr32BC1HePlfD5NTTcrghE5OEkasTYACCDqnb1d/LEFoOKGSWVlT?=
+ =?us-ascii?Q?ZDq6eaU/M98yjwCqU+uMUqsLzKqmIrmxGfI4fahZZxJxlHRO4Wwync3NgQaT?=
+ =?us-ascii?Q?pbnG9BDBOaYh84O3HxMqhvV8LI58+wMAU7hKpCgvW6d/DM6xPEjZPjdsB/hT?=
+ =?us-ascii?Q?28KHMfyMixXlGesltflp+MD2lmulgA5U1zgp4x2QA635jzF1HiJVK6ktP5qK?=
+ =?us-ascii?Q?U6SyCLOsvCqX3uTUWxnuZrMZVxsFr2EWDzuIu6T7jaC/6DKwjbQ/qt8jH2KM?=
+ =?us-ascii?Q?JV8RUa4XuLyzH4YjaDZbiM7aB65gT+2ztaCyppmexdXYc39yHYi2yQPIingm?=
+ =?us-ascii?Q?TbX2mFGVHUsSAU9b8jmgP/vdkskivFRQep7tFZszUob8NZIWTUGAzV/wHO90?=
+ =?us-ascii?Q?X1OtYuYV5ufcybw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?70Q8kYQ8j68IBy2Z6SIwDkk8QM0zditqlWWE/2oQ0F7eqI00Z/I5LmvkqCx+?=
+ =?us-ascii?Q?CHbbAtJ7dzUnYn294yihOL1vaGxFed4sTKxOvxSlydxPv/9LiCBzQUM2OISY?=
+ =?us-ascii?Q?0WQ2iUZXYXWnXaHlZAro+qkeKPv8Sq5LszZnKGG1AEYf3fS21SbkAdj1pshF?=
+ =?us-ascii?Q?FZKJ/YPDdiiCJRN3tzlwbQMawhFUzxZsgV9tgheONDThD7reIVdyQBSzD//H?=
+ =?us-ascii?Q?mgOYLbCwBRo6nro6+AiPp1eLVyvBt8/YU0/46YddkneRQ5/ViBAyX3framgb?=
+ =?us-ascii?Q?oThzbRIk0M56FN3BAz0ttINuti0yw7zxcncbHpvyjQkPBdnR1LX1CK0NFzY0?=
+ =?us-ascii?Q?7X/bVP8hLEYUkRFz8nZKiDGMNr5bq7/TWMIOQWAv6idU2cuLdWiK2PLMDV6n?=
+ =?us-ascii?Q?9wx8IFudi0j1+9oxRgGKxasP3dbogLuNUeGmKdtp6rFpo2e3zcVB2SyUAZ2p?=
+ =?us-ascii?Q?x7+oPs0FaebQ9785bgCrRUt4cVGBFv+/0kTmnKpgfnVdKhKZi08a410jUyvT?=
+ =?us-ascii?Q?YnN8ExpaHJhP+mohLhZb+GDFziaSdM5obLKAiFDgJ1+oLNIStbIwV9HxAeBd?=
+ =?us-ascii?Q?e99bMMuikJaZ99rnNNu1bbZkbKaJUOTMEIbbpLR6D6KrLWT9hkET+qY503JN?=
+ =?us-ascii?Q?DkTBwbb/TQzlgRj3rIhaK77vzwm3oNjXwg/M7S5J7q9cke2e+8Ttd92WuKVS?=
+ =?us-ascii?Q?rPAXtOgy2KSO73y1F+flBwpRe05y9lyKni0K7qo3/t6W9Vzs5/qp8Y7bjzbs?=
+ =?us-ascii?Q?9t93lEmePZHFtxJIngbjqTgSc1G8nPPSP/VlulaPAW7Er7id8YkGHPTPyN76?=
+ =?us-ascii?Q?e2LeaaCr8rDZFZeDSwUS3oF5pN74nSVdu4NKjK3OnMFlI6sc6xgZ68xUDW3v?=
+ =?us-ascii?Q?mSmiZIVUYxpd5oVnxqmSuzIVUxmR71q44/6Yd7U/NbgzwHDHyB9IaH8bd6Hb?=
+ =?us-ascii?Q?QFPDJmSrT3JJqM5oIV29yXhbT+T+tIJJSm/YQQi7dRzkVfSgSTEBA8dcwpy3?=
+ =?us-ascii?Q?eHR4vJQon/vnBeF1EZ6NGIXn198c4CoJomzm5tzSnSPvJhWh8aOJaBCZEg6N?=
+ =?us-ascii?Q?jW0KPhII9m84c1VsJylXl8DjI4XxAMv9T1li2G8i64mTZXOU7j2XpFOTngWs?=
+ =?us-ascii?Q?Adnntk58+9Y7n+YKe8tpmNbpMrHaBkpB8vkSA1m/U2+meC0hiB3caQYWjruZ?=
+ =?us-ascii?Q?0ua2IMQnY3zFa3cJJ4O+D7DV3MO2rOt2smfNNkWFShtQnF1ugmVm8cZ6r1jJ?=
+ =?us-ascii?Q?8e3ix3r9Gh/LnU8wGLIYwtJOfIULbLaJXBa02v1O8mYEo6sB663CkkrVqVnW?=
+ =?us-ascii?Q?tu19rGhd4x+1vCyDycPQBrL3Fa71RsP6LrMSecj5uU15soG5WqNhAhD9T3rg?=
+ =?us-ascii?Q?qWK1Rf1Baq0MiPPGXb9SKL4k84i6njRYnb61uoGCA6Vtx0RIMQNxJ3LmxlY9?=
+ =?us-ascii?Q?7JAZrwQJ+0WtmzjSL9NIGgAW5+v5pXXlTIyEFSZJ1hFblcTykESn637/Y6wu?=
+ =?us-ascii?Q?Jf9N9UAoUjEm5pNSnrUHNdhTsB30KXzsEVfeJY36teXM7lpp3EjqTTywoPqF?=
+ =?us-ascii?Q?rfX+zUxo1y5huo3cPjieJh0yWdYuwcvMYJaH5Olxl3b1R18EXHeWt4p+r+g0?=
+ =?us-ascii?Q?4Q=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250723030257.66560-2-ignacio.pena87@gmail.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 182a853b-9b52-45ed-92a5-08ddc9a87478
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 05:19:10.1915
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8vihcMP5YKYA6RlO6t0oTj7m7YtQm6mBirBTX5Q5FA21i8wO0Uf7MdvpxDotKfOGdnbTHkjg4N6KsyTt1q+9oM6YL7zJgvavSMoItbsRfBI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB12002
 
-On Tue, Jul 22, 2025 at 11:02:57PM -0400, Ignacio Peña wrote:
-> The kernel documentation recommends 12 character SHA-1 hashes
-> for Fixes tags. The current code allows 12-40 characters but
-> we should enforce exactly 12 for consistency.
-> 
-> The regex is changed from {12,40} to {12} and the warning
-> message updated accordingly.
-> 
-> Link: https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
+Hi Chenyuan Yang,
+
+Thanks for the patch.
+
+> -----Original Message-----
+> From: Chenyuan Yang <chenyuan0y@gmail.com>
+> Sent: 22 July 2025 21:41
+> Subject: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
+>=20
+> drm_atomic_get_new_connector_for_encoder and drm_atomic_get_new_connector=
+_state could return Null.
+> Thus, add the null pointer check for them with a similar format with it65=
+05_bridge_atomic_enable in
+> ITE IT6505.
+>=20
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
+
+Normally Fixes should be above Sb tag.
+
 > ---
->  scripts/checkpatch.pl | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+>  drivers/gpu/drm/bridge/ite-it6263.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge=
+/ite-it6263.c
+> index a3a63a977b0a..3a20b2088bf9 100644
+> --- a/drivers/gpu/drm/bridge/ite-it6263.c
+> +++ b/drivers/gpu/drm/bridge/ite-it6263.c
+> @@ -590,15 +590,28 @@ static void it6263_bridge_atomic_enable(struct drm_=
+bridge *bridge,
+>  	struct drm_connector *connector;
+>  	bool is_stable =3D false;
+>  	struct drm_crtc *crtc;
+> +	struct drm_connector_state *conn_state;
 
-No list of what changed from v1?
+Please arrange it in reverse X-mas tree fashion.
 
-And also, why make this change at all?  12+ is fine, I haven't seen
-people use huge values in the past, have you?
+>  	unsigned int val;
+>  	bool pclk_high;
+>  	int i, ret;
+>=20
+>  	connector =3D drm_atomic_get_new_connector_for_encoder(state,
+>  							     bridge->encoder);
+> -	crtc =3D drm_atomic_get_new_connector_state(state, connector)->crtc;
+> +	if (WARN_ON(!connector))
 
-thanks,
+Why WARN_ON everywhere? Can we use dev_err instead?
 
-greg k-h
+Cheers,
+Biju
+
+> +		return;
+> +
+> +	conn_state =3D drm_atomic_get_new_connector_state(state, connector);
+> +	if (WARN_ON(!conn_state))
+> +		return;
+> +
+> +	crtc =3D conn_state->crtc;
+>  	crtc_state =3D drm_atomic_get_new_crtc_state(state, crtc);
+> +	if (WARN_ON(!crtc_state))
+> +		return;
+> +
+>  	mode =3D &crtc_state->adjusted_mode;
+> +	if (WARN_ON(!mode))
+> +		return;
+>=20
+>  	regmap_write(regmap, HDMI_REG_HDMI_MODE, TX_HDMI_MODE);
+>=20
+> --
+> 2.34.1
+
 
