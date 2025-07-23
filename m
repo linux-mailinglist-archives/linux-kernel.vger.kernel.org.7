@@ -1,224 +1,184 @@
-Return-Path: <linux-kernel+bounces-743115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFA3B0FACB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:10:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA73B0FAC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDD81CC3854
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:09:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2BC1CC0D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694EA233D88;
-	Wed, 23 Jul 2025 19:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F26B222564;
+	Wed, 23 Jul 2025 19:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hfvOE8gd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPbjb4fO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C61230BCB
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8C1DE2DE;
+	Wed, 23 Jul 2025 19:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297741; cv=none; b=sYRrqP1PocPXHGfTlWF0oOGD0epGUKzqXNsUKWQr9eYUJJNoCfz/zg1Q1PFNH8SSaomQ5H8HLNI9H38V+lljGw0ndZcjTNEMbrha8Wj1eLdGvR8bNa0Lmh6cjCv/LwsxU1KGGoomY5HiPGoPUcX7pSudgyixBvCqQ7mf5IrjbW0=
+	t=1753297736; cv=none; b=WRpTf1TNoy1Nb+5wcrCSoR4bGNJ75lmDYoTnsE0HMPOobEKI95Ypsoa8wU3SlaBsOxr+UEkhwlbn5w8Ui3NIxN4p7RWZ3VnFbj9e/QdltIpTQWMiT+CUdv/S0XxXe5n+QnCgx7SVp7x8lDj/sh5Dgn/hOFBnT8J7k/5xhyrYZzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297741; c=relaxed/simple;
-	bh=b/0hdwnIExOMVb085Qt8bnoZiQN/Vv7BIVCGqQZH8r4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HkSEnKWSb58SwxUXrdTou60FU8zptcdX0f1B4toe+lA+9jX+YhMv7plUW7ZbmTzbYI5RnkWaOe1MItszZES6c+Tqf4yK4mqDJI6cr5URNjx8U96y1NpMJF5DznQ/RHchJ6933hEbp0+8LCxb7dwRyQhXd1KwI+uS526KNFI3ZqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hfvOE8gd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHBdru020122
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:08:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=NXrXegjKH9F
-	ZEEv4Dl+TWuWDw89FsK2vfam13ri509Y=; b=hfvOE8gdG1duZvZ8UKYvlySI7lE
-	Ndfuho0CV3rtLDIq0cAvbvEpw6e4dwj/JR1ac64ntB8/2vaQv/7+/g3ZoyXLALcy
-	qGfNJFjIYWf7Zt+sKVJJkN49yNrOOhYTUxFTJA0e3bqSt4v3ia642TE071PlWm1q
-	S6qH+hgF3DzafLUHcVNyTgRIjHQHRwpdTzm+wb6z7UeXoksbwR/wzNk+hBcRH5sA
-	BJLnuq4mB8Ud9JC9r+vX6TWYB+e/DCuk/BfNuYnz/6DguI+Iw+smXhoBmpS5tvHI
-	CrTmYc1NJsTkoqIl2ldMjdf4QxijXuhX/oMKqefiprZZZvT4Ee9XTPnZSew==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3es462-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:08:59 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-74ea5d9982cso183921b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:08:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753297738; x=1753902538;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NXrXegjKH9FZEEv4Dl+TWuWDw89FsK2vfam13ri509Y=;
-        b=sNJqjh8lgtaA2jtIJCIJNyxMuZ91LY/xnNPjNyvwHNnOKzDS9UMs/Iue6/p5P3yq7F
-         gVdlSNw6avCxYz+/KDwYHjv9v9S+D8BPy3ib+LSVtlFPXA6BIolBvX6fbwIgH+64LtyP
-         GJMfn55evqA4fxD84N2Pr76tEaVLQ8dYt6yTZc3JkH+IcexaaaiBlYkXmYAKJod/e6XK
-         +21pGiVuYBnSSB7U7Dhs+Y7f7tP1Hi0y0yIXKdTONT/HgEhcP3WXes89o+I3XUFmNU1p
-         aAsUxOXO8gNcYUN7rVtNBUCm3Y3pZrqA7im3Zhn9SuBP4UwNK2H1BKAMiHGysS4joHk5
-         uJ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW40dLdRE7OG8B2OXleWi+yFPfniXQ12OiZTqk8qKfbrzBUS5c+CL502q93ZI4d33JH83A3gZuTbNFfMns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbz3r2PU7+aIeZfQbTWKWk0eztZs16wiYmM+q1teJp00K3RwLv
-	CtojXDt7dzg0OfZTo14LQY1gFSEcjiBYlGuYZoJQ18CwigCJjtLSNJLiYnEgC1sGwgJO+jgMjBe
-	XzUziqA3Z8hNdAlOOXxkEqBS7eT11u6Cds4R0wDHjBA9sjB+sb1plvAjgk0/FLbaqfJE=
-X-Gm-Gg: ASbGncvVoJSOf3PT/kRTTdMlluU75ZxXSrsn58kT7FAjJPtL0aM9VQLDytmwfBUyIdM
-	nDQymRBS9cyfV8atm2SXiffZkN3b0ZHJ2wOq4WBSXtyQKijLn3QqOyh5Hgy05LYT4bBzbgO1zvf
-	J8h23E9E7wycqc2b9u5Chf3l4aWi99NvjDrLhVPeyFkSSmvMH0bW/8Eu9PmM2tmnPKYoppBuHW0
-	RMSvlGVxo5sjGOTTceKML8XqxCsd23j6bC4vCVQPufn/vlSJGNX3LZWDKqO8QWZq+uo1Q0ue+dv
-	MlOUvbX3oDEPNrc4SCVAH8wCK63BfcmB9A2qX11M81imMNoMKQA=
-X-Received: by 2002:a05:6a00:9281:b0:748:e150:ac5c with SMTP id d2e1a72fcca58-76035fe970cmr5837897b3a.23.1753297738378;
-        Wed, 23 Jul 2025 12:08:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6rfYQZeb/JoYfO4ZK95X/OcOSoYrnuOfh+vEGrN+A4OlMvLtndbVepak4mr0nineouEWh+w==
-X-Received: by 2002:a05:6a00:9281:b0:748:e150:ac5c with SMTP id d2e1a72fcca58-76035fe970cmr5837866b3a.23.1753297737800;
-        Wed, 23 Jul 2025 12:08:57 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89d5e73sm10158873b3a.59.2025.07.23.12.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 12:08:57 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] drm/msm: Fix submit error path cleanup
-Date: Wed, 23 Jul 2025 12:08:50 -0700
-Message-ID: <20250723190852.18394-3-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250723190852.18394-1-robin.clark@oss.qualcomm.com>
-References: <20250723190852.18394-1-robin.clark@oss.qualcomm.com>
+	s=arc-20240116; t=1753297736; c=relaxed/simple;
+	bh=UNlzAOR7cODPZuTeqSmrMKOwWWVj14CXn+8jYD4OLsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBgphV4m6BNYjMU2cCJGwsWCvc5AN0QPuubf2SVwRjSBiuUFAzl4JLu70//OxU1a27lE3Y/Mar6wj6d5dXYjwOsgyNiNDv6bdC40TJ+2i13xXXbTYvenImrhk9uEfwqGaYJ5OIFE/OOWORm9wFCifhqtCf9UBLmYTyWDC32Fvew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPbjb4fO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDCEC4CEE7;
+	Wed, 23 Jul 2025 19:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753297735;
+	bh=UNlzAOR7cODPZuTeqSmrMKOwWWVj14CXn+8jYD4OLsw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XPbjb4fOItVYtJw+lyr4SW3fghlW7Il7qIGMKBoHZVKrDbueqqbS5N8sRF18DhpfB
+	 O4h5VI+ikJrJYMNlfyeeROBQjQzHdfaZdc/NQyNab7afyrbQzGK+gx9h3iZZu8xt4W
+	 /DO4VvUwTcKyOwMhFmHNswLnR7Qa6r7xAD/q8QVf0ZyeA78MI6Pybr4jijEm1Frf2t
+	 +g9Pn9c/gH14alUgS58L4IuR/vCBZUnkPYobIDTbOEjb18W8JkSUtclKDD1mnMu+uf
+	 hMcqcwYvjMKYX3xdiy5r4gIiZ2bQodRHIcRhNFvTiRWSoj4HyFAiF+X1mLwxTM3+Rg
+	 hHS3N+KtC2OSg==
+Date: Wed, 23 Jul 2025 16:08:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v7 00/16] New perf ilist app
+Message-ID: <aIEzRNLTCTA5Gqhm@x1>
+References: <20250714164405.111477-1-irogers@google.com>
+ <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
+ <aIEjMroa3bW-T7d-@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: whKM0xvV_KexmEqvZCMyUWJDitzt9qYF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE2MiBTYWx0ZWRfX64HJtldFqYag
- DtSuN6raoyqAKI+V82XxDdN3AYhIGpjL6MEb5J+hWVV1CkQwwPMm3LbL842/HGDWsP7K/Q16fMx
- r3KNnt3xDB3cRCWcsNXUmWNC8eT4HtUBfcFDT8Gb/yuZzxLo2Q4FqYBvH5RaYDiAYeGfOBIH5pa
- JItnlnB6M9zW3Qzpps18Gt6asKKRou/lNAmb7PSp5MmlE7N9fP0ze5Bm9cQtAORF5T9J/cqFURG
- aea6yyL+Dj8ckDn8s4s15LSxhZMuuBubW4EXJ9e2cRo5toTzHgc1g/OM9YMaUqMff967gIH7Kk2
- kCtsmT+XMLhwKEFAEVyjD1X3tmsFWpi+lDQsS2U65rzakOqRyI0Crn9L5fhgGXBVyPheFT7gfQI
- YMLfFoAlHpC+zB9HIQC2TaCMz5e4eIk8fbp6/2eaVIdH1t2H8vsn15rEh2q9fzPhcgBPdUIY
-X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=6881334b cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
- a=EUspDBNiAAAA:8 a=l9nXAVJ8hsDFWAt1A-0A:9 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-GUID: whKM0xvV_KexmEqvZCMyUWJDitzt9qYF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230162
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aIEjMroa3bW-T7d-@google.com>
 
-submit_unpin_objects() should come before we unlock the objects.  This
-fixes the splat:
+On Wed, Jul 23, 2025 at 11:00:18AM -0700, Namhyung Kim wrote:
+> Hi Ian,
+> 
+> On Wed, Jul 23, 2025 at 08:32:33AM -0700, Ian Rogers wrote:
+> > On Mon, Jul 14, 2025 at 9:44 AM Ian Rogers <irogers@google.com> wrote:
+> > >
+> > > This patch series builds up to the addition of a new ilist app written
+> > > in python using textual [1] for the UI. The app presents perf PMUs and
+> > > events, displays the event information as in `perf list` while at the
+> > > bottom of the console showing recent activity of the event in total
+> > > and across all CPUs. It also displays metrics, placed in a tree
+> > > through their metric group, again with counts being displayed in the
+> > > bottom panel.
+> > >
+> > > The first ground work patches of fixes, cleanup and refactoring were
+> > > separated into their own series here:
+> > > https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
+> > >
+> > > The second part of the patches adds event json for the software PMU
+> > > and makes the tracepoint PMU support iteration of events and the
+> > > like. Without these improvements the tracepoint and software PMUs will
+> > > appear to have no events in the ilist app. As the software PMU moves
+> > > parsing to json, the legacy hard coded parsing is removed. This has
+> > > proven controversial for hardware events and so that cleanup isn't
+> > > done here.
+> > >
+> > > The final patches expand the perf python APIs and add the ilist
+> > > command. To run it you need the updated perf.cpython.so in your
+> > > PYTHONPATH and then execute the script. Expanding PMUs and then
+> > > selecting events will cause event informatin to be displayed in the
+> > > top-right and the counters values to be displayed as sparklines and
+> > > counts in the bottom half of the screen.
+> > >
+> > > [1] https://textual.textualize.io/
+> > >
+> > > v7: Better handle errors in the python code and ignore errors when
+> > >     scanning PMU/events in ilist.py, improving the behavior when not
+> > >     root. Add a tp_pmu/python clean up. Minor kernel coding style
+> > >     clean up. Fix behavior of ilist if a search result isn't found but
+> > >     then next is chosen.
+> > >
+> > > v6: For metrics on hybrid systems don't purely match by name, also
+> > >     match the CPU and thread so that if the same metric exists for
+> > >     different PMUs the appropriate one is selected and counters may be
+> > >     read. Likewise use evsel maps and not the evlists.
+> > >
+> > > v5: Split the series in two. Add metric support. Various clean ups and
+> > >     tweaks to the app in particular around the handling of searches.
+> > >
+> > > v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+> > >     displays as expected.
+> > >
+> > > v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+> > >     keys. No changes in the ground work first 14 patches.
+> > >
+> > > v2: In the jevents event description duplication, some minor changes
+> > >     accidentally missed from v1 meaning that in v1 the descriptions
+> > >     were still duplicated. Expand the cover letter with some thoughts
+> > >     on the series.
+> > >
+> > > Ian Rogers (16):
+> > >   perf python: Add more exceptions on error paths
+> > >   perf jevents: Add common software event json
+> > >   perf parse-events: Remove non-json software events
+> > >   perf tp_pmu: Factor existing tracepoint logic to new file
+> > >   perf tp_pmu: Add event APIs
+> > >   perf list: Remove tracepoint printing code
+> > >   perf list: Skip ABI PMUs when printing pmu values
+> > >   perf python: Improve the tracepoint function if no libtraceevent
+> > >   perf python: Add basic PMU abstraction and pmus sequence
+> > >   perf python: Add function returning dictionary of all events on a PMU
+> > >   perf ilist: Add new python ilist command
+> > >   perf python: Add parse_metrics function
+> > >   perf python: Add evlist metrics function
+> > >   perf python: Add evlist compute_metric
+> > >   perf python: Add metrics function
+> > >   perf ilist: Add support for metrics
+> > 
+> > Hi,
+> > 
+> > Is there any more I can do to get this series landed? I appreciate having:
+> > 
+> > Tested-by: Gautam Menghani <gautam@linux.ibm.com>
+> > 
+> > I think there is some follow up for "make install" for scripts like
+> > these, but I'm keen for the python API to move forward.
+>  
+> I'll review the series today so that we can get some part of it, at
+> least.  Basically I think we need a wrapper script like perf-ilist to
+> run this easily (maybe with documentation).
 
-   WARNING: CPU: 2 PID: 2171 at drivers/gpu/drm/msm/msm_gem.h:395 msm_gem_u=
-npin_locked+0x8c/0xd8 [msm]
-   Modules linked in: uinput snd_seq_dummy snd_hrtimer aes_ce_ccm snd_soc_w=
-sa884x regmap_sdw q6prm_clocks q6apm_lpass_dais q6apm_dai snd_q6dsp_common =
-q6prm snd_q6apm qcom_pd_mapper cdc_mbim cdc_wdm cdc_ncm r8153_ecm cdc_ether=
- usbnet sunrpc nls_ascii nls_cp437 vfat fat snd_soc_x1e80100 snd_soc_lpass_=
-rx_macro snd_soc_lpass_tx_macro snd_soc_lpass_va_macro snd_soc_lpass_wsa_ma=
-cro snd_soc_qcom_common soundwire_qcom snd_soc_lpass_macro_common snd_soc_h=
-dmi_codec snd_soc_qcom_sdw ext4 snd_soc_core snd_compress soundwire_bus snd=
-_pcm_dmaengine snd_seq mbcache jbd2 snd_seq_device snd_pcm pm8941_pwrkey sn=
-d_timer r8152 qcom_spmi_temp_alarm industrialio snd lenovo_yoga_slim7x ath1=
-2k mii arm_smccc_trng soundcore rng_core evdev loop panel_samsung_atna33xc2=
-0 msm ubwc_config drm_client_lib drm_gpuvm drm_exec gpu_sched drm_display_h=
-elper pmic_glink_altmode aux_hpd_bridge ucsi_glink qcom_battmgr phy_qcom_qm=
-p_combo ps883x cec aux_bridge drm_dp_aux_bus i2c_hid_of aes_ce_blk drm_kms_=
-helper aes_ce_cipher i2c_hid qcom_q6v5_pas
-    ghash_ce qcom_pil_info drm sha1_ce qcom_common phy_snps_eusb2 qcom_geni=
-_serial qcom_q6v5 qcom_sysmon pinctrl_sm8550_lpass_lpi lpasscc_sc8280xp sbs=
-a_gwdt mdt_loader gpio_keys pmic_glink i2c_dev efivarfs autofs4
-   CPU: 2 UID: 1000 PID: 2171 Comm: gnome-shell Not tainted 6.16.0-rc4-debu=
-g+ #25 PREEMPT(voluntary)
-   Hardware name: LENOVO 83ED/LNVNB161216, BIOS NHCN53WW 08/02/2024
-   pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
-   pc : msm_gem_unpin_locked+0x8c/0xd8 [msm]
-   lr : msm_gem_unpin_locked+0x88/0xd8 [msm]
-   sp : ffff80009c963820
-   x29: ffff80009c963820 x28: ffff80009c9639f8 x27: ffff00080552a830
-   x26: 0000000000000000 x25: ffff0009d5655800 x24: 0000000000000000
-   x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
-   x20: ffff000831db5480 x19: ffff000816e74400 x18: 0000000000000000
-   x17: 0000000000000000 x16: ffffc1396afdd720 x15: 0000000000000000
-   x14: 0000000000000000 x13: 0000000000000000 x12: ffff0008c065bc00
-   x11: ffff0008c065c000 x10: 0000000000000000 x9 : ffffc13945b19074
-   x8 : 0000000000000000 x7 : 0000000000000209 x6 : 0000000000000002
-   x5 : 0000000000019d01 x4 : ffff0008ba8db080 x3 : 000000000004093f
-   x2 : ffff3ed5e727f000 x1 : 0000000000000000 x0 : 0000000000000000
-   Call trace:
-    msm_gem_unpin_locked+0x8c/0xd8 [msm] (P)
-    msm_ioctl_gem_submit+0x32c/0x1760 [msm]
-    drm_ioctl_kernel+0xc8/0x138 [drm]
-    drm_ioctl+0x2c8/0x618 [drm]
-    __arm64_sys_ioctl+0xac/0x108
-    invoke_syscall.constprop.0+0x64/0xe8
-    el0_svc_common.constprop.0+0x40/0xe8
-    do_el0_svc+0x24/0x38
-    el0_svc+0x54/0x1d8
-    el0t_64_sync_handler+0x10c/0x138
-    el0t_64_sync+0x19c/0x1a0
-   irq event stamp: 2185036
-   hardirqs last  enabled at (2185035): [<ffffc1396afeef9c>] _raw_spin_unlo=
-ck_irqrestore+0x74/0x80
-   hardirqs last disabled at (2185036): [<ffffc1396afd8164>] el1_dbg+0x24/0=
-x90
-   softirqs last  enabled at (2184778): [<ffffc13969675e44>] fpsimd_restore=
-_current_state+0x3c/0x328
-   softirqs last disabled at (2184776): [<ffffc13969675e14>] fpsimd_restore=
-_current_state+0xc/0x328
-   ---[ end trace 0000000000000000 ]---
+I just tried, with the series applied:
 
-Fixes: 111fdd2198e6 ("drm/msm: drm_gpuvm conversion")
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/msm_gem_submit.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+root@number:~# perf ilist
+perf: 'ilist' is not a perf-command. See 'perf --help'.
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm=
-_gem_submit.c
-index 5f8e939a5906..0ac4c199ec93 100644
---- a/drivers/gpu/drm/msm/msm_gem_submit.c
-+++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-@@ -514,14 +514,15 @@ static int submit_reloc(struct msm_gem_submit *submit=
-, struct drm_gem_object *ob
-  */
- static void submit_cleanup(struct msm_gem_submit *submit, bool error)
- {
-+	if (error)
-+		submit_unpin_objects(submit);
-+
- 	if (submit->exec.objects)
- 		drm_exec_fini(&submit->exec);
-=20
--	if (error) {
--		submit_unpin_objects(submit);
--		/* job wasn't enqueued to scheduler, so early retirement: */
-+	/* if job wasn't enqueued to scheduler, early retirement: */
-+	if (error)
- 		msm_submit_retire(submit);
--	}
- }
-=20
- void msm_submit_retire(struct msm_gem_submit *submit)
---=20
-2.50.1
+Did you mean this?
+	list
+root@number:~#
 
+Now trying to figure out why it is not running.
+
+- Arnaldo
 
