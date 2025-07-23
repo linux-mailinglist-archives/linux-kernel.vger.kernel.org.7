@@ -1,74 +1,134 @@
-Return-Path: <linux-kernel+bounces-742929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7737BB0F85B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BDAB0F85D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A77BAA7173
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BFB5170EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CF31FC0E2;
-	Wed, 23 Jul 2025 16:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4B11F5821;
+	Wed, 23 Jul 2025 16:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8k8wR8+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jv3RqxoD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A7986328;
-	Wed, 23 Jul 2025 16:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03BC1E98EF;
+	Wed, 23 Jul 2025 16:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753289243; cv=none; b=fVt7IcK+rs5yl2qDZSky0xLyaJ6WX9siEVp9QTWyeSI7LzZb9+kqaffONQnb0gfad53/wMOaSJZvZG0fZUyxZOzU2qsvNMpkuspdHMNyA7CHpkSsziZQmbkB9j/aH1coFjp8GoqI6LgbVVq5btD64kazrnSZHueXdxH7TBeGa80=
+	t=1753289297; cv=none; b=hLQWJxG0q2BbohiG8UlRCj3F0Whr2DLRl+22PWENFJDMMz6tyM4DCifp5w7mVoIFIgPeqrhoTf8eCxOErcIK6anotG5zCy8AKnVzZtgB0W7yto4L+cW741Sbxi+Y+eyZj+Pu2WMeI08cumz00bAe1MS6PmyYYG7b6s0Hydm/6bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753289243; c=relaxed/simple;
-	bh=Z6vG8MGgVxWwLfr8GOJ9M9wDfu96wcG3fGhvFxzOBxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLuPegEaHLZSJxsyttMi1hG0oEVjBmkaAVW9RhPTmCE3axMEDYE3iwtoCJPEU9fT9HP/RJidqFY/ijQljcYAmqGK7H7IjMa4MGZKcyN2C2im2mcbb/WyM9cIfbh65Tjmd4OamQXJtx/eGdbn2nhogKDDYVvia7o1++lmL2k/ICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8k8wR8+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48783C4CEE7;
-	Wed, 23 Jul 2025 16:47:22 +0000 (UTC)
+	s=arc-20240116; t=1753289297; c=relaxed/simple;
+	bh=6og1F5AXpjRocJyy+4WO22U+A8y5olui5xNNaMBN3jY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCSQEDWtfHc9twc23k6eqdAXHHrKfN2JcQisVgRQZlaThek1UV0aJCYPddxUtPfCZ24ZHbmgqFw/E6JjH8956z7feGa8cRIN0Q6tPs5vAt0ldqLlOGA5EVWJoF4t+Lizu0JgRNwpJaO8a3i1gMZ2/1/woNCX1ubOHQCRuNCnE8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jv3RqxoD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84FAC4CEE7;
+	Wed, 23 Jul 2025 16:48:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753289243;
-	bh=Z6vG8MGgVxWwLfr8GOJ9M9wDfu96wcG3fGhvFxzOBxo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I8k8wR8+UgihugNbKZ3wgiu9PcZ1ob5FEv2U3EtH339yOQtmmAysD1R4YCZALeHUp
-	 JTEFXIj67O9SZ4AfCG8Z2ldmoqocxqgM71QzIo2TOv4eZoJhElJxldnPxU5ZgrWg4R
-	 RbjUqY5DDn9UfY3VN4bbidB6LPEtvXnpamj7cKSgH42I4Ma+p75dBm6kI1zc5qX/XC
-	 4GFN5WyCQGZIPJyCpEFd8WG7aqsVLXCGMXhCErhV8XuLhPQIvr3r8FfcBEN2UYv0yZ
-	 LG00+UytB+64df/JtZfslYc0IjGMw6LcYdAIzddvSdtETSN5ndZ5qznoQBIYnfnzgg
-	 DJpxfvWCtonXg==
-Date: Wed, 23 Jul 2025 09:47:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: dvyukov@google.com, edumazet@google.com,
- linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, syzbot@lists.linux.dev,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot ci] Re: net: Revert tx queue length on partial failure
- in dev_qdisc_change_tx_queue_len()
-Message-ID: <20250723094720.3e41b6ed@kernel.org>
-In-Reply-To: <20250723162547.1395048-1-nogikh@google.com>
-References: <20250722100743.38914e9a@kernel.org>
-	<20250723162547.1395048-1-nogikh@google.com>
+	s=k20201202; t=1753289297;
+	bh=6og1F5AXpjRocJyy+4WO22U+A8y5olui5xNNaMBN3jY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jv3RqxoDsGqWravBXS4M5h4cnWzMjdiPcvHj6GkAWXDte6hT/Kaqk0fRjVVhp7VUK
+	 yQHA/QsffrObTaoKQFvd4S7raIjCK38ZOtouGtWVWe4waChA554szHq0Qr87O8+QDG
+	 2Wocksxp2tABLQV7VV4gvXuFnh0avKUIzB+Awe9UQ9Hn067UKU5Gv6gH6L0Y+6xb8j
+	 RpZAzEESGBVF85r7JBivbQsZo2DmECyaVEXUySPTCV13HV36l8cwWNuEwpLlV7tEiB
+	 s0AbBC0Hx8HCjiz1YohGr/HehFySrLrfMm/BTgHg5dFAgzs3ALDi6X3fHFQsTNMxsE
+	 f4Mf0i3dA/wGw==
+Date: Wed, 23 Jul 2025 13:48:14 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v7 01/16] perf python: Add more exceptions on error paths
+Message-ID: <aIESTp8h0sIaD0PZ@x1>
+References: <20250714164405.111477-1-irogers@google.com>
+ <20250714164405.111477-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250714164405.111477-2-irogers@google.com>
 
-On Wed, 23 Jul 2025 18:25:47 +0200 Aleksandr Nogikh wrote:
-> On Tue, 22 Jul 2025 Jakub Kicinski wrote:
-> > I think this email is missing a References: header ?
-> > It doesn't get threaded properly.  
+On Mon, Jul 14, 2025 at 09:43:49AM -0700, Ian Rogers wrote:
+> Returning NULL will cause the python interpreter to fail but not
+> report an error. If none wants to be returned then Py_None needs
+> returning. Set the error for the cases returning NULL so that more
+> meaningful interpreter behavior is had.
 > 
-> Yes, that was indeed a bug that has now been fixed, thanks for
-> reaching out!
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/python.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 2f28f71325a8..02544387f39d 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -475,13 +475,19 @@ static PyObject *pyrf_event__new(const union perf_event *event)
+>  	if ((event->header.type < PERF_RECORD_MMAP ||
+>  	     event->header.type > PERF_RECORD_SAMPLE) &&
+>  	    !(event->header.type == PERF_RECORD_SWITCH ||
+> -	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE))
+> +	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE)){
 
-Thank you!
+Nit, missing space before {
+
+> +		PyErr_Format(PyExc_TypeError, "Unexpected header type %u",
+> +			     event->header.type);
+>  		return NULL;
+> +	}
+>  
+>  	// FIXME this better be dynamic or we need to parse everything
+>  	// before calling perf_mmap__consume(), including tracepoint fields.
+> -	if (sizeof(pevent->event) < event->header.size)
+> +	if (sizeof(pevent->event) < event->header.size) {
+> +		PyErr_Format(PyExc_TypeError, "Unexpected event version: %zd < %u",
+> +			     sizeof(pevent->event), event->header.size);
+>  		return NULL;
+> +	}
+>  
+>  	ptype = pyrf_event__type[event->header.type];
+>  	pevent = PyObject_New(struct pyrf_event, ptype);
+> @@ -1199,8 +1205,10 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
+>  		return NULL;
+>  
+>  	md = get_md(evlist, cpu);
+> -	if (!md)
+> +	if (!md) {
+> +		PyErr_Format(PyExc_TypeError, "Unknown CPU '%d'", cpu);
+>  		return NULL;
+> +	}
+>  
+>  	if (perf_mmap__read_init(&md->core) < 0)
+>  		goto end;
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
 
