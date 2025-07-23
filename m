@@ -1,133 +1,177 @@
-Return-Path: <linux-kernel+bounces-742071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17AEB0ECC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC79B0ECC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CF84E4B89
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1736581919
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072C6279DAF;
-	Wed, 23 Jul 2025 08:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA0B279DB5;
+	Wed, 23 Jul 2025 08:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uz5X5GNB"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IQUIsMIt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E85FA95E;
-	Wed, 23 Jul 2025 08:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FE027F75F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258017; cv=none; b=OR8SnWl8IJodf0tuiGBcEOtieRZB5CGcEUeRUeMULHSLrSMhUbwu19gWIc0OXTOnrSYv5YhlP9U754LTSdbb92GpCQ2sFG973azYBamWTWsY54IuUMyRw6getgfM4RtEI5xVsFpBVSrkbJdzYM69sD+wqvm+gA8jII/TX8z8nUE=
+	t=1753258023; cv=none; b=A3shJDcGq8sUfKEF3xSoWJVQxo5wypgiXPA8hJ4Syv4PI00eOc9D7lVZfAF3qTDxeuPdJ33qqM9BHpDKUbQbQE7kn6+BtGHHn+nR4Jv4OedXlWn/sRHUYKiBXQ9aJEJI1YiGsQIN0kv4vWPazA+fTAvBauPljEcDaWUW8+ZL9D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258017; c=relaxed/simple;
-	bh=eReIPFAY2mPW2djMpM8mJndQ9Ys2wnTjSj4ff9CRYo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r0EsLtjNRwPYLD/CnkZ7PkpUV/VuYxQyvVImHkbBpQ8ga9/7IEBbfDpXSUzjVkIkog7l5aM/jtXMGup5TCLDwFj4A660R8tTcUZ7/kNTZHPqNj4ZDCq/zrFiKnBud69iOjVVHEUkWSCtZ3fA2HzXel0ZlXxzgVzvJsDIG4Q/x4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uz5X5GNB; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso3690004f8f.2;
-        Wed, 23 Jul 2025 01:06:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753258014; x=1753862814; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x4hGp9dWQqyiag09FeN6D2BgolKXHwVBXU9K7yKNplY=;
-        b=Uz5X5GNBybJNHmdxnrapW5knFom3KPzRV4g6wEEzoHHX4VgMiBd84kUj7OxO5Wdh+A
-         ghOv/ZDOQipdhMvtrP8HeiGBArtgTiIXlOjQHP8XkhrW6nSdWKUsz/RIdnFTDbQekan3
-         8Bxdyl4sH82WDU+7S60KzyfgywtlKPcdd++DNRZ/WJJYsXJ1tMmjBGbWwWkyHLdF+sXv
-         o37o6nKQJMPD3H3dLn5jj7Tu2FcpUlnjkNBR7Z0OBa6mLkkhipUxX3PCadJsl+Ih6dib
-         +RypCmnx9+LgxsKBQkIUU8O5MDdU8uPIHt1kFsnwfMMX0TyOkn8S8AEbcfa2nzw0fAbd
-         IZNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753258014; x=1753862814;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x4hGp9dWQqyiag09FeN6D2BgolKXHwVBXU9K7yKNplY=;
-        b=IxvguqfELj6m5TFjBBypP8SfhjG85uNSOxCp/51KnqYjttKu30P/z+6qPzIh/Adqud
-         ZdZTXQDaMvVaJ7QcHcZX/3bLwUMRNe3+QamytU8JTSwyrReGhODzFfvOsfehy/NRzKA/
-         9kD4p7DpCM1FoNRwkMbkM8Fxc7MzbKbnXIOv1t/RCIU6fJy5uSlRecXJgjnmyPfdAra2
-         xbxcfhwCVOtQlGLj7THtBvTShQi3d6fRmE1iUJlbZVbCfQBF8mtltVNktr3wv/XLtd4H
-         bKv/oOVapByBCx9IEgihLfKfNK6MjwJUkxbH7muXk37K42st5Uroc79FF9wFoTE57PLX
-         rdUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXlIKJ4XMi18/tplI1au+SRXBT1le4EifAv/4RDsQM0db/Z2PARmNErau5p1N5h7/ggp+LIk7PD3IWIgpZ@vger.kernel.org, AJvYcCXapBaf0TBwIrgzN+RucrtJzkrWag+t8IApfElhSe+LUFvd++a4rx74957axoHv2GqypjvJ8gozBev4bCKr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxmMn+7n89evSSLFDyKpKZRBTILdsdu8UqUQiwZTcCTsN82q5D
-	ZJS1ukc0flLmJsT8qwVBeQfa2Yi8FHkLasaT8oWd2pD7oEvZGj/jx5cP
-X-Gm-Gg: ASbGncvEW+8i8Ujv4qQ0wq6YXX6Qv2m0l6m6ntIzKO5J4AbX942Vw16BrmAViHNoanC
-	FONq573abyA3VhcDWw/xxqjTaUu8I9OtvWN5d4hFs40/Bj++uubt28V6PdIxxO0O2NKnp3I+E1E
-	Qa5zLJ3Ewj/mVl0a+l5hnu7FBHXuLReXZIdsQ5k7kt80/wl7QHkXD7oJicGnzj8OymODr3mMabw
-	u2qmU99RLGsu4ncJTwa0RnYAhdMOjZXdkBPLO03PHh1y5Lrxky8RFpNmYQ5lKZX+q61NB459rcX
-	Ik6Ae29jpI9wGPqr862vhwL3UiiaVk2xZ1smOCDMGyeFehoS1gTF75M/M1zsX7839ReUL+lF4PY
-	B36x5RflDTdf83rItNCSi7oLLzEvB1jkcqCBxpdWp6NKJD/KuhN4=
-X-Google-Smtp-Source: AGHT+IEib0qqC+Z0x4lzasRoTtea/6+PQdl+D0+gVXii4BSRmjOi2y+wPGZYjjKAmHCqtrEeRr7YUA==
-X-Received: by 2002:a05:6000:40df:b0:3a4:eef5:dece with SMTP id ffacd0b85a97d-3b768f163a7mr1507259f8f.35.1753258013571;
-        Wed, 23 Jul 2025 01:06:53 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca315basm15560899f8f.39.2025.07.23.01.06.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 01:06:52 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Wed, 23 Jul 2025 10:06:43 +0200
-Subject: [PATCH] spi: spi-qpic-snand: don't hardcode ECC steps
+	s=arc-20240116; t=1753258023; c=relaxed/simple;
+	bh=8aecLTAzLm8TXTXNAqv86bF9B9YQxFXwXcdqeERA7Z8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=afVja7lExLUuliatICLe8ZXzWTXStbqDJsszmBrs/cWLJtmjLho7IVIh1qUFkNgC6DOO3dxYxeI2t9rZuHf7A9gnB3wB0wbwDwQHKFVHWl8HkCSNOvibbQI7x/3WdSfNUebjPmg4wwS+E0J11eN++JwFlCGr+dNKpVRgVb41trQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IQUIsMIt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8819C66;
+	Wed, 23 Jul 2025 10:06:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753257980;
+	bh=8aecLTAzLm8TXTXNAqv86bF9B9YQxFXwXcdqeERA7Z8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IQUIsMItpWJDPqoFjfn9sUxnY1GzstPIpRxIB/NkzRo20ERg3SMuBDJt9f0YYWkLD
+	 6HQw7ZNE4kFZfglV9tpgu0R1ogEgZm5zqjEd3rBJFL4FEun+KOKypWHJIbBGNUyHOz
+	 lxXVmolGm76zDlpzHk7ynhhTE3OUQQGR0tFjrLug=
+Message-ID: <d12fc642-bb6b-4d97-9660-f50d2dad1202@ideasonboard.com>
+Date: Wed, 23 Jul 2025 11:06:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] phy: cadence: cdns-dphy: Update calibration wait
+ time for startup state machine
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: aradhya.bhatia@linux.dev, s-jain1@ti.com, r-donadkar@ti.com,
+ j-choudhary@ti.com, a0512644@ti.com, vkoul@kernel.org, kishon@kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250704125915.1224738-1-devarsht@ti.com>
+ <20250704125915.1224738-3-devarsht@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
+ wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
+ Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
+ eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
+ LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
+ G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
+ DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
+ 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
+ rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
+ Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
+ aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
+ ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
+ PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
+ VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
+ 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
+ uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
+ R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
+ sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
+ Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
+ PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
+ dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
+ qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
+ hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
+ DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
+ KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
+ 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
+ xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
+ UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
+ /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
+ 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
+ 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
+ mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
+ 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
+ suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
+ xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
+ m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
+ CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
+ CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
+ 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
+ ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
+ yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
+ 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
+In-Reply-To: <20250704125915.1224738-3-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-qpic-snand-fix-steps-v1-1-d800695dde4c@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABKYgGgC/x2MQQqAIBAAvxJ7biGNkvpKdDDdai9mbkQg/T3pO
- AwzGYQSk8BYZUh0s/ARCqi6ArfbsBGyLwy60V1jdItnZIcSbPC48oNyURT0/bBoZ0yvnIeSxkR
- F/ttpft8PSRevKGYAAAA=
-X-Change-ID: 20250723-qpic-snand-fix-steps-d69b2c7761cd
-To: Mark Brown <broonie@kernel.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
 
-NAND devices with different page sizes requires different number
-of ECC steps, yet the qcom_spi_ecc_init_ctx_pipelined() function
-sets 4 steps in 'ecc_cfg' unconditionally.
+Hi,
 
-The correct number of the steps is calculated earlier in the
-function already, so use that instead of the hardcoded value.
+On 04/07/2025 15:59, Devarsh Thakkar wrote:
+> Do read-modify-write so that we re-use the characterized reset value as
+> specified in TRM [1] to program calibration wait time which defines number
+> of cycles to wait for after startup state machine is in bandgap enable
+> state.
+> 
+> This fixes PLL lock timeout error faced while using RPi DSI Panel on TI's
+> AM62L and J721E SoC since earlier calibration wait time was getting
+> overwritten to zero value thus failing the PLL to lockup and causing
+> timeout.
+> 
+> [1] AM62P TRM (Section 14.8.6.3.2.1.1 DPHY_TX_DPHYTX_CMN0_CMN_DIG_TBIT2):
+> Link: https://www.ti.com/lit/pdf/spruj83
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7a343c8bf4b5 ("phy: Add Cadence D-PHY support")
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> ---
+> V4: No change
+> V3:
+> - Do read-modify-write to preserve reset value for calibration wait
+>   time
+> V2:
+> Introduced this as as separate patch
+> 
+>  drivers/phy/cadence/cdns-dphy.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
+> index da8de0a9d086..24a25606996c 100644
+> --- a/drivers/phy/cadence/cdns-dphy.c
+> +++ b/drivers/phy/cadence/cdns-dphy.c
+> @@ -30,6 +30,7 @@
+>  
+>  #define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
+>  #define DPHY_CMN_SSM_EN			BIT(0)
+> +#define DPHY_CMN_SSM_CAL_WAIT_TIME	GENMASK(8, 1)
+>  #define DPHY_CMN_TX_MODE_EN		BIT(9)
+>  
+>  #define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
+> @@ -410,7 +411,8 @@ static int cdns_dphy_power_on(struct phy *phy)
+>  	writel(reg, dphy->regs + DPHY_BAND_CFG);
+>  
+>  	/* Start TX state machine. */
+> -	writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+> +	reg = readl(dphy->regs + DPHY_CMN_SSM);
+> +	writel((reg & DPHY_CMN_SSM_CAL_WAIT_TIME) | DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+>  	       dphy->regs + DPHY_CMN_SSM);
 
-Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/spi/spi-qpic-snand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's not how you do read-modify-write. You should first read the
+register, then clear the fields you want to set/clear, then set the
+fields, then write.
 
-diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-index c49bf7079808a1933c8a630e0b07b5fd54dfddb6..8fb8895bc9b54f2095981c975c1f412045a5db74 100644
---- a/drivers/spi/spi-qpic-snand.c
-+++ b/drivers/spi/spi-qpic-snand.c
-@@ -313,7 +313,7 @@ static int qcom_spi_ecc_init_ctx_pipelined(struct nand_device *nand)
- 	ecc_cfg->bch_enabled = true;
- 	ecc_cfg->bytes = ecc_cfg->ecc_bytes_hw + ecc_cfg->spare_bytes + ecc_cfg->bbm_size;
- 
--	ecc_cfg->steps = 4;
-+	ecc_cfg->steps = cwperpage;
- 	ecc_cfg->cw_data = 516;
- 	ecc_cfg->cw_size = ecc_cfg->cw_data + ecc_cfg->bytes;
- 	bad_block_byte = mtd->writesize - ecc_cfg->cw_size * (cwperpage - 1) + 1;
+reg = readl(dphy->regs + DPHY_CMN_SSM, dphy->regs + DPHY_CMN_SSM);
+reg &= ~(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN)
+reg |= DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN;
+writel(reg, dphy->regs + DPHY_CMN_SSM);
 
----
-base-commit: 69e536c93242425fc65580b02d3f781a96403660
-change-id: 20250723-qpic-snand-fix-steps-d69b2c7761cd
+That's the general form, in this particular case the and-line is not
+necessary, of course.
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+There's also FIELD_MODIFY() (and related), but I'm not sure if I like
+them... Up to you.
+
+ Tomi
 
 
