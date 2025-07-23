@@ -1,174 +1,112 @@
-Return-Path: <linux-kernel+bounces-742232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21664B0EEEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F092B0EF41
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E08E1C83D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E96963D4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A08928B7DE;
-	Wed, 23 Jul 2025 09:55:32 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075DA28AB11;
+	Wed, 23 Jul 2025 10:04:28 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA69A281351;
-	Wed, 23 Jul 2025 09:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374EC15C158
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264531; cv=none; b=KuNjCrx4AlB4IbyvwnCLwEd709mVPcnPRqREwnClHIzsKrpkg9VNjKTfOWb+Wzb7XsdZtdE1rGw4IpEi3HIThrZdNJdW9Kf4P4X3WWTjDvo5nTWtm1baAhJm88iwJPNKmdit7k0OYumrwKmEuVj8L94Qj9kTPVJ4FoVoOSQL+Dw=
+	t=1753265067; cv=none; b=E6LNGaSGND7Ujv/OyNGYAncg929nCwTbfxRgk2FJm1XHBGKvbBgTPkNtBvWBGoWkfCSM/NHO52bPSJpfGDtlKwXA2Ivl1grvuEyMAPjC5mrm7N/5lLb0FS88qyP6XVxy9coHTQIEEoGwz17JbQI4kd3eN6V5UfZox59GSk2Sz/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264531; c=relaxed/simple;
-	bh=uMba/ezhAC8r5pyu8vjGDcLH/UWyJZSzahC5FZcfZPY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=inEgSNQYBUWXnLfOnEVi6EPIqnBpWV2gm+iLcG+xlDJUwHKZO1VS7TkM9Js2PrvMwW3Aq0bO7rTdr055c/jbX1KD+IQVSdMUHVFigy9PFdFgi/Q+Kc6Y1dVXQbeKWiRBA8ElN74rkgYzfHjWTmyBAmSO27dz2U9CrJYFezKSzjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 749D91A1640;
-	Wed, 23 Jul 2025 11:55:22 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 37DB61A05FA;
-	Wed, 23 Jul 2025 11:55:22 +0200 (CEST)
-Received: from mega.am.freescale.net (mega.ap.freescale.net [10.192.208.232])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1B9AD1800079;
-	Wed, 23 Jul 2025 17:55:20 +0800 (+08)
-From: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-To: davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kuba@kernel.org,
-	n.zhandarovich@fintech.ru,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	wojciech.drewek@intel.com,
-	Arvid.Brodin@xdin.com,
-	horms@kernel.org,
-	lukma@denx.de,
-	m-karicheri2@ti.com,
-	xiaoliang.yang_1@nxp.com,
-	vladimir.oltean@nxp.com
-Subject: [PATCH net-next] net: hsr: create an API to get hsr port type
-Date: Wed, 23 Jul 2025 18:06:05 +0800
-Message-Id: <20250723100605.23860-1-xiaoliang.yang_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1753265067; c=relaxed/simple;
+	bh=bE0yIo25baacy16U6DjEzxsyFcbj3tsm0i+HCiWRQ7c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q+2LMpgjzRkiYOprFiDoupBSkNJPcSSL4vUIJuO2TiNq0sOVc6sYuQkIEg9Wa7na/b3+2/0kQUx+iF8QQfqo8SYAPkcrSvU2IAp3QRIWPNVS7/BLfLhHU4v8TC5q7n5EkIqMQgPQ67l8N5eEF8gb5ChuPm4CdlXX4xXqXSlDjrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c24b196cbso437926039f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:04:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753265065; x=1753869865;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FKDNn80UNdegqD35YXNlsiMYgRpP2DwQxC56oqDnj7o=;
+        b=UFwVUofuf/jyvMugpXySQ6axGI4x6FmOfO9KucWH/tIeXYtq5qZsXReRLrqOUNb3nL
+         lrNmwD1JPYRA3vODHlDPGrO5hnYLyZU0/6XAaJsEbfAp1N6Ib+F1+NWcVWMh8tgX7ilX
+         +D7vbGtICnZjjZEUTFuzob+4NXcqv7MqpJHFuSDWCP9eXtifPbe3Ro5/bi86lhsMi5Ps
+         iLTCOyZdCl4+GLwtqfakVptx/j1BfEGBa7MCcLaEwBC/MiSFEUW4y1pliEFg+KyN/l23
+         QRMGp3VyjaAs5hnmxsThMvbBAp2E3OioKgU6Q2JgRRjRbw6sYWkl3JMBVb2A7I1rBIMX
+         MVMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeIbI7bDzYZfkJgOKK7Pq4w8qFMdlB3KDuh9xFFK5atOKt0AWXES//k/RhxvJamY5/Zk6IPAoF9rTJgYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykCj3d4F0cuXJlJpuJHEcb5wQlKPBEpmRQ7UlMw0e9aPyhgKLN
+	CWvzeFHj1saiL0icAngmZ4zsQV+T+zTXjOiPTf29pPZ1ZWC9QczQ/yF5znCSdmVJ+ghqUrdlxlx
+	8SV/MuhvMkRZ5zdoWEg5CHhqd1G4gGUr5IlBuKU5kG+jNdjXrn3bwsZ53GBI=
+X-Google-Smtp-Source: AGHT+IGmXIzvjUkm1ra6c1AN/IRIKqaj5QTggQN7vkr0icouMduAxcGeWv8Xt7bE2QI7R7gxf42uXoamrSrPN917MyEdzqndfxQS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:1689:b0:867:6680:cfd with SMTP id
+ ca18e2360f4ac-87c64f87d98mr424509839f.1.1753265065372; Wed, 23 Jul 2025
+ 03:04:25 -0700 (PDT)
+Date: Wed, 23 Jul 2025 03:04:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6880b3a9.050a0220.40ccf.0002.GAE@google.com>
+Subject: [syzbot] Monthly kernfs report (Jul 2025)
+From: syzbot <syzbot+listbd47593dbaa9c88b91d7@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If a switch device has HSR hardware ability and HSR configuration
-offload to hardware. The device driver needs to get the HSR port type
-when joining the port to HSR. Different port types require different
-settings for the hardware, like HSR_PT_SLAVE_A, HSR_PT_SLAVE_B, and
-HSR_PT_INTERLINK. Create the API hsr_get_port_type() and export it.
+Hello kernfs maintainers/developers,
 
-When the hsr_get_port_type() is called in the device driver, if the port
-can be found in the HSR port list, the HSR port type can be obtained.
-Therefore, before calling the device driver, we need to first add the
-hsr_port to the HSR port list.
+This is a 31-day syzbot report for the kernfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kernfs
 
-Signed-off-by: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 20 issues are still open and 23 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  422     Yes   WARNING in kernfs_get (5)
+                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
+<2>  422     Yes   WARNING in kernfs_remove_by_name_ns (3)
+                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
+<3>  353     No    possible deadlock in lookup_slow (3)
+                   https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
+<4>  113     Yes   INFO: task hung in kernfs_dop_revalidate (4)
+                   https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
+<5>  68      No    possible deadlock in kernfs_fop_write_iter (2)
+                   https://syzkaller.appspot.com/bug?extid=1cfd86253864f61b533e
+<6>  33      Yes   WARNING in kernfs_new_node (3)
+                   https://syzkaller.appspot.com/bug?extid=306212936b13e520679d
+<7>  32      Yes   possible deadlock in walk_component (4)
+                   https://syzkaller.appspot.com/bug?extid=b4567a8b2d2ad5f9dd06
+<8>  25      Yes   INFO: task hung in kernfs_remove_by_name_ns (2)
+                   https://syzkaller.appspot.com/bug?extid=6d5664213a6db9a5a72c
+<9>  22      Yes   possible deadlock in kernfs_seq_start
+                   https://syzkaller.appspot.com/bug?extid=4c493dcd5a68168a94b2
+<10> 10      Yes   INFO: task hung in pipe_write (6)
+                   https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
+
 ---
- include/linux/if_hsr.h |  8 ++++++++
- net/hsr/hsr_device.c   | 20 ++++++++++++++++++++
- net/hsr/hsr_slave.c    |  7 ++++---
- 3 files changed, 32 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/if_hsr.h b/include/linux/if_hsr.h
-index d7941fd88032..4d6452ca2ac8 100644
---- a/include/linux/if_hsr.h
-+++ b/include/linux/if_hsr.h
-@@ -43,6 +43,8 @@ extern bool is_hsr_master(struct net_device *dev);
- extern int hsr_get_version(struct net_device *dev, enum hsr_version *ver);
- struct net_device *hsr_get_port_ndev(struct net_device *ndev,
- 				     enum hsr_port_type pt);
-+extern int hsr_get_port_type(struct net_device *hsr_dev, struct net_device *dev,
-+			     enum hsr_port_type *type);
- #else
- static inline bool is_hsr_master(struct net_device *dev)
- {
-@@ -59,6 +61,12 @@ static inline struct net_device *hsr_get_port_ndev(struct net_device *ndev,
- {
- 	return ERR_PTR(-EINVAL);
- }
-+
-+static inline int hsr_get_port_type(struct net_device *hsr_dev, struct net_device *dev,
-+				    enum hsr_port_type *type)
-+{
-+	return -EINVAL;
-+}
- #endif /* CONFIG_HSR */
- 
- #endif /*_LINUX_IF_HSR_H_*/
-diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
-index 88657255fec1..d4bea847527c 100644
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -679,6 +679,26 @@ struct net_device *hsr_get_port_ndev(struct net_device *ndev,
- }
- EXPORT_SYMBOL(hsr_get_port_ndev);
- 
-+/* Get hsr port type, return -EINVAL if not get.
-+ */
-+int hsr_get_port_type(struct net_device *hsr_dev, struct net_device *dev, enum hsr_port_type *type)
-+{
-+	struct hsr_priv *hsr;
-+	struct hsr_port *port;
-+
-+	hsr = netdev_priv(hsr_dev);
-+
-+	hsr_for_each_port(hsr, port) {
-+		if (port->dev == dev) {
-+			*type = port->type;
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL(hsr_get_port_type);
-+
- /* Default multicast address for HSR Supervision frames */
- static const unsigned char def_multicast_addr[ETH_ALEN] __aligned(2) = {
- 	0x01, 0x15, 0x4e, 0x00, 0x01, 0x00
-diff --git a/net/hsr/hsr_slave.c b/net/hsr/hsr_slave.c
-index b87b6a6fe070..e11ab1ed3320 100644
---- a/net/hsr/hsr_slave.c
-+++ b/net/hsr/hsr_slave.c
-@@ -198,14 +198,14 @@ int hsr_add_port(struct hsr_priv *hsr, struct net_device *dev,
- 	port->type = type;
- 	ether_addr_copy(port->original_macaddress, dev->dev_addr);
- 
-+	list_add_tail_rcu(&port->port_list, &hsr->ports);
-+
- 	if (type != HSR_PT_MASTER) {
- 		res = hsr_portdev_setup(hsr, dev, port, extack);
- 		if (res)
- 			goto fail_dev_setup;
- 	}
- 
--	list_add_tail_rcu(&port->port_list, &hsr->ports);
--
- 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
- 	netdev_update_features(master->dev);
- 	dev_set_mtu(master->dev, hsr_get_max_mtu(hsr));
-@@ -213,7 +213,8 @@ int hsr_add_port(struct hsr_priv *hsr, struct net_device *dev,
- 	return 0;
- 
- fail_dev_setup:
--	kfree(port);
-+	list_del_rcu(&port->port_list);
-+	kfree_rcu(port, rcu);
- 	return res;
- }
- 
--- 
-2.17.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
