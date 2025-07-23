@@ -1,166 +1,204 @@
-Return-Path: <linux-kernel+bounces-743215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2489BB0FC04
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:14:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF23FB0FC05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEF04E0FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F261AA25F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004342586EA;
-	Wed, 23 Jul 2025 21:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D6525A327;
+	Wed, 23 Jul 2025 21:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UWmsSVtM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xZHfY5r+"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706921E7C1C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 21:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC05259CA5
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 21:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753305242; cv=none; b=aERtNMeM9N36sSH1OmVEI0LRJ2lLHHc5eDPfaBmc8Uw0W7e4PR5gSYblVGf4ExwN/NszOMqNk3MfV73NxUdSc+ZaawLam7UQnCAH2zTHRMqJ9Mv3arEsHkxAngrnIA6rrgHO5bDoLE1xL38ggZ4w75mNcaD6g3xvMnpYcSzqolA=
+	t=1753305322; cv=none; b=b4NZdZVGl8Qld6v8uSxKOrEnzvZlgvQfiT5Lj0blsl2i1KTZfEoOwfckARjZDmUOnIm4G9/xT5+LqvgE7XqWbYEIUBbW+ii81JtbwXNXftbuKdYqRhC3GXHpcKS5P6gOjrWQPFeNMx52qURVs039RwZJgyZauEY+pvctOT8bQRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753305242; c=relaxed/simple;
-	bh=w8IGsQxBfxh3nbHiAy+GRvDG7bpNglYahwAaEeLwQQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O5c9riP/lPCw/B87PBujBpmhguSZRZBq0a4Yd1m08LUekYE3xy5iMnYqkSvxPWCr1S4kFSTanRc04w8FUglzeu8xZRG+RPKij9JYF3CFos7Gzdd9mnZN6fUdiNepahSvJGU7woDc+SReNLX1posH0kPRlrmdAz/OB2S+Nx8uAns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UWmsSVtM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753305239;
+	s=arc-20240116; t=1753305322; c=relaxed/simple;
+	bh=qbkCdF7EWwl/tqL5TKoBNdBvNskXvLKwwBDNfbuDA+k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=EK2j0V52QQfIpj6CNYuMYrTMc1RkIcbGFtluwCuMtZEyDnr3OWaG6cX2Haxr/6GammIVcxXChdb/ErY3AN4lOzdKx/HSZvbKgFCY3Fkt2tpf/2bFcWeZCOd8bJxRWEyosTnUuPHZ0iJr9SbE6M91EGspHVpXZmuoRwhwxB/W6yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xZHfY5r+; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753305308;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KEFFKCC6CirY6Qu+LFOWn/4wjxHopYc9Cu/eHLmtLrk=;
-	b=UWmsSVtMTjyVDXMa0TKoOm/8we+PvdI57HvYwhjApAB2RiDlgQX5kzL7G4Io4SCyDhBOoR
-	bCEUWuj4q26sbaPh88P1pyhn8KDWeo7TEo5PzfRdgJ/tIsJQQYWsTnviGTO3maUASC9Ys8
-	7nMGdpbAxTq4Ejnh6gGKUaqbcR4Hhhc=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-296-2I-nRuTrNTms_MNzp7xiEQ-1; Wed, 23 Jul 2025 17:13:58 -0400
-X-MC-Unique: 2I-nRuTrNTms_MNzp7xiEQ-1
-X-Mimecast-MFC-AGG-ID: 2I-nRuTrNTms_MNzp7xiEQ_1753305237
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-70e86a2a1b8so6483127b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:13:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753305237; x=1753910037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KEFFKCC6CirY6Qu+LFOWn/4wjxHopYc9Cu/eHLmtLrk=;
-        b=RP7X6zQZNz7EWzs0mfp2gh8sFGDwoABZv0pl15AXJXng8ten/tJTbiDcmxj4SaW6jF
-         oED3EIRNi7Z1ty3qvZD0NFi4eucWfJDEMWVi5GvQS1evX/zpGgigPGpr/zycijuRWo8E
-         sZcim/KvyJau3zYQaXvGZa0SdRfbEuwv5FnBZ8UVTs4A7SqWPN/rAuS22cJuWNwYfG6C
-         BTbiui5jhkd4HCJV9sJSoH4CzS36fvCKPafDq5tfUNWW7aEZcBf4kesxYe3+SsibkZBo
-         SJ5kerFZ8PoVKeebpxTj7e0TOtwREMD9zu9l7dlbUwUbe6gvNYzNSyoXTk7njTFbq843
-         VoSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC+HVFFynVGtBq66YJO7eOnVyw5ZFddOe+Xx8tzCEYg+jh7Z+NJWyLL3ZoSKhaSJXMFbjg8NPcpJISZvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmTh976Unlrc18P8zmOAR1cFM2qfrDQSIqvR8AjQ3RP4fj5sQ5
-	JfVWR93CtHYHAyjy6mKrDryF4HyQ/hg/w6Z0tL7pGfOba6wKmwOnN/dLZ8+EW7dmbDhZUGljpO+
-	mc3ONn1H2efS/mPpIyJP3lB6nL2r6n76dKP/2C2zHuH99kY9hAdahADUjbIyqF2E4TlDTgdJPZh
-	hOwtK8XH9ROQuBN3jg5+vhaRF7KkWMTIDFWGqEBD1KRzVM2+ayVgA=
-X-Gm-Gg: ASbGnct4XcO1mdjORTXbtm3A9L99Niwte4sgmLdsLq67IqRe5WXzqKO+9iGJX8QLUuI
-	sGCSMgmhHG1oInDUPKiv/oA7yLLvdpsA6QSslz7Yd55hwSs82mbvc4XAjzOUjSIG8xrtaoD9Gf9
-	Ujq/w0fi815y5as4MydA9Gc4g=
-X-Received: by 2002:a05:690c:600c:b0:710:f39f:a2bc with SMTP id 00721157ae682-719b4208ab4mr60589787b3.8.1753305236961;
-        Wed, 23 Jul 2025 14:13:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHKu4d3onHAb7X8LWAPu0O+WUZ/aYhsMpnRlh9HgSTUlujJWY4TnCn/IV7CVGxpS2q71+P/Xaq3BIZIvRa+hU=
-X-Received: by 2002:a05:690c:600c:b0:710:f39f:a2bc with SMTP id
- 00721157ae682-719b4208ab4mr60589447b3.8.1753305236584; Wed, 23 Jul 2025
- 14:13:56 -0700 (PDT)
+	bh=K9I+CLZgNY4gnwsc75t+pkIuW17N0SFWdzhX6a32934=;
+	b=xZHfY5r+QbNzSQe7zq8+lBpixZY+b/xtIOYktc8ga1VO1k9l0RZmK1KDuKLsE4LdX2LdzN
+	eA5XyIhCPWrvgudpuWsDjoGrtxI8rcivshs/RwKGTMTZcAmUjttFSIjlckEbcdS/s8t00t
+	jnOaGjvoPkrIi4jvitskDhMpSD80edM=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250704040417.63826-1-dev.jain@arm.com>
-In-Reply-To: <20250704040417.63826-1-dev.jain@arm.com>
-From: Nico Pache <npache@redhat.com>
-Date: Wed, 23 Jul 2025 15:13:30 -0600
-X-Gm-Features: Ac12FXwzjaonSZ_XBVSayzqL2leWBYkEuOCfl6SDlX5nA8rmqz_ZykeRteEcbLw
-Message-ID: <CAA1CXcD2fRc-apfDi2UtQ-cvDwazxOu+bAVnKvVj2rgwdHedsA@mail.gmail.com>
-Subject: Re: [PATCH v3] khugepaged: Reduce race probability between migration
- and khugepaged
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, baohua@kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Oscar Salvador <osalvador@suse.de>, Anshuman Khandual <anshuman.khandual@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH net-next] tracing: ipv6: Replace deprecated strcpy() with
+ strscpy()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20250723143625.79ab2c16@batman.local.home>
+Date: Wed, 23 Jul 2025 14:15:02 -0700
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Guillaume Nault <gnault@redhat.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Ido Schimmel <idosch@nvidia.com>,
+ Petr Machata <petrm@nvidia.com>,
+ linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <AE36F453-DEAE-432C-9CDA-0D2DA875CDA2@linux.dev>
+References: <20250714075436.226197-2-thorsten.blum@linux.dev>
+ <20250714123825.6f0485c9@batman.local.home>
+ <F998F71D-1244-4154-BC5F-19201C23BDBE@linux.dev>
+ <20250723143625.79ab2c16@batman.local.home>
+To: Steven Rostedt <rostedt@goodmis.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 3, 2025 at 10:04=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
-> Suppose a folio is under migration, and khugepaged is also trying to
-> collapse it. collapse_pte_mapped_thp() will retrieve the folio from the
-> page cache via filemap_lock_folio(), thus taking a reference on the folio
-> and sleeping on the folio lock, since the lock is held by the migration
-> path. Migration will then fail in
-> __folio_migrate_mapping -> folio_ref_freeze. Reduce the probability of
-> such a race happening (leading to migration failure) by bailing out
-> if we detect a PMD is marked with a migration entry.
->
-> This fixes the migration-shared-anon-thp testcase failure on Apple M3.
->
-> Note that, this is not a "fix" since it only reduces the chance of
-> interference of khugepaged with migration, wherein both the kernel
-> functionalities are deemed "best-effort".
->
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+On 23. Jul 2025, at 11:36, Steven Rostedt wrote:
+> On Wed, 23 Jul 2025 10:46:12 -0700 Thorsten Blum wrote:
+>=20
+>> Your commit fca8300f68fe3 changed it from __dynamic_array() to =
+__array()
+>> and __string() seems to be just a special version of =
+__dynamic_array()
+>> with a length of -1.
+>>=20
+>> In the commit description you wrote: "Since the size of the name is =
+at
+>> most 16 bytes (defined by IFNAMSIZ), it is not worth spending the =
+effort
+>> to determine the size of the string."
+>=20
+> So the original had:
+>=20
+> 	__dynamic_array(char,  name,   IFNAMSIZ )
+>=20
+> Which is not dynamic at all. A dynamic_array (like __string) saves the
+> size in meta data within the event. So basically the above is wasting
+> bytes to save a fixed size. If you are going to use a dynamic array,
+> might as well make it dynamic!
+>=20
+> I was doing various clean ups back then so I didn't look too deeply
+> into this event when I made that change. I just saw the obvious waste
+> of space in the ring buffer.
+>=20
+> Just to explain it in more detail. A dynamic_array has in the ring =
+buffer:
+>=20
+> 	short offset;
+> 	short len;
+> 	[..]
+> 	char  name[len];
+>=20
+> That is, 4 bytes are used to know the size of the array and where in
+> the event it is located. Thus the __dynamic_array() usage basically =
+had:
+>=20
+> 	short offset;
+> 	short len =3D IFNAMSIZ;
+> 	[..]
+> 	char name[IFNAMSIZ];
+>=20
+> Why have the offset and length? with just __array(char, name, =
+IFNAMSIZ}
+> it would be just:
+>=20
+> 	char name[IFNAMSIZ];
+>=20
+> See why I changed it?
+>=20
+> Now, the change I'm suggesting now would make the __string() be =
+dynamic!
+>=20
+> 	short offset;
+> 	short len =3D strlen(res->nh && res->nh->fib_nh_dev ? =
+res->nh->fib_nh_dev->name : "-") + 1;
+> 	[..]
+> 	char name[len];
+>=20
+> As IFNAMSIZ is 16, and the above adds 4 bytes to the name, if the name
+> is less than 7 bytes or less, you save memory on the ring buffer.
+>=20
+> 	2 bytes: offset
+> 	2 bytes: len;
+> 	7 bytes + '\0'
+>=20
+> total: 12 bytes
+>=20
+> Note, if there's only one dynamic value, it is always at least 4 bytes =
+aligned.
 
-LGTM! This is a nice check to have here :)
+Thanks for the detailed explanation.
 
-Reviewed-by: Nico Pache <npache@redhat.com>
-> ---
->
-> v2->v3:
->  - Improve comment (David)
->
-> v1->v2:
->  - Remove SCAN_PMD_MIGRATION, merge into SCAN_PMD_MAPPED (David, Anshuman=
+I think the better change would be this then:
+
+diff --git a/include/trace/events/fib6.h b/include/trace/events/fib6.h
+index 8d22b2e98d48..3f95df1fd155 100644
+--- a/include/trace/events/fib6.h
++++ b/include/trace/events/fib6.h
+@@ -32,8 +32,9 @@ TRACE_EVENT(fib6_table_lookup,
+		__field(        u16,	dport		)
+		__field(        u8,	proto		)
+		__field(        u8,	rt_type		)
+-		__array(		char,	name,	IFNAMSIZ )
+-		__array(		__u8,	gw,	16	 )
++		__string(	name,	res->nh && res->nh->fib_nh_dev ?
++					res->nh->fib_nh_dev->name : "-"	=
 )
->  - Add a comment (Lorenzo)
->
-> v1:
->  - https://lore.kernel.org/all/20250630044837.4675-1-dev.jain@arm.com/
->
->  mm/khugepaged.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 1aa7ca67c756..a55fb1dcd224 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -941,6 +941,14 @@ static inline int check_pmd_state(pmd_t *pmd)
->
->         if (pmd_none(pmde))
->                 return SCAN_PMD_NONE;
-> +
-> +       /*
-> +        * The folio may be under migration when khugepaged is trying to
-> +        * collapse it. Migration success or failure will eventually end
-> +        * up with a present PMD mapping a folio again.
-> +        */
-> +       if (is_pmd_migration_entry(pmde))
-> +               return SCAN_PMD_MAPPED;
->         if (!pmd_present(pmde))
->                 return SCAN_PMD_NULL;
->         if (pmd_trans_huge(pmde))
-> --
-> 2.30.2
->
++		__array(	__u8,	gw,	16	)
+	),
+
+	TP_fast_assign(
+@@ -64,11 +65,8 @@ TRACE_EVENT(fib6_table_lookup,
+			__entry->dport =3D 0;
+		}
+
+-		if (res->nh && res->nh->fib_nh_dev) {
+-			strscpy(__entry->name, =
+res->nh->fib_nh_dev->name, IFNAMSIZ);
+-		} else {
+-			strcpy(__entry->name, "-");
+-		}
++		__assign_str(name);
++
+		if (res->f6i =3D=3D net->ipv6.fib6_null_entry) {
+			in6 =3D (struct in6_addr *)__entry->gw;
+			*in6 =3D in6addr_any;
+@@ -82,7 +80,7 @@ TRACE_EVENT(fib6_table_lookup,
+		  __entry->tb_id, __entry->oif, __entry->iif, =
+__entry->proto,
+		  __entry->src, __entry->sport, __entry->dst, =
+__entry->dport,
+		  __entry->flowlabel, __entry->tos, __entry->scope,
+-		  __entry->flags, __entry->name, __entry->gw, =
+__entry->err)
++		  __entry->flags, __get_str(name), __entry->gw, =
+__entry->err)
+);
+
+#endif /* _TRACE_FIB6_H */
+
+
+I'll submit a v2 if you agree that this is correct.
+
+Thanks,
+Thorsten
 
 
