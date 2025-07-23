@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-742863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E82B0F77D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:52:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427B3B0F77B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06BA2169372
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4693B7738
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568411E7C08;
-	Wed, 23 Jul 2025 15:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5928C1E500C;
+	Wed, 23 Jul 2025 15:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TqYIm+bS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPEe0uZc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B591D5CC6;
-	Wed, 23 Jul 2025 15:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2158A95C;
+	Wed, 23 Jul 2025 15:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285957; cv=none; b=ZIUG8vwpat0St+ty6OHsXNx9dZt1xM0+Fzwy5iDLSfHup1uoTO/OncTnndcopzt0zbWC+q14Zv8tEmLPGysCCNryBho/P5PO/v0ivdjN+nUkfBhBUbLccBPW7ZUxDn4gEe4upx6u8ikngnPZl/nH3lNdcsuP3yuiDPL+KL/4g5k=
+	t=1753285927; cv=none; b=MH7OirecaDo+BxVXq7uwlZMtu3d9OyddliaP2Av01n+1Ki0CSzaLn1gzNy8Ks320M/QuvyEPxZfxDKWTzCbl5qQdC3S5xt4695frwrSmfe6vLOPX900dAZqgyBWLsN5pbwfski0cQkl9qdC25fFxns8GzU5IXv1Wbkgtg/QfP+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285957; c=relaxed/simple;
-	bh=UOmggXegZ3I7AUbaO4eA1lGNTCljsX3RiPVrPuISBFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=habrGdQEuY3zNSdeNylVP9BV/9zogiBZCOC7NuqWIUx+ifwgFud0DmC8QMAa+lRif1z7xFPadiyj/7dXHvsbdR71FAGU3u+pq+TFlTRKOvaAgJE/23xNSkTyu8+eE5T8kiNiq4vvzq/XQAPa7A/OhS0Jk3lqx/2GJ5BGGwdqbq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TqYIm+bS; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753285956; x=1784821956;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UOmggXegZ3I7AUbaO4eA1lGNTCljsX3RiPVrPuISBFw=;
-  b=TqYIm+bSHEYpQkYvvFQNFnD06b2/KX2b7cuifzYVGr3AE88rQJN4LXyu
-   yX+bI4YUIUS785Ow8k3Bug9n2R9EWUYuEGppINFFRoZ3GOENF+mbIDv1c
-   eIb5jLG1Hp6KDIJJDbPvNQMv0NMlDYbGrkIBLkpEG/0R4yvZ0JOtLrguj
-   tGAFSJIQGW7LksLPQcvirkBEFJxGc440bElh0HsGkci3yj+cgcCkWfaLN
-   D0X9bDhlWl+ZfwaKJlDRdw5z4jfsZmB/WLlJwVyq5Ye5KOgOtFnndmod4
-   /T8BNv0Di5nV/OGz+Ne1LJ0Wf5fYIZtTnsbO90//VM5+FNmjaas5Qtj4e
-   w==;
-X-CSE-ConnectionGUID: FqjRJCERTF6epmP+Q92E1A==
-X-CSE-MsgGUID: njD2cZZ3TVSTLGhOHiRISg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66271350"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="66271350"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:52:34 -0700
-X-CSE-ConnectionGUID: 2oT4088jRjGtJKukWNNCSQ==
-X-CSE-MsgGUID: qImF+t5SQlqYvA/5KfLGOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="196690540"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 23 Jul 2025 08:52:31 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ueblc-000JVH-2E;
-	Wed, 23 Jul 2025 15:52:28 +0000
-Date: Wed, 23 Jul 2025 23:52:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-	jiri@resnulli.us, sdf@fomichev.me, kuniyu@google.com,
-	aleksander.lobakin@intel.com, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: Re: [PATCH] net: Revert tx queue length on partial failure in
- dev_qdisc_change_tx_queue_len()
-Message-ID: <202507232358.OuGr01a5-lkp@intel.com>
-References: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
+	s=arc-20240116; t=1753285927; c=relaxed/simple;
+	bh=qmx86GClRdTh+GmCFQ9s0XfZC0/2nNXkeIbHp8gEHAY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SuTRk8kFiHpLm91agQqPMsloVeZcomoQm25hlek/f7iqKKiahGjrlO+P+YR05vNyt4Xtww5P2LxKGQE2OG2QvMQl7wo9zayLcWtRlxjeUeCWBi1b+t6ukv0D7vlA55r/jUemdDDrdQ/LJiGW2Mvm3GUYXdwgMV7ktAU8DTEmuGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPEe0uZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C864BC4CEE7;
+	Wed, 23 Jul 2025 15:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753285927;
+	bh=qmx86GClRdTh+GmCFQ9s0XfZC0/2nNXkeIbHp8gEHAY=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=CPEe0uZchNTvxnafRpM7AFxu2Ioxl0xOwyIGJ3HBtJ3Xd4Yrc6TrlYeCTqLeemfvO
+	 2lHysHKURYajjzIDRE4LKHb04FVpOyqneT5a6Unoq05VmunQL1lYhjDB3s3/duoIH8
+	 q0eTkUvtOY98JL9IeXWiK+vLwGemTxAQ7pnZp5QTE5HopPWjqiEAswhtpFejkGJEMK
+	 vxwfo/om7nuVXa0F8GlQDuHb0KQnebXQZhSC3LZTtKU/qiuOzESxL0hYCnHsE3V86e
+	 BViQOMsbu198ff6bub+F2xKkGffbzJIM77Y8d8Ik4+RU6K8ZR+T5+4tTU7HkVUV+jU
+	 lkxaxSzLVESIQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Jul 2025 17:52:02 +0200
+Message-Id: <DBJJZL9MXYSJ.3S4JQ14MK6N3B@kernel.org>
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?=
+ <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com> <aIBl6JPh4MQq-0gu@tardis-2.local> <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com> <aIDxFoQV_fRLjt3h@tardis-2.local> <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org> <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com> <DBJIY7IKSNVH.1Q2QD6X30GIRC@kernel.org> <aIEDbB_FcgHgzfKd@google.com>
+In-Reply-To: <aIEDbB_FcgHgzfKd@google.com>
 
-Hi Suchit,
+On Wed Jul 23, 2025 at 5:44 PM CEST, Alice Ryhl wrote:
+> On Wed, Jul 23, 2025 at 05:03:12PM +0200, Danilo Krummrich wrote:
+>> On Wed Jul 23, 2025 at 4:56 PM CEST, Daniel Almeida wrote:
+>> >> On 23 Jul 2025, at 11:35, Danilo Krummrich <dakr@kernel.org> wrote:
+>> >> On 7/23/25 4:26 PM, Boqun Feng wrote:
+>> >>> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
+>> >>> But sure, this and the handler pinned initializer thing is not a blo=
+cker
+>> >>> issue. However, I would like to see them resolved as soon as possibl=
+e
+>> >>> once merged.
+>> >>=20
+>> >> I think it would be trivial to make the T an impl PinInit<T, E> and u=
+se a
+>> >> completion as example instead of an atomic. So, we should do it right=
+ away.
+>> >>=20
+>> >> - Danilo
+>> >
+>> >
+>> > I agree that this is a trivial change to make. My point here is not to=
+ postpone
+>> > the work; I am actually somewhat against switching to completions, as =
+per the
+>> > reasoning I provided in my latest reply to Boqun. My plan is to switch=
+ directly
+>> > to whatever will substitute AtomicU32.
+>>=20
+>> I mean, Boqun has a point. AFAIK, the Rust atomics are UB in the kernel.
+>>=20
+>> So, this is a bit as if we would use spin_lock() instead of spin_lock_ir=
+q(),
+>> it's just not correct. Hence, we may not want to showcase it until it's =
+actually
+>> resolved.
+>>=20
+>> The plain truth is, currently there's no synchronization primitive for g=
+etting
+>> interior mutability in interrupts.
+>
+> Is the actual argument here "we are getting rid of Rust atomics in the
+> next cycle, so please don't introduce any more users during the next
+> cycle because if you do it will take one cycle longer to get rid of
+> all Rust atomics"?
 
-kernel test robot noticed the following build warnings:
+That's an argument as well, I guess.
 
-[auto build test WARNING on net-next/main]
-[also build test WARNING on net/main linus/master horms-ipvs/master v6.16-rc7 next-20250723]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> I can accept that argument. But I don't accept the argument that we
+> shouldn't use them here because of the UB technicality. That is an
+> isolated demand for rigor and I think it is unreasonable. Using Rust
+> atomics is an accepted workaround until the LKMM atomics land.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Suchit-Karunakaran/net-Revert-tx-queue-length-on-partial-failure-in-dev_qdisc_change_tx_queue_len/20250722-151746
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250722071508.12497-1-suchitkarunakaran%40gmail.com
-patch subject: [PATCH] net: Revert tx queue length on partial failure in dev_qdisc_change_tx_queue_len()
-config: parisc-randconfig-r072-20250723 (https://download.01.org/0day-ci/archive/20250723/202507232358.OuGr01a5-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 9.5.0
+I think there's a difference between actually needing them and using them t=
+o
+showcase something. Or in other words, limiting workarounds to only those p=
+laces
+where we can't avoid them seems like the correct thing to do.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507232358.OuGr01a5-lkp@intel.com/
-
-smatch warnings:
-net/sched/sch_generic.c:1465 dev_qdisc_change_tx_queue_len() warn: always true condition '(i >= 0) => (0-u32max >= 0)'
-net/sched/sch_generic.c:1465 dev_qdisc_change_tx_queue_len() warn: always true condition '(i >= 0) => (0-u32max >= 0)'
-
-vim +1465 net/sched/sch_generic.c
-
-  1447	
-  1448	int dev_qdisc_change_tx_queue_len(struct net_device *dev, unsigned int old_len)
-  1449	{
-  1450		bool up = dev->flags & IFF_UP;
-  1451		unsigned int i;
-  1452		int ret = 0;
-  1453	
-  1454		if (up)
-  1455			dev_deactivate(dev);
-  1456	
-  1457		for (i = 0; i < dev->num_tx_queues; i++) {
-  1458			ret = qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
-  1459			if (ret)
-  1460				break;
-  1461		}
-  1462	
-  1463		if (ret) {
-  1464			dev->tx_queue_len = old_len;
-> 1465			while (i >= 0) {
-  1466				qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
-  1467				i--;
-  1468			}
-  1469		}
-  1470	
-  1471		if (up)
-  1472			dev_activate(dev);
-  1473		return ret;
-  1474	}
-  1475	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Using a completion in the hard IRQ and showing a spinlock or mutex example =
+in
+the threaded handler seems like a good mix to me.
 
