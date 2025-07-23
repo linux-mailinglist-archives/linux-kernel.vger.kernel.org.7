@@ -1,247 +1,195 @@
-Return-Path: <linux-kernel+bounces-743148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D273AB0FB32
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930BBB0FB34
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98BA16FF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900104E0BA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D7A2327A3;
-	Wed, 23 Jul 2025 19:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8CA214A94;
+	Wed, 23 Jul 2025 19:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JWRW5M7t"
-Received: from SJ2PR03CU002.outbound.protection.outlook.com (mail-westusazon11023101.outbound.protection.outlook.com [52.101.44.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F948PVFB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FA9200BAE;
-	Wed, 23 Jul 2025 19:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.44.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300554; cv=fail; b=Jj8DC6YFZsfCq6Ci/EdbJs+VDa69P71tTX3pbjj8UB5d9tvSeSDVEAZ+ui1E3eKzUwDzBQ0GYXQoYT75xXrbg9sfPzraKeSASYsc5GlE/FpVBiH1lon7eQ4imwj9M0Pg8K4skFocpqjJ8q4qyOWc8uuxvoTBtVuV7wWzUFxf/Jo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300554; c=relaxed/simple;
-	bh=NbRkuUrANDq5CHoZZRvLOgV6pZsPYSWNURLiv1D8L6E=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tJKjoOcoS8LaMxUKIleNY+n3otvCObIrRBy8j2tVF7QXC/MFadsVRlDYQT57FSWdvXuVSYzrM6sgel5Oij3qpOFieYVwyTwXSKxeS9EwLsD9U551Phig/CMHG4t8xZ8+Ku6COPdovmtAhIUtnqZqI6KA7LsRT6UtM/TxtZXdZOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=JWRW5M7t; arc=fail smtp.client-ip=52.101.44.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v2nMV2kb/wFRobBj4dBWzMFTfL8NPlxb3MRDQfQGldkyuZ7k2U2lO5ufPa5BAW2T3tbQXbcWAx5BV+r4CbWBJqfqO15yzlp3/pNW8akVC6zQbcGyJOQmfrsi/MtwIDYu7fx81unVJzW1b2hau2DTi5MYKtsWYEBzoV9XS3CbGmeX1jf8tKUCo163kDDox9dhFAouqoPIqC78dxcuyrfsVxnc39c11+dKrFaWq2PwOyGsRScvd1xPVR94JSpn0H6SQuSUtxTllNk1zoFk71pmnCSV5rSa95n0P9dqbl8slJ1wrcTQBKYy8FLvqg5sJwDzrNs7BZMwZXixRIgY0Xnpww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AhUN9bYyya9HcQTKRb2Tr9lYZtPkq3KIWG5QNp1HDcE=;
- b=fgFYYztJkXF20hxFurq0pCqGt0f6xyX/ljKaYIeHfw5Evjxd2wG/rn/pYAw4GOVpx+CR+BkZVDHeICC7CuqekHjo4TkltB3oVn9Gol68Vp8oRTES1ARAD6D+5QvMl4RkDZI4weVDeZ8myQXfK9NVgLZ83JS806nGRzeJVnpSv8oJNrvcKXGhRpqlZgeYhRteXt0RYAW7HPkVR1UEraqqHf2vPp4LI2h/9RHxaQcvSv3K5S5Lg4qBKqrnTvPB/ckSNk4GHI5FqUwUPaRDZhmYW1EdKbD7s3nVa/6nVQhoqFMuN6Q+M2FiuB92N1EKw7tXEband1/T81QokykdFldDog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AhUN9bYyya9HcQTKRb2Tr9lYZtPkq3KIWG5QNp1HDcE=;
- b=JWRW5M7tNmkZaHm/DnJq8nfHI7nWFTlls34f5K8feDL9dy4RAcjiUcXuf6RN6uEepe6suownZclwqOXzGfEfH7V4O7zTu5da9EiqU3HyrpWQe78nGCwDYoZIFeNaGzJEC/zI9hY6XCPx5OjGPOoeTR8hx8Ie7i/wWyxr4d21Qyk=
-Received: from SJ2PR21MB4013.namprd21.prod.outlook.com (2603:10b6:a03:546::14)
- by SJ0PR21MB2016.namprd21.prod.outlook.com (2603:10b6:a03:2aa::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.5; Wed, 23 Jul
- 2025 19:55:49 +0000
-Received: from SJ2PR21MB4013.namprd21.prod.outlook.com
- ([fe80::3c6d:58dc:1516:f18]) by SJ2PR21MB4013.namprd21.prod.outlook.com
- ([fe80::3c6d:58dc:1516:f18%4]) with mapi id 15.20.8964.004; Wed, 23 Jul 2025
- 19:55:49 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Dipayaan Roy <dipayanroy@linux.microsoft.com>, "horms@kernel.org"
-	<horms@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>, KY Srinivasan
-	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "pabeni@redhat.com" <pabeni@redhat.com>, Long Li
-	<longli@microsoft.com>, Konstantin Taranov <kotaranov@microsoft.com>,
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net"
-	<daniel@iogearbox.net>, "hawk@kernel.org" <hawk@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "sdf@fomichev.me"
-	<sdf@fomichev.me>, "lorenzo@kernel.org" <lorenzo@kernel.org>,
-	"michal.kubiak@intel.com" <michal.kubiak@intel.com>,
-	"ernis@linux.microsoft.com" <ernis@linux.microsoft.com>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>, Shiraz
- Saleem <shirazsaleem@microsoft.com>, "rosenp@gmail.com" <rosenp@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "ssengar@linux.microsoft.com"
-	<ssengar@linux.microsoft.com>, Dipayaan Roy <dipayanroy@microsoft.com>
-Subject: RE: [PATCH v2] net: mana: Use page pool fragments for RX buffers
- instead of full pages to improve memory efficiency.
-Thread-Topic: [PATCH v2] net: mana: Use page pool fragments for RX buffers
- instead of full pages to improve memory efficiency.
-Thread-Index: AQHb/AUBeOoDCPVUaUazwNHsW9rYXbRAHwZw
-Date: Wed, 23 Jul 2025 19:55:49 +0000
-Message-ID:
- <SJ2PR21MB4013DD021CE6EE505366E83DCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
-References:
- <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-In-Reply-To:
- <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=15485fe5-d475-47f0-9408-2df30c684c9e;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-07-23T19:53:59Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR21MB4013:EE_|SJ0PR21MB2016:EE_
-x-ms-office365-filtering-correlation-id: cf8ce484-87d7-4757-1bae-08ddca22ebe8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020|7053199007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?5CXy0LpNuwICJ0h0F9L38DpWvO1XtInpWpZUNDxLSzawrnaBIuQVhRuz9T9p?=
- =?us-ascii?Q?Q/lpBnl//La2N0rAFeml93Hz5VYRt1HHF5g2VkEp5Ir34OzpMKfBDTAFXGBo?=
- =?us-ascii?Q?QbszOmyyqgLQRnPpyfYLAJQM7lqJENyEl4j7M3JQi0o7UR6NRQf9jOP/SyzQ?=
- =?us-ascii?Q?3gcHl0Cmek4Z8pxJTkpG8/cFFqsozM8jZiKApvsPrLJBX913SnaQVRvx2swn?=
- =?us-ascii?Q?v+v8nIep8FU3AT+4s/ACRObHUZIoXbaKtFD9N5K48L171XUy4idh4mP+GvCz?=
- =?us-ascii?Q?rHCPrQe9X58cTis8kaIz9125VP7iifyF1I0lZPbSCdtYFgeTuzPDopW9SPUG?=
- =?us-ascii?Q?SLz+Pp+E8rhktNT75zoUFTecY+lU2vNGQCvMejn+qmo5gmm4cvKSwLzjOCdl?=
- =?us-ascii?Q?YOyBI0tj+8YWcJNBWEaL9sRzN09tITlYV6GfUNSWcMssRgUoa1Gx62Bcexyh?=
- =?us-ascii?Q?ivzRUoo2RmQER8PznBt4tw5u2D6lDuCe5aLbHEw1Ox1jDiQVbj3oDST1a6tR?=
- =?us-ascii?Q?YIC2tQ5oX1dImSoK7xQZs+h9QubtoGYA44Uuzc9w9nIm4TSBovdZqjOU9EDz?=
- =?us-ascii?Q?C/Zn06KBH500NeF9MOcj0pDqMPqaTpyZ8RlTds7vrWuAOJ8xOOCiiwDO6SzB?=
- =?us-ascii?Q?0dnFMeuiXux9F3Xg73KOOk9puIpgD19U++y7OQfPOsC9OkR1lQH8h4Yb/laT?=
- =?us-ascii?Q?MmV0dkZpM3dHGOu8gsIzN5q6RHZXfMcpkI61UzngzHelSgeKnh/0+70sEvaF?=
- =?us-ascii?Q?gNpDAFrnHDZWnlXR+Ij/hM9J23C0KjWgv5jxS9y8M7Orr30D4UJAqlxx1RJ1?=
- =?us-ascii?Q?bjC5gfUyWUh50N+uG3Gz3KEV2JLB6oIxdTg58jCde3vHP8XBOXn7lCkVq4eW?=
- =?us-ascii?Q?QnQUjnBN6gd6dqeO5lvY22+Vggydw1+7tRFY3P7pcbhOFVswSyHmyuV74Jtj?=
- =?us-ascii?Q?L+xynXTiMwv1uS8UD4/Buf26IiWMPzJtyNFpFV9kbrmD5GSldAjxgiY+mHty?=
- =?us-ascii?Q?jWi3r3vZ+/u5HNPBnLRhIWks58wM4OnUvOgC01o5NxVU3qwJhMEYYtetJDYe?=
- =?us-ascii?Q?/RcHj2qqn+nyNL9EeJBv0/dSCFuqhKbRcK0juNz6NUndVKR+grDsj4ERgyM+?=
- =?us-ascii?Q?pAk8ADgB39iT5hq2CoWIuZtKexpaZUOame0r6LbF2JMgMdrH73fd8gQHiJyu?=
- =?us-ascii?Q?x8p0bI40nCPtGdYoK5iHxIn47VjbQXLfT0Y4RmyAUtz3xgS+EeANJ+9ObTT3?=
- =?us-ascii?Q?E7pileE7fVXy44/Zo0ooMxFJbyIa02y25Vgg0q2VYxF4cGHWRLMRS1mq5RyD?=
- =?us-ascii?Q?WKvKbFd5TewMojNxwxljjR/ItEOeJfL3/TzNqljq39V89uQb1b5xhXbtt+bW?=
- =?us-ascii?Q?p6x+0zMOhMhkPOyaxONxaSxOF4OKPJwG1SI8Zm7PVyET10UtccFNed4+ZoQN?=
- =?us-ascii?Q?UlPoa+d+SnsZM647FV/uZnjCRF8NL8oZkFvKazMKNWOWU9RAoKAJvN3lvpI7?=
- =?us-ascii?Q?BX7JNBxpjyHS4Kw=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR21MB4013.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020)(7053199007)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?NffS8qZjEMhgOOEuE3IDCurlhrfo0tyFPOnyVgCoCUoFVYGaVlhRCFOMil1K?=
- =?us-ascii?Q?K0ywfwUEEIbIdD62SvrzFbwIn+sliUfJCrZZ0E4q7QFn9bJ0E/c+6GJ7UOhF?=
- =?us-ascii?Q?CAAfCO3e79RJLtOw2fOZXemECvGvmU+WaACqdYReowYO9sO4S3I+04bxvsgo?=
- =?us-ascii?Q?GRZ/sQyZ8Z4N/77zSrvXKt4gNtwNHPfpeTQSwYE/3gE1QetxwZyFUHeLGDWb?=
- =?us-ascii?Q?GlX3hgekO22CS7WFFnReYrczAMG7PjCi5hMcb9XxCDNs9t7hcVY+C0LiLXRr?=
- =?us-ascii?Q?V5g8CZG10PqI3ZgTHsYNzY1xX73xiiW6zR+ezaZcAVJj3sMDbF9dyYYNvARX?=
- =?us-ascii?Q?wng7dzYENaxluiKfH/o4ebOZ/ffqVEPc7SuulIWXwIrf7N/MfiYI1/9yGKfg?=
- =?us-ascii?Q?55n56u4dPjqxdBw581r9bFZID9jl5fJ3+XVVzbvzSBNAKQKWuwo9NtFBdraQ?=
- =?us-ascii?Q?3B5w0wVYnPt2xdHjg6KCWVnq7rDgOtZtM46tw0Ro+sH2KL/enrJTSS6shbmJ?=
- =?us-ascii?Q?nBu86DbSg6rW2VLjZmFWwPyEBPvzjPoatsxSr2OcfyvU2ajDGg9VXmcuQpHd?=
- =?us-ascii?Q?yuRF4pC/di8Iup/P+uXq0iECG4buZ4T/NmSEix9D7Cj9hpxxN17SUH9GAJDx?=
- =?us-ascii?Q?wHg0GPyvr8RKYiB1N+j1F+UPljchqBpQkzGq6UxZOHZLBKqyPb9zZU/IW1QH?=
- =?us-ascii?Q?KePL2ChTTgW/y7sk2tcZsIGO82kgRRWSY8UHbkvVoDPnWlFhNN9ti+MrXNMs?=
- =?us-ascii?Q?fKl7oAv7AKVjz1s9L+5O4GSw4lsW35DO5NCty1awJG1RpILLL90LYE7yiTpa?=
- =?us-ascii?Q?x94KKBrXQa06Zo2zxA3afDCnkraafalg0Z/1OwQb9D0vQy43vGBTSm25OV2g?=
- =?us-ascii?Q?tg7YMPfv9m8mw8qh9T6MU3D11taZNO/RfTLJLuTQRQW0GgPjFko4abqT/zMt?=
- =?us-ascii?Q?cUgcQyjrO9WmaGT/XqDOMsroF38KUVqn9W3pCVxYXjbwizpdsiVung/dehHR?=
- =?us-ascii?Q?lAmNAIUrvpbE3iXzzTl/AWeFSr8VVILjxr6te9c1BXdRV/otHyvqFcN8kAzR?=
- =?us-ascii?Q?FVLPK7PEfZ72imWJwfPjZNOQdxMYvnfVSb/2sNRuxHXEjegNCGmpr7lpTy1d?=
- =?us-ascii?Q?4IERP/L+izg022/uUy7ufFF0NVbn2vfn0si94DsAKHy4JyzSkOg6Sj3f3COn?=
- =?us-ascii?Q?5IRAvvSkICVCyq3jB5ufKj4st0IIrq7n+w90mWPhnlNbAZ79whQkN1ANDqm0?=
- =?us-ascii?Q?YJLIdmr/4bMZovo+quEe5xHi9T2SAwfzp0isjud2WzgO03NZlIXtTNuSa4GU?=
- =?us-ascii?Q?w8br/MFTlV5XiOl/4dadrh6KzuJSBPp5CiUow8u5lXHOMjAiw0skXXT2P9+K?=
- =?us-ascii?Q?pu2IXWtuVJA9NNRkatLa7FrdyXLlOhV50gS6aJ3iLtIU/mPbQ0P7S2fC5/oz?=
- =?us-ascii?Q?wEpaNvmsf1Sxyt6aFCALmNZi+Q+WQ2yuy+Bxv5EjA4mdtRcXym3u2H82VtNI?=
- =?us-ascii?Q?vWpt28nK/mBfxOmGiOQuiqUc4I4gKqWGnj+A5B1pp0Bklz+r0U2wODMaTH1M?=
- =?us-ascii?Q?SebpqaRMnjlPDpSrhU1TfTd38mnaw4mIwOmKXiCG?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5BE7F9;
+	Wed, 23 Jul 2025 19:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753300634; cv=none; b=mmVs/CFIj0dYwzy9N8aR2XWvUNR+gsYZ2VdwOY6m89mmEt8SjuqOD1JnXs7BQhABKplx8ls8pSnAYDuh4w1mNb0UsqcRLxLaEWlGhlJW/r1nFVR4AVn+SyIOFsCNViLCZNSkm9Zu84Yg2JraCBCi/Qz1yYRSmm0rpionAXSlS70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753300634; c=relaxed/simple;
+	bh=KO1DPBhAby687F5YozzqhxpfEKDn5Y3mLGJdWS2v+ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExxY+qV1jenUrCRc5TECHS71WGpXom8b3oZC+21S+vNBHiMVYUi0/tWWYKb8Y04BKyy4sX0UTBaPVMkrRlC9hwVcqVbJ2EILVdSQ3XX6Wt+l/vGmMi8nsOq+f7CjzfjI/6CQUnYz8jtDqFM5Ddd90paAx/cQ6sbUNVstQ/c/T7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F948PVFB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B52FC4CEE7;
+	Wed, 23 Jul 2025 19:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753300634;
+	bh=KO1DPBhAby687F5YozzqhxpfEKDn5Y3mLGJdWS2v+ts=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=F948PVFBhg0oY672LQKnhc0GQ5Te+g71ZnShvK2l00GsuKJWDStASevDn7v7i0uI/
+	 FWNW5v7RtzYxPS4gDzKvNh7cASK8p2B0dXLLBsWuL9qWAF0VYvL4M4pQabNQkjx5YR
+	 ITwZg0ZiC1alcrBcg7Oaa/rtSopSv9C+Al97zSR6VdS8GdtuWr7DdxeOs8ipoGnStF
+	 awEz68gi/fzMZmW8t3mERMYk8eO0WtPRkMZQyyo2QKuGyHKo1uqRSlcKJEaJUqj26F
+	 u1kzcLV7fK7zBjMTErkwAwIYhB3UuR5apTkUk4di8pFJNr2GQBzyJJ5jdQIF5uZYZn
+	 87WdsNN7bKqWA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E32FECE08DF; Wed, 23 Jul 2025 12:57:13 -0700 (PDT)
+Date: Wed, 23 Jul 2025 12:57:13 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
+	quic_neeraju@quicinc.com, frederic@kernel.org,
+	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
+	hernan.poncedeleon@huaweicloud.com
+Subject: Re: [RFC] tools/memory-model: Rule out OOTA
+Message-ID: <9963f6a6-9da9-4120-b1fe-e4a1df9edda1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
+ <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
+ <b9c250b2-e4c0-4e8f-b37c-b51d93b980f0@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR21MB4013.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf8ce484-87d7-4757-1bae-08ddca22ebe8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 19:55:49.1957
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yCOwcEWpFUrW17k1BTC2koCT0jmzp3hUDTbC7J46FTZP5sAY0K8xk0awQHlCKSPZwuh7kXx+q+qhgZ90abwBtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR21MB2016
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9c250b2-e4c0-4e8f-b37c-b51d93b980f0@rowland.harvard.edu>
 
+On Wed, Jul 23, 2025 at 03:25:13PM -0400, Alan Stern wrote:
+> On Tue, Jul 22, 2025 at 05:43:16PM -0700, Paul E. McKenney wrote:
+> >     Also, C-JO-OOTA-7.litmus includes a "*r2 = a" statement that makes herd7
+> >     very unhappy.  On the other hand, initializing registers to the address
+> >     of a variable is straight forward, as shown in the resulting litmus test.
+> 
+> ...
+> 
+> > diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
+> > new file mode 100644
+> > index 00000000..31c0b8ae
+> > --- /dev/null
+> > +++ b/manual/oota/C-JO-OOTA-7.litmus
+> > @@ -0,0 +1,47 @@
+> > +C C-JO-OOTA-7
+> > +
+> > +(*
+> > + * Result: Never
+> > + *
+> > + * But LKMM finds the all-ones result, due to OOTA on r2.
+> > + *
+> > + * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
+> > + *)
+> > +
+> > +{
+> > +	0:r2=a;
+> > +	1:r2=b;
+> > +}
+> 
+> In this litmus test a and b are never assigned any values, so they
+> always contain 0.
+> 
+> > +
+> > +P0(int *a, int *b, int *x, int *y)
+> > +{
+> > +	int r1;
+> > +	int r2;
+> > +
+> > +	r1 = READ_ONCE(*x);
+> > +	smp_rmb();
+> > +	if (r1 == 1) {
+> > +		r2 = READ_ONCE(*a);
+> 
+> If this executes then r2 now contains 0.
+> 
+> > +	}
+> > +	*r2 = a;
+> 
+> And so what is supposed to happen here?  No wonder herd7 is unhappy!
 
+Nothing good, I will admit!  Good eyes, and thank you!
 
-> -----Original Message-----
-> From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-> Sent: Wednesday, July 23, 2025 3:07 PM
-> To: horms@kernel.org; kuba@kernel.org; KY Srinivasan <kys@microsoft.com>;
-> Haiyang Zhang <haiyangz@microsoft.com>; wei.liu@kernel.org; Dexuan Cui
-> <decui@microsoft.com>; andrew+netdev@lunn.ch; davem@davemloft.net;
-> edumazet@google.com; pabeni@redhat.com; Long Li <longli@microsoft.com>;
-> Konstantin Taranov <kotaranov@microsoft.com>; ast@kernel.org;
-> daniel@iogearbox.net; hawk@kernel.org; john.fastabend@gmail.com;
-> sdf@fomichev.me; lorenzo@kernel.org; michal.kubiak@intel.com;
-> ernis@linux.microsoft.com; shradhagupta@linux.microsoft.com; Shiraz Salee=
-m
-> <shirazsaleem@microsoft.com>; rosenp@gmail.com; netdev@vger.kernel.org;
-> linux-hyperv@vger.kernel.org; linux-rdma@vger.kernel.org;
-> bpf@vger.kernel.org; linux-kernel@vger.kernel.org;
-> ssengar@linux.microsoft.com; Dipayaan Roy <dipayanroy@microsoft.com>
-> Subject: [PATCH v2] net: mana: Use page pool fragments for RX buffers
-> instead of full pages to improve memory efficiency.
->=20
-> This patch enhances RX buffer handling in the mana driver by allocating
-> pages from a page pool and slicing them into MTU-sized fragments, rather
-> than dedicating a full page per packet. This approach is especially
-> beneficial on systems with large page sizes like 64KB.
->=20
-> Key improvements:
->=20
-> - Proper integration of page pool for RX buffer allocations.
-> - MTU-sized buffer slicing to improve memory utilization.
-> - Reduce overall per Rx queue memory footprint.
-> - Automatic fallback to full-page buffers when:
->    * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
->    * The XDP path is active, to avoid complexities with fragment reuse.
-> - Removal of redundant pre-allocated RX buffers used in scenarios like MT=
-U
->   changes, ensuring consistency in RX buffer allocation.
->=20
-> Testing on VMs with 64KB pages shows around 200% throughput improvement.
-> Memory efficiency is significantly improved due to reduced wastage in pag=
-e
-> allocations. Example: We are now able to fit 35 rx buffers in a single
-> 64kb
-> page for MTU size of 1500, instead of 1 rx buffer per page previously.
->=20
-> Tested:
->=20
-> - iperf3, iperf2, and nttcp benchmarks.
-> - Jumbo frames with MTU 9000.
-> - Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
->   testing the XDP path in driver.
-> - Page leak detection (kmemleak).
-> - Driver load/unload, reboot, and stress scenarios.
->=20
-> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
->=20
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > +	smp_wmb();
+> > +	WRITE_ONCE(*y, 1);
+> > +}
+> > +
+> > +P1(int *a, int *b, int *x, int *y)
+> > +{
+> > +	int r1;
+> > +	int r2;
+> > +
+> > +	r1 = READ_ONCE(*y);
+> > +	smp_rmb();
+> > +	if (r1 == 1) {
+> > +		r2 = READ_ONCE(*b);
+> > +	}
+> > +	*r2 = b;
+> 
+> Same here.
+> 
+> > +	smp_wmb();
+> > +	WRITE_ONCE(*x, 1);
+> > +}
+> > +
+> > +locations [0:r2;1:r2]
+> > +exists (0:r1=1 /\ 1:r1=1)
 
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Yes, I did misinterpret Jonas's initialization advice, which reads
+as follows:  "unless you know how to initialize *a and *b to valid
+addresses, you may need to add something like `if (r2 == 0) r2 = a`
+to run this in herd7".
 
+Given that there are two instances of r2, there are a number of
+possible combinations of initialization.  I picked the one shown
+in the patch below, and got this:
 
+$ herd7 -conf linux-kernel.cfg ~/paper/scalability/LWNLinuxMM/litmus/manual/oota/C-JO-OOTA-7.litmus
+Test C-JO-OOTA-7 Allowed
+States 3
+0:r1=0; 0:r2=a; 1:r1=0; 1:r2=b;
+0:r1=0; 0:r2=a; 1:r1=1; 1:r2=b;
+0:r1=1; 0:r2=a; 1:r1=0; 1:r2=b;
+No
+Witnesses
+Positive: 0 Negative: 3
+Flag mixed-accesses
+Condition exists (0:r1=1 /\ 1:r1=1)
+Observation C-JO-OOTA-7 Never 0 3
+Time C-JO-OOTA-7 0.01
+Hash=d9bb35335e45b31b1a39bab88eca837c
+
+I get something very similar if I cross-initialize them, that is
+a=b;b=a.
+
+Thoughts?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
+index 31c0b8ae..d7fe0f94 100644
+--- a/manual/oota/C-JO-OOTA-7.litmus
++++ b/manual/oota/C-JO-OOTA-7.litmus
+@@ -11,6 +11,8 @@ C C-JO-OOTA-7
+ {
+ 	0:r2=a;
+ 	1:r2=b;
++	a=a;
++	b=b;
+ }
+ 
+ P0(int *a, int *b, int *x, int *y)
 
