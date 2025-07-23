@@ -1,151 +1,85 @@
-Return-Path: <linux-kernel+bounces-742106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CC7B0ED40
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58C0B0ED45
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19FC01C82E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A3D5817B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095A12797B1;
-	Wed, 23 Jul 2025 08:32:23 +0000 (UTC)
-Received: from srv01.abscue.de (abscue.de [89.58.28.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD14F27EFFD;
+	Wed, 23 Jul 2025 08:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHRrgiIi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086D417B50F;
-	Wed, 23 Jul 2025 08:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39769278E5A;
+	Wed, 23 Jul 2025 08:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753259542; cv=none; b=ZT5n0ARrIoM/heV53sOzuecHF22qyYzauXxSaxB3VIg2oKw8aJBtHDCcIi+ISmoLzfhDtGArNIPDPUjvmaaHITIqyqFfTGji74oRl0fDR802EkDwlLd2nvFz1lr0ByowIMo7mphH9hTTvquE5W/w+VhL0+XzdJd4dxfqLA/6x6A=
+	t=1753259567; cv=none; b=HUSZO74ZoJik9Y+yNbdnWJClyeULvkTbg4WpGqakXqYO410aG83Mn8ifJjCq3ew4w52ihOKUqocrhYBAMZUirrKEaZNXuQmNY6rcug17h01EJJwzy3wruixOEU5TQ7ztg6RWrzJk11QHtDF+GcHbJDURqL6hYo77KGHNiw/HOPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753259542; c=relaxed/simple;
-	bh=NGX/Za1eE2sxLgY4fg3e0t9tLET9CgIcMUf/lAtkPdM=;
+	s=arc-20240116; t=1753259567; c=relaxed/simple;
+	bh=hz//+fyPn6iEdrpgvveWfsPwwbaPjDkwCuRuVl9i7wU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsjSKfPenG9vKYFrPdWX9UL8dgdirpeVrIEfzrwGCc+FVhGpGWfoT8tgFyuzBM15h99EIPIsKcVBiyDPaIpNICulMoziqcJC8tD08KoSNPW1wZ7LV03elWPkIOqJbyPlkrB46v79mdXAMVwemmeflWyWkpOHzuZy+H/d7JOvOog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
-Received: from srv01.abscue.de (localhost [127.0.0.1])
-	by spamfilter.srv.local (Postfix) with ESMTP id A14371C025E;
-	Wed, 23 Jul 2025 10:32:16 +0200 (CEST)
-X-Spam-Level: 
-Date: Wed, 23 Jul 2025 10:32:11 +0200
-From: Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Kevin Tang <kevin.tang@unisoc.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/15] drm: sprd: add clock gating support
-Message-ID: <aICeC5lSSW0qR7oh@abscue.de>
-References: <20250722-ums9230-drm-v2-0-054276ec213d@abscue.de>
- <20250722-ums9230-drm-v2-10-054276ec213d@abscue.de>
- <20250723-resourceful-intrepid-beaver-cbeada@houat>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tb5PXhJ6nbkflO1soeQMQyw1A4YJC8g0hlU6P8iWZjp3OisG7fi1P5B+2+bRbRtx2RBKo33phZhAZsMt5xg4QTpCl60MdoUvj413nBOkxtIq4snnOmYosvqi1M60dFEDEhh/OpVPllQ0nBitsvNtbVWwYUeOeAxKOGgX/djy8BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHRrgiIi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DB8C4CEE7;
+	Wed, 23 Jul 2025 08:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753259566;
+	bh=hz//+fyPn6iEdrpgvveWfsPwwbaPjDkwCuRuVl9i7wU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jHRrgiIiqaaPFpTpzPhxESsJ+npF1R9e1GbGn1WNut2kVW3+nyOidVF+f4Sk+62sO
+	 IEr//dTLLUUTkh0gjetgMyB7nlw2pqrBJd7kX9j6m6RpAhym/J9hRo4Lxf2bQ2t/gI
+	 7WGyLz/22NjFiJfH7falnvZ1JuGbqsbxPmgLvfO/ZF/T7k/92L7xUMW4svo0lwiNO9
+	 xUKw3+EgX3jSMeon3Rk7Kv6tTootRL9ESluMPvH949/lxvdCltUVUIlXRU+aoMfUe+
+	 IfOcrwPygDKk9oD5BXQo+8wb15Jzi1/ooOT0W1BTyWhRcYpZ4K9L+5WDePifFynNJw
+	 BQADnJ2lQZJnw==
+Date: Wed, 23 Jul 2025 10:32:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel@oss.qualcomm.com
+Subject: Re: [PATCH 0/7] Refactor sa8775p/qcs9100 to common names
+ lemans-auto/lemans
+Message-ID: <20250723-angelic-aboriginal-waxbill-cd2e4c@kuoka>
+References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250723-resourceful-intrepid-beaver-cbeada@houat>
+In-Reply-To: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
 
-Hi Maxime,
-
-On Wed, Jul 23, 2025 at 09:00:28AM +0200, Maxime Ripard wrote:
-> Hi,
+On Tue, Jul 22, 2025 at 08:19:19PM +0530, Wasim Nazir wrote:
+> This patch series refactors the sa8775p and qcs9100 platforms and introduces
+> a unified naming convention for current and future platforms (qcs9075).
 > 
-> On Tue, Jul 22, 2025 at 04:41:12PM +0200, Otto Pflüger wrote:
-> > Enable the DPU and DSI clocks specified in the device tree.
-> > Disable the DSI clock when it is not needed.
-> > 
-> > Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> > ---
-> >  drivers/gpu/drm/sprd/sprd_dpu.c | 7 +++++++
-> >  drivers/gpu/drm/sprd/sprd_dpu.h | 1 +
-> >  drivers/gpu/drm/sprd/sprd_dsi.c | 9 +++++++++
-> >  drivers/gpu/drm/sprd/sprd_dsi.h | 4 +++-
-> >  4 files changed, 20 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sprd/sprd_dpu.c b/drivers/gpu/drm/sprd/sprd_dpu.c
-> > index 0d9eb778794d92418b39f8535d94abde3566de43..9d274600e6a80bdfc435f6c6eff77c9dd71cb38c 100644
-> > --- a/drivers/gpu/drm/sprd/sprd_dpu.c
-> > +++ b/drivers/gpu/drm/sprd/sprd_dpu.c
-> > @@ -3,6 +3,7 @@
-> >   * Copyright (C) 2020 Unisoc Inc.
-> >   */
-> >  
-> > +#include <linux/clk.h>
-> >  #include <linux/component.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/dma-buf.h>
-> > @@ -794,6 +795,12 @@ static int sprd_dpu_context_init(struct sprd_dpu *dpu,
-> >  	if (ctx->irq < 0)
-> >  		return ctx->irq;
-> >  
-> > +	ctx->clk = devm_clk_get_optional_enabled(dev, "core");
-> > +	if (IS_ERR(ctx->clk)) {
-> > +		dev_err(dev, "failed to get DPU core clock\n");
-> > +		return PTR_ERR(ctx->clk);
-> > +	}
-> > +
-> >  	/* disable and clear interrupts before register dpu IRQ. */
-> >  	writel(0x00, ctx->base + REG_DPU_INT_EN);
-> >  	writel(0xff, ctx->base + REG_DPU_INT_CLR);
-> > diff --git a/drivers/gpu/drm/sprd/sprd_dpu.h b/drivers/gpu/drm/sprd/sprd_dpu.h
-> > index 157a78f24dc18b071602552ea9d005af66525263..d48b922de580a8a4bf07c4610c431d3321f7b810 100644
-> > --- a/drivers/gpu/drm/sprd/sprd_dpu.h
-> > +++ b/drivers/gpu/drm/sprd/sprd_dpu.h
-> > @@ -44,6 +44,7 @@ enum {
-> >   */
-> >  struct dpu_context {
-> >  	void __iomem *base;
-> > +	struct clk *clk;
-> >  	int irq;
-> >  	u8 if_type;
-> >  	struct videomode vm;
-> > diff --git a/drivers/gpu/drm/sprd/sprd_dsi.c b/drivers/gpu/drm/sprd/sprd_dsi.c
-> > index e01d1d28fe579644ec2e0c83ec9170269932adfe..2af4273a6c73185084290c9d14b8ac18914d514b 100644
-> > --- a/drivers/gpu/drm/sprd/sprd_dsi.c
-> > +++ b/drivers/gpu/drm/sprd/sprd_dsi.c
-> > @@ -828,6 +828,8 @@ static void sprd_dsi_bridge_pre_enable(struct drm_bridge *bridge)
-> >  	struct sprd_dsi *dsi = bridge_to_dsi(bridge);
-> >  	struct dsi_context *ctx = &dsi->ctx;
-> >  
-> > +	clk_prepare_enable(ctx->clk);
-> > +
-> >  	if (ctx->enabled) {
-> >  		drm_warn(dsi->drm, "dsi is initialized\n");
-> >  		return;
-> > @@ -875,6 +877,8 @@ static void sprd_dsi_bridge_post_disable(struct drm_bridge *bridge)
-> >  	sprd_dphy_fini(ctx);
-> >  	sprd_dsi_fini(ctx);
-> >  
-> > +	clk_disable_unprepare(ctx->clk);
-> > +
-> >  	ctx->enabled = false;
-> >  }
-> 
-> I'm a bit confused. Why do you need to enable / disable that clock in
-> pre_enable / post_disable, if you already enabled it at probe?
+> The motivation behind this change is to group similar platforms under a
+> consistent naming scheme and to avoid using numeric identifiers.
+> For example, qcs9100 and qcs9075 differ only in safety features provided by
+> the Safety-Island (SAIL) subsystem but safety features are currently
+> unsupported, so both can be categorized as the same chip today.
+>
 
-These are two different clocks. DPU uses devm_clk_get_optional_enabled,
-while DSI uses devm_clk_get_optional and enables/disables it when
-needed. Ideally both clocks should be disabled when not needed, but this
-will be implemented later.
+I expressed strong disagreement with this patchset in individual
+patches. I expect NO NEW versions of it, but by any chance you send it,
+then please always carry my:
+
+Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-Otto Pflüger
+Krzysztof
+
 
