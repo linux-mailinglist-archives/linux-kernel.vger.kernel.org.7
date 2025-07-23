@@ -1,58 +1,74 @@
-Return-Path: <linux-kernel+bounces-741685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED412B0E7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:56:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDDFB0E7E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E78D3BB47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:56:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E2B77AC861
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881921531C8;
-	Wed, 23 Jul 2025 00:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A4A15530C;
+	Wed, 23 Jul 2025 01:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trNTavwP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="piNnvYcZ";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="RjYIICVa"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837F78F26;
-	Wed, 23 Jul 2025 00:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DF19A;
+	Wed, 23 Jul 2025 01:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753232189; cv=none; b=XHrvo5LEBRoesAit93a6FTyPK2u7tpSu8VbSqXplJ/wX2KXJrJeIXJNgriB3JYNpviRxaubQbFZgQ/3PfhRk9OydkaM/WTZoAt7CTY1n6IndFfdKl5b2bGAqrXhGGXSZhwUyO7RyaPeWrRcHy962OkXCS94dMReA+gIQsvL49Zg=
+	t=1753232542; cv=none; b=MStCXtx1xxLwc96vUg8jWYnDeGGZDzekITCsg0fQ+ajKZfS8U1y3hH3aevjvI9knm7JWtnV9YzodtCXnZtQg9zlkh3L4M/JmuVhlhL2X9QZFV7ufFcz9U3G1XWo0qeNunSmc+y1pIzA87FutG/fvvFwe/zBBm22gMXlFzKUyzH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753232189; c=relaxed/simple;
-	bh=QJxg62QCgXV0R5bA6++p8g8B+F1pTaGEkT3/0NKUVfY=;
+	s=arc-20240116; t=1753232542; c=relaxed/simple;
+	bh=vr7pD0YXRwAScuGrHCqezmW3XIU4AIHJ6JEseENsoCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sf5APIvkkFmptontaJAfXUURt0NGZdhojSCiKKUz5Oia0p0GijbEj/2OAHtY06MYVCkvnVZKhaa0bS+MB8X7jlOfeG4IhpWWOw5IdcVu7l/i4dPlAAsvL1pToi2VspHX6I7aZIlPjVBrmHCGzAdlw2DgTz9E5MuiPUZJH0A1/bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trNTavwP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D7AC4CEEB;
-	Wed, 23 Jul 2025 00:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753232188;
-	bh=QJxg62QCgXV0R5bA6++p8g8B+F1pTaGEkT3/0NKUVfY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdYQUi+mif88XGtfiGNl0rs7Uw75wZlIiw8VfyzFJe6C98UQZDMSzpw4niicsBKWJDNNlk6obXEkRjIDhXB+Xw+Z8nDos9HdV89VmGmYzKKw7tXUVMmVIJjijLAL4WSRmZrwYBp20jmsxpRlPiJHW9qnRFP0xzqnmfBw+XGEMtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=piNnvYcZ; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=RjYIICVa; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 95B2660286; Wed, 23 Jul 2025 03:02:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753232536;
+	bh=EdBX1broglTSvzLe9lwy2ZswEClbQ77newzg7SsGALQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=trNTavwPngyVCZbYzvSByN9aytmcE69e/s8B10RXqWnL4+p/rkYUeND68f5JBiwIw
-	 DgkDPurDFO8XpNjIkpCHLfYbBD/cMwW5zFA8IpcqsulhoT5clMAnojs6tFIkt5qGqY
-	 poR2DOxCN0CZktzS14CiXQk1kLWgbwYmdIzXSmQRO9uAWQCHx9Ib65T7PzdUNLR8Ad
-	 GUYeA2kWVJ7unkF1O8d/rzAP6ohrMGQYIFs2GWgDvF+9OTHV4UYPqzUKPPHNNoS4aP
-	 QBc5xr/ysXxcxULoWewswYIYbURWx4Kr/QwtSzjNltzKParjYqQcEqEIgQWKw3RT1L
-	 p1xHg1e62lalw==
-Date: Tue, 22 Jul 2025 17:56:25 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, vmolnaro@redhat.com, mpetlan@redhat.com,
-	atrajeev@linux.vnet.ibm.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools:perf:tests:shell:common This file was missing the
- shebang line, so added it
-Message-ID: <aIAzOewUz_KtcccA@google.com>
-References: <20250722223350.414-1-unixbhaskar@gmail.com>
+	b=piNnvYcZVGZjhbwkbgC5IpM+efqJQIz/dU+UVB9X6ILYWi5OfISmkKd+f3+UaNMhx
+	 +xlXTPBQqplY30YBtm+qMvmZWdTpYuRu3Bv6V1cdrsLxFiR2DNcUERr16XX3tdmC1l
+	 bB8NtZ+w7zDLRtg+U4jqQLTd62NQYkWOzPn/yJGToXoO0Xy5xDpnL2V7wk/2riHL74
+	 /EfPESziNiN27aGwntYYA5aBx4XsC5Bno8qHyOWFImoJeiNzXJ+GOYQ0Pu1xBdl76k
+	 LzaIalKxgd/PagVss9cCqEqxurK38FBWDo33WYgMKTD9LtDmb9YVpN3VKs63/eobre
+	 O6DwK6OZa6rbw==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id 4636A6027B;
+	Wed, 23 Jul 2025 03:02:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753232533;
+	bh=EdBX1broglTSvzLe9lwy2ZswEClbQ77newzg7SsGALQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RjYIICVaotgq0vkIS+QNcJYDP7fcYp3/qKFToB+eVy255pard5wDrJkbncSN3mLXi
+	 7e3o+XK43GHZd+yicBqVyPG3L9wRO/zgGoX4k3L/UxBsbeEQ2gTs0gXxLAnv/V/b5s
+	 3H1bFZuMiCNzSLuxts9mcjxyA5uPTZm0N3NkMsvwEalkbX+rLLGMPzRnLL+MypH5xx
+	 Fm8yXJ837xbnZDRF+zF1lB79YVoc2MUk6icDi+P4+tnsdOB/J8z5bXRr2PBn1NWM0B
+	 7jjWPKdFdrAzvqJtpOY/fKyRsXZgCnnydtA1uyZsS7PfWlMZ37IAt+phsUfGThars5
+	 HZun9V/hJwpVg==
+Date: Wed, 23 Jul 2025 03:02:09 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: lvxiafei <xiafei_xupt@163.com>
+Cc: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com,
+	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, lvxiafei@sensetime.com,
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com, fw@strlen.de
+Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
+Message-ID: <aIA0kYa1oi6YPQX8@calendula>
+References: <20250508081313.57914-1-xiafei_xupt@163.com>
+ <20250522091954.47067-1-xiafei_xupt@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,35 +77,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250722223350.414-1-unixbhaskar@gmail.com>
+In-Reply-To: <20250522091954.47067-1-xiafei_xupt@163.com>
 
-Hello,
-
-On Wed, Jul 23, 2025 at 04:02:24AM +0530, Bhaskar Chowdhury wrote:
-> This file was missing the shebang line, so added it.
-
-I guess that's because it doesn't intend to be run standalone.  IOW it
-should be included by other files which should have the shebang.
-
-Thanks,
-Namhyung
-
+On Thu, May 22, 2025 at 05:19:54PM +0800, lvxiafei wrote:
+> From: lvxiafei <lvxiafei@sensetime.com>
 > 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> Add the netns field in the "nf_conntrack: table full,
+> dropping packet" log to help locate the specific netns
+> when the table is full.
+> 
+> Signed-off-by: lvxiafei <lvxiafei@sensetime.com>
 > ---
->  tools/perf/tests/shell/common/init.sh | 1 +
->  1 file changed, 1 insertion(+)
+>  net/netfilter/nf_conntrack_core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/perf/tests/shell/common/init.sh b/tools/perf/tests/shell/common/init.sh
-> index 26c7525651e0..9e9d4247ada3 100644
-> --- a/tools/perf/tests/shell/common/init.sh
-> +++ b/tools/perf/tests/shell/common/init.sh
-> @@ -1,3 +1,4 @@
-> +#!/bin/sh
->  # SPDX-License-Identifier: GPL-2.0
->  #
->  #	init.sh
-> --
-> 2.49.1
-> 
+> diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+> index 7f8b245e287a..47036a9d4acc 100644
+> --- a/net/netfilter/nf_conntrack_core.c
+> +++ b/net/netfilter/nf_conntrack_core.c
+> @@ -1659,7 +1659,11 @@ __nf_conntrack_alloc(struct net *net,
+>  			if (!conntrack_gc_work.early_drop)
+>  				conntrack_gc_work.early_drop = true;
+>  			atomic_dec(&cnet->count);
+> -			net_warn_ratelimited("nf_conntrack: table full, dropping packet\n");
+> +			if (net == &init_net)
+> +				net_warn_ratelimited("nf_conntrack: table full, dropping packet\n");
+> +			else
+> +				net_warn_ratelimited("nf_conntrack: table full in netns %u, dropping packet\n",
+> +						     net->ns.inum);
+
+This is slightly better, but it still does not say what packet has
+been dropped, right?
+
+Probably a similar approach to nf_tcp_log_invalid() would better here.
+
+Thus, nf_log infrastructure could be used as logging hub.
+
+Logging the packet probably provides more context information than
+simply logging the netns inode number.
 
