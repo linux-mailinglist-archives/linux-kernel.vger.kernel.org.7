@@ -1,408 +1,99 @@
-Return-Path: <linux-kernel+bounces-742188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67756B0EE78
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B6CB0EE7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35ED91AA3D8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155893B13F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEA228540F;
-	Wed, 23 Jul 2025 09:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A1A284694;
+	Wed, 23 Jul 2025 09:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZv5YO0V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnufFwsv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7311C84D0;
-	Wed, 23 Jul 2025 09:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA51C84D0;
+	Wed, 23 Jul 2025 09:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753263073; cv=none; b=tZXrma25ahlBRKRusyb6vj05CICQIBgCzwkvnYYUFkyzi/9nzg69nbCfCUM3hVv+m7/VBTLcbIUMt5LnqckSDe+tnfA2S5Jk1tB5lVMLqpw4cHgVxEOb9RowbcCT7HAp6LYszhuKa+b/ccDDGb05940OZzPjS+54pSjTJFgWuBQ=
+	t=1753263141; cv=none; b=BTbvWI3Do07t+vjX5rdMkgy4pm/DKgXcSc40vvs2BsCY3guOEvKuDPB2bWp8qK1D2AxFSQXP38to0pfkjBZCxLWxeF+YLdo3CCEtthk/+3FjU7YsajWT5tVbSC9D9z8WGtyEomrFUByUXcaUq9asZQ2vaIA2N/Tm7LcmELH34UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753263073; c=relaxed/simple;
-	bh=WfnuZ0Mwt7UWG+eQ4u6fHUfDMSZ4NpKzbnvg4OLO8AE=;
+	s=arc-20240116; t=1753263141; c=relaxed/simple;
+	bh=VAILaPd6nBnwY1RmU2BFZxST8YPq75mfdT1tCy/Ki2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sr36Tkwj/pEQ3RBQhf6WclS6r8MENP3IbGPeA6lFXSDF3mmb8Ad7voWe0ojAjsDgaCYHcZh5TfyKyR5UmtfWU8DdywiA4omhpIYQycgwM01efn0IM+9dLE7Qe83W2rhPnj6LNdILqEsji+aLipZgsgzGKqgY/e+OKq3f/3u+CuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZv5YO0V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B2FC4CEF4;
-	Wed, 23 Jul 2025 09:31:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hU6U5gfUVHPha7xQHCxRW5httMHvTlN2HAGR0PlCEa9ofdf1jCkD3Ur2UwB02ZiwJ1DwYL36YHA/BuASzea6bvPCVm9Ts6svsrGgRcqB0BPF5iWkNtNJBFRaecBpgmto/BhqTea+Kk3jfgRuudPNohMXAWQpNDAhD2avSSoeHZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnufFwsv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D9EC4CEF4;
+	Wed, 23 Jul 2025 09:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753263073;
-	bh=WfnuZ0Mwt7UWG+eQ4u6fHUfDMSZ4NpKzbnvg4OLO8AE=;
+	s=k20201202; t=1753263138;
+	bh=VAILaPd6nBnwY1RmU2BFZxST8YPq75mfdT1tCy/Ki2g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZv5YO0V3xhJGLBo1dVH9bIdseZ/4ikEzZAEMfsiXEi+wRzUJBiOhfBLK5BHkqOYl
-	 jPXLDcnrqq8Y+VhT0j1RWYc1WRyImkG1ySPyU/D8B+OJmLsrR+WQhuv788AREvrP92
-	 Tx6DL9J1vFOXAqpLIqbuNJRbCb5CCsX6Olf9Nk7fYdH/IgDNYLsKy4lqBweci+V+bV
-	 UH1UgHg5fNv8L7Kt2ezPsIMfyCi9bby3N61uetclP/FsQsVb7J9wPWLWlUW+eEcQyq
-	 9mS1UBbB854T+0CB8OLR0aR00L/E8/5uxYKJcCoy5F32V39KBZE5tmOnz7e76dWWq8
-	 vsjcOBcdMMUQw==
-Date: Wed, 23 Jul 2025 10:31:08 +0100
-From: Lee Jones <lee@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-Message-ID: <20250723093108.GQ11056@google.com>
-References: <20250708141114.134950-1-linux@timmermann.space>
- <20250708141114.134950-3-linux@timmermann.space>
+	b=ZnufFwsvby3EUHi8G66LPXd83iTs2bNT5ZtWBcECbEL1NFTQ4wPQVdWcgh6IgUJ1B
+	 vQ5Y+w3ExxNcIL0bV9wzz8132Fgx8JDJXHS0BdBqQmsHBaqygUJSinBbyr6YKcWOil
+	 puC6+qj9Go9yBAr8lTdHx7XuQ0OhfHg6l8Ojg1RxrGUs8ZHoWY0cn0FNvm2cAHtsH+
+	 GixdoOJWqxtfdzJ7AZSm7AF9sd6By96LAbXmym/noCJTGhkO0jeRPgnfWvBnSEXZBa
+	 MFD5BuEIU4QxKWqXz77iL7nH2kXVQuZ/HCR5pRzY5KPSmlQcWN1abfomoxC0F/lO5u
+	 QEM1r5vr+mkJA==
+Date: Wed, 23 Jul 2025 11:32:14 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
+	jikos@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
+Message-ID: <34ks6futbrmunsq2tbz75jwqg64lpk4pg6udbbk3yo2exm657b@3fivbjjdcyl4>
+References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
+ <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
+ <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
+ <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
+ <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
+ <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250708141114.134950-3-linux@timmermann.space>
+In-Reply-To: <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
 
-On Tue, 08 Jul 2025, Lukas Timmermann wrote:
-
-> Since there were no existing drivers for the AS3668 or related devices,
-> a new driver was introduced in a separate file. Similar devices were
-> reviewed, but none shared enough characteristics to justify code reuse.
-> As a result, this driver is written specifically for the AS3668.
+On Jul 21 2025, Alan Stern wrote:
+> On Mon, Jul 21, 2025 at 03:05:58PM +0200, Benjamin Tissoires wrote:
+> > > So then would it be better to accept these report fields (perhaps with a 
+> > > warning) and instead, harden the core HID code so that it doesn't choke 
+> > > when it runs across one of them?
+> > > 
+> > 
+> > Yeah, that seems like the best plan forward.
+> > 
+> > [sorry on reduced setup for the next 3 weeks, so I can't really debug
+> > the entire thing now.]
+> > 
+> > Though, we should probably not annoy users unless we are trying to do
+> > something that won't be needed. I doubt that Saitek gamepad will ever
+> > call the faulty functions, so why putting an error in the logs when it's
+> > working fine?
 > 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> ---
->  MAINTAINERS                |   1 +
->  drivers/leds/Kconfig       |  13 +++
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-as3668.c | 195 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 210 insertions(+)
->  create mode 100644 drivers/leds/leds-as3668.c
+> All right.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 091206c54c63..945d78fef380 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
->  L:	linux-leds@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
-> +F:	drivers/leds/leds-as3668.c
->  
->  ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
->  M:	Tianshu Qiu <tian.shu.qiu@intel.com>
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index a104cbb0a001..8cfb423ddf82 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -100,6 +100,19 @@ config LEDS_ARIEL
->  
->  	  Say Y to if your machine is a Dell Wyse 3020 thin client.
->  
-> +config LEDS_AS3668
-> +	tristate "LED support for AMS AS3668"
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	help
-> +	  This option enables support for the AMS AS3668 LED controller.
-> +	  The AS3668 provides up to four LED channels and is controlled via
-> +	  the I2C bus. This driver offers basic brightness control for each
-> +	  channel, without support for blinking or other advanced features.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called leds-as3668.
-> +
->  config LEDS_AW200XX
->  	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 2f170d69dcbf..983811384fec 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
->  obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
->  obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
->  obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
-> +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
->  obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
->  obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
->  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
-> new file mode 100644
-> index 000000000000..fbf29a6d0296
-> --- /dev/null
-> +++ b/drivers/leds/leds-as3668.c
-> @@ -0,0 +1,195 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  Osram AMS AS3668 LED Driver IC
-> + *
-> + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/i2c.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/uleds.h>
-> +
-> +#define AS3668_MAX_LEDS 4
-> +
-> +/* Chip Registers */
+> Probably the best way to do this is simply to revert the commit that's 
+> already applied and then merge a new patch to harden the core.  Would 
+> you like me to post the reversion patch or do you prefer to do it 
+> yourself?
 
-This should be obvious in the nomenclature.
+Given that the faulty commit is on top of for-6.17/core, I can simply
+force push to the parent, and also force push the for-next branch. That
+should do the trick.
 
-> +#define AS3668_CHIP_ID1 0x3e
+Can you post your s32ton fix on top of that then?
 
-AS3668_CHIP_ID1_REG
-
-> +#define AS3668_CHIP_ID2 0x3f
-> +
-> +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
-> +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
-> +
-> +#define AS3668_CURRX_CONTROL 0x01
-> +#define AS3668_CURR1 0x02
-> +#define AS3668_CURR2 0x03
-> +#define AS3668_CURR3 0x04
-> +#define AS3668_CURR4 0x05
-> +
-> +/* Constants */
-> +#define AS3668_CHIP_IDENT 0xa5
-
-What's the difference between ID and IDENT?
-
-> +#define AS3668_CHIP_REV1 0x01
-
-How many REVs can one chip have?
-
-> +struct as3668_led {
-> +	struct led_classdev cdev;
-> +	struct as3668 *chip;
-> +	struct fwnode_handle *fwnode;
-> +
-> +	int num;
-
-We can do better than 'num'.
-
-> +};
-> +
-> +struct as3668 {
-> +	struct i2c_client *client;
-> +	struct as3668_led leds[AS3668_MAX_LEDS];
-> +};
-> +
-> +static int as3668_read_value(struct i2c_client *client, u8 reg)
-> +{
-> +	return i2c_smbus_read_byte_data(client, reg);
-> +}
-> +
-> +static int as3668_write_value(struct i2c_client *client, u8 reg, u8 value)
-> +{
-> +	int err = i2c_smbus_write_byte_data(client, reg, value);
-> +
-> +	if (err)
-> +		dev_err(&client->dev, "error writing to reg 0x%02x, returned %d\n", reg, err);
-> +
-> +	return err;
-> +}
-
-These look like abstractions for the sake of abstractions.
-
-Just use the i2c_smbus_*() calls directly.
-
-> +static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
-> +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-> +
-> +	return as3668_read_value(led->chip->client, AS3668_CURR1 + led->num);
-> +}
-> +
-> +static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-> +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-> +
-> +	as3668_write_value(led->chip->client, AS3668_CURR1 + led->num, brightness);
-> +}
-> +
-> +static int as3668_dt_init(struct as3668 *as3668)
-> +{
-> +	struct device *dev = &as3668->client->dev;
-> +	struct as3668_led *led;
-> +	struct led_init_data init_data = {};
-> +	int err;
-> +	u32 reg;
-> +
-> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "unable to read device tree led reg\n");
-
-"'reg' property missing from %s\n", child->name
-
-> +
-> +		if (reg < 0 || reg > AS3668_MAX_LEDS)
-> +			return dev_err_probe(dev, -EOPNOTSUPP, "unsupported led reg %d\n", reg);
-
-"'reg' property in %s is out of scope: %d\n", child->name, reg
-
-> +		led = &as3668->leds[reg];
-> +		led->fwnode = of_fwnode_handle(child);
-> +
-> +		led->num = reg;
-> +		led->chip = as3668;
-> +
-> +		led->cdev.max_brightness = U8_MAX;
-> +		led->cdev.brightness_get = as3668_brightness_get;
-> +		led->cdev.brightness_set = as3668_brightness_set;
-> +
-> +		init_data.fwnode = led->fwnode;
-> +		init_data.default_label = ":";
-> +
-> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "failed to register %d LED\n", reg);
-
-Swap "%d" and "LED"
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int as3668_probe(struct i2c_client *client)
-> +{
-> +	int err;
-> +	u8 chip_id1, chip_id2, chip_serial, chip_rev;
-> +	struct as3668 *as3668;
-
-Nit: structs at the top, then filter down in size order.
-
-> +	/* Check for sensible i2c address */
-> +	if (client->addr != 0x42)
-
-No magic numbers - define this please.
-
-> +		return dev_err_probe(&client->dev, -EFAULT,
-> +				     "unexpected address for as3668 device\n");
-
-Unwrap this - you can use up to 100-chars in LEDs.
-
-"Expected I2C address %x, got %x", <DEFINE>, client->addr"
-
-> +	/* Read identifier from chip */
-> +	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
-> +
-> +	if (chip_id1 != AS3668_CHIP_IDENT)
-> +		return dev_err_probe(&client->dev, -ENODEV,
-> +				"chip reported wrong id: 0x%02x\n", chip_id1);
-
-Unlikely.  This too is unexpected, as above.
-
-> +	/* Check the revision */
-> +	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
-
-Is child_id2 not for another chip?
-
-This is ambiguous, please improve the variable nomenclature.
-
-> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_id2);
-> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_id2);
-> +
-> +	if (chip_rev != AS3668_CHIP_REV1)
-> +		dev_warn(&client->dev, "unexpected chip revision\n");
-
-Values please.
-
-> +	/* Print out information about the chip */
-> +	dev_dbg(&client->dev,
-> +		"chip_id: 0x%02x | chip_id2: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
-> +		chip_id1, chip_id2, chip_serial, chip_rev);
-> +
-> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
-> +	if (!as3668)
-> +		return -ENOMEM;
-> +
-> +	as3668->client = client;
-
-\n
-
-> +	err = as3668_dt_init(as3668);
-> +	if (err)
-> +		return dev_err_probe(&client->dev, err, "failed to initialize device\n");
-
-No need for 2 error messages.
-
-> +	/* Initialize the chip */
-> +	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x55);
-
-No magic numbers.
-
-> +	as3668_write_value(client, AS3668_CURR1, 0x00);
-> +	as3668_write_value(client, AS3668_CURR2, 0x00);
-> +	as3668_write_value(client, AS3668_CURR3, 0x00);
-> +	as3668_write_value(client, AS3668_CURR4, 0x00);
-> +
-> +	return 0;
-> +}
-> +
-> +static void as3668_remove(struct i2c_client *client)
-> +{
-> +	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x0);
-> +}
-> +
-> +static const struct i2c_device_id as3668_idtable[] = {
-> +	{"as3668"},
-
-Spaces after the '{' and before the '}'.
-
-> +	{}
-> +};
-> +
-
-Remove this line.
-
-> +MODULE_DEVICE_TABLE(i2c, as3668_idtable);
-> +
-> +static const struct of_device_id as3668_match_table[] = {
-> +	{.compatible = "ams,as3668"},
-
-Spaces after the '{' and before the '}'.
-
-> +	{}
-> +};
-> +
-
-Remove this line.
-
-> +MODULE_DEVICE_TABLE(of, as3668_match_table);
-> +
-> +static struct i2c_driver as3668_driver = {
-> +	.driver = {
-> +		.name           = "leds_as3668",
-> +		.of_match_table = as3668_match_table,
-> +	},
-> +	.probe          = as3668_probe,
-> +	.remove         = as3668_remove,
-> +	.id_table       = as3668_idtable,
-
-Remove all of the odd tabbing from in here.
-
-A single space is fine.
-
-> +};
-> +
-
-Remove.
-
-> +module_i2c_driver(as3668_driver);
-> +
-> +MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
-> +MODULE_DESCRIPTION("AS3668 LED driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.50.0
-> 
-
--- 
-Lee Jones [李琼斯]
+Cheers,
+Benjamin
 
