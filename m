@@ -1,1130 +1,207 @@
-Return-Path: <linux-kernel+bounces-742755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93B9B0F64F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75A4B0F5CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C176586110
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7361CC30C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D651307ACC;
-	Wed, 23 Jul 2025 14:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B382F5485;
+	Wed, 23 Jul 2025 14:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="lk6oHfL3"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSOfFOzl"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E938303DF9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301D22E719B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282089; cv=none; b=L6nq8YjVf5M+n0cwSufUVhEPHK4mSpDFqZLjGpBntIODzizqe13+Cb+8Ei7ig5tsi3KGeHeCB/MAYxsyTR6g/dxdVdnkXDUMpQkK+Ak3dF8kcYG+nX1gurRyvDgw6Dbw7+rQ8Ar2+4nefPcLq34k9ZjcrawegL6iw8FUaEm3wqo=
+	t=1753282019; cv=none; b=gON2EpE7JLVkDSBHC/DFxy+ZXwA0LiPMfR4hcr1Ifp8vkv77SAWrr1SfBib2fhQuITO/+Ofk2jmcw8T8KYsqyg50stI1h2fxKX1T/4Pz63OmwXwLPngD1JiXKQqI4JXL1VmoD1illbHYsnCO/wpz7oslgLE3hiCSlSpF6K4Mvro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282089; c=relaxed/simple;
-	bh=8l0K6QJ4RkWllZcpyZGwgZlU9m1P2gnk5TToNIUeT/Q=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q8G5XE9ZYwTNdzliDRVq04GxizoxPKC1Z6xYIxxfWcticQtw9rdvQpl9X2jz/9PMtss9Z7eGhx9FsEpizU8zWEHomKvRQ5nt/ew67TrYnr1sOdxwSPzE73qhr9dokBrHnlPIGW0y/ju868XEUdrgsx0eHHkSxBf+vfrocmKmMR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=lk6oHfL3; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e8d7ad77e4cso4898809276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:48:02 -0700 (PDT)
+	s=arc-20240116; t=1753282019; c=relaxed/simple;
+	bh=pNF5x/KnFiLldz0sKiX5Sar4huY0ieTZ2jOl0Mw64+M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qY7IjGrFQQ/8HC5NPr988gij2PoSD9SVlClSmxB47ydk+HId/reQhoD7MgxxmFd/5teJ+jUdtnPjDct50kTP4W4Xw7kxAMLISk4ooyB/8y5Tem+WGf1OlkYA2MuY233iEAom3X9N4gbJf/fRGiM+R7jbvuH7CV9OS+qRQRit5sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BSOfFOzl; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so52723555e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753282080; x=1753886880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1753282014; x=1753886814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=60o0+pILn7oYpaQU4GzfpCaIJI/wVLOztDCQbTE/8Fw=;
-        b=lk6oHfL33DRygEmycTqTSPdwXuwH5hy32r3J/F9TQA4/3S2s9v9ceb3ykwDH++yvbv
-         2TVA0atGroGi3hMZgUdmG4tIa2R871AkUfPtVogcmXzdrKzvE/KWbslIkFJ3HFwM29Y+
-         O+k9GMtmqMTKp+R4fTPHCBBIPjwPZTgbReCHHU90wobbPo1y34nZHAGZxwbfpkbcj1Nd
-         RwC/9FLHW7PLtnVT1GGh65D+K5kjemtItUntFClQxU6Cviyv/VkUjkF2VIkIzFv9NSb6
-         zZ+oC4HN7qvvIb2aki9AMGAUx5oDugz/tOQKS3TmdsBKPnG2lfkQXX8R/X4tmFUYi+mW
-         OQew==
+        bh=L29h6EKArV20tELErS9C9+UIvpslfClXnLtlZ1Dwf+I=;
+        b=BSOfFOzlq+2WO54TbQOjDYZDr7MPIzj9p6ZS7aSkkkT/EDkGmELqR7n2G67oLmQ1H3
+         XUzJF71Q4hWLJh8FuXKODnkhsdZYQnr9/QvsV/At4BlrN+ZUq9Wthbvbb2Xrjl+JhiW7
+         wvV3kSg1aHWTJsiokrFRnsgOc1hTAO8ni/rFc2IV2ZbHdwKhST99qibzsVoBwjEDyPlA
+         TeWzSTiRo/DVifOm9JS40TIzv2uNtjntu69E/o/m/7s0A56nUGxQob/+8nrzmAf16Itf
+         pN8xGGScb/boW68QtzeMmWpHCWWBQb4uMfFKd5du+b6ZktCPHBNcjXkD1XGqgAKcB+Du
+         cQgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753282080; x=1753886880;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=60o0+pILn7oYpaQU4GzfpCaIJI/wVLOztDCQbTE/8Fw=;
-        b=pjZds1IiNQDr8dcW6k1Xa4alRN6wSsDqX86rgR2vIuYWlBhftjN7Z1WMki7vcy5Ls1
-         gcWuwt9cbXA5PoNzC3ujFk8ArNmpWrdIRGpYHRUivoKwqMz84iqv9Oi3Tg531IjXqUqP
-         NWJOjUGsp1R4ncDgYLz/1WYS26HNH5ONebYutU0S/oekMt9z4B7SuDgQPWubNjpp/YW1
-         FVO0aEU5tZ90patrrwtv2GsFkMZODVLdBPv95fGzeAMz6MS11+Ceo1L3vPPPVESd7oie
-         p3Cskv2BLrgZGc1jRlKdULUf3nw5xrBF71haybDjz/xay3au3qZoQpPASKwkx3jt0Bzk
-         ad8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2prF2boZIFciS1YoNb+zw2fGAccRUCtf4353n87x58jOcTok7e3hMzRVZpGVFg2m+QP9PBhJDnN/dJ50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/3EXSfDwgahReQA5Wfs7fCQVpgVAnpL2JEoWCefwYQxHhSwZ6
-	XS0+73yfEElzolyKaUyUII6yQH8BSOVS551xYKmIBNnwH1xH6oxF684kx0cJ8AdO8HI=
-X-Gm-Gg: ASbGncvTHCEnkZJOKCdSq1rZBRabVGsUej6L4JwlFvNWzd8/JIB/19vbkZCpiB9HOqO
-	B2XB2w9Q2HRJFfH33f+qBUucTWgB3aaxG69RilfZPJK0gVxqTWWuAgH4SNPl/czqcod/aYLJJSb
-	jcqYj8n8cp+4mxKq9Gy9OIXAeB50JwIvg7V+b4gg4WUZf2vq18iBSLe5XDuEtD5DGUppw3HtNxZ
-	OKYG3bv92++TsqBwMbktS4hKBCg7Ll1eO5UgchyEt56W02ttL4dL1spR8jsCQxgBKa1t6cCYXJF
-	ID4PbKJoIlH1+320K7nPNh3o+8BhvG88DU2iKlfVzC27AHuYTG8VBHRsIEfT3HBqDbeK+1KY6rJ
-	eiP8ITkaBpuWkjJFl0Navx14FCvuLaPsAZco4uyWCNl/W7uG0n7ITgYVkKvFerGKOLe68rNEhja
-	m4Rx7mgurPQvRPRQ==
-X-Google-Smtp-Source: AGHT+IEHR5YhXNXKqQu5cYnYQfYX3NmO3Uw1youtd2STD6HMFKwDB0cE2+RVBh3uuo0TCOuCIAe/Cw==
-X-Received: by 2002:a05:690c:3391:b0:717:b35b:94d1 with SMTP id 00721157ae682-719b42089f0mr42556337b3.9.1753282080302;
-        Wed, 23 Jul 2025 07:48:00 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (235.247.85.34.bc.googleusercontent.com. [34.85.247.235])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-719532c7e4fsm30482117b3.72.2025.07.23.07.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 07:47:59 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: pratyush@kernel.org,
-	jasonmiu@google.com,
-	graf@amazon.com,
-	changyuanl@google.com,
-	pasha.tatashin@soleen.com,
-	rppt@kernel.org,
-	dmatlack@google.com,
-	rientjes@google.com,
-	corbet@lwn.net,
-	rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com,
-	ojeda@kernel.org,
-	aliceryhl@google.com,
-	masahiroy@kernel.org,
-	akpm@linux-foundation.org,
-	tj@kernel.org,
-	yoann.congal@smile.fr,
-	mmaurer@google.com,
-	roman.gushchin@linux.dev,
-	chenridong@huawei.com,
-	axboe@kernel.dk,
-	mark.rutland@arm.com,
-	jannh@google.com,
-	vincent.guittot@linaro.org,
-	hannes@cmpxchg.org,
-	dan.j.williams@intel.com,
-	david@redhat.com,
-	joel.granados@kernel.org,
-	rostedt@goodmis.org,
-	anna.schumaker@oracle.com,
-	song@kernel.org,
-	zhangguopeng@kylinos.cn,
-	linux@weissschuh.net,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mm@kvack.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	bartosz.golaszewski@linaro.org,
-	cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com,
-	yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com,
-	quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com,
-	ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com,
-	leon@kernel.org,
-	lukas@wunner.de,
-	bhelgaas@google.com,
-	wagi@kernel.org,
-	djeffery@redhat.com,
-	stuart.w.hayes@gmail.com,
-	ptyadav@amazon.de,
-	lennart@poettering.net,
-	brauner@kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	saeedm@nvidia.com,
-	ajayachandra@nvidia.com,
-	jgg@nvidia.com,
-	parav@nvidia.com,
-	leonro@nvidia.com,
-	witu@nvidia.com
-Subject: [PATCH v2 32/32] libluo: add tests
-Date: Wed, 23 Jul 2025 14:46:45 +0000
-Message-ID: <20250723144649.1696299-33-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+        d=1e100.net; s=20230601; t=1753282014; x=1753886814;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L29h6EKArV20tELErS9C9+UIvpslfClXnLtlZ1Dwf+I=;
+        b=DEKtRZcrmN2N30nQrDYi45MmCvfqpNQlqLBQDhHe9rmUgCpKpi3fJM+jurhJQ4OtM6
+         XNpWzMDPkiiLBaoe6Yj3jcqEmnJQB7pNl4msuCCRC/FCh5ySGq1n7fo74iu5+9+NEi2x
+         GOGbt+Rx597puEj8aQL+jblOOIzn4QJX9oN1NOHJ5/5a+EhHOBfCiiwd5a55wQz+7vwk
+         uO05JX96OJpmHh5Db9idaBV7TkAiFBElUj873Q/yn8CYlY8uMQqI7oFOoTZ+aSb9irDk
+         G/knAlxBbcI/DZS4MYZoI44mz/bVDPUMi0xgfp68TtRhihAMbybKgICCkWsAPbItsujN
+         pdIw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/yl2WBVH6BEBWlTSzj6+4MES95I64pdnvYn8b5pnZzvkTQF2L/m6QE6b8LG3iKA1rb5LxVL2okFYwHYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKTiPqPAk/ZIn+HN3Vf3ZQWOLj1Sxo4dQSBC0BhjCGrDQL0JmW
+	QtXHMNyfwjkGSqZ31OzLGK0ftvtkbQMuA4JmDyLz6nfPFIvfQPGKojTSGf1HeTZmRvc=
+X-Gm-Gg: ASbGncutmWGzvFDJmq/PQZwM/bG/K0tIY9/mNWwscW8aNO/ixjyTsdv6kOO96FfoqYB
+	NP2ZSRip9rpPZ8vbIYpWa17E9qn5S8wjiv9s2r8l83qEuG6RRI1w5TddYeHYjlwhl50wjjnnhhI
+	C68mNFe+/xu/7MXD37CX7qTbs/f2C690jMfzuXT/CpYOAzpvHi92olW9Lav0NU5Mmli4CrXMdxO
+	i4yhLwPg+OZZfjZ7a6wR6USiFgGF33VgW58vrTFStcxw/dBp/fk51vMb51n9EeBqymaVbgBMNAs
+	xjlgTYbUP2e02+kVqaHeiR0dxA+kDVI6Fb/HEwMG2MahtnCxcrK2I1v9FLI3YHtGmKDpwnsSchY
+	svBmNdiNpHM/nnCMaliA44q5+j+JeN1ixqGymAa04UTkfe/ZfoMUy/UN7s1rCsWIxd7Z5zc5tsx
+	MKWA==
+X-Google-Smtp-Source: AGHT+IFfNwcscWk8yTXaSaqSwGrS5jaSAAkFnZ9U4aRsYEXlqsL1Eq4oLL6kohZIRvs7+CcnQw3YTQ==
+X-Received: by 2002:a05:6000:26cd:b0:3b6:c88:7b74 with SMTP id ffacd0b85a97d-3b768f2e446mr2720020f8f.59.1753282014234;
+        Wed, 23 Jul 2025 07:46:54 -0700 (PDT)
+Received: from ?IPV6:2a01:cb14:150f:cf00:b6af:e6a0:6569:3a1? ([2a01:cb14:150f:cf00:b6af:e6a0:6569:3a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c632sm16730245f8f.80.2025.07.23.07.46.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 07:46:53 -0700 (PDT)
+Message-ID: <aec9cd03-6fc2-4dc8-b937-8b7cf7bf4128@linaro.org>
+Date: Wed, 23 Jul 2025 16:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] soc: qcom: mdt_loader: Fix error return values in
+ mdt_header_valid()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Pratyush Yadav <ptyadav@amazon.de>
+Hi,
 
-Add a test suite for libluo itself, and for the kernel LUO interface.
-The below tests are added:
+On 25/06/2025 17:22, Dan Carpenter wrote:
+> This function is supposed to return true for valid headers and false for
+> invalid.  In a couple places it returns -EINVAL instead which means the
+> invalid headers are counted as true.  Change it to return false.
+> 
+> Fixes: 9f9967fed9d0 ("soc: qcom: mdt_loader: Ensure we don't read past the ELF header")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/soc/qcom/mdt_loader.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 1b4ebae458f3..0ca268bdf1f8 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -33,14 +33,14 @@ static bool mdt_header_valid(const struct firmware *fw)
+>   		return false;
+>   
+>   	if (ehdr->e_phentsize != sizeof(struct elf32_phdr))
+> -		return -EINVAL;
+> +		return false;
+>   
+>   	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
+>   	if (phend > fw->size)
+>   		return false;
+>   
+>   	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+> -		return -EINVAL;
+> +		return false;
+>   
+>   	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+>   	if (shend > fw->size)
 
-1. init - Tests the initialization and cleanup functions of libluo.
+This patch on linux-next breaks loading DSP firmwares on at least SM8550, SM8650, X1E8:
 
-2. state - Tests the luo_get_state() API, which in turn tests the
-LIVEUPDATE_IOCTL_GET_STATE ioctl
+[    7.572665] remoteproc remoteproc1: Booting fw image qcom/sm8550/adsp.mbn, size 28342616
+[    7.615176] remoteproc remoteproc1: Failed to load program segments: -22
 
-3. preserve - Creates a memfd, preserves it, puts LUO in prepared state,
-   cancels liveupdate, and makes sure memfd is functional.
+CI runs:
+https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248846#L1323
+https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248850#L2037
 
-4. prepared - Puts a memfd in LUO enters prepared state. Then it
-   makes sure the memfd stays functional but remains in restricted mode. It
-   makes sure the memfd can't grow or shrink, but can be read from or
-   written to.
+Bisect log:
+# bad: [a933d3dc1968fcfb0ab72879ec304b1971ed1b9a] Add linux-next specific files for 20250723
+# good: [89be9a83ccf1f88522317ce02f854f30d6115c41] Linux 6.16-rc7
+git bisect start 'a933d3dc1968fcfb0ab72879ec304b1971ed1b9a' 'v6.16-rc7'
+# bad: [a56f8f8967ad980d45049973561b89dcd9e37e5d] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad a56f8f8967ad980d45049973561b89dcd9e37e5d
+# bad: [f6a8dede4030970707e9bae5b3ae76f60df4b75a] Merge branch 'fs-next' of linux-next
+git bisect bad f6a8dede4030970707e9bae5b3ae76f60df4b75a
+# bad: [b863560c5a26fbcf164f5759c98bb5e72e26848d] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
+git bisect bad b863560c5a26fbcf164f5759c98bb5e72e26848d
+# good: [6fe8797df6f2e3a7e3c736d5bd4862915a06a690] Merge branch 'for-next/core' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux
+git bisect good 6fe8797df6f2e3a7e3c736d5bd4862915a06a690
+# good: [c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5] Merge tag 'ti-k3-dt-for-v6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into soc/dt
+git bisect good c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5
+# good: [6a323f22a8b925f3646c884e2f9c733c79393f1d] Merge branch 'soc/drivers' into for-next
+git bisect good 6a323f22a8b925f3646c884e2f9c733c79393f1d
+# good: [5d8b3562faac8030b5c26efc1cd739a41c4db722] Merge branch 'soc/dt' into for-next
+git bisect good 5d8b3562faac8030b5c26efc1cd739a41c4db722
+# bad: [b79c0d780e519d760c2529f0bf849111b9270192] Merge tag 'apple-soc-drivers-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux into soc/drivers
+git bisect bad b79c0d780e519d760c2529f0bf849111b9270192
+# good: [9841d92754d0f3846977a39844c3395ee2463381] Merge tag 'memory-controller-drv-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl into soc/drivers
+git bisect good 9841d92754d0f3846977a39844c3395ee2463381
+# good: [64a026dd896e423a177fe87e11aa69bf5348c27b] soc: qcom: socinfo: Add support to retrieve TME build details
+git bisect good 64a026dd896e423a177fe87e11aa69bf5348c27b
+# good: [9cea10a4f5a39fde32bf7b8addfa5f9175174e0e] dt-bindings: sram: qcom,imem: Add a number of missing compatibles
+git bisect good 9cea10a4f5a39fde32bf7b8addfa5f9175174e0e
+# good: [0445eee835d6e59d635e242ba1d9273f168035fa] soc: apple: rtkit: Make shmem_destroy optional
+git bisect good 0445eee835d6e59d635e242ba1d9273f168035fa
+# bad: [5b8141596b06fba7313cdfbd5f589649d7fde662] Merge tag 'qcom-drivers-for-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/drivers
+git bisect bad 5b8141596b06fba7313cdfbd5f589649d7fde662
+# bad: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
+git bisect bad 9f35ab0e53ccbea57bb9cbad8065e0406d516195
+# first bad commit: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
 
-5. transitions - Tests transitions from normal to prepared to cancel
-   state work.
-
-6. error - Tests error handling of the library on invalid inputs.
-
-7. kexec - Tests the main functionality of LUO -- preserving a FD over
-   kexec. It creates a memfd with random data, saves the data to a file on
-   disk, and then preserves the FD and goes into prepared state. Now the
-   test runner must perform a kexec. Once rebooted, running the test again
-   resumes the test. It fetches the memfd back, nd compares its content
-   with the saved data on disk.
-
-A specific test can be selected or excluded uring the -t or -e arguments.
-
-Sample run:
-
-    $ ./test
-    LibLUO Test Suite
-    =================
-
-    Testing initialization and cleanup... PASSED
-    Testing get_state... PASSED (current state: normal)
-    Testing state transitions... PASSED
-    Testing fd_preserve with freeze and cancel... PASSED
-    Testing operations on prepared memfd... PASSED
-    Testing error handling... PASSED
-    Testing fd preserve for kexec... READY FOR KEXEC (token: 3)
-    Run kexec now and then run this test again to complete.
-
-    All requested tests completed.
-
-Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
----
- tools/lib/luo/Makefile         |   4 +
- tools/lib/luo/tests/.gitignore |   1 +
- tools/lib/luo/tests/Makefile   |  18 +
- tools/lib/luo/tests/test.c     | 848 +++++++++++++++++++++++++++++++++
- 4 files changed, 871 insertions(+)
- create mode 100644 tools/lib/luo/tests/.gitignore
- create mode 100644 tools/lib/luo/tests/Makefile
- create mode 100644 tools/lib/luo/tests/test.c
-
-diff --git a/tools/lib/luo/Makefile b/tools/lib/luo/Makefile
-index e8f6bd3b9e85..ef4c489efcc5 100644
---- a/tools/lib/luo/Makefile
-+++ b/tools/lib/luo/Makefile
-@@ -29,9 +29,13 @@ $(SHARED_LIB): $(OBJS)
- cli: $(STATIC_LIB)
- 	$(MAKE) -C cli
- 
-+tests: $(STATIC_LIB)
-+	$(MAKE) -C tests
-+
- clean:
- 	rm -f $(OBJS) $(STATIC_LIB) $(SHARED_LIB)
- 	$(MAKE) -C cli clean
-+	$(MAKE) -C tests clean
- 
- install: all
- 	install -d $(DESTDIR)/usr/local/lib
-diff --git a/tools/lib/luo/tests/.gitignore b/tools/lib/luo/tests/.gitignore
-new file mode 100644
-index 000000000000..ee4c92682341
---- /dev/null
-+++ b/tools/lib/luo/tests/.gitignore
-@@ -0,0 +1 @@
-+/test
-diff --git a/tools/lib/luo/tests/Makefile b/tools/lib/luo/tests/Makefile
-new file mode 100644
-index 000000000000..7f4689722ff6
---- /dev/null
-+++ b/tools/lib/luo/tests/Makefile
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: LGPL-3.0-or-later
-+TESTS = test
-+INCLUDE_DIR = ../include
-+HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
-+
-+CC = gcc
-+CFLAGS = -Wall -Wextra -O2 -g -I$(INCLUDE_DIR)
-+LDFLAGS = -L.. -l:libluo.a
-+
-+.PHONY: all clean
-+
-+all: $(TESTS)
-+
-+test: test.c ../libluo.a $(HEADERS)
-+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
-+
-+clean:
-+	rm -f $(TESTS)
-diff --git a/tools/lib/luo/tests/test.c b/tools/lib/luo/tests/test.c
-new file mode 100644
-index 000000000000..7963ae8ebadf
---- /dev/null
-+++ b/tools/lib/luo/tests/test.c
-@@ -0,0 +1,848 @@
-+// SPDX-License-Identifier: LGPL-3.0-or-later
-+#define _GNU_SOURCE
-+/**
-+ * @file test.c
-+ * @brief Test program for the LibLUO library
-+ *
-+ * This program tests the basic functionality of the LibLUO library.
-+ *
-+ * Copyright (C) 2025 Amazon.com Inc. or its affiliates.
-+ * Author: Pratyush Yadav <ptyadav@amazon.de>
-+ */
-+
-+#include <libluo.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <sys/mman.h>
-+#include <getopt.h>
-+
-+/* Path to store token for kexec test */
-+#define TOKEN_FILE		"libluo_test_token"
-+#define TEST_DATA_FILE		"libluo_test_data"
-+#define MEMFD_NAME		"libluo_test_memfd"
-+
-+/* Size of the random data buffer (1 MiB) */
-+#define RANDOM_BUFFER_SIZE	(1 << 20)
-+static char random_buffer[RANDOM_BUFFER_SIZE];
-+
-+/* Test IDs */
-+#define TEST_INIT_CLEANUP	(1 << 0)
-+#define TEST_GET_STATE		(1 << 1)
-+#define TEST_FD_PRESERVE	(1 << 2)
-+#define TEST_ERROR_HANDLING	(1 << 3)
-+#define TEST_FD_KEXEC		(1 << 4)
-+#define TEST_FD_PREPARED	(1 << 5)
-+#define TEST_STATE_TRANSITIONS	(1 << 6)
-+#define TEST_ALL		(TEST_INIT_CLEANUP | TEST_GET_STATE | \
-+				 TEST_FD_PRESERVE | TEST_ERROR_HANDLING | \
-+				 TEST_FD_KEXEC | TEST_FD_PREPARED | \
-+				 TEST_STATE_TRANSITIONS)
-+
-+/*
-+ * luo_fd_preserve() needs a unique token. Generate a monotonically increasing
-+ * token.
-+ */
-+static uint64_t next_token()
-+{
-+	static uint64_t token = 0;
-+
-+	return token++;
-+}
-+
-+/* Read exactly specified size from fd. Any less results in error. */
-+static int read_size(int fd, char *buffer, size_t size)
-+{
-+	size_t remain = size;
-+	ssize_t bytes_read;
-+
-+	while (remain) {
-+		bytes_read = read(fd, buffer, remain);
-+		if (bytes_read == 0)
-+			return -ENODATA;
-+		if (bytes_read < 0)
-+			return -errno;
-+
-+		remain -= bytes_read;
-+	}
-+
-+	return 0;
-+}
-+
-+/* Write exactly specified size from fd. Any less results in error. */
-+static int write_size(int fd, const char *buffer, size_t size)
-+{
-+	size_t remain = size;
-+	ssize_t written;
-+
-+	while (remain) {
-+		written = write(fd, buffer, remain);
-+		if (written == 0)
-+			return -EIO;
-+		if (written < 0)
-+			return -errno;
-+
-+		remain -= written;
-+	}
-+
-+	return 0;
-+}
-+
-+static int generate_random_data(char *buffer, size_t size)
-+{
-+	int fd, ret;
-+
-+	fd = open("/dev/urandom", O_RDONLY);
-+	if (fd < 0)
-+		return -errno;
-+
-+	ret = read_size(fd, buffer, size);
-+	close(fd);
-+	return ret;
-+}
-+
-+static int save_test_data(const char *buffer, size_t size)
-+{
-+	int fd, ret;
-+
-+	fd = open(TEST_DATA_FILE, O_RDWR);
-+	if (fd < 0)
-+		return -errno;
-+
-+	ret = write_size(fd, buffer, size);
-+	close(fd);
-+	return ret;
-+}
-+
-+static int load_test_data(char *buffer, size_t size)
-+{
-+	int fd, ret;
-+
-+	fd = open(TEST_DATA_FILE, O_RDONLY);
-+	if (fd < 0)
-+		return -errno;
-+
-+	ret = read_size(fd, buffer, size);
-+	close(fd);
-+	return ret;
-+}
-+
-+/* Create and initialize a memfd with random data. */
-+static int create_test_fd(const char *memfd_name, char *buffer, size_t size)
-+{
-+	int fd;
-+	int ret;
-+
-+	fd = memfd_create(memfd_name, 0);
-+	if (fd < 0)
-+		return -errno;
-+
-+	ret = generate_random_data(buffer, size);
-+	if (ret < 0) {
-+		close(fd);
-+		return ret;
-+	}
-+
-+	if (write_size(fd, buffer, size) < 0) {
-+		close(fd);
-+		return -errno;
-+	}
-+
-+	/* Reset file position to beginning */
-+	if (lseek(fd, 0, SEEK_SET) < 0) {
-+		close(fd);
-+		return -errno;
-+	}
-+
-+	return fd;
-+}
-+
-+/*
-+ * Make sure fd contains expected data up to size. Returns 0 on success, 1 on
-+ * data mismatch, -errno on error.
-+ */
-+static int verify_fd_content(int fd, const char *expected_data, size_t size)
-+{
-+	char buffer[size];
-+	int ret;
-+
-+	/* Reset file position to beginning */
-+	if (lseek(fd, 0, SEEK_SET) < 0)
-+		return -errno;
-+
-+	ret = read_size(fd, buffer, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (memcmp(buffer, expected_data, size) != 0)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+/* Save token to file for kexec test. */
-+static int save_token(uint64_t token)
-+{
-+	FILE *file = fopen(TOKEN_FILE, "w");
-+
-+	if (!file)
-+		return -errno;
-+
-+	if (fprintf(file, "%lu", token) < 0) {
-+		fclose(file);
-+		return -errno;
-+	}
-+
-+	fclose(file);
-+	return 0;
-+}
-+
-+/* Load token from file for kexec test. */
-+static int load_token(uint64_t *token)
-+{
-+	FILE *file = fopen(TOKEN_FILE, "r");
-+
-+	if (!file)
-+		return -errno;
-+
-+	if (fscanf(file, "%lu", token) != 1) {
-+		fclose(file);
-+		return -EINVAL;
-+	}
-+
-+	fclose(file);
-+	return 0;
-+}
-+
-+/* Test initialization and cleanup */
-+static void test_init_cleanup(void)
-+{
-+	int ret;
-+
-+	printf("Testing initialization and cleanup... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	luo_cleanup();
-+	printf("PASSED\n");
-+}
-+
-+/* Test getting LUO state */
-+static void test_get_state(void)
-+{
-+	int ret;
-+	enum liveupdate_state state;
-+
-+	printf("Testing get_state... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	ret = luo_get_state(&state);
-+	if (ret < 0) {
-+		printf("FAILED (get_state: %s)\n", strerror(-ret));
-+		luo_cleanup();
-+		return;
-+	}
-+
-+	printf("PASSED (current state: %s)\n", luo_state_to_string(state));
-+	luo_cleanup();
-+}
-+
-+/* Test preserving and unpreserving a file descriptor with prepare and cancel */
-+static void test_fd_preserve_unpreserve(void)
-+{
-+	uint64_t token = next_token();
-+	int ret, fd = -1;
-+
-+	printf("Testing fd_preserve with freeze and cancel... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	fd = create_test_fd(MEMFD_NAME, random_buffer, sizeof(random_buffer));
-+	if (fd < 0) {
-+		ret = fd;
-+		printf("FAILED (create_test_fd: %s)\n", strerror(-ret));
-+		goto out_cleanup;
-+	}
-+
-+	ret = luo_fd_preserve(fd, token);
-+	if (ret < 0) {
-+		printf("FAILED (preserve: %s)\n", strerror(-ret));
-+		goto out_close_fd;
-+	}
-+
-+	ret = luo_prepare();
-+	if (ret < 0) {
-+		printf("FAILED (prepare: %s)\n", strerror(-ret));
-+		goto out_unpreserve;
-+	}
-+
-+	ret = luo_cancel();
-+	if (ret < 0) {
-+		printf("FAILED (cancel: %s)\n", strerror(-ret));
-+		goto out_unpreserve;
-+	}
-+
-+	ret = luo_fd_unpreserve(token);
-+	if (ret < 0) {
-+		printf("FAILED (unpreserve: %s)\n", strerror(-ret));
-+		goto out_close_fd;
-+	}
-+
-+	ret = verify_fd_content(fd, random_buffer, sizeof(random_buffer));
-+	if (ret < 0) {
-+		printf("FAILED (verify_fd_content: %s)\n",
-+		       ret == 1 ? "data mismatch" : strerror(-ret));
-+		goto out_close_fd;
-+	}
-+
-+	printf("PASSED\n");
-+	goto out_close_fd;
-+
-+out_unpreserve:
-+	luo_fd_unpreserve(token);
-+out_close_fd:
-+	close(fd);
-+out_cleanup:
-+	luo_cleanup();
-+}
-+
-+/* Test error handling with invalid inputs. */
-+static void test_error_handling(void)
-+{
-+	int ret;
-+
-+	printf("Testing error handling... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	/* Test with invalid file descriptor */
-+	ret = luo_fd_preserve(-1, next_token());
-+	if (ret != -EINVAL) {
-+		printf("FAILED (expected EINVAL for invalid fd, got %d)\n", ret);
-+		luo_cleanup();
-+		return;
-+	}
-+
-+	/* Test with NULL state pointer */
-+	ret = luo_get_state(NULL);
-+	if (ret != -EINVAL) {
-+		printf("FAILED (expected EINVAL for NULL state, got %d)\n", ret);
-+		luo_cleanup();
-+		return;
-+	}
-+
-+	luo_cleanup();
-+	printf("PASSED\n");
-+}
-+
-+/* Test preserving a file descriptor for kexec reboot */
-+static void test_fd_preserve_for_kexec(void)
-+{
-+	enum liveupdate_state state;
-+	int fd = -1, ret;
-+	uint64_t token;
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	/* Check if we're in post-kexec state */
-+	ret = luo_get_state(&state);
-+	if (ret < 0) {
-+		printf("FAILED (get_state: %s)\n", strerror(-ret));
-+		goto out_cleanup;
-+	}
-+
-+	if (state == LIVEUPDATE_STATE_UPDATED) {
-+		/* Post-kexec: restore the file descriptor */
-+		printf("Testing memfd restore after kexec... ");
-+
-+		ret = load_token(&token);
-+		if (ret < 0) {
-+			printf("FAILED (load_token: %s)\n", strerror(-ret));
-+			goto out_cleanup;
-+		}
-+
-+		ret = load_test_data(random_buffer, RANDOM_BUFFER_SIZE);
-+		if (ret < 0) {
-+			printf("FAILED (load_test_data: %s)\n", strerror(-ret));
-+			goto out_cleanup;
-+		}
-+
-+		ret = luo_fd_restore(token, &fd);
-+		if (ret < 0) {
-+			printf("FAILED (restore: %s)\n", strerror(-ret));
-+			goto out_cleanup;
-+		}
-+
-+		/* Verify the file descriptor content with stored data. */
-+		ret = verify_fd_content(fd, random_buffer, RANDOM_BUFFER_SIZE);
-+		if (ret) {
-+			printf("FAILED (verify_fd_content: %s)\n",
-+			       ret == 1 ? "data mismatch" : strerror(-ret));
-+			goto out_close_fd;
-+		}
-+
-+		ret = luo_finish();
-+		if (ret < 0) {
-+			printf("FAILED (finish: %s)\n", strerror(-ret));
-+			goto out_close_fd;
-+		}
-+
-+		printf("PASSED\n");
-+		goto out_close_fd;
-+	} else {
-+		/* Pre-kexec: preserve the file descriptor */
-+		printf("Testing fd preserve for kexec... ");
-+
-+		fd = create_test_fd(MEMFD_NAME, random_buffer, RANDOM_BUFFER_SIZE);
-+		if (fd < 0) {
-+			ret = fd;
-+			printf("FAILED (create_test_fd: %s)\n", strerror(-ret));
-+			goto out_cleanup;
-+		}
-+
-+		/* Save random data to file for post-kexec verification */
-+		ret = save_test_data(random_buffer, RANDOM_BUFFER_SIZE);
-+		if (ret < 0) {
-+			printf("FAILED (save_test_data: %s)\n", strerror(-ret));
-+			goto out_close_fd;
-+		}
-+
-+		token = next_token();
-+		ret = luo_fd_preserve(fd, token);
-+		if (ret < 0) {
-+			printf("FAILED (preserve: %s)\n", strerror(-ret));
-+			goto out_close_fd;
-+		}
-+
-+		/* Save token to file for post-kexec restoration */
-+		ret = save_token(token);
-+		if (ret < 0) {
-+			printf("FAILED (save_token: %s)\n", strerror(-ret));
-+			goto out_unpreserve;
-+		}
-+
-+		ret = luo_prepare();
-+		if (ret < 0) {
-+			printf("FAILED (prepare: %s)\n", strerror(-ret));
-+			goto out_unpreserve;
-+		}
-+
-+		printf("READY FOR KEXEC (token: %lu)\n", token);
-+		printf("Run kexec now and then run this test again to complete.\n");
-+
-+		/* Note: At this point, the system should perform kexec reboot.
-+		 * The test will continue in the new kernel with the
-+		 * LIVEUPDATE_STATE_UPDATED state.
-+		 *
-+		 * Since the FD is now preserved, we can close it.
-+		 */
-+		goto out_close_fd;
-+	}
-+
-+out_unpreserve:
-+	luo_fd_unpreserve(token);
-+out_close_fd:
-+	close(fd);
-+out_cleanup:
-+	luo_cleanup();
-+}
-+
-+/*
-+ * Test that prepared memfd can't grow or shrink, but reads and writes still
-+ * work.
-+ */
-+static void test_fd_prepared_operations(void)
-+{
-+	char write_buffer[128] = {'A'};
-+	size_t initial_size, file_size;
-+	int ret, fd = -1;
-+	uint64_t token;
-+
-+	printf("Testing operations on prepared memfd... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	/* Create and initialize test file descriptor */
-+	fd = create_test_fd(MEMFD_NAME, random_buffer, sizeof(random_buffer));
-+	if (fd < 0) {
-+		ret = fd;
-+		printf("FAILED (create_test_fd: %s)\n", strerror(-ret));
-+		goto out_cleanup;
-+	}
-+
-+	/* Get initial file size */
-+	ret = lseek(fd, 0, SEEK_END);
-+	if (ret < 0) {
-+		printf("FAILED (lseek to end: %s)\n", strerror(errno));
-+		goto out_close_fd;
-+	}
-+	initial_size = (size_t)ret;
-+
-+	token = next_token();
-+	ret = luo_fd_preserve(fd, token);
-+	if (ret < 0) {
-+		printf("FAILED (preserve: %s)\n", strerror(-ret));
-+		goto out_close_fd;
-+	}
-+
-+	ret = luo_prepare();
-+	if (ret < 0) {
-+		printf("FAILED (prepare: %s)\n", strerror(-ret));
-+		goto out_unpreserve;
-+	}
-+
-+	/* Test 1: Write to the prepared file descriptor (within existing size) */
-+	if (lseek(fd, 0, SEEK_SET) < 0) {
-+		printf("FAILED (lseek before write: %s)\n", strerror(errno));
-+		goto out_cancel;
-+	}
-+
-+	/* Write buffer is smaller than total file size. */
-+	ret = write_size(fd, write_buffer, sizeof(write_buffer));
-+	if (ret < 0) {
-+		printf("FAILED (write to prepared fd: %s)\n", strerror(errno));
-+		goto out_cancel;
-+	}
-+
-+	ret = verify_fd_content(fd, write_buffer, sizeof(write_buffer));
-+	if (ret) {
-+		printf("FAILED (verify_fd_content after write: %s)\n",
-+		       ret == 1 ? "data mismatch" : strerror(-ret));
-+		goto out_cancel;
-+	}
-+
-+	/* Test 2: Try to grow the file using write(). */
-+
-+	/* First, seek to one byte behind initial size. */
-+	ret = lseek(fd, initial_size - 1, SEEK_SET);
-+	if (ret < 0) {
-+		printf("FAILED: (lseek after write verification: %s)\n",
-+		       strerror(errno));
-+	}
-+
-+	/*
-+	 * Then, write some data that should increase the file size. This should
-+	 * fail.
-+	 */
-+	ret = write_size(fd, write_buffer, sizeof(write_buffer));
-+	if (ret == 0) {
-+		printf("FAILED: (write beyond initial size succeeded)\n");
-+		goto out_cancel;
-+	}
-+
-+	ret = lseek(fd, 0, SEEK_END);
-+	if (ret < 0) {
-+		printf("FAILED (lseek after larger write: %s)\n", strerror(errno));
-+		goto out_cancel;
-+	}
-+	file_size = (size_t)ret;
-+
-+	if (file_size != initial_size) {
-+		printf("FAILED (file grew beyond initial size: %zu != %zu)\n",
-+		       (size_t)file_size, initial_size);
-+		goto out_cancel;
-+	}
-+
-+	/* Test 3: Try to shrink the file using truncate */
-+	ret = ftruncate(fd, initial_size / 2);
-+	if (ret == 0) {
-+		printf("FAILED (file was truncated)\n");
-+		goto out_cancel;
-+	}
-+
-+	ret = lseek(fd, 0, SEEK_END);
-+	if (ret < 0) {
-+		printf("FAILED (lseek after shrink attempt: %s)\n", strerror(errno));
-+		goto out_cancel;
-+	}
-+	file_size = (size_t)ret;
-+
-+	if (file_size != initial_size) {
-+		printf("FAILED (file shrunk from initial size: %zu != %zu)\n",
-+		       (size_t)file_size, initial_size);
-+		goto out_cancel;
-+	}
-+
-+	ret = luo_cancel();
-+	if (ret < 0) {
-+		printf("FAILED (cancel: %s)\n", strerror(-ret));
-+		goto out_unpreserve;
-+	}
-+
-+	ret = luo_fd_unpreserve(token);
-+	if (ret < 0) {
-+		printf("FAILED (unpreserve: %s)\n", strerror(-ret));
-+		goto out_close_fd;
-+	}
-+
-+	printf("PASSED\n");
-+	goto out_close_fd;
-+
-+out_cancel:
-+	luo_cancel();
-+out_unpreserve:
-+	luo_fd_unpreserve(token);
-+out_close_fd:
-+	close(fd);
-+out_cleanup:
-+	luo_cleanup();
-+}
-+
-+static int test_prepare_cancel_sequence(const char *sequence_name)
-+{
-+	int ret;
-+	enum liveupdate_state state;
-+
-+	/* Initial state should be NORMAL */
-+	ret = luo_get_state(&state);
-+	if (ret < 0) {
-+		printf("FAILED (%s get initial state failed: %s)\n",
-+		       sequence_name, strerror(-ret));
-+		return ret;
-+	}
-+
-+	if (state != LIVEUPDATE_STATE_NORMAL) {
-+		printf("FAILED (%s unexpected initial state: %s)\n",
-+		       sequence_name, luo_state_to_string(state));
-+		return -EINVAL;
-+	}
-+
-+	/* Test NORMAL -> PREPARED transition */
-+	ret = luo_prepare();
-+	if (ret < 0) {
-+		printf("FAILED (%s prepare failed: %s)\n",
-+		       sequence_name, strerror(-ret));
-+		return ret;
-+	}
-+
-+	ret = luo_get_state(&state);
-+	if (ret < 0) {
-+		printf("FAILED (%s get state after prepare failed: %s)\n",
-+		       sequence_name, strerror(-ret));
-+		goto out_cancel;
-+	}
-+
-+	if (state != LIVEUPDATE_STATE_PREPARED) {
-+		printf("FAILED (%s expected PREPARED state, got %s)\n",
-+		       sequence_name, luo_state_to_string(state));
-+		ret = -EINVAL;
-+		goto out_cancel;
-+	}
-+
-+	/* Test PREPARED -> NORMAL transition via cancel */
-+	ret = luo_cancel();
-+	if (ret < 0) {
-+		printf("FAILED (%s cancel failed: %s)\n",
-+		       sequence_name, strerror(-ret));
-+		return ret;
-+	}
-+
-+	ret = luo_get_state(&state);
-+	if (ret < 0) {
-+		printf("FAILED (%s get state after cancel failed: %s)\n",
-+		       sequence_name, strerror(-ret));
-+		return ret;
-+	}
-+
-+	if (state != LIVEUPDATE_STATE_NORMAL) {
-+		printf("FAILED (%s expected NORMAL state after cancel, got %s)\n",
-+		       sequence_name, luo_state_to_string(state));
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+
-+out_cancel:
-+	luo_cancel();
-+	return ret;
-+}
-+
-+/* Test all state transitions */
-+static void test_state_transitions(void)
-+{
-+	int ret;
-+
-+	printf("Testing state transitions... ");
-+
-+	ret = luo_init();
-+	if (ret < 0) {
-+		printf("FAILED (init failed: %s)\n", strerror(-ret));
-+		return;
-+	}
-+
-+	/* Test first prepare -> cancel sequence */
-+	ret = test_prepare_cancel_sequence("first");
-+	if (ret < 0)
-+		goto out;
-+
-+	/*
-+	 * Test second prepare -> freeze -> cancel sequence in case the
-+	 * previous cancellation left some side effects.
-+	 */
-+	ret = test_prepare_cancel_sequence("second");
-+	if (ret < 0)
-+		goto out;
-+
-+	printf("PASSED\n");
-+
-+out:
-+	luo_cleanup();
-+}
-+
-+/* Test name to flag mapping */
-+struct test {
-+	const char *name;
-+	void (*fn)(void);
-+	unsigned int flag;
-+};
-+
-+/* Array of test names and their corresponding flags */
-+static struct test tests[] = {
-+	{"init", test_init_cleanup, TEST_INIT_CLEANUP},
-+	{"state", test_get_state, TEST_GET_STATE},
-+	{"transitions", test_state_transitions, TEST_STATE_TRANSITIONS},
-+	{"preserve", test_fd_preserve_unpreserve, TEST_FD_PRESERVE},
-+	{"prepared", test_fd_prepared_operations, TEST_FD_PREPARED},
-+	{"error", test_error_handling, TEST_ERROR_HANDLING},
-+	{"kexec", test_fd_preserve_for_kexec, TEST_FD_KEXEC},
-+	{NULL, NULL, 0}
-+};
-+
-+static int parse_test_names(char *arg, unsigned int *flags)
-+{
-+	char *name;
-+	struct test *test;
-+
-+	*flags = 0;
-+	name = strtok(arg, ",");
-+
-+	while (name != NULL) {
-+		test = tests;
-+		while (test->name) {
-+			if (strcmp(name, test->name) == 0) {
-+				*flags |= test->flag;
-+				break;
-+			}
-+			test++;
-+		}
-+
-+		/* Check if we found a match */
-+		if (!test->name) {
-+			printf("Unknown test: %s\n", name);
-+			return 1;
-+		}
-+
-+		name = strtok(NULL, ",");
-+	}
-+
-+	return 0;
-+}
-+
-+static void usage(const char *program_name)
-+{
-+	printf("Usage: %s [options]\n", program_name);
-+	printf("Options:\n");
-+	printf("  -h, --help                 Show this help message\n");
-+	printf("  -t, --test=TEST_ID         Run specific test(s)\n");
-+	printf("  -e, --exclude=TEST_ID      Exclude specific test(s)\n");
-+	printf("\n");
-+	printf("Test IDs:\n");
-+	printf("  init        - Test initialization and cleanup\n");
-+	printf("  state       - Test getting LUO state\n");
-+	printf("  preserve    - Test memfd preserve/unpreserve with freeze/cancel\n");
-+	printf("  prepared    - Test memfd functions can read/write but not grow after prepare\n");
-+	printf("  transitions - Test all state transitions (NORMAL->PREPARED->FROZEN->NORMAL)\n");
-+	printf("  error       - Test error handling\n");
-+	printf("  kexec       - Test memfd preserve for kexec\n");
-+	printf("\n");
-+	printf("Multiple tests can be specified with comma separation.\n");
-+	printf("Example: %s --test=init,state --exclude=kexec\n", program_name);
-+	printf("By default, all tests are run.\n");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	unsigned int tests_to_run = TEST_ALL;
-+	unsigned int tests_to_exclude = 0;
-+	struct option long_options[] = {
-+		{"help", no_argument, 0, 'h'},
-+		{"test", required_argument, 0, 't'},
-+		{"exclude", required_argument, 0, 'e'},
-+		{0, 0, 0, 0}
-+	};
-+	struct test *test;
-+	int opt;
-+
-+	printf("LibLUO Test Suite\n");
-+	printf("=================\n\n");
-+
-+	if (!luo_is_available()) {
-+		printf("LUO is not available on this system. Skipping tests.\n");
-+		return 0;
-+	}
-+
-+	while ((opt = getopt_long(argc, argv, "ht:e:", long_options, NULL)) != -1) {
-+		switch (opt) {
-+		case 'h':
-+			usage(argv[0]);
-+			return 0;
-+		case 't':
-+			if (parse_test_names(optarg, &tests_to_run))
-+				return 1;
-+			break;
-+		case 'e':
-+			if (parse_test_names(optarg, &tests_to_exclude))
-+				return 1;
-+			break;
-+		default:
-+			printf("Try '%s --help' for more information.\n", argv[0]);
-+			return 1;
-+		}
-+	}
-+
-+	/* Apply exclusions to the tests to run */
-+	tests_to_run &= ~tests_to_exclude;
-+	if (!tests_to_run) {
-+		printf("ERROR: all tests excluded\n");
-+		return 1;
-+	}
-+
-+	/* Run selected tests */
-+	test = tests;
-+	while (test->name) {
-+		if (tests_to_run & test->flag)
-+			test->fn();
-+		test++;
-+	}
-+
-+	printf("\nAll requested tests completed.\n");
-+	return 0;
-+}
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Neil
 
