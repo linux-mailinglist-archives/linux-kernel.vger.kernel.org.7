@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-742156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2E0B0EE14
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:09:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED132B0EE20
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B91885AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F7E1891B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E58283FFD;
-	Wed, 23 Jul 2025 09:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBP0VGWu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EA0286880;
+	Wed, 23 Jul 2025 09:10:36 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D494227FB1F;
-	Wed, 23 Jul 2025 09:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5722C284B59;
+	Wed, 23 Jul 2025 09:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261741; cv=none; b=LmsR9wS3eadvMbgHKuha/OWBmp4T0QQcwW5+QY1NDUWkY5Wfa/8xc/jyCqFND8/plAaYCzp/h7LvIk8OGiWCBJ/PDy5mZM37xlsCaRG0iMoNirgt5meGOMvMcnHmsG+sGOwGQxAkww01+C2ExE5eKVkMeYMbGCKdPq7MWOJOKuM=
+	t=1753261836; cv=none; b=ilygEQtikE8KpD8gJY/fLdT5M8cjjyUrHgyhtcd3wjuypTGDCPPvKiuTAZIlgXefR7y1whgigNzusQCl8X2+LdtMtJU4KDW7SpPU43ZYfKbTuwX8hQ9Uv3uqEpofNn1riWb6BGPIqovHLr4MA5oCtYHiuRhURR2YiQRarKWb8LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261741; c=relaxed/simple;
-	bh=g49COW3IKwTguPh7akA80Qh//lQu38pjD9W2/2yJCeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQwavZqqldX7VmZfDcqPvG8Lr1SNp6agDblSfgi87hnUHE9Ucg532XK4v0LzqKkhG7YXtPGL64iUtNzne1qjDul1c1Lljlyw8kZYXSrCIAHhJGDWgzN5fGT/Ot9p0we3ryDotezYnVfTfiT7DVG7LfPW95GJp0nLk7WmhDsoN80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBP0VGWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A543C4CEE7;
-	Wed, 23 Jul 2025 09:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753261741;
-	bh=g49COW3IKwTguPh7akA80Qh//lQu38pjD9W2/2yJCeY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rBP0VGWutY6cfmAFLSDNl5/cp0H+HD0Xl7nh0jYjE3BhuqtAdPPr5gkiTD4g2UtD1
-	 ZZCiRn8Vg2pEug44w4H+xgI2ryObQk1CtCS8tkJzWmrt0AeWOnIjHI0towp0/YmbLi
-	 bDtE0c4dzQEe46Vw9EWmMKVClX4MFFILdaQCaBjalM+DUydUhf2GCrcAR+jBGucRYB
-	 BvqatwQW0GtIdLqK5euLH0zGaNXMlhvzpzcqmYFTYQbtWQhCgQQcVUfY02PnYl5Ihd
-	 SjjIK4N0zOo+2nUjmq3zrDXsHabB5TqigX4O8vpBrpeqK9+kvTNpolL0EAJndAaQn/
-	 kJfLUkJkcR1ow==
-Message-ID: <f5f30f4e-50ee-4539-893b-4a7667a16651@kernel.org>
-Date: Wed, 23 Jul 2025 11:08:57 +0200
+	s=arc-20240116; t=1753261836; c=relaxed/simple;
+	bh=Hrbi2C+hTff4G+83NVvHms4IBIh/TN74PB4fHmkevs4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hgJhxQgditvF/e1UnpN/8rGzWom7pjN/3C+DUPpYM/Gid17L9Aa+iLKm++idPP/Bw1jN3Pp1/spX/qGgCj4TYgEraAZUbs5sV4sJWNV0JzcvuxMHp6O+VBZVDRa3t+KgfBhlBSayAJXe/pnFbj3MXzPaNT8kQL0mw4x8LMuPMbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: zesmtpsz5t1753261780tbeaa28bf
+X-QQ-Originating-IP: awkAxcCUL62rHzR5gGKIYUznmEvNu7djrobXMgCqJlI=
+Received: from localhost.localdomain ( [183.17.231.145])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 23 Jul 2025 17:09:38 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12639370633705829095
+EX-QQ-RecipientCnt: 14
+From: Nick <nick.li@foursemi.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	nick.li@foursemi.com
+Cc: xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com,
+	like.xy@foxmail.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] ASoC: codecs: Add support for FourSemi FS2104/5S
+Date: Wed, 23 Jul 2025 17:09:29 +0800
+Message-Id: <20250723090934.480055-1-nick.li@foursemi.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: Enable display support
-To: Yongxing Mou <quic_yongmou@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com>
- <ad436d4f-dff2-4063-9b9b-e1218f6dc3c7@kernel.org>
- <aa18a24f-a16a-46a1-a66c-732999acb63e@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aa18a24f-a16a-46a1-a66c-732999acb63e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MWUTOgANNX2v5REthzLHOJvFnArKB3OrCalxwUeegP1ZLQk83bmao/ha
+	EYctkYMATN+9gxB3u6AEjThItm/MlSXX8QmOEv5DQt4GF9WrArfBo7osYq+rnfCWd7NVp2R
+	JoUCJkuQncAFp2Pmn/n9iDnHK1l7M7Bi1gUdOq+qtoOf4cw29kD3M2drz6y5v/iA9UVGMQj
+	bfACODo6rZ7R8MoFTli+thMhAcJSRSj6M38khbKOaW+O3DlpJ/srOAOoX3Rb0X8xcTk3EVa
+	WC11KHiOIiHDAYBp+RZ9wBJqsilL33itNc/lO56FmoipFJ7w/9wjWcGsVOrhIDyaDPLoiMW
+	JE3TiyenHcqV0vudJnShAY/N8wZynQ2a6ch2/QE8o9NQXUEN00KAAVmleXbX8kslMIUHuXU
+	EWQ4dvczWttf/dC1Z3CRqoZPMmEmtgYMImYIYxoGRwYI+JiIIirm0goN3bn8VZQlOoN+dZy
+	aHOwtspXcyeKNVrEbwmhQoMIqVuBl+66p+2ggguCPlCiCj0RX1lWgroRjPTlHZPbXYGhfRq
+	mpUVKND3SuGSbhVqezMjZ2kYvBHDZvBSYNbQ0VLwrJVvlP3FaC+tGGHgTuTaUfV1gK330jl
+	EBLIDEtkGkas2Y4fjTbV4AAOm/o+q+w1NJpwwPibGwsWVDiyUQ/S0sZM13D5AqEGKiXh1fa
+	z8M8fynaObHnzIrnMjwtIJkVR0q5vUb83YMS9VosMKV9Bq0/NOENoS1rCwulcucMa5qiMzL
+	D3ZK0skq4/zK7SC2fWWN5rbgLwPaRsPx3p1qLyMpwRf4ZyCYay+u6c3ILf74mYcN7Y2j96I
+	dJwkul3OrJHCrCrq2moRTqtgB034/HwbjyJR+uc9r/v30MKrMiJkXq1d+5wOYSBiuj5EFOg
+	N5fnOzxqsbTH3fpUqR4afS43dntovm3vlzNVtdXjx4JBctDFG4Wqsx4tZmBBE+Uzm7vIhda
+	6ZXFmbOixKeSwgrwGOv4xI6G1fDMCBMtjcvolP2EZ4AzhjdOwvgLjTusCFBac8t77imzL4o
+	FNgRJGVvCTkOILATcGTcpOhdPAzn+Tiy/Y7KgQAMBsQe2uT93CwWn1j/R3c+vqSz6ZvcaW1
+	iV6ctsVP/SWoxriHb4VG3s=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On 23/07/2025 10:08, Yongxing Mou wrote:
->>> ---
->>> This change made top of initial DTS:
->>> https://lore.kernel.org/all/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com/
->>> ---
->>>   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 156 +++++++++++++++++++++++++++++
->>>   1 file changed, 156 insertions(+)
->>
->> Just squash it there. Why are you posting knowingly incomplete DTS just
->> to fix it later?
->>
->> Best regards,
->> Krzysztof
-> Hi, sorry, I'm just want to enable display based initial DTS. Should 
-> this patch merge into the initial DTS?
+The FS2104/5S are Inductor-Less, Stereo, Closed-Loop,
+Digital Input Class-D Power Amplifiers with Enhanced Signal Processing
+FS2104 can deliver 2x15W into 4ohm BTL speaker loads,
+FS2105S can deliver 2x30W into 8ohm BTL speaker loads.
+
+Most functions have been built and tested on EVB boards:
+ARMv8-A, Linux version 6.16.0-rc6-v8
+
+v4 -> v5:
+* patch#0
+  - Update change logs of the cover letter
+    Add the related reviewers after the change items
+* patch#2
+  - Add supplies(pvdd&dvdd) to section: required (Krzysztof)
+* patch#5
+  - Update MAINTAINERS for new files
+
+v3 -> v4:
+* patch#1
+  - add reviewed-by Krzysztof
+* patch#2
+  - add reviewed-by Rob Herring
+* patch#4
+  - Fix warnings reported by clang-20(W=1): (kernel test robot)
+    warnings: variable 'ret' is used uninitialized
+
+v2 -> v3:
+.../foursemi,fs2105s.yaml(patch 0002)
+- Drop "schema for " in the patch subject (Krzysztof)
+- Delete the description of the property reg (Krzysztof)
+- Restore the property clocks to v1 (Krzysztof)
+- Keep the same order as in list of properties (Krzysztof)
+
+.../Kconfig(patch 0004)
+- Fix warning reported by running checkpatch.pl (Krzysztof)
+  Write the help of config symbol with at least 4 lines
+
+.../fs210x.c/h(patch 0004)
+- Update entries comment to C++ style (Mark Brown)
+- Use linux/gpio/consumer.h instead of linux/of_gpio.h (Krzysztof)
+- Use a private lock instead of a global one (Krzysztof)
+- Delete driver version and log (Mark Brown)
+- Drop checking of pval in fs210x_reg_read (Mark Brown)
+- Drop most of the debug logs and unused codes (Mark Brown&Krzysztof)
+- Drop registers dumping in monitor (Mark Brown)
+- Use fsleep instead of usleep_range (Mark Brown)
+- Update mixer to a standard control: (Mark Brown)
+  PCM Playback Volume
+- Add 2 new standard controls: (Mark Brown)
+  DAC Mute Switch: Mute/Unmute
+  DAC Fade Switch: Fade enable/disable
+- Fix errors reported by mixer-test in mixer: (Mark Brown)
+  Effect Scene
+- Integrate the operation of reset(sdz) pin into chip init/reset (Mark Brown)
+- Add DAPM event for playback: (Mark Brown)
+  Start/stop device in DAPM instead of mute_stream
+  Start/stop delay works in mute_stream only
+- Drop use_pmdown_time in component driver for DAPM event
+- Add dai ops startup: (Mark Brown)
+  Report format&sample rates in constraints
+- Add dai ops trigger: (Mark Brown)
+  Start device in trigger when we can't obtain/control the bclk clock
+- Use description words: PROVIDER, consumer (Mark Brown)
+- Add a sysfs node for monitor period(fs210x->check_interval_ms) (Mark Brown)
+- Do the initialisations of delayed works and clock in i2c probe (Mark Brown)
+- Prevent new work after the device is suspended (Mark Brown)
+- Update regmap cache type to MAPLE (Mark Brown)
+  Define volatile registers
+- Simplify the logic of getting and setting clock (Krzysztof)
+- Simplify the logic of getting and setting reset gpio (Krzysztof)
+- Use dev_err_probe for error logs (Krzysztof)
+- Drop fs210x_parse_platdata and use fs210x_parse_dts in fs210x_init (Krzysztof)
+- Drop null checking for regmap in i2c probe (Krzysztof)
+- Drop the lock in i2c probe (Krzysztof)
+- Add a suffix(instances id) to dai name
+- Drop compatible of "foursemi,fs2104" (Krzysztof)
+- Drop ifdef CONFIG_OF and of_match_ptr (Krzysztof)
+
+v1 -> v2:
+- Adjust the order of patches according to the dependency relationship (Krzysztof)
+- Rename yaml file to foursemi,fs2105s.yaml (Krzysztof)
+- Fix some properties and wrong definitions in foursemi,fs2105s.yaml: (Krzysztof)
+  sdz-gpios -> reset->gpios
+  fs,fwm-name -> firmware-name
+  Delete fs,dai-name
+- Drop "dt-bindings for" from subject (Krzysztof)
+- Update the driver code according to the update of DT schema (Krzysztof)
+- Fix warnings/errors reported by running checkpatch.pl --strict (Krzysztof)
+- Fix warnings/errors reported by running make dt_bindings_check (Rob Herring)
+
+Nick Li (4):
+  dt-bindings: vendor-prefixes: Add Shanghai FourSemi Semiconductor
+    Co.,Ltd
+  ASoC: dt-bindings: Add FS2104/5S audio amplifiers
+  ASoC: codecs: Add library for FourSemi audio amplifiers
+  ASoC: codecs: Add FourSemi FS2104/5S audio amplifier driver
+
+ .../bindings/sound/foursemi,fs2105s.yaml      |   99 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ sound/soc/codecs/Kconfig                      |   16 +
+ sound/soc/codecs/Makefile                     |    4 +
+ sound/soc/codecs/fs-amp-lib.c                 |  265 +++
+ sound/soc/codecs/fs-amp-lib.h                 |  150 ++
+ sound/soc/codecs/fs210x.c                     | 1583 +++++++++++++++++
+ sound/soc/codecs/fs210x.h                     |   75 +
+ 8 files changed, 2194 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml
+ create mode 100644 sound/soc/codecs/fs-amp-lib.c
+ create mode 100644 sound/soc/codecs/fs-amp-lib.h
+ create mode 100644 sound/soc/codecs/fs210x.c
+ create mode 100644 sound/soc/codecs/fs210x.h
 
 
-Yes, initial DTS is not merged and being reviewed. Adding new board is
-one commit, not two.
+base-commit: ed73a24357531e1747a6e140c329015da6429629
+--
+2.39.5
 
-
-Best regards,
-Krzysztof
 
