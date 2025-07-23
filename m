@@ -1,72 +1,89 @@
-Return-Path: <linux-kernel+bounces-743098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D592B0FA8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:58:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C50BB0FA91
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA183AA7AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:57:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E217A10BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EBB225762;
-	Wed, 23 Jul 2025 18:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A277C223328;
+	Wed, 23 Jul 2025 18:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpLZ/w0T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EvHoQ0OK"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E972608;
-	Wed, 23 Jul 2025 18:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB072253A9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297067; cv=none; b=hoCPzV2V+Eg6lEhkDwh0UcWSuwqijZCOg1JbrYLEQH7zO/trfREhHdJQl8TiacZhLmE35qAv4IoFwG811PUGJw8q0k5RrwEzEa5aodvTeBjv/CqQNpJg06RvxirYwO39l2bomNelixvB3NHa+D9Bmtj0De/CujHZAZanbkRSQVY=
+	t=1753297108; cv=none; b=BKhmhfZPrCCjw/BOGp8crlEhxuGkfxL+L8vTH0oyaFW8XHX3m8et+4l2G21w/BVn+Ij/d35535UaIEb9blM+uwVgUsDfnP6t3fOqfvg6hosPUnxoKqQtzEPHklQGFjBnkUAwX4bGoLtyHDpQBV/0lGN3FHvAdep1JKREv2/cKn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297067; c=relaxed/simple;
-	bh=j8XKfedFYcUm22+b5RV+OnieIZHRwYbb5ZLgayTvYNc=;
+	s=arc-20240116; t=1753297108; c=relaxed/simple;
+	bh=mmzQsMhl6rfhBdXQys7xatXOBT6V9yF5g+naRmfEqMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Piq5mCxRO8kjv5EJav6VJUBP/2xh7EUd5v7R3b1ORxwcK4m5RGgtIJU7NuRzZivHTrLtxGiA1WMC/0O15vmDkgRPL9S4BcRsjbnuU7I96GJLeej5wpr29ysitsRsD/M10/zljgyystNUxkoS0Ql/MyzmMTxxNGNYmvRc1le3wZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpLZ/w0T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 788C2C4CEE7;
-	Wed, 23 Jul 2025 18:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753297067;
-	bh=j8XKfedFYcUm22+b5RV+OnieIZHRwYbb5ZLgayTvYNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LpLZ/w0Tu9BpExuMQzpEErvVFe2PyvoB+u3oEBldPdPLsc/DT01VbLwdDzt9Uc56r
-	 mAGE4zizF2YFIcMyVHfP+qDoP2kQUlMY1xBkMUEWsxUu/x1t2FEmSk6SCD00+oAb1R
-	 apNfRHBINyvd05YYUiTA8Rmi9bg5Lp+F3zfNXRRN0dvaE+9/V7ipEgfTxIOhqWn1aD
-	 gDsdPfw7vuCJFbATR8i5OfS7s+n5VDrYoD9bWcB+9YzVfcniAzqrbJtViaM8VOzZqS
-	 LeaHndO9admHKgiTqyXBZKUErA64FhpNQYzwswvnAzObOtme6qznUFtoExX++oxhcl
-	 VXKHAyyMJh7Vw==
-Date: Wed, 23 Jul 2025 15:57:44 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 05/16] perf tp_pmu: Add event APIs
-Message-ID: <aIEwqAGFvAuUtiah@x1>
-References: <20250714164405.111477-1-irogers@google.com>
- <20250714164405.111477-6-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKZcS5cp2gidMzl2yI1j6u8auGDSUeJpLqbOJKNmuxZm5V31K/L58O9aQoiCN6NCAum5NZgO1MinGQnI1ytRm1/Uvhs0qymkNobrlBwZsid0OYdZQeNSuApMHpJGvL+6HtAGjVgOb23A+I+MNwegSTq+CiQlf5HOU3Zd7HfaBlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EvHoQ0OK; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2357c61cda7so20095ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753297106; x=1753901906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tgyxBCBooV+1URrR0k+S4ytxsHSs18Tgj8DW+tHKzAo=;
+        b=EvHoQ0OK0Cda5iUy1S5gE5XhTRvQt+/qJjlvlF3UxMn6Y1JPn94Zl4/vZQGWMbQXav
+         +kp7wNsbZYWVTK9V6UX8USy9aLNn8CIf+u4H6SEdoO0cJalYWPefEruszZ5oGppzdCdL
+         1KNJSdYc3zq2kpYaLgU2LTTKlzKndWdi97m9jeDdIRCx94re5vAC1VdC3zW2ZARqOwmo
+         EEgZ1w2Go+RGvCCHbuGrgdgtrHX7XlW+LqGnjX9bSZwySD8fdAHnr/B3EPDFiybnkPI6
+         sUsGHbmrEJv8gIDo+PAd/h9KuC4bnuFVebeUXMyOsEjj4GImf7gdQAPbEeCISAtAaQey
+         FIgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753297106; x=1753901906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tgyxBCBooV+1URrR0k+S4ytxsHSs18Tgj8DW+tHKzAo=;
+        b=LHG6YzWaTBA7nIPvVT4WbrxAHr47pb+rmpf8wLDGr/O7W9kmpDHCGSOMI+9Jy3bsJD
+         sBTDuwKV1kDzsCQUlRokFbNs04MfnNv3Loq8W9qE6XR7cZz58i8OlNuy7/T04Vzbnkxk
+         4KEGon/dbv+0lC1js84rBMl6o0xAVk3+WqgZFUwMJgZKfMsZ0wpFa5bumQoSvxOpEZqU
+         aNc2dMYB0/QnE4YrR7zPyPrLzqGVpzJH96pAEiC9mb8j6y+sH6bvNcYMTCeuSaWhQPRj
+         Ce5O0eAhXLo0mMW+r/gUSFOlTtLRBkA8ZZsw80hi9bs8uJsftOffRLaUm9zf8wMin6fU
+         eIMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCGrT26ANjc665FnuNSTBMfyMJnQgFh+RTjDmSkyedsLipT8zOorzH6sEBC6ew+g8F6/q8DB0YZFYZXDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhJPfbJGvNhsSJ/zoQ5/1AEv+FjuQdY0JrWH7Tj0wHFz1OAeJw
+	c7i2WlAVbRatkSkSIIkB3zjSLoBrYq9aJnnZ3QxlRT6TiJywKzwELpvowV9rqSxlLA==
+X-Gm-Gg: ASbGncv6QAy06TgDh4i3Lo7MVIAlqSsu5ODifRmCFHwQRcr1/dj5LR15V+XNGXX0Nrk
+	Ri8ExUupq5Z+TihlUzZCpsP1GHOsYLnm9D7CmqfWQaDP2xVY84yfjhBLnyaPeOyleMhGbvDBrb/
+	3asWgarsjLzPnvZTtCQ6GG+dPiyfHrsrSJDYYFVoNbl6hEdL7ifZfJVVpJe4Qf6zcSlyI5qEU4R
+	AAUUJRODUHFkCCrpMTtlimLH8wPYM+Uws0VHzQTFk/cesRbYsIaA5v29HzM+fzvSAsaC+xnbvHi
+	QfU6iGp5ztaAKNBdhI8n78jwXAsiyJDQolz/Tf3myafCEBjJajiI9O451AvD1hUH0/ylfPrxS6W
+	7tBOeUy+lvRR35oqaWMkovAGOP/aiE+M4XwBxw2fS8DwnGyu70hkIZgNr
+X-Google-Smtp-Source: AGHT+IHUkgfjZ7uajnt2ygxd4BiWFzqlf8/UuEEurXoZ/+uZ0jw37E8kKbO1K9MhbyfBxy1R4DSPBQ==
+X-Received: by 2002:a17:903:124f:b0:22e:1858:fc25 with SMTP id d9443c01a7336-23fa2ef97efmr184175ad.9.1753297105524;
+        Wed, 23 Jul 2025 11:58:25 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cbd66eecsm10238885b3a.142.2025.07.23.11.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 11:58:25 -0700 (PDT)
+Date: Wed, 23 Jul 2025 18:58:20 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, will@kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
+ get_viommu_size
+Message-ID: <aIEwzM7mKUI8-h9U@google.com>
+References: <20250721200444.1740461-1-nicolinc@nvidia.com>
+ <20250721200444.1740461-3-nicolinc@nvidia.com>
+ <aIDlsUvF2Xbdelvx@google.com>
+ <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,221 +92,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250714164405.111477-6-irogers@google.com>
+In-Reply-To: <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
 
-On Mon, Jul 14, 2025 at 09:43:53AM -0700, Ian Rogers wrote:
-> Add event APIs for the tracepoint PMU allowing things like perf list
-> to function using it. For perf list add the tracepoint format in the
-> long description (shown with -v).
+On Wed, Jul 23, 2025 at 11:05:26AM -0700, Nicolin Chen wrote:
+> On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
+> > On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
+> > > @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
+> > >  	phys_addr_t page0_base;
+> > >  	int ret;
+> > >  
+> > > +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
+> > > +	if (WARN_ON(vsmmu->core.type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV))
+> > > +		return -EOPNOTSUPP;
+> > > +
+> > 
+> > Nit: I don't think we'd expect a call to this if the vintf_size returned
+> > 0? I see that in iommufd_viommu_alloc_ioctl, we already have a check:
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/pmu.c    |   7 +++
->  tools/perf/util/tp_pmu.c | 114 +++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/tp_pmu.h |   7 +++
->  3 files changed, 128 insertions(+)
+> It's added in the previous patch where I explained that this is
+> to detect data corruption. When something like that happens, it
+> would be often illogical.
 > 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index b09b2ea2407a..dc05233e8232 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -24,6 +24,7 @@
->  #include "hwmon_pmu.h"
->  #include "pmus.h"
->  #include "tool_pmu.h"
-> +#include "tp_pmu.h"
->  #include <util/pmu-bison.h>
->  #include <util/pmu-flex.h>
->  #include "parse-events.h"
-> @@ -1983,6 +1984,8 @@ bool perf_pmu__have_event(struct perf_pmu *pmu, const char *name)
->  		return false;
->  	if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name))
->  		return false;
-> +	if (perf_pmu__is_tracepoint(pmu))
-> +		return tp_pmu__have_event(pmu, name);
->  	if (perf_pmu__is_hwmon(pmu))
->  		return hwmon_pmu__have_event(pmu, name);
->  	if (perf_pmu__is_drm(pmu))
-> @@ -1998,6 +2001,8 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
->  {
->  	size_t nr;
->  
-> +	if (perf_pmu__is_tracepoint(pmu))
-> +		return tp_pmu__num_events(pmu);
->  	if (perf_pmu__is_hwmon(pmu))
->  		return hwmon_pmu__num_events(pmu);
->  	if (perf_pmu__is_drm(pmu))
-> @@ -2068,6 +2073,8 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
->  	struct hashmap_entry *entry;
->  	size_t bkt;
->  
-> +	if (perf_pmu__is_tracepoint(pmu))
-> +		return tp_pmu__for_each_event(pmu, state, cb);
->  	if (perf_pmu__is_hwmon(pmu))
->  		return hwmon_pmu__for_each_event(pmu, state, cb);
->  	if (perf_pmu__is_drm(pmu))
-> diff --git a/tools/perf/util/tp_pmu.c b/tools/perf/util/tp_pmu.c
-> index fd83164f8763..9d68a1da17f6 100644
-> --- a/tools/perf/util/tp_pmu.c
-> +++ b/tools/perf/util/tp_pmu.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
->  #include "tp_pmu.h"
-> +#include "pmus.h"
->  #include <api/fs/fs.h>
->  #include <api/fs/tracing_path.h>
->  #include <api/io_dir.h>
-> @@ -93,3 +94,116 @@ int tp_pmu__for_each_tp_sys(void *state, tp_sys_callback cb)
->  	close(events_dir.dirfd);
->  	return ret;
->  }
-> +
-> +bool perf_pmu__is_tracepoint(const struct perf_pmu *pmu)
-> +{
-> +	return pmu->type == PERF_TYPE_TRACEPOINT;
-> +}
-> +
-> +struct for_each_event_args {
-> +	void *state;
-> +	pmu_event_callback cb;
-> +	const struct perf_pmu *pmu;
-> +};
-> +
-> +static int for_each_event_cb(void *state, const char *sys_name, const char *evt_name)
-> +{
-> +	struct for_each_event_args *args = state;
-> +	char name[2 * FILENAME_MAX + 2];
-> +	/* 16 possible hex digits and 22 other characters and \0. */
-> +	char encoding[16 + 22];
-> +	char *format = NULL;
-> +	size_t format_size;
-> +	struct pmu_event_info info = {
-> +		.pmu = args->pmu,
-> +		.pmu_name = args->pmu->name,
-> +		.event_type_desc = "Tracepoint event",
-> +	};
-> +	char *tp_dir = get_events_file(sys_name);
-> +	char path[PATH_MAX];
-> +	int id, err;
-> +
-> +	if (!tp_dir)
-> +		return -1;
-> +
-> +	scnprintf(path, sizeof(path), "%s/%s/id", tp_dir, evt_name);
-> +	err = filename__read_int(path, &id);
-> +	if (err == 0) {
-> +		snprintf(encoding, sizeof(encoding), "tracepoint/config=0x%x/", id);
-> +		info.encoding_desc = encoding;
-> +	}
-> +
-> +	scnprintf(path, sizeof(path), "%s/%s/format", tp_dir, evt_name);
-> +	put_events_file(tp_dir);
-> +	err = filename__read_str(path, &format, &format_size);
-> +	if (err == 0) {
-> +		info.long_desc = format;
-> +		for (size_t i = 0 ; i < format_size; i++) {
-> +			/* Swap tabs to spaces due to some rendering issues. */
-> +			if (format[i] == '\t')
-> +				format[i] = ' ';
-> +		}
-> +	}
-> +	snprintf(name, sizeof(name), "%s:%s", sys_name, evt_name);
-> +	info.name = name;
-> +	err = args->cb(args->state, &info);
-> +	free(format);
-> +	return err;
-> +}
-> +
-> +static int for_each_event_sys_cb(void *state, const char *sys_name)
-> +{
-> +	return tp_pmu__for_each_tp_event(sys_name, state, for_each_event_cb);
-> +}
-> +
-> +int tp_pmu__for_each_event(struct perf_pmu *pmu, void *state, pmu_event_callback cb)
-> +{
-> +	struct for_each_event_args args = {
-> +		.state = state,
-> +		.cb = cb,
-> +		.pmu = pmu,
-> +	};
-> +
-> +	return tp_pmu__for_each_tp_sys(&args, for_each_event_sys_cb);
-> +}
-> +
-> +static int num_events_cb(void *state, const char *sys_name __maybe_unused,
-> +			 const char *evt_name __maybe_unused)
-> +{
-> +	size_t *count = state;
-> +
-> +	(*count)++;
-> +	return 0;
-> +}
-> +
-> +static int num_events_sys_cb(void *state, const char *sys_name)
-> +{
-> +	return tp_pmu__for_each_tp_event(sys_name, state, num_events_cb);
-> +}
-> +
-> +size_t tp_pmu__num_events(struct perf_pmu *pmu __maybe_unused)
-> +{
-> +	size_t count = 0;
-> +
-> +	tp_pmu__for_each_tp_sys(&count, num_events_sys_cb);
-> +	return count;
-> +}
-> +
-> +bool tp_pmu__have_event(struct perf_pmu *pmu __maybe_unused, const char *name)
-> +{
-> +	char *dup_name, *colon;
-> +	int id;
-> +
-> +	if (strchr(name, ':') == NULL)
-> +		return false;
 
-Nit:
+Right.. I got mis-led by the comment, my point is that if an
+"unsupported type" was rejected in _get_vintf_size, we wouldn't be here
+calling viommu_init since we error out based on the check in
+iommufd_viommu_alloc_ioctl.. but yes, if there was some data corruption
+that changed the viommu type between these calls, I guess it makes sense
+to check and error out here.
 
-	colon = strchr(name, ':');
-	if (colon == NULL)
-		return false;
-
-> +
-> +	dup_name = strdup(name);
-> +	if (!dup_name)
-> +		return false;
-> +
-> +	colon = strchr(dup_name, ':');
-
-	colon = dup_name + (colon - name);
-
-> +	*colon = '\0';
-> +	id = tp_pmu__id(dup_name, colon + 1);
-> +	free(dup_name);
-> +	return id >= 0;
-> +}
-> diff --git a/tools/perf/util/tp_pmu.h b/tools/perf/util/tp_pmu.h
-> index 49537303bd73..30456bd6943d 100644
-> --- a/tools/perf/util/tp_pmu.h
-> +++ b/tools/perf/util/tp_pmu.h
-> @@ -2,6 +2,8 @@
->  #ifndef __TP_PMU_H
->  #define __TP_PMU_H
->  
-> +#include "pmu.h"
-> +
->  typedef int (*tp_sys_callback)(void *state, const char *sys_name);
->  typedef int (*tp_event_callback)(void *state, const char *sys_name, const char *evt_name);
->  
-> @@ -9,4 +11,9 @@ int tp_pmu__id(const char *sys, const char *name);
->  int tp_pmu__for_each_tp_event(const char *sys, void *state, tp_event_callback cb);
->  int tp_pmu__for_each_tp_sys(void *state, tp_sys_callback cb);
->  
-> +bool perf_pmu__is_tracepoint(const struct perf_pmu *pmu);
-> +int tp_pmu__for_each_event(struct perf_pmu *pmu, void *state, pmu_event_callback cb);
-> +size_t tp_pmu__num_events(struct perf_pmu *pmu);
-> +bool tp_pmu__have_event(struct perf_pmu *pmu, const char *name);
-> +
->  #endif /* __TP_PMU_H */
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
+> > And call ops->viommu_init only when the above isn't met. Thus,
+> > if we still end up calling ops->viommu_init, shouldn't we BUG_ON() it?
+> > I'd rather have the core code handle such things (since the driver is
+> > simply implementing the ops) and BUG_ON() something that's terribly
+> > wrong..
 > 
+> BUG_ON is discouraged following the coding style:
+> https://docs.kernel.org/process/coding-style.html#use-warn-rather-than-bug
+> 
+
+Noted. Thanks.
+
+> > I can't see any ops->viommu_init being called elsewhere atm, let me
+> > know if there's a different path that I missed..
+> 
+> I see it as a precaution that should never get triggered. But in
+> case that it happens, I don't want it to proceed further wasting
+> precious HW resource given that this function allocates a VINTF.
+> 
+
+Agreed.
+
+> Nicolin
+
+Praan
 
