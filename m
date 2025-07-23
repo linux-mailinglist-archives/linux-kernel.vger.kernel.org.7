@@ -1,260 +1,164 @@
-Return-Path: <linux-kernel+bounces-742875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714AEB0F7BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ED6B0F7CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A29696750D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:04:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A71C169CA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA5B1E5729;
-	Wed, 23 Jul 2025 16:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836E31E47CC;
+	Wed, 23 Jul 2025 16:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fysc24rd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Wr4/+rr5"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9F51DDA0E;
-	Wed, 23 Jul 2025 16:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753286651; cv=none; b=fpDBCAJCqiQmFpQwFOcgzJ6QqAVycdWK8vJMawbxyahw/E/N33ZkQ97T4q858Cjr3HSYBDo3ol0zzSZI8k2GdQ94FqG2GFpO2rMly5DKwAo2Cr5ZNzdJqEv0HabDmx/fauPc0JKjQHKj0P3mwxuoyzGaFlEQYxOAcNrptH2tWKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753286651; c=relaxed/simple;
-	bh=aT3dePDX5kED8uFvltRVKttJXB3VIAVrPdKJ+VRQTNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlIebgfIarTGwKle7lQwcYBQgvpFNTI3ahKYsbjmftFbgOldPPgjj86TOfLBETQqdOzIPh+5tsG5cAmS7PaR7l3hJi5jY/VAhLMVOeDKPCtl+Ma7wiDRG9IxT8ezApQcynjJPSsJwSKGvdSm3dCQroNohlH6bR3x7hcXcflqfdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fysc24rd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A84C4CEE7;
-	Wed, 23 Jul 2025 16:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753286651;
-	bh=aT3dePDX5kED8uFvltRVKttJXB3VIAVrPdKJ+VRQTNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fysc24rdUOqKOp/UVWpz3zEueTW8ts9yDqaULY8g9Q9M+ffCHUU5UWt1btWHxKMF6
-	 YzT1AmR6Zo6UuVyIFwp2YvRWfybNMDn5QmE2oXIaD0IYp4pTg3Q3hCBZd1gxYQXXGE
-	 ik0nL1LobZduP8Y5aDvqi65wuOKM03TdNVbHwWJ9B3LOU9mjKhAclIDRrmCCoelFf5
-	 Zz1tEhbQeCoEPwbvnKoQ5u43J6SlQY/i4IdC0Txm6juQUMVXLoDmDfyGpcYQqqt//n
-	 SI7HQLvuOrlN1hzRgP7Sp+AlB5jrxzMO+QaoZc+SwdmfSUznycHjAZk2NHvK0it2qq
-	 sf+ombISl5O4Q==
-Date: Wed, 23 Jul 2025 13:04:07 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for
- TUI
-Message-ID: <aIEH99tRH8EoqBA5@x1>
-References: <20250716050054.14130-1-namhyung@kernel.org>
- <20250716050054.14130-6-namhyung@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDAA4A28;
+	Wed, 23 Jul 2025 16:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753286891; cv=pass; b=e3GV+mtPf+F+0CoYEas7bnJp/DsAr5wiW4Ior5Od0jHl6/IFbLSe/UQd0hihacvpfanpZQPdJCGdKHA1M7KbnP4dbFzvWngZXqiERHNqLADUHyT3jjeAOCoHRp4jiHickGJygzSDtVkWLci0iYjXM8Qm2pGqr2pRlAbHoTy7eQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753286891; c=relaxed/simple;
+	bh=YsxEQ6Q7Rx0h54CXT9Nux+NoksdOzBkb/yyRR5d++vE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kem9V73StDFau3T57zeNwxa2DtlYAsw/75+xo6KFmleiKocF2B/jLpblKBbcwUVx0Rvug7TqX4U8iIgy2tCOQCoDkLmNMlHA3aUOtGN1WMEKfzxUGfm84z63X4hTgbvQBLqtVyu8BFA6yvHMJ8aoVi5RAUB8Iv9NqY87fMLNZXM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Wr4/+rr5; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753286870; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QfCC2/+a3tzLaozm/pXkaPJx3cvaFYssQh5tenoBh3/0jbMgYv48sLymSJ0H+DPiRROFf0h/2cr468t7FnUc826c0JbzPWChF/omHcUo381QCTwCrHtX9HExwfhQEaTRYhx4zhCVzhyO6AiOt/FRCrOCT6kUhxRKJsO6C+Msp2s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753286870; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YsxEQ6Q7Rx0h54CXT9Nux+NoksdOzBkb/yyRR5d++vE=; 
+	b=irA3f94516eMpgLkTtEq+f3UDxB/x1yU4niyHWF1gyTF7R9M4e1DCmB7F9jcPBpkk/4GOyFs7kdoKSmuCqxxElCSuS+r31ju9Y/iNKUtr8G3awzJ87cUgnQWAl8EbjyO8hReDF8wETqTVhFDndJY6oytJaDMg2/ucWFa4u3u8Q0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753286870;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=YsxEQ6Q7Rx0h54CXT9Nux+NoksdOzBkb/yyRR5d++vE=;
+	b=Wr4/+rr5m62xvvrILqBHXmNvr9G/vUOnYc31SOcUXyBsPkMudu+HhvurboG9/njD
+	pdqWH3Q5EwMZuks59+c+yL4j2y7wSu7/opVHpup3bP/z2baePHh/9XKK+oAy1fUYdmZ
+	v4uLg12MbIm8ZZZSyNI4RavlfI8NXZlKCr6FAFPQ=
+Received: by mx.zohomail.com with SMTPS id 1753286868381777.8597804313176;
+	Wed, 23 Jul 2025 09:07:48 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716050054.14130-6-namhyung@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aIEE4Tt7xtaX-9V9@tardis-2.local>
+Date: Wed, 23 Jul 2025 13:07:32 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CF821F27-7F78-4B3E-AF62-887341EAA7BE@collabora.com>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
+ <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
+ <aIBl6JPh4MQq-0gu@tardis-2.local>
+ <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
+ <aIDxFoQV_fRLjt3h@tardis-2.local>
+ <95A7ACD9-8D0D-41FB-A0C0-691B699CBA17@collabora.com>
+ <aIEE4Tt7xtaX-9V9@tardis-2.local>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Tue, Jul 15, 2025 at 10:00:51PM -0700, Namhyung Kim wrote:
-> Until now, the --code-with-type option is available only on stdio.
-> But it was an artifical limitation because of an implemention issue.
-> 
-> Implement the same logic in annotation_line__write() for stdio2/TUI.
-> Make disasm_line__write() return the number of printed characters so
-> that it can skip unnecessary operations when the screen is full.
-> 
-> Remove the limitation and update the man page.
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/Documentation/perf-annotate.txt |  1 -
->  tools/perf/builtin-annotate.c              |  5 --
->  tools/perf/ui/browsers/annotate.c          |  6 +++
->  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++---
->  4 files changed, 61 insertions(+), 12 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-> index 46090c5b42b4762f..547f1a2680185e3c 100644
-> --- a/tools/perf/Documentation/perf-annotate.txt
-> +++ b/tools/perf/Documentation/perf-annotate.txt
-> @@ -170,7 +170,6 @@ include::itrace.txt[]
->  
->  --code-with-type::
->  	Show data type info in code annotation (for memory instructions only).
-> -	Currently it only works with --stdio option.
->  
->  
->  SEE ALSO
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index 9833c2c82a2fee46..6debd725392db4a4 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
->  		symbol_conf.annotate_data_sample = true;
->  	} else if (annotate_opts.code_with_type) {
->  		symbol_conf.annotate_data_member = true;
-> -
-> -		if (!annotate.use_stdio) {
-> -			pr_err("--code-with-type only works with --stdio.\n");
-> -			goto out_delete;
-> -		}
->  	}
->  
->  	setup_browser(true);
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index 23bea5b165774ae7..cdee1969f3131a7c 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -4,6 +4,7 @@
->  #include "../ui.h"
->  #include "../../util/annotate.h"
->  #include "../../util/debug.h"
-> +#include "../../util/debuginfo.h"
->  #include "../../util/dso.h"
->  #include "../../util/hist.h"
->  #include "../../util/sort.h"
-> @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  
->  	ui_helpline__push("Press ESC to exit");
->  
-> +	if (annotate_opts.code_with_type)
-> +		browser.dbg = debuginfo__new(dso__long_name(dso));
+[=E2=80=A6]
 
-Some error checking here to tell the user if debuginfo isn't available
-and hints on how to get it in place?
+>>=20
+>>=20
+>> Because it is not as explicit. The main thing we should be conveying =
+to users
+>> here is how to get a &mut or otherwise mutate the data when running =
+the
+>> handler. When people see AtomicU32, it's a quick jump to "I can make =
+this work
+>> by using other locks, like SpinLockIrq". Completions hide this, IMHO.
+>>=20
+>=20
+> I understand your argument. However, I'm not sure the example of
+> `irq::Registration` is the right place to do this. On one hand, it's =
+one
+> of the usage of interior mutability as you said, but on the other =
+hand,
+> for people who are familiar with interior mutability, the difference
+> between `AtomicU32` and `Completion` is not that much. That's kinda my
+> argument why using `Completion` in the example here is fine.
+>=20
+> Sounds reasonable?
+>=20
+>> It's totally possible for someone to see this and say "ok, I can call
+>> complete() on this, but how can I mutate the data in some random T =
+struct?",
+>> even though these are essentially the same thing from an interior =
+mutability
+>> point of view.
+>>=20
+>=20
+> We probably better assume that interior mutability is commmon =
+knowledge
+> or we could make an link to some documentation of interior mutability,
+> for example [1], in the documentation of `handler`. Not saying your
+> effort and consideration is not valid, but at the project level,
+> interior mutability should be widely acknowledged IMO.
+>=20
+> [1]: https://doc.rust-lang.org/reference/interior-mutability.html
+>=20
+> Regards,
+> Boqun
+>=20
+>> -- Daniel
 
-> +
->  	browser.b.width = notes->src->widths.max_line_len;
->  	browser.b.nr_entries = notes->src->nr_entries;
->  	browser.b.entries = &notes->src->source;
-> @@ -1111,6 +1115,8 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  
->  	ret = annotate_browser__run(&browser, evsel, hbt);
->  
-> +	if (annotate_opts.code_with_type)
-> +		debuginfo__delete(browser.dbg);
+I do expect mostly everbody (except brand-new newcomers) to be aware of
+interior mutability. What I don't expect is for people _immediately_ see =
+that
+it's being used in Completion, and connect the dots from there.
 
-This is a local variable, so no need to zero browser.dbg after deleting
-it, ok.
+Keyword here being "immediately", users will naturally realize this in a =
+couple
+of minutes at max, of course.
 
->  	if (not_annotated && !notes->src->tried_source)
->  		annotated_source__purge(notes->src);
->  
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index d69e406c1bc289cd..06ddc7a9f58722a4 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -1362,6 +1362,11 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
->  	};
->  	struct annotation_line *al;
->  
-> +	if (annotate_opts.code_with_type) {
-> +		evsel__get_arch(apd->evsel, &apd->arch);
-> +		apd->dbg = debuginfo__new(dso__long_name(map__dso(apd->he->ms.map)));
-> +	}
-> +
->  	list_for_each_entry(al, &notes->src->source, node) {
->  		if (annotation_line__filter(al))
->  			continue;
-> @@ -1370,6 +1375,9 @@ static int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp,
->  		wops.first_line = false;
->  	}
->  
-> +	if (annotate_opts.code_with_type)
-> +		debuginfo__delete(apd->dbg);
+Anyways, I guess we can use Completion then. TBH I wasn't aware of the =
+UB
+thing, so I can see how you also have a point. On top of that, we can =
+use the
+words "interior mutability" somewhere in the example as well to make it =
+even
+clearer.
 
-But here it would be good to nullify apd->dbg?
+I'll change it for v8.
 
-> +
->  	return 0;
->  }
->  
-> @@ -1743,7 +1751,7 @@ static double annotation_line__max_percent(struct annotation_line *al,
->  	return percent_max;
->  }
->  
-> -static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
-> +static int disasm_line__write(struct disasm_line *dl, struct annotation *notes,
->  			       void *obj, char *bf, size_t size,
->  			       void (*obj__printf)(void *obj, const char *fmt, ...),
->  			       void (*obj__write_graph)(void *obj, int graph))
-> @@ -1771,8 +1779,8 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
->  		obj__printf(obj, "  ");
->  	}
->  
-> -	disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_offset,
-> -			       notes->src->widths.max_ins_name);
-> +	return disasm_line__scnprintf(dl, bf, size, !annotate_opts.use_offset,
-> +				      notes->src->widths.max_ins_name);
->  }
->  
->  static void ipc_coverage_string(char *bf, int size, struct annotation *notes)
-> @@ -2116,11 +2124,52 @@ void annotation_line__write(struct annotation_line *al, struct annotation *notes
->  
->  		width -= printed + 3;
->  
-> -		disasm_line__write(disasm_line(al), notes, obj, bf, sizeof(bf), obj__printf, obj__write_graph);
-> +		printed = disasm_line__write(disasm_line(al), notes, obj, bf, sizeof(bf),
-> +					     obj__printf, obj__write_graph);
-> +
-> +		obj__printf(obj, "%s", bf);
-> +		width -= printed;
-> +
-> +		if (annotate_opts.code_with_type && apd->dbg) {
-> +			struct annotated_data_type *data_type;
-> +			int offset = 0;
-> +
-> +			data_type = __hist_entry__get_data_type(apd->he, apd->arch,
-> +								apd->dbg,
-> +								disasm_line(al),
-> +								&offset);
-> +			if (data_type && data_type != NO_TYPE) {
-> +				char member[256];
-> +
-> +				printed = scnprintf(bf, sizeof(bf),
-> +						    "\t\t# data-type: %s",
-> +						    data_type->self.type_name);
->  
-> -		obj__printf(obj, "%-*s", width, bf);
-> +				if (data_type != &stackop_type &&
-> +				    data_type != &canary_type &&
-> +				    sizeof(bf) > (size_t)printed) {
-> +					printed += scnprintf(bf + printed,
-> +							     sizeof(bf) - printed,
-> +							     " +%#x", offset);
-> +				}
-> +
-> +				if (annotated_data_type__get_member_name(data_type,
-> +									 member,
-> +									 sizeof(member),
-> +									 offset) &&
-> +				    sizeof(bf) > (size_t)printed) {
-> +					printed += scnprintf(bf + printed,
-> +							     sizeof(bf) - printed,
-> +							     " (%s)", member);
-> +				}
->  
-> -		(void)apd;
-> +				obj__printf(obj, "%-*s", width, bf);
-> +			} else {
-> +				obj__printf(obj, "%-*s", width, " ");
-> +			}
-> +		} else {
-> +			obj__printf(obj, "%-*s", width, " ");
-> +		}
->  	}
->  
->  }
-> -- 
-> 2.50.0
-> 
+-- Daniel
+
+
 
