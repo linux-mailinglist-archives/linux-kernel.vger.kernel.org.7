@@ -1,108 +1,68 @@
-Return-Path: <linux-kernel+bounces-741895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C94B0EA5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B91B0EA5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 741147AE73F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D0F5675C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2CF248F66;
-	Wed, 23 Jul 2025 06:10:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C971DF270;
+	Wed, 23 Jul 2025 06:11:20 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0821DF270;
-	Wed, 23 Jul 2025 06:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F88B2475C7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753251035; cv=none; b=bUy7fmSmW2fnDKX1UOxfauOR/EjNBKnoHNcMHqcQ7PE0VCdZ71n9iR1o2YeuT9fTepl60+RHew2cfHAoq+iiODiirTDcZMVr+08c40TonLq2o+BHrPvv/KpPlekgXKPHwnJNw7MRpjSSlWVeJ9QCaMRgoImfUQpyI8iQM8KBTkQ=
+	t=1753251079; cv=none; b=KijSPNiJ4yiLskMEyO5kEjPKhV7+WoX+oZRZdSuq42MiU+qCzZEb1Cd04o0TtdJIutoCpD8ExQxuTxQ6f3aeyu55ovIBmxC6s2OiLtg1XWJEvl7A5o48JNeLJWcsN5ZW1Z/BOsTTErux/YajNkpB9/RCLZ/OmTQZl3IW5U8A1mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753251035; c=relaxed/simple;
-	bh=Up4e+Yh+TFp6xF5GI5N1UdKYKtDQiGnnMcm26vc0/HQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VcjoCLCYHGb7LbwCYFqjx6Wuj+Oyy+5OdC4+41TzRceXF/fJU1uKTdVvXkMnHAy4Oc6N3CXDGs733Ju4Z8A7M9ZQPUtu6rmfOULFHr3379hnUHWo8WlGSF+pW0MT6S6qEoqHzf6zaBHEaabB3B882QfcR9mu2k4dPkM7m39WP84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bn3dv1xMfzKHMXH;
-	Wed, 23 Jul 2025 14:10:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 00D631A058E;
-	Wed, 23 Jul 2025 14:10:25 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP3 (Coremail) with SMTP id _Ch0CgD3cNvPfIBoL_KwBA--.45357S3;
-	Wed, 23 Jul 2025 14:10:25 +0800 (CST)
-Subject: Re: [PATCH 4/6] elevator: factor elevator lock out of
- dispatch_request method
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- hare@suse.de, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
- <20250722072431.610354-5-yukuai1@huaweicloud.com>
- <08c989bd-20d8-476c-af99-c9eb8065349d@kernel.org>
- <cc6f72cb-3782-4426-57c2-4d54fc4f38f2@huaweicloud.com>
- <d32d44ef-a964-430a-a735-f63f2fa5e7ed@kernel.org>
- <2b48b0eb-7294-c4e1-8b84-ce2e860f3a75@huaweicloud.com>
- <352c67be-b39e-4372-9f69-f942b0a9818d@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <36056c2f-f0c3-5758-3848-ca06371a6241@huaweicloud.com>
-Date: Wed, 23 Jul 2025 14:10:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753251079; c=relaxed/simple;
+	bh=75vTQ39K3m2zEuOjHg4AdtoNTOOvlU5jT6zwTjw0d5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0B8Oj2xK/utdhcCMqmdWj0r/qQOrBsPnuaiAZJVYBsHzqcr7Vfymx9XIhEZYo07tpvM4guaYpBqa9GVaeYMntrXY1ZXSFn96hlX+1b6UtjsP3Z7uQSEofIwiD8FTcTaMeplBvUsOyjJXIPUhdP8UW2kyGu58Uks0wVY4TjjO7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AA74667373; Wed, 23 Jul 2025 08:11:12 +0200 (CEST)
+Date: Wed, 23 Jul 2025 08:11:12 +0200
+From: hch <hch@lst.de>
+To: Kamaljit Singh <Kamaljit.Singh1@wdc.com>
+Cc: hch <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"sagi@grimberg.me" <sagi@grimberg.me>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cassel@kernel.org" <cassel@kernel.org>,
+	"dlemoal@kernel.org" <dlemoal@kernel.org>
+Subject: Re: [PATCH v4 2/2] nvme: prevent admin controller from smart log
+ fetch (LID 2)
+Message-ID: <20250723061112.GB18943@lst.de>
+References: <20250721173700.4153098-1-kamaljit.singh1@wdc.com> <20250721173700.4153098-3-kamaljit.singh1@wdc.com> <20250722063015.GC15013@lst.de> <BY5PR04MB6849574654806676E024F16DBC5CA@BY5PR04MB6849.namprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <352c67be-b39e-4372-9f69-f942b0a9818d@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgD3cNvPfIBoL_KwBA--.45357S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF1fKw4xur15JF18JF1fJFb_yoWxZFg_Z3
-	y3t348G3WUJr1SqF4jyF43tr4xKayrWry5Gr1ktw4rXFWUuFZ0qwsYvr17Ar1UtFWSyas3
-	Awnxuw40v3429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BY5PR04MB6849574654806676E024F16DBC5CA@BY5PR04MB6849.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi,
+On Tue, Jul 22, 2025 at 04:34:05PM +0000, Kamaljit Singh wrote:
+> By "let's leave this in", I thought you were referring to my patch. But now that I re-read
+> it, seems like by "failing a get_log page is fine" you probably meant to let the driver 
+> issue a get_log for LID=2 and fail.
 
-在 2025/07/23 12:34, Damien Le Moal 写道:
-> What about something like this:
-> 1) Introduce the elevator common/generic lock (first part of patch 1 + middle
-> of patch 4 squashed together)
-> 2) Convert deadline to use elevator generic lock (second part of patch 1 + end
-> of patch 4)
-> 3) Convert bfq to use elevator generic lock (patch 3 + beginning of patch 4)
-> 4) Patch 6
-> 
-> As for the ioc changes, they do not seem directly related to the elevator lock
-> changes, but since the code may conflict, maybe bring them as prep patches at
-> the beginning (0).
+Yes.
 
-This sounds good. BTW, the ioc changes has to be in front of step 3), to
-prevent queue_lock to be nested in elevator lock.
+> Process wise, can you ignore this 2/2 patch and we call this patch-set done?
 
-Thanks,
-Kuai
-
+That's what I've done.  Patch 1 is queued up in the nvme-6.17 branch.
 
