@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-742146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C386B0EDEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF56B0EDF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8BC1C83879
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6E917603D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F2E283C9C;
-	Wed, 23 Jul 2025 08:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000B283FE5;
+	Wed, 23 Jul 2025 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inc5BQJg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h74P1KVs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C17E2E36FA;
-	Wed, 23 Jul 2025 08:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26E6283FDE;
+	Wed, 23 Jul 2025 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261183; cv=none; b=jVSm5DWu8DPzX0q5TsI2vb9pcH0YvvuG+BM5Hzp8NGsJbcLL7Non7e8WmVuyW5bSRQy1OJA8WMTk+bo1vqJjj0XyH5AN+MiivbNHQWQut/e3xUG7OAH3vh/5TyD6jrCki5E57SL/GdZNz73EfDTSrJojYfql//DKJscZAxkA6uE=
+	t=1753261245; cv=none; b=CH6uCr07mfva7cGFlx0B/4Cz3ot7vWar6PcYZrxDhL/hjqzYQcdB4n5xuk+cMB6Fp9ZFMsDFgj+sPqsCrSbFgroa+fTEtugqdMiRHBPxKN7gOpQ9kvXY21uLntVJM61VGnyCxvNo1dSScsqMWp0fq/NPyBfMtcd7fSLlCrYeFc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261183; c=relaxed/simple;
-	bh=ed2JaOJR5dOBUDINT/O/3MnJ6uPl2DqDrKd95czTVeQ=;
+	s=arc-20240116; t=1753261245; c=relaxed/simple;
+	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZOGLE5bVTA+2nwgkJunz/q/DfLHbd9bPDlChqlUFcxU/1PtnoFlrDE68Xv21Or65pHf0E+3855kIU6iax0IAPfNpOLFKVJYQ79M2ZbFKM+bNYZUhsPyJa4JNSMkMApalJ7wGd/MOEUPMpCwEC1rOVqwRrpZFBJ+FFQYnAbP2eBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inc5BQJg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1279C4CEE7;
-	Wed, 23 Jul 2025 08:59:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qpAsQ/SqV1wtE+l1A/XH697fqlFbnl7+QR2yJLFMsC2KlhussiJJ0pFKAe2IidRBzk8GHP7+nWDJzc5AT4MDhu/GhRwOatIBRF5QPoxS8P1l/PONYF7vv70G7TgegfwIHbUR61P1CriA2cBbSrj9VBkQmtmMS5bN9YPQztggOLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h74P1KVs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED5C4CEE7;
+	Wed, 23 Jul 2025 09:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753261182;
-	bh=ed2JaOJR5dOBUDINT/O/3MnJ6uPl2DqDrKd95czTVeQ=;
+	s=k20201202; t=1753261245;
+	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=inc5BQJgj4hjnX5gpBReEJ6o6IwE0Y+E5UYLFfMaUVRuv2HRXGuTvmNqsnV0hqea2
-	 o136bAvkNwrx++rZudUBCkFl6+Q0sjP+bhveoGHai4BbHLSqoMiWT+HybcmlWtcjNm
-	 jGMTvugd49JSmrZ3zsyEcMPM54Nuf8b+dwiTDzyjTOmE8PdQYe2FTODP+zZxfmcAxF
-	 opRShCpg7+qCcHTvmHYJAAn2eezobvpUSbhN3xpVEmVhw15eKVEpXEiwtLiL7wHQUQ
-	 ccqnzHqQdSZBDkPiD/Svwj19Psun/ZkCJTRjhHA6HMCdLzTlBYichFC3YLXMn6VpUh
-	 qdupEZfx9V8Xw==
-Message-ID: <ae1310d3-12e1-4856-8f34-1c51bdfbf44a@kernel.org>
-Date: Wed, 23 Jul 2025 10:59:38 +0200
+	b=h74P1KVsWWv3AE+EU8hXR7Cuyn4Eka9sKV+4Dh2bNqpAenoNzYH1SzsXgNon4Vp1E
+	 57y1dxGRSeN6du/ORxuLU2nY+2GDk+gk4K+3GnNhqbr5yS308F4Zwynw66j21kzxEo
+	 SKKbn76ut326an85/aN3jxEbNkDIY/jz1qN0zTIQ3chCR92Uy/JPqlfk+2mN5Tpil9
+	 kBIbnaOA4pCOhuS9xHP6UBqyMK4RSBachNSAbE8pz0O52SFJsz8v8uDBx6fUkyxFM7
+	 NNQKcl29ueHrxks2hJJZkLQ/EDCECO2CLcW14wSvt1wzjl8opH7UQhS3Lc4u3rzxFV
+	 rgvbaqUE8VqXA==
+Message-ID: <bca15900-da2d-4384-a79a-ee630fd7cee2@kernel.org>
+Date: Wed, 23 Jul 2025 11:00:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs615-ride: remove redundant gpio
- header file
-To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com, kernel@oss.qualcomm.com
-References: <20250723084351.4627-1-yuanjie.yang@oss.qualcomm.com>
- <e0c9e620-a331-43c8-9c62-f9769744a484@kernel.org>
- <aICjeK+gC1yxPb9I@yuanjiey.ap.qualcomm.com>
+Subject: Re: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: William Mcvicker <willmcvicker@google.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
+References: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
+ <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,29 +105,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aICjeK+gC1yxPb9I@yuanjiey.ap.qualcomm.com>
+In-Reply-To: <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/07/2025 10:55, yuanjiey wrote:
-> On Wed, Jul 23, 2025 at 10:49:10AM +0200, Krzysztof Kozlowski wrote:
->> On 23/07/2025 10:43, yuanjie yang wrote:
->>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->>>
->>> Remove redundant gpio header file in QCS615 RIDE DTS.
+On 21/07/2025 10:18, Krzysztof Kozlowski wrote:
+> 
+> On Thu, 17 Jul 2025 17:22:36 +0100, Peter Griffin wrote:
+>> Register cpu pm notifiers for gs101 which call the
+>> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+>> C2 hint. This hint is required to actually enter the C2 idle state in
+>> addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
 >>
->> I do not see it redundant at all. Just look at the file - it is used.
-> qcs615-ride.dts: file
+>> A couple of corner cases are handled, namely when the system is rebooting
+>> or suspending we ignore the request. Additionally the request is ignored if
+>> the CPU is in CPU hot plug. Some common code is refactored so that it can
+>> be called from both the CPU hot plug callbacks and CPU PM notifier taking
+>> into account that CPU PM notifiers are called with IRQs disabled whereas
+>> CPU hotplug callbacks are not.
+>>
+>> [...]
 > 
-> line:
-> 7:#include <dt-bindings/gpio/gpio.h>
-> 8:#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> 9:#include <dt-bindings/gpio/gpio.h>
+> Applied, thanks!
 > 
-> I see line 7 and line 9 include the same <dt-bindings/gpio/gpio.h>,
-> I think we can remove one header file. 
+> [1/1] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+>       (no commit info)
 > 
-So say that it is there twice...
+
+... and dropped, because I missed the part it is not bisectable. This
+cannot go the same cycle.
 
 Best regards,
 Krzysztof
