@@ -1,104 +1,94 @@
-Return-Path: <linux-kernel+bounces-742302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721F4B0EFAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7813DB0EFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 821AD3AC648
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A50188E296
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C8228B7C9;
-	Wed, 23 Jul 2025 10:24:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E6A277C9E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E0428466F;
+	Wed, 23 Jul 2025 10:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ma9cBdzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F52D28C033;
+	Wed, 23 Jul 2025 10:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753266240; cv=none; b=DtNLZ2zVJY4qEeJOq/p+LXKDOd9/XGCqweP7gSEmSSxo+1wXSFdcHRG/rE5lJm5dB5r41ajPWvz4mZdxhiZJZCl6T1rygpp1xeJsB+rflKmR9sLc27/IlmNjxhsJ+5KWMbLPqYLJqAmunBe7BTjeJOWpSla2gF6rJas6q9p3yGY=
+	t=1753266258; cv=none; b=rqWo6kH3FFc2pqv9llu4RIQCo7Yp/GSBBmnOn2eqKZzzQCDvObSp7oN0dzY/QXhR1aKyXwaAZWKdY1XFRVb/lx1wjhJVSnreixFruQKE95revRt8HlmF3xAruRzm5dkhAUdUAEhbAWQQ+mg3YEwHnLFkUtdBwG9h1yZQrtaxrMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753266240; c=relaxed/simple;
-	bh=k2N2kXKbG4db75Hpml+LtVoswRkcOT3xjDvro7B2Gr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8Y2WKsQfYNDk0awrH/of6ZlOttBGcVONq9fG5ahsPC4Wnz1s0cNQeFou5vatAdWd4YST3D1xlSFhGRWqXeZhUXckIIK5Y3RhpFATGc2e9B8kHlgn5Ufrll5LbRpdqansCqPQgluI0FHRTKIVuqj9kM5rzZI48Eag8cKmygLIew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE35A22C7;
-	Wed, 23 Jul 2025 03:23:51 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DAFB3F5A1;
-	Wed, 23 Jul 2025 03:23:57 -0700 (PDT)
-Date: Wed, 23 Jul 2025 11:23:55 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: hejunhao <hejunhao3@huawei.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 04/10] coresight: Appropriately disable programming
- clocks
-Message-ID: <20250723102355.GJ3137075@e132581.arm.com>
-References: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
- <20250627-arm_cs_fix_clock_v4-v4-4-0ce0009c38f8@arm.com>
- <daece566-2cca-71dd-d21a-80dadad2c71b@huawei.com>
+	s=arc-20240116; t=1753266258; c=relaxed/simple;
+	bh=VxIrlHY3WeU5nF1uFuE1TzdHdN3R1UoY01Lw2c+e024=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UK6MICG27oBex4BH8cgpMiCp5pCXxC+pEkhUa5KtG0G8wjDHGGg4h0bQpuXdL4Jd0pVp6qQFDMVPmdd+aWHEE9q1IFNRJLKIgVdHes6lE9Yt8zRKWqq8u56sYoF7UnP0rzTGmuFt3EnuUuYYdnxPN7JwMJAJP21VbClMRkQOKwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ma9cBdzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2723AC4CEE7;
+	Wed, 23 Jul 2025 10:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753266257;
+	bh=VxIrlHY3WeU5nF1uFuE1TzdHdN3R1UoY01Lw2c+e024=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ma9cBdzH1LIaPH0x/g3JfxtIpOusBqAn16JMYnvGxtUdE1KZRTp5tsOiJJ4VJEKcr
+	 i2Nbjzjpx6xffyRX6dUiBYrnr7G2IAfnPgjnnt3AsmFiDw2vM9fIbMEsDybAbAKhYt
+	 28RTJpKzt0dPBG8q4wCQGJPKxwToLUObgS4W67gw24pxhukTL2IClqnzxnVxoM4Eqy
+	 1q/tSD4YJsYKQ6uobWMIYvQY3Sd2nFmoa68e2Gtg7YO+EDS4aWCr4cQ6qfn6frTFYD
+	 k5/UvugDfFgLlrDyO+As2uS9pTjHvf8bg/3U+A4sbhmUtMNKel0Qp6JzNCFlumuiUE
+	 FQJsPfx66dTHg==
+Message-ID: <a55fde07-9320-46b0-bf7c-a2fdfb7c79b2@kernel.org>
+Date: Wed, 23 Jul 2025 11:24:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <daece566-2cca-71dd-d21a-80dadad2c71b@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] bpftool: Add CET-aware symbol matching for x86_64
+ architectures
+To: chenyuan <chenyuan_fl@163.com>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, yonghong.song@linux.dev
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yuan Chen <chenyuan@kylinos.cn>
+References: <20250723022043.20503-1-chenyuan_fl@163.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20250723022043.20503-1-chenyuan_fl@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Your message had a
+"Reply-To: <aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org>" header, I
+ignored it. I believe you meant to have In-Reply-To: instead.
 
-On Mon, Jul 21, 2025 at 10:08:27PM +0800, hejunhao wrote:
-> On 2025/6/27 19:51, Leo Yan wrote:
-> > diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> > index 4ac65c68bbf44b98db22c3dad2d83a224ce5278e..dd2b4cc7a2b70cf060a3207548fe80e3824c489f 100644
-> > --- a/include/linux/coresight.h
-> > +++ b/include/linux/coresight.h
-> > @@ -480,26 +480,16 @@ static inline bool is_coresight_device(void __iomem *base)
-> >    * Returns:
-> >    *
-> >    * clk   - Clock is found and enabled
-> > - * NULL  - clock is not found
-> >    * ERROR - Clock is found but failed to enable
-> >    */
-> >   static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
-> >   {
-> >   	struct clk *pclk;
-> > -	int ret;
-> > -	pclk = clk_get(dev, "apb_pclk");
-> > -	if (IS_ERR(pclk)) {
-> > -		pclk = clk_get(dev, "apb");
-> > -		if (IS_ERR(pclk))
-> > -			return NULL;
-> Hi,
+
+2025-07-23 10:20 UTC+0800 ~ chenyuan_fl@163.com
+> From: Yuan Chen <chenyuan@kylinos.cn>
 > 
-> Here, the function returns NULL, but the caller uses IS_ERR() to check the
-> function return value.
-> Yes, this patch has already been fixed this, and should we split this fix
-> into a separate patch?
+> Adjust symbol matching logic to account for Control-flow Enforcement
+> Technology (CET) on x86_64 systems. CET prefixes functions with
+> a 4-byte 'endbr' instruction, shifting the actual hook entry point to
+> symbol + 4.
+> 
+> Changed in PATCH v4:
+> * Refactor repeated code into a function.
+> * Add detection for the x86 architecture.
+> 
+> Changed int PATH v5:
+> * Remove detection for the x86 architecture.
+> 
+> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
+> ---
 
-I am not sure if I understand this question correctly.
 
-Are you suggesting that we should use IS_ERR_OR_NULL() instead of
-IS_ERR() to check the returned clock pointer?
+Looks good from my side, thank you!
 
-If so, the answer is that we should not change it. As Suzuki mentioned,
-we need to tolerate the absence of pclk in the ACPI case. So keep using
-IS_ERR() is the right thing to do.
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
 
-Thanks,
-Leo
+Probably worth waiting for Yonghong's ack as well before merging this patch.
 
