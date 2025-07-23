@@ -1,88 +1,75 @@
-Return-Path: <linux-kernel+bounces-743366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940EAB0FDB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:44:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53380B0FDBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2313218992AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54E29587B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4115726CE08;
-	Wed, 23 Jul 2025 23:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383FB2586DA;
+	Wed, 23 Jul 2025 23:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4Gnlzmx"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iw8EuyUv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C83A111BF;
-	Wed, 23 Jul 2025 23:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E4D24EF8C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 23:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753314263; cv=none; b=q2B4iryh2G8NwTBjYMwl9CXGA2irVsjrliZDOFEv4Kj0pSFaUqW3ue0CRzbmlDmUuzH855AaOMmf+OxczKB2NQxMxg/x+kcR7wPo/BxIZzGP6OFeuQggKB6sfE7XhuP6yF4/JHd9sc8mkVvRNJm/+gHg0TPku6c0plnqaXWncuE=
+	t=1753314278; cv=none; b=ce7LnpJOkbqeDTFgDOq0+ZqfC2xWv0A48dW3ZMItLzmhcx+fTMZ3MUS+nYc4RgYq7lMiZSOda9s29gno0kok6k0m8DIuVwKA2PqDAi752BprjjS0nPQa6/5+sikbAB2BxDm32dARVPSBIDGgmOtbyFgoQL4ZCKaA5Q6/Xq2fLKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753314263; c=relaxed/simple;
-	bh=NFMZcHmxH+7tGrivjlfbqsit7c9Wdvhu5x2EGP8PyZY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBuwstu3TCRC34vNZxIftiRUFpzzBaGbwuGaMCVhxdbBunnDjecWoQnaN/qM9BrAWHZibrnBNdjT9MUBc0LvcX5AjATE7Vm91afUomK0uLjnhQt4h1wrEfdp7h7EDOGXGUbtHXjdB3GgWz5gcEILIi6TLHtEP/aCv8oQG5m1MAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4Gnlzmx; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234c5b57557so2946245ad.3;
-        Wed, 23 Jul 2025 16:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753314262; x=1753919062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=egOR95e8pzUIXHVjCnVm2bcSsTXIg61tjStS28c2/fc=;
-        b=N4GnlzmxL/vxZckL9Tl5K4c0xOf+L1Rp/N9Ji/M4ephbo1gJBkezSxFPcnn9jIpJiz
-         JN5cTjEN9irluoSUtmHRTzS/H7P+mnjQn4kPPt6VWh/nx19zIK7A3mY4zP94S5UmF2uG
-         wf+zHNGQdXzNdhS/PIInr8ydvkY2pV8asykjwQKCGZ7qLQlCe82qBTGnpoMcxUnbFo7T
-         RSS1chRJT64TV7g95xoBxin+pldqGh/zILI0t+qheR/ihe6oxT1cZLnzf7dGN+sQoc2s
-         7XgnTzDr8cuekF5+LeL00J7ibOd7fQx//m25wLGVa2jvaONtWdcaHSIBsDpWx78wLXvN
-         2GFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753314262; x=1753919062;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egOR95e8pzUIXHVjCnVm2bcSsTXIg61tjStS28c2/fc=;
-        b=gM5Nn8ymAvchGynVljkskGtyEq7e2W0KhP6/NcBHdQqLdFXY3rIQpitVMtlhzUA6xV
-         +l7jJa0ty/fS5gjduMs5HzcVYmwld6iTknNCiLqk/ud0TQNOky2kx7r4XGPop4DNSzii
-         4itY2rL/Hh9Vv+QX3eeZ5iR28IsRhDylsZ19eMlzSyl8spdT6qdEeo/mpLACNTOxyf4M
-         JHekEcSlUexHZiHv2V9m20klpeUFSONISCLQiBTwiIQQhdzXvORJikv5rHtC+WaxLGLd
-         gtfd46Ratc0o4NmIcJhQhJYmr7UPXUdFOLe8/Roq1DkAK0Z5Cv2L6YF+2ukcYOqf73Lx
-         0OTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrwxpTKByTXrEXrqA8T34QQRC6p80uWhMfEoKSFrCKJ50V7vf9eVGGv5ish6lI/tEvGLYslPoUhGTV@vger.kernel.org, AJvYcCWAFdkwCffolF0zm5LR1eUcJlC5eSWiVeboDfFfTrjim10GGHtea8tnmQCu1eU1OlKzOq3+E2fXGP5qV+Hd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlBlSq4ywqV/C/FaMd+P+I4pN7GcDi81Dk6lK4HmMnt4VTq3Jo
-	45bAI+6wFruV9OL/Rc3P4WN2c5R/1vzlcLu76R2XPP5nT3jAMVTYdKyG
-X-Gm-Gg: ASbGnctvI4WTRPYhGiJAtUg7sbDoMgNmmjWAgdPYiZFQnwWrFKSkDII3FYwqHQTlMrc
-	hB54n7f0C/k8exy4IGn/akCRUEBC7oQfB6n+9LtDdjFZ93bfx2uQCg4hZF5vaN5em7dXTbEPEuv
-	upyi87TYHcY5CDw2Ny+rY5zUeN2d73GHIN96o5XfW68/axIPna4Za/T/jSLU5oEcDI20ENb2uhC
-	VpF+1KLkgK+p2OJxi9ZmW22qEklLA4uL2RSWRtnWBNpKodmK2cOuYvy2k7uMQm+rhU7ReUh+6cu
-	foY5NNJV42ooE7r1PT1/aeZaont1LXpLknSzTo3tsLzrnrv66rvwCiyLJWQEyWOluLTlJ4p2Apr
-	OhVff4/szoxoRw5qB3fwC27dJtiYx5/zMOF7Ljrp9HTWIP3ydz4ICE9NEx8A2nL5rROZZfplJ3V
-	8=
-X-Google-Smtp-Source: AGHT+IFDzS99qUj6bsQTcDicde763FDogEGZYIzf0CqpnnHK6ECZzmfcAqK3CJqUDBhhH8jFJnC1JA==
-X-Received: by 2002:a17:902:ef08:b0:23c:7b9e:163e with SMTP id d9443c01a7336-23f98164116mr54444835ad.11.1753314261687;
-        Wed, 23 Jul 2025 16:44:21 -0700 (PDT)
-Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa490222dsm1371765ad.182.2025.07.23.16.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 16:44:21 -0700 (PDT)
-Date: Wed, 23 Jul 2025 16:44:18 -0700
-From: Tao Ren <rentao.bupt@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v3 00/13] ARM: dts: aspeed: Add Meta Darwin dts
-Message-ID: <aIFz0nq7qHvzglwZ@localhost.localdomain>
-References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+	s=arc-20240116; t=1753314278; c=relaxed/simple;
+	bh=uRZC0I2PMbZxs8/2p6yZUNrvL4np1x1vR6oKZKvgcmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ras6LrDI4rrw890yHwyieSkT9BIhSmOICbntw+eRU5xCVUjm5AigKcPsdIcces3PZMS3wsilOmwYpPFgdtNbGuqwtC/FZbfY/ym+Df70ijN7a0T7Gg/LrNxoRXUNLzGA+lNgiVxJJQkxE0G48cGAfYqBZSekFLf5YKGg+POvOoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iw8EuyUv; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753314277; x=1784850277;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=uRZC0I2PMbZxs8/2p6yZUNrvL4np1x1vR6oKZKvgcmI=;
+  b=iw8EuyUv9b9anNTi6Bfeedjg3xKdVSnh2au71NAnPFaR0EyxXPd7w+mJ
+   amkq+Qr4nqGBUPdR4cMdAmy8whQm3ahR9CB+HKq0e4B8++qQ89XaWKIc2
+   crCtF/IlZqaH3k2i425wWeGGUQjcM+W++hku96tb6NmcVZRFDcZrtHmTw
+   znvBtdDbfzhdt4syXvP6GMcVUcjdHokT9cV/xA2XMVYn7xYH2o0BPFly8
+   1baOZbfTaMHEpoE4fIjaJ6FwHuPLripYkIxy/cO3VKuiNV2e0mtPzGjBS
+   a+pJWYwVfxPjNToaCeMP0VnOilPKP0EwEPCdCW7exlbkNvoz/sjT7lDVo
+   g==;
+X-CSE-ConnectionGUID: AuLh0sbnSUaWpwZJlfsKKw==
+X-CSE-MsgGUID: mtxfUH+OQsSktJ1QHf6Lkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55555163"
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="55555163"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 16:44:36 -0700
+X-CSE-ConnectionGUID: nojacTDPT6ObVAmX4iD1sw==
+X-CSE-MsgGUID: nPSX8+ynTeeJCy0QzjofCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="159844699"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 23 Jul 2025 16:44:35 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uej8S-000JtN-24;
+	Wed, 23 Jul 2025 23:44:32 +0000
+Date: Thu, 24 Jul 2025 07:44:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: include/uapi/linux/vbox_vmmdev_types.h:239:4: warning: field u
+ within 'struct vmmdev_hgcm_function_parameter32' is less aligned than 'union
+ (unnamed union at include/uapi/linux/vbox_vmmdev_types.h:223:2)' and is
+ usually due to 'struct vmmdev_hgcm_function...
+Message-ID: <202507240731.jgaW3v2n-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,43 +78,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723233013.142337-1-rentao.bupt@gmail.com>
 
-On Wed, Jul 23, 2025 at 04:29:56PM -0700, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
-> 
-> The patch series introduces the initial device tree for Meta/Facebook
-> Darwin AST2600 BMC.
-> 
-> Patches #1, #2 and #3 fixes the DTB warnings in wedge400/fuji dts and
-> ast2600-facebook-netbmc-common.dtsi.
-> 
-> Patch #4 moves eMMC entries from ast2600-facebook-netbmc-common.dtsi to
-> each BMC platform because eMMC was removed from future Meta Network BMC
-> platforms.
-> 
-> Patch #5 introduces new BMC flash layout with 64MB data partition.
-> 
-> Patches #6, #7 and #8 add "wedge400-data64-bmc" board. "wedge400-bmc"
-> and "wedge400-data64-bmc" are identical except BMC flash layout.
-> 
-> Patches #9, #10 and #11 add "fuji-data64-bmc" board. "fuji-bmc" and
-> "fuji-data64-bmc" are identical except BMC flash layout.
-> 
-> Patches #12 and #13 add Meta Darwin BMC and updates devicetree
-> bindings.
+Hi Arnd,
 
-Hi Andrew,
+FYI, the error/warning still remains.
 
-Sorry the patch series grow bigger and bigger, and thanks again for the
-review.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   01a412d06bc5786eb4e44a6c8f0f4659bd4c9864
+commit: c99e1e1d0850ff157f1bc16871acd2dff5a9bcc3 vbox: add HAS_IOPORT dependency
+date:   5 months ago
+config: arm-randconfig-r122-20250724 (https://download.01.org/0day-ci/archive/20250724/202507240731.jgaW3v2n-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
+reproduce: (https://download.01.org/0day-ci/archive/20250724/202507240731.jgaW3v2n-lkp@intel.com/reproduce)
 
-Besides, the patch series is applied on top of the latest mainline, and
-we may need to rebase when v6.17-rc1 is ready. Please let me know if I
-need to hold my patches till v6.17-rc1.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507240731.jgaW3v2n-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/virt/vboxguest/vboxguest_linux.c:15:
+   In file included from include/linux/vbox_utils.h:8:
+>> include/uapi/linux/vbox_vmmdev_types.h:239:4: warning: field u within 'struct vmmdev_hgcm_function_parameter32' is less aligned than 'union (unnamed union at include/uapi/linux/vbox_vmmdev_types.h:223:2)' and is usually due to 'struct vmmdev_hgcm_function_parameter32' being packed, which can lead to unaligned accesses [-Wunaligned-access]
+     239 |         } u;
+         |           ^
+>> include/uapi/linux/vbox_vmmdev_types.h:254:6: warning: field u within 'struct vmmdev_hgcm_function_parameter64::(unnamed at include/uapi/linux/vbox_vmmdev_types.h:249:3)' is less aligned than 'union (unnamed union at include/uapi/linux/vbox_vmmdev_types.h:251:4)' and is usually due to 'struct vmmdev_hgcm_function_parameter64::(unnamed at include/uapi/linux/vbox_vmmdev_types.h:249:3)' being packed, which can lead to unaligned accesses [-Wunaligned-access]
+     254 |                         } u;
+         |                           ^
+   2 warnings generated.
 
 
-Cheers,
+vim +239 include/uapi/linux/vbox_vmmdev_types.h
 
-- Tao
+f6ddd094f57934 Hans de Goede 2017-11-30  219  
+f6ddd094f57934 Hans de Goede 2017-11-30  220  /** HGCM function parameter, 32-bit client. */
+f6ddd094f57934 Hans de Goede 2017-11-30  221  struct vmmdev_hgcm_function_parameter32 {
+f6ddd094f57934 Hans de Goede 2017-11-30  222  	enum vmmdev_hgcm_function_parameter_type type;
+f6ddd094f57934 Hans de Goede 2017-11-30  223  	union {
+f6ddd094f57934 Hans de Goede 2017-11-30  224  		__u32 value32;
+f6ddd094f57934 Hans de Goede 2017-11-30  225  		__u64 value64;
+f6ddd094f57934 Hans de Goede 2017-11-30  226  		struct {
+f6ddd094f57934 Hans de Goede 2017-11-30  227  			__u32 size;
+f6ddd094f57934 Hans de Goede 2017-11-30  228  			union {
+f6ddd094f57934 Hans de Goede 2017-11-30  229  				__u32 phys_addr;
+f6ddd094f57934 Hans de Goede 2017-11-30  230  				__u32 linear_addr;
+f6ddd094f57934 Hans de Goede 2017-11-30  231  			} u;
+f6ddd094f57934 Hans de Goede 2017-11-30  232  		} pointer;
+f6ddd094f57934 Hans de Goede 2017-11-30  233  		struct {
+f6ddd094f57934 Hans de Goede 2017-11-30  234  			/** Size of the buffer described by the page list. */
+f6ddd094f57934 Hans de Goede 2017-11-30  235  			__u32 size;
+f6ddd094f57934 Hans de Goede 2017-11-30  236  			/** Relative to the request header. */
+f6ddd094f57934 Hans de Goede 2017-11-30  237  			__u32 offset;
+f6ddd094f57934 Hans de Goede 2017-11-30  238  		} page_list;
+f6ddd094f57934 Hans de Goede 2017-11-30 @239  	} u;
+f6ddd094f57934 Hans de Goede 2017-11-30  240  } __packed;
+f6ddd094f57934 Hans de Goede 2017-11-30  241  VMMDEV_ASSERT_SIZE(vmmdev_hgcm_function_parameter32, 4 + 8);
+f6ddd094f57934 Hans de Goede 2017-11-30  242  
+f6ddd094f57934 Hans de Goede 2017-11-30  243  /** HGCM function parameter, 64-bit client. */
+f6ddd094f57934 Hans de Goede 2017-11-30  244  struct vmmdev_hgcm_function_parameter64 {
+f6ddd094f57934 Hans de Goede 2017-11-30  245  	enum vmmdev_hgcm_function_parameter_type type;
+f6ddd094f57934 Hans de Goede 2017-11-30  246  	union {
+f6ddd094f57934 Hans de Goede 2017-11-30  247  		__u32 value32;
+f6ddd094f57934 Hans de Goede 2017-11-30  248  		__u64 value64;
+f6ddd094f57934 Hans de Goede 2017-11-30  249  		struct {
+f6ddd094f57934 Hans de Goede 2017-11-30  250  			__u32 size;
+f6ddd094f57934 Hans de Goede 2017-11-30  251  			union {
+f6ddd094f57934 Hans de Goede 2017-11-30  252  				__u64 phys_addr;
+f6ddd094f57934 Hans de Goede 2017-11-30  253  				__u64 linear_addr;
+f6ddd094f57934 Hans de Goede 2017-11-30 @254  			} u;
+f6ddd094f57934 Hans de Goede 2017-11-30  255  		} __packed pointer;
+f6ddd094f57934 Hans de Goede 2017-11-30  256  		struct {
+f6ddd094f57934 Hans de Goede 2017-11-30  257  			/** Size of the buffer described by the page list. */
+f6ddd094f57934 Hans de Goede 2017-11-30  258  			__u32 size;
+f6ddd094f57934 Hans de Goede 2017-11-30  259  			/** Relative to the request header. */
+f6ddd094f57934 Hans de Goede 2017-11-30  260  			__u32 offset;
+f6ddd094f57934 Hans de Goede 2017-11-30  261  		} page_list;
+f6ddd094f57934 Hans de Goede 2017-11-30  262  	} __packed u;
+f6ddd094f57934 Hans de Goede 2017-11-30  263  } __packed;
+f6ddd094f57934 Hans de Goede 2017-11-30  264  VMMDEV_ASSERT_SIZE(vmmdev_hgcm_function_parameter64, 4 + 12);
+f6ddd094f57934 Hans de Goede 2017-11-30  265  
+
+:::::: The code at line 239 was first introduced by commit
+:::::: f6ddd094f5793447d594aa9f42032a7aba12b4d2 virt: Add vboxguest driver for Virtual Box Guest integration UAPI
+
+:::::: TO: Hans de Goede <hdegoede@redhat.com>
+:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
