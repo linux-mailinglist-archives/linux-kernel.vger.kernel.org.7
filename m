@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-742690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55973B0F565
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:35:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C68B0F571
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28331892B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3ABAC50B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEBB2F49F0;
-	Wed, 23 Jul 2025 14:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B84B2F4A05;
+	Wed, 23 Jul 2025 14:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="J8aC342I"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="efwwPUby"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF822EF2AA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5376D23BD1F;
+	Wed, 23 Jul 2025 14:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753281250; cv=none; b=PGgCE4RtsbvSXxRn5GClhWmBSIrNWBA4m7T5j3J46HnvQ6RVikz+uiv5LuZC+fAsDq+BTXRMJgqsy+nxMTn6/lswxh5xjXZGCzr1yNqYNPEKqn76UIFcn6em1QJx3/Vxzz5rFkbx5F7nUF3LL9gny0D5/8pvKOtb98zxicYEhWQ=
+	t=1753281293; cv=none; b=R8IHjK8OBaypyQs3U2PH3xJ95OLyww9x6C2ywoA7za+wTgOFIZCIls0w7asX1CmB6oCccZV4XyB8tEQgS/PzL3UVNnRQw0Zw7o2X1ja7dxQ/LWPlsBIz/DDYD04m3lRNnfCIWIijUW/pXsxBp7mS85eYxcvp6MmmEQMkEjvRflQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753281250; c=relaxed/simple;
-	bh=1ULuyti9Kn4FcMH3MUItWYZpR0G6mq8RJGPSkQjQpYE=;
+	s=arc-20240116; t=1753281293; c=relaxed/simple;
+	bh=a7Wl6Hu1yG6irRzac4k+rBoiFOJEo/rF0YecZangH3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hqw4pdqm5E5V098xs+P73OUf68bBAyRYyL6hgo26SMSeg3ShpIhmpLnbFxzQKe1lBoLvBaah4LVfR1p9KH00IBrh6XlLfqLOFgHuc4D5wqoKKnxlljhpL0Odz0yHFMKkwMz4jxziTebixhfrgP7u3Wc0Lp9opDE5dP6CC5iElmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=J8aC342I; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ab6416496dso79148791cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1753281248; x=1753886048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DpVfUmI1KeHlRdksG5/hlr6v6bC/FgYZRIQLfFzPySo=;
-        b=J8aC342I5csm64SBHVemOrTwBaimpllITWbF8sZ4uCOCbZ+EWKbiI6RFv6hApLnxeJ
-         DWalxAxi5/yP7w5f73t7SOnblE8fOPzOHf4UHzuC3r/ntWQo0yymNHupjnVTAPrnRcrf
-         GCJogHwhfIMkzaIbxBG9Lym0SMkE/zuJVR8cV7fzAM67a/LGshdXNELkF78SJdv9uSwL
-         g3ebtrka5s8GTpJYtkFdvce3gq6aSM3MdYu933lczBHEn2xayc9syBdnSCTi+kIj6B1U
-         bk6iiCXWpkY2WPOwjXY2/dojj28U5ozZzV6AWmV9P/kYNPoybS5yi3ALgTyzfrF6cKPO
-         yASw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753281248; x=1753886048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DpVfUmI1KeHlRdksG5/hlr6v6bC/FgYZRIQLfFzPySo=;
-        b=BSiusHD3qBRvin0R9yiLBSlCl1Glg5LI+l+0ziWJ6WUnbrYVuaSYJxgogwdWK3xcpO
-         pI4S81Wm1ui7XvzKA2GYKPJFsPoFdA0M148ZcDBeLUZMuhBHrSeLOt6qcxRiWLOt812m
-         a3LBZlwG6CtSspY9/juVYtjDC4vJr14/kEsokVUie1+mfs2QAl5dCILckob1qbqNtgYF
-         Mw5/RYDW6pbZ/stdxBF4r0ypGc4OJ5a4fm48dkLIdKI2Ns+mVBVBaZLxpYxTM4ne/7C0
-         xPXjih6HKcr8xhExnAuXT1nkjWnrgP0Ss8dUi5G55DQoQn70QZ7kDt4JcAT6KvIn3dbh
-         nD4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGs71dneOSK/4kUmW7cznrf1V9X7Ao8cD0Tx3IkNmOuid6cRSmxqW3xeNMBCzDyw7f8/Onv9g7udBz6/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyopRKZ13fH1ajfDRG500kfa32XFeMFmQz6Od20zimexsaR/sUp
-	M6cMBMxhjiGAaTybtJ7W8lsMzDRuqNUk6jZYTgFvX6gYsxNEAA5b5I1m/ZIcTYw5XSx8tZ/7nZp
-	wcfM=
-X-Gm-Gg: ASbGncvUHZ2zqcg7I55k+9apP4Ta78+dxngb6v+AviuS8BvNLLJPtvqz0z471tGZPWS
-	potke8mk8zu0m8xTW6Qs+RgnIBVrO1AfflHCZDydTcv9ktJtvxvRCm8WpmHlVpaR/nUOl9TQTgw
-	noHgwtiR6MENQyEjMbZp0he6Xt1BNINrPYagq4tlPExesKszzEOnxfCi1/wA9xRDxeNkeCPanco
-	8D1sMRJuPiwnmYJ8Z9KqgHiCQZg/DqkGNIN5crVaaHyUfCpquf/UwGXrqEJjXsfPivPhK5DPhjU
-	HL1DujG7wuckJgVhTtQL6XADPHsia5mBuSY58vWCS6jBJlssr21kHtv6l32UXEhO/1gAH2ZRXYj
-	BI0flsEj9HZ1nCn269h0a5owGPKV3nMGpRvLnA01kcXgPCuhZMQE=
-X-Google-Smtp-Source: AGHT+IHpNXlDJG0Cf2V8A8Oz1qR6u5Q6ICaQoF7lbGkGS7QpFGO8kmzSUKcIsA361heT2XOuYduEYQ==
-X-Received: by 2002:a05:622a:cb:b0:4ab:5e1f:ca8a with SMTP id d75a77b69052e-4ae6de54cffmr43546971cf.14.1753281247645;
-        Wed, 23 Jul 2025 07:34:07 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4b24930sm67046841cf.51.2025.07.23.07.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 07:34:07 -0700 (PDT)
-Date: Wed, 23 Jul 2025 10:34:04 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>,
-	jikos@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
-Message-ID: <750377a5-b5df-4b2b-8e38-0001bfbeb30f@rowland.harvard.edu>
-References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
- <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
- <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
- <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
- <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
- <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
- <34ks6futbrmunsq2tbz75jwqg64lpk4pg6udbbk3yo2exm657b@3fivbjjdcyl4>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEM/GZvPPcNGZn+ZyIanrq9VdqS58vVotEBdvVc3De227E2J09KD/eO6Unnr9psfuB3/ovYSenT+VC9CIg4ljH3RarkKMMwe5TZ0WjUlkunwflDdXgLG2LmXYZpDJwtSpNDRwZFajNbFkCiE7tUcQ24R57+NR5dkP2Ng+asn17U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=efwwPUby; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753281292; x=1784817292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a7Wl6Hu1yG6irRzac4k+rBoiFOJEo/rF0YecZangH3w=;
+  b=efwwPUbysLuVKSyf8OBjEnkKn3pLYmnETBGmtko9il1EG9zQpUPejwY3
+   FZAFRokdAytLrChs1SOJr/uiSRWPrRecknUB8getGPPx8yngJrvD9Br9r
+   TWEAWh0d00Id00jLfqLjGuL9F939KWxfm5CutsO2019P6y5MmadCueKCt
+   PDj5qj9rcKeYwV4dEpdxkpvv0JBJTW8RRAoVWLPRMj60z5SMkwRWnJ7Sn
+   x+VorENeR0xjcwUIho3qpYVxwHlvVR4zZGogeSLskukSGFB7pkUA0ytbD
+   Tqj5m3xrOgS56Ip/6ZNljkqiDXMuLxbUAyiLZC+1mPulgJsbWD4lhLzo6
+   g==;
+X-CSE-ConnectionGUID: tQiZY6wSRcia+3k/9xoFyw==
+X-CSE-MsgGUID: QKo7/3ZaQCSmvQyPOfcMDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="58181307"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="58181307"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:34:48 -0700
+X-CSE-ConnectionGUID: +h2Bk6JjS5GJYf9LBIIeqA==
+X-CSE-MsgGUID: cLHVUgJJS3qfaeqWk31VoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="159565064"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:34:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ueaYN-00000000JX5-0sst;
+	Wed, 23 Jul 2025 17:34:43 +0300
+Date: Wed, 23 Jul 2025 17:34:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: ad7173: prevent scan if too many setups
+ requested
+Message-ID: <aIDzAiQT0S0-ZcQo@smile.fi.intel.com>
+References: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,40 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34ks6futbrmunsq2tbz75jwqg64lpk4pg6udbbk3yo2exm657b@3fivbjjdcyl4>
+In-Reply-To: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 23, 2025 at 11:32:14AM +0200, Benjamin Tissoires wrote:
-> On Jul 21 2025, Alan Stern wrote:
-> > On Mon, Jul 21, 2025 at 03:05:58PM +0200, Benjamin Tissoires wrote:
-> > > > So then would it be better to accept these report fields (perhaps with a 
-> > > > warning) and instead, harden the core HID code so that it doesn't choke 
-> > > > when it runs across one of them?
-> > > > 
-> > > 
-> > > Yeah, that seems like the best plan forward.
-> > > 
-> > > [sorry on reduced setup for the next 3 weeks, so I can't really debug
-> > > the entire thing now.]
-> > > 
-> > > Though, we should probably not annoy users unless we are trying to do
-> > > something that won't be needed. I doubt that Saitek gamepad will ever
-> > > call the faulty functions, so why putting an error in the logs when it's
-> > > working fine?
-> > 
-> > All right.
-> > 
-> > Probably the best way to do this is simply to revert the commit that's 
-> > already applied and then merge a new patch to harden the core.  Would 
-> > you like me to post the reversion patch or do you prefer to do it 
-> > yourself?
+On Tue, Jul 22, 2025 at 02:20:07PM -0500, David Lechner wrote:
+> Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
+> the maximum number of unique channel configurations.
 > 
-> Given that the faulty commit is on top of for-6.17/core, I can simply
-> force push to the parent, and also force push the for-next branch. That
-> should do the trick.
+> In the AD7173 family of chips, there are some chips that have 16
+> CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
+> GAINx and OFFSETx registers). Since commit 92c247216918 ("iio: adc:
+> ad7173: fix num_slots"), it is possible to have more than 8 channels
+> enabled in a scan at the same time, so it is possible to get a bad
+> configuration when more than 8 channels are using unique configurations.
+> This happens because the algorithm to allocate the setup slots only
+> takes into account which slot has been least recently used and doesn't
+> know about the maximum number of slots available.
 > 
-> Can you post your s32ton fix on top of that then?
+> Since the algorithm to allocate the setup slots is quite complex, it is
+> simpler to check after the fact if the current state is valid or not.
+> So this patch adds a check in ad7173_update_scan_mode() after setting up
+> all of the configurations to make sure that the actual setup still
+> matches the requested setup for each enabled channel. If not, we prevent
+> the scan from being enabled and return an error.
+> 
+> The setup comparison in ad7173_setup_equal() is refactored to a separate
+> function since we need to call it in two places now.
 
-Sure.  Patch coming up shortly...
+...
 
-Alan Stern
+> + * ad7173_setup_equal - Compare two channel setups
+
+Better naming is
+ad7173_is_setup_equal().
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
