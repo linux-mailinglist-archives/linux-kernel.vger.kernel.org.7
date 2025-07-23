@@ -1,183 +1,299 @@
-Return-Path: <linux-kernel+bounces-742181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D536B0EE5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:25:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4606EB0EE60
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259365829D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7CA1895C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F105285070;
-	Wed, 23 Jul 2025 09:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CA0288C08;
+	Wed, 23 Jul 2025 09:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ccom6Vwe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1MtR2nQ0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ccom6Vwe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1MtR2nQ0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PEAbKjiW"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBD328750C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCAF28688D;
+	Wed, 23 Jul 2025 09:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753262681; cv=none; b=iRgRU9hFIojhHk3TwyBfW74K9VanS1iX/ByfFIJo5bxvlJyn6JECmiZakIGjfR/vpR4G6rHGuSF+gjuVQmEBhTl3+O0yn+m5W2J10XCwVCAmxstf4zMDNmqoj9VPnoos0TWFXKZkELlmVlmTLR1J+LFLAdCQ4DnGtV0gh6ot5RI=
+	t=1753262698; cv=none; b=GnjsbCHDm3HUNZcLNyQ1tQWhOiWenbZ97gpEk4ZiMoOcXDzSJxB1x9bXKSIUEfqQgwkV+W+ikz8ObkoZe1W8AB9mDNhJ8wTmlfj235iFaaIkKrlBHdpc27Sl9gzpSEeXM0EzZQZEisEGkCtf5CFyXNGireawGmaUup8tsggaX0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753262681; c=relaxed/simple;
-	bh=J6VFWbu1C7zZajBtNZU8o6mssrimrS/0TVGKqcv8Tmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I6OXluW9Og91X9Z4C4HBXc5CMfiuiaFzjGQofNR8aVshFW9fQtXb0CMhSRH+fPtRCkaJDgX6W18CqAv0Tp/mAsk3tV6eQCFvJyMGbRD1PvW/XgySd4O6e4CljKCJe6Cj8JjsmHU4MGzpG/M4p1UlZCxFlLg+XTsBiSx5Db9jzFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ccom6Vwe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1MtR2nQ0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ccom6Vwe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1MtR2nQ0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1753262698; c=relaxed/simple;
+	bh=miti0fBWg9l4CTRUeAOI1spPURaA2m4Iuf5wjnsIqho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e3/H+x18XS9tX7Hoq7DjNPFKu+f3CkwLKcfzTEGxf5Fhyiukbuw7sw7KsfPgymEtu+9u8c5NLJ6g5u6UhlVxOoUhJADACT+Nq++yqRsOxWH9rrKenb7ccSoVV12tM6tkyVq1Y0lS53xuK95k7/4wbqi+29GFDsf7UHEO7q4+V0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PEAbKjiW; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 234151F449;
-	Wed, 23 Jul 2025 09:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753262678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGxCt9KCgX092Wm21+x8qB83HQqiNVWcqGnh8WxE9j8=;
-	b=ccom6Vweafzv6HgsvYFpattF2Eqs+zq+DWVHKrSlRr5b3aipFUf4zj5jQGIi2CGnUy8S1u
-	f4eCuTXbmP16yzbzD0wfeBLpJGt2iyQ/Kug0SY1ydBxxcwp8MiAOsB2Ng8mchhp3Yee91Y
-	6Q/3sb3cZhP6BT58Bo7IIGzoTN4z/FA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753262678;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGxCt9KCgX092Wm21+x8qB83HQqiNVWcqGnh8WxE9j8=;
-	b=1MtR2nQ08XHF4Gm9droZzX/aXdy5fOsKuyTMkQOH+FCmVKZS7v0Au0C6AO5N02jQCokHNC
-	xb3BDjXNw1syzIAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753262678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGxCt9KCgX092Wm21+x8qB83HQqiNVWcqGnh8WxE9j8=;
-	b=ccom6Vweafzv6HgsvYFpattF2Eqs+zq+DWVHKrSlRr5b3aipFUf4zj5jQGIi2CGnUy8S1u
-	f4eCuTXbmP16yzbzD0wfeBLpJGt2iyQ/Kug0SY1ydBxxcwp8MiAOsB2Ng8mchhp3Yee91Y
-	6Q/3sb3cZhP6BT58Bo7IIGzoTN4z/FA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753262678;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGxCt9KCgX092Wm21+x8qB83HQqiNVWcqGnh8WxE9j8=;
-	b=1MtR2nQ08XHF4Gm9droZzX/aXdy5fOsKuyTMkQOH+FCmVKZS7v0Au0C6AO5N02jQCokHNC
-	xb3BDjXNw1syzIAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC17613302;
-	Wed, 23 Jul 2025 09:24:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yvxOOVWqgGgLVgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 09:24:37 +0000
-Message-ID: <d2bfd6ba-191d-4466-858c-bd1731605a87@suse.cz>
-Date: Wed, 23 Jul 2025 11:24:37 +0200
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bn7yC4Zvzz9tkl;
+	Wed, 23 Jul 2025 11:24:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1753262691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iJbmUAH3vRKxe2rKHTAfLf2Cof6kOw4q34nGIRQ3JMU=;
+	b=PEAbKjiWzHtfkjreRjIVdaxfqTNLVSCaWcofOgAwQ9HpHjX8H/Tj9E21Q948J/hUE9/egN
+	wLPM3ig7M27l+9V4qf5jOOyxE4spDW6RIWPHTlmpMaMZLiYyC1K3kcBzumGnQ+Vzpg8W3j
+	bkW4ymZn2X9cJhhfZhI9NZ6l0kVBn37qBEfWZYRc+G0xLl/aMnz0GZIoGSJlsLLVMw+jbF
+	WyglR6/veImYAxH86w/9901c5yN4TvGRgYV3yeaKQNKIN+pm7PKTEFJeldveA1wEFVRxzf
+	ucF4/Dyu4hGTzwNOYdHjnewbs547GIpF9QhI6hj13zkRCZX4N2MoOzR/qB8NNg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Date: Wed, 23 Jul 2025 11:24:42 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, x86@kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [RFC 2/4] mm: add static huge zero folio
+Message-ID: <fd7yh3ndu7rvo46sc5hg34ihgy4suer5lwl4llixbn2uhko3b3@vc46kzdyjdi4>
+References: <20250722094215.448132-1-kernel@pankajraghav.com>
+ <20250722094215.448132-3-kernel@pankajraghav.com>
+ <3d935889-fcda-4345-bd57-6c7a84458493@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add missing files to page alloc section
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>
-References: <20250722174143.147143-1-lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250722174143.147143-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d935889-fcda-4345-bd57-6c7a84458493@redhat.com>
+X-Rspamd-Queue-Id: 4bn7yC4Zvzz9tkl
 
-On 7/22/25 19:41, Lorenzo Stoakes wrote:
-> There are a couple of mm/-specific header files that were accidentally
-> missed previously, and some page ref debug code also that ought to live
-> here.
+On Wed, Jul 23, 2025 at 11:06:05AM +0200, David Hildenbrand wrote:
+> On 22.07.25 11:42, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > There are many places in the kernel where we need to zeroout larger
+> > chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+> > is limited by PAGE_SIZE.
+> > 
+> > This is especially annoying in block devices and filesystems where we
+> > attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+> > bvec support in block layer, it is much more efficient to send out
+> > larger zero pages as a part of single bvec.
+> > 
+> > This concern was raised during the review of adding LBS support to
+> > XFS[1][2].
+> > 
+> > Usually huge_zero_folio is allocated on demand, and it will be
+> > deallocated by the shrinker if there are no users of it left. At moment,
+> > huge_zero_folio infrastructure refcount is tied to the process lifetime
+> > that created it. This might not work for bio layer as the completions
+> > can be async and the process that created the huge_zero_folio might no
+> > longer be alive. And, one of the main point that came during discussion
+> > is to have something bigger than zero page as a drop-in replacement.
+> > 
+> > Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
+> > the huge_zero_folio, and it will never drop the reference. This makes
+> > using the huge_zero_folio without having to pass any mm struct and does
+> > not tie the lifetime of the zero folio to anything, making it a drop-in
+> > replacement for ZERO_PAGE.
+> > 
+> > If STATIC_PMD_ZERO_PAGE config option is enabled, then
+> > mm_get_huge_zero_folio() will simply return this page instead of
+> > dynamically allocating a new PMD page.
+> > 
+> > This option can waste memory in small systems or systems with 64k base
+> > page size. So make it an opt-in and also add an option from individual
+> > architecture so that we don't enable this feature for larger base page
+> > size systems.
+> > 
+> > [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+> > [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+> > 
+> > Co-Developed-by: David Hildenbrand <david@redhat.com>
 > 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> "Co-developed-by:"
+> 
+> And must be followed by
+> 
+> Signed-of-by: David Hildenbrand <david@redhat.com>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Sounds good. Actually, I didn't want to add your sign-off without
+your consent. But I will add it to the patch :)
 
+> 
+> As mentioned to the cover letter: spaces vs. tabs.
+> 
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > ---
+> >   arch/x86/Kconfig        |  1 +
+> >   include/linux/huge_mm.h | 16 ++++++++++++++++
+> >   mm/Kconfig              | 12 ++++++++++++
+> >   mm/huge_memory.c        | 28 ++++++++++++++++++++++++++++
+> >   4 files changed, 57 insertions(+)
+> > 
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index 0ce86e14ab5e..8e2aa1887309 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -153,6 +153,7 @@ config X86
+> >   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
+> >   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
+> >   	select ARCH_WANTS_THP_SWAP		if X86_64
+> > +	select ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO if X86_64
+> >   	select ARCH_HAS_PARANOID_L1D_FLUSH
+> >   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
+> >   	select BUILDTIME_TABLE_SORT
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 7748489fde1b..0ddd9c78f9f4 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -476,6 +476,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
+> >   extern struct folio *huge_zero_folio;
+> >   extern unsigned long huge_zero_pfn;
+> > +extern atomic_t huge_zero_folio_is_static;
+> >   static inline bool is_huge_zero_folio(const struct folio *folio)
+> >   {
+> > @@ -494,6 +495,16 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
+> >   struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
+> >   void mm_put_huge_zero_folio(struct mm_struct *mm);
+> > +struct folio *__get_static_huge_zero_folio(void);
+> > +
+> > +static inline struct folio *get_static_huge_zero_folio(void)
+> > +{
+> > +       if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
+> > +               return NULL;
+> > +       if (likely(atomic_read(&huge_zero_folio_is_static)))
+> > +               return huge_zero_folio;
+> > +       return __get_static_huge_zero_folio();> +}
+> >   static inline bool thp_migration_supported(void)
+> >   {
+> > @@ -685,6 +696,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
+> >   {
+> >   	return 0;
+> >   }
+> > +
+> > +static inline struct folio *get_static_huge_zero_folio(void)
+> > +{
+> > +       return NULL;
+> > +}
+> >   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+> >   static inline int split_folio_to_list_to_order(struct folio *folio,
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index 0287e8d94aea..14721171846f 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -835,6 +835,18 @@ config ARCH_WANT_GENERAL_HUGETLB
+> >   config ARCH_WANTS_THP_SWAP
+> >   	def_bool n
+> > +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
+> > +	def_bool n
+> > +
+> > +config STATIC_HUGE_ZERO_FOLIO
+> > +	bool "Allocate a PMD sized folio for zeroing"
+> > +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
+> > +	help
+> > +	  Typically huge_zero_folio, which is a PMD page of zeroes, is allocated
+> > +	  on demand and deallocated when not in use. This option will
+> > +	  allocate huge_zero_folio but it will never free it.
+> > +	  Not suitable for memory constrained systems.
+> 
+> Maybe something like
+> 
+> "
+> Without this config enabled, the huge zero folio is allocated on demand and
+> freed under memory pressure once no longer in use. To detect remaining users
+> reliably, references to the huge zero folio must be tracked precisely, so it
+> is commonly only available for mapping it into user page tables.
+> 
+> With this config enabled, the huge zero folio can also be used for other
+> purposes that do not implement precise reference counting: it is still
+> allocated on demand, but never freed, allowing for more wide-spread use,
+> for example, when performing I/O similar to the traditional shared
+> zeropage."
+> 
+> Not suitable for memory constrained systems.
+> "
+
+Sounds much better! I will add it.
+
+> 
+> Should we make it clear that this is currently limited to THP configs?
+> 
+> depends on TRANSPARENT_HUGEPAGE
+
+You are right. As we use the existing infrastructure, we do become
+dependent on THP.
+> 
+> > +
+> >   config MM_ID
+> >   	def_bool n
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 5d8365d1d3e9..6c890a1482f3 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -75,6 +75,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+> >   static bool split_underused_thp = true;
+> >   static atomic_t huge_zero_refcount;
+> > +static atomic_t huge_zero_static_fail_count __read_mostly;
+> > +atomic_t huge_zero_folio_is_static __read_mostly;
+> >   struct folio *huge_zero_folio __read_mostly;
+> >   unsigned long huge_zero_pfn __read_mostly = ~0UL;
+> >   unsigned long huge_anon_orders_always __read_mostly;
+> > @@ -266,6 +268,32 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
+> >   		put_huge_zero_page();
+> >   }
+> > +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
+> > +struct folio *__get_static_huge_zero_folio(void)
+> 
+> Do we want to play safe and have a
+> 
+> if (unlikely(!slab_is_available()))
+> 	return NULL;
+> 
+Yes, sounds good.
+
+> > +{
+> > +       /*
+> > +        * If we failed to allocate a huge zero folio multiple times,
+> > +        * just refrain from trying.
+> > +        */
+> 
+> Hmmm, I wonder if we want to retry "some time later" again. Meaning, we'd
+> base it on the jiffies, maybe?
+> 
+> See print_bad_pte() for an example.
+
+That is a good idea. I was thinking somethign like that while I was
+making the changes. This seems more logical.
+
+> 
+> > +       if (atomic_read(&huge_zero_static_fail_count) > 2)
+> > +               return NULL;
+> > +
+> 
+> We could make some smart decision regarding totalram_pages() and just
+> disable it. A bit tricky, we can do that as a follow-up.
+> 
+
+oooh. Yeah, I will add it in my todos to make this as a follow up :)
+
+
+Thanks for all your comments David! Can I send it next series as a normal patch
+series instead of an RFC? It looks like this series is shaping up nicely.
+
+--
+Pankaj
 
