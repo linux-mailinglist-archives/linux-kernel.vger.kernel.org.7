@@ -1,207 +1,228 @@
-Return-Path: <linux-kernel+bounces-743140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02A0B0FB1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F49B0FB1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF777AF91E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B51177074
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688FE1F4176;
-	Wed, 23 Jul 2025 19:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9277229B21;
+	Wed, 23 Jul 2025 19:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v5MdVD98"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="vjJPy8D2"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68842E630
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300008; cv=fail; b=Cp2RBiAzphPYBzFV+uagBAL9sEfaYIzLE9pB6eTjzMqvwzTuNEDH5tzD6SFWhxU/hUYYb+tY1ObH9FfTof+SDTZiVfRIGl2oHQcevp6322TFruSv0y1yVkUw9Nx5M0ZoDY0WZKZdB5alGgtJbop8/UY4ux8MNhSBvnr1qoT0IJ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300008; c=relaxed/simple;
-	bh=wOSShY+n+gjJDko7lvSj64yg6r9lzQFfhma2TaVOjec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eKO+7RgD2+W0Zj4Y4uXukq2iVen99G0E3zXW6U6COa3azbqpbumACBIKJXKqrN11+LNmaXz//szoW9ha7rpLiw30y8W3QKYjgr688FLb3YAYnZatBWEWP2LRtS44puSQW6vIn8KBUUO5kkZ+Fo3+oz2m37EIJkKZf8b/wubw2Jw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=v5MdVD98; arc=fail smtp.client-ip=40.107.243.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hNnb5vwPy1Kbb91tOJPfXxjbm/aBpEqPY7oFVA9oYdxfl70WRcEhwjhNqmwl+X6utcCfKrrEQnObyXhpd1MXhrOTsm55cQ3eeBBJ/7Hye7iF5eV2uigv2Bfk239gMOdn6HK1ka55Y9+ar4E9T7E6tux4JsBSQlZNM/SAAFHbAZT/3eNsdDyJKiVUzB/AhDfg2zDx6XWeZReMMQ3Ja7IKJhGf3LoAWdItt/D5PFChm/K4DRX/02bYPxG46pOQNp9CINf0GymVMmlhCngqsBBwvehXIhJPQkNnbIJX3r6E8cGmTbw0EQ1SwXBwXsNttmQe8XoH7Ju2/I0bIPKUjnQxYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FmQAproEMnTSl+z/XOK1WRkTu/KfZfgxgrxdPz3CBZk=;
- b=oDhV9sTjlK2niXKO9EHCdFBCBonxVOPf0fIJ6iRM/4HaUxatWXaoooIYr1w8pp7+boa3eXX8RCADukkzmA0h0U3YRhAlUTRsGI6xbziGBfzdgtpgAAWcM9/AR9ScKw92DW2Fh8b+bYbB+xaw71qZVn/fpeZ61FZPGpuYopgXYTH7G7lA6FV4Xxm62s9S2xt2PXkvUSMtvtR0+HXdYeIcHC9pZ4HC8X6fQIqiDMI25pondwDyRaN2D76jsSabPoeFF8024e2JTBYmqcZbR8BUomEVNFaB7T5jQE7xDw+NBT0SoO8pKMUARmMge5rW3SicO+wxgh4ooHidf9QROKOO7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FmQAproEMnTSl+z/XOK1WRkTu/KfZfgxgrxdPz3CBZk=;
- b=v5MdVD98DcvWw/eaN/avfWwavmDtB4igmmpgmsFn6pXHsuu5sed2Dg5lYbRzKAtLNuhLTPByokBE89MbPYF485clSCINd9s6oIwfkVCziPBsZzbCQWlD/asO7csdm8VowltPLb9UODZv5/8FlpzD9020w/rZLx+JjuZZ7pVm6oo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- CH3PR12MB9250.namprd12.prod.outlook.com (2603:10b6:610:1ae::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 19:46:44 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
- 19:46:44 +0000
-Date: Wed, 23 Jul 2025 15:46:39 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Libing He <libhe@redhat.com>, David Arcari <darcari@redhat.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
-Message-ID: <20250723194639.GA1229722@yaz-khff2.amd.com>
-References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
- <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local>
- <20250723183426.GA1158000@yaz-khff2.amd.com>
- <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
-X-ClientProxiedBy: LV3P220CA0026.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:234::27) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A591E9906
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753300099; cv=none; b=Zt0MqvC7KkeCzc39Khln5vz8HyfUnRcTLvcmglNTBdU2labRMIU9VdfssqWyBs/zA7L56ORIDgyGRPp97+1X1hK81YKLHYiLaKftjJ1D66ptkCYnAIB0FxD3SuYJMKw8NO9gV+FMjpAE8DiHRjKyApJHLm4Q54ZsaBbZMVSP/B4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753300099; c=relaxed/simple;
+	bh=fjW18v6vhzrUXB8LA096q7hD4dSBcyTZvUGV4oxCBuU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FfAAuybXdI9r0jD3hPA8DtlKGjoswDy6RyM/6wGqvPB8Q5d9Gc1qj8LV2qIIXmg8pPr66V/P3PlpasysQpy5pInbEQG+N8TYfUfAic79DrZkd32zZhRV7tkRa1gS1qkMGoNQVBLZes2Z8sErUhcFqucCZh0IBbgq7ly5G50LreM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=vjJPy8D2; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1753300094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UlZ5tG6/MqMLi3OqYJIZjahAOWvu1Yqz/tvUfudcSsI=;
+	b=vjJPy8D2AAgbT89wOLDUOghqfQIQVzJJrkvqjEfEx6vQiZP9zPgwexyGVdi4BEMPgLnI29
+	QVzLU7WmVpIYDObmKyjqJ6z56bwTiOsBHgCkG0GYeKkaheAfv3WdKSyCHu/acffHGhh4aC
+	i2mAMzO//ZyupOaBNjVWdhx6BZzYyFuGcl+FAF3u4D3KFThrVGhhw7p9HWDs6bzqSTEfdF
+	s04vG+nSRnvH620S2Bnp+dx1VVcgB+uoX4y+NKR8/u+Qg3FMaQx3yVAbQbzRSyMANPpqLT
+	1+H2yV8KPZFbt0CAOI0k69t9sN+z5jTK0ThtU3e/xH5BtQdibw95hk1wtungNQ==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Wed, 23 Jul 2025 20:47:29 +0100
+Subject: [PATCH v6] riscv: introduce asm/swab.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|CH3PR12MB9250:EE_
-X-MS-Office365-Filtering-Correlation-Id: 400087c4-53c0-4adc-9fce-08ddca21a6f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Al/sz+b3VpkZbSsIVBdLoUhEswq6XZaQ3Tf+NywpCM4EOu3x3fyzB+yEBAmE?=
- =?us-ascii?Q?M17iBeSNyWJABKecfTozXuMVbBNJW+6R8eVOzpOMnaXpvT9HHxRQzNVWti4B?=
- =?us-ascii?Q?ZoCBwf13BvJnGuCRJSZ9MRyMBhSpCxHAmgiPgIdemUHUvCfEq+XIZv00V2Iq?=
- =?us-ascii?Q?vIIz9QvgdVy1ph2nwRCjHd5fxbAfKl1kYaul97sgzKEDS6wmcuqUmoOlQZW+?=
- =?us-ascii?Q?QfWqeOmXDcjgszYKRTi9ScBjBZ/l+7QOQdquZZt06sHYcXzloXO0lK93JRyZ?=
- =?us-ascii?Q?Im3LEvjqo1YgN5d+26v04QZWygzvGzuPzP8aLGmssnjXB/QV03MFaP5MG9gn?=
- =?us-ascii?Q?1BsFlI1gQHYe1oZZro800GquOunO78fwTguwcOs6/j96YpRn0qpq5hWwKcEp?=
- =?us-ascii?Q?iicdjZwvCvLaXoyOjg/dmcsf1NfjTfOf//X80kkvtNFzUfl35vrNGvEKOCw3?=
- =?us-ascii?Q?2w85yPoc1kdvHu1Cp5JLP6dUL5XG+rDdQggGkC8qmnX5R6maVYzn+X9tpqy5?=
- =?us-ascii?Q?RYZ3TSKYb1Q0ZMKvoVHAMPHBZ4MXIDVNj1sFPfM97C8fybNbOWAG8n/AW7yb?=
- =?us-ascii?Q?8FafE0bZrQMCp3hw4aGu5YfDnKqQzBD+U/1qbPGcP9zC2gyO0uMkisMWemp+?=
- =?us-ascii?Q?VwllKrz3My6jsBb0G0BkozTh91s265/4tKGdRJ481k4P+QPfh9y12nYLb5gg?=
- =?us-ascii?Q?kGv/qVcnEJj1igPt5nx/feZHzE7IlL6CqmGLHeH4p3V1oAw+0JQAGCMoDvcY?=
- =?us-ascii?Q?bBtIZebkk5rrA78mvx5svnDCkt+TniX5WrfwA2YPCcY6AtvZ1GM/q9iqlbwj?=
- =?us-ascii?Q?w5rJltBlqm2tH4hinZxmZdipRmIkwBWOs63/isp5r3l3ZlxQygKy7VdqTYsk?=
- =?us-ascii?Q?+0qZnK0Enh4TgHL00jYuRYMsCLHA0GkRJVxJtcj3hJRUeIY6SqgfjxqHD0xx?=
- =?us-ascii?Q?A8pkbBxs9q5jvuOQkc8EKrNaVwurac/dFTHd0SULPGJcDhYbEMu0iht0bZIT?=
- =?us-ascii?Q?7b8IUmp1sbiA9184qHdApfjYb3jnROy4dYRyk29tNw+N6l+2XrUjLvSjaWz3?=
- =?us-ascii?Q?ePmF6xMGBJNz6YWC6yDuazhuGVvc2mOCDMiH/54/ACP2xQ2IFjnsCOnzcGpE?=
- =?us-ascii?Q?93zqlV0ET7FYIRAs/oxvnNU47Jz6JTksjFOT/C1EvS97d+boIFbyfeGZ3v1w?=
- =?us-ascii?Q?DzkP72Ea7B4rQa8bGftXxMykpTQgRzkpySkrv/UNR8WK1AFiZdk82VYCK/LR?=
- =?us-ascii?Q?Xqvg2CKAo4SCj8aoYIQ9t5iNZvL0pVDfdhraEZvCG2YYxEHmnoWB29Iati4M?=
- =?us-ascii?Q?RwA2yCIw1IMzP0HKB5JZ9RKmeBjAiAPhhZddS1i4Y+YqAAuS+Ce/AhBoks7w?=
- =?us-ascii?Q?9g293v0ZRuh/PfT2RVGX70V3cHABNPo0q9PqN0ot1YKsovSaxvqFlVn389/G?=
- =?us-ascii?Q?NUxV4LwF/us=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xGMH5OQ8tAlaHmpz53vdGF0SyrRF6HfxTJumfe09CAUJ00N2b5AulMIN/zic?=
- =?us-ascii?Q?xxzpJkGFVAl61PmdT280qWWKU76d8z36z2T3LWKviqEy2htsu0FcNyK0cYoL?=
- =?us-ascii?Q?MfINi2EA3y8lJBz7m+EiY2Qs1L50nfTiKn4rM3DF0hK5xEn8Ev4bTv+pPaV2?=
- =?us-ascii?Q?Yp1US8w3A+KioctSsk++KVH9/uRbWK/TiERcdXo/GWWajiv5/STnkWVouVb8?=
- =?us-ascii?Q?yAokVBKm050CZ0bORcNNAL1arxyXgPbLbNwALWp6l4gJOMm5kKJ1uQt0j8VE?=
- =?us-ascii?Q?4dg8qzCL+nNgmBFCb9NQEZChrVoTvZaRG1uy5+59Ly/IZUA9UUliy6o2jn4D?=
- =?us-ascii?Q?J29twT73oPQYW0hRlEhjBJ76QLvzos1J5krLI1Ep0vIj9s1byzWw5fH3Pkh7?=
- =?us-ascii?Q?71+++WwWQI4LvgDrq+yrfFLM024KXOZyF0Kw5SVtZIPsaeOUK6xMc+VhhyoL?=
- =?us-ascii?Q?4rJmVm125PpYu9z4BnM2hruPuztY/ddCN/7FNW94PMCxl3Nn2Kd6aZ+YQA19?=
- =?us-ascii?Q?QZlETzPS4VhtEJFI+dEKZ1X6BruCQw4uVaS9g92IAm3dLrr40qSb2uSf3Y95?=
- =?us-ascii?Q?bAgmF++3lFe+V9NwZ1Y9Bzy77RG55AwuevzMdYTA82msevp6LAXPBALoNDQN?=
- =?us-ascii?Q?orU55sjwNwzm7qEVbJBEBMkyCOlirIo7MO6lVRy5sh7q2l6yeHdCUVDoyI0O?=
- =?us-ascii?Q?Ub+TFsrZIyScq9QnbDfsqxDkiJdpYIJNZSEWF8G38ykXx4UPh78xy604rsZ9?=
- =?us-ascii?Q?NJOosRCrM65wNVlKtP6HKJGFLaZX+Zogyl9+zBAE5mfSmNBlvroC/hVkNWdK?=
- =?us-ascii?Q?ZEe4a6Wbj1Z4PdyJ9wl5ZTS/S0mCcZpdqrvl0U9fsoMHg25F7hxKMT8M63DG?=
- =?us-ascii?Q?T0CqrU6Kggn7YUY6ksYwXymWo+yqwefzazo6ION0U7V+bPGw984UvDIvotmQ?=
- =?us-ascii?Q?l/1Tn/6uN/olDlTyW9EawWW8qGmXDJypmOHySRi/AscAsrQkB6107n3+BwwF?=
- =?us-ascii?Q?pGfyVuoYtifHIOxJO99c4yMSGcAP+IjOH0VhYzWFtlvsVqetZu+vFhwPH3rK?=
- =?us-ascii?Q?VIlQyd9Cs88bmACSIuy4KriDzqsKUJX7fSsx3ODGy6TQ4saQIPi6laSbxV3H?=
- =?us-ascii?Q?Pkv99eMAYMPm3Jkz5rTIv/5Xby7BziTdXXZNMx131/XowHOhKw74JE6tc43T?=
- =?us-ascii?Q?DKl9B3DBOqFZidH9qR05iDVUyvRaoIEb50qGKwU+ruzQsfP/K7c3hcgk3feP?=
- =?us-ascii?Q?G4YUrXoTZmVUXUj6b4zPoSB6T0iREvsryHKkSVt7Vvz0eVXIvWgFKT0tg8XK?=
- =?us-ascii?Q?P3M0oH2yhWbTpIQ5RSyFWxMGcQJiX8DrOMuW3Ccep4Aegg57+D2Sd5YOnY4z?=
- =?us-ascii?Q?o1vQOWhgsamqq7sfIqYR5lOVHXsS4+/BABtcW7OXXHKMI6mJCRHEbaUtHFWb?=
- =?us-ascii?Q?oyFOdzbkxPj66/3GXzNB/FfNtqlqkjmolEFWn/Y1oLWDk21zGgbpFevZ0Fe6?=
- =?us-ascii?Q?ThRl9350RWdKVNB5xuyPeh5w2coC5mujmZy/Cx9+utCYb+kHopja414W5dhn?=
- =?us-ascii?Q?1t/pQNvzUE3zraRYhwOWswI7WLR1bNwOHVX6xm5e?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 400087c4-53c0-4adc-9fce-08ddca21a6f4
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 19:46:44.2841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qmA/4ZNLyjPgAN7yb9X9Q4/tfBBCuwktZtbMli6QvQ0ZroZ0D73Wu4dU4uiu9tXheD3z/wSirt4o6UH2PLasiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9250
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-riscv-swab-v6-1-fc11e9a2efc9@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIAFA8gWgC/23Qz07EIBDH8VfZcBYzwwAtnnwP44E/U5eDrQGDm
+ k3fXXZjsq3p8Ufy+SbDRVQumat4Ol1E4ZZrXuY+7MNJxLOf31jm1LdQoAwQDLLkGpusXz7IMGJ
+ w2jsfMYgOPgpP+fsWe3nt+5zr51J+bu2G19e/DMI201CiJG2N4gmZnX3OPMc8+/oYl3dxLTW11
+ W6nlQSZDAWbrA8OzYGmu9ZAO01dU5gGMGkEJjrQeqOV3WndtdUKUIP2dowH2tz1gLvva6bfjcm
+ EMEStJhr/6XVdfwGSSrwlnwEAAA==
+X-Change-ID: 20250307-riscv-swab-b81b94a9ac1b
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Palmer Dabbelt <palmer@rivosinc.com>, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>, 
+ Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 23, 2025 at 10:35:31PM +0300, Borislav Petkov wrote:
-> On July 23, 2025 9:34:26 PM GMT+03:00, Yazen Ghannam <yazen.ghannam@amd.com> wrote:
-> >On Tue, Jul 22, 2025 at 06:56:15PM +0200, Borislav Petkov wrote:
-> >> On Mon, Jul 21, 2025 at 06:11:54PM +0000, Yazen Ghannam wrote:
-> >> > The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
-> >> > commonly used error response from hardware. This may occur due to a real
-> >> > hardware issue or when running in a VM.
-> >> 
-> >> Well, which is it Libing is reporting? VM or a real hw issue?
-> >> 
-> >
-> >In this case, it was a VM.
-> >
-> >> If it is a VM, is that -1 the only thing a VMM returns when reading that
-> >> MMIO address or can it be anything?
-> >> 
-> >> If latter, you need to check X86_FEATURE_HYPERVISOR.
-> >> 
-> >> Same for a real hw issue.
-> >> 
-> >> IOW, is -1 the *only* invalid data we can read here or are we playing
-> >> whack-a-mole with it?
-> >> 
-> >
-> >I see you're point, but I don't think we can know for sure all possible
-> >cases. There are some reserved bits that shouldn't be set. But these
-> >definitions could change in the future.
-> >
-> >And it'd be a pain to try and verify combinations of bits and configs.
-> >Like can bit A and B be set together, or can bit C be set while running
-> >in a VM, or can bit D ever be set on Model Z? 
-> >
-> >The -1 (all bits set) is the only "applies to all cases" invalid data,
-> >since this is a common hardware error response. So we can at least check
-> >for this.
-> >
-> >Thanks,
-> >Yazen
-> 
-> I think you should check both: HV or -1.
-> 
-> HV covers the VM angle as they don't emulate this and we simply should disable this functionality when running as a guest.
-> 
-> -1 covers the known-bad hw value.
-> 
+Implement endianness swap macros for RISC-V.
 
-Okay, will do.
+Use the rev8 instruction when Zbb is available. Otherwise, rely on the
+default mask-and-shift implementation.
 
-Thanks,
-Yazen
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+---
+Motivated by [1]. Tested with crc_kunit as pointed out here [2]. I can't 
+provide performance numbers as I don't have RISC-V hardware.
+
+[1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
+[2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
+---
+Changes in v6:
+- Fix kernel test robot report using Alex's fix from [4] 
+- Link to v5: https://lore.kernel.org/r/20250717-riscv-swab-v5-1-1d5bb7c42f38@iencinas.com
+
+[4] https://lore.kernel.org/all/6ec13c2a-764c-4a88-a419-b4d7433c0731@ghiti.fr/
+
+Changes in v5:
+- Duplicate ___constant_swab helpers in arch/riscv/include/asm/swab.h to
+  avoid delaying the patch as suggested by Alex in [3] (drop patch 1 and
+  convert this into a 1-patch series)
+- Link to v4: https://lore.kernel.org/r/20250426-riscv-swab-v4-0-64201404a68c@iencinas.com
+
+[3] https://lore.kernel.org/linux-riscv/7e22a448-3cee-4475-b69b-3dd45b57f168@ghiti.fr/
+
+Changes in v4:
+
+- Add missing include in the 1st patch, reported by
+  https://lore.kernel.org/all/202504042300.it9RcOSt-lkp@intel.com/
+- Rewrite the ARCH_SWAB macro as suggested by Arnd
+- Define __arch_swab64 for CONFIG_32BIT (Ben)
+- Link to v3: https://lore.kernel.org/r/20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com
+
+Changes in v3:
+
+PATCH 2:
+  Use if(riscv_has_extension_likely) instead of asm goto (Eric). It
+  looks like both versions generate the same assembly. Perhaps we should
+  do the same change in other places such as arch/riscv/include/asm/bitops.h
+- Link to v2: https://lore.kernel.org/r/20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com
+
+Changes in v2:
+- Introduce first patch factoring out the default implementation into
+  asm-generic
+- Remove blank line to make checkpatch happy
+- Link to v1: https://lore.kernel.org/r/20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com
+---
+ arch/riscv/include/asm/swab.h | 87 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+
+diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..c1da22aa13268f872a672f12a86fd9f18f3e645b
+--- /dev/null
++++ b/arch/riscv/include/asm/swab.h
+@@ -0,0 +1,87 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef _ASM_RISCV_SWAB_H
++#define _ASM_RISCV_SWAB_H
++
++#include <linux/types.h>
++#include <linux/compiler.h>
++#include <asm/cpufeature-macros.h>
++#include <asm/hwcap.h>
++#include <asm-generic/swab.h>
++
++#if defined(CONFIG_TOOLCHAIN_HAS_ZBB) && defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
++
++// Duplicated from include/uapi/linux/swab.h
++#define ___constant_swab16(x) ((__u16)(				\
++	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
++	(((__u16)(x) & (__u16)0xff00U) >> 8)))
++
++#define ___constant_swab32(x) ((__u32)(				\
++	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
++	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
++	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
++	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
++
++#define ___constant_swab64(x) ((__u64)(				\
++	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
++	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
++	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
++	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
++	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
++	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
++	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
++	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
++
++#define ARCH_SWAB(size, value)						\
++({									\
++	unsigned long x = value;					\
++									\
++	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
++		asm volatile (".option push\n"				\
++			      ".option arch,+zbb\n"			\
++			      "rev8 %0, %1\n"				\
++			      ".option pop\n"				\
++			      : "=r" (x) : "r" (x));			\
++		x = x >> (BITS_PER_LONG - size);			\
++	} else {                                                        \
++		x = ___constant_swab##size(value);                      \
++	}								\
++	x;								\
++})
++
++static __always_inline __u16 __arch_swab16(__u16 value)
++{
++	return ARCH_SWAB(16, value);
++}
++
++static __always_inline __u32 __arch_swab32(__u32 value)
++{
++	return ARCH_SWAB(32, value);
++}
++
++#ifdef CONFIG_64BIT
++static __always_inline __u64 __arch_swab64(__u64 value)
++{
++	return ARCH_SWAB(64, value);
++}
++#else
++static __always_inline __u64 __arch_swab64(__u64 value)
++{
++	__u32 h = value >> 32;
++	__u32 l = value & ((1ULL << 32) - 1);
++
++	return ((__u64)(__arch_swab32(l)) << 32) | ((__u64)(__arch_swab32(h)));
++}
++#endif
++
++#define __arch_swab64 __arch_swab64
++#define __arch_swab32 __arch_swab32
++#define __arch_swab16 __arch_swab16
++
++#undef ___constant_swab16
++#undef ___constant_swab32
++#undef ___constant_swab64
++
++#undef ARCH_SWAB
++
++#endif /* defined(CONFIG_TOOLCHAIN_HAS_ZBB) && defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
++#endif /* _ASM_RISCV_SWAB_H */
+
+---
+base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
+change-id: 20250307-riscv-swab-b81b94a9ac1b
+
+Best regards,
+-- 
+Ignacio Encinas <ignacio@iencinas.com>
+
 
