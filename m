@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-742595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863F8B0F424
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:36:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58ACCB0F426
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF09A9666F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444495666E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819C32E92D1;
-	Wed, 23 Jul 2025 13:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F64B2E974C;
+	Wed, 23 Jul 2025 13:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYZMjNEq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s3a1IUzu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYZMjNEq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s3a1IUzu"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aRy0XfV6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q81RoC3k";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aRy0XfV6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q81RoC3k"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BB32E8E12
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E794E2E7F3A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277721; cv=none; b=eZH6BIJu/mnjSyn8LB8ltIRILum/WZlcU/YwYeEk7dmqQ8ikx+Th3TkzvHHaJheAbtgaZ9zxcxxgkrTyd8HRgwL2aJboQEcwqjSmorD59wqt5dJIW7CekeCuOJD8z2OKf3FE87FIJMx7PWNFsHzLcjWeE1AsYxBcBJQrTEQs9LE=
+	t=1753277727; cv=none; b=J1E56CrdMqUXlH2ME+/0yI+d5R8EfBQ5I9n5WrLlen3lCzdDGFNfTdP8vYBn3tXaCFuZ0BszRlFzI4+MbuLG6D409I1OT3w7qKssponMK4nsI55FSSX3mj7cqiQvfnzlR1UVmF9rb6w2nuwMr732Ex4jD/qGxFoFPrV0Fbmhpko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277721; c=relaxed/simple;
-	bh=mUqgzrU5dc2neVGtE6a0FvUEDhDz5Uruu+j1fauzLI8=;
+	s=arc-20240116; t=1753277727; c=relaxed/simple;
+	bh=N92RPV8qw0pn5y79OhPB/vfZVX/JyOGcG+2Hg6SRHKQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uuWJYcCYWXAeW57BS0FdbHwdb5VoHyDe7TdHnN0XjWwsEOH/IP2xAKfSwO3JCEOFwCTCkslQvMp3kQiv6AegPz6fBczvD76X8jUQ3jcxjUElluxu0K/BKu3wYv29Dv6IA/WbbkQZVN95f/D2qIH5KP7Sxq6RX4BAF1AvkhFWALM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYZMjNEq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s3a1IUzu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYZMjNEq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s3a1IUzu; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=Prdjogt51Hx8KlBjGe7LS/R2sHz/l3CTqIiOSwPI4oPf5M1QQ18h2hQqI1ik3Ts/cy9lRlxO58A3K/fYYCn/ILjVy/PCekWPSelvMPvL4wwGl1ZYRE267cXDxa2Yiex//sTttZuUJQFWZhMdVYG+M646/dePioDznX8heJ0IeWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aRy0XfV6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q81RoC3k; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aRy0XfV6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q81RoC3k; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A21A221233;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B5FF7218F3;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5N50KpHrcbkWP+T2bNvlGjW2kxPjMJyMhhnC06rEb9Y=;
-	b=QYZMjNEq62hxR8jbfv4GYd+aORWzzXWl0FWZ+TyLv5dnH3/LPxYKrgmLbBjIEBU8FJ8EXN
-	86CEJwGcJmvb5g8fL/twbUC7S8Kvlk66PmkH/6Mfct9w5ezlYWDzOT5NQkvcVjHNs7pCNF
-	Jzr9PYGMagrLcutpZ0rSdz+u4KezpTs=
+	bh=BZ8jFguaUhh6ngJiPeQDDEWlyXz498l0EKqDytKUQuU=;
+	b=aRy0XfV6iBHXc66Atd1OdHGcjOJGeVoDwjCdDi6IG1bqBLcKJ03/Ff4rIHu8ienAkNndOt
+	7tKn/qP7oLqwY8TurNMa3eEGZ2DkqfD+BVqGpYBGZZISazTibzMxZMebBqVsMZrM8FnKgM
+	ne7GThlYOUOie8dD7tbLgYExXL+P4u4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5N50KpHrcbkWP+T2bNvlGjW2kxPjMJyMhhnC06rEb9Y=;
-	b=s3a1IUzu8NfcfpQ1qLFiuUtxB6p8xCWqjald55ZZcij9W14qXdYk+8diRIjofH4XgEFSe8
-	zXEPzUPu2mV/SnAQ==
+	bh=BZ8jFguaUhh6ngJiPeQDDEWlyXz498l0EKqDytKUQuU=;
+	b=Q81RoC3k+Z4CAeXV+PTWo4u8vh/2Wn16aPOVxjCfIaXnN/mzeCqB9IOAHMQ7h8/oLePiSo
+	zT/j7zbDqxQu19BQ==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QYZMjNEq;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s3a1IUzu
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=aRy0XfV6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Q81RoC3k
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5N50KpHrcbkWP+T2bNvlGjW2kxPjMJyMhhnC06rEb9Y=;
-	b=QYZMjNEq62hxR8jbfv4GYd+aORWzzXWl0FWZ+TyLv5dnH3/LPxYKrgmLbBjIEBU8FJ8EXN
-	86CEJwGcJmvb5g8fL/twbUC7S8Kvlk66PmkH/6Mfct9w5ezlYWDzOT5NQkvcVjHNs7pCNF
-	Jzr9PYGMagrLcutpZ0rSdz+u4KezpTs=
+	bh=BZ8jFguaUhh6ngJiPeQDDEWlyXz498l0EKqDytKUQuU=;
+	b=aRy0XfV6iBHXc66Atd1OdHGcjOJGeVoDwjCdDi6IG1bqBLcKJ03/Ff4rIHu8ienAkNndOt
+	7tKn/qP7oLqwY8TurNMa3eEGZ2DkqfD+BVqGpYBGZZISazTibzMxZMebBqVsMZrM8FnKgM
+	ne7GThlYOUOie8dD7tbLgYExXL+P4u4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5N50KpHrcbkWP+T2bNvlGjW2kxPjMJyMhhnC06rEb9Y=;
-	b=s3a1IUzu8NfcfpQ1qLFiuUtxB6p8xCWqjald55ZZcij9W14qXdYk+8diRIjofH4XgEFSe8
-	zXEPzUPu2mV/SnAQ==
+	bh=BZ8jFguaUhh6ngJiPeQDDEWlyXz498l0EKqDytKUQuU=;
+	b=Q81RoC3k+Z4CAeXV+PTWo4u8vh/2Wn16aPOVxjCfIaXnN/mzeCqB9IOAHMQ7h8/oLePiSo
+	zT/j7zbDqxQu19BQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DAFA13AF2;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9FF1F13ADD;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8I9OIgjlgGh0IwAAD6G6ig
+	id AOy/JgjlgGh0IwAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:04 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 23 Jul 2025 15:34:43 +0200
-Subject: [PATCH v5 10/14] mm, slab: allow NUMA restricted allocations to
- use percpu sheaves
+Date: Wed, 23 Jul 2025 15:34:44 +0200
+Subject: [PATCH v5 11/14] testing/radix-tree/maple: Increase readers and
+ reduce delay for faster machines
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,7 +100,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-slub-percpu-caches-v5-10-b792cd830f5d@suse.cz>
+Message-Id: <20250723-slub-percpu-caches-v5-11-b792cd830f5d@suse.cz>
 References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -109,8 +109,14 @@ To: Suren Baghdasaryan <surenb@google.com>,
 Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
  Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
+ maple-tree@lists.infradead.org, vbabka@suse.cz, 
+ "Liam R. Howlett" <howlett@gmail.com>
 X-Mailer: b4 0.14.2
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: B5FF7218F3
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -124,7 +130,7 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	MIME_TRACE(0.00)[0:+];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	RCVD_TLS_ALL(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	MID_RHS_MATCH_FROM(0.00)[];
@@ -134,113 +140,61 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: A21A221233
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
 X-Spam-Score: -4.51
 
-Currently allocations asking for a specific node explicitly or via
-mempolicy in strict_numa node bypass percpu sheaves. Since sheaves
-contain mostly local objects, we can try allocating from them if the
-local node happens to be the requested node or allowed by the mempolicy.
-If we find the object from percpu sheaves is not from the expected node,
-we skip the sheaves - this should be rare.
+From: "Liam R. Howlett" <howlett@gmail.com>
 
+Add more threads and reduce the timing of the readers to increase the
+possibility of catching the rcu changes.  The test does not pass unless
+the reader is seen.
+
+Signed-off-by: Liam R. Howlett <howlett@gmail.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/slub.c | 52 +++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 45 insertions(+), 7 deletions(-)
+ tools/testing/radix-tree/maple.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 50fc35b8fc9b3101821c338e9469c134677ded51..b98983b8d2e3e04ea256d91efcf0215ff0ae7e38 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4765,18 +4765,42 @@ __pcs_handle_empty(struct kmem_cache *s, struct slub_percpu_sheaves *pcs, gfp_t
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index 2c0b3830125336af760768597d39ed07a2f8e92b..f6f923c9dc1039997953a94ec184c560b225c2d4 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -35062,7 +35062,7 @@ void run_check_rcu_slowread(struct maple_tree *mt, struct rcu_test_struct *vals)
+ 
+ 	int i;
+ 	void *(*function)(void *);
+-	pthread_t readers[20];
++	pthread_t readers[30];
+ 	unsigned int index = vals->index;
+ 
+ 	mt_set_in_rcu(mt);
+@@ -35080,14 +35080,14 @@ void run_check_rcu_slowread(struct maple_tree *mt, struct rcu_test_struct *vals)
+ 		}
+ 	}
+ 
+-	usleep(5); /* small yield to ensure all threads are at least started. */
++	usleep(3); /* small yield to ensure all threads are at least started. */
+ 
+ 	while (index <= vals->last) {
+ 		mtree_store(mt, index,
+ 			    (index % 2 ? vals->entry2 : vals->entry3),
+ 			    GFP_KERNEL);
+ 		index++;
+-		usleep(5);
++		usleep(2);
+ 	}
+ 
+ 	while (i--)
+@@ -35098,6 +35098,7 @@ void run_check_rcu_slowread(struct maple_tree *mt, struct rcu_test_struct *vals)
+ 	MT_BUG_ON(mt, !vals->seen_entry3);
+ 	MT_BUG_ON(mt, !vals->seen_both);
  }
- 
- static __fastpath_inline
--void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
-+void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp, int node)
++
+ static noinline void __init check_rcu_simulated(struct maple_tree *mt)
  {
- 	struct slub_percpu_sheaves *pcs;
- 	void *object;
- 
- #ifdef CONFIG_NUMA
--	if (static_branch_unlikely(&strict_numa)) {
--		if (current->mempolicy)
--			return NULL;
-+	if (static_branch_unlikely(&strict_numa) &&
-+			 node == NUMA_NO_NODE) {
-+
-+		struct mempolicy *mpol = current->mempolicy;
-+
-+		if (mpol) {
-+			/*
-+			 * Special BIND rule support. If the local node
-+			 * is in permitted set then do not redirect
-+			 * to a particular node.
-+			 * Otherwise we apply the memory policy to get
-+			 * the node we need to allocate on.
-+			 */
-+			if (mpol->mode != MPOL_BIND ||
-+					!node_isset(numa_mem_id(), mpol->nodes))
-+
-+				node = mempolicy_slab_node();
-+		}
- 	}
- #endif
- 
-+	if (unlikely(node != NUMA_NO_NODE)) {
-+		/*
-+		 * We assume the percpu sheaves contain only local objects
-+		 * although it's not completely guaranteed, so we verify later.
-+		 */
-+		if (node != numa_mem_id())
-+			return NULL;
-+	}
-+
- 	if (!local_trylock(&s->cpu_sheaves->lock))
- 		return NULL;
- 
-@@ -4788,7 +4812,21 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
- 			return NULL;
- 	}
- 
--	object = pcs->main->objects[--pcs->main->size];
-+	object = pcs->main->objects[pcs->main->size - 1];
-+
-+	if (unlikely(node != NUMA_NO_NODE)) {
-+		/*
-+		 * Verify that the object was from the node we want. This could
-+		 * be false because of cpu migration during an unlocked part of
-+		 * the current allocation or previous freeing process.
-+		 */
-+		if (folio_nid(virt_to_folio(object)) != node) {
-+			local_unlock(&s->cpu_sheaves->lock);
-+			return NULL;
-+		}
-+	}
-+
-+	pcs->main->size--;
- 
- 	local_unlock(&s->cpu_sheaves->lock);
- 
-@@ -4888,8 +4926,8 @@ static __fastpath_inline void *slab_alloc_node(struct kmem_cache *s, struct list
- 	if (unlikely(object))
- 		goto out;
- 
--	if (s->cpu_sheaves && node == NUMA_NO_NODE)
--		object = alloc_from_pcs(s, gfpflags);
-+	if (s->cpu_sheaves)
-+		object = alloc_from_pcs(s, gfpflags, node);
- 
- 	if (!object)
- 		object = __slab_alloc_node(s, gfpflags, node, addr, orig_size);
+ 	unsigned long i, nr_entries = 1000;
 
 -- 
 2.50.1
