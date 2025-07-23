@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-743086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E1AB0FA58
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:36:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52A2B0FA5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65163AC2A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB7C7B84F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4180E218E91;
-	Wed, 23 Jul 2025 18:36:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272FA1FBEB9;
+	Wed, 23 Jul 2025 18:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vOZiwET9"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D831F2382;
-	Wed, 23 Jul 2025 18:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D6E1F418F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753295792; cv=none; b=kaGwVk1vPg7XEvNhFjW1oy0n3yDkNA3Nu/ACt6VTu32QQoJxDKzGe+yh5ye+wYDirOCymcBZSN5ujuVuqMRzKQkvixY126VsMVmzp3bDBxa8oIovIBTXJUK+WHQh5wxEfxiiMYj9McBx1VkdEKkWb+DFcw3kk7sUnF10xYIxBSM=
+	t=1753295805; cv=none; b=d+xwnjXFSEVmPmV/uhdNKFJHS87oH3So94ZcpHtFCYrtbpr5j4OfpiJWUcp462abNDPwTgiJcXXWs+Ek2IlsIsFepSValT+anyTxuR7l+ST7ffRQfORfu0nhBZrVJDWd1SN/YKZoscjqbhFYxXNdoHfQFruI0PGECTTkeZkTsVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753295792; c=relaxed/simple;
-	bh=yqFMomdPaEK7X3d9xAM+2uDC7w4ugxBVs2gHa1PjSy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WjHm/oPhh9xy50rFWO+XRJl7ttixHX4gIv8QRYVVLRPHfvKctBPMKTdzUWUxcuJA+m/boUQIoTVnCtxhFYFgspbiFg9sYUGzugaWks5zmeBtXquj3N81wPPym/OZPVZ8tD67DluhSMowHrxiNQYUO1kOTElvJQtluH9l/snurZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id B597B80198;
-	Wed, 23 Jul 2025 18:36:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 912772000E;
-	Wed, 23 Jul 2025 18:36:26 +0000 (UTC)
-Date: Wed, 23 Jul 2025 14:36:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Guillaume Nault <gnault@redhat.com>,
- Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, Petr
- Machata <petrm@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] tracing: ipv6: Replace deprecated strcpy()
- with strscpy()
-Message-ID: <20250723143625.79ab2c16@batman.local.home>
-In-Reply-To: <F998F71D-1244-4154-BC5F-19201C23BDBE@linux.dev>
-References: <20250714075436.226197-2-thorsten.blum@linux.dev>
-	<20250714123825.6f0485c9@batman.local.home>
-	<F998F71D-1244-4154-BC5F-19201C23BDBE@linux.dev>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753295805; c=relaxed/simple;
+	bh=5hi4WrE71marHQiRuZkE2QbL/wCvNDBks+dUnwx2Lx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uz8q3FYBkDWdeIxJ5/HQb28WHsH+iLQ85F2EO1ANH8s8OQ1qxB497H20O0gLinCSn0cpOyeDnl5XlTZGenXP2SO3Gd2gttHgi4OBYFFjVBjzDzULqGBxelbtBg4uim5BjqiN6aFsSbO0BZe5eVtaTj7gdt82Ag+hxsiq2l7c6VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vOZiwET9; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ab814c4f2dso4781321cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753295803; x=1753900603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2895cOJRgjiK1NbActFOWQBd/8gPRhRvycIhI8MYzeg=;
+        b=vOZiwET96MORBsApNWWOpr7w1eVjDMXmm2SGQVCnHMRJEByhzWu4fOxb0vAsvLN4zp
+         Jojnb8gfSrL/9RqpHTMXip2f+EStewCSZOLrRFrbdTAZvxMK7+99RAwNY7+NfYbkfoa8
+         tz6gp/BYjhqeHLubccgRnU6SrV+e1EDHS75C/4J95KnddF/Vk5b9qi2V+b1Bzf5AOqnP
+         p8P9JwHePEqrs0V2DxQz3iBXvClLVFLH0yYrr9GxkM0jKsdY20xCAsTp6IN5JFV6rh0i
+         9V/+c4q0ASlFe7EuHR85csDO8RKrU1CGhiVFauJPIawSuD34WbNlpk4AbkYPB1z/906v
+         7oTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753295803; x=1753900603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2895cOJRgjiK1NbActFOWQBd/8gPRhRvycIhI8MYzeg=;
+        b=qZh9hVjg+c90OKQcd9xk2uNrjBnHvRK+OGOJGlA1bPQBywBiT3zd6QLp/qZ3gdZSpx
+         i3/mggF1Mbrf9agr/Xt5FcqXl1Ed9Vkg401CTiJzxzsEmci+lbKWjt7OPEnjYj7Wfs7N
+         Q0KBDVrAkj6SgL1eMFXEgdiJ8wuAlVqEnk7KJa0PVvub3FsjX7/ITGU1W4DA1k4EU8Cs
+         ifIhvgo0+8jJGep3ZR1ld7EOvKBh9Num2vbqatxOCipGYdflGXYb4cxXtOp7q6QS47jP
+         btGFO7q4Lzs5PkPCClnxgiyjYieJr8BUNYeap7538/d0vP3N9ccV5Pehb0coaYhuHEEw
+         NnAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnVi/MDwVNcrp3xwJbAZqsTHELdUKaY5kB5bYxYcGVRykTKlWk1QXx1DblEwrTYLQfxnBlbLA9Av91Rew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvLY8ghxNjWuSU1qqfVbvDxId9IBexHp9eYd8NaHtgMF0orSlV
+	wU3bR644vJVokYZFQ0/tErANKwV1LB3U6ELXxNO09rynmeQF6xUOTDwQnrIk4u7e0fWFoAXP2iC
+	0lfl6iFofHeNaMQQgEdzGJKMOhzjJaRMN0tCEMjbm
+X-Gm-Gg: ASbGnctkfznIgP9lVo7ey0fJGGEtjeyvR/ycbrt/F8Ro/wz6yZv5aFAybNkNK4hBLUF
+	M8SI5o3cpQVqJcveOUokdxbdYa9hvnsAyo4ZZmSfn9RENDXKBUKAfTcH7UzZi2/oeGNiroMriCh
+	0PC8ZgcUfE8i0TF1+ChTPHQitzhN+cbSnSOyuu0vrYms4PscSoDHpOe4EhKG9P2iUg6TRUEQsYc
+	hHnFM4=
+X-Google-Smtp-Source: AGHT+IFt8r1/bn5aE5w+xjp/KZnjhjjB3CgH2KGrcYHKkd+BtH2rkKXI/86jZpijEYB+DXMkCkZr0IIHXXxPnA3Mb6g=
+X-Received: by 2002:a05:622a:189d:b0:4ab:3ff6:f0e9 with SMTP id
+ d75a77b69052e-4ae6de3d55fmr49370301cf.1.1753295802557; Wed, 23 Jul 2025
+ 11:36:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 97fqo7ua18ip1yyhaw6m5mq7mso11h9i
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 912772000E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX186Ou0+sVmKiJAwOSNmliskq3ha9o1Jvlg=
-X-HE-Tag: 1753295786-28041
-X-HE-Meta: U2FsdGVkX18jsqLw0QVuJ9dT1wLV8GQ269AtzTkLsHIHjm6cdJNrRBG5mG7b2V8smas6y97W/DonII5TkQ+78STxUpxoGndDpxPHOsqHIZ3eai0SHSsjCf2ZuQBb8gPRWE3P0rWiFTVju8AMIUyhpbhIEHmrA/Ub20SJUcaM4sV21Q5cjy3zAnhbAQ2UX2KEXX4mW8yVvWUA7+rE9vBYIpgogh+2A1vPhBxDyyQePLa1kj47RHsvVPGZt2n0qtQ5ZfnDqxcSE/dxQhy0Yfm9D4d0nL7wFV0SMgNcz9XmmvQX63sU5uIGFyomgmZKPwPs
+References: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
+ <CANn89iJgG3yRQv+a04wzUtgqorSOM3DOFvGV2mgFV8QTVFjYxg@mail.gmail.com> <CAO9wTFiGCrAOkZSPr1N6W_8yacyUUcZanvXdQ-FQaphpnWe5DA@mail.gmail.com>
+In-Reply-To: <CAO9wTFiGCrAOkZSPr1N6W_8yacyUUcZanvXdQ-FQaphpnWe5DA@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 23 Jul 2025 11:36:31 -0700
+X-Gm-Features: Ac12FXxlhlhqW8vDJc_oByEs7Tt3_KF9XPplKKOxSHqunQfLKrXinLUbIUzJieg
+Message-ID: <CANn89iKwrp0j1bYQ8yGsbj_B1+eEv8BaWavHAuWpYdQVg-dqsA@mail.gmail.com>
+Subject: Re: [PATCH] net: Revert tx queue length on partial failure in dev_qdisc_change_tx_queue_len()
+To: Suchit K <suchitkarunakaran@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, sdf@fomichev.me, 
+	kuniyu@google.com, aleksander.lobakin@intel.com, netdev@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Jul 2025 10:46:12 -0700
-Thorsten Blum <thorsten.blum@linux.dev> wrote:
+On Wed, Jul 23, 2025 at 11:17=E2=80=AFAM Suchit K <suchitkarunakaran@gmail.=
+com> wrote:
+>
+> >
+> > WRITE_ONCE() is missing.
+> >
+> > > +               while (i >=3D 0) {
+> > > +                       qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
+> >
+> > What happens if one of these calls fails ?
+> >
+> > I think a fix will be more complicated...
+>
+> Hi Eric,
+> Given that pfifo_fast_change_tx_queue_len is currently the only
+> implementation of change_tx_queue_len, would it be reasonable to
+> handle partial failures solely within pfifo_fast_change_tx_queue_len
+> (which in turn leads to skb_array_resize_multiple_bh)? In other words,
+> is it sufficient to modify only the underlying low level
+> implementation of pfifo_fast_change_tx_queue_len for partial failures,
+> given that it's the sole implementation of change_tx_queue_len?
 
-> Your commit fca8300f68fe3 changed it from __dynamic_array() to __array()
-> and __string() seems to be just a special version of __dynamic_array()
-> with a length of -1.
-> 
-> In the commit description you wrote: "Since the size of the name is at
-> most 16 bytes (defined by IFNAMSIZ), it is not worth spending the effort
-> to determine the size of the string."
+A generic solution will involve two phases...
+Lots of core changes, for a very narrow case.
 
-So the original had:
-
-	__dynamic_array(char,  name,   IFNAMSIZ )
-
-Which is not dynamic at all. A dynamic_array (like __string) saves the
-size in meta data within the event. So basically the above is wasting
-bytes to save a fixed size. If you are going to use a dynamic array,
-might as well make it dynamic!
-
-I was doing various clean ups back then so I didn't look too deeply
-into this event when I made that change. I just saw the obvious waste
-of space in the ring buffer.
-
-Just to explain it in more detail. A dynamic_array has in the ring buffer:
-
-	short offset;
-	short len;
-	[..]
-	char  name[len];
-
-That is, 4 bytes are used to know the size of the array and where in
-the event it is located. Thus the __dynamic_array() usage basically had:
-
-	short offset;
-	short len = IFNAMSIZ;
-	[..]
-	char name[IFNAMSIZ];
-
-Why have the offset and length? with just __array(char, name, IFNAMSIZ}
-it would be just:
-
-	char name[IFNAMSIZ];
-
-See why I changed it?
-
-Now, the change I'm suggesting now would make the __string() be dynamic!
-
-	short offset;
-	short len = strlen(res->nh && res->nh->fib_nh_dev ? res->nh->fib_nh_dev->name : "-") + 1;
-	[..]
-	char name[len];
-
-As IFNAMSIZ is 16, and the above adds 4 bytes to the name, if the name
-is less than 7 bytes or less, you save memory on the ring buffer.
-
-	2 bytes: offset
-	2 bytes: len;
-	7 bytes + '\0'
-
-total: 12 bytes
-
-Note, if there's only one dynamic value, it is always at least 4 bytes aligned.
-
--- Steve
+Most of us do not use pfifo_fast anyway.
 
