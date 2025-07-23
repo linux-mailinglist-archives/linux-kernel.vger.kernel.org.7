@@ -1,223 +1,75 @@
-Return-Path: <linux-kernel+bounces-742458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B888B0F1EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:10:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A7EB0F1F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D179581FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146D63AE94A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94592E5B05;
-	Wed, 23 Jul 2025 12:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBFB2E54DE;
+	Wed, 23 Jul 2025 12:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HTMJFGU1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhbhcSBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D401D1DE3C8;
-	Wed, 23 Jul 2025 12:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FD22E4990;
+	Wed, 23 Jul 2025 12:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272591; cv=none; b=abBIz10hhEJPNjXgpz1FgIPwZeGwVNMyuYyoLStURZNTvOLKf0wz1p4JS51f2dEl0uslXCmbosNjFkMYHorNdzsgv8mukmeavko/8Kt7BdBlaZWGcbpxZp8yHUAZlddDALLYwPzir17biPlpWQzHdf0fQa/iRhO5eoJwR/nOG6w=
+	t=1753272611; cv=none; b=tuC3mZPF2Pft1MvHvHtKnL6TsXTFpLfEyz21vzsGrj5b9WxzPc5TGJid8lASR4X3YaS0Vp+0d9Jrb/NemdZwAbc9xumKjDsR5DKxpxWQrBMU4xHEueTla1oqO/PieJuRLujpsZSz7Tcqvn2MhW9gnZ4Vdp40z6gjuIhr2vJUZM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272591; c=relaxed/simple;
-	bh=siE8fG3tOa4csUecyxtY0hUOvcCp6sqnC8Vo2a9kR/4=;
+	s=arc-20240116; t=1753272611; c=relaxed/simple;
+	bh=kguXGVIYahys1CghrE6fvQ9HN78HLNnT0gHXf8S16f4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UoAzUKjeeTUyzpS7Vj21TSvUUDjyuysxi7UAlt2QfGtIwkFj/oBH2unIVFVZb/VnnA/BlEXxjXkFL+cjVN/TqHMU26HAEFc2d1DY55tggec3wrcvFDS/ljWORXoaJ8aL+3ctYiwUa+WEYE9Ge0+epQid64biNBf739GTbBEkdHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HTMJFGU1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 06899346;
-	Wed, 23 Jul 2025 14:09:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753272547;
-	bh=siE8fG3tOa4csUecyxtY0hUOvcCp6sqnC8Vo2a9kR/4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dNYjUvwVfCMZMPOIiDiKN2h3SPNtXPaqSghAgPJgudS26rq9SxpDiD0P9MDTxOCW7KjZaZbPkL3lOgwz8HkdXe1di1W1ZmQMwxVmUFoCjGcEyvIi0oWgGBQtP1pIyR1sDAeIjN7NjHrpkrT9+oBN7jDpHHOXy05tFuodvNjBtfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhbhcSBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49C0C4CEE7;
+	Wed, 23 Jul 2025 12:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753272611;
+	bh=kguXGVIYahys1CghrE6fvQ9HN78HLNnT0gHXf8S16f4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HTMJFGU14p10/IwOa7/UFpK/pDUt/w7K6xknyd7yj0E+Z+etsPiDRFNQUCPmXeCRc
-	 xO2GDyIJ2qefRL/3HeF2X7qhGuXEoxOQsrAqVaaYNzweILJ8gGsfGAktcm8N33fQE+
-	 g2MDZwgP3QWB7R+eaOKCLAr4CD+DrN315ufz7ERM=
-Date: Wed, 23 Jul 2025 15:09:42 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
-Message-ID: <20250723120942.GB10291@pendragon.ideasonboard.com>
-References: <m3h5zbxkc6.fsf@t19.piap.pl>
- <m38qknx939.fsf@t19.piap.pl>
- <175308758352.3134829.9472501038683860006@localhost>
- <m31pq9y98z.fsf@t19.piap.pl>
- <175326599663.2811177.16620980968274114885@localhost>
- <m3seinw1po.fsf@t19.piap.pl>
+	b=WhbhcSBmnbcX4TqMivR1ZcpDk+ryonpNXh/HLk8F4QTKlZv09zeWZTvDPoDW7LR2x
+	 I1tyfzwuJzp1P4p8+n5ItGrsfsopsM0ug5fXoxHUFd3AI1HJ8CQFBcDdQ9NdM9NG/s
+	 v7yRCSiV60ISPREeq5U6c4cIoB/Hv57ThQ/x/KmydKQ1wke0MYlx/AJg6bLNnJffpC
+	 f+p/QpTlmQqzV9zh1CW6eDWxOqySgXc0sLuQdub9W8b2t/uXSSiEI5x9ADov2JwTJk
+	 s1SA8eARPX6GbS5STT6kY/980PBC/+UlrgS6kpWmULeCxsJDdJwHWk0RaiI8CIYiD9
+	 GuezxBHxXWfOQ==
+Date: Wed, 23 Jul 2025 17:40:07 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: nbpfaxi:  Add missing check after DMA map
+Message-ID: <aIDRHwF2yOfNJAux@vaman>
+References: <20250707075752.28674-2-fourier.thomas@gmail.com>
+ <aIDQSA3JFbyyaWkM@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <m3seinw1po.fsf@t19.piap.pl>
+In-Reply-To: <aIDQSA3JFbyyaWkM@vaman>
 
-On Wed, Jul 23, 2025 at 02:06:43PM +0200, Krzysztof Hałasa wrote:
-> Stefan Klug writes:
+On 23-07-25, 17:36, Vinod Koul wrote:
+> On 07-07-25, 09:57, Thomas Fourier wrote:
+> > The DMA map functions can fail and should be tested for errors.
+> > If the mapping fails, unmap and return an error.
 > 
-> > Just a quick heads up. I ran the tester and so far no unexpected
-> > results. I'll run it from time to time after a reboot to see if I ever
-> > hit that condition.
-> >
-> > How does your device tree look like? Any chance the ISP is clocked for
-> > overdrive but the device is not or something similar? Although I have a
-> > hard time imagining how that would lead to such effects.
-> 
-> Interesting.
-> I tested it on two different devices (a Compulab UCM-based camera and
-> a Solidrun Hummingboard Mate) and it's the same on both. I think the
-> first one uses 1600 MHz industrial CPU:
-> 
-> (U-boot) CPU: i.MX8MP[8] rev1.1 at 1200 MHz
-> 
-> Not sure about the Hummingboard.
-> 
-> Both cameras apparently are connected to the second MIPI.
-> 
-> Well... maybe if it's only the second ISP, and there is only one camera,
-> then we could reroute the data to the first ISP? The MIPI receiver has
-> a crossbar I think.
+> Pls change this to dmaengine: xxx that is the subsystem name as show in
+> the Fixes tag that you picked up below
 
-There's a crossbar switch in the ISI, but the connections from CSI-2
-receivers to ISPs are fixed.
-
-Have you tried reporting the issue to NXP ?
-
-> And the other way around: for a test, one could reroute MIPI0 to ISP1.
-> Will have a look.
-> 
-> The DT has the usual stuff (for the second MIPI/ISP):
-> 
-> &i2c6 {
-> 	clock-frequency = <400000>;
-> 	pinctrl-names = "default";
-> 	pinctrl-0 = <&pinctrl_i2c6>;
-> 	single-master;
-> 	status = "okay";
-> 
-> 	imx462_camera@1a {
-> 		compatible = "sony,imx462";
-> 		reg = <0x1a>;
-> 		clocks = <&clk IMX8MP_CLK_IPP_DO_CLKO2>;
-> 		clock-names = "xclk";
-> 		clock-frequency = <37125000>;
-> 		reset-gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
-> 		status = "okay";
-> 
-> 		port {
-> 			imx462_mipi_ep: endpoint {
-> 				data-lanes = <1 2 3 4>;
-> 				clock-lanes = <0>;
-> 				link-frequencies = /bits/ 64 <222750000 148500000>;
-> 				remote-endpoint = <&mipi_csi_1_in>;
-> 			};
-> 		};
-> 	};
-> 
-> };
-> 
-> &mipi_csi_1 {
->     status = "okay";
-> 
->     ports {
->         port@0 {
->             reg = <0>;
->             mipi_csi_1_in: endpoint {
->                 remote-endpoint = <&imx462_mipi_ep>;
->                 data-lanes = <1 2 3 4>;
->             };
->         };
-> 
->         port@1 {
->             reg = <1>;
->             mipi_csi_1_out: endpoint {
->                 remote-endpoint = <&isp_1_in>;
->             };
->         };
->     };
-> };
-> 
-> &isp_1 {
->     status = "okay";
-> 
->     ports {
->         port@1 {
->             isp_1_in: endpoint {
->                 bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
->                 remote-endpoint = <&mipi_csi_1_out>;
->             };
->         };
->     };
-> };
-> 
-> The CCM registers show basically (p. 229 in i.MX8MP ref manual):
->   8 MEDIA_ISP           mux 7       post 0 SYSTEM_PLL2_DIV2 = 500 MHz
->  20 MEDIA_AXI           mux 1 pre 1 post 0 SYSTEM_PLL2_CLK / 2 = 500 MHz
->  21 MEDIA_APB           mux 2 pre 3 post 0 SYSTEM_PLL1_CLK / 4 = 200 MHz
-> 123 MEDIA_MIPI_PHY1_REF mux 0 pre 0 post 0 24M_REF_CLK = 24 MHz
-> 125 MEDIA_CAM2_PIX      mux 2 pre 0 post 0 SYSTEM_PLL2_DIV4 = 250 MHz
-> 
-> The first 3 are at the max values, MEDIA_MIPI_PHY1_REF max is 125 MHz,
-> MEDIA_CAM2_PIX max is 266 MHz. Maybe I should try changing these clocks,
-> but not sure how do I do that (any change causes rkisp1 driver loading
-> to fail). Will look at it.
-> 
-> BTW the double read and double write in NXP driver (isp-vvcam) were
-> introduced by (in their repo):
-> 
-> Author: hexing <Xing.He@verisilicon.com>  2022-08-05 10:19:49
-> Committer: Robby Cai <robby.cai@nxp.com>  2022-08-08 04:50:48
-> 
-> M865SW-1031: the second isp port jump frames
-> 
-> Reason:mi read or write reg occasionally it does not take effect
-> 
-> WorkAround:read or write twice of mi reg
-> 
-> ---------------------------- vvcam/isp/isp_ioctl.c ----------------------------
-> index 60741bd..e0d3048 100644
-> @@ -118,5 +118,8 @@ void isp_write_reg(struct isp_ic_dev *dev, u32 offset, u32 val)
->  	if (offset >= ISP_REG_SIZE)
->  		return;
-> -	__raw_writel(val, dev->base + offset);
-> +	writel(val, dev->base + offset);
-> +	if ((offset >= REG_ADDR(mi_mp_y_base_ad_init))
-> +		&& (offset <= REG_ADDR(mi_mp_y_pic_size)))
-> +		writel(val, dev->base + offset);
->  //	  isp_info("%s	addr 0x%08x val 0x%08x\n", __func__, offset, val);
->  }
-> @@ -128,5 +131,8 @@ u32 isp_read_reg(struct isp_ic_dev *dev, u32 offset)
->  	if (offset >= ISP_REG_SIZE)
->  		return 0;
-> -	val = __raw_readl(dev->base + offset);
-> +	val = readl(dev->base + offset);
-> +	if ((offset >= REG_ADDR(mi_mp_y_base_ad_init))
-> +		&& (offset <= REG_ADDR(mi_mp_y_pic_size)))
-> +		val = readl(dev->base + offset);
->  //	  isp_info("%s	addr 0x%08x val 0x%08x\n", __func__, offset, val);
->  	return val;
-> 
+Ignore this one pls, that was for another patch of your which I fixed up
+while applying
 
 -- 
-Regards,
-
-Laurent Pinchart
+~Vinod
 
