@@ -1,227 +1,153 @@
-Return-Path: <linux-kernel+bounces-742134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0899FB0EDCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7EBB0EDC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403941885CAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35737188B70D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14E32820BA;
-	Wed, 23 Jul 2025 08:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668A283130;
+	Wed, 23 Jul 2025 08:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="b3dTttzL"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YvWMXOBr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA2D1581F8;
-	Wed, 23 Jul 2025 08:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EAA28000C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261029; cv=none; b=ATn4mq9RXV0tg4ETWPQtV4Wg9FUxdRe2FeuwXAKFKk4D/vZnuWgnJywn/HOO6PsuePq+v61ljr+n5HX3cARADTTl7FheFS3iao0101dcAm4KH2IX6ArPjOzhIh/lwuzT2Bn8C8nt9v6WTYkUHHLtLrvNbHXkJtsaSd5y+aXhf9A=
+	t=1753260930; cv=none; b=QUOI821NndZaa/irF/sVp64xJziUN7twYLvGvbdcuXahGfOWiltUFvHswrxKHYwWjtgLRG0wcOUS49Q5kJ1B0pLzNcmH84X8/atQ2mP2uEBt+LTZylVfRm4TBBqjmded/27AZE85St47n6oZrF7b+eBT1UXM8cCP4BOML2V06pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261029; c=relaxed/simple;
-	bh=Y0TKez6Zs8Dmhd9Gs0F8vfIoDJDRLuLzxDMZTjKyf1k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=HbCH0AA6HAbgcLLTwnx3AZdQU6MsxD3sOegMywm85U4ta7jzzDv3HgOAUDBLgkazxMtYb+vHWCFF/CeTcfLla6gD9Z0oCo9xi5qaJuRDrWu4cmyebAXe1al5uUsFIT/gq/1KeCpzWQdFyOMASBAJa0haZEu4mLAWfh0D50isgkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=b3dTttzL; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N8uM65028510;
-	Wed, 23 Jul 2025 10:56:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	phZtJJljKEJOK6MlgZrPZlmrH/bqjB9NJkz8RgXJGMQ=; b=b3dTttzLcyGu3faH
-	8GZs7OjxwijhA4DA3LtAQaSGpnn4V4apeeWcMp9oPqhcdBD0esOHs3d5NQdnvChE
-	Xt5I/sfbV7Cjm2x8iTd6rrGfGpbXqkJne3dZdJocYLmZic5eh5nlrQKjL+rtvsWH
-	b3HIbW/UcIrElRkku/YmkCuu1DEx3Dr8BjLZ+16790OsH9ccM73I5Nm6FP/Xo0hh
-	q3e0kNj88tnViO0DzcuMlWauZUYY7KTZdiAEcUtqc7+uZvcR5T0Qp0OPTQ4nyY7+
-	8Vu5OcxGOp+c8/dFtrDBWaZ8dQDC6meg0yzFA+W0qQGkn2UK7YJunWCPVeIjCBgX
-	X0P60Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48028gae19-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 10:56:48 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 930794005B;
-	Wed, 23 Jul 2025 10:55:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 249447530A7;
-	Wed, 23 Jul 2025 10:53:57 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Jul
- 2025 10:53:56 +0200
-Message-ID: <9c9499e3-10c9-4245-938a-65831fe10c05@foss.st.com>
-Date: Wed, 23 Jul 2025 10:53:55 +0200
+	s=arc-20240116; t=1753260930; c=relaxed/simple;
+	bh=J6LLkUZtxkhT0lF2A4tYYQe7AdJvj9M8D+fzDPn2MUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqc86hdVi9yIqyjBlaRty8UuC6NK5iqyd2xZNIAxn0UqbnOgOV70wh26QkDJE0QQ8xOWCCCPsqM0QVTP+8OPf0DOB4++sfRp8oWllnzG9XsDwOo4Qo4+SUlgfBQV4hOTVrlm9at8rqUyn4r4UQBCiOuPA0ccFWZjpQSVE9fGYDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YvWMXOBr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMO8wd013723
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:55:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2/MKy99x4tsVjpzMWhXhf/+0
+	XGUClqX2jBqY1KxJfYc=; b=YvWMXOBrULWXQldxeFHZpwXye1T0I51eS9uifweF
+	oeyVAzfF9qVXP9zw50I90MEAs+zr3M/tTeRrtNrv8DXa4p2as6O8D4RTGRIlbMRE
+	Jwx0GTmn5yNQQFIVMZ9cnly/rrWKRwiKrdtfECTm/wa8qpDNLkkgHod0CukG30Ge
+	olCsoxwyJFoKA3Nokt49zilQ/0eWfW/g7D1yHve4fXhi0ThWBViig1HLWyqyM0ZP
+	ByPTXAtindCiCtgxGcQ4FIIpei2W5harCuktfPzj1OxBTvT8uEPk/hwPnoMYAJ+u
+	1jwY5j0wRBTPq4Av7rQbsAzxZbmusLkZubPC7UijSNpa2A==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048vatnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:55:28 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31327b2f8e4so6002418a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:55:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753260927; x=1753865727;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2/MKy99x4tsVjpzMWhXhf/+0XGUClqX2jBqY1KxJfYc=;
+        b=vZgMIOcEdvyoodT4yCtaPT67ddqYo23eB8X8/JkEzNZJrv8ibuTbe4v4OSP3dHIPne
+         8zBAiD0+ufRcgT3pL6JXTamCXW4yWgnM8YKeEJWqh8ULOIHV+GgMjIVBDmfYCE1+7Hyj
+         KMHMpUweMoi8lqmgZ8FBw6vQBwuXpUE3VZr/W9cu3VMzApMvKkKpnbk6y2CdW3OaMdpZ
+         07DVXHj8n43LGzXRqJ1AE6mDrrjM+7NA5l5FpTMItLZ7Q29t25I8xJsTgtGV4DsNxB2h
+         hCbZSXrJVwdqJUY33t3FMZ1j8uhaichGcqizdlMVp9qNEVbrHNe5/LU7Pc2kOhFVzG5i
+         7nwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuvswksUR2i0XstnB0i+seZHL5piwnwDDS8hTEPQoSLtjGR9VO0YUHiHjE3VyG40gNGbsTIbd6fbdg2cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeOW3XbHuQDK5JHuZAkwvGzASP+02yBgHYVV/t7cK7MH1xWlss
+	fYAXZfoiTDy+4AW54Ps+Tnp48JAfUCUmtf/P0Lo3TW2whOprMrvuXrSiQ//oV5XEBed6NqM6fVJ
+	2EIXD9QRwXuIRYlCpKqS8AlnqF1CVyqIO/qUTvHLFsi1GOqC/WbsLa6Er0aQmsmXg3UY=
+X-Gm-Gg: ASbGncs+zN3yQOI6ozgSa8qeRl12wH0NLzYPG14lAKpJRyO40fI5Zedq8ZHeExw4l40
+	glXMn0OWW3hwyBbtvM8JN87DneSmd4JXTUoNfps7PqUGlvrcvmwVCE/uY6FUGNEQElHK5msxvnw
+	9CNoSAK38L70kp3Rrd+U9RnrxnJCRN3tnep4/naqj3eyKGV8X0nKJPt1MUfs1qGPtA3Mec/PSg+
+	fvMnDWZ3iZeUJ7YavFFyOxBwsJMcwsd6Mg1GVo1NWRBVtcUajHYQGlw8JMenUxZvI+NtAk01ckL
+	gz4usuzDk+DtZloiEK7wrRY9IlBXvsbx73EngqrVxUX7VSuPgyNgKwEy5UADfhd7i8K9NhxitMr
+	5wJQ2A34tUvcW4rSOGuQ=
+X-Received: by 2002:a17:90b:1e10:b0:312:da0d:3d85 with SMTP id 98e67ed59e1d1-31e506df8efmr3704017a91.6.1753260927304;
+        Wed, 23 Jul 2025 01:55:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7aSTD2BEN2GPGipaFx5snYQw8DKNBiJv81IMCn4FkQGBP3nLk9dZg+gV939ivxjAN8wpgQw==
+X-Received: by 2002:a17:90b:1e10:b0:312:da0d:3d85 with SMTP id 98e67ed59e1d1-31e506df8efmr3703988a91.6.1753260926904;
+        Wed, 23 Jul 2025 01:55:26 -0700 (PDT)
+Received: from yuanjiey.ap.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8d550sm8456955a12.24.2025.07.23.01.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 01:55:26 -0700 (PDT)
+Date: Wed, 23 Jul 2025 16:55:20 +0800
+From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com,
+        kernel@oss.qualcomm.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615-ride: remove redundant gpio
+ header file
+Message-ID: <aICjeK+gC1yxPb9I@yuanjiey.ap.qualcomm.com>
+References: <20250723084351.4627-1-yuanjie.yang@oss.qualcomm.com>
+ <e0c9e620-a331-43c8-9c62-f9769744a484@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Andrew Lunn
-	<andrew@lunn.ch>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Simon Horman <horms@kernel.org>,
-        Tristram Ha
-	<Tristram.Ha@microchip.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
- <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
- <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
- <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
- <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
- <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
- <5a2e0cd8-6d20-4f5a-a3a0-9010305509e3@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <5a2e0cd8-6d20-4f5a-a3a0-9010305509e3@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0c9e620-a331-43c8-9c62-f9769744a484@kernel.org>
+X-Proofpoint-GUID: _6wqysETRRCyX9RZfVbL1Kyalh6wJlKm
+X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=6880a380 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=HDA7t77kZpctsFZEpKoA:9
+ a=CjuIK1q_8ugA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA3NCBTYWx0ZWRfX+3W66Xg7atFI
+ i0whc5dQsrSw+U8pDQZfuEjB7VS3wXF/2YcdmugVtd3iVfzC8/NuroXqwNuOXXKPb9sHjZdqpjE
+ jjC8649FGYlUXHQaJxyo/JxtOTS8jzDo9c1Xxjz07j96gJVVpj2u99/SoEEJlJEEGsIgXae++9V
+ etogzW4WMwodTOrM/3TdToyNNMlhHxOKzVPFC+rTAOsbG84zS6pufP5UCUp9f/hkVju6rp2cZs4
+ 4e/o88VnRxUqA4T607TWkurPL3tjSIHKJZjQydPUxPRVTdmUVdvO9c6XnLXmmdg1WLw6+8vXFBv
+ 6saR9+oynLJKiVYkr/tAxTo6RZSpUe9vD0ogGYc4QzEAWDWBna/24uXt8TWDkm7oL+J5lf0M+ek
+ 1wawXuC7Ji130NLJFCnl10/EUWSvqG1rZvBHRdBBKRuT9FJE62igo6L894IqWIsZxw32HFzi
+X-Proofpoint-ORIG-GUID: _6wqysETRRCyX9RZfVbL1Kyalh6wJlKm
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=985
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230074
 
-
-
-On 7/23/25 10:50, Gatien CHEVALLIER wrote:
+On Wed, Jul 23, 2025 at 10:49:10AM +0200, Krzysztof Kozlowski wrote:
+> On 23/07/2025 10:43, yuanjie yang wrote:
+> > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > 
+> > Remove redundant gpio header file in QCS615 RIDE DTS.
 > 
-> 
-> On 7/22/25 22:20, Russell King (Oracle) wrote:
->> On Tue, Jul 22, 2025 at 03:40:16PM +0200, Andrew Lunn wrote:
->>> I know Russell has also replied about issues with stmmac. Please
->>> consider that when reading what i say... It might be not applicable.
->>>
->>>> Seems like a fair and logical approach. It seems reasonable that the
->>>> MAC driver relies on the get_wol() API to know what's supported.
->>>>
->>>> The tricky thing for the PHY used in this patchset is to get this
->>>> information:
->>>>
->>>> Extract from the documentation of the LAN8742A PHY:
->>>> "The WoL detection can be configured to assert the nINT interrupt pin
->>>> or nPME pin"
->>>
->>> https://www.kernel.org/doc/Documentation/devicetree/bindings/power/wakeup-source.txt
->>>
->>> It is a bit messy, but in the device tree, you could have:
->>>
->>>      interrupts = <&sirq 0 IRQ_TYPE_LEVEL_LOW>
->>>                   <&pmic 42 IRQ_TYPE_LEVEL_LOW>;
->>>      interrupt-names = "nINT", "wake";
->>>      wakeup-source
->>>
->>> You could also have:
->>>
->>>      interrupts = <&sirq 0 IRQ_TYPE_LEVEL_LOW>;
->>>      interrupt-names = "wake";
->>>      wakeup-source
->>>
->>> In the first example, since there are two interrupts listed, it must
->>> be using the nPME. For the second, since there is only one, it must be
->>> using nINT.
->>>
->>> Where this does not work so well is when you have a board which does
->>> not have nINT wired, but does have nPME. The phylib core will see
->>> there is an interrupt and request it, and disable polling. And then
->>> nothing will work. We might be able to delay solving that until such a
->>> board actually exists?
->>
->> (Officially, I'm still on vacation...)
->>
->> At this point, I'd like to kick off a discussion about PHY-based
->> wakeup that is relevant to this thread.
->>
->> The kernel has device-based wakeup support. We have:
->>
->> - device_set_wakeup_capable(dev, flag) - indicates that the is
->>    capable of waking the system depending on the flag.
->>
->> - device_set_wakeup_enable(dev, flag) - indicates whether "dev"
->>    has had wake-up enabled or disabled depending on the flag.
->>
->> - dev*_pm_set_wake_irq(dev, irq) - indicates to the wake core that
->>    the indicated IRQ is capable of waking the system, and the core
->>    will handle enabling/disabling irq wake capabilities on the IRQ
->>    as appropriate (dependent on device_set_wakeup_enable()). Other
->>    functions are available for wakeup IRQs that are dedicated to
->>    only waking up the system (e.g. the WOL_INT pin on AR8031).
->>
->> Issue 1. In stmmac_init_phy(), we have this code:
->>
->>          if (!priv->plat->pmt) {
->>                  struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
->>
->>                  phylink_ethtool_get_wol(priv->phylink, &wol);
->>                  device_set_wakeup_capable(priv->device, 
->> !!wol.supported);
->>                  device_set_wakeup_enable(priv->device, !!wol.wolopts);
->>          }
->>
->> This reads the WoL state from the PHY (a different struct device)
->> and sets the wakeup capability and enable state for the _stmmac_
->> device accordingly, but in the case of PHY based WoL, it's the PHY
->> doing the wakeup, not the MAC. So this seems wrong on the face of
->> it.
-> 
-> 2 cents: Maybe even remove in stmmac_set_wol() if !priv->plat->pmt.
-> 
+> I do not see it redundant at all. Just look at the file - it is used.
+qcs615-ride.dts: file
 
-Sorry, that's not very clear. I was thinking of removing:
-device_set_wakeup_enable(priv->device, !!wol->wolopts); in
-stmmac_set_wol()
+line:
+7:#include <dt-bindings/gpio/gpio.h>
+8:#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+9:#include <dt-bindings/gpio/gpio.h>
 
->>
->> Issue 2. no driver in phylib, nor the core, ever uses any of the
->> device_set_wakeup_*() functions. As PHYs on their own are capable
->> of WoL, isn't this an oversight? Shouldn't phylib be supporting
->> this rather than leaving it to MAC drivers to figure something out?
->>
->> Issue 3. should pins like WOL_INT or nPME be represented as an
->> interrupt, and dev_pm_set_dedicated_wake_irq() used to manage that
->> interrupt signal if listed as an IRQ in the PHY's DT description?
->>
->> (Side note: I have tried WoL on the Jetson Xavier NX board I have
->> which uses stmmac-based WoL, but it seems non-functional. I've
->> dropped a private email to Jon and Thierry to see whether this is
->> expected or something that needs fixing. I'm intending to convert
->> stmmac to use core wakeirq support, rather than managing
->> the enable_irq_wake()/disable_irq_wake() by itself.)
->>
+I see line 7 and line 9 include the same <dt-bindings/gpio/gpio.h>,
+I think we can remove one header file. 
+
+> Otherwise provide arguments WHY you claim this is redundant.
+> 
+> Best regards,
+> Krzysztof
+
+Thanks,
+Yuanjie
+
+
 
