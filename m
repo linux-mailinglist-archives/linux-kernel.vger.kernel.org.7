@@ -1,161 +1,159 @@
-Return-Path: <linux-kernel+bounces-741939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF12B0EAF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:48:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B2FB0EAF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76125804D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:47:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B7C1AA80A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EB626FDA4;
-	Wed, 23 Jul 2025 06:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6JtxCOy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0EF270555;
+	Wed, 23 Jul 2025 06:50:59 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEC26FA58;
-	Wed, 23 Jul 2025 06:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B43226FA60;
+	Wed, 23 Jul 2025 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753253270; cv=none; b=FK6VsngzkL8diGQcOMulkFo00hXGPru2UgXz/yXv7UMnvqdNcvaAuBiWxBPoQbeBflUvw4mtyEbPZ2igsS0OoC/6U2KNkaJ6fBTd/TSV5YIiCSwGxv+Pgk6+3KJiaNppGhv06ytnycckFu1OmLQOMZLoEiapZ4PFt6K9SAbLfXQ=
+	t=1753253459; cv=none; b=SJBbs/QJ+H9IKGwAUUnpiuxS16Rg5Dg0v4MDZsQnGDMuBpgGFipXnQ68u1yb15LZB0tZetDGGyo/F7W4OrZuHVOoXZcsrjEKzIDS0gyJgm7pzE9kjlwJCVSs0b7sysQvJbEFM3NXeK7eT5q46734WDub/iLCMgpPb0nqQbSgdcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753253270; c=relaxed/simple;
-	bh=7zkhMiynmV7ttrTgKe2oO/0dCFzwTwF9NlgqRU5gQRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ribUil42PqJSMrLkPVCKUxGFdeDen4CvsFyD++U+hMG4NkgBSjV4TQZZbez62M6jvkXMf6NqPraQqoL+MyfPfs8qnTiESzE9vDMHChhJan3AwSSbz6t8U/3hw+P5dh2k7d3/iS66uv6hU+A881S237PEwmKg+VS4vAuD2dNDicE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6JtxCOy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB94C4CEE7;
-	Wed, 23 Jul 2025 06:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753253270;
-	bh=7zkhMiynmV7ttrTgKe2oO/0dCFzwTwF9NlgqRU5gQRU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f6JtxCOyTOCTAV0joAoGB9qRuxnyFsqVAyxJMOhwpH1lTZ44qqjv23vjn+8pfYXXP
-	 1tCg2zSptxXTP0T6B9Z79B+RSDLY1LmSMV325PJcauJMWbPPgGrgfZ4/xNv6XF3/fB
-	 as2omzTgBEYuUEFIRq1pMDwRmUSQMF9UETYLXHPTZM6BAz0way/OBw7/rQIX9VIV4l
-	 IP41IQrbrVVyE5bKN+41+fbtnfbiab7c2U5TbcoTPVPfZY19Hv8j0uufOV3zmR1FUD
-	 3D4hv5gBBiRIK3FDxINoCNOscJ0LEGkxxrcqcgKIsWjMic/3xUN/gsmM8LmzZyrSix
-	 yCk5bKR/5DM3A==
-Message-ID: <4ee9c7c0-4a3f-4afa-ae5a-7fd8a750c92b@kernel.org>
-Date: Wed, 23 Jul 2025 08:47:46 +0200
+	s=arc-20240116; t=1753253459; c=relaxed/simple;
+	bh=G58YKvUujIBWrJkI0NYR1sVGNRm9J8ICp7P9MOotfgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhvVgPjs1Ln8bqP2JWHvyuWOum6p6iYEKCwgM2k3bNwZLRp4qQH6Sv3YghE5Kys4PgG4TExuliboOECJjwdO9dXBuwK1pn3SZ68iXwk++IVfJnceFsyyE7MyTpFmrZcrZF565VBbuuwVdLQbaTMrWFLCnmayeDpCaVfWUH2sZ1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz16t1753253380t0ab00ecb
+X-QQ-Originating-IP: lRLKBcb1n0wzw/+enrJkpgcKfTXRxD93bs4sAWYliJs=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 23 Jul 2025 14:49:38 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11276420674999546687
+Date: Wed, 23 Jul 2025 14:49:38 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Simon Horman <horms@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 14/15] net: rnpgbe: Add base rx function
+Message-ID: <92D9F4A7FDB27183+20250723064938.GF169181@nic-Precision-5820-Tower>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-15-dong100@mucse.com>
+ <20250722141426.GK2459@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>
-References: <20250722232005.GA2863060@bhelgaas>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250722232005.GA2863060@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722141426.GK2459@horms.kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MAN6sKHDZ5xSaGWXfe+7Bn96Kxr/zIytK58NzLYVZD5K0bPm9SWLPbmp
+	ZgP5VO8dAJUVM+dyW4qci2FTMyNsyaDopEOFvcFylknYFjPI2icsAIuQ7htzKqySkeYbB4v
+	80X2dVzQf9cDDwyf4as/thLg7Y9hetmU+egvMiQ9lX04fUutKQafB24sesfDbaaS0C0iwTv
+	c26tEwOelqqDPi60HO3xcHZe33cL36M7aamUekb8HtIMC1IBE7y5inGAqKH2R6lXsPr0PjL
+	hyC3B+C9nsmfFAAHbfo8/9KJ/WRkADl+e8yH12MYIClv/HfQ0kfA7e7ovpaVzoliNxaqqfg
+	8nSX7XgXsWZu1eFJKCnEEeA/9VXt/TYLIw3Uw5BJx5C7bgGvc4srixU/OI2Pt5X6mmZpV4K
+	JQVlxad565UWGVbF8ijYiwkqIEcZl+W8DYJlYWkEbD168Cf56fnCgLPawwBwCx0mXJ4xMiw
+	MFAh1PgFvSGx0ohVWawEL3TYm9WE7HioReNbwkDQlRVdBDNJRD+x/ztW7MPPeKY4xjtHL0y
+	/NCjWADs5k5cDJRrylRy7j9PqlZ7ZndzzmCRJF1uxYiaGRMxQIiYfDqJ79vpsPD9dFp6y6X
+	CjUf9Kqv74/ZSjSMu7knuGrgYrEUNjIIIFPlGiep+tXGQkx7pbdISekLHwArJzl59Lf2d/k
+	eFBU/yAWmsW+0+0ZnZ+RMHAg/rprf39gpGL5nqtEdUiMXZu8cuFGXnJUODc+A89fUO2Izyb
+	ENCHJmbFCKhrIdOoaSkRRE4aodwG1ZUnoPo7Ye4dkcahV5a8F36JyRHuXDVvDrp9Xxswk7f
+	DywhhTiLgzw3PjxRzGbUcx77wIVLrZ8lNAS7XDwBfxSj2GhhhqXZQEkAhah6A9cm41xl5i3
+	Lm3mMdDOelrR8Xi0qMYI6dAbWy+0JjZMuBX9OeaDOtHI6FcCRaMUyOfkg4MgCroV1gmjDSZ
+	O+E2hGym61TNSdeTSnaBSDRAoDgKhGbKEr3a5OJJXidy6qcxQenyFmZVcpskSvhRS080=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On 23. 07. 25, 1:20, Bjorn Helgaas wrote:
-> On Tue, Jul 22, 2025 at 08:24:26AM +0200, Jiri Slaby wrote:
->> On 21. 07. 25, 19:08, Bjorn Helgaas wrote:
->>> Jiri, question for you below about more possible drivers/pci/
->>> conversions to use dev_fwnode() for struct device * cases.
->>
->> Sorry, I am a way too occupied :/.
->>
->>> Would like to get this in for v6.17 if these should be changed.
->>
->> It's not necessary, but a good to have cleanup (opposed to the posted fixes,
->> which were required). I will switch those eventually, but I don't promise
->> 6.17. (If someone does not beat me to it.)
+On Tue, Jul 22, 2025 at 03:14:26PM +0100, Simon Horman wrote:
+> On Mon, Jul 21, 2025 at 07:32:37PM +0800, Dong Yibo wrote:
+> > Initialize rx clean function.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
 > 
-> It's not clear from the commit log:
+> ...
 > 
->    irq_domain_create_simple() takes fwnode as the first argument. It can be
->    extracted from the struct device using dev_fwnode() helper instead of
->    using of_node with of_fwnode_handle().
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c
 > 
->    So use the dev_fwnode() helper.
+> ...
 > 
-> why the posted fixes are required (other than Arnd's change to
-> altera_pcie_init_irq_domain(), which fixes an unused variable warning
-> when CONFIG_OF is not enabled).
-
-Sorry, my bad. These are a cleanup suggested in this series:
-https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
-
-I.e. series switching from irq_domain_add_*() (take of_node) to 
-irq_domain_create_*() (take fwnode).
-
-These days, fwnode is preferred and if there were no more users of 
-of_node in changed functions, the series above even produced warnings 
-(Arnd's and others' fixes).
-
-> Since it sounds like no changes are required for the other ones I
-> mentioned, I'm going to leave them alone for now:
+> > @@ -299,12 +707,27 @@ static int rnpgbe_poll(struct napi_struct *napi, int budget)
+> >  	struct mucse_q_vector *q_vector =
+> >  		container_of(napi, struct mucse_q_vector, napi);
+> >  	struct mucse *mucse = q_vector->mucse;
+> > +	int per_ring_budget, work_done = 0;
+> >  	bool clean_complete = true;
+> >  	struct mucse_ring *ring;
+> > -	int work_done = 0;
+> > +	int cleaned_total = 0;
 > 
->    dw_pcie_allocate_domains()
->    mobiveil_allocate_msi_domains()
->    altera_allocate_domains()
->    mtk_pcie_allocate_msi_domains()
->    xilinx_pl_dma_pcie_init_msi_irq_domain()
->    nwl_pcie_init_msi_irq_domain()
->    plda_allocate_msi_domains()
+> cleaned_total is set but otherwise unused in this function.
+> 
+> Flagged by Clang 20.1.8 builds with KCFLAGS=-Wunused-but-set-variable.
+> 
 
-Given fwnode is always used them, it's not necessary to use 
-dev_fwnode(). But it'd be a nice cleanup. Provided the list, I started 
-the cleanup now :).
+Got it, I can get this warning with KCFLAGS=-Wunused-but-set-variable
+locally, I'll fix it.
 
-thanks,
--- 
-js
-suse labs
+> >  
+> >  	mucse_for_each_ring(ring, q_vector->tx)
+> >  		clean_complete = rnpgbe_clean_tx_irq(q_vector, ring, budget);
+> > +	if (q_vector->rx.count > 1)
+> > +		per_ring_budget = max(budget / q_vector->rx.count, 1);
+> > +	else
+> > +		per_ring_budget = budget;
+> > +
+> > +	mucse_for_each_ring(ring, q_vector->rx) {
+> > +		int cleaned = 0;
+> > +
+> > +		cleaned = rnpgbe_clean_rx_irq(q_vector, ring, per_ring_budget);
+> > +		work_done += cleaned;
+> > +		cleaned_total += cleaned;
+> > +		if (cleaned >= per_ring_budget)
+> > +			clean_complete = false;
+> > +	}
+> >  
+> >  	if (!netif_running(mucse->netdev))
+> >  		clean_complete = true;
+> 
+> ...
+> 
+> > @@ -871,6 +1323,8 @@ static int rnpgbe_setup_rx_resources(struct mucse_ring *rx_ring,
+> >  	memset(rx_ring->desc, 0, rx_ring->size);
+> >  	rx_ring->next_to_clean = 0;
+> >  	rx_ring->next_to_use = 0;
+> > +	if (mucse_alloc_page_pool(rx_ring)
+> 
+> There is a trailing ')' missing from the line above.
+> 
+
+Yes, compile error here. I'll fix it.
+
+> > +		goto err;
+> >  
+> >  	return 0;
+> >  err:
+> 
+> ...
+> 
+
+Thanks for your feedback.
+
 
