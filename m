@@ -1,353 +1,215 @@
-Return-Path: <linux-kernel+bounces-743076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FA0B0FA44
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:25:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243EDB0FA46
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654B73AEB37
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F346169994
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8C822CBD8;
-	Wed, 23 Jul 2025 18:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0822B8B6;
+	Wed, 23 Jul 2025 18:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Eoi0yhoD"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="EJdUs3Of";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="tnMu1oHc"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232341FBEB9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753295129; cv=none; b=O0T+ASiWfboZYokD0IISp1exBeX77wq4dVpZ256FR8HkMktD/zB2NW45U9JF8yqpc1p40Pv/OKMsQYjEYOz3f/XeVF/iHItX3lYePlc8sJueJP76dHKc1o/xMcIyuHjJJqNxvlasNRWnc5fJXVwsGmmuOcUKuKNnQZOm4r27ngA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753295129; c=relaxed/simple;
-	bh=8jDBOp1/5ELJhrpejGV8dWC1K+YLRxWROk+vO9JU2Hs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=iOPxTy54V9Golt1Lm3pBEg76I9B8+rrpnsX62JdiJcUGrMv10s43R3YblBIbJ75AfhWwdA2jtnFKwCDJxjIIm9Sq6t9PIGofsJpX14+iUoNVlCtPYumkK2Jhay/a8OnRANy1jYqoagTHoXf73KXFzZv/9K0f10VTQ6tv0psbZMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Eoi0yhoD; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250723182524euoutp028f677fafe18cc3a7fda946633c9cdd8c~U9KBiqNEv3003330033euoutp02I
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:25:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250723182524euoutp028f677fafe18cc3a7fda946633c9cdd8c~U9KBiqNEv3003330033euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753295124;
-	bh=G6lUJBsrYso7PwE/gZWaei8bxr8s7smO7yvVENy5ZWM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Eoi0yhoDJhygGHXhdPx4SWp+qGp7DRtgM2eSAyUAjZkjRpZj/Zxnkd+teGujPpUSs
-	 /BJUadrrmfQXFsq0AhNuTEPXIRbf613uCcGWQzC9rvL+qoiPTx467N3dyEftJXywub
-	 LN4ffyCTLdxXUzX24A1kuDF+jJc4nDp+otxwCBnM=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250723182523eucas1p220449ccef4d32615f84483b37faff727~U9KAiikNS1921119211eucas1p2c;
-	Wed, 23 Jul 2025 18:25:23 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250723182522eusmtip1bed061c359b01d486f01c16f2257ca7c~U9J-SKJbB3063330633eusmtip1Q;
-	Wed, 23 Jul 2025 18:25:22 +0000 (GMT)
-Message-ID: <07410f0c-8369-4683-9143-c79c6cb3f5b0@samsung.com>
-Date: Wed, 23 Jul 2025 20:25:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0281E7C38
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753295243; cv=fail; b=mUuTizoqFHYQ7emR+xwc5+FLBwbRwNussTu2lDgWFqOHERtPgo4400Fe9qTljaPLz1rDhBlldSWGWAhv7J8Ieq//soBheXZvJe9TPHj12wNtSn8/fG+rsqJPI+v/U3FKHhOx/tXPuymbLJOzmspzN59OqS6brqpqLuxFsE54v6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753295243; c=relaxed/simple;
+	bh=ZJyk9wdsWxAKwQtpypmq9SmEtVINCSZJBD3NT2V7NSc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cW1MAW274x7MFBMzYjRWxAqTY/Mtt7HUZaO0EGmfCmnNTasHozZz2tBLxUXj9HjHx85b0F/knKaaudscntCF38nEIWbVy2S1nxoCJur7b9vRosc++z/Sp2vT+yl/MVa8+BETfEKPlnUe3DQ6fatp0/BP5U4GOWcnoW24T5ssgbg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=EJdUs3Of; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=tnMu1oHc; arc=fail smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1753295241; x=1784831241;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ZJyk9wdsWxAKwQtpypmq9SmEtVINCSZJBD3NT2V7NSc=;
+  b=EJdUs3OfNwCnzfaVKsJz9NoC30GK6LMVAaal0Q0ar/sYRCzaW1/lkv4U
+   1lww9Q/+iaVh1iOg47ZQYzrX/GUC/e9uUubq9eupybmp4QLA4pzOY6KvZ
+   32uJ6IUF1Oh7Rq8QkaCa5HrFWFqi4E8Jd9rDx7Cgd6N80jMRsPKc6W+dd
+   4QO3uAMThs/m9SSlk+/bqi/5pAztI6qxS8Lvg5nx7qh6tRo6Ank3/rpx6
+   Hzur6WjPuMkHYEunjg8fKi0sCNnDa7xm7p3SqLm+tUdUjddXQdw4rhFPS
+   tqzgn/MtaO7KsMeDJCITFdAjNtobnzR1SHBCgqLPqalZlLpwRIvAiyWHL
+   A==;
+X-CSE-ConnectionGUID: 7ycfZCuoSUCwxIDpkZVBiQ==
+X-CSE-MsgGUID: 9tbbCeBoTv2ghVltCv8yOg==
+X-IronPort-AV: E=Sophos;i="6.16,335,1744041600"; 
+   d="scan'208";a="101488662"
+Received: from mail-dm6nam12on2042.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([40.107.243.42])
+  by ob1.hgst.iphmx.com with ESMTP; 24 Jul 2025 02:27:14 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a/sTeAamvD7sV78+kLxOJq7UF8/eP2t9yi4ceijjeqqFrQ3xne3PwMH8BSlg0Jv9G9p6cxZvJCdhTDtP8wUtX72ZwYlOHwAlmVntwRVtKpzgnyFzfx8+FgEbfEsp7wDK26CM0ER2iYUDR9zY1ttycGQBey38OjY0BF2+Bl6+fajjaBKlIr0h5SvZ3kw0sPz3TIa4epq4JBLXvuKi6mQ2mmZ7qMLN9xMGgjZJNs6ZA3Gc63xPTu3S1iVSz7UYIUd5Iu20jMl0XG+sHMn+BWVcsQwBTdM9jzhy8+BhZBi5z6Vv/Dw4cSkHp6NFJluxmcqj/pIEA9a5/7ZQYfKYEptF1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZJyk9wdsWxAKwQtpypmq9SmEtVINCSZJBD3NT2V7NSc=;
+ b=CKGAJMjQpzclY8iHw9FuHc6evsM9tQcoNsNZospG/gr0r7c0jx44t+Bk8HkB2zk09xTj5ud9js1PYNwG0otgNUo2DqXehaoVJy/8E86ru0Af/v38vOi/VK8lq9EaUPsFjK07+Bn2nV7DJbH4y/64Is1Obn2SKEf3uBmuquZPZrOIt8FCjuVoSwwWTRGJ3+lIBCGq0V6W+mikoWLluIKU/9gX/xzdvAxpLP80yejn3P3lHSR0Tr3dv29J7VynsZxPWdj4t20Tx8tEukWHBIy49V8mJvZIXk9vH8q3DrdNUQUASbeL6EXZTRt1m+6TXmfEbQqn1KF03+WQoPCzaT/0Rg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZJyk9wdsWxAKwQtpypmq9SmEtVINCSZJBD3NT2V7NSc=;
+ b=tnMu1oHcO7xqYx0QT/1I9Jq2QT7Z+FwQ7+LMsJ7vwtwzizvfxPbYYrzikn6g1lu6aSaef4e9yz5Vk+6EqPZhqUw4Gs8DYUWkD5zgtnUcli6fpnCvirhEplO+MsdeW3PyvLLOVLRy5alZdfXadLT0osuTIukWcv22GGwWAunl0G8=
+Received: from BY5PR04MB6849.namprd04.prod.outlook.com (2603:10b6:a03:228::17)
+ by DM6PR04MB6509.namprd04.prod.outlook.com (2603:10b6:5:1bb::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
+ 2025 18:27:12 +0000
+Received: from BY5PR04MB6849.namprd04.prod.outlook.com
+ ([fe80::a414:8a6d:1caa:13d5]) by BY5PR04MB6849.namprd04.prod.outlook.com
+ ([fe80::a414:8a6d:1caa:13d5%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 18:27:11 +0000
+From: Kamaljit Singh <Kamaljit.Singh1@wdc.com>
+To: hch <hch@lst.de>
+CC: hch <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>, "sagi@grimberg.me" <sagi@grimberg.me>,
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cassel@kernel.org" <cassel@kernel.org>, "dlemoal@kernel.org"
+	<dlemoal@kernel.org>
+Subject: Re: [PATCH v4 2/2] nvme: prevent admin controller from smart log
+ fetch (LID 2)
+Thread-Topic: [PATCH v4 2/2] nvme: prevent admin controller from smart log
+ fetch (LID 2)
+Thread-Index: AQHb+mYXMAEuLxyp1ESYRJA9jnnQSrQ9r1+AgAChYwqAAOufAIAAzOY2
+Date: Wed, 23 Jul 2025 18:27:11 +0000
+Message-ID:
+ <BY5PR04MB684919E8FED440576C3A52F4BC5FA@BY5PR04MB6849.namprd04.prod.outlook.com>
+References: <20250721173700.4153098-1-kamaljit.singh1@wdc.com>
+ <20250721173700.4153098-3-kamaljit.singh1@wdc.com>
+ <20250722063015.GC15013@lst.de>
+ <BY5PR04MB6849574654806676E024F16DBC5CA@BY5PR04MB6849.namprd04.prod.outlook.com>
+ <20250723061112.GB18943@lst.de>
+In-Reply-To: <20250723061112.GB18943@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY5PR04MB6849:EE_|DM6PR04MB6509:EE_
+x-ms-office365-filtering-correlation-id: 3544dd9b-d6f5-4be9-6f77-08ddca168a1f
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?xpLVkdnrnwBE9ulTDJssmdOrXkQ3hfxRbETWOobY88cLSqT2uS+MzNO/Gh?=
+ =?iso-8859-1?Q?Yl7RsuNVKIKji2WpzqMNegWoTuSDJX6o03+t3OFcTQ4mv4gRptbhd8KNPG?=
+ =?iso-8859-1?Q?y7yDGsDeGSacRRxvLllwOYLHKUCWSOxHA8IwQ+QV7JsLZrxYOBCY59d7UL?=
+ =?iso-8859-1?Q?4lJqBFwon80TyeFUGG7+npb4wFB7G5AjpLvhNO9VlhjUTy27VxCMGl/xJg?=
+ =?iso-8859-1?Q?zpGJZ6QFX8fFkNQ8ArnF242P+7nWm7yqO43bl1cAxRPH4gWhka4MNtvE6I?=
+ =?iso-8859-1?Q?jgZZqG41ZGGnFpBmPQ43QVpQ2JUWtMOUvSh102Eki/dzi3TuXp2OfKPT24?=
+ =?iso-8859-1?Q?gDD+V8lRUJvYtr9iyAtsfwuwRgokQNsiJInWCGOzM65FSU8gYfhSCaYbl7?=
+ =?iso-8859-1?Q?mSpTGoha5SuvNyFq1CJqoJ/hLlJpJ/nR9lSUH45+Kl5cZWF6i25jqmX0p5?=
+ =?iso-8859-1?Q?Y7xhZO73lRoW3jJJFnptCd9rF8umSwsvb/rrhXXHESmDhh2Q3v1qGpd0oh?=
+ =?iso-8859-1?Q?6elyg+ZxPxDWqUxr0hW9ixHfgNMnbbK59Co1tKkOBVK6F0BdzRYLiiIed4?=
+ =?iso-8859-1?Q?WceAGl1cxAJh9L7FOODZdVyhmMSOJEFVLKfKXbpb+GOQ0I/lSe+QsdyUV+?=
+ =?iso-8859-1?Q?ZTPRtrWWarE6tzuP2o005/9lMbEdD12upbMKuukmtT89kpU4PxXVy1Zj5O?=
+ =?iso-8859-1?Q?zdYa7M28E2+TFyNJNoDIW3MR+Q8K4eEh7022bxzk7JcbITli5KbD4WMdqj?=
+ =?iso-8859-1?Q?/n8rCSrQtMCiMlGuBQ7ph+xyh93s4o4tYGiYClPrMGfNS9v+xLW4+AOcC2?=
+ =?iso-8859-1?Q?TIXZZXTaGDvz6Q2eiUp/6r7odYdvXSArmzL/w6rpIYI2/wTSYdW/pdWzyr?=
+ =?iso-8859-1?Q?boIwqYBLJF5Quto+emNcWhWfciHYMOdDTSDsRexnTvUkhk2yhhoKsNZCTP?=
+ =?iso-8859-1?Q?Ujei8OkK3Xxsq1VuSFGmX6+K4pWekio0eRoo/XiLtviAFtzZ0+zi4OyHiN?=
+ =?iso-8859-1?Q?/EG5fjQyfKt8lZk5N/5Cc3b+iLPm0aKjCfSOYWm4Wwb0w4LF8aAIh/80RO?=
+ =?iso-8859-1?Q?Reu38ULhXKxQQYWEXK4zy2tH8F/ToJ2EXIsLupM8GfTQ6vDb4FFO0mG11d?=
+ =?iso-8859-1?Q?F8sN3LcnwNHWfLuRKklBNxfEl6w86i+Q0qRFfq6Ph7v6cUVcZUnXAtsr4C?=
+ =?iso-8859-1?Q?zZQJvovbzjl1NSHoJnmmKINMvB4/NFaRZzq06gKEuzEB9tEYYA5Q/qbDze?=
+ =?iso-8859-1?Q?O5H78Z6Oa4PCbOUJZY0vhDdtJn6qEM8kXiONWitsdVENJ+xsDtZPI9VZJZ?=
+ =?iso-8859-1?Q?zl/UOVM6owsa690z5753EVQgOqwfZtWLtqSfd1LR5QSYNQwUwQyJKjypoy?=
+ =?iso-8859-1?Q?8RxXdeC+TZfcKwO0Bi93LBBN6iyOqwt0T7QYkuOt6F8FgaXAELnEUMdL+S?=
+ =?iso-8859-1?Q?0GYoFamy4DAjgLs3/3b2c6/WGY189sSsFYiWX50kV5XEgFPN0u9CFOeK7c?=
+ =?iso-8859-1?Q?kKzlwPW2YOxrdAXAUKPq6udogTnN+ZZ0Cx786eBpr9lg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6849.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?n2DawOIStHi39eqS3GAEBHeDL1c/1T8CNd74u1YmWPRLgEHeYCaX7A2iAy?=
+ =?iso-8859-1?Q?uLNLOFXOVQuQpIc5gygBKtPXm/8scoECCHzXxKSPUUXv9sKWxFbqkvNy/6?=
+ =?iso-8859-1?Q?MAQzkCeOLYJagRMDi483rkPhW9edNbJta3Tn03ghpVKvfxXn1w5Txs8VKU?=
+ =?iso-8859-1?Q?J1oZS6js64yECnU18WgI2jxJ+1LRsBM/5dYoD107F2VMMCh8bhYx/3mVXa?=
+ =?iso-8859-1?Q?rsfR3wEiK4wLk2MaIuEbah42ClUAaZ7/P2kBV/PqMFo5tkAIDOMaeGv9EH?=
+ =?iso-8859-1?Q?o3zHzrcoHcxeGJ0gbBcxMoukPjsorBvOFexLV90BqBe+79zJ9q8xytE5Qj?=
+ =?iso-8859-1?Q?84LRku5RU9wJUfztAztILTPBjq/tz7n+8uUFKvqMUdkILCsGjOptlaqJeH?=
+ =?iso-8859-1?Q?Z6SFvlFh1QW7eOF2rprOuhLlTp+RQd3xnBOd/wf2gnphX+sNn1VpzKsmKz?=
+ =?iso-8859-1?Q?ii8zkwhk+agJSSmdw2IXGrvsp5U8/UPAcLUy8j4+NTm18+KKyVslSFjGKH?=
+ =?iso-8859-1?Q?dRZ9kflzrB8GjbCHMoSWw/T6XsziQX7V2IwxITPNNnQkxIJR101hSx+70M?=
+ =?iso-8859-1?Q?i6CYyKtVAD8+pvxpZpTeOARd2neeF2yDaCqW9J4NkndjUCM28naZC/mcW6?=
+ =?iso-8859-1?Q?oPBGifTfhgpZI+lh9XACNOjSr9BWYAXi8Or/JnXxouHpBrMjmFb1kaVgY2?=
+ =?iso-8859-1?Q?UVvnQx5Ebq5+JGye5urvu5OLMtxl/ynf88WZpLSKHE5Mzh/DuvOZHtCR64?=
+ =?iso-8859-1?Q?n/9pT7JEQHoSeXYZNPszDC5zrd+4yN4hx/ZDOffbRA0xAB+eRn6V0Jndbs?=
+ =?iso-8859-1?Q?TAJJ300+cOwGcxiQNEnOpFcEMGkvBBMLgTbCnGtTJJZmpFw5vQzaMo8Jp5?=
+ =?iso-8859-1?Q?uhJXfLr2QW10J4IscYqi/IZxOtn52QJKLP6i19WqoGO5okmbs6zchfa2KT?=
+ =?iso-8859-1?Q?v920jx1X/hgFVTx67Q67cx1DjpjpA54o7B0HN0Z8vQqoWspWU5Qn/b2+vw?=
+ =?iso-8859-1?Q?J3Ynt0Fu9IOLKn5MnrJ3CZNiQqlPPbqIWofdBSO8AXuVVluxRr5uVWKQ66?=
+ =?iso-8859-1?Q?SKLNdr968l9pWgMIIN5MQKsW8ycMeWDp4YlWdc2o9AioMF8Ycd3QJGkaDL?=
+ =?iso-8859-1?Q?qUfu5SLLBF5L4aB4erwF3COhx7E5obBBb62H6hhl2Xia7SFOcKP4mvZT6J?=
+ =?iso-8859-1?Q?uF2jyc8I/pTEvpxEGYySIeHLe3TrVjL6WMaPmk1o+D5zt25LYHO8iPN73U?=
+ =?iso-8859-1?Q?2M5LSbPe2YALw4tNPBlQvSbulAGKq2QEN+l6ocUrL11ldjCW8jU4g0xtiO?=
+ =?iso-8859-1?Q?CjOZxrMj1AVXX9xyIexDub7JP0nPQwZq2Aa8OJlEq7T3g5fh8okC7PLe7W?=
+ =?iso-8859-1?Q?3uPvpcXfW+UkWYtJg70pQ8/pXYYU8BPAeXGuJN4W+qFKkuYr1272fmgeqW?=
+ =?iso-8859-1?Q?AbbBkfXF0lTTZOyKhH0mJN3GpcMYdSrEbraXI9C+y81rWHKrRcAut0Y+Cw?=
+ =?iso-8859-1?Q?VRdOpTiyIXj6cdXfsmPw5it0ayqokTY87r0SDTouEsVWSWNJHT9Ssouhbf?=
+ =?iso-8859-1?Q?RxC4uB2O+nQREb3InMRxDa45EExsPYCUf5ZPr3Gn06KN9Yd37YrXo4mEBu?=
+ =?iso-8859-1?Q?P9bBI3QM6qoRV/rq9HW1pQxoo1jv4FpckP?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-To: Matt Coster <Matt.Coster@imgtec.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
-	Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
-	Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <9c4f962d-6877-4a53-b0f3-218930f94e1e@imgtec.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250723182523eucas1p220449ccef4d32615f84483b37faff727
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
-X-EPHeader: CA
-X-CMS-RootMailID: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
-References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
-	<CGME20250623114436eucas1p1ab8455b32937a472f5f656086e38f428@eucas1p1.samsung.com>
-	<20250623-apr_14_for_sending-v6-5-6583ce0f6c25@samsung.com>
-	<9c82a6bc-c6ff-4656-8f60-9d5fa499b61a@imgtec.com>
-	<d154d2d0-3d59-4176-a8fb-3cb754cf2734@samsung.com>
-	<e1a3d854-93bc-4771-9b8e-1639ca57b687@kernel.org>
-	<d12fd4fb-0adb-40c4-8a0a-c685cd6327b3@samsung.com>
-	<27068fd3-92b5-402b-9f3c-fd786db56668@kernel.org>
-	<f25c1e7f-bef2-47b1-8fa8-14c9c51087a8@imgtec.com>
-	<491b69ce-5a2f-4df1-95af-9318bbe6c9b0@samsung.com>
-	<9c4f962d-6877-4a53-b0f3-218930f94e1e@imgtec.com>
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	IIZbw+atNJZSXNZtKDG43ZyBgnCA27LFVZ8whNz+Ph1PU9/fQAO4geMxN1/Sgvz+3aiEySywvRzYwbbM9Cy4iu9UkzN6OMhawL7KSpnSz7lin5TLj5471Hye7+sRC2xbwkcoQTofDTAlZJEVoTNG5x8xQv+5PiXE9Cowb4OTSxXuWIB64RVrWN+ITJG3b1g5KiC8v6zM9+pghtCLC7MsC6a1fH+DwLnMyHW1P3zyJpYEPHBYplBhF9FFr8CTaX4EbwYtxXwziTdmxe6k754PfcV1FfmTd4rAcldYAHAHQP33+NDN8l08Kw2a/zhFHFvp2ptoZMzA1Ngsrk8VaCIMGpVKxPANBrlzb4nmXyKIcFWQi4ZTulft25Mj5024KQWm4IIYoab64IknioiYsD8NAmvNA8lVMRNzILpOraVKkLpwtYDlcktpBBfqOThzVoM7FnG68hymD6BdnmKMpK26VvtEyF6oQaxoHjzUTCcab+eyjl89C0++Xr3fyDnQnZqQ4LFwcFvXGFQhE8ilYekxgsK681A1wRWHynPjJjSAaEPDMhlEyaAQqHKWaGYJZjaNIOVMZs0sp1AImnWRFIlOGJR2vALnnYu+GD6wQ6bf4F4AK2QKmfUcmAkb1S3AZkkA
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR04MB6849.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3544dd9b-d6f5-4be9-6f77-08ddca168a1f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 18:27:11.1343
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T/QTk44rtVop6V/MnTreGMWdsBQsGxEMrRlMq+nKM6/W6HWdn4DT1bxLOhjMWqIXe9TCQ3YNgSWySCcLPi2NXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6509
 
-
-
-On 7/23/25 18:50, Matt Coster wrote:
-> On 23/07/2025 17:26, Michal Wilczynski wrote:
->> On 7/23/25 11:45, Matt Coster wrote:
->>> On 25/06/2025 15:41, Krzysztof Kozlowski wrote:
->>>> On 25/06/2025 16:18, Michal Wilczynski wrote:
->>>>>
->>>>>
->>>>> On 6/25/25 15:55, Krzysztof Kozlowski wrote:
->>>>>> On 25/06/2025 14:45, Michal Wilczynski wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 6/24/25 15:53, Matt Coster wrote:
->>>>>>>> On 23/06/2025 12:42, Michal Wilczynski wrote:
->>>>>>>>> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
->>>>>>>>> specific GPU compatible string.
->>>>>>>>>
->>>>>>>>> The thead,th1520-gpu compatible, along with its full chain
->>>>>>>>> img,img-bxm-4-64, and img,img-rogue, is added to the
->>>>>>>>> list of recognized GPU types.
->>>>>>>>>
->>>>>>>>> The power-domains property requirement for img,img-bxm-4-64 is also
->>>>>>>>> ensured by adding it to the relevant allOf condition.
->>>>>>>>>
->>>>>>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>>>>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>>>>>>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>>>>>>>> ---
->>>>>>>>>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 9 ++++++++-
->>>>>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..9b241a0c1f5941dc58a1e23970f6d3773d427c22 100644
->>>>>>>>> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>>>> @@ -21,6 +21,11 @@ properties:
->>>>>>>>>            # work with newer dts.
->>>>>>>>>            - const: img,img-axe
->>>>>>>>>            - const: img,img-rogue
->>>>>>>>> +      - items:
->>>>>>>>> +          - enum:
->>>>>>>>> +              - thead,th1520-gpu
->>>>>>>>> +          - const: img,img-bxm-4-64
->>>>>>>>> +          - const: img,img-rogue
->>>>>>>>>        - items:
->>>>>>>>>            - enum:
->>>>>>>>>                - ti,j721s2-gpu
->>>>>>>>> @@ -93,7 +98,9 @@ allOf:
->>>>>>>>>        properties:
->>>>>>>>>          compatible:
->>>>>>>>>            contains:
->>>>>>>>> -            const: img,img-axe-1-16m
->>>>>>>>> +            enum:
->>>>>>>>> +              - img,img-axe-1-16m
->>>>>>>>> +              - img,img-bxm-4-64
->>>>>>>>
->>>>>>>> This isn't right – BXM-4-64 has two power domains like BXS-4-64. I don't
->>>>>>>> really know what the right way to handle that in devicetree is given the
->>>>>>>> TH1520 appears to expose only a top-level domain for the entire GPU, but
->>>>>>>> there are definitely two separate domains underneath that as far as the
->>>>>>>> GPU is concerned (see the attached snippet from integration guide).
->>>>>>>>
->>>>>>>> Since power nodes are ref-counted anyway, do we just use the same node
->>>>>>>> for both domains and let the driver up/down-count it twice?
->>>>>>>
->>>>>>> Hi Matt,
->>>>>>>
->>>>>>> Thanks for the very helpful insight. That's a great point, it seems the
->>>>>>> SoC's design presents a tricky case for the bindings.
->>>>>>>
->>>>>>> I see what you mean about potentially using the same power domain node
->>>>>>> twice. My only hesitation is that it might be a bit unclear for someone
->>>>>>> reading the devicetree later. Perhaps another option could be to relax
->>>>>>> the constraint for this compatible?
->>>>>>>
->>>>>>> Krzysztof, we'd be grateful for your thoughts on how to best model this
->>>>>>> situation.
->>>>>>
->>>>>>
->>>>>> It's your hardware, you should tell us, not me. I don't know how many
->>>>>> power domains you have there, but for sure it is not one AND two domains
->>>>>> the same time. It is either one or two, because power domains are not
->>>>>> the same as regulator supplies.
->>>>>
->>>>> Hi Krzysztof, Matt,
->>>>>
->>>>> The img,bxm-4-64 GPU IP itself is designed with two separate power
->>>>> domains. The TH1520 SoC, which integrates this GPU, wires both of these
->>>>> to a single OS controllable power gate (controlled via mailbox and E902
->>>>> co-processor).
->>>>
->>>> This helps... and also sounds a lot like regulator supplies, not power
->>>> domains. :/
->>>
->>> Apologies for taking so long to get back to you with this, I wanted to
->>> make sure I had the whole picture from our side before commenting again.
->>>
->>> From the GPU side, a "typical" integration of BXM-4-64 would use two
->>> power domains.
->>>
->>> Typically, these domains exist in silicon, regardless of whether they
->>> are exposed to the host OS, because the SoC's power controller must have
->>> control over them. As part of normal operation, the GPU firmware (always
->>> in domain "a" on Rogue) will request the power-up/down of the other
->>> domains, including during the initial boot sequence. This all happens
->>> transparently to the OS. The GPU block itself has no power gating at
->>> that level, it relies entirely on the SoC integration.
->>>
->>> However, it turns out (unknown to me until very recently) that this
->>> functionality is optional. The integrator can opt to forego the
->>> power-saving functionality afforded by firmware-controlled power gating
->>> and just throw everything into a single domain, which appears to be
->>> what's happened here.
->>>
->>> My only remaining issue here, then, is the naming. Since this
->>> integration doesn't use discrete domains, saying it has one domain
->>> called "a" isn't correct*. We should either:
->>>
->>>  - Drop the name altogether for this integration (and others like it
->>>    that don't use the low-power functionality, if there are any), or
->>
->> Hi Matt,
->>
->> Thanks for the detailed explanation, that clears things up perfectly.
-> 
-> I'm glad I could get to the bottom of this one, it was bothering me too!
-> 
->>
->> I agree with your assessment. Dropping the power-domain-names property
->> for this integration seems like the cleanest solution. As you pointed
->> out, since the OS sees only a single, undifferentiated power domain,
->> giving it a name like "gpu" would be redundant. This approach correctly
->> models the hardware without setting a potentially confusing precedent.
-> 
-> That seems reasonable. I was very much on the fence for this one, so
-> I'll happily go along with dropping the name altogether.
-> 
-> Just to make sure I understand correctly, the change here would be to
-> move "required: - power-domain-names" from "img,img-rogue" to every
-> conditional block that constrains the number of domains?
-> 
-> Can we add negative constraints in conditionals? Then we could add
-> "power-domain-names: false" to the "thead,th1520-gpu" conditional block
-> alongside "power-domains: maxItems: 1".
-
-Yeah the diff with v7 would look like so:
-diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-index 263c40c8438e..338746f39cbb 100644
---- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-+++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-@@ -89,6 +89,11 @@ allOf:
-         compatible:
-           contains:
-             const: img,img-rogue
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              const: thead,th1520-gpu
-     then:
-       required:
-         - power-domains
-@@ -100,11 +105,12 @@ allOf:
-           contains:
-             const: thead,th1520-gpu
-     then:
-+      required:
-+        - power-domains
-       properties:
-         power-domains:
-           maxItems: 1
--        power-domain-names:
--          maxItems: 1
-+        power-domain-names: false
- 
-   - if:
-       properties:
-
-
-This change ensures power-domain-names is required for all img,img-rogue
-devices, except for thead,th1520-gpu. For the thead specifically,
-power-domains remains required, but power-domain-names is explicitly
-forbidden.
-
-> 
->>
->> To follow through on this, I assume we'll need to adjust
->> pvr_power_domains_init() to handle nodes that don't have the
->> power-domain-names property. Does that sound right to you?
-> 
-> You should get away without making any code changes here, since we
-> already shortcut on "domain_count <= 1" to just allow the pm_runtime to
-> deal with the single (or missing) domain directly.
-
-Great !
-
-> 
-> If we ever start controlling the individual domains ourselves from the
-> kernel (rather than just ensuring they all come on and off in the
-> correct sequence), we can add checks/handling for the no-name case then.
-> 
-> Cheers,
-> Matt
-> 
->>
->>>  - Come up with a new domain name to signal this explicitly (perhaps
->>>    simply "gpu")? Something that's unlikely to clash with the "real"
->>>    names that are going to start appearing in the Volcanic bindings
->>>    (where we finally ditched "a", "b", etc.).
->>>
->>> Cheers,
->>> Matt
->>>
->>> *Yes, I know that's what we said for the AXE-1-16M, but that tiny GPU is
->>> the exception to the rule; AFAIK it's the only one we've ever produced
->>> that truly has only one power domain.
->>>
->>>>
->>>>>
->>>>> This means a devicetree for the TH1520 can only ever provide one power
->>>>> domain for the GPU. However, a generic binding for img,bxm-4-64 should
->>>>
->>>> If this was a supply, you would have two supplies. Anyway internal
->>>> wirings of GPU do not matter in such case and more important what the
->>>> SoC has wired. And it has one power domain.
->>>>
->>>>
->>>>> account for a future SoC that might implement both power domains.
->>>>>
->>>>> That's why I proposed to relax the constraints on the img,bmx-4-64 GPU.
->>>>
->>>> This should be constrained per each device, so 1 for you and 2 for
->>>> everyone else.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>
->>>
->>
->> Best regards,
-> 
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+From: hch <hch@lst.de>=0A=
+Date: Tuesday, July 22, 2025 at 23:11=0A=
+>> By "let's leave this in", I thought you were referring to my patch. But =
+now that I re-read=0A=
+>> it, seems like by "failing a get_log page is fine" you probably meant to=
+ let the driver=0A=
+>> issue a get_log for LID=3D2 and fail.=0A=
+>=0A=
+>Yes.=0A=
+=0A=
+>> Process wise, can you ignore this 2/2 patch and we call this patch-set d=
+one?=0A=
+>=0A=
+>That's what I've done.=A0 Patch 1 is queued up in the nvme-6.17 branch.=0A=
+=0A=
+Yes, I already pulled it. Thank you Christoph!=0A=
+=A0=0A=
+-Kamaljit=
 
