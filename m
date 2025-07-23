@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-741800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34431B0E918
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B5AB0E91F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30BE53AC6C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE0B1C86D1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F060D246BAC;
-	Wed, 23 Jul 2025 03:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EAE246BB6;
+	Wed, 23 Jul 2025 03:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PW4sntQk"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tzRkD6qf"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79C81EB9FA;
-	Wed, 23 Jul 2025 03:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390032459F8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753241494; cv=none; b=odsaSYwm7OODfvnSE0IVtcCH/p1ZTFJI50elJ9F5TbXtR5oSmj7OXk3FzrRG4CTdJYE4zpjG8kDe8tKc5owxDh0PAi9YEfPQlD1hvluS94zx+cxtb7DJKZ/NIzOOluvl21l0pao0B/xyDShjEH8Bin/j5RTMZhMTV5GuX/KqYr8=
+	t=1753241524; cv=none; b=pepQ7nUKJlNV/wCRAvl0FnabcWcg00pI8Sao5XQe0LUWcBv0OZHmoQoP0FOb+InxO0wJB9KsKk8L2uv+UnINgsAwWKKT90ngixyb/YxeHwo3yamRXwZpehcEA+7WhRn/8tWxcQHg1d9mgCMY8y2VluZyBZnyiYf67zcppQwDJ1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753241494; c=relaxed/simple;
-	bh=6bCQcolvuibuBF306pHwBMIQKL09hFn4GKG6NZNGu2Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oDQLETma14ogtgPZJSOUElk4pqcxT+VRF+FWQ/TazsaF8fjIagaRuErndEu5LSEY0FQ5BXF9qq3GzIVLSNSKR1Tv01I+lUxFuqrXqkdtvfL4TI6Mj23uiNrmN5EhvG4zg46Lze2PBEAQ6cwZzA6117MEAhb03bew6b75we0zN20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PW4sntQk; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753241483; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=qNM2R76KG/iWIUpD/7vKxG7buUzQcrBiSdbH8d5CUGU=;
-	b=PW4sntQkg8leU2UhEo2mAVTMFVR9a3musM5PRVsRgS0iX9Y7U4bzH5KinhE7a3f+hvoJieDzfz2Npc3f7Cpl9VkCakXbxMCpZOPQMkXRCYhWks5aSmJNQ0MHA/e7FMndmH2v51E7k5sUZXxHbJp7yItXZisbfp+eJE9aLm3Nw6E=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WjZukoU_1753241468 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 23 Jul 2025 11:31:21 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: rostedt@goodmis.org,
-	lukas@wunner.de,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	helgaas@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	mattc@purestorage.com,
-	Jonathan.Cameron@huawei.com
-Cc: bhelgaas@google.com,
-	tony.luck@intel.com,
-	bp@alien8.de,
-	xueshuai@linux.alibaba.com,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	oleg@redhat.com,
-	naveen@kernel.org,
+	s=arc-20240116; t=1753241524; c=relaxed/simple;
+	bh=gluhea+9Q4zXLUk0JeIwrEY7xnmNHN7GWK8C7nGilAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Dw/KD1GHmSCRT5JDL4viRQnxE/1LfQ9S5Kt3A+S/dcV6AsKBcLE7a87MqWdOo6WX59oFn7xwdkdZ/TWgWlCh2YkfnSWcYfastYkl+SoQZ1ociDwNJMgTVSzC4gUriuoBUfz5kx8ft6WBsRmsD/f/LrfwOVuZKAuFLNMXxXxafBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tzRkD6qf; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753241509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dPzrBOWfFfkNAKrMd58E0JJGQXeyfS1QZoVdfNZC5BY=;
+	b=tzRkD6qfYJcYFZ3JprPuyyeC0H2igHpoBbr1Jc8WUQ+QmobrBScZRd18PanLL+pimrSgct
+	UffF2NKy8HIaXSDma/+8W29AWIt80M4uP2EUQ4t6RivvHyoEirL6D1irpWtY5B7vD0Q+SV
+	8rN/baa2fXg7r6h69lr0nnqHPINhuXc=
+From: Tao Chen <chen.dylane@linux.dev>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
 	davem@davemloft.net,
-	anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	tianruidong@linux.alibaba.com
-Subject: [PATCH v9 0/2] add PCI hotplug and PCIe link tracepoint
+	kuba@kernel.org,
+	hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v3 2/3] bpftool: Add bpftool-token manpage
 Date: Wed, 23 Jul 2025 11:31:06 +0800
-Message-Id: <20250723033108.61587-1-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+Message-ID: <20250723033107.1411154-2-chen.dylane@linux.dev>
+In-Reply-To: <20250723033107.1411154-1-chen.dylane@linux.dev>
+References: <20250723033107.1411154-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-changes since v8:
-- rewrite commit log from Bjorn
-- move pci_hp_event to a common place (include/trace/events/pci.h) per Ilpo
-- rename hotplug event strings per Bjorn and Lukas
-- add PCIe link tracepoint per Bjorn, Lukas, and Ilpo
+Add bpftool-token manpage with information and examples of token-related
+commands.
 
-Hotplug events are critical indicators for analyzing hardware health, and
-surprise link downs can significantly impact system performance and reliability.
-In addition, PCIe link speed degradation directly impacts system performance and
-often indicates hardware issues such as faulty devices, physical layer problems,
-or configuration errors.
+Suggested-by: Quentin Monnet <qmo@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ .../bpftool/Documentation/bpftool-token.rst   | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 tools/bpf/bpftool/Documentation/bpftool-token.rst
 
-This patch set add PCI hotplug and PCIe link tracepoint to help analyze PCI
-hotplug events and PCIe link speed degradation.
-
-Shuai Xue (2):
-  PCI: trace: Add a generic RAS tracepoint for hotplug event
-  PCI: trace: Add a RAS tracepoint to monitor link speed changes
-
- drivers/pci/hotplug/pciehp_ctrl.c |  33 +++++++--
- drivers/pci/hotplug/pciehp_hpc.c  |   5 +-
- drivers/pci/pci.c                 |   2 +-
- drivers/pci/pci.h                 |  12 ++-
- drivers/pci/pcie/bwctrl.c         |   4 +-
- drivers/pci/probe.c               |  10 ++-
- include/linux/pci.h               |   1 +
- include/trace/events/pci.h        | 119 ++++++++++++++++++++++++++++++
- include/uapi/linux/pci.h          |   7 ++
- 9 files changed, 177 insertions(+), 16 deletions(-)
- create mode 100644 include/trace/events/pci.h
-
+diff --git a/tools/bpf/bpftool/Documentation/bpftool-token.rst b/tools/bpf/bpftool/Documentation/bpftool-token.rst
+new file mode 100644
+index 00000000000..d082c499cfe
+--- /dev/null
++++ b/tools/bpf/bpftool/Documentation/bpftool-token.rst
+@@ -0,0 +1,64 @@
++.. SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++
++================
++bpftool-token
++================
++-------------------------------------------------------------------------------
++tool for inspection and simple manipulation of eBPF tokens
++-------------------------------------------------------------------------------
++
++:Manual section: 8
++
++.. include:: substitutions.rst
++
++SYNOPSIS
++========
++
++**bpftool** [*OPTIONS*] **token** *COMMAND*
++
++*OPTIONS* := { |COMMON_OPTIONS| }
++
++*COMMANDS* := { **show** | **list** | **help** }
++
++TOKEN COMMANDS
++===============
++
++| **bpftool** **token** { **show** | **list** }
++| **bpftool** **token help**
++|
++
++DESCRIPTION
++===========
++bpftool token { show | list }
++    List BPF token information for each *bpffs* mount point containing token
++    information on the system. Information include mount point path, allowed
++    **bpf**\ () system call commands, maps, programs, and attach types for the
++    token.
++
++bpftool prog help
++    Print short help message.
++
++OPTIONS
++========
++.. include:: common_options.rst
++
++EXAMPLES
++========
++|
++| **# mkdir -p /sys/fs/bpf/token**
++| **# mount -t bpf bpffs /sys/fs/bpf/token** \
++|         **-o delegate_cmds=prog_load:map_create** \
++|         **-o delegate_progs=kprobe** \
++|         **-o delegate_attachs=xdp**
++| **# bpftool token list**
++
++::
++
++    token_info  /sys/fs/bpf/token
++            allowed_cmds:
++              map_create          prog_load
++            allowed_maps:
++            allowed_progs:
++              kprobe
++            allowed_attachs:
++              xdp
 -- 
-2.39.3
+2.48.1
 
 
