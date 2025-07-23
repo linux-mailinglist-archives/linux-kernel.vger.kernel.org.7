@@ -1,199 +1,165 @@
-Return-Path: <linux-kernel+bounces-742360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EE6B0F0A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CA6B0F0AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DE7179571
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78201C85462
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDA029B8C0;
-	Wed, 23 Jul 2025 11:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56C52DC348;
+	Wed, 23 Jul 2025 11:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I6MV5ZZv"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCkNJQvE"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E16F277CB8;
-	Wed, 23 Jul 2025 11:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150E8836;
+	Wed, 23 Jul 2025 11:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268448; cv=none; b=u3Gey8itXxzYw0SELucJ7TA9Sjh8HZtI3exKMJFt/2kGgTbe6WJZ6L5sEMjQdZJKtgCjvRVLBWfy582CNSlR03TiAV/Oovm6g3TuL/TERypYcewNBVvzeV88V3HLZck+isWP9ra8/aw76ilUQ8xNM4x9Q3nSFd+84LkpU7vaB4c=
+	t=1753268455; cv=none; b=ZvX7J1dTzjF0Vl6TGDX4i3D7INp27dx2QbyBu5LLqZq1Qrz9fU2qCGLobTDtK7Q6EE/CCD6T+ftqRinmmOLQkKupvqDhxx7mnG/CHQsADDGY3dbaaFVgIps5yGYMl6+fYuXOrN8kHYqzE/3d/upf7TGHrjZiuvqrqMpiktB1mVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268448; c=relaxed/simple;
-	bh=XFKlGoRDNIP9xHezYy6FedqnnzH7yQlAfi74H36rk5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnn18QloQtb+9ReJ8MHr3PeT86vZx1kVh2NX/NcbwJCs8cqOkoclawEsWHi3CWK7/PCzJ9aoaoKz5EVkt1ZardvLdfusq865Si7bvi/HFnVtZQxEkO0P1j8efeWcx4Brl4uv78UFQwI2acEp8pq6W7pfF8URjR0Gn9JY0qXZGV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I6MV5ZZv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9e34g028685;
-	Wed, 23 Jul 2025 11:00:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rXyY98
-	gBFsKNIUwm61q4RC5iDzASeVtBCRo/LxrSEvc=; b=I6MV5ZZv9n9cYCf8R+K924
-	A7bq/OnQu7Th26ym7jCug8MQcHa771Ps3g3FoDqyvhZGZhGDglSp8/l0sTgzRJmk
-	s/KAR3Bah2eyB03U9fS2RhWwM3R7Oa5sMN+r6lJuZ4d6mhah+US5j2Ac5wWZp1qt
-	YjATeZ3Y1T34ktuGv/f7qMO6JGTI4HRT5hYbvH5zi671fe2g0k/84Bq9W9WisVAM
-	rw0DSGMgb9oXoM1DtyBXJ+ZE/PzC1z0TRefMbghV69ORHTbd9JvZV2GJXDaeqFUa
-	VeyP24ow73n/mfYkwcv2BakCfIYAPEUkbUQlmEwxvOhwk5ONFzCMNxcCbl3N6aVw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdyk0r7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 11:00:25 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56NB0LTb005675;
-	Wed, 23 Jul 2025 11:00:25 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdyk0qx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 11:00:25 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56N86YaI004133;
-	Wed, 23 Jul 2025 11:00:24 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8fxn7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 11:00:23 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56NB0NSC21365436
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 11:00:23 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 25BAC58060;
-	Wed, 23 Jul 2025 11:00:23 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7FFA658063;
-	Wed, 23 Jul 2025 11:00:19 +0000 (GMT)
-Received: from [9.204.206.224] (unknown [9.204.206.224])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Jul 2025 11:00:19 +0000 (GMT)
-Message-ID: <97289b39-ca4b-47ac-af81-c5223932ff63@linux.ibm.com>
-Date: Wed, 23 Jul 2025 16:30:18 +0530
+	s=arc-20240116; t=1753268455; c=relaxed/simple;
+	bh=bMahuYUYM6/64hnLQulgIzsZOf3xlVVH4Q9fDdEtIFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pp1VwUatGykJH4pLOJIfAKc2D0lGF0lt5Dd8mdU/fzOKEN5TXm3hLM6akkuhIRELAT9fFFf2Lk6XTvSZGhPMahy81iijSqUbTLcLm/okM3BvUw+Lq6HXxg2liSsvP0i5VUSl6/uAbi4McTdZ8/8Dyb5abQqNBbB2qNTbFgapnLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCkNJQvE; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-455b00339c8so46958095e9.3;
+        Wed, 23 Jul 2025 04:00:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753268452; x=1753873252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=stallE/vzxsBh3c9kZVq7u8ek21pHjIuCENjScXlQNU=;
+        b=mCkNJQvEFXarwNsFprXSUxYoFzoBN5sdUETlIKl2yN0z8dzA+0C3/cTlVqcPoxzCUS
+         55JuTh7Gex9iaWlA27JamkilqUh7OEM0azyKnqauYb1QtVANtt7F88OAbR3ZqKKbPt3Q
+         XuyjQEHJRH5ZokwyzkPu7r8MVpKcBXeQOvNWUntG1h/WXFbXib0uW/DfWi7AsgOSC+2W
+         81zYYkvOWFDeL0ajwFeKchfR10LvPKk3D4WfyFp4GUNFrx+/eGj/biW4cfRPBNNHOHf6
+         Ls9b3IoR1mr3L90ukWHRbmxRLTW8yTWEJhRN68lkyQCQJJAQHoNKfjXL97rl8+TJL9tl
+         GqTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753268452; x=1753873252;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stallE/vzxsBh3c9kZVq7u8ek21pHjIuCENjScXlQNU=;
+        b=mGfehKWYPcBybfeZrZWMBAyvvZkGf7HUKzfvDBfNRwjNIoghfXoS3jAaERccvCEN2F
+         d1Zdgkw8I0rOLgmyeQ7r4rtFjHUIpfszEVWqWwwTs7qMiKRhV+F+sUAQQujXY01KWZmo
+         lksycLUNGisEc3KtOyXc9lUalwvzhLRAXFkTU38hib09xjbbWaIGNT0H7hZ9Ti2MDcmk
+         ZVRdJyZAU6auTJBpCr54SC2jddanX5lwm/Lg5cY4EdidywQGJc/1p106vNlx7uxoUtkz
+         seT6LuDVEXubfw7GBdfzXq8wnWtCvudL/aI6zZ2+qjY2sNh1do+zJjjGqndad/c7oBwW
+         NbRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Xk/I7WyXwLdA2dBgaryWvcX1iFs95pTFOeD7QEOvMMfgCUQCguLST0n6LZ03TCGaIalaoHiC@vger.kernel.org, AJvYcCWph+3+3pGGBRfkhyJ24zn7xMlsZgoXdC1Fr6xVBPW1Sqxgb+RUWIqohL2nEv8BOJsckhAUKmMSOe9HfWke@vger.kernel.org, AJvYcCXEqmL6Szn48VjRcVQHjq8e49Gk+HIQX5xyLjR/g7tJrt2T3E8vD7PmlAf7DaYlrJ8WCfwJ1LbHp4POjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsdbtXjwxzrCnlhGShkVbNu0WuZPYNEBXp14nzNsLeRX7T9LKN
+	iCd4RxVBuieSr3k1HZWwwxgrcycMD73d+hpkfAIhtFL84ygKTEYwSh+A
+X-Gm-Gg: ASbGncu5DORANaaFqbWhKT/Tn7YRMDhlL9aRZNUPg//TE6czComhqIkCyOf7w1rM5vX
+	sHeXnH8PsgJ4P1hnvEK4UTBgsCdyP5wne8jtl3QCpbD6ZX6+XMn5j4aG51sIiVOc1QlcyfAcfQl
+	YgHXUDIdxIvO867XxMFsm5QllQDk5+8Wuoi1pc862TfCAfQvfsCCAsPuWSrJPPmax0k0N9wKMdQ
+	PLoLF7+Ma2AkDpt8r73yhBFzAHpRrGS9VuWfbRqr+622JGc+jJ0dL/0sSVBnY6gKQk8FkC033+H
+	2t24laDzEx/XKlZ5c2LCHjcfx8wDaiXq7+Q7tkne9sBct2zMeQWBQySlLYuaVhCog7d4qGY6qQf
+	CKc5AgfnNmB9DpLYsarg1Xa31F/w4eFc=
+X-Google-Smtp-Source: AGHT+IFeylv5DxY9J/rJ1xIOfkPYVeNtwo6o2ATJVK60KjhMryniQO9VztIJxYyMrYgGrOndtZr1YA==
+X-Received: by 2002:a05:600c:4509:b0:456:133f:a02d with SMTP id 5b1f17b1804b1-45868d2dd64mr20531965e9.17.1753268451619;
+        Wed, 23 Jul 2025 04:00:51 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:f4f0:900:dbce:b6e:fb8b:9dcf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691ab836sm20061245e9.25.2025.07.23.04.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 04:00:51 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: envelsavinds@gmail.com,
+	jirislaby@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] HID: multitouch: fix slab out-of-bounds access in mt_report_fixup()
+Date: Wed, 23 Jul 2025 12:00:36 +0100
+Message-Id: <20250723110036.24439-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] PowerNV PCIe Hotplug Driver Fixes
-To: Bjorn Helgaas <helgaas@kernel.org>, Michael Ellerman
- <mpe@ellerman.id.au>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        christophe leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Shawn Anastasio <sanastasio@raptorengineering.com>,
-        Timothy Pearson <tpearson@raptorengineering.com>
-References: <20250722204704.GA2815491@bhelgaas>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <20250722204704.GA2815491@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3Nm6biQkwCC6kDwcAJfurgg3QHzgi2LN
-X-Authority-Analysis: v=2.4 cv=XP0wSRhE c=1 sm=1 tr=0 ts=6880c0c9 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=1pD9pYlTiUhiYWAN9AsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: Wh94iUv_xNberR8-A23dJ-8HaY003zBx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5MCBTYWx0ZWRfX+FSqIcfZ5YmY
- K8vjJImsB2oiS+he4B+1JzHzyhSpRQ6FxkySAjN3uS9PnVyVDPvA5m8ZK6qJrZmfifPINNQyqTd
- 3xnKwrGcCTEPjCgpatpm7w86UniY+QbuWFYNixHIARf61rCz+DPEYIXYgD5Rg5VfbOOu1GKOLuB
- zxexJMpOORGwkxBUndvan/F9S3BqvPcckbCs1Elc7beI5Fro4xVTAE0xTL/mWz38qvMU4rzjgc9
- 2WHwwy1XmY6CEyrsEyruazDROq0/g8MCrAqTpcVOEXaxps6QNGwdlDSQ+oZxDvbqa2S60owJy/X
- bPFUv5iSWs0pywB3ceZ0EPbokt687c1htlDU7o3rODz1H4AOeGygpEb2W1RH20xShCQ80EuadjF
- GgT1Z69X1zsSexugWL/Rnpf0V9BYl4CdfHpqD/3IGZgFmCAw2bCnAO90OJHco4d9GgZasYuB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
- suspectscore=0 clxscore=1011 malwarescore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230090
+Content-Transfer-Encoding: 8bit
 
+A malicious HID device can trigger a slab out-of-bounds during
+mt_report_fixup() by passing in report descriptor smaller than
+607 bytes. mt_report_fixup() attempts to patch byte offset 607
+of the descriptor with 0x25 by first checking if byte offset
+607 is 0x15 however it lacks bounds checks to verify if the
+descriptor is big enough before conducting this check. Fix
+this bug by ensuring the descriptor size is at least 608
+bytes before accessing it.
 
+Below is the KASAN splat after the out of bounds access happens:
 
-On 7/23/25 2:17 AM, Bjorn Helgaas wrote:
-> [-> to: Madhavan, Michael, Mahesh; seeking acks]
-> 
-> On Thu, Jul 17, 2025 at 06:27:52PM -0500, Bjorn Helgaas wrote:
->> On Tue, Jul 15, 2025 at 04:31:49PM -0500, Timothy Pearson wrote:
->>> Hello all,
->>>
->>> This series includes several fixes for bugs in the PowerNV PCIe hotplug
->>> driver that were discovered in testing with a Microsemi Switchtec PM8533
->>> PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
->>> PCIe switches that don't correctly implement slot presence detection
->>> such as the aforementioned one. Without the workaround, the switch works
->>> and downstream devices can be hot-unplugged, but the devices never come
->>> back online after being plugged in again until the system is rebooted.
->>> Other hotplug drivers (like pciehp_hpc) use a similar workaround.
->>>
->>> Also included are fixes for the EEH driver to make it hotplug safe,
->>> and a small patch to enable all three attention indicator states per
->>> the PCIe specification.
->>>
->>> Thanks,
->>>
->>> Shawn Anastasio (2):
->>>   PCI: pnv_php: Properly clean up allocated IRQs on unplug
->>>   PCI: pnv_php: Work around switches with broken presence detection
->>>
->>> Timothy Pearson (4):
->>>   powerpc/eeh: Export eeh_unfreeze_pe()
->>>   powerpc/eeh: Make EEH driver device hotplug safe
->>>   PCI: pnv_php: Fix surprise plug detection and recovery
->>>   PCI: pnv_php: Enable third attention indicator state
->>>
->>>  arch/powerpc/kernel/eeh.c         |   1 +
->>>  arch/powerpc/kernel/eeh_driver.c  |  48 ++++--
->>>  arch/powerpc/kernel/eeh_pe.c      |  10 +-
->>>  arch/powerpc/kernel/pci-hotplug.c |   3 +
->>>  drivers/pci/hotplug/pnv_php.c     | 244 +++++++++++++++++++++++++++---
->>>  5 files changed, 263 insertions(+), 43 deletions(-)
->>
->> I'm OK with this from a PCI perspective, and I optimistically put it
->> on pci/hotplug.
->>
->> I'm happy to merge via the PCI tree, but would need acks from the
->> powerpc folks for the arch/powerpc parts.
->>
->> Alternatively it could be merged via powerpc with my ack on the
->> drivers/pci patches:
->>
->> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->>
->> If you do merge via powerpc, I made some comment formatting and commit
->> log tweaks that I would like reflected in the drivers/pci part.  These
->> are on
->> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=hotplug
-> 
-> Powerpc folks: let me know how you want to handle this.  I haven't
-> included it in pci/next yet because I don't have acks for the
-> arch/powerpc parts.
-> 
+[   13.671954] ==================================================================
+[   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
+[   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
+[   13.673297]
+[   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
+[   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
+[   13.673297] Call Trace:
+[   13.673297]  <TASK>
+[   13.673297]  dump_stack_lvl+0x5f/0x80
+[   13.673297]  print_report+0xd1/0x660
+[   13.673297]  kasan_report+0xe5/0x120
+[   13.673297]  __asan_report_load1_noabort+0x18/0x20
+[   13.673297]  mt_report_fixup+0x103/0x110
+[   13.673297]  hid_open_report+0x1ef/0x810
+[   13.673297]  mt_probe+0x422/0x960
+[   13.673297]  hid_device_probe+0x2e2/0x6f0
+[   13.673297]  really_probe+0x1c6/0x6b0
+[   13.673297]  __driver_probe_device+0x24f/0x310
+[   13.673297]  driver_probe_device+0x4e/0x220
+[   13.673297]  __device_attach_driver+0x169/0x320
+[   13.673297]  bus_for_each_drv+0x11d/0x1b0
+[   13.673297]  __device_attach+0x1b8/0x3e0
+[   13.673297]  device_initial_probe+0x12/0x20
+[   13.673297]  bus_probe_device+0x13d/0x180
+[   13.673297]  device_add+0xe3a/0x1670
+[   13.673297]  hid_add_device+0x31d/0xa40
+[...]
 
-Patchset looks fine to be. 
+Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+v2:
+- Simplify fix with a if-size check after discussion with Jiri Slaby
+- Change explanation of bug to reflect inclusion of a if-size check
 
-I am fine to take it via my tree since I already have your Acked-by.
+ drivers/hid/hid-multitouch.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Maddy
-
-
-> Bjorn
-> 
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 294516a8f541..22c6314a8843 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1503,6 +1503,14 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
+ 	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
+ 	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
++		if (*size < 608) {
++			dev_info(
++				&hdev->dev,
++				"GT7868Q fixup: report descriptor is only %u bytes, skipping\n",
++				*size);
++			return rdesc;
++		}
++
+ 		if (rdesc[607] == 0x15) {
+ 			rdesc[607] = 0x25;
+ 			dev_info(
+-- 
+2.39.5
 
 
