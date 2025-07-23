@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-742300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626EDB0EFAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:23:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DB4B0EFAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5767B1C84320
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4725679AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA94D28C2C5;
-	Wed, 23 Jul 2025 10:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85AF28C2A2;
+	Wed, 23 Jul 2025 10:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnUunGsB"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dSbZ/oLy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5F28A706;
-	Wed, 23 Jul 2025 10:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B789C28A706
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753266176; cv=none; b=E8bbJ831xr2NaDGXWHMFkWPSZOtKPpQULl479nv2sQ4s+BoE5R1+5oglhOncwukUS5+G47GkQubNfI0Wi3D6puJaN4pyw0ibQy6Oriqn5Zl2GuKE4QNfGT4Ety/BKDiEgmDmpJ1FQwX67nqqHqHOdWLi5cFSu8Zv4PB5xQT1rBY=
+	t=1753266184; cv=none; b=ncbghOZy6sS5EL54+jviojZe7NYDmD9LfVG96hCT7FtwZfreD3IahW/se9GFb5eBQnJ1SwEnRRiHUPpuDoGprhHCn+z7lmlcDsri+6RTWZr+QmrB5JcPOPnpWzsiyS1pVMNGJ7cH3H6k16LaASYeUXh9KwAm5vC9xctTnZCFpic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753266176; c=relaxed/simple;
-	bh=Bfx76TzIghN5u+qtfFanMhMreHrl+v998hIMT1LtYtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LnsuW76xrbLEeeyKarEeYd154tUoXNtzGsPnZWvASzWN5rK/Jq7mI65aWsD0jwWhqvdFAu05IjoWaUEYdu1QlimfWp9/zDEf5FPiwlXj/DGlIcqu3MOI6cebpAWAhh1ZreAa+3gPEh+cEZ+o966JHJ5zghkTQXWMQqMPHnSQHDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnUunGsB; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-312efc384fcso304148a91.3;
-        Wed, 23 Jul 2025 03:22:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753266174; x=1753870974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bfx76TzIghN5u+qtfFanMhMreHrl+v998hIMT1LtYtY=;
-        b=SnUunGsBSQ3xVZtDwOq7DhkgWnOcE2yEdNovOQsx5uDKQSNFBBPSzDn/aLyxV8qUwh
-         Bjem6d2NA925+sD5FIzk49URh1iQynIcuvMOQvO0UivWYlO4VG3P6ljS3Mp369AWCKI9
-         zRjxZCXKh9iXUuDJIszS7FaiMW8nRf5BxHSraf6BMXdC8wNUVmnriyzPgt0IMTA3KM2d
-         OCuH0Vdj44UUK0Wt4ECLRiuZFW83i1JO/hA1mmmze9RHSSP0UsTqRuI0OcKf3TzZIzt8
-         Tflp9E2OSPf3yPcoA93PHSHgtXYcILpGprMckPBZrXz0JM5gr9UYgzf3fLqOgu7nihRS
-         5blg==
+	s=arc-20240116; t=1753266184; c=relaxed/simple;
+	bh=bcyKLsB3eb4YS9fuhXTf5h3qyk92uF6p/Os/+PB4kTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=chumnFgywlFbPye7+n/peQHVXJYopmLsancEV7lScR/3L90odn4MoslAXxqKH5WyAeYvAeb+Rovuj16QzTONXYW3Kv6tWrOK5IlzrxThsJp3jQCg0rFTTERElMUSsl7zYUSvsUfdX+KJaAXhtHDB2NfiF0XEmT9CBoO0EQ7L5fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dSbZ/oLy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9Ps34031341
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:23:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A8pYxrLggsp/Pc9lqDpa3++CGRfIO5nj4AvygT3vYys=; b=dSbZ/oLyUawVCApG
+	U9s1cCPf1xaU5ffr1QouCSCReiTXpsSdXT7yImzX80Ko4E33y+KWyJl5y7B9zmS5
+	D2U2UwBB8crRwf3p/3/G//AUWbfC/MJa/EU5dDSNahH0XM6MGursDaTOnoT41VX3
+	ocl/Y16OYNQ4+WFYSx/gSyzZIKXHpeXcQs5uQB271ERjdxN9/O1rNtjPHXFw6z0n
+	4UzOtDr4+5w7tSTHVyINko/jOvcoEB2IihBvFnWmlWvjwYT5s/B3LblCndbDvFLh
+	LXymxsVGKKRdd6tKAMLHV5BmUU5Xv3YP7Vx+u6BWr5Y4jeKNNlzNPAclWLc0rl+L
+	ivewTw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048s4st7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:23:01 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6facbe71504so9864326d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:23:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753266174; x=1753870974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bfx76TzIghN5u+qtfFanMhMreHrl+v998hIMT1LtYtY=;
-        b=uEuRY1wFWujKuHtgAeoRfAOMdQHxAs/Och6q1vrRmPqyYi0Cu4GEEs4dyqbD3N//7i
-         6INiLTGrzd/kL12RHsQCzhatb7luSNk238dALjDNAayp6xzY4LIaa08utyiL5+5t54Qg
-         9nFmBwOez/uc+LXzJ2FFNsZqoFtQb4t0uzG9cV22oZugCwOrnoU3XuzT0tdL8czGYRHh
-         ZLoej795qS5s44zHnZHbd0i7GWx+nVN0To5ToFhCpLjqAxJQKTkU+z//k8WgdUC4fVC2
-         m8OApwD7IeqDbRYhv0yoEuKJDC43UUzMKBYNDgTufMgvEsTzmGG5D2kaXPSCYNhCGbCH
-         gwZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOtcbqiqZzawW/zY6ShJ6rPSU/xN7apBKKTDIeTe431Br2RB04fiL8GdQKgSBVhZTb7KWM/4ftxqR3SL+GwLw=@vger.kernel.org, AJvYcCW61yiD6jKI/sfdad9tVlhMXbb76JyfFAw9MQPtmsc7DAxJ9GAmSz3SiDm2z+SGaXTRzN5IankPHDU=@vger.kernel.org, AJvYcCWAZinCLX0lahdFfTnfy/xyCXVSbOmaGGirYfzhrtAEnxawqqkRw+a6w+lML9mqySiwjfNac3yVjRMVxf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxztQb0yxctmPIQzPJW/Lm8Ss3exQQ1M2/TKrUNl87PIBDSbw48
-	8bSoqc1z8SImfbN+BjPQ5zTHkXrPNr3mhMiPUgB6oBh8c+v3QSwsv9ZCgNzYH6LhPeQxxDEV9pO
-	FNm1NrYHsefHNIIY8D0aWltDGoOvzrEo=
-X-Gm-Gg: ASbGncsW5LNUWeBT2LkN/wSL1Cl/wCOUlsKTxfTfC5PSsZ1Kc9sok0IfBeifgNxHMyK
-	m3jkzdVgtAEgPDwF8lsdAT2f7TIo2V+Dyk7jJIdF5RAQjmjWcyGLvWG8uGoFpd0blTiqlfGEELS
-	NuW2/8kf5oJqhogJAGGe/FUZTkA2P0tbMM25hLSdTqtralGBE3d1inDbcSMXbXy9hKPD9dxsjUT
-	DGXzaoH
-X-Google-Smtp-Source: AGHT+IFi6YW4dYbxSTyxUF0XmLqEjSwekl8kW2Ctm7AWzZEoUFjLYSBfJlYB0wSz623jmdDt3hYkJgZn1duQNrEVjFw=
-X-Received: by 2002:a17:90b:4d08:b0:310:cf92:7899 with SMTP id
- 98e67ed59e1d1-31e50812d7cmr1562432a91.3.1753266173942; Wed, 23 Jul 2025
- 03:22:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753266181; x=1753870981;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A8pYxrLggsp/Pc9lqDpa3++CGRfIO5nj4AvygT3vYys=;
+        b=Oi5D93U1IgglnEv1gpxfhPErVV4D2EjvZRITOVADtiljoOuz/0dXb7lSN2bJN+stbd
+         nliP1335mXLK+VrFR3NbZvFZO5DKVHZ2fiwhZtXhBBqJzsr0V81T0uzjOswmYNj+RgYS
+         U2jrlorGpF+afigZISFkStislCnhGjNQLPd9dbj/FigA82/TYrGZEXXwb6U0D437GZ5M
+         xaa9Z4izpxwhVJf0VCBFYgAffvavsCYFZ29knrb0vWtyNCMZt8nQ9LUUdKvs2kaRLQHs
+         8Y8pPx3CemeMTzlyrncgEYCSn3Ym8f7hvnHeGOlK0YUPMJhGkau0xfLCQACpWl7HBGde
+         7ITg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrKqA1XntV3S5BeBNXocjoq9Wt8YdaYNOiJLjQx2Ae+3LQmIgWOEsbgqqQ8u7LorbUgxF0j03hypAse4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvxm3KFJ3sicibg30aPtlyAemIg3VvdUw06x2pRVywEyJ0X4D/
+	8eonzJ9YQm+k8mzImueLBaGP7+EaXBeZIeX4udqNx/HiDsSBH46yDhreSpw1MOcPA29PyWYoAk7
+	U51RtQZ0sR1fOzMns35kFcaxA++rUrpQu25gnjxacdzqGQdprwzXVEVKDJuG+mA+kXWw=
+X-Gm-Gg: ASbGncuz5dSyM3Qaq8LG6su4XwL++zquQelrvLW2I2Jpe/dhoStT+vLktKjsHnuGiTd
+	r9U+sXKH44c03h0zpIivLGtipu5HjdrYHKjdq6uU5imgcXex0vDu+mDedJrM2YZwjbPFdqqp2uO
+	BWTsyKOv25bGFaI+kkq4GOtoMlBRqOUdDgDVGvyIqJRgU+jVEnv8tXpQUBYlW9U62hfQ8mq0VZ8
+	t/WE/yvrF/83EXZ01kMV1ANowCoW7Boh6rgsLIz0MgmCOLZzcR0GRwBfU5OHWUmwFBdh/8TG1d5
+	bi81gsi3IgGJ67Jce6BWOCU5X5CiooBDx7Yv6PzAV7YFewd2UonCq5d36MmE8C52/3iZt16vne5
+	aPj2I5E3zpjjkMom9MA==
+X-Received: by 2002:a05:620a:28d3:b0:7e1:6d46:9bde with SMTP id af79cd13be357-7e62a1af38emr109301685a.11.1753266180888;
+        Wed, 23 Jul 2025 03:23:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbdAr1cLYfzXD8fo0X4Lr4Ip40OFyltSfV9KEUBwzI9EI09L7HNQRYzee7xRd+UpVLCkm7uQ==
+X-Received: by 2002:a05:620a:28d3:b0:7e1:6d46:9bde with SMTP id af79cd13be357-7e62a1af38emr109300185a.11.1753266180496;
+        Wed, 23 Jul 2025 03:23:00 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6caf9ad7sm1021436966b.164.2025.07.23.03.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 03:23:00 -0700 (PDT)
+Message-ID: <ffc28d89-ba45-480a-b664-9e4ffc50a3bc@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 12:22:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
-In-Reply-To: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 23 Jul 2025 12:22:40 +0200
-X-Gm-Features: Ac12FXwI7UlrHyralsnPXb4_3WAFplt92eODvFMDKQ-62apnp249DejCbkOTgLg
-Message-ID: <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Add initial interconnect (icc_path) Rust abstractions
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/17] drm/msm: Add support for IFPC
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-11-9347aa5bcbd6@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250720-ifpc-support-v1-11-9347aa5bcbd6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA4NyBTYWx0ZWRfXy/UwCUgV24vd
+ dbPwmXhFZp/cfDb0Jp3m1Xcw4hhX6eu9ea6B1Orc0P9KByPK1Wp1Tzg0ZdEoTjeXKMCBTzjlD21
+ FcuHkrTm/RoHXidzK0oghDgZojG82rtWEEHHWck7ety5LdBqDKrDjGv69QZwZCLnhEjYuTzyoya
+ qgmUd9R5IRlfUfrwVejdSL/Yq1Qlrq3yxMZq3J+nDycp06ZvQUgqqZv1/1HxhMdng3IyUxRNGmx
+ DDAFH10UyFpXEr3BsQPLF3CiF37LO4mu66hMAOoh5lnYQrP6bfCT0tMDAvdXzlLiRxQCYqVH9aK
+ 3HCcxEiBLJUSdhdjTvZfiHUTCFikcfo6Gw69de3LTB5YhjTZ4DqgKCt/QxEE23+ZHga395FjIQQ
+ jhhbwdq3/cuzVc1kqqGKM+V09Ano/pssPfSZfgthN1Rt5jQREeKa+g6Kwf39y64Zx9tthnC6
+X-Proofpoint-ORIG-GUID: L2mhQWmmSQjvfxZrZ8glY_9kZRHRs-qe
+X-Proofpoint-GUID: L2mhQWmmSQjvfxZrZ8glY_9kZRHRs-qe
+X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=6880b805 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=mXZsdZnO6U5RsJfdWwEA:9
+ a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 mlxlogscore=983 lowpriorityscore=0 suspectscore=0
+ spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230087
 
-On Tue, Jul 22, 2025 at 11:14=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.=
-org> wrote:
->
-> icc_path is in essence very similar to `struct clk`, so the newly
-> propsed bindings are understandably based on the corresponding
-> common_clk module.
-> This is the interconnect consumer part, with the corresponding ICC
-> provider changes coming in some near future.
->
-> I attached a sample driver making use of these, to ease any testing
-> or CI work (as the title says, please don't merge it though).
+On 7/20/25 2:16 PM, Akhil P Oommen wrote:
+> Add a new quirk to denote IFPC (Inter-Frame Power Collapse) support
+> for a gpu. Based on this flag send the feature ctrl hfi message to
+> GMU to enable IFPC support.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-Thanks!
+[...]
 
-The usual two main questions for new abstractions are whether the
-maintainers of the C side want to see this happen (and how will it be
-maintained etc.) and what users of the abstractions are expected
-upstream.
+> +static int a6xx_hfi_enable_ifpc(struct a6xx_gmu *gmu)
+> +{
+> +	if (gmu->idle_level != GMU_IDLE_STATE_IFPC)
+> +		return 0;
+> +
+> +	return a6xx_hfi_feature_ctrl_msg(gmu, HFI_FEATURE_IFPC, 1, 0x1680);
+> +}
 
-For the first part, some subsystems prefer to maintain it themselves,
-others prefer to have someone else lead a separate sub-entry in
-`MAINTAINERS` (e.g. "... [RUST]"), possibly with its own branch too.
+If this function is not used anywhere else, you may want to inline it,
+checking for the opposite condition
 
-Cheers,
-Miguel
+Konrad
 
