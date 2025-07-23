@@ -1,68 +1,80 @@
-Return-Path: <linux-kernel+bounces-741877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A261B0EA1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 529C9B0EA1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53DFF1C80D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1655A1C818BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7817219A9B;
-	Wed, 23 Jul 2025 05:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FDE2475C7;
+	Wed, 23 Jul 2025 05:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k1Fah8OQ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="nuvd4NNk"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A457523A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7ED1185E4A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753249003; cv=none; b=GhY63WjgBwqR+IWqlwLQYGcsJrjNI6aNLdOuXecf9FlJT4B8s3K4vMTMH4HI8ECkQ5PZM+WljozOVB3JN6TzYfkm+mUOWo7sC8aBFOrA7bsRSWMEZ90ptbOa+9vb3bbs+HA2Pv91bwv9xyqSeq4li9zxJxpzU2bhvFTi4BbYblc=
+	t=1753249071; cv=none; b=H9wroKqEtaxxpYcE1clYYsKWSys25Wbv6PF74XDjL557p03KAJEzjthBcOq3TWinNOjM3DAvKAG2S8MbGV5RiHy9b0kjtJeXLzj+Zn1fSPGRC0FhWqbZLgs2tWF4Gg56709LuGLR3CIyr4dZ+XS7+sCZsZcfYM6b2NRSwZsSciY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753249003; c=relaxed/simple;
-	bh=pOh6HAX5WXdcMDXnvHXu6ItbVCb/zUSxlocOG7DxtRo=;
+	s=arc-20240116; t=1753249071; c=relaxed/simple;
+	bh=jgmU0mVrM9TEWK9SDqyK12S6GaRiPg9G1If9CLN/p8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOOz9Xyl4Th5MIeWxYjf7xOkbzzGeP4L4c1/QjiKJRI6wWyqIV6K6xNLXYpju8lICJm1tHYOV0uoquw78e6LYv0oyzRBO85YTBexo47szZxSXC85dV2ujWf721DVr637JnLthtQzKQqlLb27dP3NNrPGABImgISpOoV0TuqL79s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k1Fah8OQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lriBSHQn9T3/tnkp6FVPWjsBUy6Y2i0Py2+kWACQ1EM=; b=k1Fah8OQgen41BR0+0qCE2zg76
-	nYycNUiXv8aREKUKtfwW7g6l8BOc3/rYwpkuRSgUq9QZxTrIvA6dqaS1pT7yrgAL0u56Zk2SxWwUY
-	R4M0h1oFfF1gSJjuyhekU+CSeoEVCPomDrE8r90q+m/KtvYR0c/9eqp+qQpdVdrnUsJBZ9c4V4S2W
-	kUPOUFNV1WgZDOFTYVkGMIm7r+9wYd+F1Bo8DZ0VteqXfubO2el+Hs5EVcRLSFWCKlhCK4GH1gbi6
-	O445Sg+YZM7Z4L7PfPGsOqStOXZ71DBTPC0HKOuq/OMTB3hj/B4ANkannEIc1eMcTuuRqkQs8lti4
-	WRMjlZJg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ueS9c-000000044LH-3hQv;
-	Wed, 23 Jul 2025 05:36:36 +0000
-Date: Tue, 22 Jul 2025 22:36:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add further core files to mm core
- section
-Message-ID: <aIB05LvNW9-VT82I@infradead.org>
-References: <20250616203844.566056-1-lorenzo.stoakes@oracle.com>
- <727b5e89-89d7-4abf-a93c-8d6f2cb2c438@redhat.com>
- <aFDm0YrbSAvXc5Wp@kernel.org>
- <33c605a6-2b89-4b40-ba80-ed2ca665ef5a@lucifer.local>
- <bdca2e2e-acdb-4ea5-9017-6c1a58353452@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XH6I1vHjBHRdFPU7ldr4p+euYTjQHIPyzX8gUqLU0het64YL87wt43kNz7U/twn5rrmJ4EIXhVdJtK1ckRnY612TLiPrCF3jcqFBRv7jkllkSwXMJdouSVoX2xZ1Zq9z1iDAxEYCLuopOasWMvBdmcFPe2IP6uZdWUGohUUmbpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=nuvd4NNk; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 80C4A1014A4A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:07:47 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 80C4A1014A4A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753249067; bh=jgmU0mVrM9TEWK9SDqyK12S6GaRiPg9G1If9CLN/p8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nuvd4NNkx9+OaWJx8MshqRM6HGFPCey7VmVboKOkbDftyBkdZPud0RFn8SnWFzEtt
+	 dupzPgNxoowLXB5IZhR6ulEonRR2v0VyilSdbojQeZP33hmNQfROUlRvE8x2Wetwd7
+	 TWuB1VNhN351k1gOh0+VwWFzwZ53Rl3ryenCN72Y=
+Received: (qmail 15488 invoked by uid 510); 23 Jul 2025 11:07:47 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.944097 secs; 23 Jul 2025 11:07:47 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 23 Jul 2025 11:07:43 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 4BA853414F2;
+	Wed, 23 Jul 2025 11:07:42 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 034231E81366;
+	Wed, 23 Jul 2025 11:07:42 +0530 (IST)
+Date: Wed, 23 Jul 2025 11:07:36 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: Haylen Chu <heylenay@4d2.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
+	elder@riscstar.com, inochiama@outlook.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, heylenay@outlook.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, unicornxdotw@foxmail.com,
+	jszhang@kernel.org, zhangmeng.kevin@linux.spacemit.com,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
+ recalc_rate callback
+Message-ID: <aIB1IPa9HBDh+Vns@bhairav-test.ee.iitb.ac.in>
+References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+ <aH7kjkC_YSEi7dFz@ketchup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,20 +83,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bdca2e2e-acdb-4ea5-9017-6c1a58353452@suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <aH7kjkC_YSEi7dFz@ketchup>
 
-On Tue, Jul 22, 2025 at 04:22:59PM +0200, Vlastimil Babka wrote:
-> It seems it only gained its only user in b739f125e4eb ("i915: use
-> io_mapping_map_user") but reverted a month later by 0e4fe0c9f2f9 ("Revert
-> "i915: use io_mapping_map_user"") all that in 2021.
+On Tue, Jul 22, 2025 at 01:08:30AM +0000, Haylen Chu wrote:
+> On Tue, Jul 22, 2025 at 12:37:10AM +0530, Akhilesh Patil wrote:
+> > Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+> > get correct rate entry. Follow .recalc_rate callback documentation
+> > as mentioned in include/linux/clk-provider.h for error return value.
 > 
-> Ideally i915 would be converted again with the revert reasons investigated
-> properly this time. Otherwise we should remove the thing.
+> Nice catch, thanks.
+> 
+> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> 
+> Here misses a Fixes tag. With this added,
+> 
+> Reviewed-by: Haylen Chu <heylenay@4d2.org>
+> 
+Thanks Haylen and Alex for the review. Sent V2 patch with Fixes tag.
 
-Yeah, someone needs to sort the i915 mess, and it's sad they just
-reverted things instead of trying to understand it.
-
-But until that happens the code is dead and should be removed.
-
+> > ---
+> >  drivers/clk/spacemit/ccu_pll.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+> > index 4427dcfbbb97..45f540073a65 100644
+> > --- a/drivers/clk/spacemit/ccu_pll.c
+> > +++ b/drivers/clk/spacemit/ccu_pll.c
+> > @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+> >  
+> >  	WARN_ON_ONCE(!entry);
+> >  
+> > -	return entry ? entry->rate : -EINVAL;
+> > +	return entry ? entry->rate : 0;
+> >  }
+> >  
+> >  static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -- 
+> > 2.34.1
+> > 
 
