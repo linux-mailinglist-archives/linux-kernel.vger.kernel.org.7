@@ -1,358 +1,221 @@
-Return-Path: <linux-kernel+bounces-741836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56400B0E98B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:18:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9DEB0E98D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDF14E8313
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:18:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D21E1C820A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBDA20FAB4;
-	Wed, 23 Jul 2025 04:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9703C2147FB;
+	Wed, 23 Jul 2025 04:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="pNqCtW0M"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4Ywp0M+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB702594
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B451820DD52;
+	Wed, 23 Jul 2025 04:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753244309; cv=none; b=TMULdA946UNcA68LqFJSZ5lJzqLC3UGBZEK0jT8G71ZxK1dRi1rVVP15qi3frs+xkqmW+GR160BQwkP1DZf7UFUdRsgW7j2yA/gVVmoc25EuXH2yNjded3iCH29YW+7XsOvsV8YwxKFvczdnY1ETql3SFgnyF6Nzf5bS7XBNGr4=
+	t=1753244347; cv=none; b=Vp0LFtIv0w+vgLZUR00HKd2j8O8fFJyCFW0vOg/6pvHUscDalQwTyEVIf5uSPZNH9Y9NmcZ+G2EhxmT5RzIET09ud0vb2OgW7Gc7kYPfp7Nnuhh0JVjhCPYcO7WFgDDGuBUNaT68gMPEAsC5FSFgIbi563Bd+4ghnE/7sqmPIQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753244309; c=relaxed/simple;
-	bh=WJ23vpzdRqE8SEbtzf8pS7/yeG7RDBCvQbMcNICOdvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nnkxGgIoNlEPwIg8CtuVTqf26877V6kmH+LgsDbbuGIMnwyg3E+PrBpkp6BIDftbgJ1duPABkLhAl+N6/BFxJmJXG/SeuztqRoA3eZHnS3eeU+HdLrdod9otZyhs3bkhHq7TlEF4niCeVPXA4pIwtOwOcWvf/wO08ER/U8h8YkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=pNqCtW0M; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748feca4a61so3430466b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753244306; x=1753849106; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1TaPjoUJwv9Etp1fT/nKK3BG4ePkhHW+sFnAWEuxVio=;
-        b=pNqCtW0MwTNn5TaGzJ0oES9FTNqwu49jcITAQ9PqOVpG8O7dfi4n+8uuQP/bLMs7RH
-         zcjLmJY7bsdj/3h4j+djadrA0r3CIx7zqluR9KDjF44aO2Qve0tMM/Btyf/Pb6udpFyZ
-         m00nI0hRv6i0uLPq/5V9LnsVBElTpqGzilUpuiSdT2t8VYu7BNBLVhYpu9PYO+PO2mcL
-         w2nvqodTk5FIH+qdBr0CKwaoG4jP0xVHqFsh4nWyBV0C8njCq7KNYB2caSGjYUeHioh9
-         9gQgPxZkK3wvcIekOi3rgXKkpzNoeC6areCUzbSwzpYWRGVG68segZdfv0tIdVcgcDgq
-         6aQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753244306; x=1753849106;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1TaPjoUJwv9Etp1fT/nKK3BG4ePkhHW+sFnAWEuxVio=;
-        b=BWjydbYJfDfEAUkIr9zdFLLtnAbofToHyEq5fjYqNzl2ZK5kf63mw6/SXyAIwXFay6
-         7sMw2QhwLjGpBJrY+om9DeAGx9LFSQo6kpsQb38x+vZDA4r42vt/dagiTAUStU3ko6cG
-         F+A6z4bv9St36asOWva0HbXaJZOB224QBBKSqWneqzcGmngtzkdgBbTuc98RxswiZOzk
-         UgEmMevwktDCqSCcPfMMXCE/v2TZfwIDketNtVXFCqE6lCPXcPYemSXzRjsERaGZC0sZ
-         P6gSL1G1LqE6624hP4O18QrSVx1k7RZ8XdvtWWkr72+20CZDTbks61CLk5pCCic9Ddqw
-         722Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPVEl4p4kQ7P9Xy3F+JoM8Dv3wvS9zHDoMVCVegF0KfC4B60pKNR8jzD3AAThli/82cdlzmMWei5K+mJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNmL8U38XAKkQ5Inc5LcBkRMnWsCan7h1hjq6T/nF1gx5adPyR
-	42WyfHm3Qx2Gjvz7p+cgyLwW1yHgsxSELT09JVOlXJ+UTPlPu0RtPixBMauUilzm2gs=
-X-Gm-Gg: ASbGncvmyxCOhHvE+RwFoCjz8vBjAY59YUk3CS3GsIMdJf2fDjQnnPuN21QygylHqOR
-	enC00Kbjgxfwz7L1S+HbKXVkld8BQP5d3mLgGwYUXIt92tElVRLsUtu+d94Audz6J5oK9Ecj5M7
-	MkUW3IkKJWnjDo+GvzMbGnO0EE/NFJTQ1pENYOQXmjiAevbgjoiHbzaQbEbt/0zUegojYNK5W18
-	lKiLKgLKc+ROERN7QuyTKcmrJHzDKb4USTX5tT2JvyHeaIc/AkGoniAnZ3h3RyxZl/j6pWRr7zi
-	ncV42vWN2J1e2Jytv+nea9w0SwYjowzHVNqXpYKvhZg9GYsqQ9OsnLi4izNvt0eqKvW0F6mcQfH
-	b9mAJo+rqkcU9BSDB845prurFV+7yo3tX
-X-Google-Smtp-Source: AGHT+IFA0YBcJMnJhHP3FPjc3REPEkZAG5QXhqFnyh6OJFA1c0QUKVHohKaPiDE95kjr2eXjEimzkQ==
-X-Received: by 2002:a05:6a00:4614:b0:740:a023:5d60 with SMTP id d2e1a72fcca58-760353db72fmr2543842b3a.19.1753244306301;
-        Tue, 22 Jul 2025 21:18:26 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2a88sm8770962b3a.23.2025.07.22.21.18.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 21:18:25 -0700 (PDT)
-Date: Tue, 22 Jul 2025 21:18:23 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Himanshu Chauhan <hchauhan@ventanamicro.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Mayuresh Chitale <mchitale@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	WangYuli <wangyuli@uniontech.com>,
-	Huacai Chen <chenhuacai@kernel.org>, Nam Cao <namcao@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yunhui Cui <cuiyunhui@bytedance.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Celeste Liu <coelacanthushex@gmail.com>,
-	Evan Green <evan@rivosinc.com>, Nylon Chen <nylon.chen@sifive.com>
-Subject: Re: [RFC PATCH 6/6] riscv: ptrace: Add hw breakpoint support
-Message-ID: <aIBij4hr3Jna8OjV@debug.ba.rivosinc.com>
-References: <20250722173829.984082-1-jesse@rivosinc.com>
- <20250722173829.984082-7-jesse@rivosinc.com>
+	s=arc-20240116; t=1753244347; c=relaxed/simple;
+	bh=GacNtb7sskwb36O4NWQBdsR5VCTCEGIjnMoDH5/Rf+g=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=M02vMJKBm7fe/RNWGqYt3ub2Nw1XhZ4j1YTlFkBBjcWQ0Tfsv2E3UpyM3/NGeBE659lbU9H2TXqCt48Akl8A1J2SoIGLvST1PLqKnYGaKJ8ocplt2EepwgYG7VIc/IZW74/0BBlAVLwW8QV6VCIpN5db+jxohlINteptaRDuIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4Ywp0M+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03AC9C4CEE7;
+	Wed, 23 Jul 2025 04:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753244346;
+	bh=GacNtb7sskwb36O4NWQBdsR5VCTCEGIjnMoDH5/Rf+g=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=n4Ywp0M+HOmdlM2E2S1SUOJyvHJFHYQoVbYrlxUQgtibf2i+wnBM6r3ufWFqFnjut
+	 6OvIniy+jzyYeK27UyZCdmNJKPC9zoSppxpwA5kbsWMwJMZot95doY54YCP6Zc4obb
+	 HPIg9aahsrcdeGtXWVh+mosSroHorTEQBX5c7HnBXNliSwVwE5EKHJkO/bBCwi0iQ1
+	 8wT9+2NDOwcKwA0bZflhf3hREsifLsJHJk1vvprGfkVYOXSaM4nbAO7ZzEcXxAWUkz
+	 /AD1kQ6eKF75vmjOezJc7/g7QtNpEXeRlfZiDqKtnBmXRF9LwfxelSD1Y7gjR0s4Km
+	 w9kWO4QZ2L+qQ==
+Date: Tue, 22 Jul 2025 23:19:05 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250722173829.984082-7-jesse@rivosinc.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ joel@jms.id.au, linux-arm-kernel@lists.infradead.org, 
+ andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org, 
+ devicetree@vger.kernel.org
+To: Donald Shannon <donalds@nvidia.com>
+In-Reply-To: <20250723014239.22667-1-donalds@nvidia.com>
+References: <20250723014239.22667-1-donalds@nvidia.com>
+Message-Id: <175324420395.1136488.7622581130155119218.robh@kernel.org>
+Subject: Re: [PATCH v6 0/2] Adding device tree and binding for NVIDIA
+ GB200-UT3.0b
 
-On Tue, Jul 22, 2025 at 10:38:29AM -0700, Jesse Taube wrote:
->Add ability to setup hw breakpoints to ptrace. Call defines a new
->structure of (ulong[3]){bp_addr, bp_len, bp_type} with
->bp_type being one of HW_BREAKPOINT_LEN_X and
->bp_len being one of HW_BREAKPOINT_X with a value of
->zero dissabling the breakpoint.
->
->Signed-off-by: Jesse Taube <jesse@rivosinc.com>
->---
-> arch/riscv/include/asm/processor.h   |  4 ++
-> arch/riscv/include/uapi/asm/ptrace.h |  3 +-
-> arch/riscv/kernel/hw_breakpoint.c    | 14 ++++-
-> arch/riscv/kernel/process.c          |  4 ++
-> arch/riscv/kernel/ptrace.c           | 93 ++++++++++++++++++++++++++++
-> 5 files changed, 116 insertions(+), 2 deletions(-)
->
->diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
->index 5f56eb9d114a..488d956a951f 100644
->--- a/arch/riscv/include/asm/processor.h
->+++ b/arch/riscv/include/asm/processor.h
->@@ -12,6 +12,7 @@
->
-> #include <vdso/processor.h>
->
->+#include <asm/hw_breakpoint.h>
-> #include <asm/ptrace.h>
->
-> #define arch_get_mmap_end(addr, len, flags)			\
->@@ -108,6 +109,9 @@ struct thread_struct {
-> 	struct __riscv_v_ext_state vstate;
-> 	unsigned long align_ctl;
-> 	struct __riscv_v_ext_state kernel_vstate;
->+#ifdef CONFIG_HAVE_HW_BREAKPOINT
->+	struct perf_event *ptrace_bps[RV_MAX_TRIGGERS];
->+#endif
-> #ifdef CONFIG_SMP
-> 	/* Flush the icache on migration */
-> 	bool force_icache_flush;
->diff --git a/arch/riscv/include/uapi/asm/ptrace.h b/arch/riscv/include/uapi/asm/ptrace.h
->index a38268b19c3d..a7998ed41913 100644
->--- a/arch/riscv/include/uapi/asm/ptrace.h
->+++ b/arch/riscv/include/uapi/asm/ptrace.h
->@@ -14,7 +14,8 @@
->
-> #define PTRACE_GETFDPIC_EXEC	0
-> #define PTRACE_GETFDPIC_INTERP	1
->-
->+#define PTRACE_GETHBPREGS	2
->+#define PTRACE_SETHBPREGS	3
 
-Why not use `PTRACE_GETREGSET` `PTRACE_SETREGSET` ?
+On Tue, 22 Jul 2025 18:42:37 -0700, Donald Shannon wrote:
+> Patch 1 adds the binding for the NVIDIA GB200-UT3.0b platform.
+> Patch 2 adds the device tree for the NVIDIA GB200-UT3.0b platform.
+> 
+> This is an Aspeed AST2600 based unit testing platform for GB200.
+> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
+> differences, additional gpio expanders, and voltage regulator gating
+> some devices.
+> 
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
+> 
+> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
+> Signed-off-by: Donald Shannon <donalds@nvidia.com>
+> ---
+> Changes v1 -> v2:
+>   - Changed phy-mode to rgmii-id [Lunn]
+>   - Removed redundant max-speed for mac0 [Lunn]
+>   - Fixed typo from gb200nvl to gb200 in Makefile
+> Changes v2 -> v3:
+>  - Fixed whitespace issues [Krzysztof]
+>  - Fixed schema validation issues from my end ( there are still issues
+>  with the aspeed dtsi file that are not related to this new dts)
+>  [Herring]
+>  - Reordered to follow style guide [Krzysztof]
+>  - Removed redundant status okays
+>  - Changed vcc to vdd for the power gating on the gpio expanders
+> Changes v3 -> v4:
+>   - Added changelog [Krzysztof]
+>   - Added nvidia,gb200-ut30b board binding [Krzysztof]
+>   - Removed unused imports
+>   - Reordered a couple other style guide violations
+>   - Added back in a couple needed "status okay"s
+> Changes v4 -> v5:
+>  - Resumed my patch after a pause
+>  - Don't plan to make this include of nvidia-gb200nvl-bmc due to some
+>  platform differences
+>  - Fixed io expanders that weren't gated by the 3.3V standby regulator
+>  - Fixed incorrect interrupt pin for one IO expander
+>  - Removed some IO expanders and I2C busses
+> Changes v5 -> v6:
+>  - Fixed subject line
+>  - Added missing gpio-key compatible type to buttons
+> ---
+> 
+> Donald Shannon (2):
+>   dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b  board
+>   ARM: dts: aspeed: Add NVIDIA GB200 UT3.0b board
+> 
+>  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts  | 1028 +++++++++++++++++
+>  3 files changed, 1030 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts
+> 
+> 
+> base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
+> --
+> 2.43.0
+> 
+> 
+> 
 
-> /*
->  * User-mode register state for core dumps, ptrace, sigcontext
->  *
->diff --git a/arch/riscv/kernel/hw_breakpoint.c b/arch/riscv/kernel/hw_breakpoint.c
->index 437fd82b9590..c58145464539 100644
->--- a/arch/riscv/kernel/hw_breakpoint.c
->+++ b/arch/riscv/kernel/hw_breakpoint.c
->@@ -633,7 +633,19 @@ void arch_uninstall_hw_breakpoint(struct perf_event *event)
-> 		pr_warn("%s: Failed to uninstall trigger %d. error: %ld\n", __func__, i, ret.error);
-> }
->
->-void flush_ptrace_hw_breakpoint(struct task_struct *tsk) { }
->+/*
->+ * Release the user breakpoints used by ptrace
->+ */
->+void flush_ptrace_hw_breakpoint(struct task_struct *tsk)
->+{
->+	int i;
->+	struct thread_struct *t = &tsk->thread;
->+
->+	for (i = 0; i < dbtr_total_num; i++) {
->+		unregister_hw_breakpoint(t->ptrace_bps[i]);
->+		t->ptrace_bps[i] = NULL;
->+	}
->+}
->
-> void hw_breakpoint_pmu_read(struct perf_event *bp) { }
->
->diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
->index 15d8f75902f8..9cf07ecfb523 100644
->--- a/arch/riscv/kernel/process.c
->+++ b/arch/riscv/kernel/process.c
->@@ -9,6 +9,7 @@
->
-> #include <linux/bitfield.h>
-> #include <linux/cpu.h>
->+#include <linux/hw_breakpoint.h>
-> #include <linux/kernel.h>
-> #include <linux/sched.h>
-> #include <linux/sched/debug.h>
->@@ -164,6 +165,7 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
->
-> void flush_thread(void)
-> {
->+	flush_ptrace_hw_breakpoint(current);
-> #ifdef CONFIG_FPU
-> 	/*
-> 	 * Reset FPU state and context
->@@ -218,6 +220,8 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
-> 		set_bit(MM_CONTEXT_LOCK_PMLEN, &p->mm->context.flags);
->
-> 	memset(&p->thread.s, 0, sizeof(p->thread.s));
->+	if (IS_ENABLED(CONFIG_HAVE_HW_BREAKPOINT))
->+		memset(p->thread.ptrace_bps, 0, sizeof(p->thread.ptrace_bps));
->
-> 	/* p->thread holds context to be restored by __switch_to() */
-> 	if (unlikely(args->fn)) {
->diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
->index ea67e9fb7a58..b78cfb0f1c0e 100644
->--- a/arch/riscv/kernel/ptrace.c
->+++ b/arch/riscv/kernel/ptrace.c
->@@ -9,11 +9,13 @@
->
-> #include <asm/vector.h>
-> #include <asm/ptrace.h>
->+#include <asm/hw_breakpoint.h>
-> #include <asm/syscall.h>
-> #include <asm/thread_info.h>
-> #include <asm/switch_to.h>
-> #include <linux/audit.h>
-> #include <linux/compat.h>
->+#include <linux/hw_breakpoint.h>
-> #include <linux/ptrace.h>
-> #include <linux/elf.h>
-> #include <linux/regset.h>
->@@ -336,12 +338,103 @@ void ptrace_disable(struct task_struct *child)
-> {
-> }
->
->+#ifdef CONFIG_HAVE_HW_BREAKPOINT
->+static void ptrace_hbptriggered(struct perf_event *bp,
->+				struct perf_sample_data *data,
->+				struct pt_regs *regs)
->+{
->+	struct arch_hw_breakpoint *bkpt = counter_arch_bp(bp);
->+	int num = 0;
->+
->+	force_sig_ptrace_errno_trap(num, (void __user *)bkpt->address);
->+}
->+
->+/*
->+ * idx selects the breakpoint index.
->+ * Both PTRACE_GETHBPREGS and PTRACE_SETHBPREGS transfer three 32-bit words:
->+ * address (0), length (1), type (2).
->+ * Instruction breakpoint length is one of HW_BREAKPOINT_LEN_X or 0. 0 will
->+ * disable the breakpoint.
->+ * Instruction breakpoint type is one of HW_BREAKPOINT_X.
->+ */
->+
->+static long ptrace_gethbpregs(struct task_struct *child, unsigned long idx,
->+			      unsigned long __user *datap)
->+{
->+	struct perf_event *bp;
->+	unsigned long user_data[3] = {0};
->+
->+	if (idx >= RV_MAX_TRIGGERS)
->+		return -EINVAL;
->+
->+	bp = child->thread.ptrace_bps[idx];
->+
->+	if (!IS_ERR_OR_NULL(bp)) {
->+		user_data[0] = bp->attr.bp_addr;
->+		user_data[1] = bp->attr.disabled ? 0 : bp->attr.bp_len;
->+		user_data[2] = bp->attr.bp_type;
->+	}
->+
->+	if (copy_to_user(datap, user_data, sizeof(user_data)))
->+		return -EFAULT;
->+
->+	return 0;
->+}
->+
->+static long ptrace_sethbpregs(struct task_struct *child, unsigned long idx,
->+			      unsigned long __user *datap)
->+{
->+	struct perf_event *bp;
->+	struct perf_event_attr attr;
->+	unsigned long user_data[3];
->+
->+	if (idx >= RV_MAX_TRIGGERS)
->+		return -EINVAL;
->+
->+	if (copy_from_user(user_data, datap, sizeof(user_data)))
->+		return -EFAULT;
->+
->+	bp = child->thread.ptrace_bps[idx];
->+	if (IS_ERR_OR_NULL(bp))
 
-Why not only check for NULL?
-IS_ERR_VALUE will always expand to be true. right?
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
->+		attr = bp->attr;
->+	else
->+		ptrace_breakpoint_init(&attr);
->+
->+	attr.bp_addr = user_data[0];
->+	attr.bp_len = user_data[1];
->+	attr.bp_type = user_data[2];
->+	attr.disabled = !attr.bp_len;
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Is it okay to not have any sanitization on inputs?
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Can these inputs be controlled by user to give kernel address and kernel
-breakpoint?
+  pip3 install dtschema --upgrade
 
->+
->+	if (IS_ERR_OR_NULL(bp)) {
->+		bp = register_user_hw_breakpoint(&attr, ptrace_hbptriggered, NULL,
->+					   child);
->+		if (IS_ERR(bp))
->+			return PTR_ERR(bp);
->+
->+		child->thread.ptrace_bps[idx] = bp;
->+		return 0;
->+	} else {
->+		return modify_user_hw_breakpoint(bp, &attr);
->+	}
->+}
->+#endif
->+
-> long arch_ptrace(struct task_struct *child, long request,
-> 		 unsigned long addr, unsigned long data)
-> {
-> 	long ret = -EIO;
->+	unsigned long __user *datap = (unsigned long __user *) data;
->
-> 	switch (request) {
->+#ifdef CONFIG_HAVE_HW_BREAKPOINT
->+	case PTRACE_GETHBPREGS:
->+		ret = ptrace_gethbpregs(child, addr, datap);
->+		break;
->+
->+	case PTRACE_SETHBPREGS:
->+		ret = ptrace_sethbpregs(child, addr, datap);
->+		break;
->+#endif
-> 	default:
-> 		ret = ptrace_request(child, request, addr, data);
-> 		break;
->-- 
->2.43.0
->
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 05adbee3ad528100ab0285c15c91100e19e10138
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250723014239.22667-1-donalds@nvidia.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/apb/fsi@1e79b000/cfam@0,0/hub@3400/cfam@5,0/hub@3400: failed to match any schema with compatible: ['fsi-master-hub']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /gpio-fsi/cfam@0,0/i2c@1800: failed to match any schema with compatible: ['ibm,fsi-i2c-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b000 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b100 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'anyOf' conditional failed, one must be fixed:
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'oneOf' conditional failed, one must be fixed:
+		'interrupts' is a required property
+		'interrupts-extended' is a required property
+	'gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'linux,code' is a required property
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: Unevaluated properties are not allowed ('gpio' was unexpected)
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'anyOf' conditional failed, one must be fixed:
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'oneOf' conditional failed, one must be fixed:
+		'interrupts' is a required property
+		'interrupts-extended' is a required property
+	'gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'linux,code' is a required property
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: Unevaluated properties are not allowed ('gpio' was unexpected)
+	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+
+
+
+
+
 
