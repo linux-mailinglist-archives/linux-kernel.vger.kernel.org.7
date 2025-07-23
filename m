@@ -1,84 +1,52 @@
-Return-Path: <linux-kernel+bounces-742220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEACDB0EED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DB5B0EED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB36AA0788
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0B71C83AFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E54289817;
-	Wed, 23 Jul 2025 09:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E91E28467D;
+	Wed, 23 Jul 2025 09:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmISql3C"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jR+rdDGi"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B82276036;
-	Wed, 23 Jul 2025 09:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248B27E7E1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264432; cv=none; b=MvRVGaGzROeDKHK0dlXVtHvrWwrIDyreZYADOIMND3F8RxTKJnstJXFQ/BXqXn/eerWM6avrgJtp363PKwLsfqh9g4QYmbwUr6zGaAy8B/52Y0NhlhY54/As/8JbsqqWepMewZCEd5x4cHhRWNFj/WGQOTZpc35b6LaW3qQ0Ynk=
+	t=1753264476; cv=none; b=uGxN2W9KOPNSmRp/c92cDEtoVLHke5hbkq5IqgNVAaRSDT0qxEoOCzVCkqws4S5K/SmizLb2BVyYAskL2F5SmMFRsfHz4ulx5bTENcXsiZEXiZSz10eCzAVxYS0r0Yp3wV/wevXc6mSLDxBOfLske8wY29/v0m4YnISGx76aSpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264432; c=relaxed/simple;
-	bh=t2/w6xlnqLOYPB4OTfx8oTatGXUEHAIKRrDBlB2Z/Ao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j4T2tS0mK8dyi5Vt4Y5+8THQuvXlQ+SHh1UW457rkOtxmhSJBx1dbcb6nBg6UstSBoEYYIbo6fWGBFA/AbzxdtBWn9hj+StHa6XVx52x1KE2bZk8LWhNA31g3Lqe67iKzkkG+GNKkZ9Oxp5dusmxiFnOyMObRmxxFKwzuXinlzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmISql3C; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so49797375e9.3;
-        Wed, 23 Jul 2025 02:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753264428; x=1753869228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ye4p2iW6iL7aR7iE9gTvKTq4CWuN94sAbCzmmHDSAYs=;
-        b=NmISql3CaKWUcLn4mnL5dItuS88RMEPQH2FO/19+OmYE10XBbgwF4mOpvpY+cTOpZz
-         KJRicKUTVfBAGZqb3vCoRENzR3VVMTGgxw+cfEJCTbpC7L5MMb4sSYR9uAWDcAFcC+Un
-         JKudpV0OJk77i+GQ98yVNr+yAPyi5mNe9X5Rp3z1gDdl4ihJWMeUFznaVcWrJ6FMog2k
-         yEAGX0hDhum0jrt6FaGPI6o9+fhXuj41zUJEpqtNKc7iTo0/Xa8I/vuUT9/i5od81Xue
-         YpFibgMgVI8jABz6Rc9hK6fLfiSMRjfpYSjj9QM5gx/hVr0WX0aG5txhsg8gp4yJZ1kR
-         i66A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753264428; x=1753869228;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ye4p2iW6iL7aR7iE9gTvKTq4CWuN94sAbCzmmHDSAYs=;
-        b=xGNIQNvdqj/qH7zhw1AMIfXl6cS/tsKAx06aqdaCRIhqgOoyJfN8FkIHnD2HTlGSYc
-         yy5YAJ5Dshpy7t/JUGcXGoKFxJelueYtsvAvapkywPHQh9nRYF1irXJtYISlBwGPLGGp
-         r2CnyAbgN07of+1Ozo2Q9dM+9gmjkpTLG5T5rCzuEAMHmn0RKMjOAeF/1YnuUu1wUyxb
-         jQ3Rr3czpsatoSw5zwXFRTP5vCp2s/68seWcigXAEIqmIgq3BhyM9Sn+ZxY4d/+Shryv
-         4tUhmNmNTc1iT85xcrOFzdBmhC7/BgLZmhytV72PsmSYFMaZvsQxMoOG+XpHR9hrB4SO
-         0zIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWieNfaoyexo0KqePLjnjUuouNMlK1ffgVXywTmde4fw2tiaMMatIWpcfyPFM1mD2kOqiee9VnP/xoLVbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Z8t3yEjRPCT90YUs0UjU5AGMB6BfQp+3STzEIBdKFcX1V2cd
-	C+O+zJvL4IK9eX6RFKagrSWoGDqx7HtmHNNkOTxfiS96WQ28OJxvb8+W
-X-Gm-Gg: ASbGnctf5buyMcudgASMne0qKzKWOLIjnf3VtkfmOgWKo+9f+WjVR4wTXtpgZG2myEP
-	3UoDk1Os4BfD2bmE7NwqAZKhVJRg6E9Xqb1NVWm3xPs8G3nR1FPilpMmtsVru0diEWeHRj8GP7y
-	W4Sw5XxOK+UiydJqPOtfqcqspXQEm41KligcD51uNjoyfAl+aU+ZUmCLoWM5LBP84NZrZu0jN5I
-	lyShCpw9Yt4ih36xAhkKxNJ9mNz34CkeQJnkjCNXUlayue/XJDnK3JLsXZl4p9vh3xJmhWGgCLN
-	ERaWt6Lii48YlDzfy7HRuqYmiyxnBSFNXl3knKUfE7qVT3gt/wNvF1PtRdXStIt4tcpDldE4uVj
-	OVdNgfuTPPQPQwDkVrKRe
-X-Google-Smtp-Source: AGHT+IHhr6maHryXz36lI6T/2OR7TSp4Zt59BMddnWzWMSB7a61uDHoY7ikxmy0vRQMI0jzI6GOLzg==
-X-Received: by 2002:a05:600c:c0d2:20b0:442:dc6f:7a21 with SMTP id 5b1f17b1804b1-4586a49249emr9298835e9.3.1753264427953;
-        Wed, 23 Jul 2025 02:53:47 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4586918c706sm17504175e9.12.2025.07.23.02.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 02:53:47 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Justin Chen <justin.chen@broadcom.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mailbox: bcm74110: Fix spelling mistake "braodcom" -> "broadcom"
-Date: Wed, 23 Jul 2025 10:53:15 +0100
-Message-ID: <20250723095315.3999463-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753264476; c=relaxed/simple;
+	bh=ydH+Obkp/3P1ccbLhAL7B7uBaevdmyUwuJg0krkTG4k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HVZjWMy32Jzjqj1MhNLQHU9asdKTv5Gupcd7hU2BHUa9c0nS7+h0LSzcwxuo5uYVkVEkB6pZ88SeXwutJj7ij1zqPKYwH7770kMXWToRyIH58vIh9D9fTI2Jj5AsmpH4TBg+zruKTxnpuX3pQ0FfnncRHVDVc36BeMpE5VCbc9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jR+rdDGi; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EC5443384;
+	Wed, 23 Jul 2025 09:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753264472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gmVO0IQ6lgIkx0UIDC0DA82oQtxUZJ5xFddmjHi8fvQ=;
+	b=jR+rdDGiooEQeuJKSDmzpG6EWJH4VOBkbF3Q3pH7GR6cn4gRpJyZZTW02kbnbKHXc70rtC
+	OuSEXHDy9iaIOOYIwfzgbxYIkmqtiVIwTF3QqGjPumXNGq09bbDwDYhNKbC08FAAOSqYlN
+	y3FsMia26PhFxlhPH9eWTvCC5uPKDn2VxFTgW7KZFS6EmJNQN5yf2946dS2zTJH+EFt0DO
+	iUFwcV9vDw8a2UMb4bCtDAbekCKP17SGr6Km5ZLvoyg33fM6sNUxkXiw2wKT3T9avbWtsH
+	ZjY4+xQ1NRWHx/vefxl9ELuJpLp78Qrh8A/FpJ6KWt1/6KwFtGhWQZjYMdO9TA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 0/9] drm/bridge: get/put the bridge when looping over the
+ encoder chain
+Date: Wed, 23 Jul 2025 11:54:07 +0200
+Message-Id: <20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,27 +55,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAD+xgGgC/02O22rDMBBEf8XouQpa2ZIvlNL/CCGsVutExJdUc
+ kJKyL9XTUzp48wwM+cuEsfASXTFXUS+hhTmKQt4KwQdcTqwDD5roZU2qoZG+jhKF4PPCQ7DTPL
+ Ay/myyH6Oe0Y67tewhwqQoXbWoMhr58h9uD2ftruXjvx1yYfLyxQOE0uaxzEsXVFZKq1tDKByG
+ kzrvGtr7AlJVWw8k6JetdyI/6Bd8YeZvyQxrahJ6sr4sqx8WYPurvBbGzklXHvvz6LVSgFYsBv
+ IEyBPHCcePjHE03fYZLQPsXs8fgAroQMHNAEAAA==
+X-Change-ID: 20250718-drm-bridge-alloc-getput-for_each_bridge-f141ae17b65a
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejjeegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptefgheetvddtteeutdeuvdefkeeifefhhedtleefkeekffeuueelteehgeduueeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpfhhrvggvuggvshhkthhophdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehnihgtkhdruggvshgruhhlnhhivghrshdolhhkmhhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-There is a spelling mistake in the author's email address. Fix it.
+This series adds drm_bridge_get/put() calls for DRM bridges used when
+looping over bridges in an encoder chain.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This is part of the work towards removal of bridges from a still existing
+DRM pipeline without use-after-free. The grand plan was discussed in [1].
+Here's the work breakdown (➜ marks the current series):
+
+ 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (in v6.16-rc1)
+    B. ✔ convert all bridge drivers to new API (now in drm-misc-next)
+    C. ✔ kunit tests (now in drm-misc-next)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (now in drm-misc-next)
+    E. ➜ add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
+       2. … drm_bridge_get_prev_bridge()
+       3. … drm_bridge_get_next_bridge()
+       4. ➜ drm_for_each_bridge_in_chain()
+       5. drm_bridge_connector_init
+       6. of_drm_find_bridge
+       7. drm_of_find_panel_or_bridge, *_of_get_bridge
+    F. debugfs improvements
+ 2. handle gracefully atomic updates during bridge removal
+ 3. … avoid DSI host drivers to have dangling pointers to DSI devices
+ 4. finish the hotplug bridge work, removing the "always-disconnected"
+    connector, moving code to the core and potentially removing the
+    hotplug-bridge itself (this needs to be clarified as points 1-3 are
+    developed)
+
+Most loops are based on drm_for_each_bridge_in_chain(), so add a scoped
+variant that does not use an externally-declared iterator variable and
+ensures that a reference to the bridge pointed to by the iterator is
+taken/released before/after every iteration (and when breaking out of the
+loop).
+
+All conversions are trivial except for drm_bridge_connector_init() which
+needs some preliminary cleanups (patches 1-2).
+
+omapdrm/omap_encoder.c is the only driver iterating over the encoder bridge
+chain starting from a specific bridge, instead of iterating over the whole
+list. For this use case, add a drm_for_each_bridge_in_chain_from() variant.
+
+This series depends on two fixes to bridge-connector:
+
+ * commit 103578241512 ("drm/bridge-connector: Fix bridge in
+   drm_connector_hdmi_audio_init()"), currently in drm/drm-fixes, not yet
+   on drm-misc*
+
+ * "drm/display: bridge-connector: correct CEC bridge pointers in
+   drm_bridge_connector_init"
+   (https://lore.kernel.org/lkml/20250719-fix-cec-bridges-v1-1-a60b1333c87d@oss.qualcomm.com/),
+   not yet applied
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/mailbox/bcm74110-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Luca Ceresoli (9):
+      drm/display: bridge-connector: use scope-specific variable for the bridge pointer
+      drm/display: bridge-connector: remove unused variable assignment
+      drm/bridge: add drm_for_each_bridge_in_chain_scoped()
+      drm/display: bridge-connector: use drm_for_each_bridge_in_chain_scoped()
+      drm/atomic: use drm_for_each_bridge_in_chain_scoped()
+      drm/bridge: use drm_for_each_bridge_in_chain_scoped()
+      drm/bridge: remove drm_for_each_bridge_in_chain()
+      drm/bridge: add drm_for_each_bridge_in_chain_from()
+      drm/omap: use drm_for_each_bridge_in_chain_from()
 
-diff --git a/drivers/mailbox/bcm74110-mailbox.c b/drivers/mailbox/bcm74110-mailbox.c
-index 0680be8dc18f..469409d6d3bc 100644
---- a/drivers/mailbox/bcm74110-mailbox.c
-+++ b/drivers/mailbox/bcm74110-mailbox.c
-@@ -651,6 +651,6 @@ static struct platform_driver bcm74110_mbox_driver = {
- };
- module_platform_driver(bcm74110_mbox_driver);
- 
--MODULE_AUTHOR("Justin Chen <justin.chen@braodcom.com>");
-+MODULE_AUTHOR("Justin Chen <justin.chen@broadcom.com>");
- MODULE_DESCRIPTION("BCM74110 mailbox driver");
- MODULE_LICENSE("GPL");
+ .clang-format                                  |  2 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c | 13 +++----
+ drivers/gpu/drm/drm_atomic.c                   |  3 +-
+ drivers/gpu/drm/drm_bridge.c                   |  3 +-
+ drivers/gpu/drm/omapdrm/omap_encoder.c         |  4 +-
+ include/drm/drm_bridge.h                       | 52 ++++++++++++++++++++++++--
+ 6 files changed, 58 insertions(+), 19 deletions(-)
+---
+base-commit: 46c366851a0b2159bdb97afcac04e5dec0cf09e8
+change-id: 20250718-drm-bridge-alloc-getput-for_each_bridge-f141ae17b65a
+prerequisite-change-id: 20250718-fix-cec-bridges-245d334d3712:v1
+prerequisite-patch-id: df6d3d4a62c942703fab374bee85c49e4ac259cc
+prerequisite-message-id: <20250620011616.118-1-kernel@airkyi.com>
+prerequisite-patch-id: ba5a6a15ea02bcee387db0e92ffb4cd0e1fbf816
+
+Best regards,
 -- 
-2.50.0
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
