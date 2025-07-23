@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-742031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B28B0EC27
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53DDB0EC2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BC116927D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF631886FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6E127703A;
-	Wed, 23 Jul 2025 07:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B99277038;
+	Wed, 23 Jul 2025 07:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqhPa9Tl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mv4l+vVx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDB127702B;
-	Wed, 23 Jul 2025 07:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BB221C174;
+	Wed, 23 Jul 2025 07:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753256602; cv=none; b=Krkr4DjQ3jcjk6LJkc+q9HF4Gvx93+W08slqvVEDYV/VznanWk4/94uUpqB4pkCZcCYalDsdVWTLXbnbuBmrPt08ZVpihvrQQjP6vg1zsdz9ejKm7sGg5nl02NMe67MUhTkVvgal/E0mNbrlokNbzCTU/CWc+eUoOROi9KFyqXM=
+	t=1753256646; cv=none; b=cXsEOcDXBZUuO11L6173Ntg7pheIZxpXiqei3yEBRQclw+EkmKgyjYJ3jS9buqy/gsU0xAB4goGdDfvOjmUeUBKO2QZsJMhP6yiKYLtQgSPdNDVR2UiW6sPiYQVumLb2W57sSGvNADWddllFveW8L7C8VIVE1mAG1XGeQ38FVO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753256602; c=relaxed/simple;
-	bh=PDQlgTK2hEukkn2nVLrwDLz5l5fS7ZJLaim0Bz1akh8=;
+	s=arc-20240116; t=1753256646; c=relaxed/simple;
+	bh=Ac7MqmvxZYLH/0zq09mvIBTiUSZ6NHJ4LWStoolGqkY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAAItfa6iHZ2lsjpv/su2bG5Nkmd6iSivRypBOz8wNlOg755YJbWTBZPM/ElAP3sBvdU8Eo1k9FTnpqr/EYH5N4Y/XfIorXulKMgf+HNxsBOvSxAN+CUDETh4Q93bjNG5mDWOKNZIDojMEN3osaigV3qSrP7JzZDenHBzBZ/YI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqhPa9Tl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C630C4CEF4;
-	Wed, 23 Jul 2025 07:43:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWGBeSFpue36vBnXj8EkMRSucpGJ+Rrva2ZeWrJWBFumEOUvOPPUtBSKrBCDM0sYh1fU9azZAOa+yQB/ylmsHtwdegM4MSbdj1NugzNjAOTk7ZKBSNrJyNe29GOd1WbsZwQwvQw6Q1Z7XiwlHXOgIxfsnkVazK/Bwmx0pPNTOoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mv4l+vVx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF27C4CEE7;
+	Wed, 23 Jul 2025 07:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753256602;
-	bh=PDQlgTK2hEukkn2nVLrwDLz5l5fS7ZJLaim0Bz1akh8=;
+	s=k20201202; t=1753256646;
+	bh=Ac7MqmvxZYLH/0zq09mvIBTiUSZ6NHJ4LWStoolGqkY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SqhPa9TlVJ7mzGdkyU5ifzQFCfywY/+v5unKHua3ht6MFkPDOuFVtS3H00jZtbdm7
-	 UATjZK2F3vsjF82M1KudsAlNU8TIlbWsPxPizMu6xdurZWcbqTqUA4YJXOGTdzD2iZ
-	 k1qAxcG+oti3ucJlL5J44zwAuvf+ls/kqGEd87OX8oD6JS+tluTpr5Bl9sD02wOMwr
-	 mZHX7fQZ5mSqzk6mmn3qCRLqTSBE6akWkmz0mPYJYOQUxNjtxknpkjhYTxWwOP8Q29
-	 xPDzajThmQFW+Ocw+jmG9tTyzv4GALQtDvVe3g6FvSd7K7qYY5wOHYOSS7sJpOBfMX
-	 t299niR2HzypA==
-Date: Wed, 23 Jul 2025 09:43:19 +0200
+	b=mv4l+vVxHvh6MbEBikyP+nWZshJPaKipljRjLeil11Jrx2QyqSDjD4ozOMYAxVoE2
+	 gDIgKydcR1OM7E7Vbue/0Won/TJndwSYXW5cQyBFUgBPiLoU3bOWicZfWTr4X4wnqW
+	 AVEs2UotWsXo2297444Fl6klcFAinHZgcYxAedvbMsAb5iJA3DYy71ob+/y0EIHxAM
+	 giFmnsCmCgbN+mmUD4TMZl3D0HDDL9LVn7PytwrL1CD1UdJfp/6iZAZ10LPRYq7OBM
+	 8ixX5cBX/sYykzw8966T+1g2psTqI2WqqFq5W8NoJxUnut2xNsbZHEMCPTOMRRsfs8
+	 JbIeEHncMe2KA==
+Date: Wed, 23 Jul 2025 09:44:03 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Macpaul Lin <macpaul.lin@mediatek.com>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -53,10 +53,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	Pablo Sun <pablo.sun@mediatek.com>, Ramax Lo <ramax.lo@mediatek.com>, 
 	Macpaul Lin <macpaul@gmail.com>, 
 	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: arm64: mediatek: add mt8395-evk-ufs
- board
-Message-ID: <20250723-fancy-elegant-mastiff-1c65cc@kuoka>
+Subject: Re: [PATCH v2 2/4] arm64: dts: mediatek: mt8395-genio-1200-evk: Move
+ common parts to dtsi
+Message-ID: <20250723-nimble-crystal-cassowary-229ee0@kuoka>
 References: <20250722085811.2062790-1-macpaul.lin@mediatek.com>
+ <20250722085811.2062790-2-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,25 +66,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250722085811.2062790-1-macpaul.lin@mediatek.com>
+In-Reply-To: <20250722085811.2062790-2-macpaul.lin@mediatek.com>
 
-On Tue, Jul 22, 2025 at 04:58:08PM +0800, Macpaul Lin wrote:
-> Add a compatible string for the MediaTek mt8395-evk-ufs board.
-> This board is the origin Genio 1200 EVK already mounted two main storages,
-> one is eMMC, and the other is UFS. The system automatically prioritizes
-> between eMMC and UFS via BROM detection, so user could not use both storage
-> types simultaneously. As a result, mt8395-evk-ufs must be treated as a
-> separate board.
+On Tue, Jul 22, 2025 at 04:58:09PM +0800, Macpaul Lin wrote:
+> In preparation for introducing the Genio 1200 EVK UFS board support, split
+> mt8395-genio-1200-evk.dts file in two to create mt8395-genio-common.dtsi
+> file, containing common definitions for both boards.
 > 
 > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 > ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> Changes for v2:
->  - No change.
+>  .../dts/mediatek/mt8395-genio-1200-evk.dts    | 1189 +----------------
+>  ...-1200-evk.dts => mt8395-genio-common.dtsi} |    4 -
+>  2 files changed, 1 insertion(+), 1192 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
