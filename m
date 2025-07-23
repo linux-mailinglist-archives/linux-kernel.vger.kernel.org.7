@@ -1,359 +1,254 @@
-Return-Path: <linux-kernel+bounces-742342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAD3B0F02E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:45:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D42B0F032
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE333A57A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:44:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884B57B521F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7264D28DB46;
-	Wed, 23 Jul 2025 10:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3230290D87;
+	Wed, 23 Jul 2025 10:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b="GyJ8d7He"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aEgNWsEo";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="EksR6U5P"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74B42DA743
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267498; cv=none; b=PPr7q3xA7xzEoJlNXBqMdUU3www7gnHw4qJAEZa7Kd1WvZp1tenMMcj+JF0BCQMEGvY2jLtCR2sd8PLvdmKL4oXjXum0oNehxasbIo1+L4Mgf4v6PgfT+wZ507R4TYYcnQ0wLfSnWqOzat0EKE0U7GSTrbX6b2VWi39GYt7NAkY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267498; c=relaxed/simple;
-	bh=qBX0JDeGTivbXtJf33doQUh6g6lQZVKlqiviu7KFJ/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IKLZ3NdoqZYs/i4+eH0U4ETWLLFFq6W/gcP6WmyXiqcvGaVSsQH/RGQsJfu2QtoFivf5EXf6rQOIIBJxN/fYTgFtDW+B/r1MPs1pr54PINJqr2EBwSQ7xkqSyXT5s6LeDHbm58XOCq6uwNgRiDFe+O0H01BJEkij56n9tddTwFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev; spf=none smtp.mailfrom=sedlak.dev; dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b=GyJ8d7He; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sedlak.dev
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6129ff08877so1319272a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:44:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F6A253F39;
+	Wed, 23 Jul 2025 10:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753267540; cv=fail; b=rQBzp0GnGoLTCh2CyPEskc32f9L3y2Vmsw9/Q9JFOXrBTBh9Jh6dkvRJu+rn5L+RY+0s7qaj3jsbBsdf02glwSx6L9POM0LUs8+uySc64xfY2GZlQ4OCNwfaE3yG2FpsbGTeJhY8H0SQF3TCROOBC4hVy9ih/tIzWA7tULfvUI8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753267540; c=relaxed/simple;
+	bh=0XP5lrqU0CeFG+ViEG9xuf+KSOBb7tQOfE3TsC7S3uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=C3aPrH31peZyJiFBhwtd7LMGvC7mEv+TrbdN0+WV8GkStGS/SaoKe61GEetbOreccXevSLD+5vepzBJbY4vJGXcn5Cf/FkyeKJXVZTWe7nTdgLfG6AuN2Udbz5a3z2duiAvNTrRq4B+PPobmMNaeZ2vCWUV0TMty5k71LNkrI5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aEgNWsEo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=EksR6U5P; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N8MrHU023827;
+	Wed, 23 Jul 2025 10:45:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=87JKxGzuH/NeFarLNU
+	LnUNSqOQuiHhxIYvSTRRHeec8=; b=aEgNWsEoqrOJD9Pn0z3HjPbs21e6eyUuZi
+	NC0HJ8SaOOY6dTrU5j2vgzwc/41dKPKXjmQh3pMNaCUdGxf1UKmgBi/+eAJGz6AI
+	sF1NAYqxPTYYLmzlGVYurBXSNe/bgvvF1fS/WpOe8TBO1NBa6jXQT2ZJN7FH9Hpv
+	oQcZeK+aLN9DcLPoj9Y35FCnmjDQsrmixv+yB4t0R4OVmdUdcrGtdLwIio/cf1se
+	866RWI0jpa4hyekMM+rzZaeKs5DM4MjjXfbDUtO4zeeMJNbWZFetBuY/6rlLvwbM
+	q9RrdplSrfMX3ZpRkh6t/VBRJK6pkI9tHFpbIKEhIZ28B6AZRy/Q==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e2f7wj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 10:45:28 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9DPM8010263;
+	Wed, 23 Jul 2025 10:45:27 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801taeknj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 10:45:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wG1oqB4tNc6bZInJKe6XS1r8Z7um1M0lWWm/HOZ/LEB82VjI+CikbxjjFTKfjBJWZKqOOkkMaqVxSIixeumo6fIbJOZGTMOXeV/LCtFiA9mqEshq/ua3ZAAopyUYsAEBDoCpN03vr7FbLyNXfOM/5BbawCqRDWWC4YPrC/sRBhEAeavjFclSOvA8TC7+wIxFGAFGxJ3z5xamcHlK5Dmx/sjp8OQKZ7E5s4JQfdXCdcouy8GKQVHfvnmgx4eG71g/mY+Z5coxga5Gjg2FScofk6n1CEqsxJbN6WO7w1t/yvL6c5GPjKV/Dc86SsrnojK1tU7BMVH6jhJeNaX4bOsvow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=87JKxGzuH/NeFarLNULnUNSqOQuiHhxIYvSTRRHeec8=;
+ b=XVMIlKrsmjon/CwguvRM0g4oM/1QGGIjaAh4YNf3LkeCHLedWNYayfxSCTZ35Bk9gQanJEuLf1lUbDCMRbullIt8aho1m7hBzAl6v9Jh/s0LLnEvvAGYoKXk6ejzMTx7uc49gGg5zXVQ5YhB3P+KnzEVz6HxABVcPm4NL3SwgD0LTaTCuMG/vx3RhSij+DQ49YtbqBfkEosS1IUZ4WHqk//at4wrLgzhjWgLyXR5eZR93Sb2cQ+4sjZPwdfdUE3s7kDFY0Uti/7TiDcXMqAqCRmHyd0kfLpaC6jNpMD2u7OO5Lr43zgItL5SYUw+E0P3lLsFZ/d987mD3xAh8eJWxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sedlak-dev.20230601.gappssmtp.com; s=20230601; t=1753267494; x=1753872294; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7xYOZXPRdiXsohCXzg0pxN0cIN0Hm/modECQR4pJ+7s=;
-        b=GyJ8d7HeXC4egm5bctPuZwDAZEZK6bnUMAnGp3yGP0G8Gz6tw4pLRJvUJ12ZuqYGKZ
-         766rLcSFyQyTuSlNCM6t2f3dGnEhdDNJEtrqhLRmh3ep/dgDLzkfywGEjiXN58E4sIhQ
-         Wv0hrXoilobUhT1esS4rnUnxZcmCmU35NPcYDqyvzAnRajPJx3ho/dBIJU9evFNt2Fa5
-         XbeKfD6P26vXT+lbo6EJ+unvJbuQaim8p1M4ESBIAGsILQua7qi82ocWhrXV5bXfEzSM
-         w5BqMv91e5Q4OIhRajnC0y343HrDm/BRmn7FEee3u6+wUyFsTtOXhfUCYI/xDqZLsaXn
-         XT8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753267494; x=1753872294;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xYOZXPRdiXsohCXzg0pxN0cIN0Hm/modECQR4pJ+7s=;
-        b=dLsQsRMwhDar8ZZxnq4fy5Xdz4hDuYk/Wxwpoe0vVjcVRvyQ1zQtR6g9Wuu0pBjt2D
-         vJCD2T73jxuBTqQXPoGXdqQCSIdnUwBHJh0AnVgqMdcTwRKI0gC0RILFej8lKwzNlvHI
-         zgJ5M5sJjvqn40+/819xa1OBCXJPi7gD+WZZyLxgtiEP3Qr+7d2yzwBmGEJ9ZKa2Gjen
-         mlZ9M5lirygL4A/38dOoxxjpCjPkGgU3ppK9wb7DKLi0ZTsvXUh2cCnIktAbJsTDJ3fc
-         nYB4P40F5HgLmuCt/mDkzHchQ0Fu4ZoZEuQORYGSwTjaiYhH78QAsjZu3YCHFW/rd8Tp
-         IYcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbBDsLE2oW+9NJVvVC8t3VvB8QosxeWhegqY7rFfbyEtU9FA6XNUG6Qg4YBs3LgWt2VFt+IXs3U4HTmPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwavEg1IErtfh5iPwaAH3m0LVtnyyQwdvtaWygxAFdOKCc1zIsi
-	kK/S3hs3Zuy3sc5YpDfBRScRQRhSw5FaBnRpxL924ccwHKtARj6x9VswfvSbQUDz2dk=
-X-Gm-Gg: ASbGnctCf7x+a5tg7gP0smaUMI3t3SJkbSe62IdXHp1QJqc0T/cnBfNpgV/dwa8wi9G
-	u/T1e/CtUn5m1F8J6BDXqQcZsCStdvmVhcpPD/6DOKYlDHlcmVW46O/ZPJAB3BlklBigP/UxfrF
-	6OnJ2YKwjhNaf2SCPiIHJVrtGoyj4Q9bnGsixNoq8D2kNngyEYR3JNVjJ41RkiXkm6NmxubALS2
-	31M4XGr+CT6TCdUh3d58fhqlACfAnGR/TaMxIO+VYDf3IkTCjHgVZHLFHKnVfH/zvJ5GlhrEBIT
-	Zv30MULqqjQtonGmx7u5nbM6nHIQRMedoBmXOHIh5vnaoi2kUOyRDAow6KKz/8EeFzw3XZKzcR1
-	P5Mk0a65H6yI/6ekpPDBepC8aP9Vc53eW
-X-Google-Smtp-Source: AGHT+IE23/w37kh2WpRE8noRTOloYfD2av2U6W+7NxUiHq7HRFeWTokOzqO4eVBP7cTthd6+wZ5C2g==
-X-Received: by 2002:a05:6402:50c7:b0:612:dfdd:4718 with SMTP id 4fb4d7f45d1cf-61346fe4392mr6180298a12.12.1753267493631;
-        Wed, 23 Jul 2025 03:44:53 -0700 (PDT)
-Received: from [10.0.5.28] (remote.cdn77.com. [95.168.203.222])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c9071069sm8214578a12.50.2025.07.23.03.44.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 03:44:53 -0700 (PDT)
-Message-ID: <d0891c62-6c9a-4036-bf63-f5070ebba084@sedlak.dev>
-Date: Wed, 23 Jul 2025 12:44:52 +0200
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=87JKxGzuH/NeFarLNULnUNSqOQuiHhxIYvSTRRHeec8=;
+ b=EksR6U5PNA9n0wD5fUGzhUMg3NQqVzyJQuvE3d02hGMLhIljFO/26U/TPu5yu97XQ8+UV08d6n4NFSuGSzq0Bz78zK+PYhBW1aeXx5CZRwJU1NzsX/I6V7jetUStm53AG2K237r+atjlP/aIOBxkK5ghkMZm+AKGr5XZWfC0I+0=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ5PPF1EC0B6C27.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::793) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 10:45:24 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 10:45:24 +0000
+Date: Wed, 23 Jul 2025 11:45:21 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] tools/testing/selftests: Fix spelling mistake
+ "unnmap" -> "unmap"
+Message-ID: <d856925c-90f5-44cd-bdb2-aef5c8224e17@lucifer.local>
+References: <20250723095027.3999094-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723095027.3999094-1-colin.i.king@gmail.com>
+X-ClientProxiedBy: LO6P123CA0052.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:310::10) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] rust: Add initial interconnect framework abstractions
-To: Konrad Dybcio <konradybcio@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Georgi Djakov <djakov@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
- <20250722-topic-icc_rs-v1-1-9da731c14603@oss.qualcomm.com>
-Content-Language: en-US
-From: Daniel Sedlak <daniel@sedlak.dev>
-In-Reply-To: <20250722-topic-icc_rs-v1-1-9da731c14603@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ5PPF1EC0B6C27:EE_
+X-MS-Office365-Filtering-Correlation-Id: 600fac7b-c9e2-4d7e-2ad6-08ddc9d607be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nBgffrtiB0knuBWuyiCAG3UG1QDODZXY8/6Q7VOkL1BQoJlGiuhn5xYvG0pe?=
+ =?us-ascii?Q?OV7Ff3rtRgrAvZWFga7a1vxdVqXk+/bfVgmAT6qxOQPRDDAu3c/BRSufxEvl?=
+ =?us-ascii?Q?TitcYSJpkb7Md6R7IOvxRyhH8oAyMsyud7U46mT0G9nLm8eKdDhhX2KQ3P3V?=
+ =?us-ascii?Q?P6WZKHbm2Nuw07L+LiQkv++0ZdXylCl4t90Q/Wk6PsMsx7m/jcESNKuTov4/?=
+ =?us-ascii?Q?CTtoIKXlHuh6gawo3wHbx032x2v4fC7sdvyN7TYGBAAgKdoanY9DLkCHfnC1?=
+ =?us-ascii?Q?LgI0tFbRgwrtE1oaky2eE+X94p/FCO1SMfbCn2tAiGRuyfc+gmzWQzihwo51?=
+ =?us-ascii?Q?0gkL6BgRBdjCN4wM3Q+lG6ipgbrCj8+ir3bM0lYLQ887T8/yaRqpA+iqcsu2?=
+ =?us-ascii?Q?HrfX/98rFe5eYycGWpwSSiTAVocrpM5I7gCoOji4z7qe86ut1KuZvFiHSKL6?=
+ =?us-ascii?Q?GTD+ZTnGJVA8MKgQ4p5dFhjq+PD7u6OXYW17NZiCBQgFB+zLWJXkyidxucDn?=
+ =?us-ascii?Q?CsbSNlq2LOlnNWIov5AFMZyLLKL4dM5jgPs4Pec0qlx6cJV4vTtw+e+4OB3V?=
+ =?us-ascii?Q?BskW41JlBY2V59W59O5xcojDuEbonH5oc2TArLUMpOXxJ2Fm8ASG1BKkWj48?=
+ =?us-ascii?Q?BeowC02Grni6ZQSh+6M3/PU/dTTz+ZSZ1DBvRkxU14L2udqxrgTavKPDZxdH?=
+ =?us-ascii?Q?hldnNPLHk9c6g1ji1ffYwh16aq7LcL2sDSntg8rocRzicF8jwOHnlQ1x4GD3?=
+ =?us-ascii?Q?GzQkZ6FRZwdEqu3lC5mv3keTYA4T3p5egicmuCJ69qwyBOfP5sn//PKw5JF2?=
+ =?us-ascii?Q?/Jy81bTc8jPLhrkbf2gkvSxWZAwD5CSUGukzyfFHXqHfABN8bLEqUk1u/5RL?=
+ =?us-ascii?Q?idZ1igj6mGvdGtJQl2pm2dv7z+QB5YdGIlgeG9TjAlsRbW/14BS5s++aXttk?=
+ =?us-ascii?Q?BN1+NE3qlEvrl3nAFXnY62KVZ/agMRX4pBMZDy9N0J6gpyQAPoXWmkUp7oe+?=
+ =?us-ascii?Q?VeQa7NN5N3oOpmAf8IWLUfCcSC3gIKeRy88GwXoBP2r3WCQs4hkzAx196X8C?=
+ =?us-ascii?Q?d3nDkSEZEGcBY3GW+RCIf93FJAAIVHrTBT2E8K/YsfQfsCfefdgLpKeX1x7E?=
+ =?us-ascii?Q?4ahNUKhnITI4SxQpzGKULHvzWQmE5lTb0EqW6L0Ok4bgC/XScdFzLAC+2u1x?=
+ =?us-ascii?Q?j7XGGPy/EVWOTfOpn8IIgNoOi2oT9o/m/uI8b8pcOzCjNe1Wzyvn/SKTbGJC?=
+ =?us-ascii?Q?guutVoAUn7xXICPs5Xcdb9qkZpxCDclX6P3eXSNI5+j5uWZDoi8pKFO9bvbN?=
+ =?us-ascii?Q?jrR4/UIDyRl3x1zyfqJDfG0T3To9COLjDWV5GXLL3aAJ2P98co7deAYtDXge?=
+ =?us-ascii?Q?+zm6QtA7ysw2ihvyUWA3q/ENv1OZ8uc82jlmADFwm/84LzPHgsKE7LLQjyRZ?=
+ =?us-ascii?Q?leLSkXb2Ir4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iwCC2UVgNVDz53udTKFay/KRFyZeSitITat7QRxVddNWre5R6wT30wo2D87A?=
+ =?us-ascii?Q?v9NAMeMrXvjcK8hHx7SE/UtFambmA/yVVCWBSq8gSF/NprW/w9OawfBuKChv?=
+ =?us-ascii?Q?+yxF7UAFOpGDURc7zCYCAqNmAyrdrJcoytRK6oBxsFJ5USTbffAKUEYy/m96?=
+ =?us-ascii?Q?VEmtFS8gpzKlJ3oN/iSNO8EQ5kDsGgYDfZ0n9U2ejc4dDnEXfR6Rg/RWRNws?=
+ =?us-ascii?Q?t2QH0ukDkNItiRAqG8mxF/doOkaub/aGvzxSgOgyKMkhrlQgYepNXB/TV0il?=
+ =?us-ascii?Q?3qPXaWNGtSnHLXhr0xl0IxqyMuLCv+QZ5Beiawimr/WT50CUquRzYODoSoFN?=
+ =?us-ascii?Q?IK4NtXyCI/PiaUQl6SFxQmFF6HJpc4sQDQfGGJaghOEm6oTJqK70Z9/09xon?=
+ =?us-ascii?Q?rFcZz7MQow2J2qGSBV7nz3NmTHG47fP0uoOQl0aRb20iXs1Fkm4ZPfLjfG9U?=
+ =?us-ascii?Q?T6qDQ0RtVbA3Y4V6Al6TEtqhvPlR73Ibk3D1aM3BWE6y9bulDRwYpi7CKxIa?=
+ =?us-ascii?Q?6u7a57g0OpEJsmOYpQPmKokvGcv5g9YfPcvF/OcQlcpzETz+aXeB+k9QCPHK?=
+ =?us-ascii?Q?RBbx1IwcpLMVGSOLXM5QyZZsicCJoU+P2LbX06W018aWr0Ibwrd3YzDQxiW4?=
+ =?us-ascii?Q?9b5fbPLMzYkZa1EDJCfFHvQngvnFDinNDCFJedySHWbQtWt0KvFuhzsCFuBX?=
+ =?us-ascii?Q?lnkGIvljqw/F1VKjYFHpG0xwR/0WWBU0hqO7oVFCewJsDPPWXf8RxBYIUY5I?=
+ =?us-ascii?Q?wNAiHjPm4fAG9JSf22Plptce/BEkFJ222CtOb9yk12LeUMTA7DUmogJGwtod?=
+ =?us-ascii?Q?6ZSpJ2UTz6BUmMXoYa1ZN3I/9hb8KZr0Nq8l2Yg+dsTAVhTkmyXENZ3QH1X4?=
+ =?us-ascii?Q?ElCUdb2nCNbErdpZeVyIjFxXOX5PVx9KpOriYibkv8Q/S2vkzrjrpbrHezCq?=
+ =?us-ascii?Q?wEo9Xeq0INbyxB9YDR+qmE5SCNUcHgp4wdgsVKrruNjbx+fvxjHJP65PDz0b?=
+ =?us-ascii?Q?mMLg3pWU1VK8B6ALL0eSFSNH0qcYYlQQQRBXsV5vBcTTF8Yd34S2m1ZtBWgD?=
+ =?us-ascii?Q?Dm+/Jz/t1vfvGLKC9QawX6xoCoRNA1bV4jVZX2wsqZeWF6illfdeyYKylAJj?=
+ =?us-ascii?Q?ukxkwVC5i9Sree/6Bm52eSE3Gpas9RgRzUbPlFepLgEF11Jhx9JEUNURZmlU?=
+ =?us-ascii?Q?nf1csY3Tjg+Pf/6EeQox2Fv+fOxe08KSqIUG15g5LLKOFeUTIxp4Zzg6/Ofb?=
+ =?us-ascii?Q?Lt2+tG2qapDmWqUk8yeMBkJNqT7Px+FLIHKUZwzvcMlWezY2bJGz4PLQ5fwp?=
+ =?us-ascii?Q?ydobLnieY54PbHhbbIvWEiU/wdqapZd5187hDG7SJbP2CEAYDETivllg14jW?=
+ =?us-ascii?Q?UzvR8uBnrqK6Ww9NxK/SkvI9Rb7Uj8YnY0+N5ExSN5kHQGbrLg5DlzhPSPJg?=
+ =?us-ascii?Q?zw38H1VyiGwwk+Ylc2vZOpBYQ7rHRBZCAmuQsbeCYBv0w1cjuD9O7l0q/Vg1?=
+ =?us-ascii?Q?+BjBBKZyrLBw+OAtXpX5S9H5LEBv5g5Rr13W3ao2dpIHrdF+SUsFn6MLTJGP?=
+ =?us-ascii?Q?XBtksZnH2XXmICzBJAo7mbOF7uJFTkupRqQN/sBJwwQKby04dr8w7JEnD6D9?=
+ =?us-ascii?Q?jw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	raosCcSIPnepDvFcs4BzXxz+4iWUHqCTe5JcY8/bstW/vYquWdUlZQwcjLqOrZ7J+IfkMPWS/ishpTTgFqniXWU5ILoVeJ97JwC622dCql9mRHMbRM4vkJAoC797zBIw1J61AcYumJFmJqD41XK2r8JKyc+6YvrYRBleaVWIbhgB6IpgO3MpSLfsNPbh7onwf51Bq8SgsyxYXt+qGZl/qHoaqv8hcPjcjnSoncH0YHwFlgiX6rVipiXKfdkAtGQzcvd/eda8LmdOibUzL2eju3Jasyzw1iLrmuNCuthk0XIeqgiA/mX1S8cvclBiPsVSHK5PupjIyzLPElv/4akRcu+qwPK2wq+4MJ6gabdsVtKrZcWyoLM3w8I6wYcUA8ue0GyQuSr6kSj/im8DDjlO9rJE3+Svc984803R81V07lUaoifJc8Iw2owRZnwD5q1aU06d5UgwwCJh6+gRuTZMf1JgFw2ZcHSFhfpUT2MlCxjH8RcuBqhE8d+vd4oar9XhRqSQL5HgX+YKhnG9eQIBZTxdTfOwm8KMrp6Qt7lH9eR4VJXCaVR8NIUxb578HkTK9FJzg4GELqDZXjIz8S2tcWy269xsdl8oVmA+mEVl9WE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 600fac7b-c9e2-4d7e-2ad6-08ddc9d607be
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 10:45:24.8484
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nYm455oiKQVtfHlPCGx8ahNwjGIYAdZwiewTb4Ugmj0rFB4gWlZ60BJ5DWJfLa5P8Tr00rmI2PIqn5yPX8xGDkcomifkMhG+tSNA3u3yvgk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF1EC0B6C27
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507230091
+X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=6880bd48 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=MyuWbYkV9QP5UU1-1HoA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: _wrwRz0W7Btw_monkfZOspZdCrTCCGle
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5MSBTYWx0ZWRfX4tNPv592hMH1
+ 4MLSaKRIl0U0TkP8hpsh42x4skDQ3tSOdlhYwVFCK91vWh+RhVknskhg8iQESXYqQmTAQ5K/gtp
+ 51erQv0/ZKNDKXiiiI47zsT0G/2tqQt6uTGfpa3We2C4n3BeunW9jk08no4IvSJs/DE2y/ovEOR
+ vO030hdiBz9/Z3Hq3N/ZbHDuH8/b4yDurj/JqZNSmg25pJk7bjeXAYe8Q2WdgWsHuFtKdlKmoD5
+ iZhkUZDN40arNXnp/m3aKMudR3oaXhBBsEoYy6mL2FuJplFx0DxJKIrYvRbzzI5bUmee/VqhgVK
+ u8sJFJi80+VKCf/W58kaqZsPW3y2mDeWu6CUQARvqwmCsZV4uzZbymqIhef6XSUg956NB+UV2UR
+ CaMMrnpXr72nAsjn3yTesxbZ0M/PBu+SxUtaeoB84+PchetPsChZ9uC97lOfxy+GPl7xRlsL
+X-Proofpoint-ORIG-GUID: _wrwRz0W7Btw_monkfZOspZdCrTCCGle
 
-Hi Konrad,
+On Wed, Jul 23, 2025 at 10:50:27AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in ksft_test_result_fail messages. Fix them.
 
-On 7/22/25 11:14 PM, Konrad Dybcio wrote:
+Oops :) Thanks!
 
-> +//! Reference: <https://docs.kernel.org/driver-api/interconnect.html>
-> +
-> +/// The interconnect framework bandidth unit.
-> +///
-> +/// Represents a bus bandwidth request in kBps, wrapping a [`u32`] value.
-> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> +pub struct IccBwUnit(pub u32);
+This is new in this cycle so I think Andrew may just squash this into the
+relevant patch.
 
-IMO this is bit of an anti pattern for the newtype. Wouldn't be better 
-to have the inner type private instead of public to keep the u32 as an 
-implementation detail?
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-> +
-> +impl IccBwUnit {
-> +    /// Create a new instance from bytes (B)
-> +    pub const fn from_bytes_per_sec(bps: u32) -> Self {
-> +        Self(bps / 1000)
-> +    }
-> +
-> +    /// Create a new instance from kilobytes (kB) per second
-> +    pub const fn from_kilobytes_per_sec(kbps: u32) -> Self {
-> +        Self(kbps)
-> +    }
-> +
-> +    /// Create a new instance from megabytes (MB) per second
-> +    pub const fn from_megabytes_per_sec(mbps: u32) -> Self {
-> +        Self(mbps * 1000)
-> +    }
-> +
-> +    /// Create a new instance from gigabytes (GB) per second
-> +    pub const fn from_gigabytes_per_sec(gbps: u32) -> Self {
-> +        Self(gbps * 1000 * 1000)
-> +    }
-> +
-> +    /// Create a new instance from bits (b) per second
-> +    pub const fn from_bits_per_sec(_bps: u32) -> Self {
-> +        Self(1)
-> +    }
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-This is a very shady API. If I were to call
-
-	let bw = IccBwUnit::from_bits_per_sec(16);
-
-I would expect.
-
-	assert_eq!(bw.as_bytes_per_sec(), 2);
-
-But it would fail (assuming that 8 bits = 1 byte), since 
-IccBwUnit::from_bits_per_sec(), always assigns 1.
-
-
-> +
-> +    /// Create a new instance from kilobits (kb) per second
-> +    pub const fn from_kilobits_per_sec(kbps: u32) -> Self {
-> +        Self(kbps.div_ceil(8))
-> +    }
-> +
-> +    /// Create a new instance from megabits (Mb) per second
-> +    pub const fn from_megabits_per_sec(mbps: u32) -> Self {
-> +        Self(mbps * 1000 / 8)
-> +    }
-> +
-> +    /// Create a new instance from gigabits (Gb) per second
-> +    pub const fn from_gigabits_per_sec(mbps: u32) -> Self {
-> +        Self(mbps * 1000 * 1000 / 8)
-> +    }
-> +
-> +    /// Get the bandwidth in bytes (B) per second
-> +    pub const fn as_bytes_per_sec(self) -> u32 {
-> +        self.0 * 1000
-> +    }
-> +
-> +    /// Get the bandwidth in kilobytes (kB) per second
-> +    pub const fn as_kilobytes_per_sec(self) -> u32 {
-> +        self.0
-> +    }
-> +
-> +    /// Get the bandwidth in megabytes (MB) per second
-> +    pub const fn as_megabytes_per_sec(self) -> u32 {
-> +        self.0 / 1000
-> +    }
-> +
-> +    /// Get the bandwidth in gigabytes (GB) per second
-> +    pub const fn as_gigabytes_per_sec(self) -> u32 {
-> +        self.0 / 1000 / 1000
-> +    }
-> +
-> +    /// Get the bandwidth in bits (b) per second
-> +    pub const fn as_bits_per_sec(self) -> u32 {
-> +        self.0 * 8 / 1000
-> +    }
-> +
-> +    /// Get the bandwidth in kilobits (kb) per second
-> +    pub const fn as_kilobits_per_sec(self) -> u32 {
-> +        self.0 * 8
-> +    }
-> +
-> +    /// Get the bandwidth in megabits (Mb) per second
-> +    pub const fn as_megabits_per_sec(self) -> u32 {
-> +        self.0 * 8 * 1000
-> +    }
-> +
-> +    /// Get the bandwidth in gigabits (Gb) per second
-> +    pub const fn as_gigabits_per_sec(self) -> u32 {
-> +        self.0 * 8 * 1000 * 1000
-> +    }
-> +}
-> +
-> +impl From<IccBwUnit> for u32 {
-> +    fn from(bw: IccBwUnit) -> Self {
-> +        bw.0
-> +    }
-> +}
-> +
-> +#[cfg(CONFIG_INTERCONNECT)]
-> +mod icc_path {
-> +    use super::IccBwUnit;
-> +    use crate::{
-> +        device::Device,
-> +        error::{Result, from_err_ptr, to_result},
-> +        prelude::*,
-> +    };
-> +
-> +    use core::ptr;
-> +
-> +    /// A reference-counted interconnect path.
-> +    ///
-> +    /// Rust abstraction for the C [`struct icc_path`]
-> +    ///
-> +    /// # Invariants
-> +    ///
-> +    /// An [`IccPath`] instance holds either a pointer to a valid [`struct icc_path`] created by
-> +    /// the C portion of the kernel, or a NULL pointer.
-> +    ///
-> +    /// Instances of this type are reference-counted. Calling [`IccPath::of_get`] ensures that the
-> +    /// allocation remains valid for the lifetime of the [`IccPath`].
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// The following example demonstrates hwo to obtain and configure an interconnect path for
-> +    /// a device.
-> +    ///
-> +    /// ```
-> +    /// use kernel::icc_path::{IccPath, IccBwUnit};
-> +    /// use kernel::device::Device;
-> +    /// use kernel::error::Result;
-> +    ///
-> +    /// fn poke_at_bus(dev: &Device) -> Result {
-> +    ///     let bus_path = IccPath::of_get(dev, Some(c_str!("bus")))?;
-> +    ///
-> +    ///     bus_path.set_bw(
-> +    ///         IccBwUnit::from_megabits_per_sec(400),
-> +    ///         IccBwUnit::from_megabits_per_sec(800)
-> +    ///     )?;
-> +    ///
-> +    ///     // bus_path goes out of scope and self-disables if there are no other users
-> +    ///
-> +    ///     Ok(())
-> +    /// }
-> +    /// ```
-> +    #[repr(transparent)]
-> +    pub struct IccPath(*mut bindings::icc_path);
-> +
-> +    impl IccPath {
-> +        /// Get [`IccPath`] corresponding to a [`Device`]
-> +        ///
-> +        /// Equivalent to the kernel's of_icc_get() API.
-> +        pub fn of_get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> +            let id = name.map_or(ptr::null(), |n| n.as_ptr());
-> +
-> +            // SAFETY: It's always safe to call [`of_icc_get`]
-> +            //
-> +            // INVARIANT: The reference count is decremented when [`IccPath`] goes out of scope
-> +            Ok(Self(from_err_ptr(unsafe {
-> +                bindings::of_icc_get(dev.as_raw(), id)
-> +            })?))
-> +        }
-> +
-> +        /// Obtain the raw [`struct icc_path`] pointer.
-> +        #[inline]
-> +        pub fn as_raw(&self) -> *mut bindings::icc_path {
-> +            self.0
-> +        }
-> +
-> +        /// Enable the path.
-> +        ///
-> +        /// Equivalent to the kernel's icc_enable() API.
-> +        #[inline]
-> +        pub fn enable(&self) -> Result {
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid argument for `icc_enable`].
-> +            to_result(unsafe { bindings::icc_enable(self.as_raw()) })
-> +        }
-> +
-> +        /// Disable the path.
-> +        ///
-> +        /// Equivalent to the kernel's icc_disable() API.
-> +        #[inline]
-> +        pub fn disable(&self) -> Result {
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid argument for `icc_disable`].
-> +            to_result(unsafe { bindings::icc_disable(self.as_raw()) })
-> +        }
-> +
-> +        /// Set the bandwidth on a path
-> +        ///
-> +        /// Equivalent to the kernel's icc_set_bw() API.
-> +        #[inline]
-> +        pub fn set_bw(&self, avg_bw: IccBwUnit, peak_bw: IccBwUnit) -> Result {
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid argument for [`icc_set_bw`].
-> +            to_result(unsafe {
-> +                bindings::icc_set_bw(
-> +                    self.as_raw(),
-> +                    avg_bw.as_kilobytes_per_sec(),
-> +                    peak_bw.as_kilobytes_per_sec(),
-> +                )
-> +            })
-> +        }
-> +    }
-> +
-> +    impl Drop for IccPath {
-> +        fn drop(&mut self) {
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid argument for [`icc_put`].
-> +            unsafe { bindings::icc_put(self.as_raw()) }
-> +        }
-> +    }
-> +}
-> +
-> +// SAFETY: An `IccPath` is always reference-counted and can be released from any thread.
-> +unsafe impl Send for IccPath {}
-> +
-> +#[cfg(CONFIG_INTERCONNECT)]
-> +pub use icc_path::*;
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 87bcaa1c6b8a6291e71905e8dde60d945b654b98..60f6ac6e79cce57a8538ea0ad48f34f51af91731 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -89,6 +89,7 @@
->   pub mod fmt;
->   pub mod fs;
->   pub mod init;
-> +pub mod icc;
-
-Nit: formatting/missing space?
-
->   pub mod io;
->   pub mod ioctl;
->   pub mod jump_label;
-> 
-
-Thanks!
-Daniel
+> ---
+>  tools/testing/selftests/mm/mremap_test.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+> index fccf9e797a0c..774cdba102fc 100644
+> --- a/tools/testing/selftests/mm/mremap_test.c
+> +++ b/tools/testing/selftests/mm/mremap_test.c
+> @@ -525,10 +525,10 @@ static void mremap_move_multiple_vmas(unsigned int pattern_seed,
+>  out:
+>  	if (success)
+>  		ksft_test_result_pass("%s%s\n", test_name,
+> -				      dont_unmap ? " [dontunnmap]" : "");
+> +				      dont_unmap ? " [dontunmap]" : "");
+>  	else
+>  		ksft_test_result_fail("%s%s\n", test_name,
+> -				      dont_unmap ? " [dontunnmap]" : "");
+> +				      dont_unmap ? " [dontunmap]" : "");
+>  }
+>
+>  static void mremap_shrink_multiple_vmas(unsigned long page_size,
+> @@ -727,10 +727,10 @@ static void mremap_move_multiple_vmas_split(unsigned int pattern_seed,
+>  out:
+>  	if (success)
+>  		ksft_test_result_pass("%s%s\n", test_name,
+> -				      dont_unmap ? " [dontunnmap]" : "");
+> +				      dont_unmap ? " [dontunmap]" : "");
+>  	else
+>  		ksft_test_result_fail("%s%s\n", test_name,
+> -				      dont_unmap ? " [dontunnmap]" : "");
+> +				      dont_unmap ? " [dontunmap]" : "");
+>  }
+>
+>  /* Returns the time taken for the remap on success else returns -1. */
+> --
+> 2.50.0
+>
 
