@@ -1,127 +1,209 @@
-Return-Path: <linux-kernel+bounces-742335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0E9B0F01B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF25B0F01F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9F7964EEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B991898C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3DD2BDC15;
-	Wed, 23 Jul 2025 10:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E9428DF50;
+	Wed, 23 Jul 2025 10:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wb7gA+dL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NKBM1xd5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fsknoIhp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z0m8UJ27";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xCNm0FJi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B416928137C;
-	Wed, 23 Jul 2025 10:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404728505D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267221; cv=none; b=tvsUuU3RDnaD+UTgKsvqUg0/OFVcXNQ0+wZU03Bvig1fQol5KCPTKla2lGaWiTkHM669fqmLtWNoNzzALGpWa/1x4E/TkzGOS+oTIHKOJ2nf0BuG2pgpSCtKM20Msa+xbxd7oAg33h2xUO8w9R2Pag3FiUo+BVkjS4VPHPMrHn8=
+	t=1753267306; cv=none; b=EDu6cD8UdggDGSj8yfO6mj05zwbRZRDbjXFxzkrGTzWEcCqEcauDLvplBNWNT81H3Rbb1nfCLzyKhNF5lGgVTukASl3QMoUSD4/QX9Edkt1naaVJfkXAuNbYmIiHPdkf1Qd6wxWC4sv7FFs6ZyWexqBFeu5PsY8c4WjNMEMZqbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267221; c=relaxed/simple;
-	bh=Kr9pqZNtJgRq0KuJQB/cKSB7DHn2xeP5OuSwdjWmQ5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbCQUdYR4eChUvkReyNFp/xnD8EJkR+IwEni2PjJHV+5/HImqgIpCvlm41VwMvuD8Y1GtHJR0gx6axJ5l8rfWRMAEbq1L4O2t8QyqYKODCGzohLTCSvUeBCHhyYD1ASQa5z9vyAFqvefOQv2ayn1NnewOxam1haVz7k8WkH77fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wb7gA+dL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E282C4CEE7;
-	Wed, 23 Jul 2025 10:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753267221;
-	bh=Kr9pqZNtJgRq0KuJQB/cKSB7DHn2xeP5OuSwdjWmQ5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wb7gA+dLTG19+kAQhtI7r0ZURbl/JDkasqowAE3a/Wh248Nnlc1k7aU/ksS9RYamq
-	 knUFyuAwhsxKRsAI/GG5CibNsysPDlNp0afPwO/aCFq6sRgp0+shNphfUqcwHJi0DH
-	 3zs7KxJtS+1uKRBASoEE7QKPSkc2D6lJ6IXybMF9LHGU4aZuB6JczBwnpWZJ7EHg1O
-	 gg+A1yYh9daxiGnJOFjBpZhC0l0n5Om15FAGdxEoDiUhzgyiLNnxFBFRJbttHttbMN
-	 duLDp6XGWO6RXQ3QgR66ZfIwhP5gpt2SItcGGEYZ4XA0smDpSHIKYfufmwryt8Qtgx
-	 UZgjbM2LQ2PaA==
-Date: Wed, 23 Jul 2025 11:40:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Raag Jadav <raag.jadav@intel.com>, dri-devel@lists.freedesktop.org,
-	linux-sound@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v2 2/3] ASoC: hdac_hdmi: Use dev_info on invalid ELD
- version
-Message-ID: <b209b185-8caa-41d4-8f8d-95aefec1d785@sirena.org.uk>
-References: <20250722195437.1347865-1-detlev.casanova@collabora.com>
- <20250722195437.1347865-3-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1753267306; c=relaxed/simple;
+	bh=gPY+utJPoK4qXzF64aQZa7JY6601chZq5rW3jJ0PDZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s5lidBIETrWU8KzTpx9Wnvxu0EUbsrcGhfgMtEaEZCMHf4QVg+13lg0Db/b8g4gwNVXxWASRI4wBDqcbGK5F/GOf90ls7wKQx+YHRhgQbB9+8wjphx4MX81pZVkYtxjzbePVyYwZCrj1qLMvB6aZ09yOhOajFrFi2O0dBdUasS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NKBM1xd5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fsknoIhp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z0m8UJ27; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xCNm0FJi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E77722175B;
+	Wed, 23 Jul 2025 10:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753267302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
+	b=NKBM1xd5hhTzbTqPiSyk5QXJkcG61Dqusg27TViwKYbLIS08gyHj03IMZxCROsZxjvN8O0
+	RBGFlc6StQ2nYf/Hy6ui4z0p+mvq9h5MCdnGDv5xM/BZysG2XzNTMt1Uuq726a9FoEip3s
+	h+oodcYtGRud5Czr+Bn0HiA8qC4IPzg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753267302;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
+	b=fsknoIhppO56VFd6H3bw8yT50VVyKKpMwyAyvFBVWZ+zHvR/WN/Rv1Sh28eKhe9f3/TjLv
+	e10LCKM9A7eteIDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753267301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
+	b=Z0m8UJ27XSzMXQKk79q7WGSW7TcWfKiQ2J66nsA2YY2izT3H8iU0XPZoZJCriuKne3UBZM
+	PfuVs5yrRsN1lmZvNBVnXHw9yx1f6Tuy1c01cZW04qjGkZUxhx1hiTieGzP2pvrtx+MoZY
+	1vV67SnMZ9PnADaJa+UWiWox48lIin4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753267301;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
+	b=xCNm0FJiM3wqrOGGEIYAVmUhudcOoLDjUxopgEP5QhS5XGvt2DxI8LNg3IcgemTldGzFxN
+	/LQ0ilrJzWzg6ABA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A34513302;
+	Wed, 23 Jul 2025 10:41:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tkwmA2W8gGhdbAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 23 Jul 2025 10:41:41 +0000
+From: Pedro Falcato <pfalcato@suse.de>
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Bernard Metzler <bmt@zurich.ibm.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Pedro Falcato <pfalcato@suse.de>,
+	stable@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] RDMA/siw: Fix the sendmsg byte count in siw_tcp_sendpages
+Date: Wed, 23 Jul 2025 11:41:23 +0100
+Message-ID: <20250723104123.190518-1-pfalcato@suse.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eFKBin1ilgiNfb0m"
-Content-Disposition: inline
-In-Reply-To: <20250722195437.1347865-3-detlev.casanova@collabora.com>
-X-Cookie: List was current at time of printing.
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo,intel.com:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
+Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
+we have been doing this:
 
---eFKBin1ilgiNfb0m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+                             size_t size)
+[...]
+        /* Calculate the number of bytes we need to push, for this page
+         * specifically */
+        size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
+        /* If we can't splice it, then copy it in, as normal */
+        if (!sendpage_ok(page[i]))
+                msg.msg_flags &= ~MSG_SPLICE_PAGES;
+        /* Set the bvec pointing to the page, with len $bytes */
+        bvec_set_page(&bvec, page[i], bytes, offset);
+        /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
+        iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+try_page_again:
+        lock_sock(sk);
+        /* Sendmsg with $size size (!!!) */
+        rv = tcp_sendmsg_locked(sk, &msg, size);
 
-On Tue, Jul 22, 2025 at 03:54:36PM -0400, Detlev Casanova wrote:
-> When disconnected, the ELD data cannot be read by the display driver, so
-> it just sets the data to 0.
+This means we've been sending oversized iov_iters and tcp_sendmsg calls
+for a while. This has a been a benign bug because sendpage_ok() always
+returned true. With the recent slab allocator changes being slowly
+introduced into next (that disallow sendpage on large kmalloc
+allocations), we have recently hit out-of-bounds crashes, due to slight
+differences in iov_iter behavior between the MSG_SPLICE_PAGES and
+"regular" copy paths:
 
-Please don't put patches for different subsystems into the same series
-if there's no dependencies, it just makes dependencies less obvious and
-creates hassle merging things.
+(MSG_SPLICE_PAGES)
+skb_splice_from_iter
+  iov_iter_extract_pages
+    iov_iter_extract_bvec_pages
+      uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
+  skb_splice_from_iter gets a "short" read
 
-> That makes the ELD parsing code read an ELD version of 0, which is
-> invalid. In hdac_hdmi, that is logged with dev_err(), but should be
-> logged with dev_info() instead as it is done in sound/core/pcm_drm_eld.c
->=20
-> This avoids printing multiple messages like:
->=20
->     HDMI: Unknown ELD version 0
->=20
-> in the kernel log when userspace tries to open the sound device.
+(!MSG_SPLICE_PAGES)
+skb_copy_to_page_nocache copy=iov_iter_count
+ [...]
+   copy_from_iter
+        /* this doesn't help */
+        if (unlikely(iter->count < len))
+                len = iter->count;
+          iterate_bvec
+            ... and we run off the bvecs
 
-It doesn't, it just lowers the severity of the logs that are printed.
-If the goal is to lower the number of messages printed you need to use
-a ratelimited print.
+Fix this by properly setting the iov_iter's byte count, plus sending the
+correct byte count to tcp_sendmsg_locked.
 
---eFKBin1ilgiNfb0m
-Content-Type: application/pgp-signature; name="signature.asc"
+Cc: stable@vger.kernel.org
+Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
+Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+---
+ drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
+index 3a08f57d2211..9576a2b766c4 100644
+--- a/drivers/infiniband/sw/siw/siw_qp_tx.c
++++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
+@@ -340,11 +340,11 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+ 		if (!sendpage_ok(page[i]))
+ 			msg.msg_flags &= ~MSG_SPLICE_PAGES;
+ 		bvec_set_page(&bvec, page[i], bytes, offset);
+-		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
++		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
+ 
+ try_page_again:
+ 		lock_sock(sk);
+-		rv = tcp_sendmsg_locked(sk, &msg, size);
++		rv = tcp_sendmsg_locked(sk, &msg, bytes);
+ 		release_sock(sk);
+ 
+ 		if (rv > 0) {
+-- 
+2.50.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiAvAwACgkQJNaLcl1U
-h9DLlAf/UR+hhxSi+4m+Jov1EipVWvw6PObyiKC9GcgVW5a8/3sx58QxgNNL8n3q
-VL8fD2dSxmbCICrI92GRYs2EXXQI6MFk2n5HgxDCWK+GzqcgfmkxTEKaXRezAgdD
-Z74CEyQKMytwHrZg0hSN4uIy62KUm6gLu7A+GI2rOOJ3Xd8IgaDyVt1WoRfdj8nO
-StiMnf3kaa9LgC5Ql9J0cqdhKI0xA6FfdcrU6qO2Ki6/644qZDzgrnVaVMjP4lpp
-kT6s8rVgT7gMIlsnUk8U2l4Q8q/fEUibVe2groGTUmiYOZU4MUznrXVPF+fuYi5G
-JttLPr13R3i/120Tj1aSwcBpmslvjw==
-=8mPT
------END PGP SIGNATURE-----
-
---eFKBin1ilgiNfb0m--
 
