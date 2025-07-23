@@ -1,82 +1,87 @@
-Return-Path: <linux-kernel+bounces-742049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03247B0EC65
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:52:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047F7B0EC6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130F73AEECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:52:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D02A7AAB7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CD9277C9F;
-	Wed, 23 Jul 2025 07:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CD427816E;
+	Wed, 23 Jul 2025 07:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cae+OoNf"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JhTm37q7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8178274B3B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE4277C8A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753257157; cv=none; b=hiMqDLD9zFZK/XZnxain3tIBYVX0NKpkKQ4IZpZG/6YMFiGxyXnmsvT57hUPg0oe9kAoEU91lbUZ4Hm4hSv9tdWVWsmjNHjOWHz27P08wgnGz2JM33qwg39PQvQDvraYGKgYVhiep2Pa2szFsfzjZHvzJ2wU5ZYiIXXfIzQgKQ4=
+	t=1753257204; cv=none; b=Qp81xsrL5j/+903KlrU06FfTHxy1S2SEsc81Onwm7wEGmhK66KRRZeAxpAzQrBAD7X99QVnNGrIKMJSyo2/TIMvdyavcQoR/cXAXDFib486G78BaU6SIeXunN2FgrBhgN4P2G8MYSfJdTqYYPK0b8BYkWdGrfjGYPXtvknOOwCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753257157; c=relaxed/simple;
-	bh=ud0gO2Wa0cMTDxDy0tyqeRKDtzrmUjlTHcoL1rFLobo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lQjH4sSasXCwuH9DxNCUVFYA7VBVls+Km05a12BjpUBXRUBHqRZWroyj3TuuDsLs9WyjiP4bWladiLYlRyBr07BLnZZ55+qw5KkmbB+7BmmMXXLBzSbOGT/6CXWsNxRgJ2pIWrCXW9dGfxJKhFDjZZ56gIRYXp98Z7dskplWTOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cae+OoNf; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d54214adso45903485e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 00:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753257153; x=1753861953; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wJr/hw1dHQH58OkL2qscj1xdCFrGFtnGhH2Sn1vmVSA=;
-        b=Cae+OoNfqmYA6R9LwXX8Fi4zSdaxLsTtLlKKc38RyI/3Iwo0LxRWhzuOWkiOfJxFH6
-         N/Vrg2i2lq5SRdwe1x8kDdSJWsZBZ+JeYqvhJZVXmn1MO9mVvO2pnzFBSAkqP6cI2BGI
-         cGI4jmXHQ+hU1ZXP14mCOdZ1+tpkicKlxBhxu9Zah2ChpzZUFy/0ch/2ILfQc3JGbi0V
-         QP7bxpdh5T8TZ/bF67SwHe6Olk6F97lsVnR6vseP+kN4d+/lRXelM6jt9gkkquO05BW5
-         oy6tKYPLgv0mJmlORSuYK7qkQxfHP1CTd8ryMYRUs0CvQlFdYHBWqfmRu7qqxneyNoS4
-         TXkQ==
+	s=arc-20240116; t=1753257204; c=relaxed/simple;
+	bh=6AUA4zDaiameTtBfRmj4nc7+J78zCgRFdcNELO3I5L8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=npuZker6k8c6x5fQ7oy89uVOUGPc4B7D1TK4xsRKuHGx2VIPwabazl8NEtpXvTAVdz7/wdVjrPpqjHPZ8NG5Jz8iJ5T4LWbmQhjEVYEphqASEuANTgm6kc8lJaL1m475hubi9o0/e+B/LsH73ybj73jG7bM4rIFY7T3LtL3im90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JhTm37q7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMNt0s019472
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:53:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bdlbcmtJz0mVZF6c4pr1ox58V6mA0vz53UAjtEAd3i8=; b=JhTm37q7O2eNlk9u
+	JwsS8zXMc4j+IiZMPeij+rzQCfbmmouDUpZdPzdnO80jwlI8Sz1VSK3mbsbamv/m
+	GNom75E/ilxx7TVmpwFCEZ5jX1rw6sX3DLNb1Frx1AeBzXQ9HOjLmrAx7FHPEQ8A
+	HCXyST7uITCmDS33KMRN1cD6dtV274NDGxKJxXhyC95svO3w+vzAVWk9qCLuu4d1
+	CTRXHUvwJM/X8sEU2/ITclMaKgOqHwwIbx0Mg3v8rOldgs8yZIiXyKYn5RxrSzd8
+	Tl2T2bOVkWbaBXLQiCGhT2RCtZ1kSOFmXp2nU+SzqcIR+OyYJCam1OJL9DvLZbRI
+	X2oxdA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6pgpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:53:21 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b3f321dc6abso3611373a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 00:53:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753257153; x=1753861953;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wJr/hw1dHQH58OkL2qscj1xdCFrGFtnGhH2Sn1vmVSA=;
-        b=H85Bfc7UD/wqP4CrhRB+dWPQBAP7Uj7eDsP6F73EMcE/d1rBZMdLN6jJ2lKqKzDKiO
-         tae3os1GW3lKPYmvMcDfwsOWvKHQp0uVErpaCJanJ75IxrrNuOdn02wGLSOb7jo3sGTh
-         HWx81IPSAiPXUn4BG5l8uLYajRxRDYq14rDvXuf1Nsh6ljoBb7WFbU2yRC3I4qN+dHjl
-         zUcm86UOXjKalA2f6lUaKWC5yAEyPeforIz5+L/4z2HAOl2CC7gOTjHFzBB4y/RR68Nq
-         Sge/poQzEDUbCIRaPaD6TFnaplCL1r3Ri/G5tFF5pXf2SmQZftv5ufo2w+kLp2ibbiWs
-         31PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv96yjh9CrdJQYBQfy5H9hUrgY+F+J1Ipp31GClzy+sHdlyvgcEzFL5ZoUg8HoRJ+roqkf1Cb8H8tOLfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAIqGQV5tmowlAsAa4JGs3IyaVZ/cVaoivxNovvu4TBZHmF5qE
-	pDcwn3s9TihhDWwIuN9OjpJs2S4eBL8Z8vofJuEMBLAAzyDp+i3KX0sqj2LpMItZ4BQ=
-X-Gm-Gg: ASbGncsisVWZU8EPYyhnOS/Z2VUPos4NRxHGDRYT6eSP3TYXtkH+obP+s5pk7yVBVPO
-	1SeA9d8N+tY+n1Kgbihd2FFr9NlTgZ3g8EvvkPhp4ADl6UufZ2yPijNAnWp+lnmbLYoYniOZtie
-	a6jz3gJmV7byMtCrnveV1cLRjaH0sqgwnERiZ7LlY2krmTfECBCTsEPaXZHwm6md0HKLjN8ctX/
-	oZMmnXqDEstsbqKCm4FwPEUPBIQ475kxUnsNU3ohJHn8Kg58uTjiTnLHgMYq62XyGsY1FyJVk0/
-	w7SyLhFtulP+ibGLCgu6GAaBQ5DDUVRs1+mMQ+bR43vnCIOxE+NCPWT6I/R+B0dYrzvIbCsGgFC
-	zZr+Ozrgk7HI3A7/Z0ZeR4Slhw5aUHCVhHVnbfMMAIbD9AX9FR+zJBuZRUOP6U3QdCsCW/W2s6Y
-	s=
-X-Google-Smtp-Source: AGHT+IH1+KGiK7+CPpG7hfWiA/jq/1R1SSgKNRLgfm5//YxJ7f7pwzncw9zDFJZ9mt07q0lMm4XQyQ==
-X-Received: by 2002:a05:6000:4024:b0:3b6:1630:9204 with SMTP id ffacd0b85a97d-3b768ec8a1bmr1439039f8f.19.1753257152837;
-        Wed, 23 Jul 2025 00:52:32 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:8813:2f0d:f9e0:5294? ([2a01:e0a:3d9:2080:8813:2f0d:f9e0:5294])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45869199605sm14357735e9.14.2025.07.23.00.52.31
+        d=1e100.net; s=20230601; t=1753257200; x=1753862000;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bdlbcmtJz0mVZF6c4pr1ox58V6mA0vz53UAjtEAd3i8=;
+        b=Z5F9zvQQTceGVutifJs0kZnhKRsvCvyiwRNlwTE3tYXcHFzFkajhvpjEqHugXSmM7G
+         w+9++6oUbop68O055XHiyffEEI1mIU4gKmtePzOghAwqvwuwrFd8H1ETTWU0mlvAUiNW
+         tF9MaGJgLpLji+aTfx5MY5XOfpJLqiaizx09NJ/zrQtMKwuzlCRjw53kkYUyAmKb8s7c
+         3zSuJimDZiWdkYk5+zQtnMYAsAx7fg6XM/5iY+8sxVRzkvOIO7mZRRvuM32MYQmr6h3j
+         javONAsHeNUi5CZCAt88ZUD5KC/XCxuxy1DfQrKNbv/TvvlCy/NyqKEZeNq64dP+IMXf
+         O89g==
+X-Forwarded-Encrypted: i=1; AJvYcCUz75jAankGSrsEWQ3YAqMVO7Ktzr7oVl0QoqQNEbCQ0n2xDHyQGFGzzLAl6k6tZOryU5CuzPMFwRiDNGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7KLvzWsKM5cq7QQk1B8T9OzlHnngfQhm3edUM7UiEUSV90U+9
+	u+TAxUdQUnyvnGs/Iji5JwbEm4q/GlpHcxO3a4SnEzHF//xAADhreqDggW8eFraTS6RRCyNZW4O
+	cKbt/t/t5ItXqqLBVkAfF9o+IDP/fYP2o/0/HMehFwHGPlzIbcI9wYcEGYlZYfeWe+Ww=
+X-Gm-Gg: ASbGncsZ2Z3g6pAjtzpnTimvyugarpoXiI0llRUms27daI6XYHLY+spfoxd1qRwxWjq
+	hcecU9TXSjDS2MF/weL/PKSKU4CxDYFLisaL2FIA1FCtygWMgPZYq/W1Gi4FGv9EbeNCG6MepEe
+	8Iqu8XXB7hChNDqDfHyhs8skSvlGCnaP6WMeyb3sjb0D2fgyx3luPvvuLPBCSdKMNNej2oJ2VqZ
+	bkTATkI5gTtlO8+mfp9B3+53uhXdu5VgKDwdaFQI3r7ryXrc/z+EosgHVa/yLh/51GbIsBxwvOP
+	8gYmOFdAI4RpVT0LQxEOlHb19yWCC/54pNUhSHvdy6VpU4lOUTBSV4BVc5BYA+zYwaZkSWEbQaq
+	l9Br6h0ZQhQ1iwWvCVYtTWYUHBxU=
+X-Received: by 2002:a05:6a20:430a:b0:21a:ecf5:ea71 with SMTP id adf61e73a8af0-23d4904017fmr3704500637.15.1753257200299;
+        Wed, 23 Jul 2025 00:53:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXv4m6IG8934XcRiMWuyLGd/m78qxsh/7ZdcHnT+rokiIcxXq6zawIQJAfrmzCzRVYOl2RwQ==
+X-Received: by 2002:a05:6a20:430a:b0:21a:ecf5:ea71 with SMTP id adf61e73a8af0-23d4904017fmr3704467637.15.1753257199847;
+        Wed, 23 Jul 2025 00:53:19 -0700 (PDT)
+Received: from [10.133.33.46] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8d550sm8349944a12.24.2025.07.23.00.53.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 00:52:32 -0700 (PDT)
-Message-ID: <d1c67441-85d6-42d7-9ace-c4884f767dc8@linaro.org>
-Date: Wed, 23 Jul 2025 09:52:31 +0200
+        Wed, 23 Jul 2025 00:53:19 -0700 (PDT)
+Message-ID: <39deebf4-79cd-42a0-b49e-01d556e6d1e3@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 15:53:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,116 +89,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 1/2] phy: add new phy_notify_pmstate() api
-To: Vinod Koul <vkoul@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
- William Mcvicker <willmcvicker@google.com>
-References: <20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org>
- <20250703-phy-notify-pmstate-v2-1-fc1690439117@linaro.org>
- <e2lhm237c3xtbdjux2wuesq5fwu7nky3w7oq2fnsgn2pqcg5kh@xhxktriooyes>
- <aICKM-ebp9SMAkZ_@vaman>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <aICKM-ebp9SMAkZ_@vaman>
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
+ <20250716-hamoa_initial-v1-3-f6f5d0f9a163@oss.qualcomm.com>
+ <aHkhcUVBnrwadKfa@linaro.org>
+ <3a381014-cfe4-4b3c-a3c7-df688c1e87cc@oss.qualcomm.com>
+ <aHlZu51tYDSsyFTh@linaro.org>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <aHlZu51tYDSsyFTh@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=688094f1 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=ErcKch8FPRIGc_MFKVoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: HGq_3ABGxxQc3X-W49tDQBFqt7yOz3F2
+X-Proofpoint-GUID: HGq_3ABGxxQc3X-W49tDQBFqt7yOz3F2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA2NiBTYWx0ZWRfXxYFvHuYWHWar
+ ed3qzywZ+bNGzeOsahZSFi+JlJO0W+fpar6Y/BOehWnWuMahaQnw1e0aom4E/PrLC+4/gV+9/Wh
+ rW2t8/H2SLHJ3aRTzFPLgDDh3gRfS2/WGlNqctHlei6A/mI4VdEZTkHAgfZtukMWkwe1sp3cN0f
+ rz9lD8AbtArxVFGCFpnPpcfQXmJkyqVReMqE+CbPxeDa3poIFpgkuGzOyyMpEFt59mEE9OStu4q
+ 3gaaxosPgB2TgtJuecL9KgP5OvHTZ2m2ZvzVDAVNQD7LoG5vHIP95pJMU3sumPNKnF9gge1RYoX
+ SdtxDWUuIW4j7RXtQi8rpZUyXBsLNaTFXH2SoMFu7mk/FNrDrciXsk8HuPwKNsYJOMFkTw7HLPI
+ CRam3fsIW5NWdTNYP5t+FjG5ts4IGL7vyVG1UZ6s5UtExYZTZ48LzF1xLyQbqitmJmVQkZQl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230066
 
-On 23/07/2025 09:07, Vinod Koul wrote:
-> On 22-07-25, 22:04, Manivannan Sadhasivam wrote:
->> On Thu, Jul 03, 2025 at 02:03:22PM GMT, Peter Griffin wrote:
->>> Add a new phy_notify_pmstate() api that notifies and configures a phy for a
->>> given PM link state transition.
->>>
->>> This is intended to be by phy drivers which need to do some runtime
->>> configuration of parameters during the transition that can't be handled by
->>> phy_calibrate() or phy_power_{on|off}().
->>>
->>> The first usage of this API is in the Samsung UFS phy that needs to issue
->>> some register writes when entering and exiting the hibernate link state.
->>>
->>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>> ---
->>>   drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
->>>   include/linux/phy/phy.h | 25 +++++++++++++++++++++++++
->>>   2 files changed, 50 insertions(+)
->>>
->>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->>> index 04a5a34e7a950ae94fae915673c25d476fc071c1..0b29bc2c709890d7fc27d1480a35cda6a826fd30 100644
->>> --- a/drivers/phy/phy-core.c
->>> +++ b/drivers/phy/phy-core.c
->>> @@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
->>>   }
->>>   EXPORT_SYMBOL_GPL(phy_notify_disconnect);
->>>   
->>> +/**
->>> + * phy_notify_pmstate() - phy link state notification
->>
->> 'pmstate' doesn't correspond to 'link state'. So how about,
->> phy_notify_link_state()?
->>
->> s/phy/PHY (here and below)
->>
->>> + * @phy: the phy returned by phy_get()
->>> + * @state: the link state
->>> + *
->>> + * Notify the phy of some PM link state transition. Used to notify and
->>
->> Link state change is common for the PHY. So remove 'PM'.
-> 
-> Is it really link or phy state?
 
-It seems to be a link state, and I think adding a way to force
-a link state to a phy, which is basically the role of a phy,
-more coherent.
 
-Neil
+On 2025-07-18 04:14, Stephan Gerhold wrote:
+> On Thu, Jul 17, 2025 at 10:10:05PM +0200, Konrad Dybcio wrote:
+>> On 7/17/25 6:14 PM, Stephan Gerhold wrote:
+>>> On Wed, Jul 16, 2025 at 05:08:41PM +0800, Yijie Yang wrote:
+>>>> The HAMOA-IOT-SOM is a compact computing module that integrates a System
+>>>> on Chip (SoC) — specifically the x1e80100 — along with essential
+>>>> components optimized for IoT applications. It is designed to be mounted on
+>>>> carrier boards, enabling the development of complete embedded systems.
+>>>>
+>>>> This change enables and overlays the following components:
+>>>> - Regulators on the SOM
+>>>> - Reserved memory regions
+>>>> - PCIe6a and its PHY
+>>>> - PCIe4 and its PHY
+>>>> - USB0 through USB6 and their PHYs
+>>>> - ADSP, CDSP
+>>>> - WLAN, Bluetooth (M.2 interface)
+>>
+>> [...]
+>>
+>>>> +&usb_mp_hsphy0 {
+>>>> +	vdd-supply = <&vreg_l2e_0p8>;
+>>>> +	vdda12-supply = <&vreg_l3e_1p2>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_mp_hsphy1 {
+>>>> +	vdd-supply = <&vreg_l2e_0p8>;
+>>>> +	vdda12-supply = <&vreg_l3e_1p2>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_mp_qmpphy0 {
+>>>> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+>>>> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_mp_qmpphy1 {
+>>>> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+>>>> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>>
+>>>
+>>> Assuming the USB ports are located on the carrier board and not the
+>>> SoM(?):
+>>>
+>>> Are carrier boards required to make use of all these USB
+>>> ports/interfaces? In my experience it's not unusual that embedded
+>>> carrier boards use only the functionality that they need. Maybe this
+>>> should just set the common properties and enabling individual ports for
+>>> PCIe and USB should be up to the carrier boards.
+>>
+>> The PHYs are on the SoC and if the kernel is told they're "disabled",
+>> they may possibly be left dangling from the bootloader
+>>
+> 
+> How is this different from any of the laptops we have upstream? If we're
+> worried about firmware keeping unused PHYs on, then we should probably
+> enable all the PHY nodes by default in the SoC .dtsi?
+
+Per my understanding, the SoM may be used with various types of 
+firmware, some of which might fully initialize all USB PHYs. In 
+contrast, laptop platforms typically rely on fixed firmware that only 
+initializes what's necessary for boot.
 
 > 
->>
->>> + * configure the phy accordingly.
->>> + *
->>> + * Returns: %0 if successful, a negative error code otherwise
->>> + */
->>> +int phy_notify_pmstate(struct phy *phy, enum phy_linkstate state)
->>
->> I think you need to use 'int state' and let drivers pass their own link state
->> values. You cannot have generic link states across all peripherals.
-> 
-> I would avoid that, people start overloading this if we let it keep
-> open! I would like to avoid the api -(ab)use
-> 
+> Thanks,
+> Stephan
+
+-- 
+Best Regards,
+Yijie
 
 
