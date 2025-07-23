@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-742159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CE7B0EE1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F917B0EE22
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9B818914AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA5E1897D89
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3065228506D;
-	Wed, 23 Jul 2025 09:10:32 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5176D288524;
+	Wed, 23 Jul 2025 09:10:38 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD79284681;
-	Wed, 23 Jul 2025 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF6B283FE7;
+	Wed, 23 Jul 2025 09:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261831; cv=none; b=BDyK2guw3AT5AvjNc2deiLxiug6dp6uFAHCS/f9P1ikPCBKzmUzkajqHEXxvOsBDBb/CvA2tUISsf078Zy5fm0f5GKro4QoerUBD3NQCmcB/C+7cQw2dDZ21XLhWBN+sIe9mtiA24b/rIwbLx/5sLX8orj+EA14IUOKNSmioEd0=
+	t=1753261837; cv=none; b=ftQSMDnBfuh4xSt2d4tiM+C5wU7mgpzsf7rw1bZDIlq0MDI11fRLq4FXTSxLsc5zcISGWoRz6ojE0ftWMES5wpVddIk7FR3BbWJKlzBViaZ7ox8hFIjhs5+MlzpbP9WXtsJQFtwKO8ugNTaO60D87BRd626/Ajrn14DLrleHIvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261831; c=relaxed/simple;
-	bh=PM1VPsrdjO0YYhZC6Dej1QyKtXiLbfGG2zKsH8vSHdQ=;
+	s=arc-20240116; t=1753261837; c=relaxed/simple;
+	bh=u8DjUTY+X3pAn4e5Xzdze6tG6ay2FnfhL5m3eTIlBpo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SD8nEU3TFT0ov+GjPpRtcoXX5uDGEGqnkzGYwXmp0cK2o0h90JJKOXT1WF7iK9kd0NhZGZsCgegXApCfeCXcy9uYtqZ3obnh7OjyREMKFd0OOSoY1GiGRSpU6bvwoYoFSeFvE3vIpZk+DLpmFCAf/umAjiDReN2zeLcWg+viGx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.243.244.52
+	 MIME-Version; b=Bes+xrJbd8pt8gOBFbCrf//Jxs1a6xSZZqX+iV3JgBSVZjy9x6I27NtNUNmGt2BJo0efD85FPSt4HNU4IsmpeA2razWV1nOdb3kNvdPjHKWP6oTL017F2bnqmiovsXsddxJ59B0Z+oVKqByBb8h11dQD0FMo+sWDOxbg6cSSDzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.254.200.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
-X-QQ-mid: zesmtpsz5t1753261782t33bb06d1
-X-QQ-Originating-IP: 87V1k3nUNlWghQC7T6XSvNSIAYjIn2dp964L5xBjvjI=
+X-QQ-mid: zesmtpsz5t1753261784t671181c4
+X-QQ-Originating-IP: jRrvKDkbdkjtDRgmBTHKi4qQYs0nhyQxif1XjsVZUBk=
 Received: from localhost.localdomain ( [183.17.231.145])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 23 Jul 2025 17:09:41 +0800 (CST)
+	id ; Wed, 23 Jul 2025 17:09:43 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2544636101494092667
-EX-QQ-RecipientCnt: 15
+X-BIZMAIL-ID: 17466599980844399083
+EX-QQ-RecipientCnt: 14
 From: Nick <nick.li@foursemi.com>
 To: lgirdwood@gmail.com,
 	broonie@kernel.org,
@@ -51,11 +51,10 @@ Cc: xiaoming.yang@foursemi.com,
 	like.xy@foxmail.com,
 	linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 1/5] dt-bindings: vendor-prefixes: Add Shanghai FourSemi Semiconductor Co.,Ltd
-Date: Wed, 23 Jul 2025 17:09:30 +0800
-Message-Id: <20250723090934.480055-2-nick.li@foursemi.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 2/5] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
+Date: Wed, 23 Jul 2025 17:09:31 +0800
+Message-Id: <20250723090934.480055-3-nick.li@foursemi.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250723090934.480055-1-nick.li@foursemi.com>
 References: <20250723090934.480055-1-nick.li@foursemi.com>
@@ -68,50 +67,145 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MxRSPV+z0HAofvtj4gW+BjMaKhMYbU/UAsTLgqPZAN6ATwqhdaUhJK3P
-	X2XKtA4SzZLc/rMdE7MmshahRgapm+isy4mO8QhzAwrmgw65fzw4kx0xMcaGwa47pnoLh4n
-	ZBu9stfkrXCng+Q3WDd9OjV+CUNdQrOyiT6cpW2swCe4MlmnKbO/tcDzgWcEhLgZmwxa7jN
-	IG1Gqi0iYw2bo7QLH8BfOQY1iyFeGJM2wakDr9JK33KdoSf5Cr7qnlMFhWvuLjESlBKdY8B
-	2/Kf5X4VO8FECALZ2/n7ToNzHUE1GRc6CmdUOc4njeMoIn2r89U5uWIRYlDY0pkcBbX4k2g
-	GR17yJNtJQlBMxuIZ6jxX8cPrhEZKz4PJjfhOuLUTKp6rgUSvw1ftUOAvcAtN18simXrUJc
-	/KLyFvFr5DdROH5C6z0aBdDIOqKsebHRCY3rdewukHvhITZsGkBAFjl9ft35DNlKvj2S/ak
-	Tq38zkUVBOuU4+aeC8ACAaXbIQRiDQjhH0CQQI9jxgl/mCKmsSXvoifWjVodzzV9sKYRocF
-	OqSWyzSGewQPzcufAVCVp1zN9zvNBXsuRpfLeMMCXcI6plB8cKyLdjeq4JA5PnAchU+st6Y
-	yQL2qKGEyM6tvIO81lbU4ZW9uM0NaWV5vmJe8WHfBvxRuiGu2Mbi31/jD3+O09Oo728G+G0
-	YCDxy7mWCbP0rGXmzU6Qb6o8AMtAivZeyGad0aJ4pZsvntGeyXYIrAkm62X82keuj7vpxbo
-	rLLtUDpWdw3BnszmyPrL6K9wkGFauVItO9cq2+6LYeYgYAW8IEzNfMh7WO6y70Z7Tct5xbw
-	+ItWM+guGlsOjb7uBI8PglKYbMRTPgiAP1LsYgMkfMLVR+q/64+iTJ12Nf2t/8Tlzfdy9Iy
-	GEMbhvy6W2nzlXXu6N8r3YhrPZFXhKJ4/s7gJ2YiebJNW4TglwquhtEj18dXdKlrQFJaeis
-	aVfYllgwgOB60RgXrl3DoMu3nH9DIxVBARkOnAgXSFbjAvQJxbDkWRXeyqVrzIXg5Y2L4fW
-	tgSGpo6Sv5Q5T4o5/SWD5fuJCJw6Ja1uGG7gUP6XTjAvK44TIdh3nO2zOAh6rF83bOoVtvP
-	g==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-XMAILINFO: MsVdersypWT2si12ViHs14JhS0Z9siKQEgjzgyHHc4Dh8R/47PQArE14
+	Z4r4Kx7DvzAf4nxxLBN2Qm4jPzDxiqqqhkHfgC+jTA502chV0JbgCiUkRlEtAKFttODZDJZ
+	Gbn3mffIDw4ZzolIxm2I80g3noVO7S2BcdHGnRtmh9gviS5KSejqzpt/YU+W1Yi3lllKK6C
+	4tS6kKIYBCCmE1ApSZBt4mh7cKzSl9quj+4r1MY5MT52qheMQkECGQ+Fbh70Kxo6t1HVqzp
+	5X5FP7/C4al5+e9uwMekUNdVuYass8SD9vVNfvBKP5f3qZViXqo7JtXa8snpz/nVQROjUQv
+	6r7JPoJb5c8CL9EpQKKpMLubo6Rp+cEhdMG7KNvSfB27u4NqMsi2Y1vmxxa0+V+REWKoTp/
+	ZGiCrQ951kzguCpiq3ahjwr9kD0fuwDftukKnMq4XZh/IJyw5M9akoaejPcNgeYkf+GD7Hp
+	FnDDA/Mdsx/TnTG7+BSNBF/PZDnTDUGULlFTtUbcSMuh5k8EnJwZwQzb4EsDyCYkXhu84Lg
+	5YON3GGpMKA9zLxzhEwf5oslO2ZfPg0rXdldYT2zyeKJW2ryJjVWLoGonW9uW3p3l5ytNw0
+	LBIPOJueTzMRSwcu9XFebw4tKBEO8G4SpJLpK8boLeP3ddY+ydxyrbOejp8Cm0InaqEB1bI
+	hXC1a0chn2szx9xfBTAFUKV4uaxv807Z8qRacUOqn2KRUkaiJj1zIq6MxnEZQJLg8WW/Ckg
+	Mv2ymsNyFndQ/Nlh8aSeOxqarYlRW2dTEaOIn7R19+OAX7LBAlknaobcphHQ0XbKCfR51qL
+	bdoOyGaU56ftnrlIIoLr3/ay5DSiqR57j5sgJlk4Jlg5/LvyI12K/UvDTn5K1LoaH6WzcTb
+	1X9oP1kyKzw7R8wGG17cy7B99UYg3PvtyukVkSg36PK3+gk5WwzhdA7aOLrDdhYyEO1NMpY
+	W0CHdksaoXjqlA7va1Ohx2KZTIKP9QSfKWhSOl7/NKOFajHWM25I5Py7LBL8Rl9isesLaRA
+	u4FfWI3BafS9d85W1d64AILweJ3URZ2ghoa6w6vJHai+ZsWIeaZlApCRvEBRqbupHPvpen2
+	4oexSpJRgccMiPh6ib77fbLf3ovjy1w5Q==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 
 From: Nick Li <nick.li@foursemi.com>
 
-Add vendor prefix for Shanghai FourSemi Semiconductor Co.,Ltd
-Link: https://en.foursemi.com/
+Add a DT schema for describing FourSemi FS2104/5S
+audio amplifiers which support both I2S and I2C interface.
 
 Signed-off-by: Nick Li <nick.li@foursemi.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/sound/foursemi,fs2105s.yaml      | 101 ++++++++++++++++++
+ 1 file changed, 101 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 99e86271c..f692e3b29 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -547,6 +547,8 @@ patternProperties:
-     description: FocalTech Systems Co.,Ltd
-   "^forlinx,.*":
-     description: Baoding Forlinx Embedded Technology Co., Ltd.
-+  "^foursemi,.*":
-+    description: Shanghai FourSemi Semiconductor Co.,Ltd.
-   "^freebox,.*":
-     description: Freebox SAS
-   "^freecom,.*":
+diff --git a/Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml b/Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml
+new file mode 100644
+index 000000000..4da735317
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml
+@@ -0,0 +1,101 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/foursemi,fs2105s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: FourSemi FS2104/5S Digital Audio Amplifier
++
++maintainers:
++  - Nick Li <nick.li@foursemi.com>
++
++description:
++  The FS2104 is a 15W Inductor-Less, Stereo, Closed-Loop,
++  Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
++  The FS2105S is a 30W Inductor-Less, Stereo, Closed-Loop,
++  Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - foursemi,fs2104
++          - const: foursemi,fs2105s
++      - enum:
++          - foursemi,fs2105s
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: The clock of I2S BCLK
++
++  clock-names:
++    items:
++      - const: bclk
++
++  interrupts:
++    maxItems: 1
++
++  '#sound-dai-cells':
++    const: 0
++
++  pvdd-supply:
++    description:
++      Regulator for power supply(PVDD in datasheet).
++
++  dvdd-supply:
++    description:
++      Regulator for digital supply(DVDD in datasheet).
++
++  reset-gpios:
++    maxItems: 1
++    description:
++      It's the SDZ pin in datasheet, the pin is active low,
++      it will power down and reset the chip to shut down state.
++
++  firmware-name:
++    maxItems: 1
++    description: |
++      The firmware(*.bin) contains:
++      a. Register initialization settings
++      b. DSP effect parameters
++      c. Multi-scene sound effect configurations(optional)
++      It's gernerated by FourSemi's tuning tool.
++
++required:
++  - compatible
++  - reg
++  - '#sound-dai-cells'
++  - pvdd-supply
++  - dvdd-supply
++  - reset-gpios
++  - firmware-name
++
++allOf:
++  - $ref: dai-common.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        audio-codec@68 {
++            compatible = "foursemi,fs2105s";
++            reg = <0x68>;
++            clocks = <&clocks 18>;
++            clock-names = "bclk";
++            #sound-dai-cells = <0>;
++            pvdd-supply = <&pvdd_supply>;
++            dvdd-supply = <&dvdd_supply>;
++            reset-gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
++            firmware-name = "fs2105s-btl-2p0-0s.bin";
++            pinctrl-names = "default";
++            pinctrl-0 = <&fs210x_pins_default>;
++        };
++    };
 -- 
 2.39.5
 
