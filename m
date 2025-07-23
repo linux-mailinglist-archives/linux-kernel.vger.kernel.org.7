@@ -1,215 +1,135 @@
-Return-Path: <linux-kernel+bounces-743001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BBFB0F952
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 861ECB0F958
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCADE1643AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079305A0BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16C245014;
-	Wed, 23 Jul 2025 17:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4AD22DF95;
+	Wed, 23 Jul 2025 17:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3TsDAwh"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVTh23Ym"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AC3244697;
-	Wed, 23 Jul 2025 17:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015ED21FF5B;
+	Wed, 23 Jul 2025 17:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753292001; cv=none; b=bbvXrlYVYUvzB/eMkUNuU22MtQ1ziXvHZbFjP7AD8qzXJNmfGFzHe6rlQv2ojM7usGx79PJ1jMlpURbfMNYYBczhLIWgbidzScDo/TBMkHG7a1d+PkBob0lnfUT+ZwNmknyIWQBaXN+6zBEVSVoyuiR45jNN0IMjE5Nbhgw728M=
+	t=1753292107; cv=none; b=ZeP9fNLdc/tEHg2szdqkWsNbpGbD6/4rxM00jF1WO639MtXUdbquuldYu/vIIo24NQIZE/OOWL7ixkR63G2JFi6w4zTBtJV5cjFjwzeF/tLlrSk5lkkxDKt0fqOa20llz/MUtywFyLSSU1chtbbkS8phYi4fL9X4sLdPTcvNVDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753292001; c=relaxed/simple;
-	bh=C2VlGrQRcLA6KNMLUWn4frGY1BGHzl2OatrBQFPkZDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQCNyjQejHQgFGUy8yzBQ8q1Zd6SNunR7WVCDKADgNhsDTKwIBZ/+bBRGuXZupzoigWPWZjxS/4rN/FTvWlJe1ne7ZNPjNWwpzQY+HmuOayh5uwJZNEyKoi8rgNU4rWNx207YE734rNxLM1y7oSQyLSVQdeqPRaEO0oa7mgBlIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3TsDAwh; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55a1eced1abso9414e87.3;
-        Wed, 23 Jul 2025 10:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753291998; x=1753896798; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KBM3XOa1GXkPG7AU5j/kIOwYcdf4HqHkAm2pQZ3zu3U=;
-        b=d3TsDAwhRnzHHCVMNNkAXmbwISMmAE5CtOgI2nqgRLHiso9LzFkJzGCaaTUhMzEp0r
-         le+jxG3A9wCjzp1WKALfm6lEza1tvSCFpNcCxdNOVH1m47lbTZki+CErKkF5yCvDfxv0
-         7atJjHc40EuetIIBVwTl5pzmU6OyVIJfY2AOoa8c5cx5dICScW99FcmDhAbhxCNOSumM
-         X11tbVIFll5WVULK+9UyLPrnfhkMDu5ELSNcMHxpRZUfigInjYAKkY0raUcI8/85WtRS
-         a13xCxQiGbLyeTh3/iaEr/GaW1A0eGx3lAQiomznR4ubgeXAIPsBDmLF+Va9/LSxcDR6
-         UkAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753291998; x=1753896798;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KBM3XOa1GXkPG7AU5j/kIOwYcdf4HqHkAm2pQZ3zu3U=;
-        b=EZhY5wiG1v639IqvQXPwndba0wRQ7vl8sTYUiFYXL4TWvMKkyHKKTKvrmhE4SmrQuK
-         ZTDVZxJhrAxz8pkTDWDeOwKOQzRE8OWTiVpQ+ISaqB36c+jgM4zl86pnBLn5S+MZjYNz
-         N9sP+1dB3Deplc4laYXI6rIRyC+fLLFpIkdtzUiaFOq/j7gtoz+Hq9wmmYy/XfXeySjD
-         9MeeW6OCckNbt6NnhuYGvFHIinVOgljyZY8f9t44/YpSvPJmSFCBOrcKpWwU5NQx1XhP
-         gJsgqpjRNi4iKgrmHgrxG77XM6uXAYQfG8/A6pPgBPAhKRaV5MTkOXVgOoFoeQ5nDd/+
-         XiQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSs+8cjdT3CzCSa6yzX2omqBt2lRx8CpYtN7UhvSerGRfNoTUT/jujzmmvByLfoZn/Sqj66Az5HdS+Rg==@vger.kernel.org, AJvYcCV9g5MgBcrZfih30YgfH4PrZTyny+ZyfO0805J9mJSUN0LRmdCc5P1FHuCyEj05elQn1No2KrrgahCt/wY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4CFVY/fHW3C4/vjK7A1n/sl5v9lWbyCec2SjCxvpIJDKDqD1H
-	eY2gc/WF2sll6XFUPqmG6Nffj+sQZSTEcdEVs4TybZ8ipDmKjnjgoRYF
-X-Gm-Gg: ASbGncv0Xj9jLhul6nXbYkztyz76JzhOWyeeO6oA39HVnpDceCWcJcedAXsO97GlzjQ
-	lm1Q79PB9yoYTH8my1rfJaJUBCuEhUua/qKb2ebtgzgL+C9Up4Q41pnoYSPMCNM0H424TtuaVfH
-	eeA2mN5e52yZ+G8Ad11dhbdOJGififxhRmpQtwFvVdW9xurpskMLBix5PELUdGLK+VaaYfT0LS/
-	6nrnhy326Qp23ZVpn1zQyKYpP6SLq3c9KweRNepYDR/YxysCFoPi/6HZmDTnxVKIZnae1hQDJZ/
-	5BeW1Ai50LjJs60FFWQ7tagsq3N9SVT0GiHdZv1qdwgp60ig/Nejj5mcXUSeBZ4SZcHRIrQAeF1
-	BrW40WeDSJOdAs976ET6eYC9LPhZN2XwD07olItQ=
-X-Google-Smtp-Source: AGHT+IEhfKgja72kmMEVu8mg+y0GPA2wBPQGXBF9w7fJkfAZVikcQ8zyKptW1cZk85GIYWtzdxftWQ==
-X-Received: by 2002:a05:6512:3c8b:b0:553:24b4:6492 with SMTP id 2adb3069b0e04-55a5132157emr458860e87.5.1753291997236;
-        Wed, 23 Jul 2025 10:33:17 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31aac980sm2396014e87.74.2025.07.23.10.33.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 10:33:16 -0700 (PDT)
-Message-ID: <f7051d82-559f-420d-a766-6126ba2ed5ab@gmail.com>
-Date: Wed, 23 Jul 2025 19:32:51 +0200
+	s=arc-20240116; t=1753292107; c=relaxed/simple;
+	bh=DxP/8U/gv179+30ubQutejfBAUlzcxofPDI//uz2+R4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q8qnDxnM/Gx/0q3ubgJdxOuggqz73SDNQJtKMBWM94LM+DjGbb82bSwkYZ3Z4pgyxe8uybYJESX8CzweUZ6W96nkB5Erj613ynBoFKJ+U7QFlltI/lOlCWC/PIyl2j9kA2OukFTO3l4xalASlGvnjHFzsilAdYfZWO07SCObYxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVTh23Ym; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 908A1C4CEE7;
+	Wed, 23 Jul 2025 17:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753292106;
+	bh=DxP/8U/gv179+30ubQutejfBAUlzcxofPDI//uz2+R4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=MVTh23YmUNkU71zCRbAYlnJYU4ugyNq3CDZLnJrUfZAvrJ3AVaPH9p3XRWW8xGgtB
+	 NPmC9pqJTDx9OGXUz/yrGsddDYAqBm2RhJy3HJ/UOyMqhFwRN2+4Mutb5YAxVPlM42
+	 ixRbnYyPFr67e9d88K16+7WmnoyAOeWZLUJ9nGywq4cHezPq4v/KuPEJgTLhZsKWRP
+	 KzgxJmMIph1wRYd7mk3l5o2Tji0XsmTBqcG9onOOwlYZ+maQGZ/mEdbPvTVfF+Kst2
+	 zebSL/UD2YxtIsiaZqKfaQfh3lqHi5mHRs8ofIP/x7qaSKwUofxeLN6Cm7VJNudOTK
+	 d6A2rqKzMBetQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 804E1C83F1A;
+	Wed, 23 Jul 2025 17:35:06 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v5 0/2] hwmon: add support for MC33XS2410 hardware
+Date: Wed, 23 Jul 2025 19:34:55 +0200
+Message-Id: <20250723-mc33xs2410-hwmon-v5-0-f62aab71cd59@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/12] kasan: unify kasan_arch_is_ready() and remove
- arch-specific implementations
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com,
- agordeev@linux.ibm.com, akpm@linux-foundation.org, glider@google.com,
- dvyukov@google.com, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250717142732.292822-1-snovitoll@gmail.com>
- <f10f3599-509d-4455-94a3-fcbeeffd8219@gmail.com>
- <CACzwLxjD0oXGGm2dkDdXjX0sxoNC2asQbjigkDWGCn48bitxSw@mail.gmail.com>
-Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <CACzwLxjD0oXGGm2dkDdXjX0sxoNC2asQbjigkDWGCn48bitxSw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAD8dgWgC/23Q0QrCIBQG4FcJrzOOOnN21XtEF5sem9C20FiLs
+ XfPjaAoL/8D//fDmUjE4DGSw2YiAQcffd+lILcbYpqquyD1NmXCgUuQoGhrhBgjLxjQ5tH2Ha2
+ kcxodGgBJUu0W0PlxJU/nlBsf7314rgsDW65vjPF/bGCU0craulLKqNLp49Vj3WAIO9O3ZPEG/
+ m3IjMGTUVqOqa9QgM0Y4mPsmc4YIhkCmBIMC+1KlzGKj6GgzBgFBaplrVFgepI0P8Y8zy99T6x
+ EfwEAAA==
+X-Change-ID: 20250507-mc33xs2410-hwmon-a5ff9efec005
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753292105; l=2083;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=DxP/8U/gv179+30ubQutejfBAUlzcxofPDI//uz2+R4=;
+ b=w2jsYEX3F4tizmo5c8iQbF8fCJeuHjAOI2yQlfmaW1ngd4BN8okSmhyujLKXgFy+3yMnJifrF
+ AsQ/iBYkl/QC5eDneSi+Vzq27UhkWc3o1+06/u5pAfbmjZ84VIjJedp
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
+
+The device is able to monitor temperature, voltage and current of each of
+the four outputs. Add basic support for monitoring the temperature of the
+four outputs and the die temperature.
+
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+Changes in v5:
+- Define DEFAULT_SYMBOL_NAMESPACE
+- Replace mc33xs2410_hwmon_register with devm_auxiliary_device_create
+- Add MODULE_IMPORT_NS("PWM_MC33XS2410") to mc33xs2410.h
+- Add documentation for HWMON driver
+- Link to v4: https://lore.kernel.org/r/20250708-mc33xs2410-hwmon-v4-0-95b9e3ea5f5c@liebherr.com
+
+Changes in v4:
+- Move hwmon functionality into separate driver residing in hwmon subsystem
+  (auxiliary device)
+- Link to v3: https://lore.kernel.org/r/20250619-mc33xs2410-hwmon-v3-1-301731e49f8f@liebherr.com
+
+Changes in v3:
+- Add changes suggested by Uwe Kleine-König.
+  Remove "#if IS_ENABLED(CONFIG_HWMON)" and add
+  "if (IS_REACHABLE(CONFIG_HWMON))" in mc33xs2410_hwmon_probe.
+- Link to v2: https://lore.kernel.org/r/20250515-mc33xs2410-hwmon-v2-1-8d2e78f7e30d@liebherr.com
+
+Changes in v2:
+- Remove helper mc33xs2410_hwmon_read_out_status and report the last
+  latched status.
+- Link to v1: https://lore.kernel.org/r/20250512-mc33xs2410-hwmon-v1-1-addba77c78f9@liebherr.com
+
+---
+Dimitri Fedrau (2):
+      pwm: mc33xs2410: add hwmon support
+      hwmon: add support for MC33XS2410 hardware monitoring
+
+ Documentation/hwmon/index.rst            |   1 +
+ Documentation/hwmon/mc33xs2410_hwmon.rst |  34 ++++++
+ drivers/hwmon/Kconfig                    |  10 ++
+ drivers/hwmon/Makefile                   |   1 +
+ drivers/hwmon/mc33xs2410_hwmon.c         | 178 +++++++++++++++++++++++++++++++
+ drivers/pwm/Kconfig                      |   1 +
+ drivers/pwm/pwm-mc33xs2410.c             |  20 +++-
+ include/linux/mc33xs2410.h               |  16 +++
+ 8 files changed, 259 insertions(+), 2 deletions(-)
+---
+base-commit: 3b85883a9a7751ab198696f33f94afa428b43722
+change-id: 20250507-mc33xs2410-hwmon-a5ff9efec005
+
+Best regards,
+-- 
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
 
-
-On 7/22/25 8:21 PM, Sabyrzhan Tasbolatov wrote:
-> On Tue, Jul 22, 2025 at 3:59 AM Andrey Ryabinin <ryabinin.a.a@gmail.com> wrote:
->>
->>
->>
->> On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
->>
->>> === Testing with patches
->>>
->>> Testing in v3:
->>>
->>> - Compiled every affected arch with no errors:
->>>
->>> $ make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
->>>       OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
->>>       HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld \
->>>       ARCH=$ARCH
->>>
->>> $ clang --version
->>> ClangBuiltLinux clang version 19.1.4
->>> Target: x86_64-unknown-linux-gnu
->>> Thread model: posix
->>>
->>> - make ARCH=um produces the warning during compiling:
->>>       MODPOST Module.symvers
->>>       WARNING: modpost: vmlinux: section mismatch in reference: \
->>>               kasan_init+0x43 (section: .ltext) -> \
->>>               kasan_init_generic (section: .init.text)
->>>
->>> AFAIU, it's due to the code in arch/um/kernel/mem.c, where kasan_init()
->>> is placed in own section ".kasan_init", which calls kasan_init_generic()
->>> which is marked with "__init".
->>>
->>> - Booting via qemu-system- and running KUnit tests:
->>>
->>> * arm64  (GENERIC, HW_TAGS, SW_TAGS): no regression, same above results.
->>> * x86_64 (GENERIC): no regression, no errors
->>>
->>
->> It would be interesting to see whether ARCH_DEFER_KASAN=y arches work.
->> These series add static key into __asan_load*()/_store*() which are called
->> from everywhere, including the code patching static branches during the switch.
->>
->> I have suspicion that the code patching static branches during static key switch
->> might not be prepared to the fact the current CPU might try to execute this static
->> branch in the middle of switch.
-> 
-> AFAIU, you're referring to this function in mm/kasan/generic.c:
-> 
-> static __always_inline bool check_region_inline(const void *addr,
-> 
->       size_t size, bool write,
-> 
->       unsigned long ret_ip)
-> {
->         if (!kasan_shadow_initialized())
->                 return true;
-> ...
-> }
-> 
-> and particularly, to architectures that selects ARCH_DEFER_KASAN=y, which are
-> loongarch, powerpc, um. So when these arch try to enable the static key:
-> 
-> 1. static_branch_enable(&kasan_flag_enabled) called
-> 2. Kernel patches code - changes jump instructions
-> 3. Code patching involves memory writes
-> 4. Memory writes can trigger any KASAN wrapper function
-> 5. Wrapper calls kasan_shadow_initialized()
-> 6. kasan_shadow_initialized() calls static_branch_likely(&kasan_flag_enabled)
-> 7. This reads the static key being patched --- this is the potential issue?
-> 
-
-
-Yes, that's right.
-
-
-> The current runtime check is following in tis v3 patch series:
-> 
-> #ifdef CONFIG_ARCH_DEFER_KASAN
-> ...
-> static __always_inline bool kasan_shadow_initialized(void)
-> {
->         return static_branch_likely(&kasan_flag_enabled);
-> }
-> ...
-> #endif
-> 
-> I wonder, if I should add some protection only for KASAN_GENERIC,
-> where check_region_inline() is called (or for all KASAN modes?):
-> 
-> #ifdef CONFIG_ARCH_DEFER_KASAN
-> ...
-> static __always_inline bool kasan_shadow_initialized(void)
-> {
->         /* Avoid recursion (?) during static key patching */
->         if (static_key_count(&kasan_flag_enabled.key) < 0)
->                 return false;
->         return static_branch_likely(&kasan_flag_enabled);
-> }
-> ...
-> #endif
-> 
-> Please suggest where the issue is and if I understood the problem.
-
-I don't know if it's a real problem or not. I'm just pointing out that we might
-have tricky use case here and maybe that's a problem, because nobody had such use
-case in mind. But maybe it's just fine.
-I think we just need to boot test it, to see if this works.
-
-> I might try to run QEMU on powerpc with KUnits to see if I see any logs.
-powerpc used static key same way before your patches, so powerpc should be fine.
 
