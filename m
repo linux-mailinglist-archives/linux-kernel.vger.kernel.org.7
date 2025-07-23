@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-741789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2C3B0E8F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:08:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFA8B0E8F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85B81C8122D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:09:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877D17B554F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D401F473A;
-	Wed, 23 Jul 2025 03:08:44 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4201F2382;
-	Wed, 23 Jul 2025 03:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8091F2382;
+	Wed, 23 Jul 2025 03:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="i9/Q14H9"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CA81DF26A;
+	Wed, 23 Jul 2025 03:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753240123; cv=none; b=dP6+r+6mDJUSBVHfb+YeuU9AniCwfakdDklUsFAAS++ACJlkp/M3KsZVTYPKKgNTG0JGuQkwdsyBs8DlMwMERlflH29HLHStuKEk9MhnRwTI9fo0kspetZBjmf0V3wSMviKfI34n2u3Fvx2eIsblwNlxMSZPChCcZfZaAja9a7o=
+	t=1753240092; cv=none; b=qV2Ds/zDCiO9x1z2f/iqJDCp6ErfzViswwpTlnO+SXLSXQLcAbUgp4WX7fJYuZLQFqT2I7oRijnJbg1mRd+NzB/I/SC545agaNSvboLApkxndUotRI/b4twK16fXQeTyJrvl2ZKzTSqEyGf/+WIPA7YoUIHiPgfAF7pi2HmzlF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753240123; c=relaxed/simple;
-	bh=2yg9SG0vvIlVvlZR8JpUpVQxNLZGjH6tRGJV9TpFhS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmfbenEgT9djIEuUfWjy//LIzYzxu9SalOH3uTLIS06REvhf655Kiy4VFvSy3CdI9nWBKENJROpBtfaA8V85GKBfqutlIziUFhXcu4G77kUyZGPO0fXYi7aAK/YSMiengk25XGV2pNJGR+Zao2t8pEq0KknXAY8LcRtWxxXp6po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz5t1753240028t6b29edfa
-X-QQ-Originating-IP: NT9ZibIvYk5fNjjauD+gBPoL+YaRUZQrmD9vxnv86+c=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 23 Jul 2025 11:07:06 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1109793005909151533
-Date: Wed, 23 Jul 2025 11:07:05 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Simon Horman <horms@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
-Message-ID: <78BE2D403125AFDD+20250723030705.GB169181@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-4-dong100@mucse.com>
- <20250722113542.GG2459@horms.kernel.org>
+	s=arc-20240116; t=1753240092; c=relaxed/simple;
+	bh=11NZzGtILvIkTkT+burk1u1dHBQYFKy//0QHhZgzBcs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nZ3aeGEQ5smY2ccCAvJKXCnIZ0brAotA8l60YJUH/kE7THOskMhEI8Z6ZLaiad1VFL5jVXLgEwU2X6vv8/yn59yZjqD5f+t87TNLQ+z0xCJYTQGmlGCGCqrxOurhfGszzU9i4aO7frKhgMkIF6BsUEbvg2KlTbmtU+s/A98nA9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=i9/Q14H9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 00EA32014DE6; Tue, 22 Jul 2025 20:08:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 00EA32014DE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753240090;
+	bh=9iVDLIiS0+o8avGvkJ11y66/XQWME2nzHrsTC0w2cgo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=i9/Q14H9mkjO+yZ3iGgT6UCuvyZpb7L+eM6oPJSdkccOJ9DGFaezb0Y0dxtsaXuf6
+	 j9nwA4VXghN58U+CBuvqq7NSaTQnHmrb3M4GWSz8JVk07J9goFYgDO6ZzIjnelunii
+	 +lj9vWCfGzLujOd3VzWcnaXeS6IIE8HL/A52KjcI=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: krzk@kernel.org
+Cc: apais@microsoft.com,
+	conor+dt@kernel.org,
+	decui@microsoft.com,
+	devicetree@vger.kernel.org,
+	haiyangz@microsoft.com,
+	hargar@linux.microsoft.com,
+	hargar@microsoft.com,
+	krzk+dt@kernel.org,
+	kys@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	ssengar@linux.microsoft.com,
+	wei.liu@kernel.org,
+	cho@microsoft.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus message-connection-id property
+Date: Tue, 22 Jul 2025 20:08:09 -0700
+Message-Id: <1753240089-29558-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <095a1455-c6ac-4a7d-a219-ddfd0a93d8d6@kernel.org>
+References: <095a1455-c6ac-4a7d-a219-ddfd0a93d8d6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722113542.GG2459@horms.kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NfRA73Gayti6CGR3D1JlkQ2+KrsmWAYUkl9H1DK2aWmQSQG72lYm2EAN
-	c74TwYi0o7kfSFslwYgeoZ1xr59cgDC6dPMbyFHs6TRLmCwdQL92FKAV86JFgzXpOEGQPG3
-	hYORMAZoQ5i1Ry7crHDGuJ+7hMyK695lpI3EERR6k8SEahkTO7/SvyWj6nk0mayMYnPnRnB
-	kXod5ud4dV/EHkHz4prcgLPsVrSl29qjZiWj+vt57o2Q1O/PCbPw6c5KOufwWbvDbEjeJjb
-	JAiky/PNwJDTJmhnltdFwuUsVYukv2p009jT/jFobZzu62wg7c2KwNJ2jX5fFafGPpqa0KU
-	EDgpwHv+7cVtExEh4OWe72jTVP6pUatXNyfEX5DFDqQYBjveDo7oDRGEokrucC+p3/VvtZD
-	ap+us0yG9zjn82ojSkpCX8PrSWOM1+Tj/hy1YnwvQ9mhd1U6iiFGVUfrB6GTk4xGLZ6B1wn
-	HM+HzoKXKJtsy7SRCHy4yi3Nwbln1cw4668c2y4lI0CsdmHVQmyrQDxnBV2/2kigLO6BKUk
-	07RA93rerTcZ0GaxzOdX9lxZorS6uuI7JGL2sI5sTKhuQkMGdkPVebDXN5lqaHDrWIIrolq
-	suUv0E1e7D+ViTpYbanopYYzanDGxkech3MEDVJdePoEL9mFTYby9Z3oidcrfhTovzR+uRX
-	q/Q119vfIQpzB8LSw60w9XrZj5zDYUp38RjPwxe4teSR85Ry+vB+kwOPoFSlVwvySfCe5XG
-	alQd+eS10ESGwtAKgWKTHR8Q6235E0Yty7DgP2rJknKhEudDq59BfJ0mp9RNnDFmCf2r1/4
-	UHbc/PGv+tGACOFqWMvZpjdCLZDut/O7Z5YmZnSc4b+pPS+86zcc3VjDpeMJXC3TywpGsP1
-	EsUlROYSyTsKwOk2JJ2QQSCjy6oBbRd/GBvZ/W0CmgZ6TNSrd1DbMnXByxeudFkCL0/JNXq
-	Z1S2NLLmnAKt/8w9perumQmHPghxw0rOqnqREbhCRyu/FnbvYdno7QdaPJ0txR3X6CvJxtE
-	VyIKhk8Q==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-On Tue, Jul 22, 2025 at 12:35:42PM +0100, Simon Horman wrote:
-> On Mon, Jul 21, 2025 at 07:32:26PM +0800, Dong Yibo wrote:
-> > Initialize basic mbx function.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> 
-> ...
-> 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> 
-> ...
-> 
-> > +/**
-> > + * mucse_obtain_mbx_lock_pf - obtain mailbox lock
-> > + * @hw: pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to obtain
-> > + *
-> > + * This function maybe used in an irq handler.
-> > + *
-> > + * @return: 0 if we obtained the mailbox lock
-> > + **/
-> > +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +	int try_cnt = 5000, ret;
-> > +	u32 reg;
-> > +
-> > +	reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
-> > +				   PF2VF_MBOX_CTRL(mbx, mbx_id);
-> > +	while (try_cnt-- > 0) {
-> > +		/* Take ownership of the buffer */
-> > +		mbx_wr32(hw, reg, MBOX_PF_HOLD);
-> > +		/* force write back before check */
-> > +		wmb();
-> > +		if (mbx_rd32(hw, reg) & MBOX_PF_HOLD)
-> > +			return 0;
-> > +		udelay(100);
-> > +	}
-> > +	return ret;
-> 
-> ret is declared, and returned here.
-> But it is never initialised.
-> 
-> Perhaps it is appropriate to return an error value here,
-> and update the kernel doc for this function accordingly.
-> 
-> Flagged by W=1 builds with Clang 20.1.8, and Smatch.
-> 
-> > +}
-> 
-> ...
-> 
+> Host is supposed to have multiple guests, so this feels like you are
+> going to prepare for each guest different DTS with different connection
+> ID. This feels like poor design. DTS is supposed to be relatively static
+> configuration, not runtime choice vmguestid+1.
 
-Got it, I will fix this.
-Maybe my clang (10.0.0) is too old, I will update it and 
-try W=1 again.
-Thanks for your feedback.
+> The guest cannot access other configuration channels, can it? If it can,
+> it would mean it can eavesdrop on other guests? So obviously it cannot.
+> Therefore from guest point of view this is completely redundant. Guest
+> cannot use any other value, thus guest should not configure it. The
+> guest has only one channel and uses only this one which gets to right
+> place to the host.
 
+Thank you for your feedback. Let me explain the connection ID in more detail:
+
+1. Message Port Architecture:
+   - The connection ID specifies which Hyper-V hypervisor message port (mailbox slot) to use for communication between the host and guest
+   - The hypervisor has multiple message ports, but historically VMBus only used one
+   - With the introduction of VTL2 (Virtual Trust Level 2), the control plane can now be hosted in VTL2, requiring different message ports for communication
+
+2. Control Plane Communication:
+   - The VMBus control plane on the host needs to communicate with the VMBus driver in the guest
+   - When the control plane is hosted in VTL2, it requires a different message port than the standard communication path
+   - The connection ID tells the guest whether to use the standard or alternate message port for this control plane communication
+
+3. Message Processing:
+   - Each message is tagged with an ID
+   - If the guest uses an incorrect ID, the host won't recognize the message and will drop it
+   - This is not about choosing between multiple available channels - it's about using the correct mailbox slot for communication
+
+4. Security and Isolation:
+   - Each guest has its private hypervisor mailbox
+   - Multiple guests using the same connection ID cannot interfere with each other
+   - The connection ID is more like a "root ID" that helps enumerate devices on the bus, not a channel selector between guests
+
+5. Dynamic Nature:
+   - The connection ID is specified when the guest starts running
+   - The host can change it during VM lifecycle events (reset/reboot)
+   - This is why the VMBus driver needs to know the connection ID every time the kernel starts
+   - The ID might be different from what it was during the last guest run
+
+
+
+
+Thanks,
+Hardik
 
