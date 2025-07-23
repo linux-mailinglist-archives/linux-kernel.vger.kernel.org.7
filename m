@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-742866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54A8B0F786
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D3EB0F789
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0133B762C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93B0162D30
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DEF1E7C23;
-	Wed, 23 Jul 2025 15:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1FC1E834B;
+	Wed, 23 Jul 2025 15:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VO0pS5qq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3YGcbU3"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A10678F4F;
-	Wed, 23 Jul 2025 15:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A313BB48
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753286183; cv=none; b=KYTxjb78pnLSy9qkmlEWVsUzMX/HUIz0ZeuSjL5f8jLAzi0q6zSBXzduFIgOsTjlXAYU5pwvQCYG3urR/MTTnybq/D9prutzFTyGbl9BwQ7lJeH/aOb9eobSG9iVV3rIxQfLwMBJ1Dh+AYbRyMv4guCqreD9otnTl1Ak9SFyCSk=
+	t=1753286238; cv=none; b=dorXqDzsZ+m5wXaQ0GD2TcqMQHQYhwSUFmBmP5qtApJxComvC9+LjYNTvMkIwfSXBFJjE/O9xJ87MJI6rgDIZk3zabvR49iEPBsM/ZWIXADfpgww6WYhAM5+2tl9Guzkx/1HCEG04ilIK5GEVcRAp8OvhV2IjaYR/IQUlyLpqTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753286183; c=relaxed/simple;
-	bh=EN9+m3bH+TJpgrCM7uWfTcM91Em9VgRtsgV5GqA5fd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IqHynS1aDq55bKvlZkOIn7pydqjflXxyypgyyuullEXq0ef/3nR6M80n2LEzShI3XG9NYguMMDd50MhAI9glyPO1RKoB38loBq/1BvQRMt2OqNtPJhdqKIYFWV/2D9A7fKYUj8rRE0JXVp37Y1dMzskdP73I5927rFt2YaskOGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VO0pS5qq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC551C4CEE7;
-	Wed, 23 Jul 2025 15:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753286183;
-	bh=EN9+m3bH+TJpgrCM7uWfTcM91Em9VgRtsgV5GqA5fd0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VO0pS5qqAgPXx/o6Dbu03y1edTLCWVAh7/ig9hegmLZdW0EOucz+0u2C1vPTkAH7T
-	 l92gy6ZShIsxyeVvSdQoOVZ23dr5F/avulMGaQB5mBGMkDsQZ2ntwEJE4KGeneavDU
-	 Fh6QdwHl3Az7F06SbFSUO7lb8mdigE8EvftzQJOI8bCdhkFPtEof4JJJ4ofyasSEYb
-	 iH8uYrO9XFgXB+mWW0dzILZQu7QZOwUTuLy/ZCXQToFgZ+xTUZN3XY8K0Q7Fppw16D
-	 E9bhruIy7uHq/ZLv8vRhADQUKNJTJPOWRkJ5pIqSjIyT43xA6OwGj/2bXok63CYAxr
-	 8e0XObngroXEQ==
-Date: Wed, 23 Jul 2025 16:56:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Yasin Lee
- <yasin.lee.x@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] iio: proximity: hx9023s: fix scan_type endianness
-Message-ID: <20250723165615.67969881@jic23-huawei>
-In-Reply-To: <f74d6542-cc4e-40dd-8ef9-2a766d0b51ef@baylibre.com>
-References: <20250722-iio-proximity-hx9023c-fix-scan_type-endianness-v1-1-48f5dc156895@baylibre.com>
-	<823a28d6-e612-4e32-976a-cb99945848ce@baylibre.com>
-	<aIDuEcHhaGtz2klP@smile.fi.intel.com>
-	<795dffe0-51cf-49a8-bbb1-1585edddf5ba@baylibre.com>
-	<aIDzvNYIaJnSuzOa@smile.fi.intel.com>
-	<7ca7e0b9-a77d-4de8-92b1-fea3250e8155@baylibre.com>
-	<aID6jfjULn2kvvQJ@smile.fi.intel.com>
-	<f74d6542-cc4e-40dd-8ef9-2a766d0b51ef@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753286238; c=relaxed/simple;
+	bh=6PAkTe1dj1TtO1WACsCPAZuyivpj6xQq+J5+CpFI4cs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YB2+0Eps1fGT/K0MWBlRYywKUfoFxKkYoQN1UcxMinUeBlw9q/ntTadWrwunMK5MopZbHhhqE+yOYTyVEAYNsYWIKHz72gTvOEllcvUIi8bo++YA+glVJQz1VfZHS7Avv+nlU8jtNVFtN6Iatair4M+aT7y2cp+moNGpwpfdmZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n3YGcbU3; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23632fd6248so65247085ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753286236; x=1753891036; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pnll/DJyW6AHp9YnPp0+5ZkZG0dK6J64xQlXrA23muA=;
+        b=n3YGcbU399jZMhaY0C9XwcMWr7uKYBeI4Rxs0DkXBRoRLvdfBWA0CYU63RAqtqDUe2
+         QBPfNOgtI6A744ZSeqAmyFWnn0gYZkIGBPmheVP4NtuxOTvPsGYd9bSrm0WfPSD+jH0h
+         wnq5wvs6bLVtk9Xmcift6wJqAshdVlL2dmtquDJMQQ/49eygJF5+x+18keWg6OccmVWF
+         /iHnSf5inGQARaRs70yMiF6hBT8JHTbROs6M1U/lUV4K4q42gugPuWhGUzYOJ5CWfHp0
+         aJLaCU0rRQFG4ms+xuW6v7UD8CWmcrLZiF93Q61lmvv93WH8123Sun6MBO47s+6T9Xls
+         8DRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753286236; x=1753891036;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pnll/DJyW6AHp9YnPp0+5ZkZG0dK6J64xQlXrA23muA=;
+        b=jhMHHypmVwYS/AJunHaAJ4ImAGQnGzblTHsMxZRJhCxJH113PIqHhE+51VxvboY5A+
+         HmuvMigNqOVQfOL5bKrgXqMo28W9NCmxT3np56zHO4jWWnR2LHvnBqxDaYcCNbMwVkpr
+         wq/Jd76C+G68BaJEDX/GUJvJGv8BCX9IOqxBgSq7c2MmhYOQ3JhnMhbqYwohGDFhT9Yo
+         8afZsOAyWK5qD0Ab7xTAajmk40ts8P1oucwvNWun8ItdoKAPafCnxg5tXj6pDeCfEt1W
+         SC6ymNQ4bE/Ojt9SDbZDoP/vN4ubn/N7FJyT/inP4sJUJnn2p6Iw4C3EQvdaZALT/CJ+
+         K43g==
+X-Forwarded-Encrypted: i=1; AJvYcCWvZdnYhtgIQQF/OxWFre58dcKZ7pUgvaXaXkKs8lnNKgRqKb2hKmCGt8b5rMva7LMofcVCFING1KLUZ2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWy5qrP+0Qo2iGNurpYoNjxMHaOTS6JPRreUYSVdLXvoSjfCak
+	2xNZ5+75Y8fCamaHqo4fL0ie+KltC4YlCrJp/at6VHe96h0i/v+t9DpzfWUWM+67nmif5PwgXDJ
+	xDbxqbg==
+X-Google-Smtp-Source: AGHT+IFFztsHdzhGL156gGYuLAl7YBZxBB76oIkYrIz9tRK0i7YqAXFfsNkZmV6Q+PyuD/S0tjzOV1yCoXg=
+X-Received: from plgp7.prod.google.com ([2002:a17:902:ebc7:b0:235:6d5:688b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea06:b0:215:8d49:e2a7
+ with SMTP id d9443c01a7336-23f9823e7f5mr52579355ad.50.1753286235929; Wed, 23
+ Jul 2025 08:57:15 -0700 (PDT)
+Date: Wed, 23 Jul 2025 08:57:14 -0700
+In-Reply-To: <20250723120539.122752-2-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250723120539.122752-1-adrian.hunter@intel.com> <20250723120539.122752-2-adrian.hunter@intel.com>
+Message-ID: <aIEGWoM-kY_6gL8N@google.com>
+Subject: Re: [PATCH V4 1/2] x86/tdx: Eliminate duplicate code in tdx_clear_page()
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, pbonzini@redhat.com, vannapurve@google.com, 
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, H Peter Anvin <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kas@kernel.org, kai.huang@intel.com, reinette.chatre@intel.com, 
+	xiaoyao.li@intel.com, tony.lindgren@linux.intel.com, 
+	binbin.wu@linux.intel.com, isaku.yamahata@intel.com, yan.y.zhao@intel.com, 
+	chao.gao@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 23 Jul 2025 10:11:50 -0500
-David Lechner <dlechner@baylibre.com> wrote:
-
-> On 7/23/25 10:06 AM, Andy Shevchenko wrote:
-> > On Wed, Jul 23, 2025 at 09:57:58AM -0500, David Lechner wrote:  
-> >> On 7/23/25 9:37 AM, Andy Shevchenko wrote:  
-> >>> On Wed, Jul 23, 2025 at 09:29:37AM -0500, David Lechner wrote:  
-> >>>> On 7/23/25 9:13 AM, Andy Shevchenko wrote:  
-> >>>>> On Tue, Jul 22, 2025 at 06:08:37PM -0500, David Lechner wrote:  
-> >>>>>> On 7/22/25 6:07 PM, David Lechner wrote:  
-> >>>>>>> Change the scan_type endianness from IIO_BE to IIO_LE. This matches
-> >>>>>>> the call to cpu_to_le16() in hx9023s_trigger_handler() that formats
-> >>>>>>> the data before pushing it to the IIO buffer.  
-> >>>>>  
-> >>>>>> It is odd to have data already in CPU-endian and convert it to LE
-> >>>>>> before pushing to buffers. So I'm a bit tempted to do this instead
-> >>>>>> since it probably isn't likely anyone is using this on a big-endian
-> >>>>>> system:  
-> >>>>>
-> >>>>> I can say that first of all, we need to consult with the datasheet for the
-> >>>>> actual HW endianess. And second, I do not believe that CPU endianess may be
-> >>>>> used,   
-> >>>>
-> >>>> Why not? Lot's of IIO drivers use IIO_CPU in their scan buffers.
-> >>>>  
-> >>>>> I can't imagine when this (discrete?) component can be integrated in such
-> >>>>> a way. That said, I think your second approach even worse.  
-> >>>>
-> >>>> hx9023s_sample() is calling get_unaligned_le16() on all of the data
-> >>>> read over the bus, so in the driver, all data is stored CPU-endian
-> >>>> already rather than passing actual raw bus data to the buffer.  
-> >>>
-> >>> I see, now it makes a lot of sense. Thanks for clarifying this to me.
-> >>>  
-> >>>> So it seems a waste of CPU cycles to convert it back to little-endian
-> >>>> to push to the buffer only for consumers to have to convert it back
-> >>>> to CPU-endian again. But since most systems are little-endian already
-> >>>> this doesn't really matter since no actual conversion is done in this
-> >>>> case.  
-> >>>
-> >>> Right, but it's buggy on BE, isn't it?
-> >>>  
-> >>
-> >> Right now, the driver is buggy everywhere. The scan info says that the
-> >> scan data is BE, but in reality, it is LE (no matter the CPU-endianness).
-> >>
-> >> With the simple patch, it fixes the scan info to reflect reality that
-> >> the data is LE in the buffer. This works on BE systems. They just have
-> >> an extra conversion from BE to LE in the kernel when pushing to the
-> >> buffer and userspace would have to convert back to BE to do math on it.
-> >>
-> >> With the alternate patch you didn't like, the forced conversion to LE
-> >> when pushing to buffers is dropped, so nothing would change on LE
-> >> systems but BE systems wouldn't have the extra order swapping.  
-> > 
-> > But do they need that? If you supply CPU order (and it is already in a such
-> > after get_unaligned_*() calls) then everything would be good, no?
-> >   
+On Wed, Jul 23, 2025, Adrian Hunter wrote:
+> tdx_clear_page() and reset_tdx_pages() duplicate the TDX page clearing
+> logic.  Rename reset_tdx_pages() to tdx_quirk_reset_paddr() and create
+> tdx_quirk_reset_page() to call tdx_quirk_reset_paddr() and be used in
+> place of tdx_clear_page().
 > 
-> It doesn't make sense to my why, but the existing code is changing
-> back to LE before pushing to buffers for some reason.
+> The new name reflects that, in fact, the clearing is necessary only for
+> hardware with a certain quirk.  That is dealt with in a subsequent patch
+> but doing the rename here avoids additional churn.
 > 
+> Note reset_tdx_pages() is slightly different from tdx_clear_page() because,
+> more appropriately, it uses mb() in place of __mb().  Except when extra
+> debugging is enabled (kcsan at present), mb() just calls __mb().
 > 
-> 	iio_for_each_active_channel(indio_dev, bit) {
-> 		index = indio_dev->channels[bit].channel;
-> 		data->buffer.channels[i++] = cpu_to_le16(data->ch_data[index].diff);
-> 	}
-> 
-> 	iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
-> 				    sizeof(data->buffer), pf->timestamp);
-> 
-> I agree that it seems unnecessary which is why I suggested the
-> alternate patch to drop the cpu_to_le16() and just leave it
-> CPU-endian when pushing to the buffers.
-> 
+> Reviewed-by: Kirill A. Shutemov <kas@kernel.org>
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Acked-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
 
-This one was seriously odd and went though a lot of discussions around
-endian conversions during review.  Definitely wait for Yasin to reply.
+...
 
-That's not to say I can recall how we ended up with the dance that
-you are seeing now (and I'm too far behind on reviews to get to digging
-through threads to refresh my memory).
+> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+> index 7ddef3a69866..57b46f05ff97 100644
+> --- a/arch/x86/include/asm/tdx.h
+> +++ b/arch/x86/include/asm/tdx.h
+> @@ -131,6 +131,8 @@ int tdx_guest_keyid_alloc(void);
+>  u32 tdx_get_nr_guest_keyids(void);
+>  void tdx_guest_keyid_free(unsigned int keyid);
+>  
+> +void tdx_quirk_reset_page(struct page *page);
 
-Jonathan
+Might make sense to have this be a static inline so as to avoid two exports if
+KVM ever needs/wants the inner helper, but either way is a-ok by me.
 
-
+Acked-by: Sean Christopherson <seanjc@google.com>
 
