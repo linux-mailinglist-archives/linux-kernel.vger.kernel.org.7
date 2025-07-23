@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-742952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3956B0F8A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4646FB0F8AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D9417D7C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8104617EFF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D585120E717;
-	Wed, 23 Jul 2025 17:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA46A2135C5;
+	Wed, 23 Jul 2025 17:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQvik5Ze";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s3FwFLi6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="m4EPov57"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97782F5B;
-	Wed, 23 Jul 2025 17:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707CA20C00E;
+	Wed, 23 Jul 2025 17:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753290515; cv=none; b=u5dyps28RXnlFi7FRu2kvCyNSbH+yaJq6T+zJUgfDboGxcNo3pItuFA+ctEXmVeJgZwTpolIHR8ouRtgI7MCFwQ8tyHlTXGMZcDpntyqI0csDOysISCT4bAngrjsbM6Id0LQtbjQ7DMX4Cu3JfFTsGVthwSNqTlrMFwKgfg8hZc=
+	t=1753290609; cv=none; b=LVytbD+3KHte70UV573LnH/Pm8CaMJ5ZXj33kcfVI3QpWgqiTRSTmEXQLZ0McbQ2/9RaStorlsVoV7S18lpvwd6CTPsB2oIF5RPtlG30MBlH5+RtXZAnb/58QozxEezNZQAiAc3wsKmiryYZO/Imh9/YL+IO4xcAs4MDNDAObM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753290515; c=relaxed/simple;
-	bh=ayW+70j1SKRNbxmtM6BEN8MtsgzWyaR3bkTkLp5gqbs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o/qe+/7BqllpIyVZWMuc+yu4a1m1LrnkMpd19RUZYCJxD/tjv/67Ud30dlB8oU5nL27ONIq8lHW9FQoeNexESABxq/IHvUyaqiMtaq6IaYafRbzWsqCxndi3e1LWvnaLPjF+s2AU/4Dopl37j1VpsQjOaokY5N4hbrH6kTFsNQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQvik5Ze; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s3FwFLi6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753290511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayW+70j1SKRNbxmtM6BEN8MtsgzWyaR3bkTkLp5gqbs=;
-	b=oQvik5Zeb9uwcQOxRMeNjmc2wDRcZcz+cf3UjqGE6WAmAlQuUifSLs07JIuqvXMksgBVOx
-	ZE9osLolL9paY+17UrpsRUsBGu5j9XvTf19cBjgNlRz6ro9asyiJwsOvrDculRauNIUwo+
-	0s3EJkRdKkqUrukyoezwX6LoXT3WqKUDbBQ/TEFxC1ry0/tLenQrVdWLx9yb/6LXUdDnee
-	5p6vRzTP+COZbrJDCpfo375Rxkn6CVMo/M+wxvKbCLGBwMqMVnbKCjgvWWKF++kwn4UkFT
-	19MXHzs5FexCmL5FEe8q2VBnJX+5Pa/8O/low1PBPR+D5wNaULOdS6ET61yWrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753290511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ayW+70j1SKRNbxmtM6BEN8MtsgzWyaR3bkTkLp5gqbs=;
-	b=s3FwFLi6bNx8dgZz5uc8FZXzRsO0Xw4jPLZYgxlv3yvSCD/wJx+wxZG27451eNXqfMIspb
-	yy62gFqs5T+7+ECw==
-To: Andrew Donnellan <ajd@linux.ibm.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nicolas Saenz Julienne <nsaenz@amazon.com>, Mark Rutland
- <mark.rutland@arm.com>
-Subject: Re: [PATCH] Documentation: core-api: entry: Replace deprecated KVM
- entry/exit functions
-In-Reply-To: <20250723075134.105132-1-ajd@linux.ibm.com>
-References: <20250723075134.105132-1-ajd@linux.ibm.com>
-Date: Wed, 23 Jul 2025 19:08:30 +0200
-Message-ID: <87cy9qsult.ffs@tglx>
+	s=arc-20240116; t=1753290609; c=relaxed/simple;
+	bh=YeQYhjTp5dduT427Tt7El0kEHKxVmhQSi0aw79AHZek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1uIUXcoMpARePohzuCMfEEmC0TQ87TbD3mmEPf0wgNEmhyQlpAPYDcmuApSn4PWJ9YGbz9rbP45QPxnZqgbgqBWm7JkUL0lqRC+RAxmen6rb3ECR7iqKZnQ/sbop3tXD4+t75JubrKSVZWWxoV1M0GKtjN7jG1yTUcYgpXUfng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=m4EPov57; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=eEQLl89P4OrcuStEjktKkoC3l8QiiX66+dxj6MpfBDE=; b=m4EPov57YzBTbrZgGZ/wo7y9/4
+	OWl5BKdeEkLsvOhqGneoQOaYRwMbJdYu7aCKyClbLj8ZYZQwvTCAAdLbHqbNqk/8Rl39l9VPu7HvM
+	7QlYgIPDGSOjFlHnLwzCpc2wi6z4PG540Y9V2ApIquOIedeIEKsh62eT7Vs0XT99PmUU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uecyX-002fdW-Mm; Wed, 23 Jul 2025 19:09:53 +0200
+Date: Wed, 23 Jul 2025 19:09:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 2/6] net: dsa: microchip: Add KSZ8463 switch
+ support to KSZ DSA driver
+Message-ID: <b20340d8-e4e5-45b7-907f-be35a7809b91@lunn.ch>
+References: <20250723022612.38535-1-Tristram.Ha@microchip.com>
+ <20250723022612.38535-3-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723022612.38535-3-Tristram.Ha@microchip.com>
 
-On Wed, Jul 23 2025 at 17:51, Andrew Donnellan wrote:
+> This patch adds the basic structure for using KSZ8463.  It cannot use the
+> same regmap table for other KSZ switches as it interprets the 16-bit
+> value as little-endian and its SPI commands are different.
 
-> The x86-specific functions kvm_guest_{enter,exit}_irqoff() were removed
-> and replaced by the generic guest_state_{enter,exit}_irqoff() in commit
-> ef9989afda73 ("kvm: add guest_state_{enter,exit}_irqoff()") and commit
-> b2d2af7e5df3 ("kvm/x86: rework guest entry logic").
->
-> Update the references in the entry/exit handling documentation.
->
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Nicolas Saenz Julienne <nsaenz@amazon.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Thanks for adding the custom regmap. It makes the patch much smaller
+and less intrusive.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+	Andrew
 
