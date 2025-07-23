@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-743354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADB9B0FD9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:31:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E023B0FD9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24166AA6B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 321825A118B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7442741CF;
-	Wed, 23 Jul 2025 23:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC0826D4E8;
+	Wed, 23 Jul 2025 23:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtt9WR4W"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iy+KKMdx"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55FA273817;
-	Wed, 23 Jul 2025 23:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9F02741B0;
+	Wed, 23 Jul 2025 23:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753313427; cv=none; b=pyigN7AaWdvji212uHZax7U0PNmY92x21OvK1jvz3KzlOPipz3WDVWxiyRG2J0uLMFWekeqkWc3VWwEbKtsS3WP8AveM/dnpEC1roFBv3nmeaHzyzOl7ZHIGTFcY0ebpqT952IcDD0vsw+svbtXEeTal6+0FTXm2dnNxh3Ynu2E=
+	t=1753313428; cv=none; b=nMJy+iHhXVArIqkJ+xNZoBmSnkLCkQY4A9p0FhbfGlj4AiKqJ9c0n70icQPdEy7Ad9ET3QEnOdsm1zfYd/GBkvHEvXjqISxGpjpRTL/AVkTdEeO2i+P2ptDj6wc2XfQzPXYMq0xyM+YIEabASGOFjVwrKYJO6pCw02n+tAxk2wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753313427; c=relaxed/simple;
-	bh=GfYWs/R0+rcewDkLVXCC5SDhMnM7D9a/I1092RugNII=;
+	s=arc-20240116; t=1753313428; c=relaxed/simple;
+	bh=pvWVd0fI2f7a7cAI0R0Y8/7FqaC0BizRGiMWT5gC7N4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F5Hi2CkYI4lOkW5JJ6zWhUaf14uf05Am0JMBFi1CznhW2EZiratl6JtYmi/PlDFDz41eM1cSzkuw3+IMGUGVux6afYr8eDUrOwSSg5ymoa218ouoKFBnf7+ic8uyc0pr5qz8DNaExC64WjqKD+93MQGMKc4ieA00BbgTvDO6ia8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtt9WR4W; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=WWAKv8YFv5nIz/meEu8thBfWOyCnH5sKNqZqolQOX1EyaPxPDjf1FJ+6OUcWk+/MGX0PCrnXdbea6L2WfSnhbhtJOjkF2HZ8dY2IOY0tBkOQH2GE8f3tR/bMN1/Wm72Ku382LldPE9j6VKmmmfD+nRXYoso6n+7+BTJwARlwyUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iy+KKMdx; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235d6de331fso4436235ad.3;
-        Wed, 23 Jul 2025 16:30:25 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23c8f179e1bso3763225ad.1;
+        Wed, 23 Jul 2025 16:30:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753313425; x=1753918225; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753313426; x=1753918226; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hexKS3OBdUuka6mz2tsiA5AZ62DQZfbT13EVs55U9NQ=;
-        b=jtt9WR4WecIPgdDyMDkrLFbg9GuaCPZU3ZsXWkCF1bUyqylQbkJuVWUemyLHOz3J+7
-         1Ci97eFCxu1sbFjtbKYZSDm1AU95Xpdly+QXsMAnwGJR2pWQh8kCR2lFs/8jgqOwDgrG
-         OzbjfLMYrkg+HMVvYj1432F5iWG8P1sk0OsOGAlFZetMu7giSf4FjQjN1sUS5nsrnPcb
-         ATK5+loROhKqnUjPXkyzhgQ/mM3DD4TTC3rmFTYKsr6VS9/urC+j/gNJxFGV4zgL3aov
-         uJ5ZFdJS6jzKopsw2tCpLvFnLGZSk/Xpr4s1LP+qi+/4Pmf86WKKrXwh0LZnoKw/g5pQ
-         jyCA==
+        bh=RkVzo5NE0GNCbJSinTR7TyExPK/C8GmZwMd+EFgVEoM=;
+        b=iy+KKMdx5JBdlNUFLtDXkjQygxNyWMRHLHBvsRH+ifvKAdbLcQzes9XhFB89kPVb1t
+         THPoZH7uRjJKDp4Vrgqz7OHjNt6UCY2i+bdw9AebE9zWcod4UhVYPkwWTFTbO+2kR2kR
+         J38QWnHdsM4UvMe7D5R/dkTlfZTy2xFGlL8tn8CR7XRs9g/Dn7F6y6sloXedvzM9cxm0
+         xSi+ND3iPptikGtTE5N223LabEhZ21H7ciy9tJzXG1ssZ3Fl6YKm+3r5JJZXKBOrwDec
+         F6Fw5Z1RynxlRMRZI8zNp7mYHGZbSiLh/QSeszxNAWabmRQCfI16T86/LsQrURbvtmEy
+         I1YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753313425; x=1753918225;
+        d=1e100.net; s=20230601; t=1753313426; x=1753918226;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hexKS3OBdUuka6mz2tsiA5AZ62DQZfbT13EVs55U9NQ=;
-        b=rHgbMGdv9xJOO0e+C9mjcFtp3TEQsqTc0KJp5gpBzEolQsK/thKZxcSCeiYvfP7kIp
-         1C7nVFqnboLdv9Qs+6IxwCLO6LepL1ozJzA9bmG5jQYlp7oSTTu5cPrIszF6vECbSr9h
-         CeWb7NXYVodPBfR/a8s5FUUmGEuIvkjFmcolLmtGBGnfdOSKKm+I3TNN/h9UDs5/WnM0
-         Mtfr52dyIB5yNPwUw3a3RS1u/vu/kpGLatTG3bbKDDIGn6opZXv5uTypgMmmvvYQ2NYD
-         /PJCzHz2m/+w5YqVSsHAtRwkuVckfDlWsPKEibGpIIUbdwXhW1lTlWuKalncx5Sz/AXy
-         xZ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWNirt6+6DPPYo89O48/9RnKoF99AvschoGgp/AhEsjsPPhTJtZQbY2kcrV4cdcAhYlqC8Fd1P9bFZS9ca3@vger.kernel.org, AJvYcCX2BxHBvZs5sgVANiCXEK34JSnbrWNLHDYsnwXeu19WfQgdgEKm99pCMDb2rejb7yDV8fY3L8OtkZfX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvaKW93Xiyk8i9DBEOMj1yNjhZdR/17tSyGW3/iALoYY5rDL3Q
-	boIXUV1lFp9Otep7P1ZPW5eoc63lHvTxWeaXJU1W8TKEyBlmYrovOFGf
-X-Gm-Gg: ASbGncvLkgACdvsdB/RPgfPx6W5h9zK9D5AXpa2PPBYKMRdavs/633Bo2q1cl6+Jpwd
-	pisWnDY1btSFhomE+mVG1TS5dnm+7T4TlzuOONUCqzNFJ+0G8aWlfBt5yjeU8D04m6+mFvSsSTV
-	khRPY66nsglXdJcJEEnlAwlQdKynGFFvsON0VFahL0Dg1KazC2/mCiimgRx6jvmXidax6b6t7RZ
-	mHD/uo8UI4Vn6d5uFBMX63FrNJfi6trGesepgHZD5Uj36APeJ/oqNHXzF5BE4KdkcuC3fFy1Uuq
-	M8VYeOGFTC0Yz3QQVYyo1OiYRoJYBA58mcxUG4ZTlkGXsPlFxx6WrpbRP3bOb362maB76U+d2wf
-	cnE1LcNguGdlFOK0DOgchx91HgUbzJTGppMrGY67kEDJe0TFNQCdtbzHB1BAx0ZpEM3j8bLFIuz
-	w=
-X-Google-Smtp-Source: AGHT+IGI7TnYck3w9Hntb7EBGOSxlq7HH1YPFTWNRaeivNj40fXsheG0i19dTMp3Dq/70CdQsBEbvQ==
-X-Received: by 2002:a17:902:ce11:b0:21f:617a:f1b2 with SMTP id d9443c01a7336-23f981da200mr67178985ad.46.1753313424830;
-        Wed, 23 Jul 2025 16:30:24 -0700 (PDT)
+        bh=RkVzo5NE0GNCbJSinTR7TyExPK/C8GmZwMd+EFgVEoM=;
+        b=gOe+A/rDoURsRaS2eFEtl+1Vp8LmHv9g/8M/6xRapfoFRYT6oeuNv99/vgPUDprWOV
+         RQKbIfnydtoJhCt63jHdCQbm5qkiKRFbPmby6/eZ+c4nBaYteNlQ2or5iE41gHXh5tVg
+         QaxePEsRWIAWUZKLNiSUZz/P4ewt20OpnLICyN2MWCTAToZNT5TlHueGfT9GGrSzxNfF
+         t2ody7nYqSjmJXPM1VdWaAAZJ10e8yH250XY5D3pJOR4Voi/Z2kszZbjfuiN8GjxvUTS
+         kpc9Td7NrWNjEBMKlu/sLlHSrHlFvCpEHRWCGwUzfD14bPGHp8P6GJRDMqsONyhve8BO
+         8LXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtroHIVJy3FqtUUqFofEwM+XXe4H8lSzqc7x9zCVxxWSQ9mEQlkpz5JKBNknQ+LtTrj62rrIlA7bbIeCV5@vger.kernel.org, AJvYcCWYUVDB8nA14h9vNNckFlolYlosJoxRLWgmYBMY517wdxSp2Y9YgxbggJQqtR70Lw48DT7EhXoZjMHq@vger.kernel.org
+X-Gm-Message-State: AOJu0YytmlxLQFU+EcvtXjE1BF8bEc0/KWY6GHz+Nx4qYdsmLoe8B5MG
+	v1gnAlPNgBs0mdA3cGmeG9++PVIkSQyCEf/fQ/qDQ5LBFDkRdY0PR7No
+X-Gm-Gg: ASbGnctzSn9if39Z6t76QtxoGpeO/z+75X6CBS7oV5nszsRSjjevLP/LQ6kN0RBXrNj
+	T3z+4SDSAYJzUCcv8j28cypDNkfx98VK0LMkea5vDsuxyGtPmZn4IQlVeMOxgWzBSgJqgBXjv2V
+	rqG5UW7GVMnfwvDs9qJDxKmzXM9RJw8ypfLHvo9U7yF69KYhMRQzespQII6I+iF3YM7djQjXe4T
+	k+fmR/3b9v35yz9q/09Inw9nqcN0Vu21uVMdMuyVORfA6hvglguNpBVEcX9ll2G94FN5tFbfS+z
+	6ejYj2xQpUOxCFVe5v3uPlQBWRFoOk1CP/EyIUO+pIgu9NU46FYiEP7J8J8RGgJNxNbV5mH9DRY
+	/DMrqIRRnc989y0wqjujEPkfbYf14JTKJZQV7LxJ5pz/GWI1mHD92PBLGVgpMCyqbfIKMxq88Vn
+	s=
+X-Google-Smtp-Source: AGHT+IHzWqipQFV1rlMjfGMj2ZYctdbfed8wRJ1YF4iYb6xdbsKUiD0L697jJ9ynyQV7v99kSM5TEg==
+X-Received: by 2002:a17:903:2b03:b0:234:c549:da10 with SMTP id d9443c01a7336-23f981d2e75mr67924515ad.47.1753313426507;
+        Wed, 23 Jul 2025 16:30:26 -0700 (PDT)
 Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48bc6fbsm1260765ad.120.2025.07.23.16.30.23
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48bc6fbsm1260765ad.120.2025.07.23.16.30.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 16:30:24 -0700 (PDT)
+        Wed, 23 Jul 2025 16:30:26 -0700 (PDT)
 From: rentao.bupt@gmail.com
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -86,9 +86,9 @@ To: Rob Herring <robh@kernel.org>,
 	Andrew Lunn <andrew@lunn.ch>,
 	Tao Ren <taoren@meta.com>
 Cc: Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v3 03/13] ARM: dts: aspeed: Fix DTB warnings in ast2600-facebook-netbmc-common.dtsi
-Date: Wed, 23 Jul 2025 16:29:59 -0700
-Message-ID: <20250723233013.142337-4-rentao.bupt@gmail.com>
+Subject: [PATCH v3 04/13] ARM: dts: aspeed: Move eMMC out of ast2600-facebook-netbmc-common.dtsi
+Date: Wed, 23 Jul 2025 16:30:00 -0700
+Message-ID: <20250723233013.142337-5-rentao.bupt@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250723233013.142337-1-rentao.bupt@gmail.com>
 References: <20250723233013.142337-1-rentao.bupt@gmail.com>
@@ -102,39 +102,85 @@ Content-Transfer-Encoding: 8bit
 
 From: Tao Ren <rentao.bupt@gmail.com>
 
-Fix deprecated spi-gpio properties in ast2600-facebook-netbmc-common.dtsi.
+Move eMMC entries from ast2600-facebook-netbmc-common.dtsi to each
+platform because eMMC is removed from future Meta/Facebook AST2600
+Network BMC platforms.
 
 Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
 ---
 Changes in v3:
   - None.
 Changes in v2:
-  - None (the patch is introduced in v2).
+  - The 3 emmc-related patches in v1 are squashed into this patch.
 
- .../dts/aspeed/ast2600-facebook-netbmc-common.dtsi     | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ .../boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts   | 12 ++++++++++++
+ .../arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts | 12 ++++++++++++
+ .../dts/aspeed/ast2600-facebook-netbmc-common.dtsi   | 12 ------------
+ 3 files changed, 24 insertions(+), 12 deletions(-)
 
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
+index 74f3c67e0eff..ff1009ea1c49 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
+@@ -201,3 +201,15 @@ fixed-link {
+ 		full-duplex;
+ 	};
+ };
++
++&emmc_controller {
++	status = "okay";
++};
++
++&emmc {
++	status = "okay";
++
++	non-removable;
++	max-frequency = <25000000>;
++	bus-width = <4>;
++};
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
+index 840d19d6b1d4..d0331980d082 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
+@@ -1243,3 +1243,15 @@ &mac3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_rgmii4_default>;
+ };
++
++&emmc_controller {
++	status = "okay";
++};
++
++&emmc {
++	status = "okay";
++
++	non-removable;
++	max-frequency = <25000000>;
++	bus-width = <4>;
++};
 diff --git a/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi b/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
-index 00e5887c926f..208cf6567ed4 100644
+index 208cf6567ed4..0ef225acddfc 100644
 --- a/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
 +++ b/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
-@@ -31,9 +31,13 @@ spi_gpio: spi {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+@@ -156,18 +156,6 @@ &vhub {
+ 	status = "okay";
+ };
  
--		gpio-sck = <&gpio0 ASPEED_GPIO(X, 3) GPIO_ACTIVE_HIGH>;
--		gpio-mosi = <&gpio0 ASPEED_GPIO(X, 4) GPIO_ACTIVE_HIGH>;
--		gpio-miso = <&gpio0 ASPEED_GPIO(X, 5) GPIO_ACTIVE_HIGH>;
-+		/*
-+		 * chipselect pins are defined in platform .dts files
-+		 * separately.
-+		 */
-+		sck-gpios = <&gpio0 ASPEED_GPIO(X, 3) GPIO_ACTIVE_HIGH>;
-+		mosi-gpios = <&gpio0 ASPEED_GPIO(X, 4) GPIO_ACTIVE_HIGH>;
-+		miso-gpios = <&gpio0 ASPEED_GPIO(X, 5) GPIO_ACTIVE_HIGH>;
- 
- 		tpm@0 {
- 			compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
+-&emmc_controller {
+-	status = "okay";
+-};
+-
+-&emmc {
+-	status = "okay";
+-
+-	non-removable;
+-	max-frequency = <25000000>;
+-	bus-width = <4>;
+-};
+-
+ &rtc {
+ 	status = "okay";
+ };
 -- 
 2.47.3
 
