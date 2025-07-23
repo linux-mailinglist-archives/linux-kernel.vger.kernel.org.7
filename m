@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-743012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A9FB0F985
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:44:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D33BB0F984
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F22AAC4440
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778AD175756
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9254624500A;
-	Wed, 23 Jul 2025 17:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTEoClWJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V/m9EQLS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1570322173D;
+	Wed, 23 Jul 2025 17:38:06 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB915C158;
-	Wed, 23 Jul 2025 17:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDE81FECDD;
+	Wed, 23 Jul 2025 17:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753292251; cv=none; b=qGCxDMC7TqSk6/hF63KlgggkeEkgeR715CChXbUgyWvHkAXtz8o0yJcXMu4y+5Xrut6ijoKvgdths4qb+63d++ZFwK0xFgCluBuJY45Mvu5z2MGepIpP4/zTc033Dp/vxfYHAcLyy8XGhvq/Vh++CC05UQIdxOomR8yRaljpMUs=
+	t=1753292285; cv=none; b=FSPDxsj8hx6qq1Lwe6RsSEnDtTfV0eWLSQ+IANjx98J5J9sqrp/C6UHbqPB5QbZ3Ur1UJyxKjFrndWI85nXvWMZcDJKD1WAlyknVnAWvi7kRFb5UkAdJOVFA5nJHwxK7Af1LFi/ppZok5aTy79biVg3LhAlTC6D7/vpWZiEBGMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753292251; c=relaxed/simple;
-	bh=SK0T/YPPJf5gjC7D4LgNCas0mCg0dqP26nQsyvEH/T4=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RBXbBMYb/whvVQBxHa0DYg29tUcuAOJ7VeBjKa3JWseiJDVO0kHvoG4NlliyxVykQ0irnjy3vqiJ9V4+Bxg9Jdox/ESXHFry3xD1VAo0o065HnuyLtTYzE4YJKWtEI+bmo2vQq+LqT3+D/WRzsYAG61Y/zMpozGrXXLuI4p4L1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTEoClWJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V/m9EQLS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753292247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAN36tnPlVScqFyW8H2kecVmf43LbzR0LCpjmIdCB6k=;
-	b=dTEoClWJpdbZ8dDT/H8RBibW5G3pXOOc7s0AFPsIuxm4wZIG3cAMH4PBg7kS9MSRq90Z7p
-	mdkx7DyiIBN13jDTsP4J3u7cq80L9uQDFENlrOzvWmmllj4cYDp8CWrhP73KFXPFDLa5Rh
-	ufDzvNPhC6DkMEy/jgY/NpIGpgsP+B3UQ2R+FnIHCYfKdbv+bgnfuL8jvPslRiwEdTRDM+
-	auRoX4DfeM7cJO5PagYEI1rkPT+ts9Xzm58KVrqTNA68AAbhiW1Z3PZmG3VezBuwE8bywZ
-	Wzlxur0f6tt0Lb1ZqpQkWyt9g+zWAgLuhXQHESNLqMoyf0QJyzB1S113gM9nsQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753292247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAN36tnPlVScqFyW8H2kecVmf43LbzR0LCpjmIdCB6k=;
-	b=V/m9EQLSeALkvLMUgne5PHhsAdv3wLFBWfmwy/iiP2pq1OL7lDqxS5TYhKlnJ2UF4PJaNs
-	39ByRYfi3VRICtBw==
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Kevin Chen <kevin_chen@aspeedtech.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>
-Subject: RE: [PATCH v3 2/2] irqchip: aspeed: add debugfs support and AST2700
- INTC0/INTC1 routing/protection display
-In-Reply-To: <OS8PR06MB7541516DD4FDEBD72A764042F25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
- <20250722095156.1672873-3-ryan_chen@aspeedtech.com> <8734aotfdq.ffs@tglx>
- <OS8PR06MB7541516DD4FDEBD72A764042F25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Date: Wed, 23 Jul 2025 19:37:26 +0200
-Message-ID: <87wm7yrep5.ffs@tglx>
+	s=arc-20240116; t=1753292285; c=relaxed/simple;
+	bh=4H/8cvAlzzijGnO45p+GF9IzfW2DCmApE2O4FWgIqCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDqhd0W3xWuYQuehNtHw7kYItUzji6+bETj9fMWnF6VgbSFINvpiEpwq+SQ/6EfGkLG3bLC6VC0vljv850OESLxcc+//UlX1EXUO6/8JenbF72WpOAtQPDNl9SQlVFfwJB9+E6za4lSC/YzbPJ8XdTahMAZZQvWXBoGk3t5D3xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae36dc91dc7so12266366b.2;
+        Wed, 23 Jul 2025 10:38:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753292282; x=1753897082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bLib4tbx2PfQpPOdJVFlUTHL/WscmwWuW3AT7VBz8YQ=;
+        b=PNd4cFnxUzJwq/LZKK2kSnbKukRI3zsK0KVjc7Go54k0peFbifZc0iQBU21/PBI4bR
+         CkbDBRGowxDHS3Iqzd9j3gAuGiqHsZqIftktCI1mcuvWr0Ps7htyrMn8BhEIeOHPnoWu
+         B0fP6mV6yFjt49fGLRGsPonftZpazyL4/KDbsb+CjQJlCsMCwPz9TFNMnc5jrMki/kMB
+         XFFL+RUrjxd2rEcVBCwraw3XHfVW7TGvfiukwyArh0mrHBW9QHyG5BqUff5k/391ZhWb
+         YjwRDO5alTllTpOYQ4sUeSAfF1Y9xNWVn5LL4z77efMC2mdr4rSUoyWWW0VNBvFWUUdB
+         HwOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7snrmXdTYN330A3lbQswvYU1WLLipysJUVqPviHLBaktaDB8jCy4dF1RrShfiGb5W+907hXVLyNkrnIc=@vger.kernel.org, AJvYcCWrPYG+3Sh4DabZoBm/VdEvVUQDRYpvQi3DYqF+hXO31PjXQGNpcCaEY6WulVQ9OcaR/YdTryWS@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIIaB2kAEXQN1ylKh5QWOelsYq06HcxKznEDdsPhU1WpaA1b0B
+	oEZYVqQ3woNV+Vrg3OtQtPoAcV47EAx/SykPLCxzi98jslXcRcy81UCx
+X-Gm-Gg: ASbGncuz1s9HdZfRKMOElsR3g7y4DMYWYBtYSjfhNd6GYJXlZCoJG5JElymzI5vBMyc
+	ebj/R+vrBWsh063vyhE6MxX2aCOjuZ+phpnojx/25MKMJ6JV/bJaKmovq7hCzBr2K+H6I4zXAEf
+	N9lVUXRJUTeBr0x2GmENq2dDGHxNWa/oAA0cL1fpFtwGKXpr56i4EKXSVGjo1MmdSp1ZvDpMi9r
+	y7srtDZjQe9oeqMcB8WUfG2VfsMxPEH3B70qKP8KFm/2M6sDGkVNaSypjBlVi6/N/DK7XPDJtdd
+	hqlsqDxQ0lUOh3fh5e7YWqpb395z4UbFfSxK/B3oNRpfCtl3Fnhdh+iBVjLm1h+PenGsxOnVdU1
+	OkZageHlOfZw2nJ7x5k6JusuP
+X-Google-Smtp-Source: AGHT+IFKyx3Q9wuSh34URqG6zrn4DJvRJZyiO5qZBHB1GbSWbom2jQl3SXRF3LSwnqhPTehFz6YkWg==
+X-Received: by 2002:a17:907:7294:b0:aec:65de:5258 with SMTP id a640c23a62f3a-af2f64bd1b4mr384490466b.3.1753292282133;
+        Wed, 23 Jul 2025 10:38:02 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f543ddsm8656219a12.30.2025.07.23.10.38.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 10:38:01 -0700 (PDT)
+Date: Wed, 23 Jul 2025 10:37:59 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 3/5] netconsole: add support for strings with
+ new line in netpoll_parse_ip_addr
+Message-ID: <ptspqvcgbwmyyyhtfhna3jsdzffvo2tffyl4mugkozvyen5oze@ek2i6q5kkgtq>
+References: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
+ <20250721-netconsole_ref-v2-3-b42f1833565a@debian.org>
+ <20250723144933.GA1036606@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723144933.GA1036606@horms.kernel.org>
 
-On Wed, Jul 23 2025 at 06:02, Ryan Chen wrote:
->> > +struct aspeed_intc {
->> > +	void __iomem *base;
->> > +	struct device *dev;
->> > +	struct dentry *dbg_root;
->> > +	int (*show_routing)(struct seq_file *s, void *unused);
->> > +	int (*show_prot)(struct seq_file *s, void *unused); };
->> 
->> See the chapter about struct declarations and initializers in the documentation
->> I linked to above.
->
-> Sorry, I don't see the struct "> > +	int (*show_prot)(struct seq_file *s, void *unused); };"
+On Wed, Jul 23, 2025 at 03:54:11PM +0100, Simon Horman wrote:
+> On Mon, Jul 21, 2025 at 06:02:03AM -0700, Breno Leitao wrote:
 
-I fatfingered that, but that's not the problem.
+> > --- a/drivers/net/netconsole.c
+> > +++ b/drivers/net/netconsole.c
+> > @@ -303,20 +303,21 @@ static void netconsole_print_banner(struct netpoll *np)
+> >  static int netpoll_parse_ip_addr(const char *str, union inet_addr *addr)
+> >  {
+> >  	const char *end;
+> > +	int len;
+> >  
+> > -	if (!strchr(str, ':') &&
+> > -	    in4_pton(str, -1, (void *)addr, -1, &end) > 0) {
+> > -		if (!*end)
+> > -			return 0;
+> > -	}
+> > -	if (in6_pton(str, -1, addr->in6.s6_addr, -1, &end) > 0) {
+> > -#if IS_ENABLED(CONFIG_IPV6)
+> > -		if (!*end)
+> > -			return 1;
+> > -#else
+> > +	len = strlen(str);
+> > +	if (!len)
+> >  		return -1;
+> > +
+> > +	if (str[len - 1] == '\n')
+> > +		len -= 1;
+> > +
+> > +	if (in4_pton(str, len, (void *)addr, -1, &end) > 0)
+> > +		return 0;
+> > +#if IS_ENABLED(CONFIG_IPV6)
+> > +	if (in6_pton(str, len, addr->in6.s6_addr, -1, &end) > 0)
+> > +		return 1;
+> >  #endif
+> 
+> I don't think it needs to block progress.
+> But FWIIW, I think it would be nice to increase
+> build coverage and express this as:
 
-> My original submit is following, it should ok. Am I right?
+Agree. While testing with IPv6 disabled, the netcons selftest exploded,
+so, this explose a bug in the selftest. This is now fixed in:
 
-No. Read the chapter I pointed you to.
+	https://lore.kernel.org/all/20250723-netcons_test_ipv6-v1-1-41c9092f93f9@debian.org/
 
-> https://www.spinics.net/lists/kernel/msg5776957.html
-
-I have replied to this very mail. No need to paste me this and the pointer
-to some random mail archive
-
+Thanks for the review,
+--breno
 
