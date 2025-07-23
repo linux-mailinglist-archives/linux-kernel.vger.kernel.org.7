@@ -1,232 +1,154 @@
-Return-Path: <linux-kernel+bounces-742608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD95B0F43D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501EDB0F443
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E01D9678A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:37:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192A01C80F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDDB2E5427;
-	Wed, 23 Jul 2025 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C26C2E7F07;
+	Wed, 23 Jul 2025 13:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JdGk9JPI"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="ZwL68YgC"
+Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CCF8F58
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0372E7196;
+	Wed, 23 Jul 2025 13:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277881; cv=none; b=rjgSmZaQb1wzn9oI9gMbw2aigfVpJNdUZQl2TrqGEFZdPJ+Ifdgl94wVcpvlee0DYsAMotw1PHZSsCLP/ck2CftahHi08gCAeVbUfmM0An08e7sKRAhR99DFSWeQ6Lnviop+Emft4q+lzjhSdz+LcFKbukT1iRe1IwWuioCXTIU=
+	t=1753278101; cv=none; b=HrZaiCTGxb+LqsFQoPEOhG9j8nR7d/b9o15trH4WpGeWY8NcVu6hsBwKK/toAtqpoX2X8+nFrmG0rdYRyqdGZenzfwXwgROfb97cl2sIUjH7HrxokHDkGClB364Ny06Pue0wfaOvbDBEWM7pGWTsooyajgkInQUVmIttL5PnbWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277881; c=relaxed/simple;
-	bh=loj95alexQ30u6RYGhFIYnYsaA5hCj9ehW16PyQpKvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+rrHY4Fb1xIfjhtIk5rgt6jE5B8/1dX2SM4rOzKYjL+vJ4uYcS1SBpoQJKlSzaneZOx+xxCui1ZZDsSgISP//N39NHxFlI1WVmVU8zqlXzJOYUtQHGnB9UfdIhCnNi9r77XF26RHL4iSJDDM2xBx4bcbDG8MvKTy7++dlS1dUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JdGk9JPI; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2357c61cda7so117045ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753277879; x=1753882679; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m+JLK8o3lT0td/MYczWJEZnb2L8d00AyuRGacnswf14=;
-        b=JdGk9JPI8X4t66bEVRyd90KaD6AvgRS2ajscRpw0gn84aBeIcLgVNDHJOuHuEvNCdh
-         ymv9soxA9fVMMK/Lna7aPTK8R+KjSz6sg55UGFbvqdjM51Q0JLfzdr0RMfke7dXmH3iy
-         5rnOHdwh6NVnW7jmkNYfxZdj2fr2zgvVIbyuNxk0vTGU2M2+EUAUTsRi/UlwUvxdD8m6
-         On3Q0VtiekwK17M2oTwxGXB+mR6pIEjXZJhe/qsdvYBpVMGC0rHfy+n/hm81b3XYgqBt
-         emIFcb/P11lbkctNscVFaQsh7kjjaLHSkXiAJwlVWLHAwW4SC97VdQPN3AU1WVfWMudr
-         HvRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753277879; x=1753882679;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m+JLK8o3lT0td/MYczWJEZnb2L8d00AyuRGacnswf14=;
-        b=oI0eTg1ndO7FOkqqCs41joZ/N25ini3bn/hzRQam+AdMYz3Crki1eNyrey0sXcjnvs
-         v0w5IHwEaqc3i6sctq18PetjIp/PaG0oKQYYHUzk1+0r36Q7GvxAFBtrahstPbuZW/S7
-         m2bcRLVw2ySvJ4NFaai2LWT9GvGzFdcdfEjrMxKBgeVI2mnUt3Gsq2oo4SzH2Wl0Uyji
-         v2ac/nC4Fx7IKd1pohm3oIhaTuV3ZMRwzFZTeOq8meqVs0hU9Lo/9dPeCy8lpyqz6Of1
-         l1Y0cpvz2CIgmYmgqAEtSrPFuEQLrELoKlJydi7flaoF7/bhJwZFtWWtP2kei2DR5Ihe
-         us5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUPs8QVtkDXyrb0dWu0qTIG3ClM5GLOl2L5gau1Falw1tj+0yunpR10QSWZV8wLgVsLhVNbepYRiAFVNsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2eodMCTh/GIe3Z9GsTpRNrW+fO5tNx6pYjwZrU0HDpMj/t+7Q
-	Eh5/dH3+ulFSQp/gm63N/ggLZJpsDn2vs9mnAc8ajDeMBnnVfyhp94M+Y1YTn5zsnA==
-X-Gm-Gg: ASbGncuNikmM13kMS+m31H6e4neEtpfS29kB+ftynByuyiOrzfmhwF3oAW93ghemR2w
-	5n64jo8zmq0OTlSqbuSDk86tLrYUKH03Pek5SJsbdGKKy0Iu/ygUQmZCPI0IJAqN8j6TyFDkCMq
-	IMHGLh6JWwsKmgz5xk7ntkw4ln2wMqrOZWgyF2LkeA661EToQYzqyeONL++59vYD8+p5SlUct7T
-	jrzcwAXYmgT8zaU2HDT9hWCD7C+jhlv1XxNCCvrT9Tbp1L44LEXxtnOGYe2UbWZfCYwwRDl3Gig
-	qpgnutXsQfzapSl0wMMDb1nQnmX4QsxQ3CSUg4pCOzt5qAMFZReWOE09DBLzRvNX77bzjcFrgC4
-	e7Xei4Odr3I3PLwf4Rzcpuet7L0iMdtLjZRsURzwEFwa9WkMejv6PAwqJ/T6tSBAP0ho=
-X-Google-Smtp-Source: AGHT+IHNDySI/nH+OMkMv0ChQEdtb4UFgDV0ZT5tuGjSaRubSm3kOT/oocHqF0dfxqVXTEfR3wYujw==
-X-Received: by 2002:a17:903:15c3:b0:234:13ad:7f9f with SMTP id d9443c01a7336-23f978e398cmr3323895ad.22.1753277878789;
-        Wed, 23 Jul 2025 06:37:58 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23f75d13bdfsm77086475ad.51.2025.07.23.06.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 06:37:58 -0700 (PDT)
-Date: Wed, 23 Jul 2025 13:37:53 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, will@kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aIDlsUvF2Xbdelvx@google.com>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
+	s=arc-20240116; t=1753278101; c=relaxed/simple;
+	bh=Fe1DptJHaGCM5CkASpgFnW9O9iShBZfMWlsENeeszII=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bls4/dfE7zkuXfr29KKqtL2g5BWbJ1aCfCboXDSQdtJ7yjCTXFdHDUKAMP7BXKFgC+y4QZf3WLcu8wz6pPyCoUKxs3qCUjFgVoELg9uYL+4c1NCNCea15YGMbRTXwrW8naDcOvA2WevkHp58xiB7fLwx1JlJvPA8zHhx67jEfoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=ZwL68YgC; arc=none smtp.client-ip=67.231.149.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
+	by mx0a-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NDagNT032404;
+	Wed, 23 Jul 2025 14:40:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=jan2016.eng;
+	 bh=WHVTH4XDRN6t7jYshd3rEKyXqq+qwGThczpMYeU7gdo=; b=ZwL68YgC9Hga
+	n5cFrm7zxaLqZkkONSYvt7SWTZx7z77sbUGAa92JSMIv26mTzwLIknr6wzF5GJ4i
+	A6ZqNCOltPYM5rfov0Khd3QuxRaPmAUYcQgTbPCKoIVlFntlWXViUDi3m/gyuHu4
+	uQq1jY9QrmToEPzpuJg8iNG7VZueXRC51RLuXxACrHJTX2DFXA/z53g86i9l6igA
+	hikby8o2AzwC9AN3kjoa/AsVY8OuggT5t+jCuqPJ6/1SISTtKaiBwz2Lfk1AyW/n
+	A7onSfdcdU3DuCNw60Ezj7P8qY/6FvbPBglv0HGt/FQu9wqmdrV/Nyq3GAzLsopt
+	+oJvrfcvDA==
+Received: from prod-mail-ppoint8 (a72-247-45-34.deploy.static.akamaitechnologies.com [72.247.45.34] (may be forged))
+	by mx0a-00190b01.pphosted.com (PPS) with ESMTPS id 4830rv82a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 14:40:42 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint8.akamai.com [127.0.0.1])
+	by prod-mail-ppoint8.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCeFhs001565;
+	Wed, 23 Jul 2025 09:40:41 -0400
+Received: from email.msg.corp.akamai.com ([172.27.50.200])
+	by prod-mail-ppoint8.akamai.com (PPS) with ESMTPS id 4806px609g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 09:40:41 -0400
+Received: from ustx2ex-exedge3.msg.corp.akamai.com (172.27.50.214) by
+ ustx2ex-dag4mb1.msg.corp.akamai.com (172.27.50.200) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 08:40:40 -0500
+Received: from ustx2ex-dag4mb2.msg.corp.akamai.com (172.27.50.201) by
+ ustx2ex-exedge3.msg.corp.akamai.com (172.27.50.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 08:40:40 -0500
+Received: from bos-lhvzmp.bos01.corp.akamai.com (172.28.221.177) by
+ ustx2ex-dag4mb2.msg.corp.akamai.com (172.27.50.201) with Microsoft SMTP
+ Server id 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 06:40:40
+ -0700
+Received: by bos-lhvzmp.bos01.corp.akamai.com (Postfix, from userid 42339)
+	id 2E9DC15F582; Wed, 23 Jul 2025 09:40:40 -0400 (EDT)
+From: Michael Zhivich <mzhivich@akamai.com>
+To: <stable@vger.kernel.org>, <bp@alien8.de>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Michael Zhivich
+	<mzhivich@akamai.com>
+Subject: [PATCH v3 6.12] x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
+Date: Wed, 23 Jul 2025 09:40:19 -0400
+Message-ID: <20250723134019.2370983-1-mzhivich@akamai.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025072219-mulberry-shallow-da0d@gregkh>
+References: <2025072219-mulberry-shallow-da0d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721200444.1740461-3-nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507230116
+X-Authority-Analysis: v=2.4 cv=JbS8rVKV c=1 sm=1 tr=0 ts=6880e65a cx=c_pps
+ a=YfDTZII5gR69fLX6qI1EXA==:117 a=YfDTZII5gR69fLX6qI1EXA==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=X7Ea-ya5AAAA:8 a=QyML1Wa_BHPz27VLx9cA:9
+X-Proofpoint-ORIG-GUID: fMVNwE0PsDw6dEpnzGx03j0sSRa15-nk
+X-Proofpoint-GUID: fMVNwE0PsDw6dEpnzGx03j0sSRa15-nk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExNyBTYWx0ZWRfX3XK6VeT7jWIX
+ fYydU7v/q5nxH4eF8h1RAyPDnutiiouVEV9iH1S1aoPx9RfVlAKGz6VfR3huPHWpSbQBBkQX3Wa
+ aKZ7k5CUyzcFAuRXu4Ur29LPV6TzHuCASkba5tkJHaRcP+qJAPX8BenaMjqb5Rb9qNcrNQ7++CF
+ izS+w4MKj5u6rduaw7zo2KtIyYIt1jRHCJfvXDPBGFjGy/2eAx2CqTre8VofuaOhzfVqbyF4WQ+
+ QmLyacPvRm/KIpk+ZZb8t5NYOlSEkAs+1jppQ8OYgrWgfrcy0hCyc/Se603BXA/l/uESLC+GhiE
+ M+4L+BuuCzFd5wY9ROx94hKnP8MLGTFGSEeOUq5rF3kVzMI7zuxpEZvk2ALxkTxuROZQwcw9etK
+ Inmay8hzEIv6Ta7uDG5CFZMqbZSc/FFykOCLVpy8DSnLqTSkDx6oao0ZlPPK2Kmo4bpkuRUA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=971 adultscore=0 spamscore=0
+ clxscore=1015 mlxscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230117
 
-On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
-> It's more flexible to have a get_viommu_size op. Replace static vsmmu_size
-> and vsmmu_type with that.
-> 
-> Suggested-by: Will Deacon <will@kernel.org>
-> Acked-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c    |  8 ++------
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        |  4 ++--
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |  3 +--
->  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c     | 14 ++++++++++++--
->  4 files changed, 17 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index c034d6c5468f..8cd8929bbfdf 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -423,10 +423,9 @@ size_t arm_smmu_get_viommu_size(struct device *dev,
->  	if (viommu_type == IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
->  		return VIOMMU_STRUCT_SIZE(struct arm_vsmmu, core);
->  
-> -	if (!smmu->impl_ops || !smmu->impl_ops->vsmmu_size ||
-> -	    viommu_type != smmu->impl_ops->vsmmu_type)
-> +	if (!smmu->impl_ops || !smmu->impl_ops->get_viommu_size)
->  		return 0;
-> -	return smmu->impl_ops->vsmmu_size;
-> +	return smmu->impl_ops->get_viommu_size(viommu_type);
->  }
->  
->  int arm_vsmmu_init(struct iommufd_viommu *viommu,
-> @@ -451,9 +450,6 @@ int arm_vsmmu_init(struct iommufd_viommu *viommu,
->  		return 0;
->  	}
->  
-> -	/* Unsupported type was rejected in arm_smmu_get_viommu_size() */
-> -	if (WARN_ON(viommu->type != smmu->impl_ops->vsmmu_type))
-> -		return -EOPNOTSUPP;
->  	return smmu->impl_ops->vsmmu_init(vsmmu, user_data);
->  }
->  
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 9f4ad3705801..f56113107c8a 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -4716,8 +4716,8 @@ static struct arm_smmu_device *arm_smmu_impl_probe(struct arm_smmu_device *smmu)
->  
->  	ops = new_smmu->impl_ops;
->  	if (ops) {
-> -		/* vsmmu_size and vsmmu_init ops must be paired */
-> -		if (WARN_ON(!ops->vsmmu_size != !ops->vsmmu_init)) {
-> +		/* get_viommu_size and vsmmu_init ops must be paired */
-> +		if (WARN_ON(!ops->get_viommu_size != !ops->vsmmu_init)) {
->  			ret = -EINVAL;
->  			goto err_remove;
->  		}
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 3fa02c51df9f..e332f5ba2f8a 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -728,8 +728,7 @@ struct arm_smmu_impl_ops {
->  	 */
->  	void *(*hw_info)(struct arm_smmu_device *smmu, u32 *length,
->  			 enum iommu_hw_info_type *type);
-> -	const size_t vsmmu_size;
-> -	const enum iommu_viommu_type vsmmu_type;
-> +	size_t (*get_viommu_size)(enum iommu_viommu_type viommu_type);
->  	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
->  			  const struct iommu_user_data *user_data);
->  };
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> index 4c86eacd36b1..46005ed52bc2 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> @@ -832,6 +832,13 @@ static void *tegra241_cmdqv_hw_info(struct arm_smmu_device *smmu, u32 *length,
->  	return info;
->  }
->  
-> +static size_t tegra241_cmdqv_get_vintf_size(enum iommu_viommu_type viommu_type)
-> +{
-> +	if (viommu_type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV)
-> +		return 0;
-> +	return VIOMMU_STRUCT_SIZE(struct tegra241_vintf, vsmmu.core);
-> +}
-> +
->  static struct arm_smmu_impl_ops tegra241_cmdqv_impl_ops = {
->  	/* For in-kernel use */
->  	.get_secondary_cmdq = tegra241_cmdqv_get_cmdq,
-> @@ -839,8 +846,7 @@ static struct arm_smmu_impl_ops tegra241_cmdqv_impl_ops = {
->  	.device_remove = tegra241_cmdqv_remove,
->  	/* For user-space use */
->  	.hw_info = tegra241_cmdqv_hw_info,
-> -	.vsmmu_size = VIOMMU_STRUCT_SIZE(struct tegra241_vintf, vsmmu.core),
-> -	.vsmmu_type = IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV,
-> +	.get_viommu_size = tegra241_cmdqv_get_vintf_size,
->  	.vsmmu_init = tegra241_cmdqv_init_vintf_user,
->  };
->  
-> @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
->  	phys_addr_t page0_base;
->  	int ret;
->  
-> +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
-> +	if (WARN_ON(vsmmu->core.type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV))
-> +		return -EOPNOTSUPP;
-> +
+For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
+field in zen_patch_rev union on the stack may be garbage.  If so, it will
+prevent correct microcode check when consulting p.ucode_rev, resulting in
+incorrect mitigation selection.
 
-Nit: I don't think we'd expect a call to this if the vintf_size returned
-0? I see that in iommufd_viommu_alloc_ioctl, we already have a check:
+This is a stable-only fix.
 
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Michael Zhivich <mzhivich@akamai.com>
+Fixes: 7a0395f6607a5 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+---
 
-        viommu_size = ops->get_viommu_size(idev->dev, cmd->type);
-	        if (!viommu_size) {
-			rc = -EOPNOTSUPP;
-			goto out_put_idev;
-		}
+Changes in v3:
+- separate "fixes" tag for each stable
 
-And call ops->viommu_init only when the above isn't met. Thus,
-if we still end up calling ops->viommu_init, shouldn't we BUG_ON() it?
-I'd rather have the core code handle such things (since the driver is
-simply implementing the ops) and BUG_ON() something that's terribly
-wrong..
+ arch/x86/kernel/cpu/amd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I can't see any ops->viommu_init being called elsewhere atm, let me
-know if there's a different path that I missed..
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index efd42ee9d1cc..289ff197b1b3 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -378,6 +378,8 @@ static bool amd_check_tsa_microcode(void)
+ 	p.model		= c->x86_model;
+ 	p.ext_model	= c->x86_model >> 4;
+ 	p.stepping	= c->x86_stepping;
++	/* reserved bits are expected to be 0 in test below */
++	p.__reserved	= 0;
+ 
+ 	if (cpu_has(c, X86_FEATURE_ZEN3) ||
+ 	    cpu_has(c, X86_FEATURE_ZEN4)) {
+-- 
+2.34.1
 
-Apart from the above nit,
-
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
-
->  	if (!user_data)
->  		return -EINVAL;
->  
-> -- 
-> 2.43.0
-> 
-> 
 
