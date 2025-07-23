@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-743222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93265B0FC1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:25:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2CBB0FC1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B021C830AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:25:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6ECF7A9523
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E787526CE3A;
-	Wed, 23 Jul 2025 21:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB9026CE36;
+	Wed, 23 Jul 2025 21:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="An42eBv0"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oACApUMN"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE17314A4F9;
-	Wed, 23 Jul 2025 21:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691F814A4F9;
+	Wed, 23 Jul 2025 21:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753305918; cv=none; b=cE1YT5LZCZjZ85bhFHMwlF0B9rbT8Tcs3pbqFxhC2pNsIYi+LsxPXzTLirxRzgcsRIJt7if5NTMdlW+3obbcEb579HeR5t4D4ePy3+WA68pPiYk5SaqBhIl1HMQGutxuSNh+uPxgFH2QZfZBR1Q9VmkaXNN7EHX3Ol48gcKGcEs=
+	t=1753305953; cv=none; b=OsQb3uwtifJ4vx5CB0rwQhQ70GyiADvCP0bEZWoa+EQSrJyCkBlKTTmECVOBsQieA1pNs7xnR9i7TbGeEEpVmJJj98RkH4uz0RUgy08+mIygkTU1Zvv4A6MrLL32ka2W4DS9O0IE3mj0DyBUCgEy3LpVaQ7pu2z8BjzFJDytlM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753305918; c=relaxed/simple;
-	bh=zVctxYoLHPv6JSk7LEg3jS/TARaw/a7N58sj1SnGTeA=;
+	s=arc-20240116; t=1753305953; c=relaxed/simple;
+	bh=LgxYyIGtTyJP9hOOR/qvr8QhOR8HdZhoxjEvUb4YpiU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxTukSqFsDyYTtyc+KqCh64HVCS9DmABrOEDKE4h4DHcYsVJn5qaTbpgQ7zUQTD7LhLv5LIJmha3q4ei+dEvU9I8HKj/WQpqQKcApfLYXM8//W5hkUsnAT4wplLBD7h+Fv+Rdg59rR+h1XrJjPAJrziOpUIkuG0mM5Kj2AZcWos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=An42eBv0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YcKa9zxhHHkTSiqRaxtCtu00HFAere42O4zaabyjgto=; b=An42eBv0WoFbA+MdRU+JZRbvsN
-	fZClMN9xJ/2ODcnXUgTV97uEZSSORlNfFVPnjrrCze3xTtUTf7Q9o5aW8olgaAbceoZCgiGwJQJJp
-	jqHZr94UKf8piBg6s9vaqsXjzFcmqTBukV+tPwx3VCz2D4QVBO4jISAMRvXp/br8M6CsLWRuhAaHV
-	qUclRL93XM/JA4c1fnx8E1jLw7GhNsGgyu/ihfrJqWCEACXhPGvZoDAXBWTFmhAYGNXlEhBMmEIY0
-	ADxjhl1He0FM4Eyyw2UWUjMUUHPAcgx0FJO+Eo4sTLSy9j5etAH+sQAg/wn/VEnVFI5ho2aFkb9ly
-	FmIQmEzQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uegxb-0000000EjGr-1wMy;
-	Wed, 23 Jul 2025 21:25:11 +0000
-Date: Wed, 23 Jul 2025 22:25:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
-Message-ID: <20250723212511.GQ2580412@ZenIV>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
- <20250723023233.GL2580412@ZenIV>
- <cce1a29f2f55baf679c3fe83269d9bceb3c4fd6c.camel@ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UYCt11VZGO76nNjNmNJApDIfM8HgdkRFncgfIJ2KlfFhRyZKIw13v6rUxrZsIB0zAO6vkYvVhJGP0vkNcNpwgKuszFZMQ4CFMEanx8qnf/ZUIaGhvMDEAa9dFUocdqWLzTk7TYYDGDMZRBSook8cJtdDSfWQ9rY515k4KYk+F90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oACApUMN; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5FDDD44381;
+	Wed, 23 Jul 2025 21:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753305943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yE+1V9Bzs7uInAkzQVm3CUqU/Wbcnor70jQ2KiGKqx8=;
+	b=oACApUMNE1abTf1bcxGGtgGDeK6AheNe0cbULcdcdKIWVOaG/gLY0YwrWR2Zsek2q8VdVW
+	my6Q86doOFmj7aeJshOIuBsvFVZCdu35FVto0CJ36ADyBu2+3leJVCOFtjJila23kwW2r3
+	pSsVEUTGYwqQex9Z82No/SXkDsMPDyn1AG5ucF7VuE2L6AMA3RkWozsUxe+BP0L4hnxNkI
+	lQSJPe0I5gKq3TXCi/MdNDi1aP68dGbMoCtHP+TyNWA+z/E6byjvv+hyqONiwdxo5GSNnq
+	IvyK+nVlzIDH1sSoXRYvPBpzceDIEk+82BGJveX+rQ3Ivhm2zBUY86ae+v9/+A==
+Date: Wed, 23 Jul 2025 23:25:43 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Meagan Lloyd <meaganlloyd@linux.microsoft.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	code@tyhicks.com
+Subject: Re: [PATCH 0/2] Expand oscillator stop flag (OSF) validity check to
+ ds1341
+Message-ID: <175330593311.840154.1335180460711019905.b4-ty@bootlin.com>
+References: <1749665656-30108-1-git-send-email-meaganlloyd@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,25 +60,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cce1a29f2f55baf679c3fe83269d9bceb3c4fd6c.camel@ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <1749665656-30108-1-git-send-email-meaganlloyd@linux.microsoft.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejkeekhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopehmvggrghgrnhhllhhohigusehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrr
+ dhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohguvgesthihhhhitghkshdrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Jul 23, 2025 at 05:58:01PM +0000, Viacheslav Dubeyko wrote:
+On Wed, 11 Jun 2025 11:14:14 -0700, Meagan Lloyd wrote:
+> We would like to use CONFIG_RTC_HCTOSYS to sync a supercapacitor-backed
+> DS1342 RTC to the kernel time early in boot. An obstacle is that the
+> sync in rtc_hctosys() is unconditional as long as rtc_read_time()
+> succeeds and in some power loss situations, our RTC comes up with either
+> an unpredictable future time or the default 01/01/00 from the datasheet.
+> Syncing a future time, followed by an NTP sync would not be desired as
+> it would result in a backwards time jump. The sync feature is useful in
+> boot scenarios where power is maintained so syncing only when the RTC
+> data is valid would allow us to make use of the feature.
+> 
+> [...]
 
-> So, this line simply copies CNID from old_dentry->d_fsdata to
-> new_dentry->d_fsdata during the rename operation. I assume that
-> ->fs_data should be untouched by generic logic of dentries processing.
+Applied, thanks!
 
-Yes, I understand that; what I do not understand is why.  Why would
-the CNID of renamed object be slapped on dentry of removed target?
-I'm trying to understand the logics with link(2) and unlink-of-opened
-in that code...
+[1/2] rtc: ds1307: remove clear of oscillator stop flag (OSF) in probe
+      https://git.kernel.org/abelloni/c/48458654659c
+[2/2] rtc: ds1307: handle oscillator stop flag (OSF) for ds1341
+      https://git.kernel.org/abelloni/c/523923cfd5d6
 
-Incidentally, what happens if you
-	fd = creat("foo", 0666);
-	write(fd, "foo", 3);
-	link("foo", "bar");
-	unlink("bar");
-	close(fd);
-The games with S_DEAD in there look odd...
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
