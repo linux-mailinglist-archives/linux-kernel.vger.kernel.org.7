@@ -1,217 +1,204 @@
-Return-Path: <linux-kernel+bounces-742823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E1FB0F719
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:33:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6BEB0F71B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41264581280
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E551C8125F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF6A1FDA82;
-	Wed, 23 Jul 2025 15:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7446A1F91C5;
+	Wed, 23 Jul 2025 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XcPewZ0x"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mJXcMAvC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8dbAjp8S";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bTZryZDH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GKLkOVTu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4211DED4C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A381DED4C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753284770; cv=none; b=q7pNp/LUj4MJvizeY81QbmsfsYcttDUNxkRLl4MLQi/plzGqbkvyPJOZiGY+N7AIcR64RNHkFHFDuzk5o/JrJfeallwpalIYRsIdbRleYRrKTTgEKYIwGTs8ZFewhRKHQirw4+qWlGdUlVZmSvM9YnwxlusoiQ+60tCFo29On0k=
+	t=1753284782; cv=none; b=LGf8tEr202R4IHlEiPG86vp8AT8kWSMfSrLkZ34/zPwpG1Ivn9R4RgMBep6VxVpKK3sLwYYu9D16CI1CcUSwbn+U7q7TdUzZOq77Abx1vsfK4s8zgApIOMKKSEs3WZrBbxWg0JZGT55ZjQYj2fc+AxOaZJ1jS0rhmTA20i9Rc3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753284770; c=relaxed/simple;
-	bh=nr7TULJUkQGJrOuVQsjl/I5u3f9/RpcP/64xpbsoWgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Y0KZIu+xsGaYa2b0fUoOaIeDdBbr72gr5LOnwpdNDwK17mC1sjjRd9UP0UAMlHHxCu53N+cAoHBKQn49xehgbMcR028D9cyuRgLa2lMoqPzPBzsF+zMaIOkeTJ98bX2SvKA1iBUJrXL9MnLe0deRNMPs8j9MssHeeLNmxR1PY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XcPewZ0x; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so243505ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753284766; x=1753889566; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CaAqCEsAjkmQzr7VENxBG51Twgph3dMOYa2qTVa6CyY=;
-        b=XcPewZ0x1FlP5xy2rLV4CngkbMBhNZDiyQ8CezQ3Vcy+evRF5GrFn6BtB/BFxAwcyE
-         sWPvBq3yCITfQqY7ummPXKuRmhY2Ul1XMDQ5C98cOwXQvAZdyRDbBSIoAFqS9enpXDQO
-         x5yUdSdMRYruTODafJJz7s+YoOmL+XG54dSEGYwJm/NZOypVJWBpEte3lJ1FrA8ffu2Z
-         NZk42CTYirxhswyprkLUefE0n3xa3ZrSLFwUYQZ45gFV+S4plwbNvhsjj6I9ZMtL1x5W
-         GxYbqeWk6Gz72kGMhTIaBSJYoA9JFKfnnJP7BaMOuVB0/ZVbtgbxzLfF47pyeb7kkeNQ
-         T8+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753284766; x=1753889566;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CaAqCEsAjkmQzr7VENxBG51Twgph3dMOYa2qTVa6CyY=;
-        b=fqO6up0xj6Qvp4i57NNJewlY7LcXFl1Lh84z6LlFBD8gjx3BpY2gMKsGe7dHMC4kTl
-         GcqBfjlyqiQvkE4+CGiDcub16XUO+2aTgH6cLGM83jMqTu05v0rHh3Ogs3m4ghxcKGaR
-         GTR2SMksOjkrHTQ768TVJzwkalntXrLWhBCEO9Ager13mK4xIsfuF7HoiksEkmQZCWmO
-         bCnMSy1xfdlLSMsjG127MxfWrqCmG9m0aV+RF9WsHqgNlzpBcOR03VsAFh9hXj0g9Yt2
-         N0TA4BcmuDJs0TCMFDVpFFXj7plkTYdj85lCyikcM2s6Gu02FMv8oMim6Dy59btxSo4k
-         yxWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWg+MN1yOXBJJzqhJNXRBqH+eKOVSfO3qvsfUzXdALVRfKT2QseAOjkkivsWy1qcM5MUTRekKIiLTyE9MU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz86WwQVmU4gI0ykgMcQp94GuSUf6+TALLZA8yK0jAjcO1lVQc
-	5MP5CaD90a8IICFE9hX1haoCfFU9BaMe5tGgg5baLhicc5KXm7/ibbgsZPcRxu7UyaFF1Pdf3ub
-	nXTzkYkJCUabDRhbo2buGmdywihMd0S0i8uaL8w1B
-X-Gm-Gg: ASbGnctbDyoJxn6keH1y05WK4JlURimeds+/0XbkAeS/yPVfJsJlmdBuRSRdeoviWRJ
-	ICiO8V4NODiJoxTLfsTUuef5E1KoCbG3RJXD1mlUBqYqAdEE9wpFmuFb8u409fcA3dTUu0qd2VZ
-	g7G0l2vrNh0d3eQRdd4S06KjxOZGtG309oA3fHRZw+BRo9a6P0aNhWjdVmucsZJp1MsRa5EF1fE
-	CrTOLLMIuAATWr2gPBWZ68UhEBFdvT84yjL
-X-Google-Smtp-Source: AGHT+IF5QKhsrn3+8oYvsbqw6dZwTwQRa+IA5NCzjoUghqtvYBDSJBFXjMOGu7kyKyj0/NIRuK6nQ4JeIMGT6I1Ua38=
-X-Received: by 2002:a92:cd8c:0:b0:3e2:f7ef:ad1d with SMTP id
- e9e14a558f8ab-3e32991132bmr5423835ab.18.1753284765898; Wed, 23 Jul 2025
- 08:32:45 -0700 (PDT)
+	s=arc-20240116; t=1753284782; c=relaxed/simple;
+	bh=ppHjZTzpAIHsQQScYHUpXkmr7YEAt1LKQrwtH6ui1wc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HSt9fB8FQAkD0wkQXiYptYmoiQCUm9veXzLOnFlp7HbScN/JK+hMW5IpIbqOiqsGsj+97X0/50I5NFo1OFExnWS5DZYBUIMcVXORfCIzIJPQJSw68JZger2lP9i0sCENShStPqts7A/OqTsjRwRKHuWQ+CIdHDaEbj75xY4yR0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mJXcMAvC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8dbAjp8S; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bTZryZDH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GKLkOVTu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 203B321843;
+	Wed, 23 Jul 2025 15:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753284779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5pU+3sJNbYBelT2fQpiIx0haZ7OiDqvI5XNfu681tSA=;
+	b=mJXcMAvCu4pXu1tD8Fjrj9bz2ycM+cSnUsjUcd0O0bJQNCl4p5IhQjHChgQQuHplvuEMvU
+	jMg+VrC1YiJYtrBoVIacSsUVyEaWnig1GTgi+jBR/ukcUTT8qXzBUNviXsilWWFM0xSHSb
+	caNtBWhbIOpwMZsZeRImupMveOf+a4I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753284779;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5pU+3sJNbYBelT2fQpiIx0haZ7OiDqvI5XNfu681tSA=;
+	b=8dbAjp8Sn/DHPpAeVB8khtYLy3g6bq5zfhMcQygia4sHlQKZGgHJD/D/raasY8cNwf1y8g
+	j8AXOK6+t6F4o5CQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bTZryZDH;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=GKLkOVTu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753284778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5pU+3sJNbYBelT2fQpiIx0haZ7OiDqvI5XNfu681tSA=;
+	b=bTZryZDH15sOP7xNn+GQuGTjwFkOZe/X4I2nQeS8O36uTbCm/UN8tyBpYZgfbu0/cDV/zd
+	xNVl2sunTnZUrR2a2BNcjJXboqleHE+3Ak34s8YhH4OVnZrav/QyZHXl1ofTb0W/zBc7mV
+	9wCa5HvlWKB88Spu7pnuNWd42hsVsCs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753284778;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5pU+3sJNbYBelT2fQpiIx0haZ7OiDqvI5XNfu681tSA=;
+	b=GKLkOVTuQQfRF48P8ffgXMzJkoCClBU7NGb7IX7XTtt/L2BQBi26Fl0yhE0hIHZj9Cgn5n
+	VD3J9ZVLRAeWcVCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CF1713302;
+	Wed, 23 Jul 2025 15:32:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BSLIAqoAgWgQRwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 15:32:58 +0000
+Message-ID: <7b8ec9ae-3eaf-4e66-b903-ba3c7f9a20be@suse.cz>
+Date: Wed, 23 Jul 2025 17:32:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714164405.111477-1-irogers@google.com>
-In-Reply-To: <20250714164405.111477-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 23 Jul 2025 08:32:33 -0700
-X-Gm-Features: Ac12FXxkYblDM8jJvwPf1tvNA6UrYooACCiYgA3NMcwyVVRRGWUTq1zPtYJdnuM
-Message-ID: <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
-Subject: Re: [PATCH v7 00/16] New perf ilist app
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] MAINTAINERS: add MM MISC section, add missing files to
+ MISC and CORE
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>
+References: <20250723095823.21940-1-lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250723095823.21940-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email];
+	URIBL_BLOCKED(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 203B321843
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On Mon, Jul 14, 2025 at 9:44=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> This patch series builds up to the addition of a new ilist app written
-> in python using textual [1] for the UI. The app presents perf PMUs and
-> events, displays the event information as in `perf list` while at the
-> bottom of the console showing recent activity of the event in total
-> and across all CPUs. It also displays metrics, placed in a tree
-> through their metric group, again with counts being displayed in the
-> bottom panel.
->
-> The first ground work patches of fixes, cleanup and refactoring were
-> separated into their own series here:
-> https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
->
-> The second part of the patches adds event json for the software PMU
-> and makes the tracepoint PMU support iteration of events and the
-> like. Without these improvements the tracepoint and software PMUs will
-> appear to have no events in the ilist app. As the software PMU moves
-> parsing to json, the legacy hard coded parsing is removed. This has
-> proven controversial for hardware events and so that cleanup isn't
-> done here.
->
-> The final patches expand the perf python APIs and add the ilist
-> command. To run it you need the updated perf.cpython.so in your
-> PYTHONPATH and then execute the script. Expanding PMUs and then
-> selecting events will cause event informatin to be displayed in the
-> top-right and the counters values to be displayed as sparklines and
-> counts in the bottom half of the screen.
->
-> [1] https://textual.textualize.io/
->
-> v7: Better handle errors in the python code and ignore errors when
->     scanning PMU/events in ilist.py, improving the behavior when not
->     root. Add a tp_pmu/python clean up. Minor kernel coding style
->     clean up. Fix behavior of ilist if a search result isn't found but
->     then next is chosen.
->
-> v6: For metrics on hybrid systems don't purely match by name, also
->     match the CPU and thread so that if the same metric exists for
->     different PMUs the appropriate one is selected and counters may be
->     read. Likewise use evsel maps and not the evlists.
->
-> v5: Split the series in two. Add metric support. Various clean ups and
->     tweaks to the app in particular around the handling of searches.
->
-> v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
->     displays as expected.
->
-> v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
->     keys. No changes in the ground work first 14 patches.
->
-> v2: In the jevents event description duplication, some minor changes
->     accidentally missed from v1 meaning that in v1 the descriptions
->     were still duplicated. Expand the cover letter with some thoughts
->     on the series.
->
-> Ian Rogers (16):
->   perf python: Add more exceptions on error paths
->   perf jevents: Add common software event json
->   perf parse-events: Remove non-json software events
->   perf tp_pmu: Factor existing tracepoint logic to new file
->   perf tp_pmu: Add event APIs
->   perf list: Remove tracepoint printing code
->   perf list: Skip ABI PMUs when printing pmu values
->   perf python: Improve the tracepoint function if no libtraceevent
->   perf python: Add basic PMU abstraction and pmus sequence
->   perf python: Add function returning dictionary of all events on a PMU
->   perf ilist: Add new python ilist command
->   perf python: Add parse_metrics function
->   perf python: Add evlist metrics function
->   perf python: Add evlist compute_metric
->   perf python: Add metrics function
->   perf ilist: Add support for metrics
+On 7/23/25 11:58, Lorenzo Stoakes wrote:
+> Add a MEMORY MANAGEMENT - MISC section to contain files that are not described
+> by other sections, moving all but the catch-all mm/ and tools/mm/ from MEMORY
+> MANAGEMENT to MEMORY MANAGEMENT - CORE and MEMORY MANAGEMENT - MISC as
+> appropriate.
+> 
+> In both sections add remaining missing files. At this point, with the other
+> recent MAINTAINERS changes, this should now mean that every memory
+> management-related file has a section and assigned maintainers/reviewers.
+> 
+> Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
+> CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
+> related for this to be sensible.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Hi,
+Acked-by: Vlastimil Babka <vbabka@suse.cZ>
 
-Is there any more I can do to get this series landed? I appreciate having:
-
-Tested-by: Gautam Menghani <gautam@linux.ibm.com>
-
-I think there is some follow up for "make install" for scripts like
-these, but I'm keen for the python API to move forward.
-
-Thanks,
-Ian
-
->
->  tools/perf/builtin-list.c                     |  65 ++-
->  .../arch/common/common/software.json          |  92 ++++
->  tools/perf/pmu-events/empty-pmu-events.c      | 266 +++++----
->  tools/perf/pmu-events/jevents.py              |  15 +-
->  tools/perf/python/ilist.py                    | 491 +++++++++++++++++
->  tools/perf/util/Build                         |   1 +
->  tools/perf/util/evsel.c                       |  21 +-
->  tools/perf/util/parse-events.c                | 198 ++-----
->  tools/perf/util/parse-events.h                |   1 -
->  tools/perf/util/parse-events.l                |  38 +-
->  tools/perf/util/parse-events.y                |  29 +-
->  tools/perf/util/pfm.c                         |   2 +
->  tools/perf/util/pmu.c                         |   7 +
->  tools/perf/util/pmus.c                        |   2 +
->  tools/perf/util/print-events.c                | 100 +---
->  tools/perf/util/print-events.h                |   4 +-
->  tools/perf/util/python.c                      | 519 +++++++++++++++++-
->  tools/perf/util/tp_pmu.c                      | 209 +++++++
->  tools/perf/util/tp_pmu.h                      |  19 +
->  19 files changed, 1638 insertions(+), 441 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/software.jso=
-n
->  create mode 100755 tools/perf/python/ilist.py
->  create mode 100644 tools/perf/util/tp_pmu.c
->  create mode 100644 tools/perf/util/tp_pmu.h
->
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
 
