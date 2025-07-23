@@ -1,192 +1,93 @@
-Return-Path: <linux-kernel+bounces-741865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237CEB0E9F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:12:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0F3B0EA02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DF21C87855
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2811C87CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAEB242D66;
-	Wed, 23 Jul 2025 05:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8721D5B3;
+	Wed, 23 Jul 2025 05:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YzpXVGae"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHux7sbx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AF513A265
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85FF2F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753247543; cv=none; b=Y+JvtYks3C4QvgXnZjSpvIEuGhRdNx8sZhXuRTDjQ6Gf2wXXuo3inQOQ7ZoW6nJP8Zy0Tn6H1zdSdo55I+o2VtHjrbdugjdf5sqe0FIHoQ7gXeXPgbTp8i/4DcTTvAK/R+Vy/+8gs/SlvpXjMldWinBQyoTZ/9KBTd8TaUAdT9I=
+	t=1753247921; cv=none; b=Ofrvnp39Wk1pOCxn0ktn0iePEGP/XYlDE7PWekvSnMxoQgEVXVCvu9VTvpoITts9+ARt5DLZ7uxiraJsrrl5py2FvMh6x0FjRiiwIjPAWMl2eyVEL75d+9xbHLmYrZksu3TwX/uhiOeG9FVmtzOz3mbstE/kCuwv0WkQ8ZPqrJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753247543; c=relaxed/simple;
-	bh=qDeUmMD82P8ZgrNOK+/tNlnWhFbGWqwTS61keOxqtUA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=aIsPtpsaLmoVQVbV4ZUm5AvGFZVT7d10TE7kkPrJJrVe7oTqVjBYdz4EQA3E+E3uULOyqa+MaCHQS20K5SaPtzavHjCqw/cYycqLzlVpANQQ4EoGi/sSgUfJS11OTd/WWzPCybvSvWy5RSTpvX3OAgvL7wQJKlW/0UYHuKGv64U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YzpXVGae; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250723051215epoutp043fe671ed77100f5774d2554d856b2e15~UyVhHysxo0931209312epoutp04w
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:12:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250723051215epoutp043fe671ed77100f5774d2554d856b2e15~UyVhHysxo0931209312epoutp04w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753247535;
-	bh=IoOtrbeFHn5e1/Xtu2aEuqosP9/5TZJzgfaIJ8FAwVw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=YzpXVGaeKBdahD4O1K7MxAae0WhiCSSMJ/4EqEiCWru/oOvUNtko+rgHcnJNA03hr
-	 94UXec9t3f7jWjVE0bpi72c6E5bY6BEY8VYztjvTqTpZcCapc4O83DDy5T6wWkvpdf
-	 tgcTdTJpoSP4byk6Y9GIFVEj0AvOSnPbA40pBn3k=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250723051215epcas5p212e2b5380f798498c5c80f442874a239~UyVgY52qc2028920289epcas5p2l;
-	Wed, 23 Jul 2025 05:12:15 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bn2Lj5rTmz6B9m4; Wed, 23 Jul
-	2025 05:12:13 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250723051134epcas5p13eb4eedb2beb180423c5237f4a272f06~UyU66C8CP1233212332epcas5p1N;
-	Wed, 23 Jul 2025 05:11:34 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250723051131epsmtip2df639fe0e527bf88b1c968e311ad775e~UyU3yq7j60675706757epsmtip2K;
-	Wed, 23 Jul 2025 05:11:31 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzysztof.kozlowski@linaro.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
-Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Wed, 23 Jul 2025 10:41:30 +0530
-Message-ID: <000901dbfb90$42873060$c7959120$@samsung.com>
+	s=arc-20240116; t=1753247921; c=relaxed/simple;
+	bh=kF4IPwhM4HYaC5OYAGkDsFkIDR4awcOTgIWQid4x2yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sF3tRuY3/Mx7mjOhpOzligqe8ymcsP1a/Cyn3yXU4oEGEcRR3HN+1faVWsDOPXzEbsE0dgjreDLXiN/l8SmX2i6hYJ9j0vrF41J/tq+HCBO2Wa5pMrG61L1XC9D70/Q+tO/hldeARjp/xg0mGNmMxD70lG8eZhGoaycrapE7h+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHux7sbx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 236D7C4CEE7;
+	Wed, 23 Jul 2025 05:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753247921;
+	bh=kF4IPwhM4HYaC5OYAGkDsFkIDR4awcOTgIWQid4x2yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aHux7sbx11I7KG2xIMA7yFSf3JCpZ2HV6BNUYZXPxObtWAS2elBxr8Bg5BICdgMSr
+	 ILbzPBLstH4OI/luBuwso9nu26oL8SmVUKOG7trO+/MhrP6TaEnl4MOa5X4RGpIP0t
+	 zM82H15ER3b/5eNiWPfxN46UGqLV7RVXfKjgaExQ1vXTvyn7TY2cIRSfZjOE3r45wF
+	 w3FuXqVMuDxHc4Ph/Phvpo4XgROKtRwbGTgjh9N3iBI837GC1EfpUHxNv7ZxbDo2bp
+	 n7vMMJHon9yrSvCbrmjIlJSpofKaOw0w6ZXO+1aXAIWqd3QlYkCaU8xlHLMuPsWuf/
+	 jgP4uQ8H/kfkg==
+Date: Wed, 23 Jul 2025 08:18:34 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] MAINTAINERS: rename MM to MM MISC, add missing files
+Message-ID: <aIBwqmITl1VyZp7S@kernel.org>
+References: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+7Lxui8Q
-Content-Language: en-in
-X-CMS-MailID: 20250723051134epcas5p13eb4eedb2beb180423c5237f4a272f06
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
-	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
-	<20250701120706.2219355-2-pritam.sutar@samsung.com>
-	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
-	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
-	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
-	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
-	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
-	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
 
-Hi Krzysztof,
+On Tue, Jul 22, 2025 at 08:27:04PM +0100, Lorenzo Stoakes wrote:
+> To fit in with other sections within MAINTAINERS for memory management
+> files, rename the MEMORY MANAGEMENT section to MEMORY MANAGEMENT - MISC to
+> contain files that are not described by other sections.
+> 
+> We also add missing files to MEMORY MANAGEMENT - MISC and MEMORY MANAGEMENT
+> - CORE sections.
+> 
+> Move over appropriate files to the core section, and in both sections add
+> remaining missing files. At this point, with the other recent MAINTAINERS
+> changes, this should now mean that every memory management-related file has
+> a section and assigned maintainers/reviewers.
+> 
+> For the time being, we maintain catch-all mm/ and tools/mm/ entries for MM
+> - MISC, though in future we may wish to remove these to make it obvious
+> when files don't have assigned entries.
+> 
+> Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
+> CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
+> related for this to be sensible.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 22 July 2025 11:37 AM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof Kozlows=
-ki'
-> <krzysztof.kozlowski=40linaro.org>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> andre.draszik=40linaro.org; peter.griffin=40linaro.org; neil.armstrong=40=
-linaro.org;
-> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: Re: =5BPATCH v4 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
-> On 22/07/2025 06:34, Pritam Manohar Sutar wrote:
-> >>>> Nothing is explained in changelog/cover letter. You claim you only
-> >>>> added Rb
-> >> tag.
-> >>>> This is an entirely silent change while keeping the review.
-> >>>
-> >>> Will add more explanations in cover letter/changelog why this block i=
-s
-> added.
-> >>>
-> >>>> Combined with not even following DTS style=21
-> >>>
-> >>> Ok got it. Will change supplies name as below avdd075_usb =3D>
-> >>> avdd075-usb
-> >>> avdd18_usb20 =3D> avdd18-usb20
-> >>> avdd33_usb20 =3D> avdd33-usb20
-> >>>
-> >>> Confirm the above change that is meant in terms of DTS style.
-> >> Yes. I have doubts that actual supplies have suffix usb20. Are there
-> >> more than one avdd18 for this block?
-> >>
-> >
-> > Yes, there are more than one vdd18 supplies for this block.
->=20
-> And their names are?
->=20
-> >
-> > Re-analysed your comment on adding new supplies.
-> > Going to re-use existing supplies as mentioned below, rather than
-> > introducing new supplies
-> >
-> >   dvdd-usb20-supply   =3D> for 0.75v
-> >   vddh-usb20-supply   =3D> for 1.8v
-> >   vdd33-usb20-supply =3D> for 3.3v
->=20
->=20
-> You just expect us to guess whether this is correct...
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Sorry about not being clear so far.=20
-
-V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY
-The naming convention used in the schematic are
-avdd075-usb,=20
-avdd18_usb20,=20
-avdd33_usb20.
-
-However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
-Since GS101 binding already using supply names similar to what is mentioned=
- in the PHY user manual.
-I thought of using the same instead of earlier naming conventions (which wa=
-s as per v920 schematic).
-
-Let me know if this make sense or we should be just using as per schematic?
-
->=20
-> Best regards,
-> Krzysztof
-
-Regards,
-Pritam
-
-
+-- 
+Sincerely yours,
+Mike.
 
