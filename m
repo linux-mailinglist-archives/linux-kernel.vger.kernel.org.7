@@ -1,240 +1,163 @@
-Return-Path: <linux-kernel+bounces-743054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF77B0F9FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:06:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A26AB0FA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8DC165BDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F9E17FCB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1350C223702;
-	Wed, 23 Jul 2025 18:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B7F2264B5;
+	Wed, 23 Jul 2025 18:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pvYP9RtP"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O7SH2ghI"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8361F12F8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8134D2E36F0;
+	Wed, 23 Jul 2025 18:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753294001; cv=none; b=IfqAoWPzAdePLnYyvePQwwyvmAYjbUauBKGKdxx9AEnmEuSohcM/cI5ieId74YpS4DoNBRzzGJQTymMgD/0p9YwLlEYmRtZnUYWcXwEyYu1HoZN9eG/cC5WFgY3cUWDrHvuJhLO/5pQCk6Q8F3HFVdMd+1ITRd3KOqKabiZICSE=
+	t=1753294251; cv=none; b=V+l7k9nj+zF5iNZXe405hrO4HeRdzrAJSGeV3l08fW5I8hfYKDc36xBHuBzLTyAlCFP5TCj9aj+RjHzTM2G1RCGknHSOlgmG6JLW7ss3rmOpwP41lwWBXV0Pie5VxF980LIWE5iXfd/c6xPxDl/ntf/Uy2yZFcwQ+1DuSj1vo00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753294001; c=relaxed/simple;
-	bh=eWymMRmLfscJuffkwMDNgqpA4cVY4kBbJFGJ+bFrOmc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ClZ0N2v1b0XrqegTSoyU62arrzjqNJvI6KOWzW6PUv6vIeG8tJUwfrFFhbBVCbiRcPs96bKZUFaHuGte+W5DmnTuGXAkU68fM77cdj4mRGjX2JZP96H+OeY7h2WdoVfQvbZjn4xwtPGYUkFhC42mRRRb7yg6FuEMUsVmWU03Pho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pvYP9RtP; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311e7337f26so96951a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753293999; x=1753898799; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZfDzw+qVz0o/w7Bp6MxT59VuQisbldYUAGH/6NuUrY=;
-        b=pvYP9RtPXYNw6SMtX4kszuUXq5gsYKT6m11XjsnNaTLntlrLmZzADOQESG48RP2CKf
-         D6l46EsgXwu71UenSFrRkQiEYqOF2DMEjAbOIOsREiyurHS9dIKvfyDYKPLwU7muW+VF
-         PaILNSdC7Xta/X/83gI6pdxqxFWXlTcaeddBeSm4rWUOB77c0vQZyPKG9pdereqLTII4
-         kMcyKygx3MMLltzU313BgKUVFjGRn3MME8e4qdroVJnAdbCnZBQHLNdayigHjjUzJqhe
-         Glzo7Z/5JmEryiys3S0ifhQkxAZeAx3evtCMIppNksGKnhy4/dkSc5DoKgGhI2Crw3r8
-         T/3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753293999; x=1753898799;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZfDzw+qVz0o/w7Bp6MxT59VuQisbldYUAGH/6NuUrY=;
-        b=fzMmndD1LgeEZjHBFZfNAXnRWMnFeQTcesBWK7k055I0UECFJvaitRzZn23fBCskpA
-         0n/EsvBzNDk63DGypiU+66sBrxicCYrzhVaX8EPQ0LL5FKFPMmrpJHWyYoMlMenFjXpu
-         8642DiUCdgvKvFMSSW5470hug9DoRE2eIzHsPhG6Wlkers566ODW4nHfHROSkTY2zk9N
-         ZDdvVT+XChnBZ880A9dAAjK1PqPI1d3uCCnZxxNPoRxR2WVHk/LLKDN6L3drqkJ9Or3r
-         mIi6PR7PCVZJwcHqo4MD2ZZCe+lcIhkFYnPDp8F5KR2QhJcw/vJYRqD+T+Wld4mXkLOl
-         2ujg==
-X-Gm-Message-State: AOJu0YyRkonCV7J8ZfjZVXlaE+9zNPSUHkWJpR4pth8CL7F7Jui0oOqL
-	ss8RYmwJxU4mOiQwnXGKRKgaM9YY6qOzKkU6ioC4qDgzPhnizLO+v1dAGShopEuYnn1cEqDQP60
-	FkcYl6A==
-X-Google-Smtp-Source: AGHT+IF3hX1FXykh7Df5O4ildAUw6dsX0iRQymh7GSo9oxT9J1zy8hJ9dw+7n83OiW1YjgBQlL2K8mHkgqw=
-X-Received: from pjm4.prod.google.com ([2002:a17:90b:2fc4:b0:2fa:1803:2f9f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:530f:b0:311:ffe8:20ee
- with SMTP id 98e67ed59e1d1-31e5071ccdfmr6877046a91.11.1753293999283; Wed, 23
- Jul 2025 11:06:39 -0700 (PDT)
-Date: Wed, 23 Jul 2025 11:06:37 -0700
-In-Reply-To: <20250422161304.579394-3-zack.rusin@broadcom.com>
+	s=arc-20240116; t=1753294251; c=relaxed/simple;
+	bh=tKNJjaAqhMlo0SUQGs+ceDgPqde7WpwhfupbI7Mb4wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WjA8RJXrUS2rBffobb/scxBI2BWfl3QcfxYFHuuxamif/W011tWLHNJKhXzlMFO/rr5RYQkgby13YztErvuUsk+vgA8cp1Qnjyxb7oIFnfm195yUy1Ab+JA7pDFiMVY/7RVMbiSG6HYP1Soclx+S9//1D0GphJ4qjf0rGQfa42o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O7SH2ghI; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=e7yAQVKufsGUq0RlWkmXXT76VJ5Jz8/4Modn4AF3l8Y=; b=O7SH2ghIeyJ4J07Wq82Am6kIXg
+	mCZtwEIIPos7eogVB5F4K5ZUsUNFNft08J0nNKY92wMJ5T8msMb5f+Fxyb2zR9WiWXNg93VFKhzF1
+	U1F3SUG0OSdJ5eVblMhR6L910dsJzBHA4SPi3xnoWQDBSzG6FhFKHkB8nLZ3AUtAYtmBD5cyGnZ/T
+	Lhl3eBBKAym8Hd1B+gO7bH9EZwbxDPR0zp0Bhv/NNjlmVRNqdA973OVYO2o9x4vor9H+2JPKuq8Ap
+	l7D+ZM1w9f4ehGy7/X/qD/bzfmN5YUZ3nirX5+kIm25iSEDX9Q0DcYTwrjXi92na9Jm1d8l/0Rrbt
+	PGOtSY3g==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uedvQ-00000005ifW-2wT6;
+	Wed, 23 Jul 2025 18:10:44 +0000
+Message-ID: <62345993-46bb-48d9-853b-09a82b03edaf@infradead.org>
+Date: Wed, 23 Jul 2025 11:10:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250422161304.579394-1-zack.rusin@broadcom.com> <20250422161304.579394-3-zack.rusin@broadcom.com>
-Message-ID: <aIEkrc7Mdf2ia1Mm@google.com>
-Subject: Re: [PATCH v2 2/5] KVM: x86: Allow enabling of the vmware backdoor
- via a cap
-From: Sean Christopherson <seanjc@google.com>
-To: Zack Rusin <zack.rusin@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, Doug Covelli <doug.covelli@broadcom.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 14/14] RDMA/ionic: Add Makefile/Kconfig to kernel build
+ environment
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>, shannon.nelson@amd.com,
+ brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net, jgg@ziepe.ca,
+ leon@kernel.org, andrew+netdev@lunn.ch
+Cc: allen.hubbe@amd.com, nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
+ <20250723173149.2568776-15-abhijit.gangurde@amd.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250723173149.2568776-15-abhijit.gangurde@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 22, 2025, Zack Rusin wrote:
-> @@ -6735,6 +6734,19 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->  		mutex_unlock(&kvm->lock);
->  		break;
->  	}
-> +#ifdef CONFIG_KVM_VMWARE
-> +	case KVM_CAP_X86_VMWARE_BACKDOOR:
 
-I much perfer using a single KVM_CAP_X86_VMWARE capability.  More below.
 
-> +		r = -EINVAL;
-> +		if (cap->args[0] & ~1)
+On 7/23/25 10:31 AM, Abhijit Gangurde wrote:
+> Add ionic to the kernel build environment.
+> 
+> Co-developed-by: Allen Hubbe <allen.hubbe@amd.com>
+> Signed-off-by: Allen Hubbe <allen.hubbe@amd.com>
+> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
+> ---
+> v2->v3
+>   - Removed select of ethernet driver
+>   - Fixed make htmldocs error
+> 
+>  .../device_drivers/ethernet/index.rst         |  1 +
+>  .../ethernet/pensando/ionic_rdma.rst          | 43 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 ++++
+>  drivers/infiniband/Kconfig                    |  1 +
+>  drivers/infiniband/hw/Makefile                |  1 +
+>  drivers/infiniband/hw/ionic/Kconfig           | 15 +++++++
+>  drivers/infiniband/hw/ionic/Makefile          |  9 ++++
+>  7 files changed, 79 insertions(+)
+>  create mode 100644 Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
+>  create mode 100644 drivers/infiniband/hw/ionic/Kconfig
+>  create mode 100644 drivers/infiniband/hw/ionic/Makefile
+> 
 
-Using bit 0 for "enable" needs to be #defined arch/x86/include/uapi/asm/kvm.h.
+> diff --git a/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
+> new file mode 100644
+> index 000000000000..80c4d9876d3e
+> --- /dev/null
+> +++ b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
+> @@ -0,0 +1,43 @@
+> +.. SPDX-License-Identifier: GPL-2.0+
+> +
+> +============================================================
+> +Linux Driver for the AMD Pensando(R) Ethernet adapter family
+> +============================================================
 
-At that point, adding more capabilities for the other VMware functionality doesn't
-make much sense, especially since the capabilities that are added in later patches
-don't have the kvm->created_vcpus protection, i.e. are likely buggy.
+Please try to differentiate the title of this driver from that of
+the Pensando ethernet driver:
 
-E.g. with the below diff (completely untested, probably won't apply cleanly?)
-spread across three-ish patches, the accessors can be:
+========================================================
+Linux Driver for the Pensando(R) Ethernet adapter family
+========================================================
 
-static inline bool kvm_is_vmware_cap_enabled(struct kvm *kvm, u64 cap)
-{
-	return kvm->arch.vmware.caps & cap;
-}
+Thanks.
 
-static inline bool kvm_is_vmware_backdoor_enabled(struct kvm_vcpu *vcpu)
-{
-	return kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_BACKDOOR);
-}
+> +
+> +AMD Pensando RDMA driver.
+> +Copyright (C) 2018-2025, Advanced Micro Devices, Inc.
+> +
+> +Contents
+> +========
+> +
+> +- Identifying the Adapter
+> +- Enabling the driver
+> +- Support
+> +
+> +Identifying the Adapter
+> +=======================
+> +
+> +See Documentation/networking/device_drivers/ethernet/pensando/ionic.rst
+> +for more information on identifying the adapter.
+> +
+> +Enabling the driver
+> +===================
+> +
+> +The driver is enabled via the standard kernel configuration system,
+> +using the make command::
+> +
+> +  make oldconfig/menuconfig/etc.
+> +
+> +The driver is located in the menu structure at:
+> +
+> +  -> Device Drivers
+> +    -> InfiniBand support
+> +      -> AMD Pensando DSC RDMA/RoCE Support
+> +
+> +Support
+> +=======
+> +
+> +For general Linux rdma support, please use the rdma mailing
+> +list, which is monitored by AMD Pensando personnel::
+> +
+> +  linux-rdma@vger.kernel.org
 
-static inline bool kvm_is_vmware_hypercall_enabled(struct kvm *kvm)
-{
-	return kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_HYPERCALL);
-}
 
-static inline bool kvm_vmware_nested_backdoor_l0_enabled(struct kvm *kvm)
-{
-	return kvm_is_vmware_backdoor_enabled(kvm) &&
-	       kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_NESTED_BACKDOOR);
-}
+-- 
+~Randy
 
----
- arch/x86/include/asm/kvm_host.h |  4 +---
- arch/x86/include/uapi/asm/kvm.h |  4 ++++
- arch/x86/kvm/x86.c              | 34 ++++++++++++---------------------
- 3 files changed, 17 insertions(+), 25 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 639c49db0106..1433cdd14675 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1219,9 +1219,7 @@ struct kvm_xen {
- #ifdef CONFIG_KVM_VMWARE
- /* VMware emulation context */
- struct kvm_vmware {
--	bool backdoor_enabled;
--	bool hypercall_enabled;
--	bool nested_backdoor_l0_enabled;
-+	u64 caps;
- };
- #endif
- 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index e019111e2150..ae578422d6f4 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -1013,4 +1013,8 @@ struct kvm_tdx_init_mem_region {
- 	__u64 nr_pages;
- };
- 
-+#define KVM_VMWARE_ENABLE_BACKDOOR		_BITULL(0)
-+#define KVM_VMWARE_ENABLE_HYPERCALL		_BITULL(1)
-+#define KVM_VMWARE_ENABLE_NESTED_BACKDOOR	_BITULL(2)
-+
- #endif /* _ASM_X86_KVM_H */
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 7234333a92d8..b9e2faf0ceb7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -126,6 +126,10 @@ static u64 __read_mostly efer_reserved_bits = ~((u64)EFER_SCE);
- #define KVM_X2APIC_API_VALID_FLAGS (KVM_X2APIC_API_USE_32BIT_IDS | \
-                                     KVM_X2APIC_API_DISABLE_BROADCAST_QUIRK)
- 
-+#define KVM_CAP_VMWARE_VALID_MASK (KVM_VMWARE_CAP_ENABLE_BACKDOOR | \
-+				   KVM_VMWARE_ENABLE_HYPERCALL | \
-+				   KVM_VMWARE_ENABLE_NESTED_BACKDOOR)
-+
- static void update_cr8_intercept(struct kvm_vcpu *vcpu);
- static void process_nmi(struct kvm_vcpu *vcpu);
- static void __kvm_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
-@@ -4708,11 +4712,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_IRQFD_RESAMPLE:
- 	case KVM_CAP_MEMORY_FAULT_INFO:
- 	case KVM_CAP_X86_GUEST_MODE:
--#ifdef CONFIG_KVM_VMWARE
--	case KVM_CAP_X86_VMWARE_BACKDOOR:
--	case KVM_CAP_X86_VMWARE_HYPERCALL:
--	case KVM_CAP_X86_VMWARE_NESTED_BACKDOOR_L0:
--#endif
- 		r = 1;
- 		break;
- 	case KVM_CAP_PRE_FAULT_MEMORY:
-@@ -4836,6 +4835,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_READONLY_MEM:
- 		r = kvm ? kvm_arch_has_readonly_mem(kvm) : 1;
- 		break;
-+#ifdef CONFIG_KVM_VMWARE
-+	case KVM_CAP_X86_VMWARE:
-+		return KVM_CAP_VMWARE_VALID_MASK;
-+#endif
- 	default:
- 		break;
- 	}
-@@ -6669,31 +6672,18 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		break;
- 	}
- #ifdef CONFIG_KVM_VMWARE
--	case KVM_CAP_X86_VMWARE_BACKDOOR:
-+	case KVM_CAP_X86_VMWARE:
- 		r = -EINVAL;
--		if (cap->args[0] & ~1)
-+		if (cap->args[0] & ~KVM_CAP_VMWARE_VALID_MASK)
- 			break;
-+
- 		mutex_lock(&kvm->lock);
- 		if (!kvm->created_vcpus) {
--			kvm->arch.vmware.backdoor_enabled = cap->args[0];
-+			kvm->arch.vmware.caps = cap->args[0];
- 			r = 0;
- 		}
- 		mutex_unlock(&kvm->lock);
- 		break;
--	case KVM_CAP_X86_VMWARE_HYPERCALL:
--		r = -EINVAL;
--		if (cap->args[0] & ~1)
--			break;
--		kvm->arch.vmware.hypercall_enabled = cap->args[0];
--		r = 0;
--		break;
--	case KVM_CAP_X86_VMWARE_NESTED_BACKDOOR_L0:
--		r = -EINVAL;
--		if (cap->args[0] & ~1)
--			break;
--		kvm->arch.vmware.nested_backdoor_l0_enabled = cap->args[0];
--		r = 0;
--		break;
- #endif
- 	default:
- 		r = -EINVAL;
-
-base-commit: 77a53b6f5d1c2dabef34d890d212910ed1f43bcb
---
 
