@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-742680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDBDB0F54B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4345B0F54E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526B6189B55E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D590A1897817
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6E2F2719;
-	Wed, 23 Jul 2025 14:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JOThtsR6"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B3B2F2C50;
+	Wed, 23 Jul 2025 14:30:22 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A42EF66E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6111E24BC09;
+	Wed, 23 Jul 2025 14:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280982; cv=none; b=sMp+ePN/nzwPIBE4YwYEqgzPHF6GSV41JjNEGWzLFGVwJ539eHfz/pMxz4yP4cq2ETrrNH0mdIjVG/6poXiLs6l/BFQigbH/IYpvAG/B1KVQ4d8XYQe5iK7L0RgmlKSuLncsmNkSUp0A4F+w8dG2IdZqSbGOAG5smVg8G3L0oFk=
+	t=1753281022; cv=none; b=U4XoWdLHn4u1ZOrrK+sbhcyKv9tIND0W/mSEL0BB29UtNeN9vm/PRr6+1eOpF3RL0VWDK6K3gWf5KKpyiYBA04tnCz9/CT8AX0uf+j7QvbrWkji7vj343jaF90mJ3FobO1MIuOAun6GC3TmDUEGlR6Y6BfnIbmHocJ7s7vYq2ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280982; c=relaxed/simple;
-	bh=PPsQ8mITnmr3I8UwjYrUNojkeRQJSFbKPS7aIH5+wFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YDcvKT9EUGFAOapgqZtzHkfkVLueWemp2sZQCnNRnQcG4XetQjeSP9bRKooXQCQWlmNROfEIte0ehoLZ0Bf/wt/2GcM1zkhwi2w1DBmXuJvdgMCsIkal4Sdx3xrdy38leOrtk/n5ZrI4/Ilk0SBpvr9X+5Y2NLiNR2l7mrwlw3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JOThtsR6; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-73e88bc38bbso3059194a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753280980; x=1753885780; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qLButLoj9620WR1DJqpTFbSFouv61wpEe6LAYSZOeEA=;
-        b=JOThtsR6TbgWZeX5KPd3BqmLWIZbHsN1//ttNycSg68BtYN5kfFCQRgooFg4TXF9PG
-         hoHc0TzWi3Oy7ZXqsPXILo+qsNvvR9xPyH8g+oQd55q6n9FYW8ampZZbwGS3MpYKWukV
-         vyDLyQvsM82+ASZzLnYg5i6du2P56Ay0Fub76/hf2HDxQcXpqFTAePfeJqvDhe2Dt8MQ
-         8fHVbyVxSlnw5fp4tak+lP19764VDKxegD9l3triAK817tPvOsxHZlaSOrSss/2nk3VF
-         xZ1LT3NjZZ3imuqd+TH8N2EcC8c2lTJ+WP1A3S4JhxCXLX9JUwbSj4nUfeMp657GNltB
-         7tKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753280980; x=1753885780;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qLButLoj9620WR1DJqpTFbSFouv61wpEe6LAYSZOeEA=;
-        b=B5Yb6v9haig5K9H/mJ6yhJG/xJeKCeECUhnOlrbK75/aVyaIJpkQpWTG6U+A16Y0J5
-         1ZGjLEdotQyfHt+yl2L5dPqzovL/0LB4B4CTK4GGF9tDBbcd+tRY1+HzR1izv/3XGEw0
-         7xGHIJiREJocUBa4JNpirxSo2jJNlD7yhvtLHdAeAYxVhRxCRjm2XcqMvUuTBOakdRGu
-         mQKF2kCsbTPzz714I/XdqqlRTyOadFmAFRC0WrqZ+NbeY4qNpQf+j4OucYexB9OQV8O3
-         SqfApL9y2EOWGHH7bJee9AIKG3BPnPCOwdysVH3PMddLfc9gVJRHzlrB8DpdHaf81O2k
-         fYPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQcEd0nu2AC5CyZb0wvNEr96009iFOkugXstyf3jafFYyW20TvmLF13d7oMckAJ4i5Wu0nqK4X6dc8hkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9uYE91UOxg0QR/UIZTD5mHuP6Ggo8+PtFqPZHgN6l/5RTwHU
-	puKDaqqdgBO7XSICBEdTDGtlWgpiSyf1GZguJcRYZ2yqHcixDlKdYMywz8QkhcmQgTc=
-X-Gm-Gg: ASbGnctwTxqluh7yXoO/XtqSrJ3d8/84CJrRjxY6dVGXZSn9s7kBHUOJ/OrXrrN7IgD
-	w9IMWbKhh0rk2OJICznDP+bDDwj8sR73ymrBFyrHfdwxXa9ycxBSAiYLhAefn86qixCi8z6W2Zb
-	qJn25D/4Hnljc8qA3pmuY5hc1l4I/yCRPer7BX9TtDcDN+omOUFP+5M+/rs51o2eAQPVTWS6DsP
-	TnmMuULFUAzdhCVtYr60C8SOHcMEo1LGKpt2DsPlkw8NNobgXtBoE5TYl2quhhGs/0qgIF1Rave
-	WS8ngo0La8czu/Flo3yGIUaJ+O+EbBEvxjLkCtphoKN4ZoyOoTIaXLi7uRr2v3mHFsZuJyX1zxh
-	roOxf0eJ7J3FMFysQho4A7HketNxRANiaZGJ+nkRFxVHKVGkPMRNiADd+OIoyU6gXJQsrzCwM
-X-Google-Smtp-Source: AGHT+IHlFVxr5zkaRfw2DOyo7XDcQNlbMyDdVec8aX5LzzNWMDYfM7aa0GQ0k+Ct91dsFVc5t0tkCA==
-X-Received: by 2002:a05:6830:2a90:b0:735:bab9:c5c1 with SMTP id 46e09a7af769-74088abe8a6mr2512656a34.22.1753280979582;
-        Wed, 23 Jul 2025 07:29:39 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:11dd:c0f5:968d:e96? ([2600:8803:e7e4:1d00:11dd:c0f5:968d:e96])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8fc51467sm3447840a34.31.2025.07.23.07.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 07:29:39 -0700 (PDT)
-Message-ID: <795dffe0-51cf-49a8-bbb1-1585edddf5ba@baylibre.com>
-Date: Wed, 23 Jul 2025 09:29:37 -0500
+	s=arc-20240116; t=1753281022; c=relaxed/simple;
+	bh=AbZb5rI/gYo+qTcf+dpPtDgq68HPZ9t6Qo1QO26okX8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=petap0gwBhMPRuX9HWI05kVJtPx28p3msVl69a1IyDOgnf6agK8HLrzIFUHa/bNlc29bu6/ZJLqgoeYXvY+ntbKvr/DevPaMv2bVF7YpTLowaUitlkXC4AEGhmTK80eqAi32vXH7CaiOHsu2Sz/YqFGqv02GbciIQsP/i43UOZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.214.181])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d03a2599;
+	Wed, 23 Jul 2025 22:30:14 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	kishon@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	robh@kernel.org,
+	vkoul@kernel.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH 07/11] arm64: dts: rockchip: Add USB nodes for RK3528
+Date: Wed, 23 Jul 2025 22:30:06 +0800
+Message-Id: <20250723143006.1083489-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250723122323.2344916-8-jonas@kwiboo.se>
+References: <20250723122323.2344916-8-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: proximity: hx9023s: fix scan_type endianness
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Yasin Lee <yasin.lee.x@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250722-iio-proximity-hx9023c-fix-scan_type-endianness-v1-1-48f5dc156895@baylibre.com>
- <823a28d6-e612-4e32-976a-cb99945848ce@baylibre.com>
- <aIDuEcHhaGtz2klP@smile.fi.intel.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aIDuEcHhaGtz2klP@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaThpCVh1JGRlKGU0dSx5LTlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKT1VKQ0pZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVU
+	tZBg++
+X-HM-Tid: 0a9837b12a7003a2kunm2a36e8dcff846
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P006STo4ODEpCDEODBk3HUIt
+	CQhPChpVSlVKTE5ISUNKS0pOTkhMVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpPVUpDSllXWQgBWUFJTENJNwY+
 
-On 7/23/25 9:13 AM, Andy Shevchenko wrote:
-> On Tue, Jul 22, 2025 at 06:08:37PM -0500, David Lechner wrote:
->> On 7/22/25 6:07 PM, David Lechner wrote:
->>> Change the scan_type endianness from IIO_BE to IIO_LE. This matches
->>> the call to cpu_to_le16() in hx9023s_trigger_handler() that formats
->>> the data before pushing it to the IIO buffer.
+Hi,
+
+> The DWC3 node does not contain any default phys because out of current
+> and pending supported boards only one board, ROCK 2A, can use USB3.
+> Remaining boards use the Naneng Combo PHY for PCIe instead of USB3.
+
+I have other RK3528 boards with USB3 and can test this in a few days.
+Or do you think that usb3-phy should be added in the dts of the device?
+
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> index 85bc3f5aa2c7..3e51a3f51e05 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -243,6 +243,29 @@ soc {
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
 > 
->> It is odd to have data already in CPU-endian and convert it to LE
->> before pushing to buffers. So I'm a bit tempted to do this instead
->> since it probably isn't likely anyone is using this on a big-endian
->> system:
-> 
-> I can say that first of all, we need to consult with the datasheet for the
-> actual HW endianess. And second, I do not believe that CPU endianess may be
-> used, 
+> +		usb_host0_xhci: usb@fe500000 {
+> +			compatible = "rockchip,rk3528-dwc3", "snps,dwc3";
+> +			reg = <0x0 0xfe500000 0x0 0x400000>;
+> +			clocks = <&cru CLK_REF_USB3OTG>,
+> +				 <&cru CLK_SUSPEND_USB3OTG>,
+> +				 <&cru ACLK_USB3OTG>;
+> +			clock-names = "ref_clk", "suspend_clk", "bus_clk";
+> +			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+> +			power-domains = <&power RK3528_PD_VPU>;
+> +			resets = <&cru SRST_A_USB3OTG>;
+> +			dr_mode = "otg";
+> +			phy_type = "utmi_wide";
+> +			snps,dis_enblslpm_quirk;
+> +			snps,dis-del-phy-power-chg-quirk;
+> +			snps,dis-tx-ipgap-linecheck-quirk;
+> +			snps,dis-u1-entry-quirk;
+> +			snps,dis-u2-entry-quirk;
+> +			snps,dis-u2-freeclk-exists-quirk;
+> +			snps,parkmode-disable-hs-quirk;
+> +			snps,parkmode-disable-ss-quirk;
 
-Why not? Lot's of IIO drivers use IIO_CPU in their scan buffers.
+Maybe "snps,dis_u2_susphy_quirk" is needed?
+Downstream kernels add this on USB2.0 only devices:
+https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64/boot/dts/rockchip/rk3528-demo.dtsi#L474
 
-> I can't imagine when this (discrete?) component can be integrated in such
-> a way. That said, I think your second approach even worse.
-> 
+> +		u2phy: usb2phy@ffdf0000 {
+> +			u2phy_otg: otg-port {
+> +			u2phy_host: host-port {
 
-hx9023s_sample() is calling get_unaligned_le16() on all of the data
-read over the bus, so in the driver, all data is stored CPU-endian
-already rather than passing actual raw bus data to the buffer.
+I think it would be better to call it usb2phy, usb2phy0_otg and usb2phy0_host?
+In this way, we can put these USB nodes close together in the device's dts.
 
-So it seems a waste of CPU cycles to convert it back to little-endian
-to push to the buffer only for consumers to have to convert it back
-to CPU-endian again. But since most systems are little-endian already
-this doesn't really matter since no actual conversion is done in this
-case.
+--
+2.25.1
 
 
 
