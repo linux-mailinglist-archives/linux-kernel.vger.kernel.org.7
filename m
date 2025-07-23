@@ -1,167 +1,96 @@
-Return-Path: <linux-kernel+bounces-742641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D87B0F4BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:00:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69AFB0F4C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660933A9C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 519111C83668
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E032F0032;
-	Wed, 23 Jul 2025 14:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L3+YEqko"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711E02F2358;
+	Wed, 23 Jul 2025 14:00:54 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AC32EFD84;
-	Wed, 23 Jul 2025 14:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4458A2F2362;
+	Wed, 23 Jul 2025 14:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753279215; cv=none; b=kw6rPDDkF6MUCgjSRyBOEGBbMfVYnqmcwNl1oVq6obOez8qb3FMC0tEYW6mmuSTnHtxoA9kg0rEnIhvj9n5Wcen//Tq/sdSIo0z9SUYYM3Mu2vizmIYUr9hYy248NJvywCXviZR+1cVsydrKD74oDrZr8sZAh8KlSD6UUIXW7Fc=
+	t=1753279254; cv=none; b=AaZYtCCrAU62lwsTUlk3gjXL984rN9wvI3+M3S3MtYK47pGMBPc8T8LZptphrm4NiVg9g/+oQZQBsghgZ05l9Tf8EgP8vdcJwepY6A+8ohfpOc/UoWExYXE2VpOwbjhXOkK4dhls0eEnE8DHv82oxMBFgNK4gUSey3dgKOEPWUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753279215; c=relaxed/simple;
-	bh=5p7rvRCpYgVrdj5kB8Zx5M5QXjYmJ9zUvPIry/IyTM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PI/2UhTPWjIuihr00kA21vfdxqSWANQlmskXdyvvGkOuY7Q05mi5UfyVNKz7GmVS3G47lEKJy/Ab3L99cD3JhKMuDyi0yrVV6d42D3mMHSqgO6It2uhrXfTCoz8C0murNKRg9LRngdVqHSZX5V38Nz44l/C/r13MmsZe613Yj3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L3+YEqko; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9C932E92;
-	Wed, 23 Jul 2025 15:59:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753279173;
-	bh=5p7rvRCpYgVrdj5kB8Zx5M5QXjYmJ9zUvPIry/IyTM4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3+YEqkolB7bLdPjd5KPTAcUiwzewgVy8G7WrsW1/tkDpYBpai+83GIFapOvOdgvs
-	 WYg2FHx489ezAX6s8KPQWJgp3aEFrLdV2Jis9LxDGSvgzbMk6mS8V8RWyxyIFONvmh
-	 /2MUqprzFaBwarXK7eAxrfaGf8+rrW0q6t0TojB0=
-Date: Wed, 23 Jul 2025 17:00:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Julien Vuillaumier <julien.vuillaumier@nxp.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	ribalda@chromium.org, jai.luthra@ideasonboard.com,
-	laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
-	celine.laurencin@nxp.com
-Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
- captures
-Message-ID: <20250723140009.GD6719@pendragon.ideasonboard.com>
-References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
- <20250715235952.GE19299@pendragon.ideasonboard.com>
- <20250716001205.GG19299@pendragon.ideasonboard.com>
- <ebff73fd-292d-459a-9ebe-cbbc6ef2b39b@nxp.com>
+	s=arc-20240116; t=1753279254; c=relaxed/simple;
+	bh=nMncE97U/Ipqmpmk7mC2eWQvqR4lqGJam9I+INPmniM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QPzj1bqZSM6I3MHlNYI+v5jIHJIiDCRPgjopFsa8bz86lAJH/SVK85G+QqfSJAMGMU3xnBL/NOx5Kj6p0G9i34fuUnVSZNTpLYY+am/blTHe1J06K1ZOYCKS39n6T83Ae/fToOUvLLD14ceaHk0iwOYkx9UdZSNCjtWBkPns4rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id ED66E806F4;
+	Wed, 23 Jul 2025 14:00:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 2D64930;
+	Wed, 23 Jul 2025 14:00:48 +0000 (UTC)
+Date: Wed, 23 Jul 2025 10:00:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 7/7] tracing: probes: Add a kerneldoc for
+ traceprobe_parse_event_name()
+Message-ID: <20250723100049.46e8ec7c@batman.local.home>
+In-Reply-To: <175323430565.57270.2602609519355112748.stgit@devnote2>
+References: <175323423662.57270.14650807176845939538.stgit@devnote2>
+	<175323430565.57270.2602609519355112748.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ebff73fd-292d-459a-9ebe-cbbc6ef2b39b@nxp.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ck4g5e88xgtt5tzg1czg8zt8g63hmhgw
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 2D64930
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+KlQ1W+17VzVmvSHIC/a1RVGNS2p6REX4=
+X-HE-Tag: 1753279248-335724
+X-HE-Meta: U2FsdGVkX18SHHCl1w3YRptYk+NS9Mnf/UYbZl5cSp9m3fobh61D8AZjgaIq/HJH7oshE0/JE+e6/ntWrBSlZAllV4PjUqHxVa0q1pNs3Crhq1lppq9+gh0Jq9kXSRidGhTql2R+mVbP5L8glVEQydOnZSA29UWHD2dFPmkcPGGHhehkuWDrGHqHWZV5crZLzSIbXbnK6M9F7JhOk+lyWdSCHvySWvpLFOWPj2JQ7BcASXN8NJ1HLIjTpiCeoBDUxh46wf/UrJSbOgLvLhO9ObD3nIWggYPxVzOSPJezDND4TKe5yzPLxLVJQuQM5GCvveksr1KDbNTcjNp8lLWuOUkI01yYMJRuZnnEQbI1RJaBjmgX+KiwgnkGd0XsON0Uv3bAYbQYaHdfR6QQ2get6w==
 
-On Tue, Jul 22, 2025 at 10:46:16AM +0200, Julien Vuillaumier wrote:
-> On 16/07/2025 02:12, Laurent Pinchart wrote:
-> > On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
-> >> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
-> >>> Add new standard controls as U32 arrays, for sensors with multiple
-> >>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
-> >>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
-> >>> that have multiple captures, but the HDR merge is done inside the sensor,
-> >>> in the end exposing a single stream, but still requiring AEC control
-> >>> for all captures.
-> >>
-> >> It's also useful for sensors supporting DOL or DCG with HDR merge being
-> >> performed outside of the sensor.
-> > 
-> > Regarless of where HDR merge is implemented, we will also need controls
-> > to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
-> > standardize the values, and that's not good enough. At least for DOL and
-> > DCG with HDR merge implemented outside of the sensor, we need to
-> > standardize the modes.
-> 
-> For the HDR-capable sensors with the HDR merge implemented outside, the 
-> short capture(s) are likely implemented as separate streams, in order to 
-> match the raw camera sensor model.
+On Wed, 23 Jul 2025 10:31:45 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Yes, that's my expectation. They should use a different data type or a
-different virtual channel (I expect most sensors to support both
-options).
+> -/* @buf must has MAX_EVENT_NAME_LEN size */
+> +/**
+> + * traceprobe_parse_event_name() - Parse a string into group and event names
+> + * @pevent: A pointer to the string to be parsed.
+> + * @pgroup: A pointer to the group name.
+> + * @buf:    A buffer to store the parsed group name.
+> + * @offset: The offset of the string in the original user command, for logging.
+> + *
+> + * This parses a string with the format `[GROUP/][EVENT]` or `[GROUP.][EVENT]`
+> + * (either GROUP or EVENT or both must be specified).
+> + * Since the parsed group name is stored in @buf, the caller must ensure @buf
+> + * is at least MAX_EVENT_NAME_LEN bytes.
+> + *
+> + * Return: 0 on success, or -EINVAL on failure.
+> + *
+> + * If success, *@pevent is updated to point to the event name part of the
+> + * original string, or NULL if there is no event name.
+> + * Also, *@pgroup is updated to point to the parsed group which is stored
+> + * in @buf, or NULL if there is no group name.
+> + */
+>  int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
+>  				char *buf, int offset)
+>  {
 
-> In that case, the SDR/HDR mode switch, when supported, can be done by 
-> configuring the sensor device internal route for the short capture stream.
+Much better.
 
-That's an option too, but it won't allow us to select between different
-HDR modes. For instance, the AR0830 supports both DOL (2 exposures) and
-DCG (2 gains). We would need a way to select between those two modes.
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-> You mentioned the need to be able to select the HDR mode in a standard 
-> way. Could you elaborate on the foreseen usage: would it be to select 
-> SDR/HDR operation, to select between different HDR sub-modes, to inform 
-> user space about HDR capability... ?
-
-Both. From a libcamera perspective, I want standardized controls for
-this, to avoid sensor-specific code as much as possible.
-
-> > Can you tell which sensor(s) you're working with ?
-> > 
-> >>> All controls are in the same class, so they could all be set
-> >>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
-> >>> useful in case of sensors with context switching.
-> >>
-> >> Agreed, we should be able to set them all. Are we still unable to set
-> >> controls from multiple classes atomatically ? I thought that limitation
-> >> has been lifted.
-> >>
-> >>> Each element of the array will hold an u32 value (exposure or gain)
-> >>> for one capture. The size of the array is up to the sensor driver which
-> >>> will implement the controls and initialize them via v4l2_ctrl_new_custom().
-> >>> With this approach, the user-space will have to set valid values
-> >>> for all the captures represented in the array.
-> >>
-> >> I'll comment on the controls themselves in patch 2/2.
-> >>
-> >>> The v4l2-core only supports one scalar min/max/step value for the
-> >>> entire array, and each element is validated and adjusted to be within
-> >>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
-> >>> maximum value for the exposure control could be "the max value for the
-> >>> long exposure" or "the max value for the sum of all exposures". If none
-> >>> of these is ok, the sensor driver can adjust the values as supported and
-> >>> the user space can use the TRY operation to query the sensor for the
-> >>> minimum or maximum values.
-> >>
-> >> Hmmmm... I wonder if we would need the ability to report different
-> >> limits for different array elements. There may be over-engineering
-> >> though, my experience with libcamera is that userspace really needs
-> >> detailed information about those controls, and attempting to convey the
-> >> precise information through the kernel-userspace API is bound to fail.
-> >> That's why we implement a sensor database in libcamera, with information
-> >> about how to convert control values to real gain and exposure time.
-> >> Exposing (close to) raw register values and letting userspace handle the
-> >> rest may be better.
-> >>
-> >>> Mirela Rabulea (2):
-> >>>    LF-15161-6: media: Add exposure and gain controls for multiple
-> >>>      captures
-> >>>    LF-15161-7: Documentation: media: Describe exposure and gain controls
-> >>>      for multiple captures
-> >>
-> >> Did you forget to remove the LF-* identifiers ? :-)
-> >>
-> >>>
-> >>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
-> >>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
-> >>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
-> >>>   3 files changed, 23 insertions(+)
-
--- 
-Regards,
-
-Laurent Pinchart
+-- Steve
 
