@@ -1,237 +1,265 @@
-Return-Path: <linux-kernel+bounces-743370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D69B0FDD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:55:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFCEB0FDD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 786C354845A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2E41C226CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30E427380E;
-	Wed, 23 Jul 2025 23:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC90273D65;
+	Wed, 23 Jul 2025 23:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="xs3esqA+"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="al8uNzyt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD0E215055;
-	Wed, 23 Jul 2025 23:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753314932; cv=none; b=XX8+a/WXI/dm/Waj+FS0Bw6Zzs8y0YMUlLqiHRfr95Xqu7Taaqes9QnNqhEd8Pfrngbma+gUqdfdELwXzJsA2OVwEWYnG73wTG0QcONJZNlRP7GVyJzdtPasrSo2d/OhVbYJ/wKS9v2dDdgeP7+HgpQEPuRBKhZV1+PtLBZkmdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753314932; c=relaxed/simple;
-	bh=5Rkl6QkujiSWyv84mlJ0xwNtng60dAwf1DJAIOq9JbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4kuGg0cqSm3bmR5xYI+coSvNd8ENj7ClrLuegZTO6F+r4Bq1/vWwwwTpvqklRtGigspjVLV3ctj4DZm6N6hiM4DWAIRJtsI8MO41XhiXOL5emwbyeVhzUikK+ycGealUnDIFhMuayL9noJrEn2H/O7XTeiZTDdiI7dayPsGmKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=xs3esqA+; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bnWGc3P5sz9ssw;
-	Thu, 24 Jul 2025 01:55:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753314920;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=adkKVU2xcTSCol5IeKbXbR2OHCXr05cLR6HT03bl1E8=;
-	b=xs3esqA+LbZikdpw0S1ONQQsAJpNNRItL+NhgVpCCBvSmDJvo/Cghe6Ldn7FVrH4QfegqY
-	WVs4QBukb5HrYTE+wN+kxmukZtaZZ/2sW8qkJ3WdRZdNYrfev7vK0U++E/MBdqhihbm6Im
-	+MVV2PH24WP0dXnROYRAEKP3BZh9kyrNSLHr0bxovByxKvi6VQhEvLT9SY2/n3ZmSwP0ga
-	g4D1mwDAJmqPPsseQTW0y4HRbBOPAib55PK33Vlhti+otkyCg+AIKt5McnHdSKYYYybwQ8
-	uAStCNBzUXyziMmWl4KfxBv3Ca6PEsdz6zEfjMZt41XtaG/B+gs4QJpzQvU6FQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 24 Jul 2025 09:55:05 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
-Message-ID: <2025-07-23.1753314869-silly-creamer-crushed-cabana-proper-jury-FaB28g@cyphar.com>
-References: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
- <CALCETrVo+Mdj7as2R0R+FqTBbjqwTkXu5Zkj=dg8EVM9xRhBPw@mail.gmail.com>
- <20250721.150803-lavish.ninja.rigid.racism-OCjeOw80sO9@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08504282F5;
+	Wed, 23 Jul 2025 23:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753315011; cv=fail; b=THDmARZWlFjZnhx5GvtxWU1FaPib3MPjEL4izPH3g50ToYqZeMT8Tu6ZSspScWAsmzK2+27lUlFXQEcl/Swa83WDzD3wx9dgMPJQrlVkrdESiHqPq3/A/jcjVOMMncnjAcKxCuL/E9PE42dTk1FtpYjXKBaJO/AtPbVIjeidsZQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753315011; c=relaxed/simple;
+	bh=6ZItpAGVsO9Rv0HNrFyylKNG0bw4iu0UVzh09l0jHa8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PNrWaRa3QGBofE9jYi5F18N5PfdNl/CdC/dZS8KuFVSGxWRWOuB9Yyw4FNzIuuGIW7G0QriSRo9OpA/U+F2g2AATSCT9joHvsUh3CR/wX88gj/YZs8t1NiIVOcqcIszvZmNxtpRkIJ/7u6bNWmANGcczClKehLYQni7981M54IE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=al8uNzyt; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753315010; x=1784851010;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=6ZItpAGVsO9Rv0HNrFyylKNG0bw4iu0UVzh09l0jHa8=;
+  b=al8uNzytxprPvd/FOJ+tNcEjkzVujJn7ILP0hlIjocb58VnAq4jOVwTI
+   bupwNtJVvwe9Pm2GVaC/yZJktSdhu4F3wO6HfQfywOMyGG2WmSK/0P0FN
+   X7PnHkefbitjRHKlJiTs0SGT+/am7nWYJzuoVvrlEnvcxNuyueWrDrpda
+   LpYoRWlnblq6jKHbyoHo6nBuiwf7nTDKCalSyl5ucHDAKiGJ+m33dIdi2
+   zqoTllvLHXwgKInJKxMIitUbVAHr+oC42vobmoClKwVPTiFWzuIRATmH5
+   5zKVLjTBuFbQ2F/SC+5wie6tlKLqqEYh26qztWCjyy9XnYAifVKejej0f
+   g==;
+X-CSE-ConnectionGUID: eFMecg8sSFSrTBv0Ocz5hg==
+X-CSE-MsgGUID: F17OaTvCQrWUN9zwD8bXwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="67040992"
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="67040992"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 16:56:50 -0700
+X-CSE-ConnectionGUID: efF3SXJ7QwS+UhuKXrqzDg==
+X-CSE-MsgGUID: 9QNsbZAERdCCS15QCvZYvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="159103797"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 16:56:50 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 16:56:49 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 16:56:49 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.88)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 23 Jul 2025 16:56:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QARUJXygBAy9nwI3oulcMuHy87LoBOejPuDSyaK8irYWxj2fh61SKOVajrGQAXP2xHrcyedSEkwWOw2P65w21iDF/GUzrojSLvJCKRQH/5fk6kHEPn7b+Ozz/hsW4nij4Ac90cxaTIu2M2LTJl4ywUtKQC9EOGpW/nU5+aeAl3V0/mYaYi85VVic26Hqrjqy+DOaQEPSWdd1jKJT2Q4rpIPZytSIZCTa62qCkAqc6rEvrt5nZrkjhsjhZ1pvTGCXsNL4jHWSOjLk6I4b65k4I83uwUqkJMfRx8dvqUpnKXr3PyJkW2ZEODULNodXbOU0UMMcgoqyGEm7gUuRQPWRFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6ZItpAGVsO9Rv0HNrFyylKNG0bw4iu0UVzh09l0jHa8=;
+ b=X5E14hAg1GmKB1zNkU++7NsZoJ582UW13W6nkumG+Fy3lcGJ7pC9kSVkUR3jySzaTwAUazpkYV+I6CMHIsl4Fa+RJS2/EzfhyEhxwwBqbySi2WxgJXHPOP7ZQ12MvTaWowpfBHCehZsBtKsnPiBzw6P8D5IQZkPz7mB/e+nSXPlK+pNNLVusSK4Y+3Y4EGMs/R8/pG2A/CZI9jQMyK8+W8hGm6LL0jB1ZsarJ1d7QU/gpo/DIYkGI+sDqdCR83Ec39onMHfJp1CpsPMm9xBGuBHZCpMpk01OZc5N14R/BBCEZiVx+hJ26kl6YWE+l2zxSO8ofMrVGKMuA72at/FX0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
+ by IA1PR11MB8788.namprd11.prod.outlook.com (2603:10b6:208:597::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Wed, 23 Jul
+ 2025 23:56:46 +0000
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 23:56:46 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "Hunter, Adrian"
+	<adrian.hunter@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"seanjc@google.com" <seanjc@google.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Li, Xiaoyao"
+	<xiaoyao.li@intel.com>, "Luck, Tony" <tony.luck@intel.com>, "Zhao, Yan Y"
+	<yan.y.zhao@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "Chatre, Reinette" <reinette.chatre@intel.com>,
+	"kas@kernel.org" <kas@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "tony.lindgren@linux.intel.com"
+	<tony.lindgren@linux.intel.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"hpa@zytor.com" <hpa@zytor.com>, "bp@alien8.de" <bp@alien8.de>, "Gao, Chao"
+	<chao.gao@intel.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH V4 1/2] x86/tdx: Eliminate duplicate code in
+ tdx_clear_page()
+Thread-Topic: [PATCH V4 1/2] x86/tdx: Eliminate duplicate code in
+ tdx_clear_page()
+Thread-Index: AQHb+8ovevc+bw9PokmM8lb9WadM7LQ/vkEAgAAI0YCAAAHUAIAADQaAgAB91gCAAAcfgIAACGuA
+Date: Wed, 23 Jul 2025 23:56:45 +0000
+Message-ID: <0b2a23d7c30e91e47cddd3fc7ef911249c5d8531.camel@intel.com>
+References: <20250723120539.122752-1-adrian.hunter@intel.com>
+		 <20250723120539.122752-2-adrian.hunter@intel.com>
+		 <f7f99ab69867a547e3d7ef4f73a9307c3874ad6f.camel@intel.com>
+		 <ee2f8d16-be3c-403e-8b9c-e5bec6d010ce@intel.com>
+		 <4b7190de91c59a5d5b3fdbb39174e4e48c69f9e7.camel@intel.com>
+		 <7e54649c-7eb2-444f-849b-7ced20a5bb05@intel.com>
+		 <10af9524189d42d633b260547857516b49f9dc8e.camel@intel.com>
+	 <8da9c9c9c53707ec805ccd1b7f8091081e3455e6.camel@intel.com>
+In-Reply-To: <8da9c9c9c53707ec805ccd1b7f8091081e3455e6.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|IA1PR11MB8788:EE_
+x-ms-office365-filtering-correlation-id: 6539230a-0366-47db-0e89-08ddca4494ce
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?aGo4VXVaZ1JSMnZmR3RNTkdjWnd4anlVbDJFT3dqQmFrWTR1cXNzU3FqRVQy?=
+ =?utf-8?B?dVJlMWJiQTRpSW1vekEvWDc2aU0zTi8xTzhONDFWbVdTckJjMEQvQklGTzhJ?=
+ =?utf-8?B?UjZTY3dMaG9PSHMwMDMyWHFzYVd0R2xIZE9TNTV1emIyTVpUd3lmKzJ6dk8y?=
+ =?utf-8?B?NFZzWk1rRWlleUpWOFhOeUhmQXdjQ2lQcExqOXVON2hYcm9LanowM0grK3Yr?=
+ =?utf-8?B?c1Y5amR4R2J3aXZ5T3YwUm1OdkZXVTQ3dnhiektZSTN6MFd2UTVrdmxMWEhu?=
+ =?utf-8?B?S0xaMGRXdkxWRnl3ZGFmM25hTFhMQVIyNjJOSWtCbmlpMEF4bm5ER2JiYmZ2?=
+ =?utf-8?B?eWlzdEU0dEQyRC9VTDBTUGZId2U5d29JMEhUcSt6L0N0REt2eTJvUmlXV0ln?=
+ =?utf-8?B?RmY0R2VObXFaSks1Q1A3T3ZENERCdWZ1Q1ZBYzMva3hxd0VQWFZsNGNLZlVF?=
+ =?utf-8?B?SllWMC9hZXhDNnJ4QkFOOVcxbTNTK0tvc3JoUTFycHdwSWFObGY2NTE1Mm1u?=
+ =?utf-8?B?cDVKdmFEQnpLazZ4QXRoelYzZmdTM0N4dFdEaGs2eTEvdWxBNjkvdTFOUUZ4?=
+ =?utf-8?B?R0kvSmZlUVpsazJSUVNUeUdBbkVnTlVZWFp6em5MQW5CV0hxTGdNVWwwNFBD?=
+ =?utf-8?B?SDdZWTJaWWErYUlMUWxUUXFXRGkyVENPcStsNUZkdy9CbE1DandURk9JNUdX?=
+ =?utf-8?B?c2U4K2dYbjN4dVY3Vkhoa1pJdjZrUnVsdWE2VnNnRWZLcFJiV3hzZlJnMHJG?=
+ =?utf-8?B?OXM0S3M0NnlQM3ZybG5sRzF4QU9GaERBcjRvL3Z1anpUcThCOGpRTmVmL29Y?=
+ =?utf-8?B?ZmQwU3ZhbDRTRmtKZkFNWWY1bk9ocjdQRStYWmFNWWlsL3piSVZjVVNMMnJo?=
+ =?utf-8?B?RUc3clgzcHliY1B1TUxWdEE1bnNZMkdhUDZCVEJXTCtYNmFCSUZkNTMrSEJj?=
+ =?utf-8?B?cU84RExGNHhXVWRTQUFyRWdXdU1KUmhMY0VFLzVjUnpDRVJFTzRLNnNtSktP?=
+ =?utf-8?B?RFpxYTVpTjBxVGJvNjZwUXNncmNSQWZzaHM3QS9lcE5WODdWbXBmb2dQa1dx?=
+ =?utf-8?B?VjkyMjZHeWVNSFZybVVKOTQrZWFneVMzL2d1V3pFdm9VYU10eVJqaWZJUnRY?=
+ =?utf-8?B?clR2RklEQnJSV3A1ZllVRVVEcW4ySWZ4ak4xZW55eEdmZUdUMWl4NmpIeVF3?=
+ =?utf-8?B?TlhVZVM1RjFvY3BKR3E3Tm9IQkh1ai8rL3pNS3lmbWZ2YVRsb2lsQ3k1K0Vh?=
+ =?utf-8?B?MW1RaTVFRlozdnhyYzhJUVpvOTY5VWVITDY2bDhiakc1aUx1WGZENm1hMjJa?=
+ =?utf-8?B?d3BXaHd2U2FMMGZmZlFsZllVVkRoZUJLeHNoT3dpK2NqNllUYVJHSXVNenk3?=
+ =?utf-8?B?VU85MGpyUWVuc2ZXWlc0ZGdOTDhSUmZEcUlySjBKOVpuczYxeFk4aCt3ZWJv?=
+ =?utf-8?B?V0tOVlpKNnZDTWsxMzZSYkFybktjZFdWYzRXbk83YWs0enVkbGMwWm1ZKy81?=
+ =?utf-8?B?TFY4SHpQaDdoN2I1Sk40K3dSKytGNFU2SVpCTVRIa1oyRjlWbytxZFJFVUFQ?=
+ =?utf-8?B?TWtERWNpVHN1QThSNExWaUsrZklhaVZrdzFuMjc5d05lMlJwQUhjeDF5SjNm?=
+ =?utf-8?B?dDRoR3RtYm1FVm84cDdXcVpNaWd5UXdPVkEwcUZpN2phTVZIQ0RYeGhSNmJy?=
+ =?utf-8?B?N2orK0VES3VrOHl5RFJtSlgvZ09WRytsMThqamFJSWdMdVE5eCtVZk9tOUNE?=
+ =?utf-8?B?NGswUlZTNGcwV29SNVIwRGIrTW9nSG9GL1o4LzBySzA4clJTQk5qNmVSK1ZC?=
+ =?utf-8?B?SmF6dDhRdjhTVHgyQmkvYUh2OG9JYWpnOFpHdE5RV2EzdnVReERlUnZpd2RG?=
+ =?utf-8?B?dU5rQ1V2QnRUVUdURWJBeG9NcHNhZ01IMnBNUGlkaGpUY1VUM0RsNktSbUVv?=
+ =?utf-8?B?K1M4VDdvL0RFamhHZWhCa0kzeDNQYTRIR1Vsb0JYOFVpdXZ3Z3F3OGJGMXhn?=
+ =?utf-8?Q?YzocAz1W5jUAm2VHAh03TU76OjhOvA=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b3B1djF6R0NPSjgzeTJBNk5WMUE1V3lIR2FDTzQ4NUV2aWJjTlIrcnZYeDls?=
+ =?utf-8?B?Y0phZ1UwWTZXQXZBL1pBRzVxb0NCUEI0MWpkUGRlaWliaWNnbW5VV1R6VWFS?=
+ =?utf-8?B?TWkxYmVEeDRsUmlOQ2ZGa1BhaWluZDFaalRWYjRra09XMEJ5eUFYa1dPVmI5?=
+ =?utf-8?B?L2NoQjVoQmdRYXdFR2VwMkppb05DMmRIVVQxNDdiN1FEUlZDTUVBdyt2SW9z?=
+ =?utf-8?B?eGtPbjlNR3VjNWNZbitNRzd0cDhzL0JtNW9IR1J1SGpLSDBTb09QMUk5NHhY?=
+ =?utf-8?B?MG9uZEdjck04TjFsYjNrb3IxOUx0Z3p3VXFsMlFqS09rUVEyR21ETlYxWVV3?=
+ =?utf-8?B?dXdXbDRleXBkS01nTHN5Y3NaWk5KZG0wYW8zS3dPVnZIcUZpbVc3ZzBJek1G?=
+ =?utf-8?B?b2c2b3RpdmFrVXQyWWQyYW1qTnd1bzFZRHpobFlnMkluYUYxSHJzMzJpWC9D?=
+ =?utf-8?B?d2pYd1NLa1VBU3BFNFNrdzA2Zm5lU2Z6MGtyY3dXZmlTdG83TExLY3Uvc3NS?=
+ =?utf-8?B?am1KbEZLUDRDUGM0dHQ4UFp1OTVEM1dFNWdzL2FGNGtqYmlyWVZiRmVkdjBo?=
+ =?utf-8?B?TkVQTHMyck1ISHlyM05lUGtsZWpDdkVrY0xQZEg4Y1Y1dDBjLzRsZCtNZ3Yz?=
+ =?utf-8?B?bGdpRjJTbjlmSjRXSUx6ZjlqOFBYUEhXQzNjVHZVVDU0b0IrZjJzSm15OXRC?=
+ =?utf-8?B?M3NLcFc1WW9uQUthdzZRV3d5cUZDMExhNUFpZlRkQk9LaHVnYmJlYndLK0Jn?=
+ =?utf-8?B?VzZxL256MUhrUE9CazV0TlBHaFIyV01ZVDZDWEJ6SDRJL3NvOGhvc3ZRejB4?=
+ =?utf-8?B?MXVDYnZFZzR1N3JjekIvSGlsMkNMSXhWT2ExRDZnNDRpMkxoRDJlbGRFbkhQ?=
+ =?utf-8?B?V2V2c1ZHS05JRno3eWt3SEFEZ0JiaXAvdG84Q1kxS0ZiakkwcDFRclhKWEZV?=
+ =?utf-8?B?MmxHaFpPQ21McGtFSjlwU1pseUFBQWZoZTJYOHp3T29BRDhueW8xUitJbkll?=
+ =?utf-8?B?MHlKQjJSUDJsVmlKQlh4TmxXSWNVUXhSTWlxNHFoT2hMZ3NxZytBSUxoZzJK?=
+ =?utf-8?B?MDVpbWxuMUJBcWRqYWdLUWZGcStQcE4xcy9ibjBBN20wQXNrdHhjTWxCLzhw?=
+ =?utf-8?B?SThlOWlpZjBJeFNHUjVPSXpmamU3M3gvMGIyMHR0ZWdRdnRXaHlBdlRpMmY0?=
+ =?utf-8?B?aWVjQ3NVWWtNKzhwWHhqVUFOR0xUdit2VlRhZU53eG5hQXdLYVFCa2ZLMEhk?=
+ =?utf-8?B?cGdmR3BjZVZ2dlhmcUp4VTBmU3JqM0ZNQ090RW1MRVhmeEgxR1pkVWRGNzlY?=
+ =?utf-8?B?T2s0ZDE2RTBNbHVML0xReGxjaDByRWhIT0ROTVNrQ1RydDJSem9RTjQvaFg3?=
+ =?utf-8?B?dHdUYXZiU2xtK1JwMThyLy9IMFNTanB4Ni9wTGdqelpxOEFEN2pnZXJBOFI2?=
+ =?utf-8?B?K0xMYy84RCt0YUtrM3pyNlYxcUx5UnZTRDRTeS9SektjeUU0cTc4Vzh5cFlL?=
+ =?utf-8?B?WTBFUVRRb3RPampXSG16cFNBTSsyM3ZOeTZKeXl2TlpJQlluSFNhWXJSNUYx?=
+ =?utf-8?B?aWNLalJtdlNCcXg1TGI3SFI4dkM0TEs3dlduemwzU0MrclpVUVBBYVRwL0pR?=
+ =?utf-8?B?K3RXNTJMZlBON0g3bG0zUFVtaHFCaEtlNVN4K2trZHBuUW15b0dvU0dKN2JP?=
+ =?utf-8?B?dzFIN1VUdytLMVJpNHpzdndnS3ZIVFYrdi9vNnhFaW1iNlI4cmRTMVozRHA3?=
+ =?utf-8?B?OXBxUklaa0pLMWpDeVcwZm9SejVxQVdRckpxOEx1ZGx6WE9HaEtUVVVjeUs5?=
+ =?utf-8?B?cnFwMUJoSDZnTlBuQ2JxVlZsTithY3ZhWmw2VU5SNnJZZitMWkwwa0Fvejkz?=
+ =?utf-8?B?QjhLOVVZVkpLMWNLMHRzZENkVWxlUExIQml3STJyRWdYRmlLcXJCQTlVVFRE?=
+ =?utf-8?B?NVFkWlgvRzRUYlhsWXUwbFlWaXFBU242b0IwL1N6OWFWcXpwbytGUzUwYVNC?=
+ =?utf-8?B?cUN0S2czRlI3U1IrbGw4N3dGSXVDenhBOS9sUkxhaHI3bis1Q01qYVJTcWJa?=
+ =?utf-8?B?NENrMCtOY0daMGxDUTZWZ1lmYTdwK2JKa2Z1cE5MMVRIV3EwRGYzalFVTzhK?=
+ =?utf-8?Q?jCFO43Jw1dQJZHRYfJL//6qkL?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0FE12C0E08301D47A18CA85C98AEF7C3@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i6lgalhwjitwn6se"
-Content-Disposition: inline
-In-Reply-To: <20250721.150803-lavish.ninja.rigid.racism-OCjeOw80sO9@cyphar.com>
-X-Rspamd-Queue-Id: 4bnWGc3P5sz9ssw
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6539230a-0366-47db-0e89-08ddca4494ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 23:56:45.9151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1HDKH+QftVCk9dU/LZzuDji6e3ZI67SsgqsTeZSAaRj1bzHFH3RjdtBhg0DXpyPQO4NY0xVPfHRq5VhuplSv5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8788
+X-OriginatorOrg: intel.com
 
-
---i6lgalhwjitwn6se
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC 0/4] procfs: make reference pidns more user-visible
-MIME-Version: 1.0
-
-On 2025-07-22, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-07-21, Andy Lutomirski <luto@amacapital.net> wrote:
-> > On Mon, Jul 21, 2025 at 1:44=E2=80=AFAM Aleksa Sarai <cyphar@cyphar.com=
-> wrote:
-> > >
-> > > Ever since the introduction of pid namespaces, procfs has had very
-> > > implicit behaviour surrounding them (the pidns used by a procfs mount=
- is
-> > > auto-selected based on the mounting process's active pidns, and the
-> > > pidns itself is basically hidden once the mount has been constructed).
-> > > This has historically meant that userspace was required to do some
-> > > special dances in order to configure the pidns of a procfs mount as
-> > > desired. Examples include:
-> > >
-> > >  * In order to bypass the mnt_too_revealing() check, Kubernetes creat=
-es
-> > >    a procfs mount from an empty pidns so that user namespaced contain=
-ers
-> > >    can be nested (without this, the nested containers would fail to
-> > >    mount procfs). But this requires forking off a helper process beca=
-use
-> > >    you cannot just one-shot this using mount(2).
-> > >
-> > >  * Container runtimes in general need to fork into a container before
-> > >    configuring its mounts, which can lead to security issues in the c=
-ase
-> > >    of shared-pidns containers (a privileged process in the pidns can
-> > >    interact with your container runtime process). While
-> > >    SUID_DUMP_DISABLE and user namespaces make this less of an issue, =
-the
-> > >    strict need for this due to a minor uAPI wart is kind of unfortuna=
-te.
-> > >
-> > > Things would be much easier if there was a way for userspace to just
-> > > specify the pidns they want. Patch 1 implements a new "pidns" argument
-> > > which can be set using fsconfig(2):
-> > >
-> > >     fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
-> > >     fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid=
-", 0);
-> > >
-> > > or classic mount(2) / mount(8):
-> > >
-> > >     // mount -t proc -o pidns=3D/proc/self/ns/pid proc /tmp/proc
-> > >     mount("proc", "/tmp/proc", "proc", MS_..., "pidns=3D/proc/self/ns=
-/pid");
-> > >
-> > > The initial security model I have in this RFC is to be as conservative
-> > > as possible and just mirror the security model for setns(2) -- which
-> > > means that you can only set pidns=3D... to pid namespaces that your
-> > > current pid namespace is a direct ancestor of. This fulfils the
-> > > requirements of container runtimes, but I suspect that this may be too
-> > > strict for some usecases.
-> > >
-> > > The pidns argument is not displayed in mountinfo -- it's not clear to=
- me
-> > > what value it would make sense to show (maybe we could just use ns_dn=
-ame
-> > > to provide an identifier for the namespace, but this number would be
-> > > fairly useless to userspace). I'm open to suggestions.
-> > >
-> > > In addition, being able to figure out what pid namespace is being used
-> > > by a procfs mount is quite useful when you have an administrative
-> > > process (such as a container runtime) which wants to figure out the
-> > > correct way of mapping PIDs between its own namespace and the namespa=
-ce
-> > > for procfs (using NS_GET_{PID,TGID}_{IN,FROM}_PIDNS). There are
-> > > alternative ways to do this, but they all rely on ancillary informati=
-on
-> > > that third-party libraries and tools do not necessarily have access t=
-o.
-> > >
-> > > To make this easier, add a new ioctl (PROCFS_GET_PID_NAMESPACE) which
-> > > can be used to get a reference to the pidns that a procfs is using.
-> > >
-> > > It's not quite clear what is the correct security model for this API,
-> > > but the current approach I've taken is to:
-> > >
-> > >  * Make the ioctl only valid on the root (meaning that a process with=
-out
-> > >    access to the procfs root -- such as only having an fd to a procfs
-> > >    file or some open_tree(2)-like subset -- cannot use this API).
-> > >
-> > >  * Require that the process requesting either has access to
-> > >    /proc/1/ns/pid anyway (i.e. has ptrace-read access to the pidns
-> > >    pid1), has CAP_SYS_ADMIN access to the pidns (i.e. has administrat=
-ive
-> > >    access to it and can join it if they had a handle), or is in a pid=
-ns
-> > >    that is a direct ancestor of the target pidns (i.e. all of the pids
-> > >    are already visible in the procfs for the current process's pidns).
-> >=20
-> > What's the motivation for the ptrace-read option?  While I don't see
-> > an attack off the top of my head, it seems like creating a procfs
-> > mount may give write-ish access to things in the pidns (because the
-> > creator is likely to have CAP_DAC_OVERRIDE, etc) and possibly even
-> > access to namespace-wide things that aren't inherently visible to
-> > PID1.
->=20
-> This latter section is about the privilege model for
-> ioctl(PROCFS_GET_PID_NAMESPACE), not the pidns=3D mount flag. pidns=3D
-> requires CAP_SYS_ADMIN for pidns->user_ns, in addition to the same
-> restrictions as pidns_install() (must be a direct ancestor). Maybe I
-> should add some headers in this cover letter for v2...
->=20
-> For the ioctl -- if the user can ptrace-read pid1 in the pidns, they can
-> open a handle to /proc/1/ns/pid which is exactly the same thing they'd
-> get from PROCFS_GET_PID_NAMESPACE.
->=20
-> > Even the ancestor check seems dicey.  Imagine that uid 1000 makes an
-> > unprivileged container complete with a userns.  Then uid 1001 (outside
-> > the container) makes its own userns and mountns but stays in the init
-> > pidns and then mounts (and owns, with all filesystem-related
-> > capabilities) that mount.  Is this really safe?
->=20
-> As for the ancestor check (for the ioctl), the logic I had was that
-> being in an ancestor pidns means that you already can see all of the
-> subprocesses in your own pidns, so it seems strange to not be able to
-> get a handle to their pidns. Maybe this isn't quite right, idk.
->=20
-> Ultimately there isn't too much you can do with a pidns fd if you don't
-> have privileges to join it (the only thing I can think of is that you
-> could bind-mount it, which could maybe be used to trick an
-> administrative process if they trusted your mountns for some reason).
->=20
-> > CAP_SYS_ADMIN seems about right.
->=20
-> For pidns=3D, sure. For the ioctl, I think this is overkill.
-
-My bad, I forgot to add you to Cc for v2 Andy. PTAL:
-
- <https://lore.kernel.org/all/20250723-procfs-pidns-api-v2-0-621e7edd8e40@c=
-yphar.com/>
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---i6lgalhwjitwn6se
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaIF2WQAKCRAol/rSt+lE
-byrQAQDSb5GrHSNEL0F882yj0V9aT+2idljnDmsMGNvtV4Yb8QD+PnGyDg9rgG4f
-NMqT6s5tlpun08MU8faoFumIO4Nhrw4=
-=ZeKP
------END PGP SIGNATURE-----
-
---i6lgalhwjitwn6se--
+T24gV2VkLCAyMDI1LTA3LTIzIGF0IDIzOjI2ICswMDAwLCBFZGdlY29tYmUsIFJpY2sgUCB3cm90
+ZToNCj4gT24gV2VkLCAyMDI1LTA3LTIzIGF0IDIzOjAxICswMDAwLCBIdWFuZywgS2FpIHdyb3Rl
+Og0KPiA+IFN1Y2ggcmVuYW1pbmcgZ29lcyBhIGxpdHRsZSBiaXQgZmFyIElNSE8uDQo+ID4gDQo+
+IA0KPiBJIGFncmVlIGl0J3Mgbm90IHF1aXRlIG5lY2Vzc2FyeSBjaHVybi4NCj4gDQo+ID4gwqAg
+SSByZXNwZWN0IHRoZSB2YWx1ZSBvZiBoYXZpbmcNCj4gPiAicXVpcmsiIGluIHRoZSBuYW1lLCBi
+dXQgaXQgYWxzbyBzZWVtcyBxdWl0ZSByZWFzb25hYmxlIHRvIG1lIHRvIGhpZGUgc3VjaA0KPiA+
+ICJxdWlyayIgYXQgdGhlIGxhc3QgbGV2ZWwgYnV0IGp1c3QgaGF2aW5nICJyZXNldCBURFggcGFn
+ZXMiIGNvbmNlcHQgaW4gdGhlDQo+ID4gaGlnaGVyIGxldmVscy4NCj4gDQo+IEFzc3VtaW5nIGFs
+bCB0aGUgY29tbWVudHMgZ2V0IGNvcnJlY3RlZCwgdGhpcyBzdGlsbCBsZWF2ZXMgInJlc2V0IiBh
+cyBhbg0KPiBvcGVyYXRpb24gdGhhdCBzb21ldGltZXMgZWFnZXJseSByZXNldHMgdGhlIHBhZ2Us
+IG9yIHNvbWV0aW1lcyBsZWF2ZXMgaXQgdG8gYmUNCj4gbGF6aWx5IGRvbmUgbGF0ZXIgYnkgYSBy
+YW5kb20gYWNjZXNzLsKgDQo+IA0KDQpUaGFua3MgZm9yIHRoZSBwb2ludC4NCg0KWWVhaCBJIGFn
+cmVlIGl0J3MgYmV0dGVyIHRvIGNvbnZleSBzdWNoIGluZm9ybWF0aW9uIGluIHRoZSBmdW5jdGlv
+biBuYW1lLg0KDQoNCj4gTWF5YmUgaW5zdGVhZCBvZiByZXNldCB3aGljaCBpcyBhbiBhY3Rpb24N
+Cj4gdGhhdCBzb21ldGltZXMgaXMgc2tpcHBlZCwgc29tZXRoaW5nIHRoYXQgc2F5cyB3aGF0IHN0
+YXRlIHdlIHdhbnQgdGhlIHBhZ2UgdG8gYmUNCj4gYXQgdGhlIGVuZCAtIHJlYWR5IHRvIHVzZS4N
+Cj4gDQo+IHRkeF9tYWtlX3BhZ2VfcmVhZHkoKQ0KPiB0ZHhfbWFrZV9wYWdlX3VzYWJsZSgpDQo+
+IC4uLm9yIHNvbWV0aGluZyBpbiB0aGF0IGRpcmVjdGlvbi4NCj4gDQo+IEJ1dCB0aGlzIGlzIHN0
+aWxsIGNodXJuLiBLYWksIHdoYXQgZG8geW91IHRoaW5rIGFib3V0IHRoZSBvdGhlciBvcHRpb24g
+b2YganVzdA0KPiBwdXR0aW5nIHRoZSBYODZfQlVHX1REWF9QV19NQ0UgaW4gdGR4X3Jlc2V0X3Bh
+Z2UoKSBhbmQgbGV0dGluZyB0aGUNCj4gaW5pdGlhbGl6YXRpb24gZXJyb3IgcGF0aCAodGRtcnNf
+cmVzZXRfcGFtdF9hbGwoKSkga2VlcCBhbHdheXMgemVyb2luZyB0aGUNCj4gcGFnZXMuIFNvOg0K
+PiANCj4gc3RhdGljIHZvaWQgdGR4X3Jlc2V0X3BhZGRyKHVuc2lnbmVkIGxvbmcgYmFzZSwgdW5z
+aWduZWQgbG9uZyBzaXplKQ0KPiB7DQo+IAkvKiBkb2luZyBNT1ZESVI2NEIgLi4uICovDQo+IH0N
+Cj4gDQo+IHN0YXRpYyB2b2lkIHRkbXJfcmVzZXRfcGFtdChzdHJ1Y3QgdGRtcl9pbmZvICp0ZG1y
+KQ0KPiB7DQo+IAl0ZG1yX2RvX3BhbXRfZnVuYyh0ZG1yLCB0ZHhfcmVzZXRfcGFkZHIpOw0KPiB9
+DQo+IA0KPiB2b2lkIHRkeF9xdWlya19yZXNldF9wYWdlKHN0cnVjdCBwYWdlICpwYWdlKQ0KPiB7
+DQo+IAlpZiAoIWJvb3RfY3B1X2hhc19idWcoWDg2X0JVR19URFhfUFdfTUNFKSkNCj4gCQlyZXR1
+cm47DQo+IA0KPiAJdGR4X3Jlc2V0X3BhZGRyKHBhZ2VfdG9fcGh5cyhwYWdlKSwgUEFHRV9TSVpF
+KTsNCj4gfQ0KPiBFWFBPUlRfU1lNQk9MX0dQTCh0ZHhfcmVzZXRfcGFnZSk7DQoNCkkgZG9uJ3Qg
+dGhpbmsgaXQncyBnb29kIGlkZWEgdG8gdHJlYXQgUEFNVCBhbmQgb3RoZXIgdHlwZXMgb2YgVERY
+IG1lbW9yeQ0KZGlmZmVyZW50bHkuICBJIHdvdWxkIHJhdGhlciBnbyB3aXRoIHRoZSByZW5hbWlu
+ZyBhcyBzaG93biBpbiBBZHJpYW4ncw0KcGF0Y2guDQoNClNvIG5vIG9iamVjdGlvbiBmcm9tIG1l
+LiA6LSkNCg==
 
