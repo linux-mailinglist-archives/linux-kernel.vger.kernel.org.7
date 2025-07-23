@@ -1,177 +1,96 @@
-Return-Path: <linux-kernel+bounces-742540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C408FB0F351
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:11:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DB5B0F37F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78861188782D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:09:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADEDAC4202
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BD02E718B;
-	Wed, 23 Jul 2025 13:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7812EA754;
+	Wed, 23 Jul 2025 13:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbzNAY7c"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyhBhbEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0807E27462;
-	Wed, 23 Jul 2025 13:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0460B2EA494;
+	Wed, 23 Jul 2025 13:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276131; cv=none; b=i2myZvOVoz0lixKK+DtPk62g0AYRPVc1lX611THIAsluRsDhf3Pa0P8psUORNXN93d2J2ftgRtuZ13NfaCk9ip0v60thU8XmIHHYWXnR+gOXMwxuc9qryboFCnTSGurpSWLW84gQIWfhh7a8i3h9gjKnevIHG8Hdjj7i7Xp/QQM=
+	t=1753276182; cv=none; b=sczLw3cVmYQvYmfTE+cWoq4LF6XcznzlFtSa38KbTHBAnU3meLm90Pq1MnZ0Q277CpYXrZmUyc7gabxfTIrni95ioRnNuwtgkmpV0yuGeFMgNr4fl9rDLcEQvw1Tt7wrQ2YY6XAQTayHwBnsZfhZHXLDT2DRb399u43SdTR7l5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276131; c=relaxed/simple;
-	bh=yfmGsiFC+dIczt/LBxNUwbIxH2mD71bvoQ0IaVpl/E8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bRii9kB4+h7LAEqDrB2v4EQ8oHnLxIplyHxSH0/m25ioLEHQCTG8dSkGRU/tH6phs7oNozetkySRWml0/vmirNs+0fFRyNopy/qJxZOjEyQ6dlfIOWRhFdP/xNKTvEutgtLpnLofRqU6XubGHvpvAAdLS4wpxxAhseyL4PrPNyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbzNAY7c; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so1273554466b.1;
-        Wed, 23 Jul 2025 06:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753276127; x=1753880927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=63bvutfPWfULysxs/Y7lfFZ/UW1E0YotNd+dud8Jgvw=;
-        b=cbzNAY7cfrWYOmfAeN3uljifXjlfZFgO0gKDH5ayw+s1p5d2d1QtXvYdJdK/36nXl1
-         zIdJ1frh18AnKQD9kbiX8CLu+EImOJ8ep06e/vs7HvG5KsZRCL2jkb1CXov4pSRvlEgN
-         yf1JBUYnD2O6CG/kKFRmj9owdkAOXN5u3NHNZSRyGPEzPamPQCrqdWPnfVVpILfsP0nk
-         utukMmvQcBpcvNXzOccWiQRHk29/uUYhbUuzzPFtrEHhEERJorS5icVgLyqjbwS3j42z
-         F1mIETB52X0IUTpRcu+97VNmDnI+zixZy/BF78oYpLUomaiM+8p7CZQVPY5fT+lywXTt
-         3HAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753276127; x=1753880927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63bvutfPWfULysxs/Y7lfFZ/UW1E0YotNd+dud8Jgvw=;
-        b=W86O6f8V3EYarMDUX1KHSTq497l4OEySRyqbHla/2ogJddTTVMUwWAvp1nGm72vQUw
-         M8IBcUtc2O7CHgiE+aR1472zXiWdawm6WpPBFNHKYp1B3YIYpeG09CDf112XtYvK/JWg
-         1aX5SwYtjuhFArl8Rvk5R/kSAPi9P/0kgKxfyXh6+sPMvPjaWFkZ4L4voiJqATWoyVgg
-         RAvtRBdo8b86wZ+r+U/5sVbonDzWqAeB3u4DBol7OGgYPd1oReU6Qpue+rORgz95FCQs
-         ResXpJCi+WXn9JE7qrgiR6FpzvCI/xmACWaqaOQYoHy2SxGs3HqJMcmMomwIu8CrwAlh
-         5yGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeWiWYCYUY7QBES1PasUSit3PBAeDbDCBY0VewGT2R1OHbc6SBqPMTEUWu9Hpb+u797qr/OrjU9Kw2PCDc@vger.kernel.org, AJvYcCVWxuAi5bKfcX6aio0QAXn3HtZpDDq5iux/fmj2xl/JEegmRfLHbOoWNBNtjXPQEcbYMyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8ZrU27yXwCP8sZQ2XYLjG3kLbeauegwNlaFUuIllsTZ3dLzI/
-	8bFO2hydbg5rt0G861LY4CvOL2/c2ukWeXKu6pOF26LfqUbXT2zZaD2U
-X-Gm-Gg: ASbGncvPdkGR7m0bUzH8SPOhv1kQOGNTy/d7f/7FSp2tZlxrKJ78q6/5iF/k2RyVAFx
-	JK3c94dGbPkxtiYe+xgv/+E0zIHJA1q8q0fZtMGsXfVdZfiH8+scW4WUS0XMAo+NQ11E82JDRN9
-	TrGX4Kvo/y4XqcBip/K+bYuApPHPNusDc6qunsgb0h40wiih0WGYFHaWh5+tExxTYmn8JNQb/DP
-	ftA1parbY2DfM/7v94M0buoDcgtdQJxtpkMXHIjdQE1LFWzQQo3voVIHWT5qngdCE/F9ps7Gv78
-	hJz13pe1StoEBq7U9x42DyJNeiL+O1fUnTFpTpzNuORxaCA67yRcCmRsPdGZLFrfRczLVxx+yQB
-	fH+K20jlp
-X-Google-Smtp-Source: AGHT+IHLWOHAMOHHN8FAga9AKPQXGXhOOXxYaMY0Wv9st5zkKMY4THWH5NR6RqITn0MxRf2fWTJh5Q==
-X-Received: by 2002:a17:907:3d89:b0:ae0:dfa5:3520 with SMTP id a640c23a62f3a-af2f88579f4mr307934466b.31.1753276126835;
-        Wed, 23 Jul 2025 06:08:46 -0700 (PDT)
-Received: from krava ([173.38.220.33])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79c279sm1044081766b.28.2025.07.23.06.08.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 06:08:46 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 23 Jul 2025 15:08:44 +0200
-To: aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yonghong.song@linux.dev, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yuan Chen <chenyuan@kylinos.cn>
-Subject: Re: [PATCH v5] bpftool: Add CET-aware symbol matching for x86_64
- architectures
-Message-ID: <aIDe3IR2SR6S0WM9@krava>
-References: <20250723022043.20503-1-chenyuan_fl@163.com>
+	s=arc-20240116; t=1753276182; c=relaxed/simple;
+	bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y0J5CkIguB0bI4PXLo9VIofEQfUTEHxh0vh8xxTjEdAC3zO3Krl0jYeMtvW70AJIOV1dJA12a+9RB+569Q1MDY46UGodJjllvq8qmPwslzI52Xdtv9Ow34PsGFsRHLhl03892qrnEBYS+ku0TSW6sQFNq9oEVKz639nB/AvAXUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyhBhbEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76671C4CEE7;
+	Wed, 23 Jul 2025 13:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753276181;
+	bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZyhBhbEcjEzDgWoBWybf0Ek2hF9Lq+/12qnqmLj3A+DqdDMdX0SMzkmCzC1eJ87YT
+	 aIiURxFeKMe1oPnfBoVqAnSl7q0lvcGiQyeVYdOz3Px4GkHlDa3fJkCWSqwNz0piwq
+	 4HYeG2HBGLw6ObuhFiXbQxRjZhGTHlWOY27ZlbfIUs5tb6cxUm5klyWI7HG6dlIiVg
+	 FVskX+DsbmOO1tWMa6ONnNATzggde4zI7JEW1LiLqV4A7Zvq4ATwJxaorWQolHMOTZ
+	 WV0jPEV3PaJof3oOWO9bBPRHDP/U4CXNol+fS6EifEs4FxI9ZzGR/zhZn1pQ1FkKHr
+	 z1+tpM1LAjwQg==
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Subject: Re: [PATCH RESEND] doc: update porting, vfs documentation to describe mmap_prepare()
+Date: Wed, 23 Jul 2025 15:09:26 +0200
+Message-ID: <20250723-formfrage-brokkoli-62228a77f3cb@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250723123036.35472-1-lorenzo.stoakes@oracle.com>
+References: <20250723123036.35472-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723022043.20503-1-chenyuan_fl@163.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=brauner@kernel.org; h=from:subject:message-id; bh=kQr0L3MtwaWm+H8lvaxCeljFh4mQXtQXo0lPIFY8gUI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ03BdY2rX6nNJ9m1sZ02SSzf27kiYYlnJE1GXbxDiYS T2d9C+io5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIx5xl+swW9edZ5Xk4pe2dd 3fNHqiWfNkkmvfQ5eUP2UtrMxamzZjAyrDrBtUxlkZJDkucny3ld59lfHa1/v8/pBJcPv0a2vGE eFwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 10:20:43AM +0800, chenyuan_fl@163.com wrote:
-> From: Yuan Chen <chenyuan@kylinos.cn>
+On Wed, 23 Jul 2025 13:30:36 +0100, Lorenzo Stoakes wrote:
+> Now that we have established .mmap_prepare() as the preferred means by
+> which filesystems establish state upon memory mapping of a file, update the
+> VFS and porting documentation to reflect this.
 > 
-> Adjust symbol matching logic to account for Control-flow Enforcement
-> Technology (CET) on x86_64 systems. CET prefixes functions with
-> a 4-byte 'endbr' instruction, shifting the actual hook entry point to
-> symbol + 4.
+> As part of this change, additionally update the VFS documentation to
+> contain the current state of the file_operations struct.
 > 
-> Changed in PATCH v4:
-> * Refactor repeated code into a function.
-> * Add detection for the x86 architecture.
-> 
-> Changed int PATH v5:
-> * Remove detection for the x86 architecture.
-> 
-> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
-> ---
->  tools/bpf/bpftool/link.c | 26 ++++++++++++++++++++++++--
->  1 file changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
-> index a773e05d5ade..288bf9a032a5 100644
-> --- a/tools/bpf/bpftool/link.c
-> +++ b/tools/bpf/bpftool/link.c
-> @@ -282,6 +282,28 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
->  	return data;
->  }
->  
-> +static bool
-> +symbol_matches_target(__u64 sym_addr, __u64 target_addr)
-> +{
-> +	if (sym_addr == target_addr)
-> +		return true;
-> +
-> +#if defined(__x86_64__)
-> +	/*
-> +	 * On x86_64 architectures with CET (Control-flow Enforcement Technology),
-> +	 * function entry points have a 4-byte 'endbr' instruction prefix.
-> +	 * This causes kprobe hooks to target the address *after* 'endbr'
-> +	 * (symbol address + 4), preserving the CET instruction.
-> +	 * Here we check if the symbol address matches the hook target address
-> +	 * minus 4, indicating a CET-enabled function entry point.
-> +	 */
-> +	if (sym_addr == target_addr - 4)
-> +		return true;
-> +#endif
+> [...]
 
-looks good.. perhaps it might be too much, but should we try to read
-CONFIG_X86_KERNEL_IBT value and do the check based on that? there's
-already some code reading options in probe_kernel_image_config
+Applied to the vfs-6.17.mmap_prepare branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.mmap_prepare branch should appear in linux-next soon.
 
-jirka
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +
-> +	return false;
-> +}
-> +
->  static void
->  show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
->  {
-> @@ -307,7 +329,7 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
->  		goto error;
->  
->  	for (i = 0; i < dd.sym_count; i++) {
-> -		if (dd.sym_mapping[i].address != data[j].addr)
-> +		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
->  			continue;
->  		jsonw_start_object(json_wtr);
->  		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
-> @@ -744,7 +766,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
->  
->  	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
->  	for (i = 0; i < dd.sym_count; i++) {
-> -		if (dd.sym_mapping[i].address != data[j].addr)
-> +		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
->  			continue;
->  		printf("\n\t%016lx %-16llx %s",
->  		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
-> -- 
-> 2.25.1
-> 
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.mmap_prepare
+
+[1/1] doc: update porting, vfs documentation to describe mmap_prepare()
+      https://git.kernel.org/vfs/vfs/c/425c8bb39b03
 
