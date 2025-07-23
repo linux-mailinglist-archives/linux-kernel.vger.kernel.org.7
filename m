@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-742324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD98B0EFF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3C0B0EFFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105DC3AF931
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:36:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286B7583892
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C677287246;
-	Wed, 23 Jul 2025 10:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8632BFC7B;
+	Wed, 23 Jul 2025 10:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IvHzO6I0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zv1I/PdE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2BE286887
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0692C2BD5AF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267018; cv=none; b=buSvmOVJQllFVmq9C2ekTwZ0VOpVUDCT/EnPi2F1t2Xl1ymrLvnRMSC0AZ8Vq1AfvinpXnmPR+tZWo6YeFMv3h0N0lYdGz0BBGLO0YsPlB9rFo8ShYGTdRsw7r3nPTEwh4kQw4UBIbGt562RcSAM33+9X1pWB5bnn37j6wGojug=
+	t=1753267030; cv=none; b=o4otieHBZjDhrTusAkpUXW+2ycLsMWO3wOOQ1wa2WwQbtT/LuGV+aGHBL0bVYaRE9e/XCU4qsGWCT5IF1rD81mPgxVcZTbbSOvgQyBchZpmefpoDRyLTm4KxEwQy70CORdUagdcnN0J8SuRLpRgjOsn9EuKXvx8xlzWA4b9gz0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267018; c=relaxed/simple;
-	bh=fXF7zEtoV3pkDHHk/2jCv9vm7zea7eal1YY9i1TcUJc=;
+	s=arc-20240116; t=1753267030; c=relaxed/simple;
+	bh=VZ6H2QqhGifjHQ2Cq+ZjqLjogniGh02DxOQCdfNC8IE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RKKMRD8baOpj5b8UGDOrg99YjUG1Wp5KuGKnslN5SRxQaQtbQ/Z7qL3Dv4pP+nD8SAWQZ7rxbFGwYEHKs/hOtIMzPLy5+z1cz1e0hEGU89ExdT5/TDieLLculS1/3Sa/JIpn2YRtbggMFlg7UHDwF0D7oWaNCNfgzVHAxCVYxiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IvHzO6I0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753267015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GC/2LupUE5wLX6ukUG4xRAWyfgxjbwSSK+8wvyo+VGw=;
-	b=IvHzO6I0ryBth2DgumleJ5Tv9eUaqurxz7WpzquxhakfkHlfDkY8incdSoBOPwAZmz2a1Q
-	3RiOtuV3R5uPP0T5VbJ41SGk8fBu8FuohFS5SRw1pr15ayf2LpOLElF/PHCx/wbXVuFqu6
-	u9tQ4s6KR3HQN3VtnQ1bFtGHzv5eDjU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-324-aiUQbumtMZupI4JsRsmvfw-1; Wed, 23 Jul 2025 06:36:54 -0400
-X-MC-Unique: aiUQbumtMZupI4JsRsmvfw-1
-X-Mimecast-MFC-AGG-ID: aiUQbumtMZupI4JsRsmvfw_1753267013
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so4335496f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:36:53 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=gXnTAJuE7MsgTIQZ9Yg7Au9tqZ29m1zadumxPDyjH5E5f0SRSAAhnbVqeU6pKRzElugzqX4bSgTjlaeuNnZSTuoixgVMDY72sfj//Lk16zjqUxtQTStApyNNFmKfl+kXV6iOC8EZk+OndDqFt3tXApykLs0njS1Uc6v2VHTMgY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zv1I/PdE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N92gYS024471
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:37:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c3WPPm6RUB+edcD+yYLNUyD+huQyOSescoQcJtylh1s=; b=Zv1I/PdEDk7aA0q1
+	FINhBwRDh/LayvL4SnyhTB1So+vWOL9HgMkPjtiXjvs/t2RB381UOUPA8GnQhXgr
+	e/lmqLi/vYAJ/QEPYJxC+dgTdZkgumz9Bq9ngpqx1juCssJU7Ytf1lULXSppiEZm
+	tQan85pPIEBaSjYz5YKB/OHnINwMaYDpE3QdhlCAEj5Sgu3K71Gq+ZMs7vAF3ECs
+	TvhsNaKcnyTcS/Tcv9f6WQwuXb92QhTj79ippoeK5A97ev1SYuYo/yMyAHdXnTQH
+	YTPQkwsugld8ascrp3XdK8WUMt+p3Iy7dw4L9+ehX8IN72yoxlEkwwOg0lI0grGP
+	T9wC2g==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3eqn3k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:37:07 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7dea65840b8so67428985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:37:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753267013; x=1753871813;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GC/2LupUE5wLX6ukUG4xRAWyfgxjbwSSK+8wvyo+VGw=;
-        b=lpOP39LupTqnuUPfbVF4VPpeQkW/Q7aR3cPMdDvB9oQDmHYlA+5fi/3SUCT7OmHpRr
-         RM5K/QvwQ9Y0SKjXHuDcvRXtzyWpjsF8M3/ZaTu2HleIVEwvnAHpyaWv6XDZyCpGsKZf
-         viCvavfFnA390PRqxUAgDOEVY7PVdLHsAUPGYAMO7CcllXrhilenGeX2gka4o/BruU/N
-         k9JeCISC2fCYmcen4xBA140IDfUOaMR8c4iIK5QyoXGHhZ8tGiNRQbDhgBgaWbu3s/HR
-         syleMdxvR/aC+G1HOGb83BDuWCrjAjfN4AjduNrNKdjsYx2fXTQPs+OI+Q0Xkui5AA9C
-         2CSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBYs94VQJ4p7TRm4gUO0bu49VMhDcrxF5wv5vkI9XqVAxke1ef1HFcHK9MsmKgqE33AEb9coO6JuDyt9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyetBhX7sdVUzVtLsKOai066Dklq/5V/pgbRy1xflNr60R5WAI
-	h4NfcRsh9Tf2JtH1+vcy/VsYWjrUe8Ntp53ueNdgF50NVutDfM/tw66w+h1g7fFOrv/kGVbogVB
-	uPNhcVGkEs8bg3laRiXWcz0vW8+axGEun0Mb6yGY7dczxaMXhB6PpCRWMDFgfablRAA==
-X-Gm-Gg: ASbGncuOPrOeoDcj1bIQFby1vuklfwAyARTrGftc4SZxfeBAOLgGMnMY0PnbkYTh5Tb
-	bMw6pt5CF5Hvh+lioqaZ7ZZdHE/ODimqNUjzaUYffCuQ4hUeRrDEHRKoXj8X9rquuqLABI/PSl7
-	jX31nB3LbG2HNmNu4ljcwaEzPuF5Ak7pSFXKf1TyKRMQGHZP9VQJZCltotmM4H5yIJxWof3tLTT
-	l/pHjU5GVYGW5f51UJrzlBtqWD+0MZT8ZXXn6ttryE7EYrrpwzluRz6OfaNiNEThWG9nKQ79ZQv
-	tOA1KRnH4OgF+w/sUqk9xuXbIIMkN4/j1TaznOXdkux3slHTnZvyqt5Wq6uZZCSwhCNt7A5qSvx
-	dFAx3elJcDxUT9NgOq+JioSRPZUQ6jOffkCZpqJ8PxuUUDZvDb5Mh7PHunar8WgoQXAs=
-X-Received: by 2002:a05:6000:1886:b0:3a5:27ba:479c with SMTP id ffacd0b85a97d-3b768effafdmr2019227f8f.43.1753267012714;
-        Wed, 23 Jul 2025 03:36:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqUvpYeVB0LjNVAtGw7wtGt9ho7Oby82qyjHiMQGf36IgI7a2x1v0eqNwKNc2oJ1e6grFOEA==
-X-Received: by 2002:a05:6000:1886:b0:3a5:27ba:479c with SMTP id ffacd0b85a97d-3b768effafdmr2019195f8f.43.1753267012191;
-        Wed, 23 Jul 2025 03:36:52 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f00:4000:a438:1541:1da1:723a? (p200300d82f004000a43815411da1723a.dip0.t-ipconnect.de. [2003:d8:2f00:4000:a438:1541:1da1:723a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d581sm15775545f8f.64.2025.07.23.03.36.49
+        d=1e100.net; s=20230601; t=1753267026; x=1753871826;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c3WPPm6RUB+edcD+yYLNUyD+huQyOSescoQcJtylh1s=;
+        b=RaWDDOTKXflTe2b2OV5OMkIa7m2oMuGkEh6NT9r9GRbBWW0WHQXtf4YMHhzd/yydo2
+         cKO4Uc0t2YmMYUG9/74yOUxQVVGnsVwaWHjtpC6qf7rSuvHor3s0P34NGdEw8Sihe4/h
+         QqwpxFSkItOA0qrCpN7mJCBG/q3bk30YwuJiomqPLW2f+i7I2wrZu52cUGLEIuSymWGV
+         lcMrvqis/pqyjxYf2TSnAHNmcsLm5zXAooNl4nsACTMt0lRMLOvbHwKmyTj/kQFlOW4i
+         PhVtXMWPKLsIelLEndRrYgVvZNDJ7zrv1P9HB7vemqbYTJJvBo9MSI4w4cAy9tyKOFls
+         +vaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDZTXEbP8HQ7MQug7AWrfPSdcmyfv0MjIDjZFaCQHmIhE+0swFipIROFy4oCsldgHW33COanV6ixzJN6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW5hKci1gG8zpztvaKDLahe7o1WWwLiYehGX9qFbW+Fg5AK6uj
+	AMT06Qtd+qqkiTbURR2h01bIShAY/GHqmn5DJJ2ROVWOLNUo/sY0tpNm4n/AxWD14qC41jCaLdo
+	6vPRVFueQzpjGx1eLcKF5s29ro5015Ou8HClGb8gDm2ylD1POlIUpyCZgxUhIKUL0E0M=
+X-Gm-Gg: ASbGnctkA0Q17J7JE23MQ3RNGzlC1xqgz6n1HK6XosEgevhteO9osRxaanXpk+U1vr1
+	e6qAeTi22+uLf4PzQJE0CXcgP2eLwmYrIDiQg6/LMgf2inaTh9A9sVCpYWdEiNzTniQYmLnfvzI
+	t2s/zughtUu1Hl3R5ajP3YXPaM49tQ3lxBNWROarm06506JHeclZFj5ntTOuWg4Z3X0kSxf57pR
+	LsPEdI/4qvLgeIB4YL/PnTBiSTdd1H+tOo7PgjeLjdYUL2IbeYiu3715xrmd5hzsN3nYvw3pakO
+	y8nQPkqzqn8uH2yIw8AUeSZxZIg7spBDZWbvIjL0tW/D6zDVm1z/FWCp2TpMignMP5HkjSQtHKQ
+	ZZ3I7MeRbPAxqIodfcQ==
+X-Received: by 2002:a05:620a:2609:b0:7e3:3996:f491 with SMTP id af79cd13be357-7e62a0a57c4mr134095385a.1.1753267026396;
+        Wed, 23 Jul 2025 03:37:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHf4hV1cEmi4SrXNUuipDGElpSF5X/2irJs3VnwL9DVxlwxrsZDYzctE6f2Vdwwz4dC9NujMg==
+X-Received: by 2002:a05:620a:2609:b0:7e3:3996:f491 with SMTP id af79cd13be357-7e62a0a57c4mr134093185a.1.1753267025970;
+        Wed, 23 Jul 2025 03:37:05 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d89cdsm1029598966b.62.2025.07.23.03.37.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 03:36:50 -0700 (PDT)
-Message-ID: <cbf19dfd-f1a2-4fec-bee4-137df33098d6@redhat.com>
-Date: Wed, 23 Jul 2025 12:36:49 +0200
+        Wed, 23 Jul 2025 03:37:05 -0700 (PDT)
+Message-ID: <2182b484-9ccc-4ebf-89f4-519646958413@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 12:37:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,221 +89,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: add MM MISC section, add missing files to
- MISC and CORE
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
-References: <20250723095823.21940-1-lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH V3 3/4] mmc: sdhci-msm: Add Device tree parsing logic for
+ DLL settings
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sachin Gupta <quic_sachgupt@quicinc.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, quic_cang@quicinc.com,
+        quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com,
+        quic_mapa@quicinc.com, quic_narepall@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sartgarg@quicinc.com
+References: <20250122094707.24859-1-quic_sachgupt@quicinc.com>
+ <20250122094707.24859-4-quic_sachgupt@quicinc.com>
+ <6xvsnmbnnvpmlgvmi42pt4d3ugkrxhrgrkp56szqhgh2foxe72@z4ildfxufq7j>
+ <c6ca33b2-f8c5-66e7-bb3b-dd595ed040c5@quicinc.com>
+ <d0af754d-8deb-041f-8e34-1c1214fccb09@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250723095823.21940-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <d0af754d-8deb-041f-8e34-1c1214fccb09@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: CpIzRRAx2wC_1ZzNi3-m--KIJ7MqZuAf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA4OSBTYWx0ZWRfX+qq1vCBpWhZp
+ UrQpozIoxdCMUFIgJ05GbhXdF3gkpeUmxppZrKuxiQfiPE+n+PUibXlzfZY/6vCjRGGCbGLCJK9
+ fW3oudVYmFrC5SMjaubs3xJ+9uYiGGgNb5gAF8s0L34GixBuRj+8WHkl6ORiDZYfLAII3n0cs1z
+ OaJI1I6uFn4/9GupOVubY8hoS8GCMggPGdQr/O3oaHoDcK1Ie378S0fQWf9C9SJJX4RtwBeC1OQ
+ os2cDe62Pll/CVXq2MSgcRLE8jZn5gHxFo4cysOal7ln1KBHITqRSD0Vwhalfp++BSmyqiY1Vh2
+ 6vP8SzLn60Dhe1NFoiHc2xy22zAWqpswN6XHfVNmRlrYcFqzrlzgXhPjdKX8OLrYVHaqPCSnihX
+ 8gI9sWA0uXCwD4iYmFsTL0hnCuv6mqyXMM3JMSzdrR5zbmCiPRxbfwbu+v/yIqXP9/rBenzl
+X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=6880bb53 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=OTpidQhUJuL9SOIRPhwA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: CpIzRRAx2wC_1ZzNi3-m--KIJ7MqZuAf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230089
 
-On 23.07.25 11:58, Lorenzo Stoakes wrote:
-> Add a MEMORY MANAGEMENT - MISC section to contain files that are not described
-> by other sections, moving all but the catch-all mm/ and tools/mm/ from MEMORY
-> MANAGEMENT to MEMORY MANAGEMENT - CORE and MEMORY MANAGEMENT - MISC as
-> appropriate.
-
-Curious: do we need the catch-all because of untracked files, or because 
-of future files?
-
+On 7/23/25 12:14 PM, Ram Prakash Gupta wrote:
 > 
-> In both sections add remaining missing files. At this point, with the other
-> recent MAINTAINERS changes, this should now mean that every memory
-> management-related file has a section and assigned maintainers/reviewers.
+> On 6/10/2025 5:47 PM, Ram Prakash Gupta wrote:
+>> Hi Dmitry,
+>>
+>> As updated in [PATCH V3 2/2] of this series, I have started now to continue
+>> this work. Will address your comment next.
+>>
+>> Thanks,
+>> Ram
+
+[...]
+
+>>> And the pointer to dll_table is lost, lingering for the driver lifetime.
+>>> Please drop the devm_ part and kfree() it once it is not used anymore.
 > 
-> Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
-> CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
-> related for this to be sensible.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
-> 
-> v2:
-> * Propagate ack (thanks Mike!)
-> * Retain MEMORY MANAGEMENT section to contain the global mm/ and tools/mm/
->    directories and remove from MEMORY MANAGEMENT - MISC section, I misunderstood
->    how these catch-alls would work. As reported by Vlastimil.
-> * Update cover letter and subject to reflect the above.
-> 
-> v1:
-> https://lore.kernel.org/all/20250722192704.164758-1-lorenzo.stoakes@oracle.com/
-> 
-> 
->   MAINTAINERS | 68 ++++++++++++++++++++++++++++++++++++++++++-----------
->   1 file changed, 54 insertions(+), 14 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 507a999f1955..5a9d4c57add4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15741,22 +15741,8 @@ S:	Maintained
->   W:	http://www.linux-mm.org
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->   T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
-> -F:	Documentation/admin-guide/mm/
-> -F:	Documentation/mm/
-> -F:	include/linux/gfp.h
-> -F:	include/linux/gfp_types.h
-> -F:	include/linux/memory_hotplug.h
-> -F:	include/linux/memory-tiers.h
-> -F:	include/linux/mempolicy.h
-> -F:	include/linux/mempool.h
-> -F:	include/linux/mmzone.h
-> -F:	include/linux/mmu_notifier.h
-> -F:	include/linux/pagewalk.h
-> -F:	include/trace/events/ksm.h
->   F:	mm/
->   F:	tools/mm/
-> -F:	tools/testing/selftests/mm/
-> -N:	include/linux/page[-_]*
-> 
->   MEMORY MANAGEMENT - CORE
->   M:	Andrew Morton <akpm@linux-foundation.org>
-> @@ -15771,18 +15757,32 @@ L:	linux-mm@kvack.org
->   S:	Maintained
->   W:	http://www.linux-mm.org
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	include/linux/gfp.h
-> +F:	include/linux/gfp_types.h
->   F:	include/linux/memory.h
->   F:	include/linux/mm.h
->   F:	include/linux/mm_*.h
-> +F:	include/linux/mmzone.h
->   F:	include/linux/mmdebug.h
->   F:	include/linux/pagewalk.h
->   F:	kernel/fork.c
->   F:	mm/Kconfig
->   F:	mm/debug.c
-> +F:	mm/folio-compat.c
-> +F:	mm/highmem.c
->   F:	mm/init-mm.c
-> +F:	mm/internal.h
-> +F:	mm/maccess.c
->   F:	mm/memory.c
-> +F:	mm/mmzone.c
->   F:	mm/pagewalk.c
-> +F:	mm/pgtable-generic.c
-> +F:	mm/sparse-vmemmap.c
-> +F:	mm/sparse.c
->   F:	mm/util.c
-> +F:	mm/vmpressure.c
-> +F:	mm/vmstat.c
-> +N:	include/linux/page[-_]*
-> 
->   MEMORY MANAGEMENT - EXECMEM
->   M:	Andrew Morton <akpm@linux-foundation.org>
-> @@ -15844,6 +15844,46 @@ F:	mm/mempolicy.c
->   F:	mm/migrate.c
->   F:	mm/migrate_device.c
-> 
-> +MEMORY MANAGEMENT - MISC
-> +M:	Andrew Morton <akpm@linux-foundation.org>
-> +M:	David Hildenbrand <david@redhat.com>
-> +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> +R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Mike Rapoport <rppt@kernel.org>
-> +R:	Suren Baghdasaryan <surenb@google.com>
-> +R:	Michal Hocko <mhocko@suse.com>
-> +L:	linux-mm@kvack.org
-> +S:	Maintained
-> +W:	http://www.linux-mm.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	Documentation/admin-guide/mm/
-> +F:	Documentation/mm/
-> +F:	include/linux/memory-tiers.h
-> +F:	include/linux/mempolicy.h
+> ok, I ll allocate memory using kzalloc in function  sdhci_msm_dt_get_array
+>  and kfree() after copying data in this function.
 
-That is already under "MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION"
+You can use __free() nowadays (see e.g. drivers/soc/qcom/mdt_loader.c :
+mdt_load_split_segment), which will dispose of the memory when it goes
+out of scope, limiting the need to clean it up every error path
+separately
 
-> +F:	include/linux/mempool.h
-> +F:	include/linux/memremap.h
-
-That will be MEMORY_HOTPLUG, right?
-
-> +F:	include/linux/mmu_notifier.h
-> +F:	include/trace/events/ksm.h
-
-This is already in the KSM section.
-
-> +F:	mm/backing-dev.c
-> +F:	mm/cma.c
-> +F:	mm/cma_debug.c
-> +F:	mm/cma_sysfs.c
-> +F:	mm/dmapool.c
-> +F:	mm/dmapool_test.c
-> +F:	mm/early_ioremap.c
-> +F:	mm/fadvise.c
-> +F:	mm/io-mapping.c
-> +F:	mm/ioremap.c
-> +F:	mm/mapping_dirty_helpers.c
-> +F:	mm/memory-tiers.c
-> +F:	mm/mmu_notifier.c
-> +F:	mm/page_idle.c
-> +F:	mm/pgalloc-track.h
-> +F:	mm/process_vm_access.c
-> +F:	mm/ptdump.c
-> +F:	tools/testing/selftests/mm/
-
-Kind-of a catch-all as well.
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+Konrad
 
