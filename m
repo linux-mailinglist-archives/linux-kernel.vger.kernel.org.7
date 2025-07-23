@@ -1,458 +1,205 @@
-Return-Path: <linux-kernel+bounces-743145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC48EB0FB26
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B36B0FB2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1DF542EC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:52:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500061CC08FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD2D233D9E;
-	Wed, 23 Jul 2025 19:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5133D229B21;
+	Wed, 23 Jul 2025 19:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddIPuekV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V+0pYH0h"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C1C230D0E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3BE22FAFD
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300341; cv=none; b=Rvm4ufrJ7yyySASIvA5zUhXwcOdnzj8d0ifNYm9gofe1iE3V8faV8R2c1WGull97pr2mHnitFX5R0zqULXqpFwt6mPoDfGJuOJdUvvq2hIT/VBzHnYIa1AunY5UI0Mavh1gX7p22MtJXTKCPAm8Hf8BLlFBdn+3iZCGIuJ3BDzQ=
+	t=1753300401; cv=none; b=MJgrQq9TscpFpYGSRH0Pg6G5L8AecR+78S0LihP+K42QzftgG+eeOGqBvWCmMEXJuM1alcivGeF9XG0ThqFnK1DKULtQIjkXYiR/ZvNY5FV/I7vs7/bsCBIelTFDdAORAuYWNyeYnriMYRTESSfIuvbjmPb0g8hjdBoBiPwsLhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300341; c=relaxed/simple;
-	bh=Y5JsE5tRSSsP92MKvSWNiCM6v9jYg1QggN8lxHqWiDk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=VMyiTEvyqWR1DGUj7eSkw/Zbhb7fgDB/iPZ+og2jiWDE4XT5vIIFynOL4jbJ0u5ia/EQsL0PZEX065whmSfbi6QMzltMJGrPxnaG4zeAH8QWZ5omfBPUF57e5TL2xwAq0OwBQopeQ5WptdG/G9G9aGYvrNf4Tp2sFARQ3gTVlIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddIPuekV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D84F9C4CEF8;
-	Wed, 23 Jul 2025 19:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753300341;
-	bh=Y5JsE5tRSSsP92MKvSWNiCM6v9jYg1QggN8lxHqWiDk=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=ddIPuekVA3BHjyDf6F/Isws+PDptKeZxiyrE8gWApu4IVbmHZEh50tTmzC9EJjhlB
-	 uNwIXxYpl3u760x4dtJ1YLkIc4k0dOkPiNz7dnT1RCZGrc+vqy6tOz6PMqUQ9tx31h
-	 +WXeHjIjYjK2zXCQLDmxl/hXcz5zLhjFydfylNyE2NuWnmv7c0M/UPCnf2FyCYT76T
-	 UoWZ7pMNikEfC2KL9A+f/7TE8iVlV1bMYIZ9QYo8VRBEfVHOR7/iVpMlRNlasNjBvK
-	 MxCgEHjM5QhodLXfEoFYX2bZwMYPSznhE/Z7eyXzpCzm1vIc8+qsPfh0ZhnRoZBTpD
-	 z96BXuPJpwfdg==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1uefVm-00000000QvF-20uE;
-	Wed, 23 Jul 2025 15:52:22 -0400
-Message-ID: <20250723195222.333798731@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 23 Jul 2025 15:52:11 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [for-next][PATCH 3/3] tracing: Remove redundant config HAVE_FTRACE_MCOUNT_RECORD
-References: <20250723195208.164959427@kernel.org>
+	s=arc-20240116; t=1753300401; c=relaxed/simple;
+	bh=+tFh962v8sYhok4cVRelwItYZlJghinDgEuVc6mAJxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bQRIGaIcePLPycnNTYenaIwdEu3c49OMZomsr0cpkupLMcO94+ZsgBRlG05YkRBqe8OEYJJ2tQnpbg4utbhXxlc7VcRLD7Esj782T0+P9gbrMPgifUPk9jqAZlofsgODlo/xcfF/+lL6sgHpjnt/h5ugoyIXSzr09fdQPK3iU1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V+0pYH0h; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso416a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753300398; x=1753905198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3bnpcnE1fkwQyW3rhyr9hOHNwso9We4QMT1uHZvBtss=;
+        b=V+0pYH0hLPhoOl94KDGyjsZILz3tcNjBQt7oA3Bboy3wrt3xCeuEtINQc4lTwVtf+Y
+         gHS2fUGbMvLkKU7pFNRSazRGqJsxO3Ga14yxnGZCMKRUsM6UfewnxyzLkwL0sI/QNel7
+         HtkaUw9SddS82IPEPLXUP7nkVcpaNuNpIY6X3eO+eA/2HKslY2ejwftwhnwl39hZxbKa
+         wcHpxnL7qEcXOfNJSlAAQwfDoQ3mLkoH83FSWkNLDdVDeO23zu5SNtcLuER0+z+74ZXz
+         wPr2/VcAtnsxY9yBnKesIJfEACwv14ZROjP3MRyaHd5g3kMs24gkfoRKQuyEILo5GPtj
+         n7ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753300398; x=1753905198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3bnpcnE1fkwQyW3rhyr9hOHNwso9We4QMT1uHZvBtss=;
+        b=sEtW/sLl9CjvqxtXB6s5HGmIgVOKmVHmkmRCydZJrDM+CzQ0++WsNPVCTvxlvBUV2G
+         UjE08NykpuCPn6GLK8Xv+07pY873SD/ysKqDv5o4QfpPCJwhbT77LZIyiqhkUKBXwUMI
+         yLh9c2HuSC1ylPQYSv8DPPfeMpGJUkEPODEG25S6JmM41/8UymjQEP2zBlrkb+eeaaKU
+         V5SSHXV6ubs2WEXrEvh1zqYozkAXcMsSQKFW+N+4z5pdJk4VOfxpebSwyzfwN26Z1T2g
+         pvREnyc1HTjZWdBcMvc5STJhp4v0jUH6ZifEH+RBimJOhgGsGM67awd70mfztRLVQsEq
+         BkuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCENLDo4gPnHsO8dT/zFWFUSQ9Zo7mrLDcoOyFcngOWpFo1sfjVoaN9x8ccl6YdVWLzDuN6H0247zezYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCkDHjHW8sG3x4cS50ST5YH8Bm5VKeD7peufGbSeDXINT5QIoM
+	tlol2d5KGapHAd/gMKBrVb1GgtOn3ZffMv6m0+X0OtO9U1hTn4p1HCw3e6NBxpuprZN70gcm5Q1
+	U0FSksU5IYCc2ki6Ilxul18rveqx7+CRA6Cz8yenm
+X-Gm-Gg: ASbGncs4aSylckl0EkY1ktvkZpvUnERDJ/40rJ/e+ueHsWWsibvvZe+i1iRUhGCGPIH
+	x0nK4dWaSKs4PbsQV8rEnuLzg1JM0tHw/+VJ/BcNudOz2xSIdnbGMNQIyiB7FR55JnbwOs4v+sZ
+	xJJuVI7jZD7T33CwKjb4SIVZ92gONohXl8E6Mhhcl/sktshgwn0biniQASM3zcINPwxomFzYSpD
+	S0LiPNhchk6MGqGSE0fdjz84NlN1ZvRlpE=
+X-Google-Smtp-Source: AGHT+IEpUE9GYvSLtb7w3d/O+eozi8+DViR6ZZEdPliTC+wgOSS818919CJlmXbVLWW4EIEGd+NJv6m8e+Vvpdp5io8=
+X-Received: by 2002:a05:6402:290e:b0:60e:5391:a9e5 with SMTP id
+ 4fb4d7f45d1cf-614c50e54camr9355a12.5.1753300397200; Wed, 23 Jul 2025 12:53:17
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+ <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz> <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
+ <c53b22c3-9f7f-4793-9d10-f4df861a3e32@suse.cz> <CAG48ez2cGX3e5bqgcw0OEnho29+YhwG2eOrHRgNwGAA_Nb65nw@mail.gmail.com>
+ <28e1fc65-995c-4185-b5c2-7eb001312698@lucifer.local>
+In-Reply-To: <28e1fc65-995c-4185-b5c2-7eb001312698@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 23 Jul 2025 21:52:41 +0200
+X-Gm-Features: Ac12FXwPWJF6R7SG9BtZJpb2I9YFfCkUYHPki1cbGvCKwCZKU_i67BSwznUK6t8
+Message-ID: <CAG48ez0KE9bfFJ+yAMPUAj=_hcNRfes3=nfQd7Rv95TSnHtUCg@mail.gmail.com>
+Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
+ vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>, 
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Jul 23, 2025 at 8:39=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Wed, Jul 23, 2025 at 08:19:09PM +0200, Jann Horn wrote:
+> > On Wed, Jul 23, 2025 at 8:10=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> > > On 7/23/25 19:49, Jann Horn wrote:
+> > > > On Wed, Jul 23, 2025 at 7:32=E2=80=AFPM Vlastimil Babka <vbabka@sus=
+e.cz> wrote:
+> > > >> On 7/23/25 18:26, Jann Horn wrote:
+> > > >> > There's a racy UAF in `vma_refcount_put()` when called on the
+> > > >> > `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is us=
+ed
+> > > >> > without sufficient protection against concurrent object reuse:
+> > > >>
+> > > >> Oof.
+> > > >>
+> > > >> > I'm not sure what the right fix is; I guess one approach would b=
+e to
+> > > >> > have a special version of vma_refcount_put() for cases where the=
+ VMA
+> > > >> > has been recycled by another MM that grabs an extra reference to=
+ the
+> > > >> > MM? But then dropping a reference to the MM afterwards might be =
+a bit
+> > > >> > annoying and might require something like mmdrop_async()...
+> > > >>
+> > > >> Would we need mmdrop_async()? Isn't this the case for mmget_not_ze=
+ro() and
+> > > >> mmput_async()?
+> > > >
+> > > > Now I'm not sure anymore if either of those approaches would work,
+> > > > because they rely on the task that's removing the VMA to wait until=
+ we
+> > > > do __refcount_dec_and_test() before deleting the MM... but I don't
+> > > > think we have any such guarantee...
+> > >
+> > > I think it would be waiting in exit_mmap->vma_mark_detached(), but th=
+en
+> > > AFAIU you're right and we'd really need to work with mmgrab/mmdrop be=
+cause
+> > > at that point the  mmget_not_zero() would already be failing...
+> >
+> > Ah, I see! vma_mark_detached() drops its reference, then does
+> > __vma_enter_locked() to bump the refcount by VMA_LOCK_OFFSET again
+> > (after which the reader path can't acquire it anymore), then waits
+> > until the refcount drops to VMA_LOCK_OFFSET, and then decrements it
+> > down to 0 from there. Makes sense.
+>
+> Sorry, this is really my fault because I didn't closely follow the
+> reimplementation of the VMA locks closely enough and so am a little behin=
+d
+> here (I'll fix this, probably by documenting them fully in the relevant d=
+oc
+> page).
+>
+> So forgive me if I"m asking stupid questions.
+>
+> What exactly is the issue with the waiter not being triggered?
+>
+> I see in vma_mark_detached():
+>
+>         /*
+>          * We are the only writer, so no need to use vma_refcount_put().
+>          * The condition below is unlikely because the vma has been alrea=
+dy
+>          * write-locked and readers can increment vm_refcnt only temporar=
+ily
+>          * before they check vm_lock_seq, realize the vma is locked and d=
+rop
+>          * back the vm_refcnt. That is a narrow window for observing a ra=
+ised
+>          * vm_refcnt.
+>          */
+>
+> So, if this is happening at the point of the unmap, and we're unlucky eno=
+ugh to
+> have some readers have spuriously incremented the refcnt before they chec=
+k
+> vm_lock_seq, we trigger __vma_enter_locked() and wait on other VMAs to
+> vma_refcount_put() to wake it up vai rcuwait_wake_up() if the refcount is=
+ still
+> raised (which it should be right?)
 
-Ftrace is tightly coupled with architecture specific code because it
-requires the use of trampolines written in assembly. This means that when
-a new feature or optimization is made, it must be done for all
-architectures. To simplify the approach, CONFIG_HAVE_FTRACE_* configs are
-added to denote which architecture has the new enhancement so that other
-architectures can still function until they too have been updated.
+I'm not sure if I'm understanding you correctly; but yes,
+__vma_enter_locked() waits for all the waiters to drop their
+"refcounts". (It's not really a refcount, you can also think of it as
+a sleepable read-write lock where the low bits are the number of
+readers.)
 
-The CONFIG_HAVE_FTRACE_MCOUNT was added to help simplify the
-DYNAMIC_FTRACE work, but now every architecture that implements
-DYNAMIC_FTRACE also has HAVE_FTRACE_MCOUNT set too, making it redundant
-with the HAVE_DYNAMIC_FTRACE.
+> So actually are we going to be left with readers sat around waiting forev=
+er? If
+> the scenario mentioned happens?
 
-Remove the HAVE_FTRACE_MCOUNT config and use DYNAMIC_FTRACE directly where
-applicable.
+I'm not sure I understand the question. Readers don't wait, they bail
+out if they hit contention and retry with the mmap lock. As far as VMA
+locks are concerned, readers basically always trylock, only writers
+can wait.
 
-Link: https://lore.kernel.org/all/20250703154916.48e3ada7@gandalf.local.home/
+> If we make the rando mm we are now referencing stick around, aren't we ju=
+st
+> spuriously triggering this thing while potentially leaving actual waiters
+> waiting?
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/20250704104838.27a18690@gandalf.local.home
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- Documentation/trace/ftrace-design.rst | 12 ++++--------
- arch/arm/Kconfig                      |  1 -
- arch/arm64/Kconfig                    |  1 -
- arch/csky/Kconfig                     |  1 -
- arch/loongarch/Kconfig                |  1 -
- arch/microblaze/Kconfig               |  1 -
- arch/mips/Kconfig                     |  1 -
- arch/parisc/Kconfig                   |  1 -
- arch/powerpc/Kconfig                  |  1 -
- arch/riscv/Kconfig                    |  1 -
- arch/s390/Kconfig                     |  1 -
- arch/sh/Kconfig                       |  1 -
- arch/sparc/Kconfig                    |  1 -
- arch/x86/Kconfig                      |  1 -
- include/asm-generic/vmlinux.lds.h     |  2 +-
- include/linux/ftrace.h                |  2 +-
- include/linux/kernel.h                |  6 +++---
- include/linux/module.h                |  2 +-
- kernel/module/main.c                  |  2 +-
- kernel/trace/Kconfig                  | 18 ++++--------------
- kernel/trace/ftrace.c                 |  4 ----
- scripts/recordmcount.pl               |  2 +-
- 22 files changed, 16 insertions(+), 47 deletions(-)
+In that case, the thing we've read-locked is not part of the MM we
+were trying to operate on, it is part of the rando other VM, so the
+writers we've blocked are also part of the rando other VM, and so the
+rando other VM is where we have to do a wakeup.
 
-diff --git a/Documentation/trace/ftrace-design.rst b/Documentation/trace/ftrace-design.rst
-index dc82d64b3a44..8f4fab3f9324 100644
---- a/Documentation/trace/ftrace-design.rst
-+++ b/Documentation/trace/ftrace-design.rst
-@@ -238,19 +238,15 @@ You need very few things to get the syscalls tracing in an arch.
-   - Tag this arch as HAVE_SYSCALL_TRACEPOINTS.
- 
- 
--HAVE_FTRACE_MCOUNT_RECORD
---------------------------
-+HAVE_DYNAMIC_FTRACE
-+-------------------
- 
- See scripts/recordmcount.pl for more info.  Just fill in the arch-specific
- details for how to locate the addresses of mcount call sites via objdump.
- This option doesn't make much sense without also implementing dynamic ftrace.
- 
--
--HAVE_DYNAMIC_FTRACE
---------------------
--
--You will first need HAVE_FTRACE_MCOUNT_RECORD and HAVE_FUNCTION_TRACER, so
--scroll your reader back up if you got over eager.
-+You will first need HAVE_FUNCTION_TRACER, so scroll your reader back up if you
-+got over eager.
- 
- Once those are out of the way, you will need to implement:
- 	- asm/ftrace.h:
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 3072731fe09c..33cc9dbb7f68 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -107,7 +107,6 @@ config ARM
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && MMU
- 	select HAVE_EXIT_THREAD
- 	select HAVE_GUP_FAST if ARM_LPAE
--	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 55fc331af337..f943a07db139 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -223,7 +223,6 @@ config ARM64
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
- 	select HAVE_FTRACE_GRAPH_FUNC
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_FREGS
-diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-index acc431c331b0..4331313a42ff 100644
---- a/arch/csky/Kconfig
-+++ b/arch/csky/Kconfig
-@@ -80,7 +80,6 @@ config CSKY
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_ERROR_INJECTION
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_LZO
- 	select HAVE_KERNEL_LZMA
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 4b19f93379a1..bead8266dc5c 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -144,7 +144,6 @@ config LOONGARCH
- 	select HAVE_EXIT_THREAD
- 	select HAVE_GUP_FAST
- 	select HAVE_FTRACE_GRAPH_FUNC
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_FREGS
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index f18ec02ddeb2..484ebb3baedf 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -28,7 +28,6 @@ config MICROBLAZE
- 	select HAVE_DEBUG_KMEMLEAK
- 	select HAVE_DMA_CONTIGUOUS
- 	select HAVE_DYNAMIC_FTRACE
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_PAGE_SIZE_4KB
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 1e48184ecf1e..268730824f75 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -73,7 +73,6 @@ config MIPS
- 	select HAVE_EBPF_JIT if !CPU_MICROMIPS
- 	select HAVE_EXIT_THREAD
- 	select HAVE_GUP_FAST
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_GCC_PLUGINS
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index fcc5973f7519..2efa4b08b7b8 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -81,7 +81,6 @@ config PARISC
- 	select HAVE_KPROBES
- 	select HAVE_KRETPROBES
- 	select HAVE_DYNAMIC_FTRACE if $(cc-option,-fpatchable-function-entry=1,1)
--	select HAVE_FTRACE_MCOUNT_RECORD if HAVE_DYNAMIC_FTRACE
- 	select FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY if DYNAMIC_FTRACE
- 	select HAVE_KPROBES_ON_FTRACE
- 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c3e0cc83f120..cb4fb8d73300 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -246,7 +246,6 @@ config PPC
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
- 	select HAVE_FTRACE_GRAPH_FUNC
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
- 	select HAVE_FUNCTION_ERROR_INJECTION
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index d71ea0f4466f..62ec265e2962 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -159,7 +159,6 @@ config RISCV
- 	select HAVE_DYNAMIC_FTRACE_WITH_CALL_OPS if (DYNAMIC_FTRACE_WITH_ARGS && !CFI_CLANG)
- 	select HAVE_DYNAMIC_FTRACE_WITH_ARGS if HAVE_DYNAMIC_FTRACE
- 	select HAVE_FTRACE_GRAPH_FUNC
--	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
- 	select HAVE_FUNCTION_GRAPH_TRACER if HAVE_DYNAMIC_FTRACE_WITH_ARGS
- 	select HAVE_FUNCTION_GRAPH_FREGS
- 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 0c16dc443e2f..d956e85f0465 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -199,7 +199,6 @@ config S390
- 	select HAVE_GUP_FAST
- 	select HAVE_FENTRY
- 	select HAVE_FTRACE_GRAPH_FUNC
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_FREGS
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 89185af7bcc9..d5795067befa 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -40,7 +40,6 @@ config SUPERH
- 	select HAVE_GUP_FAST if MMU
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_HW_BREAKPOINT
- 	select HAVE_IOREMAP_PROT if MMU && !X2TLB
- 	select HAVE_KERNEL_BZIP2
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 0f88123925a4..f307e730446c 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -78,7 +78,6 @@ config SPARC64
- 	select MMU_GATHER_NO_FLUSH_CACHE
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
- 	select HAVE_DYNAMIC_FTRACE
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_PAGE_SIZE_8KB
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 71019b3b54ea..eb07f236ce53 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -244,7 +244,6 @@ config X86
- 	select HAVE_GUP_FAST
- 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
- 	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
--	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_FREGS	if HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_GRAPH_TRACER	if X86_32 || (X86_64 && DYNAMIC_FTRACE)
- 	select HAVE_FUNCTION_TRACER
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index fa5f19b8d53a..ae2d2359b79e 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -167,7 +167,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- #define FTRACE_STUB_HACK
- #endif
- 
--#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#ifdef CONFIG_DYNAMIC_FTRACE
- /*
-  * The ftrace call sites are logged to a section whose name depends on the
-  * compiler option used. A given kernel image will only use one, AKA
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index b672ca15f265..7ded7df6e9b5 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1108,7 +1108,7 @@ static __always_inline unsigned long get_lock_parent_ip(void)
- # define trace_preempt_off(a0, a1) do { } while (0)
- #endif
- 
--#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#ifdef CONFIG_DYNAMIC_FTRACE
- extern void ftrace_init(void);
- #ifdef CC_USING_PATCHABLE_FUNCTION_ENTRY
- #define FTRACE_CALLSITE_SECTION	"__patchable_function_entries"
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 1cce1f6410a9..989315dabb86 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -373,9 +373,9 @@ ftrace_vprintk(const char *fmt, va_list ap)
- static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- #endif /* CONFIG_TRACING */
- 
--/* Rebuild everything on CONFIG_FTRACE_MCOUNT_RECORD */
--#ifdef CONFIG_FTRACE_MCOUNT_RECORD
--# define REBUILD_DUE_TO_FTRACE_MCOUNT_RECORD
-+/* Rebuild everything on CONFIG_DYNAMIC_FTRACE */
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+# define REBUILD_DUE_TO_DYNAMIC_FTRACE
- #endif
- 
- /* Permissions on a sysfs file: you didn't miss the 0 prefix did you? */
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 5faa1fb1f4b4..800e6fde9bf7 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -539,7 +539,7 @@ struct module {
- 	struct trace_eval_map **trace_evals;
- 	unsigned int num_trace_evals;
- #endif
--#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#ifdef CONFIG_DYNAMIC_FTRACE
- 	unsigned int num_ftrace_callsites;
- 	unsigned long *ftrace_callsites;
- #endif
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 413ac6ea3702..58d36f8cef0d 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2639,7 +2639,7 @@ static int find_module_sections(struct module *mod, struct load_info *info)
- 					 sizeof(*mod->trace_bprintk_fmt_start),
- 					 &mod->num_trace_bprintk_fmt);
- #endif
--#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#ifdef CONFIG_DYNAMIC_FTRACE
- 	/* sechdrs[0].sh_size is always zero */
- 	mod->ftrace_callsites = section_objs(info, FTRACE_CALLSITE_SECTION,
- 					     sizeof(*mod->ftrace_callsites),
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 28afc6941e7a..9f2b1661a8ac 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -74,11 +74,6 @@ config HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
- 	  If the architecture generates __patchable_function_entries sections
- 	  but does not want them included in the ftrace locations.
- 
--config HAVE_FTRACE_MCOUNT_RECORD
--	bool
--	help
--	  See Documentation/trace/ftrace-design.rst
--
- config HAVE_SYSCALL_TRACEPOINTS
- 	bool
- 	help
-@@ -803,27 +798,22 @@ config BPF_KPROBE_OVERRIDE
- 	 Allows BPF to override the execution of a probed function and
- 	 set a different return value.  This is used for error injection.
- 
--config FTRACE_MCOUNT_RECORD
--	def_bool y
--	depends on DYNAMIC_FTRACE
--	depends on HAVE_FTRACE_MCOUNT_RECORD
--
- config FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY
- 	bool
--	depends on FTRACE_MCOUNT_RECORD
-+	depends on DYNAMIC_FTRACE
- 
- config FTRACE_MCOUNT_USE_CC
- 	def_bool y
- 	depends on $(cc-option,-mrecord-mcount)
- 	depends on !FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY
--	depends on FTRACE_MCOUNT_RECORD
-+	depends on DYNAMIC_FTRACE
- 
- config FTRACE_MCOUNT_USE_OBJTOOL
- 	def_bool y
- 	depends on HAVE_OBJTOOL_MCOUNT
- 	depends on !FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY
- 	depends on !FTRACE_MCOUNT_USE_CC
--	depends on FTRACE_MCOUNT_RECORD
-+	depends on DYNAMIC_FTRACE
- 	select OBJTOOL
- 
- config FTRACE_MCOUNT_USE_RECORDMCOUNT
-@@ -831,7 +821,7 @@ config FTRACE_MCOUNT_USE_RECORDMCOUNT
- 	depends on !FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY
- 	depends on !FTRACE_MCOUNT_USE_CC
- 	depends on !FTRACE_MCOUNT_USE_OBJTOOL
--	depends on FTRACE_MCOUNT_RECORD
-+	depends on DYNAMIC_FTRACE
- 
- config TRACING_MAP
- 	bool
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4203fad56b6c..00b76d450a89 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1042,10 +1042,6 @@ static struct ftrace_ops *removed_ops;
-  */
- static bool update_all_ops;
- 
--#ifndef CONFIG_FTRACE_MCOUNT_RECORD
--# error Dynamic ftrace depends on MCOUNT_RECORD
--#endif
--
- struct ftrace_func_probe {
- 	struct ftrace_probe_ops	*probe_ops;
- 	struct ftrace_ops	ops;
-diff --git a/scripts/recordmcount.pl b/scripts/recordmcount.pl
-index 0871b2e92584..861b56dda64e 100755
---- a/scripts/recordmcount.pl
-+++ b/scripts/recordmcount.pl
-@@ -359,7 +359,7 @@ if ($arch eq "x86_64") {
-     $mcount_regex = "^\\s*([0-9a-fA-F]+):\\s*R_CKCORE_PCREL_JSR_IMM26BY2\\s+_mcount\$";
-     $alignment = 2;
- } else {
--    die "Arch $arch is not supported with CONFIG_FTRACE_MCOUNT_RECORD";
-+    die "Arch $arch is not supported with CONFIG_DYNAMIC_FTRACE";
- }
- 
- my $text_found = 0;
--- 
-2.47.2
-
-
+> I may be completely misunderstanding here...
 
