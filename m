@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-741915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E4EB0EA9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4BDB0EA9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACA13A6F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF103BFA33
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D44726C3B0;
-	Wed, 23 Jul 2025 06:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87826B942;
+	Wed, 23 Jul 2025 06:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDIKKI5e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHTxszWX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0814917BA6;
-	Wed, 23 Jul 2025 06:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A7225BEF2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753251998; cv=none; b=cSYFRic3DUIYYpcJmXMy0Bg7YiEXXwML3sxL3x57duY6Aw1TxsD3MmtojoAkqLd1plCB/9KsukDMVvNVHDB9xbD3km5EfUnNCZ+sEcFzWmuwrNl+Sj71cmeblstJfW2QV584bS00GnFLiQLb5mezqFv4rT+RMN/owlLUcuTqqr8=
+	t=1753252061; cv=none; b=BMSrQV22cczPc/yjpG+DvxhhDblDZHpdZ+EM5bW/ru+8tX8KZiw5Utnc/gxpTcR+xUY55+36Hy27EHE+LNSCsr6iTbxG/kBpivjm/AwUNuODtnun+pdWGve8NB22h+WqEjRfgH/DaCNSxU2mha+F/6jEHAAlfwSXR4q6zUs6QU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753251998; c=relaxed/simple;
-	bh=ux9IkYfq1lY2FiVA9kzE3G4S1pelAI1ZDTYrto6gpJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H0yTHpVmey5uV8qihEXFCciKsUwgKQZUIkgfyQVG5MqY73eZynVTUxKYw2hpNKITPjOJiUz9mblWYdz8NZLXqQn72eGWwYdAIlkg1WcER0h8YwNpH9C4LVLK2T0ZoVCwUJhENuh7y9/LiMHCEvJY+CAqC/Rxck39aHxLfK1RKWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDIKKI5e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E9DC4CEE7;
-	Wed, 23 Jul 2025 06:26:33 +0000 (UTC)
+	s=arc-20240116; t=1753252061; c=relaxed/simple;
+	bh=y59ijpVlyUu91O/9y3LLuf9U8G20b+NWq4NL4oCIB/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=liygBGued3qQvRQAsfiYMN3ecgf5JM+ui5ORo/eI0nJ4Z8lCCsgieEGuI7w4kfiP6Rc4Kbh0Wv49CLFe2ZO3/LxWl8BBE+c3fzXIyYds0TjTzq9PHYHKFzlLth8VfG7c1wo1XMbAcmwyLsXepbRWUJfrRjfEkgFvRvJ5RFOBlVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHTxszWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CACB4C4CEE7;
+	Wed, 23 Jul 2025 06:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753251995;
-	bh=ux9IkYfq1lY2FiVA9kzE3G4S1pelAI1ZDTYrto6gpJQ=;
+	s=k20201202; t=1753252060;
+	bh=y59ijpVlyUu91O/9y3LLuf9U8G20b+NWq4NL4oCIB/U=;
 	h=From:To:Cc:Subject:Date:From;
-	b=KDIKKI5eT8iSUpJNzcxlHA1VMrIJrgaWeZvSOfA/GgbIY/8sYi8vGgpcXWp90HnBO
-	 jEfQ6uYSc+OF2X22AdpsiPsbkd5s9LnzPs7/64aqq48+hc76zWhjPKK9E8TO9fRc9J
-	 45G05yK4CnyNDtPTCdoJKgJfxKxjQ6bPetZkzvrtSXdD3gbq2FjWD3nsV5lRvS4S9G
-	 +ysgD4ko4YkV5f4KXd++YbQpMoH7yYW02wU3/hMLU3xbJPS2VdRSCs0kzh73EnaWsH
-	 YPjU7WdKYtu+EuLHBzzTK71q83mQKFUV/uE+KqWuXA/T0k37kyr3Z13aB/FPmtxBZg
-	 3vy28dDOL/Hug==
+	b=mHTxszWX7ngfXlQ18eFEInffYgWl22ta7psvY8iKzPopS8eV7p4d19kvpksmKKRWs
+	 +6Km9xMjAh/Ajhm9YwxqBUUuroJjMX+piq09CC3HrzJ2GUCQ5nFa6sSESYzqL0tlCo
+	 9DItOY2nBu4GSywdmEJjbsozLygifs3hD911zS5WtNmJOYWl4BytEJ15yfiILotuKW
+	 riGCYSxZ9je1unTs7Pd9lRyD+uKOtbzFQ5BJzckqGOEIh9A0ujPR1BRf3DMqMpxtaS
+	 Ke+hEtyTDpBpFL+CUO/8j2My/OzT/mF64BEDDfM+FZn0GUx48Vjg/ju/wZvXqnI3zI
+	 HpQk37fRMsq2A==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: bp@alien8.de
+To: p.zabel@pengutronix.de
 Cc: linux-kernel@vger.kernel.org,
 	tglx@linutronix.de,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	linux-edac@vger.kernel.org
-Subject: [PATCH -resend] edac: Use dev_fwnode()
-Date: Wed, 23 Jul 2025 08:26:31 +0200
-Message-ID: <20250723062631.1830757-1-jirislaby@kernel.org>
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH -resend] gpu: ipu-v3: Use dev_fwnode()
+Date: Wed, 23 Jul 2025 08:27:37 +0200
+Message-ID: <20250723062737.1831015-1-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,35 +66,28 @@ using of_node with of_fwnode_handle().
 So use the dev_fwnode() helper.
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Robert Richter <rric@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
 Link: https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
-
 ---
-Cc: linux-edac@vger.kernel.org
----
- drivers/edac/altera_edac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/ipu-v3/ipu-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index cae52c654a15..cfd17a8e5865 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -2131,8 +2131,8 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
- 	edac->irq_chip.name = pdev->dev.of_node->name;
- 	edac->irq_chip.irq_mask = a10_eccmgr_irq_mask;
- 	edac->irq_chip.irq_unmask = a10_eccmgr_irq_unmask;
--	edac->domain = irq_domain_create_linear(of_fwnode_handle(pdev->dev.of_node),
--						64, &a10_eccmgr_ic_ops, edac);
-+	edac->domain = irq_domain_create_linear(dev_fwnode(&pdev->dev), 64, &a10_eccmgr_ic_ops,
-+						edac);
- 	if (!edac->domain) {
- 		dev_err(&pdev->dev, "Error adding IRQ domain\n");
- 		return -ENOMEM;
+diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
+index 333f36e0a715..521d7ec10d85 100644
+--- a/drivers/gpu/ipu-v3/ipu-common.c
++++ b/drivers/gpu/ipu-v3/ipu-common.c
+@@ -1169,7 +1169,7 @@ static int ipu_irq_init(struct ipu_soc *ipu)
+ 	};
+ 	int ret, i;
+ 
+-	ipu->domain = irq_domain_create_linear(of_fwnode_handle(ipu->dev->of_node), IPU_NUM_IRQS,
++	ipu->domain = irq_domain_create_linear(dev_fwnode(ipu->dev), IPU_NUM_IRQS,
+ 					       &irq_generic_chip_ops, ipu);
+ 	if (!ipu->domain) {
+ 		dev_err(ipu->dev, "failed to add irq domain\n");
 -- 
 2.50.1
 
