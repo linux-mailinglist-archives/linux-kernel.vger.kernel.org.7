@@ -1,187 +1,147 @@
-Return-Path: <linux-kernel+bounces-742632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F47B0F48D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD16B0F492
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5423B543C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F98188A49B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C22E8DF2;
-	Wed, 23 Jul 2025 13:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759AC2E8DFD;
+	Wed, 23 Jul 2025 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYbuhc12"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HBiN9DQ0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925B1957FC;
-	Wed, 23 Jul 2025 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF42E8895;
+	Wed, 23 Jul 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278707; cv=none; b=izPEfXUZawXDzztVEADLGMF7KVur46TTPyKaG4RFTjd1FWXyUPHOxUq7dCHEvbyyhEsU5s/hiVwee3kqKY6HuxOaKBEjuIlpKnrdHBbJDtTnFoeLAwB4m8SC644YNdImTjubfbG7DV934VE37yLmi39O2Rd2MLmXByHR1+pHxu0=
+	t=1753278718; cv=none; b=jEGk6lrqKNrRSHffg3OcFxk5uiFKSHwfmtYbaiOap74DYvC1YaeZ0BTlIunuYT8LXBERJXOnm8ufTP1/JU7mw0EYCRYFVd4n4+pKRivyRGVwPn/id6oS7fkQ5JI0i7od2HMQ3DPsE/0RDF133UrFehYu1Zl/QDTA68rpvcfNK2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278707; c=relaxed/simple;
-	bh=+CUkgIqlXm37cQn4uw0m+wfSExX1ej4HwaxwpAyMUrQ=;
+	s=arc-20240116; t=1753278718; c=relaxed/simple;
+	bh=8KNCwUsdYcAafh9ORfLqKTBj0WUYg+Mx1qZ64FNHitc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2oaHWPNCC8H13urKBbm0BA889D5IItvs3woCKH5f4vLapqCgqntZxnu+p1FyvsvR340KyNfAs6iC7MhrLYDI8Iq+3n19aKh+xG/PRBcwkzg2F1HNi7JUHrNFPJqM0sU6rsLL3Hg/QQIrJlIhKcd1b+8oG1boJ/WVSesem9mxW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYbuhc12; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fad4a1dc33so60081506d6.1;
-        Wed, 23 Jul 2025 06:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753278703; x=1753883503; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+tDGNKrq8C0RgHBmdZ2huLR3bEGVTqDHewscGCcyP8=;
-        b=bYbuhc125LJc6yJRXfxJ2F9XK5ZABUPpFdJxfz52DbTJR1EvSx/qeRoGM8hJiytcf+
-         bJ6eyBpYAsDpcHeKbqgGispzTiMPrj6C8QsBYaFP65B9P/872a6/m1hTdTWD7YCiKSAo
-         VQylkB+IX0aXqrlZY2+DXiQduRXvKSxUMBxtXTX2BLW4ltMsU2tnVc0cI/VL9GkCEQPX
-         scw8AwFqVA5ulaHBWh0sB4SkoR9tMA9MSMY0Q+SGJVNAOIHoopMUGH8grnan/ljtbLtb
-         UntmByp4cND9cyPCg9Tr4gHY8i/j33PHUq8N1bLyDRqpLmrgg/n1AkjIA2vfACVEOhXO
-         B/Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753278703; x=1753883503;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h+tDGNKrq8C0RgHBmdZ2huLR3bEGVTqDHewscGCcyP8=;
-        b=Vc60z3K8uRErStUg3ZLWK3RssiUEGOPoUAsbMK3GrfdhyK8Bnu2aaGDVxR6vICv2N7
-         TXhPqpmjhsaAzFXN1+rDoW6UrVzkjhlE4ktaRV11NNnJAX4I4OboZh0FMa/ZLZCbiDUT
-         NyAByQ5p2tvLO5OpCAIwQRCGbqyaoloeSlRRN6Irv7bBMHAZbDchnAr9N+3S98aDQlPG
-         e7XR0WeH2PpJmqzPsQRNpszgb0/JCogvSM6pIop4K9uk3Nx3ehV+80hkaYflW1rfx4TO
-         NLow/JDXIzwJIPbFDZydPsYtCVhvczCd7ElS99bbGfWPX/r9cUvNUK1d7ldFAKjy6mg+
-         spzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFsH8ZaHRSifiUNbguLF5ur0rRF3H6DhEy116Bvu+gpBUQT8bjfhQhHkOh0qAlmCy9hPm1N4C+N7Vs@vger.kernel.org, AJvYcCWhnZZNRpGCRH+a+pgzUW5yovIPLfZhx6VNCejOy0EhthsgVJdV8c2tL4BGXpyzsQ1mZrq5fkiM0C7iu/OPs/Q=@vger.kernel.org, AJvYcCXX+Gp3Rj5OKDg2LjREGP27ZuU1OcDzLDtqY3iBfbkbqs5OoWchVLs81+EB30JCIjzDX7g0NQ0ZCSpY3vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB9Yv2jFYGUwV0qVX3Wlh6+Si+KBUUt+N+UVN+eaRj6NggdCD1
-	vysQZx6FhieFCF0zRSVGDRnXZoJWIME99ZngJC8l7E0lVL5TZHCCklYp
-X-Gm-Gg: ASbGnctj+rsdk5sIYtPRgE4748VXC2FS2scWeLoF7ikhB2JUb5yooecqG4IkfT0i0S3
-	zeNiJIB9w39lMpARBlmelEeX7lOyeQkaKDUhMoRfaIOIHHgNEXCh6mAeTULarnmsc45s8zMbe9o
-	iG5biUAtCUM6HEVZ4JE8tpo9DPy9l/clwL5uFvvzoNw+MkcancUSmHg+5K6BmP1qU/D3Nn6dq7x
-	Z82S4G2o+iJwiZip0/7O3pVnWqDQoggW+HV43bHBMc6HsXwSbWUxNf7CEeiEHOXhgyCqsR7a50j
-	8d6/a2tTlG4nZnFHUVe0/PWOQtfW3osaOMCCZcDT1fq8qlRJiPtT64aPCazuDTkG7tvvReRnP5f
-	lkP1G2BWvgT96aOJ1K8K769l03vZGjeB5CFs8IwhL/Uizqnx1vJ3KH67bzd/0DiVkMW5bA6EB7h
-	LsIS+LYle9qvuzd2IQL8b6IeQPl2wew32XgQ==
-X-Google-Smtp-Source: AGHT+IH5nlBBdOgrPIobi/RLqeR1UjUMNZ1p01f3edEfGLtmvSJW2VYBsZ3pKRPwdHB8RMcZ2c4igg==
-X-Received: by 2002:a05:6214:d48:b0:6fb:6114:1034 with SMTP id 6a1803df08f44-70700845f98mr48358216d6.39.1753278703116;
-        Wed, 23 Jul 2025 06:51:43 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b90d3cbsm64264926d6.43.2025.07.23.06.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 06:51:42 -0700 (PDT)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 30239F40068;
-	Wed, 23 Jul 2025 09:51:42 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Wed, 23 Jul 2025 09:51:42 -0400
-X-ME-Sender: <xms:7uiAaIwHsRuwp1phD17YMI2ONG8BLJSXhzrDeQCUsTV9FXqyWSLW9A>
-    <xme:7uiAaC0I3kkO0CtQtoXXZkcSr7YkYlkvZdCJOLa3JJjWVV8LP4yIltFi9CohsPtgL
-    rg6fGQrbxN7fhLZsQ>
-X-ME-Received: <xmr:7uiAaMBGQZMHSJv7z62VvxCVgm-7gBLp6IbLkvZn9yg2N2xInrmoxkWu7b4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejjeelhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeevgffhueevkedutefgveduuedujeefledthffgheegkeekiefgudekhffggeel
-    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
-    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
-    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
-    gvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegurg
-    hnihgvlhdrrghlmhgvihgurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopeho
-    jhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhr
-    tghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpth
-    htoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtmhhg
-    rhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdroh
-    hrgh
-X-ME-Proxy: <xmx:7uiAaP_xSsM1oNZwcGzC8BcxgfdScD8rnbd_UOhSZ5NFOcjUw339WA>
-    <xmx:7uiAaK9bHtowvqYoymBwoIPLEzExkfv-d3WsK3JB6lWcFfTwdDmpLg>
-    <xmx:7uiAaP03_4aVjaOXaE7BQILPJxQEOOs2jrsowiSR_1GJS-MA2Hu2pQ>
-    <xmx:7uiAaC_8BUf3FYyFmr6atQAmUhj4a80BjgTOmluJeP-0BsaxS75bDQ>
-    <xmx:7uiAaIfivg5hIBgEhEuOW3xQuEiJgBuDCiFA96o-6xOQyZxdGBtNdkGy>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Jul 2025 09:51:41 -0400 (EDT)
-Date: Wed, 23 Jul 2025 06:51:40 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Message-ID: <aIDo7I9QdIk-VvL7@tardis.local>
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
- <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <aIBl6JPh4MQq-0gu@tardis-2.local>
- <CAH5fLgjsRMuN8NDgXD_4R3Wk4PqcZhZnnruAC+0WRYkz=U7rJw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQRPOsbsCkz2XzUKpc1KzfMQWMD0xMc7SV4bXvctXVadQFEAfSpgTibDtz/JN9F+T1CBF919PkegxF+YaEI8FAfsFdUx8M9i1XAXi3wjr48Ncl4kwyesriYHZX0wYr/lpZ21DhI6dANiWoFjHUU/5+GNKWyLCrgndUaOM1rEzLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HBiN9DQ0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NB1pYj030352;
+	Wed, 23 Jul 2025 13:51:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=OoLQgwHCwYVfc9EEWEeZn1CU5S18sg
+	mBYtINjB3Z/ag=; b=HBiN9DQ0Lo7YoeuF16jPBNM8FbrHvY9HFA3wkYdgA5enU/
+	D+ptjXw6YzFbNaXE51wZlFAP+n/e/7CwwFWTd34Ro052Z9MQWThsI12+HQLzEgU7
+	uqEk5eHOYaR1yELI5CO4e20Jmj2tNE0ElzDW6OORiLkIUZyE9lwnjCuiRYNRNSFg
+	Zk3c5E8mGH2cwIS9VIkXqB9SjmBO05rc24vkp6Ye/jDjEqSD4RvH7LHi/dM24wB+
+	QIhqlc+SSnpoJbQrYqmSFqYQ6AySwidtobNdK9lFzqUu//mOoupkbY6kLc4hd8Py
+	oD/xi5H93H8Wb0f9e2WeBs8Uescwpo9YTt2HlOgw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdykuy9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 13:51:49 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56NDl84s006324;
+	Wed, 23 Jul 2025 13:51:49 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdykuy5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 13:51:48 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCTQd6005057;
+	Wed, 23 Jul 2025 13:51:47 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8fy7f3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 13:51:47 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56NDpj4n12190086
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 13:51:45 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B0AF52005A;
+	Wed, 23 Jul 2025 13:51:45 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6497F2004B;
+	Wed, 23 Jul 2025 13:51:43 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.19.8])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 23 Jul 2025 13:51:43 +0000 (GMT)
+Date: Wed, 23 Jul 2025 19:21:40 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <1e6dad5f4bdc8107e670cc0bd3ce0fccd0c9037a.1752329098.git.ojaswin@linux.ibm.com>
+ <5211dff7-579b-48ea-8180-72d8c6083400@oracle.com>
+ <aHkAJJkvaWYJu7gC@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <b270bb66-721e-4433-adaf-fe5ae100ca6e@oracle.com>
+ <aH9PwFm06n9KQ0mE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjsRMuN8NDgXD_4R3Wk4PqcZhZnnruAC+0WRYkz=U7rJw@mail.gmail.com>
+In-Reply-To: <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ce7xF2DtL-Xgt5mwwVAaUqwG3nK_9UgH
+X-Authority-Analysis: v=2.4 cv=XP0wSRhE c=1 sm=1 tr=0 ts=6880e8f5 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=1TsAVJmRfjqj6DXqSPIA:9
+ a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-GUID: KSMiHbF58cSUPyjk3QgnQvlZGS7R0a6l
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExNyBTYWx0ZWRfX7xg42erhnv9g
+ Jtub26aql13gnvL8ram/8rIWQiaKRbEeQAhYqTXkM8VfumcOkvTJjZUOeFrLywfuIYUICG/5lfq
+ ft17HdmZAMteatGstujh1Ce3zP1AdLNG26FTRkXG7i5ujk/EPthasnWqeBylB1Q8LijEOJDjSIi
+ 4L5n2JLYA/A0zN4MsVn5+qB8yC3W6f/zqxiaPLV+s5dQ0S2DYT+9g3pJZh+lzYm5dg5ddZcotLh
+ tXuglfmQiDbCCXNT70JOScRzkaHw3tNENrTej562KmQeojXmxR7WqDH1AsL8vge7yYoC2YFXJ2b
+ cPV+3sc1hWXvV/yPgql6xe34tLMLFxQX4CVvUxuco28TorqZIoWNyuXcyqogohp5wUeDuu3rXA5
+ FvO/nUbe8hAnS7eijNdk0wFPA2Z8VUeWiJ2Zt2OK3EwEAxXt7vw2dzPhQrF8Dl6cG6wo2IRj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=510 spamscore=0
+ suspectscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 phishscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230117
 
-On Wed, Jul 23, 2025 at 07:35:26AM +0200, Alice Ryhl wrote:
-> On Wed, Jul 23, 2025 at 6:32 AM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > On Tue, Jul 15, 2025 at 12:16:40PM -0300, Daniel Almeida wrote:
-> > > This patch adds support for non-threaded IRQs and handlers through
-> > > irq::Registration and the irq::Handler trait.
-> > >
-> > > Registering an irq is dependent upon having a IrqRequest that was
-> > > previously allocated by a given device. This will be introduced in
-> > > subsequent patches.
-> > >
-> > > Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> > > ---
-> > [...]
-> > > diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
-> > > index 9abd9a6dc36f3e3ecc1f92ad7b0040176b56a079..01bd08884b72c2a3a9460897bce751c732a19794 100644
-> > > --- a/rust/kernel/irq.rs
-> > > +++ b/rust/kernel/irq.rs
-> > > @@ -12,3 +12,8 @@
-> > >
-> > >  /// Flags to be used when registering IRQ handlers.
-> > >  pub mod flags;
-> > > +
-> > > +/// IRQ allocation and handling.
-> > > +pub mod request;
-> > > +
-> > > +pub use request::{Handler, IrqRequest, IrqReturn, Registration};
-> >
-> > I woulde use #[doc(inline)] here for these re-export. It'll give a list
-> > of struct/trait users can use in the `irq` module.
+On Wed, Jul 23, 2025 at 12:33:27PM +0100, John Garry wrote:
+> On 22/07/2025 09:47, Ojaswin Mujoo wrote:
+> > > > Yes, I've tested with XFS with software fallback as well. Also, tested
+> > > > xfs while keeping io size as 16kb so we stress the hw paths too.
+> > > so is that requirement implemented with the _require_scratch_write_atomic
+> > > check?
+> > No, its just something i hardcoded for that particular run. This patch
+> > doesn't enforce hardware only atomic writes
 > 
-> You get the same effect by making `mod request` a private module.
-> 
+> If we are to test this for XFS then we need to ensure that HW atomics are
+> available.
 
-Oh yes, that also works! I think we probably should do that.
+Why is that? Now with the verification step happening after writes,
+software atomic writes should also pass this test since there are no
+racing writes to the verify reads.
 
 Regards,
-Boqun
-
-> Alice
+ojaswin
+> 
+> Thanks,
+> John
 
