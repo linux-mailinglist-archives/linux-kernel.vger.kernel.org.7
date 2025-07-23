@@ -1,79 +1,200 @@
-Return-Path: <linux-kernel+bounces-742090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD183B0ED09
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6450CB0ED0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D487D6C4E76
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2659F18965DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934F4279DA4;
-	Wed, 23 Jul 2025 08:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75D227A10C;
+	Wed, 23 Jul 2025 08:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ccSo9uzS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZeM2Gzb7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C9B17BEBF;
-	Wed, 23 Jul 2025 08:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DC0279DA4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258815; cv=none; b=QDWZDt0vDbzEjMI8lIpSkm8VmOi8JeqH9oJ9W1oktc8l78Bmyd8QU+LWwWBugHvIpin8cX3BTD6WxRRyt/bGtJEkrGirJGGNlqGmrZx/WXp6oxXyp7P5qo948/DH0q8zOn34tZG4DGwEh9dfhXnHqtFhJJ2t/3inatHyfHyyqzM=
+	t=1753258840; cv=none; b=JmXKJ+k65oKjF6g1GeKL+KGWAbYRcbaeAb6aHlFZd9S5NiSqVxZ6tYS8ZD66sDjCBOFn+RqkAyDP/3xL8klnY4N3F2iiqD6+vAdigqsgGjUl7v00/cjcsZWDdSwneYw0TgWqrKpbGDkiYiqAXsDTdoys6HJns45Z1H1QZXzI4Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258815; c=relaxed/simple;
-	bh=+VAH1oPZaKTMRxEiDnWmTlypzS5GEurSvnDvL9UArgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkmFZkAJoWsRVn/k6jtD8B4aGYzE6PULbAXL85sqtUb9zN136SNnVWNrrbaMI1ULm95g9kKJht+f/ttSHTnAyqdb2No9HibXTWdk4sZOgyNSlXTQWXlAPsJMYVqO5FNZgb5la00n9De6Ck75D2lbmDxp1z1k10O/8LSdsd/4wJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ccSo9uzS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F3FC4CEE7;
-	Wed, 23 Jul 2025 08:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753258814;
-	bh=+VAH1oPZaKTMRxEiDnWmTlypzS5GEurSvnDvL9UArgQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ccSo9uzSlkmxbB9yJENs2mmP8LvktBm7liVmV4nepuVaZWB1/LMMbTrD/k2h3G2Dz
-	 Y9aPVAdQ8p23oEMwvX7nUpJ0pIqqYfbsM3w1DF+v/98cw062+iB1TgNb79sfftKJqW
-	 Vq7vUH9XdUymml3LwReH4Zz/HNZtYTZYWDJqyHTTHBxO0i3nvW11WODSGMzUKOoRrO
-	 gcpCDA2BrdVzZAaNL0Dohrx8EgGy96eYWbVzSFfkxxKsv3aHrEAis6Fj2PVWz+peAx
-	 g23slysfzARHRmhtUKAtBKGsqC/m7t3HYDAKv8I4KSZ4ixkRnbXlLHb/pn3lCiIdIl
-	 vFO4szo183s0A==
-Date: Wed, 23 Jul 2025 10:20:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: i2c: exynos5: add
- samsung,exynos2200-hsi2c compatible
-Message-ID: <20250723-auburn-dove-of-performance-f27235@kuoka>
-References: <20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1753258840; c=relaxed/simple;
+	bh=hsczvWWZZK+zZzVF7FiOuyFbg4D8AetCUGPHyHYX1wY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EXdoJR8G9AKu0jCpv2g6DoT707wx42tCXvEwv8RJtCh7jinx2BtF6ZJzBHmp4odVct7sJk0SIeL3RWLZPuKoyVuGIQZzcCpcvERTqTbrnwGieEgiCa/xNxMUh3VIcAueqUHq6Tz3f6kBIoYowSNJzUllHAAzqLwMtizHaEMVc0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZeM2Gzb7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753258837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ArrbP6ULmISQTAdQsbfYfBJ/dfwnESI5dLXQURXYbWQ=;
+	b=ZeM2Gzb79SjUckNly7CfOFvAjReMMKT/e1iqf0P+aBDYH3MUBdNzblCz2ud+dqn0gxNVd3
+	vvKpu5M9q9zaV8++nNftE0UFRVGoIjCKpd7MsKxLYXPxTG7rETOvcBtJVgBxwEhiaxs9jZ
+	QBnN2lfjDgtKB8DKvA5HPIi6rb74lVY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-iu2vSz8iNLy1tUV7eUPXqg-1; Wed, 23 Jul 2025 04:20:35 -0400
+X-MC-Unique: iu2vSz8iNLy1tUV7eUPXqg-1
+X-Mimecast-MFC-AGG-ID: iu2vSz8iNLy1tUV7eUPXqg_1753258835
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45624f0be48so36303645e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:20:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753258835; x=1753863635;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ArrbP6ULmISQTAdQsbfYfBJ/dfwnESI5dLXQURXYbWQ=;
+        b=cjguvp/vKRENRYK+Fupwo00xKLMp2EGpQCkL+kXj76kXWcEPoSQ2aUbcP/8y2thBVT
+         xGbkDXGTenNVMtPgpBg621DSZVwjOfdg+K4QRI5NNMg4r2nZI0ab8b2T96kUd9lznIao
+         f9nh4BrHpzJIyYPXE7ldYVbFX6xsPd4IkvZA8zQRKjCn3nCMTIv+jbFb/fQaY83CyWLB
+         aKGnhH4+6XrsqWXuHxjC6JsQr9E2c9gJQMGty5KlLeUQYpgmFFvUxbYvWD3vt9serUZo
+         Xfs/6Q8nlAtqe7iUwl60yDW26eIFHE7jjGJSvyaO5rBvzoKM4zh4MdMDeRN2EKnwubGq
+         ZEgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2AQv8IoOffd68S9AmpbmQHcIjX6+MkTAkqAyIED7PexfOeUjadeIPzD7UMpv9n1Nw/hGS/YbK1h+fSmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwSeygSo2Lp6yAu4r2y0c9NWjDatfRRRVnEWEhawyoQNf+85yn
+	+gqVEafk0oGS8sjY/CXJNBatq6OC+8QOiucjGSrAeJWl+T+QTxDolHhUtmtQzmUCrkd8wT0RfhI
+	+gj7JC4Bx+QW6qZvQDb7maGjmVkCS8HNf+pLBmXTjTnh1Oaigg73UTnSTAsCuybe3Uw==
+X-Gm-Gg: ASbGncuqlr0+CHATaQuaCTiXQNc54plzBBNlamIeh1O/h0OskKUGUrgEWqf+fYhUgmY
+	NM4JfrAN3+Bp9b6uIBCJ1OPKudyhzpahP8P6/lAU1l/tEm30s7Y9n8Ut+OICLhrUSsaytI8+wYr
+	0X4/3Fe+6oa4v3zHC8RsWDAF380c8R7PDCzTGwoBpl5zkiE7mTXPgbvqni3+ZWTG7ev1y8tYm5u
+	l4jCgNwpDxOT+olQUB9L4QoktywpZ0AbA0Fdi2nCjI3u23G/HomOuDUMxjQ8jxCli63skhfRikI
+	qWK6+Eb1RiPiTAeH5j10Eg2nIz5MIhZ9GlsxUKX6U8zUGN7J3P6tNMEheRKQxGIClu+MWcRk45b
+	I814GEIT+D7xyzYpgsZPNd6gqV5cJiy5pSY8Gb/5zuRMuMVC3T3RNcGXZkXuTJweRTsY=
+X-Received: by 2002:a05:6000:2088:b0:3b5:e6f2:ab4d with SMTP id ffacd0b85a97d-3b768f0784amr1449534f8f.42.1753258834424;
+        Wed, 23 Jul 2025 01:20:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGuehv3n5C5mV94SzfgBIwheXZpqlCTL4RcfpQFRxJyOhldB5Jf2Jv2Nn3bHC1HmTGXwVtUSw==
+X-Received: by 2002:a05:6000:2088:b0:3b5:e6f2:ab4d with SMTP id ffacd0b85a97d-3b768f0784amr1449465f8f.42.1753258833789;
+        Wed, 23 Jul 2025 01:20:33 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f00:4000:a438:1541:1da1:723a? (p200300d82f004000a43815411da1723a.dip0.t-ipconnect.de. [2003:d8:2f00:4000:a438:1541:1da1:723a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76773a0e3sm2532813f8f.17.2025.07.23.01.20.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 01:20:33 -0700 (PDT)
+Message-ID: <42146bb2-c017-43dd-aee2-1f1a893d3b17@redhat.com>
+Date: Wed, 23 Jul 2025 10:20:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 0/7] Add NUMA mempolicy support for KVM guest-memfd
+To: Sean Christopherson <seanjc@google.com>
+Cc: Shivank Garg <shivankg@amd.com>, vbabka@suse.cz, willy@infradead.org,
+ akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
+ brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
+ thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
+ kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org,
+ hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com,
+ rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev,
+ ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com,
+ amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com,
+ ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com,
+ pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com,
+ suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+ <bdce1a12-ab73-4de1-892b-f8e849a8ab51@redhat.com>
+ <aH-j8bOXMfOKdpHp@google.com>
+ <80a047e2-e0fb-40cd-bb88-cce05ca017ac@redhat.com>
+ <aIAZtgtdy5Fw1OOi@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aIAZtgtdy5Fw1OOi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 03:14:34PM +0300, Ivaylo Ivanov wrote:
-> Add samsung,exynos2200-hsi2c compatible, reusing the autov9 support
-> since it's compatible with exynos2200's i2c controllers.
+On 23.07.25 01:07, Sean Christopherson wrote:
+> On Tue, Jul 22, 2025, David Hildenbrand wrote:
+>> On 22.07.25 16:45, Sean Christopherson wrote:
+>>> On Tue, Jul 22, 2025, David Hildenbrand wrote:
+>>>> Just to clarify: this is based on Fuad's stage 1 and should probably still be
+>>>> tagged "RFC" until stage-1 is finally upstream.
+>>>>
+>>>> (I was hoping stage-1 would go upstream in 6.17, but I am not sure yet if that is
+>>>> still feasible looking at the never-ending review)
+>>>
+>>> 6.17 is very doable.
+>>
+>> I like your optimism :)
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> I'm not optimistic, just incompetent.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Well, I wouldn't agree with that :)
 
-Best regards,
-Krzysztof
+> I forgot what kernel we're on.  **6.18**
+> is very doable, 6.17 not so much.
+
+Yes, probably best to target 6.18 than rushing this into the upcoming MR.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
