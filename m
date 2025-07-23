@@ -1,268 +1,155 @@
-Return-Path: <linux-kernel+bounces-743210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7A6B0FBF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:04:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36A5B0FBFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78B975474F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:04:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4004E209C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEA12367D1;
-	Wed, 23 Jul 2025 21:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3a876eDu"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F00B230BEE;
+	Wed, 23 Jul 2025 21:07:53 +0000 (UTC)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03E1235061
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 21:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0B17C91;
+	Wed, 23 Jul 2025 21:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753304667; cv=none; b=SutcoraLpiMIV69YaSQHVyaQMNWGaVVYAEi0QgfNgsKtLmjRH9IwlYzAyNBwSbbTLuri0p3dShAhyWYUv+j/oPVRB+f+LjGGhxBaplB43jge1UCncezJK/pA645DI3cq76EMs2Z4/APqqgpEAZ2pu8MlOLMaAVOQCjYlNAMwd3U=
+	t=1753304872; cv=none; b=OYNceXlZ/hn0QJcda1MX/Ppwn3e1R51L3M3bLKJHJ3Uy5DFrW40KdqPlbzB7Syh6scKEZ9lhWFDKPpZUmkwc41aQ+O/fVRMsnS/R5AAY5G1eQIGHol+kNXPNqfQZ5IQe3jGeCzqolhvv5tJEobco1LX+wdiWu/jZrsMHe5f0ujs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753304667; c=relaxed/simple;
-	bh=WAv8i9t+2A4TSqFub5I4xy1flvqkr+YG7h0uKx/Wfok=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XWfNFSbhYEgNQgECNoN4uHehjIbSDZNCdZTJXwI14PCtVYs+Tx5pWBHDgWhxAxiwFl7vjp5w1UYH9o+j648NfLTsbnEhGdlpy+kPowY6GptmpueXsZg4pLOtlS2SpHNJY8Cg1LLxmC4gOi7mQaUUWyyLhXfVOvKeZ6ynGK6E2ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3a876eDu; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31218e2d5b0so328562a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753304665; x=1753909465; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AKxdsaDKMq8JifVPZTjK8B0Aqm8PGqtAXC7zsjT09Y=;
-        b=3a876eDujIwCtpicY/A4hnyFdOf05uazhExg/1n36Iz9YIvufj/ExXC1ca0pdIT8LI
-         LlefJalA2m1HkJFlXFwFZ0zbblGzDleoNPixFoqtixqWuxuGEPwCBk3XSZJ5EJvHbGIR
-         gyFijJwUb37YtuSxNpXaD6Vpqv4a18vbZLAoKga1nD1RbIrVEhp6bVyABeBP5/Z4x3bJ
-         jaaT9XEoOmQz2CmA7LgdV0lnQGf3QyXUYLLkLPPhif0s5pgDDc60vTJRNjp1tOtfvqZE
-         uD8Evm+azPLspelMS+PWr8f+z8nAiNTzgX2SX2NiWxg5jtryH2HGT9NnOm4ItlI6QWxn
-         3hwA==
+	s=arc-20240116; t=1753304872; c=relaxed/simple;
+	bh=hPWMMmywbOOEzN+S87+NwwdTnc0omrEhFKsvJPqdTgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=puJ6WEPJxxj/UmiBtthXfnd8p2FF0IyvLcLZ12UwWrYjRrKyKkuELzJMGOxMi/kncgon/IFJruNJBMQbduVAOLNN3XuBZmegutD2wX851lMX8TcpXnHgnqkeqR9O21SzaYyQdYknohFeLQBUNvaq5OaiTsOO72VMTNBIOpujY94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3510c22173so41134a12.0;
+        Wed, 23 Jul 2025 14:07:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753304665; x=1753909465;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AKxdsaDKMq8JifVPZTjK8B0Aqm8PGqtAXC7zsjT09Y=;
-        b=LnR/TPsHR6e0bNbt9fLIsn705aMAAbkIi2xXZ8LdBpmu6xHQJeySJkHsz0DARFinNI
-         KgXUi2A4Wfcp62e4/11hSAOPgeu46mv3lZkVLAOkLn+ZJ+nWdaDA3yzIxj3C90Zln/K6
-         jfRzFQhfmws8tWnDGUwxygOtHUR+HxCZpKQwdY/3/nB7UbYgw4PGtbfLXmhaAo/TCpx+
-         2qwQ3qkSMhmxxTqAFU8w5d+GNdaYqn00cCWnrDMhynNGDetq5yp3lUB4Wq3A+2ITKr/j
-         5Z/KfFIyYQ53t9zvVHun1omdnCkaq9Ueu2YZb5YRKVBZl5zLYpDRNUuCdi2ei9TgvCRZ
-         xWDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOI0fOekaw8DPyvzqs2UY1XaDTyszITt1ixhSFtxoqxbmphh1veniRWJs9+qkZF6VUwHDYWkn/aP/iEf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8QtF6aa6lfe7KkW0+QCYqXlt7SVx7zSwRaModufisdHir9Mek
-	hlq9pMTCoUVtio42z757Lz+SHtwWK8ZLbsRANhGbh+Dy+xjUvagG8GEj1YY9sbyTWusKdlQezvU
-	RVcObQg==
-X-Google-Smtp-Source: AGHT+IGMPRmib3bNif1K4SFd+9uNWBQSopU22YYdtSI0CHVsr5nQ6FOrb6bhSIdrxx4sJqoJq+ep89XSFQI=
-X-Received: from pjbov7.prod.google.com ([2002:a17:90b:2587:b0:31c:bd1d:516])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2885:b0:311:f99e:7f4b
- with SMTP id 98e67ed59e1d1-31e507ce490mr5730816a91.28.1753304665082; Wed, 23
- Jul 2025 14:04:25 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:04:23 -0700
-In-Reply-To: <20250707224720.4016504-8-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1753304870; x=1753909670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/IMiDdl5dSKdreUaUPFyQ/2CpyhV6qLtFUX9jkTE9Bk=;
+        b=eYsdOXB1Dz6iyOKAL+VP6aapg43IyLDS0Rj7Ipl4/3hZpkydqgHiRJstzTOKzDBB5m
+         eXGn8u5ioW6YVjmUvcnSeahjjvfySCWKfaIz7iPiC5BmqL3SEVWzI7fxP/aIsKHrN+19
+         FWmJBgQbY58rukjBCNpM6AH/YEB9h0NCwfAy/PciKm+3z7qmVrgh1jHFM0afXDRW5JYf
+         349apI2SH44yiyEeDPpaOmWdxv+zRET6uXneF0LxxhJtpUFfAnk6GXCDLOPdYjMVgAbH
+         15JAGIYMQAmj7TcmSQOKqZGFhbncJcSPgI/GFivIID+zizdDzgQxgr/WVt/pJ2ASX63I
+         W5hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuEj34w2KqrZNEHJBsmqEjY4U01SXI3TDOPcYj/Ag373WTmk6fQ0yZFmgN9V6LKyEUCyBOkre5V0cQ9EJgfeKN+Q==@vger.kernel.org, AJvYcCWmXzTW/qihjANKuAne3gnag3DI/deq1Ietu0RWfzcTz31P8YpB0jFF3VNOGe6Eecn3mQ6ovmE86LKCBSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRS0rSb6skbpHr/K8H7FDe3XRjLplbi1D5RhOQKSGxZWoCM478
+	Ks85c7CZ3txTIHM8ufDFvzQPwzXuDmet0YnzDFPgfhNyDVwecIjE9zT1
+X-Gm-Gg: ASbGncs/4nMu10tJO3FEuXhG9aMQ3iymINyDNMGivaVZwtjtcxyx7r6+gOleMsGGGKT
+	eoNYPMqTOFSrrrZs60+lFlsOY33gKgxh51tRJclG4RhWUl9MtEKgnJpnXtsK4as5C+HPd0JvpqF
+	wefaAZp5b3DTpAUqyyrt4rnOIVEGoySpk4Y3/4XfT8E1KTdj9atFSnglpcfHMwCfKRho2sIBjF/
+	oVUfVhWkXFSNxVxIiy43CE2GZfkyVPnFo1cHdSNFalwvrdnKgLpgEk3pO7FUr2jyTAP9KV1IGGg
+	T/grbbPnJFLZttv52Cadt5/J1aqybvzUGXHJGAQfqY2hfFdNcSG+48RVydj3I2xvzvC/Ek4/vdE
+	mfCBoi8QPbo1/zPSMoSRjFEE=
+X-Google-Smtp-Source: AGHT+IEi131jF0DgSED99zXtWgOrXDGfJi5rNwdTWqxbh/HdaMC7dTOr3gW9pa2J13t2/D/l+T+ncg==
+X-Received: by 2002:a05:6a20:3ca7:b0:239:d43:4820 with SMTP id adf61e73a8af0-23d491af241mr2497205637.10.1753304870583;
+        Wed, 23 Jul 2025 14:07:50 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e519e169asm2335508a91.13.2025.07.23.14.07.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 14:07:50 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Will Deacon <will@kernel.org>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	Michelle Jin <shjy180909@gmail.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>,
+	syzkaller@googlegroups.com
+Subject: [PATCH] perf/core: Prevent UBSAN negative‑idx shift by throttle/unthrottle group
+Date: Wed, 23 Jul 2025 21:04:28 +0000
+Message-ID: <20250723210426.590974-3-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com> <20250707224720.4016504-8-jthoughton@google.com>
-Message-ID: <aIFOV4ydqsyDH72G@google.com>
-Subject: Re: [PATCH v5 7/7] KVM: selftests: Add an NX huge pages jitter test
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
-	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 07, 2025, James Houghton wrote:
-> +		/*
-> +		 * To time the jitter on all faults on pages that are not
-> +		 * undergoing nx huge page recovery, only execute on every
-> +		 * other 1G region, and only time the non-executing pass.
-> +		 */
-> +		if (page & (1UL << 18)) {
+Where perf_event_throttle_group() and perf_event_unthrottle_group() would
+invoke pmu->start()/stop() on events still in the OFF state, leaving
+event->hw.idx == -1 and triggering UBSAN shift-out-of-bounds errors
+(negative shift exponent) in pmu enable/disable event. By checking
+'event->state > PERF_EVENT_STATE_OFF' for both the group leader and each
+sibling, this ensure only started events with valid hw.idx values are passed
+to the PMU, preventing negative-index shifts undefined behavior.
 
-This needs a #define or helper, I have no idea what 1 << 18 is doing.
+The issue is reproducible using the syzlang and C reproducer available:
+Link: https://lore.kernel.org/lkml/14fb716a-dedf-482a-8518-e5cc26165e97@kzalloc.com/
 
-> +			uint64_t tsc1, tsc2;
-> +
-> +			tsc1 = rdtsc();
-> +			*gva = 0;
-> +			tsc2 = rdtsc();
-> +
-> +			if (tsc2 - tsc1 > max_cycles)
-> +				max_cycles = tsc2 - tsc1;
-> +		} else {
-> +			*gva = RETURN_OPCODE;
-> +			((void (*)(void)) gva)();
-> +		}
-> +	}
-> +
-> +	GUEST_SYNC1(max_cycles);
-> +}
-> +
-> +struct kvm_vm *create_vm(uint64_t memory_bytes,
-> +			 enum vm_mem_backing_src_type backing_src)
-> +{
-> +	uint64_t backing_src_pagesz = get_backing_src_pagesz(backing_src);
-> +	struct guest_args *args = &guest_args;
-> +	uint64_t guest_num_pages;
-> +	uint64_t region_end_gfn;
-> +	uint64_t gpa, size;
-> +	struct kvm_vm *vm;
-> +
-> +	args->guest_page_size = getpagesize();
-> +
-> +	guest_num_pages = vm_adjust_num_guest_pages(VM_MODE_DEFAULT,
-> +				memory_bytes / args->guest_page_size);
-> +
-> +	TEST_ASSERT(memory_bytes % getpagesize() == 0,
-> +		    "Guest memory size is not host page size aligned.");
-> +
-> +	vm = __vm_create_with_one_vcpu(&vcpu, guest_num_pages, guest_code);
-> +
-> +	/* Put the test region at the top guest physical memory. */
-> +	region_end_gfn = vm->max_gfn + 1;
-> +
-> +	/*
-> +	 * If there should be more memory in the guest test region than there
-> +	 * can be pages in the guest, it will definitely cause problems.
-> +	 */
-> +	TEST_ASSERT(guest_num_pages < region_end_gfn,
-> +		    "Requested more guest memory than address space allows.\n"
-> +		    "    guest pages: %" PRIx64 " max gfn: %" PRIx64
-> +		    " wss: %" PRIx64 "]",
+Fixes: 9734e25fbf5a ("perf: Fix the throttle logic for a group")
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+Tested-by: Yunseong Kim <ysk@kzalloc.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: syzkaller@googlegroups.com
+---
+ kernel/events/core.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Don't wrap this last one.
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 22fdf0c187cd..e5cec61be545 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2684,18 +2684,28 @@ static void perf_event_unthrottle_group(struct perf_event *event, bool skip_star
+ {
+ 	struct perf_event *sibling, *leader = event->group_leader;
+ 
+-	perf_event_unthrottle(leader, skip_start_event ? leader != event : true);
+-	for_each_sibling_event(sibling, leader)
+-		perf_event_unthrottle(sibling, skip_start_event ? sibling != event : true);
++	if (leader->state > PERF_EVENT_STATE_OFF)
++		perf_event_unthrottle(leader,
++			skip_start_event ? leader != event : true);
++
++	for_each_sibling_event(sibling, leader) {
++		if (sibling->state > PERF_EVENT_STATE_OFF)
++			perf_event_unthrottle(sibling,
++				skip_start_event ? sibling != event : true);
++	}
+ }
+ 
+ static void perf_event_throttle_group(struct perf_event *event)
+ {
+ 	struct perf_event *sibling, *leader = event->group_leader;
+ 
+-	perf_event_throttle(leader);
+-	for_each_sibling_event(sibling, leader)
+-		perf_event_throttle(sibling);
++	if (leader->state > PERF_EVENT_STATE_OFF)
++		perf_event_throttle(leader);
++
++	for_each_sibling_event(sibling, leader) {
++		if (sibling->state > PERF_EVENT_STATE_OFF)
++			perf_event_throttle(sibling);
++	}
+ }
+ 
+ static int
+-- 
+2.50.0
 
-> +		    guest_num_pages, region_end_gfn - 1, memory_bytes);
-> +
-> +	gpa = (region_end_gfn - guest_num_pages - 1) * args->guest_page_size;
-> +	gpa = align_down(gpa, backing_src_pagesz);
-> +
-> +	size = guest_num_pages * args->guest_page_size;
-> +	pr_info("guest physical test memory: [0x%lx, 0x%lx)\n",
-> +		gpa, gpa + size);
-
-And don't wrap here either (82 chars is totally fine).
-
-> +
-> +	/*
-> +	 * Pass in MAP_POPULATE, because we are trying to test how long
-> +	 * we have to wait for a pending NX huge page recovery to take.
-> +	 * We do not want to also wait for GUP itself.
-> +	 */
-
-Right, but we also don't want to wait for the initial fault-in either, no?  I.e.
-plumbing in MAP_POPULATE only fixes the worst of the delay, and maybe only with
-the TDP MMU enabled.
-
-In other words, it seems like we need a helper (option?) to excplitly "prefault",
-all memory from within the guest, not the ability to specify MAP_POPULATE.
-
-> +	vm_mem_add(vm, backing_src, gpa, 1,
-> +		   guest_num_pages, 0, -1, 0, MAP_POPULATE);
-> +
-> +	virt_map(vm, guest_test_virt_mem, gpa, guest_num_pages);
-> +
-> +	args->pages = guest_num_pages;
-> +
-> +	/* Export the shared variables to the guest. */
-> +	sync_global_to_guest(vm, guest_args);
-> +
-> +	return vm;
-> +}
-> +
-> +static void run_vcpu(struct kvm_vcpu *vcpu)
-> +{
-> +	struct timespec ts_elapsed;
-> +	struct timespec ts_start;
-> +	struct ucall uc = {};
-> +	int ret;
-> +
-> +	clock_gettime(CLOCK_MONOTONIC, &ts_start);
-> +
-> +	ret = _vcpu_run(vcpu);
-> +
-> +	ts_elapsed = timespec_elapsed(ts_start);
-> +
-> +	TEST_ASSERT(ret == 0, "vcpu_run failed: %d", ret);
-> +
-> +	TEST_ASSERT(get_ucall(vcpu, &uc) == UCALL_SYNC,
-> +		    "Invalid guest sync status: %" PRIu64, uc.cmd);
-> +
-> +	pr_info("Duration: %ld.%09lds\n",
-> +		ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
-> +	pr_info("Max fault latency: %" PRIu64 " cycles\n", uc.args[0]);
-> +}
-> +
-> +static void run_test(struct test_params *params)
-> +{
-> +	/*
-> +	 * The fault + execute pattern in the guest relies on having more than
-> +	 * 1GiB to use.
-> +	 */
-> +	TEST_ASSERT(params->memory_bytes > PAGE_SIZE << 18,
-
-Oooh, the 1 << 18 is 1GiB on PFNs.  Ugh.  Just use SZ_1G here.  And assert immediate
-after setting params.memory_bytes, don't wait until the test runs.
-
-> +		    "Must use more than 1GiB of memory.");
-> +
-> +	create_vm(params->memory_bytes, params->backing_src);
-> +
-> +	pr_info("\n");
-> +
-> +	run_vcpu(vcpu);
-> +}
-> +
-> +static void help(char *name)
-> +{
-> +	puts("");
-> +	printf("usage: %s [-h] [-b bytes] [-s mem_type]\n",
-> +	       name);
-> +	puts("");
-> +	printf(" -h: Display this help message.");
-> +	printf(" -b: specify the size of the memory region which should be\n"
-> +	       "     dirtied by the guest. e.g. 2048M or 3G.\n"
-> +	       "     (default: 2G, must be greater than 1G)\n");
-> +	backing_src_help("-s");
-> +	puts("");
-> +	exit(0);
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	struct test_params params = {
-> +		.backing_src = DEFAULT_VM_MEM_SRC,
-> +		.memory_bytes = DEFAULT_TEST_MEM_SIZE,
-> +	};
-> +	int opt;
-> +
-> +	while ((opt = getopt(argc, argv, "hb:s:")) != -1) {
-> +		switch (opt) {
-> +		case 'b':
-> +			params.memory_bytes = parse_size(optarg);
-> +			break;
-> +		case 's':
-> +			params.backing_src = parse_backing_src_type(optarg);
-> +			break;
-> +		case 'h':
-> +		default:
-> +			help(argv[0]);
-> +			break;
-> +		}
-> +	}
-> +
-> +	run_test(&params);
-> +}
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
 
