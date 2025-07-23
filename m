@@ -1,234 +1,179 @@
-Return-Path: <linux-kernel+bounces-742501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBABB0F27A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:44:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE91B0F281
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB78565DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EB2565F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BDE2E6126;
-	Wed, 23 Jul 2025 12:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B52428B7FF;
+	Wed, 23 Jul 2025 12:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q77chXgl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Th3ykaYL"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985AD210F4A;
-	Wed, 23 Jul 2025 12:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753274651; cv=fail; b=RybnVaGjsADHP4imJhDanAJff1NE3WX33YptJVzyWVkxfh3odj1T5A11UOQ0QunTVDxV5d+APWaGBdJEvifhSn/6mAhmXsrTbndJvB/T6qknjWeuxhtEpkTT8UzCYcQ0zQZiX9Hj5iO/tPDrmwps5gMMpr05S4lbaWKAin25Oqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753274651; c=relaxed/simple;
-	bh=/RBXTjLHexNsuPE9+CGVYNjOS42il1pTAT7CZqvOFOU=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rijazkBoCNstlozG/knARRZJTWI9jkRUftW1hBWpxKGoUOoOU8qEvMtuw3u5tf2Xj4QUNLHY/prCumQJILt6XurR1euTo82MSdUBDOFrx2B8Xjkvz+dl3oICpag4F7tsVaUDvqRHDn+83xTmiu3wEwTe7rZO2gxtZmg6zVsYwE8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q77chXgl; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753274650; x=1784810650;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=/RBXTjLHexNsuPE9+CGVYNjOS42il1pTAT7CZqvOFOU=;
-  b=Q77chXglC3KvkfmKsukUCQ6nZP+q44lZ6DbNg0PwW9nQ77xXMlRJjt+5
-   g7/03WgeU7kHkAb2kO/FVWMJRWkTtMrV/HdeqDF2e/rLMIH/0FqkRuShA
-   5/YZukHK/5blQpXuE4jnu2HrtJvSwyNhzPmW7epeI+7kaYbdGIRFM1SUE
-   GuNird5OhjshMq6YiQv0TAr49MGUCADQFjoLYgX7sXTfRIV1XgYqouBp/
-   5LKqV1Ov4SUBETKysDcvBASLSfjSGjsryg7M/sDmcIh8KhEC4msES/Zh+
-   /at9PwDJb8PcyrVSHPF6AMrOB8LFQKSGYnogAeAUfWIG+HAOPpDwjg8N6
-   A==;
-X-CSE-ConnectionGUID: 54S2UuUBR2mN6cwSO4/YiQ==
-X-CSE-MsgGUID: menNKsTHRpaYdUccAyNHsw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="78091421"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="78091421"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:44:09 -0700
-X-CSE-ConnectionGUID: kV4Pz5RPSlyDfBHb3AkJnw==
-X-CSE-MsgGUID: JvtKCQWjTUOf48Iils4N1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="159518210"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:44:09 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 05:44:08 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 05:44:08 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.72) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 05:44:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hI6tYtj3bmS+jagRsbji6H/VZOqE27ocD75lAmT0aTtdE3T/G5uwhEcyr8SWEuz4jCfrpmoXgIRw+Ny79Egx69riyQ9Yfz6zXF/9XhKd0bu/vNHbuBgq832h6k1CVxV6ZsKgdSeOIxBMRUlq9Z7zAs4o1l5/RBGTlF/ljoFHXgXJHpEj9WDUgo0t9w9V0ybmkxzBcz4Duil71K3dYYzOojcGkqpbjNvG84YyDb8ZSd1mKcUNHGDCs28k3N6T80VMh9NBXybr3cFsWODIzeN4Bm5Lm4v924y5OUwhT8wzz1j0AWdVvaqt0KotqVLwj7ua+ttgUmhyKrarFxQ3u+fXDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OMN1IlEbJCE0GbBeBMY2a7BSVIFlQWcxpiBSyXXVrtc=;
- b=Yges8MegZeFSqneT3/ulpHkBB8cZnVJ7UgZrMK+57D5HGOCXMlzUgTQpJ6LOTMYFkxhQ5vSxHIfCiG9KlPGv6yrwGVaNvXmB/iu52/FiWLYwXdl/ZcLCKkd/NpiN0EuQNNg4VjNIgqQh8+10nM9HzGXQqIfJIADpl62x0TAisQEqLLLc4+kpFu2NOMSCqzZ5V93gBZhMgF9ZZoSK1FBYAQ4T0SrK5r05DfswAexbjgAtLW9Fd3CMygFE3KhqyqLcvG59W0yRP7LvY9p3H/hKeLrC0cVyt2BHH4deCrLPR/wb8ahdb/5LqaSpKvnSDVCGPO17mM01M6qqnUf0d4z5Pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH0PR11MB7585.namprd11.prod.outlook.com (2603:10b6:510:28f::10)
- by SJ0PR11MB6816.namprd11.prod.outlook.com (2603:10b6:a03:485::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Wed, 23 Jul
- 2025 12:43:23 +0000
-Received: from PH0PR11MB7585.namprd11.prod.outlook.com
- ([fe80::9ba4:34:81ac:5010]) by PH0PR11MB7585.namprd11.prod.outlook.com
- ([fe80::9ba4:34:81ac:5010%2]) with mapi id 15.20.8943.028; Wed, 23 Jul 2025
- 12:43:23 +0000
-From: "K, Kiran" <kiran.k@intel.com>
-To: Salah Triki <salah.triki@gmail.com>, Marcel Holtmann
-	<marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Bluetooth: btintel_pcie: Drop pci_set_drvdata(pdev, NULL)
-Thread-Topic: [PATCH] Bluetooth: btintel_pcie: Drop pci_set_drvdata(pdev,
- NULL)
-Thread-Index: AQHb9sp89z0+ODq8mU++U4T6yuV6l7Q/sNOw
-Date: Wed, 23 Jul 2025 12:43:23 +0000
-Message-ID: <PH0PR11MB7585C9C53264028687071050F55FA@PH0PR11MB7585.namprd11.prod.outlook.com>
-References: <aHhtIL3jyVbCEMqh@pc>
-In-Reply-To: <aHhtIL3jyVbCEMqh@pc>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR11MB7585:EE_|SJ0PR11MB6816:EE_
-x-ms-office365-filtering-correlation-id: a160da58-213e-4a93-08af-08ddc9e68300
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?O3Z5FCbeC6WUTP/kwMOoka43OgNwj3HVnso/PeBrVUy9lqB3SvvIPUu7inWD?=
- =?us-ascii?Q?dvZsgHhW/5L+Gx3vzjbTeXCri61G/nva2mZ9at9afmD1Li2nmh8qEN6RseKT?=
- =?us-ascii?Q?q3KbXKdAs+r6h1r09XC0wsxNO4XeSvdJIce+nG+waaVDvOtp08BGrv9Px0gi?=
- =?us-ascii?Q?uI578Fp9rnL+HrjArWD4fl6HeoZ9CDPNnnEe66uKlJR3pVGGVJ3GfDtQ7+vY?=
- =?us-ascii?Q?VezHmoRYSWUGYYjKv6YSKmX7xWPBivWm7j5B7xgHHtnTRKIMWGiJYkkjmJIF?=
- =?us-ascii?Q?bJrbz69osgHMFtzETrt7hFDufjjtz/0N1l8GB+Fg5XyRVcX159VaWLRWL6fL?=
- =?us-ascii?Q?NsSDXlMKo540I+ab0te330BXwh+zRRjSKGYcwa5QS4rR1osYcXD5L4//X0t8?=
- =?us-ascii?Q?1jeJHFkUaMrSn2GduIms0+YKbtbmw49qDmmGovyC/ETW3EczfO259H1z81br?=
- =?us-ascii?Q?R59wtVSCV2N19axTxZWXJEPi2kq8mbSzkZu89lVgPZ7an2a1+TW9R9HT7PRL?=
- =?us-ascii?Q?Olthby0XQ1q790UwYp93p35PmtseJQejwfDtR53GznFeFzV9fEkOZBcWkuWp?=
- =?us-ascii?Q?7dRi8gdebxsPuwY6TG0hIOHq5U98nUswihTE8K4qQViMMA9FpEjSFDLe6WBa?=
- =?us-ascii?Q?Oc4Bzh0XS96LNAhcqNprl8lSsxbbZMeQL3f0RIilg+AMZn2ibxs2bK5rTipw?=
- =?us-ascii?Q?PSwn2Qx/z6fSWymJMbclFxlSYMCeSi++0RfOj3fzJWhMQcUu1FY+DAajISde?=
- =?us-ascii?Q?gXEfxJvLE4brO9jK20uVY+3g19N+SGDKUN7kOKIzJn1Qm4C+M5KIzcoD97qj?=
- =?us-ascii?Q?uLnTrRkNox4J5oQ+RpxEwbmwhNIZPCjmrV4qaHBAje493cYeu+zZGCSYRZzM?=
- =?us-ascii?Q?DHN+WPtt4AbgczHOExPf/CTajUG9In7BzQAyiRIJBIiYjy/pI8zFEq3bVoiK?=
- =?us-ascii?Q?PF8M35gbZkwWqus6I2DEnrsG7XtKF4EWVhLwUPxIzdyA9QNz4iBU5OTw+Rkk?=
- =?us-ascii?Q?00SQx+I//dh7LcpgdPcm10wWiTnDtfUDTT+FGaI9P4wktK8SuIsP4VarcR4h?=
- =?us-ascii?Q?5kIhi27UsCYvjk4mKTqy33fvnkapwuFByFGU+fTpDrZFuhPKdL4gRHC827et?=
- =?us-ascii?Q?DkePJLj8YB24u2QJ1WexiG6TPg8aq0GSqd7d0fbdFr9UEHvPe5rZV72FbSRL?=
- =?us-ascii?Q?4oM/4Z2JMbUCbQDsiw5p2DKgpMlx9KAfMJVFSurojaM3MpS4AHGtKFi2RFI9?=
- =?us-ascii?Q?YX1c8wcenM3GSavUIkpDNCeA4NLvtmBXy512kcNJv2Tk7gVX0/sL8yRjwVYs?=
- =?us-ascii?Q?2WWJjc2u9YbsOC+dwHlW3frW6i0RqyVLA8OoCqm1AHsz7iPHSElkhRheTC6m?=
- =?us-ascii?Q?GQyZ2s3G6G26cl3FDnuu1TU6QKjMtnOeqtOg02Y1a0m+2R8/aocShcPCb4MM?=
- =?us-ascii?Q?WYKTHVxOB563fv7ruqi4KXt3PHY2cIJ5Qg1AskqS0ISnx7mepyKVhQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB7585.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?9ffFZSd7cX2Qyhm4oZACoSS/8zMCI64lDgBUF9mIpeykGIHEdTaPD8KAwcPn?=
- =?us-ascii?Q?RP84NSYpjQyHXzzuwXm5FzBaZmi7H2FYbelCQrdvstt3Tt33ZWHUwLIekN4R?=
- =?us-ascii?Q?xx5p0eOgzp2WVmBnyrzOOSkKHfDmR62Qm3O7Ag5mZYRQTOj4L8V/070fwhP4?=
- =?us-ascii?Q?pkuFFpGYLF1yJYHy7lZppxcD5CbnlpBlOpNsVymV+dC3Zux7WcnF8BijcZdN?=
- =?us-ascii?Q?/2v9/wa7mjAm9WoIZz01Sa3Ny4A3BdfQWN/HZBClL/rCH3DaSrOtWxaKfwcT?=
- =?us-ascii?Q?eUNeC8+pQo+mpTSQj267rSt0ZOf1B5773RSl1kcj85mTXW/apMB2js2VnfRb?=
- =?us-ascii?Q?rtZbH/2yl9gpLn2Vav3TGIJMLsG7P4F2xop/MQKNfkXYO+v7JxZQJkKs7q7I?=
- =?us-ascii?Q?jCyYdyrU+Iz367J4HFqAvlNa2a6X1Kc7Ls0RHpCWZnFJxX+RcUE8ZdnK+S0q?=
- =?us-ascii?Q?4NS9bcTIzTQN51iiM89k20Q/MdslAGi7Al61l3ZCjRiRIvKc591uW3Tc9S/P?=
- =?us-ascii?Q?eHA2oFQQBMyxfjRUo0OZuiK5dn+S9snToZUFTgrgFXc3QO8sSGUvmXCtMXsw?=
- =?us-ascii?Q?Nv9HnX2I8NLwYHFITBlRkf1EJJvFa2H9ocYNuy7SYzkBc/xy1VxFGERJvBwQ?=
- =?us-ascii?Q?epfgyyBDRtsJjsF6g7BZtQoZBDZvvU0V35Z45WhJ6pkvv4yu4rzPsEl/ZkCY?=
- =?us-ascii?Q?oDmQokJVQX4lc+RMh15cu8Sb/5+wFJTQyY/3zqoOvTNhNY+yfnzQyuy1sa+B?=
- =?us-ascii?Q?nPAauvgeZirfUz1+nvSw58XupXbU/f8DMEuyNiPv5F2wAKfWqNLyuc91FAyc?=
- =?us-ascii?Q?dJso/w3nMY/yojjYoW3BqC40ZJcv+XGMpgJLG7y8r5lPv7d2hDeZDfGNO8R1?=
- =?us-ascii?Q?NWwBQt20ZI0aKUwEQLIgN807I+d5MMKCxhPT++qkveiDzMu/aDm1krwgyGDn?=
- =?us-ascii?Q?Jasxnt3Fq6+2bHm4GtZmNGo1zzuuKKAaO3GXlKwT9lASvwNEOprhPoRerjC+?=
- =?us-ascii?Q?BWFCz7ofyXhJH4OFnBCHVRvngtlCXFMZ0/bKI1Qc0x8PiynB3Zwk15W1z4t9?=
- =?us-ascii?Q?YHtR8BzCp2EfjhlHzkig455SjKrgNGPjiUfmNAG+clmDqdhwSYkrpxEkMaOC?=
- =?us-ascii?Q?bVL7hzLaxBSh9rYZiNm7T4KdHMN2860ToP09oEW+LgKaQUzqBiqooR726Hwc?=
- =?us-ascii?Q?oqzJExPzg5MS4Eag1aRdlECuPq0hKl9kiJnWcjeEAiavU8ENd6DniSEGPv25?=
- =?us-ascii?Q?HtW36+eN3dXl5vDyagVAMPr8egOyxn48arWHSTj9b+qT8yG+arkzmAddrE5t?=
- =?us-ascii?Q?nEONmDohfCFDrg5bbRI5YDsSrKRZd4WqWLpo0ZmPwdHIydRofdNyrTxRDW7n?=
- =?us-ascii?Q?UXK1g3AvQEryIqfpQ4zTDnNrkDCI46iXhFfaAp8sFEa7usGtIa5RPK8oKlQf?=
- =?us-ascii?Q?ObfH9FE5FBW7fd9YMnu663BS03xOzc28s+qMJ/VwXvsggPqjwbWKe0URejKj?=
- =?us-ascii?Q?7eFch/VB7k0q1oVTSscDs6F5w+PxswceH9E89bQTfjF703WaWtyT7Ew3UCFI?=
- =?us-ascii?Q?ils73G/IkxyNUJuxalE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CD2E613B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753274726; cv=none; b=u+LaCtpxJBXR0j++yM0tuwfdb3y/fs4Yho2l8DKJ4GiNPxgqPCIalGytV97Yv4ZE2v7yvwenqgnKytAWgcQ4pUB+fHH1H8OvQuHx4d+IKnDGcw8kTu9zbCHNDcxu8LlnnjB6tMk5tbXq1Gjjo8ZhRoyBtNvLdGtYLXV0OI2ExeY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753274726; c=relaxed/simple;
+	bh=PSVh8+zmjXz2/3Itj97rR3bCxNouxj4qoJGhebydnM0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=MzbbP8k5/m9ik9jGLrY5/OEslZjj7oyVXDo0DPmLE39h0iZCbjfEWhfbDa9yfCmGUu6yPZ3ONj0lmvmL+EZQPQzSy/nF174swg2eapAjPR4nex7T5s5K2dO4As4O9b9R8rgGkVA7l/e4Loep2BpvYDBN/nY9FHfOE5Q79bNv3/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Th3ykaYL; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250723124516epoutp03f033ebc8fa2ca4c6cea4cae324235eec~U4hCyHOk52832528325epoutp03-
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:45:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250723124516epoutp03f033ebc8fa2ca4c6cea4cae324235eec~U4hCyHOk52832528325epoutp03-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753274716;
+	bh=PEOfka7o20zIZPmyJjhDlnK3FdIZ1ayZnAmiWFOAY8o=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Th3ykaYLsbUr7KCPyz3pnLe7ntpQviosxGR/2/NTX7YjsIa2F6uvGG4/t8bK2qXi6
+	 +7KYSWEKgoP+QUS/P1ZtifH1h4YMgmiBvknkZH2QImhHyU2qDjLbf0tW2ADHno+lLk
+	 KQa+ncSUwSb50Qbsz0xYXyxOlH4+NZjURykH1CZE=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250723124515epcas5p1aaf594fdd1861aef3eb2f4883c0973b8~U4hBuY4AX2230822308epcas5p1z;
+	Wed, 23 Jul 2025 12:45:15 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bnDPQ1b3Qz6B9m6; Wed, 23 Jul
+	2025 12:45:14 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250723124513epcas5p40a7150ee82c674eb479589288323da54~U4hAQiFXe2820028200epcas5p4a;
+	Wed, 23 Jul 2025 12:45:13 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250723124510epsmtip201e2e3138007aeaccacf564c5214f1c8~U4g9PPG5e2748727487epsmtip2V;
+	Wed, 23 Jul 2025 12:45:10 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
+	<pritam.sutar@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <neil.armstrong@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
+Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Wed, 23 Jul 2025 18:15:08 +0530
+Message-ID: <2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7585.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a160da58-213e-4a93-08af-08ddc9e68300
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 12:43:23.3474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SDKsAUyz2pvj2EiCmN04Kgv14pSRDqeCDZ2jjsJhvSfRNc5VT9bYTiqZB7slY4h1MLaRpTw1deA7sHTBVgzFQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6816
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+wC0VRd5AgU5Triy3GiwIA==
+X-CMS-MailID: 20250723124513epcas5p40a7150ee82c674eb479589288323da54
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+	<20250701120706.2219355-2-pritam.sutar@samsung.com>
+	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
+	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
+	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
+	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
+	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
+	<000901dbfb90$42873060$c7959120$@samsung.com>
+	<6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
 
-Hi Luiz,
 
->-----Original Message-----
->From: Salah Triki <salah.triki@gmail.com>
->Sent: Thursday, July 17, 2025 8:55 AM
->To: Marcel Holtmann <marcel@holtmann.org>; Luiz Augusto von Dentz
-><luiz.dentz@gmail.com>; linux-bluetooth@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Cc: salah.triki@gmail.com
->Subject: [PATCH] Bluetooth: btintel_pcie: Drop pci_set_drvdata(pdev, NULL)
->
->Drop pci_set_drvdata(pdev, NULL) in the remove function of the pci driver
->since it is useless, the data is not accessible when the driver is removed=
-.
->
->Signed-off-by: Salah Triki <salah.triki@gmail.com>
 
-Tested-by: Kiran K <kiran.k@intel.com>
->---
-> drivers/bluetooth/btintel_pcie.c | 2 --
-> 1 file changed, 2 deletions(-)
->
->diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_=
-pcie.c
->index e1c688dd2d45..28fa4ca3199a 100644
->--- a/drivers/bluetooth/btintel_pcie.c
->+++ b/drivers/bluetooth/btintel_pcie.c
->@@ -2339,8 +2339,6 @@ static void btintel_pcie_remove(struct pci_dev
->*pdev)
-> 	btintel_pcie_free(data);
->
-> 	pci_clear_master(pdev);
->-
->-	pci_set_drvdata(pdev, NULL);
-> }
->
-> #ifdef CONFIG_DEV_COREDUMP
->--
->2.43.0
->
-Thanks,
-Kiran
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Wednesday, July 23, 2025 2:13 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof
+> Kozlowski' <krzysztof.kozlowski=40linaro.org>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+=5Bsnip=5D
+> >>>>> Ok got it. Will change supplies name as below avdd075_usb =3D>
+> >>>>> avdd075-usb
+> >>>>> avdd18_usb20 =3D> avdd18-usb20
+> >>>>> avdd33_usb20 =3D> avdd33-usb20
+> >>>>>
+> >>>>> Confirm the above change that is meant in terms of DTS style.
+> >>>> Yes. I have doubts that actual supplies have suffix usb20. Are
+> >>>> there more than one avdd18 for this block?
+> >>>>
+> >>>
+> >>> Yes, there are more than one vdd18 supplies for this block.
+> >>
+> >> And their names are?
+> >>
+> >>>
+> >>> Re-analysed your comment on adding new supplies.
+> >>> Going to re-use existing supplies as mentioned below, rather than
+> >>> introducing new supplies
+> >>>
+> >>>   dvdd-usb20-supply   =3D> for 0.75v
+> >>>   vddh-usb20-supply   =3D> for 1.8v
+> >>>   vdd33-usb20-supply =3D> for 3.3v
+> >>
+> >>
+> >> You just expect us to guess whether this is correct...
+> >
+> > Sorry about not being clear so far.
+> >
+> > V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY The naming
+> > convention used in the schematic are avdd075-usb, avdd18_usb20,
+> > avdd33_usb20.
+> >
+> > However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
+>=20
+>=20
+> Then dvdd, vdd33 and vdd18.
+>=20
+> > Since GS101 binding already using supply names similar to what is
+> mentioned in the PHY user manual.
+>=20
+>=20
+> GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you ha=
+ve
+> only USB 2.0, that's why I question the suffix.
+>=20
+I cross checked the schematic of v920 SADK, this is a combo PHY which suppo=
+rt USB-3.0 as well.=20
+=40 Pritam
+Schema should capture all the supplies including USB-3.0, similar to GS101 =
+(which has USB2.0 and DP combo).
+So that would be as below:
+dvdd075-usb20-supply
+vdd18-usb20-supply
+vdd33-usb20-supply
+dvdd075-usb30-supply
+vdd18-usb30-supply
+please cross check the supply at your end and do the needful.=20
 
+>=20
+> Best regards,
+> Krzysztof
 
 
