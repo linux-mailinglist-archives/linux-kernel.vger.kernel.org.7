@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-742633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD16B0F492
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A4EB0F496
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F98188A49B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62B4189E47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759AC2E8DFD;
-	Wed, 23 Jul 2025 13:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052C92EA476;
+	Wed, 23 Jul 2025 13:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HBiN9DQ0"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="VUhkBz0F"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF42E8895;
-	Wed, 23 Jul 2025 13:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49B02E8DFB
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278718; cv=none; b=jEGk6lrqKNrRSHffg3OcFxk5uiFKSHwfmtYbaiOap74DYvC1YaeZ0BTlIunuYT8LXBERJXOnm8ufTP1/JU7mw0EYCRYFVd4n4+pKRivyRGVwPn/id6oS7fkQ5JI0i7od2HMQ3DPsE/0RDF133UrFehYu1Zl/QDTA68rpvcfNK2g=
+	t=1753278837; cv=none; b=duiRG9KzQyD5b5QGAkUFsiEgrjtQN0PU4uDVewXjkvVPdorVZ7wdux2IHofzRCk6YCggxYxhbrSFuwxHlkbhd3LXIqO83rTHrT1r7l3JXAFzTthplC599xLo0MI/XHDS0gdGESTDTFQ7lwNvU7h+yqpxT1LE59n2V07nJT6+iPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278718; c=relaxed/simple;
-	bh=8KNCwUsdYcAafh9ORfLqKTBj0WUYg+Mx1qZ64FNHitc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQRPOsbsCkz2XzUKpc1KzfMQWMD0xMc7SV4bXvctXVadQFEAfSpgTibDtz/JN9F+T1CBF919PkegxF+YaEI8FAfsFdUx8M9i1XAXi3wjr48Ncl4kwyesriYHZX0wYr/lpZ21DhI6dANiWoFjHUU/5+GNKWyLCrgndUaOM1rEzLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HBiN9DQ0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NB1pYj030352;
-	Wed, 23 Jul 2025 13:51:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=OoLQgwHCwYVfc9EEWEeZn1CU5S18sg
-	mBYtINjB3Z/ag=; b=HBiN9DQ0Lo7YoeuF16jPBNM8FbrHvY9HFA3wkYdgA5enU/
-	D+ptjXw6YzFbNaXE51wZlFAP+n/e/7CwwFWTd34Ro052Z9MQWThsI12+HQLzEgU7
-	uqEk5eHOYaR1yELI5CO4e20Jmj2tNE0ElzDW6OORiLkIUZyE9lwnjCuiRYNRNSFg
-	Zk3c5E8mGH2cwIS9VIkXqB9SjmBO05rc24vkp6Ye/jDjEqSD4RvH7LHi/dM24wB+
-	QIhqlc+SSnpoJbQrYqmSFqYQ6AySwidtobNdK9lFzqUu//mOoupkbY6kLc4hd8Py
-	oD/xi5H93H8Wb0f9e2WeBs8Uescwpo9YTt2HlOgw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdykuy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 13:51:49 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56NDl84s006324;
-	Wed, 23 Jul 2025 13:51:49 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482kdykuy5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 13:51:48 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCTQd6005057;
-	Wed, 23 Jul 2025 13:51:47 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8fy7f3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 13:51:47 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56NDpj4n12190086
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 13:51:45 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B0AF52005A;
-	Wed, 23 Jul 2025 13:51:45 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6497F2004B;
-	Wed, 23 Jul 2025 13:51:43 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.19.8])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Jul 2025 13:51:43 +0000 (GMT)
-Date: Wed, 23 Jul 2025 19:21:40 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
- crc check verifier
-Message-ID: <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <1e6dad5f4bdc8107e670cc0bd3ce0fccd0c9037a.1752329098.git.ojaswin@linux.ibm.com>
- <5211dff7-579b-48ea-8180-72d8c6083400@oracle.com>
- <aHkAJJkvaWYJu7gC@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <b270bb66-721e-4433-adaf-fe5ae100ca6e@oracle.com>
- <aH9PwFm06n9KQ0mE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
+	s=arc-20240116; t=1753278837; c=relaxed/simple;
+	bh=hByHGrth5zdeb5TgCiwXXXAzfAWK6MDyTN/grdnGXO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SS/S+/4Wnyv22wDMcRjPby1cU+4F89gjMUoX/HrTEi5fb42R9Si4gFJxyN1zT+maQ3OZimw9XYOovWpUT6E4KthJ/o/EtaGFgABLkXDD6hctU7EbWk9r8RLqZwxSgMcQLqfUOUUzD3BhT9nlg5iAnBJe+TvaqokodhrBFecVrOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=VUhkBz0F; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ae721c2f10so5637991cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:53:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753278834; x=1753883634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9nYQ1nxWVgdB6FCVcfOrCHIYHLuEY3Xl4xttYXGmsTA=;
+        b=VUhkBz0FovqY5h/QVPdB73Klq4kCB3HeRqIw1lDXbDXRf9++Bui89TnRiUXjQI8WvC
+         F/GfF0KrhXNxEk2+JDBcBosXSdx8PYUEKHOx+vQqQnKS4HHaJfVQ6MGRJ8F/7YcJwcQs
+         MzpC5xCP4RPuQJIULXKmgoXfNO7xLUEAXvceVg7M40wBIHyrh6R7ox+CI1yLP4FHfsLI
+         FC3jiZntXEQG5IdEM5RTLBw4S8rvJNc6NOq3NC9FkTk+XoASAriBXxrBQ2F5vxDccwKL
+         vkjze2pjI7NA2Q8sWWBKQ61OiEq5uOkVoOE89pshBkZa389e2pP+402UOWCLzvLDYoA/
+         JpTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753278834; x=1753883634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9nYQ1nxWVgdB6FCVcfOrCHIYHLuEY3Xl4xttYXGmsTA=;
+        b=LOt5f9/ZF791Lac7xouVacRSrHRHhT6pqI+xp9Rt72Rc53NtF0FYQdSPNvLbqTgePU
+         9POg6XwSrpfz1Axff3D+rP3lq7DUD0Y3+sP1hj0A93Ke65N8C6zMxSOS4JH6uDpzStkr
+         n1KEgEC9XmOJvKuN4L/lnrrom27LvypPA9sBlFxHUsrqPnka7d8q5/Z037pohV33trFE
+         KmO8HM2n8yC2hqfOlQbn3shDoaxoiNl3m6JBoEhYaorqnV1zFfhf9SZflwPHEFQm2r54
+         eZZ2hPjUsyYoNba3vJMRvJxQ8m9sCnlTpl0l1lUZX7MOnmEyKv1N5wTVnFIHnYdxWmq/
+         GOIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4b98pXhVJwgFXrwbfJHS5x6bKb3tpvJj23bZm5o1sD90355cMHna6NEus9pKXMdQRA0xfSfqVABKbvF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1er5W16q8lTwLbRq1tyh7L05KnLDIMkSbtr8tIYGpH562jTpw
+	NruX0W9dWWf4dErvXHY3ZWhbP0KBV7De/FVGwZ4fHbvkj1n3MPvhB522DUI59cozcj0Q9XzrdEi
+	843Qmm0jmqPNGmMwoMRfYxATdAzRBKNefEK7FoZ93BA==
+X-Gm-Gg: ASbGncvc2HIpGYn3uapK2075s7kJwTjHILV3th9OXXJoKm1aVPrxPKnSzviWuDEoWQB
+	SjQeOI5JIbu6rJxCYYFQAp4WTp+7GOn7vLh5zmxJRMzy0Fj+j3hTXCMbON3TKYagzPlGziG4Ooj
+	prMK9wX+Fl27Ybg9nhRZ0OqszubR+jWIkLJgw7agxX971HC+dG+gr9arBOg+1fqk7nrUZFC9UK1
+	F7x
+X-Google-Smtp-Source: AGHT+IHnUuhdrD9l7/UqXUCaUGkjpnut9RPkUhkRsYy8dMo95ULrH9zUrOnS3/mgiyGB2gnOI0df5GH4vloe3EzyqoM=
+X-Received: by 2002:a05:622a:13:b0:4ab:65c3:37d5 with SMTP id
+ d75a77b69052e-4ae6e009e59mr39018621cf.27.1753278827759; Wed, 23 Jul 2025
+ 06:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ce7xF2DtL-Xgt5mwwVAaUqwG3nK_9UgH
-X-Authority-Analysis: v=2.4 cv=XP0wSRhE c=1 sm=1 tr=0 ts=6880e8f5 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=1TsAVJmRfjqj6DXqSPIA:9
- a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-GUID: KSMiHbF58cSUPyjk3QgnQvlZGS7R0a6l
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExNyBTYWx0ZWRfX7xg42erhnv9g
- Jtub26aql13gnvL8ram/8rIWQiaKRbEeQAhYqTXkM8VfumcOkvTJjZUOeFrLywfuIYUICG/5lfq
- ft17HdmZAMteatGstujh1Ce3zP1AdLNG26FTRkXG7i5ujk/EPthasnWqeBylB1Q8LijEOJDjSIi
- 4L5n2JLYA/A0zN4MsVn5+qB8yC3W6f/zqxiaPLV+s5dQ0S2DYT+9g3pJZh+lzYm5dg5ddZcotLh
- tXuglfmQiDbCCXNT70JOScRzkaHw3tNENrTej562KmQeojXmxR7WqDH1AsL8vge7yYoC2YFXJ2b
- cPV+3sc1hWXvV/yPgql6xe34tLMLFxQX4CVvUxuco28TorqZIoWNyuXcyqogohp5wUeDuu3rXA5
- FvO/nUbe8hAnS7eijNdk0wFPA2Z8VUeWiJ2Zt2OK3EwEAxXt7vw2dzPhQrF8Dl6cG6wo2IRj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=510 spamscore=0
- suspectscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230117
+References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
+ <20250625231838.1897085-18-pasha.tatashin@soleen.com> <d6e44430-ec9c-4d77-a00b-15e97ab9beab@infradead.org>
+In-Reply-To: <d6e44430-ec9c-4d77-a00b-15e97ab9beab@infradead.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 23 Jul 2025 13:53:11 +0000
+X-Gm-Features: Ac12FXycG_A7VpBGI0ZPxdi4OoC_3NChOWXSX3JfSNxhPZyJt2s_1oWRajx-S3I
+Message-ID: <CA+CK2bCpY3xnPeEyWCRYVpRcs3maKMqZnApQtm5upkwmM80a3g@mail.gmail.com>
+Subject: Re: [PATCH v1 17/32] liveupdate: luo_sysfs: add sysfs state monitoring
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, ilpo.jarvinen@linux.intel.com, 
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
+	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
+	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
+	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 12:33:27PM +0100, John Garry wrote:
-> On 22/07/2025 09:47, Ojaswin Mujoo wrote:
-> > > > Yes, I've tested with XFS with software fallback as well. Also, tested
-> > > > xfs while keeping io size as 16kb so we stress the hw paths too.
-> > > so is that requirement implemented with the _require_scratch_write_atomic
-> > > check?
-> > No, its just something i hardcoded for that particular run. This patch
-> > doesn't enforce hardware only atomic writes
-> 
-> If we are to test this for XFS then we need to ensure that HW atomics are
-> available.
+On Thu, Jun 26, 2025 at 12:29=E2=80=AFAM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
+>
+> Hi,
+>
+>
+> On 6/25/25 4:18 PM, Pasha Tatashin wrote:
+> > diff --git a/Documentation/ABI/testing/sysfs-kernel-liveupdate b/Docume=
+ntation/ABI/testing/sysfs-kernel-liveupdate
+> > new file mode 100644
+> > index 000000000000..4cd4a4fe2f93
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-kernel-liveupdate
+> > @@ -0,0 +1,51 @@
+> > +What:                /sys/kernel/liveupdate/
+> > +Date:                May 2025
+> > +KernelVersion:       6.16.0
+> > +Contact:     pasha.tatashin@soleen.com
+> > +Description: Directory containing interfaces to query the live
+> > +             update orchestrator. Live update is the ability to reboot=
+ the
+> > +             host kernel (e.g., via kexec, without a full power cycle)=
+ while
+> > +             keeping specifically designated devices operational ("ali=
+ve")
+> > +             across the transition. After the new kernel boots, these =
+devices
+> > +             can be re-attached to their original workloads (e.g., vir=
+tual
+> > +             machines) with their state preserved. This is particularl=
+y
+> > +             useful, for example, for quick hypervisor updates without
+> > +             terminating running virtual machines.
+> > +
+> > +
+> > +What:                /sys/kernel/liveupdate/state
+> > +Date:                May 2025
+> > +KernelVersion:       6.16.0
+> > +Contact:     pasha.tatashin@soleen.com
+> > +Description: Read-only file that displays the current state of the liv=
+e
+> > +             update orchestrator as a string. Possible values are:
+> > +
+> > +             "normal":       No live update operation is in progress. =
+This is
+> > +                             the default operational state.
+>
+> Just an opinion, but the ':'s after each possible value aren't needed
+> and just add noise.
 
-Why is that? Now with the verification step happening after writes,
-software atomic writes should also pass this test since there are no
-racing writes to the verify reads.
+Removed columns, thanks.
 
-Regards,
-ojaswin
-> 
-> Thanks,
-> John
+Pasha
 
