@@ -1,126 +1,103 @@
-Return-Path: <linux-kernel+bounces-743011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF62BB0F983
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A9FB0F985
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEC41890A00
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F22AAC4440
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB5722069F;
-	Wed, 23 Jul 2025 17:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9254624500A;
+	Wed, 23 Jul 2025 17:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYa2s30/"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTEoClWJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V/m9EQLS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BA2227574;
-	Wed, 23 Jul 2025 17:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB915C158;
+	Wed, 23 Jul 2025 17:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753292240; cv=none; b=HI06fMETzi2OuIL+alrV3DEoi6vKgrS2OdEL5TKuSU2gJZejTiZS4myFsCWzxMfz7nTThZtUpD1AuB/xcxcnlurSSjwWJQ7L3BhnBc0lfQT3JbOgfOU5c2OfhfWYBjr4HAd8IYWvCaJ8icZOH2HohBD9XI/DeR/YJUtjCzfLx8k=
+	t=1753292251; cv=none; b=qGCxDMC7TqSk6/hF63KlgggkeEkgeR715CChXbUgyWvHkAXtz8o0yJcXMu4y+5Xrut6ijoKvgdths4qb+63d++ZFwK0xFgCluBuJY45Mvu5z2MGepIpP4/zTc033Dp/vxfYHAcLyy8XGhvq/Vh++CC05UQIdxOomR8yRaljpMUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753292240; c=relaxed/simple;
-	bh=rjZa4jQ92WzR1buCinsSPkKs46EphiG1VoHBWeHqJ44=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iAak2V2vyzJEp4/+dUaGq+SQ191n+RxPGWNeSS3dB1Az33rMEwQlPuw1xPZJXfkpFNiJcotdZsUhinJrAfa9x9CKDM0oYsdg+5JGekalVKK7umolxwC7SWUcLBqXXK4VxUS4xe3zSo9KS+sygNMUoMK7QgSS1hzEqPe/5n2ddVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYa2s30/; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso68128f8f.1;
-        Wed, 23 Jul 2025 10:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753292237; x=1753897037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KlttEDH05prTNfq+ea0u2Drdfy6nVwhRi7cMSKNkO7o=;
-        b=VYa2s30/Rw5ANj2emubxyZ8keO8oOeXO7NUgxNoFM7B9tHeuXvgs3yxzYwqrRJYYTc
-         gqb65P6RAGE07uBWt2t43yZmoUpw+S/iQ/Fj62x660KjKzPLFCH/be4xRyxFkx2ZokDw
-         KU1hrnBDBq4khkY87nhAVIDkKoH7T422wdsrEkI7I/PLBceVs1hcVxCvSHYKEmOanrY8
-         bZbH78PkREYNBipz2WLOS6JRuVdK0QIUUOrgyIpXfpAxbar6PnSlK7PSSyHee95o6PX9
-         f6umAdy2aNm/bbbm3RYGPv6GaldyjCsvsjiXh3mgd6h2UFYKdy7AiczW/R7BFHM1Sdaw
-         AMLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753292237; x=1753897037;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KlttEDH05prTNfq+ea0u2Drdfy6nVwhRi7cMSKNkO7o=;
-        b=BFFQndrI9JgntwdOzR2RZsIEYCAqR66qPhGgh7wQwh/pMVHLIRdnRLH9znAuWkmuA5
-         2Z5A06iEINiWJwSS9FrOrjM6LrrC1lLU4ebMUltFJ7HYqSrjjhAgPnUS+cWb+zXNEeUj
-         4GudhLBQrXiM+ALCVFuztShdZD/i1vKUsbXpGWu5SeKx0XC+4eTt97daBcC9jNat0kNI
-         o41Lgmu6WACbzaOnPJ8MuzFqKSmD4gYvSoT19lhHS8X4XSc51Jlnqfa5roR8dqqYyl2C
-         u9gWY3ji1918aOIORoxhE73JnVZ3j81uuUW4t3XrN0PBqHz+qjcxpF2FMQWymfyUFekY
-         BFhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcedbS6gSRTEsHlfq6z/g02QqSxXMbkSG68BC2s/vdjI5GvduI3hh9AwT/PiN02gfB+n/zWsxat9YHCXE=@vger.kernel.org, AJvYcCVodC1j2Oi2FTDHfA3KobrlN7kvQ3hNl9MLCWSvhu5FUfe3P//OLDs6OKtRR6CWsBTC8LhU2JxS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvfmfX39HlP10SFigF0Ub/JsvwWJV1U+Y8sSbIGlZyHvS3jHHE
-	5xLz/F04Ce+hrXhUjsOPy2kgNNCtDVyF8dGhoMD95YcSvXP+yDpS38c0
-X-Gm-Gg: ASbGnct04bODvj4OiU2AEuusMjZuq1fTvXVstmzBR4DDKhgUDIfRSXzyRAWYmZ1jgbv
-	oe+EkVXRqXfp1jFNO6NQamzSyHnjxpWssVjUtCw6s9OiWewbSwExhxD3TBpl0X/Abd/G3sjcp/+
-	KOgIW/dnMmCXPZxbv8Gsu9mYfhYEFUr+JgbmJ51v8LWAKbgCvCAf2OkXyWynyNbB1J75csJmT3k
-	3imZszbLWVmC1BmKrhINUFQtOmSfgjLfsR/ZqzLEiVWLr8uoBmzjOGsJpPt7gEVFjuAIn8tUElB
-	QKOS64nOyi7Zm3B9p01Ny7c+53U9Lh3aYixNBHpKWuCEyg4gbCbv0qQxwdhme+T+1jw5dnNR0yW
-	jt9l4D/9J7lYODYCtRy0Ckg==
-X-Google-Smtp-Source: AGHT+IE3KbWMQ5xYVuQes3e+Ej3tBCSlC2qdBRuaX0zaWpDwjxOX/Cd/Zs4snUJi1/joOzjnGEafCA==
-X-Received: by 2002:a05:6000:1885:b0:3a4:f644:95f0 with SMTP id ffacd0b85a97d-3b768f165f7mr3434077f8f.54.1753292236917;
-        Wed, 23 Jul 2025 10:37:16 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:f4f0:900:24ed:b04c:5d6c:b1a7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca487c1sm16953808f8f.41.2025.07.23.10.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 10:37:16 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] HID: multitouch: fix integer overflow in set_abs()
-Date: Wed, 23 Jul 2025 18:36:59 +0100
-Message-Id: <20250723173659.59327-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753292251; c=relaxed/simple;
+	bh=SK0T/YPPJf5gjC7D4LgNCas0mCg0dqP26nQsyvEH/T4=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RBXbBMYb/whvVQBxHa0DYg29tUcuAOJ7VeBjKa3JWseiJDVO0kHvoG4NlliyxVykQ0irnjy3vqiJ9V4+Bxg9Jdox/ESXHFry3xD1VAo0o065HnuyLtTYzE4YJKWtEI+bmo2vQq+LqT3+D/WRzsYAG61Y/zMpozGrXXLuI4p4L1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTEoClWJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V/m9EQLS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753292247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NAN36tnPlVScqFyW8H2kecVmf43LbzR0LCpjmIdCB6k=;
+	b=dTEoClWJpdbZ8dDT/H8RBibW5G3pXOOc7s0AFPsIuxm4wZIG3cAMH4PBg7kS9MSRq90Z7p
+	mdkx7DyiIBN13jDTsP4J3u7cq80L9uQDFENlrOzvWmmllj4cYDp8CWrhP73KFXPFDLa5Rh
+	ufDzvNPhC6DkMEy/jgY/NpIGpgsP+B3UQ2R+FnIHCYfKdbv+bgnfuL8jvPslRiwEdTRDM+
+	auRoX4DfeM7cJO5PagYEI1rkPT+ts9Xzm58KVrqTNA68AAbhiW1Z3PZmG3VezBuwE8bywZ
+	Wzlxur0f6tt0Lb1ZqpQkWyt9g+zWAgLuhXQHESNLqMoyf0QJyzB1S113gM9nsQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753292247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NAN36tnPlVScqFyW8H2kecVmf43LbzR0LCpjmIdCB6k=;
+	b=V/m9EQLSeALkvLMUgne5PHhsAdv3wLFBWfmwy/iiP2pq1OL7lDqxS5TYhKlnJ2UF4PJaNs
+	39ByRYfi3VRICtBw==
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Kevin Chen <kevin_chen@aspeedtech.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>
+Subject: RE: [PATCH v3 2/2] irqchip: aspeed: add debugfs support and AST2700
+ INTC0/INTC1 routing/protection display
+In-Reply-To: <OS8PR06MB7541516DD4FDEBD72A764042F25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
+ <20250722095156.1672873-3-ryan_chen@aspeedtech.com> <8734aotfdq.ffs@tglx>
+ <OS8PR06MB7541516DD4FDEBD72A764042F25FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Date: Wed, 23 Jul 2025 19:37:26 +0200
+Message-ID: <87wm7yrep5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-It is possible for a malicious HID device to trigger a signed integer
-overflow (undefined behaviour) in set_abs() in the following expression
-by supplying bogus logical maximum and minimum values:
-	
-	int fuzz = snratio ? (fmax - fmin) / snratio : 0;
+On Wed, Jul 23 2025 at 06:02, Ryan Chen wrote:
+>> > +struct aspeed_intc {
+>> > +	void __iomem *base;
+>> > +	struct device *dev;
+>> > +	struct dentry *dbg_root;
+>> > +	int (*show_routing)(struct seq_file *s, void *unused);
+>> > +	int (*show_prot)(struct seq_file *s, void *unused); };
+>> 
+>> See the chapter about struct declarations and initializers in the documentation
+>> I linked to above.
+>
+> Sorry, I don't see the struct "> > +	int (*show_prot)(struct seq_file *s, void *unused); };"
 
-For example, if the logical_maximum is INT_MAX and logical_minimum is -1
-then (fmax - fmin) resolves to INT_MAX + 1, which does not fit in a 32-bit
-signed int, so the subtraction overflows. Fix this by computing the 
-difference in a 64 bit context.
+I fatfingered that, but that's not the problem.
 
-Fixes: 5519cab477b6 ("HID: hid-multitouch: support for PixCir-based panels")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
- drivers/hid/hid-multitouch.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> My original submit is following, it should ok. Am I right?
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 22c6314a8843..687638ed6d0f 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -540,7 +540,8 @@ static void set_abs(struct input_dev *input, unsigned int code,
- {
- 	int fmin = field->logical_minimum;
- 	int fmax = field->logical_maximum;
--	int fuzz = snratio ? (fmax - fmin) / snratio : 0;
-+	s64 diff = (s64)fmax - (s64)fmin;
-+	int fuzz = snratio ? (int)div_s64(diff, snratio) : 0;
- 	input_set_abs_params(input, code, fmin, fmax, fuzz, 0);
- 	input_abs_set_res(input, code, hidinput_calc_abs_res(field, code));
- }
--- 
-2.39.5
+No. Read the chapter I pointed you to.
+
+> https://www.spinics.net/lists/kernel/msg5776957.html
+
+I have replied to this very mail. No need to paste me this and the pointer
+to some random mail archive
 
 
