@@ -1,116 +1,213 @@
-Return-Path: <linux-kernel+bounces-742961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8377DB0F8C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:16:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A33B0F8D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D917B5E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C98E584475
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781272116F6;
-	Wed, 23 Jul 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vlHLPvdm"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BB021A457;
+	Wed, 23 Jul 2025 17:18:34 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A06B2E371B;
-	Wed, 23 Jul 2025 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3C5215055
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 17:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753290971; cv=none; b=TlajRNPn0Zde+WaL4/9arve3gzQuFFlLhYPSdSZvDQ4Jr1yvN7Oa7xKnfupjhkWU5PE7vFudcEISRpUxI8gaH9KuViMt4bBtXUtjoETZhH3jjsRnKkqcKkPVTHI4ocWuDdExWLyBURBb3I/HgT+zo3OYnSb7gzkUV2vW92nMs5U=
+	t=1753291113; cv=none; b=YB9FLWs4upf4ozkc68T53bLyGJvLacxssif3GCfAU4wTHQmiXsmP9yyDWaCBBQG6Fsj6XGoRc/X/ChkUeJnX6S6vhUGRW9fDqygZl5ZuqAmejPjpjX4yijhOX6oDCwAdTYQd2tmfoFJ79e6qC+acYQMw+vfanyrf3IPLAag4zKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753290971; c=relaxed/simple;
-	bh=iVTDmofGQTAzngV/8kkO8hEyfpfo8lk01PQhA0Hog3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQc48qCEe7xqtc1IBe3l/VzUcyzAhI1X687aEqyv1hIDfX9AuVvaugOP6AgRk68I2IqOUtv5Czh8qrKXyxxeZCu0Ckbc0efB+5k+U2qcRYk26TfgHXDyKM4rC1b2SFxmwQPud0QDgvs6RlzlAYvJEm3+1aIUEhtpUFJhpjqFdlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vlHLPvdm; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=TUmK6VJp0+E0SJQueeIqF9DxsO4dtccjN/iCA5xVXSQ=; b=vlHLPvdmdD+XmzDdgEpCoJ37fR
-	4kA3gtamKP6pl7RUUKO7ce0QIfkO69/BZ/B8cVEnuum/5vFgJ/9z9LEreyN4BY0egcqVBEUlz4hoG
-	+oAv6TzUYbem5YxCixTJvUMOQfg1CBZLX7BcrP6MF8x+QqEcf+CfpK10/m6eDUp5axqo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ued4T-002fhc-Qy; Wed, 23 Jul 2025 19:16:01 +0200
-Date: Wed, 23 Jul 2025 19:16:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 2/6] net: dsa: microchip: Add KSZ8463 switch
- support to KSZ DSA driver
-Message-ID: <857db988-fd4d-4cac-9774-43161f1f592a@lunn.ch>
-References: <20250723022612.38535-1-Tristram.Ha@microchip.com>
- <20250723022612.38535-3-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1753291113; c=relaxed/simple;
+	bh=AZwlVqhuvRKGgNehKvqBHIKxgnviIKuL1MrgZDbxDeI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Jv1On0z1rnnxoWIeJ6K/wcxyRIRAten0RP0SnC83xy70UMioR7/S7MeB12XUUTmkh+ojfxtlVWjdPugtM8wpyTqiLxKq54L1lofFPwG2sZ4Ip427NVFzArRYuDsAt4Ie9O5HEh8WzhXTGOSzz2VbtDg7iNWKA8CFhAiqhetcgzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso10601139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:18:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753291111; x=1753895911;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KR3LA6tAIxJqUmqUW48dljikQflU1OVX+o4ME8EXujQ=;
+        b=g+UOpeaOR3lfuQSpEcanTUPuI7shcGVBMgXp11bjvnwMNMEU2dpB5a5+d6rkYfU5WJ
+         8M5QRoxGoxA2XQyThPSJCm0mel17H7VP5eAW398BDOXzSK5ELXTbvEmXQbiBJgSk1JM1
+         wYZaKiFalqTH9QgCHS+qkFf6+D0dWjMZcG31EwSo7j41KDH2EVtkntPpmc38CdgiOT66
+         L93m9jF6GC8jOKQgW+dp/syV/fGCFTlOtM4KqTnuP/N0e9ZaFx/35yN7CRASgCCGpu+U
+         1uqDlAs3A3R/quBqM1HFQ+GpB/Sjvtq0HQ3EvNuE2gEDNViztx8zt7/f2bt4lzDTbC2R
+         xR/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXYXpMLsMSYuPGjm6Qr76WMBhaUknbfzat8/cbM+x4xpLfwaQDrdK646K4Z0QZzt9H+bH7hXGyrKaW0XcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1kvTaRbjotZGz4ZDcgw0MQf4bu2o9QLiSJavrgbjcx8+T3ibV
+	0i828LOs7yCjDZMS+116bf13VX8lm9u8MKnXNsS7Xiyk312zs/d29j1FjbJIo5HGUo0yZw3bKZ5
+	jIv+b67/YZCW/PpAFhg1G3o8nvRBiLJVBaG4UtJ9agfPUKqUKj4YYOspxs8I=
+X-Google-Smtp-Source: AGHT+IGweLyovhlyqubji/Qi7uhEMJXAkGSbXJF0/ZTNBzkVMUbYo8AV/ZwpmhUd4dbiVc4KzunpoBifa5kLyKwKtUOpiVCvpy1t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723022612.38535-3-Tristram.Ha@microchip.com>
+X-Received: by 2002:a05:6602:13d1:b0:86d:d6:5687 with SMTP id
+ ca18e2360f4ac-87c64fa0e51mr814500639f.6.1753291107701; Wed, 23 Jul 2025
+ 10:18:27 -0700 (PDT)
+Date: Wed, 23 Jul 2025 10:18:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68811963.050a0220.248954.0005.GAE@google.com>
+Subject: [syzbot] [hfs?] KASAN: out-of-bounds Read in hfs_bnode_move
+From: syzbot <syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com>
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> KSZ8463 switch is a 3-port switch based from KSZ8863.  Its major
-> difference from other KSZ SPI switches is its register access is not a
-> simple continual 8-bit transfer with automatic address increase but uses
-> a byte-enable mechanism specifying 8-bit, 16-bit, or 32-bit access.  Its
-> registers are also defined in 16-bit format because it shares a design
-> with a MAC controller using 16-bit access.  As a result some common
-> register accesses need to be re-arranged.  The 64-bit access used by
-> other switches needs to be broken into 2 32-bit accesses.
+Hello,
 
-> +	if (ksz_is_ksz8463(dev)) {
-> +		int i;
-> +
-> +		for (i = 0; i < 2; i++)
-> +			ret = regmap_read(ksz_regmap_32(dev), reg + i * 4,
-> +					  &value[i]);
-> +		*val = (u64)value[0] << 32 | value[1];
-> +		return ret;
-> +	}
->  	ret = regmap_bulk_read(ksz_regmap_32(dev), reg, value, 2);
+syzbot found the following issue on:
 
-This needs a bit more explanation. When i look at
+HEAD commit:    89be9a83ccf1 Linux 6.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ac1b82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=41ba9c82bce8d7101765
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1771ef22580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f764f0580000
 
-https://elixir.bootlin.com/linux/v6.15.7/source/drivers/base/regmap/regmap.c#L3117
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-89be9a83.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a3f5f507f252/vmlinux-89be9a83.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a8f9b92c57a6/bzImage-89be9a83.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f02d92e4771f/mount_0.gz
 
-It appears to do something similar, looping over count doing
-_regmap_read().
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
 
-There is also:
+loop0: detected capacity change from 0 to 64
+==================================================================
+BUG: KASAN: out-of-bounds in hfs_bnode_move+0xea/0x130 fs/hfs/bnode.c:143
+Read of size 18446744073709486080 at addr ffff888000994400 by task syz.0.16/5547
 
-https://elixir.bootlin.com/linux/v6.15.7/source/include/linux/regmap.h#L370
+CPU: 0 UID: 0 PID: 5547 Comm: syz.0.16 Not tainted 6.16.0-rc7-syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x230 mm/kasan/report.c:480
+ kasan_report+0x118/0x150 mm/kasan/report.c:593
+ check_region_inline mm/kasan/generic.c:-1 [inline]
+ kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
+ __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
+ hfs_bnode_move+0xea/0x130 fs/hfs/bnode.c:143
+ hfs_brec_remove+0x467/0x550 fs/hfs/brec.c:222
+ hfs_cat_move+0x6fb/0x960 fs/hfs/catalog.c:364
+ hfs_rename+0x1dc/0x2d0 fs/hfs/dir.c:299
+ vfs_rename+0xb99/0xec0 fs/namei.c:5137
+ do_renameat2+0x878/0xc50 fs/namei.c:5286
+ __do_sys_rename fs/namei.c:5333 [inline]
+ __se_sys_rename fs/namei.c:5331 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5331
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f11db18e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd56ec9fe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f11db3b5fa0 RCX: 00007f11db18e9a9
+RDX: 0000000000000000 RSI: 0000200000000780 RDI: 00002000000003c0
+RBP: 00007f11db210d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f11db3b5fa0 R14: 00007f11db3b5fa0 R15: 0000000000000002
+ </TASK>
 
- * @use_single_read: If set, converts the bulk read operation into a series of
- *                   single read operations. This is useful for a device that
- *                   does not support  bulk read.
- * @use_single_write: If set, converts the bulk write operation into a series of
- *                    single write operations. This is useful for a device that
- *                    does not support bulk write.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x35 pfn:0x994
+memcg:ffff888030a98000
+anon flags: 0x7ff00000020908(uptodate|active|owner_2|swapbacked|node=0|zone=0|lastcpupid=0x7ff)
+raw: 007ff00000020908 0000000000000000 dead000000000122 ffff888059a96cc1
+raw: 0000000000000035 0000000000000000 00000001ffffffff ffff888030a98000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 5548, tgid 5548 (dhcpcd-run-hook), ts 123108746961, free_ts 121368908469
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ folio_alloc_mpol_noprof mm/mempolicy.c:2438 [inline]
+ vma_alloc_folio_noprof+0xe4/0x200 mm/mempolicy.c:2473
+ folio_prealloc+0x30/0x180 mm/memory.c:-1
+ wp_page_copy mm/memory.c:3569 [inline]
+ do_wp_page+0x1231/0x5800 mm/memory.c:4030
+ handle_pte_fault mm/memory.c:6085 [inline]
+ __handle_mm_fault+0x1144/0x5620 mm/memory.c:6212
+ handle_mm_fault+0x40a/0x8e0 mm/memory.c:6381
+ do_user_addr_fault+0xa81/0x1390 arch/x86/mm/fault.c:1336
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x76/0xf0 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5509 tgid 5509 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ free_unref_folios+0xc66/0x14d0 mm/page_alloc.c:2763
+ folios_put_refs+0x559/0x640 mm/swap.c:992
+ free_pages_and_swap_cache+0x4be/0x520 mm/swap_state.c:267
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:397 [inline]
+ tlb_flush_mmu+0x3a0/0x680 mm/mmu_gather.c:404
+ tlb_finish_mmu+0xc3/0x1d0 mm/mmu_gather.c:497
+ exit_mmap+0x44c/0xb50 mm/mmap.c:1297
+ __mmput+0x118/0x420 kernel/fork.c:1121
+ exit_mm+0x1da/0x2c0 kernel/exit.c:581
+ do_exit+0x648/0x22e0 kernel/exit.c:952
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1105
+ __do_sys_exit_group kernel/exit.c:1116 [inline]
+ __se_sys_exit_group kernel/exit.c:1114 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1114
+ x64_sys_call+0x21ba/0x21c0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-It would be better if regmap_bulk_read() could be made to work, and
-hide away the differences, which is what regmap is all about.
+Memory state around the buggy address:
+ ffff888000994300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888000994380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888000994400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                   ^
+ ffff888000994480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888000994500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
-	Andrew
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
