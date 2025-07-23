@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-742697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D608BB0F579
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C01B0F578
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCCB13B71CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552F9188A7B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954F32EF9BD;
-	Wed, 23 Jul 2025 14:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6322F4309;
+	Wed, 23 Jul 2025 14:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMrIkLjb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="Qx+ki/g6"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA3820E023;
-	Wed, 23 Jul 2025 14:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B80A31;
+	Wed, 23 Jul 2025 14:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753281369; cv=none; b=OfyK2k8edxUa5CN37izSBu0pRP0zGAStu5yfKs8fnaZXW9CuQDygUdGH3xsIC0Ifuv5SNTyHTIwz/pCx894hyg52VjH49aPqbDV+gbOw+nckty78/kXO+oImNwsMsf8fBjJYBwhVoEp09qMMFGFuHa5IGQMCwebZ3ORkpZP65vg=
+	t=1753281426; cv=none; b=EPfrrFYOBZHU0yH4/+31giU2IN4UHNADxg1jxM8dEYkApRj51F5rD9pbQyXsmLfeGgz7UNpSa58LKBJygWJeR8H6CGNg7PVsdqpRMZP3lJMlU93FXDSO729gQsCOXQOT1lwZWCO+iuqtEY1pvxMUi5E56ZzfboeFgU0x3hp1fdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753281369; c=relaxed/simple;
-	bh=TfLI4hpAb/IcCHboE4yM4dKFzRS2cirqHqAIlnDgTGg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=u80j9vKcnIsOrLEUGkDHC9xZzH65my2X/jxRrx4cnu8FriMx9C0IYDIZPxZ9vzE56C9fY13jFlotwCyAiuUrwDfoI4vU2m37uB7o3lLA4BcjYCCr+KB5phmgfKss2NAps6PimHTD4iquHj6/8TGkGAJ8ZcPixC/a3tR6hfD2hg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMrIkLjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A890DC4CEEF;
-	Wed, 23 Jul 2025 14:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753281368;
-	bh=TfLI4hpAb/IcCHboE4yM4dKFzRS2cirqHqAIlnDgTGg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=FMrIkLjb1A20xcuUaefBE7BMQemq/dKlgpIi8I4hjl1vGcHzsd8ZcMIDIwKKazkzk
-	 p0jlBDlD8lje1j5VxLHIzHqwOJ7DhXc0szQTpnSyZAsOmXkOrOHPiJD7vmhN0mnxP1
-	 jvH3h0VGfnhMygM/LVgOX+alciq+9nM/jeNzm1wvbWuQghuDy4xlCuYJOFi/bBkLRB
-	 M05hSN/zy8lTB78R8zLyYREH8pyzMu2s5PPF/Cnkkr7z0QEoPHuy/OuOeQFMGoLspD
-	 E0LcWEK7OaMrFgdviTPXxntdKfIBBfTwCTHUy1DUuPe6tXaDigz9C2NIFXVfJeCLfi
-	 x/Hrw3zLgv5eQ==
+	s=arc-20240116; t=1753281426; c=relaxed/simple;
+	bh=1Eu6C66aJDQYWOYhxnwsTT2t5y102QgUEg4VToHlsTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FOXFgC8hHNqbEltxSVezTCxRPEJep2Kc/XHnjBNZA323cNObuLmHimR8l9pniSoi/9i9Our/2tCh98yL2a7kly6GMBDucSLUznBSXcyGRVAtU3iZmuXltt7DlYhVnsez9b8iteqRTKor3wZEKwh7Xv+ZiN0JIHoMKBKS2XsdOfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=Qx+ki/g6; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=JE8x8JbxhqSBlVW6JXjbTPZwTk8sConJh4EHbajYP/Q=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1753281394; v=1; x=1753713394;
+ b=Qx+ki/g60yiW5sNkfABHdiHKQSO3ov0lBjHTRMsMXXzn6RW2Q8f8jllh88wEI3vqgruy96k3
+ vNr09IAfbXnhBPvOy0iI4A6N7YQKAwo+iLgKglW2RUr5x7AQNHVPMagV1t9WFJaxme5ReDKGK7S
+ sMPb8suMuouA92EagbLFWoCXvEktZNVxbUpzhlg3mylMvsuaqdkNrFvR8obiwBxfV2Cv3uxotZ7
+ I/Wka1IBZ1E3uGUseK4LEGFaakYH+OrcUivdxpFv9WNffn2pAjgEbQveq9s8rS7ksRQUbnnvD0W
+ bOCnEpSyAs78mKNPRXbOLogHAIyqmycyotxUlKT11ihaQ==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 12094314; Wed, 23 Jul 2025 16:36:34 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Rob Herring <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Karel Balej <balejk@matfyz.cz>,
+ David Wronek <david@mainlining.org>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject:
+ Re: [PATCH RFC 1/2] dt-bindings: mmc: sdhci-pxa: add state_uhs pinctrl
+Date: Wed, 23 Jul 2025 16:36:33 +0200
+Message-ID: <5051937.31r3eYUQgx@radijator>
+In-Reply-To: <20250721143541.GA593898-robh@kernel.org>
+References:
+ <20250718-pxav3-uhs-v1-0-2e451256f1f6@dujemihanovic.xyz>
+ <20250718-pxav3-uhs-v1-1-2e451256f1f6@dujemihanovic.xyz>
+ <20250721143541.GA593898-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 23 Jul 2025 16:36:05 +0200
-Message-Id: <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org>
-Cc: "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] rust: sync: refactor static_lock_class!() macro
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
- <20250723-lock-class-key-cleanup-v1-1-85fa506b8ca4@google.com>
-In-Reply-To: <20250723-lock-class-key-cleanup-v1-1-85fa506b8ca4@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed Jul 23, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
->  impl LockClassKey {
-> +    /// Initializes a statically allocated lock class key.
-> +    ///
-> +    /// This is usually used indirectly through the [`static_lock_class!=
-`] macro.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The destructor must never run on the returned `LockClassKey`.
+On Monday, 21 July 2025 16:35:41 Central European Summer Time Rob Herring=20
+wrote:
+> On Fri, Jul 18, 2025 at 11:12:38PM +0200, Duje Mihanovi=C4=87 wrote:
+> > On the pxav3 controller, increasing the drive strength of the data pins
+> > might be required to maintain stability on fast bus clocks (above 100
+> > MHz). Add a state_uhs pinctrl to allow this.
+> >=20
+> > The existing state_cmd_gpio pinctrl is changed to apply only on pxav1 as
+> > it's unneeded on the other controllers.
+> >=20
+> > Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+> > ---
+> >=20
+> >  .../devicetree/bindings/mmc/sdhci-pxa.yaml         | 45
+> >  +++++++++++++++++----- 1 file changed, 35 insertions(+), 10 deletions(=
+=2D)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+> > b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml index
+> >=20
+4869ddef36fd89265a1bfe96bb9663b553ac5084..7a9e2a63ac4351aea10b2763ca250ce48
+> > 89df1eb 100644 --- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.ya=
+ml
+> > +++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+> >=20
+> > @@ -30,6 +30,39 @@ allOf:
+> >            maxItems: 1
+> >         =20
+> >          reg-names:
+> >            maxItems: 1
+> >=20
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: mrvl,pxav1-mmc
+> > +    then:
+> > +      properties:
+> > +        pinctrl-names:
+> > +          description:
+> > +            Optional for supporting PXA168 SDIO IRQ errata to switch C=
+MD
+> > pin between +            SDIO CMD and GPIO mode.
+> > +          items:
+> > +            - const: default
+> > +            - const: state_cmd_gpio
+>=20
+> blank line
 
-I don't know how lockdep works, but Boqun mentioned in the other thread
-that it uses the address of static keys. But AFAIK there is no mechanism
-to differentiate them, so does lockdep just check the address and if it
-is in a static segment it uses different behavior?
+While at it, should I do the same with the properties: blocks in the existi=
+ng=20
+if: block?
 
-Because from the safety requirements on this function, I could just do
-this:
+Regards,
+=2D-
+Duje
 
-    // SAFETY: we leak the box below, so the destructor never runs.
-    let class =3D KBox::new(unsafe { LockClassKey::new_static() });
-    let class =3D Pin::static_ref(KBox::leak(class));
-    let lock =3D SpinLock::new(42, c_str!("test"), class);
-    let _ =3D lock.lock();
 
-Because if lockdep then expects this to be initialized, we need to
-change the requirement to only be used from statics.
-
----
-Cheers,
-Benno
-
-> +    #[doc(hidden)]
-> +    pub const unsafe fn new_static() -> Self {
-> +        LockClassKey {
-> +            inner: Opaque::uninit(),
-> +        }
-> +    }
 
