@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-742594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F695B0F422
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:35:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D8EB0F425
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EEE8169524
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226BD7A3129
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2412A2E8DF1;
-	Wed, 23 Jul 2025 13:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFBE2E9EDB;
+	Wed, 23 Jul 2025 13:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w+8aWlEV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qnViJaVV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w+8aWlEV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qnViJaVV"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PeRIBlAG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QH0aAN2I";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PeRIBlAG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QH0aAN2I"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22882E7196
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74442E9EA6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277716; cv=none; b=R0YxtL8JyHfHG1SL3zh3JrORWVS1GxHdYYkOPz4ivMBQjgcN/gANEc8GDxEzY9RtRR6mAIA9AGaurJHSq8sutB1tsvRXyC3/bi4+jza/esPWtKSwlaNcbqjT2fW/IK0pXZ8TKiLouo9B7u+ydnCpDC0F9XfAlGLnMNqbiXGJSmM=
+	t=1753277730; cv=none; b=joEAPFmySeVm7r7+xZr7C9j6IsrA/D7csAAc28a3paxp4TmR7UgN7783WDrtpfMBzJbJUKWlekW8j/Sf6wnawA5zRXOjGEWMRXvfWge9m16pOUQOAFv1+x7TQfWB6CO3qz+1G5LRDaaQwcNqdGUe2nY2MFrdZ8Q/gP0IWvh4/gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277716; c=relaxed/simple;
-	bh=dG1giyj2dsCyVUxqGYUW8p7bs8KuWRTtSFkZAcFcchU=;
+	s=arc-20240116; t=1753277730; c=relaxed/simple;
+	bh=g+cW4iv2z/ZLxq3t03iSc/ruNf+jvJ3mN4AJ/CBvE6o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bhl181Jfsv1iO8n8N58vF75kHbrO7GKto6JJkXilImwdXsUdgVQpKRrebQ3xB+rN9GktarO+8Tq5GBetdCvjYZvvIAO3IPhubzk4NWAQKEFG/ETrC1CPHPiVXXSNXk9ZrCh5Id/eZagyhOIHAqPWsiQB8FpCZZjZ/OHQVNVnLsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w+8aWlEV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qnViJaVV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w+8aWlEV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qnViJaVV; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:To:Cc; b=hhuNLediyGfSZfCIrGaCaMYqr6zmFnUH7bKnduiHjpwsltilXFy0++ViGjRieIwMEmxzWuFl1Nc7ou+nr/BxDmm9ksrjPBLzMmq4ByV46ig+pC1OHvN9Hp+erMnkfoFLTiTGpjfYNsYW1sfV7zD9Yzx08UehbJDTNH+o9NoBTeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PeRIBlAG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QH0aAN2I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PeRIBlAG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QH0aAN2I; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1DA971F78F;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F3B01F790;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
-	b=w+8aWlEVxjdtasQJNYG4cwAS62pKLVEL254SN4W/E9p62BnWXUpEvNrYeD379SCLpkK9AU
-	R66reAIdkwGTxr6Sp4X3Ywh4fQZ+h/d+z/USoEPB1/a5JsnN8xXaimuNIlFTltPix8lQ1V
-	l4lE+2XHF00vWpJKHjyPv8ylbHK6HBo=
+	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
+	b=PeRIBlAGtgcYtv6sV41maiS0N6Wyp9R4jEVFozj0FAL64NcONmOw/HHDJ2Uw8yqbS/yj07
+	uX72Rm5xLLHPkWs44sV8qF8N+d3fCZfgQXV66toCcEpscT4Ay5+zMYiiY5IXJE+McEceiL
+	Z7ktm3gD6bc8QbxCGpjmf5rdQMqKc5A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
-	b=qnViJaVVhHNa5Zhw7P2qp0WTSOuBGcG1Hd8Cn5OyqOGdTXHdM9F3tywUcqNHwE43rCd/sJ
-	ea3e7m82r1YY9BBg==
+	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
+	b=QH0aAN2IfgpijQ3IVcSa2GuONJ86Wq/eNK/EUoByY4hgIJ+MyRWxfLYayE4qTrn8LBop5m
+	HT0bOSzSE5uZgDAA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=w+8aWlEV;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qnViJaVV
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PeRIBlAG;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QH0aAN2I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
-	b=w+8aWlEVxjdtasQJNYG4cwAS62pKLVEL254SN4W/E9p62BnWXUpEvNrYeD379SCLpkK9AU
-	R66reAIdkwGTxr6Sp4X3Ywh4fQZ+h/d+z/USoEPB1/a5JsnN8xXaimuNIlFTltPix8lQ1V
-	l4lE+2XHF00vWpJKHjyPv8ylbHK6HBo=
+	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
+	b=PeRIBlAGtgcYtv6sV41maiS0N6Wyp9R4jEVFozj0FAL64NcONmOw/HHDJ2Uw8yqbS/yj07
+	uX72Rm5xLLHPkWs44sV8qF8N+d3fCZfgQXV66toCcEpscT4Ay5+zMYiiY5IXJE+McEceiL
+	Z7ktm3gD6bc8QbxCGpjmf5rdQMqKc5A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
-	b=qnViJaVVhHNa5Zhw7P2qp0WTSOuBGcG1Hd8Cn5OyqOGdTXHdM9F3tywUcqNHwE43rCd/sJ
-	ea3e7m82r1YY9BBg==
+	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
+	b=QH0aAN2IfgpijQ3IVcSa2GuONJ86Wq/eNK/EUoByY4hgIJ+MyRWxfLYayE4qTrn8LBop5m
+	HT0bOSzSE5uZgDAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0560313AFA;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17D7613AFB;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ABEMAQjlgGh0IwAAD6G6ig
+	id 4KOKBQjlgGh0IwAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:04 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 23 Jul 2025 15:34:36 +0200
-Subject: [PATCH v5 03/14] slab: sheaf prefilling for guaranteed allocations
+Date: Wed, 23 Jul 2025 15:34:37 +0200
+Subject: [PATCH v5 04/14] slab: determine barn status racily outside of
+ lock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,7 +100,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-slub-percpu-caches-v5-3-b792cd830f5d@suse.cz>
+Message-Id: <20250723-slub-percpu-caches-v5-4-b792cd830f5d@suse.cz>
 References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -138,404 +139,101 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	DKIM_TRACE(0.00)[suse.cz:+]
 X-Spam-Flag: NO
 X-Spam-Level: 
-X-Rspamd-Queue-Id: 1DA971F78F
+X-Rspamd-Queue-Id: 2F3B01F790
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Action: no action
 X-Spam-Score: -4.51
 
-Add functions for efficient guaranteed allocations e.g. in a critical
-section that cannot sleep, when the exact number of allocations is not
-known beforehand, but an upper limit can be calculated.
+The possibility of many barn operations is determined by the current
+number of full or empty sheaves. Taking the barn->lock just to find out
+that e.g. there are no empty sheaves results in unnecessary overhead and
+lock contention. Thus perform these checks outside of the lock with a
+data_race() annotated variable read and fail quickly without taking the
+lock.
 
-kmem_cache_prefill_sheaf() returns a sheaf containing at least given
-number of objects.
+Checks for sheaf availability that racily succeed have to be obviously
+repeated under the lock for correctness, but we can skip repeating
+checks if there are too many sheaves on the given list as the limits
+don't need to be strict.
 
-kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
-and is guaranteed not to fail until depleted.
-
-kmem_cache_return_sheaf() is for giving the sheaf back to the slab
-allocator after the critical section. This will also attempt to refill
-it to cache's sheaf capacity for better efficiency of sheaves handling,
-but it's not stricly necessary to succeed.
-
-kmem_cache_refill_sheaf() can be used to refill a previously obtained
-sheaf to requested size. If the current size is sufficient, it does
-nothing. If the requested size exceeds cache's sheaf_capacity and the
-sheaf's current capacity, the sheaf will be replaced with a new one,
-hence the indirect pointer parameter.
-
-kmem_cache_sheaf_size() can be used to query the current size.
-
-The implementation supports requesting sizes that exceed cache's
-sheaf_capacity, but it is not efficient - such "oversize" sheaves are
-allocated fresh in kmem_cache_prefill_sheaf() and flushed and freed
-immediately by kmem_cache_return_sheaf(). kmem_cache_refill_sheaf()
-might be especially ineffective when replacing a sheaf with a new one of
-a larger capacity. It is therefore better to size cache's
-sheaf_capacity accordingly to make oversize sheaves exceptional.
-
-CONFIG_SLUB_STATS counters are added for sheaf prefill and return
-operations. A prefill or return is considered _fast when it is able to
-grab or return a percpu spare sheaf (even if the sheaf needs a refill to
-satisfy the request, as those should amortize over time), and _slow
-otherwise (when the barn or even sheaf allocation/freeing has to be
-involved). sheaf_prefill_oversize is provided to determine how many
-prefills were oversize (counter for oversize returns is not necessary as
-all oversize refills result in oversize returns).
-
-When slub_debug is enabled for a cache with sheaves, no percpu sheaves
-exist for it, but the prefill functionality is still provided simply by
-all prefilled sheaves becoming oversize. If percpu sheaves are not
-created for a cache due to not passing the sheaf_capacity argument on
-cache creation, the prefills also work through oversize sheaves, but
-there's a WARN_ON_ONCE() to indicate the omission.
-
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- include/linux/slab.h |  16 ++++
- mm/slub.c            | 265 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 281 insertions(+)
+ mm/slub.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 6cfd085907afb8fc6e502ff7a1a1830c52ff9125..3ff70547db49d0880b1b6cb100527936e88ca509 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -829,6 +829,22 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t flags,
- 				   int node) __assume_slab_alignment __malloc;
- #define kmem_cache_alloc_node(...)	alloc_hooks(kmem_cache_alloc_node_noprof(__VA_ARGS__))
- 
-+struct slab_sheaf *
-+kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size);
-+
-+int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
-+		struct slab_sheaf **sheafp, unsigned int size);
-+
-+void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-+				       struct slab_sheaf *sheaf);
-+
-+void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_t gfp,
-+			struct slab_sheaf *sheaf) __assume_slab_alignment __malloc;
-+#define kmem_cache_alloc_from_sheaf(...)	\
-+			alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__VA_ARGS__))
-+
-+unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf);
-+
- /*
-  * These macros allow declaring a kmem_buckets * parameter alongside size, which
-  * can be compiled out with CONFIG_SLAB_BUCKETS=n so that a large number of call
 diff --git a/mm/slub.c b/mm/slub.c
-index f6d86cd3983533784583f1df6add186c4a74cd97..8b3093ee2e02c9ff4e149ac54833db4972b414a3 100644
+index 8b3093ee2e02c9ff4e149ac54833db4972b414a3..339d91c6ea29be99a14a8914117fab0e3e6ed26b 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -384,6 +384,11 @@ enum stat_item {
- 	BARN_GET_FAIL,		/* Failed to get full sheaf from barn */
- 	BARN_PUT,		/* Put full sheaf to barn */
- 	BARN_PUT_FAIL,		/* Failed to put full sheaf to barn */
-+	SHEAF_PREFILL_FAST,	/* Sheaf prefill grabbed the spare sheaf */
-+	SHEAF_PREFILL_SLOW,	/* Sheaf prefill found no spare sheaf */
-+	SHEAF_PREFILL_OVERSIZE,	/* Allocation of oversize sheaf for prefill */
-+	SHEAF_RETURN_FAST,	/* Sheaf return reattached spare sheaf */
-+	SHEAF_RETURN_SLOW,	/* Sheaf return could not reattach spare */
- 	NR_SLUB_STAT_ITEMS
- };
+@@ -2760,9 +2760,12 @@ static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
+ 	struct slab_sheaf *empty = NULL;
+ 	unsigned long flags;
  
-@@ -445,6 +450,8 @@ struct slab_sheaf {
- 	union {
- 		struct rcu_head rcu_head;
- 		struct list_head barn_list;
-+		/* only used for prefilled sheafs */
-+		unsigned int capacity;
- 	};
- 	struct kmem_cache *cache;
- 	unsigned int size;
-@@ -2797,6 +2804,30 @@ static void barn_put_full_sheaf(struct node_barn *barn, struct slab_sheaf *sheaf
- 	spin_unlock_irqrestore(&barn->lock, flags);
- }
++	if (!data_race(barn->nr_empty))
++		return NULL;
++
+ 	spin_lock_irqsave(&barn->lock, flags);
  
-+static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
-+{
-+	struct slab_sheaf *sheaf = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&barn->lock, flags);
-+
-+	if (barn->nr_full) {
-+		sheaf = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
-+					barn_list);
-+		list_del(&sheaf->barn_list);
-+		barn->nr_full--;
-+	} else if (barn->nr_empty) {
-+		sheaf = list_first_entry(&barn->sheaves_empty,
-+					 struct slab_sheaf, barn_list);
-+		list_del(&sheaf->barn_list);
-+		barn->nr_empty--;
-+	}
-+
-+	spin_unlock_irqrestore(&barn->lock, flags);
-+
-+	return sheaf;
-+}
-+
- /*
-  * If a full sheaf is available, return it and put the supplied empty one to
-  * barn. We ignore the limit on empty sheaves as the number of sheaves doesn't
-@@ -4919,6 +4950,230 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t gfpflags, int nod
- }
- EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+-	if (barn->nr_empty) {
++	if (likely(barn->nr_empty)) {
+ 		empty = list_first_entry(&barn->sheaves_empty,
+ 					 struct slab_sheaf, barn_list);
+ 		list_del(&empty->barn_list);
+@@ -2809,6 +2812,9 @@ static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
+ 	struct slab_sheaf *sheaf = NULL;
+ 	unsigned long flags;
  
-+/*
-+ * returns a sheaf that has at least the requested size
-+ * when prefilling is needed, do so with given gfp flags
-+ *
-+ * return NULL if sheaf allocation or prefilling failed
-+ */
-+struct slab_sheaf *
-+kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct slab_sheaf *sheaf = NULL;
++	if (!data_race(barn->nr_full) && !data_race(barn->nr_empty))
++		return NULL;
 +
-+	if (unlikely(size > s->sheaf_capacity)) {
+ 	spin_lock_irqsave(&barn->lock, flags);
+ 
+ 	if (barn->nr_full) {
+@@ -2839,9 +2845,12 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
+ 	struct slab_sheaf *full = NULL;
+ 	unsigned long flags;
+ 
++	if (!data_race(barn->nr_full))
++		return NULL;
 +
-+		/*
-+		 * slab_debug disables cpu sheaves intentionally so all
-+		 * prefilled sheaves become "oversize" and we give up on
-+		 * performance for the debugging. Same with SLUB_TINY.
-+		 * Creating a cache without sheaves and then requesting a
-+		 * prefilled sheaf is however not expected, so warn.
-+		 */
-+		WARN_ON_ONCE(s->sheaf_capacity == 0 &&
-+			     !IS_ENABLED(CONFIG_SLUB_TINY) &&
-+			     !(s->flags & SLAB_DEBUG_FLAGS));
+ 	spin_lock_irqsave(&barn->lock, flags);
+ 
+-	if (barn->nr_full) {
++	if (likely(barn->nr_full)) {
+ 		full = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
+ 					barn_list);
+ 		list_del(&full->barn_list);
+@@ -2864,19 +2873,23 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
+ 	struct slab_sheaf *empty;
+ 	unsigned long flags;
+ 
++	/* we don't repeat this check under barn->lock as it's not critical */
++	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
++		return ERR_PTR(-E2BIG);
++	if (!data_race(barn->nr_empty))
++		return ERR_PTR(-ENOMEM);
 +
-+		sheaf = kzalloc(struct_size(sheaf, objects, size), gfp);
-+		if (!sheaf)
-+			return NULL;
-+
-+		stat(s, SHEAF_PREFILL_OVERSIZE);
-+		sheaf->cache = s;
-+		sheaf->capacity = size;
-+
-+		if (!__kmem_cache_alloc_bulk(s, gfp, size,
-+					     &sheaf->objects[0])) {
-+			kfree(sheaf);
-+			return NULL;
-+		}
-+
-+		sheaf->size = size;
-+
-+		return sheaf;
-+	}
-+
-+	local_lock(&s->cpu_sheaves->lock);
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+	if (pcs->spare) {
-+		sheaf = pcs->spare;
-+		pcs->spare = NULL;
-+		stat(s, SHEAF_PREFILL_FAST);
+ 	spin_lock_irqsave(&barn->lock, flags);
+ 
+-	if (barn->nr_full >= MAX_FULL_SHEAVES) {
+-		empty = ERR_PTR(-E2BIG);
+-	} else if (!barn->nr_empty) {
+-		empty = ERR_PTR(-ENOMEM);
+-	} else {
++	if (likely(barn->nr_empty)) {
+ 		empty = list_first_entry(&barn->sheaves_empty, struct slab_sheaf,
+ 					 barn_list);
+ 		list_del(&empty->barn_list);
+ 		list_add(&full->barn_list, &barn->sheaves_full);
+ 		barn->nr_empty--;
+ 		barn->nr_full++;
 +	} else {
-+		stat(s, SHEAF_PREFILL_SLOW);
-+		sheaf = barn_get_full_or_empty_sheaf(pcs->barn);
-+		if (sheaf && sheaf->size)
-+			stat(s, BARN_GET);
-+		else
-+			stat(s, BARN_GET_FAIL);
-+	}
-+
-+	local_unlock(&s->cpu_sheaves->lock);
-+
-+
-+	if (!sheaf)
-+		sheaf = alloc_empty_sheaf(s, gfp);
-+
-+	if (sheaf && sheaf->size < size) {
-+		if (refill_sheaf(s, sheaf, gfp)) {
-+			sheaf_flush_unused(s, sheaf);
-+			free_empty_sheaf(s, sheaf);
-+			sheaf = NULL;
-+		}
-+	}
-+
-+	if (sheaf)
-+		sheaf->capacity = s->sheaf_capacity;
-+
-+	return sheaf;
-+}
-+
-+/*
-+ * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
-+ *
-+ * If the sheaf cannot simply become the percpu spare sheaf, but there's space
-+ * for a full sheaf in the barn, we try to refill the sheaf back to the cache's
-+ * sheaf_capacity to avoid handling partially full sheaves.
-+ *
-+ * If the refill fails because gfp is e.g. GFP_NOWAIT, or the barn is full, the
-+ * sheaf is instead flushed and freed.
-+ */
-+void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-+			     struct slab_sheaf *sheaf)
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct node_barn *barn;
-+
-+	if (unlikely(sheaf->capacity != s->sheaf_capacity)) {
-+		sheaf_flush_unused(s, sheaf);
-+		kfree(sheaf);
-+		return;
-+	}
-+
-+	local_lock(&s->cpu_sheaves->lock);
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+	if (!pcs->spare) {
-+		pcs->spare = sheaf;
-+		sheaf = NULL;
-+		stat(s, SHEAF_RETURN_FAST);
-+	}
-+
-+	local_unlock(&s->cpu_sheaves->lock);
-+
-+	if (!sheaf)
-+		return;
-+
-+	stat(s, SHEAF_RETURN_SLOW);
-+
-+	/* Accessing pcs->barn outside local_lock is safe. */
-+	barn = pcs->barn;
-+
-+	/*
-+	 * If the barn has too many full sheaves or we fail to refill the sheaf,
-+	 * simply flush and free it.
-+	 */
-+	if (data_race(pcs->barn->nr_full) >= MAX_FULL_SHEAVES ||
-+	    refill_sheaf(s, sheaf, gfp)) {
-+		sheaf_flush_unused(s, sheaf);
-+		free_empty_sheaf(s, sheaf);
-+		return;
-+	}
-+
-+	barn_put_full_sheaf(barn, sheaf);
-+	stat(s, BARN_PUT);
-+}
-+
-+/*
-+ * refill a sheaf previously returned by kmem_cache_prefill_sheaf to at least
-+ * the given size
-+ *
-+ * the sheaf might be replaced by a new one when requesting more than
-+ * s->sheaf_capacity objects if such replacement is necessary, but the refill
-+ * fails (returning -ENOMEM), the existing sheaf is left intact
-+ *
-+ * In practice we always refill to full sheaf's capacity.
-+ */
-+int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
-+			    struct slab_sheaf **sheafp, unsigned int size)
-+{
-+	struct slab_sheaf *sheaf;
-+
-+	/*
-+	 * TODO: do we want to support *sheaf == NULL to be equivalent of
-+	 * kmem_cache_prefill_sheaf() ?
-+	 */
-+	if (!sheafp || !(*sheafp))
-+		return -EINVAL;
-+
-+	sheaf = *sheafp;
-+	if (sheaf->size >= size)
-+		return 0;
-+
-+	if (likely(sheaf->capacity >= size)) {
-+		if (likely(sheaf->capacity == s->sheaf_capacity))
-+			return refill_sheaf(s, sheaf, gfp);
-+
-+		if (!__kmem_cache_alloc_bulk(s, gfp, sheaf->capacity - sheaf->size,
-+					     &sheaf->objects[sheaf->size])) {
-+			return -ENOMEM;
-+		}
-+		sheaf->size = sheaf->capacity;
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * We had a regular sized sheaf and need an oversize one, or we had an
-+	 * oversize one already but need a larger one now.
-+	 * This should be a very rare path so let's not complicate it.
-+	 */
-+	sheaf = kmem_cache_prefill_sheaf(s, gfp, size);
-+	if (!sheaf)
-+		return -ENOMEM;
-+
-+	kmem_cache_return_sheaf(s, gfp, *sheafp);
-+	*sheafp = sheaf;
-+	return 0;
-+}
-+
-+/*
-+ * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
-+ *
-+ * Guaranteed not to fail as many allocations as was the requested size.
-+ * After the sheaf is emptied, it fails - no fallback to the slab cache itself.
-+ *
-+ * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUNT
-+ * memcg charging is forced over limit if necessary, to avoid failure.
-+ */
-+void *
-+kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
-+				   struct slab_sheaf *sheaf)
-+{
-+	void *ret = NULL;
-+	bool init;
-+
-+	if (sheaf->size == 0)
-+		goto out;
-+
-+	ret = sheaf->objects[--sheaf->size];
-+
-+	init = slab_want_init_on_alloc(gfp, s);
-+
-+	/* add __GFP_NOFAIL to force successful memcg charging */
-+	slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, s->object_size);
-+out:
-+	trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
-+
-+	return ret;
-+}
-+
-+unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf)
-+{
-+	return sheaf->size;
-+}
- /*
-  * To avoid unnecessary overhead, we pass through large allocation requests
-  * directly to the page allocator. We use __GFP_COMP, because we will need to
-@@ -8464,6 +8719,11 @@ STAT_ATTR(BARN_GET, barn_get);
- STAT_ATTR(BARN_GET_FAIL, barn_get_fail);
- STAT_ATTR(BARN_PUT, barn_put);
- STAT_ATTR(BARN_PUT_FAIL, barn_put_fail);
-+STAT_ATTR(SHEAF_PREFILL_FAST, sheaf_prefill_fast);
-+STAT_ATTR(SHEAF_PREFILL_SLOW, sheaf_prefill_slow);
-+STAT_ATTR(SHEAF_PREFILL_OVERSIZE, sheaf_prefill_oversize);
-+STAT_ATTR(SHEAF_RETURN_FAST, sheaf_return_fast);
-+STAT_ATTR(SHEAF_RETURN_SLOW, sheaf_return_slow);
- #endif	/* CONFIG_SLUB_STATS */
++		empty = ERR_PTR(-ENOMEM);
+ 	}
  
- #ifdef CONFIG_KFENCE
-@@ -8564,6 +8824,11 @@ static struct attribute *slab_attrs[] = {
- 	&barn_get_fail_attr.attr,
- 	&barn_put_attr.attr,
- 	&barn_put_fail_attr.attr,
-+	&sheaf_prefill_fast_attr.attr,
-+	&sheaf_prefill_slow_attr.attr,
-+	&sheaf_prefill_oversize_attr.attr,
-+	&sheaf_return_fast_attr.attr,
-+	&sheaf_return_slow_attr.attr,
- #endif
- #ifdef CONFIG_FAILSLAB
- 	&failslab_attr.attr,
+ 	spin_unlock_irqrestore(&barn->lock, flags);
 
 -- 
 2.50.1
