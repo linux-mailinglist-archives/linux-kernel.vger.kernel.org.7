@@ -1,101 +1,208 @@
-Return-Path: <linux-kernel+bounces-742340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DCDB0F02A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:43:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B8BB0F023
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A83AA5B10
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763D7583D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBE526C3BE;
-	Wed, 23 Jul 2025 10:43:49 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE728295D86;
+	Wed, 23 Jul 2025 10:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL12AZzw"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A9C23A9B0;
-	Wed, 23 Jul 2025 10:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E1129E11B;
+	Wed, 23 Jul 2025 10:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267429; cv=none; b=UL4gzYaKQ/sQvRvCXY6836vOHHSBl7oiuJeOEdK1Y/gT1hgo/xk7wCC2+xN11JoVvZNmvHAl1UJTthCJt7CQgsoagICinievr/JjGheMqOm3Igkop/qqhGlmzz3g0P/1h+kbgbYByJitYq/ISl/zsIDDJTgd+oRRIftIPj8C3nc=
+	t=1753267362; cv=none; b=nwXuQZ05G2zt13VcWlB84OMeRGexnUqwDBUn7ASw/etcBdWFx1dwGbTUJTrK7qmk8wmRMoOqOCo7F0yNGz6XwXuoTkhpSthCE613Pb66cu2fM2E4Y7/1dJZcDhs9dQ6upqq/P0kPNthf9wDGW/pLJF5NN+PKuwvMIu2Js8C/1X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267429; c=relaxed/simple;
-	bh=CeNRvuvwYWoVJB5M5UHDRPJgLHidL2E1QaHeWDWNRNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnUYrnvXh46847FZ09E8hCwOP1IoaHM02QQr2Ighvp/iHwpRUuNi1CIFTDHvOyUOu3PgiDoxzWUw79KAMhjIt+0M6jdtVZMddN5LfhTbTKTBnLO3dzBCmQEElRwXdBlWkQF+aM2eEmkrGl0U0EZs74dKkyE179cvpRV8V6ykhxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz7t1753267343tbb65405f
-X-QQ-Originating-IP: AMID40wbO4UnU89sYl62AWFs9G0YVjfeRYNVQgQgS8o=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 23 Jul 2025 18:42:20 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3337543533688690038
-Date: Wed, 23 Jul 2025 18:42:20 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: MD Danish Anwar <danishanwar@ti.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
-	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
-	richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] Add driver for 1Gbe network chips from MUCSE
-Message-ID: <A7AE3E9B4297A2FA+20250723104220.GA981103@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <5bce6424-51f9-4cc1-9289-93a2c15aa0c1@ti.com>
- <49D59FF93211A147+20250722113541.GA126730@nic-Precision-5820-Tower>
- <b51950c8-ce79-4b0b-af5c-bb788af33620@lunn.ch>
+	s=arc-20240116; t=1753267362; c=relaxed/simple;
+	bh=+9tuVR4nouAHVpeWB2PYkNO5oDVhEoD8b4T8d6O2Ajo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dSGLotjrlEtqGwwjsO4ZzZHtb0Vibg6IDpLaMr+dKpYRKz1QsC7hgauq8UJoLVf1JKiEXGBQJ1CR4BJPca1Q06vKttpzToxqCFTM8i51c6iliRt89oId3PSh01A1xpGypBh2Jg4EOvEduZiGOn/V6X2d3YBNz0BD+HPoNUs/cZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL12AZzw; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313290ea247so1139092a91.3;
+        Wed, 23 Jul 2025 03:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753267360; x=1753872160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAuuZmOFH+W/jVW863c0NGno6eBeeHPuYTr+Gg9Lqgo=;
+        b=WL12AZzwc7H4eyILbYcgrlyNEo1+bwEd29OfXVJN35jH86QkJD6/txWqAJ03blAE07
+         rKM/cTVXUz+b1qUr409CD7by/2owsNVzpMdZcvhVqYL0/99n0Xlu/7d5TpkFv9qQPdJ5
+         J4hKCSGdhoE26oD7T8iZ7wo4RMqj2lIhVhVTEKI2B2cb6lKweR3fLuhbMR4nrUmHzzaT
+         t38oyvISfq892ydNQJrmt6C0qnEQgypnYCCf5UzgtFht/8F8ALPg+vOzIDCAgkPFShYS
+         edb9Nn4/KKgoW9ZUfOEsOOx3OHRwMTV7Jbhgl+I2KRSATFy/L2XVeoQrS3uDDxSTLsWo
+         Ku3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753267360; x=1753872160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OAuuZmOFH+W/jVW863c0NGno6eBeeHPuYTr+Gg9Lqgo=;
+        b=KfZwpvBtDqQrvxrI2+1pHOA2WCnr6lxnZT6HHIwEs/PEqm8M4CWeMSlpRwC+bqgDJo
+         sE59Yv0tkmogmRcyd5mgCWBVOqo2VNK0baGTfai9R0FKOMvKd8G6Gu3VJNWnaHqXIb6d
+         K3u0YptTzY9Q1E84BkBI3EeJV7XG70S5CvoaCN/VLhT+jthsaEYbMj0/ujOKsS6688OC
+         fzRUzqob+43qkpYG/HIEK0wTLHNLviTpelj0UlIptYkjBe5ID8aLzZ+GBuu9qX1zTmiz
+         YU9K4ldjrSCs1Azq6J4iLQkHahsOgRaiThX3jQ3WlnVIvo4qgNAftNys/sWkpyeGiu53
+         lGlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP/3QiThlnitLVgCKk3gls2LLFZDUzdn2gXOnQXmAoRPBTdqsHNuh2SinsoeTHrfqzn5pDum6rx6ONkzFAGrs=@vger.kernel.org, AJvYcCWcLfqdz2lxq3OKfQxnSrwBUaQ/o8kzLwWi8+liRPJEISeQ/OPV3IQZ7dJQJnixvd4Q4OwYjoaccj8=@vger.kernel.org, AJvYcCXH8KRzIG/XsTDJtdESdqPqiDpEKrVN45bVk0XtyfryAWFxp3WQBIOE/YHU3iwu5NHrQxclFLz62qy0wT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydWDWJd6sxtyv7Bv9i8gETeoKxjM/2trO0Rf1MtBPS3c7n9Tiu
+	jACs6X1AhPO/bQZzYJ15rp4BTu+bmbVLWw6J/Ux8puRgNvvuaM/xIkTXy+OeNvYI2fdAe6SELdw
+	O2mTbno/IhtRjA1/C4FmCXXBCljBH6jI=
+X-Gm-Gg: ASbGncvcM96aWTBUw2ECDkrFUUX2Akgc/TXQinwGUTzgF/q64MJuYeXiJLGdR2Q1xqD
+	NBIkc8GugVvEkrewO8JWBZQVWaEcZWXiWa2LwVr49hR2TqOBSERPvY1zit8aPsenuWgXYA0Hsfy
+	FWAikIw0V6GvULVzfeohemAmMy232KCkLaWOoi5/oaYSGb0kfm8xjqQlUrMflLP9P+kOPcxfT2s
+	NaJ366M
+X-Google-Smtp-Source: AGHT+IFFCZCT0ofZYjyZFGteyXAUIYA+5ZedU961XooANvsay5UfRw4uYozQNmnNUjCP0VbWtYYTh+HT21vc4V60b+w=
+X-Received: by 2002:a17:90b:1b07:b0:311:a314:c2dd with SMTP id
+ 98e67ed59e1d1-31e507e7767mr1712396a91.4.1753267359918; Wed, 23 Jul 2025
+ 03:42:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b51950c8-ce79-4b0b-af5c-bb788af33620@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MUtpDbzatTjwCtUQqgK5n1YzfGhnrSFgUELS1GUnZHOYYPiNWmhcFrce
-	dXiYxx7swpHE6ep5yjxlO9emlwisg7N9iXKLBOupwtDm0en8ZjZSHqzKEcdgvoivXvwm5vK
-	9549va6cb/OUc5nDobebt7PS5ERVaj/yzOkuYCzzaK5MiJX57Jf/rlkW1K8+LOWcU37Wzxh
-	FOdSiwbmCNi5EbAkDPQ4GNduxAWbZyup1GqLJMkhnVyZHdy+Cggfxve12kNTEGffwJU8RAm
-	TUpvHW0qs2cDnmhZI922mG0OSVlXVbzWeFcN1UjELVx7GPSTRYPfGu6iWb016yEkjconyxm
-	nTGmcdPXIhD7o4+hXQzjC3jvJbDmVbTOZtpkpUAeRsKgZPttygKs0ZzBGtKOdUr6K2E5TCe
-	sBvkPkGjJMCIFwruo3hDXpcZjQCt8R1MBHL1+VYisGFJGZbTqZGnK4Xx0eJoqIkMth7bXDf
-	Bdz37SS+Tr/IW19ZsjY4l/VKlK26be8HNaxfNnnWSat/N3x7To0NCKPfyPUV25SBY0iUZKM
-	jarCK3s711oMsYfC6AbywfiHtSZA0GFvyH+jGMvIbYNoivy5kbC3NwEqqDOvqoAvP4n8NId
-	CtgY/uPW5uu1Cl/BgjvxgAqCTKWZNUxskOCFyI7pxltuWGtGA7pD3m82P+eu362/cDE8IHW
-	hF325DOYSgw9JFlEpQTGBOzlPQEahjOBXxQzNDS/6LCLYRb6wLMohcJS2zofJiAR8mlAdRF
-	Tl2SOWXDZv+UPZP/16DugYxYLDap1kdjbQZN3irxu0JXqFMM4+pn1wSJ4B0w4fCGQ25sMyn
-	Z6cNS/I49lWZF10yg/gNSe12J4rVooA+Gp8ZtK9n1p9E5kKWq6c0kyhrGi1Oky43fKd1De1
-	a+HvLg4iabtncSadAz6jm9pd4OK9lSWx1qD056aI1hOeibly5BrBhgtG8a/o5XiN/W+gmK1
-	Zelh2Sgc1h6aykGkwjUpPZjsAmtnnWfy6lb8WIPIP9QTVk1F93EmMN5E5oLxo9bzkp/ujzA
-	fd9s6zxiqFPMClXrevHiSpJanq0aRtnf29c4JHMevxw5I3wyPf
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com> <20250722-topic-icc_rs-v1-1-9da731c14603@oss.qualcomm.com>
+In-Reply-To: <20250722-topic-icc_rs-v1-1-9da731c14603@oss.qualcomm.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 23 Jul 2025 12:42:27 +0200
+X-Gm-Features: Ac12FXzx7YzWGMIPWojNZRDJWiRGDclI6az_LyKYTAK7y0jh4ycpj5ifeQLxQgo
+Message-ID: <CANiq72nPLn+3V_DhN9_dmKnRrb5mfjzQ67Utz7HdtOY3McpweA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: Add initial interconnect framework abstractions
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 05:07:08PM +0200, Andrew Lunn wrote:
-> > A series patches can be accepted without achieving the basic tx/rx
-> > functions for a network card? If so, I can split this.
-> 
-> Think about the very minimum to make it useful. Maybe only support
-> PF. Throw out all VF support. You don't need statistics, ethtool,
-> devlink etc. They can all be added later.
-> 
-> 	Andrew
-> 
+Hi Konrad,
 
-Ok, I'll try to minmum it.
+Some quick mostly doc-related comments...
 
-Thanks for your feedback.
+On Tue, Jul 22, 2025 at 11:14=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.=
+org> wrote:
+>
+> +//! Interconnect abstractions
+
+Please follow the usual style, i.e. ending sentences with a period.
+
+> +//! (based on clk.rs)
+
+Is there a reason to mention this in the documentation? If not, I
+would probably mention it in the commit message instead.
+
+> +//! C headers:
+> +//! [`include/linux/interconnect.h`](srctree/include/linux/interconnect.=
+h)
+> +//! [`include/linux/interconnect-provider.h`](srctree/include/linux/inte=
+rconnect-provider.h)
+
+Please see if this looks as expected when rendered -- you may want an
+" and " or a comma or similar.
+
+> +/// The interconnect framework bandidth unit.
+
+Typo.
+
+> +/// Represents a bus bandwidth request in kBps, wrapping a [`u32`] value=
+.
+> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> +pub struct IccBwUnit(pub u32);
+
+Since there are accessors below, do the internal details need to be public?
+
+> +    /// Create a new instance from gigabytes (GB) per second
+> +    pub const fn from_gigabytes_per_sec(gbps: u32) -> Self {
+> +        Self(gbps * 1000 * 1000)
+> +    }
+
+I guess this means callers must call this with reasonable numbers and
+otherwise it is considered a bug, right? i.e. this could overflow, and
+thus panic under `CONFIG_RUST_OVERFLOW_CHECKS=3Dy`.
+
+> +impl From<IccBwUnit> for u32 {
+> +    fn from(bw: IccBwUnit) -> Self {
+> +        bw.0
+> +    }
+> +}
+
+Is this needed since there are more explicit accessors?
+
+> +#[cfg(CONFIG_INTERCONNECT)]
+> +mod icc_path {
+
+Maybe a different file?
+
+> +    /// Rust abstraction for the C [`struct icc_path`]
+
+This intra-doc link is probably broken, since it refers to C --
+normally you need an explicit link for this. Please check the docs via
+`make .... rustdoc`.
+
+> +    /// The following example demonstrates hwo to obtain and configure a=
+n interconnect path for
+
+Typo.
+
+> +    ///     // bus_path goes out of scope and self-disables if there are=
+ no other users
+
+Please follow the usual formatting for comments, i.e. Markdown and
+ending with a period.
+
+> +            // SAFETY: It's always safe to call [`of_icc_get`]
+
+Comments don't need intra-doc links, since they do not get rendered
+(sadly -- a long-term wish of mine is having `rustdoc` link those in
+the source view and thus checked too).
+
+> +            // SAFETY: By the type invariants, self.as_raw() is a valid =
+argument for `icc_enable`].
+
+That seems like half of an intra-doc link :)
+
+> +// SAFETY: An `IccPath` is always reference-counted and can be released =
+from any thread.
+> +unsafe impl Send for IccPath {}
+
+This gives an error, right? Was it meant to be inside the other Rust module=
+?
+
+Also, please also run `make .... rustfmt`.
+
+Finally, the examples in the docs are converted automatically into
+KUnit tests (under `CONFIG_RUST_KERNEL_DOCTESTS=3Dy`) -- the examples
+currently have build errors.
+
+We have some extra notes at:
+
+    https://rust-for-linux.com/contributing#submit-checklist-addendum
+
+on things that are useful to test/check.
+
+I hope that helps!
+
+Cheers,
+Miguel
 
