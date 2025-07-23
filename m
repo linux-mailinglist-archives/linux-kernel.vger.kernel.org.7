@@ -1,156 +1,297 @@
-Return-Path: <linux-kernel+bounces-742339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E126FB0F027
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E0EB0F0B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC556167582
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7B11C85976
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B311A286D7C;
-	Wed, 23 Jul 2025 10:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dy+lQEYF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29BD286D7C;
+	Wed, 23 Jul 2025 11:02:50 +0000 (UTC)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A528B7EC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1DC6F06B;
+	Wed, 23 Jul 2025 11:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267383; cv=none; b=Gv/dBjHwDzEKSPwH1DF2gLx9y5KUKKn7wErmEVw2W7m70OQ/Fz17kTbKhEetbj6cIb1rp/rOi9VWN68xuhPwWsWW1uRwABHToaA+GMXWtHGFnjN5bkHKWwXUyBZqkWju1ItDvql7LB5mgyYO8FWljaVC6Zrl5UMpJ4fpUEz8Hes=
+	t=1753268570; cv=none; b=pVx1KxdHqBf0ybOGKFitMQWnbv3YwRLZNmykNmcExSQbqfo+yT/2UiSOpdF5MiYWPDbiWcObJrr9Ch2j9q+zpBS+mJavvtaV2V0xuTY5PGuS13kxPpgUspOHW3XjwGQdkuNXEnGggudOhU+qEykJ9xe3/TXqkpkuWl+GctYZ674=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267383; c=relaxed/simple;
-	bh=f5vjYnuwq6ABDcw1W6FfEOgL9eISvsb8ivewKAcEJXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=banzNuq9LRqcuEFQZ7p1xoaAhwVcCjbp0mkC8tbgeVmcRqGB4/kikTy8ZMjcNaMZHA0hhASHsap63mjLAwItfxmSaYn4eoDfMkNpO/7XL/7+n4pIFP8RuWxNoap1iP9I66xrHW/I5HoPaheFRlUW8CwU2urRmpXOLmAWIA/16GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dy+lQEYF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N92fon009244
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:43:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zqTjFr0XvB8rxNwwFvY/OMrafbYzUbXKrxHy9b1cJTs=; b=Dy+lQEYF5EQev29I
-	PBsUuGSRAdaeaE0aFK+ofrx4XNVBVdInAbCmtKrDSe9KtHurL0vWHBlr5NECj2Qg
-	oShBbqGDNi+4vRsUj/be8evf1d3sA6LAS9zkX71Ds0+/t0JlNPRlLj7sr+0+Lslm
-	mUX7M4Z50lT4HHkAdcCNBQoe+gymJ8DbUv8jn8ZxSv58DiR9OfcnQyJh262lx7GS
-	lAD4joq2/+KCEx0/tlUYNOna8uL2rjHFxlU7/z6dx9g3PWf57LWheFSVMxNT4y6v
-	9vkXiW6sfOeKE9IvXnm2gPEtA7+6pbECOOcDj0fEqhBNAgVjZMQ+VCqF1OhJXgMd
-	yjy3CA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na389x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:43:00 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab77393308so21526301cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:43:00 -0700 (PDT)
+	s=arc-20240116; t=1753268570; c=relaxed/simple;
+	bh=7TUTvKtalQdMgk4iybDHiIaixywXXBTmIw3de8n0g9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lzmrAX6ilvZs2xc6WfrTfemOxmk0HxXDyQgEaeArRQpvQttQ/KfD2KMyWFdT76BTDQmptfTXEsSjxEitDIVQqqtk4GuxAmgnb4uuMQpzAmJhE7AfUZhm/2rJCSqjYdU9x0OH24DZTOMLZpFCD5SHu6D2FsKCfP3dEC51fmyiHkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b3f2ea2f96fso322898a12.0;
+        Wed, 23 Jul 2025 04:02:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753267379; x=1753872179;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqTjFr0XvB8rxNwwFvY/OMrafbYzUbXKrxHy9b1cJTs=;
-        b=g1pIBZiBNp/SzV43ntLI5v1EsC54yPD6XCxGCtCls45LJ3Irf1mSlQIQjXDnAO9Xid
-         lpCqjpB5bU/GK/5EYcq3tLTC0bCAJ3a8PhBH/C+KWXNTC27n/Os0E0DkHsahEP5p3A1g
-         qSJX1ipKFQcBWtw6wjnMPur4TmeihDxFF+fLIqcJmYvCv4UJta2yPBRMakITxv2pJRi/
-         1q3dCMY1UwfBBWAXZKr+IyXkL26NFhQ3+wUNO6r3FiVBIplxkwSvc4MnFMlHKFf0YTS7
-         x9gCj/QGDOaf1OfH3+mNPkOvJELK1Y4XniAw9H/Wc3NJbBkZKy+6u5aB2Djsfd6Od+Dg
-         y3Ow==
-X-Gm-Message-State: AOJu0YwFYq9zxj/77IvM4Zt1OHFP449Q6nIY6OBdi9J+Y7JlOP2CQVef
-	+S6EFvheV+JtsLEyBNe8+D4GkGe9LENIEgLTj0gq/H42563egNtcp/aSPg+TdsVNNg89UxnqjiP
-	ji3vvRxxVVURsnW9tH3bJ1pNPrUQBy16kCLP90FFuV/t/yFFSVLsOtwL2bAJ7hhFFrac=
-X-Gm-Gg: ASbGncuTFdtObS/yIQIFG28P7W7gP/35V99pO4c7r5vAUmT9UWIcRXk8Ka4dVWOo0cR
-	3QEvkiE3WmbO2x9wLH6pLCdqVt3jZtjuqZ6oZCZhfnsXozzRCsJ3qOLI1z0HpEx6bsxjFK3fkb1
-	XJ/Eoc8W7yGQTqTQuHLr9ZELGPKjApr5hNiYtUSm2xR25nHfywu4D/1AkQdiuV/6EgZ7mhlyuZ7
-	uRMklEBorXDB2LuI/UAu+DZ1t8w87pIXtObTOP1W6mQABsrWnBkqAi+FEIKtYQODMVTx+NUvXpR
-	9vBRmH4Ultm9nBtFJjdpQ25fkQToqRqbdJhmhniW6Nsz1ncU5wmFv0LFB5PGoBgwf3BbKd02BKB
-	XDuRlaJNvLsNVOU/mvQ==
-X-Received: by 2002:a05:622a:409:b0:475:1c59:1748 with SMTP id d75a77b69052e-4ae6df217d6mr12951231cf.11.1753267379382;
-        Wed, 23 Jul 2025 03:42:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYlXiYalJcIYmfsGuDzo2btn4rvUYkzj8173rBsMVorgA9iyFHUcxva1ejaW684OOniAAJMA==
-X-Received: by 2002:a05:622a:409:b0:475:1c59:1748 with SMTP id d75a77b69052e-4ae6df217d6mr12951081cf.11.1753267378840;
-        Wed, 23 Jul 2025 03:42:58 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612e7125fb4sm7106394a12.9.2025.07.23.03.42.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 03:42:58 -0700 (PDT)
-Message-ID: <ea856550-263c-49e5-9a6a-19f9fabfb407@oss.qualcomm.com>
-Date: Wed, 23 Jul 2025 12:42:56 +0200
+        d=1e100.net; s=20230601; t=1753268568; x=1753873368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eIaSs7Fhujj41mthw9JZxgIBsdS8g/yHvNODnq+JPvU=;
+        b=cTBswxG5dBIXGNX/Jbeh/s/ruLmOn6lAvY6IkCshLatGAQ5rbgDVbnqT4p+K4sYQ/l
+         0ZQoSA2eMy0xEDOF5cN8PUTVOuyFs8G+b1FuO4tSjgbBOcs/n1EDKYa6IBbYhHbx4e4y
+         mE/rWN1HH2jCQD87/cyNT0cAVYnwZIeliugk6VWBEgWWYcAr/WNqnQrjAShbgfPLjElR
+         k+S6MCQn9L0Qa6osdKBDZWg+VRweJVLN/Dcj5v9Ml61jizF7KzoF16ZwU4iIqYyHTFGX
+         x14cDV3yyB5tQqej/vuTkyx2zVMRVn1Y+gQF1aH88pFl5q5c23PeVu8ZtiIVfCxoaiZL
+         ZyZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOd+3RwgeLJXD/RUrmzdacGacmZWM4XhOnEuP+HA06G61rYy0Pi2g+7KhrRyI/SGHeqdPPlsOGR1QPiTPdcvmlLw==@vger.kernel.org, AJvYcCUa1iDIGMK9b5jqBFB0qmHPYZSWPUabXqLhfy17AueKfhAfWLw6taVMwA5kTEeL4gNUd1xkkRZasOHDga8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAxtQa4Pg/zNFG7Y0bwVB1ax7kPDWzCNQx1OGskOS6VO4FPHmF
+	i0Vc296TylWOj0VaiMhAj4kf18KaMaLTxXAjctiZm+XHXwZ2W+hcwPcl
+X-Gm-Gg: ASbGncuf+WnS3DCp5p97/iuaktePmz8p4LMHoGcUoJXvYYpB5fwBF9UjOFUXQiuWVg+
+	H44oBwTpAzBsl+RMYKm4R7bx30wvk5qJSQASdYEnfD4LeAe2ZXVOf0OS8MwkJvzLnWecaTt9PEi
+	AN7IIKr2ctwgDxDvrag2tPmnF1d6kFaeyX/wau7O+zOcg85/HCGQCy2AMWXkRYpvXhw6W3qCP4p
+	ev+dRxLP1g64Rac34tJzQSKPcbViztK3RDLY24eHIdIrDwOSesq7nf1d6658hI4YYbp3MoRI7NR
+	hNDiiYcBpVfeSZD5ripidT2r/cyOnrhviehV4pTjW+fG5JKZEb9mRxFDbog0E+i/ycBMCTg98TJ
+	M5h4v9NGlE8bc
+X-Google-Smtp-Source: AGHT+IG2WnYfXBAsSOophfSvE8ZsJU3rbkH3GWiFlG4n7LRfHTdG8XzpOYxVzgOnCs7BXHCIpO4Q4A==
+X-Received: by 2002:a05:6a20:158f:b0:220:839d:1d61 with SMTP id adf61e73a8af0-23d49198aafmr1604510637.9.1753268567669;
+        Wed, 23 Jul 2025 04:02:47 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-75eb876df3csm3572462b3a.7.2025.07.23.04.02.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 04:02:47 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Hemendra Dassanayake <Hemendra.Dassanayake@arm.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	Michelle Jin <shjy180909@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	syzkaller@googlegroups.com
+Subject: [PATCH] perf: arm_pmuv3: Fix kernel panic on UBSAN from negative hw.idx in armv8pmu_enable/disable_event()
+Date: Wed, 23 Jul 2025 10:44:03 +0000
+Message-ID: <20250723104359.364547-5-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Add initial audio support for
- Hamoa-IOT-EVK
-To: quic_leqi@quicinc.com, kernel@oss.qualcomm.com
-Cc: linux-kernel@vger.kernel.org, kernel@quicinc.com,
-        Trilok Soni <quic_tsoni@quicinc.com>
-References: <20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7hSrkgXqg6wurAJn9B1MVv_AuVYyg-Ng
-X-Proofpoint-ORIG-GUID: 7hSrkgXqg6wurAJn9B1MVv_AuVYyg-Ng
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5MSBTYWx0ZWRfX3W+Lkq8aa5DG
- i2D7Zzz7V+jwISDugmGMU+w3P881OblxPShQH/vyGAzCKyKaTUSWdPJVQ8VykJfbDWcHl7qBU+w
- AbrEaLDjdu5bqlZHrZimp3YijEvkOcXIM6E5FgHse/87tM98JOaHKsIf/uxf5heXeklrg8Tr4SZ
- U381nB9DOAQcwOHxpjWRJzf8UkFkiGwFa84dTpp3T9BR9RRsL0r06R8T4RS9xeTWuKdlVaZvwRD
- RqlJXcaGgz+EeicRRxxQkSnrPLDjWZPiUvCMR+CrjNbyaUARghDcjn5bIX4fuSiL4PBJOficoNp
- qR8EXE8zKJde+GF/ej8UUWQTTl5x3MYEShjIeLoYeyIMicykO2+aR1OwMCdtWXtUAVXsfqbX5rp
- RJ0VSEdT7dFlRH/NesG/cgTfW4wL5SglJBYQA+U5WxFSMDSBnX/B3/Vnu+81NXLwQQE55NmU
-X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=6880bcb4 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=e5AY6RWa8OZnZzLWLjkA:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=914
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230091
+Content-Transfer-Encoding: 8bit
 
-On 7/23/25 10:29 AM, 'leqi via B4 Relay' via kernel wrote:
-> From: leqi <quic_leqi@quicinc.com>
-> 
-> This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
-> including WCD9385 configuration, micbias voltage settings, GPIO reset,
-> and power supply bindings. It enables basic audio functionality for
-> testing and development.
-> 
-> Signed-off-by: leqi <quic_leqi@quicinc.com>
-> ---
+When 'event->hw.idx' was negative in armv8pmu_enable/disable_event().
 
-git config --global user.name "Your Real Name"
+  UBSAN: shift-out-of-bounds in drivers/perf/arm_pmuv3.c:716:25
+  shift exponent -1 is negative
 
-Please switch to your oss.qualcomm.com ID for submissions.
+  UBSAN: shift-out-of-bounds in drivers/perf/arm_pmuv3.c:658:13
+  shift exponent -1 is negative
 
-> This patch adds initial audio codec support for the Qualcomm Hamoa-IOT-EVK board.
-> It brings up the WCD9385 codec with basic configuration, including micbias voltage
-> settings, GPIO reset handling, and power supply bindings.
-> 
-> The DTS changes are adapted from the existing X1 CRD DTS and have not yet been
-> validated on Hamoa-IOT-EVK hardware. They are intended to enable initial bring-up
-> and provide a foundation for further testing and development.
+This occurred because a perf_event could reach armv8pmu event with a
+negative idx, typically when a valid counter could not be allocated.
 
-Please hold off sending the patch until it's validated, then.
-Please also use `b4 prep -c` to make sure the patches can actually
-reach all the maintainers.
+This issue was observed when running KVM on Radxa's Orion6 platform.
 
-Refrain from CC-ing the internal mailing list when posting to LKML.
+The issue was previously guarded indirectly by armv8pmu_event_is_chained(),
+which internally warned and returned false for idx < 0. But since the
+commit 29227d6ea157 ("arm64: perf: Clean up enable/disable calls"), this
+check was removed.
 
-Konrad
+To prevent undefined behavior, add an explicit guard to early return from
+armv8pmu event if hw.idx < 0, similar to handling in other PMU drivers.
+(e.g. intel_pmu_disable_event() on arch/x86/events/intel/core.c)
+
+$ ./syz-execprog -executor=./syz-executor -repeat=0  -sandbox=none \
+  -disable=binfmt_misc,cgroups,close_fds,devlink_pci,ieee802154,net_dev,net_reset,nic_vf,swap,sysctl,tun,usb,vhci,wifi \
+  -procs=8 perf.syz
+
+r0 = perf_event_open(&(0x7f0000000240)={
+        0x0, 0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        @perf_config_ext
+    }, 0x0, 0x0, 0xffffffffffffffff, 0x0)
+
+perf_event_open(&(0x7f0000000280)={
+        0x0, 0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        @perf_config_ext
+    }, 0x0, 0x0, r0, 0x0)
+
+perf_event_open(&(0x7f0000000540)={
+        0x3, 0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4,
+        @perf_bp={0x0, 0x2}, 0x20, 0x0, 0x0, 0x0, 0x2,
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x81
+    }, 0x0, 0x0, r0, 0x0)
+
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/perf/arm_pmuv3.c:716:25
+shift exponent -1 is negative
+CPU: 0 UID: 0 PID: 8405 Comm: syz.3.19 Tainted: G        W           6.16.0-rc2-g5982a539cdce #3 PREEMPT
+Tainted: [W]=WARN
+Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
+Call trace:
+ show_stack+0x2c/0x3c (C)
+ __dump_stack+0x30/0x40
+ dump_stack_lvl+0xd8/0x12c
+ dump_stack+0x1c/0x28
+ ubsan_epilogue+0x14/0x48
+ __ubsan_handle_shift_out_of_bounds+0x2b0/0x34c
+ armv8pmu_enable_event+0x3c4/0x4b0
+ armpmu_start+0xc4/0x118
+ perf_event_unthrottle_group+0x3a8/0x50c
+ perf_adjust_freq_unthr_events+0x2f4/0x578
+ perf_adjust_freq_unthr_context+0x278/0x46c
+ perf_event_task_tick+0x394/0x5b0
+ sched_tick+0x314/0x6cc
+ update_process_times+0x374/0x4b0
+ tick_nohz_handler+0x334/0x480
+ __hrtimer_run_queues+0x3ec/0xb78
+ hrtimer_interrupt+0x2b8/0xb50
+ arch_timer_handler_virt+0x74/0x88
+ handle_percpu_devid_irq+0x174/0x308
+ generic_handle_domain_irq+0xe0/0x140
+ gic_handle_irq+0x6c/0x190
+ call_on_irq_stack+0x24/0x30
+ do_interrupt_handler+0xd4/0x138
+ el1_interrupt+0x34/0x54
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x6c/0x70
+ generic_exec_single+0x2dc/0x304 (P)
+ smp_call_function_single+0x308/0x530
+ perf_install_in_context+0x4a0/0x798
+ __arm64_sys_perf_event_open+0x184c/0x1d50
+ invoke_syscall+0x98/0x2b8
+ el0_svc_common+0x130/0x23c
+ do_el0_svc+0x48/0x58
+ el0_svc+0x58/0x17c
+ el0t_64_sync_handler+0x78/0x108
+ el0t_64_sync+0x198/0x19c
+---[ end trace ]---
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/perf/arm_pmuv3.c:658:13
+shift exponent -1 is negative
+CPU: 0 UID: 0 PID: 8006 Comm: syz.0.19 Not tainted 6.16.0-rc2-g5982a539cdce #3 PREEMPT
+Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
+Call trace:
+ show_stack+0x2c/0x3c (C)
+ __dump_stack+0x30/0x40
+ dump_stack_lvl+0xd8/0x12c
+ dump_stack+0x1c/0x28
+ ubsan_epilogue+0x14/0x48
+ __ubsan_handle_shift_out_of_bounds+0x2b0/0x34c
+ armv8pmu_disable_event+0x228/0x2f8
+ armpmu_stop+0xa0/0x104
+ perf_event_throttle_group+0x354/0x4cc
+ __perf_event_account_interrupt+0x26c/0x290
+ __perf_event_overflow+0xe8/0xd28
+ perf_event_overflow+0x38/0x4c
+ armv8pmu_handle_irq+0x244/0x320
+ armpmu_dispatch_irq+0x6c/0x9c
+ handle_percpu_devid_irq+0x174/0x308
+ generic_handle_domain_irq+0xe0/0x140
+ gic_handle_irq+0x6c/0x190
+ call_on_irq_stack+0x24/0x30
+ do_interrupt_handler+0xd4/0x138
+ el1_interrupt+0x34/0x54
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x6c/0x70
+ generic_exec_single+0x2dc/0x304 (P)
+ smp_call_function_single+0x308/0x530
+ perf_install_in_context+0x4a0/0x798
+ __arm64_sys_perf_event_open+0x184c/0x1d50
+ invoke_syscall+0x98/0x2b8
+ el0_svc_common+0x130/0x23c
+ do_el0_svc+0x48/0x58
+ el0_svc+0x58/0x17c
+ el0t_64_sync_handler+0x78/0x108
+ el0t_64_sync+0x198/0x19c
+---[ end trace ]---
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/perf/arm_pmuv3.c:730:26
+shift exponent -1 is negative
+CPU: 0 UID: 0 PID: 8006 Comm: syz.0.19 Not tainted 6.16.0-rc2-g5982a539cdce #3 PREEMPT
+Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
+Call trace:
+ show_stack+0x2c/0x3c (C)
+ __dump_stack+0x30/0x40
+ dump_stack_lvl+0xd8/0x12c
+ dump_stack+0x1c/0x28
+ ubsan_epilogue+0x14/0x48
+ __ubsan_handle_shift_out_of_bounds+0x2b0/0x34c
+ armv8pmu_disable_event+0x298/0x2f8
+ armpmu_stop+0xa0/0x104
+ perf_event_throttle_group+0x354/0x4cc
+ __perf_event_account_interrupt+0x26c/0x290
+ __perf_event_overflow+0xe8/0xd28
+ perf_event_overflow+0x38/0x4c
+ armv8pmu_handle_irq+0x244/0x320
+ armpmu_dispatch_irq+0x6c/0x9c
+ handle_percpu_devid_irq+0x174/0x308
+ generic_handle_domain_irq+0xe0/0x140
+ gic_handle_irq+0x6c/0x190
+ call_on_irq_stack+0x24/0x30
+ do_interrupt_handler+0xd4/0x138
+ el1_interrupt+0x34/0x54
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x6c/0x70
+ generic_exec_single+0x2dc/0x304 (P)
+ smp_call_function_single+0x308/0x530
+ perf_install_in_context+0x4a0/0x798
+ __arm64_sys_perf_event_open+0x184c/0x1d50
+ invoke_syscall+0x98/0x2b8
+ el0_svc_common+0x130/0x23c
+ do_el0_svc+0x48/0x58
+ el0_svc+0x58/0x17c
+ el0t_64_sync_handler+0x78/0x108
+ el0t_64_sync+0x198/0x19c
+---[ end trace ]---
+
+Fixes: 29227d6ea157 ("arm64: perf: Clean up enable/disable calls")
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+Tested-by: Yunseong Kim <ysk@kzalloc.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: syzkaller@googlegroups.com
+---
+ drivers/perf/arm_pmuv3.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index 3db9f4ed17e8..846d69643fd8 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -795,6 +795,9 @@ static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
+ 
+ static void armv8pmu_enable_event(struct perf_event *event)
+ {
++	if (unlikely(event->hw.idx < 0))
++		return;
++
+ 	armv8pmu_write_event_type(event);
+ 	armv8pmu_enable_event_irq(event);
+ 	armv8pmu_enable_event_counter(event);
+@@ -802,6 +805,9 @@ static void armv8pmu_enable_event(struct perf_event *event)
+ 
+ static void armv8pmu_disable_event(struct perf_event *event)
+ {
++	if (unlikely(event->hw.idx < 0))
++		return;
++
+ 	armv8pmu_disable_event_counter(event);
+ 	armv8pmu_disable_event_irq(event);
+ }
+-- 
+2.50.0
+
 
