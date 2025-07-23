@@ -1,151 +1,104 @@
-Return-Path: <linux-kernel+bounces-742375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0727BB0F0DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B13B0F0E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8192CAC28DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FE0189087E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676F52DA749;
-	Wed, 23 Jul 2025 11:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D79222564;
+	Wed, 23 Jul 2025 11:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="lH0nf79q"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ri+ecnKq"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7682D9EC8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB4A6F06B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268979; cv=none; b=QGJ/sfGpMaJWi31lxro3Jx7R2LEXZwjPsB/i6geJE+3n8bHSP4ukr7mRfbjzdUCdM2h21ltu7LIV54BnGzu6Ha6e/vccVtVWyPelccZQyUeoI4RUJWwCVR+m5xvJEvRAcsn9ngfYJrm1wstnUPQVrDhxFt+xXPjsL2gnke4IBi0=
+	t=1753269023; cv=none; b=QXy6PmFPVqQq07dIdfl/ABzVNpwNB9rnwqcIbRP9fq36PJ6MvGZpSlTT3HW/i0kcS9yggFVTh8L4CFQZJ3nRBopqbTo8qv135vDecTIRA9VvwDA6BhAv2DOY96ZEsiHOv39WYR872LN2+EaMh92uIetEZkPP6en5kH9stQ/EOiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268979; c=relaxed/simple;
-	bh=RI4f/Z3SE/X4N72vDIGv1owBAPo8cR1uNdwgSgPfEhU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=u8hA5okNQSorCfSEsDbMdhVZoNEHTuoyWp+0UjkYhvR5VoHsquTcTf052uAyqLMjb8jiwfncB+C2Edn+yk3zHTrKFr8ApjVy0uSfl3NRzcwh3LsD/YBZIYN0rng1oVyV6Cgl7EHuFB+O+VGkw6v4m6awl8iKVpzkDAuHB3rqARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=lH0nf79q; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so10119513a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1753268976; x=1753873776; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g3R+RLDGTGe3/dGYkfQsVctb8blA4LBzgoSO+v6ujHY=;
-        b=lH0nf79q/KYhIRIi45N+vnmNP3b96ibkAJBkFIgfXPJjsMaSODNwST0V/AG3aQxJ3e
-         FeGVrhZ20jk1u3yWxc/27UenH7HjHSyulUvKEinc1xUWggHiwMO9bbaBDvddOq3F/VPx
-         JGf3Q4ZFanq3VyjyT3kZDPJKjCp1kFiPzhtexs6eApuvqWSDofiiZqRcMx2EMaVJBLRB
-         /OZnG/IEMv9Un14BPiREjjLhA9QJXw0ds5wbqA0JmFofDWyisSne5C4Az4ffNzDfJrKm
-         xgomlw5+qF8Ea9887re6EVOp4BIrBlVwyjrtjoqKr8pvaCpfiBxzoaMJyx7Ko3LB/rEO
-         0LuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753268976; x=1753873776;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g3R+RLDGTGe3/dGYkfQsVctb8blA4LBzgoSO+v6ujHY=;
-        b=dIxJOGNQ8XWmS1s4QlSKeh9JqxurtPOaGcx8JZOYF7BlTQr3TfYoMCONXlR+dwtY94
-         SzLAjM2Olv8KtjEOyQJLZ8lHMY470EQrW8uffegmoYPRJZKi44tjjoyWaCqeId+h8Y2N
-         5FXsyOAiI/V1hkuCqJTp6cWyfKB1ldHVQpuuf5iboSyBfFw6+80bqpWzYHu76/N0XCrz
-         7tOia3Z5r8Zl4oHDDnaFeAKE4FfAdcBJ9D3E3EsTs9jynyyEbU5Rn+TbXZBJQ/MRuJ4d
-         GuDJnsqBIeVSSQugLlA6Bbu+OlJXyeD63F3wcS8lxi6b6p/Y++7rdgFEkZDg5afJCKvp
-         KXiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEr70QPXHxyzt3G5GESZyDIpvGiv6178gCkwh/vkdaJf24elOCAssths0hacT22sMZWmuWDYy2i/UY8wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuSk6Jb5rEomNVkOGJIUP7H2+TFte1z6gMwfS5bUbr/ruwWx7A
-	IGHE2nfLpUxHG9robXo7K3wntoIjfVfYtAn/zBxqPD1/0cM7cbHtxc/Zrn33RsbST68=
-X-Gm-Gg: ASbGncvflAd8IpbATarwCZBw4JdZs9HnI94NHvV+HlwBiP6Xk/GUucvlqfkmc7wM9CK
-	KIKTwKRlOfINKVHD3U0wQslfd+3QYIO/PWatbdAFjgm+OxzLwbQC3a3XuXITdfPfXC3Ba5SY4fl
-	dBbU7HcQxbz9qXo66VdFd5wfMn3K1fg7w7ZuFqKIPuAxRyqHBDyu4qgs6P8Vs6sDoy0W5AzMMVU
-	6rLG8JM6YZWlwfBchcU/5yNiIgTku0CE/2eIUtnfzgUf5qdxBDK/uJwhVXw7MZa+Ge/ZUiqR8L6
-	flaz432P/VbuEQpOmUuN41ernTwmEhJB0MUGGHT9ysuLJ/YXYi7bTmEknNuaK+zUIQ5e901siQ9
-	+CmXNwnz8I9IumdEjYaieZARgML9P17NaL5YXf8DZSbO2moeddncVKEwm2pA0an8vSVc=
-X-Google-Smtp-Source: AGHT+IEnlnbgewz5ArcfCq7ZHFS6Ryv2VXYRZKE9xkEMAwJ9/yNzgZ0lkdiJuTPpFfnJ3XOTmn+y8A==
-X-Received: by 2002:a17:907:c26:b0:ae0:ca8e:5561 with SMTP id a640c23a62f3a-af2f6915e5amr241315066b.13.1753268976160;
-        Wed, 23 Jul 2025 04:09:36 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2eb90sm1033906466b.90.2025.07.23.04.09.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 04:09:35 -0700 (PDT)
+	s=arc-20240116; t=1753269023; c=relaxed/simple;
+	bh=+PsIDRh39+QLU7O4We0suOk5TY87ALaXw+iWI70Jd04=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WzqyDY/IqCm4ltJtODQzOr5goWAUHH4i4p6lcMph8ruUuhfdP8myJ5WYd+TfJUrIjKCtrpSHz5mWLpaMHiVQxBsKkrUh9xBAuUBcvZSG6c31R1zk4Edeu+cTyGOiRYpJ3XXUYlpZXmYCzCcCdu2AWMWAzxxJgs7yUGAMv/cWSQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ri+ecnKq; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4BF6F41C84;
+	Wed, 23 Jul 2025 11:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753269014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jEJXTViUpwJmM1PZQ4s5GJCfEWzwic955fqQl2UwH2Y=;
+	b=Ri+ecnKq2DYLUj8KACW+RfVmXvXtr5s4EL4hPM5F3FAZm5N6cXrkR7xTphb29dqoVLNH7M
+	F3uGD1otPxX5lJ1yB9HNKWuLJ5GQQTYscGf69OAQgI4zfWavFEO7EprayVJUFoBKdMdu/E
+	wcrrIxfOGC1Emtmq/ZLK0vY9UAKRzrOkx6GSy3SZK5rTJuQGPYDjvMGaV7dgX9vDNo3vhA
+	0rJRv+nCAfEca1UzSlbtlQsZzQPDDumS/j3mAn77PJSnP3yAETqKSi/VN5wDUtDPwdrF9X
+	40INrZClD3YDKuXvWaUIhEurA8qOZrHcgg74mQPjef9pXXYFYztZ6lijYKPRmA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_prev_bridge-v1-0-34ba6f395aaa@bootlin.com>
+References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_prev_bridge-v1-0-34ba6f395aaa@bootlin.com>
+Subject: Re: [PATCH 0/3] drm/bridge: get/put the bridge returned by
+ drm_bridge_get_prev_bridge()
+Message-Id: <175326901209.1518728.9011986165395959669.b4-ty@bootlin.com>
+Date: Wed, 23 Jul 2025 13:10:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 23 Jul 2025 13:09:35 +0200
-Message-Id: <DBJDZBYHR94V.1QGVALCL60M1X@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Mark Brown" <broonie@kernel.org>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Felipe Balbi" <balbi@kernel.org>, "Srinivas
- Kandagatla" <srini@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Bjorn
- Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konradybcio@kernel.org>, "Wesley Cheng" <quic_wcheng@quicinc.com>,
- "Stephan Gerhold" <stephan.gerhold@linaro.org>,
- <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/5] Enable USB audio offloading on Fairphone 4
- smartphone
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250501-fp4-usb-audio-offload-v2-0-30f4596281cd@fairphone.com>
- <DBDAPORDD5IM.1BHXPK225E2PP@fairphone.com>
- <DBHIM4SA3OIK.PXX6HMDE93B8@fairphone.com>
- <ac3f1eb2-5830-4bda-bc57-c4d29c22aba0@sirena.org.uk>
-In-Reply-To: <ac3f1eb2-5830-4bda-bc57-c4d29c22aba0@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejjeeivdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepledtveevveduvedvteefhffgiefhfeefleffvdfgffefheeuueeihffhtdeuteehnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedrjeehngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhto
+ hepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjfhuihdrrfhusehgvghhvggrlhhthhgtrghrvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Mark,
 
-On Wed Jul 23, 2025 at 12:57 PM CEST, Mark Brown wrote:
-> On Mon, Jul 21, 2025 at 08:22:06AM +0200, Luca Weiss wrote:
->> On Wed Jul 16, 2025 at 9:19 AM CEST, Luca Weiss wrote:
->
->> > All dependencies for the patches have been applied already, so this
->> > series can land as well!
->
->> Is it still possible to pick up the sound patches (1-3) for 6.17? Dts
->> has been applied already.
->
-> As previously discussed they won't apply until after the merge window.
+On Wed, 09 Jul 2025 17:59:36 +0200, Luca Ceresoli wrote:
+> This series adds drm_bridge_get/put() calls for DRM bridges returned by
+> drm_bridge_get_prev_bridge().
+> 
+> This is part of the work towards removal of bridges from a still existing
+> DRM pipeline without use-after-free. The grand plan was discussed in [1].
+> Here's the work breakdown (➜ marks the current series):
+> 
+> [...]
 
-Sorry about that, I thought the conflict was for the 6.16 merge window,
-not 6.17?
+Applied, thanks!
 
-The patches this depends on have been applied by you on 2025-06-09:
-https://lore.kernel.org/linux-arm-msm/174950282564.277844.46348045130952041=
-60.b4-ty@kernel.org/
+[1/3] drm/bridge: get the bridge returned by drm_bridge_get_prev_bridge()
+      commit: 9b75346e3c2b8ecb5b90b132c2fc185ddd30ecf3
+[2/3] drm/bridge: select_bus_fmt_recursive(): put the bridge obtained by drm_bridge_get_prev_bridge()
+      commit: d4eecb4c24dc160f4a003c804602c746fb8fec58
+[3/3] drm/bridge: display-connector: put the bridge obtained by drm_bridge_get_prev_bridge()
+      commit: c571cb70e1ed43ee543c70151e61a001ab2eefa2
 
-So I'm not aware of another conflict, that's why I was asking in the
-first place.
-
-Regards
-Luca
-
->
-> Please don't send content free pings and please allow a reasonable time
-> for review.  People get busy, go on holiday, attend conferences and so=20
-> on so unless there is some reason for urgency (like critical bug fixes)
-> please allow at least a couple of weeks for review.  If there have been
-> review comments then people may be waiting for those to be addressed.
->
-> Sending content free pings adds to the mail volume (if they are seen at
-> all) which is often the problem and since they can't be reviewed
-> directly if something has gone wrong you'll have to resend the patches
-> anyway, so sending again is generally a better approach though there are
-> some other maintainers who like them - if in doubt look at how patches
-> for the subsystem are normally handled.
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
