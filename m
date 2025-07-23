@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-742474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122A8B0F223
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:24:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421CBB0F229
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07478967F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F191C8603D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FF32E6D3D;
-	Wed, 23 Jul 2025 12:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC51B2E6118;
+	Wed, 23 Jul 2025 12:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="woenmJN1"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AZNi5pnJ"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3852E62CE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E392E7182
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753273432; cv=none; b=dc6r04S2NDM9gb4fKmvchjsUkSER4nd6G3ZH13PArpmkZh9ipaJiROAmFaNqtBeBHAx/UMSxAZoXL9jueZ5TlTCPiMsMXQUl1eZeRCqKrCvllNGIIId9ILzMSIbyyPYDrwRgp7TRnDOvnEovKzL53jx9+EQJ1R0njyKECg7wOWU=
+	t=1753273437; cv=none; b=Yjm9uxRybfgZcs86KiBQ10w8KNxLbQ12OGM6Az5gBSj2NYoA4sSxuFGNf+Lxiu6qneEyd6MAOXorj9WIaYZ9bXIsTo/icdx3oCKa0h9p9WXAqOGmi8uU8gb6gUXrcuUsIrYth1nCxo4aaALNZa2J1+TJKWVEqwX65Q32eyQeJ84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753273432; c=relaxed/simple;
-	bh=DTnFKaqXMEEGzhsDNMlfzfA05S3UXxqZxcGj8rtyYVs=;
+	s=arc-20240116; t=1753273437; c=relaxed/simple;
+	bh=cdNBkQlutdrvrcaHH16yIRxSKS/R7TMRMZ65Ez/Jxsc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UFeBLAk3x5UQZMQdey3cD4Kn1yzRrNiVXhTRsZ9z20/CyEQMrkR8DnlyG4UpNp4DlrDJjP5lO1hnqbqKA/4GqSeJ6bjZuU9Qu+BlOVov6pvrakiy9j0Nrc3+E1qKkxeHKsOGTfyYFPtH31M3L/gvoXwM38idbxakqhg1Mm0YjCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=woenmJN1; arc=none smtp.client-ip=121.127.44.73
+	 MIME-Version; b=PWa59NbPfSGTNIXOqar/dWSFfNz4cX8g5vIIyJrONlJfXtwTe6TH0VjYvqRpNOJbjmn0dGUcgO8EjS2znahm1wM6h48LD0hdoqnly29AbAV3V9kuBValSOlbMEIKCyKmQTZ2pDdSZZ3h5yEpphdoLCmTIoeKSfAmAw0nyjfQB48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AZNi5pnJ; arc=none smtp.client-ip=121.127.44.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1753273430; bh=G7HtzhH5QPJr92DGCLq8/qfM86Vj1rU2kScnrBc1jhM=;
- b=woenmJN1aBXmGg8d8qEPz2IJtXUlhqaQ59x/4DbJEp+GE1zVul0sD/XzInEs6MRJESwHfuNdg
- TMcz9anhctM/DMFruIGqa7SSo1drlOAnHufQWKfdR+78H23WEOV9L0WUTDlA+PTIQyJG9tm225u
- eVBydH8zeAvpU9nFqabc9qvLWDJuTNBKFUZEZJPH/O/76QU4bqyZznIuz8b7VBJ57dzBgNi8YFK
- qi/W2oxAvFVfonawHXMSrCqtdNHyOmQz6U2pvoQtm2wGJG/kqO4nHt5uFao6zLkvdDVnPFpe5mE
- FHuGsE4e/FXJgLhI7G0oKxapeqlo4ynCHs8WBAAB9hqA==
-X-Forward-Email-ID: 6880d453cb0ee86f9731a09c
+ t=1753273434; bh=zhhvg5zJxU5T4KsEk/esqcxT0PtM2GilClP+9BqeGhw=;
+ b=AZNi5pnJ4s3VvOH7espO4hV+Ti3iAYLnnBbD2skDfHDZmbx7oIA/rjcoXUGoHv3I2MgkREzTa
+ Y5Y12sdZx9ukdoLGzCRu1Mw/BPOmQosNnp6HYyK0QaCIyOZWjmFjA0LzIb2Jj1nY/DcV4ziiqax
+ CpgDREw267yLvobYd3yyfE1Ug4ZoVFK0OpHopzuC5yx0bD23RVGBs/vIxppIDanXoCEzStt6g9j
+ HqDRamDEA9NsB0fb8zsJQ1/hwANCiyYVmWH/4sE8Ax6PU2ixb6FqhgSroPezOsvl1oRcmUCjHgy
+ Zjgynsl9ie4d7z0GJYrQBDEV5as36RSueS3AQl21l52A==
+X-Forward-Email-ID: 6880d457cb0ee86f9731a0cb
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  121.127.44.73
 X-Forward-Email-Version: 1.1.6
@@ -61,10 +61,11 @@ Cc: Yao Zi <ziyao@disroot.org>,
 	linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 04/11] phy: rockchip: inno-usb2: Add clkout_ctl_phy support
-Date: Wed, 23 Jul 2025 12:23:02 +0000
-Message-ID: <20250723122323.2344916-5-jonas@kwiboo.se>
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jianwei Zheng <jianwei.zheng@rock-chips.com>
+Subject: [PATCH 05/11] phy: rockchip: inno-usb2: Add support for RK3528
+Date: Wed, 23 Jul 2025 12:23:03 +0000
+Message-ID: <20250723122323.2344916-6-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250723122323.2344916-1-jonas@kwiboo.se>
 References: <20250723122323.2344916-1-jonas@kwiboo.se>
@@ -76,126 +77,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 480m clk is controlled using regs in the PHY address space and not
-in the USB GRF address space on e.g. RK3528 and RK3506.
+From: Jianwei Zheng <jianwei.zheng@rock-chips.com>
 
-Add a clkout_ctl_phy usb2phy_reg to handle enable/disable of the 480m
-clk on these SoCs.
+The RK3528 has a single USB2PHY with a otg and host port.
 
+Add support for the RK3528 variant of USB2PHY.
+
+PHY tuning for RK3528:
+
+- Turn off differential receiver in suspend mode to save power
+  consumption.
+
+- Set HS eye-height to 400mV instead of default 450mV.
+
+- Choose the Tx fs/ls data as linestate from TX driver for otg port
+  which uses dwc3 controller to improve fs/ls devices compatibility with
+  long cables.
+
+This is based on vendor kernel linux-stan-6.1-rkr5 tag.
+
+Signed-off-by: Jianwei Zheng <jianwei.zheng@rock-chips.com>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 47 +++++++++++++++----
- 1 file changed, 38 insertions(+), 9 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-index 130f03474719..cd1a02b990ef 100644
+index cd1a02b990ef..b8950d9f9e97 100644
 --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
 +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-@@ -179,6 +179,7 @@ struct rockchip_usb2phy_cfg {
- 	unsigned int	num_ports;
- 	int (*phy_tuning)(struct rockchip_usb2phy *rphy);
- 	struct usb2phy_reg	clkout_ctl;
-+	struct usb2phy_reg	clkout_ctl_phy;
- 	const struct rockchip_usb2phy_port_cfg	port_cfgs[USB2PHY_NUM_PORTS];
- 	const struct rockchip_chg_det_reg	chg_det;
- };
-@@ -228,6 +229,7 @@ struct rockchip_usb2phy_port {
-  * struct rockchip_usb2phy - usb2.0 phy driver data.
-  * @dev: pointer to device.
-  * @grf: General Register Files regmap.
-+ * @phy_base: USB PHY regmap.
-  * @clks: array of phy input clocks.
-  * @clk480m: clock struct of phy output clk.
-  * @clk480m_hw: clock struct of phy output clk management.
-@@ -245,6 +247,7 @@ struct rockchip_usb2phy_port {
- struct rockchip_usb2phy {
- 	struct device	*dev;
- 	struct regmap	*grf;
-+	struct regmap	*phy_base;
- 	struct clk_bulk_data	*clks;
- 	struct clk	*clk480m;
- 	struct clk_hw	clk480m_hw;
-@@ -312,15 +315,33 @@ static void rockchip_usb2phy_clk_bulk_disable(void *data)
- 	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
+@@ -1507,6 +1507,28 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+ 				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
  }
  
--static int rockchip_usb2phy_clk480m_prepare(struct clk_hw *hw)
-+static void
-+rockchip_usb2phy_clk480m_clkout_ctl(struct clk_hw *hw, struct regmap **base,
-+				    const struct usb2phy_reg **clkout_ctl)
- {
- 	struct rockchip_usb2phy *rphy =
- 		container_of(hw, struct rockchip_usb2phy, clk480m_hw);
++static int rk3528_usb2phy_tuning(struct rockchip_usb2phy *rphy)
++{
++	int ret = 0;
 +
-+	if (rphy->phy_cfg->clkout_ctl_phy.enable) {
-+		*base = rphy->phy_base;
-+		*clkout_ctl = &rphy->phy_cfg->clkout_ctl_phy;
-+	} else {
-+		*base = rphy->grf;
-+		*clkout_ctl = &rphy->phy_cfg->clkout_ctl;
-+	}
++	/* Turn off otg port differential receiver in suspend mode */
++	ret |= regmap_write(rphy->phy_base, 0x30, BIT(18) | 0x0000);
++
++	/* Turn off host port differential receiver in suspend mode */
++	ret |= regmap_write(rphy->phy_base, 0x430, BIT(18) | 0x0000);
++
++	/* Set otg port HS eye height to 400mv (default is 450mv) */
++	ret |= regmap_write(rphy->phy_base, 0x30, GENMASK(22, 20) | 0x0000);
++
++	/* Set host port HS eye height to 400mv (default is 450mv) */
++	ret |= regmap_write(rphy->phy_base, 0x430, GENMASK(22, 20) | 0x0000);
++
++	/* Choose the Tx fs/ls data as linestate from TX driver for otg port */
++	ret |= regmap_write(rphy->phy_base, 0x94, GENMASK(22, 19) | 0x0018);
++
++	return ret;
 +}
 +
-+static int rockchip_usb2phy_clk480m_prepare(struct clk_hw *hw)
-+{
-+	const struct usb2phy_reg *clkout_ctl;
-+	struct regmap *base;
+ static int rk3576_usb2phy_tuning(struct rockchip_usb2phy *rphy)
+ {
  	int ret;
+@@ -1920,6 +1942,57 @@ static const struct rockchip_usb2phy_cfg rk3399_phy_cfgs[] = {
+ 	{ /* sentinel */ }
+ };
  
-+	rockchip_usb2phy_clk480m_clkout_ctl(hw, &base, &clkout_ctl);
++static const struct rockchip_usb2phy_cfg rk3528_phy_cfgs[] = {
++	{
++		.reg = 0xffdf0000,
++		.num_ports	= 2,
++		.phy_tuning	= rk3528_usb2phy_tuning,
++		.clkout_ctl_phy	= { 0x041c, 7, 2, 0, 0x27 },
++		.port_cfgs	= {
++			[USB2PHY_PORT_OTG] = {
++				.phy_sus	= { 0x004c, 8, 0, 0, 0x1d1 },
++				.bvalid_det_en	= { 0x0074, 3, 2, 0, 3 },
++				.bvalid_det_st	= { 0x0078, 3, 2, 0, 3 },
++				.bvalid_det_clr	= { 0x007c, 3, 2, 0, 3 },
++				.idfall_det_en	= { 0x0074, 5, 5, 0, 1 },
++				.idfall_det_st	= { 0x0078, 5, 5, 0, 1 },
++				.idfall_det_clr	= { 0x007c, 5, 5, 0, 1 },
++				.idrise_det_en	= { 0x0074, 4, 4, 0, 1 },
++				.idrise_det_st	= { 0x0078, 4, 4, 0, 1 },
++				.idrise_det_clr	= { 0x007c, 4, 4, 0, 1 },
++				.ls_det_en	= { 0x0074, 0, 0, 0, 1 },
++				.ls_det_st	= { 0x0078, 0, 0, 0, 1 },
++				.ls_det_clr	= { 0x007c, 0, 0, 0, 1 },
++				.utmi_avalid	= { 0x006c, 1, 1, 0, 1 },
++				.utmi_bvalid	= { 0x006c, 0, 0, 0, 1 },
++				.utmi_id	= { 0x006c, 6, 6, 0, 1 },
++				.utmi_ls	= { 0x006c, 5, 4, 0, 1 },
++			},
++			[USB2PHY_PORT_HOST] = {
++				.phy_sus	= { 0x005c, 8, 0, 0x1d2, 0x1d1 },
++				.ls_det_en	= { 0x0090, 0, 0, 0, 1 },
++				.ls_det_st	= { 0x0094, 0, 0, 0, 1 },
++				.ls_det_clr	= { 0x0098, 0, 0, 0, 1 },
++				.utmi_ls	= { 0x006c, 13, 12, 0, 1 },
++				.utmi_hstdet	= { 0x006c, 15, 15, 0, 1 },
++			}
++		},
++		.chg_det = {
++			.opmode		= { 0x004c, 3, 0, 5, 1 },
++			.cp_det		= { 0x006c, 19, 19, 0, 1 },
++			.dcp_det	= { 0x006c, 18, 18, 0, 1 },
++			.dp_det		= { 0x006c, 20, 20, 0, 1 },
++			.idm_sink_en	= { 0x0058, 1, 1, 0, 1 },
++			.idp_sink_en	= { 0x0058, 0, 0, 0, 1 },
++			.idp_src_en	= { 0x0058, 2, 2, 0, 1 },
++			.rdm_pdwn_en	= { 0x0058, 3, 3, 0, 1 },
++			.vdm_src_en	= { 0x0058, 5, 5, 0, 1 },
++			.vdp_src_en	= { 0x0058, 4, 4, 0, 1 },
++		},
++	},
++	{ /* sentinel */ }
++};
 +
- 	/* turn on 480m clk output if it is off */
--	if (!property_enabled(rphy->grf, &rphy->phy_cfg->clkout_ctl)) {
--		ret = property_enable(rphy->grf, &rphy->phy_cfg->clkout_ctl, true);
-+	if (!property_enabled(base, clkout_ctl)) {
-+		ret = property_enable(base, clkout_ctl, true);
- 		if (ret)
- 			return ret;
- 
-@@ -333,19 +354,23 @@ static int rockchip_usb2phy_clk480m_prepare(struct clk_hw *hw)
- 
- static void rockchip_usb2phy_clk480m_unprepare(struct clk_hw *hw)
- {
--	struct rockchip_usb2phy *rphy =
--		container_of(hw, struct rockchip_usb2phy, clk480m_hw);
-+	const struct usb2phy_reg *clkout_ctl;
-+	struct regmap *base;
-+
-+	rockchip_usb2phy_clk480m_clkout_ctl(hw, &base, &clkout_ctl);
- 
- 	/* turn off 480m clk output */
--	property_enable(rphy->grf, &rphy->phy_cfg->clkout_ctl, false);
-+	property_enable(base, clkout_ctl, false);
- }
- 
- static int rockchip_usb2phy_clk480m_prepared(struct clk_hw *hw)
- {
--	struct rockchip_usb2phy *rphy =
--		container_of(hw, struct rockchip_usb2phy, clk480m_hw);
-+	const struct usb2phy_reg *clkout_ctl;
-+	struct regmap *base;
-+
-+	rockchip_usb2phy_clk480m_clkout_ctl(hw, &base, &clkout_ctl);
- 
--	return property_enabled(rphy->grf, &rphy->phy_cfg->clkout_ctl);
-+	return property_enabled(base, clkout_ctl);
- }
- 
- static unsigned long
-@@ -1332,9 +1357,13 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
- 
- 	if (!dev->parent || !dev->parent->of_node ||
- 	    of_property_present(np, "rockchip,usbgrf")) {
-+		rphy->phy_base = device_node_to_regmap(np);
-+		if (IS_ERR(rphy->phy_base))
-+			return PTR_ERR(rphy->phy_base);
- 		rphy->grf = syscon_regmap_lookup_by_phandle(np, "rockchip,usbgrf");
- 	} else {
- 		rphy->grf = syscon_node_to_regmap(dev->parent->of_node);
-+		rphy->phy_base = rphy->grf;
- 	}
- 	if (IS_ERR(rphy->grf))
- 		return PTR_ERR(rphy->grf);
+ static const struct rockchip_usb2phy_cfg rk3562_phy_cfgs[] = {
+ 	{
+ 		.reg = 0xff740000,
+@@ -2287,6 +2360,7 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
+ 	{ .compatible = "rockchip,rk3328-usb2phy", .data = &rk3328_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
++	{ .compatible = "rockchip,rk3528-usb2phy", .data = &rk3528_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3562-usb2phy", .data = &rk3562_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3568-usb2phy", .data = &rk3568_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3576-usb2phy", .data = &rk3576_phy_cfgs },
 -- 
 2.50.1
 
