@@ -1,81 +1,51 @@
-Return-Path: <linux-kernel+bounces-742125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26745B0ED9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:47:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20A3B0ED9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C543BCBCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6C116AFA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2FF27F75F;
-	Wed, 23 Jul 2025 08:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cJHZW42i"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACBF1581F8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4C527FB1F;
+	Wed, 23 Jul 2025 08:49:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFC027A92B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753260462; cv=none; b=u3KI1KjFPtyE8B0UAfxwFNjh80Gq/LE6msmAMl3GXs+ovQRV8ByTjEoA/m3T4bTX0TxTLmmA1kL3/c3VlyujpaXW3AjT1PrPwx5Au8/OmA5prnZ48dQrMnGlDpE08kT+blA+A3GPXoDElxdt/gu+SCziXzp70lA5R1htU1VOFZs=
+	t=1753260552; cv=none; b=XGBav0q30CNsuPOtvLPmLjcGVumM3l2wVP/JJ2bnSOvn23qEw98bi9ulm5ZhUJATIzm7p3q8gohiYu2dqa7uh5FizMhLxDih9SPbZdQZu355wuZmVdyYvKbTsIaUiS0QCOJceIAttv/MnhG24xx5aeFNg5A7xTkjbxNZy0W0Mzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753260462; c=relaxed/simple;
-	bh=XkWtoBEy+RtVEYij8/zZoQ140vXxVhFS3YCRagqTajs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cQYDmBRVEnsTvjcPu7ablY6WdwppXiv9JNqmw0MiXSnsSQCwkylpk0zgzYtMX+JX1h8b8IcZtDlo5kr3yl1TX+afTKn/XrPU77tVjHsCVlHwunZXEMOVqI+n+/ByUKpTIbOgn5cChl47zcgEtw8UylIQCBwcNSXKb/LEDBfup2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cJHZW42i; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so6424951a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753260461; x=1753865261; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XkWtoBEy+RtVEYij8/zZoQ140vXxVhFS3YCRagqTajs=;
-        b=cJHZW42ir9I/EO7jFk1DFciMyOMJrZZBb0AAK/75DkhNwI0kb7c9b+s5LpyfdZ7K3o
-         ZcfIAKK4yp0HH8bzwNeCQkTcd5tR+FacGGZkURO+FxrX/z7rb6PCvEzBYVLEQNV66LEi
-         XufNfnz86ZYOG5McAP3Sapz1IJCgpKnO1g1wo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753260461; x=1753865261;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkWtoBEy+RtVEYij8/zZoQ140vXxVhFS3YCRagqTajs=;
-        b=mQTX9BRmwModb4r60o0ucgNODYOjJHXosIr3agxtloBhkKzdRpZwjtvNyFUKLyqRJx
-         JINkdBbjInXT4065utJpA9AfTVxNSsszfXCqnyTNAt0wZkRH4P+VYjxJbM8XCzYBhVuA
-         MIeBokCxupTgfwYbo88zxPV0ucSkKfuJIQzAlT/6i5V2j+YlX6vZMjG4M4Uu1cz4av9c
-         KX5vFi4LJ/RDERAGpk5DnyJ18+V0umKcQV77Zrf7gZV4M7bQNBevA9e2ZbIuWpihxv0w
-         UP6six9WMTzdw0b67Jqg8NltJmbcPF2KMXyFejLw8xLib+sPStjlXj/dYBtf4QdxAleq
-         Hq2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVDDtzYJd2cPdtUjJGiXQrgrj3W2srmtG5JEEm1ZTSH6eZf2ef7r9fO98WdpK+ZuZsSIf7HVc1oWM6OxME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDf/J33wbIRdQtwtRQ+f/1sppE6cl+Jk3fTuOd0VgZOn/Kn8Ex
-	t0LMGWYcPzS9gPEAeb3lZWc9cL7nufKmtytl8HBNwufvOOVwUkBX8lqoyTqF+RkQvw==
-X-Gm-Gg: ASbGncsiR4i7IrdGbGe1XfZazM0vBBBwrCd7vO7Ll2RIHGuPGPUq043ZCnD1EbgRCgE
-	bW7iI97N2ZusTZ9dPMSLmrKIMEq1udRpKkC263gSx4hhtSmcZrjRvAdguCAv+WqtEJxLr7u/sQ0
-	6dRCm1vV0Y7OLiBNsMDakmoMZJS5NYM2ST1cHBvFGWvtR6tCMyZpVr/Zw9JKa0SwlE1vCb8+4nx
-	IOdtyuyEGe7jQInCrcQELWY4LZE5V3LF2xnfvyQhIoioj/hwjGpv6QcP8Vg1AA9Ry3XHEm37U4o
-	y+Kj0cmMx3JaNkhNv+T7BEWg6ZckBDbsaLPQ0uhq3GYDSM1viIgBhmm8329ieAndcZNbIV7pzt0
-	8qOITKUUaXPSp8Vj6x6ZhNQpiTA==
-X-Google-Smtp-Source: AGHT+IHf7pd/APQTIG3i6HqTIMWQdqJf767iTNlzngJRFG8jMvKF4lKtndMTbEM80kKxucwL/NFrsA==
-X-Received: by 2002:a05:6a21:6197:b0:236:355d:5f27 with SMTP id adf61e73a8af0-23d491f866emr3296443637.42.1753260460802;
-        Wed, 23 Jul 2025 01:47:40 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:23e0:b24b:992e:55d2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2008sm8500708b3a.30.2025.07.23.01.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 01:47:40 -0700 (PDT)
-Date: Wed, 23 Jul 2025 17:47:36 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Petr Mladek <pmladek@suse.com>, 
-	John Ogness <john.ogness@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org
-Subject: [RFC] panic: redundant backtraces with SYS_INFO_ALL_CPU_BT
-Message-ID: <wgczmfbmzppwqvdjvsmhwzravvfzkabgeh6yifc3y4syl76xy5@ytgnkkmmcpr7>
+	s=arc-20240116; t=1753260552; c=relaxed/simple;
+	bh=UIxA8PfIxTr9Yc1OXWjAvTUdgAeQw+cvzk9x7t5Xucc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7ClyPA1SIsQiKvIX8oFz74LdGsuem2eaRrGXvGWwRyu6I2wqzOrZHchf1PmDOVDal7VU4apjxeihWP0eW8XxROmQiPKj/W5KWlQICIT8Sl6C/jkR5dh7Z6dGTK+idnLQ+vTkao3taYBTmEwYdsTolCkI/JR3di1k2fw5lEwXSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55BED1BCA;
+	Wed, 23 Jul 2025 01:48:57 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA52E3F5A1;
+	Wed, 23 Jul 2025 01:49:01 -0700 (PDT)
+Date: Wed, 23 Jul 2025 09:48:53 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Weikang Guo <guoweikang.kernel@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: Ensure phys_to_ttbr on pgdir for
+ idmap_cpu_replace_ttbr1
+Message-ID: <aICh9Z3dsEQj_79y@J2N7QTR9R3>
+References: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
+ <aH-mlN88NrTzahfM@J2N7QTR9R3>
+ <20250723024923.GA1884099@ubuntu-virtual-machine>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,21 +54,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250723024923.GA1884099@ubuntu-virtual-machine>
 
-Hello folks,
+On Wed, Jul 23, 2025 at 10:50:55AM +0800, Weikang Guo wrote:
+> On Tue, Jul 22, 2025 at 03:56:20PM +0100, Mark Rutland wrote:
+> > On Tue, Jul 22, 2025 at 04:21:13PM +0800, Weikang Guo wrote:
+> > > Commit 5ffdfaedfa0a ("arm64: mm: Support Common Not Private translations")
+> > > changed the contract of idmap_cpu_replace_ttbr1, requiring that the TTBR
+> > > argument passed in should already be processed by phys_to_ttbr (i.e., in
+> > > TTBR format, not just a raw physical address).
+> > > 
+> > > However, the current map_kernel implementation does not always convert the
+> > > pgdir/ttbr argument via phys_to_ttbr before calling
+> > > idmap_cpu_replace_ttbr1. This can lead to issues on systems with
+> > > CONFIG_ARM64_PA_BITS_52 enabled, as the TTBR would not be properly folded
+> > > per the ARMv8.2+ requirements.
+> > 
+> > For the cases below I don't believe that this is actually a problem.
+> > Since commit:
+> > 
+> >   453dfcee70c5c344 ("arm64: booting: Require placement within 48-bit addressable memory")
+> > 
+> > ... we require that the kernel Image (including any trailing unallocated
+> > bytes accounted for in image_size) are below the 48-bit address limit,
+> > and so there should be no difference between the PA and TTBR format.
+> > 
+> > We could probably test and enforce that in the early boot code somehow,
+> > if we're not doing that already.
+> > 
+> > If we were going to change things to avoid accidents in future, I think
+> > it would be better to enforce this with the type system. e.g. we could
+> > have a ttbr_val type that's distinct from phys_addr_t. Even then, for
+> > the idmap code I think it's better to avoid the phys_to_ttbr() dance,
+> > since that has runtime patching.
+> > 
+> > Mark.
+> >
+> 
+> Thank you for your detailed explanation.
+> 
+> As you mentioned, if we can guarantee that the kernel image is always within
+> the 48-bit PA range,then there is indeed no real difference between the PA
+> and TTBR formats in this context.
 
-Should SYS_INFO_ALL_CPU_BT use trigger_allbutcpu_cpu_backtrace(),
-instead of trigger_all_cpu_backtrace(), to exclude self/panic-cpu?
-Otherwise it dumps extra backtraces for the panic CPU, which is
-a little redundant (and confusing.)
+Yep.
 
-E.g.
-softlockup watchdog_timer_fn() calls dump_stack() from IRQ for the
-locked-up CPU before it calls into panic() (assuming soft lockup panic),
-which then can SYS_INFO_ALL_CPU_BT and trigger NMI backtraces for all CPUs,
-including panic CPU which already dumped its stack, but this time we
-dump_stack() from NMI.
+To be clear, I'm saying that there's no functional problem in practice,
+and hence the description in the commit message is more alarming than
+necessary.
 
-I suspect it's a similar story for BUG()/BUG_ON() (and WARN/WARN_ON(),
-assuming panic on warn.)
+Since the conversion is trivial I'm not against applying the conversion
+consistently, but if we do that I think we should enforce that through
+the type system so that missing conversions will be identified by the
+compiler.
+
+> In that case, does it mean that the conversion of `reserved_pg_dir`here is
+> also redundant? (There may be other similar cases.)
+
+Yes, 'reserved_pg_dir' should be part of the kernel Image and hence
+below the 48-bit limit.
+
+> If we already ensure the kernel is always mapped below 48 bits, it does
+> seem safe to remove `phys_to_ttbr`here as well.
+
+I assume for both instances of 'here' above you're referring to the
+macro below.
+
+> .macro  __idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
+>     adrp    \tmp1, reserved_pg_dir
+>     phys_to_ttbr \tmp2, \tmp1    // This might not be needed either?
+>     offset_ttbr1 \tmp2, \tmp1
+>     msr ttbr1_el1, \tmp2
+>     isb
+>     tlbi    vmalle1
+>     dsb nsh
+>     isb
+> .endm
+
+Yes, the phys_to_ttbr conversion above isn't strictly necessary today.
+
+Mark.
 
