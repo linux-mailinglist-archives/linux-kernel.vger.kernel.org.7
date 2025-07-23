@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-742481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EF2B0F22F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E5BB0F26A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667FF178420
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857931AA8162
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F792E889C;
-	Wed, 23 Jul 2025 12:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED26248F69;
+	Wed, 23 Jul 2025 12:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AR3DSb9J"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RDhmv4d0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3B2E6108
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A6726C3BD;
+	Wed, 23 Jul 2025 12:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753273462; cv=none; b=lTsvebCUaEDivLawK58dC9J1dTt84HqyKh6XPGUeEreNP21H9sBY0TiIwjBxRhwSrOtGUrt/hY9TEj0hrsPAZNkqEdT3OwtNbfOut8cTYneXPPRHaNngB5mVDk+BegHiqalQN2+f3Cqn5rsDOZh5vcEnBC0ryo29hexHACgGFCk=
+	t=1753274324; cv=none; b=Obnm97g/iohfRe3FxRJPb1L/07l5hKGV1Zwa80ejxshfgF/+wdbcwxLF2a2VCmBdl7Fo6BEIiiPoHkuSZQAmBlsWjsswqkMQfU1xCpwz4TdGpbZppg/pOBY1GmlvvIkBucikl2u6orUWjuJOkgqAB+pqBAMQPJf/RaeLFcLQL/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753273462; c=relaxed/simple;
-	bh=gREyE0ZVyEhxplbBjcx7JIYNT/8H1hIoNyKFT5KHri4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OKhbfk9tlhQS2UZOdTzI6QnAvLzsAYBolBs2vnP/ZiNxHc8wEX77f6u4CGS8kp1dH44m2JYzfNFOcdKS4XJPQc249pTtQVDrQGkoMUmamRcCVMxqRGVqDRDWH0zqYuzrvLOZFLfHiHinik4PxhJS9YYyFaexPPycNKYGkD4dz1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AR3DSb9J; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1753273460; bh=weO9qVUiN6tEUR9RLEUl6LP42sZYtMP9t4YbYxPbAIE=;
- b=AR3DSb9JLDjPD8kH1MeoJs2wBWnLUBaQbgOmBTbu/G62vLhA7xswGDQxI/o/kawCOAH9q/rOX
- zWPR/QDEdl4au8kHcIXCIsb2iObyiCgJpjSB5UqLKZLWt1pxZigSQaqQUsDI/Z39nlx/2mhC/t7
- A7AO7fTtiNj2LyQFOWU2+3iFp9IxEg1kKk6Bk9WjGwI3cUkVBFTOpEycg5rraaXd4u4da7qaUBl
- bJIeleMH5VGh6nKYVLV+Bkcctskhm+fPvzK1YZON4+hHT2ON5vsngK6zRkkyDxisMNFgNg9pdSf
- tj1kcGlfkuQXrHM5EFgTb7197sjyCQ1slAqcu6JarfMw==
-X-Forward-Email-ID: 6880d471cb0ee86f9731a149
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.1.6
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 11/11] arm64: dts: rockchip: Enable USB 2.0 ports on NanoPi Zero2
-Date: Wed, 23 Jul 2025 12:23:09 +0000
-Message-ID: <20250723122323.2344916-12-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250723122323.2344916-1-jonas@kwiboo.se>
-References: <20250723122323.2344916-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1753274324; c=relaxed/simple;
+	bh=OrTb+KcHqT4ajdsH1ypK8FaKVkgJa8ksvVRgB8HRm9Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fQ91SoOF2r1pSRvvvAtLAL/P62/WNObPc9h0ZAqAJiYLo59ioqaf3EOl6Fm4gWP6iIq9rIJcmX75yZ1DCCz2c81fC/P7GDgDOubJA/9M8BvzXpSTSnuOLZrc79xm393s3QLQbEBSMy16cZSwih6kDUl4pIpz2K8TcXgS/Ar9qlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RDhmv4d0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D940C4CEE7;
+	Wed, 23 Jul 2025 12:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753274322;
+	bh=OrTb+KcHqT4ajdsH1ypK8FaKVkgJa8ksvVRgB8HRm9Q=;
+	h=From:Date:Subject:To:Cc:From;
+	b=RDhmv4d0mUWTFu/k6l+UgHLvejZEHBBcCvuOIo8nKodYeCvy+R8vxIiOVsm1q5JOQ
+	 UsrRTEdNNtnDr9n1eqkSUf95LHjki0r7NChsEJc37EiZPy3FZaXpOp1USxa78ZVWv0
+	 tuyMocSaFBl7WcHl3c/07K9XCpnUq66Esftj/19hyYg68nLgz5Xp9QwZMsSCjS1E0N
+	 5x0RUI3Igu7319Us20lfGHASKXT91o9pSK2yUANHXbKAU3KGRHreHXiuXbYKbbU2WU
+	 ErW0ksZ+wacNF9oO4SiESQeC7UcafWUVHrfIo/8BWzh4d9dAcYVlXHWEwqxu05EHoB
+	 QBF5TpoFQ+Wog==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 23 Jul 2025 13:27:45 +0100
+Subject: [PATCH] arm64/sme: Drop inaccurate documentation of streaming mode
+ switches
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-arm64-sme-mode-switch-doc-v1-1-702bb484b4f4@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEDVgGgC/x3MQQ6CMBBG4auQWTMJTIsar0JcYPsjsyg1HaMmh
+ LvTsPwW721kKAqje7NRwVdN81rRtw2FZVpfYI3VJJ0M3VWEp5Iuni2BU45g++knLBxz4Bt6J97
+ 5p0ek2r8LZv2f7/Gx7wfH5ah4awAAAA==
+X-Change-ID: 20250722-arm64-sme-mode-switch-doc-8e132434b4ed
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1936; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=OrTb+KcHqT4ajdsH1ypK8FaKVkgJa8ksvVRgB8HRm9Q=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBogNfQPuSRx5nolzVnWzO3f5C+iSWPt1ou4zVoV
+ QuR7n/k3ZGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaIDX0AAKCRAk1otyXVSH
+ 0MvbB/oDMKFjJJgkmKz5aDIP9D9olw3VGOkisOZtq2L19yAa9LIBaPWqfS+u9NiffrlmpSi2adO
+ Ome5zhPsryc5XH/0b+eDJIcu/BaqhePrwNg2u0IlIwjm4Wn3YrtR3cN+HjuobeHawVeLM48T5jS
+ J2GPCXLn2yG81L7/hWfPqXfIqyEqUTYq6EmojjpfL9OKelTZi9MDwI2Bil9NC1I/WwQ+3vOXXho
+ wajoW9rC37ZFRdXv0bzPkeZ01YcPaqUH1gaJAt9yMwhHkeHnil5+omwXdskK809wqSe2SypOlzh
+ YyUqU4VVrdPAXYbic0RXO4NhuMJ7tIPmfvqvq3NNQtAhZnT7
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-The NanoPi Zero2 has one USB 2.0 Type-A HOST port and one USB 2.0 Type-C
-OTG port.
+The SME ABI documentation contains an inaccurate description of the
+architectural streaming mode entry/exit behaviour, just remove it since
+this is better documented by the architecture or with the rest of the
+documentation for the specific software interfaces concerned.
 
-Add support for using the USB 2.0 ports on NanoPi Zero2.
-
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+The rest of the documentation needs more thorough review, but it seems
+wise to remove the incorrect statement to avoid confusion.
+---
+ Documentation/arch/arm64/sme.rst | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts b/arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
-index 9f683033c5f3..38a73ff05b7c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
-@@ -333,8 +333,37 @@ &sdmmc {
- 	status = "okay";
- };
+diff --git a/Documentation/arch/arm64/sme.rst b/Documentation/arch/arm64/sme.rst
+index 4cb38330e704..583f2ee9cb97 100644
+--- a/Documentation/arch/arm64/sme.rst
++++ b/Documentation/arch/arm64/sme.rst
+@@ -81,17 +81,7 @@ The ZA matrix is square with each side having as many bytes as a streaming
+ mode SVE vector.
  
-+&u2phy {
-+	status = "okay";
-+};
-+
-+&u2phy_host {
-+	phy-supply = <&usb2_host_5v>;
-+	status = "okay";
-+};
-+
-+&u2phy_otg {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0m0_xfer>;
- 	status = "okay";
- };
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&usb_host0_xhci {
-+	extcon = <&u2phy>;
-+	maximum-speed = "high-speed";
-+	phys = <&u2phy_otg>;
-+	phy-names = "usb2-phy";
-+	status = "okay";
-+};
--- 
-2.50.1
+ 
+-3.  Sharing of streaming and non-streaming mode SVE state
+----------------------------------------------------------
+-
+-It is implementation defined which if any parts of the SVE state are shared
+-between streaming and non-streaming modes.  When switching between modes
+-via software interfaces such as ptrace if no register content is provided as
+-part of switching no state will be assumed to be shared and everything will
+-be zeroed.
+-
+-
+-4.  System call behaviour
++3.  System call behaviour
+ -------------------------
+ 
+ * On syscall PSTATE.ZA is preserved, if PSTATE.ZA==1 then the contents of the
+@@ -112,7 +102,7 @@ be zeroed.
+   exceptions for execve() described in section 6.
+ 
+ 
+-5.  Signal handling
++4.  Signal handling
+ -------------------
+ 
+ * Signal handlers are invoked with PSTATE.SM=0, PSTATE.ZA=0, and TPIDR2_EL0=0.
+
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250722-arm64-sme-mode-switch-doc-8e132434b4ed
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
