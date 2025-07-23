@@ -1,290 +1,267 @@
-Return-Path: <linux-kernel+bounces-742656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DDEB0F4F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B359CB0F4F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46BFC542ED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A05542927
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7102F5466;
-	Wed, 23 Jul 2025 14:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC822EB5BC;
+	Wed, 23 Jul 2025 14:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gow82bdC"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JPOS8cZ5"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0302F214A97
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47B52EA14D;
+	Wed, 23 Jul 2025 14:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753279736; cv=none; b=YfdQvFZLGgrwpE9j9Dmvue8ZJJk5aU4bE3iMxrJ+kecuav260W9lkeEuyQ0PgQ2NzvjplYrvw6UxG+sa1Goln7mOS8dEIVBlmugcZ5gD+4QzHpSV3eJ1br23BLyFChFbd3X41FKE8ksH92bBtWU5hMfyY77C/OtoxWjispdnrZI=
+	t=1753279799; cv=none; b=m64mSaXBhaflUJ4jGPJB8twETR7z3ROUNVVNUJp8Qrtuds/tW+SZCx4wcF6I+mKZH3+jENVrXn7Cw6qbBoW3G06Vo5uyT5Pz9G4bj1Bq7gVi+gKvagMx6AiYytAqOvWk5vkqErl9WNMxneJMeqQoIbToOZTqfJ8xPHibiq6WNrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753279736; c=relaxed/simple;
-	bh=ydclLCaGSmNkeuVXez2CYGfXDVtHqZ0XMHB7iwtfteI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jcw5VMq+MMqdpjQVX92vt+TUS7adsEM8D1DrI3+kxFM7vk/llBtB/t4/SmeJkSK3b1/2SjN/HoI1PVmyDhKJc45XHhZIsmXG4Ip0wD4T2GKcm9KokBqikJbCdAW4AAXkXuHtxGw0R68zc27xhC/RFCiW5/+jb4H+8ti95LkPNPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gow82bdC; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2350fc2591dso10610735ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753279734; x=1753884534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZYHF8dEvCBs5P2/4YixNScJ4EMSwZSRI7lnKT6lnKU=;
-        b=gow82bdCBozXffEhR4afcwutih3y2ONXeFe+fleeTasBbvI+pGC9dWGR8ADA02NsK3
-         FRq7kdnD+jS1jcKsGDTfCDcVNFj2QYafnZkxMZnFt4dsyquvWK9EhnWt2JU8l+b1aOwM
-         RgZWHBieWFrsHlBAjvHAvM8wEeFYZwIZszy+H419N7ma8iRgjPpq1YnyvWnQbDWkEff+
-         D2/JWYWcI5dwbfjF1N5envpaZe1o2lDJ3vYPzSlRLZVnmlUIr5cBwot+n/wysMmVV+Hu
-         yyYjrQ+vQEMXPLPL3pSQLfkQHhPUHCHtzrFIliNR8RLjrvdgG7z7DJMijWt3dSptXFeE
-         8SZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753279734; x=1753884534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZYHF8dEvCBs5P2/4YixNScJ4EMSwZSRI7lnKT6lnKU=;
-        b=dpAc02pkvK2oRem+B0z4sH+pkBkyonATFYdJB9uM0B4zrvR2/kanEeYhW8PmQ46NLl
-         5VHnLuucUUZ36/E/sdwcE20xDLh5ly2HGHL1XGQwHEZf3xnJX+n45zwAYg8UNXi9W6fR
-         uNkwYqIreyj6jj6FOh2Dwl+cLEvPmjQABCZS/n3ExKheMp3dnMeLLS9OYR400Yp9dKeT
-         CYEuumHlFwiugI46WeYcyNmJxZWUx1h3WTxr45qBo5v8vvXYCqYlWx7u0K834ebrtaWF
-         9HzholalSKiSSzN86yOVAhjnBpjpM53KRnrKoWvdNURmiT/AgMr0aViPdLtzv4QXT3i4
-         li8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaNAe0OK6HDRTac9PvkFxmSbqYHWy5M383qLYmqg0lf5ttssZ5gF2q3p5HVCnCQIoWCZvZmq4UYFSKzXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmyFIAvAcjjBv9a5z2WPnd6apactAIlVaj9pvcnFABifPVBKex
-	IJms7z97+LetgnhiYjfq0WCWGob1r5bHH/crlu0iwaNiRdvQHz82bFetL0xi1O5iAh/zTHPiNKn
-	n6y+n8RrAIMzqSj9mNrl+ylgwEaK/YLyjWRNA3sG2
-X-Gm-Gg: ASbGnctlWFOqMnZDi9Gqfuq9kkTL/UX5wMheHQ54/FbKl7ziWkNIqCTrN4e8oer8Utw
-	G+DS6L0jx7RqAa6TYA7bjs6v/KGM72kPAtPQVAbX4rSfE8NFT91GqIiGO1NwsWgQh3jC72FEWXV
-	7eex33yrh5HWYAIBx7JN/F7657rUeyivegydGatD5Qp1PEWy4b/q2e3qTomc+5+h80aBO8t7AAO
-	H7pmj3XjPoNgKOuaYWDEpR2obbvO2+VulQ=
-X-Google-Smtp-Source: AGHT+IHtN6u2lKCHJzkcV0H0rD9pbklTmhJEymw6TdX51stK0L0459k4B8/sxAU7uMTZuxiDg8mVOy+I2NYwD+eroAQ=
-X-Received: by 2002:a17:903:988:b0:234:9fe1:8fc6 with SMTP id
- d9443c01a7336-23f8accce8amr110357055ad.18.1753279726373; Wed, 23 Jul 2025
- 07:08:46 -0700 (PDT)
+	s=arc-20240116; t=1753279799; c=relaxed/simple;
+	bh=rHLzR3DWuoPsjoOUS5tpuu2jYPcAk5V3uu/hjvz8CKA=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=nkTdvR4SaYRYnAPu8zfwgOB+PgpfxiT1xd2ACTtojQMP12tGpwtzBxYpbi4wTIqfPv4BDAJVwWkXFb3vpplb9WV+ec2ebFTq/RrCwO6N4lOuWRUDg5QO7xSMR+AO3ImFWJ9OLtwD6aZS43Draz6ghQmDJhkI5O9kicprWgtsTzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JPOS8cZ5; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:5fd2:1bb4:fa29:737] ([IPv6:2601:646:8081:9484:5fd2:1bb4:fa29:737])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56NE8mPJ1176164
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 23 Jul 2025 07:08:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56NE8mPJ1176164
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753279730;
+	bh=Z525S9Hljk1kFHZ9q9qjWOfnEkBN+CVsXAzilr8qm8k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JPOS8cZ5fW0b4s+xjjHBXjfIygt93132qJ8IiQ0ZwGxq7y3YD5AApbSPOJSIuWsrL
+	 7XfpVUFfE24wF63EQLvHbBfPtxbIFJnUhUXYyFCxrgS1cTKqJ3HhkNE+dZanVVEHjc
+	 wuexfGxvCRzKxBPRtYIwOMUeE0YgnMzzTMc4Jdz0eILK0N2COgEn4Twqh94ejaGit9
+	 3M+dFT5r5k3LVnlJnXb3e7a8H+WuhJL0Bg2r/nFIzwowHtsG+rRZBL7S+16T7SXXK5
+	 cCQWzvxzaYKlHf8lZSX3IBFZKLU8vOgMH7VsHPXuZsPoJZi77FLeohJ9TgNpoJfuw1
+	 pwtuTY3TO8ZaQ==
+Content-Type: multipart/mixed; boundary="------------nCXPrGAbh2CIXtJ1Z1dwRDgB"
+Message-ID: <641393bd-c3d7-4bd0-a3c7-da600685be1b@zytor.com>
+Date: Wed, 23 Jul 2025 07:08:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com> <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-In-Reply-To: <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Wed, 23 Jul 2025 16:08:34 +0200
-X-Gm-Features: Ac12FXwGZKKVQK2n5_1WVsl19jqwqnUR1CUMp5DpEg3RIbtNMZC0IYtKGK64P7w
-Message-ID: <CANp29Y4PHQh8Hm-13k_rybECR=+9LvwSiuPPOoJsiv2ZU2EcTw@mail.gmail.com>
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in io_poll_remove_entries
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86: Clear feature bits disabled at compile-time
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "Kirill A. Shutemov" <kas@kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Xin Li <xin3.li@intel.com>,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Sean Christopherson <seanjc@google.com>,
+        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        linux-kernel@vger.kernel.org
+References: <20250723092250.3411923-1-maciej.wieczor-retman@intel.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250723092250.3411923-1-maciej.wieczor-retman@intel.com>
 
-On Sun, Jul 20, 2025 at 8:49=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/20/25 12:24 PM, Jens Axboe wrote:
-> > On 7/19/25 11:29 AM, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' o=
-f gi..
-> >> git tree:       upstream
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1288c38c58=
-0000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dfa738a4418=
-f051ee
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D01523a0ae560=
-0aef5895
-> >> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils fo=
-r Debian) 2.40
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1688c38c=
-580000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D166ed7d458=
-0000
-> >>
-> >> Downloadable assets:
-> >> disk image (non-bootable): https://storage.googleapis.com/syzbot-asset=
-s/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vml=
-inux-4871b7cb.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe=
-6/bzImage-4871b7cb.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
-ommit:
-> >> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/s=
-pinlock_api_smp.h:119 [inline]
-> >> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel=
-/locking/spinlock.c:170
-> >> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
-> >>
-> >> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzka=
-ller-00253-g4871b7cb27f4 #0 PREEMPT(full)
-> >> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian=
--1.16.3-2~bpo12+1 04/01/2014
-> >> Workqueue: events io_fallback_req_func
-> >> Call Trace:
-> >>  <TASK>
-> >>  __dump_stack lib/dump_stack.c:94 [inline]
-> >>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
-> >>  print_address_description mm/kasan/report.c:378 [inline]
-> >>  print_report+0xcd/0x610 mm/kasan/report.c:480
-> >>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
-> >>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
-> >>  kasan_check_byte include/linux/kasan.h:399 [inline]
-> >>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
-> >>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
-> >>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
-> >>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
-> >>  spin_lock_irq include/linux/spinlock.h:376 [inline]
-> >>  io_poll_remove_entry io_uring/poll.c:146 [inline]
-> >>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
-> >>  io_poll_remove_entries io_uring/poll.c:159 [inline]
-> >>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
-> >>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
-> >>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
-> >>  process_scheduled_works kernel/workqueue.c:3321 [inline]
-> >>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
-> >>  kthread+0x3c5/0x780 kernel/kthread.c:464
-> >>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
-> >>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >>  </TASK>
-> >>
-> >> Allocated by task 6154:
-> >>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
-> >>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
-> >>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
-> >>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
-> >>  kmalloc_noprof include/linux/slab.h:905 [inline]
-> >>  kzalloc_noprof include/linux/slab.h:1039 [inline]
-> >>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline=
-]
-> >>  __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
-> >>  comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
-> >>  comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
-> >>  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
-> >>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
-> >>  vfs_ioctl fs/ioctl.c:51 [inline]
-> >>  __do_sys_ioctl fs/ioctl.c:907 [inline]
-> >>  __se_sys_ioctl fs/ioctl.c:893 [inline]
-> >>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
-> >>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
-> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >>
-> >> Freed by task 6156:
-> >>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
-> >>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
-> >>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
-> >>  poison_slab_object mm/kasan/common.c:247 [inline]
-> >>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
-> >>  kasan_slab_free include/linux/kasan.h:233 [inline]
-> >>  slab_free_hook mm/slub.c:2381 [inline]
-> >>  slab_free mm/slub.c:4643 [inline]
-> >>  kfree+0x2b4/0x4d0 mm/slub.c:4842
-> >>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
-> >>  comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
-> >>  do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
-> >>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
-> >>  vfs_ioctl fs/ioctl.c:51 [inline]
-> >>  __do_sys_ioctl fs/ioctl.c:907 [inline]
-> >>  __se_sys_ioctl fs/ioctl.c:893 [inline]
-> >>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
-> >>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
-> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > I took a quick look at this, and surely looks like a comedi bug. If you
-> > call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just doe=
-s
-> > a detach and frees the device, regardless of whether anyone has it
-> > opened or not?! It's got some odd notion of checking whether it's busy
-> > or not. For this case, someone has a poll active on the device, yet it
-> > still happily frees it.
-> >
-> > CC'ing some folks, as this looks utterly broken.
->
-> Case in point, I added:
->
-> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
-> index 376130bfba8a..4d5fde012558 100644
-> --- a/drivers/comedi/drivers.c
-> +++ b/drivers/comedi/drivers.c
-> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct comed=
-i_device *dev)
->                                 kfree(s->private);
->                         comedi_free_subdevice_minor(s);
->                         if (s->async) {
-> +                               WARN_ON_ONCE(waitqueue_active(&s->async->=
-wait_head));
->                                 comedi_buf_alloc(dev, s, 0);
->                                 kfree(s->async);
->                         }
->
-> and this is the first thing that triggers:
->
-> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170 comedi_device_de=
-tach+0x510/0x720
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted 6.16.0-rc6-00281-gf4a40a4=
-282f4-dirty #1438 NONE
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 21400005 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
-> pc : comedi_device_detach+0x510/0x720
-> lr : comedi_device_detach+0x1dc/0x720
-> sp : ffff80008aeb7880
-> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
-> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
-> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
-> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
-> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
-> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
-> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
-> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
-> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
-> Call trace:
->  comedi_device_detach+0x510/0x720 (P)
->  do_devconfig_ioctl+0x37c/0x4b8
->  comedi_unlocked_ioctl+0x33c/0x2bd8
->  __arm64_sys_ioctl+0x124/0x1a0
->  invoke_syscall.constprop.0+0x60/0x2a0
->  el0_svc_common.constprop.0+0x148/0x240
->  do_el0_svc+0x40/0x60
->  el0_svc+0x44/0xe0
->  el0t_64_sync_handler+0x104/0x130
->  el0t_64_sync+0x170/0x178
->
-> Not sure what the right fix for comedi is here, it'd probably be at
-> least somewhat saner if it only allowed removal of the device when the
-> ref count would be 1 (for the ioctl itself). Just ignoring the file ref
-> and allowing blanket removal seems highly suspicious / broken.
->
-> As there's no comedi subsystem in syzbot, moving it to kernel:
->
-> #syz set subsystems: kernel
+This is a multi-part message in MIME format.
+--------------nCXPrGAbh2CIXtJ1Z1dwRDgB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-FTR now there's, so:
+On 2025-07-23 02:22, Maciej Wieczor-Retman wrote:
+> 
+>  arch/x86/kernel/cpu/common.c       | 12 ++++++++++++
+>  arch/x86/tools/cpufeaturemasks.awk |  8 ++++++++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index 77afca95cced..ba8b5fba8552 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -1709,6 +1709,16 @@ static void __init cpu_parse_early_param(void)
+>  	}
+>  }
+>  
+> +static __init void init_cpu_cap(struct cpuinfo_x86 *c)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < NCAPINTS; i++) {
+> +		cpu_caps_set[i] = REQUIRED_MASK(i);
+> +		cpu_caps_cleared[i] = DISABLED_MASK(i);
+> +	}
+> +}
+> +
 
-#syz set subsystems: comedi
+No... just use an static array initializer for cpu_caps_cleared[].  You
+don't even need to add any code at all.
 
->
-> --
-> Jens Axboe
+Ironically enough, I actually had those macros generated in the original
+awk script version, but they weren't used.
+
+And you MUST NOT initialize cpu_caps_set[].  What we *can* and probably
+should do is, at the very end of the process, verify that the final mask
+conforms to cpu_caps_set[] and print a nasty message and set the
+TAINT_CPU_OUT_OF_SPEC flag:
+
+	add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK)
+
+... but that is a separate patch, and doesn't need to be backported.
+
+Xin send me a patch privately (attached) but it needs to have the
+REQUIRED_MASK_INIT_VALUES part removed and made into a proper patch.
+
+Xin didn't add an SoB on it, but you can use mine:
+
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+
+	-hpa
+
+--------------nCXPrGAbh2CIXtJ1Z1dwRDgB
+Content-Type: text/x-patch; charset=UTF-8; name="xin.patch"
+Content-Disposition: attachment; filename="xin.patch"
+Content-Transfer-Encoding: base64
+
+UmV0dXJuLVBhdGg6IDx4aW5Aenl0b3IuY29tPgpSZWNlaXZlZDogZnJvbSBbMTkyLjE2OC43
+LjIwMl0gKFs3MS4yMDIuMTY2LjQ1XSkKCShhdXRoZW50aWNhdGVkIGJpdHM9MCkKCWJ5IG1h
+aWwuenl0b3IuY29tICg4LjE4LjEvOC4xNy4xKSB3aXRoIEVTTVRQU0EgaWQgNTZNSU1rU2o2
+OTI1OTAKCSh2ZXJzaW9uPVRMU3YxLjMgY2lwaGVyPVRMU19BRVNfMTI4X0dDTV9TSEEyNTYg
+Yml0cz0xMjggdmVyaWZ5PU5PKQoJZm9yIDxocGFAenl0b3IuY29tPjsgVHVlLCAyMiBKdWwg
+MjAyNSAxMToyMjo0NyAtMDcwMApES0lNLUZpbHRlcjogT3BlbkRLSU0gRmlsdGVyIHYyLjEx
+LjAgbWFpbC56eXRvci5jb20gNTZNSU1rU2o2OTI1OTAKREtJTS1TaWduYXR1cmU6IHY9MTsg
+YT1yc2Etc2hhMjU2OyBjPXJlbGF4ZWQvcmVsYXhlZDsgZD16eXRvci5jb207CglzPTIwMjUw
+NjIxMDE7IHQ9MTc1MzIwODU2NzsKCWJoPWR5dGVBRnNBSnk1K1ZtUS92WlZBU3E4YzdpYUor
+aU1CRFo1TngrSEN6bVk9OwoJaD1EYXRlOlN1YmplY3Q6VG86UmVmZXJlbmNlczpGcm9tOklu
+LVJlcGx5LVRvOkZyb207CgliPW5ub1JyUHVYOUlKK28xUjdoOUE2RzJ5VTFaNloyNUN6STI0
+K3E2c1RtbGF0UFk5NUw5WXJ6WEN6eXZYbGswYk5sCgkgb2ZCNG9DaE84U1plTVI3R2RhNm1B
+cTNvbmp2TFNmNElkVk51bUZhMzRUMXIzeWhqbHlRMTRIak1VU2VOTXZzYUJhCgkgM3NEdDUr
+TGY0OE14TzFGRWNEZy9BTzdTV2w2cUdiZUN0QnRKTTJJUVNNV0lCYjMxZ2dxQTBCZFpjTDlK
+WXNOWndsCgkgM216Q2V2Z1MwdFhCOHh6dG9Vak9kUDQyTGJhQkdyY2R5ZmxTUGtsVmFQSC9r
+RFFWeDlxV0ZTS2EwekdRVktlZzBOCgkgN0l0S3BINFdlMnBsTmp1MGc2dUR3WkJRQnh5TzM4
+VlFsQ3VReStsL00vaTZIbW41NnJ0Rmh6Z3ltTnNVQUY1NFBWCgkgWFBQWFdVcXVEcC9Hdz09
+Ck1lc3NhZ2UtSUQ6IDw5ZmZkN2YwYi1mMTk2LTQxYTEtODNjMi00YTgzMGQxYmIwMzVAenl0
+b3IuY29tPgpEYXRlOiBUdWUsIDIyIEp1bCAyMDI1IDExOjIyOjQ2IC0wNzAwCk1JTUUtVmVy
+c2lvbjogMS4wClVzZXItQWdlbnQ6IE1vemlsbGEgVGh1bmRlcmJpcmQKU3ViamVjdDogUmU6
+IFtQQVRDSF0geDg2OiBDbGVhciBMQU0gYW5kIEZSRUQgZmVhdHVyZSBiaXRzClRvOiAiSC4g
+UGV0ZXIgQW52aW4iIDxocGFAenl0b3IuY29tPgpSZWZlcmVuY2VzOiA8MjAyNTA3MjIwNzQ0
+MzkuNDA2OTk5Mi0xLW1hY2llai53aWVjem9yLXJldG1hbkBpbnRlbC5jb20+CiA8MzIzODJm
+NjAtNzlmYi00Y2ZhLTg3YjQtNTgxZjkyYzk4MGRhQHp5dG9yLmNvbT4KIDxBNEVCMTAxNi04
+Q0Y3LTQ2MDktQkJGMS05QUVDODNCNTJBNEZAenl0b3IuY29tPgogPDU2NTRiM2JjLTE1ZDQt
+NDQzYi1hN2IxLTJmOWZkMWQzZTBhYUB6eXRvci5jb20+CiA8QUEzOEQ3NTQtMzE4OS00OTA1
+LUFBM0ItNDVBNTYwNjVCNjhBQHp5dG9yLmNvbT4KIDw5MWRkOGI3NS0xMTkxLTRhM2QtOWY2
+Mi1kOTRjMzI1NzkzZmRAenl0b3IuY29tPgpDb250ZW50LUxhbmd1YWdlOiBlbi1VUwpGcm9t
+OiBYaW4gTGkgPHhpbkB6eXRvci5jb20+CkF1dG9jcnlwdDogYWRkcj14aW5Aenl0b3IuY29t
+OyBrZXlkYXRhPQogeHNETkJHVVB6MWNCREFDUy85eU9KR29qQkZQeEZ0ME9mVFd1TWwwdVNn
+cHdrMzd1UnJGUFRUTHc0QmF4aGxGTDBianM2cSswCiAyT2ZHMzRSK2EwWkN1ajVjOXZnZ1VN
+b09MZER5QTd5UFZBSlUwT1g2bHFwZzZ6L2t5UWczdDRqdmFqRzZhQ2d3U0R4NUt6ZzUKIFJq
+M0FYbDhrMndiMGpkcVJCNFJ2YU9QRmlITkdnWENzNVBrdXgvcXIwbGFlRklwek1LTW9vdEdh
+NGtmVVJnUGhSelVhTTF2eQogYnNNc0w4dnBKdEdVbWl0clNxZTVkVk5CSDAwd2hMdFBGTTdJ
+YnpLVVJQVU9rUlJpdXNGQXN3MGExenRDZ29GY3pxNlZmQVZ1CiByYVR5ZTBML1ZYd1pkK2FH
+aTQwMVYydExzQUh4eGNrUmk5cDNtYzBqRXhQYzYwam9LK2FaUHk2YW13U0N5NWtBSi9BYm9Z
+dFkKIFZtS0lHS3gxeXg4UE95Nm0rMWxaOEMwcTliOGVKOGtXUEFSNzhQZ1QzN0ZRV0tZUzF1
+QXJvRzJ3TGRLN0ZpSUVwUGhDRCt6SAogd2xzbG8yRVRiZEtqckxJUE5laFFDT1dyVDMyazh2
+Rk5FTUxQNUcvbW1qZk5qNXNFZjNJT0tnTVRNVmw5QUZqc0lOTEhjeEVRCiA2VDhuR2JYL24z
+bXNQNkEzNkZEZmRTRUFFUUVBQWMwV1dHbHVJRXhwSUR4NGFXNUFlbmwwYjNJdVkyOXRQc0xC
+RFFRVEFRZ0EKIE54WWhCSVVxL1dGU0RUaU92VUlxdjJ1OURsY2RyamRSQlFKbEQ4OVhCUWtG
+bzVxQUFoc0RCQXNKQ0FjRkZRZ0pDZ3NGRmdJRAogQVFBQUNna1FhNzBPVngydU4xSFVwZ3Yv
+Y00yZnNGQ1FvZExBck1UWDVudDl5cUFXZ0E1dDFzcnJpNkVnUzhXM0YrM0tpdGdlCiB0WVRC
+S3U2ajVCWHVYYVgzdnlmQ20remFqREpONzdKSHVZbnBjS0tyMTNWY1ppMVN3djZKeDF1MElJ
+OERPbW9EWUxiMVEyWlcKIHY4M1c1NWZPV0oyZzcyeC9ValZKQlEwc1ZqQW5nYXpVM2NrYzBU
+ZU5RbGtjcFNWR2EvcUJJSExmWnJhV3Rkck5BUVQ0QTFmYQogc1dHdUpyQ2hCRmh0S2JZWGJV
+Q3U5QW9ZbW1iUW5zeDJFV29KeTNoN09qdGZGYXBKYlBacWwrbm81QUozTWs5ZUU1b1d5TEgr
+CiBRV3F0T2VKTTdrS3ZuL2RCdWRva0ZTTmhEVXcwNmU3RW9WUFNKeVVJTWJZdFVPN2cyK0F0
+dTQ0Ry9FUFAweVYwSjRsUk82RUEKIHdZUlhmZjcrSTFqSVdFSHBqNUVGVllPNlNtQmc3ekYy
+aWxsSEVXMzFKQVB0ZERMREhZY1pEZlM0MWNhRUtPUUlQc2R6UWthUQogb1cyaGNoY2pjTVBB
+ZnloaFJ6VXBWSExQeExDZXRQOHZyVmhUdm5hWlVvMHhhVlliMyt3alArRDVqLzMraHdibHUy
+YWdQc2FFCiB2Z1ZiWjhGeDNUVXhVUENBZHIvcDczREdnNTdvSGpnZXpzRE5CR1VQejFnQkRB
+RDRNZzdoTUZSUXFsem90Y05TeGF0bEFRTkwKIE1hZExmVVRGejh3VVVhMjFMUExySEJrVXdt
+OFJ1amVoSnJ6Y1ZiUFl3UFhJTzB1eUwvRi8vL0NvZ01OeDdJd282Ynk0M0tPeQogZzg5d1ZG
+aHl5MjM3RVk3NmoxbFZmTHpjTVltakJvVEg5NWZKQy9sVmI1V2h4aWw2S2pTTi9SL3kzamZH
+MWRQWGZ3QXVaLzROCiBjTW9Pc2xXa2ZaS0plRXV0NWFaVFJlcEtLRjU0VDVyNDlIOUY3T0ZM
+eXhyQy91STlVRHR0V3FNeGNXeUNrSGgwdjFEaTgxNzYKIGpqWVJOVHJHRWZZZkd4U3ArM2pZ
+TDNQb05jZUlNa3FNOWhhWGpqR2wwVzFCNEJpZEsxTFZZQk5vdjByVEV6eXIwYTFyaVVycAog
+UWsrNnovTEh4Q005bEZGWG5xSDdLV2VUb1RPUFFlYkQyQi9BaDVDWmxmdDQxaThMNkxPRi9M
+Q3VEQnVZbHUvZkkybnVDYzhkCiBtNHd3dGtvdTFZL2tJd2JFc0UvNlJRd1JYVVpoek82bGxm
+b045NkZjenIvUnd2UElLNVNWTWl4cVdxNFFHRkF5SzBtLzFhcDQKIGJoSVJyZENMVlFjZ1U0
+Z2xvMTd2cWZFYVJjVFc1U2dYK3BHczRLSVBQQkU1Si9BQkQ2cEJuVVVBRVFFQUFjTEEvQVFZ
+QVFnQQogSmhZaEJJVXEvV0ZTRFRpT3ZVSXF2MnU5RGxjZHJqZFJCUUpsRDg5WkJRa0ZvNXFB
+QWhzTUFBb0pFR3U5RGxjZHJqZFI0QzBMCiAvUmNqb2xFam9aVzhWc3l4V3RYYXpRUG5hUnZ6
+WjR2aG1HT3NDUHIyQlB0TWxTd0R6VGxyaThCQkcxLzN0L0ROSzRKTHV3RWoKIE9BSUUzZmtr
+bStVRzRLanVkNmFOZXJhREk1MkRSVkNTeDZ4ZmYzYmptSnNKSk1iMTJtV2dsTjZMamRGNksr
+UEUrT1RKVWgyRgogZE9oc2xONUMya2dsMGR2VXVldndNZ1FGM0lsakxtaS82QVBLWUpIamtK
+cHUxRTZsdVplYy9sUmJldEh1TkZ0YmgzeGdGSUp4CiAyUnBnVkRQNHhCM2Y4cjBJK3k2dWEr
+cDdmZ09qREx5b0ZqdWJSR2VkMEJlNDVKSlFFbjdBM0NTYjZYdTdOWW9ibnhma3dBR1oKIFE4
+MWEyWHR2TlM3QWo2TldWb09RQjVLYk00eW9zTzUrTWUxVjFTa1gyamxubjI2SlBFdmJWM0tS
+RmN3VjVSbkR4bTRPUVRTawogUFliQWtqQmJtK3R1Si9TbSs1WXA1VC9Cbkt6MjFGb0NTOHV2
+VGl6aUhqMkg3Q3Vla242RjhFWWhlZ09ObStSVmczdmlrT3BuCiBnYW84NWk0SHdRVEs5L0Qx
+d2dKSVFrZHdXWFZNWjZxL09BTGFCcDgydlEyVTlzalR5RlhnRGpnbGdoMDBWUkFIUDd1MVJj
+dTQKIGw3NXcxeEluc2c9PQpJbi1SZXBseS1UbzogPDkxZGQ4Yjc1LTExOTEtNGEzZC05ZjYy
+LWQ5NGMzMjU3OTNmZEB6eXRvci5jb20+CkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hh
+cnNldD1VVEYtODsgZm9ybWF0PWZsb3dlZApDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA3
+Yml0CgpPbiA3LzIyLzIwMjUgMTE6MTMgQU0sIEguIFBldGVyIEFudmluIHdyb3RlOgo+IE9u
+IDIwMjUtMDctMjIgMTE6MDgsIEguIFBldGVyIEFudmluIHdyb3RlOgo+Pj4KPj4+IFllcywg
+c29tZXRoaW5nIGxpa2U6Cj4+Pgo+Pj4gCXZvaWQgX19pbml0IGluaXRfY3B1X2NhcCh2b2lk
+KQo+Pj4gCXsKPj4+IAkJZm9yIChpID0gMDsgaSA8IE5DQVBJTlRTOyBpKyspIHsKPj4+IAkJ
+CWNwdV9jYXBzX3NldFtpXSA9IFJFUVVJUkVEX01BU0soaSk7Cj4+PiAJCQljcHVfY2Fwc19j
+bGVhcmVkW2ldID0gRElTQUJMRURfTUFTSyhpKTsKPj4+IAkJfQo+Pj4gCX0KPj4+Cj4+PiBB
+bmQgaXQgd291bGQgYmUgYmV0dGVyIGlmIGl0IGNvdWxkIGJlIGRvbmUgYXQgYnVpbGQgdGlt
+ZSAodG8gYXZvaWQKPj4+IGNoYW5naW5nIFhlbiB3aGljaCBoYXMgYSBkZWRpY2F0ZWQgc3Rh
+cnR1cCBjb2RlIHBhdGgpOgo+Pj4KPj4+IAlfX3UzMiBjcHVfY2Fwc197c2V0LGNsZWFyZWR9
+W05DQVBJTlRTICsgTkJVR0lOVFNdID0gewo+Pj4gCQl7UkVRVUlSRUQsRElTQUJMRUR9X01B
+U0soaSksCj4+PiAJfTsKPj4+Cj4+PiBBbmQgdGhlbiBhcHBseV9mb3JjZWRfY2FwcygpIHdp
+bGwgZG8gdGhlIHJlc3QgYXV0b21hdGljYWxseSA6KQo+Pgo+PiBZZWFoOgo+Pgo+PiB1MzIg
+X19pbml0IGNwdV9jYXBzX2NsZWFyZWQgPSB7IC4uLiB9Owo+Pgo+PiAuLi4gd2hpY2ggY2Fu
+IGNvbWUgc3RyYWlnaHQgb3V0IG9mIHRoZSBhd2sgc2NyaXB0Lgo+Pgo+IAo+IEhlY2ssIEkg
+dGhpbmsgSSBldmVuIGRpZCBzb21ldGhpbmcgbGlrZSB0aGlzIGluIHRoZSBmaXJzdCB2ZXJz
+aW9uLCBidXQKPiB0Z2x4IG9yIHNvbWVvbmUgZWxzZSBhc2tlZCB0byBheGUgaXQgYmVjYXVz
+ZSBpdCB3YXNuJ3QgYmVpbmcgdXNlZCAoeWV0LikgIDspCj4gCgpkaWZmIC0tZ2l0IGEvYXJj
+aC94ODYva2VybmVsL2NwdS9jb21tb24uYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvY29tbW9u
+LmMKaW5kZXggNTgwOTUzNGVjYzk4Li5lYjA3NWZiZjMzN2UgMTAwNjQ0Ci0tLSBhL2FyY2gv
+eDg2L2tlcm5lbC9jcHUvY29tbW9uLmMKKysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9jb21t
+b24uYwpAQCAtNzAzLDggKzcwMyw4IEBAIHN0YXRpYyBjb25zdCBjaGFyICp0YWJsZV9sb29r
+dXBfbW9kZWwoc3RydWN0IApjcHVpbmZvX3g4NiAqYykKICB9CgogIC8qIEFsaWduZWQgdG8g
+dW5zaWduZWQgbG9uZyB0byBhdm9pZCBzcGxpdCBsb2NrIGluIGF0b21pYyBiaXRtYXAgb3Bz
+ICovCi1fX3UzMiBjcHVfY2Fwc19jbGVhcmVkW05DQVBJTlRTICsgTkJVR0lOVFNdIF9fYWxp
+Z25lZChzaXplb2YodW5zaWduZWQgCmxvbmcpKTsKLV9fdTMyIGNwdV9jYXBzX3NldFtOQ0FQ
+SU5UUyArIE5CVUdJTlRTXSBfX2FsaWduZWQoc2l6ZW9mKHVuc2lnbmVkIGxvbmcpKTsKK19f
+dTMyIGNwdV9jYXBzX2NsZWFyZWRbTkNBUElOVFMgKyBOQlVHSU5UU10gX19hbGlnbmVkKHNp
+emVvZih1bnNpZ25lZCAKbG9uZykpID0gRElTQUJMRURfTUFTS19JTklUX1ZBTFVFUzsKK19f
+dTMyIGNwdV9jYXBzX3NldFtOQ0FQSU5UUyArIE5CVUdJTlRTXSBfX2FsaWduZWQoc2l6ZW9m
+KHVuc2lnbmVkIApsb25nKSkgPSBSRVFVSVJFRF9NQVNLX0lOSVRfVkFMVUVTOwoKICAjaWZk
+ZWYgQ09ORklHX1g4Nl8zMgogIC8qIFRoZSAzMi1iaXQgZW50cnkgY29kZSBuZWVkcyB0byBm
+aW5kIGNwdV9lbnRyeV9hcmVhLiAqLwpkaWZmIC0tZ2l0IGEvYXJjaC94ODYvdG9vbHMvY3B1
+ZmVhdHVyZW1hc2tzLmF3ayAKYi9hcmNoL3g4Ni90b29scy9jcHVmZWF0dXJlbWFza3MuYXdr
+CmluZGV4IDE3M2Q1YmYyZDk5OS4uNmIzNTgzMzA0ZWU4IDEwMDc1NQotLS0gYS9hcmNoL3g4
+Ni90b29scy9jcHVmZWF0dXJlbWFza3MuYXdrCisrKyBiL2FyY2gveDg2L3Rvb2xzL2NwdWZl
+YXR1cmVtYXNrcy5hd2sKQEAgLTgxLDcgKzgxLDEzIEBAIEVORCB7CiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHByaW50ZiAiXHRcXFxuXHRcdCgoeCkgPj4gNSkgPT0gJTJk
+ID8gCiVzX01BU0slZCA6IiwgaSwgcywgaTsKICAgICAgICAgICAgICAgICB9CiAgICAgICAg
+ICAgICAgICAgcHJpbnRmICIgMFx0XFxcbiI7Ci0gICAgICAgICAgICAgICBwcmludGYgIlx0
+KSAmICgxVSA8PCAoKHgpICYgMzEpKSlcblxuIjsKKyAgICAgICAgICAgICAgIHByaW50ZiAi
+XHQpICYgKDFVIDw8ICgoeCkgJiAzMSkpKVxuIjsKKworICAgICAgICAgICAgICAgcHJpbnRm
+ICJcbiNkZWZpbmUgJXNfTUFTS19JTklUX1ZBTFVFU1x0XHRcdFxcIiwgczsKKyAgICAgICAg
+ICAgICAgIHByaW50ZiAiXG5cdHtcdFx0XHRcdFx0XHRcXCI7CisgICAgICAgICAgICAgICBm
+b3IgKGkgPSAwOyBpIDwgbmNhcGludHM7IGkrKykKKyAgICAgICAgICAgICAgICAgICAgICAg
+cHJpbnRmICJcblx0XHQlc19NQVNLJWQsXHRcdFx0XFwiLCBzLCBpOworICAgICAgICAgICAg
+ICAgcHJpbnRmICJcblx0fVxuXG4iOwogICAgICAgICB9CgogICAgICAgICBwcmludGYgIiNl
+bmRpZiAvKiBfQVNNX1g4Nl9DUFVGRUFUVVJFTUFTS1NfSCAqL1xuIjsK
+
+--------------nCXPrGAbh2CIXtJ1Z1dwRDgB--
 
