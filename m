@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-743250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C01B0FC8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7661BB0FC90
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 822EF7AE641
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73FDB968427
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49318272815;
-	Wed, 23 Jul 2025 22:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710D727281F;
+	Wed, 23 Jul 2025 22:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AWICn2Ap"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFqt3/4m"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B66126E17F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3231F1909;
+	Wed, 23 Jul 2025 22:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753308762; cv=none; b=nNzCMPwzBak+ipojW89Mghp6tFTXev+gJEizyQ5xgCabr6z4qc34xk1YPujc1p+3iBgXW7ilpdjTGlSK+1yrcE4sAqke8pMFJnx/RkeZVx3hr8glGzGU+xnf81NLS1R7tVBqG5wqmCWAQ4DTSqBgReMj5UbiFWHblFAqLp9GSlc=
+	t=1753308848; cv=none; b=EX7x88qPNZER2Xyn2YNVhD75hUZIxcU+fQtdjmlBQ2WvWQFOwje99qRLgppKHu8/bULkF5tiZFZeIZYA5Svs4THedUD7bhbBGLhZ8/Vmkhd/04xblkRqOiTbKEONNsAEeS0pEQAKgtAtXiLKX5uBSxOHLhgtOMXFgUR0pQ0Cadc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753308762; c=relaxed/simple;
-	bh=MHO/qp+UAkFUDV1KW+FRY1st72hVPxPQhofJO3khj6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eKg3H7OVcnsFNYi6V6rIQM/H0FbAnjIMpcQa5ZXKQgj9P6rAQAokuyXYJN1W1lNizHEvFaRONj0UBwchIQexNdOSs8cn8IDiKMQhzbj2/uY1aCLjEtlKoaOx3dqWwEF1BXR+vi/htXVQ4x7O3/5hcbQ+qNyRUk9mC1wuDNkqYMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AWICn2Ap; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NH7qQS025911
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:12:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=nwBcV4Oemt5
-	w740AAje6mIColtrmwRWXKq31FSAZZI4=; b=AWICn2ApB2hptKoeZROC9GpzaY5
-	SFOn2Ft8ShfZYY1eOrWzBCbUCM9IEdHDe24FI+bSASpuOLAtwDefPQXyw+GumzTq
-	XbtgmrE4Q0LY4qQbsKoVG2r0VEQNCqYxMFeaXT8ELJbN9GMGuRZ16Vhe9RDXna8n
-	8hB2ymR0ZL/m7y+4ew/0C5oPpUx5658CNlQpY9vHYy2onO/NEtrtjqGHZVKVF1uf
-	GiePYIFU9rF+LBJ6QgPeS1RS56CYyEn2fg8A76CaTbB6hh/1HzwC3EwFXb37uU+G
-	2NCM46UhzpjmsQC7BLbu7sUCnC9+k5Yy17RjQxfFoe1O25R70YGAt6lLJ5A==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482b1ud84f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:12:40 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23827190886so3132715ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:12:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753308745; x=1753913545;
+	s=arc-20240116; t=1753308848; c=relaxed/simple;
+	bh=1n2X3dSDnt+iiB9SB7H1HStj19tGyqnSrPupfMGdvpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ct8hKbaAG6t0uW+sTa9IaObbblRyN8SgxWo299DL3xpYBMG1JA4pa0PtWKEBQv1rRosGQxnPTVeKLcdz6CPPbG8l/olhWrB9SY+AWWGuNZEPRTzpOvyALiiefTRyokZMyGgbAQ6iL5a1wUqIi8rhg2OFp003oZ9/7dKsvzyXX2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFqt3/4m; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-451d6ade159so1818685e9.1;
+        Wed, 23 Jul 2025 15:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753308845; x=1753913645; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dcxr9WChsXfgQ3Y6J1Tmdhs3S3jUnpYIY2ntdf391WI=;
+        b=bFqt3/4mU32+NzzFuMr6aQVhJVb7bdzVPZFmFxQo6JxoLprYBciWt8kzJs4nDTd5lh
+         /VgUvdbIGu0GDerYHo5l4Qdd5VvFMVmvjlmFXkmfkLmRTsVYYghhqW6mb/HTHRIGai6q
+         myqDsoutpISDXuTHKycFbFj/5yWHOqXQ+U6GlJPAkcK8dTXSaCsIZJKoIJ/MXukT/f5U
+         kZlptdFh+GoO1qdaQrXg7t3zoma5FqFjco/1WJuwr2VRWC9u2uuuhtYorbaXxAek59hM
+         tXl9laUCouF65Bsuwo/0RaXHQUOmreozQY1/ErIsZ3QhC6sjDrU0JgH6XZEyZOt/c10B
+         1d+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753308845; x=1753913645;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nwBcV4Oemt5w740AAje6mIColtrmwRWXKq31FSAZZI4=;
-        b=HmlMCI1m+kau66CsPbar/ZS8GF/WydQNQEI0vPYoQcmZzfXwi379MJTOCt6NQ2K6KH
-         Zvbf8qtVLGqV/+Ad8LUgXOWetj3v499K3X4OqBYKb/ZvdPQdFT6g3nc5pkxT0OXpei0A
-         zN70wZDvhXDqgJX13okXmaeiNN4wIIhwY2nKQqUhdFg79xwEIKyZz9SdvSmPBUGuZ+y2
-         zDxFowVzCxd494EGZP6jHtSd/xSXEmxVAz3gPGhg7J/Fj5XdMw5Rhpgg2xu+nNozi8zi
-         8ouwrtmJpv+1RCrEVu/pUW5pgFMdhVckBhvH2krte+nR1/jn7aUc0x6+RHmj1xQ+vRbb
-         evaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHQer6QuKsF9SmmHSbQc6CV+RlWWdiXepyzA2vQQfxfcMVjXljy1D4w3K3DM1QhORgwrDauhCBcmYUhVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzHU0HK/T/VrLzpDR2M4bFRwvk18z3ygbWAND27NrlUcg78u1G
-	HiBNF0M1Otafk9Ys3TBZyITMjd2B6KCMbQSIX0Ry0FX36e89qOJP2fjF4JYhXC2BPgsCzTSHL+u
-	XhRzPHCyQArJdPGvbd51jMD/t/HrZYDi4n7XgdfmaltM55LlIE1LBkaSmlwevR2HTN5M=
-X-Gm-Gg: ASbGncsP6b/2hNdbmvalsqo71xa1ujDSxi9HKX7qDX6t4HgAt7iIB8tXcsaqpSqEnf+
-	tCW8kAmDdTnA4b2CQHEiZelP6TcAp3M3EHx39H5JOu2/jeNv4VCB1qTEvIM/mEJXM6U0Pib2h1A
-	tW2HOhy6YonsoFEfGkkfbmboCTucJJxKvEK6u3+/34SFjKwwPw6jPza0lTbhRDSe/jMuVOwL3Jl
-	hMFlylPqTVdB/X7eIH/chhbAeJLTVA3imWZiMifnXzvY8r26h6xBrDhu5s8torZm34oqJ4smTUK
-	nOOpZk0UAbyJzE2LkMxfiBa3NY2mcQGXwNOSzbZIlrZPAvIl7Ys=
-X-Received: by 2002:a17:902:e943:b0:235:ec11:f0ee with SMTP id d9443c01a7336-23f9814207bmr57803125ad.14.1753308744788;
-        Wed, 23 Jul 2025 15:12:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkj+Iw99H9WbS4Td45rekkyuGG7wRyakRiLqXabI0Xe5dEzjqYnRgG1GK9hr915l7+gNcwMA==
-X-Received: by 2002:a17:902:e943:b0:235:ec11:f0ee with SMTP id d9443c01a7336-23f9814207bmr57802895ad.14.1753308744415;
-        Wed, 23 Jul 2025 15:12:24 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48fa0f7sm449255ad.169.2025.07.23.15.12.23
+        bh=Dcxr9WChsXfgQ3Y6J1Tmdhs3S3jUnpYIY2ntdf391WI=;
+        b=UfS401Za6mnf4HIRuNx6a97cAyDLtBbUwb1T5PEMFZPgU/SMEIBW1Xtev4L8xWEqA2
+         PI6xqtaJ+F6FmdqsHnJNUNgnjJzq5fMqyBDhl/aj/RU45lTYDIbWx4Ft+AX+rAw6C4Fy
+         WRvaLlvJv438Uv/W2euzBJgGL+uf1L/N6NvIi+IbrnjloTGxxTnrL28X3hX+Cqd/aVna
+         i+GxY80nFC7CHQdNEsutimyU4wTRAg7lVMQuiZNEWhUMs77dx1dBCGGmq62g0Q52c80u
+         rrcZFmFwKlYbfhb8s/fEv3JtINarCMxXD1PAY7N6IlVk1JQvSPPPC3q7vqyEog3HOdGh
+         NVSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Nz6MsmvS6rbGZkE5XE83fjuvJiHru2Ygfww0NsyPH8UsBTM2jD+HA5NUxmXspdoVnFntsX0OySP5a2kHuJ8M0w==@vger.kernel.org, AJvYcCXIU744CuSzvHyXGz7BRJ2LitNekZamsoQWL8UVYC72WMCELONcNNdpHXPb4GQ+//cfyhtiePyuhhvmxDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWgrZW/2ITsQFk24HeO9CcRBml97nSxhG0sA0hwEvqSXn6Un00
+	N/00IB/1llxwGm3pI2TsK8stDPElnu7Jxh7NUeLeFSy90cqmWwI3gU6k
+X-Gm-Gg: ASbGncuXqhoWGfoJUubm7eiKhp9pj6ddv9BF/DJCpxPAvcvg9Bu+93M33/pXu27lCP/
+	K9DJWocQXSsDyy/YlME0DcJX14TojzTr8DQM5oHaRVCIQf+fbzATXbhljOtbq6u+trLwxpsghME
+	sY5FVl15+Jkn2U/N8xxw/FzgZnSXc+Ecw+9jSOt+8hlac5r682piHY/yAPXghAig0W4jWiBEjyT
+	hF73EjXp0+HYwUwll1rO4zb8bssGHqwdPhSGb7eWcnqd7iy7WfXk27z8+5VVpQZlIiDWnF6dJ6b
+	LGuEhDaBVAVHCqfgBFURtjA1Jma8Bh/DoYF0MbXCPXfqhvef2Cilc0Y5VemyKRpry5nVJL6e9kp
+	raUPCj7XyxNI8hC1pbWOJvO4/Fq0v19OYH5V9CmSNvnE+hiix0PTGj8/C0ob5
+X-Google-Smtp-Source: AGHT+IEHu4yEUwkN54fD2xw9nPvwgj8fXax3ltxH3jc2G3S4Abiw8N8eyK0gVyU28RXmmWI5cYhJwA==
+X-Received: by 2002:a05:600c:3b1a:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-45868c8d67amr44059195e9.9.1753308845293;
+        Wed, 23 Jul 2025 15:14:05 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586f433c0asm1824735e9.30.2025.07.23.15.14.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 15:12:23 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Danilo Krummrich <dakr@redhat.com>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] drm/msm: Handle in-place remaps
-Date: Wed, 23 Jul 2025 15:12:12 -0700
-Message-ID: <20250723221213.36325-3-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250723221213.36325-1-robin.clark@oss.qualcomm.com>
-References: <20250723221213.36325-1-robin.clark@oss.qualcomm.com>
+        Wed, 23 Jul 2025 15:14:05 -0700 (PDT)
+Date: Wed, 23 Jul 2025 23:14:03 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, kernel test robot <lkp@intel.com>,
+ Eric Biggers <ebiggers@google.com>, Yuzhuo Jing <yuzhuo@google.com>, Andy
+ Lutomirski <luto@kernel.org>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, Al
+ Viro <viro@zeniv.linux.org.uk>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] vdso: Switch get/put unaligned from packed
+ struct to memcpy
+Message-ID: <20250723231403.6ef5c162@pumpkin>
+In-Reply-To: <CAP-5=fWeK4RnL8=BQm3o3u0KoONYEptwEYFBC5_DkJTbgpbx9g@mail.gmail.com>
+References: <20250626054826.433453-2-irogers@google.com>
+	<202507050736.b4hX0Xks-lkp@intel.com>
+	<87o6tcrzh2.ffs@tglx>
+	<CAP-5=fWbmo3ejmeWbweSk5waPtS2VTc1obtaWiibZC3cVmvVvg@mail.gmail.com>
+	<CAP-5=fWeK4RnL8=BQm3o3u0KoONYEptwEYFBC5_DkJTbgpbx9g@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=LdY86ifi c=1 sm=1 tr=0 ts=68815e58 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
- a=EUspDBNiAAAA:8 a=kCfvZJGldO2mi53t-5YA:9 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE5MSBTYWx0ZWRfX1OaBC3u+E7eg
- NHW5k8I+XEhj+sRP5wvmZDKvhubsROFneifxzoQYex84Pc5B7kCSxPbVeP8UA65+n4LgseSro7y
- 1jTK3oa6Vve3uFvxee9ZO41ty3voQ3S0FnOYjsKuA83iqO0GT0919j+HnuH7WL766prsweObAqX
- NtOb0C6662v4sBJ3W9pUV6+Pt/byXbSo2/tWeLseGLUPaRDvXsyLgSNxUIA9qOEAJOuL1CuBV5x
- AbGwKOJgvlYwdXZ7XUqpX9xOpH6xFEWwGE9J1nntJd4SGzthCN6nMEGUQA9eKlOGuM94TjEQA4E
- mE0Gcy9sjscf/M0t3+kv6J6NC6AK7Slwx2kGghx2MPbrXT0hVgOBw9g6nMH767lLZPSn9vEWnWM
- 6wwQRZqtjeQc4noqG3UrmlEz6J6iHNOiksFIVakv5rnrrAmAJSQW0LwUm3sBlH9Li0o5KEsH
-X-Proofpoint-ORIG-GUID: SGyLu7q8p63eOqJje3PCYorTsuqS76FM
-X-Proofpoint-GUID: SGyLu7q8p63eOqJje3PCYorTsuqS76FM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
- suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230191
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Handle the special case of a MAP op simply updating the va flags by
-detecting the special case, and skip pgtable updates.
+On Tue, 22 Jul 2025 10:00:51 -0700
+Ian Rogers <irogers@google.com> wrote:
 
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/msm_gem_vma.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+...
+> Oh, the actual warning is "leaves the object uninitialized". It is
+> possible to silence this by changing:
+> 
+>   const U16 __get_unaligned_ctrl_type __always_unused;
+> 
+> to something like:
+> 
+>   const U16 __get_unaligned_ctrl_type __always_unused = 0;
+> 
+> You then get complained at that the code is using 0 instead of NULL
+> when instead of U16 the type of the __get_unaligned_t is a pointer.
+> Basically I've entered into an analysis tool wac-a-mole and I don't
+> have a combination to make them all happy.
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index dc54c693b28d..d4b1cfb3aa03 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -519,9 +519,10 @@ msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *arg)
- }
- 
- static int
--msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg)
-+msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *_arg)
- {
--	struct msm_vm_bind_job *job = ((struct op_arg *)arg)->job;
-+	struct op_arg *arg = _arg;
-+	struct msm_vm_bind_job *job = arg->job;
- 	struct drm_gpuvm *vm = job->vm;
- 	struct drm_gpuva *orig_vma = op->remap.unmap->va;
- 	struct drm_gpuva *prev_vma = NULL, *next_vma = NULL;
-@@ -529,6 +530,18 @@ msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg)
- 	bool mapped = to_msm_vma(orig_vma)->mapped;
- 	unsigned flags;
- 
-+	/* Special case for in-place updates: */
-+	if (op->remap.unmap->keep && arg->flags &&
-+	    op->remap.next && !op->remap.prev &&
-+	    (orig_vma->gem.obj == op->remap.next->gem.obj) &&
-+	    (orig_vma->gem.offset == op->remap.next->gem.offset) &&
-+	    (orig_vma->va.addr == op->remap.next->va.addr) &&
-+	    (orig_vma->va.range == op->remap.next->va.range)) {
-+		/* Only flags are changing, so update that in-place: */
-+		unsigned orig_flags = orig_vma->flags & (DRM_GPUVA_USERBITS - 1);
-+		orig_vma->flags |= orig_flags | arg->flags;
-+	}
-+
- 	vm_dbg("orig_vma: %p:%p:%p: %016llx %016llx", vm, orig_vma,
- 	       orig_vma->gem.obj, orig_vma->va.addr, orig_vma->va.range);
- 
--- 
-2.50.1
+Can you embed the variable inside a struct and then initialise with {} ?
+
+Does this code actually work all the time?
+There have always been 'problems' because gcc remembers the alignment
+of pointers through (void *) casts.
+So if your misaligned pointer has a type that should be aligned
+them memcpy(&dest, (void *)misaligned_int_ptr, 4) will still do an
+aligned read.
+
+You also really need the compiler to optimise the memcpy into two
+memory reads, some shifts, masks and ors, and a single write to a
+register.
+I'm not at all sure that is going to happen.
+(Especially since I've never seen it optimised to only two reads
+even when reading 'packed' variables.
+
+	David
+
+> 
+> Thanks,
+> Ian
+> 
 
 
