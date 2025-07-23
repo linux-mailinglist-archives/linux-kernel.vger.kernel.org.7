@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-742451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23889B0F1DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DC3B0F1DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C73584012
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8753F1AA409F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E922E54DE;
-	Wed, 23 Jul 2025 12:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29C02E54D9;
+	Wed, 23 Jul 2025 12:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bbaa.fun header.i=@bbaa.fun header.b="fS0YXnJf"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RgxvzIq3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C0127EFFA;
-	Wed, 23 Jul 2025 12:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC0615A87C;
+	Wed, 23 Jul 2025 12:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272315; cv=none; b=LlQs/Za2z0CqGos9WvIr3pAuGkodv5OCVxOgGIcCzbUKGDhQYnaPEeKaip7P6OjGR6HVEp9C90jV2w3YysDsfIGlx5vk1edPh8g/w4I1KhEQeTprYtoj5pX678gCuh3hVKx7IYQ/XDA2kAG1ZDQvh22hdR7Vk/vfjRlW2Gv1dYo=
+	t=1753272359; cv=none; b=WevKwgnkPQb9iiJY5//pJnu2EieK3xkpMloCJtGtMDqzpHDmiUlT59Com3lXehfdGlNe8mzgBSIpZtmp47HAaYeCHWkS/kji3jl0ktSXTjCnOaPaiCyeQXAeknF7EnW5YMn0f7fJ0tdOHAAf6TgI89wmoStMg0nHyR5GQ7ea/n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272315; c=relaxed/simple;
-	bh=p3Y86nc38LoiKKqABtDaF5tDDqxNVBq0P6kFqBg05XM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m/OxjZ4CTFDKI7nH8zGfhSF78mC0MvhVcYyi4FflYJFlGkgPYveew0EoAtRCiPZeG7CkmUq8rSZRXRMAr/8BnqXSy/DUP+rwZppBcH2iEvCS6dH3VVLcM6LPvbmT57f8UlbcXsOHN12I7xTg7jvKpUQ6mx/uYbMpifUekb4RlTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bbaa.fun; spf=none smtp.mailfrom=bbaa.fun; dkim=pass (1024-bit key) header.d=bbaa.fun header.i=@bbaa.fun header.b=fS0YXnJf; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bbaa.fun
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bbaa.fun
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bbaa.fun;
-	s=goar2402; t=1753272271;
-	bh=+I7xsf7G7jFeIPNE7axWQVp7+uIyws4cVypDWIf1bKg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fS0YXnJf7DMxMZxH1RzA2SIRZQvT4uDe9hJxUOoaqblFPMEhJp6F4TGR1GhC0hWft
-	 nagbG6AcwWJ6Y+CLZlgKCNfoxNkGkJ/aVHv92ElsdFSawc0DOu9hxnqG/IeYVJnQFS
-	 nmCfZTKwqGxhGwg73bixwpfjCsDUKQTeRCTRZCMw=
-X-QQ-mid: zesmtpip2t1753272266tcc89ea27
-X-QQ-Originating-IP: KheH5zzepJwErfQEAABqPMuD/+8ySdoAYJ2HK++Onls=
-Received: from localhost ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 23 Jul 2025 20:04:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14388533980788281363
-EX-QQ-RecipientCnt: 6
-From: Ban ZuoXiang <bbaa@bbaa.fun>
-To: stable@vger.kernel.org
-Cc: iommu@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	gregkh@linuxfoundation.org,
+	s=arc-20240116; t=1753272359; c=relaxed/simple;
+	bh=Mow2kC3IacSZWQPiIr4pg35iuks13IZ+nPS4mpSBR+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FI4aOYOn0cWv/G18Fg0EuYJrwGijcfHrQAKlD0eR0xtylffu5+uFWEsK1IqlcX2Sn6azZtVsshGMMdSg4uLkrrHkqUZ+4uBYtZ9xwC0DrVruG23jzin0XKfdeLGQ+3h2tdjmcheP4D29BUV6rFy3UVoEhfsFLsIyvW/tN19JWIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RgxvzIq3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753272357; x=1784808357;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Mow2kC3IacSZWQPiIr4pg35iuks13IZ+nPS4mpSBR+8=;
+  b=RgxvzIq3kohAfDirt6Q8JpC8Jyl8/XngKv/V9hbqM1x0JA7auesfKCZd
+   pzAY1WqAsVqy0rqRAc2Ebk85qjIhmPt7cyEL72rt7YOlCNu46tnw4LixC
+   ga1OpMyeanCgwKVf2MeI7nVSxaQ9Ow0QA+UB2LKJNs7g9HVToPm446vf/
+   lDwhcWqKewqYCOlwSpQE+rvVbvi0RszRXngHBPI6fvjQdeEzzIldiwbrO
+   uYKn8UoXwQfqXybdxpjoOQYa97ywxhYCGKzibbY96szGFRgr9gehOuIKw
+   fju5Px068JSvlI5LLaAg1tYvZLSBZ+u46spDMbC2JNxydNM/rSrGZ/XqS
+   w==;
+X-CSE-ConnectionGUID: yhcp6HN6SfmWrnLlf+oZcQ==
+X-CSE-MsgGUID: 9vis5eRXTD+l7doXCoomGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66249177"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="66249177"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:05:57 -0700
+X-CSE-ConnectionGUID: uzyQmLCpTcOJg3Z8UVPBIw==
+X-CSE-MsgGUID: 8x0sJCmeTe21dMw/9gvF/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="183154007"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.72])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 05:05:52 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	vannapurve@google.com
+Cc: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>,
 	linux-kernel@vger.kernel.org,
-	Ban ZuoXiang <bbaa@bbaa.fun>
-Subject: [PATCH] iommu/vt-d: Fix misplaced domain_attached assignment
-Date: Wed, 23 Jul 2025 20:04:23 +0800
-Message-ID: <468CF4B655888074+20250723120423.37924-1-bbaa@bbaa.fun>
-X-Mailer: git-send-email 2.50.1
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kas@kernel.org,
+	kai.huang@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com
+Subject: [PATCH V4 0/2] x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+Date: Wed, 23 Jul 2025 15:05:37 +0300
+Message-ID: <20250723120539.122752-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:bbaa.fun:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MpO6L0LObisWl+PGsSopayhkh5clV6lzYsQ/+m0W7hBGvlarcuCwvNob
-	53vetMWNsXF3TlGNn1MeV+IXukoMsbgQNdFgwxWbs/SNbhx8p1yVNFEL+kH2rlpDnR1RNkP
-	aIOXT1MAOZAxNi2dy/rQazFBMaRvlbT46O13mC5F7aAuIRpjaMCqmLnuxEjD10ypsAZJ+Ew
-	fumM5n9viUfZryQiBo7dSV1UMtvFVHot6iHBbH/Ypj0KzdkgmtjPxm0Tc/99g2pXw4mgwQ5
-	rZzZ+XE0RZogBMw3LcCIkQUqmTQDA5ry1A788/aRCCmXP6ENKGkStuIQvBTIuW/eFyH6H1u
-	2KpX71x1z9qxBxJ11E4hPd384NYHVXaemyOPLm++surmhSIqmD6JhkH4u1JScnWt6Qbj7bx
-	W43u6zW13PjB/QQ2rp/K3fNMh1TDZJc4WU+/HMscIBGJRRkACUaECC7jQp+HVZfmwIZ7qJj
-	noPw4jqBK/ncwZ3zYjEstqjN1JGx8y+R64ODJa8TMYtixe9VXq0aZsFlZDB+hJeg7UTk13T
-	p3k7pEEhKoMkAg/jjjYyHWa5GSKpzeZRj34XKwYAffcxxbDsPpZL1B//tCsMEyYdh8Kl+c+
-	EG4LZwZ8Ft+Gea8S9dWRw8NiLWMgEkyHvcGGJ0t2HpmCbo4MNOXfBCs/ySB5UGKJldz2b+c
-	p/6NC9l0zgPF0ATgUvKttdIDdUHEekyA/e+IhD5QAobLrbhdIDC++qYY+MhSSxsBhh2h0v9
-	xQuC997DjEDNCC2z0MX+ccLa+t4KNTDxsshxSg0TgFqfl66ptOEZqZrbX+n8tmJqGp12Uka
-	XMu8Cd5P4OWDmuZMktjyqHuwTOPcwPqd86SqeFsEe1G1QcAQpniQHkSrWA7WfvxVDjH8cFl
-	+FjxZ0riqmyAzDxCx1GpJYOhC6eblSLMGWvje+pODbm5T0MMJrsWmtS9xv+AuqdtxGC0Zsn
-	WoiHQjbdKen/NsaBmcVAIqMrX5lhKMqOy754ldleCamzntnEiDBA8vsxrHE3aKNjZsDdR23
-	DjG4OL6g==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-Commit fb5873b779dd ("iommu/vt-d: Restore context entry setup order
-for aliased devices") was incorrectly backported: the domain_attached
-assignment was mistakenly placed in device_set_dirty_tracking()
-instead of original identity_domain_attach_dev().
+Hi
 
-Fix this by moving the assignment to the correct function as in the
-original commit.
+Here are 2 small self-explanatory patches related to clearing TDX private
+pages.
 
-Fixes: fb5873b779dd ("iommu/vt-d: Restore context entry setup order for aliased devices")
-Closes: https://lore.kernel.org/linux-iommu/721D44AF820A4FEB+722679cb-2226-4287-8835-9251ad69a1ac@bbaa.fun/
-Cc: stable@vger.kernel.org
-Reported-by: Ban ZuoXiang <bbaa@bbaa.fun>
-Signed-off-by: Ban ZuoXiang <bbaa@bbaa.fun>
----
- drivers/iommu/intel/iommu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Patch 1 is a minor tidy-up.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 56e9f125cda9..af4e6c1e55db 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4414,9 +4414,6 @@ static int device_set_dirty_tracking(struct list_head *devices, bool enable)
- 			break;
- 	}
- 
--	if (!ret)
--		info->domain_attached = true;
--
- 	return ret;
- }
- 
-@@ -4600,6 +4597,9 @@ static int identity_domain_attach_dev(struct iommu_domain *domain, struct device
- 		ret = device_setup_pass_through(dev);
- 	}
- 
-+	if (!ret)
-+		info->domain_attached = true;
-+
- 	return ret;
- }
- 
--- 
-2.50.1
+In patch 2, by skipping the clearing step, shutdown time can improve by
+up to 40%.
 
+
+Changes in V4:
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Add and use tdx_quirk_reset_page() for KVM (Sean)
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Add TDX Module Base spec. version (Rick)
+	Add Rick's Rev'd-by
+
+Changes in V3:
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Explain "quirk" rename in commit message (Rick)
+	Explain mb() change in commit message  (Rick)
+	Add Rev'd-by, Ack'd-by tags
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Remove "flush cache" comments (Rick)
+	Update function comment to better relate to "quirk" naming (Rick)
+	Add "via MOVDIR64B" to comment (Xiaoyao)
+	Add Rev'd-by, Ack'd-by tags
+
+Changes in V2 (as requested by Dave):
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Rename reset_tdx_pages() to tdx_quirk_reset_paddr()
+	Call tdx_quirk_reset_paddr() directly
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Improve the comment
+
+
+Adrian Hunter (2):
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+
+ arch/x86/include/asm/tdx.h  |  2 ++
+ arch/x86/kvm/vmx/tdx.c      | 25 +++----------------------
+ arch/x86/virt/vmx/tdx/tdx.c | 20 +++++++++++++++-----
+ 3 files changed, 20 insertions(+), 27 deletions(-)
+
+
+Regards
+Adrian
 
