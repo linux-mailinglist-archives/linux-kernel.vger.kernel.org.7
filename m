@@ -1,212 +1,220 @@
-Return-Path: <linux-kernel+bounces-741768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45646B0E8BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:40:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23779B0E8C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62934568008
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4094E7C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1787A1DF24F;
-	Wed, 23 Jul 2025 02:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061FD1E1DE7;
+	Wed, 23 Jul 2025 02:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJp/S2ZR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfhTM7Zz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8723A184
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48896184;
+	Wed, 23 Jul 2025 02:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753238418; cv=none; b=XPNfMRjV6OiI1ME5A0+KrgJRxkBAqxk/5Mlu3G+7FRXP5F+8czOzL3wzXuNRc1vGt102wI6E4XRqYkyROsFIF2nUeCru4B9FraoeFfTM8mv+lMPfpWPh0DaU1dVxNmehN/Gw/2GGcLDL+Al7tziwsBdgq8QNejFLxDET67OQIp8=
+	t=1753238686; cv=none; b=XMSqSIJiUA5yzkvkIKnplc052HHtHABzKNHcN5wt2pXyk8uUyYeFt7bJBzU/v1cUcj8dkoddtLYA01n7aB432MjbRfisqrRiRsq72j+g3CVgMM4p3A6qMDGN2BFffR0GQBiiO1NPDFXYD72/cLTARbIoFBm+3tt5jZch6oWlfHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753238418; c=relaxed/simple;
-	bh=RfShTE/DepzD5GTCvdM5Nv3LwjXbnNS2DGjokiMlIzs=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=dLdorbCP5g+olgoAOpDbGnVnEJRUDL5ziuORtx57GHhxjBSOGIN7shs06A6F1zNy+t/72ypZyLh91ejnm2t6ICjS8yRAR0LV6lkMULpY0hj0dRAo59dOfg6ADfaGWcZycuBRepg0ypFwMIQGAqSkAVtz7NTikIlQpIkbWnIHfEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJp/S2ZR; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753238416; x=1784774416;
-  h=date:from:to:cc:subject:message-id;
-  bh=RfShTE/DepzD5GTCvdM5Nv3LwjXbnNS2DGjokiMlIzs=;
-  b=CJp/S2ZR8mmHhKi/hktdsYan47nzeNY2Bic9jKeEQuO9pOL9kYcxwkjU
-   aVVpCAXSxR5xJIWjgW68/sWtHtKLLohxA7naRIWbXaQJil0aGLJGSgwu+
-   6iAXsz7GJL8c4iL4bi1uCovnVtka7QoY7XqfWUCBvkblxVhs8+V0QGYBS
-   1H0Gv7iykfmdvhfKP1NpvN+IRFin5Q62EoyKjEh4mnLelcm3T4hsCoM5f
-   TQgT0JIksQxKiW6HtUna5ANM7AfPiONFy35+AgzZOED4bku4nsrbok3im
-   O2q1Yi/vcAKw9vdeZnZ5atfdbOETv6qT8VdXdp/L/LpEIoSWgnzW8RT4E
-   w==;
-X-CSE-ConnectionGUID: fA2aBzQCTE6HbDAzFturrA==
-X-CSE-MsgGUID: QUne9w1NSI257B+7OnbcRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="59308228"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="59308228"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 19:40:16 -0700
-X-CSE-ConnectionGUID: Eq3wK+GuQ5+3WBeyCafW1w==
-X-CSE-MsgGUID: +ELR+wiHSr+7hGmWlUE3vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="159867965"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Jul 2025 19:40:14 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uePOu-000ItV-2w;
-	Wed, 23 Jul 2025 02:40:12 +0000
-Date: Wed, 23 Jul 2025 10:39:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/futex] BUILD SUCCESS
- e40892214b454c8734350d82374f46c2e495a4d2
-Message-ID: <202507231013.ifuw9jqC-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1753238686; c=relaxed/simple;
+	bh=brzx3xAIgHCREuE7sMjqSV0M7fDB4QvQdk9PspusO6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AOPp4GMFcP14gbkpGfTMTjoAmZdkYFynQjsr0mIMQCTEVnV3h6uqAa1YG0XZv2cxz51deE0AoYwNYWp1wgtRKLf3OSs/PF9Rbkiu/58NhPr0eRlqv1mo2Q6panL8/SEK1gZiJm4PXMiexWMeesUhhPcb72FYp2dwJ6I2i0c0PcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfhTM7Zz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C912C4CEEB;
+	Wed, 23 Jul 2025 02:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753238685;
+	bh=brzx3xAIgHCREuE7sMjqSV0M7fDB4QvQdk9PspusO6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gfhTM7Zzm9AVvaeBe/Ty4R0UJZVQzCiCsh2nQapsfHSOJS8fi9l7sCOGZuy8W3t09
+	 jcUzqC13nxUJdXZIA383O5EEsRzoUusJ/tNzqspfQZOjDwwg5r8SHGoaOlLyUeUeKm
+	 m0JuUxui72AYzCZnqb7XX7ytVmxbxVxIa5431o7SLya8TDLbpfhDOmc9ZukKmwABFh
+	 JW6t0+4w0DowIQeOxBp14eX/Z/J9zj/K2pLuzuoNYosjt5dhrpKLGSbq25oSkXSPMg
+	 sscZJFsLYnVqGEgewvdzCrd2/uktdwij6xyJxfscI9roMDooIl71cpXeYxRv/JZxbJ
+	 xzkf5HzgmEm8w==
+Message-ID: <d32d44ef-a964-430a-a735-f63f2fa5e7ed@kernel.org>
+Date: Wed, 23 Jul 2025 11:42:17 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] elevator: factor elevator lock out of
+ dispatch_request method
+To: Yu Kuai <yukuai1@huaweicloud.com>, hare@suse.de, tj@kernel.org,
+ josef@toxicpanda.com, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
+ <20250722072431.610354-5-yukuai1@huaweicloud.com>
+ <08c989bd-20d8-476c-af99-c9eb8065349d@kernel.org>
+ <cc6f72cb-3782-4426-57c2-4d54fc4f38f2@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <cc6f72cb-3782-4426-57c2-4d54fc4f38f2@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/futex
-branch HEAD: e40892214b454c8734350d82374f46c2e495a4d2  selftests/futex: Fix spelling mistake "Succeffuly" -> "Successfully"
+On 7/23/25 11:17 AM, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/07/23 9:59, Damien Le Moal 写道:
+>> On 7/22/25 4:24 PM, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> Currently, both mq-deadline and bfq have global spin lock that will be
+>>> grabbed inside elevator methods like dispatch_request, insert_requests,
+>>> and bio_merge. And the global lock is the main reason mq-deadline and
+>>> bfq can't scale very well.
+>>>
+>>> For dispatch_request method, current behavior is dispatching one request at
+>>
+>> s/current/the current
+>>
+>>> a time. In the case of multiple dispatching contexts, this behavior will
+>>> cause huge lock contention and messing up the requests dispatching
+>>
+>> s/messing up/change
+>>
+>>> order. And folloiwng patches will support requests batch dispatching to
+>>
+>> s/folloiwng/following
+>>
+>>> fix thoses problems.
+>>>
+>>> While dispatching request, blk_mq_get_disatpch_budget() and
+>>> blk_mq_get_driver_tag() must be called, and they are not ready to be
+>>> called inside elevator methods, hence introduce a new method like
+>>> dispatch_requests is not possible.
+>>>
+>>> In conclusion, this patch factor the global lock out of dispatch_request
+>>> method, and following patches will support request batch dispatch by
+>>> calling the methods multiple time while holding the lock.
+>>
+>> You are creating a bisect problem here. This patch breaks the schedulers
+>> dispatch atomicity without the changes to the calls to the elevator methods in
+>> the block layer.
+> 
+> I'm not sure why there will be bisect problem, I think git checkout to
+> any patch in this set should work just fine. Can you please explain a
+> bit more?
 
-elapsed time: 1002m
+If you apply this patch, stop here without applying the following patches, and
+test the changes up to this point, things will break since there is no locking
+during dispatch.
 
-configs tested: 120
-configs skipped: 3
+So you need to organize the patches so that you first have the elevator level
+common locking in place and then have one patch for bfq and one patch for
+mq-deadline that switch to using that new lock. Hence the suggestion to reverse
+the order of your changes: change the block layer first, then have bfq and
+mq-deadline use that new locking.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+>>
+>> So maybe reorganize these patches to have the block layer changes first, and
+>> move patch 1 and 3 after these to switch mq-deadline and bfq to using the
+>> higher level lock correctly, removing the locking from bfq_dispatch_request()
+>> and dd_dispatch_request().
+> 
+> Sure, I can to the reorganize.
+> 
+> Thanks,
+> Kuai
+> 
+>>
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>> ---
+>>>   block/bfq-iosched.c  | 3 ---
+>>>   block/blk-mq-sched.c | 6 ++++++
+>>>   block/mq-deadline.c  | 5 +----
+>>>   3 files changed, 7 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>>> index 11b81b11242c..9f8a256e43f2 100644
+>>> --- a/block/bfq-iosched.c
+>>> +++ b/block/bfq-iosched.c
+>>> @@ -5307,8 +5307,6 @@ static struct request *bfq_dispatch_request(struct
+>>> blk_mq_hw_ctx *hctx)
+>>>       struct bfq_queue *in_serv_queue;
+>>>       bool waiting_rq, idle_timer_disabled = false;
+>>>   -    spin_lock_irq(bfqd->lock);
+>>> -
+>>>       in_serv_queue = bfqd->in_service_queue;
+>>>       waiting_rq = in_serv_queue && bfq_bfqq_wait_request(in_serv_queue);
+>>>   @@ -5318,7 +5316,6 @@ static struct request *bfq_dispatch_request(struct
+>>> blk_mq_hw_ctx *hctx)
+>>>               waiting_rq && !bfq_bfqq_wait_request(in_serv_queue);
+>>>       }
+>>>   -    spin_unlock_irq(bfqd->lock);
+>>>       bfq_update_dispatch_stats(hctx->queue, rq,
+>>>               idle_timer_disabled ? in_serv_queue : NULL,
+>>>                   idle_timer_disabled);
+>>> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+>>> index 55a0fd105147..82c4f4eef9ed 100644
+>>> --- a/block/blk-mq-sched.c
+>>> +++ b/block/blk-mq-sched.c
+>>> @@ -98,6 +98,7 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx
+>>> *hctx)
+>>>           max_dispatch = hctx->queue->nr_requests;
+>>>         do {
+>>> +        bool sq_sched = blk_queue_sq_sched(q);
+>>>           struct request *rq;
+>>>           int budget_token;
+>>>   @@ -113,7 +114,12 @@ static int __blk_mq_do_dispatch_sched(struct
+>>> blk_mq_hw_ctx *hctx)
+>>>           if (budget_token < 0)
+>>>               break;
+>>>   +        if (sq_sched)
+>>> +            spin_lock_irq(&e->lock);
+>>>           rq = e->type->ops.dispatch_request(hctx);
+>>> +        if (sq_sched)
+>>> +            spin_unlock_irq(&e->lock);
+>>> +
+>>>           if (!rq) {
+>>>               blk_mq_put_dispatch_budget(q, budget_token);
+>>>               /*
+>>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+>>> index e31da6de7764..a008e41bc861 100644
+>>> --- a/block/mq-deadline.c
+>>> +++ b/block/mq-deadline.c
+>>> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct
+>>> blk_mq_hw_ctx *hctx)
+>>>       struct request *rq;
+>>>       enum dd_prio prio;
+>>>   -    spin_lock(dd->lock);
+>>>       rq = dd_dispatch_prio_aged_requests(dd, now);
+>>>       if (rq)
+>>> -        goto unlock;
+>>> +        return rq;
+>>>         /*
+>>>        * Next, dispatch requests in priority order. Ignore lower priority
+>>> @@ -481,8 +480,6 @@ static struct request *dd_dispatch_request(struct
+>>> blk_mq_hw_ctx *hctx)
+>>>               break;
+>>>       }
+>>>   -unlock:
+>>> -    spin_unlock(dd->lock);
+>>>       return rq;
+>>>   }
+>>>   
+>>
+>>
+> 
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250722    gcc-10.5.0
-arc                   randconfig-002-20250722    gcc-11.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                          gemini_defconfig    clang-20
-arm                         lpc18xx_defconfig    clang-22
-arm                   randconfig-001-20250722    gcc-12.5.0
-arm                   randconfig-002-20250722    clang-22
-arm                   randconfig-003-20250722    gcc-8.5.0
-arm                   randconfig-004-20250722    clang-17
-arm                         vf610m4_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250722    clang-22
-arm64                 randconfig-002-20250722    clang-22
-arm64                 randconfig-003-20250722    clang-22
-arm64                 randconfig-004-20250722    gcc-8.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250722    gcc-11.5.0
-csky                  randconfig-002-20250722    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250722    clang-20
-hexagon               randconfig-002-20250722    clang-18
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250722    gcc-12
-i386        buildonly-randconfig-002-20250722    gcc-12
-i386        buildonly-randconfig-003-20250722    clang-20
-i386        buildonly-randconfig-004-20250722    gcc-12
-i386        buildonly-randconfig-005-20250722    clang-20
-i386        buildonly-randconfig-006-20250722    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250722    gcc-15.1.0
-loongarch             randconfig-002-20250722    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                        mvme16x_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          ath79_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250722    gcc-11.5.0
-nios2                 randconfig-002-20250722    gcc-8.5.0
-openrisc                         alldefconfig    gcc-15.1.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250722    gcc-8.5.0
-parisc                randconfig-002-20250722    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                      katmai_defconfig    clang-22
-powerpc               randconfig-001-20250722    gcc-13.4.0
-powerpc               randconfig-002-20250722    clang-22
-powerpc               randconfig-003-20250722    gcc-14.3.0
-powerpc                     tqm8560_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20250722    gcc-8.5.0
-powerpc64             randconfig-002-20250722    clang-22
-powerpc64             randconfig-003-20250722    clang-22
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250722    clang-16
-riscv                 randconfig-002-20250722    gcc-12.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250722    clang-22
-s390                  randconfig-002-20250722    gcc-12.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250722    gcc-15.1.0
-sh                    randconfig-002-20250722    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250722    gcc-13.4.0
-sparc                 randconfig-002-20250722    gcc-15.1.0
-sparc64               randconfig-001-20250722    gcc-8.5.0
-sparc64               randconfig-002-20250722    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250722    gcc-12
-um                    randconfig-002-20250722    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250722    gcc-12
-x86_64      buildonly-randconfig-002-20250722    gcc-12
-x86_64      buildonly-randconfig-003-20250722    gcc-12
-x86_64      buildonly-randconfig-004-20250722    clang-20
-x86_64      buildonly-randconfig-005-20250722    gcc-12
-x86_64      buildonly-randconfig-006-20250722    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250722    gcc-15.1.0
-xtensa                randconfig-002-20250722    gcc-10.5.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+Damien Le Moal
+Western Digital Research
 
