@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-742549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D68B0F37A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 535E3B0F3B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C0D3A30D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC7DAC5FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337A32EA49D;
-	Wed, 23 Jul 2025 13:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C6B2EE276;
+	Wed, 23 Jul 2025 13:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GZAtIP6w"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="35oZvwN1"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37B32EA171;
-	Wed, 23 Jul 2025 13:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C588E2ED17F;
+	Wed, 23 Jul 2025 13:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276181; cv=none; b=In44r+SRawFrfrGPXGa2wIOGsTD1B3bQWFuQ+CiXGU92FicYnjxfdHWaq0Yg/fZ2fGdw0d6ju6P+EcUkGlv6L+JP5W0VTSCGDUxGzlfR8PA2t9OCjgA46d6RHunO+qDF8QEFehSDznt0nbdKeyM4tdSsP0ipWstnE/eHqp8RG2s=
+	t=1753276211; cv=none; b=p5LBjASA73MNj/pw8lSbe3UQNQ464PzgePvdLEoBTKwZzRnBl+TNagz+CX88qgaYEvCCvrfigQhg+eZtZU9cP7ayZgE/JvrJQPqsgFUptp4oWwhUEFs93ExWiMoSK7vTddjHjL5nC9Ezw8WEv8I4CRzeP4lk5n03KJsJo8feODE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276181; c=relaxed/simple;
-	bh=PeN3qmCWQUdwNQs4xuvTgl/wQEdVxnzDNM1iGwMrCyQ=;
+	s=arc-20240116; t=1753276211; c=relaxed/simple;
+	bh=gftIvYHzveImR+MPjt/uzTmWFEBJ3zj0CJjUcncYRD4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=LHh6TfKCNEC1fetb2ZAOTMTlhbUERvYnbPK54kOpVtNct76FcIoePAvoxCe82OqU7s5TmxACXnbBtrYnL6DGUf2AJfTnZCQ1AEd5MiaoUqpn8X43vKdeKf27pBn7wR7APqIQtBPL2ZpDcEf3uXzF+upXiUqjD/xr4dVCm1kssGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GZAtIP6w; arc=none smtp.client-ip=91.207.212.93
+	 In-Reply-To:To:CC; b=m7OX/RphO6Lq+XBMHSYFphTywzsjUoyvyltlZmfm36nZTyn4IK/+/oOtuP3/6UzgOfSoyUrGjqacRQZltv47EB012C0KRO4/+LZr+PJyBgQ05/OxkW8Chzx692973gEWZw3Iq1Icq4uwnVvqYtw2IshltSYJxKeoMsLWRCABmzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=35oZvwN1; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ND4eCh026047;
-	Wed, 23 Jul 2025 15:09:25 +0200
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCX8Lx000944;
+	Wed, 23 Jul 2025 15:09:55 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	iltrvkkBDPNUkwWqDFThCKXQjo7LhI+eeBGbd3adnYk=; b=GZAtIP6w0OHPrm6y
-	AZ2GVFDUvGO84rN9CmrxdkuZ+iqQJV1hncEqauoFXzknP+0brNjQbtoFTkCeRe6D
-	2L5E19Va7jYFj37Hj7Y8zwjb90A5fNE6qtk2Dhe6wKxJ8nDdDY8K8olDXKIpS6Tj
-	Vg9jOdBGsIa0zoOQ+kHl5By5zL9GBFi1tESTAkQHXImdugjIKTUHB2Tew83+JJCf
-	qbKzYdKcB2vLtO5c0FnRDUSNowG/H8qRkRBon7fP6mYFQSLYUYa10yYwEKj2sV3O
-	ASB6BfAd7XpVJSBc+D0Sbv39o0Z3O0g/P+H6jZGQXOaC0ZoGi/aCDcE18PdeR4tW
-	77rUXw==
+	+oFosf+Y2aWw9hUSMPebh2RDsEkKVFT8bx1JKOIHJNs=; b=35oZvwN1an/ggBlG
+	31NT3I5thUhT8nm5gZOeUMI6VmQ+GF/4bYSYtFHUlj0QwtoLw3dra+qKYMu3CaFl
+	f1SomLpRIhDtKsUmOxGdooqhcLs5jphObQn755T7WsaviQtgxekE8/ygwfhicfyi
+	RnDNdrThVF7Oi02ARll+gSS7qZoonVtmiC38GRlneNqRaUgY7asHue6klueH6q0j
+	hdwVQwNRTTF1FPqN2JvVKn7N4R2olVkirrEHQv/UObjhlNO7pdAgVl/gufsqn4oU
+	4bk+IponXsA96vyoEBBYqcAXZbS4WVOWx9Z0Nlh6a2z9en7tB0yKF4MHbYykeJes
+	4NzA6w==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480pan0rdx-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g8uvef-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 15:09:25 +0200 (MEST)
+	Wed, 23 Jul 2025 15:09:55 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3EFFF40054;
-	Wed, 23 Jul 2025 15:07:58 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 40F6C40055;
+	Wed, 23 Jul 2025 15:08:18 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 54E4E799A43;
-	Wed, 23 Jul 2025 15:06:14 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1C6A3372B47;
+	Wed, 23 Jul 2025 15:06:15 +0200 (CEST)
 Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Jul
  2025 15:06:14 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Wed, 23 Jul 2025 15:05:59 +0200
-Subject: [PATCH v4 15/20] MAINTAINERS: add myself as STM32 DDR PMU
- maintainer
+Date: Wed, 23 Jul 2025 15:06:00 +0200
+Subject: [PATCH v4 16/20] ARM: dts: stm32: add ddrperfm on stm32mp131
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250723-ddrperfm-upstream-v4-15-1aa53ca319f4@foss.st.com>
+Message-ID: <20250723-ddrperfm-upstream-v4-16-1aa53ca319f4@foss.st.com>
 References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
 In-Reply-To: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
 To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -106,31 +105,31 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
 
-Add Clément Le Goffic as STM32 DDR PMU maintainer.
+The DDRPERFM is the DDR Performance Monitor embedded in STM32MP131 SoC.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- MAINTAINERS | 7 +++++++
+ arch/arm/boot/dts/st/stm32mp131.dtsi | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 10850512c118..247f07ae4176 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23487,6 +23487,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/power/supply/st,stc3117.yaml
- F:	drivers/power/supply/stc3117_fuel_gauge.c
+diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
+index 492bcf586361..e097723789aa 100644
+--- a/arch/arm/boot/dts/st/stm32mp131.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
+@@ -998,6 +998,13 @@ iwdg2: watchdog@5a002000 {
+ 			status = "disabled";
+ 		};
  
-+ST STM32 DDR PMU
-+M:	Clément Le Goffic <legoffic.clement@gmail.com>
-+S:	Maintained
-+F:	Documentation/admin-guide/perf/stm32-ddr-pmu.rst
-+F:	Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
-+F:	drivers/perf/stm32_ddr-pmu.c
++		ddrperfm: perf@5a007000 {
++			compatible = "st,stm32mp131-ddr-pmu";
++			reg = <0x5a007000 0x400>;
++			clocks = <&rcc DDRPERFM>;
++			resets = <&rcc DDRPERFM_R>;
++		};
 +
- ST STM32 FIREWALL
- M:	Gatien Chevallier <gatien.chevallier@foss.st.com>
- S:	Maintained
+ 		rtc: rtc@5c004000 {
+ 			compatible = "st,stm32mp1-rtc";
+ 			reg = <0x5c004000 0x400>;
 
 -- 
 2.43.0
