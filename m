@@ -1,179 +1,104 @@
-Return-Path: <linux-kernel+bounces-742502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE91B0F281
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E61B0F289
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EB2565F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A640FAC0298
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B52428B7FF;
-	Wed, 23 Jul 2025 12:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611D22E6D1C;
+	Wed, 23 Jul 2025 12:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Th3ykaYL"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ee98WH8P"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46CD2E613B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D428B7EA;
+	Wed, 23 Jul 2025 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753274726; cv=none; b=u+LaCtpxJBXR0j++yM0tuwfdb3y/fs4Yho2l8DKJ4GiNPxgqPCIalGytV97Yv4ZE2v7yvwenqgnKytAWgcQ4pUB+fHH1H8OvQuHx4d+IKnDGcw8kTu9zbCHNDcxu8LlnnjB6tMk5tbXq1Gjjo8ZhRoyBtNvLdGtYLXV0OI2ExeY=
+	t=1753274997; cv=none; b=s3f+1Doy+uBHYAjPADF4Fthi4vniD82FLYKSR68BjzfhvQFIlYI40J2PFFx73qkdJDSdGpSYFV+SSJ7slZHzpt0W6I81mrEG/3g7vV6ogHci6emuP3AKxsQ9M8lWWxzHcgOmRlRMy01bq0OtFvrh+5cEKSY1m+6Q7OSehJ/pszU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753274726; c=relaxed/simple;
-	bh=PSVh8+zmjXz2/3Itj97rR3bCxNouxj4qoJGhebydnM0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=MzbbP8k5/m9ik9jGLrY5/OEslZjj7oyVXDo0DPmLE39h0iZCbjfEWhfbDa9yfCmGUu6yPZ3ONj0lmvmL+EZQPQzSy/nF174swg2eapAjPR4nex7T5s5K2dO4As4O9b9R8rgGkVA7l/e4Loep2BpvYDBN/nY9FHfOE5Q79bNv3/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Th3ykaYL; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250723124516epoutp03f033ebc8fa2ca4c6cea4cae324235eec~U4hCyHOk52832528325epoutp03-
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:45:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250723124516epoutp03f033ebc8fa2ca4c6cea4cae324235eec~U4hCyHOk52832528325epoutp03-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753274716;
-	bh=PEOfka7o20zIZPmyJjhDlnK3FdIZ1ayZnAmiWFOAY8o=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Th3ykaYLsbUr7KCPyz3pnLe7ntpQviosxGR/2/NTX7YjsIa2F6uvGG4/t8bK2qXi6
-	 +7KYSWEKgoP+QUS/P1ZtifH1h4YMgmiBvknkZH2QImhHyU2qDjLbf0tW2ADHno+lLk
-	 KQa+ncSUwSb50Qbsz0xYXyxOlH4+NZjURykH1CZE=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250723124515epcas5p1aaf594fdd1861aef3eb2f4883c0973b8~U4hBuY4AX2230822308epcas5p1z;
-	Wed, 23 Jul 2025 12:45:15 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bnDPQ1b3Qz6B9m6; Wed, 23 Jul
-	2025 12:45:14 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250723124513epcas5p40a7150ee82c674eb479589288323da54~U4hAQiFXe2820028200epcas5p4a;
-	Wed, 23 Jul 2025 12:45:13 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250723124510epsmtip201e2e3138007aeaccacf564c5214f1c8~U4g9PPG5e2748727487epsmtip2V;
-	Wed, 23 Jul 2025 12:45:10 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
-	<pritam.sutar@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzysztof.kozlowski@linaro.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
-	<peter.griffin@linaro.org>, <neil.armstrong@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
-Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Wed, 23 Jul 2025 18:15:08 +0530
-Message-ID: <2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
+	s=arc-20240116; t=1753274997; c=relaxed/simple;
+	bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pFApsk9UHcIt/gJMp3UnSM1lVEgvJVHFX+FwXc+Ly3ez1hpEsokHmeJyX7TP1OFMBD318Bvck3HDD/af5aIoHoUaTCAaA/OOU0+CEuFmRmc09D/qUPv+NmPZUsnkBIIZ18gCpxBvIb9sD8tMAPM1HKIXNjlOd6sfNeAk6X9xnBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ee98WH8P; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23c71b21f72so10820455ad.2;
+        Wed, 23 Jul 2025 05:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753274996; x=1753879796; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
+        b=Ee98WH8PGqZQrbj6hemgBeCGsZXHcVARPaZBdCfPmioh8jY2t+wfvhmWa41q5W6kAJ
+         sf/seB0wroUbBC+U4Pdj5yLIsSxJhE+fwmOd7MwMbfhB6PD/t77KPsQ3mxbu+MF1SLGp
+         0Xvsu/cuIFxQSnIt9zNtafVLG4ysBteWxCmHD4tB2cSJS+0Ob8+/NuhvcMVybWm07mtS
+         cYW+m+nE1GsoElQfQTl8741tZkySgPnAMoHEI2zNHZ5MbSUI65amC+VsO8bT4SrIJnMQ
+         zqgNZtbJmrKhBzm9eyi5SNdgJMRzkSkTg+NwbnJDsw35/nbgANFYZoSfuMW9EXw/S9Yi
+         +gmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753274996; x=1753879796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
+        b=jZuT2sR5cCIhzG+JNSkNf5d7N60Dwzx6VBOlWMI+F3Kqkr4aqTiCmJKBz83bQFPp+b
+         jFeyiRC9P/YV/gTy+djFAaee7GuVhT5FD77zavUWQor1cge5pXV8aO+77Xt0TAU6EzvY
+         h+elhURshB2Jx/O7dzaPwyC1cs5bwHfkibPr0LJ9d6Fv+5NZqAsi3P/tnyxNIWNDkHS8
+         ed3RtXhFrSEnNx+pV1KeCRKpOILHwMsqc+MPvb1Rk4+sVLaNqahsEq+M1mgQ0F7I1hKR
+         tYw5yWk9RgAQ+wKGMdxsrV6MBAPdwztVWhb5gdeUdf65wFl18FEcMgOgZXeBImrbwxPr
+         df/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXFPVREVtR/+hXiGLQ+sCEHyYxz1huLByWVXRegPuqxZkDQ+kfBUn35YomI6KrdDhyljSbwHmxjjpNq2ik=@vger.kernel.org, AJvYcCXOvPCSVbfg5U8sYgxkzLaYyiBu2RtsbGcW0Os5zyZeQyVuqWYzQsLJSvgn9iXkdOp8z2+HgLgZnJkR3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrlOGdqk3KuTZaaXzTxY4NJiKi4QebF2cb7IZYMWLnQVFwxfp/
+	ejsJvSu5w4iRC621JgxK5I17ctrwFlqeFLwQOkPnNOxtljXEV/ZKFudHmaDsaAIf/ackwfv0TYP
+	5R5dAnBhdYQbx6urC0GWS5jmc7bcY0HE=
+X-Gm-Gg: ASbGnctNH7hgd31J0XpQF/vI/r9zLLu67ZLmrApYA+Aj2+MEriDEXN1lwUBOLN0gxcd
+	siCi3RiByycL9ghcsKpYRBcnm9933nNQ353xGfKJvaPmjpwFW/LyexH3hcxe12H+f5KE8vB3Mjm
+	7YVyx4u3PD7XEnUG0i/DrGKLwFvshIrliBhQUFJ0uqcTubQ0Hl8FYqX6VqudJklza/dhUIj6ElR
+	YnG2EKL
+X-Google-Smtp-Source: AGHT+IEPMZZiyO4Rgpj58hEJInZjj5GgFr5IFWeJTNLs8cLo75ujlDwm8/g+buidWOGhCXr/tqd1sz+o4Lvfkq/9e5c=
+X-Received: by 2002:a17:902:d48a:b0:234:f1b5:6e9b with SMTP id
+ d9443c01a7336-23f98129135mr17643215ad.1.1753274995529; Wed, 23 Jul 2025
+ 05:49:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250723112605.74f1c077@canb.auug.org.au>
+In-Reply-To: <20250723112605.74f1c077@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 23 Jul 2025 14:49:42 +0200
+X-Gm-Features: Ac12FXwdy8HYdhV1FZG5TYNUT_XBJ98xcEii8FixuatgzNCqud0xun_O5LCdgb4
+Message-ID: <CANiq72m3w8Q74dV5sBTrZDoJom3SLjcOkMeR3LbVOs8+pcsXOQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the driver-core tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Christian Schrefl <chrisi.schrefl@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Shankari Anand <shankari.ak0208@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+wC0VRd5AgU5Triy3GiwIA==
-X-CMS-MailID: 20250723124513epcas5p40a7150ee82c674eb479589288323da54
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
-References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
-	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
-	<20250701120706.2219355-2-pritam.sutar@samsung.com>
-	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
-	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
-	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
-	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
-	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
-	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
-	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
-	<000901dbfb90$42873060$c7959120$@samsung.com>
-	<6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
 
+On Wed, Jul 23, 2025 at 3:26=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
 
+Looks good to me, thanks!
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Wednesday, July 23, 2025 2:13 PM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof
-> Kozlowski' <krzysztof.kozlowski=40linaro.org>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-=5Bsnip=5D
-> >>>>> Ok got it. Will change supplies name as below avdd075_usb =3D>
-> >>>>> avdd075-usb
-> >>>>> avdd18_usb20 =3D> avdd18-usb20
-> >>>>> avdd33_usb20 =3D> avdd33-usb20
-> >>>>>
-> >>>>> Confirm the above change that is meant in terms of DTS style.
-> >>>> Yes. I have doubts that actual supplies have suffix usb20. Are
-> >>>> there more than one avdd18 for this block?
-> >>>>
-> >>>
-> >>> Yes, there are more than one vdd18 supplies for this block.
-> >>
-> >> And their names are?
-> >>
-> >>>
-> >>> Re-analysed your comment on adding new supplies.
-> >>> Going to re-use existing supplies as mentioned below, rather than
-> >>> introducing new supplies
-> >>>
-> >>>   dvdd-usb20-supply   =3D> for 0.75v
-> >>>   vddh-usb20-supply   =3D> for 1.8v
-> >>>   vdd33-usb20-supply =3D> for 3.3v
-> >>
-> >>
-> >> You just expect us to guess whether this is correct...
-> >
-> > Sorry about not being clear so far.
-> >
-> > V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY The naming
-> > convention used in the schematic are avdd075-usb, avdd18_usb20,
-> > avdd33_usb20.
-> >
-> > However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
->=20
->=20
-> Then dvdd, vdd33 and vdd18.
->=20
-> > Since GS101 binding already using supply names similar to what is
-> mentioned in the PHY user manual.
->=20
->=20
-> GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you ha=
-ve
-> only USB 2.0, that's why I question the suffix.
->=20
-I cross checked the schematic of v920 SADK, this is a combo PHY which suppo=
-rt USB-3.0 as well.=20
-=40 Pritam
-Schema should capture all the supplies including USB-3.0, similar to GS101 =
-(which has USB2.0 and DP combo).
-So that would be as below:
-dvdd075-usb20-supply
-vdd18-usb20-supply
-vdd33-usb20-supply
-dvdd075-usb30-supply
-vdd18-usb30-supply
-please cross check the supply at your end and do the needful.=20
+(I am still checking/testing the others)
 
->=20
-> Best regards,
-> Krzysztof
-
+Cheers,
+Miguel
 
