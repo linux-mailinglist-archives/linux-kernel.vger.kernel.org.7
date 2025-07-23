@@ -1,193 +1,123 @@
-Return-Path: <linux-kernel+bounces-743219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD885B0FC15
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:21:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7787AB0FC16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A038A1AA7E04
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC6C1AA1E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBBE26CE38;
-	Wed, 23 Jul 2025 21:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzlqJBGQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24A26CE32;
+	Wed, 23 Jul 2025 21:21:25 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321EE2E630;
-	Wed, 23 Jul 2025 21:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348B826CE0A;
+	Wed, 23 Jul 2025 21:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753305674; cv=none; b=Uj2u6BTvmbWujADV1cXIn8gpZ1VLwtwJ7yloO6w09e6jygwu+JK7L0ODS3cpOYQrb0S4NaTZq1Lm9urY2Jg4NBYPxd8ylxVqr+NVEL+15c+TUiLowlBUCObT4ydqxRKqNCow2m7wuOsVDikvuMtsKa4NKA+yi4jakhHbXjTJng8=
+	t=1753305685; cv=none; b=FzeG9xh0Pk1a5rwwOdTp0OXKY1rZzzqegnn/r/BfhD1Xn5knR1KX7NSGof09IjiqQGvmnH0WGbgUFo3UnBpNcwx68DM3lGpMJEwo7IhuuThWOoH+EFwHlcSIdYg1fWFirKoMc0TM2r5nN5WBf6QRXoBk9ha/vIGTyPJowAkMJ00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753305674; c=relaxed/simple;
-	bh=J+2l9Ux3H/DgjEwIji6H7wMMNYF7wVPwD6xtgBzUtSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReQ4u/HFJDGJiST/9oVopwKXYDPhZy7MAs/7LdobD1j8Wwz9rmIRz4R9le12JOZd1CKNrGBAxpuGt6r17wmRxkliB+CWmCanAdOl9gRtvRtcE+dQ1sOqjzalf3Zk9L6A0ysFFZjihDC8zWfl51I8sOLPV94q4rnh5GeETxMs/AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzlqJBGQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE68FC4CEE7;
+	s=arc-20240116; t=1753305685; c=relaxed/simple;
+	bh=VPXYxYVtd6s3/QwcATqT8F0pmv/ZiyMRk5nynEKSGFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BlXsOnG59/TqgouMna+6az05t0DzcqRhnASAo1KkmRwFv6lUvgReqq27pYa7CGHuSk0aWgP4CQXSRY2EYeFfKNHlJKN0p1dFrbpLEYAkoCbKBfG3tEp9zgTg6koy9UDvSNbF2f9YmjQ23471Yyk2gRsLyPzfec1V0QqhtYklwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 8028712EE3F;
+	Wed, 23 Jul 2025 21:21:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 432ED2000E;
 	Wed, 23 Jul 2025 21:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753305673;
-	bh=J+2l9Ux3H/DgjEwIji6H7wMMNYF7wVPwD6xtgBzUtSU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=kzlqJBGQj2u6k31WdSrMq3v85JMSp3+3Z4jhYuxOyrgOD343mRhEfZgYwbq76DtGK
-	 kGKbZVok0/VQNlnjBVgq3XVPS1LZZMacAqjkdRZn6JKoVx6Oy402jf64FfMjLFqMvI
-	 bw6HsDVLLsuL1mEUf8pkgErLfrXsfH1u0ENosZUcyVMicXzVAsHZUsOWHvCGzIpRcs
-	 IMSCnVE2mbh2MxZdpfc3M7IuQVRQ9itxof1KETheLWt/l3YRbo/oAp6A9dYCA4QpP4
-	 pPCOtnKAAl5dvreQFSkS59+Yu1VSBiodagNOEZ+ATQS9KJlxhWL6/77lWcxGzYzsWb
-	 mqjqWIiEyfJwg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6DD0CCE08DF; Wed, 23 Jul 2025 14:21:13 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:21:13 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Joel Fernandes <joelagnelf@nvidia.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] srcu: Add srcu_read_lock_fast_notrace() and
- srcu_read_unlock_fast_notrace()
-Message-ID: <a62c72c0-41f6-4588-bfd1-0506ecb6910e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
- <20250723202800.2094614-2-paulmck@kernel.org>
- <aIFLG91VhtjN8iaf@tardis.local>
+Date: Wed, 23 Jul 2025 17:21:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Guillaume Nault <gnault@redhat.com>,
+ Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, Petr
+ Machata <petrm@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tracing: ipv6: Replace deprecated strcpy()
+ with strscpy()
+Message-ID: <20250723172114.061cc226@gandalf.local.home>
+In-Reply-To: <AE36F453-DEAE-432C-9CDA-0D2DA875CDA2@linux.dev>
+References: <20250714075436.226197-2-thorsten.blum@linux.dev>
+	<20250714123825.6f0485c9@batman.local.home>
+	<F998F71D-1244-4154-BC5F-19201C23BDBE@linux.dev>
+	<20250723143625.79ab2c16@batman.local.home>
+	<AE36F453-DEAE-432C-9CDA-0D2DA875CDA2@linux.dev>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIFLG91VhtjN8iaf@tardis.local>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 432ED2000E
+X-Stat-Signature: kegzwk6g57adhy3wkto5u1nsueku345w
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+IsVoACPy2Z+7qVEXdlgVce576+oGEJ38=
+X-HE-Tag: 1753305673-867281
+X-HE-Meta: U2FsdGVkX19MUNA+JVSepE1HTC98wpo7HgiqisHjDzAD26LTzKZW3A58hsm/f3dphPQ/1p+gORdAqxdT+378F+hqf+91FZF2xDQW/DBNSHbeQbSrzCHCm2TJgYG+SKzB7ne8iLEG82vb1syDG6Cct06CZuKPUbjPY2x7IjbBxMe6VZ+ZHobF1Af4nSBSEYzxJFfbWdQAr/540miYGq/bvsp+zJTX0D+b/EkuogIPqqhSdCHq+zm/AaQcfNzqp8UdKBEyFNATaP4eGQ3iOadAweNvQwung3XpVdHWoyooyT8//lVTa2FFTMIj8Sdzhf1M
 
-On Wed, Jul 23, 2025 at 01:50:35PM -0700, Boqun Feng wrote:
-> On Wed, Jul 23, 2025 at 01:27:56PM -0700, Paul E. McKenney wrote:
-> > This commit adds no-trace variants of the srcu_read_lock_fast() and
-> > srcu_read_unlock_fast() functions for tracing use.
-> > 
-> > [ paulmck: Apply notrace feedback from Joel Fernandes, Steven Rostedt, and Mathieu Desnoyers. ]
-> > 
-> > Link: https://lore.kernel.org/all/20250721162433.10454-1-paulmck@kernel.org
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > Cc: <bpf@vger.kernel.org>
-> > ---
-> >  include/linux/srcu.h     | 30 ++++++++++++++++++++++++++++--
-> >  include/linux/srcutree.h |  5 +++--
-> >  2 files changed, 31 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> > index 478c73d067f7d..ec3b8e27d6c5a 100644
-> > --- a/include/linux/srcu.h
-> > +++ b/include/linux/srcu.h
-> > @@ -271,7 +271,7 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-> >   * where RCU is watching, that is, from contexts where it would be legal
-> >   * to invoke rcu_read_lock().  Otherwise, lockdep will complain.
-> >   */
-> > -static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *ssp) __acquires(ssp)
-> > +static inline struct srcu_ctr __percpu notrace *srcu_read_lock_fast(struct srcu_struct *ssp) __acquires(ssp)
+On Wed, 23 Jul 2025 14:15:02 -0700
+Thorsten Blum <thorsten.blum@linux.dev> wrote:
+
+> Thanks for the detailed explanation.
 > 
-> Hmm.. am I missing something, why do we need ot make
-> srcu_read_lock_fast() notrace? I thought we only need those _notrace()
-> variants notrace?
-
-Good point!  It looks like I got a bit too exuberant here.  I am removing
-notrace from srcu_read_lock_fast() and srcu_read_unlock_fast(), but
-leaving srcu_read_lock_fast_notrace(), srcu_read_unlock_fast_notrace(),
-__srcu_read_lock_fast(), and __srcu_read_unlock_fast() as-is.
-
-							Thanx, Paul
-
-> Regards,
-> Boqun
+> I think the better change would be this then:
 > 
-> >  {
-> >  	struct srcu_ctr __percpu *retval;
-> >  
-> > @@ -282,6 +282,20 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
-> >  	return retval;
-> >  }
-> >  
-> > +/*
-> > + * Used by tracing, cannot be traced and cannot call lockdep.
-> > + * See srcu_read_lock_fast() for more information.
-> > + */
-> > +static inline struct srcu_ctr __percpu *srcu_read_lock_fast_notrace(struct srcu_struct *ssp)
-> > +	__acquires(ssp)
-> > +{
-> > +	struct srcu_ctr __percpu *retval;
-> > +
-> > +	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
-> > +	retval = __srcu_read_lock_fast(ssp);
-> > +	return retval;
-> > +}
-> > +
-> >  /**
-> >   * srcu_down_read_fast - register a new reader for an SRCU-protected structure.
-> >   * @ssp: srcu_struct in which to register the new reader.
-> > @@ -385,7 +399,8 @@ static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
-> >   *
-> >   * Exit a light-weight SRCU read-side critical section.
-> >   */
-> > -static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-> > +static inline void notrace
-> > +srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-> >  	__releases(ssp)
-> >  {
-> >  	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
-> > @@ -394,6 +409,17 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
-> >  	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
-> >  }
-> >  
-> > +/*
-> > + * Used by tracing, cannot be traced and cannot call lockdep.
-> > + * See srcu_read_unlock_fast() for more information.
-> > + */
-> > +static inline void srcu_read_unlock_fast_notrace(struct srcu_struct *ssp,
-> > +						 struct srcu_ctr __percpu *scp) __releases(ssp)
-> > +{
-> > +	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
-> > +	__srcu_read_unlock_fast(ssp, scp);
-> > +}
-> > +
-> >  /**
-> >   * srcu_up_read_fast - unregister a old reader from an SRCU-protected structure.
-> >   * @ssp: srcu_struct in which to unregister the old reader.
-> > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> > index 043b5a67ef71e..4d2fee4d38289 100644
-> > --- a/include/linux/srcutree.h
-> > +++ b/include/linux/srcutree.h
-> > @@ -240,7 +240,7 @@ static inline struct srcu_ctr __percpu *__srcu_ctr_to_ptr(struct srcu_struct *ss
-> >   * on architectures that support NMIs but do not supply NMI-safe
-> >   * implementations of this_cpu_inc().
-> >   */
-> > -static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct *ssp)
-> > +static inline struct srcu_ctr __percpu notrace *__srcu_read_lock_fast(struct srcu_struct *ssp)
-> >  {
-> >  	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
-> >  
-> > @@ -267,7 +267,8 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
-> >   * on architectures that support NMIs but do not supply NMI-safe
-> >   * implementations of this_cpu_inc().
-> >   */
-> > -static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-> > +static inline void notrace
-> > +__srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-> >  {
-> >  	barrier();  /* Avoid leaking the critical section. */
-> >  	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-> > -- 
-> > 2.40.1
-> > 
-> > 
+> diff --git a/include/trace/events/fib6.h b/include/trace/events/fib6.h
+> index 8d22b2e98d48..3f95df1fd155 100644
+> --- a/include/trace/events/fib6.h
+> +++ b/include/trace/events/fib6.h
+> @@ -32,8 +32,9 @@ TRACE_EVENT(fib6_table_lookup,
+> 		__field(        u16,	dport		)
+> 		__field(        u8,	proto		)
+> 		__field(        u8,	rt_type		)
+> -		__array(		char,	name,	IFNAMSIZ )
+> -		__array(		__u8,	gw,	16	 )
+> +		__string(	name,	res->nh && res->nh->fib_nh_dev ?
+> +					res->nh->fib_nh_dev->name : "-"	)
+> +		__array(	__u8,	gw,	16	)
+> 	),
+> 
+> 	TP_fast_assign(
+> @@ -64,11 +65,8 @@ TRACE_EVENT(fib6_table_lookup,
+> 			__entry->dport = 0;
+> 		}
+> 
+> -		if (res->nh && res->nh->fib_nh_dev) {
+> -			strscpy(__entry->name, res->nh->fib_nh_dev->name, IFNAMSIZ);
+> -		} else {
+> -			strcpy(__entry->name, "-");
+> -		}
+> +		__assign_str(name);
+> +
+> 		if (res->f6i == net->ipv6.fib6_null_entry) {
+> 			in6 = (struct in6_addr *)__entry->gw;
+> 			*in6 = in6addr_any;
+> @@ -82,7 +80,7 @@ TRACE_EVENT(fib6_table_lookup,
+> 		  __entry->tb_id, __entry->oif, __entry->iif, __entry->proto,
+> 		  __entry->src, __entry->sport, __entry->dst, __entry->dport,
+> 		  __entry->flowlabel, __entry->tos, __entry->scope,
+> -		  __entry->flags, __entry->name, __entry->gw, __entry->err)
+> +		  __entry->flags, __get_str(name), __entry->gw, __entry->err)
+> );
+> 
+> #endif /* _TRACE_FIB6_H */
+> 
+> 
+> I'll submit a v2 if you agree that this is correct.
+
+Isn't the above pretty much what I suggested?
+
+-- Steve
 
