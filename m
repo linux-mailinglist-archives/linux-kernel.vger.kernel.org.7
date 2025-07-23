@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-741964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E21B0EB4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:07:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DD3B0EB48
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48441580889
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:07:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B72D7B100D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC824272E51;
-	Wed, 23 Jul 2025 07:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826226CE37;
+	Wed, 23 Jul 2025 07:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQSciDun"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqzKK+cq"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1A12FF6F;
-	Wed, 23 Jul 2025 07:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279AF12FF6F;
+	Wed, 23 Jul 2025 07:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753254408; cv=none; b=ifFwnHd6G65X+w7+i/cIhWQFE7R2oin/PKcai57e+P/Vxf/AEQdEoS78W7nCQvY6IJo/U8HrsIVVcWlaaKxecIx7wFEzbFwECSEcFbCw8W497lJ3hEznHmNlHsZyJ7TSVDFstO+C5fWufPwJoEs5o2Pw2rgJQypphAopyXXYuR0=
+	t=1753254400; cv=none; b=ZXfQCXkouk5+PNDnGBxCHeWkA89DblH5PP2teaofClN3JRBTBrSWEAJ6GWxchTO1uWC8LZ5ZVA+Z6nCBYidcJH4GrkUT1QHbwgh27H6wn3A8q9No6sJ9b4ICkU18fXJlargGENLW+JK9nFNH3o9jg3tEZGbn6STJNROpfKQl7Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753254408; c=relaxed/simple;
-	bh=iflZfY3qMI5grSf6yRjiEW4K74WNj8Ky50H/GR5cHdo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MvVolJ23KImc0nOPWd+ET6m9QfgYpBQ5ZC8L6rezKbe3Ak46fJ4TEgEf/hyb/JBLsG7UQ9lKvjGHTArgBCuP0rcgAm1IwNjcWKl5/5DVP4FmeGYx4V8c/hy5Byto/9aWqQgYkMnrI3Xcz6v9o4mExdiPdKX25BdDJruDrHOhnME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQSciDun; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C159CC4CEE7;
-	Wed, 23 Jul 2025 07:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753254407;
-	bh=iflZfY3qMI5grSf6yRjiEW4K74WNj8Ky50H/GR5cHdo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=EQSciDunEnPNVWjy2UkZe7ljxX4kHCidSM58CJApfmFUu8Z5Ud3nV2OQapL4PVXnR
-	 bsWhB55GIwMLUO5fR2ZjWGPrRfVWI2dm/aKwgTKen1YjL2lPPqxBp8he4IL3hp+xZy
-	 0Qdc7v+66t2Qun8HW6CqlpPfvw+zKPEH+DbGadzuyzkIl7t+HUv8tOqtObFQuCYNQK
-	 qMP+GZ0g3cM+QxIQan9oDqLW4vPuC7gXO29gvmIcyYG3pjIT30rOO/Nx/ZRGHYrUYz
-	 gW+jbOgwOijyUlZ3LdggDIxwGfTbYXRieyh4Hk1O/5gKn/pZj5XunKnl4PJfPLRPFP
-	 VqSLjX7ZwcgsQ==
-Message-ID: <5ca3ba94-27b3-4cda-aba4-e2935acbe55c@kernel.org>
-Date: Wed, 23 Jul 2025 09:06:41 +0200
+	s=arc-20240116; t=1753254400; c=relaxed/simple;
+	bh=H/ykRQohnCJBy42fi3mylO+fbnAZqRuU8bziW0Xu+Kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=na5IVjeU0iWAl7ORq+Aijl02FWKgsdTiD2xUN4h30UBthNLJrheifzTgT064ZXG4448vYdrK/lrNE/x2p6HKT9ii4Qaif1/6Y3rd4x+Nh4Udq6cTQPWKTgpcEK9PfKlAAVm2xJutvVEhhE8iK0vw72AGhWdCf8ZqxkyTiQxey0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqzKK+cq; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23f8d27eeeaso14647005ad.2;
+        Wed, 23 Jul 2025 00:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753254397; x=1753859197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xSfEfvb8afuE48CtYIaScUPPOzcOQyPW2QSBJb+hCQY=;
+        b=nqzKK+cqi7U/DLXy6NvYeGoizE83gSmc+oljkOS2tPutggj/89Tv7oEY+aubG+J0zZ
+         wmSxshbdk3b+nH1WkujLcxxt2y4hpaLIfF3C3CT3qzZC/W6pa54fzuT5SfbjjizGj/qX
+         gHMZT9LlBVMz0ESPgstHevtLYVYF5HxfTtOx19F+pINOU4FWDth8+PYNiM0v6SbwwBZL
+         fkXKJnzlnAsVdi/4+wHcQMjonv3+4SZalfy6ug17Jo4n7swblZNprQtvwWG11cOj913t
+         nhxNMBRv5Y0YfaV9jHz95er85tEtnSucLgimHlCy+B/v6UorhS1RiXZ/lA71unxA6dhk
+         fXWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753254397; x=1753859197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xSfEfvb8afuE48CtYIaScUPPOzcOQyPW2QSBJb+hCQY=;
+        b=fOs+VbduNmG8iWNH+o9N1LcIukutANNxjBzLsa4a02Ce60KH1VSjE4h2L+5Z5kyzBI
+         qP8/DLzhCLIK+rwHrONgXRaLm2y5FHDU03Oa8AcCHW2ssP56LlqwBzPFmG6J1ZoUa3X4
+         ERcBCFtsF684j3DBn8KFHGTrQAABcpmW5fKuzdwHn5di96xoExjDrvsYzh5GvnlsNIhA
+         GW0YF4e8oaHQryNyJIFbjyGMvqX/SQi0UyE0sXePZf9ngEDUhs8lSfxczQUcO2ukkG9G
+         fCAIrXSAC+jnriBV9zHiXYbVn9YXtMz4WF150fpYLzG15ue573MxbyfGsDFPscqow8DZ
+         oS4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWX+418JViZnZHt1/cnM//4YwV3dAJ1fZKyQPtGKWBIfVIp5HnLQrnacDS6xB2yj9693R3CVLkJcn9UaBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPSA1cwLf1uG5mk2E+k2MZh/Ebgh50cuqriDSVeU0qiGiQjlDk
+	Poiq+b+yovzBe/8IHknLGfwCkxb/gY9E02mHGlwttu/m1RbKzjsecP30
+X-Gm-Gg: ASbGncuWP11WJSP3vvvEipDQ36fPWok8ta4eOHiyvBir05sUjZkFfsMs9xviDdoINiY
+	/OJGSF+KwFFv/9lCuz3+bXC8TbzfkSiJwbTzw012k7qR9MXCFRnDt0hgKYCRcZDLGmjGMw2NhMa
+	s1pKATe1kzexD9I4iHtQtFe44wBm6pqve2SBcCg+DrX8o/tZKas8qemBUHcQ6FQ7YVRpqxCDFCg
+	2njFY4Pk5eIRLlXVi6LgyQUxFHi3wFCZGEdRRYevaDFvvFUr9aCtCmW1vKuVqKnddSGNdezw3tQ
+	xw51jvSobRtGlfFMGIS45LtyP8pBoK/MEewIeylSzA65GaH6EuEorJufLo+T+17qTUsiPaGAMy7
+	GnL30o7mzu+05j83iST1LmITc1i2cJmQQWx9288qWRjSTqoiw97ytDI21skN4Pr7kR11FR4P5J9
+	vxP0Gv
+X-Google-Smtp-Source: AGHT+IFefdirCzH5nMP0LOZIgRw3WIB0n3LunUIKHLBVyYlwoO7rUssyGOsIglA2MVE3IsZShp7xEQ==
+X-Received: by 2002:a17:903:944:b0:23d:dd63:2cd9 with SMTP id d9443c01a7336-23f981d2fa9mr26782205ad.46.1753254397238;
+        Wed, 23 Jul 2025 00:06:37 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([122.170.64.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e51a66c33sm912153a91.28.2025.07.23.00.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 00:06:36 -0700 (PDT)
+From: "Darshan R." <rathod.darshan.0896@gmail.com>
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Darshan R." <rathod.darshan.0896@gmail.com>
+Subject: [PATCH] power: supply: Clean up spacing for better readability
+Date: Wed, 23 Jul 2025 07:06:59 +0000
+Message-ID: <20250723070659.12784-1-rathod.darshan.0896@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
- binding into memory channel
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Le Goffic <legoffic.clement@gmail.com>, Julius Werner
- <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
- <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
- <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/07/2025 08:57, Krzysztof Kozlowski wrote:
-> On Tue, Jul 22, 2025 at 04:03:24PM +0200, Clément Le Goffic wrote:
->> LPDDR and DDR channels exist and share the same properties, they have a
->> compatible, ranks, and an io-width.
-> 
-> Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
+Fixed some minor style issues reported by checkpatch.pl. Mainly adjusted the
+spacing around operators and type casts to match the kernel coding
+conventions. For example:
 
+- Changed `gpios[ndescs-i-1]` to `gpios[ndescs - i - 1]`
+- Added space in `(u32*)` to make it `(u32 *)`
+- Cleaned up spacing in a `for` loop
 
-Although these were not JEDEC probably...
+No functional changes — just making the code easier to read and consistent
+with the rest of the kernel.
 
-> don't think all memory types do.
-> 
-> I think this should be renamed to sdram-channel.
-... yet still JEDEC also has some standards for SRAM, EPROM, HBM and
-SGRAM (graphics), see:
-https://www.jedec.org/category/technology-focus-area/memory-configurations-jesd21-c
+Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
+---
+ drivers/power/supply/gpio-charger.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
+index 1b2da9b5fb65..2504190eba82 100644
+--- a/drivers/power/supply/gpio-charger.c
++++ b/drivers/power/supply/gpio-charger.c
+@@ -79,7 +79,8 @@ static int set_charge_current_limit(struct gpio_charger *gpio_charger, int val)
+ 
+ 	for (i = 0; i < ndescs; i++) {
+ 		bool val = (mapping.gpiodata >> i) & 1;
+-		gpiod_set_value_cansleep(gpios[ndescs-i-1], val);
++
++		gpiod_set_value_cansleep(gpios[ndescs - i - 1], val);
+ 	}
+ 
+ 	gpio_charger->charge_current_limit = mapping.limit_ua;
+@@ -226,14 +227,14 @@ static int init_charge_current_limit(struct device *dev,
+ 	gpio_charger->current_limit_map_size = len / 2;
+ 
+ 	len = device_property_read_u32_array(dev, "charge-current-limit-mapping",
+-		(u32*) gpio_charger->current_limit_map, len);
++		(u32 *) gpio_charger->current_limit_map, len);
+ 	if (len < 0)
+ 		return len;
+ 
+ 	set_def_limit = !device_property_read_u32(dev,
+ 						  "charge-current-limit-default-microamp",
+ 						  &def_limit);
+-	for (i=0; i < gpio_charger->current_limit_map_size; i++) {
++	for (i = 0; i < gpio_charger->current_limit_map_size; i++) {
+ 		if (gpio_charger->current_limit_map[i].limit_ua > cur_limit) {
+ 			dev_err(dev, "charge-current-limit-mapping not sorted by current in descending order\n");
+ 			return -EINVAL;
+-- 
+2.43.0
 
-Best regards,
-Krzysztof
 
