@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-741870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD3FB0EA0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3B7B0EA12
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B0516F4CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12001C87DE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307C62472BF;
-	Wed, 23 Jul 2025 05:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0BC248F5A;
+	Wed, 23 Jul 2025 05:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hJ3inEuN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="MOafYYOw"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD7F78F51;
-	Wed, 23 Jul 2025 05:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B0F238166
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753248569; cv=none; b=eQjL2Ou78mtDHLlZTDVXSirXGKB7cpA1m9vr4U48orZMCeLpFKCX26knfIvZbsmG1y0if7E7/NONI3Fl3/j8Ryli4PR6aef7gd1mz+kpQ+ttTZmRpa9XWfKEjqBo2cGUdDxpYjPY1VbrXo/GeOSFF4PB1kblHgS4G5f87awP6UU=
+	t=1753248622; cv=none; b=s20n1vNe0JXT+jcuOzAS5VGtEnXOKBd/xo5K1w/uQBy63CjgWs/PYxs62Ms+g7HgqxvGSHbPwNarqMpkEPYwKHmfQu9BSe/Y2rxlr9o60dHb/H/Gf8s7EoAysdZzWeWvEYMB/2JoqrNHLaS52+VSZXM/J/D2+27YZgTeSImIGnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753248569; c=relaxed/simple;
-	bh=JIAmCqVKkUtB1JMmgBylqwKIzjeF2m66X6vVcRvAPN0=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=LZZmMYpWP4U+nqm1rdtFfFaiFZp1Wb1n+14ILv9ujouBvC18mdwgDZZxgKwBOUgDLSyynJIefqZb3laaZrUsY6sf6IKv6SY6WuSDhYQ55TrV2qp9YhodZjBz9rR/+aVCLUA4HycZcSg54WulNFcYR2pvxmtFaegO3iLEFdxNlRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hJ3inEuN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MHsWwh004384;
-	Wed, 23 Jul 2025 05:29:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=JIAmCqVKkUtB1JMmgBylqwKIzjeF
-	2m66X6vVcRvAPN0=; b=hJ3inEuNNjnxQjViqd/aEcMJSO+a6y08IGngtgv8mj0B
-	k57JFoOSM8ieNTzII3YVpZGtJ53UtxNTmOyIIlSTDTlNoeeRdaR1lAH5nEW7jpzt
-	RmLIAwE1q8YGR5mk1J7ztw+IjpqRshYued/akImy3fXFh5x4pJmyL4h/UtKUgXx0
-	AriKfxNGICLj8QDlgKopbwprK/vo4i3FUEkLmnL2MOr+Mipvq8MPEVkDFo55It2M
-	ICh/rOQMoLQ8jr0r0jDAZ5mX4i1K3pyEOwfQEGmed95f9ajgnWAYtdxLaRbZrCdx
-	5/Ua8FoFz3BIX3WWZ+dBsgVSytSuY2tyJWiBrHU3hQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff4tr15-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 05:29:09 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56N5Pq4d008412;
-	Wed, 23 Jul 2025 05:29:07 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff4tr11-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 05:29:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56N2j4BS012404;
-	Wed, 23 Jul 2025 05:29:06 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480p306jef-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 05:29:06 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56N5T4Xn6095472
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 05:29:05 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ACE415805A;
-	Wed, 23 Jul 2025 05:29:04 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4027058060;
-	Wed, 23 Jul 2025 05:29:01 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.252.202])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Jul 2025 05:29:00 +0000 (GMT)
-From: Venkat <venkat88@linux.ibm.com>
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1753248622; c=relaxed/simple;
+	bh=o4QgzqTBBnUc7wLsm/2kW3soQ4NatWqYiTC9EV+Uq+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=l4HV5ud0CKX8poYiPosfqYfAQa8JTCf0hL11ds5qwTsUFrwC+6tBZXAJaF21vsojv6ZbL54k6XSH9a4tPfR8nvoJI9GVpNtDF/++jk/XzPP5vDvBqabKkleg0kAUQVY7ycsjZTdPFhDy6XztiK20Y9P9AvuAsnTq/ZGNF9qAX5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=MOafYYOw; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 85AF71080236
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:00:07 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 85AF71080236
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753248607; bh=o4QgzqTBBnUc7wLsm/2kW3soQ4NatWqYiTC9EV+Uq+s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MOafYYOw79qQucX81r9LQF+Ec7ynt3g2Rvw8/cSySiFSLdCZnK3ABHUdK6MYDVMIf
+	 UxUX7wqJUeWlnjb7dOlcT0z37ix1nb+WYk0cpPJnZXWoel/SfKjTJQVCKUFnYgJ8Gp
+	 Fki1krcxRssbRgjvEbrXQtikJ4P1ezR/LlvSarbA=
+Received: (qmail 6639 invoked by uid 510); 23 Jul 2025 11:00:07 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.901731 secs; 23 Jul 2025 11:00:07 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 23 Jul 2025 11:00:03 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 323A134151D;
+	Wed, 23 Jul 2025 11:00:02 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 0CE721E81366;
+	Wed, 23 Jul 2025 11:00:02 +0530 (IST)
+Date: Wed, 23 Jul 2025 10:59:56 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
+	heylenay@4d2.org, elder@riscstar.com, inochiama@outlook.com,
+	akhilesh@ee.iitb.ac.in, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	unicornxdotw@foxmail.com, jszhang@kernel.org,
+	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH v2] clk: spacemit: ccu_pll: fix error return value in
+ recalc_rate callback
+Message-ID: <aIBzVClNQOBrjIFG@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v2 2/2] powerpc/fprobe: fix updated fprobe for
- function-graph tracer
-Message-Id: <D06F2360-106E-4CBF-85F1-B2B5185CB9FE@linux.ibm.com>
-Date: Wed, 23 Jul 2025 10:58:48 +0530
-Cc: christophe.leroy@csgroup.eu, Hari Bathini <hbathini@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        maddy@linux.ibm.com, mark.rutland@arm.com, mhiramat@kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        rostedt@goodmis.org, venkat88@linux.ibm.com
-To: adityab1@linux.ibm.com
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EXlF6YegNTYLZuDyrNkJTeRc-gQPxWqb
-X-Proofpoint-ORIG-GUID: RWU4CdPyZfG-WyQ6BVFOrV2Jq1CMLiQo
-X-Authority-Analysis: v=2.4 cv=Ae2xH2XG c=1 sm=1 tr=0 ts=68807325 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=J52luZ3L32VaiGxZi9YA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA0MSBTYWx0ZWRfX6mcaF9sqDl04
- Ne8tBut4Boommp7ME2sz6ivXYdFvnUf2k5n8YpGogMG1tVZIqhiKLre3HgqfYOjKxX1hpNXQMtc
- Wa3YNsYvO5r0LdMd7vbBgS9MzOdufDPt6Yqcm4qP5Vuk4YiMzCYazGhEEWVGqoRW7fM0NE0qb+G
- 3LLiLD223ceHeTrI+93a+dOWa/AQwN/q64Eo3IkpR5WieJdkFVovCYQ53rt/shCwZnNDlOXraJ4
- 2aBXB3Xp8tpc7v0YM8M4EKmdfH2NaQIWLK7GJTClQUSMKcIsURNglXpYAxb+EloCvmQukpAxYlV
- xubtlFpCMcjcHqKFNDQccbCgEkQIVYGg8h9UsmgJe6PEyAmvXGsHi/4jeeB+19Fda2LiUZYDWU+
- CdlEZsRzr6tXqZrD7oItV8xky8LzqXwt0x5DMv2CsPGITjjWMaprg2SkBetAGR5kcjbd3Meq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=371 lowpriorityscore=0 adultscore=0 malwarescore=0 bulkscore=0
- clxscore=1011 phishscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230041
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+get correct rate entry. Follow .recalc_rate callback documentation
+as mentioned in include/linux/clk-provider.h for error return value.
 
-Tested this patch by applying on top of mainline. Build and boot is =
-successful. Also ran ftrace selftest, intended test passed and no new =
-failures/errors introduced with this patch. Hence,
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
+Reviewed-by: Alex Elder <elder@riscstar.com>
+---
+v1 --> v2: 
+  - Add missing Fixes: tag
+  - Carry forward Reviewed-by tags
+---
+ drivers/clk/spacemit/ccu_pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+index 4427dcfbbb97..45f540073a65 100644
+--- a/drivers/clk/spacemit/ccu_pll.c
++++ b/drivers/clk/spacemit/ccu_pll.c
+@@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	WARN_ON_ONCE(!entry);
+ 
+-	return entry ? entry->rate : -EINVAL;
++	return entry ? entry->rate : 0;
+ }
+ 
+ static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+-- 
+2.34.1
 
-Regards,
-Venkat.=
 
