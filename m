@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-741922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D5CB0EAAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BA0B0EAAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30A53B147F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0B14E1E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0097626E6F6;
-	Wed, 23 Jul 2025 06:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655C526E6E7;
+	Wed, 23 Jul 2025 06:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N58Frue8"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UYOIAsLA"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D84126E158;
-	Wed, 23 Jul 2025 06:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71E185E4A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753252312; cv=none; b=LE4KgfUiHohSmO4yZxG2AXq+uT7PBlg94ohiRL/gQzU7+SI0+HCJwRYlb3RY0j1ROb39OK2WwioJB0rS76bmP0m8X5Qsp+ql18EiUeV0Y93k12yQBQ+Ui1Dau/cMV7d1KdrL/P279xyjcopgyMQpxoVRhUF8CRjjwczuucXBMqY=
+	t=1753252372; cv=none; b=bCIfKrcxzQpGeNW4QbID1+uasM3KR5+nWi2c9no+zbEJw0ayAht4QWrvEDnZo3ee7tzjhXJuzZmlVPUQGEonHk/zEMTKw9YS2xHSoTANVLXmh5vrL5ZxJvrhZYrN0HVT1k0XGWwDTOj19E0Xu6pL0yAyWq8sRrNv1koNnALuKwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753252312; c=relaxed/simple;
-	bh=7wPZzKUCutOWSDrN29iZqd2GuvbH5yGyfWNh7XiSoc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mBqnfb25dDKZHdxcKrcDtWqua2GRBEO/ium/qgPjFEtKWKsfsRTNs5i3CkCKkQWxIxL9CPROpPxgLXA4K9bDDzD+EA6TooDx+jD8kDc7lB0d1nYr9Cpn3cdG9SZ80vfM/mUJaaE8b+S8hU7ZBmxky7HZsgOzTzeDx7nRC3RGoyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N58Frue8; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234fcadde3eso73562175ad.0;
-        Tue, 22 Jul 2025 23:31:50 -0700 (PDT)
+	s=arc-20240116; t=1753252372; c=relaxed/simple;
+	bh=ksSHZQHzmsnYrIOFwQI3+1UdMZb47B54kf6s59ZmSk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PcAPOzGUK3niZJoFkbs28N9KFEerEfrB+PApTWsBIcjNG9Ip8e1CCohdVjLvosWcand9HPRZoKf8OfGCT/BpprCNudR8UKG7k/GU7IrMyg0Uek2LzzAzPTH8ZM/IspncO6gpiHOONHnF1KnEoZo1UR0EgZ+12hZwajHJfHSsLH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UYOIAsLA; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-700fee04941so60799016d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:32:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753252310; x=1753857110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SlOsoYRFjhvvw2blQM4GdnqtjksdBcf86gL/ylrDtaA=;
-        b=N58Frue8GpAggNLVNNrJ4SWu8aeRS8WVsuI+2HTExogOfLd2g8ZNEXBDDUVkFR3Xmr
-         0ONizAHxer8YFl+/mYd3nC5t6G0AVElFHLrutMN8YGAuIHrPz/NEtHKqyI4hHpWkEDrl
-         VCoWLMuSjm9xujJDAw3lT2V0ueKmcO20iX7vNrIAupq2UVE2qfQBIk8JRl2TmVFla/9C
-         62zrTxx7nav+6IEZzLHVXqtM7Zz43L1CInVE5GL4AUMqVMxN0wtvzsmM4V8RncbiH1W9
-         /cpszdq4QxxoWTVJD97syvz541FRB8zivbUjgig9yVASRwmAJVCe0T7uKJ2fJV//EosR
-         Ygsg==
+        d=google.com; s=20230601; t=1753252370; x=1753857170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wF+NlFQlfE9P//LH37cgymDuX2rWkQJvOt5FtUPktlY=;
+        b=UYOIAsLAD7actdTC3pKFAXtCESECtEs19tHQowIj6saIY02KRWMAO0i3IsAfvG2iP3
+         nE3bDQpSUrLusXA2I/BmKs5TFXzqj6MxbAX8U9emYdGv54odwPUTW0/7IOSchvWOefF5
+         EWOdyqL3dtVv61XDQGOC83lnyCPRtR3lYvw5eyZFxN9JO17bsshco0E45pr11lkUOYsa
+         UXSmLYWkXZn+BNaa6ITf80h7//qyYdeoPX2uMQSO9sds7pR7CSR+nCocCCFRb+5PWdL8
+         UEk5F8rTztEIwKYZSigFN+eeLHohRuNaBfMH1XyMRdkod5ZaHeVv07vtW/mCilDyXnUy
+         +kNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753252310; x=1753857110;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SlOsoYRFjhvvw2blQM4GdnqtjksdBcf86gL/ylrDtaA=;
-        b=ios4hnOID97vdERshrY051ikEQ+Gk0juofFU+MGCZbShGjSoBCX7ew4TyLs3dbDuy5
-         wY9IX1PzsUmrroig3l75XnSbDr7v81g0YzeQwdpjmNnHfoZ/EkM5CzETBcnZbk8DmgLt
-         57H/F1iMa0PZYYHPm348l3WWc2rqOC9AFzKzTIBcS+btxh7B9OhYqNi1VzDeEeggDaAm
-         4l/l8/XDlyYMikfQ8cHG1bpMROiJJT0QSZV7YIz43BUo9J657XvPL8hpFmcIWTfRaIkX
-         braIRpjAKSwTtlcmd369rJKu59Cn09XzhtpdrzY0vNPN5F1AlRv8YosvmHWFuniZGfq1
-         INxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNCiGG7chuIXoElEdYjciccgVD8llwtmnsiDClxGFT+Z+yagSgpnmC+owik51luixSnRGJnt0Bph8Ay90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO6sYfWoCHeddb6oAbiHVUuQCByA5olMnH7f4yZon38vp0JZBO
-	TKXGVXz80qKcdWdzHWHZK+BmvNM7f170Hb9zHmdC4/Aafq23llsLWd5I
-X-Gm-Gg: ASbGncu2fxq9fzO1uNCMJ4vYbw6BwkY6vYe88mAIl3w0ibAgh23KeFeojvpVOPa9Xc6
-	szL0z4n5m9NyrMHE68GoSTgsiDPqg4N9QQdo0FGSLFitPVSTKmlHebKWqId1jy1MJ94j5fWYvww
-	Ynr9ZjHtzVjzJrdBeQpA7gC/QBejiaRrDSDOYK+UEuqQaPrpUyI7ih3/xXlQ+UHYQW4Kj0/PFj/
-	jCPBcRiFQIGH/N58InpavKC9FY4wzopTHM6IR+n5n/dZBN3lM5IyHrNy/YcHyTzBbSbSpawvGRG
-	v/pkyvxhkioaeDMWtl5iMtWY2TgyC3/6PWUFg4ftMdBETFw1L2kZUXoy8bB/te27pvy96cvQZek
-	DWygilgYRFB57lR6xFjJ9fPVpUCIUxVT46C0o3w==
-X-Google-Smtp-Source: AGHT+IF0erTYwksmGNUunkkGnj1FdxqYP5O20Sfan0hwnByjnUy7hQyyvyetFe4ESFwRrHY3wjoU6g==
-X-Received: by 2002:a17:902:e845:b0:235:1966:93a9 with SMTP id d9443c01a7336-23f9812b4c5mr28540155ad.3.1753252310276;
-        Tue, 22 Jul 2025 23:31:50 -0700 (PDT)
-Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e2ccbsm89826735ad.4.2025.07.22.23.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 23:31:49 -0700 (PDT)
-From: Pengtao He <hept.hept.hept@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Michal Luczaj <mhal@rbox.co>,
-	Eric Biggers <ebiggers@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pengtao He <hept.hept.hept@gmail.com>
-Subject: [PATCH] net/core: fix wrong return value in __splice_segment
-Date: Wed, 23 Jul 2025 14:31:19 +0800
-Message-ID: <20250723063119.24059-1-hept.hept.hept@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1753252370; x=1753857170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wF+NlFQlfE9P//LH37cgymDuX2rWkQJvOt5FtUPktlY=;
+        b=ce8GFUoCaQrqfFjz5ZztCbQMpRouKKt51Y/mgYPPhiH+cbTGUjQB/MD+g5qfXC0uGe
+         ItgoxavtaM1ryOVLm3DdYAZOetwEk1cemm04tl5kNHfJIFtkCQNOJvqLo4/TGqZ4cOks
+         DT+uKzyk9GdOOpCW2Vi6lGpNgqVTGyiQx6o/TEEvsV+qj48lSH6U8eWB9J9sRxTmt6JL
+         fp8JvXLLSHFXKS94n1Jq+i7Rc1rkIYOt30jQdBlAo9774R4QGkvuyxw/vBJOp3Q/duRx
+         H3xztwbvstLeF5MnDT/t0tFKclViBwUGsQitPAHh7qTEg5h0z/O62ZF9CbgU+eZaoK13
+         5TUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8HW0I2e9SFPA1EYrYjM2WntG03eeVcR+bHbQjsG6d6xAz+hT2h5l3V3bpxjJmkKpD8nJ3CcSoXlO89wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUrN0AWvdnFHG39fBhRmNbh9xNhdrtxfNNAoPB+w4Sx0giC9WZ
+	DHnailfM3JB7tfiB12CfwZrvMJCg+G7k/jlxX0XagbCNT2bXmoC/EFRgm/CcJLuuM/xmKZXszF7
+	UN7pMjtksxHWBIp/vPbg7dGN3j2ENCA2V79LWqZzv
+X-Gm-Gg: ASbGncsA4Bz91w/jP0TPaVPSzQUI4VbsO2zpmBqCOE3GKp2eIZ9Wchm1PiM27W/Y9Fa
+	xXra+hN9hh7v352YzYAw5H7wzfyzd1rE2tJazEKZK+I6m4EsXOMiTf1p1BJ/YPFMqEbX0D+MHs9
+	ROA19/Qw2ZEbxvKETdYTo8pssFs1LZA9sc+I4btg3f40LNvRnO61vkEaMRSqILjtx4OOgsT+w1P
+	Vl1Qv6HpXt88YqtGb3nLBI4ZuCaR8bz5l6xHQ==
+X-Google-Smtp-Source: AGHT+IGaqgYRjEX0CAvEddmukIk7IF9PBFCp4ZtJi2P67k9ZqIeoiNjpZBVtVB0l4YEk+IAj9Ec/9U9ndRdKeWbsifs=
+X-Received: by 2002:a05:6214:f6f:b0:6ff:b41b:b5bb with SMTP id
+ 6a1803df08f44-707006ca3aemr26052026d6.26.1753252369878; Tue, 22 Jul 2025
+ 23:32:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250722183839.151809-1-elver@google.com>
+In-Reply-To: <20250722183839.151809-1-elver@google.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 23 Jul 2025 08:32:13 +0200
+X-Gm-Features: Ac12FXyBlr57qCpyR0lUbajVEyB390gj3dwP42_EXhGqHDRidQO7_1t2ga4NKco
+Message-ID: <CAG_fn=V7K2fSOD951uNuk0sAExUxrHRg6hOnpt1Eg=sb8Jo--Q@mail.gmail.com>
+Subject: Re: [PATCH] kcsan: test: Initialize dummy variable
+To: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>, Boqun Feng <boqun.feng@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, 
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Return true immediately when the last segment is processed,
-without waiting for the next segment.
-
-Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
----
- net/core/skbuff.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index ee0274417948..cc3339ab829a 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3114,6 +3114,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
- 		*len -= flen;
- 	} while (*len && plen);
- 
-+	if (!*len)
-+		return true;
-+
- 	return false;
- }
- 
--- 
-2.49.0
-
+On Tue, Jul 22, 2025 at 8:39=E2=80=AFPM Marco Elver <elver@google.com> wrot=
+e:
+>
+> Newer compiler versions rightfully point out:
+>
+>  kernel/kcsan/kcsan_test.c:591:41: error: variable 'dummy' is
+>  uninitialized when passed as a const pointer argument here
+>  [-Werror,-Wuninitialized-const-pointer]
+>    591 |         KCSAN_EXPECT_READ_BARRIER(atomic_read(&dummy), false);
+>        |                                                ^~~~~
+>  1 error generated.
+>
+> Although this particular test does not care about the value stored in
+> the dummy atomic variable, let's silence the warning.
+>
+> Link: https://lkml.kernel.org/r/CA+G9fYu8JY=3Dk-r0hnBRSkQQrFJ1Bz+ShdXNwC1=
+TNeMt0eXaxeA@mail.gmail.com
+> Fixes: 8bc32b348178 ("kcsan: test: Add test cases for memory barrier inst=
+rumentation")
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Signed-off-by: Marco Elver <elver@google.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
