@@ -1,255 +1,238 @@
-Return-Path: <linux-kernel+bounces-741683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D6B0E7B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:53:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6490BB0E7B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F8D561F0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AD8562A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E951519AC;
-	Wed, 23 Jul 2025 00:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48815442C;
+	Wed, 23 Jul 2025 00:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpTfisrY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZvYXaG8T"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EEEEAE7;
-	Wed, 23 Jul 2025 00:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753232001; cv=none; b=sQmt9PetsfnlHLU1eemAsw4UQkQslX4cR1OqWzvRWSBSavenQplN9TxGJ3jvmPXjyD+2M6fAruKTgQUK7lip0PUWIZ2+oJvpAZ3KWU8vKFdvt7+9jeNSWEq+m3VUuGTgW7gJwdBqebx3kUZwhYh+SMDmBnhIT2EI7yYOITKixCA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753232001; c=relaxed/simple;
-	bh=S9Se4NuSA42yZUgXJgt8LkY9wfVVkkvF3bhtyBZpUXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aH9TFF9alziRu9q8ddG/1Xc1PQg8KO7a8IKtu5H5tu5NS5ehPKZqIcv5Kth2FYGVKHiCS39BT8p2YAxXi/iFrBzSMtfj43pxAAYYlvWH/tXO13BuRwwxrFgdPrJA7STI0Il5OxmUqyMnYmW3aEPdbuyQ4VcXylvxp97RF2pBHlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpTfisrY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8976C4CEEB;
-	Wed, 23 Jul 2025 00:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753232001;
-	bh=S9Se4NuSA42yZUgXJgt8LkY9wfVVkkvF3bhtyBZpUXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kpTfisrYvJhaneY9HRei6iOVZ+VVYZlxrO2D+8LZxQ/MJ+SxFnvssquTO1OV54BDV
-	 kZvFGLDRC5hJdKvF9FH7b03V++wcYfJePs9nyySkWz9klr4DmMAIIYgjkYc2r8MfXd
-	 1Yh9FsPOuANnHTxoSQKp7B7RrT/qIuuKfh8lWTXqLqKnqHalcakOQ9PJ4AWxbJKCaL
-	 jUCn3Dg9NMmetGd8W02+GsAb5JYhLOQhR1+zhF2qdEUvF7LRlyinKPiAST9m6ZNABj
-	 aO8WzEpGpdPv3MgyAhqRGTWr7KLbActg8Nptf9pMzwLgn+CyGNGnXUTftiTFoh6/y8
-	 u5AVSLIhM7Psg==
-Date: Tue, 22 Jul 2025 17:53:18 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: duchangbin <changbin.du@huawei.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf: ftrace: add graph tracer options
- args/retval/retval-hex/retaddr
-Message-ID: <aIAyfpLifAM-BoFb@google.com>
-References: <20250613114048.132336-1-changbin.du@huawei.com>
- <cee4d3e644ab4bea8959eff1c16d2a20@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8213B58D;
+	Wed, 23 Jul 2025 00:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753232138; cv=pass; b=dIaYogLCm/y2reM8ZBBsGMG2O6jMBuayOWTYP2QM2+/RAFFFCFNrEJ7225DtR02uzWabZB7Q9CjuwOALSNETaNLjgwSIwJSHZCzOYcvtjyiQcAn8qyONpNQ+Kgh+6NoH8sU74UmPPbWPPYGBn9jVqF5T//pAjYT16JeRL1m9QA4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753232138; c=relaxed/simple;
+	bh=ycN+a20a39+uHkwjSn4cEM7f6YHzcXmsuaFLVrv2MDk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lbEXRO8bOes8G7mDEaonHflyErFTLgCrNO0e9KZmw+VEFjAZBGOgyXzyz6omFIMZQjEUZrX7/Jn+ALTiCyKTvfGX8wEU+hx0CceSnO4tSPnLBqXI909LnS2Rk6oytEkOjTvuJe3yDlrH9JYrth7nSUqKobV3jVBhQt3ILNYXuvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZvYXaG8T; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753232083; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BNVgI65NKwrtemFylave53P707ygH90jssUdgPyCXHBjCVKl7Udowg3RrF5jW7lF+5L42aejLvx/6hooj37lkUWKT4Dexs1swMBwvouETQ8S4k/u0Ys2wqbDqX/QqCZ/2uvKx2loUqZJ0H9dQiab1L3k3n/E7e2nCVbAErzEDSU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753232083; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rFbss56s1hh59hJnWNWrBx8A3FfQ2zEsLLLpTD2DR70=; 
+	b=TGSZ1id1WJCBtc6bHuQLco/N+TCYCFviuh18cPF5Ek3sPu2D4qJWiYMri7c2Hb6K4TSJo1sgI+loqbsf+bHo0vuIeo/q1PCJWgOAx987mFoVGKr6//t5m0SXPHgRxTimb9YJHzXMX6mCGdtaFfMMVynLWzb3h9zNW1On/X63zGk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753232083;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=rFbss56s1hh59hJnWNWrBx8A3FfQ2zEsLLLpTD2DR70=;
+	b=ZvYXaG8T4lAnVI7iEL9ckJnVjctoR4mbpuljQW5qa0nNFVYtj2UA182Mcp7VcjIq
+	rU2H+R1c/ojDQ0LgbZpn4xh+1AOzAXJ8AVqlNn0ZrzBOrk5X3WK5mhFEJ8rftjA7KNA
+	yuEqHQt4db104nTrC+dqErmZkdlh3xjnXx0CK9b4=
+Received: by mx.zohomail.com with SMTPS id 1753232080305334.71411635942;
+	Tue, 22 Jul 2025 17:54:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cee4d3e644ab4bea8959eff1c16d2a20@huawei.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 2/2] samples: rust: add sample code for scatterlist
+ abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718103359.1026240-3-abdiel.janulgue@gmail.com>
+Date: Tue, 22 Jul 2025 21:54:23 -0300
+Cc: acourbot@nvidia.com,
+ dakr@kernel.org,
+ jgg@ziepe.ca,
+ lyude@redhat.com,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Tamir Duberstein <tamird@gmail.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Petr Tesarik <petr@tesarici.cz>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F13AD3DF-6045-45FB-B3A8-9F4BA99BC485@collabora.com>
+References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
+ <20250718103359.1026240-3-abdiel.janulgue@gmail.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hello,
+Hi Abdiel, Alex,
 
-On Tue, Jul 22, 2025 at 10:03:58AM +0000, duchangbin wrote:
-> Kindly ping.
+> On 18 Jul 2025, at 07:33, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
+wrote:
+>=20
+> Add simple excercises to test the scatterlist abstraction.
+>=20
+> Co-developed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+> samples/rust/rust_dma.rs | 49 +++++++++++++++++++++++++++++++++++++++-
+> 1 file changed, 48 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
+> index 9e05d5c0cdae..1fa278e8e29a 100644
+> --- a/samples/rust/rust_dma.rs
+> +++ b/samples/rust/rust_dma.rs
+> @@ -4,11 +4,33 @@
+> //!
+> //! To make this driver probe, QEMU must be run with `-device =
+pci-testdev`.
+>=20
+> -use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, =
+prelude::*, types::ARef};
+> +use kernel::{
+> +    bindings, device::Core, dma::CoherentAllocation, page::*, pci, =
+prelude::*, scatterlist::*,
+> +    sync::Arc, types::ARef,
+> +};
+>=20
+> struct DmaSampleDriver {
+>     pdev: ARef<pci::Device>,
+>     ca: CoherentAllocation<MyStruct>,
+> +    _sgt: SGTable<OwnedSgt<PagesArray>, ManagedMapping>,
+> +}
+> +
+> +struct PagesArray(KVec<Page>);
+> +impl SGTablePages for PagesArray {
+> +    fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a Page, usize, =
+usize)> {
+> +        self.0.iter().map(|page| (page, kernel::page::PAGE_SIZE, 0))
 
-Sorry for the delay, processing now...
+The order seems to also be inverted here (see comment on the previous =
+patch)
 
-Thanks,
-Namhyung
+> +    }
+> +
+> +    fn entries(&self) -> usize {
+> +        self.0.len()
+> +    }
+> +}
+> +
+> +struct WrappedArc(Arc<kernel::bindings::sg_table>);
+> +impl core::borrow::Borrow<kernel::bindings::sg_table> for WrappedArc =
+{
+> +    fn borrow(&self) -> &kernel::bindings::sg_table {
+> +        &self.0
+> +    }
+> }
 
-> 
-> On Fri, Jun 13, 2025 at 07:40:47PM +0800, Changbin Du wrote:
-> > This change adds support for new funcgraph tracer options funcgraph-args,
-> > funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
-> > 
-> > The new added options are:
-> >   - args       : Show function arguments.
-> >   - retval     : Show function return value.
-> >   - retval-hex : Show function return value in hexadecimal format.
-> >   - retaddr    : Show function return address.
-> > 
-> >  # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
-> >  # tracer: function_graph
-> >  #
-> >  # CPU  DURATION                  FUNCTION CALLS
-> >  # |     |   |                     |   |   |   |
-> >  5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
-> >  5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cf90e */
-> >  5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/0x150 */
-> >  5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunlock+0x4f/0x200 */
-> >  5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsave+0x23/0x90 ret=0x0 */
-> >  5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17a/0x740 ret=0x3bf2a3cfc8b */
-> >  5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irqsave+0x4a/0x90 ret=0x1 */
-> >  5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=0x292 */
-> >  5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_slowunlock+0x191/0x200 */
-> >  5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cff1f */
-> >  5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_irqrestore+0x23/0x60 ret=0x1 */
-> >  5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irqrestore+0x35/0x60 ret=0x0 */
-> >  5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=0x80000000 */
-> >  5)   1.881 us    |    } /* rt_mutex_slowunlock ret=0x0 */
-> >  5)   2.931 us    |  } /* mutex_unlock ret=0x0 */
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@huawei.com>
-> > ---
-> >  tools/perf/Documentation/perf-ftrace.txt |  4 ++
-> >  tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
-> >  tools/perf/util/ftrace.h                 |  4 ++
-> >  3 files changed, 67 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Documentation/perf-ftrace.txt
-> > index b77f58c4d2fd..4b21a755132f 100644
-> > --- a/tools/perf/Documentation/perf-ftrace.txt
-> > +++ b/tools/perf/Documentation/perf-ftrace.txt
-> > @@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
-> >  --graph-opts::
-> >  	List of options allowed to set:
-> >  
-> > +	  - args         - Show function arguments.
-> > +	  - retval       - Show function return value.
-> > +	  - retval-hex   - Show function return value in hexadecimal format.
-> > +	  - retaddr      - Show function return address.
-> >  	  - nosleep-time - Measure on-CPU time only for function_graph tracer.
-> >  	  - noirqs       - Ignore functions that happen inside interrupt.
-> >  	  - verbose      - Show process names, PIDs, timestamps, etc.
-> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> > index bba36ebc2aa7..f7cf1dd7b64b 100644
-> > --- a/tools/perf/builtin-ftrace.c
-> > +++ b/tools/perf/builtin-ftrace.c
-> > @@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace *ftrace __maybe_unused)
-> >  	write_tracing_option_file("funcgraph-proc", "0");
-> >  	write_tracing_option_file("funcgraph-abstime", "0");
-> >  	write_tracing_option_file("funcgraph-tail", "0");
-> > +	write_tracing_option_file("funcgraph-args", "0");
-> > +	write_tracing_option_file("funcgraph-retval", "0");
-> > +	write_tracing_option_file("funcgraph-retval-hex", "0");
-> > +	write_tracing_option_file("funcgraph-retaddr", "0");
-> >  	write_tracing_option_file("latency-format", "0");
-> >  	write_tracing_option_file("irq-info", "0");
-> >  }
-> > @@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace *ftrace)
-> >  	return 0;
-> >  }
-> >  
-> > +static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
-> > +{
-> > +	if (ftrace->graph_args) {
-> > +		if (write_tracing_option_file("funcgraph-args", "1") < 0)
-> > +			return -1;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
-> > +{
-> > +	if (ftrace->graph_retval || ftrace->graph_retval_hex) {
-> > +		if (write_tracing_option_file("funcgraph-retval", "1") < 0)
-> > +			return -1;
-> > +	}
-> > +
-> > +	if (ftrace->graph_retval_hex) {
-> > +		if (write_tracing_option_file("funcgraph-retval-hex", "1") < 0)
-> > +			return -1;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
-> > +{
-> > +	if (ftrace->graph_retaddr) {
-> > +		if (write_tracing_option_file("funcgraph-retaddr", "1") < 0)
-> > +			return -1;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
-> >  {
-> >  	if (!ftrace->graph_noirqs)
-> > @@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *ftrace)
-> >  		return -1;
-> >  	}
-> >  
-> > +	if (set_tracing_funcgraph_args(ftrace) < 0) {
-> > +		pr_err("failed to set tracing option funcgraph-args\n");
-> > +		return -1;
-> > +	}
-> > +
-> > +	if (set_tracing_funcgraph_retval(ftrace) < 0) {
-> > +		pr_err("failed to set tracing option funcgraph-retval\n");
-> > +		return -1;
-> > +	}
-> > +
-> > +	if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
-> > +		pr_err("failed to set tracing option funcgraph-retaddr\n");
-> > +		return -1;
-> > +	}
-> > +
-> >  	if (set_tracing_funcgraph_irqs(ftrace) < 0) {
-> >  		pr_err("failed to set tracing option funcgraph-irqs\n");
-> >  		return -1;
-> > @@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct option *opt,
-> >  	int ret;
-> >  	struct perf_ftrace *ftrace = (struct perf_ftrace *) opt->value;
-> >  	struct sublevel_option graph_tracer_opts[] = {
-> > +		{ .name = "args",		.value_ptr = &ftrace->graph_args },
-> > +		{ .name = "retval",		.value_ptr = &ftrace->graph_retval },
-> > +		{ .name = "retval-hex",		.value_ptr = &ftrace->graph_retval_hex },
-> > +		{ .name = "retaddr",		.value_ptr = &ftrace->graph_retaddr },
-> >  		{ .name = "nosleep-time",	.value_ptr = &ftrace->graph_nosleep_time },
-> >  		{ .name = "noirqs",		.value_ptr = &ftrace->graph_noirqs },
-> >  		{ .name = "verbose",		.value_ptr = &ftrace->graph_verbose },
-> > @@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
-> >  	OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
-> >  		     "Set nograph filter on given functions", parse_filter_func),
-> >  	OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
-> > -		     "Graph tracer options, available options: nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
-> > +		     "Graph tracer options, available options: args,retval,retval-hex,retaddr,nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
-> >  		     parse_graph_tracer_opts),
-> >  	OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "size",
-> >  		     "Size of per cpu buffer, needs to use a B, K, M or G suffix.", parse_buffer_size),
-> > diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
-> > index a9bc47da83a5..782c33227e92 100644
-> > --- a/tools/perf/util/ftrace.h
-> > +++ b/tools/perf/util/ftrace.h
-> > @@ -29,6 +29,10 @@ struct perf_ftrace {
-> >  	int			graph_depth;
-> >  	int			func_stack_trace;
-> >  	int			func_irq_info;
-> > +	int			graph_args;
-> > +	int			graph_retval;
-> > +	int			graph_retval_hex;
-> > +	int			graph_retaddr;
-> >  	int			graph_nosleep_time;
-> >  	int			graph_noirqs;
-> >  	int			graph_verbose;
-> > -- 
-> > 2.43.0
-> > 
-> 
-> -- 
-> Cheers,
-> Changbin Du
+I assume there is no way to get around this without compromising =
+somewhere
+else, right?
+
+>=20
+> const TEST_VALUES: [(u32, u32); 5] =3D [
+> @@ -58,10 +80,35 @@ fn probe(pdev: &pci::Device<Core>, _info: =
+&Self::IdInfo) -> Result<Pin<KBox<Self
+>             kernel::dma_write!(ca[i] =3D MyStruct::new(value.0, =
+value.1))?;
+>         }
+>=20
+> +        let mut pages =3D KVec::new();
+> +        for _ in TEST_VALUES.into_iter() {
+> +            let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
+GFP_KERNEL);
+> +        }
+> +
+> +        // Let's pretend this is valid...
+
+I=E2=80=99d reword this.
+
+> +        // SAFETY: `sg_table` is not a reference.
+> +        let sg_table: bindings::sg_table =3D unsafe { =
+core::mem::zeroed() };
+> +
+> +        // `borrowed_sgt` cannot outlive `sg_table`.
+> +        // SAFETY: =46rom above, we assume that `sg_table` is =
+initialized and valid.
+> +        let _borrowed_sgt =3D unsafe { =
+SGTable::new_unmapped(&sg_table) };
+
+Wait, zero-initialization is considered =E2=80=9Cinitialized and =
+valid=E2=80=9D here? i.e.:
+
+struct sg_table {
+	struct scatterlist *sgl;	/* the list */
+	unsigned int nents;		/* number of mapped entries */
+	unsigned int orig_nents;	/* original size of list */
+};
+
+> +
+> +        let sg_table =3D WrappedArc(Arc::new(sg_table, GFP_KERNEL)?);
+> +        // `refcounted_sgt` keeps a refcounted reference to the =
+`sg_table` and is thus not
+> +        // tied by a compile-time lifetime.
+> +        // SAFETY: =46rom above, we assume that `sg_table` is =
+initialized and valid.
+> +        let _refcounted_sgt =3D unsafe { =
+SGTable::new_unmapped(sg_table) };
+
+Ah, this is cool, though the Borrow implementation is a bit of a =
+downside :/
+
+> +
+> +        // `owned_sgt` carries and owns the data it represents.
+> +        let owned_sgt =3D SGTable::new_owned(PagesArray(pages), =
+GFP_KERNEL)?;
+> +        let sgt =3D owned_sgt.dma_map(pdev.as_ref(), =
+kernel::dma::DmaDataDirection::DmaToDevice)?;
+> +
+>         let drvdata =3D KBox::new(
+>             Self {
+>                 pdev: pdev.into(),
+>                 ca,
+> +                // excercise the destructor
+> +                _sgt: sgt,
+>             },
+>             GFP_KERNEL,
+>         )?;
+> --=20
+> 2.43.0
+>=20
+
+=E2=80=94 Daniel
+
 
