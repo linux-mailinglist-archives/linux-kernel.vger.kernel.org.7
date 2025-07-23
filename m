@@ -1,169 +1,338 @@
-Return-Path: <linux-kernel+bounces-742759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827ECB0F669
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:03:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D96B0F662
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F8F1889154
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A27F77BA648
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A842FCE0C;
-	Wed, 23 Jul 2025 14:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7705F2FD5A4;
+	Wed, 23 Jul 2025 14:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajICN4Ku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="jASIwfBk"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D26F2FC3AE;
-	Wed, 23 Jul 2025 14:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6472FD596
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282223; cv=none; b=u4kJay8qooVrDggfxeYOJkb13NlDjDjEYL39HF9tBGVlM8c9Y8rvalX7bfm7yvCWO8hKji+aSYd+EGPAhXHvvgx5h2Yjh9Ix7EAB/tGFOn3R7ufT+e9tA0EL0rR7n+w5bF04Aj7nmgZeE9v7QJ5NDNfBulQAeJ+ih5SxBGjOnqI=
+	t=1753282355; cv=none; b=YRPkTD9sJ7VUGnCaS1twO9+uftuEwnhv79ISdC/mN0tpr+1ufHYkvKA0BTexFg9RponjAJ5YqRjB3qfUP0ml2ugi+boTU9pkERDYkkHVOxWa1nliK7rJejSoQywJ3jam7fvbiXeU60Jaq3QrlysjTYGvErwhIhbT5kvHHwz7WJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282223; c=relaxed/simple;
-	bh=aZqQBj3Q0MLO38xOs+l/KAa78pTbHFsmu7NSuwSazTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJJSuHTkZYWBrLWdLod2HTBwsca+gfYdOeEZF5nTP3dsYdSrDzCm4P16K86l4jhNX9XGhrL+o4OSUDcmIb3xOkwaTNXGvigs93R0F3iwE4PzDNEj7YLuvVnIFge2CuYTI0BCXitm7YbCxMC3JdIk07IlrRDtBY7pbtwkG3Gw71w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajICN4Ku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA051C4CEF8;
-	Wed, 23 Jul 2025 14:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282221;
-	bh=aZqQBj3Q0MLO38xOs+l/KAa78pTbHFsmu7NSuwSazTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ajICN4KuGGGlV0yyQlHAdIDFz8bj43GXCAH4ORyaBqwi6xArAHsIiJ/uP4vZcLTWY
-	 eKKMBCIbM6URY8c1VsiZpUfbnt8SHn/EkX+mJQ0NEEptOnHPOycaM6l5Nsw38w9748
-	 LHmZk5PZfoKKV7AZA6QLYKp6w/L8a/DFxmeJOaMFEQDoHKPLTTD6yjzMqWMJSDD5Vz
-	 GdnIQ0yCpTVS6CguD86wWbYUafG+38CZM0WWl/+/A0sMrbXE6EhZ10VAp8sQ2aqi7a
-	 SoCZtPkgAjw+KYRh1j0WJbois5N0yIKHDAFyZp8yQuszOv5Zvf6bxvB/Cs5VASLeoJ
-	 pJcuzt8141LSg==
-Date: Wed, 23 Jul 2025 07:50:21 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 02/13] common/rc: Fix fsx for ext4 with bigalloc
-Message-ID: <20250723145021.GM2672039@frogsfrogsfrogs>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <84a1820482419a1f1fb599bc35c2b7dcc1abbcb9.1752329098.git.ojaswin@linux.ibm.com>
- <20250717161154.GF2672039@frogsfrogsfrogs>
- <aH9ffl7-2ri2Exgv@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1753282355; c=relaxed/simple;
+	bh=Y5mV7Iw85fbp5EoomigTRjr705g6yNBWr1FkXK0GWKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+6oMszC1Eh+XT/OdgefvRtGJC/htxrhRiw3QZGa8PNYCrynuGBozrjHHrgj4S1oYlUonVIKuMdWSErrViAv+/WQqos040iMZn1vp+3pRhY2Md5USpgCvzYcH5PsudUz2KRY8YluKK4XjlEj3aUfnuxaT1j4Pv16Uf3wmPC0hMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=jASIwfBk; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1753282323;
+ bh=i8rKZEkFrLRFaYQBc3BIIxI8WYrqNMHpEOrc29zdPS4=;
+ b=jASIwfBkSb9pscpRseVuj3FkBqOO88QJSyfKXetLEiffxytX94js/4etg0Hm7+1TmOqdtNhNY
+ xc0/TDZ64O8lSLLhT3tVwvhwy7jpGoxVts3/62x5Fg5R3taVW8zacVZoWqIOMIryv5LM4f+NYXq
+ DwlH8nnA1+p636zjZcc8Zu028Uw9DCfySX5Gn4qMwjRqNKEKmRRAkmLOt3jwFRLXtGz32pff1kW
+ IPivuNx0raRwdTUaHUyW6jndePy/7w1rE7x7nvUdb6ZIlQwVW0+s3TdvURVAuvaePqib5K/knNs
+ ugn+IBycVsGLlFwspWU60IUxBRS4d/lg3yKFJZeRgcFA==
+X-Forward-Email-ID: 6880f6eacb0ee86f9731d64d
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.1.6
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <eb7c9e40-3c17-488f-98a2-17b972f61e75@kwiboo.se>
+Date: Wed, 23 Jul 2025 16:51:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH9ffl7-2ri2Exgv@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] phy: rockchip: naneng-combphy: Add RK3528 support
+To: Yao Zi <ziyao@disroot.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Frank Wang <frank.wang@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, Chukun Pan <amadeus@jmu.edu.cn>,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250624033733.50197-1-ziyao@disroot.org>
+ <20250624033733.50197-6-ziyao@disroot.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250624033733.50197-6-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 03:23:02PM +0530, Ojaswin Mujoo wrote:
-> On Thu, Jul 17, 2025 at 09:11:54AM -0700, Darrick J. Wong wrote:
-> > On Sat, Jul 12, 2025 at 07:42:44PM +0530, Ojaswin Mujoo wrote:
-> > > Insert range and collapse range only works with bigalloc in case
-> > > the range is cluster size aligned, which fsx doesnt take care. To
-> > > work past this, disable insert range and collapse range on ext4, if
-> > > bigalloc is enabled.
-> > > 
-> > > This is achieved by defining a new function _set_default_fsx_avoid
-> > > called via run_fsx helper. This can be used to selectively disable
-> > > fsx options based on the configuration.
-> > > 
-> > > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > ---
-> > >  common/rc | 27 +++++++++++++++++++++++++++
-> > >  1 file changed, 27 insertions(+)
-> > > 
-> > > diff --git a/common/rc b/common/rc
-> > > index 9a9d3cc8..218cf253 100644
-> > > --- a/common/rc
-> > > +++ b/common/rc
-> > > @@ -5113,10 +5113,37 @@ _require_hugepage_fsx()
-> > >  		_notrun "fsx binary does not support MADV_COLLAPSE"
-> > >  }
-> > >  
-> > > +_set_default_fsx_avoid() {
-> > > +	local file=$1
-> > > +
-> > > +	case "$FSTYP" in
-> > > +	"ext4")
-> > > +		local dev=$(findmnt -n -o SOURCE --target $file)
-> > > +
-> > > +		# open code instead of _require_dumpe2fs cause we don't
-> > > +		# want to _notrun if dumpe2fs is not available
-> > > +		if [ -z "$DUMPE2FS_PROG" ]; then
-> > > +			echo "_set_default_fsx_avoid: dumpe2fs not found, skipping bigalloc check." >> $seqres.full
-> > > +			return
-> > > +		fi
-> > 
-> > I hate to be the guy who says one thing and then another, but ...
-> > 
-> > If we extended _get_file_block_size to report the ext4 bigalloc cluster
-> > size, would that be sufficient to keep testing collapse/insert range?
-> > 
-> > I guess the tricky part here is that bigalloc allows sub-cluster
-> > mappings and we might not want to do all file IO testing in such big
-> > units.
-> 
-> Hmm, so maybe a better way is to just add a parameter like alloc_unit in
-> fsx where we can pass the cluster_size to which INSERT/COLLAPSE range be
-> aligned to. For now we can pass it explicitly in the tests if needed.
-> 
-> I do plan on working on your suggestion of exposing alloc unit via
-> statx(). Once we have that in the kernel, fsx can use that as well.
-> 
-> If this approach sounds okay I can try to maybe send the whole "fixing
-> of insert/collpase range in fsx" as a patchset separate from atomic
-> writes.
+Hi Yao Zi,
 
-Yeah, that sounds like a good longer-term solution to me. :)
+On 6/24/2025 5:37 AM, Yao Zi wrote:
+> Rockchip RK3528 integrates one naneng-combphy that is able to operate in
+> PCIe and USB3 mode. The control logic is similar to previous variants of
+> naneng-combphy but the register layout is apperantly different from the
+> RK3568 one.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../rockchip/phy-rockchip-naneng-combphy.c    | 186 +++++++++++++++++-
+>  1 file changed, 185 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+> index 1d1c7723584b..bf00a85a113b 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+> @@ -20,7 +20,46 @@
+>  #define REF_CLOCK_25MHz			(25 * HZ_PER_MHZ)
+>  #define REF_CLOCK_100MHz		(100 * HZ_PER_MHZ)
+>  
+> -/* COMBO PHY REG */
+> +/* RK3528 COMBO PHY REG */
+> +#define RK3528_PHYREG6				0x18
+> +#define RK3528_PHYREG6_PLL_KVCO			GENMASK(12, 10)
+> +#define RK3528_PHYREG6_PLL_KVCO_VALUE		0x2
+> +#define RK3528_PHYREG6_SSC_DIR			GENMASK(5, 4)
+> +#define RK3528_PHYREG6_SSC_UPWARD		0
+> +#define RK3528_PHYREG6_SSC_DOWNWARD		1
+> +
+> +#define RK3528_PHYREG40				0x100
+> +#define RK3528_PHYREG40_SSC_EN			BIT(20)
+> +#define RK3528_PHYREG40_SSC_CNT			GENMASK(10, 0)
+> +#define RK3528_PHYREG40_SSC_CNT_VALUE		0x17d
+> +
+> +#define RK3528_PHYREG42				0x108
+> +#define RK3528_PHYREG42_CKDRV_CLK_SEL		BIT(29)
+> +#define RK3528_PHYREG42_CKDRV_CLK_PLL		0
+> +#define RK3528_PHYREG42_CKDRV_CLK_CKRCV		1
+> +#define RK3528_PHYREG42_PLL_LPF_R1_ADJ		GENMASK(10, 7)
+> +#define RK3528_PHYREG42_PLL_LPF_R1_ADJ_VALUE	0x9
+> +#define RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ	GENMASK(6, 4)
+> +#define RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ_VALUE 0x7
+> +#define RK3528_PHYREG42_PLL_KVCO_ADJ		GENMASK(2, 0)
+> +#define RK3528_PHYREG42_PLL_KVCO_ADJ_VALUE	0x0
+> +
+> +#define RK3528_PHYREG80				0x200
+> +#define RK3528_PHYREG80_CTLE_EN			BIT(17)
+> +
+> +#define RK3528_PHYREG81				0x204
+> +#define RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X	BIT(5)
+> +#define RK3528_PHYREG81_SLEW_RATE_CTRL		GENMASK(2, 0)
+> +#define RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW	0x7
+> +
+> +#define RK3528_PHYREG83				0x20c
+> +#define RK3528_PHYREG83_RX_SQUELCH		GENMASK(2, 0)
+> +#define RK3528_PHYREG83_RX_SQUELCH_VALUE	0x6
+> +
+> +#define RK3528_PHYREG86				0x218
+> +#define RK3528_PHYREG86_RTERM_DET_CLK_EN	BIT(14)
+> +
+> +/* RK3568 COMBO PHY REG */
+>  #define RK3568_PHYREG6				0x14
+>  #define RK3568_PHYREG6_PLL_DIV_MASK		GENMASK(7, 6)
+>  #define RK3568_PHYREG6_PLL_DIV_SHIFT		6
+> @@ -398,6 +437,147 @@ static int rockchip_combphy_probe(struct platform_device *pdev)
+>  	return PTR_ERR_OR_ZERO(phy_provider);
+>  }
+>  
+> +static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
+> +{
+> +	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
+> +	unsigned long rate;
+> +	u32 val;
+> +
+> +	/* Set SSC downward spread spectrum */
+> +	val = FIELD_PREP(RK3528_PHYREG6_SSC_DIR, RK3528_PHYREG6_SSC_DOWNWARD);
+> +	rockchip_combphy_updatel(priv, RK3528_PHYREG6_SSC_DIR, val, RK3528_PHYREG6);
+> +
+> +	switch (priv->type) {
+> +	case PHY_TYPE_PCIE:
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_pcie, true);
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_pcie, true);
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_pcie, true);
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_pcie, true);
+> +		break;
+> +	case PHY_TYPE_USB3:
+> +		/* Enable adaptive CTLE for USB3.0 Rx */
+> +		rockchip_combphy_updatel(priv, RK3528_PHYREG80_CTLE_EN, RK3528_PHYREG80_CTLE_EN,
+> +					 RK3528_PHYREG80);
+> +
+> +		/* Set slow slew rate control for PI */
+> +		val = FIELD_PREP(RK3528_PHYREG81_SLEW_RATE_CTRL,
+> +				 RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW);
+> +		rockchip_combphy_updatel(priv, RK3528_PHYREG81_SLEW_RATE_CTRL, val,
+> +					 RK3528_PHYREG81);
+> +
+> +		/* Set CDR phase path with 2x gain */
+> +		rockchip_combphy_updatel(priv, RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X,
+> +					 RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X, RK3528_PHYREG81);
+> +
+> +		/* Set Rx squelch input filler bandwidth */
+> +		val = FIELD_PREP(RK3528_PHYREG83_RX_SQUELCH, RK3528_PHYREG83_RX_SQUELCH_VALUE);
+> +		rockchip_combphy_updatel(priv, RK3528_PHYREG83_RX_SQUELCH, val, RK3528_PHYREG83);
+> +
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txcomp_sel, false);
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txelec_sel, false);
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->usb_mode_set, true);
 
---D
+I suggest we add something like following here:
 
-> > 
-> > > +
-> > > +		$DUMPE2FS_PROG -h $dev 2>&1 | grep -q bigalloc && {
-> > > +			export FSX_AVOID+=" -I -C"
-> > 
-> > No need to export FSX_AVOID to subprocesses.
-> > 
-> > --D
-> 
-> Got it, will fix. Thanks for review!
-> 
-> 
-> Regards,
-> ojaswin
-> > 
-> > > +		}
-> > > +		;;
-> > > +	# Add other filesystem types here as needed
-> > > +	*)
-> > > +		;;
-> > > +	esac
-> > > +}
-> > > +
-> > >  _run_fsx()
-> > >  {
-> > >  	echo "fsx $*"
-> > >  	local args=`echo $@ | sed -e "s/ BSIZE / $bsize /g" -e "s/ PSIZE / $psize /g"`
-> > > +
-> > > +	_set_default_fsx_avoid $testfile
-> > > +
-> > >  	set -- $FSX_PROG $args $FSX_AVOID $TEST_DIR/junk
-> > >  	echo "$@" >>$seqres.full
-> > >  	rm -f $TEST_DIR/junk
-> > > -- 
-> > > 2.49.0
-> > > 
-> > > 
-> 
+		rockchip_combphy_param_write(priv->pipe_grf, &cfg->u3otg0_port_en, true);
+
+to ensure that U3 is enabled in case boot firmware disable the U3 port.
+
+> +		break;
+> +	default:
+> +		dev_err(priv->dev, "incompatible PHY type\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rate = clk_get_rate(priv->refclk);
+> +
+> +	switch (rate) {
+> +	case REF_CLOCK_24MHz:
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_24m, true);
+> +		if (priv->type == PHY_TYPE_USB3) {
+> +			/* Set ssc_cnt[10:0]=00101111101 & 31.5KHz */
+> +			val = FIELD_PREP(RK3528_PHYREG40_SSC_CNT, RK3528_PHYREG40_SSC_CNT_VALUE);
+> +			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_CNT, val,
+> +						 RK3528_PHYREG40);
+> +		} else if (priv->type == PHY_TYPE_PCIE) {
+> +			/* tx_trim[14]=1, Enable the counting clock of the rterm detect */
+> +			rockchip_combphy_updatel(priv, RK3528_PHYREG86_RTERM_DET_CLK_EN,
+> +						 RK3528_PHYREG86_RTERM_DET_CLK_EN, RK3528_PHYREG86);
+> +		}
+> +		break;
+> +	case REF_CLOCK_100MHz:
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_100m, true);
+> +		if (priv->type == PHY_TYPE_PCIE) {
+> +			/* PLL KVCO tuning fine */
+> +			val = FIELD_PREP(RK3528_PHYREG6_PLL_KVCO, RK3528_PHYREG6_PLL_KVCO_VALUE);
+> +			rockchip_combphy_updatel(priv, RK3528_PHYREG6_PLL_KVCO, val,
+> +						 RK3528_PHYREG6);
+> +
+> +			/* su_trim[6:4]=111, [10:7]=1001, [2:0]=000, swing 650mv */
+> +			writel(0x570804f0, priv->mmio + RK3528_PHYREG42);
+> +		}
+> +		break;
+> +	default:
+> +		dev_err(priv->dev, "Unsupported rate: %lu\n", rate);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (device_property_read_bool(priv->dev, "rockchip,ext-refclk")) {
+> +		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
+> +
+> +		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
+> +			val = FIELD_PREP(RK3528_PHYREG42_CKDRV_CLK_SEL,
+> +					 RK3528_PHYREG42_CKDRV_CLK_CKRCV);
+> +			val |= FIELD_PREP(RK3528_PHYREG42_PLL_LPF_R1_ADJ,
+> +					  RK3528_PHYREG42_PLL_LPF_R1_ADJ_VALUE);
+> +			val |= FIELD_PREP(RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ,
+> +					  RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ_VALUE);
+> +			val |= FIELD_PREP(RK3528_PHYREG42_PLL_KVCO_ADJ,
+> +					  RK3528_PHYREG42_PLL_KVCO_ADJ_VALUE);
+> +			rockchip_combphy_updatel(priv,
+> +						 RK3528_PHYREG42_CKDRV_CLK_SEL		|
+> +						 RK3528_PHYREG42_PLL_LPF_R1_ADJ		|
+> +						 RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ	|
+> +						 RK3528_PHYREG42_PLL_KVCO_ADJ,
+> +						 val, RK3528_PHYREG42);
+> +
+> +			val = FIELD_PREP(RK3528_PHYREG6_PLL_KVCO, RK3528_PHYREG6_PLL_KVCO_VALUE);
+> +			rockchip_combphy_updatel(priv, RK3528_PHYREG6_PLL_KVCO, val,
+> +						 RK3528_PHYREG6);
+> +		}
+> +	}
+> +
+> +	if (priv->type == PHY_TYPE_PCIE) {
+> +		if (device_property_read_bool(priv->dev, "rockchip,enable-ssc"))
+> +			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
+> +						 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct rockchip_combphy_grfcfg rk3528_combphy_grfcfgs = {
+> +	/* pipe-phy-grf */
+> +	.pcie_mode_set		= { 0x0000, 5, 0, 0x00, 0x11 },
+> +	.usb_mode_set		= { 0x0000, 5, 0, 0x00, 0x04 },
+> +	.pipe_rxterm_set	= { 0x0000, 12, 12, 0x00, 0x01 },
+> +	.pipe_txelec_set	= { 0x0004, 1, 1, 0x00, 0x01 },
+> +	.pipe_txcomp_set	= { 0x0004, 4, 4, 0x00, 0x01 },
+> +	.pipe_clk_24m		= { 0x0004, 14, 13, 0x00, 0x00 },
+> +	.pipe_clk_100m		= { 0x0004, 14, 13, 0x00, 0x02 },
+> +	.pipe_rxterm_sel	= { 0x0008, 8, 8, 0x00, 0x01 },
+> +	.pipe_txelec_sel	= { 0x0008, 12, 12, 0x00, 0x01 },
+> +	.pipe_txcomp_sel	= { 0x0008, 15, 15, 0x00, 0x01 },
+> +	.pipe_clk_ext		= { 0x000c, 9, 8, 0x02, 0x01 },
+> +	.pipe_phy_status	= { 0x0034, 6, 6, 0x01, 0x00 },
+> +	.con0_for_pcie		= { 0x0000, 15, 0, 0x00, 0x110 },
+> +	.con1_for_pcie		= { 0x0004, 15, 0, 0x00, 0x00 },
+> +	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x101 },
+> +	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
+
+And adding something like this:
+
+	/* pipe-grf */
+	.u3otg0_port_en		= { 0x0044, 15, 0, 0x0181, 0x1100 },
+
+Should be possible with ("phy: rockchip: naneng-combphy: Enable U3 OTG
+port for RK3568") [1].
+
+Most RK3528 boards I have come across this far seem to use PCIe instead
+of USB3, so having boot firmware disable U3 early (to help support USB
+gadget in boot firmware) and instead having this PHY driver re-enable U3
+when needed seem most logical to me.
+
+I will push an updated U-Boot rk3528 branch [2] where I include such
+early U3 port disable once source.denx.de is back online again.
+
+[1] https://lore.kernel.org/r/20250723072324.2246498-1-jonas@kwiboo.se
+[2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+
+Regards,
+Jonas
+
+> +};
+> +
+> +static const struct rockchip_combphy_cfg rk3528_combphy_cfgs = {
+> +	.num_phys	= 1,
+> +	.phy_ids	= {
+> +		0xffdc0000,
+> +	},
+> +	.grfcfg		= &rk3528_combphy_grfcfgs,
+> +	.combphy_cfg	= rk3528_combphy_cfg,
+> +};
+> +
+>  static int rk3562_combphy_cfg(struct rockchip_combphy_priv *priv)
+>  {
+>  	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
+> @@ -1213,6 +1393,10 @@ static const struct rockchip_combphy_cfg rk3588_combphy_cfgs = {
+>  };
+>  
+>  static const struct of_device_id rockchip_combphy_of_match[] = {
+> +	{
+> +		.compatible = "rockchip,rk3528-naneng-combphy",
+> +		.data = &rk3528_combphy_cfgs,
+> +	},
+>  	{
+>  		.compatible = "rockchip,rk3562-naneng-combphy",
+>  		.data = &rk3562_combphy_cfgs,
+
 
