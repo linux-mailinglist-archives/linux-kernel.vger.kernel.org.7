@@ -1,101 +1,171 @@
-Return-Path: <linux-kernel+bounces-742196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9D4B0EE94
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C58B0EE93
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF5D1778FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B983B7A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C992F28727F;
-	Wed, 23 Jul 2025 09:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22B2868B8;
+	Wed, 23 Jul 2025 09:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dFRM+tpN"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rYeMw/Z/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC167284694
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA59127E079
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753263460; cv=none; b=qWGK5u0CzzFfepLBmBytKKSSGsvI/z1gOsxJfwxAJvK3gI/LqAEbkllFbGy3k4nhSp6Lt7XiWVTzqlJBk2h7v2gPZ24PlsoIDyFlWjBnexoQsSTf4yRnY3m5jFuvHQR1d2OYFIGL4oFVU7CFrTMX1wpTCSRRTJX2FcBzTCH1QL8=
+	t=1753263458; cv=none; b=FiScy8pqQW8E0iswBlggnzv5pZX1GTqI92HX/bkx0ooAhnxypW4e2wa5ny6b4M7LtR2pjg0P0mDdlb//+8qxXhBSsWBgyim/vB0ejCieIkp4sqtCLjq1qLu5P/dkKVELUDUdeOEqvVp9p7hEyTkCEuckddf+Ul8zPetJquVmWSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753263460; c=relaxed/simple;
-	bh=Q66xsA1c5vWlizutLgsD2be+4pQ8rZeycqCEKNYGQIc=;
+	s=arc-20240116; t=1753263458; c=relaxed/simple;
+	bh=9lbXW47zYRBbNIAHssQzUMi4FIW/6MYbIiMbRSaBNo0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bjlo3Xh4ry832Jzx3xXUgL7bRpUX3e/fZCSpO43XrWGA79buJhCbqjNV3W6/VAk4+99+tClxJsCDhCqccGp35tyy3PCbk3zBtbkSDZF6jtAEumzGkCChEd4XM+RzjZucMHVrIkPlAbHlbZk+F6WReHE3ARBWeXWqIQYoOLDenNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dFRM+tpN; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b33f5cee-d3de-4cbd-8eeb-214ba6b42cb7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753263453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BmHpTBjJA4deSSRvm8BefbJLyr67VvXXsw2bU3lFe7g=;
-	b=dFRM+tpNPT7p9UgKAuDbizJDaaH7rRV5TdcekszlC1wNKSxpudvxz2O8QJjjxFzAJ8pUph
-	+oMTfP+kdVMDtA8N4roTeDqLrTRrH/XHJNG/yjF0Qm9cFxyOrzhb768pZm0C5864VeuWdL
-	qYoHBAYxPwRzcSHhwZvYtt/gOhSRZsc=
-Date: Wed, 23 Jul 2025 10:37:27 +0100
+	 In-Reply-To:Content-Type; b=XG6xOEKWEnX5IwSS8yCcIqOpNrCMc/OV8bW0ynu4obTkrruRnZl5J/PzU+xKI4+YXc38E1//NEq9ZeGe8VG9PwF/lleTDLRMQXgZgezVUe6qMXryMSxTOxbYA3T9NVxsXTa7A4px2GTk98nPbvLXndk3iV0u5qvIPcCUCxMqiNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rYeMw/Z/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6B09FC70;
+	Wed, 23 Jul 2025 11:36:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753263416;
+	bh=9lbXW47zYRBbNIAHssQzUMi4FIW/6MYbIiMbRSaBNo0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rYeMw/Z/5d6HMieBznhzKxln+P5JCikaDAQo5CczlPI3N5qcORPGyX64b08fxURiF
+	 HJQ2NdZTMGwm+BzSht/p7M9l6/6v0jhD4ZTyNpXYMKA2JHpqIjd7nczqibdGtAepNs
+	 CfbFLbJJunj0p0azTZfcqK6pO1XCt/whx9yihCcQ=
+Message-ID: <2bec3583-6078-4650-a8d0-6cfe8fcec3f3@ideasonboard.com>
+Date: Wed, 23 Jul 2025 12:37:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] pch_gbe: Add NULL check for ptp_pdev in pch_gbe_probe()
-To: Chenyuan Yang <chenyuan0y@gmail.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, richardcochran@gmail.com, mingo@kernel.org,
- tglx@linutronix.de
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250723034105.2939635-1-chenyuan0y@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Fix PLL lock timeout and calibration wait time
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: aradhya.bhatia@linux.dev, s-jain1@ti.com, r-donadkar@ti.com,
+ j-choudhary@ti.com, a0512644@ti.com, vkoul@kernel.org, kishon@kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250704125915.1224738-1-devarsht@ti.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250723034105.2939635-1-chenyuan0y@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250704125915.1224738-1-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 23/07/2025 04:41, Chenyuan Yang wrote:
-> Since pci_get_domain_bus_and_slot() can return NULL for PCI_DEVFN(12, 4),
-> add NULL check for adapter->ptp_pdev in pch_gbe_probe().
-> 
-> This change is similar to the fix implemented in commit 9af152dcf1a0
-> ("drm/gma500: Add NULL check for pci_gfx_root in mid_get_vbt_data()").
-> 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> ---
->   drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-> index e5a6f59af0b6..10b8f1fea1a2 100644
-> --- a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-> +++ b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-> @@ -2515,6 +2515,11 @@ static int pch_gbe_probe(struct pci_dev *pdev,
->   		pci_get_domain_bus_and_slot(pci_domain_nr(adapter->pdev->bus),
->   					    adapter->pdev->bus->number,
->   					    PCI_DEVFN(12, 4));
-> +	if (!adapter->ptp_pdev) {
-> +		dev_err(&pdev->dev, "PTP device not found\n");
-> +		ret = -ENODEV;
-> +		goto err_free_netdev;
-> +	}
+Hi,
 
-Why is this error fatal? I believe the device still can transmit and
-receive packets without PTP device. If this situation is really possible
-I would suggest you to add checks to ioctl function to remove
-timestamping support if there is no PTP device found
+On 04/07/2025 15:59, Devarsh Thakkar wrote:
+> This fixes PLL lockup and O_CMN_READY timeout by moving the polling
+> function after common state machine gets enabled. Also fix the
+> calibration wait time to optimize the polling time.
+> 
+> NOTE: This needs to be applied on top of  
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com/           
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-5-862c841dbe02@ideasonboard.com/           
+>   from the series:                                                                                  
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/    
+> 
+> Changelog:
+> V4:                                                                                                 
+> - Optimize wait_for_pll_lock, wait_for_cmn_ready calls to oneline                                   
+>   using conditional operator                                                                        
+> - Remove superflous init for ret variable in cdns_dphy_configure                                    
+> - Enable pll and psm ref clocks before configuring PLL                                              
+> - Update commit message to refer to TRM                                                             
+> - Rebased on top of:                                                                                
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com/           
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-5-862c841dbe02@ideasonboard.com/           
+>   from the series:                                                                                  
+>   https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/    
+> 
+> V3: 
+> -   Use read-modify-write for using calibrated value for PLL
+>     lock time
+> -   Move out PLL clock configuration part to power_on function
+> 
+> V2: Separate patch for calibration logic and
+>     return error code on polling 
+> 
+> Previous versions:
+> V3: https://lore.kernel.org/all/20250502033451.2291330-1-devarsht@ti.com/
+> V2: https://lore.kernel.org/all/20250326152320.3835249-1-devarsht@ti.com/
+> V1: https://lore.kernel.org/all/20241230125319.941372-1-devarsht@ti.com/
+> 
+> Test logs:
+> Link: https://gist.github.com/devarsht/d08d851399ca327e5594266a8d66d478
+> 
+> Rangediff:
+> V3->V4:
+> https://gist.github.com/devarsht/e4db52e1f4aec2d45596b3ed019e92ef
+> 
+> V2->V3:
+> https://gist.github.com/devarsht/c4d2c4f6715ec7aa4df4cb2c7991b7aa
+> 
+> Devarsh Thakkar (2):
+>   phy: cadence: cdns-dphy: Fix PLL lock and O_CMN_READY polling
+>   phy: cadence: cdns-dphy: Update calibration wait time for startup
+>     state machine
+> 
+>  drivers/phy/cadence/cdns-dphy.c | 126 ++++++++++++++++++++++++--------
+>  1 file changed, 94 insertions(+), 32 deletions(-)
+> 
 
->   
->   	netdev->netdev_ops = &pch_gbe_netdev_ops;
->   	netdev->watchdog_timeo = PCH_GBE_WATCHDOG_PERIOD;
+For the series:
+
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+ Tomi
 
 
