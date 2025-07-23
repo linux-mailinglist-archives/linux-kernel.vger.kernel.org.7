@@ -1,293 +1,184 @@
-Return-Path: <linux-kernel+bounces-742304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AAF4B0EFB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C20B1B0EFBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A09158266F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96145836C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA9E28C2C5;
-	Wed, 23 Jul 2025 10:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUoTdpub"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B6828D8C4;
+	Wed, 23 Jul 2025 10:26:06 +0000 (UTC)
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazon11021077.outbound.protection.outlook.com [40.107.57.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3BA28B4FE;
-	Wed, 23 Jul 2025 10:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753266284; cv=none; b=IJ8/E0LVWmcjruLr5gJU7+UylpDEpHr0AyWlCPoR73VgdAUzLqFDxphlZLpx5tbjQaoatE0K5eGr0y+E8vKgkEXK8G5zgPugMMQm4Hwl8UpoHoxEjxxJTGK1pf0pY5QYKIVEHeQZFFNhshkVNYAGvdUx7EyH+HurH5cWEYlIKSk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753266284; c=relaxed/simple;
-	bh=fdOwq/b2f7LD/Gf9dK9AiNuHaOxniq0rEMtRpG8ko2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTnEjAr9FEiq1sNWKm3WRP0f8o6ON9zbzzoaNyMWkJ4JEEO5HNLHVXfJEYpRzopp8AJyKYPQf9DNm2vuMsD38WGKqLubTS9hl3F56P/VdimiQfoO34syJ8Lw5ibIdHLlxiQuDFs0JgfrPhtYFKfmeU5ldzOY70oO0myo0rph9yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUoTdpub; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a54690d369so5348452f8f.3;
-        Wed, 23 Jul 2025 03:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753266280; x=1753871080; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3QfeDIhZBxM0UUz93jdrNB6cr19zCPo/07VW3k9S7Eo=;
-        b=QUoTdpubiqm7XDgt+TJUYZDBNaExnozI4gDE5PIVNfG2S/sLmbQGmIJvyccXrhz01i
-         oUVE6P0+xjF43RU2hZYyyefYu2xDgYmfL3vb4kT0MYypP+nh7yzzx2OWg9fsKrbLSmlL
-         viOvzDIxIDHQVUaFRhl9OeXbFfs1g93cXZphdHi1/M1/HB6ByK+/p2JjyVuuUzm1wqg3
-         NOiWfsC6g2yidm71mZzcdelKL5VtaAp0x4GrYWZbQJ+0IMDe6jqQgxj4oH6e9YVRCJlS
-         wZK6kBNm7ObTafzv50Wrv0hx95sYqipjuqnKzBkr8HWOGPPu8kVitQwGIDU8DHAiH7K/
-         4Hkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753266280; x=1753871080;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3QfeDIhZBxM0UUz93jdrNB6cr19zCPo/07VW3k9S7Eo=;
-        b=VWt97Szdn4BwDU1mbvIZZ001RXEHkmkzCPmOfuUtUWKexd2rkQoLQHcENneMwPs52H
-         vgM4Y+Rh/ossFAtHaFuM4rwUg1/qkP12gNEXDyN5P5VhrikEl9g008jE24ezIC3ARDUM
-         ysCHIojue0M5lqqziebYVtS/qV3cCMtBdox4cNWpLtWT7raGCwESh4zHxe7dRDRgGfe/
-         FQNSABaWbPX9S4OZZgw9rCJThGe8US2y5cVSXWCzGlZrlaPoHwpJiHB1/u+n4Mpi9RRG
-         rwOdqRwkFCjSWbhBPVI0DkPJoCVx+uPPuZBUB0Wx/cKT8+T026rh7UThlRmtZvhn2de2
-         ovtg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8z5pk8gUuW1g+vEM3lHM+9fySJrgLQVGvl1tuSagJ/dCV//IKSejhmhDQGt2c4lFVNWrmktDXa/JGqA==@vger.kernel.org, AJvYcCUuzFpClTN0nGNB5e+ZPseEQsY6XMPV/PklewsB7EPMoQb64PtvozCgjrV9wTKkZeQDkWupS5EJ@vger.kernel.org, AJvYcCV+xsHP0/XZcpb3uiBPi4TyJ32r6vQc1Z4Dfs1JfvXR+KCmxjx2PBM4j9O/xglaiFEZI7JZOK1z2v2ngG/p@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXfy8OKBJ6arep7KPqQ19zbHVRRAZPhkeRaVajfMq1g+B17dNC
-	Y1cNM6VFwNkhhZKbm7f+rwUCoydw/53pIVgCSP+Db8n6i2m+EuwIYRsr
-X-Gm-Gg: ASbGnctCQ6fXD/sK81yf20iipZe348jZmtFxMbHrrPd1rc0cK7P9PbHeLOQeKNy8Wv/
-	4VfugK8Znod85N61CoJjdE8MvoIM43CaGUr8OOc07F6z504m2Wkxezt6MBgumpLlO9rWF0oUX8S
-	Gpsy9NR6P5GgUqzqmJ7b/hm9nQEMNrxwMKSAyAU749y5A7VoEbgLyqBVNF2bFKUuYQyK+SDYfPT
-	yiuCHI/HhE/Z8p65RILFkw065toYEgDmXr82GqjupLyYpiua/+6ySegBDvCL452wMEU5adLtQrv
-	tbhOmhwRqA6wSm/pkfATq7woXvSfBKFUcP6ElqQLsR9XP/CzXODS3Ibz7n3JdsLbb0j+7lBgk4Z
-	mq3cKQ5InkBWA1gnrig==
-X-Google-Smtp-Source: AGHT+IGS04CA4uRCGjfoHnJSh4w9B1dOWMtvG+P9rrFOsMscOys6Vkwj4GFJ5qvKH1O+tSHxvpYVmQ==
-X-Received: by 2002:a05:6000:250a:b0:3b6:d6d:dd2 with SMTP id ffacd0b85a97d-3b768eb0630mr2546202f8f.25.1753266279498;
-        Wed, 23 Jul 2025 03:24:39 -0700 (PDT)
-Received: from gmail.com ([2a02:c7c:f4f0:900:dbce:b6e:fb8b:9dcf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca487fdsm15906378f8f.48.2025.07.23.03.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 03:24:39 -0700 (PDT)
-Date: Wed, 23 Jul 2025 11:24:31 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Dmitry Savin <envelsavinds@gmail.com>
-Subject: Re: [PATCH RESEND] HID: multitouch: fix slab out-of-bounds access in
- mt_report_fixup()
-Message-ID: <aIC4X_pDf6SFd55c@gmail.com>
-References: <20250722080003.3605-1-qasdev00@gmail.com>
- <c90e88a4-7fff-49fa-8a6f-24f3671d9390@kernel.org>
- <aH9zl18IqvL7l9pX@gmail.com>
- <1a2d0220-5862-4cba-8d0f-2eb7556c9620@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC6E28A407;
+	Wed, 23 Jul 2025 10:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.57.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753266365; cv=fail; b=f3HhvvJSp0nH8Yox0sRNQs4xWIS3Y61e2TKAMf6QCvB9XGcgoKO0P3TGOfKXMPkwAQgqVddaIdNNi7ki9rBAwb2f16YLHKKLSHjXn1T7vUKJ+JLjpoS2OxfVTlqzfg2b0H1vlQzYPzWe3w047jJ9xF7FwftN0SMQt9n30yjLCWw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753266365; c=relaxed/simple;
+	bh=Lj+WRQ31BHR92etfW/U7yo2oWYpHS52cyD2SKx/tgxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KzZkJtUkx1dhmx+y2axw8anr33mTA0O6IYMyF8R19ldxMqVXIK6jJWEXjM++v+Ew+nVu0/OV0muJw4JoCTL2A75U6cYvkXiM1ptzQDlEZmLBrofPXRN6F1xAj5cryTqNiDZE7YBeYVxl8KDv8fE49wx2ulUVhXeDIZWTjv+DmO8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.57.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XDPnOm5PTOMWZaBlOVLz9g5IQJf7tSr1ewWTIDSDMvjTShLRQJXOLIkf2c3XgLBawBHyqtZ3JK0dTelVuZ9/t1PhPoCAS+duDPekxmo30dc29sVHtWAAx9o0+Z3lbBvewp+jbEtdiPqUK5DHfL/m4CywVEi7rQAJQqbqbVejTVGfe9xbEUXv7wSv/6fKuYK6khS+nWnpNKIPV+WLIRpk3Z2EZK1jDoH2wVXI8QI0LwqzDQ9k/Lqr9sHGkfob+5+RuuN14ywRHAeN7vC3eCk9qaoXdXeGDsGQGFdSi4jtvnTUZGXRfAQBtYjP0aGCWfRvyBJ0CJ3E3zh5DsKUXbDCHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ftll1+qMBfUyVi2xBlb3LCrDFetJc/49hlj06+AWj4=;
+ b=aLYSyOfqYcf5tObTCoeDEkAKOw2YerCmFsJmCLtBexVcsCISSPK9HH1UwMA6/XO+Bsh5hx3Gelwr/j9Gpxb0CX8AxjNWGuHz/KASy/nPl5bEJEz1lmwED33hzLA2uya2q7KEyQ9K6MFD+Izvq5zNAmpXf/GJ2bPFzqSTqZfNPUCxdeyLCFuF4mIdpU9hhwWiZd712Ghy7PTMI6s+d9MqkFKf1WmLUp+DLyFzEzarF7Bq73yG+YcwcqudaiRaVHS/KDYJ413PXDEdAJCNnC8/afbU111eqrc5tjsncZGLNO2TztR82r05U0YRThRQpwKTnab798Aew6R9CZDOQ1+T+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
+ by MA5P287MB4064.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:165::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
+ 2025 10:25:56 +0000
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
+ 10:25:56 +0000
+From: Tarang Raval <tarang.raval@siliconsignals.io>
+To: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	hverkuil@xs4all.nl
+Cc: Tarang Raval <tarang.raval@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Yunke Cao <yunkec@google.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] media: Add devm-managed helper functions for media and V4L2 subsystems
+Date: Wed, 23 Jul 2025 15:55:04 +0530
+Message-Id: <20250723102515.64585-1-tarang.raval@siliconsignals.io>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BM1PR01CA0152.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:68::22) To PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:199::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a2d0220-5862-4cba-8d0f-2eb7556c9620@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3P287MB1829:EE_|MA5P287MB4064:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7da574a4-79bc-438b-18b5-08ddc9d34f28
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kAyjzfgfrVB1GKkkYrqzYaeaqCGMQ1otJOa3F68l7anERUII/TzUfXgLVRfG?=
+ =?us-ascii?Q?hO86Cl1SrlwBDW7XoxnICGMGhEl7NenemgVrX4B+l1ydBsB0axEv6uiNi9CR?=
+ =?us-ascii?Q?ZQ52LKyPFPwPQdZFJsIA02GTfz16BT5Sw2a6+shQonzX1Caz7ZfD9RLMOgUD?=
+ =?us-ascii?Q?Y9vFr9ywJ0MWLMCDa47VMKDhhTyPlqgrmD9Ap9GleHzg9DjAlDliVLjwMQSP?=
+ =?us-ascii?Q?G/2SYzegnj4aGAY6ZSzX6+xYYWqjvVIxEm+TWky+eWJBi1p0AISaltwHcdKl?=
+ =?us-ascii?Q?Rlf0c0ZxDEnffUdI0M609IaGPxEQnm+ZeKkJsHX5SZoozUMmOqWMbCpvmJhi?=
+ =?us-ascii?Q?94OfxocZnt/VaSvT454dx4jlvCcn7mL8g+mYeQ6QeFepHXcTUCSGyQj5UKXC?=
+ =?us-ascii?Q?LYrWHvOPH1l4dzjoeaNQet2eR1uo1ZfOnZnMvrjPdvxWVnlS8DAxmkw+A3fu?=
+ =?us-ascii?Q?tp/Bmapk04pXzQJyPYLnUmeXUExfVlmBMf64DVekpKNap2oRw7Xba3zFoNWn?=
+ =?us-ascii?Q?HjxkSOT0/W+nxW//28pJ/HRaNO1G71KmS6lWBfkBtrao6S+tAFB0A5Z67c+P?=
+ =?us-ascii?Q?on0kPfR7V7Kxs0KUPCDT2FAzB20EVD0yg9Tb+YnDu6PMqpwLQx5tk6pn6HHR?=
+ =?us-ascii?Q?78hqJ/kQAPv3YkDuJ6ibkzSPdBwEWXP4wgmr2xQe7UsVBbos+deFMOs+7Z4p?=
+ =?us-ascii?Q?Prq3TTVrmIBTerlEHPoJ7+zBX9UH0AdpQWxySXd9EPtbrvJOnfvBKVb20Q9p?=
+ =?us-ascii?Q?bS4KpprfnOrvfIbD9hF/TcycJaEy1TBJsJZs4eoHR14lU9AOVAkcpzQXlJMd?=
+ =?us-ascii?Q?x3LwOfRvZCou1FTAD99se2A2HfYas1qCBg1hEsuVJBP0nFdir8giYOQb/wSr?=
+ =?us-ascii?Q?k+nSZguYi/QdQLawG2HlueflCANiESLSxdSPp5aHbEE76DdW/wbxiEs1U632?=
+ =?us-ascii?Q?U1ngVIoKvwY0dnT8ywpm7Z7i+OaJLt+kU2tmNDka6wFDpuz2u9x1fdCTXegt?=
+ =?us-ascii?Q?GAKzhlnHB8M1EDbWtLhUr/+DiCV9IK5Pqz+lGZDBDuA+cTqD7q+Q5uS93mX6?=
+ =?us-ascii?Q?D7PNCvhQtBCD6cQDGoxhMsJeOD/cS4FHgsYSQk8sJ1GXpRjwdw/0guH8AoO6?=
+ =?us-ascii?Q?0PAw2hRPU+v/TJL0caXlBwxZnTspa36F10OQMZyYJ1vt6G8lbm6ZtzatdXGS?=
+ =?us-ascii?Q?kuRUn4017FRPEt8lBoXM9efKI8HKjKOAksDJOTt8/j3lL7maswWAtNl/MAyd?=
+ =?us-ascii?Q?r7y42snSbytzsY4tsndYwrXFcCSECh2Nap3WhFrXeYs+JQsGnLAiq/gNS0AL?=
+ =?us-ascii?Q?9L1B3337VH+Xq2y5rlIKo5SBBXT/dnWNVZgC2c1v+Fzf5HomrgZRAW20imT4?=
+ =?us-ascii?Q?btriL2w7FAnhJExh+hzAOFuuFPciz19u3PxNsDmNbNIZCobFGexAhNemX2Ej?=
+ =?us-ascii?Q?7uWC2RCkZHL3S+Vo2REr/+lyqPRnKoiByG+3mUk882fD6Su9Kg6EYg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xuQGUi2uw8xOsJ2pAuRHj3fTkP38CHeKLwFWm43343lW79O/BnQHJYafg59a?=
+ =?us-ascii?Q?4lpUtuPJ1vZlN2t4ZEePytJjymiaOkw7GquI74Mhhwpy/4dRFYhUrrXgYgrm?=
+ =?us-ascii?Q?XbrCz5Tjjx+/Dlc8x4wmfdppaYWC6+AwZBLluGc6RkDjG5SiKfECM4yVjWD6?=
+ =?us-ascii?Q?cQrVHNN0n62dgbEd6u0CWVzHC0O7B8//pcao3ZJJqpgJ0ALSqtGW5kwlHsLF?=
+ =?us-ascii?Q?OYfHSzTu5mfNZozvYag+6M2rcVzXITfkAx/hsDVDBhRVnd3MrS/Girz0zPdj?=
+ =?us-ascii?Q?pHitTCBHdcVb5yaacrVk3H6h/h7L+fNV4bG5XjpbfuzY77jjTBhvz24fJsVT?=
+ =?us-ascii?Q?Wz1Ssh14gF/CMh92OMnP7mJN/cHRv0jEu/cGPqVZ3MBQ5KyXAcCxaR3N2YwY?=
+ =?us-ascii?Q?ZoUbkikpjE4E54krz6xRIVumfRJnrN3rSFdeR4jvlcSw1sayMp6sOQm9oUGs?=
+ =?us-ascii?Q?Cf1oTVX7/A4xro9JPt0OXS+PUL/BRgOk5IEMFVBO7urYGYCF9m3meOS+Eo2w?=
+ =?us-ascii?Q?I2rWWz9JZH1kyIRSRac+sS8kCdIS9ly9dqb7OYRsxL0ATJn//9bl/nMeWlv9?=
+ =?us-ascii?Q?mMMoLvyoSOG9QwQDdF/FzVkxFTAM8V1AMEVIo4tuAncEcewL7i3VsPiufeSD?=
+ =?us-ascii?Q?77Rs1IhsS7d5dC+I9c1YWiJ087nBPayxGSzrdHFOq91IdXcweGLvJnNWOZhU?=
+ =?us-ascii?Q?5R+ZMCfxqqsUThLhxu1VgDkpXIS9zoHauySJ5ndSQqNG2SwfIho2U0/EEgwQ?=
+ =?us-ascii?Q?D+LoAOl6aZeB3wQv4f6TZ8W7/LFzR99RKYXIvvsLwV4nkofiabtz4njU4ird?=
+ =?us-ascii?Q?Uq0yz2GiaFClRrRwTt7q9ONwwd2FhQ+NXUGJGerE3IgnPT5NdlTwdmPzyDyH?=
+ =?us-ascii?Q?6HrrxCo2v9tbh/INg8Gm9kHbSctbyrWakI/U0JaX4egzKrNm9qD30eeok+CN?=
+ =?us-ascii?Q?JzFVEq52pPrfXdFkXpshgm8HQHTerP4BmkujWYBW9qskOZ1dBg2uNTKPl/aq?=
+ =?us-ascii?Q?TX9eaK/C6R1oSV0Hsi7cSYNe1ILbi0YZt3pkpf0FcT/O0N7zN9uZKvyxR1p1?=
+ =?us-ascii?Q?wrik3cfn6b1jAzuNpldDdmM1uxVElFL4r7oyU1zHi1hiSrFEMBPQHjQ3E3wv?=
+ =?us-ascii?Q?xZxNYqaIKa1BmpAO6Yth3Cydik+WUhhKbRHDV546VfKUT7RRHNHyU/ukmCST?=
+ =?us-ascii?Q?Ktzjzq8llmxkI4vQjk9WzDnYMpurJi3kcef+dKgj4qXlxKWEb4Zhjco6fjgv?=
+ =?us-ascii?Q?MwSy2TTMQ2MMeIzdsYV1HlUvSlD6e95qMlJH/JofVTPGMc348vozeBivum8c?=
+ =?us-ascii?Q?dQ7D89zzBwj8ms7rHdXJeIQcwI/OyvC2+msgYwkBnQlu2s/dSulf1fN+pxpB?=
+ =?us-ascii?Q?7QgbLO1b+9cfKsFWqCCw2R4ST4nPTZDc8Hqnk3Ay72uYIjwP8XydF8kdxTj+?=
+ =?us-ascii?Q?13KjUcuIOD9RxTo8gmEDr7LjUK9iAtFg3tCAaMcL4tit0AqCLPaGz44Kko7R?=
+ =?us-ascii?Q?iu50j9sJ/B300oSMy7+R2KXy2DEQjNXWvf4X3xIa1K1LB4XIEGm2mWOVw+Ln?=
+ =?us-ascii?Q?5cgk4pwbRlJPe5qheuBSA2wE0n3ys7vzcDYhWmRL+/9yfWU9qsE24H+M6q0r?=
+ =?us-ascii?Q?kA=3D=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7da574a4-79bc-438b-18b5-08ddc9d34f28
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 10:25:56.0627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5LUeKK53CyLVWlO0iQSs0zW7TPYHtNmlgJJPMyqEBGCWCFBIPBDUgQWG/d6yKPOByRe7YU92hARzJf/5lXH48oSSfW0qEmdrwxWhf0rKm+U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA5P287MB4064
 
-On Wed, Jul 23, 2025 at 06:40:52AM +0200, Jiri Slaby wrote:
-> On 22. 07. 25, 13:19, Qasim Ijaz wrote:
-> > On Tue, Jul 22, 2025 at 11:16:15AM +0200, Jiri Slaby wrote:
-> > > On 22. 07. 25, 10:00, Qasim Ijaz wrote:
-> > > > A malicious HID device can trigger a slab out-of-bounds during
-> > > > mt_report_fixup() by passing in report descriptor smaller than
-> > > > 607 bytes. mt_report_fixup() attempts to patch byte offset 607
-> > > > of the descriptor with 0x25 by first checking if byte offset
-> > > > 607 is 0x15 however it lacks bounds checks to verify if the
-> > > > descriptor is big enough before conducting this check. Fix
-> > > > this vulnerability by ensuring the descriptor size is
-> > > > greater than or equal to 608 before accessing it.
-> > > > 
-> > > > Below is the KASAN splat after the out of bounds access happens:
-> > > > 
-> > > > [   13.671954] ==================================================================
-> > > > [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
-> > > > [   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
-> > > > [   13.673297]
-> > > > [   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
-> > > > [   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
-> > > > [   13.673297] Call Trace:
-> > > > [   13.673297]  <TASK>
-> > > > [   13.673297]  dump_stack_lvl+0x5f/0x80
-> > > > [   13.673297]  print_report+0xd1/0x660
-> > > > [   13.673297]  kasan_report+0xe5/0x120
-> > > > [   13.673297]  __asan_report_load1_noabort+0x18/0x20
-> > > > [   13.673297]  mt_report_fixup+0x103/0x110
-> > > > [   13.673297]  hid_open_report+0x1ef/0x810
-> > > > [   13.673297]  mt_probe+0x422/0x960
-> > > > [   13.673297]  hid_device_probe+0x2e2/0x6f0
-> > > > [   13.673297]  really_probe+0x1c6/0x6b0
-> > > > [   13.673297]  __driver_probe_device+0x24f/0x310
-> > > > [   13.673297]  driver_probe_device+0x4e/0x220
-> > > > [   13.673297]  __device_attach_driver+0x169/0x320
-> > > > [   13.673297]  bus_for_each_drv+0x11d/0x1b0
-> > > > [   13.673297]  __device_attach+0x1b8/0x3e0
-> > > > [   13.673297]  device_initial_probe+0x12/0x20
-> > > > [   13.673297]  bus_probe_device+0x13d/0x180
-> > > > [   13.673297]  device_add+0xe3a/0x1670
-> > > > [   13.673297]  hid_add_device+0x31d/0xa40
-> > > > [...]
-> > > > 
-> > > > Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> > > > Reviewed-by: Dmitry Savin <envelsavinds@gmail.com>
-> > > > ---
-> > > >    drivers/hid/hid-multitouch.c | 25 ++++++++++++++++---------
-> > > >    1 file changed, 16 insertions(+), 9 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> > > > index 7ac8e16e6158..af4abe3ba410 100644
-> > > > --- a/drivers/hid/hid-multitouch.c
-> > > > +++ b/drivers/hid/hid-multitouch.c
-> > > > @@ -1461,18 +1461,25 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-> > > >    	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
-> > > >    	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
-> > > >    	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-> > > > -		if (rdesc[607] == 0x15) {
-> > > > -			rdesc[607] = 0x25;
-> > > > -			dev_info(
-> > > > -				&hdev->dev,
-> > > > -				"GT7868Q report descriptor fixup is applied.\n");
-> > > > +		if (*size >= 608) {
-> > > > +			if (rdesc[607] == 0x15) {
-> > > > +				rdesc[607] = 0x25;
-> > > > +				dev_info(
-> > > > +					&hdev->dev,
-> > > > +					"GT7868Q report descriptor fixup is applied.\n");
-> > > > +			} else {
-> > > > +				dev_info(
-> > > > +					&hdev->dev,
-> > > > +					"The byte is not expected for fixing the report descriptor. \
-> > > > +					It's possible that the touchpad firmware is not suitable for applying the fix. \
-> > > > +					got: %x\n",
-> > > 
-> > > This is wrong. You have all the spaces/tabs in the string now. Drop all the
-> > > backslashes, and open and close the string on every line.
-> > > 
-> > > > +					rdesc[607]);
-> > > > +			}
-> > > 
-> > > As this is superlong and superindented, perhaps introduce a new function for
-> > > these devices?
-> > > 
-> > > >    		} else {
-> > > >    			dev_info(
-> > > >    				&hdev->dev,
-> > > > -				"The byte is not expected for fixing the report descriptor. \
-> > > > -It's possible that the touchpad firmware is not suitable for applying the fix. \
-> > > > -got: %x\n",
-> > > 
-> > > This was horrid too, yeah.
-> > > 
-> > > > -				rdesc[607]);
-> > > > +				"GT7868Q fixup: report descriptor only %u bytes, skipping\n",
-> > > 
-> > > A predicate missing. Eg. "has only", or "is only".
-> > > 
-> > 
-> > Thanks for the feedback Jiri, I took the advice on board, is something
-> > like this better?
-> 
-> Definitely.
-> 
-> >   static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-> > 				   unsigned int *size)
-> >   {
-> >            if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
-> >                (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
-> >                 hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-> > 		 if (*size < 608) {
-> > 			 dev_info(
-> > 				 &hdev->dev,
-> > 				 "GT7868Q fixup: report descriptor is only %u bytes, skipping\n",
-> > 				 *size);
-> >                            return rdesc;
-> >                    }
-> > 		 if (rdesc[607] == 0x15) {
-> > 			 rdesc[607] = 0x25;
-> > 			 dev_info(
-> > 				 &hdev->dev,
-> > 				 "GT7868Q fixup: report descriptor fixup is applied.\n");
-> > 		 } else {
-> > 			 dev_info(&hdev->dev,
-> > 				 "GT7868Q fixup: offset 607 is %x (expected 0x15), "
-> > 				 "descriptor may be malformed, skipping\n",
-> > 				 rdesc[607]);
-> > 		 }
-> > 	  }
-> >   	  return rdesc;
-> >   }
-> > 
-> > the key changes I made are:
-> > 
-> > - Move size check to the top, this way the indentation level is decent
-> > - get rid of message backslashes
-> > - shorten the fixup failure message when rdesc[607] is not 0x15 and make
-> >    it a bit clearer since this message was the longest - just a minor
-> >    cleanup
-> > - added "is only %u bytes" as you suggested
-> > 
-> > if this is all good I can send v2.
-> 
-> I would invert the conditions. So the code would look like:
-> 
-> static bool goodix_needs_fixup(hdev)
-> {
->   if (hdev->vendor != I2C_VENDOR_ID_GOODIX)
->     return false;
-> 
->  return hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
->                  hdev->product == I2C_DEVICE_ID_GOODIX_01E9;
-> }
-> 
-> static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->  				   unsigned int *size)
-> {
->   if (!goodix_needs_fixup(hdev))
->     return rdesc;
-> 
->   if (*size < 608) {
->     dev_info(&hdev->dev,
->              "GT7868Q fixup: report descriptor is only %u bytes,
-> skipping\n",
->  	     *size);
->     return rdesc;
->   }
-> 
->   if (rdesc[607] != 0x15) {
->     dev_info(&hdev->dev,
->  	 "GT7868Q fixup: offset 607 is %x (expected 0x15), descriptor may be
-> malformed, skipping\n",
->          rdesc[607]);
->     return rdesc;
->   }
-> 
->   rdesc[607] = 0x25;
->   dev_info(&hdev->dev,
->  	 "GT7868Q fixup: report descriptor fixup is applied.\n");
-> 
->   return rdesc;
-> }
+This patch series introduces devm-managed versions of several commonly used
+media and V4L2 initialization functions. These helpers simplify resource
+management by leveraging the devres infrastructure, ensuring automatic
+cleanup when the associated device is detached or the driver is unloaded.
 
-Thanks Jiri, this looks good. I think Ill split this into 2 patches
-one for fixing the OOB with a size check and the second for a general
-function cleanup. Hope that sounds good.
+Tested with IMX219 and OV2735 camera sensors on an i.MX8MP-based platform.
 
-Thanks
-qasim
-> 
-> thanks,
-> -- 
-> js
-> suse labs
+Tarang Raval (4):
+  media: mc: Add devm_media_entity_pads_init() helper
+  media: v4l: async: Add devm_v4l2_async_register_subdev_sensor() helper
+  media: v4l2: subdev: Add devm_v4l2_subdev_init_finalize() helper
+  media: v4l2-ctrls: Add devm_v4l2_ctrl_handler_init() helper
+
+ drivers/media/mc/mc-entity.c              | 19 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-async.c      | 19 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ctrls-core.c | 20 ++++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-subdev.c     | 18 ++++++++++++++++++
+ include/media/media-entity.h              | 20 ++++++++++++++++++++
+ include/media/v4l2-async.h                | 18 ++++++++++++++++++
+ include/media/v4l2-ctrls.h                | 19 +++++++++++++++++++
+ include/media/v4l2-subdev.h               | 17 +++++++++++++++++
+ 8 files changed, 150 insertions(+)
+
+-- 
+2.34.1
+
 
