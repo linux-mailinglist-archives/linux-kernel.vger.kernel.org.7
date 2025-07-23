@@ -1,97 +1,111 @@
-Return-Path: <linux-kernel+bounces-743191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35367B0FBD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C2BB0FBC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 595E57BAD66
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC60565DE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D4F23AE96;
-	Wed, 23 Jul 2025 20:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4123C4E9;
+	Wed, 23 Jul 2025 20:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tRvqJ29w"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djZqBtod"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D6B23ABA6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555C11DE2DE;
+	Wed, 23 Jul 2025 20:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753303106; cv=none; b=aDrmzs8WTRkGXxHktSSlWDi/ROWQqvMK5/Qko7Mef9VpLgLYeQiz7iejKj7Y0ODLgXPXZOezUpuJxl5RB+U35bSF1H+XTlZq8c7i4egIzgaqphXciQVcs/8DnvIEwc44tDtfIN61cfz7BAuLivQJXNoPIQI7jzpGxLawqWIjspo=
+	t=1753303140; cv=none; b=Yg1SpOTanY3kmYcoGXSfvAAsB1Mu0o0YqUjiZbD6pUBcRa8wOvoQ2kOZHeJ+Ova8zsDmpALU4GUgIs7pZdw4hJm3btQbD2qD2zcztE5UOufcnohvQdhKQ+6iaNsqg1JGlxDAx3kx0UTe6FaaMsUnYSs3hwYsa7NlxDTw9iIBiIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753303106; c=relaxed/simple;
-	bh=9ksNRByA1R6WRpgBAqiFWOz1XaJlUuXPr+5odDMxUFw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pHIpdXQJ5HEWMRySNBK5X0PYXDNn2QpmM+vFl31OT6wI4/kzRKYMz3RdYjgWIDTFmRSO6RGeW30y0EbbSJ0+n/nUd5D5yoEEdywd+Tsleoily/7x6CqN1+9F23qJ5Zbk6bM/p5Jg93LbltQ8E4xSCVlXLlodg9N6P1AUexeztQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tRvqJ29w; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b39280167fdso235878a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753303104; x=1753907904; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lngQW6Itt1q4DN9erl71oSaE8dVS9EZdINPQsN2S/U4=;
-        b=tRvqJ29w0q4VvYfAxEoitAKpD7jlZys4VNC1KzEhXNP9b162/WAdaFrIbMMloTkwFq
-         4pZUv6zsoZ2Rw5n8s5i16gge5w3fshkajdl9GrzR2gNLZxjztskyRC+N6WAeC8VyeRFg
-         wBhAsz1WTk0zr3xqYac2iXeu29qtEmP9QicNa4CjjMpb8iIjOFHxE9h/DyyfvbnRqhhK
-         ffqW79TWlOBb8bJhyxrkW6jptF/QcKZW46i/CO51JMDxxLXSeqfXGxKlIZr8WKZzBntD
-         wKkHMzhJfCCcUCsrBLYd4rjLNydl2VrMYVoysA46qnaNIZZQSRN9fIih8NV9FKIRrAgr
-         CxYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753303104; x=1753907904;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lngQW6Itt1q4DN9erl71oSaE8dVS9EZdINPQsN2S/U4=;
-        b=GDZ3M+7JzjJTKG3M/fL/KvInot35ZdvDfA4zkz4t7DL5Donvt56UCpjFEFzbrs0Iyb
-         j++FVSuSwwy0ZcLu06515YixzThMXAVcjKWjit4fy1z+aBDr8CTyiyxDzxFMCASfPKnz
-         s53/J/hL5Ct7895iTq9wInYUCXWzHgNp+igvixULYEwt4/b7kgD65J405el/5wYOYu15
-         aMzMutzetirnZE28R/r5wSSvZj1ukmKJWN6xZqj6eHaNKz3Wydt10YUKHz71ZFgBEzH+
-         Ogm8fmlMiofsmdRUdnSPf6W6FcxfhC1rlst8ypoexIJ3pxYpGDvrwsRk7C6eKqrlQ6K2
-         8hgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcfhFtdI23U12H0ZxvfZOezpZKARK/XlHMQh8JJMPB7CJeidRaBLz8vUBSt0pDOYfMADGhF0YVvzxioD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6gjHHJCLBuugDX03b5WDbJTgQFONfeTkCpDoygQ9IwczJEj/E
-	GkTCFpfjrESthRJw8sM6NPy7Jl+K6W4smesp9wUtPHUoy6SMg3c+LkERen5QlmeXKp9ps/Wb00r
-	m2MfrYg==
-X-Google-Smtp-Source: AGHT+IEquxd/YBrG+cywa0a1Dg+V5VomOJUYvM7hrpfchOE4B9Vl3O0Q+2Xy8S7PqUmaL7IPxMeVUuFecvs=
-X-Received: from pjbsw11.prod.google.com ([2002:a17:90b:2c8b:b0:31c:2fe4:33bd])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:35c7:b0:312:e6f1:c05d
- with SMTP id 98e67ed59e1d1-31e5073f550mr6110372a91.2.1753303104581; Wed, 23
- Jul 2025 13:38:24 -0700 (PDT)
-Date: Wed, 23 Jul 2025 13:38:22 -0700
-In-Reply-To: <20250707224720.4016504-5-jthoughton@google.com>
+	s=arc-20240116; t=1753303140; c=relaxed/simple;
+	bh=53iMllV/QMtR2Pz6h6pQ/XW3ZnbjJ2SxLIO1nHjBr5o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gfA54lsVz1PCm7EPoaAoJ8vAyNVlrDCSzGXi6BdZu3UKMyiWRY8RV4l2EMueFncCemT4H0MzlMBRcSxHLrXueKQVX0DGy4XoN/CauA141H0is57zJSU+UscIrZhm0efouuPl8ZXHoUsdl0cLJzW2FJqAHQWzVpDSk2lR3t5I+6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djZqBtod; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D7BC4CEE7;
+	Wed, 23 Jul 2025 20:38:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753303139;
+	bh=53iMllV/QMtR2Pz6h6pQ/XW3ZnbjJ2SxLIO1nHjBr5o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=djZqBtodvFgywZUYqeix7oD77SVKjKXsm3QywmGf9OyDzrFv6WZTAQAnHAordDRqE
+	 FWwNhi4+hzeCnVMW4jpM7j0hpN674zBqShLviyFD5aPJsmaz6QcJ3z668difzDG7GJ
+	 eJofQDZgybNecu4Yi5t8gxr8dxBdzlHWfJVKzAqWXxa6myfcTNB1WE1rvG0RLQ8smt
+	 yJNL1RVjTIFA6OyCkLepu7h6rvrvIQ1RULNXuGs+KY3SyzTf7/a+y87/4TN7e02zZ4
+	 aFne0lcj1se6SD3KKSjCLsynnd9FNEupsLysCZHRSRsriXYTSujD2arSoYV/h+2KBH
+	 sZ5tNboxAY3Vw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v2 0/3] SM8750 GPU clocks
+Date: Wed, 23 Jul 2025 22:38:47 +0200
+Message-Id: <20250723-topic-8750_gpucc-v2-0-56c93b84c390@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com> <20250707224720.4016504-5-jthoughton@google.com>
-Message-ID: <aIFIPm5zENeKlgkw@google.com>
-Subject: Re: [PATCH v5 4/7] KVM: x86/mmu: Only grab RCU lock for nx hugepage
- recovery for TDP MMU
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
-	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFdIgWgC/32NQQqDMBREryJ/3UhMjQld9R5Fik2++qGaNFFpk
+ dy9qQfoZuANzJsdIgbCCJdih4AbRXJzBnEqwIzdPCAjmxkEF5IrrtniPBmmleT3wa/GMIGNttg
+ /hLJnyDMfsKf3oby1mUeKiwuf42Grfu0f2VYxznRjdNNJXttaXV2M5WvtnsZNU5kD2pTSF2H2d
+ LO3AAAA
+X-Change-ID: 20250708-topic-8750_gpucc-2e68defb27d3
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753303136; l=1345;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=53iMllV/QMtR2Pz6h6pQ/XW3ZnbjJ2SxLIO1nHjBr5o=;
+ b=C+q3jN9k8nHgP1TIffskP0Vur6QDfx12IpRagkT3acNFPG0HPygmy/1t3GUeRNXfUFHSA0UXH
+ QaziLnOlEKTDZqYuKIu5nhTZa/aJ9t/b2H2DXP4kQCdK6zuqDf+8jCk
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon, Jul 07, 2025, James Houghton wrote:
-> Now that we have separate paths for the TDP MMU, it is trivial to only
-> grab rcu_read_lock() for the TDP MMU case.
+This series brings a driver for GPU clock controllers (there are two
+now, but that's almost a cosmetic change) on 8750 and wires up the GPU
+SMMU instance.
 
-Yeah, but it's also a largely pointless change.  For the overwhelming majority of
-deployments, rcu_read_{un}lock() does literally nothing.  And when it does do
-something, the cost is a single atomic.
+No external dependencies to the best of my knowledge.
 
-I'm leaning quite strongly toward skipping this patch, as I find the code to be
-much more readable if KVM grabs RCU unconditionally.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Changes in v2:
+- gxcc bindings: remove double colon & list the names for power-domains
+- Link to v1: https://lore.kernel.org/r/20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com
 
-> We do not need to grab it for the shadow MMU, as pages are not RCU-freed in
-> that case.
+---
+Konrad Dybcio (3):
+      dt-bindings: clock: qcom: Add SM8750 GPU clocks
+      clk: qcom: Add a driver for SM8750 GPU clocks
+      arm64: dts: qcom: sm8750: Add GPU clock & IOMMU nodes
+
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |   5 +
+ .../bindings/clock/qcom,sm8750-gxcc.yaml           |  61 +++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi               |  63 +++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gpucc-sm8750.c                    | 524 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8750-gpucc.h      |  53 +++
+ 7 files changed, 716 insertions(+)
+---
+base-commit: 0be23810e32e6d0a17df7c0ebad895ba2c210fc4
+change-id: 20250708-topic-8750_gpucc-2e68defb27d3
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
