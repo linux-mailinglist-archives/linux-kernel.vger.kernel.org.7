@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-743374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A44B0FDD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62462B0FDDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20DE1CE01EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E4BDAA6E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C4B242D6D;
-	Thu, 24 Jul 2025 00:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14B6C2E0;
+	Thu, 24 Jul 2025 00:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJdXS4qY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nd4kaBvi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CDD24DCE3;
-	Thu, 24 Jul 2025 00:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0122513A86C;
+	Thu, 24 Jul 2025 00:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753315221; cv=none; b=ODEEkIlPJdRrM5n++uzT91IbJQ+tQzLsDPZZo3qocw2xgjsLzuXPpVpdPPka5bb47Ck4gndUk+zEFDFuJ96B9zvAhmSneceNN55zxs6BAnrVrZmD6rg7yK/E15deTH7ByVbxM/KerdRSlpr6Tx1QG5EO82HMJHXSZeSPEaj6eb4=
+	t=1753315227; cv=none; b=JqaDBE/95TwkvE0gtSeVkJTYXft6yBbxqErazYN2lqUIxB5uu750UKc7wZCcOxi0QbpRGRfD4Z86HjIAKV0B4IT+0/N4HFsc+/bwL07L0d0YSQWZ9RkcqXXa/aXPAsCZ7Uv4U2ugLJmZ4jiFOA6pNPZH56SJxG+FXem3bcVx1VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753315221; c=relaxed/simple;
-	bh=TMO1q/yEQRaEVcz1Gj8Of2O2/owEkXMVj9dfWg7k7FI=;
+	s=arc-20240116; t=1753315227; c=relaxed/simple;
+	bh=/oaGFd9a2iA9pf6zk2AOQig//Q3kUefe8KL6KqMoiFs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/jfltoBwiqVqVaJ/JKI7mkZ6MmwyUz4S7nI7Eco0Hiq+ByFiPb8C5M7FHtCs6FQVeGlXyERhP6fsMTOOzIbyOGBOazhd89P02t3ASeG7+NjR8KolTvWOpPiBEIsGzncR35Jqy9kvNTtKdUx/OY1/KnVp7jhCz5HlP/0b4WPHXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJdXS4qY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB32C4CEEF;
-	Thu, 24 Jul 2025 00:00:16 +0000 (UTC)
+	 MIME-Version; b=YIUW1ixzobxOEIC75ETxqu+gvQTX2loQn5dKF6m7Th2osHRomT9kD4kGIWUG/dY4Xew+Gm5AhAMQonNcQiWA2RbAmsAoaLQ5w3te0IB4xVjqm+EsWjOKsALwgom+z/dPbB1FcvOtz2LHMVq51kUD7M4hUvChUtrPYWB0hqfcGtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nd4kaBvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D1AC4CEEF;
+	Thu, 24 Jul 2025 00:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753315219;
-	bh=TMO1q/yEQRaEVcz1Gj8Of2O2/owEkXMVj9dfWg7k7FI=;
+	s=k20201202; t=1753315226;
+	bh=/oaGFd9a2iA9pf6zk2AOQig//Q3kUefe8KL6KqMoiFs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vJdXS4qYNrnsr8tUJ37NQb3l1bAsU16Jdm3hd8zSg9Q8zItzzKtziIaS1f0Wv42un
-	 YkxA80wyWzCkJUM6n6VZP04XH/NRQeKflouthLyzbACAikxNOrHiS4HPFMstc6yo9I
-	 vELOoPegx9wZ9kjdY1ah/Hnw7UDqooMrnuzlUPH5fwn+lKUaLXXBk7m65dnskCy80l
-	 UZ9c8Yuar/rYplRu1TLeFwJmb/10BHbTiwX5UwvFZT0sAYifHezFkgwccWhVUQQPsR
-	 RS5hw7FXHFp2omUc4qgcGAXnJXBhxob5bG8uYYiGNGg4dFiR861lMS8C8dOQYuuRyT
-	 YqzWtWoMB2BVw==
+	b=Nd4kaBvi7KAB7x28KZOlKghgEWi4vKFgOsA1GF6s3d3Q0nKdGJ4Eb2RlQF5zJfhH4
+	 +OEdCDD89Fhcgpb/g6SBoNs8psJP+W/hWDfTtDecGUSmvLg3cJcroUWT042uhw2tTL
+	 5nYRLVx2gsS55SgZZgdD19Gf7WqMSuZ5ENx5f9NOUeIpQRu4ug6ax6RDc82tqI6Hv8
+	 FhzGF3gra9wd5aPPG4PXGiTyhYl/ORXNZz6d9CTumDhF4m5YsEPX0kD2yBXo+uyLb+
+	 HRGNVf7idw/toZF0tuM79F8cwNAIuMXazoFRCZ70k/+KHpaRE0QB21cIsOAgYImg2U
+	 GmB4vkDNwrS9A==
 From: Gary Guo <gary@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -51,17 +51,19 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Alex Mantel <alexmantel93@mailbox.org>
-Cc: Will Deacon <will@kernel.org>,
+	Will Deacon <will@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	rust-for-linux@vger.kernel.org,
+	Tamir Duberstein <tamird@gmail.com>,
+	Francesco Zardi <frazar00@gmail.com>,
+	Antonio Hickey <contact@antoniohickey.com>
+Cc: rust-for-linux@vger.kernel.org,
+	David Gow <davidgow@google.com>,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/5] rust: convert `Arc` to use `Refcount`
-Date: Thu, 24 Jul 2025 00:32:56 +0100
-Message-ID: <20250723233312.3304339-4-gary@kernel.org>
+Subject: [PATCH v5 4/5] rust: block: convert `block::mq` to use `Refcount`
+Date: Thu, 24 Jul 2025 00:32:57 +0100
+Message-ID: <20250723233312.3304339-5-gary@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250723233312.3304339-1-gary@kernel.org>
 References: <20250723233312.3304339-1-gary@kernel.org>
@@ -75,137 +77,223 @@ Content-Transfer-Encoding: 8bit
 
 From: Gary Guo <gary@garyguo.net>
 
-With `Refcount` type created, `Arc` can use `Refcount` instead of
-calling into FFI directly.
+Currently there's a custom reference counting in `block::mq`, which uses
+`AtomicU64` Rust atomics, and this type doesn't exist on some 32-bit
+architectures. We cannot just change it to use 32-bit atomics, because
+doing so will make it vulnerable to refcount overflow. So switch it to
+use the kernel refcount `kernel::sync::Refcount` instead.
 
+There is an operation needed by `block::mq`, atomically decreasing
+refcount from 2 to 0, which is not available through refcount.h, so
+I exposed `Refcount::as_atomic` which allows accessing the refcount
+directly.
+
+Tested-by: David Gow <davidgow@google.com>
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
 Signed-off-by: Gary Guo <gary@garyguo.net>
 ---
- rust/kernel/sync/arc.rs | 45 +++++++++++++----------------------------
- 1 file changed, 14 insertions(+), 31 deletions(-)
+ rust/kernel/block/mq/operations.rs |  7 ++--
+ rust/kernel/block/mq/request.rs    | 63 ++++++++----------------------
+ rust/kernel/sync/refcount.rs       | 14 +++++++
+ 3 files changed, 34 insertions(+), 50 deletions(-)
 
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 4ee155b43b2dc..9298993ea7d8b 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -8,7 +8,7 @@
- //! threads.
- //!
- //! It is different from the standard library's [`Arc`] in a few ways:
--//! 1. It is backed by the kernel's `refcount_t` type.
-+//! 1. It is backed by the kernel's [`Refcount`] type.
- //! 2. It does not support weak references, which allows it to be half the size.
- //! 3. It saturates the reference count instead of aborting when it goes over a threshold.
- //! 4. It does not provide a `get_mut` method, so the ref counted object is pinned.
-@@ -18,11 +18,11 @@
- 
- use crate::{
-     alloc::{AllocError, Flags, KBox},
--    bindings,
-     ffi::c_void,
-     init::InPlaceInit,
+diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
+index c2b98f507bcbd..c0f95a9419c4e 100644
+--- a/rust/kernel/block/mq/operations.rs
++++ b/rust/kernel/block/mq/operations.rs
+@@ -10,9 +10,10 @@
+     block::mq::Request,
+     error::{from_result, Result},
+     prelude::*,
 +    sync::Refcount,
-     try_init,
--    types::{ForeignOwnable, Opaque},
-+    types::ForeignOwnable,
+     types::ARef,
  };
- use core::{
-     alloc::Layout,
-@@ -145,7 +145,7 @@ pub struct Arc<T: ?Sized> {
- #[pin_data]
- #[repr(C)]
- struct ArcInner<T: ?Sized> {
--    refcount: Opaque<bindings::refcount_t>,
+-use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Ordering};
++use core::marker::PhantomData;
+ 
+ /// Implement this trait to interface blk-mq as block devices.
+ ///
+@@ -78,7 +79,7 @@ impl<T: Operations> OperationsVTable<T> {
+         let request = unsafe { &*(*bd).rq.cast::<Request<T>>() };
+ 
+         // One refcount for the ARef, one for being in flight
+-        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
++        request.wrapper_ref().refcount().set(2);
+ 
+         // SAFETY:
+         //  - We own a refcount that we took above. We pass that to `ARef`.
+@@ -187,7 +188,7 @@ impl<T: Operations> OperationsVTable<T> {
+ 
+             // SAFETY: The refcount field is allocated but not initialized, so
+             // it is valid for writes.
+-            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(AtomicU64::new(0)) };
++            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(Refcount::new(0)) };
+ 
+             Ok(0)
+         })
+diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+index fefd394f064a7..71c62143e94d6 100644
+--- a/rust/kernel/block/mq/request.rs
++++ b/rust/kernel/block/mq/request.rs
+@@ -8,13 +8,10 @@
+     bindings,
+     block::mq::Operations,
+     error::Result,
++    sync::Refcount,
+     types::{ARef, AlwaysRefCounted, Opaque},
+ };
+-use core::{
+-    marker::PhantomData,
+-    ptr::NonNull,
+-    sync::atomic::{AtomicU64, Ordering},
+-};
++use core::{marker::PhantomData, ptr::NonNull, sync::atomic::Ordering};
+ 
+ /// A wrapper around a blk-mq [`struct request`]. This represents an IO request.
+ ///
+@@ -37,6 +34,9 @@
+ /// We need to track 3 and 4 to ensure that it is safe to end the request and hand
+ /// back ownership to the block layer.
+ ///
++/// Note that the driver can still obtain new `ARef` even if there is no `ARef`s in existence by
++/// using `tag_to_rq`, hence the need to distinguish B and C.
++///
+ /// The states are tracked through the private `refcount` field of
+ /// `RequestDataWrapper`. This structure lives in the private data area of the C
+ /// [`struct request`].
+@@ -98,8 +98,11 @@ pub(crate) unsafe fn start_unchecked(this: &ARef<Self>) {
+     ///
+     /// [`struct request`]: srctree/include/linux/blk-mq.h
+     fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::request, ARef<Self>> {
+-        // We can race with `TagSet::tag_to_rq`
+-        if let Err(_old) = this.wrapper_ref().refcount().compare_exchange(
++        // To hand back the ownership, we need the current refcount to be 2.
++        // Since we can race with `TagSet::tag_to_rq`, this needs to atomically reduce
++        // refcount to 0. `Refcount` does not provide a way to do this, so use the underlying
++        // atomics directly.
++        if let Err(_old) = this.wrapper_ref().refcount().as_atomic().compare_exchange(
+             2,
+             0,
+             Ordering::Relaxed,
+@@ -173,13 +176,13 @@ pub(crate) struct RequestDataWrapper {
+     /// - 0: The request is owned by C block layer.
+     /// - 1: The request is owned by Rust abstractions but there are no [`ARef`] references to it.
+     /// - 2+: There are [`ARef`] references to the request.
+-    refcount: AtomicU64,
 +    refcount: Refcount,
-     data: T,
  }
  
-@@ -157,7 +157,7 @@ impl<T: ?Sized> ArcInner<T> {
-     /// `ptr` must have been returned by a previous call to [`Arc::into_raw`], and the `Arc` must
-     /// not yet have been destroyed.
-     unsafe fn container_of(ptr: *const T) -> NonNull<ArcInner<T>> {
--        let refcount_layout = Layout::new::<bindings::refcount_t>();
-+        let refcount_layout = Layout::new::<Refcount>();
-         // SAFETY: The caller guarantees that the pointer is valid.
-         let val_layout = Layout::for_value(unsafe { &*ptr });
-         // SAFETY: We're computing the layout of a real struct that existed when compiling this
-@@ -229,8 +229,7 @@ impl<T> Arc<T> {
-     pub fn new(contents: T, flags: Flags) -> Result<Self, AllocError> {
-         // INVARIANT: The refcount is initialised to a non-zero value.
-         let value = ArcInner {
--            // SAFETY: There are no safety requirements for this FFI call.
--            refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) }),
-+            refcount: Refcount::new(1),
-             data: contents,
-         };
+ impl RequestDataWrapper {
+     /// Return a reference to the refcount of the request that is embedding
+     /// `self`.
+-    pub(crate) fn refcount(&self) -> &AtomicU64 {
++    pub(crate) fn refcount(&self) -> &Refcount {
+         &self.refcount
+     }
  
-@@ -348,18 +347,13 @@ pub fn into_unique_or_drop(this: Self) -> Option<Pin<UniqueArc<T>>> {
-         // We will manually manage the refcount in this method, so we disable the destructor.
-         let this = ManuallyDrop::new(this);
-         // SAFETY: We own a refcount, so the pointer is still valid.
--        let refcount = unsafe { this.ptr.as_ref() }.refcount.get();
-+        let refcount = unsafe { &this.ptr.as_ref().refcount };
+@@ -189,7 +192,7 @@ pub(crate) fn refcount(&self) -> &AtomicU64 {
+     /// # Safety
+     ///
+     /// - `this` must point to a live allocation of at least the size of `Self`.
+-    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut AtomicU64 {
++    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut Refcount {
+         // SAFETY: Because of the safety requirements of this function, the
+         // field projection is safe.
+         unsafe { &raw mut (*this).refcount }
+@@ -205,47 +208,13 @@ unsafe impl<T: Operations> Send for Request<T> {}
+ // mutate `self` are internally synchronized`
+ unsafe impl<T: Operations> Sync for Request<T> {}
  
-         // If the refcount reaches a non-zero value, then we have destroyed this `Arc` and will
-         // return without further touching the `Arc`. If the refcount reaches zero, then there are
-         // no other arcs, and we can create a `UniqueArc`.
--        //
--        // SAFETY: We own a refcount, so the pointer is not dangling.
--        let is_zero = unsafe { bindings::refcount_dec_and_test(refcount) };
--        if is_zero {
--            // SAFETY: We have exclusive access to the arc, so we can perform unsynchronized
--            // accesses to the refcount.
--            unsafe { core::ptr::write(refcount, bindings::REFCOUNT_INIT(1)) };
-+        if refcount.dec_and_test() {
-+            refcount.set(1);
- 
-             // INVARIANT: We own the only refcount to this arc, so we may create a `UniqueArc`. We
-             // must pin the `UniqueArc` because the values was previously in an `Arc`, and they pin
-@@ -456,14 +450,10 @@ fn borrow(&self) -> &T {
- 
- impl<T: ?Sized> Clone for Arc<T> {
-     fn clone(&self) -> Self {
--        // SAFETY: By the type invariant, there is necessarily a reference to the object, so it is
--        // safe to dereference it.
--        let refcount = unsafe { self.ptr.as_ref() }.refcount.get();
+-/// Store the result of `op(target.load())` in target, returning new value of
+-/// target.
+-fn atomic_relaxed_op_return(target: &AtomicU64, op: impl Fn(u64) -> u64) -> u64 {
+-    let old = target.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| Some(op(x)));
 -
--        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot overflow to zero.
-+        // INVARIANT: `Refcount` saturates the refcount, so it cannot overflow to zero.
-         // SAFETY: By the type invariant, there is necessarily a reference to the object, so it is
-         // safe to increment the refcount.
--        unsafe { bindings::refcount_inc(refcount) };
-+        unsafe { self.ptr.as_ref() }.refcount.inc();
- 
-         // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
-         unsafe { Self::from_inner(self.ptr) }
-@@ -472,16 +462,10 @@ fn clone(&self) -> Self {
- 
- impl<T: ?Sized> Drop for Arc<T> {
-     fn drop(&mut self) {
--        // SAFETY: By the type invariant, there is necessarily a reference to the object. We cannot
--        // touch `refcount` after it's decremented to a non-zero value because another thread/CPU
--        // may concurrently decrement it to zero and free it. It is ok to have a raw pointer to
--        // freed/invalid memory as long as it is never dereferenced.
--        let refcount = unsafe { self.ptr.as_ref() }.refcount.get();
+-    // SAFETY: Because the operation passed to `fetch_update` above always
+-    // return `Some`, `old` will always be `Ok`.
+-    let old = unsafe { old.unwrap_unchecked() };
 -
-         // INVARIANT: If the refcount reaches zero, there are no other instances of `Arc`, and
-         // this instance is being dropped, so the broken invariant is not observable.
--        // SAFETY: Also by the type invariant, we are allowed to decrement the refcount.
--        let is_zero = unsafe { bindings::refcount_dec_and_test(refcount) };
-+        // SAFETY: By the type invariant, there is necessarily a reference to the object.
-+        let is_zero = unsafe { self.ptr.as_ref() }.refcount.dec_and_test();
-         if is_zero {
-             // The count reached zero, we must free the memory.
-             //
-@@ -775,8 +759,7 @@ pub fn new_uninit(flags: Flags) -> Result<UniqueArc<MaybeUninit<T>>, AllocError>
-         // INVARIANT: The refcount is initialised to a non-zero value.
-         let inner = KBox::try_init::<AllocError>(
-             try_init!(ArcInner {
--                // SAFETY: There are no safety requirements for this FFI call.
--                refcount: Opaque::new(unsafe { bindings::REFCOUNT_INIT(1) }),
-+                refcount: Refcount::new(1),
-                 data <- pin_init::uninit::<T, AllocError>(),
-             }? AllocError),
-             flags,
+-    op(old)
+-}
+-
+-/// Store the result of `op(target.load)` in `target` if `target.load() !=
+-/// pred`, returning [`true`] if the target was updated.
+-fn atomic_relaxed_op_unless(target: &AtomicU64, op: impl Fn(u64) -> u64, pred: u64) -> bool {
+-    target
+-        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| {
+-            if x == pred {
+-                None
+-            } else {
+-                Some(op(x))
+-            }
+-        })
+-        .is_ok()
+-}
+-
+ // SAFETY: All instances of `Request<T>` are reference counted. This
+ // implementation of `AlwaysRefCounted` ensure that increments to the ref count
+ // keeps the object alive in memory at least until a matching reference count
+ // decrement is executed.
+ unsafe impl<T: Operations> AlwaysRefCounted for Request<T> {
+     fn inc_ref(&self) {
+-        let refcount = &self.wrapper_ref().refcount();
+-
+-        #[cfg_attr(not(CONFIG_DEBUG_MISC), allow(unused_variables))]
+-        let updated = atomic_relaxed_op_unless(refcount, |x| x + 1, 0);
+-
+-        #[cfg(CONFIG_DEBUG_MISC)]
+-        if !updated {
+-            panic!("Request refcount zero on clone")
+-        }
++        self.wrapper_ref().refcount().inc();
+     }
+ 
+     unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
+@@ -257,10 +226,10 @@ unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
+         let refcount = unsafe { &*RequestDataWrapper::refcount_ptr(wrapper_ptr) };
+ 
+         #[cfg_attr(not(CONFIG_DEBUG_MISC), allow(unused_variables))]
+-        let new_refcount = atomic_relaxed_op_return(refcount, |x| x - 1);
++        let is_zero = refcount.dec_and_test();
+ 
+         #[cfg(CONFIG_DEBUG_MISC)]
+-        if new_refcount == 0 {
++        if is_zero {
+             panic!("Request reached refcount zero in Rust abstractions");
+         }
+     }
+diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
+index 3ff4585326b41..a9b24c6b2f8a7 100644
+--- a/rust/kernel/sync/refcount.rs
++++ b/rust/kernel/sync/refcount.rs
+@@ -4,6 +4,8 @@
+ //!
+ //! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
+ 
++use core::sync::atomic::AtomicI32;
++
+ use crate::build_assert;
+ use crate::types::Opaque;
+ 
+@@ -34,6 +36,18 @@ fn as_ptr(&self) -> *mut bindings::refcount_t {
+         self.0.get()
+     }
+ 
++    /// Get the underlying atomic counter that backs the refcount.
++    ///
++    /// NOTE: This will be changed to LKMM atomic in the future.
++    #[inline]
++    pub fn as_atomic(&self) -> &AtomicI32 {
++        let ptr = self.0.get().cast();
++        // SAFETY: `refcount_t` is a transparent wrapper of `atomic_t`, which is an atomic 32-bit
++        // integer that is layout-wise compatible with `AtomicI32`. All values are valid for
++        // `refcount_t`, despite some of the values being considered saturated and "bad".
++        unsafe { &*ptr }
++    }
++
+     /// Set a refcount's value.
+     #[inline]
+     pub fn set(&self, value: i32) {
 -- 
 2.49.0
 
