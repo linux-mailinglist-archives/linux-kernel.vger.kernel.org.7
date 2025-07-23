@@ -1,246 +1,170 @@
-Return-Path: <linux-kernel+bounces-742145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7601B0EDED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE25B0EE02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64911565F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD176C0735
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F18F283CB1;
-	Wed, 23 Jul 2025 08:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DB4283FE7;
+	Wed, 23 Jul 2025 09:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cp3YSihD"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011070.outbound.protection.outlook.com [52.101.65.70])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SehxYpO7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED8D281371;
-	Wed, 23 Jul 2025 08:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261183; cv=fail; b=eAw8eNG0JGD/nUemslVboVjOK/QfRwYPM4F6AUcN/HeqaNNn3d1e0sPoVW5DiIwG/xX9KalWGKa7QAMCLKpXFAQcV8dTSxydyyw9M+RF7ZtCm07DFQVJ1smNreZ1sZYQVE/Poib+WL8QqBtak4wTjzJsAUy/YpF/VX7lVH1+o3Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261183; c=relaxed/simple;
-	bh=5XVdOBZ1BCclXv2zS718c1F6pmvpRiT3r7OLYCL5Q4g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YuFz3hsCzDsltK/gN/mwSXV9p2r6vlwm0Zck2cF0wBr0BHFRZ+sX1GzYbDABL2GOX2uGLI5k75tdhoLY/WiSpr1RkkQ4DVPAOKW+W9/2C+uYK/0+GwdpBfOAUcUwdPE+1/aDqg9e4+KZA1AgHA7zFUVkGTTmLgedq+tCxq5knDk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cp3YSihD; arc=fail smtp.client-ip=52.101.65.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oXirgwlfWfDWHM84uY7xdEAlqQVZeZBdbvuyPfkkrqIzS5KPgKv8LpmDf+YyuFC6LaAcMtdr94JIfFG92TfwI3h3wLn6ROTq8Agj5+MxzIGwf96Z+an/Dc+ug07OPA/j4KM4HCI4sqDm4ruNa9uM7gAvHQRzhmh8t2/xKYToSJKI/lldsfqWAkfUQJP8fnJe7dY1qf5UIE25UG400HPMr6eOFbamzJhuhn4SqNFzTG7Gxzci7WJbsnu83fP2kFtg6NT/mRcwwzYAR4mP2GIKcfSO+QldIlJSb3EboNYLDYfsAAPmKR2NmtlqSiIY3uQG+Z9Pe/olCSOpFraIhgFoiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YDlab+WoMlh3WvpFRAqch8rh4EcSLqpq/wpTMR/0938=;
- b=egVI/yYxh66U5wb7l2tM3RiA6FjP56yryYWp3b5deCcHvPFc3c2G+CWyG/mzxp9bfztEPaNXC+mVOhuG0P6vDfYDYhigtxnjiLCtAu/18DPl3aIbOQen6irE1Hd8Yg6164V/nXAUo7JVwHTlkAJyUtAspKRZ7eQN+2siXqK6XxdG29lI5Q2m3hkDa5CaLRL6/2kihv9adOWDwKTJK/sUxKSdX7Oi21RzUrWssg0DH3/a4toUS0lESvFPjvy81qpNxckyeuMPC/5qARJm7wXL/Ho6V4waCqERNPKLtCGbZBMA1mt1A1qJR1QFQnEb1GE/uE0rQ0L3F0qwswjsOFmPWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YDlab+WoMlh3WvpFRAqch8rh4EcSLqpq/wpTMR/0938=;
- b=Cp3YSihDscnivgq5KWgsdA9L06dpzZQDkynyAAaA9FlbPV7TNPWvPvpYSNJucb2l+5tLLMOh3T+AIN9CushmLMWMECha1Xqe7vcY5gxHXBAD2Tg2uuPr4O46aCUSPbCVZxrWXUKis93bWod7SHMPj9ULJCZigArkO228Bju4SqN65dwwn9sdgel5GpNJmYE3NdxKRhSMBTKWwhhCxLatMIl2UaxHE/5IMkFLqhPDpkHRnAc4ecshbpVxLS7stmB1Btg1N2wSHg95PufjMyjNsanDEhBDIsNe2ls5IiVSW/VD1/1oojB+23aN6iD1qdhNDnuvKtAj0d/v1dVD/u2tpw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DU4PR04MB10315.eurprd04.prod.outlook.com (2603:10a6:10:56b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 08:59:38 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
- 08:59:37 +0000
-Message-ID: <adf144c9-3c36-4806-b1bc-9122d511f338@nxp.com>
-Date: Wed, 23 Jul 2025 17:01:11 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: display: imx: add binding for i.MX8MP
- HDMI PAI
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- lumag@kernel.org, dianders@chromium.org, cristian.ciocaltea@collabora.com,
- luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de
-References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
- <20250718101150.3681002-4-shengjiu.wang@nxp.com>
- <a5621775-5032-4422-80bb-5f8f60351dbe@nxp.com>
- <CAA+D8ANb7kZETxO_CQazoz6-DiNCOGivLhJVwhw9p78ynP1ntQ@mail.gmail.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <CAA+D8ANb7kZETxO_CQazoz6-DiNCOGivLhJVwhw9p78ynP1ntQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0078.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::20) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6021F94A;
+	Wed, 23 Jul 2025 09:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753261480; cv=none; b=VlN4Q4B94eH/LHR+7KKhBKX1A0UXoMxIujgez2hFvoFwOGHdx0yqhEmw1iFQulUlwxWsa5iTMggxyS9QqFt+dPur+7TM2P9nGGO+4FTSyQzdJeADiPIxNd6/XeWl2HjYb34zE6lXjmvX+Z4MufXJ+qCP+VvUIyg/iyP3C76Klkw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753261480; c=relaxed/simple;
+	bh=uM1yIeNXaAOrUJx+SIA3ksktxtXkBR6/9c40F73MvHk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9Jg/u4NxSTuArs77Qciwa4SDnZda0KuJSiE+wAkml5pM8YO32NX6dNGzZO1caMS+sZTXvNOYFUzoSoyu47DBXjF6ubMafI1LNcenSaS0DIrDwJM36YK7dIjOISPkWbdbQVKoPcuOXJ6Q1TTdPmdqrHHkAGalH53kdpW8V7lf3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=SehxYpO7; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1753261480; x=1784797480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uM1yIeNXaAOrUJx+SIA3ksktxtXkBR6/9c40F73MvHk=;
+  b=SehxYpO71RR3UI2vDteDh+uCdSb9RCpqZokZw7dD4VoAbh3PHG3ji8lG
+   EyI6XElA+ziJ4DirMeeWmHSorEl32u/Tom9+FVb8QZJs/C8nkoL5o7e5T
+   XLf3FXdTQRhzBu+j/4dSOg5riYnSFyd6VuQZVfl8wKU/6TJerlacrFpwQ
+   L6IK4yHcSjGC58F5a8jk/Urk0s1foA/VIJQ2zKxzrNAEv8zNAJ2W3geCc
+   9iRGmmmg1try1Ui+sh5q2oX1idEjVXZaXb7smTTEpqr2Mp9IzeGgNplXb
+   9bWQQnU4arSY+1QItNKeRbzVelCQEKPWSkMh/n9CCv33CYiAB4azstprK
+   g==;
+X-CSE-ConnectionGUID: HpDSfaDuQV22XKWexB7eBw==
+X-CSE-MsgGUID: 3sx0FfeUSWCSbAk2P3OhuQ==
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="44308986"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jul 2025 02:04:39 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 23 Jul 2025 02:04:36 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 23 Jul 2025 02:04:36 -0700
+Date: Wed, 23 Jul 2025 11:01:45 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: phy: micrel: Add support for lan8842
+Message-ID: <20250723090145.o2kq4vxcjrih54rt@DEN-DL-M31836.microchip.com>
+References: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
+ <aIB0VYLqcBKVtAmU@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10315:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b2559c2-9d9e-4106-3e15-08ddc9c7407f
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|19092799006|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?b3FjaFFBNVlBNjIrUUJzQURDVUZZN0NGZjhoNHVlUlZ4RUVuSHJ3UnR3OW1H?=
- =?utf-8?B?bzBKTndtMEE4ZkFodVJ2RlJFVmY3YjZaNlhvbmZ3WG1RTEk5SXlieXNWTEwv?=
- =?utf-8?B?eExiRUw0cGNZKzR0cVZZUUtDNzhrbC90c0RYSU1RblI4NGYvWWhPcDZFVU1R?=
- =?utf-8?B?TTZaaC9KUmVaZ0FnWW5iL1Q1dGdSVmVCR3JVRFg3L280MC9na09lQ2duN2Nj?=
- =?utf-8?B?clNScTRnQ2M3aEhEcHZlUnRYRi9jaW04YjN5UjY1NG4yRzhMeWpSZkRqeGxN?=
- =?utf-8?B?WHQyamxWSjE5aWJna3BFSHZrWWtOOVZXcWVxSmV0SHdGNjUyNWVDamgrTjdB?=
- =?utf-8?B?Vnc2MEwrOWpvdnB5Ky92d1hrMFR5WE9OTnZlZHd2QkVoZUtieERkK3RHU3E3?=
- =?utf-8?B?TXpwcEI2SDBRa3BVQWhzdmt5VzFkWHNma2Q4ajA3ZFpxaDdFQy81VmNuYUJN?=
- =?utf-8?B?LzNseHJRNktKV3U5UnJXTmhYa0ZEZThmcnRjYmViRWJiL05iaG1HZW84VE4x?=
- =?utf-8?B?Y2pGZ1FxeDJJVzV1UUNBb3c5SlQ1RXhtTjZoUjJnNVRQcTNnaEdyRmNIR1J3?=
- =?utf-8?B?VHVJWjVsOWxYcGk3aU40d3VuMDNMazRqMmpoL0hTc2MzZXZhNjVVdlhmWGp1?=
- =?utf-8?B?YkJuUzVjMi9TcUJIN3FnT2ZDOE84MU9WTy9oRUErbXVpTEhkNHMySjlQNFhD?=
- =?utf-8?B?UGVsd1RTVFVvOGwwUDk1MEpwREs1cGRVdU1EQzJOQVlqbmVOZ3RGczVqcXFv?=
- =?utf-8?B?d0V3RW02MzhWdjBSN0lqZUthd1NEcWdOOVRkMGxlK1d6V29Nb1l0b2ljdjFk?=
- =?utf-8?B?ejlaV1dnNXIyNi9udThMai81NUxMMENhbjVuSW9TK0U1N2Zpb2pmOWlkbzhJ?=
- =?utf-8?B?azhGRXdXSDE1clJReUIvRUdGa3hTYW9XVHhQUzNnUjgzM0xjYXc0RmFXZGx5?=
- =?utf-8?B?YWliZEtzTGk2VjVXQTNyZFY2Z1FyK0gyVk1aUE1kWWdocTFmYk9PaFUrQlFR?=
- =?utf-8?B?K2w4NEhPbktPUkprbzFteDREUU4yMjg1Y0VGUVhQbUx0SU8zdStVVllocnlV?=
- =?utf-8?B?NXprUE5MWjRmRHZWYjhvVmRjZk52OXBWVWdkc2g4MldZRUY2ZnB1OFY4TGtK?=
- =?utf-8?B?Y1dSaUEvbFVLa1I2Wk5DVStKd2YvdThwOTBQRGw3MTRBWW04Z0N2VzFuL01U?=
- =?utf-8?B?cHpQQ3V2NkV4dFFPVEltOE1RTDR6Y2tVNTREVmx2bmFDYkJSYi8vdU9kVzN5?=
- =?utf-8?B?TlBYOHdtOWlxVkQ4bWhRK1dPYTdnc3o1Z0JQTlMvL2NRU0pDaFhOZ0wyK2lr?=
- =?utf-8?B?S1RTOHNwY083WEhXZDduek1TTVdjQVNtU21OU1RsMVF6UklvSFNTQWRONTdY?=
- =?utf-8?B?akVTZ3hyeGUyaUkxUjlKUjRaWGNNWEZOakp2TTBPVGxDeEsvblBWTEpOY2Ji?=
- =?utf-8?B?OWg5Rjc2Z2RNeit4R3FrbiszTFdyMmZORmJhUTZPbWZUOVhIY0pjelhob3hs?=
- =?utf-8?B?bWgrUHFweGJqd2xxYWt3U3BlYzdDdHByK25Ta1ZQYVZpWVJJQ1FIK1FSWWcv?=
- =?utf-8?B?NUtNOTArWHI3MGhBN0k0RHViV2VXaUtjTm9vNEhuT1JqSHVLWWxIWWZXeGhV?=
- =?utf-8?B?aTA5UCtDUGN6ODNPS0tsTGF0K2REajJYYVp3YSsvdHd6aUNtb3NWeFo1NnFp?=
- =?utf-8?B?Tjh1MTZ6aWE4a3VEaU5Oa01NWnMydEVZYVA2VE92NWQzeFFUY1QyQXkvOU5h?=
- =?utf-8?B?YUNFcjAzSGExU1JmY2xGckM1NUc2ZGIvR2F4YTg3ZDVVQWRGZk1VVFpmRHNV?=
- =?utf-8?B?aWRvWnBSWkc4UzlKYjRYcHEvbEZFT3hINU5ycTVVT1NrRDlxUUtWYVl5Z3Zz?=
- =?utf-8?B?TVpHWGxjUzEvcjdZS3lVWG9EQ2svQzBsUk10Y285MkVneWc9PQ==?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?cE41VlpRc3I0eGV4OGt1QUxCWVdUaFNySmI1SDBtVWpGRnQ1b053NnhsVEZa?=
- =?utf-8?B?MVZsdmZLU0ZFd1VjcVVTMU4rSENlU1NMZFdoNWRSck1rMU5tV0dHdzhONGFn?=
- =?utf-8?B?emF5UkhRNWNSdkNRMWRTWjVSMU1ZOGdEQXl3N1NSdThlRHQ4V2dXdG4xbzBx?=
- =?utf-8?B?dW9RNCtBK1pnZ1VhcWx4SXlibVFGN1BHOGphSWVwWjJ0bENxQ2k2WHFPVU92?=
- =?utf-8?B?YmQxOFJDbGcxeFBEWkVsU3pyUW55aklCYVZ6SjJ1cFNDUEEzSjhHV3Evamwr?=
- =?utf-8?B?OVpqemticmE2OHNsYitxYjhibjZUSlJoK1JURDZrNWUva05LZ1VadExJTTNM?=
- =?utf-8?B?SldObDhVMHJVTXA1Y0daODF3VWt4MzA2b2YyZHNoNlRKVHpibnJpOUZtdi9C?=
- =?utf-8?B?RWNZWWlvSTg5bWpRbmFsYlFDbmx5bS8rekExWnZXRERBVEtKMzA3Yk9rbkw0?=
- =?utf-8?B?a1RMTis1N3hPMC9kbVZlMlZHTmV0d2kyNGttRFoxNWRzb2dLVkVoRDZVc0Nv?=
- =?utf-8?B?MGJjS2NaN1JRUXkvdGk0NFBpNHVMRkpsZUMxL2F6eFZsandJeStvSGdhZVR1?=
- =?utf-8?B?UG9qSmdYWWF3anl6OEFiemxSM0V5cVk1V1Y1bVMrcnE5YWh5TE44dEZ6ckJv?=
- =?utf-8?B?blRucTJGemtFVFozS2dpYk1DS0tFN3d5ZWhaaW5iWGl2SFA3UXJBbkN0Qnlm?=
- =?utf-8?B?aHE5R3lSNXUrYWwrTVhHUHM4T0dYMm0reDZHSW81bUVmejJBTHZMWmhmZnoy?=
- =?utf-8?B?cGh0d3ovV2lPMnpBZWR5ZTU2Y1EyMkh6UWdRZXVZNU0vSy9mNDJGK1hFck9l?=
- =?utf-8?B?QTRCTW1JLzh3NGR4a3JEVk5mYzZrMXFHZTJqQ0VxdGV5ZVB5dGdJdXNzalY5?=
- =?utf-8?B?Y1ZzV0lmcHM5RmhWR2tZeFNiK3lHcnB1NEJnMHpLOFBVZDlnMXNaNEhvRjlN?=
- =?utf-8?B?OXBnZDJyVUdhREcveHVNamU3dXl2WmF0NURtbWhDRWpKZ3l1a1dUOTJ4Qk9j?=
- =?utf-8?B?b21nSTZhVnNJbUZLTUJGMG0zdHhxelFhNFVTaS9CTEM2ZUpUdUgvOGZGa1VE?=
- =?utf-8?B?aEo1YkxDQitFaW9iSjVEUk0zbFJTSndKYk5NMUlueHZ5d3RERDJZN1ZjUnI4?=
- =?utf-8?B?dExLQWJUMThkdkZiTk8xRzAzTUNVT2Y2MjlwTERwSnk1bFVDc3piN0REV3FW?=
- =?utf-8?B?UWtyS2E4Rjc4RWtWaHluTkNKYUl1cEpRSnZVSnBvbEFKcWNVU2dZVmJvVXRq?=
- =?utf-8?B?YXVmVTJydkZ5ZDl5cllrMzBWanhpU1piRisrMlNONXlUeko1dzc0UU5hVXAy?=
- =?utf-8?B?b0g3RmFKY1R0VXpuUDh3SnhwTlhubGhud2JjQjJmVSsxdnlQdHRjNk9Rd0NK?=
- =?utf-8?B?Q2VYOXJJTk5ML0IrS2hNNEhPa0VYVTMycWhYZGR0MXUyT1k0cW9VTjZhYjVK?=
- =?utf-8?B?eG44djBVdU1taWpjSHBzbmgzVjFOaE5ldHZQYk9BYm5kalBpa0pUNzlLVmpr?=
- =?utf-8?B?UWwyeVg5ZXZVazR2cXFkcmwvNUJFNkpERXMzalNPazV3QWFXOE5UMFBmcGlD?=
- =?utf-8?B?c2psQkxLdzRlM0RJeFZmaTB4bzI1WHIxRkx5alV4N0xFdUxUVktVUVNXUkFt?=
- =?utf-8?B?eG80T1RKSUVqMmwwZkEza081VjU4SGZ2ZHR4Z0hCT0U0YnFQSGtyNkdZdEpO?=
- =?utf-8?B?SnMvdlFUZkd1NVdoNmxsWmJ2bWY5Tkg0QWdQbld6V3UwVG1icStld0dLZjJr?=
- =?utf-8?B?MGx3aSttUmlmRnF5UzRYRUpYTlNGVXdzdk1YM2txemJVK0ljZHU5QWVZNXV0?=
- =?utf-8?B?UDQzSzh2a1o5Zy9LMWZtTWtOQkhNRjE1a1NuMHNNWmN5OWx5dGVaRUhrck5H?=
- =?utf-8?B?bzFpaGNWMWJvZW9wYXZDalhhaXo1RFZlOVJhMVdkdmZEaGVLTXlINXl6eWRM?=
- =?utf-8?B?K2pqRkdBMUJKUXN6dytrMURFWXJrTWJHVDAvVG5sY2hHNHVsblh5Slh5OHk4?=
- =?utf-8?B?MHZ2RUkwSGhiMGIwWGk4WnlCU2FlMFRKMW5CR2NSR3I3dEZwSDNjSmo5Mzc0?=
- =?utf-8?B?V0xEUkNBbWF4cTNMMWpucFZVV3ZuK0FmNXQvTHRvMlJObWw4SmlXeXRmTEVM?=
- =?utf-8?Q?E9nqa9gZEJcHwUJGBfdZO1Sr5?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b2559c2-9d9e-4106-3e15-08ddc9c7407f
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 08:59:37.7657
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cwNymLuPDMw8hWPOMlvYEC/7Z7++1PLAlobZd/DhsVauikosbMHr/uGl9AYtwnqBvVlEx6pFOCVpfxPK2/39UQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10315
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <aIB0VYLqcBKVtAmU@pengutronix.de>
 
-On 07/23/2025, Shengjiu Wang wrote:
-> On Tue, Jul 22, 2025 at 3:16 PM Liu Ying <victor.liu@nxp.com> wrote:
->>
->> Hi Shengjiu,
->>
->> On 07/18/2025, Shengjiu Wang wrote:
->>> Add binding for the i.MX8MP HDMI parallel Audio interface block.
->>> As this port is linked to imx8mp-hdmi-tx, add port@2 in
->>> fsl,imx8mp-hdmi-tx.yaml document.
->>>
->>> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
->>> ---
->>>  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 13 ++++
->>>  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 61 +++++++++++++++++++
->>>  2 files changed, 74 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
-
-[...]
-
->>> +properties:
->>
->> In i.MX8MP TRM, HTX_PAI block diagram mentions an APB interface.
->> Does it mean a clock is needed?
+The 07/23/2025 07:34, Oleksij Rempel wrote:
 > 
-> The APB clock is bound with the power domain, so no need to add it here.
+> Hi Horatiu,
 
-That depends on OS's power domain driver implementation.
-From DT's point of view, the APB clock should be a property here.
+Hi Olekij,
 
 > 
->>
->>> +  compatible:
->>> +    const: fsl,imx8mp-hdmi-pai
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  power-domains:
->>> +    maxItems: 1
->>> +
->>> +  port:
->>> +    $ref: /schemas/graph.yaml#/properties/port
->>> +    description: Output to the HDMI TX controller.
->>> +    unevaluatedProperties: false
->>
->> Why do you need this line?
+> On Mon, Jul 21, 2025 at 09:14:05AM +0200, Horatiu Vultur wrote:
 > 
-> per my understanding, this line can be added or removed.
+> > +static int lan8842_config_init(struct phy_device *phydev)
+> > +{
+> > +     int val;
+> > +     int ret;
+> > +
+> > +     /* Reset the PHY */
+> > +     val = lanphy_read_page_reg(phydev, 4, LAN8814_QSGMII_SOFT_RESET);
+> 
+> It would be good to use defines for MMD pages.
 
-I'd choose to drop it :)
+Those are extended pages and not MMD pages. Currently in the entire
+source code I can see we used hardcoded values, also in the register
+description it looks like all these extended pages do not have really
+meaningfull names: Extended Page 0, Extended Page 4, Extended Page 5...
 
-[...]
+> 
+> > +     if (val < 0)
+> > +             return val;
+> > +     val |= LAN8814_QSGMII_SOFT_RESET_BIT;
+> > +     lanphy_write_page_reg(phydev, 4, LAN8814_QSGMII_SOFT_RESET, val);
+> 
+> Please, do not ignore return values.
+
+Good catch, I will fix that in the next version.
+There are few others bellow, I will fix those also.
+
+> 
+> > +
+> > +     /* Disable ANEG with QSGMII PCS Host side
+> > +      * It has the same address as lan8814
+> > +      */
+> > +     val = lanphy_read_page_reg(phydev, 5, LAN8814_QSGMII_PCS1G_ANEG_CONFIG);
+> > +     if (val < 0)
+> > +             return val;
+> > +     val &= ~LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA;
+> > +     ret = lanphy_write_page_reg(phydev, 5, LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
+> > +                                 val);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     /* Disable also the SGMII_AUTO_ANEG_ENA, this will determine what is the
+> > +      * PHY autoneg with the other end and then will update the host side
+> > +      */
+> > +     lanphy_write_page_reg(phydev, 4, LAN8842_SGMII_AUTO_ANEG_ENA, 0);
+> > +
+> > +     /* To allow the PHY to control the LEDs the GPIOs of the PHY should have
+> > +      * a function mode and not the GPIO. Apparently by default the value is
+> > +      * GPIO and not function even though the datasheet it says that it is
+> > +      * function. Therefore set this value.
+> > +      */
+> > +     lanphy_write_page_reg(phydev, 4, LAN8814_GPIO_EN2, 0);
+> > +
+> > +     /* Enable the Fast link failure, at the top level, at the bottom level
+> > +      * it would be set/cleared inside lan8842_config_intr
+> > +      */
+> > +     val = lanphy_read_page_reg(phydev, 0, LAN8842_FLF);
+> > +     if (val < 0)
+> > +             return val;
+> > +     val |= LAN8842_FLF_ENA | LAN8842_FLF_ENA_LINK_DOWN;
+> 
+> If I see it correctly, FLF support will make link fail after ~1ms, while
+> IEEE 802.3 recommends 750ms. Since a link recovery of a PHY with autoneg
+> support usually takes multiple seconds, I see the benefit for FLF
+> support only mostly for SyncE environment at same time it seems to be
+> a disadvantage for other environments.
+
+Why would be a disadvantage?
+> 
+> I would prefer to have IEEE 802.3 recommended link behavior by default
+> and have separate Netlink configuration interface for FLF.
+> 
+> Best Regards,
+> Oleksij
+> --
+> Pengutronix e.K.                           |                             |
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
 -- 
-Regards,
-Liu Ying
+/Horatiu
 
