@@ -1,180 +1,90 @@
-Return-Path: <linux-kernel+bounces-742242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93375B0EF0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB715B0EF14
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA50166C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9821682E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD044289373;
-	Wed, 23 Jul 2025 10:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sqfkX5JI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBA2191493
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CDD28CF45;
+	Wed, 23 Jul 2025 10:01:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4F428C029;
+	Wed, 23 Jul 2025 10:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264859; cv=none; b=Y7b8LaIJSbjvhWBAyzr2NrOJev4qMdhYRBAvEYACB+8w7CvIuAyYy0ReTsVabW7P3IbzdlRWLppbTmiEZ+nk2PnK3Ss5jeGjV/cCz0NqDZFS4C7INoKzYkoH9rS83qfeAdxO1u4zIUBaCWIAV+K3PLgzUNCzxahdSLHv88mn0L4=
+	t=1753264867; cv=none; b=OFjZw+AZa8Qp6TxSMeYOoArr0/TP+Krau+qHNHnZczqm4BtAbE2dXuOVD4prHyZ0Fo4lm3sVNN8d8fXaVIeQS/r5aBToRVQjtI723eQrvqPIZ8pIvijVzSdF7br3w7v0I0m0IHUMlDRss6bykMHeZ3Ulh0vIbzIh23JToZGFvJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264859; c=relaxed/simple;
-	bh=eEvn9cZKgQR1Rtzv+NnYhlwg6dfZT5qLpB9DJl8NpDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TuASD/V7JWWFv8Zy/NFWgmMSm3ZGDpgrKUxAk3CXk9fvU0b8l10cq5NFOKdiDvvBzTvbu1i0T66LNtk5/QuuAqeRi0lGByAdY7DJ7yYVjzaIiOhnmVHrBRCB+XpFNCyTAraJensSScjSHDD0jOS6927I44xxSSWq7ANYHEfWSIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sqfkX5JI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BB651F0B;
-	Wed, 23 Jul 2025 12:00:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753264815;
-	bh=eEvn9cZKgQR1Rtzv+NnYhlwg6dfZT5qLpB9DJl8NpDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sqfkX5JIPnhfTHOiiHy8JqT66tc+sSRzJmmUd2T5XFE30peQmKaNlGtCNRuHPhKRa
-	 Iezxy5hUffcGFPd/mPWtifrmEFd8vHzX6acOBnRALujbxH2aRnhRCYySOUv43Xcip2
-	 SOgivfXwWqBI1+VJ/KlhN7KxcLw9mXc2/AXbemiw=
-Message-ID: <5630b5db-6577-4302-b90e-2a94a93b5283@ideasonboard.com>
-Date: Wed, 23 Jul 2025 13:00:49 +0300
+	s=arc-20240116; t=1753264867; c=relaxed/simple;
+	bh=rRc7eKvHbFGcza3WOstM5gEoFED6LfK2Xd83nvCt4Js=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eArentE4trcg3vXED7nodt6h5o82wbn4SVgQsvB5s+k4ZAfp5sS+hAnplvGaDoYix4NkdPsSCZPPAmL0MFX4OHnLReILg1qst4uRbWx8VO9B8EKkHWgBkJr/uJ6+yNt1auVGJ6yNaUfSji5fsScGtrQR8TjqsF5MuT+KJmGN+CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxSWrcsoBoLzkwAQ--.62641S3;
+	Wed, 23 Jul 2025 18:01:00 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxzsHYsoBo1AUjAA--.24129S2;
+	Wed, 23 Jul 2025 18:00:57 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/2] Refine stmmac code
+Date: Wed, 23 Jul 2025 18:00:54 +0800
+Message-ID: <20250723100056.6651-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/tidss: Set crtc modesetting parameters with adjusted
- mode
-To: Jayesh Choudhary <j-choudhary@ti.com>, jyri.sarha@iki.fi,
- dri-devel@lists.freedesktop.org, devarsht@ti.com
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- linux-kernel@vger.kernel.org
-References: <20250624080402.302526-1-j-choudhary@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20250624080402.302526-1-j-choudhary@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxzsHYsoBo1AUjAA--.24129S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUBEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1a6r1DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E
+	14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280
+	aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28Icx
+	kI7VAKI48JMxAqzxv262kKe7AKxVWUAVWUtwCF54CYxVCY1x0262kKe7AKxVWUAVWUtwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
+	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07Ul4E_UUUUU=
 
-Hi,
+Here are two small patches to refine stmmac code when debugging and
+testing the problem "Failed to reset the dma".
 
-On 24/06/2025 11:04, Jayesh Choudhary wrote:
-> TIDSS uses crtc_* fields to propagate its registers and set the
-> clock rates. So set the CRTC modesetting timing parameters with
-> the adjusted mode when needed, to set correct values.
-> 
-> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
-> 
-> Hello All,
-> 
-> After the DSI fixes[0], TIDSS is using crtc_* timings while programming
-> hardware[1]. But while testing on TI's J784S4-EVM platform, I noticed
-> that crtc_timings are not propagated properly.
-> 
-> The display pipeline there looks like:
-> TIDSS -> CDNS-DSI -> SN65DSI86 bridge -> DisplayPort
-> 
-> Consider the case of 1920x1080 resolution where the EDID mode has clock
-> of 148500kHz. After adjustment, the clock changes to 148800kHz. While
-> this change is reflected in mode->clock, its not propagated to
-> mode->crtc_clock.
-> 
-> [0] provides the **essential** fixes to get DSI working and its
-> patches are Reviewed and Tested.
-> The series improves the condition of DSI. I have observed that
-> 800x600 and 1280x1024 modes are working now after [0].
-> 
-> This patch helps to enables other modes. So taking this up as a
-> delta patch so as to avoid respining v5 of [0].
-> I hope this approach is okay!
+v2:
+  -- Update the commit message of patch #1 to explain the background.
+  -- Add Reviewed-by tag for patch #2, no code changes.
 
-Yes, I think this makes sense.
+Tiezhu Yang (2):
+  net: stmmac: Return early if invalid in loongson_dwmac_fix_reset()
+  net: stmmac: Check stmmac_hw_setup() in stmmac_resume()
 
-I'll pick this up after my series has been merged.
+ drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c | 3 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c    | 9 ++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
- Tomi
-
-> 
-> [0]: https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
-> [1]: https://patchwork.kernel.org/project/dri-devel/patch/20250618-cdns-dsi-impro-v4-3-862c841dbe02@ideasonboard.com/ 
-> 
->  drivers/gpu/drm/tidss/tidss_crtc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> index 17efd77ce7f2..da89fd01c337 100644
-> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> @@ -91,7 +91,7 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
->  	struct dispc_device *dispc = tidss->dispc;
->  	struct tidss_crtc *tcrtc = to_tidss_crtc(crtc);
->  	u32 hw_videoport = tcrtc->hw_videoport;
-> -	const struct drm_display_mode *mode;
-> +	struct drm_display_mode *mode;
->  	enum drm_mode_status ok;
->  
->  	dev_dbg(ddev->dev, "%s\n", __func__);
-> @@ -108,6 +108,9 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
->  		return -EINVAL;
->  	}
->  
-> +	if (drm_atomic_crtc_needs_modeset(crtc_state))
-> +		drm_mode_set_crtcinfo(mode, 0);
-> +
->  	return dispc_vp_bus_check(dispc, hw_videoport, crtc_state);
->  }
->  
+-- 
+2.42.0
 
 
