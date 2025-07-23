@@ -1,191 +1,102 @@
-Return-Path: <linux-kernel+bounces-742574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B7BB0F3E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:24:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF03B0F3EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567883BB2D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:22:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1377B7B6F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE262E6118;
-	Wed, 23 Jul 2025 13:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848C02E7BCE;
+	Wed, 23 Jul 2025 13:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0o600WTr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ICV017V2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0o600WTr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ICV017V2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQGBF7Kt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58E2E6D31
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D964F2D29C7;
+	Wed, 23 Jul 2025 13:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276938; cv=none; b=Rlmzj3eKa6/zUhjGMkkMuZA3Hx0WQbLxUQ9z6Z1+7mk+y4SPb16Bo7MK+qr1SEse20LgvTx+/PiRHSPGKICjCB8dTXCfNL6aKr1U5PO/bZjefTnqhxWJS9458qakiP07qW7914eQtneLTeh+RC744ZhpC82gSQrvufE0hRyom5U=
+	t=1753276976; cv=none; b=OiXzib55Y22m6q0f7bj4zHdnwilMRIOsOwGyOiKbsx0NMnXZRvWvE3amJ7B2fASSgNDYb2IIpO3t5i5X1fL+S45B9itcKBpsRjrl84Sf8lMnnwmFwUI9SjRQlVWsH+dE6YarmVa6rW55O6CsvCYZbFAiqdWLGfabZwQCx8wlZ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276938; c=relaxed/simple;
-	bh=5zU8ZAr3SMvfuaM+8iY14N48D84esM2zsmKZnYPnEqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UZ3YzeIK64TKnSo/wcbwr02o0BbmWM0X13e7o1Tw4+EYY0zNbEYUXUq8zBH6weWwTfJgD9S/hxoIYvMCHHj1BzwWy/4HmC0sFsod6puta0ScH0eRAJdS+tAVGCfkV749Z1j7ZDyBS8dDzSq/0wP7GYCHNS74QXyXS/KMwReQAMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0o600WTr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ICV017V2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0o600WTr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ICV017V2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9216E218F2;
-	Wed, 23 Jul 2025 13:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753276922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHb1UmULRkWstV5P4nMj+VxLK8zD/76FhrbXgXNQRUo=;
-	b=0o600WTrhF7mqytOXsBYYI4hbogQkBaLYNkZh6yOhsRu0dzDfoThI2SzfeB1U184ufHj8G
-	7GbA+URz2VZXrHtSTbT36riHJWUSWhwFuAmShP1d5xNX71G6iq7hOCDBFGO9KRvcSbAe6q
-	9ZGwqoxN2M84b5EyhaTDeV/EBfiNu3E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753276922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHb1UmULRkWstV5P4nMj+VxLK8zD/76FhrbXgXNQRUo=;
-	b=ICV017V2+baXLLVaiY3mCil8ZmvkRtv3ETatf8BEsf8sZlpYy3ZZ3dz1BSSQSvJ5PPNrGf
-	4TzUZ+D2SO5FhHBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753276922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHb1UmULRkWstV5P4nMj+VxLK8zD/76FhrbXgXNQRUo=;
-	b=0o600WTrhF7mqytOXsBYYI4hbogQkBaLYNkZh6yOhsRu0dzDfoThI2SzfeB1U184ufHj8G
-	7GbA+URz2VZXrHtSTbT36riHJWUSWhwFuAmShP1d5xNX71G6iq7hOCDBFGO9KRvcSbAe6q
-	9ZGwqoxN2M84b5EyhaTDeV/EBfiNu3E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753276922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHb1UmULRkWstV5P4nMj+VxLK8zD/76FhrbXgXNQRUo=;
-	b=ICV017V2+baXLLVaiY3mCil8ZmvkRtv3ETatf8BEsf8sZlpYy3ZZ3dz1BSSQSvJ5PPNrGf
-	4TzUZ+D2SO5FhHBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC85813302;
-	Wed, 23 Jul 2025 13:22:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CJ1lNvnhgGhnHwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 23 Jul 2025 13:22:01 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: [PATCH 3/3] docs/vfs: Remove mentions to the old mount API helpers
-Date: Wed, 23 Jul 2025 14:21:56 +0100
-Message-ID: <20250723132156.225410-4-pfalcato@suse.de>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250723132156.225410-1-pfalcato@suse.de>
-References: <20250723132156.225410-1-pfalcato@suse.de>
+	s=arc-20240116; t=1753276976; c=relaxed/simple;
+	bh=CDbI+Nsj3caOgtI2pJwYkNmOJA/uaxHrC9DvitFk4Q0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=tTRN8Ei9tzmWA/XNmdbOegkOhIUY2IGxiPIOTW7gXSec0hympNQc+37kWaq97CAHucN3fEFONVFIyJgkqrmd/H+iBauY4GRPyJgzXvAk7Ey624DYDb0LuZ3z7+ly3uJthx4ZgJCKpvwaRS86Sy0I7MzSR6VptesAw3HVMxdOPAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQGBF7Kt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC3EC4CEE7;
+	Wed, 23 Jul 2025 13:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753276975;
+	bh=CDbI+Nsj3caOgtI2pJwYkNmOJA/uaxHrC9DvitFk4Q0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=RQGBF7Kt1lvI3yc5fqBSzO1JPUgFwXu/W8GiL0k9as6EvKM0p/febse+ul/5oF+tI
+	 dwYiX9iSKcV+NRTUrF0xJPhSbst3VyULdtSVmoIIZNDc/xqwF0DZkBO/eULLCA2x59
+	 dbzM8pciS1JYsfWOE/GkPiONaHfQVFtMqio0Zv/X3EM6KiNYkH0QIWY94FZEs7UuSQ
+	 TEalT6ENGYQigsc766rdzE90veMpRLXpgZsm5/N7dF4sBM0Ik04W8kO4cyVstIb7dt
+	 q+E+ydRtxxTsLQgBhPsvK/iVPld0s5gOxJMTXIELiNIvH/SaE4UcyjwGrK3YZITLJR
+	 d/WTb3PiNGz1g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLw5gink3swc9hgcaooqib9oj6)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -6.80
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Jul 2025 15:22:49 +0200
+Message-Id: <DBJGTCPDUU4J.16S98YARG0S7O@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Georgi Djakov" <djakov@kernel.org>,
+ "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Bjorn Andersson"
+ <bjorn.andersson@oss.qualcomm.com>, "Marijn Suijten"
+ <marijn.suijten@somainline.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pm@vger.kernel.org>, "Konrad
+ Dybcio" <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH DNM 2/2] interconnect: Add a test Rust consumer driver
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Konrad Dybcio"
+ <konradybcio@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
+ <20250722-topic-icc_rs-v1-2-9da731c14603@oss.qualcomm.com>
+ <D4552EF5-21DB-44AF-8E45-F57B0B8CB853@collabora.com>
+In-Reply-To: <D4552EF5-21DB-44AF-8E45-F57B0B8CB853@collabora.com>
 
-Now that mount_bdev(), mount_nodev() and mount_single() have all been
-removed, remove mentions to them in vfs.rst.
+On Wed Jul 23, 2025 at 3:10 PM CEST, Daniel Almeida wrote:
+> On 22 Jul 2025, at 18:14, Konrad Dybcio <konradybcio@kernel.org> wrote:
+>> +#[pin_data]
+>> +struct IccTestConsumerDriver {
+>> +    #[pin]
+>> +    path: IccPath,
+>> +}
+>
+> I don=E2=80=99t think this does anything useful without PhantomPinned, bu=
+t Benno is
+> the right person to chime in here.
 
-While we're at it, redirect people looking for mount API docs to
-mount_api.rst (which documents the newer API).
+It does do something useful, there just has to be one type marked with
+`#[pin]` that is `!Unpin` (so for example `PhantomPinned`, `Opaque<T>`
+etc.).
 
-Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+In this case however, `IccPath` is a newtype of `*mut bindings::icc_path`
+which isn't `PhantomPinned`, so this doesn't ensure that the
+`IccTestConsumerDriver` will stay pinned after initializing.
+
+> More importantly though, why do you have #[pin] on IccPath?
+
+Another question is: why is `IccPath` not a newtype of
+`Opaque<bindings::icc_path>`? And then one can use `&IccPath`.
+
 ---
- Documentation/filesystems/vfs.rst | 27 ++-------------------------
- 1 file changed, 2 insertions(+), 25 deletions(-)
-
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 94eba21265a1..af06144cf0fe 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -209,31 +209,8 @@ method fills in is the "s_op" field.  This is a pointer to a "struct
- super_operations" which describes the next level of the filesystem
- implementation.
- 
--Usually, a filesystem uses one of the generic mount() implementations
--and provides a fill_super() callback instead.  The generic variants are:
--
--``mount_bdev``
--	mount a filesystem residing on a block device
--
--``mount_nodev``
--	mount a filesystem that is not backed by a device
--
--``mount_single``
--	mount a filesystem which shares the instance between all mounts
--
--A fill_super() callback implementation has the following arguments:
--
--``struct super_block *sb``
--	the superblock structure.  The callback must initialize this
--	properly.
--
--``void *data``
--	arbitrary mount options, usually comes as an ASCII string (see
--	"Mount Options" section)
--
--``int silent``
--	whether or not to be silent on error
--
-+For more information on mounting (and the new mount API), see
-+Documentation/filesystems/mount_api.rst.
- 
- The Superblock Object
- =====================
--- 
-2.50.1
-
+Cheers,
+Benno
 
