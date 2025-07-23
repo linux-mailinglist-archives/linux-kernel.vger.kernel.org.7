@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-742598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D8EB0F425
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3624B0F42D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226BD7A3129
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424BC5669EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFBE2E9EDB;
-	Wed, 23 Jul 2025 13:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20A72EA481;
+	Wed, 23 Jul 2025 13:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PeRIBlAG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QH0aAN2I";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PeRIBlAG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QH0aAN2I"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KxrbcoQK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5VH7Cvn5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KxrbcoQK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5VH7Cvn5"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74442E9EA6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179172EA154
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277730; cv=none; b=joEAPFmySeVm7r7+xZr7C9j6IsrA/D7csAAc28a3paxp4TmR7UgN7783WDrtpfMBzJbJUKWlekW8j/Sf6wnawA5zRXOjGEWMRXvfWge9m16pOUQOAFv1+x7TQfWB6CO3qz+1G5LRDaaQwcNqdGUe2nY2MFrdZ8Q/gP0IWvh4/gY=
+	t=1753277738; cv=none; b=MPtVj/mP3DYKvpSbwLYX/YDQrC4McJRUr++XF5L9HbhqDOsG3/yJCUE1kzGyG1OXEzmUw3qGg2wz9GHgdzrOm2d626+SgXfzlVNya87cQAjGxiPSU62G6XNS7y75KeoG9s4Of1mBhDRwqflIK4LCyPYO1arSN8W/pksAkE67/Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277730; c=relaxed/simple;
-	bh=g+cW4iv2z/ZLxq3t03iSc/ruNf+jvJ3mN4AJ/CBvE6o=;
+	s=arc-20240116; t=1753277738; c=relaxed/simple;
+	bh=yM12N+qjBdV+wJ+IvfCWEywD8wX8OcWtZRR11EzaA+g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hhuNLediyGfSZfCIrGaCaMYqr6zmFnUH7bKnduiHjpwsltilXFy0++ViGjRieIwMEmxzWuFl1Nc7ou+nr/BxDmm9ksrjPBLzMmq4ByV46ig+pC1OHvN9Hp+erMnkfoFLTiTGpjfYNsYW1sfV7zD9Yzx08UehbJDTNH+o9NoBTeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PeRIBlAG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QH0aAN2I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PeRIBlAG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QH0aAN2I; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:To:Cc; b=BJA/H0R5hWjQm6W3yAq/wRFEJavRtVxCgmp9qJzZoeH4YY0zBKzuWgY/L/p6+rnOTjcJxAdNVmbQMm2AuI8njCuRqMC56Y5OgWvPFBU8fz+QSFuCaO6rNV5oCMf4meGATQYRA4QMTtYamGzYYclvFlO+p7EGNssVsNK3U3FzJlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KxrbcoQK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5VH7Cvn5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KxrbcoQK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5VH7Cvn5; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F3B01F790;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 447311F791;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
-	b=PeRIBlAGtgcYtv6sV41maiS0N6Wyp9R4jEVFozj0FAL64NcONmOw/HHDJ2Uw8yqbS/yj07
-	uX72Rm5xLLHPkWs44sV8qF8N+d3fCZfgQXV66toCcEpscT4Ay5+zMYiiY5IXJE+McEceiL
-	Z7ktm3gD6bc8QbxCGpjmf5rdQMqKc5A=
+	bh=Rl2sdnU3Na/QjO19ynlaiFzijVMgFDAZeg0f3e42QKM=;
+	b=KxrbcoQKJ5Zfh0d43utMQ996V/KuOHaz6QEYI7AgHy8WjqkcVQXXy527a0GvSIEIX5CuIm
+	kX6sxUWQegF3+JIEGkUor41DcDTaGhM1mbpxq8bLum1o3JAA3BtoWZiZIUW9MdKS1ymbay
+	8lEda69OpP83eNKooq6uFbn09O+5cVA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
-	b=QH0aAN2IfgpijQ3IVcSa2GuONJ86Wq/eNK/EUoByY4hgIJ+MyRWxfLYayE4qTrn8LBop5m
-	HT0bOSzSE5uZgDAA==
+	bh=Rl2sdnU3Na/QjO19ynlaiFzijVMgFDAZeg0f3e42QKM=;
+	b=5VH7Cvn50oCDXW33Smu9Pmz6TOm7KOYfInWQRUWwsYQRJm35g1CbxZiVux8KjZZ2CGGDZB
+	XXH7aUnC+4hDV8AA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PeRIBlAG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QH0aAN2I
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
-	b=PeRIBlAGtgcYtv6sV41maiS0N6Wyp9R4jEVFozj0FAL64NcONmOw/HHDJ2Uw8yqbS/yj07
-	uX72Rm5xLLHPkWs44sV8qF8N+d3fCZfgQXV66toCcEpscT4Ay5+zMYiiY5IXJE+McEceiL
-	Z7ktm3gD6bc8QbxCGpjmf5rdQMqKc5A=
+	bh=Rl2sdnU3Na/QjO19ynlaiFzijVMgFDAZeg0f3e42QKM=;
+	b=KxrbcoQKJ5Zfh0d43utMQ996V/KuOHaz6QEYI7AgHy8WjqkcVQXXy527a0GvSIEIX5CuIm
+	kX6sxUWQegF3+JIEGkUor41DcDTaGhM1mbpxq8bLum1o3JAA3BtoWZiZIUW9MdKS1ymbay
+	8lEda69OpP83eNKooq6uFbn09O+5cVA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DnB5Z/uUr1V7ojjJYSvVXb431U/VD/MFqSsJJofBvxs=;
-	b=QH0aAN2IfgpijQ3IVcSa2GuONJ86Wq/eNK/EUoByY4hgIJ+MyRWxfLYayE4qTrn8LBop5m
-	HT0bOSzSE5uZgDAA==
+	bh=Rl2sdnU3Na/QjO19ynlaiFzijVMgFDAZeg0f3e42QKM=;
+	b=5VH7Cvn50oCDXW33Smu9Pmz6TOm7KOYfInWQRUWwsYQRJm35g1CbxZiVux8KjZZ2CGGDZB
+	XXH7aUnC+4hDV8AA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17D7613AFB;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B13E13ADD;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4KOKBQjlgGh0IwAAD6G6ig
+	id wIc6CgjlgGh0IwAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:04 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 23 Jul 2025 15:34:37 +0200
-Subject: [PATCH v5 04/14] slab: determine barn status racily outside of
- lock
+Date: Wed, 23 Jul 2025 15:34:38 +0200
+Subject: [PATCH v5 05/14] tools: Add testing support for changes to rcu and
+ slab for sheaves
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-slub-percpu-caches-v5-4-b792cd830f5d@suse.cz>
+Message-Id: <20250723-slub-percpu-caches-v5-5-b792cd830f5d@suse.cz>
 References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -109,131 +108,222 @@ To: Suren Baghdasaryan <surenb@google.com>,
 Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
  Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
+ maple-tree@lists.infradead.org, vbabka@suse.cz, 
+ "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
 	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
-	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,Oracle.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2F3B01F790
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-Spam-Score: -4.30
 
-The possibility of many barn operations is determined by the current
-number of full or empty sheaves. Taking the barn->lock just to find out
-that e.g. there are no empty sheaves results in unnecessary overhead and
-lock contention. Thus perform these checks outside of the lock with a
-data_race() annotated variable read and fail quickly without taking the
-lock.
+From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 
-Checks for sheaf availability that racily succeed have to be obviously
-repeated under the lock for correctness, but we can skip repeating
-checks if there are too many sheaves on the given list as the limits
-don't need to be strict.
+Make testing work for the slab and rcu changes that have come in with
+the sheaves work.
 
+This only works with one kmem_cache, and only the first one used.
+Subsequent setting of kmem_cache will not update the active kmem_cache
+and will be silently dropped because there are other tests which happen
+after the kmem_cache of interest is set.
+
+The saved active kmem_cache is used in the rcu callback, which passes
+the object to be freed.
+
+The rcu call takes the rcu_head, which is passed in as the field in the
+struct (in this case rcu in the maple tree node), which is calculated by
+pointer math.  The offset of which is saved (in a global variable) for
+restoring the node pointer on the callback after the rcu grace period
+expires.
+
+Don't use any of this outside of testing, please.
+
+Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 ---
- mm/slub.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ tools/include/linux/slab.h            | 41 ++++++++++++++++++++++++++++++++---
+ tools/testing/shared/linux.c          | 24 ++++++++++++++++----
+ tools/testing/shared/linux/rcupdate.h | 22 +++++++++++++++++++
+ 3 files changed, 80 insertions(+), 7 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 8b3093ee2e02c9ff4e149ac54833db4972b414a3..339d91c6ea29be99a14a8914117fab0e3e6ed26b 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2760,9 +2760,12 @@ static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *empty = NULL;
- 	unsigned long flags;
+diff --git a/tools/include/linux/slab.h b/tools/include/linux/slab.h
+index c87051e2b26f5a7fee0362697fae067076b8e84d..d1444e79f2685edb828adbce8b3fbb500c0f8844 100644
+--- a/tools/include/linux/slab.h
++++ b/tools/include/linux/slab.h
+@@ -23,6 +23,12 @@ enum slab_state {
+ 	FULL
+ };
  
-+	if (!data_race(barn->nr_empty))
-+		return NULL;
++struct kmem_cache_args {
++	unsigned int align;
++	unsigned int sheaf_capacity;
++	void (*ctor)(void *);
++};
 +
- 	spin_lock_irqsave(&barn->lock, flags);
+ static inline void *kzalloc(size_t size, gfp_t gfp)
+ {
+ 	return kmalloc(size, gfp | __GFP_ZERO);
+@@ -37,9 +43,38 @@ static inline void *kmem_cache_alloc(struct kmem_cache *cachep, int flags)
+ }
+ void kmem_cache_free(struct kmem_cache *cachep, void *objp);
  
--	if (barn->nr_empty) {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty,
- 					 struct slab_sheaf, barn_list);
- 		list_del(&empty->barn_list);
-@@ -2809,6 +2812,9 @@ static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *sheaf = NULL;
- 	unsigned long flags;
- 
-+	if (!data_race(barn->nr_full) && !data_race(barn->nr_empty))
-+		return NULL;
+-struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+-			unsigned int align, unsigned int flags,
+-			void (*ctor)(void *));
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
- 	if (barn->nr_full) {
-@@ -2839,9 +2845,12 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
- 	struct slab_sheaf *full = NULL;
- 	unsigned long flags;
- 
-+	if (!data_race(barn->nr_full))
-+		return NULL;
++struct kmem_cache *
++__kmem_cache_create_args(const char *name, unsigned int size,
++		struct kmem_cache_args *args, unsigned int flags);
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (barn->nr_full) {
-+	if (likely(barn->nr_full)) {
- 		full = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
- 					barn_list);
- 		list_del(&full->barn_list);
-@@ -2864,19 +2873,23 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
- 	struct slab_sheaf *empty;
- 	unsigned long flags;
- 
-+	/* we don't repeat this check under barn->lock as it's not critical */
-+	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
-+		return ERR_PTR(-E2BIG);
-+	if (!data_race(barn->nr_empty))
-+		return ERR_PTR(-ENOMEM);
++/* If NULL is passed for @args, use this variant with default arguments. */
++static inline struct kmem_cache *
++__kmem_cache_default_args(const char *name, unsigned int size,
++		struct kmem_cache_args *args, unsigned int flags)
++{
++	struct kmem_cache_args kmem_default_args = {};
 +
- 	spin_lock_irqsave(&barn->lock, flags);
++	return __kmem_cache_create_args(name, size, &kmem_default_args, flags);
++}
++
++static inline struct kmem_cache *
++__kmem_cache_create(const char *name, unsigned int size, unsigned int align,
++		unsigned int flags, void (*ctor)(void *))
++{
++	struct kmem_cache_args kmem_args = {
++		.align	= align,
++		.ctor	= ctor,
++	};
++
++	return __kmem_cache_create_args(name, size, &kmem_args, flags);
++}
++
++#define kmem_cache_create(__name, __object_size, __args, ...)           \
++	_Generic((__args),                                              \
++		struct kmem_cache_args *: __kmem_cache_create_args,	\
++		void *: __kmem_cache_default_args,			\
++		default: __kmem_cache_create)(__name, __object_size, __args, __VA_ARGS__)
  
--	if (barn->nr_full >= MAX_FULL_SHEAVES) {
--		empty = ERR_PTR(-E2BIG);
--	} else if (!barn->nr_empty) {
--		empty = ERR_PTR(-ENOMEM);
--	} else {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty, struct slab_sheaf,
- 					 barn_list);
- 		list_del(&empty->barn_list);
- 		list_add(&full->barn_list, &barn->sheaves_full);
- 		barn->nr_empty--;
- 		barn->nr_full++;
-+	} else {
-+		empty = ERR_PTR(-ENOMEM);
- 	}
+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list);
+ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
+diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
+index 0f97fb0d19e19c327aa4843a35b45cc086f4f366..f998555a1b2af4a899a468a652b04622df459ed3 100644
+--- a/tools/testing/shared/linux.c
++++ b/tools/testing/shared/linux.c
+@@ -20,6 +20,7 @@ struct kmem_cache {
+ 	pthread_mutex_t lock;
+ 	unsigned int size;
+ 	unsigned int align;
++	unsigned int sheaf_capacity;
+ 	int nr_objs;
+ 	void *objs;
+ 	void (*ctor)(void *);
+@@ -31,6 +32,8 @@ struct kmem_cache {
+ 	void *private;
+ };
  
- 	spin_unlock_irqrestore(&barn->lock, flags);
++static struct kmem_cache *kmem_active = NULL;
++
+ void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *))
+ {
+ 	cachep->callback = callback;
+@@ -147,6 +150,14 @@ void kmem_cache_free(struct kmem_cache *cachep, void *objp)
+ 	pthread_mutex_unlock(&cachep->lock);
+ }
+ 
++void kmem_cache_free_active(void *objp)
++{
++	if (!kmem_active)
++		printf("WARNING: No active kmem_cache\n");
++
++	kmem_cache_free(kmem_active, objp);
++}
++
+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list)
+ {
+ 	if (kmalloc_verbose)
+@@ -234,23 +245,28 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
+ }
+ 
+ struct kmem_cache *
+-kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+-		unsigned int flags, void (*ctor)(void *))
++__kmem_cache_create_args(const char *name, unsigned int size,
++			  struct kmem_cache_args *args,
++			  unsigned int flags)
+ {
+ 	struct kmem_cache *ret = malloc(sizeof(*ret));
+ 
+ 	pthread_mutex_init(&ret->lock, NULL);
+ 	ret->size = size;
+-	ret->align = align;
++	ret->align = args->align;
++	ret->sheaf_capacity = args->sheaf_capacity;
+ 	ret->nr_objs = 0;
+ 	ret->nr_allocated = 0;
+ 	ret->nr_tallocated = 0;
+ 	ret->objs = NULL;
+-	ret->ctor = ctor;
++	ret->ctor = args->ctor;
+ 	ret->non_kernel = 0;
+ 	ret->exec_callback = false;
+ 	ret->callback = NULL;
+ 	ret->private = NULL;
++	if (!kmem_active)
++		kmem_active = ret;
++
+ 	return ret;
+ }
+ 
+diff --git a/tools/testing/shared/linux/rcupdate.h b/tools/testing/shared/linux/rcupdate.h
+index fed468fb0c78db6f33fb1900c7110ab5f3c19c65..c95e2f0bbd93798e544d7d34e0823ed68414f924 100644
+--- a/tools/testing/shared/linux/rcupdate.h
++++ b/tools/testing/shared/linux/rcupdate.h
+@@ -9,4 +9,26 @@
+ #define rcu_dereference_check(p, cond) rcu_dereference(p)
+ #define RCU_INIT_POINTER(p, v)	do { (p) = (v); } while (0)
+ 
++void kmem_cache_free_active(void *objp);
++static unsigned long kfree_cb_offset = 0;
++
++static inline void kfree_rcu_cb(struct rcu_head *head)
++{
++	void *objp = (void *) ((unsigned long)head - kfree_cb_offset);
++
++	kmem_cache_free_active(objp);
++}
++
++#ifndef offsetof
++#define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
++#endif
++
++#define kfree_rcu(ptr, rhv)						\
++do {									\
++	if (!kfree_cb_offset)						\
++		kfree_cb_offset = offsetof(typeof(*(ptr)), rhv);	\
++									\
++	call_rcu(&ptr->rhv, kfree_rcu_cb);				\
++} while (0)
++
+ #endif
 
 -- 
 2.50.1
