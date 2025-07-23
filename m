@@ -1,269 +1,287 @@
-Return-Path: <linux-kernel+bounces-742824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA0EB0F71C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:33:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECB8B0F715
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20202163B76
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710DE5809EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1717F1F8AD3;
-	Wed, 23 Jul 2025 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C723D1F099C;
+	Wed, 23 Jul 2025 15:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LPfz1FlA";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LPfz1FlA"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012022.outbound.protection.outlook.com [52.101.66.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9RfqqZR"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785041EB193
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.22
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753284782; cv=fail; b=bYjHMjlXvJFRP9gv50aTS22e8e6q2lY0jKumkgHvm5qXP2ikvbQrmlLubp5Eztcehx7eQP8Zuz6aED8GAXgEZFcmNYF5hMk/5h8987v1ZHtBaeICvUxuyFUxoprtHWGGTZK2Yp5zS+IKignohS+4nytzKJRuRGDrog+l4SC0Z80=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753284782; c=relaxed/simple;
-	bh=1zxEAERIaTtBLPMhuN1fpyV9oAPwb+in/aZ8di67AK8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sr+mvZSfQMmxh5ArdXZNRHOsiWYQmAjPgd8qPMRSu9iyet4QHVQu4c2znhE2sHXtKScDcA/yya9trhZKSfmRAY+C898pa9vgzCxEddc/4T6k/7xfM05VHzI2rW9R15p+eRerslobzOlLqjvOFeUDjCBwzUs6JOIrFaHlFw8v7mk=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LPfz1FlA; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LPfz1FlA; arc=fail smtp.client-ip=52.101.66.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=wJkBWhEfnuLBC6mROlo+X8Zgref+0N9RCOjARgOZz4bfwVFXblyn/CNaLSw07EYfKmyCQuPm9dSIAsWnxtyObEzcHDgP2FAytWsV38icdiRLkyOjZNSiKdG8ejGqSh7JIZHEWdye7r9JvgguupArGMWDNTEUFbuecczKdSue8l033DZp8cTI7d6uYrkZHarmI23Bsz4ldQyFyVVoBnWDUCTHPKAGCMcRYRIOJbdvZy6zRFhEiVBu/c0HU0mIJxCInOHKs1sckFX1+Jp2W6palM1PNSsScMXxYFTI5TkfZCfphDbbkQhi7IQz3Of1ne3GWqO5ypgsEjBXK+CwnXVK0A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VfY3sFECrRvA0x5/1ydNOClZDBjtfdYzVMbbNQgs9Ok=;
- b=Lf+1nnE5MGwCTYptV+PiteO6PWSLURMoM51d3Dl7Vrw6ittU3wjmP3fz6an/9gItklflj58lXFe+cGqhj8j/cUGF7jub8tSd8jDekTgOBViiPw5Ka7lmxBU5i/bmMgHPq6GBd63sFEdVOGRhQ4qYvdjwZa8yVtmEP1+YOCxVE2moTtwTppVXxywKtva8FWD9lY4uq7cYB+KDWBSE5zQrBg60XTmLWKjH3+LVPYBWfIXaNAJ08lUNOjhp6RBR4V+Yw/lKGZ5OXvj+JRIeHlNhiEdFl5ZxE7jBVLMoiv84JZhyGm4CkCMyOWaUib3+VKmbXrRGhuXmeB/D4E2XIy9p2Q==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VfY3sFECrRvA0x5/1ydNOClZDBjtfdYzVMbbNQgs9Ok=;
- b=LPfz1FlA6qx6Dm92rb0FJncEXtWj0M+bqYe0xmMB7BfIhh+rMCilR2vGwaeOdY/u0EHuHMPvJ6E1bMp081Geed3ggvVjhmzLXaoMuDTHO3FPrMAHtV27pJnwgLIObRogluVaUBo/tdZo704+ATjJd9JhqG68BZ93LU1xQs/H2Rw=
-Received: from DUZPR01CA0233.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b4::17) by AS8PR08MB9693.eurprd08.prod.outlook.com
- (2603:10a6:20b:617::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 15:32:53 +0000
-Received: from DU2PEPF0001E9BF.eurprd03.prod.outlook.com
- (2603:10a6:10:4b4:cafe::3e) by DUZPR01CA0233.outlook.office365.com
- (2603:10a6:10:4b4::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Wed,
- 23 Jul 2025 15:32:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU2PEPF0001E9BF.mail.protection.outlook.com (10.167.8.68) with Microsoft SMTP
- Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20 via
- Frontend Transport; Wed, 23 Jul 2025 15:32:52 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b8SlGdq8uEm0ZAc7Bl2jzc6KCs9j0+KKuUMHWhmP18rVgt1YuYA25dyZ4NZRYletwR0auJuRmBdgvJgVimCFHMghTT2FxOU+dyLX6Mw4T3xS8lPiDre2yYpuzJh3auji8E8xodt1+71TXmI9sDisqyMD8vngJH/bOk9nRN94iept/J/9TRSk1mt5dXyMZ7oeSK5rNgNlVZCq3nmws0hOGFA+2CHlzJeReKjJlSYPsdpQDrW8G3wWLdxQcfn+IRluYA9U3iCQxCpK0kLydquwh//YndT/sg3uyw2yDtrKB+kZ4yWcUEE6loK018NBUxJ3FvGxDagMFDKbw4Xv9CEk2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VfY3sFECrRvA0x5/1ydNOClZDBjtfdYzVMbbNQgs9Ok=;
- b=T1I/mBRjuKBNHqQbVY6H/Xjt2UWPACu0dC4bgdLKbDAdwMeIF9QszjaZPs+ZSKucEfu2XCCCIX11L1xIPiNl38o1DUMsdqWqi4U6/fMmhPpn6et4u+vsHrT3iUu6AZbZLbcjCLjy7ScyJldza/YZENJueE6y9SN8B7Amh5LvX60fmlcEmxQh2iaQi+0PiWlFhGzgd/usYuhH6ASdUpKNoYbjxqboTTe6kIg4UnlYBvADut6AfRF6eBckzSGRv8QTc2Ynabjb+lpmmmK9Cgn/uege1h0vWNa5/44iCNErkjaeWtXNw26IpBSmZoQCfjJPQWDnUYBRSYTM95jvmwVjUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VfY3sFECrRvA0x5/1ydNOClZDBjtfdYzVMbbNQgs9Ok=;
- b=LPfz1FlA6qx6Dm92rb0FJncEXtWj0M+bqYe0xmMB7BfIhh+rMCilR2vGwaeOdY/u0EHuHMPvJ6E1bMp081Geed3ggvVjhmzLXaoMuDTHO3FPrMAHtV27pJnwgLIObRogluVaUBo/tdZo704+ATjJd9JhqG68BZ93LU1xQs/H2Rw=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
- by AS2PR08MB9786.eurprd08.prod.outlook.com (2603:10a6:20b:605::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 15:32:20 +0000
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
- 15:32:19 +0000
-Message-ID: <4afab284-5169-4837-8317-3ad216108261@arm.com>
-Date: Wed, 23 Jul 2025 21:02:11 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] mm: Introduce FPB_RESPECT_WRITE for PTE batching
- infrastructure
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
- willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
- lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
- anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com,
- ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
- quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
- yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
- hughd@google.com, yang@os.amperecomputing.com
-References: <20250718090244.21092-1-dev.jain@arm.com>
- <20250718090244.21092-5-dev.jain@arm.com>
- <6963114B-A7F2-49AA-83CA-CC4EE284714F@nvidia.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <6963114B-A7F2-49AA-83CA-CC4EE284714F@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0P287CA0011.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::7) To AM9PR08MB7120.eurprd08.prod.outlook.com
- (2603:10a6:20b:3dc::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D20D19CC29;
+	Wed, 23 Jul 2025 15:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753284751; cv=none; b=QeIfplHTWjrJFDHCCZcLYAbLmO3bPd9eswhKCHWUwwjJ9zdzV+FgFtPMUkV8odEibG2CmgGbhJgVcMHSu4ohnJ4TMYKE+B0YbjMN4MwiienCuz6fQnCYOX7+jnaDoK/nk03mtkjr/bJcvPJvLZ4G2h43f5/KAmtkJxCVeMb9xok=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753284751; c=relaxed/simple;
+	bh=HkcngKq7JR/WRYu7csRYIy3MdLYjoZUIv+jpqjw+ctU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BHZtveXXOiJhX94vYGskrkN7vt10LfWDcUCTBy7/ij+Ps8Xaf76utrZHz+Evp5k9HngJtPgg5LBeKBZfh/cfzuzQpxwhxDFcKIc+MiqA8XOfEqxuj/4kQTWHp/Ol/7sRcIgn9oigBhsAloggW2t6ru1gcjUObrR++J5ZLZqHRSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9RfqqZR; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234b9dfb842so58908695ad.1;
+        Wed, 23 Jul 2025 08:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753284749; x=1753889549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SAUZEw7Zyr/dH2MhdiUynRcdRRRh3d/M1xLFRoTpl7c=;
+        b=a9RfqqZRF1sptucDzj4hVEV8gKBLGJZqtpl6T7/bq2Mm9Dg2jkKv9xYiXAuOivTag7
+         i0UIa2jW5OA7Z+lfbOFC2byM4b/bq3S/Yt3Zc6h5PvVD2f2WcWIiTIwe9iGcKk0oLVJs
+         07XMvMP2CnNDiGW04LbKQRMjyRNEP+Ebo4xuQmmvjrcvJcLR0dk+JQou38KnNqMdN874
+         7fvctf0RdiDPpXCcgGXiKmnYjvUqhGizF4PIGOAz0G7femsfzEfmCRuFIdZ0hsmd1i4L
+         vyJJGDFWAHQs9vXMqgyet9Boq1koqmrLgYc04KjM9FkbRzZw8NQ04WPvBtDsYOI7FV6j
+         xTZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753284749; x=1753889549;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SAUZEw7Zyr/dH2MhdiUynRcdRRRh3d/M1xLFRoTpl7c=;
+        b=f7+A9lT2U9ouZcq/9VTVI8baU0U9zwEiD/lAnw0h5KfMaVPdZCoPFDcWdDPpeSg+GX
+         qzsQgqOBtE9rGV+BdvrjvCbzez44GY1s1bfCyl50vdrVHufFYC5QK//6vAeSbzgYXtsN
+         u9Z8fEnxuGoITKDZIBwcyOdFPmd9sRPf2MW9MwTXGYfHDoDux6u3zU0W+FetltkP4zs9
+         gM3FvQnuaDdp++zJVmQcIcSe7G8seKcZVbtOw9R8+oUZCYUOAfFyMkbLGkJ5PPnY54ov
+         8NOqlL/V8J6r6USMj9JIg5V6QzDmGXznaoKvkVvqH7PHXSgOtxsMaTisZiAIvkVzrhtZ
+         /5jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmrknXAqpAKpDW4BCZU58XhEM6uYiacsIT8aEnOTKMVMm+gISxJifO0Q3YENmcgzE95jTLsi5f6GfoFMeb@vger.kernel.org, AJvYcCVbOScDzV5BmbJzKrIuOzkEhogqFotyf5oQbxkJDwywCQ+7TkBPI2/wfXF24VS6ClMaJZKhzB6cNMb8@vger.kernel.org, AJvYcCWLvFk5kE2b9Viwjpu5BhmaZ+8PeCvjGBWeAPOg5eKr1foH6uPU/4fY+cQRnmHepbb5ChfXunTOGUBIVA==@vger.kernel.org, AJvYcCXs5GY62DJGMLvITqU3SSau6PhmxYp6swZ2BBrR/u2P+D4Kgi1NDlsBmLCZuY5jJ0I7dJlsRhMRXTnQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ORb+9K8FxNEnYDJhiKrcIXnQbN3QNLdKApB2tKG5ykJyk7tY
+	7oxuBrOiDhFJbcTaXpcbu+4lNPQnWRo2O8T9L+1ie70EXBmTwBGds5TjJfXfdw==
+X-Gm-Gg: ASbGnctsJHPwBLT3MND++kewqaotE2ClnAESHRUPbW4O+tPNtYArD2MfxSvObI28RSg
+	xCTYFsWDP5QlS5q5eF4k7FtPXBhgv0j+V6gaj16LY7TJIIA4NHGKfOV9i9EuR4JS9lCGcKVManN
+	6XWjtohIOB+fC/6mPJ7b+tSstGN6mRrxtFA9zipObtMeOKIv94z5UEbO8ymlB1B06wZSw8g6cSz
+	yxqxub0HkuNeBQ2zb4XP4zImrjwTri6ZpJFogEXU/rixTZaP5ZBrSfWGZGAwLYpDVuSTQNmiKhn
+	l2xUIlPrwi108DYh7DOFPSp1RUuIB80n60fkiMkDGnsXSXGdp0f0b35cYpunpLTmVBQ0xtlGXcS
+	yl5V6OSuT8/ECoSBfSueSQyc6oyW4R/aO+JZcZaCwVYTs
+X-Google-Smtp-Source: AGHT+IHzrpP4vCfo3NRU61rWRBd8ZxUejRAEZpPjSFan9to0J9MpkOLFyF9oSRFuO4QjpYtIahwrQg==
+X-Received: by 2002:a17:903:2444:b0:23f:8d6a:8e45 with SMTP id d9443c01a7336-23f98140a01mr53243475ad.4.1753284748542;
+        Wed, 23 Jul 2025 08:32:28 -0700 (PDT)
+Received: from DESKTOP-P76LG1N.lan ([42.118.149.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3fcbsm99273685ad.48.2025.07.23.08.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 08:32:28 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: lee@kernel.org,
+	krzk+dt@kernel.org
+Cc: pavel@kernel.org,
+	rdunlap@infradead.org,
+	christophe.jaillet@wanadoo.fr,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v11 2/4] leds: add basic support for TI/National Semiconductor LP5812 LED Driver
+Date: Wed, 23 Jul 2025 22:32:21 +0700
+Message-Id: <20250723153221.96289-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <0c7e171d-056d-4c00-a30b-0fd39e25bf4c@kernel.org>
+References: <0c7e171d-056d-4c00-a30b-0fd39e25bf4c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB7120:EE_|AS2PR08MB9786:EE_|DU2PEPF0001E9BF:EE_|AS8PR08MB9693:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99886a30-e701-427b-63fb-08ddc9fe308b
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?WVhhVWJJa0dvUWhmSkhzT01Zd3BRWmFBamdwbFphS1VmU21aR1luaVRUM2g2?=
- =?utf-8?B?VDg1enJjWU9RdW45cWlTSXpOZEZpUmlRY3dxU0V4dHp0dVpMb09ROGxGUTdx?=
- =?utf-8?B?Y0dqUFdEREdIZFBvQlQ2RXFFc3BpOUEybGhrVjZlMU9tRk9aeTI4M2Jray91?=
- =?utf-8?B?cFlzdlVqNE5xdkxPd2J1M3cwTktpMko5eG4ySlVLQXpqSWYrMTR6T2hRYUdG?=
- =?utf-8?B?YzR1R21vQkw3NmFpL3ZZSVYyeWcwZlJVeUEwZTV0RWI4bmlMelZoVHhFWVEz?=
- =?utf-8?B?TVUyNDR5OWpkTDFuSlhLZTZ4M2l0OFV5RVcrZzF4RkQyWDF2Wi8yWGpocTdz?=
- =?utf-8?B?ME9MRFJBRGxOK0M1T1ZwalhQc1ZVbm8vR0lWQ0Nnd2dHVENoL3JZSy92d3Er?=
- =?utf-8?B?bCt4MVdIYlNmTE5GY3lIbURCUkdCK3h6ZG9ZWktoMEU5UHM1UHRYNCs1WThL?=
- =?utf-8?B?NlpnRk9QYjdGZlV1K3FXWlZaRUFpM1JWalhYcllyTGxyVVB0YVN6THFsemJ5?=
- =?utf-8?B?Wkx6RzN3ZUZtT2o4N21JbUJ6T1BWb25IY25oaFp3ejZKZlhKdGFCVjZ4eVBs?=
- =?utf-8?B?SHk2UTB0V2d2SE40UmVyYTJOZkloQkpwQjQ4ay8rb2xGTFUrZ3VPa2hJc0lB?=
- =?utf-8?B?VWxFL1orTWI4bzFMSVVYY0hodGFTaG5VR2FEekRsVzMweCs4dGRHUi96UjZV?=
- =?utf-8?B?bWg0VmlNL3hMZEFRY0FpaWRMUWJjZkdyOEFOdEI3aklYSU8vdU5uQnRJT2lt?=
- =?utf-8?B?cXBUcllPVEdOVXRxT2hKRU9XaGRWVTRuUVlMUkFRTU5wU2RQZ3pQZWpDQ25T?=
- =?utf-8?B?UWtXNnd2NW4wTk0xTG41bm9Ya1lOUlVLaXlYRjd1QU5FL2t1T09kRlo4YStn?=
- =?utf-8?B?cGk4RWFQNDVveDBlWmw3SndxRmo1aVJ2ZDR4RXpRYUtVNUxHQ25SK21OL1Nm?=
- =?utf-8?B?aHZkNE10TEJUN0txeW5aU1UrWmkwOHV2Z1J3SDFnaUNrZlRidWxnQ3psTVQr?=
- =?utf-8?B?SURLcGwxT3pXanJsYkJFN2xXVWN2ckFGSWFRbFNuMHg2cmJBYzRsQlZDR0lW?=
- =?utf-8?B?aVN6TmFiQUtydVoycGJsWW9IWW0zUXBjNzI0MGxYcElQUFJtK0ZGMXFzNDcw?=
- =?utf-8?B?bzczZlRSclpwTGVaaksySVp3TFRJZWh4OVd5ZFFUMWgvc2c4d0plNlhFQkV1?=
- =?utf-8?B?aVFMUjJoMTJ5cVFGc3NrN2hIN2l4TXlCY0czVFI3dndGeEtLT3RSaC9UeHg3?=
- =?utf-8?B?dDhGY1dKTjBHRk04WUZHSHQ1SFZERkdGbFp2RkU4TVdWeVpwVi8vMkpyeW9s?=
- =?utf-8?B?UjJ0UW1BWVJaaXVZdmcwcTA4NzdNNXFDeHZRU3NYSGlNM29KWUkvYUxWMlox?=
- =?utf-8?B?czZ3aHN6ZnRtYXd6NDFJZ09LMWU0anovbUhzTWx3cEdYTDhTTml2Mk5NRTVY?=
- =?utf-8?B?cnFra2hYSnNrMjNld3VsUkg0QUozdUcyanhZMnRhSTlRalhnR21EdUtMRWVU?=
- =?utf-8?B?d2EzU0tRMERSZkxsNWdpTDJuSFlSOXZnVURPczEvOFIvc2gwbVZ5R25QQjRK?=
- =?utf-8?B?SUlUaEYzMVVwb01wK0xJR2JYVHNXYmUrTk0ra083dlMzbWJrTHh3T3NxY09I?=
- =?utf-8?B?aysvM0ZZOUJ0eE1rb2RnTStYNGxxK0RhNTFOTndXZitnZEFhdjlrQk8zK2NI?=
- =?utf-8?B?elhPalZGdVdnVi9rUGxZeGh6THUzVFJLOFNZbDQxZzJJYVp0R0RRVkMvZ1p4?=
- =?utf-8?B?Y1FmU2pqS2x3clBJQzV6b2llWkJhaEtpWVNPbnk5dTkxQzJ4RGtXTy9zeXor?=
- =?utf-8?B?aEhGT2cvU3pWR1VrMXpkakZ6RUloMmovb1lhZnJxbS81TEJxdGpDYm1FeW8v?=
- =?utf-8?B?Q1c4QXAyNzVrbkJzMTNhMWllYW4wbDBBR2RWWElhQWxrWFFtWUJlTFJGby9K?=
- =?utf-8?Q?nDAmDoercMA=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB9786
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU2PEPF0001E9BF.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	9434d310-eb1a-464e-2872-08ddc9fe1c49
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|36860700013|376014|1800799024|82310400026|7416014|14060799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bjNjd3B2M09henE3MTFpSVhmc3F0S0xNd0NBRmcrc2hSLzV0SU52SzdlMkEy?=
- =?utf-8?B?OFNyaWpnaG9UeUFibDc4V2xEb3puYVZPcVpCUVprZTNWbHRZUUVuNU1yOTBp?=
- =?utf-8?B?QUk5TEV1Y0pZSFRmY3kwR3FaZEtTSGhKS1k0dm1DOHhIVk03OFN5UkdmYnNL?=
- =?utf-8?B?NWpjRWp4Z0kyL1lnL2tTcnpnZkVubHBGL0sxZ0s4NnBlSzJnT3dWSzZadXNY?=
- =?utf-8?B?K1k3M2kzbXFTMkZOeEtYaW5wNnByZ1c2SnozY2VvYzEwdUdxNjRkNkc2SW9t?=
- =?utf-8?B?MFVTbnhFTWFuTC9hYnhTT3l5b0VNb0phL1lIOGpDcU1zMmt2YjdxTzdmdXZP?=
- =?utf-8?B?WWczYVJkOHF6dVhTNTRQNHdvcUdUenpRck8vV0g5UmVMZnI0bVJGaWkzZ09H?=
- =?utf-8?B?VlBKZG4xZWc5TkE1TU5PRVROdk4yMFVzeUovWGxWQlJtaVNJU1l3N3UzYUo0?=
- =?utf-8?B?ZjJJSjVEb2lCWGJvZEhQUGxZd2I4WWZiRlkraFNwWS9ZdmlzVnBsaFpwV2Ja?=
- =?utf-8?B?UE1DbStzc3JWeXBaUnIvcDhrcUY3RGlvNDd3eENIVUNkSklkMFlvRnhSRkw0?=
- =?utf-8?B?S1RpVUNuNkNPSEROMHhmU2NOWXFVUHNidTlVZGZ0K3B4TU5yWmlqRE1CVllR?=
- =?utf-8?B?cW5xbnBpRTFZUituMEhjb01FZ0NmMzNCK3BvSE1jdVdDNzk3WVpOTG51VjFh?=
- =?utf-8?B?QUh4SWJPNmJhbXhKNGtVelNHMk5CUDBJWnNpbGhyTk9yZzBOdXM5TnZiVFFh?=
- =?utf-8?B?VnhGbWdTSFJ6Rjc0SWhhRlZxV2g5a1NxZE1HYlI3djdOejJlK21kUXFuTm9q?=
- =?utf-8?B?dTR1enIrQ0dJazZWTkZHKy83M3J2bThvdkVBdE9POWx1b3dPaUdXOGdubFJn?=
- =?utf-8?B?VWdtSU1Kc0VpbkNYOHlZbFYxZ1dHQ1YrRGFWa3liQzlyTnl2bURlWFEwZFpO?=
- =?utf-8?B?NERtamVsZlM0U010RW0vcUFMVTVJUVA3NDJudWZtUGErektINlNwYXpxdHRJ?=
- =?utf-8?B?M3I3Tkh6NmpBZ3dDUFp1NExNOWxSZXRWaHBBVkhCbFgvQmZoa1ZWb04ydU5h?=
- =?utf-8?B?V212YUxRcWlZdFYyTnU3Q2RXTUk0eGhXZDNwTlU4dkdLU0REb1FIbTdUdVlZ?=
- =?utf-8?B?TzNJYTBoNVhOaEN0ZzFnNFA4KzNPSGJZTDd6RWZQZndYUjRnQzNIeWlCaTA4?=
- =?utf-8?B?bEtDdVd6bjFuTys0Qyt0TEF2VWFtclk1Wm9mb3RvZmhPTkYvZkZlbFJmWC9n?=
- =?utf-8?B?T1l3L29mZjRkN1plelRvYVk3WlFmN1dvdklhL3hnb0NrYkZ3UFNnN0Jtdmtu?=
- =?utf-8?B?M05TNjhteE84Y2JUODFuNkFzNTI3NkQ1RDZlbUZBVXJOTmZERklSZytUdTl3?=
- =?utf-8?B?cnp0L1FUckR3S3BEYkNDdjlzbXhWUDBiLzFocm9RMDRKdEh4S1RWS0VmeXdi?=
- =?utf-8?B?MHMyUCtUM0prOWVsWERlRDlqUHZSVXU4T2xORE51aHhtek83UTZCSVl4NXpP?=
- =?utf-8?B?TWtxdTkrenNYbVJ6bGZBV1l5aDhzbHRCajhZR2N5eDBCT0wwVUNDVm9UT1NJ?=
- =?utf-8?B?b3dhU3cwc1FtZWxRVkFtMGxOWHRId2lPWHNzWUxaYjVnbkhOektrMGg0ZlNl?=
- =?utf-8?B?UEM0SzVEVktULzc1YzZRNWpRd2UrNDFSYnVLZDZEU2hBYW9jM3J4czEycnpl?=
- =?utf-8?B?ZUp1KzlDWkVvNjc2bk8xWCt1OE9QUno1dmlTeVZmNytzUUNDUXBidkdmSEhN?=
- =?utf-8?B?Witsc0IzZmhPOVpjaVMrbWkxWDNtL1d4RmY2UVdsUTRlSGdreU9QZmlOejdw?=
- =?utf-8?B?KzJ5S1ZocDlPVEd0citvNVBUR2pZOFgraDBVeTR2cmRMUzlyUFJPUWF4aTNW?=
- =?utf-8?B?Ky9aNytJb2E5L05Ea2lOenJPNkdiK1VnOFFnT0VJbTRldXhhSzdyYlRRNkZK?=
- =?utf-8?B?cHYrZmRmTWJUUTZiN0FJbU1ySHpicHZRVExqMHJXeWh3eEJLME5HUDFKVmZK?=
- =?utf-8?B?d1JiaVg1citKMGQwbVRXZ016Tmh1ejJReUcvcUtIU2VQN25nUnhwZ3drZW14?=
- =?utf-8?Q?u7Yjhd?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(36860700013)(376014)(1800799024)(82310400026)(7416014)(14060799003)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 15:32:52.8773
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99886a30-e701-427b-63fb-08ddc9fe308b
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF0001E9BF.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9693
+Content-Transfer-Encoding: 8bit
 
+On Fri, 18 Jul 2025, Krzysztof Kozlowski wrote:
 
-On 23/07/25 8:58 pm, Zi Yan wrote:
-> On 18 Jul 2025, at 5:02, Dev Jain wrote:
->
->> Patch 6 optimizes mprotect() by batch clearing the ptes, masking in the new
-> “Patch 6” might not make sense when reading it in the git log. Something like
-> below might be better:
+> On 14/07/2025 19:23, Nam Tran wrote:
+> >> +static int lp5812_parse_led(struct device_node *np,
+> > +			    struct lp5812_led_config *cfg,
+> > +			    int led_index)
+> > +{
+> > +	int num_colors = 0, ret;
+> > +
+> > +	of_property_read_string(np, "label", &cfg[led_index].name);
+> > +
+> > +	ret = of_property_read_u32(np, "reg", &cfg[led_index].chan_nr);
+> 
+> You mix code for probe with code for regular operation. This is not
+> expected and confusing. All functions related to probe must be before
+> the probe function is defined.
 
-Andrew has fixed that for me :)
+I will restructured the code to move all probe-related helpers above the
+lp5812_probe() function.
 
->
-> mprotect() will be optimized by batch clearing the ptes, masking in the new
-> protections, and batch setting the ptes in an upcoming commit.
->
-> No need to repin for this one.
->
->> protections, and batch setting the ptes. Suppose that the first pte
->> of the batch is writable - with the current implementation of
->> folio_pte_batch(), it is not guaranteed that the other ptes in the batch
->> are already writable too, so we may incorrectly end up setting the
->> writable bit on all ptes via modify_prot_commit_ptes().
->>
->> Therefore, introduce FPB_RESPECT_WRITE so that all ptes in the batch
->> are writable or not.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   mm/internal.h | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
-> LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > +
+> > +static struct lp5812_led *lp5812_dev_to_led(struct device *dev)
+> > +{
+> > +	struct led_classdev *cdev = dev_get_drvdata(dev);
+> > +	const char *name = dev->platform_data;
+> > +
+> > +	if (strcmp(name, LP5812_SC_LED) == 0)
+> > +		return container_of(cdev, struct lp5812_led, cdev);
+> > +
+> > +	return container_of((struct led_classdev_mc *)cdev, struct lp5812_led, mc_cdev);
+> 
+> 
+> No, just pass correct pointer to platform data, no need with strcmp and
+> then different container of...
 
-Thanks.
+I will remove the string-based `platform_data` handling and now store a direct
+pointer to `struct lp5812_led` in `dev->platform_data`.
+This allows simplifying `lp5812_dev_to_led()` without the need for `strcmp()`
+or multiple `container_of()` usages.
 
->
-> Best Regards,
-> Yan, Zi
+> > +static int lp5812_init_led(struct lp5812_led *led, struct lp5812_chip *chip, int chan)
+> > +{
+> > +	struct device *dev = &chip->client->dev;
+> > +	struct mc_subled *mc_led_info;
+> > +	struct led_classdev *led_cdev;
+> > +	int i, ret = 0;
+> > +
+> > +	if (chip->led_config[chan].name) {
+> > +		led->cdev.name = chip->led_config[chan].name;
+> > +	} else {
+> > +		led->cdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s:channel%d",
+> > +						chip->label ? : chip->client->name, chan);
+> > +		if (!led->cdev.name)
+> > +			return -ENOMEM;
+> > +	}
+> > +
+> > +	if (!chip->led_config[chan].is_sc_led) {
+> > +		mc_led_info = devm_kcalloc(dev,
+> > +					   chip->led_config[chan].num_colors,
+> > +					   sizeof(*mc_led_info), GFP_KERNEL);
+> > +		if (!mc_led_info)
+> > +			return -ENOMEM;
+> > +
+> > +		led_cdev = &led->mc_cdev.led_cdev;
+> > +		led_cdev->name = led->cdev.name;
+> > +		led_cdev->brightness_set_blocking = lp5812_set_mc_brightness;
+> > +		led->mc_cdev.num_colors = chip->led_config[chan].num_colors;
+> > +		for (i = 0; i < led->mc_cdev.num_colors; i++) {
+> > +			mc_led_info[i].color_index =
+> > +				chip->led_config[chan].color_id[i];
+> > +			mc_led_info[i].channel =
+> > +					chip->led_config[chan].led_id[i];
+> > +		}
+> > +
+> > +		led->mc_cdev.subled_info = mc_led_info;
+> > +	} else {
+> > +		led->cdev.brightness_set_blocking = lp5812_set_brightness;
+> > +	}
+> > +
+> > +	led->cdev.groups = lp5812_led_groups;
+> > +	led->chan_nr = chan;
+> > +
+> > +	if (chip->led_config[chan].is_sc_led) {
+> > +		ret = devm_led_classdev_register(dev, &led->cdev);
+> > +		if (ret == 0) {
+> > +			led->cdev.dev->platform_data = devm_kstrdup(dev, LP5812_SC_LED, GFP_KERNEL);
+> > +			if (!led->cdev.dev->platform_data)
+> > +				return -ENOMEM;
+> > +		}
+> > +	} else {
+> > +		ret = devm_led_classdev_multicolor_register(dev, &led->mc_cdev);
+> > +		if (ret == 0) {
+> > +			led->mc_cdev.led_cdev.dev->platform_data =
+> > +				devm_kstrdup(dev, LP5812_MC_LED, GFP_KERNEL);
+> > +			if (!led->mc_cdev.led_cdev.dev->platform_data)
+> > +				return -ENOMEM;
+> > +
+> > +			ret = sysfs_create_groups(&led->mc_cdev.led_cdev.dev->kobj,
+> > +						  lp5812_led_groups);
+> > +			if (ret)
+> > +				dev_err(dev, "sysfs_create_groups failed\n");
+> > +		}
+> > +	}
+> > +
+> > +	if (ret) {
+> > +		dev_err(dev, "led register err: %d\n", ret);
+> 
+> Why are you printing same error multiple times?
+
+I will remove the redundant error message at the end of `lp5812_init_led()`
+to avoid double-printing.
+Now only the specific failure points log detailed errors.
+
+> > +static int lp5812_probe(struct i2c_client *client)
+> > +{
+> > +	struct lp5812_chip *chip;
+> > +	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+> > +	struct device_node *np = dev_of_node(&client->dev);
+> > +	struct lp5812_led *led;
+> > +	int ret;
+> > +
+> > +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> > +	if (!chip)
+> > +		return -ENOMEM;
+> > +
+> > +	chip->cfg = i2c_get_match_data(client);
+> > +
+> > +	if (np) {
+> > +		ret = lp5812_of_populate_pdata(&client->dev, np, chip);
+> > +		if (ret)
+> > +			goto err_init;
+> > +	} else {
+> > +		return dev_err_probe(&client->dev, -EINVAL, "No platform data\n");
+> 
+> This is confusing syntax. Expected is:
+> if (!missing something)
+> 	return -EINVAL
+
+I will update it.
+
+> The other problem is that you claim this can match and bind without OF,
+> but here you say it is a requirement. So either this code is wrong or
+> your I2C ID table should be removed.
+
+I will update the probe logic for clarity and removed the i2c_device_id table
+and .id_table field.
+
+> > +	led = devm_kcalloc(&client->dev, chip->num_channels, sizeof(*led), GFP_KERNEL);
+> > +	if (!led)
+> > +		return -ENOMEM;
+> > +
+> > +	chip->client = client;
+> > +
+> > +	mutex_init(&chip->lock);
+> > +
+> > +	i2c_set_clientdata(client, led);
+> > +
+> > +	ret = lp5812_init_device(chip);
+> > +	if (ret)
+> > +		goto err_init;
+> > +
+> > +	dev_info(&client->dev, "%s Programmable led chip found\n", id->name);
+> 
+> Drop. You have only one device type (look at your binding), so you
+> cannot "find" devices.
+
+I will drop it.
+
+> > +static void lp5812_remove(struct i2c_client *client)
+> > +{
+> > +	struct lp5812_led *led = i2c_get_clientdata(client);
+> > +
+> > +	lp5812_unregister_sysfs(led, led->chip);
+> > +	lp5812_deinit_device(led->chip);
+> > +
+> > +	dev_info(&client->dev, "Removed driver\n");
+> 
+> No, drop, useless.
+
+I will remove it.
+
+Thank you for your thorough review and helpful suggestions.
+
+Best regards,
+Nam Tran
 
