@@ -1,134 +1,186 @@
-Return-Path: <linux-kernel+bounces-742763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385A4B0F667
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7B9B0F676
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747DC1717C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A13174B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29792FCE1D;
-	Wed, 23 Jul 2025 14:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C226B303DE5;
+	Wed, 23 Jul 2025 14:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiO5J/zV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="U8G1ZLbh"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005652F50BD;
-	Wed, 23 Jul 2025 14:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282447; cv=none; b=NxhzB0sHVge9hgw9SZitVK/up9GBaPvvt886Sxb0oA55rBwhn/je6gfMyxHcZqA4S6RzeBrjt1KE75BBIONTHvoME54mgQf4pgxpbtm158zDlQkKZjxCuPxqFQl1R0fHqDtE9Xt+OPF/8tMC5yX7g/P4Qm4eefkXbpIvUcnTQn0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282447; c=relaxed/simple;
-	bh=4U/+U3/SF5geYLW4vyxe77t41Yfr2fQzgQTGw6vbhVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFcbxBKHK1ej3YOnvnyDOtw9rIpXVMazt4NjuD5nbeX5yDRpL1kuN0R7Ofnm7YjTOJFwJYlNT+jMb5JMLNS4T6VYBXyy6c+cB0QmxbMxPhA2iYdYTQskRDqB0YZNx5zzKmd+7fUdciziXmB80obRuTFUQrP8Pc3izrTRLHgvK5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiO5J/zV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03596C4CEFA;
-	Wed, 23 Jul 2025 14:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282444;
-	bh=4U/+U3/SF5geYLW4vyxe77t41Yfr2fQzgQTGw6vbhVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CiO5J/zV5S6FbLaWm2MKDwnRTJOHgGUSzY22lvLLoCt1suc5TMFQcPrLA148z896s
-	 e7YStYXLrNYy7qFW72jehY35t1utnJOTYqVX3Y+SwMDv/mD1ogJSe3floTEmSxanOl
-	 MafGxv49RfiE6oHPGql4W8zEnGRW0+3hWeY4So0Li1TCGEJYiBGvNIL8LRNOdSWWz6
-	 z6LskuFZfKh2z7m8XRykksR0EMaLnz1QyD/NuLYnxJsDkRykHS6bzgHDZxKKUGEHh8
-	 DzU8JGewheVY4nRRqbM0UxZpWw7cF3Bjac89rXx9WaCTcgJNBJLUEE/+07BvLp6RBT
-	 b90JExGjbuH3Q==
-Date: Wed, 23 Jul 2025 15:54:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next v2 4/5] netconsole: use netpoll_parse_ip_addr in
- local_ip_store
-Message-ID: <20250723145400.GB1036606@horms.kernel.org>
-References: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
- <20250721-netconsole_ref-v2-4-b42f1833565a@debian.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2264D2FF465;
+	Wed, 23 Jul 2025 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753282560; cv=pass; b=WCi9lcZk3M5qL1pa0m1wSwhQKHHstjxCT4InOwbbzzHFzjPkGxPwu1pxm9oM3b9eqY0MaqJKZvbdzOtk719xfyPUfs+Um4URRx6evbu++imHN8Oxd/0GB/oYxYtLXqR594DJJrEUgP4OUWzMUdNYAe3z2vLKtDgP5cxbfoskVxc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753282560; c=relaxed/simple;
+	bh=lSQrmhEgwu7KF7VuYErPsVcaycifpb4w2sf/ZlD88HU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=knN92aifVOrUGefqOpwfosMOAg6C7vKToSPJ3YF15dlsnIsWBen1A3dk0rVEqip/9/7bAEZLizxeGBUieinaJEGXwNA14HMIq2cNqH4xEWNBCwXaXLnUBx5Af/Hw+CtfcTf2DBVwbjV3tfhoj6wKhWuhvKj7pUeejwJIvWCBjDY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=U8G1ZLbh; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753282467; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CAbV/6nAU+BRyql8bLADOQcgzaqK2Gub+7grQv1ddt3gU2BMkocUTJxx3cavyxm24NQ9pnWqQWklc9lX+GF9ZkFKCEhAgmyeTQ1ugD/42V5GkAtJq300oRxgCczAQXp6GC2sQ7+eVo633XHpmtqkV1CvaoIyVO7+Yx3iTkWt5GE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753282467; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2lwWCq9zBGsw0LGnOcqUCoqzVzvg7jHi7JcvSLbMDS0=; 
+	b=DeYo5R/hO2+8FBrJ865Bg1F4hp+yopt21Oq9x3kVvigq6HPkkYThZ2CCHgXnEVBWBuOxKFBaB4z9H4x3MtOMF9iKHKyK7k8epZwsUnzzlWmIESWC7qqOiBh0A1SVzn2I0UKCr41XtKtBW5YZQptAUPQfHnHKaTjCzwUMiybD/u4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753282467;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=2lwWCq9zBGsw0LGnOcqUCoqzVzvg7jHi7JcvSLbMDS0=;
+	b=U8G1ZLbhJb+wlJOANZPzZ++HXHQ4A4K2n9kv0BoziLe/o019jxj30zffuq8YWyGY
+	fnH/Q18GwZmlgrAjiamasdE1ZGW5kOiMncCQMqfqD4olLsMMii8PwabmIoM0L7dpHAl
+	LDX1Q6JZ9JIEk2ADWQKO+SGlbEFaIccPO3ZdVKOo=
+Received: by mx.zohomail.com with SMTPS id 1753282465210288.77001923495413;
+	Wed, 23 Jul 2025 07:54:25 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-netconsole_ref-v2-4-b42f1833565a@debian.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aIDxFoQV_fRLjt3h@tardis-2.local>
+Date: Wed, 23 Jul 2025 11:54:09 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <95A7ACD9-8D0D-41FB-A0C0-691B699CBA17@collabora.com>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
+ <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
+ <aIBl6JPh4MQq-0gu@tardis-2.local>
+ <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
+ <aIDxFoQV_fRLjt3h@tardis-2.local>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, Jul 21, 2025 at 06:02:04AM -0700, Breno Leitao wrote:
-> Replace manual IP address parsing with a call to netpoll_parse_ip_addr
-> in local_ip_store(), simplifying the code and reducing the chance of
-> errors.
-> 
-> Also, remove the pr_err() if the user enters an invalid value in
-> configfs entries. pr_err() is not the best way to alert user that the
-> configuration is invalid.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-My suggestion below not withstanding, this looks good to me.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> On 23 Jul 2025, at 11:26, Boqun Feng <boqun.feng@gmail.com> wrote:
+>=20
+> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
+>> Hi Boqun,
+>>=20
+>> [...]
+>>=20
+>>>> +        IrqRequest { dev, irq }
+>>>> +    }
+>>>> +
+>>>> +    /// Returns the IRQ number of an [`IrqRequest`].
+>>>> +    pub fn irq(&self) -> u32 {
+>>>> +        self.irq
+>>>> +    }
+>>>> +}
+>>>> +
+>>>> +/// A registration of an IRQ handler for a given IRQ line.
+>>>> +///
+>>>> +/// # Examples
+>>>> +///
+>>>> +/// The following is an example of using `Registration`. It uses a
+>>>> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior =
+mutability.
+>>>=20
+>>> We are going to remove all usage of core::sync::Atomic* when the =
+LKMM
+>>> atomics [1] land. You can probably use `Completion` here (handler =
+does
+>>> complete_all(), and registration uses wait_for_completion()) because
+>>> `Completion` is irq-safe. And this brings my next comment..
+>>=20
+>> How are completions equivalent to atomics? I am trying to highlight =
+interior
+>> mutability in this example.
+>>=20
+>=20
+> Well, `Completion` also has interior mutability.
+>=20
+>> Is the LKMM atomic series getting merged during the upcoming merge =
+window? Because my
+>> understanding was that the IRQ series was ready to go in 6.17, =
+pending a reply
+>=20
+> Nope, it's likely to be in 6.18.
+>=20
+>> from Thomas and some minor comments that have been mentioned in v7.
+>>=20
+>> If the LKMM series is not ready yet, my proposal is to leave the
+>> Atomics->Completion change for a future patch (or really, to just use =
+the new
+>> Atomic types introduced by your series, because again, I don't think =
+Completion
+>> is the right thing to have there).
+>>=20
+>=20
+> Why? I can find a few examples that an irq handler does a
+> complete_all(), e.g. gpi_process_ch_ctrl_irq() in
+> drivers/dma/qcom/gpi.c. I think it's very normal for a driver thread =
+to
+> use completions to wait for an irq to happen.
+>=20
+> But sure, this and the handler pinned initializer thing is not a =
+blocker
+> issue. However, I would like to see them resolved as soon as possible
+> once merged.
+>=20
+> Regards,
+> Boqun
+>=20
+>>=20
+>> - Daniel
 
-> ---
->  drivers/net/netconsole.c | 22 +++++-----------------
->  1 file changed, 5 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index f2c2b8852c603..b24e423a60268 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -751,6 +751,7 @@ static ssize_t local_ip_store(struct config_item *item, const char *buf,
->  {
->  	struct netconsole_target *nt = to_target(item);
->  	ssize_t ret = -EINVAL;
-> +	int ipv6;
->  
->  	mutex_lock(&dynamic_netconsole_mutex);
->  	if (nt->enabled) {
-> @@ -759,23 +760,10 @@ static ssize_t local_ip_store(struct config_item *item, const char *buf,
->  		goto out_unlock;
->  	}
->  
-> -	if (strnchr(buf, count, ':')) {
-> -		const char *end;
-> -
-> -		if (in6_pton(buf, count, nt->np.local_ip.in6.s6_addr, -1, &end) > 0) {
-> -			if (*end && *end != '\n') {
-> -				pr_err("invalid IPv6 address at: <%c>\n", *end);
-> -				goto out_unlock;
-> -			}
-> -			nt->np.ipv6 = true;
-> -		} else
-> -			goto out_unlock;
-> -	} else {
-> -		if (!nt->np.ipv6)
-> -			nt->np.local_ip.ip = in_aton(buf);
-> -		else
-> -			goto out_unlock;
-> -	}
-> +	ipv6 = netpoll_parse_ip_addr(buf, &nt->np.local_ip);
-> +	if (ipv6 == -1)
-> +		goto out_unlock;
-> +	nt->np.ipv6 = ipv6;
 
-I don't think this needs to block progress.
-And if you disagree that is fine too.
-But I would have expressed this as:
+Because it is not as explicit. The main thing we should be conveying to =
+users
+here is how to get a &mut or otherwise mutate the data when running the
+handler. When people see AtomicU32, it's a quick jump to "I can make =
+this work
+by using other locks, like SpinLockIrq". Completions hide this, IMHO.
 
-	nt->np.ipv6 = !!ipv6;
+It's totally possible for someone to see this and say "ok, I can call
+complete() on this, but how can I mutate the data in some random T =
+struct?",
+even though these are essentially the same thing from an interior =
+mutability
+point of view.
 
-Because nt->np.ipv6 is a bool and ipv6 is an int.
+-- Daniel
 
-Likewise for patch 5/5.
 
-...
 
