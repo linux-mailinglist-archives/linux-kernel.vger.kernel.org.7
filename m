@@ -1,786 +1,348 @@
-Return-Path: <linux-kernel+bounces-741679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC5AB0E7AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:46:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3B4B0E7AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFDCF169347
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA796C526A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA821519B4;
-	Wed, 23 Jul 2025 00:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19F22E630;
+	Wed, 23 Jul 2025 00:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="PkAqea0v"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjPKEWla"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3338C78F26;
-	Wed, 23 Jul 2025 00:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEAD156CA;
+	Wed, 23 Jul 2025 00:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753231559; cv=pass; b=mn2JCwsdQmZC2cyUv6dUjl7J2Y9egoyHWdBWs+XToKEhF35sqCluGeJbUIphoGu+K3pY5rULtMO//cxzHJerNqusTZYxS8UqF+Pdb3xZcVNm8kfhgMcn4uaCJYRW/WjzPT055pH5liFMxgcfKiI6BxBJprY3sMmSzeyqpPgAqJI=
+	t=1753231540; cv=fail; b=YBo1Kg8JpFwDl9Ac5W74fkOxdAsn2spST+ykU8XjVwKGcg4W77vg8xXDN4BcrlqMz1Dmm4Z9IYaIltQJ2OoM0xPL9avb3rlqfIbJXx+9dlwVq0Hkfix0ZzeLy/q6gd+hnw7kR2LwCxCPg4EcvYqVqTdDYhS6AeS3ZerK3Jub7P4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753231559; c=relaxed/simple;
-	bh=YkEQiUosvcK8XA37iDMYpyYrYggceyNgpIhQ3gg4PUA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=vAgJQeIildGwH6E6v5WLTET5LbGkAlB+zc1t+dgzPHujAcSGnPy6PRn5ADhxel8XndFQ8ytj2eSsTbvfQKOQLPlXaoaOkMuIf41s+sXypYjqv4CshOy83i22eEEZB9wMsdtyxFSrQ9NSu9An/icSsHL5qitH6yNvpoeyd4/9mgU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=PkAqea0v; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753231501; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AoY9r0kZNzmY+7I5ME1iBkgDoB8Aje5DEIxLdtLJOjKLyp3Os9E2HKQw+a6GZIHcuFa8dvYJ1DE2+BuPYaADeA15wLLjrZcEpRbq5rFRnCaVeQeIkpqe461i1WZm/kHUEOuvoWEcgaqKE2Mb98c+W4shiBLJrx5zGeazIdmWyZs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753231501; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Y/8TA8iXa+swpxja+BCip3f75Ikfe8JgOIrMXP2uKLk=; 
-	b=SyzV4TC9WLhj07pbdtBOhebYyDcAnFhHGQY2eFy259zsOF3dvJ08yeiW/LVVQQGVgsqgm0JW0p8fc+LOP6s+rGoDsanAoaKPCo7ryC1ey4gujfinYNtY+KjwkEUWShbyAjKj6HvEI0ttQ64azYrrb0wqrpaRO1vmaaEdlErNSt0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753231501;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Y/8TA8iXa+swpxja+BCip3f75Ikfe8JgOIrMXP2uKLk=;
-	b=PkAqea0vJS5hMQka0mF95mVBEVA6RnsHV/6VKBrMWKqJh7kTupblImbulmr65/ZZ
-	xdtX/1ZfNpyJkwCCyN7gSBPYMXNOw2PxkLysWnGUruEgklF2BjWYTLBB+wNY7coF57P
-	fraShl9mywcncC8BbGfdfjGiSYLL+t6MSctDJGAg=
-Received: by mx.zohomail.com with SMTPS id 1753231497812613.8647771954251;
-	Tue, 22 Jul 2025 17:44:57 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1753231540; c=relaxed/simple;
+	bh=hhDwV70xsk4sjHYW53HVusafDqiBtuHJUWZDFxCJObk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kDzQyU3fWtD2fSO2LARKJeoc6t6Sqxihp1GcDoq/yvb05GCI8OpvgTfb8Rcfek1cJGeiqIUIbVI0ikL95hA+MkBGkuNVxivO+9BVM5rOIdjfxbjjJkUIyD+lok8M77TNEOyYh6e3a8UJ7B/Yvvx3lJxRdxLoKwezvZFVetNTAaY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjPKEWla; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753231539; x=1784767539;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=hhDwV70xsk4sjHYW53HVusafDqiBtuHJUWZDFxCJObk=;
+  b=OjPKEWlapBoZxcHnuWNvdb82czkBjlxzas7ae/LP1VkRRcB1wqgArYLA
+   HOaLokRjkbxu2MvBWY+z1BazdJ90hcZR4w17BG+07eUbtHYJSq0RQFTAq
+   0owLYQTmCPF9Rhxumj2zyYBN7zqTtW7wq84aOLpveBnyi2S2lZN2pK5sD
+   FtPKLJMkv9KjvpKByHiMlyJkI9g56WJhBVsiLrkqXCSzU/PLOHkJoNBv0
+   otxmxI4JIj/cohGPDZZwgLOD/mahdVzYakNBZoJVhZXz77VyBkLnnww9H
+   MuHQqycp5j68UNalZ0/kPdpBGARL82kdwQlXFWA0YpStLiN2pYUPAFqoT
+   A==;
+X-CSE-ConnectionGUID: /5iikPUeRzi9ZGDAZIUxZg==
+X-CSE-MsgGUID: hgw1YCQbRr6R9wgV69I7vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55595646"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="55595646"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 17:45:34 -0700
+X-CSE-ConnectionGUID: 8cM+ZS8WTuWyvQtFBRsPYg==
+X-CSE-MsgGUID: a8867n9jTvypkiztNUNwHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="158948264"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 17:45:31 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 22 Jul 2025 17:45:31 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 22 Jul 2025 17:45:31 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.67)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 22 Jul 2025 17:45:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=THm9In6viCM7b8Ts6+NkPd8Cvw98tvnP/pKiiSYqGyUTiqcXX14h5lTdm4xQZG31x6Tib+CwcUvyY5jakdtkQ+GLQuZG/ZLvnqLCYA+KvVyvEGaehMDGCtwtBB8psUuAZLFKyATDk1HOS7IvhIyMse2FcPy02hD/PgD3ZsNxAJlcqd9SAVDoKNdgFRKlCszgNw3qH81Y+LjSxyWpl5ldPywjMg+YWyvxoblIuzZGNOlWSlt7CFnutLiekdETYwZfH2oEjGoqQ8VqVddto9VOnXLJIBQEw++eD11ZdAQSU9XOyI+jyoSqiyMiNpe3fKrp+yqr3YmL0i1XW4rh/A2w1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kY8Tm1ZLXoESjGLXw4/2Sx1CAh7aCMXkTZyr6jLm7Cs=;
+ b=iAcP4c4ajjQerQVROs5ed8Jx58tCqLgqzNSa2b3mbD6uNEHnxab7lnn+SYUErqtwLzDj60oXXa/1O2usbO6UOBbD6alEOq4mfwjOc8p3MTLdf/T8L4m/oZPUVetv0aEzHNIF3PBr+PrYIaoxDBD9fjmVhKpU7sVAo9kII5r7UrNNJb8ugwltpKOMdI+LqNtvPEPzyIxwJnVG3VNvDsrL8vnnPlviMY2I5PvTlzG81gooarb2EmMYIhf+0wQLafZSn6aaoiLvuxByxhJJ9Zi+Zi1qCSny3PkIwAEwGqIwHP2gEm4fO0sq/KuLClk79kbRfRBIojLjHt9Zqov/X/PgOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
+ by SJ2PR11MB7475.namprd11.prod.outlook.com (2603:10b6:a03:4c9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.40; Wed, 23 Jul
+ 2025 00:45:26 +0000
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::4e89:bb6b:bb46:4808]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::4e89:bb6b:bb46:4808%7]) with mapi id 15.20.8922.037; Wed, 23 Jul 2025
+ 00:45:26 +0000
+Date: Tue, 22 Jul 2025 17:45:16 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: <dan.j.williams@intel.com>
+CC: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, "Rafael J .
+ Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek
+	<pavel@kernel.org>, Li Ming <ming.li@zohomail.com>, Jeff Johnson
+	<jeff.johnson@oss.qualcomm.com>, Ying Huang <huang.ying.caritas@gmail.com>,
+	Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+	Greg KH <gregkh@linuxfoundation.org>, Nathan Fontenot
+	<nathan.fontenot@amd.com>, Terry Bowman <terry.bowman@amd.com>, "Robert
+ Richter" <rrichter@amd.com>, Benjamin Cheatham <benjamin.cheatham@amd.com>,
+	PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li
+	<lizhijian@fujitsu.com>
+Subject: Re: [PATCH v5 1/7] cxl/acpi: Refactor cxl_acpi_probe() to always
+ schedule fallback DAX registration
+Message-ID: <aIAwnACBeWindJ-s@aschofie-mobl2.lan>
+References: <20250715180407.47426-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250715180407.47426-2-Smita.KoralahalliChannabasappa@amd.com>
+ <687ffcc0ee1c8_137e6b100ed@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <687ffcc0ee1c8_137e6b100ed@dwillia2-xfh.jf.intel.com.notmuch>
+X-ClientProxiedBy: BYAPR21CA0016.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::26) To DS4PPF0BAC23327.namprd11.prod.outlook.com
+ (2603:10b6:f:fc02::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 1/2] rust: add initial scatterlist abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
-Date: Tue, 22 Jul 2025 21:44:39 -0300
-Cc: acourbot@nvidia.com,
- dakr@kernel.org,
- jgg@ziepe.ca,
- lyude@redhat.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Tamir Duberstein <tamird@gmail.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- open list <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Petr Tesarik <petr@tesarici.cz>,
- Sui Jingfeng <sui.jingfeng@linux.dev>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>,
- airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E999B1A2-B1F6-4625-B784-08016672F4E0@collabora.com>
-References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
- <20250718103359.1026240-2-abdiel.janulgue@gmail.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|SJ2PR11MB7475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04b15d03-7056-411e-0d38-08ddc9823706
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dnDlpeMid9Vm6jfmGjgCyt1xijANJopbzcCx2imBBqyZDfJ5t0I0ydBows33?=
+ =?us-ascii?Q?AGiEtLLD8L1WV2f6Z5Psc2PdUFS6XuxaF4X3m/NqMMbX2YQ8BVKXAU0EA2J+?=
+ =?us-ascii?Q?jZ53+cdxgTlG/gOuipgHu6izAXrZUzgDLpomBfCRM8O7Rxk6PcYxnRvBLHlh?=
+ =?us-ascii?Q?FnYXPYyRdTBcRKUgwusOI3NpKo+tGANJ+gM8AzsTaJpwXKHOlQXIDWxjsJe6?=
+ =?us-ascii?Q?5at0IgBLRLd/xTxNi/W5awmcu4xCinPqZUa794LSp2cuiwNCLfjhMFbN5T5S?=
+ =?us-ascii?Q?p5GkdyQDde5uvtIIPvhqvHjxT8DZ53CdTro1fBLU1FyDEXcFneJoxRjJiBcR?=
+ =?us-ascii?Q?Ynh0K2vBJeE8zjHWtgNlURaBmhW/hr+8SffVlUQQjSflbAPFzwBR9uzs0LJ6?=
+ =?us-ascii?Q?qKm7k8kmOFXs+FnN3Spv49B6L9kcjt2oXz1fuJJd7FIu4oTx0B451ZSkOGcu?=
+ =?us-ascii?Q?1tZSlu+TkCaexmLkiZU+kY1Vg0LTiNQ1JLpagtjbO6ZFrl1IgnLRCsoOMftn?=
+ =?us-ascii?Q?VptBMkOfr1bQdgMsBt28SiHW6+pSlbAn3ESLiQ8Wnvyv5GmDv2sYo+0Z9WUL?=
+ =?us-ascii?Q?827NA+fGQmeLrg8rzOE0JZ1SNdxxQUfZA46JuqXs8rVTDlry7BLexadmHNtf?=
+ =?us-ascii?Q?0+yufJJsEgTSyvwOyfNDNhU0hcAOqy/ztx02IyNJfAgXQGSMG3WRU/67RVTF?=
+ =?us-ascii?Q?rB7A1Q7eSrwNrjOYpYzjXITZKVWGjGIKkVRQTzsiA3vV+8VDqHPyqcTEoZKV?=
+ =?us-ascii?Q?2Klba6F7vXYhzgaCKRUsmXhroVVm5p+rRjLqIz66UkDtPy5C3FoH4d1LF1Rh?=
+ =?us-ascii?Q?bwDTWzFhgr5ekvCUjwAduAasAhbVG1WyQQZMI/wTrhbC4veCYk7/GIWZp+CK?=
+ =?us-ascii?Q?+yW0O0yB1aNZsv3OeOuMc+vDe0c21vO1WmKeEmlAonOyCSQUTl45o2NkPA8S?=
+ =?us-ascii?Q?XN1EkCzUj2ukSXDGbSHbuLZZzPAG1+QeT0ck9Au/KzLsSNwVUT/+cFdc7+YQ?=
+ =?us-ascii?Q?qqWOrHHkrL9UwwAHAOdwMmJ2B7nzXvECDDRh4UGnOWUF+G4dhBGAyDFq+UHC?=
+ =?us-ascii?Q?GEnvpsaVwKbvZDWufuifqffbLu91zfKXyjn8XmypuqTHlT0o1icMnVKtszu2?=
+ =?us-ascii?Q?3O9E5KY/E7daJZKhLp/UzEcPj809/+lGUCxCbz2jT5aZR8awYNNQwIGjtO0G?=
+ =?us-ascii?Q?uQkbiQxWKYg1au+98abP8Kv3SCs5dTgaoqz4da2aHN85ZnbGgLxs8t3ovbFt?=
+ =?us-ascii?Q?thNfKqR/61AzpnQR0UtyKczZbBUjiBpkImq3DZlDM6LAYkIaYufi5kYfTV0K?=
+ =?us-ascii?Q?BD9DOU6wLUx0k0qNKRFBgOGZhVEDUdCSHt8/HDGm0MKn1Jnz1oQ7v0i+Zp2l?=
+ =?us-ascii?Q?fZrPNc+udtExKyW6Tdxkw4lwQDxhlUX4DJlbx7IqaJP2dc23Sg4H/aXGCBb7?=
+ =?us-ascii?Q?LOIoLTcRbhQ=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EIOvbHIpsX1Zc+PEVjLStGIV6bkPw/F3UEs77iPgyG0AkGb53ZXlorC6hz1H?=
+ =?us-ascii?Q?Yqp5gc9+Rrq0dcey2852YnWBeRqlbs+XcQDxxCFs0EZHemv8693hb6YrJYQo?=
+ =?us-ascii?Q?4zBe3drMpgtX3bvzSJ+WV1W/0Gcypp8ThUpMh4GjtJasDl5YIpLxGJD7RHYJ?=
+ =?us-ascii?Q?mQQmeV0B1KDTlUFWE7fJnFJLa1VX/+fEZT187CL43OPuI04jijdPkGqC/61a?=
+ =?us-ascii?Q?M+dsSS8kklQIO4TQ74BoqaM+sHskwOzJl5n+4wswt/Et/NupuAN49wEYG1+L?=
+ =?us-ascii?Q?cfqGV36LtHl8x1l+eQLK3jBEH8cmBTjnXKL2jVDHPGsGeu0XVm6U+2/BYZnw?=
+ =?us-ascii?Q?qduikcVcbOi4tfVvTLfb7gf3oTpx+lq8j5ftIyOKp9AgSLAwtJMzhecqC3rL?=
+ =?us-ascii?Q?XTO4uHpQYa96y32d9Q9U4Z93GvlQsjDfN5MzfsVVnb5lPdLKu9olYFRMuV0k?=
+ =?us-ascii?Q?sGF4ewA6cVHW0rVKz5nJndZQ00fou/Zp1Fu64GUlyQv4fPezGJMkIg9Kq1RE?=
+ =?us-ascii?Q?hH0tfsM7ylRbaMPPcZhsFF0hFg8ULFHIto47mboH8BLtSF4Eg8INDbBPgnH2?=
+ =?us-ascii?Q?WaIo+m4KpGdblejFlyfDQAF9rHEbtGG0DestNuY1qT2U4d0sOt6/kBtQ2ArQ?=
+ =?us-ascii?Q?hxS8aRtTxugmfyPgw3JODAOBjoCjCfK/p30fFnmiOB4ZWAhkuBQtOtewNp/h?=
+ =?us-ascii?Q?DVV9qxFa6twNdB79X7JqEoKMw8/OhgLFj5eYAuunnUJSPvCBQ1EYNzqE40fQ?=
+ =?us-ascii?Q?ajvP8HmJiM7CC817tgDyRmG8M/dtQ3aZtW0fcLfRdoSc+1S4d6Byt6ijMavW?=
+ =?us-ascii?Q?2IsXFwK9d5mvfriCg/YWj1PXNsUzuBGq5ghH1WMXlGeWTlv9ZbkkseLuFAQj?=
+ =?us-ascii?Q?zpcVpy03QXEXr6hKKf6bZ4/sa8mj7NCbZFW+/lR0erCtZv4rLQjatCEwViU2?=
+ =?us-ascii?Q?TkzVCp7J3DQVdLRfzjf0RUeb4r9HjSzX3tn3EP5awIazTOPdrAKQIoIw4jMW?=
+ =?us-ascii?Q?i8A/Z9FKjxKO3XJP/sB8C2tMIEKb4j8pouJzlYEIuf7rr3zYAFIiCB6eOWlD?=
+ =?us-ascii?Q?YZxBZHJvP11XS5Jm1WZwgjj9U2PpHOPFhp8qIn46r6qPc9N09K2XJ19zxqey?=
+ =?us-ascii?Q?dbH7wM+3qEq50UrsmOKn2QeFF+PEUfthqWvczOtlByRTi0JibJcbexzALm+m?=
+ =?us-ascii?Q?qDeB+r63oOraj5M+lAAjmd9WH/cbT9+NM/zXk06ptaxbhzzJP1syOBIDiR1j?=
+ =?us-ascii?Q?0L9W9GrwCCRM4Oz60c5wrBPXBDBvKi4HOfCmbOYhADSgcWsLkGyny4+ssAnY?=
+ =?us-ascii?Q?aQVWOuz4ufBc4yadIbTRm2xJro5kiwWLIApHV3o756nH3/gP6XU76Dqg86fG?=
+ =?us-ascii?Q?5oDjyj5KS9nsN29NtQFpPYxDhkyNz7BfGxIgD0csA+RqxVhJbR/WvhlDRvWR?=
+ =?us-ascii?Q?PeeE24lXidEjVuvJVdt8buGINZcY/xpcuFyD/6iEtC3Q6BKmJw5EchdiTJCt?=
+ =?us-ascii?Q?TBbvOIDnohC1KdcE7GUq/1B0MSaSZRybKnGDBK4LRY26fe4CLIcLx9JRZmVa?=
+ =?us-ascii?Q?g5KL45B1N93YLmM7a4DtJZ1bvtkTQ6GqHvGrpDlYuHG7hEkdi9JXNe2W2n3T?=
+ =?us-ascii?Q?dA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04b15d03-7056-411e-0d38-08ddc9823706
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 00:45:26.5197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8KIykSo/OiY82RNhb3w+PaLJbGE9LScVN20GKMe31aKBcmNlCTIdCg/kExrs1Z9rDzIJYvCDMXxesxAgp4ANfLPdxDkErllUzU1YJgV63zs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7475
+X-OriginatorOrg: intel.com
 
-Hi Abdiel, Alex,
+On Tue, Jul 22, 2025 at 02:04:00PM -0700, Dan Williams wrote:
+> Smita Koralahalli wrote:
+> > Refactor cxl_acpi_probe() to use a single exit path so that the fallback
+> > DAX registration can be scheduled regardless of probe success or failure.
+> 
+> I do not understand why cxl_acpi needs to be responsible for this,
+> especially in the cxl_acpi_probe() failure path. Certainly if
+> cxl_acpi_probe() fails, that is a strong signal to give up on the CXL
+> subsystem altogether and fallback to DAX vanilla discovery exclusively.
+> 
+> Now, maybe the need for this becomes clearer in follow-on patches.
+> However, I would have expected that DAX, which currently arranges for
+> CXL to load first would just flush CXL discovery, make a decision about
+> whether proceed with Soft Reserved, or not.
+> 
+> Something like:
+> 
+> DAX						CXL 
+> 						Scan CXL Windows. Fail on any window
+>                                                 parsing failures
+>                                                 
+>                                                 Launch a work item to flush PCI
+>                                                 discovery and give a reaonable amount of
+>                                                 time for cxl_pci and cxl_mem to quiesce
+> 
+> <assumes CXL Windows are discovered     	
+>  by virtue of initcall order or         	
+>  MODULE_SOFTDEP("pre: cxl_acpi")>       	
+>                                         	
+> Calls a CXL flush routine to await probe	
+> completion (will always be racy)        	
+> 
+> Evaluates if all Soft Reserve has
+> cxl_region coverage
+> 
+> if yes: skip publishing CXL intersecting
+> Soft Reserve range in iomem, let dax_cxl
+> attach to the cxl_region devices
+> 
+> if no: decline the already published
+> cxl_dax_regions, notify cxl_acpi to
+> shutdown. Install Soft Reserved in iomem
+> and create dax_hmem devices for the
+> ranges per usual.
 
+This is super course. If CXL region driver sets up 99 regions with
+exact matching SR ranges and there are no CXL Windows with unused SR,
+then we have a YES!
 
-This overall looks good, a few minor comments below.
+But if after those 99 successful assemblies, we get one errant window
+with a Soft Reserved for which a region never assembles, it's a hard NO.
+DAX declines, ie teardowns the 99 dax_regions and cxl_regions.
 
-> On 18 Jul 2025, at 07:33, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
-wrote:
->=20
-> Add the rust abstraction for scatterlist. This allows use of the C
-> scatterlist within Rust code which the caller can allocate themselves
-> or to wrap existing kernel sg_table objects.
->=20
-> Co-developed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
-> rust/bindings/bindings_helper.h |   1 +
-> rust/helpers/helpers.c          |   1 +
-> rust/helpers/scatterlist.c      |  30 +++
-> rust/kernel/dma.rs              |  18 ++
-> rust/kernel/lib.rs              |   1 +
-> rust/kernel/scatterlist.rs      | 405 ++++++++++++++++++++++++++++++++
-> 6 files changed, 456 insertions(+)
-> create mode 100644 rust/helpers/scatterlist.c
-> create mode 100644 rust/kernel/scatterlist.rs
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index 8cbb660e2ec2..e1e289284ce8 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -47,6 +47,7 @@
-> #include <linux/cred.h>
-> #include <linux/device/faux.h>
-> #include <linux/dma-mapping.h>
-> +#include <linux/dma-direction.h>
-> #include <linux/errname.h>
-> #include <linux/ethtool.h>
-> #include <linux/file.h>
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 0683fffdbde2..7b18bde78844 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -35,6 +35,7 @@
-> #include "rbtree.c"
-> #include "rcu.c"
-> #include "refcount.c"
-> +#include "scatterlist.c"
-> #include "security.c"
-> #include "signal.c"
-> #include "slab.c"
-> diff --git a/rust/helpers/scatterlist.c b/rust/helpers/scatterlist.c
-> new file mode 100644
-> index 000000000000..c871de853539
-> --- /dev/null
-> +++ b/rust/helpers/scatterlist.c
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/dma-direction.h>
-> +
-> +void rust_helper_sg_set_page(struct scatterlist *sg, struct page =
-*page,
-> +     unsigned int len, unsigned int offset)
+Obviously, this is different from the current approach that aimed to
+pick up completely unused SRs and the trimmings from SRs that exceeded
+region size and offered them to DAX too.
+
+I'm cringing a bit at the fact that one bad apple (like a cxl device
+that doesn't show up for it's region) means no CXL devices get managed.
+
+Probably asking the obvious question here. This is what 'we' want,
+right?
+
+> 
+> Something like the above puts all the onus on device-dax to decide if
+> CXL is meeting expectations. CXL is only responsible flagging when it
+> thinks it has successfully completed init. If device-dax disagrees with
+> what CXL has done it can tear down the world without ever attaching
+> 'struct cxl_dax_region'. The success/fail is an "all or nothing"
+> proposition.  Either CXL understands everything or the user needs to
+> work with their hardware vendor to fix whatever is giving the CXL driver
+> indigestion.
+> 
+> It needs to be coarse and simple because longer term the expectation is
+> the Soft Reserved stops going to System RAM by default and instead
+> becomes an isolated memory pool that requires opt-in. In many ways the
+> current behavior is optimized for hardware validation not applications.
+> 
+> > With CONFIG_CXL_ACPI enabled, future patches will bypass DAX device
+> > registration via the HMAT and hmem drivers. To avoid missing DAX
+> > registration for SOFT RESERVED regions, the fallback path must be
+> > triggered regardless of probe outcome.
+> > 
+> > No functional changes.
+> 
+> A comment below in case something like this patch moves forward:
+> 
+> > 
+> > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> > ---
+> >  drivers/cxl/acpi.c | 30 ++++++++++++++++++------------
+> >  1 file changed, 18 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> > index a1a99ec3f12c..ca06d5acdf8f 100644
+> > --- a/drivers/cxl/acpi.c
+> > +++ b/drivers/cxl/acpi.c
+> > @@ -825,7 +825,7 @@ static int pair_cxl_resource(struct device *dev, void *data)
+> >  
+> >  static int cxl_acpi_probe(struct platform_device *pdev)
+> >  {
+> > -	int rc;
+> > +	int rc = 0;
+> >  	struct resource *cxl_res;
+> >  	struct cxl_root *cxl_root;
+> >  	struct cxl_port *root_port;
+> > @@ -837,7 +837,7 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+> >  	rc = devm_add_action_or_reset(&pdev->dev, cxl_acpi_lock_reset_class,
+> >  				      &pdev->dev);
+> >  	if (rc)
+> > -		return rc;
+> > +		goto out;
+> 
+> No, new goto please. With cleanup.h the momentum is towards elimination
+> of goto. If you need to do something like this, just wrap the function:
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index a1a99ec3f12c..b50d3aa45ad5 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -823,7 +823,7 @@ static int pair_cxl_resource(struct device *dev, void *data)
+>  	return 0;
+>  }
+>  
+> -static int cxl_acpi_probe(struct platform_device *pdev)
+> +static int __cxl_acpi_probe(struct platform_device *pdev)
+>  {
+>  	int rc;
+>  	struct resource *cxl_res;
+> @@ -900,6 +900,15 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int cxl_acpi_probe(struct platform_device *pdev)
 > +{
-> + return sg_set_page(sg, page, len, offset);
+> +	int rc = __cxl_acpi_probe(pdev);
+> +
+> +	/* do something */
+> +
+> +	return rc;
 > +}
 > +
-> +dma_addr_t rust_helper_sg_dma_address(struct scatterlist *sg)
-> +{
-> + return sg_dma_address(sg);
-> +}
-> +
-> +unsigned int rust_helper_sg_dma_len(struct scatterlist *sg)
-> +{
-> + return sg_dma_len(sg);
-> +}
-> +
-> +struct scatterlist *rust_helper_sg_next(struct scatterlist *sg)
-> +{
-> + return sg_next(sg);
-> +}
-> +
-> +void rust_helper_dma_unmap_sgtable(struct device *dev, struct =
-sg_table *sgt,
-> +   enum dma_data_direction dir, unsigned long attrs)
-> +{
-> + return dma_unmap_sgtable(dev, sgt, dir, attrs);
-> +}
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 1f7bae643416..598fa50e878d 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -102,6 +102,24 @@ pub mod attrs {
->     pub const DMA_ATTR_PRIVILEGED: Attrs =3D =
-Attrs(bindings::DMA_ATTR_PRIVILEGED);
-> }
->=20
-> +/// DMA mapping direction.
-> +///
-> +/// Corresponds to the kernel's [`enum dma_data_direction`].
-> +///
-> +/// [`enum dma_data_direction`]: =
-srctree/include/linux/dma-direction.h
-> +#[derive(Copy, Clone, PartialEq, Eq)]
-> +#[repr(i32)]
-> +pub enum DmaDataDirection {
-> +    /// Direction isn't known.
-> +    DmaBidirectional =3D =
-bindings::dma_data_direction_DMA_BIDIRECTIONAL,
-> +    /// Data is going from the memory to the device.
-> +    DmaToDevice =3D bindings::dma_data_direction_DMA_TO_DEVICE,
-> +    /// Data is coming from the device to the memory.
-> +    DmaFromDevice =3D bindings::dma_data_direction_DMA_FROM_DEVICE,
-> +    /// No direction (used for debugging).
-> +    DmaNone =3D bindings::dma_data_direction_DMA_NONE,
-> +}
-> +
-> /// An abstraction of the `dma_alloc_coherent` API.
-> ///
-> /// This is an abstraction around the `dma_alloc_coherent` API which =
-is used to allocate and map
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index f61ac6f81f5d..48391a75bb62 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -101,6 +101,7 @@
-> pub mod print;
-> pub mod rbtree;
-> pub mod revocable;
-> +pub mod scatterlist;
-> pub mod security;
-> pub mod seq_file;
-> pub mod sizes;
-> diff --git a/rust/kernel/scatterlist.rs b/rust/kernel/scatterlist.rs
-> new file mode 100644
-> index 000000000000..0242884bf9fd
-> --- /dev/null
-> +++ b/rust/kernel/scatterlist.rs
-> @@ -0,0 +1,405 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Scatterlist
-> +//!
-> +//! C header: =
-[`include/linux/scatterlist.h`](srctree/include/linux/scatterlist.h)
-> +
-> +use core::borrow::{Borrow, BorrowMut};
-> +
-> +use crate::{
-> +    bindings,
-> +    device::{Bound, Device},
-> +    dma::DmaDataDirection,
-> +    error::{Error, Result},
-> +    page::Page,
-> +    types::{ARef, Opaque},
-> +};
-> +
-> +/// A single scatter-gather entry, representing a span of pages in =
-the device's DMA address space.
-> +///
-> +/// This interface is accessible only via the `SGTable` iterators. =
-When using the API safely, certain
-> +/// methods are only available depending on a specific state of =
-operation of the scatter-gather table,
-> +/// i.e. setting page entries is done internally only during =
-construction while retrieving the DMA address
-> +/// is only possible when the `SGTable` is already mapped for DMA via =
-a device.
-> +///
-> +/// # Invariants
-> +///
-> +/// The `scatterlist` pointer is valid for the lifetime of an SGEntry =
-instance.
-> +#[repr(transparent)]
-> +pub struct SGEntry(Opaque<bindings::scatterlist>);
-> +
-> +impl SGEntry {
-> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
-> +    ///
-> +    /// This is meant as a helper for other kernel subsystems and not =
-to be used by device drivers directly.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the `struct scatterlist` pointed to =
-by `ptr` is valid for the lifetime
-> +    /// of the returned reference.
-> +    pub(crate) unsafe fn as_ref<'a>(ptr: *mut bindings::scatterlist) =
--> &'a Self {
-> +        // SAFETY: The pointer is valid and guaranteed by the safety =
-requirements of the function.
-> +        unsafe { &*ptr.cast() }
-> +    }
-
-Did you see this? [0]
-
-
-> +
-> +    /// Convert a raw `struct scatterlist *` to a `&'a mut SGEntry`.
-> +    ///
-> +    /// This is meant as a helper for other kernel subsystems and not =
-to be used by device drivers directly.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// See safety requirements of [`SGEntry::as_ref`]. In addition, =
-callers must ensure that only
-> +    /// a single mutable reference can be taken from the same raw =
-pointer, i.e. for the lifetime of the
-> +    /// returned reference, no other call to this function on the =
-same `struct scatterlist *` should
-> +    /// be permitted.
-> +    pub(crate) unsafe fn as_mut<'a>(ptr: *mut bindings::scatterlist) =
--> &'a mut Self {
-> +        // SAFETY: The pointer is valid and guaranteed by the safety =
-requirements of the function.
-> +        unsafe { &mut *ptr.cast() }
-> +    }
-> +
-> +    /// Obtain the raw `struct scatterlist *`.
-> +    pub(crate) fn as_raw(&self) -> *mut bindings::scatterlist {
-> +        self.0.get()
-> +    }
-> +
-> +    /// Returns the DMA address of this SG entry.
-> +    pub fn dma_address(&self) -> bindings::dma_addr_t {
-> +        // SAFETY: By the type invariant of `SGEntry`, ptr is valid.
-> +        unsafe { bindings::sg_dma_address(self.0.get()) }
-> +    }
-> +
-> +    /// Returns the length of this SG entry.
-> +    pub fn dma_len(&self) -> u32 {
-> +        // SAFETY: By the type invariant of `SGEntry`, ptr is valid.
-> +        unsafe { bindings::sg_dma_len(self.0.get()) }
-> +    }
-> +
-> +    /// Internal constructor helper to set this entry to point at a =
-given page. Not to be used directly.
-> +    fn set_page(&mut self, page: &Page, length: u32, offset: u32) {
-> +        let c: *mut bindings::scatterlist =3D self.0.get();
-> +        // SAFETY: according to the `SGEntry` invariant, the =
-scatterlist pointer is valid.
-> +        // `Page` invariant also ensure the pointer is valid.
-> +        unsafe { bindings::sg_set_page(c, page.as_ptr(), length, =
-offset) };
-> +    }
-> +}
-> +
-> +/// Trait implemented by all mapping states.
-> +pub trait MappingState {}
-> +
-> +/// Trait implemented by all mapping states representing the fact =
-that a `struct sg_table` is
-> +/// mapped (and thus its DMA addresses are valid).
-> +pub trait MappedState: MappingState {}
-> +
-> +/// Represents the fact that a `struct sg_table` is not DMA-mapped.
-> +pub struct Unmapped;
-> +impl MappingState for Unmapped {}
-> +
-> +/// Represents the fact that a `struct sg_table` is DMA-mapped by an =
-external entity.
-
-Perhaps it would be nice to define what an =E2=80=9Cexternal entity=E2=80=9D=
- means?
-
-> +pub struct BorrowedMapping;
-> +impl MappingState for BorrowedMapping {}
-> +impl MappedState for BorrowedMapping {}
-> +
-> +/// A managed DMA mapping of a `struct sg_table` to a given device.
-> +///
-> +/// The mapping is cleared when this object is dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// - The `scatterlist` pointer is valid for the lifetime of a =
-`ManagedMapping` instance.
-> +/// - The `Device` instance is within a [`kernel::device::Bound`] =
-context.
-> +pub struct ManagedMapping {
-> +    dev: ARef<Device>,
-> +    dir: DmaDataDirection,
-> +    // This works because the `sgl` member of `struct sg_table` never =
-moves, and the fact we can
-> +    // build this implies that we have an exclusive reference to the =
-`sg_table`, thus it cannot be
-> +    // modified by anyone else.
-> +    sgl: *mut bindings::scatterlist,
-> +    orig_nents: ffi::c_uint,
-> +}
-> +
-> +/// SAFETY: An `ManagedMapping` object is an immutable interface and =
-should be safe to `Send` across threads.
-> +unsafe impl Send for ManagedMapping {}
-> +impl MappingState for ManagedMapping {}
-> +impl MappedState for ManagedMapping {}
-> +
-> +impl Drop for ManagedMapping {
-> +    fn drop(&mut self) {
-> +        // SAFETY: Invariants on `Device<Bound>` and `Self` ensures =
-that the `self.dev` and `self.sgl`
-> +        // are valid.
-> +        unsafe {
-> +            bindings::dma_unmap_sg_attrs(
-> +                self.dev.as_raw(),
-> +                self.sgl,
-> +                self.orig_nents as i32,
-> +                self.dir as i32,
-> +                0,
-> +            )
-> +        };
-> +    }
-> +}
-> +
-> +/// A scatter-gather table of DMA address spans.
-> +///
-> +/// This structure represents the Rust abstraction for a C `struct =
-sg_table`. This implementation
-> +/// abstracts the usage of an already existing C `struct sg_table` =
-within Rust code that we get
-> +/// passed from the C side.
-> +pub struct SGTable<T: Borrow<bindings::sg_table>, M: MappingState> {
-> +    /// Mapping state of the underlying `struct sg_table`.
-> +    ///
-> +    /// This defines which methods of `SGTable` are available.
-> +    ///
-> +    /// Declared first so it is dropped before `table`, so we remove =
-the mapping before freeing the
-> +    /// SG table if the latter is owned.
-> +    _mapping: M,
-> +
-> +    /// Something that can borrow the underlying `struct sg_table`.
-> +    table: T,
-> +}
-> +
-> +impl<T> SGTable<T, Unmapped>
-> +where
-> +    T: Borrow<bindings::sg_table>,
-> +{
-> +    /// Create a new unmapped `SGTable` from an already-existing =
-`struct sg_table`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the `struct sg_table` borrowed by =
-`r` is initialized, valid for
-> +    /// the lifetime of the returned reference, and is not mapped.
-> +    pub unsafe fn new_unmapped(r: T) -> Self {
-> +        Self {
-> +            table: r,
-> +            _mapping: Unmapped,
-> +        }
-> +    }
-> +}
-> +
-> +impl<T> SGTable<T, BorrowedMapping>
-> +where
-> +    T: Borrow<bindings::sg_table>,
-> +{
-> +    /// Create a new mapped `SGTable` from an already-existing =
-`struct sg_table`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that the `struct sg_table` borrowed by =
-`r` is initialized, valid for
-> +    /// the lifetime of the returned reference, and is DMA-mapped.
-> +    pub unsafe fn new_mapped(r: T) -> Self {
-> +        Self {
-> +            table: r,
-> +            _mapping: BorrowedMapping,
-> +        }
-> +    }
-> +}
-> +
-> +impl<T, M> SGTable<T, M>
-> +where
-> +    T: Borrow<bindings::sg_table>,
-> +    M: MappedState,
-> +{
-> +    /// Returns an immutable iterator over the scatter-gather table.
-> +    pub fn iter(&self) -> SGTableIter<'_> {
-> +        SGTableIter {
-> +            // SAFETY: dereferenced pointer is valid due to the type =
-invariants on `SGTable`.
-> +            pos: Some(unsafe { =
-SGEntry::as_ref(self.table.borrow().sgl) }),
-> +        }
-> +    }
-> +}
-> +
-> +/// Provides a list of pages that can be used to build a `SGTable`.
-> +pub trait SGTablePages {
-
-I feel like this could be defined closer to where it is used.
-
-> +    /// Returns an iterator to the pages providing the backing memory =
-of `self`.
-> +    ///
-> +    /// Implementers should return an iterator which provides =
-information regarding each page entry to
-> +    /// build the `SGTable`. The first element in the tuple is a =
-reference to the Page, the second element
-> +    /// as the offset into the page, and the third as the length of =
-data. The fields correspond to the
-> +    /// first three fields of the C `struct scatterlist`.
-
-I feel like the above could be replaced by simply defining a struct with =
-the
-right field names.
-
-> +    fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a Page, usize, =
-usize)>;
-> +
-> +    /// Returns the number of pages in the list.
-> +    fn entries(&self) -> usize;
-> +}
-> +
-> +/// An iterator through `SGTable` entries.
-> +pub struct SGTableIter<'a> {
-> +    pos: Option<&'a SGEntry>,
-> +}
-> +
-> +impl<'a> Iterator for SGTableIter<'a> {
-> +    type Item =3D &'a SGEntry;
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        let entry =3D self.pos;
-> +        // SAFETY: `sg` is an immutable reference and is equivalent =
-to `scatterlist` via its type
-> +        // invariants, so its safe to use with sg_next.
-> +        let next =3D unsafe { bindings::sg_next(self.pos?.as_raw()) =
-};
-> +
-> +        // SAFETY: `sg_next` returns either a valid pointer to a =
-`scatterlist`, or null if we
-> +        // are at the end of the scatterlist.
-> +        self.pos =3D (!next.is_null()).then(|| unsafe { =
-SGEntry::as_ref(next) });
-> +        entry
-> +    }
-> +}
-> +
-> +impl<'a, T, M> IntoIterator for &'a SGTable<T, M>
-> +where
-> +    T: Borrow<bindings::sg_table>,
-> +    M: MappedState,
-> +{
-> +    type Item =3D &'a SGEntry;
-> +    type IntoIter =3D SGTableIter<'a>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.iter()
-> +    }
-> +}
-> +
-> +impl<T> SGTable<T, Unmapped>
-> +where
-> +    T: BorrowMut<bindings::sg_table>,
-> +{
-> +    /// Map this scatter-gather table describing a buffer for DMA by =
-the `Device`.
-> +    ///
-> +    /// To prevent the table from being mapped more than once, this =
-call consumes `self` and transfers
-> +    /// ownership of resources to the new `SGTable<_, =
-ManagedMapping>` object.
-> +    pub fn dma_map(
-> +        mut self,
-> +        dev: &Device<Bound>,
-> +        dir: DmaDataDirection,
-> +    ) -> Result<SGTable<T, ManagedMapping>> {
-> +        // SAFETY: Invariants on `Device<Bound>` and `SGTable` =
-ensures that the pointers are valid.
-> +        let ret =3D unsafe {
-> +            bindings::dma_map_sgtable(
-> +                dev.as_raw(),
-> +                self.table.borrow_mut(),
-> +                dir as i32,
-> +                bindings::DMA_ATTR_NO_WARN as usize,
-> +            )
-> +        };
-> +        if ret !=3D 0 {
-> +            return Err(Error::from_errno(ret));
-> +        }
-> +
-> +        let sgl =3D self.table.borrow_mut().sgl;
-> +        let orig_nents =3D self.table.borrow().orig_nents;
-> +
-> +        Ok(SGTable {
-> +            table: self.table,
-> +            // INVARIANT:
-> +            // - `sgl` is valid by the type invariant of `OwnedSgt`.
-
-How is `OwnedSgt` relevant here? I see self, which is SGTable, then =
-table,
-which is T: Borrow<bindings::sg_table>, and then borrow(), which is
-bindings::sg_table.
-
-> +            // - `dev` is a reference to Device<Bound>.
-> +            _mapping: ManagedMapping {
-> +                dev: dev.into(),
-> +                dir,
-> +                sgl,
-> +                orig_nents,
-> +            },
-> +        })
-> +    }
-> +}
-> +
-> +/// An owned `struct sg_table`, which lifetime is tied to this =
-object.
-
-s/which/whose ? Although I am not a native English speaker.
-
-> +///
-> +/// # Invariants
-> +///
-> +/// The `sg_table` is valid and initialized for the lifetime of an =
-`OwnedSgt` instance.
-> +pub struct OwnedSgt<P: SGTablePages> {
-> +    sgt: bindings::sg_table,
-> +    /// Used to keep the memory pointed to by `sgt` alive.
-> +    _pages: P,
-> +}
-> +
-> +/// SAFETY: An `OwnedSgt` object is constructed internally by =
-`SGTable` and no interface is exposed to
-> +/// the user to modify its state after construction, except =
-[`SGTable::dma_map`] which transfers
-> +/// ownership of the object, hence should be safe to `Send` across =
-threads.
-> +unsafe impl<P: SGTablePages> Send for OwnedSgt<P> {}
-> +
-> +impl<P> Drop for OwnedSgt<P>
-> +where
-> +    P: SGTablePages,
-> +{
-> +    fn drop(&mut self) {
-> +        // SAFETY: Invariant on `OwnedSgt` ensures that the sg_table =
-is valid.
-> +        unsafe { bindings::sg_free_table(&mut self.sgt) };
-> +    }
-> +}
-> +
-> +impl<P> Borrow<bindings::sg_table> for OwnedSgt<P>
-> +where
-> +    P: SGTablePages,
-> +{
-> +    fn borrow(&self) -> &bindings::sg_table {
-> +        &self.sgt
-> +    }
-> +}
-> +
-> +// To allow mapping the state!
-
-Can you expand this comment a bit?
-
-> +impl<P> BorrowMut<bindings::sg_table> for OwnedSgt<P>
-> +where
-> +    P: SGTablePages,
-> +{
-> +    fn borrow_mut(&mut self) -> &mut bindings::sg_table {
-> +        &mut self.sgt
-> +    }
-> +}
-> +
-> +impl<P: SGTablePages> SGTable<OwnedSgt<P>, Unmapped> {
-
-Oh, I now see that you can have SGTable<OwnedSgt<..>, =E2=80=A6>. In any =
-case, when
-I said in my previous comment that "I don't see how OwnedSGTable is =
-relevant
-here=E2=80=9D, T was unconstrained.
-
-I am mentioning this on the off-chance that it's a mistaken assumption =
-instead
-of a typo.
-
-> +    /// Allocate and build a new `SGTable` from an existing list of =
-`pages`. This method moves the
-> +    /// ownership of `pages` to the table.
-> +    ///
-> +    /// To build a scatter-gather table, provide the `pages` object =
-which must implement the
-> +    /// `SGTablePages` trait.
-> +    ///
-> +    ///# Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::{device::Device, scatterlist::*, page::*, =
-prelude::*};
-> +    ///
-> +    /// struct PagesArray(KVec<Page>);
-
-A blank line would be welcome here, IMHO.
-
-> +    /// impl SGTablePages for PagesArray {
-> +    ///     fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a =
-Page, usize, usize)> {
-
-See, it's hard to figure out what is going on here. I had to go back up =
-to the
-comment that explains what each field means in the tuple. This could be =
-fixed
-if this thing was its own struct with named fields.
-
-> +    ///         self.0.iter().map(|page| (page, =
-kernel::page::PAGE_SIZE, 0))
-
-By the way, ironically, the order seems to be inverted here :)
-
-> +    ///     }
-> +    ///
-> +    ///     fn entries(&self) -> usize {
-> +    ///         self.0.len()
-> +    ///     }
-> +    /// }
-> +    ///
-> +    /// let mut pages =3D KVec::new();
-> +    /// let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
-GFP_KERNEL);
-> +    /// let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
-GFP_KERNEL);
-> +    /// let sgt =3D SGTable::new_owned(PagesArray(pages), =
-GFP_KERNEL)?;
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn new_owned(pages: P, flags: kernel::alloc::Flags) -> =
-Result<Self> {
-> +        // SAFETY: `sgt` is not a reference.
-> +        let mut sgt: bindings::sg_table =3D unsafe { =
-core::mem::zeroed() };
-> +
-> +        // SAFETY: The sgt pointer is from the Opaque-wrapped =
-`sg_table` object hence is valid.
-
-IMHO the sentence above does not read very well.
-
-> +        let ret =3D
-> +            unsafe { bindings::sg_alloc_table(&mut sgt, =
-pages.entries() as u32, flags.as_raw()) };
-> +        if ret !=3D 0 {
-> +            return Err(Error::from_errno(ret));
-> +        }
-> +        // SAFETY: We just successfully allocated `sgt`, hence the =
-pointer is valid and have sole access to
-> +        // it at this point.
-> +        let sgentries =3D unsafe { =
-core::slice::from_raw_parts_mut(sgt.sgl, pages.entries()) };
-> +        for (entry, page) in sgentries
-> +            .iter_mut()
-> +            .map(|e|
-> +                 // SAFETY: `SGEntry::as_mut` is called on the =
-pointer only once, which is valid and non-NULL
-> +                 // while inside the closure.
-> +                 unsafe { SGEntry::as_mut(e) })
-> +            .zip(pages.iter())
-> +        {
-> +            entry.set_page(page.0, page.1 as u32, page.2 as u32)
-> +        }
-> +
-> +        Ok(Self {
-> +            // INVARIANT: We just successfully allocated and built =
-the table from the page entries.
-> +            table: OwnedSgt { sgt, _pages: pages },
-> +            _mapping: Unmapped,
-> +        })
-> +    }
-> +}
-> --=20
-> 2.43.0
->=20
->=20
-
-If you give me a couple of days I can test this on Tyr and see if the =
-MCU still boots :)
-
-=E2=80=94 Daniel
-
-[0] =
-https://lore.kernel.org/rust-for-linux/20250711-device-as-ref-v2-0-1b16ab6=
-402d7@google.com/
-
+>  static const struct acpi_device_id cxl_acpi_ids[] = {
+>  	{ "ACPI0017" },
+>  	{ },
 
