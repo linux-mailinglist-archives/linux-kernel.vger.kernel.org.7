@@ -1,94 +1,235 @@
-Return-Path: <linux-kernel+bounces-741728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359A3B0E84F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB29B0E857
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB52F174C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8461C27F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C871A7264;
-	Wed, 23 Jul 2025 01:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D731A7264;
+	Wed, 23 Jul 2025 01:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHPkuMq+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJbYLPSv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7041FB3;
-	Wed, 23 Jul 2025 01:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DF9A59;
+	Wed, 23 Jul 2025 01:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753235395; cv=none; b=FDPhNVB/13pAOq7FL1qHCxhBNFN4gksYCxEJfsIUB20V8cAfvdzGPDeiKmYYWFiLb4S/OU18e52/B+TGKMX/u1orH/VTfHe5A0fgko3iGWdS1OcIv6vKZPuzn3gp5K1eCaqTf/sedQkv2rkXZ4d21rU9aHTT1xJrEsW9tNNEq20=
+	t=1753235687; cv=none; b=SClMN0fC4FsjNPHiuwHNLhpjRvk4l+lyjinADx7mPERyos6OOJSuAwovb3gsNWUXLctsejB1+ACTo9XZTHT9PFoyRC8zJfUce8v2f9LFF1KBeFRIpmIxrGh/whg91YkzqEr1MA3U7Rdkmmnx23NQttGb5vU3mFW3h2WBXopDwh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753235395; c=relaxed/simple;
-	bh=TWWP5UC0hl2kMWCVnIXPI8WlY1NR78JudHF5e6wlwdM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MXlK/mCxHwZ53G6e7SFBMVE196cOY5dApK/GiJCELifig6F0qiPetEGd6ZmcPn7nrHZu/KSIM9mI4we2OSBJ0BIOqB4o6oxoJTbOAjgAgk5a00nKtNnXuY06PvYNow28cCl6tkx7kbk4OtIndxACZluZBgrWcUGyWxAfrttPcj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHPkuMq+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 222D9C4CEEB;
-	Wed, 23 Jul 2025 01:49:55 +0000 (UTC)
+	s=arc-20240116; t=1753235687; c=relaxed/simple;
+	bh=jSyZIb0xPqskwGqxDdGm2zRmpdZ0xgBmOakqH8fDSoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QD/sTIBOpRZnC6+F6HyyOxQeTG68DPb0eTDspr5D7QNv5PJj7suHBNQvuHATXfxQhLFrr6BNDtK9HUT5p95Cz3M+omVjmrBtYmDFjiOrggYe2b62g6iQICY6TGFakkEp15i8jz/5w4yjuZlAxlMk6TUxPow671e9B1uLejBReIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJbYLPSv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF93C4CEEB;
+	Wed, 23 Jul 2025 01:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753235395;
-	bh=TWWP5UC0hl2kMWCVnIXPI8WlY1NR78JudHF5e6wlwdM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cHPkuMq+uDnLJgjjdEi10acprytyO7c2jBESQjdNfA3uEbAoymSOeFYDwtxlbBpXm
-	 K8JvB1GDJlYlXIzz16wE2HwG3rg4+Z9o/aQIPOPVtFLUZu6rh+HD8rr7pMrDMG78Ci
-	 l0FptGsMmqrhMhQRdxxVBtnYZ308pugQ6N3yVIpzpgWBsnDHg9fpce4FG1oA0YUSTH
-	 1N6F6IFOuMtvUPTwJmjz40f8g8Z7JECRIpIH46pv++PjmHp6wTePCeVg0VexuIOsHh
-	 aXUXDxD5gvQ/eei/ysWYTzTdr/BzhIwnO0YuL0ogqsBHljkYxLfqxX+G1AC2cKk+zL
-	 XOr9azYckNvdA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCA9383BF5D;
-	Wed, 23 Jul 2025 01:50:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1753235686;
+	bh=jSyZIb0xPqskwGqxDdGm2zRmpdZ0xgBmOakqH8fDSoo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gJbYLPSv6F7/ECZcr7Z165paXgaoTwPpA2REoXYzmyS3XmwJF5c2GG70zbpQvdSs+
+	 SfzH9y4Ub+CZX9cjjmokUJO6uTlJf/lklLLLVsOVHJg27tec5kXx6wMm+cG+N9ux3d
+	 Ja7UyNxUJleudxnbUAcL2zliCr/NZZsR86j0jEWyVLTtXL62sTh7NiiP4IrpnL/WtV
+	 7NDvt4y0XP495AH6T04sD3hq7PzBXKFH277DKw+xhDjkjYWXHKePccDeqFQ4oN7qJI
+	 DQF+c/7Ypf0HBiKqqX2MaighoFRQ6W06+JlzaI7P4CZlz9JFGX8R+F2udIFthLQBQ6
+	 N+1rHunmpjg4A==
+Message-ID: <8e74ee4a-bb57-45e8-b452-474bfec88ffc@kernel.org>
+Date: Wed, 23 Jul 2025 10:52:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [pull-request] mlx5-next updates 2025-07-22
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175323541324.1021632.17931149096787900898.git-patchwork-notify@kernel.org>
-Date: Wed, 23 Jul 2025 01:50:13 +0000
-References: <1753175048-330044-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1753175048-330044-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
- leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] block, bfq: don't grab queue_lock from io path
+To: Yu Kuai <yukuai1@huaweicloud.com>, hare@suse.de, tj@kernel.org,
+ josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
+ <20250722072431.610354-3-yukuai1@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250722072431.610354-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This pull request was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 22 Jul 2025 12:04:08 +0300 you wrote:
-> Hi,
+On 7/22/25 4:24 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> The following pull-request contains common mlx5 updates
-> for your *net-next* tree.
-> Please pull and let me know of any problem.
+> Currently issue io can grab queue_lock three times from bfq_bio_merge(),
+> bfq_limit_depth() and bfq_prepare_request(), the queue_lock is not
+> necessary if icq is already created:
 > 
-> Regards,
-> Tariq
+> - queue_usage_counter is already grabbed and queue won't exist;
+> - current thread won't exist;
+> - if other thread is allocating and inserting new icq to ioc->icq_tree,
+>   rcu can be used to protect lookup icq from the raidx tree, it's safe
+>   to use extracted icq until queue or current thread exit;
 > 
-> [...]
+> If ioc or icq is not created, then bfq_prepare_request() will create it,
+> which means the task is issuing io to queue the first time, this can
+> consider a slow path and queue_lock will still be held to protect
+> inserting allocated icq to ioc->icq_tree.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/bfq-iosched.c | 24 +++++++-----------------
+>  block/blk-ioc.c     | 43 ++++++++++++++++++++++++++++++++++++++-----
+>  block/blk.h         |  2 +-
+>  3 files changed, 46 insertions(+), 23 deletions(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 0cb1e9873aab..58d57c482acd 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -454,17 +454,13 @@ static struct bfq_io_cq *icq_to_bic(struct io_cq *icq)
+>   */
+>  static struct bfq_io_cq *bfq_bic_lookup(struct request_queue *q)
+>  {
+> -	struct bfq_io_cq *icq;
+> -	unsigned long flags;
+> -
+> -	if (!current->io_context)
+> -		return NULL;
+> +	struct io_cq *icq;
+>  
+> -	spin_lock_irqsave(&q->queue_lock, flags);
+> -	icq = icq_to_bic(ioc_lookup_icq(q));
+> -	spin_unlock_irqrestore(&q->queue_lock, flags);
+> +	rcu_read_lock();
+> +	icq = ioc_lookup_icq_rcu(q);
+> +	rcu_read_unlock();
+>  
+> -	return icq;
+> +	return icq_to_bic(icq);
 
-Here is the summary with links:
-  - [pull-request] mlx5-next updates 2025-07-22
-    https://git.kernel.org/netdev/net-next/c/56613001dfc9
+icq cannot be NULL here ? If it can, that needs checking, otherwise,
+icq_to_bic() will return a bad address.
 
-You are awesome, thank you!
+>  }
+>  
+>  /*
+> @@ -2456,16 +2452,10 @@ static void bfq_remove_request(struct request_queue *q,
+>  static bool bfq_bio_merge(struct request_queue *q, struct bio *bio,
+>  		unsigned int nr_segs)
+>  {
+> +	/* bic will not be freed until current or elevator exit */
+
+I would drop this comment, or move it somewhere else as having a comment in the
+declarations seems odd.
+
+> +	struct bfq_io_cq *bic = bfq_bic_lookup(q);
+>  	struct bfq_data *bfqd = q->elevator->elevator_data;
+>  	struct request *free = NULL;
+> -	/*
+> -	 * bfq_bic_lookup grabs the queue_lock: invoke it now and
+> -	 * store its return value for later use, to avoid nesting
+> -	 * queue_lock inside the bfqd->lock. We assume that the bic
+> -	 * returned by bfq_bic_lookup does not go away before
+> -	 * bfqd->lock is taken.
+> -	 */
+> -	struct bfq_io_cq *bic = bfq_bic_lookup(q);
+>  	bool ret;
+>  
+>  	spin_lock_irq(&bfqd->lock);
+> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+> index ce82770c72ab..0be097a37e22 100644
+> --- a/block/blk-ioc.c
+> +++ b/block/blk-ioc.c
+> @@ -314,7 +314,7 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
+>   * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
+>   * with @q->queue_lock held.
+>   */
+> -struct io_cq *ioc_lookup_icq(struct request_queue *q)
+> +static struct io_cq *ioc_lookup_icq(struct request_queue *q)
+>  {
+>  	struct io_context *ioc = current->io_context;
+>  	struct io_cq *icq;
+> @@ -341,7 +341,40 @@ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+>  	rcu_read_unlock();
+>  	return icq;
+>  }
+> -EXPORT_SYMBOL(ioc_lookup_icq);
+> +
+> +/**
+> + * ioc_lookup_icq_rcu - lookup io_cq from ioc in io path
+> + * @q: the associated request_queue
+> + *
+> + * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
+> + * from io path, either return NULL if current issue io to @q for the first
+> + * time, or return a valid icq.
+> + */
+> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q)
+> +{
+> +	struct io_context *ioc = current->io_context;
+> +	struct io_cq *icq;
+> +
+> +	WARN_ON_ONCE(percpu_ref_is_zero(&q->q_usage_counter));
+> +
+> +	if (!ioc)
+> +		return NULL;
+> +
+> +	icq = rcu_dereference(ioc->icq_hint);
+> +	if (icq && icq->q == q)
+> +		return icq;
+> +
+> +	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
+> +	if (!icq)
+> +		return NULL;
+> +
+> +	if (WARN_ON_ONCE(icq->q != q))
+> +		return NULL;
+> +
+> +	rcu_assign_pointer(ioc->icq_hint, icq);
+> +	return icq;
+> +}
+> +EXPORT_SYMBOL(ioc_lookup_icq_rcu);
+>  
+>  /**
+>   * ioc_create_icq - create and link io_cq
+> @@ -420,9 +453,9 @@ struct io_cq *ioc_find_get_icq(struct request_queue *q)
+>  	} else {
+>  		get_io_context(ioc);
+>  
+> -		spin_lock_irq(&q->queue_lock);
+> -		icq = ioc_lookup_icq(q);
+> -		spin_unlock_irq(&q->queue_lock);
+> +		rcu_read_lock();
+> +		icq = ioc_lookup_icq_rcu(q);
+> +		rcu_read_unlock();
+>  	}
+>  
+>  	if (!icq) {
+> diff --git a/block/blk.h b/block/blk.h
+> index 468aa83c5a22..3c078e517d59 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -460,7 +460,7 @@ static inline void req_set_nomerge(struct request_queue *q, struct request *req)
+>   * Internal io_context interface
+>   */
+>  struct io_cq *ioc_find_get_icq(struct request_queue *q);
+> -struct io_cq *ioc_lookup_icq(struct request_queue *q);
+> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q);
+>  #ifdef CONFIG_BLK_ICQ
+>  void ioc_clear_queue(struct request_queue *q);
+>  #else
+
+The blk-ioc changes should go into there own patch, to separate block layer
+changes and bfq scheduler changes. No ?
+
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Damien Le Moal
+Western Digital Research
 
