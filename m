@@ -1,140 +1,114 @@
-Return-Path: <linux-kernel+bounces-743123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5A6B0FAE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:19:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FDCB0FAD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC3816E1E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:19:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F30F567D4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8F021D5BC;
-	Wed, 23 Jul 2025 19:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E87218E91;
+	Wed, 23 Jul 2025 19:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="edj+1Zey"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD552208994;
-	Wed, 23 Jul 2025 19:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIhj+X2f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80CC221DB7;
+	Wed, 23 Jul 2025 19:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753298368; cv=none; b=LUcv6yeOUaFDqeh6D+Cv0sZTPzZo6kMD2vN2SRS/pjWMjaV8q/XkppUbDCe3zvFH2D4NvRyOsRdDx17Qrc43xbomcOJCTXsUl7krRDQBKqG3c/Foka+FUPB5bOVOBKk4AMRQSpK8K4ro4Abm2THRjJbOcYxyQUa5pZTPoj2th6A=
+	t=1753297873; cv=none; b=cSA8hvsS7pbsuPsvp43noMK6wJDG7gfQiSAApze+Fj+WkON0M7x1vIBKdZxUUaD+wNveXi4WkOtZl1SbvMbNfJDjPDbt+E5AaGml5JHnNOnfR+6X7PfQ3o5wHMs70Am0HxM7ZllD+pyvirapGQK+xTwfa/N2W3LUbgSBMDmp1x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753298368; c=relaxed/simple;
-	bh=FvY0SQaUZbTcc7+BcW62wVkk1vw9BfWsz/WTViyM9RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VBR+tvYHwaBgximfDVKkYnDTPs0iPBXxXtqVFbK4bBdgdLP3n5wcaS66ej3iN716gzh8pgnSyV0CqOABx6s9r1iLkiHLkl354NOcUrldk737DL3LG7ZQDnX0OoejIAPdze1msnbGQhir6H4zUtgJqnLscKJbd9Zi2R6Z7H21fm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=fail smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=edj+1Zey; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1753297854; bh=FvY0SQaUZbTcc7+BcW62wVkk1vw9BfWsz/WTViyM9RY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=edj+1ZeytZ0MfIPn8lOLXBuihtwqJonl+5jIPFB0VXEX/lvX1XbY83pHxGxdodoaT
-	 03F4bFCB98ImY/iIjzMLjARYkOpwwIC2GaYHn3ufG5NAAmybf6HM138h8TELeUEuwl
-	 hYQFQkUzfNB2Kqng+WfMQ1rLOBFTTc1sA20BAA5o51tMSUUCIQpCI+No01aCywwOmv
-	 IYdL2rytX506zEvlxkx7DD3l4Quf5lJzgVf8xqdTI54i6zMo5ivxMsCXTiYIHW91jT
-	 X+o6WEpJBLWwKVvIoheeIpQVNYrMKbblJgxyFie4wTyTs/PBdtfN2IdXRHPVffuPtz
-	 1plUzHIwgxLsCXboeQu6mkFGltNOAMefk1SornG05k6lM1XtPGl2xJh5Abxuq9YBcs
-	 /dO4X5vAh/84MYS3bXfXqNCPZeQAgeQYUfjo9ymdloUXqFO+WvzH9H20SZueGX47U0
-	 1Axu9Gpz9i8cEhgk7Ges+F3AxXjUtaDmHYX1+VQEcXHlG0wcP8AbRWjmJ78Xuuvdku
-	 /r1JRTtKu6ZB6ov61ptsWWRLqdr2or/wnuCsGsF3QNgQwxszDcoqermU6z+OAJpIWh
-	 9suwMzUB3zgJV+vuSCM45tb+iqfggXXFEUzkxk/czDHW2hQzBunok9OpHmVrfHRhJe
-	 zWgwsflE4blh/n1vygQhleH4=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 4F54F160433;
-	Wed, 23 Jul 2025 21:10:54 +0200 (CEST)
-Message-ID: <da2050d1-660c-48ee-8635-0f359880f713@ijzerbout.nl>
-Date: Wed, 23 Jul 2025 21:10:51 +0200
+	s=arc-20240116; t=1753297873; c=relaxed/simple;
+	bh=V5byk39n1HmyWQGRKiSu3MxLT9DQq3UI17ZkhmMF038=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQ9vfSPkDaUrF5jCAl2qXqoSdEfZ0qC4Xe8Irhk/AuJ+WvifDevoGfCHpT/0ItOsy92hMMTIqg6v5npT3CB+PxNw71/ai4QM//l/Xj+yo6gxD2oIyvUpP8ibO+oy0H5jETWnVyV2hwhR0AEbYnmlXspbRUtCIxlxpeMAbF2ToiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIhj+X2f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E80C4CEE7;
+	Wed, 23 Jul 2025 19:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753297873;
+	bh=V5byk39n1HmyWQGRKiSu3MxLT9DQq3UI17ZkhmMF038=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FIhj+X2fBYCZjgRYRC3FLPrs24n5uXGDHBZx5jMCxHxgO9Jpk7+8vTQ5sUlPF1Wmm
+	 I9lqYoWVojbh06SY84pl3PwmSA1XUdvQ/fLT2xZJTvq9ulW7ogRD0TsDGX3+jJAUMl
+	 YhgSXXXf9IkcgL8+kW7oo7DpqjwjsT8Qg5mHzF9gCkPfVaOIIcOK0HPmm5ar2PjUBQ
+	 GIXst8ZazMfyIImICU3IcNdpqrQZzBToCJyqFksZhBoAm03Go4O7EaJfT/iheBoZRz
+	 cdWOtNEL1KQAgbUtivsQErqPkks6VPPSNK/oVDZP8vZSVsZ/qcpPBlPB4iHiXBJ/CC
+	 K57zpM4DiuvCA==
+Date: Wed, 23 Jul 2025 16:11:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v7 00/16] New perf ilist app
+Message-ID: <aIEzzt1f3UWDCAIw@x1>
+References: <20250714164405.111477-1-irogers@google.com>
+ <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
+ <aIEjMroa3bW-T7d-@google.com>
+ <aIEzRNLTCTA5Gqhm@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PatchV2 4/4] Octeontx2-af: Debugfs support for firmware
- data
-To: Hariprasad Kelam <hkelam@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: kuba@kernel.org, davem@davemloft.net, sgoutham@marvell.com,
- gakula@marvell.com, jerinj@marvell.com, lcherian@marvell.com,
- sbhatta@marvell.com, naveenm@marvell.com, edumazet@google.com,
- pabeni@redhat.com, andrew+netdev@lunn.ch, bbhushan2@marvell.com
-References: <20250720163638.1560323-1-hkelam@marvell.com>
- <20250720163638.1560323-5-hkelam@marvell.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20250720163638.1560323-5-hkelam@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIEzRNLTCTA5Gqhm@x1>
 
-Op 20-07-2025 om 18:36 schreef Hariprasad Kelam:
-> MAC address, Link modes (supported and advertised) and eeprom data
-> for the Netdev interface are read from the shared firmware data.
-> This patch adds debugfs support for the same.
->
-> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
-> ---
-> V2 *
->      fix max line length warnings and typo
->
->   .../net/ethernet/marvell/octeontx2/af/mbox.h  |   7 +-
->   .../marvell/octeontx2/af/rvu_debugfs.c        | 162 ++++++++++++++++++
->   2 files changed, 168 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> index 0bc0dc79868b..933073cd2280 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/mbox.h
-> @@ -664,7 +664,12 @@ struct cgx_lmac_fwdata_s {
->   	/* Only applicable if SFP/QSFP slot is present */
->   	struct sfp_eeprom_s sfp_eeprom;
->   	struct phy_s phy;
-> -#define LMAC_FWDATA_RESERVED_MEM 1021
-> +	u32 lmac_type;
-> +	u32 portm_idx;
-> +	u64 mgmt_port:1;
-> +	u64 advertised_an:1;
-> +	u64 port;
-> +#define LMAC_FWDATA_RESERVED_MEM 1018
->   	u64 reserved[LMAC_FWDATA_RESERVED_MEM];
->   };
->   
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> index 0c20642f81b9..8375f18c8e07 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-> ...
-> @@ -2923,6 +2988,97 @@ static int rvu_dbg_cgx_dmac_flt_display(struct seq_file *s, void *unused)
->   
->   RVU_DEBUG_SEQ_FOPS(cgx_dmac_flt, cgx_dmac_flt_display, NULL);
->   
-> +static int cgx_print_fwdata(struct seq_file *s, int lmac_id)
-> +{
-> +	struct cgx_lmac_fwdata_s *fwdata;
-> +	void *cgxd = s->private;
-> +	struct phy_s *phy;
-> +	struct rvu *rvu;
-> +	int cgx_id, i;
-> +
-> +	rvu = pci_get_drvdata(pci_get_device(PCI_VENDOR_ID_CAVIUM,
-> +					     PCI_DEVID_OCTEONTX2_RVU_AF, NULL));
-> +	if (!rvu)
-> +		return -ENODEV;
-> +
-> +	if (!rvu->fwdata)
-> +		return -EAGAIN;
-> +
-> +	cgx_id = cgx_get_cgxid(cgxd);
-You need to check the return value. It can be -EINVAL which you don't
-want to use for the array index.
-> +
-> +	if (rvu->hw->lmac_per_cgx == CGX_LMACS_USX)
-> +		fwdata =  &rvu->fwdata->cgx_fw_data_usx[cgx_id][lmac_id];
-> +	else
-> +		fwdata =  &rvu->fwdata->cgx_fw_data[cgx_id][lmac_id];
-> +
->
+On Wed, Jul 23, 2025 at 04:08:55PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Jul 23, 2025 at 11:00:18AM -0700, Namhyung Kim wrote:
+> > > I think there is some follow up for "make install" for scripts like
+> > > these, but I'm keen for the python API to move forward.
+> >  
+> > I'll review the series today so that we can get some part of it, at
+> > least.  Basically I think we need a wrapper script like perf-ilist to
+> > run this easily (maybe with documentation).
+> 
+> I just tried, with the series applied:
+> 
+> root@number:~# perf ilist
+> perf: 'ilist' is not a perf-command. See 'perf --help'.
+> 
+> Did you mean this?
+> 	list
+> root@number:~#
+> 
+> Now trying to figure out why it is not running.
+
+So it is not wired up like 'perf archive', trying it directly:
+
+root@number:~# ~acme/git/perf-tools-next/tools/perf/python/ilist.py 
+Traceback (most recent call last):
+  File "/home/acme/git/perf-tools-next/tools/perf/python/ilist.py", line 11, in <module>
+    from textual import on
+ModuleNotFoundError: No module named 'textual'
+root@number:~#
+
+I thought there was some discussion about catching this exception and
+providing guidance, lemme try...
+
+- Arnaldo
 
