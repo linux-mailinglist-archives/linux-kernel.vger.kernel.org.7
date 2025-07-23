@@ -1,97 +1,149 @@
-Return-Path: <linux-kernel+bounces-742387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B790DB0F101
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40415B0F103
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3025168C45
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051F4188F12C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C4F2E4277;
-	Wed, 23 Jul 2025 11:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A2C2E4996;
+	Wed, 23 Jul 2025 11:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAeLUYnT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvVyJuZ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16FA2E4257;
-	Wed, 23 Jul 2025 11:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1EA27934E;
+	Wed, 23 Jul 2025 11:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269307; cv=none; b=aK7/1Y8wnIVrLxsns/hTLpby95p/l9IQwO7IiXUhNGCG+aV9A4SMH5GFr5TOG5FzKHP9Nai7hXzBlSKLOw6kb9jJWuApq8FSoU49iqTBAGaGWoM/KnKSEvaJ5/8WrnIThM9jIDqSMbpct1LOBYjz9aU3SO0DTuMe9jG2g5ziD7Q=
+	t=1753269321; cv=none; b=RRczE3jMZ+QH4nzJckcXwi6Xv2CbHtpqsYP/accGzmV+TZ+sAyrTqdeT1j3smOB6s/z5prgDKSV0LoV3TP2FvTimGkM0lYVHwAatI52InD4C1ytsjbCnRIYGSXSu8Od9lWospMJKz2hN8z2diOSFLtJgANW/KQVWGnyXYiC0S1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269307; c=relaxed/simple;
-	bh=dKAjneFMzMHV6ADO7jAIQ7puucfCDQKrQoiKVcsttcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mx1+Kq9IvbQHUfGUuYCAxoP8oGjPyQZmOv9VM+uvWZldxvtDe1J+qfR2FgiOMRUlo7kIPChNs5UIQm0ehHEr/3nI/UaMyxoEZjKIxHCit3VA9DrQjd0akhzHh4bRtB4Rzo8OvUuarP57YlmpSSfyC7+MWU0/1v7IQGyABoLJ/N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAeLUYnT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A52C4CEE7;
-	Wed, 23 Jul 2025 11:15:02 +0000 (UTC)
+	s=arc-20240116; t=1753269321; c=relaxed/simple;
+	bh=GfCM8NPnkyvjKCYgv/plWSvBAkdknCndIiK7M6dmf/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SHKWu0y8+USyniNy7QKB70V7FYnnG9KtROJE7qMHPDZMS2WVD80rKsnt95Id05OVOI+SWRIRRyaUkBujs9aybk0tlPqnvPh2udF8zEvhhJsk/hgUt7CQodNpVBXitixHjw6i959w5e/6BxDStMuzDOtv8klVLEmFf8EtBltM29g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvVyJuZ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB649C4CEE7;
+	Wed, 23 Jul 2025 11:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753269306;
-	bh=dKAjneFMzMHV6ADO7jAIQ7puucfCDQKrQoiKVcsttcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aAeLUYnT0ZRdgU8yI5+VRgRtpVtre+7vEMx6i/q2M2yMeE3E84CCPAYS58FWVI5Co
-	 CS3amFoIzmeLyY7RWB9uUPoBvrhyWKo+j6QXlqZ1NcDxFJcYx7pRBZHO3mEg04jh0O
-	 cW6CK33BLuz+52bSdWc6+QkOV8omQzbo1iruSVCB5S811eg6icxc14AUPof8aebcms
-	 EeEPSwq6wtPzpdbHmL2wO8sLjhP7+bSXFlhaLfI+B5ym135qeddlvJpZm+3M8QMtPK
-	 Y10rfF5wl+1aBEVirKG3MGSqzyEUolJK86ThuxRb7YVAzp0dfP57G8JTmYBpKFTxaf
-	 P4+mgmiTuGxug==
-Date: Wed, 23 Jul 2025 12:15:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.1 00/79] 6.1.147-rc1 review
-Message-ID: <86180bd9-16b7-490c-a574-6eaded0fa232@sirena.org.uk>
-References: <20250722134328.384139905@linuxfoundation.org>
+	s=k20201202; t=1753269320;
+	bh=GfCM8NPnkyvjKCYgv/plWSvBAkdknCndIiK7M6dmf/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KvVyJuZ+Wk0021GHQI9H7KN5Tn3hdZaR1KPrg05//bIOm5FzuFwvSdpaFIdD62OZ/
+	 ite4PO9NRwi2a0ShfbuX7wjh61mgjnA27U/ScFZvlYBFPdBtpwsfIUH00/1cGmchK5
+	 8sQC/hHdU72oZuC2EWMDjtpH9AfqKfCqmgbNJxt/XQyM7+2eZimglGnxpIWRUJ6g6Q
+	 4gV2D9bRmRpAGvQqk7qzhMpuzBzZia1VKUVO7Xk6d7GGUytZjGOlYL4sq6ItUZeNDD
+	 QnklRVkqvYdK/EAql7AsxOa+uUgqqxBsto69m5LeGfy0bWds5oWvuOXulEBUZzUFnh
+	 50/F1LVFSnqdA==
+Message-ID: <de3ded0d-6d05-43fe-9ac9-b8bf29bd7d53@kernel.org>
+Date: Wed, 23 Jul 2025 13:15:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AWXlMOCO9ZOHt7EA"
-Content-Disposition: inline
-In-Reply-To: <20250722134328.384139905@linuxfoundation.org>
-X-Cookie: List was current at time of printing.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org,
+ Lucca Fachinetti <luccafachinetti@gmail.com>
+References: <20250723-leds-is31fl3236a-v6-0-210328058625@thegoodpenguin.co.uk>
+ <20250723-leds-is31fl3236a-v6-1-210328058625@thegoodpenguin.co.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250723-leds-is31fl3236a-v6-1-210328058625@thegoodpenguin.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 23/07/2025 12:02, Pawel Zalewski wrote:
+> From: Lucca Fachinetti <luccafachinetti@gmail.com>
+> 
+> Add datasheets for reference, NB that I was not able to find an
+> up-to-date, funtional direct URL for si-en products datasheet
+> so they were skipped.
+> 
+> Signed-off-by: Lucca Fachinetti <luccafachinetti@gmail.com>
+> Co-developed-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+> Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+> ---
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
---AWXlMOCO9ZOHt7EA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
 
-On Tue, Jul 22, 2025 at 03:43:56PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.147 release.
-> There are 79 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
 
---AWXlMOCO9ZOHt7EA
-Content-Type: application/pgp-signature; name="signature.asc"
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiAxDMACgkQJNaLcl1U
-h9AF7Qf/Qt6GTXO433kUo19v/wO8sjgiy+hRFz1IEitQemMwFb41ToAIMYr5JCVj
-ALqw9suJ9iQblv+Tyk3sfXPpA1leMitq8gPO4IK/VRIAhG5tPDbovzELSwdTXrTR
-n9+pRTePKlC5T3HZUxiDI/y+3zbxU0QencgeDua4Xac/rAWmIsv3CZZ7Y0tfuO29
-TlaKBam7ehJT89HOKLGKCO/m1e6YjhAsjgfZ5xgIJABs1TpU6ibAFXGyLXmM1mz7
-TIH5TZcUKqon9ZHR2p3EDaYQTeFg9c5n18tv4nTHbQ4fOh+Rm8X3e/c3BA61T595
-QPYbQbR8sJyY1de05J2Jq0VrrVG7GA==
-=/EOg
------END PGP SIGNATURE-----
-
---AWXlMOCO9ZOHt7EA--
+Best regards,
+Krzysztof
 
