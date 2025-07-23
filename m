@@ -1,221 +1,125 @@
-Return-Path: <linux-kernel+bounces-741837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9DEB0E98D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:19:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2DBB0E98F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D21E1C820A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:19:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9A157A77B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9703C2147FB;
-	Wed, 23 Jul 2025 04:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B588D210F4A;
+	Wed, 23 Jul 2025 04:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4Ywp0M+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIL9lM5q"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B451820DD52;
-	Wed, 23 Jul 2025 04:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86205188CC9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753244347; cv=none; b=Vp0LFtIv0w+vgLZUR00HKd2j8O8fFJyCFW0vOg/6pvHUscDalQwTyEVIf5uSPZNH9Y9NmcZ+G2EhxmT5RzIET09ud0vb2OgW7Gc7kYPfp7Nnuhh0JVjhCPYcO7WFgDDGuBUNaT68gMPEAsC5FSFgIbi563Bd+4ghnE/7sqmPIQk=
+	t=1753244429; cv=none; b=KIPq77jmNhT8rV3U81wWJWE3n47s0jEgEnGAkboKdUb1RNyw3NT662u+tVut4CTCh5kY8ox8fp+B4QjoHQC14k1AzJbryO63sSAGohMKvPxGyfvJZ/wdC35XbtN3eWoypXrHoPM4yrvjAojipDMh7XLbJrnIZcm1n0AKz8seH4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753244347; c=relaxed/simple;
-	bh=GacNtb7sskwb36O4NWQBdsR5VCTCEGIjnMoDH5/Rf+g=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=M02vMJKBm7fe/RNWGqYt3ub2Nw1XhZ4j1YTlFkBBjcWQ0Tfsv2E3UpyM3/NGeBE659lbU9H2TXqCt48Akl8A1J2SoIGLvST1PLqKnYGaKJ8ocplt2EepwgYG7VIc/IZW74/0BBlAVLwW8QV6VCIpN5db+jxohlINteptaRDuIqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4Ywp0M+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03AC9C4CEE7;
-	Wed, 23 Jul 2025 04:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753244346;
-	bh=GacNtb7sskwb36O4NWQBdsR5VCTCEGIjnMoDH5/Rf+g=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=n4Ywp0M+HOmdlM2E2S1SUOJyvHJFHYQoVbYrlxUQgtibf2i+wnBM6r3ufWFqFnjut
-	 6OvIniy+jzyYeK27UyZCdmNJKPC9zoSppxpwA5kbsWMwJMZot95doY54YCP6Zc4obb
-	 HPIg9aahsrcdeGtXWVh+mosSroHorTEQBX5c7HnBXNliSwVwE5EKHJkO/bBCwi0iQ1
-	 8wT9+2NDOwcKwA0bZflhf3hREsifLsJHJk1vvprGfkVYOXSaM4nbAO7ZzEcXxAWUkz
-	 /AD1kQ6eKF75vmjOezJc7/g7QtNpEXeRlfZiDqKtnBmXRF9LwfxelSD1Y7gjR0s4Km
-	 w9kWO4QZ2L+qQ==
-Date: Tue, 22 Jul 2025 23:19:05 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1753244429; c=relaxed/simple;
+	bh=nUybmxEjUgZoFF8qKzweqegM7JvT+hk9E8RYEVIYVwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afTTLGmzlCNSTHFpe5V5X+zIQW3bTRn3FsfFR+ySSdnJ0x7f+xRKfCjnjzOr8EgnjPL7okBH4PCt8AtM0+EgmR3qsSm7s3L8zvcX0YDZ1wdZ6ypNik1EUtxxLRv1msuXUlSQfEdKVJicpm4oj4rRk0ARTwYWxOtxJYKS5Voh+FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIL9lM5q; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4561607166aso47978475e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753244426; x=1753849226; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=En7KJtyJSwnrZsH4lDeg9kMr8qGpBkZWwaCC2J8P8Xs=;
+        b=HIL9lM5qseVUMnMWJGu0ywaHQ8VNzgohV+N4o1vD8SmQ7fORPeoOba5iL528N8CILt
+         hrejH64hB3tEH7Mp2DEwtGJ40uHqG/D4dIPJMDL7YOKgXuk8mBCu0oIXV91QP3DLlY6L
+         B2xzHP4Sn89lBH2Yx2KmYJx8HvUSxNjLRIreaY9355YzjYMLiOlszO9KPENNM5u9SzzE
+         OilqKCMlhxaWMyfoC4CWMfN6DLyC3EfPRsInBUB9iuDsoPTj6IWfNTWhsGIGc0mdeOkU
+         drhEk6WnUyk/Cm8lDQ+gqwV6k6Wume7d1/YLw5Mjp4Txr9u13I9YT8ZH/OmtTDNt33F4
+         np/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753244426; x=1753849226;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=En7KJtyJSwnrZsH4lDeg9kMr8qGpBkZWwaCC2J8P8Xs=;
+        b=J4EtrRrWY0MGeMQdDBDsn6JWYUy3s8R1Gc6W6s0OYNpBkWTjFLMWvhEWcwAn4/vo8x
+         CJIpMompoXAUCW5QV/o9GsHWcwmcE3gbflzjK2FifPt/DGRS7anHgm8rykCoOEpq/QYY
+         L6MH6t7YlzaCtBNF2qgHCNnpi5HnlYnK+nE13Pirt/iXp3kQWWZ1JjEhc0UxuhWHxC70
+         pdr4xohUMZPWjG1c6qfS+Cs0Y4m0rrKvEQ47nv26dSpC7UrjiSJWMXCNqp33uhegvisF
+         E4QNbGYLu3M7giUJC9C4FRVPyA6xS/6JbPED+6hDzCd2mGOv9lo65QWVpg1hf/DZevfs
+         GgCQ==
+X-Gm-Message-State: AOJu0YzeuHNmile/TjBFKJrki/YVqkbqro4WN/pe5nM0UUFn+B9fSgJ+
+	amMPJlGiBuJK0ukMB0nDyvX3oGXgINfPJayL4AEakvsuPxsCZvtKtuPGmFgg20zxhqk=
+X-Gm-Gg: ASbGncvtEx8ui5UsXsD8hfJQWsK+/TkKjiAeNi3bzB4mkgloSM9d546FavnvJOoMh53
+	QlD29Mei+kunx0kqIQAQ13SLZOqdfggysAuSKF6O258EN28sNdq+a0yP9dXIYOJb51JG8F4wRl2
+	b7smtA0zyzYcn0vqcRWzdFmfM09YjSGWvFPVEeyxzi1vTjvTWtUigVIFGTdyHh12PM432O/IBay
+	8FXg6Iwp+ksPHx7WiBlZz2BYlWgYKde/i0FNxEeqoykc740koed9p2jaEvdxSTtN/+8Am3+ywGq
+	+PkvSNlRsUvqDhdnc20Tow332SEqQjBUY/Ns8uH4trgkpodbp45d6Ez/WNgYvT+V/cV3AmrxlJL
+	ljjlV/hfGsv8DrajdjyLFxcR3ddgdtzo=
+X-Google-Smtp-Source: AGHT+IH+7wJvVSiGwJccW+P53ZiuQE9AatDgb9VpNpO6qzD7aOLdZazB+3EAT3qo9QKAG9L9CG0USw==
+X-Received: by 2002:a05:6000:250f:b0:3b5:def6:4f7 with SMTP id ffacd0b85a97d-3b768ef96a5mr1079669f8f.30.1753244425754;
+        Tue, 22 Jul 2025 21:20:25 -0700 (PDT)
+Received: from zephyr ([31.130.177.100])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b762bb4f6csm4747577f8f.4.2025.07.22.21.20.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 21:20:25 -0700 (PDT)
+From: Ali Nasrolahi <a.nasrolahi01@gmail.com>
+X-Google-Original-From: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+Subject: [PATCH v2] staging: rtl8723bs: remove redundant semicolon in basic_types.h
+Date: Wed, 23 Jul 2025 07:49:21 +0330
+Message-ID: <20250723041920.9623-2-A.Nasrolahi01@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
- joel@jms.id.au, linux-arm-kernel@lists.infradead.org, 
- andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org, 
- devicetree@vger.kernel.org
-To: Donald Shannon <donalds@nvidia.com>
-In-Reply-To: <20250723014239.22667-1-donalds@nvidia.com>
-References: <20250723014239.22667-1-donalds@nvidia.com>
-Message-Id: <175324420395.1136488.7622581130155119218.robh@kernel.org>
-Subject: Re: [PATCH v6 0/2] Adding device tree and binding for NVIDIA
- GB200-UT3.0b
+Content-Transfer-Encoding: 8bit
 
+The macro SET_BITS_TO_LE_2BYTE ends with a semicolon inside its definition,
+which can lead to an extra semicolon when used, resulting in inconsistent
+formatting or potential warnings.
 
-On Tue, 22 Jul 2025 18:42:37 -0700, Donald Shannon wrote:
-> Patch 1 adds the binding for the NVIDIA GB200-UT3.0b platform.
-> Patch 2 adds the device tree for the NVIDIA GB200-UT3.0b platform.
-> 
-> This is an Aspeed AST2600 based unit testing platform for GB200.
-> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
-> differences, additional gpio expanders, and voltage regulator gating
-> some devices.
-> 
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
-> 
-> Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-> Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> ---
-> Changes v1 -> v2:
->   - Changed phy-mode to rgmii-id [Lunn]
->   - Removed redundant max-speed for mac0 [Lunn]
->   - Fixed typo from gb200nvl to gb200 in Makefile
-> Changes v2 -> v3:
->  - Fixed whitespace issues [Krzysztof]
->  - Fixed schema validation issues from my end ( there are still issues
->  with the aspeed dtsi file that are not related to this new dts)
->  [Herring]
->  - Reordered to follow style guide [Krzysztof]
->  - Removed redundant status okays
->  - Changed vcc to vdd for the power gating on the gpio expanders
-> Changes v3 -> v4:
->   - Added changelog [Krzysztof]
->   - Added nvidia,gb200-ut30b board binding [Krzysztof]
->   - Removed unused imports
->   - Reordered a couple other style guide violations
->   - Added back in a couple needed "status okay"s
-> Changes v4 -> v5:
->  - Resumed my patch after a pause
->  - Don't plan to make this include of nvidia-gb200nvl-bmc due to some
->  platform differences
->  - Fixed io expanders that weren't gated by the 3.3V standby regulator
->  - Fixed incorrect interrupt pin for one IO expander
->  - Removed some IO expanders and I2C busses
-> Changes v5 -> v6:
->  - Fixed subject line
->  - Added missing gpio-key compatible type to buttons
-> ---
-> 
-> Donald Shannon (2):
->   dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b  board
->   ARM: dts: aspeed: Add NVIDIA GB200 UT3.0b board
-> 
->  .../bindings/arm/aspeed/aspeed.yaml           |    1 +
->  arch/arm/boot/dts/aspeed/Makefile             |    1 +
->  .../aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts  | 1028 +++++++++++++++++
->  3 files changed, 1030 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dts
-> 
-> 
-> base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
-> --
-> 2.43.0
-> 
-> 
-> 
+This patch removes the redundant semicolon to comply with kernel macro
+style guidelines and improve readability.
 
+Detected using checkpatch.pl.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Signed-off-by: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+---
+Changes in v2:
+- Rewrapped commit message to follow 72-character limit
+- Added explanation for removing semicolon
+- Thanks for the review and feedback!
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+ drivers/staging/rtl8723bs/include/basic_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 05adbee3ad528100ab0285c15c91100e19e10138
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250723014239.22667-1-donalds@nvidia.com:
-
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/apb/fsi@1e79b000/cfam@0,0/hub@3400/cfam@5,0/hub@3400: failed to match any schema with compatible: ['fsi-master-hub']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /gpio-fsi/cfam@0,0/i2c@1800: failed to match any schema with compatible: ['ibm,fsi-i2c-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): reg-io-width: 4 is not of type 'object'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: lpc@1e789000 (aspeed,ast2600-lpc-v2): lpc-snoop@80: 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@28 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@2c (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: sdc@1e740000 (aspeed,ast2600-sd-controller): sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b000 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: fsi@1e79b100 (aspeed,ast2600-fsi-master): compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'anyOf' conditional failed, one must be fixed:
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'oneOf' conditional failed, one must be fixed:
-		'interrupts' is a required property
-		'interrupts-extended' is a required property
-	'gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: 'linux,code' is a required property
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-power: Unevaluated properties are not allowed ('gpio' was unexpected)
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'anyOf' conditional failed, one must be fixed:
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'oneOf' conditional failed, one must be fixed:
-		'interrupts' is a required property
-		'interrupts-extended' is a required property
-	'gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: 'linux,code' is a required property
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200-ut30b.dtb: buttons (gpio-keys): button-uid: Unevaluated properties are not allowed ('gpio' was unexpected)
-	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-
-
-
-
+diff --git a/drivers/staging/rtl8723bs/include/basic_types.h b/drivers/staging/rtl8723bs/include/basic_types.h
+index e2f203910be..640db1e79e7 100644
+--- a/drivers/staging/rtl8723bs/include/basic_types.h
++++ b/drivers/staging/rtl8723bs/include/basic_types.h
+@@ -162,7 +162,7 @@
+ 		(					\
+ 		LE_BITS_CLEARED_TO_2BYTE(__pstart, __bitoffset, __bitlen) | \
+ 		((((u16)__val) & BIT_LEN_MASK_16(__bitlen)) << (__bitoffset)) \
+-		);
++		)
+ 
+ #define SET_BITS_TO_LE_1BYTE(__pstart, __bitoffset, __bitlen, __val) \
+ 		*((u8 *)(__pstart)) = EF1BYTE			\
+-- 
+2.50.1
 
 
