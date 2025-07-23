@@ -1,170 +1,138 @@
-Return-Path: <linux-kernel+bounces-741969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7806B0EB7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F805B0EB81
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876EA3A5AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ED601C81F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D4272814;
-	Wed, 23 Jul 2025 07:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D736272815;
+	Wed, 23 Jul 2025 07:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+MiU0gQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0gl4xfQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82C52343C2;
-	Wed, 23 Jul 2025 07:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEC327146E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753254655; cv=none; b=gqQbjtq29XGC7YEqvWNb285sjKF819bYMV576KT4Vxid69d19+ZzprXgEziwE2QRs2s24GumLkhpep0ysWcQxyea2/TgfvsN8wb0T4+VtvVbezGAToxUT8qKKEMUZHbghjuVQKcHGZKYreD0+xlCtQIxqMtnxZ+7F+uBnlNLJ/c=
+	t=1753254741; cv=none; b=JL2ezgF+y7jq5/ztDC2qm24mPI+ICX4TEVgaGWvX21qRMN3NiP6CXx5mX/p8E9F/ewFTaCciZ9Y+qpxTB1vcGPKkBhh5X9lQHcMzDZO/67cCVId/JXC7L4lSH2C5QX5h/HqJiheV6k+QzZP/b94AZNj8drIy9pr+2ct2KCTQ2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753254655; c=relaxed/simple;
-	bh=LtZZ+pL+54XbUsH86XC7eT0lo0x6zk/Anu05ecDY0V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB/aiO7+0mDMX9XTXQeuoOYF9w8Ti5efJNH7cjfdo6zKAwazGvhDTbKnawwGPQhPB+NwnGjmblDiBodZL2ThLke3gcm1CrJNUlH7aLQfbQsJ9TWB+B0L+5xYOgl70/IhWnyXTQlLYSBXKp0zilnHy5dcYokYpsZy0WrCMQkRwbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+MiU0gQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8DFC4CEF4;
-	Wed, 23 Jul 2025 07:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753254655;
-	bh=LtZZ+pL+54XbUsH86XC7eT0lo0x6zk/Anu05ecDY0V8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+MiU0gQ0/C509a3tjri8tl+mscBPdQ/71d1BZ4kYkBzNhWxst+H5d0YZ9nfMAJVt
-	 IUQ2zc6HBJ/IlzX1EFNAbXGFuUUohrB2DUSKsHq6UvxtdT3iwunutM4iG3vg2hM04y
-	 8mMf9sOgVF1Iyjz5ms6eDvYm40y/8xLGcwpwvDvYalOMLROBcNYJmCcxOqoTEXOWu6
-	 sW1Zol1xaJ215LJC8zNABZCauwgV+Xll/Aq3bwwDRCbhvABiPPWqtkCyIw3wh/NkOo
-	 DfE+ntOlrLYb8vQmOwVVRS9Hk82QqhzY3+yofLwIeYEMbvi50HNK5LXsLk0Uf2z/9T
-	 EzlaB+L5c7otw==
-Date: Wed, 23 Jul 2025 10:10:50 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Cassen <acassen@corp.free.fr>
-Subject: Re: [PATCH net-next V2 1/2] net/mlx5e: Support routed networks
- during IPsec MACs initialization
-Message-ID: <20250723071050.GL402218@unreal>
-References: <1753194228-333722-1-git-send-email-tariqt@nvidia.com>
- <1753194228-333722-2-git-send-email-tariqt@nvidia.com>
- <aICGmVC06H+WTy6s@mev-dev.igk.intel.com>
+	s=arc-20240116; t=1753254741; c=relaxed/simple;
+	bh=FwnLzYB260LPBBLyO6QPG8c/64H6Crnq1RaI4UHgsKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZY9oMXy/dyRpkoeHdzVAFXzCLKKnLYpMxeBbFyeFQbvQ3gQh0AFX1MiCrJGUJfHEQU/nHWTsBuxyVT6HIJlxXP0J+9SwyB79Y2L4gqcfMY2D/WEk9EKe23UOkW5gzYFsqxoEbTc/z0KTVM2RmFyOGcKj1qK+xSBfI0thfUiBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0gl4xfQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753254737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=svJ9vKg5v2xhgonVVA8jklvWB8f0wsV6uQlirW6mTLA=;
+	b=T0gl4xfQNe+weoXhUlAnf/l1GdVp5YbWSCKOR0Pt4rQVem0R8LRjXHXqzMH5nyuOEyCQsx
+	cJS4F/U7G5ws2Cd8We9YwMkMLnOHkN1TO9JQKEqMT63Q5UMJen5vf/hAFwwX9x/7b/y1vj
+	PaZdg9A8HTxfxaUHuvAnoTyhWlADBis=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-454-sgaakkDeM82b-jUnpyICkQ-1; Wed, 23 Jul 2025 03:12:16 -0400
+X-MC-Unique: sgaakkDeM82b-jUnpyICkQ-1
+X-Mimecast-MFC-AGG-ID: sgaakkDeM82b-jUnpyICkQ_1753254735
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-6090274dd37so5952413a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 00:12:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753254735; x=1753859535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=svJ9vKg5v2xhgonVVA8jklvWB8f0wsV6uQlirW6mTLA=;
+        b=rjJTLj0y/DJ9UKfUNpmfi258npehWKkDY6e9mw0O0SysJdkuy8DMxClCVBw+/JlOql
+         Hb9izKPgYKVkajBZzg13oq5BsqmoC0B+hqGRxxj7OMxW0ouUlyzyW6C/6t2TBR7YSO4Z
+         tlL115MdTnAY8Q/h2ZdBN1xhb5LtagVTRa+rQXeXOZMnxHl/wdTSUNmPIQ4GeTo8psdp
+         7FcCUF31Y0eTB5Sf2U9VAZdckThhNIQwyasOAozECue6XXHueAOvpRy5IVsU6Zcj2r48
+         WO21JO8JT+LQfi0BKqMpYs5jHIIZn6K3C6EQvT2QvNtTWeXr9ftHEIiUUx8eb6mo7TXy
+         3zMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxJx3lD5PvamDTHr+FgyeyFu7sAHMQUpQPxBW3ul2qmhoUtpfkh+XZk8zeLyH7tiqdWZQf7cKzDf4qkik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW31MpClsFYCkfgcuiCZS3CLdwuIy6Xnepc2SZc76xmB6HUzIs
+	zAofY5VdhVjitfu7vyx3RuO37JIETZsf7g4+wIZnC5ycg4S23UhZUfFDwNb8YtV7uMbq9ZFGvr3
+	RIiZOBgL+T0pTZVMMnu5URM4+0bQ9DEICglFcOofLBBhTQM8V3ihxTxOnIM8weWR1CHdHV3IhbQ
+	==
+X-Gm-Gg: ASbGnctO69NkApYY9IkZ2F6TgEb3SjdpCOLVkZz/770vC7G/Qj/vlIAT6IIzqUlkaR9
+	W6YkEvXvuJcRPnnXybJisiXt0A86JalXKgPM8FrIfvSqDBJlcXlmv0A+i9TmP4eddGgFS0pIkoZ
+	RiPl6VgcWMa2H8XPObd4rrhSjHuVVejtbGt/RjAexTtPXlWwKxW8+ywGd25mgzliOC4HmS1ia+Y
+	Vhh1fMjwP/IgkTWK2I5N5AyFeMAcG053+Vv1ZC4IUrQjogenlpvqt7DfqlRVljES0RSnzjIJ2mA
+	qn0RZQZ0pAB4wdW9CGbo7HBQTtEqD8ikeb9Sd8cFsyB7HSx1CrrKbXWm3od/Mo4shCMXeKZ7cM/
+	u2KYo7EcymA==
+X-Received: by 2002:a17:907:9816:b0:ade:316e:bfc with SMTP id a640c23a62f3a-af2f6c0ab4amr179168166b.21.1753254734905;
+        Wed, 23 Jul 2025 00:12:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGri0DF7TftUzJZLGAOyHGORDLnO7b2pDFWy2dCBLl64IhL44y4nfzSRlFJb2/VuGJ7H/2qMA==
+X-Received: by 2002:a17:907:9816:b0:ade:316e:bfc with SMTP id a640c23a62f3a-af2f6c0ab4amr179165166b.21.1753254734451;
+        Wed, 23 Jul 2025 00:12:14 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca7d33csm997361466b.112.2025.07.23.00.12.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 00:12:13 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] x86: Drop unused and needless config X86_64_SMP
+Date: Wed, 23 Jul 2025 09:12:11 +0200
+Message-ID: <20250723071211.622802-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aICGmVC06H+WTy6s@mev-dev.igk.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 08:52:09AM +0200, Michal Swiatkowski wrote:
-> On Tue, Jul 22, 2025 at 05:23:47PM +0300, Tariq Toukan wrote:
-> > From: Alexandre Cassen <acassen@corp.free.fr>
-> > 
-> > Remote IPsec tunnel endpoint may refer to a network segment that is
-> > not directly connected to the host. In such a case, IPsec tunnel
-> > endpoints are connected to a router and reachable via a routing path.
-> > In IPsec packet offload mode, HW is initialized with the MAC address
-> > of both IPsec tunnel endpoints.
-> > 
-> > Extend the current IPsec init MACs procedure to resolve nexthop for
-> > routed networks. Direct neighbour lookup and probe is still used
-> > for directly connected networks and as a fallback mechanism if fib
-> > lookup fails.
-> > 
-> > Signed-off-by: Alexandre Cassen <acassen@corp.free.fr>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
-> > Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> > ---
-> >  .../mellanox/mlx5/core/en_accel/ipsec.c       | 82 ++++++++++++++++++-
-> >  1 file changed, 80 insertions(+), 2 deletions(-)
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-<...>
+As part of the commit 38a4968b3190 ("x86/percpu/64: Remove INIT_PER_CPU
+macros"), the only use of the config option X86_64_SMP in the kernel tree
+is removed. As this config option X86_64_SMP is just equivalent to
+X86_64 && SMP, the source code in the tree just uses that expression in the
+few places where needed. Note further that this option cannot be explicitly
+enabled or disabled when configuring the kernel build configuration.
 
-> > @@ -274,18 +281,89 @@ static void mlx5e_ipsec_init_macs(struct mlx5e_ipsec_sa_entry *sa_entry,
-> >  	case XFRM_DEV_OFFLOAD_IN:
-> >  		src = attrs->dmac;
-> >  		dst = attrs->smac;
-> > -		pkey = &attrs->addrs.saddr.a4;
-> > +
-> > +		switch (addrs->family) {
-> > +		case AF_INET:
-> > +			fl4.flowi4_proto = x->sel.proto;
-> > +			fl4.daddr = addrs->saddr.a4;
-> > +			fl4.saddr = addrs->daddr.a4;
-> > +			pkey = &addrs->saddr.a4;
-> > +			break;
-> > +		case AF_INET6:
-> > +			fl6.flowi6_proto = x->sel.proto;
-> > +			memcpy(fl6.daddr.s6_addr32, addrs->saddr.a6, 16);
-> > +			memcpy(fl6.saddr.s6_addr32, addrs->daddr.a6, 16);
-> > +			pkey = &addrs->saddr.a6;
-> > +			break;
-> > +		default:
-> > +			return;
-> > +		}
-> >  		break;
-> >  	case XFRM_DEV_OFFLOAD_OUT:
-> >  		src = attrs->smac;
-> >  		dst = attrs->dmac;
-> > -		pkey = &attrs->addrs.daddr.a4;
-> 
-> Isn't it worth to move getting pkey to separate function? The switch is
-> the same with OFFLOAD_IN and OFFLOAD_OUT.
+Drop this needless and unused config option. No functional change.
 
-The content of the switch is completely opposite, as an example for pkey:
-In OFFLOAD_IN:
-pkey = &addrs->...S...addr.a4;
-pkey = &addrs->...S...addr.a6;
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ arch/x86/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
 
-In OFFLOAD_OUT:
-pkey = &addrs->...D...addr.a4;
-pkey = &addrs->...D...addr.a6;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 66115134b596..afa4077e423f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -411,10 +411,6 @@ config HAVE_INTEL_TXT
+ 	def_bool y
+ 	depends on INTEL_IOMMU && ACPI
+ 
+-config X86_64_SMP
+-	def_bool y
+-	depends on X86_64 && SMP
+-
+ config ARCH_SUPPORTS_UPROBES
+ 	def_bool y
+ 
+-- 
+2.50.1
 
-There is only one line which is common: "... = x->sel.proto;"
-
-> 
-> > +		switch (addrs->family) {
-> > +		case AF_INET:
-> > +			fl4.flowi4_proto = x->sel.proto;
-> > +			fl4.daddr = addrs->daddr.a4;
-> > +			fl4.saddr = addrs->saddr.a4;
-> > +			pkey = &addrs->daddr.a4;
-> > +			break;
-> > +		case AF_INET6:
-> > +			fl6.flowi6_proto = x->sel.proto;
-> > +			memcpy(fl6.daddr.s6_addr32, addrs->daddr.a6, 16);
-> > +			memcpy(fl6.saddr.s6_addr32, addrs->saddr.a6, 16);
-> > +			pkey = &addrs->daddr.a6;
-> > +			break;
-> > +		default:
-> > +			return;
-
-<...>
-
-> >  	n = neigh_lookup(&arp_tbl, pkey, netdev);
-> >  	if (!n) {
-> >  		n = neigh_create(&arp_tbl, pkey, netdev);
-> 
-> Code looks fine,
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-
-Thanks
-
-> 
-> > -- 
-> > 2.31.1
-> 
 
