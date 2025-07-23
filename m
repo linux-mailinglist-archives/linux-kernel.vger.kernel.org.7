@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-742899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0FCB0F7FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE265B0F800
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5FB962F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F809AA3AC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0611F582A;
-	Wed, 23 Jul 2025 16:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC581EDA02;
+	Wed, 23 Jul 2025 16:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7pvM9ES"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOdbMFOA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548D1F4C87;
-	Wed, 23 Jul 2025 16:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1632E36F0;
+	Wed, 23 Jul 2025 16:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753287630; cv=none; b=dJgjs7Oa5V7RmsyLHQlaE5sFaEWRlwpRnLVyKhLgGMnODQPxICAXsnWzV9kU/ik+n19YU8PaOOoyv9pnFUA9zfXxmUZPrgGz1k1UTn/Glhf5wRNVCvEtFb+MFSrJmC0+pTkr9DBB7LCuH+BXF/35YCtT9ZDz5zpzLG5nOS9+xqk=
+	t=1753287723; cv=none; b=XNPuoHYV3eGJxL0ZI3l0D7zWUvamhqhlkJ2uJ/Y6Tt+6wgrZolAwweno+t/BKgRSgcQ/pkau2BsS757n6N8H9W0NkDkDfyRvw6vjG3u0QUu0X9h0TxcjncFUkXeL9kmrrEpiXq6aQbgR3s6rMxg90UD1gVqyItjslkfh8TG/hz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753287630; c=relaxed/simple;
-	bh=oTd0EuHHjKrCdYujk4PLI6jiloB4JBjZE/fMA+OwsFo=;
+	s=arc-20240116; t=1753287723; c=relaxed/simple;
+	bh=bfdY0aVwf47XiE8ZVRejqu5I4YU16Lsl9rpzoYPP11c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Na8xwYm5Ys4NHE5HeZvOuvWD4iCDzZvuztsPWjco2q9NwqjptUQhnc96dm7cFdvqRNlj3XcGMBojrvTBgPneOCRiNamEXOw3rP92fhfAbd6FLlCHVy/17ymI/AnZw68HItOx5df6dU9mVEiutIAtUNvLSR9/hP8Jqez2EgYE0No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7pvM9ES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2972C4CEE7;
-	Wed, 23 Jul 2025 16:20:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+YXnYYGnQ4/gK8VZW8s2L0XO3YIrWTrdotlyouMFNgHYdwh9o4XLMy54gOsP8+cK3eac9UuKbZiw0qfaEHiW4j9rbtA14u7Sh5Z3r54FpLA9tJ0JkAgxRTmmvL4zOLbjHRCTllTskr8GUHxn0nua9FOnx+ds21NQ3wKH1+bz3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOdbMFOA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275CFC4CEE7;
+	Wed, 23 Jul 2025 16:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753287630;
-	bh=oTd0EuHHjKrCdYujk4PLI6jiloB4JBjZE/fMA+OwsFo=;
+	s=k20201202; t=1753287723;
+	bh=bfdY0aVwf47XiE8ZVRejqu5I4YU16Lsl9rpzoYPP11c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U7pvM9ESzvMSs9zVUpJhDPeifBPpyJfP3TkTpOXFpj3C33Ytpuc5vnhink62Bw8tj
-	 5iIBkHhpBf7P1Z7exfrMVVNTzTYiRca/1IhEz5c7P7k8P4K2NjJg+5SYfPKXXimvRR
-	 m4mkFhEpHadU/9cMDthqDNV2k68MPA18pJ1Vm5qhezp0XIl6I96btvCDs4LNj3jGz5
-	 9OVyUPM90rRdnT25F1UOw7glP1wLPl3Uf3A+GwbfQi7Wn8oTuQnhciqS14EggvPvPn
-	 Ti1m5UuNn7rVty/UiyWY3FKA6RgTXMElFWwvv+tHIezUNd6dK/x7DYlT8TlITI5EIX
-	 7rDdoNnrqrwSw==
-Date: Wed, 23 Jul 2025 13:20:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for
- TUI
-Message-ID: <aIELyy7jg5gSlkVT@x1>
-References: <20250716050054.14130-1-namhyung@kernel.org>
- <20250716050054.14130-6-namhyung@kernel.org>
- <aIEH99tRH8EoqBA5@x1>
+	b=aOdbMFOAjPrHkyem2K8fAg4ZfGJz3RKc/Z0QsmW/z4vMpJR7kLa+Sjp9YkYnQ1TyL
+	 SYta3l8yt27PDDMo+q4zdNtj9hznvhgftwL3aRclTUlvEgBLA/FE+Vn0Wpw/S9lYpn
+	 MjUtb67pSB/tKwjdYknGLY3A2FkllPFKhbbgsnbI7BvHQoFKOKFq/eMosuRXRIxpRS
+	 hrta77jYY+pWUZb/ov6u4nXI8w0yJGjZggBMCSgiSQJYvUp34ZaYVgjgFDhC5Qz9MW
+	 etKJrZNC5Cd3g94Joam/OU9eewkUnfrimPINAx6ftuV/XPESxCw66L5tyKoUJqfJR5
+	 R9ar/yGtFlFCw==
+Date: Wed, 23 Jul 2025 17:21:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tristram.Ha@microchip.com
+Cc: Woojung.Huh@microchip.com, andrew@lunn.ch, olteanv@gmail.com,
+	kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, maxime.chevallier@bootlin.com,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	marex@denx.de, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 4/7] net: dsa: microchip: Use different
+ registers for KSZ8463
+Message-ID: <20250723162158.GJ1036606@horms.kernel.org>
+References: <20250719012106.257968-1-Tristram.Ha@microchip.com>
+ <20250719012106.257968-5-Tristram.Ha@microchip.com>
+ <20250720101703.GQ2459@horms.kernel.org>
+ <20250720102224.GR2459@horms.kernel.org>
+ <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,87 +66,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIEH99tRH8EoqBA5@x1>
+In-Reply-To: <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
 
-On Wed, Jul 23, 2025 at 01:04:11PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Jul 15, 2025 at 10:00:51PM -0700, Namhyung Kim wrote:
-> > Until now, the --code-with-type option is available only on stdio.
-> > But it was an artifical limitation because of an implemention issue.
+On Wed, Jul 23, 2025 at 02:25:27AM +0000, Tristram.Ha@microchip.com wrote:
+> > On Sun, Jul 20, 2025 at 11:17:03AM +0100, Simon Horman wrote:
+> > > On Fri, Jul 18, 2025 at 06:21:03PM -0700, Tristram.Ha@microchip.com wrote:
+> > > > From: Tristram Ha <tristram.ha@microchip.com>
+> > > >
+> > > > KSZ8463 does not use same set of registers as KSZ8863 so it is necessary
+> > > > to change some registers when using KSZ8463.
+> > > >
+> > > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> > > > ---
+> > > > v3
+> > > > - Replace cpu_to_be16() with swab16() to avoid compiler warning
+> > >
+> > > ...
+> > >
+> > > > diff --git a/drivers/net/dsa/microchip/ksz_common.c
+> > b/drivers/net/dsa/microchip/ksz_common.c
+> > >
+> > > ...
+> > >
+> > > > @@ -2980,10 +2981,15 @@ static int ksz_setup(struct dsa_switch *ds)
+> > > >     }
+> > > >
+> > > >     /* set broadcast storm protection 10% rate */
+> > > > -   regmap_update_bits(ksz_regmap_16(dev), regs[S_BROADCAST_CTRL],
+> > > > -                      BROADCAST_STORM_RATE,
+> > > > -                      (BROADCAST_STORM_VALUE *
+> > > > -                      BROADCAST_STORM_PROT_RATE) / 100);
+> > > > +   storm_mask = BROADCAST_STORM_RATE;
+> > > > +   storm_rate = (BROADCAST_STORM_VALUE *
+> > BROADCAST_STORM_PROT_RATE) / 100;
+> > > > +   if (ksz_is_ksz8463(dev)) {
+> > > > +           storm_mask = swab16(storm_mask);
+> > > > +           storm_rate = swab16(storm_rate);
+> > > > +   }
+> > > > +   regmap_update_bits(ksz_regmap_16(dev),
+> > > > +                      reg16(dev, regs[S_BROADCAST_CTRL]),
+> > > > +                      storm_mask, storm_rate);
+> > >
+> > > Hi Tristram,
+> > >
+> > > I am confused by the use of swab16() here.
+> > >
+> > > Let us say that we are running on a little endian host (likely).
+> > > Then the effect of this is to pass big endian values to regmap_update_bits().
+> > >
+> > > But if we are running on a big endian host, the opposite will be true:
+> > > little endian values will be passed to regmap_update_bits().
+> > >
+> > >
+> > > Looking at KSZ_REGMAP_ENTRY() I see:
+> > >
+> > > #define KSZ_REGMAP_ENTRY(width, swp, regbits, regpad, regalign)         \
+> > >         {                                                               \
+> > >               ...
+> > >                 .reg_format_endian = REGMAP_ENDIAN_BIG,                 \
+> > >                 .val_format_endian = REGMAP_ENDIAN_BIG                  \
+> > >         }
 > > 
-> > Implement the same logic in annotation_line__write() for stdio2/TUI.
-> > Make disasm_line__write() return the number of printed characters so
-> > that it can skip unnecessary operations when the screen is full.
+> > Update; I now see this in another patch of the series:
 > > 
-> > Remove the limitation and update the man page.
+> > +#define KSZ8463_REGMAP_ENTRY(width, swp, regbits, regpad, regalign)    \
+> > +       {                                                               \
+> >                 ...
+> > +               .reg_format_endian = REGMAP_ENDIAN_BIG,                 \
+> > +               .val_format_endian = REGMAP_ENDIAN_LITTLE               \
+> > +       }
 > > 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/Documentation/perf-annotate.txt |  1 -
-> >  tools/perf/builtin-annotate.c              |  5 --
-> >  tools/perf/ui/browsers/annotate.c          |  6 +++
-> >  tools/perf/util/annotate.c                 | 61 +++++++++++++++++++---
-> >  4 files changed, 61 insertions(+), 12 deletions(-)
+> > Which I understand to mean that the hardware is expecting little endian
+> > values. But still, my concerns raised in my previous email of this
+> > thread remain.
 > > 
-> > diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-> > index 46090c5b42b4762f..547f1a2680185e3c 100644
-> > --- a/tools/perf/Documentation/perf-annotate.txt
-> > +++ b/tools/perf/Documentation/perf-annotate.txt
-> > @@ -170,7 +170,6 @@ include::itrace.txt[]
-> >  
-> >  --code-with-type::
-> >  	Show data type info in code annotation (for memory instructions only).
-> > -	Currently it only works with --stdio option.
-> >  
-> >  
-> >  SEE ALSO
-> > diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> > index 9833c2c82a2fee46..6debd725392db4a4 100644
-> > --- a/tools/perf/builtin-annotate.c
-> > +++ b/tools/perf/builtin-annotate.c
-> > @@ -917,11 +917,6 @@ int cmd_annotate(int argc, const char **argv)
-> >  		symbol_conf.annotate_data_sample = true;
-> >  	} else if (annotate_opts.code_with_type) {
-> >  		symbol_conf.annotate_data_member = true;
-> > -
-> > -		if (!annotate.use_stdio) {
-> > -			pr_err("--code-with-type only works with --stdio.\n");
-> > -			goto out_delete;
-> > -		}
-> >  	}
-> >  
-> >  	setup_browser(true);
-> > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> > index 23bea5b165774ae7..cdee1969f3131a7c 100644
-> > --- a/tools/perf/ui/browsers/annotate.c
-> > +++ b/tools/perf/ui/browsers/annotate.c
-> > @@ -4,6 +4,7 @@
-> >  #include "../ui.h"
-> >  #include "../../util/annotate.h"
-> >  #include "../../util/debug.h"
-> > +#include "../../util/debuginfo.h"
-> >  #include "../../util/dso.h"
-> >  #include "../../util/hist.h"
-> >  #include "../../util/sort.h"
-> > @@ -1101,6 +1102,9 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
-> >  
-> >  	ui_helpline__push("Press ESC to exit");
-> >  
-> > +	if (annotate_opts.code_with_type)
-> > +		browser.dbg = debuginfo__new(dso__long_name(dso));
+> > And I have a question: does this chip use little endian register values
+> > whereas other chips used big endian register values?
+> > 
+> > >
+> > > Which based on a skimming the regmap code implies to me that
+> > > regmap_update_bits() should be passed host byte order values
+> > > which regmap will convert to big endian when writing out
+> > > these values.
+> > >
+> > > It is unclear to me why changing the byte order of storm_mask
+> > > and storm_rate is needed here. But it does seem clear that
+> > > it will lead to inconsistent results on big endian and little
+> > > endian hosts.
 > 
-> Some error checking here to tell the user if debuginfo isn't available
-> and hints on how to get it in place?
+> The broadcast storm value 0x7ff is stored in registers 6 and 7 in KSZ8863
+> where register 6 holds the 0x7 part while register 7 holds the 0xff part.
+> In KSZ8463 register 6 is defined as 16-bit where the 0x7 part is held in
+> lower byte and the 0xff part is held in higher byte.  It is necessary to
+> swap the bytes when the value is passed to the 16-bit write function.
 
-Ok, you did it  later with:
+Perhaps naively, I would have expected
 
-commit 81d638a1b96ec04d7c41e163b5077419cf85e798 (HEAD)
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Tue Jul 15 22:00:53 2025 -0700
+	.val_format_endian = REGMAP_ENDIAN_LITTLE
 
-    perf annotate: Show warning when debuginfo is not available
-    
-    When user requests data-type annotation but no DWARF info is available,
-    show a warning message about it.
+to handle writing the 16-bit value 0x7ff such that 0x7 is in
+the lower byte, while 0xff is in the upper byte. Is that not the case?
 
-- Arnaldo
+If not, do you get the desired result by removing the swab16() calls
+and using
+
+	.val_format_endian = REGMAP_ENDIAN_BIG
+
+But perhaps I misunderstand how .val_format_endian works.
+
+> 
+> All other KSZ switches use 8-bit access with automatic address increase
+> so a write to register 0 with value 0x12345678 means 0=0x12, 1=0x34,
+> 2=0x56, and 3=0x78.
+> 
 
