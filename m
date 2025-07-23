@@ -1,118 +1,162 @@
-Return-Path: <linux-kernel+bounces-741686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDDFB0E7E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:02:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D98B0E7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E2B77AC861
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDA837AF94F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A4A15530C;
-	Wed, 23 Jul 2025 01:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D77114A60F;
+	Wed, 23 Jul 2025 01:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="piNnvYcZ";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="RjYIICVa"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="XLMDA25x"
+Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DF19A;
-	Wed, 23 Jul 2025 01:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171C2149C51
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753232542; cv=none; b=MStCXtx1xxLwc96vUg8jWYnDeGGZDzekITCsg0fQ+ajKZfS8U1y3hH3aevjvI9knm7JWtnV9YzodtCXnZtQg9zlkh3L4M/JmuVhlhL2X9QZFV7ufFcz9U3G1XWo0qeNunSmc+y1pIzA87FutG/fvvFwe/zBBm22gMXlFzKUyzH8=
+	t=1753232791; cv=none; b=IoflCiJVL/VGO3YqzQgmTbd94aF3Mjs70vJIYsVyJI34M7fpQsTAZhnJMQKyJcHdy8uJfhLATFEv5LWea4xID5lPyxGv7JCF8ZaMlZNO0a6zc6J3ePm/92dcTjGJEOyLEW50TGpjJCtkAIKwdu2eu2+JOlbbmQ8VFD68e8JWJl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753232542; c=relaxed/simple;
-	bh=vr7pD0YXRwAScuGrHCqezmW3XIU4AIHJ6JEseENsoCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cdYQUi+mif88XGtfiGNl0rs7Uw75wZlIiw8VfyzFJe6C98UQZDMSzpw4niicsBKWJDNNlk6obXEkRjIDhXB+Xw+Z8nDos9HdV89VmGmYzKKw7tXUVMmVIJjijLAL4WSRmZrwYBp20jmsxpRlPiJHW9qnRFP0xzqnmfBw+XGEMtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=piNnvYcZ; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=RjYIICVa; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 95B2660286; Wed, 23 Jul 2025 03:02:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753232536;
-	bh=EdBX1broglTSvzLe9lwy2ZswEClbQ77newzg7SsGALQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=piNnvYcZVGZjhbwkbgC5IpM+efqJQIz/dU+UVB9X6ILYWi5OfISmkKd+f3+UaNMhx
-	 +xlXTPBQqplY30YBtm+qMvmZWdTpYuRu3Bv6V1cdrsLxFiR2DNcUERr16XX3tdmC1l
-	 bB8NtZ+w7zDLRtg+U4jqQLTd62NQYkWOzPn/yJGToXoO0Xy5xDpnL2V7wk/2riHL74
-	 /EfPESziNiN27aGwntYYA5aBx4XsC5Bno8qHyOWFImoJeiNzXJ+GOYQ0Pu1xBdl76k
-	 LzaIalKxgd/PagVss9cCqEqxurK38FBWDo33WYgMKTD9LtDmb9YVpN3VKs63/eobre
-	 O6DwK6OZa6rbw==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 4636A6027B;
-	Wed, 23 Jul 2025 03:02:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753232533;
-	bh=EdBX1broglTSvzLe9lwy2ZswEClbQ77newzg7SsGALQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RjYIICVaotgq0vkIS+QNcJYDP7fcYp3/qKFToB+eVy255pard5wDrJkbncSN3mLXi
-	 7e3o+XK43GHZd+yicBqVyPG3L9wRO/zgGoX4k3L/UxBsbeEQ2gTs0gXxLAnv/V/b5s
-	 3H1bFZuMiCNzSLuxts9mcjxyA5uPTZm0N3NkMsvwEalkbX+rLLGMPzRnLL+MypH5xx
-	 Fm8yXJ837xbnZDRF+zF1lB79YVoc2MUk6icDi+P4+tnsdOB/J8z5bXRr2PBn1NWM0B
-	 7jjWPKdFdrAzvqJtpOY/fKyRsXZgCnnydtA1uyZsS7PfWlMZ37IAt+phsUfGThars5
-	 HZun9V/hJwpVg==
-Date: Wed, 23 Jul 2025 03:02:09 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: lvxiafei <xiafei_xupt@163.com>
-Cc: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com,
-	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, lvxiafei@sensetime.com,
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	pabeni@redhat.com, fw@strlen.de
-Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
-Message-ID: <aIA0kYa1oi6YPQX8@calendula>
-References: <20250508081313.57914-1-xiafei_xupt@163.com>
- <20250522091954.47067-1-xiafei_xupt@163.com>
+	s=arc-20240116; t=1753232791; c=relaxed/simple;
+	bh=uSar9xHTnGUQj7iYqiDRlLrJCkeSSB2Ouf2GH3Pr1+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bEdfDojCK05EmeYS8xoC2mxl94FHsdyRZOFSSoQdUNC7AA2VzWJltDRqxChwLzBVxnExM4Fl7zgkswtoX7BlHSS1c01iUagYNxwMPv5LtcqeXYSXzDHDt5ubJOoPuNGDZ0wYmJJPpW/ULhqkZAeI7ZYEAdhMHjQkC/CYGVlPmg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=XLMDA25x; arc=none smtp.client-ip=61.135.153.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753232783;
+	bh=xV1mGKNcZIdCI/Yqy+MW7AgI9iRp29g0Rl6VzIV3Dek=;
+	h=From:Subject:Date:Message-ID;
+	b=XLMDA25xIH/+xhYkxVU4mwGpCe0uKXJhL9Te8Lkj7ApsCDk0M7KhlnB91/jgnG+Jz
+	 hKr2CBZ2rzCtrQvJqWjCfyHQGf+ndhVz35cZ2mLsyxYP/KjXxcIT2UmEh1tbmiU8V6
+	 4JooubFnhWjprP7hv0RaJv2ISihXxMK3KXFwYLOU=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 688034F200000F1B; Wed, 23 Jul 2025 09:03:50 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1175294456963
+X-SMAIL-UIID: FB494A7CF96241028F43B38BAFEACAE8-20250723-090350-1
+From: Hillf Danton <hdanton@sina.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: thomas.hellstrom@linux.intel.com,
+	axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ming Lei <ming.lei@redhat.com>,
+	regressions@lists.linux.dev
+Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking dependency detected when plugging USB stick after ffa1e7ada456
+Date: Wed, 23 Jul 2025 09:03:34 +0800
+Message-ID: <20250723010336.2793-1-hdanton@sina.com>
+In-Reply-To: <CABXGCsO5mFu9fOq8oKwByZaAjJrCB_V0hKgOsLLJJ4x3PmHr1g@mail.gmail.com>
+References: <CABXGCsPgCBahYRtEZUZiAZtkX51gDE_XZQqK=apuhZ_fOK=Dkg@mail.gmail.com> <20250722005125.2765-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250522091954.47067-1-xiafei_xupt@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025 at 05:19:54PM +0800, lvxiafei wrote:
-> From: lvxiafei <lvxiafei@sensetime.com>
+On Tue, 22 Jul 2025 12:11:36 +0500 Mikhail Gavrilov wrote:
+> On Tue, Jul 22, 2025 at 5:51 AM Hillf Danton <hdanton@sina.com> wrote:
+> >
+> > Try the diff that serializes elevator_change() with q->elevator_lock if
+> > reproducer is available.
+> >
+> > --- x/block/elevator.c
+> > +++ y/block/elevator.c
+> > @@ -661,6 +661,7 @@ static int elevator_change(struct reques
+> >         unsigned int memflags;
+> >         int ret = 0;
+> >
+> > +       /* updaters should be serialized */
+> >         lockdep_assert_held(&q->tag_set->update_nr_hwq_lock);
+> >
+> >         memflags = blk_mq_freeze_queue(q);
+> > @@ -674,11 +675,11 @@ static int elevator_change(struct reques
+> >          * Disk isn't added yet, so verifying queue lock only manually.
+> >          */
+> >         blk_mq_cancel_work_sync(q);
+> > +       blk_mq_unfreeze_queue(q, memflags);
+> >         mutex_lock(&q->elevator_lock);
+> >         if (!(q->elevator && elevator_match(q->elevator->type, ctx->name)))
+> >                 ret = elevator_switch(q, ctx);
+> >         mutex_unlock(&q->elevator_lock);
+> > -       blk_mq_unfreeze_queue(q, memflags);
+> >         if (!ret)
+> >                 ret = elevator_change_done(q, ctx);
+> >
 > 
-> Add the netns field in the "nf_conntrack: table full,
-> dropping packet" log to help locate the specific netns
-> when the table is full.
+> Hi Hillf,
 > 
-> Signed-off-by: lvxiafei <lvxiafei@sensetime.com>
-> ---
->  net/netfilter/nf_conntrack_core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Thanks for the patch.
 > 
-> diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-> index 7f8b245e287a..47036a9d4acc 100644
-> --- a/net/netfilter/nf_conntrack_core.c
-> +++ b/net/netfilter/nf_conntrack_core.c
-> @@ -1659,7 +1659,11 @@ __nf_conntrack_alloc(struct net *net,
->  			if (!conntrack_gc_work.early_drop)
->  				conntrack_gc_work.early_drop = true;
->  			atomic_dec(&cnet->count);
-> -			net_warn_ratelimited("nf_conntrack: table full, dropping packet\n");
-> +			if (net == &init_net)
-> +				net_warn_ratelimited("nf_conntrack: table full, dropping packet\n");
-> +			else
-> +				net_warn_ratelimited("nf_conntrack: table full in netns %u, dropping packet\n",
-> +						     net->ns.inum);
+> I tested your proposed diff that serializes elevator_change() with
+> q->elevator_lock. Unfortunately, instead of the previous lockdep
+> warning, I'm now seeing a soft lockup warning.
+> 
+> Here is the relevant excerpt from the kernel log:
+> 
+> [   78.573292] sd 6:0:0:0: [sda] Assuming drive cache: write through
+> [   78.581496] ------------[ cut here ]------------
+> [   78.581507] WARNING: CPU: 7 PID: 300 at block/elevator.c:578
+> elevator_switch+0x512/0x630
+> 
+> This happens after plugging in a USB flash stick (sd 6:0:0:0) with the
+> patched kernel.
+> 
+> Full dmesg trace is attached below.
+> 
+> Let me know if you'd like me to try additional debugging or patches.
+> 
+> Thanks for looking into this!
 
-This is slightly better, but it still does not say what packet has
-been dropped, right?
+In order to cure the deadlock, queue is thawed before switching elevator,
+so lets see what comes out with that warning ignored.
 
-Probably a similar approach to nf_tcp_log_invalid() would better here.
-
-Thus, nf_log infrastructure could be used as logging hub.
-
-Logging the packet probably provides more context information than
-simply logging the netns inode number.
+--- x/block/elevator.c
++++ y/block/elevator.c
+@@ -575,7 +575,6 @@ static int elevator_switch(struct reques
+ 	struct elevator_type *new_e = NULL;
+ 	int ret = 0;
+ 
+-	WARN_ON_ONCE(q->mq_freeze_depth == 0);
+ 	lockdep_assert_held(&q->elevator_lock);
+ 
+ 	if (strncmp(ctx->name, "none", 4)) {
+@@ -661,6 +660,7 @@ static int elevator_change(struct reques
+ 	unsigned int memflags;
+ 	int ret = 0;
+ 
++	/* updaters should be serialized */
+ 	lockdep_assert_held(&q->tag_set->update_nr_hwq_lock);
+ 
+ 	memflags = blk_mq_freeze_queue(q);
+@@ -674,11 +674,11 @@ static int elevator_change(struct reques
+ 	 * Disk isn't added yet, so verifying queue lock only manually.
+ 	 */
+ 	blk_mq_cancel_work_sync(q);
++	blk_mq_unfreeze_queue(q, memflags);
+ 	mutex_lock(&q->elevator_lock);
+ 	if (!(q->elevator && elevator_match(q->elevator->type, ctx->name)))
+ 		ret = elevator_switch(q, ctx);
+ 	mutex_unlock(&q->elevator_lock);
+-	blk_mq_unfreeze_queue(q, memflags);
+ 	if (!ret)
+ 		ret = elevator_change_done(q, ctx);
+ 
+--
 
