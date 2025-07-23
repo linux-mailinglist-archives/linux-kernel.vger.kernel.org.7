@@ -1,175 +1,234 @@
-Return-Path: <linux-kernel+bounces-741778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DE4B0E8D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C32E3B0E8DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEFE188D229
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5FF1CC1599
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DE81E9B21;
-	Wed, 23 Jul 2025 02:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC36B184;
+	Wed, 23 Jul 2025 02:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rBArHKUs"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK6G5Bhd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB29282E1;
-	Wed, 23 Jul 2025 02:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753239248; cv=fail; b=S2JY5jGGRF94scp1/15QuqIHnh4l2eq661ntF0XfFOUaNuzUYSZAA1F0lMF+vIGkNQ6BipKBAZuGYVscZgsHHVzcvFLoACKasBBAekru+XNxiViuPH59ZupjoqXW39w7Wy1Ci7bkMkn/eSJ8Vb6ipAB9uHmSylJV6P/f8aCSZsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753239248; c=relaxed/simple;
-	bh=XiCeRCUktmAj7eaeUU/61JdBGBODCpCZNb+MBwNqAt0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOQ0NzEL9dtLeKBjcvhSiBWtZwVCsJvjU4FVcqMSksLXbBo0FTpiAwlZQSbVaLr6pLPOdb0WNGGqaSb5oL4ulZyVOV/DLlnXhTZRtz6GCDK0UGcfspMU7oQyYgUuKX2y3htue8TBwYL7Ta1iMWitqX0miSE+oT9+jj4dwVZgA14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rBArHKUs; arc=fail smtp.client-ip=40.107.223.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PGCW6SJiJXklnEa/rxL89L6a+2nsGPMdfUokS1XqPjSdcWiezt7bmCqRo1/yINcUpguXKSD2eCrH3vXF9C8zyI0ut0uJgNfs7H4KqWAne9VyHOCREz3wD9ENR8oIEoZJyDTNLGm+H4JE9/aMaHVSpTO7rtMdoaGbWAljK3d6TySDmLyPRSqYHSQrAiYDLE1oqFPn4fBNriOItSLA2CckMZ12BCluWcVSD3RVjuu/WtjRQOPm1SpkjfQLpSx1LCKVpO1salVQULriHmiYfvA3BbidWB+fZmQA17iUCLteKbXwMbXi6ytcqR8OWu0pe+2hAcoyZ57YRUEYTxz6eB9+cA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LUX3IVEZTifyss8uyWu2gTUjFdWteWeYuWY227DW5uQ=;
- b=g7O9sWGJzgUE82ik2BvfQEm8CayMRySgMNTwJj9lk3eJGYAqcgZTbXnHN3NPCCCOEUspBzhaDu00mTFcBnLjqPN1UH4yPIJc5Jd0edYVtaRX4g1WqN8RiLQzeasjuGVHdDK3eLDVPSnIThjXC6krb5EgF18UA3IkR+fuocQYHLJ9Pq0sgjKvuAS8Xr8UoHJ2q+uGw0gDz56p8wQxo3gtV1sbRaod5hetVPti0j5NwfP1137CI89zTV2/008v69jOByHdmFcmA7E4AJih7jvI8gEGTG2jZ0xg2AnKU6ypBNGG4qzOxZiSnO8evQyLXiKqBSFABk8ccr+89Sfg9CVq1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LUX3IVEZTifyss8uyWu2gTUjFdWteWeYuWY227DW5uQ=;
- b=rBArHKUsCl+8OTRGEAvk9nFVVY1N5E5H56mcDE4qDAghWh8VhHZRIh/TKWqXcdxMD9lndkRPHGY91JJDvpvv2FanCLAGM+VGn77CR3xzbyyJ7B4wrIHgcZ6nfjnDKVz6BuNXdJisGKeh+8RtfUlwnWBqkeuI93PJs5hDj7ICsmIe1iXcytEu9Epm0Xw0eH5znL4WC2fy5Xhz8UhisXWySyTLmRIEXk49onwKDOd3cZXmY/ySgUTGg9n5ohzGJKLkvTCOCvt09P8BAHuThvavnn2dDXCgT+GLsf9GUD63df1z0bUzM+Ffx7BH23CE+OlOppuMzdnXf3hRHOVcvNwhzw==
-Received: from BL6PEPF0001640F.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1004:0:16) by MN0PR12MB6125.namprd12.prod.outlook.com
- (2603:10b6:208:3c7::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Wed, 23 Jul
- 2025 02:53:58 +0000
-Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
- (2a01:111:f403:f901::3) by BL6PEPF0001640F.outlook.office365.com
- (2603:1036:903:4::a) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.21 via Frontend Transport; Wed,
- 23 Jul 2025 02:53:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Wed, 23 Jul 2025 02:53:56 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Jul
- 2025 19:53:32 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 22 Jul
- 2025 19:53:32 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 22 Jul 2025 19:53:31 -0700
-Date: Tue, 22 Jul 2025 19:53:29 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <rafael@kernel.org>, <lenb@kernel.org>,
-	<bhelgaas@google.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <patches@lists.linux.dev>,
-	<pjaroszynski@nvidia.com>, <vsethi@nvidia.com>, <helgaas@kernel.org>
-Subject: Re: [PATCH RFC v2 3/4] iommu: Introduce iommu_dev_reset_prepare()
- and iommu_dev_reset_done()
-Message-ID: <aIBOqSkbQ/1sub0M@Asurada-Nvidia>
-References: <cover.1751096303.git.nicolinc@nvidia.com>
- <9042270b6c2d15a53e66d22d29b87c1c59e60669.1751096303.git.nicolinc@nvidia.com>
- <20250704154342.GN1410929@nvidia.com>
- <aIAJfYMKYKyZZRqx@Asurada-Nvidia>
- <c57ba058-4b25-42a9-8076-98b72b304d51@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA111F12E0
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753239502; cv=none; b=RjAkX4EhlkYKXKCkSK2GdPknsyJ64gbHl5D1d+boOgXw5P9TZQ3SYy1RgOiET+1Nmwgd9Kgp7EhPWBvhj0qlmtcf5+TFUNYejyN3gj7YO7KQmJjcJ/Txhc3xkJdkkp/FQh4bBVp5g2oaYvUMO3JV7J57J+ghkhWWVPTLgfsRDe8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753239502; c=relaxed/simple;
+	bh=ZIWrT6BRLKphQtnh3Uhpob2LwoYBYO0WXJVd9NLPwhg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ouwFFk+SCX5z7tY7bVfuszdlGRDTtOdTVhilf7dCJ7PUFJ/5h/QO23RvJ/GT4YV/RGy7GXHsJAJmX8mttqaBWEBFLKejnrCtj7TLOfi5xWNHWbKTkDaEvDN+Mb44Hn/Xmi/kUQ4CXRwP/n8ny/nkiUw7JgPm7Tl8TGhmDT6HhIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK6G5Bhd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8E79FC4CEF6;
+	Wed, 23 Jul 2025 02:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753239501;
+	bh=ZIWrT6BRLKphQtnh3Uhpob2LwoYBYO0WXJVd9NLPwhg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=tK6G5BhdD7QFycWPPHmjBBRxEBTvxZNXwoMs9PnlmIwb2qn77DtfGaXtVyWI8l0OU
+	 S7RfsBTIH3gy1ec1QUEzV9PaPcYHGfhd1Dtu6p5hREbXYKat0KoRkXZFNga3A0O/WA
+	 s5OrGecKyjlEY54aM7tirOQoVAAh3Hx718xu3oYv2IPdwzDDiuyLzt0buL79EZNNbl
+	 u3TKHoq8/Ojv6a66ox4a0r2LXBO6WIBhBY8QxeYpvivd8O4FbC/MJksygM29Flu6NT
+	 FdIWxFNBs0B2UqXiiF1XcrEK2WLOoeY2x8Hrrs3J502pcqiQ8PxjMQeweENaZe5uGo
+	 Dh7M1fsgaNkQw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E7AC83F25;
+	Wed, 23 Jul 2025 02:58:21 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Wed, 23 Jul 2025 10:57:49 +0800
+Subject: [PATCH v3] soc: amlogic: clk-measure: Optimize measurement
+ accuracy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c57ba058-4b25-42a9-8076-98b72b304d51@linux.intel.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|MN0PR12MB6125:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdaf7022-13f2-4631-d1d2-08ddc9942ae5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s+sgh1bQaB+CaPMrNJGdgFcjkdGz7QNobHVNfFeTGuyed3azAWqgc5m0dJ2c?=
- =?us-ascii?Q?1WQ5R3zJU5opD/qiQmEPe7SjkDI3XlQIAniqqjFcvvM8ukq/rtpEam3k3Fgr?=
- =?us-ascii?Q?vBCvdkW0zeCcEAstex+HGol/u7iJp79lkHTGLr7I26pSox2KD7+bIe1NfAmq?=
- =?us-ascii?Q?onOUWCoc1ox4/ag9486j3gzjXPNvC6GLKu1a33rCKJPnhTkGcE8XXxfUrGD4?=
- =?us-ascii?Q?C4YGN6WiBBIJ/uAThs97WAntkHnd6YpdGYWK7XxBNMDde415fAcfvbZAxJDU?=
- =?us-ascii?Q?mJ0onycs3q6J4ksqvGSqiRf0OASycE6anIHkelifXl+PkGTkJgeRLw0ISyuf?=
- =?us-ascii?Q?UKKtWFzhctSy9nLGQ1/bWEzbQav1T3NshpgTCYvmoiQJtJCB/iinay9iO78M?=
- =?us-ascii?Q?/lu7OD2w6ypMEp/TTl14iO7NLFMwkvCds/kr78ooY6Dz0eQBHHOA1gWi9YV9?=
- =?us-ascii?Q?4eRyk1kIAiVtR14uVLtuK7cDaDANTpl/DZ3OluC0HV7MXBtLhO6JGXqENGJD?=
- =?us-ascii?Q?NelO4EIviakpFXWYwlSRlBpo6DZjJPD4mmoB/hh+9AvOJ/0UPZf7KkAdYFbs?=
- =?us-ascii?Q?cPlgu5k9qgAZQBJKh9C2VoBD2386dEKCE9wmgqpfrjFizr/+CM41rqRYTxQB?=
- =?us-ascii?Q?4GLrV5V0UggVv4d4mUdNqObOS6g7IY7FX+hfBCIDXMbdh49zAC7bX1jreqno?=
- =?us-ascii?Q?pN5Fj+bkcfmlRSb8rJ55dJEuuCtgzG12DH5rbCYhP0wDiDQ3bTlADYrmdj5R?=
- =?us-ascii?Q?4T8fUSaquqq+qsUGhwWR2sUUAyoSDBvVyMTg01IMNMpt5Ebl9hToj6X7lqBE?=
- =?us-ascii?Q?isrwni+MCsR+digQADNDA4u6HXf1xaAciLZ5c9CSHBK8nsCtTqmQ3Iazz3E6?=
- =?us-ascii?Q?8kxAj5vlmQSbv75f9K8m++851wNxDDo67nC8BLfV6/bdX1LD958tHa2VSBNr?=
- =?us-ascii?Q?UaM4/xZtiQXt0nz4xI9B/liBmj17ycAs/V01o4uLjPUWpzvMW1z9F7WgbLvl?=
- =?us-ascii?Q?5E6MTFbkaZJ6dVnaANqc37QlOuaxQB2Jvlx/DyEfb4NKWeoaH+QW6sX7ji95?=
- =?us-ascii?Q?KloQ72DpRt1ahPgBjDnirlMvWtKp6XU+7v/A45/XM+auVG/ToT9T3OLi+tPx?=
- =?us-ascii?Q?IEsi7RtKsjvdJgsXAAIMlkReiocJb/vEshmFbw7jCYMZPyrirEKK9HUs9Z7f?=
- =?us-ascii?Q?Rb1jvWScTMRNDHPSEYNjD2iLgOCTtdfACtEpxqKwdenwULIJQjpsF3qc0S4t?=
- =?us-ascii?Q?YWmDUoRW+F7XO1EMVIrhg3Wkj791ip1o4HKspqznhw3nTdgoRcJsCLEI2WX9?=
- =?us-ascii?Q?+n0AVFY9gZrYCRQWzgprc78j44tAvDjvMxayofqNbIL1LCLSsKVMCwwL2cqf?=
- =?us-ascii?Q?XwZt1Ge5hF1lK6bzYEq5skuJmjH0czcYTkwhhYo6BhNi8dErEgWHl5vjvcbg?=
- =?us-ascii?Q?epm2MnABP1fweAG9a6Bu30/3wBTnyKexHKbNGePIEgb87fho0VDcOA9yp0gg?=
- =?us-ascii?Q?AsXxJ+xMGqlU051lj3JCBkGz8oR39wGoSN++?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 02:53:56.6604
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdaf7022-13f2-4631-d1d2-08ddc9942ae5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB75.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6125
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250723-optimize_clk-measure_accuracy-v3-1-d56269de7335@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAKxPgGgC/4XNQQ6CMBCF4auYrq2xU6HqynsYQ+p0kIlATQtEN
+ Nzdqhtdsfzf4ntPESkwRbFfPEWggSP7NoVeLgRWtr2QZJdawBqydQZa+lvHDT+owPoqG7KxD1R
+ YxD5YHOWOVE6kN7lzIJJxC1Ty/eMfT6krjp0P4+duUO/1KxtlZuRBSSX1eQvOIDqz0Qfb1P7Cu
+ ELfiLc9wI8HMOdB8vCsQJUuM5S7f2+aphcesulAHAEAAA==
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753239500; l=6160;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=vJWmpNtcOXlkoFv9Cp1Rrilgfgh79zA1b26tZqiToCY=;
+ b=NW5FxwYhv/eaTWUj1TZji3jsNq8VPlkJB6UliYLm+8DKq+3FuGYafUU/9m9VpBoomKPSVPUhP
+ nVZoQQM0k/HBA2aQNRl9acUNw4S+UB9iPmUeNXiDHI+uleYj5J9PwzV
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Wed, Jul 23, 2025 at 10:21:41AM +0800, Baolu Lu wrote:
-> On 7/23/25 05:58, Nicolin Chen wrote:
-> > >     return 0;
-> > > 
-> > > guard(mutex)(&group->mutex);
-> > I recall Baolu mentioned that Joerg might not like the guard style
-> > so I am keeping mutex_lock/unlock().
-> 
-> You may be misremembering or mixing something up. I didn't see Joerg
-> express that opinion. :-)
-> 
-> My understanding is that cleanup.h could be used in new or refactored
-> code, but people don't like converting existing lock/unlock mechanisms
-> for no real benefit.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Ah, thanks for clarifying. Let's do the guard() way then :)
+The cycle count register has a 20-bit effective width, but the driver
+only utilizes 16 bits. This reduces the sampling window when measuring
+high-frequency clocks, resulting in (slightly) degraded measurement
+accuracy.
 
-Nicolin
+The input clock signal path from gate (Controlled by MSR_RUN) to internal
+sampling circuit in clk-measure has a propagation delay requirement: 24
+clock cycles must elapse after mux selection before sampling.
+
+The measurement circuit employs single-edge sampling for clock frequency
+detection, resulting in a ±1 cycle count error within the measurement window.
+
++1 cycle: 3 rising edges captured in 2-cycle measurement window.
+    __    __    __
+ __↑  |__↑  |__↑  |__
+  ^             ^
+
+-1 cycle: 2 rising edges captured in 3-cycle measurement window.
+    __    __    __
+ __↑  |__↑  |__↑  |__↑
+    ^               ^
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Improve measurement accuracy by increasing the bit width of the cycle
+counter register and adding delay during measurement.
+
+The 800μs delay between enabling the input clock gate and activating
+sampling is determined by the minimum sampling frequency of 30kHz (the
+lowest commonly used frequency in applications is 32.768kHz).
+
+Here are the test comparisons based on C3:
+
+Pre-optimization:
+cat /sys/kernel/debug/meson-clk-msr/measure_summary 
+  clock                     rate    precision
+---------------------------------------------
+ sys_clk               166664063    +/-5208Hz
+ axi_clk               499968750    +/-15625Hz
+ rtc_clk                23982813    +/-3125Hz
+ p20_usb2_ckout        479968750    +/-15625Hz
+ eth_mpll_test         499992188    +/-15625Hz
+ sys_pll              1919875000    +/-62500Hz
+ cpu_clk_div16         119998162    +/-3676Hz
+ ts_pll                        0    +/-3125Hz
+ fclk_div2             999843750    +/-31250Hz
+ fclk_div2p5           799953125    +/-31250Hz
+ fclk_div3             666625000    +/-20833Hz
+ fclk_div4             499914063    +/-15625Hz
+ fclk_div5             399987500    +/-12500Hz
+ fclk_div7             285709821    +/-8928Hz
+ fclk_50m               49982813    +/-3125Hz
+ sys_oscin32k_i            26563    +/-3125Hz
+
+Post-optimization:
+cat /sys/kernel/debug/meson-clk-msr/measure_summary 
+  clock                     rate    precision
+---------------------------------------------
+ sys_clk               166665625    +/-1562Hz
+ axi_clk               499996875    +/-1562Hz
+ rtc_clk                24000000    +/-1562Hz
+ p20_usb2_ckout        479996875    +/-1562Hz
+ eth_mpll_test         499996875    +/-1562Hz
+ sys_pll              1919987132    +/-1838Hz
+ cpu_clk_div16         119998438    +/-1562Hz
+ ts_pll                        0    +/-1562Hz
+ fclk_div2             999993750    +/-1562Hz
+ fclk_div2p5           799995313    +/-1562Hz
+ fclk_div3             666656250    +/-1562Hz
+ fclk_div4             499996875    +/-1562Hz
+ fclk_div5             399993750    +/-1562Hz
+ fclk_div7             285712500    +/-1562Hz
+ fclk_50m               49998438    +/-1562Hz
+ sys_oscin32k_i            32813    +/-1562Hz
+---
+Changes in v3:
+- Drop Change-Id. 
+- Link to v2: https://lore.kernel.org/r/20250722-optimize_clk-measure_accuracy-v2-1-cb121fd57e6d@amlogic.com
+
+Changes in v2:
+- Change "HACK" in comments to "NOTE" according to Martin's suggestion.
+- Link to v1: https://lore.kernel.org/r/20250717-optimize_clk-measure_accuracy-v1-1-3b82d7ccd743@amlogic.com
+---
+ drivers/soc/amlogic/meson-clk-measure.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
+index d862e30a244e..df395e015f26 100644
+--- a/drivers/soc/amlogic/meson-clk-measure.c
++++ b/drivers/soc/amlogic/meson-clk-measure.c
+@@ -22,7 +22,7 @@ static DEFINE_MUTEX(measure_lock);
+ #define MSR_CLK_SRC		GENMASK(26, 20)
+ #define MSR_BUSY		BIT(31)
+ 
+-#define MSR_VAL_MASK		GENMASK(15, 0)
++#define MSR_VAL_MASK		GENMASK(19, 0)
+ 
+ #define DIV_MIN			32
+ #define DIV_STEP		32
+@@ -805,14 +805,23 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
+ 	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_DURATION,
+ 			   FIELD_PREP(MSR_DURATION, duration - 1));
+ 
+-	/* Set ID */
+-	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC,
+-			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id));
++	/* Set the clock channel ID and enable the input clock gate. */
++	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC | MSR_RUN,
++			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id) | MSR_RUN);
+ 
+-	/* Enable & Start */
+-	regmap_update_bits(priv->regmap, reg->freq_ctrl,
+-			   MSR_RUN | MSR_ENABLE,
+-			   MSR_RUN | MSR_ENABLE);
++	/*
++	 * NOTE: The input clock signal path from gate (Controlled by MSR_RUN)
++	 * to internal sampling circuit in clk-measure has a propagation delay
++	 * requirement: 24 clock cycles must elapse after mux selection before
++	 * sampling.
++	 *
++	 * For a 30kHz measurement clock, this translates to an 800μs delay:
++	 * 800us = 24 / 30000Hz.
++	 */
++	fsleep(800);
++
++	/* Enable the internal sampling circuit and start clock measurement. */
++	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_ENABLE, MSR_ENABLE);
+ 
+ 	ret = regmap_read_poll_timeout(priv->regmap, reg->freq_ctrl,
+ 				       val, !(val & MSR_BUSY), 10, 10000);
+@@ -846,7 +855,7 @@ static int meson_measure_best_id(struct meson_msr_id *clk_msr_id,
+ 	do {
+ 		ret = meson_measure_id(clk_msr_id, duration);
+ 		if (ret >= 0)
+-			*precision = (2 * 1000000) / duration;
++			*precision = 1000000 / duration;
+ 		else
+ 			duration -= DIV_STEP;
+ 	} while (duration >= DIV_MIN && ret == -EINVAL);
+
+---
+base-commit: 58abdca0eb653c1a2e755ba9ba406ee475d87636
+change-id: 20250523-optimize_clk-measure_accuracy-9e16ee346dd2
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
