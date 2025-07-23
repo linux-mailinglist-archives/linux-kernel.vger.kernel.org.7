@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-742513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1E0B0F2A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 275D9B0F2A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA95AC080D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139FDAC06FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231062E762F;
-	Wed, 23 Jul 2025 12:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AD82E717B;
+	Wed, 23 Jul 2025 12:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fyXKyqao"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx7SheHY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB70F29B8C0;
-	Wed, 23 Jul 2025 12:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A55D2FF;
+	Wed, 23 Jul 2025 12:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753275326; cv=none; b=n7LmafwWk9ewe5M6hyl713cb/EFqMbtqQfFxBbrT5qiYs2w7DBLJzBtUKoyQo6Ff4r0S2jZb/ragQNL8MFu+lCsYoaNNTu9QzQOwQdE4yv8l/gk+q8TUUBNZMwDlOKR2ECu5Oy3gK/dw8IS5fSBkoqjCttRjO+YH9gyloEbRr2Y=
+	t=1753275325; cv=none; b=iknyeT24W08gJ1WmWX+832p/zbZkgQGIKNkrfuGT4wEURaqbHzmIOyjhhFlw6+lGJupaamQTlnaV6BDAGPI3rLCqwCoC6AGr+uT7wNjNx6Nt/qHfKE5T0IeDIgPeLJ2NQ0/RY6/BDZ2EVr9dwSyTqDOSGCZ0869mfGD4qsSxaz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753275326; c=relaxed/simple;
-	bh=p2ZhOmEScPOsAsGDCejzk4PERbGyjps7u8IIAuzDQxI=;
+	s=arc-20240116; t=1753275325; c=relaxed/simple;
+	bh=q6UaTmh3DUzTqX540vpF9A2/WnSH1xQl+bmrZyzGJWc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJAW+sMrmHVIHmkXAbgeAojxe20Js8hiU8XToh9HmBekZ6LmPqFp3pA/dKDg35AYI7+Q3mKN4r4phjno7g/nNXYDiubrFCrvUiszl2j+ZUXjgH4F2iiqnUf4rccM9SG7tLzTYxXA1LzYsGqTSmbx37/MITKgci/uWdJkTDXAPM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fyXKyqao; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 859DAE92;
-	Wed, 23 Jul 2025 14:54:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753275284;
-	bh=p2ZhOmEScPOsAsGDCejzk4PERbGyjps7u8IIAuzDQxI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOEZ6v1dcH7HzrbuPR+g1aLFOnT52ou3tbkVQv0i04Xos7NLumnKSI3DFLZxDTtW1Yo8jaQWvGN2XqRpvovSMA0LGDpKoQgQs298FTZPls+liwGYfSM7MkrTyQiOEdk0bXD8Uy202YvZlQ04GNdPD9Poi5A6zCLlJN0OvxFdn+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx7SheHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4F2C4CEE7;
+	Wed, 23 Jul 2025 12:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753275325;
+	bh=q6UaTmh3DUzTqX540vpF9A2/WnSH1xQl+bmrZyzGJWc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyXKyqaoRVzbpOmpbNpPqJ3xg5g3T7qgoZmuWY7zfkmoDvp8qe87j3Q4DGLHrg/LF
-	 8mA7G7pEaN+IeEWLbS0IU+yRuua1IyhukLHdKBuYvsB/pwVPSHr4E4gy82JmginlGd
-	 lacLTiyrIDSaklnmJMBS4ynBeasWlzJ0PMO9/Sb0=
-Date: Wed, 23 Jul 2025 15:55:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hansg@kernel.org>,
-	James Cowgill <james.cowgill@blaize.com>,
-	Yunke Cao <yunkec@google.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Tommaso Merciai <tomm.merciai@gmail.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] media: Add devm-managed helper functions for media
- and V4L2 subsystems
-Message-ID: <20250723125520.GB6719@pendragon.ideasonboard.com>
-References: <20250723102515.64585-1-tarang.raval@siliconsignals.io>
+	b=tx7SheHYFhejshYY11lOeIM2jstrFeP/NycPJe3aYBOWngvzkDZNZ0WzlXfZfzMlM
+	 huSVlGkH+7jz0dKXHFK6U8UTm69rIU/V6qpTMtd/wPweOig6wkSboPdPkHmuv51Rxp
+	 Il2Dm+5ZTN8Ax8aymSfWFiGroRlPv/bnyXRM2jU0WVao5REn5SJGvfaYiYTJKyPmiG
+	 6uXr+ULn0VP4ukPTgJZVtEkStDk1sWegvKgoHi98HlKcLsBG+Dy2CiiY9qWZ6S4JgE
+	 SgborqPkp3A+QCsukP0yW92UE3GoJ/rzIzJyFXVQVLxrDvOL3N931v0KlUtb71WLWB
+	 qn+5goUiUZwCQ==
+Date: Wed, 23 Jul 2025 13:55:21 +0100
+From: Simon Horman <horms@kernel.org>
+To: Maher Azzouzi <maherazz04@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jhs@mojatatu.com,
+	xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	Ferenc Fejes <fejes@inf.elte.hu>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [PATCH net] net/sched: mqprio: fix stack out-of-bounds write in
+ tc entry parsing
+Message-ID: <20250723125521.GA2459@horms.kernel.org>
+References: <20250722155121.440969-1-maherazz04@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +60,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250723102515.64585-1-tarang.raval@siliconsignals.io>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250722155121.440969-1-maherazz04@gmail.com>
 
-Hi Tarang,
++ Ferenc and Vladimir
 
-On Wed, Jul 23, 2025 at 03:55:04PM +0530, Tarang Raval wrote:
-> This patch series introduces devm-managed versions of several commonly used
-> media and V4L2 initialization functions. These helpers simplify resource
-> management by leveraging the devres infrastructure, ensuring automatic
-> cleanup when the associated device is detached or the driver is unloaded.
+On Tue, Jul 22, 2025 at 04:51:21PM +0100, Maher Azzouzi wrote:
+> From: MaherAzzouzi <maherazz04@gmail.com>
 
-I'll let Sakari review this, but overall, I don't think we want to take
-this direction. Objects need to be refcounted instead of freed at remove
-time. This patch series doesn't necessarily cause a regression as such,
-but it will make it more difficult to fix life time management issues in
-V4L2.
+nit: space between your names please
 
-> Tested with IMX219 and OV2735 camera sensors on an i.MX8MP-based platform.
 > 
-> Tarang Raval (4):
->   media: mc: Add devm_media_entity_pads_init() helper
->   media: v4l: async: Add devm_v4l2_async_register_subdev_sensor() helper
->   media: v4l2: subdev: Add devm_v4l2_subdev_init_finalize() helper
->   media: v4l2-ctrls: Add devm_v4l2_ctrl_handler_init() helper
+> TCA_MQPRIO_TC_ENTRY_INDEX is validated using
+> NLA_POLICY_MAX(NLA_U32, TC_QOPT_MAX_QUEUE), which allows the value
+> TC_QOPT_MAX_QUEUE (16). This leads to a 4-byte out-of-bounds stack write in
+> the fp[] array, which only has room for 16 elements (0–15).
 > 
->  drivers/media/mc/mc-entity.c              | 19 +++++++++++++++++++
->  drivers/media/v4l2-core/v4l2-async.c      | 19 +++++++++++++++++++
->  drivers/media/v4l2-core/v4l2-ctrls-core.c | 20 ++++++++++++++++++++
->  drivers/media/v4l2-core/v4l2-subdev.c     | 18 ++++++++++++++++++
->  include/media/media-entity.h              | 20 ++++++++++++++++++++
->  include/media/v4l2-async.h                | 18 ++++++++++++++++++
->  include/media/v4l2-ctrls.h                | 19 +++++++++++++++++++
->  include/media/v4l2-subdev.h               | 17 +++++++++++++++++
->  8 files changed, 150 insertions(+)
+> Fix this by changing the policy to allow only up to TC_QOPT_MAX_QUEUE - 1.
 > 
+> Fixes: f62af20bed2d ("net/sched: mqprio: allow per-TC user input of FP adminStatus")
+> Reported-by: Maher Azzouzi <maherazz04@gmail.com>
 
--- 
-Regards,
+I don't think there is any need to include a Reported-by tag if
+you are also the patch author.
 
-Laurent Pinchart
+> Signed-off-by: Maher Azzouzi <maherazz04@gmail.com>
+
+I agree with your analysis and that this is a good fix.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+I do think it is misleading to name this #define MAX,
+but it's part of the UAPI so that ship has sailed.
+
+It seems that taprio has a similar problem, but that it is
+not a bug due to an additional check. I wonder if something
+like this for net-next is appropriate to align it's implementation
+wit that of maprio.
+
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index 2b14c81a87e5..e759e43ad27e 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -998,7 +998,7 @@ static const struct nla_policy entry_policy[TCA_TAPRIO_SCHED_ENTRY_MAX + 1] = {
+ 
+ static const struct nla_policy taprio_tc_policy[TCA_TAPRIO_TC_ENTRY_MAX + 1] = {
+ 	[TCA_TAPRIO_TC_ENTRY_INDEX]	   = NLA_POLICY_MAX(NLA_U32,
+-							    TC_QOPT_MAX_QUEUE),
++							    TC_QOPT_MAX_QUEUE - 1),
+ 	[TCA_TAPRIO_TC_ENTRY_MAX_SDU]	   = { .type = NLA_U32 },
+ 	[TCA_TAPRIO_TC_ENTRY_FP]	   = NLA_POLICY_RANGE(NLA_U32,
+ 							      TC_FP_EXPRESS,
+@@ -1698,19 +1698,15 @@ static int taprio_parse_tc_entry(struct Qdisc *sch,
+ 	if (err < 0)
+ 		return err;
+ 
+-	if (!tb[TCA_TAPRIO_TC_ENTRY_INDEX]) {
++	if (NL_REQ_ATTR_CHECK(extack, opt, tb, TCA_TAPRIO_TC_ENTRY_INDEX)) {
+ 		NL_SET_ERR_MSG_MOD(extack, "TC entry index missing");
+ 		return -EINVAL;
+ 	}
+ 
+ 	tc = nla_get_u32(tb[TCA_TAPRIO_TC_ENTRY_INDEX]);
+-	if (tc >= TC_QOPT_MAX_QUEUE) {
+-		NL_SET_ERR_MSG_MOD(extack, "TC entry index out of range");
+-		return -ERANGE;
+-	}
+-
+ 	if (*seen_tcs & BIT(tc)) {
+-		NL_SET_ERR_MSG_MOD(extack, "Duplicate TC entry");
++		NL_SET_ERR_MSG_ATTR(extack, tb[TCA_TAPRIO_TC_ENTRY_INDEX],
++				    "Duplicate tc entry");
+ 		return -EINVAL;
+ 	}
+ 
+
+> ---
+>  net/sched/sch_mqprio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/sched/sch_mqprio.c b/net/sched/sch_mqprio.c
+> index 51d4013b6121..f3e5ef9a9592 100644
+> --- a/net/sched/sch_mqprio.c
+> +++ b/net/sched/sch_mqprio.c
+> @@ -152,7 +152,7 @@ static int mqprio_parse_opt(struct net_device *dev, struct tc_mqprio_qopt *qopt,
+>  static const struct
+>  nla_policy mqprio_tc_entry_policy[TCA_MQPRIO_TC_ENTRY_MAX + 1] = {
+>       [TCA_MQPRIO_TC_ENTRY_INDEX]     = NLA_POLICY_MAX(NLA_U32,
+> -                                                      TC_QOPT_MAX_QUEUE),
+> +                                                      TC_QOPT_MAX_QUEUE - 1),
+>       [TCA_MQPRIO_TC_ENTRY_FP]        = NLA_POLICY_RANGE(NLA_U32,
+>                                                          TC_FP_EXPRESS,
+>                                                          TC_FP_PREEMPTIBLE),
+> --
+> 2.34.1
+>
+
 
