@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-743262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0132B0FCB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DF4B0FCBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5A95566AFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FFB8566BF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BB5271A6A;
-	Wed, 23 Jul 2025 22:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F1021C190;
+	Wed, 23 Jul 2025 22:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IQY/7LQT"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AT1EWGbw"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80D83D81
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2CD2288C6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753309673; cv=none; b=FDVdFEdWbRxiRwt/e4alaCoJd95LPzQtB22mz565UO47zoWwRWjAuztpEUeuZnND980sDWMKroq3MJKR5dsVa0KyIb6+iedItnKKF07qcYMCgB83EO7WPkEC26pFau1mThufhHOyc5ytU2BXzArzf9eRoENBSzFY7fzyJ4OpKf0=
+	t=1753309675; cv=none; b=cmm0zLbzPQZwsIxAKF/E1tuB/CO0IaRKe4LESsg/dvCIXYD5Ecx6Yz3iPkCb4r2TV2iWJSzfwoAD/ww+vrlOq74HnfDwgkFhXaUfPfRUaGmu7M32Xi//ZweXzoigtlRM0Mvi9Vrc4CKc7nKCwm8ZPZ9+qfyGN9prqHTlyqlUFvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753309673; c=relaxed/simple;
-	bh=ml/nSyTS4nfNiVoXhTw4+0kOFaq7KatZVFjsGfHaznU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NiY7AjG0XeCrWZ7FgMjq/ixdv/VcsvJM1kgmLhvWy7N2/FkryhS5xKZD6FIiRmiKh1OVXwicq8SksJ+CCFJtpJ+4icCRoMhQKviywKFkz7v2lDGyVLV4SYr0XIOSN/QwLQXIsb7dYvBzDzd8eHpA9FidCX/y+YVmIslabhvy1Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IQY/7LQT; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1753309675; c=relaxed/simple;
+	bh=9f0MWQGMt3kWf5M6K6kO0Cc5wE9p0DRpP3bTC8UxFa8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Hi/c9+msBDAHyvXb5XoZ2SLI5GN/XAZ3qdJXFxDhScP4vyu/a8SlFx5QBJITeoLx5o0zAUvTtmdUmM/RFfIFN2HnGQce63HkLWj/iS4nivEPFL12Xe0pcg6kCza8JOaNE/9OBMHGBC4ZHnbrwK/jhr3skTM+nidTMAgifyGyRQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AT1EWGbw; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NGmboA010356
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:51 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NGxoPs024516
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=tCWhBevTdE4kvZRMnxa1E9d5Kc39rrSpZ3A
-	+p8Y4ZLE=; b=IQY/7LQTRxJnXzgIJAzOsr67iXJwDvb6tMffxSQj4MlnmV/eOUV
-	/SY+EO6dM7wOuEvYrQjD0leZApBG4wSSnFLhmxe+VslSWcDWDd721SYIk/anEvZp
-	tLkPwxLF4YztS88R85SwIb3xHQ0fwBedHooxwMeCiUEjEeJI/5shJSlKafN8xzia
-	gSFs0hVVsSJRUV9m1K+Hn0B8wyGeo6fyk6noeNCLSL2A2UCibBPdCdduQN8NAm+h
-	s3cyTHQQSmm4/aINRqsVujKu94toj34C1hidR7IdAT+Uap4hTzF4GW65T45Y5uTp
-	mpGJ8YWrQxCv3sTWlHwBql8oT4EATlOO1Ow==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na552g-1
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=Lv1gwH4qM/M
+	xiyZvly5IYByAhPppt71Gyj/KfZY9Y6w=; b=AT1EWGbwmHUZe82eIpcGumIowaO
+	5WUQRfMUyT9qI9KY1UMDzUAUb+b9DVUmG4tSLQ1tvG2BwCy5JxCZHpOtFw9PBsyv
+	CCPn9ONlbHapU8Y1jG68afIACvNFAaGM5mb4YiwEj9WWC3g0Zu20O8WcInESEXSA
+	D+axwAmhEj873DQh4rWlBHXq294wU2wdr9xt+xzwHC1KVe/YBoCGQQXhn+qa1tJ6
+	MoN2bc1FPFsm9RuELVYRNV0CUBBqUwGptQBmy1FZt6R1ExvVvsEGhidbXwjP8Y7y
+	mzIkjNezWcRHMf2o4e+uWBKccv6OAZ3N/CnNGAHxuyCVjQyPCI20vpxFY7A==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482b1ud914-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:50 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-704b4b61d10so8391706d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:27:50 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:27:52 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6facf4cf5e1so5892966d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:27:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753309669; x=1753914469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tCWhBevTdE4kvZRMnxa1E9d5Kc39rrSpZ3A+p8Y4ZLE=;
-        b=qO1gTGKISILLexebaEBHuSawN9XLiFsNd/TAw8Y14nuK0FuHIqgMl6YN9flTM2dqIO
-         /xvKKrsLSumWZV/lMpq/YvoMvI6Kf/WKSAoJ5b4IBiSJd0jeI8HnJTQF2bjZo3ORlngi
-         QFu8+t02iEjaYODG1vb3Za360c3msIptyq8xdgIn4GwsZEvlX6/y7S5m8o8NZGqHnTdo
-         ZePmHD3exrfiIiFxSp08AopiKQD/yXiGi+UbLIPACajlIiN+UgAVImxGt2LZlpE2aMJh
-         gbuWTYsa7nn0T38HHXxXUe57KWsUpHfdcsb9y3nBgKrU7UY1fqmSX206GRo4pUqhD+K6
-         oH2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUcqPsNQEfe0wYNB54kVw8tJg81vw3berXhZkIuqZtNzoWi/s3+vY9idlQgbJDSO8eehvwMvcvkDrtKXvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBvKVlVcdU+kDJN0HzNdlEWogBjTuT20Zwo8RfOdsPItvupv3h
-	IVgA2WiJtpCiwzt6N49v9l1kx0mKipB+GnotXjMAe7GEMdCx/pqILX9q7S59jRG5FZj6l2LGA8s
-	pwMcl65a5nZk2sBSytIr8TwUPwSngYETKCvzfGKGUfEh24BQz1yX4bXIArHKGrBbQl1k=
-X-Gm-Gg: ASbGnctTnAtC8sVAZEgeKUqzCXsm9KEoTy44TVdUBolZNrSNvcMkNSSXDO4pDpVhqYn
-	B/x9RpILsW98MGS3i0FddQ9PVh+0Z6ar1KKTxlQHqjyYVCdVz8yAwJACDkn9NCQxmNPfS6XRfry
-	9anbh6FZVGqO9L51wsBVUwJda8sXVBb+Yekn9fIqyBPxp2XvOQ3YwZ0K+qD1R1Ln9/9yMakdd4+
-	5/6n18kN6znQbJCBZSD0lz7Vrqvsuy7Vco39d6fV9gCsXdIf3mjtnmVe2LZ4UcGUbQXc/CGXeMl
-	qWeItlfd8TVTBlMKHyRpsql3yAjnUlZkQYJnqlqpY2O+pAnh29bvWg==
-X-Received: by 2002:a05:6214:27c7:b0:704:f952:3d66 with SMTP id 6a1803df08f44-707006a3e74mr56004576d6.47.1753309669342;
-        Wed, 23 Jul 2025 15:27:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoTPc6rZ3A4sCYOQY6hqoF6vg5g7pJJHVgRIc7sboGdJqU/JZ/MgA0NmBi5HBfF4TKbldvJA==
-X-Received: by 2002:a05:6214:27c7:b0:704:f952:3d66 with SMTP id 6a1803df08f44-707006a3e74mr56004156d6.47.1753309668752;
-        Wed, 23 Jul 2025 15:27:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753309671; x=1753914471;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lv1gwH4qM/MxiyZvly5IYByAhPppt71Gyj/KfZY9Y6w=;
+        b=bm/4HEnVxoshjJ5iw1IeMr+S4AgmiXGaVIjpNegcxmb/sVyinHkMJZwnobs4yfZti9
+         Rt/8oOH4hux23byxx5+kOBPUidZbUB7oTuYFEBAHfcuc/nytNatuPVYIFMTduERGiceK
+         Ju9LPYm1AzoEFXj+p9r2iTm1clCDuzMxDmdVun6RQvzS+0u+NFtxnSL/ehC+UGArIf1I
+         5vLD0ZCuqBwWO/P1iWdJ4msWdBqT/vGMyYuYGBgPvrvBlbTSYwfhCwh/Xdt08hXjhEzT
+         hwYhXPQvjzATyL9aWIel93vBmFvROk5efQ1IqB0EQDmBLFq/xvXoQSU8DKiBWFFt9/HK
+         wN9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Qfs60hfzgWGgo9uT7+rwPloef9iRC+svCpVz6y0lwJmEKmXQxsSEAMRrQK6XccAFqzMisAt9KzTtTSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytaj0/sgMysheEnokqgI3/E2zmPR2yhm4Nxikj8lXoPQ5KTMpZ
+	N+cBs6awCtlZkyF8FWC/NJMrbJ+HEtRramAtxMYjA8d/LDMCSykpLUD0RUVxHQQylmpWXVDMciO
+	2hbu1nwrxCYUQf32JPpHuhFBiezQv6094lZnBi/VR0ncVVzG75cpgMJcE5NmwW1oFUn4=
+X-Gm-Gg: ASbGncvw3I3JhHybCcOtr4y4ADeRZgdsANzayf4f2afKisNYo6SXvdDmUgj36dk5FmJ
+	+LfjUCM/+zf+TI4aI5DNUNZ7P6O5CK0CcdFJsUa9kYay4mNES3wlTDmGEGuteL6YnBeosZ8U49N
+	1cVgNYvTweFIoQkGNR079BtTLolVzP5GBWAPED/FsDmMSuQlxLN0Fr99M99cNRottpxw/t0tUAG
+	mqyvwvpSoIS4MK5qdK7O6dZChRPe4ZwV9i5QAZDVfnaElAi6SP6UdnjBLz5JWtdGbJoW1QUk6Fi
+	oai/8qWCQG155V61MZ4vKCDlDPoJzUYzlLjttm6P4n6Svhtbv3jdUw==
+X-Received: by 2002:a05:6214:27c7:b0:704:f952:3d66 with SMTP id 6a1803df08f44-707006a3e74mr56005426d6.47.1753309671040;
+        Wed, 23 Jul 2025 15:27:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHk6k7H/DKZ6RoAa/iFffbLEugNjCZjM21SKc3RSw1fAYe9HXKUtDzJ+0og7urmcPaOs6vudg==
+X-Received: by 2002:a05:6214:27c7:b0:704:f952:3d66 with SMTP id 6a1803df08f44-707006a3e74mr56005156d6.47.1753309670593;
+        Wed, 23 Jul 2025 15:27:50 -0700 (PDT)
 Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad23bsm248520f8f.44.2025.07.23.15.27.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad23bsm248520f8f.44.2025.07.23.15.27.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 15:27:48 -0700 (PDT)
+        Wed, 23 Jul 2025 15:27:49 -0700 (PDT)
 From: srinivas.kandagatla@oss.qualcomm.com
 To: andersson@kernel.org, konradybcio@kernel.org
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
         cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH 00/23] arm64: dts: qcom: cleanup DSP audio services
-Date: Wed, 23 Jul 2025 23:27:14 +0100
-Message-ID: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 01/23] arm64: dts: qcom: x1e80100: move dsp audio nodes to dedicated dts
+Date: Wed, 23 Jul 2025 23:27:15 +0100
+Message-ID: <20250723222737.35561-2-srinivas.kandagatla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
+References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,221 +97,306 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: L7juKZtKtTL8q4g3V0PyT2QXuWjgoPTv
-X-Proofpoint-ORIG-GUID: L7juKZtKtTL8q4g3V0PyT2QXuWjgoPTv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE5MyBTYWx0ZWRfXzHIpbp8r1P7q
- KqacNcCIafq3wODT9k73PgxJIbgbsUKoa10MFc4Q7LucVnwy0rd0+gEVzQCOEad0kJ0SacTB8Ch
- 20ToGhBA8gDSI8KMApYqSbt0YFSR4VeBG5G+Vz6b4dHMzLD32ijgB7txn3UJk6iGJnXxMIGsn0G
- 2HlDzkbhezEgO/5j/vShib1Pvw5mbuCYbkfaVHBrqfM7h0c4+JutbIOjY8YeMLPIX3ApViCkj86
- JyDbnBbjnOa1GM6IrcPbQPQtpTChAykdm27anRZo/ogAZIEahLZ4SoULaZxMSdboF2Os9CfyL/c
- 0YxXg/8AaycfgNvWN2RWMrYjccxvSU9YSarFvdkVzFEquGR8lIMprjgpIquLjvBKS4TyYoSXUUP
- 3XKiYD0EVr1BWB/ZegaHJUigqRvgUIS8sy+rentjhuupPoiiSgvCgDaTgrdHW6GqpsnaBqVu
-X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=688161e6 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=CqbkFek1id5cHgMPXAcA:9
- a=OIgjcC2v60KrkQgK7BGD:22
+X-Authority-Analysis: v=2.4 cv=LdY86ifi c=1 sm=1 tr=0 ts=688161e8 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ETe8z7BbGz-F56Y7HIQA:9
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE5MyBTYWx0ZWRfXy/6X7Ui+z1dL
+ 03WI29b3Ciu1LTQVGDsVdC/z/uIe7eCSHbCeuhOqVIconXB2skOWg95niDB45WEokXGvxzGFs1g
+ BFeZd4bUDPYqlIjnKEECx54Pk/vF1jLNYkd3v2WpETbPdIJ1PlATxqgB6CZyrZhZcHHv0S4fDEW
+ 0YJtcmaRd5lApujPc3/Y0AvYmsq+ygyjxScmc+uzwpv5DZ2ev/eeJGai61Qk+tvi9oQtdZ7xu+I
+ yxyonJq55LM2LnM45cqUaI/UiwO3vu31ZtXUPcCHnzA7WfghExYwQPK21/uGsF8r+y6iVyox09e
+ YP9ADHfUK+iAEEkjtjabPyNIxCX0LDW31zdJofqVMJAuLmruIrnomwtcBi2u8BEp7QkOPdPCiUp
+ JwC2B7jARVTIevU2PGTuyYF/RHfayAFUPrQZT0d55kvFeEqLHeBASDT8Vckk6UXIDbr05LoR
+X-Proofpoint-ORIG-GUID: k-xKes1vl8sFcVnSXseEsSJXGgc8zFRB
+X-Proofpoint-GUID: k-xKes1vl8sFcVnSXseEsSJXGgc8zFRB
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=970
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=2
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2507230193
 
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 
-All the SoC level dts has exactly same device tree entires for DSP Audio
-sevices (apr, gpr, afe, apm, asm, adm) and its child devices.
+All the device tree nodes for audioreach dsp are duplicated across all
+the SoC dtsi files, Move this to a dedicated dtsi file so to remove some
+duplication, make it consistent across all device trees and also make it
+easy for new SoC's to add audio support.
 
-It does not make sense to keep copying the same content over and over
-for each SoC, This patch series moves DSP services to common dtsi file
-so that it eliminates duplicate content,  makes audio dts much consistent
-and makes it easy for adding audio support for new SoC.
-As part of this cleanup, two common dtsi files (elite and audioreach)
-based on q6dsp framework are added and a SoC level audio.dtsi needs to add
-the required iommu configuration for the audio stream service.
- 
-This patch series also addresses another issue found with multiple
-instances of wsa codec macro, his can lead duplicate dapm widgets
-and mixers resulting in failing to probe sound-card if both of
-these instances are part of the dai-link.
-
-Tested this on X13s, any testing is appreciated.
-   
-Srinivas Kandagatla (23):
-  arm64: dts: qcom: x1e80100: move dsp audio nodes to dedicated dts
-  arm64: dts: qcom: sc8280xp: use dedicated audioreach dtsi
-  arm64: dts: qcom: sm8650: use dedicated audioreach dtsi
-  arm64: dts: qcom: sm8550: use dedicated audioreach dtsi
-  arm64: dts: qcom: sm8450: use dedicated audioreach dtsi
-  arm64: dts: qcom: sar2130p: use dedicated audioreach dtsi
-  arm64: dts: qcom: sm8350: move dsp audio nodes to dedicated dts
-  arm64: dts: qcom: sm8250: use dedicated elite dtsi
-  arm64: dts: qcom: sm6115: use dedicated elite dtsi
-  arm64: dts: qcom: sdm845: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sdm630: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sc7280: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sc7180: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sm8750: use dedicated audioreach dtsi
-  arm64: dts: qcom: msm8916: use dedicated elite-audio dtsi
-  arm64: dts: qcom: msm8939: use dedicated elite-audio dtsi
-  arm64: dts: qcom: msm8996: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sm6350: use dedicated elite-audio dtsi
-  arm64: dts: qcom: msm8953: use dedicated elite-audio dtsi
-  arm64: dts: qcom: sm8450: add sound prefix for wsa2
-  arm64: dts: qcom: sm8550: add sound prefix for wsa2
-  arm64: dts: qcom: sm8750: add sound prefix for wsa2
-  arm64: dts: qcom: sm8650: add sound prefix for wsa2
-
- arch/arm64/boot/dts/qcom/apq8039-t2.dts       |  1 +
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts   |  1 +
- arch/arm64/boot/dts/qcom/apq8096-ifc6640.dts  |  1 +
- .../arm64/boot/dts/qcom/audioreach-audio.dtsi | 45 ++++++++++
- arch/arm64/boot/dts/qcom/elite-audio.dtsi     | 86 +++++++++++++++++++
- arch/arm64/boot/dts/qcom/msm8916-audio.dtsi   |  5 ++
- arch/arm64/boot/dts/qcom/msm8916-pm8916.dtsi  |  1 +
- arch/arm64/boot/dts/qcom/msm8916.dtsi         | 44 ----------
- arch/arm64/boot/dts/qcom/msm8929.dtsi         |  1 +
- arch/arm64/boot/dts/qcom/msm8939-audio.dtsi   |  5 ++
- arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi  |  1 +
- .../qcom/msm8939-sony-xperia-kanuti-tulip.dts |  1 +
- arch/arm64/boot/dts/qcom/msm8939.dtsi         | 44 ----------
- arch/arm64/boot/dts/qcom/msm8953-audio.dtsi   |  5 ++
- arch/arm64/boot/dts/qcom/msm8953.dtsi         | 78 +----------------
- arch/arm64/boot/dts/qcom/msm8996-audio.dtsi   | 14 +++
- .../boot/dts/qcom/msm8996-oneplus-common.dtsi |  1 +
- .../dts/qcom/msm8996-sony-xperia-tone.dtsi    |  1 +
- arch/arm64/boot/dts/qcom/msm8996-v3.0.dtsi    |  1 +
- .../boot/dts/qcom/msm8996-xiaomi-gemini.dts   |  1 +
- arch/arm64/boot/dts/qcom/msm8996.dtsi         | 48 +----------
- arch/arm64/boot/dts/qcom/msm8996pro.dtsi      |  1 +
- .../boot/dts/qcom/qcm6490-fairphone-fp5.dts   |  1 +
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts      |  1 +
- .../boot/dts/qcom/qcm6490-shift-otter.dts     |  1 +
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  1 +
- arch/arm64/boot/dts/qcom/qcs8550.dtsi         |  1 +
- arch/arm64/boot/dts/qcom/qrb5165-rb5.dts      |  1 +
- arch/arm64/boot/dts/qcom/sa8540p.dtsi         |  1 +
- arch/arm64/boot/dts/qcom/sar2130p-audio.dtsi  |  5 ++
- .../arm64/boot/dts/qcom/sar2130p-qar2130p.dts |  1 +
- arch/arm64/boot/dts/qcom/sar2130p.dtsi        | 40 +--------
- .../boot/dts/qcom/sc7180-acer-aspire1.dts     |  1 +
- arch/arm64/boot/dts/qcom/sc7180-audio.dtsi    |  8 ++
- arch/arm64/boot/dts/qcom/sc7180-idp.dts       |  1 +
- arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
- arch/arm64/boot/dts/qcom/sc7180.dtsi          | 56 +-----------
- arch/arm64/boot/dts/qcom/sc7280-audio.dtsi    |  8 ++
- arch/arm64/boot/dts/qcom/sc7280-idp.dtsi      |  1 +
- arch/arm64/boot/dts/qcom/sc7280-qcard.dtsi    |  1 +
- arch/arm64/boot/dts/qcom/sc7280.dtsi          | 68 +--------------
- arch/arm64/boot/dts/qcom/sc8280xp-audio.dtsi  |  9 ++
- arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     |  1 +
- .../boot/dts/qcom/sc8280xp-huawei-gaokun3.dts |  1 +
- .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  1 +
- .../dts/qcom/sc8280xp-microsoft-arcata.dts    |  1 +
- .../dts/qcom/sc8280xp-microsoft-blackrock.dts |  1 +
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi        | 38 +-------
- arch/arm64/boot/dts/qcom/sdm630-audio.dtsi    |  8 ++
- .../qcom/sdm630-sony-xperia-ganges-kirin.dts  |  1 +
- .../sdm630-sony-xperia-nile-discovery.dts     |  1 +
- .../qcom/sdm630-sony-xperia-nile-pioneer.dts  |  1 +
- .../qcom/sdm630-sony-xperia-nile-voyager.dts  |  1 +
- arch/arm64/boot/dts/qcom/sdm630.dtsi          | 45 +---------
- arch/arm64/boot/dts/qcom/sdm845-audio.dtsi    |  8 ++
- arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |  1 +
- arch/arm64/boot/dts/qcom/sdm845-db845c.dts    |  1 +
- .../arm64/boot/dts/qcom/sdm845-lg-common.dtsi |  1 +
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |  1 +
- .../boot/dts/qcom/sdm845-oneplus-common.dtsi  |  1 +
- .../dts/qcom/sdm845-samsung-starqltechn.dts   |  1 +
- .../boot/dts/qcom/sdm845-shift-axolotl.dts    |  1 +
- .../dts/qcom/sdm845-sony-xperia-tama.dtsi     |  1 +
- .../qcom/sdm845-xiaomi-beryllium-common.dtsi  |  1 +
- .../boot/dts/qcom/sdm845-xiaomi-polaris.dts   |  1 +
- arch/arm64/boot/dts/qcom/sdm845.dtsi          | 49 +----------
- arch/arm64/boot/dts/qcom/sdm850.dtsi          |  1 +
- arch/arm64/boot/dts/qcom/sm4250.dtsi          |  1 +
- arch/arm64/boot/dts/qcom/sm6115-audio.dtsi    |  8 ++
- .../boot/dts/qcom/sm6115-fxtec-pro1x.dts      |  1 +
- arch/arm64/boot/dts/qcom/sm6115.dtsi          | 69 +--------------
- .../boot/dts/qcom/sm6115p-lenovo-j606f.dts    |  1 +
- arch/arm64/boot/dts/qcom/sm6350-audio.dtsi    | 17 ++++
- .../qcom/sm6350-sony-xperia-lena-pdx213.dts   |  1 +
- arch/arm64/boot/dts/qcom/sm6350.dtsi          | 62 +------------
- arch/arm64/boot/dts/qcom/sm7125.dtsi          |  1 +
- arch/arm64/boot/dts/qcom/sm7225.dtsi          |  1 +
- arch/arm64/boot/dts/qcom/sm7325.dtsi          |  1 +
- arch/arm64/boot/dts/qcom/sm8250-audio.dtsi    |  8 ++
- arch/arm64/boot/dts/qcom/sm8250-hdk.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8250-mtp.dts       |  1 +
- .../boot/dts/qcom/sm8250-sony-xperia-edo.dtsi |  1 +
- .../dts/qcom/sm8250-xiaomi-elish-common.dtsi  |  1 +
- .../boot/dts/qcom/sm8250-xiaomi-pipa.dts      |  1 +
- arch/arm64/boot/dts/qcom/sm8250.dtsi          | 53 +-----------
- arch/arm64/boot/dts/qcom/sm8350-audio.dtsi    |  8 ++
- arch/arm64/boot/dts/qcom/sm8350-hdk.dts       |  1 +
- .../qcom/sm8350-microsoft-surface-duo2.dts    |  1 +
- arch/arm64/boot/dts/qcom/sm8350-mtp.dts       |  1 +
- .../dts/qcom/sm8350-sony-xperia-sagami.dtsi   |  1 +
- arch/arm64/boot/dts/qcom/sm8350.dtsi          | 67 +--------------
- arch/arm64/boot/dts/qcom/sm8450-audio.dtsi    |  5 ++
- arch/arm64/boot/dts/qcom/sm8450-hdk.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8450-qrd.dts       |  1 +
- .../dts/qcom/sm8450-sony-xperia-nagara.dtsi   |  1 +
- arch/arm64/boot/dts/qcom/sm8450.dtsi          | 40 +--------
- arch/arm64/boot/dts/qcom/sm8550-audio.dtsi    | 10 +++
- arch/arm64/boot/dts/qcom/sm8550-hdk.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8550-mtp.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8550-qrd.dts       |  1 +
- .../boot/dts/qcom/sm8550-samsung-q5q.dts      |  1 +
- .../qcom/sm8550-sony-xperia-yodo-pdx234.dts   |  1 +
- arch/arm64/boot/dts/qcom/sm8550.dtsi          | 45 +---------
- arch/arm64/boot/dts/qcom/sm8650-audio.dtsi    | 10 +++
- arch/arm64/boot/dts/qcom/sm8650-hdk.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8650-mtp.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8650-qrd.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8650.dtsi          | 44 +---------
- arch/arm64/boot/dts/qcom/sm8750-audio.dtsi    | 10 +++
- arch/arm64/boot/dts/qcom/sm8750-mtp.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8750-qrd.dts       |  1 +
- arch/arm64/boot/dts/qcom/sm8750.dtsi          | 42 +--------
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+---
+ .../arm64/boot/dts/qcom/audioreach-audio.dtsi | 45 +++++++++++++++++++
  .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    |  1 +
  arch/arm64/boot/dts/qcom/x1-crd.dtsi          |  1 +
  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  |  1 +
  .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   |  1 +
  .../dts/qcom/x1e80100-asus-vivobook-s15.dts   |  1 +
- arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi  |  6 ++
+ arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi  |  6 +++
  .../dts/qcom/x1e80100-dell-xps13-9345.dts     |  1 +
  .../dts/qcom/x1e80100-hp-omnibook-x14.dts     |  1 +
  .../dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  1 +
  .../dts/qcom/x1e80100-microsoft-romulus.dtsi  |  1 +
  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts     |  1 +
- arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 43 +---------
- 124 files changed, 401 insertions(+), 946 deletions(-)
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 43 ++----------------
+ 13 files changed, 64 insertions(+), 40 deletions(-)
  create mode 100644 arch/arm64/boot/dts/qcom/audioreach-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/elite-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8916-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8939-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8953-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8996-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sar2130p-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sc7180-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sc7280-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sc8280xp-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm845-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm6115-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm6350-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8250-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8350-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8450-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8550-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8650-audio.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sm8750-audio.dtsi
  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi
 
+diff --git a/arch/arm64/boot/dts/qcom/audioreach-audio.dtsi b/arch/arm64/boot/dts/qcom/audioreach-audio.dtsi
+new file mode 100644
+index 000000000000..fce722579155
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/audioreach-audio.dtsi
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/*
++ * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#include <dt-bindings/soc/qcom,gpr.h>
++#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
++
++&gpr {
++	compatible = "qcom,gpr";
++	qcom,glink-channels = "adsp_apps";
++	qcom,domain = <GPR_DOMAIN_ID_ADSP>;
++	qcom,intents = <512 20>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	q6apm: service@1 {
++		compatible = "qcom,q6apm";
++		reg = <GPR_APM_MODULE_IID>;
++		#sound-dai-cells = <0>;
++		qcom,protection-domain = "avs/audio",
++					 "msm/adsp/audio_pd";
++
++		q6apmbedai: bedais {
++			compatible = "qcom,q6apm-lpass-dais";
++			#sound-dai-cells = <1>;
++		};
++
++		q6apmdai: dais {
++			compatible = "qcom,q6apm-dais";
++		};
++	};
++
++	q6prm: service@2 {
++		compatible = "qcom,q6prm";
++		reg = <GPR_PRM_MODULE_IID>;
++		qcom,protection-domain = "avs/audio",
++					 "msm/adsp/audio_pd";
++
++		q6prmcc: clock-controller {
++			compatible = "qcom,q6prm-lpass-clocks";
++			#clock-cells = <2>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+index c771fd1d8029..1d8a75fba301 100644
+--- a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ 
++#include "x1e80100-audio.dtsi"
+ #include "x1e80100-pmics.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
+index c9f0d5052670..19b993fdd17f 100644
+--- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ 
++#include "x1e80100-audio.dtsi"
+ #include "x1e80100-pmics.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+index 2d9627e6c798..6df3ee553bc7 100644
+--- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
++++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+@@ -10,6 +10,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. X1E001DE Snapdragon Devkit for Windows";
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+index ac1dddf27da3..cf2cf3e520fa 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ 
+ #include "x1e80100.dtsi"
++#include "x1e80100-audio.dtsi"
+ #include "x1e80100-pmics.dtsi"
+ 
+ / {
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+index 71b2cc6c392f..82b08350da17 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+@@ -13,6 +13,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "ASUS Vivobook S 15";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi
+new file mode 100644
+index 000000000000..e03441bb2a79
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/x1e80100-audio.dtsi
+@@ -0,0 +1,6 @@
++#include "audioreach-audio.dtsi"
++
++&q6apmdai{
++	iommus = <&apps_smmu 0x1001 0x80>,
++		 <&apps_smmu 0x1061 0x0>;
++};
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+index fd00d1bf12e1..fb98fdc53594 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
+@@ -14,6 +14,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "Dell XPS 13 9345";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+index 8d2a9b7f4730..8206b6f2cf30 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+@@ -14,6 +14,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "HP Omnibook X 14";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+index d02f8d4f7baf..aed5554c6646 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+@@ -11,6 +11,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "Lenovo Yoga Slim 7x";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+index 0fd8516580b2..669b95dc1666 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+@@ -11,6 +11,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	aliases {
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+index 4dfba835af6a..9e464d001343 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+@@ -10,6 +10,7 @@
+ 
+ #include "x1e80100.dtsi"
+ #include "x1e80100-pmics.dtsi"
++#include "x1e80100-audio.dtsi"
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. X1E80100 QCP";
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 5e9a8fa3cf96..f3216a84137e 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -17,7 +17,6 @@
+ #include <dt-bindings/phy/phy-qcom-qmp.h>
+ #include <dt-bindings/power/qcom,rpmhpd.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+-#include <dt-bindings/soc/qcom,gpr.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+ #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
+ #include <dt-bindings/thermal/thermal.h>
+@@ -4041,6 +4040,9 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
+ 				label = "lpass";
+ 				qcom,remote-pid = <2>;
+ 
++				gpr: gpr {
++				};
++
+ 				fastrpc {
+ 					compatible = "qcom,fastrpc";
+ 					qcom,glink-channels = "fastrpcglink-apps-dsp";
+@@ -4090,45 +4092,6 @@ compute-cb@7 {
+ 					};
+ 				};
+ 
+-				gpr {
+-					compatible = "qcom,gpr";
+-					qcom,glink-channels = "adsp_apps";
+-					qcom,domain = <GPR_DOMAIN_ID_ADSP>;
+-					qcom,intents = <512 20>;
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-
+-					q6apm: service@1 {
+-						compatible = "qcom,q6apm";
+-						reg = <GPR_APM_MODULE_IID>;
+-						#sound-dai-cells = <0>;
+-						qcom,protection-domain = "avs/audio",
+-									 "msm/adsp/audio_pd";
+-
+-						q6apmbedai: bedais {
+-							compatible = "qcom,q6apm-lpass-dais";
+-							#sound-dai-cells = <1>;
+-						};
+-
+-						q6apmdai: dais {
+-							compatible = "qcom,q6apm-dais";
+-							iommus = <&apps_smmu 0x1001 0x80>,
+-								 <&apps_smmu 0x1061 0x0>;
+-						};
+-					};
+-
+-					q6prm: service@2 {
+-						compatible = "qcom,q6prm";
+-						reg = <GPR_PRM_MODULE_IID>;
+-						qcom,protection-domain = "avs/audio",
+-									 "msm/adsp/audio_pd";
+-
+-						q6prmcc: clock-controller {
+-							compatible = "qcom,q6prm-lpass-clocks";
+-							#clock-cells = <2>;
+-						};
+-					};
+-				};
+ 			};
+ 		};
+ 
 -- 
 2.50.0
 
