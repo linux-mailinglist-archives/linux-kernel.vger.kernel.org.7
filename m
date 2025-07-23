@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-742704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42756B0F58F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA88FB0F593
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AAB3B7381
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8359605AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534D31804A;
-	Wed, 23 Jul 2025 14:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="EzZ3d4Sz"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFDD2F4321;
+	Wed, 23 Jul 2025 14:40:37 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99031A31
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898772F4305;
+	Wed, 23 Jul 2025 14:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753281605; cv=none; b=nW37qGPmzzO6udvDk6aqtSCvjX2NSfnYoNbSQ+J6/YVUGsVrb9/5TnP0iyLda6G5wTWVcdBKs3H+8AqXWNBhr9I0q/fap4VMuvFODsC3+ZnXIQlhwb6r8fKimDYy1XfjxG0tXJH5NfCO/iC1LmG4pfudh1GnAi7RTiOuMtFT+pM=
+	t=1753281636; cv=none; b=anvksmoeTPwPJdAyyN/UKMnK5DxkZV8Y1BB1Z7BfnjsWgCZU6m28tSdCgiLoBi9lw2/FFwKaMmTGKsL4jJ/xyHEPNho27Ak36LcnCugaUxY47f4ytdsV9qavHYdcuX4wul/2F+q+alJcx8ZEFg/qLDxU7jcPZgoN2buxvFiJA8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753281605; c=relaxed/simple;
-	bh=0z+SXJ5yfQB6L25otv7+RIp45kETMhhVSzDBfbQ+6f0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XzhZYAItHwRfLDyXzoGZBweVAmj4zANVv7J+9AcAg0iclsoEVeDX2G1AMvtyTE29MRQFmRHSd8PwkuoiLA7nybxQWzfbHY2BM31QPqAS4dw39vxggp+5hK4p1oHYgj9wx+98lz6JJpDrdtDJ2nCd7OstD9Fbbwjy6vqqxzusACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=EzZ3d4Sz; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4aba19f4398so84667951cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1753281602; x=1753886402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E4VW1A7ZGjSXpn0g5zEan91Zyknv45cf516fxn6sXo4=;
-        b=EzZ3d4Sz/vwV3U5tX+CTieQkSi4yK/S1vksOJZ+mVHaWM45wXvxcHhJ8IMPPAZPR6M
-         6BvdvOaOkbhd9PH36BRwNNA02wAkGgOAFdxuGL/rVlIUER1uOLkvjY/Pewe2+V0I/ikx
-         5cmo4BgNBBw8c1K1n4eqlmsqlUOCgDz9di8rCDD01pAleJC3EFFTtcHDvqJJBlNLF7vw
-         a+f3jKod1vnGB+d7iVGoiEUZhvdUbAzIZBwiqvna5n7P64TJc9ql2jNyQgVpGEjx9uKH
-         3fo5S8WE/1N9bQQYYx+lCReYZ1UKsT4WB3iRNuk/PXXPz4AOatJY+Nf9tI/f00hza+uW
-         5znw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753281602; x=1753886402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E4VW1A7ZGjSXpn0g5zEan91Zyknv45cf516fxn6sXo4=;
-        b=Dj+/4qntwFn5LsdYPP0W9nbHG/HX4sZ55VuDX2lj2vySUqPtTKBemEV2X3e1UOIQnW
-         Oqy2YhzDg9iMrQ8fM++KZ8lo/GV2FWWwC4x1fIRqWTEr1CoMYplAeNL648WTFf2rVqKm
-         fUgehGStz0Oigk7r+5RH2L9vEt0kU0ebMER/LOsb3x5bORC5e/55JgMDIMo3jmsTo5pt
-         l2j6/BTAQIJm73nLLH+wmTGqjnrKeMMD9yZny/Ju60XMr2Vn3CWKQxC3u7mwkWsuvdh+
-         diD5B5EGpS6xrcVjAI4RxS1O68xzbHfdHxUyEORaGA/8QCjAUgeJXhFD2hFn5Yw4D0ed
-         c51A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGzL7LqzTvQhP0iBqP6w2Z2tzHhFR+CgGwHrqOrGxgaaDpilthZ+apbpr1abHUqxT8roGT3hnzmCk4b0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytkFUtQehVhv1N57C06G9vI+iHKlKXLXFMPe024//t8hMbLjY/
-	kAHc7tsEhVDSl3w6fcE50scXpcdwb/if+TS9iioEST2NiyGy23bVzO2D+ZOuwo2PgxTKZPpdquO
-	rvVVdbqwDFXcLxuEsKpn+IEcxod82roWrSsHr7lbS5Q==
-X-Gm-Gg: ASbGncvuM5XErFTP2xsCSXqDbwmDIcn3ioLxbRgDAPniPciPq6izG2DlwxqcoT8mYyB
-	ZFhmoSjN90Tn9gOcT6uJ+uIp5vjrx2issN27cvqKle6XVu8xaZD92Yw2PW4VZyrkKqquM873+qn
-	Rm+rbsrLyOs03CCfRAxN0u6P3x6/c9wVi9dswypxS26acfy1PDroWhk05nIsXwS8bPQHFAm0b2m
-	U89
-X-Google-Smtp-Source: AGHT+IHFS+sl5UqmRZOH4YC8rrY1lTn2lhJNlt9MYCWZB3088lrRvjxl69LEe5to8g07iNSRAqNDE0qYJCcj4SAzgKY=
-X-Received: by 2002:ac8:5d14:0:b0:4ab:41a7:852 with SMTP id
- d75a77b69052e-4ae6df7e0f7mr46630481cf.26.1753281602021; Wed, 23 Jul 2025
- 07:40:02 -0700 (PDT)
+	s=arc-20240116; t=1753281636; c=relaxed/simple;
+	bh=0YaGZMSoMLNaahfcZJoR8s9IUmTq1MSvyGXpCPCDbi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iAof9QkXAfMQhsEZJ2+wneyPtGMTzncezVuywtO57Lmn2fNDresO9LSR8nVkqvtGUJNoj8lS7yGhrn9CMwnGQ9ggPA45SyVwJFCdnjenxYo5+BpSqpRZPg7o81r0cnRAF9U7cjb6S5YLF0bHmyL0o0dyaQ+4D3x1BNWULyCVrZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 48B2BC0724;
+	Wed, 23 Jul 2025 14:40:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 852B520012;
+	Wed, 23 Jul 2025 14:40:31 +0000 (UTC)
+Date: Wed, 23 Jul 2025 10:40:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-ID: <20250723104030.6ec24dfd@batman.local.home>
+In-Reply-To: <175257696222.1655692.4019049819386139160.stgit@mhiramat.tok.corp.google.com>
+References: <175257695307.1655692.4466186614215884669.stgit@mhiramat.tok.corp.google.com>
+	<175257696222.1655692.4019049819386139160.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
- <20250625231838.1897085-4-pasha.tatashin@soleen.com> <ac8efa08-3f85-4532-8762-573ebd258ca7@infradead.org>
-In-Reply-To: <ac8efa08-3f85-4532-8762-573ebd258ca7@infradead.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 23 Jul 2025 14:39:25 +0000
-X-Gm-Features: Ac12FXw5a0SPc2DZ1qffEKM0_QNNJkpaMIdscCC70ESios9nqZeZ3FVsbikeuDw
-Message-ID: <CA+CK2bCChNVmGXPN52La1zECBBSRf5SffHFEHwMcJCDaqA+YUQ@mail.gmail.com>
-Subject: Re: [PATCH v1 03/32] kho: warn if KHO is disabled due to an error
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, ilpo.jarvinen@linux.intel.com, 
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 852B520012
+X-Stat-Signature: 9g7rcsa51jcoyxtf9nxq9pbeie5fhbqc
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18ysHvR0mHRhaL2ZmMdI+AEiHpnygqOmIg=
+X-HE-Tag: 1753281631-241907
+X-HE-Meta: U2FsdGVkX19M/n9phauSB5s8yoZ2YcOoPyHtjlDIxrbZRSlv3NXJ6io4jVJDfUywfzSx3t124lqWYL9noYwE+r9NRlDMavZuMFtG+N/v699ERDAbXY9733GVmpRMvpC/Tmnmo9M2AHnFa0qqKPnP+HxkCSCQ9qW/tkBl9wk/IW8gPSQg8ifEkvaWiDryCcTyBJ2NjnoOYh9rLj3/ZmSf2klsZ69Fg+KgCZq033S0LfVzNHkO9m0tcNqVK46oezmEs6zIKu8ep6ui7Pd49Uj9DgfnaptUaZFcLoWuj3VirNcJBp/4qP9E3J6n7ajI94bt8fkkNvjCQVutSItvyO5Oa6Mrcto7OQIj
 
-On Wed, Jun 25, 2025 at 11:57=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
-g> wrote:
->
->
->
-> On 6/25/25 4:17 PM, Pasha Tatashin wrote:
-> > During boot scratch area is allocated based on command line
-> > parameters or auto calculated. However, scratch area may fail
-> > to allocate, and in that case KHO is disabled. Currently,
-> > no warning is printed that KHO is disabled, which makes it
-> > confusing for the end user to figure out why KHO is not
-> > available. Add the missing warning message.
->
-> Are users even going to know what "KHO" means in the warning message?
+On Tue, 15 Jul 2025 19:56:02 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Changed warning to: Failed to reserve scratch area, disabling kexec handove=
-r
+> +static void
+> +trace_event_update_with_eval_map(struct module *mod,
+> +				 struct trace_eval_map **start,
+> +				 int len)
+>  {
+>  	struct trace_eval_map **map;
+>  
+> -	if (len <= 0)
+> -		return;
+> -
+>  	map = start;
+>  
+> -	trace_event_eval_update(map, len);
+> +	/* This must run always for sanitizing. */
+> +	trace_event_update_all(map, len);
+> +
+> +	if (len <= 0)
+> +		return;
+>  
+>  	trace_insert_eval_map_file(mod, start, len);
+>  }
 
->
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > ---
-> >  kernel/kexec_handover.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> > index 1ff6b242f98c..069d5890841c 100644
-> > --- a/kernel/kexec_handover.c
-> > +++ b/kernel/kexec_handover.c
-> > @@ -565,6 +565,7 @@ static void __init kho_reserve_scratch(void)
-> >  err_free_scratch_desc:
-> >       memblock_free(kho_scratch, kho_scratch_cnt * sizeof(*kho_scratch)=
-);
-> >  err_disable_kho:
-> > +     pr_warn("Failed to reserve scratch area, disabling KHO\n");
-> >       kho_enable =3D false;
-> >  }
-> >
->
-> --
-> ~Randy
->
+So this will add more work during boot up as it is processed on every
+event regardless if it has an eval map or not. But this is only needed
+if CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y is enabled.
+
+What about having this be:
+
+	/* Always run sanitizer if PAHOLE_HAS_BTF_TAG is set */
+	if (!IS_ENABLED(CONFIG_PAHOLE_HAS_BTF_TAG) && len <= 0)
+		return;
+
+	map = start;
+
+	trace_event_update_all(map, len);
+
+	if (len <= 0)
+		return;
+
+	trace_insert_eval_map_file(mod, start, len);
+}
+
+-- Steve
 
