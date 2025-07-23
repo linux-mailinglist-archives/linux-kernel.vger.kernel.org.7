@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-743213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3585B0FBFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42656B0FC03
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1161CC133B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B301AA49E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DDB2367D3;
-	Wed, 23 Jul 2025 21:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1871258CED;
+	Wed, 23 Jul 2025 21:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqi24Ydz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fRMF/9wp"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C420617C91;
-	Wed, 23 Jul 2025 21:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DA22586DA;
+	Wed, 23 Jul 2025 21:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753304875; cv=none; b=AYmoRxLkU9UcHUELgUNhouHW2HSIrHaXhu26FlK2ljlCMc8CAiqWzqpmUcU9r8k2BYPvasskC/RTw+ywvgCw8ldXGB9M5Y4+otMy+7XemmptdaIGJfbjY2mUUMIsOQzPUYbvZdSot9engkQ+rplIG9zJId5FVilJQPP3D2R4+xY=
+	t=1753305118; cv=none; b=NOwKoGYjdu1z/SIAGmuQ2PCPRS+1G2xH+KLFP7Qk/m4g9G10ld0qQ4qHHeFCwYPY2VzlZp+PJa+WuuTR2KyHZOx5NUHsKT9TzeLzKc7b4kWZSFHmLZBcWKDEuKL/Tm3ll43CjWfDemUCA43qwklWvotGGRMyBKLmO4Eh6hfuGXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753304875; c=relaxed/simple;
-	bh=hGZi/sGJfyKViWvaeWB9IxwYAFMpegznJ3FoUdmRua4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KEoXcSIMKzOv2H1B4W/imK0vlQM2P45MGdxl6Nk8haU5lX4U0IMdjyt8RRm8X6kwGzyAHyZLsb3NXcCHUogw/euRk0GxTeidtsCG3Gsxt6IFBro1sb9uTG8sBsHDujTnMJDALRztjK+y690ti81izGz0l8OlXtiRaI3Q+H+iIY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqi24Ydz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28FF4C4CEE7;
-	Wed, 23 Jul 2025 21:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753304875;
-	bh=hGZi/sGJfyKViWvaeWB9IxwYAFMpegznJ3FoUdmRua4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Gqi24YdzNvYMSEIuuWnPsO3qvZPiXiuqNjVcRfI3ca+QDOlIcQVctCxQVwASMg5RX
-	 kKSN+++vsYRtkShZ2jIn7n9mnmWan0sWyf9+j+FcP1OtPuxskwkhbcBrudkhSfoBKM
-	 MwmwBIod8AjBdQ/hY1VSFZgckrvCYWKj/O2in06m0I/WanJYb1r1IR60YOAcAziIdW
-	 QYWA/wf2slXq8an5oX99umRK55OTSZfqqlK7svVQ7zZjSWH1qmRk8TZE8MxVKrW29C
-	 cWzdu9fXmeqRxFHvDhtl27/CeRoyfGjJNhBAnXRLQMGg+xL3G10u4SszsT4uTcCqVc
-	 G6X77xbTuvtGQ==
-Date: Wed, 23 Jul 2025 16:07:53 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Christian Bruel <christian.bruel@foss.st.com>, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-pci@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [RESEND PATCH 0/2] Add pinctrl_pm_select_init_state helper
- function
-Message-ID: <20250723210753.GA2911683@bhelgaas>
+	s=arc-20240116; t=1753305118; c=relaxed/simple;
+	bh=q0mE4UUBWfCV+wTusBCOf5CCslH2279SZu5XfCB7RLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RseRR+E1XkFti9ydvDk6mkxR+5pJjSk7+EWf34j/fsxosSe724fYqFLmP4lucYndoGe+Ge77s6M2zYFXciv8ivKNEGIgXCHuHkthyzc3xX2dD6MSxfDjohaLlIe7elxtYKTupPnSLzrd0KUUZWWbk+2IUd3HV0E8+OCF18123sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fRMF/9wp; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9B4021026ADA7;
+	Wed, 23 Jul 2025 23:11:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753305113; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=q0mE4UUBWfCV+wTusBCOf5CCslH2279SZu5XfCB7RLY=;
+	b=fRMF/9wp7KlMF/vwBka+uclAaSlW7YKY/JnQQJxJbt/Vy4/EXLXSlhWO8w3MOS08JzX0Yv
+	34ERCNVYApCkC0605fFmqgxYmbl7Ss+2tbY14/xoT5syVwrDncCYVfoesmUeGXSmdxX4tm
+	Jhz724Z9cn8fGKyPElCSDKu7KvVhWcKP1Tkio5QROCo1UlkZ7S2M7tOji0w/TWjMs3PU1F
+	3x7fYX9RJcOuPfU//SvkYSk8N2659arFmkf8Rw80d7QlD9psltkXvneHbXWPb+sm27fYi9
+	K6W+yWXFw1LUvPtxf6IUnTEr7jWpQ77DcceVACvs/FhOXalVjAEb0rC1azIfkQ==
+Date: Wed, 23 Jul 2025 23:11:48 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v15 06/12] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250723231148.3c7448a5@wsk>
+In-Reply-To: <20250723131704.1f16a13a@kernel.org>
+References: <20250716214731.3384273-1-lukma@denx.de>
+	<20250716214731.3384273-7-lukma@denx.de>
+	<20250718182840.7ab7e202@kernel.org>
+	<20250722111639.3a53b450@wsk>
+	<20250723220517.063c204b@wsk>
+	<20250723131704.1f16a13a@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZHw8am05Qcjp7FJyo7D7bZcvzZKVjdB7BUCq3FuQCy8A@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/M8WPw5wCXj1LYwZ0GVHQLmu";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Jul 23, 2025 at 01:32:52PM +0200, Linus Walleij wrote:
-> On Thu, Jul 17, 2025 at 8:33 AM Christian Bruel
-> <christian.bruel@foss.st.com> wrote:
-> 
-> > We have the helper functions pinctrl_pm_select_default_state and
-> > pinctrl_pm_select_sleep_state.
-> > This patch adds the missing pinctrl_pm_select_init_state function.
-> >
-> > The STM32MP2 needs to set the pinctrl to an initial state during
-> > pm_resume, just like in probe. To achieve this, the function
-> > pinctrl_pm_select_init_state is added.
-> >
-> > This allows a driver to balance pinctrl_pm_select_sleep_state()
-> > with pinctrl_pm_select_default_state() and
-> > pinctrl_pm_select_init_state() in pm_runtime_suspend and pm_runtime_resume.
-> >
-> > Christian Bruel (2):
-> >   pinctrl: Add pinctrl_pm_select_init_state helper function
-> >   PCI: stm32: use pinctrl_pm_select_init_state() in
-> >     stm32_pcie_resume_noirq()
-> 
-> If Bjorn Helgaas is OK with it I can apply this to the pinctrl tree.
-> 
-> Otherwise I can also just apply patch 1/2, but that doesn't solve
-> any problem.
+--Sig_/M8WPw5wCXj1LYwZ0GVHQLmu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The stm32 driver has been posted and is on this branch of the PCI
-tree:
+Hi Jakub,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dwc-stm32&id=5a972a01e24b
+> On Wed, 23 Jul 2025 22:05:17 +0200 Lukasz Majewski wrote:
+> > Do you have more comments and questions regarding this driver after
+> > my explanation?
+> >=20
+> > Shall I do something more? =20
+>=20
+> Addressing the comments may be more useful than explaining them away.
 
-but it's not in mainline (or even in pci/next) yet, so you would only
-be able to apply patch 2/2 if you took the whole driver, which is
-probably more than you would want to do.
+As I've already described what are the issues I try to solve (and some
+design decisions), I will correct them (where applicable) and prepare
+next code version.
 
-I haven't put it in pci/next yet because it doesn't build when
-CONFIG_PINCTRL is not defined:
 
-  https://lore.kernel.org/r/20250716192418.GA2550861@bhelgaas
+Best regards,
 
-I don't know enough about pinctrl to know why stm32 needs this when
-nobody else seems to.  I doubt it's really unique, so maybe it's just
-not doing the right thing here.
+Lukasz Majewski
 
-Bjorn
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/M8WPw5wCXj1LYwZ0GVHQLmu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmiBUBQACgkQAR8vZIA0
+zr1uVwf/ZkcfzdhljMsZvGmXGsgINoyLcSM9aaTPSiBsJLo6kHbkhO5BQ45r7aFs
+PAq5vR7/YlMNpmne5x86thl3jp7jjUobLRAee/jyLDCpsSWsC8P4Iq1ogX1J4GGY
+YR+MYHjNWFsd8t/77fQA9NXYqf+EEay3tTgk8g72rftPmbOvR+JUSI+x2LFbZ3hd
+lo14UI23C3C1QCfTMGtySwQDFAtve9Da/rBxhgkz2OVQs5z4tTeRl9NTCbyj/FEx
+4bisM6SJrcKXKP7w3gOMdbu9XGmvOIzbd5tIhAY7W7l+ck7Izs6KwNRxcHMciDvT
+2Ogt8uTTtktdP5xgf6bqBrlTDKYwlg==
+=XciX
+-----END PGP SIGNATURE-----
+
+--Sig_/M8WPw5wCXj1LYwZ0GVHQLmu--
 
