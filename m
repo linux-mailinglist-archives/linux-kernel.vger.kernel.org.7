@@ -1,159 +1,89 @@
-Return-Path: <linux-kernel+bounces-742512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275D9B0F2A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:55:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC8AB0F2A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139FDAC06FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:55:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B99E1C86759
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AD82E717B;
-	Wed, 23 Jul 2025 12:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx7SheHY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C592E717B;
+	Wed, 23 Jul 2025 12:55:39 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A55D2FF;
-	Wed, 23 Jul 2025 12:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52F92E62BF;
+	Wed, 23 Jul 2025 12:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753275325; cv=none; b=iknyeT24W08gJ1WmWX+832p/zbZkgQGIKNkrfuGT4wEURaqbHzmIOyjhhFlw6+lGJupaamQTlnaV6BDAGPI3rLCqwCoC6AGr+uT7wNjNx6Nt/qHfKE5T0IeDIgPeLJ2NQ0/RY6/BDZ2EVr9dwSyTqDOSGCZ0869mfGD4qsSxaz4=
+	t=1753275339; cv=none; b=Olj5j+5i3Oz9kmSadWISBp3t9RxWCbxRxKQy1HGfEl6CDx0wixiUzvCPVckaI0z4u2xcCRPeqNZ5++ize0dlP2uaFxIBSLsBkoNy+iXdzkGaKBNZyDL89+XiMj/fIBFC6eNAg2zB/Ku7m/8ZYZjSfYp9KiTKXObVT/gdGlMbOCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753275325; c=relaxed/simple;
-	bh=q6UaTmh3DUzTqX540vpF9A2/WnSH1xQl+bmrZyzGJWc=;
+	s=arc-20240116; t=1753275339; c=relaxed/simple;
+	bh=etpnUlcxzPSIr+c+AJdJsU8DIfsQMe11YjoWD4zU+aw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOEZ6v1dcH7HzrbuPR+g1aLFOnT52ou3tbkVQv0i04Xos7NLumnKSI3DFLZxDTtW1Yo8jaQWvGN2XqRpvovSMA0LGDpKoQgQs298FTZPls+liwGYfSM7MkrTyQiOEdk0bXD8Uy202YvZlQ04GNdPD9Poi5A6zCLlJN0OvxFdn+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx7SheHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4F2C4CEE7;
-	Wed, 23 Jul 2025 12:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753275325;
-	bh=q6UaTmh3DUzTqX540vpF9A2/WnSH1xQl+bmrZyzGJWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tx7SheHYFhejshYY11lOeIM2jstrFeP/NycPJe3aYBOWngvzkDZNZ0WzlXfZfzMlM
-	 huSVlGkH+7jz0dKXHFK6U8UTm69rIU/V6qpTMtd/wPweOig6wkSboPdPkHmuv51Rxp
-	 Il2Dm+5ZTN8Ax8aymSfWFiGroRlPv/bnyXRM2jU0WVao5REn5SJGvfaYiYTJKyPmiG
-	 6uXr+ULn0VP4ukPTgJZVtEkStDk1sWegvKgoHi98HlKcLsBG+Dy2CiiY9qWZ6S4JgE
-	 SgborqPkp3A+QCsukP0yW92UE3GoJ/rzIzJyFXVQVLxrDvOL3N931v0KlUtb71WLWB
-	 qn+5goUiUZwCQ==
-Date: Wed, 23 Jul 2025 13:55:21 +0100
-From: Simon Horman <horms@kernel.org>
-To: Maher Azzouzi <maherazz04@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	Ferenc Fejes <fejes@inf.elte.hu>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net] net/sched: mqprio: fix stack out-of-bounds write in
- tc entry parsing
-Message-ID: <20250723125521.GA2459@horms.kernel.org>
-References: <20250722155121.440969-1-maherazz04@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4AfznjN8inufOQ00HWR0e1r7+Rav6EdndOQZF2pg9YhGcGuxQxqrBF6LaJkAiJloGqLjYcM4onSq8iGyM4tNimM3DrCxMV9dm/Amc9O1PZi8R/rDVxHcmbg1DUUVj3OFsLRFUPoxqnnTJdN4AaA4lu6/8Bn8g2MPiPI1kkAEUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id A36AA2C01622;
+	Wed, 23 Jul 2025 14:55:28 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 704E924CC4C; Wed, 23 Jul 2025 14:55:28 +0200 (CEST)
+Date: Wed, 23 Jul 2025 14:55:28 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Shuan He <heshuan@bytedance.com>,
+	kwilczynski@kernel.org
+Subject: Re: [PATCH] PCI: Remove redudant calls to
+ pci_create_sysfs_dev_files() and pci_proc_attach_device()
+Message-ID: <aIDbwNdWgtKcrfF_@wunner.de>
+References: <20250723111124.13694-1-manivannan.sadhasivam@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250722155121.440969-1-maherazz04@gmail.com>
+In-Reply-To: <20250723111124.13694-1-manivannan.sadhasivam@oss.qualcomm.com>
 
-+ Ferenc and Vladimir
-
-On Tue, Jul 22, 2025 at 04:51:21PM +0100, Maher Azzouzi wrote:
-> From: MaherAzzouzi <maherazz04@gmail.com>
-
-nit: space between your names please
-
+On Wed, Jul 23, 2025 at 04:41:24PM +0530, Manivannan Sadhasivam wrote:
+> Both pci_create_sysfs_dev_files() and pci_proc_attach_device() are called
+> from pci_bus_add_device(). Calling these APIs from other places is prone to
+> a race condition as nothing prevents the callers from racing against
+> each other.
 > 
-> TCA_MQPRIO_TC_ENTRY_INDEX is validated using
-> NLA_POLICY_MAX(NLA_U32, TC_QOPT_MAX_QUEUE), which allows the value
-> TC_QOPT_MAX_QUEUE (16). This leads to a 4-byte out-of-bounds stack write in
-> the fp[] array, which only has room for 16 elements (0â€“15).
-> 
-> Fix this by changing the policy to allow only up to TC_QOPT_MAX_QUEUE - 1.
-> 
-> Fixes: f62af20bed2d ("net/sched: mqprio: allow per-TC user input of FP adminStatus")
-> Reported-by: Maher Azzouzi <maherazz04@gmail.com>
+> Moreover, the proper place to create SYSFS and PROCFS entries is during
+> the 'pci_dev' creation. So there is no real need to call these APIs
+> elsewhere.
 
-I don't think there is any need to include a Reported-by tag if
-you are also the patch author.
+The raison d'être for the call to pci_create_sysfs_dev_files() in
+pci_sysfs_init() is that PCI_ROM_RESOURCEs may appear after device
+enumeration but before the late_initcall stage:
 
-> Signed-off-by: Maher Azzouzi <maherazz04@gmail.com>
+https://lore.kernel.org/r/20231019200110.GA1410324@bhelgaas/
 
-I agree with your analysis and that this is a good fix.
+Your patch will regress those platforms.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The proper solution is to make the resource files in sysfs static
+and call sysfs_update_group() from pci_sysfs_init().
 
-I do think it is misleading to name this #define MAX,
-but it's part of the UAPI so that ship has sailed.
+Krzysztof has an old branch where he started working on this:
 
-It seems that taprio has a similar problem, but that it is
-not a bug due to an additional check. I wonder if something
-like this for net-next is appropriate to align it's implementation
-wit that of maprio.
+https://github.com/kwilczynski/linux/commits/kwilczynski/sysfs-static-resource-attributes/
 
-diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
-index 2b14c81a87e5..e759e43ad27e 100644
---- a/net/sched/sch_taprio.c
-+++ b/net/sched/sch_taprio.c
-@@ -998,7 +998,7 @@ static const struct nla_policy entry_policy[TCA_TAPRIO_SCHED_ENTRY_MAX + 1] = {
- 
- static const struct nla_policy taprio_tc_policy[TCA_TAPRIO_TC_ENTRY_MAX + 1] = {
- 	[TCA_TAPRIO_TC_ENTRY_INDEX]	   = NLA_POLICY_MAX(NLA_U32,
--							    TC_QOPT_MAX_QUEUE),
-+							    TC_QOPT_MAX_QUEUE - 1),
- 	[TCA_TAPRIO_TC_ENTRY_MAX_SDU]	   = { .type = NLA_U32 },
- 	[TCA_TAPRIO_TC_ENTRY_FP]	   = NLA_POLICY_RANGE(NLA_U32,
- 							      TC_FP_EXPRESS,
-@@ -1698,19 +1698,15 @@ static int taprio_parse_tc_entry(struct Qdisc *sch,
- 	if (err < 0)
- 		return err;
- 
--	if (!tb[TCA_TAPRIO_TC_ENTRY_INDEX]) {
-+	if (NL_REQ_ATTR_CHECK(extack, opt, tb, TCA_TAPRIO_TC_ENTRY_INDEX)) {
- 		NL_SET_ERR_MSG_MOD(extack, "TC entry index missing");
- 		return -EINVAL;
- 	}
- 
- 	tc = nla_get_u32(tb[TCA_TAPRIO_TC_ENTRY_INDEX]);
--	if (tc >= TC_QOPT_MAX_QUEUE) {
--		NL_SET_ERR_MSG_MOD(extack, "TC entry index out of range");
--		return -ERANGE;
--	}
--
- 	if (*seen_tcs & BIT(tc)) {
--		NL_SET_ERR_MSG_MOD(extack, "Duplicate TC entry");
-+		NL_SET_ERR_MSG_ATTR(extack, tb[TCA_TAPRIO_TC_ENTRY_INDEX],
-+				    "Duplicate tc entry");
- 		return -EINVAL;
- 	}
- 
+Thanks,
 
-> ---
->  net/sched/sch_mqprio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/sched/sch_mqprio.c b/net/sched/sch_mqprio.c
-> index 51d4013b6121..f3e5ef9a9592 100644
-> --- a/net/sched/sch_mqprio.c
-> +++ b/net/sched/sch_mqprio.c
-> @@ -152,7 +152,7 @@ static int mqprio_parse_opt(struct net_device *dev, struct tc_mqprio_qopt *qopt,
->  static const struct
->  nla_policy mqprio_tc_entry_policy[TCA_MQPRIO_TC_ENTRY_MAX + 1] = {
->       [TCA_MQPRIO_TC_ENTRY_INDEX]     = NLA_POLICY_MAX(NLA_U32,
-> -                                                      TC_QOPT_MAX_QUEUE),
-> +                                                      TC_QOPT_MAX_QUEUE - 1),
->       [TCA_MQPRIO_TC_ENTRY_FP]        = NLA_POLICY_RANGE(NLA_U32,
->                                                          TC_FP_EXPRESS,
->                                                          TC_FP_PREEMPTIBLE),
-> --
-> 2.34.1
->
-
+Lukas
 
