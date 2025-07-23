@@ -1,185 +1,302 @@
-Return-Path: <linux-kernel+bounces-742449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C18B0F1D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B5BB0F1DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2C717E209
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A417FA85
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AF22E5B1B;
-	Wed, 23 Jul 2025 12:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082552E54D9;
+	Wed, 23 Jul 2025 12:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UllcB1D4"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8YKL1qp"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B132AD3E;
-	Wed, 23 Jul 2025 12:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440662E54C7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272259; cv=none; b=se/EYmhD0qed0erbyysi5w/JYeHhP6qQrHC4pbFnPMGY9ATWR+r4opQyQrC8SQMEr5m324CRAuZXggJ1IHsN7tFGjiQ7s3BiC5sYOIqolK5O0eaKsxewwL9FSjuYucSIESqRlQKmlSWNYVg4MjOcjslLiv8LlSN9u7OQyj+zm94=
+	t=1753272275; cv=none; b=U8gy0L/S93MRHlfuCilHXC8j0yrN9KbZCfN+ukaabWg86UxzyHW0KE/YksjeN65/DK6RAFsRhmL0m3KoE0b18LojJ08+4PH0Iiw+08zJktQfw7hrF/ToHTorAM2CNtDRKadYOwVLiZYgIxpXeR1uKKSRPV8WVjsr+RqSMT0p6es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272259; c=relaxed/simple;
-	bh=wwvOed4AiyIpZRV0tXtWm2hLLOZaO65VZ2Oh5cV3zvI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Qxmkk+iYQ/unaUDoDJ8wkEWxEEy0dz8B5DckZR4pE7zKrB+vAKoZSi2EqZ7Mz5k3s73eIpAviuuM0TKuZNjc8OrOIUNgDT97eMP3R0HfA3sBVTJlRoS6Dno/LjRzCrfyttLWmEUOiDja4TDjvALoUCneCYPIVzqbp8kS/0EmbdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UllcB1D4; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae9c2754a00so1118159166b.2;
-        Wed, 23 Jul 2025 05:04:17 -0700 (PDT)
+	s=arc-20240116; t=1753272275; c=relaxed/simple;
+	bh=tZtnr1t9b0UyyBWJF2pBQb3rRxn1BtGGkwNYgLCrcY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1QTOBDzkohl35ghyNn4Fm8bQwCRoHnLq/lsXF5s461B3F1uEZ6XR4rjBEe5lbBce/KT/nN6ab3ef3QWL9V2dllCTdIlCQZVdw3IFo9yIXbR0kq2sp5kz1PHN5Q2O+TiNcnIxtsioFpHWWSwg9OC0WDuRLDnwMgt1JD6jded/gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j8YKL1qp; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-606aadc1433so1357660a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 05:04:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753272256; x=1753877056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=velNThWNzCVL50HpO0OOnaoFk16wgTpoe4CXm5vwClc=;
-        b=UllcB1D4k3Hlcrc9gEDnyvKx8ZU1NIohqJhUXIZ9E0n3flF2BwKS1k9hWDgQbf206u
-         N7TSGM4M9tYyZtU3Yo9C4kj+DEgr4BBKHbL7t4zaRCIKw721EMe4/8vWWtGTkpN1v2P4
-         zXfSvBy9sQvgnZ++ZhckAkZUoQtqeIeI+RrELsEoNdr2lx26ObDysyZ6WEx17jC5d0I+
-         +4eDDjP+tsn91qV49TujRSoyfO/M7u7u9MxLYFMsE6VRBXc0KkctBOJ79gOT9iYBnbEO
-         ToeVg+7eOE+2CJVLJWNr2z/YAiVze8s022/Qw8jHBCEuD9SBDGIF0w1f7/PLr04ZW92t
-         3t/w==
+        d=linaro.org; s=google; t=1753272272; x=1753877072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RfFmbru/LCAFgBCMPMUZ+BBCwsaXUjK95SJrm5H8vz8=;
+        b=j8YKL1qpZLwQ/iFxlAwIgYUybHsGGV0BKUXbwb0EkmTSqritWfpfUYPRxKLNutuk8v
+         oxVbg6ZyNt900Ofl/jPZCvJM6Iq8nwOvaSYeIP5jsUtYmdQYNEexgbcVT3Aw37nhK43H
+         uIoXyWtVKKUVfzABhExF34oHtloAN3nXOfmoKn5A447VcLkormZj55YK46JXTOvdomj2
+         xZqWZgnQDJT5hIC3WEQo3w8i2VH5pLQefygtSxD3XyF+f+Ke24butXF9/aQ6lzee237B
+         RTy02C/bFyB7zsGviXfr0KD8UN4tiIh99QzCQcCSARa7NU4HWSnAvu9DlVZpbOde2SkV
+         EMZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753272256; x=1753877056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753272272; x=1753877072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=velNThWNzCVL50HpO0OOnaoFk16wgTpoe4CXm5vwClc=;
-        b=eE5tgrs0p+pZGs2gmu335Suevl/OpwQBIkjDoummm9rl4Ajp+Kw8nW2s9GxZxXomDr
-         LBA8Z0rVu8lRdEJWcSfvXkKDOLVtLeJb3/kbYfptDTzeI/PozCrKilzEgNgN2F/3iAiI
-         1n+UaJlNOL1IXAjy2s65QXJ5dXUq8ez/XHHYU6XMYoGe0LQrFV/kP6SRc3qZ8gdBwmy7
-         JhL8ZDm0afNDUbiOgJKjRcooYDfslLJiC1KqQ8PhtJ31DEqLlLGquBTpqUFIwu7PKW1d
-         fAVx/ESMZZCY73HIHqLjF0q1NWW62DV+xA43y/f2zek+uhGBLIdhIfI+6YogEa9J3TUj
-         urLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ/fcSEt5SPhJasFj+U7KtIQntLz5pFncRaqC9eishiUdX/X52byBZ07gLWpI+y3lovmusY65/v98ORA==@vger.kernel.org, AJvYcCWcNWMzQ0BVLbiJwZoloi+kqfM6pCRy95Y5pVspDQBIA5B+CYbwAtk3c0QnHyD/m32gMR9DIHbdwaj6hgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjmKBN3Q6Z65ivHmRrZyEfG5Zybi3Wjub+qQcxmftK1jY3sGWx
-	GlF4bgRhfxk3NxDDvNYLATmNd6akdD208fZZWhcvvQAGqa2XWQT7wO415KrcciuN+tOdTmM3NC/
-	a4yIK7sV5AQFS3QV5QjwhoQpitw3Xwjc=
-X-Gm-Gg: ASbGncvXwmpBTQjMYkp8QchPbVxTNqX1EHAFj+G+BrafChbme5mwzDJjuY3WUbxNPZU
-	G/QTqJPl+WdjLqGt/UMzjGw/Gx1aytTJMzast6U6M1a7IEQtvlXDfaCzTsI28BA9knWNSKSEwSJ
-	/eUEi2zgCfKJ3uGFor8t6+N2aiHLZXNE3ddGihhE1b42bjzBi960sHLSooQUXI1cymTtMB4dPxo
-	0p9ZGIY
-X-Google-Smtp-Source: AGHT+IHhEPs4iHRKYQeRICabXf1ERltK6sNXU1YXjcCDKLZbj6UWTz4u+Q4+yp8vBgqsfjexE+MQ2oL4zJ/tIO6zVO0=
-X-Received: by 2002:a17:907:1c92:b0:ade:433c:6412 with SMTP id
- a640c23a62f3a-af2f66c05f0mr231926066b.3.1753272255076; Wed, 23 Jul 2025
- 05:04:15 -0700 (PDT)
+        bh=RfFmbru/LCAFgBCMPMUZ+BBCwsaXUjK95SJrm5H8vz8=;
+        b=geWsoEjpWq4P+5PShsXMtQ7/rXsGIcWvsmIQ7b4C1UZP3SLkrSgaOGWj7IfxqpwnGr
+         KrMx66B4dz1bvo58IV9jtYDLaVElDqeeyHsLqzhqvAHyCUWvVeBUqa17SgZkdTIb1H5J
+         2aWibZsR4sGmDdC+EiqffuVB2Bdzq1uzoaF6gQb9zga6Pf+FOlSss1SlLUV7n9d74tX9
+         aWEtuq3AoU3nxJYtEH8n6nSxIwxyEDZtLywQNBuwFHEf5tUB89CIgTOfnUCEz3FQ0nKI
+         XojxnEncLHhkOrZah7ouE/EISuXcqGSVwNtxSu3ZLg3WwShYYO4RDC8SLeUbvN/oSl7b
+         wIGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB3vfG9iylyiINFRyPIbV2BR5vcWh7zkllwyhqFwm3/vq7vTUGqpBLK6Pa/bYlJfO2LycsYT6JUmAPJUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywds+X36mzAnomM2JUAN1SS1Wqq7MwZVucD5nIaOfyCFlIV+eNL
+	8MZdE1XkOdyaeRgdL6JnM6dUIlyJBw4bnE3W2DGq/dXwK/OZo996sLLF8ZR3O8QYzwc=
+X-Gm-Gg: ASbGncs6yh93dp1JfhqEeufDGG13SVly0+EV3jB+2ziFt/ZbN9BO9LKeoINRAyLDaWY
+	NOwXC+Ms4OyC16JXylLsNH8ThSu6rwhBCTXFP+9LPuLV+RzBRPK3a9jmAH5z8vg2qP1CV8Dv5hj
+	bvY8g+7O4F4SvoCKIQH0vuVSdP1eYAGLDoLHPi6+kuDmbOKzw+ZYptcmThtvvpvWpd+rbr24/HX
+	g4t+wW2tiCnsS1ht3NBY22yiATp/xzZg3Yo7VF7G06jooOh6cQpRV5a9D+K4Di/tD8v1Hwjj+LZ
+	L9Os29GNcqBTFHnE62CNbYNvGtJl6j1zUIWPdy1xDxyJT0sn54rS5U6Av1VAOgcCeuyRH0n8mWZ
+	zJVkniVq4IqFSUSo9IQpBtTI9REAMss93
+X-Google-Smtp-Source: AGHT+IFp/yhow1yu8WxEFj4kLLF/zSyEkqWJuG1rRXxqxsP0ns2I8R6QZIpkgSUWEiIfNYQhI6nfEQ==
+X-Received: by 2002:a05:6402:5256:b0:612:ce8b:8e1d with SMTP id 4fb4d7f45d1cf-6149b5afb99mr910771a12.10.1753272271408;
+        Wed, 23 Jul 2025 05:04:31 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c90bb932sm8391470a12.67.2025.07.23.05.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 05:04:30 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RFC DO NOT MERGE] arm64: dts: qcom: sm8750-mtp: Add WiFi and Bluetooth
+Date: Wed, 23 Jul 2025 14:04:28 +0200
+Message-ID: <20250723120427.52874-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Hc Zheng <zhenghc00@gmail.com>
-Date: Wed, 23 Jul 2025 20:04:02 +0800
-X-Gm-Features: Ac12FXzg_F6i03IIPmSBMY0-i-b566lIJkbYl7GaJn_czywc_aaIzeZMqWl60Xw
-Message-ID: <CAHCEFEwToeQe_Ey8e=sf8fOmoobvrDCPsxw+hfUSoRawPX03+Q@mail.gmail.com>
-Subject: [RFC] problems with RFS on bRPC applications
-To: andrew+netdev@lunn.ch, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, laoar.shao@gmail.com, yc1082463@gmail.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5199; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=tZtnr1t9b0UyyBWJF2pBQb3rRxn1BtGGkwNYgLCrcY0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBogM/LXCYJpbCtSYtFUWvWkh/NaxRT6HqG6wP+s
+ aY4feQMUl+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIDPywAKCRDBN2bmhouD
+ 1yE0D/4+Mhb6DPOTnylAUmuSnIfu3oPq9s7n6FoVE7B3Y8VFy2wwFZ5KlGwV55B5cw2GDLxigNg
+ 16Fimj6sYCHavBIDtesFPceXbPGwn6fLkKBZw0keoyfSPvMiIFsrskQlXN5quxL8QMSVcMP7eqq
+ 7cEt4zvuX/IcA3R8O/cXOVf7f1XS+ZWkVmP8LbwIuFPBAXYjZMBPQi8pgO+NlJ10K523O9uHvqd
+ mOAu6OAkd4DtK1vU+5g3UuOW+6/r2U8A+yFETjOYBnPGYmaRSXGdQnW/NpT1m+uKuAK+2tOEUU3
+ edoOUJz+K98QiZGmSjWe/AwG7rV01l5mKSz1SodZCfg4SouONJqpgMLeFnpMdj8AjHCJR75On7T
+ Tds1InQlsWyZznZi1bgFhZuGpbogvQ4V6Vo8+p+9BEmyJcdFY4HzYl6PsLULnatRkwTt54xNTUn
+ cdXxWq0ijR6pnBra9Y9puNdSkm2xkNTfC24jUzvYkC2oKCCcOXtU1bT9sYYdfVVkxYDagU+Ti/u
+ cuhDMMsaa0IdHI+J8ZcVOyK+zaQlf88gRsp3pFpzQYFj7rPpLAsUoiam+5l4ijW9G18S2K4h2Xo
+ /bGRV++x3MW+s94mJeZ6aHk5m0LMWvYJk7VPm07SzanFJWPQeXe5ZAOtPsOjyFyT8WFAdfvBcUm J9m8eI0Ozhls5ew==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+MTP8750 rev 2.0 (power grid v8) boards come as two different variants
+with different WiFi chips: WCN7850 and WCN786x.  WCN7850 is already
+supported by the kernel, but WCN786x is not.  Both of the board variants
+are considered newest revisions and the difference is only in MCN
+numbers and internal codenames.
 
-I have tried to enable ARFS on the Mellanox CX-6 Ethernet card. It
-works fine for simple workloads and benchmarks, but when running a
-BRPC (https://github.com/apache/brpc) workload on a 2 NUMA-node
-machine, the performance degrades significantly. After some tracing, I
-identified the following workload patterns that ARFS/RFS failed to
-handle efficiently:
+Add WCN7850 WiFi and Bluetooth to the MTP8750, stating that this DTS
+represents the WCN7850 variant.  The S5F regulator should operate at
+0.85 V, thus adjust lower constraint and its label.
 
-- The workload has multiple threads that use epoll and read from the
-same socket, which may cause the flow to be frequently updated in
-sock_flow_table.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-- The threads reading from the socket also migrate frequently between CPUs.
+---
 
-With these patterns, the flow is being updated very frequently, which
-causes severe lock contention on arfs->arfs_lock in
-mlx5e_rx_flow_steer. As a result, network packets are not being
-handled in a timely manner.
+Posting as RFC because it depends on unpublished PCI DTS patches thus it
+cannot be merged/build.
 
-Here are the case we want to enable ARFS/RFS:
+Bluetooth not yet tested, because my user-space is incomplete.  I am
+working on fixing this but anyway I don't expect issues since it is
+exactly the same as previous SoCs.
+---
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 127 +++++++++++++++++++++++-
+ 1 file changed, 124 insertions(+), 3 deletions(-)
 
-- We want to ensure that flows belonging to different containers do
-not interfere with each other. Our goal is for the flows to be steered
-to the appropriate container=E2=80=99s CPUs.
-
-- In the case of BRPC, the original RFS/ARFS logic does not help, so
-we aim to steer the flow to CPUs running the container, as close as
-possible and as balance as possible.
-
-One simple solution I came up with is to have another mode in addition
-to RFS, eg: like rps_record_sock_flow with a fix interval to avoid
-frequently updated, or add an interface to allow usespace to dynamicly
-steer the flows. This mode would steer flows to cpu within the target
-container=E2=80=99s CPU set, providing some load balancing and locality
-
-I have written some simple PoC code for this. After applying it in
-production, we noticed the following performance changes:
-
-- Cross NUMA memory bandwidth: 13GB =E2=86=92 9GB
-
-- Pod system busy: 7.2% =E2=86=92 6.8%
-
-- CPU PSI: 14ms =E2=86=92 12ms
-
-However, we also noticed that some RX queue receives more flows than
-others, since this code does not implement load balancing.
-
-I am writing this email to request suggestions from netdev developers.
-
-Additionally, for Mellanox forks, is there any plans to refine
-arfs->arfs_lock in mlx5e_rx_flow_steer?
-
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 5a04fbf72476..1df7e125c61f 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -30,6 +30,7 @@
- #include <asm/byteorder.h>
- #include <asm/local.h>
-
-+#include <linux/cpumask.h>
- #include <linux/percpu.h>
- #include <linux/rculist.h>
- #include <linux/workqueue.h>
-@@ -753,15 +754,21 @@ static inline void rps_record_sock_flow(struct
-rps_sock_flow_table *table,
-        if (table && hash) {
-                unsigned int index =3D hash & table->mask;
-                u32 val =3D hash & ~rps_cpu_mask;
-+               u32 old =3D READ_ONCE(table->ents[index]);
-
+diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+index 5a94c14425dc..e142927f7e75 100644
+--- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+@@ -254,6 +254,77 @@ vph_pwr: vph-pwr-regulator {
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
 +
-+               if (likely((old & ~rps_cpu_mask) =3D=3D val &&
-cpumask_test_cpu(old & rps_cpu_mask, current->cpus_ptr))) {
-+                   return;
-+               }
-                /* We only give a hint, preemption can change CPU under us =
-*/
-                val |=3D raw_smp_processor_id();
++	/*
++	 * MTPs rev 2.0 (power grid v8) come with two different WiFi chips:
++	 * WCN7850 and WCN786x.
++	 * They use the same enable GPIOs and share (almost) the same supplies.
++	 * The WCN7850 supplies are superset of WCN786x variant.
++	 *
++	 * Device nodes here for the PMU, WiFi and Bluetooth describe the MTP
++	 * variant with WCN7850.
++	 */
++	wcn7850-pmu {
++		compatible = "qcom,wcn7850-pmu";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&wlan_en>, <&bt_default>;
++
++		wlan-enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
++		bt-enable-gpios = <&pm8550ve_f_gpios 3 GPIO_ACTIVE_HIGH>;
++
++		vdd-supply = <&vreg_s5f_0p85>;
++		vddio-supply = <&vreg_l3f_1p8>;
++		vddio1p2-supply = <&vreg_l2f_1p2>;
++		vddaon-supply = <&vreg_s4d_0p85>;
++		vdddig-supply = <&vreg_s1d_0p97>;
++		vddrfa1p2-supply = <&vreg_s7i_1p2>;
++		vddrfa1p8-supply = <&vreg_s3g_1p8>;
++
++		clocks = <&rpmhcc RPMH_RF_CLK1>;
++
++		regulators {
++			vreg_pmu_rfa_cmn: ldo0 {
++				regulator-name = "vreg_pmu_rfa_cmn";
++			};
++
++			vreg_pmu_aon_0p59: ldo1 {
++				regulator-name = "vreg_pmu_aon_0p59";
++			};
++
++			vreg_pmu_wlcx_0p8: ldo2 {
++				regulator-name = "vreg_pmu_wlcx_0p8";
++			};
++
++			vreg_pmu_wlmx_0p85: ldo3 {
++				regulator-name = "vreg_pmu_wlmx_0p85";
++			};
++
++			vreg_pmu_btcmx_0p85: ldo4 {
++				regulator-name = "vreg_pmu_btcmx_0p85";
++			};
++
++			vreg_pmu_rfa_0p8: ldo5 {
++				regulator-name = "vreg_pmu_rfa_0p8";
++			};
++
++			vreg_pmu_rfa_1p2: ldo6 {
++				regulator-name = "vreg_pmu_rfa_1p2";
++			};
++
++			vreg_pmu_rfa_1p8: ldo7 {
++				regulator-name = "vreg_pmu_rfa_1p8";
++			};
++
++			vreg_pmu_pcie_0p9: ldo8 {
++				regulator-name = "vreg_pmu_pcie_0p9";
++			};
++
++			vreg_pmu_pcie_1p8: ldo9 {
++				regulator-name = "vreg_pmu_pcie_1p8";
++			};
++		};
++	};
+ };
+ 
+ &apps_rsc {
+@@ -525,9 +596,9 @@ regulators-2 {
+ 
+ 		qcom,pmic-id = "f";
+ 
+-		vreg_s5f_0p5: smps5 {
+-			regulator-name = "vreg_s5f_0p5";
+-			regulator-min-microvolt = <500000>;
++		vreg_s5f_0p85: smps5 {
++			regulator-name = "vreg_s5f_0p85";
++			regulator-min-microvolt = <852000>;
+ 			regulator-max-microvolt = <1000000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+@@ -1051,6 +1122,23 @@ &pcie0_phy {
+ 	status = "okay";
+ };
+ 
++&pcieport0 {
++	wifi@0 {
++		compatible = "pci17cb,1107";
++		reg = <0x10000 0x0 0x0 0x0 0x0>;
++
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
++		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
++		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
++	};
++};
++
+ &pmih0108_eusb2_repeater {
+ 	status = "okay";
+ 
+@@ -1186,6 +1274,14 @@ spkr_1_sd_n_active: spkr-1-sd-n-active-state {
+ };
+ 
+ &tlmm {
++	bt_default: bt-default-state {
++		sw-ctrl-pins {
++			pins = "gpio18";
++			function = "gpio";
++			bias-pull-down;
++		};
++	};
++
+ 	disp0_reset_n_active: disp0-reset-n-active-state {
+ 		pins = "gpio98";
+ 		function = "gpio";
+@@ -1221,6 +1317,31 @@ wcd_default: wcd-reset-n-active-state {
+ 		bias-disable;
+ 		output-low;
+ 	};
++
++	wlan_en: wlan-en-state {
++		pins = "gpio16";
++		function = "gpio";
++		drive-strength = <8>;
++		bias-pull-down;
++	};
++};
++
++&uart14 {
++	status = "okay";
++
++	bluetooth {
++		compatible = "qcom,wcn7850-bt";
++
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
++
++		max-speed = <3200000>;
++	};
+ };
+ 
+ &ufs_mem_phy {
+-- 
+2.48.1
 
-                /* The following WRITE_ONCE() is paired with the READ_ONCE(=
-)
-                 * here, and another one in get_rps_cpu().
-                 */
--               if (READ_ONCE(table->ents[index]) !=3D val)
-+               if (old !=3D val) {
-                        WRITE_ONCE(table->ents[index], val);
-+               }
-        }
- }
-
-
-
-Best Regards
-Huaicheng Zheng
 
