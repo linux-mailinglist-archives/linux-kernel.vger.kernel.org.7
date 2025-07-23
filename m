@@ -1,143 +1,101 @@
-Return-Path: <linux-kernel+bounces-742239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9CDB0EEFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:59:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A8EB0EF0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F1427B7B3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F29C17FE78
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8F8288C92;
-	Wed, 23 Jul 2025 09:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E086928C2BE;
+	Wed, 23 Jul 2025 10:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCsvzskT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ayGFd5cL"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01BE280325;
-	Wed, 23 Jul 2025 09:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF0328C2A4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264744; cv=none; b=e8Li3cpxCznEs1TPapWtDvKkz176xCVJfmC34S9NG9+S9X1JS0Hyrr/TYn3qbhPkCfH2m/c7Vhs2HkjIm3lKkPZYf1pKR4qhde5Pjgr71FXLpUNXnulK0/0fPHn4bkZ4kbhaBQbR44jpL8aLbLH4/YdOchpAEWaW9V5hpGLvjho=
+	t=1753264845; cv=none; b=pLsg2vvxKjfET7E3iw+JlwAx/cIVKxzfkYIsW1y1P2xpWngX1yNbUOQPPq2K0JJVPTlV1gTrNIBxBHt4BMevvPS8RAbqi5O3PcpEtlkV5IR0++HQmhWdxGFFsa+UjAD3AUYIJO5qJucDbtbc23EqkccP5za5YMCBSeCjf8ezck0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264744; c=relaxed/simple;
-	bh=yzX7va2srxpQsEnQrCqzNSATBc4ZgUiYAKZ5VunBZIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nA3CmAEuu5Ibf9h1x67b7O/5WiYW7FiDCp9ELXP5Bep3zChqm/UtDJuyxgUTZ3RuGq/InxHo6F8/zEVIlClsn4dmVXExRO8XZBtPge5rjJf3oMA2EMhWoJ8DB1UZ3ApjdF/NAl/Y1aPGP9Asr7dVcAotB60o/hT18yMCxGqeudM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCsvzskT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0008C4CEE7;
-	Wed, 23 Jul 2025 09:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753264743;
-	bh=yzX7va2srxpQsEnQrCqzNSATBc4ZgUiYAKZ5VunBZIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sCsvzskTIiUISMxcu3iQM4Mfm3ktUPUQqQFseLTYboda08WkEP3zRtfrg7joDVUka
-	 uvkd+F0St/5hNrzlG6oLHsGtTErA1r82vjNuu7cCbCYLabFfJjPJTPZfNijtXL7Y40
-	 9KWR90q5fYU9f6Z0Ajws0gD8n3urDLp4zn/r30AkGidlSE0aMtIdtgWcm7rjRfBGkl
-	 U37hX6bmqcHXcIbFp7lvRSOhPbFKHdQC4mzVsPecdfQer7drjEAEBtnmoV6+dNbuGh
-	 GYC689eGG45h6W8216ZdckWnBSlC0euXCL3NVZGIrqi6fyRHzICQjKp6RJgngvymvC
-	 ZhC3wk7Q5SAwg==
-Date: Wed, 23 Jul 2025 10:58:56 +0100
-From: Lee Jones <lee@kernel.org>
-To: a0282524688@gmail.com
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-	andi.shyti@kernel.org, mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
-	jdelvare@suse.com, alexandre.belloni@bootlin.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v14 0/7] Add Nuvoton NCT6694 MFD drivers
-Message-ID: <20250723095856.GT11056@google.com>
-References: <20250715025626.968466-1-a0282524688@gmail.com>
+	s=arc-20240116; t=1753264845; c=relaxed/simple;
+	bh=HPZwATo2v7l2HKnBADp1hY9EvYt/2s2FvfAZXn5KMgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k+D7dOS/CtDQqwwxvzjD9Y6e/aO7Hn0a4gz8bYFWxUMqXKWG6gBmugQzWJG9P3JaifFYXPOFqcOZft2w/7Zry/QHlkyNaXO5crgCqdzPEwuwtb1ma8pEMrTacswf3p8JgRBcViC6xPqKd5kaKkQxTKjrxaSFG0MEUhg8eBNzUWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ayGFd5cL; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b271f3ae786so4810590a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:00:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753264843; x=1753869643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HPZwATo2v7l2HKnBADp1hY9EvYt/2s2FvfAZXn5KMgo=;
+        b=ayGFd5cL3R3LoL/zdxpCk7+lUry2dJIAnit4piWTrOUcabWqWOyMcg0/8oQduUf18u
+         MIdeeQhnXgqg8PBeChU5pHpDYfMGcMzSDatDWMiEDjdMp+XI/SjjWqqm6yNYkarseP57
+         o8LytKX7r4zJBFJ1vUtjdfZODT2N9RCVoUngGqCyJB5E+oD3hCYZOMuxbkS4idwGYZID
+         4LNR2tyH4/cheSmGNr8eEeD/SaNbUqnQ3D0x6XDiX3SftHTog7u5Y/vdMBkgYexH1qMF
+         myDaYUu9fErPad0f6dTB4vL/CIiia0P0rmGuYLJt1tyaxg/ogzaSxDdSukIVdfNz4y+v
+         nd3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753264843; x=1753869643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HPZwATo2v7l2HKnBADp1hY9EvYt/2s2FvfAZXn5KMgo=;
+        b=QwgdUFs2/Se2dFTEWkqt151IfXumtw/lUH9+3V7RqZg0eEjgL0zTisKNHfHSJ7UNDe
+         uqN6HkTut0p5FRkhVxq0+OAI3xRW1NoanfUozCT3nu7yDahx2FxZWR8ljqPW8uirOt7H
+         nd2/jxSecf7eEy1zoH+qb6uN6/B8Kr/Ewo1FV8WkGlRhC/nBwbSR7gHbRaiCH3IQYkMI
+         1QQxc/3CM6PUbLSFop3gZvH/lBIalGpScyMT8Tt2BLe96YNoB1iDGO/A6Jtx3pQ53mQS
+         1Cj9AMgJr/g61kcWTzYXiMiAk1OeGqvDgfYsqYLaL5pdOTrmgs977pYg4eaqMGpGVInI
+         k2/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXt7xvEHl5j9VDqXPq591kUxBSjKuPaahVgJhD8Mw5dX65n+4Aop2g4nJ+uo2lt9u0jna3dcUc6SVRntNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw92fB8put4DnuOZ4LOVHtw5smzM7VDBKx/gaKvJoaIRHmO4qE7
+	Y4jeh7ONB2tbP2qWQxd9IKkegkhIrVnpNshjD2+M0UgcMRouYAXAk6BCkw7oHjdjVZngX1BqUNa
+	v+DZ0399pdGw3EzESPnn6wGyiwhjlzKv/+OsM49V0
+X-Gm-Gg: ASbGncvss0154q50xQBhwkw/3oz18u9QtUh9YChm9cgiB6dC4PpFnFfJ3QRyppp1eAm
+	7juNwJVZvVsZPYZX0BNFZBsUiaqSBqYvq1V9X6MO5goWm5e3RJMnWVXoh4vOTwd/EhMJxkuucw5
+	318hqhEpZVE2rTFOePAe1AtLIUSE4sipJsa1k7BLnCT43BiJT8m5dAN2FgglFKsxrXD8ek0Tt/S
+	D/39odkHLTstM+0D4fOqyDSlfpM+PeWVHI=
+X-Google-Smtp-Source: AGHT+IFKdgMVv6MdZ6th8VYi+G1eSJ+usUdsbGov5YnyFODN1/ouqeIDAQd3Vhyn+lwAM/oVscstn/wc15yDdHf9Va8=
+X-Received: by 2002:a17:90a:d004:b0:30a:4874:5397 with SMTP id
+ 98e67ed59e1d1-31e5076975dmr3527915a91.9.1753264842865; Wed, 23 Jul 2025
+ 03:00:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250715025626.968466-1-a0282524688@gmail.com>
+References: <687a71bf.a70a0220.693ce.006b.GAE@google.com> <nxgsgizgeja6265rgz3uezzpgy33toz7aiicwy6uf5g5orhbcj@qmqipkujhg5c>
+In-Reply-To: <nxgsgizgeja6265rgz3uezzpgy33toz7aiicwy6uf5g5orhbcj@qmqipkujhg5c>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Wed, 23 Jul 2025 12:00:29 +0200
+X-Gm-Features: Ac12FXzuflPvvUMLvR1nQ6j-JAG-PFzkYytPhhrcjQwHerDhhO2eoYNb1CHvQtw
+Message-ID: <CANp29Y4K9fU_QFye5E-J00PvY8FcCGtRFotY1yUAa8TmKFwsPQ@mail.gmail.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_get_next_dev
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: syzbot <syzbot+2b98caf09c41174a9697@syzkaller.appspotmail.com>, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Jul 2025, a0282524688@gmail.com wrote:
+On Sat, Jul 19, 2025 at 7:35=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> Will syzbot reopen if the fix is still in linux-next? Let's find out.
+>
+> #syz fix: bcachefs: Fix UAF by journal write path
+>
 
-> From: Ming Yu <a0282524688@gmail.com>
-> 
-> This patch series introduces support for Nuvoton NCT6694, a peripheral
-> expander based on USB interface. It models the chip as an MFD driver
-> (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
-> WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
-> 
-> The MFD driver implements USB device functionality to issue
-> custom-define USB bulk pipe packets for NCT6694. Each child device can
-> use the USB functions nct6694_read_msg() and nct6694_write_msg() to issue
-> a command. They can also request interrupt that will be called when the
-> USB device receives its interrupt pipe.
-> 
-> The following introduces the custom-define USB transactions:
-> 	nct6694_read_msg - Send bulk-out pipe to write request packet
-> 			   Receive bulk-in pipe to read response packet
-> 			   Receive bulk-in pipe to read data packet
-> 
-> 	nct6694_write_msg - Send bulk-out pipe to write request packet
-> 			    Send bulk-out pipe to write data packet
-> 			    Receive bulk-in pipe to read response packet
-
-[...]
-
-> Ming Yu (7):
->   mfd: Add core driver for Nuvoton NCT6694
->   gpio: Add Nuvoton NCT6694 GPIO support
->   i2c: Add Nuvoton NCT6694 I2C support
->   can: Add Nuvoton NCT6694 CANFD support
->   watchdog: Add Nuvoton NCT6694 WDT support
->   hwmon: Add Nuvoton NCT6694 HWMON support
->   rtc: Add Nuvoton NCT6694 RTC support
-> 
->  MAINTAINERS                         |  12 +
->  drivers/gpio/Kconfig                |  12 +
->  drivers/gpio/Makefile               |   1 +
->  drivers/gpio/gpio-nct6694.c         | 499 +++++++++++++++
->  drivers/hwmon/Kconfig               |  10 +
->  drivers/hwmon/Makefile              |   1 +
->  drivers/hwmon/nct6694-hwmon.c       | 949 ++++++++++++++++++++++++++++
->  drivers/i2c/busses/Kconfig          |  10 +
->  drivers/i2c/busses/Makefile         |   1 +
->  drivers/i2c/busses/i2c-nct6694.c    | 196 ++++++
->  drivers/mfd/Kconfig                 |  15 +
->  drivers/mfd/Makefile                |   2 +
->  drivers/mfd/nct6694.c               | 388 ++++++++++++
->  drivers/net/can/usb/Kconfig         |  11 +
->  drivers/net/can/usb/Makefile        |   1 +
->  drivers/net/can/usb/nct6694_canfd.c | 832 ++++++++++++++++++++++++
->  drivers/rtc/Kconfig                 |  10 +
->  drivers/rtc/Makefile                |   1 +
->  drivers/rtc/rtc-nct6694.c           | 297 +++++++++
->  drivers/watchdog/Kconfig            |  11 +
->  drivers/watchdog/Makefile           |   1 +
->  drivers/watchdog/nct6694_wdt.c      | 307 +++++++++
->  include/linux/mfd/nct6694.h         | 102 +++
->  23 files changed, 3669 insertions(+)
->  create mode 100644 drivers/gpio/gpio-nct6694.c
->  create mode 100644 drivers/hwmon/nct6694-hwmon.c
->  create mode 100644 drivers/i2c/busses/i2c-nct6694.c
->  create mode 100644 drivers/mfd/nct6694.c
->  create mode 100644 drivers/net/can/usb/nct6694_canfd.c
->  create mode 100644 drivers/rtc/rtc-nct6694.c
->  create mode 100644 drivers/watchdog/nct6694_wdt.c
->  create mode 100644 include/linux/mfd/nct6694.h
-
-I will apply this the other side of the pending merge-window.
-
--- 
-Lee Jones [李琼斯]
+Syzbot will actually "close' the bug only once the fix commit has
+reached all the fuzzed trees. So it should be okay.
 
