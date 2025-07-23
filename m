@@ -1,106 +1,414 @@
-Return-Path: <linux-kernel+bounces-743153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C276BB0FB3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F9EB0FB42
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 012D6544B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8E94E227F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB522222B4;
-	Wed, 23 Jul 2025 20:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61315230D1E;
+	Wed, 23 Jul 2025 20:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2FWV9ihP"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SyBtKbQt"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A1C5D8F0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1C11EE7B7;
+	Wed, 23 Jul 2025 20:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300881; cv=none; b=pHhP9d6tD5BmmLsp3y7ww3iHY7t1PU58cc4iadQVqtUggIJsnXNVNfdo3lTFL7eogjRd27XLIe1ACb9lTMk1aB9tRXskE31vei7cF8lVW0hjT8rluGMxIOzl8gkjQbujxJo0SW+cCpl85TpTFl6LTB/BhL8Yj6PkRT3nmP9ZyrI=
+	t=1753301127; cv=none; b=roAerfgwNBBuyVJxehbod07NEYRGD/fCKgchEO7Zk5T10KVYMIZhRI6qn/JpfF4qqWLvPi1GOetIqyNcrRKPd9y2/aZ/WNV2NK5RD1bHDhBrGixGGM7fnDpeVHlbqfAnhcC42WRO4iPShSilVrVoy0LdXqa4IeoRHJzPhbMavfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300881; c=relaxed/simple;
-	bh=mmfqhyu9vL1PIyA4FAolJ8zTTEeu0mpAwsXikAz/bGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qT6aAWVDox0czqN0KOUqh7TZ+P95fkixOzkHRs8CRmBZkKLVClMD2Imx0EMLC0kKZNnKvIrc+fj84sLhE4yx2JSPQ4sZ8GNok0BZ3ccdajiBglqy/Llam3EDf3XqC/kB5RhyFC9sPCkIflO/eSKF7aA3lT5a3uBhEvnM3PEtbuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2FWV9ihP; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso523a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753300878; x=1753905678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mmfqhyu9vL1PIyA4FAolJ8zTTEeu0mpAwsXikAz/bGo=;
-        b=2FWV9ihPtT1p2OV6zcXOkWC9q/0HphEiNNieJ4AS8E/U80N8rh6BpT2E9ekBpIwWc8
-         dxmsE+BW/1rfVAH2hCSCovKLSHIlNWAtyPgJqfkgD/tL9nbDk++KYGMabcZzjL238pUK
-         LkSBqufaAUMAKi/jiOvZGBW9ZJ0gLrYiHk8FEe/oCCR4uTeFSjcw7ldu4Xfo6+uHWZT+
-         xlCA3WOmBAthNhd67khRPJQHCvMwQxOHCJBHovLSbzBCuMl/Qq0zBKsK73OeXchUm78k
-         mjgFf1Mk3/poazZZCVD3f4m8k9ZDCZDFYo9dzF4BqSI69wo2yXDkecGsDwDKHx0wAGcr
-         cAVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753300878; x=1753905678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mmfqhyu9vL1PIyA4FAolJ8zTTEeu0mpAwsXikAz/bGo=;
-        b=QLyq8ZDD7NGwkq/229o783+OFO/Xlv5UwX2/KvmDIaa1QIf67R5Sd+5+9TWcvWuikw
-         M6uaQYgN5Nwc2sBLO0dMZ5oTM6mH2KTcuMuZl0ubOytozAMNpEbgLck1vGcH/qY44Rq3
-         yIkR8Auwctla8ATOa+xsvmIfol6XIOkpMRwSrRFp0se6eP8EG6uVNHlEjnlxFsO2+tZG
-         VxlWwvWec57TtfqQAmi7NpEwPy9+wEiPCCJ75+ToVYGaFTbjCtt8eejeNSaQR+Ie2qFO
-         rLtDXubm4Rwsp0rHlGTe1UBuTJFKe3pWFEmGRyF4bwTVTuKNYw4Yp2uF1eCwdZp/nSDY
-         CUFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdiu6jrY7YMwHej2bNISOvB93I26vptJYPI3xQYVnxV3/QTMoQTVPRjNntFiqib/ib4a7gsu8dwYf8MHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuZz2ynkPwRreyk71wTlvQNAXYfHFv6DoaOb/a1mProGRJAf0L
-	Kw1aossO1LgkPNNfBZhvx3S4NJ1FwM7UKgVf6Vg818XZ/aGhKIiGXiDsiHOfMdCGC7Uj1xsGakx
-	TgsVcwmJLTy+9n3iPUO7OUaz8M7SfzSXvQciPeMRD
-X-Gm-Gg: ASbGncshP/ebn+5iqeFr2P1dRyERrxGxVFECZBpLZKvHyv5SlwZSAcdvD/T2jt7L376
-	bU6A1OKTIvrWmNhqt6mOnM/zQMHBliQNkXPIAFm0aTEF1VAZ/0C61L7MR6O08mvrb1FbodniqKE
-	PATZhURRAiZaw9z1gc6/AI8cBf7INqVsUIIIeWSb3jqZ3QmfJFH9oNIQwxNcvcTW+/g+vZVus0m
-	fOsp+p93o92psa74OkRNkMt5CihaFPhBrs=
-X-Google-Smtp-Source: AGHT+IEyXGTWR0XZZte/eASlEm7qrI06sVh3iGjpWdMzm8/vWVFxkQtUydmt9xCTl4XoHoqeljjoWTaB4r+v4tgfXVM=
-X-Received: by 2002:a05:6402:290e:b0:60e:5391:a9e5 with SMTP id
- 4fb4d7f45d1cf-614c50e54camr10227a12.5.1753300876951; Wed, 23 Jul 2025
- 13:01:16 -0700 (PDT)
+	s=arc-20240116; t=1753301127; c=relaxed/simple;
+	bh=H7nBYB1X2440pJpSoN1Wn0N9DqqtQ4gh2JSuvy/9Oa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=grbexL086FGFSchJH353MqPeKuA+2fD2jPuBG3B53ouQKQ2g4p+e+gOaE1pfCBf88UAQ3Mn3/Aw3PoZp5oSJH9sSRf8ECad6+Jfm3nbqULnzYYsjGgnwtGhlUvqghE5IVpudPAGUhvbThopTSF6/glcMUCJ/75Z7a4PnmTf0M9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SyBtKbQt; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6DE3810272359;
+	Wed, 23 Jul 2025 22:05:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753301122; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=JRu1eEhqQTWRrM+V9siD8r1BXrfWDxNfwR7uGPU++GM=;
+	b=SyBtKbQtFJsJr8BbMMF4N8L0uuZ0w/k99K9Lgwo26BBDMWchLQ3FZDnWWOq3pb6F2H+WtB
+	IH+nJS/DzMJAuwGcepsegNzfGd+UQw22MHZhJhknKZ/tRgAoe1M/xgOHeRLGFKRwdYXD2r
+	95E75LHIK/XQR7g4vKwLJC+4XmCd5557t59okh64ES41tuBaHxSMNEiUjOH17vuxdAoBRs
+	/dO5I6YGCmlA9RA2dm6eFwf1/wYrat3uHsPR4y4rH7sW2HHPWRh/llRKP00X3Mc/lRYll3
+	XfBrBSFn3P805Vkju6oKOWmp5MwvuyFOmTq+xOE8v2pQOekag46+iKswvcWOIA==
+Date: Wed, 23 Jul 2025 22:05:17 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v15 06/12] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250723220517.063c204b@wsk>
+In-Reply-To: <20250722111639.3a53b450@wsk>
+References: <20250716214731.3384273-1-lukma@denx.de>
+	<20250716214731.3384273-7-lukma@denx.de>
+	<20250718182840.7ab7e202@kernel.org>
+	<20250722111639.3a53b450@wsk>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
- <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz> <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
- <c53b22c3-9f7f-4793-9d10-f4df861a3e32@suse.cz> <CAG48ez2cGX3e5bqgcw0OEnho29+YhwG2eOrHRgNwGAA_Nb65nw@mail.gmail.com>
- <28e1fc65-995c-4185-b5c2-7eb001312698@lucifer.local> <CAG48ez0KE9bfFJ+yAMPUAj=_hcNRfes3=nfQd7Rv95TSnHtUCg@mail.gmail.com>
-In-Reply-To: <CAG48ez0KE9bfFJ+yAMPUAj=_hcNRfes3=nfQd7Rv95TSnHtUCg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 23 Jul 2025 22:00:40 +0200
-X-Gm-Features: Ac12FXw7CgyRl7JjB9ySJ0F_t8x_hAcLmfJ4tfnYlheNfb0W0Wn0LvVOrf4lVAk
-Message-ID: <CAG48ez0782x2dqa5LrK2cf9M0_Q=Gvo5tXsUFQDtyK00LpcvyQ@mail.gmail.com>
-Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
- vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>, 
-	kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/TD4of5q5UnstYcIEUgvkE=c";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
+
+--Sig_/TD4of5q5UnstYcIEUgvkE=c
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 9:52=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> I'm not sure if I'm understanding you correctly; but yes,
-> __vma_enter_locked() waits for all the waiters to drop their
-> "refcounts". (It's not really a refcount, you can also think of it as
-> a sleepable read-write lock where the low bits are the number of
-> readers.)
+Hi Jakub, Paolo,
 
-Sorry, that's not entirely true, since an attached VMA has a refcount
-elevated by one. It's kind of a refcount, and kind of forms part of a
-sleepable read-write lock, it's complicated.
+Do you have more comments and questions regarding this driver after my
+explanation?
+
+Shall I do something more?
+
+Thanks in advance for you feedback.
+
+> Hi Jakub,
+>=20
+> > On Wed, 16 Jul 2025 23:47:25 +0200 Lukasz Majewski wrote: =20
+> > > +static netdev_tx_t mtip_start_xmit_port(struct sk_buff *skb,
+> > > +					struct net_device *dev,
+> > > int port) +{
+> > > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > > +	struct switch_enet_private *fep =3D priv->fep;
+> > > +	unsigned short status;
+> > > +	struct cbd_t *bdp;
+> > > +	void *bufaddr;
+> > > +
+> > > +	spin_lock(&fep->hw_lock);   =20
+> >=20
+> > I see some inconsistencies in how you take this lock.
+> > Bunch of bare spin_lock() calls from BH context, but there's also
+> > a _irqsave() call in mtip_adjust_link(). =20
+>=20
+> In the legacy NXP (Freescale) code for this IP block (i.e. MTIP
+> switch) the recommended way to re-setup it, when link or duplex
+> changes, is to reset and reconfigure it.
+>=20
+> It requires setting up interrupts as well... In that situation, IMHO
+> disabling system interrupts is required to avoid some undefined
+> behaviour.
+>=20
+> > Please align to the strictest
+> > context (not sure if the irqsave is actually needed, at a glance,
+> > IOW whether the lock is taken from an IRQ) =20
+>=20
+> The spin_lock() for xmit port is similar to what is done for
+> fec_main.c. As this switch uses single uDMA for both ports as well as
+> there is no support (and need) for multiple queues it can be omitted.
+>=20
+> >  =20
+> > > +	if (!fep->link[0] && !fep->link[1]) {
+> > > +		/* Link is down or autonegotiation is in
+> > > progress. */
+> > > +		netif_stop_queue(dev);
+> > > +		spin_unlock(&fep->hw_lock);
+> > > +		return NETDEV_TX_BUSY;
+> > > +	}
+> > > +
+> > > +	/* Fill in a Tx ring entry */
+> > > +	bdp =3D fep->cur_tx;
+> > > +
+> > > +	/* Force read memory barier on the current transmit
+> > > description */   =20
+> >=20
+> > Barrier are between things. What is this barrier separating, and
+> > what write barrier does it pair with? As far as I can tell cur_tx
+> > is just a value in memory, and accesses are under ->hw_lock, so
+> > there should be no ordering concerns. =20
+>=20
+> The bdp is the uDMA descritptor (memory allocated in the coherent dma
+> area). It is used by the uDMA when data is transferred to MTIP switch
+> internal buffer.
+>=20
+> The bdp->cbd_sc is a half word, which is modified by uDMA engine, to
+> indicate if there are errors or transfer has ended.
+>=20
+> The rmb() shall improve robustness - it assures that the status
+> corresponds to what was set by uDMA. On the other hand dma coherent
+> allocation shall do this as well.
+>=20
+> The fec_main.c places the rmb() in similar places, so I followed their
+> approach.
+>=20
+> >  =20
+> > > +	rmb();
+> > > +	status =3D bdp->cbd_sc;
+> > > +
+> > > +	if (status & BD_ENET_TX_READY) {
+> > > +		/* All transmit buffers are full. Bail out.
+> > > +		 * This should not happen, since dev->tbusy
+> > > should be set.
+> > > +		 */
+> > > +		netif_stop_queue(dev);
+> > > +		dev_err(&fep->pdev->dev, "%s: tx queue full!.\n",
+> > > dev->name);   =20
+> >=20
+> > This needs to be rate limited, we don't want to flood the logs in
+> > case there's a bug. =20
+>=20
+> +1
+>=20
+> >=20
+> > Also at a glance it seems like you have one fep for multiple
+> > netdevs. =20
+>=20
+> Yes.
+>=20
+> > So stopping one netdev's Tx queue when fep fills up will not stop
+> > the other ports from pushing frames, right? =20
+>=20
+> This is a bit more complicated...
+>=20
+> Other solutions - like cpsw_new - are conceptually simple; there are
+> two DMAs to two separate eth IP blocks.
+> During startup two separate devices are created. When one wants to
+> enable bridge (i.e. start in-hw offloading) - just single bit is setup
+> and ... that's it.
+>=20
+> With vf610 / imx287 and MTIP it is a bit different (imx287 is even
+> worse as second ETH interface has incomplete functionality by design).
+>=20
+> When switch is not active - you have two uDMA ports to two ENET IP
+> blocks. Full separation. That is what is done with fec_main.c driver.
+>=20
+> When you enable MTIP switch - then you have just a single uDMA0 active
+> for "both" ports. In fact you "bridge" two ports into a single one -
+> that is why Freescale/NXP driver (for 2.6.y) just had eth0 to "model"
+> bridged interfaces. That was "simpler" (PHY management was done in the
+> driver as well).
+>=20
+> Now, in this driver, we do have two network devices, which are
+> "bridged" (so there is br0). And of course there must be separation
+> between lan0/1 when this driver is used, but bridge is not (yet)
+> created. This works :-)
+>=20
+>=20
+> So I do have - 2x netdevs (handled by single uDMA0) + 2PHYS + br0 +
+> NAPI + switchdev (to avoid broadcast frame storms + {R}STP + FDB -
+> WIP).
+>=20
+>=20
+> Just pure fun :-) to model it all ... and make happy all maintainers
+> :-)
+>=20
+> >  =20
+> > > +		spin_unlock(&fep->hw_lock);
+> > > +		return NETDEV_TX_BUSY;
+> > > +	}
+> > > +
+> > > +	/* Clear all of the status flags */
+> > > +	status &=3D ~BD_ENET_TX_STATS;
+> > > +
+> > > +	/* Set buffer length and buffer pointer */
+> > > +	bufaddr =3D skb->data;
+> > > +	bdp->cbd_datlen =3D skb->len;
+> > > +
+> > > +	/* On some FEC implementations data must be aligned on
+> > > +	 * 4-byte boundaries. Use bounce buffers to copy data
+> > > +	 * and get it aligned.spin
+> > > +	 */
+> > > +	if ((unsigned long)bufaddr & MTIP_ALIGNMENT) {   =20
+> >=20
+> > I think you should add=20
+> >=20
+> > 	if ... ||
+> >            fep->quirks & FEC_QUIRK_SWAP_FRAME)
+> >=20
+> > here. You can't modify skb->data without calling skb_cow_data()
+> > but you already have buffers allocated so can as well use them. =20
+>=20
+> The vf610 doesn't need the frame to be swapped, but has requirements
+> for alignment as well.
+>=20
+> I would keep things as they are now - as they just improve
+> readability.
+>=20
+> Please keep in mind that this version only supports imx287, but the
+> plan is to add vf610 as well (to be more specific - this driver also
+> works on vf610, but I plan to add those patches after this one is
+> accepted and pulled).=20
+>=20
+> >  =20
+> > > +		unsigned int index;
+> > > +
+> > > +		index =3D bdp - fep->tx_bd_base;
+> > > +		memcpy(fep->tx_bounce[index],
+> > > +		       (void *)skb->data, skb->len);   =20
+> >=20
+> > this fits on one 80 char line BTW, quite easily:
+> >=20
+> > 		memcpy(fep->tx_bounce[index], (void *)skb->data,
+> > skb->len);
+> >=20
+> > Also the cast to void * is not necessary in C. =20
+>=20
+> +1
+>=20
+> >  =20
+> > > +		bufaddr =3D fep->tx_bounce[index];
+> > > +	}
+> > > +
+> > > +	if (fep->quirks & FEC_QUIRK_SWAP_FRAME)
+> > > +		swap_buffer(bufaddr, skb->len);
+> > > +
+> > > +	/* Save skb pointer. */
+> > > +	fep->tx_skbuff[fep->skb_cur] =3D skb;
+> > > +
+> > > +	fep->skb_cur =3D (fep->skb_cur + 1) & TX_RING_MOD_MASK;   =20
+> >=20
+> > Not sure if this is buggy, but maybe delay updating things until the
+> > mapping succeeds? Fewer things to unwind. =20
+>=20
+> Yes, the skb storage as well as ring buffer modification can be done
+> after dma mapping code.
+>=20
+> >  =20
+> > > +	/* Push the data cache so the CPM does not get stale
+> > > memory
+> > > +	 * data.
+> > > +	 */
+> > > +	bdp->cbd_bufaddr =3D dma_map_single(&fep->pdev->dev,
+> > > bufaddr,
+> > > +					  MTIP_SWITCH_TX_FRSIZE,
+> > > +					  DMA_TO_DEVICE);
+> > > +	if (unlikely(dma_mapping_error(&fep->pdev->dev,
+> > > bdp->cbd_bufaddr))) {
+> > > +		dev_err(&fep->pdev->dev,
+> > > +			"Failed to map descriptor tx buffer\n");
+> > > +		dev->stats.tx_errors++;
+> > > +		dev->stats.tx_dropped++;   =20
+> >=20
+> > dropped and errors are two different counters
+> > I'd stick to dropped =20
+>=20
+> Ok.
+>=20
+> >  =20
+> > > +		dev_kfree_skb_any(skb);
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	/* Send it on its way.  Tell FEC it's ready, interrupt
+> > > when done,
+> > > +	 * it's the last BD of the frame, and to put the CRC on
+> > > the end.
+> > > +	 */
+> > > +
+> > > +	status |=3D (BD_ENET_TX_READY | BD_ENET_TX_INTR
+> > > +			| BD_ENET_TX_LAST | BD_ENET_TX_TC);   =20
+> >=20
+> > The | goes at the end of the previous line, start of new line
+> > adjusts to the opening brackets..
+> >  =20
+>=20
+> I've refactored it.
+>=20
+> > > +
+> > > +	/* Synchronize all descriptor writes */
+> > > +	wmb();
+> > > +	bdp->cbd_sc =3D status;
+> > > +
+> > > +	netif_trans_update(dev);   =20
+> >=20
+> > Is this call necessary? =20
+>=20
+> I've added it when I was forward porting the old driver. It can be
+> removed.
+>=20
+> >  =20
+> > > +	skb_tx_timestamp(skb);
+> > > +
+> > > +	/* Trigger transmission start */
+> > > +	writel(MCF_ESW_TDAR_X_DES_ACTIVE, fep->hwp + ESW_TDAR);
+> > > +
+> > > +	dev->stats.tx_bytes +=3D skb->len;
+> > > +	/* If this was the last BD in the ring,
+> > > +	 * start at the beginning again.
+> > > +	 */
+> > > +	if (status & BD_ENET_TX_WRAP)
+> > > +		bdp =3D fep->tx_bd_base;
+> > > +	else
+> > > +		bdp++;
+> > > +
+> > > +	if (bdp =3D=3D fep->dirty_tx) {
+> > > +		fep->tx_full =3D 1;
+> > > +		netif_stop_queue(dev);
+> > > +	}
+> > > +
+> > > +	fep->cur_tx =3D bdp;
+> > > + err:
+> > > +	spin_unlock(&fep->hw_lock);
+> > > +
+> > > +	return NETDEV_TX_OK;
+> > > +}   =20
+>=20
+>=20
+> Thanks for the feedback.
+>=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> --
+>=20
+> DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+> Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+> Groebenzell, Germany
+> Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email:
+> lukma@denx.de
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/TD4of5q5UnstYcIEUgvkE=c
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmiBQH0ACgkQAR8vZIA0
+zr1Utgf6Ard+NJXd0ZSwPbQGeReeiTVtyyTnWcReC90yLPoHeAp0XlMJjBDXKjd4
+UB7FYVTELP+NVWQFhAutUrWMlMaiAetWXTwiYgxmCa5O05HuHATTkaN7dRZ3iVQc
+lvPpoTZfRXf2QPEJ7PaoPsvqoVew1GINeqqKmqodBbDvOz7ykY7ixvjbrw/CLFXM
+q/3gN2TzXmKS1sTiM0y05r/V7XunIzrV4eZVcEJAy1p7WuE56VqHssJVf33FOCU8
+WJHa9x6eli6qVbdsU6EbtX5yI3cJpTJtqi55COBtFAd1h7EahG44/wtJ6Hjfzh7+
+zH/lEkH06w5PbB/+xFJag5+KwzvlcQ==
+=EEYc
+-----END PGP SIGNATURE-----
+
+--Sig_/TD4of5q5UnstYcIEUgvkE=c--
 
