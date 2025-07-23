@@ -1,144 +1,142 @@
-Return-Path: <linux-kernel+bounces-742838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800D7B0F73B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:38:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06F4B0F75A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF131C83C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800EA567174
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B25201278;
-	Wed, 23 Jul 2025 15:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCAF130E58;
+	Wed, 23 Jul 2025 15:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYe3g8ss"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=nixdorf.dev header.i=@nixdorf.dev header.b="ZUJYBkuF"
+Received: from shadowice.org (shadowice.org [95.216.8.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8655E1DF24F;
-	Wed, 23 Jul 2025 15:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E241A5BAE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.8.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285071; cv=none; b=jHbFiqQYCtvy6G0Q1ETKkwFdZiCaLJQwfrYS6kew4wQ/i1vzCg9hXt/v9Y4EGJB3k4khNsegnDcuaq8suJeeUecs2GXArcCHo1QiEqGOz08+GEnp4FPh+QBT96yJCSil1t1TRiFFgVQMiMigwsh7f1JqwUHidr3Omvdhc65mhjY=
+	t=1753285517; cv=none; b=Q01lNwKE2+xpw2AgCAGM83wSHIDD5VPF4lJs70TA0N9QDpG/NEIcrc4VYfvIogPAfMNB4PT9nzFeQpa60AeQ9Y9pGtZ3fU4PdnB9GuoIKzcQOS+9FppXYuNJ6oWPHkRM/wiNZE5piDR6fsgohmwYgLqMgpgmVGnDcqidTBbHTsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285071; c=relaxed/simple;
-	bh=GkaLzbRmFC1Xm8xfzJ9FdN3snJHt4yOsk0bZUbSNsDA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hJqcEXnd5yo6ViaVllCRw/s+6E/vThMv8n/HN5ZnYhvUKJQGfMYWG2d3CPDWxPFbgbTKyy+4gIZjt7xocdHv9W7UBFKyn9fREV0iti1JDNRy0XPKSbKEMQsDkgOIoqpBAT7DHCcSJ/23uhlsnqXGZGrU86F16NkEr13yf4KutEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rYe3g8ss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04058C4CEE7;
-	Wed, 23 Jul 2025 15:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753285071;
-	bh=GkaLzbRmFC1Xm8xfzJ9FdN3snJHt4yOsk0bZUbSNsDA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rYe3g8ss9GLl7NVkp32MA8JIVZZt4Np4NFz5Hfh9U7Etmttw4ZDJySVRByir0p/kJ
-	 nHBZUzN0q11u28UmSSjeDabHtVaAWvLyZSa69Q1jOj6ZJsUwJXRSYjHCq5YD6WKZv/
-	 ZQSnAIwBrYoemZFPOYAQkq3GERtDMQrVLueDzPq8A7UP109lGNx8HSBCA8xtLw77L4
-	 znazvut00D4zSgU9qPqLw0s9e+qynnYtiVHj/M6b46khRWNr/e8m7tqSmx284C9+O7
-	 iRytOmoDV1JJfQpRuI81LLmplhYucC3zuV2IyVhlE+hKb5DVNi0W2tSEb6aBwZOF8t
-	 jxAqTJG9jSSTA==
-Date: Thu, 24 Jul 2025 00:37:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ben Hutchings <benh@debian.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] bootconfig: Fix unaligned access when building footer
-Message-Id: <20250724003747.be2a733e2e7fcf8a9e263cc4@kernel.org>
-In-Reply-To: <aIC-NTw-cdm9ZGFw@decadent.org.uk>
-References: <aIC-NTw-cdm9ZGFw@decadent.org.uk>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753285517; c=relaxed/simple;
+	bh=rTvu3BJdQlechtwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E0oAPg6SebssdDWhCadWRARpVTivKCTJ69aIr4NV7CxGfjaQoa5ZONmXBH0OD4+U1qOnvIyGRPnowG1AEF++Fz81nYd2+171E2EpH7R1YLLp8eeezwKTNkdLWzd+bC7YlIbsjXWXvNumbHtq/fFyDN0fNc5hNzRdwgMf9KyEeLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nixdorf.dev; spf=none smtp.mailfrom=nixdorf.dev; dkim=fail (0-bit key) header.d=nixdorf.dev header.i=@nixdorf.dev header.b=ZUJYBkuF reason="key not found in DNS"; arc=none smtp.client-ip=95.216.8.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nixdorf.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nixdorf.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=default; bh=rTvu3BJdQlec
+	htwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=; h=cc:to:subject:date:from;
+	d=nixdorf.dev; b=ZUJYBkuFjsA2Q9vbOiaXmTci19ACs3EWH8KHBY5je/Ltk5rTLMYHY
+	wCaTpSLlI+dg2WdhxlAabKLVpXdA+ecAKCKtSE4QuCHNx6LBwzvKDpJrS2n7k1YCbSgbPA
+	vJn03NvaKB3Wyr9dwm/niFTs+Uk3EKxU6Ple6yFXFLc1w3hw=
+Received: from [127.0.0.1] (p4fe9d2f1.dip0.t-ipconnect.de [79.233.210.241])
+	by shadowice.org (OpenSMTPD) with ESMTPSA id 0b804b51 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 23 Jul 2025 17:38:32 +0200 (CEST)
+From: Johannes Nixdorf <johannes@nixdorf.dev>
+Date: Wed, 23 Jul 2025 17:38:20 +0200
+Subject: [PATCH] seccomp: Fix a race with WAIT_KILLABLE_RECV if the tracer
+ replies too fast
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-seccomp-races-v1-1-bef5667ce30a@nixdorf.dev>
+X-B4-Tracking: v=1; b=H4sIAOsBgWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcyND3eLU5OT83ALdosTk1GLdVEtzC0vzFLMUS5MkJaCegqLUtMwKsHn
+ RsbW1AClNuQZfAAAA
+X-Change-ID: 20250721-seccomp-races-e97897d6d94b
+To: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
+ Will Drewry <wad@chromium.org>, Sargun Dhillon <sargun@sargun.me>
+Cc: linux-kernel@vger.kernel.org, Ali Polatel <alip@chesswob.org>, 
+ Johannes Nixdorf <johannes@nixdorf.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753285111; l=3055;
+ i=johannes@nixdorf.dev; s=20250722; h=from:subject:message-id;
+ bh=rTvu3BJdQlechtwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=;
+ b=x//spWWrzD0eyi7yYTuHF/k1StjO1VXmjJZ1SX3Cb3RZozfwhtmI2Q8aTJ5uYIQbMkX9Ipx4v
+ Dto3xP8jCMwDuN1nAwHho26PKmdIw8RVvm3iakGUBlasR14qDczteMd
+X-Developer-Key: i=johannes@nixdorf.dev; a=ed25519;
+ pk=6Mv9a34ZxWm/f3K6MdzLRKgty83xawuXPS5bMkbLzWs=
 
-On Wed, 23 Jul 2025 12:49:25 +0200
-Ben Hutchings <benh@debian.org> wrote:
+Normally the tracee starts in SECCOMP_NOTIFY_INIT, sends an
+event to the tracer, and starts to wait interruptibly. With
+SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV, if the tracer receives the
+message (SECCOMP_NOTIFY_SENT is reached) while the tracee was waiting
+and is subsequently interrupted, the tracee begins to wait again
+uninterruptibly (but killable).
 
-> Currently we add padding between the bootconfig text and footer to
-> ensure that the footer is aligned within the initramfs image.
-> However, because only the bootconfig data is held in memory, not the
-> full initramfs image, the footer may not be naturally aligned in
-> memory.
-> 
-> This can result in an alignment fault (SIGBUS) when writing the footer
-> on some architectures, such as sparc.
+This fails if SECCOMP_NOTIFY_REPLIED is reached before the tracee
+is interrupted, as the check only considered SECCOMP_NOTIFY_SENT as a
+condition to begin waiting again. In this case the tracee is interrupted
+even though the tracer already acted on its behalf. This breaks the
+assumption SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV wanted to ensure,
+namely that the tracer can be sure the syscall is not interrupted or
+restarted on the tracee after it is received on the tracer. Fix this
+by also considering SECCOMP_NOTIFY_REPLIED when evaluating whether to
+switch to uninterruptible waiting.
 
-Aah, got it. 
+With the condition changed the loop in seccomp_do_user_notification()
+would exit immediately after deciding that noninterruptible waiting
+is required if the operation already reached SECCOMP_NOTIFY_REPLIED,
+skipping the code that processes pending addfd commands first. Prevent
+this by executing the remaining loop body one last time in this case.
 
-> 
-> Build the footer in a struct on the stack before adding it to the
-> buffer.
-> 
-> References: https://buildd.debian.org/status/fetch.php?pkg=linux&arch=sparc64&ver=6.16%7Erc7-1%7Eexp1&stamp=1753209801&raw=0
-> Signed-off-by: Ben Hutchings <benh@debian.org>
-> ---
->  tools/bootconfig/main.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
-> index 4988e23a1422..57c669d2aa90 100644
-> --- a/tools/bootconfig/main.c
-> +++ b/tools/bootconfig/main.c
-> @@ -11,6 +11,7 @@
->  #include <string.h>
->  #include <errno.h>
->  #include <endian.h>
-> +#include <assert.h>
->  
->  #include <linux/bootconfig.h>
->  
-> @@ -363,7 +364,12 @@ static int delete_xbc(const char *path)
->  
->  static int apply_xbc(const char *path, const char *xbc_path)
->  {
-> -	char *buf, *data, *p;
-> +	struct {
-> +		uint32_t size;
-> +		uint32_t csum;
-> +		char magic[BOOTCONFIG_MAGIC_LEN];
-> +	} footer;
+Fixes: c2aa2dfef243 ("seccomp: Add wait_killable semantic to seccomp user notifier")
+Reported-by: Ali Polatel <alip@chesswob.org>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220291
+Signed-off-by: Johannes Nixdorf <johannes@nixdorf.dev>
+---
+ kernel/seccomp.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Don't we need __attribute__((__packed__)) for the footer?
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 41aa761c7738cefe01ca755f78f12844d7186e2a..fa44bcb6aa47df88bdc5951217d99779bd56ab70 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1139,7 +1139,7 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
+ static bool should_sleep_killable(struct seccomp_filter *match,
+ 				  struct seccomp_knotif *n)
+ {
+-	return match->wait_killable_recv && n->state == SECCOMP_NOTIFY_SENT;
++	return match->wait_killable_recv && n->state >= SECCOMP_NOTIFY_SENT;
+ }
+ 
+ static int seccomp_do_user_notification(int this_syscall,
+@@ -1186,13 +1186,12 @@ static int seccomp_do_user_notification(int this_syscall,
+ 
+ 		if (err != 0) {
+ 			/*
+-			 * Check to see if the notifcation got picked up and
+-			 * whether we should switch to wait killable.
++			 * Check to see whether we should switch to wait
++			 * killable. Only return the interrupted error if not.
+ 			 */
+-			if (!wait_killable && should_sleep_killable(match, &n))
+-				continue;
+-
+-			goto interrupted;
++			if (!(!wait_killable && should_sleep_killable(match,
++								      &n)))
++				goto interrupted;
+ 		}
+ 
+ 		addfd = list_first_entry_or_null(&n.addfd,
 
-Thank you,
+---
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+change-id: 20250721-seccomp-races-e97897d6d94b
 
-> +	char *buf, *data;
->  	size_t total_size;
->  	struct stat stat;
->  	const char *msg;
-> @@ -433,17 +439,13 @@ static int apply_xbc(const char *path, const char *xbc_path)
->  	size += pad;
->  
->  	/* Add a footer */
-> -	p = data + size;
-> -	*(uint32_t *)p = htole32(size);
-> -	p += sizeof(uint32_t);
-> +	footer.size = htole32(size);
-> +	footer.csum = htole32(csum);
-> +	memcpy(footer.magic, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
-> +	static_assert(sizeof(footer) == BOOTCONFIG_FOOTER_SIZE);
-> +	memcpy(data + size, &footer, BOOTCONFIG_FOOTER_SIZE);
->  
-> -	*(uint32_t *)p = htole32(csum);
-> -	p += sizeof(uint32_t);
-> -
-> -	memcpy(p, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
-> -	p += BOOTCONFIG_MAGIC_LEN;
-> -
-> -	total_size = p - data;
-> +	total_size = size + BOOTCONFIG_FOOTER_SIZE;
->  
->  	ret = write(fd, data, total_size);
->  	if (ret < total_size) {
-
-
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Johannes Nixdorf <johannes@nixdorf.dev>
+
 
