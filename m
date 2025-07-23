@@ -1,775 +1,209 @@
-Return-Path: <linux-kernel+bounces-743230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18D3B0FC2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6546EB0FC32
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 23:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9429A1CC2485
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213491AA5E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECBE2586DA;
-	Wed, 23 Jul 2025 21:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A694427056F;
+	Wed, 23 Jul 2025 21:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F5zu/qie"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ioPP6HYV"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55B20D4E9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 21:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8782126CE2C;
+	Wed, 23 Jul 2025 21:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753306415; cv=none; b=Q18kounwtrV+uTS4LWokEMVTvLpOLWrXA2BRe3b+zyGnNXaxGDXsb3+McpeXelg2xqvyZ5EZ/2ij+81xxAlLBiQcFsW70V0HOmyDY+5QKS/H2aW0AIfarlU0I5JI5rCvdHMz+jilumFLoMdQghzHYCkf10Txd7NtSlDIDYAxqlM=
+	t=1753306810; cv=none; b=hYl92KaUIhgR+8hsyuxhSw+PfLk0JOk174Oz7a0eqMpvie6wLaLHiR5KzwBGRE+hfnS24dpBY0L95gCIX3hlzKI98KdkHvRT/9d0QqSNDVPQ48A0jKx5GsS60VTwNQfRfqvK2T74rtiSrsyo1uM7NWaokniqFTFDfehpIRNoDlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753306415; c=relaxed/simple;
-	bh=giS4PhgAHowRACp0iAQv2s7oG1TP1moHPfASTvmUoSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WK8XFWyXinNsGVOFhA4vpgLgHJ9z3UKAePoQ9Cc89coK6MgKiv+HK+NJpOW0GNEDJnI+iIqbvO0YcRStytyKUWAJ3t1se9aK84qa6XNhJF9AWO8kTKJ29xQ5fRzEJqLPP3c0hDpX+7YQbvcpp8KRwPGrUxG77y2DFxcbhy6ExGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F5zu/qie; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e2429bd4b3so15305ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753306412; x=1753911212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2l1TvtYU06DO48M9oNAGeqm7CbRPUb25mVR46EGpM0c=;
-        b=F5zu/qiewuQ1vTOgOCEi/iU6FgNfHfW0oZeqwJaXhY0aB+WT37ToJ/4fffRO1EBRU+
-         Dhy7jB7ZWv72e1kTUoYgbRGged4/XVvklvjmCkVnjoC0UtECUhXa7UXXDELaQMsIb8jy
-         PMqIMrc0Qv4Y3Ib8KxJvmNDi1V3Xl3TJCT+5ua5KP0MZyMy8sitUhZJotV5r9346b7mD
-         fT3JRQbj9q0wJy1xpdlWX7qlExLSpBbEX5ChL/t+c34YyJk0M5889gZ6oj9Zu+f6LP5f
-         /A2N795K6BzOwgaQvp4/24h0ziZlI5e9Y3GAmqrsCb/6QjDP90k7RN42ehfFeRjsvMYD
-         EKcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753306412; x=1753911212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2l1TvtYU06DO48M9oNAGeqm7CbRPUb25mVR46EGpM0c=;
-        b=jhTAtFg2W8ar0spJx3dP1BehXHbpZ/ONUlzj2nOm1LlguO4+gVUjHWN34gAiBoRTgF
-         TfB5UmJyRLMzXeNCBjzQM1Xmcyziu9dMqE1HwMEmhXfLrqVylXXPBl42ptIbDrEwQ46m
-         uiOeYyWkx0v3XQ7a3x7OR59kgPxkdkHY8Bg+dPW3qBYh57iHBEBga3458G2ZfemJK8t8
-         IBfN0kbK617HvGfKpvlQsvx46uBcNmRZbIMdjgTCOwq5H7feIiziQACjl/gO6cy4nylS
-         QhKKJRBVexhmdQXpbwIApR/nTvtH3ew2PsOabsMVfzkKQK/MHgadCEU+1Oh8w5kXx9nI
-         AkrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCB1bCm3sofD598UzoI2AvCgrfb0WR+/Sp+fwNGYqeRFGgmelyz0thDTSOq0Zu5WQ4PWNSg7r0G5Ms4e8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe0po5ZPsElhF2PTf9/YGpKHteXJBnL4oKmwC2HoyrcCujhgab
-	LMU1TqHdryBXrCZ99jBSFvs2z4CI6bd8RyP9SNaKBTkuQ2B2wevJfYaAiMMJ27HbLeLFEZvp3so
-	1rDc7DfRsdeNuK93p7ENsIODcPQsaB33qMUPTVuvv
-X-Gm-Gg: ASbGncukkm8xXrn3jOuSe+OFPj/vj94wZWlJF8iVsOZLfuzkZe3DFMAWLfWYAezUfCs
-	VfuyMoJ2HTsKfFXuc7FjW/jcylAukBNMuUQ6lLC86IBrG7wTvAQvw8EI2XxbALUMPZxdxZcls2E
-	xj1fg3nhwgx940z+7SOs2vnsGp5ZCwXxhCDdEjS0Vqi0wChFjQJuUAKKUZPE9uWhaRH8co5HHD6
-	sR4IhuLhWHDqkSf9Qzd4suQbT/nqImUaMN8aD/WNIh62UU=
-X-Google-Smtp-Source: AGHT+IHboYtQXjS0l9l2eeZw4V4NPWUdJyvH73iBU6KOOIahIsryDG4w11+MdEnLw1e6AUlWsW6H12RjMOjXxUlJT20=
-X-Received: by 2002:a05:6e02:170a:b0:3e0:5511:9796 with SMTP id
- e9e14a558f8ab-3e3b7328ac6mr316165ab.1.1753306411619; Wed, 23 Jul 2025
- 14:33:31 -0700 (PDT)
+	s=arc-20240116; t=1753306810; c=relaxed/simple;
+	bh=UufNsZizet1xLf97MQ8+VfzME0OpE/bKoTPWe0JIP9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBTR+9V+QU7aaCGaNjZWo0P+lkAaeNpUpX/XIPAHqwOVCVN72PFY6FSN02xl0vjxHqqCqM1gdxKregrizTtKxqg79lZ+fRILMmk9ebZSao684lXKFmdniru8J8XkWoonw9Ibv2A2lhSXVgrVjnUoX71WGlA03iKrnrDLAgumqIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ioPP6HYV; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1E98343369;
+	Wed, 23 Jul 2025 21:39:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753306799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wTDPZISTAtDJweAfErLxD5sezF7OlcREwST/Cpk6fh8=;
+	b=ioPP6HYV9KFJEssOZLj06yxviLP+9b7qFDJxC8kvbVNfk3am45fuBDB6O9wn4yaeJUlI7u
+	i8jDmTZ9BPZGx1dri2sLgKNrhIQPtni6wbjpbYAOg2h/gF1yjCZhkGqpc9VlAdTF7ZOTES
+	1pcS6O+Y+8qLJfj6URFmNuw/MgL1TKIHjtUpXS2iLH1C14zrNgaRDOLtOK2VyXxhDahVkF
+	fox+A7O5baQHuO/9EQFJkpNUAsDBkkKHn5FTOqdNN7ryQYJnN7bkOEQe+P8o2CR3424bTJ
+	0E/BsoEjG8A8aTVkHaLVqrZG+QBno05WF+S1D+83Z+uhD9O6g59GeZu/PxNw3w==
+Date: Wed, 23 Jul 2025 23:39:56 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Alex Elder <elder@riscstar.com>
+Cc: lee@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	troymitchell988@gmail.com, guodong@riscstar.com,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 5/8] rtc: spacemit: support the SpacemiT P1 RTC
+Message-ID: <20250723213956570da462@mail.local>
+References: <20250710175107.1280221-1-elder@riscstar.com>
+ <20250710175107.1280221-6-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714164405.111477-1-irogers@google.com> <20250714164405.111477-12-irogers@google.com>
- <66fd717b870b63ec703b4bf0bbcc50a6d0742c30.camel@intel.com>
-In-Reply-To: <66fd717b870b63ec703b4bf0bbcc50a6d0742c30.camel@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 23 Jul 2025 14:33:20 -0700
-X-Gm-Features: Ac12FXwv-_8wU8X10St6rrGy9T61TOJxJK17E_R-NBsu01kZIPmOulTOm1Q0KOA
-Message-ID: <CAP-5=fWBMRTg+rcRVZRNZA5MirZrQ+_kgYWwAvNQ3EZJBkdeNA@mail.gmail.com>
-Subject: Re: [PATCH v7 11/16] perf ilist: Add new python ilist command
-To: "Falcon, Thomas" <thomas.falcon@intel.com>
-Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
-	"mhiramat@kernel.org" <mhiramat@kernel.org>, "tmricht@linux.ibm.com" <tmricht@linux.ibm.com>, 
-	"xu.yang_2@nxp.com" <xu.yang_2@nxp.com>, "howardchu95@gmail.com" <howardchu95@gmail.com>, 
-	"Hunter, Adrian" <adrian.hunter@intel.com>, "ak@linux.intel.com" <ak@linux.intel.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "gautam@linux.ibm.com" <gautam@linux.ibm.com>, 
-	"ctshao@google.com" <ctshao@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"james.clark@linaro.org" <james.clark@linaro.org>, "collin.funk1@gmail.com" <collin.funk1@gmail.com>, 
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"linux@treblig.org" <linux@treblig.org>, "Wang, Weilin" <weilin.wang@intel.com>, 
-	"yangtiezhu@loongson.cn" <yangtiezhu@loongson.cn>, "acme@kernel.org" <acme@kernel.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
-	"namhyung@kernel.org" <namhyung@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250710175107.1280221-6-elder@riscstar.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejkeekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegvlhguvghrsehrihhstghsthgrrhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhlr
+ dgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthdrjhhonhgtiiihkhesohdvrdhplh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Jul 23, 2025 at 11:33=E2=80=AFAM Falcon, Thomas <thomas.falcon@inte=
-l.com> wrote:
->
-> On Mon, 2025-07-14 at 09:43 -0700, Ian Rogers wrote:
-> > The perf ilist command is a textual app [1] similar to perf list. In
-> > the top-left pane a tree of PMUs is displayed. Selecting a PMU expands
-> > the events within it. Selecting an event displays the `perf list`
-> > style event information in the top-right pane.
-> >
-> > When an event is selected it is opened and the counters on each CPU
-> > the event is for are periodically read. The bottom of the screen
-> > contains a scrollable set of sparklines showing the events in total
-> > and on each CPU. Scrolling below the sparklines shows the same data as
-> > raw counts. The sparklines are small graphs where the height of the
-> > bar is in relation to maximum of the other counts in the graph.
-> >
-> > By default the counts are read with an interval of 0.1 seconds (10
-> > times per second). A -I/--interval command line option allows the
-> > interval to be changed. The oldest read counts are dropped when the
-> > counts fill the line causing the sparkline to move from right to left.
-> >
-> > A search box can be pulled up with the 's' key. 'n' and 'p' iterate
-> > through the search results. As some PMUs have hundreds of events a 'c'
-> > key will collapse the events in the current PMU to make navigating the
-> > PMUs easier.
-> >
-> > [1] https://textual.textualize.io/
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
->
-> Hi Ian, I hit a segfault playing around with the ilist search feature. I =
-can recreate it pretty
-> reliably by searching for something then holding down 'n' to quickly cycl=
-e through the results.
-> After a few seconds, the program crashes.
->
-> I've attached a backtrace from gdb below.
+On 10/07/2025 12:51:03-0500, Alex Elder wrote:
+> +static int p1_rtc_read_time(struct device *dev, struct rtc_time *t)
+> +{
+> +	struct p1_rtc *p1 = dev_get_drvdata(dev);
+> +	struct regmap *regmap = p1->regmap;
+> +	u32 count = RTC_READ_TRIES;
+> +	u8 seconds;
+> +	u8 time[6];
+> +	int ret;
+> +
+> +	if (!regmap_test_bits(regmap, RTC_CTRL, RTC_EN))
+> +		return -ENODEV;		/* RTC is disabled */
 
-Thanks! I suspect that maybe you got the app to somehow read from an
-event that wasn't opened or enabled or some such. I'll have a go at
-reproducing.
+That should be -EINVAL, as all the other drivers have standardized this.
 
-Thanks,
-Ian
+With this fixed,
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-> Thanks,
-> Tom
->
-> #0  __memset_avx2_unaligned_erms () at ../sysdeps/x86_64/multiarch/memset=
--vec-unaligned-erms.S:210
-> #1  0x00007fffe88121a7 in perf_evsel__read (evsel=3D0x555557b16390, cpu_m=
-ap_idx=3D8, thread=3D0,
-> count=3D0x0) at evsel.c:403
-> #2  0x00007fffe88cbf97 in evsel__read_one (evsel=3D0x555557b16390, cpu_ma=
-p_idx=3D8, thread=3D0) at
-> util/evsel.c:1719
-> #3  0x00007fffe88cc794 in evsel__read_counter (evsel=3D0x555557b16390, cp=
-u_map_idx=3D8, thread=3D0) at
-> util/evsel.c:1896
-> #4  0x00007fffe880c0a8 in prepare_metric (mexp=3D0x555555d25660, evsel=3D=
-<optimized out>,
-> pctx=3D0x5555579b5d00, cpu_idx=3D8, thread_idx=3D0)
->     at /home/tfalcon/perf-tools-next/tools/perf/util/python.c:1353
-> #5  pyrf_evlist__compute_metric (pevlist=3D<optimized out>, args=3D<optim=
-ized out>, kwargs=3D<optimized
-> out>) at /home/tfalcon/perf-tools-next/tools/perf/util/python.c:1428
-> #6  0x00007ffff7978655 in method_vectorcall_VARARGS_KEYWORDS (func=3D<opt=
-imized out>,
-> args=3D0x7ffff7fb1680, nargsf=3D<optimized out>, kwnames=3D<optimized out=
->)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/descrobject=
-.c:358
-> #7  0x00007ffff793f337 in _PyObject_VectorcallTstate (tstate=3D0x7ffff7d5=
-99d0 <_PyRuntime+283024>,
-> callable=3D0x7fffe94f3dd0, args=3D<optimized out>, nargsf=3D<optimized ou=
-t>,
->     kwnames=3D<optimized out>) at /usr/src/debug/python3.13-3.13.5-
-> 1.fc41.x86_64/Include/internal/pycore_call.h:168
-> #8  PyObject_Vectorcall (callable=3D0x7fffe94f3dd0, args=3D<optimized out=
->, nargsf=3D<optimized out>,
-> kwnames=3D<optimized out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:327
-> #9  0x00007ffff794f1c1 in _PyEval_EvalFrameDefault (tstate=3D<optimized o=
-ut>, frame=3D<optimized out>,
-> throwflag=3D<optimized out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/generated_ca=
-ses.c.h:1843
-> #10 0x00007ffff79ab59f in _PyEval_EvalFrame (tstate=3D0x7ffff7d599d0 <_Py=
-Runtime+283024>,
-> frame=3D<optimized out>, throwflag=3D0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Include/internal/py=
-core_ceval.h:119
-> #11 _PyEval_Vector (tstate=3D0x7ffff7d599d0 <_PyRuntime+283024>, func=3D0=
-x7fffdde34400, locals=3D0x0,
-> args=3D0x7fffffffc9a8, argcount=3D1, kwnames=3D0x0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/ceval.c:1816
-> #12 _PyFunction_Vectorcall (func=3D0x7fffdde34400, stack=3D0x7fffffffc9a8=
-, nargsf=3D1, kwnames=3D0x0) at
-> /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:413
-> #13 _PyObject_VectorcallTstate (tstate=3D0x7ffff7d599d0 <_PyRuntime+28302=
-4>, callable=3D0x7fffdde34400,
-> args=3D0x7fffffffc9a8, nargsf=3D1, kwnames=3D0x0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Include/internal/py=
-core_call.h:168
-> #14 method_vectorcall (method=3D<optimized out>, args=3D0x7ffff7d2a140 <_=
-PyRuntime+88320>,
-> nargsf=3D<optimized out>, kwnames=3D<optimized out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/classobject=
-.c:70
-> #15 0x00007ffff795369d in PyObject_Call (callable=3D0x7fffcfc978c0, args=
-=3D0x7ffff7d2a128
-> <_PyRuntime+88296>, kwargs=3D0x0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:373
-> #16 PyCFunction_Call (callable=3D0x7fffcfc978c0, args=3D0x7ffff7d2a128 <_=
-PyRuntime+88296>, kwargs=3D0x0)
-> at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:381
-> #17 _PyEval_EvalFrameDefault (tstate=3D<optimized out>, frame=3D<optimize=
-d out>, throwflag=3D<optimized
-> out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/generated_ca=
-ses.c.h:1355
-> #18 0x00007ffff7a3a861 in _PyEval_EvalFrame (tstate=3D0x7ffff7d599d0 <_Py=
-Runtime+283024>,
-> frame=3D<optimized out>, throwflag=3D0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Include/internal/py=
-core_ceval.h:119
-> #19 gen_send_ex2 (gen=3D0x7fffdccfcba0, arg=3D0x7ffff7d0bd30 <_Py_NoneStr=
-uct>, presult=3D0x7fffffffcc68,
-> exc=3D0, closing=3D<optimized out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/genobject.c=
-:229
-> #20 0x00007fffde564149 in task_step_impl (state=3Dstate@entry=3D0x7fffde8=
-9dfd0,
-> task=3Dtask@entry=3D0x7fffdcd443c0, exc=3Dexc@entry=3D0x0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Modules/_asynciomod=
-ule.c:2782
-> #21 0x00007fffde5657a5 in task_step (state=3D0x7fffde89dfd0, task=3D0x7ff=
-fdcd443c0, exc=3D0x0) at
-> /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Modules/_asynciomodule.c:3=
-101
-> #22 0x00007ffff79700a7 in cfunction_vectorcall_O (func=3D0x7fffcc0b1ad0, =
-args=3D0x7fffcc37e860,
-> nargsf=3D<optimized out>, kwnames=3D<optimized out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Include/cpython/met=
-hodobject.h:50
-> #23 0x00007ffff7ad6a3f in _PyObject_VectorcallTstate (tstate=3D0x7ffff7d5=
-99d0 <_PyRuntime+283024>,
-> callable=3D0x7fffcc0b1ad0, args=3D<optimized out>, nargsf=3D<optimized ou=
-t>,
->     kwnames=3D<optimized out>) at /usr/src/debug/python3.13-3.13.5-
-> 1.fc41.x86_64/Include/internal/pycore_call.h:168
-> #24 0x00007ffff78ef15b in context_run (self=3D0x7fffddf2a440, args=3D0x7f=
-ffcc37e858, nargs=3D2,
-> kwnames=3D0x0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/context.c:66=
-4
-> #25 0x00007ffff7969b4b in cfunction_vectorcall_FASTCALL_KEYWORDS (func=3D=
-<optimized out>,
-> args=3D0x7fffcc37e858, nargsf=3D<optimized out>, kwnames=3D<optimized out=
->)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/methodobjec=
-t.c:441
-> #26 0x00007ffff795369d in PyObject_Call (callable=3D0x7fffcdff8950, args=
-=3D0x7fffcc37e840, kwargs=3D0x0)
-> at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:373
-> #27 PyCFunction_Call (callable=3D0x7fffcdff8950, args=3D0x7fffcc37e840, k=
-wargs=3D0x0) at
-> /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Objects/call.c:381
-> #28 _PyEval_EvalFrameDefault (tstate=3D<optimized out>, frame=3D<optimize=
-d out>, throwflag=3D<optimized
-> out>)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/generated_ca=
-ses.c.h:1355
-> #29 0x00007ffff7a25fcb in PyEval_EvalCode (co=3D0x5555555d9a90, globals=
-=3D<optimized out>,
-> locals=3D0x7fffe9634c80)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/ceval.c:604
-> #30 0x00007ffff7a640c3 in run_eval_code_obj (tstate=3Dtstate@entry=3D0x7f=
-fff7d599d0 <_PyRuntime+283024>,
-> co=3Dco@entry=3D0x5555555d9a90, globals=3Dglobals@entry=3D0x7fffe9634c80,
->     locals=3Dlocals@entry=3D0x7fffe9634c80) at /usr/src/debug/python3.13-=
-3.13.5-
-> 1.fc41.x86_64/Python/pythonrun.c:1381
-> #31 0x00007ffff7a615f3 in run_mod (mod=3Dmod@entry=3D0x555555710ec8,
-> filename=3Dfilename@entry=3D0x7fffe96568e0, globals=3Dglobals@entry=3D0x7=
-fffe9634c80,
->     locals=3Dlocals@entry=3D0x7fffe9634c80, flags=3Dflags@entry=3D0x7ffff=
-fffd298,
-> arena=3Darena@entry=3D0x7fffe971bdb0, interactive_src=3D0x0, generate_new=
-_source=3D0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/pythonrun.c:=
-1466
-> #32 0x00007ffff7a5dfd6 in pyrun_file (fp=3Dfp@entry=3D0x5555555703a0,
-> filename=3Dfilename@entry=3D0x7fffe96568e0, start=3Dstart@entry=3D257, gl=
-obals=3Dglobals@entry=3D0x7fffe9634c80,
->     locals=3Dlocals@entry=3D0x7fffe9634c80, closeit=3Dcloseit@entry=3D1, =
-flags=3D0x7fffffffd298) at
-> /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Python/pythonrun.c:1295
-> #33 0x00007ffff7a5dc4f in _PyRun_SimpleFileObject (fp=3Dfp@entry=3D0x5555=
-555703a0,
-> filename=3Dfilename@entry=3D0x7fffe96568e0, closeit=3Dcloseit@entry=3D1,
->     flags=3Dflags@entry=3D0x7fffffffd298) at /usr/src/debug/python3.13-3.=
-13.5-
-> 1.fc41.x86_64/Python/pythonrun.c:517
-> #34 0x00007ffff7a5d881 in _PyRun_AnyFileObject (fp=3Dfp@entry=3D0x5555555=
-703a0,
-> filename=3Dfilename@entry=3D0x7fffe96568e0, closeit=3Dcloseit@entry=3D1,
->     flags=3Dflags@entry=3D0x7fffffffd298) at /usr/src/debug/python3.13-3.=
-13.5-
-> 1.fc41.x86_64/Python/pythonrun.c:77
-> #35 0x00007ffff7a5beda in pymain_run_file_obj (program_name=3D0x7fffe9634=
-db0, filename=3D0x7fffe96568e0,
-> skip_source_first_line=3D0)
->     at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Modules/main.c:410
-> #36 pymain_run_file (config=3D0x7ffff7d2c0c8 <_PyRuntime+96392>) at /usr/=
-src/debug/python3.13-3.13.5-
-> 1.fc41.x86_64/Modules/main.c:429
-> #37 pymain_run_python (exitcode=3D0x7fffffffd28c) at /usr/src/debug/pytho=
-n3.13-3.13.5-
-> 1.fc41.x86_64/Modules/main.c:696
-> #38 Py_RunMain () at /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Modul=
-es/main.c:775
-> #39 0x00007ffff7a1396c in Py_BytesMain (argc=3D<optimized out>, argv=3D<o=
-ptimized out>) at
-> /usr/src/debug/python3.13-3.13.5-1.fc41.x86_64/Modules/main.c:829
-> #40 0x00007ffff760f488 in __libc_start_call_main (main=3Dmain@entry=3D0x5=
-55555555160 <main>,
-> argc=3Dargc@entry=3D2, argv=3Dargv@entry=3D0x7fffffffd4f8)
->     at ../sysdeps/nptl/libc_start_call_main.h:58
-> #41 0x00007ffff760f54b in __libc_start_main_impl (main=3D0x555555555160 <=
-main>, argc=3D2,
-> argv=3D0x7fffffffd4f8, init=3D<optimized out>, fini=3D<optimized out>,
->     rtld_fini=3D<optimized out>, stack_end=3D0x7fffffffd4e8) at ../csu/li=
-bc-start.c:360
-> #42 0x0000555555555095 in _start ()
->
->
-> > ---
-> >  tools/perf/python/ilist.py | 392 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 392 insertions(+)
-> >  create mode 100755 tools/perf/python/ilist.py
-> >
-> > diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
-> > new file mode 100755
-> > index 000000000000..b21f4c93247e
-> > --- /dev/null
-> > +++ b/tools/perf/python/ilist.py
-> > @@ -0,0 +1,392 @@
-> > +#!/usr/bin/env python3
-> > +# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> > +"""Interactive perf list."""
-> > +
-> > +import argparse
-> > +from typing import Any, Dict, Tuple
-> > +import perf
-> > +from textual import on
-> > +from textual.app import App, ComposeResult
-> > +from textual.binding import Binding
-> > +from textual.containers import Horizontal, HorizontalGroup, Vertical, =
-VerticalScroll
-> > +from textual.command import SearchIcon
-> > +from textual.screen import ModalScreen
-> > +from textual.widgets import Button, Footer, Header, Input, Label, Spar=
-kline, Static, Tree
-> > +from textual.widgets.tree import TreeNode
-> > +
-> > +class ErrorScreen(ModalScreen[bool]):
-> > +    """Pop up dialog for errors."""
-> > +
-> > +    CSS=3D"""
-> > +    ErrorScreen {
-> > +        align: center middle;
-> > +    }
-> > +    """
-> > +    def __init__(self, error: str):
-> > +        self.error =3D error
-> > +        super().__init__()
-> > +
-> > +    def compose(self) -> ComposeResult:
-> > +        yield Button(f"Error: {self.error}", variant=3D"primary", id=
-=3D"error")
-> > +
-> > +    def on_button_pressed(self, event: Button.Pressed) -> None:
-> > +        self.dismiss(True)
-> > +
-> > +
-> > +class SearchScreen(ModalScreen[str]):
-> > +    """Pop up dialog for search."""
-> > +
-> > +    CSS=3D"""
-> > +    SearchScreen Horizontal {
-> > +        align: center middle;
-> > +        margin-top: 1;
-> > +    }
-> > +    SearchScreen Input {
-> > +        width: 1fr;
-> > +    }
-> > +    """
-> > +    def compose(self) -> ComposeResult:
-> > +        yield Horizontal(SearchIcon(), Input(placeholder=3D"Event name=
-"))
-> > +
-> > +    def on_input_submitted(self, event: Input.Submitted) -> None:
-> > +        """Handle the user pressing Enter in the input field."""
-> > +        self.dismiss(event.value)
-> > +
-> > +
-> > +class Counter(HorizontalGroup):
-> > +    """Two labels for a CPU and its counter value."""
-> > +
-> > +    CSS=3D"""
-> > +    Label {
-> > +        gutter: 1;
-> > +    }
-> > +    """
-> > +
-> > +    def __init__(self, cpu: int) -> None:
-> > +        self.cpu =3D cpu
-> > +        super().__init__()
-> > +
-> > +    def compose(self) -> ComposeResult:
-> > +        label =3D f"cpu{self.cpu}" if self.cpu >=3D 0 else "total"
-> > +        yield Label(label + " ")
-> > +        yield Label("0", id=3Df"counter_{label}")
-> > +
-> > +
-> > +class CounterSparkline(HorizontalGroup):
-> > +    """A Sparkline for a performance counter."""
-> > +
-> > +    def __init__(self, cpu: int) -> None:
-> > +        self.cpu =3D cpu
-> > +        super().__init__()
-> > +
-> > +    def compose(self) -> ComposeResult:
-> > +        label =3D f"cpu{self.cpu}" if self.cpu >=3D 0 else "total"
-> > +        yield Label(label)
-> > +        yield Sparkline([], summary_function=3Dmax, id=3Df"sparkline_{=
-label}")
-> > +
-> > +
-> > +class IListApp(App):
-> > +    TITLE =3D "Interactive Perf List"
-> > +
-> > +    BINDINGS =3D [
-> > +        Binding(key=3D"s", action=3D"search", description=3D"Search",
-> > +                tooltip=3D"Search events and PMUs"),
-> > +        Binding(key=3D"n", action=3D"next", description=3D"Next",
-> > +                tooltip=3D"Next search result or item"),
-> > +        Binding(key=3D"p", action=3D"prev", description=3D"Previous",
-> > +                tooltip=3D"Previous search result or item"),
-> > +        Binding(key=3D"c", action=3D"collapse", description=3D"Collaps=
-e",
-> > +                tooltip=3D"Collapse the current PMU"),
-> > +        Binding(key=3D"^q", action=3D"quit", description=3D"Quit",
-> > +                tooltip=3D"Quit the app"),
-> > +    ]
-> > +
-> > +    CSS =3D """
-> > +        /* Make the 'total' sparkline a different color. */
-> > +        #sparkline_total > .sparkline--min-color {
-> > +            color: $accent;
-> > +        }
-> > +        #sparkline_total > .sparkline--max-color {
-> > +            color: $accent 30%;
-> > +        }
-> > +        /*
-> > +         * Make the active_search initially not displayed with the tex=
-t in
-> > +         * the middle of the line.
-> > +         */
-> > +        #active_search {
-> > +            display: none;
-> > +            width: 100%;
-> > +            text-align: center;
-> > +        }
-> > +    """
-> > +
-> > +    def __init__(self, interval: float) -> None:
-> > +        self.interval =3D interval
-> > +        self.evlist =3D None
-> > +        self.search_results: list[TreeNode[str]] =3D []
-> > +        self.cur_search_result: TreeNode[str] | None =3D None
-> > +        super().__init__()
-> > +
-> > +
-> > +
-> > +    def expand_and_select(self, node: TreeNode[Any]) -> None:
-> > +        """Expand select a node in the tree."""
-> > +        if node.parent:
-> > +            node.parent.expand()
-> > +            if node.parent.parent:
-> > +                node.parent.parent.expand()
-> > +        node.expand()
-> > +        node.tree.select_node(node)
-> > +        node.tree.scroll_to_node(node)
-> > +
-> > +
-> > +    def set_searched_tree_node(self, previous: bool) -> None:
-> > +        """Set the cur_search_result node to either the next or previo=
-us."""
-> > +        l =3D len(self.search_results)
-> > +
-> > +        if l < 1:
-> > +            tree: Tree[str] =3D self.query_one("#pmus", Tree)
-> > +            if previous:
-> > +                tree.action_cursor_up()
-> > +            else:
-> > +                tree.action_cursor_down()
-> > +            return
-> > +
-> > +        if self.cur_search_result:
-> > +            idx =3D self.search_results.index(self.cur_search_result)
-> > +            if previous:
-> > +                idx =3D idx - 1 if idx > 0 else l - 1
-> > +            else:
-> > +                idx =3D idx + 1 if idx < l - 1 else 0
-> > +        else:
-> > +            idx =3D l - 1 if previous else 0
-> > +
-> > +        node =3D self.search_results[idx]
-> > +        if node =3D=3D self.cur_search_result:
-> > +            return
-> > +
-> > +        self.cur_search_result =3D node
-> > +        self.expand_and_select(node)
-> > +
-> > +    def action_search(self) -> None:
-> > +        """Search was chosen."""
-> > +        def set_initial_focus(event: str | None) -> None:
-> > +            """Sets the focus after the SearchScreen is dismissed."""
-> > +
-> > +            search_label =3D self.query_one("#active_search", Label)
-> > +            search_label.display =3D True if event else False
-> > +            if not event:
-> > +                return
-> > +            event =3D event.lower()
-> > +            search_label.update(f'Searching for events matching "{even=
-t}"')
-> > +
-> > +            tree: Tree[str] =3D self.query_one("#pmus", Tree)
-> > +            def find_search_results(event: str, node: TreeNode[str], \
-> > +                                    cursor_seen: bool =3D False, \
-> > +                                    match_after_cursor: TreeNode[str] =
-| None =3D None) \
-> > +                    -> Tuple[bool, TreeNode[str] | None]:
-> > +                """Find nodes that match the search remembering the on=
-e after the cursor."""
-> > +                if not cursor_seen and node =3D=3D tree.cursor_node:
-> > +                    cursor_seen =3D True
-> > +                if node.data and event in node.data:
-> > +                    if cursor_seen and not match_after_cursor:
-> > +                        match_after_cursor =3D node
-> > +                    self.search_results.append(node)
-> > +
-> > +                if node.children:
-> > +                    for child in node.children:
-> > +                        (cursor_seen, match_after_cursor) =3D \
-> > +                            find_search_results(event, child, cursor_s=
-een, match_after_cursor)
-> > +                return (cursor_seen, match_after_cursor)
-> > +
-> > +            self.search_results.clear()
-> > +            (_ , self.cur_search_result) =3D find_search_results(event=
-, tree.root)
-> > +            if len(self.search_results) < 1:
-> > +                self.push_screen(ErrorScreen(f"Failed to find pmu/even=
-t {event}"))
-> > +                search_label.display =3D False
-> > +            elif self.cur_search_result:
-> > +                self.expand_and_select(self.cur_search_result)
-> > +            else:
-> > +                self.set_searched_tree_node(previous=3DFalse)
-> > +
-> > +        self.push_screen(SearchScreen(), set_initial_focus)
-> > +
-> > +
-> > +    def action_next(self) -> None:
-> > +        """Next was chosen."""
-> > +        self.set_searched_tree_node(previous=3DFalse)
-> > +
-> > +
-> > +    def action_prev(self) -> None:
-> > +        """Previous was chosen."""
-> > +        self.set_searched_tree_node(previous=3DTrue)
-> > +
-> > +
-> > +    def action_collapse(self) -> None:
-> > +        """Collapse the potentially large number of events under a PMU=
-."""
-> > +        tree: Tree[str] =3D self.query_one("#pmus", Tree)
-> > +        node =3D tree.cursor_node
-> > +        if node and node.parent and node.parent.parent:
-> > +            node.parent.collapse_all()
-> > +            node.tree.scroll_to_node(node.parent)
-> > +
-> > +
-> > +    def update_counts(self) -> None:
-> > +        """Called every interval to update counts."""
-> > +        if not self.evlist:
-> > +            return
-> > +
-> > +        def update_count(cpu: int, count: int):
-> > +            # Update the raw count display.
-> > +            counter: Label =3D self.query(f"#counter_cpu{cpu}" if cpu =
->=3D 0 else "#counter_total")
-> > +            if not counter:
-> > +                return
-> > +            counter =3D counter.first(Label)
-> > +            counter.update(str(count))
-> > +
-> > +            # Update the sparkline.
-> > +            line: Sparkline =3D self.query(f"#sparkline_cpu{cpu}" if c=
-pu >=3D 0 else "#sparkline_total")
-> > +            if not line:
-> > +                return
-> > +            line =3D line.first(Sparkline)
-> > +            # If there are more events than the width, remove the fron=
-t event.
-> > +            if len(line.data) > line.size.width:
-> > +                line.data.pop(0)
-> > +            line.data.append(count)
-> > +            line.mutate_reactive(Sparkline.data)
-> > +
-> > +        # Update the total and each CPU counts, assume there's just 1 =
-evsel.
-> > +        total =3D 0
-> > +        self.evlist.disable()
-> > +        for evsel in self.evlist:
-> > +            for cpu in evsel.cpus():
-> > +                aggr =3D 0
-> > +                for thread in evsel.threads():
-> > +                    counts =3D evsel.read(cpu, thread)
-> > +                    aggr +=3D counts.val
-> > +                update_count(cpu, aggr)
-> > +                total +=3D aggr
-> > +        update_count(-1, total)
-> > +        self.evlist.enable()
-> > +
-> > +
-> > +    def on_mount(self) -> None:
-> > +        """When App starts set up periodic event updating."""
-> > +        self.update_counts()
-> > +        self.set_interval(self.interval, self.update_counts)
-> > +
-> > +
-> > +    def set_pmu_and_event(self, pmu: str, event: str) -> None:
-> > +        """Updates the event/description and starts the counters."""
-> > +        # Remove previous event information.
-> > +        if self.evlist:
-> > +            self.evlist.disable()
-> > +            self.evlist.close()
-> > +            lines =3D self.query(CounterSparkline)
-> > +            for line in lines:
-> > +                line.remove()
-> > +            lines =3D self.query(Counter)
-> > +            for line in lines:
-> > +                line.remove()
-> > +
-> > +        def pmu_event_description(pmu: str, event: str) -> str:
-> > +            """Find and format event description for {pmu}/{event}/.""=
-"
-> > +            def get_info(info: Dict[str, str], key: str):
-> > +                return (info[key] + "\n") if key in info else ""
-> > +
-> > +            for p in perf.pmus():
-> > +                if p.name() !=3D pmu:
-> > +                    continue
-> > +                for info in p.events():
-> > +                    if "name" not in info or info["name"] !=3D event:
-> > +                        continue
-> > +
-> > +                    desc =3D get_info(info, "topic")
-> > +                    desc +=3D get_info(info, "event_type_desc")
-> > +                    desc +=3D get_info(info, "desc")
-> > +                    desc +=3D get_info(info, "long_desc")
-> > +                    desc +=3D get_info(info, "encoding_desc")
-> > +                    return desc
-> > +            return "description"
-> > +
-> > +        # Parse event, update event text and description.
-> > +        full_name =3D event if event.startswith(pmu) or ':' in event e=
-lse f"{pmu}/{event}/"
-> > +        self.query_one("#event_name", Label).update(full_name)
-> > +        self.query_one("#event_description", Static).update(pmu_event_=
-description(pmu, event))
-> > +
-> > +        # Open the event.
-> > +        try:
-> > +            self.evlist =3D perf.parse_events(full_name)
-> > +            if self.evlist:
-> > +                self.evlist.open()
-> > +                self.evlist.enable()
-> > +        except:
-> > +            self.evlist =3D None
-> > +
-> > +        if not self.evlist:
-> > +            self.push_screen(ErrorScreen(f"Failed to open {full_name}"=
-))
-> > +            return
-> > +
-> > +        # Add spark lines for all the CPUs. Note, must be done after
-> > +        # open so that the evlist CPUs have been computed by propagate
-> > +        # maps.
-> > +        lines =3D self.query_one("#lines")
-> > +        line =3D CounterSparkline(cpu=3D-1)
-> > +        lines.mount(line)
-> > +        for cpu in self.evlist.all_cpus():
-> > +            line =3D CounterSparkline(cpu)
-> > +            lines.mount(line)
-> > +        line =3D Counter(cpu=3D-1)
-> > +        lines.mount(line)
-> > +        for cpu in self.evlist.all_cpus():
-> > +            line =3D Counter(cpu)
-> > +            lines.mount(line)
-> > +
-> > +
-> > +    def compose(self) -> ComposeResult:
-> > +        """Draws the app."""
-> > +        def pmu_event_tree() -> Tree:
-> > +            """Create tree of PMUs with events under."""
-> > +            tree: Tree[str] =3D Tree("PMUs", id=3D"pmus")
-> > +            tree.root.expand()
-> > +            for pmu in perf.pmus():
-> > +                pmu_name =3D pmu.name().lower()
-> > +                pmu_node =3D tree.root.add(pmu_name, data=3Dpmu_name)
-> > +                try:
-> > +                    for event in sorted(pmu.events(), key=3Dlambda x: =
-x["name"]):
-> > +                        if "name" in event:
-> > +                            e =3D event["name"].lower()
-> > +                            if "alias" in event:
-> > +                                pmu_node.add_leaf(f'{e} ({event["alias=
-"]})', data=3De)
-> > +                            else:
-> > +                                pmu_node.add_leaf(e, data=3De)
-> > +                except:
-> > +                    # Reading events may fail with EPERM, ignore.
-> > +                    pass
-> > +            return tree
-> > +
-> > +        yield Header(id=3D"header")
-> > +        yield Horizontal(Vertical(pmu_event_tree(), id=3D"events"),
-> > +                         Vertical(Label("event name", id=3D"event_name=
-"),
-> > +                                  Static("description", markup=3DFalse=
-, id=3D"event_description"),
-> > +                                  ))
-> > +        yield Label(id=3D"active_search")
-> > +        yield VerticalScroll(id=3D"lines")
-> > +        yield Footer(id=3D"footer")
-> > +
-> > +
-> > +    @on(Tree.NodeSelected)
-> > +    def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> =
-None:
-> > +        """Called when a tree node is selected, selecting the event.""=
-"
-> > +        if event.node.parent and event.node.parent.parent:
-> > +            assert event.node.parent.data is not None
-> > +            assert event.node.data is not None
-> > +            self.set_pmu_and_event(event.node.parent.data, event.node.=
-data)
-> > +
-> > +
-> > +if __name__ =3D=3D "__main__":
-> > +    ap =3D argparse.ArgumentParser()
-> > +    ap.add_argument('-I', '--interval', help=3D"Counter update interva=
-l in seconds", default=3D0.1)
-> > +    args =3D ap.parse_args()
-> > +    app =3D IListApp(float(args.interval))
-> > +    app.run()
->
+
+> +
+> +	ret = regmap_bulk_read(regmap, RTC_TIME, time, sizeof(time));
+> +	if (ret)
+> +		return ret;
+> +
+> +	do {
+> +		seconds = time[0];
+> +		ret = regmap_bulk_read(regmap, RTC_TIME, time, sizeof(time));
+> +		if (ret)
+> +			return ret;
+> +	} while (time[0] != seconds && --count);
+> +
+> +	if (!count)
+> +		return -EIO;		/* Unable to get a consistent result */
+> +
+> +	t->tm_sec = time[0] & GENMASK(5, 0);
+> +	t->tm_min = time[1] & GENMASK(5, 0);
+> +	t->tm_hour = time[2] & GENMASK(4, 0);
+> +	t->tm_mday = (time[3] & GENMASK(4, 0)) + 1;
+> +	t->tm_mon = time[4] & GENMASK(3, 0);
+> +	t->tm_year = (time[5] & GENMASK(5, 0)) + 100;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * The P1 hardware documentation states that values in the registers are
+> + * latched so when written they represent a consistent time snapshot.
+> + * Nevertheless, this is not guaranteed by the implementation, so we must
+> + * disable the RTC while updating it.
+> + */
+> +static int p1_rtc_set_time(struct device *dev, struct rtc_time *t)
+> +{
+> +	struct p1_rtc *p1 = dev_get_drvdata(dev);
+> +	struct regmap *regmap = p1->regmap;
+> +	u8 time[6];
+> +	int ret;
+> +
+> +	time[0] = t->tm_sec;
+> +	time[1] = t->tm_min;
+> +	time[2] = t->tm_hour;
+> +	time[3] = t->tm_mday - 1;
+> +	time[4] = t->tm_mon;
+> +	time[5] = t->tm_year - 100;
+> +
+> +	/* Disable the RTC to update; re-enable again when done */
+> +	ret = regmap_clear_bits(regmap, RTC_CTRL, RTC_EN);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If something goes wrong, leave the RTC disabled */
+> +	ret = regmap_bulk_write(regmap, RTC_TIME, time, sizeof(time));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_set_bits(regmap, RTC_CTRL, RTC_EN);
+> +}
+> +
+> +static const struct rtc_class_ops p1_rtc_class_ops = {
+> +	.read_time = p1_rtc_read_time,
+> +	.set_time = p1_rtc_set_time,
+> +};
+> +
+> +static int p1_rtc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rtc_device *rtc;
+> +	struct p1_rtc *p1;
+> +
+> +	p1 = devm_kzalloc(dev, sizeof(*p1), GFP_KERNEL);
+> +	if (!p1)
+> +		return -ENOMEM;
+> +	dev_set_drvdata(dev, p1);
+> +
+> +	p1->regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!p1->regmap)
+> +		return dev_err_probe(dev, -ENODEV, "failed to get regmap\n");
+> +
+> +	rtc = devm_rtc_allocate_device(dev);
+> +	if (IS_ERR(rtc))
+> +		return dev_err_probe(dev, PTR_ERR(rtc),
+> +				     "error allocating device\n");
+> +	p1->rtc = rtc;
+> +
+> +	rtc->ops = &p1_rtc_class_ops;
+> +	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> +	rtc->range_max = RTC_TIMESTAMP_END_2063;
+> +
+> +	clear_bit(RTC_FEATURE_ALARM, rtc->features);
+> +	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
+> +
+> +	return devm_rtc_register_device(rtc);
+> +}
+> +
+> +static struct platform_driver p1_rtc_driver = {
+> +	.probe = p1_rtc_probe,
+> +	.driver = {
+> +		.name = MOD_NAME,
+> +	},
+> +};
+> +
+> +module_platform_driver(p1_rtc_driver);
+> +
+> +MODULE_DESCRIPTION("SpacemiT P1 RTC driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:" MOD_NAME);
+> -- 
+> 2.45.2
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
