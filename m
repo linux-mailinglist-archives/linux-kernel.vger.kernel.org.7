@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-742900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE265B0F800
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:22:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEF8B0F803
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F809AA3AC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AA3547B43
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC581EDA02;
-	Wed, 23 Jul 2025 16:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5504C1F12F8;
+	Wed, 23 Jul 2025 16:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOdbMFOA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6YSQOuz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1632E36F0;
-	Wed, 23 Jul 2025 16:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3301C1AAA;
+	Wed, 23 Jul 2025 16:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753287723; cv=none; b=XNPuoHYV3eGJxL0ZI3l0D7zWUvamhqhlkJ2uJ/Y6Tt+6wgrZolAwweno+t/BKgRSgcQ/pkau2BsS757n6N8H9W0NkDkDfyRvw6vjG3u0QUu0X9h0TxcjncFUkXeL9kmrrEpiXq6aQbgR3s6rMxg90UD1gVqyItjslkfh8TG/hz8=
+	t=1753287858; cv=none; b=JcG2U8QOFuSu8lZ1/T2phZJK1sbQE4T/zrfeWQ9LYg+3tsMdK7LZ40FTETAGR22kxN4U1K7XxfpV54UTdqPFQObzli7qgpfAquNZ1pWDJ+vFXtszxZN3aqq1aiS1zCTcoikI/NoCHIhwWC3lEDSwqWRot2uJY/KsNLpwxnBTNJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753287723; c=relaxed/simple;
-	bh=bfdY0aVwf47XiE8ZVRejqu5I4YU16Lsl9rpzoYPP11c=;
+	s=arc-20240116; t=1753287858; c=relaxed/simple;
+	bh=/TS71y3VNFWgP6TWRd6SL9uz/jrouP8/vidq2THQ0mQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+YXnYYGnQ4/gK8VZW8s2L0XO3YIrWTrdotlyouMFNgHYdwh9o4XLMy54gOsP8+cK3eac9UuKbZiw0qfaEHiW4j9rbtA14u7Sh5Z3r54FpLA9tJ0JkAgxRTmmvL4zOLbjHRCTllTskr8GUHxn0nua9FOnx+ds21NQ3wKH1+bz3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOdbMFOA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275CFC4CEE7;
-	Wed, 23 Jul 2025 16:21:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzZ3nrNH9aEM2FTFbXCwwRpiJQz+Whv989XghDxEHtgR3ptA6cQMYBKtvyIK0l/w8NYT4iodFP9JJKFefGPUV129SfmY8FylLPF29Ae0StAfPojTgg0i6GuqKkT2181KbTb2U5/qNn06ExMujGl8aIRfJ1MQttD11qAE9pe+qWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6YSQOuz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CA2C4CEE7;
+	Wed, 23 Jul 2025 16:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753287723;
-	bh=bfdY0aVwf47XiE8ZVRejqu5I4YU16Lsl9rpzoYPP11c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aOdbMFOAjPrHkyem2K8fAg4ZfGJz3RKc/Z0QsmW/z4vMpJR7kLa+Sjp9YkYnQ1TyL
-	 SYta3l8yt27PDDMo+q4zdNtj9hznvhgftwL3aRclTUlvEgBLA/FE+Vn0Wpw/S9lYpn
-	 MjUtb67pSB/tKwjdYknGLY3A2FkllPFKhbbgsnbI7BvHQoFKOKFq/eMosuRXRIxpRS
-	 hrta77jYY+pWUZb/ov6u4nXI8w0yJGjZggBMCSgiSQJYvUp34ZaYVgjgFDhC5Qz9MW
-	 etKJrZNC5Cd3g94Joam/OU9eewkUnfrimPINAx6ftuV/XPESxCw66L5tyKoUJqfJR5
-	 R9ar/yGtFlFCw==
-Date: Wed, 23 Jul 2025 17:21:58 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tristram.Ha@microchip.com
-Cc: Woojung.Huh@microchip.com, andrew@lunn.ch, olteanv@gmail.com,
-	kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, maxime.chevallier@bootlin.com,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	marex@denx.de, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 4/7] net: dsa: microchip: Use different
- registers for KSZ8463
-Message-ID: <20250723162158.GJ1036606@horms.kernel.org>
-References: <20250719012106.257968-1-Tristram.Ha@microchip.com>
- <20250719012106.257968-5-Tristram.Ha@microchip.com>
- <20250720101703.GQ2459@horms.kernel.org>
- <20250720102224.GR2459@horms.kernel.org>
- <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
+	s=k20201202; t=1753287858;
+	bh=/TS71y3VNFWgP6TWRd6SL9uz/jrouP8/vidq2THQ0mQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=A6YSQOuz+xR9SoGL+89T2UDnhJqmKToHcHnIoccQ18LDaEOaGh5nTPDG9nBY4JhxK
+	 BBMFLEKEOGcmAgrFO/BVYUCk8ENIRJ6UjTXJk3r078u3a0vadL98fcHyzdQ8MZO0QK
+	 qXCFQr3WymV9DE6qzyIuzXzKH9iVn8/JzQGpQvUuYmcNCrcx85+eibZIP8gdkC5HWH
+	 pY6cKjZ43DF3OJw5lozDcg9vd+LWUqUFuBIzKCJAbsJb2FRJ6gpo/nGr9Noun53NJv
+	 rzK/DF3yfEY4gsqlZmSNhlVn6zHPds/sI2SfjQ7ODNirL7rxq++W6q90jdLPtSOLJ3
+	 XwJmMuXujLXiA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CC247CE0AD1; Wed, 23 Jul 2025 09:24:17 -0700 (PDT)
+Date: Wed, 23 Jul 2025 09:24:17 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 5/4] srcu: Document __srcu_read_{,un}lock_fast()
+ implicit RCU readers
+Message-ID: <ee536672-2846-4174-94d4-3f42ba341324@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ce304859-e258-45e7-b40f-b5cacc968eaf@paulmck-laptop>
+ <9FAE52D6-D073-43D9-93D3-3E49006943B2@nvidia.com>
+ <fa4fd174-065d-4a04-b080-ffe04d31313f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DM3PR11MB873641FBBF2A79E787F13877EC5FA@DM3PR11MB8736.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa4fd174-065d-4a04-b080-ffe04d31313f@nvidia.com>
 
-On Wed, Jul 23, 2025 at 02:25:27AM +0000, Tristram.Ha@microchip.com wrote:
-> > On Sun, Jul 20, 2025 at 11:17:03AM +0100, Simon Horman wrote:
-> > > On Fri, Jul 18, 2025 at 06:21:03PM -0700, Tristram.Ha@microchip.com wrote:
-> > > > From: Tristram Ha <tristram.ha@microchip.com>
-> > > >
-> > > > KSZ8463 does not use same set of registers as KSZ8863 so it is necessary
-> > > > to change some registers when using KSZ8463.
-> > > >
-> > > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> > > > ---
-> > > > v3
-> > > > - Replace cpu_to_be16() with swab16() to avoid compiler warning
-> > >
-> > > ...
-> > >
-> > > > diff --git a/drivers/net/dsa/microchip/ksz_common.c
-> > b/drivers/net/dsa/microchip/ksz_common.c
-> > >
-> > > ...
-> > >
-> > > > @@ -2980,10 +2981,15 @@ static int ksz_setup(struct dsa_switch *ds)
-> > > >     }
-> > > >
-> > > >     /* set broadcast storm protection 10% rate */
-> > > > -   regmap_update_bits(ksz_regmap_16(dev), regs[S_BROADCAST_CTRL],
-> > > > -                      BROADCAST_STORM_RATE,
-> > > > -                      (BROADCAST_STORM_VALUE *
-> > > > -                      BROADCAST_STORM_PROT_RATE) / 100);
-> > > > +   storm_mask = BROADCAST_STORM_RATE;
-> > > > +   storm_rate = (BROADCAST_STORM_VALUE *
-> > BROADCAST_STORM_PROT_RATE) / 100;
-> > > > +   if (ksz_is_ksz8463(dev)) {
-> > > > +           storm_mask = swab16(storm_mask);
-> > > > +           storm_rate = swab16(storm_rate);
-> > > > +   }
-> > > > +   regmap_update_bits(ksz_regmap_16(dev),
-> > > > +                      reg16(dev, regs[S_BROADCAST_CTRL]),
-> > > > +                      storm_mask, storm_rate);
-> > >
-> > > Hi Tristram,
-> > >
-> > > I am confused by the use of swab16() here.
-> > >
-> > > Let us say that we are running on a little endian host (likely).
-> > > Then the effect of this is to pass big endian values to regmap_update_bits().
-> > >
-> > > But if we are running on a big endian host, the opposite will be true:
-> > > little endian values will be passed to regmap_update_bits().
-> > >
-> > >
-> > > Looking at KSZ_REGMAP_ENTRY() I see:
-> > >
-> > > #define KSZ_REGMAP_ENTRY(width, swp, regbits, regpad, regalign)         \
-> > >         {                                                               \
-> > >               ...
-> > >                 .reg_format_endian = REGMAP_ENDIAN_BIG,                 \
-> > >                 .val_format_endian = REGMAP_ENDIAN_BIG                  \
-> > >         }
-> > 
-> > Update; I now see this in another patch of the series:
-> > 
-> > +#define KSZ8463_REGMAP_ENTRY(width, swp, regbits, regpad, regalign)    \
-> > +       {                                                               \
-> >                 ...
-> > +               .reg_format_endian = REGMAP_ENDIAN_BIG,                 \
-> > +               .val_format_endian = REGMAP_ENDIAN_LITTLE               \
-> > +       }
-> > 
-> > Which I understand to mean that the hardware is expecting little endian
-> > values. But still, my concerns raised in my previous email of this
-> > thread remain.
-> > 
-> > And I have a question: does this chip use little endian register values
-> > whereas other chips used big endian register values?
-> > 
-> > >
-> > > Which based on a skimming the regmap code implies to me that
-> > > regmap_update_bits() should be passed host byte order values
-> > > which regmap will convert to big endian when writing out
-> > > these values.
-> > >
-> > > It is unclear to me why changing the byte order of storm_mask
-> > > and storm_rate is needed here. But it does seem clear that
-> > > it will lead to inconsistent results on big endian and little
-> > > endian hosts.
+On Wed, Jul 23, 2025 at 12:10:46PM -0400, Joel Fernandes wrote:
 > 
-> The broadcast storm value 0x7ff is stored in registers 6 and 7 in KSZ8863
-> where register 6 holds the 0x7 part while register 7 holds the 0xff part.
-> In KSZ8463 register 6 is defined as 16-bit where the 0x7 part is held in
-> lower byte and the 0xff part is held in higher byte.  It is necessary to
-> swap the bytes when the value is passed to the 16-bit write function.
-
-Perhaps naively, I would have expected
-
-	.val_format_endian = REGMAP_ENDIAN_LITTLE
-
-to handle writing the 16-bit value 0x7ff such that 0x7 is in
-the lower byte, while 0xff is in the upper byte. Is that not the case?
-
-If not, do you get the desired result by removing the swab16() calls
-and using
-
-	.val_format_endian = REGMAP_ENDIAN_BIG
-
-But perhaps I misunderstand how .val_format_endian works.
-
 > 
-> All other KSZ switches use 8-bit access with automatic address increase
-> so a write to register 0 with value 0x12345678 means 0=0x12, 1=0x34,
-> 2=0x56, and 3=0x78.
+> On 7/23/2025 9:32 AM, joelagnelf@nvidia.com wrote:
+> > 
+> > 
+> >> On Jul 22, 2025, at 6:17 PM, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >>
+> >> ﻿This commit documents the implicit RCU readers that are implied by the
+> >> this_cpu_inc() and atomic_long_inc() operations in __srcu_read_lock_fast()
+> >> and __srcu_read_unlock_fast().  While in the area, fix the documentation
+> >> of the memory pairing of atomic_long_inc() in __srcu_read_lock_fast().
+> > 
+> > Just to clarify, the implication here is since SRCU-fast uses synchronize_rcu on the update side, these operations result in blocking of classical RCU too. So simply using srcu fast is another way of achieving the previously used pre-empt-disabling in the use cases.
+> 
+> Hi Paul, it was nice sync'ing with you off-list. Following are my suggestions
+> and where I am coming from:
+> 
+> 1. For someone who doesn't know SRCU-fast depends on synchronize_rcu (me after a
+> few beers :P), the word 'RCU' in the comment you added to this patch, might come
+> across as 'which RCU are we referring to - SRCU or classical RCU or some other'.
+> So I would call it 'classical RCU reader' in the comment.
+> 
+> 2. It would be good to call out specifically that, the SRCU-fast critical
+> section is akin to a classical RCU reader, because of its implementation's
+> dependence on synchronize_rcu() to overcome the lack of read-side memory barriers.
+> 
+> 3. I think since the potential size of these code comment suggestions, it may
+> make sense to provide a bigger comment suggesting these than providing them
+> inline as you did. And also calling out the tracing usecase in the comments for
+> additional usecase clarification.
+> 
+> I could provide a patch to do all this soon, as we discussed, as well (unless
+> you're Ok with making this change as well).
+
+Thank you very much for the clarification, and I will make the changes
+with attribution.
+
+							Thanx, Paul
+
+> Thanks!
+> 
+>  - Joel
+> 
+> 
+> 
+> 
+> > 
+> > Or is the rationale for this something else?
+> > 
+> > I would probably spell this out more in a longer comment above the if/else, than modify the inline comments.
+> > 
+> > But I am probably misunderstood the whole thing. :-(
+> > 
+> > -Joel
+> > 
+> >>
+> >> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> >> Cc: Steven Rostedt <rostedt@goodmis.org>
+> >> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> >> Cc: <bpf@vger.kernel.org>
+> >>
+> >> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+> >> index 043b5a67ef71e..78e1a7b845ba9 100644
+> >> --- a/include/linux/srcutree.h
+> >> +++ b/include/linux/srcutree.h
+> >> @@ -245,9 +245,9 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
+> >>    struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
+> >>
+> >>    if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
+> >> -        this_cpu_inc(scp->srcu_locks.counter); /* Y */
+> >> +        this_cpu_inc(scp->srcu_locks.counter); // Y, and implicit RCU reader.
+> >>    else
+> >> -        atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  /* Z */
+> >> +        atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  // Y, and implicit RCU reader.
+> >>    barrier(); /* Avoid leaking the critical section. */
+> >>    return scp;
+> >> }
+> >> @@ -271,9 +271,9 @@ static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_
+> >> {
+> >>    barrier();  /* Avoid leaking the critical section. */
+> >>    if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
+> >> -        this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
+> >> +        this_cpu_inc(scp->srcu_unlocks.counter);  // Z, and implicit RCU reader.
+> >>    else
+> >> -        atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
+> >> +        atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  // Z, and implicit RCU reader.
+> >> }
+> >>
+> >> void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+> >>
 > 
 
