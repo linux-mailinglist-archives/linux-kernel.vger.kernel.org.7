@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-742511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840C4B0F29E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1E0B0F2A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B77E3A4EC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:54:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA95AC080D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467BF2E7178;
-	Wed, 23 Jul 2025 12:54:26 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231062E762F;
+	Wed, 23 Jul 2025 12:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fyXKyqao"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BC02E6106;
-	Wed, 23 Jul 2025 12:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB70F29B8C0;
+	Wed, 23 Jul 2025 12:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753275265; cv=none; b=K27NOg78HCmIR+U1gAUX6i2xBTJcfl2bDJTbSvyyldraoYbW0uoGnLDOCVmAS2wuLH+z8JgVoqjziXKdVEGUurXKD0ptDymxAVGsMqfTbgDPKrvcmGrYj0zG53KC66wa0wj0bAE8DXOVbE34B8+8LUKoFZQSPPfI+LZVG/F8iLo=
+	t=1753275326; cv=none; b=n7LmafwWk9ewe5M6hyl713cb/EFqMbtqQfFxBbrT5qiYs2w7DBLJzBtUKoyQo6Ff4r0S2jZb/ragQNL8MFu+lCsYoaNNTu9QzQOwQdE4yv8l/gk+q8TUUBNZMwDlOKR2ECu5Oy3gK/dw8IS5fSBkoqjCttRjO+YH9gyloEbRr2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753275265; c=relaxed/simple;
-	bh=Kerz7Zsk0nf3PTKd3glROZF305DbaeWJZ18IC/WXhzo=;
+	s=arc-20240116; t=1753275326; c=relaxed/simple;
+	bh=p2ZhOmEScPOsAsGDCejzk4PERbGyjps7u8IIAuzDQxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOLWVZjJVSZtqsOKB2LEon4G7EqRVJiIjWq3M4YgOd3v1Fy4PoVSux9+/OnH1taiGqFn3FzUrYJbT4Oa7tGPIzUMh+ffG+UBkJKYNmepj3Y69HgPYRQriV0rdmXGZ8haONmBqGwagvUzG0xPNcObF9jsD42MkqiWLkTh+jqRmDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id BC9C5335CDD;
-	Wed, 23 Jul 2025 12:54:22 +0000 (UTC)
-Date: Wed, 23 Jul 2025 20:54:16 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: sboyd@kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: spacemit: fix resource leak in
- spacemit_ccu_reset_register
-Message-ID: <20250723125416-GYA738759@gentoo>
-References: <20250723124020.60897-1-hendrik.hamerlinck@hammernet.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJAW+sMrmHVIHmkXAbgeAojxe20Js8hiU8XToh9HmBekZ6LmPqFp3pA/dKDg35AYI7+Q3mKN4r4phjno7g/nNXYDiubrFCrvUiszl2j+ZUXjgH4F2iiqnUf4rccM9SG7tLzTYxXA1LzYsGqTSmbx37/MITKgci/uWdJkTDXAPM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fyXKyqao; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 859DAE92;
+	Wed, 23 Jul 2025 14:54:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753275284;
+	bh=p2ZhOmEScPOsAsGDCejzk4PERbGyjps7u8IIAuzDQxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fyXKyqaoRVzbpOmpbNpPqJ3xg5g3T7qgoZmuWY7zfkmoDvp8qe87j3Q4DGLHrg/LF
+	 8mA7G7pEaN+IeEWLbS0IU+yRuua1IyhukLHdKBuYvsB/pwVPSHr4E4gy82JmginlGd
+	 lacLTiyrIDSaklnmJMBS4ynBeasWlzJ0PMO9/Sb0=
+Date: Wed, 23 Jul 2025 15:55:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Yunke Cao <yunkec@google.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] media: Add devm-managed helper functions for media
+ and V4L2 subsystems
+Message-ID: <20250723125520.GB6719@pendragon.ideasonboard.com>
+References: <20250723102515.64585-1-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250723124020.60897-1-hendrik.hamerlinck@hammernet.be>
+In-Reply-To: <20250723102515.64585-1-tarang.raval@siliconsignals.io>
 
-Hi Hendrik, 
+Hi Tarang,
 
-On 14:40 Wed 23 Jul     , Hendrik Hamerlinck wrote:
-> The function spacemit_ccu_reset_register() allocates memory for an
-> auxiliary device. If auxiliary_device_add() fails, it skips cleanup of
-> these resources, resulting in leaks.
+On Wed, Jul 23, 2025 at 03:55:04PM +0530, Tarang Raval wrote:
+> This patch series introduces devm-managed versions of several commonly used
+> media and V4L2 initialization functions. These helpers simplify resource
+> management by leveraging the devres infrastructure, ensuring automatic
+> cleanup when the associated device is detached or the driver is unloaded.
+
+I'll let Sakari review this, but overall, I don't think we want to take
+this direction. Objects need to be refcounted instead of freed at remove
+time. This patch series doesn't necessarily cause a regression as such,
+but it will make it more difficult to fix life time management issues in
+V4L2.
+
+> Tested with IMX219 and OV2735 camera sensors on an i.MX8MP-based platform.
 > 
-> Fix this by using the appropriate error handling path.
+> Tarang Raval (4):
+>   media: mc: Add devm_media_entity_pads_init() helper
+>   media: v4l: async: Add devm_v4l2_async_register_subdev_sensor() helper
+>   media: v4l2: subdev: Add devm_v4l2_subdev_init_finalize() helper
+>   media: v4l2-ctrls: Add devm_v4l2_ctrl_handler_init() helper
 > 
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-> Fixes: 988543522ebd ("clk: spacemit: set up reset auxiliary devices")
-Can you put Fixes tag before SoB? I'd suggest to follow tip tree's docs
-
-https://docs.kernel.org/process/maintainer-tip.html
-4.2.6. Ordering of commit tags
-
-otherwise, looks good
-
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
-
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 65e6de030717..5bb85e32c6cf 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -1059,7 +1059,7 @@ static int spacemit_ccu_reset_register(struct device *dev,
->  	ret = auxiliary_device_add(adev);
->  	if (ret) {
->  		auxiliary_device_uninit(adev);
-> -		return ret;
-> +		goto err_free_aux_id;
->  	}
->  
->  	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
-> -- 
-> 2.43.0
+>  drivers/media/mc/mc-entity.c              | 19 +++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-async.c      | 19 +++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls-core.c | 20 ++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-subdev.c     | 18 ++++++++++++++++++
+>  include/media/media-entity.h              | 20 ++++++++++++++++++++
+>  include/media/v4l2-async.h                | 18 ++++++++++++++++++
+>  include/media/v4l2-ctrls.h                | 19 +++++++++++++++++++
+>  include/media/v4l2-subdev.h               | 17 +++++++++++++++++
+>  8 files changed, 150 insertions(+)
 > 
 
 -- 
-Yixun Lan (dlan)
+Regards,
+
+Laurent Pinchart
 
