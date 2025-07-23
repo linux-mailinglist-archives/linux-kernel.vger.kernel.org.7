@@ -1,149 +1,84 @@
-Return-Path: <linux-kernel+bounces-742216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBCBB0EECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6646CB0EECD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65DD13B81B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2EA1C28176
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B3628B4EC;
-	Wed, 23 Jul 2025 09:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C35289809;
+	Wed, 23 Jul 2025 09:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTnl6RyJ"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkV6vMS6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE8C286D62;
-	Wed, 23 Jul 2025 09:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2932F286881;
+	Wed, 23 Jul 2025 09:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264338; cv=none; b=sMVlv+1B3mEVkbyMY5OnmAsHTWikUPw+BwtaoaroCLgnlonLOAMOsWcX9DvAlvzh39IBUPgmvhhfkqwxhLPm8rM42bzJbRg4Y0GTOI5qE2lWcsdQR+3G79HIZqlk+I1MEaMUKRwNJswqV5EPXD+YpBSncu9oe9pgmizK03m4LTs=
+	t=1753264357; cv=none; b=u4oZDwUAEy1vEG2EPEBuYopXTSYygBtw7/y6riWjhfJhuYfQEz9T3V/kUi/HL/I9Pt0Q9sQjAKXgaMNv4DENQ5MlwqCfC+WvYecoSt1O3k7tL6FOQ/8jnh6ECJAvHn681Mlth7P0wy0nFyrQq5nxBeYdQKlNsAnLi45nOY2SpNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264338; c=relaxed/simple;
-	bh=N/dbalNatsU+qJPlZyF8dzo8wixIe5QIEqdKyRkmytU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T5TPqthmNoTnpWyeSFj5AeapZ6XhOOR1MMVwwlNme/G1qAex+5i1dPlqt0YAmgovhHOKpIjONrhE78i6MkhkfJNjx8FGmLKrBiLjOTdFbgAOSqHrL51nk7wqiqa8ng2CnJ/1ToF/UH0Zx0b2x6QNFru+WJkrRYcAsEgBI3g1Ixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTnl6RyJ; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-312efc384fcso300607a91.3;
-        Wed, 23 Jul 2025 02:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753264336; x=1753869136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V+/dV0S/yM5ebUUQww27WfFYh9svGL82SiTI5/e7B7U=;
-        b=dTnl6RyJ4TUIVoJmqUuDJYhoEObZ+jPz20Uwkq4Ex0TwNhW82mw79oWBi3sdAkFlWv
-         LYdzUY71UlUuTTW5eBAYIiEtAx8sFaCBAgRIcxS7j6NU6ICaSjB+ZpFrCyHJu1ib6+jN
-         1nLYAt0UhfxMn51VlbBgUz2WRJXk/ZlfD2u+E+lJCi50bZHViwInbmr3jyQ1GYXiwv72
-         Oa0a/hlP+9BikAWge6Tdb0m/bOLIvjtjvdjJNrGNlnXutHeQHwnAwweEopcvN8xXzw1w
-         t8kGEsTBW8DdVb0krsGX4PXwYFRtLsAVwwo5m2oYKpbjoP3zuE04Spx8B8leBvbVSkKf
-         JVVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753264336; x=1753869136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V+/dV0S/yM5ebUUQww27WfFYh9svGL82SiTI5/e7B7U=;
-        b=X8otmHbftmGdNOH5Yqe4YuJQGdDDaw2o7WG4RgvRbVBrdwFRz4c7CfnNUpg1xPRqss
-         +8+5B1FFZQ6xr8qjcji2Xp/mv8FWnZmjgnpwF6hdJ66Iw8vCNAuuWmFU46NUmLUw2KDN
-         1sXLrX4rHoKGVs0S9xVPb0rKvLlx8V0BbfKyhX6Z7FXBcD4T9dgWZ29JRDrmP5LuWWWl
-         EH+n4Svca/DO1VIuSNs8CRnAMGOwa0nTbZ9pLJXHbKvt61kvPT5mRBjrPUlDxfDwMPjS
-         CB57gcOeFQDD/EeOqwjvWCvMeZYuc3J2CnzG3tQElOQ1iqRVsqzQOCnZ0jL9eUiuKY5z
-         RlZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6xzoJ3djBx5hodol06k67k/APIs8dQG6Hj1ePGiYQJgHQDFJ7ILbnBlFCRPqUtv0jvtvczC/xRwfoXtyM1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEHE/NsZTFp+3hnpqVegBFrwhYo5o4IwA7dNN4t3p8NTaxrXOS
-	pigrp//6ljiMuFb4yY3cQoBaPLTehB/m3d9MVKD56xafFJLPB6ALkQNGabm0p+Dcj+qoqVrwkTy
-	8N+sOBznmNsPKCukARmZKKkKAzfYh2C0=
-X-Gm-Gg: ASbGncuzQT9f7pq6WyAeops+YTftB4FX9xmb83l4gnQguKiHgx4dkTt3eIcjr2LG8Vj
-	07zOLUcubUlM2udtB11IF88htKGKApYFNHArRzBaRzfCuOdun8389jlGJUvI+4ca4u24DxHSr0M
-	cusMRqyJC9l+I1YCQzE6kCmRXr9QeWp8Jmh1x4gQuzg8TdNsoeLBlK2RA8YEjSCihskqpir5pNP
-	RJGJyQr
-X-Google-Smtp-Source: AGHT+IF5yp3x1uoUnaGZMoJBe+fzYcdYddNENz2TuSijJoibHeDm9sWJWjMzhPHdSfVi3F/pn5nO7IChbp80rUU+c7Q=
-X-Received: by 2002:a17:90b:4a47:b0:312:e76f:520f with SMTP id
- 98e67ed59e1d1-31e5088598emr1376264a91.8.1753264336236; Wed, 23 Jul 2025
- 02:52:16 -0700 (PDT)
+	s=arc-20240116; t=1753264357; c=relaxed/simple;
+	bh=+wQKGYJ8E5igUxnQNQhVSMViz6MZKDL8iigyUEy9eXw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IM5VRmWZ/jm+3HN1dr+Hlze+vovVIMz5BdXkhSC71JLSLZKiTIaXcRR88vXoZddzDq+CInI/jOtBa5lQ6tmtTbz2xfbawRoUP8NfQOd/M6G2+Dofl3OE9PbwVjsP/R1+CukHWSDXo/ijQnkqY5lyPZ6lYK6lfydMe4KKcdNTL74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkV6vMS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EAEDC4CEE7;
+	Wed, 23 Jul 2025 09:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753264356;
+	bh=+wQKGYJ8E5igUxnQNQhVSMViz6MZKDL8iigyUEy9eXw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=GkV6vMS6cYZOlonHCDPQFwBpyiNY/JTwK0KReAiIYI0bHZLvWNS3QWY1dJinmMA4+
+	 pjJ2sJsaFAwx/nxQQT6+/l0CcYmfC+FI485pjmdREnmAJGWiMwU41vzYocC9YdNTZR
+	 mR73g3ey4J4wr0RkvFhRwTZDpJYH055u+GqDzk6ByTpnd1SI3iKtmgwyHMP7A+AULn
+	 O9BrzDUJrE1+1f5YSWp6T2r9+K0C/toutqsFOYaVZ+0lL8IXwnczk2kD40EIxVpOwJ
+	 7pM0lcJlXUplvSpRNPyansy2hFAAB0CAI+Fq16QZlnxc2T6PM+pz1y0GRLE8vbdTBj
+	 HugNdEVlDXXqg==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: praneeth@ti.com, m-leonard@ti.com, rklein@nvidia.com, jm@ti.com, 
+ khilman@baylibre.com, kory.maincent@bootlin.com, 
+ thomas.petazzoni@bootlin.com
+In-Reply-To: <20250708210448.56384-1-s-ramamoorthy@ti.com>
+References: <20250708210448.56384-1-s-ramamoorthy@ti.com>
+Subject: Re: (subset) [PATCH v2] mfd: dt-bindings: Convert TPS65910 to DT
+ schema
+Message-Id: <175326435403.1737056.64583377188739989.b4-ty@kernel.org>
+Date: Wed, 23 Jul 2025 10:52:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502094537.231725-1-fujita.tomonori@gmail.com>
- <CANiq72=Hr5rg7tYta8aUoxt8hOPjR2ik5_-xMWZwacr63=-7KA@mail.gmail.com> <20250723.152042.1300024463910400.fujita.tomonori@gmail.com>
-In-Reply-To: <20250723.152042.1300024463910400.fujita.tomonori@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 23 Jul 2025 11:52:04 +0200
-X-Gm-Features: Ac12FXzZ5eWdKPVCRlnoxNrP6D3TFPlJaL8XzNsPkRFhVqP5xsNvOO-4LiDYGFY
-Message-ID: <CANiq72nLQkJo8voGONJBEgE8st7=A4RW7VP+W++SVCWse49n=Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] rust: Add bug/warn abstractions
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	x86@kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, peterz@infradead.org, hpa@zytor.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org, 
-	kernel@xen0n.name, tangyouling@loongson.cn, hejinyang@loongson.cn, 
-	yangtiezhu@loongson.cn, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, dakr@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Wed, Jul 23, 2025 at 8:21=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> The patch for arm64? I tried to minimize changes to the original code
-> so not intentional.
+On Tue, 08 Jul 2025 16:04:48 -0500, Shree Ramamoorthy wrote:
+> Convert the TI TPS65910 documentation to DT schema format.
+> 
+> Fix incorrect I2C address in example: should be 0x2d.
+> 
+> TPS65910 datasheet: https://www.ti.com/lit/gpn/tps65910
+> 
+> 
+> [...]
 
-The riscv one, i.e. from the range diff:
+Applied, thanks!
 
-    @@ arch/riscv/include/asm/bug.h: typedef u32 bug_insn_t;
-                "2:\n\t"                                        \
-     -                  __BUG_ENTRY "\n\t"                      \
-     -                  ".org 2b + %3\n\t"                      \
-    --                  ".popsection"                           \
-     +          __BUG_ENTRY(file, line, flags) "\n\t"           \
-     +                  ".org 2b + " size "\n\t"                \
-    -+                  ".popsection\n"                         \
-    +                   ".popsection"                           \
-     +
-     +#define __BUG_FLAGS(flags)                                        \
-     +do {                                                              \
+[1/1] mfd: dt-bindings: Convert TPS65910 to DT schema
+      commit: 22c7481c4052bc7ee0a81bca2323f4cc7abba17f
 
-If you look into the `.popsection` line, your patch adds a newline,
-but I guess it was not intentional. In x86 there is a newline after
-the directive, but there we have `extra` afterwards.
+--
+Lee Jones [李琼斯]
 
-(I noticed since I went to expand the macros in a dummy file, given it
-can be something tricky to spot differences in the normal diff, but it
-is visible in the normal diff.)
-
-> Yeah, I followed the original code style.
-
-And here I meant (i.e. the first part of that paragraph) that:
-
-    -                    "\t.org 2b+%c1\n"                                 =
- \
-
-now generated those two spaces around it:
-
-    +       "\t.org 2b + " size "\n"                                       =
- \
-
-> I've just tested rust-next. Looks like all arches (x86, riscv, and
-> arm64) works as expected.
-
-Thanks a lot!
-
-Cheers,
-Miguel
 
