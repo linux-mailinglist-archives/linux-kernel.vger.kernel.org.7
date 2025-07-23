@@ -1,262 +1,356 @@
-Return-Path: <linux-kernel+bounces-742606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAC0B0F439
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:40:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9CBB0F42B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE23965332
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E575167426
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2314E2E8E01;
-	Wed, 23 Jul 2025 13:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD32E2EA15A;
+	Wed, 23 Jul 2025 13:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sn6d6Wfc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3DXGttR4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sn6d6Wfc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3DXGttR4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xw3xeDyN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041D12E92C0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ECE2E9EA6;
+	Wed, 23 Jul 2025 13:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277759; cv=none; b=XrGy0zkBw96fmOi2kgvlYMZR5dkNcMG9B2/DU57/NTDn1PDKTG5wjjXp3sP17ELXwbRwPOel+TNBslHC3pAaG6OEGA+s28LPlaFJhM6XjRvjv2xHITLGeKKPibgn+JdDaNLDm84SNBtYGEQ+I2M3o2C9GoTXF2UtF06y7u+kZbY=
+	t=1753277736; cv=none; b=AnaJ4uAl9V+RU1Yl837z5eG+JVRBHCoNXHdHI9lsUAhfhD2dnp7/OROwYYeifY8rAdK1b0FCKv/dVDOKu6TitSVfWn0D8ouYl8Dz8Jgyc3zhR7omYHWbzOlX6/jz2M91B5065gDr3OPQM72NN+20aK8b2r9LWNfVVbczGc2ZVbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277759; c=relaxed/simple;
-	bh=z5pUnyw8hUonIK9+AnJweN/AmTdJLkkwvhC18stu32w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ckzl1DFHRHfvzJhizj9RrPe7iotiplp+4Vl5Z6Lmpgy2zFj6OsawlViUJHTU7LrqClxdzCgCWZD8wNH2376v8jj4QHMTHtIJuGTW9grEd3O2PumCjFUepKIjHr/ltQ2nIFkwvxHAFH4DBWaqbY/8QwjHQ1ARzY2ZfTfJRNKm6lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sn6d6Wfc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3DXGttR4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sn6d6Wfc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3DXGttR4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0AF611F794;
-	Wed, 23 Jul 2025 13:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753277705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tzLrbkIiOuwOvdyzKWDx4NnuEyUkSbgCzU8mbhcB3rk=;
-	b=sn6d6WfcnZz0DB5GiAC6bKFdOor9xAUmtBOjzv7UyoUJi3Brgkx5qyprggCv0Jz+3zOEBw
-	VAtyXImFe99kv+r3YDGZME13MuC05nGNUHzdZ4oneFTxPl9nqQx/Ouv962zpAgZk2qzTC4
-	9imwhDfigzZKEOTRlrH+cY08NQ+0Uro=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753277705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tzLrbkIiOuwOvdyzKWDx4NnuEyUkSbgCzU8mbhcB3rk=;
-	b=3DXGttR4IxzgIWDb2FW7GeODLV2hRB1+1SJUyMLWvyXK6xe4UaC+7BfWGz+b3dUeL4MiHq
-	BeWT8hkanTBQ29CA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sn6d6Wfc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=3DXGttR4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753277705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tzLrbkIiOuwOvdyzKWDx4NnuEyUkSbgCzU8mbhcB3rk=;
-	b=sn6d6WfcnZz0DB5GiAC6bKFdOor9xAUmtBOjzv7UyoUJi3Brgkx5qyprggCv0Jz+3zOEBw
-	VAtyXImFe99kv+r3YDGZME13MuC05nGNUHzdZ4oneFTxPl9nqQx/Ouv962zpAgZk2qzTC4
-	9imwhDfigzZKEOTRlrH+cY08NQ+0Uro=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753277705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tzLrbkIiOuwOvdyzKWDx4NnuEyUkSbgCzU8mbhcB3rk=;
-	b=3DXGttR4IxzgIWDb2FW7GeODLV2hRB1+1SJUyMLWvyXK6xe4UaC+7BfWGz+b3dUeL4MiHq
-	BeWT8hkanTBQ29CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DD4CB13ADD;
-	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gCa6NQjlgGh0IwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:04 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 23 Jul 2025 15:34:47 +0200
-Subject: [PATCH v5 14/14] maple_tree: Convert forking to use the sheaf
- interface
+	s=arc-20240116; t=1753277736; c=relaxed/simple;
+	bh=L2qZUOAPfjSFhZesNu8X11Qw8IVdgImrR2at+uKnWDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aqygs3eAJ59cfW6DTirw4QzWs1dhapNXr843ZZf0KPQtnn5Bgu/HYHJRcHkiGE7nxQ9GMLU1m7GroIoVLJGwzWCo3ppKYwsxo8kOQ2c3VMs6zafUCpssCpxAcBgngvUj20FaJnO/krCWO4yLbpxvO5vCxKLuaMVWUL/5Ey8f4k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xw3xeDyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E40C4CEF7;
+	Wed, 23 Jul 2025 13:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753277736;
+	bh=L2qZUOAPfjSFhZesNu8X11Qw8IVdgImrR2at+uKnWDA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xw3xeDyNX0IQqb0DxOQMq2tgdzwUJv9T+vQLIpNxokYVDfA6N8g6A+KgkOPqxv/j9
+	 yX9GiZzhPFR8/ennif6u0eFtYdbQ4VZElFmvnrF6ge1petYcxgEl9aj96oyyd9CdMc
+	 pLIL3mAWj20+kByQZhyiX8UKoGEcfoSAL4P20VH3MZ2NNSz6Xog/W5nknIeTwqcxd6
+	 O4MxCvD4Z6RWgvqIvCAFQBx97+MTrJASF/17pbN5lZke13j4sd86WmSMFM04KOyxWK
+	 1E/EiGKSqMIowTX43m3f42zG2pNJAgWG77UXNjOmN4t3Dcc9ICGRjdje9IQKUWezOR
+	 S9yLk2Z5rfArA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-615950642d9so3756018eaf.1;
+        Wed, 23 Jul 2025 06:35:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU17ZrRuv6d19v0ocS2ddy9H+vFrDKgIZl8p3z3DOElS3yOHFQHtJROGeBB/pwzECSZQ5YVLqOC76am@vger.kernel.org, AJvYcCUuuIwXKA0vCzfs4D90lLzXhwLSYuXBtb6fTUU8i3SsaUL0dut+lUY5NLcMarMTQrN3vzi+xRO2Hhc6n5dd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhbZiuFLxKv6wi3ighrcH4pXmTIzgiShEZ1xuJMH/LvDW9xhhB
+	Qyq72bADnFj0x6t0BpdRPi3d0mqVDRipRJjCQhl6fV4ScEC4+FwxA88kMP1qvY/HoqTqmHXBPqC
+	9CXWYH3umaeCcpmi3qAWRMSaUaHqRGEk=
+X-Google-Smtp-Source: AGHT+IEAliIFzrWVAoD/qEpT2o5T1SOc2xRGy+1bTmSt/v5TXoC/zofdPln4FPx0AocBcJsMtWm9I9xSvlzxenEfQZk=
+X-Received: by 2002:a05:6820:a03:b0:615:9673:ab6c with SMTP id
+ 006d021491bc7-6186e7b4703mr1997335eaf.1.1753277735141; Wed, 23 Jul 2025
+ 06:35:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-slub-percpu-caches-v5-14-b792cd830f5d@suse.cz>
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
-In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz, 
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,Oracle.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 0AF611F794
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+References: <20250723121034.3685996-1-lihuisong@huawei.com>
+In-Reply-To: <20250723121034.3685996-1-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 23 Jul 2025 15:35:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gOi5kUKVWSwaPW=4Kmjkj1kj=nzaZ0jTa8fAAy32ZytA@mail.gmail.com>
+X-Gm-Features: Ac12FXxOjiaUjEzPLgb4u84iD2PrGnGDKHPxD-8tosnQSTKy8kagenOxi10Qzsc
+Message-ID: <CAJZ5v0gOi5kUKVWSwaPW=4Kmjkj1kj=nzaZ0jTa8fAAy32ZytA@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: processor: idle: Fix resource leak and potential
+ concurrent in acpi_processor_power_init()
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com, liuyonglong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+On Wed, Jul 23, 2025 at 2:10=E2=80=AFPM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> There are three kind of issues:
+> 1> There are two resource leak issues in acpi_processor_power_init:
+>    a> Don't unregister acpi_idle_driver when do kzalloc failed.
 
-Use the generic interface which should result in less bulk allocations
-during a forking.
+This is not a resource leak.  As I said before, the driver need not be
+unregistered on a memory allocation failure.
 
-A part of this is to abstract the freeing of the sheaf or maple state
-allocations into its own function so mas_destroy() and the tree
-duplication code can use the same functionality to return any unused
-resources.
+>    b> Don't free cpuidle device memory when register cpuidle device faile=
+d.
 
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- lib/maple_tree.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+This is a separate minor issue that needs to be addressed by a separate pat=
+ch.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 9aa782b1497f224e7366ebbd65f997523ee0c8ab..180d5e2ea49440248aaae04a066276406b2537ed 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -1178,6 +1178,19 @@ static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
- 	mas_set_err(mas, -ENOMEM);
- }
- 
-+static inline void mas_empty_nodes(struct ma_state *mas)
-+{
-+	mas->node_request = 0;
-+	if (mas->sheaf) {
-+		mt_return_sheaf(mas->sheaf);
-+		mas->sheaf = NULL;
-+	}
-+
-+	if (mas->alloc) {
-+		mt_free_one(mas->alloc);
-+		mas->alloc = NULL;
-+	}
-+}
- 
- /*
-  * mas_free() - Free an encoded maple node
-@@ -5414,15 +5427,7 @@ void mas_destroy(struct ma_state *mas)
- 		mas->mas_flags &= ~MA_STATE_REBALANCE;
- 	}
- 	mas->mas_flags &= ~(MA_STATE_BULK|MA_STATE_PREALLOC);
--
--	mas->node_request = 0;
--	if (mas->sheaf)
--		mt_return_sheaf(mas->sheaf);
--	mas->sheaf = NULL;
--
--	if (mas->alloc)
--		mt_free_one(mas->alloc);
--	mas->alloc = NULL;
-+	mas_empty_nodes(mas);
- }
- EXPORT_SYMBOL_GPL(mas_destroy);
- 
-@@ -6499,7 +6504,7 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	struct maple_node *node = mte_to_node(mas->node);
- 	struct maple_node *new_node = mte_to_node(new_mas->node);
- 	enum maple_type type;
--	unsigned char request, count, i;
-+	unsigned char count, i;
- 	void __rcu **slots;
- 	void __rcu **new_slots;
- 	unsigned long val;
-@@ -6507,20 +6512,17 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Allocate memory for child nodes. */
- 	type = mte_node_type(mas->node);
- 	new_slots = ma_slots(new_node, type);
--	request = mas_data_end(mas) + 1;
--	count = mt_alloc_bulk(gfp, request, (void **)new_slots);
--	if (unlikely(count < request)) {
--		memset(new_slots, 0, request * sizeof(void *));
--		mas_set_err(mas, -ENOMEM);
-+	count = mas->node_request = mas_data_end(mas) + 1;
-+	mas_alloc_nodes(mas, gfp);
-+	if (unlikely(mas_is_err(mas)))
- 		return;
--	}
- 
--	/* Restore node type information in slots. */
- 	slots = ma_slots(node, type);
- 	for (i = 0; i < count; i++) {
- 		val = (unsigned long)mt_slot_locked(mas->tree, slots, i);
- 		val &= MAPLE_NODE_MASK;
--		((unsigned long *)new_slots)[i] |= val;
-+		new_slots[i] = ma_mnode_ptr((unsigned long)mas_pop_node(mas) |
-+					    val);
- 	}
- }
- 
-@@ -6574,7 +6576,7 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 			/* Only allocate child nodes for non-leaf nodes. */
- 			mas_dup_alloc(mas, new_mas, gfp);
- 			if (unlikely(mas_is_err(mas)))
--				return;
-+				goto empty_mas;
- 		} else {
- 			/*
- 			 * This is the last leaf node and duplication is
-@@ -6607,6 +6609,8 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Make them the same height */
- 	new_mas->tree->ma_flags = mas->tree->ma_flags;
- 	rcu_assign_pointer(new_mas->tree->ma_root, root);
-+empty_mas:
-+	mas_empty_nodes(mas);
- }
- 
- /**
+> 2> There isn't lock to prevent the global acpi_processor_registered, whic=
+h
+>    may lead to concurrent register cpuidle driver.
 
--- 
-2.50.1
+That's not obvious because in principle the code in question is only
+run during initialization which is serialized.
 
+In theory, it could run in parallel CPU online, but that at least is
+not default behavior AFAICS.
+
+In any case, if you claim something like this, it is advisable to
+mention a specific scenario in which the race in question can happen.
+
+> 3> The cpuidle driver should be registered in advance when all of the CPU=
+s
+>    have been brought up instead of being in a CPU hotplug callback.
+
+The "in advance" piece above is rather confusing and it can be dropped
+without changing the meaning of the rest of the sentence.
+
+> To solve these issues, so add a new function to initialize acpi_idle_driv=
+er
+> based on the power management information of an available CPU and registe=
+r
+> cpuidle driver in acpi_processor_driver_init().
+
+I think that the main problem here is that the cpuidle driver is
+registered from within a CPU hotplug callback, which is questionable
+and confusing.  Usually, however, this doesn't lead to any functional
+issues AFAICS.
+
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  v2: register cpuidle driver in advance when all of the CPUs have been
+>      brought up.
+>      v1 link: https://patchwork.kernel.org/project/linux-acpi/patch/20250=
+619061327.1674384-1-lihuisong@huawei.com/
+> ---
+>  drivers/acpi/processor_driver.c |  5 +++
+>  drivers/acpi/processor_idle.c   | 71 ++++++++++++++++++++++-----------
+>  include/acpi/processor.h        |  9 +++++
+>  3 files changed, 62 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_dri=
+ver.c
+> index 65e779be64ff..ff944c93b6ff 100644
+> --- a/drivers/acpi/processor_driver.c
+> +++ b/drivers/acpi/processor_driver.c
+> @@ -263,6 +263,10 @@ static int __init acpi_processor_driver_init(void)
+>         if (result < 0)
+>                 return result;
+>
+> +       result =3D acpi_processor_register_idle_driver();
+> +       if (result)
+> +               pr_info("register idle driver failed, ret =3D %d.\n", res=
+ult);
+
+This registers the cpuidle driver before registering cpuidle devices
+for all CPUs.
+
+It would be better to make acpi_processor_register_idle_driver() print
+the diagnostic message on failures and then it won't need to return a
+value.
+
+Note that it may fail if intel_idle is already registered, for
+example, so the message should rather be a debug-level one.
+
+> +
+>         result =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+>                                    "acpi/cpu-drv:online",
+>                                    acpi_soft_cpu_online, NULL);
+> @@ -301,6 +305,7 @@ static void __exit acpi_processor_driver_exit(void)
+>
+>         cpuhp_remove_state_nocalls(hp_online);
+>         cpuhp_remove_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD);
+> +       acpi_processor_unregister_idle_driver();
+>         driver_unregister(&acpi_processor_driver);
+>  }
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 2c2dc559e0f8..2408f1076631 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1360,7 +1360,52 @@ int acpi_processor_power_state_has_changed(struct =
+acpi_processor *pr)
+>         return 0;
+>  }
+>
+> -static int acpi_processor_registered;
+> +int acpi_processor_register_idle_driver(void)
+> +{
+> +       struct acpi_processor *pr;
+> +       int cpu;
+> +       int ret;
+
+The ret variable needs to be initialized here or tools will complain,
+and so it may be initialized to -ENODEV:
+
+int ret =3D -ENODEV;
+
+> +
+> +       /*
+> +        * Acpi idle driver is used by all possible CPUs.
+> +        * Install the idle handler by the processor power info of one in=
+ them.
+> +        * Note that we use previously set idle handler will be used on
+> +        * platforms that only support C1.
+> +        */
+> +       for_each_cpu(cpu, (struct cpumask *)cpu_possible_mask) {
+> +               pr =3D per_cpu(processors, cpu);
+> +               if (pr =3D=3D NULL)
+
+"if (!pr)" please.
+
+> +                       continue;
+> +
+> +               ret =3D acpi_processor_get_power_info(pr);
+
+if (ret)
+        continue;
+
+> +               if (!ret) {
+> +                       pr->flags.power_setup_done =3D 1;
+
+I think this is set here to prevent the subsequent
+acpi_processor_setup_cpuidle_states() call from bailing out, but is
+this not too early to set it?
+
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (unlikely(!pr))
+> +               return -ENODEV;
+
+This is unnecessary if ret is initialized to -ENODEV;
+
+> +
+> +       if (ret) {
+> +               pr_err("%s get power information failed.\n",
+> +                      acpi_idle_driver.name);
+
+This message is confusing at best.  It should be something like "No
+ACPI power information for any CPUs" and the driver name in it has no
+purpose.
+
+> +               return ret;
+> +       }
+> +
+> +       acpi_processor_setup_cpuidle_states(pr);
+
+I'd call this in the loop right before breaking out of it, so the
+scope of pr is clear.
+
+> +       ret =3D cpuidle_register_driver(&acpi_idle_driver);
+> +       if (ret)
+
+Print a diagnostic message here and do not return a value (ie. make
+the function void).
+
+> +               return ret;
+> +
+> +       pr_debug("%s registered with cpuidle\n", acpi_idle_driver.name);
+> +       return 0;
+> +}
+> +
+> +void acpi_processor_unregister_idle_driver(void)
+> +{
+> +       cpuidle_unregister_driver(&acpi_idle_driver);
+> +}
+>
+>  int acpi_processor_power_init(struct acpi_processor *pr)
+>  {
+> @@ -1375,22 +1420,7 @@ int acpi_processor_power_init(struct acpi_processo=
+r *pr)
+>         if (!acpi_processor_get_power_info(pr))
+>                 pr->flags.power_setup_done =3D 1;
+>
+> -       /*
+> -        * Install the idle handler if processor power management is supp=
+orted.
+> -        * Note that we use previously set idle handler will be used on
+> -        * platforms that only support C1.
+> -        */
+>         if (pr->flags.power) {
+> -               /* Register acpi_idle_driver if not already registered */
+> -               if (!acpi_processor_registered) {
+> -                       acpi_processor_setup_cpuidle_states(pr);
+> -                       retval =3D cpuidle_register_driver(&acpi_idle_dri=
+ver);
+> -                       if (retval)
+> -                               return retval;
+> -                       pr_debug("%s registered with cpuidle\n",
+> -                                acpi_idle_driver.name);
+> -               }
+> -
+>                 dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
+>                 if (!dev)
+>                         return -ENOMEM;
+> @@ -1403,11 +1433,10 @@ int acpi_processor_power_init(struct acpi_process=
+or *pr)
+>                  */
+>                 retval =3D cpuidle_register_device(dev);
+>                 if (retval) {
+> -                       if (acpi_processor_registered =3D=3D 0)
+> -                               cpuidle_unregister_driver(&acpi_idle_driv=
+er);
+> +                       per_cpu(acpi_cpuidle_device, pr->id) =3D NULL;
+> +                       kfree(dev);
+
+These two lines should be added in a separate patch.
+
+
+>                         return retval;
+>                 }
+> -               acpi_processor_registered++;
+>         }
+>         return 0;
+>  }
+> @@ -1421,10 +1450,6 @@ int acpi_processor_power_exit(struct acpi_processo=
+r *pr)
+>
+>         if (pr->flags.power) {
+>                 cpuidle_unregister_device(dev);
+> -               acpi_processor_registered--;
+> -               if (acpi_processor_registered =3D=3D 0)
+> -                       cpuidle_unregister_driver(&acpi_idle_driver);
+> -
+>                 kfree(dev);
+>         }
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index d0eccbd920e5..3cb41a3f2d9a 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -423,6 +423,8 @@ int acpi_processor_power_init(struct acpi_processor *=
+pr);
+>  int acpi_processor_power_exit(struct acpi_processor *pr);
+>  int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
+>  int acpi_processor_hotplug(struct acpi_processor *pr);
+> +int acpi_processor_register_idle_driver(void);
+> +void acpi_processor_unregister_idle_driver(void);
+>  #else
+>  static inline int acpi_processor_power_init(struct acpi_processor *pr)
+>  {
+> @@ -443,6 +445,13 @@ static inline int acpi_processor_hotplug(struct acpi=
+_processor *pr)
+>  {
+>         return -ENODEV;
+>  }
+> +static int acpi_processor_register_idle_driver(void)
+> +{
+> +       return -ENODEV;
+> +}
+> +static void acpi_processor_unregister_idle_driver(void)
+> +{
+> +}
+>  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+>
+>  /* in processor_thermal.c */
+> --
+> 2.33.0
+>
 
