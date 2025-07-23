@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-742008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD8BB0EBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:26:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE7BB0EBC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E5616E902
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:26:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272C47B811B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAF8274B2C;
-	Wed, 23 Jul 2025 07:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF08272E42;
+	Wed, 23 Jul 2025 07:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="F978N9YG"
-Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eURqjYdv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6CC2749D9;
-	Wed, 23 Jul 2025 07:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA35E2701D1;
+	Wed, 23 Jul 2025 07:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753255596; cv=none; b=HpUkQzfxqb2GGgymxhfpAT0Iim+GDypOnNaUC7PF3oD/L1IV01SCmcDqMTy4fOhQyUfdxG2olt1EzeyNpF2QMqlin8Ue7PSfHGGWQpm5pcIMTnmh+tI71Hu2Lk+XE1wSVpkiLeUszKjoBQ6EaXiUE1e9krjUAb4s97usMzlguK0=
+	t=1753255238; cv=none; b=u5+Cb6fTczY6v2kzvfViDOwdSe0km9hgOlO01o3mDUaWmQ5y9g03FGjcAxWlT5LuY3PdzOWq7kRblfizrbf+wzqd7B3a0Mrvgph2S5wD/t4xrME83lpPiPnMwMdodhAYzmD2xl3GiHlx0JMYlc4zImsiakPpfPmioRvKJqgnN2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753255596; c=relaxed/simple;
-	bh=6N4TRiRZ0oanZgXMZ6ZfXs5IPqi+1Ay79cak2ea1LWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQYWkkUHSH3enGKkgGAkYi+0DprbZdEj/U/t8LeKGXGf6Dvjce+iXkQPC5BD8ioUVZM9F2QNlWc0Fah/D6HJtUl0vPBnYqlteWgO1HUvKytcJ8snxwXhUtNAAt2fTbLfHlrZMSBR5Q7eWBS3QmbO/pLjh8qwe2qByP/DHhJwrSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=F978N9YG; arc=none smtp.client-ip=213.190.28.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
-	s=dkim_2024-02-03; t=1753255138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qDjOlNwNb/uFhnwIO+pE6cclriwg1Jx+N91R6n4gkiY=;
-	b=F978N9YGJqJMjXzp3AGuz4Tm+bpIfhiYsdEu/aveVUpYCvuT8lfqSft72R3Da8uR5gXq7Q
-	vgHYjSHeHZA7WbBQ==
-Message-ID: <0974b1b3-d90c-4f58-9201-989d71690d52@hardfalcon.net>
-Date: Wed, 23 Jul 2025 09:18:56 +0200
+	s=arc-20240116; t=1753255238; c=relaxed/simple;
+	bh=Vxz6oiIqIgOHJzowDL4yIofRLk/aDZkZ6xpVY+bDf4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHprPHiBwi4slUYU+x6jjxfBptTnKkRVPt4+B/DC8hZvCliYYif6GKuctzo3BeT51tRmGCROw/XZbwDwU/E3wrR8OIlDtK2i1UKuerTt0S2bs4s60tPQWopaA3Hhy7PlDKGbLiPJr+ueySiQkX9I/GwnfyiTO0z8A7b3MSCSDLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eURqjYdv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5FAC4CEF7;
+	Wed, 23 Jul 2025 07:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753255238;
+	bh=Vxz6oiIqIgOHJzowDL4yIofRLk/aDZkZ6xpVY+bDf4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eURqjYdvLvvTzLu+pTAML/z+NRsJAn0RGdSfgKc8Af05VWhEfCpct55SwQtYBYtNw
+	 Yh9m8aI1LopqogjprRVmcRiXfPtqN49fAGVqOsZ5f0WsM4G+2w0qrUcapEhG0bPUuc
+	 +uh58UcKyd5EPzAr6G6yG20kw8we7zqpwRVajXN++53raEtduqV7HY21nVyCOMri/2
+	 0EHMbBc2vd6P4DMm+9G7lmT7VgAoMb6pcPHIX6KOccxqTocDddlDiyOcKXm0BXSAko
+	 vX/WsMdwmqLdL6COZleQ8xcK61F92S4FG072I+7bC49h3Uit39VWURZttiSw3rC2uV
+	 HAA4gPDoa5SXQ==
+Date: Wed, 23 Jul 2025 12:50:34 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: "Verma, Devendra" <Devendra.Verma@amd.com>
+Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>
+Subject: Re: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+Message-ID: <aICNQuhw3SrZJrYS@vaman>
+References: <20250623061733.1864392-1-devverma@amd.com>
+ <aF3Eg_xtxZjZTEop@vaman>
+ <SA1PR12MB81208BAD2A5D264482333FF79540A@SA1PR12MB8120.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250722134345.761035548@linuxfoundation.org>
-Content-Language: en-US, de-DE, en-US-large
-From: Pascal Ernster <git@hardfalcon.net>
-In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SA1PR12MB81208BAD2A5D264482333FF79540A@SA1PR12MB8120.namprd12.prod.outlook.com>
 
-[2025-07-22 15:42] Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.15.8 release.
-> There are 187 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 02-07-25, 09:38, Verma, Devendra wrote:
+> > On 23-06-25, 11:47, Devendra K Verma wrote:
+> > > The HDMA IP supports the simple mode (non-linked list).
+> > > In this mode the channel registers are configured to initiate a single
+> > > DMA data transfer. The channel can be configured in simple mode via
+> > > peripheral param of dma_slave_config param.
+> > >
+> > > Signed-off-by: Devendra K Verma <devverma@amd.com>
+> > > ---
+> > >  drivers/dma/dw-edma/dw-edma-core.c    | 10 +++++
+> > >  drivers/dma/dw-edma/dw-edma-core.h    |  2 +
+> > >  drivers/dma/dw-edma/dw-hdma-v0-core.c | 53
+> > ++++++++++++++++++++++++++-
+> > >  include/linux/dma/edma.h              |  8 ++++
+> > >  4 files changed, 72 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/dma/dw-edma/dw-edma-core.c
+> > > b/drivers/dma/dw-edma/dw-edma-core.c
+> > > index c2b88cc99e5d..4dafd6554277 100644
+> > > --- a/drivers/dma/dw-edma/dw-edma-core.c
+> > > +++ b/drivers/dma/dw-edma/dw-edma-core.c
+> > > @@ -235,9 +235,19 @@ static int dw_edma_device_config(struct dma_chan
+> > *dchan,
+> > >                                struct dma_slave_config *config)  {
+> > >       struct dw_edma_chan *chan = dchan2dw_edma_chan(dchan);
+> > > +     struct dw_edma_peripheral_config *pconfig = config->peripheral_config;
+> > > +     unsigned long flags;
+> > > +
+> > > +     if (WARN_ON(config->peripheral_config &&
+> > > +                 config->peripheral_size != sizeof(*pconfig)))
+> > > +             return -EINVAL;
+> > >
+> > > +     spin_lock_irqsave(&chan->vc.lock, flags);
+> > >       memcpy(&chan->config, config, sizeof(*config));
+> > > +
+> > > +     chan->non_ll_en = pconfig ? pconfig->non_ll_en : false;
+> > >       chan->configured = true;
+> > > +     spin_unlock_irqrestore(&chan->vc.lock, flags);
+> > >
+> > >       return 0;
+> > >  }
+> > > diff --git a/drivers/dma/dw-edma/dw-edma-core.h
+> > > b/drivers/dma/dw-edma/dw-edma-core.h
+> > > index 71894b9e0b15..c0266976aa22 100644
+> > > --- a/drivers/dma/dw-edma/dw-edma-core.h
+> > > +++ b/drivers/dma/dw-edma/dw-edma-core.h
+> > > @@ -86,6 +86,8 @@ struct dw_edma_chan {
+> > >       u8                              configured;
+> > >
+> > >       struct dma_slave_config         config;
+> > > +
+> > > +     bool                            non_ll_en;
+> >
+> > why do you need this? What is the decision to use non ll vs ll one?
 > 
-> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
+> The IP supports both the modes, LL mode and non-LL mode.
+> In the current driver code, the support for non-LL mode is not
+> present. This patch enables the non-LL aka simple mode support
+> by means of the peripheral_config option in the dmaengine_slave_config.
 
+That does not answer my question, what decides which mode should be
+used?
 
-Compiles fine for x86_64 with GCC 15.1.1, and runs fine on various physical Intel machines (Ivy Bridge, Haswell, Kaby Lake, Coffee Lake) and in a Skylake VM.
-
-Tested-by: Pascal Ernster <git@hardfalcon.net>
-
-
-Regards
-Pascal
+-- 
+~Vinod
 
