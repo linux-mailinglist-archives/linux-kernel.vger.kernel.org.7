@@ -1,299 +1,288 @@
-Return-Path: <linux-kernel+bounces-742202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03941B0EEA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F1FB0EEA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0351C82C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19401C82DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C4F284694;
-	Wed, 23 Jul 2025 09:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBDE2877C7;
+	Wed, 23 Jul 2025 09:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q4bEBCj7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZrVh1UIE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nigw4flJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Km+OrjSE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XQfUwyXQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2D5284B3A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9E72853E7;
+	Wed, 23 Jul 2025 09:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753263733; cv=none; b=RQ/GCOrSnc5BmNjL8cQM3s9F76BLkjCePRJ9Hjbc84ZvC9l56S6zOoOxzzooTouhYBF4xroZqA1Er+/gk5uKTCadF6ZpVDaievvRPnYpofjhEKf4oG06znJGKKS+u49+tK3EPWNU8QsiUurNISzqA60f8Zu6HFxxkgG0FSBANn8=
+	t=1753263759; cv=none; b=OyC6dyanz50ouCbaRYbTfjH98wl0jLO9wQY1dJ79TJ22VbPlP5BjkwIRqNVlcdA1FfPc2X/QpEyRUk7/bqUCz3lMSPsI/506fawRiXt4u36CHx1H0NkuRFEg7VVeG9tpOnYiAyCZAo5qu4388Qg2q0vUUUc7OU4Vkt6tO9uR7lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753263733; c=relaxed/simple;
-	bh=q1YROvwkw3QWtBkiTRCYGWYE2il+LD5ZcEw//3vZ6OE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+W/PYYuZVB4ORf7qIfoCE8TfAU58rx3LBDEpd77yJPqp5dYwMzNkqhmL1JHD1E/zD1TNIBAiPzA0q3HsK7OFKb4Q6lp3+lPvLz1SvJnTpTFtUaLl+fBZ/eFLuD9FTg97jZg3zkncXAY+zyV9Av5ykpbS9l2gdVxh0cuI8X/sNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q4bEBCj7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZrVh1UIE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nigw4flJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Km+OrjSE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BA7E2218D5;
-	Wed, 23 Jul 2025 09:42:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753263730; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6e0oYfSmhk1vpAzcB9KYh3w+HHjNFd4D8pmNPbAL1oM=;
-	b=q4bEBCj7AFQW8kjp2rssc7FgHugzBS+u7tKVDL4ySIqhj3lwtisU+pjXcIAi/qu73Ii/5t
-	oezZF8yi+IR9QlIsAMKKcDZDGeAljeI6TNBp960ylpnSOFl303Xrbd9dpaRiX92eS1IhxR
-	Vj1LjkmOQuBM5kAgV65HgkGmOpikDS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753263730;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6e0oYfSmhk1vpAzcB9KYh3w+HHjNFd4D8pmNPbAL1oM=;
-	b=ZrVh1UIE4tjMnrHPbxHDQJNaDB7GDxHnnQtjqebQWWJHP6z+8U39h3soz55gojlagyEBRu
-	k+2D5sScgewOQ8BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753263729; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6e0oYfSmhk1vpAzcB9KYh3w+HHjNFd4D8pmNPbAL1oM=;
-	b=Nigw4flJ+LVggunln2cMQrvb69s+bP0lOmiu5vft09zxqW9w0YlXr9SDlqpI8GZmV0viaw
-	xLlYsHD/DahjA3ndFsg+80iAl7+roRi5juZaqv1y9u2PZnwixiCWakClaWjVl8xRA8yTVW
-	DuoAs2k4y2VonkiOjspz9XRxNSwv4tk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753263729;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6e0oYfSmhk1vpAzcB9KYh3w+HHjNFd4D8pmNPbAL1oM=;
-	b=Km+OrjSEay5QPgXIhTrPlZW9fVSTu+OsVHLhsZx3QnxDIq3UJuivZ3NB183qJVLdQTExxj
-	RQLFclycMMwXpeBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A07D613ABE;
-	Wed, 23 Jul 2025 09:42:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cF/BJnGugGgZWwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 09:42:09 +0000
-Message-ID: <66daf9db-ce97-4345-886c-3f8ab111b4fc@suse.cz>
-Date: Wed, 23 Jul 2025 11:42:09 +0200
+	s=arc-20240116; t=1753263759; c=relaxed/simple;
+	bh=vaLSVEk/I8c+AN22zxdA34oe9R4YxZV31UGdwncXb/w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XJGGKaRys1xT9BT1C7J4VlFpVfA512Q9tYLZNKluDRFBCXYuE/4pbRSXXb/1IEawNBTvUmVkHuUnl15VNtuxupHCuK/ioJmtGtRVthpjxB/7OchnuBHpjR1WHD5YwJrNwVMQ8cpSA0qj1QcT0dPVO1iQTa14Vsl0nvHi/yML0B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XQfUwyXQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6c077I1RSBowU6xDJVwopXrSusY0xQYRPoalBYci8Aw=; b=XQfUwyXQ35eTM56dFmxc9++ViX
+	9+n6OB4zXy1yZ93MOahWNJA5IO6CmDX7dHGaQGJHLDC40ASazl8q8YITrJpafLoGOpMSgjEwSBceq
+	9maqKqtXQhsR0bYsakvjUT+8PqlFq800U6GQCn8WxUXy/mjSanMAb4iiFeoz18+AXX2SN0eOrZ5jr
+	B8wS6THjOG7cUIinzjFDTVbJ22T52Snz+4l2s0X29KRet38GOhbLCLwBgL0dsm9eXASBR3qVs1Zov
+	Pa6ALnOHdD2f2bJkDUbfSaTgG38rVKaTIsFVSop9umgGYOU/JVAefdomVekXVfNn7HSaklSK79Xr+
+	FOuAyY6g==;
+Received: from [54.239.6.190] (helo=edge-cache-169.e-lhr50.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueVzY-00000008khV-1Hnr;
+	Wed, 23 Jul 2025 09:42:29 +0000
+Message-ID: <590aa43842aa1e6667d6a564cfdcb86a2ca02160.camel@infradead.org>
+Subject: Re: [RFC PATCH 2/2] KVM: arm64: vgic-its: Unmap all vPEs on shutdown
+From: David Woodhouse <dwmw2@infradead.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sebastian Ott <sebott@redhat.com>,
+ Andre Przywara <andre.przywara@arm.com>, Thorsten Blum
+ <thorsten.blum@linux.dev>, Shameer Kolothum
+ <shameerali.kolothum.thodi@huawei.com>,
+ linux-arm-kernel@lists.infradead.org,  kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,  "Saidi, Ali"
+ <alisaidi@amazon.com>
+Date: Wed, 23 Jul 2025 11:42:26 +0200
+In-Reply-To: <aIAUxarULx3vC2MO@linux.dev>
+References: <20250623132714.965474-1-dwmw2@infradead.org>
+	 <20250623132714.965474-2-dwmw2@infradead.org> <aIAUxarULx3vC2MO@linux.dev>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-cwbpnR8RpG6qtbrpv5c5"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: rename MM to MM MISC, add missing files
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>
-References: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,suse.com:email,oracle.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On 7/22/25 21:27, Lorenzo Stoakes wrote:
-> To fit in with other sections within MAINTAINERS for memory management
-> files, rename the MEMORY MANAGEMENT section to MEMORY MANAGEMENT - MISC to
-> contain files that are not described by other sections.
-> 
-> We also add missing files to MEMORY MANAGEMENT - MISC and MEMORY MANAGEMENT
-> - CORE sections.
-> 
-> Move over appropriate files to the core section, and in both sections add
-> remaining missing files. At this point, with the other recent MAINTAINERS
-> changes, this should now mean that every memory management-related file has
-> a section and assigned maintainers/reviewers.
-> 
-> For the time being, we maintain catch-all mm/ and tools/mm/ entries for MM
 
-This...
+--=-cwbpnR8RpG6qtbrpv5c5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> - MISC, though in future we may wish to remove these to make it obvious
-> when files don't have assigned entries.
-> 
-> Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
-> CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
-> related for this to be sensible.
+On Tue, 2025-07-22 at 15:46 -0700, Oliver Upton wrote:
+> On Mon, Jun 23, 2025 at 02:27:14PM +0100, David Woodhouse wrote:
+> > From: David Woodhouse <dwmw@amazon.co.uk>
+> >=20
+> > We observed systems going dark on kexec, due to corruption of the
+> > new
+> > kernel's text (and sometimes the initrd). This was eventually
+> > determined
+> > to be caused by the vLPI pending tables used by the GIC in the
+> > previous
+> > kernel, which were not being quiesced properly.
+> >=20
+> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > ---
+> > =C2=A0arch/arm64/kvm/arm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 5 +++++
+> > =C2=A0arch/arm64/kvm/vgic/vgic-v3.c | 14 ++++++++++++++
+> > =C2=A0include/kvm/arm_vgic.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 2 ++
+> > =C2=A03 files changed, 21 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> > index 38a91bb5d4c7..2b76f506bc2d 100644
+> > --- a/arch/arm64/kvm/arm.c
+> > +++ b/arch/arm64/kvm/arm.c
+> > @@ -2164,6 +2164,11 @@ void
+> > kvm_arch_disable_virtualization_cpu(void)
+> > =C2=A0		cpu_hyp_uninit(NULL);
+> > =C2=A0}
+> > =C2=A0
+> > +void kvm_arch_shutdown(void)
+> > +{
+> > +	kvm_vgic_v3_shutdown();
+> > +}
+> > +
+> > =C2=A0#ifdef CONFIG_CPU_PM
+> > =C2=A0static int hyp_init_cpu_pm_notifier(struct notifier_block *self,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0 unsigned long cmd,
+> > diff --git a/arch/arm64/kvm/vgic/vgic-v3.c
+> > b/arch/arm64/kvm/vgic/vgic-v3.c
+> > index b9ad7c42c5b0..6591e8d84855 100644
+> > --- a/arch/arm64/kvm/vgic/vgic-v3.c
+> > +++ b/arch/arm64/kvm/vgic/vgic-v3.c
+> > @@ -382,6 +382,20 @@ static void map_all_vpes(struct kvm *kvm)
+> > =C2=A0						dist-
+> > >its_vm.vpes[i]->irq));
+> > =C2=A0}
+> > =C2=A0
+> > +void kvm_vgic_v3_shutdown(void)
+> > +{
+> > +	struct kvm *kvm;
+> > +
+> > +	if (!kvm_vgic_global_state.has_gicv4_1)
+> > +		return;
+> > +
+> > +	mutex_lock(&kvm_lock);
+> > +	list_for_each_entry(kvm, &vm_list, vm_list) {
+> > +		unmap_all_vpes(kvm);
+> > +	}
+> > +	mutex_unlock(&kvm_lock);
+> > +}
+> > +
+>=20
+> This presumes the vCPUs have already been quiesced which I'm guessing
+> is the case for you.
 
-... together with this means the pre-existing reviewers of CORE will now get
-CC'd on everything under mm/ - I'm not sure if this consequence was apparent
-and wanted, so pointing that out. Myself, as long as whole mm/ is there, I'd
-rather not be one of the R: purely for volume reasons. The misc files
-themselves would have been fine.
+Yeah. With KHO we aspire to be able to do a kexec with some pCPUs
+actually still *running* guest vCPUs instead of pointlessly taking them
+offline just for *one* pCPU to do the kexec work. But that's a way off
+yet, and in that case all these tables will need to be in memory which
+persists across the kexec so we won't need to quiesce anything. But
+those fantasies are a way off for now...
 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
-> 
-> Andrew - apologies, but there will likely be some small conflicts here
-> given other MAINTAINERS patches move stuff from the MEMORY MANAGEMENT
-> section too.
-> 
-> I kept patches separate in case one ends up having push-back we can still
-> have the rest putting missing files in place.
-> 
-> Note that we also have [0] going through the slab tree, as it seemed a more
-> suitable place to do that change to minimise conflicts on that front.
-> 
-> [0]: https://lore.kernel.org/all/20250722175901.152272-1-lorenzo.stoakes@oracle.com/
-> 
-> REVIEWERS NOTES:
-> 
-> This is based on discussions had in [1] both about this newly renamed
-> section and where David indicated he was open to maintainership of the misc
-> section.
-> 
-> I am sending un-RFC'd as, while a lot of files being moved about, it seems
-> relatively safe to put these files in core/misc and we can move them around
-> later if necessary.
-> 
-> Additionally, on the reviewers being added, these files are broadly files
-> that could have been placed in the 'core' section, so this is more or less
-> an administrative decision to split into two and so it seems reasonable to
-> maintain the same list of people.
-> 
-> Apologies if this is overly presumptuous, the intent here is for us to
-> finally reach a point (with the other patches applied) where (as far as I
-> can tell) every memory management-related file should now have MAINTAINERS
-> entries.
-> 
-> [1]: https://lore.kernel.org/all/20250616203844.566056-1-lorenzo.stoakes@oracle.com/
-> 
->  MAINTAINERS | 82 +++++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 57 insertions(+), 25 deletions(-)
-> 
+> The vPEs need to be made nonresident from the
+> redistributors prior to unmapping from the ITS to avoid consuming
+> unknown vPE state (IHI0069H.b 8.6.2).
 
-<trim>
+Right, I think that's what's being done in the second patch I sent,
+saying, "FWIW this is a previous hack we attempted which *didn't work".
+To be clear, we do still *have* that hack, in addition to the explicit
+unmap_all_vpes() call.
 
-> +MEMORY MANAGEMENT - MISC
-> +M:	Andrew Morton <akpm@linux-foundation.org>
-> +M:	David Hildenbrand <david@redhat.com>
-> +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> +R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Mike Rapoport <rppt@kernel.org>
-> +R:	Suren Baghdasaryan <surenb@google.com>
-> +R:	Michal Hocko <mhocko@suse.com>
-> +L:	linux-mm@kvack.org
-> +S:	Maintained
-> +W:	http://www.linux-mm.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	Documentation/admin-guide/mm/
-> +F:	Documentation/mm/
-> +F:	include/linux/memory-tiers.h
-> +F:	include/linux/mempolicy.h
-> +F:	include/linux/mempool.h
-> +F:	include/linux/memremap.h
+I would love a definitive answer about what the hypervisor is
+*expected* to do here. It's very suboptimal that the GIC doesn't
+actually stop accessing memory when it is quiesced, and that the GIC
+doesn't live behind an IOMMU which would at least allow stray DMA to be
+prevented.
 
-Weren't a bunch of these moved to other sections already?
+> So we'd probably need to deschedule the vPE in
+> kvm_arch_disable_virtualization_cpu() along with some awareness of
+> 'kvm_rebooting'.
 
-> +F:	include/linux/mmu_notifier.h
-> +F:	include/trace/events/ksm.h
-> +F:	mm/
-> +F:	mm/backing-dev.c
-> +F:	mm/cma.c
-> +F:	mm/cma_debug.c
-> +F:	mm/cma_sysfs.c
-> +F:	mm/dmapool.c
-> +F:	mm/dmapool_test.c
-> +F:	mm/early_ioremap.c
-> +F:	mm/fadvise.c
-> +F:	mm/io-mapping.c
-> +F:	mm/ioremap.c
-> +F:	mm/mapping_dirty_helpers.c
-> +F:	mm/memory-tiers.c
-> +F:	mm/mmu_notifier.c
-> +F:	mm/page_idle.c
-> +F:	mm/pgalloc-track.h
-> +F:	mm/process_vm_access.c
-> +F:	mm/ptdump.c
-> +F:	tools/mm/
-> +F:	tools/testing/selftests/mm/
-> +
->  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
->  M:	Andrew Morton <akpm@linux-foundation.org>
->  M:	Mike Rapoport <rppt@kernel.org>
-> --
-> 2.50.1
+Yeah, I also pondered doing it *all* from there, but it looked like it
+would have required some kind of counting to work out when the *last*
+CPU was taken down as there's only a per-CPU arch hook. So I didn't
+bother with that for the early RFC.
 
+Note that this issue with the GIC's scattershot DMA doesn't only affect
+KVM hosts and the vLPI pending tables. We *also* have similar issues on
+the guest side with hibernate. The boot kernel sends a MAPD command to
+set up an ITT, then transfers control back to the resumed kernel which
+had previously set up that ITT at a *different* address, and nobody
+ever tells the (v)GIC. Which means that if the host subsequently
+serializes that guest for LU/LM, it corrupts memory that the running
+kernel didn't expect it to. I guess this would happen for hibernate on
+real hardware too? And maybe even kexec but that one just hasn't bitten
+us yet?
+
+
+
+--=-cwbpnR8RpG6qtbrpv5c5
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDcyMzA5NDIy
+NlowLwYJKoZIhvcNAQkEMSIEINQAJXmn1zKH1aw3XR5fNyRKX4AqeY7yJpd1AcKh141sMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAI+MgZUXVZCtU
+hIGNVUXDBETy3DNPmjtJHnVEjIcGU4ZgQ/7sgK+c8hF7mi/5UhOsbQsTiB6vqI9dHGODvuVzFV2P
+vdD/0UOz6HPfke13MvWQ6jGqDmLf9WquJbeGhU12a4yDci6pMjL69U03VWH6HVoClFNX5NE9mG8s
+UCkUkZencwk1mjOASIlP0/WHu8qcBnW+5+pBAuegEJLZKmeB/mxY46AmdyXz+GK5bVqbgBmYkHaS
+0QU3IatTxtNRodl1YnYgCun6zwDmqlof451MVNOey7Xi5yPSZKHEKI+QlcxhSHpqQ8fcPMnOOhhf
+ECo5/htcmr61nNPq1sXNSgMpcm0iAdpH+nZZXtUeQ7Qb5y/XlSMgiubwKikIg6aAsD+3SrhZ8mLy
+37862KLtdVaZ96ppI7rOsy+rlF8wDrgzeRb2GcASs5GrX9ldu+r7jvNYHKDPLa1wrEhzguPeYcMc
+eFlieilD2HjmakBeD6tDehXVK+UBGcBrbkW9DaLLUvWIlUh6CSpmJT8SbPCZNkI1WjrTF0bz5c6U
+Cjb+eGxolB0dTCAj2ndndhaEfgCsCGerlNAOJzWAUPYU9/4Rltr8DQtcIxJz7XeTMRfqjtdld2HD
+uBUPXAgU/aWB22cVHpV4uJj0pOmEvLjc43xZjQAE2/jQqtGIPBbhNJ/calmc2yAAAAAAAAA=
+
+
+--=-cwbpnR8RpG6qtbrpv5c5--
 
