@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-742080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B08B0ECE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7946CB0ECD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BDD168AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A4516A3EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AA72798FF;
-	Wed, 23 Jul 2025 08:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C753A1662E7;
+	Wed, 23 Jul 2025 08:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="c2BAurjQ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BL+gnleZ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD492A59;
-	Wed, 23 Jul 2025 08:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C5C277CBC;
+	Wed, 23 Jul 2025 08:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258389; cv=none; b=BNkyIeciVYwJwfpf416ODzH3cK9LavHIoUtt88O0DqWvKLhoJ9sHkZptN3l9q9ySeLHAthh4GMDlzw9R67aVci/O8APGpYKPme/a8fvaJNKxu7HzPowX4LqcokOqq3Gj5n7zOohofUnCS/A7tqK28LnFsUxywtml2fjNTd9aZyE=
+	t=1753258208; cv=none; b=NMZ0u8uDiINMNKN9hXzrrkqGFgoPezstq3V3RN7CK4QqJ6qvtItFViVYOLcwN4T96kWA3HSoqwMRm5MgPhZaLj3HQkaS/mgceSrMVmiqdPGWfeLINcCePbH4aGzMiT4DtwJ0lXis74I1NJAFGlv3KfANrmx+cBmH6dwCQ3ylMxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258389; c=relaxed/simple;
-	bh=x4YCilgrFXmxCXXy8ZoPr6Kw8EmAvhbD3xpyUcNslJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QMYI4R98j/vwpgxwQPl0AyExUSVFMn7S15Fm0m1QMwTKwK44u4ZTV6UqC1D7gXMJPZ9s/4IzMNg8hfFXqLOmf1gLd2amVyhInOUUMSfdx7sBPJdl5lzVKpoi9Lm5uo5+MglVQX53FkiOAZDoNqsJbZuaX2TbF+w/R8AldE+oifo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=c2BAurjQ; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N6doax017391;
-	Wed, 23 Jul 2025 10:12:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	QK/sgu4bbRdODvf5tGfCdDwOR/bbwmheF/bQDBgiURc=; b=c2BAurjQoIkZx3qZ
-	U2f+PzALTuiatgf01cQJZ+5YLfNH9gWPig4oRGmgheOtBV6Fysjg3Dbjnyq3At1K
-	C06RPHgeUh3BDvg17/h+P/+vsRdODvB4gkDo6OOZFuKie0KGvhlXbXFBb3/SXuYq
-	hRkN/TQBnhr+e8cye3LN3PH5MUR+3JqDcMblh1k+fCMjX13S64aaHHjRCoPXakVq
-	ui2IgS0L9Jb9e+sxtSOl6kjyrnZP+pLaop77Dt5U0vAbHXFPodnoh06RmDssgYUO
-	qsuGOrFmw/0G6jp3XDY/ZThhXSJ2KPAst6jbzuklVuJBOuMO5+1bZw9V6jLMl2l4
-	pqpznw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4qpqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 10:12:48 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2CEBC40046;
-	Wed, 23 Jul 2025 10:11:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CB65D76C471;
-	Wed, 23 Jul 2025 10:10:01 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Jul
- 2025 10:10:00 +0200
-Message-ID: <e9e33fc7-4705-4e6d-bd33-ce9dc1a9b94e@foss.st.com>
-Date: Wed, 23 Jul 2025 10:10:00 +0200
+	s=arc-20240116; t=1753258208; c=relaxed/simple;
+	bh=EdhV/HoC6xZnX2bnuCV2/LzTZIEfyRdVxGCTzPm+bK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=stEv0D9vsEM8lidEOdvto1cLL9Lhrr9E4eXzEvoteJXEGnpc7PUH7GDt8E9Y0cgx+60EgABplD0vvCfGGNclbMb3MD9vRtzw7euZQn27ovs+7Iwu+NWHyposg1Xx8oCACcpzjScG2J4nxByxKTfi4GprrxMVtaNl5GAp5H/VvYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BL+gnleZ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753258204;
+	bh=EdhV/HoC6xZnX2bnuCV2/LzTZIEfyRdVxGCTzPm+bK0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BL+gnleZ794iAZx7tLA6dt0FfFB0Q2Rry3uLk1sG7yLLhffct61DNXSoRs1cQgUZK
+	 4Qw3EgNGeV0zUItANc/V4ytSOX65TwPojnYtzpZunG6rteQWx5buVSEEeiKupwvrKE
+	 0l155W/3aZOxY0DNpNIJVfO5F90N/pKQu2lirmfNXgOXOgzhNSTLBOyhDVpDRq+emY
+	 kgvq6bQa99iUXtmlgGB3aKpR9FkSVhXIqnieSa2Lcx1EsNcUppCYv4Je87Doa3n9hB
+	 /phYF0vawpq5rbJtDl8LGOadDEkNX5CD8KGZpUpc3eCq37VmXIbWGl+8hLvOV+teW4
+	 N3FxYLUOoiP6w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E48DD17E0CE6;
+	Wed, 23 Jul 2025 10:10:02 +0200 (CEST)
+Message-ID: <f1589156-7e4a-4f47-88a1-8c51f6594366@collabora.com>
+Date: Wed, 23 Jul 2025 10:10:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,160 +56,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
- binding into memory channel
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Julius Werner
-	<jwerner@chromium.org>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Le Goffic <legoffic.clement@gmail.com>,
-        Julius Werner <jwerner@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
- <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
- <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
+Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
+ compatible and update clock nodes
+To: =?UTF-8?B?TWFjcGF1bCBMaW4gKOael+aZuuaWjCk=?= <Macpaul.Lin@mediatek.com>,
+ =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+ "chu.stanley@gmail.com" <chu.stanley@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "James.Bottomley@HansenPartnership.com"
+ <James.Bottomley@HansenPartnership.com>,
+ "bvanassche@acm.org" <bvanassche@acm.org>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "avri.altman@wdc.com" <avri.altman@wdc.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "macpaul@gmail.com" <macpaul@gmail.com>,
+ =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ =?UTF-8?B?QmVhciBXYW5nICjokKnljp/mg5/lvrcp?= <bear.wang@mediatek.com>,
+ =?UTF-8?B?UmFtYXggTG8gKOe+heaYjumBoCk=?= <Ramax.Lo@mediatek.com>
+References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
+ <20250722085721.2062657-3-macpaul.lin@mediatek.com>
+ <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
+ <845f204b2b2e39b794cdb9c0f3293dc8cba7286a.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <845f204b2b2e39b794cdb9c0f3293dc8cba7286a.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
 
-Hi Krzysztof,
-
-On 7/23/25 08:57, Krzysztof Kozlowski wrote:
-> On Tue, Jul 22, 2025 at 04:03:24PM +0200, Clément Le Goffic wrote:
->> LPDDR and DDR channels exist and share the same properties, they have a
->> compatible, ranks, and an io-width.
-> 
-> Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
-> don't think all memory types do.
-> 
-> I think this should be renamed to sdram-channel.
-
-Ok, do you want me to also the memory-props patch into sdram-props ?
-
-> 
+Il 23/07/25 09:33, Macpaul Lin (林智斌) ha scritto:
+> On Tue, 2025-07-22 at 11:39 +0200, AngeloGioacchino Del Regno wrote:
 >>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   ...pddr-channel.yaml => jedec,memory-channel.yaml} | 26 +++++++++++-----------
->>   1 file changed, 13 insertions(+), 13 deletions(-)
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
 >>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,memory-channel.yaml
->> similarity index 82%
->> rename from Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr-channel.yaml
->> rename to Documentation/devicetree/bindings/memory-controllers/ddr/jedec,memory-channel.yaml
->> index 34b5bd153f63..3bf3a63466eb 100644
->> --- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr-channel.yaml
->> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,memory-channel.yaml
->> @@ -1,16 +1,16 @@
->>   # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>   %YAML 1.2
->>   ---
->> -$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,lpddr-channel.yaml#
->> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,memory-channel.yaml#
->>   $schema: http://devicetree.org/meta-schemas/core.yaml#
->>   
->> -title: LPDDR channel with chip/rank topology description
->> +title: Memory channel with chip/rank topology description
->>   
->>   description:
->> -  An LPDDR channel is a completely independent set of LPDDR pins (DQ, CA, CS,
->> -  CK, etc.) that connect one or more LPDDR chips to a host system. The main
->> -  purpose of this node is to overall LPDDR topology of the system, including the
->> -  amount of individual LPDDR chips and the ranks per chip.
->> +  A memory channel is a completely independent set of pins (DQ, CA, CS,
 > 
-> A memory channel of SDRAM memory like DDR SDRAM or LPDDR SDRAM is ...
-
-Ack
-
+> [snip...]
 > 
->> +  CK, etc.) that connect one or more memory chips to a host system. The main
->> +  purpose of this node is to overall memory topology of the system, including the
->> +  amount of individual memory chips and the ranks per chip.
->>   
->>   maintainers:
->>     - Julius Werner <jwerner@chromium.org>
->> @@ -26,14 +26,14 @@ properties:
->>     io-width:
->>       description:
->>         The number of DQ pins in the channel. If this number is different
->> -      from (a multiple of) the io-width of the LPDDR chip, that means that
->> +      from (a multiple of) the io-width of the memory chip, that means that
->>         multiple instances of that type of chip are wired in parallel on this
->>         channel (with the channel's DQ pins split up between the different
->>         chips, and the CA, CS, etc. pins of the different chips all shorted
->>         together).  This means that the total physical memory controlled by a
->>         channel is equal to the sum of the densities of each rank on the
->> -      connected LPDDR chip, times the io-width of the channel divided by
->> -      the io-width of the LPDDR chip.
->> +      connected memory chip, times the io-width of the channel divided by
->> +      the io-width of the memory chip.
->>       enum:
->>         - 8
->>         - 16
->> @@ -51,8 +51,8 @@ patternProperties:
->>     "^rank@[0-9]+$":
->>       type: object
->>       description:
->> -      Each physical LPDDR chip may have one or more ranks. Ranks are
->> -      internal but fully independent sub-units of the chip. Each LPDDR bus
->> +      Each physical memory chip may have one or more ranks. Ranks are
->> +      internal but fully independent sub-units of the chip. Each memory bus
->>         transaction on the channel targets exactly one rank, based on the
->>         state of the CS pins. Different ranks may have different densities and
->>         timing requirements.
->> @@ -107,7 +107,7 @@ additionalProperties: false
->>   
->>   examples:
->>     - |
->> -    lpddr-channel0 {
->> +    memory-channel0 {
+>> The unipro mp_bclk really is the ufs-sap clock; besides, the standard
+>> has clocks
+>> for both TX and RX symbols - and also MT8195 (and also MT6991,
+>> MT8196, and others)
+>> UFS controller do have both TX and RX symbol clocks.
+>>
+>> Besides, you're also missing the crypto clocks for UFS, which brings
+>> the count to
+>> 12 total clocks for MT8195.
+>>
+>> Please, look at my old submission, which actually fixes the
+>> compatibles other than
+>> adding the right clocks for all UFS controllers in MediaTek
+>> platforms.
+>>
+>> https://lore.kernel.org/all/20240612074309.50278-1-angelogioacchino.delregno@collabora.com/
+>>
+>> I want to take the occasion to remind everyone that my fixes were
+>> discarded because
+>> the MediaTek UFS driver maintainer wants to keep the low quality of
+>> the driver in
+>> favor of easier downstream porting - which is *not* in any way
+>> adhering to quality
+>> standards that the Linux community deserves.
+>>
 > 
-> If doing this, then separate commit based on generic node name
-> convention. But then we need to come with generic node name first,
-> sdram-channel?
-
-I don't want anything specific so yes it could be cool to have a generic 
-node name.
-"sdram-channel" is fine for me.
-@Julius what do you think about it ?
-Is your existing software generating it in the kernel ?
-I'm curious about dynamic node name generation.
-
-> 
-> And also '-0', not '0' suffix.
-
-Ack
-
-> Best regards,
-> Krzysztof
+> Oops, it is sad to hear that.
+> MediaTek will raise an internal discussion and hope
+> we could get the more specific requirements back to you soon.
 > 
 
+Thanks for that.
+
+Cheers,
+Angelo
 
