@@ -1,222 +1,245 @@
-Return-Path: <linux-kernel+bounces-742797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37695B0F6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED90B0F6CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E25318880F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B0D1666AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8731C2E54D9;
-	Wed, 23 Jul 2025 15:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D72E92D7;
+	Wed, 23 Jul 2025 15:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fNZCyw2S";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7JljtQ5L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="soEitRL0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3D9aR+au"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mcJgnYk6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBA329C33C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753283590; cv=none; b=Vwna+k+wxABNH0rYTBypYFqUS+Nd7yzuhglQZQSfXlLj7mVjNqo+LiSDm93Q7JCrnufIZBFFLXhNBWCpjxXXiZBxxUrgvudp+4j7mLrw7pDL1lPZnNV5v0zHf3VHKUh/UDCwdvUZXiW8ugJRU73YVPW7HuG1MbCi1dukiGGvYhc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753283590; c=relaxed/simple;
-	bh=l6RSbBw88pYnM45HYZLrG6+cYihyCMp/9LCGuoNeiVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qLnWxh+57xy2r1PbJFS57Y7stfRIUHCn8DLWVfmaxIpWBkxfI41cKTTmSiBkGNPsu7r8wYqmoK7OZq7C8Q6HR6EC0ryWyR1ZDNB0AEsdXTw5Ql3IfBz9WX2ZO/bntvagHgxwC7qaQAHCcSZ0Vm6LZv1ZNNC+likFwe2XuvT6N/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fNZCyw2S; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7JljtQ5L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=soEitRL0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3D9aR+au; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B6F321296;
-	Wed, 23 Jul 2025 15:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753283586; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pnw34Pwnw+OLEEFtJ5PF8S2TL+K3w03RLCu1xE/WHec=;
-	b=fNZCyw2SGNkIRROvzgOTdjZOczHxbDkXO2kblSToYa+NRLHYpyDOVgOn7mTSIQKQCxAA6j
-	bkxLOKxDXvNljT6At44WDHp21DXwH6SCDTDvsTCIKrthcXzpGhBUSYlfCOBhiSi63FkKwv
-	hXk4nnnHCYU3yjkYS5QF/MU4ktrNFUA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753283586;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pnw34Pwnw+OLEEFtJ5PF8S2TL+K3w03RLCu1xE/WHec=;
-	b=7JljtQ5L6hk9z5yfW0iRYepbYO7B8+fZ+eeQmEjYPImi99GnZrmnyQQ4vHnrrzEmV/w7bY
-	HDa09UP5ZvZkghBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753283585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pnw34Pwnw+OLEEFtJ5PF8S2TL+K3w03RLCu1xE/WHec=;
-	b=soEitRL0NeqmPXkghjdqCMj+3GWzqD48rRHSmXZUJ9gyTmAvqkkB0lR1H33Oe2GG8EVIVQ
-	xb6x9V1YN/lhwzOTCIjKXjeVX8ZYnEiODQ9XdSEoW4+/0xHyLjvkDPnpelSWXgEcbSt6k3
-	RQCZVCW9Oeampi6B9FKmiUaN4F2BmvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753283585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pnw34Pwnw+OLEEFtJ5PF8S2TL+K3w03RLCu1xE/WHec=;
-	b=3D9aR+aunc6FDx8Karric5IQ3vDnjKVnX3xjEU63KIGbX2/2jdclUgBFYn64ARaGC4WddC
-	HHo1kyDwwEnlCmAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67F8013302;
-	Wed, 23 Jul 2025 15:13:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WWEHGQH8gGj5QAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 15:13:05 +0000
-Message-ID: <2f5512f6-1f0e-4e54-b9c3-8a0501843bbe@suse.cz>
-Date: Wed, 23 Jul 2025 17:13:05 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764182951D5;
+	Wed, 23 Jul 2025 15:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753283646; cv=fail; b=CgYcZ2PHVWchDx/ZlI4KX18geT7mHUZuTpG+r6yB+h3LhXmKFGwefajA8dYDikG+h2dsiQP0vfFkaevnrcUcfZoYhhQeoaHekX1edT2m/oHsG/3cDg8jiYMPMSIXrT/KBkPi3UwNc3nTBJuQMNarN4CSVRFQg+zHeP81a1c/8kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753283646; c=relaxed/simple;
+	bh=kPISuOmRiA2dL5KhertDdUTZYSCTAXJHslj0JR3wCtE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tBtH/52pQzYGhwchmdHt7KMI0jrhsZZeALsODSUfGNWT7Ck3yX4N98U9FGSYPxePyFjjmL+pkV9RUd+n6m54G1ChaIp0uidPXQVD1vZzo78ewsG50N22eq2Ol1un5TBEeVpp+hax7gHfudKutvPZA9L9Fu8oEoLI95gyv/qv3rA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mcJgnYk6; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753283645; x=1784819645;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=kPISuOmRiA2dL5KhertDdUTZYSCTAXJHslj0JR3wCtE=;
+  b=mcJgnYk60vuIxUnGVhCryZxeRTiAY77jE9prMKbUi2sKWcPqSs5IXi8r
+   y0K41BjokbflfwNw9OUDBnvGfGAjowtFzBYfrEb1dh1FSbonD+q0tnSFl
+   3G9ro59VJhzp0TpOlIq6uRbajrwkUuqnBLKqPIcMr4YxiPEE+ELHKxQOa
+   RO/pg4W9xlSGGP/rvgN/UevRH6/2f//q5vFNAh/Z6zLwUnFTjVIrkdFhB
+   Z5GT2MQQdG3V49lDDMeP5V7+PJyo4AEs0oT3Hm656b7ZCI1ULmsI2ELT7
+   lpcNXMkX5A6dxOjgVxFlelBiBX4LYYgQK0WEIHTJgQNZeJ+HNsOoP/EYq
+   A==;
+X-CSE-ConnectionGUID: SbOX5Xu4TTuh9OydYyNGpw==
+X-CSE-MsgGUID: 43vU6j/RS2yZivOKW+5AFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55450071"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="55450071"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:14:03 -0700
+X-CSE-ConnectionGUID: rVQ1HXzuRLCnvxx+3maEnw==
+X-CSE-MsgGUID: +43csPV0QeKzFiXunTo48g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="165039521"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:14:02 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 08:14:01 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 08:14:01 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.68)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 08:14:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UXFBau0cZCCr7iHqb/zjfMZ6F4OiRdW4AwG5bLXuJn4H+kNYBX9TKBK/xyPN0Zyr1ngGBIj/KP2LS8ngioWvCAfyp1Bxw49KtG/Gt0ObnV42C3Ki/86pc4KQTsU92ftaBh9ONeuplWtMS5fe+TbaMbXdNADZHhoyHz0mVwH+PKdMRPgQkiA47KCE8cpic2M/BYCkqAsbae0yhBGxDJb5yhxFSkDNqulR6o5gXS/Kd9NQyhunJG2OliZ3lM7zErz/7A7Li1poNnlRtZRu9stA6qOTVwPfzjC5Nd24wppdvW0VKuu03TmvEJDPEgAEDNogAj5FBv4jnJFaGdealr1iYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CFakZWawXwau7hqGw2ESnAr8N7LfuVo/VncaFAAHiJ4=;
+ b=nb13f+fmAC4T762gxBOCipU3CorfY+FKxLWfyW6WmxclI0AZ11k2sF0jIbhIIo77QDuaMdnX1uAEgRx1YHzF55z/RYkkew1SWLOWoACZ52ujk4tudsyUAtma94VCdUSoAKOXlba5839YsraB9T3qFGGKbyjsA+QBBtj3JfkJYMzKmBpaWRchtSmMZgoZEbrsjaUFzU3WoJMRuJQXXQeZHA7kcTDcl2U6CbxZEt+uV4G4M89/s4yi5l72rdJ/HidW9fl17bivzaPYF4YWu9Azc8Uimh+RKi6Uk5EAMhx89Hoz+CJbQnzyUBy9Q1KEGvYxc097XVhT8viHTnIpP1BM3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
+ by PH3PPF2B89F77E0.namprd11.prod.outlook.com (2603:10b6:518:1::d11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Wed, 23 Jul
+ 2025 15:13:58 +0000
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 15:13:58 +0000
+Date: Wed, 23 Jul 2025 17:13:07 +0200
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter
+ Anvin" <hpa@zytor.com>, "Kirill A. Shutemov" <kas@kernel.org>, Alexander
+ Potapenko <glider@google.com>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, Xin Li <xin3.li@intel.com>, Sai Praneeth
+	<sai.praneeth.prakhya@intel.com>, "Jethro Beekman" <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, "Sean Christopherson"
+	<seanjc@google.com>, Tony Luck <tony.luck@intel.com>, "Fenghua Yu"
+	<fenghua.yu@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, Kees Cook
+	<kees@kernel.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, Yu-cheng Yu
+	<yu-cheng.yu@intel.com>, <stable@vger.kernel.org>, Borislav Petkov
+	<bp@suse.de>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] x86: Clear feature bits disabled at compile-time
+Message-ID: <xfshxftto4al2syvtrmbqbswlussduvncodyowjwfcvi23v45e@sy4e4hckbf7a>
+References: <20250723092250.3411923-1-maciej.wieczor-retman@intel.com>
+ <20250723134640.GAaIDnwGx6cAF9FFGz@renoirsky.local>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250723134640.GAaIDnwGx6cAF9FFGz@renoirsky.local>
+X-ClientProxiedBy: LO4P123CA0172.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18a::15) To MN2PR11MB3934.namprd11.prod.outlook.com
+ (2603:10b6:208:152::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: add MM MISC section, add missing files to
- MISC and CORE
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>
-References: <20250723095823.21940-1-lorenzo.stoakes@oracle.com>
- <abbaed17-955a-44cc-9593-10c1afa4c6a3@lucifer.local>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <abbaed17-955a-44cc-9593-10c1afa4c6a3@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|PH3PPF2B89F77E0:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc7fdd5d-950f-4093-9c6c-08ddc9fb8bfc
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?5okipkmORiMNhfD1hq5LfzN4rLhundZDwmUgHa2Lcqe8hqdBQN+lZnAshI?=
+ =?iso-8859-1?Q?WHkPO2GTXLHDVhOmxFvwImOezoMkNIWDj5VTRCWXD7FbXiIvvx1UTvnD38?=
+ =?iso-8859-1?Q?x7Kk643uc4ZOd9/r95hLGJCf/6Og9nbKI6FYrSngAObLQ6P7if6pVb+3+f?=
+ =?iso-8859-1?Q?lulvvuqGOT2RoJKS14yMqOjYdE6Cz2VAq/9GBxyuOzvS0dzobqHjF3b016?=
+ =?iso-8859-1?Q?eQ98mjhDU1JLzYu/gRDmArwnKwyFwQMMtwU71kyyijx8HOONiFNbPb8sZo?=
+ =?iso-8859-1?Q?o5FcntMnedz34GGnWZ6aZBpq6JuruoqIvnA8FRVl/ZJ83KPZLOIsJZPVTd?=
+ =?iso-8859-1?Q?Tqx5Ii5RzxweVi+/zHQMToJgEQMf52NQ8Af9Y8cuB9F5DNUIjP1yH3fbze?=
+ =?iso-8859-1?Q?brLiiDju8ApM+92pMDGG+xRKuphSZIyT/mGIm8IHxrjxTwI0LeU6sBLe0f?=
+ =?iso-8859-1?Q?rJ1rLi1+NKAeaNXy2HB8vZvUzy09CFilwr7F/AXbs8ODafss7wAHHd0WdU?=
+ =?iso-8859-1?Q?xkOV/9yIPKuA2aeKjL4uvwihH8gTShgubfhXKl8Zu8cn891JepxEv6pvpr?=
+ =?iso-8859-1?Q?dgdtqazacxulWF7d5nG7Xri7MyYn5LdLHJSexZgl1kI+pbrN3WvBn+lDC2?=
+ =?iso-8859-1?Q?tMBAM5xu0JHkDLN+8F7D7w2yfKlxpT29LUfXXPHJ6LMQqDCzmhF4ZpDuHw?=
+ =?iso-8859-1?Q?jBLfP9eySgO5jZjuB+qh6Ug6Ocws6yIOziGuDMnXHzhEpPUWc/rpT44pAC?=
+ =?iso-8859-1?Q?ZLHM68D9i5n7d2MldGN22MgEzsu0JaEJohO7Cg3YlvI1n4QTQWrHt1tLyO?=
+ =?iso-8859-1?Q?vPvbGEd2sW5ER+7wm6F4nhZBRuRYRo9h8vLTLSxoaZpi1ajpTR85okjGHF?=
+ =?iso-8859-1?Q?E56QnbKoiFwecqCRumRGeytQakjBlQ21fZ2s5DcIBZxyquOJfdd1iZDjVG?=
+ =?iso-8859-1?Q?8PXWKaKNywnUsTr3htj+u8fbS01nXnkTJ5CtgT0itoaUIeEHkf50Hrf9Gc?=
+ =?iso-8859-1?Q?B3PpK2NMo4+YfIVH5jTDa80Gkb/5a5A25UOSPB2o+Qn0y9DtjoIbXhg4Ll?=
+ =?iso-8859-1?Q?0sX3kbLXt0rwDwmgP6c6+2NvKhZfUEVtSACSZRlIEYxL4QPXNSlDdRaPdo?=
+ =?iso-8859-1?Q?n0kIzxiFp1U5WbIGGYfm6cMh6Z8COuZwvs5I5SMlMCuYTfhmlybmL/8a6x?=
+ =?iso-8859-1?Q?0M6Ww0uQMbrev+M37rGiQ+25lmGdE928i6SQ+0iT+hcbAcC4IszNz6quGQ?=
+ =?iso-8859-1?Q?RdTaifcmPI+c+GaaMcqLp3pnepw/lpWsMDtwvn+BrOCfNKaiIV2+HNUEZp?=
+ =?iso-8859-1?Q?cbbwrT/smORpP+QhXQZ86POc/eB/IHJMXDHM4zBUILO4zv1RWh8reJVoRz?=
+ =?iso-8859-1?Q?O4lcmtHqzwdIbrsPeXdMeJskvAvaHTmSXnC7ztCmy84oxdbZx05QPUX2cQ?=
+ =?iso-8859-1?Q?wHO62wQIXoaTq6V4AN2XQ1CH4VARmvCtPFXySCZG9Zy3BekZJrEHqnYjdZ?=
+ =?iso-8859-1?Q?0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?LAWpOf0TrlO5RAcROV7thq36GqNc4y+WJEUk6FLNTCLIhjjb/xXO3FiGZ/?=
+ =?iso-8859-1?Q?BFxz5o4rMhbjCSWo+rEU3mxCz+vJWlnkc5MtD4EZMTi3FNNhHyTgzZxggc?=
+ =?iso-8859-1?Q?9XiQMuoeCGWBu8E7vBNMcB+1aBifvHgtWCo3hOBBLvf2HdeLIZ8+GzS73f?=
+ =?iso-8859-1?Q?tUxqVj51ZcDH6MfqgthRPQg5nJgqG1l4dAyANDa461oidYhLZGPh0DTKW2?=
+ =?iso-8859-1?Q?0UUAmUH5t1DY2KBl7oJZm3rtPirZer48LF5GwxonASxi7hs+/XNslzABFA?=
+ =?iso-8859-1?Q?JUBQos6XqeJ/bErFTIYzw5SrechhmZuAKcfhQnPQA1iX1+CsdFpDCVvA2Q?=
+ =?iso-8859-1?Q?UMMT43c3VtSJoFkudx8RyrC2AFEtJ9/LBiXAZ8T/GP2NFdoQuiEF91vE6I?=
+ =?iso-8859-1?Q?oKJ9FlMw+Woq9+BDkKQZlxeh0I9q+SJyl3AU2fsBokro4+0Ot8Kf49Iq32?=
+ =?iso-8859-1?Q?4d7QQjZpg8C9TI2vmCnR7PVXDcZy43X1bU44Wsq5c1mF48LcmOYNYVWG9x?=
+ =?iso-8859-1?Q?Fx99AfYIlZ1iKbKzOiwE24yJXsGkQsAcVxUDMXd4yWWsUs00ccBKNYMrJ+?=
+ =?iso-8859-1?Q?lH4O2RXVy23uqDVRM1jVSFNANN8p5dVVT0thf1v2aXHGlx8h12fHdONd4w?=
+ =?iso-8859-1?Q?uPjppZXZFtVAmJJDcLUGofOXWhfDGxhCF1pL1rKck+AEigBKsgz2107APb?=
+ =?iso-8859-1?Q?r9QMNstS110FGA740ZBg30gi1UmS8ih7kdMXy17go6ArIysdXCXdHOtl5c?=
+ =?iso-8859-1?Q?C1XvBjtiRn++1rngz7cFwjf6sh93/HxIVKpT2IX9+IgmUgGdKEEU0yB5Vc?=
+ =?iso-8859-1?Q?83IfGU/iBG3Kr/GU94noBjiMdCUVI8W19icqsfQ0fWO1+Ecy9MXWfUQ9Ia?=
+ =?iso-8859-1?Q?ITchJtBkVWa1g+oo/SlsUvVPH3Djbj8crkQiizD9KplUNVGgIhRUvgJFSz?=
+ =?iso-8859-1?Q?1o9LH3dOJT/XLWQIVtoXBBgBbu5WGiNRy+fZxOpZ16FMObvEI6aRPw5Mtp?=
+ =?iso-8859-1?Q?XDci2G1KTrCWeboqErm74L0F6vvCSk5HUQ2lzmJJHk36K4kuX9a0m+CJHP?=
+ =?iso-8859-1?Q?hdQTRFYzatQAo4p6b6EkT7PP9Lpxs/FlQfFkRLubLBxzuGmwyDNLRtVB8d?=
+ =?iso-8859-1?Q?wmVoCGBYkdjLUu6PycK3ymMFZAAp+5KlgNUZrtaJVwIkzUoWgT33UoCXpk?=
+ =?iso-8859-1?Q?fqlyy2jGdXhFV60YfjsMVKVzPoxaCaJi6G2AJwkshX/H1uy+naJJKSJ6lq?=
+ =?iso-8859-1?Q?E5U7VI3PGUrKf+KJT1VkiWUWHt9Sqe34A2FflcwSejQF5vdjAZIh6JWT4j?=
+ =?iso-8859-1?Q?k4X/SRxJV8joK3WID+s6f0pmV4HrU3fmN14F4uZfKahe/cDuVSoezuOwxJ?=
+ =?iso-8859-1?Q?zGysERWe1czSRxmuN83p5gIDgnEI75Doy+J3ho9DmKf5s80DTQwaUNsyhV?=
+ =?iso-8859-1?Q?71bqPbMDcOjqUseqju8BQyHsWDArlEuDVntJQwQOhRbB+CcUT9Ui+Tbevt?=
+ =?iso-8859-1?Q?7qBryoNm3hYFED4MPPfTO+Bbc07ILq5u0xjlM6R3UnsWo5i9VkbBz0FbPv?=
+ =?iso-8859-1?Q?2aEQFuEx0pIch1oMM+FS9ZxEQhsjIXhMfnI6BHC3KRwHaTRv8yh6nz/man?=
+ =?iso-8859-1?Q?hTdd1CzWA22nRnX1ZP6q/FWMNpORPTh97a8+txrbDKviZ686oKakeFnQoH?=
+ =?iso-8859-1?Q?kr4j+516nmRRdz798NI=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc7fdd5d-950f-4093-9c6c-08ddc9fb8bfc
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 15:13:58.0273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X8P9Ck3va89MXVPdo23BXxMr7gSLKK/ehZB/7K0sK1mKnMvNvo0CQSFs0vfkaGaXjLy+AfT3nP4VAAGxhAtegBbL10ZeKrrFJ7v53GbA5FY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF2B89F77E0
+X-OriginatorOrg: intel.com
 
-On 7/23/25 17:05, Lorenzo Stoakes wrote:
-> Hi Andrew,
-> 
-> Please apply the attached fix-patch removing duplicated header files
-> accidentally included in the MEMORY MANAGEMENT - MISC section, as pointed
-> out by David.
-> 
-> Thanks, Lorenzo
-> 
-> ----8<----
-> From 9a94ef4511f6d0cb39f5edcc963b2aadc11febed Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Wed, 23 Jul 2025 16:02:27 +0100
-> Subject: [PATCH] MAINTAINERS: remove duplicated header files from mm misc
->  section
-> 
-> These are present in other sections already, so remove them.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  MAINTAINERS | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5a9d4c57add4..5a6cb44635a2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15860,11 +15860,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->  F:	Documentation/admin-guide/mm/
->  F:	Documentation/mm/
->  F:	include/linux/memory-tiers.h
-> -F:	include/linux/mempolicy.h
->  F:	include/linux/mempool.h
+On 2025-07-23 at 15:46:40 +0200, Borislav Petkov wrote:
+>On Wed, Jul 23, 2025 at 11:22:49AM +0200, Maciej Wieczor-Retman wrote:
+>> +static __init void init_cpu_cap(struct cpuinfo_x86 *c)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < NCAPINTS; i++) {
+>> +		cpu_caps_set[i] = REQUIRED_MASK(i);
+>> +		cpu_caps_cleared[i] = DISABLED_MASK(i);
+>> +	}
+>> +}
+>
+>There's already apply_forced_caps(). Not another cap massaging function
+>please. Add that stuff there.
 
-You could take out this one too as it's going to SLAB via my tree?
+I'll try that, but can't it overwrite some things? apply_forced_caps() is called
+three times and cpu_caps_set/cleared are modified in between from what I can
+see. init_cpu_cap() was supposed to only initialize these arrays.
 
-> -F:	include/linux/memremap.h
->  F:	include/linux/mmu_notifier.h
-> -F:	include/trace/events/ksm.h
->  F:	mm/backing-dev.c
->  F:	mm/cma.c
->  F:	mm/cma_debug.c
-> --
-> 2.50.1
+>
+>As to what the Fixes: tag should be - it should not have any Fixes: tag
+>because AFAICT, this has always been this way. So this fix should be
+>backported everywhere.
 
+I found that in 5.9-rc1 the documentation for how /proc/cpuinfo should work was
+merged [1]. I understand that from that point on, while one can't rely on a
+feature's absence, it's a reliable convention that if a flag is present, then
+the feature is working. So from 5.9 on, it seems like a bug when these features
+show up as working while they're not due to not being compiled.
+
+[1] ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
+
+>
+>Thx.
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>https://people.kernel.org/tglx/notes-about-netiquette
+
+-- 
+Kind regards
+Maciej Wieczór-Retman
 
