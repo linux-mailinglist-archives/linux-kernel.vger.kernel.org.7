@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-742383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B7BB0F0FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E00B0F0F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4833D7AA652
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45FC188443B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB22DBF51;
-	Wed, 23 Jul 2025 11:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFD72E2EF0;
+	Wed, 23 Jul 2025 11:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VveC0p42"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Qof0X4K7"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0992D3731;
-	Wed, 23 Jul 2025 11:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E1428F531
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269207; cv=none; b=W0gISWEdmwEI6vM7EPis8ZgtPb2D98TEgmrddM5Bl1Zr0mWqM8eZOkvb3xrGmtiVM1MCT2aqUNBSUwVAttAq78EVB2EcIkpk+W4fdtHgtsnzZGbjLpj0D1B8XeZLGXq60F7g92XREJgd6SuP9iviQ9doeGdW8696MlN9XjBDY/I=
+	t=1753269209; cv=none; b=Lex3rtGW7Od5KvKUvfdalcjDLT9GmjRHdxKh0RrjQAQ8KGaeLQp89eot5advIqkOVwwTG5eh1rA1fNpuwgejpABjPuft5F3PcnQBvMSqgce6SjqrHye0IJBoK0jJ1kri+I1hXjbpUiC0YDfCdCwYFxaTkKNdAMj40gLydgVcmWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269207; c=relaxed/simple;
-	bh=QS54HACGbgdMRs0EaSON+Zv0IttzLgk3Dxvba53hmEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6wtHKltfcrQl6Je2yggkGsDmVUKIPD4awkGmPfNswLYlDqd5dC/2+b0nHR/VkkGkRajXXzHVJtUQXcw0GcTWCMivWuN5XzjSglUnET6gMgxW2hPams+gVPM4pm/brYeo6o+zGoyYZ+T3Lsi3H5PJzL6P8lOGghoCd2gCTiTYHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VveC0p42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D80DC4CEE7;
-	Wed, 23 Jul 2025 11:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753269207;
-	bh=QS54HACGbgdMRs0EaSON+Zv0IttzLgk3Dxvba53hmEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VveC0p42ztQD01MnFfZlI0VMLsO/8qZp7VAoH72GvyCT1o3tfOA0XyRIjPFW5lYAi
-	 k/cIVCxaOvcMxuF8JK4oly+Gb+x9y18pTR8ZJEjd8EVkpIBuCRWDBWQUpbwfP4Q2eq
-	 +lPnxlk9lnVBTy4tpisJi/Tfy/ztJCXogsJqF913H6al3HBi7BHxRzVLX1pvKOUDSD
-	 u4nKNy3+XCK+OZZ12lH1OFoU2zW/+/VApEeCOQFhw2tJeQc8mtur2z1ClR3ALgloY8
-	 Ux9hfdhPXUvJYr0p5pe8eLDh/7We5RJ84askLuSNAHurpDXmcxDapbMFTnS9hOs+mi
-	 r4bOPw4jHoiAw==
-Date: Wed, 23 Jul 2025 12:13:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
-	oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] arm64: probes: Add GCS support to bl/blr/ret
-Message-ID: <75faf0ec-79ee-4631-91d0-535c81c1bc85@sirena.org.uk>
-References: <20250719043740.4548-1-jeremy.linton@arm.com>
- <20250719043740.4548-6-jeremy.linton@arm.com>
- <aICywZ55EKfSYSIY@arm.com>
+	s=arc-20240116; t=1753269209; c=relaxed/simple;
+	bh=41O+153xmJgNdu1ZJTd1Wvjw6XQRDIcFTlK5QmAzPFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PrashUL8I3OLtYp1Wkw/WZXjT8Vps75vABjZfarOhf2GsVTV2aX0n6HeS/HZHBRQsjr/yYfazs6sjabVC3YsUB7EiGZF2/cEj3nW/139M6YivIPZ52MqqDCFcIw2xiEqN2212w10IyRXA31EdxGtER6hCRZGUQoWqKFsofwoy+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Qof0X4K7; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab5aec969eso120273661cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753269206; x=1753874006; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvgmGBaWE2f+k/MY6pGjbltcZz4rXWd+ofntlB6TQl4=;
+        b=Qof0X4K70xjsbh9HXVhBTyAEHS1ZLk9DgGd4PQeQHjTlMsnZebMBLuURN1t2ftpBWm
+         maGTBW4K6x23oqakQsPF3DKG7YPA6oNMb1NXLXcdssHUCKIgqEgXQDJ4b+VNZ+zLBpdo
+         Wr4Z6f0HUClBsRJ+fjcHsvRH7gC8jDC90VIpU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753269206; x=1753874006;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XvgmGBaWE2f+k/MY6pGjbltcZz4rXWd+ofntlB6TQl4=;
+        b=xJU+J6jbo5N9ARpVeyE0Q8FIgZUfrefAphIJYaSek/Vh/aqwEETypFT8kSGnCjuOwt
+         G0lznmkuGADccmOnrI+HKvo5cHYNYTfFP2w3bQLYkaiJi/dfdUvbmsTJD/HA4fb8cUvQ
+         Z0ZcnuH4l4chm83PC/5zlJC+gPkSLann7VjAxtkRDoN1KxhOhrG13Fihh0iZ+trsjkGu
+         3e9Zy3mHoFTh48ZcjXG+2d9jXx84BNjLSWJd8+xvpDm9Cet3grBJrAT8SV6YELbMXOY1
+         J6uMU7QJAxhdacgnS+PoP6TweJAojW5oFzo/J9LFkRpWNW3ZZrQHDlsdssfNTZE0ahBN
+         6pBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY0uUNAFEROCbMWPkEcVjvO9H64x3lXTHyAqBocWHyLn0FMZ+8IrcWyxdUsU9oXAkVno5I6wlc7MR+H+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+TFZcrHYKB/6Q0/ORc1FbgwVBJBmwIznD+gyOpxnLPqkRdv80
+	C+TE0LUcBSJddswMIYBc4+ef3HrhHovkmNjE0xsMdawvZKxgTeKXnIedwDG6s2WPPQ==
+X-Gm-Gg: ASbGncs4P+PSuivpprtPkuX2asiPW3RsLne8pPcGMTNPLtcuPcVKuNmSBtNkfHzrgtP
+	HPxv8fNgoaIZRk/45wqlFaY9D4sw2NrOJrk9QL4HFUXXC+7BDsRT9HSmYxSS3fgJH77ia6QhYR8
+	aAFxyD050gly6RMOw9iWpAmRzVs40oBGUX1alNSzrQK6oYkZZc6KMMtyuxQoDKSlvyMbN60vMhC
+	3gVWUo4x+en8YQPbmOUrTA2mUPa0pV7FlsfpXrw7nQqqHR/lmXg2G0HDB5Q/7ZHXHsrjchI9uL2
+	ker7Wq/SAmqKCEw3afU5x+K5B1yIWYtvIdKZr7vZoRho42kjWuXK30FOupu1sZE8LZfoj915Tyy
+	/XrrE5EUp4y4uUH3I20rEq65tJzPjrAcfuCFdZQTBi9yFhwqtpxiPv265jZuYMNI=
+X-Google-Smtp-Source: AGHT+IGoNF17MdvxYORZ6QH6kCq+U/AOPAufEmn1e0CkaBnBRISl28TUvJZQmz4XrfJd57ecG90D8A==
+X-Received: by 2002:a05:622a:1207:b0:4ab:7e22:8553 with SMTP id d75a77b69052e-4ae6de99a0bmr29387191cf.12.1753269205859;
+        Wed, 23 Jul 2025 04:13:25 -0700 (PDT)
+Received: from [10.176.2.145] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abce0bbfdfsm46979931cf.9.2025.07.23.04.13.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 04:13:25 -0700 (PDT)
+Message-ID: <d0a74192-472c-472b-a5ca-bc8700d63003@broadcom.com>
+Date: Wed, 23 Jul 2025 13:13:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LlK8+g0AOOO1HzK1"
-Content-Disposition: inline
-In-Reply-To: <aICywZ55EKfSYSIY@arm.com>
-X-Cookie: List was current at time of printing.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] wifi: brcm80211: Remove more unused functions
+To: linux@treblig.org, kvalo@kernel.org, linux-wireless@vger.kernel.org
+Cc: brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org
+References: <20250626140812.56700-1-linux@treblig.org>
+ <20250626140812.56700-3-linux@treblig.org>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20250626140812.56700-3-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---LlK8+g0AOOO1HzK1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 11:00:33AM +0100, Catalin Marinas wrote:
-> On Fri, Jul 18, 2025 at 11:37:37PM -0500, Jeremy Linton wrote:
+On 6/26/2025 4:08 PM, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> This is a subset of unused functions in bcrmsmac phy_cmn.c,
+> They're unused since the original 2010
+> commit a9533e7ea3c4 ("Staging: Add initial release of brcm80211 - Broadcom
+> 802.11n wireless LAN driver.")
+> 
+> Remove them.
 
-> > @@ -133,17 +147,26 @@ simulate_br_blr(u32 opcode, long addr, struct pt_=
-regs *regs)
-> >  	/* update pc first in case we're doing a "blr lr" */
-> >  	instruction_pointer_set(regs, get_x_reg(regs, xn));
-> > =20
-> > -	/* Link register is x30 */
-> >  	if (((opcode >> 21) & 0x3) =3D=3D 1)
-> > -		set_x_reg(regs, 30, addr + 4);
-> > +		update_lr(regs, addr);
-> >  }
+Tested on BCM4313 card.
 
-> I can see why this function was originally updating PC (in case of a blr
-> lr) but updating the LR was not supposed to fail. With GCS, I think we
-> should follow similar logic to simulate_b_bl() and skip updating PC/LR
-> if the write to the GCS failed (assuming that's what the hardware does,
-> I haven't checked the spec).
-
-Yes, the pseudocode does the GCS validation before it starts updating
-BTYPE or any of the registers.
-
---LlK8+g0AOOO1HzK1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiAw88ACgkQJNaLcl1U
-h9DmBQf+NT0Xig5/CJmpAvlNNkwAL72NZQH1v7bPz2tbKiHVjN1NwtBf/kvxhpEJ
-RMMUpmeXdnzJLb5ivMwiO+8bgLYvs+ac79pa1VQYELxVclezQ/cjk4wH0S4PH+gN
-neW8Elmceqi2i9Qdf5Bsk1bBwytFluoTnYxoivJsYUCkOR+Fd4ERBYdixoqjJ0iK
-+aORZ60biBcK47nd+hg41RbXRPovvPqiaSlwQFZaG+xaujmlKiFVA9raaxu6s/J8
-4etrlu666ZIaJpv0Dt559+M04Qi3MOld4/oJZcDMPUWyTxCpHV8Di6eEOAKTnRSn
-W8tJ7fswvUHErMIkOyCePEMdE1dAHw==
-=mw2L
------END PGP SIGNATURE-----
-
---LlK8+g0AOOO1HzK1--
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>> 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_cmn.c | 186 ------------------
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_hal.h |  12 --
+>   2 files changed, 198 deletions(-)
 
