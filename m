@@ -1,144 +1,218 @@
-Return-Path: <linux-kernel+bounces-743059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F43B0FA09
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15D9B0FA0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546CB1C80604
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B15171BB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7B1229B38;
-	Wed, 23 Jul 2025 18:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4F227586;
+	Wed, 23 Jul 2025 18:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYoO+01I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S4Vc/LMG"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6A7227586;
-	Wed, 23 Jul 2025 18:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17848469D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753294381; cv=none; b=RrDUPUlxNs7X737FQcz5vne0Eoqg1uHFVWA3Sgqj+efCngOfx86T6jZTZ2q+fBtaxBPLQ0Zh0o+5CuysvcpnU1aAhLUuC4NKms+Q7b/Cs+1GeExDIIuDLAusE+87n+L3yXysCkBlVD9esqzoKoGCiiQ1b1BjDl2YoOeGSf4SzVM=
+	t=1753294415; cv=none; b=Hq7weWJzWxS5bajyv0C0v/NDlmSO8kMuOHU7GRKn/ty50JmlPibvRLLyOahLBvuolAn07hp1h1bcPlU/FFQyhsBdKzOZ31Cp4GtI/wufJtrX1CDSValy2pVB3mhfbhJBCOSWKKDvsiwW3qxmYTxP5+XQVs7T2rrr6YzYRHW461I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753294381; c=relaxed/simple;
-	bh=tLCKVZt19DaYe1dqxAbztjqS4Ys5y4Da+9uuXIAVUvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9GdWgK0r7wmskaS+XMd2oAQCEnQ7awSyirQ3SUlSE6amFXMgF5cZlZZEJzhnzykaMZSCTGHPP4y+nE5kShpFRtZya1IXFOvcXia068QY8cE0ZYOpTS5H7em0dzj6CL2FyRYjd+/bN+rusS1fW+yBXidL2JYepsIDJo4Pu0/CL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYoO+01I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3716C4AF09;
-	Wed, 23 Jul 2025 18:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753294381;
-	bh=tLCKVZt19DaYe1dqxAbztjqS4Ys5y4Da+9uuXIAVUvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dYoO+01IAlBpfUVh0YGQ/C0hznze+1pjglrSW4NkHEbqQygx64ma1lmp/+78ZnkXH
-	 QoA/lyW56IskUulUxLPEEGdKxOXEyzvSWzym4osQpUj4boKYVOtuWW1TcIqHCO5GRk
-	 v2pbiz8Rva2NEhcobQ6iMgfI1svOdP+SLHk6bsGTyX7FAxzF/7ShGT5kY2hp8Ql/Vz
-	 Grnl6iA75A6PfwdHjTkvr4ESEZUjItHO1aVW395G0ll+8lAbnVBp4LYmhblUOGuMeS
-	 fKo3NLJbj98c23b0KiU4FPzHe7gPhkE+AgpEYsqEfObtL+w9srsDFp1ULYuWIM0ouN
-	 c176Gpf01G1pg==
-Date: Wed, 23 Jul 2025 11:12:59 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 01/16] perf python: Add more exceptions on error paths
-Message-ID: <aIEmK1Ekly_HUJvV@google.com>
-References: <20250714164405.111477-1-irogers@google.com>
- <20250714164405.111477-2-irogers@google.com>
+	s=arc-20240116; t=1753294415; c=relaxed/simple;
+	bh=YdmNl10OUtC/re+EOWea/4ZaPSgqrvrQjhgHJMPnSwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ldiIB+bOWwB3BwdHcuoqhXm8iukUktclzfEWt8SPftXom2vDeFx5qNb8wMMNMluh9rU0ukC/nHN9vdno6Zj4xujmLhR/Cma60Umejt6Ug7fY3uQf1kDQABwfaLkdOVf0jQYdSCFq1JurEUpsGAf8CBidAx2oDN3doiR8K7y79dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S4Vc/LMG; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ab5953f5dcso2370351cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753294413; x=1753899213; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jRAUCvyU8pYPmWFn/9AeIOCYqe0g5gOFDinoFnUur9s=;
+        b=S4Vc/LMG/UbBn60mEcc1YZSRMdyjRXQypAkgQ3YSzPs63VIra9Gcnq6OfxsZ+1cWqV
+         gCpK+eHD9pkmbnPxGjwNxGIJ3elpcEmmcMHcG/meqR1vnm5q3IqNdSYlEJQdh/avC84d
+         R1kPIVV80w4A11HylQUFi2nnvOfhBYgZdUwp8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753294413; x=1753899213;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jRAUCvyU8pYPmWFn/9AeIOCYqe0g5gOFDinoFnUur9s=;
+        b=xO0C4+dtYZqr7sV/r8dH/Zzx5/VFE/Hk24rHI67GAyTivgsb5YOFRoPgpDRsjsqgh4
+         IvavRVOZM/Tf03NKifoC7S/8fudseU6OPHd9pwerNbXHgxgE8KgA1cPO/CrsS4o21oNe
+         ttTVx8CWYf8rd6G87pquuNdRLSx5M0dVYP3+aBadHFMkrlT2NpWn0KZApYtRwGpKKFUI
+         JuHDSQzvuiBMwcIzo1uz0gYYu9iVnYCE8rmqp7gGxHweyyv+fOk3VBlBOjZSGEkHW0Nr
+         QtjevXvnETQ799xSt4kM0BauFsNXlhbD96mJd1WekP/dBUNk44XCm3Lrr+M4uPF1ZH60
+         xCEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfOXfXSs3+AfvExWd9kPMcyAj5w84xSSlFhOLmBFtYc8GZWve+exxZTYza7z/dWA0ohAZsN478ed5RmL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGzcyxY2+ySN2mvOej1fy71Ki61XyqXFoEz9sy1ON9L35/p9eX
+	5mTPuqrp32Pd2ufxri+umOoxgLQ4IzSc4Qz2s7v9ozstNafOLjcHMfldEBwCt+oW/g==
+X-Gm-Gg: ASbGncuA2ghxuxnohABv9E1c940WVW0x6XibgSRAkoxTmsVgAJd5Mvw9VWFdMDCI1f0
+	BV3Jwe6F302RGe1sQY1CUTZd5piL8I8dEO3Xt5x4NZ2tFQeUaxSVY17GbBgbXo5Zr/sj0Iysnr4
+	QlTOJUVCCynBUucccQvjFC9FGybqew+PKk+dTlIwTJDBj4tl7RqpNDJg3HUftQU0WXbjFkHctAT
+	WIcQKeQG8DfYIo1z7hSfKmsf6HuWG8VhPJu3XEfqamkkFGD1ii75/jFguxF36SPRH7EIeLELu04
+	OANmBxfwzLOTLeyKKYS6fqLFlhvb730I2jitr4b7RtvvHMKQVExXEz3Xikt+EB9jJ1Vx6c6wxyq
+	a05KHfOPoEE1KRIeByn6aKgs1y+K3UUICqtvEsOZ8e3Gu6N4TDySwJ3GrSz/m7Q==
+X-Google-Smtp-Source: AGHT+IFEF43RiqqzhjaLFGYq5MEC9HWC1y8/iwg5IEvEfmbn8mT4shMSnIGatZImTK+5KIX285TGZw==
+X-Received: by 2002:a05:622a:59cf:b0:4ab:66d1:dcdd with SMTP id d75a77b69052e-4ae6df6ebecmr72328811cf.39.1753294412889;
+        Wed, 23 Jul 2025 11:13:32 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abbf5575bbsm62437351cf.24.2025.07.23.11.13.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 11:13:32 -0700 (PDT)
+Message-ID: <69711c9c-b85b-4cd4-a5fe-2719b8e30438@broadcom.com>
+Date: Wed, 23 Jul 2025 11:13:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250714164405.111477-2-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+To: Andrew Lunn <andrew@lunn.ch>,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Simon Horman <horms@kernel.org>,
+ Tristram Ha <Tristram.Ha@microchip.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+ <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
+ <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
+ <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
+ <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
+ <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
+ <9f00a6cf-c441-4b4c-84ca-5c41e6f0a9d9@lunn.ch>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <9f00a6cf-c441-4b4c-84ca-5c41e6f0a9d9@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 14, 2025 at 09:43:49AM -0700, Ian Rogers wrote:
-> Returning NULL will cause the python interpreter to fail but not
-> report an error. If none wants to be returned then Py_None needs
-> returning. Set the error for the cases returning NULL so that more
-> meaningful interpreter behavior is had.
+On 7/23/25 07:23, Andrew Lunn wrote:
+>> We can't retrofit such detection into PHY drivers - if we do so, we'll
+>> break WoL on lots of boards (we'd need to e.g. describe PMEB in DT for
+>> RTL8211F PHYs. While we can add it, if a newer kernel that expects
+>> PMEB to be described to allow WoL is run with an older DT, then that
+>> will be a regression.) Thus, I don't see how we could retrofit PHY
+>> WoL support detection to MAC drivers.
+> 
+> WoL is a mess. I wounder on how many boards it actually works
+> correctly? How often is it tested?
+ > > I actually think this is similar to pause and EEE. Those were also a
+> mess, and mostly wrongly implemented. The solution to that was to take
+> as much as possible out of the driver and put it into the core,
+> phylink.
+> 
+> We probably want a similar solution. The MAC driver indicates its WoL
+> capabilities to phylink. The PHY driver indicates its capabilities to
+> phylink. phylink implements all the business logic, and just tells the
+> PHY what it should enable, and stay awake. phylink tells the MAC what
+> is should enable, and that it should stay awake.
 
-It looks like you are adding error messages for the failure cases, not
-adding new exceptions, right?  IIUC returning NULL in pyrf_event__new()
-ends up having PyErr_NoMemory().  Then now it has different messages?
+We would need both a phylib and a phylink set of helpers because not all 
+of the drivers need to be converted to phylink.
 
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/python.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+> Is this going to happen? Given Russell limited availability, i guess
+> not. It needs somebody else to step up and take this on. Are we going
+> to break working systems? Probably. But given how broken this is
+> overall, how much should we actually care? We can just fix up systems
+> as they are reported broken.
+
+Please just refrain from making such statements, it really just does not 
+help, and if you have no direct hands on experience with Wake-on-LAN, it 
+becomes purely gratuitous. I agree that there is a lack of adequate 
+consistency and guidelines for developers to implement Wake-on-LAN 
+properly, but I don't agree with the message and the way it is 
+delivered. It's just completely antagonistic to people like me and my 
+colleagues who have spent a great deal of time implementing Wake-on-LAN 
+for actively used systems, and I am talking hundred of millions of STBs 
+deployed each of them doing hundreds of system suspend/resume involving 
+Wake-on-LAN per day.
+
 > 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 2f28f71325a8..02544387f39d 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -475,13 +475,19 @@ static PyObject *pyrf_event__new(const union perf_event *event)
->  	if ((event->header.type < PERF_RECORD_MMAP ||
->  	     event->header.type > PERF_RECORD_SAMPLE) &&
->  	    !(event->header.type == PERF_RECORD_SWITCH ||
-> -	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE))
-> +	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE)){
-> +		PyErr_Format(PyExc_TypeError, "Unexpected header type %u",
-> +			     event->header.type);
->  		return NULL;
-> +	}
->  
->  	// FIXME this better be dynamic or we need to parse everything
->  	// before calling perf_mmap__consume(), including tracepoint fields.
-> -	if (sizeof(pevent->event) < event->header.size)
-> +	if (sizeof(pevent->event) < event->header.size) {
-> +		PyErr_Format(PyExc_TypeError, "Unexpected event version: %zd < %u",
+> I also think WoL, pause and EEE is a space we should have more tests
+> for. To fully test WoL and pause you need a link partner, but i
+> suspect you can do some basic API tests without one. WoL you
+> definitely need a link partner. So this makes testing a bit more
+> difficult. But that should not stop the community from writing such
+> tests and making them available for developers to use.
 
-Maybe "Unexpected event size" instead?
+The tests are in premise very simple, but you need a link partner and 
+you need to be ideally on the same physical network and you need to have 
+a system that supports system wide wake-up, or if nothing else s2idle. 
+Then you need a secondary wake-up source like a RTC or GPIO in order to 
+ensure that there is an upper bound on when you timeout for not 
+receiving a proper wake-on-LAN trigger.
 
-Thanks,
-Namhyung
+It's not clear to me what needs to be contributed to the community, but 
+essentially the pseudo code is something like:
 
-
-> +			     sizeof(pevent->event), event->header.size);
->  		return NULL;
-> +	}
->  
->  	ptype = pyrf_event__type[event->header.type];
->  	pevent = PyObject_New(struct pyrf_event, ptype);
-> @@ -1199,8 +1205,10 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
->  		return NULL;
->  
->  	md = get_md(evlist, cpu);
-> -	if (!md)
-> +	if (!md) {
-> +		PyErr_Format(PyExc_TypeError, "Unknown CPU '%d'", cpu);
->  		return NULL;
-> +	}
->  
->  	if (perf_mmap__read_init(&md->core) < 0)
->  		goto end;
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
+- wait for DUT to boot
+for each support Wake-on-LAN mode:
+	- configure wake-on-LAN on DUT
+	- snapshot /sys/*/wakeup_count for the MAC/PHY device
+	- enter standby with e.g.: rtcwake -s <TIMEOUT> -m mem
+	- send Wake-on-LAN trigger from external device
+	- ensure DUT woke-up before <TIMEOUT> and check that /sys/*wakeup_count 
+is +1 compared to the previous snapshot
+-- 
+Florian
 
