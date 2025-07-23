@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-742765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547D0B0F66A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:03:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79083B0F666
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A86176AED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C012FAC4A21
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801A52FE386;
-	Wed, 23 Jul 2025 14:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1AA302078;
+	Wed, 23 Jul 2025 14:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpwOIKvK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2Cf8VKp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F232FEE3A;
-	Wed, 23 Jul 2025 14:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AE8301148;
+	Wed, 23 Jul 2025 14:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282461; cv=none; b=cjzn4OvRjQ124g4JngPO9MZ8L0EAWjU5EVNJH0lfRxt0TE95CRi5GvqOtXIZwd+Xs70d5HsYVVhwH0kCWjYjovtmw46W9P4OfNIfGbjvUxhQShCRTUlnpPhaptWyTwGcsTZ4pUKcURqxD+eJxe5I8fL5JkVGcqe7X4Dv1fnF4Cg=
+	t=1753282467; cv=none; b=fGzN23keyPSvjHrT+M8QLybiQ0Lmk+8CEhk0ZAfsNbAtsBxvaXeAXTcPs65I4Ssr3M63rQtnE9+oSbxND/Jormb3eMnOp6y7tikPS/WSzNh/wyWlLlPuqRhrgkMt212DgSqTu3aLViOoRyvEWhHkJ89cJB7SuP7S+fs3D0fB9HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282461; c=relaxed/simple;
-	bh=TionPmrd2VrfHI4NgYA2/KWHwkD1LEDfhxeY2hPKkrk=;
+	s=arc-20240116; t=1753282467; c=relaxed/simple;
+	bh=y+g/uzpxGoEeQev5j+AyDMsNyEL4KeDVSDo9psgVMLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TD8dnvKLd1dGofWBeBNQnyD6Dgc+HlUoVXoXIwGsm6UWhvgUOjyipxaZEAOZzPDriIy+E5Z+kMzswxHOsHx1JzHmYQN8tK5g2n0pN/WxpjH1iT0Osfvfs2qB2fcH/nJR0Nn59ENyg5BOwggwkwO6ZggDLCgkhtyOR68vZTVb3Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpwOIKvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED63C4CEFA;
-	Wed, 23 Jul 2025 14:54:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpYmb3uGl4WGvBirtLf5FbTQ6iasdW4EFAW+7Rvs/iHgnnAR0EaXYuGo/Fcxt51J/M+OVfkJFQBTVUEdNZYjWpnWT9bJsSx2MiwsnKJoi/pzDwu1KflvIxtq+lWjBdhmmgGx6/A8adwRY3Xifmwy9oMEG7mDGgstXLLmPuMRuhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2Cf8VKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB512C4CEFC;
+	Wed, 23 Jul 2025 14:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282455;
-	bh=TionPmrd2VrfHI4NgYA2/KWHwkD1LEDfhxeY2hPKkrk=;
+	s=k20201202; t=1753282463;
+	bh=y+g/uzpxGoEeQev5j+AyDMsNyEL4KeDVSDo9psgVMLE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IpwOIKvK5DliUM7TmPe29jzWYrCqLfIlVEGxdG4XcEJxYPkJb4g/amL26BwbJuF0K
-	 pv08T/OLPVHoE7/RqALutIGWGdMEvRR24bQZGZtmpRTt86F0cVI2TSFkbOnCsqwiiv
-	 mnlqwDk8Pzh1+AABVZNLZoxpEx+EYrNQ5x3aidn7274r+n+OSXEzFv+6BvFzTvXMRC
-	 wE+Vvwcg1YGTbsWtVXQPEPnMx1DrgxCarEaTHV3Q8hLa3Yk7MB4kbPXpgd6Q+zBTuo
-	 yGR8OBMqZGITPugzjNe8J5jCfv1ryJv7w5OVSJMFIipr5eNfur97PpXs1CKBzWLSba
-	 L40o1/LrPRFkw==
-Date: Wed, 23 Jul 2025 15:54:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net-next v2 3/5] netconsole: add support for strings with
- new line in netpoll_parse_ip_addr
-Message-ID: <20250723144933.GA1036606@horms.kernel.org>
-References: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
- <20250721-netconsole_ref-v2-3-b42f1833565a@debian.org>
+	b=u2Cf8VKpyjqQEsL1GL9nabTeJnsWtYkmeIQfMMvVw8dhEpQX40cJ34YtfOhRr+j4P
+	 d9eekkecg546N1fJS2JQ2hL459GSHae8kwIWugR80LGoDQqZOaDqk/gu/mYGgpDxSN
+	 vQTSVGmFUPl842Xud3QTXqaWvIA/zcsb28kCItbQADq3W9cUhYL3gGktSZTHftPnFm
+	 RgW2Op0tNNloSe/4wH4HAbVFmi2C1zIpgEnfxWp1lI0646YBBrKZya4K/fRqonlBfH
+	 1ov3172yW5mhZkSPbv1fjccBUmomK9HtQGSdxVqONl19P5niyQLUgiCOtNYoGbDLnZ
+	 Ze8X+CIn88SAA==
+Date: Wed, 23 Jul 2025 07:54:23 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] generic/1228: Add atomic write multi-fsblock
+ O_[D]SYNC tests
+Message-ID: <20250723145423.GN2672039@frogsfrogsfrogs>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <ae247b8d0a9b1309a2e4887f8dd30c1d6e479848.1752329098.git.ojaswin@linux.ibm.com>
+ <20250717163510.GJ2672039@frogsfrogsfrogs>
+ <aIDpdg_SibBYFAPy@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,71 +62,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721-netconsole_ref-v2-3-b42f1833565a@debian.org>
+In-Reply-To: <aIDpdg_SibBYFAPy@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On Mon, Jul 21, 2025 at 06:02:03AM -0700, Breno Leitao wrote:
-> The current IP address parsing logic fails when the input string
-> contains a trailing newline character. This can occur when IP
-> addresses are provided through configfs, which contains newlines in
-> a const buffer.
+On Wed, Jul 23, 2025 at 07:23:58PM +0530, Ojaswin Mujoo wrote:
+> On Thu, Jul 17, 2025 at 09:35:10AM -0700, Darrick J. Wong wrote:
 > 
-> Teach netpoll_parse_ip_addr() how to ignore newlines at the end of the
-> IPs. Also, simplify the code by:
+> <snip>
 > 
->  * No need to check for separators. Try to parse ipv4, if it fails try
->    ipv6 similarly to ceph_pton()
->  * If ipv6 is not supported, don't call in6_pton() at all.
+> > > +verify_atomic_write() {
+> > > +	if [[ "$1" == "shutdown" ]]
+> > > +	then
+> > > +		local do_shutdown=1
+> > > +	fi
+> > > +
+> > > +	test $bytes_written -eq $awu_max || _fail "atomic write len=$awu_max assertion failed"
+> > > +
+> > > +	if [[ $do_shutdown -eq "1" ]]
+> > > +	then
+> > > +		echo "Shutting down filesystem" >> $seqres.full
+> > > +		_scratch_shutdown >> $seqres.full
+> > > +		_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed for Test-3"
+> > > +	fi
+> > > +
+> > > +	check_data_integrity
+> > > +}
+> > > +
+> > > +mixed_mapping_test() {
+> > > +	prep_mixed_mapping
+> > > +
+> > > +	echo "+ + Performing O_DSYNC atomic write from 0 to $awu_max" >> $seqres.full
+> > > +	bytes_written=$($XFS_IO_PROG -dc "pwrite -DA -V1 -b $awu_max 0 $awu_max" $testfile | \
+> > > +		        grep wrote | awk -F'[/ ]' '{print $2}')
+> > > +
+> > > +	verify_atomic_write $1
+> > 
+> > The shutdown happens after the synchronous write completes?  If so, then
+> > what part of recovery is this testing?
+> > 
+> > --D
 > 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-
-My suggestion below not withstanding, this looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-> ---
->  drivers/net/netconsole.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
+> Right, it is mostly inspired by [1] where sometimes isize update could
+> be lost after dio completion. Although this might not exactly be
+> affected by atomic writes, we added it here out of caution.
 > 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index 8d1b93264e0fd..f2c2b8852c603 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -303,20 +303,21 @@ static void netconsole_print_banner(struct netpoll *np)
->  static int netpoll_parse_ip_addr(const char *str, union inet_addr *addr)
->  {
->  	const char *end;
-> +	int len;
->  
-> -	if (!strchr(str, ':') &&
-> -	    in4_pton(str, -1, (void *)addr, -1, &end) > 0) {
-> -		if (!*end)
-> -			return 0;
-> -	}
-> -	if (in6_pton(str, -1, addr->in6.s6_addr, -1, &end) > 0) {
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -		if (!*end)
-> -			return 1;
-> -#else
-> +	len = strlen(str);
-> +	if (!len)
->  		return -1;
-> +
-> +	if (str[len - 1] == '\n')
-> +		len -= 1;
-> +
-> +	if (in4_pton(str, len, (void *)addr, -1, &end) > 0)
-> +		return 0;
-> +#if IS_ENABLED(CONFIG_IPV6)
-> +	if (in6_pton(str, len, addr->in6.s6_addr, -1, &end) > 0)
-> +		return 1;
->  #endif
+> [1] https://lore.kernel.org/fstests/434beffaf18d39f898518ea9eb1cea4548e77c3a.1695383715.git.ritesh.list@gmail.com/
 
-I don't think it needs to block progress.
-But FWIIW, I think it would be nice to increase
-build coverage and express this as:
+Ah, so we're racing with background log flush then.  Would it improve
+the potential failure detection rate to call shutdown right after the
+pwrite, e.g.
 
-	if (IS_ENABLED(CONFIG_IPV6) &&
-	    in6_pton(str, len, addr->in6.s6_addr, -1, &end) > 0)
-		return 1;
+$XFS_IO_PROG -dxc "pwrite -DA..." -c 'shutdown' $testfile
 
+It can take a few milliseconds to walk down the bash functions and
+fork/exec another child process.
+
+--D
+
+> > > +}
+> > > +
+> 
 
