@@ -1,161 +1,286 @@
-Return-Path: <linux-kernel+bounces-742901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCEF8B0F803
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:24:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406ABB0F808
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AA3547B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580EF1CC08FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5504C1F12F8;
-	Wed, 23 Jul 2025 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417DA1F4176;
+	Wed, 23 Jul 2025 16:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6YSQOuz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="liLifVWL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3301C1AAA;
-	Wed, 23 Jul 2025 16:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F01C1AAA;
+	Wed, 23 Jul 2025 16:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753287858; cv=none; b=JcG2U8QOFuSu8lZ1/T2phZJK1sbQE4T/zrfeWQ9LYg+3tsMdK7LZ40FTETAGR22kxN4U1K7XxfpV54UTdqPFQObzli7qgpfAquNZ1pWDJ+vFXtszxZN3aqq1aiS1zCTcoikI/NoCHIhwWC3lEDSwqWRot2uJY/KsNLpwxnBTNJk=
+	t=1753287901; cv=none; b=QW1UeUG3XbllswzGyEcRQlgBfzn/lRCsKI4gATDcutUxFNrNXt7BEhii3AQ4hkXXV+1phvm244c/xZTrW/tMYEOOO3ULoTH/LfeEeFt3/4FbDJL2e0m7p3+vrF8hosokIxjNi9THnQIaLdd84Wo2esVt5yowWH158S49Pt7rBAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753287858; c=relaxed/simple;
-	bh=/TS71y3VNFWgP6TWRd6SL9uz/jrouP8/vidq2THQ0mQ=;
+	s=arc-20240116; t=1753287901; c=relaxed/simple;
+	bh=+yH5sdRuy5JtUTts9MfUfZZCJprgFstIzCLKlBAEnhc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzZ3nrNH9aEM2FTFbXCwwRpiJQz+Whv989XghDxEHtgR3ptA6cQMYBKtvyIK0l/w8NYT4iodFP9JJKFefGPUV129SfmY8FylLPF29Ae0StAfPojTgg0i6GuqKkT2181KbTb2U5/qNn06ExMujGl8aIRfJ1MQttD11qAE9pe+qWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A6YSQOuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CA2C4CEE7;
-	Wed, 23 Jul 2025 16:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753287858;
-	bh=/TS71y3VNFWgP6TWRd6SL9uz/jrouP8/vidq2THQ0mQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=A6YSQOuz+xR9SoGL+89T2UDnhJqmKToHcHnIoccQ18LDaEOaGh5nTPDG9nBY4JhxK
-	 BBMFLEKEOGcmAgrFO/BVYUCk8ENIRJ6UjTXJk3r078u3a0vadL98fcHyzdQ8MZO0QK
-	 qXCFQr3WymV9DE6qzyIuzXzKH9iVn8/JzQGpQvUuYmcNCrcx85+eibZIP8gdkC5HWH
-	 pY6cKjZ43DF3OJw5lozDcg9vd+LWUqUFuBIzKCJAbsJb2FRJ6gpo/nGr9Noun53NJv
-	 rzK/DF3yfEY4gsqlZmSNhlVn6zHPds/sI2SfjQ7ODNirL7rxq++W6q90jdLPtSOLJ3
-	 XwJmMuXujLXiA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CC247CE0AD1; Wed, 23 Jul 2025 09:24:17 -0700 (PDT)
-Date: Wed, 23 Jul 2025 09:24:17 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v3 5/4] srcu: Document __srcu_read_{,un}lock_fast()
- implicit RCU readers
-Message-ID: <ee536672-2846-4174-94d4-3f42ba341324@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ce304859-e258-45e7-b40f-b5cacc968eaf@paulmck-laptop>
- <9FAE52D6-D073-43D9-93D3-3E49006943B2@nvidia.com>
- <fa4fd174-065d-4a04-b080-ffe04d31313f@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxVHUOt3JNRpi4vCSA6MN4l9SNHqaEQsjZV3TKxsUeCWNL7beIebS2C9DWEl17foFps0dBM9vZL97mLRtttD2d/3BDww0Ekb2w0trfuE6EHpEDL3OBbSYggbaDxnbk7esRlWh7dtV2WuqDgLlbdWhMlENgGts8l7Gzd0g5YPGyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=liLifVWL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zZNfuBfgB8dRySkDcZcabnnOZgPd4ahYjtj3I0BOkM4=; b=liLifVWLrTxGNp03U4ezUOaAcM
+	kl7wHLDNErluVHrsCzFpLad3A/KqCtnUpyr3eFfWTFeV57VEatuR6kyvyxrGBZ6isu2L2UwzHYOaR
+	Vj24hXdbxfa2gaUtS3K/HWa+DrZ/czeRVIrpr5mNRBnd08VndPL8P6CUVzNAjM3crXcs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uecGS-002fSW-KG; Wed, 23 Jul 2025 18:24:20 +0200
+Date: Wed, 23 Jul 2025 18:24:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Fan Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
+ RPMSG-ETH Driver
+Message-ID: <81273487-a450-4b28-abcc-c97273ca7b32@lunn.ch>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-2-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fa4fd174-065d-4a04-b080-ffe04d31313f@nvidia.com>
+In-Reply-To: <20250723080322.3047826-2-danishanwar@ti.com>
 
-On Wed, Jul 23, 2025 at 12:10:46PM -0400, Joel Fernandes wrote:
-> 
-> 
-> On 7/23/2025 9:32 AM, joelagnelf@nvidia.com wrote:
-> > 
-> > 
-> >> On Jul 22, 2025, at 6:17 PM, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >>
-> >> ﻿This commit documents the implicit RCU readers that are implied by the
-> >> this_cpu_inc() and atomic_long_inc() operations in __srcu_read_lock_fast()
-> >> and __srcu_read_unlock_fast().  While in the area, fix the documentation
-> >> of the memory pairing of atomic_long_inc() in __srcu_read_lock_fast().
-> > 
-> > Just to clarify, the implication here is since SRCU-fast uses synchronize_rcu on the update side, these operations result in blocking of classical RCU too. So simply using srcu fast is another way of achieving the previously used pre-empt-disabling in the use cases.
-> 
-> Hi Paul, it was nice sync'ing with you off-list. Following are my suggestions
-> and where I am coming from:
-> 
-> 1. For someone who doesn't know SRCU-fast depends on synchronize_rcu (me after a
-> few beers :P), the word 'RCU' in the comment you added to this patch, might come
-> across as 'which RCU are we referring to - SRCU or classical RCU or some other'.
-> So I would call it 'classical RCU reader' in the comment.
-> 
-> 2. It would be good to call out specifically that, the SRCU-fast critical
-> section is akin to a classical RCU reader, because of its implementation's
-> dependence on synchronize_rcu() to overcome the lack of read-side memory barriers.
-> 
-> 3. I think since the potential size of these code comment suggestions, it may
-> make sense to provide a bigger comment suggesting these than providing them
-> inline as you did. And also calling out the tracing usecase in the comments for
-> additional usecase clarification.
-> 
-> I could provide a patch to do all this soon, as we discussed, as well (unless
-> you're Ok with making this change as well).
+> --- a/Documentation/networking/device_drivers/ethernet/index.rst
+> +++ b/Documentation/networking/device_drivers/ethernet/index.rst
+> @@ -61,6 +61,7 @@ Contents:
+>     wangxun/txgbevf
+>     wangxun/ngbe
+>     wangxun/ngbevf
+> +   rpmsg_eth
 
-Thank you very much for the clarification, and I will make the changes
-with attribution.
+This list is sorted. Please insert at the right location. I made the
+same comment to somebody else this week as well....
 
-							Thanx, Paul
+> +This driver is generic and can be used by any vendor. Vendors can develop their
+> +own firmware for the remote processor to make it compatible with this driver.
+> +The firmware must adhere to the shared memory layout, RPMSG communication
+> +protocol, and data exchange requirements described in this documentation.
 
-> Thanks!
-> 
->  - Joel
-> 
-> 
-> 
-> 
-> > 
-> > Or is the rationale for this something else?
-> > 
-> > I would probably spell this out more in a longer comment above the if/else, than modify the inline comments.
-> > 
-> > But I am probably misunderstood the whole thing. :-(
-> > 
-> > -Joel
-> > 
-> >>
-> >> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> >> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> >> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> >> Cc: <bpf@vger.kernel.org>
-> >>
-> >> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> >> index 043b5a67ef71e..78e1a7b845ba9 100644
-> >> --- a/include/linux/srcutree.h
-> >> +++ b/include/linux/srcutree.h
-> >> @@ -245,9 +245,9 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
-> >>    struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
-> >>
-> >>    if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-> >> -        this_cpu_inc(scp->srcu_locks.counter); /* Y */
-> >> +        this_cpu_inc(scp->srcu_locks.counter); // Y, and implicit RCU reader.
-> >>    else
-> >> -        atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  /* Z */
-> >> +        atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  // Y, and implicit RCU reader.
-> >>    barrier(); /* Avoid leaking the critical section. */
-> >>    return scp;
-> >> }
-> >> @@ -271,9 +271,9 @@ static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_
-> >> {
-> >>    barrier();  /* Avoid leaking the critical section. */
-> >>    if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-> >> -        this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
-> >> +        this_cpu_inc(scp->srcu_unlocks.counter);  // Z, and implicit RCU reader.
-> >>    else
-> >> -        atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
-> >> +        atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  // Z, and implicit RCU reader.
-> >> }
-> >>
-> >> void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
-> >>
-> 
+Could you add a link to TIs firmware? It would be a good reference
+implementation. But i guess that needs to wait until the driver is
+merged and the ABI is stable.
+
+> +Implementation Details
+> +----------------------
+> +
+> +- The magic number is defined as a macro in the driver source (e.g.,
+> +  ``#define RPMSG_ETH_SHM_MAGIC_NUM 0xABCDABCD``).
+> +- The firmware must write this value to the ``magic_num`` field of the head and
+> +  tail structures in the shared memory region.
+> +- During the handshake, the Linux driver reads these fields and compares them to
+> +  the expected value. If any mismatch is detected, the driver will log an error
+> +  and refuse to proceed.
+
+So the firmware always takes the role of "primary" and Linux is
+"secondary"? With the current implementation, you cannot have Linux on
+both ends?
+
+I don't see this as a problem, but maybe it is worth stating as a
+current limitation.
+
+> +Shared Memory Layout
+> +====================
+> +
+> +The RPMSG Based Virtual Ethernet Driver uses a shared memory region to exchange
+> +data between the host and the remote processor. The shared memory is divided
+> +into transmit and receive regions, each with its own `head` and `tail` pointers
+> +to track the buffer state.
+> +
+> +Shared Memory Parameters
+> +------------------------
+> +
+> +The following parameters are exchanged between the host and the firmware to
+> +configure the shared memory layout:
+
+So the host tells the firmware this? Maybe this is explained later,
+but is the flow something like:
+
+Linux makes an RPC call to the firmware with the parameters you list
+below. Upon receiving that RPC, the firmware puts the magic numbers in
+place. It then ACKs the RPC call? Linux then checks the magic numbers?
+
+> +1. **num_pkt_bufs**:
+> +
+> +   - The total number of packet buffers available in the shared memory.
+> +   - This determines the maximum number of packets that can be stored in the
+> +     shared memory at any given time.
+> +
+> +2. **buff_slot_size**:
+> +
+> +   - The size of each buffer slot in the shared memory.
+> +   - This includes space for the packet length, metadata, and the actual packet
+> +     data.
+> +
+> +3. **base_addr**:
+> +
+> +   - The base address of the shared memory region.
+> +   - This is the starting point for accessing the shared memory.
+
+So this is the base address in the Linux address space? How should the
+firmware convert this into a base address in its address space?
+
+> +4. **tx_offset**:
+> +
+> +   - The offset from the `base_addr` where the transmit buffers begin.
+> +   - This is used by the host to write packets for transmission.
+> +
+> +5. **rx_offset**:
+> +
+> +   - The offset from the `base_addr` where the receive buffers begin.
+> +   - This is used by the host to read packets received from the remote
+> +     processor.
+
+Maybe change 'host' to 'Linux'? Or some other name, 'primary' and
+'secondary'. The naming should be consistent throughout the
+documentation and driver.
+
+Part of the issue here is that you pass this information from Linux to
+the firmware. When the firmware receives it, it has the complete
+opposite meaning. It uses "tx_offset" to receive packets, and
+"rx_offset" to send packets. This can quickly get confusing. If you
+used names like "linux_tx_offset", the added context with avoid
+confusion.
+
+> +Shared Memory Structure
+> +-----------------------
+> +
+> +The shared memory layout is as follows:
+> +
+> +.. code-block:: text
+> +
+> +      Shared Memory Layout:
+> +      ---------------------------
+> +      |        MAGIC_NUM        |   rpmsg_eth_shm_head
+> +      |          HEAD           |
+> +      ---------------------------
+> +      |        MAGIC_NUM        |
+> +      |        PKT_1_LEN        |
+> +      |          PKT_1          |
+> +      ---------------------------
+> +      |           ...           |
+> +      ---------------------------
+> +      |        MAGIC_NUM        |
+> +      |          TAIL           |   rpmsg_eth_shm_tail
+> +      ---------------------------
+> +
+> +1. **MAGIC_NUM**:
+> +
+> +   - A unique identifier used to validate the shared memory region.
+> +   - Ensures that the memory region is correctly initialized and accessible.
+> +
+> +2. **HEAD Pointer**:
+> +
+> +   - Tracks the start of the buffer for packet transmission or reception.
+> +   - Updated by the producer (host or remote processor) after writing a packet.
+
+Is this a pointer, or an offset from the base address? Pointers get
+messy when you have multiple address spaces involved. An offset is
+simpler to work with. Given that the buffers are fixed size, it could
+even be an index.
+
+> +Information Exchanged Between RPMSG Channels
+> +--------------------------------------------
+> +
+> +1. **Requests from Host to Remote Processor**:
+
+Another place where consistent naming would be good. Here it is the
+remote processor, not firmware used earlier.
+
+> +
+> +   - `RPMSG_ETH_REQ_SHM_INFO`: Request shared memory information, such as
+> +     ``num_pkt_bufs``, ``buff_slot_size``, ``base_addr``, ``tx_offset``, and
+> +     ``rx_offset``.
+
+Is this requested, or telling? I suppose the text above uses "between"
+which is ambiguous.
+
+> +3. **Notifications from Remote Processor to Host**:
+> +
+> +   - `RPMSG_ETH_NOTIFY_PORT_UP`: Notify that the Ethernet port is up and ready
+> +     for communication.
+> +   - `RPMSG_ETH_NOTIFY_PORT_DOWN`: Notify that the Ethernet port is down.
+> +   - `RPMSG_ETH_NOTIFY_PORT_READY`: Notify that the Ethernet port is ready for
+> +     configuration.
+
+That needs more explanation. Why would it not be ready? 
+
+> +   - `RPMSG_ETH_NOTIFY_REMOTE_READY`: Notify that the remote processor is ready
+> +     for communication.
+
+How does this differ from PORT_READY?
+
+> +How-To Guide for Vendors
+> +========================
+> +
+> +This section provides a guide for vendors to develop firmware for the remote
+> +processor that is compatible with the RPMSG Based Virtual Ethernet Driver.
+> +
+> +1. **Implement Shared Memory Layout**:
+> +
+> +   - Allocate a shared memory region for packet transmission and reception.
+> +   - Initialize the `MAGIC_NUM`, `num_pkt_bufs`, `buff_slot_size`, `base_addr`,
+> +     `tx_offset`, and `rx_offset`.
+> +
+> +2. **Magic Number Requirements**
+> +
+> +   - The firmware must write a unique magic number (for example, ``0xABCDABCD``)
+
+Why "for example"? Do you have a use case where some other value
+should be used? Or can we just make this magic value part of the
+specification?
+
+> +- The driver assumes a specific shared memory layout and may not work with other
+> +  configurations.
+> +- Multicast address filtering is limited to the capabilities of the underlying
+> +  RPMSG framework.
+
+I don't think there is anything special here. The network stack always
+does perfect address filtering. The driver can help out, by also doing
+perfect address filtering, or imperfect address filtering, and letting
+more through than actually wanted. Or it can go into promiscuous mode.
+
+> +- The driver currently supports only one transmit and one receive queue.
+> +
+> +References
+> +==========
+> +
+> +- RPMSG Framework Documentation: https://www.kernel.org/doc/html/latest/rpmsg.html
+
+This results in 404 Not Found.
+
+     Andrew
 
