@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-741718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731C2B0E832
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:37:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62172B0E833
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584091C2845C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF1C560889
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17811917CD;
-	Wed, 23 Jul 2025 01:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36D41917CD;
+	Wed, 23 Jul 2025 01:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIYEA9pv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="fuKVzimE"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200B55464E;
-	Wed, 23 Jul 2025 01:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753234635; cv=none; b=TJan2WvbhmuXjCdeXXVQS9u/72TQUhWea7Y0y7RnUXhaGrvIa9OVsIEoRA7/9q9/rT50bc5n6ovCWOEULS7tWFF+47R4vwykD2VL+FTaBZTidESNQ8qHJZxnDl7V+z4AcYaVam/byHKMiD1xbYjfjW55S+gZpejnnEg1srnXjeg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753234635; c=relaxed/simple;
-	bh=LQCNQ3CMM0RmYk36/MME+4qX7+Nyqrk0Fbt6A5zO96E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zsgx3qfvC9UdU46NmuXUnlzW7sMrt3mx9hqIzy7xToTAULr2kwRRzoutoctzWmfLvrdG6ivpstyUZdGQv/jO4MKqCeffzz/iuRISSp5rn7qsw7KSVVc6C4OqrEVbDYU5eT6TKRRe6ozr7vS5wk2QsQXXQEg4MTvTWOVyR4AX6yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIYEA9pv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9CE4C4CEEB;
-	Wed, 23 Jul 2025 01:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753234634;
-	bh=LQCNQ3CMM0RmYk36/MME+4qX7+Nyqrk0Fbt6A5zO96E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oIYEA9pv4NI4eH2ivMscP5cDaiEztAW5qHuOoIMxmwCCi1AsAyNBKqmmYhdbFS9jN
-	 je9lR/lPbgFUyJvBNt1I9A1ecwkj4gdg/l4h5rEIRz8Wgs0HwQi52XqYQmewiZRGnJ
-	 sK9fbcDRrZNMG9e4TY1KWSsyoUXEswOOGAOl1oxqXvvyHo/dkgtaHqL5zIemuILC3s
-	 hFnQWyxgnkAcDlG59l9DCWtQrjNCm6Ej7PPxF0t8NXZkpgIP14LzAQtRjdEjJfkDc6
-	 JkxMA3VYaNw/Cr3xIeFIL00sj+PdBvlloCs8/ff2Fjyp+gXtMDmLSra4TJCAAEsAEs
-	 2qDotx/o0TShw==
-Date: Tue, 22 Jul 2025 18:37:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Usman Akinyemi <usmanakinyemi202@gmail.com>
-Cc: James Clark <james.clark@linaro.org>,
-	David Laight <david.laight.linux@gmail.com>, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] perf/x86: Replace strncpy() with memcpy() for vendor
- string
-Message-ID: <aIA8yDYF_WJBxtxi@google.com>
-References: <20250618215843.109941-1-usmanakinyemi202@gmail.com>
- <20250704102007.6354ce9f@pumpkin>
- <9c59d1b1-a483-49d9-b57a-c86e3e020234@linaro.org>
- <CAPSxiM9AHNrAhRjJKe9fHZ9s7VAQBF9c4S2_HWj2qu1A48hh+g@mail.gmail.com>
- <CAPSxiM9-tZjnssZMA_59ib8Ur+4VNWk4RYOsoFiWHC_Eq+drXA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4912F43;
+	Wed, 23 Jul 2025 01:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753234726; cv=pass; b=dwJPa9FLiNStOc2JblMrd69krFaW+u1jKNBfKrYgEiAt9hq0N96Rjlw4BLSs0ywuczoo8z9/nY4ApIFsQGajWtiyuAZ2Gj1COxGOXeIWVoSGKqB9hiHKiNeXZmovUk2laGVUiFYxVwNrxMrHYviGr3J9Mm1CP0J03lR5A/NTerM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753234726; c=relaxed/simple;
+	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OWQOwNYBiKJF1ryfOf0Y5UOFCZ4mxH/y0wLj4OJ8UrQyPWGHbE8ZzIC+uJy2reEsYBOnR3gYssLf+oaCZKcHX3PQcvT46spiIA0kenumNMmNZOiG37ZPuHZHuxSe95jsM9FNmheMsGMq9oSeEzlk+5IZ1UVepzo35sGA89Npkh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=fuKVzimE; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753234699; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dcs/Bw9mxtzJgk7Y5Kk1J2gUOdVUAjSVAGOg/+Yf0e/9Wmj1g/i2y0Bv7E20emP4bZdIinpgEnbICecqExezPikJsckqYIGAcuruusYjhumH6+EdmYGaNdqY12sbkKnqw/asxSUb1VkP1Af9z4er+Jg7bN/7MMou4b2elaOrs1g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753234699; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=; 
+	b=kxjK2/NvQmyPXolw9abSvXe34vFq06jWNRD4QWogwkG7HDLnNzVrzpCJCatp0jmotGc1jYSgXdeiCA0zhcCc1YkU59RvFZTQC9vRXEM2i8KCENO5ZSYwQq4zJkCmpffMCq8NRDHPP77fJi9bZXOt7Zca5Ydu9E4M9OTZPBImJuQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753234699;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=kQtBD4u/2DWbddKH9xYLkSt3qDB8X4SffSwuW+eoKug=;
+	b=fuKVzimEnUAiXPzrss/iJfEzZBdyx7qDmgkTKcIIUKG3flg5hyeJGbjhMioC6FTZ
+	MLJ9H6a/lhm/CcrgXhfQV7q2EIaKLoxs5H6dxAnRKwF7gAiRJBDtQTuZ8TGCI4rDxq5
+	HaGXV4YqPWw/2MzmhP7bxBHTJcGpWMKM9846HjQo=
+Received: by mx.zohomail.com with SMTPS id 1753234696386671.5480253480471;
+	Tue, 22 Jul 2025 18:38:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPSxiM9-tZjnssZMA_59ib8Ur+4VNWk4RYOsoFiWHC_Eq+drXA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 0/3] rust: xarray: add `insert` and `reserve`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
+Date: Tue, 22 Jul 2025 22:38:00 -0300
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org,
+ Janne Grunau <j@jannau.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7C5ED010-C61D-4748-B399-C6D052170224@collabora.com>
+References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hello,
+Hi Tamir,
 
-On Thu, Jul 10, 2025 at 07:03:07PM +0530, Usman Akinyemi wrote:
-> On Fri, Jul 4, 2025 at 6:17 PM Usman Akinyemi
-> <usmanakinyemi202@gmail.com> wrote:
-> >
-> > On Fri, Jul 4, 2025 at 4:40 PM James Clark <james.clark@linaro.org> wrote:
-> > >
-> > >
-> > >
-> > > On 04/07/2025 10:20 am, David Laight wrote:
-> > > > On Thu, 19 Jun 2025 03:28:43 +0530
-> > > > Usman Akinyemi <usmanakinyemi202@gmail.com> wrote:
-> > > >
-> > > >> strncpy() is unsafe for fixed-size binary data as
-> > > >> it may not NUL-terminate and is deprecated for such
-> > >
-> > > But memcpy doesn't null terminate after the 4 chars either so I don't
-> > > think that's a good justification. Surely you don't want null
-> > > termination, because char *vendor is supposed to be a single string
-> > > without extra nulls in the middle. It specifically adds a null at the
-> > > end of the function.
-> > >
-> > > >> usage. Since we're copying raw CPUID register values,
-> > > >> memcpy() is the correct and safe choice.
-> > > >>
-> > >
-> > > There should be a fixes: tag here if it actually fixes something. But in
-> > > this use case strncpy seems to behave identically to memcpy so I don't
-> > > think we should change it. Except maybe if b,c,d have NULLs in them then
-> > > strncpy will give you uninitialized parts where memcpy won't. But that's
-> > > not mentioned in the commit message and presumably it doesn't happen?
-> >
-> > Hi James,
-> >
-> > Thanks for the review.
-> >
-> > What you said is true, strncpy and memcpy seem to behave identically.
-> >
-> > I should have rephrased the commit message in a different way.
-> > While strncpy seems to work here, firstly, it is an interface that has
-> > been deprecated.
-> > See -> https://github.com/KSPP/linux/issues/90.
-> > Also, memcpy is semantically correct for copying raw data compared to
-> > strncpy which is for string.
-> >
-> > I am not sure if the b, c, d can have a null byte, I think using the
-> > semantically correct function (memcpy) improves the robustness even in
-> > cases where b, c, d have null byte.
-> >
-> > What do you think?
-> Hello,
-> 
-> This is a gentle follow-up on this patch.
 
-Sorry for the delay.
+> On 13 Jul 2025, at 09:05, Tamir Duberstein <tamird@gmail.com> wrote:
+>=20
+> The reservation API is used by asahi; currently they use their own
+> abstractions but intend to use these when available.
+>=20
+> Rust Binder intends to use the reservation API as well.
+>=20
+> Daniel Almeida mentions a use case for `insert_limit`, but didn't name
+> it specifically.
 
-> 
-> I would like to know if I can send the updated patch series with the
-> correct commit message.
+Sorry, this fell out of my radar for a bit. Will have a look in the next =
+couple of days.
 
-I feel like the strncpy() is intentional and we don't want unexpected
-NUL-termination in the middle.  If it has a NUL character then it should
-be a short string and don't need the later part.
 
-Thanks,
-Namhyung
-
+=E2=80=94 Daniel=
 
