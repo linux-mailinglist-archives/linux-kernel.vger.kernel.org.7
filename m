@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-742981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB26B0F907
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:30:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB84B0F906
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB5821CC1AC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:31:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEB4AC37DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3568D220F23;
-	Wed, 23 Jul 2025 17:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CA821CA1E;
+	Wed, 23 Jul 2025 17:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFl3hOiX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcQRP4Fb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F30215055;
-	Wed, 23 Jul 2025 17:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F49B7262B;
+	Wed, 23 Jul 2025 17:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753291846; cv=none; b=uVSPZNWbxSD9Cf4LpJv8/IsBvfC+kQiOSyYKVR2Wr3BwtON/G93oZJhAieTOxN2MFx/5JsxoSL6LufbNjzkkVHAHZ7lpqZXtZqkaI0+2iDFZfyWk0AEmZqoDDPu6jOnJyAjkv1wA+HxJW1va8Nws0icmeKCkswQE3y444qdlSd0=
+	t=1753291846; cv=none; b=ROAArxBRnK8HnnJ1IwX7XSwDbNEEAx4fpOWIRQBMe8sj4qYwZu5RKl5YeOdil4j8QZOzCxw4wcYxjkLn5SHLrBHYwsIvYEddqV0kjvW0775Zj3+ES8hOai38pdel9DMKT6+35d4THQIon27g37BWD6C/sQR60WtAKeTIE4rgVfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753291846; c=relaxed/simple;
-	bh=xJN02HVRClKYAJEwqIN9Rq8KdG7EBsD1osTfyz/FyQM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SfQM5B40U0d3ZfwnnIe0bejLxU+8H6ib8oEc1jcW7634dr4a8/dwRl3cFkpR4NECYVUDzHJarsaMNJ8ttksLFWjeVAsLlWZ165R8QytuqNCOeBsftuuJ+IbxS+2j6gxoOTgYPMLgdC7XL2lP+8KXMufLHLwl92JOu0Hh5yp+J0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFl3hOiX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3C4C4CEF8;
+	bh=5kbDHJBDt91yPJpWqpTjlQNKjspG21vEOO5BD8wsh0I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b2mq+Nd+E2bJM1cxrjD6F3ZxN5hB/YDkAreHiJSTiFmHDAU8938F6ziGy4fct6ODsIFC3dSIrEjSEiDLCZRzq/Tj36/pLVy6gROmyv3cKsIOIu9q8GDldUd7at73H9TtQxG3PXhHPAO9m9qfvovBQOmwgfyzBUsUE9Ng4nS2sHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcQRP4Fb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42834C4CEE7;
 	Wed, 23 Jul 2025 17:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753291846;
-	bh=xJN02HVRClKYAJEwqIN9Rq8KdG7EBsD1osTfyz/FyQM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=BFl3hOiXgoiVcaTyeDvk6wKUxJpvRu1ICwXtmre1WJC2VW1h9CJMt7udk1IMXBalp
-	 oXJpyZ/r8DLLWKRQYsMWvoS6aXeq55neXu7svGRKDvTzlwenH6Ur06biI0cg2T32ri
-	 MaBCI9cEwd3JuA9wLYQP20uVJzc5KEknry9f6Q0iP4lcgm6DsY42QSWJv7EkbLvvmW
-	 vPJjC8JvzX5T62/PHjUzWzLdejUrKq/HHOBUl9VHk0LMYUBU2SqmgxnbcUBetZGnnY
-	 SrIP8DIbJ3KSeoDtOeZJP78LkiqpFzx/wkMyJPE4cmzkapReVqxVylusx4LMWc74jc
-	 4wcOHTYy5Wqeg==
+	s=k20201202; t=1753291845;
+	bh=5kbDHJBDt91yPJpWqpTjlQNKjspG21vEOO5BD8wsh0I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DcQRP4FbjHC/WTvDxeSV8W8DJkm/03KnMeSpvt19yXTjDLMekFVq47AH50jYGX9/2
+	 87r2oXesc8gGDsGcVAYNDKJ+YSMBG7AyORlumpCpjVYlJWbO0i65arMQQoXgf2eyoL
+	 9As/MyDDLMKtiTOazxMJ/mMPfYPbjx6N9TnuQWOVDXsGNeQAMVlPJaJovK+BSNCjfa
+	 TOz6Sx2i6RoWjLl/a6e4RWlB5BRWjiXio4a5vrhlnyu/x/9zwJHlobKZ+PlViNzsos
+	 YBLCR1qnwzkBg7okNd0TmM8B024LB65iJNM4XyKxN5D2sb8s31mRzQeeNkTNmYfj6/
+	 r7VKg6IlmSNmQ==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
+ Changbin Du <changbin.du@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- Ian Rogers <irogers@google.com>
-In-Reply-To: <20250717150855.1032526-1-irogers@google.com>
-References: <20250717150855.1032526-1-irogers@google.com>
-Subject: Re: [PATCH v2 1/3] tools subcmd: Tighten the filename size in
- check_if_command_finished
-Message-Id: <175329184572.30139.15349467815781298838.b4-ty@kernel.org>
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250613114048.132336-1-changbin.du@huawei.com>
+References: <20250613114048.132336-1-changbin.du@huawei.com>
+Subject: Re: [PATCH] perf: ftrace: add graph tracer options
+ args/retval/retval-hex/retaddr
+Message-Id: <175329184520.30139.10951827776162604991.b4-ty@kernel.org>
 Date: Wed, 23 Jul 2025 10:30:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,12 +66,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Thu, 17 Jul 2025 08:08:53 -0700, Ian Rogers wrote:
-> FILENAME_MAX is often PATH_MAX (4kb), far more than needed for the
-> /proc path. Make the buffer size sufficient for the maximum integer
-> plus "/proc/" and "/status" with a '\0' terminator.
+On Fri, 13 Jun 2025 19:40:47 +0800, Changbin Du wrote:
+> This change adds support for new funcgraph tracer options funcgraph-args,
+> funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
 > 
+> The new added options are:
+>   - args       : Show function arguments.
+>   - retval     : Show function return value.
+>   - retval-hex : Show function return value in hexadecimal format.
+>   - retaddr    : Show function return address.
 > 
+> [...]
 Applied to perf-tools-next, thanks!
 
 Best regards,
