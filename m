@@ -1,195 +1,150 @@
-Return-Path: <linux-kernel+bounces-743149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930BBB0FB34
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D68B0FB35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900104E0BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A9D4E1A5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8CA214A94;
-	Wed, 23 Jul 2025 19:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA1230BFB;
+	Wed, 23 Jul 2025 19:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F948PVFB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DEG8ct1W"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5BE7F9;
-	Wed, 23 Jul 2025 19:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E07F9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300634; cv=none; b=mmVs/CFIj0dYwzy9N8aR2XWvUNR+gsYZ2VdwOY6m89mmEt8SjuqOD1JnXs7BQhABKplx8ls8pSnAYDuh4w1mNb0UsqcRLxLaEWlGhlJW/r1nFVR4AVn+SyIOFsCNViLCZNSkm9Zu84Yg2JraCBCi/Qz1yYRSmm0rpionAXSlS70=
+	t=1753300668; cv=none; b=CD4BJA2VVpW1TB6V+tsIwKgdbXQem+W3z06mYKv8T6q1oxAZG77trPfpn/DV9ptVsAVjswtHfRcbOw6YAQ/LmXvGETVk1UQcSLisuwSwbAjN7ZJXu1oCKtDXq+L2dML18B3xXb40rRANVeqE7iAZyiExhu5gVT41Zp2rO3MIp6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300634; c=relaxed/simple;
-	bh=KO1DPBhAby687F5YozzqhxpfEKDn5Y3mLGJdWS2v+ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExxY+qV1jenUrCRc5TECHS71WGpXom8b3oZC+21S+vNBHiMVYUi0/tWWYKb8Y04BKyy4sX0UTBaPVMkrRlC9hwVcqVbJ2EILVdSQ3XX6Wt+l/vGmMi8nsOq+f7CjzfjI/6CQUnYz8jtDqFM5Ddd90paAx/cQ6sbUNVstQ/c/T7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F948PVFB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B52FC4CEE7;
-	Wed, 23 Jul 2025 19:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753300634;
-	bh=KO1DPBhAby687F5YozzqhxpfEKDn5Y3mLGJdWS2v+ts=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=F948PVFBhg0oY672LQKnhc0GQ5Te+g71ZnShvK2l00GsuKJWDStASevDn7v7i0uI/
-	 FWNW5v7RtzYxPS4gDzKvNh7cASK8p2B0dXLLBsWuL9qWAF0VYvL4M4pQabNQkjx5YR
-	 ITwZg0ZiC1alcrBcg7Oaa/rtSopSv9C+Al97zSR6VdS8GdtuWr7DdxeOs8ipoGnStF
-	 awEz68gi/fzMZmW8t3mERMYk8eO0WtPRkMZQyyo2QKuGyHKo1uqRSlcKJEaJUqj26F
-	 u1kzcLV7fK7zBjMTErkwAwIYhB3UuR5apTkUk4di8pFJNr2GQBzyJJ5jdQIF5uZYZn
-	 87WdsNN7bKqWA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E32FECE08DF; Wed, 23 Jul 2025 12:57:13 -0700 (PDT)
-Date: Wed, 23 Jul 2025 12:57:13 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
-	quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	hernan.poncedeleon@huaweicloud.com
-Subject: Re: [RFC] tools/memory-model: Rule out OOTA
-Message-ID: <9963f6a6-9da9-4120-b1fe-e4a1df9edda1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
- <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
- <b9c250b2-e4c0-4e8f-b37c-b51d93b980f0@rowland.harvard.edu>
+	s=arc-20240116; t=1753300668; c=relaxed/simple;
+	bh=FVSyqqgqEq4MnbN1AK5ppWWETHgof3UqLFecD42QwMI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YIj+e+tlCP3IDRIce11SoTY+nzPZFZEOPdIsQOWOvuUDJw9Nc5DQB7g5leIs8Qf96DdVgaYJ8ewJgSN7un3PrH3BQwN3Bp/hob+DZKEo1An8W9BRKyRD/e6LPUbrkEBgwIyqTCweLq+GsmqEhGqrvWnhLBQqrHiEsHVU780IYGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DEG8ct1W; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b3bad2f99f5so304108a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753300666; x=1753905466; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DG2m9HOzWXxFr0mPV6O/7kOINoRfxN8n3jHURo/ORo=;
+        b=DEG8ct1WATN5BwkWQIXgcWqP6ciIk034NbYWzPusn72yEkYoms4aCtNMDMF3B4AOm6
+         2DZP5IlmWNnNX0Zn+QNPC+F1O1ObGov/9wbs9lGLJAp673em5+w3xfik9w6wK8TU49qq
+         GAoQAYo4OhYrTzag8rTymSeLXkSNehTPjnWTw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753300666; x=1753905466;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DG2m9HOzWXxFr0mPV6O/7kOINoRfxN8n3jHURo/ORo=;
+        b=tiQhDqayVN8iMfq4nJ5qzFd/ZycpBmQE+QbN5zMbhjCY3uQyxAGrchViOJBZWM4M2L
+         v5jkw+9kj5q7uWrObrAhxOMgYMddMTgGUypMevyIomF5Z+kPBD1pMiDRAAWwa0bWChq+
+         TxAef8lM9UBKWD4I7GnLGDyJZjSw48IW7B/3nArvQZLdb2yvUXo++SlcHy2GYkTv+MbE
+         1b+RV8naWBG6z7Kwgj7Mhr3Wt2SaiugwostobZtACsOeu/MusBDovNz24wDpKLu9Mris
+         D3q3JoPfMGuCvZKqx/s60Dqxr8OVRjdLjwUIcHBFHi3fr9iMbuw+g2JmLy3ThIBKG0ob
+         8ezQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtxH2Z0jZfAirqKWDKOFIlbd8GnebUwbdW6jufS7IdsE3LpREqN7Gnuv+LY4xJufJMtetfAFdoWj3Mk5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrnrSgO2Y3LpEGAO3h1lPZ31aEuzh4GkzM8ddIkS7lpsBdlCKM
+	iJnKybD04YX/RXJ3OOLTGhhUL9PzCYLbDMCwlrPw6LUr1SMEH3cXuS+oM6a3GKJiHQ==
+X-Gm-Gg: ASbGncsd7iIz6GABgoi6h0YtKGDQ/+Sy/ICHVcWi9gpaScq8HDijMju39E2VhckzBKP
+	gFfAB+dkvbI6/mpmzKEUyS1TNPCSgcF+TToTmbEOdZAUGftqbSMKEIpzRYNFVvp0DdWZeDuRLMX
+	/8HCVvl9QZErjgjlqfkX5RTepuetxOCevySLG8HmFXdUoUFIbSDLvv5mcBr/wTnuqdNdJwMKFRo
+	wloEtnx9S8+FNXM8I3TBIkfuKG5OUXbVSEe8h9tA6sl0aASsfFedVEJ9ky8iu9lk+oaxz7xGgcD
+	P7q2MqTnsIctSJMrFB+HX/kWCt4CTFjJDyAjHvrukww1XhxDkrmI43Initsjh0rULNrTNMBEmkT
+	UrU1PTNu3cjk+TVcDqSVCUiNme5T3qo4PdmbLd2E8SU/QxoM=
+X-Google-Smtp-Source: AGHT+IFkLaseT4J9N1a2WehClVWhl7WlueTj40zlFze3K+qatH6eNoY69q9GmgP0Dhp8ElHdTx56HQ==
+X-Received: by 2002:a17:90b:2709:b0:311:a5ab:3d47 with SMTP id 98e67ed59e1d1-31e5130f700mr4952881a91.1.1753300666086;
+        Wed, 23 Jul 2025 12:57:46 -0700 (PDT)
+Received: from ballway23.roam.corp.google.com ([136.27.48.153])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e519b1494sm2297587a91.4.2025.07.23.12.57.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 12:57:44 -0700 (PDT)
+From: Allen Ballway <ballway@chromium.org>
+Date: Wed, 23 Jul 2025 12:57:35 -0700
+Subject: [PATCH v2] media: ov8865: move mode_configure out of
+ state_configure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9c250b2-e4c0-4e8f-b37c-b51d93b980f0@rowland.harvard.edu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-mode_configure-v2-1-7fb0f6ba1194@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAK8+gWgC/3XMQQrCMBCF4auUWRtJUoLFlfeQIjWZtLNoRyZtU
+ Erubuze5f/gfTskFMIE12YHwUyJeKlhTw34aVhGVBRqg9XW6Yu1auaAD89LpHETVJ022sVn6Fo
+ XoJ5egpHeB3jva0+UVpbP4WfzW/9S2SijHA6t084O2sSbn4Rn2uYzywh9KeULhblnxa8AAAA=
+X-Change-ID: 20250722-mode_configure-80105fbd835d
+To: Hans de Goede <hansg@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Allen Ballway <ballway@chromium.org>
+X-Mailer: b4 0.14.2
 
-On Wed, Jul 23, 2025 at 03:25:13PM -0400, Alan Stern wrote:
-> On Tue, Jul 22, 2025 at 05:43:16PM -0700, Paul E. McKenney wrote:
-> >     Also, C-JO-OOTA-7.litmus includes a "*r2 = a" statement that makes herd7
-> >     very unhappy.  On the other hand, initializing registers to the address
-> >     of a variable is straight forward, as shown in the resulting litmus test.
-> 
-> ...
-> 
-> > diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
-> > new file mode 100644
-> > index 00000000..31c0b8ae
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-7.litmus
-> > @@ -0,0 +1,47 @@
-> > +C C-JO-OOTA-7
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But LKMM finds the all-ones result, due to OOTA on r2.
-> > + *
-> > + * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
-> > + *)
-> > +
-> > +{
-> > +	0:r2=a;
-> > +	1:r2=b;
-> > +}
-> 
-> In this litmus test a and b are never assigned any values, so they
-> always contain 0.
-> 
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*a);
-> 
-> If this executes then r2 now contains 0.
-> 
-> > +	}
-> > +	*r2 = a;
-> 
-> And so what is supposed to happen here?  No wonder herd7 is unhappy!
+ov8865_mode_configure() only needs to be called on sensor init, but it can
+be called multiple times from ov8865_state_configure(). Move
+ov8865_mode_configure() to ov8865_sensor_init().
 
-Nothing good, I will admit!  Good eyes, and thank you!
+Signed-off-by: Allen Ballway <ballway@chromium.org>
+---
+Changes in v2:
+Cleaned up coding style
+Removed call to ov8865_state_configure() from ov8865_sensor_init()
+---
+ drivers/media/i2c/ov8865.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*b);
-> > +	}
-> > +	*r2 = b;
-> 
-> Same here.
-> 
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +locations [0:r2;1:r2]
-> > +exists (0:r1=1 /\ 1:r1=1)
-
-Yes, I did misinterpret Jonas's initialization advice, which reads
-as follows:  "unless you know how to initialize *a and *b to valid
-addresses, you may need to add something like `if (r2 == 0) r2 = a`
-to run this in herd7".
-
-Given that there are two instances of r2, there are a number of
-possible combinations of initialization.  I picked the one shown
-in the patch below, and got this:
-
-$ herd7 -conf linux-kernel.cfg ~/paper/scalability/LWNLinuxMM/litmus/manual/oota/C-JO-OOTA-7.litmus
-Test C-JO-OOTA-7 Allowed
-States 3
-0:r1=0; 0:r2=a; 1:r1=0; 1:r2=b;
-0:r1=0; 0:r2=a; 1:r1=1; 1:r2=b;
-0:r1=1; 0:r2=a; 1:r1=0; 1:r2=b;
-No
-Witnesses
-Positive: 0 Negative: 3
-Flag mixed-accesses
-Condition exists (0:r1=1 /\ 1:r1=1)
-Observation C-JO-OOTA-7 Never 0 3
-Time C-JO-OOTA-7 0.01
-Hash=d9bb35335e45b31b1a39bab88eca837c
-
-I get something very similar if I cross-initialize them, that is
-a=b;b=a.
-
-Thoughts?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
-index 31c0b8ae..d7fe0f94 100644
---- a/manual/oota/C-JO-OOTA-7.litmus
-+++ b/manual/oota/C-JO-OOTA-7.litmus
-@@ -11,6 +11,8 @@ C C-JO-OOTA-7
- {
- 	0:r2=a;
- 	1:r2=b;
-+	a=a;
-+	b=b;
- }
+diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..eaa84fe68bdef45961885f435df99d98eb0ac0ca 100644
+--- a/drivers/media/i2c/ov8865.c
++++ b/drivers/media/i2c/ov8865.c
+@@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct ov8865_sensor *sensor,
+ 	if (sensor->state.streaming)
+ 		return -EBUSY;
  
- P0(int *a, int *b, int *x, int *y)
+-	/* State will be configured at first power on otherwise. */
+-	if (pm_runtime_enabled(sensor->dev) &&
+-	    !pm_runtime_suspended(sensor->dev)) {
+-		ret = ov8865_mode_configure(sensor, mode, mbus_code);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	ret = ov8865_state_mipi_configure(sensor, mode, mbus_code);
+ 	if (ret)
+ 		return ret;
+@@ -2384,10 +2376,10 @@ static int ov8865_sensor_init(struct ov8865_sensor *sensor)
+ 	}
+ 
+ 	/* Configure current mode. */
+-	ret = ov8865_state_configure(sensor, sensor->state.mode,
+-				     sensor->state.mbus_code);
++	ret = ov8865_mode_configure(sensor, sensor->state.mode,
++				    sensor->state.mbus_code);
+ 	if (ret) {
+-		dev_err(sensor->dev, "failed to configure state\n");
++		dev_err(sensor->dev, "failed to configure mode\n");
+ 		return ret;
+ 	}
+ 
+
+---
+base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+change-id: 20250722-mode_configure-80105fbd835d
+
+Best regards,
+-- 
+Allen Ballway <ballway@chromium.org>
+
 
