@@ -1,246 +1,161 @@
-Return-Path: <linux-kernel+bounces-741938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698CEB0EAF0
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF12B0EAF1
 	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32265580516
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76125804D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3111226FD9D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EB626FDA4;
 	Wed, 23 Jul 2025 06:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="BLjxWriK"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6JtxCOy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80969191493;
-	Wed, 23 Jul 2025 06:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEC26FA58;
+	Wed, 23 Jul 2025 06:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753253270; cv=none; b=ir9lE4k3558hp305d7gZMeAY1hBMIgid/lgWqO7l2JajLmBR84p/sEFdzpFhOQl4W/pb7eKqV6MZFjrN6x1+fp7Np42UqEaqilieC+9zaiG9gM84ri3XVhatCiDa4dlJA7bUO8ccqXEu2kqmjkczysIc7UoDDkVDG52vOfyRK58=
+	t=1753253270; cv=none; b=FK6VsngzkL8diGQcOMulkFo00hXGPru2UgXz/yXv7UMnvqdNcvaAuBiWxBPoQbeBflUvw4mtyEbPZ2igsS0OoC/6U2KNkaJ6fBTd/TSV5YIiCSwGxv+Pgk6+3KJiaNppGhv06ytnycckFu1OmLQOMZLoEiapZ4PFt6K9SAbLfXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753253270; c=relaxed/simple;
-	bh=+Yb4Wy6t52M4grBsczbkb2a6ETobnuJy4+jhoGQ6wxc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jJSpmXj2QeWmBvJmED2KWvuAPXtC/KtPsKtRtwuAyBOYt2gSTh6hVxE8+g0qLvxgD7ZoBvevhSq6+Fttg0Ixv/fCVIHbirxMU4v+NPcVdZfh/obvNlHWaZOQu7lVz7DMQ+VUqpkUmoZT9THcDg1Qk6JzYmyvSBCtAOO+acJ5ABk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=BLjxWriK; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1753253263;
-	bh=i1P2/ELUd1b9ULWl8PKW1VUWLzj7JvUrI0bGxJFYGBQ=; l=4628;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BLjxWriKj3LAllpK8YtS3Lzo/Xt/Nte/71T9DSdXP6dFMxx+/1Gca2dmP2kWFqa8w
-	 Umlt7hBpdEm7/XkM+ZXy+xva8PWE6q+yxzLDLRUyJMtKWaqIvLFtuOUmkZD25qIbG+
-	 08G+GONfzhDn4qhepRB2x4YkLgNuAWOufH9E3CHIW3crFwkJgxxzLajPyXhQAaQPtr
-	 q+C0TEixfw0FO5GQKCGk6tSYtIh0IEKmHX7GI7caS/nW1ua1lslfHvDZU2jrtw2xQs
-	 +D2J0U0wR6YZAbxze30iT+sUzN5Qv/iONqTfaIwo0s89QOmzvT+tPD0tv/xDVB2wqr
-	 HZOT1z3dltneQ==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244587:0:AUTH_RELAY)
-	(envelope-from <jeff_chang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 23 Jul 2025 14:47:35 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 23 Jul
- 2025 14:47:34 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Wed, 23 Jul 2025 14:47:34 +0800
-From: <jeff_chang@richtek.com>
-To: <krzk@kernel.org>
-CC: <broonie@kernel.org>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<jeff_chang@richtek.com>, <krzk+dt@kernel.org>, <lgirdwood@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <robh@kernel.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: Add Richtek RTR5133 Support
-Date: Wed, 23 Jul 2025 14:47:38 +0800
-Message-ID: <20250723064813.2742303-1-jeff_chang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <4ba4c608-e2e1-46e8-b796-e07c7c97dbb3@kernel.org>
-References: <4ba4c608-e2e1-46e8-b796-e07c7c97dbb3@kernel.org>
+	bh=7zkhMiynmV7ttrTgKe2oO/0dCFzwTwF9NlgqRU5gQRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ribUil42PqJSMrLkPVCKUxGFdeDen4CvsFyD++U+hMG4NkgBSjV4TQZZbez62M6jvkXMf6NqPraQqoL+MyfPfs8qnTiESzE9vDMHChhJan3AwSSbz6t8U/3hw+P5dh2k7d3/iS66uv6hU+A881S237PEwmKg+VS4vAuD2dNDicE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6JtxCOy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB94C4CEE7;
+	Wed, 23 Jul 2025 06:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753253270;
+	bh=7zkhMiynmV7ttrTgKe2oO/0dCFzwTwF9NlgqRU5gQRU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f6JtxCOyTOCTAV0joAoGB9qRuxnyFsqVAyxJMOhwpH1lTZ44qqjv23vjn+8pfYXXP
+	 1tCg2zSptxXTP0T6B9Z79B+RSDLY1LmSMV325PJcauJMWbPPgGrgfZ4/xNv6XF3/fB
+	 as2omzTgBEYuUEFIRq1pMDwRmUSQMF9UETYLXHPTZM6BAz0way/OBw7/rQIX9VIV4l
+	 IP41IQrbrVVyE5bKN+41+fbtnfbiab7c2U5TbcoTPVPfZY19Hv8j0uufOV3zmR1FUD
+	 3D4hv5gBBiRIK3FDxINoCNOscJ0LEGkxxrcqcgKIsWjMic/3xUN/gsmM8LmzZyrSix
+	 yCk5bKR/5DM3A==
+Message-ID: <4ee9c7c0-4a3f-4afa-ae5a-7fd8a750c92b@kernel.org>
+Date: Wed, 23 Jul 2025 08:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>
+References: <20250722232005.GA2863060@bhelgaas>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250722232005.GA2863060@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dear Krzysztof Kozlowski:
-
-	Thanks for your reply.
-
-	Please review my explanation for your questions.
-
-	If I have misunderstood or if there are any parts that need correction, please let me know.
-
-Thanks
-Jeff
-
-
-On 22/07/2025 10:34, jeff_chang@richtek.com wrote:
-> From: Jeff Chang <jeff_chang@richtek.com>
+On 23. 07. 25, 1:20, Bjorn Helgaas wrote:
+> On Tue, Jul 22, 2025 at 08:24:26AM +0200, Jiri Slaby wrote:
+>> On 21. 07. 25, 19:08, Bjorn Helgaas wrote:
+>>> Jiri, question for you below about more possible drivers/pci/
+>>> conversions to use dev_fwnode() for struct device * cases.
+>>
+>> Sorry, I am a way too occupied :/.
+>>
+>>> Would like to get this in for v6.17 if these should be changed.
+>>
+>> It's not necessary, but a good to have cleanup (opposed to the posted fixes,
+>> which were required). I will switch those eventually, but I don't promise
+>> 6.17. (If someone does not beat me to it.)
 > 
-> Add bindings for Richtek RT5133 IC Controlled PMIC
-
-Subject - RTR or RT? Google tells me nothing about RTR.
-
---> I will fix it to RT5133 in next patch.
-
-
-> +
-> +    properties:
-> +      base:
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for base regulator which control force-off base circuit.
-> +          Base circuit is the power source for LDO1~LDO6. Disabling it will
-> +          reduce IQ for Chip.
-
-I don't understand what this regulator is for. Your example is also
-incomplete - missing min/max constraints like voltage.
-
-Explain, what is this output pin? I already asked for explanations. I
-have diagram in front of me, so explain precisely instead of sending THE
-SAME again - which pin is it?
-
-Also, what is IQ? Except Intelligence Quotient?
-
---> Thanks to Mark's Suggestion. It's the top-level supply for LDO1 to LDO6.
-    It is not externally visible and functions merely as an on/off switch rather
-    than regulating voltages.
-    I will update the description as follows.
-
-   Properties for the base regulator, which is the top-level supply for LDO1 to LDO6.
-   It functions merely as an on/off switch rather than regulating voltages.
-   If none of LDO1 to LDO6 are in use, switching off the base will reduce the quiescent current.
-
-
-> +
-> +        properties:
-> +          richtek,oc-shutdown-all:
-> +            type: boolean
-> +            description:
-> +              Anyone of LDO is in OC state, shut down all channels to protect CHIP.
-> +              Without this property, only shut down the OC LDO channel.
-
-I don't understand this. I also do not understand why this is property
-of "base" not the chip itself...
-
-So don't send next version with the same.
-
---> It is a protection for LDO Over Current . The Description in datasheet like below. 
-
-    Anyone of LDO OC state, shut down all LDO channels
-    0 : LDO OC only shut down itself (default)
-    1 : LDO OC shut down all channels
-    We set it as a property of "base" for using regulator_desc -> of_parse_cb.
-    Should I move them to chip property? We bind it to base regulator for easily programming.
-
-
-> +
-> +          richtek,pgb-shutdown-all:
-> +            type: boolean
-> +            description:
-> +              Anyone of LDO is in PGB state, shut down all channels to protect CHIP.
-
-CHIP is an acronym? Or chip?
---> chip! I will use "chip" in next patch.
-
-> +              Without this property, only shut down the PGB LDO channel.
-> +
-> +        required:
-> +          - regulator-name
-> +
-> +    patternProperties:
-> +      "^ldo([1-6])$":
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for single LDO regulator
-> +
-> +        required:
-> +          - regulator-name
-> +
-> +      "^ldo([7-8])$":
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for single LDO regulator
-> +
-> +        properties:
-> +          rt5133-ldo1-supply:
-
-supplies do not have vendor prefixes.
-
-> +            description: |
-> +              Only for ldo7 ldo8, pvin7 and pvin8 reference design are RT5133 ldo1.
-> +              If not connect to ldo1 vout, this property for pvin7 and pvin8 is necessary.
-
-I don't understand why LDO1 supply is here.
-
-Again, which pin is it?
-
---> Please refer to PVIN7 and PVIN8 in the diagram. They are the power supplies
-    for LDO7 and LDO8, respectively. The reference for PVIN7 and PVIN8 is the VOUT of LDO1 (VOUT1).
-    In the driver, we set "rt5133-ldo1" as the supply_name in the regulator_desc
-    for LDO7 and LDO8. Users can overwrite the rt5133-ldo1-supply property according to their own layout.
-    Anyway I will just use vin-supply and I will remove vendor prefixes of supplies in next version.
-
-
-
-> +
-> +        required:
-> +          - regulator-name
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - wakeup-source
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      rt5133@18 {
-
-Nothing improved.
-
-> +        compatible = "richtek,rt5133";
-> +        reg = <0x18>;
-> +        wakeup-source;
-> +        interrupts-extended = <&gpio 187 0x0>;
-
-Nothing improved
-
---> I will update them like below.
-
-    pmic@18 {
-    interrupts-extended = <&gpio 187 IRQ_TYPE_LEVEL_LOW>;
-
-
-Implement previous comments and respond to each of them to confirm you
-understood them.
-
+> It's not clear from the commit log:
 > 
+>    irq_domain_create_simple() takes fwnode as the first argument. It can be
+>    extracted from the struct device using dev_fwnode() helper instead of
+>    using of_node with of_fwnode_handle().
+> 
+>    So use the dev_fwnode() helper.
+> 
+> why the posted fixes are required (other than Arnd's change to
+> altera_pcie_init_irq_domain(), which fixes an unused variable warning
+> when CONFIG_OF is not enabled).
 
+Sorry, my bad. These are a cleanup suggested in this series:
+https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
 
-Best regards,
-Krzysztof
+I.e. series switching from irq_domain_add_*() (take of_node) to 
+irq_domain_create_*() (take fwnode).
 
+These days, fwnode is preferred and if there were no more users of 
+of_node in changed functions, the series above even produced warnings 
+(Arnd's and others' fixes).
+
+> Since it sounds like no changes are required for the other ones I
+> mentioned, I'm going to leave them alone for now:
+> 
+>    dw_pcie_allocate_domains()
+>    mobiveil_allocate_msi_domains()
+>    altera_allocate_domains()
+>    mtk_pcie_allocate_msi_domains()
+>    xilinx_pl_dma_pcie_init_msi_irq_domain()
+>    nwl_pcie_init_msi_irq_domain()
+>    plda_allocate_msi_domains()
+
+Given fwnode is always used them, it's not necessary to use 
+dev_fwnode(). But it'd be a nice cleanup. Provided the list, I started 
+the cleanup now :).
+
+thanks,
+-- 
+js
+suse labs
 
