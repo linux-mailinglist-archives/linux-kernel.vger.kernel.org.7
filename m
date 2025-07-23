@@ -1,247 +1,114 @@
-Return-Path: <linux-kernel+bounces-743185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D328B0FB91
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5322B0FBA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAFA3BC43E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C693162504
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E591D238C3A;
-	Wed, 23 Jul 2025 20:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A937B24418D;
+	Wed, 23 Jul 2025 20:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Co0wzGkI"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="KkLrpboH"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ADD236431
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47E62417F9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753302904; cv=none; b=Lyg1Au0gfD0lF7aI09N1MBdFGPVQdJg6gCuSqhHTspU0/YvGWCSOEunbDrPpaB6CI4W5GRoVHupJf3M40iqxUG4OFFoBNV8woFX2c56uGI5dU47EOU4HpqT9ZoXLZjEprj4uyuPBsvnAP1Cx+g9hZMOeHL2RokFKbo0j/UJsOaU=
+	t=1753302928; cv=none; b=luiN5My0X1G6+JenLoviZ+LfOJnIy+SmipaID//zOzesg2VX/eq96hFK2BHyOGvvcJ0ETH2R4LaM0uA3RH7ryXdkz3KvYxrw9h1Dwt67R9gQsXhBGs6A6phJKOLk50qpvGJSL5ANSJ+vKbMjL43GZcHgzQ1X8pIqtwsOaoQquIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753302904; c=relaxed/simple;
-	bh=WTZXIXoDsiyMHH7jLVN7/heBJWOZLBzitc9MnX4fESk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=azG4HfhbnzLvMwh6BgmFRUEWxoY9fu+Ya8kTPlIMSI7qA2DgeMB4rtmcMKYiCHLvFMlyqS5az/J32kObnKKkmOFoxEdClFV8KFf6zVqvNaTRVAVx0GOdgCReMlYk2h4iqVo3gAKfdMv1m0sabTqYwW5RVudM+n1vQZhoIEBJamA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Co0wzGkI; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31e3fdf1906so206773a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753302901; x=1753907701; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnR7w9stPdKm98nKrJQNM9+YNaTPwRCkK6LNcC2wLbg=;
-        b=Co0wzGkIGFdyRgIKDioE5QfAlzl09kQtRI0cjx0oQhAAJyCvvZSNh4GrdzQKkaVkSY
-         SN+6SmeWEi2vdEJxKp2gbuB+vgfHW64zQvDO/PyAx+elpala3EnGMdxtBZSBCR3wZo7j
-         eIWLNwqcjVwTg9K0+ocq4mCfuJGyeshpwnE8yX4Je0Ny6dRT7viu8oChchHUMPblvvL7
-         /CeoWSmu9soNFUqpQkS4JFwZB8lvdBykUOlOqC3mTuQhxtLkZAc1nkv88MPWKWj1gfMg
-         Oo3osTtyV5m6ZgHnbSVMr5Sc4SwWvSFdiFX0LXtZf7EL3WcMDo0PunuBwPos6J9r58Mq
-         YD1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753302901; x=1753907701;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnR7w9stPdKm98nKrJQNM9+YNaTPwRCkK6LNcC2wLbg=;
-        b=HZDJQT0gdkjDE1lAsQQUbXNSMROKyaYstXCxZtA76eGjZ1rfesZPPJn2rAxYbwCCqh
-         av68ZwXPDe00WTshZajuINstFDdbPWNflck/ovZuXO3p4uWOBAfFulvGb+ZYYEq1IZ9C
-         T/HwF0rqS56kLaFgek6EEkmWOX7+PSjxz30o+yWF5a3rjgUfHD21mEXDTa+djNOodeij
-         8gT1QC5dUCNPi9Z7uBhv3Vf2fb5zT2D4h6MfW2f77Hh++ZnKrtOwjYphs08DJfaTkdJU
-         oFfs1jnGx736xspe2ZG8goceVWmwLdbldA71vFanbDA3L2L29r7l+i9fbbX1AygV3y0G
-         TbgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpyc46W1TYy66YhL/hQjaQmqPwdDpQHMFBsLSon9p5W4xIGm5xP9We+6mhWyBR77LJjx65DkgsuZDOtOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU98PfzRM/iNppzPIU30o5D+Kffo3JKJUQOM7iWNIBMnMmJuWm
-	WZg3tgFm1So67XufR4rP6rW8hxgY4AEiFYeKrPFR4YzVJd8fCR+PxZyW3WFu2J2yEXY1wxYzCQ0
-	3dB5VlQ==
-X-Google-Smtp-Source: AGHT+IElGF/a2fa0rRJVG8x7Wl025nPKxmm0Kd4MFuq7jeA062GW0ZiySl0PXMrGcapOCBE04uzxFXddxes=
-X-Received: from pjbos14.prod.google.com ([2002:a17:90b:1cce:b0:30a:31eb:ec8e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:da8f:b0:313:283e:e87c
- with SMTP id 98e67ed59e1d1-31e506eea04mr5481708a91.3.1753302901160; Wed, 23
- Jul 2025 13:35:01 -0700 (PDT)
-Date: Wed, 23 Jul 2025 13:34:59 -0700
-In-Reply-To: <20250707224720.4016504-4-jthoughton@google.com>
+	s=arc-20240116; t=1753302928; c=relaxed/simple;
+	bh=rrvMIO2zrmXnt+ojTSfIsLrAA1uxUFjfKOqObAVDKmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLN962iUePEz9TO233uJuIuiRUPmlld2+PgLScZhcrvmLAPi08y+tNsUv5osJHMe7hBoUhDMaWSfJgIWhXAD00oW0FpZa2OSwqeFdclI0sUF6gHEn9AIdKcYCQpggvWSvDVGGKQKSgMTlWo2h+xQi/8cVXp8aEFVH3vk2EUXIQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=KkLrpboH; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id A9B861C00C8; Wed, 23 Jul 2025 22:35:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753302916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bqAX/XJvhXJey+CSz0yx8RBFq6gMYRPzhOP76wbvV+8=;
+	b=KkLrpboHChJua7fsRTcS6qX2ZoZDd+UCdl6QjTkpY4/1kAWgfzXUTPTKSR4BKwzWyeIuXx
+	Rn8zUsEluadkbD60YT9TDjUENSE28Ykk6VDnyv/qpZSL8WtKg4lLUePvoP7ZJTOAE6D7rU
+	owQUDghST5K5jimJ2mJaJAbMS+MFcMo=
+Date: Wed, 23 Jul 2025 22:35:14 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com
+Subject: Re: 6.16-rcX: crashing way too often on thinkpad X220
+Message-ID: <aIFHgit57Uc4BDiy@duo.ucw.cz>
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
+ <aID6XPLXuGo+ViTm@duo.ucw.cz>
+ <c99e3b89-0b46-4803-997c-e6634268bcd8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com> <20250707224720.4016504-4-jthoughton@google.com>
-Message-ID: <aIFHc83PtfB9fkKB@google.com>
-Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
- MMU read lock
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
-	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cAmyQyXIWUruWwfh"
+Content-Disposition: inline
+In-Reply-To: <c99e3b89-0b46-4803-997c-e6634268bcd8@intel.com>
 
-On Mon, Jul 07, 2025, James Houghton wrote:
-> From: Vipin Sharma <vipinsh@google.com>
-> 
-> Use MMU read lock to recover TDP MMU NX huge pages. Iterate
 
-Wrap at ~75 chars.
+--cAmyQyXIWUruWwfh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> over the huge pages list under tdp_mmu_pages_lock protection and
-> unaccount the page before dropping the lock.
-> 
-> We must not zap an SPTE if:
+Hi!
 
-No pronouns!
+> >> I have had 4th or so crash with 6.16. That's not usual.
+> > Two more crashes today. Last one was with 6.16-rc7+.
+> >=20
+> > Ideas welcome,
+>=20
+> Still nothing in the logs?
+>=20
+> The age old idea of getting console and trying to capture an oops always
+> applies.
+>=20
+> I've got an x230 sitting here that I have an ExpressCard serial port
+> for. There's also netconsole and xhci debug cables.
 
-> - The SPTE is a root page.
-> - The SPTE does not point at the SP's page table.
-> 
-> If the SPTE does not point at the SP's page table, then something else
-> has change the SPTE, so we cannot safely zap it.
-> 
-> Warn if zapping SPTE fails and current SPTE is still pointing to same
-> page table. This should never happen.
-> 
-> There is always a race between dirty logging, vCPU faults, and NX huge
-> page recovery for backing a gfn by an NX huge page or an executable
-> small page. Unaccounting sooner during the list traversal is increasing
-> the window of that race. Functionally, it is okay, because accounting
-> doesn't protect against iTLB multi-hit bug, it is there purely to
-> prevent KVM from bouncing a gfn between two page sizes. The only
-> downside is that a vCPU will end up doing more work in tearing down all
-> the child SPTEs. This should be a very rare race.
-> 
-> Zapping under MMU read lock unblocks vCPUs which are waiting for MMU
-> read lock. This optimizaion is done to solve a guest jitter issue on
-> Windows VM which was observing an increase in network latency.
+I was kind of wornering if I'm only one seeing problems. I've now
+built 6.15, and I plan to switch to it on next crash to see if it is
+maybe hardware being flakey or what.
 
-With slight tweaking:
+Oh, and I got _something_, see the thread. But that did not kill the
+machine, so...
 
-Use MMU read lock to recover TDP MMU NX huge pages.  To prevent
-concurrent modification of the list of potential huge pages, iterate over
-the list under tdp_mmu_pages_lock protection and unaccount the page
-before dropping the lock.
+I'm currently traveling, and wifi reception is bad (and not really
+chance to do heavy debugging).
 
-Zapping under MMU read lock unblocks vCPUs which are waiting for MMU
-read lock, which solves a guest jitter issue on Windows VMs which were
-observing an increase in network latency.
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
 
-Do not zap an SPTE if:
-- The SPTE is a root page.
-- The SPTE does not point at the SP's page table.
+--cAmyQyXIWUruWwfh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If the SPTE does not point at the SP's page table, then something else
-has change the SPTE, so KVM cannot safely zap it.
+-----BEGIN PGP SIGNATURE-----
 
-Warn if zapping SPTE fails and current SPTE is still pointing to same
-page table, as it should be impossible for the CMPXCHG to fail due to all
-other write scenarios being mutually exclusive.
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIFHggAKCRAw5/Bqldv6
+8vHGAJwKWQkuShnRIv0E+1Co2fcoA6h4LwCePdE+WpqRqadGg3ESBvFtBPT4Zh0=
+=HAsn
+-----END PGP SIGNATURE-----
 
-There is always a race between dirty logging, vCPU faults, and NX huge
-page recovery for backing a gfn by an NX huge page or an executable
-small page.  Unaccounting sooner during the list traversal increases the
-window of that race, but functionally, it is okay.  Accounting doesn't
-protect against iTLB multi-hit bug, it is there purely to prevent KVM
-from bouncing a gfn between two page sizes. The only  downside is that a
-vCPU will end up doing more work in tearing down all  the child SPTEs.
-This should be a very rare race.
-
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Vipin Sharma <vipinsh@google.com>
-> Co-developed-by: James Houghton <jthoughton@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c     | 107 ++++++++++++++++++++++++-------------
->  arch/x86/kvm/mmu/tdp_mmu.c |  42 ++++++++++++---
->  2 files changed, 105 insertions(+), 44 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index b074f7bb5cc58..7df1b4ead705b 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -7535,12 +7535,40 @@ static unsigned long nx_huge_pages_to_zap(struct kvm *kvm,
->  	return ratio ? DIV_ROUND_UP(pages, ratio) : 0;
->  }
->  
-> +static bool kvm_mmu_sp_dirty_logging_enabled(struct kvm *kvm,
-> +					     struct kvm_mmu_page *sp)
-> +{
-> +	struct kvm_memory_slot *slot = NULL;
-> +
-> +	/*
-> +	 * Since gfn_to_memslot() is relatively expensive, it helps to skip it if
-> +	 * it the test cannot possibly return true.  On the other hand, if any
-> +	 * memslot has logging enabled, chances are good that all of them do, in
-> +	 * which case unaccount_nx_huge_page() is much cheaper than zapping the
-> +	 * page.
-
-And largely irrelevant, because KVM should unaccount the NX no matter what.  I
-kinda get what you're saying, but honestly it adds a lot of confusion, especially
-since unaccount_nx_huge_page() is in the caller.
-
-> +	 *
-> +	 * If a memslot update is in progress, reading an incorrect value of
-> +	 * kvm->nr_memslots_dirty_logging is not a problem: if it is becoming
-> +	 * zero, gfn_to_memslot() will be done unnecessarily; if it is becoming
-> +	 * nonzero, the page will be zapped unnecessarily.  Either way, this only
-> +	 * affects efficiency in racy situations, and not correctness.
-> +	 */
-> +	if (atomic_read(&kvm->nr_memslots_dirty_logging)) {
-
-Short-circuit the function to decrease indentation, and so that "slot" doesn't
-need to be NULL-initialized.
-
-> +		struct kvm_memslots *slots;
-> +
-> +		slots = kvm_memslots_for_spte_role(kvm, sp->role);
-> +		slot = __gfn_to_memslot(slots, sp->gfn);
-
-Then this can be:
-
-	slot = __gfn_to_memslot(kvm_memslots_for_spte_role(kvm, sp->role), sp->gfn);
-
-without creating a stupid-long line.
-
-> +		WARN_ON_ONCE(!slot);
-
-And then:
-
-	if (WARN_ON_ONCE(!slot))
-		return false;
-
-	return kvm_slot_dirty_track_enabled(slot);
-
-With a comment cleanup:
-
-	struct kvm_memory_slot *slot;
-
-	/*
-	 * Skip the memslot lookup if dirty tracking can't possibly be enabled,
-	 * as memslot lookups are relatively expensive.
-	 *
-	 * If a memslot update is in progress, reading an incorrect value of
-	 * kvm->nr_memslots_dirty_logging is not a problem: if it is becoming
-	 * zero, KVM will  do an unnecessary memslot lookup;  if it is becoming
-	 * nonzero, the page will be zapped unnecessarily.  Either way, this
-	 * only affects efficiency in racy situations, and not correctness.
-	 */
-	if (!atomic_read(&kvm->nr_memslots_dirty_logging))
-		return false;
-
-	slot = __gfn_to_memslot(kvm_memslots_for_spte_role(kvm, sp->role), sp->gfn);
-	if (WARN_ON_ONCE(!slot))
-		return false;
-
-	return kvm_slot_dirty_track_enabled(slot);
-> @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm,
->  	rcu_read_lock();
->  
->  	for ( ; to_zap; --to_zap) {
-> -		if (list_empty(nx_huge_pages))
-> +#ifdef CONFIG_X86_64
-
-These #ifdefs still make me sad, but I also still think they're the least awful
-solution.  And hopefully we will jettison 32-bit sooner than later :-)
+--cAmyQyXIWUruWwfh--
 
