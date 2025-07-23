@@ -1,203 +1,99 @@
-Return-Path: <linux-kernel+bounces-742677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EDEB0F53F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3FBB0F543
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5AF3A3F40
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141A51754CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7C52F2714;
-	Wed, 23 Jul 2025 14:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2342EF676;
+	Wed, 23 Jul 2025 14:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CB8pn/gA"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Au4h0cym"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12052D9EDC;
-	Wed, 23 Jul 2025 14:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3311E1DFC;
+	Wed, 23 Jul 2025 14:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280796; cv=none; b=RxqFmNMklLK+5A6vmqAGGvX8Di/UCeS+qhabEmRzwr0UM7q/Ak2VRoeMO/zouT5PQKMF4MwoLWx8BXGWvrlrk+XRyATcVryxIpbZIjkfktDUQTTgd7Gj4NlvioUiFau4cftn+lExWkkMrhh3z3wr0krKNKZyTC6doIEcJ4HYRVw=
+	t=1753280920; cv=none; b=bgFxBtJvkIG0KainXRwhWcsc8kBKMJY59QCrIKYtubcpq80VUMYdSQCkUpKpeD+PIZS3xGLLNrMEQDP2tG8gxfNclWV0qy1XtibvSEfZJIIYhvjiNJFUPRekQqzqaSN/YIHpKs4tCs7vCm/xW+4+qoBHeWYiyKfFHH3Fk1Ra1aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280796; c=relaxed/simple;
-	bh=u5kcz7+z11ZecDw4BOO0cuxQi4nShrexRctLR1fj8sI=;
+	s=arc-20240116; t=1753280920; c=relaxed/simple;
+	bh=Bb/XIIaBN/0UhJhFGasC1pbKYzuf1LGwlcF6he+lC4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTuHRwvWiZ6DUrpYYxOU9GMdpMBHY+9VGkwne3YRguUgeg+Ou3BcVUzCWKCqEAxStytUA7OPtx+FWB+hqZg2hAXZi1vKsiJNjipfiIxYrJ/d3/j8d+cYiYB2wrCsYtrzCV9HvBUNT2SbVSx7uRFoxMAoY/c2Sz/EeYK9ehJmnkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CB8pn/gA; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e33d36491dso921431685a.3;
-        Wed, 23 Jul 2025 07:26:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753280794; x=1753885594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2o2EjZkq+kx8CAy5J/9DD0iXT5RJwEkXNP+TIRG9l2g=;
-        b=CB8pn/gAL4GI4chCTzDqMUq/ZsZXjjy6Ah2mdQ7XkMz/ZYrHRp+T9o9ArvQbCvWa8E
-         RRIdENLGdvmP4nYSbWVE+dzZjF8STLCsTsILDHsYrTY2tA1eOPNi0axXBoCQxNR/jfWv
-         +S0X1EV48Q7qLSxRK0HYg5Pt3SZYubi4ILXVrCkW+nzZUZ/GdKWmDN+2isHEtL/hkgsF
-         sSaMYdSxT0cz+oFT7iSJuTaRXbK2NmzoOB+7TwxqE4sqUglGBCp5125Q4SQmtx9oMtqv
-         DawwgZO+yw8QAXprS2v+xVvzWy6Dxlwv/k/IeOAI4sIDSXEGMZXxZhLMFjFPSNxgDiOC
-         YSPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753280794; x=1753885594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2o2EjZkq+kx8CAy5J/9DD0iXT5RJwEkXNP+TIRG9l2g=;
-        b=oWNNCGeU5/tZwfdA2vgy3HlKPHaaL93G/apA/O6jMmz3i3m9CZuRY/tL+Y8RFdwUws
-         P+psj8L2XcB4fzbMdWLuSue30Jy1lqEt6uoS9NucXr4DM9iOoVCwwvT+ZDoUR10NDGtP
-         2GbyGW5bMiV8i01+ih00tJED0BeaH7b/IDnYrIuDl7+9yukzVzQN9pDy0nzM1gbpYTkq
-         SWPhvRuCO/YRCqmWhKCcrnW5WAI+ni03Ldj0IWXRWYAOzZM4tq2oHOA/widJjDO87aVH
-         H6GrISi5noavqRu1tPTdmM/0QkzMXWrj/E7uFumi9XHUqWkkP3PpUw6pY0C0YlMMaGUc
-         PywA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgo2VrmzjGGh/uUMtw9pBX2C6HZCsyDZBLp8sLBEVhgBIhmaniehKWHzf6mJxrTkRH2zZ3rm8J7SJlorynmpw=@vger.kernel.org, AJvYcCVi7F4arLGZ27IoUicpMDrqaaKCvEGw6D6u5KQ0xildumYml+nTqbaq0VCigGZnvZOsrPSxrN6EuA6X@vger.kernel.org, AJvYcCWKdlqjzkT7ls4Y0iiMvUDc5y7AmNKtLFimKe2I0arRpLhui9tll9c3jM6GhxRTwfKnihV4O5azKtqOnaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2lFiy/It37zz8OCWumMojJb+wbLCfDdRq59MABLtuOMO0fyys
-	pHc9McT8ftAUNRK+owprRcDzxFmslGnTxFmAo8kQlTlvTSYQ1ABkH1/r064FsQ==
-X-Gm-Gg: ASbGncvNFl+U+DKJwP7RCWwhfz3+Ygcp/lpjIbCv8ql6SHBMb6u6CgpsutgLN1ouzTB
-	xS5xL+SvqPES/gDQ+vIQldVusJWzElmRWze3ft9FOgN/n9VOr/rDl6ZRZpv38p3x4s5BZDx6DYP
-	t40hRlCQ9S4hvBHyCUHgTzMiGGHSqQHPb/eHPGpNx3wAoTPgcw8X+FQWax+r8SnJ9ZCxJMk40NS
-	zdRHVHA+/IJaQbRnNtzylfB4OryYgQvsxMSjKaEXI9FDlqJR6y0zExEwf9ZY++qk4SoLqUImnmt
-	7eqJ/d/EEdrDgD881HcFRJqOvxUdsV6EOIDugsoDASJWBpcacGB9+2NSUZoEYXxoXiRr6nAAHjV
-	hXDrBRieXY0/eg253cr+uViqoYN3axjW0CauRiaFutHajwMXBfx5kQqZ7ahvUtRfmwMuP7Ow5+1
-	ahQOK4uijvZzmOsROwC+FG3dY=
-X-Google-Smtp-Source: AGHT+IHNYOLGvnD/plZB0uTH+rbzjsRIN7YnkQld5If9zgM8/fDwPdGODJSVQxYRBKNmFt3aBG/7GA==
-X-Received: by 2002:a05:620a:4113:b0:7e1:f16c:16d6 with SMTP id af79cd13be357-7e62a0926f1mr355009785a.8.1753280793435;
-        Wed, 23 Jul 2025 07:26:33 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b60cb2sm666903785a.48.2025.07.23.07.26.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 07:26:33 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8BA9CF40066;
-	Wed, 23 Jul 2025 10:26:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Wed, 23 Jul 2025 10:26:32 -0400
-X-ME-Sender: <xms:GPGAaOQyU0z_zAH_bkn2B2w1eORDMvtRYEZeKQ9_Sua22ZQcsZ8QUA>
-    <xme:GPGAaKWM-_bDGYEetZsm7ETL5JE_m_ehZYfEYnqNJhKNesF8WvLNC-1dckRjedSLF
-    PyZ7yiIHztSCoaGLg>
-X-ME-Received: <xmr:GPGAaNh9dvy2hv07Qr4MfsyKotP-IJdDFBh6awbB3waNK_Jvoe9AtaNX6l8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejkedtudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddunecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepveehteffvdffteekueduuedukedtgfehtddugfehvdfgtdegudffhfduudfhjeeu
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtg
-    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhg
-    rgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuoh
-    drnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtgho
-    mhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhmghhr
-    ohhsshesuhhmihgthhdrvgguuhdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:GPGAaDf3kvgrxlMBRwo1V4sT7qRbhU7Hi8NqVxClpU0wdmGMt7saZg>
-    <xmx:GPGAaIfkGJ6YVThjZpXXmiRil0lsP6N8BjV1UxI_OLjzPhZnwUSAFg>
-    <xmx:GPGAaPWLvYbKX92E2Ad0RwDHSzqlJrfC3gG_2BTQ_pGoH6zmvCXqNQ>
-    <xmx:GPGAaMeMIKPtAEbdPjR7W8TjS6PETPWEGnt_Qrh9HwvhhX2XnVpHwg>
-    <xmx:GPGAaD8DF0Bw52frFcLuGHp78fMOUq-AGXi3f4IV30D-zWGRl0mPz5ti>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Jul 2025 10:26:31 -0400 (EDT)
-Date: Wed, 23 Jul 2025 07:26:30 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-Message-ID: <aIDxFoQV_fRLjt3h@tardis-2.local>
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
- <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <aIBl6JPh4MQq-0gu@tardis-2.local>
- <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsjMXyxikpK4vZqwHLYVSlsEa43/FCnK9fQE+Bh8dYa4RjRRCOl5hX/n/JzE1pPL0Wt9FKEjToud7YwR24/umudvN7OtGW8/Lr2zgaoyckBzLqOC2SB8Hc2ESJNLQB8qG9xVqDr6738tYFr3dJ4G4Z6cBLuYGqQrobOyBTCxsms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Au4h0cym; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NfOvOHP63AILH7Fg86c4DTpSZG2INn5g2Y9EbzDcQfI=; b=Au4h0cymEHwbvqdy1U5OzLXKP8
+	lxekCJGo9MDcb4q1YihKBjPs1gnbSa8Ahr8C6RCbErZ9NbPBXj7kIZvCony+YAjf1TdaZhYEfdex/
+	Az5Bb9zcjUfNVrH/i10CutlMqVZIZGAepCijdWaxMz0MdlRxqHuLmxQOJX0F5lXyz6NU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ueaSL-002bFe-Ec; Wed, 23 Jul 2025 16:28:29 +0200
+Date: Wed, 23 Jul 2025 16:28:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Horatiu Vultur <horatiu.vultur@microchip.com>, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: micrel: Add support for lan8842
+Message-ID: <d4bbca28-5ba9-403a-8389-da712602af68@lunn.ch>
+References: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
+ <aIB0VYLqcBKVtAmU@pengutronix.de>
+ <20250723090145.o2kq4vxcjrih54rt@DEN-DL-M31836.microchip.com>
+ <aIC944gcYkfFsIRD@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com>
+In-Reply-To: <aIC944gcYkfFsIRD@pengutronix.de>
 
-On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
-> Hi Boqun,
+> # FLF Behavior (Immediate Failure)
+> An FLF-enabled PHY is designed to report link instability almost
+> immediately (~1 ms). Instead of trying to recover silently, it
+> immediately reports a hard link failure to the operating system.
 > 
-> [...]
+> # The Disadvantage in a Single-Link System
 > 
-> >> +        IrqRequest { dev, irq }
-> >> +    }
-> >> +
-> >> +    /// Returns the IRQ number of an [`IrqRequest`].
-> >> +    pub fn irq(&self) -> u32 {
-> >> +        self.irq
-> >> +    }
-> >> +}
-> >> +
-> >> +/// A registration of an IRQ handler for a given IRQ line.
-> >> +///
-> >> +/// # Examples
-> >> +///
-> >> +/// The following is an example of using `Registration`. It uses a
-> >> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior mutability.
-> > 
-> > We are going to remove all usage of core::sync::Atomic* when the LKMM
-> > atomics [1] land. You can probably use `Completion` here (handler does
-> > complete_all(), and registration uses wait_for_completion()) because
-> > `Completion` is irq-safe. And this brings my next comment..
+> For a system with only one link, this "fail-fast" approach can be a
+> disadvantage. Consider a short, recoverable noise burst:
 > 
-> How are completions equivalent to atomics? I am trying to highlight interior
-> mutability in this example.
+> - Without FLF: The PHY uses its 750 ms grace period to recover. The
+> link stays up, and the service interruption is limited to brief packet
+> loss.
 > 
-
-Well, `Completion` also has interior mutability.
-
-> Is the LKMM atomic series getting merged during the upcoming merge window? Because my
-> understanding was that the IRQ series was ready to go in 6.17, pending a reply
-
-Nope, it's likely to be in 6.18.
-
-> from Thomas and some minor comments that have been mentioned in v7.
+> - With FLF: The PHY reports "link down" after ~1 ms. The operating
+> system tears down the network interface. Even if the hardware recovers
+> quickly, the OS has to bring the interface back up, re-run DHCP, and
+> re-establish all application connections. This system-level recovery
+> often takes much longer than the original glitch.
 > 
-> If the LKMM series is not ready yet, my proposal is to leave the
-> Atomics->Completion change for a future patch (or really, to just use the new
-> Atomic types introduced by your series, because again, I don't think Completion
-> is the right thing to have there).
-> 
+> In short, FLF can turn a minor, recoverable physical-layer glitch into a
+> more disruptive, longer-lasting outage at the application level when
+> there is no backup link to switch to.
 
-Why? I can find a few examples that an irq handler does a
-complete_all(), e.g. gpi_process_ch_ctrl_irq() in
-drivers/dma/qcom/gpi.c. I think it's very normal for a driver thread to
-use completions to wait for an irq to happen.
+Fast link down can be a useful feature to have, but the PHY should
+default to what 802.3 says. There is however:
 
-But sure, this and the handler pinned initializer thing is not a blocker
-issue. However, I would like to see them resolved as soon as possible
-once merged.
+ETHTOOL_PHY_FAST_LINK_DOWN
 
-Regards,
-Boqun
+which two drivers support.
 
-> 
-> - Daniel
+	Andrew
 
