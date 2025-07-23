@@ -1,182 +1,152 @@
-Return-Path: <linux-kernel+bounces-742320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA48B0EFE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3513AB0EFE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94646188EBD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592021798CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D4328B4E0;
-	Wed, 23 Jul 2025 10:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B4927EC78;
+	Wed, 23 Jul 2025 10:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZFeCun8"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="juEiVFsh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487484204E;
-	Wed, 23 Jul 2025 10:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF9D282F5
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753266647; cv=none; b=D5u6v+MVpzefxtV3X7LfU/cdOijGspIiDHI0ZpxUtC8YjVAFYwAP0+bDmCjhwpaZ6ADMhGu2TwgUYZCzvPa/MWFmWxmrEYKvWkGwOeJuHoe4YfCwHz2N1wEbeaHHgpQcaDeE/MZfvGXWUer+T06/vy19jIKBRgfIwZCLk7tq1xo=
+	t=1753266781; cv=none; b=ZzfyIH4PSbm9H5+bkOKz7nWujJzHdCKwxf9yMEoJqZuGj8wM1KHw8KKCs4ZipQ3KkQeGHtkxEl/YLLEJDgE1w7oNycs9hj52IkwV5cLxfMM+gWXuMP9E8lOb03EFH/pfL8N7d1qvsUH9G6uqWspFJDRf5FbU43h6G0cXptXvpkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753266647; c=relaxed/simple;
-	bh=ZrYyFE1RNxcg54HRe+wiJ/9APC6lKR7QItphur8ntNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lv1p0j4wKtkY+J5y1jWBLzUIhPdmaOdPIwPPGRnRGZwBIRv0YR8Z3dCvR56gscDMwr0hJ9Br1vatFm8EKus2jq9MPMV0aX+V/AYJyUefVCuGYl9dasvBYtY5m42PaU7jOdkNqB+EUXr6WyaL3k0AaoQ/4NVO5WxZjLH6dZJCiag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZFeCun8; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8d7122c3a5so5597088276.1;
-        Wed, 23 Jul 2025 03:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753266645; x=1753871445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LA7ngCL+inJRE+v5ucYQaFMllQEH7zLcZ73D/ihvwEw=;
-        b=WZFeCun8NPSONBks4RkXsVinb6Gvj3d06WyIg5lTbgxWb5YuMpP6rv1NMJUdAdRmGy
-         ZBfyD1p0rfvBBmyDiFbPlNSnf1hIFP2e/5ZpJ0XfV9nRiE53Vlv95FguZU7OTH1vXMdA
-         PV8tyzHABJ+0TMJ/N79n9Tshs6+fIY2GXfET3tqq4j+D0V+3HbN/5GaLcz5D1Vufu2Oz
-         yJWTsCT1y1K/tg0BHfAL7SqTs85VtGVj1rxFep/pb3jyzgdcEkRkpBw+kzS3B3wcy5Ho
-         3n2QVde4L/k6LucSx3eVngZHGw9LokbcYPPG4Th8W4xOtWZ3dDuevxvBEpJyooUW7HVK
-         lJhQ==
+	s=arc-20240116; t=1753266781; c=relaxed/simple;
+	bh=KEVvEIciVzyfDH3nnB3ARh5WWrs5PJ2Px3PB8wL8BgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRGfGaKyVmzrvnPUhZ+hqYzXVSpPgRQKzb4BOzY/sN2V3LBwHM91lbRi6nhwMvJzt+oQ++K0Tuk/FADjgDFqenRm1kPoXtWJRlAvZadfZFOkt84ccRlo4Ym8SU/hiJtM42HBuH0YuZ1r2flC1cIhMiJkLl0MXmZcQl4Ug5j7G3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=juEiVFsh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N90FFB024516
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:32:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yoxWGvrI/DM0finhf+96x7egX4yJi8CUjAClFYKbmTk=; b=juEiVFshXtr5alAh
+	zEPAuqMhwz6Gx+8/Jp6UxcR7ECKkzgj0/RkRb+2vu9dVetupFS5goFH6k79/7h4K
+	rOHHbOVQOU0g4w6NNzqzvOPB8hUqOXrAOo1vjpBGi+nr5//v85r687se7u59aCWn
+	E5AP7tc98QrK/9Uem5hA0WIbbnsQergWSsAamRdQ8Y6rP1LaJ44oB00HQIgtgRcK
+	JpWR3dIfBsrIMgNwMJmjJj1jjp54fQ3ZVjcN3A6Sh56hJp8aUwIek3apFEW4jeh3
+	Tv9DE0YOyGeMFerDSUVeWqUEpFT9PwdGgxDzRO7hmWjK3K8gMp7NqIowiWDlwe0J
+	AGUB5g==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482b1ubbnk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:32:59 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7de3c682919so95344285a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:32:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753266645; x=1753871445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LA7ngCL+inJRE+v5ucYQaFMllQEH7zLcZ73D/ihvwEw=;
-        b=NZAMeMp7tp8Coi/GAxaISf0jf9v1lk2Nu6AkR4CVpG6nOD550y76OX3EMnHhleej3R
-         cSkpBI//gHEgyjVsCbEY+bLaeUKjfAf0gNd5U2CMlr1f8bbXHNEvOwzelFHKjSz8furv
-         i6zlxi+IORwTHYV0Re8dTDCzGhrejArrtkXyuoKUFs/OeWFMx7DLylz7QE0Cb1iWLL1D
-         eL0a0o4sPju+epAVf3SCKhp45wmmY7SKnR52i5sV/rXCqpyim4G8D80vlxxtIC93E4qo
-         6xc+BcBiwSAA+saSthprmPelmTxUs6Jhe08+Ma2hRYGSLDoQaPjjT5JTuC/zC6FoRdge
-         5ZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKdooei4MfnQCzJW0gNWlBGddQZ+OtWKr09kMgVYS9nU73+Kd7fmb9mfYT1Gsb135REZowWy9baDHQ@vger.kernel.org, AJvYcCUMdkf9n97zhH3R28WeVDul5pJ2Yf/M/vo3S76JmzUxs6y6XdErqy+zZNB5DI1xnGjuWPt6CCYq@vger.kernel.org, AJvYcCUe5iM/Sa9/YOXteew7nImwPt2XTnDr48tsxMEZ+xwbpmHgyhhHWZ2hzNI8qJZxxrvQi4od0P0P/dq19a+8@vger.kernel.org, AJvYcCVeZ+GAFTPcOk7o2avic4Y0XxdGryxovEXVVq3ddQ4/nT7zjjbYj5nZDZyctRKi6JzUsEwhcO5khjz+@vger.kernel.org, AJvYcCVmKpfkAIjrTohp3q4eemxMKLkU1YTFGK1g59CWUYXeZl2UTwh4TU15ip8iBZG3ZsQLMd65rczHVlHeNnbHVXk=@vger.kernel.org, AJvYcCWYKH5v5Dzcr/3B5Xny8eOeEGuL0pEbvgv14o37z1Vb8uZTyZmmM0RSe2mHtgjazPYxZzekb2Iknqs3I8Y=@vger.kernel.org, AJvYcCWpNtQOJuhqfj+dYcfO6mX+KRKj6NjjH1oPydtU+gd+wjYauZurERQcY21jSDQWYbznZepvPvSzDfefeA==@vger.kernel.org, AJvYcCX6HbW13g0gXtMcuNgDrwvONDIBRY9L1c5Uq7m15pgri3HdqWMlHFEhJZeZQv2hqTzY6f/AwSyADNUY@vger.kernel.org, AJvYcCXYlf1ZzCw1IlVvvF0lN82iIczJRu6NMxu3TYYg3jYHHgi4Bs/YUVeYGj2uUKFX4uHk4aMlJj0m/tA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQPVJGoBRNfTnekNmnf+sRy/Udr+qlmpBfDFXKGRf+M52XwbEV
-	hfQLJMifsWd/TdHoniOb8hy3NDOeNm5fMk3Y8vZs1Z4+E3fWZd0Nz7l0p4P2xHeAcA9/ULbdHZJ
-	Zb7ML1p5MW1T0Xsm0LB5KFnHFdVAHjvg=
-X-Gm-Gg: ASbGncuHaxxnMVIRoPg8HHpt8m3SMxbSq6uZYCKhZq9VS1S6caLF/Twz3r7t6jqQMo5
-	FzYNjObAbpEPtbQawEiKGrb2Hsng1ZrcaB87flR0vCpQgdofg3Z8XyViGzm8SxHBuj8z1UelNEy
-	olZdkFhpuk+8PvbFUV2vk7IN30DRJPyWNPidbtm/FQ1ceT8e3jMKBNBLz7TW4em/L1sQld3i4k5
-	BbuSLBk2IbaJEAvoQW4fh8frrefdRoMY4Ol40Y7qA==
-X-Google-Smtp-Source: AGHT+IGtjUwHyzHtKQ4mrqvi8yeQhMpiGpkgpDBx25yEpA8Cdc5zRk5eSD0faXJ+bObKq5lWLxM0HxvU9SBSEJ+05TM=
-X-Received: by 2002:a05:690c:3601:b0:718:4095:89bc with SMTP id
- 00721157ae682-719b4227127mr32013927b3.22.1753266644983; Wed, 23 Jul 2025
- 03:30:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753266761; x=1753871561;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yoxWGvrI/DM0finhf+96x7egX4yJi8CUjAClFYKbmTk=;
+        b=fFjmjPLK7eRJFpq/3gxvCB9dkiRX8Exia/mZWsIsfaf3RPU7bYiFfD6lm2OaXyqG2o
+         7vvCPykGPO2u58hiHi38ktrM+uCeWMVc4nCtZTXHxX3nDi4l3SwW/pS5WYFAiEspaMWA
+         ekoe2paiBN/Jb8gxIYp0HJbT+v71319EOGeF04b2CUvoeTUuree6XcZjaQWJzxR7Bnmu
+         hFkUm3VEjvbEEiq5IcSTI3BtohVn3OEOt4h+zg/+t+gMGlmqNRqqPGQ7dq/je7MR+H8c
+         nqVcomae0MkVFHlzbDmMWstEUH8swCU6CAxYH40t9LWQ0vnO+yHnsmp1KxsW6aU6zW+Q
+         ljbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkRBlGnibpXr1lfxmtZulgZrEi7+QdKFqr426P5/FpOd2lhJkqdHKf6pi+hV86+Q0lGZustgNTlh1P3yE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIWeCmHDjjZRkYXw2pCR2m3zW6lrxSjwvtMZIxA5aVUBrK3dZe
+	9H0LMEvuZFmsEEVGE6RbAhxY4xwaXVQa83diWOXqYBruxHVmpPvOjiHLap1ixMoQoe/cbeQ2Opq
+	grslwQF1ywaNOFLrH57wGho285iYK0j6DXrxxvfOEPiBnRweuyK9dm38ssmlxjkoplDQ=
+X-Gm-Gg: ASbGncvsPiCqqV4mfI9c3PQhqGy1zZ22Irp5KWfI4IExN8xOqIeBoJBglFJLpPAwGEr
+	33TbX9A14U/fKreFqMORiMLiE1Eo+pdn65GW6P3RSXxerb2uA8xJ5biEKSuhaer+N5xsaDSQv+9
+	Lzka5jWaQg5UrsukPkE1ovLfCP2wxoAxaW9Aavmyb5YPg2XcQF6ozWmZFx1nPQYkW/fzTl5/D/U
+	WMT2ObNdPlFKJn9ad1dsSpLdiNQRLljkJQe2VrZwpIF1zGA0gNJRDpJWQ8F3fhJDS8eTp6/2ZAV
+	I1YGidusQZ8OzwCFGLF8b7FF4cxs+KMtU0GyTBdV9dJXouvQBj5325lxdjl0NrraHl9P/1624em
+	HRTj1Ze8ReCXT7iBdZQ==
+X-Received: by 2002:a05:620a:4107:b0:7e3:715f:8757 with SMTP id af79cd13be357-7e62a0c1597mr117640785a.5.1753266761457;
+        Wed, 23 Jul 2025 03:32:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMGR1PY3KATLtDKkVwck4PFmLv2ujqFi2Asp89UsFHT9277js6Trob/xsUiROpYbvGow0BQA==
+X-Received: by 2002:a05:620a:4107:b0:7e3:715f:8757 with SMTP id af79cd13be357-7e62a0c1597mr117639285a.5.1753266760933;
+        Wed, 23 Jul 2025 03:32:40 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af3758ec76asm57350966b.121.2025.07.23.03.32.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 03:32:40 -0700 (PDT)
+Message-ID: <d50f9a01-ba8f-44ec-9206-fcef641333aa@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 12:32:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715025626.968466-1-a0282524688@gmail.com> <20250723095856.GT11056@google.com>
-In-Reply-To: <20250723095856.GT11056@google.com>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 23 Jul 2025 18:30:33 +0800
-X-Gm-Features: Ac12FXxeadozV19JFZpQNzkVZb_LJVxV9KJ9zIVS_BiMIAH5J9MrfqpSvwxvedo
-Message-ID: <CAOoeyxUBHDu8=wKkV7TdUGTqc-At-WD6TMY-qKG1dTu-w83DmA@mail.gmail.com>
-Subject: Re: [PATCH v14 0/7] Add Nuvoton NCT6694 MFD drivers
-To: Lee Jones <lee@kernel.org>
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 15/17] drm/msm/a6xx: Make crashstate capture IFPC safe
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-15-9347aa5bcbd6@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250720-ifpc-support-v1-15-9347aa5bcbd6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=LdY86ifi c=1 sm=1 tr=0 ts=6880ba5b cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=rrcyIi5yJUK-87isN-sA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA4OSBTYWx0ZWRfX4khHbSKj8zku
+ +VgXXiEICgoxTPHet34z+SuOirebjeiezPm/ZZOV6t1V1ibT/xlYxy8OJXY6X6V9wuoRDouZ+Qz
+ vDMApp1nkQ27V1NMaIRqRqyvl15OdYLMuzqwzeGrD+Db+4c1iuvRUWnRImP3FUqVkDsifTT/nCU
+ z7zPGh/uzeV8XtTo47n6oNilexxGxtr0rIfxpOE9IekDQX5hICooZymSbAX5uI9TlVLlGRbPQ2/
+ O5J7+BmXfJG4MpzZWto/mU0551a9iMT4Hid+482DBz3J3n9cLy0l70Fcs0cTietfTKmOhC//yIe
+ MVGJ9t154xnOhF8NAyBRAkPrMCQzXqcWQMpMz0rmakOfKgD8qLolCVHZNYX/vKy5Ase0352SYHM
+ KYzDPudn6u7dqZkGnCj5pznIFSxj1qCrS+OW4FyVSUJMxb3uJ5uduaseEIbj3H+z3r7OTwjm
+X-Proofpoint-ORIG-GUID: vZCrpvedOLbjFK25COeXjSlTlE2jmxUX
+X-Proofpoint-GUID: vZCrpvedOLbjFK25COeXjSlTlE2jmxUX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=598 bulkscore=0 spamscore=0
+ suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230089
 
-Dear Lee,
+On 7/20/25 2:16 PM, Akhil P Oommen wrote:
+> Now with IFPC, GX domain can collapse as soon as GPU becomes IDLE. So
+> add gx_is_on check before accessing any GX registers during crashstate
+> capture and recovery.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-Thanks a lot for all the help so far!
-Appreciate your support -- looking forward to seeing it merged.
+[...]
 
+> +	/*
+> +	 * This is true only on an A6XX_GEN1 with GMU, has IFPC enabled and a super old SQE firmware
+> +	 * without 'whereami' support
+> +	 */
 
-Best regards,
-Ming
+Firmware that old won't even be accepted by the driver, see the slightly
+confusing logic in a6xx_ucode_check_version()
 
-Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B47=E6=9C=8823=E6=97=A5 =E9=
-=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:59=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, 15 Jul 2025, a0282524688@gmail.com wrote:
->
-> > From: Ming Yu <a0282524688@gmail.com>
-> >
-> > This patch series introduces support for Nuvoton NCT6694, a peripheral
-> > expander based on USB interface. It models the chip as an MFD driver
-> > (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
-> > WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
-> >
-> > The MFD driver implements USB device functionality to issue
-> > custom-define USB bulk pipe packets for NCT6694. Each child device can
-> > use the USB functions nct6694_read_msg() and nct6694_write_msg() to iss=
-ue
-> > a command. They can also request interrupt that will be called when the
-> > USB device receives its interrupt pipe.
-> >
-> > The following introduces the custom-define USB transactions:
-> >       nct6694_read_msg - Send bulk-out pipe to write request packet
-> >                          Receive bulk-in pipe to read response packet
-> >                          Receive bulk-in pipe to read data packet
-> >
-> >       nct6694_write_msg - Send bulk-out pipe to write request packet
-> >                           Send bulk-out pipe to write data packet
-> >                           Receive bulk-in pipe to read response packet
->
-> [...]
->
-> > Ming Yu (7):
-> >   mfd: Add core driver for Nuvoton NCT6694
-> >   gpio: Add Nuvoton NCT6694 GPIO support
-> >   i2c: Add Nuvoton NCT6694 I2C support
-> >   can: Add Nuvoton NCT6694 CANFD support
-> >   watchdog: Add Nuvoton NCT6694 WDT support
-> >   hwmon: Add Nuvoton NCT6694 HWMON support
-> >   rtc: Add Nuvoton NCT6694 RTC support
-> >
-> >  MAINTAINERS                         |  12 +
-> >  drivers/gpio/Kconfig                |  12 +
-> >  drivers/gpio/Makefile               |   1 +
-> >  drivers/gpio/gpio-nct6694.c         | 499 +++++++++++++++
-> >  drivers/hwmon/Kconfig               |  10 +
-> >  drivers/hwmon/Makefile              |   1 +
-> >  drivers/hwmon/nct6694-hwmon.c       | 949 ++++++++++++++++++++++++++++
-> >  drivers/i2c/busses/Kconfig          |  10 +
-> >  drivers/i2c/busses/Makefile         |   1 +
-> >  drivers/i2c/busses/i2c-nct6694.c    | 196 ++++++
-> >  drivers/mfd/Kconfig                 |  15 +
-> >  drivers/mfd/Makefile                |   2 +
-> >  drivers/mfd/nct6694.c               | 388 ++++++++++++
-> >  drivers/net/can/usb/Kconfig         |  11 +
-> >  drivers/net/can/usb/Makefile        |   1 +
-> >  drivers/net/can/usb/nct6694_canfd.c | 832 ++++++++++++++++++++++++
-> >  drivers/rtc/Kconfig                 |  10 +
-> >  drivers/rtc/Makefile                |   1 +
-> >  drivers/rtc/rtc-nct6694.c           | 297 +++++++++
-> >  drivers/watchdog/Kconfig            |  11 +
-> >  drivers/watchdog/Makefile           |   1 +
-> >  drivers/watchdog/nct6694_wdt.c      | 307 +++++++++
-> >  include/linux/mfd/nct6694.h         | 102 +++
-> >  23 files changed, 3669 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-nct6694.c
-> >  create mode 100644 drivers/hwmon/nct6694-hwmon.c
-> >  create mode 100644 drivers/i2c/busses/i2c-nct6694.c
-> >  create mode 100644 drivers/mfd/nct6694.c
-> >  create mode 100644 drivers/net/can/usb/nct6694_canfd.c
-> >  create mode 100644 drivers/rtc/rtc-nct6694.c
-> >  create mode 100644 drivers/watchdog/nct6694_wdt.c
-> >  create mode 100644 include/linux/mfd/nct6694.h
->
-> I will apply this the other side of the pending merge-window.
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+Konrad
 
