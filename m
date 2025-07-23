@@ -1,50 +1,49 @@
-Return-Path: <linux-kernel+bounces-742445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7C6B0F1CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:01:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD2EB0F1CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5CE51C80BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:02:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D607AE6A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857662E49B8;
-	Wed, 23 Jul 2025 12:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D122A2E54B9;
+	Wed, 23 Jul 2025 12:02:02 +0000 (UTC)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C7846BF;
-	Wed, 23 Jul 2025 12:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0AD24888C;
+	Wed, 23 Jul 2025 12:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272104; cv=none; b=Fld+4Abx/+/1osiTcia7KEyQK14JzvP5zUph7u9FA3Ye2tHoOHS7nHTzSeAeJrsZuF0lq3cVK02906dRZdd9znG6qOL9StqiigJI7zR6CMmJxsXCcyoOv3NB8ympdwdGV4L1WTdZ395AZ88SKSOg8aJN4OvdTZOWvijF+PNiTMI=
+	t=1753272122; cv=none; b=ceQ/nILHfJQBtWi9TGWU1ZqTuJzywwfESPPG3ZmWw7STwsn+NjqpBKcWsuznmK+CGcd+Rw/eNmHo4CGjSV2diNunIOMZwVD3vxtjjBmOFTR+6ve+cubqS8ZSIiTuYTMq9wQYd3Y8yzRtpK9+RF7HUx8+ptBP8/Kuv26BVh5tyVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272104; c=relaxed/simple;
-	bh=ZPs+ox05jwk/MldWb/9/wG4a2T8JJQIyqykuoQpW0LI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ke1Vb+sgxpDptlxk1wzeAdrcbJocp7wk5Bvo4uoaBqmqHqNrBi2geOSK81qRsn6mhr/MV4KJClYQv8KcA+ZR4r4qrdt4dUThBUcUa6hm+vjx0s0fku2ts0MkpfRL4y/ZQWJYI7099ku5WvBsGyuqyIvXo6/0Kmrz2YE6LM4U/Oo=
+	s=arc-20240116; t=1753272122; c=relaxed/simple;
+	bh=PjryDDK5qPTp8dCMfOz6hzHAQURUAXKfBOOjhQl8K+Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PEq/GU14ftpEri1zw4r9/1JE184ejOByJD9/Cwzp72Y41QBwt4N40hIRLdzVrHUogVz4DkmPy9C2CiGXcNpHjuj/ReUWH+d9xbnRMxGce6eT1pv+3FADUVjcJYHK7LZ6/bNuCPEKkWAtYvV3r20KSlp2BTD7wH0tAGEmeUdNj5Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bnCKm6nT2zSjfl;
-	Wed, 23 Jul 2025 19:57:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bnCQF4vJHztScj;
+	Wed, 23 Jul 2025 20:00:53 +0800 (CST)
 Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 174C3180B54;
-	Wed, 23 Jul 2025 20:01:33 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id AA1DD1401F3;
+	Wed, 23 Jul 2025 20:01:57 +0800 (CST)
 Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
  (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 23 Jul
- 2025 20:01:32 +0800
+ 2025 20:01:56 +0800
 From: Yue Haibing <yuehaibing@huawei.com>
-To: <paul@paul-moore.com>, <stephen.smalley.work@gmail.com>,
-	<omosnace@redhat.com>
-CC: <selinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] selinux: Remove unused function selinux_policycap_netif_wildcard()
-Date: Wed, 23 Jul 2025 20:23:04 +0800
-Message-ID: <20250723122304.911130-1-yuehaibing@huawei.com>
+To: <dhowells@redhat.com>, <pc@manguebit.org>, <brauner@kernel.org>
+CC: <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: [PATCH -next] netfs: Remove unused declaration netfs_queue_write_request()
+Date: Wed, 23 Jul 2025 20:23:29 +0800
+Message-ID: <20250723122329.923223-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,31 +56,26 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
  dggpemf500002.china.huawei.com (7.185.36.57)
 
-This is unused since commit a3d3043ef24a ("selinux: get netif_wildcard
-policycap from policy instead of cache").
+Commit c245868524cc ("netfs: Remove the old writeback code") removed
+the implementation but leave declaration.
 
 Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- security/selinux/include/security.h | 6 ------
- 1 file changed, 6 deletions(-)
+ include/linux/netfs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index 8201e6a3ac0f..7f19972f7922 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -203,12 +203,6 @@ static inline bool selinux_policycap_netlink_xperm(void)
- 		selinux_state.policycap[POLICYDB_CAP_NETLINK_XPERM]);
- }
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index f43f075852c0..185bd8196503 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -442,7 +442,6 @@ size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
+ 			size_t max_size, size_t max_segs);
+ void netfs_prepare_write_failed(struct netfs_io_subrequest *subreq);
+ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error);
+-void netfs_queue_write_request(struct netfs_io_subrequest *subreq);
  
--static inline bool selinux_policycap_netif_wildcard(void)
--{
--	return READ_ONCE(
--		selinux_state.policycap[POLICYDB_CAP_NETIF_WILDCARD]);
--}
--
- struct selinux_policy_convert_data;
- 
- struct selinux_load_state {
+ int netfs_start_io_read(struct inode *inode);
+ void netfs_end_io_read(struct inode *inode);
 -- 
 2.34.1
 
