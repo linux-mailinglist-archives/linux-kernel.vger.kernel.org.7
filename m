@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-742415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CD2B0F166
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6EBB0F168
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6BB562791
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60413580DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AB42E499B;
-	Wed, 23 Jul 2025 11:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4952E11B0;
+	Wed, 23 Jul 2025 11:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8nScVSA"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aW3f+BSi"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A119230268;
-	Wed, 23 Jul 2025 11:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7449128A706;
+	Wed, 23 Jul 2025 11:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753270714; cv=none; b=Qlk2r/+0XJlrn/tGlupUI/jSwybGI2oYHfQHe0CkV5/LhVZWbXXGl3yl9dYmzMWE7m63kQ67qHOYyaYNBf4+dj4eQFv9lQAA616g+/dJFxWDZtp4+J7HuGE5dpabi4RzOU90FeSqul7vKL3cHsCfkkX2+deN4JaDbfX6ucF1KZY=
+	t=1753270733; cv=none; b=jmbTHFPNIJycecclGuz7FlkqdAlwNiIqMRCAvKrCTSHo3aKCDGIXlwxzydLOt8quI6JUw9LgTC8R5aTj6fp9t58Lrn3elpRWrAVsRuhJGWQAZD5pkvkIA8hSUrmCuMhdFLLwMQvirB86rCe9RdbycZCDMS8jQrG3nZT7ug+BNHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753270714; c=relaxed/simple;
-	bh=3xNIgfbZkuKToBVIaIN0T6qtZj1CAu2xNWY1oErB7vo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SsVGl/ahge8Y7PTfHE1AvmDEd1iY1ZlFgJ9JIwIZ6O8/LaziAr096OnwB8ECqa6j2z6JNeKjlDfBFJ99Iv7bbnSdRCmTz8QU9ut+ppTClQBiKfJCPW3cnaBHJu9RB2iIq7Agbf/rx4aoZ2HA67i4OupnYFw/7uNizII7m2u/yDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8nScVSA; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fa980d05a8so44396746d6.2;
-        Wed, 23 Jul 2025 04:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753270711; x=1753875511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GW8o4VpBFB3CJWAxgh6hNHP7douwh8bC//NQp5568N4=;
-        b=I8nScVSAy0AMeq43njTSqQJXOfYNxyLJ5a+IkhOhifKEByjgoNLfP8ea+9NL9YeLAu
-         5ulkjqE4eBmflI9ayvm9Q6fiXcVShriMYpkx5datKfqlAn6XTcA1c3H5bN/mY/cOhaZz
-         OOXQ9d2eVPwNMWe0CMB67DROtTjPbAzTMkcUk27XNJJ8zDev5ui3gFnE0ywcru8OjjHV
-         6jeA7TW/u/nCcxX/N9ANhxJGR1lHTTrlJsc1a+94OZJVpDv9PgikyTSvfza7RKzYRJ34
-         Qrg1Rm53hncJgrFRvtuWFgqwWMRzvH72EoEM0HI+uLF7wJziJ7E3m0FY3tlejOFGkif+
-         edew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753270711; x=1753875511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GW8o4VpBFB3CJWAxgh6hNHP7douwh8bC//NQp5568N4=;
-        b=DpDq64y87otuH+hV9/Del8XUrFnB0+CFx1zPi92Kqo+i193ZELjpHZZFamdgNof+67
-         KrYzVqw3ImbBKpjMUzSGT0EgriJ6sVucE19z5GLCryOvDbON4zsZFfeO3pVDfsoCC+Y5
-         4GinYseF7Q8Kcu0POv6y02u1OkHVogwMMceCyL47wg1k8qDnh5RptrWHg8VMPdUuYsE8
-         Iwqj6mfK3qneIkBVjbz45cfXx/1+vbePmYZGMK90rFt3gkOiEHIiNO2LSMuAibwAcjMq
-         VAPaR2PVmZs7Q06apBA1/qecoeBcRLi3gPVCkI4tB3xfpr0Kyo/wJuxAAOUnZctLw/+Z
-         e/SA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUUL+ewwGqtM4rVd7rOVHLwEU0+Hmlmq15BTc9bb2Q3YpzyjWa6JBGGCeR2mAzm1QlJZSPh4v0Wt7/RnboO0Kh@vger.kernel.org, AJvYcCV7QbutCXUgWTRooar29VagJrQyvfAhzCdvHY+I60yZDLwqN6+iMVszc1SfEx5Ov+AjPEsJNUlwLNHFZWG9@vger.kernel.org, AJvYcCVro313zHL4BFESIffZjB9riO49Hh1l3lnKb4H55afyG/g3Gpx2ZaLw4iQ82etTvtJkQhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7XMN7pmRx4smdpV6/RHO0Vhpcm1WrT6dX+vs/6XJPDKlEwjK1
-	QYuxNsjeAYYuph34bKh1aDdW4g0q/MKQgfPOjWQZzkIKvx9atlhx6xC1a7ElkZWhKWMiRFYxPiT
-	8OTSar5AhSUd3cXQACMi7339piZHrabQ=
-X-Gm-Gg: ASbGncslPWnNsXD7qshd2IHRR0sME3KLCiZ1u4tqs9Yhkz+ZdpHgfDiap8MB4q6kfaM
-	BQWxoOKjs7Bc2eNrnHiomDttkWyAeGCkmvV87FhXIrAUvjIVEvR4SEo1QFfA2FrJfSmhrFMnvT7
-	kD7UpoOtpR8xk60VDen65ENq8Ha0PNUos5W11UmjlkDMo90lR3jDRD+OdVWzXpBP91Whfa0UN8z
-	ZFHiANF
-X-Google-Smtp-Source: AGHT+IEjlRHPDytTHYrrd955Vf1ODftEruHfWOsFzh9HDDs6+tB8jBjR8Lw+tapL9nDRT/0PVtC+I5YRsiTIzT6WO0s=
-X-Received: by 2002:a05:6214:f08:b0:6fd:5cf4:cbb0 with SMTP id
- 6a1803df08f44-70700651e04mr33085726d6.25.1753270711509; Wed, 23 Jul 2025
- 04:38:31 -0700 (PDT)
+	s=arc-20240116; t=1753270733; c=relaxed/simple;
+	bh=zSboYXKx0N+K51GLU5TT/9hPklFmlORrWjoKaBQgZzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=crvp0u+Rijrbx4bN1ew0caKWX9bZ4LobpUErhtDUxkvENYfPY2lN2yJgmtZ+smNE3yflxQwBkVtKgS/OQxnXrWVATlsTEjjFaogVme+vprHZ8b1eSYMxcgBSQ5L95UBCi4YwF3A/WxVp8R29eaIv9ZrUX/qG3Of12fCNUh5MSVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aW3f+BSi; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 23 Jul 2025 07:38:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753270729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pTVDq7tqt4jNdxmpuXh4QXyl10dLJquaJYZ+1Q9DQZQ=;
+	b=aW3f+BSiEqV6nwQRpRu5sDRX6g8o8us3mskDaHE/zN2IYxn0eNYZiiLEMOQ6b9vDC1ift4
+	kIwb0sLOxyeqViTn1vkf6nqt9IZNeRdrzvBM8y+0KFCnHF64AoPX5rgSq6xOY1fsoy154j
+	m6/5Xp+O+rcYdvrBpLoriv9icFznMtE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Zhenhua Huang <quic_zhenhuah@quicinc.com>, rientjes@google.com, 
+	vbabka@suse.cz, cl@gentwo.org, roman.gushchin@linux.dev, surenb@google.com, 
+	pasha.tatashin@soleen.com, akpm@linux-foundation.org, corbet@lwn.net, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com
+Subject: Re: [PATCH 1/1] mm: slub: Introduce one knob to control the track of
+ slub object
+Message-ID: <aqscos5ivap537qljhqa2pntrxfimfkfuflji62rl2picpvaiv@sams7xovbtn6>
+References: <20250723080328.4012263-1-quic_zhenhuah@quicinc.com>
+ <aICpMWKNvhveAzth@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722153434.20571-1-kafai.wan@linux.dev> <20250722153434.20571-3-kafai.wan@linux.dev>
-In-Reply-To: <20250722153434.20571-3-kafai.wan@linux.dev>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 23 Jul 2025 19:37:55 +0800
-X-Gm-Features: Ac12FXyoLyhROuZ3og-7LF8VQDwAYshHthJdDYvrXEO7gAj--0Brx3rF8n6nXvU
-Message-ID: <CALOAHbCtiBFZP8GF63g1HmKWko_35uj34+wx5K3QU95QDLaedg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 2/4] bpf: Add log for attaching tracing
- programs to functions in deny list
-To: KaFai Wan <kafai.wan@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, leon.hwang@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aICpMWKNvhveAzth@hyeyoo>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 22, 2025 at 11:35=E2=80=AFPM KaFai Wan <kafai.wan@linux.dev> wr=
-ote:
->
-> Show the rejected function name when attaching tracing programs to
-> functions in deny list.
->
-> With this change, we know why tracing programs can't attach to functions
-> like migrate_disable() from log.
->
-> $ ./fentry
-> libbpf: prog 'migrate_disable': BPF program load failed: -EINVAL
-> libbpf: prog 'migrate_disable': -- BEGIN PROG LOAD LOG --
-> Attaching tracing programs to function 'migrate_disable' is rejected.
->
-> Suggested-by: Leon Hwang <leon.hwang@linux.dev>
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+On Wed, Jul 23, 2025 at 06:19:45PM +0900, Harry Yoo wrote:
+> The subject is a bit misleading. I think it should be something like
+> "alloc_tag: add an option to disable slab object accounting".
+> 
+> On Wed, Jul 23, 2025 at 04:03:28PM +0800, Zhenhua Huang wrote:
+> > Mem profiling feature tracks both "alloc_slab_page"(page level) and slub
+> > object level allocations. To track object level allocations,
+> > slabobj_ext consumes 16 bytes per object for profiling slub object if
+> > CONFIG_MEMCG is set.
+> > Based on the data I've collected, this overhead accounts for approximately
+> > 5.7% of slub memory usage — a considerable cost.
+> > w/ noslub  slub_debug=-
+> > Slab:              87520 kB
+> > w/o noslub slub_debug=-
+> > Slab:              92812 kB
+> 
+> Yes, the cost is not small and I hate that we have to pay 16 bytes of
+> memory overhead for each slab object when both memcg and memory profiling
+> are enabled.
 
-Acked-by: Yafang Shao <laoar.shao@gmail.com>
+I believe we did something about this for page_obj_ext; the exact
+pointer compression scheme we went with escapes me at the moment.
 
-> ---
->  kernel/bpf/verifier.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 00d287814f12..c24c0d57e595 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -23942,6 +23942,8 @@ static int check_attach_btf_id(struct bpf_verifie=
-r_env *env)
->                         return ret;
->         } else if (prog->type =3D=3D BPF_PROG_TYPE_TRACING &&
->                    btf_id_set_contains(&btf_id_deny, btf_id)) {
-> +               verbose(env, "Attaching tracing programs to function '%s'=
- is rejected.\n",
-> +                       tgt_info.tgt_name);
->                 return -EINVAL;
->         } else if ((prog->expected_attach_type =3D=3D BPF_TRACE_FEXIT ||
->                    prog->expected_attach_type =3D=3D BPF_MODIFY_RETURN) &=
-&
-> --
-> 2.43.0
->
+We did it for page and not slab because page_obj_ext is a large fixed
+size overhead and the page allocator is slower anyways, but it's
+conceivable we could do the same for slub if the memory overhead vs. cpu
+overhead tradeoff is worth it.
 
-
---=20
-Regards
-Yafang
+And - pointer compression is a valuable technique in general; coming up
+with some fast general purpose code (perhaps involving virtual mappings,
+we're not so limited on virtual address space as we used to be) might be
+worth someone's time exploring.
 
