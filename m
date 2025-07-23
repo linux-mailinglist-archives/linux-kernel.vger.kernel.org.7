@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-742144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFDEB0EDE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C386B0EDEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 688027A8BBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8BC1C83879
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202452836B5;
-	Wed, 23 Jul 2025 08:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F2E283C9C;
+	Wed, 23 Jul 2025 08:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lqkd+FkJ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inc5BQJg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2E717BEBF;
-	Wed, 23 Jul 2025 08:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C17E2E36FA;
+	Wed, 23 Jul 2025 08:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261156; cv=none; b=C8FaEirzClFz257FRwD6/JGtihe68Wy+P934EHsaT9opxXam/3Qt0SvaKJ3XRZlKJ7NcbM/y32kBbsg9P6gMkWjmlNTswvFXJ8LvQ1paWuexkXH5nFAvErdT/3+06rHE8Cl4XE6upYs1IqtojcltYPgi6N+27k/YQ6PFOVvqeM8=
+	t=1753261183; cv=none; b=jVSm5DWu8DPzX0q5TsI2vb9pcH0YvvuG+BM5Hzp8NGsJbcLL7Non7e8WmVuyW5bSRQy1OJA8WMTk+bo1vqJjj0XyH5AN+MiivbNHQWQut/e3xUG7OAH3vh/5TyD6jrCki5E57SL/GdZNz73EfDTSrJojYfql//DKJscZAxkA6uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261156; c=relaxed/simple;
-	bh=vAtJsjTxG+CJeVGzvV2qReCB+ILeVoK0JaaIwMdS7No=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qbjJ7ljKzus7igEbz3CgRWASJwI7uoy4+lyGiPMaTHqzSIh1++DvDBIaJmPT8uWjntOX6v0yu6mFmzwVOjN9DPEILHnlTtbzasb9xCfe1fxUCJUwmWTn+E11wd/C+p8W5GORyh0N0bor8M9/5EidxEEzZ7I0SxWj7QlW8OX61Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lqkd+FkJ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-747c2cc3419so5147267b3a.2;
-        Wed, 23 Jul 2025 01:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753261154; x=1753865954; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WUU4cYaiPlxLljbFaCXDcO8FtF5h1/oOjYiqKFdZk6Y=;
-        b=Lqkd+FkJoS8inGOLhAbb7k0qQmU593zr0JcefJZgVEeZJmmBletv8mKQKN0z7sSEFf
-         wjW3XhN8sUh4rir0CrUJsRO6OB4hDTdHm6wheLQEJzNMnackF7X3iGzrkD8w14rAI/MB
-         Xo8XE1l/NPVCFpbpAgjCjzEgARMFjREE6ToeMGRDwkfDN/73g3wB9q0I4Sa6i7w7ieLg
-         CDRiIm3eLOIe5vcrQEdQvot2wbv8Qa8zD3Mn69AAh+Pf7PcVQt3+HXp28I/wuCbQP4le
-         twiiAlx1rFAPoLJX01AQDu506oJN+Px72PdVWfEBJusXyIzY7XeJpwpUVZxtlfYO91Xd
-         1QTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753261154; x=1753865954;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WUU4cYaiPlxLljbFaCXDcO8FtF5h1/oOjYiqKFdZk6Y=;
-        b=PbJswjX4/TnZjG8ToLxqX9lGK7siVAjU/lxGfiOUTmVxKoB8LeqThoBzXW0d4YWdC9
-         UtxA8FfCL/rObjqb/8HVW6ZmXenPB+MDw34E6/QpeyoTQ1cyH1IN9BrLj8mcMqmM8QuJ
-         a8dWj8XBhxcWqS7fSmb8ufiffPDcA0tN9a1ZRVcgoyaBW/HCfLj5tY5lF3K95JS92zog
-         C991OnzyJv9UM2QoG4h3G0j5BvGpmbhb5JtVJrsPD1W7DpxRIwk34J1EiFfXAqz6kzzU
-         tFLnLQ1tV8fXmzw5bKJLfboDDAxBMEGWOloBsikurkygdYscK6ILYxwIrn+jYfv4bJcX
-         cQeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXK3qn+OaoDm2V3pKpj655w3J0Lq0A+DtSFpTIXPt6aH6Nd6aISh7aADnIBJhym8Ok+u1AR@vger.kernel.org, AJvYcCXg5UquwRmq97afNajUfCwSUmigbcMlWLW7AqpfQ6qpzoh+xZLkidONpDcJforohxFwyENL7qqdBkl5rm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH8CsWIkcz89dHXI0xQUBg4hikKy8RTnnZtnNWT3yi+uKQMo+P
-	aWtlqYRT+ab2OzNvTIuz+h6+J2Yvkf8uyJ+PC/zKXlr6trCupzvbMbop
-X-Gm-Gg: ASbGncswlrIJ66Unn4MtKMFZXFzwI7oeUMKCwzZ2fOGxOW/HwtWE4VmzSRW55g3a6j0
-	eg+87CO9KTM1txy0tTu+OJSqg8OrG+/99aRoGoTySeQzAzyf/dl16NhZSpjPcKYwvmeQcaqPiTy
-	6/ozRY1KhYAM3f395KZwvqT5btLqNdpr/gsryecNANeP8y4WnnNVSq5/HTG049m+xaLEpTYPn2G
-	Na+bGbd/7IwJ/g8m9EWGHJibl5z2ozaollXPn1ZQw1v2azvilfK7hmpDpYui790m/a4aWKkHDRa
-	qefb9ce/pXp66olL0nLDWEeFMJYRhsSfS/qj7q/CoxMbNSoI42EPLAHkrx3rGT8XgrEnE+oY/+8
-	Wlw3xHEVaT6VsplPAizKcVsSvWxcSqrhTSI2mXQLVfxnsXmZ9cXePFJp0zr6w6jXuz41y
-X-Google-Smtp-Source: AGHT+IFrfEaxbIuLsef0/ZmU85kZ0DSX7AYPYnSpzIabMAiLCFE6xDlVszuPokDDqy0rz6k4ysqPwg==
-X-Received: by 2002:a05:6a00:8d5:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-76034c560cemr2957482b3a.10.1753261153840;
-        Wed, 23 Jul 2025 01:59:13 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb155d77sm9110652b3a.78.2025.07.23.01.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 01:59:13 -0700 (PDT)
-Message-ID: <49eb0917-6da3-4d44-8c9c-c6b376f088e8@gmail.com>
-Date: Wed, 23 Jul 2025 17:59:10 +0900
+	s=arc-20240116; t=1753261183; c=relaxed/simple;
+	bh=ed2JaOJR5dOBUDINT/O/3MnJ6uPl2DqDrKd95czTVeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZOGLE5bVTA+2nwgkJunz/q/DfLHbd9bPDlChqlUFcxU/1PtnoFlrDE68Xv21Or65pHf0E+3855kIU6iax0IAPfNpOLFKVJYQ79M2ZbFKM+bNYZUhsPyJa4JNSMkMApalJ7wGd/MOEUPMpCwEC1rOVqwRrpZFBJ+FFQYnAbP2eBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inc5BQJg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1279C4CEE7;
+	Wed, 23 Jul 2025 08:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753261182;
+	bh=ed2JaOJR5dOBUDINT/O/3MnJ6uPl2DqDrKd95czTVeQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=inc5BQJgj4hjnX5gpBReEJ6o6IwE0Y+E5UYLFfMaUVRuv2HRXGuTvmNqsnV0hqea2
+	 o136bAvkNwrx++rZudUBCkFl6+Q0sjP+bhveoGHai4BbHLSqoMiWT+HybcmlWtcjNm
+	 jGMTvugd49JSmrZ3zsyEcMPM54Nuf8b+dwiTDzyjTOmE8PdQYe2FTODP+zZxfmcAxF
+	 opRShCpg7+qCcHTvmHYJAAn2eezobvpUSbhN3xpVEmVhw15eKVEpXEiwtLiL7wHQUQ
+	 ccqnzHqQdSZBDkPiD/Svwj19Psun/ZkCJTRjhHA6HMCdLzTlBYichFC3YLXMn6VpUh
+	 qdupEZfx9V8Xw==
+Message-ID: <ae1310d3-12e1-4856-8f34-1c51bdfbf44a@kernel.org>
+Date: Wed, 23 Jul 2025 10:59:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,148 +49,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615-ride: remove redundant gpio
+ header file
+To: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com, kernel@oss.qualcomm.com
+References: <20250723084351.4627-1-yuanjie.yang@oss.qualcomm.com>
+ <e0c9e620-a331-43c8-9c62-f9769744a484@kernel.org>
+ <aICjeK+gC1yxPb9I@yuanjiey.ap.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Joel Fernandes <joel@joelfernandes.org>,
- Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
- paulmck@kernel.org, rcu@vger.kernel.org,
- Frederic Weisbecker <frederic@kernel.org>
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: [PATCH -next] rcu: docs: Requirements.rst: Abide by conventions of
- kernel documentation
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aICjeK+gC1yxPb9I@yuanjiey.ap.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Here is a list of conventions applied here:
+On 23/07/2025 10:55, yuanjiey wrote:
+> On Wed, Jul 23, 2025 at 10:49:10AM +0200, Krzysztof Kozlowski wrote:
+>> On 23/07/2025 10:43, yuanjie yang wrote:
+>>> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+>>>
+>>> Remove redundant gpio header file in QCS615 RIDE DTS.
+>>
+>> I do not see it redundant at all. Just look at the file - it is used.
+> qcs615-ride.dts: file
+> 
+> line:
+> 7:#include <dt-bindings/gpio/gpio.h>
+> 8:#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> 9:#include <dt-bindings/gpio/gpio.h>
+> 
+> I see line 7 and line 9 include the same <dt-bindings/gpio/gpio.h>,
+> I think we can remove one header file. 
+> 
+So say that it is there twice...
 
-- Don't mark up function names, to be taken care of by the automarkup
-  extension.  Just say func().
-- Instead of ".. code-block:: none", just say "::".
-- Mark inline literals by a pair of ``xxxx``.  Don't use rust doc's
-  dialect of `yyyy`.
-- Instead of emphasizing headings by **strong emphasis**, use sub-level
-  title adornments, in this case "^^^^^^^^^^" and make them proper
-  sub-sections under "Hotplug CPU".
-
-Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>
----
- .../RCU/Design/Requirements/Requirements.rst  | 52 +++++++++----------
- 1 file changed, 24 insertions(+), 28 deletions(-)
-
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-index b0395540296b..f24b3c0b9b0d 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.rst
-+++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-@@ -1973,9 +1973,7 @@ code, and the FQS loop, all of which refer to or modify this bookkeeping.
- Note that grace period initialization (rcu_gp_init()) must carefully sequence
- CPU hotplug scanning with grace period state changes. For example, the
- following race could occur in rcu_gp_init() if rcu_seq_start() were to happen
--after the CPU hotplug scanning.
--
--.. code-block:: none
-+after the CPU hotplug scanning::
- 
-    CPU0 (rcu_gp_init)                   CPU1                          CPU2
-    ---------------------                ----                          ----
-@@ -2008,22 +2006,22 @@ after the CPU hotplug scanning.
-                                                                       kfree(r1);
-                                         r2 = *r0; // USE-AFTER-FREE!
- 
--By incrementing gp_seq first, CPU1's RCU read-side critical section
-+By incrementing ``gp_seq`` first, CPU1's RCU read-side critical section
- is guaranteed to not be missed by CPU2.
- 
--**Concurrent Quiescent State Reporting for Offline CPUs**
-+Concurrent Quiescent State Reporting for Offline CPUs
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- RCU must ensure that CPUs going offline report quiescent states to avoid
- blocking grace periods. This requires careful synchronization to handle
- race conditions
- 
--**Race condition causing Offline CPU to hang GP**
--
--A race between CPU offlining and new GP initialization (gp_init) may occur
--because `rcu_report_qs_rnp()` in `rcutree_report_cpu_dead()` must temporarily
--release the `rcu_node` lock to wake the RCU grace-period kthread:
-+Race condition causing Offline CPU to hang GP
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
--.. code-block:: none
-+A race between CPU offlining and new GP initialization (gp_init()) may occur
-+because rcu_report_qs_rnp() in rcutree_report_cpu_dead() must temporarily
-+release the ``rcu_node`` lock to wake the RCU grace-period kthread::
- 
-    CPU1 (going offline)                 CPU0 (GP kthread)
-    --------------------                 -----------------
-@@ -2044,15 +2042,14 @@ release the `rcu_node` lock to wake the RCU grace-period kthread:
-        // Reacquire lock (but too late)
-      rnp->qsmaskinitnext &= ~mask       // Finally clears bit
- 
--Without `ofl_lock`, the new grace period includes the offline CPU and waits
-+Without ``ofl_lock``, the new grace period includes the offline CPU and waits
- forever for its quiescent state causing a GP hang.
- 
--**A solution with ofl_lock**
-+A solution with ofl_lock
-+^^^^^^^^^^^^^^^^^^^^^^^^
- 
--The `ofl_lock` (offline lock) prevents `rcu_gp_init()` from running during
--the vulnerable window when `rcu_report_qs_rnp()` has released `rnp->lock`:
--
--.. code-block:: none
-+The ``ofl_lock`` (offline lock) prevents rcu_gp_init() from running during
-+the vulnerable window when rcu_report_qs_rnp() has released ``rnp->lock``::
- 
-    CPU0 (rcu_gp_init)                   CPU1 (rcutree_report_cpu_dead)
-    ------------------                   ------------------------------
-@@ -2065,21 +2062,20 @@ the vulnerable window when `rcu_report_qs_rnp()` has released `rnp->lock`:
-        arch_spin_unlock(&ofl_lock) ---> // Now CPU1 can proceed
-    }                                    // But snapshot already taken
- 
--**Another race causing GP hangs in rcu_gpu_init(): Reporting QS for Now-offline CPUs**
-+Another race causing GP hangs in rcu_gpu_init(): Reporting QS for Now-offline CPUs
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
- After the first loop takes an atomic snapshot of online CPUs, as shown above,
--the second loop in `rcu_gp_init()` detects CPUs that went offline between
--releasing `ofl_lock` and acquiring the per-node `rnp->lock`. This detection is
--crucial because:
-+the second loop in rcu_gp_init() detects CPUs that went offline between
-+releasing ``ofl_lock`` and acquiring the per-node ``rnp->lock``.
-+This detection is crucial because:
- 
- 1. The CPU might have gone offline after the snapshot but before the second loop
- 2. The offline CPU cannot report its own QS if it's already dead
- 3. Without this detection, the grace period would wait forever for CPUs that
-    are now offline.
- 
--The second loop performs this detection safely:
--
--.. code-block:: none
-+The second loop performs this detection safely::
- 
-    rcu_for_each_node_breadth_first(rnp) {
-        raw_spin_lock_irqsave_rcu_node(rnp, flags);
-@@ -2093,10 +2089,10 @@ The second loop performs this detection safely:
-    }
- 
- This approach ensures atomicity: quiescent state reporting for offline CPUs
--happens either in `rcu_gp_init()` (second loop) or in `rcutree_report_cpu_dead()`,
--never both and never neither. The `rnp->lock` held throughout the sequence
--prevents races - `rcutree_report_cpu_dead()` also acquires this lock when
--clearing `qsmaskinitnext`, ensuring mutual exclusion.
-+happens either in rcu_gp_init() (second loop) or in rcutree_report_cpu_dead(),
-+never both and never neither. The ``rnp->lock`` held throughout the sequence
-+prevents races - rcutree_report_cpu_dead() also acquires this lock when
-+clearing ``qsmaskinitnext``, ensuring mutual exclusion.
- 
- Scheduler and RCU
- ~~~~~~~~~~~~~~~~~
-
-base-commit: fde3b9b1ea92135743bb0c3b0d7c426b680a5ba8
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
