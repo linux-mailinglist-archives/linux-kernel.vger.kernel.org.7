@@ -1,81 +1,76 @@
-Return-Path: <linux-kernel+bounces-742644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A316BB0F4C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD8DB0F4CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936BE3BF2CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01B4AA739B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACCA2F270A;
-	Wed, 23 Jul 2025 14:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCEC2F2358;
+	Wed, 23 Jul 2025 14:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gdY94EqZ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q2l3GQ+P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BA818DB01;
-	Wed, 23 Jul 2025 14:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69FF1BF33F;
+	Wed, 23 Jul 2025 14:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753279346; cv=none; b=AP1DuriDzHICzIra4GcjXfy+HHTWfso6T1sAYuxHtsYqpzuxz7G/0ZyxLr1+9PzSpmqrSP+qcldQep25AO+HM2Ou9KBPLHlPaJeMdvrONyjqFvnekZcOe8vitQZzLznAzj0WRfTmCqJy/4gIZY43bcRhKvfVs9YDxZGZ7v4RxAo=
+	t=1753279375; cv=none; b=g/polyDJsh4S3CClmgeF20mdxLXnCxUF9ltHoT6uk101Ka743VWcbVf7xzqMBbY4HesXTV131Fv4hFBgS6o+O6k9SGUqYEkHIJcm94IldSmdCadWK7WG7pnPbHBovoDuZCLR40VYTsGu9q8h09nB4/Nwk/Qtw295aktInarh5U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753279346; c=relaxed/simple;
-	bh=Qt23hKMWooTOPyxlrtzHMCM+w7Fw6lCMWeDsrrEAB4k=;
+	s=arc-20240116; t=1753279375; c=relaxed/simple;
+	bh=8BdW1LBKJhDxXzq6YwSk2fYG+KDRbi+4iNzGslJHjro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiK+7Cjwb0ftzTpXEFA6bYOZZt6KsXNkw6WPdhWdTlDcQ/vFZFMbKhsbCCbv0h3tcHiV+kG1udDxF/XpuWdqgFArzBFN8722BtlNyoecqIS5fOZgdXIr7B6CJXz4Egzmy59tOaLuUVf9Rmeb6WDputX9QS49M3q5GojQj8ymxnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gdY94EqZ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hnXBrp6nZj1igjITrTimshdIDwjv73qcH+GOPbSCUXk=; b=gdY94EqZaE3KR5jXzRnewjo9j5
-	dUhX3/ZwF3t7tQ4kLjRQ80zgcsHZwbSkawzNvRgELZGmeQNNoi48mr4P3YBz1mIcSQbeHy1MooEf2
-	hRQNbLaUae0+pOCg6XV7N9BQQ9gLi593mxlmQeeNAuui0kCR8nF763Il9lhWAOPOhSZI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uea2m-002aZn-6G; Wed, 23 Jul 2025 16:02:04 +0200
-Date: Wed, 23 Jul 2025 16:02:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-Message-ID: <dea45ecd-c183-426b-abae-12220a2b6827@lunn.ch>
-References: <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
- <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
- <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
- <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
- <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
- <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
- <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
- <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
- <aIAKAlkdB5S8UiYx@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gwnf1ig8x48bwAwz5VJqSdZtXyGZfjlqqncdMXSgkmqlX2y1BxBVumL/0udP/5Qb4DvftcYm2gTaFCr88vkja/4wCqahjCjNMEEbDJ8MfzroXvlBGe76/mhFWyv5czaDXbWlYnV7/uUjNgYflkvI/zjIGjqoKu/yemVRaGmAd7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q2l3GQ+P; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753279374; x=1784815374;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8BdW1LBKJhDxXzq6YwSk2fYG+KDRbi+4iNzGslJHjro=;
+  b=Q2l3GQ+PUl5W781L1jq9fWXEr8cU6x+JAvitAAUX8z9S/kheuvYZUU0b
+   BlvsS7IHmrj0X/DwWJ99z8184bCMSKxd95LDfVQKT3QXE6BDQoYHP+hWx
+   SUPUVMLxHANEoNAvtIfU5ISx+rvyYAdgTAXhREu3n5csn2ZQsWOP8kqBN
+   nvO08Wgkn906tuk+5QVMgOAjyolXF2wiW677xSembuBVoTXKxdMnuFgXL
+   pqB9uRXQSulhFZ1Jz2A0AjNN6WJP6SblkVQAtJkQotBY2eQNPeLNEuHJQ
+   hS6YZxQiwowMj+JWIJI3TadB/9meBDN9bLDeqqkHg24s/lm07z/ax9Pzm
+   w==;
+X-CSE-ConnectionGUID: ZaHHHV0vS9S1cVNKIXI33g==
+X-CSE-MsgGUID: B0G2Ckg6Twi1Cr4khsciDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="43182027"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="43182027"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:02:53 -0700
+X-CSE-ConnectionGUID: ibXfojsqT6q1I2ur++ZJMg==
+X-CSE-MsgGUID: FGKlUjwGSlWE0rOOKSL4IA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="160259445"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:02:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uea3U-00000000J7o-1Eyq;
+	Wed, 23 Jul 2025 17:02:48 +0300
+Date: Wed, 23 Jul 2025 17:02:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: light: ltr390: Add sysfs attribute to report
+ data freshness
+Message-ID: <aIDriADP9O38eNNT@smile.fi.intel.com>
+References: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,36 +79,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIAKAlkdB5S8UiYx@shell.armlinux.org.uk>
+In-Reply-To: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-> I've just read a bit more of the RTL8211F datasheet, and looked at the
-> code, and I'm now wondering whether WoL has even been tested with
-> RTL8211F. What I'm about to state doesn't negate anything I've said
-> in my previous reply.
+On Tue, Jul 22, 2025 at 01:24:18AM +0530, Akshay Jindal wrote:
+> Some IIO sensors provide a status bit indicating whether the current data
+> register holds freshly measured data or stale data previously read.
 > 
+> Expose this status via a new read-only sysfs attribute, 'data_fresh',
+> which returns:
+>   - 1 if the data is freshly sampled
+>   - 0 if the data is stale
 > 
-> So, the RTL8211F doesn't have a separate PMEB pin. It has a pin that
-> is shared between "interrupt" and "PMEB".
+> This attribute allows userspace to observe data freshness directly, which
+> can be useful for debugging or application-level filtering.
 > 
-> Register 22, page 0xd40, bit 5 determines whether this pin is used for
-> PMEB (in which case it is pulsed on wake-up) or whether it is used as
-> an interrupt. It's one or the other function, but can't be both.
+> Document the attribute under Documentation/ABI/testing/sysfs-bus-iio.
 
-This sounds familiar.
+> +What:		/sys/.../iio:deviceX/data_fresh
+> +KernelVersion:	6.16
 
-> rtl8211f_set_wol() manipulates this bit depending on whether
-> WAKE_MAGIC is enabled or not.
-> 
-> The effect of this is...
-> 
-> If we're using PHY interrupts from the RTL8211F, and then userspace
-> configures magic packet WoL on the PHY, then we reconfigure the
-> interrupt pin to become a wakeup pin, disabling the interrupt
-> function - we no longer receive interrupts from the RTL8211F !!!!!!!
+No way it can make this version. Neither v6.17 if I understood that this
+feature is proposed in this patch.
 
-Ah. I thought that switch happened in the PHY driver suspend() call,
-and it gets restored in the resume() call? That does required that
-suspend/resume actually gets called despite WoL being enabled...
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Read-only attribute indicating whether the sensor data currently
+> +		available in the device is freshly measured or stale.
+> +
+> +		Returns:
+> +			1 - Data is freshly measured
+> +			0 - Data is stale (previously read or not yet updated)
+> +
+> +		Provides userspace visibility into data_freshness status which
+> +		can be used for debugging and informational use.
 
-	Andrew
+...
+
+>  
+> +#define LTR390_DATA_STATUS_MASK		BIT(3)
+
+Missing blank line.
+
+>  /*
+>   * At 20-bit resolution (integration time: 400ms) and 18x gain, 2300 counts of
+>   * the sensor are equal to 1 UV Index [Datasheet Page#8].
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
