@@ -1,66 +1,158 @@
-Return-Path: <linux-kernel+bounces-742347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA2EB0F061
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:51:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B249DB0F062
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5B7AA63D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D70189C99B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7B128C5A5;
-	Wed, 23 Jul 2025 10:48:55 +0000 (UTC)
-Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05362980AC;
+	Wed, 23 Jul 2025 10:49:40 +0000 (UTC)
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5086528C022
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677C0279327;
+	Wed, 23 Jul 2025 10:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267735; cv=none; b=MCU5WPLHqmac1T45p1+DMBlU/tYX1GjY4jlFw+XZbGD5GDJFbOSIGl70BrcxG8p1v//CgXGtC6l6yi95W+K33TU6a5GfmZqbhn0goPAJxzzHydA82hb0TUADJWUcPNLnoqAZUH0xNaFLPLXx8Q+obVzpAE+diZNyvq4getBVWck=
+	t=1753267780; cv=none; b=nPNdLpazDy550mUZfbHNhi/wLZ23Xx/aNbR6LSc9girRdXe8jb2gV6xNMdr48UF1DO1ErnGg9cS7OlWAYZRRfuoqSu/3tLvCcVf86FFRR/AJxhuPE2NdgVKTmNLVSvqfQxQt4VlfE0+Iu2JkENyg0KA6oQ+MJUtsvUmWhBmlTL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267735; c=relaxed/simple;
-	bh=NzpH8VNomFVF3Cl8fkxOhcssD7dMa5K9RHgP3uWe85k=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=uKD8MyL6wggyygfsE9mIbsqgKtK0gkzZUe5ahP1MtRzHgx3H/8D0vQW+AKY7WXtIeUe0OplNJCNb5QwjYI3Vp2M7kt7kkpwm8x4AhAPcZ+UOs6MZtm/STcGZmobYZNDn915REw67/BOtNCJOHweYBziZErxxe1RRjA5t+F/7xF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
-Received: from [IPV6:2400:2410:b120:f200:a1f3:73da:3a04:160d] (unknown [IPv6:2400:2410:b120:f200:a1f3:73da:3a04:160d])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id 95B7D3F108;
-	Wed, 23 Jul 2025 12:48:48 +0200 (CEST)
-Message-ID: <c4e878ae-e97c-4826-9962-fab15d7da632@hogyros.de>
-Date: Wed, 23 Jul 2025 19:48:45 +0900
+	s=arc-20240116; t=1753267780; c=relaxed/simple;
+	bh=7VwzKE9sGWkcmfi4Xv4/MJNzUZAlBn6TWR8UA8pEC2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lLbqSEynVoFbEw/fz0G3CElhVgClLLz4NfBJLHb0iHzdS7ADKwJOmKlwYqU9ReSMz+LyG4DiImQ0vMQNNQqAjVnNpy+522HMNgR3RyA5B2IUFnM6SKcPm0RV+15S1i3iEhD4xV5cqneWLoysx2V2iDH088TMeto+hayO6yb5t8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
+Received: from [2a02:578:851f:1502:391e:c5f5:10e2:b9a3] (helo=deadeye)
+	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1ueX2N-006tEP-0v;
+	Wed, 23 Jul 2025 10:49:27 +0000
+Received: from ben by deadeye with local (Exim 4.98.2)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1ueX2L-000000011VE-2oF5;
+	Wed, 23 Jul 2025 12:49:25 +0200
+Date: Wed, 23 Jul 2025 12:49:25 +0200
+From: Ben Hutchings <benh@debian.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] bootconfig: Fix unaligned access when building footer
+Message-ID: <aIC-NTw-cdm9ZGFw@decadent.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Simon Richter <Simon.Richter@hogyros.de>
-Subject: POWER9: duplicate interrupt line in /proc/interrupts, kernel problem
- or userspace problem?
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OD0zKPxJnQpOSJxd"
+Content-Disposition: inline
+X-SA-Exim-Connect-IP: 2a02:578:851f:1502:391e:c5f5:10e2:b9a3
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
 
-Hi,
 
-I have two lines starting with "LOC:" in /proc/interrupts, one with a 
-comment "Local timer interrupts for timer event device", the other 
-"Local timer interrupts for others".
+--OD0zKPxJnQpOSJxd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This makes collectd unhappy, because it uses the first column as a 
-unique identifier.
+Currently we add padding between the bootconfig text and footer to
+ensure that the footer is aligned within the initramfs image.
+However, because only the bootconfig data is held in memory, not the
+full initramfs image, the footer may not be naturally aligned in
+memory.
 
-Is this column supposed to be unique? (i.e. is this a kernel bug, or 
-should collectd expect this?)
+This can result in an alignment fault (SIGBUS) when writing the footer
+on some architectures, such as sparc.
 
-    Simon
+Build the footer in a struct on the stack before adding it to the
+buffer.
+
+References: https://buildd.debian.org/status/fetch.php?pkg=3Dlinux&arch=3Ds=
+parc64&ver=3D6.16%7Erc7-1%7Eexp1&stamp=3D1753209801&raw=3D0
+Signed-off-by: Ben Hutchings <benh@debian.org>
+---
+ tools/bootconfig/main.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/tools/bootconfig/main.c b/tools/bootconfig/main.c
+index 4988e23a1422..57c669d2aa90 100644
+--- a/tools/bootconfig/main.c
++++ b/tools/bootconfig/main.c
+@@ -11,6 +11,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <endian.h>
++#include <assert.h>
+=20
+ #include <linux/bootconfig.h>
+=20
+@@ -363,7 +364,12 @@ static int delete_xbc(const char *path)
+=20
+ static int apply_xbc(const char *path, const char *xbc_path)
+ {
+-	char *buf, *data, *p;
++	struct {
++		uint32_t size;
++		uint32_t csum;
++		char magic[BOOTCONFIG_MAGIC_LEN];
++	} footer;
++	char *buf, *data;
+ 	size_t total_size;
+ 	struct stat stat;
+ 	const char *msg;
+@@ -433,17 +439,13 @@ static int apply_xbc(const char *path, const char *xb=
+c_path)
+ 	size +=3D pad;
+=20
+ 	/* Add a footer */
+-	p =3D data + size;
+-	*(uint32_t *)p =3D htole32(size);
+-	p +=3D sizeof(uint32_t);
++	footer.size =3D htole32(size);
++	footer.csum =3D htole32(csum);
++	memcpy(footer.magic, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
++	static_assert(sizeof(footer) =3D=3D BOOTCONFIG_FOOTER_SIZE);
++	memcpy(data + size, &footer, BOOTCONFIG_FOOTER_SIZE);
+=20
+-	*(uint32_t *)p =3D htole32(csum);
+-	p +=3D sizeof(uint32_t);
+-
+-	memcpy(p, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
+-	p +=3D BOOTCONFIG_MAGIC_LEN;
+-
+-	total_size =3D p - data;
++	total_size =3D size + BOOTCONFIG_FOOTER_SIZE;
+=20
+ 	ret =3D write(fd, data, total_size);
+ 	if (ret < total_size) {
+
+--OD0zKPxJnQpOSJxd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmiAvjEACgkQ57/I7JWG
+EQmT3xAAjxwbyp2rkqMdSaqNM+rAJUX2uBn1L4jY0Ti1f1CZrGleZ6PjKoPFhntY
+Ep+pTr3LpGuMCWRB+dHVB+aldO7HUtTc/dvn4oTQCwC8RfLquElWpiLLpKURb9wy
+wHh3DSFZ9Wtk7jIBew16Vx8zE79Crb6DGl0Y4MF8gCR69W9MbYc7R13A2fH8WF5P
+IbmfxH2A1qXAghJ+Kmn36cl2v2SOp2SWRdEF6mQi62mh9mr0R1tjRwI4cf6RcM/m
+NGCPN3Dx1BRZyV60AnyZU803wxmjS3VH07L7+904eJ4o7z72dS/b3QATaCSXVZga
+88ysg1kDPVyHzGGlIn/CmGwxtGYdaUwv+hoM2BIY4b+S19veHCGmslzpD8fJxV99
+r5Yd31EppVXOra5TOdTUu2Ewic76UsczbyQt8vB7DDYwvwkNgwVp0VeIvTdP+Q94
+CemJANlwR1LX08FF60e0CYVZmoCLhA3RPZz0Os5XLkV0tfYOfLNSS+jzldee3Tpz
+Kl3iA5olDRd/+xyLb713Hg1Q83IAjvdYVF9Tq2GPShaPhEunlTMuYP1FK6dc1H2n
+rx4AxWfSJCxa1G75dGbYEBtMdBqmhSXXjkgUmqcx20xG9sZ/+yxTpkJ7KHmK+OaV
+hzlws1qVI9e5uZLz/FMEeIFq4B8283WCeyNQgSsi9hqJMuTg9Fw=
+=fRVy
+-----END PGP SIGNATURE-----
+
+--OD0zKPxJnQpOSJxd--
 
