@@ -1,349 +1,117 @@
-Return-Path: <linux-kernel+bounces-741727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19528B0E84A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:48:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65351B0E847
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5351CC0E46
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790AE4E14D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3718C02E;
-	Wed, 23 Jul 2025 01:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132CE17BEBF;
+	Wed, 23 Jul 2025 01:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlxRxMyh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSaxlIQU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6FC2628D;
-	Wed, 23 Jul 2025 01:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C835360;
+	Wed, 23 Jul 2025 01:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753235326; cv=none; b=SNPzLrQavsjOD8/6qGOXwxqN3BT2qta1bA4NjmE5BWXXX6ekhXuTavBWL6gKBtuKIC0m800RA0iX+2i8tqxPJ4OEcg57EEsIXQoQgSBUQY5pMjC6BvR8vaB/Czvv44kuZEvw0hfg9PuY4OpCd4M0HWbIKOv3EdVPXohFlUzqD8w=
+	t=1753235272; cv=none; b=o42kaD5CPf/cPsrhtzcPReQdh5mx7wGuqOWPlRRUkSst4d1CUFewCMz2GjYGB91KDIJtYTiIEHfO8TeGyZO1J9UiTJg3LqDmIeojDPqQK4B082MuB1iyoSueM5mh4w7RDy5lMEfNllmQxHR9KM6p26QWkjdY9yMC7zGaD1Xray4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753235326; c=relaxed/simple;
-	bh=AzN+Gktwg/8ta6jjY11+v3nUFF45eX/NpwcaMbv/alU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JPDKMdusTJxfecsRRic+0z6hcMsGFNoFBnaKoqZHAg/Noo9baADHS5qq/kRN/kZ6DPJRCqt/6SrlrW27VOh0fC9bzpXq2LcSrQNLpb0mtMFJwWks6i6NFTL+BEoYvLyJaDp2eQHHfmBy4OK+30cKzMyAfTCXsO1e1wl4Fe1QmyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlxRxMyh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 656F9C4CEEB;
-	Wed, 23 Jul 2025 01:48:44 +0000 (UTC)
+	s=arc-20240116; t=1753235272; c=relaxed/simple;
+	bh=Mb7U/KhjDFYsWZAeq7kpLX/tB1mdXgzYH+ofNnJA7w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c8MQcgCLTfrVnhsLjBL1z+biV32y6JI7jSwPpQ50oozIJ6cvh7H9sBEr+fBMV7kHhAYxVtIq9Lj3WW9cV87RryWio+qgJhbMlPmJmraEAj8gMUI6wrJgmtA0VM8nYNbLa1fQp93l4MvSiGbRnTjiLB9207zlH466cBc5LJBhipA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSaxlIQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A242C4CEEB;
+	Wed, 23 Jul 2025 01:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753235325;
-	bh=AzN+Gktwg/8ta6jjY11+v3nUFF45eX/NpwcaMbv/alU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GlxRxMyhCkPowqrYEf7JDYmefDKK1I1DVCVr95HJojG/YsfQjZlOHlx1xbv2UQHeR
-	 3bvOF8h/HP5nUxEqEl1wZj5f85Mfrq3gLQbrdEK3XHCz8vom3g5g/cLuX+9Iuh06r1
-	 XO9G+wx6U1SG/TBcatOqww7jSKRaZ0ugHmQG5B4TvDkw2VApuncWkDzM3hhkzbFqkf
-	 VGaplMJpbpgQmHrbAOXYWIrXCnZnVyWV1ONoKBIoYe3/YBmmK3trQ2aoUupIrxrxFn
-	 wOF1sHvLdwsgGuf9Q52+SZ0yjrNAuIepKq3bhcvnvS7DVjfaKY7sTUSnvxo+xy3UzG
-	 K31jLr+8nzXag==
-Message-ID: <625335c6-5ece-4407-bcb8-c2d8d3766208@kernel.org>
-Date: Wed, 23 Jul 2025 10:46:17 +0900
+	s=k20201202; t=1753235271;
+	bh=Mb7U/KhjDFYsWZAeq7kpLX/tB1mdXgzYH+ofNnJA7w8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eSaxlIQUL3eEVbxCOQIkht46i9qOkmpPjC5awQyRZf+80aAT4OZIJZUgFL0KzvJob
+	 jJN9p51Z2Gn4Jjut7HLS2qSJ2CVjZLi7xvRlDmvJH6ovV+oomM+l9vLsoj9OnTbtpW
+	 gxs+lyqFOALDov3oq+hcqHiX5bceaHhcg3F2jZnSRCskO2KltNrL1K3hCADq/ykMAl
+	 dgy5YzH7L4s2rPVAubBNabH9/l+qwCEmNDieDGEv+uN28T8PLqc2BcIgO84RMCRbiz
+	 CXaYalL5ZiufedGuZVCYL1iAm0lLSPJPgbuugLy4hJuM57rIH6Gm01wEMYqpqD4y7f
+	 Cib+Y+5jAPyhA==
+Date: Tue, 22 Jul 2025 18:47:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ ssantosh@kernel.org, richardcochran@gmail.com, s.hauer@pengutronix.de,
+ m-karicheri2@ti.com, glaroque@baylibre.com, afd@ti.com,
+ saikrishnag@marvell.com, m-malladi@ti.com, jacob.e.keller@intel.com,
+ kory.maincent@bootlin.com, diogo.ivo@siemens.com,
+ javier.carrasco.cruz@gmail.com, horms@kernel.org, s-anna@ti.com,
+ basharath@couthit.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vadim.fedorenko@linux.dev, pratheesh@ti.com,
+ prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
+ rogerq@ti.com, krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next v11 2/5] net: ti: prueth: Adds ICSSM Ethernet
+ driver
+Message-ID: <20250722184749.0c04d669@kernel.org>
+In-Reply-To: <20250722132700.2655208-3-parvathi@couthit.com>
+References: <20250722132700.2655208-1-parvathi@couthit.com>
+	<20250722132700.2655208-3-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] mq-deadline: switch to use high layer elevator lock
-To: Yu Kuai <yukuai1@huaweicloud.com>, hare@suse.de, tj@kernel.org,
- josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
- <20250722072431.610354-2-yukuai1@huaweicloud.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250722072431.610354-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 7/22/25 4:24 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Introduce a new spinlock in elevator_queue, and switch dd->lock to
-> use the new lock. There are no functional changes.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/elevator.c    |  1 +
->  block/elevator.h    |  4 ++--
->  block/mq-deadline.c | 57 ++++++++++++++++++++++-----------------------
->  3 files changed, 31 insertions(+), 31 deletions(-)
-> 
-> diff --git a/block/elevator.c b/block/elevator.c
-> index ab22542e6cf0..91df270d9d91 100644
-> --- a/block/elevator.c
-> +++ b/block/elevator.c
-> @@ -144,6 +144,7 @@ struct elevator_queue *elevator_alloc(struct request_queue *q,
->  	eq->type = e;
->  	kobject_init(&eq->kobj, &elv_ktype);
->  	mutex_init(&eq->sysfs_lock);
-> +	spin_lock_init(&eq->lock);
->  	hash_init(eq->hash);
->  
->  	return eq;
-> diff --git a/block/elevator.h b/block/elevator.h
-> index a07ce773a38f..cbbac4f7825c 100644
-> --- a/block/elevator.h
-> +++ b/block/elevator.h
-> @@ -110,12 +110,12 @@ struct request *elv_rqhash_find(struct request_queue *q, sector_t offset);
->  /*
->   * each queue has an elevator_queue associated with it
->   */
-> -struct elevator_queue
-> -{
-> +struct elevator_queue {
->  	struct elevator_type *type;
->  	void *elevator_data;
->  	struct kobject kobj;
->  	struct mutex sysfs_lock;
-> +	spinlock_t lock;
->  	unsigned long flags;
->  	DECLARE_HASHTABLE(hash, ELV_HASH_BITS);
->  };
+On Tue, 22 Jul 2025 18:55:02 +0530 Parvathi Pudi wrote:
+> +	for_each_child_of_node(eth_ports_node, eth_node) {
+> +		u32 reg;
+> +
+> +		if (strcmp(eth_node->name, "ethernet-port"))
+> +			continue;
+> +		ret = of_property_read_u32(eth_node, "reg", &reg);
+> +		if (ret < 0) {
+> +			dev_err(dev, "%pOF error reading port_id %d\n",
+> +				eth_node, ret);
+> +			return ret;
 
-I wonder if the above should not be its own patch, and the remaining below
-staying in this patch as that match exactly the commit title.
+missing put for eth_node
 
-Other than that, this looks good to me.
-
-> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> index 2edf1cac06d5..e31da6de7764 100644
-> --- a/block/mq-deadline.c
-> +++ b/block/mq-deadline.c
-> @@ -101,7 +101,7 @@ struct deadline_data {
->  	u32 async_depth;
->  	int prio_aging_expire;
->  
-> -	spinlock_t lock;
-> +	spinlock_t *lock;
->  };
->  
->  /* Maps an I/O priority class to a deadline scheduler priority. */
-> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q, struct request *req,
->  	const u8 ioprio_class = dd_rq_ioclass(next);
->  	const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	dd->per_prio[prio].stats.merged++;
->  
-> @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum dd_prio prio)
->  {
->  	const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	return stats->inserted - atomic_read(&stats->completed);
->  }
-> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct deadline_data *dd,
->  	enum dd_prio prio;
->  	u8 ioprio_class;
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	if (!list_empty(&per_prio->dispatch)) {
->  		rq = list_first_entry(&per_prio->dispatch, struct request,
-> @@ -434,7 +434,7 @@ static struct request *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
->  	enum dd_prio prio;
->  	int prio_cnt;
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd, DD_BE_PRIO) +
->  		   !!dd_queued(dd, DD_IDLE_PRIO);
-> @@ -466,7 +466,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
->  	struct request *rq;
->  	enum dd_prio prio;
->  
-> -	spin_lock(&dd->lock);
-> +	spin_lock(dd->lock);
->  	rq = dd_dispatch_prio_aged_requests(dd, now);
->  	if (rq)
->  		goto unlock;
-> @@ -482,8 +482,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
->  	}
->  
->  unlock:
-> -	spin_unlock(&dd->lock);
-> -
-> +	spin_unlock(dd->lock);
->  	return rq;
->  }
->  
-> @@ -552,9 +551,9 @@ static void dd_exit_sched(struct elevator_queue *e)
->  		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
->  		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
->  
-> -		spin_lock(&dd->lock);
-> +		spin_lock(dd->lock);
->  		queued = dd_queued(dd, prio);
-> -		spin_unlock(&dd->lock);
-> +		spin_unlock(dd->lock);
->  
->  		WARN_ONCE(queued != 0,
->  			  "statistics for priority %d: i %u m %u d %u c %u\n",
-> @@ -601,7 +600,7 @@ static int dd_init_sched(struct request_queue *q, struct elevator_type *e)
->  	dd->last_dir = DD_WRITE;
->  	dd->fifo_batch = fifo_batch;
->  	dd->prio_aging_expire = prio_aging_expire;
-> -	spin_lock_init(&dd->lock);
-> +	dd->lock = &eq->lock;
->  
->  	/* We dispatch from request queue wide instead of hw queue */
->  	blk_queue_flag_set(QUEUE_FLAG_SQ_SCHED, q);
-> @@ -657,9 +656,9 @@ static bool dd_bio_merge(struct request_queue *q, struct bio *bio,
->  	struct request *free = NULL;
->  	bool ret;
->  
-> -	spin_lock(&dd->lock);
-> +	spin_lock(dd->lock);
->  	ret = blk_mq_sched_try_merge(q, bio, nr_segs, &free);
-> -	spin_unlock(&dd->lock);
-> +	spin_unlock(dd->lock);
->  
->  	if (free)
->  		blk_mq_free_request(free);
-> @@ -681,7 +680,7 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->  	struct dd_per_prio *per_prio;
->  	enum dd_prio prio;
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	prio = ioprio_class_to_prio[ioprio_class];
->  	per_prio = &dd->per_prio[prio];
-> @@ -725,7 +724,7 @@ static void dd_insert_requests(struct blk_mq_hw_ctx *hctx,
->  	struct deadline_data *dd = q->elevator->elevator_data;
->  	LIST_HEAD(free);
->  
-> -	spin_lock(&dd->lock);
-> +	spin_lock(dd->lock);
->  	while (!list_empty(list)) {
->  		struct request *rq;
->  
-> @@ -733,7 +732,7 @@ static void dd_insert_requests(struct blk_mq_hw_ctx *hctx,
->  		list_del_init(&rq->queuelist);
->  		dd_insert_request(hctx, rq, flags, &free);
->  	}
-> -	spin_unlock(&dd->lock);
-> +	spin_unlock(dd->lock);
->  
->  	blk_mq_free_requests(&free);
->  }
-> @@ -849,13 +848,13 @@ static const struct elv_fs_entry deadline_attrs[] = {
->  #define DEADLINE_DEBUGFS_DDIR_ATTRS(prio, data_dir, name)		\
->  static void *deadline_##name##_fifo_start(struct seq_file *m,		\
->  					  loff_t *pos)			\
-> -	__acquires(&dd->lock)						\
-> +	__acquires(dd->lock)						\
->  {									\
->  	struct request_queue *q = m->private;				\
->  	struct deadline_data *dd = q->elevator->elevator_data;		\
->  	struct dd_per_prio *per_prio = &dd->per_prio[prio];		\
->  									\
-> -	spin_lock(&dd->lock);						\
-> +	spin_lock(dd->lock);						\
->  	return seq_list_start(&per_prio->fifo_list[data_dir], *pos);	\
->  }									\
->  									\
-> @@ -870,12 +869,12 @@ static void *deadline_##name##_fifo_next(struct seq_file *m, void *v,	\
->  }									\
->  									\
->  static void deadline_##name##_fifo_stop(struct seq_file *m, void *v)	\
-> -	__releases(&dd->lock)						\
-> +	__releases(dd->lock)						\
->  {									\
->  	struct request_queue *q = m->private;				\
->  	struct deadline_data *dd = q->elevator->elevator_data;		\
->  									\
-> -	spin_unlock(&dd->lock);						\
-> +	spin_unlock(dd->lock);						\
->  }									\
->  									\
->  static const struct seq_operations deadline_##name##_fifo_seq_ops = {	\
-> @@ -941,11 +940,11 @@ static int dd_queued_show(void *data, struct seq_file *m)
->  	struct deadline_data *dd = q->elevator->elevator_data;
->  	u32 rt, be, idle;
->  
-> -	spin_lock(&dd->lock);
-> +	spin_lock(dd->lock);
->  	rt = dd_queued(dd, DD_RT_PRIO);
->  	be = dd_queued(dd, DD_BE_PRIO);
->  	idle = dd_queued(dd, DD_IDLE_PRIO);
-> -	spin_unlock(&dd->lock);
-> +	spin_unlock(dd->lock);
->  
->  	seq_printf(m, "%u %u %u\n", rt, be, idle);
->  
-> @@ -957,7 +956,7 @@ static u32 dd_owned_by_driver(struct deadline_data *dd, enum dd_prio prio)
->  {
->  	const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
->  
-> -	lockdep_assert_held(&dd->lock);
-> +	lockdep_assert_held(dd->lock);
->  
->  	return stats->dispatched + stats->merged -
->  		atomic_read(&stats->completed);
-> @@ -969,11 +968,11 @@ static int dd_owned_by_driver_show(void *data, struct seq_file *m)
->  	struct deadline_data *dd = q->elevator->elevator_data;
->  	u32 rt, be, idle;
->  
-> -	spin_lock(&dd->lock);
-> +	spin_lock(dd->lock);
->  	rt = dd_owned_by_driver(dd, DD_RT_PRIO);
->  	be = dd_owned_by_driver(dd, DD_BE_PRIO);
->  	idle = dd_owned_by_driver(dd, DD_IDLE_PRIO);
-> -	spin_unlock(&dd->lock);
-> +	spin_unlock(dd->lock);
->  
->  	seq_printf(m, "%u %u %u\n", rt, be, idle);
->  
-> @@ -983,13 +982,13 @@ static int dd_owned_by_driver_show(void *data, struct seq_file *m)
->  #define DEADLINE_DISPATCH_ATTR(prio)					\
->  static void *deadline_dispatch##prio##_start(struct seq_file *m,	\
->  					     loff_t *pos)		\
-> -	__acquires(&dd->lock)						\
-> +	__acquires(dd->lock)						\
->  {									\
->  	struct request_queue *q = m->private;				\
->  	struct deadline_data *dd = q->elevator->elevator_data;		\
->  	struct dd_per_prio *per_prio = &dd->per_prio[prio];		\
->  									\
-> -	spin_lock(&dd->lock);						\
-> +	spin_lock(dd->lock);						\
->  	return seq_list_start(&per_prio->dispatch, *pos);		\
->  }									\
->  									\
-> @@ -1004,12 +1003,12 @@ static void *deadline_dispatch##prio##_next(struct seq_file *m,		\
->  }									\
->  									\
->  static void deadline_dispatch##prio##_stop(struct seq_file *m, void *v)	\
-> -	__releases(&dd->lock)						\
-> +	__releases(dd->lock)						\
->  {									\
->  	struct request_queue *q = m->private;				\
->  	struct deadline_data *dd = q->elevator->elevator_data;		\
->  									\
-> -	spin_unlock(&dd->lock);						\
-> +	spin_unlock(dd->lock);						\
->  }									\
->  									\
->  static const struct seq_operations deadline_dispatch##prio##_seq_ops = { \
-
-
+> +		}
+> +
+> +		of_node_get(eth_node);
+> +
+> +		if (reg == 0 && !eth0_node) {
+> +			eth0_node = eth_node;
+> +			if (!of_device_is_available(eth0_node)) {
+> +				of_node_put(eth0_node);
+> +				eth0_node = NULL;
+> +			}
+> +		} else if (reg == 1 && !eth1_node) {
+> +			eth1_node = eth_node;
+> +			if (!of_device_is_available(eth1_node)) {
+> +				of_node_put(eth1_node);
+> +				eth1_node = NULL;
+> +			}
+> +		} else {
+> +			if (reg == 0 || reg == 1)
+> +				dev_err(dev, "duplicate port reg value: %d\n",
+> +					reg);
+> +			else
+> +				dev_err(dev, "invalid port reg value: %d\n",
+> +					reg);
+> +
+> +			of_node_put(eth_node);
+> +		}
+> +	}
 -- 
-Damien Le Moal
-Western Digital Research
+pw-bot: cr
 
