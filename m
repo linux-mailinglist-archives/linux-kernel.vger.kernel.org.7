@@ -1,238 +1,95 @@
-Return-Path: <linux-kernel+bounces-741684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6490BB0E7B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED412B0E7BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AD8562A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E78D3BB47F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48815442C;
-	Wed, 23 Jul 2025 00:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881921531C8;
+	Wed, 23 Jul 2025 00:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZvYXaG8T"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trNTavwP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8213B58D;
-	Wed, 23 Jul 2025 00:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753232138; cv=pass; b=dIaYogLCm/y2reM8ZBBsGMG2O6jMBuayOWTYP2QM2+/RAFFFCFNrEJ7225DtR02uzWabZB7Q9CjuwOALSNETaNLjgwSIwJSHZCzOYcvtjyiQcAn8qyONpNQ+Kgh+6NoH8sU74UmPPbWPPYGBn9jVqF5T//pAjYT16JeRL1m9QA4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753232138; c=relaxed/simple;
-	bh=ycN+a20a39+uHkwjSn4cEM7f6YHzcXmsuaFLVrv2MDk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lbEXRO8bOes8G7mDEaonHflyErFTLgCrNO0e9KZmw+VEFjAZBGOgyXzyz6omFIMZQjEUZrX7/Jn+ALTiCyKTvfGX8wEU+hx0CceSnO4tSPnLBqXI909LnS2Rk6oytEkOjTvuJe3yDlrH9JYrth7nSUqKobV3jVBhQt3ILNYXuvY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZvYXaG8T; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753232083; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BNVgI65NKwrtemFylave53P707ygH90jssUdgPyCXHBjCVKl7Udowg3RrF5jW7lF+5L42aejLvx/6hooj37lkUWKT4Dexs1swMBwvouETQ8S4k/u0Ys2wqbDqX/QqCZ/2uvKx2loUqZJ0H9dQiab1L3k3n/E7e2nCVbAErzEDSU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753232083; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rFbss56s1hh59hJnWNWrBx8A3FfQ2zEsLLLpTD2DR70=; 
-	b=TGSZ1id1WJCBtc6bHuQLco/N+TCYCFviuh18cPF5Ek3sPu2D4qJWiYMri7c2Hb6K4TSJo1sgI+loqbsf+bHo0vuIeo/q1PCJWgOAx987mFoVGKr6//t5m0SXPHgRxTimb9YJHzXMX6mCGdtaFfMMVynLWzb3h9zNW1On/X63zGk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753232083;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=rFbss56s1hh59hJnWNWrBx8A3FfQ2zEsLLLpTD2DR70=;
-	b=ZvYXaG8T4lAnVI7iEL9ckJnVjctoR4mbpuljQW5qa0nNFVYtj2UA182Mcp7VcjIq
-	rU2H+R1c/ojDQ0LgbZpn4xh+1AOzAXJ8AVqlNn0ZrzBOrk5X3WK5mhFEJ8rftjA7KNA
-	yuEqHQt4db104nTrC+dqErmZkdlh3xjnXx0CK9b4=
-Received: by mx.zohomail.com with SMTPS id 1753232080305334.71411635942;
-	Tue, 22 Jul 2025 17:54:40 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837F78F26;
+	Wed, 23 Jul 2025 00:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753232189; cv=none; b=XHrvo5LEBRoesAit93a6FTyPK2u7tpSu8VbSqXplJ/wX2KXJrJeIXJNgriB3JYNpviRxaubQbFZgQ/3PfhRk9OydkaM/WTZoAt7CTY1n6IndFfdKl5b2bGAqrXhGGXSZhwUyO7RyaPeWrRcHy962OkXCS94dMReA+gIQsvL49Zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753232189; c=relaxed/simple;
+	bh=QJxg62QCgXV0R5bA6++p8g8B+F1pTaGEkT3/0NKUVfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sf5APIvkkFmptontaJAfXUURt0NGZdhojSCiKKUz5Oia0p0GijbEj/2OAHtY06MYVCkvnVZKhaa0bS+MB8X7jlOfeG4IhpWWOw5IdcVu7l/i4dPlAAsvL1pToi2VspHX6I7aZIlPjVBrmHCGzAdlw2DgTz9E5MuiPUZJH0A1/bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trNTavwP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D7AC4CEEB;
+	Wed, 23 Jul 2025 00:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753232188;
+	bh=QJxg62QCgXV0R5bA6++p8g8B+F1pTaGEkT3/0NKUVfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=trNTavwPngyVCZbYzvSByN9aytmcE69e/s8B10RXqWnL4+p/rkYUeND68f5JBiwIw
+	 DgkDPurDFO8XpNjIkpCHLfYbBD/cMwW5zFA8IpcqsulhoT5clMAnojs6tFIkt5qGqY
+	 poR2DOxCN0CZktzS14CiXQk1kLWgbwYmdIzXSmQRO9uAWQCHx9Ib65T7PzdUNLR8Ad
+	 GUYeA2kWVJ7unkF1O8d/rzAP6ohrMGQYIFs2GWgDvF+9OTHV4UYPqzUKPPHNNoS4aP
+	 QBc5xr/ysXxcxULoWewswYIYbURWx4Kr/QwtSzjNltzKParjYqQcEqEIgQWKw3RT1L
+	 p1xHg1e62lalw==
+Date: Tue, 22 Jul 2025 17:56:25 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, vmolnaro@redhat.com, mpetlan@redhat.com,
+	atrajeev@linux.vnet.ibm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools:perf:tests:shell:common This file was missing the
+ shebang line, so added it
+Message-ID: <aIAzOewUz_KtcccA@google.com>
+References: <20250722223350.414-1-unixbhaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 2/2] samples: rust: add sample code for scatterlist
- abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250718103359.1026240-3-abdiel.janulgue@gmail.com>
-Date: Tue, 22 Jul 2025 21:54:23 -0300
-Cc: acourbot@nvidia.com,
- dakr@kernel.org,
- jgg@ziepe.ca,
- lyude@redhat.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Tamir Duberstein <tamird@gmail.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- open list <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Petr Tesarik <petr@tesarici.cz>,
- Sui Jingfeng <sui.jingfeng@linux.dev>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>,
- airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F13AD3DF-6045-45FB-B3A8-9F4BA99BC485@collabora.com>
-References: <20250718103359.1026240-1-abdiel.janulgue@gmail.com>
- <20250718103359.1026240-3-abdiel.janulgue@gmail.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250722223350.414-1-unixbhaskar@gmail.com>
 
-Hi Abdiel, Alex,
+Hello,
 
-> On 18 Jul 2025, at 07:33, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
-wrote:
->=20
-> Add simple excercises to test the scatterlist abstraction.
->=20
-> Co-developed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+On Wed, Jul 23, 2025 at 04:02:24AM +0530, Bhaskar Chowdhury wrote:
+> This file was missing the shebang line, so added it.
+
+I guess that's because it doesn't intend to be run standalone.  IOW it
+should be included by other files which should have the shebang.
+
+Thanks,
+Namhyung
+
+> 
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 > ---
-> samples/rust/rust_dma.rs | 49 +++++++++++++++++++++++++++++++++++++++-
-> 1 file changed, 48 insertions(+), 1 deletion(-)
->=20
-> diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-> index 9e05d5c0cdae..1fa278e8e29a 100644
-> --- a/samples/rust/rust_dma.rs
-> +++ b/samples/rust/rust_dma.rs
-> @@ -4,11 +4,33 @@
-> //!
-> //! To make this driver probe, QEMU must be run with `-device =
-pci-testdev`.
->=20
-> -use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, =
-prelude::*, types::ARef};
-> +use kernel::{
-> +    bindings, device::Core, dma::CoherentAllocation, page::*, pci, =
-prelude::*, scatterlist::*,
-> +    sync::Arc, types::ARef,
-> +};
->=20
-> struct DmaSampleDriver {
->     pdev: ARef<pci::Device>,
->     ca: CoherentAllocation<MyStruct>,
-> +    _sgt: SGTable<OwnedSgt<PagesArray>, ManagedMapping>,
-> +}
-> +
-> +struct PagesArray(KVec<Page>);
-> +impl SGTablePages for PagesArray {
-> +    fn iter<'a>(&'a self) -> impl Iterator<Item =3D (&'a Page, usize, =
-usize)> {
-> +        self.0.iter().map(|page| (page, kernel::page::PAGE_SIZE, 0))
-
-The order seems to also be inverted here (see comment on the previous =
-patch)
-
-> +    }
-> +
-> +    fn entries(&self) -> usize {
-> +        self.0.len()
-> +    }
-> +}
-> +
-> +struct WrappedArc(Arc<kernel::bindings::sg_table>);
-> +impl core::borrow::Borrow<kernel::bindings::sg_table> for WrappedArc =
-{
-> +    fn borrow(&self) -> &kernel::bindings::sg_table {
-> +        &self.0
-> +    }
-> }
-
-I assume there is no way to get around this without compromising =
-somewhere
-else, right?
-
->=20
-> const TEST_VALUES: [(u32, u32); 5] =3D [
-> @@ -58,10 +80,35 @@ fn probe(pdev: &pci::Device<Core>, _info: =
-&Self::IdInfo) -> Result<Pin<KBox<Self
->             kernel::dma_write!(ca[i] =3D MyStruct::new(value.0, =
-value.1))?;
->         }
->=20
-> +        let mut pages =3D KVec::new();
-> +        for _ in TEST_VALUES.into_iter() {
-> +            let _ =3D pages.push(Page::alloc_page(GFP_KERNEL)?, =
-GFP_KERNEL);
-> +        }
-> +
-> +        // Let's pretend this is valid...
-
-I=E2=80=99d reword this.
-
-> +        // SAFETY: `sg_table` is not a reference.
-> +        let sg_table: bindings::sg_table =3D unsafe { =
-core::mem::zeroed() };
-> +
-> +        // `borrowed_sgt` cannot outlive `sg_table`.
-> +        // SAFETY: =46rom above, we assume that `sg_table` is =
-initialized and valid.
-> +        let _borrowed_sgt =3D unsafe { =
-SGTable::new_unmapped(&sg_table) };
-
-Wait, zero-initialization is considered =E2=80=9Cinitialized and =
-valid=E2=80=9D here? i.e.:
-
-struct sg_table {
-	struct scatterlist *sgl;	/* the list */
-	unsigned int nents;		/* number of mapped entries */
-	unsigned int orig_nents;	/* original size of list */
-};
-
-> +
-> +        let sg_table =3D WrappedArc(Arc::new(sg_table, GFP_KERNEL)?);
-> +        // `refcounted_sgt` keeps a refcounted reference to the =
-`sg_table` and is thus not
-> +        // tied by a compile-time lifetime.
-> +        // SAFETY: =46rom above, we assume that `sg_table` is =
-initialized and valid.
-> +        let _refcounted_sgt =3D unsafe { =
-SGTable::new_unmapped(sg_table) };
-
-Ah, this is cool, though the Borrow implementation is a bit of a =
-downside :/
-
-> +
-> +        // `owned_sgt` carries and owns the data it represents.
-> +        let owned_sgt =3D SGTable::new_owned(PagesArray(pages), =
-GFP_KERNEL)?;
-> +        let sgt =3D owned_sgt.dma_map(pdev.as_ref(), =
-kernel::dma::DmaDataDirection::DmaToDevice)?;
-> +
->         let drvdata =3D KBox::new(
->             Self {
->                 pdev: pdev.into(),
->                 ca,
-> +                // excercise the destructor
-> +                _sgt: sgt,
->             },
->             GFP_KERNEL,
->         )?;
-> --=20
-> 2.43.0
->=20
-
-=E2=80=94 Daniel
-
+>  tools/perf/tests/shell/common/init.sh | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/tests/shell/common/init.sh b/tools/perf/tests/shell/common/init.sh
+> index 26c7525651e0..9e9d4247ada3 100644
+> --- a/tools/perf/tests/shell/common/init.sh
+> +++ b/tools/perf/tests/shell/common/init.sh
+> @@ -1,3 +1,4 @@
+> +#!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0
+>  #
+>  #	init.sh
+> --
+> 2.49.1
+> 
 
