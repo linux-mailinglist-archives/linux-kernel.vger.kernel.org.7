@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-742596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE08B0F423
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F695B0F422
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2185668D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EEE8169524
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5564C2E92D4;
-	Wed, 23 Jul 2025 13:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2412A2E8DF1;
+	Wed, 23 Jul 2025 13:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OuWGX1re";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5LPiEh6m";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OuWGX1re";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5LPiEh6m"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w+8aWlEV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qnViJaVV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w+8aWlEV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qnViJaVV"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096752E92BC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22882E7196
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277724; cv=none; b=LQS399YD7P6r1M2jF62wiLUyq2W+jx35BZdcteFnnXTUKCiFU4U8/pY23KI1kwXdwwBMb+Ai3tAJlviWkZ3+B1QFNdf4OFLTF1eNAHFhXKLp8DZC8rx0IKHUPaMudZwNbVr8g3UiCk/FSvWQWmxN1zENFgQDSowHDaHZ+fY0WOg=
+	t=1753277716; cv=none; b=R0YxtL8JyHfHG1SL3zh3JrORWVS1GxHdYYkOPz4ivMBQjgcN/gANEc8GDxEzY9RtRR6mAIA9AGaurJHSq8sutB1tsvRXyC3/bi4+jza/esPWtKSwlaNcbqjT2fW/IK0pXZ8TKiLouo9B7u+ydnCpDC0F9XfAlGLnMNqbiXGJSmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277724; c=relaxed/simple;
-	bh=YT8w7VwaHmfgK4rEclfK/gMg30FZkEHgEnWpjH01vUA=;
+	s=arc-20240116; t=1753277716; c=relaxed/simple;
+	bh=dG1giyj2dsCyVUxqGYUW8p7bs8KuWRTtSFkZAcFcchU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tR1bpr2oElwHj5xQMnPW5MqkueumRvN1rwBaSvLfRuYnOXXtRq1bHiSNr6dxiqf47KixkaXlz3ttGyw6PCDTB7gjYQpvfFoj6kjJPoNyTr37bZ7u45LBMB6uwXPChYqDx7U9t5FD+jumV1N+wa4LQrRnj7zkaUFHkITwf/ALH0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OuWGX1re; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5LPiEh6m; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OuWGX1re; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5LPiEh6m; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:To:Cc; b=Bhl181Jfsv1iO8n8N58vF75kHbrO7GKto6JJkXilImwdXsUdgVQpKRrebQ3xB+rN9GktarO+8Tq5GBetdCvjYZvvIAO3IPhubzk4NWAQKEFG/ETrC1CPHPiVXXSNXk9ZrCh5Id/eZagyhOIHAqPWsiQB8FpCZZjZ/OHQVNVnLsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w+8aWlEV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qnViJaVV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w+8aWlEV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qnViJaVV; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0B5FD1F78E;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1DA971F78F;
 	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NduNJaepLAgleA88Uf74owzlmCV2Xd25rAPKMSWelSY=;
-	b=OuWGX1reBYwHdcrtB1jJUHDHPAAEO6Lotr5bOhPTd/+WW1SIuk/aqZmQ0loeHF0PpSVNCY
-	4Xri5mhxdySUk3wSpOJJmktEIgovS1c/PxOdQmX1+CTqzWLHUnaVtKhtTGUZCdNSD1ZGLh
-	PeOPKobxsARx2bH3BoRsn87r4pGGbME=
+	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
+	b=w+8aWlEVxjdtasQJNYG4cwAS62pKLVEL254SN4W/E9p62BnWXUpEvNrYeD379SCLpkK9AU
+	R66reAIdkwGTxr6Sp4X3Ywh4fQZ+h/d+z/USoEPB1/a5JsnN8xXaimuNIlFTltPix8lQ1V
+	l4lE+2XHF00vWpJKHjyPv8ylbHK6HBo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NduNJaepLAgleA88Uf74owzlmCV2Xd25rAPKMSWelSY=;
-	b=5LPiEh6mfqbWWomKiosa3PatrDcMiL2npq5K5lfve33JyxXEleQ0XgfUGDiPG36gU3IxnW
-	Tf+yfPs/CrubgIDQ==
+	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
+	b=qnViJaVVhHNa5Zhw7P2qp0WTSOuBGcG1Hd8Cn5OyqOGdTXHdM9F3tywUcqNHwE43rCd/sJ
+	ea3e7m82r1YY9BBg==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OuWGX1re;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5LPiEh6m
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=w+8aWlEV;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qnViJaVV
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1753277704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NduNJaepLAgleA88Uf74owzlmCV2Xd25rAPKMSWelSY=;
-	b=OuWGX1reBYwHdcrtB1jJUHDHPAAEO6Lotr5bOhPTd/+WW1SIuk/aqZmQ0loeHF0PpSVNCY
-	4Xri5mhxdySUk3wSpOJJmktEIgovS1c/PxOdQmX1+CTqzWLHUnaVtKhtTGUZCdNSD1ZGLh
-	PeOPKobxsARx2bH3BoRsn87r4pGGbME=
+	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
+	b=w+8aWlEVxjdtasQJNYG4cwAS62pKLVEL254SN4W/E9p62BnWXUpEvNrYeD379SCLpkK9AU
+	R66reAIdkwGTxr6Sp4X3Ywh4fQZ+h/d+z/USoEPB1/a5JsnN8xXaimuNIlFTltPix8lQ1V
+	l4lE+2XHF00vWpJKHjyPv8ylbHK6HBo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1753277704;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NduNJaepLAgleA88Uf74owzlmCV2Xd25rAPKMSWelSY=;
-	b=5LPiEh6mfqbWWomKiosa3PatrDcMiL2npq5K5lfve33JyxXEleQ0XgfUGDiPG36gU3IxnW
-	Tf+yfPs/CrubgIDQ==
+	bh=7WPRX5w6VLJucQ0K8sAKz65Zi/zci5w4tOo+kRZuEhI=;
+	b=qnViJaVVhHNa5Zhw7P2qp0WTSOuBGcG1Hd8Cn5OyqOGdTXHdM9F3tywUcqNHwE43rCd/sJ
+	ea3e7m82r1YY9BBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E640013AF2;
-	Wed, 23 Jul 2025 13:35:03 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0560313AFA;
+	Wed, 23 Jul 2025 13:35:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aCjYNwflgGh0IwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:03 +0000
+	id ABEMAQjlgGh0IwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 13:35:04 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 23 Jul 2025 15:34:35 +0200
-Subject: [PATCH v5 02/14] slab: add sheaf support for batching kfree_rcu()
- operations
+Date: Wed, 23 Jul 2025 15:34:36 +0200
+Subject: [PATCH v5 03/14] slab: sheaf prefilling for guaranteed allocations
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-slub-percpu-caches-v5-2-b792cd830f5d@suse.cz>
+Message-Id: <20250723-slub-percpu-caches-v5-3-b792cd830f5d@suse.cz>
 References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -111,11 +110,6 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
  maple-tree@lists.infradead.org, vbabka@suse.cz
 X-Mailer: b4 0.14.2
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0B5FD1F78E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -139,420 +133,409 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	R_RATELIMIT(0.00)[to_ip_from(RLfsjnp7neds983g95ihcnuzgq)];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 1DA971F78F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 X-Spam-Score: -4.51
 
-Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
-For caches with sheaves, on each cpu maintain a rcu_free sheaf in
-addition to main and spare sheaves.
+Add functions for efficient guaranteed allocations e.g. in a critical
+section that cannot sleep, when the exact number of allocations is not
+known beforehand, but an upper limit can be calculated.
 
-kfree_rcu() operations will try to put objects on this sheaf. Once full,
-the sheaf is detached and submitted to call_rcu() with a handler that
-will try to put it in the barn, or flush to slab pages using bulk free,
-when the barn is full. Then a new empty sheaf must be obtained to put
-more objects there.
+kmem_cache_prefill_sheaf() returns a sheaf containing at least given
+number of objects.
 
-It's possible that no free sheaves are available to use for a new
-rcu_free sheaf, and the allocation in kfree_rcu() context can only use
-GFP_NOWAIT and thus may fail. In that case, fall back to the existing
-kfree_rcu() implementation.
+kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
+and is guaranteed not to fail until depleted.
 
-Expected advantages:
-- batching the kfree_rcu() operations, that could eventually replace the
-  existing batching
-- sheaves can be reused for allocations via barn instead of being
-  flushed to slabs, which is more efficient
-  - this includes cases where only some cpus are allowed to process rcu
-    callbacks (Android)
+kmem_cache_return_sheaf() is for giving the sheaf back to the slab
+allocator after the critical section. This will also attempt to refill
+it to cache's sheaf capacity for better efficiency of sheaves handling,
+but it's not stricly necessary to succeed.
 
-Possible disadvantage:
-- objects might be waiting for more than their grace period (it is
-  determined by the last object freed into the sheaf), increasing memory
-  usage - but the existing batching does that too.
+kmem_cache_refill_sheaf() can be used to refill a previously obtained
+sheaf to requested size. If the current size is sufficient, it does
+nothing. If the requested size exceeds cache's sheaf_capacity and the
+sheaf's current capacity, the sheaf will be replaced with a new one,
+hence the indirect pointer parameter.
 
-Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
-implementation favors smaller memory footprint over performance.
+kmem_cache_sheaf_size() can be used to query the current size.
 
-Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
-count how many kfree_rcu() used the rcu_free sheaf successfully and how
-many had to fall back to the existing implementation.
+The implementation supports requesting sizes that exceed cache's
+sheaf_capacity, but it is not efficient - such "oversize" sheaves are
+allocated fresh in kmem_cache_prefill_sheaf() and flushed and freed
+immediately by kmem_cache_return_sheaf(). kmem_cache_refill_sheaf()
+might be especially ineffective when replacing a sheaf with a new one of
+a larger capacity. It is therefore better to size cache's
+sheaf_capacity accordingly to make oversize sheaves exceptional.
 
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+CONFIG_SLUB_STATS counters are added for sheaf prefill and return
+operations. A prefill or return is considered _fast when it is able to
+grab or return a percpu spare sheaf (even if the sheaf needs a refill to
+satisfy the request, as those should amortize over time), and _slow
+otherwise (when the barn or even sheaf allocation/freeing has to be
+involved). sheaf_prefill_oversize is provided to determine how many
+prefills were oversize (counter for oversize returns is not necessary as
+all oversize refills result in oversize returns).
+
+When slub_debug is enabled for a cache with sheaves, no percpu sheaves
+exist for it, but the prefill functionality is still provided simply by
+all prefilled sheaves becoming oversize. If percpu sheaves are not
+created for a cache due to not passing the sheaf_capacity argument on
+cache creation, the prefills also work through oversize sheaves, but
+there's a WARN_ON_ONCE() to indicate the omission.
+
 Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/slab.h        |   2 +
- mm/slab_common.c |  24 +++++++
- mm/slub.c        | 193 +++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 3 files changed, 214 insertions(+), 5 deletions(-)
+ include/linux/slab.h |  16 ++++
+ mm/slub.c            | 265 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 281 insertions(+)
 
-diff --git a/mm/slab.h b/mm/slab.h
-index 1980330c2fcb4a4613a7e4f7efc78b349993fd89..44c9b70eaabbd87c06fb39b79dfb791d515acbde 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -459,6 +459,8 @@ static inline bool is_kmalloc_normal(struct kmem_cache *s)
- 	return !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT));
- }
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 6cfd085907afb8fc6e502ff7a1a1830c52ff9125..3ff70547db49d0880b1b6cb100527936e88ca509 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -829,6 +829,22 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t flags,
+ 				   int node) __assume_slab_alignment __malloc;
+ #define kmem_cache_alloc_node(...)	alloc_hooks(kmem_cache_alloc_node_noprof(__VA_ARGS__))
  
-+bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj);
++struct slab_sheaf *
++kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size);
 +
- #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
- 			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
- 			 SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS | \
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index e2b197e47866c30acdbd1fee4159f262a751c5a7..2d806e02568532a1000fd3912db6978e945dcfa8 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1608,6 +1608,27 @@ static void kfree_rcu_work(struct work_struct *work)
- 		kvfree_rcu_list(head);
- }
- 
-+static bool kfree_rcu_sheaf(void *obj)
-+{
-+	struct kmem_cache *s;
-+	struct folio *folio;
-+	struct slab *slab;
++int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
++		struct slab_sheaf **sheafp, unsigned int size);
 +
-+	if (is_vmalloc_addr(obj))
-+		return false;
++void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
++				       struct slab_sheaf *sheaf);
 +
-+	folio = virt_to_folio(obj);
-+	if (unlikely(!folio_test_slab(folio)))
-+		return false;
++void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_t gfp,
++			struct slab_sheaf *sheaf) __assume_slab_alignment __malloc;
++#define kmem_cache_alloc_from_sheaf(...)	\
++			alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__VA_ARGS__))
 +
-+	slab = folio_slab(folio);
-+	s = slab->slab_cache;
-+	if (s->cpu_sheaves)
-+		return __kfree_rcu_sheaf(s, obj);
++unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf);
 +
-+	return false;
-+}
-+
- static bool
- need_offload_krc(struct kfree_rcu_cpu *krcp)
- {
-@@ -1952,6 +1973,9 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 	if (!head)
- 		might_sleep();
- 
-+	if (kfree_rcu_sheaf(ptr))
-+		return;
-+
- 	// Queue the object but don't yet schedule the batch.
- 	if (debug_rcu_head_queue(ptr)) {
- 		// Probable double kfree_rcu(), just leak.
+ /*
+  * These macros allow declaring a kmem_buckets * parameter alongside size, which
+  * can be compiled out with CONFIG_SLAB_BUCKETS=n so that a large number of call
 diff --git a/mm/slub.c b/mm/slub.c
-index 6543aaade60b0adaab232b2256d65c1042c62e1c..f6d86cd3983533784583f1df6add186c4a74cd97 100644
+index f6d86cd3983533784583f1df6add186c4a74cd97..8b3093ee2e02c9ff4e149ac54833db4972b414a3 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -350,6 +350,8 @@ enum stat_item {
- 	ALLOC_FASTPATH,		/* Allocation from cpu slab */
- 	ALLOC_SLOWPATH,		/* Allocation by getting a new cpu slab */
- 	FREE_PCS,		/* Free to percpu sheaf */
-+	FREE_RCU_SHEAF,		/* Free to rcu_free sheaf */
-+	FREE_RCU_SHEAF_FAIL,	/* Failed to free to a rcu_free sheaf */
- 	FREE_FASTPATH,		/* Free to cpu slab */
- 	FREE_SLOWPATH,		/* Freeing not to cpu slab */
- 	FREE_FROZEN,		/* Freeing to frozen slab */
-@@ -444,6 +446,7 @@ struct slab_sheaf {
+@@ -384,6 +384,11 @@ enum stat_item {
+ 	BARN_GET_FAIL,		/* Failed to get full sheaf from barn */
+ 	BARN_PUT,		/* Put full sheaf to barn */
+ 	BARN_PUT_FAIL,		/* Failed to put full sheaf to barn */
++	SHEAF_PREFILL_FAST,	/* Sheaf prefill grabbed the spare sheaf */
++	SHEAF_PREFILL_SLOW,	/* Sheaf prefill found no spare sheaf */
++	SHEAF_PREFILL_OVERSIZE,	/* Allocation of oversize sheaf for prefill */
++	SHEAF_RETURN_FAST,	/* Sheaf return reattached spare sheaf */
++	SHEAF_RETURN_SLOW,	/* Sheaf return could not reattach spare */
+ 	NR_SLUB_STAT_ITEMS
+ };
+ 
+@@ -445,6 +450,8 @@ struct slab_sheaf {
+ 	union {
  		struct rcu_head rcu_head;
  		struct list_head barn_list;
++		/* only used for prefilled sheafs */
++		unsigned int capacity;
  	};
-+	struct kmem_cache *cache;
+ 	struct kmem_cache *cache;
  	unsigned int size;
- 	void *objects[];
- };
-@@ -452,6 +455,7 @@ struct slub_percpu_sheaves {
- 	local_trylock_t lock;
- 	struct slab_sheaf *main; /* never NULL when unlocked */
- 	struct slab_sheaf *spare; /* empty or full, may be NULL */
-+	struct slab_sheaf *rcu_free; /* for batching kfree_rcu() */
- 	struct node_barn *barn;
- };
- 
-@@ -2490,6 +2494,8 @@ static struct slab_sheaf *alloc_empty_sheaf(struct kmem_cache *s, gfp_t gfp)
- 	if (unlikely(!sheaf))
- 		return NULL;
- 
-+	sheaf->cache = s;
-+
- 	stat(s, SHEAF_ALLOC);
- 
- 	return sheaf;
-@@ -2614,6 +2620,43 @@ static void sheaf_flush_unused(struct kmem_cache *s, struct slab_sheaf *sheaf)
- 	sheaf->size = 0;
+@@ -2797,6 +2804,30 @@ static void barn_put_full_sheaf(struct node_barn *barn, struct slab_sheaf *sheaf
+ 	spin_unlock_irqrestore(&barn->lock, flags);
  }
  
-+static void __rcu_free_sheaf_prepare(struct kmem_cache *s,
-+				     struct slab_sheaf *sheaf)
++static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
 +{
-+	bool init = slab_want_init_on_free(s);
-+	void **p = &sheaf->objects[0];
-+	unsigned int i = 0;
++	struct slab_sheaf *sheaf = NULL;
++	unsigned long flags;
 +
-+	while (i < sheaf->size) {
-+		struct slab *slab = virt_to_slab(p[i]);
++	spin_lock_irqsave(&barn->lock, flags);
 +
-+		memcg_slab_free_hook(s, slab, p + i, 1);
-+		alloc_tagging_slab_free_hook(s, slab, p + i, 1);
-+
-+		if (unlikely(!slab_free_hook(s, p[i], init, true))) {
-+			p[i] = p[--sheaf->size];
-+			continue;
-+		}
-+
-+		i++;
++	if (barn->nr_full) {
++		sheaf = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
++					barn_list);
++		list_del(&sheaf->barn_list);
++		barn->nr_full--;
++	} else if (barn->nr_empty) {
++		sheaf = list_first_entry(&barn->sheaves_empty,
++					 struct slab_sheaf, barn_list);
++		list_del(&sheaf->barn_list);
++		barn->nr_empty--;
 +	}
-+}
 +
-+static void rcu_free_sheaf_nobarn(struct rcu_head *head)
-+{
-+	struct slab_sheaf *sheaf;
-+	struct kmem_cache *s;
++	spin_unlock_irqrestore(&barn->lock, flags);
 +
-+	sheaf = container_of(head, struct slab_sheaf, rcu_head);
-+	s = sheaf->cache;
-+
-+	__rcu_free_sheaf_prepare(s, sheaf);
-+
-+	sheaf_flush_unused(s, sheaf);
-+
-+	free_empty_sheaf(s, sheaf);
++	return sheaf;
 +}
 +
  /*
-  * Caller needs to make sure migration is disabled in order to fully flush
-  * single cpu's sheaves
-@@ -2626,7 +2669,7 @@ static void sheaf_flush_unused(struct kmem_cache *s, struct slab_sheaf *sheaf)
- static void pcs_flush_all(struct kmem_cache *s)
- {
- 	struct slub_percpu_sheaves *pcs;
--	struct slab_sheaf *spare;
-+	struct slab_sheaf *spare, *rcu_free;
- 
- 	local_lock(&s->cpu_sheaves->lock);
- 	pcs = this_cpu_ptr(s->cpu_sheaves);
-@@ -2634,6 +2677,9 @@ static void pcs_flush_all(struct kmem_cache *s)
- 	spare = pcs->spare;
- 	pcs->spare = NULL;
- 
-+	rcu_free = pcs->rcu_free;
-+	pcs->rcu_free = NULL;
-+
- 	local_unlock(&s->cpu_sheaves->lock);
- 
- 	if (spare) {
-@@ -2641,6 +2687,9 @@ static void pcs_flush_all(struct kmem_cache *s)
- 		free_empty_sheaf(s, spare);
- 	}
- 
-+	if (rcu_free)
-+		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
-+
- 	sheaf_flush_main(s);
+  * If a full sheaf is available, return it and put the supplied empty one to
+  * barn. We ignore the limit on empty sheaves as the number of sheaves doesn't
+@@ -4919,6 +4950,230 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t gfpflags, int nod
  }
+ EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
  
-@@ -2657,6 +2706,11 @@ static void __pcs_flush_all_cpu(struct kmem_cache *s, unsigned int cpu)
- 		free_empty_sheaf(s, pcs->spare);
- 		pcs->spare = NULL;
- 	}
-+
-+	if (pcs->rcu_free) {
-+		call_rcu(&pcs->rcu_free->rcu_head, rcu_free_sheaf_nobarn);
-+		pcs->rcu_free = NULL;
-+	}
- }
- 
- static void pcs_destroy(struct kmem_cache *s)
-@@ -2682,6 +2736,7 @@ static void pcs_destroy(struct kmem_cache *s)
- 		 */
- 
- 		WARN_ON(pcs->spare);
-+		WARN_ON(pcs->rcu_free);
- 
- 		if (!WARN_ON(pcs->main->size)) {
- 			free_empty_sheaf(s, pcs->main);
-@@ -3742,7 +3797,7 @@ static bool has_pcs_used(int cpu, struct kmem_cache *s)
- 
- 	pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
- 
--	return (pcs->spare || pcs->main->size);
-+	return (pcs->spare || pcs->rcu_free || pcs->main->size);
- }
- 
- static void pcs_flush_all(struct kmem_cache *s);
-@@ -5339,6 +5394,127 @@ bool free_to_pcs(struct kmem_cache *s, void *object)
- 	return true;
- }
- 
-+static void rcu_free_sheaf(struct rcu_head *head)
-+{
-+	struct slab_sheaf *sheaf;
-+	struct node_barn *barn;
-+	struct kmem_cache *s;
-+
-+	sheaf = container_of(head, struct slab_sheaf, rcu_head);
-+
-+	s = sheaf->cache;
-+
-+	/*
-+	 * This may remove some objects due to slab_free_hook() returning false,
-+	 * so that the sheaf might no longer be completely full. But it's easier
-+	 * to handle it as full (unless it became completely empty), as the code
-+	 * handles it fine. The only downside is that sheaf will serve fewer
-+	 * allocations when reused. It only happens due to debugging, which is a
-+	 * performance hit anyway.
-+	 */
-+	__rcu_free_sheaf_prepare(s, sheaf);
-+
-+	barn = get_node(s, numa_mem_id())->barn;
-+
-+	/* due to slab_free_hook() */
-+	if (unlikely(sheaf->size == 0))
-+		goto empty;
-+
-+	/*
-+	 * Checking nr_full/nr_empty outside lock avoids contention in case the
-+	 * barn is at the respective limit. Due to the race we might go over the
-+	 * limit but that should be rare and harmless.
-+	 */
-+
-+	if (data_race(barn->nr_full) < MAX_FULL_SHEAVES) {
-+		stat(s, BARN_PUT);
-+		barn_put_full_sheaf(barn, sheaf);
-+		return;
-+	}
-+
-+	stat(s, BARN_PUT_FAIL);
-+	sheaf_flush_unused(s, sheaf);
-+
-+empty:
-+	if (data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES) {
-+		barn_put_empty_sheaf(barn, sheaf);
-+		return;
-+	}
-+
-+	free_empty_sheaf(s, sheaf);
-+}
-+
-+bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
++/*
++ * returns a sheaf that has at least the requested size
++ * when prefilling is needed, do so with given gfp flags
++ *
++ * return NULL if sheaf allocation or prefilling failed
++ */
++struct slab_sheaf *
++kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
 +{
 +	struct slub_percpu_sheaves *pcs;
-+	struct slab_sheaf *rcu_sheaf;
++	struct slab_sheaf *sheaf = NULL;
 +
-+	if (!local_trylock(&s->cpu_sheaves->lock))
-+		goto fail;
++	if (unlikely(size > s->sheaf_capacity)) {
 +
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
++		/*
++		 * slab_debug disables cpu sheaves intentionally so all
++		 * prefilled sheaves become "oversize" and we give up on
++		 * performance for the debugging. Same with SLUB_TINY.
++		 * Creating a cache without sheaves and then requesting a
++		 * prefilled sheaf is however not expected, so warn.
++		 */
++		WARN_ON_ONCE(s->sheaf_capacity == 0 &&
++			     !IS_ENABLED(CONFIG_SLUB_TINY) &&
++			     !(s->flags & SLAB_DEBUG_FLAGS));
 +
-+	if (unlikely(!pcs->rcu_free)) {
++		sheaf = kzalloc(struct_size(sheaf, objects, size), gfp);
++		if (!sheaf)
++			return NULL;
 +
-+		struct slab_sheaf *empty;
++		stat(s, SHEAF_PREFILL_OVERSIZE);
++		sheaf->cache = s;
++		sheaf->capacity = size;
 +
-+		if (pcs->spare && pcs->spare->size == 0) {
-+			pcs->rcu_free = pcs->spare;
-+			pcs->spare = NULL;
-+			goto do_free;
++		if (!__kmem_cache_alloc_bulk(s, gfp, size,
++					     &sheaf->objects[0])) {
++			kfree(sheaf);
++			return NULL;
 +		}
 +
-+		empty = barn_get_empty_sheaf(pcs->barn);
++		sheaf->size = size;
 +
-+		if (empty) {
-+			pcs->rcu_free = empty;
-+			goto do_free;
-+		}
-+
-+		local_unlock(&s->cpu_sheaves->lock);
-+
-+		empty = alloc_empty_sheaf(s, GFP_NOWAIT);
-+
-+		if (!empty)
-+			goto fail;
-+
-+		if (!local_trylock(&s->cpu_sheaves->lock)) {
-+			barn_put_empty_sheaf(pcs->barn, empty);
-+			goto fail;
-+		}
-+
-+		pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+		if (unlikely(pcs->rcu_free))
-+			barn_put_empty_sheaf(pcs->barn, empty);
-+		else
-+			pcs->rcu_free = empty;
++		return sheaf;
 +	}
 +
-+do_free:
++	local_lock(&s->cpu_sheaves->lock);
++	pcs = this_cpu_ptr(s->cpu_sheaves);
 +
-+	rcu_sheaf = pcs->rcu_free;
-+
-+	rcu_sheaf->objects[rcu_sheaf->size++] = obj;
-+
-+	if (likely(rcu_sheaf->size < s->sheaf_capacity))
-+		rcu_sheaf = NULL;
-+	else
-+		pcs->rcu_free = NULL;
++	if (pcs->spare) {
++		sheaf = pcs->spare;
++		pcs->spare = NULL;
++		stat(s, SHEAF_PREFILL_FAST);
++	} else {
++		stat(s, SHEAF_PREFILL_SLOW);
++		sheaf = barn_get_full_or_empty_sheaf(pcs->barn);
++		if (sheaf && sheaf->size)
++			stat(s, BARN_GET);
++		else
++			stat(s, BARN_GET_FAIL);
++	}
 +
 +	local_unlock(&s->cpu_sheaves->lock);
 +
-+	if (rcu_sheaf)
-+		call_rcu(&rcu_sheaf->rcu_head, rcu_free_sheaf);
 +
-+	stat(s, FREE_RCU_SHEAF);
-+	return true;
++	if (!sheaf)
++		sheaf = alloc_empty_sheaf(s, gfp);
 +
-+fail:
-+	stat(s, FREE_RCU_SHEAF_FAIL);
-+	return false;
++	if (sheaf && sheaf->size < size) {
++		if (refill_sheaf(s, sheaf, gfp)) {
++			sheaf_flush_unused(s, sheaf);
++			free_empty_sheaf(s, sheaf);
++			sheaf = NULL;
++		}
++	}
++
++	if (sheaf)
++		sheaf->capacity = s->sheaf_capacity;
++
++	return sheaf;
 +}
 +
++/*
++ * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
++ *
++ * If the sheaf cannot simply become the percpu spare sheaf, but there's space
++ * for a full sheaf in the barn, we try to refill the sheaf back to the cache's
++ * sheaf_capacity to avoid handling partially full sheaves.
++ *
++ * If the refill fails because gfp is e.g. GFP_NOWAIT, or the barn is full, the
++ * sheaf is instead flushed and freed.
++ */
++void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
++			     struct slab_sheaf *sheaf)
++{
++	struct slub_percpu_sheaves *pcs;
++	struct node_barn *barn;
++
++	if (unlikely(sheaf->capacity != s->sheaf_capacity)) {
++		sheaf_flush_unused(s, sheaf);
++		kfree(sheaf);
++		return;
++	}
++
++	local_lock(&s->cpu_sheaves->lock);
++	pcs = this_cpu_ptr(s->cpu_sheaves);
++
++	if (!pcs->spare) {
++		pcs->spare = sheaf;
++		sheaf = NULL;
++		stat(s, SHEAF_RETURN_FAST);
++	}
++
++	local_unlock(&s->cpu_sheaves->lock);
++
++	if (!sheaf)
++		return;
++
++	stat(s, SHEAF_RETURN_SLOW);
++
++	/* Accessing pcs->barn outside local_lock is safe. */
++	barn = pcs->barn;
++
++	/*
++	 * If the barn has too many full sheaves or we fail to refill the sheaf,
++	 * simply flush and free it.
++	 */
++	if (data_race(pcs->barn->nr_full) >= MAX_FULL_SHEAVES ||
++	    refill_sheaf(s, sheaf, gfp)) {
++		sheaf_flush_unused(s, sheaf);
++		free_empty_sheaf(s, sheaf);
++		return;
++	}
++
++	barn_put_full_sheaf(barn, sheaf);
++	stat(s, BARN_PUT);
++}
++
++/*
++ * refill a sheaf previously returned by kmem_cache_prefill_sheaf to at least
++ * the given size
++ *
++ * the sheaf might be replaced by a new one when requesting more than
++ * s->sheaf_capacity objects if such replacement is necessary, but the refill
++ * fails (returning -ENOMEM), the existing sheaf is left intact
++ *
++ * In practice we always refill to full sheaf's capacity.
++ */
++int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
++			    struct slab_sheaf **sheafp, unsigned int size)
++{
++	struct slab_sheaf *sheaf;
++
++	/*
++	 * TODO: do we want to support *sheaf == NULL to be equivalent of
++	 * kmem_cache_prefill_sheaf() ?
++	 */
++	if (!sheafp || !(*sheafp))
++		return -EINVAL;
++
++	sheaf = *sheafp;
++	if (sheaf->size >= size)
++		return 0;
++
++	if (likely(sheaf->capacity >= size)) {
++		if (likely(sheaf->capacity == s->sheaf_capacity))
++			return refill_sheaf(s, sheaf, gfp);
++
++		if (!__kmem_cache_alloc_bulk(s, gfp, sheaf->capacity - sheaf->size,
++					     &sheaf->objects[sheaf->size])) {
++			return -ENOMEM;
++		}
++		sheaf->size = sheaf->capacity;
++
++		return 0;
++	}
++
++	/*
++	 * We had a regular sized sheaf and need an oversize one, or we had an
++	 * oversize one already but need a larger one now.
++	 * This should be a very rare path so let's not complicate it.
++	 */
++	sheaf = kmem_cache_prefill_sheaf(s, gfp, size);
++	if (!sheaf)
++		return -ENOMEM;
++
++	kmem_cache_return_sheaf(s, gfp, *sheafp);
++	*sheafp = sheaf;
++	return 0;
++}
++
++/*
++ * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
++ *
++ * Guaranteed not to fail as many allocations as was the requested size.
++ * After the sheaf is emptied, it fails - no fallback to the slab cache itself.
++ *
++ * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUNT
++ * memcg charging is forced over limit if necessary, to avoid failure.
++ */
++void *
++kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
++				   struct slab_sheaf *sheaf)
++{
++	void *ret = NULL;
++	bool init;
++
++	if (sheaf->size == 0)
++		goto out;
++
++	ret = sheaf->objects[--sheaf->size];
++
++	init = slab_want_init_on_alloc(gfp, s);
++
++	/* add __GFP_NOFAIL to force successful memcg charging */
++	slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, s->object_size);
++out:
++	trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
++
++	return ret;
++}
++
++unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf)
++{
++	return sheaf->size;
++}
  /*
-  * Bulk free objects to the percpu sheaves.
-  * Unlike free_to_pcs() this includes the calls to all necessary hooks
-@@ -5348,10 +5524,8 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- {
- 	struct slub_percpu_sheaves *pcs;
- 	struct slab_sheaf *main, *empty;
-+	bool init = slab_want_init_on_free(s);
- 	unsigned int batch, i = 0;
--	bool init;
--
--	init = slab_want_init_on_free(s);
+  * To avoid unnecessary overhead, we pass through large allocation requests
+  * directly to the page allocator. We use __GFP_COMP, because we will need to
+@@ -8464,6 +8719,11 @@ STAT_ATTR(BARN_GET, barn_get);
+ STAT_ATTR(BARN_GET_FAIL, barn_get_fail);
+ STAT_ATTR(BARN_PUT, barn_put);
+ STAT_ATTR(BARN_PUT_FAIL, barn_put_fail);
++STAT_ATTR(SHEAF_PREFILL_FAST, sheaf_prefill_fast);
++STAT_ATTR(SHEAF_PREFILL_SLOW, sheaf_prefill_slow);
++STAT_ATTR(SHEAF_PREFILL_OVERSIZE, sheaf_prefill_oversize);
++STAT_ATTR(SHEAF_RETURN_FAST, sheaf_return_fast);
++STAT_ATTR(SHEAF_RETURN_SLOW, sheaf_return_slow);
+ #endif	/* CONFIG_SLUB_STATS */
  
- 	while (i < size) {
- 		struct slab *slab = virt_to_slab(p[i]);
-@@ -6838,6 +7012,11 @@ int __kmem_cache_shutdown(struct kmem_cache *s)
- 	struct kmem_cache_node *n;
- 
- 	flush_all_cpus_locked(s);
-+
-+	/* we might have rcu sheaves in flight */
-+	if (s->cpu_sheaves)
-+		rcu_barrier();
-+
- 	/* Attempt to free all objects */
- 	for_each_kmem_cache_node(s, node, n) {
- 		if (n->barn)
-@@ -8251,6 +8430,8 @@ STAT_ATTR(ALLOC_PCS, alloc_cpu_sheaf);
- STAT_ATTR(ALLOC_FASTPATH, alloc_fastpath);
- STAT_ATTR(ALLOC_SLOWPATH, alloc_slowpath);
- STAT_ATTR(FREE_PCS, free_cpu_sheaf);
-+STAT_ATTR(FREE_RCU_SHEAF, free_rcu_sheaf);
-+STAT_ATTR(FREE_RCU_SHEAF_FAIL, free_rcu_sheaf_fail);
- STAT_ATTR(FREE_FASTPATH, free_fastpath);
- STAT_ATTR(FREE_SLOWPATH, free_slowpath);
- STAT_ATTR(FREE_FROZEN, free_frozen);
-@@ -8349,6 +8530,8 @@ static struct attribute *slab_attrs[] = {
- 	&alloc_fastpath_attr.attr,
- 	&alloc_slowpath_attr.attr,
- 	&free_cpu_sheaf_attr.attr,
-+	&free_rcu_sheaf_attr.attr,
-+	&free_rcu_sheaf_fail_attr.attr,
- 	&free_fastpath_attr.attr,
- 	&free_slowpath_attr.attr,
- 	&free_frozen_attr.attr,
+ #ifdef CONFIG_KFENCE
+@@ -8564,6 +8824,11 @@ static struct attribute *slab_attrs[] = {
+ 	&barn_get_fail_attr.attr,
+ 	&barn_put_attr.attr,
+ 	&barn_put_fail_attr.attr,
++	&sheaf_prefill_fast_attr.attr,
++	&sheaf_prefill_slow_attr.attr,
++	&sheaf_prefill_oversize_attr.attr,
++	&sheaf_return_fast_attr.attr,
++	&sheaf_return_slow_attr.attr,
+ #endif
+ #ifdef CONFIG_FAILSLAB
+ 	&failslab_attr.attr,
 
 -- 
 2.50.1
