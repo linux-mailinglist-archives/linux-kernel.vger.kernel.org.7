@@ -1,440 +1,266 @@
-Return-Path: <linux-kernel+bounces-742426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A182B0F18C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:47:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A79DB0F192
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEA958218A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302A89602D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BBF27EFF1;
-	Wed, 23 Jul 2025 11:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D81C245021;
+	Wed, 23 Jul 2025 11:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UfaYhJH2"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y7hHRmB5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782BE1C6B4;
-	Wed, 23 Jul 2025 11:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753271254; cv=none; b=WfjGsF6dajGvti+7H/dpv6J2TupGF0c1OcXBRc74B0zTMHTj7Cz3fra1ndm0QhXn/LPMGd/vNbvmpOgRpfY3thoJm5G9jtFT48m4pyQ3eifOb6AXLcUqkBzGAlttljaR9Cum5rHL4S/UOfkVw5sDtd/1oDmYTJVT71lzmDx9Uiw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753271254; c=relaxed/simple;
-	bh=lkR71ykI2GGAkz9AeWJrbB6bF4tWrtLGNiYyOJqcXqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PHqanIk5192BGYxxUPGGu+xyGJEGEglQSwN42DpMXn+wtE9F/LptGWsmFBiZu1IYHR3iflPPLKhx2ycdVUKtq/G4HK1Jxga8EhCx4sHb3kDwjjG6Tl8E2br5eM7UwB3IFNqWY8K8TRYHzY8v/Y5Qd7YYlBru5hvvDA3FzvzS9K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UfaYhJH2; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b34a71d9208so4592691a12.3;
-        Wed, 23 Jul 2025 04:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753271251; x=1753876051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GE61PfecKBXANrthq5eeV8qbcqVbdmTy/WinYdWGDfY=;
-        b=UfaYhJH2x2BjVCKhzFjj8ULAZiLbGWudOunNK+0JxNlCD6/jIJzMm8YH4lwXm8RlkU
-         TS+J4BDJ22dw8Te8YBrXedG+rw5JUDCl+urHw9ZQJJSfdEZ9jjqWfxgUu5Du1HYIEZM7
-         3piCUIv06cmQhmCtqtprZi5XUulO1J3wu60lxihHcanldIbGeCZ11VaoeFqmfBkUM602
-         ikB3t4F/YveEXPKecbdHRjprzgxePv0s6eSINs2VVy9sCBXmSu6rE/S1u3C9zRAHNcBf
-         HeAd4VS/PrCnF0JBXI+lFZKOIQWOf1+cy1TVnohYG9N9K1DReXXfBEnpOv3oSqCq3BDt
-         0bLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753271251; x=1753876051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GE61PfecKBXANrthq5eeV8qbcqVbdmTy/WinYdWGDfY=;
-        b=TPONYvOYpmI+pajiSjqUKqJkOqdasT9AJ1XX8NXmFdolmm1XwyzsU3gxqStwnqFGxK
-         Edl0Ucc8ZLNJx2tddSZ/trsSjrS1roUXn3nceVdwFci9tA3cOUQdsCv4/8DTOJcUBZO2
-         u1zaKo1QKKAh037Dmh898PZRHFt542QdrEaMchsOR/g/tTSOuzUukNOMf2RkpTMiMd+1
-         ILbUD0P+eThMpizEClUMaqQN3+GUEcrO11TyTfz5kz+iYxMaeDj/nEuTSgLgChcHB0RD
-         vLVvTmR4zZqXmTvuVxvZYpmfmw6JcDNojyo9bZ/QmLPCAoH3VDZmNAyED00z64sTe/Cw
-         JjIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVb0nK8sKMjGwrnGTWVixLanI1r/jsfYGdA5Vw7lP67jmycq/SN+gDBhKFjKtPmL5sKKDDc6x69OPY=@vger.kernel.org, AJvYcCWYm4jNvsdNVQOtd5cXGmvvCaIlgiL6J6FjwpvRHt2ra6niM0pKQ4ZYgKCCVELGzekVAlrTvxelt29/VOR/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+hlwaLYTaSErbcLBtSz4yyzsQlSU4kXNlWjoxo0WOlYEPiooo
-	6e/DvbFUkp27pVK57LipI8mIcbyEi/ONdZpNuKP4LQXnQvylvfwBzgKl
-X-Gm-Gg: ASbGncuVwG78IV9x5gwtQaUh/Bj3Yomm/WafDz5rP8kEd8OvJ/kfgHKuQoKxTlB61nY
-	9bOpQY3aUOyeCZfrL3d8b2b3m3MHCOqJFvTpOuU+IYDx5GLC64N68VwqUyItQT1qIpoKQMBK/U+
-	QptiL3zoXeEgcBqlMRtAZJE8KIlWldL5/Wnw/qPg5/xN1EzmA90emsk/+nAyuHi/VkqbKJacUWg
-	Aiv+cZXsISadifkIXwMXcgOy8w3YzBR0KVBmIAEQt9tn0T8v9jo80nDHLS4gmKHIaOVtDEO6v9h
-	mwwa//gXz7rCkG/fYZWQeAtgnykw3hEEz1rf5COUsLqKgQE1fuYUgb3BY+6w76krj2A8WHG8CG9
-	EpcVvISpprCAd/ddjQtDijjqXgQJPLunWMdBTvA==
-X-Google-Smtp-Source: AGHT+IGfNM67A4dDLJlWRGKcQ7v5mzRt28XCC69PdtxpLQZxOV0eLRK+et91FjmelFBcpTJGsPW1rw==
-X-Received: by 2002:a05:6a21:a49:b0:222:d817:2f4a with SMTP id adf61e73a8af0-23d490405f0mr4172005637.17.1753271251369;
-        Wed, 23 Jul 2025 04:47:31 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([2401:4900:883b:7064:95f6:1448:c7f3:2f4d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e25besm9429171b3a.2.2025.07.23.04.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:47:30 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: anshulusr@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: light: ltr390: Add debugfs register access support
-Date: Wed, 23 Jul 2025 17:16:38 +0530
-Message-ID: <20250723114645.596648-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9400926A0D5;
+	Wed, 23 Jul 2025 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753271287; cv=fail; b=p6cIY/3AAMTjggwqgA1VaZKdc3neK2HEeQfPgwVghQ35oEROclyD7AK7DZQPdToU56s/c6K5EJtFysABP5bwLHOJR6KV0eFS2nHcUwTQI6bGUIYKc8dWXjBBHVbSOVvaMfYTpEGIYdgjTqrMzsmLkqEYYseDpKLeIVK9y8jn8J0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753271287; c=relaxed/simple;
+	bh=PyoN73a22cJ9qFnUpbtDgy1ZSgyfY3PwjjnotRhUx+E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NTN25RUtHWw9UudvCF2tMGshJVAg/IgmNmRtIZqa32aOaIK6c1G2EN+JhMoI0NpL52RCVhDXbnClSXHgRvZ3SAavpF212XzgJ4FQEnSvojkthI2TtdKd8qvfxv6wr9+1ElU2uWHUoNGQ73NHcUojfkNbEC/CxwucZcCG2+LwjYs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y7hHRmB5; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753271286; x=1784807286;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=PyoN73a22cJ9qFnUpbtDgy1ZSgyfY3PwjjnotRhUx+E=;
+  b=Y7hHRmB5ia+xB037c9nywq7l/8G178A+Jby7C0hXGbJ/Y1NtTf1ur0yk
+   tEcpTkxIse4Ozr14TsDn8I7gL65hdsyjGUnjbwrqj+glVLO2pa93Fis9P
+   bO/ruug0aYW+iPG4cUMuSdrb8B58SvPN2LcUbt0iE7UtHg4aYsRt6kIjE
+   9Q0A1on5nkDQfgqjkGMI0VKFNXfpPO7jWrkdFJI3ZcM/3PFSvAEnyemuf
+   hb4cXnC72l3T9/OSBtoNgZWllhoY00oIDo97rfBGAy5/RRb6I6fY5hfID
+   xhWO56eDa3QAjlDDEqBQLDxglVJh2SG3dFd/Dz6CHaL7I+GRv7r5+lRUH
+   w==;
+X-CSE-ConnectionGUID: 8XMDfkBUTnmIoeY27AVIqw==
+X-CSE-MsgGUID: uUN5095zQ5WpVrZVBPZhsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55254940"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="55254940"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 04:48:02 -0700
+X-CSE-ConnectionGUID: QuJWZDZXSkmeCVbsSJExuw==
+X-CSE-MsgGUID: o/cM5vUVSGC8Ol6LyVnc6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="159855724"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 04:48:01 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 04:48:00 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 04:48:00 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.50)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 04:48:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y/cQBINRFtLcC8HW/BnirW928JqYoIm4D5e3UaXRUaF0NGmktf+5OSNf4QWHtnfvh2KJZ0vUB0CA0ia6l+ueLlye8CcbGPv8VOxWHblJTaExWEG6My4mlbKLi/WjdsVFpNtSJ9jDCoB1A0Q4ViA07LshYNgCL7vEFn9BA4O9Araj5jGm1+UzhgMnNW2OgftMRpnSya73TAC4mZN+2vnwI/7jiaFshTvpRPsLh8Kzd9uWwDmoQTyU3nfFe7u4+qMfbNkMXHBzuJ/QQY7Z6NXeYQVH5ftDBKnHzJN3lYCZsPl68XEfGilynDyV+2JeUfZWr59WSQ4VQmSoQyvLRyIkRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2rn/razKc8H3Z1BopZ4iXEO8xO7f+M+0j/FBcktsE/8=;
+ b=VKR197DUxJjY2RhVlb1tB4dUPrnKvFpayaK/vWbMKDZSZY6y0nTK9+9rRr7Yvq4zq5KGg17ObvxMebXUbcHzneNQaylMZIX/t7Y1NHty9zNAVWKWgwIzr7dcyYu/YUg6ArMPnMvZRelE8ZxRSF/1/zWlXYQAZPbPbWZjGX7Us9tubwWC00nBGb2KUafDhwoFFMVqRJPjYVuoTSdoV/TQtz2UcI6wvFqi/EZhQGQkDnUhyYEgIpdv8+KvApw5k32kQl3f+jesk+WZA1HPNHHPn+tAYByXTC/Gwpnm8a7lfAJqO/IQ8OrB4HuftB0X3bULZKUXuuicFJTJVHEunPY4Sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
+ by SJ2PR11MB8516.namprd11.prod.outlook.com (2603:10b6:a03:56c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 11:47:57 +0000
+Received: from MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
+ ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 11:47:57 +0000
+Date: Wed, 23 Jul 2025 13:46:44 +0200
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
+	<kas@kernel.org>, Alexander Potapenko <glider@google.com>, "Peter Zijlstra
+ (Intel)" <peterz@infradead.org>, Xin Li <xin3.li@intel.com>, Sai Praneeth
+	<sai.praneeth.prakhya@intel.com>, Jethro Beekman <jethro@fortanix.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Sean Christopherson <seanjc@google.com>,
+	Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, "Mike
+ Rapoport (IBM)" <rppt@kernel.org>, Kees Cook <kees@kernel.org>, "Rick
+ Edgecombe" <rick.p.edgecombe@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
+	<stable@vger.kernel.org>, Borislav Petkov <bp@suse.de>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] x86: Clear feature bits disabled at compile-time
+Message-ID: <5pzffj2kde67oqgwpvw4j3lxd3fstuhgnosmhiyf5wcdr3je6i@juy3hfn4fiw7>
+References: <20250723092250.3411923-1-maciej.wieczor-retman@intel.com>
+ <2025072310-eldest-paddle-99b3@gregkh>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025072310-eldest-paddle-99b3@gregkh>
+X-ClientProxiedBy: DB6PR0301CA0092.eurprd03.prod.outlook.com
+ (2603:10a6:6:30::39) To MN2PR11MB3934.namprd11.prod.outlook.com
+ (2603:10b6:208:152::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|SJ2PR11MB8516:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0099589f-1193-4bec-a2d5-08ddc9dec492
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?743c5ubnWOkSrBlmCLv5rbDsAnCgs/3OAhrBTMN8QFHaEG+nP7FLmu8KG5?=
+ =?iso-8859-1?Q?xYzvSLNhF1l8atoo+lH1E982lT2gGSy7cW8Gwfcz1/64R5+cnUBaDY/oBs?=
+ =?iso-8859-1?Q?6XhZC0j5nv3QEgliIYMSuSS+vDEclmCE610/Bz1OW88tPPXGbJiO5eKeUN?=
+ =?iso-8859-1?Q?NsxHpBU6DkSHGv8RFH2bA9LzJjDWzVSvUNMtk2Dsdu2r2+ZmOmZpc/wfUu?=
+ =?iso-8859-1?Q?75gwYweehws41FciutrIMsMfa3IqVjoNIkCaD1Q51G7DtmrcXCas3UXL6p?=
+ =?iso-8859-1?Q?hJOdpPAoZ4rr1l4+9/9sGlP++DaMZ38XzuC3tgcu+rgevmijKtMRv+pPiZ?=
+ =?iso-8859-1?Q?8XJ2b0WBFgMxvbdZSsZGcpo8FHeZo9PT8BMBmz8w14re+bk2phAC88D5pG?=
+ =?iso-8859-1?Q?zRJz1k+WdQrHm1CePi5Jow0F6YgvCBDfDw764ohRIH0slgXdvpkMYALDxI?=
+ =?iso-8859-1?Q?T+86EoTZwQLlorm808ry8bsMftvsftDJMCpxM01iIic5DevKcujUYxWtBK?=
+ =?iso-8859-1?Q?wat/VpIJhZjCC1er6pN7HcVoOuBPGVwT7m97+SKitV9+KSGJnKESe4i/kp?=
+ =?iso-8859-1?Q?yjy3Z4lqGi6pjdjUXvPIAchpku68XDAbWpvD92JhtTfBQla46ATMU7yLBI?=
+ =?iso-8859-1?Q?Txl9iwwYwJatNJnev9q8pm48/Uek+UcKmq459SHmkw5j8q6GZyjTThVEV/?=
+ =?iso-8859-1?Q?RkYrpYCy1ehHepiXTn2N7hLwiJxYIf1rI8dq5NzkLu9uRMLqmAIRj4WIMc?=
+ =?iso-8859-1?Q?eW9m8UKrKf37BEAXqWwAPNKF7b2/9k8o1+L4ice1GyRSqBfvBIRMo895Cv?=
+ =?iso-8859-1?Q?SiGfZl2wO31HhPDBr3XrMvzPesMeS302xBfZLfP/cLJrqJItZleUMEzgSj?=
+ =?iso-8859-1?Q?I14FP9HSoD2fmraVSQmnQXP8+Dn2Hci2Z9VgOptiIOF7LY4lvUgWFwFG98?=
+ =?iso-8859-1?Q?gQ+U3IuAxhlui3EiFcrPPaRjV54TeQVjTREBwosjmDMdez1Ib1w/r7gdQP?=
+ =?iso-8859-1?Q?TZ+ZRrflYZ4bLRIpIuG/L2jdrMBzCDxNOn9tjh+DySfenOEMjTjfhgR4WV?=
+ =?iso-8859-1?Q?7f6R/SMCJdlZOOmWmmTsPg4v1k1Jc3iTtTrDIX3GNI6KiQd9TmoPkqWU8h?=
+ =?iso-8859-1?Q?DIYCaiVa6Bsaq956jPyRsDxADsMLKX8AlIIVePlJwpg6HxFXADa/uJF2HD?=
+ =?iso-8859-1?Q?4TzzHpKnl3BQYYtSB+T7vKcG9OZFNsa4mZJD9l+rBvN731kecddse4qXpE?=
+ =?iso-8859-1?Q?HLXiquF/yS5ybmesKWhiMwqGok2PSdk2VOCv+6w/ECI17Dm4bEfjjkilET?=
+ =?iso-8859-1?Q?Q+6dfAJKGx+Z9SzoOXmzjfDvzPTcjusinhYbKTBeGN0KdVLaV+6TYQza+Z?=
+ =?iso-8859-1?Q?3qmZyeofIy1SdjMU/J1B/ZF5vgR2FLDvIeBQeUYIHIt0YAVGdCb16YOXa7?=
+ =?iso-8859-1?Q?MroTnTpRqo43yOoNUCxO11QE9gHackyh0nsM30nsCn2Cw/YyZbEma0+yMR?=
+ =?iso-8859-1?Q?k=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?zcB0l7G+XuXak9TI48nBHEzSufnxc9iS8JBgfnX7L+AQep9wsyeT3F/7vL?=
+ =?iso-8859-1?Q?Ot88ol6MKFDJJ4vEc8F8XCweUSahaN1Qe52K2uF47O6eo9h6/SnRJFoS6J?=
+ =?iso-8859-1?Q?OoEuN++TFcTaVGSYSQO5K3+ZNl/GcMP55u1kvkk5qtSdmHiGOpFeOIMU1S?=
+ =?iso-8859-1?Q?Zgev09ktlKQChZf8i2zJ0jbfOlikUAA4bw147kDU4Yf7FhGT4KfA4SE3l7?=
+ =?iso-8859-1?Q?AuU+g4kUcCnnKLMnvm8WT1BZiJA3oz9chN/ZO2NjCgN+4RTOrlJg3dCzWI?=
+ =?iso-8859-1?Q?iquJts99tEgIfpwv7u6j4mEP7MrD3NZgmuRYLeUX9sr2EnqXpQDaZxF7bW?=
+ =?iso-8859-1?Q?1g/nLuYgCiO8yN9RcJHj2O9YnnNch4neOCX3q9BebytBjxKySPcg7P1v6j?=
+ =?iso-8859-1?Q?mMjvAtMd39W9+wUZTsPl4PChOTDyEmLob3heHHzKIa3MMmFjdVeoOSdXGH?=
+ =?iso-8859-1?Q?CEignmObBmUZNq8ipNXbyl5ejNKNA67x+QIZN022mcUGA2kJlLpIccvkTU?=
+ =?iso-8859-1?Q?wtV6z8A4x2HqmLEHE2HOd7HlyarGUvVB4njL7zb+mrteIdhEPiHKPSSSl6?=
+ =?iso-8859-1?Q?+JhUjgNXi6alT1rQsFkYGli9+2TujlC5LIbl0quu5DCaBGE7GP7/iTPPht?=
+ =?iso-8859-1?Q?sLZyMc5Ugr1Q4D0f9Rq3Ts8ZsHtlYpzad7d6bDHAmxjHrHD8XNCODqPiOn?=
+ =?iso-8859-1?Q?XRB9gkV5qidrocnGAYGPbi4ZdHwd1UUycjiHgS0l4E4QxcC5sgFSxNepu8?=
+ =?iso-8859-1?Q?R5g/oqWfVAoDBUc4TudMtbxad9NQgd2AebNpqjyQlR/lmlqMRcYHa9r7qr?=
+ =?iso-8859-1?Q?uOlWKahwJHNbbUibvJ46dmq4hpwLLtDvhb7NSkH16weekOZ/3VifT7pdlW?=
+ =?iso-8859-1?Q?ygdx/unGbKErBrRL7eKvxoQ5w0He8ZooGL7Zs7+9OqY3gbem1FKvpCwVJ2?=
+ =?iso-8859-1?Q?MrZYb/iTl2cFI21a9tRG2taBtfOQUDnhoaoZLDGIC7JFOsnLGKiCgdTjQH?=
+ =?iso-8859-1?Q?FM1qtloLDFM4Sq9o05mwx/UkHknG976ZB7cRw/R/qe4Ic4sPrS4oIQIRFg?=
+ =?iso-8859-1?Q?yYenkCJllG/6iEmwrVvDSPh+dpHPTIIG+iVke7ayyhRyU/pDogH88zW5xt?=
+ =?iso-8859-1?Q?2jI4UrQb+3sjRIxC3uPguPtdXiqESbEePK9TiN1CzZAJhFgSFO58ma0zxE?=
+ =?iso-8859-1?Q?wtkbfOp6rOmbwptm/4nQNUtm2HidORO/kmfZmfZdRn2F+DxUgeqVrJwszZ?=
+ =?iso-8859-1?Q?ERq6J0yfb490IE8uyUx/vc41W1FdnU8d/OeHGQCuDMFaVEmg+kvtTo/9FB?=
+ =?iso-8859-1?Q?NLtQuqVErfXpT8mx/l+Pjvq1pr3KF3vlV7oBBKwYTzF2sIAH59yOZJv8Mk?=
+ =?iso-8859-1?Q?vRTIjZaAgYmMuwE9dNGAyWydAhnKYi63+5H2ii0SV6GPshjsrF9PchT7WQ?=
+ =?iso-8859-1?Q?5NsSuQuOL/FCJ/VESgH4wYB0RauIPXDC4QiMK5qZNpec0VsvM3v3crkh0V?=
+ =?iso-8859-1?Q?vAb90WBb0QlIHBMeVAwp4enkPzpxQbvenfn295I4uC0pFQITvp5CeY0gHN?=
+ =?iso-8859-1?Q?uAvrL0HmM1llQC2CpRcrof42Fl3e/mP13KPaPWs1n+qKvJ9ZVkaOKMNQ0i?=
+ =?iso-8859-1?Q?ZwhnoJNMIJXUyUTdiDLcSBDlKgv5tMVK58I/OTXHWWpjA6Cw5izM0Kf3D3?=
+ =?iso-8859-1?Q?w430csZfGUeYJRarnfQ=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0099589f-1193-4bec-a2d5-08ddc9dec492
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 11:47:57.6326
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8RKZdhEjJS2uIQteyTFaPBpCF4dUmtmbNVbJWutM4Iq/Zwhwdze2QhGX7noZRxy5EcaJm049IkK9cqLZV0baT5szx+VVUO7XjVjCoQvAIM0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8516
+X-OriginatorOrg: intel.com
 
-Add support for debugfs_reg_access through the driver's iio_info structure
-to enable low-level register read/write access for debugging.
+On 2025-07-23 at 11:45:22 +0200, Greg KH wrote:
+>On Wed, Jul 23, 2025 at 11:22:49AM +0200, Maciej Wieczor-Retman wrote:
+>> If some config options are disabled during compile time, they still are
+>> enumerated in macros that use the x86_capability bitmask - cpu_has() or
+>> this_cpu_has().
+>> 
+>> The features are also visible in /proc/cpuinfo even though they are not
+>> enabled - which is contrary to what the documentation states about the
+>> file. Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
+>> split_lock_detect, user_shstk, avx_vnni and enqcmd.
+>> 
+>> Add a DISABLED_MASK() macro that returns 32 bit chunks of the disabled
+>> feature bits bitmask.
+>> 
+>> Initialize the cpu_caps_cleared and cpu_caps_set arrays with the
+>> contents of the disabled and required bitmasks respectively. Then let
+>> apply_forced_caps() clear/set these feature bits in the x86_capability.
+>> 
+>> Fixes: 6449dcb0cac7 ("x86: CPUID and CR3/CR4 flags for Linear Address Masking")
+>> Fixes: 51c158f7aacc ("x86/cpufeatures: Add the CPU feature bit for FRED")
+>> Fixes: 706d51681d63 ("x86/speculation: Support Enhanced IBRS on future CPUs")
+>> Fixes: e7b6385b01d8 ("x86/cpufeatures: Add Intel SGX hardware bits")
+>> Fixes: 6650cdd9a8cc ("x86/split_lock: Enable split lock detection by kernel")
+>> Fixes: 701fb66d576e ("x86/cpufeatures: Add CPU feature flags for shadow stacks")
+>> Fixes: ff4f82816dff ("x86/cpufeatures: Enumerate ENQCMD and ENQCMDS instructions")
+>
+>That is fricken insane.
+>
+>You are saying to people who backport stuff:
+>	This fixes a commit found in the following kernel releases:
+>		6.4
+>		6.9
+>		3.16.68 4.4.180 4.9.137 4.14.81 4.18.19 4.19
+>		5.11
+>		5.7
+>		6.6
+>		5.10
+>
+>You didn't even sort this in any sane order, how was it generated?
+>
+>What in the world is anyone supposed to do with this?
+>
+>If you were sent a patch with this in it, what would you think?  What
+>could you do with it?
+>
+>Please be reasonable and consider us overworked stable maintainers and
+>give us a chance to get things right.  As it is, this just makes things
+>worse...
+>
+>greg k-h
 
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
-Testing details:
-================
--> Tested on Raspberrypi 4B. Follow for more details.
+Sorry, I certainly didn't want to add you more work.
 
-akshayajpi@raspberrypi:~ $ uname -r
-6.12.35-v8+
-akshayajpi@raspberrypi:~ $ uname -a
-Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025 aarch64 GNU/Linux
+I noted down which features are present in the x86_capability bitmask while
+they're not compiled into the kernel. Then I noted down which commits added
+these feature flags. So I suppose the order is from least to most significant
+feature bit, which now I realize doesn't help much in backporting, again sorry.
 
--> Sensor Detection, overlaying of device tree and Driver loading
-akshayajpi@raspberrypi:~ $ i2cdetect -y 1
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:                         -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
+Would a more fitting Fixes: commit be the one that changed how the feature flags
+are used? At some point docs started stating to have them set only when features
+are COMPILED & HARDWARE-SUPPORTED.
 
-akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
-akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
-ltr390                 16384  0
-industrialio          110592  1 ltr390
-regmap_i2c             12288  1 ltr390
-
-
-1. Disable sensor via debugfs, verify from i2cget and debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 | sudo tee direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x0 | sudo tee direct_reg_access
-0x0 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x0
-0x00
-
-2. Disable sensor via debugfs and read data status via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-715
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-715
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-715
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
-0x28
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
-0x00
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
-0x7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-
-3. Re-enable sensor via debugfs and read data status via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x2 | sudo tee direct_reg_access
-0x0 0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-715
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-718
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-727
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
-0x7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x8
-
-4. Enable interrupts via sysfs and verify via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
-1
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x19
-0x14
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x19 | sudo tee direct_reg_access 
-0x19
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x14
-
-5. Write falling threshold via debugfs, verify the threshold written via sysfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x24 0x32 | sudo tee direct_reg_access 
-0x24 0x32
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x32
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x25 0x0 | sudo tee direct_reg_access 
-0x25 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x26 0x0 | sudo tee direct_reg_access 
-0x26 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_falling_value 
-50
-final value = 0x0 << 16 | 0x0 << 8 | 0x32 = 50
-
-6. Block light and verify interrupts getting generated.
--> Before blocking light
-cat /proc/interrupts|grep ltr390
- 58:         0          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
-
-->After blocking light
-58:         92          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
-
-7. write value to a non-writeable reg via debugfs.
--> LTR390_ALS_DATA_0|1|2 are non-writeable registers. Writing to them gives I/O error as expected.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd 0x1 | sudo tee direct_reg_access
-0xd 0x1
-tee: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe 0x1 | sudo tee direct_reg_access
-0xe 0x1
-tee: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf 0x1 | sudo tee direct_reg_access
-0xf 0x1
-tee: direct_reg_access: Input/output error
-
-8. read value from a non-readable reg via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x2 |sudo tee direct_reg_access 
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-cat: direct_reg_access: Input/output error
-
-
-9. do simple raw reads from debugfs.
--> reading raw value via sysfs:
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-705
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-695
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-711
-
--> reading via debugfs (should be in the same ballpark of sysfs)
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd | sudo tee direct_reg_access
-0xd
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0xC7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe | sudo tee direct_reg_access
-0xe
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf | sudo tee direct_reg_access
-0xf
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0x0
-final value = 0x0 << 16 | 0x2 << 8 | 0xc7 = 711
-
-10. Testing reads on registers beyond max_register.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x27 | sudo tee direct_reg_access 
-0x27
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-cat: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x28 | sudo tee direct_reg_access 
-0x28
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-cat: direct_reg_access: Input/output error
-
- drivers/iio/light/ltr390.c | 99 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 89 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index ee59bbb8aa09..1f6ee0fd6d19 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -38,12 +38,20 @@
- #define LTR390_ALS_UVS_GAIN		0x05
- #define LTR390_PART_ID			0x06
- #define LTR390_MAIN_STATUS		0x07
--#define LTR390_ALS_DATA			0x0D
--#define LTR390_UVS_DATA			0x10
-+#define LTR390_ALS_DATA_0		0x0D
-+#define LTR390_ALS_DATA_1		0x0E
-+#define LTR390_ALS_DATA_2		0x0F
-+#define LTR390_UVS_DATA_0		0x10
-+#define LTR390_UVS_DATA_1		0x11
-+#define LTR390_UVS_DATA_2		0x12
- #define LTR390_INT_CFG			0x19
- #define LTR390_INT_PST			0x1A
--#define LTR390_THRESH_UP		0x21
--#define LTR390_THRESH_LOW		0x24
-+#define LTR390_THRESH_UP_0		0x21
-+#define LTR390_THRESH_UP_1		0x22
-+#define LTR390_THRESH_UP_2		0x23
-+#define LTR390_THRESH_LOW_0		0x24
-+#define LTR390_THRESH_LOW_1		0x25
-+#define LTR390_THRESH_LOW_2		0x26
- 
- #define LTR390_PART_NUMBER_ID		0xb
- #define LTR390_ALS_UVS_GAIN_MASK	GENMASK(2, 0)
-@@ -98,11 +106,62 @@ struct ltr390_data {
- 	int int_time_us;
- };
- 
-+static bool ltr390_is_readable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case LTR390_MAIN_CTRL:
-+	case LTR390_ALS_UVS_MEAS_RATE:
-+	case LTR390_ALS_UVS_GAIN:
-+	case LTR390_PART_ID:
-+	case LTR390_MAIN_STATUS:
-+	case LTR390_ALS_DATA_0:
-+	case LTR390_ALS_DATA_1:
-+	case LTR390_ALS_DATA_2:
-+	case LTR390_UVS_DATA_0:
-+	case LTR390_UVS_DATA_1:
-+	case LTR390_UVS_DATA_2:
-+	case LTR390_INT_CFG:
-+	case LTR390_INT_PST:
-+	case LTR390_THRESH_UP_0:
-+	case LTR390_THRESH_UP_1:
-+	case LTR390_THRESH_UP_2:
-+	case LTR390_THRESH_LOW_0:
-+	case LTR390_THRESH_LOW_1:
-+	case LTR390_THRESH_LOW_2:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool ltr390_is_writeable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case LTR390_MAIN_CTRL:
-+	case LTR390_ALS_UVS_MEAS_RATE:
-+	case LTR390_ALS_UVS_GAIN:
-+	case LTR390_INT_CFG:
-+	case LTR390_INT_PST:
-+	case LTR390_THRESH_UP_0:
-+	case LTR390_THRESH_UP_1:
-+	case LTR390_THRESH_UP_2:
-+	case LTR390_THRESH_LOW_0:
-+	case LTR390_THRESH_LOW_1:
-+	case LTR390_THRESH_LOW_2:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static const struct regmap_config ltr390_regmap_config = {
- 	.name = "ltr390",
- 	.reg_bits = 8,
- 	.reg_stride = 1,
- 	.val_bits = 8,
-+	.max_register = LTR390_THRESH_LOW_2,
-+	.readable_reg = ltr390_is_readable_reg,
-+	.writeable_reg = ltr390_is_writeable_reg,
- };
- 
- /* Sampling frequency is in mili Hz and mili Seconds */
-@@ -194,7 +253,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 			if (ret < 0)
- 				return ret;
- 
--			ret = ltr390_register_read(data, LTR390_UVS_DATA);
-+			ret = ltr390_register_read(data, LTR390_UVS_DATA_0);
- 			if (ret < 0)
- 				return ret;
- 			break;
-@@ -204,7 +263,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 			if (ret < 0)
- 				return ret;
- 
--			ret = ltr390_register_read(data, LTR390_ALS_DATA);
-+			ret = ltr390_register_read(data, LTR390_ALS_DATA_0);
- 			if (ret < 0)
- 				return ret;
- 			break;
-@@ -454,14 +513,14 @@ static int ltr390_read_threshold(struct iio_dev *indio_dev,
- 
- 	switch (dir) {
- 	case IIO_EV_DIR_RISING:
--		ret = ltr390_register_read(data, LTR390_THRESH_UP);
-+		ret = ltr390_register_read(data, LTR390_THRESH_UP_0);
- 		if (ret < 0)
- 			return ret;
- 		*val = ret;
- 		return IIO_VAL_INT;
- 
- 	case IIO_EV_DIR_FALLING:
--		ret = ltr390_register_read(data, LTR390_THRESH_LOW);
-+		ret = ltr390_register_read(data, LTR390_THRESH_LOW_0);
- 		if (ret < 0)
- 			return ret;
- 		*val = ret;
-@@ -480,10 +539,10 @@ static int ltr390_write_threshold(struct iio_dev *indio_dev,
- 	guard(mutex)(&data->lock);
- 	switch (dir) {
- 	case IIO_EV_DIR_RISING:
--		return regmap_bulk_write(data->regmap, LTR390_THRESH_UP, &val, 3);
-+		return regmap_bulk_write(data->regmap, LTR390_THRESH_UP_0, &val, 3);
- 
- 	case IIO_EV_DIR_FALLING:
--		return regmap_bulk_write(data->regmap, LTR390_THRESH_LOW, &val, 3);
-+		return regmap_bulk_write(data->regmap, LTR390_THRESH_LOW_0, &val, 3);
- 
- 	default:
- 		return -EINVAL;
-@@ -586,6 +645,25 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
-+						unsigned int reg, unsigned int writeval,
-+						unsigned int *readval)
-+{
-+	int ret;
-+	struct ltr390_data *data = iio_priv(indio_dev);
-+
-+	guard(mutex)(&data->lock);
-+
-+	if (!readval)
-+		return regmap_write(data->regmap, reg, writeval);
-+
-+	ret = regmap_read(data->regmap, reg, readval);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static const struct iio_info ltr390_info = {
- 	.read_raw = ltr390_read_raw,
- 	.write_raw = ltr390_write_raw,
-@@ -594,6 +672,7 @@ static const struct iio_info ltr390_info = {
- 	.read_event_config = ltr390_read_event_config,
- 	.write_event_value = ltr390_write_event_value,
- 	.write_event_config = ltr390_write_event_config,
-+	.debugfs_reg_access = ltr390_debugfs_reg_access,
- };
- 
- static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
 -- 
-2.43.0
-
+Kind regards
+Maciej Wieczór-Retman
 
