@@ -1,262 +1,116 @@
-Return-Path: <linux-kernel+bounces-742859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686AEB0F773
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0779DB0F776
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7E117D0EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811455618C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3F31C1AAA;
-	Wed, 23 Jul 2025 15:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6C91A5B8F;
+	Wed, 23 Jul 2025 15:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I00cJBY/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmBKNNWa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF1F3BB48;
-	Wed, 23 Jul 2025 15:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285821; cv=fail; b=YYcnyrzNLH45SEiQblesIO7vYO317A6MEHmO8gb1ZwiHtErqx/TlytgzGioFNQF6ldQ46KX6NUbjoBz6DMCdGY6qyqbu/jCc/3VLBSEOIcnhXYJTA7VOxxDm4Wd+EblnCAjGMZXH6g6JG0VgOTa7W5+a7SBeXxWMdQ7lIA21OwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285821; c=relaxed/simple;
-	bh=Sztu9mpjje1QgWYBWCD3b9f5M0Bs+ur9HqxQX4w2mw8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oRSifT6H64LBstZE2Elzin3Uy6mGg5R70GF2FGwjuqVqmWDTfgEPQV003vpq40lrh+zLLSWmTFi7LzrkyfUl9b+TCEOaq9+Ue6I60YPpK3QiCP0VTLzPMuVBvAAcp+cVx8EA7I/AKl2JlYoXVhE+dv897KNbdG6cMXkYat14wYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I00cJBY/; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753285821; x=1784821821;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Sztu9mpjje1QgWYBWCD3b9f5M0Bs+ur9HqxQX4w2mw8=;
-  b=I00cJBY/04ef7KGjY3IjQEcerVYwDYpEUomxuL3i03yLCitiunKlGSBx
-   73qEPmF5+SJlBwM/ZYWhPJVZh4FKcA3wNe3mMEC4hdEnz8+F5IIdD8r/z
-   7IS8lBw9COtMdBzUgPmr9hETRRsFQQOzd7VJ8nitwXH3baln1aqMSLrVk
-   vMkpoJrvs/r10f7C1z5rSrH4mwd1mMpF864Ovw265US+GRpnmFoZo80a6
-   fpVoTKtwYVCui2T7oBsbCW8N7Nw3VD8ti7+kTAx7Gp6PmRhA4JCCU1YUv
-   8tY0AcyKlV2MfmCehKezPHoVFo16Rwi/OkWZznIVvI0eANDId7KlNKpd2
-   A==;
-X-CSE-ConnectionGUID: eeRFDMWCRkqVv2rngicQYg==
-X-CSE-MsgGUID: XWW4OkxrT3Sh4zt9RxMqfg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="73030665"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="73030665"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:50:12 -0700
-X-CSE-ConnectionGUID: j1GSNcCzQVyvH7ZCsrTdKg==
-X-CSE-MsgGUID: wK46uuxASSOP49J3pxcoTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="159888873"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:50:11 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 08:50:10 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 08:50:10 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.70)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 23 Jul 2025 08:50:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PKsxPRxzUrFEjPie8lEq5GxgqJI0+bYNHi+0Sz7+CNrOpDFaTVgOfFTyPMQPLt8I4Ptn53OEI2w/TnSb5hEThHeveHmPDrT8O0DLdxaVSesA6dUZsfzNZXc4Vtsa53ukr/sQVyHf9y2nXyunW2SS+TjJvuJYsLRF/YR6V5AcUb+WVfq3Oi2tlJAddygV7kyp+ZPOU1BmdefMtHdWYmV7mUZPDylrx5Z3PI+/eRsGow6vjcegUDXaw06MM0Cx/D4f4WhbXz5YEfeeAAxrlWhAXhHBbjziFpqoB9D1IP9YKN2zJz/SJLqB21gRpMDfRoihI6wtAXr0b9kmo3FK5hYOLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QlSe85YeJdNjhtw3GYMgWOKWfWgsSet5fo5tLsjwRoo=;
- b=J6CkDcE1iGSu5MOfjlnyAiKr3Tzja7zuNHFK4RDLbAtXQCOwJAcuDWWMWR7Cyv5yGVY8GY+qLgZ2HmcN2H3STkcZUv0uHjv4/POuxXOTe88rrMhGhXjABuRabnAAplFDRu9KjfZlTiUbM4boZ7NIjTmMs7vCPg+eB5TpLNiScnzwEeViUgxu2YMdF1g2RpTfz8Ztd07nyIhzIWvfIEHa0adUFZFfB8D6DsGHd0bgm4pvYlI12pdxHjRUN7nOP9oW7MdBJMME73WA1nVWh5x8jUsrC4joUE/ndne2IlIbdR6KXMmwtqSn47a9qtVHwovasDaWtBS7igubVIWuGpoQtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by PH7PR11MB6524.namprd11.prod.outlook.com (2603:10b6:510:210::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Wed, 23 Jul
- 2025 15:50:08 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%5]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
- 15:50:07 +0000
-Date: Wed, 23 Jul 2025 12:50:01 -0300
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-CC: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, <linux-um@lists.infradead.org>, "Richard
- Weinberger" <richard@nod.at>, <intel-xe@lists.freedesktop.org>, "Linux DRI
- Development" <dri-devel@lists.freedesktop.org>
-Subject: Re: linux-next: Tree for Jul 21 [drivers/gpu/drm/xe/xe.ko]
-Message-ID: <di56uabghjhn6pst3byqplwkpy6oin6gjqjlvklolp7h6kz4vc@ygemqab4dj6t>
-References: <20250721174126.75106f39@canb.auug.org.au>
- <70458c86-597a-4346-b18c-1fbd9a833a55@infradead.org>
- <esdm6jfdkdbaeaphyhtfsckiii2tptdpe6dffddp5sqyg2klhk@b5dtuayqqpht>
- <22f5d759-e79c-4231-bf4b-2e498543aa5b@infradead.org>
- <vpdxxpbbirslnp5m2sdaz74ehdwc5tp54fp6rp2kxtt7vmr23e@lnp5lp7vzryy>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <vpdxxpbbirslnp5m2sdaz74ehdwc5tp54fp6rp2kxtt7vmr23e@lnp5lp7vzryy>
-X-ClientProxiedBy: SJ2PR07CA0015.namprd07.prod.outlook.com
- (2603:10b6:a03:505::28) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A243BB48;
+	Wed, 23 Jul 2025 15:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753285831; cv=none; b=BZeZyF7kv7+qlfnQQSZAGhIgs95My/Pl8M6MHgV584SQEudZGmz7PeAGJDyoo6hP6QqWWswpM/6SldR/g0KGOcs+R8ITO1XKPH+rmsh+jldYgdVnObPwnLrLcO6CI/edwQojO+3M8AjhkF8ZyTXxpEFDkRbSfF0zij//JtLh0+0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753285831; c=relaxed/simple;
+	bh=q0RdIwl2onvcmCTOyNGzyc8T7XKOzlJKJ3pq4M0YgrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EUpr3FPCUE81IWvx14tBI3q6IeiLJe4gkKqOQGKlf+yq3DwKA+eYfOorM116DmdegKYZOqtgmMfGqOL91NOYMffT5+wF6+lGD6kHqaBmg5PjTH2xWEucZM+a7dTE5zU4BoTAK4WqjBdfFohlk6xFstad/mPCka8pYgnHBW103Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmBKNNWa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51412C4CEE7;
+	Wed, 23 Jul 2025 15:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753285830;
+	bh=q0RdIwl2onvcmCTOyNGzyc8T7XKOzlJKJ3pq4M0YgrQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SmBKNNWav95G3vsgJvAXo6iiufNuKUnjGCOlLlJ6awlSazcT+GVpf/l5k87yZbNFn
+	 K3w14Y242PXRz3nw78+h6Bohl6wG5U54VpWGUqdcp902wpdo/m8CZ9QcdbAXqoUkC/
+	 E88MH/T5icJwck0NvRSwhX42ciMp0O4yRqq3ubK7dtAfV0yROA1MpfN0wepLgWQH2p
+	 pyIZKgqzA8UmZShrY5ukSSCQS83TLa3qcZKjZhtLj10JUjMMS6eHuhtoAd7S5qsi3k
+	 g6OXWs2k+9kN0XPOPyAYmdCVHrVdoerUCnEJG5Zsw9QA9QM5ruBrYV7+OvfkZZJipn
+	 G9io2fsDkj9ZA==
+Date: Wed, 23 Jul 2025 16:50:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] dt-bindings: iio: adc: rockchip-saradc: Allow
+ use of a power-domain
+Message-ID: <20250723165021.4e2dd324@jic23-huawei>
+In-Reply-To: <20250723085654.2273324-4-jonas@kwiboo.se>
+References: <20250723085654.2273324-1-jonas@kwiboo.se>
+	<20250723085654.2273324-4-jonas@kwiboo.se>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH7PR11MB6524:EE_
-X-MS-Office365-Filtering-Correlation-Id: f49bdae9-7d50-4c74-c524-08ddca0098b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CevDlUk7xRLh9W9XLjw84sE0FlqxJoOJp87gUE1FhlU7SvE+wRopxYJAF72n?=
- =?us-ascii?Q?DHzazNYjoGbYVr/uGbXsl30bQjhxKqVrBRwoyOYRCUdVpQhsLahdT2x7gFHH?=
- =?us-ascii?Q?cfNbQ9d9jynOU/7Vkr2vVu/U2kroMxebkKi9tzHzKqlaVcvCmTO8J2g+nb0k?=
- =?us-ascii?Q?aalVr7n18frTjV4x1NZkDnY5TgwOwBFSvMx5Xizfwb0hrtXUm+xYzI6O5/tH?=
- =?us-ascii?Q?02RSS6gpfXceU0dE7bjI4UG1x8JiS97YwNIk1aB8ezDmUpxQQmRDdbEWXdzb?=
- =?us-ascii?Q?H/fUfxvvX/YtrAkLR/aAe8vICasThfq+q8Cf37aoiAac78gfIJpHnaQnsGV7?=
- =?us-ascii?Q?/0Hl3Yw4mihOg9WRMwsiSD8Db1VVicwo3l6Y4jg/TChzmVO+pTflOa01RZbQ?=
- =?us-ascii?Q?M05RXuX9d5UtoEojuEdhfd1ynnzy+DwXKd8VW1oxUKOlrkMUdqsySyP2uY/N?=
- =?us-ascii?Q?F7PRyIfHzIL7RaClQtG66bCM+0rfeLOScm6YDlpiThVm4KCcKdiHkZM7vZpK?=
- =?us-ascii?Q?F6qgD6XlC9ldioNO/ENynZ4Lox5f4a9nkmYqUba3X3zyBPVbMYl0lAbw67qr?=
- =?us-ascii?Q?OPdIN4F0YAia1XJBf/TCmz0cHUyxgAYZYRmohhpqLetOyYDUmgrpGBLV6qWz?=
- =?us-ascii?Q?gFxmg6VDRCJehzf920kw9lFzsQtJY1DYUsuiQ0ajDZkofgXq2XIlCl877FRA?=
- =?us-ascii?Q?3LkPU90zLWgV/R8LzLAq60Rrnys/q7A5wDJDmXsfgvqE43JVNcdD+5cC9Fj0?=
- =?us-ascii?Q?4X9SjfKF8Vz7cf7Rf1Z7+eVicyO51jAicJK64nr9kwbadnBPP0ryi3s1HeyL?=
- =?us-ascii?Q?Owt6uJDzAgmE3u9sIyhjJPsw0NAGSKEqbhB9GOxR8pbi4UcqOFO+8p9yNufB?=
- =?us-ascii?Q?TeyMq7msP0S9kjkbPyTfwg0GT842abNHqB73YLO2sO1YdvBRQ6MhXRGOJEDp?=
- =?us-ascii?Q?VBvHj8lIpfN2SjH+T2+nYrlUCdjkzunrQ0rgHUvQI/xa7nYAc70p8nXpH13M?=
- =?us-ascii?Q?dm2qVwFUQeWR3gbuygq07EoY8sxvJCxq5hqiiAzwi5NfnSv7GTTodSJHMPrY?=
- =?us-ascii?Q?UESviqd63ZWMoughfVI6qpENZTCOq/CSm/1z0edEDeFwhhs5TnBfz8yHlmVp?=
- =?us-ascii?Q?K1HblNVTUnHLXUCOChGiQn2/UHfjJMFE9GpJO3+nx2ipIPS8PTHwm13SsXnu?=
- =?us-ascii?Q?glj+ZM5HgpOgEmh9YDMfeC52IPZW50nWhZ/dMqjUw4BA2KndYb3rkMIHatpG?=
- =?us-ascii?Q?m92JetTfSAMSJQlxe89Zn3fI2+md/0L//j1rGpsjnElYKH2cFB6IwCLovE6L?=
- =?us-ascii?Q?byThtK4Alt3rX2Mad3SWOdiLBsa5GAdhuDZZICXdtdxO3XjPW++XFIue4lC+?=
- =?us-ascii?Q?pU1TLssMUmreSbTzaQThDm10J8+WcGQUN8Jz5noP2AeR6O/WDzkeXmyXEC8+?=
- =?us-ascii?Q?VtUSUiFMx+M=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iV1+SWgzypz45rt/8youAiBhkwAe/g+ODkui8MbfU8U02lkU9OK2RY7sc4uB?=
- =?us-ascii?Q?YM7s/RXLCB05fcTsWPahs96EALamXGfB7HZAEr37iQXG9OlrisJNmXtx3Tex?=
- =?us-ascii?Q?0mpOuv+bVBa81CybE+f4LdsqKWHJiVlY//4b6UU6vx5I0NRSgFR3OwtwUPqb?=
- =?us-ascii?Q?d+TTHM4w+/UXtbdKTwElazJOpVP6FpavoULw9Wab/sjxALqoQUOLxMOOiRYl?=
- =?us-ascii?Q?EGbP56bazhSCTkPhqfU1O4xew8d3eTOWWJiIRi7DZYlu1KfLVg5awJcm6gbV?=
- =?us-ascii?Q?gJPvPKOvFXI+fS/Yiz86CwSbbkgu2+kXQfeokeznbHkTzJhcx+5I2yhiHIXo?=
- =?us-ascii?Q?z5rkUKUs2Pm+I5A9/EZmb/BbAwcTD1kua7IHYmffCrug+LIamtqLmUvEJpmT?=
- =?us-ascii?Q?2bQz4/JYybUlDMnQoxmAfF61Wel9fXoLkjUbN7nnOfYKvs8xeaPrrucPB3uu?=
- =?us-ascii?Q?yzwV1h3I7kRsYbbRgm2G7Pfhppv2O4kFETnLywTnuusCZKJ0YDMhESXnI9LH?=
- =?us-ascii?Q?JREaSN6lbQjQ3mheWt3irh1b0Aq+asHm+tfclDDnAkkQdIWR7QPuMH1WzX9I?=
- =?us-ascii?Q?tIYciROc+el3Qn0tg8tXZB3QC1l6kgE5yu956FpYg0iY9+1ZLlbQFdqYmx/t?=
- =?us-ascii?Q?jYeZSszyhFGBa6TsaKmhS1pd5009M2lo3Zy7cklcIM6RWf9PGtd3mN/8ITwt?=
- =?us-ascii?Q?p0JvxlusEfNMYqupRhiR+5rDaR8Guh/DEmXcLDPJJgzS/jNZhQA2j4bLFPw5?=
- =?us-ascii?Q?b7r1K47vw818QRWypxfZ8aGheJOo11bOpvYCR2QlGfpcV/+ROF/cdaj/eHw3?=
- =?us-ascii?Q?2YMgzmwNlBqS2RCMrjrA6Uyq+WiGJWu32CysDPS7blmZcIrvEaZUb7srdPB3?=
- =?us-ascii?Q?s1OmUF26haPlnRGoRGkgkiUNNfIx8AN3OIeiH1oFbsMUdfDEWK+f60xe8QWq?=
- =?us-ascii?Q?59tXlbsKP6I2rwMeZplBzYzzz9TgXNmocIWZo5JGFZCte527MBFFiyyKFYgv?=
- =?us-ascii?Q?Q8IMfS5FAzxJO+5oiLf70yjHsfbuf6NXQKA5yM+yqsvq2mgRfuowIT7sgo/K?=
- =?us-ascii?Q?sKmfN4zGHj0jAdlx3wMPAsTRRYBKEwK1cNcixgfn1szIzTXEO7pp+C6Whsoz?=
- =?us-ascii?Q?nfME7gICt25wEnFcJj7xZNteFZ+fh6A8R1xjLw5ruGwIXXBUnpX4qM3CZk4S?=
- =?us-ascii?Q?aHOWSkQIXlyZ51ZR6x399iAXA2Cot67aiDQBRiqikRpZ78YSZm5YcMxEciUr?=
- =?us-ascii?Q?dzHT9/pvq6Tb7bqnFquXNq/wg9dNjVWhAcK6SMHQEGNx69Q5GrCTzlqbbXSA?=
- =?us-ascii?Q?qmZxgI7g7kncURmTC1Cn4jAbyHBeB5J8oZDru4REc6ejreLv1ubvW/HflYQ9?=
- =?us-ascii?Q?PnLgn4zAlRa6cFdiKjS3qyZvex6/mQR2RSk7f7XozYNa7wXw/fTpFsuDlNjR?=
- =?us-ascii?Q?8mVzfJRPdGmlT7GKT+04gQ3APTRaAIuH9nldg/TvpUMiwyfF/ToyO98swZqy?=
- =?us-ascii?Q?qtkKrQ996peMmoDP4irx4M7ypSui/AhWD07355Bw585S4uchSjn4f8MIbitB?=
- =?us-ascii?Q?HaQ343OiNziArfsKgcAN1MRNEjjtB4pn2qTDyySFJbou1d/Q3bU24igE78PK?=
- =?us-ascii?Q?+A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f49bdae9-7d50-4c74-c524-08ddca0098b7
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 15:50:07.0520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7ClF3HoLubHaod3lQ4zAFkSH4GVU0BZfOpF4L6kUiBVdRPkS7iTFpISIr0blYEiCtyV4KfNMexm3V8Jn6hlZiqcEOAFZ4dOyqY8h1sUNjKw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6524
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 10:26:11AM -0300, Lucas De Marchi wrote:
->On Mon, Jul 21, 2025 at 10:50:29PM -0700, Randy Dunlap wrote:
->>Hi,
->>
->>On 7/21/25 6:38 PM, Lucas De Marchi wrote:
->>>On Mon, Jul 21, 2025 at 01:17:33PM -0700, Randy Dunlap wrote:
->>>>
->>>>
->>>>On 7/21/25 12:41 AM, Stephen Rothwell wrote:
->>>>>Hi all,
->>>>>
->>>>>Changes since 20250718:
->>>>>
->>>>
->>>>on ARCH=um SUBARCH=i386, when
->>>># CONFIG_DEBUG_FS is not set
->>>
->>>can you share your entire config? I have all of the settings above, but
->>>I can't reproduce it with gcc-13. Is this a regression from the previous
->>>-next tag? I think the diff below should fix it, but I can't confirm on
->>>my end nor I see how this would be a regression from a few days ago
->>>only.
->>
->>It's a randconfig, attached. (#1046 is for 32-bit)
->>config-um64-drmxegt is for 64-bit.
->>using gcc (SUSE Linux) 15.1.1 20250714
->
->just tried on Ubuntu with gcc 14 and still can't reproduce it. I try
->again later on arch or suse.
->
->>
->>>
->>>-----8<-------
->>>diff --git a/drivers/gpu/drm/xe/xe_gt.h b/drivers/gpu/drm/xe/xe_gt.h
->>>index e9ccab8aedbef..41880979f4ded 100644
->>>--- a/drivers/gpu/drm/xe/xe_gt.h
->>>+++ b/drivers/gpu/drm/xe/xe_gt.h
->>>@@ -24,7 +24,7 @@
->>> extern struct fault_attr gt_reset_failure;
->>> static inline bool xe_fault_inject_gt_reset(void)
->>> {
->>>-    return should_fail(&gt_reset_failure, 1);
->>>+    return IS_ENABLED(CONFIG_DEBUG_FS) && should_fail(&gt_reset_failure, 1);
->>> }
->>>
->>> struct xe_gt *xe_gt_alloc(struct xe_tile *tile);
->>>-----8<-------
->>
->>This fixes the problem for me. Thanks.
->>
->>Acked-by: Randy Dunlap <rdunlap@infradead.org>
->>Tested-by: Randy Dunlap <rdunlap@infradead.org>
->
->ok, thanks for confirming.  Initially I thought we could have a
->dependency on debugfs that commit ccbfd2df3018 ("drm/xe: clean up fault
->injection usage") broke, but it doesn't seem so.
->
->So... another approach, probably more correct, would be to move the
->attribute off _debugfs.c, since it's availability shouldn't be tied to
->debugfs.
+On Wed, 23 Jul 2025 08:56:45 +0000
+Jonas Karlman <jonas@kwiboo.se> wrote:
 
-nvm, the change is correct, it is actually a debugfs attribute.
+> The SARADC controller in most Rockchip SoCs are part of power domains
+> that are always powered on, i.e. PD_BUS or PD_PERI. These always powered
+> on power domains have typically not been described in the device tree.
+> 
+> Because these power domains have been left out of the device tree there
+> has not been any real need to properly describe the power domain of the
+> SARADC controller.
+> 
+> On RK3528 the SARADC controller is part of the PD_VPU power domain.
+> 
+> Add support to describe an optional power-domains for the SARADC
+> controller in Rockchip SoCs.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Applied to the testing branch of iio.git.
 
-Applied to drm-xe-next:
+I'll be rebasing on rc1 once available.
 
-	4d3bbe9dd28c ("drm/xe: Fix build without debugfs")
+Thanks,
 
-thanks,
-Lucas De Marchi
+Jonathan
+
+> ---
+> v2: Update commit message
+> ---
+>  Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+> index 41e0c56ef8e3..f776041fd08f 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml
+> @@ -47,6 +47,9 @@ properties:
+>        - const: saradc
+>        - const: apb_pclk
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    resets:
+>      maxItems: 1
+>  
+
 
