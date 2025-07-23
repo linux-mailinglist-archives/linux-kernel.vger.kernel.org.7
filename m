@@ -1,374 +1,297 @@
-Return-Path: <linux-kernel+bounces-743052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E33EB0F9F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53917B0F9F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F133B9EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:04:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50626165A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D1D1FE44B;
-	Wed, 23 Jul 2025 18:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876E72206BB;
+	Wed, 23 Jul 2025 18:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcL57z8j"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="asxiudF5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781DC2E0;
-	Wed, 23 Jul 2025 18:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293908; cv=none; b=n2DhBMatcB7FS97Zn7mrnzC18egbTZwOhmWSmDWtEYxtlah4pZ1uJOeyMR4Orc2bBuKAKu70IE7UN1nni2YQf6JPROwuqY1TxTqsjSUhHVvU4uKa8DTfaHH6sowWkkm+VqTzGXUuWzHWN4bqgdAU/k4Dc3Tl9lqCbO6KyuY1LW8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293908; c=relaxed/simple;
-	bh=u7GVxT2RYawBIdHa3a6kihghiksZVYyf0zQoc5idxI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GOAal5EVrhiE3qMkbamZzN7q+u+SrVP9M9iD5BQKy2+xx5iMLy2O6OZ0B0QKdGwu9bDdxEYBKN+dyriXaXAm9aGxh+umtBd4x/1TQzZBWZp/jpelXhH2SvPvZTfYB378rdCGEli2wkmhd1UQf6TMVmo+DLYy1w8LD5yOaBfx9a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CcL57z8j; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso258356a12.2;
-        Wed, 23 Jul 2025 11:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753293906; x=1753898706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YRRQxHGB+9SsoaZj6Fupkuk2dhJLaPIsp4PZrc5vEYA=;
-        b=CcL57z8jgLNVz82v0YZciqclr3Fke8Z0IIPrxOHMdQ+9suzEUpXmLMypstmmKraHh3
-         GQq+ENTlyvLguyIguUNbeUL96TSu+U8lFjqWZkhxwVcUuLD+LMEbP6dwieoBtRbN4xix
-         X8QU9V5AVe8k0zq0s6fpwdjkzK3r7j0ogMVlVyX37ngVoKPWtjlNROriHWCzaGPeysAj
-         ii3Me6Z78CbaGFEixq+T1/v9CgFD9290KnPQdnhNMq1lMq+gI3C9xqpL+FcahvpaFRPh
-         2UT2A5m/VVA3cMq7sGDKNOyQdkzvMz0n3y8FYkNI+Dczu7gyeN7NNATuxBnIIUrmbo2P
-         ClDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753293906; x=1753898706;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YRRQxHGB+9SsoaZj6Fupkuk2dhJLaPIsp4PZrc5vEYA=;
-        b=QJE6MmyNKnVWCf9DlRKuI/Fx4TRp5AEFvcMb60qmjFYGxcGAebRIccAB1xVv4OkgZx
-         BZD9F6Jq+vJoD53EJmaFrodliWTxOXE2ykq2EWqW8pjMmQiN/IJdEl/3ju3ukjCMe65E
-         ak1zo0qU7HrJUSRZTjh3B8/zegGq2JTwsMFIVEaSU5BX6gTvPyUIAbr8OGzjHP1+ElVw
-         w4gmAotdkWMtlJCWthJp3gGuw2Q+gJjjhATtLiop9ZuVyCFz2uHtx1p0BIKdp85IBHIf
-         AaW2nh+rN5jhcnEsyCPkuPE3zgpsHieRkS1U2NxEM+Xl/+PR5twVe2AHYk/VtWfomsnl
-         IshA==
-X-Forwarded-Encrypted: i=1; AJvYcCV60uuPqAN6ISEVfWnEjazfVhFT2YTSPR7qr/jTIUxlKBef+F9aSqqOobTpB0DeoVipewHS837Fgxy/ekFn@vger.kernel.org, AJvYcCVF8E/Ydbwmsp09BiixTwyb8RgRmHytdM3O3LoWo1e0CtfsnsRow3wfDthqjTQ+XuqNYdncG9bnyt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8dG/Vs9Qxjm1r9hHhiXFS2O4JKPuFcgbQSYg4q8vWf1ZQn+1r
-	Qg/IGRfsH1RwZWoXo4WaL6Zu3jt/X520KhNIpAZmKsMFzkyZoDb/KAaT
-X-Gm-Gg: ASbGnctXibiui6ZyspWI2jIaJd6OWEXkk0JZRc3KebND+pGmyCp3d5PxTANx72ib8zH
-	SZ/ytWBzGHD8ZxUN3T0QTYx+hsakgWMzq75/CguuzFNExFkohGHqaP/21yW2phQQP8QqjaDojMy
-	K/BAH8p4D1Ipp+cMJjgVADZ/ycN2iYuemqHzo+YbP7FJr4eWjU9G/sLTtrwcLZ6KFQlgxr0iHCH
-	/x/PJ1hyPwBk/toH4z/bGBW1PII+yp09EOBOK9RzZLG4i3C5Dm0R/fSMllBwucskLQcpwVRBDSh
-	5wg9EuflU0lgLDY7Xdzk5gnrIuO757WnA3YiGvskHm1iDMqCQXFpSR9gZxeOmQ7kCUjYqA8SZN2
-	HeDfW5mCU9YUEEFaCyWY5PuuB6rs2yoxIELmg3UqMHSrT6Yo=
-X-Google-Smtp-Source: AGHT+IF8Hee14fYadrlZRlhceQheuKuRw8Kd+48z+O+jXjMYiO3CWOSzSrtzoyz8wd/Hv/BBDVE1Gg==
-X-Received: by 2002:a05:6a20:258c:b0:220:3870:c61e with SMTP id adf61e73a8af0-23d48fe819emr7004096637.4.1753293905930;
-        Wed, 23 Jul 2025 11:05:05 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([2401:4900:883b:7064:9811:2a6:32b8:82ac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb76d4efsm10155622b3a.107.2025.07.23.11.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 11:05:05 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: anshulusr@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio: light: ltr390: Add debugfs register access support
-Date: Wed, 23 Jul 2025 23:34:54 +0530
-Message-ID: <20250723180457.629833-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA13921FF58
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753293845; cv=fail; b=eBmjybiqhzX3IJ3KI/VwakEDZrge5ZQq0TuqLIz9BZjqHjrL0/MGL1WJUvN61mOHOX6Fxt3OrF8nafAaYptkItILBRvteOI9rto1V/qzvGC4DsghULQ5h8LaakAT3GHq35vZha2PZDgaZhMqOI1u35vhr/a95l2R9+AHbkpxTQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753293845; c=relaxed/simple;
+	bh=F8x2O8VQX/3W0FKqcIzTu++mRQN/K2GLtfCyo5EReGI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NYM1OV4/vFJF7kmIJ1ze6M+0+/J6ggYiEsujQOvBeCUm6js0TxIPJpiEmdZ080ohUBbOG5joNmiN2okfRRZrIwO0vTxK4rBonsyn8ZJkIp1wQCl/TB1f+9TswS5BaWXrEa/ISPMcwkvA/9NLTqOWEZVq6C+5N/LdNiB5dR6KNXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=asxiudF5; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753293844; x=1784829844;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=F8x2O8VQX/3W0FKqcIzTu++mRQN/K2GLtfCyo5EReGI=;
+  b=asxiudF5lY7KBrN2Fn6L81E0mX6EwRe6Ld5hTvynfa0WDwmWeukVuAr5
+   9T8/8OWxAr7S0OjTnZzuPrguJTiNQbKoQVsHF1rkWTqnUb+RzOiU9LAX6
+   ZBHGfxkd/ypJGvN+6VOARi/wb7huSnWnwzP8WqvJM+pxcVL2D/5eqCMHA
+   6+PzYafbl0YZhtIMIpyH/3tgum8GaDAee0bDFVWl1UnkWSu/vMwERNjT7
+   Y/zXgMOU34QKNR6pKfY62BAZp9+lznleNnOSAau4WE8enqzSBgigMqjGO
+   r2uTq9070AmFdc+qS+Jh+8+C3+2zjCc07l+JbJ1hrBB2Ju4HmKFqFX52X
+   A==;
+X-CSE-ConnectionGUID: fPFmJCWITEW4p6qwglGxdQ==
+X-CSE-MsgGUID: cSaP4tSnQpOfAGYARTTDjw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55701208"
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="55701208"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 11:04:00 -0700
+X-CSE-ConnectionGUID: amsjmIeZTvmqt3Lv5nU7tA==
+X-CSE-MsgGUID: Xh03FLtRR8SK/XUiKJoETg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="160374063"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 11:04:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 11:03:45 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 11:03:45 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.73) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 23 Jul 2025 11:03:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mR14p4Mpq/nJH2Ms/XCjMagCqXwuM+mNkrMLNQyWQi0fn2i68NmVxJSKL51jnF2iQFmPj52EIeZ0JhBMoylkKei257sirBv5hFAnSBcv3G0dDG7s2lHuyclxglFkZjSFFx7llJwsA/hj95lEB3wT3+Pg1+ZYVR608zvghAeKVrNUbqKx3BVB4e0y5b+jP6Y1MBMYfoM2zHFDmU66/n3ae3Z5FhoXj0MT4IaULq1zR+7GImfjyXeWCeXEaYlGGdn3NVg+CEjEh//rp2ls0d683hPCxZBE6mPTD9WPNPcjj0kXg64klRf6NYW+ma0GKG1D+GjNsIlp5O6WNn/ckdUS9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EsW65FY5tbPdlVgqjgbuVYxRbAX9Dkd2Kb5BN5u8Y4A=;
+ b=wL0xmAGJSSmOkX7SlSNVDASMMmvUYQUMvwD34iU2q5xx8prU3WO1/av7CXCx1Um9HAEo2MjgkUIK1yNU1Cjypn90hkihclUW0KrMKGoBupqfFGwJAqo+LYNNGkZjg3eQvEfFh4ZZOZgOgJrjo52iJKflHn+jVEBqLqjs99QaJN87fGXT6Pw5TIYiODTbx70RC46wJytHPUkWpmrJmqmiww7eqyikMxZss7f+paX5bw1FR9roaRn7C8rwZaRZIgCD2ZH5kbqmyf16XEIaDpH72GzFPABLjqBxS2yWxzT8dKjZGIz0bO4HX4Irajv0xWGhIBwqTdHvyTDnZ8RNh6PiQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SJ0PR11MB5197.namprd11.prod.outlook.com (2603:10b6:a03:2d1::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
+ 2025 18:03:22 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%7]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
+ 18:03:22 +0000
+Date: Wed, 23 Jul 2025 11:05:08 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Francois Dugast <francois.dugast@intel.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, <balbirs@nvidia.com>,
+	<airlied@gmail.com>, <apopple@nvidia.com>, <baohua@kernel.org>,
+	<baolin.wang@linux.alibaba.com>, <dakr@kernel.org>, <david@redhat.com>,
+	<donettom@linux.ibm.com>, <jane.chu@oracle.com>, <jglisse@redhat.com>,
+	<kherbst@redhat.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<lyude@redhat.com>, <peterx@redhat.com>, <ryan.roberts@arm.com>,
+	<shuah@kernel.org>, <simona@ffwll.ch>, <wangkefeng.wang@huawei.com>,
+	<willy@infradead.org>, <ziy@nvidia.com>
+Subject: Re: [PATCH] mm/hmm: Do not fault in device private pages owned by
+ the caller
+Message-ID: <aIEkVEvNJwcegBF7@lstrano-desk.jf.intel.com>
+References: <9ae3e014-c7d0-4d58-af0e-925bcd9e4cfd@nvidia.com>
+ <20250722193445.1588348-1-francois.dugast@intel.com>
+ <20250722130721.9169d564eeeb28807e18635a@linux-foundation.org>
+ <aIEA-a5h3Zkx87EN@fdugast-desk>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aIEA-a5h3Zkx87EN@fdugast-desk>
+X-ClientProxiedBy: MW4PR04CA0133.namprd04.prod.outlook.com
+ (2603:10b6:303:84::18) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ0PR11MB5197:EE_
+X-MS-Office365-Filtering-Correlation-Id: d27a9cbb-67c0-4414-3bf1-08ddca133640
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YzRITDRxZHRETGx3eWM4U2tWcHAwMG0vWlovSjhBMFJENVpWU052VlVlQmZ6?=
+ =?utf-8?B?S0gxNDBYYkQ4VkZGSGRmUTFkQjI0L2FoUy9DdkFtdE4vWkErOFNjbkdhaW1a?=
+ =?utf-8?B?ME1QZyswZ2RxbWplNnlQcTZsdm9aSUxQeUIrbk4ydWlDN2ZqTkdQbUw2SDI5?=
+ =?utf-8?B?dys2azBJQzBYVnpQZ0E3UmhHblF3NGNKMnpwaTVoNHZSNE1OeGdOQUk1Mmoy?=
+ =?utf-8?B?eTVHaHlTV0VaL1NGRXlxcVRDTkgzY3duQ0MrQ0s4ZytKWFZ4ekxYTkZMRTN5?=
+ =?utf-8?B?RWd0RUNQbFZtZWR3ZDk2c2Nhdm1JR0tvZFRBWWk4Skt2YTFwTitXdzR6dEEy?=
+ =?utf-8?B?Z1lscWN3MzRyYkN3a2hRWkpKNGFvZzkyNDA0WkFaRTRJV2ZZSTVlaGVXY2tC?=
+ =?utf-8?B?dEx2UVUyNXlHLzlMTWphRktSWUZjZ0dXWFExY3QxNlc5ZzY1V1lFSS9IK2Yx?=
+ =?utf-8?B?bjNFM1dGckQ0czBkOGJVcjdsL1A1NFQrZ3lTQ1VHOUtJemw1cm90MGtmdTZ6?=
+ =?utf-8?B?Y0hlTHVWc2pabDY2VU5Pc0oxTGQ3ZDl0d3BKUHFUeTREWVNTajhrQ3lrbFVj?=
+ =?utf-8?B?Q3pZY21acjF5dk1EYWZKa2NLKzArU1RkajRqUXJJRzdZeFpJVllNU09xM2Q0?=
+ =?utf-8?B?eW11aTRYTjhkWi9NMVJPVFFMbXVOeWRtVkY3UWU4dVFYcS9adEtKcEU5VEpZ?=
+ =?utf-8?B?NVFCMXRGUW0zR09wRUIxd1hjRmUxQlhMNEFsdlJsbGZQdldtS2lhRXZUVldN?=
+ =?utf-8?B?NTd0SXoxV1JnOU0zS2V2QVZIdDNMVGV5b05yN05qRU93SUoxRlcrcXpNcHls?=
+ =?utf-8?B?c3pFaEtycXlQczFhU21iT1VJQ0ZpYS9lVFE2MENHa2ZVQjMyeGxVY29YSS9J?=
+ =?utf-8?B?enJETml0aXFCV1VuSDFnWCtrZElOdEJMYzZrOU0zdmxRbnB3N1BMUnlCeU5m?=
+ =?utf-8?B?MCtra09XRnZuYVNIa2loOUdNMXlwN3YzY0RXd3UwUllBdTI4bENUK01rYmt4?=
+ =?utf-8?B?RTYvSUU2bGgwc3E3dWE4RWduQ21DYjY5RTg2c0VpYndGa0VwUGF0ZzlGbVpU?=
+ =?utf-8?B?UEh2WmhiM0NldGFRMXJWRW0rYWpsQ2wwdDJLK3FnRDlyZGd5ZWJMaGYrYVVu?=
+ =?utf-8?B?bWJ0SURrZCtOc0M4bUk2WUxibTlDemlJcjF2c1RUY3orTG5uYmNRRmQybkg5?=
+ =?utf-8?B?NWtFeVZGSWMyZmdIT0k5MFFmMGhhNExsb0lCSXFweCtJUlFlSjNROW5xNHZk?=
+ =?utf-8?B?R3ZxbFJKOVBiL2orMHFiRzJsR2U2cXhERy8xNGIya1ZXQkRtNy9OL1FzY1o4?=
+ =?utf-8?B?SnJIZi9lcXQvZ0ttd1JWWWJGbWlXWHFZcHB0NzVTTm9ONHNqYzYwQ1BoOGdV?=
+ =?utf-8?B?cS9uNkNuRlRCK2IydVY0c29tRTU0NUNNZXd0V2htaWxDZDNhTzRlSTVZdVRw?=
+ =?utf-8?B?WHNKeXYvR1pxVk0ydTl5bXpjcnY2T0o4eHRmNENjY3VkYU5CLy8vK3o1eU9Z?=
+ =?utf-8?B?TE9BeUFqdjZaNjNwSXNvWUhjb3EzVzVOdVMwdnF2VkVJSW9NMmtoRkhOWUht?=
+ =?utf-8?B?a24vbjNIdnNqSGgxdWhhR0dGUkJ0LzA1UEt2RUJIMEZpb01XR0ZDQlJvMWVH?=
+ =?utf-8?B?MzZlcWhlNlVCY0E5cVVxOXhvdHo2Skx1c2ZKdmkyOThhci9CckxkdEpzQThQ?=
+ =?utf-8?B?anlnZDZSbHNjNFF6cHNyTlpMc2huRFVjalVUWUJocjdlSDc2TUNXT2o2SjVF?=
+ =?utf-8?B?ZFcveUh1bFhPTkdhTGNlUFJNYW50aUNCUXdldm5LNGtXTE1mN0o3LzNxNUN0?=
+ =?utf-8?B?UExFZE51SjVFbUM2c3RLdllTMmhnSHhTNmhTWnFhYzdYdS9RTWFld00xR1VG?=
+ =?utf-8?B?SCtocnFoNmJaZjZUenI2d3BPYUxGK3pCVEVSbkJKQU5pbnc9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NDdNcmtKcWZrajhwVkxSS054SENEV25xellENDRnZTBRd3Y0WVYrKy9POUtN?=
+ =?utf-8?B?T2h1U2ZuUFRYQklHM1RqZFUvOFFzU0p4S1ByOFl3bXhmcmt0MjJRRzh0WlNJ?=
+ =?utf-8?B?emdhcXM1OVVzZk45WmwveE02bEc0KzhpRnZPMnJQQTVvUlNaSFFUQ0lycnZ0?=
+ =?utf-8?B?ODU1N1BPK2lsTXpRekhyVG5DQ29xdUVQNEdBZUJpaXNoeFpRS1I5cjhUM3Q3?=
+ =?utf-8?B?UnF3YlIweEVVYTEydmYyUEQ4a2dVNC9Ccys2K2dRc0ZRMCsyRG43dHA0dXpT?=
+ =?utf-8?B?dHZoVzNvbWU1TzBRaHhYUlREbHFwK09ML0laLytWVmNMNWVTM2w5WHUrNFps?=
+ =?utf-8?B?dytENllydkYyOWxCUkpTcnRSbXFnbWxUQUluOWZKQUNpbDZuQkllM1lja3U0?=
+ =?utf-8?B?Vnl0WEdDMmVSbERFUktkMzRwcFFHR2JNczNERC9kNkFXTnRDTFFLdFk0cFFu?=
+ =?utf-8?B?NnFaOGQwcURjZ1BCeWk4SllQTHNoeGJzY2kzdDlEaWZkZkNZTkJKRFl4NlU1?=
+ =?utf-8?B?VVlsaGUycllvclVqdUt6K3ZCRENlTktmK0tjSHVHamJIbVdrWE5BdlMzaHFN?=
+ =?utf-8?B?djlFcCtWd1lDSGJucHE0V3d2UEZyUkVhc0ViSDdhV2VnM3dkbGQ3WEg3Wkh3?=
+ =?utf-8?B?ay9kZzErVW0wdG92Ums3WDNqSHpmRkpGcHV4a1QyVWVpT1lEWEJqY3MwOUhP?=
+ =?utf-8?B?M1NWTEFTVGNzdjI5TW5PemdRQ280Nzc5WGF2cGhtWGxCV0QrUTMwY0w5d0Jt?=
+ =?utf-8?B?N05tQ0c4a3llRm1qRE1MSHBuL3RiRlRuSVFOQXNqZW1XdVJJaWljZ0Uxc3NM?=
+ =?utf-8?B?MnVJVXcrUmVSaDMrenFWSWRVSndnRHROeHowNHN3Q0lHYTM4SlBqK040dk5C?=
+ =?utf-8?B?b2o2RzFFbnEyVFEyeTJsbmRCTWtSQzNTWml3alV1WURJdW43NFp0ZnFQSm84?=
+ =?utf-8?B?NHhSblJxRmpqMUxLZDVhamZDTk40VkNNeWpuOE9uUHdUZ0VUWldDQ1hZMlJ1?=
+ =?utf-8?B?QVN5WmtlT3RmUWJBSEJudUxwcTZTa1U4bnhlTWR3ZytySHRRQ0VMTWVHSUFu?=
+ =?utf-8?B?NGZ4VHlsbWphcldSNWdWOFFQdVQ3aTUzN0ZJWUw4a1B3dWV2V2RCTFRZQWdy?=
+ =?utf-8?B?UVBGbjNyQUNna2dJaENXUFdtL0sxMDVrU05HbDFDRGZBOWljV1NqYzlYNVVP?=
+ =?utf-8?B?b0hJNDBYcTVMMWFVTTVWWlA4K252aklLVkthcE9YdXJiK0dLNG9XTjlXMDl3?=
+ =?utf-8?B?eUdQSzQ2STJtdFdJQmZjcDBGVGtIQ05rdmtKSG55anlQOGlScVRxQVorRlRI?=
+ =?utf-8?B?QVNIampRVnZ0TkFTWU81UitPcDFYS0lpRFNPL0Jndk9xSVliOEdZbmpWa1BR?=
+ =?utf-8?B?MmxtZWc0ekJJRVhJRHFFb3RQaDZqdDVtSzR0dmNLcC9xY3hmVjVFTXJCQnhD?=
+ =?utf-8?B?bVI1bXl4QTdGWEhlY3ZVL044VEZtKzAwL3hCckE1akJOT1o1N29vbXd1T0x4?=
+ =?utf-8?B?WTQwWU9aU2wzeXJ6a1R5cVNURzlaTTh3STBpUjJHa05YeWtGVmt1WnlpZEtJ?=
+ =?utf-8?B?eGtraDlDaGtnR2gzckdMSFZCbXFldmhoNWhXbFVhd3habXIrKzlkd3pKYkda?=
+ =?utf-8?B?UnhDazB4bnI4MGtpMC9qdU5JdWJRRHVGY0E4NG1Qb25UR09PQnplNUNVK1Z3?=
+ =?utf-8?B?RUZRVWJNell0NmNDRjBsTXpCSDNqSTMvWjJrZXEzMmdodVZEbkcvTTlKazI0?=
+ =?utf-8?B?Tm1ONllOUXYwQVgrU1Q4bVkrRFhpeVl1OG1UQUVTV1dUTFllQ21nbExISURu?=
+ =?utf-8?B?NXRXVTkySkpSRmhzdGtMK2RCVHVYUElqam1PWFZ5b1ZYS3doSndxNjlXRU1M?=
+ =?utf-8?B?VEF3czN5ejI1ajN6MXplTHFZbHlRcENneldVQmh2eGd3MExEc25tTWJWMFUy?=
+ =?utf-8?B?ck4yaXI3QjB0ZUlaTkZpVG5zY2ltZ0pFYThQbXFGVjVaWHJMYlc0TytJWHhM?=
+ =?utf-8?B?Y3ZBU0c4MzBDK0tCRzJJaEZFRGtMeW1GdlBNajdndFJnb2QrSjJVOWtMekFK?=
+ =?utf-8?B?Nm9NYXBtaC9kb2FUZlRyWk5TQmRtRHdjM2MwTDNxeG80MUIyZ1B4YXV3TTVO?=
+ =?utf-8?B?cWtkSXQwSTRKU2lMQ1VxK3RubUtmNHA0cEZBR2VVOGxoK2wvRHdsTm5FSUlT?=
+ =?utf-8?B?Q0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d27a9cbb-67c0-4414-3bf1-08ddca133640
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 18:03:22.1614
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p3570ZIcP988gGzuFdwTwmWUlYQNB5liz45iwyatZncWpeIt3vGm2pvCb6LN6/NbbBJl+RbdGruj9V953mJWFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5197
+X-OriginatorOrg: intel.com
 
-Add support for debugfs_reg_access through the driver's iio_info structure
-to enable low-level register read/write access for debugging.
+On Wed, Jul 23, 2025 at 05:34:17PM +0200, Francois Dugast wrote:
+> On Tue, Jul 22, 2025 at 01:07:21PM -0700, Andrew Morton wrote:
+> > On Tue, 22 Jul 2025 21:34:45 +0200 Francois Dugast <francois.dugast@intel.com> wrote:
+> > 
+> > > When the PMD swap entry is device private and owned by the caller,
+> > > skip the range faulting and instead just set the correct HMM PFNs.
+> > > This is similar to the logic for PTEs in hmm_vma_handle_pte().
+> > 
+> > Please always tell us why a patch does something, not only what it does.
+> 
+> Sure, let me improve this in the next version.
+> 
+> > 
+> > > For now, each hmm_pfns[i] entry is populated as it is currently done
+> > > in hmm_vma_handle_pmd() but this might not be necessary. A follow-up
+> > > optimization could be to make use of the order and skip populating
+> > > subsequent PFNs.
+> > 
+> > I infer from this paragraph that this patch is a performance
+> > optimization?  Have its effects been measured?
+> 
+> Yes, this performance optimization would come from avoiding the loop
+> over the range but it has neither been properly tested nor measured
+> yet.
+> 
 
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
+This is also a functional change. Once THP device pages are enabled (for
+performance), we will encounter device-private swap entries in PMDs. At
+that point, the correct behavior is to populate HMM PFNs from the swap
+entry when dev_private_owner matches; otherwise, trigger a fault if the
+HMM range-walk input requests one, or skip it in the non-faulting case.
 
-Changes since v1:
-=================
-- Replaced _[0|1|2] macros with a respective common parameterized macro.
-- Retained base macros to avoid churn.
-- Swapped regmap_write with regmap_read to avoid negate operator.
-- Simplified debugfs function by directly returning return value of
-  regmap_[read|write].
-- Replaced [readable|writeable]_reg with regmap ranges by using
-  [rd|wr]_table property of regmap_config.
- 
-Testing details(updated):
-========================
--> Tested on Raspberrypi 4B. Follow for more details.
+It’s harmless to merge this patch before THP device pages are enabled,
+since with the current code base we never find device-private swap
+entries in PMDs.
 
-akshayajpi@raspberrypi:~ $ uname -r
-6.12.35-v8+
-akshayajpi@raspberrypi:~ $ uname -a
-Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025 aarch64 GNU/Linux
+I'd include something like the above explanation in the patch commit
+message, or in code comments if needed.
 
--> Sensor Detection, overlaying of device tree and Driver loading
-akshayajpi@raspberrypi:~ $ i2cdetect -y 1
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:                         -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
+Matt
 
-akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
-akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
-ltr390                 16384  0
-industrialio          110592  1 ltr390
-regmap_i2c             12288  1 ltr390
-
-
-1. Disable sensor via debugfs, verify from i2cget and debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 | sudo tee direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x0 | sudo tee direct_reg_access
-0x0 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x0
-0x00
-
-2. Disable sensor via debugfs and read data status via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-603
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-603
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-603
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
-0x28
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
-0x00
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
-0x7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-
-3. Re-enable sensor via debugfs and read data status via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x2 | sudo tee direct_reg_access
-0x0 0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-608
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-614
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-601
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
-0x7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x8
-
-4. Enable interrupts via sysfs and verify via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
-1
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x19
-0x14
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x19 | sudo tee direct_reg_access 
-0x19
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x14
-
-5. Write falling threshold via debugfs, verify the threshold written via sysfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x24 0x32 | sudo tee direct_reg_access 
-0x24 0x32
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x32
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x25 0x0 | sudo tee direct_reg_access 
-0x25 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x26 0x0 | sudo tee direct_reg_access 
-0x26 0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-0x0
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_falling_value 
-50
-final value = 0x0 << 16 | 0x0 << 8 | 0x32 = 50
-
-6. Block light and verify interrupts getting generated.
--> Before blocking light
-cat /proc/interrupts|grep ltr390
- 58:         0          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
-
-->After blocking light
-58:         63          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
-
-7. write value to a non-writeable reg via debugfs.
--> LTR390_ALS_DATA_0|1|2 are non-writeable registers. Writing to them gives I/O error as expected.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd 0x1 | sudo tee direct_reg_access
-0xd 0x1
-tee: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe 0x1 | sudo tee direct_reg_access
-0xe 0x1
-tee: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf 0x1 | sudo tee direct_reg_access
-0xf 0x1
-tee: direct_reg_access: Input/output error
-
-8. read value from a non-readable reg via debugfs.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x2 |sudo tee direct_reg_access 
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
-cat: direct_reg_access: Input/output error
-
-9. do simple raw reads from debugfs.
--> reading raw value via sysfs:
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-627
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-622
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-616
-
--> reading via debugfs (should be in the same ballpark of sysfs)
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd | sudo tee direct_reg_access
-0xd
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0xC7
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe | sudo tee direct_reg_access
-0xe
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0x2
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf | sudo tee direct_reg_access
-0xf
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-0x0
-final value = 0x0 << 16 | 0x2 << 8 | 0x70 = 624
-
-10. Testing reads on registers beyond max_register.
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x27 | sudo tee direct_reg_access 
-0x27
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-cat: direct_reg_access: Input/output error
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x28 | sudo tee direct_reg_access 
-0x28
-akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
-cat: direct_reg_access: Input/output error
-
- drivers/iio/light/ltr390.c | 55 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index ee59bbb8aa09..b63301648689 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -38,12 +38,21 @@
- #define LTR390_ALS_UVS_GAIN		0x05
- #define LTR390_PART_ID			0x06
- #define LTR390_MAIN_STATUS		0x07
-+
- #define LTR390_ALS_DATA			0x0D
-+#define LTR390_ALS_DATA_BYTE(n)		((LTR390_ALS_DATA) + (n))
-+
- #define LTR390_UVS_DATA			0x10
-+#define LTR390_UVS_DATA_BYTE(n)		((LTR390_UVS_DATA) + (n))
-+
- #define LTR390_INT_CFG			0x19
- #define LTR390_INT_PST			0x1A
-+
- #define LTR390_THRESH_UP		0x21
-+#define LTR390_THRESH_UP_BYTE(n)	((LTR390_THRESH_UP) + (n))
-+
- #define LTR390_THRESH_LOW		0x24
-+#define LTR390_THRESH_LOW_BYTE(n)	((LTR390_THRESH_LOW) + (n))
- 
- #define LTR390_PART_NUMBER_ID		0xb
- #define LTR390_ALS_UVS_GAIN_MASK	GENMASK(2, 0)
-@@ -98,11 +107,42 @@ struct ltr390_data {
- 	int int_time_us;
- };
- 
-+static const struct regmap_range ltr390_readable_reg_ranges[] = {
-+	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
-+	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_MAIN_STATUS),
-+	regmap_reg_range(LTR390_ALS_DATA_BYTE(0), LTR390_ALS_DATA_BYTE(2)),
-+	regmap_reg_range(LTR390_UVS_DATA_BYTE(0), LTR390_UVS_DATA_BYTE(2)),
-+	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
-+	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_UP_BYTE(2)),
-+	regmap_reg_range(LTR390_THRESH_LOW_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
-+};
-+
-+static const struct regmap_access_table ltr390_readable_reg_table = {
-+	.yes_ranges = ltr390_readable_reg_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(ltr390_readable_reg_ranges),
-+};
-+
-+static const struct regmap_range ltr390_writeable_reg_ranges[] = {
-+	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
-+	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_ALS_UVS_GAIN),
-+	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
-+	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_UP_BYTE(2)),
-+	regmap_reg_range(LTR390_THRESH_LOW_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
-+};
-+
-+static const struct regmap_access_table ltr390_writeable_reg_table = {
-+	.yes_ranges = ltr390_writeable_reg_ranges,
-+	.n_yes_ranges = ARRAY_SIZE(ltr390_writeable_reg_ranges),
-+};
-+
- static const struct regmap_config ltr390_regmap_config = {
- 	.name = "ltr390",
- 	.reg_bits = 8,
- 	.reg_stride = 1,
- 	.val_bits = 8,
-+	.max_register = LTR390_THRESH_LOW_BYTE(2),
-+	.rd_table = &ltr390_readable_reg_table,
-+	.wr_table = &ltr390_writeable_reg_table,
- };
- 
- /* Sampling frequency is in mili Hz and mili Seconds */
-@@ -586,6 +626,20 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
-+						unsigned int reg, unsigned int writeval,
-+						unsigned int *readval)
-+{
-+	struct ltr390_data *data = iio_priv(indio_dev);
-+
-+	guard(mutex)(&data->lock);
-+
-+	if (readval)
-+		return regmap_read(data->regmap, reg, readval);
-+
-+	return regmap_write(data->regmap, reg, writeval);
-+}
-+
- static const struct iio_info ltr390_info = {
- 	.read_raw = ltr390_read_raw,
- 	.write_raw = ltr390_write_raw,
-@@ -594,6 +648,7 @@ static const struct iio_info ltr390_info = {
- 	.read_event_config = ltr390_read_event_config,
- 	.write_event_value = ltr390_write_event_value,
- 	.write_event_config = ltr390_write_event_config,
-+	.debugfs_reg_access = ltr390_debugfs_reg_access,
- };
- 
- static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
--- 
-2.43.0
-
+> > 
+> > > --- a/mm/hmm.c
+> > > +++ b/mm/hmm.c
+> > > @@ -355,6 +355,31 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+> > >  	}
+> > >  
+> > >  	if (!pmd_present(pmd)) {
+> > > +		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> > > +
+> > > +		/*
+> > > +		 * Don't fault in device private pages owned by the caller,
+> > > +		 * just report the PFNs.
+> > > +		 */
+> > 
+> > Similarly, this tells us "what" it does, which is fairly obvious from
+> > the code itself.  What is not obvious from the code is the "why".
+> 
+> Indeed, will fix.
+> 
+> > 
+> > > +		if (is_device_private_entry(entry) &&
+> > > +		    pfn_swap_entry_folio(entry)->pgmap->owner ==
+> > > +		    range->dev_private_owner) {
+> > > +			unsigned long cpu_flags = HMM_PFN_VALID |
+> > > +				hmm_pfn_flags_order(PMD_SHIFT - PAGE_SHIFT);
+> > > +			unsigned long pfn = swp_offset_pfn(entry);
+> > > +			unsigned long i;
+> > > +
+> > > +			if (is_writable_device_private_entry(entry))
+> > > +				cpu_flags |= HMM_PFN_WRITE;
+> > > +
+> > > +			for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
+> > > +				hmm_pfns[i] &= HMM_PFN_INOUT_FLAGS;
+> > > +				hmm_pfns[i] |= pfn | cpu_flags;
+> > > +			}
+> > > +
+> > > +			return 0;
+> > > +		}
+> > > +
+> > >  		if (hmm_range_need_fault(hmm_vma_walk, hmm_pfns, npages, 0))
+> > >  			return -EFAULT;
+> > >  		return hmm_pfns_fill(start, end, range, HMM_PFN_ERROR);
+> > 
 
