@@ -1,65 +1,72 @@
-Return-Path: <linux-kernel+bounces-741853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667B6B0E9D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:50:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742D7B0E9D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480E71C87406
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239E8960866
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D170324468C;
-	Wed, 23 Jul 2025 04:49:45 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1872C1FC8;
-	Wed, 23 Jul 2025 04:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0B6242D78;
+	Wed, 23 Jul 2025 04:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3cMUCxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AB85464E;
+	Wed, 23 Jul 2025 04:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753246185; cv=none; b=a06sRUdPJ0ELclh7VgKAr0eu+n1ba6tJy/eTF1uO7otFveEgndG5dPoksAAm/DMWHYtUC2IfLQK5qJXXQQtcrzLpyIvhz8lyvO+BtoazkPAAaf0wFTrWt9uOKE4hiMJKl38OUvcRSOUikZqz9IF5QgQnnB4tJMpeQ3XUwMUWisY=
+	t=1753246211; cv=none; b=VDu2NzBWCttdygKbRyA6M9JAyoWVGCptv+w/4XjeJ2X/75DCn3vZhHpZ0yA4aOuSjIXemrbDdLbg6nEqkrnUyoEh06cHP4Waf3A40Uv4dygKIbF43I9+2ATdQ0MGhWzlGmZyJpWDUkA5HpjeXO40I3UtDJw4bJ3TaThewEixAww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753246185; c=relaxed/simple;
-	bh=26EE2xjoIICOObnyz/2jnRgqEmWOtW4bbfbTz6qa83o=;
+	s=arc-20240116; t=1753246211; c=relaxed/simple;
+	bh=FRrcCCQQ4F/hJI3vXYnGQ/KyERQSqfeqQbk3YFvCDTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLYGdRZUYJ2B0x0Ih7FJheCBOnxB/oFjOUBPuY5AFYrgFjmU9e533oI6cpSTVVKuNG0INDaLUkYQNVry0IukP/KPfwzapNNe8og7h0MLNw5tpyucXElrACnhQ4qfgo/jDJj41dIYKXsZc2CLnrJQ4ikFZ3Z87+KPu15lhrG2ARA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-ec-688069e2743d
-Date: Wed, 23 Jul 2025 13:49:33 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, almasrymina@google.com,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
-	akpm@linux-foundation.org, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, toke@redhat.com, david@redhat.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
-	ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com,
-	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, bbhushan2@marvell.com, tariqt@nvidia.com,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
-	leon@kernel.org, mbloch@nvidia.com, danishanwar@ti.com,
-	rogerq@kernel.org, nbd@nbd.name, lorenzo@kernel.org,
-	ryder.lee@mediatek.com, shayne.chen@mediatek.com,
-	sean.wang@mediatek.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	aleksander.lobakin@intel.com, horms@kernel.org, m-malladi@ti.com,
-	krzysztof.kozlowski@linaro.org, matthias.schiffer@ew.tq-group.com,
-	robh@kernel.org, imx@lists.linux.dev,
-	intel-wired-lan@lists.osuosl.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v12 00/12] Split netmem from struct page
-Message-ID: <20250723044933.GA8691@system.software.com>
-References: <20250721021835.63939-1-byungchul@sk.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyMesLnMIYpCSTzkkSSfYnq6/H89XfGi+tcfobhYG5cLZzCgYFOweu7610iyPZUjkSWxNqKRxws2Z6CvrN2BLX5OzntES7bEa/jg/eS9V4XI1VwlTWe2Wf7cesnOkbUdW0x94dDUct5CIvbuQWR3Drpk2upQtXX6wb7caoEv3Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3cMUCxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5CEC4CEE7;
+	Wed, 23 Jul 2025 04:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753246210;
+	bh=FRrcCCQQ4F/hJI3vXYnGQ/KyERQSqfeqQbk3YFvCDTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X3cMUCxTLqzOQsWUObwmsbY2S/+091JqNYSeqdU0N/cOAtyVxdEmILr/RzkJdUnSl
+	 jb6gz+T51o/8zfFtk8GYNes4Ts0EHdyPETGXI0bFgyPbFZCuwSBMMZZ7/ibVIbLCun
+	 dcmBsj4jFXfbtdgBUhWu4B3pbbfFgS41JQZP8jRbGdXpuOqDsB8ON0qUmPiln5sVMw
+	 nfxEePuVh48sExCgQLvZ72J3jJBFLpXd4QkiJDvzFA4EBWDJGN3bzfQn//zlF7HVof
+	 MVpo5AsJn9fWRlbKJuIVhCTwuBscdHITGU90uxyDVzQe0o9gVoZDYvRqkrHL6s8Mnp
+	 GXAI0WxPGCzSw==
+Date: Tue, 22 Jul 2025 23:50:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Macpaul Lin <macpaul.lin@mediatek.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Peter Wang <peter.wang@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>,
+	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: ufs: mediatek,ufs: add MT8195
+ compatible and update clock nodes
+Message-ID: <20250723045009.GA1218051-robh@kernel.org>
+References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
+ <20250722085721.2062657-3-macpaul.lin@mediatek.com>
+ <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,218 +75,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721021835.63939-1-byungchul@sk.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTZxTG8973frWjyV0n7p2ELOlmlpEA6tSdkfkRN+Pd4jIjicnc4mzG
-	zdoI1RRtgWSjIszZrUjAZbYrGU4sn4opAzqsbBaCnZrxJVj5KA42glpErVQqrqzXzMz/njzn
-	ye85Jzk8Vleyy3i9Yb9kNGizNaySVs4k/JQ6qbfoVnh3g7OpkYW+8AkGGubzoOaGh4H+OgLn
-	eucpcNa3IngQHeHAfWQUQ7jrIgsnT0QwRM/aaHD2FNMw1/QIw9/dExz4ff/Q0OD+AMZdUzR4
-	D7dh6JxbDhNH/SzYihcw2IMlLCwOLzBwPnqHgyJPLQXnb7dw0NtaysCxR6cwtFluxLsmhxgY
-	aHeyMHCoD0GwcZGBKV+8MFQ7ykFpgwOB79c6FoqK34BQywMO7n7XhWG8dCPEjpugu2opRC6H
-	EIycGqRg0evh4I/gGQa6mtoouPpnFEPk20oWrDNHEQza2ym4UnmWgerLV6n4HpkwtPiYgor+
-	KhYmi8cR9HdO0PDDwVIETR0BBu554ycvzDvZjZvEztAsFj1j1Uj8ue46JU6XxSgx0HGJEn9x
-	jHFilfuA2FybIp703qREa6Afi+76I6zovl/OiaNDXlb0H1+gxebqQnG62Y62Je9Uvp0lZetN
-	kjF9/W6lzve9ndpXti4veK0CW1BNuhUpeCKsJm1fVaCneup0JS1rWlhOHn5dwciaFV4jgUAU
-	WxHPLxHSyVD5R1ak5LFwMIFMh2xYzrwgbCYufzsrZ1TCm8QSTpZttbCGhG55nmBUwvPkd/tf
-	T/BYSCGB2E1KjmMhidTEeNlWCGvJRPw/ZJ0ovEJ+a71IyVVEmFKQMxdm/1vzJXKhNkCXIcHx
-	DNbxDNbxP7YK4Xqk1htMOVp99uo0Xb5Bn5f22d4cN4o/reuLxx970P3eTB8SeKRJUFlaCnVq
-	RmvKzc/xIcJjzRJV5NyXOrUqS5tfIBn3fmo8kC3l+lAST2teVK2KmLPUwufa/dIeSdonGZ9O
-	KV6xzIKoolt7fFvL3hteqcw4vYGkHrs3IjWGt3U0JJpnMt9PchUGDyfv2pGyvUSlNy/tDpk+
-	2ZThV8x5pkXbZqvd9m7XW3fuftg6vMJV9GOB25oa3rJr+3ODW8fKC2LmxENrHloMO+Gdktdd
-	PePeb3ZkZM2aS7g0tGVV5OWeAYNkeLUv47qGztVpV6ZgY672X7cHPHiwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTdxTO7/7ui4Yb7yrDG3FL1sUZSZQtvk6iGybGcLPExYUZnfFBgze2
-	A6procKSYdGazWZUlI3ZUhJQ5K0lRaBCRVeYgJqpFLAqFq0bAVfng4KWsmJrssz/vnPO9zh/
-	fCyWh6mFrFqTK2k1ymwFLSNlX6w9vMyvNqg+vl7yAdjsTTTcmqyioPFVPtQ+cFIwUC9A581X
-	BNga2hAEQ/cYcBwdwTDZ00vD6appDKHmYhJsN4wkTNlnMPx1xc9An/tfEhodm2C0ZowE1w/t
-	GLqnFoP/WB8NxcYwBovvCA1zd8MUXAz9w8AhZx0B3RX90fHvVgZutpkp+HnmDIZ2w4No4KNh
-	CjwdNho8h28h8DXNUTDmjqYG6kYYMDdaEbgv1dNwyLgCAq1BBp790oNh1LweIif1cKUyEaav
-	BRDcOzNEwJzLycAfvnMU9NjbCRh8GMIw/VMFDaYnxxAMWToIuF7RTEH1tUEi+kc6DM/NElA6
-	UEnDI+MogoFuPwnlRWYE9i4vBc9dRnL9BrE78BSLzvvVSDxff4cQx0sihOjtukqIF6z3GbHS
-	kSe21CWLp10ThGjyDmDR0XCUFh0vTjDiyLCLFvtOhkmxpfqgON5iQZvf3y5bt0fKVuslbcpn
-	GTKV+1cLsb/k03zf7VJsQLUpJhTHCvxKYexsBRnDJL9YePljKRXDNL9E8HpD2IRYNoFPEYZP
-	fG1CMhbzRfHCeKAYxzjz+Y1CTV8HHeNw/BrBMPlebC3nVwmBx843Nhz/jtBv+fONPeaTBW9k
-	gojRMZ8k1EbY2DqOXy34o52I4Xf5D4XLbb1ECeKsb6mtb6mt/6srEW5ACWqNPkepzl61XJel
-	KtCo85dn7stxoGgla76fPe5EQU+aG/EsUsRzhtaDKjml1OsKctxIYLEigZvuLFTJuT3Kgu8k
-	7b7d2rxsSedGSSypWMB9vlXKkPN7lblSliTtl7T/XQk2bqEBpS7b9HLBXfztog1lEfNmQ5DD
-	X5Vn2TqbS6fsHbNLf0trMj7ZSeWdO1B28XjeN5nBVI/nam2z/EhNfvnMjR31iUVdZ8eTuLKq
-	das1232ndqf9vmhbYa4ulO5cUljOFMxLjcDjXRnz5Dk7Mh1beqvCienJXw7F09sI/dBlV9nE
-	R/2DClKnUn6SjLU65WsqBJKsjgMAAA==
-X-CFilter-Loop: Reflected
+In-Reply-To: <b90956e8-adf9-4411-b6f9-9212fcd14b59@collabora.com>
 
-On Mon, Jul 21, 2025 at 11:18:23AM +0900, Byungchul Park wrote:
-> Hi all,
+On Tue, Jul 22, 2025 at 11:39:54AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 22/07/25 10:57, Macpaul Lin ha scritto:
+> > Add MT8195 UFSHCI compatible string.
+> > Relax the schema to allow between one to eight clocks/clock-names
+> > entries for all MediaTek UFS nodes. Legacy platforms may only need
+> > a few clocks, whereas newer devices such as the MT8195 require
+> > additional clock-gating domains. For MT8195 specifically, enforce
+> > exactly eight clocks and clock-names entries to satisfy its hardware
+> > requirements.
+> > 
+> > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> > ---
+> >   .../devicetree/bindings/ufs/mediatek,ufs.yaml | 42 ++++++++++++++++---
+> >   1 file changed, 36 insertions(+), 6 deletions(-)
+> > 
+> > Changes for v2:
+> >   - Remove duplicate minItems and maxItems as suggested in the review.
+> >   - Add a description of how the MT8195 hardware differs from earlier
+> >     platforms.
+> > 
+> > diff --git a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > index 20f341d25ebc..1dec54fb00f3 100644
+> > --- a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > +++ b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+> > @@ -9,21 +9,20 @@ title: Mediatek Universal Flash Storage (UFS) Controller
+> >   maintainers:
+> >     - Stanley Chu <stanley.chu@mediatek.com>
+> > -allOf:
+> > -  - $ref: ufs-common.yaml
+> > -
+> >   properties:
+> >     compatible:
+> >       enum:
+> >         - mediatek,mt8183-ufshci
+> >         - mediatek,mt8192-ufshci
+> > +      - mediatek,mt8195-ufshci
+> >     clocks:
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 8
+> >     clock-names:
+> > -    items:
+> > -      - const: ufs
+> > +    minItems: 1
+> > +    maxItems: 8
+> >     phys:
+> >       maxItems: 1
+> > @@ -47,6 +46,37 @@ required:
+> >   unevaluatedProperties: false
+> > +allOf:
+> > +  - $ref: ufs-common.yaml
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - mediatek,mt8195-ufshci
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 8
+> > +        clock-names:
+> > +          items:
+> > +            - const: ufs
+> > +            - const: ufs_aes
+> > +            - const: ufs_tick
+> > +            - const: unipro_sysclk
+> > +            - const: unipro_tick
+> > +            - const: unipro_mp_bclk
 > 
-> The MM subsystem is trying to reduce struct page to a single pointer.
-> See the following link for your information:
+> The unipro mp_bclk really is the ufs-sap clock; besides, the standard has clocks
+> for both TX and RX symbols - and also MT8195 (and also MT6991, MT8196, and others)
+> UFS controller do have both TX and RX symbol clocks.
 > 
->    https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
+> Besides, you're also missing the crypto clocks for UFS, which brings the count to
+> 12 total clocks for MT8195.
 > 
-> The first step towards that is splitting struct page by its individual
-> users, as has already been done with folio and slab.  This patchset does
-> that for page pool.
+> Please, look at my old submission, which actually fixes the compatibles other than
+> adding the right clocks for all UFS controllers in MediaTek platforms.
 > 
-> Matthew Wilcox tried and stopped the same work, you can see in:
+> https://lore.kernel.org/all/20240612074309.50278-1-angelogioacchino.delregno@collabora.com/
 > 
->    https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
-> 
-> I focused on removing the page pool members in struct page this time,
-> not moving the allocation code of page pool from net to mm.  It can be
-> done later if needed.
-> 
-> The final patch that removes the page pool fields will be posted once
-> all the conversions are completed.
-> 
-> 	Byungchul
-> ---
-> Changes from v11:
-> 	1. Rebase on net-next/main as of Jul 21.
-> 	2. Change page_pool_page_is_pp() to check for const type of
-> 	   page.  For now that it's called along with every
-> 	   pp_page_to_nmdesc() call as Pavel suggested,
-> 	   page_pool_page_is_pp() should also cover const type of page.
+> I want to take the occasion to remind everyone that my fixes were discarded because
+> the MediaTek UFS driver maintainer wants to keep the low quality of the driver in
+> favor of easier downstream porting - which is *not* in any way adhering to quality
+> standards that the Linux community deserves.
 
-I believe the curretn version is good enough.
+Sounds like we need a new maintainer then. They clearly don't understand 
+that downstream doesn't exist.
 
-	Byungchul
-
-> Changes from v10:
-> 	1. Introduce __netmem_to_nmdesc() and use it in
-> 	   __netmem_get_pp(). (feedbacked by Mina)
-> 	2. Fix a bug that fails on casting 'const page -> const
-> 	   netmem_desc', by using macros and _Generic. (feedbacked by
-> 	   test robot)
-> 	3. Add comment on pp_page_to_nmdesc() to ask for more attention
-> 	   before using the helper. (feedbacked by Mina)
-> 
-> Changes from v9:
-> 	1. Remove the patch 'page_pool: access ->pp_magic through
-> 	   netmem_desc in page_pool_page_is_pp()' and decide to wait for
-> 	   Pavel's work of PageNetpp() to identify page type for page
-> 	   pool, that doesn't need to access ->pp_magic.
-> 	2. Rename page_to_nmdesc() to pp_page_to_nmdesc() and add
-> 	   DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(page)) in it,
-> 	   just in case. (feedbacked by Pavel)
-> 	3. Apply just simple casting from page to netmem_desc for
-> 	   accessing ->pp and ->pp_ref_count, instead of full converting
-> 	   page to netmem_ref for network drivers e.g. mlx4, netdevsim,
-> 	   and mt76.
-> 	4. Expand the support for drivers to access ->pp and
-> 	   ->pp_ref_count to fec, octeontx2-pf, iavf, idpf, mlx5, ti,
-> 	   and xdp.
-> 	5. Squash each helper with its first user. (feedbacked by Mina)
-> 
-> Changes from v8:
-> 	1. Rebase on net-next/main as of Jul 10.
-> 	2. Exclude non-controversial patches that have already been
-> 	   merged to net-next.
-> 	3. Re-add the patches that focus on removing accessing the page
-> 	   pool fields in struct page.
-> 	4. Add utility APIs e.g. casting, to use struct netmem_desc as
-> 	   descriptor, to support __netmem_get_pp() that has started to
-> 	   be used again e.g. by libeth.
-> 
-> Changes from v7 (no actual updates):
-> 	1. Exclude "netmem: introduce struct netmem_desc mirroring
-> 	   struct page" that might be controversial.
-> 	2. Exclude "netmem: introduce a netmem API,
-> 	   virt_to_head_netmem()" since there are no users.
-> 
-> Changes from v6 (no actual updates):
-> 	1. Rebase on net-next/main as of Jun 25.
-> 	2. Supplement a comment describing struct net_iov.
-> 	3. Exclude a controversial patch, "page_pool: access ->pp_magic
-> 	   through struct netmem_desc in page_pool_page_is_pp()".
-> 	4. Exclude "netmem: remove __netmem_get_pp()" since the API
-> 	   started to be used again by libeth.
-> 
-> Changes from v5 (no actual updates):
-> 	1. Rebase on net-next/main as of Jun 20.
-> 	2. Add given 'Reviewed-by's and 'Acked-by's, thanks to all.
-> 	3. Add missing cc's.
-> 
-> Changes from v4:
-> 	1. Add given 'Reviewed-by's, thanks to all.
-> 	2. Exclude potentially controversial patches.
-> 
-> Changes from v3:
-> 	1. Relocates ->owner and ->type of net_iov out of netmem_desc
-> 	   and make them be net_iov specific.
-> 	2. Remove __force when casting struct page to struct netmem_desc.
-> 
-> Changes from v2:
-> 	1. Introduce a netmem API, virt_to_head_netmem(), and use it
-> 	   when it's needed.
-> 	2. Introduce struct netmem_desc as a new struct and union'ed
-> 	   with the existing fields in struct net_iov.
-> 	3. Make page_pool_page_is_pp() access ->pp_magic through struct
-> 	   netmem_desc instead of struct page.
-> 	4. Move netmem alloc APIs from include/net/netmem.h to
-> 	   net/core/netmem_priv.h.
-> 	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
-> 	6. Add given 'Reviewed-by's, thanks to Mina.
-> 
-> Changes from v1:
-> 	1. Rebase on net-next's main as of May 26.
-> 	2. Check checkpatch.pl, feedbacked by SJ Park.
-> 	3. Add converting of page to netmem in mt76.
-> 	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
-> 	   since it's on-going by Tariq Toukan.  I will wait for his
-> 	   work to be done.
-> 	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
-> 	   in page_pool_page_is_pp()' since we need more discussion.
-> 	6. Revert 'mm, netmem: remove the page pool members in struct
-> 	   page' since there are some prerequisite works to remove the
-> 	   page pool fields from struct page.  I can submit this patch
-> 	   separatedly later.
-> 	7. Cancel relocating a page pool member in struct page.
-> 	8. Modify static assert for offests and size of struct
-> 	   netmem_desc.
-> 
-> Changes from rfc:
-> 	1. Rebase on net-next's main branch.
-> 	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
-> 	2. Fix a build error reported by kernel test robot.
-> 	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
-> 	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
-> 	4. Do static_assert() on the size of struct netmem_desc instead
-> 	   of placing place-holder in struct page, feedbacked by
-> 	   Matthew.
-> 	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
-> 	   of wholly renaming it to strcut netmem_desc, feedbacked by
-> 	   Mina and Pavel.
-> 
-> Byungchul Park (12):
->   netmem: introduce struct netmem_desc mirroring struct page
->   netmem: use netmem_desc instead of page to access ->pp in
->     __netmem_get_pp()
->   netmem, mlx4: access ->pp_ref_count through netmem_desc instead of
->     page
->   netdevsim: access ->pp through netmem_desc instead of page
->   mt76: access ->pp through netmem_desc instead of page
->   net: fec: access ->pp through netmem_desc instead of page
->   octeontx2-pf: access ->pp through netmem_desc instead of page
->   iavf: access ->pp through netmem_desc instead of page
->   idpf: access ->pp through netmem_desc instead of page
->   mlx5: access ->pp through netmem_desc instead of page
->   net: ti: icssg-prueth: access ->pp through netmem_desc instead of page
->   libeth: xdp: access ->pp through netmem_desc instead of page
-> 
->  drivers/net/ethernet/freescale/fec_main.c     |  10 +-
->  drivers/net/ethernet/intel/iavf/iavf_txrx.c   |   2 +-
->  drivers/net/ethernet/intel/idpf/idpf_txrx.c   |   8 +-
->  .../marvell/octeontx2/nic/otx2_txrx.c         |   2 +-
->  drivers/net/ethernet/mellanox/mlx4/en_rx.c    |   4 +-
->  .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |   3 +-
->  .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |   4 +-
->  drivers/net/netdevsim/netdev.c                |   6 +-
->  drivers/net/wireless/mediatek/mt76/mt76.h     |   3 +-
->  include/linux/mm.h                            |   4 +-
->  include/net/libeth/xdp.h                      |   2 +-
->  include/net/netmem.h                          | 153 +++++++++++++++---
->  12 files changed, 161 insertions(+), 40 deletions(-)
-> 
-> 
-> base-commit: 4701ee5044fb3992f1c910630a9673c2dc600ce5
-> -- 
-> 2.17.1
+Rob
 
