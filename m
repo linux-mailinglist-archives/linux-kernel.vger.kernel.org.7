@@ -1,79 +1,59 @@
-Return-Path: <linux-kernel+bounces-742009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3095FB0EBE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1335DB0EBE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272531C838C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A181C22CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F7B274B2F;
-	Wed, 23 Jul 2025 07:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E61274B28;
+	Wed, 23 Jul 2025 07:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpFNvuK4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQ9VprkW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCCF2737EB;
-	Wed, 23 Jul 2025 07:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE58273D6A;
+	Wed, 23 Jul 2025 07:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753255641; cv=none; b=H05vgrBBjTLZljurW30bw2e9WdOAKU0seUzluAYPBMjJasVq9XJKCckCBvT36RP5qCDV/4Tz5N6SYgyf1ZaMgQZHQpIkaXa8lMtA+Cm3DZPbJ5UncsZt9wrHnS3gJhrkaiqDTtk31TGnfmJXQ3wTtoaaNKOAmhYqyzpwWzIF1/s=
+	t=1753255746; cv=none; b=tLWmaxdZtZFCH+PF38dlPvJPn3ZKEZgzEbIhE0eWL94Eti4twLkd/eVMaoXNYS76iyyw6UOj+C55yl+LKq6HuZ5Lz+Z2N5dnx+PV006UwfPR7IYJQxQevXTl7zAX51O26Y91vc1hcBuS/hk6HZnBT8WdhOwAoHRFXZ/fZUhGahE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753255641; c=relaxed/simple;
-	bh=bf9PaPOgFqxUTKwmAInneVFpDKX7U1g8t0Uc+GYu1J4=;
+	s=arc-20240116; t=1753255746; c=relaxed/simple;
+	bh=xF8Pni8rJCxkZ8VtQYcsNsFSmJ4XavgHmbqmuA+rrJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvDnEk6Mjwk0SLGBbAC1deBngmyWk0dK13VLiIRmenDOpGpLnou9fGH4F79pPTiMD8HkwludA7bC979/G3e8y45eDl8Z0tc/+OynzCLTEVKcuGCoZfz9WKBd4KAXUkn8Rs8wsrlE9HFJwwljyGZ89KWqmpEZl8I2QvFUw22Hkuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpFNvuK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC38C4CEE7;
-	Wed, 23 Jul 2025 07:27:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHaJZDqcwCNa1lVvbDd7PYvfAZVpk1TywHjKa4lPynwTSQqHPNsD9yJ2uEUyUxmeG15NJEd+O03cjRyd3mJDPF7+oa92IsH521ZAn1QZ89zXco/de9YjEMQ4LwWMhyzFWyEKe/56xJBxPGSV9dAYXZmX7lUJ1LGznevc0Ti40Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQ9VprkW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165FCC4CEE7;
+	Wed, 23 Jul 2025 07:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753255640;
-	bh=bf9PaPOgFqxUTKwmAInneVFpDKX7U1g8t0Uc+GYu1J4=;
+	s=k20201202; t=1753255745;
+	bh=xF8Pni8rJCxkZ8VtQYcsNsFSmJ4XavgHmbqmuA+rrJU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WpFNvuK4W+NWoO0APgZK0qaJgYMa1bmENI+725ngQ1ZO7xDvrjsl/XH5iB42a78+B
-	 XX64eGz5ahvmKit9daWehUGcQ7pql1G9jml0RCqf6SJIN+xYF9hKbbMBiS1PIhPcNJ
-	 NgqjV9NGxPPyxLd2VBTgcOI7H6kCq05eOp3CSHbf0NG44UNx5T8wtKN9R4BYH/T5nK
-	 xHfinbRCaxD9z6WKbxsU/lmtyF1UeA+MIhu1j9aoczze0KKAMVZRKPvL4HftRzY/3O
-	 A1PNVJAppIami1epkhtj79mPoG0JH/mihT0AaUKsF9pT0gHZb1gKh9Z99pJdbY08BW
-	 E3XaM5y0qy4Ug==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1ueTse-000000002Jb-1bvS;
-	Wed, 23 Jul 2025 09:27:12 +0200
-Date: Wed, 23 Jul 2025 09:27:12 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Christopher Obbard <christopher.obbard@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] Add support for OLED panel used on Snapdragon
- Lenovo T14s Gen6
-Message-ID: <aICO0CXxp4Vu331u@hovoldconsulting.com>
-References: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org>
- <aCw9pYehCdfXXeiR@hovoldconsulting.com>
- <aG-QyF12rGY55gcG@hovoldconsulting.com>
- <d431435b-4ac0-44aa-922d-0bde126ca563@linaro.org>
- <DBIMQO2CS0I3.17XLZPKPCVW2S@linaro.com>
- <e9c63414-8434-4e35-a159-66df1864f9f3@linaro.org>
+	b=PQ9VprkW2tbVKWFFhQJjT7fPdPdVoBrrTvhyfcQ+Zq7WTfLRUIt9cTYyCj0lzPzVE
+	 kDYhrwwvWgtemaoenDfnp7qhz5nwgBuNwyOW2jKqiiQ2LNdlt3A9z5n/RIsgWxjfyy
+	 xm7ZUIozwbWt630bb7cTuxZiQg+XqueTywboVhdFBqnaE1AgbTkA1lc/0YxNgv1PaR
+	 CIMaW5gXUDkJcQ59N3j7nPTkhfB84OvILgGtOr4Sf0VPtMcxEjuNYbvx/mGlzulj0s
+	 B+fIq5TnA9tvwa5TCs2n4Y7i5yTSk5Flb3IX50omU5FdUEBOY53s4+HsdcKEj00Wzj
+	 qWLJNuT6WE21Q==
+Date: Wed, 23 Jul 2025 08:29:00 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 net 4/4] net: hns3: default enable tx bounce buffer
+ when smmu enabled
+Message-ID: <20250723072900.GV2459@horms.kernel.org>
+References: <20250722125423.1270673-1-shaojijie@huawei.com>
+ <20250722125423.1270673-5-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +62,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9c63414-8434-4e35-a159-66df1864f9f3@linaro.org>
+In-Reply-To: <20250722125423.1270673-5-shaojijie@huawei.com>
 
-On Wed, Jul 23, 2025 at 08:51:22AM +0200, Neil Armstrong wrote:
-> On 22/07/2025 15:48, Rui Miguel Silva wrote:
-> > On Tue Jul 22, 2025 at 2:01 PM WEST, Neil Armstrong wrote:
-> >> On 10/07/2025 12:07, Johan Hovold wrote:
-
-> >>> Neil, do you have the OLED version now?
-> >>
-> >> I'm not sure, how do I determine that ? Is there something specific in the type number ?
-> > 
-> > Yes, yours is the OLED version, the exact models stated above.
+On Tue, Jul 22, 2025 at 08:54:23PM +0800, Jijie Shao wrote:
+> The SMMU engine on HIP09 chip has a hardware issue.
+> SMMU pagetable prefetch features may prefetch and use a invalid PTE
+> even the PTE is valid at that time. This will cause the device trigger
+> fake pagefaults. The solution is to avoid prefetching by adding a
+> SYNC command when smmu mapping a iova. But the performance of nic has a
+> sharp drop. Then we do this workaround, always enable tx bounce buffer,
+> avoid mapping/unmapping on TX path.
 > 
-> Ack thx, I'll test and re-spin this patchset then.
+> This issue only affects HNS3, so we always enable
+> tx bounce buffer when smmu enabled to improve performance.
+> 
+> Fixes: 295ba232a8c3 ("net: hns3: add device version to replace pci revision")
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ---
+> ChangeLog:
+> v1 -> v2:
+>   - Split this patch, omits the ethtool changes,
+>     ethtool changes will be sent to net-next, suggested by Simon Horman
+>   v1: https://lore.kernel.org/all/20250702130901.2879031-1-shaojijie@huawei.com/
 
-Thanks. Note that this depends on this series as well which also needs a
-minor update:
+Thanks for breaking this out.
 
-	https://lore.kernel.org/all/20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org/
-
-Can you respin that one as well?
-
-Johan
+Reviewed-by: Simon Horman <horms@kernel.org>
 
