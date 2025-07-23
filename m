@@ -1,95 +1,127 @@
-Return-Path: <linux-kernel+bounces-742185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D997B0EE67
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0857B0EE6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3868D1C84AD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE610546D14
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CE1286890;
-	Wed, 23 Jul 2025 09:26:21 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E8A286D7D;
+	Wed, 23 Jul 2025 09:29:17 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEA9271454;
-	Wed, 23 Jul 2025 09:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9A3FB1B;
+	Wed, 23 Jul 2025 09:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753262781; cv=none; b=sA+IJ7mIwyq0XgN14dzSLsyO9NyJqOs7S/eaP9Xfhs3hv24M4Jpg52x3Mpi0Khto06Ddf8kDdf6BbUX0rU5On1YDSRRYMMSKJjgfrsHMTGwcwwdc0Y2kjBOr+G+kCcT8pHzWc/0VUGcjJDpe5ihi2AMsoDsZfonnyOOtIO5Tq+Y=
+	t=1753262956; cv=none; b=OWPSaBp7Inz8NBAflzU/k8fy7gXdQi2Y65xSF21AiJnTYf1QKZnjq5wzDDexPw4sCOJwWMB3tnf9Wa8PCX8FUTr5Uc4yJZmg0GPggwri1LVPTdE9IwvaUJqAzKY4WZsjmSrpN8O8/PUpc45DRgXQ/xO6s2cKqu3HZMUMdHt+eJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753262781; c=relaxed/simple;
-	bh=7xNXxrvUumKxQi8n26P3wHBPJX8mTzGQeQysCUFywaI=;
-	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
-	 In-Reply-To:Content-Type; b=Q9vJC364ZaLZC3oimM/iAsiBq0OXNA997N+H7eoeXpmoixJzah51WAcUKk9kSx2vzjSC00DLJd8kQEUfef+Kcuy2Rqppdlz8zSjtsByTASPyVujqDMywWVZTfT2oJNQt4r0/sLnN6cllP5barVUYKRCxMKBYabYIJzUqVz9BF6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bn7wN4zqJz13Mfx;
-	Wed, 23 Jul 2025 17:23:16 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id A92C2140258;
-	Wed, 23 Jul 2025 17:26:13 +0800 (CST)
-Received: from kwepemq100003.china.huawei.com (7.202.195.72) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 23 Jul 2025 17:26:13 +0800
-Received: from [10.67.113.98] (10.67.113.98) by kwepemq100003.china.huawei.com
- (7.202.195.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 23 Jul
- 2025 17:26:12 +0800
-Message-ID: <6880AAB4.4080103@hisilicon.com>
-Date: Wed, 23 Jul 2025 17:26:12 +0800
-From: Wei Xu <xuwei5@hisilicon.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+	s=arc-20240116; t=1753262956; c=relaxed/simple;
+	bh=grOY7rG/X+b9Vqa7udJpstXqVwojxMiy+5DRZZXGdFA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jQyUq/xu6XTNTOyt5cQ2L7HdoC+ip9Vwd6bSJHwHyx7z4/w0oTqMgcU6qljswCzCB4QCtI6mhims2nF9ZH7eKST4zYOgtnicVFBqKd30NOdXojlny4CPqbXXIIyA8UKqg7qxM/XibKHb4WLSfVtibNsw+92WfcE+30hpHPhkQAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
+ (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 23 Jul
+ 2025 11:29:03 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%6]) with mapi id
+ 15.01.2507.057; Wed, 23 Jul 2025 11:29:03 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, Ming Lei <ming.lei@canonical.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
+ event
+Thread-Topic: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
+ event
+Thread-Index: AQHb8Xe2qza52xx55UmGbnkg6Pc/lg==
+Date: Wed, 23 Jul 2025 09:29:03 +0000
+Message-ID: <aICrWl2TTTInbfT8@w447anl.localdomain>
+References: <20250710085028.1070922-1-john.ernberg@actia.se>
+ <20250714163505.44876e62@kernel.org>
+ <74a87648-bc02-4edb-9e6a-102cb6621547@actia.se>
+ <20250715065403.641e4bd7@kernel.org>
+ <fbd03180-cca0-4a0f-8fd9-4daf5ff28ff5@actia.se>
+ <20250716143959.683df283@kernel.org>
+ <55147f36-822b-4026-a091-33b909d1eea8@actia.se>
+ <20250718161825.65912e37@kernel.org>
+In-Reply-To: <20250718161825.65912e37@kernel.org>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-esetresult: clean, is OK
+x-esetid: 37303A2955B14450647C67
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <95DD33E56AD5674EBC1A132FFD9750A6@actia.se>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: Yihang Li <liyihang9@huawei.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Yihang Li <liyihang9@h-partners.com>
-CC: <James.Bottomley@HansenPartnership.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<liuyonglong@huawei.com>, xuwei 00615891 <xuwei5@huawei.com>,
-	<xuwei5@hisilicon.com>
-Subject: Re: [PATCH] scsi: MAINTAINERS: Update hisi_sas entry
-References: <20250702012423.1947238-1-liyihang9@h-partners.com> <yq1ms967jj5.fsf@ca-mkp.ca.oracle.com> <09fe7faa-cae5-6dff-4f35-2c2744c73cc0@huawei.com>
-In-Reply-To: <09fe7faa-cae5-6dff-4f35-2c2744c73cc0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq100003.china.huawei.com (7.202.195.72)
 
-Hi Martin,
+Hi Jakub,
 
-On 2025/7/23 17:14, Yihang Li wrote:
-> CC hisilicon SOC maintainer: xuwei5@huawei.com
-> 
-> On 2025/7/15 1:52, Martin K. Petersen wrote:
->>
->> Hi Yihang!
->>
->>> liyihang9@huawei.com no longer works. So update information for hisi_sas.
->>
->> In situations where affiliation changes it is customary to receive an
->> acknowledgement from the institution which previously held the
->> maintainership.
->>
-> .
-> 
+On Fri, Jul 18, 2025 at 04:18:25PM -0700, Jakub Kicinski wrote:
+> On Fri, 18 Jul 2025 09:07:26 +0000 John Ernberg wrote:
+> > > Thanks for the analysis, I think I may have misread the code.
+> > > What I was saying is that we are restoring the carrier while
+> > > we are still processing the previous carrier off event in
+> > > the workqueue. My thinking was that if we deferred the
+> > > netif_carrier_on() to the workqueue this race couldn't happen.
+> > >=20
+> > > usbnet_bh() already checks netif_carrier_ok() - we're kinda duplicati=
+ng
+> > > the carrier state with this RX_PAUSED workaround.
+> > >=20
+> > > I don't feel strongly about this, but deferring the carrier_on()
+> > > the the workqueue would be a cleaner solution IMO.
+> > >  =20
+> >=20
+> > I've been thinking about this idea, but I'm concerned for the opposite=
+=20
+> > direction. I cannot think of a way to fully guarantee that the carrier=
+=20
+> > isn't turned on again incorrectly if an off gets queued.
+> >=20
+> > The most I came up with was adding an extra flag bit to set carrier on,=
+=20
+> > and then test_and_clear_bit() it in the __handle_link_change() function=
+.
+> > And also clear_bit() in the usbnet_link_change() function if an off=20
+> > arrives. I cannot convince myself that there isn't a way for that to go=
+=20
+> > sideways. But perhaps that would be robust enough?
+>=20
+> I think it should be robust enough.. Unless my grep skills are failing
+> me - no drivers which call usbnet_link_change() twiddle the link state
+> directly.
+>=20
+> Give it a go, if you think your initial patch is cleaner -- it's fine.
+>=20
 
-Yihang's mail has been changed to: liyihang9@h-partners.com. So
+Apologies for the delay, I was stuck in a higher priority issue.
 
-Acked-by: Wei Xu <xuwei5@hisilicon.com>
+I've tested this approach and it looks promising. Will send this approach
+as a v2 later today.
 
-Thanks!
+Thank you for the guidance, very much appreciated.
 
-Best Regards,
-Wei
+Best regards // John Ernberg=
 
