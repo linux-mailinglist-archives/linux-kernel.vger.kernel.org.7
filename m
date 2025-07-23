@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-743126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE1FB0FAE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:26:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35173B0FAE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098BE9666BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387F2189C5F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10C22A1D4;
-	Wed, 23 Jul 2025 19:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6403229B21;
+	Wed, 23 Jul 2025 19:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hNOs0sMM"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="MGky4O9x"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176642192F4;
-	Wed, 23 Jul 2025 19:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8A62192F4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753298778; cv=none; b=s+tWBfc48KAEbaJz1dCzq4ynu9NdU3rmbL/AxnuCakCJJEwhFHOWfQoFbZDwEWC3YoAzmmIVmdnhzGg4d0EDuSFQXFtsyx8ISK+T2aMmy99+NO98ooPPUm0jDica6CknQkXDqol0hSHMwvv3eQIo3XKZR5elriMXy0j7mCZoA94=
+	t=1753298720; cv=none; b=iTj8TtgPu8HJi9ohQosbT4bkCKm6d+enKq/veod/5UE9u5OcWBZFnCy4tyd5vEJpwlv8u/v9LHVppnNHEVRoHNIl19+IlOrPjZIsWRTkhdxa/+14srxi+3BAm9RA0scU/eNfsVY4eh7bZDNdxjpU/J74tpU8+CsfKql/wQG6wUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753298778; c=relaxed/simple;
-	bh=McKtVO0Hih5A9AVjNMHsFSbGO7m6LL6HMnmcX3RYaM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTQLPaQogmTTXge+XPIr4XlPywhriD9eL8+Q4+pqAcGytk8LRT+SiHqxUAGzeARgOfPR0LIxozRKJtViewEYp2Dmc4rUFimL+7MBmWhaQkGLCGX9+POjg30I2dbZyojyeRCiS7l7gMWZeZPgkfdzkbPUeRBk1eYxIZFZcm61juQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hNOs0sMM; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHttM6009436;
-	Wed, 23 Jul 2025 19:26:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=o7Xj0Emi+6jkt4QCvj9ula6o/6JAU
-	0YBmQDnMaeeNpc=; b=hNOs0sMMrTU+Awv7bbiaSbGPAmgAN2DpIX786dgjW+YJd
-	z/l2Hpntuv7opZs9l/ZMtlKhX55QaUTHTjgrAp/383Nd93R8HCYJA1JiW0Ea8UAI
-	c2wdQSILKPmXH2qP1htRGY7HnJxgLCrVEUwYqoILyegdy+uvMo1FRw6+kCsOn3h+
-	K9inF5d/0YJNd0dWtJGebg8IbiQwPd8ubQadBB5TKjYRrs/8KshGBg1pr2hfC400
-	BODMvYENvNtzmZliHgERgzfXD9kcLIKj77RH+aP9PfCjyjYq+ZRlYSdLEKE1VQpG
-	Tn4jdCGU2eY0c9kiiyEXZF12R+6x1R37svAEGSiLQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e2g7y8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 19:26:06 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56NI0sDe038352;
-	Wed, 23 Jul 2025 19:26:05 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tb12yx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 19:26:05 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56NJQ5rH022657;
-	Wed, 23 Jul 2025 19:26:05 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4801tb12y4-1;
-	Wed, 23 Jul 2025 19:26:05 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-        gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
-        linux-staging@lists.linux.dev
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [bug report] staging: sm750fb: Fix polarity assignment for vertical and horizontal mode
-Date: Wed, 23 Jul 2025 12:24:31 -0700
-Message-ID: <20250723192528.77109-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1753298720; c=relaxed/simple;
+	bh=BkbfST8VnkNe2dA/eG0x4Zv7iq6xINXAglN3NoSKfys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhMSO8hhwonviL5NNYagAcqsSQlbyyVAuc9xvAji2Ww3uknsSPZ1ovhnIKXKkXc9GrU3V9wB2jZPCcUUSuOBJw/q8ssRjpWBVNrwOc/Z0bEfMK/wP2QFOOaTHWKLQCPQhX7jUr8IF2xMYs6Uidm2QBsutIWcZBHY9cBDcmFEv34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=MGky4O9x; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ab82eb33f9so4224191cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1753298717; x=1753903517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ja0+u1t4v2GnYrO6vfHRjNkhPG9aXnqYbT0ae6BB0O8=;
+        b=MGky4O9x2AETvR2H/qYFl08V1e5VR7MlQsPlDQP4Oj3YdiOEt1v56QjOc3ZlW6epWC
+         tiEI7pef4DJUwiODErN6G62pKqoBEm6YdNWVwIDnc6WY6a78qL/IQuLgFK8HotdwnAgk
+         yIFfsTMIccwjvge1YOMKkkP/VLsAQSKGVA7XXieUn5FYjhJhYrN5PkUhP0Hbs1EGk3rt
+         JLRRtJzu8zB/1ytK2Q6lxZlCvtTNtItMEDYx0IUqD7K6/o8lCobZFvfzSwnrkX6gFAIF
+         B8OBnViiXD/Tzvzyk4ecU0g8Rj/lnbCXmECt/gNaTjZuozKiROKguUwzNQ6kU5VsZ7ru
+         gcBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753298717; x=1753903517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ja0+u1t4v2GnYrO6vfHRjNkhPG9aXnqYbT0ae6BB0O8=;
+        b=BFS5Kez5AfuL474v+5RasjYpG0hd5u6UUz4hOGcz10H/vF2CrH6/aTgXAxtEzOgvOp
+         dSNqMqhao0pf4WVSzBrNeEGG/8j0MjZrjWOgBHqk2267F/7EnDSzoh5xepIXJAUq39yt
+         cJxUw/sZ1Iuja9+0f4e0nRerr2jjScAnQQj5N7yKpVFO/ArHwjW/5lATG/O2Ck6kGrpk
+         Tyi8vXGIPfhXnrwSGONtH8Qtrt4aX9SagdTYjzHhjSclqPAEPZtd1JretFcdiuL0PYOc
+         pKjZsvxk/yy/Tj8vr0pIWlnSWEh+6V4iuLox1Lu3LP5i5sv5Q9bdUE7ji65KT4Wl9/xg
+         8Ibw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWLfwHs21u4ianr1D+cEEL8FEAFgoFBKpa+mvjrHo9QnqQzBqvtfKLkfqrIThGG1i4YYLuG41IL8mNDrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy25hfOB3J8PiAECVgI8pRM0ZjtfQhYrBdnKFrh2nQXvyiGIOJl
+	OuLy43iOSPDM5j1srXp6zdIbnqZWMRhDgAkVJkccjdAwj2S0AHFsv3i0k2L2YWxVig==
+X-Gm-Gg: ASbGncsTeQ9SEq4Uff9OjUmAgSpwpZ9AUEKuDyS9UXAv66SdvYE08qnTnCl0JPHXaL5
+	xCqUVunB/a92Z3jidisGQ8u/jNGJjdAsBo9fZL3m5hEYDa1g2iZ5OsGRhvK3uaKWJRS6K8msSmy
+	l6oZwM6jINdPdM4QxhLGzjUBUZR/OCVI++1Lkp5VRBw49gld3lyilOSvLQCqVUCj9HVuxZbeHKT
+	9FOzqfSpjC/1uM4pqauvwqmryvoKCFrUHdcHMy95M3vfh7GJm2XiXn2ECFlUpkr3w1CR+yqBl7m
+	/+OHVJHpny08PZ38XreecDPRwwb/46ZXGwW8P+ycix3vuRYEXWZvWyoHdUsi0uG+4qvU7O/hC52
+	S2vbRqNrZmr+1b5kAyYZcThub7Jd8qFawngAbAihz6R7Gx1ymKCZ66G98UmbRg904/w==
+X-Google-Smtp-Source: AGHT+IG8vOZUCry43fkriuOa/tnIX5d5irFl/w/P6a2uToDSFLiTZ8ufd5Tr7TYG4+WypOiZc7k5eA==
+X-Received: by 2002:ac8:5913:0:b0:4ab:9551:3b4d with SMTP id d75a77b69052e-4ae6dfe9242mr49397451cf.54.1753298717332;
+        Wed, 23 Jul 2025 12:25:17 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:1011:2006:3d4c:de64:63d3:50b5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb499fcd2sm70834141cf.17.2025.07.23.12.25.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 12:25:16 -0700 (PDT)
+Date: Wed, 23 Jul 2025 15:25:13 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
+	quic_neeraju@quicinc.com, frederic@kernel.org,
+	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
+	hernan.poncedeleon@huaweicloud.com
+Subject: Re: [RFC] tools/memory-model: Rule out OOTA
+Message-ID: <b9c250b2-e4c0-4e8f-b37c-b51d93b980f0@rowland.harvard.edu>
+References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
+ <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507230164
-X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=6881374e b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=dYcGuau3DC2CDLyDpIsA:9 cc=ntf
- awl=host:12062
-X-Proofpoint-GUID: fKMKiYlUq6jK_HTh1oR3XqYkoeo99nBW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE2NCBTYWx0ZWRfX+Wpp0PUoVB+Q
- 82wgPOPJqKBirSki6OxbmI8lbs2GPkjes3x3gNtmFpnb1R0IYdPRyreAkd4Ixrp3Pz+BDiB9SP+
- /MJxMtSFIaEpdRZw6C3u6I26csTYvvo7102uGrZ2szga/STfBvzslldauM6Pp18bQwPWl9+I9qz
- ocR2+FOa5mldwQm4lleEn0VtzJkNc5lu8q+K+7KIvDtqYp7IV1F6EDiWtgb6S1uBUUgG3f370w3
- 4pc6TwVvWhMYt/Mme4kJPBfNowtlhKbUXHuViFx97iqtvkHl3x0aT5YTIXo2w9yn60hNEAYqtnE
- zq78H8xuPAWvGgHsMBr8iZ3KfEJ5lCb07ENItTqu6cc9wpe0l3OOoNe26Q4XwBF0b1/vY6j2nr+
- x0yLFmZICH1kvc3gTvViLujLoas4EYa+LSf3Ov0UAXnWq2KzHRhGKTq93JBDuVK+S0q9LwQz
-X-Proofpoint-ORIG-GUID: fKMKiYlUq6jK_HTh1oR3XqYkoeo99nBW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
 
-In drivers/staging/sm750fb/sm750_hw.c,
-the vertical and horizontal sync polarity assignments were incorrectly
-ordered. 
-The assignment for modparm.vertical_sync_polarity was mistakenly using
-the FB_SYNC_HOR_HIGH_ACT bit instead of FB_SYNC_VERT_HIGH_ACT, 
-and the horizontal polarity line was commented out or missing.
+On Tue, Jul 22, 2025 at 05:43:16PM -0700, Paul E. McKenney wrote:
+>     Also, C-JO-OOTA-7.litmus includes a "*r2 = a" statement that makes herd7
+>     very unhappy.  On the other hand, initializing registers to the address
+>     of a variable is straight forward, as shown in the resulting litmus test.
 
-This patch corrects the logic by properly assigning:
+...
 
-vertical_sync_polarity -> from FB_SYNC_VERT_HIGH_ACT
-horizontal_sync_polarity -> from FB_SYNC_HOR_HIGH_ACT
+> diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
+> new file mode 100644
+> index 00000000..31c0b8ae
+> --- /dev/null
+> +++ b/manual/oota/C-JO-OOTA-7.litmus
+> @@ -0,0 +1,47 @@
+> +C C-JO-OOTA-7
+> +
+> +(*
+> + * Result: Never
+> + *
+> + * But LKMM finds the all-ones result, due to OOTA on r2.
+> + *
+> + * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
+> + *)
+> +
+> +{
+> +	0:r2=a;
+> +	1:r2=b;
+> +}
 
-Please let me know your feedback.
-Thanks,
-Alok
----
-Fixes: 81dee67e215b ("staging: sm750fb: add sm750 to staging")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/staging/sm750fb/sm750_hw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In this litmus test a and b are never assigned any values, so they
+always contain 0.
 
-diff --git a/drivers/staging/sm750fb/sm750_hw.c b/drivers/staging/sm750fb/sm750_hw.c
-index 7119b67efe11b..5a32756f98c31 100644
---- a/drivers/staging/sm750fb/sm750_hw.c
-+++ b/drivers/staging/sm750fb/sm750_hw.c
-@@ -280,9 +280,9 @@ int hw_sm750_crtc_set_mode(struct lynxfb_crtc *crtc,
- 	/* set timing */
- 	modparm.pixel_clock = ps_to_hz(var->pixclock);
- 	modparm.vertical_sync_polarity =
--		(var->sync & FB_SYNC_HOR_HIGH_ACT) ? POS : NEG;
--	modparm.horizontal_sync_polarity =
- 		(var->sync & FB_SYNC_VERT_HIGH_ACT) ? POS : NEG;
-+	modparm.horizontal_sync_polarity =
-+		(var->sync & FB_SYNC_HOR_HIGH_ACT) ? POS : NEG;
- 	modparm.clock_phase_polarity =
- 		(var->sync & FB_SYNC_COMP_HIGH_ACT) ? POS : NEG;
- 	modparm.horizontal_display_end = var->xres;
--- 
-2.46.0
+> +
+> +P0(int *a, int *b, int *x, int *y)
+> +{
+> +	int r1;
+> +	int r2;
+> +
+> +	r1 = READ_ONCE(*x);
+> +	smp_rmb();
+> +	if (r1 == 1) {
+> +		r2 = READ_ONCE(*a);
 
+If this executes then r2 now contains 0.
+
+> +	}
+> +	*r2 = a;
+
+And so what is supposed to happen here?  No wonder herd7 is unhappy!
+
+> +	smp_wmb();
+> +	WRITE_ONCE(*y, 1);
+> +}
+> +
+> +P1(int *a, int *b, int *x, int *y)
+> +{
+> +	int r1;
+> +	int r2;
+> +
+> +	r1 = READ_ONCE(*y);
+> +	smp_rmb();
+> +	if (r1 == 1) {
+> +		r2 = READ_ONCE(*b);
+> +	}
+> +	*r2 = b;
+
+Same here.
+
+> +	smp_wmb();
+> +	WRITE_ONCE(*x, 1);
+> +}
+> +
+> +locations [0:r2;1:r2]
+> +exists (0:r1=1 /\ 1:r1=1)
+
+Alan
 
