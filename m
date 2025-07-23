@@ -1,153 +1,129 @@
-Return-Path: <linux-kernel+bounces-742618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC96EB0F45E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D09C9B0F449
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E743A31F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108253A3621
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188CA2E717D;
-	Wed, 23 Jul 2025 13:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24DE2E88AC;
+	Wed, 23 Jul 2025 13:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="iKoD0HQL"
-Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmuG7qTl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD09233DF;
-	Wed, 23 Jul 2025 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FBB8F58;
+	Wed, 23 Jul 2025 13:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278406; cv=none; b=hE4rkRDzivbyarwkeuGoIrmoRmueB9v9cTuJHbtE0Kdv1CSMrMoTcVWjVAG3JuBbwLh/R4RA3sVPNcxmPa76uh17PBo3TXD9H4KAXpq2GUng4WlFMiupThPChafgFsbC+Jm4lZm+VdUnBJwL3vTjJEzjFMlB9wvOR887RGrEiwA=
+	t=1753278110; cv=none; b=HpYv5UkPUkYYvsZmzS+ivwf5zKK1iSryVEdfe4B78wTXI11ofH3qPC2x/71Vq9iIklG0G+ZKsWzQ70t10nKSb00QzSyh34qiLgkqaMiY7iLRRi1LlNWj8Eq340FPgq/BUyRnc0CDHgEd2xq8ZT8jOcT7wtKMmUTVIzjYVA+OwKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278406; c=relaxed/simple;
-	bh=mIC1opv81Wco4JyPgoo2Z+5nQ0wEJI9iz7tolDJLRcc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YsYaHoN8Iz8JKlcGGBJQCuvYoWmWv20BU2Zaa/Ctq/TtXCx3mR3s0VimQ4159MUBgLsdjhqehSvbxcvFQk8+b5Xt8iiTs8C6JkWX1XnqcMKY+j8TwEI8nfOLAthi+uLMZ74sJWp0ZHRRGllxL46kZbZE6TuXL3TQCQX8V5xijug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=iKoD0HQL; arc=none smtp.client-ip=67.231.157.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0122330.ppops.net [127.0.0.1])
-	by mx0b-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NDWaTa021520;
-	Wed, 23 Jul 2025 14:41:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=PVjDwUrvI3ZKZ87UWt4KPxLzsVcn3p2xe6FThQead9w=; b=iKoD0HQLZ+Vm
-	kdEJRBGGQEdmvJNV3NJzTUYxIIHuph9ZP6mmJordZhjaxpJgx9kHHTgJR7/gD/V9
-	CuI/Uulpq89HVUeNpoGzNuLU0ZdeX2ah2ukszYrwl82XAy36sg3NoUidKSar8deH
-	paiyTSa3PBAsBDeVlkHP1SxV+BXQA3nXxD4D3jmXipUIW2l7HW5gcSqwxUM8xl0I
-	4MMrZaDKn3Sx/vu7ooLqlvV9opBrLdp31U0JNyWuld1ZboLiQ0pUGX8cpzbqX/vV
-	Ft4MrY4KSTAxZdUaYPrucGKEYHNP8w7b3hWJrdZ+q4G/BnIt48t5+ii6dHUmB9Rf
-	50ofzCHA3Q==
-Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
-	by mx0b-00190b01.pphosted.com (PPS) with ESMTPS id 482w3v305k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 14:41:24 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
-	by prod-mail-ppoint5.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 56NAI7sK002777;
-	Wed, 23 Jul 2025 06:41:23 -0700
-Received: from email.msg.corp.akamai.com ([172.27.91.20])
-	by prod-mail-ppoint5.akamai.com (PPS) with ESMTPS id 4809b9yqan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Jul 2025 06:41:23 -0700
-Received: from usma1ex-exedge1.msg.corp.akamai.com (172.27.91.34) by
- usma1ex-dag4mb1.msg.corp.akamai.com (172.27.91.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 09:41:23 -0400
-Received: from usma1ex-dag4mb6.msg.corp.akamai.com (172.27.91.25) by
- usma1ex-exedge1.msg.corp.akamai.com (172.27.91.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 23 Jul 2025 09:41:23 -0400
-Received: from bos-lhvzmp.bos01.corp.akamai.com (172.28.221.177) by
- usma1ex-dag4mb6.msg.corp.akamai.com (172.27.91.25) with Microsoft SMTP Server
- id 15.2.1748.26 via Frontend Transport; Wed, 23 Jul 2025 09:41:23 -0400
-Received: by bos-lhvzmp.bos01.corp.akamai.com (Postfix, from userid 42339)
-	id C6BD115F582; Wed, 23 Jul 2025 09:41:22 -0400 (EDT)
-From: Michael Zhivich <mzhivich@akamai.com>
-To: <stable@vger.kernel.org>, <bp@alien8.de>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-        Michael Zhivich
-	<mzhivich@akamai.com>
-Subject: [PATCH v3 6.6] x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
-Date: Wed, 23 Jul 2025 09:41:21 -0400
-Message-ID: <20250723134121.2371126-1-mzhivich@akamai.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025072219-mulberry-shallow-da0d@gregkh>
-References: <2025072219-mulberry-shallow-da0d@gregkh>
+	s=arc-20240116; t=1753278110; c=relaxed/simple;
+	bh=zxxC/wQlJmLxLa47Q7NNudHjnXvG/vCvKPONP/39QCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9XLCCby8Zb0AdDah6bPznl6pd84WwpjTwHlf2AM6/YDb8zoS8j9FsKeFS+iTIj7wMR/luRDVlKklgFGKYIEPy72/09HpGdN8LUWL84nNA06sGTOhC03j32YPAybqlX1XePnrbJvn8k9dGrRlCLLV0wik4yhtfNuE4GFI50lf9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmuG7qTl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83DD9C4CEE7;
+	Wed, 23 Jul 2025 13:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753278109;
+	bh=zxxC/wQlJmLxLa47Q7NNudHjnXvG/vCvKPONP/39QCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PmuG7qTl4sg7/QMBKgyBmArSjY7MW6zMzETCIkWyLdi81B49I4VHdhuWfDtD85keA
+	 s1bLp3unFlREP9Un4fUUX5JziSZMKwf4Hw/KgMn4VmYohw3DYwp/XXVUfyBh5wkyD3
+	 R09TNEfWqkjGMY/LeDVi0f9DYMrxS2enzACUqqbvhnTzVcHNryjALifb57fyVeXAHb
+	 L1ILoKBkyV+Sg2NQ8JbJ+iBlFG6RrkLTutCNyS6FMTUcZyOmERe66AVfkM7t7YxQvS
+	 J5Dx9ktAMD/94OEX5E4E6anz65xzMbxXPuCU2irBMH4pS5JuXICjJt5QYIrsV2r6ZK
+	 GQzPzDIu1LfKg==
+Date: Wed, 23 Jul 2025 08:41:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	Julius Werner <jwerner@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 02/20] dt-bindings: stm32: stm32mp25: add
+ `access-controller-cell` property
+Message-ID: <20250723134148.GA2136293-robh@kernel.org>
+References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
+ <20250723-ddrperfm-upstream-v4-2-1aa53ca319f4@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507230116
-X-Proofpoint-ORIG-GUID: he64b_cDpGyCobWgerWQiNMWly-NDy9C
-X-Authority-Analysis: v=2.4 cv=bcRrUPPB c=1 sm=1 tr=0 ts=6880e684 cx=c_pps
- a=NpDlK6FjLPvvy7XAFEyJFw==:117 a=NpDlK6FjLPvvy7XAFEyJFw==:17
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=X7Ea-ya5AAAA:8 a=QyML1Wa_BHPz27VLx9cA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExNyBTYWx0ZWRfX8Vhx3Df7DvHK
- fH2wUpId9tPG4nPYNUJZIQDwWIXHP5TGhLupkQd6pcBenJQXYwhZDVU+YxyN1gNIZUmqCfw4/tm
- L0K3EFdT+cvmbAn7JKaSG7bSB/StMXvN2/pNCHRLX8N31YA4UQ8ZQ6k6gsh0ktvXByt407Jtv4A
- wuqSalUERj9HhjVoFuNjX8UuK4BwupgD46uv1i5tfM+Qf82M8V+tsfCv5JKkkTIJ8FMu4AlWNBp
- Kv9lZXHfdqTXOQLTw+D6EjvXE9O0Qeh+3qPrfftmuXHK7kjw36aoj1Pf7tlZHG7wCXSRH8PVws4
- Vr+4KDDLz4487+Q/CPu1GtiOmJd0j3rx2lQxhR3KYijN3bX//gvRpUc3PRz9ACktGAu3NZkepNw
- kPUkq+e2dA958lf+KfbEwcSnl5HqF3TyH3kRjYo25mhDkZ04XKm12NmBb7J8f+hsAFUmKsKh
-X-Proofpoint-GUID: he64b_cDpGyCobWgerWQiNMWly-NDy9C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
- spamscore=0 mlxscore=0 suspectscore=0 impostorscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 mlxlogscore=932
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230117
+In-Reply-To: <20250723-ddrperfm-upstream-v4-2-1aa53ca319f4@foss.st.com>
 
-For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
-field in zen_patch_rev union on the stack may be garbage.  If so, it will
-prevent correct microcode check when consulting p.ucode_rev, resulting in
-incorrect mitigation selection.
+On Wed, Jul 23, 2025 at 03:05:46PM +0200, Clément Le Goffic wrote:
+> RCC is able to check the availability of a clock.
+> Allow to query the RCC with a firewall ID.
 
-This is a stable-only fix.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Michael Zhivich <mzhivich@akamai.com>
-Fixes: 90293047df18 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
----
-
-Changes in v3:
-- separate "fixes" tag for each stable
-
- arch/x86/kernel/cpu/amd.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 5fcdfbb792bd..b5a234eef471 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -549,6 +549,8 @@ static bool amd_check_tsa_microcode(void)
- 	p.model		= c->x86_model;
- 	p.ext_model	= c->x86_model >> 4;
- 	p.stepping	= c->x86_stepping;
-+	/* reserved bits are expected to be 0 in test below */
-+	p.__reserved	= 0;
- 
- 	if (cpu_has(c, X86_FEATURE_ZEN3) ||
- 	    cpu_has(c, X86_FEATURE_ZEN4)) {
--- 
-2.34.1
-
+The subject is wrong. There is no such "access-controller-cell" 
+property.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> index 88e52f10d1ec..4d471e3d89bc 100644
+> --- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+> @@ -31,6 +31,11 @@ properties:
+>    '#reset-cells':
+>      const: 1
+>  
+> +  '#access-controller-cells':
+> +    const: 1
+> +    description:
+> +      Contains the firewall ID associated to the peripheral.
+> +
+>    clocks:
+>      items:
+>        - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
+> @@ -123,6 +128,7 @@ required:
+>    - reg
+>    - '#clock-cells'
+>    - '#reset-cells'
+> +  - '#access-controller-cells'
+>    - clocks
+>  
+>  additionalProperties: false
+> @@ -136,6 +142,7 @@ examples:
+>          reg = <0x44200000 0x10000>;
+>          #clock-cells = <1>;
+>          #reset-cells = <1>;
+> +        #access-controller-cells = <1>;
+>          clocks =  <&scmi_clk CK_SCMI_HSE>,
+>                    <&scmi_clk CK_SCMI_HSI>,
+>                    <&scmi_clk CK_SCMI_MSI>,
+> 
+> -- 
+> 2.43.0
+> 
 
