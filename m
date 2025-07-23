@@ -1,130 +1,255 @@
-Return-Path: <linux-kernel+bounces-741682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D8EB0E7B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D6B0E7B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFA46C22F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F8D561F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C54142E83;
-	Wed, 23 Jul 2025 00:51:02 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E951519AC;
+	Wed, 23 Jul 2025 00:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpTfisrY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3CF4A1A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 00:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EEEEAE7;
+	Wed, 23 Jul 2025 00:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753231861; cv=none; b=QFW+TnQ0K3tIZeiaygrxWdD+z7ii3wMhxfYVfq1xDy0GmxO5XSupgoDh2ouv9oGrE7eQ75rWkjmMDQkD8xXJZfXSH3TT/EKKK7NsQIj99Q1bG5UZdYe0bLBp9Kr8QUAzDTkJbMJueapI98YPefzAerzc+t4AcJieR8Q4olu/gQY=
+	t=1753232001; cv=none; b=sQmt9PetsfnlHLU1eemAsw4UQkQslX4cR1OqWzvRWSBSavenQplN9TxGJ3jvmPXjyD+2M6fAruKTgQUK7lip0PUWIZ2+oJvpAZ3KWU8vKFdvt7+9jeNSWEq+m3VUuGTgW7gJwdBqebx3kUZwhYh+SMDmBnhIT2EI7yYOITKixCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753231861; c=relaxed/simple;
-	bh=hgQ51q/RpKZtfqP3A3qw53Z9D/xBT2ghky2bzXKjwG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ViLmLPE/2aWLK66s8JFOx13cRlmpSINragGiI7UwOgSipgC0S9Lz7aixfXNA9kQVFPIGtsR2Z6O+5LwH0FMURzD0spOFuWUj99TifCfFmjjhW9HNW22mtl5cwIZcTg6MfCgLT0x+vhtJ9vLssOv5P5wkztmQM/CrRi8fVlo/AZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 9DE991D8B5A;
-	Wed, 23 Jul 2025 00:50:50 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 7C62320027;
-	Wed, 23 Jul 2025 00:50:48 +0000 (UTC)
-Date: Tue, 22 Jul 2025 20:50:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v4 00/14] rv: Add monitors to validate task switch
-Message-ID: <20250722205047.621efa7e@gandalf.local.home>
-In-Reply-To: <20250721082325.71554-1-gmonaco@redhat.com>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753232001; c=relaxed/simple;
+	bh=S9Se4NuSA42yZUgXJgt8LkY9wfVVkkvF3bhtyBZpUXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aH9TFF9alziRu9q8ddG/1Xc1PQg8KO7a8IKtu5H5tu5NS5ehPKZqIcv5Kth2FYGVKHiCS39BT8p2YAxXi/iFrBzSMtfj43pxAAYYlvWH/tXO13BuRwwxrFgdPrJA7STI0Il5OxmUqyMnYmW3aEPdbuyQ4VcXylvxp97RF2pBHlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpTfisrY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8976C4CEEB;
+	Wed, 23 Jul 2025 00:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753232001;
+	bh=S9Se4NuSA42yZUgXJgt8LkY9wfVVkkvF3bhtyBZpUXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kpTfisrYvJhaneY9HRei6iOVZ+VVYZlxrO2D+8LZxQ/MJ+SxFnvssquTO1OV54BDV
+	 kZvFGLDRC5hJdKvF9FH7b03V++wcYfJePs9nyySkWz9klr4DmMAIIYgjkYc2r8MfXd
+	 1Yh9FsPOuANnHTxoSQKp7B7RrT/qIuuKfh8lWTXqLqKnqHalcakOQ9PJ4AWxbJKCaL
+	 jUCn3Dg9NMmetGd8W02+GsAb5JYhLOQhR1+zhF2qdEUvF7LRlyinKPiAST9m6ZNABj
+	 aO8WzEpGpdPv3MgyAhqRGTWr7KLbActg8Nptf9pMzwLgn+CyGNGnXUTftiTFoh6/y8
+	 u5AVSLIhM7Psg==
+Date: Tue, 22 Jul 2025 17:53:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: duchangbin <changbin.du@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf: ftrace: add graph tracer options
+ args/retval/retval-hex/retaddr
+Message-ID: <aIAyfpLifAM-BoFb@google.com>
+References: <20250613114048.132336-1-changbin.du@huawei.com>
+ <cee4d3e644ab4bea8959eff1c16d2a20@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: rot59xq6n7b5otrstygwbtfgwbzndbg8
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 7C62320027
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18LwjtOPHPrUV9v4psN1/4giZuKDSepxqc=
-X-HE-Tag: 1753231848-433730
-X-HE-Meta: U2FsdGVkX1/m62/imTaeOsu5pbhBHluMWv0eMufCohr4ftFd8IKRYKrRS0O0J8vQAv5lBPW6tSjixsbKADxVSRP4JsZbqSmvAULBFq7tGhqRXivUwdo7aGtpEfFlDScWZRMQCxAHfJPzvQWE+VXy61OaqLZyrMVDqiGs3dTuht1YljXLb3Uqtrx+6plD0Yiv+s7BxI7Z6UutgP0qsBpSRD9YNN+xMeeNKEYUg1ZSdlj4tCZQDqW2boRzEHF81ReXxD/z2MhASZhvPKaZwBaCZ8z6jCmiZUMYlGzJoSu0aVMg86FAmWrzLwatKmgKY3ARhpKATQzAojIggrTjIieQbpdkSuqY79Sl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cee4d3e644ab4bea8959eff1c16d2a20@huawei.com>
 
-On Mon, 21 Jul 2025 10:23:10 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+Hello,
 
->  Documentation/trace/rv/monitor_sched.rst      | 307 +++++++++++++++---
->  include/linux/rv.h                            |   3 +-
->  include/linux/sched.h                         |   7 +-
->  include/rv/da_monitor.h                       | 129 +++++---
->  include/trace/events/sched.h                  |  12 +-
->  kernel/sched/core.c                           |  13 +-
->  kernel/trace/rv/Kconfig                       |  16 +-
->  kernel/trace/rv/Makefile                      |   6 +-
->  kernel/trace/rv/monitors/{tss => nrp}/Kconfig |  12 +-
->  kernel/trace/rv/monitors/nrp/nrp.c            | 138 ++++++++
->  kernel/trace/rv/monitors/nrp/nrp.h            |  75 +++++
->  kernel/trace/rv/monitors/nrp/nrp_trace.h      |  15 +
->  kernel/trace/rv/monitors/opid/Kconfig         |  19 ++
->  kernel/trace/rv/monitors/opid/opid.c          | 169 ++++++++++
->  kernel/trace/rv/monitors/opid/opid.h          | 104 ++++++
->  .../sncid_trace.h => opid/opid_trace.h}       |   8 +-
->  kernel/trace/rv/monitors/sched/Kconfig        |   1 +
->  kernel/trace/rv/monitors/sched/sched.c        |   3 +-
->  kernel/trace/rv/monitors/sco/sco.c            |   7 +-
->  kernel/trace/rv/monitors/scpd/Kconfig         |   2 +-
->  kernel/trace/rv/monitors/scpd/scpd.c          |   7 +-
->  kernel/trace/rv/monitors/sncid/sncid.c        |  96 ------
->  kernel/trace/rv/monitors/sncid/sncid.h        |  49 ---
->  kernel/trace/rv/monitors/snep/Kconfig         |   2 +-
->  kernel/trace/rv/monitors/snep/snep.c          |   7 +-
->  kernel/trace/rv/monitors/snep/snep.h          |  14 +-
->  kernel/trace/rv/monitors/snroc/snroc.c        |   3 +-
->  .../trace/rv/monitors/{sncid => sssw}/Kconfig |  10 +-
->  kernel/trace/rv/monitors/sssw/sssw.c          | 116 +++++++
->  kernel/trace/rv/monitors/sssw/sssw.h          | 105 ++++++
->  kernel/trace/rv/monitors/sssw/sssw_trace.h    |  15 +
->  kernel/trace/rv/monitors/sts/Kconfig          |  19 ++
->  kernel/trace/rv/monitors/sts/sts.c            | 156 +++++++++
->  kernel/trace/rv/monitors/sts/sts.h            | 117 +++++++
->  .../{tss/tss_trace.h => sts/sts_trace.h}      |   8 +-
->  kernel/trace/rv/monitors/tss/tss.c            |  91 ------
->  kernel/trace/rv/monitors/tss/tss.h            |  47 ---
->  kernel/trace/rv/monitors/wip/Kconfig          |   2 +-
->  kernel/trace/rv/monitors/wip/wip.c            |   3 +-
->  kernel/trace/rv/monitors/wwnr/wwnr.c          |   3 +-
->  kernel/trace/rv/rv_trace.h                    | 114 ++++---
+On Tue, Jul 22, 2025 at 10:03:58AM +0000, duchangbin wrote:
+> Kindly ping.
 
-Can you break this up into two patch series? One that modifies the kernel
-and one that modifies the tools directory. Linus prefers changes to tools
-come in separately to changes in the kernel. So do I as I test them
-differently.
+Sorry for the delay, processing now...
 
 Thanks,
+Namhyung
 
--- Steve
-
-
->  tools/verification/models/sched/nrp.dot       |  29 ++
->  tools/verification/models/sched/opid.dot      |  35 ++
->  tools/verification/models/sched/sncid.dot     |  18 -
->  tools/verification/models/sched/sssw.dot      |  30 ++
->  tools/verification/models/sched/sts.dot       |  38 +++
->  tools/verification/models/sched/tss.dot       |  18 -
->  tools/verification/rv/src/in_kernel.c         |   4 +-
->  tools/verification/rv/src/rv.c                |   1 +
->  tools/verification/rvgen/rvgen/container.py   |  10 +
->  tools/verification/rvgen/rvgen/dot2c.py       |  20 +-
->  tools/verification/rvgen/rvgen/generator.py   |  16 +-
+> 
+> On Fri, Jun 13, 2025 at 07:40:47PM +0800, Changbin Du wrote:
+> > This change adds support for new funcgraph tracer options funcgraph-args,
+> > funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
+> > 
+> > The new added options are:
+> >   - args       : Show function arguments.
+> >   - retval     : Show function return value.
+> >   - retval-hex : Show function return value in hexadecimal format.
+> >   - retaddr    : Show function return address.
+> > 
+> >  # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
+> >  # tracer: function_graph
+> >  #
+> >  # CPU  DURATION                  FUNCTION CALLS
+> >  # |     |   |                     |   |   |   |
+> >  5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
+> >  5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cf90e */
+> >  5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/0x150 */
+> >  5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunlock+0x4f/0x200 */
+> >  5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsave+0x23/0x90 ret=0x0 */
+> >  5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17a/0x740 ret=0x3bf2a3cfc8b */
+> >  5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irqsave+0x4a/0x90 ret=0x1 */
+> >  5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=0x292 */
+> >  5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_slowunlock+0x191/0x200 */
+> >  5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 ret=0x3bf2a3cff1f */
+> >  5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_irqrestore+0x23/0x60 ret=0x1 */
+> >  5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irqrestore+0x35/0x60 ret=0x0 */
+> >  5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=0x80000000 */
+> >  5)   1.881 us    |    } /* rt_mutex_slowunlock ret=0x0 */
+> >  5)   2.931 us    |  } /* mutex_unlock ret=0x0 */
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> > ---
+> >  tools/perf/Documentation/perf-ftrace.txt |  4 ++
+> >  tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
+> >  tools/perf/util/ftrace.h                 |  4 ++
+> >  3 files changed, 67 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Documentation/perf-ftrace.txt
+> > index b77f58c4d2fd..4b21a755132f 100644
+> > --- a/tools/perf/Documentation/perf-ftrace.txt
+> > +++ b/tools/perf/Documentation/perf-ftrace.txt
+> > @@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
+> >  --graph-opts::
+> >  	List of options allowed to set:
+> >  
+> > +	  - args         - Show function arguments.
+> > +	  - retval       - Show function return value.
+> > +	  - retval-hex   - Show function return value in hexadecimal format.
+> > +	  - retaddr      - Show function return address.
+> >  	  - nosleep-time - Measure on-CPU time only for function_graph tracer.
+> >  	  - noirqs       - Ignore functions that happen inside interrupt.
+> >  	  - verbose      - Show process names, PIDs, timestamps, etc.
+> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> > index bba36ebc2aa7..f7cf1dd7b64b 100644
+> > --- a/tools/perf/builtin-ftrace.c
+> > +++ b/tools/perf/builtin-ftrace.c
+> > @@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace *ftrace __maybe_unused)
+> >  	write_tracing_option_file("funcgraph-proc", "0");
+> >  	write_tracing_option_file("funcgraph-abstime", "0");
+> >  	write_tracing_option_file("funcgraph-tail", "0");
+> > +	write_tracing_option_file("funcgraph-args", "0");
+> > +	write_tracing_option_file("funcgraph-retval", "0");
+> > +	write_tracing_option_file("funcgraph-retval-hex", "0");
+> > +	write_tracing_option_file("funcgraph-retaddr", "0");
+> >  	write_tracing_option_file("latency-format", "0");
+> >  	write_tracing_option_file("irq-info", "0");
+> >  }
+> > @@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace *ftrace)
+> >  	return 0;
+> >  }
+> >  
+> > +static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
+> > +{
+> > +	if (ftrace->graph_args) {
+> > +		if (write_tracing_option_file("funcgraph-args", "1") < 0)
+> > +			return -1;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
+> > +{
+> > +	if (ftrace->graph_retval || ftrace->graph_retval_hex) {
+> > +		if (write_tracing_option_file("funcgraph-retval", "1") < 0)
+> > +			return -1;
+> > +	}
+> > +
+> > +	if (ftrace->graph_retval_hex) {
+> > +		if (write_tracing_option_file("funcgraph-retval-hex", "1") < 0)
+> > +			return -1;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
+> > +{
+> > +	if (ftrace->graph_retaddr) {
+> > +		if (write_tracing_option_file("funcgraph-retaddr", "1") < 0)
+> > +			return -1;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
+> >  {
+> >  	if (!ftrace->graph_noirqs)
+> > @@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *ftrace)
+> >  		return -1;
+> >  	}
+> >  
+> > +	if (set_tracing_funcgraph_args(ftrace) < 0) {
+> > +		pr_err("failed to set tracing option funcgraph-args\n");
+> > +		return -1;
+> > +	}
+> > +
+> > +	if (set_tracing_funcgraph_retval(ftrace) < 0) {
+> > +		pr_err("failed to set tracing option funcgraph-retval\n");
+> > +		return -1;
+> > +	}
+> > +
+> > +	if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
+> > +		pr_err("failed to set tracing option funcgraph-retaddr\n");
+> > +		return -1;
+> > +	}
+> > +
+> >  	if (set_tracing_funcgraph_irqs(ftrace) < 0) {
+> >  		pr_err("failed to set tracing option funcgraph-irqs\n");
+> >  		return -1;
+> > @@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct option *opt,
+> >  	int ret;
+> >  	struct perf_ftrace *ftrace = (struct perf_ftrace *) opt->value;
+> >  	struct sublevel_option graph_tracer_opts[] = {
+> > +		{ .name = "args",		.value_ptr = &ftrace->graph_args },
+> > +		{ .name = "retval",		.value_ptr = &ftrace->graph_retval },
+> > +		{ .name = "retval-hex",		.value_ptr = &ftrace->graph_retval_hex },
+> > +		{ .name = "retaddr",		.value_ptr = &ftrace->graph_retaddr },
+> >  		{ .name = "nosleep-time",	.value_ptr = &ftrace->graph_nosleep_time },
+> >  		{ .name = "noirqs",		.value_ptr = &ftrace->graph_noirqs },
+> >  		{ .name = "verbose",		.value_ptr = &ftrace->graph_verbose },
+> > @@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
+> >  	OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
+> >  		     "Set nograph filter on given functions", parse_filter_func),
+> >  	OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
+> > -		     "Graph tracer options, available options: nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
+> > +		     "Graph tracer options, available options: args,retval,retval-hex,retaddr,nosleep-time,noirqs,verbose,thresh=<n>,depth=<n>",
+> >  		     parse_graph_tracer_opts),
+> >  	OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "size",
+> >  		     "Size of per cpu buffer, needs to use a B, K, M or G suffix.", parse_buffer_size),
+> > diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
+> > index a9bc47da83a5..782c33227e92 100644
+> > --- a/tools/perf/util/ftrace.h
+> > +++ b/tools/perf/util/ftrace.h
+> > @@ -29,6 +29,10 @@ struct perf_ftrace {
+> >  	int			graph_depth;
+> >  	int			func_stack_trace;
+> >  	int			func_irq_info;
+> > +	int			graph_args;
+> > +	int			graph_retval;
+> > +	int			graph_retval_hex;
+> > +	int			graph_retaddr;
+> >  	int			graph_nosleep_time;
+> >  	int			graph_noirqs;
+> >  	int			graph_verbose;
+> > -- 
+> > 2.43.0
+> > 
+> 
+> -- 
+> Cheers,
+> Changbin Du
 
