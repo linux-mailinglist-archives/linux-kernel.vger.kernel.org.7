@@ -1,59 +1,91 @@
-Return-Path: <linux-kernel+bounces-742678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3FBB0F543
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:28:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6673B0F549
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141A51754CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2918EAA74A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2342EF676;
-	Wed, 23 Jul 2025 14:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8B2F2360;
+	Wed, 23 Jul 2025 14:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Au4h0cym"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JjM8tild"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3311E1DFC;
-	Wed, 23 Jul 2025 14:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324E1433A6;
+	Wed, 23 Jul 2025 14:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280920; cv=none; b=bgFxBtJvkIG0KainXRwhWcsc8kBKMJY59QCrIKYtubcpq80VUMYdSQCkUpKpeD+PIZS3xGLLNrMEQDP2tG8gxfNclWV0qy1XtibvSEfZJIIYhvjiNJFUPRekQqzqaSN/YIHpKs4tCs7vCm/xW+4+qoBHeWYiyKfFHH3Fk1Ra1aM=
+	t=1753280968; cv=none; b=u3d+VwrcEbUxQo9j1HTk3gTrMkN1hRbztCECVl3cCoL9j2etPznHSyHa4OqATMRE7DtR65ZgeD4vnXCC5inCaQnb+IcQg4a0Gczp8UB/vQ7wdf4JhM9X8bRsb9wevvVXVScxEfD2vBRakseY2EZ/9/JroqGEvr1uXFpLqJcUvAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280920; c=relaxed/simple;
-	bh=Bb/XIIaBN/0UhJhFGasC1pbKYzuf1LGwlcF6he+lC4s=;
+	s=arc-20240116; t=1753280968; c=relaxed/simple;
+	bh=JnPfz05COLFbrti4eA0oit4iSLVZ3XvOremqEbmexSk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsjMXyxikpK4vZqwHLYVSlsEa43/FCnK9fQE+Bh8dYa4RjRRCOl5hX/n/JzE1pPL0Wt9FKEjToud7YwR24/umudvN7OtGW8/Lr2zgaoyckBzLqOC2SB8Hc2ESJNLQB8qG9xVqDr6738tYFr3dJ4G4Z6cBLuYGqQrobOyBTCxsms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Au4h0cym; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NfOvOHP63AILH7Fg86c4DTpSZG2INn5g2Y9EbzDcQfI=; b=Au4h0cymEHwbvqdy1U5OzLXKP8
-	lxekCJGo9MDcb4q1YihKBjPs1gnbSa8Ahr8C6RCbErZ9NbPBXj7kIZvCony+YAjf1TdaZhYEfdex/
-	Az5Bb9zcjUfNVrH/i10CutlMqVZIZGAepCijdWaxMz0MdlRxqHuLmxQOJX0F5lXyz6NU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ueaSL-002bFe-Ec; Wed, 23 Jul 2025 16:28:29 +0200
-Date: Wed, 23 Jul 2025 16:28:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Horatiu Vultur <horatiu.vultur@microchip.com>, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: micrel: Add support for lan8842
-Message-ID: <d4bbca28-5ba9-403a-8389-da712602af68@lunn.ch>
-References: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
- <aIB0VYLqcBKVtAmU@pengutronix.de>
- <20250723090145.o2kq4vxcjrih54rt@DEN-DL-M31836.microchip.com>
- <aIC944gcYkfFsIRD@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OH/3G9aImvnRFstvLjFDVPZQ/XVi1yW0EtlNWalN4iESPwoRIx/JAtMnRuEYHr2DPRqVcSUZEGU57lmtQcvPwIPP1mrMH9W06J8Lb95YF5HVM2zk3bYi9L/WJp1mGs/IkejYIl3FuIBbGfbNf3/0MkV5ZZsQKOh3wsnRypVv50I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JjM8tild; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753280967; x=1784816967;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JnPfz05COLFbrti4eA0oit4iSLVZ3XvOremqEbmexSk=;
+  b=JjM8tildqKRdGU+ADVYHW+mOMr9p/te3fMCwzPvfyPp1NXLk6NLdjMb8
+   z9GLBn367lEZjkO0/5a468HPqLfxNkSWvlzC6+E5b1CEu1kkYaJ83F/2k
+   yLQsVbE6Y+6CJwcRC9FiQLfsDeN9jUbY49eiycaSxKNbsIyl2hkI8j+eF
+   qrS0dnDtJ+bqU8Vo6RvZCnvCehSRtvv8b5T/T7pRWuDB9866WGjPkSD1I
+   jlmADsLUkVwylXgTQ71RCZVp/UisXD2lxigGr2Cszp51KwfRT2aqt/hAg
+   dye6sddHElwghIKdaM0pgoBtuMJ9OKePWHCiDelkplG2vfnJr1USdS6u8
+   A==;
+X-CSE-ConnectionGUID: GYC6BE01ThCrDgc7rwTulw==
+X-CSE-MsgGUID: tEM0QZ0HSuKd681BcpvO5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="58180465"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="58180465"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 07:29:26 -0700
+X-CSE-ConnectionGUID: bLMBwyrWRkeAJvKC8iopDQ==
+X-CSE-MsgGUID: UZkMCzLeRXqiwiq1mUGeIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="159562699"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 23 Jul 2025 07:29:21 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ueaT8-000JRD-1n;
+	Wed, 23 Jul 2025 14:29:18 +0000
+Date: Wed, 23 Jul 2025 22:28:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Breno Leitao <leitao@debian.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	Robert Moore <robert.moore@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	acpica-devel@lists.linux.dev, osandov@osandov.com,
+	xueshuai@linux.alibaba.com, konrad.wilk@oracle.com,
+	linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org, kernel-team@meta.com,
+	Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
+Message-ID: <202507232209.GrgpSr47-lkp@intel.com>
+References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,38 +94,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIC944gcYkfFsIRD@pengutronix.de>
+In-Reply-To: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
 
-> # FLF Behavior (Immediate Failure)
-> An FLF-enabled PHY is designed to report link instability almost
-> immediately (~1 ms). Instead of trying to recover silently, it
-> immediately reports a hard link failure to the operating system.
-> 
-> # The Disadvantage in a Single-Link System
-> 
-> For a system with only one link, this "fail-fast" approach can be a
-> disadvantage. Consider a short, recoverable noise burst:
-> 
-> - Without FLF: The PHY uses its 750 ms grace period to recover. The
-> link stays up, and the service interruption is limited to brief packet
-> loss.
-> 
-> - With FLF: The PHY reports "link down" after ~1 ms. The operating
-> system tears down the network interface. Even if the hardware recovers
-> quickly, the OS has to bring the interface back up, re-run DHCP, and
-> re-establish all application connections. This system-level recovery
-> often takes much longer than the original glitch.
-> 
-> In short, FLF can turn a minor, recoverable physical-layer glitch into a
-> more disruptive, longer-lasting outage at the application level when
-> there is no backup link to switch to.
+Hi Breno,
 
-Fast link down can be a useful feature to have, but the PHY should
-default to what 802.3 says. There is however:
+kernel test robot noticed the following build warnings:
 
-ETHTOOL_PHY_FAST_LINK_DOWN
+[auto build test WARNING on 97987520025658f30bb787a99ffbd9bbff9ffc9d]
 
-which two drivers support.
+url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/vmcoreinfo-Track-and-log-recoverable-hardware-errors/20250723-005950
+base:   97987520025658f30bb787a99ffbd9bbff9ffc9d
+patch link:    https://lore.kernel.org/r/20250722-vmcore_hw_error-v3-1-ff0683fc1f17%40debian.org
+patch subject: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
+config: x86_64-buildonly-randconfig-001-20250723 (https://download.01.org/0day-ci/archive/20250723/202507232209.GrgpSr47-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250723/202507232209.GrgpSr47-lkp@intel.com/reproduce)
 
-	Andrew
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507232209.GrgpSr47-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> vmlinux.o: warning: objtool: do_machine_check+0x5cc: call to hwerr_log_error_type() leaves .noinstr.text section
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
