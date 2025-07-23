@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-742149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67924B0EDFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:03:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E93DB0EE04
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03CD3AF0B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61356C3A5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A000A283C9E;
-	Wed, 23 Jul 2025 09:03:43 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EDB283FF1;
+	Wed, 23 Jul 2025 09:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UFMOx8H1"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAED723C51B;
-	Wed, 23 Jul 2025 09:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22588279DC2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261423; cv=none; b=sa9ubL6CUutx1qAb8wq2aLbffMiE0wM4F0ACkFo9TqH84UtjCzfQbHepB7q0mzH5aw/8blZTuvZSFfj3euUPXvttVrsye0vpcipyCU8YsHlKWSYl/CxRBMcURHQ9J+dLtbFw7oBuAbybz3SHt0+z807UTAKqq/nyWGQ4M3qdolM=
+	t=1753261506; cv=none; b=NFtsB8lTLlu5qjXrDX2ZYPz2pl63b1R6zq7xnR4DIB/mV7lIIr7kvfyMIV6ZmFgpHY26eWoyccJlyjBEo4hNPfb4dPokU0bk8zcTD4q66RpOc9ZslUOTo9WS5uJsj/2rheQN5OFEKSZ4QvT0Pz/MXjumePcw7CnHhv2DnyHA2Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261423; c=relaxed/simple;
-	bh=nE+gf4V+eeaoDrErzU4FGCqcMfHvTfIsnoLh5Oa1g6E=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=SQBA5QZbnXuCcDjIAVSVteb2NKivahcST2QXEbMxP2kQzPR0qMAy2gZzV8TSJZa4U2xAwzvx3G+zM7+qr7EF48/d/ELU9j6xHrSdCtDCS51osByR3Qg4HBnw2xjCOskNnEe2qODZNRmcWTT8cBsrx6XZ20i80IbwD7KV23sjckc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bn7Tj0L83zKHMtl;
-	Wed, 23 Jul 2025 17:03:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id C17291A1A93;
-	Wed, 23 Jul 2025 17:03:35 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP1 (Coremail) with SMTP id cCh0CgBn2LNlpYBov6W_BA--.5952S3;
-	Wed, 23 Jul 2025 17:03:35 +0800 (CST)
-Subject: Re: [PATCH RFC] mm/readahead: improve randread performance with
- readahead disabled
-To: Yu Kuai <yukuai1@huaweicloud.com>, willy@infradead.org,
- akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
- <19b73b35-1e16-cb7d-d32f-d054d3e66fa0@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <416d00a2-1530-3ee7-be31-2a58f5fc70e2@huaweicloud.com>
-Date: Wed, 23 Jul 2025 17:03:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753261506; c=relaxed/simple;
+	bh=jKxS63Re37hcFm6L5FR0wOlWb0i7sX+Y/k5+Rp76jT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AeO9lgFrDHCaulJVyLLbb3rZLijhc/Qy3ONemOom00gj56gnZ30X3P9+r8KNR343sapSZDLWmh29I25zoIJCZhCpMgj89INvFmwRTVtzoj6S/VB+iFUB/iXZzhN3WyBFcYnoNeRUN7niUZ8Jq6gg/Fa6Q7NjYigyoXLvQRIObjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UFMOx8H1; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0b98ccc57so110365866b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753261502; x=1753866302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CoZCnvfP/rwehZqm543p76Ydsjj+4/YJqR0zDLYGaAE=;
+        b=UFMOx8H19Rsg+CgmUAAmFzOKd2j9tmv6ECE2xMLR585XbhVoXzIBeQhOkUuXL1laB8
+         cVbHq3hSkVT+Vusvbko4fH4427/vMQOZg4MElhG/yZP3TkKEym5CJXZNZ9iRQpwookT4
+         EuvCUjwvKKZJrOw8ibTBt0RyKZ35s2aMl/Fvr2Rh63tRymOgdhg5ywaOhICcfhPk18Jc
+         LMCEGgNYb4+zds+UJHdjiuJoEdO1un0vQbCGkEMgjQFrAqQPIIGoTSl5xX4CmNBwc5OQ
+         pYnTji++M5eHtBFsfTgFixngOp50NRZLJBiEkwhCua1GBwHUUaoTSqn8V/RUCyw6/IiZ
+         NFyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753261502; x=1753866302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CoZCnvfP/rwehZqm543p76Ydsjj+4/YJqR0zDLYGaAE=;
+        b=HJvFSlbtBS6LlVwEOK9ZYY44Pept1dB7XiCqCN/dSigCXCE1bVwkKGK27hqbIha4pe
+         QEicIxLH9y3GRNVfcKIl/OCzfhEsuYfYDiWfC8rIeulcs1oRXvrOE0vTRa61kxTj11r4
+         o0hvaYx3fX6va+z4FvSikColSC3qdKaTUiFCf5E96P2T7kboTNDHgjmkkpSOd/X8zb+7
+         E4QJztH0UDKJKDMgOyMKP1sFeenYYm/yTRsEmv/FYAeMFfJZlMUfTbgCpuVxQQC8524n
+         dQrT5d55Xndoh4AwaygWxNpRJnCtMPksp4wv+bWotPy/DduHld/hYpPSQQMX/CgVezyg
+         mgiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DuGYj1Qe0eDeLRX27L/3lqLo3laGywB6/n19kN3QkMBoofmSzsWYhGsQDNbx1l3447MJm1nfZWRnbyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRt+QfvFKcwyN23R3zSkynekJ7xWupUwxyfDxlx+l8qgzARZPe
+	9KsSnpQwaMVwCqOplWb5xA9d2SinkIg3gEtPPk+rj8k2h7uCqMYvu7EtOpnkRbtrcTXz8aAoqrU
+	VnwRA
+X-Gm-Gg: ASbGncut23pZTBL2EHyr7H7GG+SjqG2JvDvSzIlXOtpHAP+9UoobyTDCS9d40tZUEXm
+	hbAiqTK/UTyHYPlHhqiszBOrNY/lN82Ujm6LrsgbGj237Z1QUm9pD8huD3XS2GrbQmFfyxRlTws
+	VyJZoAS5e4XB/SF/i4Yzo0HKgKeVFTqpkbe/uyMEGRVJ0EsD3An/0tNrXU/NhHB9ODmi8wO3pC8
+	i2bW4pB9fJ0HbySpgRfFfvB4uh+j9f9+2wLKjVfyjvU9hQ91U+LYl4on5PnhK9BzwSeehE3v9Ch
+	TyYfZ8hq69CKiVe2eLjR0D2HuM5S0NQZvqLO4w1ED5XJNG4PxrUtvUSzM/o0DfhIKNW/amKywJy
+	3eC4Qjo/y2Q5NAcH/OmFTymvnj3caJAsH
+X-Google-Smtp-Source: AGHT+IEfzsllmY1ddx+Lz3lhSzSUYagxITt83zhZt/m63TVAuXGg4evDnAWl67hB8SYpI35/gQ1tAw==
+X-Received: by 2002:a17:907:8688:b0:ae3:617a:c52 with SMTP id a640c23a62f3a-af2f64c62aamr72965566b.2.1753261502178;
+        Wed, 23 Jul 2025 02:05:02 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af22f6fa6afsm208165466b.120.2025.07.23.02.05.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 02:05:01 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/2] samsung: drivers for v6.17
+Date: Wed, 23 Jul 2025 11:04:55 +0200
+Message-ID: <20250723090455.25295-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <19b73b35-1e16-cb7d-d32f-d054d3e66fa0@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=jKxS63Re37hcFm6L5FR0wOlWb0i7sX+Y/k5+Rp76jT4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBogKW3mDzwNTJovQ3V2taqJr+0T0EUFr4aTJQrU
+ U2eCAEqgvCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaICltwAKCRDBN2bmhouD
+ 1yR5D/wLSF3mWxeCh6hr0nA8CzfZto/VRm7x52o6glrfAIZHQ/zaOZ1570ojQRpZeJP5mZm4qGY
+ eCpgfc3Cl1f3osmJKLI+ojFPlK2gH/ipqWahqcUL3RsUoLEivfyXNMYgVXTlWkTORjB418lS8G4
+ fC+/aTu3X6UgYmwLBP8r10DUaCbsZDfBDbr0mNCU1VMLKphSgTRHrJ7Fg8HVk8mXucjIsd0J/5t
+ Wl9bVoa0hc/QJMAZO9hG2pK0KaAuIHgs/9GSO9HpcyHnlMKbMOvg09YptLZkXDUDs2zTlRF5wnB
+ NQXTtkM/pqAfz3z9cWqPeRK4OkEILvtOIFeYAIO+qd8n3Pa3B7DyBhlf2r/xLCh6FOKtNtHp1dX
+ tk1JND/+6NxXlw4Zt9WkiAj6vA4vu7Do4i1DEdR2dlB/C28jltww4CsTGu48nkO66/6iD1vCAA3
+ ZMeQciN0yfxEl7fRNBiHs5JSXdSW8axGHEtdSU8PkD71n0nSR0Fwxf4RY1JSEk7vFdeFJlUUuio
+ z03+FSDx3pT2g/B3sbq/trspGQa3YpomiGIBGJvvId9fUwkUa4CHy5DxEbDObIScg4zIs3oZ8W8
+ GikDwiW3shZzRPhee2lB943Ur5FpLQDYG1LGPmjsUY7oMlNhTaPs2mEsEmIWjvC7ivChoKGwVrB R22rNCovyB27l2A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBn2LNlpYBov6W_BA--.5952S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFyfXw4kCFyUWFy3AF4Dtwb_yoW5JFy8pF
-	s5JFWUtryUWrn3Ary7J34UJFyrGr48X3W5JryrJFyUAr43Gr4a9ryUXr1qgF1UJr4xJw1U
-	Zr4DZr9xZr1Yvr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 Hi,
 
-在 2025/07/14 9:42, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2025/07/01 19:08, Yu Kuai 写道:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> We have a workload of random 4k-128k read on a HDD, from iostat we 
->> observed
->> that average request size is 256k+ and bandwidth is 100MB+, this is 
->> because
->> readahead waste lots of disk bandwidth. Hence we disable readahead and
->> performance from user side is indeed much better(2x+), however, from
->> iostat we observed request size is just 4k and bandwidth is just around
->> 40MB.
->>
->> Then we do a simple dd test and found out if readahead is disabled,
->> page_cache_sync_ra() will force to read one page at a time, and this
->> really doesn't make sense because we can just issue user requested size
->> request to disk.
->>
->> Fix this problem by removing the limit to read one page at a time from
->> page_cache_sync_ra(), this way the random read workload can get better
->> performance with readahead disabled.
->>
->> PS: I'm not sure if I miss anything, so this version is RFC
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   mm/readahead.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
-> 
-> Friendly ping ...
-> 
+Late pull with minor things.
 
-Friendly ping again ...
+Best regards,
+Krzysztof
 
->> diff --git a/mm/readahead.c b/mm/readahead.c
->> index 20d36d6b055e..1df85ccba575 100644
->> --- a/mm/readahead.c
->> +++ b/mm/readahead.c
->> @@ -561,13 +561,21 @@ void page_cache_sync_ra(struct readahead_control 
->> *ractl,
->>        * Even if readahead is disabled, issue this request as readahead
->>        * as we'll need it to satisfy the requested range. The forced
->>        * readahead will do the right thing and limit the read to just the
->> -     * requested range, which we'll set to 1 page for this case.
->> +     * requested range.
->>        */
->> -    if (!ra->ra_pages || blk_cgroup_congested()) {
->> +    if (blk_cgroup_congested()) {
->>           if (!ractl->file)
->>               return;
->> +        /*
->> +         * If the cgroup is congested, ensure to do at least 1 page of
->> +         * readahead to make progress on the read.
->> +         */
->>           req_count = 1;
->>           do_forced_ra = true;
->> +    } else if (!ra->ra_pages) {
->> +        if (!ractl->file)
->> +            return;
->> +        do_forced_ra = true;
->>       }
->>       /* be dumb */
->>
-> 
-> .
-> 
 
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.17
+
+for you to fetch changes up to 687d974a218a719f7e729bef9c498ec36f18115e:
+
+  dt-bindings: soc: samsung: exynos-sysreg: add hsi2 for ExynosAutov920 (2025-07-16 10:41:42 +0200)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v6.17
+
+1. Google GS101: Minor improvement PMU binding.
+2. ExynosAutov920: Add HSI2 system registers binding.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      dt-bindings: soc: samsung: exynos-pmu: Constrain google,pmu-intr-gen-syscon
+
+Sowon Na (1):
+      dt-bindings: soc: samsung: exynos-sysreg: add hsi2 for ExynosAutov920
+
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml          | 3 +++
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 1 +
+ 2 files changed, 4 insertions(+)
 
