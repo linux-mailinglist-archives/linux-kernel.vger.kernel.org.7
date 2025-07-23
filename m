@@ -1,341 +1,272 @@
-Return-Path: <linux-kernel+bounces-743063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE37B0FA17
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C73BB0FA18
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E700173886
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5371816B397
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC0E223323;
-	Wed, 23 Jul 2025 18:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9841EF38C;
+	Wed, 23 Jul 2025 18:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fDSGeb+n";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pI3qbwY6"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rZxHiwm8"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B02E36F0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753294476; cv=fail; b=qj+6Jnr02vecxzQ2Ynq2uuUBJ1xMZGedXYyi/zAdH3bxSVgM8I6ixvZn9dQA4GsEtREWYCxQSCSNajmzfAEafFfDEWitB9f4hdTXA/sbT19RSBCjwuqer/Az0/zzTAtzQiw/qm211E8VSbEW3e9ExZxUUBA907+VxbovM5dLBsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753294476; c=relaxed/simple;
-	bh=UEgsXJRWN8hhnF+qzEks4jR6OQndVxPd8e/Cjs5Wdrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=X85ykQLLJ7vz6slDmFKObr8qWpWpw/k6Y5sbmZpIXiJ/Ya/w/5gcG2E/ihMh36tqUe3ILSg9oWc0NTACkWVyqtTUq6QeD1BNPe2DXI4LMUdRm7B5WQ9ZYNryCOpVvAF73AQV/6HETkpAf/ZX68t8mplE/u/UPz2A2A3icQCU+Xs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fDSGeb+n; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pI3qbwY6; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHttEr009436;
-	Wed, 23 Jul 2025 18:14:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Q1qeVLL3rszeaz92QI
-	lsmOjUtMKdajbF9ur6rcL5748=; b=fDSGeb+nGjJSsJ/qlLNAu1OqqJE9lFNuAd
-	18AHr4dPzI1/OkVpNj5H5bktH+cFwaHiSSaJWsBVM24fq6qYNgoXbFAXNe8+XMhP
-	+RVS+WxaLSmmKsliQaD4H3np9FNsUr6MnPmOkVBa7cVW+xIJaZfy6rA6f/eYvDQu
-	U6+iTqTCdCeFyPRJhh7Bferjmo66c/ZyLHWwyajYUKMSzGYOH+4MmDcGjRjNq7PW
-	SNS1kifPuV/4nFzY8vCqD4vbnBsqkFw1wlMp6izuCQa3dX/bkhx2JFKdqh/eFm4+
-	VO4brGJSU6x1PNzQE+Q5EYepKq1UuCfVIkEUtaZGgzTuUtJvw2Vw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e2g41m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 18:14:24 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHABhW031483;
-	Wed, 23 Jul 2025 18:14:23 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801th7yjn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 18:14:23 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xToOx1KJxWaTniJsjxY9HE1CpjGxqjsmLi/86y82Wkw+j2mDOpV8HN8sbEj+T0FVy/AMvZuQUXqct/EaZ7x9cpsO365pFgf6HpUPcVZzaOjbLtXpgiMR5vLm/fp1b+B4Jin95eI1qmfsvI5HOuVvup6reB0lANhWArdat30zciDTQpPPCJ5OyGijYZFLnTFH7mNfPuNa3KB7Tm9zKhLWx7e4LX7X+XNAZQiUFiSv0bsWi1vgVRs0zoztBTjzFkoDyJb8DnYMepYGBTV/ssIAfQE54TxqlEl83Zb5OwZXSSPtMSHMwcH6N1vc1IlZ3LKs32FNhaT2xUTX94mI6O3mFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q1qeVLL3rszeaz92QIlsmOjUtMKdajbF9ur6rcL5748=;
- b=PzMIOAHeSlUGTM8Q2riBswR+N7F4pH/eNf/aEfKMkJmaLq8YUdMcVUD8xUi3jim4wya8v4tTZnKeQ5Pk+7s/w80DLNjyi2h7bA1QDESi1QYALeVoKweweqVV+s/hwWXimEGqwS1oGrXQYUTD6hVle2TERtcMbtLcrkFbbAeNx4FKuDgp7ksZKM9oOfWQ6w56Mq0ZM5vLbHeZvQ33VZwgTG2Xgzvos2AxzhZnmP3xTuXu5VbtZI+EaV8j7+dgmF++RiwMHic34PYgWttEDSHbjjSy8tK1NFljS3zlAEp1QwSBRZ0r4Rkfpg+W8ETIgQaNaL+5jZJC9DxgS+ogBaEKzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8D51F418F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753294544; cv=none; b=E5/OUy2YtWH7I6GDpEAr9A+HPUm75TqMT6eMe49vetQcY3TWOVfMtc17H36cAOzYycfBM9auNg990zSTbwmHG5xaSvSMznbsPiKUzxgHQ/kZEArF1s3XfDL1Fbt+HxcJu5SFsBGk2G9gTxvSU36M9Gj7nqamINvF+jSNWuOzd2w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753294544; c=relaxed/simple;
+	bh=vjCS7XRV9GNLU9BZynOc/Q1ypNtkMuWhatqaXYlbaOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qNQJ0VqPI2qNWdOZfSIiMz0VCraen+HgUzHGNyDkNOaZgejz1EkwlCjUdDCsifZV+M9mcBi7k6U9SkLiZyh1auuRt6bKRVluzH8N0WtI2dzmmBhP21yK/ytZQI9qtz+rF6OY0s9Z7cvYrtEchOxYY8NljvMzB+6NWDl1l2BE5fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rZxHiwm8; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3e283b2d065so23825ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:15:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q1qeVLL3rszeaz92QIlsmOjUtMKdajbF9ur6rcL5748=;
- b=pI3qbwY628afjh/+XYb6qXgncGyCVSA9saIyIf84DaHUtekhR8YrYSERWGMShA+NgeU4WlGzKn7oFZp+QrAbMWDg7uhBzOxuH3Z20k1zJz5KGr3O2WIAxA1p81GpyfjcT+8KgJPaHBGP0P8YKdSsJfLKABKINVsYWf9SkGSgx4w=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS0PR10MB7247.namprd10.prod.outlook.com (2603:10b6:8:fb::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 18:14:21 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
- 18:14:21 +0000
-Date: Wed, 23 Jul 2025 19:14:18 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
- vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
-Message-ID: <6df9812c-96a5-41be-8b0e-5fff95ec757c@lucifer.local>
-References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
-X-ClientProxiedBy: LO2P265CA0198.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9e::18) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=google.com; s=20230601; t=1753294542; x=1753899342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H36aNSQcBdBkwNrcJ1g0QaYoDvoQx/EdYKDUImcfEe0=;
+        b=rZxHiwm8AIIwSh7t1basAC3f10IA+QgUbEWvNqsxTigBgb5mqHHuZBAgRFw+dNknqt
+         FxbDJ7zlvh0C9Y06X8QLIK+3JmyEoldCSxLp5ubkR31feZ7CHDrASs0+Pe7bJGMOEqXI
+         tsWR0dhmNWJtoFDT/Ufuhtfhq6TcnNiKTCx3jqxpDeEIlNFPNZ4dEkQwWEDWuDxKTaqq
+         q8r1Pxk74xg8H/pGDid7Rzy37yt64sBzEsmAdtm6JioxTySL5M6WH5IuF9M5eT47fjEv
+         EVnAykbtbXhbbkPrrJzgcd9aYGljxY0Q1dqMrZKKMD5DkhL2izg+oszbTrKGx8KapI68
+         MEpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753294542; x=1753899342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H36aNSQcBdBkwNrcJ1g0QaYoDvoQx/EdYKDUImcfEe0=;
+        b=fwpPvsG/oIF6Fh8tt1SlkLGrAlia1YOqpGQmZpwWClU4DxVXHOZav4dhJgt5lcyDvQ
+         Q5cvy2afrbpQdq7wzqe2/0b/NTYGZa17357NQ5OUSU+1/7xoRGYgGTX0iV7J92rB2Hm4
+         IY9tG6xwotpR9yB1RYdNlzQjQdhaNgV84Yau6RDr2a7QqUhFvpTBEI/stokcq0jvtL+y
+         JyGhodMqdI/vOy0nqMfs2j6b8JFLomYHOe40Ic/2wvfiMbpDqaPmrrJbV0lcn3H4T4SI
+         kfMEeoojd8u1ZffkcmARcuqpZs8T06lWQQDCicSeA/XiuM/2GJ/bi/6W7nT2fQcpL0qn
+         VM4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWiGA9iRKy53wK1kNgiooBpRZAS6FPT28+YjqA0tECOyz6+PaR22ErfN4af5bs+PHgoDIv9F1YWe5plISc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3UXkRQSY2Ts/zK8+g9OpUc/GDzrrV+Jk4BCn/9+sy6d8WMePO
+	6eYtgD247FpuSXOVFO2NEPp9F/Zha6zLOr/EHY81rbBbk22K8fWIN6tiscD0EezjdZ3LDAYDhKv
+	0moAlv2M07y48U9E8TH48ErAWZvQfopXB9lvdOyGc
+X-Gm-Gg: ASbGncszZI2KRwa+XEWsML7vgWRuhQ0MxrJ0CYDinKASfKci+tpIVowZczNTzj97sj+
+	oaBUPRfzpWKQQZ7JxPWesSgI1787+6IBaVVZnSemzMnVi6w09RSObTkCbHNMedPA5zRvAk+RGuc
+	esXBOj0SXe0RoWekCcgGaUmUFCfwzYMhDpIFxbag7BMwWiq80e2AzrEi5KRPXZxqHvYt7S290cr
+	ikTIiC4Z8Zl2kb+B2MDuaMQJU/nTyrciMiW
+X-Google-Smtp-Source: AGHT+IE13asCQBfg5BH5l0ZzmcYhpaRmMrBFh6FbaJlmYj/g2YllwYTcBbaHjqK+UWJCEdPp7ZgECDHmJV+eHNC3B/I=
+X-Received: by 2002:a05:6e02:1a0d:b0:3e3:a7d5:a47a with SMTP id
+ e9e14a558f8ab-3e3b66571b5mr99715ab.7.1753294541306; Wed, 23 Jul 2025 11:15:41
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7247:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd870af4-1899-4b84-7cbe-08ddca14bf06
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Hts7sFVnkI5wudgudbGXwvqkPEd1/98YCxt6B9peWZDoTKS/raaAYQFiGymh?=
- =?us-ascii?Q?QvTHR94hoAaNq39nnIuqNzVz2vkAwgCSzRQxLDM1PdEYxThU+biZVSz5xm8x?=
- =?us-ascii?Q?GIuNAIvvliQxK9HDUFhujDjvF0TgNkx+AjBr7GL6wx3mJqAVZPmtAkqZoPmg?=
- =?us-ascii?Q?Tj+6pGUjRNiNiGNnQ4abaeFOlkhYkuoBhZ9Ytib4H5zpsi8/Z2xgV0zGHvYp?=
- =?us-ascii?Q?RSsav0dJqgyf10ylNKhFHddd8TgeP35t8xos6KdrGPC2C+rEpU0Iq2SdDwZV?=
- =?us-ascii?Q?RZO0WMnI6G7O/L4xilIpUddVprr/Hfskau5DJiKWLX0o9w/T5Qwtrc/16Fvg?=
- =?us-ascii?Q?5Kj4lkhI8MCXrs/iYFqRUm31UtqyELLl8gB81Nu9CFJtUJ+XYt1EOtpAGjw/?=
- =?us-ascii?Q?Rxj5Mw+nA1Oics45a6gJSleKQln3oJ3jA3FmG5tMIihnLal8GYvRQlYPfGFE?=
- =?us-ascii?Q?9Ck41PPBQ/TAe488/MlBECkEB8RlT7a5EoYQI2YLCGE70YY4l1/pTnCMg8Kh?=
- =?us-ascii?Q?QvFFDjx79V0DDvADDcBMPkAKKyGUjY/Puy3J8p/t9WHifiC5+zCXfKw11AL1?=
- =?us-ascii?Q?7r+VlkYDeVH7QTNdmEGd5tvRZB2WVUJYDqLizYmr6wjNsWu1eOPxLWTA8R0A?=
- =?us-ascii?Q?FffRlEmf5w9aMQ2fRKP2uQx8jMF1HgztK7ZjKVSyKca3ESvJykufehg2wdXo?=
- =?us-ascii?Q?J60ovIyvvXRQi783Gj3gQ7jCYZfFrm6Qt0VTIh8lgZWsnYK/EKze75/WZrNw?=
- =?us-ascii?Q?oL7hxB2WDxnUFA9rN6tfPptwUz/5OF/lPf2IOi1713aBj02RO4YqWk9OQsnC?=
- =?us-ascii?Q?PcMXjE295kykWysw0qLYIEUJdltLALJOI5NnDuUJzu2QNFaPvtneHN5XyBHI?=
- =?us-ascii?Q?Pfm/GrGI5iZv9LQEI/7R5ELo/kX7V/ZjqcNXa8D8G7fOwqlShjsQiNdgt6dh?=
- =?us-ascii?Q?FLv5edsLA6nuQfk/7Vuz6EmPm8Fbuf45VAAGQmWcbxZM9VI8CQjvN3Nelfxp?=
- =?us-ascii?Q?azqDDs6TbT8Svly9RE62dvtu7CtUCTzUpgOKnDEsHzf/SBaRVBynGXtOtypj?=
- =?us-ascii?Q?HVfLUx885JxJnwRE6Oj7CkFkdvMlDmg61DHCiVT0xIT4jRaXVbmucNAHAgGv?=
- =?us-ascii?Q?7kZiKpBNBGoqgUnKWT+bMLA2zGo6LvAAxwjbiHLfJKwdf4p71rzB8NEZlYlK?=
- =?us-ascii?Q?1N7zh9jaSpnJp0rXeE7CFqR8XUC6a0u3NSKJXLLLWmI3MQMZhj189Bf7eCbR?=
- =?us-ascii?Q?m2IASvuSUQxybBt5MpkeJfvjZrVYzR8A7pqwHiJVwSV6yvu3xmyu9oZw8BeB?=
- =?us-ascii?Q?XDy5+Z26X9+RdMdPa/kqH1BT5WoBWl9QLdhVcY2sRf6eaD9OZxaL86HVzEcg?=
- =?us-ascii?Q?9uvr0zdf9AK6f5zPauxEMIc1/4RgTKy7PN6XP67K+Teoogr0OvNMJraGHZoR?=
- =?us-ascii?Q?7JIv+l4W9WE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6inKmQcUmCXcN28pe1zCJcexPeC2lhvjbGm4+PzTkgToleKFt2wNVktuCcJs?=
- =?us-ascii?Q?9AFeqbt1gHCB5G+r/awL3jNalsSm5C84sS0PhS2ehGf7NQWqpteFDuyJ+mt0?=
- =?us-ascii?Q?+zrq8Ax+CRcbzuQmK26xTMGyNGGcqMSEJDPml7Quc5VeXIohmpDHfQR3U76u?=
- =?us-ascii?Q?KC3KGQ9t6vhsqJBstJVTzDPnZcJvCcwH+ZFzuYGAhn0MzeEmQ8RuWJClPWB0?=
- =?us-ascii?Q?avmPK1LWU7CasLLN5+68jYpIRGhZ3xc0OHrJ9PFmBgtg2u0xuC6Ij12fbtPj?=
- =?us-ascii?Q?3nouguVGLR1wUw7LmtL6y8/mh813QEA5Sx3sn1X1MdNIrHj0HDuZvoLWSe0H?=
- =?us-ascii?Q?etxQ/m8zbhDiS+czNUgEfWjqiLA1n03OsZTficOhmvTcZuG4+EJVaR5EqHZS?=
- =?us-ascii?Q?3pqRgoFpjB4QQPCabTDe0y5OZpOiu+0ydPcDXFNtDASgV0O58ENuvmVlF1HZ?=
- =?us-ascii?Q?TlKnS6iLECoxNzzB1Q13s9dmnSJp8eglgZnPwTA799L0ZPP48aLLDWWIf35j?=
- =?us-ascii?Q?ebL8E9qdZuhd0583tgCoszKwc1htWfaO1BVuIkvl89FF9ewiBhpOPMx/Mj7Z?=
- =?us-ascii?Q?Xb5n83LfnjdSJiL3Fd/U7YSYZnHe6d23Pdd3rn30J6s7pRruCdQ4dJg+apnM?=
- =?us-ascii?Q?QOy0OMMtrcPJgAHYb4CWUZYYEMJQxXZGWbrxfzxCrOZG2Vbno06UYlrtvTIX?=
- =?us-ascii?Q?mwEuUpL70roVZg9sEk7GnOJdPX8C9vLufgci29jsO8seK1O23gJrsDdxYnik?=
- =?us-ascii?Q?3nsDmlic3yTXx3DJWeXEfjsKIUca7dH+NUF1rZf5p4SS8zfMXgTe0eLlc5lI?=
- =?us-ascii?Q?be3Nw9k0BHhsFRbsvH47sGkfY08s+9n8d1/IOw9wuBHb5Mnl5FEx8XqUU6oS?=
- =?us-ascii?Q?T/XzQKaIWmwl+wHQz/NAlqdAMUPCFj4Y+KUaq+O86pGofnSR2Vdsb3FsIGJM?=
- =?us-ascii?Q?n3Hk3M97rzuAv7nD4Xe856NHgsJANJecuMjlXs2HND6uzl3PB21nAbQALbg7?=
- =?us-ascii?Q?HPvFfvwmor1Q4JUF63h9fqhj3wfzWXJgHkQT0C1xVgfsYwS7puDhKLIKO3/d?=
- =?us-ascii?Q?lSLdQ5ice/6tZmPPdQ1Qy+dkaev8TsYWduv9BtlILUJVe0QC6d7/ibA43PZG?=
- =?us-ascii?Q?Bnmr66Etmf7pT2PqCNezHueWiRfiZzFWZs6bETpoxqgUMGcDgVWT1RTUQHDQ?=
- =?us-ascii?Q?w9kwAwJPhkyIxEBu/vC4h8T8iKTKGxATh9FUyPGbsXKx171IJAm9QRmKa8z/?=
- =?us-ascii?Q?+f6dA1FF8JWkC/hz6vDykRS0Xv2js+A8iu15pUVfbz3zw2f30BgTW+r+1j4d?=
- =?us-ascii?Q?KQ3ZCE2MIeSyr+HAmsMFLLd4FHwInZSa19bXQYIN6rVxn8/IBGRVqJ09dyr2?=
- =?us-ascii?Q?zuK2OJEf862r9g+VSIjLDzHvpe3pVF3dsVUjZ08Cg+mGBt5cg8q2ljAV0pB6?=
- =?us-ascii?Q?XYO/HrJ0vpFUK6pytxNGbanCr3lTI9wiToPxzRCFkfyVpXTG297BfS3xDB9x?=
- =?us-ascii?Q?mxXEucuyiiolCPC9QZkKlNA+PMrzuittAZ6vTuWc39buZaC2Mv82Ka2ZrwIU?=
- =?us-ascii?Q?TkaAM/zjfTAifXNae9Z4h9y70yQi6OukCM237I3QSIs69/IDCku6Ngy05QZn?=
- =?us-ascii?Q?FA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	s0mAltCH2/KCLrtDzmAIKMww8JdCZwYjTUIpBYV/+etPIwhggiQIlGVaCgGHNnNh88nW9IlUGwGnIV1Zmm059PrZRvlnfyW94ol1iqY5lOV16d4CrOzT2qJbh4hYtoGLz7NSZtA5W9GRIocspGppoP75BcEP8gpXCkrC8UGB0QWZsl3axxFrgSp1KlpHT9fMMMx3oWQi1XSDTA5eLYAFPBcjdRByYXS/lyIPwJ/pAwtJziZKRnGhU15Z4tzJKnFlMj8vcvoyU68Vu0JhUdjROmKZewXTNsfHJgtHWoirE0c/SssHGMHHqs+iQqdPoL9a9tydXlO+9WfDmIA3AMtMqZeGLCBo1YWslCIS2X9HgGrIwewakwifNmB4dbh/+Q4cwYh4fJLmFMKbc5JvJAuiKZeX1YDJPKjq1W2qS7XSfOBsmLOyMK2nfzGjHb2o/aeMko4WsUclUvl99bboJTKZdKC24iM6LwasJZVWIOxxcMrzGupvBMxSgiTggVta87TQfhWvwnQ2/ttINa4j9LNr0pwc9msKLwUCnEd8DkL/zTm0zzzCNPLwv9fRFZV2JQW2OvZpdwf64A5A0jEnbX74LtgzJ5fsQxe7vs6d8kNGkDc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd870af4-1899-4b84-7cbe-08ddca14bf06
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 18:14:21.0106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9xVNSEr6IFX3rkyET7JEC2OEV/eXtKsm0b+wENABF80IBJqg0VUcyCS6kxUjVS7SqfQ5o3bljnIptxXpV/gOERWbIxVo/kpWLREcPwfmOWI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7247
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507230156
-X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=68812680 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=WM-lATvdv94pRHHaGsQA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
-X-Proofpoint-GUID: -9ZrTtp4HaxWJlX031u5ofJb6hXc3Gfz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE1NiBTYWx0ZWRfXww8QY34eDj4f
- B4TW5ey2cPvzDjUfoSuD5SUp0rfLoW4Kh0Z4KXoVg+A4aOaEu7JjIUvAtZbaBnwtGJaoDR3ltRF
- 4lQGIVo9vqCeZbVWxIzDH63MtFIUa2QqfAZKr+AxR3Y6NRp3eZePutji1E7ywrMoHrRCu0Cy8KS
- C0Sm5/4U7ufQeVUVIYewJURXSkDGarIMqO7faZQomIp9nnerMnrNTe7trBdaGOsjte+8ang7772
- ky9b8WE0sasykZwwdPlqfglVVHcUXk9D6rq03m+CEqNa0c7mp5WDsrQspD7n/Evz14BAB+ha+nQ
- el2PTHVDnvl5O8WOO1Im8YpfDDrmTeykNxKU1lVPJxm1c16W5CpFyGotLxkYDz+U1IDbBMsoN9T
- xvIq0CJYiODCrA7NvXguT8ViGljGtwTaMHzgULMf0iIte5AzLt8kEnr17uEwAE2KWulM3xo5
-X-Proofpoint-ORIG-GUID: -9ZrTtp4HaxWJlX031u5ofJb6hXc3Gfz
+References: <20250714164405.111477-1-irogers@google.com> <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
+ <aIEjMroa3bW-T7d-@google.com>
+In-Reply-To: <aIEjMroa3bW-T7d-@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 23 Jul 2025 11:15:29 -0700
+X-Gm-Features: Ac12FXw5c8Ku4R1FuTi1BLP5m5hmDNxu_9ZbwpmPfjflCFGU7qqUz7X34M9e4jQ
+Message-ID: <CAP-5=fX1j_MdzjqLTYeNGFTWLaQp8Dmbi093QN98b2pNgFcpBA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/16] New perf ilist app
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Collin Funk <collin.funk1@gmail.com>, 
+	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Gautam Menghani <gautam@linux.ibm.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 06:26:53PM +0200, Jann Horn wrote:
-> There's a racy UAF in `vma_refcount_put()` when called on the
-> `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
-> without sufficient protection against concurrent object reuse:
+On Wed, Jul 23, 2025 at 11:00=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
-> rcu_read_lock(). At that point, the VMA may be concurrently freed, and
-> it can be recycled by another process. vma_start_read() then
-> increments the vma->vm_refcnt (if it is in an acceptable range), and
-> if this succeeds, vma_start_read() can return a reycled VMA. (As a
-> sidenote, this goes against what the surrounding comments above
-> vma_start_read() and in lock_vma_under_rcu() say - it would probably
-> be cleaner to perform the vma->vm_mm check inside vma_start_read().)
+> Hi Ian,
 >
-> In this scenario where the VMA has been recycled, lock_vma_under_rcu()
-> will then detect the mismatching ->vm_mm pointer and drop the VMA
-> through vma_end_read(), which calls vma_refcount_put().
-
-So in _correctly_ identifying the recycling, we then hit a problem. Fun!
-
-> vma_refcount_put() does this:
+> On Wed, Jul 23, 2025 at 08:32:33AM -0700, Ian Rogers wrote:
+> > On Mon, Jul 14, 2025 at 9:44=E2=80=AFAM Ian Rogers <irogers@google.com>=
+ wrote:
+> > >
+> > > This patch series builds up to the addition of a new ilist app writte=
+n
+> > > in python using textual [1] for the UI. The app presents perf PMUs an=
+d
+> > > events, displays the event information as in `perf list` while at the
+> > > bottom of the console showing recent activity of the event in total
+> > > and across all CPUs. It also displays metrics, placed in a tree
+> > > through their metric group, again with counts being displayed in the
+> > > bottom panel.
+> > >
+> > > The first ground work patches of fixes, cleanup and refactoring were
+> > > separated into their own series here:
+> > > https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.=
+com/
+> > >
+> > > The second part of the patches adds event json for the software PMU
+> > > and makes the tracepoint PMU support iteration of events and the
+> > > like. Without these improvements the tracepoint and software PMUs wil=
+l
+> > > appear to have no events in the ilist app. As the software PMU moves
+> > > parsing to json, the legacy hard coded parsing is removed. This has
+> > > proven controversial for hardware events and so that cleanup isn't
+> > > done here.
+> > >
+> > > The final patches expand the perf python APIs and add the ilist
+> > > command. To run it you need the updated perf.cpython.so in your
+> > > PYTHONPATH and then execute the script. Expanding PMUs and then
+> > > selecting events will cause event informatin to be displayed in the
+> > > top-right and the counters values to be displayed as sparklines and
+> > > counts in the bottom half of the screen.
+> > >
+> > > [1] https://textual.textualize.io/
+> > >
+> > > v7: Better handle errors in the python code and ignore errors when
+> > >     scanning PMU/events in ilist.py, improving the behavior when not
+> > >     root. Add a tp_pmu/python clean up. Minor kernel coding style
+> > >     clean up. Fix behavior of ilist if a search result isn't found bu=
+t
+> > >     then next is chosen.
+> > >
+> > > v6: For metrics on hybrid systems don't purely match by name, also
+> > >     match the CPU and thread so that if the same metric exists for
+> > >     different PMUs the appropriate one is selected and counters may b=
+e
+> > >     read. Likewise use evsel maps and not the evlists.
+> > >
+> > > v5: Split the series in two. Add metric support. Various clean ups an=
+d
+> > >     tweaks to the app in particular around the handling of searches.
+> > >
+> > > v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+> > >     displays as expected.
+> > >
+> > > v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+> > >     keys. No changes in the ground work first 14 patches.
+> > >
+> > > v2: In the jevents event description duplication, some minor changes
+> > >     accidentally missed from v1 meaning that in v1 the descriptions
+> > >     were still duplicated. Expand the cover letter with some thoughts
+> > >     on the series.
+> > >
+> > > Ian Rogers (16):
+> > >   perf python: Add more exceptions on error paths
+> > >   perf jevents: Add common software event json
+> > >   perf parse-events: Remove non-json software events
+> > >   perf tp_pmu: Factor existing tracepoint logic to new file
+> > >   perf tp_pmu: Add event APIs
+> > >   perf list: Remove tracepoint printing code
+> > >   perf list: Skip ABI PMUs when printing pmu values
+> > >   perf python: Improve the tracepoint function if no libtraceevent
+> > >   perf python: Add basic PMU abstraction and pmus sequence
+> > >   perf python: Add function returning dictionary of all events on a P=
+MU
+> > >   perf ilist: Add new python ilist command
+> > >   perf python: Add parse_metrics function
+> > >   perf python: Add evlist metrics function
+> > >   perf python: Add evlist compute_metric
+> > >   perf python: Add metrics function
+> > >   perf ilist: Add support for metrics
+> >
+> > Hi,
+> >
+> > Is there any more I can do to get this series landed? I appreciate havi=
+ng:
+> >
+> > Tested-by: Gautam Menghani <gautam@linux.ibm.com>
+> >
+> > I think there is some follow up for "make install" for scripts like
+> > these, but I'm keen for the python API to move forward.
 >
-> ```
-> static inline void vma_refcount_put(struct vm_area_struct *vma)
-> {
->         /* Use a copy of vm_mm in case vma is freed after we drop vm_refcnt */
->         struct mm_struct *mm = vma->vm_mm;
+> I'll review the series today so that we can get some part of it, at
+> least.  Basically I think we need a wrapper script like perf-ilist to
+> run this easily (maybe with documentation).
 
-Are we at a point where we _should_ be looking at a VMA with vma->vm_mm ==
-current->mm here?
+Sgtm, I'll hold off on a new version, Arnaldo has caught some useful
+nits to clean up in it.
 
-Or can we not safely assume this?
+Something related are the scripting engine scripts like gecko and
+flamegraph. Something I've discovered is that those scripts work less
+well than standalone apps like the ilist.py here. One issue there is
+that the scripting engine tends to throw lots of data into a
+dictionary in case it is useful, which means there is a higher
+overhead than in the standalone app. Another issue is that the
+scripting engine wants perf to drive python to drive the script. This
+conflicts with python wanting to own the main thread, things like
+asyncio, etc. For textual it isn't possible for the app to run on
+anything other than the main thread, but it'd be useful to
+incrementally load data while displaying it. With the scripting engine
+it is only possible to run a textual app at trace_end (i.e. not
+incrementally). Something we found in the gecko work was that it was
+hard to handle command line arguments in a scripting engine style
+script, what options are for record, report and live mode.
 
-Because if we can, can we not check for that here?
+What does this mean? I think we want to move the scripting engine into
+the python.c and perf python .so and expose it with something like the
+session/tool API. I think we should migrate the existing scripts to
+use this and then I think we can deprecate the python interpreter
+script engine integration. Perhaps we can deprecate perl scripting
+engine support at the same time. Then things like ilist.py can be run
+with "perf script ilist", similar to how the scripting engine scripts
+run today. Your proposal would avoid the need for the script keyword,
+but perhaps that'd make it clear why the UI changes. I don't mind
+having or not having "script" in the command line :-)
 
-Do we need to keep the old mm around to wake up waiters if we're happily
-freeing it anyway?
+Thanks,
+Ian
 
-If not, then surely we can just do this check, and not do the wake up if
-false?
-
-I may be mising something or being stupid here so :P
-
->         int oldcnt;
+> Thanks,
+> Namhyung
 >
->         rwsem_release(&vma->vmlock_dep_map, _RET_IP_);
->         if (!__refcount_dec_and_test(&vma->vm_refcnt, &oldcnt)) {
->
->                 if (is_vma_writer_only(oldcnt - 1))
->                         rcuwait_wake_up(&mm->vma_writer_wait);
->         }
-> }
-> ```
->
-> This is wrong: It implicitly assumes that the caller is keeping the
-> VMA's mm alive, but in this scenario the caller has no relation to the
-> VMA's mm, so the rcuwait_wake_up() can cause UAF.
-
-Oh yikes. Yikes yikes yikes.
-
->
-> In theory, this could happen to any multithreaded process where thread
-> A is in the middle of pagefault handling while thread B is
-> manipulating adjacent VMAs such that VMA merging frees the VMA looked
-> up by thread A - but in practice, for UAF to actually happen, I think
-> you need to at least hit three race windows in a row that are each on
-> the order of a single memory access wide.
-
-Hmm ok this is confusing, below you reference threads by number with
-letter=process, and here you say thread 'A' and "B'.
-
-
->
-> The interleaving leading to UAF is the following, where threads A1 and
-> A2 are part of one process and thread B1 is part of another process:
-
-Err but you refer to A1, A2, A3 below, should A3=B1?
-
-> ```
-> A1               A2               A3
-> ==               ==               ==
-> lock_vma_under_rcu
->   mas_walk
->                  <VMA modification removes the VMA>
->                                   mmap
->                                     <reallocate the VMA>
->   vma_start_read
->     READ_ONCE(vma->vm_lock_seq)
->     __refcount_inc_not_zero_limited_acquire
->                                   munmap
-                                   ^
-				   |
-                                   OK so here, we have unmapped and
-				   returned VMA to the slab so
-				   SLAB_TYPESAFE_BY_RCU may now result in
-				   you having a VMA with vma->vm_mm !=
-				   current->mm right?
-
->                                     __vma_enter_locked
->                                       refcount_add_not_zero
->   vma_end_read
->     vma_refcount_put
-      ^
-      |
-      Then here, we're grabbing process
-      B's mm... whoops...
-
->       __refcount_dec_and_test
->                                       rcuwait_wait_event
->                                     <finish operation>
-                                      ^
-				      |
-				      Then here, the VMA is finally
-				      freed right?
-
->       rcuwait_wake_up [UAF]
-        ^
-	|
-	And then here we try to deref freed mm->vma_writer_wait
-	and boom.
-> ```
->
-
-This accurate?
-
-> I'm not sure what the right fix is; I guess one approach would be to
-> have a special version of vma_refcount_put() for cases where the VMA
-> has been recycled by another MM that grabs an extra reference to the
-> MM? But then dropping a reference to the MM afterwards might be a bit
-> annoying and might require something like mmdrop_async()...
-
-This seems a bit convoluted... And I worry about us getting the refcount
-stuff wrong somehow, we'd have to be very careful about this to avoid
-leaking VMAs somehow...
+> > >
+> > >  tools/perf/builtin-list.c                     |  65 ++-
+> > >  .../arch/common/common/software.json          |  92 ++++
+> > >  tools/perf/pmu-events/empty-pmu-events.c      | 266 +++++----
+> > >  tools/perf/pmu-events/jevents.py              |  15 +-
+> > >  tools/perf/python/ilist.py                    | 491 ++++++++++++++++=
++
+> > >  tools/perf/util/Build                         |   1 +
+> > >  tools/perf/util/evsel.c                       |  21 +-
+> > >  tools/perf/util/parse-events.c                | 198 ++-----
+> > >  tools/perf/util/parse-events.h                |   1 -
+> > >  tools/perf/util/parse-events.l                |  38 +-
+> > >  tools/perf/util/parse-events.y                |  29 +-
+> > >  tools/perf/util/pfm.c                         |   2 +
+> > >  tools/perf/util/pmu.c                         |   7 +
+> > >  tools/perf/util/pmus.c                        |   2 +
+> > >  tools/perf/util/print-events.c                | 100 +---
+> > >  tools/perf/util/print-events.h                |   4 +-
+> > >  tools/perf/util/python.c                      | 519 ++++++++++++++++=
++-
+> > >  tools/perf/util/tp_pmu.c                      | 209 +++++++
+> > >  tools/perf/util/tp_pmu.h                      |  19 +
+> > >  19 files changed, 1638 insertions(+), 441 deletions(-)
+> > >  create mode 100644 tools/perf/pmu-events/arch/common/common/software=
+.json
+> > >  create mode 100755 tools/perf/python/ilist.py
+> > >  create mode 100644 tools/perf/util/tp_pmu.c
+> > >  create mode 100644 tools/perf/util/tp_pmu.h
+> > >
+> > > --
+> > > 2.50.0.727.gbf7dc18ff4-goog
+> > >
 
