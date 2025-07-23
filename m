@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-741726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65351B0E847
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:48:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359A3B0E84F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790AE4E14D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB52F174C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132CE17BEBF;
-	Wed, 23 Jul 2025 01:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C871A7264;
+	Wed, 23 Jul 2025 01:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSaxlIQU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHPkuMq+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C835360;
-	Wed, 23 Jul 2025 01:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7041FB3;
+	Wed, 23 Jul 2025 01:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753235272; cv=none; b=o42kaD5CPf/cPsrhtzcPReQdh5mx7wGuqOWPlRRUkSst4d1CUFewCMz2GjYGB91KDIJtYTiIEHfO8TeGyZO1J9UiTJg3LqDmIeojDPqQK4B082MuB1iyoSueM5mh4w7RDy5lMEfNllmQxHR9KM6p26QWkjdY9yMC7zGaD1Xray4=
+	t=1753235395; cv=none; b=FDPhNVB/13pAOq7FL1qHCxhBNFN4gksYCxEJfsIUB20V8cAfvdzGPDeiKmYYWFiLb4S/OU18e52/B+TGKMX/u1orH/VTfHe5A0fgko3iGWdS1OcIv6vKZPuzn3gp5K1eCaqTf/sedQkv2rkXZ4d21rU9aHTT1xJrEsW9tNNEq20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753235272; c=relaxed/simple;
-	bh=Mb7U/KhjDFYsWZAeq7kpLX/tB1mdXgzYH+ofNnJA7w8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c8MQcgCLTfrVnhsLjBL1z+biV32y6JI7jSwPpQ50oozIJ6cvh7H9sBEr+fBMV7kHhAYxVtIq9Lj3WW9cV87RryWio+qgJhbMlPmJmraEAj8gMUI6wrJgmtA0VM8nYNbLa1fQp93l4MvSiGbRnTjiLB9207zlH466cBc5LJBhipA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSaxlIQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A242C4CEEB;
-	Wed, 23 Jul 2025 01:47:50 +0000 (UTC)
+	s=arc-20240116; t=1753235395; c=relaxed/simple;
+	bh=TWWP5UC0hl2kMWCVnIXPI8WlY1NR78JudHF5e6wlwdM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=MXlK/mCxHwZ53G6e7SFBMVE196cOY5dApK/GiJCELifig6F0qiPetEGd6ZmcPn7nrHZu/KSIM9mI4we2OSBJ0BIOqB4o6oxoJTbOAjgAgk5a00nKtNnXuY06PvYNow28cCl6tkx7kbk4OtIndxACZluZBgrWcUGyWxAfrttPcj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHPkuMq+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 222D9C4CEEB;
+	Wed, 23 Jul 2025 01:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753235271;
-	bh=Mb7U/KhjDFYsWZAeq7kpLX/tB1mdXgzYH+ofNnJA7w8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eSaxlIQUL3eEVbxCOQIkht46i9qOkmpPjC5awQyRZf+80aAT4OZIJZUgFL0KzvJob
-	 jJN9p51Z2Gn4Jjut7HLS2qSJ2CVjZLi7xvRlDmvJH6ovV+oomM+l9vLsoj9OnTbtpW
-	 gxs+lyqFOALDov3oq+hcqHiX5bceaHhcg3F2jZnSRCskO2KltNrL1K3hCADq/ykMAl
-	 dgy5YzH7L4s2rPVAubBNabH9/l+qwCEmNDieDGEv+uN28T8PLqc2BcIgO84RMCRbiz
-	 CXaYalL5ZiufedGuZVCYL1iAm0lLSPJPgbuugLy4hJuM57rIH6Gm01wEMYqpqD4y7f
-	 Cib+Y+5jAPyhA==
-Date: Tue, 22 Jul 2025 18:47:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ssantosh@kernel.org, richardcochran@gmail.com, s.hauer@pengutronix.de,
- m-karicheri2@ti.com, glaroque@baylibre.com, afd@ti.com,
- saikrishnag@marvell.com, m-malladi@ti.com, jacob.e.keller@intel.com,
- kory.maincent@bootlin.com, diogo.ivo@siemens.com,
- javier.carrasco.cruz@gmail.com, horms@kernel.org, s-anna@ti.com,
- basharath@couthit.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, vadim.fedorenko@linux.dev, pratheesh@ti.com,
- prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
- rogerq@ti.com, krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
-Subject: Re: [PATCH net-next v11 2/5] net: ti: prueth: Adds ICSSM Ethernet
- driver
-Message-ID: <20250722184749.0c04d669@kernel.org>
-In-Reply-To: <20250722132700.2655208-3-parvathi@couthit.com>
-References: <20250722132700.2655208-1-parvathi@couthit.com>
-	<20250722132700.2655208-3-parvathi@couthit.com>
+	s=k20201202; t=1753235395;
+	bh=TWWP5UC0hl2kMWCVnIXPI8WlY1NR78JudHF5e6wlwdM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cHPkuMq+uDnLJgjjdEi10acprytyO7c2jBESQjdNfA3uEbAoymSOeFYDwtxlbBpXm
+	 K8JvB1GDJlYlXIzz16wE2HwG3rg4+Z9o/aQIPOPVtFLUZu6rh+HD8rr7pMrDMG78Ci
+	 l0FptGsMmqrhMhQRdxxVBtnYZ308pugQ6N3yVIpzpgWBsnDHg9fpce4FG1oA0YUSTH
+	 1N6F6IFOuMtvUPTwJmjz40f8g8Z7JECRIpIH46pv++PjmHp6wTePCeVg0VexuIOsHh
+	 aXUXDxD5gvQ/eei/ysWYTzTdr/BzhIwnO0YuL0ogqsBHljkYxLfqxX+G1AC2cKk+zL
+	 XOr9azYckNvdA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCA9383BF5D;
+	Wed, 23 Jul 2025 01:50:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [pull-request] mlx5-next updates 2025-07-22
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175323541324.1021632.17931149096787900898.git-patchwork-notify@kernel.org>
+Date: Wed, 23 Jul 2025 01:50:13 +0000
+References: <1753175048-330044-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1753175048-330044-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 22 Jul 2025 18:55:02 +0530 Parvathi Pudi wrote:
-> +	for_each_child_of_node(eth_ports_node, eth_node) {
-> +		u32 reg;
-> +
-> +		if (strcmp(eth_node->name, "ethernet-port"))
-> +			continue;
-> +		ret = of_property_read_u32(eth_node, "reg", &reg);
-> +		if (ret < 0) {
-> +			dev_err(dev, "%pOF error reading port_id %d\n",
-> +				eth_node, ret);
-> +			return ret;
+Hello:
 
-missing put for eth_node
+This pull request was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> +		}
-> +
-> +		of_node_get(eth_node);
-> +
-> +		if (reg == 0 && !eth0_node) {
-> +			eth0_node = eth_node;
-> +			if (!of_device_is_available(eth0_node)) {
-> +				of_node_put(eth0_node);
-> +				eth0_node = NULL;
-> +			}
-> +		} else if (reg == 1 && !eth1_node) {
-> +			eth1_node = eth_node;
-> +			if (!of_device_is_available(eth1_node)) {
-> +				of_node_put(eth1_node);
-> +				eth1_node = NULL;
-> +			}
-> +		} else {
-> +			if (reg == 0 || reg == 1)
-> +				dev_err(dev, "duplicate port reg value: %d\n",
-> +					reg);
-> +			else
-> +				dev_err(dev, "invalid port reg value: %d\n",
-> +					reg);
-> +
-> +			of_node_put(eth_node);
-> +		}
-> +	}
+On Tue, 22 Jul 2025 12:04:08 +0300 you wrote:
+> Hi,
+> 
+> The following pull-request contains common mlx5 updates
+> for your *net-next* tree.
+> Please pull and let me know of any problem.
+> 
+> Regards,
+> Tariq
+> 
+> [...]
+
+Here is the summary with links:
+  - [pull-request] mlx5-next updates 2025-07-22
+    https://git.kernel.org/netdev/net-next/c/56613001dfc9
+
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
