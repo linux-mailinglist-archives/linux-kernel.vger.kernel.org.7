@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-742869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD698B0F78E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:58:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE01B0F7AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC90C17E8FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:58:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EED17A3D83
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836C11F03DE;
-	Wed, 23 Jul 2025 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFFD1FBEB1;
+	Wed, 23 Jul 2025 15:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="FZ61ulp1"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clcv19b5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226BF3BB48;
-	Wed, 23 Jul 2025 15:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5F1F3D54;
+	Wed, 23 Jul 2025 15:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753286273; cv=none; b=XxdernSMtSiY+/M7zjz18CMh+s7eeDiCK6Ad+JGBeWu9pBf1B7RGtwBNZmUbp/wElXwt4wpoKmQwtJ+FlNcY+1yL1MI7TRL4IZhQBpqIWJ/71i7Rrfk+AWu++6aYgMd3Gs+lTxftbCCNA28wfedWwiPgcyY2Epf12DiKIPaYckU=
+	t=1753286349; cv=none; b=QMR19NNhK6eCJ3h2wM1S2JeEHZ0HR5DijbfdESDJb59ffwc5siziDRk3CuN95coWj27UmaQEqrdYdc2Q98XBmxDsuuDQeIbsxuXAZKex4sva7Yk50ywp4+xcLXb+MHKVNDoSxsc+mVJLLIDfQL5eZY9k9mmBANzC5oPirOpaNIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753286273; c=relaxed/simple;
-	bh=axfy8vvsoLiMCW2rfQhexTDgQwDa4u9NASIoGU6WatE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAenCE/kNu+5JrT+ruJWfrDx4Ho74X6SnwLg0nG7rfJBEMJoROBuUAlbjpcxTG1IUg9dds/QnyruXVJcV3jpZQUF1agTSy2XUom3QNfnWDuJUg5PH/t/ImSg/djXc/WxqcLPFDKc0WPhrDfepcMncuShVEqI9QgmZPLseIo9plU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=FZ61ulp1; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 473351FB58;
-	Wed, 23 Jul 2025 17:57:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1753286261;
-	bh=GGQiiaNQmQtWEKfnk1CajfS6xfLXVxvjK3LAkDlRIYk=; h=From:To:Subject;
-	b=FZ61ulp1jnxgutiV9XX95ONOAgmWth2DjzsVMeI5l8UsquXm7b4EZTPDC0Z2t0C5Q
-	 DDUgSHFCJvzeY0yKqLLimylRUWZyJbqYHyJH8sC8pE8szl4VH4K9AYMSciOL3tI1K6
-	 qXoKHib841jhVf4R7rYQoxte3RSmGNCoBwFnitCqMCp4D4RQFj/ialSRm1Hc19jnKY
-	 3XiBuMUEY1EP6ir/ESHvoO41LA/9rHDo4jyJrxnP46bjZFlQhccxe1GvB4El4h2A6/
-	 mplJvsBtZEs68Haqy1UwfkAwThl7bYkmCgDZrV33F4Hc04r2jILATsQL476xtih0Y9
-	 YhWrQQXm6BHEQ==
-Date: Wed, 23 Jul 2025 17:57:28 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Joe Hung =?utf-8?B?KOa0qumKmOmZvSk=?= <joe_hung@ilitek.com>
-Cc: "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"francesco.dolcini@toradex.com" <francesco.dolcini@toradex.com>,
-	"emanuele.ghidoli@toradex.com" <emanuele.ghidoli@toradex.com>,
-	linux-input <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Luca Hsu =?utf-8?B?KOW+kOWYiemNiik=?= <luca_hsu@ilitek.com>
-Subject: Re: [PATCH] input: ilitek_ts_i2c: report key event for palm
-Message-ID: <20250723155728.GA61254@francesco-nb>
-References: <b372a99d01c14d1690afba4ceedd0936@ilitek.com>
+	s=arc-20240116; t=1753286349; c=relaxed/simple;
+	bh=l5L+lEz1dNbThjL45OGEhpHZYEbWBADkvh3KY+K3ZnU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=REM20wvY0es/LdZG+kHmc1J6nwshRB4or6ONeYvQWSUAQam5KgSeJK81BfgZansZGG7S2om4XDx/gyUj4Ew05RJt0eikKQ8FOuzE0OLM5zfkT31jKABmN5CPKKheegmSmp4jlv5sk6nuw1rQmYDx6Vnkda+C7Y1LVdgL1PBwC2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clcv19b5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D03C4CEE7;
+	Wed, 23 Jul 2025 15:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753286349;
+	bh=l5L+lEz1dNbThjL45OGEhpHZYEbWBADkvh3KY+K3ZnU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=clcv19b5pzoVv7wydv9hmQlP0xAzUhE8NzZNIK7svu2xarRS/llEdBMrbt+g3Fqo1
+	 6hpDJw7Ag8L6a908RMv5pcprf0uWPW/MN903PocRH7GJp7+Xu4Y18GjJdmVIwrWyi1
+	 WoOkUPHsoaBqFpVn/ZEj+HAbd1mQwWwK8rhG4VSxyThHqUsLQPYt/PKt8iSZ/JGJRy
+	 z7iPdWDa0KFp2NJXg/q5IKnD/ZSKr2Yy35SgXwKqqhUhBRZ/HsEMphJi2tW7nlozri
+	 gj7eklvObBRvKiad/Q4FxzVnPQwddv+LLfFN2mdgoNgivhHZQMS2wC/iuZ1dmaAYAW
+	 /aXQ24F65vGvQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F21383BF4E;
+	Wed, 23 Jul 2025 15:59:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b372a99d01c14d1690afba4ceedd0936@ilitek.com>
+Subject: Re: [PATCH net-next v3] net: replace ND_PRINTK with dynamic debug
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175328636724.1599213.15305193300784446965.git-patchwork-notify@kernel.org>
+Date: Wed, 23 Jul 2025 15:59:27 +0000
+References: <20250708033342.1627636-1-wangliang74@huawei.com>
+In-Reply-To: <20250708033342.1627636-1-wangliang74@huawei.com>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, alex.aring@gmail.com,
+ dsahern@kernel.org, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org
 
-On Mon, Jul 14, 2025 at 09:51:42AM +0000, Joe Hung (洪銘陽) wrote:
-> From ec0d80214fee6acc0b38f33ad0b6b487098963bc Mon Sep 17 00:00:00 2001
-> From: Joe Hong <joe_hung@ilitek.com>
-> Date: Mon, 14 Jul 2025 17:20:11 +0800
-> Subject: [PATCH] input: ilitek_ts_i2c: report key event for palm
+Hello:
 
-something wrong on this headers, check your setup
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-> Add support for reporting user-defined key event while getting palm event.
+On Tue, 8 Jul 2025 11:33:42 +0800 you wrote:
+> ND_PRINTK with val > 1 only works when the ND_DEBUG was set in compilation
+> phase. Replace it with dynamic debug. Convert ND_PRINTK with val <= 1 to
+> net_{err,warn}_ratelimited, and convert the rest to net_dbg_ratelimited.
 > 
-> Signed-off-by: Joe Hong <joe_hung@ilitek.com>
-> ---
->  drivers/input/touchscreen/ilitek_ts_i2c.c | 42 +++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
+> Suggested-by: Ido Schimmel <idosch@idosch.org>
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
 > 
-> diff --git a/drivers/input/touchscreen/ilitek_ts_i2c.c b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> index 0dd632724a00..fdcb4ab66fbb 100644
-> --- a/drivers/input/touchscreen/ilitek_ts_i2c.c
-> +++ b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> @@ -39,8 +39,13 @@
->  #define ILITEK_TP_I2C_REPORT_ID				0x48
->  
->  #define REPORT_COUNT_ADDRESS				61
-> +#define ALGO_MODE_ADDRESS				62
->  #define ILITEK_SUPPORT_MAX_POINT			40
->  
-> +static uint palm_key;
-> +module_param(palm_key, uint, 0664);
-> +MODULE_PARM_DESC(palm_key, "Set palm key code when palm is detected");
+> [...]
 
-I do not think that putting some kind of configuration in a kernel
-module param is an option
+Here is the summary with links:
+  - [net-next,v3] net: replace ND_PRINTK with dynamic debug
+    https://git.kernel.org/bluetooth/bluetooth-next/c/96698d1898bc
 
-Francesco
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
