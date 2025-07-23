@@ -1,104 +1,190 @@
-Return-Path: <linux-kernel+bounces-742503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E61B0F289
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:50:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0EAB0F28C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A640FAC0298
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57B885477D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611D22E6D1C;
-	Wed, 23 Jul 2025 12:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ee98WH8P"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E02E7165;
+	Wed, 23 Jul 2025 12:50:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D428B7EA;
-	Wed, 23 Jul 2025 12:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E126E712
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753274997; cv=none; b=s3f+1Doy+uBHYAjPADF4Fthi4vniD82FLYKSR68BjzfhvQFIlYI40J2PFFx73qkdJDSdGpSYFV+SSJ7slZHzpt0W6I81mrEG/3g7vV6ogHci6emuP3AKxsQ9M8lWWxzHcgOmRlRMy01bq0OtFvrh+5cEKSY1m+6Q7OSehJ/pszU=
+	t=1753275037; cv=none; b=gyuHawcvk6YssSe4Dn6Dm5vwp0kS8eOvKPdDClGAMpYM8N1h4nDIcUK/dXEjkViDZAtrnN2kI7TQIn7FSvXLpitQ/GsuyzhFzuUUJJ1/N5eixw9tIt0tpbIBPw94ZSD0HXMQGeLcmfo0o0VmUKJ5joiVGp4yg1Qo/G5jHjj3m4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753274997; c=relaxed/simple;
-	bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pFApsk9UHcIt/gJMp3UnSM1lVEgvJVHFX+FwXc+Ly3ez1hpEsokHmeJyX7TP1OFMBD318Bvck3HDD/af5aIoHoUaTCAaA/OOU0+CEuFmRmc09D/qUPv+NmPZUsnkBIIZ18gCpxBvIb9sD8tMAPM1HKIXNjlOd6sfNeAk6X9xnBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ee98WH8P; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23c71b21f72so10820455ad.2;
-        Wed, 23 Jul 2025 05:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753274996; x=1753879796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
-        b=Ee98WH8PGqZQrbj6hemgBeCGsZXHcVARPaZBdCfPmioh8jY2t+wfvhmWa41q5W6kAJ
-         sf/seB0wroUbBC+U4Pdj5yLIsSxJhE+fwmOd7MwMbfhB6PD/t77KPsQ3mxbu+MF1SLGp
-         0Xvsu/cuIFxQSnIt9zNtafVLG4ysBteWxCmHD4tB2cSJS+0Ob8+/NuhvcMVybWm07mtS
-         cYW+m+nE1GsoElQfQTl8741tZkySgPnAMoHEI2zNHZ5MbSUI65amC+VsO8bT4SrIJnMQ
-         zqgNZtbJmrKhBzm9eyi5SNdgJMRzkSkTg+NwbnJDsw35/nbgANFYZoSfuMW9EXw/S9Yi
-         +gmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753274996; x=1753879796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R1ZnDPdr+KLfnXF+L3GBYcBOic3/gGKPyOTI7hCc9Bk=;
-        b=jZuT2sR5cCIhzG+JNSkNf5d7N60Dwzx6VBOlWMI+F3Kqkr4aqTiCmJKBz83bQFPp+b
-         jFeyiRC9P/YV/gTy+djFAaee7GuVhT5FD77zavUWQor1cge5pXV8aO+77Xt0TAU6EzvY
-         h+elhURshB2Jx/O7dzaPwyC1cs5bwHfkibPr0LJ9d6Fv+5NZqAsi3P/tnyxNIWNDkHS8
-         ed3RtXhFrSEnNx+pV1KeCRKpOILHwMsqc+MPvb1Rk4+sVLaNqahsEq+M1mgQ0F7I1hKR
-         tYw5yWk9RgAQ+wKGMdxsrV6MBAPdwztVWhb5gdeUdf65wFl18FEcMgOgZXeBImrbwxPr
-         df/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFPVREVtR/+hXiGLQ+sCEHyYxz1huLByWVXRegPuqxZkDQ+kfBUn35YomI6KrdDhyljSbwHmxjjpNq2ik=@vger.kernel.org, AJvYcCXOvPCSVbfg5U8sYgxkzLaYyiBu2RtsbGcW0Os5zyZeQyVuqWYzQsLJSvgn9iXkdOp8z2+HgLgZnJkR3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrlOGdqk3KuTZaaXzTxY4NJiKi4QebF2cb7IZYMWLnQVFwxfp/
-	ejsJvSu5w4iRC621JgxK5I17ctrwFlqeFLwQOkPnNOxtljXEV/ZKFudHmaDsaAIf/ackwfv0TYP
-	5R5dAnBhdYQbx6urC0GWS5jmc7bcY0HE=
-X-Gm-Gg: ASbGnctNH7hgd31J0XpQF/vI/r9zLLu67ZLmrApYA+Aj2+MEriDEXN1lwUBOLN0gxcd
-	siCi3RiByycL9ghcsKpYRBcnm9933nNQ353xGfKJvaPmjpwFW/LyexH3hcxe12H+f5KE8vB3Mjm
-	7YVyx4u3PD7XEnUG0i/DrGKLwFvshIrliBhQUFJ0uqcTubQ0Hl8FYqX6VqudJklza/dhUIj6ElR
-	YnG2EKL
-X-Google-Smtp-Source: AGHT+IEPMZZiyO4Rgpj58hEJInZjj5GgFr5IFWeJTNLs8cLo75ujlDwm8/g+buidWOGhCXr/tqd1sz+o4Lvfkq/9e5c=
-X-Received: by 2002:a17:902:d48a:b0:234:f1b5:6e9b with SMTP id
- d9443c01a7336-23f98129135mr17643215ad.1.1753274995529; Wed, 23 Jul 2025
- 05:49:55 -0700 (PDT)
+	s=arc-20240116; t=1753275037; c=relaxed/simple;
+	bh=MSimA2+DDncNbgkF9xykJmmS+FJHGnRa1/2TzOvLbpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GoR5AhuMZnzv2j15MpcIol6pPVWSQpvErjbHOTdMvYETN/x4GslKFV/uz8JnzPcI5NVDy6YIp5cR+GkkP7Q2xr9lgwctEhWo2mNgkx8DRxzah9Zr98yMLZKGuMvY0oqrUmLcVs4OjqLy4o7ddzf+MzTHBqo4+9//bwBfdtua0l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <f.pfitzner@pengutronix.de>)
+	id 1ueYvL-0005Ys-Pi; Wed, 23 Jul 2025 14:50:19 +0200
+Message-ID: <fdfa4301-7b2d-47c5-9aca-fc00c4408bcf@pengutronix.de>
+Date: Wed, 23 Jul 2025 14:50:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723112605.74f1c077@canb.auug.org.au>
-In-Reply-To: <20250723112605.74f1c077@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 23 Jul 2025 14:49:42 +0200
-X-Gm-Features: Ac12FXwdy8HYdhV1FZG5TYNUT_XBJ98xcEii8FixuatgzNCqud0xun_O5LCdgb4
-Message-ID: <CANiq72m3w8Q74dV5sBTrZDoJom3SLjcOkMeR3LbVOs8+pcsXOQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Christian Schrefl <chrisi.schrefl@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Shankari Anand <shankari.ak0208@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] parse horizontal/vertical flip properties
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ entwicklung@pengutronix.de
+References: <20250718-fpf-media-dt-flip-v1-0-75b3a938b4be@pengutronix.de>
+ <ryuew3kxnocj6uqq4nadp3kyaxg27rxlrgnaieyy2hlpz5jkd3@iyetnsbfanee>
+ <35debf21-bca7-480f-a61e-7b0494f10ca5@pengutronix.de>
+ <mljx67lkcw4kh3cs344iprik244cm7hqfckmg4bj5j5atuyt62@lh2ht4mrtkjq>
+ <3ac271c7-a67a-4f6f-935d-256937516068@pengutronix.de>
+ <ffzxxsplmivvj7pib7n7lkutbyohl5npofdaxdxtoffo43yatw@gqm64zdgb4iy>
+Content-Language: en-US, de-DE
+From: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+In-Reply-To: <ffzxxsplmivvj7pib7n7lkutbyohl5npofdaxdxtoffo43yatw@gqm64zdgb4iy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: f.pfitzner@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jul 23, 2025 at 3:26=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
+On 7/23/25 14:21, Jacopo Mondi wrote:
+> Hi Fabian
 >
-> I fixed it up (see below) and can carry the fix as necessary. This
+> On Wed, Jul 23, 2025 at 12:09:58PM +0200, Fabian Pfitzner wrote:
+>> On 7/23/25 11:44, Jacopo Mondi wrote:
+>>> On Wed, Jul 23, 2025 at 11:29:27AM +0200, Fabian Pfitzner wrote:
+>>>> On 7/23/25 11:17, Jacopo Mondi wrote:
+>>>>> Hi Fabian
+>>>>>
+>>>>> On Wed, Jul 23, 2025 at 10:58:28AM +0200, Fabian Pfitzner wrote:
+>>>>>> There are cameras containing a mirror on their optical path e. g. when
+>>>>>> mounted upside down.
+>>>>> How is this different from 'rotation = 180' ?
+>>>> If you simply want to flip the output (e. g. horizontally), you cannot do
+>>>> this with a rotation.
+>>>> The camera I'm referring to is not only upside down, but also flipped
+>>>> horizontally.
+>>> 180 degress rotation = HFLIP + VFLIP
+>> I do not want to do both. Only one of them.
+>>> Yes, you can't express 'mirror' in DTS, because DTS are about the
+>>> physical mounting rotation of the camera. Sensor drivers shall not
+>>> apply any flip control automatically, it's userspace that by parsing
+>>> the rotation property through the associated v4l2 controls should decide
+>>> if it has to apply flips or not to correct the images.
+>>>
+>>> What is the use case you had in mind ? Tell the driver through a DTS
+>>> property it has to apply flips to auto-compensate ? Because I think we
+>>> shouldn't and if I'm not mistaken we also document it:
+>>> https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera-sensor.html#rotation-orientation-and-flipping
+>> I have a camera that does a horizontal flip in its hardware, so the output
+> Sorry, I don't want to be annoying, but what does it mean "does a
+> horizontal flip in the hardware" ?
 
-Looks good to me, thanks!
+Between the sensor and lenses (optical path) there might be a mirror 
+that causes a flip of the image.
+"Might be" because I do not know if its really something that comes from 
+the hardware itself or whether its inside the firmware (for the camera 
+I'm using right now).
+Either way, I cannot change it. So my idea was to set it via a device 
+tree property, such that the driver can "revert" the flip that was made.
+I thought, that it might be useful for other drivers as well that face 
+similar issues.
 
-(I am still checking/testing the others)
+>
+> In my understanding either "in hardware" means you can't control it
+> from software (and so there's no point in telling drivers what to do)
+> or you can control it from software and it's a regular HFLIP.
+>
+>> is not what I want. My example above was misleading. The rotation fixes the
+>> "upside down" problem, but does not fix the flip.
+>>
+>> Doing that in userspace might be a solution, but in my opinion it is a bit
+>> ugly to write a script that always sets the flip property from userspace
+>> when the device was started.
+>> A much cleaner way would be to simply set this property in the device tree
+>> such that the driver can be initially configured with the proper values.
+> Sorry, don't agree here. What if a sensor is mounted 90/270 degrees
+> rotated (typical for mobile devices in example) ? You can't compensate
+> it completely with flips, would you 270+HFLIP=90 ? would you leave it
+> unmodified ? Userspace has to know and act accordingly, doing things
+> in driver (will all drivers behave the same ? Will some compensate or
+> other won't ?) is a recipe for more complex behaviours to handle.
+Hmm, sure there might be more complex scenarios.
+The device tree property is for developer who know that there will not 
+be any changes in user space anymore (e. g. cameras that are fixed in place)
+And even if, it is still possible to make modifications from user space 
+(like for the rotation property). My changes are not enforce any 
+restrictions regarding that it is just an optional attribute.
+>
+>> PS: I have to send this email twice. The first one contained HTML parts that
+>> were rejected by some receivers...
+>>
+>>> TL;DR drivers shall not flip, userspace should. Mirroring is an effect
+>>> of drivers applying an HFLIP, because unless I'm missing something
+>>> obvious, 'mirror' is not a physical mounting configuration of the camera
+>>> sensor.
+>>>
+>>> FIY we're talking about something similar in libcamera
+>>> https://lists.libcamera.org/pipermail/libcamera-devel/2025-July/051533.html
+>>>
+>>>>>> Introduce two options to change the device's flip property via device tree.
+>>>>>>
+>>>>>> As there is already support for the panel-common driver [1], add it for cameras in the same way.
+>>>>>>
+>>>>>> [1] commit 3c0ecd83eee9 ("dt-bindings: display: panel: Move flip properties to panel-common")
+>>>>>>
+>>>>>> Signed-off-by: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+>>>>>> ---
+>>>>>> Fabian Pfitzner (2):
+>>>>>>          media: dt-bindings: add flip properties
+>>>>>>          media: v4l: fwnode: parse horizontal/vertical flip properties
+>>>>>>
+>>>>>>     .../devicetree/bindings/media/video-interface-devices.yaml        | 8 ++++++++
+>>>>>>     drivers/media/v4l2-core/v4l2-fwnode.c                             | 3 +++
+>>>>>>     include/media/v4l2-fwnode.h                                       | 4 ++++
+>>>>>>     3 files changed, 15 insertions(+)
+>>>>>> ---
+>>>>>> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+>>>>>> change-id: 20250718-fpf-media-dt-flip-7fcad30bcfb7
+>>>>>>
+>>>>>> Best regards,
+>>>>>> --
+>>>>>> Fabian Pfitzner <f.pfitzner@pengutronix.de>
+>>>>>>
+>>>> --
+>>>> Pengutronix e.K.                           | Fabian Pfitzner             |
+>>>> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+>>>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+>>>> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
+>>>>
+>> --
+>> Pengutronix e.K.                           | Fabian Pfitzner             |
+>> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+>> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
+>>
+-- 
+Pengutronix e.K.                           | Fabian Pfitzner             |
+Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
-Cheers,
-Miguel
 
