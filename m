@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-743168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CC7B0FB69
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34634B0FB6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AFA1AA621C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712BC1684A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7B23505E;
-	Wed, 23 Jul 2025 20:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A46238C07;
+	Wed, 23 Jul 2025 20:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO7iyyPw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHLoX8Wa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA31920DD42;
-	Wed, 23 Jul 2025 20:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34E230BEE;
+	Wed, 23 Jul 2025 20:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753302474; cv=none; b=WWZyZ+OJGwFjbNhaRDu7abC6aKNsmmB6RGpqKq2o/UFa+34H2t0zdFmPVvCtgoZrVMTaUTCd8pocvFaHHZCnDO1AcM0zocYfP9VBd1adR88ywDNqsKfGqj2Ehl658cr/WwKAR0BIOm9wXIQJtnLFkBPnbwzn/JrKcAvsUcB+UvA=
+	t=1753302484; cv=none; b=SAeRWxpkwpo6SB5r7zGldi400iSAewFmBPBqTgO2739BlcWGEc0gBD08Lxlfh5BTB2i/Cc+l6xovJZQOxrrfP94IvkrI/0LqKiB8jeBfi7nY3UkujtTFeNxfxf8sjo0eaqH6ROzGq0RUnsyPN8FqDb74H13ffEBZMJ94n0HA83g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753302474; c=relaxed/simple;
-	bh=ZDJ0UddwErHUrb2PajQCNvDNDSafrN7s/hTlFFWDmR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=owViNKzlWHfrYaibMal0+r+byqF6DQMnhFWyhWTsSJ9Vh3Ew+FSnWNHL3KzcGjVoC3f2BliLx6LDBIcS7xcb8GkOrHL41a3grz9RcF0+hTMMDTOJ1a4K1K1O4AjUKO9Ctl4pTwbepvIjceGO9f8S7+gVxdqbcaTmmkJEqfzKcE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO7iyyPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7839EC4CEE7;
-	Wed, 23 Jul 2025 20:27:54 +0000 (UTC)
+	s=arc-20240116; t=1753302484; c=relaxed/simple;
+	bh=bLAjkr0rM9XAbo8UHtiwK4eJ6EnmjrJMGttjy+b6bi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nbRF2UhUFThtLQo9Mjpz2p2L3jdGMbqhwoGaldBha2c6y8Vy0fRsHRqX5QEmbzxSGGr7WISDToM3kew/iDlBOqVb6DE0xUXHREJr2f3MCpeq0d3TrmI9Mmxo7teDaRWjnv5Sjy5ICfVZxW/mfsxzOTnmhxXFFIM+WZbkwhD1nqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHLoX8Wa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C8BC4CEE7;
+	Wed, 23 Jul 2025 20:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753302474;
-	bh=ZDJ0UddwErHUrb2PajQCNvDNDSafrN7s/hTlFFWDmR4=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=AO7iyyPwZp4oYGUIKxGRTziPM5XcOeALxcbZIzVPdrRKDzULIb1vwzCIzppsVI6PF
-	 evzRavTvxxNQGMDTShh7dcCOuPiPND8U8qQd4Xo3++O0zR3EwHo1o3bXCH3/uV/miC
-	 6x1VDJbhf2XeSuVBh/WfamQAFvfhae4Hl81TLXydNgZrkaWrvWfzQ1e4okLknQ5A2X
-	 NCail7r0i/RRWXtSsRnPo66PMtIEng7H6vOCgOdk2x8QiZrtCcaly5B7HIAbDXA3mO
-	 87MBTnvJj6sTMxaG9dPfLtkwbRzyokMNMy49WpIpAqkHokTKifzZWphy7ZX7HgrKGz
-	 tC3r/YFRDG1VA==
+	s=k20201202; t=1753302484;
+	bh=bLAjkr0rM9XAbo8UHtiwK4eJ6EnmjrJMGttjy+b6bi8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DHLoX8WaSr8rGPNBsi/CR4rvQbKi79eO2QNAIQxa//G3uQz6Cc0seeeZo+YhUqvWn
+	 X9EPzvAwn3wfZCEXCOytFxekbTunm3elUGhlNzd8AVzk1mf/2iX9Ley7vU4X+qkwDP
+	 kwoDEsYgXv3/42e7EXuFzreErA38xfyTVi3O6Kk3qvfvZvmWJ9dLUiHVj9gD15IO4r
+	 fTzNPviaLWhzubYbVKMmN7TUdm8dGPKm9grhl2a1fm3Nj4mYs+VYYJXX69X39R8LKh
+	 K77safqG4BOEHDhTpmlBVIDYoar0wPp+3PUYUHB7WZbmkyOYCqXr3r1HltN2jPwXly
+	 AdNDx0rxs2S/Q==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0A192CE08DF; Wed, 23 Jul 2025 13:27:54 -0700 (PDT)
-Date: Wed, 23 Jul 2025 13:27:54 -0700
+	id 04E89CE08DF; Wed, 23 Jul 2025 13:28:04 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH 0/6] Switch __DECLARE_TRACE() to new notrace variant of
- SRCU-fast
-Message-ID: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	bpf@vger.kernel.org
+Subject: [PATCH v4 1/6] srcu: Move rcu_is_watching() checks to srcu_read_{,un}lock_fast()
+Date: Wed, 23 Jul 2025 13:27:55 -0700
+Message-Id: <20250723202800.2094614-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
+References: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+The rcu_is_watching() warnings are currently in the SRCU-tree
+implementations of __srcu_read_lock_fast() and __srcu_read_unlock_fast().
+However, this makes it difficult to create _notrace variants of
+srcu_read_lock_fast() and srcu_read_unlock_fast().  This commit therefore
+moves these checks to srcu_read_lock_fast(), srcu_read_unlock_fast(),
+srcu_down_read_fast(), and srcu_up_read_fast().
 
-This is version 4 of a patch series creating a new notrace variant of
-SRCU-fast and introducing it to the __DECLARE_TRACE() in place of the
-current preemption disabling.  This change enable preemption of BPF
-programs attached to tracepoints, as is required for runtime use of BPF
-in real-time systems.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: <bpf@vger.kernel.org>
+---
+ include/linux/srcu.h     | 4 ++++
+ include/linux/srcutree.h | 2 --
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-This triggers continues to trigger a kernel test robot report of a
-"using smp_processor_id() in preemptible" splat.  I looked for issues
-with explicit preemption disabling, and, not finding any, will next turn
-my attention to accesses to per-CPU variables.  Any and all insights
-are welcome.
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index f179700fecafb..478c73d067f7d 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -275,6 +275,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
+ {
+ 	struct srcu_ctr __percpu *retval;
+ 
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
+ 	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
+ 	retval = __srcu_read_lock_fast(ssp);
+ 	rcu_try_lock_acquire(&ssp->dep_map);
+@@ -295,6 +296,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
+ static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *ssp) __acquires(ssp)
+ {
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_down_read_fast().");
+ 	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
+ 	return __srcu_read_lock_fast(ssp);
+ }
+@@ -389,6 +391,7 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
+ 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
+ 	srcu_lock_release(&ssp->dep_map);
+ 	__srcu_read_unlock_fast(ssp, scp);
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
+ }
+ 
+ /**
+@@ -405,6 +408,7 @@ static inline void srcu_up_read_fast(struct srcu_struct *ssp, struct srcu_ctr __
+ 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
+ 	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
+ 	__srcu_read_unlock_fast(ssp, scp);
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_up_read_fast().");
+ }
+ 
+ /**
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index bf44d8d1e69ea..043b5a67ef71e 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -244,7 +244,6 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
+ {
+ 	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
+ 
+-	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
+ 	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
+ 		this_cpu_inc(scp->srcu_locks.counter); /* Y */
+ 	else
+@@ -275,7 +274,6 @@ static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_
+ 		this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
+ 	else
+ 		atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
+-	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
+ }
+ 
+ void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+-- 
+2.40.1
 
-1.	Move rcu_is_watching() checks to srcu_read_{,un}lock_fast().
-
-2.	Add srcu_read_lock_fast_notrace() and
-	srcu_read_unlock_fast_notrace().
-
-3.	Add guards for notrace variants of SRCU-fast readers.
-
-4.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
-
-5.	Document __srcu_read_{,un}lock_fast() implicit RCU readers.
-
-6.	Document srcu_flip() memory-barrier D relation to SRCU-fast.
-
-Changes since v3:
-
-o	Add "notrace" per Joel, Steven, and Matthew feedback.
-
-o	Upgrade explanatory comments and add new ones per Joel feedback.
-
-	https://lore.kernel.org/all/20250721162433.10454-1-paulmck@kernel.org/
-
-Changes since v2:
-
-o	Posting standalone as opposed to a reply.
-
-	https://lore.kernel.org/all/3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop/
-
-Changes since RFC version:
-
-o	RFC patch 6/4 has been pulled into the shared RCU tree:
-	e88c632a8698 ("srcu: Add guards for SRCU-fast readers")
-
-o	RFC patch 5/4 (which removed the now-unnecessary special boot-time
-	avoidance of SRCU) has been folded into patch 4/4 shown above,
-	as suggested by Steven Rostedt.
-
-	https://lore.kernel.org/all/bb20a575-235b-499e-aa1d-70fe9e2c7617@paulmck-laptop/
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/include/linux/srcu.h       |    4 +++
- b/include/linux/srcutree.h   |    2 -
- b/include/linux/tracepoint.h |    6 +++--
- b/kernel/rcu/srcutree.c      |   10 +++++++++
- b/kernel/tracepoint.c        |   21 ++++++++++++++++++-
- include/linux/srcu.h         |   35 ++++++++++++++++++++++++++++++--
- include/linux/srcutree.h     |   47 +++++++++++++++++++++++++++----------------
- 7 files changed, 101 insertions(+), 24 deletions(-)
 
