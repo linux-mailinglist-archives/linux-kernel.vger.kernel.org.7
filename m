@@ -1,112 +1,160 @@
-Return-Path: <linux-kernel+bounces-742284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59131B0EF82
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E1FB0EF6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 878127B6A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA3F1C83B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA12828D85F;
-	Wed, 23 Jul 2025 10:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hTHKWDgo"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669ED27EFFD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC72A2900A8;
+	Wed, 23 Jul 2025 10:09:32 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E633285070
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753265432; cv=none; b=Q8xrFJl2gzJ1snebXN9JRm6iygOzYaZ2JA6aQ7OIl6R+ZUIy9JOiLieRfq1/TBJEt1rWT9ytuqadLlzmJ6EK8c065Ay42bP4B4B43/vBz421+Nzhnv7G25ehSYl8QH4lVcorYydz9M0dJ9a7OnwyWSNrVoTGZEF2a3mMdDwpVug=
+	t=1753265372; cv=none; b=V/Rw3oRqTnC2TWUW8gAeLovyJUdOEnRkaw9HjT2ml4TEWjWweSdMxPyT8BzgahL1SmWYFDzK4XgIS/UwxUg3/yKbRSBPU30gY+dsarUn+AxUwOEZsXb57ZOH7/zhtM+G6JpWYXcCVU5sKz998g24GRQ/eTuS/h2QLIO6YyU2q6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753265432; c=relaxed/simple;
-	bh=s4HiKl+QEDkzijiropzXvy5iHdrqZS0GUwdnzOGUd7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rlhe2i3ctuB2FNFNlQr0xpMtAZjM6Y5K8B6mW5DDPHoq5YuDfKr2IdbsL+Wgzuqr0NnyylHSGnQ7FWry8xuB4yNlR0VvXiYhqVyjr2yvGyHX4UQM9xRPnBPqvitJ0qzmicmo8tcSyMhfqAIKMopQjD1fmT4RhjoRVDzLqdfJA4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hTHKWDgo; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Nh
-	2o4zeAg7OMbohCVL8ICOdq71b512GbZ6YsdS2hIic=; b=hTHKWDgoW+BGrspZYE
-	GXu4pdKkNEuYd437XW58tC0Ey0ajx5kKkzZa7mI7ORSJd5oTkudASXCSf6Ue8lDA
-	Pvj90Rrljc7UqgFeIZwvgBoP20JIVVfQ7SSLS3SGImx91DqmaTGKS8gX32kgjbOU
-	UOF+Tg2b6k3bdt9lD5ldvLzkE=
-Received: from ly-pc.. (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgBXroe+tIBofN_UAA--.20396S4;
-	Wed, 23 Jul 2025 18:09:12 +0800 (CST)
-From: Xuanye Liu <liuqiye2025@163.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kees Cook <kees@kernel.org>
-Cc: Xuanye Liu <liuqiye2025@163.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm: Add process info to bad rss-counter warning
-Date: Wed, 23 Jul 2025 18:09:00 +0800
-Message-ID: <20250723100901.1909683-1-liuqiye2025@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753265372; c=relaxed/simple;
+	bh=FodX8F9Oi2GSeNREkWkr0lf3vk0qCR0laJz590G6kMs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sIVj0iXqn6C4E/V2cVqtqPlPQg2vaJ0VziNYJCY9lttIJBnYuIFwl+I1qpxKvWeoeIkem4WHq0Lx6oq01hCOdgkPZUWBC2mDJzPfc34DnIyfuG+9pKO6n/fub3VEL90O5B87GOlaclcM+1ASNOW2DW6cB8r+jZq4Q6BtNqXA4yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddcc7e8266so9829795ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 03:09:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753265369; x=1753870169;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CqgK15jyLtDdlPezel9tKJH2qIMmyug0dFZIUHXDQ+0=;
+        b=QFHk14ZYzENa60XqwhSZoV0nIkUp7Tw6Eb1KxTDWktCDyfZcaZ3T8vLkgZYVk1bJOX
+         3/omGdJss4W1ZZOudWcSynsjzhGPfXH6eQ8FlpzRiVxpxYpPtuiOK72lNrbz7iGzAI61
+         y79iTtjPbr9N6BAJMCXB7kKoNIpK9Kl3c2UDy+zZJLDoyyal/9nWP9mjRv33WKFdcjYb
+         t9dBlSTjf7rY8cXP2EpUrqpZjAzQbFTC7/HquZgGLo38cRZSelV4RYMDnwaS+H39qaDx
+         MuL7TTlmGPDmCDj+qRNPzxv1yYDZJyUNmWdaZLdZ7kBp7ZjcTrmXL4t6Lsy/POrFQI1z
+         axNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBzeOjqmjSRMczBABJGpO5NguCoSKFbp2Hygnk9DhzwcnaNUH6ZSppjpm27VayGvi/+czNwFY9/UzI7+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzAoR5tbIXVQeIEX+hyIECdw5QGWB94SjjTMu5scIWRbbkPsG4
+	mvwPy3MlLVM1tDRVnLgGnc6WmVrd17b/iXc2EP0e+E3l4TDkpEovZ6sx43ELmEpImVR3zwLR1hl
+	LcIZl0oAzrjWuSzxU/edPAbUZ74PC0UTnVeAX0sj0zD4pHKqaAle1zBavEoE=
+X-Google-Smtp-Source: AGHT+IGfXPUKRSdvN2YWhLw6zow5UDBBewiMpJSV91x5nC52F00FuBjU4LEJ9d09DsYuvwtk+6PHzVEbAJTxVE3LCPNv2sL5zPkj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgBXroe+tIBofN_UAA--.20396S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWruw1fGr48Cw4UGr47Jr4fXwb_yoWDXrg_Gr
-	Wvqwn8ua1jy3WDCa4ayay3Xr4Ig39YgFy093WIgFZ3ZF9rAr90gr9rGrykArn7XFsay3s3
-	AF95Gw129r18AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1zpB3UUUUU==
-X-CM-SenderInfo: 5olx1xd1hsijqv6rljoofrz/1tbiMAqTUGiAskRAAQAAsm
+X-Received: by 2002:a05:6e02:318a:b0:3e2:c1ba:79c2 with SMTP id
+ e9e14a558f8ab-3e2c1ba7bfamr86175445ab.7.1753265369524; Wed, 23 Jul 2025
+ 03:09:29 -0700 (PDT)
+Date: Wed, 23 Jul 2025 03:09:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6880b4d9.050a0220.40ccf.0004.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: refcount bug in nsim_fib_event_nb (2)
+From: syzbot <syzbot+ea02c8daa5dc1c52b364@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Enhance the debugging information in check_mm() by including the
-process name and PID when reporting bad rss-counter states. This
-helps identify which process is associated with the memory accounting
-issue.
+Hello,
 
-Signed-off-by: Xuanye Liu <liuqiye2025@163.com>
+syzbot found the following issue on:
+
+HEAD commit:    6832a9317eee Merge tag 'net-6.16-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1004038c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8bff2df4655c5f44
+dashboard link: https://syzkaller.appspot.com/bug?extid=ea02c8daa5dc1c52b364
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/818bd549a31a/disk-6832a931.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f971d7bc88e2/vmlinux-6832a931.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f637a5f4829c/bzImage-6832a931.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ea02c8daa5dc1c52b364@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: addition on 0; use-after-free.
+WARNING: CPU: 1 PID: 6193 at lib/refcount.c:25 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+Modules linked in:
+CPU: 1 UID: 0 PID: 6193 Comm: kworker/u8:17 Not tainted 6.16.0-rc6-syzkaller-00121-g6832a9317eee #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: netns cleanup_net
+RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
+Code: 00 00 e8 49 ea 06 fd 5b 41 5e e9 d1 05 b0 06 cc e8 3b ea 06 fd c6 05 b6 66 d1 0a 01 90 48 c7 c7 40 6e e1 8b e8 b7 d7 ca fc 90 <0f> 0b 90 90 eb d7 e8 1b ea 06 fd c6 05 97 66 d1 0a 01 90 48 c7 c7
+RSP: 0000:ffffc9000b5b7248 EFLAGS: 00010246
+RAX: 6b82cdd65d8ecc00 RBX: 0000000000000002 RCX: ffff88807b493c00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: dffffc0000000000
+R13: ffff888061720020 R14: ffff88802422823c R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888125d59000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000020000000e000 CR3: 00000000400d2000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __refcount_add include/linux/refcount.h:-1 [inline]
+ __refcount_inc include/linux/refcount.h:366 [inline]
+ refcount_inc include/linux/refcount.h:383 [inline]
+ fib_info_hold include/net/ip_fib.h:629 [inline]
+ nsim_fib4_prepare_event drivers/net/netdevsim/fib.c:930 [inline]
+ nsim_fib_event_schedule_work drivers/net/netdevsim/fib.c:1000 [inline]
+ nsim_fib_event_nb+0xe9a/0x1080 drivers/net/netdevsim/fib.c:1043
+ call_fib_notifier+0x42/0x80 net/core/fib_notifier.c:24
+ call_fib_entry_notifier net/ipv4/fib_trie.c:90 [inline]
+ fib_leaf_notify net/ipv4/fib_trie.c:2175 [inline]
+ fib_table_notify net/ipv4/fib_trie.c:2193 [inline]
+ fib_notify+0x359/0x5d0 net/ipv4/fib_trie.c:2216
+ fib_net_dump net/core/fib_notifier.c:69 [inline]
+ register_fib_notifier+0x184/0x360 net/core/fib_notifier.c:107
+ nsim_fib_create+0x847/0x9d0 drivers/net/netdevsim/fib.c:1596
+ nsim_dev_reload_create drivers/net/netdevsim/dev.c:1483 [inline]
+ nsim_dev_reload_up+0x36b/0x780 drivers/net/netdevsim/dev.c:988
+ devlink_reload+0x4ec/0x8d0 net/devlink/dev.c:474
+ devlink_pernet_pre_exit+0x1d9/0x3d0 net/devlink/core.c:509
+ ops_pre_exit_list net/core/net_namespace.c:162 [inline]
+ ops_undo_list+0x184/0x990 net/core/net_namespace.c:235
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:686
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
- kernel/fork.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cfe2f1df5f27..e02fa515b77c 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -584,9 +584,12 @@ static void check_mm(struct mm_struct *mm)
- 	for (i = 0; i < NR_MM_COUNTERS; i++) {
- 		long x = percpu_counter_sum(&mm->rss_stat[i]);
- 
--		if (unlikely(x))
--			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld\n",
--				 mm, resident_page_types[i], x);
-+		if (unlikely(x)) {
-+			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld Comm:%s Pid:%d\n",
-+				 mm, resident_page_types[i], x,
-+				 current->comm,
-+				 task_pid_nr(current));
-+		}
- 	}
- 
- 	if (mm_pgtables_bytes(mm))
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
