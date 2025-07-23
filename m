@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-742127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20A3B0ED9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE980B0EDA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6C116AFA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C1A964924
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4C527FB1F;
-	Wed, 23 Jul 2025 08:49:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFC027A92B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA527283141;
+	Wed, 23 Jul 2025 08:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgQNhywR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C729279DB1;
+	Wed, 23 Jul 2025 08:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753260552; cv=none; b=XGBav0q30CNsuPOtvLPmLjcGVumM3l2wVP/JJ2bnSOvn23qEw98bi9ulm5ZhUJATIzm7p3q8gohiYu2dqa7uh5FizMhLxDih9SPbZdQZu355wuZmVdyYvKbTsIaUiS0QCOJceIAttv/MnhG24xx5aeFNg5A7xTkjbxNZy0W0Mzg=
+	t=1753260555; cv=none; b=ClwdxhNe6YFUlXmLUCP3YSxmtaLRYxrkWkFZGBt/ICvQjTfC8L1iGT21RBuOuRtQj63q2p0ihk0E7mUXPLW8oGSFBzRsClfuJYQAAM0pfyhlW4NKwufjh6jcWag+F9vtuqaVyoj+7AzGQr4AfYWG8GZ0D4LENcgNeFPXDrcopV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753260552; c=relaxed/simple;
-	bh=UIxA8PfIxTr9Yc1OXWjAvTUdgAeQw+cvzk9x7t5Xucc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7ClyPA1SIsQiKvIX8oFz74LdGsuem2eaRrGXvGWwRyu6I2wqzOrZHchf1PmDOVDal7VU4apjxeihWP0eW8XxROmQiPKj/W5KWlQICIT8Sl6C/jkR5dh7Z6dGTK+idnLQ+vTkao3taYBTmEwYdsTolCkI/JR3di1k2fw5lEwXSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55BED1BCA;
-	Wed, 23 Jul 2025 01:48:57 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA52E3F5A1;
-	Wed, 23 Jul 2025 01:49:01 -0700 (PDT)
-Date: Wed, 23 Jul 2025 09:48:53 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Weikang Guo <guoweikang.kernel@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: Ensure phys_to_ttbr on pgdir for
- idmap_cpu_replace_ttbr1
-Message-ID: <aICh9Z3dsEQj_79y@J2N7QTR9R3>
-References: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
- <aH-mlN88NrTzahfM@J2N7QTR9R3>
- <20250723024923.GA1884099@ubuntu-virtual-machine>
+	s=arc-20240116; t=1753260555; c=relaxed/simple;
+	bh=q18yaphPto6WWGklUO2aM8oYIZb1lpbk/omJqDEaC6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LeLzKKtVBKVwQ0dWQCMyUtLxN4bwCAzY46WdjWpWuOJ8Fm6HgZ/zwYLc/AxQTldQLzDo3MF4Z/zSQc+D+dPRV9khSwFUL9D5IOfHTsvNbLj1KxWTSE/GSoT2YHoin8V84gk2q4LocyrOYTgZGUI1TLggW3+dulPWcUHuAt33dAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgQNhywR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18092C4CEE7;
+	Wed, 23 Jul 2025 08:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753260554;
+	bh=q18yaphPto6WWGklUO2aM8oYIZb1lpbk/omJqDEaC6c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JgQNhywRQO/OIGqxUBLr9wncb28RXstXbeVzLO911yTvbHVDBWHWq6sPVqoET1Whj
+	 BNIQmVoETMrCWj5iZalQc2jZqaCT9CUdJm2rCLi3gYHff+1E2OK07CrzVcjcoAnjHW
+	 tqGHGIwbBy6VfmFUM8xjQGSkYpWszEAlCFxjXAq+I3iCF12R5cd5mFffC72/3ewvE+
+	 KSuuhb+vCiHLf/wdj8KAA51qHH+Dv0yPitmmO2kDxZjJ4PnDHpyFSjB4lifJgNTmaK
+	 HDYEpz8YZg2ziG8HZBXtuygaZc7i7+3WuYfeJqE1h8LO7WrLvKkYlaOQ+3Zya/Cwwi
+	 F7xg5LGRb33BA==
+Message-ID: <e0c9e620-a331-43c8-9c62-f9769744a484@kernel.org>
+Date: Wed, 23 Jul 2025 10:49:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723024923.GA1884099@ubuntu-virtual-machine>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615-ride: remove redundant gpio
+ header file
+To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com,
+ quic_yuanjiey@quicinc.com, kernel@oss.qualcomm.com
+References: <20250723084351.4627-1-yuanjie.yang@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250723084351.4627-1-yuanjie.yang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 10:50:55AM +0800, Weikang Guo wrote:
-> On Tue, Jul 22, 2025 at 03:56:20PM +0100, Mark Rutland wrote:
-> > On Tue, Jul 22, 2025 at 04:21:13PM +0800, Weikang Guo wrote:
-> > > Commit 5ffdfaedfa0a ("arm64: mm: Support Common Not Private translations")
-> > > changed the contract of idmap_cpu_replace_ttbr1, requiring that the TTBR
-> > > argument passed in should already be processed by phys_to_ttbr (i.e., in
-> > > TTBR format, not just a raw physical address).
-> > > 
-> > > However, the current map_kernel implementation does not always convert the
-> > > pgdir/ttbr argument via phys_to_ttbr before calling
-> > > idmap_cpu_replace_ttbr1. This can lead to issues on systems with
-> > > CONFIG_ARM64_PA_BITS_52 enabled, as the TTBR would not be properly folded
-> > > per the ARMv8.2+ requirements.
-> > 
-> > For the cases below I don't believe that this is actually a problem.
-> > Since commit:
-> > 
-> >   453dfcee70c5c344 ("arm64: booting: Require placement within 48-bit addressable memory")
-> > 
-> > ... we require that the kernel Image (including any trailing unallocated
-> > bytes accounted for in image_size) are below the 48-bit address limit,
-> > and so there should be no difference between the PA and TTBR format.
-> > 
-> > We could probably test and enforce that in the early boot code somehow,
-> > if we're not doing that already.
-> > 
-> > If we were going to change things to avoid accidents in future, I think
-> > it would be better to enforce this with the type system. e.g. we could
-> > have a ttbr_val type that's distinct from phys_addr_t. Even then, for
-> > the idmap code I think it's better to avoid the phys_to_ttbr() dance,
-> > since that has runtime patching.
-> > 
-> > Mark.
-> >
+On 23/07/2025 10:43, yuanjie yang wrote:
+> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
 > 
-> Thank you for your detailed explanation.
-> 
-> As you mentioned, if we can guarantee that the kernel image is always within
-> the 48-bit PA range,then there is indeed no real difference between the PA
-> and TTBR formats in this context.
+> Remove redundant gpio header file in QCS615 RIDE DTS.
 
-Yep.
+I do not see it redundant at all. Just look at the file - it is used.
 
-To be clear, I'm saying that there's no functional problem in practice,
-and hence the description in the commit message is more alarming than
-necessary.
+Otherwise provide arguments WHY you claim this is redundant.
 
-Since the conversion is trivial I'm not against applying the conversion
-consistently, but if we do that I think we should enforce that through
-the type system so that missing conversions will be identified by the
-compiler.
-
-> In that case, does it mean that the conversion of `reserved_pg_dir`here is
-> also redundant? (There may be other similar cases.)
-
-Yes, 'reserved_pg_dir' should be part of the kernel Image and hence
-below the 48-bit limit.
-
-> If we already ensure the kernel is always mapped below 48 bits, it does
-> seem safe to remove `phys_to_ttbr`here as well.
-
-I assume for both instances of 'here' above you're referring to the
-macro below.
-
-> .macro  __idmap_cpu_set_reserved_ttbr1, tmp1, tmp2
->     adrp    \tmp1, reserved_pg_dir
->     phys_to_ttbr \tmp2, \tmp1    // This might not be needed either?
->     offset_ttbr1 \tmp2, \tmp1
->     msr ttbr1_el1, \tmp2
->     isb
->     tlbi    vmalle1
->     dsb nsh
->     isb
-> .endm
-
-Yes, the phys_to_ttbr conversion above isn't strictly necessary today.
-
-Mark.
+Best regards,
+Krzysztof
 
