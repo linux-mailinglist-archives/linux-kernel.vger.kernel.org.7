@@ -1,215 +1,246 @@
-Return-Path: <linux-kernel+bounces-742148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AC0B0EDF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7601B0EDED
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11551778D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64911565F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ADB283FFD;
-	Wed, 23 Jul 2025 09:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F18F283CB1;
+	Wed, 23 Jul 2025 08:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTnM5XzO"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cp3YSihD"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011070.outbound.protection.outlook.com [52.101.65.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E751281526;
-	Wed, 23 Jul 2025 09:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261274; cv=none; b=s03QXbsV7sh9n2S3Nx7tCjrhOOsAjNg5ACPBd3LpvPhtcpFVzl2qih2OCJ26g1WZzD4JjljwJ5s2xcWLUiee3hBWGZsJmqTqWn+76iZd/OWlwQTb3YI1ZEKBCZEvvbxFV8ZUp7cCCOyXIhzQPpUHR1R6ExNy6fPlG+msBDmUeUE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261274; c=relaxed/simple;
-	bh=HVQUD3Ib6X4vO1vXKL8LG+SI0kZlkOlq4KpZxCl65JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iks2YfScb2zL0OToQI07fr0RlB333hHC186ez81CewbAdtCyLnYEl+iugyCjQCXC2Yfe4aRvOFSN4JSaSWapi4+hN0FQNc0WYzRHMsNtlg/fJajb7Xh1BCN1DIT+PILSCGQ2VBHnrH7TvgdUbIRzjzCR0aKcz93N/bphD6lC3GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTnM5XzO; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d6ade159so46444785e9.1;
-        Wed, 23 Jul 2025 02:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753261271; x=1753866071; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfi+7jzS+QroB9ovq5xCDmfLCYDKNlqIdXI2M9FMRkQ=;
-        b=dTnM5XzOon+hYkFce4v6HlsQVUqWSbG+luh3GOazYDIB7lxmlTdOMNrGcYasjwDovO
-         4nbUzlzZFZkMSyCBrM8Myz13/vVPmanODR1v4XUyK075zOua2KHIicFwNmek70NrQtQt
-         mUBGB8kpoqoMx2JQEyqRyJBPVFKk/OzOA9nEqsXJfOAk8RS1EG/T+BEcNZJ0x1yNj8ww
-         wpmGq0wqmBzOlCpNpBT46KlJ2y8bGAAwQNCV6P4+QonQ+ryOlZbMMmGI9oF8NbfJyUAJ
-         ynQPMc7R++g8rtTl+jhlkidoXegIV0elaf9DkC90RstOK5C9qNaGliyFcLdvJteTKHM9
-         pyXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753261271; x=1753866071;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vfi+7jzS+QroB9ovq5xCDmfLCYDKNlqIdXI2M9FMRkQ=;
-        b=tM95JbJknTO5amcvBuD9mqVZGSKJY1ikD1eQJuB6aSOJh4PBZgP3gOQ5AJsPUkonAh
-         l811sjYVB/paJKdFQ7lbcg9/CFskbLwLEBAORARaA/HkGpuKbcxnLPo+ApMc7BFAYk1F
-         HTJMGsqR6BA3JxCNWZtp6P6gahd9KrIB6AMIXQgCutZh4f/bYkhz94fHs5erX3ZX9uE5
-         Au9rcJHDcPczKu0GNbVZk0ifoPBDJRoFXHzWjSYumcOWyY286F51cEJtFUhhME+b/vY7
-         LNOdPCzIKAAdN0l+HuYgrLv/0qanhwOsmqh1PbyfuS7u9h4kKFyo1RWQMxOusssId3nS
-         p96A==
-X-Forwarded-Encrypted: i=1; AJvYcCVBdziDoIkGh+W77lsl9WRKyL7NhfQoOAjf1fxfNhkSCw4QI2r/L/R9By44M9D/Xdq/sm5pDRok4M5L@vger.kernel.org, AJvYcCVZxgL0MgnGcDZ04pTVQoh0OQpUYEyeHa/uSFyZCqgVrCUEkjrq5wUCdG1yho6a1iyCmyzFDYWpTqj8@vger.kernel.org, AJvYcCVlmwcdyKQsDj66H410QFs+ve00XquhBfULeTMV5BLElT3WOINaUGXpGsdp8U5gII1WDOGxhVuvm7s=@vger.kernel.org, AJvYcCWeqVyjBxeJ1+JE7DNtO+3Un7qqyvJ7HFZ8/u4TI8xTQyuw28IbdSDJ1WwRbi/GzQW7qnlpiMnexdDYbQ==@vger.kernel.org, AJvYcCX1vu+Axx8jhu0oo9Mo5/XjUREB+D4lpAD8eSor4VfxdQeY8EwSiZ2NMB6WK0/bPshnU53s1Stu4Q4eMuPe@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEZ+ZYurPG55EDoqwlFNpfrNNOdJi8ujOJY0bsWPzYCpT92pRR
-	gKfNm8CMdFoNz2P1/2zhUw+vlocXS5c/z8OnUEyaivE4zeICT2fuOK0O
-X-Gm-Gg: ASbGncuZnvtMR52VXcMm8oi1MgrDo/nDbotQIHjfmUmdamFreKltkR9yJlLj1SW0IO9
-	Qcs9XLeYC+hW6li8Di4Hz5irXZ1IqIpLrPq+wMTCBaFaScMyW90onAZD1G8dwxMMQ1lhD2T25wQ
-	nlcWiLdaB+5A8ZqWa0DyO20L0eAn7i0I66gEtjvZYcUVXZBFPHcfwM8XYKgQRMRjcXBRLIbHsQo
-	U+22lotcEfwHY3AZsNF6f6Igcb+c8V95LMXVfDNVwsUGkj3o/HdYQzYzmmiEQonSkbEFfy1/p5O
-	c7RRq6x04hPmQMXRBLO4N3Cljui9H/tT7/aQV5thYes3Iq2tbxYeAE0itgOZN4GaDQPAift1iAP
-	z3gUOEwEQeOrSgdaLeWaaNrwMd3v4rubNYnMhoAWIHd5nryMjpLk4h4QF/nZDBRYo07xJvCfa9Q
-	sfxZwfkMqY
-X-Google-Smtp-Source: AGHT+IEknrstHg6cUD/SgoHhNho7BNCTRJA/GS5vJOJzPvYI6zayldv/5uJL7C58FRXa6VpYJz8Fmg==
-X-Received: by 2002:a05:600c:8b08:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45868c79052mr16967605e9.4.1753261270574;
-        Wed, 23 Jul 2025 02:01:10 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca25533sm15448303f8f.11.2025.07.23.02.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 02:01:09 -0700 (PDT)
-Date: Wed, 23 Jul 2025 11:01:07 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org, loongarch@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-Message-ID: <awvdox3bgabbc42aamezlg33k4cje6y75qoxn7ruh3nhd4qv5n@u3spdahehad4>
-References: <20250717103241.2806798-1-thierry.reding@gmail.com>
- <2025071716-phoney-object-1648@gregkh>
- <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
- <2025071919-patience-cattishly-cf7c@gregkh>
- <l54i36uk33je744w4f47tehdopk5dsjotvozfv5b2hehmxrwpq@eins7awyq4dy>
- <2025072218-decipher-spree-327d@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED8D281371;
+	Wed, 23 Jul 2025 08:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753261183; cv=fail; b=eAw8eNG0JGD/nUemslVboVjOK/QfRwYPM4F6AUcN/HeqaNNn3d1e0sPoVW5DiIwG/xX9KalWGKa7QAMCLKpXFAQcV8dTSxydyyw9M+RF7ZtCm07DFQVJ1smNreZ1sZYQVE/Poib+WL8QqBtak4wTjzJsAUy/YpF/VX7lVH1+o3Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753261183; c=relaxed/simple;
+	bh=5XVdOBZ1BCclXv2zS718c1F6pmvpRiT3r7OLYCL5Q4g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YuFz3hsCzDsltK/gN/mwSXV9p2r6vlwm0Zck2cF0wBr0BHFRZ+sX1GzYbDABL2GOX2uGLI5k75tdhoLY/WiSpr1RkkQ4DVPAOKW+W9/2C+uYK/0+GwdpBfOAUcUwdPE+1/aDqg9e4+KZA1AgHA7zFUVkGTTmLgedq+tCxq5knDk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cp3YSihD; arc=fail smtp.client-ip=52.101.65.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oXirgwlfWfDWHM84uY7xdEAlqQVZeZBdbvuyPfkkrqIzS5KPgKv8LpmDf+YyuFC6LaAcMtdr94JIfFG92TfwI3h3wLn6ROTq8Agj5+MxzIGwf96Z+an/Dc+ug07OPA/j4KM4HCI4sqDm4ruNa9uM7gAvHQRzhmh8t2/xKYToSJKI/lldsfqWAkfUQJP8fnJe7dY1qf5UIE25UG400HPMr6eOFbamzJhuhn4SqNFzTG7Gxzci7WJbsnu83fP2kFtg6NT/mRcwwzYAR4mP2GIKcfSO+QldIlJSb3EboNYLDYfsAAPmKR2NmtlqSiIY3uQG+Z9Pe/olCSOpFraIhgFoiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YDlab+WoMlh3WvpFRAqch8rh4EcSLqpq/wpTMR/0938=;
+ b=egVI/yYxh66U5wb7l2tM3RiA6FjP56yryYWp3b5deCcHvPFc3c2G+CWyG/mzxp9bfztEPaNXC+mVOhuG0P6vDfYDYhigtxnjiLCtAu/18DPl3aIbOQen6irE1Hd8Yg6164V/nXAUo7JVwHTlkAJyUtAspKRZ7eQN+2siXqK6XxdG29lI5Q2m3hkDa5CaLRL6/2kihv9adOWDwKTJK/sUxKSdX7Oi21RzUrWssg0DH3/a4toUS0lESvFPjvy81qpNxckyeuMPC/5qARJm7wXL/Ho6V4waCqERNPKLtCGbZBMA1mt1A1qJR1QFQnEb1GE/uE0rQ0L3F0qwswjsOFmPWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YDlab+WoMlh3WvpFRAqch8rh4EcSLqpq/wpTMR/0938=;
+ b=Cp3YSihDscnivgq5KWgsdA9L06dpzZQDkynyAAaA9FlbPV7TNPWvPvpYSNJucb2l+5tLLMOh3T+AIN9CushmLMWMECha1Xqe7vcY5gxHXBAD2Tg2uuPr4O46aCUSPbCVZxrWXUKis93bWod7SHMPj9ULJCZigArkO228Bju4SqN65dwwn9sdgel5GpNJmYE3NdxKRhSMBTKWwhhCxLatMIl2UaxHE/5IMkFLqhPDpkHRnAc4ecshbpVxLS7stmB1Btg1N2wSHg95PufjMyjNsanDEhBDIsNe2ls5IiVSW/VD1/1oojB+23aN6iD1qdhNDnuvKtAj0d/v1dVD/u2tpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU4PR04MB10315.eurprd04.prod.outlook.com (2603:10a6:10:56b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
+ 2025 08:59:38 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8964.019; Wed, 23 Jul 2025
+ 08:59:37 +0000
+Message-ID: <adf144c9-3c36-4806-b1bc-9122d511f338@nxp.com>
+Date: Wed, 23 Jul 2025 17:01:11 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: display: imx: add binding for i.MX8MP
+ HDMI PAI
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ lumag@kernel.org, dianders@chromium.org, cristian.ciocaltea@collabora.com,
+ luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ l.stach@pengutronix.de
+References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
+ <20250718101150.3681002-4-shengjiu.wang@nxp.com>
+ <a5621775-5032-4422-80bb-5f8f60351dbe@nxp.com>
+ <CAA+D8ANb7kZETxO_CQazoz6-DiNCOGivLhJVwhw9p78ynP1ntQ@mail.gmail.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <CAA+D8ANb7kZETxO_CQazoz6-DiNCOGivLhJVwhw9p78ynP1ntQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0078.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::20) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t3b24mrvydogtoje"
-Content-Disposition: inline
-In-Reply-To: <2025072218-decipher-spree-327d@gregkh>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b2559c2-9d9e-4106-3e15-08ddc9c7407f
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|19092799006|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?b3FjaFFBNVlBNjIrUUJzQURDVUZZN0NGZjhoNHVlUlZ4RUVuSHJ3UnR3OW1H?=
+ =?utf-8?B?bzBKTndtMEE4ZkFodVJ2RlJFVmY3YjZaNlhvbmZ3WG1RTEk5SXlieXNWTEwv?=
+ =?utf-8?B?eExiRUw0cGNZKzR0cVZZUUtDNzhrbC90c0RYSU1RblI4NGYvWWhPcDZFVU1R?=
+ =?utf-8?B?TTZaaC9KUmVaZ0FnWW5iL1Q1dGdSVmVCR3JVRFg3L280MC9na09lQ2duN2Nj?=
+ =?utf-8?B?clNScTRnQ2M3aEhEcHZlUnRYRi9jaW04YjN5UjY1NG4yRzhMeWpSZkRqeGxN?=
+ =?utf-8?B?WHQyamxWSjE5aWJna3BFSHZrWWtOOVZXcWVxSmV0SHdGNjUyNWVDamgrTjdB?=
+ =?utf-8?B?Vnc2MEwrOWpvdnB5Ky92d1hrMFR5WE9OTnZlZHd2QkVoZUtieERkK3RHU3E3?=
+ =?utf-8?B?TXpwcEI2SDBRa3BVQWhzdmt5VzFkWHNma2Q4ajA3ZFpxaDdFQy81VmNuYUJN?=
+ =?utf-8?B?LzNseHJRNktKV3U5UnJXTmhYa0ZEZThmcnRjYmViRWJiL05iaG1HZW84VE4x?=
+ =?utf-8?B?Y2pGZ1FxeDJJVzV1UUNBb3c5SlQ1RXhtTjZoUjJnNVRQcTNnaEdyRmNIR1J3?=
+ =?utf-8?B?VHVJWjVsOWxYcGk3aU40d3VuMDNMazRqMmpoL0hTc2MzZXZhNjVVdlhmWGp1?=
+ =?utf-8?B?YkJuUzVjMi9TcUJIN3FnT2ZDOE84MU9WTy9oRUErbXVpTEhkNHMySjlQNFhD?=
+ =?utf-8?B?UGVsd1RTVFVvOGwwUDk1MEpwREs1cGRVdU1EQzJOQVlqbmVOZ3RGczVqcXFv?=
+ =?utf-8?B?d0V3RW02MzhWdjBSN0lqZUthd1NEcWdOOVRkMGxlK1d6V29Nb1l0b2ljdjFk?=
+ =?utf-8?B?ejlaV1dnNXIyNi9udThMai81NUxMMENhbjVuSW9TK0U1N2Zpb2pmOWlkbzhJ?=
+ =?utf-8?B?azhGRXdXSDE1clJReUIvRUdGa3hTYW9XVHhQUzNnUjgzM0xjYXc0RmFXZGx5?=
+ =?utf-8?B?YWliZEtzTGk2VjVXQTNyZFY2Z1FyK0gyVk1aUE1kWWdocTFmYk9PaFUrQlFR?=
+ =?utf-8?B?K2w4NEhPbktPUkprbzFteDREUU4yMjg1Y0VGUVhQbUx0SU8zdStVVllocnlV?=
+ =?utf-8?B?NXprUE5MWjRmRHZWYjhvVmRjZk52OXBWVWdkc2g4MldZRUY2ZnB1OFY4TGtK?=
+ =?utf-8?B?Y1dSaUEvbFVLa1I2Wk5DVStKd2YvdThwOTBQRGw3MTRBWW04Z0N2VzFuL01U?=
+ =?utf-8?B?cHpQQ3V2NkV4dFFPVEltOE1RTDR6Y2tVNTREVmx2bmFDYkJSYi8vdU9kVzN5?=
+ =?utf-8?B?TlBYOHdtOWlxVkQ4bWhRK1dPYTdnc3o1Z0JQTlMvL2NRU0pDaFhOZ0wyK2lr?=
+ =?utf-8?B?S1RTOHNwY083WEhXZDduek1TTVdjQVNtU21OU1RsMVF6UklvSFNTQWRONTdY?=
+ =?utf-8?B?akVTZ3hyeGUyaUkxUjlKUjRaWGNNWEZOakp2TTBPVGxDeEsvblBWTEpOY2Ji?=
+ =?utf-8?B?OWg5Rjc2Z2RNeit4R3FrbiszTFdyMmZORmJhUTZPbWZUOVhIY0pjelhob3hs?=
+ =?utf-8?B?bWgrUHFweGJqd2xxYWt3U3BlYzdDdHByK25Ta1ZQYVZpWVJJQ1FIK1FSWWcv?=
+ =?utf-8?B?NUtNOTArWHI3MGhBN0k0RHViV2VXaUtjTm9vNEhuT1JqSHVLWWxIWWZXeGhV?=
+ =?utf-8?B?aTA5UCtDUGN6ODNPS0tsTGF0K2REajJYYVp3YSsvdHd6aUNtb3NWeFo1NnFp?=
+ =?utf-8?B?Tjh1MTZ6aWE4a3VEaU5Oa01NWnMydEVZYVA2VE92NWQzeFFUY1QyQXkvOU5h?=
+ =?utf-8?B?YUNFcjAzSGExU1JmY2xGckM1NUc2ZGIvR2F4YTg3ZDVVQWRGZk1VVFpmRHNV?=
+ =?utf-8?B?aWRvWnBSWkc4UzlKYjRYcHEvbEZFT3hINU5ycTVVT1NrRDlxUUtWYVl5Z3Zz?=
+ =?utf-8?B?TVpHWGxjUzEvcjdZS3lVWG9EQ2svQzBsUk10Y285MkVneWc9PQ==?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?cE41VlpRc3I0eGV4OGt1QUxCWVdUaFNySmI1SDBtVWpGRnQ1b053NnhsVEZa?=
+ =?utf-8?B?MVZsdmZLU0ZFd1VjcVVTMU4rSENlU1NMZFdoNWRSck1rMU5tV0dHdzhONGFn?=
+ =?utf-8?B?emF5UkhRNWNSdkNRMWRTWjVSMU1ZOGdEQXl3N1NSdThlRHQ4V2dXdG4xbzBx?=
+ =?utf-8?B?dW9RNCtBK1pnZ1VhcWx4SXlibVFGN1BHOGphSWVwWjJ0bENxQ2k2WHFPVU92?=
+ =?utf-8?B?YmQxOFJDbGcxeFBEWkVsU3pyUW55aklCYVZ6SjJ1cFNDUEEzSjhHV3Evamwr?=
+ =?utf-8?B?OVpqemticmE2OHNsYitxYjhibjZUSlJoK1JURDZrNWUva05LZ1VadExJTTNM?=
+ =?utf-8?B?SldObDhVMHJVTXA1Y0daODF3VWt4MzA2b2YyZHNoNlRKVHpibnJpOUZtdi9C?=
+ =?utf-8?B?RWNZWWlvSTg5bWpRbmFsYlFDbmx5bS8rekExWnZXRERBVEtKMzA3Yk9rbkw0?=
+ =?utf-8?B?a1RMTis1N3hPMC9kbVZlMlZHTmV0d2kyNGttRFoxNWRzb2dLVkVoRDZVc0Nv?=
+ =?utf-8?B?MGJjS2NaN1JRUXkvdGk0NFBpNHVMRkpsZUMxL2F6eFZsandJeStvSGdhZVR1?=
+ =?utf-8?B?UG9qSmdYWWF3anl6OEFiemxSM0V5cVk1V1Y1bVMrcnE5YWh5TE44dEZ6ckJv?=
+ =?utf-8?B?blRucTJGemtFVFozS2dpYk1DS0tFN3d5ZWhaaW5iWGl2SFA3UXJBbkN0Qnlm?=
+ =?utf-8?B?aHE5R3lSNXUrYWwrTVhHUHM4T0dYMm0reDZHSW81bUVmejJBTHZMWmhmZnoy?=
+ =?utf-8?B?cGh0d3ovV2lPMnpBZWR5ZTU2Y1EyMkh6UWdRZXVZNU0vSy9mNDJGK1hFck9l?=
+ =?utf-8?B?QTRCTW1JLzh3NGR4a3JEVk5mYzZrMXFHZTJqQ0VxdGV5ZVB5dGdJdXNzalY5?=
+ =?utf-8?B?Y1ZzV0lmcHM5RmhWR2tZeFNiK3lHcnB1NEJnMHpLOFBVZDlnMXNaNEhvRjlN?=
+ =?utf-8?B?OXBnZDJyVUdhREcveHVNamU3dXl2WmF0NURtbWhDRWpKZ3l1a1dUOTJ4Qk9j?=
+ =?utf-8?B?b21nSTZhVnNJbUZLTUJGMG0zdHhxelFhNFVTaS9CTEM2ZUpUdUgvOGZGa1VE?=
+ =?utf-8?B?aEo1YkxDQitFaW9iSjVEUk0zbFJTSndKYk5NMUlueHZ5d3RERDJZN1ZjUnI4?=
+ =?utf-8?B?dExLQWJUMThkdkZiTk8xRzAzTUNVT2Y2MjlwTERwSnk1bFVDc3piN0REV3FW?=
+ =?utf-8?B?UWtyS2E4Rjc4RWtWaHluTkNKYUl1cEpRSnZVSnBvbEFKcWNVU2dZVmJvVXRq?=
+ =?utf-8?B?YXVmVTJydkZ5ZDl5cllrMzBWanhpU1piRisrMlNONXlUeko1dzc0UU5hVXAy?=
+ =?utf-8?B?b0g3RmFKY1R0VXpuUDh3SnhwTlhubGhud2JjQjJmVSsxdnlQdHRjNk9Rd0NK?=
+ =?utf-8?B?Q2VYOXJJTk5ML0IrS2hNNEhPa0VYVTMycWhYZGR0MXUyT1k0cW9VTjZhYjVK?=
+ =?utf-8?B?eG44djBVdU1taWpjSHBzbmgzVjFOaE5ldHZQYk9BYm5kalBpa0pUNzlLVmpr?=
+ =?utf-8?B?UWwyeVg5ZXZVazR2cXFkcmwvNUJFNkpERXMzalNPazV3QWFXOE5UMFBmcGlD?=
+ =?utf-8?B?c2psQkxLdzRlM0RJeFZmaTB4bzI1WHIxRkx5alV4N0xFdUxUVktVUVNXUkFt?=
+ =?utf-8?B?eG80T1RKSUVqMmwwZkEza081VjU4SGZ2ZHR4Z0hCT0U0YnFQSGtyNkdZdEpO?=
+ =?utf-8?B?SnMvdlFUZkd1NVdoNmxsWmJ2bWY5Tkg0QWdQbld6V3UwVG1icStld0dLZjJr?=
+ =?utf-8?B?MGx3aSttUmlmRnF5UzRYRUpYTlNGVXdzdk1YM2txemJVK0ljZHU5QWVZNXV0?=
+ =?utf-8?B?UDQzSzh2a1o5Zy9LMWZtTWtOQkhNRjE1a1NuMHNNWmN5OWx5dGVaRUhrck5H?=
+ =?utf-8?B?bzFpaGNWMWJvZW9wYXZDalhhaXo1RFZlOVJhMVdkdmZEaGVLTXlINXl6eWRM?=
+ =?utf-8?B?K2pqRkdBMUJKUXN6dytrMURFWXJrTWJHVDAvVG5sY2hHNHVsblh5Slh5OHk4?=
+ =?utf-8?B?MHZ2RUkwSGhiMGIwWGk4WnlCU2FlMFRKMW5CR2NSR3I3dEZwSDNjSmo5Mzc0?=
+ =?utf-8?B?V0xEUkNBbWF4cTNMMWpucFZVV3ZuK0FmNXQvTHRvMlJObWw4SmlXeXRmTEVM?=
+ =?utf-8?Q?E9nqa9gZEJcHwUJGBfdZO1Sr5?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b2559c2-9d9e-4106-3e15-08ddc9c7407f
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 08:59:37.7657
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cwNymLuPDMw8hWPOMlvYEC/7Z7++1PLAlobZd/DhsVauikosbMHr/uGl9AYtwnqBvVlEx6pFOCVpfxPK2/39UQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10315
 
+On 07/23/2025, Shengjiu Wang wrote:
+> On Tue, Jul 22, 2025 at 3:16 PM Liu Ying <victor.liu@nxp.com> wrote:
+>>
+>> Hi Shengjiu,
+>>
+>> On 07/18/2025, Shengjiu Wang wrote:
+>>> Add binding for the i.MX8MP HDMI parallel Audio interface block.
+>>> As this port is linked to imx8mp-hdmi-tx, add port@2 in
+>>> fsl,imx8mp-hdmi-tx.yaml document.
+>>>
+>>> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+>>> ---
+>>>  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 13 ++++
+>>>  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 61 +++++++++++++++++++
+>>>  2 files changed, 74 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
 
---t3b24mrvydogtoje
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-MIME-Version: 1.0
+[...]
 
-On Tue, Jul 22, 2025 at 04:08:09PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Jul 22, 2025 at 03:56:40PM +0200, Thierry Reding wrote:
-> > On Sat, Jul 19, 2025 at 08:52:41AM +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, Jul 18, 2025 at 03:49:37PM +0200, Thierry Reding wrote:
-> > > > On Thu, Jul 17, 2025 at 02:11:41PM +0200, Greg Kroah-Hartman wrote:
-> > > > > On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
-> > [...]
-> > > > 	struct syscore;
-> > > >=20
-> > > > 	struct syscore_ops {
-> > > > 		int (*suspend)(struct syscore *syscore);
-> > > > 		void (*resume)(struct syscore *syscore);
-> > > > 		void (*shutdown)(struct syscore *syscore);
-> > > > 	};
-> > > >=20
-> > > > 	struct syscore {
-> > > > 		const struct syscore_ops *ops;
-> > > > 		struct list_head node;
-> > > > 	};
-> > > >=20
-> > > > Is that what you had in mind?
-> > >=20
-> > > I missed the list_head, so yes, this would be better, but don't pass
-> > > back the syscore structure, how about just a void * instead, making t=
-he
-> > > whole container_of() stuff go away?
-> >=20
-> > Yeah, that's a possibility. I personally don't like passing the void *
-> > around because it's easier to make mistakes that way. I also find it
-> > unintuitive because it doesn't immediately show you what the functions
-> > expect.
-> >=20
-> > My understanding is that the container_of() should get optimized away
-> > most of the time, so there aren't any obvious downsides that I can see.
->=20
-> container_of() is just pointer math, but a cast is even faster :)
->=20
-> > But I don't feel very strongly, so if you have a strong preference for
-> > void pointers, I can do that.
->=20
-> That's what you really want to have here, it's a syscore data type
-> thing, that the callback wants to reference.  Just like a irqrequest_t
-> function passes back a void * that the handler "knows" how to deal with
-> properly.
+>>> +properties:
+>>
+>> In i.MX8MP TRM, HTX_PAI block diagram mentions an APB interface.
+>> Does it mean a clock is needed?
+> 
+> The APB clock is bound with the power domain, so no need to add it here.
 
-IRQ handlers are different, though, because you pass the void * data
-when you register the interrupt. That void * then gets stored and passed
-to the handler when the interrupt is processed.
+That depends on OS's power domain driver implementation.
+From DT's point of view, the APB clock should be a property here.
 
-We'd have to change it to something like this:
+> 
+>>
+>>> +  compatible:
+>>> +    const: fsl,imx8mp-hdmi-pai
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  power-domains:
+>>> +    maxItems: 1
+>>> +
+>>> +  port:
+>>> +    $ref: /schemas/graph.yaml#/properties/port
+>>> +    description: Output to the HDMI TX controller.
+>>> +    unevaluatedProperties: false
+>>
+>> Why do you need this line?
+> 
+> per my understanding, this line can be added or removed.
 
-	struct syscore_ops {
-		/* parameters now changed to driver-specific data */
-		int (*suspend)(void *data);
-		void (*resume)(void *data);
-		void (*shutdown)(void *data);
-	};
+I'd choose to drop it :)
 
-	struct syscore {
-		const struct syscore_ops *ops;
-		struct list_head node;
-		/* NEW driver-specific data */
-		void *data;
-	};
+[...]
 
-It ends up increasing the syscore structure's size, about 33%, though
-given that there aren't a lot of these that's probably negligible.
-
-What I think is a bit more unnatural about it in this case is that we
-embed the struct syscore into some driver-private data anyway so that
-it becomes per instance, and then we have a circular reference:
-
-	foo->syscore.ops =3D &foo_syscore_ops;
-	foo->syscore.data =3D foo;
-
-Which looks kind of weird. Alternatively I suppose we could completely
-rework it and make register_syscore_ops() allocate struct syscore, and
-hide the internals from drivers completely:
-
-	err =3D register_syscore(&foo_syscore_ops, foo);
-
-With that it may be problematic that register_syscore() can now fail.
-
-Thierry
-
---t3b24mrvydogtoje
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiApM8ACgkQ3SOs138+
-s6G76RAAlyjbBOBTf8eNokhrwb69GbuFv4iEunTnd/Xy91IhOncqHjdYHN3rqTn9
-GZWy+L9VFYLaEmLV5W1ChOD3rYHCxZ3gep+jdE5ThLQvJaK4IBB4oGZ0OGXLHmVy
-TqNy+Tq/dQi2jM2o7MW1DUDM8EunrbLmjBWZZONJzH18GqJPn3LWazuC7tBBL6vu
-bmowzEXxm+4NWx5Ow3IvFnLzDa05JLaBKtVREPuf/UdRHcjzrra1RyYLyaYUI9Gy
-pWZHkgUA+1gAO2hutK8eyL98cZlnl8zrArmduJZsyZQhcNe1ltwPTzUq9wejYOr+
-Vywgy/CxznLtvKd0e27hP/I7zCx64ktofCb6l0SwueraLWYTcpJLQ23T93g1bDwY
-02o6cq0874YQdndJytU7t3cKETe5uXF0AGmepX/+GKvcQN6lBqo04OL+Ge6yRMyy
-G9gv6P2nxqY+RWkDrFtqO6RwFB+lJSwc2J3RfxHC/2ygMy2Zr2AJ5oeeAKOtTZ/0
-smpK40Y2FB6y4ohGq3UK3uPyBvOJi/jw6sMuRyv2Ou7tJIFE2EtSpA5+m5DcwUcR
-gRcfO6O0V9Y6qWBx2Tt+i6Fzekj/0xBzlQdyvCom8xrhRZ9VGbZBfpIaXDs/Anp6
-ovlk/rkbo8DsYQQxINnmSBx2uQcWSCYAU53leg5fnr4EoSGPCsg=
-=l8CI
------END PGP SIGNATURE-----
-
---t3b24mrvydogtoje--
+-- 
+Regards,
+Liu Ying
 
