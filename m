@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-741974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0604B0EB91
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:15:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7112BB0EB98
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EAF188BD04
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1C1188D097
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F136272E7E;
-	Wed, 23 Jul 2025 07:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5682701D1;
+	Wed, 23 Jul 2025 07:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ryz3mPKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XqciCb++";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j5LUVFiL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3926E25C833;
-	Wed, 23 Jul 2025 07:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2087A42065;
+	Wed, 23 Jul 2025 07:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753254930; cv=none; b=mVosIi6q0vdqEy75zIuFQIKjFyKkV205OxalL2sYVsj+8pOufjfTTWhGP5QbVOOQqNVNS1UaplMvAb735IkTRAv+X+yp0Lh5+k7NvDOcMLR6c7LRih/2y9L+TKhZ7TRt6s3mvqHIjV9io864KfYzZxES6rr+JyUVhkTBl6v/MO4=
+	t=1753255041; cv=none; b=pHn+1OAwEFiOoomRFBjrnFG8aCT0xmz2ZET76eMjbnE/Ocd0JJzf3RogZEett5VzXsdizDRL3Ixw1hgXNcibTRoVhTVrgdQ/7qBbjW0zTGRDIeLyG4FKNMwkFcEa8ILsFZTNNdheBXkTh2cDA07NOexXXVvIEM6WcT7sOLoDCRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753254930; c=relaxed/simple;
-	bh=aoQqriX7CooIPgMf9W7uo25rnfymCO1WAzndg4imAxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1L7qOpc3qCa3/ll8FLToB+t2etZMtHvpNsstK3C6IG0KyRqbox5AfNsdea6n3DGAMkKtkxZ/5bCeIQR+g8FsAG4S0Ub9tWFumdhL6pLbi0c9w2lY+HpNSLj1UdGJpkFEtHxoqA/YPb6dw0gi55oa8TRRxyxHydIma9CTJAuRqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ryz3mPKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEA7C4CEE7;
-	Wed, 23 Jul 2025 07:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753254929;
-	bh=aoQqriX7CooIPgMf9W7uo25rnfymCO1WAzndg4imAxs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ryz3mPKKqpMYfFdxtdLwsLUNADzvjjWOQj9xApvRL/oZjV4pGyNB2CcAVql1LM8gG
-	 1OF9dXIptw4qYkMUmgtx+r9Vp/wvKnGmqsj/PV77SOobPPfX7QQQ3jHGzTw3TdaEqp
-	 k9Z9zcaC1+9uZRm3Llky+X0MyyzfgEK2GILXMURVCyZV6vZAUrBZSrsyoTi2S0Supq
-	 1n0X1Y8POOkozkFMTU5KAB9sxAqzQQZRkqNSJpjrGJIA8ME/leaiOBYrfGni7yGH4K
-	 jcZ0K4UK0HtJs8RpnVR3qiQEqUeIoTK9cVtc9oXU7KT5bDUpV4tGlAvAI5jKFzuvm2
-	 crjsI7K7CdRXQ==
-Date: Wed, 23 Jul 2025 12:45:25 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
-Subject: Re: [PATCH v6 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
- support
-Message-ID: <aICMDROkyjzBZFHo@vaman>
-References: <644oygj43z2um42tmmldp3feemgzrdoirzfw7pu27k4zi76bwg@wfxbtgqqgh4p>
- <dc7358a1-ddc5-402e-9024-283f8e46e3b6@quicinc.com>
- <CAO9ioeVuAO6mYpBSpiTW0jhFRPtkubZ5eEskd1yLBHVdR8_YMA@mail.gmail.com>
- <1b55d9d4-f3ff-4cd9-8906-5f370da55732@quicinc.com>
- <28d26c70-178f-413b-b7f8-410c508cfdd7@quicinc.com>
- <CAO9ioeXBwFYL8q7x7_fHvx5YO+qyAXk4wpnfPrku4iY9yBsk0Q@mail.gmail.com>
- <cac5e84b-fbdb-47a9-860d-16a7fa4dc773@quicinc.com>
- <4q3vlydi5xgltd3pcez54alxgrehhfn4pppg47ngwp6y5k7n33@d4d4htntj64k>
- <53dd18ec-9a65-4bf7-8490-ca3eb56ce2a5@quicinc.com>
- <iang2jpe4s6wmbypmtq5uswcm6n6xntqdulyhekcz5k6zxddu3@re3rrr4dso5p>
+	s=arc-20240116; t=1753255041; c=relaxed/simple;
+	bh=Tr3oKeWSBwZFJHskNx/fls6QjGTHZ1GTeAsPxO09/6M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nSiqdvwdckiXt8rdERCYnK5RMHy99SSYtgRpTCViN4C0jNAoYJtdlPVQ3MEy4Vef/4MWuGerdGTH1dgH7w3Ge7+6j+8eyt4eVWRI6+A9Ef3gBvb6BmhRRw0iG3xWH16LGfT0zH5+y3sNPVMY8crkazGYiFbMPVloda/2c6PyGpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XqciCb++; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j5LUVFiL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 23 Jul 2025 07:17:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753255038;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0kLzgBfFfXcoSqLu68PXLNAK8FJg/cPOSg53oHflmu8=;
+	b=XqciCb+++eplu95PAMewUbctglYpvV2epi17GjX/KfasahIV/AMy7tTVtz+QETrzINf6DM
+	XF/nWoW8pc6YIjRF3LoGV+wpZHBEXCmjb4huf6pBW2/klRNBCdjD/6VfbM2GfF9r2bVVut
+	CANIXUGGDdxCrO6SYyyDKnY+AuVEdXG+i4kVbNpMWmXXWg21l7srhaXesJdR5zwjvrw4VM
+	ADIMsYSZfgR1eunlVtZcYoe/Qb+p4v6ToW79SVn66ckL5IZkQobj+QaunPiPr/gB6WMB/m
+	hjVSOxLGvtA5muxLc/ruksQiqdmXJ1TQXq+kTQrjwNLBkcuTXJny33bCZiWv+g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753255038;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0kLzgBfFfXcoSqLu68PXLNAK8FJg/cPOSg53oHflmu8=;
+	b=j5LUVFiLgvUNAoDSWLslB1loGBCoDgOOMrxyalPoIm4VgMtOvg7wSlghULU7tmlIvkm8HW
+	9K5JddlfhdmxqgAA==
+From: "tip-bot2 for Daniel Lezcano" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/clocksource] clocksource/drivers/exynos_mct: Fix section
+ mismatch from the module conversion
+Cc: Will McVicker <willmcvicker@google.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
+References: <20250715121834.2059191-1-daniel.lezcano@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <iang2jpe4s6wmbypmtq5uswcm6n6xntqdulyhekcz5k6zxddu3@re3rrr4dso5p>
+Message-ID: <175325503679.1420.6193823593844622184.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22-07-25, 15:46, Dmitry Baryshkov wrote:
-> On Tue, Jul 22, 2025 at 05:50:08PM +0530, Jyothi Kumar Seerapu wrote:
-> > On 7/19/2025 3:27 PM, Dmitry Baryshkov wrote:
-> > > On Mon, Jul 07, 2025 at 09:58:30PM +0530, Jyothi Kumar Seerapu wrote:
-> > > > On 7/4/2025 1:11 AM, Dmitry Baryshkov wrote:
-> > > > > On Thu, 3 Jul 2025 at 15:51, Jyothi Kumar Seerapu
+The following commit has been merged into the timers/clocksource branch of ti=
+p:
 
-[Folks, would be nice to trim replies]
+Commit-ID:     7e477e9c4eb412cbcaeae3ed4fff22035dc943eb
+Gitweb:        https://git.kernel.org/tip/7e477e9c4eb412cbcaeae3ed4fff22035dc=
+943eb
+Author:        Daniel Lezcano <daniel.lezcano@linaro.org>
+AuthorDate:    Tue, 15 Jul 2025 14:18:33 +02:00
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Tue, 15 Jul 2025 19:46:23 +02:00
 
-> > > > Could you please confirm if can go with the similar approach of unmap the
-> > > > processed TREs based on a fixed threshold or constant value, instead of
-> > > > unmapping them all at once?
-> > > 
-> > > I'd still say, that's a bad idea. Please stay within the boundaries of
-> > > the DMA API.
-> > >
-> > I agree with the approach you suggested—it's the GPI's responsibility to
-> > manage the available TREs.
-> > 
-> > However, I'm curious whether can we set a dynamic watermark value perhaps
-> > half the available TREs) to trigger unmapping of processed TREs ? This would
-> > allow the software to prepare the next set of TREs while the hardware
-> > continues processing the remaining ones, enabling better parallelism and
-> > throughput.
-> 
-> Let's land the simple implementation first, which can then be improved.
-> However I don't see any way to return 'above the watermark' from the DMA
-> controller. You might need to enhance the API.
+clocksource/drivers/exynos_mct: Fix section mismatch from the module conversi=
+on
 
-Traditionally, we set the dma transfers for watermark level and we get a
-interrupt. So you might want to set the callback for watermark level
-and then do mapping/unmapping etc in the callback. This is typical model
-for dmaengines, we should follow that well
+The function register_current_timer_delay() when compiling on ARM32
+fails with a section mismatch. That is resulting from the module
+conversion where the function exynos4_clocksource_init() is called
+from mct_init_dt(). This one had its __init annotation removed to for
+the module loading.
 
-BR
--- 
-~Vinod
+Fix this by adding the __init_or_module annotation for the functions:
+ - mct_init_dt()
+ - mct_init_spi()
+ - mct_init_dt()
+
+Compiled on ARM32 + MODULES=3Dno, ARM64 + MODULES=3Dyes, ARM64 +
+MODULES=3Dno
+
+Link: https://lore.kernel.org/r/20250715121834.2059191-1-daniel.lezcano@linar=
+o.org
+Reviewed-by: Will McVicker <willmcvicker@google.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mc=
+t.c
+index 5075ebe..80d263e 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -657,7 +657,7 @@ out_irq:
+ 	return err;
+ }
+=20
+-static int mct_init_dt(struct device_node *np, unsigned int int_type)
++static __init_or_module int mct_init_dt(struct device_node *np, unsigned int=
+ int_type)
+ {
+ 	bool frc_shared =3D of_property_read_bool(np, "samsung,frc-shared");
+ 	u32 local_idx[MCT_NR_LOCAL] =3D {0};
+@@ -705,12 +705,12 @@ static int mct_init_dt(struct device_node *np, unsigned=
+ int int_type)
+ 	return exynos4_clockevent_init();
+ }
+=20
+-static int mct_init_spi(struct device_node *np)
++static __init_or_module int mct_init_spi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_SPI);
+ }
+=20
+-static int mct_init_ppi(struct device_node *np)
++static __init_or_module int mct_init_ppi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_PPI);
+ }
 
