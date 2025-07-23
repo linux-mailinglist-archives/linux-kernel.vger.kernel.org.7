@@ -1,93 +1,128 @@
-Return-Path: <linux-kernel+bounces-742786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3628AB0F68E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE77B0F6AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C0B7BC884
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:06:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F621160E88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D092F546C;
-	Wed, 23 Jul 2025 15:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="HfMlW5fh"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435482EE28D;
+	Wed, 23 Jul 2025 15:06:52 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07792F2C5E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9B11DE3C8;
+	Wed, 23 Jul 2025 15:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753283172; cv=none; b=Tfu3d3MQKQ1ieGhU/I+FNqx+0vQ2I9qjBvadna6ERfTo6Su0XSUz1oGF9/ql6MqOD5nesctfAq6oDHiU6iG+VleJhtf5itTINczNdzmGa3jtLJslXMfSdNw372+ews24eIVivU+PzHd/8ZvqInIuJmA8spwcit+qsUEi9Lzlq9M=
+	t=1753283211; cv=none; b=mM9iQBUGg18w9mPlYOQ5CVBdrOSp6M9Yh4xInq5Om6JKpUCvqi9HXpa9iYzsbOgAlFLNY/OXly3Nu7cSW5IckOFuwCQZkvhJQbCn3tqwZMxYSNWMV8ymWhkcS0t5RLZ65TBO14QxXgeVEqFRxIu/7H+7oOSKSB3y1xaHa/e673s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753283172; c=relaxed/simple;
-	bh=dRWZdtAK6w39sv19LxwgbfwbwlfAwdYRs3fDVwV+UzA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jD1M15q/JmBALTmaoHwzHo41guWz/6qILJSFHolyG8aV2xh8LFph03WAzEhrEMnIx0BUfnaNQQDQrrsJZQJ+Zqbvr2FBh26EVzUsWLCWtWtoXJPYTftj/ykLgOPcM8Lh7kc+QM21H5hbSaa+a+otyRJygm2AumTQyxB9owfWxOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=HfMlW5fh; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id C0C5F1C00C8; Wed, 23 Jul 2025 17:06:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1753283164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ydhu4VXeK30HD2uypekWNP0LKvU4XTcAXNkCbKflms=;
-	b=HfMlW5fhPqWu/Yh+ymtSDmAHlyWZX/5RlTD66uj3MBlzeql5yaZyaouHjIUHbTgCYn6Uqm
-	Sx7cuWZU8w6pyFZZeSETk1fE7iwbS1HNdRA21NcIXembfNT5BKoLXd2EPaW4PMk/87Jd0Z
-	OHkWDEq7+Hrr44LXK+0NkLuYSM2uZIU=
-Date: Wed, 23 Jul 2025 17:06:04 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com
-Subject: Re: 6.16-rcX: crashing way too often on thinkpad X220
-Message-ID: <aID6XPLXuGo+ViTm@duo.ucw.cz>
-References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
+	s=arc-20240116; t=1753283211; c=relaxed/simple;
+	bh=dPsrrT5gnGdkbnBW8zvtvkYTqGG3yz/+xD7EMsf7CZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUMOIfRpJBHh3SoFfjUPq2SMfjw9jFMQFaNnCUT9kVf9yt0M1wOL5d4aykx7hDkW9W+pObw7N94yu0E2NUavW02xwFGtebSDd+3Ts6oXT5GWbYMk12wiLpWlKITIgAn6Y8K2pkfxo8c7I/Bv7lP6VwYeJzfaYLBzTGFugiUI2ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae0e0271d82so1271432266b.3;
+        Wed, 23 Jul 2025 08:06:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753283208; x=1753888008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yjUMBpHsAQr3P3nCaDXJBng7dmRo/imn0v6lMadWIJ8=;
+        b=v4WsoY3JRek9fQhBpgKG3HtHgl/ZcN0qh/QYQ9NPphncj36JL94CGdYaTDZ3mmf4hX
+         9s/cK9ZkfRC/UVwfP+u014JjChRBq5H2gMDiiz+q2YLTTXgdQUacMg+JC18p6yorrVqa
+         dEwhYLllc8SghKGn9dWCaDUieuKrYPArf5BcyyFyf7X6G9ZB1o3avpl2adTWwRUxi0lE
+         rN/qTXwXDFlqQI7YHVOCBX2c4rfXP3VEgTO6V/XM50KEDKHPbA7p5wkR3WbBer6ghc5U
+         WBTlg5Rtg+3UMHboPmBMVszK+Ro0ppRtHm1Wgpugfe5xTnuZXT68oW7hQM+qGRAh+/UE
+         qHkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/8TK5fd8GtTOfrYfcu0e0rUi9ar7DUNI5zeYsthCRf3unzzw4El+RwTADU3CRLVj3+UkNmkRDDkRe8l8=@vger.kernel.org, AJvYcCWG4ttrvyqfBzpKZNeqlp9iu2sHU/0cymeaTT2cQN8xCjjw1vjz1bnLAdnggb3i3U6BKd9tleTO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaUqGj93SczOR0gYpUe/OJ4ulyE6T9feBRNbXU1qXw0kAiaDLZ
+	V98LmM69aveOajTy7zyP/9N3+xF1smEnrhbcvbcuSUnWZz+INSrig3F1
+X-Gm-Gg: ASbGncsjhxlkoeqACIsRFABxmhx1rUsBDsC9A4LUuevrxYmCXbdYbjmDgmea8mmcXMJ
+	8Uk3MOh63oQ7ySUlM4F7D5EonLR2lJK6Hbs7pikVXvofCpKd4TJ5k8gnDRUZ/edcdzUNWxb2158
+	qkndyUepTXkD91thh9SL8cQXBmZz78vxips4GUNiXJCrrREPWwfageEt5bdjiDEGWSZXwu/Jsu2
+	NpLzy/V2ZfjRHXPE+SLgtmencRXVqabj+Cb/ZMVQEQ3OsFuObWgrWTJF5zrO8rgTqBQtKA5SBP8
+	eoFsk3QRJ9ZGhIvpq3O4BNj0ZOjWb+WchAdieYzPFwv/NBnuaJYFVb2LSMU8nJQWnq9MTasIbU+
+	esj27Rds7+Q==
+X-Google-Smtp-Source: AGHT+IEg3/R8kr5paUP6cFtSCEYF+alez3ezKbbkxAZQOVtZ5YigmhHzkFW7tOWrnqehfypQgVnxgg==
+X-Received: by 2002:a17:907:a893:b0:ae0:c0b3:5656 with SMTP id a640c23a62f3a-af2f6c0cb8dmr339397766b.22.1753283208082;
+        Wed, 23 Jul 2025 08:06:48 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca312d9sm1060974566b.94.2025.07.23.08.06.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 08:06:47 -0700 (PDT)
+Date: Wed, 23 Jul 2025 08:06:45 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 4/5] netconsole: use netpoll_parse_ip_addr in
+ local_ip_store
+Message-ID: <rsvfhrzqn4zwb2g5zrr6t3ige6lic73xtamzhmcr5flkwaor4a@x4s3sy6uqrcx>
+References: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
+ <20250721-netconsole_ref-v2-4-b42f1833565a@debian.org>
+ <20250723145400.GB1036606@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="//1BzA5bNvKrpKfL"
-Content-Disposition: inline
-In-Reply-To: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
-
-
---//1BzA5bNvKrpKfL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250723145400.GB1036606@horms.kernel.org>
 
-Hi!
+Hello Simon
 
-> I have had 4th or so crash with 6.16. That's not usual.
+On Wed, Jul 23, 2025 at 03:54:00PM +0100, Simon Horman wrote:
+> > @@ -759,23 +760,10 @@ static ssize_t local_ip_store(struct config_item *item, const char *buf,
+> >  		goto out_unlock;
+> >  	}
+> >  
+> > -	if (strnchr(buf, count, ':')) {
+> > -		const char *end;
+> > -
+> > -		if (in6_pton(buf, count, nt->np.local_ip.in6.s6_addr, -1, &end) > 0) {
+> > -			if (*end && *end != '\n') {
+> > -				pr_err("invalid IPv6 address at: <%c>\n", *end);
+> > -				goto out_unlock;
+> > -			}
+> > -			nt->np.ipv6 = true;
+> > -		} else
+> > -			goto out_unlock;
+> > -	} else {
+> > -		if (!nt->np.ipv6)
+> > -			nt->np.local_ip.ip = in_aton(buf);
+> > -		else
+> > -			goto out_unlock;
+> > -	}
+> > +	ipv6 = netpoll_parse_ip_addr(buf, &nt->np.local_ip);
+> > +	if (ipv6 == -1)
+> > +		goto out_unlock;
+> > +	nt->np.ipv6 = ipv6;
+> 
+> I don't think this needs to block progress.
+> And if you disagree that is fine too.
+> But I would have expressed this as:
+> 
+> 	nt->np.ipv6 = !!ipv6;
+> 
+> Because nt->np.ipv6 is a bool and ipv6 is an int.
+> 
+> Likewise for patch 5/5.
 
-Two more crashes today. Last one was with 6.16-rc7+.
+Agree with the suggestion. I will update the patchset with your
+suggestion.
 
-Ideas welcome,
-								Pavel
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---//1BzA5bNvKrpKfL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaID6XAAKCRAw5/Bqldv6
-8vWnAKCG3cpxlsMfFy/D0oIiMlXwbmzSBgCgvjaFmLP99HPXArPYgI0x84M7Vgs=
-=/Tcy
------END PGP SIGNATURE-----
-
---//1BzA5bNvKrpKfL--
+Thank you very much for your review, again!
+--breno
 
