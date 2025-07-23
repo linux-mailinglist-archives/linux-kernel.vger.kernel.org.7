@@ -1,269 +1,374 @@
-Return-Path: <linux-kernel+bounces-743050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCC8B0F9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E33EB0F9F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5B03A89B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F133B9EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E6C20F079;
-	Wed, 23 Jul 2025 18:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D1D1FE44B;
+	Wed, 23 Jul 2025 18:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PI4uJKob"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcL57z8j"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3707F1E8324
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781DC2E0;
+	Wed, 23 Jul 2025 18:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293783; cv=none; b=LCaVXZfFOS0ZTWFRdHRb+UWc6kN9R2QFg8anIRQ72QyjZ4WuCW3BjG7Po/9LH9nh8MDg4lnOHiYjCuVgaJ34CEnakQ64zdeWyDAYQs9hCt9GDuVe3aMQDEt/fhcPO3zfZ2hIsNZX4CXWOlVWCKIeGe7b8fjVNiPdVQbEjtF8bho=
+	t=1753293908; cv=none; b=n2DhBMatcB7FS97Zn7mrnzC18egbTZwOhmWSmDWtEYxtlah4pZ1uJOeyMR4Orc2bBuKAKu70IE7UN1nni2YQf6JPROwuqY1TxTqsjSUhHVvU4uKa8DTfaHH6sowWkkm+VqTzGXUuWzHWN4bqgdAU/k4Dc3Tl9lqCbO6KyuY1LW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293783; c=relaxed/simple;
-	bh=2iebzDMl31aYqICEJCQtJeRntCkcwu/khnNK/tJyxxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5mtOITSx33mefzYjyh7613abDVqlHdZ9ES7R9SA0f31ArKq4m1Jewu6bxxAz6pnbiYz1n8JQd7wPeIPVlci1I8q/NmiIWsx+QX18R4vkpDD4MIbi6yqkMFcLmb/syNpyA8fWKhU1IrmhdBMkEwjfwu2jkIRWvarcvl5Fhu5OhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PI4uJKob; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753293779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
-	b=PI4uJKobDM8mGXiDPr+5RqREWz7fXvaXA1eYPH+DO+N5v2DEnjAsYOuS3AWiWS1L+SYpyc
-	0PEa9cHFUgRazPkGw3mps+9TKHVflMWWpVBylQv5HX7ds1VDuXlHZXlRTxC2tFS+2DnuBw
-	EyuXAtq+wmACbOtWqn5ggweecnCCUdg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-ces8b7akNQ2AgstRsn-1Pw-1; Wed, 23 Jul 2025 14:02:57 -0400
-X-MC-Unique: ces8b7akNQ2AgstRsn-1Pw-1
-X-Mimecast-MFC-AGG-ID: ces8b7akNQ2AgstRsn-1Pw_1753293776
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso58374f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:02:56 -0700 (PDT)
+	s=arc-20240116; t=1753293908; c=relaxed/simple;
+	bh=u7GVxT2RYawBIdHa3a6kihghiksZVYyf0zQoc5idxI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GOAal5EVrhiE3qMkbamZzN7q+u+SrVP9M9iD5BQKy2+xx5iMLy2O6OZ0B0QKdGwu9bDdxEYBKN+dyriXaXAm9aGxh+umtBd4x/1TQzZBWZp/jpelXhH2SvPvZTfYB378rdCGEli2wkmhd1UQf6TMVmo+DLYy1w8LD5yOaBfx9a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CcL57z8j; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso258356a12.2;
+        Wed, 23 Jul 2025 11:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753293906; x=1753898706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YRRQxHGB+9SsoaZj6Fupkuk2dhJLaPIsp4PZrc5vEYA=;
+        b=CcL57z8jgLNVz82v0YZciqclr3Fke8Z0IIPrxOHMdQ+9suzEUpXmLMypstmmKraHh3
+         GQq+ENTlyvLguyIguUNbeUL96TSu+U8lFjqWZkhxwVcUuLD+LMEbP6dwieoBtRbN4xix
+         X8QU9V5AVe8k0zq0s6fpwdjkzK3r7j0ogMVlVyX37ngVoKPWtjlNROriHWCzaGPeysAj
+         ii3Me6Z78CbaGFEixq+T1/v9CgFD9290KnPQdnhNMq1lMq+gI3C9xqpL+FcahvpaFRPh
+         2UT2A5m/VVA3cMq7sGDKNOyQdkzvMz0n3y8FYkNI+Dczu7gyeN7NNATuxBnIIUrmbo2P
+         ClDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753293776; x=1753898576;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
-        b=iWuLzPK4TvB/r94nOsp2jBFuylApewQTFrvraGDFz3jhJskS5xeVvfT7RFsGQ+qmUV
-         KVIcKFS95bLusRN5ppgZj3WJgTM4KRy3jGzF8jJtapnoSk10cMG296NyNPf4V5rXK1oy
-         V8svT0i1rIkJPf17S/DRwbqgCx5hW/p+ebXoXPkrPwkXRA5x0AlrZPgrnyVN3/KUhHSy
-         sNoyj7SDdHYAgqdTcS11bAk81raT4rsKe9v7BaE8jH5UhfbFfr+VLaAlzHlY4YcM3o1r
-         JisbRUxMjEJA588lxXAQCFh3Yv0qx3UPqyqYiPrbap2sX2X9lJJZ66LVDUnwszIAJck7
-         QQQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH6eh+cKWx5iN/DlhyRjD/1pMv48wztqRgVn5X5GJQ3RNjxtMi0ciyyLkdVoTrOuB8YIH/Ubjw8Vo3Lco=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4vS6eD5MHiOHJwuJsmDa4P8rAEb3WoO426M7994cu2YogJGP1
-	2InvofjgzknLTfyvlIAKOQjhUUBU1hSdd2urXNTJhToISGqtKsywe1G5sPuNn2ppUUFCfx4ShJL
-	AU+hiGH0AEsM/cEGVBbya1cVH6KCH4/OhlnpRqlZpbXUR19aDuvh74EIhee1T7Q+nrw==
-X-Gm-Gg: ASbGncv8sn7yUSuy1qHudeuZJtMGjxYDR3tOguiytB0Dl5VHNbEg7fEy8kwcTeuIRpm
-	6u+uzsYoizmhtABXVAfoVn+qFps2C+dxzFvmj2uSgaJshMBCQW/knPiWMjpdGcYPW3foLgPnmvF
-	eXM2DEiH+K+KkR1YAHLkPoB9k9EOhpM4yVxSy4RjiXVK2STcbbJV8QxnNDCfm/rMkRBfaUalXgW
-	GhO/h8CRXq7CWGKBje9eZ/CGXcMF720fGG1ZwsdrO7s6DGbrOjSDZ+9DwXYJn199V+vZu8kTZsk
-	XicbwETMQ34hcQTTxmmF88W2MCEyGg7vO/CQbN+PxFFix8ZWFDJWjg5K9taB8bZ/tecXlQ==
-X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550360f8f.17.1753293775536;
-        Wed, 23 Jul 2025 11:02:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEZg16J4+gnyGIzNr4yWSx/6st9lfF2anNLh6lxP/xRh+IjVjl07vljj/vUaQGCZ849yfF1A==
-X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550304f8f.17.1753293774863;
-        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1af43.dip0.t-ipconnect.de. [87.161.175.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691b2adesm29652445e9.32.2025.07.23.11.02.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
-Message-ID: <383a957e-badb-49fc-9913-30bea3a1c5a8@redhat.com>
-Date: Wed, 23 Jul 2025 20:02:52 +0200
+        d=1e100.net; s=20230601; t=1753293906; x=1753898706;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YRRQxHGB+9SsoaZj6Fupkuk2dhJLaPIsp4PZrc5vEYA=;
+        b=QJE6MmyNKnVWCf9DlRKuI/Fx4TRp5AEFvcMb60qmjFYGxcGAebRIccAB1xVv4OkgZx
+         BZD9F6Jq+vJoD53EJmaFrodliWTxOXE2ykq2EWqW8pjMmQiN/IJdEl/3ju3ukjCMe65E
+         ak1zo0qU7HrJUSRZTjh3B8/zegGq2JTwsMFIVEaSU5BX6gTvPyUIAbr8OGzjHP1+ElVw
+         w4gmAotdkWMtlJCWthJp3gGuw2Q+gJjjhATtLiop9ZuVyCFz2uHtx1p0BIKdp85IBHIf
+         AaW2nh+rN5jhcnEsyCPkuPE3zgpsHieRkS1U2NxEM+Xl/+PR5twVe2AHYk/VtWfomsnl
+         IshA==
+X-Forwarded-Encrypted: i=1; AJvYcCV60uuPqAN6ISEVfWnEjazfVhFT2YTSPR7qr/jTIUxlKBef+F9aSqqOobTpB0DeoVipewHS837Fgxy/ekFn@vger.kernel.org, AJvYcCVF8E/Ydbwmsp09BiixTwyb8RgRmHytdM3O3LoWo1e0CtfsnsRow3wfDthqjTQ+XuqNYdncG9bnyt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8dG/Vs9Qxjm1r9hHhiXFS2O4JKPuFcgbQSYg4q8vWf1ZQn+1r
+	Qg/IGRfsH1RwZWoXo4WaL6Zu3jt/X520KhNIpAZmKsMFzkyZoDb/KAaT
+X-Gm-Gg: ASbGnctXibiui6ZyspWI2jIaJd6OWEXkk0JZRc3KebND+pGmyCp3d5PxTANx72ib8zH
+	SZ/ytWBzGHD8ZxUN3T0QTYx+hsakgWMzq75/CguuzFNExFkohGHqaP/21yW2phQQP8QqjaDojMy
+	K/BAH8p4D1Ipp+cMJjgVADZ/ycN2iYuemqHzo+YbP7FJr4eWjU9G/sLTtrwcLZ6KFQlgxr0iHCH
+	/x/PJ1hyPwBk/toH4z/bGBW1PII+yp09EOBOK9RzZLG4i3C5Dm0R/fSMllBwucskLQcpwVRBDSh
+	5wg9EuflU0lgLDY7Xdzk5gnrIuO757WnA3YiGvskHm1iDMqCQXFpSR9gZxeOmQ7kCUjYqA8SZN2
+	HeDfW5mCU9YUEEFaCyWY5PuuB6rs2yoxIELmg3UqMHSrT6Yo=
+X-Google-Smtp-Source: AGHT+IF8Hee14fYadrlZRlhceQheuKuRw8Kd+48z+O+jXjMYiO3CWOSzSrtzoyz8wd/Hv/BBDVE1Gg==
+X-Received: by 2002:a05:6a20:258c:b0:220:3870:c61e with SMTP id adf61e73a8af0-23d48fe819emr7004096637.4.1753293905930;
+        Wed, 23 Jul 2025 11:05:05 -0700 (PDT)
+Received: from akshayaj-lenovo.. ([2401:4900:883b:7064:9811:2a6:32b8:82ac])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb76d4efsm10155622b3a.107.2025.07.23.11.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 11:05:05 -0700 (PDT)
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+To: anshulusr@gmail.com,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
+	shuah@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] iio: light: ltr390: Add debugfs register access support
+Date: Wed, 23 Jul 2025 23:34:54 +0530
+Message-ID: <20250723180457.629833-1-akshayaj.lkd@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
- <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
- <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 23.07.25 19:07, Usama Arif wrote:
->>> Thanks for the patch David!
->>>
->>> As discussed in the other thread, with the below diff
->>>
->>> diff --git a/kernel/sys.c b/kernel/sys.c
->>> index 2a34b2f70890..3912f5b6a02d 100644
->>> --- a/kernel/sys.c
->>> +++ b/kernel/sys.c
->>> @@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
->>>                   return -EINVAL;
->>>             /* Flags are only allowed when disabling. */
->>> -       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
->>> +       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
->>>                   return -EINVAL;
->>>           if (mmap_write_lock_killable(current->mm))
->>>                   return -EINTR;
->>>
->>>
->>> I tested with the below selftest, and it works. It hopefully covers
->>> majority of the cases including fork and re-enabling THPs.
->>> Let me know if it looks ok and please feel free to add this in the
->>> next revision you send.
->>>
->>>
->>> Once the above diff is included, please feel free to add
->>>
->>> Acked-by: Usama Arif <usamaarif642@gmail.com>
->>> Tested-by: Usama Arif <usamaarif642@gmail.com>
->>
->> Thanks!
->>
->> The latest version lives at
->>
->>    https://github.com/davidhildenbrand/linux/tree/PR_SET_THP_DISABLE
->>
->> With all current review feedback addressed (primarily around description+comments) + that one fix.
->>
->>
-> 
-> Hi David,
-> 
-> Just wanted to check if the above branch is up to date?
-> 
+Add support for debugfs_reg_access through the driver's iio_info structure
+to enable low-level register read/write access for debugging.
 
-No, I forgot to push. Now pushed.
+Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
+---
 
-This is the diff (excluding description changes):
+Changes since v1:
+=================
+- Replaced _[0|1|2] macros with a respective common parameterized macro.
+- Retained base macros to avoid churn.
+- Swapped regmap_write with regmap_read to avoid negate operator.
+- Simplified debugfs function by directly returning return value of
+  regmap_[read|write].
+- Replaced [readable|writeable]_reg with regmap ranges by using
+  [rd|wr]_table property of regmap_config.
+ 
+Testing details(updated):
+========================
+-> Tested on Raspberrypi 4B. Follow for more details.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index c4127104d9bc3..527aa4c9645fd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -324,8 +324,8 @@ struct thpsize {
-          (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
-  
-  /*
-- * Check whether THPs are explicitly disabled through madvise or prctl, or some
-- * architectures may disable THP for some mappings, for example, s390 kvm.
-+ * Check whether THPs are explicitly disabled for this VMA, for example,
-+ * through madvise or prctl.
-   */
-  static inline bool vma_thp_disabled(struct vm_area_struct *vma,
-                 vm_flags_t vm_flags)
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 1949bb9270d48..60e496ecabe04 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -179,8 +179,8 @@ struct prctl_mm_map {
-  
-  /*
-   * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
-- * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
-- * specified for PR_SET_THP_DISABLE.
-+ * is reserved, so PR_GET_THP_DISABLE can return "1 | flags", to effectively
-+ * return "1" when no flags were specified for PR_SET_THP_DISABLE.
-   */
-  #define PR_SET_THP_DISABLE     41
-  /* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 2a34b2f708900..b87d0acaab0be 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2438,7 +2438,7 @@ static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
-         return 0;
-  }
-  
--static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
-+static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
-                                  unsigned long arg4, unsigned long arg5)
-  {
-         unsigned long *mm_flags = &current->mm->flags;
-@@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
-                 return -EINVAL;
-  
-         /* Flags are only allowed when disabling. */
--       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-+       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-                 return -EINVAL;
-         if (mmap_write_lock_killable(current->mm))
-                 return -EINTR;
+akshayajpi@raspberrypi:~ $ uname -r
+6.12.35-v8+
+akshayajpi@raspberrypi:~ $ uname -a
+Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025 aarch64 GNU/Linux
+
+-> Sensor Detection, overlaying of device tree and Driver loading
+akshayajpi@raspberrypi:~ $ i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:                         -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
+
+akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
+akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
+ltr390                 16384  0
+industrialio          110592  1 ltr390
+regmap_i2c             12288  1 ltr390
 
 
+1. Disable sensor via debugfs, verify from i2cget and debugfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 | sudo tee direct_reg_access
+0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x2
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x0 | sudo tee direct_reg_access
+0x0 0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x0
+0x00
+
+2. Disable sensor via debugfs and read data status via debugfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+603
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+603
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+603
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
+0x28
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
+0x00
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
+0x7
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x0
+
+3. Re-enable sensor via debugfs and read data status via debugfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x2 | sudo tee direct_reg_access
+0x0 0x2
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x2
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+608
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+614
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+601
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
+0x7
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x8
+
+4. Enable interrupts via sysfs and verify via debugfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
+1
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x19
+0x14
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x19 | sudo tee direct_reg_access 
+0x19
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x14
+
+5. Write falling threshold via debugfs, verify the threshold written via sysfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x24 0x32 | sudo tee direct_reg_access 
+0x24 0x32
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x32
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x25 0x0 | sudo tee direct_reg_access 
+0x25 0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x26 0x0 | sudo tee direct_reg_access 
+0x26 0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+0x0
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_falling_value 
+50
+final value = 0x0 << 16 | 0x0 << 8 | 0x32 = 50
+
+6. Block light and verify interrupts getting generated.
+-> Before blocking light
+cat /proc/interrupts|grep ltr390
+ 58:         0          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
+
+->After blocking light
+58:         63          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
+
+7. write value to a non-writeable reg via debugfs.
+-> LTR390_ALS_DATA_0|1|2 are non-writeable registers. Writing to them gives I/O error as expected.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd 0x1 | sudo tee direct_reg_access
+0xd 0x1
+tee: direct_reg_access: Input/output error
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe 0x1 | sudo tee direct_reg_access
+0xe 0x1
+tee: direct_reg_access: Input/output error
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf 0x1 | sudo tee direct_reg_access
+0xf 0x1
+tee: direct_reg_access: Input/output error
+
+8. read value from a non-readable reg via debugfs.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x2 |sudo tee direct_reg_access 
+0x2
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+cat: direct_reg_access: Input/output error
+
+9. do simple raw reads from debugfs.
+-> reading raw value via sysfs:
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+627
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+622
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+616
+
+-> reading via debugfs (should be in the same ballpark of sysfs)
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd | sudo tee direct_reg_access
+0xd
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
+0xC7
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe | sudo tee direct_reg_access
+0xe
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
+0x2
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf | sudo tee direct_reg_access
+0xf
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
+0x0
+final value = 0x0 << 16 | 0x2 << 8 | 0x70 = 624
+
+10. Testing reads on registers beyond max_register.
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x27 | sudo tee direct_reg_access 
+0x27
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
+cat: direct_reg_access: Input/output error
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x28 | sudo tee direct_reg_access 
+0x28
+akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access 
+cat: direct_reg_access: Input/output error
+
+ drivers/iio/light/ltr390.c | 55 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+index ee59bbb8aa09..b63301648689 100644
+--- a/drivers/iio/light/ltr390.c
++++ b/drivers/iio/light/ltr390.c
+@@ -38,12 +38,21 @@
+ #define LTR390_ALS_UVS_GAIN		0x05
+ #define LTR390_PART_ID			0x06
+ #define LTR390_MAIN_STATUS		0x07
++
+ #define LTR390_ALS_DATA			0x0D
++#define LTR390_ALS_DATA_BYTE(n)		((LTR390_ALS_DATA) + (n))
++
+ #define LTR390_UVS_DATA			0x10
++#define LTR390_UVS_DATA_BYTE(n)		((LTR390_UVS_DATA) + (n))
++
+ #define LTR390_INT_CFG			0x19
+ #define LTR390_INT_PST			0x1A
++
+ #define LTR390_THRESH_UP		0x21
++#define LTR390_THRESH_UP_BYTE(n)	((LTR390_THRESH_UP) + (n))
++
+ #define LTR390_THRESH_LOW		0x24
++#define LTR390_THRESH_LOW_BYTE(n)	((LTR390_THRESH_LOW) + (n))
+ 
+ #define LTR390_PART_NUMBER_ID		0xb
+ #define LTR390_ALS_UVS_GAIN_MASK	GENMASK(2, 0)
+@@ -98,11 +107,42 @@ struct ltr390_data {
+ 	int int_time_us;
+ };
+ 
++static const struct regmap_range ltr390_readable_reg_ranges[] = {
++	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
++	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_MAIN_STATUS),
++	regmap_reg_range(LTR390_ALS_DATA_BYTE(0), LTR390_ALS_DATA_BYTE(2)),
++	regmap_reg_range(LTR390_UVS_DATA_BYTE(0), LTR390_UVS_DATA_BYTE(2)),
++	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
++	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_UP_BYTE(2)),
++	regmap_reg_range(LTR390_THRESH_LOW_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
++};
++
++static const struct regmap_access_table ltr390_readable_reg_table = {
++	.yes_ranges = ltr390_readable_reg_ranges,
++	.n_yes_ranges = ARRAY_SIZE(ltr390_readable_reg_ranges),
++};
++
++static const struct regmap_range ltr390_writeable_reg_ranges[] = {
++	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
++	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_ALS_UVS_GAIN),
++	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
++	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_UP_BYTE(2)),
++	regmap_reg_range(LTR390_THRESH_LOW_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
++};
++
++static const struct regmap_access_table ltr390_writeable_reg_table = {
++	.yes_ranges = ltr390_writeable_reg_ranges,
++	.n_yes_ranges = ARRAY_SIZE(ltr390_writeable_reg_ranges),
++};
++
+ static const struct regmap_config ltr390_regmap_config = {
+ 	.name = "ltr390",
+ 	.reg_bits = 8,
+ 	.reg_stride = 1,
+ 	.val_bits = 8,
++	.max_register = LTR390_THRESH_LOW_BYTE(2),
++	.rd_table = &ltr390_readable_reg_table,
++	.wr_table = &ltr390_writeable_reg_table,
+ };
+ 
+ /* Sampling frequency is in mili Hz and mili Seconds */
+@@ -586,6 +626,20 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
+ 	}
+ }
+ 
++static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
++						unsigned int reg, unsigned int writeval,
++						unsigned int *readval)
++{
++	struct ltr390_data *data = iio_priv(indio_dev);
++
++	guard(mutex)(&data->lock);
++
++	if (readval)
++		return regmap_read(data->regmap, reg, readval);
++
++	return regmap_write(data->regmap, reg, writeval);
++}
++
+ static const struct iio_info ltr390_info = {
+ 	.read_raw = ltr390_read_raw,
+ 	.write_raw = ltr390_write_raw,
+@@ -594,6 +648,7 @@ static const struct iio_info ltr390_info = {
+ 	.read_event_config = ltr390_read_event_config,
+ 	.write_event_value = ltr390_write_event_value,
+ 	.write_event_config = ltr390_write_event_config,
++	.debugfs_reg_access = ltr390_debugfs_reg_access,
+ };
+ 
+ static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
