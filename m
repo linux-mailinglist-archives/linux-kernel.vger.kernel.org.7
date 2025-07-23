@@ -1,114 +1,177 @@
-Return-Path: <linux-kernel+bounces-743121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FDCB0FAD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49EEB0FADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F30F567D4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E366188EFE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E87218E91;
-	Wed, 23 Jul 2025 19:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF8B221DB7;
+	Wed, 23 Jul 2025 19:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIhj+X2f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ej0NzkNI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80CC221DB7;
-	Wed, 23 Jul 2025 19:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA90B21A42F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297873; cv=none; b=cSA8hvsS7pbsuPsvp43noMK6wJDG7gfQiSAApze+Fj+WkON0M7x1vIBKdZxUUaD+wNveXi4WkOtZl1SbvMbNfJDjPDbt+E5AaGml5JHnNOnfR+6X7PfQ3o5wHMs70Am0HxM7ZllD+pyvirapGQK+xTwfa/N2W3LUbgSBMDmp1x4=
+	t=1753297914; cv=none; b=oxnyBPANLYQi/Y4Pdle2hU7kpRDpiCd2QjrR4IfYRO+BVyeYW0TfQXvkSdPGBW9z4vhSjPDWHNPVDLNy8b51TzWXp4uHsZvWgA2UYGnulAGvNU4/U5kzn8xinHPx3k20Tz1UtPtoT+z+EPGIZet5jg1lkdnrRlC27Q1ZGw0f/kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297873; c=relaxed/simple;
-	bh=V5byk39n1HmyWQGRKiSu3MxLT9DQq3UI17ZkhmMF038=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQ9vfSPkDaUrF5jCAl2qXqoSdEfZ0qC4Xe8Irhk/AuJ+WvifDevoGfCHpT/0ItOsy92hMMTIqg6v5npT3CB+PxNw71/ai4QM//l/Xj+yo6gxD2oIyvUpP8ibO+oy0H5jETWnVyV2hwhR0AEbYnmlXspbRUtCIxlxpeMAbF2ToiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIhj+X2f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E80C4CEE7;
-	Wed, 23 Jul 2025 19:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753297873;
-	bh=V5byk39n1HmyWQGRKiSu3MxLT9DQq3UI17ZkhmMF038=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIhj+X2fBYCZjgRYRC3FLPrs24n5uXGDHBZx5jMCxHxgO9Jpk7+8vTQ5sUlPF1Wmm
-	 I9lqYoWVojbh06SY84pl3PwmSA1XUdvQ/fLT2xZJTvq9ulW7ogRD0TsDGX3+jJAUMl
-	 YhgSXXXf9IkcgL8+kW7oo7DpqjwjsT8Qg5mHzF9gCkPfVaOIIcOK0HPmm5ar2PjUBQ
-	 GIXst8ZazMfyIImICU3IcNdpqrQZzBToCJyqFksZhBoAm03Go4O7EaJfT/iheBoZRz
-	 cdWOtNEL1KQAgbUtivsQErqPkks6VPPSNK/oVDZP8vZSVsZ/qcpPBlPB4iHiXBJ/CC
-	 K57zpM4DiuvCA==
-Date: Wed, 23 Jul 2025 16:11:10 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 00/16] New perf ilist app
-Message-ID: <aIEzzt1f3UWDCAIw@x1>
-References: <20250714164405.111477-1-irogers@google.com>
- <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
- <aIEjMroa3bW-T7d-@google.com>
- <aIEzRNLTCTA5Gqhm@x1>
+	s=arc-20240116; t=1753297914; c=relaxed/simple;
+	bh=rjMF4SS+OV0lz6i4T4F6UW1KEe904m37qQLEFlE8G88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=riO2Q3Naqd28c5Jo4EXsTxJxvHZ8Y5MyMuhZJG5mqMLdLiIQ3TzveOMyXFHtmf2EoVlnFuGOrrDpLmLc+8+jXlxUPsMh5tXh8S8QovNWusbsdMjxDqLHAjvLg+Skt2q3b0bC+eSe435ySkk7gJUpuhpdVblyXnR1LIGy124dWgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ej0NzkNI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NH9Epb020004
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:11:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V9jA6Mn1SUrOwM4UhmLUB7hjDyvroazQdXjiBfsPsCw=; b=Ej0NzkNILdycTX5T
+	esuaRP1GVX4zJvOHh8fOZB/+MpZnGQecrdbCk8vy/8otih5K7GO/k0FKrWARUsTj
+	bwKdoLFdhLYDnntf/gqU/InnPDXFshmXQG5tMb/uOK/gygRBFZ08xctthVgijDcu
+	oPnjpRtyg935NMbiUlFSgcmQ4use9cVUtD+SYC8npC3IjlR5D9EIDRrCssMR4elf
+	V4ZXt9nWXPEqdO+YlPN/zGVdz30g6U3iUGjvqwMayeainleHSlvhHnz/KxLBu5CX
+	wDJLCt+oNAel0kyA4NQIe1oPzsusSZrmhIw1dpjyp1jD4BOyMxgYp+Aqm38ZfIlG
+	wC31cw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3es4ff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:11:51 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23689228a7fso2263605ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:11:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753297911; x=1753902711;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9jA6Mn1SUrOwM4UhmLUB7hjDyvroazQdXjiBfsPsCw=;
+        b=Jve9gdeeryZshQ4x6bFdvg711pT4u9P273ixLYAskYR79/Hql4aFoda0ZjlUYVN4Du
+         Gb1tjKJhC4ZiUGuDB0pHc0F8qLrSqIWNjIu4ikK58IRGpj1gAY7QdXwVZ4p1OyZ++5Lf
+         VbuvYbgNcsFH4sOTbtGBN+lCdL9HS4GevDZ4i0UJgMe6iBLnj2cAb0rMA+cnySMlosXq
+         C9+4r5xzc4pK6Ho2RJauCDUgBddvi03zxzv7ULfyf23t4tpuaQg6VWFbxfWQQSuPhTHe
+         FK6Op4DVPIH5YYF74qv44yx6J9t6ZlekQFYqF2on0r/DdwmhOVpMj2vnrSdrZhpoPbbh
+         15nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuzq479HEi1MiyhAGPWf/pk3fmtvo1P6PHm8G439ILqLXPg0l9KYZpmtGmgDLDis4UqLkdiRPnnCNEBeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTV8KIO3RpNUMOg7pzSiI0RqVqny851GVAo6ZzpudHH0Kc7gyV
+	rv9lcNH2xB2DI64QT46r2B0pS9bE3WMFRC5mlPRaRGaZfy2GdqymT7/HYZL21Rqqg3rvWkVFzBm
+	51uDvMbXQWtpdpVgmbe2Xpt1lLoEa0Qrh+2y/Ah3Ip8/zmFUx+kjZheZ+azx/8lgIfgQ=
+X-Gm-Gg: ASbGncuPeomZ+Hf4hcgOLz3vnX5+R2Um5UoCB3dVSCrMo764gfhy9/1uw/ryvdrqP4v
+	UifG5imLMsNZm9jWY8p5kHlhc0InvPqkMbawpKoUMlgBC6s7q1NrUQ8mrbxZeW5yCN2dTcoXvsw
+	MTyFuJPqizBKalgqIRCywgZ6h5uuJF/nYlWFL00Pq1t5vdjY5o5fiHSUC14tXjfA1cvmykbaDAD
+	yO6UCTS6+JjjqvZgRDkIfByA7WfaW0EONVtxiKS+ve3RfZl1vCFkHftK1YOBsOqLu0TfcJtMoWp
+	fKXlFE/2sppKm1R1o3eEAkdFBOKL9CuF1Qog8YYqN+EPpY04g0PiXNX8bmS+cn0Y
+X-Received: by 2002:a17:902:e885:b0:238:120:134a with SMTP id d9443c01a7336-23f9814034bmr71876825ad.22.1753297910879;
+        Wed, 23 Jul 2025 12:11:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFE6DGeXECpuu6lms2ga/Vg8TctuO58RgApUp7nY5NpQJNo+xZQMgkHkcbiQe/1P/POntb0nw==
+X-Received: by 2002:a17:902:e885:b0:238:120:134a with SMTP id d9443c01a7336-23f9814034bmr71876565ad.22.1753297910432;
+        Wed, 23 Jul 2025 12:11:50 -0700 (PDT)
+Received: from [192.168.1.4] ([106.222.235.133])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e4918sm102288265ad.41.2025.07.23.12.11.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 12:11:50 -0700 (PDT)
+Message-ID: <135cbad8-6c33-4a0c-babd-31477d9be4b0@oss.qualcomm.com>
+Date: Thu, 24 Jul 2025 00:41:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIEzRNLTCTA5Gqhm@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/17] drm/msm: a6xx: Fix gx_is_on check for a7x family
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-3-9347aa5bcbd6@oss.qualcomm.com>
+ <84a33e15-edaf-4951-8411-24b17ee5f4f5@oss.qualcomm.com>
+ <62391e11-2f26-4e30-9c8d-b47d4985b41b@oss.qualcomm.com>
+ <jeg4dw6wpxpfaio5kd5vcbqswq5nlclor7tbbh7er7zlwgdgxr@ksrw7waxj3mp>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <jeg4dw6wpxpfaio5kd5vcbqswq5nlclor7tbbh7er7zlwgdgxr@ksrw7waxj3mp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: lVFS4zN8nRFfHMUU_G5_2w-vyvQsbHed
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE2MiBTYWx0ZWRfX7YJgM/ZKeTgB
+ Wis+PQ7bdpQO82QyGdWXAQxLCx/0uapZyynTbgInhlJwqKPjKNQURuxKxmPEVaIZkngExSMht9n
+ ulbs6830Gd8bOeM9IIbGT3fBUWZJ9KanSP5FqGg9QSP7SPXq6RI7GSS9JqRKyvHpdwn4Tbz3n9r
+ AUFABKBojx8pS3rXWwCx/ynAC3EzdMbzkEoQv5X5aC4rgzhKgnDTwPjb6KKrE8ZVn2l9AOlxQz6
+ FXgC/vJ5F7keipQBMqnXzwT2juOD914vUmuKDU1WSxDI5De7iIhhD77TywON3EZn40GC5AuLXya
+ VJGkiZYMU92WfLRamFtCzsMItdPOmsJ+9sZdx6tOnIrdc6zsfafz+UkuIzjCeTuHWRWmkSLpwNb
+ iucWMDOc1iwqtiqB/JOQ13lG4wGd7y8BdAhoaUq9d/4LT2qTzX5xbWF/OFrrifht+acbEjfq
+X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=688133f7 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=4dphQItTPUswyQvINXrzgA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=R4_TJjaFeOAkSM8ik1MA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: lVFS4zN8nRFfHMUU_G5_2w-vyvQsbHed
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230162
 
-On Wed, Jul 23, 2025 at 04:08:55PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jul 23, 2025 at 11:00:18AM -0700, Namhyung Kim wrote:
-> > > I think there is some follow up for "make install" for scripts like
-> > > these, but I'm keen for the python API to move forward.
-> >  
-> > I'll review the series today so that we can get some part of it, at
-> > least.  Basically I think we need a wrapper script like perf-ilist to
-> > run this easily (maybe with documentation).
+On 7/23/2025 4:40 PM, Dmitry Baryshkov wrote:
+> On Wed, Jul 23, 2025 at 01:22:20AM +0530, Akhil P Oommen wrote:
+>> On 7/22/2025 8:03 PM, Konrad Dybcio wrote:
+>>> On 7/20/25 2:16 PM, Akhil P Oommen wrote:
+>>>> Bitfield definition for REG_A6XX_GMU_SPTPRAC_PWR_CLK_STATUS register is
+>>>> different in A7XX family. Check the correct bits to see if GX is
+>>>> collapsed on A7XX series.
+>>>>
+>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> This seems to have been introduced all the way back in the initial
+>>> a7xx submission downstream, so I'll assume this concerns all SKUs
+>>> and this is a relevant fixes tag:
+>>>
+>>> Fixes: af66706accdf ("drm/msm/a6xx: Add skeleton A7xx support")
+>>>
+>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Dmitry/Konrad,
+>>
+>> We don't have to backport this change because the existing code reads a
+>> couple of unused bits which are '0's and that is okay when IFPC is not
+>> supported. So there is no practical benefit in cherry-picking this
+>> change to older kernel versions.
 > 
-> I just tried, with the series applied:
+> Fixes tag is not about backporting. It is to point out that there was an
+> issue in the original commit which is fixed by a new one.
+
+Ack. Will add the tag. Thanks.
+
+-Akhil
 > 
-> root@number:~# perf ilist
-> perf: 'ilist' is not a perf-command. See 'perf --help'.
+>>
+>> -Akhil.
+>>
+>>>
+>>> Konrad
+>>
 > 
-> Did you mean this?
-> 	list
-> root@number:~#
-> 
-> Now trying to figure out why it is not running.
 
-So it is not wired up like 'perf archive', trying it directly:
-
-root@number:~# ~acme/git/perf-tools-next/tools/perf/python/ilist.py 
-Traceback (most recent call last):
-  File "/home/acme/git/perf-tools-next/tools/perf/python/ilist.py", line 11, in <module>
-    from textual import on
-ModuleNotFoundError: No module named 'textual'
-root@number:~#
-
-I thought there was some discussion about catching this exception and
-providing guidance, lemme try...
-
-- Arnaldo
 
