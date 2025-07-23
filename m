@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-742362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806F6B0F0AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:01:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FA1B0F0AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BE23BBEDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676941C854E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7322BE624;
-	Wed, 23 Jul 2025 11:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEC629E0E8;
+	Wed, 23 Jul 2025 11:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7WqLMq1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FY2bxxva"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C548818EB0;
-	Wed, 23 Jul 2025 11:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BB3242923;
+	Wed, 23 Jul 2025 11:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268476; cv=none; b=RDFJHE7vNhQHxqm0Q7wpaigJjmIkubFzFskaAWPXj0E64YngShgXK7aEKuo/bWxA9LLG5oqFxJVCyMk/k/h7qaPjBr48YKhIoeJ3sTBN9Bn4PG6XpnRVLfQYQQdRkC0ByWPOTRmJNjXFH64vOLg0bWaqruTC2xn8dWyfvz6QK4g=
+	t=1753268502; cv=none; b=W/FVEKc/obnkMDOjdyA3OzyyVVeaHa7f77PwTn74nuAxu8qAa0EZS44VtR9Klkeq/KDPTS8J0h1XEyX1c5BrDftaQy2xzo6HjCgdfQssQgXvGKveGsx4pUERHMpaULHlDZ+Va8FUXYUQehKkIzvSgarkpbIb/PYxXnjJdsONh84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268476; c=relaxed/simple;
-	bh=KKajWv6iXD2DJpbp036dw7aZbKM62MvOz8OdjwDW124=;
+	s=arc-20240116; t=1753268502; c=relaxed/simple;
+	bh=YWpfzJkjhB/lzcmJst7MFAPzwBU2YcX/yN06m387qI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLq8nLUCW80rqiqv6hC8Kz8dNOpP7PGRUS0CH9YQSThUl+S3PM4nYfA2KDC/ER4V9yT9oVtij+FkBKor8QuK7x1AzVZQhtrmd2Vqekyhq4IMAFX/eBnS3bRNQhS7qIdViAyq1Zy28VMaWbxDRI/uQJ8Bz1bjDE15orH842GXIKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7WqLMq1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944C9C4CEE7;
-	Wed, 23 Jul 2025 11:01:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlMyHaexfDGIMox7TELU1mUHe9VuI8+hZo3HGT16BcXnbLRK++EVJciPpb+5+wJpbH9bDm93gkvMEC3DkPkxeT4c0fbAzI3OHmeq6ouNruTOKTtbcBlKtNf7NavTtZQJYAQsu6qWdQt3UaBqkZSF5+3rvEQnRubUElh7871LlmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FY2bxxva; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F27C4CEE7;
+	Wed, 23 Jul 2025 11:01:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753268475;
-	bh=KKajWv6iXD2DJpbp036dw7aZbKM62MvOz8OdjwDW124=;
+	s=k20201202; t=1753268501;
+	bh=YWpfzJkjhB/lzcmJst7MFAPzwBU2YcX/yN06m387qI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s7WqLMq1gn6eEdTj3TMTutLL3KlZCoLBMjOI/EgQYTXCGlZq28Z4K6pLpJU2Qz1YY
-	 Gh0CgCymRDVvjRrezkt4AdoMTM3tdUCA7mtRcTVJsD0K/6An6QRzxiNGC85SKmg4Q6
-	 QghHba9i5AD6EbfhZVnJK/dVInLRJ/PNY/rPXXntKEc5YJEvfIUP2hIp+4wEiQH5cj
-	 5+BwuYPkmNtrIP9lXHDg/VkMqDeR65oWkfjNalenSPudGEeELE4pSE01RdvrNQ2/qu
-	 kYbjM6aFejmagJMp51vOcP8IBlusSTFRVCp3T0+2zoT/h7oxXpuzJvvV+h6k6LMxJh
-	 BO2miA8JpLqvA==
-Date: Wed, 23 Jul 2025 12:01:07 +0100
+	b=FY2bxxvaxrL9OZu0chlOK1KaYLTlNGiKuPGcgXo7wBm7HZFDEkNnctSw4f6BaorOW
+	 LNIaliwR59kSz3xSnaDyTn3OOvwAL8s5jT2BXx4KMnikG8zO5cTWaLazOMNW+f1T3t
+	 MPeEP+8XwPOjJsyLyzs1vF5j5MpnY+r5P2fwVLUh4urR+dZjXVKgoKBuCdT7O/5YnA
+	 0MtStOBVyacRpfwH8+UdDIPDciyc0Li3KAvWfcs9bX3ZaHUKwsxbQWPnodtZ/7HnRr
+	 RCe9wp8cZP7zrY2BD7KvoLZAjXDfXWOwpyDatadcbldX+71YOjy+XqSaUVX9D7AJjy
+	 aS0sXlpBQxYTw==
+Date: Wed, 23 Jul 2025 12:01:35 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mhiramat@kernel.org,
-	oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
-	liaochang1@huawei.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/8] arm64: uaccess: Add additional userspace GCS
- accessors
-Message-ID: <6e4cf749-d146-4f41-afec-6c07b025be93@sirena.org.uk>
-References: <20250719043740.4548-1-jeremy.linton@arm.com>
- <20250719043740.4548-5-jeremy.linton@arm.com>
- <aICwaQZxK5Spjj8G@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
+Message-ID: <37152e6a-e5b1-45f6-b182-6359e28eb73d@sirena.org.uk>
+References: <20250722134340.596340262@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,49 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pfS6fkSTDr7lad3R"
+	protocol="application/pgp-signature"; boundary="sCHXLL/elbyRZv3e"
 Content-Disposition: inline
-In-Reply-To: <aICwaQZxK5Spjj8G@arm.com>
+In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
 X-Cookie: List was current at time of printing.
 
 
---pfS6fkSTDr7lad3R
+--sCHXLL/elbyRZv3e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jul 23, 2025 at 10:50:33AM +0100, Catalin Marinas wrote:
-> On Fri, Jul 18, 2025 at 11:37:36PM -0500, Jeremy Linton wrote:
-> > +/*
-> > + * Unlike put_user_gcs() above, the use of copy_from_user() may provide
-> > + * an opening for non GCS pages to be used to source data. Therefore this
-> > + * should only be used in contexts where that is acceptable.
-> > + */
+On Tue, Jul 22, 2025 at 03:43:04PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.40 release.
+> There are 158 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> Even in user space, the GCS pages can be read with normal loads, so
-> already usable as a data source if one wants to (not that it's of much
-> use). So not sure the comment here is needed.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-The comment should probably be clarified to mention that the specific
-issue is the lack of an operation that does a load with GCS permission
-check to match what we have for stores, it'd be a bit of a landmine to
-have the operation available without anything that flags that it didn't
-validate the permissions (even assuming people read the comments in the
-header...).
-
---pfS6fkSTDr7lad3R
+--sCHXLL/elbyRZv3e
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiAwPIACgkQJNaLcl1U
-h9C1HQf/SesyTkkHOj8BBOtDMpXqeILfxSDN+1YY9sPtQnVWuBzz/BNXvVGV8hKN
-WowF+nRWnOeP6E9pP9l3iApYCIMK5dYebcLOVVipocUI0q25/gy+HRLs6cyLKT07
-NYwlIXJyw09hqYru40+rmqtvXn1vAYiulM+H76WUOjTfhrqUHceh4ZjYx0pVzcHe
-2SDiw7M3K6m8VlWHuhIMx30P+82hAet2hhdxPXC1ry8tFx2Zm00KGl1Nl1KJ3ps8
-CICn1km24uu2V3zU2siImytm+2ICHBZsHM1lasvSrCT8yo+bQX8h0zleTnda+xYc
-OFPi+6eatJNwJXE4rZXOejC7vw75WQ==
-=F1EQ
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiAwQ4ACgkQJNaLcl1U
+h9CIvQf9H2SYW0QMLVj02k+FVTlogRzqPHzXrKCC/Xv7PS+z6FsDSZPVFvCDkjQu
+et6aJkwG705+xIEW63Me0Veebnh477b7ctIVBl7aecA9rxVgh23fLqAKx60gvvcN
+YdTeW6zR5Az+/emp/hKUIfkor9zvNOPAc+VSjZa+jy2f6Df/lfLyzcnQKzfMXQtF
+Zidm/TcwpoinmIjczMaKyJ/dzaIb8E+ghd7UQSN1IGVI1DINdZlKe9B95kRqYTjB
+vR1dWFd8wUWJKCy8FP1rJNYvZCXDGQygn3SM47JCF91TymRasIbHDX51qzE9NtJD
+UV+WOSsJUQTz482zJEmLlgDHvh5uLA==
+=Rmmy
 -----END PGP SIGNATURE-----
 
---pfS6fkSTDr7lad3R--
+--sCHXLL/elbyRZv3e--
 
