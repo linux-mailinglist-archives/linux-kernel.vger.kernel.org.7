@@ -1,120 +1,142 @@
-Return-Path: <linux-kernel+bounces-741925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F018AB0EAB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA7DB0EAB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 262FF54438B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065483A7F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DA026E6E7;
-	Wed, 23 Jul 2025 06:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992CA26E70E;
+	Wed, 23 Jul 2025 06:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KU71UxNf"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h772aOx1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D20185E4A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5AE185E4A;
+	Wed, 23 Jul 2025 06:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753252738; cv=none; b=IPeVZDFj5q6KnzhS4/6Ecl7KAkyWHzDN3rozJzRZvuq/auA3Lv8G/nm4tNeNFNPd8BWU4kvjrOcBo8awWiNr53krM6n0D+WAcpU+WBRXuHQgZrYpD2HFAhyOzf9QQvp5qHtxRfHWL6owPcHCUXKHFPLRC8tZPxcu/MzSjuuyhAw=
+	t=1753252853; cv=none; b=Bm9MM2wi5imRg8cimSJiwRxHqftq7NW8HDafZ+ULcelDZMnGi7SHSTxor5T7fdOYKbCmc9REyuIdDJI48RAfQJh+LeCxOyWWOBH4uzG31cLa3pfW89XCNEz7GczazSd1bbHGsOj6qwXG0bxGfsbH2KQpxMdLVfTn62i0bZj7qdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753252738; c=relaxed/simple;
-	bh=kppjr8VXRD3ADfgRmJ8+FpIYw7kfM/MModcFvlNHGIo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jaN1pnIalZOf9WTJv1mpEb9cVyImRTFP7U12p5cJ6twwr/YmOvnof21qrJdvrT2HlLpBYWzFz57/FATTxIoR0pZmaAdy9edAyVaOILu4C6njd/msYYxVfldowphzgAM7MI0aMbQ5fQWp5UVz+7p10P1v8/f8TRwCIDpkz6b6NX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KU71UxNf; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e8b838203d3so824001276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753252736; x=1753857536; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qqv+T/SIEF1Kbneo/Sl7fRz3B0vTyt+hrI5wqB0sj7A=;
-        b=KU71UxNfKNBIcIj3pjMNXMkR7E4mjZ1wyMXXsEgpChnWb6p+uYOFlB7yV+Dlx7b4ja
-         Lnnfg1CV0TThEX79XBSQa7CYFvwmRDHoxr71au+XrwBmo3ZDsDIcVAZcKxtle9uksMAZ
-         +X57JfLVIFf+QmiMqFE53DxN77kr5Egkwi4UR7ZK2eUznJ2HHV8RjISOUHOTuZY7ZmJb
-         CybhwNnk+Oskj3GGU9SW9zw1rL8TWdKFHsD19jVAgwkYDpHhZyhx1xTa7QSufnzaMP6k
-         9rvRLIRP/1PCtkuNIPQxkPzsPylzgy3esXpuEuhih4ZG0VAb+MEAw15V5iACVFgiIa1H
-         iCMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753252736; x=1753857536;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qqv+T/SIEF1Kbneo/Sl7fRz3B0vTyt+hrI5wqB0sj7A=;
-        b=KAMTk/Xil8snsgR6Vvr/9IFsY3OpVVLqsVPOcFUItjslTeLeIwWXFcsOR148/YJP4N
-         FsMN2iTGVef2+EUpLLUD4+zWqcDvmiUKoaLojhNImy0z3EGn/l5P7m2DAW+JprPqGJyO
-         c2YNsZyRE7uiWQLaGojOAu7fp+QOEnOohoYO0v3qMipUh1NsJlmZKkEmDXw1QlAV41dI
-         WCjBpYxGh/Bbqi7CMJOAp5EvV/JPEm6wIa1MRveSNzP3RdZCIHtuLc6jd0xNeZ+Pt/9e
-         VEh0qa0Ad0E+emu1ewMcnZIS/txQAfDmTL78yNpj/f+hBnw6jYyO3eLkp6Vfzd0K3Jyr
-         WHCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD2VhFJWDHHewwnCQjz6uRs4tdSsCXVH30fek1ho6RcaqAH98bPy0BhtFcnYdwAsRqgps8wUJJrKbO/Dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz89Y65PJO220aoeh1AUSRAzFb1T0KhvIohtI6lPPs9FdJYawU7
-	IqoNSF8IEh4GdkdjWfZRJExyqFzs2hPsa5ypao7w2TE+t6V/95MDRxhQzAoR8wIKTH8=
-X-Gm-Gg: ASbGncvQz1CF8Pj9EkfFsqX0A2AWsZfz/MllgFw66cMzyK8Qj23hXOFlHkKci6EUfy1
-	dAYrzyQUDlHtbgmU+83Gi+2VmVXT8uTXMhjPk2JdWQfd4zj3weXTRRyiFDNATQNlOnsLleQ/qE8
-	hxI8nRtnxou3x6reH7FE1R/DIz+ItPOWhfRMr95qE30FfRfIkO8mG/y/Pfz2e5INeatCvxOq9Ry
-	83WClNVfh3z1IjU//SFXkxMRKOul5YjTjo55EEp1OyfWRfIk133NuHg9KVyxkNAOQEYRjQULdUT
-	d5t+d3cevUDcWhNxRQAyES64/7UclYgZ3zIJtuugOB/GHBx9ktp3vKyvx8ry3Y1ImXuC//bp6tz
-	8qs/nz+V/DTlZ1lsq7nMg4LlkJBAQqBn6nxG3C4YwVlxSMfxHzRuLwwYQyBltESu/YPYQuDluRC
-	magk96h3Hn938=
-X-Google-Smtp-Source: AGHT+IHqmW49ZZANvNBaNgggrQ29I6My8kl8bn5i+sILCwaQX0HxqwrEfZnSXrOqBfoDKTsomvJbOw==
-X-Received: by 2002:a05:6902:2786:b0:e81:b941:c210 with SMTP id 3f1490d57ef6-e8dc5818abbmr1198612276.2.1753252735788;
-        Tue, 22 Jul 2025 23:38:55 -0700 (PDT)
-Received: from ?IPV6:2600:1700:6470:8880:4432:859b:f25f:b2ca? ([2600:1700:6470:8880:4432:859b:f25f:b2ca])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc198a4sm3778895276.2.2025.07.22.23.38.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 23:38:55 -0700 (PDT)
-Message-ID: <96e9e5b9-d7f2-4527-baf2-f7519ffbb612@gmail.com>
-Date: Tue, 22 Jul 2025 23:38:54 -0700
+	s=arc-20240116; t=1753252853; c=relaxed/simple;
+	bh=92k96N1KUNqdTJWu3C5fjjdWTHuQXlO14hQn5vUbckI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=txNQP/MfJ+cXwDrrLpDbhOxIMIsKqin8MBDUUADAhgBx9ZpgVr59ogOihpVc7G6Vb9Yrz/1IF5ENOobQP9UYXfUPyCPppbOyuC2r904EIwJBCA+Lq/TXSa+X+unES8mrHnb3OVwU5PfncUSGmwY7V0CYsgs318Ep1PTzMn1n9g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h772aOx1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMP3vW031357;
+	Wed, 23 Jul 2025 06:40:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wfisOvoh576HRQexqjSB446E638RAVtM6Q6ZO9cdfjw=; b=h772aOx1uzNnNc3G
+	0WNuUGF0g6GiX9hRS68Ffy7kg4ZsmwNfNerNnW7nAVxY/aJF+oLG8Eyw5uIGoH25
+	4b2t+dHn9MfCKtFNxokVwXD52D4uIuzr1sM0PuaGjF8zHl08U4LdUH24Ua7znL0z
+	fADvRMJ6vz49jZTDfm5jB+UpNbXgR1l+m0qKlinKs49k+XK+5XRtA7cw7nsdfiwx
+	3qGmQVmRejiJST0PTe5LDchaoWm2ZiHNsguG6IhI4fkfCt9E5Amv7GHL6/DLFl/H
+	NXmicrWUbOJMhu54CRJ52wfxJ+YzLRdowTr1LaIQcrgqARoNcP7Ihpzrw7XSVsX+
+	xzY70Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048s44ka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 06:40:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56N6eikW004316
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 06:40:44 GMT
+Received: from [10.206.107.210] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 22 Jul
+ 2025 23:40:41 -0700
+Message-ID: <f48ac2fc-2239-7ece-730c-342b495b8986@quicinc.com>
+Date: Wed, 23 Jul 2025 12:10:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Min Ma <mamin506@gmail.com>
-Subject: [PATCH] MAINTAINERS: Update Min Ma's email for AMD XDNA driver
-To: ogabbay@kernel.org, quic_jhugo@quicinc.com,
- jacek.lawrynowicz@linux.intel.com, lizhi.hou@amd.com,
- dri-devel@lists.freedesktop.org
-Cc: mamin506@gmail.com, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 00/25] Enable H.264/H.265 encoder support and fixes in
+ common code
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA1NSBTYWx0ZWRfX4qllKSCXWKuz
+ sUyHJwTukdBKw3WtgI1XD0RD20Yu/C3wtvGPStpjP6LUbjh+qEAd7lr7ZGi0VBAh4HnHzGjP9FC
+ WIiLMeCItNddEQ2uhUSJockY+69DPjIXPLQ0fGEz+qL902WFWNEz1G5XnmcDfcldlaYdnuRsaD4
+ Gq377dTTC+2NXGYuDl9ssjXMFSIlrENzaG+ACezIYBBFax9vqYzxmmUkp+mx8zcEPmLrK53H4jb
+ kjXC6T6trdKbNSYjTmA8Bs7kzYS2xkrOuwAmL87CP3fSPLGreIaNBVGTZThAbqd+ldCpRnfQF3i
+ 0mFy7+rZJ98MmxjCRAXkLkB/2WOToeDllysrMJaqUby1lX4avyaeLpirJcwz5AoPvgnuEuirD6a
+ pObPwAL4evKSRgZayV9NVKfZJZ2xPHQqn0Czf++Oe47HPB+ZgTGwfZzJ+L8HsWOnlcBEq5VD
+X-Proofpoint-ORIG-GUID: QGoB9zqs04fm-K8RM7SFlayQmwbrOXfS
+X-Proofpoint-GUID: QGoB9zqs04fm-K8RM7SFlayQmwbrOXfS
+X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=688083ed cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=fSTb7FvrLMLh5MOGqSAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 mlxlogscore=650 lowpriorityscore=0 suspectscore=0
+ spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230055
 
-I recently left AMD and would like to continue participating in
-the review and maintenance of the XDNA driver using my personal email 
-address.
-This commit updates my contact information accordingly.
 
-Signed-off-by: Min Ma <mamin506@gmail.com>
----
-  MAINTAINERS | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 10850512c118..6eefa494000c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1231,7 +1231,7 @@ F:        drivers/spi/spi-amd.c
-  F:     drivers/spi/spi-amd.h
+On 7/4/2025 1:23 PM, Dikshita Agarwal wrote:
+> Hi All,
+> 
+> This patch series adds support for H.264 and H.265 encoder in iris 
+> driver and includes a few fixes and cleanup in the common code that were 
+> identified during encoder bring-up process.
+> 
+> The changes include:
+> - Enabling support for H.264 and H.265 encoding.
+> - Fixes and improvements in shared componenets used by both encoder and 
+> decoder paths.
+> - Ensuring compatibility and stability with the existing decoder flow.
+> 
+> All patches have been tested with v4l2-compliance, v4l2-ctl and 
+> Gstreamer on SM8250 and SM8550 for encoder, at the same time ensured 
+> that the existing decoder functionality remains uneffected.
+> 
 
-  AMD XDNA DRIVER
--M:     Min Ma <min.ma@amd.com>
-+M:     Min Ma <mamin506@gmail.com>
-  M:     Lizhi Hou <lizhi.hou@amd.com>
-  L: dri-devel@lists.freedesktop.org
-  S:     Supported
---
-2.43.0
+@bryan/@vikash
+do you have any further comments on this series, I have few smatch/cocci
+fixes which I plan to push with v2.
+If you have any comments, I can address them as well in v2.
 
+Thanks,
+Dikshita
 
