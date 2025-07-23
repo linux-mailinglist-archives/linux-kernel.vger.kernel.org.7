@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-742388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40415B0F103
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:15:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB82B0F109
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051F4188F12C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD45AC2768
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A2C2E4996;
-	Wed, 23 Jul 2025 11:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA927A124;
+	Wed, 23 Jul 2025 11:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvVyJuZ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8tKKvsf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1EA27934E;
-	Wed, 23 Jul 2025 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A914F253944
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269321; cv=none; b=RRczE3jMZ+QH4nzJckcXwi6Xv2CbHtpqsYP/accGzmV+TZ+sAyrTqdeT1j3smOB6s/z5prgDKSV0LoV3TP2FvTimGkM0lYVHwAatI52InD4C1ytsjbCnRIYGSXSu8Od9lWospMJKz2hN8z2diOSFLtJgANW/KQVWGnyXYiC0S1c=
+	t=1753269509; cv=none; b=J5ma4IgZ9iXHkPQzbAyEvU86ZTNM1aOHKGDYD05G3BoTvYMcW84JzOec+uia8/a1z7rQm2b7qGLhLsTlmvGKk7CTs27ih7YvBt7JIa1r1jIkPmAbEj/LMFZkxNP85DTWhCbcQr+hv8dMvt6Ev01dWGEvhe4zbOUXpXgCKXrkHUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269321; c=relaxed/simple;
-	bh=GfCM8NPnkyvjKCYgv/plWSvBAkdknCndIiK7M6dmf/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SHKWu0y8+USyniNy7QKB70V7FYnnG9KtROJE7qMHPDZMS2WVD80rKsnt95Id05OVOI+SWRIRRyaUkBujs9aybk0tlPqnvPh2udF8zEvhhJsk/hgUt7CQodNpVBXitixHjw6i959w5e/6BxDStMuzDOtv8klVLEmFf8EtBltM29g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvVyJuZ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB649C4CEE7;
-	Wed, 23 Jul 2025 11:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753269320;
-	bh=GfCM8NPnkyvjKCYgv/plWSvBAkdknCndIiK7M6dmf/E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KvVyJuZ+Wk0021GHQI9H7KN5Tn3hdZaR1KPrg05//bIOm5FzuFwvSdpaFIdD62OZ/
-	 ite4PO9NRwi2a0ShfbuX7wjh61mgjnA27U/ScFZvlYBFPdBtpwsfIUH00/1cGmchK5
-	 8sQC/hHdU72oZuC2EWMDjtpH9AfqKfCqmgbNJxt/XQyM7+2eZimglGnxpIWRUJ6g6Q
-	 4gV2D9bRmRpAGvQqk7qzhMpuzBzZia1VKUVO7Xk6d7GGUytZjGOlYL4sq6ItUZeNDD
-	 QnklRVkqvYdK/EAql7AsxOa+uUgqqxBsto69m5LeGfy0bWds5oWvuOXulEBUZzUFnh
-	 50/F1LVFSnqdA==
-Message-ID: <de3ded0d-6d05-43fe-9ac9-b8bf29bd7d53@kernel.org>
-Date: Wed, 23 Jul 2025 13:15:16 +0200
+	s=arc-20240116; t=1753269509; c=relaxed/simple;
+	bh=NCsjaUI2FgWzArbYhZfq+jli7Z84VPLHoBN6tS76E3s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I5bTFV2XlJ88vjZY4CaNKEfEgQ7DHqFaAAogTpv1eOabf0abRMgcWog4vwKJVhuq67voKNiUukHeuMwuffAgLIxPUFu4QxPsx+uc9lDEk1UubwO6WyeQMLaMANZkUOdTKTkxGwJjDPDw40KPeknar5FDXeeaR18hUkwFxwfpIYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8tKKvsf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753269506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NCsjaUI2FgWzArbYhZfq+jli7Z84VPLHoBN6tS76E3s=;
+	b=g8tKKvsfhM9C+pNay108G1RzAwlHCRywIbmgXnjvdqxhPsGbUqOYZCDwEIEaw7BnlQE7A5
+	+RC2asafdLfhdP7mok5fqaw+pquPV6TDA/Lj64ga1vG/kfKTttYeD2VU/b29gPV2kEMtpD
+	ETNAUV8Iz6zFduHxEYDOf2eF4uduEcE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-MJQEO0JiMW2PjRG4MzgexQ-1; Wed, 23 Jul 2025 07:18:25 -0400
+X-MC-Unique: MJQEO0JiMW2PjRG4MzgexQ-1
+X-Mimecast-MFC-AGG-ID: MJQEO0JiMW2PjRG4MzgexQ_1753269504
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4560f28b2b1so23196465e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:18:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753269504; x=1753874304;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NCsjaUI2FgWzArbYhZfq+jli7Z84VPLHoBN6tS76E3s=;
+        b=e8K+3s4hS15NH7YUtkBOQvDGuDWG2BV6Jd4jv64wNLlnFGsNBuzooPpo2Fhxx9zrwt
+         eCyGXSH9LfhmoX3krKLe8DHFJ8N7YAXlcr/hqvOdLI96kWmTb69bV4zYdLLwnEi+geFm
+         xFSEE7k0uNr4N5TH1lGeSiCpaX9QQbdTciH97vjugjn8/V3sSvZbRzb1sxrDCBtB2oyr
+         kuJt80z2C/+lV058RZMvlcPp2q726IfonQOaHIhjibRWwaAgLmmDt7I8SyzDJmNgcOiu
+         b/6hMeg1kE0TvdK2kCwdlcjKhsQ7VOOKywXCd4cj0KAfaeSj9NCjn7iU4hhtUVnSrYEi
+         eQrA==
+X-Gm-Message-State: AOJu0YyjrGPT7mSKHjVrD2kPrsFda8rLdY8mpiONZ5GbXAP+XxxTxTBM
+	mO+W4os/AAHposvNBiSI8bD/YHiC/5bhPwM8yzrdtLck+HkIUpjeo/XNfqR/WCLT1E24IryrmTL
+	KF1MwtjQn4Swe3GTbRTvWrRnuUsD750/MpAu8VvQNtYsqMWkhsRHVXNXnsVH5HE7o9w==
+X-Gm-Gg: ASbGncsOieVTDNX6tNGCnCotinoKnBB1c3Y/PSspE5zgYDzIa4pfAy6O8a1QKzFz2fZ
+	uN4uGl16jVOcnmwqAvzYz7XvcL5t19HnKYzNOFsLYN/G3PrtxKzcTgnabkbXQYq27YVPRWB7Ovs
+	lh8P7B9TpMyW23/MFkn5qXJJD2zzOAtrdiRadeoItdnGKmv6M1fOAUBWAYAPWzOP7/F0LGc5f8S
+	yp5PgoZpO9K7Fm/EG4QCGKJsA9IkwbqGDa3fDKwzL2nEP/0TFF/jBxYrMApSXCx0FBuKPdPPq8f
+	dFTqXLJerJwP3XELstPI3JPg+9uJOn6YlvKHwdjAH/oWKHQz3X1wXh8yl79Ex3LDZQ==
+X-Received: by 2002:a05:600c:3f07:b0:456:1d61:b0f2 with SMTP id 5b1f17b1804b1-45868d80dd4mr24977965e9.30.1753269503738;
+        Wed, 23 Jul 2025 04:18:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy5TCWxQoAdDPCS7gnjL4Nc9CVcn2kV1G0g/sNAUjUbZay7cLSZYcSITz14tFnwyBCBiPeDw==
+X-Received: by 2002:a05:600c:3f07:b0:456:1d61:b0f2 with SMTP id 5b1f17b1804b1-45868d80dd4mr24977445e9.30.1753269503141;
+        Wed, 23 Jul 2025 04:18:23 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586918c6c4sm19870955e9.11.2025.07.23.04.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 04:18:22 -0700 (PDT)
+Message-ID: <d6d432828fb542903cf87e1c0be57812cda92b0a.camel@redhat.com>
+Subject: Re: [PATCH v4 09/14] tools/dot2c: Fix generated files going over
+ 100 column limit
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Tomas Glozar
+ <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,  Clark Williams
+ <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Wed, 23 Jul 2025 13:18:21 +0200
+In-Reply-To: <20250721145254.WPp6FNzS@linutronix.de>
+References: <20250721082325.71554-1-gmonaco@redhat.com>
+	 <20250721082325.71554-10-gmonaco@redhat.com>
+	 <20250721145254.WPp6FNzS@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] dt-bindings: leds: is31fl32xx: convert the binding
- to yaml
-To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org,
- Lucca Fachinetti <luccafachinetti@gmail.com>
-References: <20250723-leds-is31fl3236a-v6-0-210328058625@thegoodpenguin.co.uk>
- <20250723-leds-is31fl3236a-v6-1-210328058625@thegoodpenguin.co.uk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250723-leds-is31fl3236a-v6-1-210328058625@thegoodpenguin.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 23/07/2025 12:02, Pawel Zalewski wrote:
-> From: Lucca Fachinetti <luccafachinetti@gmail.com>
-> 
-> Add datasheets for reference, NB that I was not able to find an
-> up-to-date, funtional direct URL for si-en products datasheet
-> so they were skipped.
-> 
-> Signed-off-by: Lucca Fachinetti <luccafachinetti@gmail.com>
-> Co-developed-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-> Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-> ---
+On Mon, 2025-07-21 at 16:52 +0200, Nam Cao wrote:
+> On Mon, Jul 21, 2025 at 10:23:19AM +0200, Gabriele Monaco wrote:
+> > The dot2c.py script generates all states in a single line. This
+> > breaks the
+> > 100 column limit when the state machines are non-trivial.
+> >=20
+> > Change dot2c.py to generate the states in separate lines in case
+> > the
+> > generated line is going to be too long.
+> >=20
+> > Also adapt existing monitors with line length over the limit.
+> >=20
+> > Suggested-by: Nam Cao <namcao@linutronix.de>
+> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> > ---
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 strformat =3D self.__get_st=
+ate_string_length()
+> > -
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxlen =3D self.__get_max_s=
+trlen_of_states() +
+> > len(self.enum_suffix)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tab_braces =3D 2 * 8 + 2 + =
+1 # "\t\t{ " ... "}"
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 comma_space =3D 2 # ", " co=
+unt last comma here
+>=20
+> PEP8 prefers two spaces before the comments.
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 linetoolong =3D tab_braces =
++ (maxlen + comma_space) *
+> > nr_events >=3D self.line_length
+>=20
+> Shouldn't this be '>' instead of '>=3D'? 100 columns are still within
+> the limit.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Right, will do.
 
+Thanks,
+Gabriele
 
----
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-Best regards,
-Krzysztof
 
