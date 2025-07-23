@@ -1,134 +1,172 @@
-Return-Path: <linux-kernel+bounces-742469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582E7B0F211
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CA0B0F21A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 560927B1ED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684911896904
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B522E5B38;
-	Wed, 23 Jul 2025 12:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170712E5B36;
+	Wed, 23 Jul 2025 12:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OR6+JZHd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WpgNnSAK"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E60289E3D;
-	Wed, 23 Jul 2025 12:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56325A34F;
+	Wed, 23 Jul 2025 12:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753273157; cv=none; b=g67mA9JMb+5G5o/L5VlfWhJ/cCufOEN+Gbuocd261CrORw6+g5BGAuqXb0o3fv+14QxJRPlabXiDDQxiDiTIbSgCoKbYkiWG2BoKHQ+FDg73euLZSj1N4NJzA4mvCcH4GQuQLmoFnhFY6CFJ7pQl9uGK8GhmoJg1rpitN6RQsw4=
+	t=1753273278; cv=none; b=pYvh7VMCB6HqbYPbiQCHKDG/BBf/qkz2t4OOPAY0H9wArCEYZw9y76veE7NhW6oripMtKVrEdYpPDoNaBSGjSCDW3lVZLyj8lvSNfqANfUMN7uUWBSWRjRKta+0mv1Pvfzcg+6sjZHSDrFOsR157UuJ64rT6LJoaGuNWoPXq0+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753273157; c=relaxed/simple;
-	bh=POuTDoQ9PpSydluEqziXn2gVwFFvN6mDSjaJOEBnvUY=;
+	s=arc-20240116; t=1753273278; c=relaxed/simple;
+	bh=GgZoqLPeuitrhx5PaJr/8XbVXKsJFtnCfPQOfvbkm0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtBe2mNt67vWBRI5gqVJUMyc7kzuBpupaL2kBF9cj84UvSJBfbTYhwv6QQjalXrPqQxpdI2Oz2puEyQswTYC/kXbs9M2jn6meTzOq+xHBISsjJSclLwWR0l0w754Ql3r9iwHBhoGirBJLkDxTIAukVoHvGAjdO5srSh1Wg8/Zdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OR6+JZHd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DB4C4CEE7;
-	Wed, 23 Jul 2025 12:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753273155;
-	bh=POuTDoQ9PpSydluEqziXn2gVwFFvN6mDSjaJOEBnvUY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUohQPim53d6UH+rdPzSSyUXoWTY6BRb9v+TA+wHBX2oaCL2MycBjtSmXIQzZC6JV6s1CRDdSjIi3gcD0KbG73pONRyk5BhG23vvqEHdhyH0gXOeKjj9HAqpTpy1OodCl5sULBp11UxevaCHdjj3qinYnEjqzzZ2tqheztZdtx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WpgNnSAK; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 202B3E91;
+	Wed, 23 Jul 2025 14:20:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753273236;
+	bh=GgZoqLPeuitrhx5PaJr/8XbVXKsJFtnCfPQOfvbkm0g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OR6+JZHdfGfBB+GjdRuPEkv2fUmvV3Ihf86Qs1cb/Z2FB/mmmnxMuw1YFMmB5a2h0
-	 2H6dDlD51Jglq3WSNPep/Ejjoyx6PxIdM8B0OFienVPR46GBB0MsV/9eN29M0Jw/vK
-	 fPAkga3FScth/T8fyiZLSl276bRhWpFYq/hoU9N4gmtqT6qqPTeMwlGhWV6O0e74Rl
-	 lh8312qzlCEJRCXLtKZrl+ywkQ74zVBuHKoXHD0/JG4DIaFZlHnR+c8NXNd066Z96d
-	 nCeyO0DkJPuxvZXtlkg1hhGz0+mYQYA0B1DTXSJyohf+bitKllSbVONZBpdY7FLy94
-	 BgaEPHKAfq2nA==
-Date: Wed, 23 Jul 2025 13:19:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/5] Enable USB audio offloading on Fairphone 4
- smartphone
-Message-ID: <00c2ac7c-763f-467f-8199-76de9f5d71b0@sirena.org.uk>
-References: <20250501-fp4-usb-audio-offload-v2-0-30f4596281cd@fairphone.com>
- <DBDAPORDD5IM.1BHXPK225E2PP@fairphone.com>
- <DBHIM4SA3OIK.PXX6HMDE93B8@fairphone.com>
- <ac3f1eb2-5830-4bda-bc57-c4d29c22aba0@sirena.org.uk>
- <DBJDZBYHR94V.1QGVALCL60M1X@fairphone.com>
+	b=WpgNnSAKga2gUmxG1DcGIqq1qjaOLOJ8hvX1HYRHIddO0MQswZjYvdx7SR3FTnsHE
+	 4616KoOuAlLQsaIxst+EuhceCgzuJcmQ/3Qnqk5tPZIYAKNrumQ77uDNPfnDFgOtFE
+	 U2lczvUHcRfllih0/MzbiDNDc36yrRDRRTFiT7hM=
+Date: Wed, 23 Jul 2025 14:21:10 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	entwicklung@pengutronix.de
+Subject: Re: [PATCH 0/2] parse horizontal/vertical flip properties
+Message-ID: <ffzxxsplmivvj7pib7n7lkutbyohl5npofdaxdxtoffo43yatw@gqm64zdgb4iy>
+References: <20250718-fpf-media-dt-flip-v1-0-75b3a938b4be@pengutronix.de>
+ <ryuew3kxnocj6uqq4nadp3kyaxg27rxlrgnaieyy2hlpz5jkd3@iyetnsbfanee>
+ <35debf21-bca7-480f-a61e-7b0494f10ca5@pengutronix.de>
+ <mljx67lkcw4kh3cs344iprik244cm7hqfckmg4bj5j5atuyt62@lh2ht4mrtkjq>
+ <3ac271c7-a67a-4f6f-935d-256937516068@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s26ZamLLlGnPk0Qb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DBJDZBYHR94V.1QGVALCL60M1X@fairphone.com>
-X-Cookie: List was current at time of printing.
+In-Reply-To: <3ac271c7-a67a-4f6f-935d-256937516068@pengutronix.de>
 
+Hi Fabian
 
---s26ZamLLlGnPk0Qb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 23, 2025 at 01:09:35PM +0200, Luca Weiss wrote:
-> On Wed Jul 23, 2025 at 12:57 PM CEST, Mark Brown wrote:
-
-> > As previously discussed they won't apply until after the merge window.
-
-> Sorry about that, I thought the conflict was for the 6.16 merge window,
-> not 6.17?
-
-There is a conflict.  You could check this yourself...
-
-> So I'm not aware of another conflict, that's why I was asking in the
-> first place.
-
-You were sending a content free ping:
-
-> > Please don't send content free pings and please allow a reasonable time
-> > for review.  People get busy, go on holiday, attend conferences and so=
-=20
-> > on so unless there is some reason for urgency (like critical bug fixes)
-> > please allow at least a couple of weeks for review.  If there have been
-> > review comments then people may be waiting for those to be addressed.
+On Wed, Jul 23, 2025 at 12:09:58PM +0200, Fabian Pfitzner wrote:
+> On 7/23/25 11:44, Jacopo Mondi wrote:
+> > On Wed, Jul 23, 2025 at 11:29:27AM +0200, Fabian Pfitzner wrote:
+> > > On 7/23/25 11:17, Jacopo Mondi wrote:
+> > > > Hi Fabian
+> > > >
+> > > > On Wed, Jul 23, 2025 at 10:58:28AM +0200, Fabian Pfitzner wrote:
+> > > > > There are cameras containing a mirror on their optical path e. g. when
+> > > > > mounted upside down.
+> > > > How is this different from 'rotation = 180' ?
+> > > If you simply want to flip the output (e. g. horizontally), you cannot do
+> > > this with a rotation.
+> > > The camera I'm referring to is not only upside down, but also flipped
+> > > horizontally.
+> > 180 degress rotation = HFLIP + VFLIP
+> I do not want to do both. Only one of them.
 > >
-> > Sending content free pings adds to the mail volume (if they are seen at
-> > all) which is often the problem and since they can't be reviewed
-> > directly if something has gone wrong you'll have to resend the patches
-> > anyway, so sending again is generally a better approach though there are
-> > some other maintainers who like them - if in doubt look at how patches
-> > for the subsystem are normally handled.
+> > Yes, you can't express 'mirror' in DTS, because DTS are about the
+> > physical mounting rotation of the camera. Sensor drivers shall not
+> > apply any flip control automatically, it's userspace that by parsing
+> > the rotation property through the associated v4l2 controls should decide
+> > if it has to apply flips or not to correct the images.
+> >
+> > What is the use case you had in mind ? Tell the driver through a DTS
+> > property it has to apply flips to auto-compensate ? Because I think we
+> > shouldn't and if I'm not mistaken we also document it:
+> > https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera-sensor.html#rotation-orientation-and-flipping
+> I have a camera that does a horizontal flip in its hardware, so the output
 
---s26ZamLLlGnPk0Qb
-Content-Type: application/pgp-signature; name="signature.asc"
+Sorry, I don't want to be annoying, but what does it mean "does a
+horizontal flip in the hardware" ?
 
------BEGIN PGP SIGNATURE-----
+In my understanding either "in hardware" means you can't control it
+from software (and so there's no point in telling drivers what to do)
+or you can control it from software and it's a regular HFLIP.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiA0zsACgkQJNaLcl1U
-h9AH6wf9ELo4l0meQaRhE0Vx8YMY2nfByC9Ukip/Q3TFsZ5P/t2r7WBg6LpGuB6G
-eCQe8Ij3e4NeK/gM1DOpSm4hAq9psN/hQJJ4TuTeIpXnHYj9xHWI7f6BD7Shl8TL
-rUdsxAdhmqFtks04vjgVBFI9ZzCKVrVgCgllgkv3qJFv24jPU89FED508O4v923I
-sh/95oHEe1SIsylpxWabv/qiV85mGyjzAwua1880+N4cTQb4+qpfPOJ5sF4Y26uv
-HePGs4rN7eQcf2EtrQTqIYkN3yjJwZ1FWSdmflPEgVh7jAEgy2/TPKwGV0hCvadt
-q9LG+Te7yykwpR31TYO4CecQNXSFJw==
-=FMQf
------END PGP SIGNATURE-----
+> is not what I want. My example above was misleading. The rotation fixes the
+> "upside down" problem, but does not fix the flip.
+>
+> Doing that in userspace might be a solution, but in my opinion it is a bit
+> ugly to write a script that always sets the flip property from userspace
+> when the device was started.
+> A much cleaner way would be to simply set this property in the device tree
+> such that the driver can be initially configured with the proper values.
 
---s26ZamLLlGnPk0Qb--
+Sorry, don't agree here. What if a sensor is mounted 90/270 degrees
+rotated (typical for mobile devices in example) ? You can't compensate
+it completely with flips, would you 270+HFLIP=90 ? would you leave it
+unmodified ? Userspace has to know and act accordingly, doing things
+in driver (will all drivers behave the same ? Will some compensate or
+other won't ?) is a recipe for more complex behaviours to handle.
+
+>
+> PS: I have to send this email twice. The first one contained HTML parts that
+> were rejected by some receivers...
+>
+> >
+> > TL;DR drivers shall not flip, userspace should. Mirroring is an effect
+> > of drivers applying an HFLIP, because unless I'm missing something
+> > obvious, 'mirror' is not a physical mounting configuration of the camera
+> > sensor.
+> >
+> > FIY we're talking about something similar in libcamera
+> > https://lists.libcamera.org/pipermail/libcamera-devel/2025-July/051533.html
+> >
+> > > > > Introduce two options to change the device's flip property via device tree.
+> > > > >
+> > > > > As there is already support for the panel-common driver [1], add it for cameras in the same way.
+> > > > >
+> > > > > [1] commit 3c0ecd83eee9 ("dt-bindings: display: panel: Move flip properties to panel-common")
+> > > > >
+> > > > > Signed-off-by: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+> > > > > ---
+> > > > > Fabian Pfitzner (2):
+> > > > >         media: dt-bindings: add flip properties
+> > > > >         media: v4l: fwnode: parse horizontal/vertical flip properties
+> > > > >
+> > > > >    .../devicetree/bindings/media/video-interface-devices.yaml        | 8 ++++++++
+> > > > >    drivers/media/v4l2-core/v4l2-fwnode.c                             | 3 +++
+> > > > >    include/media/v4l2-fwnode.h                                       | 4 ++++
+> > > > >    3 files changed, 15 insertions(+)
+> > > > > ---
+> > > > > base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+> > > > > change-id: 20250718-fpf-media-dt-flip-7fcad30bcfb7
+> > > > >
+> > > > > Best regards,
+> > > > > --
+> > > > > Fabian Pfitzner <f.pfitzner@pengutronix.de>
+> > > > >
+> > > --
+> > > Pengutronix e.K.                           | Fabian Pfitzner             |
+> > > Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+> > > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> > > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
+> > >
+> --
+> Pengutronix e.K.                           | Fabian Pfitzner             |
+> Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
+>
 
