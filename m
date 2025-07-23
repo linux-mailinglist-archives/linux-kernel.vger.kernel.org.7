@@ -1,306 +1,160 @@
-Return-Path: <linux-kernel+bounces-742380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F20B0F0EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:12:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39122B0F0F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E151AA1C5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C03B7A43F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED9289810;
-	Wed, 23 Jul 2025 11:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366DB2DE702;
+	Wed, 23 Jul 2025 11:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UJdXaofc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Nl9VYkZc"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0A8289E33
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97D82586C8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269126; cv=none; b=diI5BvdLDdWSFngKuN094bjSd+OR836DKxvKXMU09NCozJnykcAaFHiDir2Td9Q425jvnVP6AV7Amz6PkZ/fDAqb0akyL2/JEOPEATK9PpMUrAXM/cNi5kHFRYtfa7BOgvGZLoBX/sonPCIqxho3Aa3FYRpPjVDxr3g0cM4igZU=
+	t=1753269186; cv=none; b=Zt3kvX2tf10xJ6sI5R2cF79zvtxsCyNRm4Kps3cHVOSSH8R8H+LmRvBdfNl4xMhNag/7dLiulFMDRN3cqtWy6SFkoEBRLFedOECVKe2sLyFgzCKfCA/xMLxU8qOY9lHj3oWVseWJoKnaq/RUJSFswUMFafjMCqPb9euLgeZc/rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269126; c=relaxed/simple;
-	bh=hkdvBYSna1oG7Wdu8iY66NJUXKxJm4xL6CepgrPl/gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wq9Gc5fl2dcBMIxYf6dGkzxfYXgYjkUq2boJyGMLEQviqlb3WcsJyb6CDpz7eaxWLRbm+hROPPF1XAplrQRwDemWpKcI1wYmvSEj8jjCKMiicpQAzNFZJOAPpZgZ3P2t8gRRqm0LQWcSWZ89CRIxeCz+fbdYlrTYHa6E9HSYJIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UJdXaofc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9LhMP001765
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	j0VjeMPx+hhfBKfjETGJRw+SMh95RYSVHKRWrlXnn5U=; b=UJdXaofcZgDwAeKu
-	407OxHvK8Hn4sEdJ/xm62+w+A/vqZJjj7WeKbRoDIKYBpH6yrBJ79INmCWRN/80H
-	ZQiKvYfq7RnY9QSNnZpOSflOEXo85aHY/SxxUFxIIhsbUHhs8MOumIhNgU8JWR9h
-	1K6fjbW9z4jH3vmktzwu61nA0KuCMCb+HxDbySZm4BcMVFWi04/zmBv0IDmKYY3z
-	Nlrr1Zolhc610X7RjsFzLV+N7ph+fU4cQGUCai/dvfVeHiTJTi/ax9A3mMWH8Cd4
-	bFU3MtqYgZPIxTDfJRI9pVGmpl71uwXOjBMiyxyQky6B/go1jjYinFO4R7eNdgTq
-	FGgpXg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481t6w62gb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:11:57 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-706edda34f6so28088246d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:11:57 -0700 (PDT)
+	s=arc-20240116; t=1753269186; c=relaxed/simple;
+	bh=MPAX2RnsTcW0xXiyDmHG4NU6qmm1/0XOsZ82B8R6zzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tYwtNRN+aw/3cL0omMg2Ns4lu9IQ+6FYIJcwjZLPbXxUD5rT8fEdAXHLL8uDLO9ObjsnU3+9Myi1hF8QTQ9chyZrQCVaXHeLHGq7wo0SvPxPB9G+8YQZbFlT61pLUCKN3llQZBcyoodQhpg38g6O/BSlIzzyP8LkJCT230GfEho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Nl9VYkZc; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab5aec969eso120268751cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753269183; x=1753873983; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HytRhaegPRtNUdHVSaCnhiMj9eX1oCCXU5COax0hlbg=;
+        b=Nl9VYkZcn/iz5ZV2RcVXnqylRQaYyoHIb5NDMRFRLelnd7tzcXHtNirx8AYj457/Vk
+         DDCJlD/ipmd6SmfH4Gq148EP3V9Uot7pCUz4J4oftL1Rq5Tv8JLUDBgFbgrOn0eDfpZj
+         uLCwZGA3oSnWWWM9wBjABqbuhr5jAeJPuxQZw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753269116; x=1753873916;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0VjeMPx+hhfBKfjETGJRw+SMh95RYSVHKRWrlXnn5U=;
-        b=p75Q1dBbcE4Gj9ZVeoX4+8tkQCi3E45BlpHumdSkRx+qlg92BKPI5C3ycFyfjuO5Wj
-         wrYMxoOqVgejcyRtMlKbdRaX+GDbe4v1ABIhAax8HLzgreiA760oe22jczMD0/6UJL+M
-         gHH0lOxbya6tWgS5dCv3rI+bD71UdqUaunVanMvcAnUEcYSAKsnBmq6KB5dgCd5pgxOW
-         6mVe3xMcdhL+HwQyh3KmHQOY+Ww914F0JznTLgC2TCcTxdoqZKoNuHLukDwrkL3dzq+Y
-         ruGil8ZeYa6AMaxaj2MviJgbzM4Sv+wTARMDpOePEqp9WV0+f8XPhDaiXqXH+r1NBN9N
-         ld9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiB+a4KBaTc3c10ViZF6jC1ZWpib/39ERa/KLDrHxej+ZBdnlnOJmZmLrNMHIbc1GLVBKxC/flab6pmzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztqXwfExVRReK/OVdmljE+Ul3SzxuFNl4nCfDRXjWi5YPj/Wef
-	gsPmaL4qzIfiP8A4MZut9U/9xBTXAH+SG3bewq1NGaILrba0AmsjlmtOVDSknpXWtEgu+tNfRfn
-	YuURUPG8+PkRS5EkXuqn0ciIDBAl3Kl49SxgVbEOjcjCb+zzQD8CqyRh3RYpBp3e+Jbg=
-X-Gm-Gg: ASbGncsK9zvHPScZneSCy+y6F9KjJ4roTOVOO+h2mW/InXdICOIuSpx4x5Zm0VWLTML
-	k0o9eauZdJgQbsfBQzxe1rwwP6/5uGEvNBwml/RV0YYtgipsmYXjSO+LlUapeKqBiSELZPa/o0Q
-	Oue/gbewYysGtwFlW7HS2gpPJia0js0vxuVhldpvPITkatvplFnlS4N4dMV1MNVeTjKG4cDBdYR
-	JcZRMzKVFsq2LaJlIg0Kf1Qk5WeB1dpVIrrvdQSlxAFy03yJZklko4pCHEwGr4anzk0VFuFG4LV
-	kAyMBH6C/1EhaFuU4zsmvPpkG+EAc2nF0+auaXCAdKW6Dom1MQBuxfZbgBTunL3Eo2oU2Mxgb20
-	+RPIsvIi9aiKTZehX6rXdPWTkow6yMgbu9Qm9RirKRymF8IcakRhJ
-X-Received: by 2002:a05:6214:202e:b0:6fa:d9de:a3fc with SMTP id 6a1803df08f44-70700722b9bmr33142966d6.34.1753269116172;
-        Wed, 23 Jul 2025 04:11:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAliv5sNvk+3b+28VgVbpH434Z10+GwNfxjx4Yw8Dl6zlfkQH4ukDRejh6Shv9GMsLPiMb9Q==
-X-Received: by 2002:a05:6214:202e:b0:6fa:d9de:a3fc with SMTP id 6a1803df08f44-70700722b9bmr33142086d6.34.1753269115418;
-        Wed, 23 Jul 2025 04:11:55 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d7c54asm2285330e87.100.2025.07.23.04.11.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:11:54 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:11:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: rob.clark@oss.qualcomm.com, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/17] drm/msm/a6xx: Fix PDC sleep sequence
-Message-ID: <rr6zxamm5oqebfc3zq7qzfjt327owlsjvh3todjzfzkqn6cd2b@sgsrdg7kfqa4>
-References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
- <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com>
- <avni4utnzdmmafc2mf7aqgva3osbhuiqtia7gdngqswk5cmtn6@zo65ir7gyj6y>
- <CACSVV0346j2y-1Jkj=wasekYy5syax_E495AQZv0bvrrqwCSRw@mail.gmail.com>
- <f1070069-7220-4351-845a-2929d1e65a71@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1753269183; x=1753873983;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HytRhaegPRtNUdHVSaCnhiMj9eX1oCCXU5COax0hlbg=;
+        b=ifxkXVWbMUpHcBcNiWFFNdym1sbL9uNCT/wT0TtUvjZGBSqn6w+wH/xqP2oXx8x0xY
+         G0j+TqmkC8KZisA30rV312UV/qG5+juC/4LfXwL4vu5LaP+tlJWCipptDvXxX6LSFtFt
+         aWMlfOU8IOMOnpBXaOYMOahkW/i+GauZBvrjdq1cNoNoXBxfpsTdmmQqddRhCC5nF/Nv
+         TL2WVNaKPV5TyMuW7hLhpvNRujAienbvdNeNgASH+BMmkS9eJVL557y6Yg/gwOIZAMRv
+         /iQ2Lzg3BIbSDWYRuV51Zsj2rgbj9jtGEKt3Y6vuF7DTvzeQNOgzbadMcx1mmrpE9vFu
+         EEGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1pwTzeJWtva2W0wjNBv8/Zx0p/+XnxrKTNXmeGhKSbsl8+c3e/WuSnyXdmebdX1fjOpEOULyYNc2hEUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTptZqiM2lrhYLX9yOAfblt9BivCqD6iuasvcoynR37uqhk3sH
+	RaBdnShRj6NwKLtfJv2OUJK+myB8/T1a3VaYnpB4EJnRC8Urq7A8qHDnNGiGbth5unKvly1sgtE
+	BR2yqCUnE
+X-Gm-Gg: ASbGnctNqjlP+Iq8Vhkb3D/gNViFPcyvd7s99XokK0p+iNf+ndbHi8LSLhk6/rFDjQb
+	MzNh+tVHYag4/xtJoxsmCbvqQAn8IwkaENAhgxNYPOjO3WtI/lsJBq2noEgj5inS0PIJeNKbfUn
+	TMQbGX42bX8Ihdf3hwYECbG0FFk7FCqFNgeWxeY6PyGFDSfQPkw16cu2QqvKuBxpdCCCxbNPyMh
+	GgS9oqtGTJSmcw+cE+BEfAOdYo8lnDk1UgE+iay/RHxuHPyDPMFrdpPLHM2crev5XoDjCzUs9Yv
+	RgJVpz11L3worpFIL4YuUaqGp5XSMURbCiAl1ujuzbzVsmbwdzxLPd/DHbANuzXx/R1Z5z1Gkvt
+	t45BcCkpAHO3803qKbWLzAjNAaqHbmPLGzIkuspmJ9lyqp2HqzPBx
+X-Google-Smtp-Source: AGHT+IF3h2F7JQLYHnJObVwTaoPJg3PNc1Ms0PHHT8Xq6utf7IeAwcG30GcnVb+4+s+XP9N23Qq/Cg==
+X-Received: by 2002:a05:622a:5813:b0:4a9:8ddf:83ee with SMTP id d75a77b69052e-4ae6dfd22cfmr39254691cf.46.1753269182626;
+        Wed, 23 Jul 2025 04:13:02 -0700 (PDT)
+Received: from [10.176.2.145] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49802efsm65616941cf.7.2025.07.23.04.13.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 04:13:02 -0700 (PDT)
+Message-ID: <8bad525e-420c-4870-a6dd-bd28dfd4708c@broadcom.com>
+Date: Wed, 23 Jul 2025 13:12:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1070069-7220-4351-845a-2929d1e65a71@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=SPpCVPvH c=1 sm=1 tr=0 ts=6880c37d cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=wNNrqZBiHP9T-vZZJccA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfXzYAwly7R/amM
- rlY7vqJzg3+GoGGm2xq+9dcF1YRTGoox5P9forelv0570BNjEynmdXlwnh2ltfZNcQyM9Tc49TT
- bTmjQiwTc+xmLFrcQ/VnJe4L+BpmpL4I2w2vcYq+0bZAxReM3AH72vq6/uQImpndQSkePeeqmav
- U8LA49urLuD6H3ES26Tod6kjXtMMjj5GUHrgRKPXaXEPnX/+cJkml9Zxv2E+Qy7Qv4zFjmLSoY7
- 3abEeASpHosQD6sXp1VwNnypllqV+dyGytRhUXGBUGPg6RUcYZhW2PW4voFdhhxC4522CeOXo7f
- DVAiS0l/B1sRmaO1cuhqG8M9oi02VnseL7kPhRLFcyqs0knBZADfwp59MVqVPqcXAn/aR23uzlO
- Ava4HJ0iGAxPdlKHCtqHFZ/jD5GiMwNZsS4UaEVVz85sHWCOfRsP30+jcVqXGrFFIboHztMk
-X-Proofpoint-ORIG-GUID: -2Ek8bVG-Bz_NMErr7uCM2VA2Ze2PDeu
-X-Proofpoint-GUID: -2Ek8bVG-Bz_NMErr7uCM2VA2Ze2PDeu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230094
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] wifi: brcm80211: Remove unused functions
+To: linux@treblig.org, kvalo@kernel.org, linux-wireless@vger.kernel.org
+Cc: brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-kernel@vger.kernel.org
+References: <20250626140812.56700-1-linux@treblig.org>
+ <20250626140812.56700-2-linux@treblig.org>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20250626140812.56700-2-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 02:35:31AM +0530, Akhil P Oommen wrote:
-> On 7/22/2025 10:56 PM, Rob Clark wrote:
-> > On Tue, Jul 22, 2025 at 6:33 AM Dmitry Baryshkov
-> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> >>
-> >> On Sun, Jul 20, 2025 at 05:46:06PM +0530, Akhil P Oommen wrote:
-> >>> Since the PDC resides out of the GPU subsystem and cannot be reset in
-> >>> case it enters bad state, utmost care must be taken to trigger the PDC
-> >>> wake/sleep routines in the correct order.
-> >>>
-> >>> The PDC wake sequence can be exercised only after a PDC sleep sequence.
-> >>> Additionally, GMU firmware should initialize a few registers before the
-> >>> KMD can trigger a PDC sleep sequence. So PDC sleep can't be done if the
-> >>
-> >> s/KMD/the driver/
-> > 
-> > IMHO for gpu things "KMD" makes sense, to differentiate between kernel
-> > and user mode (UMD).. this is perhaps different from other areas where
-> > there isn't a userspace component to the driver stack
+On 6/26/2025 4:08 PM, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Ack
+> This is a subset of unused functions in bcrmsmac phy_cmn.c,
+> They're unused since the original 2010
+> commit a9533e7ea3c4 ("Staging: Add initial release of brcm80211 - Broadcom
+> 802.11n wireless LAN driver.")
 > 
-> > 
-> > BR,
-> > -R
-> > 
-> >>> GMU firmware has not initialized. Track these dependencies using a new
-> >>> status variable and trigger PDC sleep/wake sequences appropriately.
-> >>
-> >> Again, it looks like there should be a Fixes tag here.
-> 
-> Ack. I guess it is not a bad idea to backport this one too.
+> Remove them.
+> Then remove two more functions in phy_n.c that were only used
+> by the ones just removed.
 
-Please add cc:stable to the patches that need to be backported and make
-sure that all Fixes are at the start of the series.
+Tested on BCM4313 card.
 
-> 
-> >>
-> >>>
-> >>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> >>> ---
-> >>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 30 +++++++++++++++++++-----------
-> >>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  6 ++++++
-> >>>  2 files changed, 25 insertions(+), 11 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> >>> index 3bebb6dd7059782ceca29f2efd2acee24d3fc930..4d6c70735e0892ed87d6a68d64f24bda844e5e16 100644
-> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> >>> @@ -279,6 +279,8 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
-> >>>       if (ret)
-> >>>               DRM_DEV_ERROR(gmu->dev, "GMU firmware initialization timed out\n");
-> >>>
-> >>> +     set_bit(GMU_STATUS_FW_START, &gmu->status);
-> >>> +
-> >>>       return ret;
-> >>>  }
-> >>>
-> >>> @@ -528,6 +530,9 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
-> >>>       int ret;
-> >>>       u32 val;
-> >>>
-> >>> +     if (!test_and_clear_bit(GMU_STATUS_PDC_SLEEP, &gmu->status))
-> >>> +             return 0;
-> >>> +
-> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
-> >>>
-> >>>       ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
-> >>> @@ -555,6 +560,11 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
-> >>>       int ret;
-> >>>       u32 val;
-> >>>
-> >>> +     if (test_and_clear_bit(GMU_STATUS_FW_START, &gmu->status))
-> >>> +             return;
-> >>> +
-> >>> +     /* TODO: should we skip if IFPC is not enabled */
-> >>
-> >> Is this a question or a statement?
-> 
-> It was a reminder to myself which I forgot to revisit later. Will
-> addresss this in the next revision.
-> 
-> -Akhil.
-> 
-> >>
-> >>> +
-> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1);
-> >>>
-> >>>       ret = gmu_poll_timeout_rscc(gmu, REG_A6XX_GPU_RSCC_RSC_STATUS0_DRV0,
-> >>> @@ -563,6 +573,8 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
-> >>>               DRM_DEV_ERROR(gmu->dev, "Unable to power off the GPU RSC\n");
-> >>>
-> >>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 0);
-> >>> +
-> >>> +     set_bit(GMU_STATUS_PDC_SLEEP, &gmu->status);
-> >>>  }
-> >>>
-> >>>  static inline void pdc_write(void __iomem *ptr, u32 offset, u32 value)
-> >>> @@ -691,8 +703,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
-> >>>       /* ensure no writes happen before the uCode is fully written */
-> >>>       wmb();
-> >>>
-> >>> -     a6xx_rpmh_stop(gmu);
-> >>> -
-> >>>  err:
-> >>>       if (!IS_ERR_OR_NULL(pdcptr))
-> >>>               iounmap(pdcptr);
-> >>> @@ -852,19 +862,15 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
-> >>>       else
-> >>>               gmu_write(gmu, REG_A6XX_GMU_GENERAL_7, 1);
-> >>>
-> >>> -     if (state == GMU_WARM_BOOT) {
-> >>> -             ret = a6xx_rpmh_start(gmu);
-> >>> -             if (ret)
-> >>> -                     return ret;
-> >>> -     } else {
-> >>> +     ret = a6xx_rpmh_start(gmu);
-> >>> +     if (ret)
-> >>> +             return ret;
-> >>> +
-> >>> +     if (state == GMU_COLD_BOOT) {
-> >>>               if (WARN(!adreno_gpu->fw[ADRENO_FW_GMU],
-> >>>                       "GMU firmware is not loaded\n"))
-> >>>                       return -ENOENT;
-> >>>
-> >>> -             ret = a6xx_rpmh_start(gmu);
-> >>> -             if (ret)
-> >>> -                     return ret;
-> >>> -
-> >>>               ret = a6xx_gmu_fw_load(gmu);
-> >>>               if (ret)
-> >>>                       return ret;
-> >>> @@ -1046,6 +1052,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *gmu)
-> >>>
-> >>>       /* Reset GPU core blocks */
-> >>>       a6xx_gpu_sw_reset(gpu, true);
-> >>> +
-> >>> +     a6xx_rpmh_stop(gmu);
-> >>>  }
-> >>>
-> >>>  static void a6xx_gmu_set_initial_freq(struct msm_gpu *gpu, struct a6xx_gmu *gmu)
-> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>> index b2d4489b40249b1916ab4a42c89e3f4bdc5c4af9..034f1b4e5a3fb9cd601bfbe6d06d64e5ace3b6e7 100644
-> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>> @@ -117,6 +117,12 @@ struct a6xx_gmu {
-> >>>
-> >>>       struct qmp *qmp;
-> >>>       struct a6xx_hfi_msg_bw_table *bw_table;
-> >>> +
-> >>> +/* To check if we can trigger sleep seq at PDC. Cleared in a6xx_rpmh_stop() */
-> >>> +#define GMU_STATUS_FW_START  0
-> >>> +/* To track if PDC sleep seq was done */
-> >>> +#define GMU_STATUS_PDC_SLEEP 1
-> >>> +     unsigned long status;
-> >>>  };
-> >>>
-> >>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
-> >>>
-> >>> --
-> >>> 2.50.1
-> >>>
-> >>
-> >> --
-> >> With best wishes
-> >> Dmitry
-> 
-
--- 
-With best wishes
-Dmitry
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>> 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_cmn.c | 128 ------------------
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_hal.h |  11 --
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_int.h |   8 --
+>   .../broadcom/brcm80211/brcmsmac/phy/phy_n.c   |  19 ---
+>   4 files changed, 166 deletions(-)
 
