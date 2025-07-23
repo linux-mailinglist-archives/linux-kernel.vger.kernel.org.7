@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-742793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B432B0F6C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:16:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859DAB0F6C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA5B3BE916
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB21164142
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E06C2EB5AC;
-	Wed, 23 Jul 2025 15:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F322EACFD;
+	Wed, 23 Jul 2025 15:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="IWkwUuPr"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6Nkl8/j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733222E542A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AB92E6108
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753283432; cv=none; b=GzRMRlr9WvadprpVMDA3EmTtYhq7Gf4QkrSyGEmfT+74NNIG41NMtLVEXYWwG0tHb9dIWISl9J9DW6Ci/1SHyR9qkpZEDpL3g+7yE8TGEaa3QxQdQ+f+TKeEAoURjb/XLb85evRN9puqLhxlrbsuuSlY+K3weFWpJOxWK8NpAJo=
+	t=1753283488; cv=none; b=uJyETOaVR0D8HA9G5oHUTC1zvCcOPYzXmHJNC4647EVfcOGFsG9j5yzz/vr2q0i33gqKkWRpElSkl6r+7qC0MWCCnaLv6iAdo5yqxJOX4Yh80OogZ9K1VyyFsz3JYBID6NtPCVs2KKewxZVS0eVt7KKlbSzjIRP8Q8nrFwHkX74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753283432; c=relaxed/simple;
-	bh=s9X3Rf4iKvd8tihzYDWl7G2SYC11kejhiYfJ2FtSKJ4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=ubllsiVmEp6pvGU8bKy50/JeZhGWw4lAR7fgjB0dCpzuXeQ5ZSus6erI46cF6QfkGGrf0luCnaTtGeplFQlyrNZBVgvRf+r+ztOL6VS36yngAmjLWlVAiWkNZAC4FWDgT+DoKq/KDdC850EMmPnxgz7GTdYUCGmZ5zseU6O4TD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=IWkwUuPr; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-75ce780af03so38136b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753283429; x=1753888229; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UuChy1LULay+ShDL03IJdTFrOKC/jWx8pEhX699NilY=;
-        b=IWkwUuPrIpKXTGqhnVt3lRl+2UlmxYF/OhDKZZRRNJE45l3GBqGD0sS+MNVh1YZwHu
-         ToNbcTx7YZCG0PGJJ4cjLXQol6PKWBQtHgtKLfW59f2SHVDv68B50kJHitqg1Vly+9wa
-         v7i/xQCFE5sM0fNGH6h0jhpgj8DrlV+OMCiwGR4Bfte5SKBj0fihLMQJaUzqpwP9H7Np
-         3IZaAYS7t/pQ/dEqIKi2RHSmXltWmBFqs+YiCYrJuFS6FNtZuiiEzOcGaZwT8DzpkI6p
-         FYP+E+TNQqDFR+Kah0xH+48yypHXcl9owut7qUN1DhOC0kV1+dR4Ehphqdn6kmnFxWJ4
-         JFdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753283429; x=1753888229;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UuChy1LULay+ShDL03IJdTFrOKC/jWx8pEhX699NilY=;
-        b=TVGccsciIQ9vPRA+YlAohH2NuECxzfkpS2t3V3TTTwFXLFsJrb3biRMlR3Ko/gUKu/
-         6gn6HSPhHZ1HpFeOZyzrEPVjGadO/54T077Ph2JFHwy4HlMCqis62VuYo7cJiYN4yeF5
-         /a5vpyyYsxFUXbkXAs3PD+pgq5R6ZSU63NgRnjur+BBEttFO4sXI2nAtF3okYt4oaWtE
-         YL5Mnl6wZvO/Nbj9Asw6Gn5M2wS69T/1drl+OuyVZDIr9xuIHwoaUVnKTexyVTsSiccO
-         vE7D1EXgjnlaujc061UuouU1ALmdVm1Ls7kuu79gO5+YyzJlzPPWLFR+3uu6J4ElxQyj
-         1c1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSx2a1NO4Ki1UNDTeZOVbA4NfEa8WdGqxr6HuieZv4TZd7US42Butvmq+nHI45lItaY7osB7spBE94xQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt4qAFfVUL3gYSZsMoJlNxmHVy5dSE2E7rSghYXbaysxtoxXPM
-	xLEix7FZq2mnsYd3rMiR3d5uWWDrl0jo9gUpT6P0ts+ZyZ9iJvePWteLi0N3GrJPJqk=
-X-Gm-Gg: ASbGncvp8Wtq0x2U5z09tlzDQdwxBy1e64bJzZcOFaFdUyx92T82X7w03nVoLVzwGUC
-	sN3xvP69AkaXVBpag2cfPK8hOsth2WYTR4FUE9IQnf3DjMJXDkazwIvQTyauQ2s4rOhQzn8yd/L
-	YYizLbgoCj0fo/C9EDCB7PO1f7RWSSg0aKKmLZl59lEJ/VsM6vOr5DjxaLkFKBspsu7xX8eCk0B
-	wY3Id/yM5oLIgnCKXEhm/CegwnKfZWkb4Y9c+mLTsr7M4wyDhzwg+4zz8nrcNrHF0lTpIk3QwJk
-	Idbg9/EJ0owShcEQYyqjTwJRRXHxAvOdjlF7yKdMOCPy6Pfvz0XzeZ0KZuxhj6vOZuX+UT9bf95
-	R0Ns9rrNVgSU6fhBm6fTc5ZZoV/M+Hg==
-X-Google-Smtp-Source: AGHT+IE+co2aDTbuxqywk9VXXdq95Qx32EuhMNzguqNw2C4YBMnkv2fPJd5DUodgNwdXPUs40Wvm1w==
-X-Received: by 2002:a05:6a00:a1c:b0:748:eedb:902a with SMTP id d2e1a72fcca58-760353f328fmr4564271b3a.17.1753283429448;
-        Wed, 23 Jul 2025 08:10:29 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb1569absm9971551b3a.68.2025.07.23.08.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 08:10:28 -0700 (PDT)
+	s=arc-20240116; t=1753283488; c=relaxed/simple;
+	bh=oc0P8ERxpXVegYBaOtcr4pHGWRZMIAyx2p+ia7TZ6Nc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ek49LKMtkmYVjP+OgoOR9dl8/QY2K5Sf49fhrn0ph7nhCQKLLPHG4rE5Hy8RPTXkCzVF+eaDaA374dIpeAVyatkLsUhkOkCrjq3ma5/x3vyUlm6KkF/Twm0E1nUtNg1GiY6X98lrQEapJN5Mlke2qghE3Y2ZpXbu9c71u4ipHnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6Nkl8/j; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753283487; x=1784819487;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=oc0P8ERxpXVegYBaOtcr4pHGWRZMIAyx2p+ia7TZ6Nc=;
+  b=d6Nkl8/jjJZBU/gjlwwEEZ0aVCPf0A5vknhGZ0oO2W4bZOSpb3u5jZYj
+   yntyPlpJ1xmmYYpyIwH1Xw9r6OGVjVAlb0AohIuIUuXUva+76k+VJx0cv
+   drFF+b/oxVgmxqj5HwpyYNqO/+jUfwQjq1+usDOdRe4krRHutmFgHtCEG
+   k4PL7uGFpW1k+mszEqFyj1podCUsM5jvLQcb9gKWb34I2Vxt+IcKNa6C2
+   G4Bvww0Hv2doVYiEtR7bKRGmx0tE6tmzA1vQ/yBQqLhhQDnvLorQbECVU
+   b35jYL5Q69AQBByCefvUVggtvsdWvvhiJNIVOXMr43ntODKX/7DIKDSsi
+   Q==;
+X-CSE-ConnectionGUID: AG+Xd3HmTVWwEX1Ttx+SUA==
+X-CSE-MsgGUID: Lxse0QUtRrO4KBEXbO+dfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66643927"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="66643927"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:11:27 -0700
+X-CSE-ConnectionGUID: h9bdulkITYS2MPYARk/TTw==
+X-CSE-MsgGUID: 5xy6TjZrTqy1MMK2NtkLwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="159655222"
+Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.108.169]) ([10.125.108.169])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 08:11:27 -0700
+Message-ID: <c99e3b89-0b46-4803-997c-e6634268bcd8@intel.com>
+Date: Wed, 23 Jul 2025 08:11:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.16-rcX: crashing way too often on thinkpad X220
+To: Pavel Machek <pavel@ucw.cz>, kernel list <linux-kernel@vger.kernel.org>,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz> <aID6XPLXuGo+ViTm@duo.ucw.cz>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aID6XPLXuGo+ViTm@duo.ucw.cz>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 23 Jul 2025 09:10:26 -0600
-Message-Id: <DBJJ3QS0PN8E.3VW8UD9HEQAA6@brighamcampbell.com>
-To: "Doug Anderson" <dianders@chromium.org>
-Cc: <tejasvipin76@gmail.com>, <diogo.ivo@tecnico.ulisboa.pt>,
- <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
- <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jianhua Lu"
- <lujianhua000@gmail.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Jessica Zhang" <jessica.zhang@oss.qualcomm.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v6 1/4] drm: Create mipi_dsi_dual* macros
-From: "Brigham Campbell" <me@brighamcampbell.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250722015313.561966-1-me@brighamcampbell.com>
- <20250722015313.561966-2-me@brighamcampbell.com>
- <CAD=FV=XGO5y0F40oaOANW-r-q5qZPFYRwO7aQHi3R6Ag-aeMag@mail.gmail.com>
-In-Reply-To: <CAD=FV=XGO5y0F40oaOANW-r-q5qZPFYRwO7aQHi3R6Ag-aeMag@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue Jul 22, 2025 at 10:20 AM MDT, Doug Anderson wrote:
-> On Mon, Jul 21, 2025 at 6:53=E2=80=AFPM Brigham Campbell <me@brighamcampb=
-ell.com> wrote:
-> add/remove: 0/0 grow/shrink: 0/4 up/down: 0/-8754 (-8754)
-> Function                                     old     new   delta
-> elish_csot_init_sequence.d                   758     379    -379
-> elish_boe_init_sequence.d                    846     423    -423
-> elish_csot_init_sequence                    9136    5380   -3756
-> elish_boe_init_sequence                    10192    5996   -4196
-> Total: Before=3D33880, After=3D25126, chg -25.84%
->
-> So the new way of defining mipi_dsi_dual_dcs_write_seq_multi() did
-> indeed give a pretty sweet space savings! :-)
+On 7/23/25 08:06, Pavel Machek wrote:
+>> I have had 4th or so crash with 6.16. That's not usual.
+> Two more crashes today. Last one was with 6.16-rc7+.
+> 
+> Ideas welcome,
 
-Interesting! With as much as I've heard about compiler optimizations,
-I'm kind of surprised that the compiler didn't do a better job before
-redefining mipi_dsi_dual_dcs_write_seq_multi(). It's nice to know what
-to expect when the rubber hits the proverbial road.
+Still nothing in the logs?
 
-> This patch looks good to me now. Thanks for putting up with all my
-> requests. I know this is a lot bigger than you thought it would be
-> when you posted your first patch, but I appreciate you sticking with
-> it!
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->
-> My plan would be to give this series another week on the list. If
-> there is no additional feedback then I'll plan to land it.
+The age old idea of getting console and trying to capture an oops always
+applies.
 
-Thanks, Doug. I appreciate your patient suggestions. Waiting another
-week for any additional comments or suggestions sounds good to me!
-Thanks for letting me know.
-
-Brigham
+I've got an x230 sitting here that I have an ExpressCard serial port
+for. There's also netconsole and xhci debug cables.
 
