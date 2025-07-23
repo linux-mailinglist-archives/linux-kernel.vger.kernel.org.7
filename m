@@ -1,236 +1,133 @@
-Return-Path: <linux-kernel+bounces-742072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FCCB0ECC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17AEB0ECC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905C06C2473
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CF84E4B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB72279DA8;
-	Wed, 23 Jul 2025 08:07:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C65278E41
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072C6279DAF;
+	Wed, 23 Jul 2025 08:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uz5X5GNB"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E85FA95E;
+	Wed, 23 Jul 2025 08:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753258019; cv=none; b=u7KEZbQGzbXfmZ0sJ/oZHvKZSQs85W/Be9a5cTwlyjcmnLYpvCmnC+1xrcnjXvdNKObOojGmBE7ouiJC2/SzNlSJYVr5ekEhFCTzjOZGsdiYb9paXblHGkEYOdkysfRoj5fHMSL+MV7RxEmIOcFkikrF8JCjNpksFS64lMjWgF8=
+	t=1753258017; cv=none; b=OR8SnWl8IJodf0tuiGBcEOtieRZB5CGcEUeRUeMULHSLrSMhUbwu19gWIc0OXTOnrSYv5YhlP9U754LTSdbb92GpCQ2sFG973azYBamWTWsY54IuUMyRw6getgfM4RtEI5xVsFpBVSrkbJdzYM69sD+wqvm+gA8jII/TX8z8nUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753258019; c=relaxed/simple;
-	bh=dJpqAdH66+jKlXtR6LH6dbpmazKnzwo4yl0JhrdgI2w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kdqBvEJ9VIYGIGOvav0dy5PDAu7b8K4E4aVTOiVKq5yFUQcRG112ZI7/eBFxL1gzZPjyQu7/zYpuocZWqcOT0//h81eLx18UY8gaEQfsA+64/FJWkPO7DDKmDOjzjWg6G3WqzXg0hmzOo3YaQ5VsvU4ciyVGXpi6hnD+JHaxlSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxQK0SmIBoYyowAQ--.14846S3;
-	Wed, 23 Jul 2025 16:06:42 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJCxdOQQmIBoO+kiAA--.49850S2;
-	Wed, 23 Jul 2025 16:06:41 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Xi Ruoyao <xry111@xry111.site>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] LoongArch: Implement physical address with ELF program header
-Date: Wed, 23 Jul 2025 16:06:40 +0800
-Message-Id: <20250723080640.442339-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1753258017; c=relaxed/simple;
+	bh=eReIPFAY2mPW2djMpM8mJndQ9Ys2wnTjSj4ff9CRYo4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r0EsLtjNRwPYLD/CnkZ7PkpUV/VuYxQyvVImHkbBpQ8ga9/7IEBbfDpXSUzjVkIkog7l5aM/jtXMGup5TCLDwFj4A660R8tTcUZ7/kNTZHPqNj4ZDCq/zrFiKnBud69iOjVVHEUkWSCtZ3fA2HzXel0ZlXxzgVzvJsDIG4Q/x4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uz5X5GNB; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso3690004f8f.2;
+        Wed, 23 Jul 2025 01:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753258014; x=1753862814; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x4hGp9dWQqyiag09FeN6D2BgolKXHwVBXU9K7yKNplY=;
+        b=Uz5X5GNBybJNHmdxnrapW5knFom3KPzRV4g6wEEzoHHX4VgMiBd84kUj7OxO5Wdh+A
+         ghOv/ZDOQipdhMvtrP8HeiGBArtgTiIXlOjQHP8XkhrW6nSdWKUsz/RIdnFTDbQekan3
+         8Bxdyl4sH82WDU+7S60KzyfgywtlKPcdd++DNRZ/WJJYsXJ1tMmjBGbWwWkyHLdF+sXv
+         o37o6nKQJMPD3H3dLn5jj7Tu2FcpUlnjkNBR7Z0OBa6mLkkhipUxX3PCadJsl+Ih6dib
+         +RypCmnx9+LgxsKBQkIUU8O5MDdU8uPIHt1kFsnwfMMX0TyOkn8S8AEbcfa2nzw0fAbd
+         IZNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753258014; x=1753862814;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x4hGp9dWQqyiag09FeN6D2BgolKXHwVBXU9K7yKNplY=;
+        b=IxvguqfELj6m5TFjBBypP8SfhjG85uNSOxCp/51KnqYjttKu30P/z+6qPzIh/Adqud
+         ZdZTXQDaMvVaJ7QcHcZX/3bLwUMRNe3+QamytU8JTSwyrReGhODzFfvOsfehy/NRzKA/
+         9kD4p7DpCM1FoNRwkMbkM8Fxc7MzbKbnXIOv1t/RCIU6fJy5uSlRecXJgjnmyPfdAra2
+         xbxcfhwCVOtQlGLj7THtBvTShQi3d6fRmE1iUJlbZVbCfQBF8mtltVNktr3wv/XLtd4H
+         bKv/oOVapByBCx9IEgihLfKfNK6MjwJUkxbH7muXk37K42st5Uroc79FF9wFoTE57PLX
+         rdUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXlIKJ4XMi18/tplI1au+SRXBT1le4EifAv/4RDsQM0db/Z2PARmNErau5p1N5h7/ggp+LIk7PD3IWIgpZ@vger.kernel.org, AJvYcCXapBaf0TBwIrgzN+RucrtJzkrWag+t8IApfElhSe+LUFvd++a4rx74957axoHv2GqypjvJ8gozBev4bCKr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxmMn+7n89evSSLFDyKpKZRBTILdsdu8UqUQiwZTcCTsN82q5D
+	ZJS1ukc0flLmJsT8qwVBeQfa2Yi8FHkLasaT8oWd2pD7oEvZGj/jx5cP
+X-Gm-Gg: ASbGncvEW+8i8Ujv4qQ0wq6YXX6Qv2m0l6m6ntIzKO5J4AbX942Vw16BrmAViHNoanC
+	FONq573abyA3VhcDWw/xxqjTaUu8I9OtvWN5d4hFs40/Bj++uubt28V6PdIxxO0O2NKnp3I+E1E
+	Qa5zLJ3Ewj/mVl0a+l5hnu7FBHXuLReXZIdsQ5k7kt80/wl7QHkXD7oJicGnzj8OymODr3mMabw
+	u2qmU99RLGsu4ncJTwa0RnYAhdMOjZXdkBPLO03PHh1y5Lrxky8RFpNmYQ5lKZX+q61NB459rcX
+	Ik6Ae29jpI9wGPqr862vhwL3UiiaVk2xZ1smOCDMGyeFehoS1gTF75M/M1zsX7839ReUL+lF4PY
+	B36x5RflDTdf83rItNCSi7oLLzEvB1jkcqCBxpdWp6NKJD/KuhN4=
+X-Google-Smtp-Source: AGHT+IEib0qqC+Z0x4lzasRoTtea/6+PQdl+D0+gVXii4BSRmjOi2y+wPGZYjjKAmHCqtrEeRr7YUA==
+X-Received: by 2002:a05:6000:40df:b0:3a4:eef5:dece with SMTP id ffacd0b85a97d-3b768f163a7mr1507259f8f.35.1753258013571;
+        Wed, 23 Jul 2025 01:06:53 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca315basm15560899f8f.39.2025.07.23.01.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 01:06:52 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Wed, 23 Jul 2025 10:06:43 +0200
+Subject: [PATCH] spi: spi-qpic-snand: don't hardcode ECC steps
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxdOQQmIBoO+kiAA--.49850S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250723-qpic-snand-fix-steps-v1-1-d800695dde4c@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABKYgGgC/x2MQQqAIBAAvxJ7biGNkvpKdDDdai9mbkQg/T3pO
+ AwzGYQSk8BYZUh0s/ARCqi6ArfbsBGyLwy60V1jdItnZIcSbPC48oNyURT0/bBoZ0yvnIeSxkR
+ F/ttpft8PSRevKGYAAAA=
+X-Change-ID: 20250723-qpic-snand-fix-steps-d69b2c7761cd
+To: Mark Brown <broonie@kernel.org>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-With structure elf64_phdr, field p_paddr is physical address of the
-segment. And it is convenient for qemu to calculate the physical
-address when directly boot ELF kernel image.
+NAND devices with different page sizes requires different number
+of ECC steps, yet the qcom_spi_ecc_init_ctx_pipelined() function
+sets 4 steps in 'ecc_cfg' unconditionally.
 
-Otherwise QEMU needs convert virtual address p_vaddr into physical
-address, the conversion logic assumes that DMW method is used where
-48 bit physical address is supported. However with direct MMU mapping
-method with start address from 0xFFFF800000000000, only 47 bit physical
-address is supported. QEMU cannot assume the kernel behavior at kernel
-loading stage.
+The correct number of the steps is calculated earlier in the
+function already, so use that instead of the hardcoded value.
 
-Here add physical address indication in ELF program header, it is
-convenient to get physical kernel loading address.
-
-Here is output with command readelf -l vmlinux with patch:
-  Elf file type is EXEC (Executable file)
-  Entry point 0x90000000015f5000
-  There are 2 program headers, starting at offset 64
-  Program Headers:
-    Type           Offset             VirtAddr           PhysAddr
-                   FileSiz            MemSiz              Flags  Align
-    LOAD           0x0000000000010000 0x9000000000200000 0x0000000000200000
-                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
-
-And output with command readelf -l vmlinux without the patch:
-  Elf file type is EXEC (Executable file)
-  Entry point 0x90000000015f5000
-  There are 2 program headers, starting at offset 64
-  Program Headers:
-    Type           Offset             VirtAddr           PhysAddr
-                   FileSiz            MemSiz              Flags  Align
-    LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
-                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
-
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 ---
-v2 ... v3:
-  1. Fix compile issue where macro PHYS_OFFSET is not defined with assemble
-     code.
-v1 ... v2:
-  1. Set LOAD_OFFSET with PAGE_OFFSET rather than CACHE_BASE, since it
-     is generic with PAGE_OFFSET.
-  2. Add AT information with missing edata_padding section.
+ drivers/spi/spi-qpic-snand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index c49bf7079808a1933c8a630e0b07b5fd54dfddb6..8fb8895bc9b54f2095981c975c1f412045a5db74 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -313,7 +313,7 @@ static int qcom_spi_ecc_init_ctx_pipelined(struct nand_device *nand)
+ 	ecc_cfg->bch_enabled = true;
+ 	ecc_cfg->bytes = ecc_cfg->ecc_bytes_hw + ecc_cfg->spare_bytes + ecc_cfg->bbm_size;
+ 
+-	ecc_cfg->steps = 4;
++	ecc_cfg->steps = cwperpage;
+ 	ecc_cfg->cw_data = 516;
+ 	ecc_cfg->cw_size = ecc_cfg->cw_data + ecc_cfg->bytes;
+ 	bad_block_byte = mtd->writesize - ecc_cfg->cw_size * (cwperpage - 1) + 1;
+
 ---
- arch/loongarch/include/asm/addrspace.h |  2 +-
- arch/loongarch/kernel/vmlinux.lds.S    | 36 +++++++++++++++++---------
- 2 files changed, 25 insertions(+), 13 deletions(-)
+base-commit: 69e536c93242425fc65580b02d3f781a96403660
+change-id: 20250723-qpic-snand-fix-steps-d69b2c7761cd
 
-diff --git a/arch/loongarch/include/asm/addrspace.h b/arch/loongarch/include/asm/addrspace.h
-index e739dbc6329d..18f6c2b469bb 100644
---- a/arch/loongarch/include/asm/addrspace.h
-+++ b/arch/loongarch/include/asm/addrspace.h
-@@ -18,10 +18,10 @@
- /*
-  * This gives the physical RAM offset.
-  */
--#ifndef __ASSEMBLER__
- #ifndef PHYS_OFFSET
- #define PHYS_OFFSET	_UL(0)
- #endif
-+#ifndef __ASSEMBLER__
- extern unsigned long vm_map_base;
- #endif /* __ASSEMBLER__ */
- 
-diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
-index 08ea921cdec1..8ce6b0d948f4 100644
---- a/arch/loongarch/kernel/vmlinux.lds.S
-+++ b/arch/loongarch/kernel/vmlinux.lds.S
-@@ -3,10 +3,12 @@
- #include <asm/asm-offsets.h>
- #include <asm/thread_info.h>
- #include <asm/orc_lookup.h>
-+#include <asm/addrspace.h>
- 
- #define PAGE_SIZE _PAGE_SIZE
- #define RO_EXCEPTION_TABLE_ALIGN	4
- #define PHYSADDR_MASK			0xffffffffffff /* 48-bit */
-+#define LOAD_OFFSET			PAGE_OFFSET
- 
- /*
-  * Put .bss..swapper_pg_dir as the first thing in .bss. This will
-@@ -42,7 +44,7 @@ SECTIONS
- 
- 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
- 	_stext = .;
--	.text : {
-+	.text : AT(ADDR(.text) - LOAD_OFFSET) {
- 		TEXT_TEXT
- 		SCHED_TEXT
- 		LOCK_TEXT
-@@ -60,7 +62,7 @@ SECTIONS
- 	__inittext_begin = .;
- 
- 	INIT_TEXT_SECTION(PAGE_SIZE)
--	.exit.text : {
-+	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
- 		EXIT_TEXT
- 	}
- 
-@@ -82,7 +84,7 @@ SECTIONS
- 	}
- 
- 	INIT_DATA_SECTION(16)
--	.exit.data : {
-+	.exit.data : AT(ADDR(.exit.data) - LOAD_OFFSET) {
- 		EXIT_DATA
- 	}
- 
-@@ -90,7 +92,7 @@ SECTIONS
- 	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
- #endif
- 
--	.init.bss : {
-+	.init.bss : AT(ADDR(.init.bss) - LOAD_OFFSET) {
- 		*(.init.bss)
- 	}
- 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
-@@ -101,27 +103,34 @@ SECTIONS
- 	_sdata = .;
- 	RO_DATA(4096)
- 
--	.got : ALIGN(16) { *(.got) }
--	.plt : ALIGN(16) { *(.plt) }
--	.got.plt : ALIGN(16) { *(.got.plt) }
-+	. =  ALIGN(16);
-+	.got : AT(ADDR(.got) - LOAD_OFFSET) { *(.got) }
-+	. =  ALIGN(16);
-+	.plt : AT(ADDR(.plt) - LOAD_OFFSET) { *(.plt) }
-+	. =  ALIGN(16);
-+	.got.plt : AT(ADDR(.got.plt) - LOAD_OFFSET) { *(.got.plt) }
- 
- 	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
- 
--	.rela.dyn : ALIGN(8) {
-+	. = ALIGN(8);
-+	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET) {
- 		__rela_dyn_begin = .;
- 		 *(.rela.dyn) *(.rela*)
- 		__rela_dyn_end = .;
- 	}
- 
- #ifdef CONFIG_RELR
--	.relr.dyn : ALIGN(8) {
-+	. = ALIGN(8);
-+	.relr.dyn : AT(ADDR(.relr.dyn) - LOAD_OFFSET) {
- 		__relr_dyn_begin = .;
- 		 *(.relr.dyn)
- 		__relr_dyn_end = .;
- 	}
- #endif
- 
--	.data.rel : { *(.data.rel*) }
-+	.data.rel : AT(ADDR(.data.rel) - LOAD_OFFSET) {
-+		*(.data.rel*)
-+	}
- 
- #ifdef CONFIG_RELOCATABLE
- 	. = ALIGN(8);
-@@ -134,10 +143,13 @@ SECTIONS
- 
- 	ORC_UNWIND_TABLE
- 
--	.sdata : {
-+	.sdata : AT(ADDR(.sdata) - LOAD_OFFSET) {
- 		*(.sdata)
- 	}
--	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
-+	.edata_padding : AT(ADDR(.edata_padding) - LOAD_OFFSET) {
-+		BYTE(0);
-+		. = ALIGN(PECOFF_FILE_ALIGN);
-+	}
- 	_edata =  .;
- 
- 	BSS_SECTION(0, SZ_64K, 8)
-
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+Best regards,
 -- 
-2.39.3
+Gabor Juhos <j4g8y7@gmail.com>
 
 
