@@ -1,347 +1,418 @@
-Return-Path: <linux-kernel+bounces-742211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFF7B0EEBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE26B0EEBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08049541BD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1685428B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8332857E9;
-	Wed, 23 Jul 2025 09:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BA0288CA8;
+	Wed, 23 Jul 2025 09:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EF0gcCIm";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="UsetEjUV"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="red6ronA"
+Received: from outbound.mail.protection.outlook.com (mail-francecentralazon11013071.outbound.protection.outlook.com [40.107.162.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBF028A1D3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC70153BE9;
+	Wed, 23 Jul 2025 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264024; cv=fail; b=uXhVsPGOzXYDMok46/uSrKFxicvhBUeQMiybE75+t36rKrF3CLHg0GyAE4ZmUv9Q6LBQ4OwzfX/Nl3a7YDrbcRt1vAdN2zHns77r5/vxtXHigmHfX360YTlIFSkivtCYOjibYJ8DqyrKQQVlQQr/quYnnuJ++XBm1B5uwX5LBrI=
+	t=1753264016; cv=fail; b=B1XhuO4FpRgpB3nMQ7x8vjSh9agwamk/vNVoiLhwDsIXjIx1i4XEcIbx/BMd9MvZNyrNfDirolMC1XTyDR9I2jfiNQqdNw2Lb+mGoEhrIcRGuuDMm6Ow9r/yGiSOS0uWN+/Uf08jWsI+/KwjMu/i+U0TM0tsBDtvFUQSZ5/Ag44=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264024; c=relaxed/simple;
-	bh=i6hcKW3QSauOo2IU21TuEfDT3jdxRIlCsxW3P1WOMz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lNrQshUkyXdXGrAGq7ImnB/oCBwUvEeYuHqWqb/+RBTHMLvsR5uxvkrbpvcze+//5KzlkRWUUP8nKhbw/EDtuUyT4bTn/UVo9FPj6vSq8YE5e3R3MJyg837NFqLuBR5cX2+OgEp4u2nd/1aGt6ngA+LH7vybI6kSncw2DSF+ETA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EF0gcCIm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=UsetEjUV; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N8Ms25002596;
-	Wed, 23 Jul 2025 09:46:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=DBehcQamNBrXC9uMph
-	oBc/9IlsdeeBPOHiV4P6nC7mA=; b=EF0gcCImWquCsqSVJ8WVp5q6bhYT4nquqX
-	m+iAEppfEFvBcOcR/e+p5LhJZMZePuEEWTmavYAzf+u+14v22sADHAfwIMY0+ubJ
-	lYr4TAK0vPTZSJDaJ+Kf3cwJZsaV93PCzs4oaRJzYM7xTg/CrboHlhF0cIRlXCdP
-	HuIOZGWK2sRvBQJFNbjZmlzryQVCwrr9wHtlWPWXBPGtkueCT2v2pWreKXQ0Oe1h
-	Kv3xwonIN9kPgrvnekuYArnXvpaa3uUytk5r1797nWiCmy65m+21Kxzacp9wNsYb
-	IRZoU5CtiugDEJFGLToNlFDDeBt1H1t8iSDKFoDx2+epnfgk3S1w==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057qyayq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 09:46:50 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56N87PHB037661;
-	Wed, 23 Jul 2025 09:46:49 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2084.outbound.protection.outlook.com [40.107.244.84])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tadmwv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Jul 2025 09:46:49 +0000
+	s=arc-20240116; t=1753264016; c=relaxed/simple;
+	bh=HVfC2A6qKirJHO1RXncOAXb+j5emkZUYDUKBo+XMTWs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jhCHe3MS1ZntSakbJvKU3b2wi2iPWNzV2GOt0J+wpOSw12QkVbfsVxjdVelztmuJT8053UsOH2YTW0DPq1kh4IsHYnREfjkiTTBKkEFHVU/11G0vZ5cbqRdahfNmD0bmnVq0BEyA2OPcN9ektWVcPLSaYhxMU84cm/Y443dRiOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=red6ronA; arc=fail smtp.client-ip=40.107.162.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T7t8xhrGIa/amUSXGBILiesONiaqZHiFvellkkKE1cmBPUoVFdD608HSNW1esmPJ4+pV6VsH6JItq8RMlUHBTbzfEN7+2JlWiOfDlPJKpNjhFdLMGYwHulIa5kG9ZUM13/dcahnj0tiDxT+3QWNP7FjMWzfVEYM6/OZThmOXBpGJ/Eu2h6PgIz4Q6cTAxsaC4/BUvZGJnGI/JOplGcuA3ad68E4QCgYzRt87CxRr5M46QNwRS8b3S0GbfHnN12BGeSneALbF2G+Lr3MOSP3tKoc9984Cb1HyNf8L/ib21u9/PGEaMpa0YQdM3o073+I6kRxFvfRMU1GnmQ4CYkkG6w==
+ b=Fjr4EsWzoCfDrfxMHTjELORDY642jAMTsMZ0Fp4bjOuPdThrVVm1Pmj3ra0e28dPLpodZS3zcWIzOMVyHg+3djr4ZWrNGRKFJePn0EIvePkv9N4UwCs070S778xKMVoSo0mbf+gDOUSFR4t8B7ABt25FqQePeUmOv1rivY4lTZq3Ja12T68d9gf1jDSGLC+bd2UaFRq4+lVU286esJMHpuHkFUQMjdgvJRAe+Kbn1FSFiICnEUMMvk8juqRjhrnuD4n2/5203rIYOabDhcitPfiSq7b3sG7xd/LA3Hxy8A0TshGVUkTN4YjrB28uVGvJdYnAg+H2Ks6QVCKCQnA+Zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DBehcQamNBrXC9uMphoBc/9IlsdeeBPOHiV4P6nC7mA=;
- b=WysiUR6g6tWM8C7P6izHzbvTh/dRUvYUUaCsO93tBPCjlV0/s2rB9T3IjEwamaLPhMhfTm3N12DFM9T28zxCatsnecv4guUd+C+MjPXdUyDeGVgddcbknE3on7JWCgQTvwIlZNros7vik+6Eu2oXumeqx21+YYqNP1bSUGhj2uULDzjogRa2DMSI6UjmN5KdSAyU2knpsxSZxEf6DOjnJnByUD0Jp3Wkr+Xv+uF9QImxuRylpZeAMuZ26SQREcRG0RnYfy50Xp1tpGZ1IgEYxF30Qtsrxym9lAkWYA63cmjJWdyWieCG3UNbjpWOnlKJ3f1QVsqzohkvRWy4DesmLg==
+ bh=oxkIOlY0GeF8ymQLdvGK7dFYkJwyrpxQrBaGmh1uyLA=;
+ b=kPuDjTKqp3e+4z7jSvh/S9C5uFFe6URiRhYWMwXMto9kbMvNHqZsZezQfd5Wzc5XSJh9QhEuDVmJ6x8o/jWomzg7Y3JULmn6gGhs9ndsCdFHxJ00umce8gr6jhR8hfOlbtxF2OiB+i3uCrt7MV93xjQBEzrFt69edOEP16afKyeb64SCt39w18T+2huKrBXxPtYTidPg71LsvZbhh9afqFpnw1olAEHYhsd9DR8vKRExOAQVQg0kKMEsTX35hto4FdHVfZ/rpBBgDBooTrAaVfJP6rJnug63HlczPI8w+Z9nJl49bewe61SbmtPhQtRk5rdNZpIUJpXC4EmN8lwdRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
+ dkim=pass header.d=de.bosch.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DBehcQamNBrXC9uMphoBc/9IlsdeeBPOHiV4P6nC7mA=;
- b=UsetEjUV4aW/fDCb/0xV4V4L4+1RxfuJ94w6M7hzY+hUSGu5oKV5oVf0ql8XTqv6MR3JMcSKk83utSBKiM9j8OoQWhcXauy9de+tbGWr78NTkuFXREJ/7RrOQaaJd7PkDCanvFecVxAGXqfvycPAqzlQmxAuQ0vtqtglkFvZSUU=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DM6PR10MB4282.namprd10.prod.outlook.com (2603:10b6:5:222::11) with
+ bh=oxkIOlY0GeF8ymQLdvGK7dFYkJwyrpxQrBaGmh1uyLA=;
+ b=red6ronANqAsebJmm87xM0THOjeDTZoeE3ZDSirSU5zYsZp8/AkGr/5TGO8Sq5uq2hYgkv4SyM7bp+W4E3azC5cYnShozCk6x90gxOU+K1/xB7KG2kGFCYZp7yoYLzrWP1xaiKxJSlxqejqb33aOWiIFMzmlj9OtnrSEvjWq83Dt0CmJnXjBAP3EEtIwAFF/4gie6SD8RsC98mdgkGPAwgbTHGBaEWpzOpssSiKyh3gPnbzTTK8xLM95nlld1Bh0A1kwdQIwKVxI5WE6EBod9dUbriJKj4yVvWzFa7OG8+y2SUDFBh9O1CS7aVo16XcVzWFoXfwaUjHYwUTWAToK1w==
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
+ by PRAPR10MB5273.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:293::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 09:46:46 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
- 09:46:46 +0000
-Date: Wed, 23 Jul 2025 10:46:44 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] MAINTAINERS: rename MM to MM MISC, add missing files
-Message-ID: <1feb8f0f-ff49-4a82-ae07-21a91918e5e7@lucifer.local>
-References: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
- <66daf9db-ce97-4345-886c-3f8ab111b4fc@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66daf9db-ce97-4345-886c-3f8ab111b4fc@suse.cz>
-X-ClientProxiedBy: LO3P123CA0009.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ 2025 09:46:47 +0000
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114%6]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 09:46:47 +0000
+From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+To: Jonathan Cameron <jic23@kernel.org>
+CC: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
+	"marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Lorenz
+ Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike
+ (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+	<Kai.Dolde@de.bosch.com>
+Subject: AW: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Topic: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Index:
+ AQHb7DCnxFfdguezA0CMBsJ2vkpDJrQlVJwAgATVpeCABfU/AIADa+ZQgALjsgCACRRNsA==
+Date: Wed, 23 Jul 2025 09:46:47 +0000
+Message-ID:
+ <AM8PR10MB4721FB1A78F25B204BE3A26ACD5FA@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
+	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
+	<20250706175328.7207d847@jic23-huawei>
+	<AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+	<20250713144214.6ee02f59@jic23-huawei>
+	<AM8PR10MB4721BAD5BD78B8FD0F5C9798CD57A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+ <20250717150440.5067862b@jic23-huawei>
+In-Reply-To: <20250717150440.5067862b@jic23-huawei>
+Accept-Language: en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=de.bosch.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|PRAPR10MB5273:EE_
+x-ms-office365-filtering-correlation-id: 2d36520f-16aa-4f89-0874-08ddc9cdd78b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Cxk++10VN/F/mNF4rC8bo85kpKd4Hd4PF3DZVP5v5vEI+uV/DhGdCbQJ8hdi?=
+ =?us-ascii?Q?RD0M32GzV4MUj4a8f30q6DTw7HYtf+oAAGAMLXWMo6eKkFh8UIfz/c7We3AL?=
+ =?us-ascii?Q?TFR2X+iSz3OvRFyBIqGLhAZZw8HQmPIA+o46F6roHKIBjX7HSf0SumEpJPLV?=
+ =?us-ascii?Q?TI/BI5mwHgL2qP1qOM1Uw8va72II25zyLxyTYgL8cQrnVIdThwqbrOF2IkTY?=
+ =?us-ascii?Q?6pJNnm/z3TBc+yYto/I6kq0W2r4e4rbv5nPVloa3f3fl46h4Ga1tE3PJg+HT?=
+ =?us-ascii?Q?hYDRKTQ5YNxwobxI5C+py66rNLLojaSQXDdRdc4Envd0o25l0f6jAikDtbL7?=
+ =?us-ascii?Q?EEawrG8Xvo448NMAm+ofCVqLpwUZXGIOjzfc637NVohiAc0l/nvpezAHuUe3?=
+ =?us-ascii?Q?SCDh8RjLl/un7XaMQlCoc+DTN4Tes+3vVA674xZm8QyhsshbpFQq8umv67e+?=
+ =?us-ascii?Q?WVC5mkEVZLxYx0es2TudIeY8eHc6I8p02OslL6BbpZbS3cHVMDHqXHmOyKI4?=
+ =?us-ascii?Q?7kYGREKD9gCed7UVaSS32tNepHY3r6Ct/toWv/Jwk9FhELGMXStt/Ye3+udi?=
+ =?us-ascii?Q?Btbv5DI5HTvxfuLiDDpfqXNvfLDoDOno6i73PjfBFhYbxeyxQV8C9E0QCGsg?=
+ =?us-ascii?Q?5npQliJGsS6XuIMuYjmkpamnhet2h3hBuu5ztZiMIXwE0pflMZoxzRmU+Wmf?=
+ =?us-ascii?Q?w8/jwxIp8TKgPVBBkUu9wlNcnXOEfNtg2AyajgkomjG5FDQxTvzyaWo9Pce2?=
+ =?us-ascii?Q?A/iTYsnxS3eV1xSkdXuv5RStY/bI/hsjofxhuYXnOHCRJoNgsNm74GoTpXj/?=
+ =?us-ascii?Q?Hd0jjM+DU0xhoaeuPKYX2A3sSOAE76T5xwPmARRNMGvkan6IvSkSod5FGA0r?=
+ =?us-ascii?Q?5w4F/sXcp7usr5zQdoiAXovhS839IHZvuxy1bu78bkiFUHRR5EbHDBoIg8GS?=
+ =?us-ascii?Q?7s+Tv2WljZTiV8IuWASGOlASm2RAg4wfyp0lUhNYi0dZulvCL6TIvzvGK2PC?=
+ =?us-ascii?Q?9c0y+dJpgX+tyVUl+jbqA5frDTf0Umf31+2S8wRrLqM6JFbMR3tkC4IR5EjY?=
+ =?us-ascii?Q?LPd5orGY2/AULJGnefHFiA9F3bhOBTRjyg5lwJHu9/j77trwKQsLdlo5yrgr?=
+ =?us-ascii?Q?t55TlYQYRomkXILRvepWw4bQ9kVfHtY+ws1dAqfFJ9hBzkTyLW+Dx4spD2a0?=
+ =?us-ascii?Q?zDFzesa24ybAeWrtBS8WP+TwSTq97Xj7056DfLZ4UyjCPSYyZEIKA+4fNe09?=
+ =?us-ascii?Q?q6mByIRArb7FyrmaUnk0ESmP4ijOPXGrDA5rfrFqOSnXEIuDITdds7AWSctd?=
+ =?us-ascii?Q?rvyS+Urz7djbbVWNfz6szUUP2HN2t4NgHjkm22JtVGDaRyOW5VdXy+Uv5B2e?=
+ =?us-ascii?Q?Yv7+9hSmrA1vgTJmf9dS/LGjvaUmTdC0qUOblgajIndll/7kWE1fM6xGwTyX?=
+ =?us-ascii?Q?ZwV9NZFI574=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?6O84IhvgrxblYqOL91wgqNOwkIcw0FbrIm4Vu5h4zFqzj2zCPNzIJn8ECV7U?=
+ =?us-ascii?Q?V5VmctGmhZSYwPkPAMt9fJFM2Leg7OkLofBJW/WXfWvydua3xP2+9WOytvEY?=
+ =?us-ascii?Q?xC4JBTNccMUFlAjxxqjBgl6xc4zp0A22f6p/5FaYWFfScU74eVgoPuudqIqz?=
+ =?us-ascii?Q?UNlEQpVCaTnl9GuI19UFYMV54Vbhph0o+hsALyptExm3rUrSfrpfz9o9xWhg?=
+ =?us-ascii?Q?+J2JaqeIdL5cEXlnb36x894BmE1qOhTvGKzx4mpcTj6oUEJu8Htd0aDc5DM+?=
+ =?us-ascii?Q?WEGQedwXMYfapoAAJOVNaaThmMMsGHpi+88WUcrWeHPVYo+DYMUSso1dWCLZ?=
+ =?us-ascii?Q?XmM5cIRgGceuXXxYjOcng+EvS9K1zCaUEjUxO06amy09Iul7kcwSWVIS/a9U?=
+ =?us-ascii?Q?R2gMeSD7D5DdRj8kDXYzvy84OfMqthkPFZhPHuA2BjREb8kzyhap2Dew0a4A?=
+ =?us-ascii?Q?W1MIP5uX/zPR0hGzIlJn/K3t3z98W+z5WszcRvFg+TZCPNV8L74EseAUaYtv?=
+ =?us-ascii?Q?R2ekb3Dz1KU3KGMy5fGEwsqPAV//tm4CzR57UwCU3q3WZrcUPyeieqSPL/JX?=
+ =?us-ascii?Q?CGTSL0Skx+ePz4i+CLW7vU/hpP882EBl4q74vLrHTm97KS0TdNbe+kSplZWW?=
+ =?us-ascii?Q?rzHeMzPwptnve89BYbi2hv7tFauy0jxu8CXMcRSPIdClRXmVA0oYWpDo2GQA?=
+ =?us-ascii?Q?0tEhzzok47hZivHsdxUVNkfNfPADegGhYZ/PSUGhDkzVRgwiO2Lg7YMrRCWK?=
+ =?us-ascii?Q?dAnGM+1NdEyADesWYLwVTkhLMXfb8tswEmzpA8Q9quhi2AAkdQwumeKc4Nfh?=
+ =?us-ascii?Q?uMfyy46ArZs1yx3M5OtnPfoL7aVW9A592QLFI+nXPjjQxRMFvsJRJiUJ0umE?=
+ =?us-ascii?Q?wAaZ52J77q40d+57X7P0wmwXf6fhSpnjdF2VVv/1PS+PFs3Pvily/PxKAEbE?=
+ =?us-ascii?Q?KUe4/WWruD9ZznPN/JofETmX4zD5V/W5tp9WzHw9qc0B3LlKz9ycPWrRbII4?=
+ =?us-ascii?Q?glx3RCh1OeTHCWFpDZ48HuuC13DQCNiThys6l2JXCa4zgBEBpnsrWvkApMJ9?=
+ =?us-ascii?Q?YKWoJHQNH7FqCYAFerjcTCQt1e0rpMHqn8AwujriZrwhjf9UU9sKb7CqVIyC?=
+ =?us-ascii?Q?QVTgV7W0fvreGhHSiYv4sl1lfYV/b4rO+Srcvr0V/5T7gfF64aLgm4pTfNXo?=
+ =?us-ascii?Q?gCSylm3vX443iPgumjJxpjFnVLChr0l+piUVzSIobJX7UZmuDdJJ0KQyA7fy?=
+ =?us-ascii?Q?3qb88paX8JVDpsoqfTT7n2idDvfvlFiYy0Dned6Va8/+XyouHuyrcDxOxryo?=
+ =?us-ascii?Q?0llD+tqqCe1G2p1JGRAnTDPudFcPKXz732fPfXejPqKXUhKptQT0UWxL4ybA?=
+ =?us-ascii?Q?5V867SFUrvkh5lKlPl46Ny35BihUAm6ozuw4TO1Cdrs+ZyFbmm5qI7J7O3R0?=
+ =?us-ascii?Q?D6/D/V8QTJ2FOfFFIBKG+xMPWpxb68PqUiX1Wt8aotFqKZ95LTPJzk8Hispb?=
+ =?us-ascii?Q?4+FuWWtKqTTU0g63BEFBwJbyeJjoCq8OFCvc/fZkRrFZxs1C2nRHJUQKI7i6?=
+ =?us-ascii?Q?/Jt9seLgRLv+Fg2RsjI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM6PR10MB4282:EE_
-X-MS-Office365-Filtering-Correlation-Id: 768dd468-f1b7-4b56-25d5-08ddc9cdd6c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JMuQSKa0eQFWIGqcMF4aWRiN2HijA7Xj7R3c2UEbNQpJ7QiuJ8gsEzLuzzvi?=
- =?us-ascii?Q?5seA8HqdzzCats2Ig+iJHPRTcymcc6FKcohcP3MbTif+NxCCXEiYlrbsk0Kd?=
- =?us-ascii?Q?KndpPtGLEAAHM68gEd3c0RuPV5FGEGpyz5T4KzAYTPqlN67EA7nLMXYJZdlt?=
- =?us-ascii?Q?G6Mc2oqvTXBRdRG80Ig1v+bt2cZrQypvCxhmpKfBpTfCDW5Od2US91vjWluz?=
- =?us-ascii?Q?OXzJtXIufBQQVq0CGzvlaWSW4U//h09ltO/7fsdex3Kz2AtOFyobm+6hYai1?=
- =?us-ascii?Q?vgQd5BLMfvttsrmxnd6HMK/h8pe6kS3FmKhUWt5tJSxR657SjBPERHSSDz6c?=
- =?us-ascii?Q?IMATLkZF6WRJwjTbRmAyk0rA1DmwJRwg45jxgWvdPRJsYba93bYxh1Yjw2Ww?=
- =?us-ascii?Q?14RGWMCALkhJ6nZxlRMSnyHcbDAGYYf6hr3hIqQPzZ80eokzBrMERcf+JoRb?=
- =?us-ascii?Q?NHAqfCCiB1Ek1kcrca61BumaOpUFxVUJFlp6HhQLhQZSj3WR1miIzvnKTZbW?=
- =?us-ascii?Q?ike/QWTODAPgNsjPyezi2eu1/9ikCfuT6aIC7SSzk/wHX5SFN6Nx1oPgJZR3?=
- =?us-ascii?Q?AnCXptf7Lwfrz8MunN6H0f1KBPl6DjjCgnZJ/npOFryv9u7AEphlH5LxNaKq?=
- =?us-ascii?Q?2g6uCWOC0J46zZqZWg1N10zQbuMJrlFCrc5z8mtU2lofuPo08sLuu0WFbdNZ?=
- =?us-ascii?Q?9Gy3aCGDCXHdbW13jt6c6573++eKJnrO58da+Le7nARiI+hrkch1IZ9ext+3?=
- =?us-ascii?Q?pccXJVNBpEUSR/nxSTowR40eR+2lth8oiqCJ7G2nEALt4OV1j+CNxSxHL9Tz?=
- =?us-ascii?Q?zRL5T5g0sIr7BA7W32Lntz/ffBBPYNAl5+lKTY2Zr75leUoL3i2NpoYFAL7j?=
- =?us-ascii?Q?FV6f3yxeAT73pYfzpjlfYj29XGNmXVFuajMdk1I8wBZ4z+udiOzZL9KT3bX1?=
- =?us-ascii?Q?hDPXn0CsDR26Zo/YkgrU7jWVxw8M5froYEyrsMfmSruRpuA4rZnx9Mxrzx0S?=
- =?us-ascii?Q?ZJcSgJRKhu720hLenl+wa73dKPXgyc/cKVO46J8goIRnUOOUPlAD7cfH9XkH?=
- =?us-ascii?Q?HV7OKE2o7zc+V3aO6AcQ2afihfkDuDug/AheDbVEY/1W00J/q6FkUmWqR6f5?=
- =?us-ascii?Q?hEzTtHlTxFHlB9SU6R3Q6e7uH+YoBR74Or5P4xnSx/6leSlFmSB4hb7FNaPg?=
- =?us-ascii?Q?qdL4ZCSz42dYuQ2LozVlOqrJ5/1w+zCNxcvU/0hzpPBIL4aHvMakQMal//jU?=
- =?us-ascii?Q?vTmYEN5JG0nBSdAgZ0hs3cGlCo1v31MBubL96emQVUiYk4SCphZ+6whOlSHt?=
- =?us-ascii?Q?GpoE/dZtLUxsiQ0VK9dEWveoLsohkJ3IXo2sZNxu6xwIqzzNALrscS2UsfzR?=
- =?us-ascii?Q?/gwLMePYdw2eBsv8koNjJUZzDsSt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?moMAF/R2kqCO7ftCmoFVr6DjgHSJ3KATj8apFcBL9Gh9uaHt9UwhbY3JpALh?=
- =?us-ascii?Q?LvQ3ABlSMA0n+HiO9cvV0AZ1EPJyto6MJ8HqsTTIGd+vAcKCJaqEji9Xldfm?=
- =?us-ascii?Q?JNCr9ElQ2EvfCWxKQx9yHmhm2zuv1sWmQnu/BzNAXfanX2WmMWP/646r3ALM?=
- =?us-ascii?Q?L4lv/4AymVGndEFfGpMPAcNUU4VyZW85E0d2WYfZru/IH2yxr1iNVZQ8DPlR?=
- =?us-ascii?Q?KvFxJamX801kuRTSqcbi5yggmNC96YRpZaymAsVeLX/3N5KZGKFfXmcHrSyA?=
- =?us-ascii?Q?aApx+cvadohqc2fLaknyfCMxZMnT/0Uj9uJBBBuTrtKpuHoGdEI5Ncz0k/JW?=
- =?us-ascii?Q?w4HJNDRwettcNZO+/G7w2ASSdoKYKehMYO1IAiQE/2qCP7JMHEUUt+FT9wS/?=
- =?us-ascii?Q?jS2tYBr3OedQ3R987Yfb3NnTQkic/8BSfWH9zqCeE8tEqf3Ms1nyBSec8DsQ?=
- =?us-ascii?Q?xe9BJH/EQgEY4oD3Rayr4ammHPlKNe6pmg8s+mCkjMikecJJYqyXQmxu/8iz?=
- =?us-ascii?Q?2nFSt5gRWsZxsUoDcijaKW56IxveSWaHFKI72WpQHWRdE6zILwAYB5mgonMx?=
- =?us-ascii?Q?XZ3pBMJuu+5TeTghf3W7YLYoJggFF97Es0RUj7GIYCwGojGUNM73OfsQWVeo?=
- =?us-ascii?Q?HDiFVTLmn2C5AR8eSUF1RrsjYqMPop3wnyI8s5GL800qkq4Jm42C/yMl1t34?=
- =?us-ascii?Q?ns7Sh5mJkWnFyuiWHNn/s8FV92lhZozkFIhzB39CC5sx7DH69mrydV9LHmyc?=
- =?us-ascii?Q?B5KytK0QAouphs6QgC/7Y6X6BhOXOAtvXCFnBGOpbvs8z1fdzUf4THIw9Vw4?=
- =?us-ascii?Q?J4vfYykdvX5tbDIByw8eEabrbZm+/KFpZQlL4ywmkX32YaIFIGdU4xCAVOaj?=
- =?us-ascii?Q?dmBdPcJvfCND9EMRVwHy6Xk0hPI7/EKN/tEIUiCC+2Uh0+LiwV7NbvZMnp0w?=
- =?us-ascii?Q?7m+B2zZT63wOTuSLN/UhuiiWoaC0Jj0KIpLA2Sbfam9FPKRPuq3LkBMq0gVj?=
- =?us-ascii?Q?Few9GFYJku+LrVhU3tlHeh0QSYCqA7sPCSj5kYhfsyquwaNbWcAMSp5QdOUv?=
- =?us-ascii?Q?zT/oloAQNR+9hs16RiQKSShh4vRuhaYcWXWS4BHmzB6XQl5gCUuFDaO9Js7w?=
- =?us-ascii?Q?mAUP0gyPm0gf25yu+TCvnWfoIsCc/0zoXmakupqGIUvuOtyuXmcET140sjTD?=
- =?us-ascii?Q?PuglXglEE0wkQXG06ARdfszB1lIGSVkK5mcv8aRVjHSWGSHOBSzRvCTsYIQu?=
- =?us-ascii?Q?+K+MQFzhMmcsTkF2B9GMSFcZzpkFAXUcFYajDG/luPlRQPBQDcLhy131R9wU?=
- =?us-ascii?Q?ileCc73S4PGeIjNA8sZFgSQjWbvCkhcDVhVnhXiRwsV88NFVjP2nWeuhAnKM?=
- =?us-ascii?Q?43I6zb2iK/L8tOnFbes9mmJdtUczFIT7jHBMoDIBh1n5khBtUCJiLL6uY4pH?=
- =?us-ascii?Q?k3CGwU9WPg+IccBZFILyX/kSa16nTAPgbqsr+/r7glMzDK8f/L4txSuIQfhE?=
- =?us-ascii?Q?Kxaz75QHe6Cny52Tv+xCaMupreOnrOrTB6MRIgQXygO2Uf0o+MvaAxzVGpjv?=
- =?us-ascii?Q?x2tT/MEp8XmIpkbrMSx/DBB8VV/EtqtK1APuPxUsfT8W1HTvn2Jgb7iUNncT?=
- =?us-ascii?Q?/g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	AH78rFSpo9DiXlHTd2hz21XYPmjKSAfUE7jBV5NC3zpU3I8qdZoKZt41e02wVQdQJ2baR++rA0ErIL1LAW+c2N8Kdam11w73GymqhdeHCqXb7/Jpyh4/cQToNMHSS0odqJymIrJbhvBHNJVZpiLJGAzdTSYxwIaR0hSIXre5QqKYpLuxKffGNqZJE4dEX+RXFtupyHvkDQIWo794caa4VJkZGfJIGlHC6b+oFcxGXndEVfX5NhmyqzFfPKCYyRAcj/hldDo51Dq9iWML3v0XLF4bWeB5olEfouslpvoA9Q9eAzr8ZxZWjPabzYTiCPInYPMIWVr5sx7vIOyqgjmfVfUdMHlqAwVARdz50OFbMTIgEqqEEDVCT3NvFPCkgw1i2FxxSpfcC12n+YBzl2triZSGQmuSnTedEP5N8A9MfU3Kl9mbJcEIvAS+57yjA2RAdNVwkXzD4M3Wk6ViBF3l0DqXAPDBilib8KkJ1MF2nVFTfoFO9cRDqdQH7OHJNOy992i+fW96H8e+cHp274+zKk1Il9x9wqhqtlemdQ4iA2OhNh/mqgPaqYiC1SOLB239qXRo81EsVg3EdOzQ2X7l/agGZ+Yjv1ViO4kKC0N/Rsc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 768dd468-f1b7-4b56-25d5-08ddc9cdd6c5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-OriginatorOrg: de.bosch.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 09:46:46.5848
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d36520f-16aa-4f89-0874-08ddc9cdd78b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 09:46:47.7086
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DG6cLlT2azZoNu00/+hW2K8coO3qElcx/tfoRvxS0E7D7IKUAn8uhIII5ETqkQ34DFyvf/ZWK0c8XfSM8AZVno+2FaUBlaNsgB7ob9VHAqQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4282
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507230081
-X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=6880af8a b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=1-S1nHsFAAAA:8 a=Z4Rwk6OoAAAA:8
- a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=iox4zFpeAAAA:8 a=37rDS-QxAAAA:8
- a=W0AEHhZxnHpuk4u8SUoA:9 a=CjuIK1q_8ugA:10 a=gK44uIRsrOYWoX5St5dO:22
- a=HkZW87K1Qel5hWWM3VKY:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=k1Nq6YrhK2t884LQW06G:22
- cc=ntf awl=host:12062
-X-Proofpoint-ORIG-GUID: zN8ALQ-7CSRbDik_f8Vf_EctgWCYJL4z
-X-Proofpoint-GUID: zN8ALQ-7CSRbDik_f8Vf_EctgWCYJL4z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA4MiBTYWx0ZWRfX6LTRVH9fWrDm
- cObWQqpiN5GW1W3mD9/LPWBUkJ8fVQlzA4B7n8iZ421T4v4nNdhCvu1U/FtzVznck50Obb+4Mj+
- tl/kinAFc/n2omdTxaq2EeisUKgfq7DaPeV+W7tYn2NH2P6MmO9FwZZAH7xr2YemewFtor/pLzT
- lAXok0+6FtJ+lnsChuy0UZgpy7HknXuJLnGH/g1AQD5m47eWdzp/gMVjJyosRth6PmOavRxQv8f
- 43OkHctoYpQ3d5M4MFdiT3twndua9kqbfWSJRqS4tTFEwtXfD8AWfb/3fQrATQ4YRs86UnxYLtu
- 8+VNxwDykV0hebYgnEi3fI9MokOsOtU8WUXdZ00hPLJ5WE5nq2+hsqj0WU2MXfTE99llm1zn0uO
- I8xTZ6+zqxqw1pSk7cpkvCm194VHJNCYtY3tmSmD0844elWRRfdsXgEyGE4xE67NfuXW/gyC
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZorJNaV9unwBmWisZAS+FiCv3Sd8AOE66jHEh+AHcfGGlNc4hC9guXIW8hjftEpF/hzftTmerDbpMZqjLCnbCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5273
 
-On Wed, Jul 23, 2025 at 11:42:09AM +0200, Vlastimil Babka wrote:
-> On 7/22/25 21:27, Lorenzo Stoakes wrote:
-> > To fit in with other sections within MAINTAINERS for memory management
-> > files, rename the MEMORY MANAGEMENT section to MEMORY MANAGEMENT - MISC to
-> > contain files that are not described by other sections.
-> >
-> > We also add missing files to MEMORY MANAGEMENT - MISC and MEMORY MANAGEMENT
-> > - CORE sections.
-> >
-> > Move over appropriate files to the core section, and in both sections add
-> > remaining missing files. At this point, with the other recent MAINTAINERS
-> > changes, this should now mean that every memory management-related file has
-> > a section and assigned maintainers/reviewers.
-> >
-> > For the time being, we maintain catch-all mm/ and tools/mm/ entries for MM
->
-> This...
->
-> > - MISC, though in future we may wish to remove these to make it obvious
-> > when files don't have assigned entries.
-> >
-> > Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
-> > CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
-> > related for this to be sensible.
->
-> ... together with this means the pre-existing reviewers of CORE will now get
-> CC'd on everything under mm/ - I'm not sure if this consequence was apparent
-> and wanted, so pointing that out. Myself, as long as whole mm/ is there, I'd
-> rather not be one of the R: purely for volume reasons. The misc files
-> themselves would have been fine.
+Hi Jonathan,
 
-Hmm, I wrongly assumed it would act as a catch all for stuff not covered
-elsewhere, but obviously you're right it will. OK will respin and put MM
-section back just for this purpose.
+we find out the reason why the timestamp is invalid in the iio buffer.
 
->
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >
-> > Andrew - apologies, but there will likely be some small conflicts here
-> > given other MAINTAINERS patches move stuff from the MEMORY MANAGEMENT
-> > section too.
-> >
-> > I kept patches separate in case one ends up having push-back we can still
-> > have the rest putting missing files in place.
-> >
-> > Note that we also have [0] going through the slab tree, as it seemed a more
-> > suitable place to do that change to minimise conflicts on that front.
-> >
-> > [0]: https://lore.kernel.org/all/20250722175901.152272-1-lorenzo.stoakes@oracle.com/
-> >
-> > REVIEWERS NOTES:
-> >
-> > This is based on discussions had in [1] both about this newly renamed
-> > section and where David indicated he was open to maintainership of the misc
-> > section.
-> >
-> > I am sending un-RFC'd as, while a lot of files being moved about, it seems
-> > relatively safe to put these files in core/misc and we can move them around
-> > later if necessary.
-> >
-> > Additionally, on the reviewers being added, these files are broadly files
-> > that could have been placed in the 'core' section, so this is more or less
-> > an administrative decision to split into two and so it seems reasonable to
-> > maintain the same list of people.
-> >
-> > Apologies if this is overly presumptuous, the intent here is for us to
-> > finally reach a point (with the other patches applied) where (as far as I
-> > can tell) every memory management-related file should now have MAINTAINERS
-> > entries.
-> >
-> > [1]: https://lore.kernel.org/all/20250616203844.566056-1-lorenzo.stoakes@oracle.com/
-> >
-> >  MAINTAINERS | 82 +++++++++++++++++++++++++++++++++++++----------------
-> >  1 file changed, 57 insertions(+), 25 deletions(-)
-> >
->
-> <trim>
->
-> > +MEMORY MANAGEMENT - MISC
-> > +M:	Andrew Morton <akpm@linux-foundation.org>
-> > +M:	David Hildenbrand <david@redhat.com>
-> > +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> > +R:	Vlastimil Babka <vbabka@suse.cz>
-> > +R:	Mike Rapoport <rppt@kernel.org>
-> > +R:	Suren Baghdasaryan <surenb@google.com>
-> > +R:	Michal Hocko <mhocko@suse.com>
-> > +L:	linux-mm@kvack.org
-> > +S:	Maintained
-> > +W:	http://www.linux-mm.org
-> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> > +F:	Documentation/admin-guide/mm/
-> > +F:	Documentation/mm/
-> > +F:	include/linux/memory-tiers.h
-> > +F:	include/linux/mempolicy.h
-> > +F:	include/linux/mempool.h
-> > +F:	include/linux/memremap.h
->
-> Weren't a bunch of these moved to other sections already?
+https://elixir.bootlin.com/linux/v6.15.1/source/drivers/iio/industrialio-bu=
+ffer.c#L1093
 
-Yeah this was a product of doing the patches separately.
+In "iio_buffer_update_demux" to copy the timestamp, the address calculation=
+ is the root causes.
 
-Andrew sorted it out.
+1083  in_loc +=3D length;
+....
+1093  in_loc =3D roundup(in_loc, length);
 
-The respin should be ok for this, modulo stuff that's not merged yet (a couple
-patches where I had to fixup).
+When finish to copy the channel data, in_loc is just incremented and used a=
+s address of timestamp. This is correct only when the channel direct before=
+ timestamp is enabled.
 
+If there is a gap between the last enabled channel and timestamp, then iio =
+core will copy the wrong data.
+
+We have a fix to this issue,
+
+1093 in_loc =3D (indio_dev->scan_bytes / sizeof(int64_t) - 1) * length;
+
+just not sure, if there will be any side-effects with this fix.
+
+Are you going to fix this finding, or shall we create a new patch for that?
+
+Best regards
+Jianping Shen
+
+
+>>
+>> >>
+>> >> >> +
+>> >> >> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
+>> >> >> +      struct iio_poll_func *pf =3D p;
+>> >> >> +      struct iio_dev *indio_dev =3D pf->indio_dev;
+>> >> >> +      struct smi330_data *data =3D iio_priv(indio_dev);
+>> >> >> +      int ret, chan;
+>> >> >> +      int i =3D 0;
+>> >> >> +
+>> >> >> +      ret =3D regmap_bulk_read(data->regmap,
+>SMI330_ACCEL_X_REG, data-
+>> >> >>buf,
+>> >> >> +                             ARRAY_SIZE(smi330_channels));
+>> >> >> +      if (ret)
+>> >> >> +              goto out;
+>> >> >> +
+>> >> >> +      if (*indio_dev->active_scan_mask !=3D SMI330_ALL_CHAN_MSK)
+>{
+>> >> >> +              iio_for_each_active_channel(indio_dev, chan)
+>> >> >> +                      data->buf[i++] =3D data->buf[chan];
+>> >> >
+>> >> >If I follow this correctly you are reading all the channels and
+>> >> >just copying out the ones you want.  Just let the IIO core do that
+>> >> >for you by setting iio_dev-
+>> >> >>available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 }; and push the
+>> >> >>whole
+>> >> >buffer every time.
+>> >>
+>> >> For the most frequent use cases, we define available_scan_masks =3D {
+>> >SMI330_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK,
+>SMI330_GYRO_XYZ_MSK,
+>> >0 }; and push the whole buffer every time.
+>> >> From the user space we just enable 3 channels gyro_x, gyro_y, and gyr=
+o_z.
+>> >Then we enable buffer and expect that only the gyro values and
+>> >timestamp in iio_buffer. Nevertheless, we have 3 accelerometer values
+>> >and the timestamp in iio_buffer.
+>> >
+>> >> It seems that the iio core does not take care which channel is
+>> >> enabled,  just
+>> >copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code
+>> >still needs to take care and just copy the enabled channel value to buf=
+fer.
+>> >
+>> >Look again at how it works.  If you provide ACC_XYZ_MSK, then your
+>> >driver has to handle it.
+>> >available_scan_masks is saying what your driver supports. The driver
+>> >can check active_scan_mask to find out what is enabled.  So right
+>> >option here is only { SMI330_ALL_CHAN_MSK, 0, }  In that case the
+>> >driver never needs to check as there is only one option.
+>> >
+>> >Then if any subset of channels is enabled the IIO core copy out just
+>> >the data that is relevant.
+>> >
+>> >
+>> >>
+>> >> Another side effect after using available_scan_masks is that the
+>> >active_scan_masks sometimes does not reflect current channel
+>> >activation status.
+>> >>
+>> >> Is some step missing to properly use available_scan_masks ?  How
+>> >> can a user
+>> >find out from user space which channel combination is defined in
+>> >available_scan_masks ?
+>> >
+>> >Why would userspace want to?  Userspace requested a subset of
+>> >channels and it gets that subset.  So it if asks for the channels
+>> >that make up SMI330_ACC_XYZ_MSK, if available_scan_mask =3D=3D {
+>> >SMI330_ALL_CHAN_MSK,
+>> >0 } then the IIO core handling selects SMI330_ALL_CHAN_MSK (smallest
+>> >available mask that is superset of what we asked for) and sets
+>> >active_scan_mask to that.  The driver follows what active_scan_mask
+>> >specifies and passes all channel data via the iio_push_to_buffers*()
+>> >call. The demux in the IIO core than takes that 'scan' and repacks it
+>> >so that userspace receives just the data it asked for formatting
+>> >exactly as the driver would have done it if you had handled each channe=
+ls
+>separately in the driver.
+>> >
+>>
+>> Set available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 } and push the
+>> whole buffer. iio_push_to_buffers_with_timestamp (indio_dev, data->buf, =
+pf-
+>>timestamp); We enable the accX, accY, and accZ from userspace. And expect=
+ 3
+>acc values and the timestamp in iio buffer.
+>>
+>> Raw iio buffer data:
+>> 00000000: 3c00 d6ff 7510 0000 6100 f3ff 0000 0000  <...u...a.......
+>            ACCX ACCY ACCZ PAD_ TIMESTAMP__________
+>                               4093587712
+>> 00000010: 3f00 d2ff 8910 0000 0300 f6ff 0000 0000  ?...............
+>                               4143907584
+>> 00000020: 4900 dcff 7a10 0000 caff 0100 0000 0000  I...z...........
+>                               So this one looks bad.
 >
-> > +F:	include/linux/mmu_notifier.h
-> > +F:	include/trace/events/ksm.h
-> > +F:	mm/
-> > +F:	mm/backing-dev.c
-> > +F:	mm/cma.c
-> > +F:	mm/cma_debug.c
-> > +F:	mm/cma_sysfs.c
-> > +F:	mm/dmapool.c
-> > +F:	mm/dmapool_test.c
-> > +F:	mm/early_ioremap.c
-> > +F:	mm/fadvise.c
-> > +F:	mm/io-mapping.c
-> > +F:	mm/ioremap.c
-> > +F:	mm/mapping_dirty_helpers.c
-> > +F:	mm/memory-tiers.c
-> > +F:	mm/mmu_notifier.c
-> > +F:	mm/page_idle.c
-> > +F:	mm/pgalloc-track.h
-> > +F:	mm/process_vm_access.c
-> > +F:	mm/ptdump.c
-> > +F:	tools/mm/
-> > +F:	tools/testing/selftests/mm/
-> > +
-> >  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
-> >  M:	Andrew Morton <akpm@linux-foundation.org>
-> >  M:	Mike Rapoport <rppt@kernel.org>
-> > --
-> > 2.50.1
+>> 00000030: 4c00 d9ff 7910 0000 2f00 f8ff 0000 0000  L...y.../.......
+>                               4177473280
 >
+>> 00000040: 4b00 d9ff 8410 0000 1f00 0800 0000 0000  K...............
+>                               also bad.
+>> 00000050: 4700 daff 7f10 0000 3b00 eeff 0000 0000  G.......;.......
+>> 00000060: 3f00 d8ff 8410 0000 0c00 0900 0000 0000  ?...............
+>> 00000070: 4600 d9ff 8010 0000 0e00 0800 0000 0000  F...............
+>> 00000080: 4700 d7ff 7d10 0000 3400 feff 0000 0000  G...}...4.......
+>> 00000090: 4b00 d4ff 8010 0000 3e00 1200 0000 0000  K.......>.......
+>> 000000a0: 4600 d6ff 8d10 0000 4300 0000 0000 0000  F.......C.......
+>> 000000b0: 4900 d6ff 7710 0000 2500 f0ff 0000 0000  I...w...%.......
+>>
+>> Converted value
+>I guess this is different data as doesn't seem to line up with the above?
+>
+>> 0.015625 -0.009277 1.024411 589929
+>> 0.015869 -0.009521 1.040769 4294901719
+>> 0.020508 -0.008301 1.025632 458712
+>> 0.018799 -0.006836 1.032956 851960
+>> 0.019287 -0.009521 1.033201 4294836275
+>> 0.015625 -0.010498 1.031003 4293328982
+>> 0.015137 -0.010498 1.031980 4293853176
+>> 0.015869 -0.009521 1.031492 4293722141
+>> 0.018555 -0.011475 1.033445 4294311886
+>>
+>> The 3 acc values is correct in buffer.  Nevertheless, invalid timestamp.=
+ The
+>timestamp is actually the value of the gyroscope, which directly followed =
+by acc
+>values.
+>> If we enable the gyroX, gyroY, and gyroZ from userspace, then all the da=
+ta is
+>correct. Since the gyro values are the last 3 values and flowed by timesta=
+mp.
+>
+>Ok. That's odd and we should debug that.  This code is used in a lot of dr=
+ivers
+>so if it is not working correctly we need to figure out why asap and fix i=
+t.
+>
+
+
+
+
+>However, I'm not seeing what looks to be gyro data in bytes 8-15 etc It is=
+n't the
+>stable sequence we'd expect for a timestamp though some specific values
+>might be plausible.
+>
+>Looking again at the code, the IIO_DECLARE_BUFFER_WITH_TS() is the wrong
+>size.  That should not include channel space for the timestamp. That shoul=
+d
+>make it too big though which shouldn't be a problem.
+>Also wrong type - should be using __le16 not s16 for the buffer elements g=
+iven
+>your channel declarations.
+>
+>Please could you add a print to your code alongside the
+>iio_push_buffer_with_timestamp() to verify that the value in the pf-
+>>timestamp is reasonable looking for a timestamp.
+>
+>For reference this is the code that handles the timestamp entry creation i=
+n the
+>demux tables.
+>https://elixir.b/
+>ootlin.com%2Flinux%2Fv6.15.1%2Fsource%2Fdrivers%2Fiio%2Findustrialio-
+>buffer.c%23L1086&data=3D05%7C02%7CJianping.Shen%40de.bosch.com%7Cf0
+>9eaf03f8e44dd1e6fe08ddc53ae596%7C0ae51e1907c84e4bbb6d648ee5841
+>0f4%7C0%7C0%7C638883578931715207%7CUnknown%7CTWFpbGZsb3d8
+>eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIj
+>oiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3Ds53tTw6o%2F2guA
+>iH3J9jBRd0%2Bj6UmcmgyhtBCuKK1HE0%3D&reserved=3D0
+>
+>Jonathan
+>
+>
+>>
+>> Conclusion: Setting available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 }=
+,
+>the iio core is able to correct handle the enabled channel data, but not t=
+he
+>timestamp.
+>> The working solution for now is that our driver takes care and just copy=
+s the
+>enabled channel value to buffer without using available_scan_masks.
+>>
+>> >So the aim is that userspace never knows anything about this.  Just
+>> >set what channels you want and get that data.
+>> >
+>> >Jonathan
+>> >
+>> >
+>> >>
+>> >> >
+>> >> >The handling the core code is reasonably sophisticated and will
+>> >> >use bulk copying where appropriate.
+>> >> >
+>> >> >If there is a strong reason to not use that, add a comment here so
+>> >> >we don't have anyone 'fix' this code in future.
+>> >> >
+>> >> >> +      }
+>> >> >> +
+>> >> >> +      iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
+>> >> >> +pf->timestamp);
+>> >> >> +
+>> >> >> +out:
+>> >> >> +      iio_trigger_notify_done(indio_dev->trig);
+>> >> >> +
+>> >> >> +      return IRQ_HANDLED;
+>> >> >> +}
+>> >>
+>>
+
 
