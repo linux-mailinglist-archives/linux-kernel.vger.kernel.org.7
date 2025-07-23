@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-743309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9BCB0FD22
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A6CB0FD24
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA251CC22F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B085960A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CA271449;
-	Wed, 23 Jul 2025 22:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AEB271442;
+	Wed, 23 Jul 2025 22:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSOFFsVt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLz/eyru"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE14233714;
-	Wed, 23 Jul 2025 22:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDEF221F29;
+	Wed, 23 Jul 2025 22:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753311062; cv=none; b=RhzS+6FCF1eTvQ9Xkl2FoTHPcaIKSu/b8/psrFVj7tAzW++dU0csXgUBrD/VsiP0YBeSRAfFqL8JmlWAeN5ZroJD3M9pTynZH0Ezk/+z/8oa3Dzk+pua6za+KaE1YeQr+rIVAGhjJeRqAYNDDA0P4UlmdEfKghgT+r275SJSpdk=
+	t=1753311219; cv=none; b=NwX8CT6W8flNqAEywP4Nvnzq80YhiZvB3lHHSftd/Ybv/RMuuuqmJja9jF2QONLub0Cvj9t+a4+/au0k+P8tQOtciqWInCvb8gHEDHBQyRl/Y670CTY5BzfNunYDiXiNx0kEaowAiAB3ETn8x66/sYUVYmevVeX9StkxGWXIr7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753311062; c=relaxed/simple;
-	bh=RlAPo3yG9r5xJn+uMDDav2IEh77+oZ277nIW3U916Rc=;
+	s=arc-20240116; t=1753311219; c=relaxed/simple;
+	bh=H9LloSRiugXBEdYC4N9Q/SYB3RgU55GOfsoctf+gWG0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvKzjJgK0TFePIFCaapYdWcH1rLGlDFfJWxr9C6Cz4UEoBQHL8Y4qslQZdo0K3s8wXYHJNpVXRZPp8Zaebk5DQan7PpXmvVA94xBwGA+brKeKK9Tn1cnvJSrdwI+owXwMculi2kiYd2OUWn1K4t5MhqT5mM1cJp9/VqlGH2Luus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSOFFsVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D89C4CEE7;
-	Wed, 23 Jul 2025 22:51:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPzV0Wi+xGPRl22+L5QRYgi954Bdmugg49CJ8L6yn8hC/PKazaun1uxf86lbPbA9D5F5hBcWGxNQpKVGaiyMxGSj9cFOmPdvQsTaityrih+lpG4jGJh73KnBeufP/4/6xK4HsNjZW0MCjvxTg4aWE/4U2Iw2I5rgMRGj96KWw8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLz/eyru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16187C4CEE7;
+	Wed, 23 Jul 2025 22:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753311062;
-	bh=RlAPo3yG9r5xJn+uMDDav2IEh77+oZ277nIW3U916Rc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=DSOFFsVtTDj5wzsYtmMJMet/xf3nzeAgo1MqEZZQL5HeM3JeXp8rV9NpB9IAiQ9TR
-	 pwxvkt4Glkj5wYP9pHAlaXJiVQmDRqjeph1RX7dL8j/JHs6iuCyug1ftmN+KDQfTJu
-	 5/o5IB9pX32YJaeQJBWfMlrilX8TnhfRtvf/8pmWTvGh8tx6akWo5p9/mF3yt89xam
-	 VaoeJ80v3cwY9cgKsky9PXsbyR7RmcGmWbdQ0eGLCmOsabURJTLLEuMcv0L+CSEBZB
-	 KsTOIwmzG0liPPKLs3IPkyjPPARunb2WHgMzmDBEzl/38QqAMyUFfZNdbMwE7pQUFq
-	 NBrClfygk/12w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9DDE8CE127E; Wed, 23 Jul 2025 15:51:01 -0700 (PDT)
-Date: Wed, 23 Jul 2025 15:51:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] tracing: Guard __DECLARE_TRACE() use of
- __DO_TRACE_CALL() with SRCU-fast
-Message-ID: <18ef593a-9572-4189-8cd7-2222c8d5e43c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
- <20250723202800.2094614-4-paulmck@kernel.org>
- <020d22f0-a95b-4204-a611-eb3953c33f32@efficios.com>
- <a09344a7-22dc-48d1-a202-67532507163b@paulmck-laptop>
- <20250723182930.2d0d59f1@gandalf.local.home>
+	s=k20201202; t=1753311219;
+	bh=H9LloSRiugXBEdYC4N9Q/SYB3RgU55GOfsoctf+gWG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tLz/eyrusc8ybCkp9nqH5av1ejQFs6TDjviXQSB+yuUmKzZdODC4fIAZVmQJ178f3
+	 jUaQfOl+vrWme/Y5kkaBY/q2Cch+UZqEDDYUWNONsEiSL72JC1bv1d7qbkpt8OQh8r
+	 +d48MaNHfA9bbD6bh7iyp/o+jqHzyrapnqt7jxGXCnOIrJ9g75PoR+5OG9XFm14p7k
+	 3M79NHeuqKkOIgbsa8BKPpwXOK+E8Ks+FLOlkrcvgyf4GWoWxmaRFm8l5UcVwBqBe2
+	 dSqCGDZow9m5QbmIYQONZMCDyn+Frc8wggvhsqE5o0+bWbm18XURlo3vzbglRjX1pi
+	 wv+BfLrm11kMg==
+Date: Thu, 24 Jul 2025 00:53:36 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] i2c: lpi2c: implement master_xfer_atomic callback
+Message-ID: <aysffqj3gzcjwgdch37aghudi6bg7vqwtg6ot7dxl23riuiafa@6mwakofxbbhx>
+References: <20250718133429.67219-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,23 +59,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723182930.2d0d59f1@gandalf.local.home>
+In-Reply-To: <20250718133429.67219-1-francesco@dolcini.it>
 
-On Wed, Jul 23, 2025 at 06:29:30PM -0400, Steven Rostedt wrote:
-> On Wed, 23 Jul 2025 15:17:52 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> 
-> > I believe that Steve provided me with the essentials for perf and ftrace,
-> > but please check:  f808f53d4e4f ("squash! tracing: Guard __DECLARE_TRACE()
-> > use of __DO_TRACE_CALL() with SRCU-fast").
-> 
-> Note, there's nothing in the ftrace side that requires preemption disabled,
-> but it assumes that it is, and adjusts the preempt_count that is recorded
-> in the trace event to accommodate it.
+Hi Francesco,
 
-Ah, thank you for the clarification.  I agree with your approach as being
-a more localized change, with less chance of some forgotten invariant
-biting us.  ;-)
+On Fri, Jul 18, 2025 at 03:34:27PM +0200, Francesco Dolcini wrote:
+> Emanuele Ghidoli (2):
+>   i2c: lpi2c: use readl_poll_timeout() for register polling
+>   i2c: lpi2c: implement xfer_atomic callback
 
-							Thanx, Paul
+merged to i2c/i2c-host.
+
+Thanks,
+Andi
 
