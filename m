@@ -1,248 +1,233 @@
-Return-Path: <linux-kernel+bounces-742460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404B3B0F1F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:11:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A563B0F1F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 210097B31B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:09:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2317ACBCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED722E5B0C;
-	Wed, 23 Jul 2025 12:10:50 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3026F2E5B14;
+	Wed, 23 Jul 2025 12:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d3EGE1qc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F86212D83;
-	Wed, 23 Jul 2025 12:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE74B28EA5A;
+	Wed, 23 Jul 2025 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753272650; cv=none; b=Z+kypoBjno0MlcVnBVngSsEIAWszBw7kXdsQgagZ0+Nj++XlyixTg/vOrtGqObbKtWdFG4OmBA8MyFd2D4Vf6SPGBGxuipLSX3hApQN90xZ2XCR1+IUuTib/E9g9eG152n7fzfPnuxt3BLMpfBzDWdL4MkJjWlI8ak96BGd80uI=
+	t=1753272691; cv=none; b=epMLlbUhonwlmcawagJQXdll5KzTPZe8JDKuJ/RarhHXsf8TYgU0U29KVqr1js4umLIHkxXNb1xg7YjHYghuTa6cQpD/MAn1kGJmPbY2FZee1wsxulOYLAwoBt8unUgb0gWwC5s7AF+YSuZiXYUPGDPvd7wEicylxeP9VzwOuDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753272650; c=relaxed/simple;
-	bh=uuZlp+3gTyNCopZQ+VugT7LYpsGTyKtvVYIaBL25s9A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UlAJ1VA6UjRSMFU10oZg8G2F8XD2A87V0aH4umHVYEvHkO/SFNPqFpAjCo+WwchEJfD2wQL05bpYJlLUoUIE2UenC3YPycUESX3ccfeusjwH+RCnEVeg1lqgs8ohi1zASivAL65R/13VitTAPe8ow/lrfZosACp9cVNds48fNgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bnCXd2Z1tz2CfxM;
-	Wed, 23 Jul 2025 20:06:25 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B3F81401F1;
-	Wed, 23 Jul 2025 20:10:35 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 23 Jul 2025 20:10:35 +0800
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 23 Jul 2025 20:10:34 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
-	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH v2] ACPI: processor: idle: Fix resource leak and potential concurrent in acpi_processor_power_init()
-Date: Wed, 23 Jul 2025 20:10:34 +0800
-Message-ID: <20250723121034.3685996-1-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1753272691; c=relaxed/simple;
+	bh=BVQkkx4ks1jCz7SnnAYL8Ss31m2IY6B7ZDDOVJBjsCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DC3LHDMjQP4W4NdaVkoFsAmSUhHl9zD3C9P4cmq/bX6GdF1qVWSL6NvOggW/eOfn9ghcVYKYOro44BbWgQGzeONulPOjt/J4dT8TlU/PzF15cIvwvS1XjBovBkNv2wTdunAH8xR4XjX4lB2egOXBd3HgyvWIuATSRH/p95hta2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d3EGE1qc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9F4JA010846;
+	Wed, 23 Jul 2025 12:11:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cqYFYAC+mWsNWpnVtRJZAS2RKfDItLqPBiJ8RjaetMg=; b=d3EGE1qcToRKKSQn
+	UuGHwvmlRkSQR11z5geEYtXN710cY95A3zB4eezwtLCWcaJrQ+UOkpoTIbnRPSIa
+	QCStng8lYZE9IoleHJuTGSn7dKLKi2QuEc7eRTX+WmVMAsV2nINkYSXSPZPWJw14
+	7KhaYiJi3Em4RP8afmdkZAu8Jkxf95MvzJ+58i3PWf5kTAkbBA9pczWmLmtgWnsF
+	uXwKldBBQtJIn3vydXWkKcsxzlCFhvMqZKgzeQGA+YAkDGJfEldRzGQY0+Q/PoEr
+	Mx8iYLCxD3BmYGamiMxr9JJuZmYnVE+skdibCr5i16H1bcOwEwo87MkosQ6T4WQj
+	twEt1w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na3fru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 12:11:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56NCBQXR011268
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 12:11:26 GMT
+Received: from [10.218.37.132] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 23 Jul
+ 2025 05:11:24 -0700
+Message-ID: <43424518-e73c-4136-bb0c-d4cb30062d7b@quicinc.com>
+Date: Wed, 23 Jul 2025 17:41:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] bus: mhi: host: pci_generic: Remove MHI driver and
+ ensure graceful device recovery
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <Vivek.Pernamitta@quicinc.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
+ <20250710-sriov_vdev_next-20250630-v2-3-4bd862b822e8@quicinc.com>
+ <68f18f09-913d-4ef9-bd13-ad32c1d5f8ca@oss.qualcomm.com>
+Content-Language: en-US
+From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+In-Reply-To: <68f18f09-913d-4ef9-bd13-ad32c1d5f8ca@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VoWv5eBGznUOkmRGoidG1-Hd4OtOtALh
+X-Proofpoint-ORIG-GUID: VoWv5eBGznUOkmRGoidG1-Hd4OtOtALh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDEwMiBTYWx0ZWRfXzPgNtTHK3uov
+ yMPHyGS7iy1hofKWNDS9P369n0o3mVo/B3HlDr50B9cw9xgS33o1j20trYeYxfxopzvrqOnQg1X
+ nWaeJUnLoUw94ovATOtKXbPBVrfn7cUHNHlNVy9TQe0KR7Oc8gkYclqotUM8mX211kL4L8tdP3U
+ AM6u+Cm9ZlvQ7vRqsyxUq3iklOcfcYMbLVtRIbftz1Tog7pZrYrA/sUf8uG6lCpkn9ma9Q5mP+H
+ VCKh/FnykhpiErsISZxaty/lEDPnaSeyEoWi8S9iiDeM3/oqq9F6JjPBDOtBOI6Ixht4u2v2Cg7
+ R8NMs6rL5TnQs7Zs0MkOVBP8jDtQW21autjFiOTqExtEEWbQH/whu2/AdbK/Oc3UOAfapd0m9mk
+ 4F1VX32usAsnZnIDI/IvvMlK6gInfdMxylyUMch+fPgFfRwUQ/wfZyV/MCbpRDCY05EMSIzT
+X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=6880d16f cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=sMkw372tbV0BwNLCCAcA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
+ bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230102
 
-There are three kind of issues:
-1> There are two resource leak issues in acpi_processor_power_init:
-   a> Don't unregister acpi_idle_driver when do kzalloc failed.
-   b> Don't free cpuidle device memory when register cpuidle device failed.
-2> There isn't lock to prevent the global acpi_processor_registered, which
-   may lead to concurrent register cpuidle driver.
-3> The cpuidle driver should be registered in advance when all of the CPUs
-   have been brought up instead of being in a CPU hotplug callback.
 
-To solve these issues, so add a new function to initialize acpi_idle_driver
-based on the power management information of an available CPU and register
-cpuidle driver in acpi_processor_driver_init().
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- v2: register cpuidle driver in advance when all of the CPUs have been
-     brought up.
-     v1 link: https://patchwork.kernel.org/project/linux-acpi/patch/20250619061327.1674384-1-lihuisong@huawei.com/
----
- drivers/acpi/processor_driver.c |  5 +++
- drivers/acpi/processor_idle.c   | 71 ++++++++++++++++++++++-----------
- include/acpi/processor.h        |  9 +++++
- 3 files changed, 62 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
-index 65e779be64ff..ff944c93b6ff 100644
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -263,6 +263,10 @@ static int __init acpi_processor_driver_init(void)
- 	if (result < 0)
- 		return result;
- 
-+	result = acpi_processor_register_idle_driver();
-+	if (result)
-+		pr_info("register idle driver failed, ret = %d.\n", result);
-+
- 	result = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
- 				   "acpi/cpu-drv:online",
- 				   acpi_soft_cpu_online, NULL);
-@@ -301,6 +305,7 @@ static void __exit acpi_processor_driver_exit(void)
- 
- 	cpuhp_remove_state_nocalls(hp_online);
- 	cpuhp_remove_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD);
-+	acpi_processor_unregister_idle_driver();
- 	driver_unregister(&acpi_processor_driver);
- }
- 
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 2c2dc559e0f8..2408f1076631 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -1360,7 +1360,52 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
- 	return 0;
- }
- 
--static int acpi_processor_registered;
-+int acpi_processor_register_idle_driver(void)
-+{
-+	struct acpi_processor *pr;
-+	int cpu;
-+	int ret;
-+
-+	/*
-+	 * Acpi idle driver is used by all possible CPUs.
-+	 * Install the idle handler by the processor power info of one in them.
-+	 * Note that we use previously set idle handler will be used on
-+	 * platforms that only support C1.
-+	 */
-+	for_each_cpu(cpu, (struct cpumask *)cpu_possible_mask) {
-+		pr = per_cpu(processors, cpu);
-+		if (pr == NULL)
-+			continue;
-+
-+		ret = acpi_processor_get_power_info(pr);
-+		if (!ret) {
-+			pr->flags.power_setup_done = 1;
-+			break;
-+		}
-+	}
-+
-+	if (unlikely(!pr))
-+		return -ENODEV;
-+
-+	if (ret) {
-+		pr_err("%s get power information failed.\n",
-+		       acpi_idle_driver.name);
-+		return ret;
-+	}
-+
-+	acpi_processor_setup_cpuidle_states(pr);
-+	ret = cpuidle_register_driver(&acpi_idle_driver);
-+	if (ret)
-+		return ret;
-+
-+	pr_debug("%s registered with cpuidle\n", acpi_idle_driver.name);
-+	return 0;
-+}
-+
-+void acpi_processor_unregister_idle_driver(void)
-+{
-+	cpuidle_unregister_driver(&acpi_idle_driver);
-+}
- 
- int acpi_processor_power_init(struct acpi_processor *pr)
- {
-@@ -1375,22 +1420,7 @@ int acpi_processor_power_init(struct acpi_processor *pr)
- 	if (!acpi_processor_get_power_info(pr))
- 		pr->flags.power_setup_done = 1;
- 
--	/*
--	 * Install the idle handler if processor power management is supported.
--	 * Note that we use previously set idle handler will be used on
--	 * platforms that only support C1.
--	 */
- 	if (pr->flags.power) {
--		/* Register acpi_idle_driver if not already registered */
--		if (!acpi_processor_registered) {
--			acpi_processor_setup_cpuidle_states(pr);
--			retval = cpuidle_register_driver(&acpi_idle_driver);
--			if (retval)
--				return retval;
--			pr_debug("%s registered with cpuidle\n",
--				 acpi_idle_driver.name);
--		}
--
- 		dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 		if (!dev)
- 			return -ENOMEM;
-@@ -1403,11 +1433,10 @@ int acpi_processor_power_init(struct acpi_processor *pr)
- 		 */
- 		retval = cpuidle_register_device(dev);
- 		if (retval) {
--			if (acpi_processor_registered == 0)
--				cpuidle_unregister_driver(&acpi_idle_driver);
-+			per_cpu(acpi_cpuidle_device, pr->id) = NULL;
-+			kfree(dev);
- 			return retval;
- 		}
--		acpi_processor_registered++;
- 	}
- 	return 0;
- }
-@@ -1421,10 +1450,6 @@ int acpi_processor_power_exit(struct acpi_processor *pr)
- 
- 	if (pr->flags.power) {
- 		cpuidle_unregister_device(dev);
--		acpi_processor_registered--;
--		if (acpi_processor_registered == 0)
--			cpuidle_unregister_driver(&acpi_idle_driver);
--
- 		kfree(dev);
- 	}
- 
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index d0eccbd920e5..3cb41a3f2d9a 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -423,6 +423,8 @@ int acpi_processor_power_init(struct acpi_processor *pr);
- int acpi_processor_power_exit(struct acpi_processor *pr);
- int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
- int acpi_processor_hotplug(struct acpi_processor *pr);
-+int acpi_processor_register_idle_driver(void);
-+void acpi_processor_unregister_idle_driver(void);
- #else
- static inline int acpi_processor_power_init(struct acpi_processor *pr)
- {
-@@ -443,6 +445,13 @@ static inline int acpi_processor_hotplug(struct acpi_processor *pr)
- {
- 	return -ENODEV;
- }
-+static int acpi_processor_register_idle_driver(void)
-+{
-+	return -ENODEV;
-+}
-+static void acpi_processor_unregister_idle_driver(void)
-+{
-+}
- #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
- 
- /* in processor_thermal.c */
--- 
-2.33.0
+On 7/10/2025 6:12 PM, Konrad Dybcio wrote:
+> On 7/10/25 10:58 AM, Vivek.Pernamitta@quicinc.com wrote:
+>> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>>
+>> When the MHI driver is removed from the host side, it is crucial to ensure
+>> graceful recovery of the device. To achieve this, the host driver will
+>> perform the following steps:
+>>
+>> 1. Disable SRIOV for any SRIOV-enabled devices on the Physical Function.
+>> 2. Perform a SOC_RESET on Physical Function (PF).
+>>
+>> Disabling SRIOV ensures that all virtual functions are properly shut down,
+>> preventing any potential issues during the reset process. Performing
+>> SOC_RESET on each physical function guarantees that the device is fully
+>> reset and ready for subsequent operations.
+>>
+>> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>> ---
+>>   drivers/bus/mhi/host/pci_generic.c | 26 +++++++++++++++++++++++++-
+>>   1 file changed, 25 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+>> index 4bafe93b56c54e2b091786e7fcd68a36c8247b8e..2d1381006293412fbc593316e5c7f0f59ac74da8 100644
+>> --- a/drivers/bus/mhi/host/pci_generic.c
+>> +++ b/drivers/bus/mhi/host/pci_generic.c
+>> @@ -45,6 +45,8 @@
+>>    * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
+>>    *		   of inband wake support (such as sdx24)
+>>    * @no_m3: M3 not supported
+>> + * @reset_on_driver_unbind: Set true for devices support SOC reset and
+>> + *				 perform it when unbinding driver
+>>    */
+>>   struct mhi_pci_dev_info {
+>>   	const struct mhi_controller_config *config;
+>> @@ -58,6 +60,7 @@ struct mhi_pci_dev_info {
+>>   	unsigned int mru_default;
+>>   	bool sideband_wake;
+>>   	bool no_m3;
+>> +	bool reset_on_driver_unbind;
+>>   };
+>>   
+>>   #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+>> @@ -300,6 +303,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
+>>   	.dma_data_width = 32,
+>>   	.sideband_wake = false,
+>>   	.no_m3 = true,
+>> +	.reset_on_driver_unbind = true,
+> 
+> It seems rather unlikely that out off all MHI devices, only QDU100
+> needs this quirk when working under SR-IOV
+The reset_on_driver_unbind flag has been explicitly added for the QDU100
+device. While other devices might enter RAMDUMP mode and wait when a SOC
+reset is issued, the QDU100 device will pass through without entering
+RAMDUMP mode
+> 
+>>   };
+>>   
+>>   static const struct mhi_channel_config mhi_qcom_sa8775p_channels[] = {
+>> @@ -970,6 +974,7 @@ struct mhi_pci_device {
+>>   	struct work_struct recovery_work;
+>>   	struct timer_list health_check_timer;
+>>   	unsigned long status;
+>> +	bool reset_on_driver_unbind;
+>>   };
+>>   
+>>   static int mhi_pci_read_reg(struct mhi_controller *mhi_cntrl,
+>> @@ -1270,6 +1275,11 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>   	mhi_cntrl->mru = info->mru_default;
+>>   	mhi_cntrl->name = info->name;
+>>   
+>> +	/* Assign reset functionalities only for PF */
+>> +	if (pdev->is_physfn)
+>> +		mhi_pdev->reset_on_driver_unbind = info->reset_on_driver_unbind;
+>> +
+>> +
+> 
+> Double \n
+sure will correct in next patchset
+> 
+>>   	if (info->edl_trigger)
+>>   		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
+>>   
+>> @@ -1336,7 +1346,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>   	return err;
+>>   }
+>>   
+>> -static void mhi_pci_remove(struct pci_dev *pdev)
+>> +static void mhi_pci_resource_deinit(struct pci_dev *pdev)
+>>   {
+>>   	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+>>   	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+>> @@ -1352,6 +1362,20 @@ static void mhi_pci_remove(struct pci_dev *pdev)
+>>   	/* balancing probe put_noidle */
+>>   	if (pci_pme_capable(pdev, PCI_D3hot))
+>>   		pm_runtime_get_noresume(&pdev->dev);
+>> +}
+>> +
+>> +static void mhi_pci_remove(struct pci_dev *pdev)
+>> +{
+>> +	struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
+>> +	struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
+>> +
+>> +	/* Disable SRIOV */
+>> +	pci_disable_sriov(pdev);
+>> +	mhi_pci_resource_deinit(pdev);
+>> +	if (mhi_pdev->reset_on_driver_unbind) {
+> 
+> Can we not simply check for pdev->is_physfn?
+The reset_on_driver_unbind flag has been explicitly added for the QDU100 
+device. While other devices might enter RAMDUMP mode and wait when a SOC 
+reset is issued, the QDU100 device will pass through without entering 
+RAMDUMP mode.
+> 
+>> +		dev_info(&pdev->dev, "perform SOC reset\n");
+> 
+> Is the logspam really necessary?
+> 
+>> +		mhi_soc_reset(mhi_cntrl);
+>> +	}
+> 
+> Konrad
 
 
