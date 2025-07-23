@@ -1,94 +1,62 @@
-Return-Path: <linux-kernel+bounces-742179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9347EB0EE56
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451E3B0EE5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D873188D7C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8149188EF5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D49287512;
-	Wed, 23 Jul 2025 09:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1BE286887;
+	Wed, 23 Jul 2025 09:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J25gLojy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QOQxm+hb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J25gLojy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QOQxm+hb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dmL/ImZW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03C8205AB6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0932286888;
+	Wed, 23 Jul 2025 09:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753262661; cv=none; b=mTpVOBM2sYRcPmHSRhV6Z5ZjnKuXXmhvbPUQcgbWVX/PVHvtr5NdbWU7C1i2xYMzz9sfMRVPRHUahhK+r4K5oFYwv0lsV7shWiymUWPinR6dLixopI9/UyDegLDvBLAOBHf9AxtfhkbNOGKW8LBY8un0WiFxdfTC8vB4BiubguY=
+	t=1753262670; cv=none; b=d43rjYL85lzfGXXUznws62LWKcNQum8uXOn7Ip1TJCGZaCyvacCAiQCBIVfjUTtzHwcQArMYHjHVk8KNWwHqgXoCf4XtcvIZyoEqfhdfbBam37ZPD0uYin8QLYRJ0e/XKgZqI59RgM4oV4IYBnlcO8xZyVlyL6QIgTlipmqleaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753262661; c=relaxed/simple;
-	bh=hmVDYHObT/c+CTReZNz6Y+tTrTU3vt9RRJ/M7s8wM5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQ8D4LuTVxyLN9P6TE5FyEV5btbfVLYEs+DGDKQ3wCsMJLFDZcTW72gF9VFh5isUzn++zHM+Sx4Xv0BuDu5xSyVC2AA0OE4AuN2MmxgS74qasrGuOnulSLyrMbY3hJT18rqX9OFLjWxElCnoO5aB6r+MiIqvX7N9OgkoV1e5duU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J25gLojy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QOQxm+hb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J25gLojy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QOQxm+hb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F05E421284;
-	Wed, 23 Jul 2025 09:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753262658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Umxq9tC9oV7T6xLjIOHoIDREJCvxx4xmfRh9hhbWa6A=;
-	b=J25gLojyHwBrDMmrlxyurOQyxx0dFEimFpZnvhH81aOsUNlEUq4AQkc/RMPB15s7ebl86J
-	hEvHhxD1qNBNVEa9y4vo5ARMnhcDzSDMtR3Uexx1MgGJ7xeYZgEdJdCNd8JRhUIJZ/0ABT
-	ROMH3hHKgBENZ1FToDLcvEdtBt3yCn0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753262658;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Umxq9tC9oV7T6xLjIOHoIDREJCvxx4xmfRh9hhbWa6A=;
-	b=QOQxm+hbw/ergomcIR5qHQZWOJqfkplnlzNwhZdqB8DBetiCvL5/89OLlsBrsUTc6ygJp4
-	EZ3NaqlX0gig7DBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753262658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Umxq9tC9oV7T6xLjIOHoIDREJCvxx4xmfRh9hhbWa6A=;
-	b=J25gLojyHwBrDMmrlxyurOQyxx0dFEimFpZnvhH81aOsUNlEUq4AQkc/RMPB15s7ebl86J
-	hEvHhxD1qNBNVEa9y4vo5ARMnhcDzSDMtR3Uexx1MgGJ7xeYZgEdJdCNd8JRhUIJZ/0ABT
-	ROMH3hHKgBENZ1FToDLcvEdtBt3yCn0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753262658;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Umxq9tC9oV7T6xLjIOHoIDREJCvxx4xmfRh9hhbWa6A=;
-	b=QOQxm+hbw/ergomcIR5qHQZWOJqfkplnlzNwhZdqB8DBetiCvL5/89OLlsBrsUTc6ygJp4
-	EZ3NaqlX0gig7DBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C65C413302;
-	Wed, 23 Jul 2025 09:24:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EnzQL0GqgGjqVQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 09:24:17 +0000
-Message-ID: <98ecfbe3-2130-4260-a6a5-2146587ea5c5@suse.cz>
-Date: Wed, 23 Jul 2025 11:24:17 +0200
+	s=arc-20240116; t=1753262670; c=relaxed/simple;
+	bh=jbXkaT66+gpJy6fC2JJhYF2uNeh2bMTCPpzGLGBU/R0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AwbbnPvN0+/fciltDmozv0HlD1TXOdfFCWaGaj/L7B6vuiSIl4wPK8qaxOg2yliwLLIpA+xuGpLXXU0kbC99/bklX07+H39l3jZGFnc/7qQHXvqfYOWkCPD+0RwAC5rq5JGJeDoXVt1ghe3HA/ugm8e+rsrRkneVxS7XI1DpSfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dmL/ImZW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMO6u3019720;
+	Wed, 23 Jul 2025 09:24:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0Hvuvy0wV2wPQIy3Q2vMUB1zrcW3JjDh0Lrc3Qw9BXo=; b=dmL/ImZWw66L2Jar
+	XbZiVBFfN0L0K5VAp/IKQlxN8xbinRjImC3zeKbYrdzEZVSiy8S9F7x/UMAmMFLF
+	scITSRzWELGgCUMBF0qVMVHLsdBx1jVRhh3dw0O4Lleim9LLKROBBlzs48UW4OKh
+	QKTZ9eWPbTqQInjDH/IYk/Nd5ZPbnWpZ1+ktkzhkipuU22q6iuFrTQAEEBJZx8nh
+	MuoxpmLeZVq7li6Mhk74iPlG8Ls3aMG+EvIAz/ENLbAo6oIYhSz2nG/+RIlP4qew
+	rqJtxOdXrDTrBTNxNp9oGHeaj7tHvc1dhGnrh3c5rReBTbcN+J6cJQqPuszqRe3/
+	Dl7bTw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6pspj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 09:24:25 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56N9OOf7004853
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 09:24:24 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 23 Jul
+ 2025 02:24:21 -0700
+Message-ID: <7baebfcf-3afd-445c-ab88-a8ca503c2e33@quicinc.com>
+Date: Wed, 23 Jul 2025 17:24:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,95 +64,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: remove
- trace_mm_alloc_contig_migrate_range_info()
+Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: Enable display support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com>
+ <ad436d4f-dff2-4063-9b9b-e1218f6dc3c7@kernel.org>
+ <aa18a24f-a16a-46a1-a66c-732999acb63e@quicinc.com>
+ <f5f30f4e-50ee-4539-893b-4a7667a16651@kernel.org>
 Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>, Richard Chang <richardycc@google.com>,
- linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- David Rientjes <rientjes@google.com>, Martin Liu <liumartin@google.com>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20250722194649.4135191-1-ziy@nvidia.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250722194649.4135191-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <f5f30f4e-50ee-4539-893b-4a7667a16651@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=6880aa49 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=0ochVkNWXur7tueVziIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: SApVIETixLDH1TcJlCfVjhN4SaeVXP4Q
+X-Proofpoint-GUID: SApVIETixLDH1TcJlCfVjhN4SaeVXP4Q
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA3OSBTYWx0ZWRfX3r4q8CCvoG+g
+ F0U4U3iUcvCOSnyW3HYp5CvDwn886O++ohaiPxRKSrgKmG9Kcl+1FrGpwFlu5MvmLPnWjfSqQLV
+ 7RJR32orfzAma6uCckLVjgAC7rDe8yWeskDB4PQFzWyPT8/59bgLYWGHjrskQzta8qyT70ZOOF+
+ 9nNYL12BftrlrnHMBaTvisegwQ2iB06Rz4yawRFH1xXDyRFAeL/8fBdFKw1MAdun2Aw0Wa5uKlM
+ 6Uq4rGolITvL9/QFif0R07GPWMVlZ09iPsBy/hmTo88osQLFnqxVPk8yCvcXnKMInaV4t/NIXG3
+ I1VRjME1+vyNlTTG3y5u/8le7+oTW1JjTXPtGnlURzh4PBKYKOdYEajU1fMWDaOdHpx2w+gbOla
+ Xq1Jo/LYckCoEUHIZLdMp/NFHq7/uQwWZcTAzveAEjEKUEzy/m8nQdqnNU7ktIy+vPXKoxa9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_01,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=651 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230079
 
-On 7/22/25 21:46, Zi Yan wrote:
-> The trace event has not recorded the right data since it was introduced
-> at commit c8b360031218 ("mm: add alloc_contig_migrate_range allocation
-> statistics"). Remove it.
+
+
+On 2025/7/23 17:08, Krzysztof Kozlowski wrote:
+> WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507220742.P3SaKlI6-lkp@intel.com/
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> On 23/07/2025 10:08, Yongxing Mou wrote:
+>>>> ---
+>>>> This change made top of initial DTS:
+>>>> https://lore.kernel.org/all/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com/
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 156 +++++++++++++++++++++++++++++
+>>>>    1 file changed, 156 insertions(+)
+>>>
+>>> Just squash it there. Why are you posting knowingly incomplete DTS just
+>>> to fix it later?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> Hi, sorry, I'm just want to enable display based initial DTS. Should
+>> this patch merge into the initial DTS?
+> 
+> 
+> Yes, initial DTS is not merged and being reviewed. Adding new board is
+> one commit, not two.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Got it. Thanks~ will merge into one patch.
 
 
