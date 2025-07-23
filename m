@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-743150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D68B0FB35
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83100B0FB37
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A9D4E1A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:57:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582C75634EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA1230BFB;
-	Wed, 23 Jul 2025 19:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD77230BFF;
+	Wed, 23 Jul 2025 19:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DEG8ct1W"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jEQZmeI/"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E07F9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586725776
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753300668; cv=none; b=CD4BJA2VVpW1TB6V+tsIwKgdbXQem+W3z06mYKv8T6q1oxAZG77trPfpn/DV9ptVsAVjswtHfRcbOw6YAQ/LmXvGETVk1UQcSLisuwSwbAjN7ZJXu1oCKtDXq+L2dML18B3xXb40rRANVeqE7iAZyiExhu5gVT41Zp2rO3MIp6M=
+	t=1753300713; cv=none; b=BFeEn04SwHPgl3Ymh2pURvm0JDuC1q1uDC0kBRiaTsA99UTPPwKnO+Qye7EzAM3/Fi1g2ZfljZG9NQKifQ0+aN+VMfkouh7DAysuJBGbxVYCzhiI7nH2VDLuU2qedA+yr39fFz0lUUceFzASJuWtkeKQw1kg6C1JyRmK08DZWEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753300668; c=relaxed/simple;
-	bh=FVSyqqgqEq4MnbN1AK5ppWWETHgof3UqLFecD42QwMI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YIj+e+tlCP3IDRIce11SoTY+nzPZFZEOPdIsQOWOvuUDJw9Nc5DQB7g5leIs8Qf96DdVgaYJ8ewJgSN7un3PrH3BQwN3Bp/hob+DZKEo1An8W9BRKyRD/e6LPUbrkEBgwIyqTCweLq+GsmqEhGqrvWnhLBQqrHiEsHVU780IYGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DEG8ct1W; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b3bad2f99f5so304108a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:57:46 -0700 (PDT)
+	s=arc-20240116; t=1753300713; c=relaxed/simple;
+	bh=g8zhiVPOKgsXsJtn0IpsS+vCHNdsx7XJj10DE1qeXds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WSS/euCyh4l6OlWBumDXiyVvOPZ8wbS4TbL4sSaTMvj+hN1hLWBVvYMEKEenFVEP+ebqsXZACo9bguAszzBenGLk7YWMyXwVMatttWv2pjHb0ZUkVMGWieTCZK/glXwNuluiwwoZSONqUbCa1TdUOI63CL3PF7ipb4LcvvVK1IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jEQZmeI/; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so2410255e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 12:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753300666; x=1753905466; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/DG2m9HOzWXxFr0mPV6O/7kOINoRfxN8n3jHURo/ORo=;
-        b=DEG8ct1WATN5BwkWQIXgcWqP6ciIk034NbYWzPusn72yEkYoms4aCtNMDMF3B4AOm6
-         2DZP5IlmWNnNX0Zn+QNPC+F1O1ObGov/9wbs9lGLJAp673em5+w3xfik9w6wK8TU49qq
-         GAoQAYo4OhYrTzag8rTymSeLXkSNehTPjnWTw=
+        d=google.com; s=20230601; t=1753300707; x=1753905507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t+wSphNwAMpLftkYCJIT/z3kQtESm9gjVoVF0r2++5I=;
+        b=jEQZmeI/qm8uwXf8e7eim57vZffeoYpHQLAHwJG13Mk3ncIVnE2SzDAO7vhP+P2h7F
+         SYS1XQLdR96ytwTiri4bNdVY8CRxKdoJ+vRk4jn3PHK/d8UH96WbiutYZR9VZSffQeQU
+         gOORX//7sVdVl2vz1oULxC3p4o8KKdgGtmLM+o4xVrNrmsGMLYvGV9VlLXuMxrm+y2Eq
+         b/s4W2cyfuFNRmkA6KU7qDaTPLg5KQ+l4I3zb8M3DSpH/PookHYpXRhLs+gjgUstdS6U
+         83aL71uC/wFDz53mbC4HZlnE2VfFHJdd7zRPlDZC4U7HSO4XYWf4zbjmnxWGCCQMiKFr
+         5c+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753300666; x=1753905466;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/DG2m9HOzWXxFr0mPV6O/7kOINoRfxN8n3jHURo/ORo=;
-        b=tiQhDqayVN8iMfq4nJ5qzFd/ZycpBmQE+QbN5zMbhjCY3uQyxAGrchViOJBZWM4M2L
-         v5jkw+9kj5q7uWrObrAhxOMgYMddMTgGUypMevyIomF5Z+kPBD1pMiDRAAWwa0bWChq+
-         TxAef8lM9UBKWD4I7GnLGDyJZjSw48IW7B/3nArvQZLdb2yvUXo++SlcHy2GYkTv+MbE
-         1b+RV8naWBG6z7Kwgj7Mhr3Wt2SaiugwostobZtACsOeu/MusBDovNz24wDpKLu9Mris
-         D3q3JoPfMGuCvZKqx/s60Dqxr8OVRjdLjwUIcHBFHi3fr9iMbuw+g2JmLy3ThIBKG0ob
-         8ezQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtxH2Z0jZfAirqKWDKOFIlbd8GnebUwbdW6jufS7IdsE3LpREqN7Gnuv+LY4xJufJMtetfAFdoWj3Mk5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrnrSgO2Y3LpEGAO3h1lPZ31aEuzh4GkzM8ddIkS7lpsBdlCKM
-	iJnKybD04YX/RXJ3OOLTGhhUL9PzCYLbDMCwlrPw6LUr1SMEH3cXuS+oM6a3GKJiHQ==
-X-Gm-Gg: ASbGncsd7iIz6GABgoi6h0YtKGDQ/+Sy/ICHVcWi9gpaScq8HDijMju39E2VhckzBKP
-	gFfAB+dkvbI6/mpmzKEUyS1TNPCSgcF+TToTmbEOdZAUGftqbSMKEIpzRYNFVvp0DdWZeDuRLMX
-	/8HCVvl9QZErjgjlqfkX5RTepuetxOCevySLG8HmFXdUoUFIbSDLvv5mcBr/wTnuqdNdJwMKFRo
-	wloEtnx9S8+FNXM8I3TBIkfuKG5OUXbVSEe8h9tA6sl0aASsfFedVEJ9ky8iu9lk+oaxz7xGgcD
-	P7q2MqTnsIctSJMrFB+HX/kWCt4CTFjJDyAjHvrukww1XhxDkrmI43Initsjh0rULNrTNMBEmkT
-	UrU1PTNu3cjk+TVcDqSVCUiNme5T3qo4PdmbLd2E8SU/QxoM=
-X-Google-Smtp-Source: AGHT+IFkLaseT4J9N1a2WehClVWhl7WlueTj40zlFze3K+qatH6eNoY69q9GmgP0Dhp8ElHdTx56HQ==
-X-Received: by 2002:a17:90b:2709:b0:311:a5ab:3d47 with SMTP id 98e67ed59e1d1-31e5130f700mr4952881a91.1.1753300666086;
-        Wed, 23 Jul 2025 12:57:46 -0700 (PDT)
-Received: from ballway23.roam.corp.google.com ([136.27.48.153])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e519b1494sm2297587a91.4.2025.07.23.12.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 12:57:44 -0700 (PDT)
-From: Allen Ballway <ballway@chromium.org>
-Date: Wed, 23 Jul 2025 12:57:35 -0700
-Subject: [PATCH v2] media: ov8865: move mode_configure out of
- state_configure
+        d=1e100.net; s=20230601; t=1753300707; x=1753905507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t+wSphNwAMpLftkYCJIT/z3kQtESm9gjVoVF0r2++5I=;
+        b=GRn11MqWYFJC2KWSJKVIZkPYIQ6M1S6jnF+iFsbnC1jZmlnVnd6xLQGowqgVsFmehA
+         sEI5NHBIiOILH63gxKrP9FCoaGfhzByNdkuIGV2ic/hGF1LD8uMwHhEBC4Cd4iGFjTYI
+         rcXSJqw9TK8W+rnStcbhTjANDhp1BGx63wclHvam9jsiWSkvxRkpamd76F7mx7R5G8YK
+         qhxAO+YLXfu4Wcjqah0gr7Q758wNiyQczBq/djNrHnEog9A10B1d/Dx2RCt8o1jFf2Cw
+         rkVwWX40EnAOSviQoPh4cAaN5hiMK18/ImvqAPftrB3lZ0LvZCcRfVkNSsNX1IZ8XW8p
+         wepw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8iFqbeleQ+UNo5wkcq0JxIV6C8dFeAfhEwGma7LazsfDZJFVDMItTrZ3DvfuQw9DtfLafU6oSKQdZkBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUybIeIEvncJKhj/f6dqjeVlE2uK58MMJ8bELo554Ct95Wj86q
+	Aq8iJijH3VY30EZNF03njnsPEhIhqAclNlHOsBnLCZppXkSHOPAIjKBeUQkQr7A9tgtESsv4R6l
+	KzCG8RFBJdHz9QZj8IFFaD8V5AO5Cqova3s84Tk8K
+X-Gm-Gg: ASbGnctTk8zfsS0nnMfRqpwjKAe02cBg6OeNapjFxymyWZBtXpfF5v3iLAJsMGsFdrP
+	6vS1G/kp++/u8PVVrNDXlrvktX+BtI5xPbXi5xhvh2bvQsQ2gz8fpR9WmKofND9LZhGyPfW29x9
+	5CU8fd4uK4UJc6znq/3/Fsa5hvvHHUSXW876/NmhniqMFKSMKOOuaZ50FjphtUmEcwozIAJag+D
+	3FzGSdo
+X-Google-Smtp-Source: AGHT+IFaDTU6O3IJMCvXOkDzZcTMBsDv+ztlngHv9aGs7ot96t0vQqO3XwvIou4OVwXTVfLDTeY9Gc8RfPDT1X5xwVU=
+X-Received: by 2002:a05:6000:2901:b0:3b6:13a1:8861 with SMTP id
+ ffacd0b85a97d-3b768ef8e92mr4135128f8f.38.1753300707100; Wed, 23 Jul 2025
+ 12:58:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-mode_configure-v2-1-7fb0f6ba1194@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAK8+gWgC/3XMQQrCMBCF4auUWRtJUoLFlfeQIjWZtLNoRyZtU
- Erubuze5f/gfTskFMIE12YHwUyJeKlhTw34aVhGVBRqg9XW6Yu1auaAD89LpHETVJ022sVn6Fo
- XoJ5egpHeB3jva0+UVpbP4WfzW/9S2SijHA6t084O2sSbn4Rn2uYzywh9KeULhblnxa8AAAA=
-X-Change-ID: 20250722-mode_configure-80105fbd835d
-To: Hans de Goede <hansg@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Allen Ballway <ballway@chromium.org>
-X-Mailer: b4 0.14.2
+References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
+ <20250723-lock-class-key-cleanup-v1-1-85fa506b8ca4@google.com>
+ <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org> <CAH5fLgjWFa8TjTL+rfv7Zd+OQqhkKqWvyTkGf60pMUyQ=c4sXg@mail.gmail.com>
+ <aIELxq_iVMfjszkh@tardis-2.local>
+In-Reply-To: <aIELxq_iVMfjszkh@tardis-2.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 23 Jul 2025 21:58:13 +0200
+X-Gm-Features: Ac12FXxMV-RP24FaIH2r0YNWB6v_mOHMqRPtrQ5jEyR_mwy2TutgiYw_IKyQKKQ
+Message-ID: <CAH5fLgiOaZRki71X7oDPpz1OnNEbPgPLmcxbJXscdbDBhUy6=w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: sync: refactor static_lock_class!() macro
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ov8865_mode_configure() only needs to be called on sensor init, but it can
-be called multiple times from ov8865_state_configure(). Move
-ov8865_mode_configure() to ov8865_sensor_init().
+On Wed, Jul 23, 2025 at 6:20=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Wed, Jul 23, 2025 at 05:01:39PM +0200, Alice Ryhl wrote:
+> > On Wed, Jul 23, 2025 at 4:36=E2=80=AFPM Benno Lossin <lossin@kernel.org=
+> wrote:
+> > >
+> > > On Wed Jul 23, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
+> > > >  impl LockClassKey {
+> > > > +    /// Initializes a statically allocated lock class key.
+> > > > +    ///
+> > > > +    /// This is usually used indirectly through the [`static_lock_=
+class!`] macro.
+> > > > +    ///
+> > > > +    /// # Safety
+> > > > +    ///
+> > > > +    /// The destructor must never run on the returned `LockClassKe=
+y`.
+> > >
+> > > I don't know how lockdep works, but Boqun mentioned in the other thre=
+ad
+> > > that it uses the address of static keys. But AFAIK there is no mechan=
+ism
+> > > to differentiate them, so does lockdep just check the address and if =
+it
+>
+> In lockdep, we use `static_obj()` to tell whether it's a static obj or a
+> dynamic allocated one.
 
-Signed-off-by: Allen Ballway <ballway@chromium.org>
----
-Changes in v2:
-Cleaned up coding style
-Removed call to ov8865_state_configure() from ov8865_sensor_init()
----
- drivers/media/i2c/ov8865.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+Oh, ok. In that case I will adjust the safety comment.
 
-diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..eaa84fe68bdef45961885f435df99d98eb0ac0ca 100644
---- a/drivers/media/i2c/ov8865.c
-+++ b/drivers/media/i2c/ov8865.c
-@@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct ov8865_sensor *sensor,
- 	if (sensor->state.streaming)
- 		return -EBUSY;
- 
--	/* State will be configured at first power on otherwise. */
--	if (pm_runtime_enabled(sensor->dev) &&
--	    !pm_runtime_suspended(sensor->dev)) {
--		ret = ov8865_mode_configure(sensor, mode, mbus_code);
--		if (ret)
--			return ret;
--	}
--
- 	ret = ov8865_state_mipi_configure(sensor, mode, mbus_code);
- 	if (ret)
- 		return ret;
-@@ -2384,10 +2376,10 @@ static int ov8865_sensor_init(struct ov8865_sensor *sensor)
- 	}
- 
- 	/* Configure current mode. */
--	ret = ov8865_state_configure(sensor, sensor->state.mode,
--				     sensor->state.mbus_code);
-+	ret = ov8865_mode_configure(sensor, sensor->state.mode,
-+				    sensor->state.mbus_code);
- 	if (ret) {
--		dev_err(sensor->dev, "failed to configure state\n");
-+		dev_err(sensor->dev, "failed to configure mode\n");
- 		return ret;
- 	}
- 
-
----
-base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-change-id: 20250722-mode_configure-80105fbd835d
-
-Best regards,
--- 
-Allen Ballway <ballway@chromium.org>
-
+Alice
 
