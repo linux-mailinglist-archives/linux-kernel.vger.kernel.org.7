@@ -1,45 +1,87 @@
-Return-Path: <linux-kernel+bounces-741742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83064B0E870
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BD9B0E872
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6983AF9DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436A23B7528
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79909197A76;
-	Wed, 23 Jul 2025 02:02:29 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBD0197A76;
+	Wed, 23 Jul 2025 02:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pjT97HU7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7C51CD15
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2E918C332
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753236148; cv=none; b=Eplj87yPZwly29+o1nF09KITKqasQ2nuRxrhJ8uAPJ9m84sHvrWsLUSaE08i3s7Za7hv0+whifbvQT5BlNLIF4yK3E+CuQwnCLrKohB9CgyIhGnhZOUauFBmhHwjilg0v0YvShxiqkyGkUmtNqy4EsswmOnF6cbpaoSkANwXUhI=
+	t=1753236165; cv=none; b=XI7hFM3b2OUmkEk2da8u1fRvOPDaDqSFj+i8I0WaFpl7A83c+5OIY4rwi3GoCIPCbxJbTvwRvuU+RYtoqf4936n7BJLBwE7Ky4BcS7vXpG16U8xTVlIJCVP+74kexyK/Lt0iuQcBxFOgrEtlRU5/vMbtc9/nl713i9uXUnO+oAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753236148; c=relaxed/simple;
-	bh=bIF0Zgu+qxHRJ4xD5URl++aOpyxYOKOmrjUsTEaQcKk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=f5C1R6EgPlmJo43P0WEfpNtVZvv/YGRWf7jSi1fBT3xKQk0CaOZb1g2IXF8WEM6YBsQ2mwiuxTo0onjcg08j1LGCyG9XV5Zc7hlXI4fio7XPy7jeBK/xj8IZnxVgsNlAdblTN8xFJpTq7aY68LLWEDdKnb16Pro3CFnq9k0NzRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bmy8p0YMDz16TKP;
-	Wed, 23 Jul 2025 10:03:22 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id DC5DD140257;
-	Wed, 23 Jul 2025 10:02:21 +0800 (CST)
-Received: from [10.174.178.114] (10.174.178.114) by
- kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 23 Jul 2025 10:02:21 +0800
-Message-ID: <d197fe6c-9541-444f-91b9-15653ea70644@huawei.com>
-Date: Wed, 23 Jul 2025 10:02:20 +0800
+	s=arc-20240116; t=1753236165; c=relaxed/simple;
+	bh=6F3hhhDXHFYRN2PO7y3xC+W2D4Dq5tArMSG1+f373rY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u72p2UdeV9wiVBVIo41QjCv+6WS/5ofup1B8POBYBbLQA6SQ9XWeGja2OQSGJQOREqbLzKrTfTmexl7oUoI4dyPy2VD6SG/r9pd/cSuZbeDKmdmBPva5368d/7qS6nJUghDoeaOGnrw6LYc967uiYj4LHQ00RvadMlM456oldDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pjT97HU7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMNtLG030489
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:02:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KvE3JK53Y0Xx+2JHZiTEwGbmVHErfebjgQfHhe4H/Q0=; b=pjT97HU7CwM9GBzk
+	teS0SC8m4jPfoWz/Sh54Oq+T+xR1hhyE4+Tlxp6+dPypaQrgjAUnNKTkauhdRFlt
+	uHnCTOQPEAFcFqrnHkPUp8NOqns1BLYgilKmS3YRxVLDjfB7sJtTCrcriUJN8smS
+	7rU+FtIg8tDJJAvgpmMaNfBvsvAYc54P46bqMnp5qBI8AqDyDsX0hz02YvdCCv2D
+	SyQyzYEuwAE+TqTTohoaWQQjqHlJCGHccbsWLaomk0/uWxJNrZCaHcKMQDqOeo1Z
+	vdBzxpv1HoWc6Yqt6p/3alGlpm2lMMfjzXoD4felKY5kLiv24krADClpfFlxU5VS
+	w8NMcg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48045w1tf9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:02:43 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7492da755a1so4666549b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:02:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753236162; x=1753840962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KvE3JK53Y0Xx+2JHZiTEwGbmVHErfebjgQfHhe4H/Q0=;
+        b=O3hhywHFagrNIR9FLF0s3OVC8rD3srwUhkzrr8cwI5qRjqIbcNx1S7Hb5eN+nmcrA1
+         6tSYlk8cG6Cz0uArYdQ52MkvpUVm1Sp1hYOYQO9iSbcUsYU91Dt9r3Q8QUqmkPUtoUEk
+         jiRG4HCGdy9f2JFYHYGLowYvOM1MO7DZZw8DKm39T173aIbPdMphVHfsdVCVhsBzOvBZ
+         ItGK81UthA19U9JbQhdLB7yU1uvkfxKboCQwZoHHB2jqcx+76ltkxrn/gsBqm4744Xrt
+         4/UaTKse6bvgC0H+zE1YW3aM+QdBXpeAo1wUL4pTmJVu2/ADXwp3CjcQR92eLKq+ih5s
+         gLpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhG0cKCX4EuanN6YMB7SaUJ4xY/wSYYFCjbdo+6k+v32dgA+Ghamml8x89s24fPfKf5mKk9xhzc4stLeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRW2vrAHzH+qTa6L1kdPZpFOsSVv7D4vknIYXfT+PjOhNzocO4
+	dYRXtPzXdXy1axytXIjX7+RuF5kw5XbxwjGBtr//puKyUTnHtzcFRiFkp+UMfZ1uNYJOfHDQ11Q
+	29kbIS089SidR9kWOLkK5bPsmszJ8WoqSFnzsUfAYRs1IxXsX2Ozmg/bJRX3tUAr1KiI=
+X-Gm-Gg: ASbGnctvfagwPvhEywsHzlZtKV9lbPb+90quAlHUzvYbv2ClsK/I3nC06hBZTuIJxqx
+	+6rA4NqTMfy8t9f23kI2cX9knbEuatS+KhCsOMpGgiT+1Kgoc7M6M1DTuyD6E++nzqLS4taokFO
+	DGSa6GfAQf9LuacRGdNAZwwzwYUo9z+BVs3Ni7MEva1DKENclPBpKmP2XPcch/G9yJTOZcp5XdF
+	cJIHeyom1Csp71hyE5lytO7xAuvWyWX+NLx8xsxhVH9jBjCQ7lCVBwi1iYQ2290/cWOc7PMeW1q
+	vdlv6XQPPoGmiNqkNpV+iTbCz1zTwBE64fvA94jxIokMS4ODoI6F/urLKrqJ5Kaxkm41r2jdI63
+	ZEzAtYfSckYBo1Y+l
+X-Received: by 2002:a05:6a00:b88:b0:74e:b9fd:4a3f with SMTP id d2e1a72fcca58-760348fd155mr1772414b3a.10.1753236162448;
+        Tue, 22 Jul 2025 19:02:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEz6Z/xfTkR7LVib4gNFjxlAUfzNLNwWomRsnZ+ul5/oJgVXhvsA7nk1F/qXuxTLMJb+eDqOQ==
+X-Received: by 2002:a05:6a00:b88:b0:74e:b9fd:4a3f with SMTP id d2e1a72fcca58-760348fd155mr1772380b3a.10.1753236161938;
+        Tue, 22 Jul 2025 19:02:41 -0700 (PDT)
+Received: from [10.110.52.219] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb15698dsm8617323b3a.89.2025.07.22.19.02.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 19:02:41 -0700 (PDT)
+Message-ID: <469e2e9c-b950-4ecc-bfa9-82aa9178b65d@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 10:02:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,236 +89,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: mawupeng <mawupeng1@huawei.com>
-Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
-To: <rppt@kernel.org>
-CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>, <ardb@kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20250717085723.1875462-1-mawupeng1@huawei.com>
- <aHjQp9zPVPuPyP3B@kernel.org>
- <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
- <aHj8mfecDhJJZW1Y@kernel.org>
- <8d604308-36d3-4b55-8ddb-b33f8b586c1a@huawei.com>
- <aHzjOxg_oPp06blC@kernel.org>
- <205873c9-b8cd-4aa7-822e-3c1d6a5a5ea7@huawei.com>
- <aH9KfV8XM5fNsR/Y@kernel.org>
-In-Reply-To: <aH9KfV8XM5fNsR/Y@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs615-ride: add WiFi/BT nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250707-615-v4-0-1a2f74d167d7@oss.qualcomm.com>
+ <20250707-615-v4-2-1a2f74d167d7@oss.qualcomm.com>
+ <smnw6whsw5todddsoveeanohcaesfip27udzkbw5wk5dwlztzz@ic3xemwrbjwg>
+ <a63cab56-2d32-4d38-83f9-911561807e9d@oss.qualcomm.com>
+ <7117b159-6743-4db3-9ae5-1cf4ae051601@oss.qualcomm.com>
+Content-Language: en-US
+From: "Yu Zhang(Yuriy)" <yu.zhang@oss.qualcomm.com>
+In-Reply-To: <7117b159-6743-4db3-9ae5-1cf4ae051601@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=LL1mQIW9 c=1 sm=1 tr=0 ts=688042c3 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=5zsccHoAccC9vreTiY0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: MVOzg8XkLFMBx-XKtFJDj6NQOftpxUmK
+X-Proofpoint-ORIG-GUID: MVOzg8XkLFMBx-XKtFJDj6NQOftpxUmK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDAxNiBTYWx0ZWRfXw91/AiWpM56A
+ Bg7YBrSKgx2l23EBfJ5wTydafiUevCRHHnIvizvWMNN0pYBvbL29vyjyRCS289TU5Azf82Bzhqe
+ cIMCuENIzQVWUezBeqpvVbnxlqx1flmXe3u9UnWHyhVuZwf1jxvxhAUMfr+NogKtdzerclB3U1E
+ TLN7+PoJwoHE17qX/0J5AQiwYQ8h2Y05ljZjJuHrk63BD/H6T4X5KKhvQK6N0uaJFfTtY+xdDwP
+ JGB1OpSaOBHAE5hpyFaqC9afzFe4v3jyko/kM1rD3j28klVrTRYqzugPcgAzpIvk30Rlq8U3Xs5
+ fEKR8D2oz+rrC9Kgc2pCxxxAwR+crNwPuMuXMIg1gP4kHvl/k57tnnQ60z2MBId992X9Yi4BJQY
+ 4hSC3Xqrbsl0VB3Cffeswkrt//dyF3YhMnADsCMCvrqEznE59AqolUVeuBW1sEXW7gA//Tv9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_04,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230016
 
 
 
-On 2025/7/22 16:23, Mike Rapoport wrote:
-> On Mon, Jul 21, 2025 at 10:11:11AM +0800, mawupeng wrote:
->> On 2025/7/20 20:38, Mike Rapoport wrote:
->>> On Fri, Jul 18, 2025 at 09:37:48AM +0800, mawupeng wrote:
->>>>
->>>>
->>>> On 2025/7/17 21:37, Mike Rapoport wrote:
->>>>> On Thu, Jul 17, 2025 at 07:06:52PM +0800, mawupeng wrote:
->>>>>>
->>>>>> On 2025/7/17 18:29, Mike Rapoport wrote:
->>>>>>> On Thu, Jul 17, 2025 at 04:57:23PM +0800, Wupeng Ma wrote:
->>>>>>>> When memory mirroring is enabled, the BIOS may reserve memory regions
->>>>>>>> at the start of the physical address space without the MR flag. This will
->>>>>>>> lead to zone_movable_pfn to be updated to the start of these reserved
->>>>>>>> regions, resulting in subsequent mirrored memory being ignored.
->>>>>>>>
->>>>>>>> Here is the log with efi=debug enabled:
->>>>>>>>   efi:   0x084004000000-0x0842bf37ffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
->>>>>>>>   efi:   0x0842bf380000-0x0842c21effff [Loader Code |   |  |MR|...|WB|WT|WC|  ]
->>>>>>>>   efi:   0x0842c21f0000-0x0847ffffffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
->>>>>>>>   efi:   0x085000000000-0x085fffffffff [Conventional|   |  |  |...|WB|WT|WC|  ]
->>>>>>>> ...
->>>>>>>>   efi:   0x084000000000-0x084003ffffff [Reserved    |   |  |  |...|WB|WT|WC|  ]
->>>>>>>>
->>>>>>>> Since this kind of memory can not be used by kernel. ignore nomap memory to fix
->>>>>>>> this issue.
->>>>>>
->>>>>> Since the first non-mirror pfn of this node is 0x084000000000, then zone_movable_pfn 
->>>>>> for this node will be updated to this. This will lead to Mirror Region 
->>>>>>   - 0x084004000000-0x0842bf37ffff
->>>>>>   - 0x0842bf380000-0x0842c21effff 
->>>>>>   - 0x0842c21f0000-0x0847ffffffff
->>>>>> be seen as non-mirror memory since zone_movable_pfn will be the start_pfn of this node
->>>>>> in adjust_zone_range_for_zone_movable().
->>>>>
->>>>> What do you mean by "seen as non-mirror memory"?
->>>>
->>>> It mean these memory range will be add to movable zone.
->>>>
->>>>>
->>>>> What is the problem with having movable zone on that node start at
->>>>> 0x084000000000?
->>>>>
->>>>> Can you post the kernel log up to "Memory: nK/mK available" line for more
->>>>> context?
->>>>
->>>> Memory: nK/mK available can not see be problem here, since there is nothing wrong
->>>> with the total memory. However this problem can be shown via lsmem --output-all
->>>
->>> I didn't ask for that particular line but for *up to that line*.
->>>  
->>>> w/o this patch
->>>> [root@localhost ~]# lsmem --output-all
->>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
->>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   67584-67839    0 Movable
->>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   68096-68607    0 Movable
->>>>
->>>> w/ this patch
->>>> [root@localhost ~]# lsmem --output-all
->>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
->>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   8448-8479    0  Normal
->>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   8512-8575    0 Movable
->>>
->>> As I see the problem, you have a problematic firmware that fails to report
->>> memory as mirrored because it reserved for firmware own use. This causes
->>> for non-mirrored memory to appear before mirrored memory. And this breaks
->>> an assumption in find_zone_movable_pfns_for_nodes() that mirrored memory
->>> always has lower addresses than non-mirrored memory and you end up wiht
->>> having all the memory in movable zone.
+On 7/23/2025 1:36 AM, Dmitry Baryshkov wrote:
+> On 22/07/2025 18:58, Yu Zhang(Yuriy) wrote:
 >>
->> Yes.
 >>
+>> On 7/19/2025 6:13 PM, Dmitry Baryshkov wrote:
+>>> On Mon, Jul 07, 2025 at 10:51:06AM +0800, Yu Zhang(Yuriy) wrote:
+>>>> Add a node for the PMU module of the WCN6855 present on the qcs615 ride
+>>>> board. Assign its LDO power outputs to the existing WiFi/BT module.
 >>>
->>> So to workaround this firmware issue you propose a hack that would skip
->>> NOMAP regions while calculating zone_movable_pfn because your particular
->>> firmware reports the reserved mirrored memory as NOMAP.
 >>>
->>> Why don't you simply pass "kernelcore=32G" on the command line and you'll
->>> get the same result.
->>
->> Since mirrored memory are in each node, not only one, "kernelcore=32G" can
->> not fix this problem.
+>>> What is "existing WiFI/BT module"? There is no module in the DT. Not to
+>>> mention that PMU is a part of the WCN6855.
+>>>
+>>>>
+>>>> Signed-off-by: Yu Zhang(Yuriy) <yu.zhang@oss.qualcomm.com>
+>>>> ---
+>>>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 135 +++++++++++++++++++ 
+>>>> + +++++++++++
+>>>>   1 file changed, 135 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/ 
+>>>> boot/dts/qcom/qcs615-ride.dts
+>>>> index 
+>>>> 011f8ae077c256f079ce1b07720374a9bf721488..2df8e7e3c1d3b6d6353a6753b8387c7411edd927 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>>>> @@ -18,6 +18,7 @@ aliases {
+>>>>           mmc0 = &sdhc_1;
+>>>>           mmc1 = &sdhc_2;
+>>>>           serial0 = &uart0;
+>>>> +        serial1 = &uart7;
+>>>>       };
+>>>>       chosen {
+>>>> @@ -47,6 +48,85 @@ regulator-usb2-vbus {
+>>>>           enable-active-high;
+>>>>           regulator-always-on;
+>>>>       };
+>>>> +
+>>>> +    vreg_conn_1p8: vreg_conn_1p8 {
+>>>
+>>> No improvement. Please try again.
+>>>
+>> you mean should be "vreg_conn_1p8: vreg-conn-1p8",right? I'll update it, 
 > 
-> I don't see other nodes in lsmem output. And I asked for the kernel log
-> exactly to see how kernel sees the memory on the system.
+> What is the node name for the previous regulator device? Anything 
+> preventing you from following the pattern?
+> 
+Do you mean the prefix 'regulator'?
+I just want to keep 'vreg_conn_1p8' and 'vreg_conn_pa' the same as in 
+sa8775p-ride.dtsi, because they're using the same module.
 
-Sorry for my mistake.
-
-[    0.000000] efi: Processing EFI memory map:
-[    0.000000] efi:   0x00005fff0000-0x00005fffefff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x00005ffff000-0x00005fffffff [Boot Data   |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x000060000000-0x00007fffffff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x082080000000-0x08247fffffff [Conventional|   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x082880000000-0x083fffffffff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x084004000000-0x0842bf37ffff [Conventional|   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x0842bf380000-0x0842c21effff [Loader Code |   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x0842c21f0000-0x0847ffffffff [Conventional|   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x085000000000-0x085fffffffff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x282000000000-0x2820ffffffff [Conventional|   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x282200000000-0x283f9bffffff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x283f9c000000-0x283fffffffff [Loader Code |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x284000000000-0x2841ffffffff [Conventional|   |  |MR|  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x284400000000-0x285fffffffff [Conventional|   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x000000000000-0x000003ffffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x000004000000-0x000007dfffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |  |  |  |UC]
-[    0.000000] efi:   0x000007e00000-0x000007efffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x000007f00000-0x000007f5ffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |  |  |  |UC]
-[    0.000000] efi:   0x000008000000-0x00000bffffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x00000c200000-0x00000fffffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x00001c000000-0x00001fffffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi:   0x0004002c0000-0x0004002cffff [MMIO        |RUN|  |  |  |  |  |  |  |  |  |   |  |  |  |UC]
-[    0.000000] efi:   0x008410000000-0x008410000fff [MMIO        |RUN|  |  |  |  |  |  |  |  |  |   |  |  |  |UC]
-[    0.000000] efi:   0x00c580030000-0x00c580030fff [MMIO        |RUN|  |  |  |  |  |  |  |  |  |   |  |  |  |UC]
-[    0.000000] efi:   0x084000000000-0x084003ffffff [Reserved    |   |  |  |  |  |  |  |  |  |  |   |WB|WT|WC|  ]
-[    0.000000] efi: Memory: 61376M/462861M mirrored memory
-[    0.000000] ACPI: SRAT: Node 1 PXM 1 [mem 0x82080000000-0x83fffffffff]
-[    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x84000000000-0x85fffffffff]
-[    0.000000] ACPI: SRAT: Node 1 PXM 1 [mem 0x00000000-0x7fffffff]
-[    0.000000] ACPI: SRAT: Node 3 PXM 3 [mem 0x282000000000-0x283fffffffff]
-[    0.000000] ACPI: SRAT: Node 2 PXM 2 [mem 0x284000000000-0x285fffffffff]
-[    0.000000] NUMA: NODE_DATA [mem 0x847ffff0b00-0x847ffffffff]
-[    0.000000] NUMA: NODE_DATA [mem 0x8247fff0b00-0x8247fffffff]
-[    0.000000] NUMA: NODE_DATA [mem 0x2841fffc9b00-0x2841fffd8fff]
-[    0.000000] NUMA: NODE_DATA [mem 0x2820ffff0b00-0x2820ffffffff]
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000000000000-0x00000000ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000100000000-0x0000285fffffffff]
-[    0.000000]   ExtMem   empty
-[    0.000000]   Device   empty
-[    0.000000] Movable zone start for each node
-[    0.000000]   Node 0: 0x0000084000000000
-[    0.000000]   Node 1: 0x0000082880000000
-[    0.000000]   Node 2: 0x0000284400000000
-[    0.000000]   Node 3: 0x0000282200000000
-[    0.000000] Early memory node ranges
-[    0.000000]   node   1: [mem 0x0000000000000000-0x0000000003ffffff]
-[    0.000000]   node   1: [mem 0x0000000007e00000-0x0000000007efffff]
-[    0.000000]   node   1: [mem 0x0000000008000000-0x000000000bffffff]
-[    0.000000]   node   1: [mem 0x000000000c200000-0x000000000fffffff]
-[    0.000000]   node   1: [mem 0x0000000011000000-0x000000001bffffff]
-[    0.000000]   node   1: [mem 0x000000001c000000-0x000000001fffffff]
-[    0.000000]   node   1: [mem 0x0000000020000000-0x000000005e26ffff]
-[    0.000000]   node   1: [mem 0x000000005e270000-0x000000005fbeffff]
-[    0.000000]   node   1: [mem 0x000000005fbf0000-0x000000007fffffff]
-[    0.000000]   node   1: [mem 0x0000082080000000-0x000008247fffffff]
-[    0.000000]   node   1: [mem 0x0000082880000000-0x0000083fffffffff]
-[    0.000000]   node   0: [mem 0x0000084000000000-0x0000084003ffffff]
-[    0.000000]   node   0: [mem 0x0000084004000000-0x00000847ffffffff]
-[    0.000000]   node   0: [mem 0x0000085000000000-0x0000085fffffffff]
-[    0.000000]   node   3: [mem 0x0000282000000000-0x00002820ffffffff]
-[    0.000000]   node   3: [mem 0x0000282200000000-0x0000283fffffffff]
-[    0.000000]   node   2: [mem 0x0000284000000000-0x00002841ffffffff]
-[    0.000000]   node   2: [mem 0x0000284400000000-0x0000285fffffffff]
-[    0.000000] mminit::pageflags_layout_widths Section 0 Node 8 Zone 3 Lastcpupid 20 Kasantag 0 Gen 3 Tier 2 Flags 26
-[    0.000000] mminit::pageflags_layout_shifts Section 21 Node 8 Zone 3 Lastcpupid 20 Kasantag 0
-[    0.000000] mminit::pageflags_layout_pgshifts Section 0 Node 56 Zone 53 Lastcpupid 33 Kasantag 0
-[    0.000000] mminit::pageflags_layout_nodezoneid Node/Zone ID: 64 -> 53
-[    0.000000] mminit::pageflags_layout_usage location: 64 -> 28 layout 28 -> 26 unused 26 -> 0 page-flags
-[    0.000000] Initmem setup node 0 [mem 0x0000084000000000-0x0000085fffffffff]
-[    0.000000] mminit::memmap_init Initialising map node 0 zone 4 pfns 2214592512 -> 2248146944
-[    0.000000] Initmem setup node 1 [mem 0x0000000000000000-0x0000083fffffffff]
-[    0.000000] mminit::memmap_init Initialising map node 1 zone 0 pfns 0 -> 1048576
-[    0.000000] mminit::memmap_init Initialising map node 1 zone 2 pfns 1048576 -> 2214592512
-[    0.000000] mminit::memmap_init Initialising map node 1 zone 4 pfns 2189950976 -> 2214592512
-[    0.000000] Initmem setup node 2 [mem 0x0000284000000000-0x0000285fffffffff]
-[    0.000000] mminit::memmap_init Initialising map node 2 zone 2 pfns 10804527104 -> 10838081536
-[    0.000000] mminit::memmap_init Initialising map node 2 zone 4 pfns 10808721408 -> 10838081536
-[    0.000000] Initmem setup node 3 [mem 0x0000282000000000-0x0000283fffffffff]
-[    0.000000] zone_type: 0, zone_low: 0x0, zone_high: 0x100000
-[    0.000000] mminit::memmap_init Initialising map node 3 zone 2 pfns 10770972672 -> 10804527104
-[    0.000000] mminit::memmap_init Initialising map node 3 zone 4 pfns 10773069824 -> 10804527104
-[    0.000000] On node 1, zone DMA: 15872 pages in unavailable ranges
-[    0.000000] On node 1, zone DMA: 256 pages in unavailable ranges
-[    0.000000] On node 1, zone DMA: 512 pages in unavailable ranges
-[    0.000000] On node 1, zone DMA: 4096 pages in unavailable ranges
-[    0.000000] Fallback order for Node 0: 0 1 2 3 
-[    0.000000] Fallback order for Node 1: 1 0 2 3 
-[    0.000000] Fallback order for Node 2: 2 3 0 1 
-[    0.000000] Fallback order for Node 3: 3 2 0 1 
-[    0.000000] mminit::zonelist general 0:Movable = 0:Movable 1:Movable 1:Normal 1:DMA 2:Movable 2:Normal 3:Movable 3:Normal 
-[    0.000000] mminit::zonelist thisnode 0:Movable = 0:Movable 
-[    0.000000] mminit::zonelist general 1:DMA = 1:DMA 
-[    0.000000] mminit::zonelist general 1:Normal = 1:Normal 1:DMA 2:Normal 3:Normal 
-[    0.000000] mminit::zonelist general 1:Movable = 1:Movable 1:Normal 1:DMA 0:Movable 2:Movable 2:Normal 3:Movable 3:Normal 
-[    0.000000] mminit::zonelist thisnode 1:DMA = 1:DMA 
-[    0.000000] mminit::zonelist thisnode 1:Normal = 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist thisnode 1:Movable = 1:Movable 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist general 2:Normal = 2:Normal 3:Normal 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist general 2:Movable = 2:Movable 2:Normal 3:Movable 3:Normal 0:Movable 1:Movable 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist thisnode 2:Normal = 2:Normal 
-[    0.000000] mminit::zonelist thisnode 2:Movable = 2:Movable 2:Normal 
-[    0.000000] mminit::zonelist general 3:Normal = 3:Normal 2:Normal 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist general 3:Movable = 3:Movable 3:Normal 2:Movable 2:Normal 0:Movable 1:Movable 1:Normal 1:DMA 
-[    0.000000] mminit::zonelist thisnode 3:Normal = 3:Normal 
-[    0.000000] mminit::zonelist thisnode 3:Movable = 3:Movable 3:Normal 
-[    0.000000] Built 4 zonelists, mobility grouping on.  Total pages: 108375876
-[    0.000000] Policy zone: Normal
-[    0.000000] Memory: 464660912K/440384512K available (14848K kernel code, 5388K rwdata, 10340K rodata, 5696K init, 10981K bss, 18446744073685275216K reserved, 0K cma-reserved)
-
->  
-> Another question is do you really need ZONE_MOVABLE? Most of the time MM
-> core operates on the pageblock granularity and even if all the memory are
-> in ZONE_NORMAL the pageblocks are still movable.
-
-With feature kenrelcore=mirror, movable zone is needed to limit kernel memory usage.
-The kernel and drivers default to allocating memory from mirrored memory, enhancing
-reliability during Uncorrectable Errors (UE).
-
+>> thanks.>> +        compatible = "regulator-fixed";
+>>>> +        regulator-name = "vreg_conn_1p8";
+>>>> +        startup-delay-us = <4000>;
+>>>> +        enable-active-high;
+>>>> +        gpio = <&pm8150_gpios 1 GPIO_ACTIVE_HIGH>;
+>>>> +    };
+>>>> +
+>>>> +    vreg_conn_pa: vreg_conn_pa {
+>>>> +        compatible = "regulator-fixed";
+>>>> +        regulator-name = "vreg_conn_pa";
+>>>> +        startup-delay-us = <4000>;
+>>>> +        enable-active-high;
+>>>> +        gpio = <&pm8150_gpios 6 GPIO_ACTIVE_HIGH>;
+>>>> +    };
+>>>> +
+>>>
+>>
+> 
 > 
 
 
