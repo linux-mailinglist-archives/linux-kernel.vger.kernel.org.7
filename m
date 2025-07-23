@@ -1,238 +1,372 @@
-Return-Path: <linux-kernel+bounces-741701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87636B0E802
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49E1B0E804
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756473A8489
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D82566242
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D4516A395;
-	Wed, 23 Jul 2025 01:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699A15539A;
+	Wed, 23 Jul 2025 01:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="OrDCJGT9"
-Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2103.outbound.protection.outlook.com [40.107.116.103])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MIUaPjGV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071461367;
-	Wed, 23 Jul 2025 01:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753233875; cv=fail; b=Ncj+3ecULYXm0VBj+8dPQ+7Tdes428EKHwz2xHdkxnNcVGdOL7Nv4ioI+bjRzP/3D49nSixhzl5i9QY91lCiKrqhcmuC2RVIY5JpnPC3uDlXAedFAT+t3yeI8pAXZUUO6q6xpJ5Xi+NIY+5rmDh4fbQG4lmi3b5Q8QrPOa2vEfo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753233875; c=relaxed/simple;
-	bh=Cp+yBAbt/IXUt9yBoL/AALg1CnbxAM+Ap+AbIvmqSTA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FAo70yKaEbWEu2+MPCglMqNn0OywoAfm8ORHAFNehebwW/wWW/jvdwTLb9jkNU/dApVNlAQ2T4cpxfhHQl3jzX0FpTGCjBElGlwIzD+Onkv7tUa4FePgLV++4ttJA9rv9DX2Cavk/2i8GH3u2fdKLbNTKyyl7rxNJnhs8TtE/gQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=OrDCJGT9; arc=fail smtp.client-ip=40.107.116.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D51jh98K1ngdOKoEmV1GVtsFRuPSqMKv7qDa85+W/QJ7v2QTD+oqmangwdR3LNiSpJDCPyKIWuiEThZksroW4iE3YN8QX7FH4eDRTt7EQoPxJz7cNitf/MuNYaS0oy4yzGSQ5Zr7ZtP5L4txitAQ8uTMlvrVnujxJ1L5ujaPfq7antG2f2giJAiZfliFECC7ifrxfM9oelF31/boMwMGhPLw+blwYJ+G5Ou9xjOJ+DmgOTDZlUu0qVKlJHKiw1z4qGrjWLth6+o0ce95ltobcMveMhWTAxx+tQqWKu0MBd1MOdJFQlzLCBDxkuh1/YU6Oh7xDYwUBlGerJNRAtGqCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGHBP67Dov8hdEWkP3VCpC8Z8t2at9LRmN/P16OlYPM=;
- b=VVhalxYoTJM1Y9k59AhTxLe2t1aVbAEMykg/Sx7KWSfBmpbgPISD+sWfh/oFp9RO30+tf0a46y53bFCo7BKKzWbXJhI5eGHK0xVlXd4xN8DZCV1+1cM5Z3BF0huYGGgysr3yuCchCJZHGZXIu2huL65qdFwN8oly15QYiRr7wtjRIVeSJNbHD2g6/ZGNyI0cGMro3AmprUMt/N9rHkW3KwRhzd4XsemO89k2nkpPViuaX3ZzaGeSeuH4yTqXIAlwMNlMTMmWUnlokNUtr4plQuTUBf3QfSKRpL4ymUtREI69O7HIVaPowohVpbtcl0FIj9twrEgUZCjg8ZFreeUBAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGHBP67Dov8hdEWkP3VCpC8Z8t2at9LRmN/P16OlYPM=;
- b=OrDCJGT9yqo9O79lAcC8awjxOUkRz5BoPofaZgpvrJoI4v1CfYfkubfAQGKXXlxgw05HOdW4Ph5vve9SmnDEeqDjsY+Ays1q1pWXbwyN6tn+h72HYsLNeG7yK5QwfbTfNC1gyUMIXAhzjFHEem+pjY7qECt4YyBZBrcuqUpV05neT+iIFiDK29n+X3lRH9o9giqSi5GCMBcxdmMRcD09Y8j/Ilyb7JZKgUvlalod9sm1LchXtVfUtBeK+U5n1tZUTAFQLFRi2+ZTt7/eF8k9GZX81ieMcc6V4QecsqhbvHQ9AzlWflpuzYmFVS7oyTTfa1nncaCbacB6Fy2YUpOcIA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
- by YT3PR01MB6243.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:6a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 01:24:30 +0000
-Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::5393:fe91:357f:3ccf%5]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
- 01:24:29 +0000
-Message-ID: <2b31b238-667e-47b9-b61f-76832a1f77a7@efficios.com>
-Date: Tue, 22 Jul 2025 21:24:27 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] input: Add tracepoint support
-To: Steven Rostedt <rostedt@goodmis.org>, WangYuli <wangyuli@uniontech.com>
-Cc: dmitry.torokhov@gmail.com, guanwentao@uniontech.com,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
- niecheng1@uniontech.com, wangyuli@deepin.org, zhanjun@uniontech.com,
- Winston Wen <wentao@uniontech.com>
-References: <19571F312EE197A5+20250710072634.3992019-1-wangyuli@uniontech.com>
- <C1C54D7FA3DF3958+20250710073148.3994900-1-wangyuli@uniontech.com>
- <20250722202551.1614f59a@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250722202551.1614f59a@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0136.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:1::36) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:a0::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2E1367;
+	Wed, 23 Jul 2025 01:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753233971; cv=none; b=fF3E+XmFu2GmuwcyaNtHi0zaVR9QzDeFukpzi7dsG/3iMa3YAeOwvtwGycBu0KsORn2t6hpfBMALgkcyK52Y1u6/5qKgu0fm4zkw7IaUnACSsl717Mo+lrKyMnzp4g7f2oxdkD+tuUVSM13efRuQOheYUa2bGVmjQzKFyoa3/YE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753233971; c=relaxed/simple;
+	bh=6tysQMCcE3IDqsrLmjuWPMrVb3dQZiSPRY7q/+8GU/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uWGyx5vqIE22fZfBvOuGuOnf8QA0ii0fqIDHfurOEPoIFiImD4pn/JJEvzdY7FTtSYrNA3LS49ki8gGupCkk4gFFzGAEoMUYNWUQcGMQmh2Wv7aL+1z2pMMAzLV9FS79GQpx4M7vOLJBOSsNz1X9fRljGJR1UTUux5D0Fw+V4Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MIUaPjGV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753233802;
+	bh=4qK4hYHtsuHi8e1mZEimbviYZ0RFFmrL2QFV3bE8k+U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MIUaPjGVbubPVXTGjwmjh/v4fQhCDNYbDnMtcRtUA3Nq8nnOwTNk20nkozV2FBpk9
+	 eBfeXhkOC9kpHvuaFX3QogltxKJHYBYdvIS4Bd2p4DHB8ez8hSl2+IdXV9TUyRlaov
+	 jJvkdc0rgMydJhBe/T0a183ZphTY9vDGgEsQbrzAsfkPwjdmX6Bhj23yZY8/+Sz/FL
+	 OH9rQge+O+nssouNA75jAWwkW0hrsnTaXvL1KFxqjIdaUVJ4ncpOF2msj+3HTefBBl
+	 VVgvj7aUGNsydIgDB+zxSog5lK7ssf5nrHjC6vIWq1WI9yEiyaqrqGbzGHrvrvCtAg
+	 SATD7tqyAAGgA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmxGd4YH2z4x21;
+	Wed, 23 Jul 2025 11:23:21 +1000 (AEST)
+Date: Wed, 23 Jul 2025 11:26:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo
+ Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Christian Schrefl
+ <chrisi.schrefl@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Shankari Anand <shankari.ak0208@gmail.com>
+Subject: linux-next: manual merge of the rust tree with the driver-core tree
+Message-ID: <20250723112605.74f1c077@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|YT3PR01MB6243:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16280f48-fcfe-4aa1-3832-08ddc987abcd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qkt2TlRNSitTTUIzZ21NRXF4RWo4TUliS29JKzRJYXg0RXVXV1Y3d3RPNDhJ?=
- =?utf-8?B?OEI4TkRKanJiaTFBYTNPZjY1L2tsMmFxZWxzT3lGd0ZJNm1LRWp5MXFodGdX?=
- =?utf-8?B?eW1DR1drVVlMTWNjM010YWJXRXRFbUVOQmxEdDFjdjFmWGxFTDZiRnI2Wk85?=
- =?utf-8?B?c1pJTVIzaWdZY1d0K2UyN2lqejNnY3JXYU1ITzRSQWVQUm5jUkNGS0FITVZX?=
- =?utf-8?B?cVFIN0V4OUlodWoyZFhHK1pGTHg2MG5HOW1RT29CeVJYeXNneFVLK004QWVq?=
- =?utf-8?B?bHFWNzlBeGcvWnZYZzh0bTBsNmRnM2o2TUsvdHNYVFZVT1ZweHdmNC9WcU5i?=
- =?utf-8?B?azV5WExEQUZhb0drRFk2Q0FCWHZLcklvZWw1Q0RYbm5lcTIvdk5TclovNzBM?=
- =?utf-8?B?Z2lJekVjNDhIaGRlbCt3YVpnR2x4YUtnWlZHT3dLKzgvSkVzR0VvcGNCYS9K?=
- =?utf-8?B?R1dZZlZzVW8zZkFYV2JKdXc5OGxnZFB4UUZhdlBGRmZ3MFh2bFZNRGxLVVFs?=
- =?utf-8?B?ZCtCVGt4RFpxVStCSU8xTkdwVEkrYSt3Y2dBSVZDRUhRNDk3dFF2clphWEht?=
- =?utf-8?B?aTgxVjVqWlQrVDR2aXJrdHVQbnl0eDlxNEkwcTN2WUYzOUVKUEs4b0xOaHNG?=
- =?utf-8?B?bEIrOVduYUxMTnRPRGZ1MnFmZG52ZzBsOWxkWFdVNXNuZmhzSXowYW5nWllM?=
- =?utf-8?B?UkdVS2VqdXUyK0o4bG95eGJ1Y0pQMGtVWXZKU3lKSk1zV29PVDlZZGcrUDcx?=
- =?utf-8?B?ZXNHSG1WRlNEK2xVa0dac08ralZrTDk3Y292RVlQS01MRDQvQ2ZyUGExcjds?=
- =?utf-8?B?bElDdk5ZanEvYjltT3NLVmhyL1paRXd4ZTBHRkNkUEF1K2RKWTZHazlkRlI0?=
- =?utf-8?B?NzFNOURRd2haZEdSMk1wU2h6T3RxTmY5RnZyMytsemZLeXFiVGtrdzk5bE1i?=
- =?utf-8?B?dmJhZWpoL3lSZzViVUIxMUZIWGZ2czhMT25pTG1vV0psU0p5WVJXWkRqUnE4?=
- =?utf-8?B?SlgvNEVPRUZXdzY3QmZlQmZjZDJMdXl0SVBFUW03eWhuczJRRUNqbnpMN1JM?=
- =?utf-8?B?WWN1ellMTmdiV1RSUEN2ME1IRjRnYUo4Wk5KYUgrV0lSQ2lERm83cjIrdU1o?=
- =?utf-8?B?V3A5VFJOY2x6UVRxenJBN3VBYytHY0xhVGRWYVBqdkkxaHRRbG9hNk5TYm15?=
- =?utf-8?B?M2VtZzIrZ3FKZmlvTko2bTkrMi9EeEZkQk5ycERhZ2IyaG02cC9Oek1QVDE1?=
- =?utf-8?B?QkpBQlEzMHhnUXJmTUVSZVBJekFMdGdHZXAzcnMrYU04b2xScUVVQTBWY2kx?=
- =?utf-8?B?UlArWDgvdmFPaFpCZzJiMXFRb1ErZGhGRFBYNWVCNC9jT1hTcjROMU5kTEVJ?=
- =?utf-8?B?NVNMZW1aYUkwa2ZnQm5tdldvUG9HNitiTVFIU3lXR0VtNzdpa01mMEtKeHlo?=
- =?utf-8?B?YTJnUUJXNHZaOXBuczlDeVg3WjlsODlSM2phcUlEN0xVSWx0Z3d2KzZ6MzN4?=
- =?utf-8?B?cGtBdlpDYks5eW44S1NLcHdMeVgxcHFQU3hPMTZCdXBlMUdBelcrd0ZQWDFw?=
- =?utf-8?B?N2ZUWmQwV2pVRGhTakpFQTlQbUhhemIvL0Fia0x2K2dEaHJ5SFJXd1IwNGY0?=
- =?utf-8?B?ZXNEMlArRkR0b0hMK0M2UWxHZDlneFlydmxicklENWxMSzQ0K3V1VzYrUktz?=
- =?utf-8?B?L25HbkFzUmE4aWFRVmQrRlZVa2NvM3QrUUFyZHRxWWw4Y21QMGI1bC81MVI1?=
- =?utf-8?B?ZGpJckNJRnZ0cTNTTVVXZlhIWkV3RDRNYnRldmo1KytCQytpTW5CSkZ6d2NJ?=
- =?utf-8?Q?IASahX18vOdim1zjU90zF9z0fP8EGWkmOFObQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MHRHL2RKZEU3dlBFL1V1VDF6Z3F2L1lNVko4SnQ0TWV2ZmhGK1hpUDYxQTA1?=
- =?utf-8?B?dzBCQk9zQXFxTkhSejhQdXRyMm9kYjYrSjk3eXdHU1BwcWxxMGNTT2FVeENK?=
- =?utf-8?B?RmxMbkZGQmJudk8rWVAxRmdVQng1WktJVUh1RU1tTDZObnVUOENPMzBQT3hj?=
- =?utf-8?B?a1FxZmg4bWI2dUFVWFRybFg3UjRGSlp5dzZWQlFScUZ6c255cXplSjhLYWxN?=
- =?utf-8?B?bmx4M09qNWJ2UU9WTHZMbFZZbXBWMEtSZVZ0SjBhb3RTZ3d6OXEvL05lZkEr?=
- =?utf-8?B?S2IwTFJIQVZPNWVpUjliaitUUDlIK3U2eW5tUnNNd1U3V1UrcmdORFpzUmMy?=
- =?utf-8?B?MGdxUEY4SlVka1ZvVDE2Um1WZXo2UXJ3cTZaY0hLWEhaenJtQXQwakRZT04x?=
- =?utf-8?B?MTEwS08yWlRqb3IrNHFiaVZ2OXhoQ0s5YzlrNGpoV3pZUnZXc3d4dGkxYnMv?=
- =?utf-8?B?dCtBSWdRL1QvdU1tS0N5eGszb1RVNGtYNldSczR2c3VPelZvek4yK1ozTFRi?=
- =?utf-8?B?SW1oQXZpeGplWVRFWFVTUXdaS1BGYTM5MzZlaGVqMk8xa243T1psKzZUUkJj?=
- =?utf-8?B?V1dGZ1B1VFIvckxZTmNSU2FOWXlEVERRZVhJL2Q3Ull5NVpvNDdjR21CQzdU?=
- =?utf-8?B?SnAwUVhjTVdDcXJzZzQ2UUx2REZwYmJIMWFjeFlWUUdmWm1ocG9OSDg3L2Fm?=
- =?utf-8?B?SHdiRVVaN3NhRXVEV2VTWE0xWHBkU0svVVNjeFMyczlhOWJZbFNuWnJaODRr?=
- =?utf-8?B?eUFNaGwzZXFHb3JWQ0tIYkgwTHlUellLMVRtT3RPbkdPNXphNCt4L1hnYm11?=
- =?utf-8?B?dmFWcnZpVm9xeUh4dGxMckZ5V1UwaXR2c0F3ZzZob3JRUm8vbEUvN3p6ZXJP?=
- =?utf-8?B?T0dwRlRGaDdmcGVWVnpwbzlFSUJOcW1YOXJXelRCaU1jT0I2QWplVzcwZDhX?=
- =?utf-8?B?YWZ3Z3FQOXhjL2xzcks2QXZKVkdtVjc0aTdEQitZZmw3eEYrR3ZMeGtqdlFG?=
- =?utf-8?B?S3UzMHk5NFZVQnlqT3JCbUJGVWgzaWUvNXpTbEZOMit6WjZTN3pySThjSlk1?=
- =?utf-8?B?bHV6ME9ueTUzTXU5b2pkNk83M2tHVGUxc2FkL3hkeXZ3ZVViTXdQL1YxUXYr?=
- =?utf-8?B?L2lXNHpiUC85NytENFZBWXNsaHhXNDJpOWJiaitlZUFCYVNvUzV2R3hDSkxy?=
- =?utf-8?B?Zm4yT3NiTnpsMkRYV25mVXBvQjFtS1A5ak83UTdpWkxLWEhZVW1IYU5GVmVN?=
- =?utf-8?B?V0U3QWp5YjBmVlRNcit0OTZOaElVNHdwNTMyV1FSQy9VNGwranZxUUdSWjVT?=
- =?utf-8?B?ZGw1VTRvWUQyejFtN2gzcmhlZlh3UVdhZmdtWGJvVkZhVzJMYkEwSHNXWDlq?=
- =?utf-8?B?VTNLQ1N3N0xTd2JmYjFYQmxDSTNEQWNlN2dleTdxQmUwSmJkYSt1UmJBSXls?=
- =?utf-8?B?a1lOQmNTd1MwRFBTZTEvOGRxUjh1U0cyQ0JjRm1Lb3hqOTVSQWh5SnJyc2g3?=
- =?utf-8?B?YXkzMzhDTSt2Lzk1UllYcnpabnFPVGtVeER5N0NhNU9sV2ZHdXhHNlFGWHBp?=
- =?utf-8?B?THdtUEVDYmNZVHVRbVI2NkFTWEg2NGFJTHlTNzYvWUNkOEpSYlRTMlZPTHJv?=
- =?utf-8?B?T1BUMWx2RGI3TDhPMUxwTkdNYTZOeVlGR254NWdxMWRUUFFzK01ITjZnSlR6?=
- =?utf-8?B?N2xJeG9xQ01WWTl3QjRiQlJEbWs0N3ptS1lFclBnM1l1dmlwcEdvNzFTM0lT?=
- =?utf-8?B?QWV5ZFQ4OG9FdEErRUVrQzU1VjdyZkVTY0RYbUZBbVBGd3loT3ExM0o0WXlS?=
- =?utf-8?B?ZFZ6RW5MSUZTS2cvcUdCcDZJdDZTT05GUEdhaGhJam5FVkJLNk9OWGdWa0hS?=
- =?utf-8?B?cStNZ1QzNGhCcTcxQkJmckdlK2VRVmEvTjZ2M1hvYXlSdk5HU1h2SWh6TS9U?=
- =?utf-8?B?ZTZBM0J2LzhyVjM3RE1HNnJ2WUF2dDZsNmdKUk44SmRyY3Y5T1R1RjJQQXln?=
- =?utf-8?B?akRGV3NYMVFWVHlsQStpckZYdW9QRm5ZK3NiSmdhalpLTnRjSkFTbFBOVWFu?=
- =?utf-8?B?VEk3MFQ4NXM3RU5id3puQWgxa1BIUlVsVXZZT0JTTjdnWStVOUg1aDlKL2ha?=
- =?utf-8?B?VDd4UjJFRVN1VDQvRTRqMHZDcEcyTDdqekVnYmZjYW02RWdYL2lpRW5lSDl5?=
- =?utf-8?B?ZTEvNkdWbkV3V2ZvUTlBSUd0WCtRTksrdzZnbVY0QnljdENVbllrTXQ1djFU?=
- =?utf-8?Q?slQ2cw9NiYcbDRh0nf6feEN5GfgbDxFXIsi+eZ5oXM=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16280f48-fcfe-4aa1-3832-08ddc987abcd
-X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 01:24:29.8035
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WW0t5B5wnTa8FkKbDWtFpEA6SmAPNHCxtuRzN0j/yE3+pANTos6URzirD7mCIaY1tWTjtSJLO6FaK1Z3JE58RSbhCtDM1e+afmwrGxc6Ynk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB6243
+Content-Type: multipart/signed; boundary="Sig_/jTiag9qPyYcjLDEm=4Dan/+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2025-07-22 20:25, Steven Rostedt wrote:
-> On Thu, 10 Jul 2025 15:31:38 +0800
-> WangYuli <wangyuli@uniontech.com> wrote:
-> 
->> diff --git a/include/trace/events/input.h b/include/trace/events/input.h
->> new file mode 100644
->> index 000000000000..3c5ffcfb7c8d
->> --- /dev/null
->> +++ b/include/trace/events/input.h
->> @@ -0,0 +1,251 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* input tracepoints
->> + *
->> + * Copyright (C) 2025 WangYuli <wangyuli@uniontech.com>
->> + */
->> +#undef TRACE_SYSTEM
->> +#define TRACE_SYSTEM input
->> +
->> +#if !defined(_TRACE_INPUT_H) || defined(TRACE_HEADER_MULTI_READ)
->> +#define _TRACE_INPUT_H
->> +
->> +#include <linux/tracepoint.h>
->> +#include <linux/input.h>
->> +
->> +/**
->> + * input_event - called when an input event is processed
->> + * @dev: input device that generated the event
->> + * @type: event type (EV_KEY, EV_REL, EV_ABS, etc.)
->> + * @code: event code within the type
->> + * @value: event value
->> + *
->> + * This tracepoint fires for every input event processed by the input core.
->> + * It can be used to monitor input device activity and debug input issues.
->> + */
+--Sig_/jTiag9qPyYcjLDEm=4Dan/+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've always been worried about adding tracepoint instrumentation of the
-input subsystem that includes the actual keystrokes into the event
-payload. What I'm trying to avoid here is people leaking their password
-by mistake just because they happened to record a trace while
-typing on their keyboard.
+Hi all,
 
-I don't mind if this gets enabled with a new kernel command line
-options "tracing_leak_my_credentials=yes" or such, but I'd try to
-avoid making it easy to enable by mistake unless this information
-is specifically needed.
+Today's linux-next merge of the rust tree got a conflict in:
 
-But maybe I'm being too careful and people should really learn not
-to share kernel traces with others.
+  rust/kernel/types.rs
 
-Thoughts ?
+between commit:
 
-Thanks,
+  64888dfdfac7 ("rust: implement `Wrapper<T>` for `Opaque<T>`")
 
-Mathieu
+from the driver-core tree and commits:
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+  8802e1684378 ("rust: types: add Opaque::cast_from")
+  07dad44aa9a9 ("rust: kernel: move ARef and AlwaysRefCounted to sync::aref=
+")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/types.rs
+index 3958a5f44d56,ec82a163cb0e..000000000000
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@@ -5,12 -6,13 +6,13 @@@ use crate::ffi::c_void
+  use core::{
+      cell::UnsafeCell,
+      marker::{PhantomData, PhantomPinned},
+-     mem::{ManuallyDrop, MaybeUninit},
++     mem::MaybeUninit,
+      ops::{Deref, DerefMut},
+-     ptr::NonNull,
+  };
+ -use pin_init::{PinInit, Zeroable};
+ +use pin_init::{PinInit, Wrapper, Zeroable};
+ =20
++ pub use crate::sync::aref::{ARef, AlwaysRefCounted};
++=20
+  /// Used to transfer ownership to and from foreign (non-Rust) languages.
+  ///
+  /// Ownership is transferred from Rust to a foreign language by calling [=
+`Self::into_foreign`] and
+@@@ -399,191 -411,16 +400,29 @@@ impl<T> Opaque<T>=20
+      ///
+      /// This function is useful to get access to the value without creati=
+ng intermediate
+      /// references.
+-     pub const fn raw_get(this: *const Self) -> *mut T {
++     pub const fn cast_into(this: *const Self) -> *mut T {
+          UnsafeCell::raw_get(this.cast::<UnsafeCell<MaybeUninit<T>>>()).ca=
+st::<T>()
+      }
++=20
++     /// The opposite operation of [`Opaque::cast_into`].
++     pub const fn cast_from(this: *const T) -> *const Self {
++         this.cast()
++     }
+  }
+ =20
+ +impl<T> Wrapper<T> for Opaque<T> {
+ +    /// Create an opaque pin-initializer from the given pin-initializer.
+ +    fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
+ +        Self::try_ffi_init(|ptr: *mut T| {
+ +            // SAFETY:
+ +            //   - `ptr` is a valid pointer to uninitialized memory,
+ +            //   - `slot` is not accessed on error,
+ +            //   - `slot` is pinned in memory.
+ +            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
+ +        })
+ +    }
+ +}
+ +
+- /// Types that are _always_ reference counted.
+- ///
+- /// It allows such types to define their own custom ref increment and dec=
+rement functions.
+- /// Additionally, it allows users to convert from a shared reference `&T`=
+ to an owned reference
+- /// [`ARef<T>`].
+- ///
+- /// This is usually implemented by wrappers to existing structures on the=
+ C side of the code. For
+- /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to =
+create reference-counted
+- /// instances of a type.
+- ///
+- /// # Safety
+- ///
+- /// Implementers must ensure that increments to the reference count keep =
+the object alive in memory
+- /// at least until matching decrements are performed.
+- ///
+- /// Implementers must also ensure that all instances are reference-counte=
+d. (Otherwise they
+- /// won't be able to honour the requirement that [`AlwaysRefCounted::inc_=
+ref`] keep the object
+- /// alive.)
+- pub unsafe trait AlwaysRefCounted {
+-     /// Increments the reference count on the object.
+-     fn inc_ref(&self);
+-=20
+-     /// Decrements the reference count on the object.
+-     ///
+-     /// Frees the object when the count reaches zero.
+-     ///
+-     /// # Safety
+-     ///
+-     /// Callers must ensure that there was a previous matching increment =
+to the reference count,
+-     /// and that the object is no longer used after its reference count i=
+s decremented (as it may
+-     /// result in the object being freed), unless the caller owns another=
+ increment on the refcount
+-     /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
+-     /// [`AlwaysRefCounted::dec_ref`] once).
+-     unsafe fn dec_ref(obj: NonNull<Self>);
+- }
+-=20
+- /// An owned reference to an always-reference-counted object.
+- ///
+- /// The object's reference count is automatically decremented when an ins=
+tance of [`ARef`] is
+- /// dropped. It is also automatically incremented when a new instance is =
+created via
+- /// [`ARef::clone`].
+- ///
+- /// # Invariants
+- ///
+- /// The pointer stored in `ptr` is non-null and valid for the lifetime of=
+ the [`ARef`] instance. In
+- /// particular, the [`ARef`] instance owns an increment on the underlying=
+ object's reference count.
+- pub struct ARef<T: AlwaysRefCounted> {
+-     ptr: NonNull<T>,
+-     _p: PhantomData<T>,
+- }
+-=20
+- // SAFETY: It is safe to send `ARef<T>` to another thread when the underl=
+ying `T` is `Sync` because
+- // it effectively means sharing `&T` (which is safe because `T` is `Sync`=
+); additionally, it needs
+- // `T` to be `Send` because any thread that has an `ARef<T>` may ultimate=
+ly access `T` using a
+- // mutable reference, for example, when the reference count reaches zero =
+and `T` is dropped.
+- unsafe impl<T: AlwaysRefCounted + Sync + Send> Send for ARef<T> {}
+-=20
+- // SAFETY: It is safe to send `&ARef<T>` to another thread when the under=
+lying `T` is `Sync`
+- // because it effectively means sharing `&T` (which is safe because `T` i=
+s `Sync`); additionally,
+- // it needs `T` to be `Send` because any thread that has a `&ARef<T>` may=
+ clone it and get an
+- // `ARef<T>` on that thread, so the thread may ultimately access `T` usin=
+g a mutable reference, for
+- // example, when the reference count reaches zero and `T` is dropped.
+- unsafe impl<T: AlwaysRefCounted + Sync + Send> Sync for ARef<T> {}
+-=20
+- impl<T: AlwaysRefCounted> ARef<T> {
+-     /// Creates a new instance of [`ARef`].
+-     ///
+-     /// It takes over an increment of the reference count on the underlyi=
+ng object.
+-     ///
+-     /// # Safety
+-     ///
+-     /// Callers must ensure that the reference count was incremented at l=
+east once, and that they
+-     /// are properly relinquishing one increment. That is, if there is on=
+ly one increment, callers
+-     /// must not use the underlying object anymore -- it is only safe to =
+do so via the newly
+-     /// created [`ARef`].
+-     pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+-         // INVARIANT: The safety requirements guarantee that the new inst=
+ance now owns the
+-         // increment on the refcount.
+-         Self {
+-             ptr,
+-             _p: PhantomData,
+-         }
+-     }
+-=20
+-     /// Consumes the `ARef`, returning a raw pointer.
+-     ///
+-     /// This function does not change the refcount. After calling this fu=
+nction, the caller is
+-     /// responsible for the refcount previously managed by the `ARef`.
+-     ///
+-     /// # Examples
+-     ///
+-     /// ```
+-     /// use core::ptr::NonNull;
+-     /// use kernel::types::{ARef, AlwaysRefCounted};
+-     ///
+-     /// struct Empty {}
+-     ///
+-     /// # // SAFETY: TODO.
+-     /// unsafe impl AlwaysRefCounted for Empty {
+-     ///     fn inc_ref(&self) {}
+-     ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
+-     /// }
+-     ///
+-     /// let mut data =3D Empty {};
+-     /// let ptr =3D NonNull::<Empty>::new(&mut data).unwrap();
+-     /// # // SAFETY: TODO.
+-     /// let data_ref: ARef<Empty> =3D unsafe { ARef::from_raw(ptr) };
+-     /// let raw_ptr: NonNull<Empty> =3D ARef::into_raw(data_ref);
+-     ///
+-     /// assert_eq!(ptr, raw_ptr);
+-     /// ```
+-     pub fn into_raw(me: Self) -> NonNull<T> {
+-         ManuallyDrop::new(me).ptr
+-     }
+- }
+-=20
+- impl<T: AlwaysRefCounted> Clone for ARef<T> {
+-     fn clone(&self) -> Self {
+-         self.inc_ref();
+-         // SAFETY: We just incremented the refcount above.
+-         unsafe { Self::from_raw(self.ptr) }
+-     }
+- }
+-=20
+- impl<T: AlwaysRefCounted> Deref for ARef<T> {
+-     type Target =3D T;
+-=20
+-     fn deref(&self) -> &Self::Target {
+-         // SAFETY: The type invariants guarantee that the object is valid.
+-         unsafe { self.ptr.as_ref() }
+-     }
+- }
+-=20
+- impl<T: AlwaysRefCounted> From<&T> for ARef<T> {
+-     fn from(b: &T) -> Self {
+-         b.inc_ref();
+-         // SAFETY: We just incremented the refcount above.
+-         unsafe { Self::from_raw(NonNull::from(b)) }
+-     }
+- }
+-=20
+- impl<T: AlwaysRefCounted> Drop for ARef<T> {
+-     fn drop(&mut self) {
+-         // SAFETY: The type invariants guarantee that the `ARef` owns the=
+ reference we're about to
+-         // decrement.
+-         unsafe { T::dec_ref(self.ptr) };
+-     }
+- }
+-=20
+- /// A sum type that always holds either a value of type `L` or `R`.
+- ///
+- /// # Examples
+- ///
+- /// ```
+- /// use kernel::types::Either;
+- ///
+- /// let left_value: Either<i32, &str> =3D Either::Left(7);
+- /// let right_value: Either<i32, &str> =3D Either::Right("right value");
+- /// ```
+- pub enum Either<L, R> {
+-     /// Constructs an instance of [`Either`] containing a value of type `=
+L`.
+-     Left(L),
+-=20
+-     /// Constructs an instance of [`Either`] containing a value of type `=
+R`.
+-     Right(R),
+- }
+-=20
+  /// Zero-sized type to mark types not [`Send`].
+  ///
+  /// Add this type as a field to your struct if your type should not be se=
+nt to a different task.
+
+--Sig_/jTiag9qPyYcjLDEm=4Dan/+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAOi0ACgkQAVBC80lX
+0GwUwgf9E8QmK155t/RK+T3HCK8F5WRMOUJfofgAbn6yCFkkDEwBDmjBrcLxCZOg
+6EPl/tuQUHxbmbKAQjYjdyflVtquhguLiKdNrGT3UbuYjlpEEAWNheB3T0iz+K0P
+aZkZvENpERJ28gNwYuVoyQ+0bqXpRrTWL9aKTs49LE0TLuK8C6l4LfPlAFzhrZvC
+gABhfkDkqhJhbbzaVXGRz07A2fOlrbvhyUGEl4FJ7ViZJSRiRp1mwO2/bTrrcniV
+RaSXHvJWeJt4lr3xtqNjljeEJk0I7jyePeBhBTAug4sdE8rA706vNOAS4XLrThnk
+28YIT79NihIL5dQCScKjOag2tcKUVA==
+=4DHt
+-----END PGP SIGNATURE-----
+
+--Sig_/jTiag9qPyYcjLDEm=4Dan/+--
 
