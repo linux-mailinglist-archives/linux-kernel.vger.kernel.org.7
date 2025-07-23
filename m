@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-742855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E046B0F765
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC03CB0F768
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0481C85C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCC51C853F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E58B143C69;
-	Wed, 23 Jul 2025 15:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1724D13A3ED;
+	Wed, 23 Jul 2025 15:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNQlQ22h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EfQk4w0e"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B75F2F5B;
-	Wed, 23 Jul 2025 15:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5DB469D;
+	Wed, 23 Jul 2025 15:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285612; cv=none; b=Cb4vXOdeYuomT7dap+SDpv6Vj66rqVcayAwTWeeBCKKQfpi9jNPTFK7um9EA87Q6Z0xkCFJAEkcBfbfjregxbStKcEbv3Ui3wX/4SnD2/E0rp7vFVZ3EtjK29fbiKjKp2PGHf297Ku68Lt6Tr8egYdL3G6bg3jzELY7KIo6VR/4=
+	t=1753285679; cv=none; b=fG/VPS/7v7EP79peBFTJqE2m+ZRtG5ctNzZpWYzBnBMj9aNGhEVUyqJV+hTqahlLpsX8LQpBJa1fFUZUlm6CI6FYApDvWU6MKeo3J2oi5wpXPKqkFzk9G9y2MAJAA/aBN9h/hVfR2r2Jm5Y2AciqtZ77vzJkxlG2vV+8CrcvOlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285612; c=relaxed/simple;
-	bh=ZjkFYW2U13Mn/AmyiaZUOzdKnfqib/AK/IkijJ/maJM=;
+	s=arc-20240116; t=1753285679; c=relaxed/simple;
+	bh=B7uklZkk4HktiVAQXYK/Pza7TOFZKCpExs9amyGOK/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyFzKB3MwDmeJtdF9teCjTTxWabSyb5jABKlCFSfoZssTWjMRP9tgPpNS50kfG0vZhBsTTgSzv6cpN3bf2eJopLHVTjt0UXv1AltUUsgEnslAbBEMSl790os5e/FynB1IfogtlxNfS/BcI8wAOl5KRcWRDBhAKxq7OcAxjwODMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNQlQ22h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C75C4CEE7;
-	Wed, 23 Jul 2025 15:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753285612;
-	bh=ZjkFYW2U13Mn/AmyiaZUOzdKnfqib/AK/IkijJ/maJM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9kbQ2OraIQ8drmDbFuMl54K/cKFZRV+OpNcuUKjlTiBhnPVyqyyoVuW2BjeEzH3R+MphTOQ0PHCArtkBfLLEoew6HG9heMNPQYs8bgBpcosjUoQXf2pFww6Muou5dJwGwyW15ELp0XSGWK3asp8+AyMRIR2QpsnLrgdIw6PmMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EfQk4w0e; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CA35CE92;
+	Wed, 23 Jul 2025 17:47:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753285638;
+	bh=B7uklZkk4HktiVAQXYK/Pza7TOFZKCpExs9amyGOK/w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aNQlQ22hhTYDAPi/lRwAWj2qwUsXFOufz2OH9a9kWha+0ZAdtGQ93nBfhCsm8j9Rz
-	 cMzRiQamF7jCzbfh3hsopUlr63HJM+GBVtVcNbxvMv+xT+v3qL5lSrRMNL5zy975DG
-	 3ICxz03o8VjYbcwc9w8gDyQvogFZ2i3j3sJlnPf5v4juKizkbQrXmjJxhxE55pRIqa
-	 1pbA6bL7MGDCcJvsJ5C3v2fwaVkWys2akT3KdRpMt5jqUJEJK+50AOlgavBqkPSrjM
-	 US71vAw/WrEL/FmlQymCQmmQLKtUVLMJu02zmdsO0UCD4aVK4EAgfvNb+HU9C9wj/q
-	 wKxS3sFVQzoaA==
-Date: Wed, 23 Jul 2025 16:46:47 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Xin Long <lucien.xin@gmail.com>, linux-kernel@vger.kernel.org,
-	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
-	linux-sctp@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH net-next 0/3] net: Add sockaddr_inet unified address
- structure
-Message-ID: <20250723154647.GI1036606@horms.kernel.org>
-References: <20250722171528.work.209-kees@kernel.org>
+	b=EfQk4w0e2QVSUglYsV4uhnUu3dcnzJD+DbeygIrvYi6YlzbhrjeW2CGHSMgNt0HS1
+	 cUVinhY5iX53l1OTxDvXyjhZtKx9O9l52qUjnRK2OR5d9c5YcJ3q2q1YCBli582gVZ
+	 nbaBvJ0w1JMTl+rqGQqil9uBRW1+wWSGQKVWyPQY=
+Date: Wed, 23 Jul 2025 18:47:53 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Allen Ballway <ballway@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: ov8865: move mode_configure out of state_configure
+Message-ID: <20250723154753.GH6719@pendragon.ideasonboard.com>
+References: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250722171528.work.209-kees@kernel.org>
+In-Reply-To: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
 
-+ Iwashima-san and Willem
+On Tue, Jul 22, 2025 at 01:35:43PM -0700, Allen Ballway wrote:
+> ov8865_mode_configure() only needs to be called on sensor init, but it can
+> be called multiple times from ov8865_state_configure(). Move
+> ov8865_mode_configure() to ov8865_sensor_init().
+> 
+> Signed-off-by: Allen Ballway <ballway@chromium.org>
+> ---
+>  drivers/media/i2c/ov8865.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+> index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..1d1a1f261bf4ab5c09848402dc057e2f572504e7 100644
+> --- a/drivers/media/i2c/ov8865.c
+> +++ b/drivers/media/i2c/ov8865.c
+> @@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct ov8865_sensor *sensor,
+>  	if (sensor->state.streaming)
+>  		return -EBUSY;
+>  
+> -	/* State will be configured at first power on otherwise. */
+> -	if (pm_runtime_enabled(sensor->dev) &&
+> -	    !pm_runtime_suspended(sensor->dev)) {
+> -		ret = ov8865_mode_configure(sensor, mode, mbus_code);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	ret = ov8865_state_mipi_configure(sensor, mode, mbus_code);
+>  	if (ret)
+>  		return ret;
+> @@ -2384,6 +2376,13 @@ static int ov8865_sensor_init(struct ov8865_sensor *sensor)
+>  	}
+>  
+>  	/* Configure current mode. */
+> +	ret = ov8865_mode_configure(sensor, sensor->state.mode,
+> +				     sensor->state.mbus_code);
 
-  This series looks like something you should review
+How about the implication on ov8865_set_fmt() that will not update the
+link freq and pixel rate controls anymore ?
 
-On Tue, Jul 22, 2025 at 10:18:30AM -0700, Kees Cook wrote:
-> Hi!
+> +	if (ret) {
+> +		dev_err(sensor->dev, "failed to configure mode\n");
+> +		return ret;
+> +	}
+> +
+>  	ret = ov8865_state_configure(sensor, sensor->state.mode,
+>  				     sensor->state.mbus_code);
+>  	if (ret) {
 > 
-> Repeating patch 1, as it has the rationale:
-> 
->     There are cases in networking (e.g. wireguard, sctp) where a union is
->     used to provide coverage for either IPv4 or IPv6 network addresses,
->     and they include an embedded "struct sockaddr" as well (for "sa_family"
->     and raw "sa_data" access). The current struct sockaddr contains a
->     flexible array, which means these unions should not be further embedded
->     in other structs because they do not technically have a fixed size (and
->     are generating warnings for the coming -Wflexible-array-not-at-end flag
->     addition). But the future changes to make struct sockaddr a fixed size
->     (i.e. with a 14 byte sa_data member) make the "sa_data" uses with an IPv6
->     address a potential place for the compiler to get upset about object size
->     mismatches. Therefore, we need a sockaddr that cleanly provides both an
->     sa_family member and an appropriately fixed-sized sa_data member that does
->     not bloat member usage via the potential alternative of sockaddr_storage
->     to cover both IPv4 and IPv6, to avoid unseemly churn in the affected code
->     bases.
-> 
->     Introduce sockaddr_inet as a unified structure for holding both IPv4 and
->     IPv6 addresses (i.e. large enough to accommodate sockaddr_in6).
-> 
->     The structure is defined in linux/in6.h since its max size is sized
->     based on sockaddr_in6 and provides a more specific alternative to the
->     generic sockaddr_storage for IPv4 with IPv6 address family handling.
-> 
->     The "sa_family" member doesn't use the sa_family_t type to avoid needing
->     layer violating header inclusions.
-> 
-> Also includes the replacements for wireguard and sctp.
-> 
-> Thanks,
-> 
-> -Kees
-> 
-> Kees Cook (3):
->   ipv6: Add sockaddr_inet unified address structure
->   wireguard: peer: Replace sockaddr with sockaddr_inet
->   sctp: Replace sockaddr with sockaddr_inet in sctp_addr union
-> 
->  drivers/net/wireguard/peer.h | 2 +-
->  include/linux/in6.h          | 7 +++++++
->  include/net/sctp/structs.h   | 2 +-
->  3 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+> ---
+> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+> change-id: 20250722-mode_configure-80105fbd835d
+
+-- 
+Regards,
+
+Laurent Pinchart
 
