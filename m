@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-742147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF56B0EDF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AC0B0EDF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6E917603D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11551778D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000B283FE5;
-	Wed, 23 Jul 2025 09:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ADB283FFD;
+	Wed, 23 Jul 2025 09:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h74P1KVs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTnM5XzO"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26E6283FDE;
-	Wed, 23 Jul 2025 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E751281526;
+	Wed, 23 Jul 2025 09:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753261245; cv=none; b=CH6uCr07mfva7cGFlx0B/4Cz3ot7vWar6PcYZrxDhL/hjqzYQcdB4n5xuk+cMB6Fp9ZFMsDFgj+sPqsCrSbFgroa+fTEtugqdMiRHBPxKN7gOpQ9kvXY21uLntVJM61VGnyCxvNo1dSScsqMWp0fq/NPyBfMtcd7fSLlCrYeFc8=
+	t=1753261274; cv=none; b=s03QXbsV7sh9n2S3Nx7tCjrhOOsAjNg5ACPBd3LpvPhtcpFVzl2qih2OCJ26g1WZzD4JjljwJ5s2xcWLUiee3hBWGZsJmqTqWn+76iZd/OWlwQTb3YI1ZEKBCZEvvbxFV8ZUp7cCCOyXIhzQPpUHR1R6ExNy6fPlG+msBDmUeUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753261245; c=relaxed/simple;
-	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qpAsQ/SqV1wtE+l1A/XH697fqlFbnl7+QR2yJLFMsC2KlhussiJJ0pFKAe2IidRBzk8GHP7+nWDJzc5AT4MDhu/GhRwOatIBRF5QPoxS8P1l/PONYF7vv70G7TgegfwIHbUR61P1CriA2cBbSrj9VBkQmtmMS5bN9YPQztggOLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h74P1KVs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED5C4CEE7;
-	Wed, 23 Jul 2025 09:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753261245;
-	bh=uY/0flj583lOefShgekeFjG4SldMGKNX2k41Gwa3udQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h74P1KVsWWv3AE+EU8hXR7Cuyn4Eka9sKV+4Dh2bNqpAenoNzYH1SzsXgNon4Vp1E
-	 57y1dxGRSeN6du/ORxuLU2nY+2GDk+gk4K+3GnNhqbr5yS308F4Zwynw66j21kzxEo
-	 SKKbn76ut326an85/aN3jxEbNkDIY/jz1qN0zTIQ3chCR92Uy/JPqlfk+2mN5Tpil9
-	 kBIbnaOA4pCOhuS9xHP6UBqyMK4RSBachNSAbE8pz0O52SFJsz8v8uDBx6fUkyxFM7
-	 NNQKcl29ueHrxks2hJJZkLQ/EDCECO2CLcW14wSvt1wzjl8opH7UQhS3Lc4u3rzxFV
-	 rgvbaqUE8VqXA==
-Message-ID: <bca15900-da2d-4384-a79a-ee630fd7cee2@kernel.org>
-Date: Wed, 23 Jul 2025 11:00:41 +0200
+	s=arc-20240116; t=1753261274; c=relaxed/simple;
+	bh=HVQUD3Ib6X4vO1vXKL8LG+SI0kZlkOlq4KpZxCl65JM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iks2YfScb2zL0OToQI07fr0RlB333hHC186ez81CewbAdtCyLnYEl+iugyCjQCXC2Yfe4aRvOFSN4JSaSWapi4+hN0FQNc0WYzRHMsNtlg/fJajb7Xh1BCN1DIT+PILSCGQ2VBHnrH7TvgdUbIRzjzCR0aKcz93N/bphD6lC3GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTnM5XzO; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d6ade159so46444785e9.1;
+        Wed, 23 Jul 2025 02:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753261271; x=1753866071; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfi+7jzS+QroB9ovq5xCDmfLCYDKNlqIdXI2M9FMRkQ=;
+        b=dTnM5XzOon+hYkFce4v6HlsQVUqWSbG+luh3GOazYDIB7lxmlTdOMNrGcYasjwDovO
+         4nbUzlzZFZkMSyCBrM8Myz13/vVPmanODR1v4XUyK075zOua2KHIicFwNmek70NrQtQt
+         mUBGB8kpoqoMx2JQEyqRyJBPVFKk/OzOA9nEqsXJfOAk8RS1EG/T+BEcNZJ0x1yNj8ww
+         wpmGq0wqmBzOlCpNpBT46KlJ2y8bGAAwQNCV6P4+QonQ+ryOlZbMMmGI9oF8NbfJyUAJ
+         ynQPMc7R++g8rtTl+jhlkidoXegIV0elaf9DkC90RstOK5C9qNaGliyFcLdvJteTKHM9
+         pyXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753261271; x=1753866071;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vfi+7jzS+QroB9ovq5xCDmfLCYDKNlqIdXI2M9FMRkQ=;
+        b=tM95JbJknTO5amcvBuD9mqVZGSKJY1ikD1eQJuB6aSOJh4PBZgP3gOQ5AJsPUkonAh
+         l811sjYVB/paJKdFQ7lbcg9/CFskbLwLEBAORARaA/HkGpuKbcxnLPo+ApMc7BFAYk1F
+         HTJMGsqR6BA3JxCNWZtp6P6gahd9KrIB6AMIXQgCutZh4f/bYkhz94fHs5erX3ZX9uE5
+         Au9rcJHDcPczKu0GNbVZk0ifoPBDJRoFXHzWjSYumcOWyY286F51cEJtFUhhME+b/vY7
+         LNOdPCzIKAAdN0l+HuYgrLv/0qanhwOsmqh1PbyfuS7u9h4kKFyo1RWQMxOusssId3nS
+         p96A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBdziDoIkGh+W77lsl9WRKyL7NhfQoOAjf1fxfNhkSCw4QI2r/L/R9By44M9D/Xdq/sm5pDRok4M5L@vger.kernel.org, AJvYcCVZxgL0MgnGcDZ04pTVQoh0OQpUYEyeHa/uSFyZCqgVrCUEkjrq5wUCdG1yho6a1iyCmyzFDYWpTqj8@vger.kernel.org, AJvYcCVlmwcdyKQsDj66H410QFs+ve00XquhBfULeTMV5BLElT3WOINaUGXpGsdp8U5gII1WDOGxhVuvm7s=@vger.kernel.org, AJvYcCWeqVyjBxeJ1+JE7DNtO+3Un7qqyvJ7HFZ8/u4TI8xTQyuw28IbdSDJ1WwRbi/GzQW7qnlpiMnexdDYbQ==@vger.kernel.org, AJvYcCX1vu+Axx8jhu0oo9Mo5/XjUREB+D4lpAD8eSor4VfxdQeY8EwSiZ2NMB6WK0/bPshnU53s1Stu4Q4eMuPe@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEZ+ZYurPG55EDoqwlFNpfrNNOdJi8ujOJY0bsWPzYCpT92pRR
+	gKfNm8CMdFoNz2P1/2zhUw+vlocXS5c/z8OnUEyaivE4zeICT2fuOK0O
+X-Gm-Gg: ASbGncuZnvtMR52VXcMm8oi1MgrDo/nDbotQIHjfmUmdamFreKltkR9yJlLj1SW0IO9
+	Qcs9XLeYC+hW6li8Di4Hz5irXZ1IqIpLrPq+wMTCBaFaScMyW90onAZD1G8dwxMMQ1lhD2T25wQ
+	nlcWiLdaB+5A8ZqWa0DyO20L0eAn7i0I66gEtjvZYcUVXZBFPHcfwM8XYKgQRMRjcXBRLIbHsQo
+	U+22lotcEfwHY3AZsNF6f6Igcb+c8V95LMXVfDNVwsUGkj3o/HdYQzYzmmiEQonSkbEFfy1/p5O
+	c7RRq6x04hPmQMXRBLO4N3Cljui9H/tT7/aQV5thYes3Iq2tbxYeAE0itgOZN4GaDQPAift1iAP
+	z3gUOEwEQeOrSgdaLeWaaNrwMd3v4rubNYnMhoAWIHd5nryMjpLk4h4QF/nZDBRYo07xJvCfa9Q
+	sfxZwfkMqY
+X-Google-Smtp-Source: AGHT+IEknrstHg6cUD/SgoHhNho7BNCTRJA/GS5vJOJzPvYI6zayldv/5uJL7C58FRXa6VpYJz8Fmg==
+X-Received: by 2002:a05:600c:8b08:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-45868c79052mr16967605e9.4.1753261270574;
+        Wed, 23 Jul 2025 02:01:10 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca25533sm15448303f8f.11.2025.07.23.02.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 02:01:09 -0700 (PDT)
+Date: Wed, 23 Jul 2025 11:01:07 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org, loongarch@lists.linux.dev, 
+	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
+Message-ID: <awvdox3bgabbc42aamezlg33k4cje6y75qoxn7ruh3nhd4qv5n@u3spdahehad4>
+References: <20250717103241.2806798-1-thierry.reding@gmail.com>
+ <2025071716-phoney-object-1648@gregkh>
+ <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
+ <2025071919-patience-cattishly-cf7c@gregkh>
+ <l54i36uk33je744w4f47tehdopk5dsjotvozfv5b2hehmxrwpq@eins7awyq4dy>
+ <2025072218-decipher-spree-327d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: William Mcvicker <willmcvicker@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
-References: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
- <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t3b24mrvydogtoje"
+Content-Disposition: inline
+In-Reply-To: <2025072218-decipher-spree-327d@gregkh>
 
-On 21/07/2025 10:18, Krzysztof Kozlowski wrote:
-> 
-> On Thu, 17 Jul 2025 17:22:36 +0100, Peter Griffin wrote:
->> Register cpu pm notifiers for gs101 which call the
->> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
->> C2 hint. This hint is required to actually enter the C2 idle state in
->> addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
->>
->> A couple of corner cases are handled, namely when the system is rebooting
->> or suspending we ignore the request. Additionally the request is ignored if
->> the CPU is in CPU hot plug. Some common code is refactored so that it can
->> be called from both the CPU hot plug callbacks and CPU PM notifier taking
->> into account that CPU PM notifiers are called with IRQs disabled whereas
->> CPU hotplug callbacks are not.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
->       (no commit info)
-> 
 
-... and dropped, because I missed the part it is not bisectable. This
-cannot go the same cycle.
+--t3b24mrvydogtoje
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On Tue, Jul 22, 2025 at 04:08:09PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jul 22, 2025 at 03:56:40PM +0200, Thierry Reding wrote:
+> > On Sat, Jul 19, 2025 at 08:52:41AM +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, Jul 18, 2025 at 03:49:37PM +0200, Thierry Reding wrote:
+> > > > On Thu, Jul 17, 2025 at 02:11:41PM +0200, Greg Kroah-Hartman wrote:
+> > > > > On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
+> > [...]
+> > > > 	struct syscore;
+> > > >=20
+> > > > 	struct syscore_ops {
+> > > > 		int (*suspend)(struct syscore *syscore);
+> > > > 		void (*resume)(struct syscore *syscore);
+> > > > 		void (*shutdown)(struct syscore *syscore);
+> > > > 	};
+> > > >=20
+> > > > 	struct syscore {
+> > > > 		const struct syscore_ops *ops;
+> > > > 		struct list_head node;
+> > > > 	};
+> > > >=20
+> > > > Is that what you had in mind?
+> > >=20
+> > > I missed the list_head, so yes, this would be better, but don't pass
+> > > back the syscore structure, how about just a void * instead, making t=
+he
+> > > whole container_of() stuff go away?
+> >=20
+> > Yeah, that's a possibility. I personally don't like passing the void *
+> > around because it's easier to make mistakes that way. I also find it
+> > unintuitive because it doesn't immediately show you what the functions
+> > expect.
+> >=20
+> > My understanding is that the container_of() should get optimized away
+> > most of the time, so there aren't any obvious downsides that I can see.
+>=20
+> container_of() is just pointer math, but a cast is even faster :)
+>=20
+> > But I don't feel very strongly, so if you have a strong preference for
+> > void pointers, I can do that.
+>=20
+> That's what you really want to have here, it's a syscore data type
+> thing, that the callback wants to reference.  Just like a irqrequest_t
+> function passes back a void * that the handler "knows" how to deal with
+> properly.
+
+IRQ handlers are different, though, because you pass the void * data
+when you register the interrupt. That void * then gets stored and passed
+to the handler when the interrupt is processed.
+
+We'd have to change it to something like this:
+
+	struct syscore_ops {
+		/* parameters now changed to driver-specific data */
+		int (*suspend)(void *data);
+		void (*resume)(void *data);
+		void (*shutdown)(void *data);
+	};
+
+	struct syscore {
+		const struct syscore_ops *ops;
+		struct list_head node;
+		/* NEW driver-specific data */
+		void *data;
+	};
+
+It ends up increasing the syscore structure's size, about 33%, though
+given that there aren't a lot of these that's probably negligible.
+
+What I think is a bit more unnatural about it in this case is that we
+embed the struct syscore into some driver-private data anyway so that
+it becomes per instance, and then we have a circular reference:
+
+	foo->syscore.ops =3D &foo_syscore_ops;
+	foo->syscore.data =3D foo;
+
+Which looks kind of weird. Alternatively I suppose we could completely
+rework it and make register_syscore_ops() allocate struct syscore, and
+hide the internals from drivers completely:
+
+	err =3D register_syscore(&foo_syscore_ops, foo);
+
+With that it may be problematic that register_syscore() can now fail.
+
+Thierry
+
+--t3b24mrvydogtoje
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiApM8ACgkQ3SOs138+
+s6G76RAAlyjbBOBTf8eNokhrwb69GbuFv4iEunTnd/Xy91IhOncqHjdYHN3rqTn9
+GZWy+L9VFYLaEmLV5W1ChOD3rYHCxZ3gep+jdE5ThLQvJaK4IBB4oGZ0OGXLHmVy
+TqNy+Tq/dQi2jM2o7MW1DUDM8EunrbLmjBWZZONJzH18GqJPn3LWazuC7tBBL6vu
+bmowzEXxm+4NWx5Ow3IvFnLzDa05JLaBKtVREPuf/UdRHcjzrra1RyYLyaYUI9Gy
+pWZHkgUA+1gAO2hutK8eyL98cZlnl8zrArmduJZsyZQhcNe1ltwPTzUq9wejYOr+
+Vywgy/CxznLtvKd0e27hP/I7zCx64ktofCb6l0SwueraLWYTcpJLQ23T93g1bDwY
+02o6cq0874YQdndJytU7t3cKETe5uXF0AGmepX/+GKvcQN6lBqo04OL+Ge6yRMyy
+G9gv6P2nxqY+RWkDrFtqO6RwFB+lJSwc2J3RfxHC/2ygMy2Zr2AJ5oeeAKOtTZ/0
+smpK40Y2FB6y4ohGq3UK3uPyBvOJi/jw6sMuRyv2Ou7tJIFE2EtSpA5+m5DcwUcR
+gRcfO6O0V9Y6qWBx2Tt+i6Fzekj/0xBzlQdyvCom8xrhRZ9VGbZBfpIaXDs/Anp6
+ovlk/rkbo8DsYQQxINnmSBx2uQcWSCYAU53leg5fnr4EoSGPCsg=
+=l8CI
+-----END PGP SIGNATURE-----
+
+--t3b24mrvydogtoje--
 
