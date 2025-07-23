@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-741885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B31FB0EA3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9E4B0EA42
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3265639F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B836C7C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 05:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08F1248873;
-	Wed, 23 Jul 2025 05:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836CA248F63;
+	Wed, 23 Jul 2025 05:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6mvhaBg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkX4MEOc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B922F4A;
-	Wed, 23 Jul 2025 05:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA38A2594;
+	Wed, 23 Jul 2025 05:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753250199; cv=none; b=qMqjIuMTbKo7vIi72JEvLXjc+9Cd7hIwVUWix0WC7udpl3Z9s613DtLrjCayrtiZqRbyiJbSnsdL8yPlv+IBXeDk45cvORd3u1hOazyHYy3zZT4BfMTN0haavCFBDwTuy63btQewzSenLqfc77XIVBoB43c1XpT/nBAKqCMrrW0=
+	t=1753250315; cv=none; b=S3rxgSmv6kqYIuiKjnT7Vj4ZcL5esCUuTgDdXw//oaV/+F/sDU7Txf0+4EcsfCvGIKNZupv8Q/Y5G3bwZHhTiQLntgfkKWPHwbmWKiddXP6ZbTmQqTFMMSX+nXkU33KUY1C17yB6ncer5C2uHc/gleeE5Nb9zrQaqXelqENdzzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753250199; c=relaxed/simple;
-	bh=KO9CAxkMtTRxZtE6bm/Kqegv2fEpZ+iUowyTx+BJpk8=;
+	s=arc-20240116; t=1753250315; c=relaxed/simple;
+	bh=mtV6PtNaUOkVWENMgyWOyGp2r589sffVzijjl/VKBVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y/55BGRkwQ6Y+ezSMi27qC86seNXdja8723mdp4Yoe5TLdDsjdaJUt7lUvlNPKMLpTmhsMd10d+TH2U4S0+kcKhR7+yJL4btsGizZSgD0aTpU/l0WidGpUerQ0FAvTWMoy0PYYrfMvfxJat+3kkyRb4qQfIQGT4pYaLLiXyyQJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6mvhaBg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1EAC4CEE7;
-	Wed, 23 Jul 2025 05:56:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uPMXzm31ucMPXrPQq3P4y0EzfIi7Ov2aG2UWucjapAAyWEi+8tKtBd7f8nQqd2snsq3nJXKNru1TBl9/t4H6z/CHg0yHcrMKVNWc/6it7QdUG+uEOJMQ0rKvIYll+xlRu4hOZLy4g9djZAYGvilKNHk2EJI5xWNaBp1LadoajFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkX4MEOc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0797BC4CEE7;
+	Wed, 23 Jul 2025 05:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753250195;
-	bh=KO9CAxkMtTRxZtE6bm/Kqegv2fEpZ+iUowyTx+BJpk8=;
+	s=k20201202; t=1753250315;
+	bh=mtV6PtNaUOkVWENMgyWOyGp2r589sffVzijjl/VKBVs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u6mvhaBg0bk6uew9MII51nmcfj9c95WCba34dvauGuIOaEbRgrvHnsZRsF4zWy+wW
-	 ROO+ZDIufU7bAhxwpc95hLXTnA6RgXFMiqoo8mdv0OwHCiEQgKL/ULW9dmp/FN/gJu
-	 P5pTwh4o7Td+/dDR7WZ9pN0ZLHjNorArPxH5jfntybyl/hH5fFb1hniRTJ2gO7f1wu
-	 qpxmCI2G/f288ANXlsHoh+1NXRcXDXbGZRNtIesh+lChQjIi9cxmsCjBAD+JrL/oyj
-	 pm72tbHWc62cjuKCwTf87WjAjW06rbbWbo92Wm9pUQ/V/isaSz6Qs/w8e5uWqGBS61
-	 HNuulVSmYee/g==
-Message-ID: <d85fa0c5-f155-431e-bc09-0bb74d96d670@kernel.org>
-Date: Wed, 23 Jul 2025 07:56:31 +0200
+	b=NkX4MEOcrd8F/ufhbz5yVg7ZqwkIWhm2IdBoB7eJLTs7yjtVm+EmSCCnGH3XS14Lj
+	 3/9WjCMMgrrKrSg8+MtIOHljZnoQkHSgLEzuvEj2F7hBXmIhOOjBJLgrsaeLF5sQNB
+	 yDunzZkKjcRTgF3/Sh1taA11PW/6kGDhN0beVhcFkVTL7uwSegXqbFcr19QGlm+oXj
+	 LgYe4qD5x/hghTRXalnoqrChtbWJ4WWPFbXhXsqF29Dp2zA+e8DszKLxGbUcHvRwj8
+	 Ftr45gPb7jmL+m9CapBFVEOzn8hFL1+/XUgjq8hQgbnon4zv2K4hpuoOTyhmNeE/cx
+	 P14fm0njw7pyg==
+Message-ID: <25f80663-c896-4bbd-b1a5-0b5a93e047e1@kernel.org>
+Date: Wed, 23 Jul 2025 07:58:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b
- board
-To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: joel@jms.id.au, andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250723014239.22667-1-donalds@nvidia.com>
- <20250723014239.22667-2-donalds@nvidia.com>
+Subject: Re: [PATCHv5 wireless-next 7/7] dt-bindings: net: wireless: rt2800:
+ add SOC Wifi
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Stanislaw Gruszka <stf_xl@wp.pl>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20250722212856.11343-1-rosenp@gmail.com>
+ <20250722212856.11343-8-rosenp@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,25 +112,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250723014239.22667-2-donalds@nvidia.com>
+In-Reply-To: <20250722212856.11343-8-rosenp@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/07/2025 03:42, Donald Shannon wrote:
-> This is an Aspeed AST2600 based unit testing platform for GB200.
-> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
-> differences, additional gpio expanders, and voltage regulator gating
-> some devices.
+On 22/07/2025 23:28, Rosen Penev wrote:
+> Add device-tree bindings for the RT2800 SOC wifi device found in older
+> Ralink/Mediatek devices.
 > 
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
-> 
-> Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-> Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-Why are you faking tags? No, you cannot just add whatever you want.
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
 Best regards,
 Krzysztof
