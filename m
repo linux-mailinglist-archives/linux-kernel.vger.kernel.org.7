@@ -1,170 +1,226 @@
-Return-Path: <linux-kernel+bounces-742537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B14B0F349
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99626B0F353
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2EC1CC0098
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23112960E90
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52CF2E8893;
-	Wed, 23 Jul 2025 13:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675AF2E764A;
+	Wed, 23 Jul 2025 13:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RreGXii/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iW7dzB9e"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0AC2E8894
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360292E7189
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276001; cv=none; b=UVc5GJGY3Mk+kpcqky1011t2a8oEN6MOS2Cm1+M8QTEqL2rn8SAx3UHygOWoJOqUdlhU0+coYp5x/jDjLKVSdiwGGYQEbX+rNubOakiJhrlzLjmIZMJtUmLvgXtcdfyW7mzHHeQBbEumVrpFuBVix+IeaxSILBqQK2miqa3IDeE=
+	t=1753276041; cv=none; b=HfFmdh/s3jNbLlYcrGGqVLeDDjzlIk2TweqxDNaHTwyex/vg4WkxMXSh9qy0H+pwpeyEhADbgmsGytKbYYTcVRthSQtdgagvoRKF1JBAjn2Xs3bt/Hx/w68AhXFek0Yu6v3dRUiRqjpwCcc/OtUVel5C4SY+yp8dosR5ZcfEccE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753276001; c=relaxed/simple;
-	bh=HCpPcP1++9JXtPVhSMZtVXW/xDeqe8ilKiIpJh1wrRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f8tKpWzKdEijMGNtQ2wqCWi3s2dioibIXwKNCG3TtHeoqtkevnhOBSXzuwM+qhF0ER5XGGZFeaj+Dt2Noy3pxHHbALP3Dlyisxebc4kCseSJQ/vfqwRqB0Nqo2IBEmTG4l1LtqbzOUUP1v4MBfoh9q2PJrGmZ4m1c7OYfnwqj6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RreGXii/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9fJ55024458
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:06:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Gk+9lQo8OLB83ZmQKGeqhkdZVjnwAl1R2lXLUIpQERk=; b=RreGXii/7t9qNNrq
-	DbFUiqGFPpcSsP1x+0q0SSuLU3f8PJogH6cufEOXdeX+gFz/Dn32IeKeEKvLT1C5
-	iWpL9q816FjFMx+F+TnHboV4c3+QSvhWwQqUEzs+0RNZ5rNgz0jEZawq1KVWJisV
-	wlBurbDpJMa99lauhWu4rWj1IaPBxz7DwfqFJJnSsLB/RCKP9MfE+IVEoz1Kz0Ch
-	28pjoGdllyNkPG6oJPzR9kfa24I2OLtFVrD2299e9ls4GKbsRc7ViqkZCG4C5x/n
-	jIX60c6BYiqsZMrs/UV1I0NXV1dj2+amT8WjgeHN5Kh9Zz0e1Ssfb0N/g9tis4x6
-	M0N6PQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6qd87-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:06:38 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2369dd58602so56326895ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:06:38 -0700 (PDT)
+	s=arc-20240116; t=1753276041; c=relaxed/simple;
+	bh=K5g5ghBqJeQ8gfTrmh/oFkJT1Bbutgsqi9q9KbN3jrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XCa6aX3lX296y7pQ50JJkl2oU2ZGznp3naf0b+2QralfAEQhO+7wdRPwSZ4kkfJfsRXEoBlnzORowKtMdOoaq3wlTlIlQ8j8EpqoIFUkruKol/Motj+mvlnc7Gj/CRL+mlhd9jByNLZshgPIFgSur5w5vAZ6SJhFvdOePDQwZqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iW7dzB9e; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-31e3d29b0ffso2157386a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753276037; x=1753880837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ILj9WSAGRmrcwz1/CE7SMUUUscFZ+MMHiLlins5DWvU=;
+        b=iW7dzB9eZwvSxABapQJMhQEjvqHM8W2sL1A6g/GxONea3sBy9XHlv1gdrZS5Jj3mJs
+         9RhXDALq0Egu6gnUTXh1SiaTSLd+3LiS2BUOtoUwn7RwkVtG2mCdlVGfV8YSVJJsZhbo
+         lJmylEZBxmzXoGWXg5J8naETV4p1QCcSl8ugGd075Gi6BBnJH212r7vVHUqiNkmvjMZf
+         jYoqC633xZBTAxHdRYS39tR3blN68kIHkYejdOxXks2Cs5RXdME28kP18uhaFTKPQOcR
+         ChUWml5fb1x7BcNL4Huy/hKVDmmf00DRRbn2CaT7jHC10Qi2Bpy6uTh2EvbKsru/RUGe
+         MRXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753275997; x=1753880797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gk+9lQo8OLB83ZmQKGeqhkdZVjnwAl1R2lXLUIpQERk=;
-        b=gAfVMcI3UEvNpeYKknjiuvV5Sz7YxzO6D98WLq3h1VV1gMIsjuCII4zdJiSyh6NLrA
-         iy2IqCivvZmhNe0utRdmYR9ypeA1boFEt9K4OElPvQA/39xJdoj0gjyOYIJwIO2yf3Nu
-         yyo++vUoRsuUam+5It/4Z20CBjY4tV6jqu+6wHW1Ui240QiUsJuNwSK5VAuZG2X6iV19
-         jo0zux7w9ywyQxu7ezmE+O4xU+gWBZ9DEUdHTfxRCYxeG87C+yJpSMe15S/JbFt+49vb
-         AU0pTODquRHsxPd0Os+XeDGEgax7gk7me73PEa10bjuH1byTf6h/hs8PveD42g3sT7AK
-         gnEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLxQ70n8i/esOq9vq8rtEOr642HsauAp5cIOSKsB3wpOTRjhwtlXXHtf9S///IeTbeln50rtunWHm2Hl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwJJ8c610grObd3s75PViJivqLARAQJzEj1b3ANy5yrymbv3j+
-	w0yE/Ilo9/W4JeuypNnP+ZIOlld3Y4sVnT6SyzShqiPa9DB/7wUS9+zJXsh4PVAuWv9wMFifa7q
-	u85yoXGX5HneltkzghSEW3zgX96X2fJSKVQqgYZswaWJJTrcvxd8+yCWqsfFTtOzRPFk=
-X-Gm-Gg: ASbGncsVa3sDq/ceHsM7W0P022PeVw9yPbZ7hcA3hFHeWFXaOKpEfWn3PTCSxXoRUHN
-	9iEggR3mfk9zJR58VhtXttJVKaKQYlFEcn04pBBK3Yr/o64qLGNpeToGsOwQgMbOMF72YG4FjNY
-	o/v7aLWmo0sBW0yHx07ac9mOlwtIf6GSkKHdM9iBI9pFc1BPNjA0kv4sTnS7b/QutY5vtA3ZyRc
-	P3Jo4Bmp19zBlA8Kfltm+RyX5/cKE3k2iZ3RZ1kLh/dyQ4YXGEO1Y3dMDXqoeetvZyk9FS8VNxK
-	EU1Jz2Ep98V6+vm08EOKoCL6mzwEqWt1JcNZqOOUGvLTTze5RwgSizcB9xdXrJ13W9LMolPPyZf
-	CdTLfwMXj65L6/wGbjNi2W/eThpqr6Kfa7fVS7CRq4toXc8QgVKDPQg==
-X-Received: by 2002:a17:903:2a8f:b0:235:be0:db4c with SMTP id d9443c01a7336-23f981d70d0mr37484675ad.41.1753275997073;
-        Wed, 23 Jul 2025 06:06:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHyFR09d0346jm0sDaEVMHx8YhV6QKTGDzDqC3peZGOi5ZhCvo3sbJzMUXqkg13bKxJY6DVNg==
-X-Received: by 2002:a17:903:2a8f:b0:235:be0:db4c with SMTP id d9443c01a7336-23f981d70d0mr37484365ad.41.1753275996639;
-        Wed, 23 Jul 2025 06:06:36 -0700 (PDT)
-Received: from [10.190.201.48] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e2e51sm95859345ad.19.2025.07.23.06.06.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 06:06:35 -0700 (PDT)
-Message-ID: <e3d04cf8-6d9c-4514-9d8f-782e2d1505a7@oss.qualcomm.com>
-Date: Wed, 23 Jul 2025 18:36:31 +0530
+        d=1e100.net; s=20230601; t=1753276037; x=1753880837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ILj9WSAGRmrcwz1/CE7SMUUUscFZ+MMHiLlins5DWvU=;
+        b=Le0H115wAZSMVc5RZt38USlJ2kch9LkH9DBmWZm51GU8LVrdZvKsThYfOaA7LaJnT6
+         JyNGH7r/zGW5vfUoPlqA3bHAjKLSnaIYdetTeaVtyPdjfiziewAF7yhooS17z8wPQa+G
+         yd4X4TWVg0OPWE3Qn3Kbz1Wn7oHy4Wui3EVpFszxbgBkmf38CVPHofwkyh/pBYLTKDL9
+         /LW1IxD65wQbZWwEfHW4pWvBf64MzUyPoogxa5+I3EQSA92rKJb5cG/84C+eDDH1tM7M
+         VTPRHTfn3dbJVNcBZ6DLeK1BjskiD3m8AG51v3aYmOSHdAA2PM/NCJTKXK4qkPyVXVOy
+         F3Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWRX/zk2JfxUpzMs6wCqrCiipmVIJTapmEsPFgcispWyL1Qu1y/MYdXUyReqNtPHHb/2PEyv9UTBbzHmIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFsYLjR6bIAfXV0tOUmTCJmvXa/dsRwSV979/OYAwbdkl2xX1h
+	GTlDBjs5GnHwDtfEjzpQP1GluP9+vHQ2nyiy8pBQD2ld5Kv7aVH4+SQi4xeAillCm8cxVhFjcSp
+	O4viMBlu60zrAZltkicnAOOiT68CiVtAMEUqF2grI/Q==
+X-Gm-Gg: ASbGncufX9TofNEA6ZxeqkfCVLyelORNXr89niBRWr6fpS7Wx2ZTE8rOu5XmrqmxN8v
+	GKi+0ze7o2myEj7qhq2Zkg+ByTD5lXDjZdbHQt/nKMwDn2qGAh59yck45RMyRneSsX1rWBpRoDA
+	IO29adIXlfYFpmFivW0nfhVfpz65GJ7DjRSaSRUzKrm2zoF9tCpkf66wtBClCdTtqlzHA79X4yU
+	gtOmVIPV7Qu+y8txRX+PZzTgebEXp5TPzxWIY0v
+X-Google-Smtp-Source: AGHT+IFFU4rGd/eAENVQgxvllM7kgatqYKSu45A5IXoyTjOesjXiiHd/HlBjUVHHJk/SHkBrHRo8js/6zPqOdNttFNA=
+X-Received: by 2002:a17:90b:57c8:b0:31c:260e:55e9 with SMTP id
+ 98e67ed59e1d1-31e507dacffmr5191069a91.24.1753276037411; Wed, 23 Jul 2025
+ 06:07:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add Glymur pinctrl
- bindings
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
-        linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_rjendra@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250723103644.4058213-1-pankaj.patil@oss.qualcomm.com>
- <20250723103644.4058213-2-pankaj.patil@oss.qualcomm.com>
- <70277682-94e7-4905-823d-25ae76f72ee2@oss.qualcomm.com>
- <790fd85b-fb24-4d44-bdb1-706c534d1da5@oss.qualcomm.com>
- <d37879af-a1fc-41d4-8e31-2abba6fd6d57@oss.qualcomm.com>
- <d31c5e0f-dc50-4e7b-bd81-256269c82ec3@oss.qualcomm.com>
- <0aa2b07d-8c66-456d-aacd-c554bfa7664f@oss.qualcomm.com>
-Content-Language: en-US
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-In-Reply-To: <0aa2b07d-8c66-456d-aacd-c554bfa7664f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=6880de5e cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ABa4ZnCp-855lqKztdsA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: OwK_3W5lWKId2-qAksypoXITtobt59xk
-X-Proofpoint-GUID: OwK_3W5lWKId2-qAksypoXITtobt59xk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExMiBTYWx0ZWRfX0TgWx/xolqPw
- v7rwgg8FkFg3hPXvnfZIiVX35v3+vKot5150ALD9BPrYWV5OMsl0+/Dm01SAro+j4vnQgBytYoi
- 5tM2YGYSUH3j5zmN+uOmPLq7+ln4tXwOF7hLwHn58lAN5ZXoUzE2XqwtrSXT5zYTJJ5s2MtsgGp
- jSFlDYFZHOKqnlrU6kz0TM6dqfL206rIRxy5oEMwa2nX9AvoIknlFy1mJQrNRkSe0+cenj7IFZ1
- yjFG/m2o9hfTcl+p+0wqwhrT24QKku6Xztp711RXifgm9p0gC38L4CODzPNxmExhlhLi7P49sYE
- uWvjmaBmH2RQesuiC7uuJVRqadLkRUpXSzMUW+GbgBLu+eLJQ/r/ECBxcGQWJJ59FjkuVpjUzAK
- OUtT1h4UFEAmC4jEXz54bSvQGzpMJY4ZIt6GnnCA4tN1Zb4KUwTjCigjqOLktReQP+wMBomM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 mlxlogscore=933 impostorscore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230112
+References: <20250722134328.384139905@linuxfoundation.org>
+In-Reply-To: <20250722134328.384139905@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 23 Jul 2025 18:37:05 +0530
+X-Gm-Features: Ac12FXy2f0C4oio3mLtIgEQuU1pBJlEEwNWkdnl-ndkktKLp4yIP8BKyubkNb5E
+Message-ID: <CA+G9fYsXUvYV3+JQf4St-NjvmMoOOpPCZZ2HqDxcVAoZ5kCd=w@mail.gmail.com>
+Subject: Re: [PATCH 6.1 00/79] 6.1.147-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/23/2025 6:23 PM, Konrad Dybcio wrote:
-> On 7/23/25 2:07 PM, Pankaj Patil wrote:
->> On 7/23/2025 5:25 PM, Konrad Dybcio wrote:
->>> On 7/23/25 1:48 PM, Pankaj Patil wrote:
->>>> On 7/23/2025 5:10 PM, Konrad Dybcio wrote:
->>>>> On 7/23/25 12:36 PM, Pankaj Patil wrote:
->>>>>> Add DeviceTree binding for Glymur SoC TLMM block
->>>>>>
->>>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>>>>> ---
->>>>> [...]
->>>>>
->>>>>> +      function:
->>>>>> +        description:
->>>>>> +          Specify the alternative function to be configured for the specified
->>>>>> +          pins.
->>>>>> +        enum: [ gpio, RESOUT_GPIO_N, aoss_cti, asc_cci, atest_char, atest_usb,
->>>>> Any reason for           /\ to be uppercase?
->>>>>
->>>>> Konrad
->>>>>
->>>> glymur_functions enum members fetched from ipcat,
->>>> this does not exist for sm8750.
->>> I'll repeat my question
->>>
->>> Konrad
->> It's in uppercase because of the way it's in the driver,
->> I'll update only the bindings to lowercase and repost.
-> No, the driver must obey to bindings. That's what they're for.
+On Tue, 22 Jul 2025 at 19:16, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> This value is only used between the OS and DT, so it doesn't matter if
-> the docs refer to it in uppercase, so long as you keep both in sync.
+> This is the start of the stable review cycle for the 6.1.147 release.
+> There are 79 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Konrad
-Okay,
-Yes both driver and bindings are in sync.
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.147-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.1.147-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 3a0519451f2bb2cdc91626b4ae69a622467bc60e
+* git describe: v6.1.146-80-g3a0519451f2b
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
+46-80-g3a0519451f2b
+
+## Test Regressions (compared to v6.1.144-92-g33f8361400e7)
+
+## Metric Regressions (compared to v6.1.144-92-g33f8361400e7)
+
+## Test Fixes (compared to v6.1.144-92-g33f8361400e7)
+
+## Metric Fixes (compared to v6.1.144-92-g33f8361400e7)
+
+## Test result summary
+total: 223705, pass: 203512, fail: 4887, skip: 15084, xfail: 222
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 133 total, 133 passed, 0 failed
+* arm64: 41 total, 41 passed, 0 failed
+* i386: 21 total, 21 passed, 0 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 32 total, 31 passed, 1 failed
+* riscv: 11 total, 11 passed, 0 failed
+* s390: 14 total, 14 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 7 total, 7 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
