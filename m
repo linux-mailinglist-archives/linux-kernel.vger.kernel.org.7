@@ -1,147 +1,221 @@
-Return-Path: <linux-kernel+bounces-741898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F9EB0EA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:13:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A01B0EA6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9EB1C2438A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34F13B1EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED21248F4F;
-	Wed, 23 Jul 2025 06:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D061A24BBEC;
+	Wed, 23 Jul 2025 06:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qe9rIbhE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GQY44s07"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC501A0BFD;
-	Wed, 23 Jul 2025 06:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD469248F59
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753251191; cv=none; b=cGjj1dQKKqesDcYY9bo6FbL2PwI+xyHQMzl+sHojFDJGDcdgWS6LC39oVGAtmgkoDmT3j6Bap1XnWQCQMJKklu6bMd5Z7uSsmRKFBlijHs790ZzsDQQ743yVRFcQYVuqLhjjY0h17wi/wXxaxRHH4WOgDKuHUl7ZVyzBItXevPk=
+	t=1753251270; cv=none; b=hvb2iNQ/ReVIC6k7XNWOTSabQRpbLxXOATj0vITfqntAx3236c7fnid0kFt6DIc20AFkIm41uczxBBfuAR5TkJ8IQWMF6uNbHv5XBYuZnTAWnQDrK3UWxu1cZAOJzwmv0Hwnqvk+kbl68bFzg892bcyd+Iw7umJEzjMaDn2eTxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753251191; c=relaxed/simple;
-	bh=DEsrGV5+27jvFGqrXcClV0fRtpxtgFqr1qvc2Ieck5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=J4dyiiYYQkE2CEzaThROQa/edpCsMV4+vdAYe0EPSiUkS4qq2NXgSaAIrFR9ok5r27BvLhCDuTT6H6lFIK9k18T9I4LCjleOPGz3WBRdko112wPGfae4C6Rx3IwpczLxx/TjpRWlYvgYrgg5DUKJWQMce7FuXUKmLsQF26PWxfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qe9rIbhE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EA5C4CEF1;
-	Wed, 23 Jul 2025 06:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753251190;
-	bh=DEsrGV5+27jvFGqrXcClV0fRtpxtgFqr1qvc2Ieck5w=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Qe9rIbhEo1QJP+4dyCirCEc2zOMFqO1LIsAzVxRcs630AFrhxUXbvfdWPJyklxILZ
-	 D9xm0VIGpJjIlyRGvl7UpOmXDDeeNbtsWYM2jSMVi40ckEWN5Ma5meDPWYKo0TcNzf
-	 zFkBtRMQtcdnKLiW9fecBIAsjy7W2DjYC6b1pkjVsotOoAXGGZ/ALb7jj1Jvp8fSDD
-	 fNrALZ2mdrVLeL5wLFRxQsToonraDTkSn42P3wUnfF0VwoHzXuHOEzhty7kNnXNjOr
-	 YfIceBeQP4Zfn3K0vEjcsOTJuODnQc/Ubjs/dRkUCq6ZIdqznN/vy+wFGwxB5wk06J
-	 4sXjjsH148NbQ==
-Message-ID: <001d37c7-f704-4554-a4db-0cc130e07dd6@kernel.org>
-Date: Wed, 23 Jul 2025 08:13:06 +0200
+	s=arc-20240116; t=1753251270; c=relaxed/simple;
+	bh=YxujTbwbI2eJLNA8ZAh79ndTt0XBy+IQ4GuCHo7fhlw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RgX4SF2ZuzhL66dtd++G7GbjQ9/bMoyLkxl60K+xD0Ur0aVXW4SXnUk95UCVs8Qdmq5qLcozGFr/yctBFa+NM29/3HoLNtyXuCiFOPIvZJtb+mLytBWneKTFr8lfznJoFhFzExuO6DJy1g7k1sGLPql2Cq9FBRW/2Ezkj1SmwzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=GQY44s07; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e8d7ad77e4cso4539984276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1753251267; x=1753856067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/L2T2WbrDBkOj5NgHEVZycr71r0FjGHDnI1AHP29ZlA=;
+        b=GQY44s07f/pj7DbnlRg6BJDP1eSBpkOu72HPH25qlnI2ayBulTgTuy/AftJpgR4tR/
+         4f+p97WgjcpcL4TueHltdDKpyxw//0mgxLV9U6zxEHTSefZNdjqR/kPJCdmYu/zXJEyF
+         LPvpaO0Nd4VfCKuakQMyJgaUysHzkIpkx3cJM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753251267; x=1753856067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/L2T2WbrDBkOj5NgHEVZycr71r0FjGHDnI1AHP29ZlA=;
+        b=WaEMa3wkrt5MANgOKfqQI1nW65uXXg0eUs8r2UVYGFQ19jxfmdqP6GZInbvYTC4B1G
+         5cpB6apyuWiwTeEABmi+LJ3aqx+vX1nJ0e3VZw9ec19fmYWfHts0Me/RcW210jO+aLTF
+         V7QoCseiOFcghL+7Z+Vy14NEbVEZbL3syOHdLbgtZowPq47uau6mp/ASKrtOz1Nq9Q95
+         QolhWNOTdtd4HxXSTtBnB1ige7asCHLCsFo8s7zyogt5DfPojIuhrL4YC2KMBDd2q3Vq
+         PU7c05+ENWHMcCuZsm2aqQQM5vUXxgWWjbnKRtctfJLCLiOK8NvcaLopkgr9kfzsr5Oq
+         5LYQ==
+X-Gm-Message-State: AOJu0YzBzNy6ikAzwcdlPfBi3l17WkPM4FeGpcPqlUn7l68NCw85L/w3
+	Jv+GxnHxYL28ImNnSYDMOxNJ3Bemts69wyFhHTsU3gB6BtvIbGJxx39eedGtA2GKVfxQDFa1IrV
+	9C1LWI50ghNK0n0KzvZwAeyU48tTtkZ8a12wRmO1UVA==
+X-Gm-Gg: ASbGnctlqfhlnmzqLKAUZ6ORoFyH1gTofPI8m2NWUY2y7o8G66dOmyCMl+oGjLqXtjB
+	/X6uKTuUGiVDuU/UxHEIx1p8CcCV0UX6wbRgJAstT6zWChZrNsUbJXF/0ce7Nra9WRioqmqbx4L
+	9fJ5Y3FtLIWHlaq74mhmnf86OfQml+5hMCfFKU0Yh8pVWDiJaJ9vBlze23pDiFvkaLnB13mXQAT
+	pKM9Q==
+X-Google-Smtp-Source: AGHT+IGU0x3OvvND31qkZ6iwUV66X3FjLoR9rEUgX0VQD3a1aWSZZ/aNnjUtca65XDKxhVdatJlHhz31Mn+Kuu8/LA0=
+X-Received: by 2002:a05:6902:460a:b0:e8d:718f:cffa with SMTP id
+ 3f1490d57ef6-e8dc57ce7c6mr2095334276.6.1753251266610; Tue, 22 Jul 2025
+ 23:14:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: interrupt-controller: aspeed: Add
- parent node compatibles and refine documentation
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
- <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Kevin Chen <kevin_chen@aspeedtech.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
- <20250722095156.1672873-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250722095156.1672873-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250722103706.3440777-1-dario.binacchi@amarulasolutions.com>
+ <20250722103706.3440777-3-dario.binacchi@amarulasolutions.com> <DU0PR04MB94966B1D445966C0E7C1BDF2905FA@DU0PR04MB9496.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB94966B1D445966C0E7C1BDF2905FA@DU0PR04MB9496.eurprd04.prod.outlook.com>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Wed, 23 Jul 2025 08:14:15 +0200
+X-Gm-Features: Ac12FXz0WI4bR7Hq_kkcybVAzkogiCFRyLtm4ogxkiM3lU26r-r_CiasJXOihmg
+Message-ID: <CABGWkvpDY99-0FKi2VO+Pa4hSoEfFCAt7ZAgaVfeqqCqcOYWrA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: input: touchscreen: fsl,imx6ul-tsc: add fsl,glitch-threshold
+To: Bough Chen <haibo.chen@nxp.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-amarula@amarulasolutions.com" <linux-amarula@amarulasolutions.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2025 11:51, Ryan Chen wrote:
-> +  INTC0 is used to assert GIC if interrupt in INTC1 asserted.
-> +  INTC1 is used to assert INTC0 if interrupt of modules asserted.
-> +  +-----+   +---------+
-> +  | GIC |---|  INTC0  |
-> +  +-----+   +---------+
-> +            +---------+
-> +            |         |---module0
-> +            | INTC0_0 |---module1
-> +            |         |---...
-> +            +---------+---module31
-> +            |---....  |
-> +            +---------+
-> +            |         |     +---------+
-> +            | INTC0_11| +---| INTC1   |
-> +            |         |     +---------+
-> +            +---------+     +---------+---module0
-> +                            | INTC1_0 |---module1
-> +                            |         |---...
-> +                            +---------+---module31
-> +                            ...
-> +                            +---------+---module0
-> +                            | INTC1_5 |---module1
-> +                            |         |---...
-> +                            +---------+---module31
+Hi Bough,
 
-You binding also said intc1 is the parent of intc-ic, so where is here
-intc-ic?
+On Wed, Jul 23, 2025 at 4:45=E2=80=AFAM Bough Chen <haibo.chen@nxp.com> wro=
+te:
+>
+> > -----Original Message-----
+> > From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > Sent: 2025=E5=B9=B47=E6=9C=8822=E6=97=A5 18:36
+> > To: linux-kernel@vger.kernel.org
+> > Cc: linux-amarula@amarulasolutions.com; Dario Binacchi
+> > <dario.binacchi@amarulasolutions.com>; Conor Dooley
+> > <conor+dt@kernel.org>; Dmitry Torokhov <dmitry.torokhov@gmail.com>;
+> > Fabio Estevam <festevam@gmail.com>; Bough Chen <haibo.chen@nxp.com>;
+> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Pengutronix Kernel Team
+> > <kernel@pengutronix.de>; Rob Herring <robh@kernel.org>; Sascha Hauer
+> > <s.hauer@pengutronix.de>; Shawn Guo <shawnguo@kernel.org>;
+> > devicetree@vger.kernel.org; imx@lists.linux.dev;
+> > linux-arm-kernel@lists.infradead.org; linux-input@vger.kernel.org
+> > Subject: [PATCH 2/4] dt-bindings: input: touchscreen: fsl,imx6ul-tsc: a=
+dd
+> > fsl,glitch-threshold
+> >
+> > Add support for glitch threshold configuration. A detected signal is va=
+lid only if it
+> > lasts longer than the set threshold; otherwise, it is regarded as a gli=
+tch.
+> >
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > ---
+> >
+> >  .../input/touchscreen/fsl,imx6ul-tsc.yaml      | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.ya=
+ml
+> > b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.ya=
+ml
+> > index 678756ad0f92..2fee2940213f 100644
+> > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-ts=
+c.yaml
+> > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-ts=
+c
+> > +++ .yaml
+> > @@ -62,6 +62,23 @@ properties:
+> >      description: Number of data samples which are averaged for each re=
+ad.
+> >      enum: [ 1, 4, 8, 16, 32 ]
+> >
+> > +  fsl,glitch-threshold:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    default: 0
+>
+> Here the default should be 2 according to your third patch.
 
-This diagram and new binding do not match at all.
+I considered the default value of the register, not the driver's.
+If I'm not mistaken, the dt-bindings should be a description of the
+hardware, not of the associated driver implementation.
+
+>
+> I'm okay for this patch set, let's waiting for comments about this yaml c=
+hange.
+>
+> By the way, any real case which need to use other glitch threshod?
+
+We recently submitted
+https://lore.kernel.org/all/aGUDza5XRGDqfz5n@dragon/#t, and in this
+initial contribution we removed all the custom parts that are not
+supported upstream. This is
+one such case. For our board, we need a de_glitch value of 1.
+
+Thanks and regards,
+Dario
+
+>
+> Regards
+> Haibo Chen
+>
+> > +    enum: [ 0, 1, 2, 3 ]
+> > +    description: |
+> > +      Indicates the glitch threshold. The threshold is defined by numb=
+er
+> > +      of clock cycles. A detect signal is only valid if it is exist lo=
+nger
+> > +      than threshold; otherwise, it is regarded as a glitch.
+> > +      0: Normal function: 8191 clock cycles
+> > +         Low power mode: 9 clock cycles
+> > +      1: Normal function: 4095 clock cycles
+> > +         Low power mode: 7 clock cycles
+> > +      2: Normal function: 2047 clock cycles
+> > +         Low power mode: 5 clock cycles
+> > +      3: Normal function: 1023 clock cycles
+> > +         Low power mode: 3 clock cycles
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -94,4 +111,5 @@ examples:
+> >          measure-delay-time =3D <0xfff>;
+> >          pre-charge-time =3D <0xffff>;
+> >          touchscreen-average-samples =3D <32>;
+> > +        fsl,glitch-threshold =3D <2>;
+> >      };
+> > --
+> > 2.43.0
+>
 
 
-Best regards,
-Krzysztof
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
