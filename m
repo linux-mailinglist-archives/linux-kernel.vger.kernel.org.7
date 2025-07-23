@@ -1,189 +1,240 @@
-Return-Path: <linux-kernel+bounces-743053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411E8B0F9FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF77B0F9FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9721A56068B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8DC165BDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132302222A7;
-	Wed, 23 Jul 2025 18:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1350C223702;
+	Wed, 23 Jul 2025 18:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y7Sy+2NR"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pvYP9RtP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C970C3FFD;
-	Wed, 23 Jul 2025 18:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293955; cv=fail; b=cNWVDu2Bt/LaMSc+bc5t++dHaJW3wjAss5VWrPkwAW1IwiqQ1cUngqaaPJZDb1U3J5LBg00YSEMhUbNrA8zW5FMbtGmoEZ/Cl5xGoesXeWyLgi9o9W465aPlHwyFG9x0/9W5PNEVlLZY7GK2bavtzyODsm710r75aKWkTEcqBgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293955; c=relaxed/simple;
-	bh=Tb/5Qixzajy5Exk/59d5+cpYiJYmqqMDjwF9fIDfRhM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glzpmk1qIKQ1NPDmE0c/jL11kPUnZYhv3wveRV8eBOz2VCBG898tFRUP+BKjaVZKWxtWPUyavckuGcZbSuLnOsp01MhKP9ETAuSgutHLEr6KAfZhoCnPoA3wxEPF5Qwyw80mJ77eYCF47GiQz/8qVctVK05lCC4ZcXCftAz+kok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y7Sy+2NR; arc=fail smtp.client-ip=40.107.236.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F3RPAEoKs9Mx53ajDe46En/S2OBIWKhfpyJkUmWV4GyQSd/WERXS6xzJV0bf6yeGGOeNhMe5IsPqEm0xAHfpDOhJOqLlWrBFE9yrFaGyYes3DcRQoZuh7ORRbGCnwkkw5JjieC8nTMq6yaYlNZGgFY9c5D/UNDWX5lqqhfGxoJSL1TGxQdwwj4ZJpOVOqwykwzzkdsyTvHycDopHIkFM4pQBL/g42cS2R79HR5A2ODUEsr4mZfwV6o3pfBTA+3jrV+l5ssOJQK5dAZOxh/H4NdvK5u624hq13Bmx9H7Quk6Ubescm4ctUwl3zmrf0qkUKdItZvnFeAtK1xvUA6qaTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QoujWxgHwiTQaGaaJLZ+B18hOTaPRaC4LK5Ejbdp9UE=;
- b=lp9HSMquP3mtX3CeRJcztSqz2CCZ6I4Xxcye0jO+63FbNGCJXYhamaPN6Ez4BIva+T6KOeLAIXl0FZ8Sqijn+4nDLpkJTwxfthjG3JURCqyoRTOMYhrjliwMSC6qNfOP7sqnA/oCeOfNYos+6QBYSFyRsDrCa7M9RkB+SHTrkKnDC4ViO/CNdC5hroaIuk64l0kOEDk8cWuO1J1GcuG2k57LC/UqxMbkS85Oku3tJ2HcN8RrHuaeHBQ7+q9enVDv/tzMpJfXvBs+tDVxvZoJLrAr8AXreCZSre74mMtmWlCbCLrPkDcv4u3iBSjQTuxLSYGCG9HsVikedQYOQ3fe7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QoujWxgHwiTQaGaaJLZ+B18hOTaPRaC4LK5Ejbdp9UE=;
- b=Y7Sy+2NRPAo7LAY60CY8XkmuEnOnT12V9TLDH5hSCSVBxKCjxY/gc0RzUIyltGAPnxvn8SZN1GRqHJV5AbSY9Ya8tnRCwJSzGv52p+zi8EUQkJMCEv/fBcn3SaBs5OmTOuDWOypwPl94z0eWTNrvptQbI/IYu4S4axQ4cf14JX6dt04GDjmWM9GT8gAh7p8kq5I+NklTcEmJB8W+erlGtqwdUgdTOVIGrfJLFIHbuJGQKaDBZv5M5rADj+3/SMFE2iKdjisMomKsM9dJZNCF/FgpyDb2Jzm2DdD1t8BYReSxgjPkvzXJSd/a8DQpRKUeVOvanzzkxh0n47nTMxVCyg==
-Received: from BYAPR07CA0030.namprd07.prod.outlook.com (2603:10b6:a02:bc::43)
- by LV8PR12MB9263.namprd12.prod.outlook.com (2603:10b6:408:1e6::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
- 2025 18:05:49 +0000
-Received: from CO1PEPF000075F2.namprd03.prod.outlook.com
- (2603:10b6:a02:bc:cafe::76) by BYAPR07CA0030.outlook.office365.com
- (2603:10b6:a02:bc::43) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Wed,
- 23 Jul 2025 18:05:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000075F2.mail.protection.outlook.com (10.167.249.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Wed, 23 Jul 2025 18:05:48 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 23 Jul
- 2025 11:05:28 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 23 Jul
- 2025 11:05:27 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 23 Jul 2025 11:05:27 -0700
-Date: Wed, 23 Jul 2025 11:05:26 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Pranjal Shrivastava <praan@google.com>
-CC: <jgg@nvidia.com>, <will@kernel.org>, <joro@8bytes.org>,
-	<robin.murphy@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
- <aIDlsUvF2Xbdelvx@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8361F12F8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753294001; cv=none; b=IfqAoWPzAdePLnYyvePQwwyvmAYjbUauBKGKdxx9AEnmEuSohcM/cI5ieId74YpS4DoNBRzzGJQTymMgD/0p9YwLlEYmRtZnUYWcXwEyYu1HoZN9eG/cC5WFgY3cUWDrHvuJhLO/5pQCk6Q8F3HFVdMd+1ITRd3KOqKabiZICSE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753294001; c=relaxed/simple;
+	bh=eWymMRmLfscJuffkwMDNgqpA4cVY4kBbJFGJ+bFrOmc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ClZ0N2v1b0XrqegTSoyU62arrzjqNJvI6KOWzW6PUv6vIeG8tJUwfrFFhbBVCbiRcPs96bKZUFaHuGte+W5DmnTuGXAkU68fM77cdj4mRGjX2JZP96H+OeY7h2WdoVfQvbZjn4xwtPGYUkFhC42mRRRb7yg6FuEMUsVmWU03Pho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pvYP9RtP; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311e7337f26so96951a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753293999; x=1753898799; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZfDzw+qVz0o/w7Bp6MxT59VuQisbldYUAGH/6NuUrY=;
+        b=pvYP9RtPXYNw6SMtX4kszuUXq5gsYKT6m11XjsnNaTLntlrLmZzADOQESG48RP2CKf
+         D6l46EsgXwu71UenSFrRkQiEYqOF2DMEjAbOIOsREiyurHS9dIKvfyDYKPLwU7muW+VF
+         PaILNSdC7Xta/X/83gI6pdxqxFWXlTcaeddBeSm4rWUOB77c0vQZyPKG9pdereqLTII4
+         kMcyKygx3MMLltzU313BgKUVFjGRn3MME8e4qdroVJnAdbCnZBQHLNdayigHjjUzJqhe
+         Glzo7Z/5JmEryiys3S0ifhQkxAZeAx3evtCMIppNksGKnhy4/dkSc5DoKgGhI2Crw3r8
+         T/3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753293999; x=1753898799;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZfDzw+qVz0o/w7Bp6MxT59VuQisbldYUAGH/6NuUrY=;
+        b=fzMmndD1LgeEZjHBFZfNAXnRWMnFeQTcesBWK7k055I0UECFJvaitRzZn23fBCskpA
+         0n/EsvBzNDk63DGypiU+66sBrxicCYrzhVaX8EPQ0LL5FKFPMmrpJHWyYoMlMenFjXpu
+         8642DiUCdgvKvFMSSW5470hug9DoRE2eIzHsPhG6Wlkers566ODW4nHfHROSkTY2zk9N
+         ZDdvVT+XChnBZ880A9dAAjK1PqPI1d3uCCnZxxNPoRxR2WVHk/LLKDN6L3drqkJ9Or3r
+         mIi6PR7PCVZJwcHqo4MD2ZZCe+lcIhkFYnPDp8F5KR2QhJcw/vJYRqD+T+Wld4mXkLOl
+         2ujg==
+X-Gm-Message-State: AOJu0YyRkonCV7J8ZfjZVXlaE+9zNPSUHkWJpR4pth8CL7F7Jui0oOqL
+	ss8RYmwJxU4mOiQwnXGKRKgaM9YY6qOzKkU6ioC4qDgzPhnizLO+v1dAGShopEuYnn1cEqDQP60
+	FkcYl6A==
+X-Google-Smtp-Source: AGHT+IF3hX1FXykh7Df5O4ildAUw6dsX0iRQymh7GSo9oxT9J1zy8hJ9dw+7n83OiW1YjgBQlL2K8mHkgqw=
+X-Received: from pjm4.prod.google.com ([2002:a17:90b:2fc4:b0:2fa:1803:2f9f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:530f:b0:311:ffe8:20ee
+ with SMTP id 98e67ed59e1d1-31e5071ccdfmr6877046a91.11.1753293999283; Wed, 23
+ Jul 2025 11:06:39 -0700 (PDT)
+Date: Wed, 23 Jul 2025 11:06:37 -0700
+In-Reply-To: <20250422161304.579394-3-zack.rusin@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250422161304.579394-1-zack.rusin@broadcom.com> <20250422161304.579394-3-zack.rusin@broadcom.com>
+Message-ID: <aIEkrc7Mdf2ia1Mm@google.com>
+Subject: Re: [PATCH v2 2/5] KVM: x86: Allow enabling of the vmware backdoor
+ via a cap
+From: Sean Christopherson <seanjc@google.com>
+To: Zack Rusin <zack.rusin@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Doug Covelli <doug.covelli@broadcom.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aIDlsUvF2Xbdelvx@google.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F2:EE_|LV8PR12MB9263:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa1fb73d-a8d6-4592-bb3e-08ddca138d8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4Crk56w/cjTpY5MYue3xKYyPH2yHZaL6Jt/jmq5Dp4qSjL2YSwPTVnvJArv8?=
- =?us-ascii?Q?jh9Jk/74WSEoePNMadhWY00U6gW2eOtLAyXTWyjjjAJXE71f/yHChTONwmJK?=
- =?us-ascii?Q?/ShkWRYph0fgz0rPHOZ5R5mmZ5KGfiSqDhvKiqmiQUB9xQMBA9Q5/x7urges?=
- =?us-ascii?Q?QUxnQ9uDUHFnVnoc1jCXVntOwsOCUGS5cIN0dA0uW5EESqtfRMWSHSmbRtpF?=
- =?us-ascii?Q?HCsJrXweWCzxEuc5n+Hd/llTCwwz5X+efj7EGGfExRZr84aqaX3CCdWbiWX2?=
- =?us-ascii?Q?78+B0OmL5SQ9YUdAsC74EyCns+evyE1Z0uG+xwazoc/LYifMG7nmAuU3WUwM?=
- =?us-ascii?Q?ksv9MsNiTUgY6yZfdbkN0dusXjxFJkFQYi7ubtHu5PXmOjdBKTHCfGObr7b7?=
- =?us-ascii?Q?Bl9FlWq+DnpYRZnl1WJTrGL/Y94KfqZfTWy24OJneunbkyTLztjz7inM6sR7?=
- =?us-ascii?Q?yjNNErwiL9nuUZEObksOIbALBytoj9yJsDAal0ZoD+ARluauO7kLb6HGU2TH?=
- =?us-ascii?Q?TROADObuE9zbMOsOV7HH/IFB9FQ1f8V44TCW5rjTtVCM62DghZQHqbhe1OPN?=
- =?us-ascii?Q?Z4c/NTHDGOmZq8pksXZYs2F97Abb/QZseMyqHILAOrvIuYGWuxqyjKUgj6U7?=
- =?us-ascii?Q?wJ0rYpSfkBxr6vdI6WWnOvxDb8FP+yem5MW+SCR7w3/hj34ZqNMhCroHIf6d?=
- =?us-ascii?Q?qY1pXUd8xExygqBBWGBPrwninYqrUA4hI23uzlIuY1ivh/JJhQRBXw495h0U?=
- =?us-ascii?Q?w55Jm49smYTxgG1v0/zAxrJWoc4h37sgecOQjASAXnZItKjHRqU7XaWMa9HH?=
- =?us-ascii?Q?KxwEiboK4Y0wqn9wh2gvVQ8XnK4m5lEQsRm3IRi40HZTyoSTp/P8l3g78OFh?=
- =?us-ascii?Q?bLfMo3uMx0akKESJKukhlSInd2MOd+cypf7hfT5HgoBToXdpC+LBMiILnfbC?=
- =?us-ascii?Q?NJ6K4ZyD9D4imZIhITSoaD4NTiZ6zOZXWju+GyxURNMqRErh/c3GZJw9zoyd?=
- =?us-ascii?Q?8dpoCxUvbnI3uOszk2XeJRebsmaMpEQa6xKh/YSkdM32Nlk7YFJa1AerguIa?=
- =?us-ascii?Q?RrYlrtJDxEcXDFVfQCn5dDEsxn5HypkR99JLnU1bhAgpIZwxxTs9ZDrZ5Hcp?=
- =?us-ascii?Q?035XdjperptQIAAkyFkMB8gsWh/OpMDqx2+5waezbfVkY5GXd6COcqW5kUbJ?=
- =?us-ascii?Q?SAkt/JJSFNMkfB/y/U/J9K+49tF7udORLYWiVZ3g9mFduYCpfWsrtgj5IEjW?=
- =?us-ascii?Q?mV4sHZNYc5VxJmWdSWUko/eqHhRtmxbu6BLfQsVjpZBQWgoPD1Dn/3CCdxE4?=
- =?us-ascii?Q?R1V9yL+DMrgicXpGJ6mXRvBdgFV1ETwuB673lpzyYBPYK65m37diARZbv0xs?=
- =?us-ascii?Q?vuKkaKF370p9hnW3Zbac4yYRWVC7hE1U7Wi769xz5W4N+BA+ha/FczH3ddKo?=
- =?us-ascii?Q?ED8FCn/j5KRAHCXQ3fphBmVge5KJCIdvQg68FZuAvbBj3/8MqtZd9kaOS2Xl?=
- =?us-ascii?Q?M6ESOCxAV0s57XeJJJuFwqEPPXDVU0uKuHTll2w+oDfJeZhG65M+zeUYvQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 18:05:48.3272
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa1fb73d-a8d6-4592-bb3e-08ddca138d8a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9263
 
-On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
-> On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
-> > @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
-> >  	phys_addr_t page0_base;
-> >  	int ret;
-> >  
-> > +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
-> > +	if (WARN_ON(vsmmu->core.type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV))
-> > +		return -EOPNOTSUPP;
-> > +
-> 
-> Nit: I don't think we'd expect a call to this if the vintf_size returned
-> 0? I see that in iommufd_viommu_alloc_ioctl, we already have a check:
+On Tue, Apr 22, 2025, Zack Rusin wrote:
+> @@ -6735,6 +6734,19 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>  		mutex_unlock(&kvm->lock);
+>  		break;
+>  	}
+> +#ifdef CONFIG_KVM_VMWARE
+> +	case KVM_CAP_X86_VMWARE_BACKDOOR:
 
-It's added in the previous patch where I explained that this is
-to detect data corruption. When something like that happens, it
-would be often illogical.
+I much perfer using a single KVM_CAP_X86_VMWARE capability.  More below.
 
-> And call ops->viommu_init only when the above isn't met. Thus,
-> if we still end up calling ops->viommu_init, shouldn't we BUG_ON() it?
-> I'd rather have the core code handle such things (since the driver is
-> simply implementing the ops) and BUG_ON() something that's terribly
-> wrong..
+> +		r = -EINVAL;
+> +		if (cap->args[0] & ~1)
 
-BUG_ON is discouraged following the coding style:
-https://docs.kernel.org/process/coding-style.html#use-warn-rather-than-bug
+Using bit 0 for "enable" needs to be #defined arch/x86/include/uapi/asm/kvm.h.
 
-> I can't see any ops->viommu_init being called elsewhere atm, let me
-> know if there's a different path that I missed..
+At that point, adding more capabilities for the other VMware functionality doesn't
+make much sense, especially since the capabilities that are added in later patches
+don't have the kvm->created_vcpus protection, i.e. are likely buggy.
 
-I see it as a precaution that should never get triggered. But in
-case that it happens, I don't want it to proceed further wasting
-precious HW resource given that this function allocates a VINTF.
+E.g. with the below diff (completely untested, probably won't apply cleanly?)
+spread across three-ish patches, the accessors can be:
 
-Nicolin
+static inline bool kvm_is_vmware_cap_enabled(struct kvm *kvm, u64 cap)
+{
+	return kvm->arch.vmware.caps & cap;
+}
+
+static inline bool kvm_is_vmware_backdoor_enabled(struct kvm_vcpu *vcpu)
+{
+	return kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_BACKDOOR);
+}
+
+static inline bool kvm_is_vmware_hypercall_enabled(struct kvm *kvm)
+{
+	return kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_HYPERCALL);
+}
+
+static inline bool kvm_vmware_nested_backdoor_l0_enabled(struct kvm *kvm)
+{
+	return kvm_is_vmware_backdoor_enabled(kvm) &&
+	       kvm_is_vmware_cap_enabled(kvm, KVM_VMWARE_ENABLE_NESTED_BACKDOOR);
+}
+
+---
+ arch/x86/include/asm/kvm_host.h |  4 +---
+ arch/x86/include/uapi/asm/kvm.h |  4 ++++
+ arch/x86/kvm/x86.c              | 34 ++++++++++++---------------------
+ 3 files changed, 17 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 639c49db0106..1433cdd14675 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1219,9 +1219,7 @@ struct kvm_xen {
+ #ifdef CONFIG_KVM_VMWARE
+ /* VMware emulation context */
+ struct kvm_vmware {
+-	bool backdoor_enabled;
+-	bool hypercall_enabled;
+-	bool nested_backdoor_l0_enabled;
++	u64 caps;
+ };
+ #endif
+ 
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index e019111e2150..ae578422d6f4 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -1013,4 +1013,8 @@ struct kvm_tdx_init_mem_region {
+ 	__u64 nr_pages;
+ };
+ 
++#define KVM_VMWARE_ENABLE_BACKDOOR		_BITULL(0)
++#define KVM_VMWARE_ENABLE_HYPERCALL		_BITULL(1)
++#define KVM_VMWARE_ENABLE_NESTED_BACKDOOR	_BITULL(2)
++
+ #endif /* _ASM_X86_KVM_H */
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 7234333a92d8..b9e2faf0ceb7 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -126,6 +126,10 @@ static u64 __read_mostly efer_reserved_bits = ~((u64)EFER_SCE);
+ #define KVM_X2APIC_API_VALID_FLAGS (KVM_X2APIC_API_USE_32BIT_IDS | \
+                                     KVM_X2APIC_API_DISABLE_BROADCAST_QUIRK)
+ 
++#define KVM_CAP_VMWARE_VALID_MASK (KVM_VMWARE_CAP_ENABLE_BACKDOOR | \
++				   KVM_VMWARE_ENABLE_HYPERCALL | \
++				   KVM_VMWARE_ENABLE_NESTED_BACKDOOR)
++
+ static void update_cr8_intercept(struct kvm_vcpu *vcpu);
+ static void process_nmi(struct kvm_vcpu *vcpu);
+ static void __kvm_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
+@@ -4708,11 +4712,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_IRQFD_RESAMPLE:
+ 	case KVM_CAP_MEMORY_FAULT_INFO:
+ 	case KVM_CAP_X86_GUEST_MODE:
+-#ifdef CONFIG_KVM_VMWARE
+-	case KVM_CAP_X86_VMWARE_BACKDOOR:
+-	case KVM_CAP_X86_VMWARE_HYPERCALL:
+-	case KVM_CAP_X86_VMWARE_NESTED_BACKDOOR_L0:
+-#endif
+ 		r = 1;
+ 		break;
+ 	case KVM_CAP_PRE_FAULT_MEMORY:
+@@ -4836,6 +4835,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_READONLY_MEM:
+ 		r = kvm ? kvm_arch_has_readonly_mem(kvm) : 1;
+ 		break;
++#ifdef CONFIG_KVM_VMWARE
++	case KVM_CAP_X86_VMWARE:
++		return KVM_CAP_VMWARE_VALID_MASK;
++#endif
+ 	default:
+ 		break;
+ 	}
+@@ -6669,31 +6672,18 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		break;
+ 	}
+ #ifdef CONFIG_KVM_VMWARE
+-	case KVM_CAP_X86_VMWARE_BACKDOOR:
++	case KVM_CAP_X86_VMWARE:
+ 		r = -EINVAL;
+-		if (cap->args[0] & ~1)
++		if (cap->args[0] & ~KVM_CAP_VMWARE_VALID_MASK)
+ 			break;
++
+ 		mutex_lock(&kvm->lock);
+ 		if (!kvm->created_vcpus) {
+-			kvm->arch.vmware.backdoor_enabled = cap->args[0];
++			kvm->arch.vmware.caps = cap->args[0];
+ 			r = 0;
+ 		}
+ 		mutex_unlock(&kvm->lock);
+ 		break;
+-	case KVM_CAP_X86_VMWARE_HYPERCALL:
+-		r = -EINVAL;
+-		if (cap->args[0] & ~1)
+-			break;
+-		kvm->arch.vmware.hypercall_enabled = cap->args[0];
+-		r = 0;
+-		break;
+-	case KVM_CAP_X86_VMWARE_NESTED_BACKDOOR_L0:
+-		r = -EINVAL;
+-		if (cap->args[0] & ~1)
+-			break;
+-		kvm->arch.vmware.nested_backdoor_l0_enabled = cap->args[0];
+-		r = 0;
+-		break;
+ #endif
+ 	default:
+ 		r = -EINVAL;
+
+base-commit: 77a53b6f5d1c2dabef34d890d212910ed1f43bcb
+--
 
