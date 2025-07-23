@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-742219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B934B0EED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEACDB0EED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406B9963295
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB36AA0788
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA071289809;
-	Wed, 23 Jul 2025 09:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E54289817;
+	Wed, 23 Jul 2025 09:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxZ+X4HX"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmISql3C"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A553926C3BD;
-	Wed, 23 Jul 2025 09:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B82276036;
+	Wed, 23 Jul 2025 09:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264403; cv=none; b=ZLKQQnZbDXus9dekQ4FezyL/QEJq4xP2/hghB494Gycww53N+ZA14KvRd5a2zkOdevQY+SDkmflq4gzEqDn0uMUmu1HHvaZf4tXX5kIeROhbnZMN6/ZDqa3m7arfV2TKQk+abGdFITqBL0M/xC6L1k5XmNkVolrk9uG2E2r9kIg=
+	t=1753264432; cv=none; b=MvRVGaGzROeDKHK0dlXVtHvrWwrIDyreZYADOIMND3F8RxTKJnstJXFQ/BXqXn/eerWM6avrgJtp363PKwLsfqh9g4QYmbwUr6zGaAy8B/52Y0NhlhY54/As/8JbsqqWepMewZCEd5x4cHhRWNFj/WGQOTZpc35b6LaW3qQ0Ynk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264403; c=relaxed/simple;
-	bh=DI7ekfWyCxlDtUa0spYzAbklePE7kl5NCBVy46hkkdg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HgpmMNaoBbQud7/3ZdYUVkiHw+x0d7VbpNImOZPXeY39AR4rFrGs2esPO82IXMqZSHKR5CFa6BozPbzEDCFta1VW9cIvpXZb+x+fdT16odpF9AzUzpb6HZ/TM5t465Dein1GsccffX3fQ/TDwXAfaJLVAWJQs/sMvyss/NiLJh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxZ+X4HX; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1753264432; c=relaxed/simple;
+	bh=t2/w6xlnqLOYPB4OTfx8oTatGXUEHAIKRrDBlB2Z/Ao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j4T2tS0mK8dyi5Vt4Y5+8THQuvXlQ+SHh1UW457rkOtxmhSJBx1dbcb6nBg6UstSBoEYYIbo6fWGBFA/AbzxdtBWn9hj+StHa6XVx52x1KE2bZk8LWhNA31g3Lqe67iKzkkG+GNKkZ9Oxp5dusmxiFnOyMObRmxxFKwzuXinlzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmISql3C; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-456108bf94bso45794205e9.0;
-        Wed, 23 Jul 2025 02:53:20 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so49797375e9.3;
+        Wed, 23 Jul 2025 02:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753264399; x=1753869199; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753264428; x=1753869228; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYp6k2DX5D5XbLlxdIv0kw8mpvco5bmHcOTW1MVImJ8=;
-        b=hxZ+X4HXG/SyFOOE+M3NA62hwRy1slqDBRL49nVjQMHS20jz0Iqr/I6EdbLERKLtKr
-         PaSgx+pIMk9eZs5rTlJNYxFY5G7PwmrkVb8MpYpoCS/xpodLB6MArUO0MrU0q+wDS4UY
-         ai0KIJBfI7SSzGUN7rOIISzciOGDvz0Az4N5KSpqcKVxXFEYqEClhXVfev0UwaXFKW8q
-         iSaK1Kf929H5qfCYoI0IFVKB9XDh7xz3f7FahWLMssW4LIHWpuiBuVuBlZa5yRqQjF0W
-         aJtzJnH+bDJlZI1FIfPvEqL4/UmKlzn3CFJGg2ycN8ArLTd77pYcTYiyvGLYvdnXIqY9
-         kMYg==
+        bh=ye4p2iW6iL7aR7iE9gTvKTq4CWuN94sAbCzmmHDSAYs=;
+        b=NmISql3CaKWUcLn4mnL5dItuS88RMEPQH2FO/19+OmYE10XBbgwF4mOpvpY+cTOpZz
+         KJRicKUTVfBAGZqb3vCoRENzR3VVMTGgxw+cfEJCTbpC7L5MMb4sSYR9uAWDcAFcC+Un
+         JKudpV0OJk77i+GQ98yVNr+yAPyi5mNe9X5Rp3z1gDdl4ihJWMeUFznaVcWrJ6FMog2k
+         yEAGX0hDhum0jrt6FaGPI6o9+fhXuj41zUJEpqtNKc7iTo0/Xa8I/vuUT9/i5od81Xue
+         YpFibgMgVI8jABz6Rc9hK6fLfiSMRjfpYSjj9QM5gx/hVr0WX0aG5txhsg8gp4yJZ1kR
+         i66A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753264399; x=1753869199;
+        d=1e100.net; s=20230601; t=1753264428; x=1753869228;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EYp6k2DX5D5XbLlxdIv0kw8mpvco5bmHcOTW1MVImJ8=;
-        b=FX7o0EgCBvA62Lnwybi6JMXP4ctum2mbcf4UhF9C+6Q7MigulK6n1mi3CtdN0MXMz9
-         r7Dwes5ModTC5nUwn3EsB2hA47Sa+q4FnGECjV2NzDJC4uRq9wiZCbLOqUotxP1pShk+
-         MmQu56PPCCp92M+OaDO6lT8roEKm5vlkq5ld/+AfQn6dm6nS7R5bBeq8gssYKapqORYV
-         UTieb4q1slUGoDWQb+xR9uQIEkzmw/qbj4Q+4oK7KFm/H+jRzY1HeVMYD8bAeF5Pp1O/
-         yHhw3p0fpOiufN0EQlI29cNZU4FgMu5dKkBYClTI5PqfMJ+8megBqoj/8dYYFzUbhpDJ
-         y18Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxz1XBj6+Waz2mZRa7I7lRa3dEv5A9QHtmann2qFt3v9hkRJZy3pja9rQ7s7Xsn/JA3C9rx/M1vaZWxOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4R3CusI3JlyVZLzOkmHA9eE6VDJRCND9qxnZOqq1lzg8XxE4e
-	mRXakUrsX/l6l85q5wvkOZaMOt7fpvcjr93+93jP/LI/ljbF3sfxZDEC
-X-Gm-Gg: ASbGnct4OSz6fkXAkMb1GKkkTNbpigmETBhXXoIkwMbokDlF5y4EeWrnh3aewsl5WkU
-	+ZhVkM4co7flJJEEYfx85OpUZH0tJcWmhsP8Hi5GZ57iw23kPHg4VFG/9QcLeR7Ra72RYUepQ+1
-	J48faA5YdVKOba0F4tcV9mMB/FLjwRP11SWUK9py8IlKWkGmMPgru93lkUDaqMgnDvLLMOw6W02
-	5wg2iMQVv9KZVeLmMkVzbZR8WJNuSotqMXXWBYSdF3UN4cMx5QDDwFwHLlLvQI+Uzwzw6JIrOXh
-	TAaT+B+S/AEfNQOEsZ8KUDGowZVLq5cqChW6xtIEWSpu0qWE1gfY7YHogo0zzHGId2w4LewZJrr
-	eMThb1ORz+ZpSXlv4WHprf8oG0N+mb49Bb7EG/OWdvU3uhX+yKFO5SthCSyk=
-X-Google-Smtp-Source: AGHT+IGHhbL2sTaZXbG6R+vveuW5hqJzjcOEX+5FNByreYpvZYKCH9St+sdc+uLFjJtfcv8RAmaZFQ==
-X-Received: by 2002:a05:600c:450b:b0:456:1abd:fcfc with SMTP id 5b1f17b1804b1-45868d304cemr17334835e9.25.1753264398802;
-        Wed, 23 Jul 2025 02:53:18 -0700 (PDT)
-Received: from thinkpad-ThinkPad-E15-Gen-2.router ([154.105.198.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d807sm16038167f8f.73.2025.07.23.02.53.18
+        bh=ye4p2iW6iL7aR7iE9gTvKTq4CWuN94sAbCzmmHDSAYs=;
+        b=xGNIQNvdqj/qH7zhw1AMIfXl6cS/tsKAx06aqdaCRIhqgOoyJfN8FkIHnD2HTlGSYc
+         yy5YAJ5Dshpy7t/JUGcXGoKFxJelueYtsvAvapkywPHQh9nRYF1irXJtYISlBwGPLGGp
+         r2CnyAbgN07of+1Ozo2Q9dM+9gmjkpTLG5T5rCzuEAMHmn0RKMjOAeF/1YnuUu1wUyxb
+         jQ3Rr3czpsatoSw5zwXFRTP5vCp2s/68seWcigXAEIqmIgq3BhyM9Sn+ZxY4d/+Shryv
+         4tUhmNmNTc1iT85xcrOFzdBmhC7/BgLZmhytV72PsmSYFMaZvsQxMoOG+XpHR9hrB4SO
+         0zIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWieNfaoyexo0KqePLjnjUuouNMlK1ffgVXywTmde4fw2tiaMMatIWpcfyPFM1mD2kOqiee9VnP/xoLVbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1Z8t3yEjRPCT90YUs0UjU5AGMB6BfQp+3STzEIBdKFcX1V2cd
+	C+O+zJvL4IK9eX6RFKagrSWoGDqx7HtmHNNkOTxfiS96WQ28OJxvb8+W
+X-Gm-Gg: ASbGnctf5buyMcudgASMne0qKzKWOLIjnf3VtkfmOgWKo+9f+WjVR4wTXtpgZG2myEP
+	3UoDk1Os4BfD2bmE7NwqAZKhVJRg6E9Xqb1NVWm3xPs8G3nR1FPilpMmtsVru0diEWeHRj8GP7y
+	W4Sw5XxOK+UiydJqPOtfqcqspXQEm41KligcD51uNjoyfAl+aU+ZUmCLoWM5LBP84NZrZu0jN5I
+	lyShCpw9Yt4ih36xAhkKxNJ9mNz34CkeQJnkjCNXUlayue/XJDnK3JLsXZl4p9vh3xJmhWGgCLN
+	ERaWt6Lii48YlDzfy7HRuqYmiyxnBSFNXl3knKUfE7qVT3gt/wNvF1PtRdXStIt4tcpDldE4uVj
+	OVdNgfuTPPQPQwDkVrKRe
+X-Google-Smtp-Source: AGHT+IHhr6maHryXz36lI6T/2OR7TSp4Zt59BMddnWzWMSB7a61uDHoY7ikxmy0vRQMI0jzI6GOLzg==
+X-Received: by 2002:a05:600c:c0d2:20b0:442:dc6f:7a21 with SMTP id 5b1f17b1804b1-4586a49249emr9298835e9.3.1753264427953;
+        Wed, 23 Jul 2025 02:53:47 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4586918c706sm17504175e9.12.2025.07.23.02.53.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 02:53:18 -0700 (PDT)
-From: Imene Jaziri <imenjazirii18@gmail.com>
-X-Google-Original-From: Imene Jaziri <imenjaziri@outlook.com>
-To: laurent.pinchart@ideasonboard.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Imene Jaziri <imenjaziri@outlook.com>
-Subject: [PATCH] Add changes to uvcvideo driver 
-Date: Wed, 23 Jul 2025 10:53:14 +0100
-Message-Id: <20250723095314.16975-1-imenjaziri@outlook.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 23 Jul 2025 02:53:47 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Justin Chen <justin.chen@broadcom.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mailbox: bcm74110: Fix spelling mistake "braodcom" -> "broadcom"
+Date: Wed, 23 Jul 2025 10:53:15 +0100
+Message-ID: <20250723095315.3999463-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Add a pr_info() in the uvc_probe function to trace when the uvcvideo driver is loaded. 
-This is for learning purposes.
+There is a spelling mistake in the author's email address. Fix it.
 
-Signed-off-by: Imene Jaziri <imenjaziri@outlook.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mailbox/bcm74110-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index da24a655ab68..4e5d1d636640 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2170,7 +2170,6 @@ static int uvc_probe(struct usb_interface *intf,
- 		(const struct uvc_device_info *)id->driver_info;
- 	int function;
- 	int ret;
--
- 	/* Allocate memory for the device and initialize it. */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (dev == NULL)
-@@ -2188,7 +2187,7 @@ static int uvc_probe(struct usb_interface *intf,
- 	dev->info = info ? info : &uvc_quirk_none;
- 	dev->quirks = uvc_quirks_param == -1
- 		    ? dev->info->quirks : uvc_quirks_param;
--
-+	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
- 	if (id->idVendor && id->idProduct)
- 		uvc_dbg(dev, PROBE, "Probing known UVC device %s (%04x:%04x)\n",
- 			udev->devpath, id->idVendor, id->idProduct);
+diff --git a/drivers/mailbox/bcm74110-mailbox.c b/drivers/mailbox/bcm74110-mailbox.c
+index 0680be8dc18f..469409d6d3bc 100644
+--- a/drivers/mailbox/bcm74110-mailbox.c
++++ b/drivers/mailbox/bcm74110-mailbox.c
+@@ -651,6 +651,6 @@ static struct platform_driver bcm74110_mbox_driver = {
+ };
+ module_platform_driver(bcm74110_mbox_driver);
+ 
+-MODULE_AUTHOR("Justin Chen <justin.chen@braodcom.com>");
++MODULE_AUTHOR("Justin Chen <justin.chen@broadcom.com>");
+ MODULE_DESCRIPTION("BCM74110 mailbox driver");
+ MODULE_LICENSE("GPL");
 -- 
-2.34.1
+2.50.0
 
 
