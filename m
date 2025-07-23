@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-741766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBA2B0E8B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:33:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE314B0E8B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 04:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3257A0483
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561B94E5A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4181DED47;
-	Wed, 23 Jul 2025 02:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB8C1DF26E;
+	Wed, 23 Jul 2025 02:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dBXdZBY7"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="LJSC674v"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B9219C558
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 02:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753238017; cv=none; b=eTp5H0VLS7y5PgUNKtL97YG/atfgxd4rdBArUmHniXUpPhKoz+uwdB60Tl0zBl80PSmwz1hMAJh+9x/pP6TVemXjmGU46BdGUaEsBb/TunuLSxj7uJ+TFPAz3U00iH6izCXNvLCR4hBgf1a/6gIedcVyIQXSkGiW1wyujjgklqg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753238017; c=relaxed/simple;
-	bh=SqF492q9Kp82C7tym/WEovxGbqtFyhfwFxqr0W+j9Aw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dyKynuWOIMd1MocIxbsEri9mvHRsqOX+5PwDWuPPTpKCLvgux+pdS7OYc53EYJyb5LM0dknnD22f3KR41RJzZoETODW5GzI1zo95onw0quODHJpo5s/kUwbjL8uxN04GDhKnIeiOCaf+HTOIxrqHImO8UzgP7WYzRQzMnLuQoQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dBXdZBY7; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so5269430a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1753238016; x=1753842816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bI974Jb0wm0kSmb50OjDAjQveAFQOS1fTvXMINV5m8o=;
-        b=dBXdZBY742Qe6eu3o+2wDaSvfIIreToWinwBW7Ng70yjYMJy685LqI6zuvJ+m9OzgO
-         7wHGrpsSDbensDb9PbJB3RfFSGZZ70WJJHa4inD1lg94dE1fKWxvxAc5b2xFAGQLLd3m
-         LOe69i90kS+gO6Uq2LvwtdEa1UubJZO+addWVv9KpixTxIEk34JMvsNAFjalGL6VJqLo
-         1ZdibaJ17mpEebeYASDUHdIik6VXistwsntwOT2gKscDSn1JfZkRpSrV7zJOOpqflJ5L
-         VVfVuh1AMvwy0PzEgwbBPy1cM6y7/+W8Z6tKIoUOkoDIf4+BV6Q2aEe7elBUJ23NXMuo
-         3Tpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753238016; x=1753842816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bI974Jb0wm0kSmb50OjDAjQveAFQOS1fTvXMINV5m8o=;
-        b=EzGXQhaV38yYKMnHVEJe8BuAV4/pT4yUIHTLqet0NR4IpFly9Wa1kAN7prnZRcWd7g
-         PHJuIY/VyjSlohjkR6xYhNtdieDo8yl/RmLS6Mco91jlZtlDdFysF2n+fSQH2FzPJQSn
-         M72D1pnqdApvB+GRniLwkaM2GPdJW133nKM+dTOZ+4+3aOL9oatek7yKPmeNXaronh0M
-         cZSyGozv3MZNvDju9fSxLuliYdXZ3G331J4YH8pUV1/8etoBBOqBr58ERFUr6VL7YM//
-         L197peE7kAQCZlSBwTpB2glufs1fsxRjme3cZEOVVPlaf5CvppfW1NY+UeozMZ4Nxafa
-         MNqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs+M1L8rDWCRU6T3TFqJWJVJde4MfA8Pba6Uz2EXe9X3VKbblaFXLmpc5Pi0uUIwNd9TvvZYQLC5LsO88=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4aXatBXqxGNYU9audJs3XJwZ4btmP8dogM81IcwRE3oeUJRoR
-	5RAd0k8qIX4ayywr4+5LAyTtomfr0ALrlAmh8gQtYm2JNs+KMSqoRGwCTvq145WbQus=
-X-Gm-Gg: ASbGncuotuqjyQp8sNAw+MMorPfdCbbjCoiAv1SToe2uEkqcA5NBBzpwG9kuhNta9Hc
-	LvER0vL07A6qTfYmD/KNidipBoFdtTklU3Iye9ZmW2nrusa91QCP/4zNpBKYj0TiFRo7RAYQNYB
-	MYo/1A6X9E4iSUyKwJscmvEpCBDpnVvONnCgAb0UMkD4LZtV6pf0eux3cwtNDFBheIcwX+2zeSU
-	Wf+ODd10sf+GytWefsMk1sOXy8pO6Ne0XvrHwZTiuR/2T4Qwkq3Y6VdWUOYb2TV6G1LhiZnURQy
-	x1MY5NuVEq8zbJ0F1vuwvQPlGddfIzPjFgl9R1h1XzJW/Fqa3QHO70ptYI7JgBiu7D9KN/381y4
-	BhIkXyOmAuL9OJmrU0qRZtcsI3guhAnftCUSZdABwH5z8+dUbjaAPLzpK
-X-Google-Smtp-Source: AGHT+IF2KZMu9tBJ5eQnwYDzw6P9UXzyzYbdG7iFoo+7BGUm52xEPh6annNbtlg5BtEsYH8AFeKVTA==
-X-Received: by 2002:a17:902:e785:b0:235:880:cf8a with SMTP id d9443c01a7336-23f98149b7bmr15717685ad.15.1753238015655;
-        Tue, 22 Jul 2025 19:33:35 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d2a77sm85325795ad.136.2025.07.22.19.33.31
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Jul 2025 19:33:35 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	john.ogness@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	matt.porter@linaro.org,
-	tim.kryger@linaro.org,
-	markus.mayer@linaro.org,
-	heikki.krogerus@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v10 1/1] serial: 8250: fix panic due to PSLVERR
-Date: Wed, 23 Jul 2025 10:33:22 +0800
-Message-Id: <20250723023322.464-2-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20250723023322.464-1-cuiyunhui@bytedance.com>
-References: <20250723023322.464-1-cuiyunhui@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3B5D8F0;
+	Wed, 23 Jul 2025 02:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753238283; cv=pass; b=Vq/+66hEeKhv00HX1aUDvUHcdHvy120KKhgyXatSiV1CCjadYlQYEjwop0JukRqYk4zXAbaa4oegbfUiK44CWA5UltqwPyaUyX0gtYPp9RyPFz/TDJvEchOy5gE25A24P2Zs+LSe0NuCtMG38ZAWec1BVi7gJFVCnpifhhLWEVc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753238283; c=relaxed/simple;
+	bh=XCoc9+wLkq3sUU/NFjhuG75tzrVltF1sgbtPeA06ffs=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=NwWoCvtKtKUP57hb6Sv4I+3mAIw8VE1yeg5X4ljnQC/EmVFHSFowBnk1yXFN8AYkhIcGER2yoL28Uqy+U/FL8+v5d2yyJygafNkc2MwVDjhgw2vVSW5kHG51uZ8VT0XMvjBB93VRoHRqfNzrTv+DD8ojg0d6FkquXV96dhxYJZc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=LJSC674v; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1753238256; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nXNlbIJ2gBelqjEBEVD2ZZqHhYpHfqLNhyRL02/HrWePPrbBVzn9UFlpWLLQQqMgFkVOHgI7EPs11uxDJT2hAD3HxsnglyiqNvXHhO2Rh1o7CKVO9e2P7f9kJ1aPsC003SbwyrEkydGjlmMb2sEMdR1SO8Aw2Ums9FF/CqIAILk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753238256; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jHHlBhF2vPEqFOO6kTk6KJpYRHF8+DAv7zaVRV3Y9Vc=; 
+	b=iYfXamsvsiKsG75/ndrpRp1zxp5gBp37UyESssCCFbcHYBxAjRGCXTX3cWLDK5FMl7iYfEkAFwVZK+Gj5fuwxDKK5QTNuuNCMtui3MilTN6mzPrwa+B8CnTNZPVvv/xCFFTIiBlE0+DDcDIlzSaUif03wrRLmEkOIqh9XXl4ITM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753238256;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=jHHlBhF2vPEqFOO6kTk6KJpYRHF8+DAv7zaVRV3Y9Vc=;
+	b=LJSC674veqzVU7kyyZ0gi5lDSLjcElD+OaUS/4BfyPH46K1FfJodeapXXZVhFXCB
+	/r+z4lqTFUSDMeeukCcmEEap8Jat18rKa/sj9mu4ads9dqs4MAiMFDBWQISGKzfATUh
+	KpX2Qb0Aeeg5RvkQkDXIBaNMggYP33lbFLTSYZpc=
+Received: by mx.zohomail.com with SMTPS id 175323825315690.31617852682825;
+	Tue, 22 Jul 2025 19:37:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Conor Dooley" <conor@kernel.org>
+In-Reply-To: <20250722-proposal-gothic-e0c3725e0874@spud>
+Cc: "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Daniel Lezcano" <daniel.lezcano@linaro.org>, 
+	"Thomas Gleixner" <tglx@linutronix.de>, 
+	"Samuel Holland" <samuel.holland@sifive.com>, 
+	"Anup Patel" <anup@brainfault.org>, 
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
+	"Jiri Slaby" <jirislaby@kernel.org>, <devicetree@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, "Palmer Dabbelt" <palmer@sifive.com>, 
+	<linux-riscv@lists.infradead.org>, <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH RFC 08/10] riscv: dts: Add initial Anlogic DR1V90 SoC device
+	 tree
+Message-ID: <1854c0e4c92fe7d0.4d402317a33bdba0.106dbab4984c351f@Jude-Air.local>
+Date: Wed, 23 Jul 2025 02:37:23 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-When the PSLVERR_RESP_EN parameter is set to 1, the device generates
-an error response if an attempt is made to read an empty RBR (Receive
-Buffer Register) while the FIFO is enabled.
 
-In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
-UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
-dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
-function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
-Execution proceeds to the serial_port_in(port, UART_RX).
-This satisfies the PSLVERR trigger condition.
 
-When another CPU (e.g., using printk()) is accessing the UART (UART
-is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) ==
-(lcr & ~UART_LCR_SPAR) in dw8250_check_lcr(), causing it to enter
-dw8250_force_idle().
+On 22/07/2025 16:21, Conor Dooley wrote:
+> On Mon, Jul 21, 2025 at 11:46:14PM +0800, Junhui Liu wrote:
+>> +	cpus {
+>> +		#address-cells =3D <1>;
+>> +		#size-cells =3D <0>;
+>> +		timebase-frequency =3D <800000000>;
+>> +
+>> +		cpu@0 {
+>> +			compatible =3D "nuclei,ux900", "riscv";
+>> +			device_type =3D "cpu";
+>> +			reg =3D <0>;
+>> +			riscv,isa =3D "rv64imafdc";
+>> +			riscv,isa-base =3D "rv64i";
+>> +			riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c", "zba", "zbb", =
+"zbc",
+>> +					       "zbkc", "zbs", "zicntr", "zicsr", "zifencei",
+>> +					       "zihintpause", "zihpm";
+>=20
+> Why do riscv,isa and riscv,isa-extensions differ?
+> If riscv,isa is not even accurate, why not just remove it entirely?
 
-Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->lock
-to fix this issue.
+You're right, they should be the same. I will remove "riscv,isa" and
+keep only "riscv,isa-base" and "riscv,isa-extensions".
+Thanks for pointing it out, I will fix this in the next version.
 
-Panic backtrace:
-[    0.442336] Oops - unknown exception [#1]
-[    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
-[    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
-...
-[    0.442416] console_on_rootfs+0x26/0x70
+>=20
+>> +			i-cache-block-size =3D <64>;
+>> +			i-cache-size =3D <32768>;
+>> +			i-cache-sets =3D <256>;
+>> +			d-cache-block-size =3D <64>;
+>> +			d-cache-size =3D <32768>;
+>> +			d-cache-sets =3D <256>;
+>> +			mmu-type =3D "riscv,sv39";
+>> +
+>> +			cpu0_intc: interrupt-controller {
+>> +				compatible =3D "riscv,cpu-intc";
+>> +				interrupt-controller;
+>> +				#interrupt-cells =3D <1>;
+>> +			};
+>> +		};
+>> +	};
 
-Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaround")
-Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/T/
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
-Cc: stable@vger.kernel.org
----
- drivers/tty/serial/8250/8250_port.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 7eddcab318b4b..2da9db960d09f 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2269,9 +2269,9 @@ static void serial8250_initialize(struct uart_port *port)
- {
- 	unsigned long flags;
- 
-+	uart_port_lock_irqsave(port, &flags);
- 	serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
- 
--	uart_port_lock_irqsave(port, &flags);
- 	serial8250_init_mctrl(port);
- 	serial8250_iir_txen_test(port);
- 	uart_port_unlock_irqrestore(port, flags);
--- 
-2.39.5
+--=20
+Best regards,
+Junhui Liu
 
 
