@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-742227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E194B0EEE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9683B0EEE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987A3165BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A330962ECC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6123028D8DA;
-	Wed, 23 Jul 2025 09:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D9728A705;
+	Wed, 23 Jul 2025 09:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a5ysdtpe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NyO0e86L"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254C928CF5F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36CC28CF47
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264486; cv=none; b=aQoxx2ciPfO8w7ntShF1t1kxCiV6oYFl7HiFn6mCROvp9Y9WSTBj2so62y9TNHLP+z5mJmQp/xLbAY7zw8HN9T8ul6kMUSZxh4dufSa0XxKr2QjGf2IhCH8LA20oRGk4QgFRihrhw2FHjeXbM7TLYN/W2aN/EMHSSOEcv/sGxTA=
+	t=1753264488; cv=none; b=PYlqs+BZQasQI7QNVnN8/9TSkU9fMRhAZKx4NiLSFzR5/1cL4m+7LeEkqRfnJTi1IJq1wruH+Mf/PeibqyNnKzLgvu22bZPHVHow1TbdjgBwUt8R6+R9jQLxDM4H13OSYTeZd7s/NybJWfE9IMxIY6+cuQLQM70OqcQbr9XHf10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264486; c=relaxed/simple;
-	bh=KdL5F45RTYdR4aFMOKBN1ImXHkFgg5qgGsxKYa0B2RE=;
+	s=arc-20240116; t=1753264488; c=relaxed/simple;
+	bh=mRYS39zNc769MPF6cqrwELZCDV9+yoOTGAq/3MYHuTs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZYf/jo4SZgr7oXBBlyw0zbK76QzwFBkM0ZzcKbx+nY65bQKC2EfNWqlKrNEZQbLthitLxHpRsL+uTLJw1aJqERjqE0RHTCKbbm/yFKPatGzN7S7cIDi4skdMvTZq7htV4AxESHsYmVZ9fwOlvFQNEXMCDzIwgB4j4aum07HfYMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a5ysdtpe; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=MYW6P1+prjtfncJys72xLP2ym55yjZ4cf6MtYbbSFZFv6NhqbkCkARW6Ih2vLFDc9ZmOEMZUwKyUxz2D9A3wvT0Mdoca3NJAUP4c1XtJ7Jf1AOb3Oc8VhF/ryydGEGjxD0OZQAfyZh8qoS4m7lniZbxufTm5m/SBdmw+ypFMojc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NyO0e86L; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B33CF43369;
-	Wed, 23 Jul 2025 09:54:41 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A75CB43383;
+	Wed, 23 Jul 2025 09:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753264483;
+	t=1753264485;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dJo7ghMiIZotvVeKxTetMQIxPpCfLLJg57qJECz1Vds=;
-	b=a5ysdtpeS+HG2AVt6jZqBt309XUOj8ZAa6QCYmAtns/8X4z/7dpngFg6Qou4ApGmP4RDHq
-	dKN7MK5wnKiss9QXGrMg0kIVnK8TsG/JnGeS/NOITXldLxv4T9b4NlaX9w3l9PlR13W/kA
-	+27HoCHPz0osuJHnzO0oMmGZojrHtMMD70oF7SdRX3MGJfrX7m8lrfANi1vyxijc788403
-	HSpETqx08cwOq3lj28R7QS4ksrnwm9az7pYQTvIdoyh1iPoEU6V4ol1bw8/gCNwYmx+Ror
-	YlsnHa7L6fTQiIOuMjFGJxs5Ri9JvIQJzj0N03xe6oOYhXw7InzM2GTCs6DFSg==
+	bh=A1aT9UvQsypJ5FnvT7oFv2tdykMxUGRvv4TCDw3cO58=;
+	b=NyO0e86L5Ew9FQ+ZDvPWICbl2ZELRq6JoavXwU3d8ghvpUnCGDP6t7o9f+z5p7Rg0dcnjA
+	SV9eRA6ghquPknMnGniCLiapzOYVHG/kC4LJ6DI056nK+S2LkbgMETG5TFsVrP1uDG+QJw
+	Qj4uXKK83ubRf//72U5nlbCCXJkjnwKn96sdm5T83gkqYI1+vuPKLrL1z+2TBpvGKal094
+	4gU7D+wyWGqemkxLCAGul9JwPxq2J8cOeqIEQb6clUta60vWYIQWMeDDYFeEKwmpW4b/nU
+	V0boCTBoor2r1tANrcwg+3QavKSzCdDZa0uCISkxoaQIzNDJ7xZhSo/HsWmS+Q==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 23 Jul 2025 11:54:13 +0200
-Subject: [PATCH 6/9] drm/bridge: use drm_for_each_bridge_in_chain_scoped()
+Date: Wed, 23 Jul 2025 11:54:14 +0200
+Subject: [PATCH 7/9] drm/bridge: remove drm_for_each_bridge_in_chain()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-drm-bridge-alloc-getput-for_each_bridge-v1-6-be8f4ae006e9@bootlin.com>
+Message-Id: <20250723-drm-bridge-alloc-getput-for_each_bridge-v1-7-be8f4ae006e9@bootlin.com>
 References: <20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com>
 In-Reply-To: <20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -81,31 +81,51 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejjeegjecutefuodetggdotef
  hhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Use drm_for_each_bridge_in_chain_scoped() instead of
-drm_for_each_bridge_in_chain() to ensure the bridge being looped on is
-refcounted.
+All users have been replaced by drm_for_each_bridge_in_chain_scoped().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .clang-format            |  1 -
+ include/drm/drm_bridge.h | 14 --------------
+ 2 files changed, 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index dd45d9b504d8f2802f4ee93e4b4d893d8535abea..297e8cde585c685e5105f8e6060ae7c2371dea00 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -1476,10 +1476,9 @@ static int encoder_bridges_show(struct seq_file *m, void *data)
- {
- 	struct drm_encoder *encoder = m->private;
- 	struct drm_printer p = drm_seq_file_printer(m);
--	struct drm_bridge *bridge;
- 	unsigned int idx = 0;
+diff --git a/.clang-format b/.clang-format
+index 1cac7d4976644c8f083f801e98f619782c2e23cc..d5c05db1a0d96476b711b95912d2b82b2e780397 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -167,7 +167,6 @@ ForEachMacros:
+   - 'drm_connector_for_each_possible_encoder'
+   - 'drm_exec_for_each_locked_object'
+   - 'drm_exec_for_each_locked_object_reverse'
+-  - 'drm_for_each_bridge_in_chain'
+   - 'drm_for_each_bridge_in_chain_scoped'
+   - 'drm_for_each_connector_iter'
+   - 'drm_for_each_crtc'
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 990ef98011c96619b269787ebe01a2ad3b225c42..0a45ed862ca3293bd0b12dacf3ba2c5429800d00 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -1351,20 +1351,6 @@ drm_bridge_chain_get_first_bridge(struct drm_encoder *encoder)
+ 						       struct drm_bridge, chain_node));
+ }
  
--	drm_for_each_bridge_in_chain(encoder, bridge)
-+	drm_for_each_bridge_in_chain_scoped(encoder, bridge)
- 		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
- 
- 	return 0;
+-/**
+- * drm_for_each_bridge_in_chain() - Iterate over all bridges present in a chain
+- * @encoder: the encoder to iterate bridges on
+- * @bridge: a bridge pointer updated to point to the current bridge at each
+- *	    iteration
+- *
+- * Iterate over all bridges present in the bridge chain attached to @encoder.
+- *
+- * This is deprecated, do not use!
+- * New drivers shall use drm_for_each_bridge_in_chain_scoped().
+- */
+-#define drm_for_each_bridge_in_chain(encoder, bridge)			\
+-	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
+-
+ /**
+  * drm_bridge_get_next_bridge_and_put - Get the next bridge in the chain
+  *                                      and put the previous
 
 -- 
 2.50.1
