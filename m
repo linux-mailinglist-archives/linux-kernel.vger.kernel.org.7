@@ -1,166 +1,92 @@
-Return-Path: <linux-kernel+bounces-742880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6A4B0F7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E56B0F7D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C3B17A6F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C0E1899C88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3036E1E8337;
-	Wed, 23 Jul 2025 16:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C027D1E47CC;
+	Wed, 23 Jul 2025 16:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6KYXAb9"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeBOIldg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B50B13A3ED
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 16:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EE28DB3;
+	Wed, 23 Jul 2025 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753286968; cv=none; b=LONB9QvQ8mJSp1kG4fb7km3kytR/jaGWOtruf8T8iMBZ2U7OcL91esjF1zgnz86B7knfs+0Bl6oNmjU4PzDCLdAuLB25Mi7XNbqtCsNpC21nUJ8pHUdQgqVyQE5FI46aslG5GF6pTJgrDWdYKvHIlATrdzrC6N5CqFPFjvO2mO8=
+	t=1753287021; cv=none; b=AY8H0+KQs3O/Dk/Ozt+uE75nVjV5Yu6Wo7PM1S97xTZ6mpxtlQP2+YJEaaL0wNhK0ubB1zDhoX8qbIOZWoVLZXHEv2+wE/xiZDAxBP2qLF5UEE22zbHsWcHF7K3lHEqevxuGSBXPO+P/e35kJ6PEXk9/1J/1y6P7KpAbxJ1/ja8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753286968; c=relaxed/simple;
-	bh=5i1B6f1WovekQb0t2Q4MX1vwgoil7srvBZBIH/a852c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NWdSHSLSUrPKq+zmBfG54NkqZbf+YBENVqBhQpHjvdJP7UFpWCg0PCU2ZgqzYy8rYvkAjlG3HfxJQ5zY6jBPsZPRPxxLJ5l0tfYdojoOL8cHcuCLm0uUYTxMeIFWw6sT4DbdVxmFWwlaB5/4PLjNKZ6a0DeWt53uBD8kvgZ/bmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6KYXAb9; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-886ba728c79so241018241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753286966; x=1753891766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jiqvICJjX31b+xDIjisgqgN7QHL9poDjF7NeTkSy/Yw=;
-        b=l6KYXAb9Xxmg+I4qub0715DwIkI5KY5IkTY/IHbar2GdWyfDulk6TIFHPWXAFFyHc3
-         9k+S9HGhLRA3trSaQtfQzP+ovzUaxtTuVdABNuWPXG4Hhy5j3NDoptoMRZKa8sPZocKq
-         4AQtE4J3AOKMiDdc1rkIpvCxsPFsGx7GTuWFcGYjfelMNqPZEXf76p8FTEaKDEyFWPsH
-         y5H3irikattueXlNvX+oRNOCEeBSV/4F169pS4Zh2/U7HHee1uC2cHsYP5HRbaLROunC
-         rXhfRGH5yBGt1D3ylucA0tqpAqcUW+bQqz1jZrgq1QlMAT+wK1qHPfhm+BSzsQkkVAYk
-         Bbzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753286966; x=1753891766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jiqvICJjX31b+xDIjisgqgN7QHL9poDjF7NeTkSy/Yw=;
-        b=WaZfqT0165PazX+ystfm48/1bL290zlFiPLNq9er8n0wZ5redxY2dkTa8b2B9m5phM
-         tbFQM1NxC3pA2oXJRFNT37q4TnZwuAqPR2QDV1TNNluPyGA0+XJyaSDCQvKDP5BrPrfM
-         X506+9fXg8Ek0GLxJKm0zyg251jVGW0SdkorAPUA/9vyAyujCe/yipznsFRluafEAfAT
-         2mCwOoxnVKPspUe1jgTYfsLvg17PHaLALrS2vKPH904msrfqMKlrwsYYN7nfbo9ZHLkc
-         b+FLS8yjG9vMVLEhEwxB3bG6DVt4QWxx1IoUsPQZiYJl7qCpU/zs3vnJ2kPjNQasAfnD
-         yI7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQivdowhCv0sxELTdOp0+9p4UZdmW/sGytKN6hyMXGjvH66MNpkiqSH+Ni5X/fz+4DXUd1XCcKD2zFst0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGLghesQZIMStkkQcTPxsUS0/F3V2d0LE/wzZR/XtRKgqlYweV
-	y5yIZKExY5Cr5+PmKoqhKkOPG/6ddLy9C2vFMycqqbY7CCfQp0CcU7Wd73lKn/SozNALPPVEjfs
-	O5/oG0Z6yETWJHD2nU9QPk4Jqp/waBg==
-X-Gm-Gg: ASbGncuC9eGOgn7XtnRz1oV/UmncBEUoouaI1qTNd3HNa+WFKe7NaAGYM3PtE13hGv7
-	xZYPCpJr8j6rJSob83VnEobN/6DpHWJyzul2CRulMCIjpyDCA7+5niTSiaF70p//pMoxDuXdI+R
-	INloRTah1E8hV3V3JisDRBcqHGMv/htKoihhXkrjHmJk2ixmXLbMrYPDd3Bv1sa0mGmjFVyqfJa
-	Om9Kg==
-X-Google-Smtp-Source: AGHT+IHLoLIi9Sn5t7UcwQDFfNGKZYmYTYj7fcHTonbPWflJFuRM2pCYd005+IusGSZWW9aDNPoyaalzfB6mYcmmYqg=
-X-Received: by 2002:a05:6122:d0e:b0:537:3398:e3dc with SMTP id
- 71dfb90a1353d-537af65b97emr575987e0c.2.1753286965800; Wed, 23 Jul 2025
- 09:09:25 -0700 (PDT)
+	s=arc-20240116; t=1753287021; c=relaxed/simple;
+	bh=S2JObOj26Yfdu/cvuIJxmh8ZRRaOuma9ZxsxLZbjwEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eC3SiylQ8SxeAu7oE+OYAKdPTEF+UbwC4dh48nbgY3cjPMqbWS/WVLU51Ipn/m1lc17eJmZOqPpGX5qslq+1py3s64EfsJAyoO1aH/ZVAxG7QoXWTto2pK991dIYd71ARugpNwQMRVHnAqy9tbF3reSgPVqDZ+vN7RPs3ylm5Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeBOIldg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19D6AC4CEE7;
+	Wed, 23 Jul 2025 16:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753287019;
+	bh=S2JObOj26Yfdu/cvuIJxmh8ZRRaOuma9ZxsxLZbjwEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JeBOIldgf1htqLX7c2u8qG5ZtUhUTdOeceHU76ZHjHAIoNIsbGVk6HqO9CWUuY2vn
+	 PKX/aB5dVWKgC/HMlZVwMSs3MuUhSwsrKXEIXLu9bkPD9auX16daW58gtsPywoS2ma
+	 0bHtWktfKgDKFMA42PDoRaAIyrl3HwHUsWDrheCoW1sDDoDY1XP3DyGnWOStd/nEtH
+	 Sp+i8XO9Vx3tAHXWSpoRSu+zp9KnKpTfzLlT0ysqd9kEQSFBRtRKCm9WPqs+atNAPE
+	 NHKtjfMhC6tuXx8uo9nxlt/YBwbuqKgM0USNTZSyd9fqsZWQgLjYLsd5nqk2Z97R06
+	 r104UvVpOB8hA==
+Date: Wed, 23 Jul 2025 13:10:16 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] perf annotate: Add --code-with-type support for
+ TUI
+Message-ID: <aIEJaKDNBor71jIn@x1>
+References: <20250716050054.14130-1-namhyung@kernel.org>
+ <20250716050054.14130-6-namhyung@kernel.org>
+ <CAP-5=fVAYNy9pk9zyQRySrJ-1j12dC9ogiW94133Li_WQHd6RA@mail.gmail.com>
+ <aHfg5YPlVD_6iMg6@google.com>
+ <CAP-5=fV=E4_9RVvf1CW0GM0VY+ubr8sOvnXc+xhGW66PhMFCnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722204114.3340516-1-chenyuan0y@gmail.com> <20250723-gigantic-wrasse-of-warranty-dc70d7@houat>
-In-Reply-To: <20250723-gigantic-wrasse-of-warranty-dc70d7@houat>
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-Date: Wed, 23 Jul 2025 09:09:14 -0700
-X-Gm-Features: Ac12FXym4TiBdgoqhdHCo4mS7HgWJgQ8vXuIRZKZN-9W5bm3rxYkRm6h2V9wc34
-Message-ID: <CALGdzurMksSELQMDxy11gHS=pfASP6x_d+Sw2uZfXguLqb=J9A@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
-To: Maxime Ripard <mripard@kernel.org>
-Cc: victor.liu@nxp.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, 
-	biju.das.jz@bp.renesas.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fV=E4_9RVvf1CW0GM0VY+ubr8sOvnXc+xhGW66PhMFCnA@mail.gmail.com>
 
-Apologies for the second email.
-I am resending this message as the formatting in the previous version
-was incorrect
+On Wed, Jul 16, 2025 at 01:42:13PM -0700, Ian Rogers wrote:
+> affects sorting. In general I think we should move away from file
+> paths, inodes and the like as the build IDs will avoid races, work
+> across systems, etc. I think in this case we could add:
 
-On Tue, Jul 22, 2025 at 11:57=E2=80=AFPM Maxime Ripard <mripard@kernel.org>=
- wrote:
->
-> On Tue, Jul 22, 2025 at 03:41:14PM -0500, Chenyuan Yang wrote:
-> > drm_atomic_get_new_connector_for_encoder and
-> > drm_atomic_get_new_connector_state could return Null.
->
-> They can, but not in that scenario. atomic_enable will never be called
-> if either would return NULL.
->
-> In which situation did you trigger this bug?
+<SNIP>
 
-This is found by our static analysis tool based on the fact that
-drm_atomic_get_new_connector_state() could return NULL.
-We also noticed that under the same dir, the ITE IT6505 transmitter
-has such checks.
-Thus, we assume it would be good to have similar checks here.
+> but in the future we can find the debuginfo off of the build ID and paths, etc.
 
-> > Thus, add the null pointer check for them with a similar format with
-> > it6505_bridge_atomic_enable in ITE IT6505.
-> >
-> > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> > Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter=
-")
-> > ---
-> >  drivers/gpu/drm/bridge/ite-it6263.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/brid=
-ge/ite-it6263.c
-> > index a3a63a977b0a..3a20b2088bf9 100644
-> > --- a/drivers/gpu/drm/bridge/ite-it6263.c
-> > +++ b/drivers/gpu/drm/bridge/ite-it6263.c
-> > @@ -590,15 +590,28 @@ static void it6263_bridge_atomic_enable(struct dr=
-m_bridge *bridge,
-> >       struct drm_connector *connector;
-> >       bool is_stable =3D false;
-> >       struct drm_crtc *crtc;
-> > +     struct drm_connector_state *conn_state;
-> >       unsigned int val;
-> >       bool pclk_high;
-> >       int i, ret;
-> >
-> >       connector =3D drm_atomic_get_new_connector_for_encoder(state,
-> >                                                            bridge->enco=
-der);
-> > -     crtc =3D drm_atomic_get_new_connector_state(state, connector)->cr=
-tc;
-> > +     if (WARN_ON(!connector))
-> > +             return;
-> > +
-> > +     conn_state =3D drm_atomic_get_new_connector_state(state, connecto=
-r);
-> > +     if (WARN_ON(!conn_state))
-> > +             return;
-> > +
-> > +     crtc =3D conn_state->crtc;
-> >       crtc_state =3D drm_atomic_get_new_crtc_state(state, crtc);
-> > +     if (WARN_ON(!crtc_state))
-> > +             return;
-> > +
-> >       mode =3D &crtc_state->adjusted_mode;
-> > +     if (WARN_ON(!mode))
-> > +             return;
->
-> And that condition can never be true.
->
-> Maxime
+Yeah, agreed, we better move to make build-id the primary means of
+getting what is needed, when that isn't possible, fall back to
+filenames.
+
+Then we should check if the hostname in the perf.data header is the same
+as the machine running to warn the user about that, other options are to
+check the time the perf.data file was created to warn that its likely
+updates took place, so take the results with a grain of salt, etc.
+
+If the architecture or distro is different, things we can also see from
+the perf.data files, outright refuse to use filenames :-)
+
+- Arnaldo
 
