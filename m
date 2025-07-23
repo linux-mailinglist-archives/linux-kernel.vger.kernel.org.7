@@ -1,94 +1,79 @@
-Return-Path: <linux-kernel+bounces-742989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E60B0F920
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:33:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BBFB0F952
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BCE2163A11
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCADE1643AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6549022DA06;
-	Wed, 23 Jul 2025 17:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16C245014;
+	Wed, 23 Jul 2025 17:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pzp8XHwa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J+Sae5JF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pzp8XHwa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J+Sae5JF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3TsDAwh"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C34227B8E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 17:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AC3244697;
+	Wed, 23 Jul 2025 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753291948; cv=none; b=Qk/CNOqWDtWr2uzkH+QnaP/74/rLTJhyVrCS9NAqMsNidzrxvHOaAhStNDKD9ngMy7gOdxDUEcZCcDYgxv2VstsnUPKrgwD71NgHQK5MXUN+XknTEaN1s6lX/kPQHt70/FczqdrTF6up4fBDn4aumrwUBwjtvn3OHy4SHkL0+ec=
+	t=1753292001; cv=none; b=bbvXrlYVYUvzB/eMkUNuU22MtQ1ziXvHZbFjP7AD8qzXJNmfGFzHe6rlQv2ojM7usGx79PJ1jMlpURbfMNYYBczhLIWgbidzScDo/TBMkHG7a1d+PkBob0lnfUT+ZwNmknyIWQBaXN+6zBEVSVoyuiR45jNN0IMjE5Nbhgw728M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753291948; c=relaxed/simple;
-	bh=uv9cgSgJNK/4SUviYYqTvJigVNWYVKzTAd2VQDKUkF8=;
+	s=arc-20240116; t=1753292001; c=relaxed/simple;
+	bh=C2VlGrQRcLA6KNMLUWn4frGY1BGHzl2OatrBQFPkZDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pOw7BiYB/EnANxpP3p9SgIhAg/3WatGruR0HJhrz4u3kcgCN3IgjNU0/lr7c0YZRnwaGQz6Dg2BvaUOtPTkTckLLqCFvJqkQRv6J7X73DaTbmmF0x4JYdfCbcDjdmw80SKyTeIHQsc01A0r82OfkZPv2zcEvPVQU/3s0pFZRjtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pzp8XHwa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J+Sae5JF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pzp8XHwa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J+Sae5JF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CE6F31F793;
-	Wed, 23 Jul 2025 17:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753291944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uv9cgSgJNK/4SUviYYqTvJigVNWYVKzTAd2VQDKUkF8=;
-	b=pzp8XHwaNXj54Us1LhOKjVEzmk6KLKrTghaeHTchfUuPX+ZIW84zEc8kaFrPFk6wQbAKIW
-	4G7Yb0TsgSA+3hPMR010shZ7pSF7/0gZ6LP2M36cJe/uOtglVbgYtp5domlJMgYACKnnV2
-	2UeEdUdIIeTRo5mhWQyelKVYxYM9C7s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753291944;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uv9cgSgJNK/4SUviYYqTvJigVNWYVKzTAd2VQDKUkF8=;
-	b=J+Sae5JFx6TQ0BGgaEjNIA1HgP+INc/cVdQeNp2B500pIn4IYH5zCfdvCrEU8Ifl62P97L
-	o/s9fnhvCbfuR2AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753291944; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uv9cgSgJNK/4SUviYYqTvJigVNWYVKzTAd2VQDKUkF8=;
-	b=pzp8XHwaNXj54Us1LhOKjVEzmk6KLKrTghaeHTchfUuPX+ZIW84zEc8kaFrPFk6wQbAKIW
-	4G7Yb0TsgSA+3hPMR010shZ7pSF7/0gZ6LP2M36cJe/uOtglVbgYtp5domlJMgYACKnnV2
-	2UeEdUdIIeTRo5mhWQyelKVYxYM9C7s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753291944;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uv9cgSgJNK/4SUviYYqTvJigVNWYVKzTAd2VQDKUkF8=;
-	b=J+Sae5JFx6TQ0BGgaEjNIA1HgP+INc/cVdQeNp2B500pIn4IYH5zCfdvCrEU8Ifl62P97L
-	o/s9fnhvCbfuR2AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B505513302;
-	Wed, 23 Jul 2025 17:32:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eQWbK6gcgWhlZwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Jul 2025 17:32:24 +0000
-Message-ID: <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz>
-Date: Wed, 23 Jul 2025 19:32:24 +0200
+	 In-Reply-To:Content-Type; b=fQCNyjQejHQgFGUy8yzBQ8q1Zd6SNunR7WVCDKADgNhsDTKwIBZ/+bBRGuXZupzoigWPWZjxS/4rN/FTvWlJe1ne7ZNPjNWwpzQY+HmuOayh5uwJZNEyKoi8rgNU4rWNx207YE734rNxLM1y7oSQyLSVQdeqPRaEO0oa7mgBlIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3TsDAwh; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55a1eced1abso9414e87.3;
+        Wed, 23 Jul 2025 10:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753291998; x=1753896798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBM3XOa1GXkPG7AU5j/kIOwYcdf4HqHkAm2pQZ3zu3U=;
+        b=d3TsDAwhRnzHHCVMNNkAXmbwISMmAE5CtOgI2nqgRLHiso9LzFkJzGCaaTUhMzEp0r
+         le+jxG3A9wCjzp1WKALfm6lEza1tvSCFpNcCxdNOVH1m47lbTZki+CErKkF5yCvDfxv0
+         7atJjHc40EuetIIBVwTl5pzmU6OyVIJfY2AOoa8c5cx5dICScW99FcmDhAbhxCNOSumM
+         X11tbVIFll5WVULK+9UyLPrnfhkMDu5ELSNcMHxpRZUfigInjYAKkY0raUcI8/85WtRS
+         a13xCxQiGbLyeTh3/iaEr/GaW1A0eGx3lAQiomznR4ubgeXAIPsBDmLF+Va9/LSxcDR6
+         UkAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753291998; x=1753896798;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBM3XOa1GXkPG7AU5j/kIOwYcdf4HqHkAm2pQZ3zu3U=;
+        b=EZhY5wiG1v639IqvQXPwndba0wRQ7vl8sTYUiFYXL4TWvMKkyHKKTKvrmhE4SmrQuK
+         ZTDVZxJhrAxz8pkTDWDeOwKOQzRE8OWTiVpQ+ISaqB36c+jgM4zl86pnBLn5S+MZjYNz
+         N9sP+1dB3Deplc4laYXI6rIRyC+fLLFpIkdtzUiaFOq/j7gtoz+Hq9wmmYy/XfXeySjD
+         9MeeW6OCckNbt6NnhuYGvFHIinVOgljyZY8f9t44/YpSvPJmSFCBOrcKpWwU5NQx1XhP
+         gJsgqpjRNi4iKgrmHgrxG77XM6uXAYQfG8/A6pPgBPAhKRaV5MTkOXVgOoFoeQ5nDd/+
+         XiQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSs+8cjdT3CzCSa6yzX2omqBt2lRx8CpYtN7UhvSerGRfNoTUT/jujzmmvByLfoZn/Sqj66Az5HdS+Rg==@vger.kernel.org, AJvYcCV9g5MgBcrZfih30YgfH4PrZTyny+ZyfO0805J9mJSUN0LRmdCc5P1FHuCyEj05elQn1No2KrrgahCt/wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4CFVY/fHW3C4/vjK7A1n/sl5v9lWbyCec2SjCxvpIJDKDqD1H
+	eY2gc/WF2sll6XFUPqmG6Nffj+sQZSTEcdEVs4TybZ8ipDmKjnjgoRYF
+X-Gm-Gg: ASbGncv0Xj9jLhul6nXbYkztyz76JzhOWyeeO6oA39HVnpDceCWcJcedAXsO97GlzjQ
+	lm1Q79PB9yoYTH8my1rfJaJUBCuEhUua/qKb2ebtgzgL+C9Up4Q41pnoYSPMCNM0H424TtuaVfH
+	eeA2mN5e52yZ+G8Ad11dhbdOJGififxhRmpQtwFvVdW9xurpskMLBix5PELUdGLK+VaaYfT0LS/
+	6nrnhy326Qp23ZVpn1zQyKYpP6SLq3c9KweRNepYDR/YxysCFoPi/6HZmDTnxVKIZnae1hQDJZ/
+	5BeW1Ai50LjJs60FFWQ7tagsq3N9SVT0GiHdZv1qdwgp60ig/Nejj5mcXUSeBZ4SZcHRIrQAeF1
+	BrW40WeDSJOdAs976ET6eYC9LPhZN2XwD07olItQ=
+X-Google-Smtp-Source: AGHT+IEhfKgja72kmMEVu8mg+y0GPA2wBPQGXBF9w7fJkfAZVikcQ8zyKptW1cZk85GIYWtzdxftWQ==
+X-Received: by 2002:a05:6512:3c8b:b0:553:24b4:6492 with SMTP id 2adb3069b0e04-55a5132157emr458860e87.5.1753291997236;
+        Wed, 23 Jul 2025 10:33:17 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31aac980sm2396014e87.74.2025.07.23.10.33.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 10:33:16 -0700 (PDT)
+Message-ID: <f7051d82-559f-420d-a766-6126ba2ed5ab@gmail.com>
+Date: Wed, 23 Jul 2025 19:32:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,95 +81,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
- vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
+Subject: Re: [PATCH v3 00/12] kasan: unify kasan_arch_is_ready() and remove
+ arch-specific implementations
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com,
+ agordeev@linux.ibm.com, akpm@linux-foundation.org, glider@google.com,
+ dvyukov@google.com, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250717142732.292822-1-snovitoll@gmail.com>
+ <f10f3599-509d-4455-94a3-fcbeeffd8219@gmail.com>
+ <CACzwLxjD0oXGGm2dkDdXjX0sxoNC2asQbjigkDWGCn48bitxSw@mail.gmail.com>
 Content-Language: en-US
-To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>
-Cc: Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>,
- kernel list <linux-kernel@vger.kernel.org>
-References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <CACzwLxjD0oXGGm2dkDdXjX0sxoNC2asQbjigkDWGCn48bitxSw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
 
-On 7/23/25 18:26, Jann Horn wrote:
-> There's a racy UAF in `vma_refcount_put()` when called on the
-> `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
-> without sufficient protection against concurrent object reuse:
 
-Oof.
 
-> I'm not sure what the right fix is; I guess one approach would be to
-> have a special version of vma_refcount_put() for cases where the VMA
-> has been recycled by another MM that grabs an extra reference to the
-> MM? But then dropping a reference to the MM afterwards might be a bit
-> annoying and might require something like mmdrop_async()...
+On 7/22/25 8:21 PM, Sabyrzhan Tasbolatov wrote:
+> On Tue, Jul 22, 2025 at 3:59 AM Andrey Ryabinin <ryabinin.a.a@gmail.com> wrote:
+>>
+>>
+>>
+>> On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
+>>
+>>> === Testing with patches
+>>>
+>>> Testing in v3:
+>>>
+>>> - Compiled every affected arch with no errors:
+>>>
+>>> $ make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+>>>       OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+>>>       HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld \
+>>>       ARCH=$ARCH
+>>>
+>>> $ clang --version
+>>> ClangBuiltLinux clang version 19.1.4
+>>> Target: x86_64-unknown-linux-gnu
+>>> Thread model: posix
+>>>
+>>> - make ARCH=um produces the warning during compiling:
+>>>       MODPOST Module.symvers
+>>>       WARNING: modpost: vmlinux: section mismatch in reference: \
+>>>               kasan_init+0x43 (section: .ltext) -> \
+>>>               kasan_init_generic (section: .init.text)
+>>>
+>>> AFAIU, it's due to the code in arch/um/kernel/mem.c, where kasan_init()
+>>> is placed in own section ".kasan_init", which calls kasan_init_generic()
+>>> which is marked with "__init".
+>>>
+>>> - Booting via qemu-system- and running KUnit tests:
+>>>
+>>> * arm64  (GENERIC, HW_TAGS, SW_TAGS): no regression, same above results.
+>>> * x86_64 (GENERIC): no regression, no errors
+>>>
+>>
+>> It would be interesting to see whether ARCH_DEFER_KASAN=y arches work.
+>> These series add static key into __asan_load*()/_store*() which are called
+>> from everywhere, including the code patching static branches during the switch.
+>>
+>> I have suspicion that the code patching static branches during static key switch
+>> might not be prepared to the fact the current CPU might try to execute this static
+>> branch in the middle of switch.
+> 
+> AFAIU, you're referring to this function in mm/kasan/generic.c:
+> 
+> static __always_inline bool check_region_inline(const void *addr,
+> 
+>       size_t size, bool write,
+> 
+>       unsigned long ret_ip)
+> {
+>         if (!kasan_shadow_initialized())
+>                 return true;
+> ...
+> }
+> 
+> and particularly, to architectures that selects ARCH_DEFER_KASAN=y, which are
+> loongarch, powerpc, um. So when these arch try to enable the static key:
+> 
+> 1. static_branch_enable(&kasan_flag_enabled) called
+> 2. Kernel patches code - changes jump instructions
+> 3. Code patching involves memory writes
+> 4. Memory writes can trigger any KASAN wrapper function
+> 5. Wrapper calls kasan_shadow_initialized()
+> 6. kasan_shadow_initialized() calls static_branch_likely(&kasan_flag_enabled)
+> 7. This reads the static key being patched --- this is the potential issue?
+> 
 
-Would we need mmdrop_async()? Isn't this the case for mmget_not_zero() and
-mmput_async()?
 
+Yes, that's right.
+
+
+> The current runtime check is following in tis v3 patch series:
+> 
+> #ifdef CONFIG_ARCH_DEFER_KASAN
+> ...
+> static __always_inline bool kasan_shadow_initialized(void)
+> {
+>         return static_branch_likely(&kasan_flag_enabled);
+> }
+> ...
+> #endif
+> 
+> I wonder, if I should add some protection only for KASAN_GENERIC,
+> where check_region_inline() is called (or for all KASAN modes?):
+> 
+> #ifdef CONFIG_ARCH_DEFER_KASAN
+> ...
+> static __always_inline bool kasan_shadow_initialized(void)
+> {
+>         /* Avoid recursion (?) during static key patching */
+>         if (static_key_count(&kasan_flag_enabled.key) < 0)
+>                 return false;
+>         return static_branch_likely(&kasan_flag_enabled);
+> }
+> ...
+> #endif
+> 
+> Please suggest where the issue is and if I understood the problem.
+
+I don't know if it's a real problem or not. I'm just pointing out that we might
+have tricky use case here and maybe that's a problem, because nobody had such use
+case in mind. But maybe it's just fine.
+I think we just need to boot test it, to see if this works.
+
+> I might try to run QEMU on powerpc with KUnits to see if I see any logs.
+powerpc used static key same way before your patches, so powerpc should be fine.
 
