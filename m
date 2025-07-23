@@ -1,259 +1,124 @@
-Return-Path: <linux-kernel+bounces-742670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6F5B0F524
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:23:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5608B0F534
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11548AC16DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 622D15846DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997112EE274;
-	Wed, 23 Jul 2025 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0912EF9A3;
+	Wed, 23 Jul 2025 14:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGZTlqQ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="g8TAycsk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59E62E5415;
-	Wed, 23 Jul 2025 14:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628D119CC3D;
+	Wed, 23 Jul 2025 14:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280578; cv=none; b=p+TtoA8H1MjecYTtquS1tvrdUI23W1lETZt5UvlcDTyfKAyJUd+2kO8IEXIvVFSHf1OA75nZd5ogxbcSynrz4VEBxAyUOQLInKs8EvBC0NNuOcQCRYNC4UEePldbc7a6aybcpj+EiSJnRoFEZqEkzLzsq9vSNlSuS5jLwDh8vss=
+	t=1753280652; cv=none; b=OYmhCcSwqA7gvYPY+2ztQD0gSlTRavGqlMATVDp59K3lEdeiFgm1ZbkGTmWbeSctAwAOpjniPfJWHiHmNRCSGyA0RHVUsAfuAJwgAJgb/8++7XavFkwYHg2gS9gkpf5vpnHyRmlT75JVZvi4lXybZ2pdH/I4OMVt2ijCM3zVPAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280578; c=relaxed/simple;
-	bh=cYT83ItX8i0zQEyyAAKccpe8aP2G3UA6P+4s88looH8=;
+	s=arc-20240116; t=1753280652; c=relaxed/simple;
+	bh=L9EA4XYDWWt7nuzahxqx5W5SRZ08rtg516cT2lVGNlE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rUP0RLOjxOOe9bZL4s3pY53FGS4ZDSz4GnEDaJt3qgows6XlE695ANeYuYEe5BB05ar1bEDSIC4GqK7g6fjHFyB57PX4qupSCO6Y7+4DOejkNlDoJ5AorkvxqF0Gm9h5iKq8ighf9zb4v3U0+ZbVDkeCYshxEDuU3dQOxU6rKJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGZTlqQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804C5C4CEE7;
-	Wed, 23 Jul 2025 14:22:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753280578;
-	bh=cYT83ItX8i0zQEyyAAKccpe8aP2G3UA6P+4s88looH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGZTlqQ3fprVmpxMhYFaeGXDOwnsK2fIrIFXA5QycJ6N8mbZA44NkQk5NX4qhz9NI
-	 rz6x8cvMJ7dBBGTfDcyxWcT+xW7t63EJ444vmoPkhnigjSp/AT+U3u+RtV3hF2AQVV
-	 1yS21MLJ3c0vvChOSKKnWwXEquTznIn25vFDn6aADSUaEGmYY//1EK95N/elrP9enh
-	 2gekE1WJmRgt79l7UmSN3QPGMoY20+xefpx0MtXp/pgTcgNtPsW/HMAHUJ/ogah5C+
-	 tQsOeblnTDo13uAuge1mhZc1OHpwTQwKLFTiA8yhRoaVA6ra3UcdMEpAM6DI/hYHAD
-	 kLyqci7puio1Q==
-Date: Wed, 23 Jul 2025 19:52:48 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, cassel@kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
-Subject: Re: [PATCH v6 2/2] PCI: amd-mdb: Add support for PCIe RP PERST#
- signal handling
-Message-ID: <bozkhw7eebaxj7odsilphvlbfzfo7xmdfteng5dq5mtznroefi@trlegpl6fkcf>
-References: <20250719030951.3616385-1-sai.krishna.musham@amd.com>
- <20250719030951.3616385-3-sai.krishna.musham@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=By+GBP6k1zeq3yWhzIZ6M5vIgvAGWyH4gWUJJ/j+CkhbQL46Fg7YYhljkCshSHw/BlpPSVj2kH23U9KY5qiL2TeGf6HpR+UhB/OH23WJGx5x9fxofJaa9wz9+pgKcm5EiRuXrPv/dtw3euoYnMyPwdcxxl2PoAy6QzBplgDJ7x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=g8TAycsk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wGnkEZQrJ+KCotninbE6PxpnOQMilZmp9uMJbvlcMQ8=; b=g8TAycskRftknN7I5qk+Oh1vKa
+	XMC4Bjn7iTfccsiY/vnnITO0PQk7GPx6zLqJLGwhzTxL6ojmsFudhTCkxcPWwZUefUvfMXt+R8PBp
+	BUDjLcdZFuXBBGXSRzWF1jCV8F/TP/P6zPwioNQfXHGfuwfUx9PwuBmPesqPQ1gmisFU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ueaNv-002b7y-9m; Wed, 23 Jul 2025 16:23:55 +0200
+Date: Wed, 23 Jul 2025 16:23:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+Message-ID: <9f00a6cf-c441-4b4c-84ca-5c41e6f0a9d9@lunn.ch>
+References: <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+ <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
+ <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
+ <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
+ <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
+ <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250719030951.3616385-3-sai.krishna.musham@amd.com>
+In-Reply-To: <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
 
-On Sat, Jul 19, 2025 at 08:39:51AM GMT, Sai Krishna Musham wrote:
-> Add support for handling the AMD Versal Gen 2 MDB PCIe Root Port PERST#
-> signal via a GPIO by parsing the new PCIe bridge node to acquire the
-> reset GPIO. If the bridge node is not found, fall back to acquiring it
-> from the PCIe node.
-> 
-> As part of this, update the interrupt controller node parsing to use
-> of_get_child_by_name() instead of of_get_next_child(), since the PCIe
-> node now has multiple children. This ensures the correct node is
-> selected during initialization.
-> 
-> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
-> ---
-> Changes in v6:
-> - Simplified error checking condition logic.
-> - Removed unnecessary fallback message.
-> 
-> Changes in v5:
-> - Add fall back mechanism to acquire reset GPIO from PCIe node when PCIe Bridge
-> node is not present.
-> 
-> Changes in v4:
-> - Resolve kernel test robot warning.
-> https://lore.kernel.org/oe-kbuild-all/202506241020.rPD1a2Vr-lkp@intel.com/
-> - Update commit message.
-> 
-> Changes in v3:
-> - Implement amd_mdb_parse_pcie_port to parse bridge node for reset-gpios property.
-> 
-> Changes in v2:
-> - Change delay to PCIE_T_PVPERL_MS
-> 
-> v5 https://lore.kernel.org/all/20250711052357.3859719-1-sai.krishna.musham@amd.com/
-> v4 https://lore.kernel.org/all/20250626054906.3277029-1-sai.krishna.musham@amd.com/
-> v3 https://lore.kernel.org/r/20250618080931.2472366-1-sai.krishna.musham@amd.com/
-> v2 https://lore.kernel.org/r/20250429090046.1512000-1-sai.krishna.musham@amd.com/
-> v1 https://lore.kernel.org/r/20250326041507.98232-1-sai.krishna.musham@amd.com/
-> ---
->  drivers/pci/controller/dwc/pcie-amd-mdb.c | 62 ++++++++++++++++++++++-
->  1 file changed, 61 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-amd-mdb.c b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-> index 9f7251a16d32..697f5b3fc75e 100644
-> --- a/drivers/pci/controller/dwc/pcie-amd-mdb.c
-> +++ b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-> @@ -18,6 +18,7 @@
->  #include <linux/resource.h>
->  #include <linux/types.h>
->  
-> +#include "../../pci.h"
->  #include "pcie-designware.h"
->  
->  #define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
-> @@ -56,6 +57,7 @@
->   * @slcr: MDB System Level Control and Status Register (SLCR) base
->   * @intx_domain: INTx IRQ domain pointer
->   * @mdb_domain: MDB IRQ domain pointer
-> + * @perst_gpio: GPIO descriptor for PERST# signal handling
->   * @intx_irq: INTx IRQ interrupt number
->   */
->  struct amd_mdb_pcie {
-> @@ -63,6 +65,7 @@ struct amd_mdb_pcie {
->  	void __iomem			*slcr;
->  	struct irq_domain		*intx_domain;
->  	struct irq_domain		*mdb_domain;
-> +	struct gpio_desc		*perst_gpio;
->  	int				intx_irq;
->  };
->  
-> @@ -284,7 +287,7 @@ static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
->  	struct device_node *pcie_intc_node;
->  	int err;
->  
-> -	pcie_intc_node = of_get_next_child(node, NULL);
-> +	pcie_intc_node = of_get_child_by_name(node, "interrupt-controller");
->  	if (!pcie_intc_node) {
->  		dev_err(dev, "No PCIe Intc node found\n");
->  		return -ENODEV;
-> @@ -402,6 +405,34 @@ static int amd_mdb_setup_irq(struct amd_mdb_pcie *pcie,
->  	return 0;
->  }
->  
-> +static int amd_mdb_parse_pcie_port(struct amd_mdb_pcie *pcie)
-> +{
-> +	struct device *dev = pcie->pci.dev;
-> +	struct device_node *pcie_port_node;
-> +
-> +	pcie_port_node = of_get_next_child_with_prefix(dev->of_node, NULL, "pcie");
-> +	if (!pcie_port_node) {
-> +		dev_err(dev, "No PCIe Bridge node found\n");
-> +		return -ENODEV;
-> +	}
-> +
+> We can't retrofit such detection into PHY drivers - if we do so, we'll
+> break WoL on lots of boards (we'd need to e.g. describe PMEB in DT for
+> RTL8211F PHYs. While we can add it, if a newer kernel that expects
+> PMEB to be described to allow WoL is run with an older DT, then that
+> will be a regression.) Thus, I don't see how we could retrofit PHY
+> WoL support detection to MAC drivers.
 
-Please use for_each_child_of_node_with_prefix() and get rid of the above check.
-Since this is a scoped variant, you do not need to care about OF node refcount.
+WoL is a mess. I wounder on how many boards it actually works
+correctly? How often is it tested?
 
-If your platform supports only one Root Port, you can add a comment on top that
-the loop will execute only once. Maybe you can also add a TODO so that someone
-could prepare the driver to handle multi Root Ports in the future.
+I actually think this is similar to pause and EEE. Those were also a
+mess, and mostly wrongly implemented. The solution to that was to take
+as much as possible out of the driver and put it into the core,
+phylink.
 
-> +	/* Request the GPIO for PCIe reset signal and assert */
+We probably want a similar solution. The MAC driver indicates its WoL
+capabilities to phylink. The PHY driver indicates its capabilities to
+phylink. phylink implements all the business logic, and just tells the
+PHY what it should enable, and stay awake. phylink tells the MAC what
+is should enable, and that it should stay awake.
 
-Drop the comment.
+Is this going to happen? Given Russell limited availability, i guess
+not. It needs somebody else to step up and take this on. Are we going
+to break working systems? Probably. But given how broken this is
+overall, how much should we actually care? We can just fix up systems
+as they are reported broken.
 
-> +	pcie->perst_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(pcie_port_node),
-> +						 "reset", GPIOD_OUT_HIGH, NULL);
-> +	if (IS_ERR(pcie->perst_gpio)) {
-> +		if (PTR_ERR(pcie->perst_gpio) != -ENOENT) {
-> +			of_node_put(pcie_port_node);
-> +			return dev_err_probe(dev, PTR_ERR(pcie->perst_gpio),
-> +					     "Failed to request reset GPIO\n");
-> +		}
-> +		pcie->perst_gpio = NULL;
+I also think WoL, pause and EEE is a space we should have more tests
+for. To fully test WoL and pause you need a link partner, but i
+suspect you can do some basic API tests without one. WoL you
+definitely need a link partner. So this makes testing a bit more
+difficult. But that should not stop the community from writing such
+tests and making them available for developers to use.
 
-Not required.
-
-> +	}
-> +
-> +	of_node_put(pcie_port_node);
-> +
-> +	return 0;
-> +}
-> +
->  static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
->  				 struct platform_device *pdev)
->  {
-> @@ -426,6 +457,14 @@ static int amd_mdb_add_pcie_port(struct amd_mdb_pcie *pcie,
->  
->  	pp->ops = &amd_mdb_pcie_host_ops;
->  
-> +	if (pcie->perst_gpio) {
-> +		mdelay(PCIE_T_PVPERL_MS);
-> +
-> +		/* Deassert the reset signal */
-> +		gpiod_set_value_cansleep(pcie->perst_gpio, 0);
-> +		mdelay(PCIE_T_RRS_READY_MS);
-> +	}
-> +
->  	err = dw_pcie_host_init(pp);
->  	if (err) {
->  		dev_err(dev, "Failed to initialize host, err=%d\n", err);
-> @@ -444,6 +483,7 @@ static int amd_mdb_pcie_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct amd_mdb_pcie *pcie;
->  	struct dw_pcie *pci;
-> +	int ret;
->  
->  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
->  	if (!pcie)
-> @@ -454,6 +494,26 @@ static int amd_mdb_pcie_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, pcie);
->  
-> +	ret = amd_mdb_parse_pcie_port(pcie);
-> +
-
-Spurious newline
-
-> +	/*
-> +	 * If amd_mdb_parse_pcie_port returns -ENODEV, it indicates that the
-> +	 * PCIe Bridge node was not found in the device tree. This is not
-> +	 * considered a fatal error and will trigger a fallback where the
-> +	 * reset GPIO is acquired directly from the PCIe node.
-
-s/PCIe node/PCIe Host Bridge node
-
-> +	 */
-> +	if (ret == -ENODEV) {
-
-Please use the below pattern:
-
-	if (ret) {
-		if (ret != -ENODEV) {
-			dev_err();
-			return ret;
-		}
-
-		pcie->perst_gpio = devm_gpiod_get_optional()...
-	}
-
-> +
-
-Spurious newline
-
-> +		/* Request the GPIO for PCIe reset signal and assert */
-
-Drop the comment
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+	Andrew
 
