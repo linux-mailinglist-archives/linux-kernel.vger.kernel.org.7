@@ -1,247 +1,116 @@
-Return-Path: <linux-kernel+bounces-742781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411B2B0F6A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:13:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2639B0F6AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE751C258E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0EF1C27D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2421E45009;
-	Wed, 23 Jul 2025 15:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48F62F7D02;
+	Wed, 23 Jul 2025 15:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JZy/MbWN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVLbBCAc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B822F50A2;
-	Wed, 23 Jul 2025 15:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF712F85FE;
+	Wed, 23 Jul 2025 15:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282941; cv=none; b=e/0aWPWZkevTsVN3T0YeF/RrsVJO/1m2j+ctrZj2YMGMlvSZ0m/ng2qXKbP6CMxlXpjB6Numu6be4uwO4UEbpv9KDr78dAO8TuulbM4Xu0b8xh6XnUYaXNmdCsrLJdjZStJoRsei3wdeu4nmWkgLaklCMjQMPq+hC3gHqYOTP/I=
+	t=1753283001; cv=none; b=RMHNVwQ72OB97AZt+etlG7uUPbvnO/kOiIwKjzjjscqDkBhcwl5brQA/AV+aZr9EUq8DnRiQoQU9N/QimnXk9vup/JnbMZk7/OCo1rGXj3JNP6xV1G/+L18X5O0S+5kU61v+xCe64STaSw4Uu9nJ8mFn+8VuAJgaQk+6NxNzIM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282941; c=relaxed/simple;
-	bh=6+pvN2fHtGwOlv/O7bhUlmvmkHdX4pCXwi46X4ByuXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKHfhLmLmPs2SHCaiAqyTgEuaXVbKfvyYXJuncI7McdhPD8wrZ2XO1398W5e2iqk4S/SezMqdl3/UnW96HBshvIq24FTpfvsSyvbXwJz2vxloEUGe6VyFBA90MkXz8+HOEZf2/M1CGTowUQP7l+3A1nf/ygkdNlSyjqaQoSkrcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JZy/MbWN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8DB2EEA0;
-	Wed, 23 Jul 2025 17:01:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753282890;
-	bh=6+pvN2fHtGwOlv/O7bhUlmvmkHdX4pCXwi46X4ByuXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZy/MbWNQ0qVBBf7D5C66ZxHyKSwZg/XPanz30926mZXNoNB1dV71SKlO/PM91m08
-	 KO8hvRG2HLOHbwo+Ojxu3ocjbXla7utvwM11Mwjxf+nnL5D2Od9p+AUshzygOF3Toa
-	 lWw9cn+tFQgueBbpVICLwQ2NQEySSOAeqDYSg6Q8=
-Date: Wed, 23 Jul 2025 18:02:06 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Julien Vuillaumier <julien.vuillaumier@nxp.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	ribalda@chromium.org, jai.luthra@ideasonboard.com,
-	laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
-	celine.laurencin@nxp.com
-Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
- captures
-Message-ID: <20250723150206.GE6719@pendragon.ideasonboard.com>
-References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
- <20250715235952.GE19299@pendragon.ideasonboard.com>
- <20250716001205.GG19299@pendragon.ideasonboard.com>
- <38e022d0-cc8f-4df2-8a81-69513c854035@nxp.com>
- <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
+	s=arc-20240116; t=1753283001; c=relaxed/simple;
+	bh=WWTb+6ti3vUKjHVhd54re/0m6tya3/HZoN8eV4EAb/o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=fwsdjZ+WAlGAXyvpzn6dgUInlgcSo44gDIqR2A5hxwNXP5SrSnducR07JwSH8Ol+LcJDL/mDkd+amfcsm42yXlVKTvXt/dTuZwVx+Nm6BiHEpl3x1geTpvM0XI7CdMIJSaHdJaKuImHU818aSSJP6cbbm/F7arS77ZgeiVHoEmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVLbBCAc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADEBC4CEE7;
+	Wed, 23 Jul 2025 15:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753282997;
+	bh=WWTb+6ti3vUKjHVhd54re/0m6tya3/HZoN8eV4EAb/o=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=hVLbBCAcYVOFDM3Nyy2EgZ5pZ/3YXoCq0ii5ijFaDiFBQqaXqkhnxkeTUugCyFx4z
+	 RPypRjiyLJwhKj3HfE+SMxuYbHm4mdO6Rq2R+0sRPj0WwMmNpoL7qFrQDtLLBeTsoF
+	 AMwDa0smanMdbwJLs5SRYWsUSPYUMCEpADLetJpZFGzeQF4QQJkhHpURZztRQT6btD
+	 /ky5+nrz6fow1kPuA2kgmOeNHInktm3LbTFmm+0T07MlYhfOntAjRrvzaEHw1+LWO8
+	 4sESgJX/PjiAyJ2xDGzQjvpJ+fU7ggTbcOBxbqdJS9ZsJ40RRd/05soWrIFPptKu8C
+	 NpJ8HZMJ1CmvA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Jul 2025 17:03:12 +0200
+Message-Id: <DBJIY7IKSNVH.1Q2QD6X30GIRC@kernel.org>
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C2=B4nski?=
+ <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com> <aIBl6JPh4MQq-0gu@tardis-2.local> <ED19060D-265A-4DEF-A12B-3F5901BBF4F3@collabora.com> <aIDxFoQV_fRLjt3h@tardis-2.local> <7fa90026-d2ac-4d39-bbd8-4e6c9c935b34@kernel.org> <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com>
+In-Reply-To: <8742EFD5-1949-4900-ACC6-00B69C23233C@collabora.com>
 
-On Tue, Jul 22, 2025 at 11:53:53AM +0200, Julien Vuillaumier wrote:
-> On 20/07/2025 20:56, Mirela Rabulea wrote:
-> > On 7/16/25 03:12, Laurent Pinchart wrote:
-> >> On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
-> >>> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
-> >>>> Add new standard controls as U32 arrays, for sensors with multiple
-> >>>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
-> >>>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
-> >>>> that have multiple captures, but the HDR merge is done inside the 
-> >>>> sensor,
-> >>>> in the end exposing a single stream, but still requiring AEC control
-> >>>> for all captures.
-> >>>
-> >>> It's also useful for sensors supporting DOL or DCG with HDR merge being
-> >>> performed outside of the sensor.
-> >>
-> >> Regarless of where HDR merge is implemented, we will also need controls
-> >> to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
-> >> standardize the values, and that's not good enough. At least for DOL and
-> >> DCG with HDR merge implemented outside of the sensor, we need to
-> >> standardize the modes.
-> >>
-> >> Can you tell which sensor(s) you're working with ?
-> > 
-> > We are working mostly with these 3:
-> > Omnivision's os08a20 (2 exposures staggered hdr, each exposure on a 
-> > separate virtual channel, there are also other hdr modes which we do not 
-> > use)
-> > Omnivision ox05b1s (RGB-Ir with context switching based on group holds, 
-> > 1 context optimized for RGB, the other context optimized for Ir, each 
-> > context on a different virtual channel)
-> > Omnivision ox03c10 (4 exposures, hdr merge in sensor).
-> > 
-> >>>> All controls are in the same class, so they could all be set
-> >>>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
-> >>>> useful in case of sensors with context switching.
-> >>>
-> >>> Agreed, we should be able to set them all. Are we still unable to set
-> >>> controls from multiple classes atomatically ? I thought that limitation
-> >>> has been lifted.
-> > 
-> > Maybe I need some background check on this, but looking at kernel tag 
-> > next-20250718, this comment still lies in the documentation:
-> > "These ioctls allow the caller to get or set multiple controls
-> > atomically. Control IDs are grouped into control classes (see
-> > :ref:`ctrl-class`) and all controls in the control array must belong
-> > to the same control class."
-> > 
-> > Maybe it needs to be updated, or not...since there is also this check in 
-> > check_ext_ctrls():
-> >      /* Check that all controls are from the same control class. */
-> >      for (i = 0; i < c->count; i++) {
-> >          if (V4L2_CTRL_ID2WHICH(c->controls[i].id) != c->which) {
-> >              c->error_idx = ioctl == VIDIOC_TRY_EXT_CTRLS ? i :
-> >                                        c->count;
-> >              return false;
-> >          }
-> >      }
+On Wed Jul 23, 2025 at 4:56 PM CEST, Daniel Almeida wrote:
+>> On 23 Jul 2025, at 11:35, Danilo Krummrich <dakr@kernel.org> wrote:
+>> On 7/23/25 4:26 PM, Boqun Feng wrote:
+>>> On Wed, Jul 23, 2025 at 10:55:20AM -0300, Daniel Almeida wrote:
+>>> But sure, this and the handler pinned initializer thing is not a blocke=
+r
+>>> issue. However, I would like to see them resolved as soon as possible
+>>> once merged.
+>>=20
+>> I think it would be trivial to make the T an impl PinInit<T, E> and use =
+a
+>> completion as example instead of an atomic. So, we should do it right aw=
+ay.
+>>=20
+>> - Danilo
+>
+>
+> I agree that this is a trivial change to make. My point here is not to po=
+stpone
+> the work; I am actually somewhat against switching to completions, as per=
+ the
+> reasoning I provided in my latest reply to Boqun. My plan is to switch di=
+rectly
+> to whatever will substitute AtomicU32.
 
-This only when c->which is set to a control class. If you set it to
-V4L2_CTRL_WHICH_CUR_VAL (equal to 0) then you can set (or get) controls
-from multiple classes in one go.
+I mean, Boqun has a point. AFAIK, the Rust atomics are UB in the kernel.
 
-> > There is also another inconvenient, the VIDIOC_S_EXT_CTRLS does not 
-> > reach the v4l2 subdevice driver, what we get in the sensor driver is a 
-> > set of .s_ctrl calls. I don't know about other sensors, but for the 
-> > Omivision sensors which I am familiar with, the group holds feature 
-> > could be used to get multiple registers to be applied atomically in the 
-> > same frame, but the sensor driver would need to know when to start and 
-> > when to end filling the group hold with the desired registers. If there 
-> > is some similar feature in other sensors, I think the VIDIOC_S_EXT_CTRLS 
-> > should have a corresponding v4l2-subdev operation, so that it can be 
-> > implemented in the sensor subdevice driver. This would probably require 
-> > some changes in the v4l2 core, as currently the subdev_do_ioctl() 
-> > function does not let the VIDIOC_S_EXT_CTRLS go to the subdevice.
-> > 
-> > Laurent, Hans, any thoughts on this?
+So, this is a bit as if we would use spin_lock() instead of spin_lock_irq()=
+,
+it's just not correct. Hence, we may not want to showcase it until it's act=
+ually
+resolved.
 
-I can think of at least 3 ways to handle this.
+The plain truth is, currently there's no synchronization primitive for gett=
+ing
+interior mutability in interrupts.
 
-The first method would be to group all controls in a cluster. That way
-you will get a single .s_ctrl() call per VIDIOC_S_EXT_CTRLS. You will
-have to iterate over the controls to see which ones have changed, and
-configure the sensor accordingly. This short-circuits the logic in the
-control framework that dispatches individual controls to separate
-.s_ctrl() calls (or rather still goes through that logic, but doesn't
-make use of it), and requires reimplementing it manually in the
-.s_ctrl() handler. It's not ideal.
+You can use a normal spinlock or mutex in the threaded handler though.
 
-The second method would be to add new .begin() and .end() (name to be
-bikeshedded) control operations. I experimented with this a while ago to
-expose group hold to userspace, but never upstreamed the patches as I
-didn't really need them in the end. Alternatively, the VIDIOC_S_EXT_CTRL
-could be exposed to drivers, allowing them to implement begin/end
-operations before and after calling the control framework. I don't have
-a strong preference (maybe Hans would).
+And in the hard IRQ you can use a completion to indicate something has
+completed.
 
-I increasingly think that the control framework doesn't provide the best
-value for subdevs. It has been developed for video devices, and for
-subdevs in video-centric devices where subdevs are hidden behind a video
-device, but not for MC-centric use cases where subdevs are exposed to
-userspace. The third option would be to implement something better,
-dropping the useless features and adding support for the needs of modern
-devices, but that would be much more work.
+Once we have proper atomics and spin_lock_irq() we can still change it.
 
-> >>>> Each element of the array will hold an u32 value (exposure or gain)
-> >>>> for one capture. The size of the array is up to the sensor driver which
-> >>>> will implement the controls and initialize them via 
-> >>>> v4l2_ctrl_new_custom().
-> >>>> With this approach, the user-space will have to set valid values
-> >>>> for all the captures represented in the array.
-> >>>
-> >>> I'll comment on the controls themselves in patch 2/2.
-> >>>
-> >>>> The v4l2-core only supports one scalar min/max/step value for the
-> >>>> entire array, and each element is validated and adjusted to be within
-> >>>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
-> >>>> maximum value for the exposure control could be "the max value for the
-> >>>> long exposure" or "the max value for the sum of all exposures". If none
-> >>>> of these is ok, the sensor driver can adjust the values as supported and
-> >>>> the user space can use the TRY operation to query the sensor for the
-> >>>> minimum or maximum values.
-> >>>
-> >>> Hmmmm... I wonder if we would need the ability to report different
-> >>> limits for different array elements. There may be over-engineering
-> >>> though, my experience with libcamera is that userspace really needs
-> >>> detailed information about those controls, and attempting to convey the
-> >>> precise information through the kernel-userspace API is bound to fail.
-> >>> That's why we implement a sensor database in libcamera, with information
-> >>> about how to convert control values to real gain and exposure time.
-> >>> Exposing (close to) raw register values and letting userspace handle the
-> >>> rest may be better.
-> > 
-> > Julien, any thoughts on this?
-> 
-> Reporting min/max value per array element could have made sense for some 
-> controls. For instance we have a HDR sensor whose long capture analog 
-> gain range is different from the shorter captures gain. Conversely, it 
-> may not work well for the multi-capture exposure control where the 
-> constraint can be more about the sum of the exposures for each capture 
-> rather than the individual exposure values. In that case, exposing 
-> min/max values per array element does not really help the user space.
-> 
-> Thus, having the user space to have the necessary insight into each 
-> sensor specifics for its AEC control seems to be the versatile option.
-
-Then I think we should look at a libcamera implementation alongside with
-this patch series, and review them together.
-
-> > If we don't need to report different limits for different array 
-> > elements, we are fine, just we need to document better what those limits 
-> > stand for in case of arrays.
-> > 
-> >>>> Mirela Rabulea (2):
-> >>>>    LF-15161-6: media: Add exposure and gain controls for multiple
-> >>>>      captures
-> >>>>    LF-15161-7: Documentation: media: Describe exposure and gain 
-> >>>> controls
-> >>>>      for multiple captures
-> >>>
-> >>> Did you forget to remove the LF-* identifiers ? :-)
-> > 
-> > Yes, at least in the cover-letter, my bad :(
-> > 
-> > Thanks for feedback.
-> > 
-> >>>>
-> >>>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
-> >>>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
-> >>>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
-> >>>>   3 files changed, 23 insertions(+)
-
--- 
-Regards,
-
-Laurent Pinchart
+> The switch to impl PinInit is fine.
 
