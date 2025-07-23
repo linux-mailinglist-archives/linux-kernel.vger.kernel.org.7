@@ -1,59 +1,47 @@
-Return-Path: <linux-kernel+bounces-741962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20B6B0EB45
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E21B0EB4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0AA6C75EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:05:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48441580889
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 07:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456D3270ECF;
-	Wed, 23 Jul 2025 07:06:12 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC824272E51;
+	Wed, 23 Jul 2025 07:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQSciDun"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB952AF0A;
-	Wed, 23 Jul 2025 07:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1A12FF6F;
+	Wed, 23 Jul 2025 07:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753254371; cv=none; b=ux+YMYU/CUKOvzNcaRNeat3rCl6PMtnnqLUnb9UxuZBIxF6l4If/OqgSxx+asLwSs+uLTn5ZVhis8u20PKdy42pWVe6uL+PEwjmEMhRAu9S1Rbobc7A5zYnvglxAuwJaibWE0X0ksQrOQI0RvPc0/bVrD0YQSQyjOcTG9C6gnFI=
+	t=1753254408; cv=none; b=ifFwnHd6G65X+w7+i/cIhWQFE7R2oin/PKcai57e+P/Vxf/AEQdEoS78W7nCQvY6IJo/U8HrsIVVcWlaaKxecIx7wFEzbFwECSEcFbCw8W497lJ3hEznHmNlHsZyJ7TSVDFstO+C5fWufPwJoEs5o2Pw2rgJQypphAopyXXYuR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753254371; c=relaxed/simple;
-	bh=XA4vplFibDGvZGTZC0XMytlQ3j7xbkHH4TaNp+bBKgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=geB03xTzSp01IfxZC9ldGr5Ph2LUghwi+D5WfW44R5ScxtxUyA/iIzx1JkbIisEUUgAAa+MpstS//vSZTu92BiiDFvvpFxvbhxPKr2lTel4pqV/1yyU4geHSlBmDiJtcuCIsKVc4uyE5n+rZu++Znh04r/R+EOoIalTzwx7PBJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 7b840d74679311f0b29709d653e92f7d-20250723
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:1a41166f-0e66-4c81-bdae-caf56488a794,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:10261a4102752deb1fa961640421017e,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7b840d74679311f0b29709d653e92f7d-20250723
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <lijiayi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 721445601; Wed, 23 Jul 2025 15:05:57 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 61D2D16001A03;
-	Wed, 23 Jul 2025 15:05:57 +0800 (CST)
-X-ns-mid: postfix-688089D5-3080892398
-Received: from [172.25.120.57] (unknown [172.25.120.57])
-	by node4.com.cn (NSMail) with ESMTPA id E61A716001A01;
-	Wed, 23 Jul 2025 07:05:56 +0000 (UTC)
-Message-ID: <4697e3bd-9954-45af-a4a4-e542760102d7@kylinos.cn>
-Date: Wed, 23 Jul 2025 15:05:56 +0800
+	s=arc-20240116; t=1753254408; c=relaxed/simple;
+	bh=iflZfY3qMI5grSf6yRjiEW4K74WNj8Ky50H/GR5cHdo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MvVolJ23KImc0nOPWd+ET6m9QfgYpBQ5ZC8L6rezKbe3Ak46fJ4TEgEf/hyb/JBLsG7UQ9lKvjGHTArgBCuP0rcgAm1IwNjcWKl5/5DVP4FmeGYx4V8c/hy5Byto/9aWqQgYkMnrI3Xcz6v9o4mExdiPdKX25BdDJruDrHOhnME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQSciDun; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C159CC4CEE7;
+	Wed, 23 Jul 2025 07:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753254407;
+	bh=iflZfY3qMI5grSf6yRjiEW4K74WNj8Ky50H/GR5cHdo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=EQSciDunEnPNVWjy2UkZe7ljxX4kHCidSM58CJApfmFUu8Z5Ud3nV2OQapL4PVXnR
+	 bsWhB55GIwMLUO5fR2ZjWGPrRfVWI2dm/aKwgTKen1YjL2lPPqxBp8he4IL3hp+xZy
+	 0Qdc7v+66t2Qun8HW6CqlpPfvw+zKPEH+DbGadzuyzkIl7t+HUv8tOqtObFQuCYNQK
+	 qMP+GZ0g3cM+QxIQan9oDqLW4vPuC7gXO29gvmIcyYG3pjIT30rOO/Nx/ZRGHYrUYz
+	 gW+jbOgwOijyUlZ3LdggDIxwGfTbYXRieyh4Hk1O/5gKn/pZj5XunKnl4PJfPLRPFP
+	 VqSLjX7ZwcgsQ==
+Message-ID: <5ca3ba94-27b3-4cda-aba4-e2935acbe55c@kernel.org>
+Date: Wed, 23 Jul 2025 09:06:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,128 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ACPI: Fix initial QoS constraint application order in
- PPC initialization
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250718020312.856168-1-lijiayi@kylinos.cn>
- <20250721032606.3459369-1-lijiayi@kylinos.cn>
- <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
-Cc: rafael@kernel.org, jiayi_dec@163.com, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-From: =?UTF-8?B?5p2O5L2z5oCh?= <lijiayi@kylinos.cn>
-In-Reply-To: <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
+ binding into memory channel
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Le Goffic <legoffic.clement@gmail.com>, Julius Werner
+ <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
+ <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
+ <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 23/07/2025 08:57, Krzysztof Kozlowski wrote:
+> On Tue, Jul 22, 2025 at 04:03:24PM +0200, Clément Le Goffic wrote:
+>> LPDDR and DDR channels exist and share the same properties, they have a
+>> compatible, ranks, and an io-width.
+> 
+> Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
 
 
+Although these were not JEDEC probably...
 
-=E5=9C=A8 2025/7/21 21:27, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> On Mon, Jul 21, 2025 at 5:26=E2=80=AFAM Jiayi Li <lijiayi@kylinos.cn> w=
-rote:
->>
->> This patch fixes an issue where _PPC frequency limits set by the BIOS
->> failed to take effect due to incorrect call ordering. Previously,
->> freq_qos_update_request() was being called before freq_qos_add_request=
-(),
->> causing the constraint updates to be ignored. With this fix, the frequ=
-ency
->> limits are now properly enforced as intended.
->> The original initialization sequence was:
->>
->> cpufreq_policy_online()
->>      acpi_cpufreq_cpu_init()
->>          acpi_processor_get_platform_limit()
->>              freq_qos_update_request(&perflib_req)
->>      blocking_notifier_call_chain(...)
->>          acpi_processor_ppc_init()
->>              freq_qos_add_request(&perflib_req)
->>
->> The new sequence explicitly ensures:
->>
->> cpufreq_policy_online()
->>      acpi_cpufreq_cpu_init()
->>          acpi_processor_get_platform_limit()
->>              freq_qos_update_request(&perflib_req)
->>      blocking_notifier_call_chain(...)
->>          acpi_processor_ppc_init()
->>              freq_qos_add_request(&perflib_req)
->> +           acpi_processor_get_platform_limit()
->> +               freq_qos_update_request(&perflib_req)
->>
->> The critical change adds an immediate platform limit update after the
->> QoS request is registered. This guarantees that the initial P-state
->> constraint is applied before any subsequent updates, resolving the win=
-dow
->> where constraints could be applied out-of-order.
->>
->> Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of=
- cpufreq notifier")
->> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
->> ---
->> v1 -> v2:
->> - Modify the commit.
->> - Add pr->performance check in acpi_processor_ppc_init loop.
->> ---
->> ---
->>   drivers/acpi/processor_perflib.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor=
-_perflib.c
->> index 64b8d1e19594..56f2b8354d62 100644
->> --- a/drivers/acpi/processor_perflib.c
->> +++ b/drivers/acpi/processor_perflib.c
->> @@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy=
- *policy)
->>   {
->>          unsigned int cpu;
->>
->> +       if (ignore_ppc =3D=3D 1)
->> +               return;
->> +
->>          for_each_cpu(cpu, policy->related_cpus) {
->>                  struct acpi_processor *pr =3D per_cpu(processors, cpu=
-);
->>                  int ret;
->> @@ -180,6 +183,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy=
- *policy)
->>                  if (!pr)
->>                          continue;
->>
->> +               if (!pr->performance)
->> +                       continue;
->> +
->>                  /*
->>                   * Reset performance_platform_limit in case there is =
-a stale
->>                   * value in it, so as to make it match the "no limit"=
- QoS value
->=20
-> Applied, but I have consolidated the pr and pr->performance checks abov=
-e.
->=20
-> I have also made some changes in the subject and changelog.
->=20
-> Thanks!
+> don't think all memory types do.
+> 
+> I think this should be renamed to sdram-channel.
+... yet still JEDEC also has some standards for SRAM, EPROM, HBM and
+SGRAM (graphics), see:
+https://www.jedec.org/category/technology-focus-area/memory-configurations-jesd21-c
 
-Thanks for the review!
 
->=20
->> @@ -193,6 +199,11 @@ void acpi_processor_ppc_init(struct cpufreq_polic=
-y *policy)
->>                  if (ret < 0)
->>                          pr_err("Failed to add freq constraint for CPU=
-%d (%d)\n",
->>                                 cpu, ret);
->> +
->> +               ret =3D acpi_processor_get_platform_limit(pr);
->> +               if (ret)
->> +                       pr_err("Failed to update freq constraint for C=
-PU%d (%d)\n",
->> +                              cpu, ret);
->>          }
->>   }
->>
->> --
-
+Best regards,
+Krzysztof
 
