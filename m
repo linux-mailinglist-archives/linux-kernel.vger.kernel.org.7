@@ -1,610 +1,156 @@
-Return-Path: <linux-kernel+bounces-743132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F030B0FB13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC34FB0FB09
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA41582BE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E9A3B94C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357ED23507E;
-	Wed, 23 Jul 2025 19:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F5C230269;
+	Wed, 23 Jul 2025 19:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJFcps/k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="B4SYYgi8"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47251F3B9E;
-	Wed, 23 Jul 2025 19:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC4A1EEA5F;
+	Wed, 23 Jul 2025 19:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753299731; cv=none; b=QR4VMrC++H3OExhqgHE8r/a0Kglk5i6FCSTel5WMT0/olsPpelz9tkOKfkQYr4jy88xDBAfuoLUGWK51pcZHm16HmDwLKzYw0zefYJRh4duQSMG5gb+1NC3sNsYpJH2CG3JX3/CIdLQGpnW4xdUPjgJkWg2UjxwV8hVV3p2A8DY=
+	t=1753299716; cv=none; b=esw43cIB3MOhUnk4RDzvKdE6y1SFhq2XsyaleCyLaS2gr0LWh0chr3h2YgNry5Jrz4Q/COjEZBM9UzHQeMJXKANa6QaK7Ga3ZDHHoUff6Uh2hWnnD0IVbrCfGL5bKK2XiqnQGbYmz1/dQsyvTWIigiGFfeaEOfHthATHl2zpSms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753299731; c=relaxed/simple;
-	bh=E0Eab80CSspUom29cz1hW0Xjip+olKwYQlEy7+VGQEY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=V4jyJpKMqo+LDwLnl0+pqW2DT3FU2phnJGdnJpjjI91xXXqvTyv/XWptOvXr3NSZrz6gvq1dmW4zG1OFAXJaoVJowiZo8M4UHLzHOgo7LedEk1LSC1y9gs5cn0A5Mkq7EClSSykkOU+lS2ukQ4gsLPIw1mFlg9rXTBsyBY1OUaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJFcps/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529B9C4CEF4;
-	Wed, 23 Jul 2025 19:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753299730;
-	bh=E0Eab80CSspUom29cz1hW0Xjip+olKwYQlEy7+VGQEY=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=PJFcps/kE5PQJsEarYvghsZFGtu0h8oEw02MeAxXfES7J+CC76RxlUg/0Rvi/4O42
-	 uW3Q3vfGe6ivGNYTu8m728XnZ85KpWiHi56fDta1TGDMeE1lgjY2LuglxvtN5THeJi
-	 4nuK9U7t2vh6mG1G6QhJXaZXk9CLY5rVq54RWLLn3eUMg30OgDrDbAqnNXyFG4SimL
-	 2UN3h3iwOt6mffPWNJknKow3+LHScpVXwhz1oVjUKzhVUp+CyDoGK4rbAa+oR9nIWr
-	 EVl9YXpHWqccW0ftKhakd2UhYRD8477RAhQTLyykDI/I+2RlCu45VwZU22fc4GqKwY
-	 gDm/fRGars4Nw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1uefLv-00000000QYY-3pwl;
-	Wed, 23 Jul 2025 15:42:11 -0400
-Message-ID: <20250723194211.768813368@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 23 Jul 2025 15:41:42 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org,
- llvm@lists.linux.dev
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v4 1/4] tracing: sorttable: Add a tracepoint verification check at build time
-References: <20250723194141.617125835@kernel.org>
+	s=arc-20240116; t=1753299716; c=relaxed/simple;
+	bh=tXkjt9YB46wQ7fKSEspeGwCyc8yw9KfMpYOU1ApO+HU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oB8i5Afl2AIqPjByvqmbDtkKTTj/8oepKNKXylrbIJVi8l6VDJxNl1zKBW0A5x9vTEf09sBImo4tCLhZidycnngUxRPUs+QAl8y7SVE5nP3AMsYnGeJks8cs6o0z4rJEHggmMT6qicZi1AqWqgmEYSxJ3SmXtNpwBUhacYOLV4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=B4SYYgi8; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b271f3ae786so244398a12.3;
+        Wed, 23 Jul 2025 12:41:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1753299714; x=1753904514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tXkjt9YB46wQ7fKSEspeGwCyc8yw9KfMpYOU1ApO+HU=;
+        b=B4SYYgi8F6BQuun12lLY8lSRO5BhUmwk+nN+P7KnjJfU4/Y3yiNc5gzCIsMd77ehHO
+         CIhDxJeVv1fbcaThBPKhjLjxl4UtzwwYMi2PsEtuWBuaCHOY9xdiZ9CCGFhwKFUnxdHx
+         BFXpUOCdoRgMT+ayucALWEVN2Djp4KvEWMUwS+93lPtd9ceTqnWGiWy1nmQcZPQJoOwJ
+         8HLXyTlzz+qZ52BQYoZoxKBpagVSElbdLQ3FjjToBJ9mCsRTRsfLFEE1LC1j0rckg81D
+         BtzxhgFMvtV/cKgOOZEIRk8oXdnFdOzA72X247jcewvefLP5vktivOJprfZlQzQdDNUA
+         F5tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753299714; x=1753904514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tXkjt9YB46wQ7fKSEspeGwCyc8yw9KfMpYOU1ApO+HU=;
+        b=SvyzdogEHxyzrqa6gDUCzMjvhL5WsiR7wqLFHoyQNkkBUYhp4KdoA0ONvDKq5ev3WF
+         Vtp00TSHu2iaPYGvIWPGzhzT4HkNjd5EzeGvOTeUI1Cxns5lFyGzD1OOITTKImxTireh
+         H6jh8Jk3jQh0ykPmbcEitK4x6cQSlW1VTkPJGNv1ilziijHBz1ed26fDyvniBmMWMd/a
+         +8JBNcPi4E0NadZ8WODuYQ2grhnFsR6M2hbLFGF9+8J/r2Y9jEKTdaPiwvYoQ5Rz/EQt
+         yk7axcN8+wirJBYjjfY8mK5MAtT3emnNy6wDLDp2bS/X51lBky/Ci+eml6qko4zLBWQW
+         db1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjdAj0u8KUVFgyADN6tr2nUMtKxNMiGbmiFKhkcV4ciAy8UIHJB9M/iudNzSO2/wbqVZiTbwTmum3w@vger.kernel.org, AJvYcCWfZflsimMKTpcihF/g065JODNAAFTgVkPzNc+Tle6d3rbL/xwFzcjK+ucM097cHVQiMXn1xZpb@vger.kernel.org, AJvYcCXgtXhWfwjw95qCjWcZAETZILIsYX8GtoXdYNuNyS8lsmv9tuqvXvnbkotU5P+Jde+Mom3QVBXNAhPa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzIpmPYZxeHLcS1nvCMFNu74SK57C94NWx7Qf8KCIR8PO+58X/
+	JLO2lTzUk/H3r2BsAZBjp3VZg8aUy6gwJJsHBN81Y5BoYiu+bdYvCwIO/bms3TpVUXxy+Sipbew
+	IWdmrZhC003IS9CIn43QOxH8wNAgcZbI=
+X-Gm-Gg: ASbGncskWPiAFlkljZgNIdVWyoOQ9Mo2aJxTNsyUcmreJtz/vqHqxrq7pAJJ+Q6/OxY
+	yBxnRfolY0a+PLHM9idW78FLUW2WjJ+7bYZ3adtoxik8DHtZRN1Tw83LBVlV7WYFW3BaRXQUtJJ
+	L7JXSlTFMm9S20+DzU332CYiyMmI9obzLSbRqa+NJBBX3+CAGevhu0wjX41P/KtEmnTSegQ8Azg
+	ggSDDcac3Y8LpLdwIDdjr18laHnhKtG/abrEz8b
+X-Google-Smtp-Source: AGHT+IGWeJEGKh+77TLxgOqUFZ6T7wS6eJlh3839BVCy1uQyeIhZdVq4g4jKDXGiGQwgtBSfZKGUpxHiJcD0En+3NEg=
+X-Received: by 2002:a17:902:e349:b0:23f:9a4d:2762 with SMTP id
+ d9443c01a7336-23f9a4d291fmr33727935ad.31.1753299713947; Wed, 23 Jul 2025
+ 12:41:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
+ <CAFBinCCmsw=XGPtrk1XbphOu=OwhxmAiZ+2h4x_M-_f64Vo-7A@mail.gmail.com> <8e5e1d09-0706-42b3-8ae1-00a0e2f5139a@gmail.com>
+In-Reply-To: <8e5e1d09-0706-42b3-8ae1-00a0e2f5139a@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 23 Jul 2025 21:41:43 +0200
+X-Gm-Features: Ac12FXxIbHkGKJlc4jEtw4fHm14nx983sxWIVJ-SRO-9-6MULnML1Fz74CS-trI
+Message-ID: <CAFBinCBu4Z_HZuhPChsyraStK=RSAKH4vtNLCoFWAWUjm5n6ig@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
+To: Sanjay Suthar <sanjaysuthar661996@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	ribalda@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Jul 23, 2025 at 6:30=E2=80=AFPM Sanjay Suthar
+<sanjaysuthar661996@gmail.com> wrote:
+>
+> On 23/07/25 01:08, Martin Blumenstingl wrote:
+>
+> > On Tue, Jul 22, 2025 at 7:06=E2=80=AFPM Sanjay Suthar
+> > <sanjaysuthar661996@gmail.com> wrote:
+> >> Fix minor grammatical issues by removing duplicated "is" in two device=
+tree
+> >> binding documents:
+> >>
+> >> - net/amlogic,meson-dwmac.yaml
+> >> - iio/dac/ti,dac7612.yaml
+> >>
+> >> Signed-off-by: Sanjay Suthar <sanjaysuthar661996@gmail.com>
+> > Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> >
+> > Thank you for spotting and fixing this!
+> >
+> > To my knowledge nobody else is currently working on amlogic,meson-dwmac=
+ changes.
+> > Meaning: with an ACK from the netdev or iio maintainers this patch can
+> > go through any tree (iio, netdev, devicetree).
+> >
+> >
+> > Best regards,
+> > Martin
+>
+> Thanks for reviewing the patch. So you mentioned, now the patch can go
+> through any of above mentioned tree, Is there any Action item left on my
+> end related to this patch? Also will I be notified about when the patch
+> will be approved and merged by the respective owner?
+Apart from waiting a few days there's nothing to be done on your end.
+Both the netdev and iio maintainers are fairly quick to review
+patches, but they have to review a large volume. So give them some
+time.
 
-If a tracepoint is defined via DECLARE_TRACE() or TRACE_EVENT() but never
-called (via the trace_<tracepoint>() function), its metadata is still
-around in memory and not discarded.
+A little bit of background in case it helps understand things better.
+In my opinion this patch can go through three trees, since these areas
+are involved (in no particular order):
+- netdev
+- iio
+- devicetree
 
-When created via TRACE_EVENT() the situation is worse because the
-TRACE_EVENT() creates metadata that can be around 5k per trace event.
-Having unused trace events causes several thousand of wasted bytes.
+If one maintainer takes a patch that somehow touches another
+maintainer's area what typically happens is that the maintainers give
+their Acked-by and agree on the tree through which the patch will land
+in mainline (=3D Linux Torvalds' tree).
+When the patch is picked up there's typically a mail, informing you
+about the tree that it has been applied to.
 
-Add a verifier that injects a pointer to the tracepoint structure in the
-functions that are used and added to a section called __tracepoint_check.
-For every builtin tracepoint within the tracepoint_ptr section that is
-used, will have a corresponding pointer back to it in the __tracepoint_check
-section.
-
-Update the sorttable code to check the tracepoint_check and tracepoint_ptr
-sections to see what trace events have been created but not used.
-
-List the tracepoints that are not used at build time. Note, this currently
-only handles tracepoints that are builtin and not in modules.
-
-Enabling this currently with a given config produces:
-
-warning: tracepoint 'sched_move_numa' is unused.
-warning: tracepoint 'sched_stick_numa' is unused.
-warning: tracepoint 'sched_swap_numa' is unused.
-warning: tracepoint 'pelt_hw_tp' is unused.
-warning: tracepoint 'pelt_irq_tp' is unused.
-warning: tracepoint 'rcu_preempt_task' is unused.
-warning: tracepoint 'rcu_unlock_preempted_task' is unused.
-warning: tracepoint 'xdp_bulk_tx' is unused.
-warning: tracepoint 'xdp_redirect_map' is unused.
-warning: tracepoint 'xdp_redirect_map_err' is unused.
-warning: tracepoint 'vma_mas_szero' is unused.
-warning: tracepoint 'vma_store' is unused.
-warning: tracepoint 'hugepage_set_pmd' is unused.
-warning: tracepoint 'hugepage_set_pud' is unused.
-warning: tracepoint 'hugepage_update_pmd' is unused.
-warning: tracepoint 'hugepage_update_pud' is unused.
-warning: tracepoint 'block_rq_remap' is unused.
-warning: tracepoint 'xhci_dbc_handle_event' is unused.
-warning: tracepoint 'xhci_dbc_handle_transfer' is unused.
-warning: tracepoint 'xhci_dbc_gadget_ep_queue' is unused.
-warning: tracepoint 'xhci_dbc_alloc_request' is unused.
-warning: tracepoint 'xhci_dbc_free_request' is unused.
-warning: tracepoint 'xhci_dbc_queue_request' is unused.
-warning: tracepoint 'xhci_dbc_giveback_request' is unused.
-warning: tracepoint 'tcp_ao_wrong_maclen' is unused.
-warning: tracepoint 'tcp_ao_mismatch' is unused.
-warning: tracepoint 'tcp_ao_key_not_found' is unused.
-warning: tracepoint 'tcp_ao_rnext_request' is unused.
-warning: tracepoint 'tcp_ao_synack_no_key' is unused.
-warning: tracepoint 'tcp_ao_snd_sne_update' is unused.
-warning: tracepoint 'tcp_ao_rcv_sne_update' is unused.
-
-Some of the above is totally unused but others are not used due to their
-"trace_" functions being inside configs, in which case, the defined
-tracepoints should also be inside those same configs. Others are
-architecture specific but defined in generic code, where they should
-either be moved to the architecture or be surrounded by #ifdef for the
-architectures they are for.
-
-Link: https://lore.kernel.org/all/20250528114549.4d8a5e03@gandalf.local.home/
-
-Changes since v3: https://lore.kernel.org/20250722152157.664260747@kernel.org
-
-- Folded this patch with patch 2: https://lore.kernel.org/20250722152157.839415861@kernel.org
-
-- Removed the runtime boot check and only have the build time check (Linus Torvalds).
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/asm-generic/vmlinux.lds.h |   1 +
- include/linux/tracepoint.h        |  10 ++
- kernel/trace/Kconfig              |  19 +++
- scripts/Makefile                  |   4 +
- scripts/sorttable.c               | 268 +++++++++++++++++++++++++++---
- 5 files changed, 279 insertions(+), 23 deletions(-)
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index fa5f19b8d53a..600d8b51e315 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -708,6 +708,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	MCOUNT_REC()							\
- 	*(.init.rodata .init.rodata.*)					\
- 	FTRACE_EVENTS()							\
-+	BOUNDED_SECTION_BY(__tracepoint_check, ___tracepoint_check)	\
- 	TRACE_SYSCALLS()						\
- 	KPROBE_BLACKLIST()						\
- 	ERROR_INJECT_WHITELIST()					\
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 826ce3f8e1f8..2b96c7e94c52 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -221,6 +221,14 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		__do_trace_##name(args);				\
- 	}
- 
-+#ifdef CONFIG_TRACEPOINT_VERIFY_USED
-+# define TRACEPOINT_CHECK(name)						\
-+	static void __used __section("__tracepoint_check") *__trace_check = \
-+		&__tracepoint_##name;
-+#else
-+# define TRACEPOINT_CHECK(name)
-+#endif
-+
- /*
-  * Make sure the alignment of the structure in the __tracepoints section will
-  * not add unwanted padding between the beginning of the section and the
-@@ -270,6 +278,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
- 	static inline void __do_trace_##name(proto)			\
- 	{								\
-+		TRACEPOINT_CHECK(name)					\
- 		if (cond) {						\
- 			guard(preempt_notrace)();			\
- 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
-@@ -289,6 +298,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
- 	static inline void __do_trace_##name(proto)			\
- 	{								\
-+		TRACEPOINT_CHECK(name)					\
- 		guard(rcu_tasks_trace)();				\
- 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
- 	}								\
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 35448f7233fe..90ffb83a43dc 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -1050,6 +1050,25 @@ config GCOV_PROFILE_FTRACE
- 	  Note that on a kernel compiled with this config, ftrace will
- 	  run significantly slower.
- 
-+config TRACEPOINT_VERIFY_USED
-+	bool
-+	help
-+          This option creates a section when tracepoints are used
-+	  that hold a pointer to the tracepoint that is used.
-+	  This can be used to test if a defined tracepoint is
-+	  used or not.
-+
-+config TRACEPOINT_WARN_ON_UNUSED_BUILD
-+	bool "Warn on build if a tracepoint is defined but not used"
-+	depends on TRACEPOINTS
-+	select TRACEPOINT_VERIFY_USED
-+	help
-+	  This option checks if every builtin defined tracepoint is
-+	  used in the code. If a tracepoint is defined but not used,
-+	  it will waste memory as its metadata is still created.
-+	  This will cause a warning at build time if the architecture
-+	  supports it.
-+
- config FTRACE_SELFTEST
- 	bool
- 
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 46f860529df5..f81947ec9486 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -42,6 +42,10 @@ HOSTCFLAGS_sorttable.o += -I$(srctree)/tools/arch/$(SRCARCH)/include
- HOSTCFLAGS_sorttable.o += -DUNWINDER_ORC_ENABLED
- endif
- 
-+ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
-+HOSTCFLAGS_sorttable.o += -DPREL32_RELOCATIONS
-+endif
-+
- ifdef CONFIG_BUILDTIME_MCOUNT_SORT
- HOSTCFLAGS_sorttable.o += -DMCOUNT_SORT_ENABLED
- endif
-diff --git a/scripts/sorttable.c b/scripts/sorttable.c
-index deed676bfe38..ddcbec22ca96 100644
---- a/scripts/sorttable.c
-+++ b/scripts/sorttable.c
-@@ -92,6 +92,12 @@ static void (*w)(uint32_t, uint32_t *);
- static void (*w8)(uint64_t, uint64_t *);
- typedef void (*table_sort_t)(char *, int);
- 
-+static Elf_Shdr *init_data_sec;
-+static Elf_Shdr *ro_data_sec;
-+static Elf_Shdr *data_data_sec;
-+
-+static void *file_map_end;
-+
- static struct elf_funcs {
- 	int (*compare_extable)(const void *a, const void *b);
- 	uint64_t (*ehdr_shoff)(Elf_Ehdr *ehdr);
-@@ -550,8 +556,6 @@ static void *sort_orctable(void *arg)
- }
- #endif
- 
--#ifdef MCOUNT_SORT_ENABLED
--
- static int compare_values_64(const void *a, const void *b)
- {
- 	uint64_t av = *(uint64_t *)a;
-@@ -574,6 +578,22 @@ static int compare_values_32(const void *a, const void *b)
- 
- static int (*compare_values)(const void *a, const void *b);
- 
-+static int fill_addrs(void *ptr, uint64_t size, void *addrs)
-+{
-+	void *end = ptr + size;
-+	int count = 0;
-+
-+	for (; ptr < end; ptr += long_size, addrs += long_size, count++) {
-+		if (long_size == 4)
-+			*(uint32_t *)ptr = r(addrs);
-+		else
-+			*(uint64_t *)ptr = r8(addrs);
-+	}
-+	return count;
-+}
-+
-+#ifdef MCOUNT_SORT_ENABLED
-+
- /* Only used for sorting mcount table */
- static void rela_write_addend(Elf_Rela *rela, uint64_t val)
- {
-@@ -684,7 +704,6 @@ static char m_err[ERRSTR_MAXSZ];
- 
- struct elf_mcount_loc {
- 	Elf_Ehdr *ehdr;
--	Elf_Shdr *init_data_sec;
- 	uint64_t start_mcount_loc;
- 	uint64_t stop_mcount_loc;
- };
-@@ -785,20 +804,6 @@ static void replace_relocs(void *ptr, uint64_t size, Elf_Ehdr *ehdr, uint64_t st
- 	}
- }
- 
--static int fill_addrs(void *ptr, uint64_t size, void *addrs)
--{
--	void *end = ptr + size;
--	int count = 0;
--
--	for (; ptr < end; ptr += long_size, addrs += long_size, count++) {
--		if (long_size == 4)
--			*(uint32_t *)ptr = r(addrs);
--		else
--			*(uint64_t *)ptr = r8(addrs);
--	}
--	return count;
--}
--
- static void replace_addrs(void *ptr, uint64_t size, void *addrs)
- {
- 	void *end = ptr + size;
-@@ -815,8 +820,8 @@ static void replace_addrs(void *ptr, uint64_t size, void *addrs)
- static void *sort_mcount_loc(void *arg)
- {
- 	struct elf_mcount_loc *emloc = (struct elf_mcount_loc *)arg;
--	uint64_t offset = emloc->start_mcount_loc - shdr_addr(emloc->init_data_sec)
--					+ shdr_offset(emloc->init_data_sec);
-+	uint64_t offset = emloc->start_mcount_loc - shdr_addr(init_data_sec)
-+					+ shdr_offset(init_data_sec);
- 	uint64_t size = emloc->stop_mcount_loc - emloc->start_mcount_loc;
- 	unsigned char *start_loc = (void *)emloc->ehdr + offset;
- 	Elf_Ehdr *ehdr = emloc->ehdr;
-@@ -920,6 +925,211 @@ static void get_mcount_loc(struct elf_mcount_loc *emloc, Elf_Shdr *symtab_sec,
- static inline int parse_symbols(const char *fname) { return 0; }
- #endif
- 
-+struct elf_tracepoint {
-+	Elf_Ehdr *ehdr;
-+	uint64_t start_tracepoint_check;
-+	uint64_t stop_tracepoint_check;
-+	uint64_t start_tracepoint;
-+	uint64_t stop_tracepoint;
-+	uint64_t *array;
-+	int count;
-+};
-+
-+static void make_trace_array(struct elf_tracepoint *etrace)
-+{
-+	uint64_t offset = etrace->start_tracepoint_check - shdr_addr(init_data_sec)
-+					+ shdr_offset(init_data_sec);
-+	uint64_t size = etrace->stop_tracepoint_check - etrace->start_tracepoint_check;
-+	Elf_Ehdr *ehdr = etrace->ehdr;
-+	void *start = (void *)ehdr + offset;
-+	int count = 0;
-+	void *vals;
-+
-+	etrace->array = NULL;
-+
-+	/* If CONFIG_TRACEPOINT_VERIFY_USED is not set, there's nothing to do */
-+	if (!size)
-+		return;
-+
-+	vals = malloc(long_size * size);
-+	if (!vals) {
-+		fprintf(stderr, "Failed to allocate tracepoint check array");
-+		return;
-+	}
-+
-+	count = fill_addrs(vals, size, start);
-+
-+	compare_values = long_size == 4 ? compare_values_32 : compare_values_64;
-+	qsort(vals, count, long_size, compare_values);
-+
-+	etrace->array = vals;
-+	etrace->count = count;
-+}
-+
-+static int cmp_addr_64(const void *K, const void *A)
-+{
-+	uint64_t key = *(const uint64_t *)K;
-+	const uint64_t *a = A;
-+
-+	if (key < *a)
-+		return -1;
-+	return key > *a;
-+}
-+
-+static int cmp_addr_32(const void *K, const void *A)
-+{
-+	uint32_t key = *(const uint32_t *)K;
-+	const uint32_t *a = A;
-+
-+	if (key < *a)
-+		return -1;
-+	return key > *a;
-+}
-+
-+static int find_event(void *array, size_t size, uint64_t key)
-+{
-+	uint32_t val_32;
-+	uint64_t val_64;
-+	void *val;
-+	int (*cmp_func)(const void *A, const void *B);
-+
-+	if (long_size == 4) {
-+		val_32 = key;
-+		val = &val_32;
-+		cmp_func = cmp_addr_32;
-+	} else {
-+		val_64 = key;
-+		val = &val_64;
-+		cmp_func = cmp_addr_64;
-+	}
-+	return bsearch(val, array, size, long_size, cmp_func) != NULL;
-+}
-+
-+static int failed_event(struct elf_tracepoint *etrace, uint64_t addr)
-+{
-+	uint64_t sec_addr = shdr_addr(data_data_sec);
-+	uint64_t sec_offset = shdr_offset(data_data_sec);
-+	uint64_t offset = addr - sec_addr + sec_offset;
-+	Elf_Ehdr *ehdr = etrace->ehdr;
-+	void *name_ptr = (void *)ehdr + offset;
-+	char *name;
-+
-+	if (name_ptr > file_map_end)
-+		goto bad_addr;
-+
-+	if (long_size == 4)
-+		addr = r(name_ptr);
-+	else
-+		addr = r8(name_ptr);
-+
-+	sec_addr = shdr_addr(ro_data_sec);
-+	sec_offset = shdr_offset(ro_data_sec);
-+	offset = addr - sec_addr + sec_offset;
-+	name = (char *)ehdr + offset;
-+	if ((void *)name > file_map_end)
-+		goto bad_addr;
-+
-+	fprintf(stderr, "warning: tracepoint '%s' is unused.\n", name);
-+	return 0;
-+bad_addr:
-+	fprintf(stderr, "warning: Failed to verify unused trace events.\n");
-+	return -1;
-+}
-+
-+static void check_tracepoints(struct elf_tracepoint *etrace)
-+{
-+	uint64_t sec_addr = shdr_addr(ro_data_sec);
-+	uint64_t sec_offset = shdr_offset(ro_data_sec);
-+	uint64_t offset = etrace->start_tracepoint - sec_addr + sec_offset;
-+	uint64_t size = etrace->stop_tracepoint - etrace->start_tracepoint;
-+	Elf_Ehdr *ehdr = etrace->ehdr;
-+	void *start = (void *)ehdr + offset;
-+	void *end = start + size;
-+	void *addrs;
-+	int inc = long_size;
-+
-+	if (!etrace->array)
-+		return;
-+
-+	if (!size)
-+		return;
-+
-+#ifdef PREL32_RELOCATIONS
-+	inc = 4;
-+#endif
-+
-+	sec_offset = sec_offset + (uint64_t)ehdr;
-+	for (addrs = start; addrs < end; addrs += inc) {
-+		uint64_t val;
-+
-+#ifdef PREL32_RELOCATIONS
-+		val = r(addrs);
-+		val += sec_addr + ((uint64_t)addrs - sec_offset);
-+#else
-+		val = long_size == 4 ? r(addrs) : r8(addrs);
-+#endif
-+		if (!find_event(etrace->array, etrace->count, val)) {
-+			if (failed_event(etrace, val))
-+				return;
-+		}
-+	}
-+	free(etrace->array);
-+}
-+
-+static void *tracepoint_check(struct elf_tracepoint *etrace, Elf_Shdr *symtab_sec,
-+			      const char *strtab)
-+{
-+	Elf_Sym *sym, *end_sym;
-+	int symentsize = shdr_entsize(symtab_sec);
-+	int found = 0;
-+
-+	sym = (void *)etrace->ehdr + shdr_offset(symtab_sec);
-+	end_sym = (void *)sym + shdr_size(symtab_sec);
-+
-+	while (sym < end_sym) {
-+		if (!strcmp(strtab + sym_name(sym), "__start___tracepoint_check")) {
-+			etrace->start_tracepoint_check = sym_value(sym);
-+			if (++found == 4)
-+				break;
-+		} else if (!strcmp(strtab + sym_name(sym), "__stop___tracepoint_check")) {
-+			etrace->stop_tracepoint_check = sym_value(sym);
-+			if (++found == 4)
-+				break;
-+		} else if (!strcmp(strtab + sym_name(sym), "__start___tracepoints_ptrs")) {
-+			etrace->start_tracepoint = sym_value(sym);
-+			if (++found == 4)
-+				break;
-+		} else if (!strcmp(strtab + sym_name(sym), "__stop___tracepoints_ptrs")) {
-+			etrace->stop_tracepoint = sym_value(sym);
-+			if (++found == 4)
-+				break;
-+		}
-+		sym = (void *)sym + symentsize;
-+	}
-+
-+	if (!etrace->start_tracepoint_check) {
-+		fprintf(stderr, "warning: get start_tracepoint_check error!\n");
-+		return NULL;
-+	}
-+	if (!etrace->stop_tracepoint_check) {
-+		fprintf(stderr, "warning: get stop_tracepoint_check error!\n");
-+		return NULL;
-+	}
-+	if (!etrace->start_tracepoint) {
-+		fprintf(stderr, "warning: get start_tracepoint error!\n");
-+		return NULL;
-+	}
-+	if (!etrace->stop_tracepoint) {
-+		fprintf(stderr, "warning: get start_tracepoint error!\n");
-+		return NULL;
-+	}
-+
-+	make_trace_array(etrace);
-+	check_tracepoints(etrace);
-+
-+	return NULL;
-+}
-+
- static int do_sort(Elf_Ehdr *ehdr,
- 		   char const *const fname,
- 		   table_sort_t custom_sort)
-@@ -948,6 +1158,7 @@ static int do_sort(Elf_Ehdr *ehdr,
- 	int i;
- 	unsigned int shnum;
- 	unsigned int shstrndx;
-+	struct elf_tracepoint tstruct = {0};
- #ifdef MCOUNT_SORT_ENABLED
- 	struct elf_mcount_loc mstruct = {0};
- #endif
-@@ -985,11 +1196,17 @@ static int do_sort(Elf_Ehdr *ehdr,
- 			symtab_shndx = (Elf32_Word *)((const char *)ehdr +
- 						      shdr_offset(shdr));
- 
--#ifdef MCOUNT_SORT_ENABLED
- 		/* locate the .init.data section in vmlinux */
- 		if (!strcmp(secstrings + idx, ".init.data"))
--			mstruct.init_data_sec = shdr;
--#endif
-+			init_data_sec = shdr;
-+
-+		/* locate the .ro.data section in vmlinux */
-+		if (!strcmp(secstrings + idx, ".rodata"))
-+			ro_data_sec = shdr;
-+
-+		/* locate the .data section in vmlinux */
-+		if (!strcmp(secstrings + idx, ".data"))
-+			data_data_sec = shdr;
- 
- #ifdef UNWINDER_ORC_ENABLED
- 		/* locate the ORC unwind tables */
-@@ -1055,7 +1272,7 @@ static int do_sort(Elf_Ehdr *ehdr,
- 	mstruct.ehdr = ehdr;
- 	get_mcount_loc(&mstruct, symtab_sec, strtab);
- 
--	if (!mstruct.init_data_sec || !mstruct.start_mcount_loc || !mstruct.stop_mcount_loc) {
-+	if (!init_data_sec || !mstruct.start_mcount_loc || !mstruct.stop_mcount_loc) {
- 		fprintf(stderr,
- 			"incomplete mcount's sort in file: %s\n",
- 			fname);
-@@ -1071,6 +1288,9 @@ static int do_sort(Elf_Ehdr *ehdr,
- 	}
- #endif
- 
-+	tstruct.ehdr = ehdr;
-+	tracepoint_check(&tstruct, symtab_sec, strtab);
-+
- 	if (custom_sort) {
- 		custom_sort(extab_image, shdr_size(extab_sec));
- 	} else {
-@@ -1404,6 +1624,8 @@ int main(int argc, char *argv[])
- 			continue;
- 		}
- 
-+		file_map_end = addr + size;
-+
- 		if (do_file(argv[i], addr))
- 			++n_error;
- 
--- 
-2.47.2
+In case you don't hear anything after a few days (my rule of thumb is
+a week, during the merge window it can take longer though - but we're
+not there yet) then please send a short gentle reminder that you're
+still waiting for a reply.
 
 
+Best regards,
+Martin
 
