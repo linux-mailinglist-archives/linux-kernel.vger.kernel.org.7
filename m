@@ -1,140 +1,154 @@
-Return-Path: <linux-kernel+bounces-742673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE1CB0F537
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8353B0F53C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A69C41CC1B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7491CC1C18
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014A32EF2B4;
-	Wed, 23 Jul 2025 14:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAF02EF9BD;
+	Wed, 23 Jul 2025 14:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAQFRbNK"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZtKuJ02"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072002EF2B2
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928AA2D9EDC;
+	Wed, 23 Jul 2025 14:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280710; cv=none; b=m+lRO2oX1Y0uYWT2EQ+1PvLJnifvAFJt9ScSe0IecX2BMMIwV64h3AxfCIkdC+RnFgYIex/AOBf+nf6WYX327mc4BK+5G5c9Q7fTE6QFgiyZPFnVu5GRUDmIN+5+k0xIpY23rmtN7Q7euzmI4FwHIQidNqNpD7IWLzeLe1Ba/Ro=
+	t=1753280753; cv=none; b=I4/WhBCEqWeoV4djV9lbsUSIzdmF68/kSiR5gJsk7OZj58byX868Ft/Csz5OqPGuMi1r+eUACnhybQLU7z+e2g0oTsk2czz1mPLfmaEZU7b6zBTUSHJLKRQkvcy3cStGYksW5tZSWlqhihj5J+LEMbg5Pi7/pNeMtWxdt+pewiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280710; c=relaxed/simple;
-	bh=qSqowWXZKovsMBtlZ3VYigeEwOKRz0DOrTN6ZbzeSwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VKlFCs/fOzzzHRC7yy4qyyOlETR/SF0Hm8ZAaraEvMvRc510Bt76LpQMTSo15BgW3oWNwY4310ngPKUdwOxMsfjQa+i0JIYtTmX0s2ArA8n1ujYuFAZxF//X9oJeD9xrVegFZEu+3c4TBBsKRJvJc2Cv+7PViVn2VpMfI9MqZCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAQFRbNK; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b350704f506so900239a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753280708; x=1753885508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrJTE7O1/qPha3zwn2HxeCgRRmWdtz/w14Hn/0lyZSw=;
-        b=cAQFRbNK0A1nufxMADYaIjgfEQsvnjU4ySGdoFw0jptiPjFsXD4HO5rzIr2/7RfEZb
-         EQ7IWJn+gAfbp1hOh7PpakEtg+d7kZ60jAasnF/O+Cj1NgghZpgt/1P2zuos9MzK5gCo
-         DJLkgcSFumbp8PSHDJ7kD9NUUgH1fuwL2tIZ4uyGdtRS3y/Cx8aqfX2LPupXhC2/3kc7
-         Dkf6CoJPJC1zl+8Iyq6M8Z7hw9FLLyz3NeSLH8ot1/rx1ACN7czfteSZ4bM98n9OWyhP
-         CqrW0P1/1ux/FflzHhynOwqXSmCFXtmynICSN5fYbcWytLkSSnabEyJcYT9H9BB0GPuH
-         f/4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753280708; x=1753885508;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xrJTE7O1/qPha3zwn2HxeCgRRmWdtz/w14Hn/0lyZSw=;
-        b=ryYcIRAv8pEQBo0HYh6iAxJ072Ow4QP8CWjmcnv/eAAvCSBoFGiZmk8p8UOZuMZjDd
-         9LATaBzWSrgCBcOCy7W9A290DGlmql4q4Uhqucag6hkKYCbjMp1mrfaTGMOp1U9W4qEV
-         JCswCP2NepWwmInlEV4Lm5Q6/XdpszCeGIsXnbeRyi2VuCHA2wTPu1wcSUqeaYbIYq6X
-         1pznLr49tfrrXAH3dMEnUffhEhh/2ppUhCwmQH515K8GIln08IzHFmiErUYt6mfBpacT
-         7lchy2Bh5cpau6PoJeKy0rp7/XfAF2BO1QMUvuZRgXnFeaeg3kJxalZ9FODXShzWuavJ
-         6Ddw==
-X-Forwarded-Encrypted: i=1; AJvYcCXm5UBRmL06yRb9eVbjU6ru4dQnWlWzuY2rIeUYJmTXCdrV4bzR0nBf8F57asoVQZBmunOndoP5J3feY6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL7cUgOqLNM/RoS+9iN/RQ1/vnX2XcLsaVR9rB5H2CqjHYouAg
-	qJyl/n5NNGCDyqhhJ2mzYYcWEz3+HSBCebBCqpT5kHrGPEPJNebc7EhUVYpy+A==
-X-Gm-Gg: ASbGnctdisywzJkMG3TM+/sSLU+lJyNbWDUoVEURQL0ASXThmIuJAHiCktQCDj7ko1K
-	d0yjubUnXNJEnNvBCSoHnfzhH/pBcVGJB43JBFPgI45Vxf1mdW2QibqlgYntsUuWMr8ltGCbMoC
-	yJQesrmMy5KjHpsFFWvqmpTn5GsHMLAdhPPDa8VBYAD/vWa1/kB1Ez9ZDKz/08qsSA4rdFegZZ1
-	h9l0gsBhHVHsLvTLkR6l6KMW1oWYF9Ye0oEb0JVCyiA8qqMxqtnKB5RQtInYW+l6hSyJINRfja5
-	IyzJDiNUce0pJIuCrbSfMWoWxCFPuy2Li2r+0vInJdNRg/1fijxtZo9RMqZvvvtL+hOcOon5d0e
-	nA3a9V9dM5rFZGBgTPAin4Z/Qm6rU
-X-Google-Smtp-Source: AGHT+IGTsJzIbEQm5HV2vmpaRW5RsnVce+YqtFX9PtY/+Yvicme9nLHhJs9s7xWg7oZD6V/vVBop0g==
-X-Received: by 2002:a17:903:a90:b0:215:6c5f:d142 with SMTP id d9443c01a7336-23f9832e69dmr45488815ad.20.1753280708031;
-        Wed, 23 Jul 2025 07:25:08 -0700 (PDT)
-Received: from PC.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6eef80sm97689315ad.181.2025.07.23.07.25.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 07:25:07 -0700 (PDT)
-From: Sheng Yong <shengyong2021@gmail.com>
-X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	shengyong2021@gmail.com,
-	Sheng Yong <shengyong1@xiaomi.com>
-Subject: [PATCH] f2fs: remove unnecessary tracepoint enabled check
-Date: Wed, 23 Jul 2025 22:24:56 +0800
-Message-ID: <20250723142456.2328461-1-shengyong1@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753280753; c=relaxed/simple;
+	bh=fzHnblsgfySNaH2EsHFzy4vZVAOUhRBnZwE03ZsLOec=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gpfBAoKhD2MYgz9h6IgTyIPXZ3Aa23WDiFmQDP96hiFmx6zsuOtZJbW9Cs9iiMDiTAnWHrLGYZihhX8eiHPeCyi9+7wZ8O/JUAzlo6XYQV8631U64Xmrmp9Arjup4Yu77VIuyf3XaqbhKdsHxZ6bo1jwo5aLwJ9eZqwrdilXx44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZtKuJ02; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41BFC4CEE7;
+	Wed, 23 Jul 2025 14:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753280753;
+	bh=fzHnblsgfySNaH2EsHFzy4vZVAOUhRBnZwE03ZsLOec=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=kZtKuJ02zCU3VAdZelmzShoXa8SBSk/3PQbG1K1JP32a1AEJzEBnTSpRdKFzSP64P
+	 hbfqs6YCvaqOLAE0LxZx11YbSGXYI7WDT8221i3Ty8pKWbZOeaefZBbfefYy1NdB9F
+	 Vf1pkvSUUuyfBQK/0b9NIGIwHOe0KdXf2etXYsYY9bcS3yH8u2MBMj7E4HLcvLwj5d
+	 RO53NlqnQDm3bzn7W96mVT8zQKgZsrqYh2tbK9PslTMrvolX+bkCzjkPJ5ZrSs5p6U
+	 621rMLeBsBPfGpTn6n75FpFyzKkUDmjAqxa+CZLBCcBXbIcMjIEUP+sI6vzmn7l//P
+	 K5R1Yhvqnc2ew==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 23 Jul 2025 16:25:47 +0200
+Message-Id: <DBJI5K94Q0K0.336A61IF19ZEZ@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Alistair Popple"
+ <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
+ inline compiler hint
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250710022415.923972-1-apopple@nvidia.com>
+ <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
+ <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
+ <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
+ <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
+ <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
+ <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
+ <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org>
+ <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
+ <CAH5fLghic7MZd-BO=Z-ostGLgWmBciQmZp9VjQpLGWskFK_gyQ@mail.gmail.com>
+ <DBIKM7U4TSB8.17MTNSR81W8F3@kernel.org>
+ <DBILHBVA0NKJ.3R2QIVE9QIMM3@kernel.org>
+In-Reply-To: <DBILHBVA0NKJ.3R2QIVE9QIMM3@kernel.org>
 
-From: Sheng Yong <shengyong1@xiaomi.com>
+On Tue Jul 22, 2025 at 2:49 PM CEST, Danilo Krummrich wrote:
+> On Tue Jul 22, 2025 at 2:08 PM CEST, Benno Lossin wrote:
+>> On Tue Jul 22, 2025 at 1:35 PM CEST, Alice Ryhl wrote:
+>>> On Tue, Jul 22, 2025 at 12:57=E2=80=AFPM Benno Lossin <lossin@kernel.or=
+g> wrote:
+>>>>
+>>>> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
+>>>> > I think they're good, but we're pretty late in the cycle now. That s=
+hould be
+>>>> > fine though, we can probably take them through the nova tree, or in =
+the worst
+>>>> > case share a tag, if needed.
+>>>> >
+>>>> > Given that, it would probably be good to add the Guarantee section o=
+n as_raw(),
+>>>> > as proposed by Benno, right away.
+>>>> >
+>>>> > @Benno: Any proposal on what this section should say?
+>>>>
+>>>> At a minimum I'd say "The returned pointer is valid.", but that doesn'=
+t
+>>>> really say for what it's valid... AFAIK you're mostly using this point=
+er
+>>>> to pass it to the C side, in that case, how about:
+>>>>
+>>>>     /// # Guarantees
+>>>>     ///
+>>>>     /// The returned pointer is valid for reads and writes from the C =
+side for as long as `self` exists.
+>>>>
+>>>> Maybe we need to change it a bit more, but let's just start with this.
+>>>>
+>>>> (If you're also using the pointer from Rust, then we need to make
+>>>> changes)
+>>>
+>>> Honestly I think this is a bit over the top. I wouldn't bother adding
+>>> a section like that to every single as_raw() method out there.
+>>
+>> Hmm. And then just assume that these kinds of functions return valid
+>> pointers? I get that this is annoying to put on every function...
+>>
+>> Another option would be to have a `Ptr<'a, T>` type that is a valid
+>> pointer, but doesn't allow writing/reading safely (you need to justify
+>> why it's not a data race). And for FFI there could be an `as_ptr`
+>> function.
+>
+> I don't understand where's the difference between the two. For FFI calls =
+we'd
+> also have to justify it's not a data race, no?
 
-There is no extra work before trace_f2fs_[dataread|datawrite]_end(),
-so there is no need to check trace_<tracepoint>_enabled().
+Yes, but there you need a raw pointer.
 
-Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+> The only guarantee we take as granted from as_raw() is that it returns a =
+raw
+> pointer to the wrapped FFI type in Self, i.e. it points to valid memory. =
+Any
+> additional guarantees may come from the context where the pointer is used=
+ and
+> which specific fields it is used to access.
+
+Sure you need additional guarantees from the context, but you also need
+the fact that the pointer coming from `as_raw` isn't just a random
+pointer, but that it is derived from the reference...
+
+I don't have any good plan forward for this, so maybe we should revisit
+this in the future...
+
 ---
- fs/f2fs/file.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bd835c4f874a..a96115584203 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4855,8 +4855,7 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 			f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 						APP_BUFFERED_READ_IO, ret);
- 	}
--	if (trace_f2fs_dataread_end_enabled())
--		trace_f2fs_dataread_end(inode, pos, ret);
-+	trace_f2fs_dataread_end(inode, pos, ret);
- 	return ret;
- }
- 
-@@ -4879,8 +4878,7 @@ static ssize_t f2fs_file_splice_read(struct file *in, loff_t *ppos,
- 		f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 				   APP_BUFFERED_READ_IO, ret);
- 
--	if (trace_f2fs_dataread_end_enabled())
--		trace_f2fs_dataread_end(inode, pos, ret);
-+	trace_f2fs_dataread_end(inode, pos, ret);
- 	return ret;
- }
- 
-@@ -5225,8 +5223,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			f2fs_dio_write_iter(iocb, from, &may_need_sync) :
- 			f2fs_buffered_write_iter(iocb, from);
- 
--		if (trace_f2fs_datawrite_end_enabled())
--			trace_f2fs_datawrite_end(inode, orig_pos, ret);
-+		trace_f2fs_datawrite_end(inode, orig_pos, ret);
- 	}
- 
- 	/* Don't leave any preallocated blocks around past i_size. */
--- 
-2.43.0
-
+Cheers,
+Benno
 
