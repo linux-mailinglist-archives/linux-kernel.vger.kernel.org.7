@@ -1,184 +1,96 @@
-Return-Path: <linux-kernel+bounces-743112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA73B0FAC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:09:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B825EB0FACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2BC1CC0D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87AF8567D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F26B222564;
-	Wed, 23 Jul 2025 19:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926DE235071;
+	Wed, 23 Jul 2025 19:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPbjb4fO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="eeRm4pL/"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8C1DE2DE;
-	Wed, 23 Jul 2025 19:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5D4223DCC;
+	Wed, 23 Jul 2025 19:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297736; cv=none; b=WRpTf1TNoy1Nb+5wcrCSoR4bGNJ75lmDYoTnsE0HMPOobEKI95Ypsoa8wU3SlaBsOxr+UEkhwlbn5w8Ui3NIxN4p7RWZ3VnFbj9e/QdltIpTQWMiT+CUdv/S0XxXe5n+QnCgx7SVp7x8lDj/sh5Dgn/hOFBnT8J7k/5xhyrYZzY=
+	t=1753297769; cv=none; b=i13I7p6PCCs8QYyvJNEsoUJhfGNmChCXl5SrVQ9L/v0uQqOElUZPetiMUuXcBL7zHsXKPKIKYkgwG4jZnUwSibY75Rc5bwvvu2/NypqJTSE39HeHjuYVkcVNzlsTEI0jgQm9CQ4UREY7ZLYwlrf9T5hWog/A+yd/dqfGcQXydXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297736; c=relaxed/simple;
-	bh=UNlzAOR7cODPZuTeqSmrMKOwWWVj14CXn+8jYD4OLsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBgphV4m6BNYjMU2cCJGwsWCvc5AN0QPuubf2SVwRjSBiuUFAzl4JLu70//OxU1a27lE3Y/Mar6wj6d5dXYjwOsgyNiNDv6bdC40TJ+2i13xXXbTYvenImrhk9uEfwqGaYJ5OIFE/OOWORm9wFCifhqtCf9UBLmYTyWDC32Fvew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPbjb4fO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDCEC4CEE7;
-	Wed, 23 Jul 2025 19:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753297735;
-	bh=UNlzAOR7cODPZuTeqSmrMKOwWWVj14CXn+8jYD4OLsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XPbjb4fOItVYtJw+lyr4SW3fghlW7Il7qIGMKBoHZVKrDbueqqbS5N8sRF18DhpfB
-	 O4h5VI+ikJrJYMNlfyeeROBQjQzHdfaZdc/NQyNab7afyrbQzGK+gx9h3iZZu8xt4W
-	 /DO4VvUwTcKyOwMhFmHNswLnR7Qa6r7xAD/q8QVf0ZyeA78MI6Pybr4jijEm1Frf2t
-	 +g9Pn9c/gH14alUgS58L4IuR/vCBZUnkPYobIDTbOEjb18W8JkSUtclKDD1mnMu+uf
-	 hMcqcwYvjMKYX3xdiy5r4gIiZ2bQodRHIcRhNFvTiRWSoj4HyFAiF+X1mLwxTM3+Rg
-	 hHS3N+KtC2OSg==
-Date: Wed, 23 Jul 2025 16:08:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 00/16] New perf ilist app
-Message-ID: <aIEzRNLTCTA5Gqhm@x1>
-References: <20250714164405.111477-1-irogers@google.com>
- <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
- <aIEjMroa3bW-T7d-@google.com>
+	s=arc-20240116; t=1753297769; c=relaxed/simple;
+	bh=C6Sb8f+sbo7OpwoT/2GY1uDliorEjKd1MCNpkfYwH6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L1zatz7N9vaLMmWerVYveSoCJhng2tJljing0dpzqYK7YLrPKsw42WrSMaEGqBlm3S2eHPMTvJe9cDupYFTymuCjDij6hQXK1NQOz8+5KEGGzRvXRWAnz5VjtuqQGQHaCXoBgHtSCy39qjvopRE+Zf1letOur6z3f/Ta4J3WgjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=eeRm4pL/; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=Gc7jxMLVybdHk7DgSun6tr7+libXogPdGfREbeOZcBM=; b=eeRm4pL/BTcPjmqST4Vw5jSTRw
+	kyw7P/NRIR5G/LTjlkNI0rB5HdQ1+1WDjQvaROGzkwxYUY4ERqD8rAqQgb+VPOWVj1TSSzaNP1+cJ
+	2HuAy4BAWLGqEF2SUtgs9z+6rJbf0VPiaosd7oW5NuJqQZIrSoPM/oW4Kyn7PHBh+vhsF1SUoe6U2
+	tz0nINYTxY7YbKskJzTqj9pnJYzNGuSnfVDBDO/l5/h3l1HHVEjjheN2FarqWdjbj6JRekirbiy23
+	B5h37vyB9NJcZoKsdUlZEg5Gbhw0RbK4EPMC66bwZ8U2frpMe8Lz4Q3IJx6RtAA2ae7vnkWHJaias
+	CbvCQY2g==;
+Received: from i53875aba.versanet.de ([83.135.90.186] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ueeq1-0007Mn-0F; Wed, 23 Jul 2025 21:09:13 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	damon.ding@rock-chips.com
+Subject: [PATCH v2 0/2] Add RK3588 Tiger DisplayPort carrier
+Date: Wed, 23 Jul 2025 21:09:02 +0200
+Message-ID: <20250723190904.37792-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aIEjMroa3bW-T7d-@google.com>
 
-On Wed, Jul 23, 2025 at 11:00:18AM -0700, Namhyung Kim wrote:
-> Hi Ian,
-> 
-> On Wed, Jul 23, 2025 at 08:32:33AM -0700, Ian Rogers wrote:
-> > On Mon, Jul 14, 2025 at 9:44 AM Ian Rogers <irogers@google.com> wrote:
-> > >
-> > > This patch series builds up to the addition of a new ilist app written
-> > > in python using textual [1] for the UI. The app presents perf PMUs and
-> > > events, displays the event information as in `perf list` while at the
-> > > bottom of the console showing recent activity of the event in total
-> > > and across all CPUs. It also displays metrics, placed in a tree
-> > > through their metric group, again with counts being displayed in the
-> > > bottom panel.
-> > >
-> > > The first ground work patches of fixes, cleanup and refactoring were
-> > > separated into their own series here:
-> > > https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
-> > >
-> > > The second part of the patches adds event json for the software PMU
-> > > and makes the tracepoint PMU support iteration of events and the
-> > > like. Without these improvements the tracepoint and software PMUs will
-> > > appear to have no events in the ilist app. As the software PMU moves
-> > > parsing to json, the legacy hard coded parsing is removed. This has
-> > > proven controversial for hardware events and so that cleanup isn't
-> > > done here.
-> > >
-> > > The final patches expand the perf python APIs and add the ilist
-> > > command. To run it you need the updated perf.cpython.so in your
-> > > PYTHONPATH and then execute the script. Expanding PMUs and then
-> > > selecting events will cause event informatin to be displayed in the
-> > > top-right and the counters values to be displayed as sparklines and
-> > > counts in the bottom half of the screen.
-> > >
-> > > [1] https://textual.textualize.io/
-> > >
-> > > v7: Better handle errors in the python code and ignore errors when
-> > >     scanning PMU/events in ilist.py, improving the behavior when not
-> > >     root. Add a tp_pmu/python clean up. Minor kernel coding style
-> > >     clean up. Fix behavior of ilist if a search result isn't found but
-> > >     then next is chosen.
-> > >
-> > > v6: For metrics on hybrid systems don't purely match by name, also
-> > >     match the CPU and thread so that if the same metric exists for
-> > >     different PMUs the appropriate one is selected and counters may be
-> > >     read. Likewise use evsel maps and not the evlists.
-> > >
-> > > v5: Split the series in two. Add metric support. Various clean ups and
-> > >     tweaks to the app in particular around the handling of searches.
-> > >
-> > > v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
-> > >     displays as expected.
-> > >
-> > > v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
-> > >     keys. No changes in the ground work first 14 patches.
-> > >
-> > > v2: In the jevents event description duplication, some minor changes
-> > >     accidentally missed from v1 meaning that in v1 the descriptions
-> > >     were still duplicated. Expand the cover letter with some thoughts
-> > >     on the series.
-> > >
-> > > Ian Rogers (16):
-> > >   perf python: Add more exceptions on error paths
-> > >   perf jevents: Add common software event json
-> > >   perf parse-events: Remove non-json software events
-> > >   perf tp_pmu: Factor existing tracepoint logic to new file
-> > >   perf tp_pmu: Add event APIs
-> > >   perf list: Remove tracepoint printing code
-> > >   perf list: Skip ABI PMUs when printing pmu values
-> > >   perf python: Improve the tracepoint function if no libtraceevent
-> > >   perf python: Add basic PMU abstraction and pmus sequence
-> > >   perf python: Add function returning dictionary of all events on a PMU
-> > >   perf ilist: Add new python ilist command
-> > >   perf python: Add parse_metrics function
-> > >   perf python: Add evlist metrics function
-> > >   perf python: Add evlist compute_metric
-> > >   perf python: Add metrics function
-> > >   perf ilist: Add support for metrics
-> > 
-> > Hi,
-> > 
-> > Is there any more I can do to get this series landed? I appreciate having:
-> > 
-> > Tested-by: Gautam Menghani <gautam@linux.ibm.com>
-> > 
-> > I think there is some follow up for "make install" for scripts like
-> > these, but I'm keen for the python API to move forward.
->  
-> I'll review the series today so that we can get some part of it, at
-> least.  Basically I think we need a wrapper script like perf-ilist to
-> run this easily (maybe with documentation).
+A board that allows easy testing of the Analogix eDP controller on the
+RK3588. Requires Damon's recent work on allowing bridges in the
+Rockchip variant of the controller driver [0].
 
-I just tried, with the series applied:
+changes in v2:
+- collect Ack/Review for binding
+- address Quentin's comments
+  - sorting in Makefile and dp-connector properties
+  - ethernet alias
+  - drop data-lanes comment
 
-root@number:~# perf ilist
-perf: 'ilist' is not a perf-command. See 'perf --help'.
+[0] https://lore.kernel.org/dri-devel/20250709070139.3130635-1-damon.ding@rock-chips.com/
 
-Did you mean this?
-	list
-root@number:~#
+Heiko Stuebner (2):
+  dt-bindings: arm: rockchip: add RK3588 DP carrier from Theobroma
+    Systems
+  arm64: dts: rockchip: add RK3588 DP carrier from Theobroma Systems
 
-Now trying to figure out why it is not running.
+ .../devicetree/bindings/arm/rockchip.yaml     |   6 +-
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../rk3588-tiger-displayport-carrier.dts      | 109 ++++++++++++++++++
+ 3 files changed, 114 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
 
-- Arnaldo
+-- 
+2.47.2
+
 
