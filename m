@@ -1,46 +1,48 @@
-Return-Path: <linux-kernel+bounces-742851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06F4B0F75A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:45:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE80B0F73F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800EA567174
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EDE3AA238
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCAF130E58;
-	Wed, 23 Jul 2025 15:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759AE1FA859;
+	Wed, 23 Jul 2025 15:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=nixdorf.dev header.i=@nixdorf.dev header.b="ZUJYBkuF"
-Received: from shadowice.org (shadowice.org [95.216.8.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf9MIWZl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E241A5BAE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.8.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50B61A073F;
+	Wed, 23 Jul 2025 15:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753285517; cv=none; b=Q01lNwKE2+xpw2AgCAGM83wSHIDD5VPF4lJs70TA0N9QDpG/NEIcrc4VYfvIogPAfMNB4PT9nzFeQpa60AeQ9Y9pGtZ3fU4PdnB9GuoIKzcQOS+9FppXYuNJ6oWPHkRM/wiNZE5piDR6fsgohmwYgLqMgpgmVGnDcqidTBbHTsA=
+	t=1753285185; cv=none; b=i/aYw4tGgsk7C7v1UDZbKFth7kx+gB6ToPmSRbsShJTjtWwbrCATb6Xy5raLsgUkgvGoOA6m8lucIt9YAPMG6cMdoOD90O7SbYb4EpRkYw9IbQ3866XFdlGEEf05CUQWSB9Wg0HWGRjlsd+gvHDIua85LKme6pkRgCyYQd29qwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753285517; c=relaxed/simple;
-	bh=rTvu3BJdQlechtwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E0oAPg6SebssdDWhCadWRARpVTivKCTJ69aIr4NV7CxGfjaQoa5ZONmXBH0OD4+U1qOnvIyGRPnowG1AEF++Fz81nYd2+171E2EpH7R1YLLp8eeezwKTNkdLWzd+bC7YlIbsjXWXvNumbHtq/fFyDN0fNc5hNzRdwgMf9KyEeLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nixdorf.dev; spf=none smtp.mailfrom=nixdorf.dev; dkim=fail (0-bit key) header.d=nixdorf.dev header.i=@nixdorf.dev header.b=ZUJYBkuF reason="key not found in DNS"; arc=none smtp.client-ip=95.216.8.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nixdorf.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nixdorf.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=default; bh=rTvu3BJdQlec
-	htwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=; h=cc:to:subject:date:from;
-	d=nixdorf.dev; b=ZUJYBkuFjsA2Q9vbOiaXmTci19ACs3EWH8KHBY5je/Ltk5rTLMYHY
-	wCaTpSLlI+dg2WdhxlAabKLVpXdA+ecAKCKtSE4QuCHNx6LBwzvKDpJrS2n7k1YCbSgbPA
-	vJn03NvaKB3Wyr9dwm/niFTs+Uk3EKxU6Ple6yFXFLc1w3hw=
-Received: from [127.0.0.1] (p4fe9d2f1.dip0.t-ipconnect.de [79.233.210.241])
-	by shadowice.org (OpenSMTPD) with ESMTPSA id 0b804b51 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 23 Jul 2025 17:38:32 +0200 (CEST)
-From: Johannes Nixdorf <johannes@nixdorf.dev>
-Date: Wed, 23 Jul 2025 17:38:20 +0200
-Subject: [PATCH] seccomp: Fix a race with WAIT_KILLABLE_RECV if the tracer
- replies too fast
+	s=arc-20240116; t=1753285185; c=relaxed/simple;
+	bh=JDR0jcZ3hCvdnx4Nv+HhHC83x/f6C5vUo3Z7CFq8ZSI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=melzFNiLqsq2tnP2MhEnEv3fKU7N8J1bK2kLzbmsHoVLpf8iuMQ82YhTMnfh/LZqbGjVx4KF1xpe/xeGSwDgvLSRqSkCVFwJWdpSo9F/4loNYak855/ZGinQsTHrMs3ANSlIMENE1aH8gBs1NDaaC5nrpjnk1asgkVGKmPmRhbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf9MIWZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1142BC4CEE7;
+	Wed, 23 Jul 2025 15:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753285184;
+	bh=JDR0jcZ3hCvdnx4Nv+HhHC83x/f6C5vUo3Z7CFq8ZSI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Qf9MIWZl12Lq42hkpJGhWDjasE4yU0HKcbXhTFJ51QMvouaZyS5U4Rw2FBlsPyd1F
+	 Ecp9Jm+G656D763Vho2WFrMzDBBabIcuzRPJRRGVqyCKcNWIalnOCH562n82SYKfjA
+	 JkJP23FufRMBjfWA7cegnSTLu77qrbX0UB1dFIDfU3S52K6gjwqoBUhLb2PEZ3yt5y
+	 huxd4O6TX7WCVqVoVo3ItFNuNqQp9vt33ROMHSfzCWzXsTZTZspzF4qmsqoRKZCjQh
+	 4bAPkxdqugkBJRJtzP85CpMB7mBhM2+9wqN3RSkDIsI1YL/oJiQoPlApTIwj1Yokop
+	 iR/vJpcX1bDfw==
+From: Tamir Duberstein <tamird@kernel.org>
+Subject: [PATCH 0/3] scripts: generate_rust_analyzer: match rust/Makefile
+Date: Wed, 23 Jul 2025 11:39:39 -0400
+Message-Id: <20250723-rust-analyzer-pin-init-v1-0-3c6956173c78@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +51,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250723-seccomp-races-v1-1-bef5667ce30a@nixdorf.dev>
-X-B4-Tracking: v=1; b=H4sIAOsBgWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcyND3eLU5OT83ALdosTk1GLdVEtzC0vzFLMUS5MkJaCegqLUtMwKsHn
- RsbW1AClNuQZfAAAA
-X-Change-ID: 20250721-seccomp-races-e97897d6d94b
-To: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
- Will Drewry <wad@chromium.org>, Sargun Dhillon <sargun@sargun.me>
-Cc: linux-kernel@vger.kernel.org, Ali Polatel <alip@chesswob.org>, 
- Johannes Nixdorf <johannes@nixdorf.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753285111; l=3055;
- i=johannes@nixdorf.dev; s=20250722; h=from:subject:message-id;
- bh=rTvu3BJdQlechtwiUw7+Po0Fpa7OQn19KBJSFAcO6n8=;
- b=x//spWWrzD0eyi7yYTuHF/k1StjO1VXmjJZ1SX3Cb3RZozfwhtmI2Q8aTJ5uYIQbMkX9Ipx4v
- Dto3xP8jCMwDuN1nAwHho26PKmdIw8RVvm3iakGUBlasR14qDczteMd
-X-Developer-Key: i=johannes@nixdorf.dev; a=ed25519;
- pk=6Mv9a34ZxWm/f3K6MdzLRKgty83xawuXPS5bMkbLzWs=
+X-B4-Tracking: v=1; b=H4sIADsCgWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcyNj3aLS4hLdxLzEnMqq1CLdgsw83cy8zBJdSyNTEzNzIzNLAwNDJaD
+ mgqLUtMwKsMHRsbW1AMy7ZoBoAAAA
+X-Change-ID: 20250723-rust-analyzer-pin-init-925467269001
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tamir Duberstein <tamird@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1753285182; l=745;
+ i=tamird@kernel.org; h=from:subject:message-id;
+ bh=JDR0jcZ3hCvdnx4Nv+HhHC83x/f6C5vUo3Z7CFq8ZSI=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QCPcor03iOgOg9LDvhCFO2jQnbv/SN8WY343yR6nTMz1e66ReIahTAQP4weshIxymgWU9eEO1qs
+ WxtQpubWF+wI=
+X-Developer-Key: i=tamird@kernel.org; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-Normally the tracee starts in SECCOMP_NOTIFY_INIT, sends an
-event to the tracer, and starts to wait interruptibly. With
-SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV, if the tracer receives the
-message (SECCOMP_NOTIFY_SENT is reached) while the tracee was waiting
-and is subsequently interrupted, the tracee begins to wait again
-uninterruptibly (but killable).
+Minor fixes in this series. The main one is fixing navigation in
+pin_init_internal.
 
-This fails if SECCOMP_NOTIFY_REPLIED is reached before the tracee
-is interrupted, as the check only considered SECCOMP_NOTIFY_SENT as a
-condition to begin waiting again. In this case the tracee is interrupted
-even though the tracer already acted on its behalf. This breaks the
-assumption SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV wanted to ensure,
-namely that the tracer can be sure the syscall is not interrupted or
-restarted on the tracee after it is received on the tracer. Fix this
-by also considering SECCOMP_NOTIFY_REPLIED when evaluating whether to
-switch to uninterruptible waiting.
+This is my first series using tamird@kernel.org; please excude any
+hiccups.
 
-With the condition changed the loop in seccomp_do_user_notification()
-would exit immediately after deciding that noninterruptible waiting
-is required if the operation already reached SECCOMP_NOTIFY_REPLIED,
-skipping the code that processes pending addfd commands first. Prevent
-this by executing the remaining loop body one last time in this case.
-
-Fixes: c2aa2dfef243 ("seccomp: Add wait_killable semantic to seccomp user notifier")
-Reported-by: Ali Polatel <alip@chesswob.org>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220291
-Signed-off-by: Johannes Nixdorf <johannes@nixdorf.dev>
+Signed-off-by: Tamir Duberstein <tamird@kernel.org>
 ---
- kernel/seccomp.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Tamir Duberstein (3):
+      scripts: generate_rust_analyzer: Add compiler_builtins -> core dep
+      scripts: generate_rust_analyzer: Add pin_init -> compiler_builtins dep
+      scripts: generate_rust_analyzer: Add pin_init_internal deps
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 41aa761c7738cefe01ca755f78f12844d7186e2a..fa44bcb6aa47df88bdc5951217d99779bd56ab70 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1139,7 +1139,7 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- static bool should_sleep_killable(struct seccomp_filter *match,
- 				  struct seccomp_knotif *n)
- {
--	return match->wait_killable_recv && n->state == SECCOMP_NOTIFY_SENT;
-+	return match->wait_killable_recv && n->state >= SECCOMP_NOTIFY_SENT;
- }
- 
- static int seccomp_do_user_notification(int this_syscall,
-@@ -1186,13 +1186,12 @@ static int seccomp_do_user_notification(int this_syscall,
- 
- 		if (err != 0) {
- 			/*
--			 * Check to see if the notifcation got picked up and
--			 * whether we should switch to wait killable.
-+			 * Check to see whether we should switch to wait
-+			 * killable. Only return the interrupted error if not.
- 			 */
--			if (!wait_killable && should_sleep_killable(match, &n))
--				continue;
--
--			goto interrupted;
-+			if (!(!wait_killable && should_sleep_killable(match,
-+								      &n)))
-+				goto interrupted;
- 		}
- 
- 		addfd = list_first_entry_or_null(&n.addfd,
-
+ scripts/generate_rust_analyzer.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 ---
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-change-id: 20250721-seccomp-races-e97897d6d94b
+base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
+change-id: 20250723-rust-analyzer-pin-init-925467269001
 
 Best regards,
--- 
-Johannes Nixdorf <johannes@nixdorf.dev>
+--  
+Tamir Duberstein <tamird@kernel.org>
 
 
