@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-743100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C50BB0FA91
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:58:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C527FB0FA96
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E217A10BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39F71C24994
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A277C223328;
-	Wed, 23 Jul 2025 18:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9E822F76E;
+	Wed, 23 Jul 2025 18:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EvHoQ0OK"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WNhhE56j"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB072253A9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8A02222CA;
+	Wed, 23 Jul 2025 18:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753297108; cv=none; b=BKhmhfZPrCCjw/BOGp8crlEhxuGkfxL+L8vTH0oyaFW8XHX3m8et+4l2G21w/BVn+Ij/d35535UaIEb9blM+uwVgUsDfnP6t3fOqfvg6hosPUnxoKqQtzEPHklQGFjBnkUAwX4bGoLtyHDpQBV/0lGN3FHvAdep1JKREv2/cKn0=
+	t=1753297172; cv=none; b=k+rFJWC6axCMtsw2JM62oip/t60jxUXll2Yfk6oxG6ppq6Wsypmk8l2YQY/YdZzrv6FQcj1C+5dAoHhsh2emcjOnR1Qpe3HIs1ZuSkIe+6dJw3eR1smbHS/pSe1+FHqkRi7VOY0qtKrIh4oJib7U2CLVUYsOG3CwF9W5F1ZuU0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753297108; c=relaxed/simple;
-	bh=mmzQsMhl6rfhBdXQys7xatXOBT6V9yF5g+naRmfEqMw=;
+	s=arc-20240116; t=1753297172; c=relaxed/simple;
+	bh=YMmKd8UC5P21tTrV/oIf5AKV3dDkkV89/6bPT5QQSlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKZcS5cp2gidMzl2yI1j6u8auGDSUeJpLqbOJKNmuxZm5V31K/L58O9aQoiCN6NCAum5NZgO1MinGQnI1ytRm1/Uvhs0qymkNobrlBwZsid0OYdZQeNSuApMHpJGvL+6HtAGjVgOb23A+I+MNwegSTq+CiQlf5HOU3Zd7HfaBlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EvHoQ0OK; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2357c61cda7so20095ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753297106; x=1753901906; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tgyxBCBooV+1URrR0k+S4ytxsHSs18Tgj8DW+tHKzAo=;
-        b=EvHoQ0OK0Cda5iUy1S5gE5XhTRvQt+/qJjlvlF3UxMn6Y1JPn94Zl4/vZQGWMbQXav
-         +kp7wNsbZYWVTK9V6UX8USy9aLNn8CIf+u4H6SEdoO0cJalYWPefEruszZ5oGppzdCdL
-         1KNJSdYc3zq2kpYaLgU2LTTKlzKndWdi97m9jeDdIRCx94re5vAC1VdC3zW2ZARqOwmo
-         EEgZ1w2Go+RGvCCHbuGrgdgtrHX7XlW+LqGnjX9bSZwySD8fdAHnr/B3EPDFiybnkPI6
-         sUsGHbmrEJv8gIDo+PAd/h9KuC4bnuFVebeUXMyOsEjj4GImf7gdQAPbEeCISAtAaQey
-         FIgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753297106; x=1753901906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tgyxBCBooV+1URrR0k+S4ytxsHSs18Tgj8DW+tHKzAo=;
-        b=LHG6YzWaTBA7nIPvVT4WbrxAHr47pb+rmpf8wLDGr/O7W9kmpDHCGSOMI+9Jy3bsJD
-         sBTDuwKV1kDzsCQUlRokFbNs04MfnNv3Loq8W9qE6XR7cZz58i8OlNuy7/T04Vzbnkxk
-         4KEGon/dbv+0lC1js84rBMl6o0xAVk3+WqgZFUwMJgZKfMsZ0wpFa5bumQoSvxOpEZqU
-         aNc2dMYB0/QnE4YrR7zPyPrLzqGVpzJH96pAEiC9mb8j6y+sH6bvNcYMTCeuSaWhQPRj
-         Ce5O0eAhXLo0mMW+r/gUSFOlTtLRBkA8ZZsw80hi9bs8uJsftOffRLaUm9zf8wMin6fU
-         eIMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCGrT26ANjc665FnuNSTBMfyMJnQgFh+RTjDmSkyedsLipT8zOorzH6sEBC6ew+g8F6/q8DB0YZFYZXDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJPfbJGvNhsSJ/zoQ5/1AEv+FjuQdY0JrWH7Tj0wHFz1OAeJw
-	c7i2WlAVbRatkSkSIIkB3zjSLoBrYq9aJnnZ3QxlRT6TiJywKzwELpvowV9rqSxlLA==
-X-Gm-Gg: ASbGncv6QAy06TgDh4i3Lo7MVIAlqSsu5ODifRmCFHwQRcr1/dj5LR15V+XNGXX0Nrk
-	Ri8ExUupq5Z+TihlUzZCpsP1GHOsYLnm9D7CmqfWQaDP2xVY84yfjhBLnyaPeOyleMhGbvDBrb/
-	3asWgarsjLzPnvZTtCQ6GG+dPiyfHrsrSJDYYFVoNbl6hEdL7ifZfJVVpJe4Qf6zcSlyI5qEU4R
-	AAUUJRODUHFkCCrpMTtlimLH8wPYM+Uws0VHzQTFk/cesRbYsIaA5v29HzM+fzvSAsaC+xnbvHi
-	QfU6iGp5ztaAKNBdhI8n78jwXAsiyJDQolz/Tf3myafCEBjJajiI9O451AvD1hUH0/ylfPrxS6W
-	7tBOeUy+lvRR35oqaWMkovAGOP/aiE+M4XwBxw2fS8DwnGyu70hkIZgNr
-X-Google-Smtp-Source: AGHT+IHUkgfjZ7uajnt2ygxd4BiWFzqlf8/UuEEurXoZ/+uZ0jw37E8kKbO1K9MhbyfBxy1R4DSPBQ==
-X-Received: by 2002:a17:903:124f:b0:22e:1858:fc25 with SMTP id d9443c01a7336-23fa2ef97efmr184175ad.9.1753297105524;
-        Wed, 23 Jul 2025 11:58:25 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cbd66eecsm10238885b3a.142.2025.07.23.11.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 11:58:25 -0700 (PDT)
-Date: Wed, 23 Jul 2025 18:58:20 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, will@kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aIEwzM7mKUI8-h9U@google.com>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
- <aIDlsUvF2Xbdelvx@google.com>
- <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxFQ0i7iZHMVLwkIjECTSrGdgR1yb3ZdTIaDkwTv3cwx0iAX6PPJZzdOJ4SIXFse23wIptE+Ra57TfjqXflYCLf1aVZMgPrZsKM+Kb9cxUegRrQPkHYQqEumZa6Kp5iTC9M7NezCzzrlCeSxUP7yTSh+ThBusLICWIFFnfvmskI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WNhhE56j; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C1C1740E0163;
+	Wed, 23 Jul 2025 18:59:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NV1TOurcSxM6; Wed, 23 Jul 2025 18:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753297157; bh=3/iUg3kpzsiZrZyEgEoQDrYxpq8863x42bI2MvnPvd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WNhhE56jaVQu8KmDXYrC1yQdKtIH4nMnxxKq6HHMfPn3KWLUYHkITgL5pmZOmECm2
+	 qIx5yZsp9NhxWPtrmSuKgpzrdK+6tDoipIeQAsybPeBFHe8nsxHbu9eGiRUwKvN35I
+	 moWd3v49g+xVRScU8E2A1IRcf9nJuTnXJf0IoCcR5ViZ97oHkY2LPBNpggxXfI8909
+	 KElCdwzek1ygeNaV95IzQSFtsYmW6y8EmMOZaOMj7eOAXvijsv9rBOh2DZ3mFNzXuu
+	 ZF+l+TxcKo2TiX2+lIhI3pFmBVZA83e5J1tRBwTLfOopbAJnkvNL9m60r/t253U8pg
+	 q/8ZlCL3IKF5Fg+PYg5+iDhJ3zt+Grhz4SPpVg3gvV2nq1fO3tKXzlnUZTy76DuQqZ
+	 8w5WlekiffnTR7PRFrECf+uRApDOGb6dhTBLovo+ph+FCh/pMiKZbcADaVPA9P6JDc
+	 pDVpuaKA19Snh/y1Uoa6TATlcEZ6FfJ1U2zkredBLcHM+xaX/TaPvBxUquapEQtLZw
+	 bz3KciijHf7kc2P7gju5ur8KnwqmE+AAwyZx7tJYAGWAqA7ro+T4GvvI9YCkERW2Or
+	 kRbhhGcn+OTYKMO/PQ2vTfHBNSTB5iEv+4o44KOwVfGCIiShLJhDiCKGmo+1U0Em4x
+	 mws8PKuTNcbxgVonXq9TlbUc=
+Received: from rn.tnic (unknown [78.130.214.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C25CE40E0254;
+	Wed, 23 Jul 2025 18:58:47 +0000 (UTC)
+Date: Wed, 23 Jul 2025 21:00:48 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: kernel test robot <lkp@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+	osandov@osandov.com, xueshuai@linux.alibaba.com,
+	konrad.wilk@oracle.com, linux-edac@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
+Message-ID: <20250723190048.GBaIExYJYiHWnSBFye@renoirsky.local>
+References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
+ <202507232209.GrgpSr47-lkp@intel.com>
+ <cdlrppnrheyq7z3gmwmwsmktpmoiwq7g5hxa67rcx4iem5i6ge@jksa5o5use4w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
+In-Reply-To: <cdlrppnrheyq7z3gmwmwsmktpmoiwq7g5hxa67rcx4iem5i6ge@jksa5o5use4w>
 
-On Wed, Jul 23, 2025 at 11:05:26AM -0700, Nicolin Chen wrote:
-> On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
-> > On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
-> > > @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
-> > >  	phys_addr_t page0_base;
-> > >  	int ret;
-> > >  
-> > > +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
-> > > +	if (WARN_ON(vsmmu->core.type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV))
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > 
-> > Nit: I don't think we'd expect a call to this if the vintf_size returned
-> > 0? I see that in iommufd_viommu_alloc_ioctl, we already have a check:
+On Wed, Jul 23, 2025 at 08:36:52AM -0700, Breno Leitao wrote:
+> Basically there are two approaches, from what I understand:
 > 
-> It's added in the previous patch where I explained that this is
-> to detect data corruption. When something like that happens, it
-> would be often illogical.
-> 
+> 	1) mark do_machine_check() as noinstr
 
-Right.. I got mis-led by the comment, my point is that if an
-"unsupported type" was rejected in _get_vintf_size, we wouldn't be here
-calling viommu_init since we error out based on the check in
-iommufd_viommu_alloc_ioctl.. but yes, if there was some data corruption
-that changed the viommu type between these calls, I guess it makes sense
-to check and error out here.
+do_machine_check is already noinstr. I think you mean mark
+hwerr_log_error_type() noinstr.
 
-> > And call ops->viommu_init only when the above isn't met. Thus,
-> > if we still end up calling ops->viommu_init, shouldn't we BUG_ON() it?
-> > I'd rather have the core code handle such things (since the driver is
-> > simply implementing the ops) and BUG_ON() something that's terribly
-> > wrong..
-> 
-> BUG_ON is discouraged following the coding style:
-> https://docs.kernel.org/process/coding-style.html#use-warn-rather-than-bug
-> 
+And yes, you can mark it. hwerr_log_error_type() is not that fascinating
+to allow instrumentation for it.
 
-Noted. Thanks.
+> 	2) Move hwerr_log_error_type() earlier inside the
+> 	instrumentation_begin() area.
 
-> > I can't see any ops->viommu_init being called elsewhere atm, let me
-> > know if there's a different path that I missed..
-> 
-> I see it as a precaution that should never get triggered. But in
-> case that it happens, I don't want it to proceed further wasting
-> precious HW resource given that this function allocates a VINTF.
-> 
+Or you can do that - that looks like less of an effort btw.
 
-Agreed.
+-- 
+Regards/Gruss,
+    Boris.
 
-> Nicolin
-
-Praan
+https://people.kernel.org/tglx/notes-about-netiquette
 
