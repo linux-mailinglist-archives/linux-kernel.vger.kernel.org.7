@@ -1,174 +1,200 @@
-Return-Path: <linux-kernel+bounces-742392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3F0B0F121
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:27:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EB0B0F127
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A187A6B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC40B1C21ADB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E5F2C1581;
-	Wed, 23 Jul 2025 11:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FFB2E4278;
+	Wed, 23 Jul 2025 11:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nqbvgm4z"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gna5kEEQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E4279DDF
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33188298CA5;
+	Wed, 23 Jul 2025 11:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753270013; cv=none; b=tRVh9xuBR6kVS+rIcu433P/0fLDMPCG7/o+7bPUKz0JPYFi8BjhSv1ZLcdOfhUt1LJmcx1L6tf6VpklaKPug3gCquNh8bfuZbWFRBqdFdwZw6gBRakg4Kx53asmVtlfFgsXYyoTinKso+jXi0wCJnDOcy7YnxcDSGbaV/zl9oJA=
+	t=1753270044; cv=none; b=Wr1exv4SUQQf1xCgcZGEn6teWVWuXr8q5qE+ofvqKvyDI9eEiRyT3nsjCsC6WNF/PQeLzzsBUg6Uz5kgSEaaWtrTDaYxLU7QZLKiBQHa/xJ1W1AIKAsNKtZh8ggTh6PLKRlJ3y13OkYc0Zjzq2Bk+C9pfsi9vm5wr5uksf6KppU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753270013; c=relaxed/simple;
-	bh=DVfLmPAW/+LES4M6qfek/cSAyxf+7zdrYqLo2qRajDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pApppowQ/NF+em9CpjFgWiFZO8P2yokYRRSaeHbN2V1a6Nir+a1EqeyqO3u0YoPXTY3rdImN7UdL/J6xzrBHoMJ94Kq702MOVMw/ihAPug/uraPp6rp7X+nmd024gZ98JGZaANdH6aYvxWIBzQL9Fhcy8q8pYKOfxd+QFhSIqZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nqbvgm4z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9K2Of024755
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:26:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qjEm6Yo2vInyDtUzOUPiHjkggFV+IfkNgBwObWNLpNA=; b=nqbvgm4zYdqaje1L
-	dGb0gBUarxAyxSdWc5FcOT3gjjhsomAOcMoYEC2I826g+eQtidVcKfzNG4sgdK7V
-	xMoXVQwPTy5tnPAhzcuulBDrLeMb9LlozghHM4BD7D1FOVJN1IfN49tgX/83z8hg
-	7SAgn3wO4WLQNnYeEG/b4lb6MaJUKChAf/s8udJd/6nQIHW/wdM/o6JQrthrevcJ
-	9Wadp6UUL6SJOtQc92j5DSv0v8YLV7UkpTZ22PsqI2C2GBFkvQwGrzDph3ukdYni
-	aCspHXki0oRxkmrH7dQfanhfbXRuNBkb/koHoV/a1mXwKWL9VDJukwRWFQm9wH/7
-	rBVaVw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044dmsh6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:26:49 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fad9167e4cso136847736d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:26:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753270008; x=1753874808;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qjEm6Yo2vInyDtUzOUPiHjkggFV+IfkNgBwObWNLpNA=;
-        b=wBpEfj/LNP7DBqYcYDgpXdtTfFO7Jy87qQfgQ3/vdYFLr+rUSXqVbKBLawd8MA8kot
-         vvQCRtRbzZbbe40G4aRnN8Pqc0fBgKEGwwf1s/qmv6HUSIhg19aPz8cWE4IETKjmBd9Z
-         xRJ2ltHx/oHFunqJM1YtEcJrCDL7bETAS+HNhe8PZiwADfRxIvJLUGWeA+yT3/9SP3G6
-         idrxn3BkFHPGIKmpBZ3ULyBkI0b/n7151fu+4iLvxjU/YMEin6kslGNtu9S/gwDU2NE4
-         wsv17ZYaX/euG1v5KnQ/pIkQWA1yeFoS7UM1OaXy75H2XuuokbhIwrvjnUe5Z9PUc5MB
-         TeUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmIuN2qlRuiy0QHq5bc1ga1YOXm+ilaZ3TCdBDoHKcU+O/azAaZOJvtjbOaaRy6V/22kuUEd4bFjt1x0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDnx9/rZK/LoXUP6m89lEiWJG/yygJ/ySV/UHn9XZWowN8f8p+
-	QpuHSkf0M9CkA0SKMww9tQssJOfuJJdg9HbfhhcMh4Nhy3TGrVu2o0CGAlI5EfY8QXHpzUD94w3
-	Hn2Ksfy/0QXiTY6jJMqNLJkQS1c3saUmapyRFotqKVKsBEgUwzMWSiydyxLdGv2RVe24=
-X-Gm-Gg: ASbGncubpRhpov1cCoHCtfecOWY7FBGXu6JLvqgEwfiLiJEEp+6KWUJ8RjDIz6GClq9
-	Li5z4F/RZxsbAhW+Xr7l5w7CUUThH2T25gjklbym3bgxKCNtMgNPD8PmLAJxhDVlMkMpiFuRCuZ
-	omaxO6pKLPdipFeVOtYTou4yF66+dN8MahQjjeMXaUNBFQf4LAaVFyxnyVmfBo7dRX1kFAv/Rqw
-	QoSvffBD33wR/gE5zWvGfcEUNvWAhYpqUVvZauYsjnvrzskBucza0O4r2U/wd/AGlTxufj3joJJ
-	vZ2DjpnhkUkZK0MOttFeiZhVKXk4do4I6hZb8oF+S/G4Otz88sYnbADcCKpMxz0E+IAcsbSTbCB
-	cyoIaE6HEAtDGZu4WQoXjBbiJg4R+iYEtaKHn0cQ5HRmInI3pKzBF
-X-Received: by 2002:a05:6214:2623:b0:704:9b5d:ef4b with SMTP id 6a1803df08f44-70700644a0cmr37371936d6.26.1753270008106;
-        Wed, 23 Jul 2025 04:26:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFC9uMg2OkvtHo4eZpZkc4XSkLC06Egfy/kS8G4tkWNRgwyZcA3jTH31NhXhbsVPCWqL9XHfw==
-X-Received: by 2002:a05:6214:2623:b0:704:9b5d:ef4b with SMTP id 6a1803df08f44-70700644a0cmr37371506d6.26.1753270007671;
-        Wed, 23 Jul 2025 04:26:47 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a4be6fc33sm487064e87.209.2025.07.23.04.26.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:26:46 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:26:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
-Message-ID: <miiod6ft7iavg64q4f3uwcnztamgvt46gcguean5atsqi5d5us@xrwlzznsgx2z>
-References: <20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com>
- <20250716-hamoa_initial-v1-3-f6f5d0f9a163@oss.qualcomm.com>
- <0f9eebfe-21f8-48b8-9b49-a35126aa6dd1@kernel.org>
- <67ca3b6f-3cd3-430e-886a-0443f6d630dc@oss.qualcomm.com>
+	s=arc-20240116; t=1753270044; c=relaxed/simple;
+	bh=hD86L6FsrlkjppEeAolQw2+wF9G9eL2p4jeufpqBKxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nz8Oxckp0BymRRHH2osrDZkMaSbERMMag4ODDRUdsSQsxNqAJ1VzOofgVZX0usn2MwTThYtH2eVSN/4Q+jJfHacwTaQe7/1sX6jpJ9MlThFh/Y1Mqiv9bGhQHswPY1wvUnNcQf5uEbc2nmcdTdKXAyBqKy3ab0iC8z2/APK5Kfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gna5kEEQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B482C4CEFB;
+	Wed, 23 Jul 2025 11:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753270044;
+	bh=hD86L6FsrlkjppEeAolQw2+wF9G9eL2p4jeufpqBKxk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gna5kEEQO0FOgZEpDT/57P3FtgjTpO2uSn7YtKJvIt8uQQR2K96rr5I5udfJm84c7
+	 hUCixUBGhFeFewlQZl5ImSC12rQ066qMf33T+t3KnfWw+hieP3bmovSIvdSeAyro8T
+	 rDAvE+1zTwuK+7PZStdlqwoxksDnTVrcewtIfj0R90Lk/7OxSRV5htQPL9mATKUKqn
+	 FNwWYdXoTMs9ewijIHqVuJHpbLeK6rcl8FxiEfKc5PDZ3OLEg2jRWi7e2qpVcLBpwt
+	 iwQTgypKrgsoWPbsVBwEt0XAYFokUpVjX2z6qSPVn+usBpJA0Qs7v+HL/XzcT/azs+
+	 7u/n5xDVV9aNQ==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-615950642d9so3685530eaf.1;
+        Wed, 23 Jul 2025 04:27:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVA90WZwlVDKAAhkMgJ9pQs5ATm5vXqWNDP+sJCiVEAK78c41BTZ/U3FKkSEM7f7qdLw9WVTHHfTW3kTg==@vger.kernel.org, AJvYcCVlJyI9wxUCKkbpaZ/U2Xqljovewpkizp+6ECP7hfxBh4i5M0E5c35dzwNNYQKjtQqjd01/FfI7KnI2bq8M@vger.kernel.org, AJvYcCW/iGCLypQJwBalgOSD7vA1mW5xb/Hwz9yCttbSJlC0PoAAVvBU/LAWDhmQ/JBjJDvAtDnDJo+8SOOg@vger.kernel.org, AJvYcCWFvtxvIEDxM8Uyb1mglCpQ4LuT1AuxaCFT1i58qW8vwOGYzhnu9TWPrTiLJENx69c5aWmTVglfJr8=@vger.kernel.org, AJvYcCXng8T4on/6u7aTCHQPNAcmwa+KiIHwPQ3nu9T6CgSCT2LjeIhRCTcdloh4uhDCQ74HFOk/XrxdhZNs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/9zDwljMwqXHSMsJ3UrKyvCrl2nRZUiylz3HYwvNUL004yDV5
+	JXFopWExb/ZTLbZ/zzkUl7CmF9JV3tIpJQVdTcqNWPqu69A0TMeQniVQ2XOTB4I2Ee1TfDTi/27
+	0p4CcGNwSjYSxNn6kLuJpHklzdhppHfk=
+X-Google-Smtp-Source: AGHT+IFBBrTSzcKsgRsjEmVEi3AQj37BeFlkMYzSpLg5VvEYvowlyBOnql/yOqAWuu2WwDYjxLgaMwyjRGbr4TyyCQA=
+X-Received: by 2002:a05:6820:1792:b0:615:d742:6672 with SMTP id
+ 006d021491bc7-6187d90ed5dmr1918110eaf.8.1753270043105; Wed, 23 Jul 2025
+ 04:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <67ca3b6f-3cd3-430e-886a-0443f6d630dc@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=BJ6zrEQG c=1 sm=1 tr=0 ts=6880c6f9 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=KIACOVvSgbhCfpt34z0A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-GUID: LIooF-TU38X0r-jGMxB1Qydpzf3QThyh
-X-Proofpoint-ORIG-GUID: LIooF-TU38X0r-jGMxB1Qydpzf3QThyh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NyBTYWx0ZWRfX9bOnl0iqYDtE
- eObfB+XlsXJQ7kBeTgd0ZOn1AtPh2irO0mLumqinP1sVeOW+Fzu/zR6IMNfW5LGtUiVtmikGf2j
- xAoZfKQdk+E6XO59lLnMAV1CERCNOhenshSUG/KGBqUw7tsm9i8is++2MfldAKRoCLxzDQ9C/Xf
- v/nueCEmd3zZmhUv/1eGM0c4JSeqCa64XdtpEoLOSmBDbTKCEGn7MoJVK8opoYSstp3MjLhTQwH
- FLruUMTXePPsz5+Sm0obVAl8FSEvDPYNqZg+jnxigwO4YZjPP0pvFKZ9ZzG4pTHzN1UUdU2Zyha
- VbFV52v2r3ENqQzSLq9kfol12CVmzmxrsqLrPiyV51GtzYCi8U5CsHEMf/MUB6K0BnX63ZYBnkD
- Uoek9ug0Iz0o4rZgdhUSu5k5aUJS8F0Vha06Yr/8wC/qjwfyINRzUDxpcVpaWZZUDdvoGsky
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
- mlxlogscore=999 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- mlxscore=0 malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230097
+References: <20250717103241.2806798-1-thierry.reding@gmail.com>
+ <2025071716-phoney-object-1648@gregkh> <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
+ <2025071919-patience-cattishly-cf7c@gregkh> <l54i36uk33je744w4f47tehdopk5dsjotvozfv5b2hehmxrwpq@eins7awyq4dy>
+ <2025072218-decipher-spree-327d@gregkh> <awvdox3bgabbc42aamezlg33k4cje6y75qoxn7ruh3nhd4qv5n@u3spdahehad4>
+In-Reply-To: <awvdox3bgabbc42aamezlg33k4cje6y75qoxn7ruh3nhd4qv5n@u3spdahehad4>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 23 Jul 2025 13:27:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iYBOephv29sj0DSKZVyF3JLBsoUCckhTbGcbYHUUhYyQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzC6e4YCoK78tnnsrW1OvCOkcpvLKri7HC2f5clbN5j5h64RJlwkH_QRPE
+Message-ID: <CAJZ5v0iYBOephv29sj0DSKZVyF3JLBsoUCckhTbGcbYHUUhYyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, x86@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev, 
+	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 02:44:14PM +0800, Yijie Yang wrote:
-> 
-> 
-> On 2025-07-23 14:28, Krzysztof Kozlowski wrote:
-> > On 16/07/2025 11:08, Yijie Yang wrote:
-> > > The HAMOA-IOT-SOM is a compact computing module that integrates a System
-> > > on Chip (SoC) — specifically the x1e80100 — along with essential
-> > > components optimized for IoT applications. It is designed to be mounted on
-> > > carrier boards, enabling the development of complete embedded systems.
-> > > 
-> > > This change enables and overlays the following components:
-> > > - Regulators on the SOM
-> > > - Reserved memory regions
-> > > - PCIe6a and its PHY
-> > > - PCIe4 and its PHY
-> > > - USB0 through USB6 and their PHYs
-> > > - ADSP, CDSP
-> > > - WLAN, Bluetooth (M.2 interface)
-> > > 
-> > > Written with contributions from Yingying Tang (added PCIe4 and its PHY to
-> > > enable WLAN).
-> > > 
-> > > Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
-> > > ---
-> > 
-> > As pointed out by "arm64: dts: qcom: hamoa-iot-evk: Enable display
-> > support" this is incomplete. Adding new SoM or board is one commit. Not
-> > two. Don't split board DTS, which is already prepared/ready, into
-> > multiple fake commits. This is not a release early approach. This is
-> > opposite!
-> 
-> The inclusion of display support was not intended in the initial patch, and
-> it was not ready at the time this series was submitted. Since the display
-> patch set was not submitted by me, its timing could not be controlled. If
-> preferred, the display-related changes can be merged into this patch in the
-> next revision to maintain consistency.
+On Wed, Jul 23, 2025 at 11:01=E2=80=AFAM Thierry Reding
+<thierry.reding@gmail.com> wrote:
+>
+> On Tue, Jul 22, 2025 at 04:08:09PM +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Jul 22, 2025 at 03:56:40PM +0200, Thierry Reding wrote:
+> > > On Sat, Jul 19, 2025 at 08:52:41AM +0200, Greg Kroah-Hartman wrote:
+> > > > On Fri, Jul 18, 2025 at 03:49:37PM +0200, Thierry Reding wrote:
+> > > > > On Thu, Jul 17, 2025 at 02:11:41PM +0200, Greg Kroah-Hartman wrot=
+e:
+> > > > > > On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
+> > > [...]
+> > > > >         struct syscore;
+> > > > >
+> > > > >         struct syscore_ops {
+> > > > >                 int (*suspend)(struct syscore *syscore);
+> > > > >                 void (*resume)(struct syscore *syscore);
+> > > > >                 void (*shutdown)(struct syscore *syscore);
+> > > > >         };
+> > > > >
+> > > > >         struct syscore {
+> > > > >                 const struct syscore_ops *ops;
+> > > > >                 struct list_head node;
+> > > > >         };
+> > > > >
+> > > > > Is that what you had in mind?
+> > > >
+> > > > I missed the list_head, so yes, this would be better, but don't pas=
+s
+> > > > back the syscore structure, how about just a void * instead, making=
+ the
+> > > > whole container_of() stuff go away?
+> > >
+> > > Yeah, that's a possibility. I personally don't like passing the void =
+*
+> > > around because it's easier to make mistakes that way. I also find it
+> > > unintuitive because it doesn't immediately show you what the function=
+s
+> > > expect.
+> > >
+> > > My understanding is that the container_of() should get optimized away
+> > > most of the time, so there aren't any obvious downsides that I can se=
+e.
+> >
+> > container_of() is just pointer math, but a cast is even faster :)
+> >
+> > > But I don't feel very strongly, so if you have a strong preference fo=
+r
+> > > void pointers, I can do that.
+> >
+> > That's what you really want to have here, it's a syscore data type
+> > thing, that the callback wants to reference.  Just like a irqrequest_t
+> > function passes back a void * that the handler "knows" how to deal with
+> > properly.
+>
+> IRQ handlers are different, though, because you pass the void * data
+> when you register the interrupt. That void * then gets stored and passed
+> to the handler when the interrupt is processed.
+>
+> We'd have to change it to something like this:
+>
+>         struct syscore_ops {
+>                 /* parameters now changed to driver-specific data */
+>                 int (*suspend)(void *data);
+>                 void (*resume)(void *data);
+>                 void (*shutdown)(void *data);
+>         };
+>
+>         struct syscore {
+>                 const struct syscore_ops *ops;
+>                 struct list_head node;
+>                 /* NEW driver-specific data */
+>                 void *data;
+>         };
 
-This is neither merged nor accepted. Please squash display (and any
-other possible forthcoming changes) into this patchset before reposting
+I like this more than the original, but I would do
 
--- 
-With best wishes
-Dmitry
+struct syscore_ops_ops {
+                 int (*suspend)(void *data);
+                 void (*resume)(void *data);
+                 void (*shutdown)(void *data);
+};
+
+struct syscore_ops {
+                 struct list_head node;
+                 const struct syscore_ops_ops *ops;
+                 void *data;
+};
+
+and change register_syscore_ops() to take three arguments, the struct
+syscore_ops pointer, the (constified) struct syscore_ops_ops one, and
+the (void *) data one.
+
+Note that it is not necessary to change the signature of
+unregister_syscore_ops() in this case.
+
+> It ends up increasing the syscore structure's size, about 33%, though
+> given that there aren't a lot of these that's probably negligible.
+
+That's not a problem IMV.
+
+> What I think is a bit more unnatural about it in this case is that we
+> embed the struct syscore into some driver-private data anyway so that
+> it becomes per instance, and then we have a circular reference:
+>
+>         foo->syscore.ops =3D &foo_syscore_ops;
+>         foo->syscore.data =3D foo;
+
+That depends because "data" need not be "foo" in all cases, but also
+see above.  If the initialization of struct syscore_ops is all done by
+register_syscore_ops(), it doesn't look circular any more.
+
+> Which looks kind of weird. Alternatively I suppose we could completely
+> rework it and make register_syscore_ops() allocate struct syscore, and
+> hide the internals from drivers completely:
+>
+>         err =3D register_syscore(&foo_syscore_ops, foo);
+>
+> With that it may be problematic that register_syscore() can now fail.
+
+Yes, that might be a problem.
 
