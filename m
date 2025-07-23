@@ -1,145 +1,180 @@
-Return-Path: <linux-kernel+bounces-742240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0610B0EF0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:00:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93375B0EF0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B551886EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA50166C92
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E886D28B519;
-	Wed, 23 Jul 2025 10:00:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD044289373;
+	Wed, 23 Jul 2025 10:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sqfkX5JI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F118C332;
-	Wed, 23 Jul 2025 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBA2191493
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753264840; cv=none; b=JEwexe42WKM3gwdb+lCfuij0isNMi4uljQuLb4wXlpnfMIMfe4UvC34qL99DO2eIMS1QtSreENzftU3IvRRzul1y+0Sjw20VZABaRHsZMc34iKPDHMVrUuKR9AtjFhzF7Wl+tVmq6dvgN8ma/evz8uWpqbxMXXTUBh+RpIAKjeg=
+	t=1753264859; cv=none; b=Y7b8LaIJSbjvhWBAyzr2NrOJev4qMdhYRBAvEYACB+8w7CvIuAyYy0ReTsVabW7P3IbzdlRWLppbTmiEZ+nk2PnK3Ss5jeGjV/cCz0NqDZFS4C7INoKzYkoH9rS83qfeAdxO1u4zIUBaCWIAV+K3PLgzUNCzxahdSLHv88mn0L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753264840; c=relaxed/simple;
-	bh=p+fD85xjERppoC21Fiq4VVUPviTELtBzs+jCKBEDhJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIn71mQTA2JgPs0jO13pC9ycwscEvaoDTZbARMYPcy2sOg3HNzqdLbIehgJBces3B+Pyv+mcLom8czXov5tHAdJUwqvS5dtSlg6djUTcJnYQrs/3G9Wbi5hmP/btZYCNOsS8CH+QSNpFBh5g4L47GefTgIjTDpbb7P+89M1j3ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5A8C4CEF5;
-	Wed, 23 Jul 2025 10:00:36 +0000 (UTC)
-Date: Wed, 23 Jul 2025 11:00:33 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	broonie@kernel.org, yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com, liaochang1@huawei.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] arm64: probes: Add GCS support to bl/blr/ret
-Message-ID: <aICywZ55EKfSYSIY@arm.com>
-References: <20250719043740.4548-1-jeremy.linton@arm.com>
- <20250719043740.4548-6-jeremy.linton@arm.com>
+	s=arc-20240116; t=1753264859; c=relaxed/simple;
+	bh=eEvn9cZKgQR1Rtzv+NnYhlwg6dfZT5qLpB9DJl8NpDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TuASD/V7JWWFv8Zy/NFWgmMSm3ZGDpgrKUxAk3CXk9fvU0b8l10cq5NFOKdiDvvBzTvbu1i0T66LNtk5/QuuAqeRi0lGByAdY7DJ7yYVjzaIiOhnmVHrBRCB+XpFNCyTAraJensSScjSHDD0jOS6927I44xxSSWq7ANYHEfWSIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sqfkX5JI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BB651F0B;
+	Wed, 23 Jul 2025 12:00:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753264815;
+	bh=eEvn9cZKgQR1Rtzv+NnYhlwg6dfZT5qLpB9DJl8NpDQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sqfkX5JIPnhfTHOiiHy8JqT66tc+sSRzJmmUd2T5XFE30peQmKaNlGtCNRuHPhKRa
+	 Iezxy5hUffcGFPd/mPWtifrmEFd8vHzX6acOBnRALujbxH2aRnhRCYySOUv43Xcip2
+	 SOgivfXwWqBI1+VJ/KlhN7KxcLw9mXc2/AXbemiw=
+Message-ID: <5630b5db-6577-4302-b90e-2a94a93b5283@ideasonboard.com>
+Date: Wed, 23 Jul 2025 13:00:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719043740.4548-6-jeremy.linton@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tidss: Set crtc modesetting parameters with adjusted
+ mode
+To: Jayesh Choudhary <j-choudhary@ti.com>, jyri.sarha@iki.fi,
+ dri-devel@lists.freedesktop.org, devarsht@ti.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ linux-kernel@vger.kernel.org
+References: <20250624080402.302526-1-j-choudhary@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250624080402.302526-1-j-choudhary@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 18, 2025 at 11:37:37PM -0500, Jeremy Linton wrote:
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-> index 09a0b36122d0..c75dce7bbe13 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.c
-> +++ b/arch/arm64/kernel/probes/simulate-insn.c
-> @@ -13,6 +13,7 @@
->  #include <asm/traps.h>
+Hi,
+
+On 24/06/2025 11:04, Jayesh Choudhary wrote:
+> TIDSS uses crtc_* fields to propagate its registers and set the
+> clock rates. So set the CRTC modesetting timing parameters with
+> the adjusted mode when needed, to set correct values.
+> 
+> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+> 
+> Hello All,
+> 
+> After the DSI fixes[0], TIDSS is using crtc_* timings while programming
+> hardware[1]. But while testing on TI's J784S4-EVM platform, I noticed
+> that crtc_timings are not propagated properly.
+> 
+> The display pipeline there looks like:
+> TIDSS -> CDNS-DSI -> SN65DSI86 bridge -> DisplayPort
+> 
+> Consider the case of 1920x1080 resolution where the EDID mode has clock
+> of 148500kHz. After adjustment, the clock changes to 148800kHz. While
+> this change is reflected in mode->clock, its not propagated to
+> mode->crtc_clock.
+> 
+> [0] provides the **essential** fixes to get DSI working and its
+> patches are Reviewed and Tested.
+> The series improves the condition of DSI. I have observed that
+> 800x600 and 1280x1024 modes are working now after [0].
+> 
+> This patch helps to enables other modes. So taking this up as a
+> delta patch so as to avoid respining v5 of [0].
+> I hope this approach is okay!
+
+Yes, I think this makes sense.
+
+I'll pick this up after my series has been merged.
+
+ Tomi
+
+> 
+> [0]: https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
+> [1]: https://patchwork.kernel.org/project/dri-devel/patch/20250618-cdns-dsi-impro-v4-3-862c841dbe02@ideasonboard.com/ 
+> 
+>  drivers/gpu/drm/tidss/tidss_crtc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index 17efd77ce7f2..da89fd01c337 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -91,7 +91,7 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
+>  	struct dispc_device *dispc = tidss->dispc;
+>  	struct tidss_crtc *tcrtc = to_tidss_crtc(crtc);
+>  	u32 hw_videoport = tcrtc->hw_videoport;
+> -	const struct drm_display_mode *mode;
+> +	struct drm_display_mode *mode;
+>  	enum drm_mode_status ok;
 >  
->  #include "simulate-insn.h"
-> +#include "asm/gcs.h"
+>  	dev_dbg(ddev->dev, "%s\n", __func__);
+> @@ -108,6 +108,9 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
+>  		return -EINVAL;
+>  	}
 >  
->  #define bbl_displacement(insn)		\
->  	sign_extend32(((insn) & 0x3ffffff) << 2, 27)
-> @@ -49,6 +50,20 @@ static inline u32 get_w_reg(struct pt_regs *regs, int reg)
->  	return lower_32_bits(pt_regs_read_reg(regs, reg));
->  }
->  
-> +static inline void update_lr(struct pt_regs *regs, long addr)
-> +{
-> +	int err = 0;
+> +	if (drm_atomic_crtc_needs_modeset(crtc_state))
+> +		drm_mode_set_crtcinfo(mode, 0);
 > +
-> +	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
-> +		push_user_gcs(addr + 4,	 &err);
-> +		if (err) {
-> +			force_sig(SIGSEGV);
-> +			return;
-> +		}
-> +	}
-> +	procedure_link_pointer_set(regs, addr + 4);
-> +}
-> +
->  static bool __kprobes check_cbz(u32 opcode, struct pt_regs *regs)
->  {
->  	int xn = opcode & 0x1f;
-> @@ -107,9 +122,8 @@ simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
->  {
->  	int disp = bbl_displacement(opcode);
->  
-> -	/* Link register is x30 */
->  	if (opcode & (1 << 31))
-> -		set_x_reg(regs, 30, addr + 4);
-> +		update_lr(regs, addr);
-
-Why not pass (addr + 4) here and skip the addition in update_lr()?
-
->  
->  	instruction_pointer_set(regs, addr + disp);
+>  	return dispc_vp_bus_check(dispc, hw_videoport, crtc_state);
 >  }
-> @@ -133,17 +147,26 @@ simulate_br_blr(u32 opcode, long addr, struct pt_regs *regs)
->  	/* update pc first in case we're doing a "blr lr" */
->  	instruction_pointer_set(regs, get_x_reg(regs, xn));
 >  
-> -	/* Link register is x30 */
->  	if (((opcode >> 21) & 0x3) == 1)
-> -		set_x_reg(regs, 30, addr + 4);
-> +		update_lr(regs, addr);
->  }
 
-I can see why this function was originally updating PC (in case of a blr
-lr) but updating the LR was not supposed to fail. With GCS, I think we
-should follow similar logic to simulate_b_bl() and skip updating PC/LR
-if the write to the GCS failed (assuming that's what the hardware does,
-I haven't checked the spec).
-
->  void __kprobes
->  simulate_ret(u32 opcode, long addr, struct pt_regs *regs)
->  {
-> -	int xn = (opcode >> 5) & 0x1f;
-> +	u64 ret_addr;
-> +	int err = 0;
-> +	unsigned long lr = procedure_link_pointer(regs);
->  
-> -	instruction_pointer_set(regs, get_x_reg(regs, xn));
-> +	if (user_mode(regs) && task_gcs_el0_enabled(current)) {
-> +		ret_addr = pop_user_gcs(&err);
-> +		if (err || ret_addr != lr) {
-> +			force_sig(SIGSEGV);
-> +			return;
-> +		}
-> +	}
-> +
-> +	instruction_pointer_set(regs, lr);
->  }
-
-What happened to the RET Xn case?
-
--- 
-Catalin
 
