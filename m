@@ -1,74 +1,96 @@
-Return-Path: <linux-kernel+bounces-742777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869A6B0F696
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:10:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381B6B0F67F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD671CC61EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:05:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA767BA53B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AE32FBFE5;
-	Wed, 23 Jul 2025 15:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076962FF460;
+	Wed, 23 Jul 2025 15:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXRlcFsz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPqir2F+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8F02FA624;
-	Wed, 23 Jul 2025 15:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990752D3EFB;
+	Wed, 23 Jul 2025 15:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282811; cv=none; b=gkbOLkh/i7wbnVDxP2HSnABUXEgK6S8fCgrz3WIjZPbdn4IPRxeEoulWEF7zwyFfZc/jS7W0BbTB1cQ9UUbNrP53wqkDAAT9H3sgwOoL23nqp7AQ2kbxC9a+S00GUdgMq6YRre6dqpF9E3k/7xbTaf85VmGNw3Ax5o65+f2W8DM=
+	t=1753282891; cv=none; b=EZfio0agFRa1I45RjLXuxb3Jlg/EN23O5QmWj30mWI1/02pxIxLscR91wnvUxl6Ky5HUXnus7vTlMORG7NXSdohphViUZtvQgjrbu0ipTGIN4/e1p4HRHYKzKUVwWUHbMbpCbc/EAt/Qhj48wwAkt1DsFSUu//UW1ROGwcL1LGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282811; c=relaxed/simple;
-	bh=OAsFsARwtMGOaLiIPo6dxrAP58hUZjXFtCqKdHYwJ8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duBV+GqI/4bDpvBQ2oQgM2YXHBT+oFeo/PvRbvyNFHDfhjRahnqpixEsIkJTa9N34x5x51EdJScuC5cIGN6vkMB79dhmuEdqBNM4BmaD5nLC6kPOmMgygm97NsENdHEkYiwNzxmjtKcUXraCB4xKovgLhTs/wurJsPP2JFxMlDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXRlcFsz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F0CC4CEE7;
-	Wed, 23 Jul 2025 15:00:04 +0000 (UTC)
+	s=arc-20240116; t=1753282891; c=relaxed/simple;
+	bh=m21SaC0IlLv6BTU6zuvChLqhiP3/AhLoJDrRdogwifE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bTOV8f7eN9XOeUZ5Ob239EWdUPsANHvfqCSi7ln1Ggz2+X7ZSTgR47NxcCn0Kf+FRXs9PRrXuwCQTRWojZOXthf1ygEPU/CAMh82Ny07VcTZ40DGJlNYtiqc8/U5eDHbYXqOkKVVjmoKhKq+T1S51tfg+dlTxa+9zUL6e96ruLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPqir2F+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345C1C4CEF6;
+	Wed, 23 Jul 2025 15:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282807;
-	bh=OAsFsARwtMGOaLiIPo6dxrAP58hUZjXFtCqKdHYwJ8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hXRlcFszFeK9InxStlUrO2eLWEGuUw4dCml9mtR0e7EMUuqcFLqpLczC7TDL7cxk/
-	 p5W3XRBPLvyjkN3vl3TL9F7zdJ+CbWl0rvUmB0ZL894FrGChbN6TB7poA/RjeDXtCe
-	 1C0KyqEa6LgWfmkdQLY6nHqWwfaezz0KLEi4KnXG+Y/bDiBWinX1JxBsiBjat6kzF8
-	 BIZtRZIlOgPn+H2Uw+48dlcDEG2xBuCkdghJbHlqrcVKECrkdp9Ik7u6/loSrIV8ny
-	 S1KlGLBpS8NIu5bHRRg/ZBf0NRqMkSN6BYuW7lEeozItyTX+Px5OKr7A0i2IzJ1dyG
-	 9pZFzGei7De6g==
-Date: Wed, 23 Jul 2025 17:00:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jonathan Corbet <corbet@lwn.net>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: Re: [PATCH 0/3] fs: Remove old mount API helpers
-Message-ID: <20250723-widmung-kegeln-82e0bdc7b2df@brauner>
-References: <20250723132156.225410-1-pfalcato@suse.de>
+	s=k20201202; t=1753282890;
+	bh=m21SaC0IlLv6BTU6zuvChLqhiP3/AhLoJDrRdogwifE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dPqir2F+jYMqbnktdi+u4tGZsnWaeFyV5h94kuq9SXAZ5Adw8lmzBfsSxmSYGi66j
+	 g3YLYHcQPO2Bq9jOebM1jFTn2k/Zkqja3arHRb+ifXXswTQu8J1NZux/WQL6nuWvtU
+	 0dD8z/SwsKF81MtqULwn1KQzX8hQ1Hf8dk4W7fJEqxTLmEPu/1/4DntS/bJy3h4W+L
+	 hXWDVOfMFqFxAk483JZU/inmd1kJhP3X2bsr1jPVV00mmZfr+jfTYcu2akO4fgI8Uw
+	 pLPQH8FLqn6MDXQMINX8nR3onqs/R4U/wMk7XI7mJLZrC3Wtes87hb8tOzhOf8ZOlB
+	 1VonZSpk/m3uA==
+From: Carlos Maiolino <cem@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, Steven Rostedt <rostedt@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+ "Darrick J. Wong" <djwong@kernel.org>
+In-Reply-To: <20250722201907.886429445@kernel.org>
+References: <20250722201907.886429445@kernel.org>
+Subject: Re: [PATCH 0/4] xfs: more unused events from linux-next
+Message-Id: <175328288785.86753.6771359243622680611.b4-ty@kernel.org>
+Date: Wed, 23 Jul 2025 17:01:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250723132156.225410-1-pfalcato@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Wed, Jul 23, 2025 at 02:21:53PM +0100, Pedro Falcato wrote:
-> Based on linux-next as of 23 July 2025.
+On Tue, 22 Jul 2025 16:19:07 -0400, Steven Rostedt wrote:
+> I reran the unused tracepoint code on the latest linux-next and found more
+> xfs trace events. One was recently added but the rest were there before. Not
+> sure how I missed them.
 > 
-> This patchset contains a very small cleanup, where we remove mount_nodev
-> (unused since 6.15) and mount_bdev (unused since f2fs converted their
-> mount API usage, still in -next). Obviously depends on the f2fs patches
-> (maybe should be merged through their tree? I don't know.).
+> But anyway, here's a few more patches to remove unused xfs trace events.
 > 
-> While we're at it, we also get to removing some stale mount API docs.
+> Steven Rostedt (4):
+>       xfs: remove unused trace event xfs_dqreclaim_dirty
+>       xfs: remove unused trace event xfs_log_cil_return
+>       xfs: remove unused trace event xfs_discard_rtrelax
+>       xfs: remove unused trace event xfs_reflink_cow_enospc
+> 
+> [...]
 
-Nice, I'll pick that up for v6.18.
+Applied to for-next, thanks!
+
+[1/4] xfs: remove unused trace event xfs_dqreclaim_dirty
+      commit: 1edc170bb24082785e5825c46a36af8ae12ac762
+[2/4] xfs: remove unused trace event xfs_log_cil_return
+      commit: 55edb3326b4b07117d0c26cd67d86fb8518ee906
+[3/4] xfs: remove unused trace event xfs_discard_rtrelax
+      commit: c17f506f0abe67b6009c0d126da81a71fc1e00c1
+[4/4] xfs: remove unused trace event xfs_reflink_cow_enospc
+      commit: 10a957e43f28105ceb7b8e31a918d1c47cd4df3e
+
+Best regards,
+-- 
+Carlos Maiolino <cem@kernel.org>
+
 
