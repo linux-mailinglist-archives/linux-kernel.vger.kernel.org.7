@@ -1,631 +1,486 @@
-Return-Path: <linux-kernel+bounces-742920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E306EB0F845
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BCEB0F846
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14AA15869DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238BFAA45C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CB31F91D6;
-	Wed, 23 Jul 2025 16:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCWySloZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE975D8F0;
-	Wed, 23 Jul 2025 16:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5C01F541E;
+	Wed, 23 Jul 2025 16:39:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38AF1E8324
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753288746; cv=none; b=WQ34vCNScAAJaNdA+4lUsYRPDLLGxREEELuvYmPrPHG3xfAHJQFZIEmeYxhpk6v6PJLofOKfNb+7z1h4XOrBKdLhOIWzMkXvbS7OhBRhA7epLdTZop1R+OYEQ0sadu07GhQyLr/BI1sbajebss8A1YC1/Pan2QYEOzKk6JVBdkw=
+	t=1753288765; cv=none; b=Wg8V897MEq1uXYHbcqAaFqrMoBktGtlXCnrDHLnf/nk6BpHqyC6Rgy9gGNroM622/sDxyom3Z94tJZ0bcGCjlyUhPtrAg75IilPMPn4ckb7i6XCpRuxgnHrbjxqOILg5J8EFek7aogh48ONPkIqMkMBx6DRuD3osNGV6WTfbcMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753288746; c=relaxed/simple;
-	bh=goKtKhXh8A19MJXoBLW1n10ZfGp/2MaZMbL+mHUYHdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnZHCmjjK8xiJ80oVB5pM8nvcBhGMiIryO9Ox8kYmrY2onJG1dqxdNqXiCsg8vXdDG0kPojxkECmdijfFM3xMos5a5QM78k+KDZ7Im4bt0KTick9shJj1LM1ngCe09xLyM01LNalaIC0HCBQ2G9BvIV3tzWxB632hsfqAJAUJUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCWySloZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0184C4CEE7;
-	Wed, 23 Jul 2025 16:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753288745;
-	bh=goKtKhXh8A19MJXoBLW1n10ZfGp/2MaZMbL+mHUYHdU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=dCWySloZkG3RB1lURYuzffcGWj2N5pXwlpNWnzSi6FqZU4i/pT4hXMJjbDSCgaROc
-	 9Wj3ERjpcXql+Wh15On9prZO3G393iFDatFq0p2kXH0C1C2D6ul8kmQx1zV04tbZ92
-	 B+ew6/PipzSXHCD9FlU7GPgoTWmf/dApb0sAzZgb+MXR9FhVCLvwHk2PskXtF71L6E
-	 C0TQnn7qxIEfxs4mfOx7HQci6CeW99l9W7yD4g84TVrK8mY5N3q0GlgsbcTOsiTXFj
-	 OQnGLZ9ZAOgG21ck9IsvUyUuo3HEAVQOxLXU+hLEouvPOleN8PcPprHkp19JNbFu0I
-	 fuQ9EtZbbzp1A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4B6F3CE0AD1; Wed, 23 Jul 2025 09:39:05 -0700 (PDT)
-Date: Wed, 23 Jul 2025 09:39:05 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
-Subject: Re: [RFC] tools/memory-model: Rule out OOTA
-Message-ID: <32a8f541-f760-44a1-8150-5e3d5ba98f34@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
- <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
- <3e98c47c-d354-431f-851f-494df9e6bc78@huaweicloud.com>
+	s=arc-20240116; t=1753288765; c=relaxed/simple;
+	bh=p+8Exb/hwR39TXbVI8wYR+IYR6MTFqtL38RH2DVLQtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E/Ah25n2TxHEAmJHnoDg+w3mXzFodaxh9e55O/8nEd/SHLVUX8EzqI3T/7Z8QgeCAkNTL2BKsInF1UqJIB8zPtlZs/3CPmdMQyiSJ6f2p5VA+rmDsu36JZiXe46unABO0aG3mw64nnj9dcOvhVeW05CjhG28ULWmOcGiTM5NXBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D152722C7;
+	Wed, 23 Jul 2025 09:39:15 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70C4C3F6A8;
+	Wed, 23 Jul 2025 09:39:18 -0700 (PDT)
+Message-ID: <84e52287-e46a-40c3-90b7-ab7e9f2c7431@arm.com>
+Date: Wed, 23 Jul 2025 17:39:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e98c47c-d354-431f-851f-494df9e6bc78@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 10/36] ACPI / MPAM: Parse the MPAM table
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-11-james.morse@arm.com>
+ <20250716180725.0000452d@huawei.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250716180725.0000452d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 09:26:32AM +0200, Hernan Ponce de Leon wrote:
-> On 7/23/2025 2:43 AM, Paul E. McKenney wrote:
-> > On Mon, Jan 06, 2025 at 10:40:03PM +0100, Jonas Oberhauser wrote:
-> > > The current LKMM allows out-of-thin-air (OOTA), as evidenced in the following
-> > > example shared on this list a few years ago:
-> > 
-> > Apologies for being slow, but I have finally added the litmus tests in
-> > this email thread to the https://github.com/paulmckrcu/litmus repo.
+Hi James, Jonathan,
+
+On 7/16/25 18:07, Jonathan Cameron wrote:
+> On Fri, 11 Jul 2025 18:36:22 +0000
+> James Morse <james.morse@arm.com> wrote:
 > 
-> I do not understand some of the comments in the preamble of the tests:
+>> Add code to parse the arm64 specific MPAM table, looking up the cache
+>> level from the PPTT and feeding the end result into the MPAM driver.
 > 
-> (*
->  * Result: Never
->  *
->  * But Sometimes in LKMM as of early 2025, given that 42 is a possible
->  * value for things like S19..
->  *
->  * https://lore.kernel.org/all/20250106214003.504664-1-jonas.oberhauser@huaweicloud.com/
->  *)
+> Throw in a link to the spec perhaps?  Particularly useful to know which
+> version this was written against when reviewing it.
+
+As I comment below this code checks the table revision is 1 and so we 
+can assume it was written against version 2 of the spec. As of Monday, 
+there is a new version hot off the press,
+https://developer.arm.com/documentation/den0065/3-0bet/?lang=en which 
+introduces an "MMIO size" field to allow for disabled nodes. This should 
+be considered here to avoid advertising msc that aren't present.
 > 
-> I see that herd7 reports one of the states to be [b]=S16. Is this supposed
-> to be some kind of symbolic state (i.e., any value is possible)?
-
-Exactly!
-
-> The value in the "Result" is what we would like the model to say if we would
-> have a perfect version of dependencies, right?
-
-In this case, yes.
-
-There are other cases elsewhere in which the "Result:" comment instead
-records LKMM's current state, so that any deviation (whether right or
-wrong) are noted.  Most recently, the 1800+ changes in luc/RelAcq.
-
-> > It is quite likely that I have incorrectly intuited the missing portions
-> > of the litmus tests, especially the two called out in the commit log
-> > below.  If you have time, please do double-check.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> ---
+>>   arch/arm64/Kconfig          |   1 +
+>>   drivers/acpi/arm64/Kconfig  |   3 +
+>>   drivers/acpi/arm64/Makefile |   1 +
+>>   drivers/acpi/arm64/mpam.c   | 365 ++++++++++++++++++++++++++++++++++++
+>>   drivers/acpi/tables.c       |   2 +-
+>>   include/linux/arm_mpam.h    |  46 +++++
+>>   6 files changed, 417 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/acpi/arm64/mpam.c
+>>   create mode 100644 include/linux/arm_mpam.h
+>>
 > 
-> I read the "On the other hand" from the commit log as "this fixes the
-> problem". However I still get the following error when running C-JO-OOTA-7
-> with herd7
+>> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+>> index 05ecde9eaabe..27b872249baa 100644
+>> --- a/drivers/acpi/arm64/Makefile
+>> +++ b/drivers/acpi/arm64/Makefile
+>> @@ -6,5 +6,6 @@ obj-$(CONFIG_ACPI_GTDT) 	+= gtdt.o
+>>   obj-$(CONFIG_ACPI_IORT) 	+= iort.o
+>>   obj-$(CONFIG_ACPI_PROCESSOR_IDLE) += cpuidle.o
+>>   obj-$(CONFIG_ARM_AMBA)		+= amba.o
+>> +obj-$(CONFIG_ACPI_MPAM) 	+= mpam.o
 > 
-> Warning: File "manual/oota/C-JO-OOTA-7.litmus": Non-symbolic memory access
-> found on '[0]' (User error)
-
-Yes, my interpretation of the example in that URL didn't make any
-sense at all to herd7.  So I would welcome a fix to this litmus test.
-The only potential fixes that I found clearly went against the intent
-of this litmus test.
-
-My only real contribution in my coding of manual/oota/C-JO-OOTA-7.litmus
-is showing how to initialize a local herd7 variable to contain a pointer
-to a global variable.  ;-)
-
-							Thanx, Paul
-
-> Hernan>
-> > And the updated (and condensed!) version of the C++ OOTA paper may be
-> > found here, this time with a proposed change to the standard:
-> > 
-> > https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3692r1.pdf
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > commit fd17e8fceb75326e159ba3aa6fdb344f74f5c7a5
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date:   Tue Jul 22 17:21:19 2025 -0700
-> > 
-> >      manual/oota:  Add Jonas and Alan OOTA examples
-> >      Each of these new litmus tests contains the URL of the email message
-> >      that I took it from.
-> >      Please note that I had to tweak the example leading up to
-> >      C-JO-OOTA-4.litmus, and I might well have misinterpreted Jonas's "~"
-> >      operator.
-> >      Also, C-JO-OOTA-7.litmus includes a "*r2 = a" statement that makes herd7
-> >      very unhappy.  On the other hand, initializing registers to the address
-> >      of a variable is straight forward, as shown in the resulting litmus test.
-> >      Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > 
-> > diff --git a/manual/oota/C-AS-OOTA-1.litmus b/manual/oota/C-AS-OOTA-1.litmus
-> > new file mode 100644
-> > index 00000000..81a873a7
-> > --- /dev/null
-> > +++ b/manual/oota/C-AS-OOTA-1.litmus
-> > @@ -0,0 +1,40 @@
-> > +C C-AS-OOTA-1
-> > +
-> > +(*
-> > + * Result: Sometimes
-> > + *
-> > + * Because smp_rmb() combined with smp_wmb() does not order earlier
-> > + * reads against later writes.
-> > + *
-> > + * https://lore.kernel.org/all/a3bf910f-509a-4ad3-a1cc-4b14ef9b3259@rowland.harvard.edu
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		*a = *b;
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		*b = *a;
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-AS-OOTA-2.litmus b/manual/oota/C-AS-OOTA-2.litmus
-> > new file mode 100644
-> > index 00000000..c672b0e7
-> > --- /dev/null
-> > +++ b/manual/oota/C-AS-OOTA-2.litmus
-> > @@ -0,0 +1,33 @@
-> > +C C-AS-OOTA-2
-> > +
-> > +(*
-> > + * Result: Always
-> > + *
-> > + * If we were using C-language relaxed atomics instead of volatiles,
-> > + * the compiler *could* eliminate the first WRITE_ONCE() in each process,
-> > + * then also each process's local variable, thus having an undefined value
-> > + * for each of those local variables.  But this cannot happen given that
-> > + * we are using Linux-kernel _ONCE() primitives.
-> > + *
-> > + * https://lore.kernel.org/all/c2ae9bca-8526-425e-b9b5-135004ad59ad@rowland.harvard.edu/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b)
-> > +{
-> > +	int r0 = READ_ONCE(*a);
-> > +
-> > +	WRITE_ONCE(*b, r0);
-> > +	WRITE_ONCE(*b, 2);
-> > +}
-> > +
-> > +P1(int *a, int *b)
-> > +{
-> > +	int r1 = READ_ONCE(*b);
-> > +
-> > +	WRITE_ONCE(*a, r0);
-> > +	WRITE_ONCE(*a, 2);
-> > +}
-> > +
-> > +exists ((0:r0=0 \/ 0:r0=2) /\ (1:r1=0 \/ 1:r1=2))
-> > diff --git a/manual/oota/C-JO-OOTA-1.litmus b/manual/oota/C-JO-OOTA-1.litmus
-> > new file mode 100644
-> > index 00000000..6ab437b4
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-1.litmus
-> > @@ -0,0 +1,40 @@
-> > +C C-JO-OOTA-1
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But Sometimes in LKMM as of early 2025, given that 42 is a possible
-> > + * value for things like S19..
-> > + *
-> > + * https://lore.kernel.org/all/20250106214003.504664-1-jonas.oberhauser@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		*a = *b;
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		*b = *a;
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists (b=42)
-> > diff --git a/manual/oota/C-JO-OOTA-2.litmus b/manual/oota/C-JO-OOTA-2.litmus
-> > new file mode 100644
-> > index 00000000..ad708c60
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-2.litmus
-> > @@ -0,0 +1,44 @@
-> > +C C-JO-OOTA-2
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But Sometimes in LKMM as of early 2025, given that 42 is a possible
-> > + * value for things like S23.
-> > + *
-> > + * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2 = 0;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = *b;
-> > +	}
-> > +	WRITE_ONCE(*a, r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2 = 0;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = *a;
-> > +	}
-> > +	WRITE_ONCE(*b, r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists (b=42)
-> > diff --git a/manual/oota/C-JO-OOTA-3.litmus b/manual/oota/C-JO-OOTA-3.litmus
-> > new file mode 100644
-> > index 00000000..633b8334
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-3.litmus
-> > @@ -0,0 +1,46 @@
-> > +C C-JO-OOTA-3
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But LKMM finds the all-ones result, perhaps due to not tracking
-> > + * control dependencies out of the "if" statement.
-> > + *
-> > + * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	r2 = READ_ONCE(*b);
-> > +	if (r1 == 1) {
-> > +		r2 = *b;
-> > +	}
-> > +	WRITE_ONCE(*a, r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	r2 = READ_ONCE(*a);
-> > +	if (r1 == 1) {
-> > +		r2 = *a;
-> > +	}
-> > +	WRITE_ONCE(*b, r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-JO-OOTA-4.litmus b/manual/oota/C-JO-OOTA-4.litmus
-> > new file mode 100644
-> > index 00000000..cab7ebb6
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-4.litmus
-> > @@ -0,0 +1,43 @@
-> > +C C-JO-OOTA-4
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * And LKMM agrees, which might be a surprise.
-> > + *
-> > + * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +	int r3;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	r2 = *b;
-> > +	r3 = r1 == 0;
-> > +	WRITE_ONCE(*a, (r3 + 1) & r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +	int r3;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	r2 = *a;
-> > +	r3 = r1 == 0;
-> > +	WRITE_ONCE(*b, (r3 + 1) & r2);
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-JO-OOTA-5.litmus b/manual/oota/C-JO-OOTA-5.litmus
-> > new file mode 100644
-> > index 00000000..145c8378
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-5.litmus
-> > @@ -0,0 +1,44 @@
-> > +C C-JO-OOTA-5
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But LKMM finds the all-ones result, perhaps due r2 being unused.
-> > + *
-> > + * https://lore.kernel.org/all/1daba0ea-0dd6-4e67-923e-fd3c1a62b40b@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*a);
-> > +	}
-> > +	*b = 1;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*b);
-> > +	}
-> > +	*a = 1;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +locations [0:r2;1:r2]
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-JO-OOTA-6.litmus b/manual/oota/C-JO-OOTA-6.litmus
-> > new file mode 100644
-> > index 00000000..942e6c82
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-6.litmus
-> > @@ -0,0 +1,44 @@
-> > +C C-JO-OOTA-6
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But LKMM finds the all-ones result, due to OOTA on r2.
-> > + *
-> > + * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*a);
-> > +	}
-> > +	*b = r2;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*b);
-> > +	}
-> > +	*a = r2;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +locations [0:r2;1:r2]
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-JO-OOTA-7.litmus b/manual/oota/C-JO-OOTA-7.litmus
-> > new file mode 100644
-> > index 00000000..31c0b8ae
-> > --- /dev/null
-> > +++ b/manual/oota/C-JO-OOTA-7.litmus
-> > @@ -0,0 +1,47 @@
-> > +C C-JO-OOTA-7
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * But LKMM finds the all-ones result, due to OOTA on r2.
-> > + *
-> > + * https://lore.kernel.org/all/1147ad3e-e3ad-4fa1-9a63-772ba136ea9a@huaweicloud.com/
-> > + *)
-> > +
-> > +{
-> > +	0:r2=a;
-> > +	1:r2=b;
-> > +}
-> > +
-> > +P0(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*a);
-> > +	}
-> > +	*r2 = a;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y)
-> > +{
-> > +	int r1;
-> > +	int r2;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		r2 = READ_ONCE(*b);
-> > +	}
-> > +	*r2 = b;
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +locations [0:r2;1:r2]
-> > +exists (0:r1=1 /\ 1:r1=1)
-> > diff --git a/manual/oota/C-PM-OOTA-1.litmus b/manual/oota/C-PM-OOTA-1.litmus
-> > new file mode 100644
-> > index 00000000..e771e3c9
-> > --- /dev/null
-> > +++ b/manual/oota/C-PM-OOTA-1.litmus
-> > @@ -0,0 +1,37 @@
-> > +C C-PM-OOTA-1
-> > +
-> > +(*
-> > + * Result: Never
-> > + *
-> > + * LKMM agrees.
-> > + *
-> > + * https://lore.kernel.org/all/9a0dccbb-bfa7-4b33-ac1a-daa9841b609a@paulmck-laptop/
-> > + *)
-> > +
-> > +{}
-> > +
-> > +P0(int *a, int *b, int *x, int *y) {
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*x);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		WRITE_ONCE(*a, *b);
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*y, 1);
-> > +}
-> > +
-> > +P1(int *a, int *b, int *x, int *y) {
-> > +	int r1;
-> > +
-> > +	r1 = READ_ONCE(*y);
-> > +	smp_rmb();
-> > +	if (r1 == 1) {
-> > +		WRITE_ONCE(*b, *a);
-> > +	}
-> > +	smp_wmb();
-> > +	WRITE_ONCE(*x, 1);
-> > +}
-> > +
-> > +exists b=42
+> Keep it with the ACPI ones?  There doesn't seem to be a lot of order in here
+> though so I guess maybe there is logic behind putting it here I'm missing.
 > 
+>>   obj-y				+= dma.o init.o
+>>   obj-y				+= thermal_cpufreq.o
+>> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
+>> new file mode 100644
+>> index 000000000000..f4791bac9a2a
+>> --- /dev/null
+>> +++ b/drivers/acpi/arm64/mpam.c
+>> @@ -0,0 +1,365 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (C) 2025 Arm Ltd.
+>> +
+>> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
+>> +
+>> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/arm_mpam.h>
+>> +#include <linux/cpu.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <acpi/processor.h>
+>> +
+>> +/* Flags for acpi_table_mpam_msc.*_interrupt_flags */
+> 
+> References.. I'm looking at 3.0-alpha table 5 to check this.
+> I can see why you might be reluctant to point at an alpha if that
+> is what you are using ;)
+> 
+> 
+>> +#define ACPI_MPAM_MSC_IRQ_MODE_EDGE                    1
+>> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                    (3 << 1)
+> 
+> GENMASK(3, 2) would be my preference for how to do masks in new code.
+> 
+>> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                   0
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER BIT(3)
+>> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID               BIT(4)
+>> +
+>> +static bool frob_irq(struct platform_device *pdev, int intid, u32 flags,
+>> +		     int *irq, u32 processor_container_uid)
+>> +{
+>> +	int sense;
+>> +
+>> +	if (!intid)
+>> +		return false;
+>> +
+>> +	/* 0 in this field indicates a wired interrupt */
+>> +	if (flags & ACPI_MPAM_MSC_IRQ_TYPE_MASK)
+> I'd prefer more explicit code (and probably no comment)
+> 
+> 	if (FIELD_GET(flags, ACPI_MPAM_MSC_IRQ_TYPE_MASK) !=
+> 	    ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
+> 		return false;
+> 
+>> +		return false;
+>> +
+>> +	if (flags & ACPI_MPAM_MSC_IRQ_MODE_EDGE)
+>> +		sense = ACPI_EDGE_SENSITIVE;
+>> +	else
+>> +		sense = ACPI_LEVEL_SENSITIVE;
+> 
+> If the spec is supposed to be using standard ACPI_* types for this field
+> (I don't think the connection is explicitly documented though) then
+> 
+> 	sense = FIELD_GET(flags, ACPI_MPAM_MSC_IRQ_MODE_MASK);
+> Assuming a change to define the mask and rely on the ACPI defs for the values
+> 
+> This one is entirely up to you.
+> 
+>> +
+>> +	/*
+>> +	 * If the GSI is in the GIC's PPI range, try and create a partitioned
+>> +	 * percpu interrupt.
+>> +	 */
+>> +	if (16 <= intid && intid < 32 && processor_container_uid != ~0) {
+>> +		pr_err_once("Partitioned interrupts not supported\n");
+>> +		return false;
+>> +	}
+>> +
+>> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
+>> +	if (*irq <= 0) {
+>> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
+>> +			    intid);
+>> +		return false;
+>> +	}
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
+>> +				 struct acpi_mpam_msc_node *tbl_msc,
+>> +				 struct resource *res, int *res_idx)
+>> +{
+>> +	u32 flags, aff = ~0;
+>> +	int irq;
+>> +
+>> +	flags = tbl_msc->overflow_interrupt_flags;
+>> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
+>> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
+>> +		aff = tbl_msc->overflow_interrupt_affinity;
+> Just to make the two cases look the same I'd do
+> 
+> 	else
+> 		aff = ~0;
+> 
+> here as well and not initialize above.  It's not quite worth using
+> a helper function for these two identical blocks but it's close.
+> 
+>> +	if (frob_irq(pdev, tbl_msc->overflow_interrupt, flags, &irq, aff)) {
+>> +		res[*res_idx].start = irq;
+>> +		res[*res_idx].end = irq;
+>> +		res[*res_idx].flags = IORESOURCE_IRQ;
+>> +		res[*res_idx].name = "overflow";
+> 
+> 		res[*res_idx] = DEFINE_RES_IRQ_NAMED(irq, 1, "overflow");
+>> +
+>> +		(*res_idx)++;
+> Can roll this in as well.
+> 
+>> +	}
+>> +
+>> +	flags = tbl_msc->error_interrupt_flags;
+>> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
+>> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
+>> +		aff = tbl_msc->error_interrupt_affinity;
+>> +	else
+>> +		aff = ~0;
+>> +	if (frob_irq(pdev, tbl_msc->error_interrupt, flags, &irq, aff)) {
+>> +		res[*res_idx].start = irq;
+>> +		res[*res_idx].end = irq;
+>> +		res[*res_idx].flags = IORESOURCE_IRQ;
+>> +		res[*res_idx].name = "error";
+> 
+> Similar to above.
+> 
+>> +
+>> +		(*res_idx)++;
+>> +	}
+>> +}
+>> +
+> 
+> 
+>> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
+>> +				     struct platform_device *pdev,
+>> +				     u32 *acpi_id)
+>> +{
+>> +	bool acpi_id_valid = false;
+>> +	struct acpi_device *buddy;
+>> +	char hid[16], uid[16];
+>> +	int err;
+>> +
+>> +	memset(&hid, 0, sizeof(hid));
+>> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
+>> +	       sizeof(tbl_msc->hardware_id_linked_device));
+>> +
+>> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
+>> +		*acpi_id = tbl_msc->instance_id_linked_device;
+>> +		acpi_id_valid = true;
+>> +	}
+>> +
+>> +	err = snprintf(uid, sizeof(uid), "%u",
+>> +		       tbl_msc->instance_id_linked_device);
+>> +	if (err < 0 || err >= sizeof(uid))
+> 
+> Does snprintf() ever return < 0 ?  It's documented as returning
+> number of chars printed (without the NULL) so that can only be 0 or
+> greater.
+> 
+> Can it return >= sizeof(uid) ? Looks odd.
+> 
+> +		return acpi_id_valid;
+>> +
+>> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
+>> +	if (buddy)
+>> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
+>> +
+>> +	return acpi_id_valid;
+>> +}
+> 
+>> +static int __init _parse_table(struct acpi_table_header *table)
+>> +{
+>> +	char *table_end, *table_offset = (char *)(table + 1);
+>> +	struct property_entry props[4]; /* needs a sentinel */
+>> +	struct acpi_mpam_msc_node *tbl_msc;
+>> +	int next_res, next_prop, err = 0;
+>> +	struct acpi_device *companion;
+>> +	struct platform_device *pdev;
+>> +	enum mpam_msc_iface iface;
+>> +	struct resource res[3];
+>> +	char uid[16];
+>> +	u32 acpi_id;
+>> +
+>> +	table_end = (char *)table + table->length;
+>> +
+>> +	while (table_offset < table_end) {
+>> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+>> +		table_offset += tbl_msc->length;
+>> +
+>> +		/*
+>> +		 * If any of the reserved fields are set, make no attempt to
+>> +		 * parse the msc structure. This will prevent the driver from
+>> +		 * probing all the MSC, meaning it can't discover the system
+>> +		 * wide supported partid and pmg ranges. This avoids whatever
+>> +		 * this MSC is truncating the partids and creating a screaming
+>> +		 * error interrupt.
+>> +		 */
+>> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2)
+>> +			continue;
+>> +
+>> +		if (decode_interface_type(tbl_msc, &iface))
+>> +			continue;
+>> +
+>> +		next_res = 0;
+>> +		next_prop = 0;
+>> +		memset(res, 0, sizeof(res));
+>> +		memset(props, 0, sizeof(props));
+>> +
+>> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);
+>> +		if (IS_ERR(pdev)) {
+> 
+> returns NULL in at least some error cases (probably all, I'm just to lazy to check)
+> 
+>> +			err = PTR_ERR(pdev);
+>> +			break;
+>> +		}
+>> +
+>> +		if (tbl_msc->length < sizeof(*tbl_msc)) {
+>> +			err = -EINVAL;
+>> +			break;
+>> +		}
+>> +
+>> +		/* Some power management is described in the namespace: */
+>> +		err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
+>> +		if (err > 0 && err < sizeof(uid)) {
+>> +			companion = acpi_dev_get_first_match_dev("ARMHAA5C", uid, -1);
+>> +			if (companion)
+>> +				ACPI_COMPANION_SET(&pdev->dev, companion);
+>> +		}
+>> +
+>> +		if (iface == MPAM_IFACE_MMIO) {
+>> +			res[next_res].name = "MPAM:MSC";
+>> +			res[next_res].start = tbl_msc->base_address;
+>> +			res[next_res].end = tbl_msc->base_address + tbl_msc->mmio_size - 1;
+>> +			res[next_res].flags = IORESOURCE_MEM;
+>> +			next_res++;
+> 
+> DEFINE_RES_MEM_NAMED()?
+> 
+>> +		} else if (iface == MPAM_IFACE_PCC) {
+>> +			props[next_prop++] = PROPERTY_ENTRY_U32("pcc-channel",
+>> +								tbl_msc->base_address);
+>> +			next_prop++;
+>> +		}
+>> +
+>> +		acpi_mpam_parse_irqs(pdev, tbl_msc, res, &next_res);
+>> +		err = platform_device_add_resources(pdev, res, next_res);
+>> +		if (err)
+>> +			break;
+>> +
+>> +		props[next_prop++] = PROPERTY_ENTRY_U32("arm,not-ready-us",
+>> +							tbl_msc->max_nrdy_usec);
+>> +
+>> +		/*
+>> +		 * The MSC's CPU affinity is described via its linked power
+>> +		 * management device, but only if it points at a Processor or
+>> +		 * Processor Container.
+>> +		 */
+>> +		if (parse_msc_pm_link(tbl_msc, pdev, &acpi_id)) {
+>> +			props[next_prop++] = PROPERTY_ENTRY_U32("cpu_affinity",
+>> +								acpi_id);
+>> +		}
+>> +
+>> +		err = device_create_managed_software_node(&pdev->dev, props,
+>> +							  NULL);
+>> +		if (err)
+>> +			break;
+>> +
+>> +		/* Come back later if you want the RIS too */
+>> +		err = platform_device_add_data(pdev, tbl_msc, tbl_msc->length);
+>> +		if (err)
+>> +			break;
+>> +
+>> +		platform_device_add(pdev);
+> 
+> Can fail.
+> 
+>> +	}
+>> +
+>> +	if (err)
+>> +		platform_device_put(pdev);
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static struct acpi_table_header *get_table(void)
+>> +{
+>> +	struct acpi_table_header *table;
+>> +	acpi_status status;
+>> +
+>> +	if (acpi_disabled || !system_supports_mpam())
+>> +		return NULL;
+>> +
+>> +	status = acpi_get_table(ACPI_SIG_MPAM, 0, &table);
+>> +	if (ACPI_FAILURE(status))
+>> +		return NULL;
+>> +
+>> +	if (table->revision != 1)
+>> +		return NULL;
+Indicates that this was written against version 2 of the spec.
+>> +
+>> +	return table;
+>> +}
+>> +
+>> +static int __init acpi_mpam_parse(void)
+>> +{
+>> +	struct acpi_table_header *mpam;
+>> +	int err;
+>> +
+>> +	mpam = get_table();
+>> +	if (!mpam)
+>> +		return 0;
+> 
+> Just what I was suggesting for the PPTT case in early patches. Nice :)
+> 
+>> +
+>> +	err = _parse_table(mpam);
+>> +	acpi_put_table(mpam);
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static int _count_msc(struct acpi_table_header *table)
+>> +{
+>> +	char *table_end, *table_offset = (char *)(table + 1);
+>> +	struct acpi_mpam_msc_node *tbl_msc;
+>> +	int ret = 0;
+> 
+> Call it count as it only ever contains the count?
+> 
+>> +
+>> +	tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+>> +	table_end = (char *)table + table->length;
+>> +
+>> +	while (table_offset < table_end) {
+>> +		if (tbl_msc->length < sizeof(*tbl_msc))
+>> +			return -EINVAL;
+>> +
+>> +		ret++;
+> 
+> count++ would feel more natural here.
+> 
+>> +
+>> +		table_offset += tbl_msc->length;
+>> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> 
+> That's all I have time for today. Will get to the rest of the series soonish.
+> 
+> Jonathan
+> 
+> 
+
+Thanks,
+
+Ben
+
 
