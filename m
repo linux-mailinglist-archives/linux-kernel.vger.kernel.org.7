@@ -1,168 +1,160 @@
-Return-Path: <linux-kernel+bounces-742926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1681FB0F84E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5602AB0F84F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58201C2702D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557A2586DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09031F9F70;
-	Wed, 23 Jul 2025 16:42:09 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8121FBEB1;
+	Wed, 23 Jul 2025 16:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PbSs6it0"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1982E36EB;
-	Wed, 23 Jul 2025 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCED62E36EB
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 16:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753288929; cv=none; b=jJVj6vpvOgLT985B32MED/KW1RaqD1M8iIzRIROuMle3vpGufyVxgBuL5eNw41AS3fVBX0Tnu3/5D+s3xjTYBiKDk+uMw6RToaK+S6BEzMAUoyhj2qiCanyQajTh3Qk13FfeyvpPAzy3/P4s7OBo7YqpSOAA7bqRIqy7ot0RS3k=
+	t=1753288968; cv=none; b=aqHoPtzN2A1gZYkcHmfSavwG1S0irTRJMi8xjFPRlg4T18UH9b2Zt1ql665U1s6WNgoR0XY3vPdQTEM/Wz7o/aYvVEUTzK71JJ0C85wU4gIfwt5D/ufrE2I74k31q73VBGd+BjzOeBV9WrsFlsFCvBtFQusQGN3Jd0YUhD7XjTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753288929; c=relaxed/simple;
-	bh=uSnA7guYjYj06IC+uiBx+JjZ0jh3KzqUqP15KULIBSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nqwYFVSO1MOtS0pzp91iWfKvaWZ88bU4M9ZIa0s0XzenM+JpRF0sQ1xjnnaAkiergOHJ4CqEz6cGirproRbm1AdnHT31HdrNQfXf4wZeQn4G5xb6i4dZ71NJq3XvmwkQsfcDM55SSt+9YUPE7YMxVmFplMtufkCENjpnlDt9b6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 7F7BB10E109;
-	Wed, 23 Jul 2025 16:42:05 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id C63EC32;
-	Wed, 23 Jul 2025 16:42:03 +0000 (UTC)
-Date: Wed, 23 Jul 2025 12:42:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Takaya Saeki <takayas@google.com>, Tom
- Zanussi <zanussi@kernel.org>
-Subject: [PATCH] tracing: Have eprobes handle arrays
-Message-ID: <20250723124202.4f7475be@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753288968; c=relaxed/simple;
+	bh=weu515HxAHkuURPK86yXG/FVJJzKF9VdctGDpT2Tfw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GwPythwFeKsrORgPIjMmSVl/xTG/6fSzhNmt2LhhgfEb7/Ld2iUw6Ry2Q7LtbLrkMxPQZzJaq3A7WpriFE4xW8S8IsPnIGsxBRNWUacsGDzt2/zGmki/c+BXz6WEZg5aHiPXJLgpWDf5X4GZYit1Q3zWxI1IyaQwFllkBRnT2r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PbSs6it0; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <af8ceac7-851c-438d-8112-c1586427f58a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753288964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8p3PgGx5kkSzSoyRaIEX9Hr5sjraoOmV1Zy/tziPlHM=;
+	b=PbSs6it0tQ0Da21CUeFQxpFuNARhw1hxqMBnxLncorDOABNrr7lxhH1tJzV8wQ6RTpWUhk
+	HL23U4KCEowdH3tCkS/AT8txUd9Py0VO8x/IHn+QAYAdRBjWBFVNCR/oqql+sbPPYsXXmM
+	DMsH4LyH20OOAhb7raU0WJbHae4NHAo=
+Date: Wed, 23 Jul 2025 09:42:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH bpf-next v3 3/4] selftests/bpf: Add selftest for attaching
+ tracing programs to functions in deny list
+Content-Language: en-GB
+To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+ john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
+ laoar.shao@gmail.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, leon.hwang@linux.dev
+References: <20250722153434.20571-1-kafai.wan@linux.dev>
+ <20250722153434.20571-4-kafai.wan@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250722153434.20571-4-kafai.wan@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: g8kd9mrjcm6zsd3grc6brgwfqfxobwrt
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: C63EC32
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19HhRKbnGBvG0HEgbmBP9XIV3xfr1a9QT8=
-X-HE-Tag: 1753288923-224884
-X-HE-Meta: U2FsdGVkX1+Le3Kvep2ercH1ZO9adFIcpIH3jAlwW3aQsUGGBdyhuZtjlgkK1NGNVLaGj+JgGvy7FnG4ZlGgB9iu+v6I8TByJjO7Ob0ENLEjLZs4Vm6TXfp1F/JpXMMFM0qZ/Hsxm4rfmMLyD+0/0U/gSn/acMQhP+AxdJsu+gnHLQ1f8nuI4FLlvabYSZbVNbrApXm+rWuPg/VLbkUAmABFprP/+wuc4A3z9K4chkSieTr94iJ69jSi2TzFg45eANiE9LROCLZsNYmMgJD1n4Z3eLVIV6mESDqMIBOLrB0w4fDH805E9vHH9MGSTCDDaDh/nQMkhOBThiomGuGH3VoPLbjmohorpo5DSlHU5jDgJeubVIQXqPIumPo4oPNY
+X-Migadu-Flow: FLOW_OUT
 
-From: Steven Rostedt <rostedt@goodmis.org>
 
-eprobes are dynamic events that can read other events using their fields
-to create new events. Currently it doesn't work with arrays. When the new
-event field is attached to the old event field, it looks at the size of
-the field to determine what type of field the new field should be. For 1
-byte fields it's a char, for 2 bytes, it's a short and for 4 bytes it's an
-integer. For all other sizes it just defaults to "long". This also reads
-the contents of the field for such cases.
 
-For arrays that are bigger than the size of long, return the value of the
-address of the content itself. This will allow eprobes to read other
-values in the array of the old event.
+On 7/22/25 8:34 AM, KaFai Wan wrote:
+> The result:
+>
+>   $ tools/testing/selftests/bpf/test_progs -t tracing_failure/tracing_deny
+>   #468/3   tracing_failure/tracing_deny:OK
+>   #468     tracing_failure:OK
+>   Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+>
+> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 
-This is useful when raw_syscalls is enabled but the syscall events are
-not. The syscall events are created from the raw_syscalls as they have an
-array of "args" that holds the 6 long words passed to the syscall entry
-point. To read the value of "filename" from sys_openat, the eprobe could
-attach to the raw_syscall and read the second value.
+LGTM but see a nit below.
 
-It can then even be passed to a synthetic event and converted back to
-another eprobe to get the value of "filename" after it has been read by
-the kernel during the system call:
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
- [
-   Create an eprobe called "sys" and attach it to sys_enter.
-   Read the id of the system call and the second argument
- ]
- # echo 'e:sys raw_syscalls.sys_enter nr=$id:u32 arg2+8($args):u64' >> /sys/kernel/tracing/dynamic_events
+> ---
+>   .../bpf/prog_tests/tracing_failure.c          | 33 +++++++++++++++++++
+>   .../selftests/bpf/progs/tracing_failure.c     |  6 ++++
+>   2 files changed, 39 insertions(+)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/tracing_failure.c b/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
+> index a222df765bc3..140fb0d175cf 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
+> @@ -28,10 +28,43 @@ static void test_bpf_spin_lock(bool is_spin_lock)
+>   	tracing_failure__destroy(skel);
+>   }
+>   
+> +static void test_tracing_deny(void)
+> +{
+> +	struct tracing_failure *skel;
+> +	char log_buf[256];
+> +	int btf_id, err;
+> +
+> +	/* migrate_disable depends on CONFIG_SMP */
+> +	btf_id = libbpf_find_vmlinux_btf_id("migrate_disable", BPF_TRACE_FENTRY);
+> +	if (btf_id <= 0) {
+> +		test__skip();
+> +		return;
+> +	}
 
- [
-   Create a synthetic event "path" that will hold the address of the
-   sys_openat filename. This is on a 64bit machine, so make it 64 bits
- ]
- # echo 's:path u64 file;' >> /sys/kernel/tracing/dynamic_events
+There is a discussion about inlining migrate_disable(). See
+   https://lore.kernel.org/bpf/CAADnVQ+Afov4E=9t=3M=zZmO9z4ZqT6imWD5xijDHshTf3J=RA@mail.gmail.com/
 
- [
-   Add a histogram to the eprobe/sys which tiggers if the "nr" field is
-   257 (sys_openat), and save the filename in the "file" variable.
- ]
- # echo 'hist:keys=common_pid:file=filename if nr == 257' > /sys/kernel/tracing/events/eprobes/sys/trigger
+Maybe trying to find a different function? Otherwise, if migrate_disable
+is inlined and this test will become useless.
 
- [
-   Attach a histogram to sys_exit event that triggers the "path" synthetic
-   event and records the "filename" that was passed from the sys eprobe.
- ]
- # echo 'hist:keys=common_pid:f=$file:onmatch(eprobes.sys).trace(path,$f)' >> /sys/kernel/tracing/events/raw_syscalls/sys_exit/trigger
-
- [
-   Create another eprobe that dereferences the "file" field as a user
-   space string and displays it.
- ]
- # echo 'e:open synthetic.path file=+0($file):ustring' >> /sys/kernel/tracing/dynamic_events
-
- # echo 1 > /sys/kernel/tracing/events/eprobes/open/enable
- # cat trace_pipe
-             cat-1142    [003] ...5.   799.521912: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.521934: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522065: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522080: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522296: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-             cat-1142    [003] ...5.   799.522319: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-            less-1143    [005] ...5.   799.522327: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522333: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-             cat-1142    [003] ...5.   799.522348: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-            less-1143    [005] ...5.   799.522349: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522363: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-            less-1143    [005] ...5.   799.522477: open: (synthetic.path) file="/etc/ld.so.cache"
-             cat-1142    [003] ...5.   799.522489: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-            less-1143    [005] ...5.   799.522492: open: (synthetic.path) file="/etc/ld.so.cache"
-            less-1143    [005] ...5.   799.522720: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libtinfo.so.6"
-            less-1143    [005] ...5.   799.522744: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libtinfo.so.6"
-            less-1143    [005] ...5.   799.522759: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libtinfo.so.6"
-             cat-1142    [003] ...5.   799.522850: open: (synthetic.path) file="/lib/x86_64-linux-gnu/libc.so.6"
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_eprobe.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index 916555f0de81..7c1a743a5a42 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -343,10 +343,15 @@ get_event_field(struct fetch_insn *code, void *rec)
- 			val = *(unsigned int *)addr;
- 		break;
- 	default:
--		if (field->is_signed)
--			val = *(long *)addr;
--		else
--			val = *(unsigned long *)addr;
-+		if (field->size == sizeof(long)) {
-+			if (field->is_signed)
-+				val = *(long *)addr;
-+			else
-+				val = *(unsigned long *)addr;
-+			break;
-+		}
-+		/* This is an array, point to the addr itself */
-+		val = (unsigned long)addr;
- 		break;
- 	}
- 	return val;
--- 
-2.47.2
+> +
+> +	skel = tracing_failure__open();
+> +	if (!ASSERT_OK_PTR(skel, "tracing_failure__open"))
+> +		return;
+> +
+> +	bpf_program__set_autoload(skel->progs.tracing_deny, true);
+> +	bpf_program__set_log_buf(skel->progs.tracing_deny, log_buf, sizeof(log_buf));
+> +
+> +	err = tracing_failure__load(skel);
+> +	if (!ASSERT_ERR(err, "tracing_failure__load"))
+> +		goto out;
+> +
+> +	ASSERT_HAS_SUBSTR(log_buf,
+> +			  "Attaching tracing programs to function 'migrate_disable' is rejected.",
+> +			  "log_buf");
+> +out:
+> +	tracing_failure__destroy(skel);
+> +}
+> +
+>   void test_tracing_failure(void)
+>   {
+>   	if (test__start_subtest("bpf_spin_lock"))
+>   		test_bpf_spin_lock(true);
+>   	if (test__start_subtest("bpf_spin_unlock"))
+>   		test_bpf_spin_lock(false);
+> +	if (test__start_subtest("tracing_deny"))
+> +		test_tracing_deny();
+>   }
+> diff --git a/tools/testing/selftests/bpf/progs/tracing_failure.c b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> index d41665d2ec8c..dfa152e8194e 100644
+> --- a/tools/testing/selftests/bpf/progs/tracing_failure.c
+> +++ b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> @@ -18,3 +18,9 @@ int BPF_PROG(test_spin_unlock, struct bpf_spin_lock *lock)
+>   {
+>   	return 0;
+>   }
+> +
+> +SEC("?fentry/migrate_disable")
+> +int BPF_PROG(tracing_deny)
+> +{
+> +	return 0;
+> +}
 
 
