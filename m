@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-743019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABD0B0F993
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:50:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A68B0F997
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705EC1C805AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEB83AAA07
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8FD221727;
-	Wed, 23 Jul 2025 17:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9830E221727;
+	Wed, 23 Jul 2025 17:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aYmwN/F2"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfI4synB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3209BC2E0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 17:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09D81EE03B;
+	Wed, 23 Jul 2025 17:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293008; cv=none; b=tgW7BPvNG2UPrGFzuAn8aplPpIpvrLhP9RdyrlmYLysksG0SG/zaK97mC10RM3+R0434ISOJPVRXknrTKck9nG6hC/pnBm5b/ABfVAIgJobOUWjRpWq0CPa/nTGGK2fjqanuCsAmfk7Ej3Ufutr/GvJlvDcZVvGrbezLd/4DM8Y=
+	t=1753293063; cv=none; b=RZbm8dgeXzVB7Hl2gudqeVd8SDkN9vVpI36YQVPd6FnKA0OUXTk/V77yYe06cd6WAIEE5Fhwsx+p7fL8/a8HyWh7GMd8rvOaL2mPUCOX9kM8ml8wouJ4wa7Khp+W1RaWDf09wYVwsEbfoH1tCnI+MnJtW5+7MQshmTFq8xRt6Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293008; c=relaxed/simple;
-	bh=N3CjZ22bo998Gf96yMZtr59wxIw8Kk30KdGo+Ax6K5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BTwez9h5RevvKlnwPRX7t+4ySgc2IM/q+z/qUDaDfTw3f0AXGx3cX81BWww4uN0GeEmNTFGrzx5cB8ZAxfuZNWclgFSuabGkXY6/nxQe33l+duabqGdEcRk8pSGW+FLeUDx1yjaSmc+WErXk3tnMh/ICvxFmEiOg5j9uhI9fwZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aYmwN/F2; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so999a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753293005; x=1753897805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N3CjZ22bo998Gf96yMZtr59wxIw8Kk30KdGo+Ax6K5M=;
-        b=aYmwN/F2js5d8YFEXNoKJi8SfC3V5fydSeiDCvCDzMlk14KfSOSqRkQBGeoW2DNr5B
-         K1BHtFdD0seLZhXwwKYC8EOffVollVD2A+RmJWEJFXdsJH4n0y8JF/AKdkARS93iRLf5
-         Mq0JK1XxKPmsyYihwTqkgsctqvoIqjh5dAqZYNcK8GIaFNzk4ZGlCrCNCX63Q7m89xRC
-         TAn2UkOkIEmkL2emiIRQeoEJMnAJpw8dkzApKpQidVxJYi8hNz7mfX2UioxdKcb5QYu/
-         t7B/oUqZJT6pI77B4uSkiqqCKzW46ELTFbXjKMwo/UqjvY7s7Ac2ircD4p52J7EMvt70
-         0VSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753293005; x=1753897805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N3CjZ22bo998Gf96yMZtr59wxIw8Kk30KdGo+Ax6K5M=;
-        b=XhspWZTUn2H6GMReSEUt9TLeYDP4i40JHlC29ah+IfHghduAc0tPr+QB7TiCcmLBcB
-         4KTgOI4B11hzqRAJtT5EsLI6PyHRpYGLD3SAPJBLhpnBJSyA1bWYGGawBXhEwfmnf59v
-         w55P8EvXdV/IwL60OgTj1KJReFGrl6cjo1HlyWqzGf9W2bEcERqvt3vqMBKQN5xdCN4A
-         fHbDHoKV4BdfOcNgPm2t10GOilMZPBjHim4kEmGxk2XR2g1zszkenTJ/eGk0grKSm8HR
-         NK9D7BbQWS+9+z1pRr6+e2Qi0KlYwoAiSjIbcGi6WVkVJm8PYjpzFhyugab7Z7XUyZvz
-         M8FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRs9xa3VmEhbpdkClJl8dLCF2GiFSQVXF2oRbBbocDDqGvvvTyqJkfO8Orirp6ZvZtLds5bW/vLmfpvco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysGDykYHrHu2ckE2Zf7t875+EK88/aA9fihB4xt0rUMMwRfIMe
-	IGFNB+ycXoBNq1KBXjzrBzchkYQp67LwrKTFbi3LBcxBYXyWxeNWaPMr1k4jny6fE2EXoAwkJGk
-	+gzQ6zaVEAgbB3H8B327U3lM8Ji+loom9aZUjRcu3
-X-Gm-Gg: ASbGncss0Gg3MKOc8p+Ixl0E8/bWW43N7hrPUR91lmapSEuJUV//wc6Yzktg9QJDPj+
-	t7uwOVrY+EqHGdGOGwyZGHAnC8G3ClLDjb3cTB30EHYh3pkZ8g9sGVQQLNje8/5O3WVmWE6mIEn
-	BcVeF8X2WE2Asfjd/DOewy5pQc5aCkb/EW/WRdp80jS5kTHSUQ+Lrf8V6AW6qHDlZHBLM+W57DA
-	cnkF9lLioI96BNh6XnwpS3MyL/m15PalMo=
-X-Google-Smtp-Source: AGHT+IFZndI4SLY2jTFfc7anANksmXujHTfbPGok6SPCPQiLXDZT+bTXYZL7u6XX3OLnry7gojrC+xg7+iozT5iiYuw=
-X-Received: by 2002:a50:ab0a:0:b0:609:99a7:efdb with SMTP id
- 4fb4d7f45d1cf-614c4e2d68fmr959a12.2.1753293005107; Wed, 23 Jul 2025 10:50:05
- -0700 (PDT)
+	s=arc-20240116; t=1753293063; c=relaxed/simple;
+	bh=5++JICrxyrrls/0LDehom1H9z6DxPjc/dsMtzPXB6og=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=loh3vzPHm3KzWY6UjkJGySwF1ywFvXXClOvAqiD99ToSIjOy4CVRb4c4L78DLnmsTco5cGiOYFMW6nwY6DU86OMC6KrLAsfKV5h7tHjxNOPpKihW5oAj7xgT3A/Jt0OJCR9BjR+qvNEl1EXSQxUa1bCBRqDHF9tKtvw+2GQot2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfI4synB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF6DC4CEE7;
+	Wed, 23 Jul 2025 17:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753293062;
+	bh=5++JICrxyrrls/0LDehom1H9z6DxPjc/dsMtzPXB6og=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ZfI4synBiJ+1SE1A7h4IaQz2Hx+pHElH+/Sa5QEBmr/DbPxp+2tlCu+M8/FDb5Q1n
+	 QZIZ86hVx2CIaeble8IqGmUcNG8CxfYmkQj801ysJj17UuWx9Wos0GBORHFkSK4kle
+	 pRlsMPb8LmkV5Hwo2EtxLTRUnpJfLyTRBFwxjUQYX4mEM3si1/odzt4Wqmd6prFtSP
+	 F1y4RkaGGcoT7zOuRIun3SDy1/904Z8+B7T3SxaorasIdVZ1q2M/5XgDF3XoHiHmiA
+	 muq2FIpRMloy+PZ54Wo65QpPSbgb/SyHo1bcVDwl5h6MwWWcvcXABR0EWao0KQ8dfW
+	 mLa2tjYX+MXIw==
+From: Mark Brown <broonie@kernel.org>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250711-qpic-snand-simplify-bbm-copy-v1-1-dd2608325f72@gmail.com>
+References: <20250711-qpic-snand-simplify-bbm-copy-v1-1-dd2608325f72@gmail.com>
+Subject: Re: [PATCH] spi: spi-qpic-snand: simplify bad block marker
+ duplication
+Message-Id: <175329306112.97598.14632012143610727616.b4-ty@kernel.org>
+Date: Wed, 23 Jul 2025 18:51:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
- <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz>
-In-Reply-To: <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 23 Jul 2025 19:49:29 +0200
-X-Gm-Features: Ac12FXzJzTto75PHjdORYKleZSwPq9-F8zjWYdNYD8vo7sV26qM4zAkWjh6UImY
-Message-ID: <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
-Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
- vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>, 
-	kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On Wed, Jul 23, 2025 at 7:32=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
-> On 7/23/25 18:26, Jann Horn wrote:
-> > There's a racy UAF in `vma_refcount_put()` when called on the
-> > `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
-> > without sufficient protection against concurrent object reuse:
->
-> Oof.
->
-> > I'm not sure what the right fix is; I guess one approach would be to
-> > have a special version of vma_refcount_put() for cases where the VMA
-> > has been recycled by another MM that grabs an extra reference to the
-> > MM? But then dropping a reference to the MM afterwards might be a bit
-> > annoying and might require something like mmdrop_async()...
->
-> Would we need mmdrop_async()? Isn't this the case for mmget_not_zero() an=
-d
-> mmput_async()?
+On Fri, 11 Jul 2025 18:32:52 +0200, Gabor Juhos wrote:
+> Due to the expectations of the SPINAND code, the driver duplicates
+> the bad block markers during raw OOB reads.
+> 
+> It has been implemented by using two if statements, and due to the
+> opposite conditions one of conditional codepaths always runs. Since
+> the effect of both codepaths is the same, remove the if statements
+> and use a single line solution instead.
+> 
+> [...]
 
-Now I'm not sure anymore if either of those approaches would work,
-because they rely on the task that's removing the VMA to wait until we
-do __refcount_dec_and_test() before deleting the MM... but I don't
-think we have any such guarantee...
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: spi-qpic-snand: simplify bad block marker duplication
+      commit: 1f590fa4b93dd7c7daaa4e09d8381ac2aab3853c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
