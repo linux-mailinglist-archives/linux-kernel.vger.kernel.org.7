@@ -1,200 +1,156 @@
-Return-Path: <linux-kernel+bounces-742408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A87B0F156
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:36:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C577B0F14C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E8F3A9369
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7261C25A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363E12E5432;
-	Wed, 23 Jul 2025 11:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F9C2E54B9;
+	Wed, 23 Jul 2025 11:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PKhbkQX5"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2072.outbound.protection.outlook.com [40.107.93.72])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kjcah5zH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B772E11B0;
-	Wed, 23 Jul 2025 11:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753270560; cv=fail; b=lTvv2Wc7+fAzXe7b1RN40rn69+FZuDiXhU6ww27AT9W5bAfSpcreDXM8LDI5h+ON7vVTDGbvAQmP7kF1IxsUpRcDc31VaSFKTHQLeRrlBnmfAOa81FdPSPj0Uj93T/z7f+H3vI+61DgoGv62g72wOdYLDaW+dx3WhNU/gdzcwxg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753270560; c=relaxed/simple;
-	bh=I2ieB44M/99O+fY5XB/lbPuVKW6D/akS7+7VOm/SHn0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=ApS7IO9D+5Z/jEQvLJTrzzJUc/uNobyL6x03gVFGaMSTB1YWk0U7+kFW/wzuRoc5pWnTeTPAv9+bT1B99bVTUspYzWe7Zir6xRO7G7nBvYlXbw3wxj60UIv83zrBsiz6NR6o1NHZe5XgJNEqR26bv7z4R7bA86FOQxLqOr/9jyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PKhbkQX5; arc=fail smtp.client-ip=40.107.93.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pz7ATGPIdGlOipecmuF//8Bis17oMkDVrl353EyTAtAp8sEEbB2MVg1+ch6Im2lTfXOflyvfh8uHMNpexIlTgNzEqNnk4MOvrpTA8rGICqTa4qS9K77ubqmA06BJJ+kVTL4i4zFe6fEaWWK1MmQa7MDrMmWObNDVFWZiyIXtNsBOqI9j93oYO/xWf0FJInqm4POTMsV6ZF5rkgvrsTXdXqthpYUjMk1N2K/DsyX5UlsHCRNWUeI3Wrolk9EB08SXr8d3j7pWU7jaUUNjIV+JusDlBF8siW1Rl1UWsi3MWjo2cCoGT0w88BkGTyaDPB6JgK00jGu2XdTev5c3ZJA8Qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lNth6tT4s+EO7b1kUMyqJjfRmJNyyLeV3OohHjyRKF4=;
- b=p8s0fqhtCwbsbR1Tq7IaNXeoLNhoh7oHjqshMQRf9IOMf4RfNpmANOe30nozUS++6CAs+gK4vYRwxRaj0cglH6xilh18MjIt5czxpD16356wsoFWHiKuGGDgtRZk5uU0ljsD6eoGRFFyHmVRxD1KEarkPxlXUIeeGV60tFmQU+gy8uD3l3Y4OkK+MVlNnYhMdQPUblQeVZrBebi5Fx77qfg4Kj3eNoTyYxFd2hiJz+o7x5+w36ewqVwY4vWpb91j3wEkZImOLMa7hAX80k96OTrM2NYyAFau398bANbg46J4umrVRh3ktMST1HidpTQbMNVKWogG4zwXzpDazsxSYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lNth6tT4s+EO7b1kUMyqJjfRmJNyyLeV3OohHjyRKF4=;
- b=PKhbkQX5Mi0sCvmcp3ThnGapAh1e2lnENRXUDX9v1dK/3DEK63TC1eNRvX3Zm4DZZAkTW52Z7PTpRmBcEiNCnKlQr8nKHMU5RVbOgdAgX4EMCKPuEi9Oz4Ub4lBllW74HDyFRIkwrTNgmfrTiyh4/GOXackUXJinK5gXswdPdh1juLRGBnstjmkKEC93yaxFaZ+3YHHGp84pgPHVozjSp1FOEYnod8qNIxVD4r5Jn3ulwwBq5r7l0xcBgiIBZGsfP1jM5HbP0YiYL8nDA1kR5Wu3h9p42PINlio7Y+00wSOca6ynATz0HayGeC4fsf511QmqAbk+Yf/LwrEeHPfpVw==
-Received: from MW4PR03CA0161.namprd03.prod.outlook.com (2603:10b6:303:8d::16)
- by SA3PR12MB7904.namprd12.prod.outlook.com (2603:10b6:806:320::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Wed, 23 Jul
- 2025 11:35:56 +0000
-Received: from SJ1PEPF00001CE5.namprd03.prod.outlook.com
- (2603:10b6:303:8d:cafe::8f) by MW4PR03CA0161.outlook.office365.com
- (2603:10b6:303:8d::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.23 via Frontend Transport; Wed,
- 23 Jul 2025 11:35:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ1PEPF00001CE5.mail.protection.outlook.com (10.167.242.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Wed, 23 Jul 2025 11:35:55 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 23 Jul
- 2025 04:34:57 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 23 Jul 2025 04:34:57 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 23 Jul 2025 04:34:57 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
-References: <20250722134345.761035548@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF422E49BE;
+	Wed, 23 Jul 2025 11:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753270510; cv=none; b=e2MQacE0WnrqsOoydjKkREqgWxcJKAthPb55OhkQJ1t8CTYK2FybYd0TCJoXIMwIVGMpbAOkRrLyCxLuMs/vC9CB4Rk446GO0v3G6Y3MMV5ebNuo+dKemcAjpHSiH/EsCbZX7nAig+t3xx6W5tDiJ1YNzQxL5lddjp2S6zhM96s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753270510; c=relaxed/simple;
+	bh=NaqnBjwkXIQgRY6bvzvyQHA4TyoMVW07CLlzipyiNSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3RLFY5zMqv4qy2a57/h70YpJ+FGsV7m7KYa360rKT1EEBD+qFb9Q1GHSVU2Gv12oOyHNCI5IEOYSryCivz7KrD54axmabJaIUqlU451yHOutEKqyxyBVG58Uvw6aeuEOIeTS9G9dGASB4H85wYrWK7MmKG+n4RKbaW5gMSHZu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kjcah5zH; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753270510; x=1784806510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NaqnBjwkXIQgRY6bvzvyQHA4TyoMVW07CLlzipyiNSc=;
+  b=Kjcah5zHwh6bN0B6C76Q32zBPhG8lGgwHihSm0NyBRZncs0mk1oX9Tbt
+   Ge2Xv20ykJYMR706t/9g00Ak6PxSvncOxLv/tGyj1Gf4jroSBAsPogOpQ
+   6FX51/cfY6kJT2R1TXiIO/1Y2EA/AQHvmChmLxrjWruIRLf5i9h1F7A6b
+   +DrrHkJSN0bDBJJS+OMmFGv+Hq9/Pe74wdorUhyalZEHuAhlfzg4W8sIs
+   k4bHuz30ucRHbBwyqBIgIP6f6ebJuKwJxxgtnNmxJ2aaJlBt0zJX6HouH
+   VwGKuaXP+4rstH/hQ2pCQC9PD7PXEUmKqzGV8sThaWp0xoPUaY/5d2RDe
+   w==;
+X-CSE-ConnectionGUID: 2IA6dQgcQPSsGx1rGoHlZw==
+X-CSE-MsgGUID: O3Psr69OQc+rJ9x6diaTeA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55505001"
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="55505001"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 04:35:09 -0700
+X-CSE-ConnectionGUID: TR6FWWC9SVmfojcgdHvLRg==
+X-CSE-MsgGUID: AsjbwzVhTyeUC7pzLlASzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
+   d="scan'208";a="164892580"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 23 Jul 2025 04:35:02 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ueXkS-000JJx-17;
+	Wed, 23 Jul 2025 11:35:00 +0000
+Date: Wed, 23 Jul 2025 19:34:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Fu Guiming <fuguiming@h-partners.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
+Message-ID: <202507231813.7ti3bdJj-lkp@intel.com>
+References: <bea50c6c329c5ffb77cfe059e07eeed187619346.1753152592.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a76969f7-6861-40b4-930f-f5fa148b5b2f@drhqmail202.nvidia.com>
-Date: Wed, 23 Jul 2025 04:34:57 -0700
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE5:EE_|SA3PR12MB7904:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85835de7-bd51-4148-2fcd-08ddc9dd162f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K05pQlp2QndhNUlvemtZSTRTRDZML2lleENJL1FYTm5Rd1JWRE1NSU9xc05a?=
- =?utf-8?B?VzZuRGp3aEE4cEpGY3lKQ1hyUFNIa1dtNGM2VkErOGhaMldRUDhZaWRVYmNX?=
- =?utf-8?B?SE9Ob0VjVzVmYUJsWk4zSmpFS1k2Tmt2VldYYUttTk55c3lhd21XZ1c5SVRX?=
- =?utf-8?B?UjdYZm9xbll1L1Q5bGtTWHZ3RWh3UDM4ZUM0Nk5Qci9qektRVWlhVHdUWEFD?=
- =?utf-8?B?Z1RwZGN3U2NjN2d5MGFqVmJmSGRKZDRMWWQ0QXg1bWtmSytwL00wUGJjUmgr?=
- =?utf-8?B?RUdZUkhUQTkrRmZpOGV4QWxKb1YvVkF5cFBiWm1HYUhxNUF1RE5GZ1N3VVRG?=
- =?utf-8?B?QlhHUEJ3endmS0NQVUFaNk43eUViTHMrOTU5NXUyNTdzVHdpeWJIK0w1emEx?=
- =?utf-8?B?eGRZM0tkNDlkVTUydnE0c3VUZHpiTVRsVzVBL05INEQ0NWxUV2Y1WjRRU1Uy?=
- =?utf-8?B?YkM1NlY2eVZjTmQ3SS9Mb2lRbXphL0poWXpQY3k5Vk1xZSs2L1JkeHZyTDRV?=
- =?utf-8?B?bmZsSHR0UC9GSEZDdG51RXJMdzR6RVlsU3pTYjNhNHFBUXdETGxVRU1jV09Y?=
- =?utf-8?B?VkxXSlJNem9la24rSk1OZ1diT1A4dDlsbm5tZEEvUXRGeFF5U0dQOWluVTJT?=
- =?utf-8?B?Vk9TTVFmdXhDYUxSOEl5ZnlmNG00WXY4eDJXL2RvRGtrT1EvditKWUsydXdD?=
- =?utf-8?B?eEdqVDVOcVBUYXd2NVU2a2VQT3NmQkpxYnB3aUJwUktFbW9ibHJkQ3NMYVRU?=
- =?utf-8?B?RElhTHpocjh2dThoR0ZJbytQSzRHWWs2R1ZzdDBBV3FmdUxmbFhQek55UnZ1?=
- =?utf-8?B?cE8rS0tvM1IwV1NHWXRtOUN3Y3pmUWtqalBJN3lNNHZHZ0lXbjdjRVBZL1g3?=
- =?utf-8?B?cVpPV1NKUUhDcU1QaGlVY3ZOVDJBMitBZXVCMDhrSVU5UnFWSDlDVjRjK2FK?=
- =?utf-8?B?ZFRaM1FYRytEeTM3V044WFhuellBVExMQUhjSmR2Rm9aT05vTHJhWlhsNmxV?=
- =?utf-8?B?bDJBWmRQWG8yTXJ0RUZKQnBHcWFDbEk0Y21JU3BIUkcwRkZsSVlTbTlnb2du?=
- =?utf-8?B?Zy91QVcvRkpJNzZ5U0JtZWs5eUh4M2RxYXVpNWpyQTgyZDZ5eGtzNURIdytm?=
- =?utf-8?B?UEI5ZzR0NE1aQ2NGbHo0WHI2aFJ1aGp4Qk9HYm1ZMEpaTmhLaTV5Z0tIK3Jt?=
- =?utf-8?B?T2c4SVM5dGcwaElDcHFOblVzVWtWUUZRdDlPZDVuM2pJN2VSeVJMK2hieHZu?=
- =?utf-8?B?Uk1TZWxXNFZOVFJaaHZqdXN3Y2RHRi9DNmd3WktiV1RyWFlrbGw3cEh2ZUc2?=
- =?utf-8?B?TkZ2dXA1N25nRWpQaFBrYzM1RDBFdVVTNmZyNnpJVkl3Ris4QW82cXQvcDNI?=
- =?utf-8?B?czdGRXlsdGV1Qy9tMHdHRFA3YWhVRHZZbjhYd1J3WFFCdEVXTXhta2gvRnRM?=
- =?utf-8?B?YlI5YlFTYlVkVmhIY2x2VEVxV3RpUFpLR1dMR2FCMGNNY21xbGFjMUNVODlm?=
- =?utf-8?B?MFBlRDdNdTJnYUk5a01VSFJaY0ZYc3Z3OWl6UHExRFJZQmUvTmlRcnZIVjd4?=
- =?utf-8?B?cVJ2azdBc1Y3OC9ZWVlCOXVBblFxY2JhVTE4UjFmeHdTUVNlUUdKSVJzc0do?=
- =?utf-8?B?ZWR1NWtkdTgvSitEcXlFT0lTZEswMTVLU0lGZll2NnBrQndvTjhNNVpjOHJC?=
- =?utf-8?B?TEF3LzRSbHhicExkVUJqRm9XUnIwNHZSalY0U3BuWGdqNDIwOUpUcjcrbXNo?=
- =?utf-8?B?T0I3UDNDalBIdGp6T2FRazcrWVRaOGtGbTJ4M0EzRU5iZFJLMjJ5SHFFb1lU?=
- =?utf-8?B?VEN1c1daUTJRWkhFaHFEZWgwSUJSSzZJdVNKK0RaMnJQV2U0NVlFT2RGNVAy?=
- =?utf-8?B?NkxBN20vM0xnNzMzc1RGaGJmN1k3T3ZEaG9TdmFuK1BZZUlneWdWdzFBbG1y?=
- =?utf-8?B?UE5KSldiSkNScGxKR1p2TGVnMzVKcW9uWnN5UmdxQzg2SU9sNTNoSmRORWZa?=
- =?utf-8?B?ZWE2anVFK0JLRWw3WFFoVU9tZWJwQkg1SE9nNWxZQnc4NmNERkFZV2Z3TVE3?=
- =?utf-8?B?d01sZERvUzV1dVp3NnorRkg4UnFFWGd3Yzgvdz09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 11:35:55.2914
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85835de7-bd51-4148-2fcd-08ddc9dd162f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE5.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7904
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bea50c6c329c5ffb77cfe059e07eeed187619346.1753152592.git.zhuyikai1@h-partners.com>
 
-On Tue, 22 Jul 2025 15:42:50 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.8 release.
-> There are 187 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.8-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Fan,
 
-All tests passing for Tegra ...
+kernel test robot noticed the following build warnings:
 
-Test results for stable-v6.15:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    120 tests:	120 pass, 0 fail
+[auto build test WARNING on 5e95c0a3a55aea490420bd6994805edb050cc86b]
 
-Linux version:	6.15.8-rc1-g81bcc8b99854
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+url:    https://github.com/intel-lab-lkp/linux/commits/Fan-Gong/hinic3-Async-Event-Queue-interfaces/20250722-152434
+base:   5e95c0a3a55aea490420bd6994805edb050cc86b
+patch link:    https://lore.kernel.org/r/bea50c6c329c5ffb77cfe059e07eeed187619346.1753152592.git.zhuyikai1%40h-partners.com
+patch subject: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250723/202507231813.7ti3bdJj-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250723/202507231813.7ti3bdJj-lkp@intel.com/reproduce)
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507231813.7ti3bdJj-lkp@intel.com/
 
-Jon
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:77:17: warning: variable 'cb_state' set but not used [-Wunused-but-set-variable]
+      77 |         unsigned long *cb_state;
+         |                        ^
+   drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:91:17: warning: variable 'cb_state' set but not used [-Wunused-but-set-variable]
+      91 |         unsigned long *cb_state;
+         |                        ^
+   drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:127:17: warning: variable 'cb_state' set but not used [-Wunused-but-set-variable]
+     127 |         unsigned long *cb_state;
+         |                        ^
+   3 warnings generated.
+
+
+vim +/cb_state +77 drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c
+
+    71	
+    72	int hinic3_aeq_register_cb(struct hinic3_hwdev *hwdev,
+    73				   enum hinic3_aeq_type event,
+    74				   hinic3_aeq_event_cb hwe_cb)
+    75	{
+    76		struct hinic3_aeqs *aeqs;
+  > 77		unsigned long *cb_state;
+    78	
+    79		aeqs = hwdev->aeqs;
+    80		cb_state = &aeqs->aeq_cb_state[event];
+    81		aeqs->aeq_cb[event] = hwe_cb;
+    82		spin_lock_init(&aeqs->aeq_lock);
+    83	
+    84		return 0;
+    85	}
+    86	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
