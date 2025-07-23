@@ -1,211 +1,153 @@
-Return-Path: <linux-kernel+bounces-742965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE31B0F8D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BEBB0F8E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F793BA620
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C14F963C2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCC121A449;
-	Wed, 23 Jul 2025 17:19:31 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3EC21858E;
+	Wed, 23 Jul 2025 17:21:00 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B101E3775
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 17:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBA519C54E;
+	Wed, 23 Jul 2025 17:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753291171; cv=none; b=ZXvZnA0oNiWlprfYyzKrEM7G7vKmEVwUS3//tgPA3/uhfUub6iAprUlpcWUo2MBOIBUAUITeqfQ876l7Bh/M16PLDT9uhxnMGXMcZ8uu8DYIZsZqLd8u1GePHAyJmyC12QARgEF3UWQvwIllKoR8uPx7p+ZoWNIH+NvLKl2njkw=
+	t=1753291260; cv=none; b=RH/FG/qo+F007U1E6Q1GxgSdpO4D9J0s8AqUO0y9ZQIhWGAxiL3Zs0G7sD0ifaJevBVrEJsGS/kJH1z7j5Pss49r42aHW34Fu34BrrZsTNoeTQYTwKnXx/WD+GfGwN5FSeU/u0aw3BOTISdEKSTg8h+K5E7P81U7lnGRoLASgSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753291171; c=relaxed/simple;
-	bh=KBC/rTGDvGK+TPIpMxOkhR4RjlAUAVRHpnVIEHGjI/Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HtL6pO6gnOig+366NoS5UdHptrIUhI+7k/xez2b0QUSUCbA/3RfkbtyaTJLouYL0Y8xjzpUg33KfeNjVhQ/WgZAUwxHRBwqFFTB5XK/Wp9lYpNE6Hx4NifF0WmvRIX9JZNiZZeZ60A13NX3iHN0sRcehIBM2/fk24LBwqk2fsOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87c1cc3c42aso12247139f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:19:29 -0700 (PDT)
+	s=arc-20240116; t=1753291260; c=relaxed/simple;
+	bh=iOsorm+hWRL2X8GoIw1EcHy1Zn720bFkkp/gw+4IHFM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CoXmDpS3MUR6DAw6gay/pyEwJ1R1KrN/TuzpH5WdXfNhToDI+kP6+xjE+OXPrVPqSNXyPm/qs8DogTBhHFTLlHStwDk3QeErwX+gy1xmUusZ1nX2T4ggc9+qEh7CzJ1NSkOtBO4ESdeSa6rUfrxwIrbVSje3RIzj7JLsE+yCamE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so243546a12.0;
+        Wed, 23 Jul 2025 10:20:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753291168; x=1753895968;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LETkx7CVH83zD4M4cUDXo3lvqXJWw4t3iCSMVC8drac=;
-        b=Qh9labER8jAtnJYN7OjnrPDGqJLRxRtlfBhWKR7KshFb+kpSBgBK5tA5DdU1tOIDKG
-         ksw0W03pW2ms+1KNyRAU1kUQvuTifW4sTZja0PG+rjaSsY75/HqhLtDGEqtB/Xllssk1
-         Jufo0rrt7j62wtjX0/Vn7LfA9W6i90/0CAiejhKOnLIkiJdZ4vBHJlpTvppIKU/BYHn5
-         HK5XfCrxUtDKunbk4BtVK1b3sfXwLqOuLVaLtuxnoD7h8eJz2N9okWt+EZ1BrPd/1UI5
-         sp/0lhCJ7Iith+AvGU3za/4VZc/8RKvV49ZicchpAkK963yF87HUmarXk5MHGnKIQsjF
-         Gl4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUriKGGe2FoYrz0Kkyg0G56/d/Jnys/7EpSpPwTg1/R75NqfSWXyaaLK9gFNKiwjfdDsWZSVow0XmaV3uA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrLBcjyyyw/h/c4EJPP9hF95I4HFFD/F1Hh0zi7emsHrYqvHXD
-	CPNXVNb8pmFCIolav7Eo3Elni4+8FM4ZzdNLLRQeCoG0jtCFTzktKXsNUYjwgmcbQkr6YoNOPKp
-	LBWGHeDhbTmY48/o8nPH2qh7gg/2B01sWy7yaTz9xzpVLGok4qwY/gl+fIrU=
-X-Google-Smtp-Source: AGHT+IF8gAJsK0U1ptptS6UBVaRziAt7UZcVX/lLpudEgilcLQ6Zr5ZDcBYL39GaXR5IdHc2wFknCXfxuWMWvD8gVRmO5tWqquWD
+        d=1e100.net; s=20230601; t=1753291257; x=1753896057;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ap+YYbn2vwAHVV4xi0ikUNaFEK9zJtyyvGRtVPjUuBk=;
+        b=C4Ee6yoK2UZtze7NSpoc+ECF4rNQ8mKzB5Fzgafn8tYXgtLMflK2fxe4E3YaT2EbG2
+         WPDDYFBOyK5Mnr25l2hoZMXiwmW4RnK5m8pEvuKpVNVfBlg1+HtVPRmTgjtSeRSi+P8c
+         J9d8FkxUkQKlHVohNRfrZYL774GJxtRFUTReQqWWHLSqJ6iLxNzfQmxpWE0og3N+mOxM
+         0WURzVv8VhQOaMNBUQ8r4NK9Vueerbt6+cR2fD9kz+C+PmaX7l9ZtXVJzufySJ9PMqfo
+         dKRD2jXS7vTe9a8C6frIqk0RoFWLPM3UyNz7ZPCnqq7CzEOxxUhI2DGndDicc2rGW5o+
+         rFog==
+X-Forwarded-Encrypted: i=1; AJvYcCUMeExT84qB384sBitsrjde51+xd8dAYSv4ZFVqmq+HNn0V4Oow5D9KTXI6VZf+3mN1wWEDrc8F/3isKM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylhwxsj4VKToI5t9ifQI1Xz8ClfSE/x5psPH89hq+LsKVHwRsh
+	tvf00iyFwG0Mjba8VvBg8ee46hptUpxwT4dItXBdZ61sibv9Ozh5cEac
+X-Gm-Gg: ASbGnctql2qj/GsLCeZn59tM6PZJTIhBMRdWBaDnRMDew8VD4dpTF9FD61+d4nPE7d2
+	p6fwnKfrYL7B/jkWj0QKeidcVAqdz3g8WzRpzXHgcf58vYsEmb+j6HUp9Hgmwej9ir7X+fgUyV0
+	DmJ82JolY4Wi/m4yABwd/aXpXO+dir6Wtx1i2bsjtP2qhwMd3T0dSebTIYkc7+J8yZNonQHp6y5
+	E2bHgkQh3j4EsTtqcpJ0b20wHHWTlyZVxCH61wp7NzjxGeG+BgmCt3ifupgKBKD6RuYnaGj50se
+	HTStFeGWjF1lYQ1PH/Yz4rNMsDYDBs288UXI8Ly2KwfJSw1W9oUwG/rFg3aqBCuxKphwRY91W5O
+	LtbZSgsuuBA==
+X-Google-Smtp-Source: AGHT+IE3j1KPJjAnmXIbc50rI5Q3PPC8V9+e49LvJw7rb1JcR5iNRg+y2hJTfrDD+F1RMWEZMKrv+g==
+X-Received: by 2002:a17:907:3e9b:b0:ae7:fc3:919d with SMTP id a640c23a62f3a-af2f705ecefmr389449866b.25.1753291256565;
+        Wed, 23 Jul 2025 10:20:56 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6cad0feasm1070582866b.138.2025.07.23.10.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 10:20:56 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v3 0/5] netconsole: reuse netpoll_parse_ip_addr in
+ configfs helpers
+Date: Wed, 23 Jul 2025 10:20:28 -0700
+Message-Id: <20250723-netconsole_ref-v3-0-8be9b24e4a99@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3421:b0:87c:4496:329d with SMTP id
- ca18e2360f4ac-87c64f64aafmr689931339f.5.1753291168476; Wed, 23 Jul 2025
- 10:19:28 -0700 (PDT)
-Date: Wed, 23 Jul 2025 10:19:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688119a0.050a0220.248954.0007.GAE@google.com>
-Subject: [syzbot] [fs?] [wireless?] general protection fault in
- simple_recursive_removal (5)
-From: syzbot <syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANwZgWgC/3XNSwrDIBSF4a3IHcfiIyYho+6jlKLmmgpFi4qkh
+ Oy94KildHz4/rNDxuQxw0x2SFh99jHATGRHwN51WJH6BWYCggnFRj7RgMXGkOMDbwkdtdyNQvX
+ WGcWhI/BM6PzWghcIWGjArcC1I3D3ucT0ak+Vt/1ftHLK6DSgE0qaUY/6vKDxOpxiWlurig8v+
+ I8XlFHTC8cnKdWgvv1xHG+xi6WF9wAAAA==
+X-Change-ID: 20250718-netconsole_ref-c1f7254cfb51
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2023; i=leitao@debian.org;
+ h=from:subject:message-id; bh=iOsorm+hWRL2X8GoIw1EcHy1Zn720bFkkp/gw+4IHFM=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBogRn2L4UOJ7JZgzbsbg3zs1TIi5xdLjDzCmFXz
+ VL3S+mqmyCJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaIEZ9gAKCRA1o5Of/Hh3
+ baBGEACcX24Yn+4pKuYXlTd0V98ReoIhGQ7n0v9m0UyzswN8KE6WpfxY43JsD0lotMEoqr/f/V6
+ RSREbKFOXw1o6a7nd3AvJozWjJ1vcgh5Gaea37MhKF1DG1Pio/RdWyHOsF4W0vT9t151BlwfEyj
+ 3S4yb+fnmebsm0N5q/Dfqmnzm8TXt/Pib4tgYeZPkJOfWXckNDPtCv3tl3yAKvOMSyoBH/Q6TC4
+ EE5/S8KtgAgAsEm+xrGGJS2JuXA/2KvW3CqlKaUXPfJZZ0APbzwexBgGPX6h2kSXynjxLo0Kq5z
+ vcw+PtbxdEsba2wckBdl+STeXFLg4acm98hEfSn7uWX5liIo2pD3flnYsSo0i7k+XqiLgRC7kRg
+ SNHSft71BIWlEffdwgTZ0Jhfg50Fkc1kyFRG0+7S0gHSI7TvpWgegrTMfuG4IZL7+5qC9OFXRza
+ Fppyigsfm2AMA0eFyftjiHIwwErJUVq4lMgukiRetyrgFR+Z8XhUKfwh+Hf8pT3ZHXfc1GjRkI4
+ gNwBbORhJcS3PCjE+QhAZ7id/M/3FyBlmIgzIOjDLqbflS7ULPdBgYjIUexS4M8i6p6y1nhiGjD
+ Znj4+SPnR7hxrXQyLWdk57rzS/KOVmJRWbBpRlGfv+Jrnd2Pm+1pbCqwpvIeRbn1JWW3c2pLguH
+ 1t0hjrYTSy9M1dg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hello,
+This patchset refactors the IP address parsing logic in the netconsole
+driver to eliminate code duplication and improve maintainability. The
+changes centralize IPv4 and IPv6 address parsing into a single function
+(netpoll_parse_ip_addr). For that, it needs to teach
+netpoll_parse_ip_addr() to handle strings with newlines, which is the
+type of string coming from configfs.
 
-syzbot found the following issue on:
+Background
 
-HEAD commit:    89be9a83ccf1 Linux 6.16-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b42fd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ccd49ae046542a0641
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134baf22580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d5a4f0580000
+The netconsole driver currently has duplicate IP address parsing logic
+in both local_ip_store() and remote_ip_store() functions. This
+duplication increases the risk of inconsistencies and makes the code
+harder to maintain.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-89be9a83.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a3f5f507f252/vmlinux-89be9a83.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a8f9b92c57a6/bzImage-89be9a83.xz
+Benefits
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com
+* Reduced code duplication: ~40 lines of duplicate parsing logic eliminated
+ * Improved robustness: Centralized parsing reduces the chance of inconsistencies
+ * Easier to maintain: Code follow more the netdev way
 
-wlan1: send auth to aa:09:b7:99:c0:d7 (try 2/3)
-wlan1: send auth to aa:09:b7:99:c0:d7 (try 3/3)
-wlan1: authentication with aa:09:b7:99:c0:d7 timed out
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000029: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000148-0x000000000000014f]
-CPU: 0 UID: 0 PID: 171 Comm: kworker/u4:4 Not tainted 6.16.0-rc7-syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
-Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 c3 cc cc cc cc cc 66 66 66 66 66 66 2e
-RSP: 0018:ffffc90001977400 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffffffff8b713286 RCX: ca5c1933e35f3700
-RDX: 0000000000000000 RSI: ffffffff8b713286 RDI: 0000000000000029
-RBP: ffffffff824067f0 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed10085cf24c R12: 0000000000000000
-R13: 0000000000000148 R14: 0000000000000148 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f55ffff CR3: 000000005030a000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- __kasan_check_byte+0x12/0x40 mm/kasan/common.c:556
- kasan_check_byte include/linux/kasan.h:399 [inline]
- lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5845
- down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:869 [inline]
- simple_recursive_removal+0x90/0x690 fs/libfs.c:616
- debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
- ieee80211_sta_debugfs_remove+0x40/0x70 net/mac80211/debugfs_sta.c:1279
- __sta_info_destroy_part2+0x352/0x450 net/mac80211/sta_info.c:1501
- __sta_info_destroy net/mac80211/sta_info.c:1517 [inline]
- sta_info_destroy_addr+0xf5/0x140 net/mac80211/sta_info.c:1529
- ieee80211_destroy_auth_data+0x12d/0x260 net/mac80211/mlme.c:4597
- ieee80211_sta_work+0x11cf/0x3600 net/mac80211/mlme.c:8310
- cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
-Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 c3 cc cc cc cc cc 66 66 66 66 66 66 2e
-RSP: 0018:ffffc90001977400 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffffffff8b713286 RCX: ca5c1933e35f3700
-RDX: 0000000000000000 RSI: ffffffff8b713286 RDI: 0000000000000029
-RBP: ffffffff824067f0 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed10085cf24c R12: 0000000000000000
-R13: 0000000000000148 R14: 0000000000000148 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f55ffff CR3: 0000000011601000 CR4: 0000000000352ef0
-----------------
-Code disassembly (best guess):
-   0:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
-   7:	00
-   8:	90                   	nop
-   9:	90                   	nop
-   a:	90                   	nop
-   b:	90                   	nop
-   c:	90                   	nop
-   d:	90                   	nop
-   e:	90                   	nop
-   f:	90                   	nop
-  10:	90                   	nop
-  11:	90                   	nop
-  12:	90                   	nop
-  13:	90                   	nop
-  14:	90                   	nop
-  15:	90                   	nop
-  16:	90                   	nop
-  17:	90                   	nop
-  18:	66 0f 1f 00          	nopw   (%rax)
-  1c:	48 c1 ef 03          	shr    $0x3,%rdi
-  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  27:	fc ff df
-* 2a:	0f b6 04 07          	movzbl (%rdi,%rax,1),%eax <-- trapping instruction
-  2e:	3c 08                	cmp    $0x8,%al
-  30:	0f 92 c0             	setb   %al
-  33:	c3                   	ret
-  34:	cc                   	int3
-  35:	cc                   	int3
-  36:	cc                   	int3
-  37:	cc                   	int3
-  38:	cc                   	int3
-  39:	66                   	data16
-  3a:	66                   	data16
-  3b:	66                   	data16
-  3c:	66                   	data16
-  3d:	66                   	data16
-  3e:	66                   	data16
-  3f:	2e                   	cs
-
+PS: The patches are very well contained in other to help review.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes in v3:
+- Avoid #ifdef and use if (IS_ENABLED()) instead (Simon)
+- Assing an int to a boolean using !! (Simon)
+- Link to v2: https://lore.kernel.org/r/20250721-netconsole_ref-v2-0-b42f1833565a@debian.org
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Changes in v2:
+- Moved the netpoll_parse_ip_addr() to outside the dynamic block (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250718-netconsole_ref-v1-0-86ef253b7a7a@debian.org
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+---
+Breno Leitao (5):
+      netpoll: Remove unused fields from inet_addr union
+      netconsole: move netpoll_parse_ip_addr() earlier for reuse
+      netconsole: add support for strings with new line in netpoll_parse_ip_addr
+      netconsole: use netpoll_parse_ip_addr in local_ip_store
+      netconsole: use netpoll_parse_ip_addr in local_ip_store
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/net/netconsole.c | 84 +++++++++++++++++-------------------------------
+ include/linux/netpoll.h  |  3 --
+ 2 files changed, 30 insertions(+), 57 deletions(-)
+---
+base-commit: d61f6cb6f6ef3c70d2ccc0d9c85c508cb8017da9
+change-id: 20250718-netconsole_ref-c1f7254cfb51
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
