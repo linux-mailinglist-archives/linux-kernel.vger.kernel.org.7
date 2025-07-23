@@ -1,220 +1,139 @@
-Return-Path: <linux-kernel+bounces-743124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3482B0FAE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE1FB0FAE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E126F16D9E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098BE9666BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1127522A1D4;
-	Wed, 23 Jul 2025 19:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10C22A1D4;
+	Wed, 23 Jul 2025 19:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdXNQ/v4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hNOs0sMM"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3E22192F4;
-	Wed, 23 Jul 2025 19:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176642192F4;
+	Wed, 23 Jul 2025 19:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753298661; cv=none; b=YTrWWqmoJ9f4VQQI4nBUIsSNO309PGeI9vlmi0ZgprSaSEttER5F15jDZ8q7OEMhHeyTWS+sE/+RqSPrbEqmgIdkXWiWEA6OHhXHbaLmAh/IJH9+c3I9Qxqmr2Q+Szwo0F8+XsN3+CuGw0YHPT0j/fpqKL45YlF4WNUnph4UJ/c=
+	t=1753298778; cv=none; b=s+tWBfc48KAEbaJz1dCzq4ynu9NdU3rmbL/AxnuCakCJJEwhFHOWfQoFbZDwEWC3YoAzmmIVmdnhzGg4d0EDuSFQXFtsyx8ISK+T2aMmy99+NO98ooPPUm0jDica6CknQkXDqol0hSHMwvv3eQIo3XKZR5elriMXy0j7mCZoA94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753298661; c=relaxed/simple;
-	bh=Vm3veatecaJYU4VIsRdH8NCXde2FjUk++0i7MGDnLSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnIUDvQ+fLdVP6fHNpuhh5dJEWhnuLOkH/F23BeZG3vdEXRhfxEe/7Wie6XjID54006EjL/tfwpF5AkC0lUK3k+Xy8divXKVbarKP6CwURFjTnh4bLUl/tbVJoBTcFG7wqQJj4yLAZlg6waen04UXkFCmjoT4F9hGoH2SgvlMUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdXNQ/v4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E24FC4CEE7;
-	Wed, 23 Jul 2025 19:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753298660;
-	bh=Vm3veatecaJYU4VIsRdH8NCXde2FjUk++0i7MGDnLSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tdXNQ/v4aT+sV8Po9m6wkOdCdj13AQSFYRr3ic/Zf7qm55kS8ImW1jPrqFDFEQGOt
-	 H4uVReEuuGSKfBNIDi5jTmdMc/oaGTlaEm8gFRiPQGekUXaMWaN+NllBhJvO3UwUhh
-	 z+sbXDoO8gdEoYBOVgVEfu6+wOWP28x4fgz+uyj9/0hsRdaLNsiKda8+79dopLz0IC
-	 TTir97SiPxr4pKhEIEvY0cf427GSvlKXc4mxLhiCD+9YXUm4NFZ8gHOjreFY6C60Nk
-	 PqTnvgkd1wRXdVi9xMJN0duMh+b1/aaI3jV6OFpaXG23wtJMK+0IoqLJn/QO1xD4Ir
-	 NQc6opbxw46pw==
-Date: Wed, 23 Jul 2025 16:24:17 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 00/16] New perf ilist app
-Message-ID: <aIE24fDAuIqDXX3h@x1>
-References: <20250714164405.111477-1-irogers@google.com>
- <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
- <aIEjMroa3bW-T7d-@google.com>
- <aIEzRNLTCTA5Gqhm@x1>
- <aIEzzt1f3UWDCAIw@x1>
+	s=arc-20240116; t=1753298778; c=relaxed/simple;
+	bh=McKtVO0Hih5A9AVjNMHsFSbGO7m6LL6HMnmcX3RYaM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTQLPaQogmTTXge+XPIr4XlPywhriD9eL8+Q4+pqAcGytk8LRT+SiHqxUAGzeARgOfPR0LIxozRKJtViewEYp2Dmc4rUFimL+7MBmWhaQkGLCGX9+POjg30I2dbZyojyeRCiS7l7gMWZeZPgkfdzkbPUeRBk1eYxIZFZcm61juQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hNOs0sMM; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHttM6009436;
+	Wed, 23 Jul 2025 19:26:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=o7Xj0Emi+6jkt4QCvj9ula6o/6JAU
+	0YBmQDnMaeeNpc=; b=hNOs0sMMrTU+Awv7bbiaSbGPAmgAN2DpIX786dgjW+YJd
+	z/l2Hpntuv7opZs9l/ZMtlKhX55QaUTHTjgrAp/383Nd93R8HCYJA1JiW0Ea8UAI
+	c2wdQSILKPmXH2qP1htRGY7HnJxgLCrVEUwYqoILyegdy+uvMo1FRw6+kCsOn3h+
+	K9inF5d/0YJNd0dWtJGebg8IbiQwPd8ubQadBB5TKjYRrs/8KshGBg1pr2hfC400
+	BODMvYENvNtzmZliHgERgzfXD9kcLIKj77RH+aP9PfCjyjYq+ZRlYSdLEKE1VQpG
+	Tn4jdCGU2eY0c9kiiyEXZF12R+6x1R37svAEGSiLQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e2g7y8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 19:26:06 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56NI0sDe038352;
+	Wed, 23 Jul 2025 19:26:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tb12yx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 19:26:05 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56NJQ5rH022657;
+	Wed, 23 Jul 2025 19:26:05 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4801tb12y4-1;
+	Wed, 23 Jul 2025 19:26:05 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
+        gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org,
+        linux-staging@lists.linux.dev
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [bug report] staging: sm750fb: Fix polarity assignment for vertical and horizontal mode
+Date: Wed, 23 Jul 2025 12:24:31 -0700
+Message-ID: <20250723192528.77109-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aIEzzt1f3UWDCAIw@x1>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507230164
+X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=6881374e b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=dYcGuau3DC2CDLyDpIsA:9 cc=ntf
+ awl=host:12062
+X-Proofpoint-GUID: fKMKiYlUq6jK_HTh1oR3XqYkoeo99nBW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE2NCBTYWx0ZWRfX+Wpp0PUoVB+Q
+ 82wgPOPJqKBirSki6OxbmI8lbs2GPkjes3x3gNtmFpnb1R0IYdPRyreAkd4Ixrp3Pz+BDiB9SP+
+ /MJxMtSFIaEpdRZw6C3u6I26csTYvvo7102uGrZ2szga/STfBvzslldauM6Pp18bQwPWl9+I9qz
+ ocR2+FOa5mldwQm4lleEn0VtzJkNc5lu8q+K+7KIvDtqYp7IV1F6EDiWtgb6S1uBUUgG3f370w3
+ 4pc6TwVvWhMYt/Mme4kJPBfNowtlhKbUXHuViFx97iqtvkHl3x0aT5YTIXo2w9yn60hNEAYqtnE
+ zq78H8xuPAWvGgHsMBr8iZ3KfEJ5lCb07ENItTqu6cc9wpe0l3OOoNe26Q4XwBF0b1/vY6j2nr+
+ x0yLFmZICH1kvc3gTvViLujLoas4EYa+LSf3Ov0UAXnWq2KzHRhGKTq93JBDuVK+S0q9LwQz
+X-Proofpoint-ORIG-GUID: fKMKiYlUq6jK_HTh1oR3XqYkoeo99nBW
 
-On Wed, Jul 23, 2025 at 04:11:13PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jul 23, 2025 at 04:08:55PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Jul 23, 2025 at 11:00:18AM -0700, Namhyung Kim wrote:
-> > > > I think there is some follow up for "make install" for scripts like
-> > > > these, but I'm keen for the python API to move forward.
-  
-> > > I'll review the series today so that we can get some part of it, at
-> > > least.  Basically I think we need a wrapper script like perf-ilist to
-> > > run this easily (maybe with documentation).
- 
-> > I just tried, with the series applied:
- 
-> > root@number:~# perf ilist
-> > perf: 'ilist' is not a perf-command. See 'perf --help'.
- 
-> > Did you mean this?
-> > 	list
-> > root@number:~#
- 
-> > Now trying to figure out why it is not running.
- 
-> So it is not wired up like 'perf archive', trying it directly:
- 
-> root@number:~# ~acme/git/perf-tools-next/tools/perf/python/ilist.py 
-> Traceback (most recent call last):
->   File "/home/acme/git/perf-tools-next/tools/perf/python/ilist.py", line 11, in <module>
->     from textual import on
-> ModuleNotFoundError: No module named 'textual'
-> root@number:~#
- 
-> I thought there was some discussion about catching this exception and
-> providing guidance, lemme try...
+In drivers/staging/sm750fb/sm750_hw.c,
+the vertical and horizontal sync polarity assignments were incorrectly
+ordered. 
+The assignment for modparm.vertical_sync_polarity was mistakenly using
+the FB_SYNC_HOR_HIGH_ACT bit instead of FB_SYNC_VERT_HIGH_ACT, 
+and the horizontal polarity line was commented out or missing.
 
-root@number:~# sudo dnf install python-textual
-Updating and loading repositories:
- google-chrome                                        100% |   6.1 KiB/s |   1.3 KiB |  00m00s
- Copr repo for PyCharm owned by phracek               100% |   2.0 KiB/s |   2.1 KiB |  00m01s
- RPM Fusion for Fedora 42 - Nonfree - NVIDIA Driver   100% |   2.6 KiB/s |   2.5 KiB |  00m01s
- RPM Fusion for Fedora 42 - Nonfree - Steam           100% |   5.8 KiB/s |   2.4 KiB |  00m00s
- google-chrome                                        100% |   7.2 KiB/s |   3.2 KiB |  00m00s
- Copr repo for PyCharm owned by phracek               100% |  15.7 KiB/s |   4.8 KiB |  00m00s
-Repositories loaded.
-Package                           Arch    Version         Repository     Size
-Installing:
- python3-textual                  noarch  1.0.0-1.fc42    fedora      6.6 MiB
-Installing dependencies:
- python3-linkify-it-py            noarch  2.0.3-4.fc42    fedora    110.4 KiB
- python3-markdown-it-py           noarch  3.0.0-8.fc42    fedora    496.3 KiB
- python3-markdown-it-py+linkify   noarch  3.0.0-8.fc42    fedora      9.0 KiB
- python3-markdown-it-py+plugins   noarch  3.0.0-8.fc42    fedora      9.0 KiB
- python3-mdit-py-plugins          noarch  0.4.2-2.fc42    fedora    289.4 KiB
- python3-mdurl                    noarch  0.1.2-9.fc42    fedora     41.4 KiB
- python3-platformdirs             noarch  4.2.2-4.fc42    fedora    162.0 KiB
- python3-pygments                 noarch  2.18.0-4.fc42   fedora     10.6 MiB
- python3-rich                     noarch  13.9.4-2.fc42   fedora      2.5 MiB
- python3-uc-micro-py              noarch  1.0.3-4.fc42    fedora     13.1 KiB
+This patch corrects the logic by properly assigning:
 
-Transaction Summary:
- Installing:        11 packages
+vertical_sync_polarity -> from FB_SYNC_VERT_HIGH_ACT
+horizontal_sync_polarity -> from FB_SYNC_HOR_HIGH_ACT
 
-Total size of inbound packages is 5 MiB. Need to download 5 MiB.
-After this operation, 21 MiB extra will be used (install 21 MiB, remove 0 B).
-Is this ok [y/N]: y
-<SNIP>
-[13/13] Installing python3-textual-0:1.0.0-1.fc42.noarch                                                                         100% |  10.1 MiB/s |   6.8 MiB |  00m01s
-Complete!
-root@number:~# ~acme/git/perf-tools-next/tools/perf/python/ilist.py 
-╭────────────────────────────────────────────────────────────────── Traceback (most recent call last) ──────────────────────────────────────────────────────────────────╮
-│ /home/acme/git/perf-tools-next/tools/perf/python/ilist.py:470 in compose                                                                                              │
-│                                                                                                                                                                       │
-│   467 │   │   │   return tree                                                                                                                                         │
-│   468 │   │                                                                                                                                                           │
-│   469 │   │   yield Header(id="header")                                                                                                                               │
-│ ❱ 470 │   │   yield Horizontal(Vertical(metric_event_tree(), id="events"),                                                                                            │
-│   471 │   │   │   │   │   │    Vertical(Label("event name", id="event_name"),                                                                                         │
-│   472 │   │   │   │   │   │   │   │     Static("description", markup=False, id="event_descript                                                                        │
-│   473 │   │   │   │   │   │   │   │     ))                                                                                                                            │
-│                                                                                                                                                                       │
-│ ╭───────────────────────────────────────────────── locals ─────────────────────────────────────────────────╮                                                          │
-│ │ self = IListApp(title='Interactive Perf List', classes={'-dark-mode'}, pseudo_classes={'dark', 'focus'}) │                                                          │
-│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                          │
-│                                                                                                                                                                       │
-│ /home/acme/git/perf-tools-next/tools/perf/python/ilist.py:433 in metric_event_tree                                                                                    │
-│                                                                                                                                                                       │
-│   430 │   │   │   """Create tree of PMUs and metricgroups with events or metrics under."""     ╭─────────── locals ────────────╮                                      │
-│   431 │   │   │   tree: Tree[TreeValue] = Tree("Root", id="root")                              │ pmus = TreeNode('PMUs', None) │                                      │
-│   432 │   │   │   pmus = tree.root.add("PMUs")                                                 │ tree = Tree(id='root')        │                                      │
-│ ❱ 433 │   │   │   for pmu in perf.pmus():                                                      ╰───────────────────────────────╯                                      │
-│   434 │   │   │   │   pmu_name = pmu.name().lower()                                                                                                                   │
-│   435 │   │   │   │   pmu_node = pmus.add(pmu_name)                                                                                                                   │
-│   436 │   │   │   │   try:                                                                                                                                            │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-AttributeError: module 'perf' has no attribute 'pmus'
-root@number:~# 
+Please let me know your feedback.
+Thanks,
+Alok
+---
+Fixes: 81dee67e215b ("staging: sm750fb: add sm750 to staging")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/staging/sm750fb/sm750_hw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ok, that was with the 'python-perf3' rpm package on fedora 42, trying
-with the new one...
+diff --git a/drivers/staging/sm750fb/sm750_hw.c b/drivers/staging/sm750fb/sm750_hw.c
+index 7119b67efe11b..5a32756f98c31 100644
+--- a/drivers/staging/sm750fb/sm750_hw.c
++++ b/drivers/staging/sm750fb/sm750_hw.c
+@@ -280,9 +280,9 @@ int hw_sm750_crtc_set_mode(struct lynxfb_crtc *crtc,
+ 	/* set timing */
+ 	modparm.pixel_clock = ps_to_hz(var->pixclock);
+ 	modparm.vertical_sync_polarity =
+-		(var->sync & FB_SYNC_HOR_HIGH_ACT) ? POS : NEG;
+-	modparm.horizontal_sync_polarity =
+ 		(var->sync & FB_SYNC_VERT_HIGH_ACT) ? POS : NEG;
++	modparm.horizontal_sync_polarity =
++		(var->sync & FB_SYNC_HOR_HIGH_ACT) ? POS : NEG;
+ 	modparm.clock_phase_polarity =
+ 		(var->sync & FB_SYNC_COMP_HIGH_ACT) ? POS : NEG;
+ 	modparm.horizontal_display_end = var->xres;
+-- 
+2.46.0
 
-root@number:~# export PYTHONPATH=/tmp/build/perf-tools-next/python
-root@number:~# ~acme/git/perf-tools-next/tools/perf/python/ilist.py 
-
-Cool stuff!
-
-Lots of flashing lights! :-)
-
-Interesting to quickly browse all those events, I like it.
-
-I searched for "wakeup" and stumbled on ftrace:wakeup failures, but that
-should be just a minor adjustment, some exception list:
-
-root@number:~# ls -la /sys/kernel/tracing/events/ftrace/wakeup/
-total 0
-drwxr-xr-x. 1 root root 0 Jul 23 16:04 .
-drwxr-xr-x. 1 root root 0 Jul 23 16:04 ..
--r--r-----. 1 root root 0 Jul 23 16:04 format
--r--r-----. 1 root root 0 Jul 23 16:19 hist
-root@number:~# 
-root@number:~# ls -la /sys/kernel/tracing/events/sched/sched_wakeup/
-total 0
-drwxr-xr-x. 1 root root 0 Jul 23 16:04 .
-drwxr-xr-x. 1 root root 0 Jul 23 16:04 ..
--rw-r-----. 1 root root 0 Jul 23 16:19 enable
--rw-r-----. 1 root root 0 Jul 23 16:19 filter
--r--r-----. 1 root root 0 Jul 23 16:04 format
--r--r-----. 1 root root 0 Jul 23 16:19 hist
--r--r-----. 1 root root 0 Jul 23 16:04 id
--rw-r-----. 1 root root 0 Jul 23 16:19 trigger
-root@number:~#
-
-Do you know how to take text screen shots in textual?
-
-Apart from the super minor nits, thanks for working on this:
-
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-- Arnaldo
 
