@@ -1,96 +1,129 @@
-Return-Path: <linux-kernel+bounces-742779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381B6B0F67F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF67B0F6A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA767BA53B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1EA1894EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076962FF460;
-	Wed, 23 Jul 2025 15:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCC02FCFC3;
+	Wed, 23 Jul 2025 15:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPqir2F+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mY8ORgke"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990752D3EFB;
-	Wed, 23 Jul 2025 15:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7582F6F91
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282891; cv=none; b=EZfio0agFRa1I45RjLXuxb3Jlg/EN23O5QmWj30mWI1/02pxIxLscR91wnvUxl6Ky5HUXnus7vTlMORG7NXSdohphViUZtvQgjrbu0ipTGIN4/e1p4HRHYKzKUVwWUHbMbpCbc/EAt/Qhj48wwAkt1DsFSUu//UW1ROGwcL1LGM=
+	t=1753282929; cv=none; b=J3lkiso0F9x8sybgwABt3altIuragZgccorqSnM2xI87ogpxwGxZSiID46NyTWlc1DrupoOAcwWeOuxhOSW4isJdebKUa7diLMd/vmUslakormbsIC177ltOGoV0qC4eF1p5pt03jFndSETX3pgxZcC1UH5JxcPk/evAKheABL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282891; c=relaxed/simple;
-	bh=m21SaC0IlLv6BTU6zuvChLqhiP3/AhLoJDrRdogwifE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bTOV8f7eN9XOeUZ5Ob239EWdUPsANHvfqCSi7ln1Ggz2+X7ZSTgR47NxcCn0Kf+FRXs9PRrXuwCQTRWojZOXthf1ygEPU/CAMh82Ny07VcTZ40DGJlNYtiqc8/U5eDHbYXqOkKVVjmoKhKq+T1S51tfg+dlTxa+9zUL6e96ruLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPqir2F+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345C1C4CEF6;
-	Wed, 23 Jul 2025 15:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282890;
-	bh=m21SaC0IlLv6BTU6zuvChLqhiP3/AhLoJDrRdogwifE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dPqir2F+jYMqbnktdi+u4tGZsnWaeFyV5h94kuq9SXAZ5Adw8lmzBfsSxmSYGi66j
-	 g3YLYHcQPO2Bq9jOebM1jFTn2k/Zkqja3arHRb+ifXXswTQu8J1NZux/WQL6nuWvtU
-	 0dD8z/SwsKF81MtqULwn1KQzX8hQ1Hf8dk4W7fJEqxTLmEPu/1/4DntS/bJy3h4W+L
-	 hXWDVOfMFqFxAk483JZU/inmd1kJhP3X2bsr1jPVV00mmZfr+jfTYcu2akO4fgI8Uw
-	 pLPQH8FLqn6MDXQMINX8nR3onqs/R4U/wMk7XI7mJLZrC3Wtes87hb8tOzhOf8ZOlB
-	 1VonZSpk/m3uA==
-From: Carlos Maiolino <cem@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, Steven Rostedt <rostedt@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
- "Darrick J. Wong" <djwong@kernel.org>
-In-Reply-To: <20250722201907.886429445@kernel.org>
-References: <20250722201907.886429445@kernel.org>
-Subject: Re: [PATCH 0/4] xfs: more unused events from linux-next
-Message-Id: <175328288785.86753.6771359243622680611.b4-ty@kernel.org>
-Date: Wed, 23 Jul 2025 17:01:27 +0200
+	s=arc-20240116; t=1753282929; c=relaxed/simple;
+	bh=iE1aBZYKqQwEYNiRMnq//IWDWufJ3w5YS/WloRgwiBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CaXohfxfnEC8sqFDqImfaVQkbeUSE25MhE8vOYMoGSP4lIm7xwiFqtLBDDacc7sruk7BL8vyc0WKtDwil6Dq1VXHHm18Sxbbi7GbOWLTYbtgPx2b4GJtHWk+P3wHscTQEsFBbp32XZSJ+xFwScSuqToRsgIOGd5IoSfbgp7sZLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mY8ORgke; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-455b00339c8so49098975e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753282912; x=1753887712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SkED1IFnrdQOrvPX+FEDqQyJbbz8ySr0pcHO2vzmZv4=;
+        b=mY8ORgkeMqot4uEjGnYMYmtPMYFU4yXkUjVRzbrGVaArMpIR5Bz+YFf/Ad3QNZQ5rP
+         5YpAoMUNAlKRE1/FZQxTjcE68GVbvBi/4douPtk1XB5wvozcRDHC1LeNXKofDSmMnbFf
+         esPoTpKXproQ1BR/qhYRoV24aW9JbAcUfzyiP6m//5U31+NP3y82NwDKULklwCWkvDJ9
+         LDdC5LJwfPO+m/i25r5JMaB3vIzFT/ug6iY85ZlIfnTCZsxhoDGk3mQMC7x0vU5MZwBK
+         MnwM9V9EC8Hlz9j3nLnZkr0h2dtoQ0mYvrct+pGQjtrex0PV6+NM/4LCTCPwyBrj6cvH
+         s1rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753282912; x=1753887712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SkED1IFnrdQOrvPX+FEDqQyJbbz8ySr0pcHO2vzmZv4=;
+        b=S+FtFx31QBg3KhKWsHD4715prmCsP7WQjFWr9+6rvfW/0FoXB0Dz84YW8EabhOQWHu
+         r/cEFHYIH4/cnpNo/5EkkFuHjGG54qEEVmj+NComAwqEs/r/jGe4NMtssRDDnV7SUR1m
+         VqgQMU4f1wXwbQMyovIXuraRlHC+UNCQaPtKJw3aPXfMNsmCMJ5QYnd8atVuVzhI/fru
+         AjNHt9zJmBZYIGkbo8+Y9MPmJZDUrxO9fS91doIa9nKG9QTvGftuwMSG1RNOo69QUGwc
+         fNGYocb2XXHcQhZxNM1ZSUUfhylusgeSib9kOHbdK3RzGbJXBJl//PaT+qgOhm8IFyjt
+         JqgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxnmdSeJ9rIx6r0SMA8En+7K9tvPjT5Gw6Gf2AH/YlkLq/bO1NLmGg/l/NObzE18z//QcQlQXj7KAuIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySaXb0CZJk0TaHswIdzTTvk06fLS+JAG4PjGxpN5N34lRoMDXv
+	R4zAT4FbXOuzsli6gK4ckMzcRMBkELV/Jvu7EcVk7bVOg3eqLN8qTq0WYlgz37P4TkSYz4oFqOM
+	VBMhKZZIMgWYm8EwGMvTDWpzrcCCVeydxBSkDDFJIo8xfxmGx6GgA6ZqE
+X-Gm-Gg: ASbGncuhNF5a43Ne0nPBdcXcPQLq6gZVFtpMPE18ghL2tU9jkkwJrxM+0YuVxqCGuJ4
+	L6ktqTgDjg4lCiAxG+LYSj2DFGBn/SmRwCLVg/VakaXXZLohkyhM77mPC63w3t/g9bIU0OXuGIH
+	UY+InUyLQZMVjF5AAnYAs/Qaw/f8SofkgyX3aFySZWD7so8f4uKNMoJJgOd1t1CKAIuVWHcvrSK
+	SrgJVMY+PLuc9m1hSru74xO//vHvKWynyvB4iCiH0/gQbRF
+X-Google-Smtp-Source: AGHT+IFo6IwyLbR5G5tGGMDaDPd7c+A7mFM1EecPzUD9PrHXz7Z7GSYJhFYbhBZl9Tl4KwnUO6QlPYWlXLeyCswGE/g=
+X-Received: by 2002:a05:600c:3483:b0:456:1e5a:8879 with SMTP id
+ 5b1f17b1804b1-45868c9454fmr32278955e9.9.1753282911854; Wed, 23 Jul 2025
+ 08:01:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
+ <20250723-lock-class-key-cleanup-v1-1-85fa506b8ca4@google.com> <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org>
+In-Reply-To: <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 23 Jul 2025 17:01:39 +0200
+X-Gm-Features: Ac12FXyaXk0Tn1xnIVYCpD8QPrGtzpt5ky0enjvHtYvN2fs0RSIRfx2AoBIsbAU
+Message-ID: <CAH5fLgjWFa8TjTL+rfv7Zd+OQqhkKqWvyTkGf60pMUyQ=c4sXg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: sync: refactor static_lock_class!() macro
+To: Benno Lossin <lossin@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 22 Jul 2025 16:19:07 -0400, Steven Rostedt wrote:
-> I reran the unused tracepoint code on the latest linux-next and found more
-> xfs trace events. One was recently added but the rest were there before. Not
-> sure how I missed them.
-> 
-> But anyway, here's a few more patches to remove unused xfs trace events.
-> 
-> Steven Rostedt (4):
->       xfs: remove unused trace event xfs_dqreclaim_dirty
->       xfs: remove unused trace event xfs_log_cil_return
->       xfs: remove unused trace event xfs_discard_rtrelax
->       xfs: remove unused trace event xfs_reflink_cow_enospc
-> 
-> [...]
+On Wed, Jul 23, 2025 at 4:36=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> On Wed Jul 23, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
+> >  impl LockClassKey {
+> > +    /// Initializes a statically allocated lock class key.
+> > +    ///
+> > +    /// This is usually used indirectly through the [`static_lock_clas=
+s!`] macro.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The destructor must never run on the returned `LockClassKey`.
+>
+> I don't know how lockdep works, but Boqun mentioned in the other thread
+> that it uses the address of static keys. But AFAIK there is no mechanism
+> to differentiate them, so does lockdep just check the address and if it
+> is in a static segment it uses different behavior?
+>
+> Because from the safety requirements on this function, I could just do
+> this:
+>
+>     // SAFETY: we leak the box below, so the destructor never runs.
+>     let class =3D KBox::new(unsafe { LockClassKey::new_static() });
+>     let class =3D Pin::static_ref(KBox::leak(class));
+>     let lock =3D SpinLock::new(42, c_str!("test"), class);
+>     let _ =3D lock.lock();
+>
+> Because if lockdep then expects this to be initialized, we need to
+> change the requirement to only be used from statics.
 
-Applied to for-next, thanks!
+My understanding is that it has to with correctly handling reuse of
+the same key. In your scenario it's not reused.
 
-[1/4] xfs: remove unused trace event xfs_dqreclaim_dirty
-      commit: 1edc170bb24082785e5825c46a36af8ae12ac762
-[2/4] xfs: remove unused trace event xfs_log_cil_return
-      commit: 55edb3326b4b07117d0c26cd67d86fb8518ee906
-[3/4] xfs: remove unused trace event xfs_discard_rtrelax
-      commit: c17f506f0abe67b6009c0d126da81a71fc1e00c1
-[4/4] xfs: remove unused trace event xfs_reflink_cow_enospc
-      commit: 10a957e43f28105ceb7b8e31a918d1c47cd4df3e
-
-Best regards,
--- 
-Carlos Maiolino <cem@kernel.org>
-
+Alice
 
