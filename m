@@ -1,118 +1,235 @@
-Return-Path: <linux-kernel+bounces-742628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18DCB0F47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3F6B0F480
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15E361C84009
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD0F1C24F82
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92362E92A5;
-	Wed, 23 Jul 2025 13:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6B02E8DFD;
+	Wed, 23 Jul 2025 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RZZg4N/H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RtQevoWQ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A132E610B;
-	Wed, 23 Jul 2025 13:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1482E888B;
+	Wed, 23 Jul 2025 13:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278572; cv=none; b=GSgKGrWuUBS7X91GVpsfSXLfwHtqbCk69h2qK1ezTr9rXIOAnFgw7i5Al2SDDHUZ2vh21dAtiygkVswPSufogcbT0Df0QtjsswdH5661LYE7GeMLUSoBWI/eVXk3A/8Atx4pnGZMtjmupQ67CWrfoO+KBwn0kOPkZRtm+XQm+Xs=
+	t=1753278588; cv=none; b=lNoESCkukEGVp5/lkfssUtichqq5nJGO9PydS7yBWDUv5wYOAPh/YJlQPihm4ohYFGwOyr/6kDwPF7drLnBvR0uwqsluqPSrds8G+9KRWEU0nzH90q5EKr7AReDErKhmklh0FfCOUhlpIFXMaZBEkGGtJReZtHoMFg4mBKSO0YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278572; c=relaxed/simple;
-	bh=7uFRCZ7As5+NVhpVoYy9lZqVRjgL6TOc2bTAujGB+fw=;
+	s=arc-20240116; t=1753278588; c=relaxed/simple;
+	bh=VvAR17cp1tct65iy7g2JSjL6WDjRIvPAlDYC8vSJHDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smjpPv3fFQ99GiiQ2Pin3CHZfqf0+w/p/Ho8+8xTErC6plhmbLdxuuW2w4RkHEy3MAPZiD1cbu4PnXudTEjoBO4kHwMDlMVrkswekHtQA7aKXgdNVzQOKMySAK4B+Z8B4R60O8tRNzO3CmpculBO/okq4fd9an9jAh2DKknM6/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RZZg4N/H; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753278570; x=1784814570;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7uFRCZ7As5+NVhpVoYy9lZqVRjgL6TOc2bTAujGB+fw=;
-  b=RZZg4N/Hv5N2F/72JxAzkJR/KjDIucSD2FxTlLUBYmnmK3aORq5S94Uv
-   PRxA/dC/w9LphF+nHO0OoQwHCklSyWLLcnfpOYQusSvArXPmNoqEaxUVR
-   oLvYENhRW6nu8HV2HmJBG8q8Np9l4NAKz4N7UXlF3G6wR5ZuFU/RaREPn
-   suam5SVwFjvubV+XG6wphO0UaUqzufE8A54MYBX9BWVaqe/uOToPBtdrZ
-   Xakc1QzJTa30CfI72yzk6LiDebNsSQuTULVDCGWKkSe09O8MDInCHtOPc
-   ly1+IPhJqWZNgTLqxxKvnbytJCxhCm42v1yo2rf0I9Ztghi/OuKSo6mIH
-   g==;
-X-CSE-ConnectionGUID: jsK61R/SROOsVojyPAi1GA==
-X-CSE-MsgGUID: JLvM6ccOTeKhcVWBFg1qSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55503677"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="55503677"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 06:49:30 -0700
-X-CSE-ConnectionGUID: 3D5XKCJrQRaJeDgMUzC4mw==
-X-CSE-MsgGUID: 5QQAC3LXTZOKG/jqI10etQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="190478089"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 06:49:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ueZqW-00000000Iwh-3EDp;
-	Wed, 23 Jul 2025 16:49:24 +0300
-Date: Wed, 23 Jul 2025 16:49:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, ~lkcamp/patches@lists.sr.ht,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: adc: spear_adc: mask SPEAR_ADC_STATUS channel
- and avg sample before setting register
-Message-ID: <aIDoZHBjO4tU3Gkh@smile.fi.intel.com>
-References: <20250717221559.158872-1-rodrigo.gobbi.7@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=okFIGaSfozY2+utePYJZ24/9IUYRlB8+rr/KAAPtLY+taLan8GAiVAq7OsdhWZkI3IxPcdE8CsGDu6OXF3VAIPet4pSfiS+Kb+VRnGE1EzAnagr27LqTHXkQ+ZIu+VWSPXhRb7un1Sozo9DiabF5T0Qtc/VE4eeTq27rUsCPZvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RtQevoWQ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 08124E92;
+	Wed, 23 Jul 2025 15:49:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753278546;
+	bh=VvAR17cp1tct65iy7g2JSjL6WDjRIvPAlDYC8vSJHDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RtQevoWQPxBxXZyD66geYhzC7tRGoYYpDrPqa9iJa5AjR77DVmxPfwWCgo2m96JF5
+	 cgJ4JiBu8JgdDs7imRMaHJcl8PjTuVeTQR/O9ez6u/53q6OkpBBgBtbM1tw4w85UW8
+	 Wr3bdQVOL2gSg8RuAGQnUWWMiksU2FzfoRbVHZbw=
+Date: Wed, 23 Jul 2025 16:49:42 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+	hverkuil-cisco@xs4all.nl, ribalda@chromium.org,
+	jai.luthra@ideasonboard.com, laurentiu.palcu@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, julien.vuillaumier@nxp.com,
+	celine.laurencin@nxp.com
+Subject: Re: Re: [RFC 2/2] Documentation: media: Describe exposure and gain
+ controls for multiple captures
+Message-ID: <20250723134942.GC6719@pendragon.ideasonboard.com>
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250710220544.89066-3-mirela.rabulea@nxp.com>
+ <20250716000738.GF19299@pendragon.ideasonboard.com>
+ <fcb87e2d-5ddf-4f33-b5f7-5af67c438af5@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250717221559.158872-1-rodrigo.gobbi.7@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <fcb87e2d-5ddf-4f33-b5f7-5af67c438af5@nxp.com>
 
-On Thu, Jul 17, 2025 at 07:13:49PM -0300, Rodrigo Gobbi wrote:
-> avg sample info is a bit field coded inside the following
-> bits: 5,6,7 and 8 of a device status register.
+On Sun, Jul 20, 2025 at 10:02:13PM +0300, Mirela Rabulea wrote:
+> On 7/16/25 03:07, Laurent Pinchart wrote:
+> > On Fri, Jul 11, 2025 at 01:05:44AM +0300, Mirela Rabulea wrote:
+> >> The standard controls for exposure and gains allow a
+> >> single value, for a single capture. For sensors with HDR
+> >> capabilities or context switching, this is not enough, so
+> >> add new controls that allow multiple values, one for each
+> >> capture.
+> > 
+> > One important question not addressed by this patch is how the new
+> > controls interact with the old ones. For instance, if a sensor
+> > implements 2-DOL, it should expose a V4L2_CID_EXPOSURE_MULTI control
+> > with 2 elements. Should it also expose the V4L2_CID_EXPOSURE control,
+> > when operating in SDR mode ? What should happen when both controls are
+> > set ?
 > 
-> channel num info the same, but over bits: 1, 2 and 3.
+> Yes, it's a good point. I experimented with the option of implementing 
+> both, at least for backward compatibility (libcamera requires them) and 
+> kept them consistent, I mean if V4L2_CID_EXPOSURE_MULTI values change, 
+> also change V4L2_CID_EXPOSURE and viceversa, so basically keep 
+> consistent the values from V4L2_CID_EXPOSURE with the values for the 
+> first exposure from V4L2_CID_EXPOSURE_MULTI. Also, I had to check if hdr 
+> mode is not enabled, do nothing in s_ctrl for V4L2_CID_EXPOSURE_MULTI 
+> (cannot return error, as it will make __v4l2_ctrl_handler_setup fail).
 > 
-> mask both values in order to avoid touching other register bits,
-> since the first info (avg sample), came from dt.
+> > There are also sensors that implement multi-exposure with direct control
+> > of the long exposure, and indirect control of the short exposure through
+> > an exposure ratio. The sensors I'm working on support both, so we could
+> > just ignore the exposure ratio, but if I recall correctly CCS allows
+> > sensors to implement exposure ratio only without direct short exposure
+> > control. How should we deal with that ?
+> 
+> I'm not sure I understand, but in case of indirect short exposure 
+> control I think we do not need these multiple exposure controls, we can 
+> use the existing ones, as only the value for the long exposure is 
+> needed, the driver can derive the value for the short exposure using the 
+> ratio.
 
-Is there any issue with a Shift key?
+I'm talking about sensors that implement the CCS exposure ratio, or a
+similar mechanism. With those sensors, the long exposure time is set
+directly, and the short exposure time is calculated by the sensor by
+dividing the long exposure time by a ratio. The ratio is programmed by
+the driver through a register. The ratio could be set to a fixed value,
+but I think there are use cases for controlling it from userspace.
 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Some sensors support both direct control of the short exposure and
+indirect control through a ratio, while other may support indirect
+control only. For the sensors that support both, we could decide to only
+expose the multi-exposure control with direct control of the short
+exposure. For sensors that support indirect control only, we need to
+define an API. We could possibly still use the same multi-exposure
+control and compute the ratio internally in the driver, but there may be
+a better option.
 
-...
+> In some cases, this may be enough, but when direct individual 
+> control is needed for both long and short exposure, then we need the 
+> multiple exposure controls. Do you have a specific sensor example in mind?
+> I think in the past we looked at imx708, and my understanding was that 
+> the exposure control affects only the long exposure and the sensor will 
+> automatically divide the medium and short one with the corresponding ratio:
+> https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/media/i2c/imx708.c
 
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/completion.h>
-> +#include <linux/bitfield.h>
+The ratio seems configurable. Register 0x0220 is programmed to 0x62,
+which selects ratio-based control of the exposure. I don't know if the
+sensor supports direct control of the short (and very short) exposure.
 
-While it looks unordered, it's still better to squeeze a new header to the
-place which organises a longest (but sparse) group of ordered headers. This
-will reduce churn in the future for the ordering changes.
+> > Finally, I was recently wondering if it would be possible to reuse the
+> > existing controls instead, allowing them to be either single values or
+> > arrays. The idea would be that setting the control to a single value
+> > (essentially ignoring it's an array) would provide the current
+> > behaviour, while setting values for multiple elements would control the
+> > separate exposures.
+> 
+> You mean to divide the 32 bits value of the current controls between the 
+> multiple exposures?
+> Just one comment here, we have encountered the ox03c10 sensor with 4 
+> exposures (that will leave only 8 bits per exposure), and the ox05b1s 
+> sensor with context switching and the exposure on 24 bits (for 2 
+> contexts, 2x24=48). So reusing current 32 bit controls  might not be 
+> enough.
 
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
+I'm not sure the controls here should be used in the context switching
+use case. It would be better to define a more generic mechanism that
+supports multiple contexts for all controls.
+
+> Or do you mean changing the current controls type from 
+> V4L2_CTRL_TYPE_INTEGER to u32 array?
+
+Yes, this is what I mean.
+
+> Would that not cause issues with 
+> applications already using current controls?
+
+That would only work if the kernel could handle some type of backward
+compatibility, doing the right thing when userspace sets the control to
+a single value (as opposed to an array of values). That's probably not
+very realistic, as the control would enumerate as a compound control,
+and that may break existing userspace.
+
+Another option would be to change the control type at runtime based on
+whether or not HDR is enabled, but that also sounds like it will cause
+lots of issue.
+
+> > I haven't checked if the control framework supports
+> > this, or if it could be supported with minimum changes. The advantage is
+> > that we wouldn't need to define how the new and old controls interact if
+> > we don't introduce new controls. 
+> 
+> I think the same advantage will be achieved with stream-aware controls 
+> (no new controls, also the min/max/def semantics remain clear), but 
+> there is the issue we do not have streams if the sensor does internally 
+> the hdr merge. Does it sound any better to introduce some fake streams 
+> or pads that are not associated with any pixel stream, but just to allow 
+> multiple exposure control?
+
+That also sounds like quite a bit of complexity for little gain. It
+seems that new controls are the best option. There are still a few
+issues to solve:
+
+- Should sensors that support multi-exposure (or gains) implement
+  V4L2_CID_EXPOSURE for backward compatibility, or only
+  V4L2_CID_EXPOSURE_MULTI ? If both are implemented, how should the two
+  controls interact ?
+
+- How do we handle ratio-based exposure control ?
+
+- In which order are the exposures (and gains) stored in the array ?
+
+> BTW, Jay, what are your plans around the stream-aware controls?
+> 
+> Thanks again for feedback, Laurent!
+> 
+> > Hans, what do you think ?
+> 
+> Same question from me ;)
+> 
+> >> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> >> ---
+> >>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+> >>   1 file changed, 12 insertions(+)
+> >>
+> >> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> >> index 71f23f131f97..6efdb58dacf5 100644
+> >> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> >> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-image-source.rst
+> >> @@ -92,3 +92,15 @@ Image Source Control IDs
+> >>       representing a gain of exactly 1.0. For example, if this default value
+> >>       is reported as being (say) 128, then a value of 192 would represent
+> >>       a gain of exactly 1.5.
+> >> +
+> >> +``V4L2_CID_EXPOSURE_MULTI (__u32 array)``
+> >> +    Same as V4L2_CID_EXPOSURE, but for multiple exposure sensors. Each
+> >> +    element of the array holds the exposure value for one capture.
+> >> +
+> >> +``V4L2_CID_AGAIN_MULTI (__u32 array)``
+> >> +    Same as V4L2_CID_ANALOGUE_GAIN, but for multiple exposure sensors. Each
+> >> +    element of the array holds the analog gain value for one capture.
+> >> +
+> >> +``V4L2_CID_DGAIN_MULTI (__u32 array)``
+> >> +    Same as V4L2_CID_DIGITAL_GAIN, but for multiple exposure sensors. Each
+> >> +    element of the array holds the digital gain value for one capture.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
 
-
+Laurent Pinchart
 
