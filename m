@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-742621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1A9B0F464
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0957B0F467
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771705661E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91045566516
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FADC2E92B7;
-	Wed, 23 Jul 2025 13:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0227228751F;
+	Wed, 23 Jul 2025 13:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0tkOPL1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY8CsQHb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F303F2E8885;
-	Wed, 23 Jul 2025 13:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588772E425D;
+	Wed, 23 Jul 2025 13:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753278439; cv=none; b=RAtmdS5MrSqZNeVVsLJ6rw2hL6CVKkYOCyF3rOqks8xsmP8kEh6l1eLwcvnd38j/bs2zviSPqQZAPqSKKD7vUbMJinarAj6Gl4hf8EcKL78v2KBzonHQ9DX12T36S3swc1ZhT3g6kLHLshxKPzj1C9vGjqAcRLVjDbZa59AaA14=
+	t=1753278455; cv=none; b=ldEu8uKVez+1Wb50wlCkKDo7bVZa9Q3mmU9T7CNHO3m3NuAj7oUk3sJEBzTVYmrHclfRYsW5adQUc5IoB1Ko16wgvkWIKPczA08PtslRfIIopTklxq5hkhDZFrvZ8Abr9NbwDMxPJS0ijp2jDYEuFyJTQbBN2gKX6jxWQq6rCKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753278439; c=relaxed/simple;
-	bh=mDf9hGRa+hZOj+1JrXcwZtqq2caWcW+UkVVFTPkikUE=;
+	s=arc-20240116; t=1753278455; c=relaxed/simple;
+	bh=e4iFmU4V8FdSQBveMXcP7eTilC+19QO83wN4KtTy+Ag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJ9I6eFBQABo+4PguuFlJeCgI+TdHq7RLbEKGssMKzS+v3SSkvyDEcfyxuduaC61WAJPITTtqd+3dJebO12Z4w+1NLo/iGzIg53UO4laZeTyApzO0GS62Ss9Dbe2Faq0SkUJoeDzBaMs9D9+hh5K7DXdsWhi33XUjGEJk4xJioY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0tkOPL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F62EC4CEE7;
-	Wed, 23 Jul 2025 13:47:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNy/GbRyRvaDspL7FcwKUe7XABp3/QPkuKvZmviFBnsnLAGZoFZMzHhav7A9LeCaml7Eu9XWERAo+qqtfhxvL3ofLmy5wtNgxugYEYJrc3CgzMNGKj8XWIb6PuPCs9NDCBBoq+3CVhY0kftV3/hqXCogvjuvc7I4bs/Pi6hXYS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY8CsQHb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D21E6C4CEE7;
+	Wed, 23 Jul 2025 13:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753278437;
-	bh=mDf9hGRa+hZOj+1JrXcwZtqq2caWcW+UkVVFTPkikUE=;
+	s=k20201202; t=1753278454;
+	bh=e4iFmU4V8FdSQBveMXcP7eTilC+19QO83wN4KtTy+Ag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q0tkOPL1ASB54sO5jqP7x9+WdFZC59SO7sY4RYhnU5AOW06Ba11S8nQQgcq/qvy4K
-	 tjCVdaZHfYr/pr6eLE8g4wP20uUvKGTwjop/mcO/8AXyGkuJPZZQr9czN5VblY+3XI
-	 pVPrVn27a7B+PCMPPmV1dDk2XopBsMfwzV6lyjQInjWCLgjDbC+PiQA5oG9oyqnKXy
-	 jV1U2nW78n2WeNNLtScDG+Qos/tnaEFoYK4TAZY/mmmGmmHu9kf6KYQRIu+mIRIpsM
-	 zfmU5Bvr/rW1PGGADs+SVjUydWW3De9gkmOZNLGZBqcqkFabZXtbFv64FMAOihOOlv
-	 10o65FCTGsWng==
-Date: Wed, 23 Jul 2025 08:47:16 -0500
+	b=eY8CsQHbcb2OswoT+ggFsv3c+SKfn4phee/f3jbk8YITne+7vWAvq+pKn+v41trYZ
+	 U6D+J+cibmnR0ZmBIszGLK9iU0OpXJuqBvH4y9Q0VJPGoQpOIA1zKDYP6ekqBERbDs
+	 QugPrw354rRa7o4rZZl7+YOJhT+wR0D2wY+tCaMLp17pDUPCumTsY7frUR4SUpOdAz
+	 NhMOBTZBPhuPXa/zUdu33rGWB/BYMSw6VLUkTST4KNKSZlc6m0gZ0Uw+jkHkOCiP7g
+	 QWHKnGcoWcxJf0LXcEpTS1HUvhCKP+60Sq3a93WUft148wYpbv3D1+0k5FGG+gd85N
+	 v9kXkk5W1rxuA==
+Date: Wed, 23 Jul 2025 08:47:34 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-arm-kernel@lists.infradead.org, Yao Zi <ziyao@disroot.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
+Cc: Yao Zi <ziyao@disroot.org>, Andy Shevchenko <andy@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>, Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
 	linux-rockchip@lists.infradead.org,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: i2c: i2c-rk3x: Allow use of a
- power-domain
-Message-ID: <175327843600.2144777.12217048091920354736.robh@kernel.org>
+	David Lechner <dlechner@baylibre.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: iio: adc: rockchip-saradc: Allow use
+ of a power-domain
+Message-ID: <175327845184.2145175.4601554796265618767.robh@kernel.org>
 References: <20250723085654.2273324-1-jonas@kwiboo.se>
- <20250723085654.2273324-3-jonas@kwiboo.se>
+ <20250723085654.2273324-4-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,30 +66,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723085654.2273324-3-jonas@kwiboo.se>
+In-Reply-To: <20250723085654.2273324-4-jonas@kwiboo.se>
 
 
-On Wed, 23 Jul 2025 08:56:44 +0000, Jonas Karlman wrote:
-> The I2C controllers in most Rockchip SoCs are part of power domains that
-> are always powered on, i.e. PD_BUS or PD_PMU. These always powered
+On Wed, 23 Jul 2025 08:56:45 +0000, Jonas Karlman wrote:
+> The SARADC controller in most Rockchip SoCs are part of power domains
+> that are always powered on, i.e. PD_BUS or PD_PERI. These always powered
 > on power domains have typically not been described in the device tree.
 > 
 > Because these power domains have been left out of the device tree there
-> has not been any real need to properly describe the I2C controllers
-> power domain.
+> has not been any real need to properly describe the power domain of the
+> SARADC controller.
 > 
-> On RK3528 the I2C controllers are spread out among the described
-> PD_RKVENC, PD_VO and PD_VPU power domains. However, one I2C controller
-> belong to an undescribed always powered on power domain.
+> On RK3528 the SARADC controller is part of the PD_VPU power domain.
 > 
-> Add support to describe an optional power-domains for the I2C
-> controllers in Rockchip SoCs.
+> Add support to describe an optional power-domains for the SARADC
+> controller in Rockchip SoCs.
 > 
 > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 > ---
 > v2: Update commit message
 > ---
->  Documentation/devicetree/bindings/i2c/i2c-rk3x.yaml | 3 +++
+>  Documentation/devicetree/bindings/iio/adc/rockchip-saradc.yaml | 3 +++
 >  1 file changed, 3 insertions(+)
 > 
 
