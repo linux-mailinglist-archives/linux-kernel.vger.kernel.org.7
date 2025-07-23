@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-742189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B6CB0EE7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:32:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 964A2B0EE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155893B13F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB25172477
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A1A284694;
-	Wed, 23 Jul 2025 09:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7B32836A3;
+	Wed, 23 Jul 2025 09:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnufFwsv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdIeza0Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA51C84D0;
-	Wed, 23 Jul 2025 09:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C27273D6A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753263141; cv=none; b=BTbvWI3Do07t+vjX5rdMkgy4pm/DKgXcSc40vvs2BsCY3guOEvKuDPB2bWp8qK1D2AxFSQXP38to0pfkjBZCxLWxeF+YLdo3CCEtthk/+3FjU7YsajWT5tVbSC9D9z8WGtyEomrFUByUXcaUq9asZQ2vaIA2N/Tm7LcmELH34UE=
+	t=1753263214; cv=none; b=T8mYPBjftKmcqIbmlGKk80MBUTL/Vc6mBRpPgOfrMTQohMaVzkGoB+YI77nAadG9n08TmYCnHpzpKLcEBp0W2ZB0aJFH/3Jb03u+EVHNtzvP6JInjvadodIF2/NkJfBBWxST6zaFOiw5Whsz9XLIKx59c420W13EpQyiq/tKGU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753263141; c=relaxed/simple;
-	bh=VAILaPd6nBnwY1RmU2BFZxST8YPq75mfdT1tCy/Ki2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hU6U5gfUVHPha7xQHCxRW5httMHvTlN2HAGR0PlCEa9ofdf1jCkD3Ur2UwB02ZiwJ1DwYL36YHA/BuASzea6bvPCVm9Ts6svsrGgRcqB0BPF5iWkNtNJBFRaecBpgmto/BhqTea+Kk3jfgRuudPNohMXAWQpNDAhD2avSSoeHZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnufFwsv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D9EC4CEF4;
-	Wed, 23 Jul 2025 09:32:17 +0000 (UTC)
+	s=arc-20240116; t=1753263214; c=relaxed/simple;
+	bh=KBxipLHtpbufm4Kck6q9H41Sj+h8LM46+hXw0o6aGKA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nDP5RJjrTRxd0mpxCuKYQVf5a70WU429efxwJvVZmjmrQzT7Y2FQ7bqyQ6spNPTDKH7SW7Or5cZO0+mC1JZ5byz4RfqvZFWO3v5teP2B0IKlcrgosvocRx/qJFh9WhcPSVVJMEdPGjGFbQ/rlqT9KP+CflhuweGxwmfYm4J7tUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdIeza0Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B4DC4CEE7;
+	Wed, 23 Jul 2025 09:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753263138;
-	bh=VAILaPd6nBnwY1RmU2BFZxST8YPq75mfdT1tCy/Ki2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZnufFwsvby3EUHi8G66LPXd83iTs2bNT5ZtWBcECbEL1NFTQ4wPQVdWcgh6IgUJ1B
-	 vQ5Y+w3ExxNcIL0bV9wzz8132Fgx8JDJXHS0BdBqQmsHBaqygUJSinBbyr6YKcWOil
-	 puC6+qj9Go9yBAr8lTdHx7XuQ0OhfHg6l8Ojg1RxrGUs8ZHoWY0cn0FNvm2cAHtsH+
-	 GixdoOJWqxtfdzJ7AZSm7AF9sd6By96LAbXmym/noCJTGhkO0jeRPgnfWvBnSEXZBa
-	 MFD5BuEIU4QxKWqXz77iL7nH2kXVQuZ/HCR5pRzY5KPSmlQcWN1abfomoxC0F/lO5u
-	 QEM1r5vr+mkJA==
-Date: Wed, 23 Jul 2025 11:32:14 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
-	jikos@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
-Message-ID: <34ks6futbrmunsq2tbz75jwqg64lpk4pg6udbbk3yo2exm657b@3fivbjjdcyl4>
-References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
- <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
- <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
- <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
- <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
- <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
+	s=k20201202; t=1753263214;
+	bh=KBxipLHtpbufm4Kck6q9H41Sj+h8LM46+hXw0o6aGKA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=NdIeza0QrJG16/Lva8+/ql6lOB8euYZq9XwA39UNXqbFPtC1VsS/koV/ftkKNNJl6
+	 tYE3NucrmnI5T28lFJuNp/yEOzbbD088TZsmMPvC+E8xYX366Dn47wQvzo1kUx0pQn
+	 37ibQ/QmSkoKv/GifZp+RFg7Ry0hdCOM1PFFKvupUsSP7DWr3NXE7ZwogoZWUMesx/
+	 k+GxUqJO3T8gSRhfPqn+kT78199er7wAoXZOBRumoF60IhxZZN0I2g46AvM18jdXld
+	 NaL49WZHhcVIhu8skCPWufGxnPgFbT3DmPjm7L7ZgTQaVWpv/IlKMNc4iYWJw1L1Ap
+	 ZC1TFW21UbyBw==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: patrick.rudolph@9elements.com, naresh.solanki@9elements.com, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+In-Reply-To: <20250709133103.3482015-1-ckeepax@opensource.cirrus.com>
+References: <20250709133103.3482015-1-ckeepax@opensource.cirrus.com>
+Subject: Re: (subset) [PATCH] mfd: Minor Cirrus/Maxim Kconfig order fixes
+Message-Id: <175326321288.1724652.16184140808221299597.b4-ty@kernel.org>
+Date: Wed, 23 Jul 2025 10:33:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Jul 21 2025, Alan Stern wrote:
-> On Mon, Jul 21, 2025 at 03:05:58PM +0200, Benjamin Tissoires wrote:
-> > > So then would it be better to accept these report fields (perhaps with a 
-> > > warning) and instead, harden the core HID code so that it doesn't choke 
-> > > when it runs across one of them?
-> > > 
-> > 
-> > Yeah, that seems like the best plan forward.
-> > 
-> > [sorry on reduced setup for the next 3 weeks, so I can't really debug
-> > the entire thing now.]
-> > 
-> > Though, we should probably not annoy users unless we are trying to do
-> > something that won't be needed. I doubt that Saitek gamepad will ever
-> > call the faulty functions, so why putting an error in the logs when it's
-> > working fine?
+On Wed, 09 Jul 2025 14:31:03 +0100, Charles Keepax wrote:
+> Move some Cirrus parts so they are grouped together alphabetically in
+> menuconfig. Also move the Maxim 5970 out of the middle of the Cirrus
+> parts and put it with the other Maxim parts. No functional changes
+> just alphabetising.
 > 
-> All right.
 > 
-> Probably the best way to do this is simply to revert the commit that's 
-> already applied and then merge a new patch to harden the core.  Would 
-> you like me to post the reversion patch or do you prefer to do it 
-> yourself?
 
-Given that the faulty commit is on top of for-6.17/core, I can simply
-force push to the parent, and also force push the for-next branch. That
-should do the trick.
+Applied, thanks!
 
-Can you post your s32ton fix on top of that then?
+[1/1] mfd: Minor Cirrus/Maxim Kconfig order fixes
+      commit: 0937f646f71d23db3ad34804c67cb61772a4af9e
 
-Cheers,
-Benjamin
+--
+Lee Jones [李琼斯]
+
 
