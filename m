@@ -1,167 +1,88 @@
-Return-Path: <linux-kernel+bounces-742095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920DBB0ED1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:24:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDF1B0ED36
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F1053A6104
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771F0581785
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49899279DCA;
-	Wed, 23 Jul 2025 08:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CCD27A92E;
+	Wed, 23 Jul 2025 08:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5JChJ7B"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3XTApcN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227721E5B70
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA227990C;
+	Wed, 23 Jul 2025 08:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753259082; cv=none; b=MAai834q4Fn0qovdLKpN1+44acPvW4jceu/oX62CbDL5aKBk/aTeDzsJoKp8NcyTGA9F9bcLw0M5gts7Cy8O9yUrvmjUUddwZNM/sWrTVi3bnf9ryDssFGmbCTm09TVJYE1Cp6pS5cP30H1BsaSbz3ExxFIYPNkfpcsnp6LgE+c=
+	t=1753259354; cv=none; b=bSMva54aK14znflxh9/nEbj0V4iKUeW25asli9McIkceSBHcJ+cZcisHwtozbaWTFNwwD333E7M8uDWAGuaLX3Ov0B577B/m5GW2Xz6pSwMgQbJnSXeeMbcFjypU06njC65jft4ju/GNmqU3TIOHQISk/8rD9+5iLfF8M7oEqXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753259082; c=relaxed/simple;
-	bh=Mr0qHL9KpQwF09w9ztSBy+NLBFb2ElbAskGKav9TAPU=;
+	s=arc-20240116; t=1753259354; c=relaxed/simple;
+	bh=SJ8fc2NpnCO+no1eSN/RzEnPIgifibyaw8VNSVwphgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0fXkJZvhBfj+h8hBimrmViMvPttEQBMMOApOS3Q8GhSFuVCTInb8uLR3Vym8u080NFcT9azggze5FFbnCunY23FNc/EJC/ls31u7CvLttmSYkcpxLPLWSvoGmrWXF+d6ZnqYRt/TPDR6k/8eO+1liIbTkvyf4kHtUJZm7gNBKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5JChJ7B; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70478ba562aso7188326d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753259080; x=1753863880; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=89/h4s3KwNEdLTnh5DbgusESMCzq1wEubarwC8onohY=;
-        b=I5JChJ7Bl7UZ8McKO35TwkBTfpaJ572EJOPbHldSIYa8C8SP91gGBjSBHNQ+W1ffi5
-         jf9toHA1S8HBPrIdjyVgGaNq2uHe3fwSbrSPpdXjqwED/1PUVtDxf8ADlJSMRGUWXRLk
-         bx0TzkFBwihHjzvXebNXoiIpVPHACf02NkiplW2OM/Gb0vnXSkXlXKt47ulTNht7WCnk
-         GqJg6QQH4e74kizCxIRazE9LmqXcJL5E+To3NJrGYAiM+glJHAzFSpJ3k47GUKhf3ZB7
-         lwADCwWcIXpco0sUyB7/ytQrJRvLdet8E6iKQow71PUvUvWRPusXGSER1jqeaqfbHFWA
-         kK7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753259080; x=1753863880;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=89/h4s3KwNEdLTnh5DbgusESMCzq1wEubarwC8onohY=;
-        b=bIDGzEyCHbw/eqSbr/q7lkSQXYgbikGbnlN3waVr63AzlQkv3k1ndNmhXyiAF32e26
-         tYCM7+jJRnOmo2gIYd3KItkqtb+Qvw6Qoz7JS2d54PRWNuw0mcIC2QiasXLGq6VuehJk
-         ZWagQvY3wUrjgGCqIBRxZBHBD5uZ6dtrnvABUk5XCwyMzBQtdAUv7wHM03cmptqXwrS8
-         FK0n47dtG+ctmfwHitryTI3bnUDYsWlOLTYFJvFpSxmDIOo83ARfE1/1dHV6UpDLujkm
-         xcjN9GLXIdi536Qrn8MV9XAsS2mh8ra2jXxW2MjU0SV3yv2wFnKUB2x94KqVZ9yEikVR
-         rYUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAE3I6IZ+euixRMDKij4N8N6K5zlF7RDPSmQIGgxxCRJP4BZMBjwl/LGz7Y/T3W7dtbtDCAlkJx6A+O4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPArfGkwxY82DdfyWePFuG7lLwKdUZj13slDxp38AY3y4hW3ZN
-	KH8pRXeAysuxmfGYIu2QNZFH1ypvwWQe4jT/cqjTcqpPfY8YReuNaqMP
-X-Gm-Gg: ASbGncvvNVj0uxNZ4kzhqOf0V/xAWln+FksodyzOwvIJrVidJ5+EQ8unWU/Y1rn+9dZ
-	6g+ZjaCg7Nn2U/BM8ZpuXPzKJXlepX4JNpTTarj0Uzc2V+OgwZqrbHZ2SKaKJS+RRLeR0zUndhM
-	Cb7fXHImlF+/1WyEj46h9wljm+gah9XNGrPUWy5/y4Me+1p6P565O8S1eUXdEFeqxYKpv7K5FqR
-	QJJdoj/vAs6E/l/YeaCl+eze79PzvnY2/7ueFd9vqgwleSTwqxsJ8OrLHqMPibA3B4qToG2cJ2U
-	VC0XXA7yTtaUorS0jI/mUYIngj3vlsT5ZKqOJ6hnunf+gNPMCdw2Erex5y0KPExbf5wiF74EGlh
-	DFjzd9s89Jnj01GsJ3qKbhg3c7Mbd
-X-Google-Smtp-Source: AGHT+IEjvslnuRIBwqLZ2HqQamNAjCpDe5qjUokTuj+aDnpNGUI4s1/MFxsZ9p9Ovo3Ar38t9vY07Q==
-X-Received: by 2002:a05:6214:e6d:b0:6fa:9ca1:c520 with SMTP id 6a1803df08f44-70701135fd2mr25368546d6.16.1753259080033;
-        Wed, 23 Jul 2025 01:24:40 -0700 (PDT)
-Received: from localhost ([142.186.9.88])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70707ed62e8sm1744456d6.109.2025.07.23.01.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 01:24:39 -0700 (PDT)
-Date: Wed, 23 Jul 2025 04:28:54 -0400
-From: Seyediman Seyedarab <imandevel@gmail.com>
-To: Will Deacon <will@kernel.org>
-Cc: dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org, 
-	robin.murphy@arm.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/vt-d: replace snprintf with scnprintf in
- dmar_latency_snapshot()
-Message-ID: <fvq3h4mbms64vzyqssy4xli2sudzpyimbacg74lkdgrzi77oqy@4yywt5fav7wi>
-References: <20250722131117.2739-1-ImanDevel@gmail.com>
- <aH_RWQ_YqlydOkKH@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PE9VGJ3Iyslzo5soG4hMoUvpG3N4iF0yROYzzbm0z5lUzI2QKwUU3oJfy6jjz7boZEAdhNtcvVl/Sj2o1hkA+ljlW5pRMlpChxv3a7t/tTWCsKsUxlAHMgrhIGCcPEq03YhPPqzxpeL0sI/ZTbgn2KPiV2ph4vNWOTucw9xBdks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3XTApcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFFAC4CEE7;
+	Wed, 23 Jul 2025 08:29:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753259354;
+	bh=SJ8fc2NpnCO+no1eSN/RzEnPIgifibyaw8VNSVwphgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3XTApcNWd1pc3mPG8K5ztgs6uCHnGz1/oExjWITCGHivkYc0nk5s7d0YtkUSrGZC
+	 cQIbzh/vP89MG37vfY1FOUHkT5kcLyMWTT2+mjcJUmpCCEIfXrQHuk0HgIWVh5RD8i
+	 4oVcAPPOlrz2ANTg3qY0jAAlcvYrQYpQOwlE31mwXAGc80jfP54N528mjU5n1hpQNa
+	 2bdybs6fVpaIwkjii1nDaYd1W/42J7niU+rgk5omiNgktxnTNV+Yjy22SpaU9L4W2q
+	 PkkLjGfX3uKBw2L0wMHN1UOibsBNFLyfGoTVgtQg73IBQRMJ9iKKWHopvGVcVk0OQB
+	 CGPiKOyD+eucA==
+Date: Wed, 23 Jul 2025 10:29:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel@oss.qualcomm.com
+Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
+Message-ID: <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
+References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
+ <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aH_RWQ_YqlydOkKH@willie-the-truck>
+In-Reply-To: <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
 
-On 25/07/22 06:58PM, Will Deacon wrote:
-> On Tue, Jul 22, 2025 at 09:11:17AM -0400, Seyediman Seyedarab wrote:
-> > snprintf returns the number of bytes that would have been written,
-> > not the number actually written to the buffer. When accumulating
-> > the byte count with the return value of snprintf, this can cause
-> > the offset to exceed the actual buffer size if truncation occurs.
-> > 
-> > The byte count is passed to seq_puts() in latency_show_one() with-
-> > out checking for truncation.
-> > 
-> > Replace snprintf with scnprintf, ensuring the buffer offset stays
-> > within bound.
-> > 
-> > Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
-> > ---
-> >  drivers/iommu/intel/perf.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel/perf.c b/drivers/iommu/intel/perf.c
-> > index adc4de6bb..cee4821f4 100644
-> > --- a/drivers/iommu/intel/perf.c
-> > +++ b/drivers/iommu/intel/perf.c
-> > @@ -122,7 +122,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
-> >  	memset(str, 0, size);
-> >  
-> >  	for (i = 0; i < COUNTS_NUM; i++)
-> > -		bytes += snprintf(str + bytes, size - bytes,
-> > +		bytes += scnprintf(str + bytes, size - bytes,
-> >  				  "%s", latency_counter_names[i]);
-> >  
-> >  	spin_lock_irqsave(&latency_lock, flags);
-> > @@ -130,7 +130,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
-> >  		if (!dmar_latency_enabled(iommu, i))
-> >  			continue;
-> >  
-> > -		bytes += snprintf(str + bytes, size - bytes,
-> > +		bytes += scnprintf(str + bytes, size - bytes,
-> >  				  "\n%s", latency_type_names[i]);
-> >  
-> >  		for (j = 0; j < COUNTS_NUM; j++) {
-> > @@ -156,7 +156,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
-> >  				break;
-> >  			}
-> >  
-> > -			bytes += snprintf(str + bytes, size - bytes,
-> > +			bytes += scnprintf(str + bytes, size - bytes,
-> >  					  "%12lld", val);
+On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
+> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
+> collectively referred to as lemans. Most notably, the last of them
+> has the SAIL (Safety Island) fused off, but remains identical
+> otherwise.
 > 
-> Should the check of the return value in latency_show_one() also be
-> adjusted so that 'ret <= 0' is an error? I couldn't convince myself
-> that the string in 'debug_buf' is always null-terminated if ret == 0.
+> In an effort to streamline the codebase, rename the SoC DTSI, moving
+> away from less meaningful numerical model identifiers.
 > 
-> Will
+> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
 
-IMO, that's not necessary. 'bytes' can't be less than zero that's
-for sure (AFAIK, scnprintf() doesn't have any case where it returns
-a negative number).
-As for being zero, in every scnprintf() call, 'size - bytes' would
-have to be == 0. (or size > INT_MAX, but still you get zero, not a
-negative number as an error)
+No, stop with this rename.
 
-In latency_show_one(), the 'size' is DEBUG_BUFFER_SIZE, and
-'bytes' in the first run is 0. So, 'size - bytes' == DEBUG_BUFFER_SIZE.
-Since 'latency_counter_names' and 'latency_type_names' are arrays of
-string literals, 'bytes' is guaranteed to be increased in the first
-iteration, even if the rest become zero (which won't happen, since
-they are smaller than DEBUG_BUFFER_SIZE).
+There is no policy of renaming existing files. It's ridicilous. Just
+because you introduced a new naming model for NEW SOC, does not mean you
+now going to rename all boards which you already upstreamed.
 
-So, the case of zero is impossible, unless you want a bulletproof
-check for future implementations where the function might be rewritten.
+Best regards,
+Krzysztof
 
-Seyediman
 
