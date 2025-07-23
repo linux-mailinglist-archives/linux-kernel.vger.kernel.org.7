@@ -1,120 +1,171 @@
-Return-Path: <linux-kernel+bounces-742819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25680B0F70D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:30:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C51B0F711
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061F6580CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1409AA280C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8941FECDD;
-	Wed, 23 Jul 2025 15:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBA51F099C;
+	Wed, 23 Jul 2025 15:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKo2O0zu"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="QFDGo4B5"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705401E8324;
-	Wed, 23 Jul 2025 15:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B800C2E0
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753284607; cv=none; b=bd56DHHK56PsHuOGgsTqsRl1Tpgysrwm+bKwRbKNpvko+D0pnmihcwjcLfTFph4itQUIWihiz13tZ7HNkCc1ulqCmH3whdQ7BBlcrF6bS6kr3VLmV6hj6ZbY4hmVDAdaTn9OF0gMT6BDpe8oFc95TOoc4ck+x/v6kINSTl+7Lqk=
+	t=1753284650; cv=none; b=Rwo/RJMnFVwmJulIfGpPvPu8yr+2g0eGvm//g9NQI1g3xq/miy0Fq/g01UQHninTD968jsBb0caOkYhUo1Hr0zMWGIcjupHDOybexw1ctSR7PDdy2da31zuMvEA8mD4yIyiI/fbPPNZbFA5a9bTxtcbA0s5UllaMO+YvUyCjglg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753284607; c=relaxed/simple;
-	bh=YE3uNRDI5S8fm0jmGk54vSek+0Ek8jLfojYmWBaxReY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRyawCdv186Qz50F7sZUhXGFpxQ1/kpyihIHL1MhX6Y+SXhJBg3TuBY5wEa/G/1HHOWlyF6b17LdXNTz04DdzO/iAN4fiXmdYUI78FXj9aUnSMcYNyKf8rWXBt9lkrlvb1Bt4Vyayrzhhjuo4JPePoWI3sKpS1aAzJgWhjtbPrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKo2O0zu; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234b440afa7so63414895ad.0;
-        Wed, 23 Jul 2025 08:30:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753284606; x=1753889406; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VlMz2/tTPFsG8As+bZqbz0VVzkqHQrHWWZOCUP7dezQ=;
-        b=bKo2O0zuoU8+If/fU0+A/hH208KZZ47FRoZl93h8D+sMwXpG21cLewCax0JnmFn2Kj
-         fDwIGUaqaL2IS8wWGzg3M5OMMr231avAExVNrtsCSFQNN5q3c/TAjbR04MtzCO1mPLIx
-         NkNKoqHc7sdidw20J7VORlX5YcwMKK9tpuLmK8LNUBhITiFQdotG51dMYDPYCO3Owie7
-         p54byuVXA/pnd+l5E7hLso4c9nGVOejBSpVIJL9QQx33HnSs+f+PcVSHqotP3EjE3OQr
-         4HTAVrEAV1tdgxg+DcG3/4RleXMAAju7f8pSwet3pEQD8F1PEobCzyWeYJpdZua4fiDv
-         c5vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753284606; x=1753889406;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VlMz2/tTPFsG8As+bZqbz0VVzkqHQrHWWZOCUP7dezQ=;
-        b=G2ZtHSW5PEbjtXvJO/TjytDTxztrqYH9E/awsQ2YyWDTjgeGkWtv3tS3Hr16OL+lVy
-         8WKpuQ0lsiijylAM8Vh39hTxTKG2A4TJwnYNfz85A60ASCCIzHkLUXx9DEfPLTvKdaEE
-         pFjGXuquzZePmmcREM3yEGC7Tjbj9J1KBdGs6Pen8J6MQ8dZj+QfSJWDs7Q1wO8ySVx7
-         Zl1P4TFvu1SNIcpoGR/JfmNDfLStjH3JZKLhz2mCPNefds+0dLhOCa/51XLfZKd2u0FP
-         iyH4nbV/RgbnCuRcTk9FwUDiWk4Qb5BIh00FlNRZ2psbgdw2LmkwyK1mBgb68lWsd295
-         JMQw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/PjHg6ttp6/oIR++8S32YpIY/XXniLdJhhIFd7uCoOQSrk4pHUgE4JjVuAYhV4qj+eJipK3a7KiMElg4=@vger.kernel.org, AJvYcCXOoE702bAYSlbU916ZDrWCf0Pir3btCRofBTHNuhhFDDWhWakIPquMluffcqM5i6YP0m89up03@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQEq5V5LNv52UzuwSwkROq3Ew5hP/Lsr8XiihC/LQR1AlncU1y
-	/Zy+DGOmYkDup/fhWgl/amyEnYMPes9NNJ4VMpcGK/slI20ktp2xGRU=
-X-Gm-Gg: ASbGncsL7IV3ZfCvpDqC/kKiZC1GPIFzrnebal7NKpuB2nkvcWChRrz4ClqvBI9zEQj
-	xvruxjtPWBoDJ7WmUXvS5wk/Gr0rdYaY8HN/CKnQyk5D204vczO4NRExJADzUncIDrJ6ev9bNVM
-	h+y8ssKP+JU4ea17X/OwlLcx4EsDgIDBg/KYRWI19YgxjKonWplakBFsIcFkRJaWNEkgyEV8Tol
-	9FMfTYQkfVxJCI2UEjBLg5Mysv8Tt862qVWsWwQTKCJrGRCdGX8/9vhSY9/G8JyZGrXTY04iiej
-	2989HIoTCrzJ0mnMIKlYkOki1DXZeOaeadSDfXOJF2i8ONlJFBs4ofy9CHiPgkJe4VTdPOGHEsf
-	LwoqKXOnlIOBusZkLoh6FxEa+d+1xz9WY5SQMbs9oPtg6JD3KnOfA72OUWxtg78O3FkRE5w==
-X-Google-Smtp-Source: AGHT+IGlmkjVkRy2fyxX0cvy9lBsGJ3/JHZFcxGI03r10FEwuKm9lMvYYaVvLOt04g9NXTqCXmjVrQ==
-X-Received: by 2002:a17:902:dacd:b0:23d:ce98:6110 with SMTP id d9443c01a7336-23f9812c147mr56965895ad.10.1753284605516;
-        Wed, 23 Jul 2025 08:30:05 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6ef26esm99032005ad.193.2025.07.23.08.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 08:30:05 -0700 (PDT)
-Date: Wed, 23 Jul 2025 08:30:04 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	dsahern@kernel.org, andrew+netdev@lunn.ch, horms@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 2/2] net: Warn when overriding referenced dst entry
-Message-ID: <aID__G3iKZqsY-yE@mini-arch>
-References: <20250722210256.143208-1-sdf@fomichev.me>
- <20250722210256.143208-2-sdf@fomichev.me>
- <20250722190014.32f00bbb@kernel.org>
- <aID8FaYlyuVjeOH_@mini-arch>
- <20250723082407.06686876@kernel.org>
+	s=arc-20240116; t=1753284650; c=relaxed/simple;
+	bh=4XuTuV98wrsBdokF6KRDhzrpVkiFivv+qg6FgYZ880s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NGhZ8LyrA6QeYCVbLy2bAIpHK70eEbnliiPTPAqdl67KaCgd5ZfYY5klo5skv2CexQH9tpkpIlXx6X0V6tTpbS6bBAdKlH7hNhG4lch6bHQvqg5GNJl+509YRpukIEU/B3vpUM4CP3oLVmUc8hLwsh+jJDSFn6PQ99RGn80+laY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=QFDGo4B5; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1753284646;
+ bh=FhP6rOtQvB4VYIXnnNpu3xwHjjjJTBlHfuZIWCxLQIE=;
+ b=QFDGo4B5m0tg9VX0Vj0FuilN2HlsgI0r0Ha641c1fVx6BGQFOaIjZAwrzsI7E2IE9xsmsTuPc
+ QerK7pHvynk5/jYbuTmrAgnxEXNY1fodmzhlUpn40xzfrsBxigAgehrXFvgPtawCn8FTAZkMbih
+ 0fpAT9+jM/cC3ZNIvfSQW46wZkxDMPfWWhJdj4whOTuzIg89W3InMVBlKoGwk1aIqPfZwfsvNvB
+ jF07mGBZhrFz/E/SSW1M+5Qiv6uP73UFmZF6XVHr8TS5mmVc6nAZxHgLsC8gGHO6zaUCgoUK3Jo
+ zAnI96Npk1k1c3gO58MGzbXqI6pdG+KJKYW0e0FBasMw==
+X-Forward-Email-ID: 68810025cb0ee86f9731e6c0
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.6
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <94357eb2-d8aa-4928-8816-9f6529530170@kwiboo.se>
+Date: Wed, 23 Jul 2025 17:30:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250723082407.06686876@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/11] arm64: dts: rockchip: Add USB nodes for RK3528
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ kishon@kernel.org, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, robh@kernel.org, vkoul@kernel.org,
+ ziyao@disroot.org
+References: <20250723122323.2344916-8-jonas@kwiboo.se>
+ <20250723143006.1083489-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250723143006.1083489-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07/23, Jakub Kicinski wrote:
-> On Wed, 23 Jul 2025 08:13:25 -0700 Stanislav Fomichev wrote:
-> > > > +{
-> > > > +	DEBUG_NET_WARN_ON_ONCE(skb_dst(skb) &&
-> > > > +			       !(skb->_skb_refdst & SKB_DST_NOREF));  
-> > > 
-> > > Why not 
-> > > 
-> > > 	DEBUG_NET_WARN_ON_ONCE(skb->_skb_refdst & SKB_DST_PTRMASK);
-> > > 
-> > > ?  
-> > 
-> > That's more precise, agreed!
-> 
-> Just to be clear -- looks like I ate the
-> 
->   !(skb->_skb_refdst & SKB_DST_NOREF)
-> 
-> part part of the condition. I think we still want that.
+Hi Chukun,
 
-Ah, so you only want to get rid of those WARN_ONs in skb_dst, makes
-sense.
+On 7/23/2025 4:30 PM, Chukun Pan wrote:
+> Hi,
+> 
+>> The DWC3 node does not contain any default phys because out of current
+>> and pending supported boards only one board, ROCK 2A, can use USB3.
+>> Remaining boards use the Naneng Combo PHY for PCIe instead of USB3.
+> 
+> I have other RK3528 boards with USB3 and can test this in a few days.
+> Or do you think that usb3-phy should be added in the dts of the device?
+
+That is what I did for ROCK 2A testing I added the usb3-phy to the board
+dts. Mostly for two reasons, first because I did not want to make this
+series fully depend on the naneng-combphy series. And secondly because
+the ROCK 2A also have some sort of GPIO controlled mux for USB3 and PCIe
+signals that may affect how usb3 support is described in the device tree.
+
+I am open to ideas on how or what default phys to include in soc dtsi.
+
+For the ROCK 2A usb3-phy example, please see the commit "arm64: dts:
+rockchip: Enable USB 3.0 port on ROCK 2A" at [1].
+
+[1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250722-rk3528/
+
+> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> index 85bc3f5aa2c7..3e51a3f51e05 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>> @@ -243,6 +243,29 @@ soc {
+>>  		#address-cells = <2>;
+>>  		#size-cells = <2>;
+>>
+>> +		usb_host0_xhci: usb@fe500000 {
+>> +			compatible = "rockchip,rk3528-dwc3", "snps,dwc3";
+>> +			reg = <0x0 0xfe500000 0x0 0x400000>;
+>> +			clocks = <&cru CLK_REF_USB3OTG>,
+>> +				 <&cru CLK_SUSPEND_USB3OTG>,
+>> +				 <&cru ACLK_USB3OTG>;
+>> +			clock-names = "ref_clk", "suspend_clk", "bus_clk";
+>> +			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+>> +			power-domains = <&power RK3528_PD_VPU>;
+>> +			resets = <&cru SRST_A_USB3OTG>;
+>> +			dr_mode = "otg";
+>> +			phy_type = "utmi_wide";
+>> +			snps,dis_enblslpm_quirk;
+>> +			snps,dis-del-phy-power-chg-quirk;
+>> +			snps,dis-tx-ipgap-linecheck-quirk;
+>> +			snps,dis-u1-entry-quirk;
+>> +			snps,dis-u2-entry-quirk;
+>> +			snps,dis-u2-freeclk-exists-quirk;
+>> +			snps,parkmode-disable-hs-quirk;
+>> +			snps,parkmode-disable-ss-quirk;
+> 
+> Maybe "snps,dis_u2_susphy_quirk" is needed?
+
+Maybe, it did not seem to be needed when I tested USB2.0 only or USB3.0,
+will run some more tests on my boards.
+
+Any issues you know that snps,dis_u2_susphy_quirk would help fix?
+
+For my latest USB testing I have included a few USB related changes in
+U-Boot, e.g. early disable of U3 port. Will push and updated rk3528
+branch [2] once source.denx.de is fully back online again.
+
+[2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
+
+> Downstream kernels add this on USB2.0 only devices:
+> https://github.com/rockchip-linux/kernel/blob/develop-5.10/arch/arm64/boot/dts/rockchip/rk3528-demo.dtsi#L474
+> 
+>> +		u2phy: usb2phy@ffdf0000 {
+>> +			u2phy_otg: otg-port {
+>> +			u2phy_host: host-port {
+> 
+> I think it would be better to call it usb2phy, usb2phy0_otg and usb2phy0_host?
+> In this way, we can put these USB nodes close together in the device's dts.
+
+From what I could see these nodes are named u2phy for 8 other Rockchip
+SoCs and only named usb2phy for 3. So I went with what the majority seem
+to be calling them.
+
+I fully understand wanting to sort them closer, however we also have the
+forthcoming combphy for USB3 that also will be sorted away from the usb
+controller nodes. Hopefully someone more can chime in on node naming
+suggestions :-)
+
+Regards,
+Jonas
+
+> 
+> --
+> 2.25.1
+> 
+> 
+
 
