@@ -1,162 +1,375 @@
-Return-Path: <linux-kernel+bounces-741690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D98B0E7E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:06:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162E5B0E7E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDA837AF94F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80231C86D1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D77114A60F;
-	Wed, 23 Jul 2025 01:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC2B14A60F;
+	Wed, 23 Jul 2025 01:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="XLMDA25x"
-Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMpgd6wu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171C2149C51
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D45433A6;
+	Wed, 23 Jul 2025 01:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753232791; cv=none; b=IoflCiJVL/VGO3YqzQgmTbd94aF3Mjs70vJIYsVyJI34M7fpQsTAZhnJMQKyJcHdy8uJfhLATFEv5LWea4xID5lPyxGv7JCF8ZaMlZNO0a6zc6J3ePm/92dcTjGJEOyLEW50TGpjJCtkAIKwdu2eu2+JOlbbmQ8VFD68e8JWJl4=
+	t=1753232632; cv=none; b=sHN7eCUwiwUICy9N3YKxngZfJKUXoa+K9zmfAQFcAh1udTd5MgXsO3W19ChCtfliyMEaXS/FzTRhRFUjTkIsQgRm1lBdLXhAalxKuyV3Tbap8exIHjGFdUbTE8/GoDVT6j2iJnh21BAEfyejjWwr+oN9Y1CMZNYUV3O3mSKJVL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753232791; c=relaxed/simple;
-	bh=uSar9xHTnGUQj7iYqiDRlLrJCkeSSB2Ouf2GH3Pr1+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bEdfDojCK05EmeYS8xoC2mxl94FHsdyRZOFSSoQdUNC7AA2VzWJltDRqxChwLzBVxnExM4Fl7zgkswtoX7BlHSS1c01iUagYNxwMPv5LtcqeXYSXzDHDt5ubJOoPuNGDZ0wYmJJPpW/ULhqkZAeI7ZYEAdhMHjQkC/CYGVlPmg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=XLMDA25x; arc=none smtp.client-ip=61.135.153.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753232783;
-	bh=xV1mGKNcZIdCI/Yqy+MW7AgI9iRp29g0Rl6VzIV3Dek=;
-	h=From:Subject:Date:Message-ID;
-	b=XLMDA25xIH/+xhYkxVU4mwGpCe0uKXJhL9Te8Lkj7ApsCDk0M7KhlnB91/jgnG+Jz
-	 hKr2CBZ2rzCtrQvJqWjCfyHQGf+ndhVz35cZ2mLsyxYP/KjXxcIT2UmEh1tbmiU8V6
-	 4JooubFnhWjprP7hv0RaJv2ISihXxMK3KXFwYLOU=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 688034F200000F1B; Wed, 23 Jul 2025 09:03:50 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1175294456963
-X-SMAIL-UIID: FB494A7CF96241028F43B38BAFEACAE8-20250723-090350-1
-From: Hillf Danton <hdanton@sina.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: thomas.hellstrom@linux.intel.com,
-	axboe@kernel.dk,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>,
-	regressions@lists.linux.dev
-Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking dependency detected when plugging USB stick after ffa1e7ada456
-Date: Wed, 23 Jul 2025 09:03:34 +0800
-Message-ID: <20250723010336.2793-1-hdanton@sina.com>
-In-Reply-To: <CABXGCsO5mFu9fOq8oKwByZaAjJrCB_V0hKgOsLLJJ4x3PmHr1g@mail.gmail.com>
-References: <CABXGCsPgCBahYRtEZUZiAZtkX51gDE_XZQqK=apuhZ_fOK=Dkg@mail.gmail.com> <20250722005125.2765-1-hdanton@sina.com>
+	s=arc-20240116; t=1753232632; c=relaxed/simple;
+	bh=0gHO6zQzPlUf/Uh6AXsJ5KQkA7TVuorKLs8I2rKnc9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVjsMkHdDbexOe0ZmOyukpcOQyYvxR77V3XNQnv6uoNF+zSItL6eVOIen0FWXqApqqXSqS8jx1aSxUaZwn8Adx1gDewvwtJZy8O2NUqrIRTned9FgjNmIczlCmv8+KTkURpfQm9Hqop9mI4dkXKhXGRMZ7YJZKHw3hyj8lMqinM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMpgd6wu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F1DC4CEEB;
+	Wed, 23 Jul 2025 01:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753232632;
+	bh=0gHO6zQzPlUf/Uh6AXsJ5KQkA7TVuorKLs8I2rKnc9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JMpgd6wuxyTVLgY24ux2bD7+eb9qM0Pqh6eS4Vgxbjf+PoSmjXS/yRA39M5rd7T2v
+	 g1w12pN3R2xkacgEcb56qA7oTFmnlCcFbYyGvKvkZ9RWooVSLDkvTvuf+2k97bpKPu
+	 XUw6OeZz6+WC1mabJrZItppUprvFYELNWx1LpMwaSSSfQZm4ziC7UiBxTxHxowkdzJ
+	 n/v9EtQNgLbJ1WweB/FSJIOJHRy3QmKtxq/qKUjB66ZlKU/kIRSMKBtrUerYOyYf6l
+	 EQJAMswV/XZUON5yB8TRCkaCPTOJL2nfhSUZW7SWJAgPzp5+DYWPL5mjN70NYJQ7Wq
+	 vF2wruagUHExg==
+Date: Tue, 22 Jul 2025 18:03:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Thomas Falcon <thomas.falcon@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	James Clark <james.clark@linaro.org>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf topdown: Use attribute to see an event is a
+ topdown metic or slots
+Message-ID: <aIA09RLkeKjeUCnB@google.com>
+References: <20250718132750.1546457-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250718132750.1546457-1-irogers@google.com>
 
-On Tue, 22 Jul 2025 12:11:36 +0500 Mikhail Gavrilov wrote:
-> On Tue, Jul 22, 2025 at 5:51 AM Hillf Danton <hdanton@sina.com> wrote:
-> >
-> > Try the diff that serializes elevator_change() with q->elevator_lock if
-> > reproducer is available.
-> >
-> > --- x/block/elevator.c
-> > +++ y/block/elevator.c
-> > @@ -661,6 +661,7 @@ static int elevator_change(struct reques
-> >         unsigned int memflags;
-> >         int ret = 0;
-> >
-> > +       /* updaters should be serialized */
-> >         lockdep_assert_held(&q->tag_set->update_nr_hwq_lock);
-> >
-> >         memflags = blk_mq_freeze_queue(q);
-> > @@ -674,11 +675,11 @@ static int elevator_change(struct reques
-> >          * Disk isn't added yet, so verifying queue lock only manually.
-> >          */
-> >         blk_mq_cancel_work_sync(q);
-> > +       blk_mq_unfreeze_queue(q, memflags);
-> >         mutex_lock(&q->elevator_lock);
-> >         if (!(q->elevator && elevator_match(q->elevator->type, ctx->name)))
-> >                 ret = elevator_switch(q, ctx);
-> >         mutex_unlock(&q->elevator_lock);
-> > -       blk_mq_unfreeze_queue(q, memflags);
-> >         if (!ret)
-> >                 ret = elevator_change_done(q, ctx);
-> >
+On Fri, Jul 18, 2025 at 06:27:49AM -0700, Ian Rogers wrote:
+> The string comparisons were overly broad and could fire for the
+> incorrect PMU and events. Switch to using the config in the attribute
+> then add a perf test to confirm the attribute config values match
+> those of parsed events of that name and don't match others. This
+> exposed matches for slots events that shouldn't have matched as the
+> slots fixed counter event, such as topdown.slots_p.
 > 
-> Hi Hillf,
-> 
-> Thanks for the patch.
-> 
-> I tested your proposed diff that serializes elevator_change() with
-> q->elevator_lock. Unfortunately, instead of the previous lockdep
-> warning, I'm now seeing a soft lockup warning.
-> 
-> Here is the relevant excerpt from the kernel log:
-> 
-> [   78.573292] sd 6:0:0:0: [sda] Assuming drive cache: write through
-> [   78.581496] ------------[ cut here ]------------
-> [   78.581507] WARNING: CPU: 7 PID: 300 at block/elevator.c:578
-> elevator_switch+0x512/0x630
-> 
-> This happens after plugging in a USB flash stick (sd 6:0:0:0) with the
-> patched kernel.
-> 
-> Full dmesg trace is attached below.
-> 
-> Let me know if you'd like me to try additional debugging or patches.
-> 
-> Thanks for looking into this!
+> Fixes: fbc798316bef ("perf x86/topdown: Refine helper arch_is_topdown_metrics()")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-In order to cure the deadlock, queue is thawed before switching elevator,
-so lets see what comes out with that warning ignored.
+Dapeng, are you ok with this (or Ian's TMA fix v3 below)?
 
---- x/block/elevator.c
-+++ y/block/elevator.c
-@@ -575,7 +575,6 @@ static int elevator_switch(struct reques
- 	struct elevator_type *new_e = NULL;
- 	int ret = 0;
- 
--	WARN_ON_ONCE(q->mq_freeze_depth == 0);
- 	lockdep_assert_held(&q->elevator_lock);
- 
- 	if (strncmp(ctx->name, "none", 4)) {
-@@ -661,6 +660,7 @@ static int elevator_change(struct reques
- 	unsigned int memflags;
- 	int ret = 0;
- 
-+	/* updaters should be serialized */
- 	lockdep_assert_held(&q->tag_set->update_nr_hwq_lock);
- 
- 	memflags = blk_mq_freeze_queue(q);
-@@ -674,11 +674,11 @@ static int elevator_change(struct reques
- 	 * Disk isn't added yet, so verifying queue lock only manually.
- 	 */
- 	blk_mq_cancel_work_sync(q);
-+	blk_mq_unfreeze_queue(q, memflags);
- 	mutex_lock(&q->elevator_lock);
- 	if (!(q->elevator && elevator_match(q->elevator->type, ctx->name)))
- 		ret = elevator_switch(q, ctx);
- 	mutex_unlock(&q->elevator_lock);
--	blk_mq_unfreeze_queue(q, memflags);
- 	if (!ret)
- 		ret = elevator_change_done(q, ctx);
- 
---
+https://lore.kernel.org/r/20250719030517.1990983-1-irogers@google.com
+
+Thanks,
+Namhyung
+
+
+> ---
+> v2: In test rename topdown_pmu to p_core_pmu for clarity.
+> ---
+>  tools/perf/arch/x86/include/arch-tests.h |  4 ++
+>  tools/perf/arch/x86/tests/Build          |  1 +
+>  tools/perf/arch/x86/tests/arch-tests.c   |  1 +
+>  tools/perf/arch/x86/tests/topdown.c      | 76 ++++++++++++++++++++++++
+>  tools/perf/arch/x86/util/evsel.c         | 46 ++++----------
+>  tools/perf/arch/x86/util/topdown.c       | 31 ++++------
+>  tools/perf/arch/x86/util/topdown.h       |  4 ++
+>  7 files changed, 108 insertions(+), 55 deletions(-)
+>  create mode 100644 tools/perf/arch/x86/tests/topdown.c
+> 
+> diff --git a/tools/perf/arch/x86/include/arch-tests.h b/tools/perf/arch/x86/include/arch-tests.h
+> index 4fd425157d7d..8713e9122d4c 100644
+> --- a/tools/perf/arch/x86/include/arch-tests.h
+> +++ b/tools/perf/arch/x86/include/arch-tests.h
+> @@ -2,6 +2,8 @@
+>  #ifndef ARCH_TESTS_H
+>  #define ARCH_TESTS_H
+>  
+> +#include "tests/tests.h"
+> +
+>  struct test_suite;
+>  
+>  /* Tests */
+> @@ -17,6 +19,8 @@ int test__amd_ibs_via_core_pmu(struct test_suite *test, int subtest);
+>  int test__amd_ibs_period(struct test_suite *test, int subtest);
+>  int test__hybrid(struct test_suite *test, int subtest);
+>  
+> +DECLARE_SUITE(x86_topdown);
+> +
+>  extern struct test_suite *arch_tests[];
+>  
+>  #endif
+> diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+> index 01d5527f38c7..311b6b53d3d8 100644
+> --- a/tools/perf/arch/x86/tests/Build
+> +++ b/tools/perf/arch/x86/tests/Build
+> @@ -11,6 +11,7 @@ endif
+>  perf-test-$(CONFIG_X86_64) += bp-modify.o
+>  perf-test-y += amd-ibs-via-core-pmu.o
+>  perf-test-y += amd-ibs-period.o
+> +perf-test-y += topdown.o
+>  
+>  ifdef SHELLCHECK
+>    SHELL_TESTS := gen-insn-x86-dat.sh
+> diff --git a/tools/perf/arch/x86/tests/arch-tests.c b/tools/perf/arch/x86/tests/arch-tests.c
+> index bfee2432515b..29ec1861ccef 100644
+> --- a/tools/perf/arch/x86/tests/arch-tests.c
+> +++ b/tools/perf/arch/x86/tests/arch-tests.c
+> @@ -53,5 +53,6 @@ struct test_suite *arch_tests[] = {
+>  	&suite__amd_ibs_via_core_pmu,
+>  	&suite__amd_ibs_period,
+>  	&suite__hybrid,
+> +	&suite__x86_topdown,
+>  	NULL,
+>  };
+> diff --git a/tools/perf/arch/x86/tests/topdown.c b/tools/perf/arch/x86/tests/topdown.c
+> new file mode 100644
+> index 000000000000..8d0ea7a4bbc1
+> --- /dev/null
+> +++ b/tools/perf/arch/x86/tests/topdown.c
+> @@ -0,0 +1,76 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "arch-tests.h"
+> +#include "../util/topdown.h"
+> +#include "evlist.h"
+> +#include "parse-events.h"
+> +#include "pmu.h"
+> +#include "pmus.h"
+> +
+> +static int event_cb(void *state, struct pmu_event_info *info)
+> +{
+> +	char buf[256];
+> +	struct parse_events_error parse_err;
+> +	int *ret = state, err;
+> +	struct evlist *evlist = evlist__new();
+> +	struct evsel *evsel;
+> +
+> +	if (!evlist)
+> +		return -ENOMEM;
+> +
+> +	parse_events_error__init(&parse_err);
+> +	snprintf(buf, sizeof(buf), "%s/%s/", info->pmu->name, info->name);
+> +	err = parse_events(evlist, buf, &parse_err);
+> +	if (err) {
+> +		parse_events_error__print(&parse_err, buf);
+> +		*ret = TEST_FAIL;
+> +	}
+> +	parse_events_error__exit(&parse_err);
+> +	evlist__for_each_entry(evlist, evsel) {
+> +		bool fail = false;
+> +		bool p_core_pmu = evsel->pmu->type == PERF_TYPE_RAW;
+> +		const char *name = evsel__name(evsel);
+> +
+> +		if (strcasestr(name, "uops_retired.slots") ||
+> +		    strcasestr(name, "topdown.backend_bound_slots") ||
+> +		    strcasestr(name, "topdown.br_mispredict_slots") ||
+> +		    strcasestr(name, "topdown.memory_bound_slots") ||
+> +		    strcasestr(name, "topdown.bad_spec_slots") ||
+> +		    strcasestr(name, "topdown.slots_p")) {
+> +			if (arch_is_topdown_slots(evsel) || arch_is_topdown_metrics(evsel))
+> +				fail = true;
+> +		} else if (strcasestr(name, "slots")) {
+> +			if (arch_is_topdown_slots(evsel) != p_core_pmu ||
+> +			    arch_is_topdown_metrics(evsel))
+> +				fail = true;
+> +		} else if (strcasestr(name, "topdown")) {
+> +			if (arch_is_topdown_slots(evsel) ||
+> +			    arch_is_topdown_metrics(evsel) != p_core_pmu)
+> +				fail = true;
+> +		} else if (arch_is_topdown_slots(evsel) || arch_is_topdown_metrics(evsel)) {
+> +			fail = true;
+> +		}
+> +		if (fail) {
+> +			pr_debug("Broken topdown information for '%s'\n", evsel__name(evsel));
+> +			*ret = TEST_FAIL;
+> +		}
+> +	}
+> +	evlist__delete(evlist);
+> +	return 0;
+> +}
+> +
+> +static int test__x86_topdown(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+> +{
+> +	int ret = TEST_OK;
+> +	struct perf_pmu *pmu = NULL;
+> +
+> +	if (!topdown_sys_has_perf_metrics())
+> +		return TEST_OK;
+> +
+> +	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
+> +		if (perf_pmu__for_each_event(pmu, /*skip_duplicate_pmus=*/false, &ret, event_cb))
+> +			break;
+> +	}
+> +	return ret;
+> +}
+> +
+> +DEFINE_SUITE("x86 topdown", x86_topdown);
+> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+> index 3dd29ba2c23b..9bc80fff3aa0 100644
+> --- a/tools/perf/arch/x86/util/evsel.c
+> +++ b/tools/perf/arch/x86/util/evsel.c
+> @@ -23,47 +23,25 @@ void arch_evsel__set_sample_weight(struct evsel *evsel)
+>  bool evsel__sys_has_perf_metrics(const struct evsel *evsel)
+>  {
+>  	struct perf_pmu *pmu;
+> -	u32 type = evsel->core.attr.type;
+>  
+> -	/*
+> -	 * The PERF_TYPE_RAW type is the core PMU type, e.g., "cpu" PMU
+> -	 * on a non-hybrid machine, "cpu_core" PMU on a hybrid machine.
+> -	 * The slots event is only available for the core PMU, which
+> -	 * supports the perf metrics feature.
+> -	 * Checking both the PERF_TYPE_RAW type and the slots event
+> -	 * should be good enough to detect the perf metrics feature.
+> -	 */
+> -again:
+> -	switch (type) {
+> -	case PERF_TYPE_HARDWARE:
+> -	case PERF_TYPE_HW_CACHE:
+> -		type = evsel->core.attr.config >> PERF_PMU_TYPE_SHIFT;
+> -		if (type)
+> -			goto again;
+> -		break;
+> -	case PERF_TYPE_RAW:
+> -		break;
+> -	default:
+> +	if (!topdown_sys_has_perf_metrics())
+>  		return false;
+> -	}
+> -
+> -	pmu = evsel->pmu;
+> -	if (pmu && perf_pmu__is_fake(pmu))
+> -		pmu = NULL;
+>  
+> -	if (!pmu) {
+> -		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
+> -			if (pmu->type == PERF_TYPE_RAW)
+> -				break;
+> -		}
+> -	}
+> -	return pmu && perf_pmu__have_event(pmu, "slots");
+> +	/*
+> +	 * The PERF_TYPE_RAW type is the core PMU type, e.g., "cpu" PMU on a
+> +	 * non-hybrid machine, "cpu_core" PMU on a hybrid machine.  The
+> +	 * topdown_sys_has_perf_metrics checks the slots event is only available
+> +	 * for the core PMU, which supports the perf metrics feature. Checking
+> +	 * both the PERF_TYPE_RAW type and the slots event should be good enough
+> +	 * to detect the perf metrics feature.
+> +	 */
+> +	pmu = evsel__find_pmu(evsel);
+> +	return pmu && pmu->type == PERF_TYPE_RAW;
+>  }
+>  
+>  bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+>  {
+> -	if (!evsel__sys_has_perf_metrics(evsel) || !evsel->name ||
+> -	    strcasestr(evsel->name, "uops_retired.slots"))
+> +	if (!evsel__sys_has_perf_metrics(evsel))
+>  		return false;
+>  
+>  	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index d1c654839049..66b231fbf52e 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -1,6 +1,4 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> -#include "api/fs/fs.h"
+> -#include "util/evsel.h"
+>  #include "util/evlist.h"
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+> @@ -8,6 +6,9 @@
+>  #include "topdown.h"
+>  #include "evsel.h"
+>  
+> +// cmask=0, inv=0, pc=0, edge=0, umask=4, event=0
+> +#define TOPDOWN_SLOTS		0x0400
+> +
+>  /* Check whether there is a PMU which supports the perf metrics. */
+>  bool topdown_sys_has_perf_metrics(void)
+>  {
+> @@ -32,31 +33,19 @@ bool topdown_sys_has_perf_metrics(void)
+>  	return has_perf_metrics;
+>  }
+>  
+> -#define TOPDOWN_SLOTS		0x0400
+>  bool arch_is_topdown_slots(const struct evsel *evsel)
+>  {
+> -	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+> -		return true;
+> -
+> -	return false;
+> +	return evsel->core.attr.type == PERF_TYPE_RAW &&
+> +	       evsel->core.attr.config == TOPDOWN_SLOTS &&
+> +	       evsel->core.attr.config1 == 0;
+>  }
+>  
+>  bool arch_is_topdown_metrics(const struct evsel *evsel)
+>  {
+> -	int config = evsel->core.attr.config;
+> -	const char *name_from_config;
+> -	struct perf_pmu *pmu;
+> -
+> -	/* All topdown events have an event code of 0. */
+> -	if ((config & 0xFF) != 0)
+> -		return false;
+> -
+> -	pmu = evsel__find_pmu(evsel);
+> -	if (!pmu || !pmu->is_core)
+> -		return false;
+> -
+> -	name_from_config = perf_pmu__name_from_config(pmu, config);
+> -	return name_from_config && strcasestr(name_from_config, "topdown");
+> +	// cmask=0, inv=0, pc=0, edge=0, umask=0x80-0x87, event=0
+> +	return evsel->core.attr.type == PERF_TYPE_RAW &&
+> +		(evsel->core.attr.config & 0xFFFFF8FF) == 0x8000 &&
+> +		evsel->core.attr.config1 == 0;
+>  }
+>  
+>  /*
+> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+> index 1bae9b1822d7..2349536cf882 100644
+> --- a/tools/perf/arch/x86/util/topdown.h
+> +++ b/tools/perf/arch/x86/util/topdown.h
+> @@ -2,6 +2,10 @@
+>  #ifndef _TOPDOWN_H
+>  #define _TOPDOWN_H 1
+>  
+> +#include <stdbool.h>
+> +
+> +struct evsel;
+> +
+>  bool topdown_sys_has_perf_metrics(void);
+>  bool arch_is_topdown_slots(const struct evsel *evsel);
+>  bool arch_is_topdown_metrics(const struct evsel *evsel);
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
