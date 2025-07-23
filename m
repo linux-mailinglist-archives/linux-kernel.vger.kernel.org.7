@@ -1,37 +1,87 @@
-Return-Path: <linux-kernel+bounces-742582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AC9B0F3FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:29:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4552AB0F403
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3695C1690FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FAF963010
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7790F2E6118;
-	Wed, 23 Jul 2025 13:28:52 +0000 (UTC)
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DAF2E7F07;
+	Wed, 23 Jul 2025 13:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UN7ohAC4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE50E221736
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6631C84D7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753277332; cv=none; b=kcvsCSCX3RNTL/CioZYXkzg3UsHXzzoFHrV6sIgYg00YH9AZWHf1bT7aWebzY6KSMne+N67mTJcDujS2HcLZy9rdw+IpA3oQLOBSFjHeRz1ssM6KtoJR/WNbtQo2MqnYQliqzrqdD0INSnBFDQsH62PpHN1tw3BEqNK4knV6Bgw=
+	t=1753277463; cv=none; b=AzDx5uo5VW+0h2rz95MRmH/sEOXpVV2WyrXk0lUnyw+ENHiD1zM4QWt8qZfpk94WTI51crSqIzI8PM+oPQqWmXqSgyhp0OZtidH+v5m60GcWJC2qQ/rUVgfQvtgs2+5i5PwfJEibRrgoORnGBMxEraUQi3huo/BYvZVwE3VfE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753277332; c=relaxed/simple;
-	bh=kusrcU0m9MTMA3Eo3cny717hdH8OU9+7eTmcqQacUSc=;
+	s=arc-20240116; t=1753277463; c=relaxed/simple;
+	bh=EsJ9Yttdjk/WRUeHjLMat6aruQsPF5v/ToVWKIRY9WA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDSyA6PXoMAJ8utmEjcIo/T75XgZNdSgZuL3us0TKPYCYNgog7yMp7a7xBudjVAYcVSj5rHloKxVJcQU6BwszS+f8k8ECukAzw/o5hao6eZh6fZh7d5yvVmG93gTOCqkAu1WkDaJn6UplTLBP16F3VBc6njeKhtEgy9dHBgImfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EC3A442BB;
-	Wed, 23 Jul 2025 13:28:39 +0000 (UTC)
-Message-ID: <6ec13c2a-764c-4a88-a419-b4d7433c0731@ghiti.fr>
-Date: Wed, 23 Jul 2025 15:28:38 +0200
+	 In-Reply-To:Content-Type; b=jcqhG3EHqtAq298B/xYtDwqwDYHHvlpQvEFLZJxnRzb2YoeZmql2cc+/yi/ELC2+kXxua+lldTzcYKbqEt8Ee9YBX3eEnb22sNSnqX/XLgC2UfN9QaljoZNIa1FMV0hWg+O1D0cnfJOhvXDa5zmv8z/hrkJPvIzSE1gVVIbLOq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UN7ohAC4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N91Xlv009233
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:30:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pJyi0IIymzYW/6UhzSsrgJXNO2BmqOWGv65j5AI+HXk=; b=UN7ohAC4Vf5Bu3ct
+	04dtla9DCHR9OhS0MxGr7e9arNJbWNlmmLUXkuCkC2XmQyfoRdV23gWvvz4f+FZW
+	ErDoKo4xgEP9c0piRbPIrt5LX7r5dFonGWGKPIiRC8Zf2tv1S8jegaHp95//gNq7
+	7T5qB17S6T/sK1UYCrQkqfMV/ZGnvRF130SX7JaalcJgoOB0VnrTQjBK+vmmQfin
+	ru6N/eh/IAI1exsbS/8sWM+oKeSXX4+vMBFrxA4++2OQ5/1Ot3N3jWgB7VbPzHWO
+	2B0bCwbEPjj6Ec88AoxD63Zls87U0GFqPsYTRHUwcft2BWxwi4kZXp/aF+3p1f/v
+	pdPYLg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na3pjv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:30:59 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e33e133f42so33519385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:30:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753277458; x=1753882258;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pJyi0IIymzYW/6UhzSsrgJXNO2BmqOWGv65j5AI+HXk=;
+        b=STE5czj4ljLBrUP82+/XB0WojgAsjhWYRheyRhbic+p37MWZKE1FDFmh5o40ZS2XdR
+         O+hwN14eDekaJW+MEkUZAWgkf9E7vcxseRfFRKsOREDea3gQgL13UOELJjiiIuveO/D0
+         3lcNbZRR1JKOMRt2/kw3R/BbSrjvSuudSB658myhSvkGV+FY/1nMo3xCxUO/VH89sDzv
+         kLrzC6sm0oSWI/Y99e/3qoBQkoxFhpQoMg9ECHhiMN7qwrZnjHCLu0admLGiXZTvXkKI
+         DYsIoToMM6a93oInyxjisVpSf3CYTxTLaosm1tQKYduxaZBOnxdXun3MjjtUXtzwiSwp
+         9wWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeEi6Tn95+l9uWPcIm7sJZNIToH7lVOKqGLlhcSvmy3tbfNptQjpqbmjk4ozb/cZNaeS0tDCEkZXoADUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOlG2Wl4ogHADAqVa736Voy7qaAXsQZzKO/49viIEOhA56bzXK
+	wcpZCp8xKgJjVRWM6OR3/KUbuR4dhzHuP2bJaXsMXbLjzNeiTM0yPuqQQz4Xpo137L8/p7JocXW
+	xyMvR0G+9YrlnO2UkfHzwJh1M/xzuP1almARLTqcGP8nl9OCto2rMhZ5uEbZ/amfkZb4=
+X-Gm-Gg: ASbGncvTduEId8iVNKpR1kEMDa2jJCQPDgrjBSd8EEHY4Gqk0+Y/qBlyxHG5Xmo85QY
+	GoN69rj58wNlDptS6lPDpe2hAl0ZCX3Dftrvt+7kZ/d+66RYHiM8Tp8zAz/bWDJ0ReSx7+/vv7d
+	OzqMUC6BG3IlJYQmNpbLpZSpuhtMC7GIhnuNTveZZoEhLJSqh6WAocMdfF/adREFLjwW7RglmF4
+	8bgiuEwYmPCEdeIyw5twgJRV1ts/kdk62jCwefD1VDm1jwLECQJOJWAIJt8UwjhbDLhbLh4e/j4
+	blzVyuKAcv7D8ALHzrH7ENTBIMXPSY0UtPl8eE1ZtaKfWUpwcgm9zerqZwVHU4d53ZHeHwqqoiz
+	5zaKJrEGKZpouWdbRCQ==
+X-Received: by 2002:a05:620a:9633:b0:7e3:3029:44c with SMTP id af79cd13be357-7e62a112c00mr131774685a.7.1753277458140;
+        Wed, 23 Jul 2025 06:30:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoN9KlCmUdoNJ5eN9OsT3DyPSLXqMvOlWulVwgaFKPCWWpNreyCerv7PTLgQDFAM+oBFUZTg==
+X-Received: by 2002:a05:620a:9633:b0:7e3:3029:44c with SMTP id af79cd13be357-7e62a112c00mr131772785a.7.1753277457457;
+        Wed, 23 Jul 2025 06:30:57 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d55c1sm1056237866b.41.2025.07.23.06.30.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 06:30:56 -0700 (PDT)
+Message-ID: <ffac121b-ba15-4384-8961-2661f9748d2f@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 15:30:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,204 +89,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] riscv: introduce asm/swab.h
-To: Ignacio Encinas <ignacio@iencinas.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Palmer Dabbelt <palmer@rivosinc.com>
-References: <20250717-riscv-swab-v5-1-1d5bb7c42f38@iencinas.com>
+Subject: Re: [PATCH] media: venus: pm_helpers: add fallback for the opp-table
+To: Renjiang Han <quic_renjiang@quicinc.com>, quic_qiweil@quicinc.com,
+        quic_wangaow@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250723-fallback_of_opp_table-v1-1-20a6277fdded@quicinc.com>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250717-riscv-swab-v5-1-1d5bb7c42f38@iencinas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejjeeltdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepjeeiuedujeeikeevuedtgeeuhfekudeludegveehffefjedugeegudffgfeluefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepleehrddugedurddutddvrddukeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepleehrddugedurddutddvrddukeeipdhhvghloheplgdutddruddtrddugeeirddvudejngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepihhgnhgrtghiohesihgvnhgtihhnrghsrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlqdhmvghnthgvvghssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepshhkhhgrnheslhhin
- hhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrlhhmvghrsehrihhvohhsihhntgdrtghomh
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250723-fallback_of_opp_table-v1-1-20a6277fdded@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: HEWXh2NKTwBtuFumYNO5H8_HREYWFwn-
+X-Proofpoint-ORIG-GUID: HEWXh2NKTwBtuFumYNO5H8_HREYWFwn-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDExNiBTYWx0ZWRfX3TtDudvfqRLd
+ kg6EJSbdZhgpZJxnyMpOpyYQdbmmgHqq58ZSri/HhsjGmdNw2YINVXKA/FK23fBiKALAonfGhhG
+ KAfoP0H7fFyhCuuRCcC0u2F4zmc9Xk3zB1JLXaIbJHC0sHFqobVOJqH1zU/4gy6TvIreaWm5Zsy
+ 9RrbrJ5GCaLY0HkLc8A62mqIEqB4PFVUFi1wT6nehtGDa6sD9X25sW7tiMjwz/2s8EKq9e03GsO
+ uroimc8z1QkRzjR8M0rvbQjAQ7HQwEL+/iHnB94aGVCZZDGqBJnfH41JCX1NYiHSllF6bKSErFA
+ OBcd3Y1dkJrUw+2lBQk7cJrhjfg45J70G05EdSufYge0x2cLyJYSOZclniFrZk5ZyVIfNQ85JRg
+ WJc0lAftlsZW/s4w5LQPjCNcRGpD4CCFEPeybbY2ob9TSgvMiXiLbCLn4EXy8YkO7gLempl5
+X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=6880e413 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=iWKRvkjQqEvONqlByQsA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
+ bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230116
 
-Hi Ignacio,
-
-On 7/17/25 20:44, Ignacio Encinas wrote:
-> Implement endianness swap macros for RISC-V.
->
-> Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-> default mask-and-shift implementation.
->
-> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-> Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+On 7/23/25 2:56 PM, Renjiang Han wrote:
+> Since the device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX
+> do not include an opp-table and have not configured opp-pmdomain, they
+> still need to use the frequencies defined in the driver's freq_tbl.
+> 
+> Both core_power_v1 and core_power_v4 functions require core_clks_enable
+> function during POWER_ON. Therefore, in the core_clks_enable function,
+> if calling dev_pm_opp_find_freq_ceil to obtain the frequency fails,
+> it needs to fall back to the freq_tbl to retrieve the frequency.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
 > ---
-> Motivated by [1]. Tested with crc_kunit as pointed out here [2]. I can't
-> provide performance numbers as I don't have RISC-V hardware.
->
-> [1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
-> [2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
+> Since device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX do not
+> contain an opp-table and have not configured opp-pmdomain, they still
+> need to use the frequencies defined in the driver's freq_tbl.
+> 
+> Therefore, if calling dev_pm_opp_find_freq_ceil to obtain the frequency
+> fails in the core_clks_enable, it needs to fall back to the freq_tbl to
+> retrieve the frequency.
+> 
+> Validated this series on QCS615 and msm8916.
 > ---
-> Changes in v5:
-> - Duplicate ___constant_swab helpers in arch/riscv/include/asm/swab.h to
->    avoid delaying the patch as suggested by Alex in [3] (drop patch 1 and
->    convert this into a 1-patch series)
-> - Link to v4: https://lore.kernel.org/r/20250426-riscv-swab-v4-0-64201404a68c@iencinas.com
->
-> [3] https://lore.kernel.org/linux-riscv/7e22a448-3cee-4475-b69b-3dd45b57f168@ghiti.fr/
->
-> Changes in v4:
->
-> - Add missing include in the 1st patch, reported by
->    https://lore.kernel.org/all/202504042300.it9RcOSt-lkp@intel.com/
-> - Rewrite the ARCH_SWAB macro as suggested by Arnd
-> - Define __arch_swab64 for CONFIG_32BIT (Ben)
-> - Link to v3: https://lore.kernel.org/r/20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com
->
-> Changes in v3:
->
-> PATCH 2:
->    Use if(riscv_has_extension_likely) instead of asm goto (Eric). It
->    looks like both versions generate the same assembly. Perhaps we should
->    do the same change in other places such as arch/riscv/include/asm/bitops.h
-> - Link to v2: https://lore.kernel.org/r/20250319-riscv-swab-v2-0-d53b6d6ab915@iencinas.com
->
-> Changes in v2:
-> - Introduce first patch factoring out the default implementation into
->    asm-generic
-> - Remove blank line to make checkpatch happy
-> - Link to v1: https://lore.kernel.org/r/20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com
-> ---
->   arch/riscv/include/asm/swab.h | 87 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 87 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4f408f59fada7251d62f56d174ae76ff19f4a319
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/swab.h
-> @@ -0,0 +1,87 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef _ASM_RISCV_SWAB_H
-> +#define _ASM_RISCV_SWAB_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/compiler.h>
-> +#include <asm/cpufeature-macros.h>
-> +#include <asm/hwcap.h>
-> +#include <asm-generic/swab.h>
-> +
-> +#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
 
+This is not a proper fix, the logic you added in core_get_v4() should
+be moved to a common handler
 
-In order to fix kernel test robot report, we need to make sure the 
-toolchain supports Zbb, the following diff fixes the issue for me:
-
-diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-index 4f408f59fada7..8faa293a9b841 100644
---- a/arch/riscv/include/asm/swab.h
-+++ b/arch/riscv/include/asm/swab.h
-@@ -8,7 +8,7 @@
-  #include <asm/hwcap.h>
-  #include <asm-generic/swab.h>
-
--#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-+#if defined(CONFIG_TOOLCHAIN_HAS_ZBB) && defined(CONFIG_RISCV_ISA_ZBB) 
-&& !defined(NO_ALTERNATIVE)          \
-
-  // Duplicated from include/uapi/linux/swab.h
-  #define ___constant_swab16(x) ((__u16)(                                \
-@@ -83,5 +83,5 @@ static __always_inline __u64 __arch_swab64(__u64 value)
-
-  #undef ARCH_SWAB
-
--#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-+#endif /* defined(CONFIG_TOOLCHAIN_HAS_ZBB) && 
-defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-  #endif /* _ASM_RISCV_SWAB_H */
-
-Would you mind squashing that into a v6 please?
-
-Thanks,
-
-Alex
-
-> +
-> +// Duplicated from include/uapi/linux/swab.h
-> +#define ___constant_swab16(x) ((__u16)(				\
-> +	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
-> +	(((__u16)(x) & (__u16)0xff00U) >> 8)))
-> +
-> +#define ___constant_swab32(x) ((__u32)(				\
-> +	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
-> +	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
-> +	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
-> +	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-> +
-> +#define ___constant_swab64(x) ((__u64)(				\
-> +	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
-> +	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
-> +	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
-> +	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
-> +	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
-> +	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
-> +	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
-> +	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
-> +
-> +#define ARCH_SWAB(size, value)						\
-> +({									\
-> +	unsigned long x = value;					\
-> +									\
-> +	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
-> +		asm volatile (".option push\n"				\
-> +			      ".option arch,+zbb\n"			\
-> +			      "rev8 %0, %1\n"				\
-> +			      ".option pop\n"				\
-> +			      : "=r" (x) : "r" (x));			\
-> +		x = x >> (BITS_PER_LONG - size);			\
-> +	} else {                                                        \
-> +		x = ___constant_swab##size(value);                      \
-> +	}								\
-> +	x;								\
-> +})
-> +
-> +static __always_inline __u16 __arch_swab16(__u16 value)
-> +{
-> +	return ARCH_SWAB(16, value);
-> +}
-> +
-> +static __always_inline __u32 __arch_swab32(__u32 value)
-> +{
-> +	return ARCH_SWAB(32, value);
-> +}
-> +
-> +#ifdef CONFIG_64BIT
-> +static __always_inline __u64 __arch_swab64(__u64 value)
-> +{
-> +	return ARCH_SWAB(64, value);
-> +}
-> +#else
-> +static __always_inline __u64 __arch_swab64(__u64 value)
-> +{
-> +	__u32 h = value >> 32;
-> +	__u32 l = value & ((1ULL << 32) - 1);
-> +
-> +	return ((__u64)(__arch_swab32(l)) << 32) | ((__u64)(__arch_swab32(h)));
-> +}
-> +#endif
-> +
-> +#define __arch_swab64 __arch_swab64
-> +#define __arch_swab32 __arch_swab32
-> +#define __arch_swab16 __arch_swab16
-> +
-> +#undef ___constant_swab16
-> +#undef ___constant_swab32
-> +#undef ___constant_swab64
-> +
-> +#undef ARCH_SWAB
-> +
-> +#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-> +#endif /* _ASM_RISCV_SWAB_H */
->
-> ---
-> base-commit: 155a3c003e555a7300d156a5252c004c392ec6b0
-> change-id: 20250307-riscv-swab-b81b94a9ac1b
->
-> Best regards,
+Konrad
 
