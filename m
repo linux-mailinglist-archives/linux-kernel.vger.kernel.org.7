@@ -1,275 +1,104 @@
-Return-Path: <linux-kernel+bounces-742915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F81B0F832
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:33:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD5CB0F815
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3BA87B479D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BD45481AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304EB1F5838;
-	Wed, 23 Jul 2025 16:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4761F428C;
+	Wed, 23 Jul 2025 16:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tRCgYT13"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9kJJIZb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B18E19C54E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFFC45009;
+	Wed, 23 Jul 2025 16:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753288404; cv=none; b=uv8JeWNNGjJcvH6oL0LPJLWpk9umqNKOUB+0UAtHToWui/X0IqcoJal0yBS1J+iMYWsAypA0IuYUye7/SoSLqz6C/MomO7r53sK4dulpK14KqcBFJ2qUuUhr2huf6PFUYmIZV8Frg6f+beSrSitFYLpaJVzFRGca0B7xFuXT5AQ=
+	t=1753288013; cv=none; b=ffi/2GPuCKSFoKnp3nF0OolxReZWEAfJlUsv+fFepfGsvUYsrEF4DP8Nqu7HxYSr/nddHdrArWay/qhqco3I3ibPkteH3aPFzkf4ezQdWqXT6IvtBhF2KT2nut14Fbsjk7SODGTafDGRsCYdMzmY4xAXppLlzcZrRZIRD8FNAXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753288404; c=relaxed/simple;
-	bh=ECSykQTR1teCcssFTnwTBbSMWQnNvXHrkClmibvPMZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=JforZ9mf7uAW3+QQfyfebFPTcmtF8cMEtaxCKqz2Layh7NmWP9bx+sgqLpPqwUPfSdfp6sihW92MzCFMXk7/lo4Inw7eqSMpiyzsmYVVCb8QnUuH+TB9YDu+zHe64nB2S33y3bR8UF5M9LaJnkQ7fCDNSGQXQK56Fbjb5hQTIOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tRCgYT13; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250723162620euoutp02fcaec6015f4c73d159c803ae81b96c33~U7iEFYYwX0542305423euoutp02C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 16:26:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250723162620euoutp02fcaec6015f4c73d159c803ae81b96c33~U7iEFYYwX0542305423euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753287980;
-	bh=7pN6brrN1+roWJzA0uGaJE4IkvCiqEqeTbGqJGV/Vmw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=tRCgYT13bUipZM350Gan2/wRSElGFUM0R1EQtgiNeQq1Yv5ZjiskRuL1hnwpN6M8H
-	 VrtOmjh/Ojse6QQHOekL4N9y0d94cR2eftZ3d+5sksLKd3wEiSSoY2/btDBC6JC18k
-	 BRmOjBgHW/JTlXDL/l7PULscRkFt63+lnrJ0at+4=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250723162619eucas1p1cd8dccd9043b7592a04ff1ed99eccae5~U7iDMQIHZ1152111521eucas1p1b;
-	Wed, 23 Jul 2025 16:26:19 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250723162618eusmtip2993cfac3366b3ad5cd8973cd76567852~U7iB29emW0684706847eusmtip2I;
-	Wed, 23 Jul 2025 16:26:18 +0000 (GMT)
-Message-ID: <491b69ce-5a2f-4df1-95af-9318bbe6c9b0@samsung.com>
-Date: Wed, 23 Jul 2025 18:26:17 +0200
+	s=arc-20240116; t=1753288013; c=relaxed/simple;
+	bh=n3qXmtc19QU3ZmV4nZYz1SVUQ1cC1I+DIwzc4nirjyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrPrDe+I21VOYQHjJLjRqiPHmU32wMxFtcVS3M3ivaVF4fee2Cma5TxyHYUjA0sGri9Xj4X6p9cZWc2rJ16ywbw7HJCAPVfGfqVkXqvxrFSDoeKCFaYydHLgJsODUGzUx1Nv8Y0QLv+DL5pDyj8d7WY8PmV2EF8RrWKKVc8C06U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9kJJIZb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01150C4CEF1;
+	Wed, 23 Jul 2025 16:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753288013;
+	bh=n3qXmtc19QU3ZmV4nZYz1SVUQ1cC1I+DIwzc4nirjyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N9kJJIZbQJf6P9svGPJUD275iN2bEHWtom3WIIIQ7r4NHUvucLRzaFmcwM6DYXy/w
+	 eP8JMAD3toXG9dTz2WF6xlKU3KMM+rLmwOOw0NBmvEpBRJd6FZA5gXCq7mqYy+yd+V
+	 Z4x2uIW8DtG81v6WT9T8Uq85ff17hwtnI8CEtXn08YNtbV+NKarkzKOKjmTSYwCJQG
+	 Y183CBkHkZJmYJs72lK2Z/+DPX5LYt80yXPnETvNvaUNcjGjU2hAxbnvUbZcAphNI2
+	 k54Flizmov93mPe9r05TdbaIT9tVHzoplWF46nbNuOY89i4QqAzqq12nbkkUUZhPsA
+	 jJ4LgoDcEcSCg==
+Date: Wed, 23 Jul 2025 17:26:47 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 3/6] net: dsa: microchip: Use different
+ registers for KSZ8463
+Message-ID: <20250723162647.GK1036606@horms.kernel.org>
+References: <20250723022612.38535-1-Tristram.Ha@microchip.com>
+ <20250723022612.38535-4-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-To: Matt Coster <Matt.Coster@imgtec.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
-	Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
-	Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <f25c1e7f-bef2-47b1-8fa8-14c9c51087a8@imgtec.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250723162619eucas1p1cd8dccd9043b7592a04ff1ed99eccae5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
-X-EPHeader: CA
-X-CMS-RootMailID: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
-References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
-	<CGME20250623114436eucas1p1ab8455b32937a472f5f656086e38f428@eucas1p1.samsung.com>
-	<20250623-apr_14_for_sending-v6-5-6583ce0f6c25@samsung.com>
-	<9c82a6bc-c6ff-4656-8f60-9d5fa499b61a@imgtec.com>
-	<d154d2d0-3d59-4176-a8fb-3cb754cf2734@samsung.com>
-	<e1a3d854-93bc-4771-9b8e-1639ca57b687@kernel.org>
-	<d12fd4fb-0adb-40c4-8a0a-c685cd6327b3@samsung.com>
-	<27068fd3-92b5-402b-9f3c-fd786db56668@kernel.org>
-	<f25c1e7f-bef2-47b1-8fa8-14c9c51087a8@imgtec.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723022612.38535-4-Tristram.Ha@microchip.com>
 
+On Tue, Jul 22, 2025 at 07:26:09PM -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> KSZ8463 does not use same set of registers as KSZ8863 so it is necessary
+> to change some registers when using KSZ8463.
+> 
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 
+...
 
-On 7/23/25 11:45, Matt Coster wrote:
-> On 25/06/2025 15:41, Krzysztof Kozlowski wrote:
->> On 25/06/2025 16:18, Michal Wilczynski wrote:
->>>
->>>
->>> On 6/25/25 15:55, Krzysztof Kozlowski wrote:
->>>> On 25/06/2025 14:45, Michal Wilczynski wrote:
->>>>>
->>>>>
->>>>> On 6/24/25 15:53, Matt Coster wrote:
->>>>>> On 23/06/2025 12:42, Michal Wilczynski wrote:
->>>>>>> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
->>>>>>> specific GPU compatible string.
->>>>>>>
->>>>>>> The thead,th1520-gpu compatible, along with its full chain
->>>>>>> img,img-bxm-4-64, and img,img-rogue, is added to the
->>>>>>> list of recognized GPU types.
->>>>>>>
->>>>>>> The power-domains property requirement for img,img-bxm-4-64 is also
->>>>>>> ensured by adding it to the relevant allOf condition.
->>>>>>>
->>>>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>>>>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>>>>>> ---
->>>>>>>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 9 ++++++++-
->>>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..9b241a0c1f5941dc58a1e23970f6d3773d427c22 100644
->>>>>>> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->>>>>>> @@ -21,6 +21,11 @@ properties:
->>>>>>>            # work with newer dts.
->>>>>>>            - const: img,img-axe
->>>>>>>            - const: img,img-rogue
->>>>>>> +      - items:
->>>>>>> +          - enum:
->>>>>>> +              - thead,th1520-gpu
->>>>>>> +          - const: img,img-bxm-4-64
->>>>>>> +          - const: img,img-rogue
->>>>>>>        - items:
->>>>>>>            - enum:
->>>>>>>                - ti,j721s2-gpu
->>>>>>> @@ -93,7 +98,9 @@ allOf:
->>>>>>>        properties:
->>>>>>>          compatible:
->>>>>>>            contains:
->>>>>>> -            const: img,img-axe-1-16m
->>>>>>> +            enum:
->>>>>>> +              - img,img-axe-1-16m
->>>>>>> +              - img,img-bxm-4-64
->>>>>>
->>>>>> This isn't right – BXM-4-64 has two power domains like BXS-4-64. I don't
->>>>>> really know what the right way to handle that in devicetree is given the
->>>>>> TH1520 appears to expose only a top-level domain for the entire GPU, but
->>>>>> there are definitely two separate domains underneath that as far as the
->>>>>> GPU is concerned (see the attached snippet from integration guide).
->>>>>>
->>>>>> Since power nodes are ref-counted anyway, do we just use the same node
->>>>>> for both domains and let the driver up/down-count it twice?
->>>>>
->>>>> Hi Matt,
->>>>>
->>>>> Thanks for the very helpful insight. That's a great point, it seems the
->>>>> SoC's design presents a tricky case for the bindings.
->>>>>
->>>>> I see what you mean about potentially using the same power domain node
->>>>> twice. My only hesitation is that it might be a bit unclear for someone
->>>>> reading the devicetree later. Perhaps another option could be to relax
->>>>> the constraint for this compatible?
->>>>>
->>>>> Krzysztof, we'd be grateful for your thoughts on how to best model this
->>>>> situation.
->>>>
->>>>
->>>> It's your hardware, you should tell us, not me. I don't know how many
->>>> power domains you have there, but for sure it is not one AND two domains
->>>> the same time. It is either one or two, because power domains are not
->>>> the same as regulator supplies.
->>>
->>> Hi Krzysztof, Matt,
->>>
->>> The img,bxm-4-64 GPU IP itself is designed with two separate power
->>> domains. The TH1520 SoC, which integrates this GPU, wires both of these
->>> to a single OS controllable power gate (controlled via mailbox and E902
->>> co-processor).
->>
->> This helps... and also sounds a lot like regulator supplies, not power
->> domains. :/
-> 
-> Apologies for taking so long to get back to you with this, I wanted to
-> make sure I had the whole picture from our side before commenting again.
-> 
-> From the GPU side, a "typical" integration of BXM-4-64 would use two
-> power domains.
-> 
-> Typically, these domains exist in silicon, regardless of whether they
-> are exposed to the host OS, because the SoC's power controller must have
-> control over them. As part of normal operation, the GPU firmware (always
-> in domain "a" on Rogue) will request the power-up/down of the other
-> domains, including during the initial boot sequence. This all happens
-> transparently to the OS. The GPU block itself has no power gating at
-> that level, it relies entirely on the SoC integration.
-> 
-> However, it turns out (unknown to me until very recently) that this
-> functionality is optional. The integrator can opt to forego the
-> power-saving functionality afforded by firmware-controlled power gating
-> and just throw everything into a single domain, which appears to be
-> what's happened here.
-> 
-> My only remaining issue here, then, is the naming. Since this
-> integration doesn't use discrete domains, saying it has one domain
-> called "a" isn't correct*. We should either:
-> 
->  - Drop the name altogether for this integration (and others like it
->    that don't use the low-power functionality, if there are any), or
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
 
-Hi Matt,
+...
 
-Thanks for the detailed explanation, that clears things up perfectly.
+> @@ -2980,10 +2981,14 @@ static int ksz_setup(struct dsa_switch *ds)
+>  	}
+>  
+>  	/* set broadcast storm protection 10% rate */
+> +	storm_mask = BROADCAST_STORM_RATE;
+> +	storm_rate = (BROADCAST_STORM_VALUE * BROADCAST_STORM_PROT_RATE) / 100;
+> +	if (ksz_is_ksz8463(dev)) {
+> +		storm_mask = swab16(storm_mask);
+> +		storm_rate = swab16(storm_rate);
+> +	}
 
-I agree with your assessment. Dropping the power-domain-names property
-for this integration seems like the cleanest solution. As you pointed
-out, since the OS sees only a single, undifferentiated power domain,
-giving it a name like "gpu" would be redundant. This approach correctly
-models the hardware without setting a potentially confusing precedent.
+I'm sorry to be difficult, but I think the topic of using
+swab16(), which I raised in reviewing the previous version of this
+patchset, is still open.
 
-To follow through on this, I assume we'll need to adjust
-pvr_power_domains_init() to handle nodes that don't have the
-power-domain-names property. Does that sound right to you?
+https://lore.kernel.org/netdev/20250723162158.GJ1036606@horms.kernel.org/
 
->  - Come up with a new domain name to signal this explicitly (perhaps
->    simply "gpu")? Something that's unlikely to clash with the "real"
->    names that are going to start appearing in the Volcanic bindings
->    (where we finally ditched "a", "b", etc.).
-> 
-> Cheers,
-> Matt
-> 
-> *Yes, I know that's what we said for the AXE-1-16M, but that tiny GPU is
-> the exception to the rule; AFAIK it's the only one we've ever produced
-> that truly has only one power domain.
-> 
->>
->>>
->>> This means a devicetree for the TH1520 can only ever provide one power
->>> domain for the GPU. However, a generic binding for img,bxm-4-64 should
->>
->> If this was a supply, you would have two supplies. Anyway internal
->> wirings of GPU do not matter in such case and more important what the
->> SoC has wired. And it has one power domain.
->>
->>
->>> account for a future SoC that might implement both power domains.
->>>
->>> That's why I proposed to relax the constraints on the img,bmx-4-64 GPU.
->>
->> This should be constrained per each device, so 1 for you and 2 for
->> everyone else.
->>
->> Best regards,
->> Krzysztof
-> 
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+...
 
