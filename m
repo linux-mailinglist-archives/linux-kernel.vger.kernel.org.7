@@ -1,129 +1,247 @@
-Return-Path: <linux-kernel+bounces-742780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF67B0F6A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411B2B0F6A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1EA1894EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE751C258E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCC02FCFC3;
-	Wed, 23 Jul 2025 15:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2421E45009;
+	Wed, 23 Jul 2025 15:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mY8ORgke"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JZy/MbWN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7582F6F91
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B822F50A2;
+	Wed, 23 Jul 2025 15:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282929; cv=none; b=J3lkiso0F9x8sybgwABt3altIuragZgccorqSnM2xI87ogpxwGxZSiID46NyTWlc1DrupoOAcwWeOuxhOSW4isJdebKUa7diLMd/vmUslakormbsIC177ltOGoV0qC4eF1p5pt03jFndSETX3pgxZcC1UH5JxcPk/evAKheABL8=
+	t=1753282941; cv=none; b=e/0aWPWZkevTsVN3T0YeF/RrsVJO/1m2j+ctrZj2YMGMlvSZ0m/ng2qXKbP6CMxlXpjB6Numu6be4uwO4UEbpv9KDr78dAO8TuulbM4Xu0b8xh6XnUYaXNmdCsrLJdjZStJoRsei3wdeu4nmWkgLaklCMjQMPq+hC3gHqYOTP/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282929; c=relaxed/simple;
-	bh=iE1aBZYKqQwEYNiRMnq//IWDWufJ3w5YS/WloRgwiBU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CaXohfxfnEC8sqFDqImfaVQkbeUSE25MhE8vOYMoGSP4lIm7xwiFqtLBDDacc7sruk7BL8vyc0WKtDwil6Dq1VXHHm18Sxbbi7GbOWLTYbtgPx2b4GJtHWk+P3wHscTQEsFBbp32XZSJ+xFwScSuqToRsgIOGd5IoSfbgp7sZLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mY8ORgke; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-455b00339c8so49098975e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753282912; x=1753887712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SkED1IFnrdQOrvPX+FEDqQyJbbz8ySr0pcHO2vzmZv4=;
-        b=mY8ORgkeMqot4uEjGnYMYmtPMYFU4yXkUjVRzbrGVaArMpIR5Bz+YFf/Ad3QNZQ5rP
-         5YpAoMUNAlKRE1/FZQxTjcE68GVbvBi/4douPtk1XB5wvozcRDHC1LeNXKofDSmMnbFf
-         esPoTpKXproQ1BR/qhYRoV24aW9JbAcUfzyiP6m//5U31+NP3y82NwDKULklwCWkvDJ9
-         LDdC5LJwfPO+m/i25r5JMaB3vIzFT/ug6iY85ZlIfnTCZsxhoDGk3mQMC7x0vU5MZwBK
-         MnwM9V9EC8Hlz9j3nLnZkr0h2dtoQ0mYvrct+pGQjtrex0PV6+NM/4LCTCPwyBrj6cvH
-         s1rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753282912; x=1753887712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SkED1IFnrdQOrvPX+FEDqQyJbbz8ySr0pcHO2vzmZv4=;
-        b=S+FtFx31QBg3KhKWsHD4715prmCsP7WQjFWr9+6rvfW/0FoXB0Dz84YW8EabhOQWHu
-         r/cEFHYIH4/cnpNo/5EkkFuHjGG54qEEVmj+NComAwqEs/r/jGe4NMtssRDDnV7SUR1m
-         VqgQMU4f1wXwbQMyovIXuraRlHC+UNCQaPtKJw3aPXfMNsmCMJ5QYnd8atVuVzhI/fru
-         AjNHt9zJmBZYIGkbo8+Y9MPmJZDUrxO9fS91doIa9nKG9QTvGftuwMSG1RNOo69QUGwc
-         fNGYocb2XXHcQhZxNM1ZSUUfhylusgeSib9kOHbdK3RzGbJXBJl//PaT+qgOhm8IFyjt
-         JqgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZxnmdSeJ9rIx6r0SMA8En+7K9tvPjT5Gw6Gf2AH/YlkLq/bO1NLmGg/l/NObzE18z//QcQlQXj7KAuIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySaXb0CZJk0TaHswIdzTTvk06fLS+JAG4PjGxpN5N34lRoMDXv
-	R4zAT4FbXOuzsli6gK4ckMzcRMBkELV/Jvu7EcVk7bVOg3eqLN8qTq0WYlgz37P4TkSYz4oFqOM
-	VBMhKZZIMgWYm8EwGMvTDWpzrcCCVeydxBSkDDFJIo8xfxmGx6GgA6ZqE
-X-Gm-Gg: ASbGncuhNF5a43Ne0nPBdcXcPQLq6gZVFtpMPE18ghL2tU9jkkwJrxM+0YuVxqCGuJ4
-	L6ktqTgDjg4lCiAxG+LYSj2DFGBn/SmRwCLVg/VakaXXZLohkyhM77mPC63w3t/g9bIU0OXuGIH
-	UY+InUyLQZMVjF5AAnYAs/Qaw/f8SofkgyX3aFySZWD7so8f4uKNMoJJgOd1t1CKAIuVWHcvrSK
-	SrgJVMY+PLuc9m1hSru74xO//vHvKWynyvB4iCiH0/gQbRF
-X-Google-Smtp-Source: AGHT+IFo6IwyLbR5G5tGGMDaDPd7c+A7mFM1EecPzUD9PrHXz7Z7GSYJhFYbhBZl9Tl4KwnUO6QlPYWlXLeyCswGE/g=
-X-Received: by 2002:a05:600c:3483:b0:456:1e5a:8879 with SMTP id
- 5b1f17b1804b1-45868c9454fmr32278955e9.9.1753282911854; Wed, 23 Jul 2025
- 08:01:51 -0700 (PDT)
+	s=arc-20240116; t=1753282941; c=relaxed/simple;
+	bh=6+pvN2fHtGwOlv/O7bhUlmvmkHdX4pCXwi46X4ByuXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKHfhLmLmPs2SHCaiAqyTgEuaXVbKfvyYXJuncI7McdhPD8wrZ2XO1398W5e2iqk4S/SezMqdl3/UnW96HBshvIq24FTpfvsSyvbXwJz2vxloEUGe6VyFBA90MkXz8+HOEZf2/M1CGTowUQP7l+3A1nf/ygkdNlSyjqaQoSkrcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JZy/MbWN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8DB2EEA0;
+	Wed, 23 Jul 2025 17:01:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753282890;
+	bh=6+pvN2fHtGwOlv/O7bhUlmvmkHdX4pCXwi46X4ByuXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JZy/MbWNQ0qVBBf7D5C66ZxHyKSwZg/XPanz30926mZXNoNB1dV71SKlO/PM91m08
+	 KO8hvRG2HLOHbwo+Ojxu3ocjbXla7utvwM11Mwjxf+nnL5D2Od9p+AUshzygOF3Toa
+	 lWw9cn+tFQgueBbpVICLwQ2NQEySSOAeqDYSg6Q8=
+Date: Wed, 23 Jul 2025 18:02:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Julien Vuillaumier <julien.vuillaumier@nxp.com>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	ribalda@chromium.org, jai.luthra@ideasonboard.com,
+	laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
+	celine.laurencin@nxp.com
+Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
+ captures
+Message-ID: <20250723150206.GE6719@pendragon.ideasonboard.com>
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250715235952.GE19299@pendragon.ideasonboard.com>
+ <20250716001205.GG19299@pendragon.ideasonboard.com>
+ <38e022d0-cc8f-4df2-8a81-69513c854035@nxp.com>
+ <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
- <20250723-lock-class-key-cleanup-v1-1-85fa506b8ca4@google.com> <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org>
-In-Reply-To: <DBJIDFSMYASO.3VRN4ZZEUI8EX@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 23 Jul 2025 17:01:39 +0200
-X-Gm-Features: Ac12FXyaXk0Tn1xnIVYCpD8QPrGtzpt5ky0enjvHtYvN2fs0RSIRfx2AoBIsbAU
-Message-ID: <CAH5fLgjWFa8TjTL+rfv7Zd+OQqhkKqWvyTkGf60pMUyQ=c4sXg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: sync: refactor static_lock_class!() macro
-To: Benno Lossin <lossin@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
 
-On Wed, Jul 23, 2025 at 4:36=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> On Wed Jul 23, 2025 at 1:49 PM CEST, Alice Ryhl wrote:
-> >  impl LockClassKey {
-> > +    /// Initializes a statically allocated lock class key.
-> > +    ///
-> > +    /// This is usually used indirectly through the [`static_lock_clas=
-s!`] macro.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The destructor must never run on the returned `LockClassKey`.
->
-> I don't know how lockdep works, but Boqun mentioned in the other thread
-> that it uses the address of static keys. But AFAIK there is no mechanism
-> to differentiate them, so does lockdep just check the address and if it
-> is in a static segment it uses different behavior?
->
-> Because from the safety requirements on this function, I could just do
-> this:
->
->     // SAFETY: we leak the box below, so the destructor never runs.
->     let class =3D KBox::new(unsafe { LockClassKey::new_static() });
->     let class =3D Pin::static_ref(KBox::leak(class));
->     let lock =3D SpinLock::new(42, c_str!("test"), class);
->     let _ =3D lock.lock();
->
-> Because if lockdep then expects this to be initialized, we need to
-> change the requirement to only be used from statics.
+On Tue, Jul 22, 2025 at 11:53:53AM +0200, Julien Vuillaumier wrote:
+> On 20/07/2025 20:56, Mirela Rabulea wrote:
+> > On 7/16/25 03:12, Laurent Pinchart wrote:
+> >> On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
+> >>> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
+> >>>> Add new standard controls as U32 arrays, for sensors with multiple
+> >>>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
+> >>>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
+> >>>> that have multiple captures, but the HDR merge is done inside the 
+> >>>> sensor,
+> >>>> in the end exposing a single stream, but still requiring AEC control
+> >>>> for all captures.
+> >>>
+> >>> It's also useful for sensors supporting DOL or DCG with HDR merge being
+> >>> performed outside of the sensor.
+> >>
+> >> Regarless of where HDR merge is implemented, we will also need controls
+> >> to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
+> >> standardize the values, and that's not good enough. At least for DOL and
+> >> DCG with HDR merge implemented outside of the sensor, we need to
+> >> standardize the modes.
+> >>
+> >> Can you tell which sensor(s) you're working with ?
+> > 
+> > We are working mostly with these 3:
+> > Omnivision's os08a20 (2 exposures staggered hdr, each exposure on a 
+> > separate virtual channel, there are also other hdr modes which we do not 
+> > use)
+> > Omnivision ox05b1s (RGB-Ir with context switching based on group holds, 
+> > 1 context optimized for RGB, the other context optimized for Ir, each 
+> > context on a different virtual channel)
+> > Omnivision ox03c10 (4 exposures, hdr merge in sensor).
+> > 
+> >>>> All controls are in the same class, so they could all be set
+> >>>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
+> >>>> useful in case of sensors with context switching.
+> >>>
+> >>> Agreed, we should be able to set them all. Are we still unable to set
+> >>> controls from multiple classes atomatically ? I thought that limitation
+> >>> has been lifted.
+> > 
+> > Maybe I need some background check on this, but looking at kernel tag 
+> > next-20250718, this comment still lies in the documentation:
+> > "These ioctls allow the caller to get or set multiple controls
+> > atomically. Control IDs are grouped into control classes (see
+> > :ref:`ctrl-class`) and all controls in the control array must belong
+> > to the same control class."
+> > 
+> > Maybe it needs to be updated, or not...since there is also this check in 
+> > check_ext_ctrls():
+> >      /* Check that all controls are from the same control class. */
+> >      for (i = 0; i < c->count; i++) {
+> >          if (V4L2_CTRL_ID2WHICH(c->controls[i].id) != c->which) {
+> >              c->error_idx = ioctl == VIDIOC_TRY_EXT_CTRLS ? i :
+> >                                        c->count;
+> >              return false;
+> >          }
+> >      }
 
-My understanding is that it has to with correctly handling reuse of
-the same key. In your scenario it's not reused.
+This only when c->which is set to a control class. If you set it to
+V4L2_CTRL_WHICH_CUR_VAL (equal to 0) then you can set (or get) controls
+from multiple classes in one go.
 
-Alice
+> > There is also another inconvenient, the VIDIOC_S_EXT_CTRLS does not 
+> > reach the v4l2 subdevice driver, what we get in the sensor driver is a 
+> > set of .s_ctrl calls. I don't know about other sensors, but for the 
+> > Omivision sensors which I am familiar with, the group holds feature 
+> > could be used to get multiple registers to be applied atomically in the 
+> > same frame, but the sensor driver would need to know when to start and 
+> > when to end filling the group hold with the desired registers. If there 
+> > is some similar feature in other sensors, I think the VIDIOC_S_EXT_CTRLS 
+> > should have a corresponding v4l2-subdev operation, so that it can be 
+> > implemented in the sensor subdevice driver. This would probably require 
+> > some changes in the v4l2 core, as currently the subdev_do_ioctl() 
+> > function does not let the VIDIOC_S_EXT_CTRLS go to the subdevice.
+> > 
+> > Laurent, Hans, any thoughts on this?
+
+I can think of at least 3 ways to handle this.
+
+The first method would be to group all controls in a cluster. That way
+you will get a single .s_ctrl() call per VIDIOC_S_EXT_CTRLS. You will
+have to iterate over the controls to see which ones have changed, and
+configure the sensor accordingly. This short-circuits the logic in the
+control framework that dispatches individual controls to separate
+.s_ctrl() calls (or rather still goes through that logic, but doesn't
+make use of it), and requires reimplementing it manually in the
+.s_ctrl() handler. It's not ideal.
+
+The second method would be to add new .begin() and .end() (name to be
+bikeshedded) control operations. I experimented with this a while ago to
+expose group hold to userspace, but never upstreamed the patches as I
+didn't really need them in the end. Alternatively, the VIDIOC_S_EXT_CTRL
+could be exposed to drivers, allowing them to implement begin/end
+operations before and after calling the control framework. I don't have
+a strong preference (maybe Hans would).
+
+I increasingly think that the control framework doesn't provide the best
+value for subdevs. It has been developed for video devices, and for
+subdevs in video-centric devices where subdevs are hidden behind a video
+device, but not for MC-centric use cases where subdevs are exposed to
+userspace. The third option would be to implement something better,
+dropping the useless features and adding support for the needs of modern
+devices, but that would be much more work.
+
+> >>>> Each element of the array will hold an u32 value (exposure or gain)
+> >>>> for one capture. The size of the array is up to the sensor driver which
+> >>>> will implement the controls and initialize them via 
+> >>>> v4l2_ctrl_new_custom().
+> >>>> With this approach, the user-space will have to set valid values
+> >>>> for all the captures represented in the array.
+> >>>
+> >>> I'll comment on the controls themselves in patch 2/2.
+> >>>
+> >>>> The v4l2-core only supports one scalar min/max/step value for the
+> >>>> entire array, and each element is validated and adjusted to be within
+> >>>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
+> >>>> maximum value for the exposure control could be "the max value for the
+> >>>> long exposure" or "the max value for the sum of all exposures". If none
+> >>>> of these is ok, the sensor driver can adjust the values as supported and
+> >>>> the user space can use the TRY operation to query the sensor for the
+> >>>> minimum or maximum values.
+> >>>
+> >>> Hmmmm... I wonder if we would need the ability to report different
+> >>> limits for different array elements. There may be over-engineering
+> >>> though, my experience with libcamera is that userspace really needs
+> >>> detailed information about those controls, and attempting to convey the
+> >>> precise information through the kernel-userspace API is bound to fail.
+> >>> That's why we implement a sensor database in libcamera, with information
+> >>> about how to convert control values to real gain and exposure time.
+> >>> Exposing (close to) raw register values and letting userspace handle the
+> >>> rest may be better.
+> > 
+> > Julien, any thoughts on this?
+> 
+> Reporting min/max value per array element could have made sense for some 
+> controls. For instance we have a HDR sensor whose long capture analog 
+> gain range is different from the shorter captures gain. Conversely, it 
+> may not work well for the multi-capture exposure control where the 
+> constraint can be more about the sum of the exposures for each capture 
+> rather than the individual exposure values. In that case, exposing 
+> min/max values per array element does not really help the user space.
+> 
+> Thus, having the user space to have the necessary insight into each 
+> sensor specifics for its AEC control seems to be the versatile option.
+
+Then I think we should look at a libcamera implementation alongside with
+this patch series, and review them together.
+
+> > If we don't need to report different limits for different array 
+> > elements, we are fine, just we need to document better what those limits 
+> > stand for in case of arrays.
+> > 
+> >>>> Mirela Rabulea (2):
+> >>>>    LF-15161-6: media: Add exposure and gain controls for multiple
+> >>>>      captures
+> >>>>    LF-15161-7: Documentation: media: Describe exposure and gain 
+> >>>> controls
+> >>>>      for multiple captures
+> >>>
+> >>> Did you forget to remove the LF-* identifiers ? :-)
+> > 
+> > Yes, at least in the cover-letter, my bad :(
+> > 
+> > Thanks for feedback.
+> > 
+> >>>>
+> >>>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+> >>>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
+> >>>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
+> >>>>   3 files changed, 23 insertions(+)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
