@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-742772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0777EB0F678
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B11B0F681
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E5FAC7482
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24CB3AC7DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84FF2FCFE4;
-	Wed, 23 Jul 2025 14:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA232FD59A;
+	Wed, 23 Jul 2025 14:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncdZE9zn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rg5kZct2"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027AF2EE26A;
-	Wed, 23 Jul 2025 14:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4941303DCF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282658; cv=none; b=tFF/5/MdiM35copmUZ+vOCTIAhYww3QhHPxwhuwgTzcFt8qEg22ZB8rPGyk/Uj42ifp7b/j82RKdR7vp0ZcGYBcINIVapO/0ZbJkHAiiP8tsz+ok99504Cvw4rZrfqiiTjScHFX/MU/LM8SQpdW7p4CDM1BlfmLTc+Yq2YTJ6g0=
+	t=1753282743; cv=none; b=PR0utEJrlB5KodVTES7Q22kfNUeYHuqd3mL+kb8d7or42ZRNWt7ONh5+E87Ad5jyY4IT3LW0G+a7wA+stOqDoXt7i3WoCzecMYYpCFXOQIN/LTMDiM0IqCdtDCZgM8DKZ1CsPgEawFVU6GdeLegIPASzQXXrJj2je4ZT0K8JJTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282658; c=relaxed/simple;
-	bh=C69RAJehd2lMk3GX7I7sTjlCMaen8Xc7ti/mQhnB0fE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hy+oW+z7zNuiHtA1mcqmXvDjCht0E/8dbk2dozw4LkGqBStew6t/ebt7tEMG/CPuRtNBqvLOc77wj5DstpquGQQPI6RldIQ8L1zAGaIzrbgZV1BEt0/2/L9ruoRhG1lz1H3auTTuVX4Ccg73JwfqEnzMmhg7uz4ACTX7IIDDQqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncdZE9zn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE2EAC4CEF1;
-	Wed, 23 Jul 2025 14:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753282653;
-	bh=C69RAJehd2lMk3GX7I7sTjlCMaen8Xc7ti/mQhnB0fE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ncdZE9zne8Cx2+ZUnrXWSnuz/l/uwNOT3xB0xoTHGm+HwbFzxt6b0SfXft1FfnEe0
-	 OsJB4RtuxgEo6aOG8bap20BR1pahMJoAeMSF53bwh9Mq/Ir4kg3jOUlVf2iKf3Jsia
-	 ei3cwCKpW2po5hUV6hpjtdmqOuLzvr00H+vtQC5akSqzPq8tCG718D+iqad6a1+Epi
-	 XzfXB3Jev8dQBqcKebN+eGfea+uzAmTGTpn+sAqYrGMfKLvUKch8XmdcXPr8L7HWVf
-	 YqpkDBUyVCLu2wabcD+EFLgfwoxyNcfB7wLmSoBMP8FtI9ZDOVEUWYksONGPU0Jb+7
-	 t9w4N2QI997Gw==
-Date: Wed, 23 Jul 2025 07:57:33 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <20250723145733.GP2672039@frogsfrogsfrogs>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
- <20250717161747.GG2672039@frogsfrogsfrogs>
- <aH9g5jkwnXAkQUJl@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1753282743; c=relaxed/simple;
+	bh=d+UQZjK5JPWU+nmjBIoeo+ZaTGTNrbCSc9T8Qxpg2Jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UMtnqSMvrgc5OxMtU38ye7gh3AgP2J8zfPyHkbtOJAueWcnJSqua6fXFKoIVw/gYeUIFDUucxf1T5iLSCr4I7UFGD4UvYQ1zcGj6vMP6mNMbh254swME9LJdNDB3jWzx63+qsXaaGKaQLl/ayQIzEzLfyqFaOGkP/GfWCweAYIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rg5kZct2; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-301704710a9so7178fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 07:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753282682; x=1753887482; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WVCdxymO/cmG+R3Cl+GAt8R7HfnzufTS+mvJs9mpxm4=;
+        b=rg5kZct2ZJ4gB9FDA8iGN3hglKogQ8YdjHOAvoLpSQks8tCN29/BZ+UplTU/7Wt14W
+         W+mM50sLsMHZ+zMbo8OD0kmfAbSwbeiOCZGJ0xNweYPNeziMz+eT5hG9sxf0D3nL14Rd
+         wrpEGaFcFWrAmRHdkgRWdXoIA3oRPAS/phYKEYiYaKDMTEOx3IGE0hCJ1+F+VHU1SLr2
+         7XhD/vF1+kcGPG7nME2UH4hZTkDzkTg0mbTJK9rfNvTnkql74+zBaa9AjlUSvv+y/1SG
+         miw/YVWwX3MZPYuxckKv/p7zGauDUs4cyJ1foN0C9gw//jH2gKwoK4bnmEZtxS937mfF
+         lNew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753282682; x=1753887482;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WVCdxymO/cmG+R3Cl+GAt8R7HfnzufTS+mvJs9mpxm4=;
+        b=H2S6QV3PKMIMDunubcF3q8FJrSFiAqT6g05h4Qqz3pvGzWiWg3ZHid0q23HFIepLbl
+         ZohdhuuVBhCLS/EQbB4M0wOiL+610hDcbgwvWHcHAen15OQmpg6RHchG3JS2L0tUI4J2
+         +1n9AL5fbLWgod7vlmTJIc7h1KkJlqmfIS2QKI8Z+pvlOg4YfcKYDod1b83E0eczy7fj
+         DYuYMoviiDBqvdeBD50msG99ch/6by76EPVAj0qnzMM/1GtxedLS45zi2xbFtnSFV3iq
+         4wPo94svlaSLUKy41aYnkRGdENPoVvCIEJLe+UAVM0CUSf1uixxnsb/Lg7WC+atE9XCc
+         0qRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNOHdpGpIemQ/k0eCT0/O9Vfz94GvBZFgzuA7Cpm/Vf21EtHWDXgzlRbqfHWBe3V4oMcI8HMvwjYHlmZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhcjRdLoVE4TfgbxFPQcXCrbYbugTsHHdXOyOHK9HFkzjLdPuy
+	PmKRk66KNDp2L7++hu1TUXkPJ0ASX1qZ/P9u82eTm7G4wp7KM0DkPiXSk1ntR7E643Y=
+X-Gm-Gg: ASbGnctc2Hu0tTE5BW7kRpbk/u78jzC+Ivxfe9BzdBlvEHt1IhpiWoYq6rldHVwY0NC
+	5v7tYcfdelvq+itLQrIVSNH0XxGqAGT3EainNLh7HLhQJeN+pQ/eC+o1z5ccvXBfYiM0wh/a8ye
+	cOayajMpUxdNOjG5/REXBF1w2kFGGEuO3lV9FAqHDCW9qNguh6k3iMqICoHURkYz3e6Cgj2+Xv6
+	fp9r9x6bM5SmuuIXB2XjNz98tFlR9yGR3aSUteQiaoP2W/ERaRFbO7JB/Utm/l3LEi2R9RWWaqw
+	I7lIZZZrshklDu0pHz3lsXlneK91tey4TVs5kHv8DEVBEquEgZo7s8DoWzs8Nsqp/j67RFKQbKV
+	k+E1cykgGjVdtx7l1PoBQG5Z8EJdAPDyBn8R3kkGxrCuLtVJ4jQe4OUEVgDbTrdUb1oUBeIye
+X-Google-Smtp-Source: AGHT+IG7Sbzk+8GL3JgHROlhT8umJ/hShPtTr3mIYZViugHomJxFaWDCU0Uv14TXX3SljkAxgtjCfg==
+X-Received: by 2002:a05:6870:1582:b0:2e9:9118:9ed1 with SMTP id 586e51a60fabf-306c6f6e8e0mr2020953fac.3.1753282681800;
+        Wed, 23 Jul 2025 07:58:01 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:11dd:c0f5:968d:e96? ([2600:8803:e7e4:1d00:11dd:c0f5:968d:e96])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-615bcab4e9esm2369733eaf.12.2025.07.23.07.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 07:58:00 -0700 (PDT)
+Message-ID: <7ca7e0b9-a77d-4de8-92b1-fea3250e8155@baylibre.com>
+Date: Wed, 23 Jul 2025 09:57:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH9g5jkwnXAkQUJl@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: proximity: hx9023s: fix scan_type endianness
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Yasin Lee <yasin.lee.x@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250722-iio-proximity-hx9023c-fix-scan_type-endianness-v1-1-48f5dc156895@baylibre.com>
+ <823a28d6-e612-4e32-976a-cb99945848ce@baylibre.com>
+ <aIDuEcHhaGtz2klP@smile.fi.intel.com>
+ <795dffe0-51cf-49a8-bbb1-1585edddf5ba@baylibre.com>
+ <aIDzvNYIaJnSuzOa@smile.fi.intel.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aIDzvNYIaJnSuzOa@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 03:29:02PM +0530, Ojaswin Mujoo wrote:
-> On Thu, Jul 17, 2025 at 09:17:47AM -0700, Darrick J. Wong wrote:
+On 7/23/25 9:37 AM, Andy Shevchenko wrote:
+> On Wed, Jul 23, 2025 at 09:29:37AM -0500, David Lechner wrote:
+>> On 7/23/25 9:13 AM, Andy Shevchenko wrote:
+>>> On Tue, Jul 22, 2025 at 06:08:37PM -0500, David Lechner wrote:
+>>>> On 7/22/25 6:07 PM, David Lechner wrote:
+>>>>> Change the scan_type endianness from IIO_BE to IIO_LE. This matches
+>>>>> the call to cpu_to_le16() in hx9023s_trigger_handler() that formats
+>>>>> the data before pushing it to the IIO buffer.
+>>>
+>>>> It is odd to have data already in CPU-endian and convert it to LE
+>>>> before pushing to buffers. So I'm a bit tempted to do this instead
+>>>> since it probably isn't likely anyone is using this on a big-endian
+>>>> system:
+>>>
+>>> I can say that first of all, we need to consult with the datasheet for the
+>>> actual HW endianess. And second, I do not believe that CPU endianess may be
+>>> used, 
+>>
+>> Why not? Lot's of IIO drivers use IIO_CPU in their scan buffers.
+>>
+>>> I can't imagine when this (discrete?) component can be integrated in such
+>>> a way. That said, I think your second approach even worse.
+>>
+>> hx9023s_sample() is calling get_unaligned_le16() on all of the data
+>> read over the bus, so in the driver, all data is stored CPU-endian
+>> already rather than passing actual raw bus data to the buffer.
 > 
-> <snip>
+> I see, now it makes a lot of sense. Thanks for clarifying this to me.
 > 
-> > > +
-> > > +/*
-> > > + * Round down n to nearest power of 2.
-> > > + * If n is already a power of 2, return n;
-> > > + */
-> > > +static int rounddown_pow_of_2(int n) {
-> > > +	int i = 0;
-> > > +
-> > > +	if (is_power_of_2(n))
-> > > +		return n;
-> > > +
-> > > +	for (; (1 << i) < n; i++);
-> > > +
-> > > +	return 1 << (i - 1);
-> > > +}
-> > > +
-> > >  void
-> > >  dowrite(unsigned offset, unsigned size, int flags)
-> > >  {
-> > > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
-> > >  	offset -= offset % writebdy;
-> > >  	if (o_direct)
-> > >  		size -= size % writebdy;
-> > > +	if (flags & RWF_ATOMIC) {
-> > > +		/* atomic write len must be inbetween awu_min and awu_max */
-> > > +		if (size < awu_min)
-> > > +			size = awu_min;
-> > > +		if (size > awu_max)
-> > > +			size = awu_max;
-> > > +
-> > > +		/* atomic writes need power-of-2 sizes */
-> > > +		size = rounddown_pow_of_2(size);
-> > > +
-> > > +		/* atomic writes need naturally aligned offsets */
-> > > +		offset -= offset % size;
-> > 
-> > I don't think you should be modifying offset/size here.  Normally for
-> > fsx we do all the rounding of the file range in the switch statement
-> > after the "calculate appropriate op to run" comment statement.
-> > 
-> > --D
+>> So it seems a waste of CPU cycles to convert it back to little-endian
+>> to push to the buffer only for consumers to have to convert it back
+>> to CPU-endian again. But since most systems are little-endian already
+>> this doesn't really matter since no actual conversion is done in this
+>> case.
 > 
-> Yes, I noticed that but then I saw we make size/offset adjustments in
-> do write for writebdy and I wanted atomic writes adjustments to be done
-> after that.
+> Right, but it's buggy on BE, isn't it?
+> 
 
-<nod> ok then, I forgot that we already tweak the file range for
-write...
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Right now, the driver is buggy everywhere. The scan info says that the
+scan data is BE, but in reality, it is LE (no matter the CPU-endianness).
 
---D
+With the simple patch, it fixes the scan info to reflect reality that
+the data is LE in the buffer. This works on BE systems. They just have
+an extra conversion from BE to LE in the kernel when pushing to the
+buffer and userspace would have to convert back to BE to do math on it.
+
+With the alternate patch you didn't like, the forced conversion to LE
+when pushing to buffers is dropped, so nothing would change on LE
+systems but BE systems wouldn't have the extra order swapping.
 
 
-> Regads,
-> ojaswin
-> 
-> > 
-> > > +
-> > > +		/* Skip the write if we are crossing max filesize */
-> > > +		if ((offset + size) > maxfilelen) {
-> > > +			if (!quiet && testcalls > simulatedopcount)
-> > > +				prt("skipping atomic write past maxfilelen\n");
-> > > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> > > +			return;
-> > > +		}
-> > > +	}
-> > >  	if (size == 0) {
-> > >  		if (!quiet && testcalls > simulatedopcount && !o_direct)
-> > >  			prt("skipping zero size write\n");
-> > > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
-> > >  		return;
-> > >  	}
-> > >  
-> > > -	log4(OP_WRITE, offset, size, FL_NONE);
-> > > +	if (flags & RWF_ATOMIC)
-> > > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> > > +	else
-> > > +		log4(OP_WRITE, offset, size, FL_NONE);
-> > >  
-> > >  	gendata(original_buf, good_buf, offset, size);
-> > >  	if (offset + size > file_size) {
-> > > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
-> > >  		       (monitorstart == -1 ||
-> > >  			(offset + size > monitorstart &&
-> > >  			(monitorend == -1 || offset <= monitorend))))))
-> > > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> > > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> > > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> > > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> > > +		    (flags & RWF_ATOMIC) != 0);
-> > >  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
-> > >  	if (iret != size) {
-> > >  		if (iret == -1)
-> > > @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
-> > >  }
-> > >  #endif
-> > >  
-> > > +int test_atomic_writes(void) {
-> > > +	int ret;
-> > > +	struct statx stx;
-> > > +
-> 
 
