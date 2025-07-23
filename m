@@ -1,160 +1,205 @@
-Return-Path: <linux-kernel+bounces-742381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39122B0F0F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:13:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE64B0F0F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C03B7A43F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA4A1630C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366DB2DE702;
-	Wed, 23 Jul 2025 11:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095D02E0B6C;
+	Wed, 23 Jul 2025 11:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Nl9VYkZc"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j86+FYuJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97D82586C8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF89F2DA749
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753269186; cv=none; b=Zt3kvX2tf10xJ6sI5R2cF79zvtxsCyNRm4Kps3cHVOSSH8R8H+LmRvBdfNl4xMhNag/7dLiulFMDRN3cqtWy6SFkoEBRLFedOECVKe2sLyFgzCKfCA/xMLxU8qOY9lHj3oWVseWJoKnaq/RUJSFswUMFafjMCqPb9euLgeZc/rU=
+	t=1753269187; cv=none; b=edOb2IE511RpegP+4EgR70xMyl3HDTWGU47Iv8EmpUQwj4vWma8lFjuXTIwkUkYRNKzEIn/MgThXXVtVDRHRUASGr86e0OgvIKDCCtLRwcaJG//eI/ugyP8sdDjSCR778pPi0+LPnbVIxA1FSApOZAsoBEycuwJW1arSfgn8yd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753269186; c=relaxed/simple;
-	bh=MPAX2RnsTcW0xXiyDmHG4NU6qmm1/0XOsZ82B8R6zzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tYwtNRN+aw/3cL0omMg2Ns4lu9IQ+6FYIJcwjZLPbXxUD5rT8fEdAXHLL8uDLO9ObjsnU3+9Myi1hF8QTQ9chyZrQCVaXHeLHGq7wo0SvPxPB9G+8YQZbFlT61pLUCKN3llQZBcyoodQhpg38g6O/BSlIzzyP8LkJCT230GfEho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Nl9VYkZc; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab5aec969eso120268751cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753269183; x=1753873983; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HytRhaegPRtNUdHVSaCnhiMj9eX1oCCXU5COax0hlbg=;
-        b=Nl9VYkZcn/iz5ZV2RcVXnqylRQaYyoHIb5NDMRFRLelnd7tzcXHtNirx8AYj457/Vk
-         DDCJlD/ipmd6SmfH4Gq148EP3V9Uot7pCUz4J4oftL1Rq5Tv8JLUDBgFbgrOn0eDfpZj
-         uLCwZGA3oSnWWWM9wBjABqbuhr5jAeJPuxQZw=
+	s=arc-20240116; t=1753269187; c=relaxed/simple;
+	bh=lnzxNBd27lteRys8/UL84a5N9ZO3GwFpFozQUhELwOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pspAvGr8szmIjLXiMeUEdhTvm3dET3n0B0eo2JI19jPy9kU+kWaWeBfvSltGYOKbfaM01zcLwPYEX1EFYBvxN9nZtZWmia1SEZ2DsFEmKdNsxheCglOdX+DoZcLx3NqNAp1XQVJ5WE9OUF2GsnKdH79n3b1nYdtgIwCxTxBReQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j86+FYuJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N92gc8024471
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hdZZZ21a0qm1WSRcAHWFGr2d
+	/0HAGcq2qAHNRmdLWJY=; b=j86+FYuJEhj9z/SI4nMt5/bu9aCDS/4QXeXYBJRH
+	by3pRQpSTlel9Gw1rodhsP2Yqy2WdwxWF1ep9fPJKJGoontnffgmG1T1XvigdHbg
+	Lpc/RBwfw2eWltPSJE1bxeDlbCMipOymcVHU+U7KaZUaeg57J9Bz7UfZ3dUxsoMj
+	x4wgaIqHTc04GPMxIQBXglCVcYXwGEqdIo5JnjhvgWqT3mwfX2irVbfPdbe+3jwz
+	VIGPngYh9k1NKJ8KzbTKvbxaXOU/JvD7Bm/IkcIN4lm4SsiD9BnOqB7DVy5pEWOs
+	rHCMIYav4zNtceBH+M+euZfHd6Pjvjt3WxPsZNT5LZyOpw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3eqr2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:13:04 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-704817522b9so94801386d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:13:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1753269183; x=1753873983;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HytRhaegPRtNUdHVSaCnhiMj9eX1oCCXU5COax0hlbg=;
-        b=ifxkXVWbMUpHcBcNiWFFNdym1sbL9uNCT/wT0TtUvjZGBSqn6w+wH/xqP2oXx8x0xY
-         G0j+TqmkC8KZisA30rV312UV/qG5+juC/4LfXwL4vu5LaP+tlJWCipptDvXxX6LSFtFt
-         aWMlfOU8IOMOnpBXaOYMOahkW/i+GauZBvrjdq1cNoNoXBxfpsTdmmQqddRhCC5nF/Nv
-         TL2WVNaKPV5TyMuW7hLhpvNRujAienbvdNeNgASH+BMmkS9eJVL557y6Yg/gwOIZAMRv
-         /iQ2Lzg3BIbSDWYRuV51Zsj2rgbj9jtGEKt3Y6vuF7DTvzeQNOgzbadMcx1mmrpE9vFu
-         EEGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1pwTzeJWtva2W0wjNBv8/Zx0p/+XnxrKTNXmeGhKSbsl8+c3e/WuSnyXdmebdX1fjOpEOULyYNc2hEUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTptZqiM2lrhYLX9yOAfblt9BivCqD6iuasvcoynR37uqhk3sH
-	RaBdnShRj6NwKLtfJv2OUJK+myB8/T1a3VaYnpB4EJnRC8Urq7A8qHDnNGiGbth5unKvly1sgtE
-	BR2yqCUnE
-X-Gm-Gg: ASbGnctNqjlP+Iq8Vhkb3D/gNViFPcyvd7s99XokK0p+iNf+ndbHi8LSLhk6/rFDjQb
-	MzNh+tVHYag4/xtJoxsmCbvqQAn8IwkaENAhgxNYPOjO3WtI/lsJBq2noEgj5inS0PIJeNKbfUn
-	TMQbGX42bX8Ihdf3hwYECbG0FFk7FCqFNgeWxeY6PyGFDSfQPkw16cu2QqvKuBxpdCCCxbNPyMh
-	GgS9oqtGTJSmcw+cE+BEfAOdYo8lnDk1UgE+iay/RHxuHPyDPMFrdpPLHM2crev5XoDjCzUs9Yv
-	RgJVpz11L3worpFIL4YuUaqGp5XSMURbCiAl1ujuzbzVsmbwdzxLPd/DHbANuzXx/R1Z5z1Gkvt
-	t45BcCkpAHO3803qKbWLzAjNAaqHbmPLGzIkuspmJ9lyqp2HqzPBx
-X-Google-Smtp-Source: AGHT+IF3h2F7JQLYHnJObVwTaoPJg3PNc1Ms0PHHT8Xq6utf7IeAwcG30GcnVb+4+s+XP9N23Qq/Cg==
-X-Received: by 2002:a05:622a:5813:b0:4a9:8ddf:83ee with SMTP id d75a77b69052e-4ae6dfd22cfmr39254691cf.46.1753269182626;
+        bh=hdZZZ21a0qm1WSRcAHWFGr2d/0HAGcq2qAHNRmdLWJY=;
+        b=n+1nAN4PY+OttiITiWTnnFI65RzQOGB41CNnKuwxsaoB4dFh3W1BMdeyvIqSGAcTum
+         qXP7pAPpbYMuYNBw8kYLQXCRqeUuCyh6FFY3zINZNWwB6tGFgUOnrRceGJDopvrciK0l
+         sdPE1AV/i7SIZs2xuNQx+H9gMZUT4n89uC57ucTYCgU8K1Q+K/28rBvG+YgHONlXAipv
+         mjPU6PqaQ5hErCfmnViH4+UlHTmIU50UX+mXszRaMZthxTmvUIh/muz2roBF6K/RkLUN
+         oBqkWtqJO0DXWh4EjbLGljbSJN++SY+uWguaKuEZQd83KQJiyNTtIVheLqA4Dn1ZB+Sg
+         sZig==
+X-Forwarded-Encrypted: i=1; AJvYcCWvb6BvIIm54+y5Ztgfo0gCbryq1CJY92LlPUMdWAvYcTWOJUcgpbdlvaNiShBZZnFH1vQHeWXli3YlGac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9f/Zaqe6nlB7eI73OGCsZscimCrI37QNNgLLQmOvXF9pATKir
+	+pO3J7PXI5yj69JyrL9o/hIngH2d0p31Moz5mVjO5Xl3HbXCNXPZruUF4vVN9MzhjJToah3N13K
+	z8N81us/NDulu/vkGSHzXLq1+5haNyjWIQCD6+9tRNKvzhyTGZTNmXxgrtr5U7oUAaVo=
+X-Gm-Gg: ASbGnctHuxXJp5pj7Pa2vORfTtMwJR6f0BNniVCdeD5RpCVk4PA/eV+HMiiIMm2sgzr
+	vyn9QaZ4J/pQSPJOkDjq6N09eFieW9uqBe86epmoy3DprcHCghKnUFjHfZ5H3ZAaaNDE/KA+x9G
+	7otRgTtVMxZWJPnr6oYFllJBKQgm2+iFMiERwtzlPqCGnVHraAXLzFjvYK+5VIQGvYuJAbyVplr
+	Cvst/KxOcnfiAzl10h45uVClt449LU3MYMAvlWWjNUmLnC+nhr/2d8/FyJhNizwIFwLdwl1sa1+
+	8Lhv+ReSk7KsoM4v049KrukOXQLw0Jzjrc7lEPFlwZOctmIQryGAMbITPuUbGWF2vz4X4+rQJJ+
+	xmUqlNogE5zTeruR1WONfwmsBOnEzIH1FtCXFjWHH9A3/VNLKW2g1
+X-Received: by 2002:a05:6214:2387:b0:702:c15f:3291 with SMTP id 6a1803df08f44-7070077456dmr34745486d6.22.1753269183358;
+        Wed, 23 Jul 2025 04:13:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyDLDuy3HyepZYFtPliTkOxZ5Xsf6vDUIcCInt6v8XfdgRXS9LLj6MWS8GTPYKlkNSKOxtvQ==
+X-Received: by 2002:a05:6214:2387:b0:702:c15f:3291 with SMTP id 6a1803df08f44-7070077456dmr34744846d6.22.1753269182815;
         Wed, 23 Jul 2025 04:13:02 -0700 (PDT)
-Received: from [10.176.2.145] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49802efsm65616941cf.7.2025.07.23.04.13.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 04:13:02 -0700 (PDT)
-Message-ID: <8bad525e-420c-4870-a6dd-bd28dfd4708c@broadcom.com>
-Date: Wed, 23 Jul 2025 13:12:58 +0200
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a9103744sm20182351fa.24.2025.07.23.04.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 04:13:01 -0700 (PDT)
+Date: Wed, 23 Jul 2025 14:13:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/17] drm/msm/a6xx: Set Keep-alive votes to block IFPC
+Message-ID: <vqncxeag7jqmtxmeezvwqdtneoavs5kazpcgweuw52knqbiukl@3iifyfkgkw52>
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-8-9347aa5bcbd6@oss.qualcomm.com>
+ <jvn44gmttkidyy4emnz6mytqqjbwltlxibywfr6bfbqjfbq35e@fuvvefesqbzw>
+ <0427769f-62a1-4a20-af94-b340413296ab@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] wifi: brcm80211: Remove unused functions
-To: linux@treblig.org, kvalo@kernel.org, linux-wireless@vger.kernel.org
-Cc: brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- linux-kernel@vger.kernel.org
-References: <20250626140812.56700-1-linux@treblig.org>
- <20250626140812.56700-2-linux@treblig.org>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <20250626140812.56700-2-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0427769f-62a1-4a20-af94-b340413296ab@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: sW3rH29pEqN1QyT-ka7aI8ww8lcX4wRb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NSBTYWx0ZWRfX3+81VvSGTHW1
+ eS0lYbBJCojfGwAM3imamPSfXekLD3RuWqeuUHA9WWY9FOnYWVeOH2JgCE9mo5xseE9xvV0to/T
+ BfhKFvRFZDyG5Edijc1Hnng8RvX2uowrKcKdAwTkhpdj1ORMOhgQSofMkHHPB1E6SlCBMSFxaM6
+ L4N7Q6+XZbUKozhcDzy1t/7R+H5sDDlNybG37JOSOJhESOeRoNi5GJ5bkVGO4E6t3qPo/h4T875
+ dkVxGMRwV+uh7N7b7LuntFFJxrWtz1Fu9cehx6GP0YbUyj59lQ1buEL3knV+oVjA1754lulUIOY
+ GroRYfu7SX4HxXoDV/dVC4j3rRV0ioxXywYTBydBPbAQYUGb3v4gvnipmPH83nOZXRH1yvNE/mj
+ 9bOMUWpWvhUFwUDCNZAhriJWFv+yzj3SY31cEzu3F6EJNtp6x7DLMN8EXHhNKiOVSfZSqgkS
+X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=6880c3c0 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=OfcbPBCFm4ewgWsImK0A:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: sW3rH29pEqN1QyT-ka7aI8ww8lcX4wRb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=943 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230095
 
-On 6/26/2025 4:08 PM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, Jul 23, 2025 at 02:54:59AM +0530, Akhil P Oommen wrote:
+> On 7/22/2025 7:14 PM, Dmitry Baryshkov wrote:
+> > On Sun, Jul 20, 2025 at 05:46:09PM +0530, Akhil P Oommen wrote:
+> >> Set Keepalive votes at appropriate places to block IFPC power collapse
+> >> until we access all the required registers. This is required during gpu
+> >> IRQ handling and also during preemption.
+> >>
+> >> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> >> ---
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 26 +++++++++++++++++---------
+> >>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 ++++++++++++++++++++
+> >>  2 files changed, 37 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> index 8c004fc3abd2896d467a9728b34e99e4ed944dc4..6770f0363e7284e4596b1188637a4615d2c0779b 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >> @@ -1752,8 +1752,6 @@ static void a6xx_cp_hw_err_irq(struct msm_gpu *gpu)
+> >>  
+> >>  static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
+> >>  {
+> >> -	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+> >> -	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+> >>  	struct msm_ringbuffer *ring = gpu->funcs->active_ring(gpu);
+> >>  
+> >>  	/*
+> >> @@ -1765,13 +1763,6 @@ static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
+> >>  	if (gpu_read(gpu, REG_A6XX_RBBM_STATUS3) & A6XX_RBBM_STATUS3_SMMU_STALLED_ON_FAULT)
+> >>  		return;
+> >>  
+> >> -	/*
+> >> -	 * Force the GPU to stay on until after we finish
+> >> -	 * collecting information
+> >> -	 */
+> >> -	if (!adreno_has_gmu_wrapper(adreno_gpu))
+> >> -		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GMU_GMU_PWR_COL_KEEPALIVE, 1);
+> >> -
+> >>  	DRM_DEV_ERROR(&gpu->pdev->dev,
+> >>  		"gpu fault ring %d fence %x status %8.8X rb %4.4x/%4.4x ib1 %16.16llX/%4.4x ib2 %16.16llX/%4.4x\n",
+> >>  		ring ? ring->id : -1, ring ? ring->fctx->last_fence : 0,
+> >> @@ -1810,9 +1801,24 @@ static void a7xx_sw_fuse_violation_irq(struct msm_gpu *gpu)
+> >>  	}
+> >>  }
+> >>  
+> >> +static void set_keepalive_vote(struct msm_gpu *gpu, bool on)
+> > 
+> > a6xx_set_keepalive_vote()
 > 
-> This is a subset of unused functions in bcrmsmac phy_cmn.c,
-> They're unused since the original 2010
-> commit a9533e7ea3c4 ("Staging: Add initial release of brcm80211 - Broadcom
-> 802.11n wireless LAN driver.")
-> 
-> Remove them.
-> Then remove two more functions in phy_n.c that were only used
-> by the ones just removed.
+> static fn! Why do we need prefix here?
 
-Tested on BCM4313 card.
+It's really a good custom. Also, note that I suggested two different
+names to your functions (otherwise it's too easy to get confused).
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>> 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->   .../broadcom/brcm80211/brcmsmac/phy/phy_cmn.c | 128 ------------------
->   .../broadcom/brcm80211/brcmsmac/phy/phy_hal.h |  11 --
->   .../broadcom/brcm80211/brcmsmac/phy/phy_int.h |   8 --
->   .../broadcom/brcm80211/brcmsmac/phy/phy_n.c   |  19 ---
->   4 files changed, 166 deletions(-)
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> >> index 5b0fd510ff58d989ab285f1a2497f6f522a6b187..1c8ec1911010c00a000d195116fc950c4d947cac 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> >> @@ -136,6 +136,21 @@ static void preempt_disable_postamble(struct a6xx_gpu *a6xx_gpu)
+> >>  	a6xx_gpu->postamble_enabled = false;
+> >>  }
+> >>  
+> >> +/*
+> >> + * Set preemption keepalive vote. Please note that this vote is different from the one used in
+> >> + * a6xx_irq()
+> >> + */
+> >> +static void set_keepalive_vote(struct msm_gpu *gpu, bool on)
+> > 
+> > a6xx_set_preempt_keepalive_vote();
+> > 
+
+-- 
+With best wishes
+Dmitry
 
