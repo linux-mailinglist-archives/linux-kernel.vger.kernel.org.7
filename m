@@ -1,191 +1,114 @@
-Return-Path: <linux-kernel+bounces-742368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B542B0F0BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:08:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EABB0F0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8AB1C837A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1DE188B4EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A2D2D9EC8;
-	Wed, 23 Jul 2025 11:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311912D9EC8;
+	Wed, 23 Jul 2025 11:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UrlxioRj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O4UJfqe+"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F6D289372
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AD32E11BA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268909; cv=none; b=qxnI/9pSP1BR2nNHqAfm1ZcT9FW4UWZdy/8Ce2DqRlwt9WPmYl6MAUXGJ1j5j7VUqjutfnhn5msYgDn4C+Ibm6Zre8D5QGH4RbYiL9D4uC9ocElEfjlloYwmu96Lwv9lw7nAgUZx2Py7s8ArlZep6fjS9iLsPuzRp5vsEep6GGc=
+	t=1753268931; cv=none; b=uY89rLPR6A96LppoOMZfi4oFibsuhKLX39Es/o3olwA2ZMNb53eviyVlWQp8UjVydJKSGqbbAntaAs0Ae6Dd0JAo/zSZmRtj4/M4w3y++9geImCL7pq/6tPQLGJcA+SR+40NWKYgGpOMTH/M6Jz2c/yM/cRYMraNhjlfghC0zfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268909; c=relaxed/simple;
-	bh=afusP6XF3NlqcMK6WC1ygO/UhXjItlHBhT8/8pOnPy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tr+HSXwmeac+OZrgspYbn70gS/3rBcLKtrLOhWw1xJW5VtySuQl9eJIPZUYmzbJd33G74qDWurildRH9N27e2c9bT3Cy7lGVw6jg3rxhHC8CdTnluWprwlaZBIsrkL74lCgefzT9UOzXoykzWaAqJlgzFqOe//D7QLLrhvU/k2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UrlxioRj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9TwtI004801
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:08:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hv4tjDdkBfCtIHakQybad2DkErSzaDqc83VYETJQBNA=; b=UrlxioRjE/s6dc72
-	Tavgb/7Ta5dEHIc4LWao9G9NtLRE+KHxnwE77SCEfOMklWVwqwHGMy5ecrifbkrA
-	LfTAd9Y3owrJIGyYkCc/PXdV8+IOSOxwAcU0ueom/Ydsyft2n+Cj9ciwiZ9dPe6c
-	mNjZs6ixQLNH6x7Fb7S0s6kYDscqbWxpTxVIXFWxrBgUffHh9rdRL7PA6R2tom21
-	eOvB/7bK/r+F63W+qjxdz3cOHpoRxEHFem/idtdBOV7Jk85HAYZ6Aenyb255hZGj
-	5EcIoenfn3P9uVRazVEIJAsciDEpiJmjEdOXhPtpYdS1fDrrXCkS9oYOB4z95FzK
-	Y3DmKw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4826t1c7ke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:08:26 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70707a55da1so9973696d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:08:26 -0700 (PDT)
+	s=arc-20240116; t=1753268931; c=relaxed/simple;
+	bh=3B0D+GxZIdTFezM7wUdeHc2Z7x4Bz95ATZb5mHcRHNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pWGg4nAY2h/t99TzXfpb3iIrEqSPEsQpD9HqDIxBz1c6UJuRVmNhSzrt1corWGztO/bmHv4nppWn13DH9xmGm0Eir76QYWPlj2phq/pNGdNBaJEL4inWzhDoK2FjH7FCZgOzH2aojuBn954UsYmvtaFU9ApIv91AiA+YbyMWxs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O4UJfqe+; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-558facbc19cso5425378e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 04:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753268928; x=1753873728; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3B0D+GxZIdTFezM7wUdeHc2Z7x4Bz95ATZb5mHcRHNs=;
+        b=O4UJfqe+a1uRJFOXYrDAfuQgdI3nruGymy2J58oYxaAIvgXRTPnWm6NGiDYJFUdK1n
+         3xrS76FPfUfK8BHVVfS15hKXkVB/J/xh9354WQQXu+70RX6odvPSeEUhT1AsADkzuP5I
+         kdyXiqtxzomhvnTxl3yZyaN5X6sSAPo52+QHDOwRjHjhZ8iSxJtT8mWdJdVsD8zWt/H1
+         tecHpGmhygnVsY0QgqgAWGgYijcdJ9k3Nv6NHM0bDCmcwoHySagHnVTle3m7WZDslhkH
+         p3e8gBcizrZWvAFx41f50XVsUBPi7vstLpUApiNZNRh/2JYSxzaaSwBiM55RhbA6WQA0
+         PpDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753268906; x=1753873706;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hv4tjDdkBfCtIHakQybad2DkErSzaDqc83VYETJQBNA=;
-        b=idwsmp0BWF5S0Q+fBJGo38Hqglfy3M+F5bId0nS1nP3XgeVuMP+hN7mLoocvfz9lI+
-         bI9JRMQWz7LzTdcSl04YcNb6yDpooqGHFV7FCeF/AzY49OVy7my7zOur2KWmlVCg33Ri
-         pR1Sn812/ekTdJwfrr1si7zr9Wg/KUp4kVUeIbEq7grXb0owgqRaRUxCFY9Dy0TuNVY9
-         ncZUNUsfZh7wlvpS7pS7ycd9KN2HeTlVbP36Cf34B4htgu//ROONOtKih6GSr6cH9qMk
-         y5HGL8Qn1tbMJEfyre2v4tkNkGBj8mO78K3269j6YgS49g5Y/1foti/HnvDbTmVqMYsr
-         lDCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaK1sJmCSbz570UoM52EoIfXjcU4BXR05TIjPra+V5IRvNToiF1K6ti94vo0wku6qQLvAy85aMgyykpJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxZ+QZNchwctEiGLRWOFUNVio30Mq7feJEwm49Dd9ni3+6I81p
-	ApTm5dthuH5Iyc4INh77KacVlYPYp59UiLOoIijvD5NFW1nfrj6jFfnCFEHIIfAGEryEAaYJH9i
-	eVzlP0SnXmn5TsLzdVvvy8svBJzxF1jIvxju2lbrQebyrkcdiHMQgEXc5CcabnX+Kv5A=
-X-Gm-Gg: ASbGncvTV8Z+l52d+rgbJia2ChXAEBpgF9Q9+WIILV1OVFb/8+kDWRGVdjyNiEceEtC
-	vNUDiUWctSgmTJCsgY3CWv2JOWiEz0eRc2fR2qQug6navMpLJU40NeQVERIaHTDFg9rXmq+45S1
-	48JQ+lNsyA5t9+EhCGsFVnnMjJQxs3MohazCGsYBLaN+H1K4uEwtoIIVYb7OS3bsyk4XALjFFmv
-	tQ9xDD7AHL2iZS0ATivKMLKCsuFTVoL/lFVVfawbQogzyw6U2NLCPGcqIL140faXbX/w2xL18Ts
-	KfKZtls2pQcoQoSmgwNJXy+g0wCZGO9/h1z/euM9Hjpsg1XGvrFgSebL5PDM87kdRLjZvoLyo2O
-	PDk0OoB53nkqwhtk+vb6L+CDOHLqc8FLVfxVZv+rBzA/UYlVw4ewr
-X-Received: by 2002:a05:6214:21aa:b0:6fb:35fa:7802 with SMTP id 6a1803df08f44-7070077a62amr36099446d6.36.1753268905615;
-        Wed, 23 Jul 2025 04:08:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwSQWjtXBuA6eHishG2gIiJ2cGaipMd1mJDi68fioFVtFVf/GzaJVerynAxuQtAMxj9KL8+w==
-X-Received: by 2002:a05:6214:21aa:b0:6fb:35fa:7802 with SMTP id 6a1803df08f44-7070077a62amr36098166d6.36.1753268904649;
-        Wed, 23 Jul 2025 04:08:24 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91d9e89sm18897221fa.88.2025.07.23.04.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 04:08:22 -0700 (PDT)
-Date: Wed, 23 Jul 2025 14:08:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
- secure calls
-Message-ID: <3fogucs66bpupdwbzlhevpglxg423ub2vkn6zouakjtswa4tu3@drhgtfvr6tz7>
-References: <20250722-eud_mode_manager_secure_access-v7-1-40e9a4569895@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1753268928; x=1753873728;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3B0D+GxZIdTFezM7wUdeHc2Z7x4Bz95ATZb5mHcRHNs=;
+        b=PyiwxKHPeKsR64XfX7b3EpvuIigfO2WguL3fz9uJHE8ntrLca/o8SIvdUMJmGVxxnZ
+         nSzPRUALo5JiLDfi8Bbke52v279t16YP9OlvIFtPA768iU1u7kCwV/GyvAq4yp+BFRbF
+         dEIsK1s+0rFTAaTU+8lhC82Edrmd2je/7NQsd00VwLcp1EXG2AEt8Hy/dZNU6cZEDNVg
+         1I1Qy6e4YaAWGswqlOzSCFxfUD8B8l47Wa1dKfcznXfR0v0N/6A/RWAufIEsEh2KL7Dq
+         9pyFwMRXi3/omqQPobivMWXy9cSgePYRKXcInuj7BbEQBaRfKw3I+UI80hqw8mzhJ9QY
+         bspw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTDFWyuF9P5pZfKSlCX1AdwBAzPa4VUrcfr+KkvGyjJMQ1rzMM00w5pc56Hv90UI+WvHHFblrKB8KD9OE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIWfr/5iIHRFzm3Ptou5cPeQYx7eWJa3UJdoLRZFxLoqVsrxS4
+	1GT7cGzMy8R4yEbu+JCTCX4RJGpaW4yiSi+UXbn5JQQEj0iUANeZMI1HqwKtq8RqdKqSwYUuAJT
+	C0E2l3Nolfl3j4wNdwvROerr+GlPsgavNgrX3zymwcg==
+X-Gm-Gg: ASbGnctXaEQUXMKhPiG4fPml0lUt3+AkB69HdWkEa133g/o7Nrz1++F3wFmE9YMGck4
+	cfipueY+bE1JulsD71IXX7kwLJ6qoModaiuaWvG19RH3jnn8B7EUC0B5yALvxKPDVd/Q2Rt3tNB
+	qbDcwBNO5SlZvbbSz1IK+IgpcrLT8iv93kTSLB9lEF5cf0B+SxbcSStx6l9w+aDVyR/EKjaYBaK
+	+kF+J0=
+X-Google-Smtp-Source: AGHT+IFKArCYdHOkQCTFcXAgfJ76l45O02eVn107esIDRp4PDEtys19CbwegoUBC08sGUKe6rDVxbL8pTwqzpc2cdT8=
+X-Received: by 2002:a05:6512:39d5:b0:553:2e59:a104 with SMTP id
+ 2adb3069b0e04-55a513e983emr851506e87.37.1753268927568; Wed, 23 Jul 2025
+ 04:08:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250722-eud_mode_manager_secure_access-v7-1-40e9a4569895@oss.qualcomm.com>
-X-Proofpoint-GUID: -XIlBNVGfn1Wf647hjwa5AT7hSD5R9vq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfX1bqs4Q2JQ+A/
- n8FgeFjrP6wiR5V/3eWsPFdNbDsEniHe4FGRbHa2gnHUPDAGyvOTH3FOO+JnSGZrkIjGIF7l3Ub
- zTZcq7FObqU6ozJf5YUSXWNSTWjDvzyvR/BP+mpOZdIhw4aKwr0rTfozMt7Ov8/wKrS57ADyZcq
- CMoQI7E4/S+z0wrpULY7W2TQs3Nknt0EbvYQSKDYT4AzO6FGXTgzsMaZkGKjtE/kk0vPjbK7lwF
- ZgyR8jhzP+41WnpDXLevmXJdwERjy7DXIdTcCHDn8LRyExSl3X5n9FW/DgyqhS/gsxoM9+22JtN
- MmvYMPC/KURx0TmMRTilKZ0PfaFaSNdLaXynEzjJYUD5rp+kA/KjL5hNk2H5i92P3unisdShtie
- inlZOz/VmKI2oa9zAi4KvGCwKadyb59kGbm5yVY31GpSTrAchJbcmw6nTKKqd/QKBS1FUhsC
-X-Authority-Analysis: v=2.4 cv=E8/Npbdl c=1 sm=1 tr=0 ts=6880c2aa cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
- a=tE-qeLKrG5p5ljmTaQoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: -XIlBNVGfn1Wf647hjwa5AT7hSD5R9vq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015 phishscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230094
+References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
+ <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com> <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
+ <CACRpkdZha_ucjWvP_NQ+z2vbD65Y3u7Q0U57NYbJ=vqQ6uPGGA@mail.gmail.com>
+ <yslfabklduaybg255d3ulaxmzpghyj54zdfeqkx3oxgisxf6fo@2wecuqpvvefc>
+ <CALHNRZ8jq++KVKxKP2-GwMA6CauP=cM2_wt==MRAV4mOzK2kxw@mail.gmail.com>
+ <xc72g7j7png443pjxu2wpsuqofgrpxvn43emkt3rv5qrjzf7vt@qzvsiy3eakub> <CALHNRZ928+=85FbvfKt1c4VX7RudU7ehuOa6wwLj8JJNz+=W-A@mail.gmail.com>
+In-Reply-To: <CALHNRZ928+=85FbvfKt1c4VX7RudU7ehuOa6wwLj8JJNz+=W-A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 Jul 2025 13:08:35 +0200
+X-Gm-Features: Ac12FXyYD0AJUEr7X9CzcjA1Pj4U-nYzctmGPS86PrlZzjvsb6lrpBvI2Km-UA0
+Message-ID: <CACRpkdbLzAJS=iqgOEzE9kD-fM9tx22JTDPgQeLwbTFKiStrtw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 05:01:53PM +0530, Komal Bajaj wrote:
-> EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
-> as read-only for operating system running at EL1, enforcing access
-> restrictions that prohibit direct memory-mapped writes via writel().
-> 
-> Attempts to write to this region from HLOS can result in silent failures
-> or memory access violations, particularly when toggling EUD (Embedded
-> USB Debugger) state. To ensure secure register access, modify the driver
-> to use qcom_scm_io_writel(), which routes the write operation to Qualcomm
-> Secure Channel Monitor (SCM). SCM has the necessary permissions to access
-> protected memory regions, enabling reliable control over EUD state.
-> 
-> SC7280, the only user of EUD is also affected, indicating that this could
-> never have worked on a properly fused device.
-> 
-> Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Changes in v7:
-> - Updated the commit message as per Greg's comment
-> - Link to v6: https://lore.kernel.org/r/20250721-eud_mode_manager_secure_access-v6-1-fe603325ac04@oss.qualcomm.com
-> 
-> Changes in v6:
-> - Propagating the error code from disable_eud(), per Dmitry's suggestion
-> - Link to v5: https://lore.kernel.org/r/20250715-eud_mode_manager_secure_access-v5-1-e769be308d4a@oss.qualcomm.com
-> 
-> usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through secure calls
-> 
-> Changes in v5:
-> * Changed select QCOM_SCM to depends on QCOM_SCM in Kconfig per Greg's review
-> * Link to v4: https://lore.kernel.org/all/20250709065533.25724-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v4:
-> * Added error logging in disable_eud() for SCM write failures, per Konrad’s suggestion
-> * Link to v3: https://lore.kernel.org/all/20250708085208.19089-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v3:
-> * Moved secure write before normal writes
-> * Added error checking in disable_eud()
-> * Use ENOMEM error code if platform_get_resource() fails
-> * Select QCOM_SCM driver if USB_QCOM_EUD is enabled
-> * Link to v2: https://lore.kernel.org/all/20250627125131.27606-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v2:
-> * Drop separate compatible to be added for secure eud
-> * Use secure call to access EUD mode manager register
-> * Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_molvera@quicinc.com/
-> ---
->  drivers/usb/misc/Kconfig    |  1 +
->  drivers/usb/misc/qcom_eud.c | 33 ++++++++++++++++++++++++---------
->  2 files changed, 25 insertions(+), 9 deletions(-)
-> 
+On Mon, Jul 14, 2025 at 7:45=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> I started looking at the pinmux scripts a few days ago, but updating
+> the pinmux driver import/export for the t194 style spiderwebbed out of
+> control quickly. I expected it to be hairy, but that was an
+> underestimation. Doesn't help that I'm not the most proficient at
+> python either. I'll continue the effort later, but if someone with
+> more familiarity wants to try, it might be quicker.
 
+If this means people with 186 dev boards cannot use mainline
+Linux and they would if this driver was applied, maybe we need
+to apply it anyways?
 
--- 
-With best wishes
-Dmitry
+Yours,
+Linus Walleij
 
