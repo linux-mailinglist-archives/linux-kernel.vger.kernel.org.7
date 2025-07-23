@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-741903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A279B0EA7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66157B0EA80
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206063B91E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F003B4BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6242726B75F;
-	Wed, 23 Jul 2025 06:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1426B756;
+	Wed, 23 Jul 2025 06:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXeHXmHR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfOmbHCy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25B618C91F;
-	Wed, 23 Jul 2025 06:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741D92E36F8;
+	Wed, 23 Jul 2025 06:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753251503; cv=none; b=O0uvXhLSXe8G02x6Imf8Kq6/rTAVfmf+9+1B9V7wA2coo5I3cfnZNmh82XIZYF8B2vzwqBrYwEVj1JApGS0fY2eE/L6/ed3I54JsshspmRh5ZjpqMqjbojHSn2v7SbFs3WjIyJT24Nh2TOrKCaajYQkdgs8JMWzG1PWH3iCKLJc=
+	t=1753251597; cv=none; b=d6UxOc9rZz+kdaALbCo/94z1e4x1ZWFcPoI01M5d2qkUbo/ruaW9pyKeA8khrJTm7xu9SjvU6D5V7OWhogWdCP8U46yiJDQ1iThK6Y0boAVvIm2ZO2SZQjyBrFN74pmO3OxS8jgul38bGkVmHECJAY/nhykdy59A/IkLpLRkSu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753251503; c=relaxed/simple;
-	bh=rqrM0LKO3Whud6YGkhw6uiewxJ3mRCF6N+fqxS7NLeY=;
+	s=arc-20240116; t=1753251597; c=relaxed/simple;
+	bh=oZdkGtmxtTh9HKIAj5gYwQCRyXJDq/Rl7IxCv6JqD4o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ybxmzh/1eDdt/mv4jb+Jpsd1S35cn7bO8bDJKe6insfsDolaVh7U0cS+MAzqD5kUmiRfk9C29TeEAxI7HBa7euQHQys3JPZt6hCuIBTiJr4TA3dKBZ6xlRTYWZb0pwTI0Y8zHiRMma3a+H4L2Nf/8LvXTFDC+8oGeBGbPy9rpwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gXeHXmHR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDC0C4CEE7;
-	Wed, 23 Jul 2025 06:18:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SMG2EWnAwvhVK5JIV+rAPkobGh8GcOYA1U0xCo6NHeqYK1qRx+5b9eDEvETYSSt7tUFwqa+Nt15/beLl6mxqeKoPX9FCvZqxqTLZe5ipvG35PVX4Ud8t42bZwMZ+AHVtJtoIY1g91L2/TMYDOW+8MMohWJeW1f8KVbskaxxT9dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfOmbHCy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8702C4CEE7;
+	Wed, 23 Jul 2025 06:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753251503;
-	bh=rqrM0LKO3Whud6YGkhw6uiewxJ3mRCF6N+fqxS7NLeY=;
+	s=k20201202; t=1753251597;
+	bh=oZdkGtmxtTh9HKIAj5gYwQCRyXJDq/Rl7IxCv6JqD4o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gXeHXmHRncObLrt5e2njqEHHRsAANFxsyooWQ1cBdnJmVGG4UnAJIeYxP2jMxkjMu
-	 idpNqLypXd0/5YBkau7B9SDXAtbsGIRs64poWz1nPXqDCAHu1nYY2oLzwMHxku556U
-	 nr3sqCdVf/Y9yIb+K25qRvAhmd7f1aVy7jXW9zXPgB9lAW5w9mYA5M2XOMA2t8B5Ow
-	 yEvSJwqfgy4L9XaaqxIr7eOU56rvJlSdIan9viYKFSkJ9bOt/LjmVpj7GvFwZDLgnC
-	 ns2neJFZ0aNByHl3bB6APbkUUW2bj6mclPa44DQPIrv6yhKoctxYkVvgseU7trYo4d
-	 wSbD74A5GJ7vA==
-Message-ID: <6d3b5d1e-de1b-4d3b-ba14-7029c51b8e05@kernel.org>
-Date: Wed, 23 Jul 2025 08:18:17 +0200
+	b=IfOmbHCySCgi5/L3Du2D7fFfXoUWxn0K+Re1Sv2sSsmojsCa68x1BlHnMzpqVMdBA
+	 2sQN+MFV9s2rsVR2Cwx23eS3bziqBRr1IPzZ4lDTgXPB3fa7lB/kLKpEETYzUbc9OR
+	 PhO6Bfvrz+dszjj8KuN1XgYIPXT2EYragxmQhzaIsFlDJ1BnZnWWpSi04gBt/eYiCI
+	 MNIqE30IhsPd2uZIc5tyfWx0GSQ3XigNCf6BlKE4EParqGfG5BdpchqJaLUVzC3/CU
+	 vfE4Q4GyPbzSnzh7M5qVkapQcwJfcvDx6AsffnOwrNFgJBJI2g8iTsnw83ays2FHo3
+	 mPFfn9jRvRN/w==
+Message-ID: <4ba4c608-e2e1-46e8-b796-e07c7c97dbb3@kernel.org>
+Date: Wed, 23 Jul 2025 08:19:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: microsoft: Add vmbus
- message-connection-id property
-To: Hardik Garg <hargar@linux.microsoft.com>
-Cc: apais@microsoft.com, conor+dt@kernel.org, decui@microsoft.com,
- devicetree@vger.kernel.org, haiyangz@microsoft.com, hargar@microsoft.com,
- krzk+dt@kernel.org, kys@microsoft.com, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
- wei.liu@kernel.org, cho@microsoft.com
-References: <095a1455-c6ac-4a7d-a219-ddfd0a93d8d6@kernel.org>
- <1753240089-29558-1-git-send-email-hargar@linux.microsoft.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: Add Richtek RTR5133
+ Support
+To: =?UTF-8?B?amVmZl9jaGFuZyjlvLXkuJbkvbMp?= <jeff_chang@richtek.com>
+Cc: "broonie@kernel.org" <broonie@kernel.org>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20250722083543.2730796-1-jeff_chang@richtek.com>
+ <f4505b19-3496-4fab-ad74-d190d847eb17@kernel.org>
+ <TY1PPFAEA8AB8B70D7016E46DD1E5C1F9B4EC5FA@TY1PPFAEA8AB8B7.apcprd03.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,61 +106,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <1753240089-29558-1-git-send-email-hargar@linux.microsoft.com>
+In-Reply-To: <TY1PPFAEA8AB8B70D7016E46DD1E5C1F9B4EC5FA@TY1PPFAEA8AB8B7.apcprd03.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/07/2025 05:08, Hardik Garg wrote:
->> Host is supposed to have multiple guests, so this feels like you are
->> going to prepare for each guest different DTS with different connection
->> ID. This feels like poor design. DTS is supposed to be relatively static
->> configuration, not runtime choice vmguestid+1.
-> 
->> The guest cannot access other configuration channels, can it? If it can,
->> it would mean it can eavesdrop on other guests? So obviously it cannot.
->> Therefore from guest point of view this is completely redundant. Guest
->> cannot use any other value, thus guest should not configure it. The
->> guest has only one channel and uses only this one which gets to right
->> place to the host.
-> 
-> Thank you for your feedback. Let me explain the connection ID in more detail:
-> 
-> 1. Message Port Architecture:
->    - The connection ID specifies which Hyper-V hypervisor message port (mailbox slot) to use for communication between the host and guest
->    - The hypervisor has multiple message ports, but historically VMBus only used one
->    - With the introduction of VTL2 (Virtual Trust Level 2), the control plane can now be hosted in VTL2, requiring different message ports for communication
-> 
-> 2. Control Plane Communication:
->    - The VMBus control plane on the host needs to communicate with the VMBus driver in the guest
->    - When the control plane is hosted in VTL2, it requires a different message port than the standard communication path
->    - The connection ID tells the guest whether to use the standard or alternate message port for this control plane communication
-> 
-> 3. Message Processing:
->    - Each message is tagged with an ID
->    - If the guest uses an incorrect ID, the host won't recognize the message and will drop it
->    - This is not about choosing between multiple available channels - it's about using the correct mailbox slot for communication
-> 
+On 23/07/2025 04:32, jeff_chang(張世佳) wrote:
+> Confidential C - Richtek
 
-Don't paste me specs in response to questions, but answer specific
-questions.
 
-> 4. Security and Isolation:
->    - Each guest has its private hypervisor mailbox
->    - Multiple guests using the same connection ID cannot interfere with each other
+I cannot work with confidential data. Fix your email setup.
 
-Then all guests can use the same value, 0, making this property redundant.
-
->    - The connection ID is more like a "root ID" that helps enumerate devices on the bus, not a channel selector between guests
 > 
-> 5. Dynamic Nature:
->    - The connection ID is specified when the guest starts running
->    - The host can change it during VM lifecycle events (reset/reboot)
+> Dear Krzysztof Kozlowski:
+> 
+>         Thanks for your reply.
+> 
+>         Please review my explanation for your questions.
+> 
+>         If I have misunderstood or if there are any parts that need correction, please let me know.
+> 
+> Thanks
+> Jeff
+> 
+> 
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Tuesday, July 22, 2025 5:05 PM
+> To: jeff_chang(張世佳) <jeff_chang@richtek.com>; lgirdwood@gmail.com; broonie@kernel.org; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; linux-kernel@vger.kernel.org; devicetree@vger.kernel.org
+> Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: Add Richtek RTR5133 Support
+> 
+> On 22/07/2025 10:34, jeff_chang@richtek.com wrote:
+>> From: Jeff Chang <jeff_chang@richtek.com>
+>>
+>> Add bindings for Richtek RT5133 IC Controlled PMIC
+> 
+> Subject - RTR or RT? Google tells me nothing about RTR.
 
-So not suitable for DT. DT is a static data. You cannot just keep
-changing existing DT to match whatever you want runtime.
 
->    - This is why the VMBus driver needs to know the connection ID every time the kernel starts
->    - The ID might be different from what it was during the last guest run
+Why are you pasting my reply as yours?
+
+> 
+> --> I will fix it to RT5133 in next patch.
+
+
+Fix your email setup.
+
 Best regards,
 Krzysztof
 
