@@ -1,103 +1,72 @@
-Return-Path: <linux-kernel+bounces-742367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41584B0F0BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:06:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11697B0F0C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 378DB7A206F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7261C837BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B782BEFFB;
-	Wed, 23 Jul 2025 11:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F712DFA5A;
+	Wed, 23 Jul 2025 11:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNvnqvvw"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pphmrJId"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8DE270ED9;
-	Wed, 23 Jul 2025 11:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A24029E0E8;
+	Wed, 23 Jul 2025 11:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753268772; cv=none; b=NJ3XM9/jljJBWS8mVA63beTum7wW9KJFop6bkziUX2OcoeEeDPLyqxeMC54dhAQlt4sCPaBZ5zousSiAGa/mOQHm9uyWpwdfS9b2pebGJYPdhSiOQZtxOWlyDu21JJWRxhb648jMaQuFv1EZiCzAt6Ywtv/MvUmUTQdelIHZskc=
+	t=1753268925; cv=none; b=s4HLU+xUCyfpoV6671JJ9B8fPpVnNEUhsU3UpVmKRNWPhP0+cA4R8MA7QhIFf29x+psCDtHvMLYLl0EVeSrCHqjk0D2DcRCrlsutvxqjj7XiO6b9ddohssa2KQGnLnBoRLoxpUCM23rwZr7q5ObYpfjxukDy1f/oMVVUCxkVW3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753268772; c=relaxed/simple;
-	bh=rLzvuH/xAJ/NxbCXzGz0I4CbxebZMmvV5T+XdQSnKbo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LFyGVcnHwmEpbyyO/7w+VjJiRGtbjs8E1uUg8NOBYNELnSM9dBNffTfUxU85hfniQx8VbBjHUgs+B+38O6MUxSr6AH4EGmNueO8QQqKyCm/z/NLWQ7rmktt7AtARrxFladiYXTFWI93WrAwWIfhwzxEjnn/79LVkh6wixm85s0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNvnqvvw; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-749068b9b63so4336468b3a.0;
-        Wed, 23 Jul 2025 04:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753268770; x=1753873570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gggYC9jdzO8cIJk00SwXWq1Yluv2kBVse1A4jgDLjE=;
-        b=XNvnqvvweyft2QaKbTDEK0tJjMr8bVsxj5eHkLJIgFDD1r/BYiJ8BL7DtjHjAdteUs
-         +PXfuE8j1NVv4GC3tGfkePS1MVp/H/+lDkJVF/Gr216nTz34Cg/+YWV98+0wkkjCJDzN
-         7EnM8DVaOV1wsfdfIgV5SZPMm2Rxpo204B3/uCqLHSSm72yXvtaiYcd0VOizkuZOwsgk
-         wOqv9h48IxBSBJZHNwYQgkIPW5OQrHBhOCpR2eKGeRDRxpb7JZfRRl0T8EAKmdAY6MXH
-         lRKo/4TlYr4O/Sk51KpU34dJYBsXSR0SWtmbSujYY/mElf5J91A3tXM3PjfMkpIsZ4w5
-         7qbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753268770; x=1753873570;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2gggYC9jdzO8cIJk00SwXWq1Yluv2kBVse1A4jgDLjE=;
-        b=L5oOP2ZbpUBE6g9jlKJekcB2vCq/8PuNcZeD0chpye5fS3WmFm5Qhz+pXDQSZ+VEhj
-         th36Rb1k8uee9BLIisQpP1C0LbY0DPh+YhAxBw+8t+9Y+R8ZTeKzIB8QEPeKkBx2VBkG
-         WOLryv4NOYXaEwNBqtt0/NGSL1ffQo+BdgKJ89700V7Nc+6yRJGHpvYJpXCU+JxPm1kk
-         K3eWZTNbQ8yfAoAY3wGQ3XnW345PKKkYmZrpHLy1l1/ZSz02cdoZOW74FlVwIYsQ6nlj
-         1RY6kwRIjmBwUVfig4mKCCeybNpva1v9Tf3lr+NrXOlQKih19EIIhge76G9J25bQ7s7m
-         KW5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNz70sPEUfQjNCuEQ/f8vIpnbztTRR5gBZuLt504U8oGR0ulitMWvRFIpKK7VzgANYLJSUtCpJnWhIpQo=@vger.kernel.org, AJvYcCWkwR+D5e5smrmkG0YI5hD8sqykMJOhGUAbXwS0qp7h8AnjLE3d041l6myq+KbgmHCK4FOhguYaWt65CIzgVy5A@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYxy4Mb8/SKWBpCGfFnl0zO0gdQE5gXs4aBKMSfez3bfuM1yG9
-	WOp/ekfE34YdwDku6SmBNFprSLyn+i0GqT3EWaQDIWA+4VyTTI+EoP6r
-X-Gm-Gg: ASbGncuoYP32cHzGJus81qA0+bGT/AtiQlCJkaj0y3fsvFkLFoDJ2K06sRS7ks3xtn5
-	vAOyLDu7e3X9ep04cRLzNVgCEsjaWjRVHTbu2ZWWOyKP9XiqdaCvFhb0bY/oNVttrd250v19FTD
-	3+CaaroJ2XUHtIo8FOVa3oQIxm2MLz2Vn627YTCzuK/5mgyN7IV0EXKqfmZIF/DufDkD5ZCLBmW
-	NwLzpaHqUIotkGomA2Gp6x79XLFi5avEz7mayu1aS8eSyXRM9efQs5WHtjnclpQZHUoFAkHSmQF
-	p3sefs24s7dHS64qemRvrrlKsp5hyDZ9MutmRVS7g+/GJPcSUhoxWY2fiEtaMn9XyGpnvFUr2LX
-	5I/zvVWO2HCDBxFQ0DTC7MBz7r2PLcQwge1FoLekzico/1izj7Hk=
-X-Google-Smtp-Source: AGHT+IHDaD0SAIqDCHFQ5hg5e0ciI8y4TK/NnpJ9dwzw6/StwdgG/gRPzHcyj8m3t2GJUnEUQYB+Ng==
-X-Received: by 2002:a05:6a20:748a:b0:239:d43:481c with SMTP id adf61e73a8af0-23d49141c0bmr4231501637.37.1753268769719;
-        Wed, 23 Jul 2025 04:06:09 -0700 (PDT)
-Received: from localhost.localdomain ([114.247.113.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8dc32sm8771650a12.23.2025.07.23.04.06.03
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 23 Jul 2025 04:06:09 -0700 (PDT)
-From: wang lian <lianux.mm@gmail.com>
-To: ziy@nvidia.com
-Cc: Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	broonie@kernel.org,
-	david@redhat.com,
-	gkwang@linx-info.com,
-	jannh@google.com,
-	lianux.mm@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com,
-	p1ucky0923@gmail.com,
-	ryncsn@gmail.com,
-	shuah@kernel.org,
-	sj@kernel.org,
-	vbabka@suse.cz,
-	zijing.zhang@proton.me
-Subject: 
-Date: Wed, 23 Jul 2025 19:05:59 +0800
-Message-Id: <20250723110559.32219-1-lianux.mm@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <1C468AC6-C55B-41A3-9335-65B03EF65B83@nvidia.com>
-References: <1C468AC6-C55B-41A3-9335-65B03EF65B83@nvidia.com>
+	s=arc-20240116; t=1753268925; c=relaxed/simple;
+	bh=K3w6uW7+FkG9Ji2qt8oJ24ueGeZk9Jaai+N9sMm+7xA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kvc4l+muYEGQA9yTzcOHVRtNRIhZ2+GDapfKepEbOCD3x9nhVN2qpFRMP3elthGalLCRdNR+vHQEBGqVxGay0qxrIuR/1oQN4EpMZY61zj9noULQQBeaoQRd9jtGwzarO0Amru0Vj0UqFvkT542N2cTRqRBSCOqSwrkg4CGeyMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pphmrJId; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56N9WF6l011562;
+	Wed, 23 Jul 2025 11:08:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GiH4Z/1nBBDNEtWTVbil1x
+	vmT/ysuluJja5uRWPK2xI=; b=pphmrJId1Q/xNV9jXA6KhX8cM/atpaZkqQlQrX
+	eTYDy3qVKPDY+PXxTTVaR/SuPiZpQIK2AknftTeKcPAahITxIyHVZHX64Yk8L7XQ
+	216mL8m3VemY7tChIsL0aRFd4VvblTn14yZ3kuPQqVn8fmvqtErQ2fA8gsc74Sn/
+	J9AGuh8b0vm/6UroOy27E5aWdnSMJbKLKJVlYmniPGcGjxOEFussSA/qECBiA/3Y
+	7RTG/zOSKq9ZfXZkO/tE+BIpG66uy2mNAB+ctSg1ott1uPwtM2xCwf6B0mM7F/lA
+	k2VEO/0sjLPdivGw0/DjoGMjkINhzC4S6sTrKxaQ4U3HEJzA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047qcw7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 11:08:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56NB8Z5c021774
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Jul 2025 11:08:35 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 23 Jul 2025 04:08:30 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_mdalam@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH 0/4] Enable cpufreq for IPQ5424
+Date: Wed, 23 Jul 2025 16:38:11 +0530
+Message-ID: <20250723110815.2865403-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,45 +74,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDA5NCBTYWx0ZWRfX30q8AyqSj+cx
+ GH37qbvFuKIHdfCSP1B9xxbg17QTv+uR+zPEn+UyVNYC9TD/z4nRTa82lSNRFjVsXanbRpJDE0u
+ ZR6CgjoPhD3PygiFIhp6kHF0e7zlgB5NdumEuLavJNYiILgQRlLc31vGWqnLZ1kN9/s3ueMlrck
+ pVkT6WOEMDb65bB8R9ud84LYcPIGU5tMkDhGusSYZNbTuTocbVtRbupzwCJ/R7h4qDXZhfTOf10
+ 7w20eZmQW/Ajdlo7BoAdzRLFqhtCD/Knp7RCr2+8Zv/iDy6zZC6tQpwRrv4YAI13vg6hc5rXxOt
+ 1TaKZjDJWHcPFp0gD7dXrIMGFcGk6+t5iUA7dIVEk5prvShog1L7fYf/0zDIkmeePOYIDg+FFiY
+ 9unDgSiX3pZ9U9nEpv1gxZcRyQ1crDOY9s7cYu61WW/tjgfuxWnPwnrnt/gXxV0IEKCuac2C
+X-Proofpoint-ORIG-GUID: znyQuB2L7GNzK_l9r-E8rVfzm3XBI4Mz
+X-Proofpoint-GUID: znyQuB2L7GNzK_l9r-E8rVfzm3XBI4Mz
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=6880c2b4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=j41EFXsdaNRYK4k_7XoA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=832 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507230094
 
-From: wang lian <lianux.mm@gmail.com>
+CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+Add support for the APSS PLL, RCG and clock enable for ipq5424.
+The PLL, RCG register space are clubbed. Hence adding new APSS driver
+for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
 
-Subject: Re: [PATCH v6] selftests/mm: add process_madvise() tests
+Md Sadre Alam (1):
+  cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
 
+Sricharan Ramabadhran (3):
+  dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock
+    controller
+  clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
+  arm64: dts: qcom: ipq5424: Enable cpufreq
 
-> Here an invalid address range is provided, since pid is checked before
-> address ranges are checked.
+ .../bindings/clock/qcom,ipq5424-apss-clk.yaml |  61 ++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  65 ++++
+ drivers/clk/qcom/Kconfig                      |   7 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/apss-ipq5424.c               | 282 ++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   1 +
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   5 +
+ include/dt-bindings/clock/qcom,apss-ipq.h     |   6 +
+ .../dt-bindings/interconnect/qcom,ipq5424.h   |   3 +
+ 9 files changed, 431 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+ create mode 100644 drivers/clk/qcom/apss-ipq5424.c
 
-> BTW, the size of iovec array cannot be bigger than IOV_MAX. It might be
-> worth testing as well, if you want to.
+-- 
+2.34.1
 
-> With default_huge_page_size() -> read_pmd_pagesize() fix, feel free to
-> add:
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Tested-by: Zi Yan <ziy@nvidia.com>
-
-> I am able to compile and run the test on arm64. Thanks.
-
-> Best Regards,
-> Yan, Zi
-
-
-Hi Zi,
-Thanks a lot for your review and the valuable feedback! The issues you've pointed out are very helpful.
-
-Regarding the logic where the PID is checked before the address ranges, 
-that was an oversight on my part and I will fix it. 
-I'll also add the test case for the iovec array size against IOV_MAX as you suggested.
-
-And thank you for adding your Reviewed-by and Tested-by tags when i fix this.
-
-I plan to collect all the review comments, revise the patches, and send out a new version 
-with your tags included in the next 2-3 days.
-
-Thanks again!
-
-
-
-Best Regards,
-Wang Lian
 
