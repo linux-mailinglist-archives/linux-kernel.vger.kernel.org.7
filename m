@@ -1,209 +1,101 @@
-Return-Path: <linux-kernel+bounces-742336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF25B0F01F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:41:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DCDB0F02A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 12:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B991898C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A83AA5B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E9428DF50;
-	Wed, 23 Jul 2025 10:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NKBM1xd5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fsknoIhp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z0m8UJ27";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xCNm0FJi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBE526C3BE;
+	Wed, 23 Jul 2025 10:43:49 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404728505D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 10:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A9C23A9B0;
+	Wed, 23 Jul 2025 10:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753267306; cv=none; b=EDu6cD8UdggDGSj8yfO6mj05zwbRZRDbjXFxzkrGTzWEcCqEcauDLvplBNWNT81H3Rbb1nfCLzyKhNF5lGgVTukASl3QMoUSD4/QX9Edkt1naaVJfkXAuNbYmIiHPdkf1Qd6wxWC4sv7FFs6ZyWexqBFeu5PsY8c4WjNMEMZqbE=
+	t=1753267429; cv=none; b=UL4gzYaKQ/sQvRvCXY6836vOHHSBl7oiuJeOEdK1Y/gT1hgo/xk7wCC2+xN11JoVvZNmvHAl1UJTthCJt7CQgsoagICinievr/JjGheMqOm3Igkop/qqhGlmzz3g0P/1h+kbgbYByJitYq/ISl/zsIDDJTgd+oRRIftIPj8C3nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753267306; c=relaxed/simple;
-	bh=gPY+utJPoK4qXzF64aQZa7JY6601chZq5rW3jJ0PDZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s5lidBIETrWU8KzTpx9Wnvxu0EUbsrcGhfgMtEaEZCMHf4QVg+13lg0Db/b8g4gwNVXxWASRI4wBDqcbGK5F/GOf90ls7wKQx+YHRhgQbB9+8wjphx4MX81pZVkYtxjzbePVyYwZCrj1qLMvB6aZ09yOhOajFrFi2O0dBdUasS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NKBM1xd5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fsknoIhp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z0m8UJ27; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xCNm0FJi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E77722175B;
-	Wed, 23 Jul 2025 10:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753267302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
-	b=NKBM1xd5hhTzbTqPiSyk5QXJkcG61Dqusg27TViwKYbLIS08gyHj03IMZxCROsZxjvN8O0
-	RBGFlc6StQ2nYf/Hy6ui4z0p+mvq9h5MCdnGDv5xM/BZysG2XzNTMt1Uuq726a9FoEip3s
-	h+oodcYtGRud5Czr+Bn0HiA8qC4IPzg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753267302;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
-	b=fsknoIhppO56VFd6H3bw8yT50VVyKKpMwyAyvFBVWZ+zHvR/WN/Rv1Sh28eKhe9f3/TjLv
-	e10LCKM9A7eteIDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753267301; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
-	b=Z0m8UJ27XSzMXQKk79q7WGSW7TcWfKiQ2J66nsA2YY2izT3H8iU0XPZoZJCriuKne3UBZM
-	PfuVs5yrRsN1lmZvNBVnXHw9yx1f6Tuy1c01cZW04qjGkZUxhx1hiTieGzP2pvrtx+MoZY
-	1vV67SnMZ9PnADaJa+UWiWox48lIin4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753267301;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cYDispgFJbcU9UzWuoS/ot0t3xMqhlGClFolkxdcuek=;
-	b=xCNm0FJiM3wqrOGGEIYAVmUhudcOoLDjUxopgEP5QhS5XGvt2DxI8LNg3IcgemTldGzFxN
-	/LQ0ilrJzWzg6ABA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A34513302;
-	Wed, 23 Jul 2025 10:41:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tkwmA2W8gGhdbAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 23 Jul 2025 10:41:41 +0000
-From: Pedro Falcato <pfalcato@suse.de>
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Bernard Metzler <bmt@zurich.ibm.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Pedro Falcato <pfalcato@suse.de>,
-	stable@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] RDMA/siw: Fix the sendmsg byte count in siw_tcp_sendpages
-Date: Wed, 23 Jul 2025 11:41:23 +0100
-Message-ID: <20250723104123.190518-1-pfalcato@suse.de>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753267429; c=relaxed/simple;
+	bh=CeNRvuvwYWoVJB5M5UHDRPJgLHidL2E1QaHeWDWNRNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OnUYrnvXh46847FZ09E8hCwOP1IoaHM02QQr2Ighvp/iHwpRUuNi1CIFTDHvOyUOu3PgiDoxzWUw79KAMhjIt+0M6jdtVZMddN5LfhTbTKTBnLO3dzBCmQEElRwXdBlWkQF+aM2eEmkrGl0U0EZs74dKkyE179cvpRV8V6ykhxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz7t1753267343tbb65405f
+X-QQ-Originating-IP: AMID40wbO4UnU89sYl62AWFs9G0YVjfeRYNVQgQgS8o=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 23 Jul 2025 18:42:20 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3337543533688690038
+Date: Wed, 23 Jul 2025 18:42:20 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: MD Danish Anwar <danishanwar@ti.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
+	richardcochran@gmail.com, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] Add driver for 1Gbe network chips from MUCSE
+Message-ID: <A7AE3E9B4297A2FA+20250723104220.GA981103@nic-Precision-5820-Tower>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <5bce6424-51f9-4cc1-9289-93a2c15aa0c1@ti.com>
+ <49D59FF93211A147+20250722113541.GA126730@nic-Precision-5820-Tower>
+ <b51950c8-ce79-4b0b-af5c-bb788af33620@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo,intel.com:email];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b51950c8-ce79-4b0b-af5c-bb788af33620@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MUtpDbzatTjwCtUQqgK5n1YzfGhnrSFgUELS1GUnZHOYYPiNWmhcFrce
+	dXiYxx7swpHE6ep5yjxlO9emlwisg7N9iXKLBOupwtDm0en8ZjZSHqzKEcdgvoivXvwm5vK
+	9549va6cb/OUc5nDobebt7PS5ERVaj/yzOkuYCzzaK5MiJX57Jf/rlkW1K8+LOWcU37Wzxh
+	FOdSiwbmCNi5EbAkDPQ4GNduxAWbZyup1GqLJMkhnVyZHdy+Cggfxve12kNTEGffwJU8RAm
+	TUpvHW0qs2cDnmhZI922mG0OSVlXVbzWeFcN1UjELVx7GPSTRYPfGu6iWb016yEkjconyxm
+	nTGmcdPXIhD7o4+hXQzjC3jvJbDmVbTOZtpkpUAeRsKgZPttygKs0ZzBGtKOdUr6K2E5TCe
+	sBvkPkGjJMCIFwruo3hDXpcZjQCt8R1MBHL1+VYisGFJGZbTqZGnK4Xx0eJoqIkMth7bXDf
+	Bdz37SS+Tr/IW19ZsjY4l/VKlK26be8HNaxfNnnWSat/N3x7To0NCKPfyPUV25SBY0iUZKM
+	jarCK3s711oMsYfC6AbywfiHtSZA0GFvyH+jGMvIbYNoivy5kbC3NwEqqDOvqoAvP4n8NId
+	CtgY/uPW5uu1Cl/BgjvxgAqCTKWZNUxskOCFyI7pxltuWGtGA7pD3m82P+eu362/cDE8IHW
+	hF325DOYSgw9JFlEpQTGBOzlPQEahjOBXxQzNDS/6LCLYRb6wLMohcJS2zofJiAR8mlAdRF
+	Tl2SOWXDZv+UPZP/16DugYxYLDap1kdjbQZN3irxu0JXqFMM4+pn1wSJ4B0w4fCGQ25sMyn
+	Z6cNS/I49lWZF10yg/gNSe12J4rVooA+Gp8ZtK9n1p9E5kKWq6c0kyhrGi1Oky43fKd1De1
+	a+HvLg4iabtncSadAz6jm9pd4OK9lSWx1qD056aI1hOeibly5BrBhgtG8a/o5XiN/W+gmK1
+	Zelh2Sgc1h6aykGkwjUpPZjsAmtnnWfy6lb8WIPIP9QTVk1F93EmMN5E5oLxo9bzkp/ujzA
+	fd9s6zxiqFPMClXrevHiSpJanq0aRtnf29c4JHMevxw5I3wyPf
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
-we have been doing this:
+On Tue, Jul 22, 2025 at 05:07:08PM +0200, Andrew Lunn wrote:
+> > A series patches can be accepted without achieving the basic tx/rx
+> > functions for a network card? If so, I can split this.
+> 
+> Think about the very minimum to make it useful. Maybe only support
+> PF. Throw out all VF support. You don't need statistics, ethtool,
+> devlink etc. They can all be added later.
+> 
+> 	Andrew
+> 
 
-static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
-                             size_t size)
-[...]
-        /* Calculate the number of bytes we need to push, for this page
-         * specifically */
-        size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
-        /* If we can't splice it, then copy it in, as normal */
-        if (!sendpage_ok(page[i]))
-                msg.msg_flags &= ~MSG_SPLICE_PAGES;
-        /* Set the bvec pointing to the page, with len $bytes */
-        bvec_set_page(&bvec, page[i], bytes, offset);
-        /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
-        iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-try_page_again:
-        lock_sock(sk);
-        /* Sendmsg with $size size (!!!) */
-        rv = tcp_sendmsg_locked(sk, &msg, size);
+Ok, I'll try to minmum it.
 
-This means we've been sending oversized iov_iters and tcp_sendmsg calls
-for a while. This has a been a benign bug because sendpage_ok() always
-returned true. With the recent slab allocator changes being slowly
-introduced into next (that disallow sendpage on large kmalloc
-allocations), we have recently hit out-of-bounds crashes, due to slight
-differences in iov_iter behavior between the MSG_SPLICE_PAGES and
-"regular" copy paths:
-
-(MSG_SPLICE_PAGES)
-skb_splice_from_iter
-  iov_iter_extract_pages
-    iov_iter_extract_bvec_pages
-      uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
-  skb_splice_from_iter gets a "short" read
-
-(!MSG_SPLICE_PAGES)
-skb_copy_to_page_nocache copy=iov_iter_count
- [...]
-   copy_from_iter
-        /* this doesn't help */
-        if (unlikely(iter->count < len))
-                len = iter->count;
-          iterate_bvec
-            ... and we run off the bvecs
-
-Fix this by properly setting the iov_iter's byte count, plus sending the
-correct byte count to tcp_sendmsg_locked.
-
-Cc: stable@vger.kernel.org
-Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
-Signed-off-by: Pedro Falcato <pfalcato@suse.de>
----
- drivers/infiniband/sw/siw/siw_qp_tx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
-index 3a08f57d2211..9576a2b766c4 100644
---- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-+++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-@@ -340,11 +340,11 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
- 		if (!sendpage_ok(page[i]))
- 			msg.msg_flags &= ~MSG_SPLICE_PAGES;
- 		bvec_set_page(&bvec, page[i], bytes, offset);
--		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-+		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
- 
- try_page_again:
- 		lock_sock(sk);
--		rv = tcp_sendmsg_locked(sk, &msg, size);
-+		rv = tcp_sendmsg_locked(sk, &msg, bytes);
- 		release_sock(sk);
- 
- 		if (rv > 0) {
--- 
-2.50.1
-
+Thanks for your feedback.
 
