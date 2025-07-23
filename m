@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-742186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0857B0EE6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E85B0EE73
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE610546D14
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8493A4ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E8A286D7D;
-	Wed, 23 Jul 2025 09:29:17 +0000 (UTC)
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3738C286D55;
+	Wed, 23 Jul 2025 09:29:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9A3FB1B;
-	Wed, 23 Jul 2025 09:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6458A2868BA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753262956; cv=none; b=OWPSaBp7Inz8NBAflzU/k8fy7gXdQi2Y65xSF21AiJnTYf1QKZnjq5wzDDexPw4sCOJwWMB3tnf9Wa8PCX8FUTr5Uc4yJZmg0GPggwri1LVPTdE9IwvaUJqAzKY4WZsjmSrpN8O8/PUpc45DRgXQ/xO6s2cKqu3HZMUMdHt+eJ4=
+	t=1753262987; cv=none; b=jPLD8WZvivEPFM0O7oNKLHQ+00oQnCFw69aZk7ZpMPYbLL80hdcigb4UL0STOfSdZImeVeoByuLQCCWof8kGIu+w1i+Hq8YlsHHNent3dcbsquWKvgBXnrAJhUSdtjbppr6Mw8MACiRbLLd+Dpk6wSxecN1UZdobplF75WkL9V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753262956; c=relaxed/simple;
-	bh=grOY7rG/X+b9Vqa7udJpstXqVwojxMiy+5DRZZXGdFA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jQyUq/xu6XTNTOyt5cQ2L7HdoC+ip9Vwd6bSJHwHyx7z4/w0oTqMgcU6qljswCzCB4QCtI6mhims2nF9ZH7eKST4zYOgtnicVFBqKd30NOdXojlny4CPqbXXIIyA8UKqg7qxM/XibKHb4WLSfVtibNsw+92WfcE+30hpHPhkQAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
- (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 23 Jul
- 2025 11:29:03 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%6]) with mapi id
- 15.01.2507.057; Wed, 23 Jul 2025 11:29:03 +0200
-From: John Ernberg <john.ernberg@actia.se>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Ming Lei <ming.lei@canonical.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
- event
-Thread-Topic: [PATCH] net: usbnet: Avoid potential RCU stall on LINK_CHANGE
- event
-Thread-Index: AQHb8Xe2qza52xx55UmGbnkg6Pc/lg==
-Date: Wed, 23 Jul 2025 09:29:03 +0000
-Message-ID: <aICrWl2TTTInbfT8@w447anl.localdomain>
-References: <20250710085028.1070922-1-john.ernberg@actia.se>
- <20250714163505.44876e62@kernel.org>
- <74a87648-bc02-4edb-9e6a-102cb6621547@actia.se>
- <20250715065403.641e4bd7@kernel.org>
- <fbd03180-cca0-4a0f-8fd9-4daf5ff28ff5@actia.se>
- <20250716143959.683df283@kernel.org>
- <55147f36-822b-4026-a091-33b909d1eea8@actia.se>
- <20250718161825.65912e37@kernel.org>
-In-Reply-To: <20250718161825.65912e37@kernel.org>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-esetresult: clean, is OK
-x-esetid: 37303A2955B14450647C67
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <95DD33E56AD5674EBC1A132FFD9750A6@actia.se>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1753262987; c=relaxed/simple;
+	bh=MdmN0BHl9qK/x/8lXU5gTxriBjlVUKoKDGlmM00y1EI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWzNS0Aebkqx5WJXcytEyenIf/UZzoJg6eQJ3318jDmmK+JSnhh9/Oj7DgCWp/xBk0y+MJKcRzRcsC9Zoj4UYPQiFeSYTTWWHu9+6TaC5DVh8NzNr8GhFwWD+NfBBRHo5GQRTSHJxec0KueGMB4ijaUf2muyxhiLWLgjJoxakDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <f.pfitzner@pengutronix.de>)
+	id 1ueVmy-0008Tw-Ui; Wed, 23 Jul 2025 11:29:29 +0200
+Message-ID: <35debf21-bca7-480f-a61e-7b0494f10ca5@pengutronix.de>
+Date: Wed, 23 Jul 2025 11:29:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] parse horizontal/vertical flip properties
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ entwicklung@pengutronix.de
+References: <20250718-fpf-media-dt-flip-v1-0-75b3a938b4be@pengutronix.de>
+ <ryuew3kxnocj6uqq4nadp3kyaxg27rxlrgnaieyy2hlpz5jkd3@iyetnsbfanee>
+Content-Language: en-US, de-DE
+From: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+In-Reply-To: <ryuew3kxnocj6uqq4nadp3kyaxg27rxlrgnaieyy2hlpz5jkd3@iyetnsbfanee>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: f.pfitzner@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Jakub,
+On 7/23/25 11:17, Jacopo Mondi wrote:
+> Hi Fabian
+>
+> On Wed, Jul 23, 2025 at 10:58:28AM +0200, Fabian Pfitzner wrote:
+>> There are cameras containing a mirror on their optical path e. g. when
+>> mounted upside down.
+> How is this different from 'rotation = 180' ?
+If you simply want to flip the output (e. g. horizontally), you cannot 
+do this with a rotation.
+The camera I'm referring to is not only upside down, but also flipped 
+horizontally.
+>
+>> Introduce two options to change the device's flip property via device tree.
+>>
+>> As there is already support for the panel-common driver [1], add it for cameras in the same way.
+>>
+>> [1] commit 3c0ecd83eee9 ("dt-bindings: display: panel: Move flip properties to panel-common")
+>>
+>> Signed-off-by: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+>> ---
+>> Fabian Pfitzner (2):
+>>        media: dt-bindings: add flip properties
+>>        media: v4l: fwnode: parse horizontal/vertical flip properties
+>>
+>>   .../devicetree/bindings/media/video-interface-devices.yaml        | 8 ++++++++
+>>   drivers/media/v4l2-core/v4l2-fwnode.c                             | 3 +++
+>>   include/media/v4l2-fwnode.h                                       | 4 ++++
+>>   3 files changed, 15 insertions(+)
+>> ---
+>> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+>> change-id: 20250718-fpf-media-dt-flip-7fcad30bcfb7
+>>
+>> Best regards,
+>> --
+>> Fabian Pfitzner <f.pfitzner@pengutronix.de>
+>>
+-- 
+Pengutronix e.K.                           | Fabian Pfitzner             |
+Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
-On Fri, Jul 18, 2025 at 04:18:25PM -0700, Jakub Kicinski wrote:
-> On Fri, 18 Jul 2025 09:07:26 +0000 John Ernberg wrote:
-> > > Thanks for the analysis, I think I may have misread the code.
-> > > What I was saying is that we are restoring the carrier while
-> > > we are still processing the previous carrier off event in
-> > > the workqueue. My thinking was that if we deferred the
-> > > netif_carrier_on() to the workqueue this race couldn't happen.
-> > >=20
-> > > usbnet_bh() already checks netif_carrier_ok() - we're kinda duplicati=
-ng
-> > > the carrier state with this RX_PAUSED workaround.
-> > >=20
-> > > I don't feel strongly about this, but deferring the carrier_on()
-> > > the the workqueue would be a cleaner solution IMO.
-> > >  =20
-> >=20
-> > I've been thinking about this idea, but I'm concerned for the opposite=
-=20
-> > direction. I cannot think of a way to fully guarantee that the carrier=
-=20
-> > isn't turned on again incorrectly if an off gets queued.
-> >=20
-> > The most I came up with was adding an extra flag bit to set carrier on,=
-=20
-> > and then test_and_clear_bit() it in the __handle_link_change() function=
-.
-> > And also clear_bit() in the usbnet_link_change() function if an off=20
-> > arrives. I cannot convince myself that there isn't a way for that to go=
-=20
-> > sideways. But perhaps that would be robust enough?
->=20
-> I think it should be robust enough.. Unless my grep skills are failing
-> me - no drivers which call usbnet_link_change() twiddle the link state
-> directly.
->=20
-> Give it a go, if you think your initial patch is cleaner -- it's fine.
->=20
-
-Apologies for the delay, I was stuck in a higher priority issue.
-
-I've tested this approach and it looks promising. Will send this approach
-as a v2 later today.
-
-Thank you for the guidance, very much appreciated.
-
-Best regards // John Ernberg=
 
