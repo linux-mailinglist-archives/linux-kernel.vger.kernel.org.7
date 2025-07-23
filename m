@@ -1,372 +1,280 @@
-Return-Path: <linux-kernel+bounces-741702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49E1B0E804
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:26:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD62B0E807
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D82566242
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:26:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45BD3A11A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699A15539A;
-	Wed, 23 Jul 2025 01:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B31E15539A;
+	Wed, 23 Jul 2025 01:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MIUaPjGV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ls86somY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2E1367;
-	Wed, 23 Jul 2025 01:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B79143744
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753233971; cv=none; b=fF3E+XmFu2GmuwcyaNtHi0zaVR9QzDeFukpzi7dsG/3iMa3YAeOwvtwGycBu0KsORn2t6hpfBMALgkcyK52Y1u6/5qKgu0fm4zkw7IaUnACSsl717Mo+lrKyMnzp4g7f2oxdkD+tuUVSM13efRuQOheYUa2bGVmjQzKFyoa3/YE=
+	t=1753233994; cv=none; b=iJWmniPQb/jiDchvJyASfBvB2fPMZDOG0v96qrHHorW/CVyh6C/XpgU6Y2SHImPclyO0okU76ktw0dcdNkb38OKMt6eKW7P7ONTXw/BZwt8BQYezPHvZYAXVEJPACxQFplcmeq7vAM4M3/2w4JhIunMYGMj2NJfWcuWI9ooKW8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753233971; c=relaxed/simple;
-	bh=6tysQMCcE3IDqsrLmjuWPMrVb3dQZiSPRY7q/+8GU/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uWGyx5vqIE22fZfBvOuGuOnf8QA0ii0fqIDHfurOEPoIFiImD4pn/JJEvzdY7FTtSYrNA3LS49ki8gGupCkk4gFFzGAEoMUYNWUQcGMQmh2Wv7aL+1z2pMMAzLV9FS79GQpx4M7vOLJBOSsNz1X9fRljGJR1UTUux5D0Fw+V4Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MIUaPjGV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753233802;
-	bh=4qK4hYHtsuHi8e1mZEimbviYZ0RFFmrL2QFV3bE8k+U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MIUaPjGVbubPVXTGjwmjh/v4fQhCDNYbDnMtcRtUA3Nq8nnOwTNk20nkozV2FBpk9
-	 eBfeXhkOC9kpHvuaFX3QogltxKJHYBYdvIS4Bd2p4DHB8ez8hSl2+IdXV9TUyRlaov
-	 jJvkdc0rgMydJhBe/T0a183ZphTY9vDGgEsQbrzAsfkPwjdmX6Bhj23yZY8/+Sz/FL
-	 OH9rQge+O+nssouNA75jAWwkW0hrsnTaXvL1KFxqjIdaUVJ4ncpOF2msj+3HTefBBl
-	 VVgvj7aUGNsydIgDB+zxSog5lK7ssf5nrHjC6vIWq1WI9yEiyaqrqGbzGHrvrvCtAg
-	 SATD7tqyAAGgA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmxGd4YH2z4x21;
-	Wed, 23 Jul 2025 11:23:21 +1000 (AEST)
-Date: Wed, 23 Jul 2025 11:26:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo
- Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Christian Schrefl
- <chrisi.schrefl@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Shankari Anand <shankari.ak0208@gmail.com>
-Subject: linux-next: manual merge of the rust tree with the driver-core tree
-Message-ID: <20250723112605.74f1c077@canb.auug.org.au>
+	s=arc-20240116; t=1753233994; c=relaxed/simple;
+	bh=hCjUuYTsR7TV0F+xdfDYAb9YgyUx+t6qw2BHAPvmPQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZIKTMvBcjUsRJA7RnyUBFsA6tHxJv3hsH2eaB87E0i0XArpwMTGMvcOkcOUhQcFalM5WV2gYnS13Wujq37EaNuHGIlInTB+0wpOP/qYEhUW0/6w1vAEcUrMBY/Bjs4J3Vmh+l2DpeRdz+T0e5OgxMODXYpVph9GWNv3NQs+wwZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ls86somY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMNtQP019472
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:26:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GytfrVle3ILQWADnYNTelXzFoz+GMb/Nzm6XgJiXcyU=; b=Ls86somYWdbDbnpn
+	QFBqJejSiZyNFrpOvedFjpcyQqspMCymEvQ5Zv8uoTH+yBJvm0jmmN8kTJyruisR
+	nTj9JuP/gq6oRLSt6XlJLMBsWstGFGSKZny/QYpcbBR1S860caBGkuwFKNibNNZZ
+	Ajadv6Gkm90+SWHF4xwQYrxUAPFpqW70N1MRWsXdZ6c07SR6xq6n/WWcCB1FrFdr
+	eJJ6/Ju9EWsAQOxay3osysmhFV2HaA61oXj5Zi7Bd+xVzisB7YWmSqKUMhbCRkQ8
+	kP0zJXZs8ce/hQpDmQ2oosEp83Ac+2UYxNqyIiOQVw3i9ciME22renbn5byK3r6r
+	0dAZkg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6nm0y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:26:30 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso6533455a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:26:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753233990; x=1753838790;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GytfrVle3ILQWADnYNTelXzFoz+GMb/Nzm6XgJiXcyU=;
+        b=AJBUQah2GkqhXTNwwssHcHNEVQg2UUririjBpfIg9wXTNGkRLhoH0kA2maXgki8lYH
+         F07n48J54pvZx69czMGJPyXuG/0HLf9QvFcDTgdrvQpjVOLJlQ9Q/lbit+/01n8OKqkJ
+         NA3SEFda0JY9LprRmujBF2OOVF4YM6hiMWaREfnFDUuXnYEp7yXDZxD8CwIsiMhx+FSg
+         thdCiNQHGlm1RpF53AUIUfFtVMidiWC15+ujHWnjSPq5xkG0bSApSy43kKYg/lmMLJnK
+         Vq4ICRWgf5MkT8j3gGPy8sNyOV1geyqGLHkSuksbyt3bskoHv7o217Fz1VxXoNqaxwgs
+         Kfzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJzio667D7eP+0MHfdf6pAF+2Qb75gMd+PMN0bADE9k2ijv9CULwdnxXUisBUGMNDlJL5yVumX6sIhfHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySKKOwQecfCLFFpkEeuy1wgO2/5Hnlm3yWrUHgT7S54T21kKFs
+	3yEj90/BCvVGwOLe58gj3Q6IuwmLLZc6eGAaWVzctARGIzG/mWGNf3jv/SYwgLJZuIwXrJNjnoy
+	AYqocy7DVKfPhNSOKzlWh05ePqI3pWxcTV9tQOepLyr0RkaoMaLHFFxh23H2/deGcoLI=
+X-Gm-Gg: ASbGncv9a7T7YbFygDBKWac/7ZCXRaeJA584wzp3Ukm6aZ1FuZnV/Lx9OvTYDUDaa2a
+	ytGpVbwQD/PD7cbegmlratwJp3U8HEYxCCz9so+xJS3mjwulVEHfcn1N+sX0Ah0+QdVionJlK5B
+	av+sHDhlD3vanGfeqlUOXuqO23t3Ds270t+teJsR1paVwfgOgvxJG7FFVRnk7JzV0kJ2lpU9B3q
+	6J7TW2fy80KRyK9CCbXGR22038e4fYoNVAax58buozEQCtGu0SsZFIacVFhN9LiSuJ3f7YMDy2y
+	dD1n5amP8NF9OL8AtG6vaFvRUkPXJxP3IUuRttTkTho0cvxOFA8j4p0wwYr5UJklRzLEJJvO6nP
+	22rgyhVC5j7PEtEEVH/aYNmE=
+X-Received: by 2002:a17:90b:5448:b0:312:25dd:1c86 with SMTP id 98e67ed59e1d1-31e507c38f0mr1929452a91.18.1753233989540;
+        Tue, 22 Jul 2025 18:26:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4PXhrm5s8sQWNmDBwncqbspLsfxjBdqDsY1USrfL+suPo/bCsRTBTtIyqK2QcU0YlP/HD1A==
+X-Received: by 2002:a17:90b:5448:b0:312:25dd:1c86 with SMTP id 98e67ed59e1d1-31e507c38f0mr1929412a91.18.1753233988997;
+        Tue, 22 Jul 2025 18:26:28 -0700 (PDT)
+Received: from [10.133.33.27] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e519e16cfsm322575a91.12.2025.07.22.18.26.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 18:26:28 -0700 (PDT)
+Message-ID: <4752510e-dea8-4258-a7c2-1d8e1b50384d@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 09:26:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/jTiag9qPyYcjLDEm=4Dan/+";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 RESEND 00/10] coresight: ctcu: Enable byte-cntr
+ function for TMC ETR
+To: Mike Leach <mike.leach@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Mao Jinlong <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250714063109.591-1-jie.gan@oss.qualcomm.com>
+ <CAJ9a7ViCf=_wmLX93TzgT82vjZvbKj3XLbr8takyfC1niQESsg@mail.gmail.com>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <CAJ9a7ViCf=_wmLX93TzgT82vjZvbKj3XLbr8takyfC1niQESsg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=68803a46 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=HGROPD1eyzCyC6u9zXUA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 7f2T5uefMOd4SqjEd25NLPBlZLjIQHiC
+X-Proofpoint-GUID: 7f2T5uefMOd4SqjEd25NLPBlZLjIQHiC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDAxMCBTYWx0ZWRfXwGTvHT+iFJLz
+ 9YZpozkTH6wFawdIQVH2ixAkY6P+AefAUVa8YJxZZ+F/yiZMRQCdkOhU7OayT6vFlhq2o0MMc3y
+ i3TWWFtzAXjQItaPbdvVtdj/UY1endcgk6ISEVu8ss1oCDp+S6DGxCjj3NZus28uuQgpEAjgCfI
+ sUXfdVpr9BGHQU/yuwD0jt2zl+FUyXU7y4mxSXAoYRJk1YMFn+0JhdBJ5QVtJcvqjv4iC1DR5X0
+ yyRhC6KW2ETiqfjr5LqOwfIoI2LT5SjB53ppPsLHqOvvov/3QTxeIvlquk32IOR+3kV6A7bMN4a
+ 32XegbRS2Ypq3oPkYU4cZe89qYMvS1NUWUXfHg3F71AyfyQ4k8kUSbOnmhqlEWZfPyXZjQNdrsD
+ 8Pc7UEDi+IpuMnvZuXbQi88SSQIbRdlkYmzSomN4ngiU4/KwaAyrXfENkmwPAmGzaEmypL0+
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_04,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507230010
 
---Sig_/jTiag9qPyYcjLDEm=4Dan/+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the rust tree got a conflict in:
+On 7/22/2025 11:09 PM, Mike Leach wrote:
+> Hi
+> 
 
-  rust/kernel/types.rs
+Hi Mike
 
-between commit:
+Thanks for your comments.
 
-  64888dfdfac7 ("rust: implement `Wrapper<T>` for `Opaque<T>`")
+> I have had a look at a few of the patches. The buffer swap mechanism
+> appears to be good.
+> 
+> However there is a lot of byte-ctr code in the "core" tmc / etr source
+> files. As much of this code as possible needs to be moved to the
+> byte-cntr specifc source.
+> 
 
-from the driver-core tree and commits:
+I will try move byte-cntr related codes to the ctcu-byte-cntr specific 
+source file.
 
-  8802e1684378 ("rust: types: add Opaque::cast_from")
-  07dad44aa9a9 ("rust: kernel: move ARef and AlwaysRefCounted to sync::aref=
-")
+> I suggest having a helper function such as qcom_byte_ctr_in_use() to
+> call from the core code, and if true then call back into the byte-cntr
+> specific code to do the specialist functionality.
 
-from the rust tree.
+Sounds a good idea, call the prepare/read function regards to whether 
+there is a valid helper callback defined. I will try this solution in 
+next version.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have a minor question about the solution. We expect enable/disable the 
+byte-cntr function at anytime. So when we jump to the byte-cntr 
+function, we have to check whether the byte-cntr function is enabled or 
+not first, jump back to the standard workflow if not, am right?
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> One other possibility is to have a flag / enum in the tmc->drvdata
+> structure to indicate a variant. - e.g. TMC_STD, TMC_QCOM_BYTE_CTR,
+> set at initialisation stage to remove the need for checking the device
+> tree every call.
+> 
 
-diff --cc rust/kernel/types.rs
-index 3958a5f44d56,ec82a163cb0e..000000000000
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@@ -5,12 -6,13 +6,13 @@@ use crate::ffi::c_void
-  use core::{
-      cell::UnsafeCell,
-      marker::{PhantomData, PhantomPinned},
--     mem::{ManuallyDrop, MaybeUninit},
-+     mem::MaybeUninit,
-      ops::{Deref, DerefMut},
--     ptr::NonNull,
-  };
- -use pin_init::{PinInit, Zeroable};
- +use pin_init::{PinInit, Wrapper, Zeroable};
- =20
-+ pub use crate::sync::aref::{ARef, AlwaysRefCounted};
-+=20
-  /// Used to transfer ownership to and from foreign (non-Rust) languages.
-  ///
-  /// Ownership is transferred from Rust to a foreign language by calling [=
-`Self::into_foreign`] and
-@@@ -399,191 -411,16 +400,29 @@@ impl<T> Opaque<T>=20
-      ///
-      /// This function is useful to get access to the value without creati=
-ng intermediate
-      /// references.
--     pub const fn raw_get(this: *const Self) -> *mut T {
-+     pub const fn cast_into(this: *const Self) -> *mut T {
-          UnsafeCell::raw_get(this.cast::<UnsafeCell<MaybeUninit<T>>>()).ca=
-st::<T>()
-      }
-+=20
-+     /// The opposite operation of [`Opaque::cast_into`].
-+     pub const fn cast_from(this: *const T) -> *const Self {
-+         this.cast()
-+     }
-  }
- =20
- +impl<T> Wrapper<T> for Opaque<T> {
- +    /// Create an opaque pin-initializer from the given pin-initializer.
- +    fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
- +        Self::try_ffi_init(|ptr: *mut T| {
- +            // SAFETY:
- +            //   - `ptr` is a valid pointer to uninitialized memory,
- +            //   - `slot` is not accessed on error,
- +            //   - `slot` is pinned in memory.
- +            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
- +        })
- +    }
- +}
- +
-- /// Types that are _always_ reference counted.
-- ///
-- /// It allows such types to define their own custom ref increment and dec=
-rement functions.
-- /// Additionally, it allows users to convert from a shared reference `&T`=
- to an owned reference
-- /// [`ARef<T>`].
-- ///
-- /// This is usually implemented by wrappers to existing structures on the=
- C side of the code. For
-- /// Rust code, the recommendation is to use [`Arc`](crate::sync::Arc) to =
-create reference-counted
-- /// instances of a type.
-- ///
-- /// # Safety
-- ///
-- /// Implementers must ensure that increments to the reference count keep =
-the object alive in memory
-- /// at least until matching decrements are performed.
-- ///
-- /// Implementers must also ensure that all instances are reference-counte=
-d. (Otherwise they
-- /// won't be able to honour the requirement that [`AlwaysRefCounted::inc_=
-ref`] keep the object
-- /// alive.)
-- pub unsafe trait AlwaysRefCounted {
--     /// Increments the reference count on the object.
--     fn inc_ref(&self);
--=20
--     /// Decrements the reference count on the object.
--     ///
--     /// Frees the object when the count reaches zero.
--     ///
--     /// # Safety
--     ///
--     /// Callers must ensure that there was a previous matching increment =
-to the reference count,
--     /// and that the object is no longer used after its reference count i=
-s decremented (as it may
--     /// result in the object being freed), unless the caller owns another=
- increment on the refcount
--     /// (e.g., it calls [`AlwaysRefCounted::inc_ref`] twice, then calls
--     /// [`AlwaysRefCounted::dec_ref`] once).
--     unsafe fn dec_ref(obj: NonNull<Self>);
-- }
--=20
-- /// An owned reference to an always-reference-counted object.
-- ///
-- /// The object's reference count is automatically decremented when an ins=
-tance of [`ARef`] is
-- /// dropped. It is also automatically incremented when a new instance is =
-created via
-- /// [`ARef::clone`].
-- ///
-- /// # Invariants
-- ///
-- /// The pointer stored in `ptr` is non-null and valid for the lifetime of=
- the [`ARef`] instance. In
-- /// particular, the [`ARef`] instance owns an increment on the underlying=
- object's reference count.
-- pub struct ARef<T: AlwaysRefCounted> {
--     ptr: NonNull<T>,
--     _p: PhantomData<T>,
-- }
--=20
-- // SAFETY: It is safe to send `ARef<T>` to another thread when the underl=
-ying `T` is `Sync` because
-- // it effectively means sharing `&T` (which is safe because `T` is `Sync`=
-); additionally, it needs
-- // `T` to be `Send` because any thread that has an `ARef<T>` may ultimate=
-ly access `T` using a
-- // mutable reference, for example, when the reference count reaches zero =
-and `T` is dropped.
-- unsafe impl<T: AlwaysRefCounted + Sync + Send> Send for ARef<T> {}
--=20
-- // SAFETY: It is safe to send `&ARef<T>` to another thread when the under=
-lying `T` is `Sync`
-- // because it effectively means sharing `&T` (which is safe because `T` i=
-s `Sync`); additionally,
-- // it needs `T` to be `Send` because any thread that has a `&ARef<T>` may=
- clone it and get an
-- // `ARef<T>` on that thread, so the thread may ultimately access `T` usin=
-g a mutable reference, for
-- // example, when the reference count reaches zero and `T` is dropped.
-- unsafe impl<T: AlwaysRefCounted + Sync + Send> Sync for ARef<T> {}
--=20
-- impl<T: AlwaysRefCounted> ARef<T> {
--     /// Creates a new instance of [`ARef`].
--     ///
--     /// It takes over an increment of the reference count on the underlyi=
-ng object.
--     ///
--     /// # Safety
--     ///
--     /// Callers must ensure that the reference count was incremented at l=
-east once, and that they
--     /// are properly relinquishing one increment. That is, if there is on=
-ly one increment, callers
--     /// must not use the underlying object anymore -- it is only safe to =
-do so via the newly
--     /// created [`ARef`].
--     pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
--         // INVARIANT: The safety requirements guarantee that the new inst=
-ance now owns the
--         // increment on the refcount.
--         Self {
--             ptr,
--             _p: PhantomData,
--         }
--     }
--=20
--     /// Consumes the `ARef`, returning a raw pointer.
--     ///
--     /// This function does not change the refcount. After calling this fu=
-nction, the caller is
--     /// responsible for the refcount previously managed by the `ARef`.
--     ///
--     /// # Examples
--     ///
--     /// ```
--     /// use core::ptr::NonNull;
--     /// use kernel::types::{ARef, AlwaysRefCounted};
--     ///
--     /// struct Empty {}
--     ///
--     /// # // SAFETY: TODO.
--     /// unsafe impl AlwaysRefCounted for Empty {
--     ///     fn inc_ref(&self) {}
--     ///     unsafe fn dec_ref(_obj: NonNull<Self>) {}
--     /// }
--     ///
--     /// let mut data =3D Empty {};
--     /// let ptr =3D NonNull::<Empty>::new(&mut data).unwrap();
--     /// # // SAFETY: TODO.
--     /// let data_ref: ARef<Empty> =3D unsafe { ARef::from_raw(ptr) };
--     /// let raw_ptr: NonNull<Empty> =3D ARef::into_raw(data_ref);
--     ///
--     /// assert_eq!(ptr, raw_ptr);
--     /// ```
--     pub fn into_raw(me: Self) -> NonNull<T> {
--         ManuallyDrop::new(me).ptr
--     }
-- }
--=20
-- impl<T: AlwaysRefCounted> Clone for ARef<T> {
--     fn clone(&self) -> Self {
--         self.inc_ref();
--         // SAFETY: We just incremented the refcount above.
--         unsafe { Self::from_raw(self.ptr) }
--     }
-- }
--=20
-- impl<T: AlwaysRefCounted> Deref for ARef<T> {
--     type Target =3D T;
--=20
--     fn deref(&self) -> &Self::Target {
--         // SAFETY: The type invariants guarantee that the object is valid.
--         unsafe { self.ptr.as_ref() }
--     }
-- }
--=20
-- impl<T: AlwaysRefCounted> From<&T> for ARef<T> {
--     fn from(b: &T) -> Self {
--         b.inc_ref();
--         // SAFETY: We just incremented the refcount above.
--         unsafe { Self::from_raw(NonNull::from(b)) }
--     }
-- }
--=20
-- impl<T: AlwaysRefCounted> Drop for ARef<T> {
--     fn drop(&mut self) {
--         // SAFETY: The type invariants guarantee that the `ARef` owns the=
- reference we're about to
--         // decrement.
--         unsafe { T::dec_ref(self.ptr) };
--     }
-- }
--=20
-- /// A sum type that always holds either a value of type `L` or `R`.
-- ///
-- /// # Examples
-- ///
-- /// ```
-- /// use kernel::types::Either;
-- ///
-- /// let left_value: Either<i32, &str> =3D Either::Left(7);
-- /// let right_value: Either<i32, &str> =3D Either::Right("right value");
-- /// ```
-- pub enum Either<L, R> {
--     /// Constructs an instance of [`Either`] containing a value of type `=
-L`.
--     Left(L),
--=20
--     /// Constructs an instance of [`Either`] containing a value of type `=
-R`.
--     Right(R),
-- }
--=20
-  /// Zero-sized type to mark types not [`Send`].
-  ///
-  /// Add this type as a field to your struct if your type should not be se=
-nt to a different task.
+Also will check once, see which solution is better.
 
---Sig_/jTiag9qPyYcjLDEm=4Dan/+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+Jie
 
------BEGIN PGP SIGNATURE-----
+> Regards
+> 
+> Mike
+> 
+> On Mon, 14 Jul 2025 at 07:31, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
+>>
+>> The byte-cntr function provided by the CTCU device is used to count the
+>> trace data entering the ETR. An interrupt is triggered if the data size
+>> exceeds the threshold set in the BYTECNTRVAL register. The interrupt
+>> handler counts the number of triggered interruptions.
+>>
+>> Based on this concept, the irq_cnt can be used to determine whether
+>> the etr_buf is full. The ETR device will be disabled when the active
+>> etr_buf is nearly full or a timeout occurs. The nearly full buffer will
+>> be switched to background after synced. A new buffer will be picked from
+>> the etr_buf_list, then restart the ETR device.
+>>
+>> The byte-cntr reading functions can access data from the synced and
+>> deactivated buffer, transferring trace data from the etr_buf to userspace
+>> without stopping the ETR device.
+>>
+>> The byte-cntr read operation has integrated with the file node tmc_etr,
+>> for example:
+>> /dev/tmc_etr0
+>> /dev/tmc_etr1
+>>
+>> There are two scenarios for the tmc_etr file node with byte-cntr function:
+>> 1. BYTECNTRVAL register is configured and byte-cntr is enabled -> byte-cntr read
+>> 2. BYTECNTRVAL register is reset or byte-cntr is disabled -> original behavior
+>>
+>> Shell commands to enable byte-cntr reading for etr0:
+>> echo 0x10000 > /sys/bus/coresight/devices/ctcu0/irq_val
+>> echo 1 > /sys/bus/coresight/devices/tmc_etr0/enable_sink
+>> echo 1 > /sys/bus/coresight/devices/etm0/enable_source
+>> cat /dev/tmc_etr0
+>>
+>> Reset the BYTECNTR register for etr0:
+>> echo 0 > /sys/bus/coresight/devices/ctcu0/irq_val
+>>
+>> Changes in V3 resend:
+>> 1. rebased on next-20250711.
+>> Link to V3 - https://lore.kernel.org/all/20250624060438.7469-1-jie.gan@oss.qualcomm.com/
+>>
+>> Changes in V3:
+>> 1. The previous solution has been deprecated.
+>> 2. Add a etr_buf_list to manage allcated etr buffers.
+>> 3. Add a logic to switch buffer for ETR.
+>> 4. Add read functions to read trace data from synced etr buffer.
+>> Link to V2 - https://lore.kernel.org/all/20250410013330.3609482-1-jie.gan@oss.qualcomm.com/
+>>
+>> Changes in V2:
+>> 1. Removed the independent file node /dev/byte_cntr.
+>> 2. Integrated the byte-cntr's file operations with current ETR file
+>>     node.
+>> 3. Optimized the driver code of the CTCU that associated with byte-cntr.
+>> 4. Add kernel document for the export API tmc_etr_get_rwp_offset.
+>> 5. Optimized the way to read the rwp_offset according to Mike's
+>>     suggestion.
+>> 6. Removed the dependency of the dts patch.
+>> Link to V1 - https://lore.kernel.org/all/20250310090407.2069489-1-quic_jiegan@quicinc.com/
+>>
+>> Jie Gan (10):
+>>    coresight: core: Refactoring ctcu_get_active_port and make it generic
+>>    coresight: core: add a new API to retrieve the helper device
+>>    dt-bindings: arm: add an interrupt property for Coresight CTCU
+>>    coresight: ctcu: enable byte-cntr for TMC ETR devices
+>>    coresight: tmc: add etr_buf_list to store allocated etr_buf
+>>    coresight: tmc: add create/delete functions for etr_buf_node
+>>    coresight: tmc: add prepare/unprepare functions for byte-cntr
+>>    coresight: tmc: add a switch buffer function for byte-cntr
+>>    coresight: tmc: add read function for byte-cntr
+>>    arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
+>>
+>>   .../testing/sysfs-bus-coresight-devices-ctcu  |   5 +
+>>   .../bindings/arm/qcom,coresight-ctcu.yaml     |  17 ++
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   5 +
+>>   drivers/hwtracing/coresight/Makefile          |   2 +-
+>>   drivers/hwtracing/coresight/coresight-core.c  |  54 ++++
+>>   .../coresight/coresight-ctcu-byte-cntr.c      | 102 +++++++
+>>   .../hwtracing/coresight/coresight-ctcu-core.c | 113 ++++++--
+>>   drivers/hwtracing/coresight/coresight-ctcu.h  |  49 +++-
+>>   drivers/hwtracing/coresight/coresight-priv.h  |   4 +
+>>   .../hwtracing/coresight/coresight-tmc-core.c  |  70 ++++-
+>>   .../hwtracing/coresight/coresight-tmc-etr.c   | 270 ++++++++++++++++++
+>>   drivers/hwtracing/coresight/coresight-tmc.h   |  29 ++
+>>   12 files changed, 688 insertions(+), 32 deletions(-)
+>>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-ctcu
+>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-byte-cntr.c
+>>
+>> --
+>> 2.34.1
+>>
+> 
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAOi0ACgkQAVBC80lX
-0GwUwgf9E8QmK155t/RK+T3HCK8F5WRMOUJfofgAbn6yCFkkDEwBDmjBrcLxCZOg
-6EPl/tuQUHxbmbKAQjYjdyflVtquhguLiKdNrGT3UbuYjlpEEAWNheB3T0iz+K0P
-aZkZvENpERJ28gNwYuVoyQ+0bqXpRrTWL9aKTs49LE0TLuK8C6l4LfPlAFzhrZvC
-gABhfkDkqhJhbbzaVXGRz07A2fOlrbvhyUGEl4FJ7ViZJSRiRp1mwO2/bTrrcniV
-RaSXHvJWeJt4lr3xtqNjljeEJk0I7jyePeBhBTAug4sdE8rA706vNOAS4XLrThnk
-28YIT79NihIL5dQCScKjOag2tcKUVA==
-=4DHt
------END PGP SIGNATURE-----
-
---Sig_/jTiag9qPyYcjLDEm=4Dan/+--
 
