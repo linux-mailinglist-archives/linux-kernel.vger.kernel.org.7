@@ -1,229 +1,349 @@
-Return-Path: <linux-kernel+bounces-741724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AD0B0E843
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:45:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19528B0E84A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 03:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8331CC0C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5351CC0E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1AE8C11;
-	Wed, 23 Jul 2025 01:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3718C02E;
+	Wed, 23 Jul 2025 01:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U8reSJPu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlxRxMyh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B841218D656
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6FC2628D;
+	Wed, 23 Jul 2025 01:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753235105; cv=none; b=llkl9W2Napj9MJfujFJQRSkY0Qkn9YawVWBzvjDeDpcYwDsvepRJr4N1hJ6hx/eJf+YKwRlCc+zS+/hBvAiPaXt5NZlipc91YZyJJhjdIZ9RF2YZdyDMtk2WON14F1bwKpup4OvXVwRdpYPnkCsGMR458SsdRytJ6zKaDCJyxwc=
+	t=1753235326; cv=none; b=SNPzLrQavsjOD8/6qGOXwxqN3BT2qta1bA4NjmE5BWXXX6ekhXuTavBWL6gKBtuKIC0m800RA0iX+2i8tqxPJ4OEcg57EEsIXQoQgSBUQY5pMjC6BvR8vaB/Czvv44kuZEvw0hfg9PuY4OpCd4M0HWbIKOv3EdVPXohFlUzqD8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753235105; c=relaxed/simple;
-	bh=3ztNa+nnZDU9kypJZTOpJDy40wJdJViL+3PibACBSRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmgV52kPzu1akOnN7ZYNWtkUq9odBbfhcJ92/C5az7Rr8KBiAfIggTJSWi8i0BI8bpY9KqvWPR6HllcYuVQ8eq+WBoieTmBk7A+m7x9ZNOd8EMvYXwvVEQdDXFqpMkV1zsjaDmQc51z1FtRbP1t+OoenWxlavDjaeYZnSSkk9Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U8reSJPu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MMNvlf019487
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:45:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=p3rO97HBhCdBQ6/aphwKARQR
-	J+eX+b09ZhEfv7a22fg=; b=U8reSJPu9fdS+diAroUyYqmwZflsJqvWnZ58aHdp
-	3hSZBqJmhEOcIohUhoBBhPdf0RNHmDegeRsoF9zTO88ay+zNWPsg+q0smheQOX0Y
-	n/JIBrZGoDC2dvSUrFbrOICSJorggV+fQa41JlW/QenR2X8YWCCGIFopbQnZke4A
-	t8DpgsAT4KM6c02U91RPPvOkoeYpGBER8ZjfbwjqEtU79R6OjEGrXuJxO4/nxiHJ
-	4Nqp4fd9H6FoHhJjV1zJDs3p/42+zBj+JiCCq+l/q30NN6GVmICqUbJfsVM4L8cz
-	CfPkrQpNOQCAJFijClkjq9ju8KDyV9ezivYHNBMp09c39A==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6nna2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:45:02 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-75ab147e0f7so3335278b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753235101; x=1753839901;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p3rO97HBhCdBQ6/aphwKARQRJ+eX+b09ZhEfv7a22fg=;
-        b=XT1s3wylXMIrb8LExkeO/zbz51NPLSSUqOa7gu1Pil9KcriRfiZG54cCARScexJruP
-         3UW3G6prHec9G4pk0WuTSUct/75/nLK5OmzOHhJ8ZfSpOAVEDn6KH763HC+PfcXbJIdh
-         9BqraXI6LVsbW+dtJye7u2HKszG6cgtzmOyCF7IYIoO0kJztpCj2suH6SD/qOjKDSaTM
-         JqcPwqH8CVIjoQgoN0VTV5AHHN37FJufQXNOaR2u5+ylUTNSzHa9REgUxAO6DHsvpCBS
-         iuz5fhGZmBo++Qr2p2uEoTCfaugGJIgWtJeQrclZLAhVpSSBlFahUNhmE/hdrYV36UBi
-         hIOw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1WhGtL0LwTDxJaxwPBQFH328GDO/So8eeqL1Z0fTQY3+pWNFnuci6V9cg0zMWHe9jd1qerwXaJfHAiZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuA6spYw5qpuz1WFZAr6l9wJcTQ+4mDargxEDXHW6pRbWAFNYA
-	f8WpiRkOlJYtc1jZzALRNZ2Uw8nAGp+iqb40l3KKv1vEmtjfHbIieEeHCK8EYKfqHgITmSC7QNp
-	Cdwf7fkUi8nSVw9Mk8WJbXBKcz07aXSUELsaRal3xkR5g4o5XEj5+DplRuvl5trbuMeghqvO66a
-	A=
-X-Gm-Gg: ASbGncsHx4cZ/jkf6/HbuOTJbthZH4Nx2lwuJxd4dsgncWbJI6kVKlj21fEiouNxjg/
-	xT4kLNCLO692o8+HLhuhVbBr7kkRGJT9JGDtsoiRCFH0kVampaFxAb+lELlg9Nc9vx+OSn3AIBT
-	QAdbZwrsFsjnxLLGTxMIvRxQ/OYP1AorSsOnJLaIuiIfanws+5LlpAegzTys8xS2DNXrs4TCjNH
-	jn3SvSdLFLu7krpkY/5fQTzuMmlg32xK5JmKX/GLHciRp5aZWSBR4SbqfYyXieGTDlrHHuiLhyD
-	EprJgzu2fbvsF4CewlXU2JoICMq0lgj8atQFeMuSDgx8X+TIjFlkstgirfWOxvc+kXorNttJ9vC
-	tvcHy78ybUrbOyLpX1aw=
-X-Received: by 2002:a05:6a00:2d26:b0:73e:2d7a:8fc0 with SMTP id d2e1a72fcca58-76034c0539amr1838059b3a.1.1753235100940;
-        Tue, 22 Jul 2025 18:45:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYQ1opZLOzPDGCAqEFY0P6TdbH57aOMcPK7+KLJXkJPeeEaYYghA2ozga4amB/i8nGEl0oEQ==
-X-Received: by 2002:a05:6a00:2d26:b0:73e:2d7a:8fc0 with SMTP id d2e1a72fcca58-76034c0539amr1838035b3a.1.1753235100444;
-        Tue, 22 Jul 2025 18:45:00 -0700 (PDT)
-Received: from yuanjiey.ap.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89d3190sm8382145b3a.39.2025.07.22.18.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 18:45:00 -0700 (PDT)
-Date: Wed, 23 Jul 2025 09:44:54 +0800
-From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andersson@kernel.org, linus.walleij@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
-Subject: Re: [PATCH] pinctrl: qcom: Fix logic error when TLMM reg-names
- property is missing
-Message-ID: <aIA+lmqOMRtXTvsl@yuanjiey.ap.qualcomm.com>
-References: <20250722054446.3432-1-yuanjie.yang@oss.qualcomm.com>
- <ximweq3tsedvocc2k2agl7gmckcvttsyiwcer4wjfenni7t62b@7bkvchfxm6a2>
+	s=arc-20240116; t=1753235326; c=relaxed/simple;
+	bh=AzN+Gktwg/8ta6jjY11+v3nUFF45eX/NpwcaMbv/alU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPDKMdusTJxfecsRRic+0z6hcMsGFNoFBnaKoqZHAg/Noo9baADHS5qq/kRN/kZ6DPJRCqt/6SrlrW27VOh0fC9bzpXq2LcSrQNLpb0mtMFJwWks6i6NFTL+BEoYvLyJaDp2eQHHfmBy4OK+30cKzMyAfTCXsO1e1wl4Fe1QmyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlxRxMyh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 656F9C4CEEB;
+	Wed, 23 Jul 2025 01:48:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753235325;
+	bh=AzN+Gktwg/8ta6jjY11+v3nUFF45eX/NpwcaMbv/alU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GlxRxMyhCkPowqrYEf7JDYmefDKK1I1DVCVr95HJojG/YsfQjZlOHlx1xbv2UQHeR
+	 3bvOF8h/HP5nUxEqEl1wZj5f85Mfrq3gLQbrdEK3XHCz8vom3g5g/cLuX+9Iuh06r1
+	 XO9G+wx6U1SG/TBcatOqww7jSKRaZ0ugHmQG5B4TvDkw2VApuncWkDzM3hhkzbFqkf
+	 VGaplMJpbpgQmHrbAOXYWIrXCnZnVyWV1ONoKBIoYe3/YBmmK3trQ2aoUupIrxrxFn
+	 wOF1sHvLdwsgGuf9Q52+SZ0yjrNAuIepKq3bhcvnvS7DVjfaKY7sTUSnvxo+xy3UzG
+	 K31jLr+8nzXag==
+Message-ID: <625335c6-5ece-4407-bcb8-c2d8d3766208@kernel.org>
+Date: Wed, 23 Jul 2025 10:46:17 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ximweq3tsedvocc2k2agl7gmckcvttsyiwcer4wjfenni7t62b@7bkvchfxm6a2>
-X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=68803e9e cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=FHDt430NQJi3ZYAAoaoA:9
- a=CjuIK1q_8ugA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-ORIG-GUID: rusyu2ZCOU6FSYEj5QKHeg8GnbyvbEh1
-X-Proofpoint-GUID: rusyu2ZCOU6FSYEj5QKHeg8GnbyvbEh1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDAxMyBTYWx0ZWRfX/ogdQmuA247I
- fS5majFBCCMO9y7ybX8oBaMzN5O/BCOjx4fVZt5aarl6rxJ6HlQUI/5MtbEkA2oVdDdcsBWAU4m
- ndceayMDEeDBgpRcuyVAKXTt750yA8D0tLePXV9NTSwvxkGBlB4Hduis31f7bhiw1Jz2teB2wZL
- PZh1+SPVmvUHXF5LkUxQ74hK+UJs0oJJxwkOENFXAxcTE/6Bze0UEHIQATUM0Er3Dg+dph914Fc
- aEumQOWveIzlGYN0Jo/d7Dn4Usm6r2TSfdWT+SJ/1lGOFSn8AXSOMj+L6Gpz6PxdwFR8g53PQYG
- HSjO7JyBGioI7K1Oz6dlL6QktagKAs6gybphidI2LHwRhSJPq3wNdgJWM2X6G6l34rutn5OGvhw
- YkhDvZaAL/utgOOyNC7cOc4RAl/M2XHnE1pA1IU0d2DYSJja3acDuunoQ8KDCZk2nH1LK6fB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_04,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507230013
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] mq-deadline: switch to use high layer elevator lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, hare@suse.de, tj@kernel.org,
+ josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250722072431.610354-1-yukuai1@huaweicloud.com>
+ <20250722072431.610354-2-yukuai1@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250722072431.610354-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 09:38:51AM +0300, Dmitry Baryshkov wrote:
-> On Tue, Jul 22, 2025 at 01:44:46PM +0800, yuanjie yang wrote:
-> > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > 
-> > Some Qualcomm platforms, such as sm8750.dtsi, define a single TLMM
-> > region without the reg-names property. This is a valid and expected
-> > configuration. However, the current code incorrectly treats the absence
-> > of reg-names as an error, resulting in unintended behavior.
-> > 
-> > Refactoring the logic to handle both cases correctly:
+On 7/22/25 4:24 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> s/Refactoring/Refactor/g
-
-will update.
- 
-> > If only the gpio parameter is provided, default to TLMM region 0.
-> > If both gpio and name are provided, compare the reg-names entries in the
-> > TLMM node with the given name to select the appropriate region.
-> > 
-> > This ensures proper handling of platforms with either single or multiple
-> > TLMM regions.
+> Introduce a new spinlock in elevator_queue, and switch dd->lock to
+> use the new lock. There are no functional changes.
 > 
-> Drop this sentence.
-will update.
-
-> > 
-> > Fixes: 56ffb63749f4 ("pinctrl: qcom: add multi TLMM region option parameter")
-> > 
-> > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/elevator.c    |  1 +
+>  block/elevator.h    |  4 ++--
+>  block/mq-deadline.c | 57 ++++++++++++++++++++++-----------------------
+>  3 files changed, 31 insertions(+), 31 deletions(-)
 > 
-> No empty lines between the tags.
-will update.
+> diff --git a/block/elevator.c b/block/elevator.c
+> index ab22542e6cf0..91df270d9d91 100644
+> --- a/block/elevator.c
+> +++ b/block/elevator.c
+> @@ -144,6 +144,7 @@ struct elevator_queue *elevator_alloc(struct request_queue *q,
+>  	eq->type = e;
+>  	kobject_init(&eq->kobj, &elv_ktype);
+>  	mutex_init(&eq->sysfs_lock);
+> +	spin_lock_init(&eq->lock);
+>  	hash_init(eq->hash);
+>  
+>  	return eq;
+> diff --git a/block/elevator.h b/block/elevator.h
+> index a07ce773a38f..cbbac4f7825c 100644
+> --- a/block/elevator.h
+> +++ b/block/elevator.h
+> @@ -110,12 +110,12 @@ struct request *elv_rqhash_find(struct request_queue *q, sector_t offset);
+>  /*
+>   * each queue has an elevator_queue associated with it
+>   */
+> -struct elevator_queue
+> -{
+> +struct elevator_queue {
+>  	struct elevator_type *type;
+>  	void *elevator_data;
+>  	struct kobject kobj;
+>  	struct mutex sysfs_lock;
+> +	spinlock_t lock;
+>  	unsigned long flags;
+>  	DECLARE_HASHTABLE(hash, ELV_HASH_BITS);
+>  };
 
-> > ---
-> >  drivers/pinctrl/qcom/tlmm-test.c | 32 ++++++++++++++++----------------
-> >  1 file changed, 16 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/pinctrl/qcom/tlmm-test.c b/drivers/pinctrl/qcom/tlmm-test.c
-> > index 7d7fff538755..6de8cf23f9f0 100644
-> > --- a/drivers/pinctrl/qcom/tlmm-test.c
-> > +++ b/drivers/pinctrl/qcom/tlmm-test.c
-> > @@ -581,25 +581,25 @@ static int tlmm_reg_base(struct device_node *tlmm, struct resource *res)
-> >  	int ret;
-> >  	int i;
-> >  
-> > -	count = of_property_count_strings(tlmm, "reg-names");
-> > -	if (count <= 0) {
-> > -		pr_err("failed to find tlmm reg name\n");
-> > -		return count;
-> > -	}
-> > -
-> > -	reg_names = kcalloc(count, sizeof(char *), GFP_KERNEL);
-> > -	if (!reg_names)
-> > -		return -ENOMEM;
-> > -
-> > -	ret = of_property_read_string_array(tlmm, "reg-names", reg_names, count);
-> > -	if (ret != count) {
-> > -		kfree(reg_names);
-> > -		return -EINVAL;
-> > -	}
-> > -
-> >  	if (!strcmp(tlmm_reg_name, "default_region")) {
-> >  		ret = of_address_to_resource(tlmm, 0, res);
-> 
-> return here and remove braces around the else clause. It's strange that
-> you didn't get the warning about calling kfree on the uninitialized
-> variable.
-Thanks, will remove braces and fix kfree issue.
+I wonder if the above should not be its own patch, and the remaining below
+staying in this patch as that match exactly the commit title.
 
-> >  	} else {
-> > +		count = of_property_count_strings(tlmm, "reg-names");
-> > +		if (count <= 0) {
-> > +			pr_err("failed to find tlmm reg name\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		reg_names = kcalloc(count, sizeof(char *), GFP_KERNEL);
-> > +		if (!reg_names)
-> > +			return -ENOMEM;
-> > +
-> > +		ret = of_property_read_string_array(tlmm, "reg-names", reg_names, count);
-> > +		if (ret != count) {
-> > +			kfree(reg_names);
-> > +			return -EINVAL;
-> > +		}
-> > +
-> >  		for (i = 0; i < count; i++) {
-> >  			if (!strcmp(reg_names[i], tlmm_reg_name)) {
-> >  				ret = of_address_to_resource(tlmm, i, res);
-> > 
-> > base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Other than that, this looks good to me.
 
-Thanks,
-Yuanjie
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index 2edf1cac06d5..e31da6de7764 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -101,7 +101,7 @@ struct deadline_data {
+>  	u32 async_depth;
+>  	int prio_aging_expire;
+>  
+> -	spinlock_t lock;
+> +	spinlock_t *lock;
+>  };
+>  
+>  /* Maps an I/O priority class to a deadline scheduler priority. */
+> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q, struct request *req,
+>  	const u8 ioprio_class = dd_rq_ioclass(next);
+>  	const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	dd->per_prio[prio].stats.merged++;
+>  
+> @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum dd_prio prio)
+>  {
+>  	const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	return stats->inserted - atomic_read(&stats->completed);
+>  }
+> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct deadline_data *dd,
+>  	enum dd_prio prio;
+>  	u8 ioprio_class;
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	if (!list_empty(&per_prio->dispatch)) {
+>  		rq = list_first_entry(&per_prio->dispatch, struct request,
+> @@ -434,7 +434,7 @@ static struct request *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
+>  	enum dd_prio prio;
+>  	int prio_cnt;
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd, DD_BE_PRIO) +
+>  		   !!dd_queued(dd, DD_IDLE_PRIO);
+> @@ -466,7 +466,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  	struct request *rq;
+>  	enum dd_prio prio;
+>  
+> -	spin_lock(&dd->lock);
+> +	spin_lock(dd->lock);
+>  	rq = dd_dispatch_prio_aged_requests(dd, now);
+>  	if (rq)
+>  		goto unlock;
+> @@ -482,8 +482,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  	}
+>  
+>  unlock:
+> -	spin_unlock(&dd->lock);
+> -
+> +	spin_unlock(dd->lock);
+>  	return rq;
+>  }
+>  
+> @@ -552,9 +551,9 @@ static void dd_exit_sched(struct elevator_queue *e)
+>  		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
+>  		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
+>  
+> -		spin_lock(&dd->lock);
+> +		spin_lock(dd->lock);
+>  		queued = dd_queued(dd, prio);
+> -		spin_unlock(&dd->lock);
+> +		spin_unlock(dd->lock);
+>  
+>  		WARN_ONCE(queued != 0,
+>  			  "statistics for priority %d: i %u m %u d %u c %u\n",
+> @@ -601,7 +600,7 @@ static int dd_init_sched(struct request_queue *q, struct elevator_type *e)
+>  	dd->last_dir = DD_WRITE;
+>  	dd->fifo_batch = fifo_batch;
+>  	dd->prio_aging_expire = prio_aging_expire;
+> -	spin_lock_init(&dd->lock);
+> +	dd->lock = &eq->lock;
+>  
+>  	/* We dispatch from request queue wide instead of hw queue */
+>  	blk_queue_flag_set(QUEUE_FLAG_SQ_SCHED, q);
+> @@ -657,9 +656,9 @@ static bool dd_bio_merge(struct request_queue *q, struct bio *bio,
+>  	struct request *free = NULL;
+>  	bool ret;
+>  
+> -	spin_lock(&dd->lock);
+> +	spin_lock(dd->lock);
+>  	ret = blk_mq_sched_try_merge(q, bio, nr_segs, &free);
+> -	spin_unlock(&dd->lock);
+> +	spin_unlock(dd->lock);
+>  
+>  	if (free)
+>  		blk_mq_free_request(free);
+> @@ -681,7 +680,7 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>  	struct dd_per_prio *per_prio;
+>  	enum dd_prio prio;
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	prio = ioprio_class_to_prio[ioprio_class];
+>  	per_prio = &dd->per_prio[prio];
+> @@ -725,7 +724,7 @@ static void dd_insert_requests(struct blk_mq_hw_ctx *hctx,
+>  	struct deadline_data *dd = q->elevator->elevator_data;
+>  	LIST_HEAD(free);
+>  
+> -	spin_lock(&dd->lock);
+> +	spin_lock(dd->lock);
+>  	while (!list_empty(list)) {
+>  		struct request *rq;
+>  
+> @@ -733,7 +732,7 @@ static void dd_insert_requests(struct blk_mq_hw_ctx *hctx,
+>  		list_del_init(&rq->queuelist);
+>  		dd_insert_request(hctx, rq, flags, &free);
+>  	}
+> -	spin_unlock(&dd->lock);
+> +	spin_unlock(dd->lock);
+>  
+>  	blk_mq_free_requests(&free);
+>  }
+> @@ -849,13 +848,13 @@ static const struct elv_fs_entry deadline_attrs[] = {
+>  #define DEADLINE_DEBUGFS_DDIR_ATTRS(prio, data_dir, name)		\
+>  static void *deadline_##name##_fifo_start(struct seq_file *m,		\
+>  					  loff_t *pos)			\
+> -	__acquires(&dd->lock)						\
+> +	__acquires(dd->lock)						\
+>  {									\
+>  	struct request_queue *q = m->private;				\
+>  	struct deadline_data *dd = q->elevator->elevator_data;		\
+>  	struct dd_per_prio *per_prio = &dd->per_prio[prio];		\
+>  									\
+> -	spin_lock(&dd->lock);						\
+> +	spin_lock(dd->lock);						\
+>  	return seq_list_start(&per_prio->fifo_list[data_dir], *pos);	\
+>  }									\
+>  									\
+> @@ -870,12 +869,12 @@ static void *deadline_##name##_fifo_next(struct seq_file *m, void *v,	\
+>  }									\
+>  									\
+>  static void deadline_##name##_fifo_stop(struct seq_file *m, void *v)	\
+> -	__releases(&dd->lock)						\
+> +	__releases(dd->lock)						\
+>  {									\
+>  	struct request_queue *q = m->private;				\
+>  	struct deadline_data *dd = q->elevator->elevator_data;		\
+>  									\
+> -	spin_unlock(&dd->lock);						\
+> +	spin_unlock(dd->lock);						\
+>  }									\
+>  									\
+>  static const struct seq_operations deadline_##name##_fifo_seq_ops = {	\
+> @@ -941,11 +940,11 @@ static int dd_queued_show(void *data, struct seq_file *m)
+>  	struct deadline_data *dd = q->elevator->elevator_data;
+>  	u32 rt, be, idle;
+>  
+> -	spin_lock(&dd->lock);
+> +	spin_lock(dd->lock);
+>  	rt = dd_queued(dd, DD_RT_PRIO);
+>  	be = dd_queued(dd, DD_BE_PRIO);
+>  	idle = dd_queued(dd, DD_IDLE_PRIO);
+> -	spin_unlock(&dd->lock);
+> +	spin_unlock(dd->lock);
+>  
+>  	seq_printf(m, "%u %u %u\n", rt, be, idle);
+>  
+> @@ -957,7 +956,7 @@ static u32 dd_owned_by_driver(struct deadline_data *dd, enum dd_prio prio)
+>  {
+>  	const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
+>  
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>  
+>  	return stats->dispatched + stats->merged -
+>  		atomic_read(&stats->completed);
+> @@ -969,11 +968,11 @@ static int dd_owned_by_driver_show(void *data, struct seq_file *m)
+>  	struct deadline_data *dd = q->elevator->elevator_data;
+>  	u32 rt, be, idle;
+>  
+> -	spin_lock(&dd->lock);
+> +	spin_lock(dd->lock);
+>  	rt = dd_owned_by_driver(dd, DD_RT_PRIO);
+>  	be = dd_owned_by_driver(dd, DD_BE_PRIO);
+>  	idle = dd_owned_by_driver(dd, DD_IDLE_PRIO);
+> -	spin_unlock(&dd->lock);
+> +	spin_unlock(dd->lock);
+>  
+>  	seq_printf(m, "%u %u %u\n", rt, be, idle);
+>  
+> @@ -983,13 +982,13 @@ static int dd_owned_by_driver_show(void *data, struct seq_file *m)
+>  #define DEADLINE_DISPATCH_ATTR(prio)					\
+>  static void *deadline_dispatch##prio##_start(struct seq_file *m,	\
+>  					     loff_t *pos)		\
+> -	__acquires(&dd->lock)						\
+> +	__acquires(dd->lock)						\
+>  {									\
+>  	struct request_queue *q = m->private;				\
+>  	struct deadline_data *dd = q->elevator->elevator_data;		\
+>  	struct dd_per_prio *per_prio = &dd->per_prio[prio];		\
+>  									\
+> -	spin_lock(&dd->lock);						\
+> +	spin_lock(dd->lock);						\
+>  	return seq_list_start(&per_prio->dispatch, *pos);		\
+>  }									\
+>  									\
+> @@ -1004,12 +1003,12 @@ static void *deadline_dispatch##prio##_next(struct seq_file *m,		\
+>  }									\
+>  									\
+>  static void deadline_dispatch##prio##_stop(struct seq_file *m, void *v)	\
+> -	__releases(&dd->lock)						\
+> +	__releases(dd->lock)						\
+>  {									\
+>  	struct request_queue *q = m->private;				\
+>  	struct deadline_data *dd = q->elevator->elevator_data;		\
+>  									\
+> -	spin_unlock(&dd->lock);						\
+> +	spin_unlock(dd->lock);						\
+>  }									\
+>  									\
+>  static const struct seq_operations deadline_dispatch##prio##_seq_ops = { \
 
+
+-- 
+Damien Le Moal
+Western Digital Research
 
