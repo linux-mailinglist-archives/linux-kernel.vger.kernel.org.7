@@ -1,138 +1,167 @@
-Return-Path: <linux-kernel+bounces-742949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D48B0F89F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8E8B0F8A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0480D3BE70C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A761AA7FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 17:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5667120B1E8;
-	Wed, 23 Jul 2025 17:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08072116F6;
+	Wed, 23 Jul 2025 17:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="K3XhHuSP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKKSDOf2"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC07C149C41;
-	Wed, 23 Jul 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E142F5B;
+	Wed, 23 Jul 2025 17:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753290164; cv=none; b=uoNwl8+ASAPV5+Fp3KIriNvrvdrW2De0+nEX5WEczaT677jThpiLkLk6nYt9Snwk3mpp7nq6Szilxm4SADFoDPyiDraIMLDlqb9rJuBe9zTmJB7K4hgLlUidB7S02atuBcoR3bdXq8T8tVN3v/HV0015JGrI0VA+KUBavzmyYpY=
+	t=1753290476; cv=none; b=P8JXaYhIM4BorTzt9FLJdP3dsS82i2HwH6W2nngtp4MkdVYbpdKDRwi9SzD+xQLcS/dLwK04DPBu1JJNk2bsBeMxGAIc2olWHvrJecd9Gy+/GEwUIg+rVR8WYSUJl5W0yYT0sw9kIKi3WAEL8DWbRPlOKhQhhvBuRiwx7+c7BG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753290164; c=relaxed/simple;
-	bh=Ezg06OgxSDKdzPWG8w2hBs/q71+zE2RMViCk8Fhbyos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0q7CnAgEpgXFcQ/UFfcve8nlsUmI7XQznPB6eqaF+iwGognui6ZQj8KWVDYyS6K8XfVW4I5KRqGK8F7oEtuxNoMqAi9ZuBGFRMvFy3Rmpm2sw/r3q7LtrsjT52iRHFrttOH7WJcOBqZCOKZqcX/ccmoyxqy8FivkVgRu0bf1Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=K3XhHuSP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EAC38E8A;
-	Wed, 23 Jul 2025 19:02:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753290121;
-	bh=Ezg06OgxSDKdzPWG8w2hBs/q71+zE2RMViCk8Fhbyos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K3XhHuSPkqh4NicMKgdUj2sHYo32LjRjokjtoawyUrlGZypbscYBsp35AhwhhtA+h
-	 uxaVYzKPJFDystJHdEBDBepNl/lSu63hfQ5fmpRPWdZS0Sc3G4XLm6By/2jGn4J+z0
-	 9A2CGZ4aA/hji8KR+VTREP/p526rrw+68O5Ge6Dc=
-Date: Wed, 23 Jul 2025 20:02:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Allen Ballway <ballway@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: ov8865: move mode_configure out of state_configure
-Message-ID: <20250723170237.GE14576@pendragon.ideasonboard.com>
-References: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
- <20250723154753.GH6719@pendragon.ideasonboard.com>
- <CAEs41JCctnTgwY-ePrB+kwY7nUvJuMAttZ894PzhL-b_SF7uNQ@mail.gmail.com>
+	s=arc-20240116; t=1753290476; c=relaxed/simple;
+	bh=g2R9pH8qwHCPvAl3xHV5HdWgV1ya5184ybwP2QEaD8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gUIQUjLzT1etrlAIToy1cJsTAtfQ6Iq7motsELyoyisvbhs5x+NmrycBbPK6y49EK1GdfYD2BVKtjdSBZaTOnChyV5F5XbiQn5hOilQfQ5urRd73EtNnGxB7gjQnKcA8R3MihnzU31MBwTAuLcbnn0eZrVyWhDiw8As9/NtcwF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKKSDOf2; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae3a604b43bso9870766b.0;
+        Wed, 23 Jul 2025 10:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753290473; x=1753895273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cJwGeL5vbr0CAZa06ENE24uApyyaPDnFcL5zBWsz7hw=;
+        b=EKKSDOf2wvrA6YBo55iQnDbcg9xRsazAUmJb9oN3hKXlK3ekHJNSHpZQ31w1KEvRjj
+         WTvT6Sk6jfsZEcsynnU3zIOjB/lhPkUqd66KP5U9OYGcweikGZYbSmQOzkJSnE82Qjzw
+         HH0aGMT/D6qLxueyNk+U0PPWLdJj0xzV6TTP7eV4iz6D3+5Q2lfmb88OYJ6UDG3j/LP6
+         Mnjav05UYP0E0G7BO74tYUwLj38io0/J20L6Zs3a+84x7MPKZ2nSdxwHuDjk+1cuOuL/
+         B4twcpYMS3PmOHIOWxwsDXGhKfBQ8nWM7zBZKDUWfGbgvegYClq2xSf+Zt37zUIA5HIK
+         QiMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753290473; x=1753895273;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cJwGeL5vbr0CAZa06ENE24uApyyaPDnFcL5zBWsz7hw=;
+        b=vNZ9VOZ4tDe4jCE5LofAQk4p5nnPPxzVTbLQc3maED/VE1sy+6TQkom9h9Vwpb/HH1
+         ov0c29AaCC6hsXPlmcd1XzNnTEG1QucLS6Ory8/bI3UAvukIBgSvEGBl0v6BhgXnE+pM
+         uzJCPvv1lKBeMPjabpynkTecMUrK2UcYIyeUHS99jrugRZAw2E/RRxi699Slc6d9wPAS
+         OZD3ntKz1etouYvqGP1ZqkFi/2ZuLrzpM9E7GnvorEwgmzXGNhLGsS8udaDZJy2cOuBY
+         hsTMZG0uoU6VhTwmehUzphRlzREthxEFHEQm2rziNoq6uu7yiPkiZOM5SUBt3ahbKCbU
+         KLGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwz5N/P3aGxEKj2Q3qIOAm6DuQMHog9ge8BldSif6mGTYosTFdWjzOjdKY87QZlmsxKE8dww5rBEc=@vger.kernel.org, AJvYcCVeqCrRVzbD/oP3dZIf5OQZw0V2A/jPGbxANiQ+aeXZy1UKUai7RuJuBrvm1RvPOlinEBT5IXrMTG+l1Evu@vger.kernel.org, AJvYcCWUf70AblT7MOzE4eIEB/fOfm/SLerUqbOVpAwt4zzE9O7v9hDaTRYZT5l/YqeEKfYrQ/c+36PefT/hm8hX2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHrYB+3K4zkJtREUUHIwspiMQ5XFO+5HnWcOA3MLE4BnKf6bQp
+	9tKZVcrSD1SBgLFe9Gwv5Iwi7V885UDJTBTFcAhF1ccQScO3iusSkoJ8
+X-Gm-Gg: ASbGncu/xsUEnKVqqhxPE8FVgHqNvokLFqzbismsYEX7NYrikGm8YFP8z6MHbHjnWMy
+	yQXaoQ8d8IyL/W9uPVqA7suzPM7x4ZrdDVdwSUfJzMDejzlg14HjZ+jffyinI7v6kbBtXUYTpJ3
+	cwDPoQ62YAWun/RvinIsE8gpqfq1uVpV2mVB68TIo6PS4kTQJhKLAq0FMoGwmCxclRRmN08xzcV
+	syezrsmpfGzmQOuozMnp1x46yP4EYT2z8vgPHIOMBLalyJKtEB5kQIbOhJMAEugdcA1YnhoA5K/
+	Pekoz0hRJF4Ij+t0zz74xQ3KQpUSmVpM6/2sAHzsNTQZA+UJQm4gCqLtcuxebo5NLQmOVMb9LAb
+	6S1CzMjLa22IgesRmn6y7MZK5ZLwHv2oBXcIErFsGS1BCxZKOBov2UoXi0X4Ln+exa5KpVg8=
+X-Google-Smtp-Source: AGHT+IEhIAINLFGBCVIL5RbbqN7hXbRXTMoAEW2u3tmGCS6C7nD30TNkiWqZ+FZwuJUNa1U4NY7GhQ==
+X-Received: by 2002:a17:907:7e84:b0:af2:844e:a72f with SMTP id a640c23a62f3a-af2f8d4ece7mr344718766b.47.1753290472394;
+        Wed, 23 Jul 2025 10:07:52 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::4:45e4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6caef924sm1075303366b.156.2025.07.23.10.07.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 10:07:51 -0700 (PDT)
+Message-ID: <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
+Date: Wed, 23 Jul 2025 18:07:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
+ Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250721090942.274650-1-david@redhat.com>
+ <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
+ <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEs41JCctnTgwY-ePrB+kwY7nUvJuMAttZ894PzhL-b_SF7uNQ@mail.gmail.com>
 
-On Wed, Jul 23, 2025 at 09:40:42AM -0700, Allen Ballway wrote:
-> On Wed, Jul 23, 2025 at 8:47 AM Laurent Pinchart wrote:
-> > On Tue, Jul 22, 2025 at 01:35:43PM -0700, Allen Ballway wrote:
-> > > ov8865_mode_configure() only needs to be called on sensor init, but it can
-> > > be called multiple times from ov8865_state_configure(). Move
-> > > ov8865_mode_configure() to ov8865_sensor_init().
-> > >
-> > > Signed-off-by: Allen Ballway <ballway@chromium.org>
-> > > ---
-> > >  drivers/media/i2c/ov8865.c | 15 +++++++--------
-> > >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-> > > index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..1d1a1f261bf4ab5c09848402dc057e2f572504e7 100644
-> > > --- a/drivers/media/i2c/ov8865.c
-> > > +++ b/drivers/media/i2c/ov8865.c
-> > > @@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct ov8865_sensor *sensor,
-> > >       if (sensor->state.streaming)
-> > >               return -EBUSY;
-> > >
-> > > -     /* State will be configured at first power on otherwise. */
-> > > -     if (pm_runtime_enabled(sensor->dev) &&
-> > > -         !pm_runtime_suspended(sensor->dev)) {
-> > > -             ret = ov8865_mode_configure(sensor, mode, mbus_code);
-> > > -             if (ret)
-> > > -                     return ret;
-> > > -     }
-> > > -
-> > >       ret = ov8865_state_mipi_configure(sensor, mode, mbus_code);
-> > >       if (ret)
-> > >               return ret;
-> > > @@ -2384,6 +2376,13 @@ static int ov8865_sensor_init(struct ov8865_sensor *sensor)
-> > >       }
-> > >
-> > >       /* Configure current mode. */
-> > > +     ret = ov8865_mode_configure(sensor, sensor->state.mode,
-> > > +                                  sensor->state.mbus_code);
-> >
-> > How about the implication on ov8865_set_fmt() that will not update the
-> > link freq and pixel rate controls anymore ?
+>> Thanks for the patch David!
+>>
+>> As discussed in the other thread, with the below diff
+>>
+>> diff --git a/kernel/sys.c b/kernel/sys.c
+>> index 2a34b2f70890..3912f5b6a02d 100644
+>> --- a/kernel/sys.c
+>> +++ b/kernel/sys.c
+>> @@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
+>>                  return -EINVAL;
+>>            /* Flags are only allowed when disabling. */
+>> -       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>> +       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>>                  return -EINVAL;
+>>          if (mmap_write_lock_killable(current->mm))
+>>                  return -EINTR;
+>>
+>>
+>> I tested with the below selftest, and it works. It hopefully covers
+>> majority of the cases including fork and re-enabling THPs.
+>> Let me know if it looks ok and please feel free to add this in the
+>> next revision you send.
+>>
+>>
+>> Once the above diff is included, please feel free to add
+>>
+>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>> Tested-by: Usama Arif <usamaarif642@gmail.com>
 > 
-> I believe those will be unaffected by this change, they are updated in
-> ov8865_state_mipi_configure() which is still called from
-> ov8865_set_fmt() via ov8865_state_configure().
+> Thanks!
+> 
+> The latest version lives at
+> 
+>   https://github.com/davidhildenbrand/linux/tree/PR_SET_THP_DISABLE
+> 
+> With all current review feedback addressed (primarily around description+comments) + that one fix.
+> 
+> 
 
-You're right, my bad.
+Hi David,
 
-> > > +     if (ret) {
-> > > +             dev_err(sensor->dev, "failed to configure mode\n");
-> > > +             return ret;
-> > > +     }
-> > > +
-> > >       ret = ov8865_state_configure(sensor, sensor->state.mode,
-> > >                                    sensor->state.mbus_code);
+Just wanted to check if the above branch is up to date?
 
-Can't we drop this now ? The remaining code in ov8865_state_configure()
-updates the link frequency and pixel rate controls, and sets
-sensor->state.mode and sensor->state.mbus_code. The latter is a no-op
-here as they're set to their current value, and the controls shouldn't
-need an update in this function as it's only called from
-ov8865_resume().
+I didn't check the description/comments, but it still has [1]:
 
-> > >       if (ret) {
-> > >
-> > > ---
-> > > base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-> > > change-id: 20250722-mode_configure-80105fbd835d
+if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
 
--- 
-Regards,
+and not 
 
-Laurent Pinchart
+if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+
+in prctl_set_thp_disable, which is causing the reset to system policy case in my selftest to fail.
+
+[1] https://github.com/davidhildenbrand/linux/commit/5711cdf5dfe65ca28dac2a57d62e18f1475dac57#diff-dc9985831020a20a54baf023fec641593d0d4e75a78988c3b35a176aff1c0321R2450
+
+
+Thanks,
+Usama
+
 
