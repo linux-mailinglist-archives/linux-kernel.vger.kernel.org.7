@@ -1,203 +1,269 @@
-Return-Path: <linux-kernel+bounces-743049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E9DB0F9EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCC8B0F9F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BADF1582599
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:02:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5B03A89B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6E1227574;
-	Wed, 23 Jul 2025 18:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E6C20F079;
+	Wed, 23 Jul 2025 18:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbCi6oRp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PI4uJKob"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3AD21FF42;
-	Wed, 23 Jul 2025 18:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3707F1E8324
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753293621; cv=none; b=j+nFWwK8FfGnRgoJNAMcvUgKUMK6EinjohbESGY4foTW03AYwCi5NBaP/hWVGZUWSNBtMvHHtCPPhIViuYfMMBaQepfN5E5Ns+XM3abMpFMfSXnr48jRh7LoTx8cIODmeRnNPt0bL9SMRONWQeWNUWXqFZ+0DUb3wr5hKAjzqu8=
+	t=1753293783; cv=none; b=LCaVXZfFOS0ZTWFRdHRb+UWc6kN9R2QFg8anIRQ72QyjZ4WuCW3BjG7Po/9LH9nh8MDg4lnOHiYjCuVgaJ34CEnakQ64zdeWyDAYQs9hCt9GDuVe3aMQDEt/fhcPO3zfZ2hIsNZX4CXWOlVWCKIeGe7b8fjVNiPdVQbEjtF8bho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753293621; c=relaxed/simple;
-	bh=apI8pnNAFLf6iQss/lQxckExRNzFL10tAutzTRF9k5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5M8Z0uzHs34ltmsqdKoVnacIspNRKMfK5TvhkB99h3ssUAc/uHi9zmjsYmDrJ5Q+NoVA8Z8PQetMuvH/uFunxl0GjQNIJ43Izb63YopSKI017CTZk36hd21pAmGlQXfe/cQVPiBEAdZcebv0HJ4u4DQQ0qWVGig1JyGFZHvEBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbCi6oRp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B6FC4CEF7;
-	Wed, 23 Jul 2025 18:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753293620;
-	bh=apI8pnNAFLf6iQss/lQxckExRNzFL10tAutzTRF9k5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZbCi6oRp62dNOChxWFud2O3ip6O/K8eJghSx4JCeiZ9HllkZKcmfD2vrx5nD4uM0V
-	 aTZAyCesPftUjuwevqcirwvPSHxYkOItW9wwGrhUPX4bUaEaFePSU1rDqFJbRGrhf0
-	 G8BrvYf/ZVtVGDjU0H+8kuQrfd8+vX1qagDyvixXCJ0xl8xFzcAgahPXDkkFmf8hpi
-	 k/Va+MIoUE1u6mwoQcHqmEhrBkZVWs3U08DKMOMRthDFJaZqTncgGnuoE8b/MWluvG
-	 SrRs0GQaSgI/fv0b3JN8ES38UTOQwOHbkk/yQB0gmeiK7JGRkxCKN+img8bl8ll9vB
-	 vLkPxhmg99bpw==
-Date: Wed, 23 Jul 2025 11:00:18 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 00/16] New perf ilist app
-Message-ID: <aIEjMroa3bW-T7d-@google.com>
-References: <20250714164405.111477-1-irogers@google.com>
- <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
+	s=arc-20240116; t=1753293783; c=relaxed/simple;
+	bh=2iebzDMl31aYqICEJCQtJeRntCkcwu/khnNK/tJyxxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q5mtOITSx33mefzYjyh7613abDVqlHdZ9ES7R9SA0f31ArKq4m1Jewu6bxxAz6pnbiYz1n8JQd7wPeIPVlci1I8q/NmiIWsx+QX18R4vkpDD4MIbi6yqkMFcLmb/syNpyA8fWKhU1IrmhdBMkEwjfwu2jkIRWvarcvl5Fhu5OhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PI4uJKob; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753293779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
+	b=PI4uJKobDM8mGXiDPr+5RqREWz7fXvaXA1eYPH+DO+N5v2DEnjAsYOuS3AWiWS1L+SYpyc
+	0PEa9cHFUgRazPkGw3mps+9TKHVflMWWpVBylQv5HX7ds1VDuXlHZXlRTxC2tFS+2DnuBw
+	EyuXAtq+wmACbOtWqn5ggweecnCCUdg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-ces8b7akNQ2AgstRsn-1Pw-1; Wed, 23 Jul 2025 14:02:57 -0400
+X-MC-Unique: ces8b7akNQ2AgstRsn-1Pw-1
+X-Mimecast-MFC-AGG-ID: ces8b7akNQ2AgstRsn-1Pw_1753293776
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso58374f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:02:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753293776; x=1753898576;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G3whOxkstbMxt2nhGLk1bQZXFsEZXlxQlt2XWZxhuog=;
+        b=iWuLzPK4TvB/r94nOsp2jBFuylApewQTFrvraGDFz3jhJskS5xeVvfT7RFsGQ+qmUV
+         KVIcKFS95bLusRN5ppgZj3WJgTM4KRy3jGzF8jJtapnoSk10cMG296NyNPf4V5rXK1oy
+         V8svT0i1rIkJPf17S/DRwbqgCx5hW/p+ebXoXPkrPwkXRA5x0AlrZPgrnyVN3/KUhHSy
+         sNoyj7SDdHYAgqdTcS11bAk81raT4rsKe9v7BaE8jH5UhfbFfr+VLaAlzHlY4YcM3o1r
+         JisbRUxMjEJA588lxXAQCFh3Yv0qx3UPqyqYiPrbap2sX2X9lJJZ66LVDUnwszIAJck7
+         QQQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH6eh+cKWx5iN/DlhyRjD/1pMv48wztqRgVn5X5GJQ3RNjxtMi0ciyyLkdVoTrOuB8YIH/Ubjw8Vo3Lco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4vS6eD5MHiOHJwuJsmDa4P8rAEb3WoO426M7994cu2YogJGP1
+	2InvofjgzknLTfyvlIAKOQjhUUBU1hSdd2urXNTJhToISGqtKsywe1G5sPuNn2ppUUFCfx4ShJL
+	AU+hiGH0AEsM/cEGVBbya1cVH6KCH4/OhlnpRqlZpbXUR19aDuvh74EIhee1T7Q+nrw==
+X-Gm-Gg: ASbGncv8sn7yUSuy1qHudeuZJtMGjxYDR3tOguiytB0Dl5VHNbEg7fEy8kwcTeuIRpm
+	6u+uzsYoizmhtABXVAfoVn+qFps2C+dxzFvmj2uSgaJshMBCQW/knPiWMjpdGcYPW3foLgPnmvF
+	eXM2DEiH+K+KkR1YAHLkPoB9k9EOhpM4yVxSy4RjiXVK2STcbbJV8QxnNDCfm/rMkRBfaUalXgW
+	GhO/h8CRXq7CWGKBje9eZ/CGXcMF720fGG1ZwsdrO7s6DGbrOjSDZ+9DwXYJn199V+vZu8kTZsk
+	XicbwETMQ34hcQTTxmmF88W2MCEyGg7vO/CQbN+PxFFix8ZWFDJWjg5K9taB8bZ/tecXlQ==
+X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550360f8f.17.1753293775536;
+        Wed, 23 Jul 2025 11:02:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEZg16J4+gnyGIzNr4yWSx/6st9lfF2anNLh6lxP/xRh+IjVjl07vljj/vUaQGCZ849yfF1A==
+X-Received: by 2002:a05:6000:2013:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3b768ea011bmr3550304f8f.17.1753293774863;
+        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1af43.dip0.t-ipconnect.de. [87.161.175.67])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458691b2adesm29652445e9.32.2025.07.23.11.02.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 11:02:54 -0700 (PDT)
+Message-ID: <383a957e-badb-49fc-9913-30bea3a1c5a8@redhat.com>
+Date: Wed, 23 Jul 2025 20:02:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
+ Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250721090942.274650-1-david@redhat.com>
+ <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
+ <5968efc3-50ac-465a-a51b-df91fc1a930a@redhat.com>
+ <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <003c12a7-cb3b-4bbd-86ac-4caaddcabf26@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW=AG8ztbzS-KXpo9fH_Hp_fkZ3CVDuG9pN7P32Qm0oyg@mail.gmail.com>
 
-Hi Ian,
+On 23.07.25 19:07, Usama Arif wrote:
+>>> Thanks for the patch David!
+>>>
+>>> As discussed in the other thread, with the below diff
+>>>
+>>> diff --git a/kernel/sys.c b/kernel/sys.c
+>>> index 2a34b2f70890..3912f5b6a02d 100644
+>>> --- a/kernel/sys.c
+>>> +++ b/kernel/sys.c
+>>> @@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
+>>>                   return -EINVAL;
+>>>             /* Flags are only allowed when disabling. */
+>>> -       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>>> +       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+>>>                   return -EINVAL;
+>>>           if (mmap_write_lock_killable(current->mm))
+>>>                   return -EINTR;
+>>>
+>>>
+>>> I tested with the below selftest, and it works. It hopefully covers
+>>> majority of the cases including fork and re-enabling THPs.
+>>> Let me know if it looks ok and please feel free to add this in the
+>>> next revision you send.
+>>>
+>>>
+>>> Once the above diff is included, please feel free to add
+>>>
+>>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>>> Tested-by: Usama Arif <usamaarif642@gmail.com>
+>>
+>> Thanks!
+>>
+>> The latest version lives at
+>>
+>>    https://github.com/davidhildenbrand/linux/tree/PR_SET_THP_DISABLE
+>>
+>> With all current review feedback addressed (primarily around description+comments) + that one fix.
+>>
+>>
+> 
+> Hi David,
+> 
+> Just wanted to check if the above branch is up to date?
+> 
 
-On Wed, Jul 23, 2025 at 08:32:33AM -0700, Ian Rogers wrote:
-> On Mon, Jul 14, 2025 at 9:44 AM Ian Rogers <irogers@google.com> wrote:
-> >
-> > This patch series builds up to the addition of a new ilist app written
-> > in python using textual [1] for the UI. The app presents perf PMUs and
-> > events, displays the event information as in `perf list` while at the
-> > bottom of the console showing recent activity of the event in total
-> > and across all CPUs. It also displays metrics, placed in a tree
-> > through their metric group, again with counts being displayed in the
-> > bottom panel.
-> >
-> > The first ground work patches of fixes, cleanup and refactoring were
-> > separated into their own series here:
-> > https://lore.kernel.org/lkml/20250709214029.1769089-1-irogers@google.com/
-> >
-> > The second part of the patches adds event json for the software PMU
-> > and makes the tracepoint PMU support iteration of events and the
-> > like. Without these improvements the tracepoint and software PMUs will
-> > appear to have no events in the ilist app. As the software PMU moves
-> > parsing to json, the legacy hard coded parsing is removed. This has
-> > proven controversial for hardware events and so that cleanup isn't
-> > done here.
-> >
-> > The final patches expand the perf python APIs and add the ilist
-> > command. To run it you need the updated perf.cpython.so in your
-> > PYTHONPATH and then execute the script. Expanding PMUs and then
-> > selecting events will cause event informatin to be displayed in the
-> > top-right and the counters values to be displayed as sparklines and
-> > counts in the bottom half of the screen.
-> >
-> > [1] https://textual.textualize.io/
-> >
-> > v7: Better handle errors in the python code and ignore errors when
-> >     scanning PMU/events in ilist.py, improving the behavior when not
-> >     root. Add a tp_pmu/python clean up. Minor kernel coding style
-> >     clean up. Fix behavior of ilist if a search result isn't found but
-> >     then next is chosen.
-> >
-> > v6: For metrics on hybrid systems don't purely match by name, also
-> >     match the CPU and thread so that if the same metric exists for
-> >     different PMUs the appropriate one is selected and counters may be
-> >     read. Likewise use evsel maps and not the evlists.
-> >
-> > v5: Split the series in two. Add metric support. Various clean ups and
-> >     tweaks to the app in particular around the handling of searches.
-> >
-> > v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
-> >     displays as expected.
-> >
-> > v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
-> >     keys. No changes in the ground work first 14 patches.
-> >
-> > v2: In the jevents event description duplication, some minor changes
-> >     accidentally missed from v1 meaning that in v1 the descriptions
-> >     were still duplicated. Expand the cover letter with some thoughts
-> >     on the series.
-> >
-> > Ian Rogers (16):
-> >   perf python: Add more exceptions on error paths
-> >   perf jevents: Add common software event json
-> >   perf parse-events: Remove non-json software events
-> >   perf tp_pmu: Factor existing tracepoint logic to new file
-> >   perf tp_pmu: Add event APIs
-> >   perf list: Remove tracepoint printing code
-> >   perf list: Skip ABI PMUs when printing pmu values
-> >   perf python: Improve the tracepoint function if no libtraceevent
-> >   perf python: Add basic PMU abstraction and pmus sequence
-> >   perf python: Add function returning dictionary of all events on a PMU
-> >   perf ilist: Add new python ilist command
-> >   perf python: Add parse_metrics function
-> >   perf python: Add evlist metrics function
-> >   perf python: Add evlist compute_metric
-> >   perf python: Add metrics function
-> >   perf ilist: Add support for metrics
-> 
-> Hi,
-> 
-> Is there any more I can do to get this series landed? I appreciate having:
-> 
-> Tested-by: Gautam Menghani <gautam@linux.ibm.com>
-> 
-> I think there is some follow up for "make install" for scripts like
-> these, but I'm keen for the python API to move forward.
- 
-I'll review the series today so that we can get some part of it, at
-least.  Basically I think we need a wrapper script like perf-ilist to
-run this easily (maybe with documentation).
+No, I forgot to push. Now pushed.
 
-Thanks,
-Namhyung
+This is the diff (excluding description changes):
 
-> >
-> >  tools/perf/builtin-list.c                     |  65 ++-
-> >  .../arch/common/common/software.json          |  92 ++++
-> >  tools/perf/pmu-events/empty-pmu-events.c      | 266 +++++----
-> >  tools/perf/pmu-events/jevents.py              |  15 +-
-> >  tools/perf/python/ilist.py                    | 491 +++++++++++++++++
-> >  tools/perf/util/Build                         |   1 +
-> >  tools/perf/util/evsel.c                       |  21 +-
-> >  tools/perf/util/parse-events.c                | 198 ++-----
-> >  tools/perf/util/parse-events.h                |   1 -
-> >  tools/perf/util/parse-events.l                |  38 +-
-> >  tools/perf/util/parse-events.y                |  29 +-
-> >  tools/perf/util/pfm.c                         |   2 +
-> >  tools/perf/util/pmu.c                         |   7 +
-> >  tools/perf/util/pmus.c                        |   2 +
-> >  tools/perf/util/print-events.c                | 100 +---
-> >  tools/perf/util/print-events.h                |   4 +-
-> >  tools/perf/util/python.c                      | 519 +++++++++++++++++-
-> >  tools/perf/util/tp_pmu.c                      | 209 +++++++
-> >  tools/perf/util/tp_pmu.h                      |  19 +
-> >  19 files changed, 1638 insertions(+), 441 deletions(-)
-> >  create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
-> >  create mode 100755 tools/perf/python/ilist.py
-> >  create mode 100644 tools/perf/util/tp_pmu.c
-> >  create mode 100644 tools/perf/util/tp_pmu.h
-> >
-> > --
-> > 2.50.0.727.gbf7dc18ff4-goog
-> >
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index c4127104d9bc3..527aa4c9645fd 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -324,8 +324,8 @@ struct thpsize {
+          (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+  
+  /*
+- * Check whether THPs are explicitly disabled through madvise or prctl, or some
+- * architectures may disable THP for some mappings, for example, s390 kvm.
++ * Check whether THPs are explicitly disabled for this VMA, for example,
++ * through madvise or prctl.
+   */
+  static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+                 vm_flags_t vm_flags)
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 1949bb9270d48..60e496ecabe04 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -179,8 +179,8 @@ struct prctl_mm_map {
+  
+  /*
+   * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
+- * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
+- * specified for PR_SET_THP_DISABLE.
++ * is reserved, so PR_GET_THP_DISABLE can return "1 | flags", to effectively
++ * return "1" when no flags were specified for PR_SET_THP_DISABLE.
+   */
+  #define PR_SET_THP_DISABLE     41
+  /* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 2a34b2f708900..b87d0acaab0be 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2438,7 +2438,7 @@ static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
+         return 0;
+  }
+  
+-static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
++static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
+                                  unsigned long arg4, unsigned long arg5)
+  {
+         unsigned long *mm_flags = &current->mm->flags;
+@@ -2447,7 +2447,7 @@ static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
+                 return -EINVAL;
+  
+         /* Flags are only allowed when disabling. */
+-       if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
++       if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
+                 return -EINVAL;
+         if (mmap_write_lock_killable(current->mm))
+                 return -EINTR;
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
