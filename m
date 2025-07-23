@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-743128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494B3B0FAF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB8BB0FAF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 21:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2AC9636EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831DB5828C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 19:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152822F152;
-	Wed, 23 Jul 2025 19:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1BD226D00;
+	Wed, 23 Jul 2025 19:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqgJKdzN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jNTiKtP8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CACF1DDC2B;
-	Wed, 23 Jul 2025 19:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63E982C60
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753299065; cv=none; b=eCBtmUXxyDWQ4QDhr81CRMxCJ/Yw8pBFXMWsjVvAF5k3YYs8xf2j8kYdZgAudeacK3vsqqRyYPqbr1hYFHWqxLGNvC49X7lJBVRRj+vFe9VB9eTpkIVxVZbd8WwNQyeFvo/7PfUX69/Hzn3la13OL1Ry+TjG97JaBvRae8oOQ7Y=
+	t=1753299349; cv=none; b=cK8yXunC15uU8K+agVbymT2srr7WQBiMiPDlVlVlFgofiXiFPd7T+sfr+rxhkYJDpD0j8FBsNDMOqTDlIVyVBk8NRjQvqqVQEihkpSnFt0DQ3Ums2oZ9dZAS5bg2qYQM6Rnfzq+RXycuhQKYGDmpTGfDndtycYSH03JS/19rwMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753299065; c=relaxed/simple;
-	bh=LkOz38MhnKC7F/1ZpVoBGtSBfVOA/gBncZyaq92bCQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj/ommfvME1bWmKxs1e+4ld6lcoih3kHqj3D7IUoE/eQCmPj0jBk6RiavJSse4lGP4KD7P05qmAvervhlps3GXkWOKr7x7Edvk74P1ZQtWConJhzD0H5HfRdtSkuWlDzq+j4PG69Gm9WugjqpI1u7lykVCE4OqHzAIueWuTsv1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqgJKdzN; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753299064; x=1784835064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LkOz38MhnKC7F/1ZpVoBGtSBfVOA/gBncZyaq92bCQM=;
-  b=AqgJKdzNcmU3CZpKM520Mku25NHatlFA1HHJIpiR3KMEUT+kErrX1YEB
-   Dy0QDazptm/nNMJG/Gxw9HnI1TVUQFNa10RlJvLe6NZqLvxHKO6wf4oND
-   Nd/W9EoYc6aNVw7k9xtnG5wTFOspTZTnWn/wQlCplNDlNh6rss3WpqJ31
-   aXwlzHBYbZ09fhkVGnHYF478l7+e+YVZxxB8FcuurnBdIdckvNRV7tq7I
-   jSw181EJpXUmxv8X998f1JMI7VbLFLWmhyWZvUHqEfMyDkrtmEyahwm8G
-   cORE6AC8a7n98qwqK+WXvB3M7Yiyo+CuKpGCjpfJnhV10HimIw1Ow3Ozn
-   g==;
-X-CSE-ConnectionGUID: NHYPcn0sRI6cn+zbvPYB9A==
-X-CSE-MsgGUID: Bjpg4PaMSjaXO2eURcKVkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55692358"
-X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
-   d="scan'208";a="55692358"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 12:31:03 -0700
-X-CSE-ConnectionGUID: FifCLr7RSom6B/Svb2aXQg==
-X-CSE-MsgGUID: YStQdyFBSp66BT9qy2zqoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
-   d="scan'208";a="196813932"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 23 Jul 2025 12:30:58 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uefB1-000Jix-1A;
-	Wed, 23 Jul 2025 19:30:55 +0000
-Date: Thu, 24 Jul 2025 03:30:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>, rostedt@goodmis.org,
-	lukas@wunner.de, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, helgaas@kernel.org,
-	ilpo.jarvinen@linux.intel.com, mattc@purestorage.com,
-	Jonathan.Cameron@huawei.com
-Cc: oe-kbuild-all@lists.linux.dev, bhelgaas@google.com, tony.luck@intel.com,
-	bp@alien8.de, xueshuai@linux.alibaba.com, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
-	davem@davemloft.net, anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com, peterz@infradead.org,
-	tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link
- speed changes
-Message-ID: <202507240322.nJGdyXsy-lkp@intel.com>
-References: <20250723033108.61587-3-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1753299349; c=relaxed/simple;
+	bh=3t04CfAcfguSMnfkELrewRjpAjzgBX4bvXYMo33VTug=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=tSVQ4r69YU+rnKBELSejjD+6zbl+GxV8cptdnVPlKt1WYqORTClSPYo+dKGc9R10B4UJ3PZ4XTHVcpQudldWDwXRyW3aWONUfpsuedrguaEJ0hdTOH5C41UVXqAvsI91aSmPul8Qz/fi+WDfBkHWwCNny+nJsknuD8ldAN9lpxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jNTiKtP8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A7F8440E026A;
+	Wed, 23 Jul 2025 19:35:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1JPErwmGoCbx; Wed, 23 Jul 2025 19:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753299340; bh=G51RX2t7e7lKAMQItKW9G1XyjrkizMxapcPLGG7VUfs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=jNTiKtP8Icsqs7uRL+qTdqSZMYU+kMHNjRaknu/LQaR0bMuPS7yJqt6dntgY6aKQd
+	 tar/lfZedylIhI4gsArKhvLfCxflU+NewbZxN/Xzu4DX01wIHVXai61QOHkSqlTazw
+	 NIEzcxz1KjhuQ4W85kphCjsQ7s9XS5DL4J/K26jel1IC5k6j46z274nHKD7ajggXaA
+	 czBohyL6nXj9mhRZ79NdKq3KjmND61UrjDbAUrpTuO15YvRwACsGf7YCWa3zLDq5Le
+	 VCa84ekG18M2WuYk8PKmF4wlolx9W53EBvPgu8RLQkIZhWXTMF5N26raoR5LL5bMkc
+	 a5lDM1Sn7GC69x0sRlKiycBZyCnIFOLjP6lp/EZ/qTTZYaX7lC9wkGtB04h/6xJHBy
+	 T9Rp1/FQ3uw+Up6VxS0YamXQ/d3Y7udCp/+pFg1b//JIkTm+kVhZ+vQEpP+wh99tVD
+	 /G3SJ5axla9xmZzVP/jS6y3ZS5qCHgzJVoN+suKw+j/vZsFMpewsXr7ae4T7JklSo/
+	 voWFr2O+BF1zM88/IzLo4uF0lq6TZ3k9aWdFh5h/j6CRRwkCBNJUwlH0gLNgXDjEDc
+	 po4EzMwfRn2Pb02D9v45me6u1FWYp6IZlW25ZZlOFxXfVuUPrELJyLZdIyoV6yMhFB
+	 arqa8/NYL8tUEC+mBlnu/sB4=
+Received: from [127.0.0.1] (unknown [78.130.214.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6591F40E0254;
+	Wed, 23 Jul 2025 19:35:34 +0000 (UTC)
+Date: Wed, 23 Jul 2025 22:35:31 +0300
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+CC: x86@kernel.org, linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
+ David Arcari <darcari@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250723183426.GA1158000@yaz-khff2.amd.com>
+References: <20250721181155.3536023-1-yazen.ghannam@amd.com> <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local> <20250723183426.GA1158000@yaz-khff2.amd.com>
+Message-ID: <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723033108.61587-3-xueshuai@linux.alibaba.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shuai,
+On July 23, 2025 9:34:26 PM GMT+03:00, Yazen Ghannam <yazen=2Eghannam@amd=
+=2Ecom> wrote:
+>On Tue, Jul 22, 2025 at 06:56:15PM +0200, Borislav Petkov wrote:
+>> On Mon, Jul 21, 2025 at 06:11:54PM +0000, Yazen Ghannam wrote:
+>> > The reset reason value may be "all bits set", e=2Eg=2E 0xFFFFFFFF=2E =
+This is a
+>> > commonly used error response from hardware=2E This may occur due to a=
+ real
+>> > hardware issue or when running in a VM=2E
+>>=20
+>> Well, which is it Libing is reporting? VM or a real hw issue?
+>>=20
+>
+>In this case, it was a VM=2E
+>
+>> If it is a VM, is that -1 the only thing a VMM returns when reading tha=
+t
+>> MMIO address or can it be anything?
+>>=20
+>> If latter, you need to check X86_FEATURE_HYPERVISOR=2E
+>>=20
+>> Same for a real hw issue=2E
+>>=20
+>> IOW, is -1 the *only* invalid data we can read here or are we playing
+>> whack-a-mole with it?
+>>=20
+>
+>I see you're point, but I don't think we can know for sure all possible
+>cases=2E There are some reserved bits that shouldn't be set=2E But these
+>definitions could change in the future=2E
+>
+>And it'd be a pain to try and verify combinations of bits and configs=2E
+>Like can bit A and B be set together, or can bit C be set while running
+>in a VM, or can bit D ever be set on Model Z?=20
+>
+>The -1 (all bits set) is the only "applies to all cases" invalid data,
+>since this is a common hardware error response=2E So we can at least chec=
+k
+>for this=2E
+>
+>Thanks,
+>Yazen
 
-kernel test robot noticed the following build errors:
+I think you should check both: HV or -1=2E
 
-[auto build test ERROR on pci/for-linus]
-[also build test ERROR on trace/for-next linus/master v6.16-rc7 next-20250723]
-[cannot apply to pci/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HV covers the VM angle as they don't emulate this and we simply should dis=
+able this functionality when running as a guest=2E
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shuai-Xue/PCI-trace-Add-a-generic-RAS-tracepoint-for-hotplug-event/20250723-113454
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
-patch link:    https://lore.kernel.org/r/20250723033108.61587-3-xueshuai%40linux.alibaba.com
-patch subject: [PATCH v9 2/2] PCI: trace: Add a RAS tracepoint to monitor link speed changes
-config: sparc-sparc64_defconfig (https://download.01.org/0day-ci/archive/20250724/202507240322.nJGdyXsy-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250724/202507240322.nJGdyXsy-lkp@intel.com/reproduce)
+-1 covers the known-bad hw value=2E
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507240322.nJGdyXsy-lkp@intel.com/
+Thx=2E
 
-All errors (new ones prefixed by >>):
-
-   sparc64-linux-ld: drivers/pci/probe.o: in function `pcie_update_link_speed':
->> probe.c:(.text+0x370): undefined reference to `__tracepoint_pcie_link_event'
->> sparc64-linux-ld: probe.c:(.text+0x37c): undefined reference to `__tracepoint_pcie_link_event'
->> sparc64-linux-ld: probe.c:(.text+0x3dc): undefined reference to `__traceiter_pcie_link_event'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
