@@ -1,164 +1,341 @@
-Return-Path: <linux-kernel+bounces-743062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2D5B0FA13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE37B0FA17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6310D3B0023
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E700173886
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2380227E82;
-	Wed, 23 Jul 2025 18:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC0E223323;
+	Wed, 23 Jul 2025 18:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHqzV1T9"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fDSGeb+n";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pI3qbwY6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7914721D5AA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753294448; cv=none; b=sFxHeRJfNkHq3yrT31dNcoNwrTLof9xhYCyn/8Y/J0LL5FU3D1D+FfHkYTlF4Jro0NfrrfzTPXRj/69RBOZAu/ssT0b8mrjhPka9P3ZS4CSRwxOsQbE+FP+F9HOLQoV9cKnReGnEBWwzSZ8GkEbeMGiP1J8lsTZhHfKDqEfT1ZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753294448; c=relaxed/simple;
-	bh=JG4uReWgGvK254YxhuRwhsavbNKr7T50ZMO/oooWqyU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LhDcQthrEqDcbppPI/YovavGCGZZGa/UkYyxbpB/jbvC9ogGCzEzPLXSpSCOhIf2ePLyV7oKYMt+CDFMQc+kXI8Q2plzyz9E5Ez/XZcxA2ZBCAWAxr1FSUl/DDvsu8cvTmTAPNJ1bTH9BrlQmglpM01KJudIh/SfnVqTacSraqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KHqzV1T9; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235e1d66fa6so878695ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 11:14:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B02E36F0
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753294476; cv=fail; b=qj+6Jnr02vecxzQ2Ynq2uuUBJ1xMZGedXYyi/zAdH3bxSVgM8I6ixvZn9dQA4GsEtREWYCxQSCSNajmzfAEafFfDEWitB9f4hdTXA/sbT19RSBCjwuqer/Az0/zzTAtzQiw/qm211E8VSbEW3e9ExZxUUBA907+VxbovM5dLBsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753294476; c=relaxed/simple;
+	bh=UEgsXJRWN8hhnF+qzEks4jR6OQndVxPd8e/Cjs5Wdrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=X85ykQLLJ7vz6slDmFKObr8qWpWpw/k6Y5sbmZpIXiJ/Ya/w/5gcG2E/ihMh36tqUe3ILSg9oWc0NTACkWVyqtTUq6QeD1BNPe2DXI4LMUdRm7B5WQ9ZYNryCOpVvAF73AQV/6HETkpAf/ZX68t8mplE/u/UPz2A2A3icQCU+Xs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fDSGeb+n; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pI3qbwY6; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHttEr009436;
+	Wed, 23 Jul 2025 18:14:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=Q1qeVLL3rszeaz92QI
+	lsmOjUtMKdajbF9ur6rcL5748=; b=fDSGeb+nGjJSsJ/qlLNAu1OqqJE9lFNuAd
+	18AHr4dPzI1/OkVpNj5H5bktH+cFwaHiSSaJWsBVM24fq6qYNgoXbFAXNe8+XMhP
+	+RVS+WxaLSmmKsliQaD4H3np9FNsUr6MnPmOkVBa7cVW+xIJaZfy6rA6f/eYvDQu
+	U6+iTqTCdCeFyPRJhh7Bferjmo66c/ZyLHWwyajYUKMSzGYOH+4MmDcGjRjNq7PW
+	SNS1kifPuV/4nFzY8vCqD4vbnBsqkFw1wlMp6izuCQa3dX/bkhx2JFKdqh/eFm4+
+	VO4brGJSU6x1PNzQE+Q5EYepKq1UuCfVIkEUtaZGgzTuUtJvw2Vw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e2g41m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 18:14:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHABhW031483;
+	Wed, 23 Jul 2025 18:14:23 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801th7yjn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Jul 2025 18:14:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xToOx1KJxWaTniJsjxY9HE1CpjGxqjsmLi/86y82Wkw+j2mDOpV8HN8sbEj+T0FVy/AMvZuQUXqct/EaZ7x9cpsO365pFgf6HpUPcVZzaOjbLtXpgiMR5vLm/fp1b+B4Jin95eI1qmfsvI5HOuVvup6reB0lANhWArdat30zciDTQpPPCJ5OyGijYZFLnTFH7mNfPuNa3KB7Tm9zKhLWx7e4LX7X+XNAZQiUFiSv0bsWi1vgVRs0zoztBTjzFkoDyJb8DnYMepYGBTV/ssIAfQE54TxqlEl83Zb5OwZXSSPtMSHMwcH6N1vc1IlZ3LKs32FNhaT2xUTX94mI6O3mFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q1qeVLL3rszeaz92QIlsmOjUtMKdajbF9ur6rcL5748=;
+ b=PzMIOAHeSlUGTM8Q2riBswR+N7F4pH/eNf/aEfKMkJmaLq8YUdMcVUD8xUi3jim4wya8v4tTZnKeQ5Pk+7s/w80DLNjyi2h7bA1QDESi1QYALeVoKweweqVV+s/hwWXimEGqwS1oGrXQYUTD6hVle2TERtcMbtLcrkFbbAeNx4FKuDgp7ksZKM9oOfWQ6w56Mq0ZM5vLbHeZvQ33VZwgTG2Xgzvos2AxzhZnmP3xTuXu5VbtZI+EaV8j7+dgmF++RiwMHic34PYgWttEDSHbjjSy8tK1NFljS3zlAEp1QwSBRZ0r4Rkfpg+W8ETIgQaNaL+5jZJC9DxgS+ogBaEKzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753294446; x=1753899246; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eO5dqZ0DhB/OAkXgsZy07YNUuWXJnLDBIhzJwZGa0YE=;
-        b=KHqzV1T9+eNjT6tZ6XRjfLa8Um3r3wjiOynyi6iGJQA2kJ39I7Wo5kPShVTEIeaQtt
-         EiBKWiRyaCVjwko2G9THc0I8yIRpR1Qe6hexGzAg8T8d9F7q76Nx5h2ZBlx6xLe3Mtes
-         Ppn0t6SaLADPOELK+woAps78UbsycYB5KeC6sgJW8qHXiw0AfI4L1ZEKTOUgBo15XtAY
-         nakRyLRD6icMuwFXyW8NAiZhEYuO4sG+m+VvGdXhCxJemaTQkVqwJBji3OamUH4EX0rt
-         9JY5BM0j+ZZQWojFCNZyEcFnb3+DHCMNVRpIACVjXgptSglI3ypPQo9HpLG5/512XvQt
-         3OrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753294446; x=1753899246;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eO5dqZ0DhB/OAkXgsZy07YNUuWXJnLDBIhzJwZGa0YE=;
-        b=bnp1YQf9FZ7I2uYZLOsXcsN46eDMiLhMI+zfo/beDF0xuNhpiSLFkq8IKQzF4lcDPW
-         d6bou9iubMRzrsmcQMHxYpkwFDg1aSPHxM9BT42ILf2wIcHgIuZH1DnGoSw8KnR6/iAS
-         fshXi3IbBk8F2m9D71xCaHoAHHusmGe2lDvqftFxZgabLXDZ5c6ArYMwLoMPM8ZNJwci
-         RxNpfnNEMMbugou1mTW+aVwOVEQ+0M6jn1WvfqWm/OLr7phtc2gcTo/hJzSFwtzQl5og
-         Sjm9o+JHU7KBxb4IH2JBEaaEXtZ4zEmeodxxWM7bdBEHv0fv/tsSvuA5LqQkQnxVbCGU
-         UOug==
-X-Gm-Message-State: AOJu0YxHr3iCiWYHjSKsrD6L86phL1okTgjFVS8TU7MnKd/i3x1rO5Pn
-	avvNwTZlKDecFAgQOcYYgpMY1ThtCcKDFkBurGXmze/arCphGe1U4AfrfZRhJAqqACoTl+H340T
-	alq2xFw==
-X-Google-Smtp-Source: AGHT+IEjAqLPa5W7Efdn/up6DoBz+19wIi12MSCKj7MrbSVpgqTQz1XXEAR5E+PKwmAfbifDD/Fz4Imnksk=
-X-Received: from pji5.prod.google.com ([2002:a17:90b:3fc5:b0:312:3b05:5f44])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f152:b0:235:e309:7dec
- with SMTP id d9443c01a7336-23f98204604mr31445345ad.26.1753294445204; Wed, 23
- Jul 2025 11:14:05 -0700 (PDT)
-Date: Wed, 23 Jul 2025 11:14:03 -0700
-In-Reply-To: <20250422161304.579394-4-zack.rusin@broadcom.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q1qeVLL3rszeaz92QIlsmOjUtMKdajbF9ur6rcL5748=;
+ b=pI3qbwY628afjh/+XYb6qXgncGyCVSA9saIyIf84DaHUtekhR8YrYSERWGMShA+NgeU4WlGzKn7oFZp+QrAbMWDg7uhBzOxuH3Z20k1zJz5KGr3O2WIAxA1p81GpyfjcT+8KgJPaHBGP0P8YKdSsJfLKABKINVsYWf9SkGSgx4w=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS0PR10MB7247.namprd10.prod.outlook.com (2603:10b6:8:fb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Wed, 23 Jul
+ 2025 18:14:21 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Wed, 23 Jul 2025
+ 18:14:21 +0000
+Date: Wed, 23 Jul 2025 19:14:18 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jann Horn <jannh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
+ vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
+Message-ID: <6df9812c-96a5-41be-8b0e-5fff95ec757c@lucifer.local>
+References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+X-ClientProxiedBy: LO2P265CA0198.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250422161304.579394-1-zack.rusin@broadcom.com> <20250422161304.579394-4-zack.rusin@broadcom.com>
-Message-ID: <aIEmawm9gLflg8zt@google.com>
-Subject: Re: [PATCH v2 3/5] KVM: x86: Add support for VMware guest specific hypercalls
-From: Sean Christopherson <seanjc@google.com>
-To: Zack Rusin <zack.rusin@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, Doug Covelli <doug.covelli@broadcom.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7247:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd870af4-1899-4b84-7cbe-08ddca14bf06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Hts7sFVnkI5wudgudbGXwvqkPEd1/98YCxt6B9peWZDoTKS/raaAYQFiGymh?=
+ =?us-ascii?Q?QvTHR94hoAaNq39nnIuqNzVz2vkAwgCSzRQxLDM1PdEYxThU+biZVSz5xm8x?=
+ =?us-ascii?Q?GIuNAIvvliQxK9HDUFhujDjvF0TgNkx+AjBr7GL6wx3mJqAVZPmtAkqZoPmg?=
+ =?us-ascii?Q?Tj+6pGUjRNiNiGNnQ4abaeFOlkhYkuoBhZ9Ytib4H5zpsi8/Z2xgV0zGHvYp?=
+ =?us-ascii?Q?RSsav0dJqgyf10ylNKhFHddd8TgeP35t8xos6KdrGPC2C+rEpU0Iq2SdDwZV?=
+ =?us-ascii?Q?RZO0WMnI6G7O/L4xilIpUddVprr/Hfskau5DJiKWLX0o9w/T5Qwtrc/16Fvg?=
+ =?us-ascii?Q?5Kj4lkhI8MCXrs/iYFqRUm31UtqyELLl8gB81Nu9CFJtUJ+XYt1EOtpAGjw/?=
+ =?us-ascii?Q?Rxj5Mw+nA1Oics45a6gJSleKQln3oJ3jA3FmG5tMIihnLal8GYvRQlYPfGFE?=
+ =?us-ascii?Q?9Ck41PPBQ/TAe488/MlBECkEB8RlT7a5EoYQI2YLCGE70YY4l1/pTnCMg8Kh?=
+ =?us-ascii?Q?QvFFDjx79V0DDvADDcBMPkAKKyGUjY/Puy3J8p/t9WHifiC5+zCXfKw11AL1?=
+ =?us-ascii?Q?7r+VlkYDeVH7QTNdmEGd5tvRZB2WVUJYDqLizYmr6wjNsWu1eOPxLWTA8R0A?=
+ =?us-ascii?Q?FffRlEmf5w9aMQ2fRKP2uQx8jMF1HgztK7ZjKVSyKca3ESvJykufehg2wdXo?=
+ =?us-ascii?Q?J60ovIyvvXRQi783Gj3gQ7jCYZfFrm6Qt0VTIh8lgZWsnYK/EKze75/WZrNw?=
+ =?us-ascii?Q?oL7hxB2WDxnUFA9rN6tfPptwUz/5OF/lPf2IOi1713aBj02RO4YqWk9OQsnC?=
+ =?us-ascii?Q?PcMXjE295kykWysw0qLYIEUJdltLALJOI5NnDuUJzu2QNFaPvtneHN5XyBHI?=
+ =?us-ascii?Q?Pfm/GrGI5iZv9LQEI/7R5ELo/kX7V/ZjqcNXa8D8G7fOwqlShjsQiNdgt6dh?=
+ =?us-ascii?Q?FLv5edsLA6nuQfk/7Vuz6EmPm8Fbuf45VAAGQmWcbxZM9VI8CQjvN3Nelfxp?=
+ =?us-ascii?Q?azqDDs6TbT8Svly9RE62dvtu7CtUCTzUpgOKnDEsHzf/SBaRVBynGXtOtypj?=
+ =?us-ascii?Q?HVfLUx885JxJnwRE6Oj7CkFkdvMlDmg61DHCiVT0xIT4jRaXVbmucNAHAgGv?=
+ =?us-ascii?Q?7kZiKpBNBGoqgUnKWT+bMLA2zGo6LvAAxwjbiHLfJKwdf4p71rzB8NEZlYlK?=
+ =?us-ascii?Q?1N7zh9jaSpnJp0rXeE7CFqR8XUC6a0u3NSKJXLLLWmI3MQMZhj189Bf7eCbR?=
+ =?us-ascii?Q?m2IASvuSUQxybBt5MpkeJfvjZrVYzR8A7pqwHiJVwSV6yvu3xmyu9oZw8BeB?=
+ =?us-ascii?Q?XDy5+Z26X9+RdMdPa/kqH1BT5WoBWl9QLdhVcY2sRf6eaD9OZxaL86HVzEcg?=
+ =?us-ascii?Q?9uvr0zdf9AK6f5zPauxEMIc1/4RgTKy7PN6XP67K+Teoogr0OvNMJraGHZoR?=
+ =?us-ascii?Q?7JIv+l4W9WE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6inKmQcUmCXcN28pe1zCJcexPeC2lhvjbGm4+PzTkgToleKFt2wNVktuCcJs?=
+ =?us-ascii?Q?9AFeqbt1gHCB5G+r/awL3jNalsSm5C84sS0PhS2ehGf7NQWqpteFDuyJ+mt0?=
+ =?us-ascii?Q?+zrq8Ax+CRcbzuQmK26xTMGyNGGcqMSEJDPml7Quc5VeXIohmpDHfQR3U76u?=
+ =?us-ascii?Q?KC3KGQ9t6vhsqJBstJVTzDPnZcJvCcwH+ZFzuYGAhn0MzeEmQ8RuWJClPWB0?=
+ =?us-ascii?Q?avmPK1LWU7CasLLN5+68jYpIRGhZ3xc0OHrJ9PFmBgtg2u0xuC6Ij12fbtPj?=
+ =?us-ascii?Q?3nouguVGLR1wUw7LmtL6y8/mh813QEA5Sx3sn1X1MdNIrHj0HDuZvoLWSe0H?=
+ =?us-ascii?Q?etxQ/m8zbhDiS+czNUgEfWjqiLA1n03OsZTficOhmvTcZuG4+EJVaR5EqHZS?=
+ =?us-ascii?Q?3pqRgoFpjB4QQPCabTDe0y5OZpOiu+0ydPcDXFNtDASgV0O58ENuvmVlF1HZ?=
+ =?us-ascii?Q?TlKnS6iLECoxNzzB1Q13s9dmnSJp8eglgZnPwTA799L0ZPP48aLLDWWIf35j?=
+ =?us-ascii?Q?ebL8E9qdZuhd0583tgCoszKwc1htWfaO1BVuIkvl89FF9ewiBhpOPMx/Mj7Z?=
+ =?us-ascii?Q?Xb5n83LfnjdSJiL3Fd/U7YSYZnHe6d23Pdd3rn30J6s7pRruCdQ4dJg+apnM?=
+ =?us-ascii?Q?QOy0OMMtrcPJgAHYb4CWUZYYEMJQxXZGWbrxfzxCrOZG2Vbno06UYlrtvTIX?=
+ =?us-ascii?Q?mwEuUpL70roVZg9sEk7GnOJdPX8C9vLufgci29jsO8seK1O23gJrsDdxYnik?=
+ =?us-ascii?Q?3nsDmlic3yTXx3DJWeXEfjsKIUca7dH+NUF1rZf5p4SS8zfMXgTe0eLlc5lI?=
+ =?us-ascii?Q?be3Nw9k0BHhsFRbsvH47sGkfY08s+9n8d1/IOw9wuBHb5Mnl5FEx8XqUU6oS?=
+ =?us-ascii?Q?T/XzQKaIWmwl+wHQz/NAlqdAMUPCFj4Y+KUaq+O86pGofnSR2Vdsb3FsIGJM?=
+ =?us-ascii?Q?n3Hk3M97rzuAv7nD4Xe856NHgsJANJecuMjlXs2HND6uzl3PB21nAbQALbg7?=
+ =?us-ascii?Q?HPvFfvwmor1Q4JUF63h9fqhj3wfzWXJgHkQT0C1xVgfsYwS7puDhKLIKO3/d?=
+ =?us-ascii?Q?lSLdQ5ice/6tZmPPdQ1Qy+dkaev8TsYWduv9BtlILUJVe0QC6d7/ibA43PZG?=
+ =?us-ascii?Q?Bnmr66Etmf7pT2PqCNezHueWiRfiZzFWZs6bETpoxqgUMGcDgVWT1RTUQHDQ?=
+ =?us-ascii?Q?w9kwAwJPhkyIxEBu/vC4h8T8iKTKGxATh9FUyPGbsXKx171IJAm9QRmKa8z/?=
+ =?us-ascii?Q?+f6dA1FF8JWkC/hz6vDykRS0Xv2js+A8iu15pUVfbz3zw2f30BgTW+r+1j4d?=
+ =?us-ascii?Q?KQ3ZCE2MIeSyr+HAmsMFLLd4FHwInZSa19bXQYIN6rVxn8/IBGRVqJ09dyr2?=
+ =?us-ascii?Q?zuK2OJEf862r9g+VSIjLDzHvpe3pVF3dsVUjZ08Cg+mGBt5cg8q2ljAV0pB6?=
+ =?us-ascii?Q?XYO/HrJ0vpFUK6pytxNGbanCr3lTI9wiToPxzRCFkfyVpXTG297BfS3xDB9x?=
+ =?us-ascii?Q?mxXEucuyiiolCPC9QZkKlNA+PMrzuittAZ6vTuWc39buZaC2Mv82Ka2ZrwIU?=
+ =?us-ascii?Q?TkaAM/zjfTAifXNae9Z4h9y70yQi6OukCM237I3QSIs69/IDCku6Ngy05QZn?=
+ =?us-ascii?Q?FA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	s0mAltCH2/KCLrtDzmAIKMww8JdCZwYjTUIpBYV/+etPIwhggiQIlGVaCgGHNnNh88nW9IlUGwGnIV1Zmm059PrZRvlnfyW94ol1iqY5lOV16d4CrOzT2qJbh4hYtoGLz7NSZtA5W9GRIocspGppoP75BcEP8gpXCkrC8UGB0QWZsl3axxFrgSp1KlpHT9fMMMx3oWQi1XSDTA5eLYAFPBcjdRByYXS/lyIPwJ/pAwtJziZKRnGhU15Z4tzJKnFlMj8vcvoyU68Vu0JhUdjROmKZewXTNsfHJgtHWoirE0c/SssHGMHHqs+iQqdPoL9a9tydXlO+9WfDmIA3AMtMqZeGLCBo1YWslCIS2X9HgGrIwewakwifNmB4dbh/+Q4cwYh4fJLmFMKbc5JvJAuiKZeX1YDJPKjq1W2qS7XSfOBsmLOyMK2nfzGjHb2o/aeMko4WsUclUvl99bboJTKZdKC24iM6LwasJZVWIOxxcMrzGupvBMxSgiTggVta87TQfhWvwnQ2/ttINa4j9LNr0pwc9msKLwUCnEd8DkL/zTm0zzzCNPLwv9fRFZV2JQW2OvZpdwf64A5A0jEnbX74LtgzJ5fsQxe7vs6d8kNGkDc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd870af4-1899-4b84-7cbe-08ddca14bf06
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2025 18:14:21.0106
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9xVNSEr6IFX3rkyET7JEC2OEV/eXtKsm0b+wENABF80IBJqg0VUcyCS6kxUjVS7SqfQ5o3bljnIptxXpV/gOERWbIxVo/kpWLREcPwfmOWI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7247
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507230156
+X-Authority-Analysis: v=2.4 cv=WaYMa1hX c=1 sm=1 tr=0 ts=68812680 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=WM-lATvdv94pRHHaGsQA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13600
+X-Proofpoint-GUID: -9ZrTtp4HaxWJlX031u5ofJb6hXc3Gfz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE1NiBTYWx0ZWRfXww8QY34eDj4f
+ B4TW5ey2cPvzDjUfoSuD5SUp0rfLoW4Kh0Z4KXoVg+A4aOaEu7JjIUvAtZbaBnwtGJaoDR3ltRF
+ 4lQGIVo9vqCeZbVWxIzDH63MtFIUa2QqfAZKr+AxR3Y6NRp3eZePutji1E7ywrMoHrRCu0Cy8KS
+ C0Sm5/4U7ufQeVUVIYewJURXSkDGarIMqO7faZQomIp9nnerMnrNTe7trBdaGOsjte+8ang7772
+ ky9b8WE0sasykZwwdPlqfglVVHcUXk9D6rq03m+CEqNa0c7mp5WDsrQspD7n/Evz14BAB+ha+nQ
+ el2PTHVDnvl5O8WOO1Im8YpfDDrmTeykNxKU1lVPJxm1c16W5CpFyGotLxkYDz+U1IDbBMsoN9T
+ xvIq0CJYiODCrA7NvXguT8ViGljGtwTaMHzgULMf0iIte5AzLt8kEnr17uEwAE2KWulM3xo5
+X-Proofpoint-ORIG-GUID: -9ZrTtp4HaxWJlX031u5ofJb6hXc3Gfz
 
-On Tue, Apr 22, 2025, Zack Rusin wrote:
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 9e3be87fc82b..f817601924bd 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -183,11 +183,13 @@ config KVM_VMWARE
->  	depends on KVM
->  	default y
->  	help
-> -	  Provides KVM support for hosting VMware guests. Adds support for
-> -	  VMware legacy backdoor interface: VMware tools and various userspace
-> +	  Provides KVM support for hosting VMware guests. KVM features that can
-> +	  be turned on when this option is enabled include:
-> +	  - VMware legacy backdoor interface: VMware tools and various userspace
->  	  utilities running in VMware guests sometimes utilize specially
->  	  formatted IN, OUT and RDPMC instructions which need to be
->  	  intercepted.
-> +	  - VMware hypercall interface: VMware hypercalls exit to userspace
+On Wed, Jul 23, 2025 at 06:26:53PM +0200, Jann Horn wrote:
+> There's a racy UAF in `vma_refcount_put()` when called on the
+> `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
+> without sufficient protection against concurrent object reuse:
+>
+> lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
+> rcu_read_lock(). At that point, the VMA may be concurrently freed, and
+> it can be recycled by another process. vma_start_read() then
+> increments the vma->vm_refcnt (if it is in an acceptable range), and
+> if this succeeds, vma_start_read() can return a reycled VMA. (As a
+> sidenote, this goes against what the surrounding comments above
+> vma_start_read() and in lock_vma_under_rcu() say - it would probably
+> be cleaner to perform the vma->vm_mm check inside vma_start_read().)
+>
+> In this scenario where the VMA has been recycled, lock_vma_under_rcu()
+> will then detect the mismatching ->vm_mm pointer and drop the VMA
+> through vma_end_read(), which calls vma_refcount_put().
 
-Eh, I wouldn't bother enumerating the full set of features in the Kconfig.  Just
-state that it guards VMware emulation, and let the documentation do the heavy
-lifting.
+So in _correctly_ identifying the recycling, we then hit a problem. Fun!
 
-> +static inline bool kvm_vmware_hypercall_enabled(struct kvm *kvm)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline int kvm_vmware_hypercall(struct kvm_vcpu *vcpu)
-> +{
-> +	return 0;
-> +}
+> vma_refcount_put() does this:
+>
+> ```
+> static inline void vma_refcount_put(struct vm_area_struct *vma)
+> {
+>         /* Use a copy of vm_mm in case vma is freed after we drop vm_refcnt */
+>         struct mm_struct *mm = vma->vm_mm;
 
-If we do this right, we shouldn't need a stub for kvm_vmware_hypercall(), and
-can instead uncondtionally _declare_ kvm_vmware_hypercall(), but only fully
-define/implement it CONFIG_KVM_VMWARE=y.  The kvm_is_vmware_xxx() stubs will
-probably need to be __always_inline, but otherwise things should Just Work.
+Are we at a point where we _should_ be looking at a VMA with vma->vm_mm ==
+current->mm here?
 
-So long as kvm_is_vmware_hypercall_enabled() can be resolved to a compile-time
-constant (of %false), the compiler's dead-code optimization will drop the call
-to kvm_vmware_hypercall() before linking.  KVM (and the kernel at-large) already
-heavily relies on dead-code optimization, e.g. we use this trick for sev.c APIs.
+Or can we not safely assume this?
 
-In addition to avoiding a stub, if we screw up, e.g. add an unguarded function
-call, the bug will manifest as a link-time error, not a run-time error.
+Because if we can, can we not check for that here?
 
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 793d0cf7ae3c..adf1a1449c06 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -135,6 +135,27 @@ struct kvm_xen_exit {
->  	} u;
->  };
->  
-> +struct kvm_vmware_exit {
-> +#define KVM_EXIT_VMWARE_HCALL          1
-> +	__u32 type;
-> +	__u32 pad1;
-> +	union {
-> +		struct {
-> +			__u32 longmode;
-> +			__u32 cpl;
-> +			__u64 rax, rbx, rcx, rdx, rsi, rdi, rbp;
-> +			__u64 result;
-> +			struct {
-> +				__u32 inject;
-> +				__u32 pad2;
-> +				__u32 vector;
-> +				__u32 error_code;
-> +				__u64 address;
-> +			} exception;
-> +		} hcall;
-> +	};
-> +};
+Do we need to keep the old mm around to wake up waiters if we're happily
+freeing it anyway?
 
-Put this in the x86 header, arch/x86/include/uapi/asm/kvm.h.  The capability
-itself goes in the arch-neutral header so that KVM doesn't have to worry about
-collisions between capability numbers, but any arch specific payloads should go
-in the arch header(s).
+If not, then surely we can just do this check, and not do the wake up if
+false?
+
+I may be mising something or being stupid here so :P
+
+>         int oldcnt;
+>
+>         rwsem_release(&vma->vmlock_dep_map, _RET_IP_);
+>         if (!__refcount_dec_and_test(&vma->vm_refcnt, &oldcnt)) {
+>
+>                 if (is_vma_writer_only(oldcnt - 1))
+>                         rcuwait_wake_up(&mm->vma_writer_wait);
+>         }
+> }
+> ```
+>
+> This is wrong: It implicitly assumes that the caller is keeping the
+> VMA's mm alive, but in this scenario the caller has no relation to the
+> VMA's mm, so the rcuwait_wake_up() can cause UAF.
+
+Oh yikes. Yikes yikes yikes.
+
+>
+> In theory, this could happen to any multithreaded process where thread
+> A is in the middle of pagefault handling while thread B is
+> manipulating adjacent VMAs such that VMA merging frees the VMA looked
+> up by thread A - but in practice, for UAF to actually happen, I think
+> you need to at least hit three race windows in a row that are each on
+> the order of a single memory access wide.
+
+Hmm ok this is confusing, below you reference threads by number with
+letter=process, and here you say thread 'A' and "B'.
+
+
+>
+> The interleaving leading to UAF is the following, where threads A1 and
+> A2 are part of one process and thread B1 is part of another process:
+
+Err but you refer to A1, A2, A3 below, should A3=B1?
+
+> ```
+> A1               A2               A3
+> ==               ==               ==
+> lock_vma_under_rcu
+>   mas_walk
+>                  <VMA modification removes the VMA>
+>                                   mmap
+>                                     <reallocate the VMA>
+>   vma_start_read
+>     READ_ONCE(vma->vm_lock_seq)
+>     __refcount_inc_not_zero_limited_acquire
+>                                   munmap
+                                   ^
+				   |
+                                   OK so here, we have unmapped and
+				   returned VMA to the slab so
+				   SLAB_TYPESAFE_BY_RCU may now result in
+				   you having a VMA with vma->vm_mm !=
+				   current->mm right?
+
+>                                     __vma_enter_locked
+>                                       refcount_add_not_zero
+>   vma_end_read
+>     vma_refcount_put
+      ^
+      |
+      Then here, we're grabbing process
+      B's mm... whoops...
+
+>       __refcount_dec_and_test
+>                                       rcuwait_wait_event
+>                                     <finish operation>
+                                      ^
+				      |
+				      Then here, the VMA is finally
+				      freed right?
+
+>       rcuwait_wake_up [UAF]
+        ^
+	|
+	And then here we try to deref freed mm->vma_writer_wait
+	and boom.
+> ```
+>
+
+This accurate?
+
+> I'm not sure what the right fix is; I guess one approach would be to
+> have a special version of vma_refcount_put() for cases where the VMA
+> has been recycled by another MM that grabs an extra reference to the
+> MM? But then dropping a reference to the MM afterwards might be a bit
+> annoying and might require something like mmdrop_async()...
+
+This seems a bit convoluted... And I worry about us getting the refcount
+stuff wrong somehow, we'd have to be very careful about this to avoid
+leaking VMAs somehow...
 
