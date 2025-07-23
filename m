@@ -1,187 +1,83 @@
-Return-Path: <linux-kernel+bounces-741946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D916B0EB14
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CC9B0EB16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4093F3BA14B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA11E1C81AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1949227146A;
-	Wed, 23 Jul 2025 06:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB1D25A34D;
+	Wed, 23 Jul 2025 06:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0iXpUXS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AbSo3cCG"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547BD271443;
-	Wed, 23 Jul 2025 06:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABEC254858;
+	Wed, 23 Jul 2025 06:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753253834; cv=none; b=J+Oy+0GrYJZLm2QtLhoNYdya0zcizjYI8NjjG6ZuiOz2XzFdjQmUvnqMbivtIZtg9loysgIsBOsQkOAjz1nfpNvRkOss5PQ+Ya0A46BPa22+jW+TjJEvrnVCOEpbOKy35xtCU3S+jDJblBSHSikQvh7iY9jZGfVz3XgvLF6RTOg=
+	t=1753253879; cv=none; b=JSnQZNRtl+YLl/msmt0J0jrE8zHtMrQW67xBuCGIRJY9eRHnKLPBJI4pN6DWhthWo+hrBEcx6ZPA+6MK317GtYGAYyCjt7U26/YQzh9Jsjw+LkKAPdffkRq9W577xzL5XOZO09UKDNBjv0+5YE7zldsJWi9O2m25i+9PFxMCJhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753253834; c=relaxed/simple;
-	bh=JIfE9XgM6zvzb89Yq0cMzIJaAN+lyRfDNIOGeiBWxII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQ+I58NMznPTw/Ydt2qgum8IV7lmXP2ggf6ZP5UTtuw7d5/epPwrxnkhAvwgQTlr81OCe1V8XNEtrunKk/le/FJk7hr2SPFzCj9nMKealbDQh77eQFutHuZTGPpLqSl0u1vOSi1vPIWKaMa3Ch1cAcjCC1djzgwNXLRlP2apLx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0iXpUXS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E611C4CEF4;
-	Wed, 23 Jul 2025 06:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753253833;
-	bh=JIfE9XgM6zvzb89Yq0cMzIJaAN+lyRfDNIOGeiBWxII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s0iXpUXSq5lTOFR2KZjz0yWzsRJGefnwMpQCGHqr2UHa+TIw2Dh6DzOZXkf8/imon
-	 0bGr7Kgp/lD+i2mZIEJHxxOrDZmTrjQijh2UL2b84WaquG04VZ9Ut5MFYvOnr049Z9
-	 LuUu7yzOLeUrjOixMjKJ+PacUYHUpY3rvXeDFGyFjVRco6nszYyy1P+4Y8UFZ2ZySJ
-	 sfOXhwU16i3QFTgGWkkM9J+on6wmCtANTQAqUNKz8E/sT7me5gRRseuJpGvOTgIysJ
-	 jdEOoygpFDk7HA1ZMpBca197nzb3zukm8DY8FJySkg1wd+/LExayXRMrnNsEsWI7oe
-	 MKCdWHMbjk7GQ==
-Date: Wed, 23 Jul 2025 08:57:11 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Le Goffic <legoffic.clement@gmail.com>, 
-	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 07/19] dt-bindings: memory: factorise LPDDR channel
- binding into memory channel
-Message-ID: <20250723-zealous-turtle-of-perfection-e67aee@kuoka>
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com>
- <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
+	s=arc-20240116; t=1753253879; c=relaxed/simple;
+	bh=nDM2MDq1GeOPZXLi7Azq4cQbqW4GFXcnWwvo6fbOkls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cQFMFi0KeVLmQp3Gcn0sr3TaIMysx4Zkb72VkbUNwi1hqJsi6t8eyhh+JMhXLIOs8tdzyMmZsRZoT8gxXnRl/Jg+ymOf9Sj2bO7X+IOJNrgkaFmigFfWu3ZWjdw04tM99rI1MKiq6u+sVyQ/vdwQAEX2VXCcR9t3utsYBR1D5dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AbSo3cCG; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753253872; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=jhYdClhAP8JwILVZ0Wy3XCaYp/MbCM3I3Yu6QS8tLQo=;
+	b=AbSo3cCGzXD+zbQtyoAcngHxblxmu48knl2mzE3emWL1qs2VlCFPMtb/tDcx1foRBmztAv4RVOtqRnt4tyep0v+/6EWCmpD9b/SKQ+SrDSHVRsGb34C85PXNwxejOGB5MKq8EQiX+H161Vyp5fEXJvgsPr91GIJ4xZds0StHZ+0=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Wjb4fPq_1753253871 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 23 Jul 2025 14:57:52 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: riam.rachel.korenblit@intel.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] wifi: iwlwifi: Remove duplicated include in trans.c
+Date: Wed, 23 Jul 2025 14:57:50 +0800
+Message-ID: <20250723065750.2187628-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250722-ddrperfm-upstream-v3-7-7b7a4f3dc8a0@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025 at 04:03:24PM +0200, Cl=C3=A9ment Le Goffic wrote:
-> LPDDR and DDR channels exist and share the same properties, they have a
-> compatible, ranks, and an io-width.
+The header files fw/api/tx.h is included twice in gen1_2/trans.c,
+so one inclusion of each can be removed.
 
-Maybe it is true for all types of SDRAM, like RDRAM and eDRAM, but I
-don't think all memory types do.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=22932
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I think this should be renamed to sdram-channel.
-
->=20
-> Signed-off-by: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  ...pddr-channel.yaml =3D> jedec,memory-channel.yaml} | 26 +++++++++++---=
---------
->  1 file changed, 13 insertions(+), 13 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jed=
-ec,lpddr-channel.yaml b/Documentation/devicetree/bindings/memory-controller=
-s/ddr/jedec,memory-channel.yaml
-> similarity index 82%
-> rename from Documentation/devicetree/bindings/memory-controllers/ddr/jede=
-c,lpddr-channel.yaml
-> rename to Documentation/devicetree/bindings/memory-controllers/ddr/jedec,=
-memory-channel.yaml
-> index 34b5bd153f63..3bf3a63466eb 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpdd=
-r-channel.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,memo=
-ry-channel.yaml
-> @@ -1,16 +1,16 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,lpddr-ch=
-annel.yaml#
-> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,memory-c=
-hannel.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> =20
-> -title: LPDDR channel with chip/rank topology description
-> +title: Memory channel with chip/rank topology description
-> =20
->  description:
-> -  An LPDDR channel is a completely independent set of LPDDR pins (DQ, CA=
-, CS,
-> -  CK, etc.) that connect one or more LPDDR chips to a host system. The m=
-ain
-> -  purpose of this node is to overall LPDDR topology of the system, inclu=
-ding the
-> -  amount of individual LPDDR chips and the ranks per chip.
-> +  A memory channel is a completely independent set of pins (DQ, CA, CS,
-
-A memory channel of SDRAM memory like DDR SDRAM or LPDDR SDRAM is ...
-
-> +  CK, etc.) that connect one or more memory chips to a host system. The =
-main
-> +  purpose of this node is to overall memory topology of the system, incl=
-uding the
-> +  amount of individual memory chips and the ranks per chip.
-> =20
->  maintainers:
->    - Julius Werner <jwerner@chromium.org>
-> @@ -26,14 +26,14 @@ properties:
->    io-width:
->      description:
->        The number of DQ pins in the channel. If this number is different
-> -      from (a multiple of) the io-width of the LPDDR chip, that means th=
-at
-> +      from (a multiple of) the io-width of the memory chip, that means t=
-hat
->        multiple instances of that type of chip are wired in parallel on t=
-his
->        channel (with the channel's DQ pins split up between the different
->        chips, and the CA, CS, etc. pins of the different chips all shorted
->        together).  This means that the total physical memory controlled b=
-y a
->        channel is equal to the sum of the densities of each rank on the
-> -      connected LPDDR chip, times the io-width of the channel divided by
-> -      the io-width of the LPDDR chip.
-> +      connected memory chip, times the io-width of the channel divided by
-> +      the io-width of the memory chip.
->      enum:
->        - 8
->        - 16
-> @@ -51,8 +51,8 @@ patternProperties:
->    "^rank@[0-9]+$":
->      type: object
->      description:
-> -      Each physical LPDDR chip may have one or more ranks. Ranks are
-> -      internal but fully independent sub-units of the chip. Each LPDDR b=
-us
-> +      Each physical memory chip may have one or more ranks. Ranks are
-> +      internal but fully independent sub-units of the chip. Each memory =
-bus
->        transaction on the channel targets exactly one rank, based on the
->        state of the CS pins. Different ranks may have different densities=
- and
->        timing requirements.
-> @@ -107,7 +107,7 @@ additionalProperties: false
-> =20
->  examples:
->    - |
-> -    lpddr-channel0 {
-> +    memory-channel0 {
-
-If doing this, then separate commit based on generic node name
-convention. But then we need to come with generic node name first,
-sdram-channel?
-
-And also '-0', not '0' suffix.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c
+index 327366bf87de..49237ffe8c88 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans.c
+@@ -25,7 +25,6 @@
+ #include "fw/dbg.h"
+ #include "fw/api/tx.h"
+ #include "fw/acpi.h"
+-#include "fw/api/tx.h"
+ #include "mei/iwl-mei.h"
+ #include "internal.h"
+ #include "iwl-fh.h"
+-- 
+2.43.5
 
 
