@@ -1,128 +1,101 @@
-Return-Path: <linux-kernel+bounces-742194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CA6B0EE92
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:36:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9D4B0EE94
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 11:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06AF23B0E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF5D1778FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 09:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FEE286D4C;
-	Wed, 23 Jul 2025 09:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C992F28727F;
+	Wed, 23 Jul 2025 09:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DypZetei"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dFRM+tpN"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD9C19C54B;
-	Wed, 23 Jul 2025 09:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC167284694
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 09:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753263385; cv=none; b=ZR2CyPkryFqgan7yGm93O76lV31tXsqPBZmwXgsEwvjj6rl5mNRYkBCo3Sm7oMdDXEIEpFUnUCMg9o4B/Hsde4BtzpoODcAl4S6zB9mVS1Eza0Dz9QwMehJCll2jn7H/PhhzXmMTs5OC5dOYU0DOxdYbUDWSDVkV9HlQur1gUlE=
+	t=1753263460; cv=none; b=qWGK5u0CzzFfepLBmBytKKSSGsvI/z1gOsxJfwxAJvK3gI/LqAEbkllFbGy3k4nhSp6Lt7XiWVTzqlJBk2h7v2gPZ24PlsoIDyFlWjBnexoQsSTf4yRnY3m5jFuvHQR1d2OYFIGL4oFVU7CFrTMX1wpTCSRRTJX2FcBzTCH1QL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753263385; c=relaxed/simple;
-	bh=pYy6ryWOqe7ctLxlpAUv0mJfc4zPW9hhl8qCJspUpzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnPQ+gtklZSnbt33E68YdQDg7GhIXCzADon8ArbJBbvNx6mZMUXSjQGv/TOALfIdenrGEJl27lKSRC/Md9djklOpsd2IIdFuksBhx/XIMRIskswMNAH+DLtx3ahc76GgEmZaB3cM1oel5hpFkwKzT+iS7j9gBd49w/CiXmKygoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DypZetei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A31C4CEE7;
-	Wed, 23 Jul 2025 09:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753263385;
-	bh=pYy6ryWOqe7ctLxlpAUv0mJfc4zPW9hhl8qCJspUpzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DypZeteiGQcFhgi/OJ7BrjWZzXpXabrWqcgpSk4gJNlJLJfFW+ITHz/AUht24S/RJ
-	 87eaqULYlOW8IjBJPMTZXH1cQsvvZq0GebzEEwLAICuka2j8NtpM9HVpVm6GlSsjzv
-	 9OWKEk0vR5bSNiSD0AyHByl4sK8xkhblKtczQnr+YOjKRUEb+thyO52lbGjrBYPAAZ
-	 eb8lijOdFns4HGkSHM5NrQxp0XE+ENjjocVuTHE/FZoGTvme9ftb4PhD+WqxcbbFyb
-	 PQMVWVzVSVGPjg4bi59emp6MAIorxxyUbmBZMcES2vePm5TtARHPUffq86/i4B4UlZ
-	 rYIJnGhfF8fOw==
-Date: Wed, 23 Jul 2025 11:36:20 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
-	Alan Stern <stern@rowland.harvard.edu>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: (subset) [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in
- s32ton (2)
-Message-ID: <gdbdodhtc2ibzfzjtniawzamz7iqhcdhyiubviy27vypszfhc3@cypc7pfbib6z>
-References: <68753a08.050a0220.33d347.0008.GAE@google.com>
- <f6e67c38-8d63-4536-827c-09757a8d5609@rowland.harvard.edu>
- <ea7f1f42-273b-4c07-8bf2-769992dd9ced@rowland.harvard.edu>
- <8bec1698-5008-428f-8e71-ec002def0c54@rowland.harvard.edu>
- <175285492024.272050.11219945704830043047.b4-ty@kernel.org>
+	s=arc-20240116; t=1753263460; c=relaxed/simple;
+	bh=Q66xsA1c5vWlizutLgsD2be+4pQ8rZeycqCEKNYGQIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bjlo3Xh4ry832Jzx3xXUgL7bRpUX3e/fZCSpO43XrWGA79buJhCbqjNV3W6/VAk4+99+tClxJsCDhCqccGp35tyy3PCbk3zBtbkSDZF6jtAEumzGkCChEd4XM+RzjZucMHVrIkPlAbHlbZk+F6WReHE3ARBWeXWqIQYoOLDenNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dFRM+tpN; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b33f5cee-d3de-4cbd-8eeb-214ba6b42cb7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753263453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BmHpTBjJA4deSSRvm8BefbJLyr67VvXXsw2bU3lFe7g=;
+	b=dFRM+tpNPT7p9UgKAuDbizJDaaH7rRV5TdcekszlC1wNKSxpudvxz2O8QJjjxFzAJ8pUph
+	+oMTfP+kdVMDtA8N4roTeDqLrTRrH/XHJNG/yjF0Qm9cFxyOrzhb768pZm0C5864VeuWdL
+	qYoHBAYxPwRzcSHhwZvYtt/gOhSRZsc=
+Date: Wed, 23 Jul 2025 10:37:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175285492024.272050.11219945704830043047.b4-ty@kernel.org>
+Subject: Re: [PATCH] pch_gbe: Add NULL check for ptp_pdev in pch_gbe_probe()
+To: Chenyuan Yang <chenyuan0y@gmail.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, richardcochran@gmail.com, mingo@kernel.org,
+ tglx@linutronix.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250723034105.2939635-1-chenyuan0y@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250723034105.2939635-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Jul 18 2025, Benjamin Tissoires wrote:
-> On Tue, 15 Jul 2025 15:29:25 -0400, Alan Stern wrote:
-> > On Mon, Jul 14, 2025 at 10:10:32AM -0700, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    b4b4dbfa96de media: stk1160: use usb_alloc_noncoherent/usb..
-> > > git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15a830f0580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-> > > compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1614418c580000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1257dd82580000
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/7301552ad828/disk-b4b4dbfa.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c559b38fa1b6/vmlinux-b4b4dbfa.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/9c1da8b2a83f/bzImage-b4b4dbfa.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
-> > >
-> > > usb 4-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor, different from the interface descriptor's value: 9
-> > > usb 4-1: New USB device found, idVendor=045e, idProduct=07da, bcdDevice= 0.00
-> > > usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> > > usb 4-1: config 0 descriptor??
-> > > microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-> > > microsoft 0003:045E:07DA.0001: unsupported Resolution Multiplier 0
-> > > ------------[ cut here ]------------
-> > > UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:69:16
-> > > shift exponent 4294967295 is too large for 32-bit type 'int'
-> > > CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.16.0-rc4-syzkaller-00314-gb4b4dbfa96de #0 PREEMPT(voluntary)
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> > > Workqueue: usb_hub_wq hub_event
-> > > Call Trace:
-> > >  <TASK>
-> > >  __dump_stack lib/dump_stack.c:94 [inline]
-> > >  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
-> > >  ubsan_epilogue lib/ubsan.c:233 [inline]
-> > >  __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
-> > >  s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:69
-> > >  hid_output_field drivers/hid/hid-core.c:1841 [inline]
-> > >  hid_output_report+0x36f/0x4a0 drivers/hid/hid-core.c:1874
-> > >  __hid_request+0x1e0/0x3c0 drivers/hid/hid-core.c:1987
-> > >  hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
-> > >  hidinput_connect+0x1ada/0x2bd0 drivers/hid/hid-input.c:2327
-> > 
-> > [...]
+On 23/07/2025 04:41, Chenyuan Yang wrote:
+> Since pci_get_domain_bus_and_slot() can return NULL for PCI_DEVFN(12, 4),
+> add NULL check for adapter->ptp_pdev in pch_gbe_probe().
 > 
-> Applied to hid/hid.git (for-6.17/core), thanks!
+> This change is similar to the fix implemented in commit 9af152dcf1a0
+> ("drm/gma500: Add NULL check for pci_gfx_root in mid_get_vbt_data()").
 > 
-> [1/1] HID: core: Reject report fields with a size or count of 0
->       https://git.kernel.org/hid/hid/c/bcf266ca2779
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> ---
+>   drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> index e5a6f59af0b6..10b8f1fea1a2 100644
+> --- a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> +++ b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
+> @@ -2515,6 +2515,11 @@ static int pch_gbe_probe(struct pci_dev *pdev,
+>   		pci_get_domain_bus_and_slot(pci_domain_nr(adapter->pdev->bus),
+>   					    adapter->pdev->bus->number,
+>   					    PCI_DEVFN(12, 4));
+> +	if (!adapter->ptp_pdev) {
+> +		dev_err(&pdev->dev, "PTP device not found\n");
+> +		ret = -ENODEV;
+> +		goto err_free_netdev;
+> +	}
 
-FTR, the patch has been dropped from for-next, it broke existing
-devices. A better patch is being worked on.
+Why is this error fatal? I believe the device still can transmit and
+receive packets without PTP device. If this situation is really possible
+I would suggest you to add checks to ioctl function to remove
+timestamping support if there is no PTP device found
 
-Cheers,
-Benjamin
+>   
+>   	netdev->netdev_ops = &pch_gbe_netdev_ops;
+>   	netdev->watchdog_timeo = PCH_GBE_WATCHDOG_PERIOD;
+
 
