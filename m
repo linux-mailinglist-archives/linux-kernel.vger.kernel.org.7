@@ -1,47 +1,69 @@
-Return-Path: <linux-kernel+bounces-742672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CA8B0F536
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:24:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2896BB0F539
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4501F5434D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFC65418BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 14:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64AD2EF9B9;
-	Wed, 23 Jul 2025 14:24:43 +0000 (UTC)
-Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D752EF65E;
+	Wed, 23 Jul 2025 14:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Oj+KUwAJ"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B4E1E1DFC;
-	Wed, 23 Jul 2025 14:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB29C2EF2B4;
+	Wed, 23 Jul 2025 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753280683; cv=none; b=F5bcbLYz+UxegbLMoP8aWNtuAzI9HLD7yDQ+aeMdkoucKxYilxuqmn21rTjy73XSL3y6mUd8Tq5730KBUmKs+Q3bghtYAPZQKEWOBnXqqVGaVA3rPESxDSDDRfwzOq55+STy0CwvpR776UA7Hkzk+DK1nyOaSYoQ3FBNud45pJo=
+	t=1753280728; cv=none; b=ayt4wuIMSKcyNT7o4UQTIElKLWmVJmP8b+Wyg8dwcVmRbmO53ji0NV+tWwpZV6YjSTJbImbqt29iXFjG+Ic4u1v/UYrQHpo8LSxrv+0KBNpeaohR7jNZwZtn+UKf15ZDsCxxgFC7szuUxV1Kzr92bEv5sVd/bOknCCAu2vGbPKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753280683; c=relaxed/simple;
-	bh=IqOHHlkDWAP0B8mY0hVDKSI8j/eN7oOKCIII0jBbxyc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gqJB2w5QmEyQf5MuVkBIAxkR8KKYFvFwXj2fCMpRvZz3PVHJQzBTVNZDGnS1pJbSE6vSbPbnCXuhgSUw77b15g3MTqTexashTcu07wGIhNYSII2vk/Vp76V/4o/JNqAQnQeodvoeWrLq6/yGKc2soyzKau7YVG659VcTeKIkru4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=mblankhorst.nl; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mblankhorst.nl
-From: Maarten Lankhorst <dev@lankhorst.se>
-To: linux-kernel@vger.kernel.org
-Cc: intel-xe@lists.freedesktop.org,
-	Maarten Lankhorst <dev@lankhorst.se>,
-	Mukesh Ojha <quic_mojha@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	stable@vger.kernel.org,
-	Matthew Brost <matthew.brost@intel.com>
-Subject: [PATCH] devcoredump: Fix circular locking dependency with devcd->mutex.
-Date: Wed, 23 Jul 2025 16:24:16 +0200
-Message-ID: <20250723142416.1020423-1-dev@lankhorst.se>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1753280728; c=relaxed/simple;
+	bh=u5iZQ8dN6yf5D+SM9p9rwTEARRhqkdp06+1ijnDild0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uwbE5RXJDA4Mz73qijdtxuQezVzo5+fhLmhOeHiHvC3F+3qJHkwbhCBvGlJistRWWSUjBS2dV5Hj/MVlGyw2ZgRM0rQVvuieqkrlHB7E8mIOgkCaaN3e7VK4NDHWocw+8V7u6Aun7THD74RRTN5jUSQDSiNHa8n/yLbTkKwVTyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Oj+KUwAJ; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56NEP4ZP1293959;
+	Wed, 23 Jul 2025 09:25:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753280704;
+	bh=m0I1U8Ta9jnlUKeHE3PthL9OU0Tk6NcNozE1C+8udug=;
+	h=From:To:CC:Subject:Date;
+	b=Oj+KUwAJb21hNMHl4pcD1oZ/b2Lhj4T+0w+R+xAUf1Sjpv2Og8krNAALyxysD7maN
+	 MhmUhI1KhNOFmo5HFksgFJ8a941nXZGFkepu1a3J6qInyo97wIMtycTPsd6KDTACGc
+	 taNQojpWQu4FC92qCoTIwa2EJNImOcUr7RoqN36A=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56NEP41m2425924
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 23 Jul 2025 09:25:04 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 23
+ Jul 2025 09:25:03 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 23 Jul 2025 09:25:03 -0500
+Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56NEOtsi2832695;
+	Wed, 23 Jul 2025 09:24:56 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>,
+        <13916275206@139.com>, <v-po@ti.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <baojun.xu@ti.com>
+Subject: [PATCH v2] ALSA: hda: Add TAS2770 support
+Date: Wed, 23 Jul 2025 22:24:23 +0800
+Message-ID: <20250723142423.38768-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,380 +71,325 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The original code causes a circular locking dependency found by lockdep.
+Add TAS2770 support in TI's HDA driver. And add hda_chip_id for
+more products. Distinguish DSP and non-DSP in firmware
+loading function.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 Tainted: G S   U
-------------------------------------------------------
-xe_fault_inject/5091 is trying to acquire lock:
-ffff888156815688 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}, at: __flush_work+0x25d/0x660
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 
-but task is already holding lock:
-
-ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
-which lock already depends on the new lock.
-the existing dependency chain (in reverse order) is:
--> #2 (&devcd->mutex){+.+.}-{3:3}:
-       mutex_lock_nested+0x4e/0xc0
-       devcd_data_write+0x27/0x90
-       sysfs_kf_bin_write+0x80/0xf0
-       kernfs_fop_write_iter+0x169/0x220
-       vfs_write+0x293/0x560
-       ksys_write+0x72/0xf0
-       __x64_sys_write+0x19/0x30
-       x64_sys_call+0x2bf/0x2660
-       do_syscall_64+0x93/0xb60
-       entry_SYSCALL_64_after_hwframe+0x76/0x7e
--> #1 (kn->active#236){++++}-{0:0}:
-       kernfs_drain+0x1e2/0x200
-       __kernfs_remove+0xae/0x400
-       kernfs_remove_by_name_ns+0x5d/0xc0
-       remove_files+0x54/0x70
-       sysfs_remove_group+0x3d/0xa0
-       sysfs_remove_groups+0x2e/0x60
-       device_remove_attrs+0xc7/0x100
-       device_del+0x15d/0x3b0
-       devcd_del+0x19/0x30
-       process_one_work+0x22b/0x6f0
-       worker_thread+0x1e8/0x3d0
-       kthread+0x11c/0x250
-       ret_from_fork+0x26c/0x2e0
-       ret_from_fork_asm+0x1a/0x30
--> #0 ((work_completion)(&(&devcd->del_wk)->work)){+.+.}-{0:0}:
-       __lock_acquire+0x1661/0x2860
-       lock_acquire+0xc4/0x2f0
-       __flush_work+0x27a/0x660
-       flush_delayed_work+0x5d/0xa0
-       dev_coredump_put+0x63/0xa0
-       xe_driver_devcoredump_fini+0x12/0x20 [xe]
-       devm_action_release+0x12/0x30
-       release_nodes+0x3a/0x120
-       devres_release_all+0x8a/0xd0
-       device_unbind_cleanup+0x12/0x80
-       device_release_driver_internal+0x23a/0x280
-       device_driver_detach+0x14/0x20
-       unbind_store+0xaf/0xc0
-       drv_attr_store+0x21/0x50
-       sysfs_kf_write+0x4a/0x80
-       kernfs_fop_write_iter+0x169/0x220
-       vfs_write+0x293/0x560
-       ksys_write+0x72/0xf0
-       __x64_sys_write+0x19/0x30
-       x64_sys_call+0x2bf/0x2660
-       do_syscall_64+0x93/0xb60
-       entry_SYSCALL_64_after_hwframe+0x76/0x7e
-other info that might help us debug this:
-Chain exists of: (work_completion)(&(&devcd->del_wk)->work) --> kn->active#236 --> &devcd->mutex
- Possible unsafe locking scenario:
-       CPU0                    CPU1
-       ----                    ----
-  lock(&devcd->mutex);
-                               lock(kn->active#236);
-                               lock(&devcd->mutex);
-  lock((work_completion)(&(&devcd->del_wk)->work));
- *** DEADLOCK ***
-5 locks held by xe_fault_inject/5091:
- #0: ffff8881129f9488 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x72/0xf0
- #1: ffff88810c755078 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x123/0x220
- #2: ffff8881054811a0 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x55/0x280
- #3: ffff888156815620 (&devcd->mutex){+.+.}-{3:3}, at: dev_coredump_put+0x3f/0xa0
- #4: ffffffff8359e020 (rcu_read_lock){....}-{1:2}, at: __flush_work+0x72/0x660
-stack backtrace:
-CPU: 14 UID: 0 PID: 5091 Comm: xe_fault_inject Tainted: G S   U              6.16.0-rc6-lgci-xe-xe-pw-151626v3+ #1 PREEMPT_{RT,(lazy)}
-Tainted: [S]=CPU_OUT_OF_SPEC, [U]=USER
-Hardware name: Micro-Star International Co., Ltd. MS-7D25/PRO Z690-A DDR4(MS-7D25), BIOS 1.10 12/13/2021
-Call Trace:
- <TASK>
- dump_stack_lvl+0x91/0xf0
- dump_stack+0x10/0x20
- print_circular_bug+0x285/0x360
- check_noncircular+0x135/0x150
- ? register_lock_class+0x48/0x4a0
- __lock_acquire+0x1661/0x2860
- lock_acquire+0xc4/0x2f0
- ? __flush_work+0x25d/0x660
- ? mark_held_locks+0x46/0x90
- ? __flush_work+0x25d/0x660
- __flush_work+0x27a/0x660
- ? __flush_work+0x25d/0x660
- ? trace_hardirqs_on+0x1e/0xd0
- ? __pfx_wq_barrier_func+0x10/0x10
- flush_delayed_work+0x5d/0xa0
- dev_coredump_put+0x63/0xa0
- xe_driver_devcoredump_fini+0x12/0x20 [xe]
- devm_action_release+0x12/0x30
- release_nodes+0x3a/0x120
- devres_release_all+0x8a/0xd0
- device_unbind_cleanup+0x12/0x80
- device_release_driver_internal+0x23a/0x280
- ? bus_find_device+0xa8/0xe0
- device_driver_detach+0x14/0x20
- unbind_store+0xaf/0xc0
- drv_attr_store+0x21/0x50
- sysfs_kf_write+0x4a/0x80
- kernfs_fop_write_iter+0x169/0x220
- vfs_write+0x293/0x560
- ksys_write+0x72/0xf0
- __x64_sys_write+0x19/0x30
- x64_sys_call+0x2bf/0x2660
- do_syscall_64+0x93/0xb60
- ? __f_unlock_pos+0x15/0x20
- ? __x64_sys_getdents64+0x9b/0x130
- ? __pfx_filldir64+0x10/0x10
- ? do_syscall_64+0x1a2/0xb60
- ? clear_bhb_loop+0x30/0x80
- ? clear_bhb_loop+0x30/0x80
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x76e292edd574
-Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d d5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-RSP: 002b:00007fffe247a828 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000076e292edd574
-RDX: 000000000000000c RSI: 00006267f6306063 RDI: 000000000000000b
-RBP: 000000000000000c R08: 000076e292fc4b20 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00006267f6306063
-R13: 000000000000000b R14: 00006267e6859c00 R15: 000076e29322a000
- </TASK>
-xe 0000:03:00.0: [drm] Xe device coredump has been deleted.
-
-Fixes: 01daccf74832 ("devcoredump : Serialize devcd_del work")
-Cc: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v6.1+
-Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
-Cc: Matthew Brost <matthew.brost@intel.com>
 ---
- drivers/base/devcoredump.c | 136 ++++++++++++++++++++++---------------
- 1 file changed, 83 insertions(+), 53 deletions(-)
+v2:
+ - Rewrite the patch description
+ - Move registers define for TAS2770 from tas2781.h to tas2770-tlv.h
+ - Add new chip ID define for HDA
+ - Add digital volume control in tas2770_snd_controls
+ - Change public kcontrol name from tas27xx_ to tasdevice_
+ - Create new function for kcontrol adding
+ - Create new function for DSP binary loading
+ - Rename chip_id to hda_chip_id in i2c_probe for the supported devices
+---
+ include/sound/tas2770-tlv.h                   |  23 +++
+ .../hda/codecs/side-codecs/tas2781_hda_i2c.c  | 161 +++++++++++-------
+ 2 files changed, 127 insertions(+), 57 deletions(-)
+ create mode 100644 include/sound/tas2770-tlv.h
 
-diff --git a/drivers/base/devcoredump.c b/drivers/base/devcoredump.c
-index 03a39c417dc41..ad4bddde12ccb 100644
---- a/drivers/base/devcoredump.c
-+++ b/drivers/base/devcoredump.c
-@@ -23,50 +23,46 @@ struct devcd_entry {
- 	void *data;
- 	size_t datalen;
- 	/*
--	 * Here, mutex is required to serialize the calls to del_wk work between
--	 * user/kernel space which happens when devcd is added with device_add()
--	 * and that sends uevent to user space. User space reads the uevents,
--	 * and calls to devcd_data_write() which try to modify the work which is
--	 * not even initialized/queued from devcoredump.
-+	 * There are 2 races for which mutex is required.
- 	 *
-+	 * The first race is between device creation and userspace writing to
-+	 * schedule immediately destruction.
- 	 *
-+	 * This race is handled by arming the timer before device creation, but
-+	 * when device creation fails the timer still exists.
- 	 *
--	 *        cpu0(X)                                 cpu1(Y)
-+	 * To solve this, hold the mutex during device_add(), and set
-+	 * init_completed on success before releasing the mutex.
- 	 *
--	 *        dev_coredump() uevent sent to user space
--	 *        device_add()  ======================> user space process Y reads the
--	 *                                              uevents writes to devcd fd
--	 *                                              which results into writes to
-+	 * That way the timer will never fire until device_add() is called,
-+	 * it will do nothing if init_completed is not set. The timer is also
-+	 * cancelled in that case.
- 	 *
--	 *                                             devcd_data_write()
--	 *                                               mod_delayed_work()
--	 *                                                 try_to_grab_pending()
--	 *                                                   timer_delete()
--	 *                                                     debug_assert_init()
--	 *       INIT_DELAYED_WORK()
--	 *       schedule_delayed_work()
--	 *
--	 *
--	 * Also, mutex alone would not be enough to avoid scheduling of
--	 * del_wk work after it get flush from a call to devcd_free()
--	 * mentioned as below.
--	 *
--	 *	disabled_store()
--	 *        devcd_free()
--	 *          mutex_lock()             devcd_data_write()
--	 *          flush_delayed_work()
--	 *          mutex_unlock()
--	 *                                   mutex_lock()
--	 *                                   mod_delayed_work()
--	 *                                   mutex_unlock()
--	 * So, delete_work flag is required.
-+	 * The second race involves multiple parallel invocations of devcd_free(),
-+	 * add a deleted flag so only 1 can call the destructor.
- 	 */
- 	struct mutex mutex;
--	bool delete_work;
-+	bool init_completed, deleted;
- 	struct module *owner;
- 	ssize_t (*read)(char *buffer, loff_t offset, size_t count,
- 			void *data, size_t datalen);
- 	void (*free)(void *data);
-+	/*
-+	 * If nothing interferes and device_add() was returns success,
-+	 * del_wk will destroy the device after the timer fires.
-+	 *
-+	 * Multiple userspace processes can interfere in the working of the timer:
-+	 * - Writing to the coredump will reschedule the timer to run immediately,
-+	 *   if still armed.
-+	 *
-+	 *   This is handled by using "if (cancel_delayed_work()) {
-+	 *   schedule_delayed_work() }", to prevent re-arming after having
-+	 *   been previously fired.
-+	 * - Writing to /sys/class/devcoredump/disabled will destroy the
-+	 *   coredump synchronously.
-+	 *   This is handled by using disable_delayed_work_sync(), and then
-+	 *   checking if deleted flag is set with &devcd->mutex held.
-+	 */
- 	struct delayed_work del_wk;
- 	struct device *failing_dev;
+diff --git a/include/sound/tas2770-tlv.h b/include/sound/tas2770-tlv.h
+new file mode 100644
+index 000000000000..c0bd495b4a07
+--- /dev/null
++++ b/include/sound/tas2770-tlv.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++//
++// ALSA SoC Texas Instruments TAS2770 Audio Smart Amplifier
++//
++// Copyright (C) 2025 Texas Instruments Incorporated
++// https://www.ti.com
++//
++// The TAS2770 hda driver implements for one, two, or even multiple
++// TAS2770 chips.
++//
++// Author: Baojun Xu <baojun.xu@ti.com>
++//
++
++#ifndef __TAS2770_TLV_H__
++#define __TAS2770_TLV_H__
++
++#define TAS2770_DVC_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x17)
++#define TAS2770_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
++
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_dvc_tlv, 1650, 50, 0);
++static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2770_amp_tlv, 1100, 50, 0);
++
++#endif
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+index bacc3f6ed4bd..65a48326f5b9 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+@@ -24,6 +24,7 @@
+ #include <sound/tas2781.h>
+ #include <sound/tas2781-comlib-i2c.h>
+ #include <sound/tlv.h>
++#include <sound/tas2770-tlv.h>
+ #include <sound/tas2781-tlv.h>
+ 
+ #include "hda_local.h"
+@@ -45,9 +46,18 @@
+ #define TAS2563_CAL_TLIM		TASDEVICE_REG(0, 0x10, 0x14)
+ #define TAS2563_CAL_R0			TASDEVICE_REG(0, 0x0f, 0x34)
+ 
++enum device_chip_id {
++	HDA_TAS2563,
++	HDA_TAS2770,
++	HDA_TAS2781,
++	HDA_OTHERS
++};
++
+ struct tas2781_hda_i2c_priv {
+ 	struct snd_kcontrol *snd_ctls[2];
+ 	int (*save_calibration)(struct tas2781_hda *h);
++
++	int hda_chip_id;
  };
-@@ -95,14 +91,27 @@ static void devcd_dev_release(struct device *dev)
- 	kfree(devcd);
+ 
+ static int tas2781_get_i2c_res(struct acpi_resource *ares, void *data)
+@@ -245,6 +255,15 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
+ 	return change;
  }
  
-+static void __devcd_del(struct devcd_entry *devcd)
++static const struct snd_kcontrol_new tas2770_snd_controls[] = {
++	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2770_AMP_LEVEL,
++		0, 0, 20, 0, tas2781_amp_getvol,
++		tas2781_amp_putvol, tas2770_amp_tlv),
++	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Digital Volume", TAS2770_DVC_LEVEL,
++		0, 0, 31, 0, tas2781_amp_getvol,
++		tas2781_amp_putvol, tas2770_dvc_tlv),
++};
++
+ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
+ 		1, 0, 20, 0, tas2781_amp_getvol,
+@@ -253,7 +272,7 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+ 		tas2781_force_fwload_get, tas2781_force_fwload_put),
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_prof_ctrl = {
++static const struct snd_kcontrol_new tasdevice_prof_ctrl = {
+ 	.name = "Speaker Profile Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_profile,
+@@ -261,7 +280,7 @@ static const struct snd_kcontrol_new tas2781_prof_ctrl = {
+ 	.put = tasdevice_set_profile_id,
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_dsp_prog_ctrl = {
++static const struct snd_kcontrol_new tasdevice_dsp_prog_ctrl = {
+ 	.name = "Speaker Program Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_programs,
+@@ -269,7 +288,7 @@ static const struct snd_kcontrol_new tas2781_dsp_prog_ctrl = {
+ 	.put = tasdevice_program_put,
+ };
+ 
+-static const struct snd_kcontrol_new tas2781_dsp_conf_ctrl = {
++static const struct snd_kcontrol_new tasdevice_dsp_conf_ctrl = {
+ 	.name = "Speaker Config Id",
+ 	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+ 	.info = tasdevice_info_config,
+@@ -378,44 +397,34 @@ static void tas2781_hda_remove_controls(struct tas2781_hda *tas_hda)
+ 	snd_ctl_remove(codec->card, tas_hda->prof_ctl);
+ }
+ 
+-static void tasdev_fw_ready(const struct firmware *fmw, void *context)
++static void tasdev_add_kcontrols(struct tasdevice_priv *tas_priv,
++	struct snd_kcontrol **ctls, struct hda_codec *codec,
++	const struct snd_kcontrol_new *tas_snd_ctrls, int num_ctls)
+ {
+-	struct tasdevice_priv *tas_priv = context;
+-	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
+-	struct tas2781_hda_i2c_priv *hda_priv = tas_hda->hda_priv;
+-	struct hda_codec *codec = tas_priv->codec;
+-	int i, ret, spk_id;
+-
+-	pm_runtime_get_sync(tas_priv->dev);
+-	mutex_lock(&tas_priv->codec_lock);
++	int i, ret;
+ 
+-	ret = tasdevice_rca_parser(tas_priv, fmw);
+-	if (ret)
+-		goto out;
+-
+-	tas_hda->prof_ctl = snd_ctl_new1(&tas2781_prof_ctrl, tas_priv);
+-	ret = snd_ctl_add(codec->card, tas_hda->prof_ctl);
+-	if (ret) {
+-		dev_err(tas_priv->dev,
+-			"Failed to add KControl %s = %d\n",
+-			tas2781_prof_ctrl.name, ret);
+-		goto out;
+-	}
+-
+-	for (i = 0; i < ARRAY_SIZE(tas2781_snd_controls); i++) {
+-		hda_priv->snd_ctls[i] = snd_ctl_new1(&tas2781_snd_controls[i],
+-			tas_priv);
+-		ret = snd_ctl_add(codec->card, hda_priv->snd_ctls[i]);
++	for (i = 0; i < num_ctls; i++) {
++		ctls[i] = snd_ctl_new1(
++			&tas_snd_ctrls[i], tas_priv);
++		ret = snd_ctl_add(codec->card, ctls[i]);
+ 		if (ret) {
+ 			dev_err(tas_priv->dev,
+ 				"Failed to add KControl %s = %d\n",
+-				tas2781_snd_controls[i].name, ret);
+-			goto out;
++				tas_snd_ctrls[i].name, ret);
++			break;
+ 		}
+ 	}
++}
+ 
+-	tasdevice_dsp_remove(tas_priv);
++static void tasdevice_dspfw_init(void *context)
 +{
-+	devcd->deleted = true;
-+	device_del(&devcd->devcd_dev);
-+	put_device(&devcd->devcd_dev);
++	struct tasdevice_priv *tas_priv = context;
++	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
++	struct tas2781_hda_i2c_priv *hda_priv = tas_hda->hda_priv;
++	struct hda_codec *codec = tas_priv->codec;
++	int ret, spk_id;
+ 
++	tasdevice_dsp_remove(tas_priv);
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+ 	if (tas_priv->speaker_id != NULL) {
+ 		// Speaker id need to be checked for ASUS only.
+@@ -441,28 +450,12 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+ 			tas_priv->coef_binaryname);
+ 		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+-		goto out;
+-	}
+-
+-	tas_hda->dsp_prog_ctl = snd_ctl_new1(&tas2781_dsp_prog_ctrl,
+-		tas_priv);
+-	ret = snd_ctl_add(codec->card, tas_hda->dsp_prog_ctl);
+-	if (ret) {
+-		dev_err(tas_priv->dev,
+-			"Failed to add KControl %s = %d\n",
+-			tas2781_dsp_prog_ctrl.name, ret);
+-		goto out;
+-	}
+-
+-	tas_hda->dsp_conf_ctl = snd_ctl_new1(&tas2781_dsp_conf_ctrl,
+-		tas_priv);
+-	ret = snd_ctl_add(codec->card, tas_hda->dsp_conf_ctl);
+-	if (ret) {
+-		dev_err(tas_priv->dev,
+-			"Failed to add KControl %s = %d\n",
+-			tas2781_dsp_conf_ctrl.name, ret);
+-		goto out;
++		return;
+ 	}
++	tasdev_add_kcontrols(tas_priv, &tas_hda->dsp_prog_ctl, codec,
++			     &tasdevice_dsp_prog_ctrl, 1);
++	tasdev_add_kcontrols(tas_priv, &tas_hda->dsp_conf_ctl, codec,
++			     &tasdevice_dsp_conf_ctrl, 1);
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ 	tasdevice_prmg_load(tas_priv, 0);
+@@ -475,9 +468,45 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	 * calibrated data inside algo.
+ 	 */
+ 	hda_priv->save_calibration(tas_hda);
 +}
 +
- static void devcd_del(struct work_struct *wk)
- {
- 	struct devcd_entry *devcd;
-+	bool init_completed;
- 
- 	devcd = container_of(wk, struct devcd_entry, del_wk.work);
- 
--	device_del(&devcd->devcd_dev);
--	put_device(&devcd->devcd_dev);
-+	/* devcd->mutex serializes against dev_coredumpm_timeout */
-+	mutex_lock(&devcd->mutex);
-+	init_completed = devcd->init_completed;
-+	mutex_unlock(&devcd->mutex);
++static void tasdev_fw_ready(const struct firmware *fmw, void *context)
++{
++	struct tasdevice_priv *tas_priv = context;
++	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
++	struct tas2781_hda_i2c_priv *hda_priv = tas_hda->hda_priv;
++	struct hda_codec *codec = tas_priv->codec;
++	int ret;
 +
-+	if (init_completed)
-+		__devcd_del(devcd);
- }
- 
- static ssize_t devcd_data_read(struct file *filp, struct kobject *kobj,
-@@ -122,12 +131,12 @@ static ssize_t devcd_data_write(struct file *filp, struct kobject *kobj,
- 	struct device *dev = kobj_to_dev(kobj);
- 	struct devcd_entry *devcd = dev_to_devcd(dev);
- 
--	mutex_lock(&devcd->mutex);
--	if (!devcd->delete_work) {
--		devcd->delete_work = true;
--		mod_delayed_work(system_wq, &devcd->del_wk, 0);
--	}
--	mutex_unlock(&devcd->mutex);
-+	/*
-+	 * Although it's tempting to use mod_delayed work here,
-+	 * that will cause a reschedule if the timer already fired.
-+	 */
-+	if (cancel_delayed_work(&devcd->del_wk))
-+		schedule_delayed_work(&devcd->del_wk, 0);
- 
- 	return count;
- }
-@@ -151,11 +160,21 @@ static int devcd_free(struct device *dev, void *data)
- {
- 	struct devcd_entry *devcd = dev_to_devcd(dev);
- 
-+	/*
-+	 * To prevent a race with devcd_data_write(), disable work and
-+	 * complete manually instead.
-+	 *
-+	 * We cannot rely on the return value of
-+	 * disable_delayed_work_sync() here, because it might be in the
-+	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
-+	 *
-+	 * devcd->mutex here guards against multiple parallel invocations
-+	 * of devcd_free().
-+	 */
-+	disable_delayed_work_sync(&devcd->del_wk);
- 	mutex_lock(&devcd->mutex);
--	if (!devcd->delete_work)
--		devcd->delete_work = true;
--
--	flush_delayed_work(&devcd->del_wk);
-+	if (!devcd->deleted)
-+		__devcd_del(devcd);
- 	mutex_unlock(&devcd->mutex);
- 	return 0;
- }
-@@ -179,12 +198,10 @@ static ssize_t disabled_show(const struct class *class, const struct class_attri
-  *                                                                 put_device() <- last reference
-  *             error = fn(dev, data)                           devcd_dev_release()
-  *             devcd_free(dev, data)                           kfree(devcd)
-- *             mutex_lock(&devcd->mutex);
-  *
-  *
-  * In the above diagram, it looks like disabled_store() would be racing with parallelly
-- * running devcd_del() and result in memory abort while acquiring devcd->mutex which
-- * is called after kfree of devcd memory after dropping its last reference with
-+ * running devcd_del() and result in memory abort after dropping its last reference with
-  * put_device(). However, this will not happens as fn(dev, data) runs
-  * with its own reference to device via klist_node so it is not its last reference.
-  * so, above situation would not occur.
-@@ -374,7 +391,7 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
- 	devcd->read = read;
- 	devcd->free = free;
- 	devcd->failing_dev = get_device(dev);
--	devcd->delete_work = false;
-+	devcd->deleted = false;
- 
- 	mutex_init(&devcd->mutex);
- 	device_initialize(&devcd->devcd_dev);
-@@ -383,8 +400,14 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
- 		     atomic_inc_return(&devcd_count));
- 	devcd->devcd_dev.class = &devcd_class;
- 
--	mutex_lock(&devcd->mutex);
- 	dev_set_uevent_suppress(&devcd->devcd_dev, true);
++	pm_runtime_get_sync(tas_priv->dev);
++	mutex_lock(&tas_priv->codec_lock);
 +
-+	/* devcd->mutex prevents devcd_del() completing until init finishes */
-+	mutex_lock(&devcd->mutex);
-+	devcd->init_completed = false;
-+	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
-+	schedule_delayed_work(&devcd->del_wk, timeout);
-+
- 	if (device_add(&devcd->devcd_dev))
- 		goto put_device;
++	ret = tasdevice_rca_parser(tas_priv, fmw);
++	if (ret)
++		goto out;
  
-@@ -401,13 +424,20 @@ void dev_coredumpm_timeout(struct device *dev, struct module *owner,
+-	tasdevice_tuning_switch(tas_hda->priv, 0);
+-	tas_hda->priv->playback_started = true;
++	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
++	tasdev_add_kcontrols(tas_priv, &tas_hda->prof_ctl, codec,
++		&tasdevice_prof_ctrl, 1);
++
++	switch (hda_priv->hda_chip_id) {
++	case HDA_TAS2770:
++		tasdev_add_kcontrols(tas_priv, hda_priv->snd_ctls, codec,
++				     &tas2770_snd_controls[0],
++				     ARRAY_SIZE(tas2770_snd_controls));
++		break;
++	case HDA_TAS2781:
++		tasdev_add_kcontrols(tas_priv, hda_priv->snd_ctls, codec,
++				     &tas2781_snd_controls[0],
++				     ARRAY_SIZE(tas2781_snd_controls));
++		tasdevice_dspfw_init(context);
++		break;
++	case HDA_TAS2563:
++		tasdevice_dspfw_init(context);
++		break;
++	default:
++		break;
++	}
  
- 	dev_set_uevent_suppress(&devcd->devcd_dev, false);
- 	kobject_uevent(&devcd->devcd_dev.kobj, KOBJ_ADD);
--	INIT_DELAYED_WORK(&devcd->del_wk, devcd_del);
--	schedule_delayed_work(&devcd->del_wk, timeout);
-+
-+	/*
-+	 * Safe to run devcd_del() now that we are done with devcd_dev.
-+	 * Alternatively we could have taken a ref on devcd_dev before
-+	 * dropping the lock.
-+	 */
-+	devcd->init_completed = true;
- 	mutex_unlock(&devcd->mutex);
- 	return;
-  put_device:
--	put_device(&devcd->devcd_dev);
- 	mutex_unlock(&devcd->mutex);
-+	cancel_delayed_work_sync(&devcd->del_wk);
-+	put_device(&devcd->devcd_dev);
-+
-  put_module:
- 	module_put(owner);
-  free:
+ out:
+ 	mutex_unlock(&tas_hda->priv->codec_lock);
+@@ -581,16 +610,33 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ 		return -ENOMEM;
+ 
+ 	if (strstr(dev_name(&clt->dev), "TIAS2781")) {
+-		device_name = "TIAS2781";
++		/*
++		 * TAS2781, integrated on-chip DSP with
++		 * global I2C address supported.
++		 */
++		device_name = "TIAS2781";
++		hda_priv->hda_chip_id = HDA_TAS2781;
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
++	} else if (strstarts(dev_name(&clt->dev), "i2c-TXNW2770")) {
++		/*
++		 * TAS2770, has no on-chip DSP, so no calibration data
++		 * required; has no global I2C address supported.
++		 */
++		device_name = "TXNW2770";
++		hda_priv->hda_chip_id = HDA_TAS2770;
+ 	} else if (strstarts(dev_name(&clt->dev),
+ 			     "i2c-TXNW2781:00-tas2781-hda.0")) {
+ 		device_name = "TXNW2781";
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
+ 	} else if (strstr(dev_name(&clt->dev), "INT8866")) {
+-		device_name = "INT8866";
++		/*
++		 * TAS2563, integrated on-chip DSP with
++		 * global I2C address supported.
++		 */
++		device_name = "INT8866";
++		hda_priv->hda_chip_id = HDA_TAS2563;
+ 		hda_priv->save_calibration = tas2563_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2563_GLOBAL_ADDR;
+ 	} else {
+@@ -727,6 +773,7 @@ static const struct i2c_device_id tas2781_hda_i2c_id[] = {
+ static const struct acpi_device_id tas2781_acpi_hda_match[] = {
+ 	{"INT8866", 0 },
+ 	{"TIAS2781", 0 },
++	{"TXNW2770", 0 },
+ 	{"TXNW2781", 0 },
+ 	{}
+ };
 -- 
-2.45.2
+2.43.0
 
 
