@@ -1,108 +1,247 @@
-Return-Path: <linux-kernel+bounces-743184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372A0B0FB8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:35:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D328B0FB91
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAC07B2A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAFA3BC43E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D09C230D1E;
-	Wed, 23 Jul 2025 20:34:57 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E591D238C3A;
+	Wed, 23 Jul 2025 20:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Co0wzGkI"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D1D42065;
-	Wed, 23 Jul 2025 20:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ADD236431
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753302896; cv=none; b=GwTExxy9XtuVlfTEShVGCj2HE3/gfNzfC69FTgmFwDdtfb1x3He2aGwO/bWxOvYAf34dVs+5Ai3Xb7F/s9jqxD5yx6R/dZy7tX1abjA2szoUl6LHHRxvWafBtIeaZnH8tm+kZVhU1EBV+6ELD7yxytMAqvJT9LBYSAOfTfdN8uY=
+	t=1753302904; cv=none; b=Lyg1Au0gfD0lF7aI09N1MBdFGPVQdJg6gCuSqhHTspU0/YvGWCSOEunbDrPpaB6CI4W5GRoVHupJf3M40iqxUG4OFFoBNV8woFX2c56uGI5dU47EOU4HpqT9ZoXLZjEprj4uyuPBsvnAP1Cx+g9hZMOeHL2RokFKbo0j/UJsOaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753302896; c=relaxed/simple;
-	bh=nwUbdKhwRsspymSsNXvaMFNpqpvFm3GWxuD8/E96iig=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMsJSRYY3BWP5Jjh4dRwac45/7SGXucKm05RCrIKs/RCoVUTXaUJcVIPue6POjIJABAPTHTssS2yF4M1q4ZtWLlfNYrXJNFSHcsQ+b9TSi+kKXZ9Q2lT33COJW4iFFpn8KNSkk4eNGlroQVrrziKo7OnfRTymR0VFg8u+yJDx4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id D52E0110F58;
-	Wed, 23 Jul 2025 20:34:50 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 3A7E220010;
-	Wed, 23 Jul 2025 20:34:49 +0000 (UTC)
-Date: Wed, 23 Jul 2025 16:34:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 0/6] Switch __DECLARE_TRACE() to new notrace variant of
- SRCU-fast
-Message-ID: <20250723163450.02bc299b@gandalf.local.home>
-In-Reply-To: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
-References: <45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753302904; c=relaxed/simple;
+	bh=WTZXIXoDsiyMHH7jLVN7/heBJWOZLBzitc9MnX4fESk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=azG4HfhbnzLvMwh6BgmFRUEWxoY9fu+Ya8kTPlIMSI7qA2DgeMB4rtmcMKYiCHLvFMlyqS5az/J32kObnKKkmOFoxEdClFV8KFf6zVqvNaTRVAVx0GOdgCReMlYk2h4iqVo3gAKfdMv1m0sabTqYwW5RVudM+n1vQZhoIEBJamA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Co0wzGkI; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31e3fdf1906so206773a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 13:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753302901; x=1753907701; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnR7w9stPdKm98nKrJQNM9+YNaTPwRCkK6LNcC2wLbg=;
+        b=Co0wzGkIGFdyRgIKDioE5QfAlzl09kQtRI0cjx0oQhAAJyCvvZSNh4GrdzQKkaVkSY
+         SN+6SmeWEi2vdEJxKp2gbuB+vgfHW64zQvDO/PyAx+elpala3EnGMdxtBZSBCR3wZo7j
+         eIWLNwqcjVwTg9K0+ocq4mCfuJGyeshpwnE8yX4Je0Ny6dRT7viu8oChchHUMPblvvL7
+         /CeoWSmu9soNFUqpQkS4JFwZB8lvdBykUOlOqC3mTuQhxtLkZAc1nkv88MPWKWj1gfMg
+         Oo3osTtyV5m6ZgHnbSVMr5Sc4SwWvSFdiFX0LXtZf7EL3WcMDo0PunuBwPos6J9r58Mq
+         YD1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753302901; x=1753907701;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnR7w9stPdKm98nKrJQNM9+YNaTPwRCkK6LNcC2wLbg=;
+        b=HZDJQT0gdkjDE1lAsQQUbXNSMROKyaYstXCxZtA76eGjZ1rfesZPPJn2rAxYbwCCqh
+         av68ZwXPDe00WTshZajuINstFDdbPWNflck/ovZuXO3p4uWOBAfFulvGb+ZYYEq1IZ9C
+         T/HwF0rqS56kLaFgek6EEkmWOX7+PSjxz30o+yWF5a3rjgUfHD21mEXDTa+djNOodeij
+         8gT1QC5dUCNPi9Z7uBhv3Vf2fb5zT2D4h6MfW2f77Hh++ZnKrtOwjYphs08DJfaTkdJU
+         oFfs1jnGx736xspe2ZG8goceVWmwLdbldA71vFanbDA3L2L29r7l+i9fbbX1AygV3y0G
+         TbgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyc46W1TYy66YhL/hQjaQmqPwdDpQHMFBsLSon9p5W4xIGm5xP9We+6mhWyBR77LJjx65DkgsuZDOtOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU98PfzRM/iNppzPIU30o5D+Kffo3JKJUQOM7iWNIBMnMmJuWm
+	WZg3tgFm1So67XufR4rP6rW8hxgY4AEiFYeKrPFR4YzVJd8fCR+PxZyW3WFu2J2yEXY1wxYzCQ0
+	3dB5VlQ==
+X-Google-Smtp-Source: AGHT+IElGF/a2fa0rRJVG8x7Wl025nPKxmm0Kd4MFuq7jeA062GW0ZiySl0PXMrGcapOCBE04uzxFXddxes=
+X-Received: from pjbos14.prod.google.com ([2002:a17:90b:1cce:b0:30a:31eb:ec8e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:da8f:b0:313:283e:e87c
+ with SMTP id 98e67ed59e1d1-31e506eea04mr5481708a91.3.1753302901160; Wed, 23
+ Jul 2025 13:35:01 -0700 (PDT)
+Date: Wed, 23 Jul 2025 13:34:59 -0700
+In-Reply-To: <20250707224720.4016504-4-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 3A7E220010
-X-Stat-Signature: nzg1kbwmb5qhpy4itixisewhpkddkjrx
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19SsEdMYVrsG5m3U60l6BeB5xDUJbFvF04=
-X-HE-Tag: 1753302889-137071
-X-HE-Meta: U2FsdGVkX18hzn3ui7P/M17SZO/GyLcB0stbWd/SfDbgW/r9VlL2HGOLMvAoAAjjbZhg8piUBniaeitlH6wdcNoSTy9VpRSm4tW6cAVH2WqGOdA0RwZJsylziid+DMhDTsPrypWBSfDIkxmblrDGtTjPJh2F5Ofy8AY/ZdtBvTuy4GE0v9tQ2emJ0pvGoC5vKQLtpRYsbgFWg2oD4bAgA8dyGVwYKToSlr1SmRb8zan3CAyuTp/IeLTW6Z8FmOOrdQgPW0mKGpziZI+6ns3Y1pSHbCAmR1JHtjTE1Hp7kYicM8af2Ay4hUErT0iyQzG8S+NKPLEA2eKBLtTOrIwzQnaW5XEDgiWc
+Mime-Version: 1.0
+References: <20250707224720.4016504-1-jthoughton@google.com> <20250707224720.4016504-4-jthoughton@google.com>
+Message-ID: <aIFHc83PtfB9fkKB@google.com>
+Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
+	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 23 Jul 2025 13:27:54 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Mon, Jul 07, 2025, James Houghton wrote:
+> From: Vipin Sharma <vipinsh@google.com>
+> 
+> Use MMU read lock to recover TDP MMU NX huge pages. Iterate
 
-> This triggers continues to trigger a kernel test robot report of a
-> "using smp_processor_id() in preemptible" splat.  I looked for issues
-> with explicit preemption disabling, and, not finding any, will next turn
-> my attention to accesses to per-CPU variables.  Any and all insights
-> are welcome.
+Wrap at ~75 chars.
 
-Currently perf and ftrace expect the tracepoints to be called with
-preemption disabled. You may need this:
+> over the huge pages list under tdp_mmu_pages_lock protection and
+> unaccount the page before dropping the lock.
+> 
+> We must not zap an SPTE if:
 
-diff --git a/include/trace/perf.h b/include/trace/perf.h
-index a1754b73a8f5..1b7925a85966 100644
---- a/include/trace/perf.h
-+++ b/include/trace/perf.h
-@@ -71,7 +71,9 @@ perf_trace_##call(void *__data, proto)					\
- 	u64 __count __attribute__((unused));				\
- 	struct task_struct *__task __attribute__((unused));		\
- 									\
-+	preempt_disable_notrace();					\
- 	do_perf_trace_##call(__data, args);				\
-+	preempt_enable_notrace();					\
- }
- 
- #undef DECLARE_EVENT_SYSCALL_CLASS
-diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
-index 4f22136fd465..0504a423ca25 100644
---- a/include/trace/trace_events.h
-+++ b/include/trace/trace_events.h
-@@ -436,7 +436,9 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
- static notrace void							\
- trace_event_raw_event_##call(void *__data, proto)			\
- {									\
-+	preempt_disable_notrace();					\
- 	do_trace_event_raw_event_##call(__data, args);			\
-+	preempt_enable_notrace();					\
- }
- 
- #undef DECLARE_EVENT_SYSCALL_CLASS
+No pronouns!
 
+> - The SPTE is a root page.
+> - The SPTE does not point at the SP's page table.
+> 
+> If the SPTE does not point at the SP's page table, then something else
+> has change the SPTE, so we cannot safely zap it.
+> 
+> Warn if zapping SPTE fails and current SPTE is still pointing to same
+> page table. This should never happen.
+> 
+> There is always a race between dirty logging, vCPU faults, and NX huge
+> page recovery for backing a gfn by an NX huge page or an executable
+> small page. Unaccounting sooner during the list traversal is increasing
+> the window of that race. Functionally, it is okay, because accounting
+> doesn't protect against iTLB multi-hit bug, it is there purely to
+> prevent KVM from bouncing a gfn between two page sizes. The only
+> downside is that a vCPU will end up doing more work in tearing down all
+> the child SPTEs. This should be a very rare race.
+> 
+> Zapping under MMU read lock unblocks vCPUs which are waiting for MMU
+> read lock. This optimizaion is done to solve a guest jitter issue on
+> Windows VM which was observing an increase in network latency.
 
-But please add it with the change, as there's "preempt_count" accounting to
-report to the user that accounts that preemption was disabled when called.
+With slight tweaking:
 
--- Steve
+Use MMU read lock to recover TDP MMU NX huge pages.  To prevent
+concurrent modification of the list of potential huge pages, iterate over
+the list under tdp_mmu_pages_lock protection and unaccount the page
+before dropping the lock.
+
+Zapping under MMU read lock unblocks vCPUs which are waiting for MMU
+read lock, which solves a guest jitter issue on Windows VMs which were
+observing an increase in network latency.
+
+Do not zap an SPTE if:
+- The SPTE is a root page.
+- The SPTE does not point at the SP's page table.
+
+If the SPTE does not point at the SP's page table, then something else
+has change the SPTE, so KVM cannot safely zap it.
+
+Warn if zapping SPTE fails and current SPTE is still pointing to same
+page table, as it should be impossible for the CMPXCHG to fail due to all
+other write scenarios being mutually exclusive.
+
+There is always a race between dirty logging, vCPU faults, and NX huge
+page recovery for backing a gfn by an NX huge page or an executable
+small page.  Unaccounting sooner during the list traversal increases the
+window of that race, but functionally, it is okay.  Accounting doesn't
+protect against iTLB multi-hit bug, it is there purely to prevent KVM
+from bouncing a gfn between two page sizes. The only  downside is that a
+vCPU will end up doing more work in tearing down all  the child SPTEs.
+This should be a very rare race.
+
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Vipin Sharma <vipinsh@google.com>
+> Co-developed-by: James Houghton <jthoughton@google.com>
+> Signed-off-by: James Houghton <jthoughton@google.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c     | 107 ++++++++++++++++++++++++-------------
+>  arch/x86/kvm/mmu/tdp_mmu.c |  42 ++++++++++++---
+>  2 files changed, 105 insertions(+), 44 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index b074f7bb5cc58..7df1b4ead705b 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -7535,12 +7535,40 @@ static unsigned long nx_huge_pages_to_zap(struct kvm *kvm,
+>  	return ratio ? DIV_ROUND_UP(pages, ratio) : 0;
+>  }
+>  
+> +static bool kvm_mmu_sp_dirty_logging_enabled(struct kvm *kvm,
+> +					     struct kvm_mmu_page *sp)
+> +{
+> +	struct kvm_memory_slot *slot = NULL;
+> +
+> +	/*
+> +	 * Since gfn_to_memslot() is relatively expensive, it helps to skip it if
+> +	 * it the test cannot possibly return true.  On the other hand, if any
+> +	 * memslot has logging enabled, chances are good that all of them do, in
+> +	 * which case unaccount_nx_huge_page() is much cheaper than zapping the
+> +	 * page.
+
+And largely irrelevant, because KVM should unaccount the NX no matter what.  I
+kinda get what you're saying, but honestly it adds a lot of confusion, especially
+since unaccount_nx_huge_page() is in the caller.
+
+> +	 *
+> +	 * If a memslot update is in progress, reading an incorrect value of
+> +	 * kvm->nr_memslots_dirty_logging is not a problem: if it is becoming
+> +	 * zero, gfn_to_memslot() will be done unnecessarily; if it is becoming
+> +	 * nonzero, the page will be zapped unnecessarily.  Either way, this only
+> +	 * affects efficiency in racy situations, and not correctness.
+> +	 */
+> +	if (atomic_read(&kvm->nr_memslots_dirty_logging)) {
+
+Short-circuit the function to decrease indentation, and so that "slot" doesn't
+need to be NULL-initialized.
+
+> +		struct kvm_memslots *slots;
+> +
+> +		slots = kvm_memslots_for_spte_role(kvm, sp->role);
+> +		slot = __gfn_to_memslot(slots, sp->gfn);
+
+Then this can be:
+
+	slot = __gfn_to_memslot(kvm_memslots_for_spte_role(kvm, sp->role), sp->gfn);
+
+without creating a stupid-long line.
+
+> +		WARN_ON_ONCE(!slot);
+
+And then:
+
+	if (WARN_ON_ONCE(!slot))
+		return false;
+
+	return kvm_slot_dirty_track_enabled(slot);
+
+With a comment cleanup:
+
+	struct kvm_memory_slot *slot;
+
+	/*
+	 * Skip the memslot lookup if dirty tracking can't possibly be enabled,
+	 * as memslot lookups are relatively expensive.
+	 *
+	 * If a memslot update is in progress, reading an incorrect value of
+	 * kvm->nr_memslots_dirty_logging is not a problem: if it is becoming
+	 * zero, KVM will  do an unnecessary memslot lookup;  if it is becoming
+	 * nonzero, the page will be zapped unnecessarily.  Either way, this
+	 * only affects efficiency in racy situations, and not correctness.
+	 */
+	if (!atomic_read(&kvm->nr_memslots_dirty_logging))
+		return false;
+
+	slot = __gfn_to_memslot(kvm_memslots_for_spte_role(kvm, sp->role), sp->gfn);
+	if (WARN_ON_ONCE(!slot))
+		return false;
+
+	return kvm_slot_dirty_track_enabled(slot);
+> @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm,
+>  	rcu_read_lock();
+>  
+>  	for ( ; to_zap; --to_zap) {
+> -		if (list_empty(nx_huge_pages))
+> +#ifdef CONFIG_X86_64
+
+These #ifdefs still make me sad, but I also still think they're the least awful
+solution.  And hopefully we will jettison 32-bit sooner than later :-)
 
