@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-742544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3595FB0F35F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB7DB0F35E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 15:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8AD1188C530
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6096D188BD87
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 13:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BDB2E8897;
-	Wed, 23 Jul 2025 13:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16942E8892;
+	Wed, 23 Jul 2025 13:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dJLNOjol"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Vf/ghlj4"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429F42E7189;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410BC2E6122;
 	Wed, 23 Jul 2025 13:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753276149; cv=none; b=h4MOGJpi+oGegXvn3APBPJR4KVmCEmi1ac6YUOm3BRo5OTt1HonavjqjiN84FJ626vLiCipIASgLV5Cd+OSfagp9fI2VPB6nhAtv87TzxYM2NMJP8zfRB8Q8/j/VXNCxQ5JZ0ffdf82aWXn/EONS6eLrFHscgRWPWp/3nPlq1a4=
+	t=1753276149; cv=none; b=deWCZlVOnowsXFA5DWyHmwnp2ek+8xagWPPqNeklzaWhTetiain+pDJGIiLp9UyEr3SyFUtcaKl65rQVVcx2fT3zT2D0eiPH7wFIwR3MHqqviswWtOnJW2SRuznQlqwHpvVvvitN1msvVJKDE5jceCwHMDmNhA1fgkEyDOpvM0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753276149; c=relaxed/simple;
-	bh=Dq2ykfq63wn8VObJtf2Dtv3Y1KpLFKfxnczqmYre38w=;
+	bh=2PIpfN3dZvXiQ9iIBgbBu5gRJSTkbuCQSySSFGDtB9c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=fSZkZs/OL5P1QvOP7sa+j0zWPMNy2XMS7+fF04tbAhkYVX22w0fUJWq0449xEw1zE3oXnBjJxST/kLb5y2998nSAm6CSoAiQ4BPwsfJsmM37bDEGnNeOmQfbkM4z7hYSqGLgknt/AFSTgw1CKCcfjkN9eGTSBn6wn1z1La68RkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dJLNOjol; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=FyMRyDdLWY2acCONdIXi01nFpwV++B6g6yqRqF5pAz6Ds2j7r7nuxOtqImk3CHBS3XzvyNiiQPCVcqogpiTLzRZGVaUCJgqSsLRu4GewVKg0p69UyAhVQH/AhnFzsHkSIaKQNL3GRYq8KARi+Q7SHQ4fuemjydrUibSUcQvk4+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Vf/ghlj4; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCBtaH029998;
-	Wed, 23 Jul 2025 15:08:47 +0200
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NCtTBC005217;
+	Wed, 23 Jul 2025 15:08:46 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	1S+/fxjBGM9OThOsnlJiBdnI+RCOnybmlz6yPJOrPUQ=; b=dJLNOjolwwDmlCBx
-	gnkUS3FH/4+1cXbUqQswS2fg2KXlB9Ai9aJMvO++J76D/LviTJ4WGbZFf3NouS0S
-	tubNqITNOUp6xAWaXExM3ZnuLFmQkkhXwjRe2VKlJONg+anQiuGtj9M3/z9twR4R
-	hgkx+9BWX2K2WJ8nmeFnnGZm3XdXI3mI0FLltGkWDp9pa9FYNuqTREZL74IuVL8E
-	J5SsvPK0wI7LZU0hNtlkGhqSY7sta1uCY4U2w5ekIXPTgsYi0t5GdMeJ89xtDE1x
-	i6aaAnorWm+U36BPCEoOFMYknyeqArmWs1jXAmefAPVGgzfOCpKgYXSDxSIgTq1E
-	uYO8jg==
+	L5U4iOIMzTLQcNGAWLcYUHl7amMuMgZWgZO8MaFVrQk=; b=Vf/ghlj4LOnnGwAM
+	MEKaHOvkQvO269m/0QQ7PU8A/f3ltmSQsOJc8XbFq3dOViOPmHndk6knvLGA/N8F
+	l9wfr4mxiknsz+fgWJwfIhBDKT8cMB49VhrjgomgrsAIaJXuSHsFliKNldnNL5Cg
+	VCI/g6TDwXUooW7OwzC4iOye5nTDyN1pEcrHHrgnVAmM07P3Z8AIySH25gViBB4+
+	/D3O18F6RXPiR8Yur+4pGYrvbf0M3aC50U41AQKaJFWPb6l3Z02JnsgE+BJ14IT6
+	HQp//FYTCPY1P7IF3SyGP2ivSrLUE0OzmiTWTderTIj3UW/QhoJQtIRAj59Hr99b
+	KJ1h2g==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4s4gx-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4s4gw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 23 Jul 2025 15:08:46 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4461940045;
-	Wed, 23 Jul 2025 15:07:25 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8F5144002D;
+	Wed, 23 Jul 2025 15:07:17 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BE9007961D8;
-	Wed, 23 Jul 2025 15:06:03 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 77E357939DD;
+	Wed, 23 Jul 2025 15:06:04 +0200 (CEST)
 Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Jul
- 2025 15:06:03 +0200
+ 2025 15:06:04 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Wed, 23 Jul 2025 15:05:45 +0200
-Subject: [PATCH v4 01/20] bus: firewall: move stm32_firewall header file in
- include folder
+Date: Wed, 23 Jul 2025 15:05:46 +0200
+Subject: [PATCH v4 02/20] dt-bindings: stm32: stm32mp25: add
+ `access-controller-cell` property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250723-ddrperfm-upstream-v4-1-1aa53ca319f4@foss.st.com>
+Message-ID: <20250723-ddrperfm-upstream-v4-2-1aa53ca319f4@foss.st.com>
 References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
 In-Reply-To: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
 To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -106,86 +106,46 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-23_02,2025-07-22_01,2025-03-28_01
 
-Other driver than rifsc and etzpc can implement firewall ops, such as
-rcc.
-In order for them to have access to the ops and type of this framework,
-we need to get the `stm32_firewall.h` file in the include/ folder.
+RCC is able to check the availability of a clock.
+Allow to query the RCC with a firewall ID.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- drivers/bus/stm32_etzpc.c                       | 3 +--
- drivers/bus/stm32_firewall.c                    | 3 +--
- drivers/bus/stm32_rifsc.c                       | 3 +--
- {drivers => include/linux}/bus/stm32_firewall.h | 0
- 4 files changed, 3 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/bus/stm32_etzpc.c b/drivers/bus/stm32_etzpc.c
-index 7fc0f16960be..4918a14e507e 100644
---- a/drivers/bus/stm32_etzpc.c
-+++ b/drivers/bus/stm32_etzpc.c
-@@ -5,6 +5,7 @@
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+index 88e52f10d1ec..4d471e3d89bc 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
+@@ -31,6 +31,11 @@ properties:
+   '#reset-cells':
+     const: 1
  
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -16,8 +17,6 @@
- #include <linux/platform_device.h>
- #include <linux/types.h>
++  '#access-controller-cells':
++    const: 1
++    description:
++      Contains the firewall ID associated to the peripheral.
++
+   clocks:
+     items:
+       - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
+@@ -123,6 +128,7 @@ required:
+   - reg
+   - '#clock-cells'
+   - '#reset-cells'
++  - '#access-controller-cells'
+   - clocks
  
--#include "stm32_firewall.h"
--
- /*
-  * ETZPC registers
-  */
-diff --git a/drivers/bus/stm32_firewall.c b/drivers/bus/stm32_firewall.c
-index 2fc9761dadec..ef4988054b44 100644
---- a/drivers/bus/stm32_firewall.c
-+++ b/drivers/bus/stm32_firewall.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/bus/stm32_firewall_device.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -18,8 +19,6 @@
- #include <linux/types.h>
- #include <linux/slab.h>
- 
--#include "stm32_firewall.h"
--
- /* Corresponds to STM32_FIREWALL_MAX_EXTRA_ARGS + firewall ID */
- #define STM32_FIREWALL_MAX_ARGS		(STM32_FIREWALL_MAX_EXTRA_ARGS + 1)
- 
-diff --git a/drivers/bus/stm32_rifsc.c b/drivers/bus/stm32_rifsc.c
-index 4cf1b60014b7..643ddd0a5f54 100644
---- a/drivers/bus/stm32_rifsc.c
-+++ b/drivers/bus/stm32_rifsc.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -16,8 +17,6 @@
- #include <linux/platform_device.h>
- #include <linux/types.h>
- 
--#include "stm32_firewall.h"
--
- /*
-  * RIFSC offset register
-  */
-diff --git a/drivers/bus/stm32_firewall.h b/include/linux/bus/stm32_firewall.h
-similarity index 100%
-rename from drivers/bus/stm32_firewall.h
-rename to include/linux/bus/stm32_firewall.h
+ additionalProperties: false
+@@ -136,6 +142,7 @@ examples:
+         reg = <0x44200000 0x10000>;
+         #clock-cells = <1>;
+         #reset-cells = <1>;
++        #access-controller-cells = <1>;
+         clocks =  <&scmi_clk CK_SCMI_HSE>,
+                   <&scmi_clk CK_SCMI_HSI>,
+                   <&scmi_clk CK_SCMI_MSI>,
 
 -- 
 2.43.0
