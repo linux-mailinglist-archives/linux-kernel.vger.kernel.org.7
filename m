@@ -1,616 +1,353 @@
-Return-Path: <linux-kernel+bounces-743075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D883B0FA40
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FA0B0FA44
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 20:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A1C1683E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654B73AEB37
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F183622B8B5;
-	Wed, 23 Jul 2025 18:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8C822CBD8;
+	Wed, 23 Jul 2025 18:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unnkRupS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Eoi0yhoD"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0037A1E7C38;
-	Wed, 23 Jul 2025 18:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232341FBEB9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753295080; cv=none; b=FGNdOWPv6gTPpOfy1NG7NO0PtnHlfK6tyAZzIyCIF0KA1ZRBI79qCJ703Kl6QGFq0aCP5PqFtMSuBu40TyxpoIY5I7/VFRasAKDcZ3GJCVglLhedqfLCuuERXEl9aW0z62JqCQ8p/IyPjoA0yOkdSb5SGMbuMLV3F9/gCGA29pI=
+	t=1753295129; cv=none; b=O0T+ASiWfboZYokD0IISp1exBeX77wq4dVpZ256FR8HkMktD/zB2NW45U9JF8yqpc1p40Pv/OKMsQYjEYOz3f/XeVF/iHItX3lYePlc8sJueJP76dHKc1o/xMcIyuHjJJqNxvlasNRWnc5fJXVwsGmmuOcUKuKNnQZOm4r27ngA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753295080; c=relaxed/simple;
-	bh=esWME+OeA9UJ0rpkz5T3ZlLWXoODDMkUr7lbDQrK9Sg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j903jQG7zXv4LngWiag7WzZoyIn1/W4B466hMZaYDxqCygDz8/sRQdtS2f6HHq0hF+RoR6L9jK9ZCAAcaf/rNZbQQMSEdzCyqlD07UCKfEH986Ln6mkLC8klxHn0cVDZswIM2vGBc2YzL1IFA+SrQtcPD8Gr/pIn5zz5hxOB2O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unnkRupS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0959DC4CEE7;
-	Wed, 23 Jul 2025 18:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753295079;
-	bh=esWME+OeA9UJ0rpkz5T3ZlLWXoODDMkUr7lbDQrK9Sg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=unnkRupST0Xhz3vpf+a+2KBbmB2n9qS/hQIPTwiulUEs7FhKbQJoaUqgiU1bH7kLq
-	 XrHzXH7GActdq2h1Bm3wvIx3tJBV6BGuLnY9yKS+Oqtv93U3AXGraf7sKJTE3JnvKv
-	 L0HAma2n15tzoaK8ooJaEKLEIdFgKrbw/JDsrcpPVCOD+UWnevzU2v1NEZZbvzUDuq
-	 SeiLc2xm4TQpp0g4v/es2C28MOZiU6P3L+4/e0gJtXm3V1i8USR+5ojEhQ+unhBk3G
-	 51bHXmxp1zZNGvhf7Wus9AihtfoJEYTzDgXhIqFfLNawxvaPFnNonFHzQ26DyNcmq8
-	 9ffFaqyzROFuw==
-Date: Wed, 23 Jul 2025 11:24:37 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 02/16] perf jevents: Add common software event json
-Message-ID: <aIEo5QLf3YkYJCB_@google.com>
-References: <20250714164405.111477-1-irogers@google.com>
- <20250714164405.111477-3-irogers@google.com>
+	s=arc-20240116; t=1753295129; c=relaxed/simple;
+	bh=8jDBOp1/5ELJhrpejGV8dWC1K+YLRxWROk+vO9JU2Hs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=iOPxTy54V9Golt1Lm3pBEg76I9B8+rrpnsX62JdiJcUGrMv10s43R3YblBIbJ75AfhWwdA2jtnFKwCDJxjIIm9Sq6t9PIGofsJpX14+iUoNVlCtPYumkK2Jhay/a8OnRANy1jYqoagTHoXf73KXFzZv/9K0f10VTQ6tv0psbZMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Eoi0yhoD; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250723182524euoutp028f677fafe18cc3a7fda946633c9cdd8c~U9KBiqNEv3003330033euoutp02I
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:25:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250723182524euoutp028f677fafe18cc3a7fda946633c9cdd8c~U9KBiqNEv3003330033euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753295124;
+	bh=G6lUJBsrYso7PwE/gZWaei8bxr8s7smO7yvVENy5ZWM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Eoi0yhoDJhygGHXhdPx4SWp+qGp7DRtgM2eSAyUAjZkjRpZj/Zxnkd+teGujPpUSs
+	 /BJUadrrmfQXFsq0AhNuTEPXIRbf613uCcGWQzC9rvL+qoiPTx467N3dyEftJXywub
+	 LN4ffyCTLdxXUzX24A1kuDF+jJc4nDp+otxwCBnM=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250723182523eucas1p220449ccef4d32615f84483b37faff727~U9KAiikNS1921119211eucas1p2c;
+	Wed, 23 Jul 2025 18:25:23 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250723182522eusmtip1bed061c359b01d486f01c16f2257ca7c~U9J-SKJbB3063330633eusmtip1Q;
+	Wed, 23 Jul 2025 18:25:22 +0000 (GMT)
+Message-ID: <07410f0c-8369-4683-9143-c79c6cb3f5b0@samsung.com>
+Date: Wed, 23 Jul 2025 20:25:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250714164405.111477-3-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/8] dt-bindings: gpu: img,powervr-rogue: Add TH1520
+ GPU compatible
+To: Matt Coster <Matt.Coster@imgtec.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
+	Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
+	Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <9c4f962d-6877-4a53-b0f3-218930f94e1e@imgtec.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250723182523eucas1p220449ccef4d32615f84483b37faff727
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623114436eucas1p1ab8455b32937a472f5f656086e38f428
+References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
+	<CGME20250623114436eucas1p1ab8455b32937a472f5f656086e38f428@eucas1p1.samsung.com>
+	<20250623-apr_14_for_sending-v6-5-6583ce0f6c25@samsung.com>
+	<9c82a6bc-c6ff-4656-8f60-9d5fa499b61a@imgtec.com>
+	<d154d2d0-3d59-4176-a8fb-3cb754cf2734@samsung.com>
+	<e1a3d854-93bc-4771-9b8e-1639ca57b687@kernel.org>
+	<d12fd4fb-0adb-40c4-8a0a-c685cd6327b3@samsung.com>
+	<27068fd3-92b5-402b-9f3c-fd786db56668@kernel.org>
+	<f25c1e7f-bef2-47b1-8fa8-14c9c51087a8@imgtec.com>
+	<491b69ce-5a2f-4df1-95af-9318bbe6c9b0@samsung.com>
+	<9c4f962d-6877-4a53-b0f3-218930f94e1e@imgtec.com>
 
-On Mon, Jul 14, 2025 at 09:43:50AM -0700, Ian Rogers wrote:
-> Add json for software events so that in perf list the events can have
-> a description.  Common json exists for the tool PMU but it has no
-> sysfs equivalent. Modify the map_for_pmu code to return the common map
-> (rather than an architecture specific one) when a PMU with a common
-> name is being looked for, this allows the events to be found.
 
-Can you please share new output of `perf list sw`?  I'm glad we have
-description for software events.  But I'm also curious what's the side
-effect of having them in JSON - maybe case insensitivity?
+
+On 7/23/25 18:50, Matt Coster wrote:
+> On 23/07/2025 17:26, Michal Wilczynski wrote:
+>> On 7/23/25 11:45, Matt Coster wrote:
+>>> On 25/06/2025 15:41, Krzysztof Kozlowski wrote:
+>>>> On 25/06/2025 16:18, Michal Wilczynski wrote:
+>>>>>
+>>>>>
+>>>>> On 6/25/25 15:55, Krzysztof Kozlowski wrote:
+>>>>>> On 25/06/2025 14:45, Michal Wilczynski wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 6/24/25 15:53, Matt Coster wrote:
+>>>>>>>> On 23/06/2025 12:42, Michal Wilczynski wrote:
+>>>>>>>>> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
+>>>>>>>>> specific GPU compatible string.
+>>>>>>>>>
+>>>>>>>>> The thead,th1520-gpu compatible, along with its full chain
+>>>>>>>>> img,img-bxm-4-64, and img,img-rogue, is added to the
+>>>>>>>>> list of recognized GPU types.
+>>>>>>>>>
+>>>>>>>>> The power-domains property requirement for img,img-bxm-4-64 is also
+>>>>>>>>> ensured by adding it to the relevant allOf condition.
+>>>>>>>>>
+>>>>>>>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>>>>>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>>>>>>>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>>>>>>>>> ---
+>>>>>>>>>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 9 ++++++++-
+>>>>>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>>>>>>>>> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..9b241a0c1f5941dc58a1e23970f6d3773d427c22 100644
+>>>>>>>>> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>>>>>>>>> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+>>>>>>>>> @@ -21,6 +21,11 @@ properties:
+>>>>>>>>>            # work with newer dts.
+>>>>>>>>>            - const: img,img-axe
+>>>>>>>>>            - const: img,img-rogue
+>>>>>>>>> +      - items:
+>>>>>>>>> +          - enum:
+>>>>>>>>> +              - thead,th1520-gpu
+>>>>>>>>> +          - const: img,img-bxm-4-64
+>>>>>>>>> +          - const: img,img-rogue
+>>>>>>>>>        - items:
+>>>>>>>>>            - enum:
+>>>>>>>>>                - ti,j721s2-gpu
+>>>>>>>>> @@ -93,7 +98,9 @@ allOf:
+>>>>>>>>>        properties:
+>>>>>>>>>          compatible:
+>>>>>>>>>            contains:
+>>>>>>>>> -            const: img,img-axe-1-16m
+>>>>>>>>> +            enum:
+>>>>>>>>> +              - img,img-axe-1-16m
+>>>>>>>>> +              - img,img-bxm-4-64
+>>>>>>>>
+>>>>>>>> This isn't right – BXM-4-64 has two power domains like BXS-4-64. I don't
+>>>>>>>> really know what the right way to handle that in devicetree is given the
+>>>>>>>> TH1520 appears to expose only a top-level domain for the entire GPU, but
+>>>>>>>> there are definitely two separate domains underneath that as far as the
+>>>>>>>> GPU is concerned (see the attached snippet from integration guide).
+>>>>>>>>
+>>>>>>>> Since power nodes are ref-counted anyway, do we just use the same node
+>>>>>>>> for both domains and let the driver up/down-count it twice?
+>>>>>>>
+>>>>>>> Hi Matt,
+>>>>>>>
+>>>>>>> Thanks for the very helpful insight. That's a great point, it seems the
+>>>>>>> SoC's design presents a tricky case for the bindings.
+>>>>>>>
+>>>>>>> I see what you mean about potentially using the same power domain node
+>>>>>>> twice. My only hesitation is that it might be a bit unclear for someone
+>>>>>>> reading the devicetree later. Perhaps another option could be to relax
+>>>>>>> the constraint for this compatible?
+>>>>>>>
+>>>>>>> Krzysztof, we'd be grateful for your thoughts on how to best model this
+>>>>>>> situation.
+>>>>>>
+>>>>>>
+>>>>>> It's your hardware, you should tell us, not me. I don't know how many
+>>>>>> power domains you have there, but for sure it is not one AND two domains
+>>>>>> the same time. It is either one or two, because power domains are not
+>>>>>> the same as regulator supplies.
+>>>>>
+>>>>> Hi Krzysztof, Matt,
+>>>>>
+>>>>> The img,bxm-4-64 GPU IP itself is designed with two separate power
+>>>>> domains. The TH1520 SoC, which integrates this GPU, wires both of these
+>>>>> to a single OS controllable power gate (controlled via mailbox and E902
+>>>>> co-processor).
+>>>>
+>>>> This helps... and also sounds a lot like regulator supplies, not power
+>>>> domains. :/
+>>>
+>>> Apologies for taking so long to get back to you with this, I wanted to
+>>> make sure I had the whole picture from our side before commenting again.
+>>>
+>>> From the GPU side, a "typical" integration of BXM-4-64 would use two
+>>> power domains.
+>>>
+>>> Typically, these domains exist in silicon, regardless of whether they
+>>> are exposed to the host OS, because the SoC's power controller must have
+>>> control over them. As part of normal operation, the GPU firmware (always
+>>> in domain "a" on Rogue) will request the power-up/down of the other
+>>> domains, including during the initial boot sequence. This all happens
+>>> transparently to the OS. The GPU block itself has no power gating at
+>>> that level, it relies entirely on the SoC integration.
+>>>
+>>> However, it turns out (unknown to me until very recently) that this
+>>> functionality is optional. The integrator can opt to forego the
+>>> power-saving functionality afforded by firmware-controlled power gating
+>>> and just throw everything into a single domain, which appears to be
+>>> what's happened here.
+>>>
+>>> My only remaining issue here, then, is the naming. Since this
+>>> integration doesn't use discrete domains, saying it has one domain
+>>> called "a" isn't correct*. We should either:
+>>>
+>>>  - Drop the name altogether for this integration (and others like it
+>>>    that don't use the low-power functionality, if there are any), or
+>>
+>> Hi Matt,
+>>
+>> Thanks for the detailed explanation, that clears things up perfectly.
+> 
+> I'm glad I could get to the bottom of this one, it was bothering me too!
+> 
+>>
+>> I agree with your assessment. Dropping the power-domain-names property
+>> for this integration seems like the cleanest solution. As you pointed
+>> out, since the OS sees only a single, undifferentiated power domain,
+>> giving it a name like "gpu" would be redundant. This approach correctly
+>> models the hardware without setting a potentially confusing precedent.
+> 
+> That seems reasonable. I was very much on the fence for this one, so
+> I'll happily go along with dropping the name altogether.
+> 
+> Just to make sure I understand correctly, the change here would be to
+> move "required: - power-domain-names" from "img,img-rogue" to every
+> conditional block that constrains the number of domains?
+> 
+> Can we add negative constraints in conditionals? Then we could add
+> "power-domain-names: false" to the "thead,th1520-gpu" conditional block
+> alongside "power-domains: maxItems: 1".
+
+Yeah the diff with v7 would look like so:
+diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+index 263c40c8438e..338746f39cbb 100644
+--- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
++++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+@@ -89,6 +89,11 @@ allOf:
+         compatible:
+           contains:
+             const: img,img-rogue
++      not:
++        properties:
++          compatible:
++            contains:
++              const: thead,th1520-gpu
+     then:
+       required:
+         - power-domains
+@@ -100,11 +105,12 @@ allOf:
+           contains:
+             const: thead,th1520-gpu
+     then:
++      required:
++        - power-domains
+       properties:
+         power-domains:
+           maxItems: 1
+-        power-domain-names:
+-          maxItems: 1
++        power-domain-names: false
+ 
+   - if:
+       properties:
+
+
+This change ensures power-domain-names is required for all img,img-rogue
+devices, except for thead,th1520-gpu. For the thead specifically,
+power-domains remains required, but power-domain-names is explicitly
+forbidden.
 
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  .../arch/common/common/software.json          |  92 ++++++
->  tools/perf/pmu-events/empty-pmu-events.c      | 266 +++++++++++-------
->  tools/perf/pmu-events/jevents.py              |  15 +-
->  3 files changed, 264 insertions(+), 109 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
+>>
+>> To follow through on this, I assume we'll need to adjust
+>> pvr_power_domains_init() to handle nodes that don't have the
+>> power-domain-names property. Does that sound right to you?
 > 
-> diff --git a/tools/perf/pmu-events/arch/common/common/software.json b/tools/perf/pmu-events/arch/common/common/software.json
-> new file mode 100644
-> index 000000000000..3af2f565a601
-> --- /dev/null
-> +++ b/tools/perf/pmu-events/arch/common/common/software.json
-> @@ -0,0 +1,92 @@
-> +[
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "cpu-clock",
-> +    "BriefDescription": "Per-CPU high-resolution timer based event",
-> +    "ConfigCode": "0"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "task-clock",
-> +    "BriefDescription": "Task based high-resolution timer based event",
+> You should get away without making any code changes here, since we
+> already shortcut on "domain_count <= 1" to just allow the pm_runtime to
+> deal with the single (or missing) domain directly.
 
-s/Task based/Per-task/ ?
+Great !
 
-
-> +    "ConfigCode": "1"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "faults",
-> +    "BriefDescription": "Number of page faults [This event is an alias of page-faults]",
-> +    "ConfigCode": "2"
-
-It'd be nice if it can handle aliases without adding a new entry.  But I
-guess it requires non-trivial changes.
-
-Thanks,
-Namhyung
-
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "page-faults",
-> +    "BriefDescription": "Number of page faults [This event is an alias of faults]",
-> +    "ConfigCode": "2"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "context-switches",
-> +    "BriefDescription": "Number of context switches [This event is an alias of cs]",
-> +    "ConfigCode": "3"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "cs",
-> +    "BriefDescription": "Number of context switches [This event is an alias of context-switches]",
-> +    "ConfigCode": "3"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "cpu-migrations",
-> +    "BriefDescription": "Number of times a process has migrated to a new CPU [This event is an alias of migrations]",
-> +    "ConfigCode": "4"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "migrations",
-> +    "BriefDescription": "Number of times a process has migrated to a new CPU [This event is an alias of cpu-migrations]",
-> +    "ConfigCode": "4"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "minor-faults",
-> +    "BriefDescription": "Number of minor page faults. Minor faults don't require I/O to handle",
-> +    "ConfigCode": "5"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "major-faults",
-> +    "BriefDescription": "Number of major page faults. Major faults require I/O to handle",
-> +    "ConfigCode": "6"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "alignment-faults",
-> +    "BriefDescription": "Number of kernel handled memory alignment faults",
-> +    "ConfigCode": "7"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "emulation-faults",
-> +    "BriefDescription": "Number of kernel handled unimplemented instruction faults handled through emulation",
-> +    "ConfigCode": "8"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "dummy",
-> +    "BriefDescription": "A placeholder event that doesn't count anything",
-> +    "ConfigCode": "9"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "bpf-output",
-> +    "BriefDescription": "An event used by BPF programs to write to the perf ring buffer",
-> +    "ConfigCode": "10"
-> +  },
-> +  {
-> +    "Unit": "software",
-> +    "EventName": "cgroup-switches",
-> +    "BriefDescription": "Number of context switches to a task in a different cgroup",
-> +    "ConfigCode": "11"
-> +  }
-> +]
-> diff --git a/tools/perf/pmu-events/empty-pmu-events.c b/tools/perf/pmu-events/empty-pmu-events.c
-> index a4569a74db07..7d179d703ab1 100644
-> --- a/tools/perf/pmu-events/empty-pmu-events.c
-> +++ b/tools/perf/pmu-events/empty-pmu-events.c
-> @@ -19,109 +19,147 @@ struct pmu_table_entry {
->  };
->  
->  static const char *const big_c_string =
-> -/* offset=0 */ "tool\000"
-> -/* offset=5 */ "duration_time\000tool\000Wall clock interval time in nanoseconds\000config=1\000\00000\000\000\000\000\000"
-> -/* offset=81 */ "user_time\000tool\000User (non-kernel) time in nanoseconds\000config=2\000\00000\000\000\000\000\000"
-> -/* offset=151 */ "system_time\000tool\000System/kernel time in nanoseconds\000config=3\000\00000\000\000\000\000\000"
-> -/* offset=219 */ "has_pmem\000tool\0001 if persistent memory installed otherwise 0\000config=4\000\00000\000\000\000\000\000"
-> -/* offset=295 */ "num_cores\000tool\000Number of cores. A core consists of 1 or more thread, with each thread being associated with a logical Linux CPU\000config=5\000\00000\000\000\000\000\000"
-> -/* offset=440 */ "num_cpus\000tool\000Number of logical Linux CPUs. There may be multiple such CPUs on a core\000config=6\000\00000\000\000\000\000\000"
-> -/* offset=543 */ "num_cpus_online\000tool\000Number of online logical Linux CPUs. There may be multiple such CPUs on a core\000config=7\000\00000\000\000\000\000\000"
-> -/* offset=660 */ "num_dies\000tool\000Number of dies. Each die has 1 or more cores\000config=8\000\00000\000\000\000\000\000"
-> -/* offset=736 */ "num_packages\000tool\000Number of packages. Each package has 1 or more die\000config=9\000\00000\000\000\000\000\000"
-> -/* offset=822 */ "slots\000tool\000Number of functional units that in parallel can execute parts of an instruction\000config=0xa\000\00000\000\000\000\000\000"
-> -/* offset=932 */ "smt_on\000tool\0001 if simultaneous multithreading (aka hyperthreading) is enable otherwise 0\000config=0xb\000\00000\000\000\000\000\000"
-> -/* offset=1039 */ "system_tsc_freq\000tool\000The amount a Time Stamp Counter (TSC) increases per second\000config=0xc\000\00000\000\000\000\000\000"
-> -/* offset=1138 */ "default_core\000"
-> -/* offset=1151 */ "bp_l1_btb_correct\000branch\000L1 BTB Correction\000event=0x8a\000\00000\000\000\000\000\000"
-> -/* offset=1213 */ "bp_l2_btb_correct\000branch\000L2 BTB Correction\000event=0x8b\000\00000\000\000\000\000\000"
-> -/* offset=1275 */ "l3_cache_rd\000cache\000L3 cache access, read\000event=0x40\000\00000\000\000\000\000Attributable Level 3 cache access, read\000"
-> -/* offset=1373 */ "segment_reg_loads.any\000other\000Number of segment register loads\000event=6,period=200000,umask=0x80\000\00000\000\000\000\000\000"
-> -/* offset=1475 */ "dispatch_blocked.any\000other\000Memory cluster signals to block micro-op dispatch for any reason\000event=9,period=200000,umask=0x20\000\00000\000\000\000\000\000"
-> -/* offset=1608 */ "eist_trans\000other\000Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions\000event=0x3a,period=200000\000\00000\000\000\000\000\000"
-> -/* offset=1726 */ "hisi_sccl,ddrc\000"
-> -/* offset=1741 */ "uncore_hisi_ddrc.flux_wcmd\000uncore\000DDRC write commands\000event=2\000\00000\000\000\000\000\000"
-> -/* offset=1811 */ "uncore_cbox\000"
-> -/* offset=1823 */ "unc_cbo_xsnp_response.miss_eviction\000uncore\000A cross-core snoop resulted from L3 Eviction which misses in some processor core\000event=0x22,umask=0x81\000\00000\000\000\000\000\000"
-> -/* offset=1977 */ "event-hyphen\000uncore\000UNC_CBO_HYPHEN\000event=0xe0\000\00000\000\000\000\000\000"
-> -/* offset=2031 */ "event-two-hyph\000uncore\000UNC_CBO_TWO_HYPH\000event=0xc0\000\00000\000\000\000\000\000"
-> -/* offset=2089 */ "hisi_sccl,l3c\000"
-> -/* offset=2103 */ "uncore_hisi_l3c.rd_hit_cpipe\000uncore\000Total read hits\000event=7\000\00000\000\000\000\000\000"
-> -/* offset=2171 */ "uncore_imc_free_running\000"
-> -/* offset=2195 */ "uncore_imc_free_running.cache_miss\000uncore\000Total cache misses\000event=0x12\000\00000\000\000\000\000\000"
-> -/* offset=2275 */ "uncore_imc\000"
-> -/* offset=2286 */ "uncore_imc.cache_hits\000uncore\000Total cache hits\000event=0x34\000\00000\000\000\000\000\000"
-> -/* offset=2351 */ "uncore_sys_ddr_pmu\000"
-> -/* offset=2370 */ "sys_ddr_pmu.write_cycles\000uncore\000ddr write-cycles event\000event=0x2b\000v8\00000\000\000\000\000\000"
-> -/* offset=2446 */ "uncore_sys_ccn_pmu\000"
-> -/* offset=2465 */ "sys_ccn_pmu.read_cycles\000uncore\000ccn read-cycles event\000config=0x2c\0000x01\00000\000\000\000\000\000"
-> -/* offset=2542 */ "uncore_sys_cmn_pmu\000"
-> -/* offset=2561 */ "sys_cmn_pmu.hnf_cache_miss\000uncore\000Counts total cache misses in first lookup result (high priority)\000eventid=1,type=5\000(434|436|43c|43a).*\00000\000\000\000\000\000"
-> -/* offset=2704 */ "CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000"
-> -/* offset=2726 */ "IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000"
-> -/* offset=2789 */ "Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000"
-> -/* offset=2955 */ "dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> -/* offset=3019 */ "icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> -/* offset=3086 */ "cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000"
-> -/* offset=3157 */ "DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000"
-> -/* offset=3251 */ "DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000"
-> -/* offset=3385 */ "DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000"
-> -/* offset=3449 */ "DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> -/* offset=3517 */ "DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> -/* offset=3587 */ "M1\000\000ipc + M2\000\000\000\000\000\000\000\00000"
-> -/* offset=3609 */ "M2\000\000ipc + M1\000\000\000\000\000\000\000\00000"
-> -/* offset=3631 */ "M3\000\0001 / M3\000\000\000\000\000\000\000\00000"
-> -/* offset=3651 */ "L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000"
-> +/* offset=0 */ "software\000"
-> +/* offset=9 */ "cpu-clock\000software\000Per-CPU high-resolution timer based event\000config=0\000\00000\000\000\000\000\000"
-> +/* offset=87 */ "task-clock\000software\000Task based high-resolution timer based event\000config=1\000\00000\000\000\000\000\000"
-> +/* offset=169 */ "faults\000software\000Number of page faults [This event is an alias of page-faults]\000config=2\000\00000\000\000\000\000\000"
-> +/* offset=264 */ "page-faults\000software\000Number of page faults [This event is an alias of faults]\000config=2\000\00000\000\000\000\000\000"
-> +/* offset=359 */ "context-switches\000software\000Number of context switches [This event is an alias of cs]\000config=3\000\00000\000\000\000\000\000"
-> +/* offset=460 */ "cs\000software\000Number of context switches [This event is an alias of context-switches]\000config=3\000\00000\000\000\000\000\000"
-> +/* offset=561 */ "cpu-migrations\000software\000Number of times a process has migrated to a new CPU [This event is an alias of migrations]\000config=4\000\00000\000\000\000\000\000"
-> +/* offset=693 */ "migrations\000software\000Number of times a process has migrated to a new CPU [This event is an alias of cpu-migrations]\000config=4\000\00000\000\000\000\000\000"
-> +/* offset=825 */ "minor-faults\000software\000Number of minor page faults. Minor faults don't require I/O to handle\000config=5\000\00000\000\000\000\000\000"
-> +/* offset=934 */ "major-faults\000software\000Number of major page faults. Major faults require I/O to handle\000config=6\000\00000\000\000\000\000\000"
-> +/* offset=1037 */ "alignment-faults\000software\000Number of kernel handled memory alignment faults\000config=7\000\00000\000\000\000\000\000"
-> +/* offset=1129 */ "emulation-faults\000software\000Number of kernel handled unimplemented instruction faults handled through emulation\000config=8\000\00000\000\000\000\000\000"
-> +/* offset=1256 */ "dummy\000software\000A placeholder event that doesn't count anything\000config=9\000\00000\000\000\000\000\000"
-> +/* offset=1336 */ "bpf-output\000software\000An event used by BPF programs to write to the perf ring buffer\000config=0xa\000\00000\000\000\000\000\000"
-> +/* offset=1438 */ "cgroup-switches\000software\000Number of context switches to a task in a different cgroup\000config=0xb\000\00000\000\000\000\000\000"
-> +/* offset=1541 */ "tool\000"
-> +/* offset=1546 */ "duration_time\000tool\000Wall clock interval time in nanoseconds\000config=1\000\00000\000\000\000\000\000"
-> +/* offset=1622 */ "user_time\000tool\000User (non-kernel) time in nanoseconds\000config=2\000\00000\000\000\000\000\000"
-> +/* offset=1692 */ "system_time\000tool\000System/kernel time in nanoseconds\000config=3\000\00000\000\000\000\000\000"
-> +/* offset=1760 */ "has_pmem\000tool\0001 if persistent memory installed otherwise 0\000config=4\000\00000\000\000\000\000\000"
-> +/* offset=1836 */ "num_cores\000tool\000Number of cores. A core consists of 1 or more thread, with each thread being associated with a logical Linux CPU\000config=5\000\00000\000\000\000\000\000"
-> +/* offset=1981 */ "num_cpus\000tool\000Number of logical Linux CPUs. There may be multiple such CPUs on a core\000config=6\000\00000\000\000\000\000\000"
-> +/* offset=2084 */ "num_cpus_online\000tool\000Number of online logical Linux CPUs. There may be multiple such CPUs on a core\000config=7\000\00000\000\000\000\000\000"
-> +/* offset=2201 */ "num_dies\000tool\000Number of dies. Each die has 1 or more cores\000config=8\000\00000\000\000\000\000\000"
-> +/* offset=2277 */ "num_packages\000tool\000Number of packages. Each package has 1 or more die\000config=9\000\00000\000\000\000\000\000"
-> +/* offset=2363 */ "slots\000tool\000Number of functional units that in parallel can execute parts of an instruction\000config=0xa\000\00000\000\000\000\000\000"
-> +/* offset=2473 */ "smt_on\000tool\0001 if simultaneous multithreading (aka hyperthreading) is enable otherwise 0\000config=0xb\000\00000\000\000\000\000\000"
-> +/* offset=2580 */ "system_tsc_freq\000tool\000The amount a Time Stamp Counter (TSC) increases per second\000config=0xc\000\00000\000\000\000\000\000"
-> +/* offset=2679 */ "default_core\000"
-> +/* offset=2692 */ "bp_l1_btb_correct\000branch\000L1 BTB Correction\000event=0x8a\000\00000\000\000\000\000\000"
-> +/* offset=2754 */ "bp_l2_btb_correct\000branch\000L2 BTB Correction\000event=0x8b\000\00000\000\000\000\000\000"
-> +/* offset=2816 */ "l3_cache_rd\000cache\000L3 cache access, read\000event=0x40\000\00000\000\000\000\000Attributable Level 3 cache access, read\000"
-> +/* offset=2914 */ "segment_reg_loads.any\000other\000Number of segment register loads\000event=6,period=200000,umask=0x80\000\00000\000\000\000\000\000"
-> +/* offset=3016 */ "dispatch_blocked.any\000other\000Memory cluster signals to block micro-op dispatch for any reason\000event=9,period=200000,umask=0x20\000\00000\000\000\000\000\000"
-> +/* offset=3149 */ "eist_trans\000other\000Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions\000event=0x3a,period=200000\000\00000\000\000\000\000\000"
-> +/* offset=3267 */ "hisi_sccl,ddrc\000"
-> +/* offset=3282 */ "uncore_hisi_ddrc.flux_wcmd\000uncore\000DDRC write commands\000event=2\000\00000\000\000\000\000\000"
-> +/* offset=3352 */ "uncore_cbox\000"
-> +/* offset=3364 */ "unc_cbo_xsnp_response.miss_eviction\000uncore\000A cross-core snoop resulted from L3 Eviction which misses in some processor core\000event=0x22,umask=0x81\000\00000\000\000\000\000\000"
-> +/* offset=3518 */ "event-hyphen\000uncore\000UNC_CBO_HYPHEN\000event=0xe0\000\00000\000\000\000\000\000"
-> +/* offset=3572 */ "event-two-hyph\000uncore\000UNC_CBO_TWO_HYPH\000event=0xc0\000\00000\000\000\000\000\000"
-> +/* offset=3630 */ "hisi_sccl,l3c\000"
-> +/* offset=3644 */ "uncore_hisi_l3c.rd_hit_cpipe\000uncore\000Total read hits\000event=7\000\00000\000\000\000\000\000"
-> +/* offset=3712 */ "uncore_imc_free_running\000"
-> +/* offset=3736 */ "uncore_imc_free_running.cache_miss\000uncore\000Total cache misses\000event=0x12\000\00000\000\000\000\000\000"
-> +/* offset=3816 */ "uncore_imc\000"
-> +/* offset=3827 */ "uncore_imc.cache_hits\000uncore\000Total cache hits\000event=0x34\000\00000\000\000\000\000\000"
-> +/* offset=3892 */ "uncore_sys_ddr_pmu\000"
-> +/* offset=3911 */ "sys_ddr_pmu.write_cycles\000uncore\000ddr write-cycles event\000event=0x2b\000v8\00000\000\000\000\000\000"
-> +/* offset=3987 */ "uncore_sys_ccn_pmu\000"
-> +/* offset=4006 */ "sys_ccn_pmu.read_cycles\000uncore\000ccn read-cycles event\000config=0x2c\0000x01\00000\000\000\000\000\000"
-> +/* offset=4083 */ "uncore_sys_cmn_pmu\000"
-> +/* offset=4102 */ "sys_cmn_pmu.hnf_cache_miss\000uncore\000Counts total cache misses in first lookup result (high priority)\000eventid=1,type=5\000(434|436|43c|43a).*\00000\000\000\000\000\000"
-> +/* offset=4245 */ "CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000"
-> +/* offset=4267 */ "IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000"
-> +/* offset=4330 */ "Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000"
-> +/* offset=4496 */ "dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> +/* offset=4560 */ "icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> +/* offset=4627 */ "cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000"
-> +/* offset=4698 */ "DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000"
-> +/* offset=4792 */ "DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000"
-> +/* offset=4926 */ "DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000"
-> +/* offset=4990 */ "DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> +/* offset=5058 */ "DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> +/* offset=5128 */ "M1\000\000ipc + M2\000\000\000\000\000\000\000\00000"
-> +/* offset=5150 */ "M2\000\000ipc + M1\000\000\000\000\000\000\000\00000"
-> +/* offset=5172 */ "M3\000\0001 / M3\000\000\000\000\000\000\000\00000"
-> +/* offset=5192 */ "L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000"
->  ;
->  
-> +static const struct compact_pmu_event pmu_events__common_software[] = {
-> +{ 1037 }, /* alignment-faults\000software\000Number of kernel handled memory alignment faults\000config=7\000\00000\000\000\000\000\000 */
-> +{ 1336 }, /* bpf-output\000software\000An event used by BPF programs to write to the perf ring buffer\000config=0xa\000\00000\000\000\000\000\000 */
-> +{ 1438 }, /* cgroup-switches\000software\000Number of context switches to a task in a different cgroup\000config=0xb\000\00000\000\000\000\000\000 */
-> +{ 359 }, /* context-switches\000software\000Number of context switches [This event is an alias of cs]\000config=3\000\00000\000\000\000\000\000 */
-> +{ 9 }, /* cpu-clock\000software\000Per-CPU high-resolution timer based event\000config=0\000\00000\000\000\000\000\000 */
-> +{ 561 }, /* cpu-migrations\000software\000Number of times a process has migrated to a new CPU [This event is an alias of migrations]\000config=4\000\00000\000\000\000\000\000 */
-> +{ 460 }, /* cs\000software\000Number of context switches [This event is an alias of context-switches]\000config=3\000\00000\000\000\000\000\000 */
-> +{ 1256 }, /* dummy\000software\000A placeholder event that doesn't count anything\000config=9\000\00000\000\000\000\000\000 */
-> +{ 1129 }, /* emulation-faults\000software\000Number of kernel handled unimplemented instruction faults handled through emulation\000config=8\000\00000\000\000\000\000\000 */
-> +{ 169 }, /* faults\000software\000Number of page faults [This event is an alias of page-faults]\000config=2\000\00000\000\000\000\000\000 */
-> +{ 934 }, /* major-faults\000software\000Number of major page faults. Major faults require I/O to handle\000config=6\000\00000\000\000\000\000\000 */
-> +{ 693 }, /* migrations\000software\000Number of times a process has migrated to a new CPU [This event is an alias of cpu-migrations]\000config=4\000\00000\000\000\000\000\000 */
-> +{ 825 }, /* minor-faults\000software\000Number of minor page faults. Minor faults don't require I/O to handle\000config=5\000\00000\000\000\000\000\000 */
-> +{ 264 }, /* page-faults\000software\000Number of page faults [This event is an alias of faults]\000config=2\000\00000\000\000\000\000\000 */
-> +{ 87 }, /* task-clock\000software\000Task based high-resolution timer based event\000config=1\000\00000\000\000\000\000\000 */
-> +};
->  static const struct compact_pmu_event pmu_events__common_tool[] = {
-> -{ 5 }, /* duration_time\000tool\000Wall clock interval time in nanoseconds\000config=1\000\00000\000\000\000\000\000 */
-> -{ 219 }, /* has_pmem\000tool\0001 if persistent memory installed otherwise 0\000config=4\000\00000\000\000\000\000\000 */
-> -{ 295 }, /* num_cores\000tool\000Number of cores. A core consists of 1 or more thread, with each thread being associated with a logical Linux CPU\000config=5\000\00000\000\000\000\000\000 */
-> -{ 440 }, /* num_cpus\000tool\000Number of logical Linux CPUs. There may be multiple such CPUs on a core\000config=6\000\00000\000\000\000\000\000 */
-> -{ 543 }, /* num_cpus_online\000tool\000Number of online logical Linux CPUs. There may be multiple such CPUs on a core\000config=7\000\00000\000\000\000\000\000 */
-> -{ 660 }, /* num_dies\000tool\000Number of dies. Each die has 1 or more cores\000config=8\000\00000\000\000\000\000\000 */
-> -{ 736 }, /* num_packages\000tool\000Number of packages. Each package has 1 or more die\000config=9\000\00000\000\000\000\000\000 */
-> -{ 822 }, /* slots\000tool\000Number of functional units that in parallel can execute parts of an instruction\000config=0xa\000\00000\000\000\000\000\000 */
-> -{ 932 }, /* smt_on\000tool\0001 if simultaneous multithreading (aka hyperthreading) is enable otherwise 0\000config=0xb\000\00000\000\000\000\000\000 */
-> -{ 151 }, /* system_time\000tool\000System/kernel time in nanoseconds\000config=3\000\00000\000\000\000\000\000 */
-> -{ 1039 }, /* system_tsc_freq\000tool\000The amount a Time Stamp Counter (TSC) increases per second\000config=0xc\000\00000\000\000\000\000\000 */
-> -{ 81 }, /* user_time\000tool\000User (non-kernel) time in nanoseconds\000config=2\000\00000\000\000\000\000\000 */
-> +{ 1546 }, /* duration_time\000tool\000Wall clock interval time in nanoseconds\000config=1\000\00000\000\000\000\000\000 */
-> +{ 1760 }, /* has_pmem\000tool\0001 if persistent memory installed otherwise 0\000config=4\000\00000\000\000\000\000\000 */
-> +{ 1836 }, /* num_cores\000tool\000Number of cores. A core consists of 1 or more thread, with each thread being associated with a logical Linux CPU\000config=5\000\00000\000\000\000\000\000 */
-> +{ 1981 }, /* num_cpus\000tool\000Number of logical Linux CPUs. There may be multiple such CPUs on a core\000config=6\000\00000\000\000\000\000\000 */
-> +{ 2084 }, /* num_cpus_online\000tool\000Number of online logical Linux CPUs. There may be multiple such CPUs on a core\000config=7\000\00000\000\000\000\000\000 */
-> +{ 2201 }, /* num_dies\000tool\000Number of dies. Each die has 1 or more cores\000config=8\000\00000\000\000\000\000\000 */
-> +{ 2277 }, /* num_packages\000tool\000Number of packages. Each package has 1 or more die\000config=9\000\00000\000\000\000\000\000 */
-> +{ 2363 }, /* slots\000tool\000Number of functional units that in parallel can execute parts of an instruction\000config=0xa\000\00000\000\000\000\000\000 */
-> +{ 2473 }, /* smt_on\000tool\0001 if simultaneous multithreading (aka hyperthreading) is enable otherwise 0\000config=0xb\000\00000\000\000\000\000\000 */
-> +{ 1692 }, /* system_time\000tool\000System/kernel time in nanoseconds\000config=3\000\00000\000\000\000\000\000 */
-> +{ 2580 }, /* system_tsc_freq\000tool\000The amount a Time Stamp Counter (TSC) increases per second\000config=0xc\000\00000\000\000\000\000\000 */
-> +{ 1622 }, /* user_time\000tool\000User (non-kernel) time in nanoseconds\000config=2\000\00000\000\000\000\000\000 */
->  
->  };
->  
->  const struct pmu_table_entry pmu_events__common[] = {
-> +{
-> +     .entries = pmu_events__common_software,
-> +     .num_entries = ARRAY_SIZE(pmu_events__common_software),
-> +     .pmu_name = { 0 /* software\000 */ },
-> +},
->  {
->       .entries = pmu_events__common_tool,
->       .num_entries = ARRAY_SIZE(pmu_events__common_tool),
-> -     .pmu_name = { 0 /* tool\000 */ },
-> +     .pmu_name = { 1541 /* tool\000 */ },
->  },
->  };
->  
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_default_core[] = {
-> -{ 1151 }, /* bp_l1_btb_correct\000branch\000L1 BTB Correction\000event=0x8a\000\00000\000\000\000\000\000 */
-> -{ 1213 }, /* bp_l2_btb_correct\000branch\000L2 BTB Correction\000event=0x8b\000\00000\000\000\000\000\000 */
-> -{ 1475 }, /* dispatch_blocked.any\000other\000Memory cluster signals to block micro-op dispatch for any reason\000event=9,period=200000,umask=0x20\000\00000\000\000\000\000\000 */
-> -{ 1608 }, /* eist_trans\000other\000Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions\000event=0x3a,period=200000\000\00000\000\000\000\000\000 */
-> -{ 1275 }, /* l3_cache_rd\000cache\000L3 cache access, read\000event=0x40\000\00000\000\000\000\000Attributable Level 3 cache access, read\000 */
-> -{ 1373 }, /* segment_reg_loads.any\000other\000Number of segment register loads\000event=6,period=200000,umask=0x80\000\00000\000\000\000\000\000 */
-> +{ 2692 }, /* bp_l1_btb_correct\000branch\000L1 BTB Correction\000event=0x8a\000\00000\000\000\000\000\000 */
-> +{ 2754 }, /* bp_l2_btb_correct\000branch\000L2 BTB Correction\000event=0x8b\000\00000\000\000\000\000\000 */
-> +{ 3016 }, /* dispatch_blocked.any\000other\000Memory cluster signals to block micro-op dispatch for any reason\000event=9,period=200000,umask=0x20\000\00000\000\000\000\000\000 */
-> +{ 3149 }, /* eist_trans\000other\000Number of Enhanced Intel SpeedStep(R) Technology (EIST) transitions\000event=0x3a,period=200000\000\00000\000\000\000\000\000 */
-> +{ 2816 }, /* l3_cache_rd\000cache\000L3 cache access, read\000event=0x40\000\00000\000\000\000\000Attributable Level 3 cache access, read\000 */
-> +{ 2914 }, /* segment_reg_loads.any\000other\000Number of segment register loads\000event=6,period=200000,umask=0x80\000\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_hisi_sccl_ddrc[] = {
-> -{ 1741 }, /* uncore_hisi_ddrc.flux_wcmd\000uncore\000DDRC write commands\000event=2\000\00000\000\000\000\000\000 */
-> +{ 3282 }, /* uncore_hisi_ddrc.flux_wcmd\000uncore\000DDRC write commands\000event=2\000\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_hisi_sccl_l3c[] = {
-> -{ 2103 }, /* uncore_hisi_l3c.rd_hit_cpipe\000uncore\000Total read hits\000event=7\000\00000\000\000\000\000\000 */
-> +{ 3644 }, /* uncore_hisi_l3c.rd_hit_cpipe\000uncore\000Total read hits\000event=7\000\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_uncore_cbox[] = {
-> -{ 1977 }, /* event-hyphen\000uncore\000UNC_CBO_HYPHEN\000event=0xe0\000\00000\000\000\000\000\000 */
-> -{ 2031 }, /* event-two-hyph\000uncore\000UNC_CBO_TWO_HYPH\000event=0xc0\000\00000\000\000\000\000\000 */
-> -{ 1823 }, /* unc_cbo_xsnp_response.miss_eviction\000uncore\000A cross-core snoop resulted from L3 Eviction which misses in some processor core\000event=0x22,umask=0x81\000\00000\000\000\000\000\000 */
-> +{ 3518 }, /* event-hyphen\000uncore\000UNC_CBO_HYPHEN\000event=0xe0\000\00000\000\000\000\000\000 */
-> +{ 3572 }, /* event-two-hyph\000uncore\000UNC_CBO_TWO_HYPH\000event=0xc0\000\00000\000\000\000\000\000 */
-> +{ 3364 }, /* unc_cbo_xsnp_response.miss_eviction\000uncore\000A cross-core snoop resulted from L3 Eviction which misses in some processor core\000event=0x22,umask=0x81\000\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_uncore_imc[] = {
-> -{ 2286 }, /* uncore_imc.cache_hits\000uncore\000Total cache hits\000event=0x34\000\00000\000\000\000\000\000 */
-> +{ 3827 }, /* uncore_imc.cache_hits\000uncore\000Total cache hits\000event=0x34\000\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_uncore_imc_free_running[] = {
-> -{ 2195 }, /* uncore_imc_free_running.cache_miss\000uncore\000Total cache misses\000event=0x12\000\00000\000\000\000\000\000 */
-> +{ 3736 }, /* uncore_imc_free_running.cache_miss\000uncore\000Total cache misses\000event=0x12\000\00000\000\000\000\000\000 */
->  
->  };
->  
-> @@ -129,51 +167,51 @@ const struct pmu_table_entry pmu_events__test_soc_cpu[] = {
->  {
->       .entries = pmu_events__test_soc_cpu_default_core,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_default_core),
-> -     .pmu_name = { 1138 /* default_core\000 */ },
-> +     .pmu_name = { 2679 /* default_core\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_cpu_hisi_sccl_ddrc,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_hisi_sccl_ddrc),
-> -     .pmu_name = { 1726 /* hisi_sccl,ddrc\000 */ },
-> +     .pmu_name = { 3267 /* hisi_sccl,ddrc\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_cpu_hisi_sccl_l3c,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_hisi_sccl_l3c),
-> -     .pmu_name = { 2089 /* hisi_sccl,l3c\000 */ },
-> +     .pmu_name = { 3630 /* hisi_sccl,l3c\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_cpu_uncore_cbox,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_uncore_cbox),
-> -     .pmu_name = { 1811 /* uncore_cbox\000 */ },
-> +     .pmu_name = { 3352 /* uncore_cbox\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_cpu_uncore_imc,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_uncore_imc),
-> -     .pmu_name = { 2275 /* uncore_imc\000 */ },
-> +     .pmu_name = { 3816 /* uncore_imc\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_cpu_uncore_imc_free_running,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_cpu_uncore_imc_free_running),
-> -     .pmu_name = { 2171 /* uncore_imc_free_running\000 */ },
-> +     .pmu_name = { 3712 /* uncore_imc_free_running\000 */ },
->  },
->  };
->  
->  static const struct compact_pmu_event pmu_metrics__test_soc_cpu_default_core[] = {
-> -{ 2704 }, /* CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000 */
-> -{ 3385 }, /* DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000 */
-> -{ 3157 }, /* DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000 */
-> -{ 3251 }, /* DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000 */
-> -{ 3449 }, /* DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> -{ 3517 }, /* DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> -{ 2789 }, /* Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000 */
-> -{ 2726 }, /* IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000 */
-> -{ 3651 }, /* L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000 */
-> -{ 3587 }, /* M1\000\000ipc + M2\000\000\000\000\000\000\000\00000 */
-> -{ 3609 }, /* M2\000\000ipc + M1\000\000\000\000\000\000\000\00000 */
-> -{ 3631 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
-> -{ 3086 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000 */
-> -{ 2955 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> -{ 3019 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> +{ 4245 }, /* CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000 */
-> +{ 4926 }, /* DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000 */
-> +{ 4698 }, /* DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000 */
-> +{ 4792 }, /* DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000 */
-> +{ 4990 }, /* DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> +{ 5058 }, /* DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> +{ 4330 }, /* Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000 */
-> +{ 4267 }, /* IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000 */
-> +{ 5192 }, /* L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000 */
-> +{ 5128 }, /* M1\000\000ipc + M2\000\000\000\000\000\000\000\00000 */
-> +{ 5150 }, /* M2\000\000ipc + M1\000\000\000\000\000\000\000\00000 */
-> +{ 5172 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
-> +{ 4627 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000 */
-> +{ 4496 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> +{ 4560 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
->  
->  };
->  
-> @@ -181,18 +219,18 @@ const struct pmu_table_entry pmu_metrics__test_soc_cpu[] = {
->  {
->       .entries = pmu_metrics__test_soc_cpu_default_core,
->       .num_entries = ARRAY_SIZE(pmu_metrics__test_soc_cpu_default_core),
-> -     .pmu_name = { 1138 /* default_core\000 */ },
-> +     .pmu_name = { 2679 /* default_core\000 */ },
->  },
->  };
->  
->  static const struct compact_pmu_event pmu_events__test_soc_sys_uncore_sys_ccn_pmu[] = {
-> -{ 2465 }, /* sys_ccn_pmu.read_cycles\000uncore\000ccn read-cycles event\000config=0x2c\0000x01\00000\000\000\000\000\000 */
-> +{ 4006 }, /* sys_ccn_pmu.read_cycles\000uncore\000ccn read-cycles event\000config=0x2c\0000x01\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_sys_uncore_sys_cmn_pmu[] = {
-> -{ 2561 }, /* sys_cmn_pmu.hnf_cache_miss\000uncore\000Counts total cache misses in first lookup result (high priority)\000eventid=1,type=5\000(434|436|43c|43a).*\00000\000\000\000\000\000 */
-> +{ 4102 }, /* sys_cmn_pmu.hnf_cache_miss\000uncore\000Counts total cache misses in first lookup result (high priority)\000eventid=1,type=5\000(434|436|43c|43a).*\00000\000\000\000\000\000 */
->  };
->  static const struct compact_pmu_event pmu_events__test_soc_sys_uncore_sys_ddr_pmu[] = {
-> -{ 2370 }, /* sys_ddr_pmu.write_cycles\000uncore\000ddr write-cycles event\000event=0x2b\000v8\00000\000\000\000\000\000 */
-> +{ 3911 }, /* sys_ddr_pmu.write_cycles\000uncore\000ddr write-cycles event\000event=0x2b\000v8\00000\000\000\000\000\000 */
->  
->  };
->  
-> @@ -200,17 +238,17 @@ const struct pmu_table_entry pmu_events__test_soc_sys[] = {
->  {
->       .entries = pmu_events__test_soc_sys_uncore_sys_ccn_pmu,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_sys_uncore_sys_ccn_pmu),
-> -     .pmu_name = { 2446 /* uncore_sys_ccn_pmu\000 */ },
-> +     .pmu_name = { 3987 /* uncore_sys_ccn_pmu\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_sys_uncore_sys_cmn_pmu,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_sys_uncore_sys_cmn_pmu),
-> -     .pmu_name = { 2542 /* uncore_sys_cmn_pmu\000 */ },
-> +     .pmu_name = { 4083 /* uncore_sys_cmn_pmu\000 */ },
->  },
->  {
->       .entries = pmu_events__test_soc_sys_uncore_sys_ddr_pmu,
->       .num_entries = ARRAY_SIZE(pmu_events__test_soc_sys_uncore_sys_ddr_pmu),
-> -     .pmu_name = { 2351 /* uncore_sys_ddr_pmu\000 */ },
-> +     .pmu_name = { 3892 /* uncore_sys_ddr_pmu\000 */ },
->  },
->  };
->  
-> @@ -632,8 +670,20 @@ static const struct pmu_events_map *map_for_pmu(struct perf_pmu *pmu)
->  {
->          struct perf_cpu cpu = {-1};
->  
-> -        if (pmu)
-> +        if (pmu) {
-> +                for (size_t i=0; i < ARRAY_SIZE(pmu_events__common); i++) {
-> +                        const char *pmu_name = &big_c_string[pmu_events__common[i].pmu_name.offset];
-> +
-> +                        if (!strcmp(pmu_name, pmu->name)) {
-> +                                const struct pmu_events_map *map = &pmu_events_map[0];
-> +
-> +                                while (strcmp("common", map->arch))
-> +                                        map++;
-> +                                return map;
-> +                        }
-> +                }
->                  cpu = perf_cpu_map__min(pmu->cpus);
-> +        }
->          return map_for_cpu(cpu);
->  }
->  
-> diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
-> index e821155151ec..76c1e7b0bc22 100755
-> --- a/tools/perf/pmu-events/jevents.py
-> +++ b/tools/perf/pmu-events/jevents.py
-> @@ -295,6 +295,7 @@ class JsonEvent:
->            'cpu_atom': 'cpu_atom',
->            'ali_drw': 'ali_drw',
->            'arm_cmn': 'arm_cmn',
-> +          'software': 'software',
->            'tool': 'tool',
->        }
->        return table[unit] if unit in table else f'uncore_{unit.lower()}'
-> @@ -1158,8 +1159,20 @@ static const struct pmu_events_map *map_for_pmu(struct perf_pmu *pmu)
->  {
->          struct perf_cpu cpu = {-1};
->  
-> -        if (pmu)
-> +        if (pmu) {
-> +                for (size_t i=0; i < ARRAY_SIZE(pmu_events__common); i++) {
-> +                        const char *pmu_name = &big_c_string[pmu_events__common[i].pmu_name.offset];
-> +
-> +                        if (!strcmp(pmu_name, pmu->name)) {
-> +                                const struct pmu_events_map *map = &pmu_events_map[0];
-> +
-> +                                while (strcmp("common", map->arch))
-> +                                        map++;
-> +                                return map;
-> +                        }
-> +                }
->                  cpu = perf_cpu_map__min(pmu->cpus);
-> +        }
->          return map_for_cpu(cpu);
->  }
->  
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
 > 
+> If we ever start controlling the individual domains ourselves from the
+> kernel (rather than just ensuring they all come on and off in the
+> correct sequence), we can add checks/handling for the no-name case then.
+> 
+> Cheers,
+> Matt
+> 
+>>
+>>>  - Come up with a new domain name to signal this explicitly (perhaps
+>>>    simply "gpu")? Something that's unlikely to clash with the "real"
+>>>    names that are going to start appearing in the Volcanic bindings
+>>>    (where we finally ditched "a", "b", etc.).
+>>>
+>>> Cheers,
+>>> Matt
+>>>
+>>> *Yes, I know that's what we said for the AXE-1-16M, but that tiny GPU is
+>>> the exception to the rule; AFAIK it's the only one we've ever produced
+>>> that truly has only one power domain.
+>>>
+>>>>
+>>>>>
+>>>>> This means a devicetree for the TH1520 can only ever provide one power
+>>>>> domain for the GPU. However, a generic binding for img,bxm-4-64 should
+>>>>
+>>>> If this was a supply, you would have two supplies. Anyway internal
+>>>> wirings of GPU do not matter in such case and more important what the
+>>>> SoC has wired. And it has one power domain.
+>>>>
+>>>>
+>>>>> account for a future SoC that might implement both power domains.
+>>>>>
+>>>>> That's why I proposed to relax the constraints on the img,bmx-4-64 GPU.
+>>>>
+>>>> This should be constrained per each device, so 1 for you and 2 for
+>>>> everyone else.
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>>
+>>
+>> Best regards,
+> 
+> 
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
