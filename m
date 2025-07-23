@@ -1,157 +1,142 @@
-Return-Path: <linux-kernel+bounces-741948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B63B0EB19
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:58:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D3DB0EB10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335F816D9F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A103AD4AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 06:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93232727EA;
-	Wed, 23 Jul 2025 06:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1322571B4;
+	Wed, 23 Jul 2025 06:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WSW1SDAs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPIhSHHA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ED5254858;
-	Wed, 23 Jul 2025 06:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFE6246BCF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 06:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753253885; cv=none; b=M7556MUihlNshsLOeQVycih+4pP4mVWfQ2oovlrHrAyYOVqemWmmdPJgvRZTvTaZ/4JTlhJMFt+kyvCgNi/8E7M/wb6dglboWNlvjlAMPmd3ij4RmN6rhUiJBshbr0dnWxaJvR3/oXxEP6ArOZTlCHjuOG6mVmkQ9Rd9M2ZHpNo=
+	t=1753253830; cv=none; b=fTPhISmNKqg89d3rT4rA0YzSvV6kjCa9TAEnuNyEGCG5ocpY9BF2/pVimDs438iMM8+WEjL986HmsIGvsh5MtHiII+H0gi8T9YTonSmM643Cdhs5h99vDAXhuZzwTtl+QXNBw+Y1dJaQYzdQxBUalxjIZf31lXzIPmikDO7kG40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753253885; c=relaxed/simple;
-	bh=Qsrasya+2ybsj2TZXgu9y4ibchgm6z4CBLeQyvfptW4=;
+	s=arc-20240116; t=1753253830; c=relaxed/simple;
+	bh=RVU+KRzzrapNt7trRutwG9dz5pii8N4G+QFx0z4cerQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVLLAZOrLItgxClSSVno7eOvhdda2bDwP+0a5+8LnNnSp61pKiw+P4osikSefBOmNPEoK+QK8tlq5V9xtH7Jv+e3sUW7R+tnvIY9MmaTYVMF5gCAXgO6zwHABmOwMkupdxvFJu/RkX2csO+VQvoiL+a7u/mWUVC/we/eiURGHq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WSW1SDAs; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753253883; x=1784789883;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Qsrasya+2ybsj2TZXgu9y4ibchgm6z4CBLeQyvfptW4=;
-  b=WSW1SDAszTVwpwFhzByUKa8vtfnpEY0c7pW9xf+XZvJ0Kp4mPnkbTJYi
-   PH+EuO+zER3HjuEjIyjhF109nWC/6tYRJ4uqp+lSnGLdfl7K0Dh6S6UeD
-   n50RswJGCdIB8IytutKK25gZETSvqRWHhyum4KBVc5jaQ0uHoPdz1cYJ1
-   gVChmd+q1T/pDOC2X7OaEkPV9s9t8xNXrmL7nnW5ZAtLcPDxLDcLocjuN
-   yfqnIwDYRGh50dhAg2BBE9pQWU3iQrx6lw6RxJ12uJPnA9tSlrw4Y7fo5
-   iwhAfzzNbmhuzTN8ASJ0b4UkD/9EpNl+qI/qi+2CC3s8U7zVrAWFz0xZL
-   w==;
-X-CSE-ConnectionGUID: L73xExu/QCefW/dSrWzoqg==
-X-CSE-MsgGUID: lnmsm25+TSyVCj46gpCN8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="54744021"
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="54744021"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 23:58:03 -0700
-X-CSE-ConnectionGUID: 9c4LMBvcRHer7sabxucwQA==
-X-CSE-MsgGUID: WxHsKZNgQ/GjWfuFbXZW0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,333,1744095600"; 
-   d="scan'208";a="164999041"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 23:58:00 -0700
-Date: Wed, 23 Jul 2025 08:56:49 +0200
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Feng Liu <feliu@nvidia.com>
-Subject: Re: [PATCH net-next V2 2/2] net/mlx5e: Expose TIS via devlink tx
- reporter diagnose
-Message-ID: <aICHsQPoI+gO3eTQ@mev-dev.igk.intel.com>
-References: <1753194228-333722-1-git-send-email-tariqt@nvidia.com>
- <1753194228-333722-3-git-send-email-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2CBuEtPDztnhj1dfhuvQoLsqOnxdN8Zaj9Gx8F5D2tFdfoQwCSGZJQG/50h5sUy/BPvJX/NhsJsAsDG3hPUiY1R0sA3eLFzZK8O46ZE8sW1uIhcdoWxeQvZLhQbqs1jhmRrW8pVCG7qp6UeAvZ/bPiJ50K88Adb8OvXqANuDQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPIhSHHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07A4C4CEE7;
+	Wed, 23 Jul 2025 06:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753253830;
+	bh=RVU+KRzzrapNt7trRutwG9dz5pii8N4G+QFx0z4cerQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sPIhSHHApLwAe8MDh8immv2YlR4w5M5EDhf4iqfHnjzuZz8vL2u3OQIHagkAxFANG
+	 lgAf8+r0FAN7aT/it8TYikZHG2B7EmGSVETevK4eBpu4mrznYrgzDQzO2GDPMXEpTJ
+	 kHePx1XtvlGSgMWKMNnSHX/SYogNSarb/xLytKjP8TspjTd9px7JnInVI1aIgUVlPq
+	 U4+dW+xWLzI442+HOug3/PKwvJ3Q/7MgaV15udoT5uBQ3v9RuX5p/idiQ94KAvGt9C
+	 ClH/Dj6yDKOJMAXAbMC60+dTQkCOiC2bwAKAI3x7lt5F0oZBrS4sJxmgK/cHSnR2i9
+	 gl+KOcvf/Kmxw==
+Date: Wed, 23 Jul 2025 08:57:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: victor.liu@nxp.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, biju.das.jz@bp.renesas.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
+Message-ID: <20250723-gigantic-wrasse-of-warranty-dc70d7@houat>
+References: <20250722204114.3340516-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="v64vw7w5u4nnxhww"
 Content-Disposition: inline
-In-Reply-To: <1753194228-333722-3-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <20250722204114.3340516-1-chenyuan0y@gmail.com>
 
-On Tue, Jul 22, 2025 at 05:23:48PM +0300, Tariq Toukan wrote:
-> From: Feng Liu <feliu@nvidia.com>
-> 
-> Underneath "TIS Config" tag expose TIS diagnostic information.
-> Expose the tisn of each TC under each lag port.
-> 
-> $ sudo devlink health diagnose auxiliary/mlx5_core.eth.2/131072 reporter tx
-> ......
->   TIS Config:
->       lag port: 0 tc: 0 tisn: 0
->       lag port: 1 tc: 0 tisn: 8
-> ......
-> 
-> Signed-off-by: Feng Liu <feliu@nvidia.com>
-> Reviewed-by: Aya Levin <ayal@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+
+--v64vw7w5u4nnxhww
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/bridge: Add null pointer check for ITE IT6263
+MIME-Version: 1.0
+
+On Tue, Jul 22, 2025 at 03:41:14PM -0500, Chenyuan Yang wrote:
+> drm_atomic_get_new_connector_for_encoder and
+> drm_atomic_get_new_connector_state could return Null.
+
+They can, but not in that scenario. atomic_enable will never be called
+if either would return NULL.
+
+In which situation did you trigger this bug?
+
+> Thus, add the null pointer check for them with a similar format with
+> it6505_bridge_atomic_enable in ITE IT6505.
+>=20
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
 > ---
->  .../mellanox/mlx5/core/en/reporter_tx.c       | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/reporter_tx.c b/drivers/net/ethernet/mellanox/mlx5/core/en/reporter_tx.c
-> index bd96988e102c..85d5cb39b107 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/reporter_tx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/reporter_tx.c
-> @@ -311,6 +311,30 @@ mlx5e_tx_reporter_diagnose_common_config(struct devlink_health_reporter *reporte
->  	mlx5e_health_fmsg_named_obj_nest_end(fmsg);
->  }
->  
-> +static void
-> +mlx5e_tx_reporter_diagnose_tis_config(struct devlink_health_reporter *reporter,
-> +				      struct devlink_fmsg *fmsg)
-> +{
-> +	struct mlx5e_priv *priv = devlink_health_reporter_priv(reporter);
-> +	u8 num_tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
-> +	u32 tc, i, tisn;
+>  drivers/gpu/drm/bridge/ite-it6263.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge=
+/ite-it6263.c
+> index a3a63a977b0a..3a20b2088bf9 100644
+> --- a/drivers/gpu/drm/bridge/ite-it6263.c
+> +++ b/drivers/gpu/drm/bridge/ite-it6263.c
+> @@ -590,15 +590,28 @@ static void it6263_bridge_atomic_enable(struct drm_=
+bridge *bridge,
+>  	struct drm_connector *connector;
+>  	bool is_stable =3D false;
+>  	struct drm_crtc *crtc;
+> +	struct drm_connector_state *conn_state;
+>  	unsigned int val;
+>  	bool pclk_high;
+>  	int i, ret;
+> =20
+>  	connector =3D drm_atomic_get_new_connector_for_encoder(state,
+>  							     bridge->encoder);
+> -	crtc =3D drm_atomic_get_new_connector_state(state, connector)->crtc;
+> +	if (WARN_ON(!connector))
+> +		return;
 > +
-> +	devlink_fmsg_arr_pair_nest_start(fmsg, "TIS Config");
-> +	for (i = 0; i < mlx5e_get_num_lag_ports(priv->mdev); i++) {
-> +		for (tc = 0; tc < num_tc; tc++) {
-
-nit: tisn can be defined in this for, not outside.
-
-> +			tisn = mlx5e_profile_get_tisn(priv->mdev, priv,
-> +						      priv->profile, i, tc);
+> +	conn_state =3D drm_atomic_get_new_connector_state(state, connector);
+> +	if (WARN_ON(!conn_state))
+> +		return;
 > +
-> +			devlink_fmsg_obj_nest_start(fmsg);
-> +			devlink_fmsg_u32_pair_put(fmsg, "lag port", i);
-> +			devlink_fmsg_u32_pair_put(fmsg, "tc", tc);
-> +			devlink_fmsg_u32_pair_put(fmsg, "tisn", tisn);
-> +			devlink_fmsg_obj_nest_end(fmsg);
-> +		}
-> +	}
-> +	devlink_fmsg_arr_pair_nest_end(fmsg);
-> +}
+> +	crtc =3D conn_state->crtc;
+>  	crtc_state =3D drm_atomic_get_new_crtc_state(state, crtc);
+> +	if (WARN_ON(!crtc_state))
+> +		return;
 > +
->  static int mlx5e_tx_reporter_diagnose(struct devlink_health_reporter *reporter,
->  				      struct devlink_fmsg *fmsg,
->  				      struct netlink_ext_ack *extack)
-> @@ -326,6 +350,7 @@ static int mlx5e_tx_reporter_diagnose(struct devlink_health_reporter *reporter,
->  		goto unlock;
->  
->  	mlx5e_tx_reporter_diagnose_common_config(reporter, fmsg);
-> +	mlx5e_tx_reporter_diagnose_tis_config(reporter, fmsg);
->  	devlink_fmsg_arr_pair_nest_start(fmsg, "SQs");
->  	for (i = 0; i < priv->channels.num; i++) {
+>  	mode =3D &crtc_state->adjusted_mode;
+> +	if (WARN_ON(!mode))
+> +		return;
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+And that condition can never be true.
 
-> -- 
-> 2.31.1
+Maxime
+
+--v64vw7w5u4nnxhww
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaICHvgAKCRAnX84Zoj2+
+dswIAYCeMGJa7sCOX8bvJRHr3W2xrdlJl81rl4rZOgrggToExAt6Y5mIXlMzNLM/
+zGTl6qIBgNrjx+dqnhqGxGwmdIKU/Nd0ludwq2bakr3C+JWeHRCfcQk+hLK7ns/c
+KXvBJLcxSA==
+=sF80
+-----END PGP SIGNATURE-----
+
+--v64vw7w5u4nnxhww--
 
