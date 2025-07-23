@@ -1,366 +1,184 @@
-Return-Path: <linux-kernel+bounces-742065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3057FB0ECB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19386B0ECC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 10:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F0B3BA0DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE771896BE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 08:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D2283CB1;
-	Wed, 23 Jul 2025 08:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B91B279324;
+	Wed, 23 Jul 2025 08:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zFch3yMt"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RJa6uzj/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C7A28136E;
-	Wed, 23 Jul 2025 08:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77AF277C98
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 08:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753257862; cv=none; b=BEQ11vvxbX7ej0Zzy9FfkxDtQ7ASkGQO/Fny7jVpjEQQK8nC8T8xDZusRWmx8fHI5dO/18WdWBh5Hv+qhXiKNm0XTSv8uhky2WyCgxkzDLd362TnNJoKksOp7uu4OY+67AskpGLQx4sr74N9F6vjy7FUIK4EU3QwhZqbu0D0Wl8=
+	t=1753257945; cv=none; b=LCYhmZIQWERpRC+OCYUwcU+SOQUf6TyNnJ9Fb1BwIC4jzL1yX+fWKXInPySOjrvksVgcoHcgqL0gJccdSVbsi8cAFaiJSD3bSXFcKq8JFcHHH33KfGZcgQpfqb5hb5ns8HgZJG/V7tQ6iJIw7m6gWtn3p5LKkvXU0rHu19/+mus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753257862; c=relaxed/simple;
-	bh=xGTQ2WxSwNbRChqdoLcpbr1XSoWncCwPF77/rQ5wj+8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=txhA7urblbD5qm9wqc+v10Pf5PtZAUvPp/Y+mt8fpXCHHsIRPhuEvWtpArNrRIHppPRK4Thv/ofEnM5H26/GyY3O8JvzopYDmCJdbgt57dVvybaPSSRwY3BDrXLHaMLoqToCjhmI1GUrOro3XHKOFsYge+ERNxNdoXZkr0Xy63Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zFch3yMt; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56N83Xpw1231534;
-	Wed, 23 Jul 2025 03:03:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753257813;
-	bh=HKrrFVQiYMI4gsrlFoRJ16NAJ6J7Bacvcx8aV6fKN6I=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=zFch3yMtIBW2qOCqN/reQ+EXjwibCOyMFU7eYuoVfcGpyX4PBugmQiSw5nQaPmF3B
-	 7Il96yp/zZ+v2nu2cd51Y79jIFqU7IumvQc2Ej1/8yGUpvR+AIjaLgMOKSFbX17FAP
-	 qBZGzHZFtyPv8MJPY+lKGXFGxKXqcBOU6KuSWgr0=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56N83Wvg1619119
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 23 Jul 2025 03:03:32 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 23
- Jul 2025 03:03:32 -0500
-Received: from fllvem-mr08.itg.ti.com (10.64.41.88) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 23 Jul 2025 03:03:32 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by fllvem-mr08.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56N83WDN072253;
-	Wed, 23 Jul 2025 03:03:32 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 56N83VQZ015951;
-	Wed, 23 Jul 2025 03:03:31 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Jonathan Corbet
-	<corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        Mengyuan Lou
-	<mengyuanlou@net-swift.com>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Michael
- Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Fan
- Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
-        Lorenzo Bianconi
-	<lorenzo@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lukas
- Bulwahn <lukas.bulwahn@redhat.com>,
-        Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
-Date: Wed, 23 Jul 2025 13:33:19 +0530
-Message-ID: <20250723080322.3047826-3-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250723080322.3047826-1-danishanwar@ti.com>
-References: <20250723080322.3047826-1-danishanwar@ti.com>
+	s=arc-20240116; t=1753257945; c=relaxed/simple;
+	bh=oeClgYeFsFo1ZVSnpG93IaIEFfRZTKGpwoSrlVVlogQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sy1hbceqG5i8FxU/GTq2SZ/Qg16Xd/tg4NdKoZaRNo4ToQiv6s7Tjs2PE2alWyT7R/uEXnrDBtfozI/jIZG5R871pnfovStJkd5rxxxibfl8zXodNxXEI8/Nzc946ImkvUcCwSst5b6e5Sl1tRqvHK7VLxoXYUleHvDsCiZ0+CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RJa6uzj/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753257942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1MDkeWmxyoVFcHmHc5Ml+3hXrUNIffMq/rZBas/7Tjc=;
+	b=RJa6uzj/0ngEN/3OTqIqprosRRZcqx3PxODPSuGvvGHLERpfOBgPAsOW2zCWbFWEzMP96s
+	uHhXeM3x505Yn8l/BwuXJWl6ddA6VO2k/1RHF5L5rPc86LfcWf8gEDW3jRwBtvYonIfayJ
+	VANVbCp75GiasvFVw9rJTX01gGKgt9s=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-nTDMPqTrMpeiM5kR-RtJqw-1; Wed, 23 Jul 2025 04:05:41 -0400
+X-MC-Unique: nTDMPqTrMpeiM5kR-RtJqw-1
+X-Mimecast-MFC-AGG-ID: nTDMPqTrMpeiM5kR-RtJqw_1753257940
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45626532e27so42411945e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 01:05:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753257940; x=1753862740;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1MDkeWmxyoVFcHmHc5Ml+3hXrUNIffMq/rZBas/7Tjc=;
+        b=eujyo+7piAfpXkYB14foqueIHCNJGMglWpq5J5Sb8kCswOAVHIoB0nIN8Yg5nxeTWn
+         yCRnL7FHE6Ttepr96ywNyKTtRTjhsbfr0wMz1LoFgIRTRKUTniWtw8N/5FBG2BIW+RYA
+         phCoJH8px7iXojr/iw91al/l47AKTHCV1/TPQiVSguvPbD+awRODEIA0gNIRk8OQeVyh
+         TICuWoQpL9bxAzv+G5gbr3iiBL43jfAHXKDeIErMHTkM9zTv6WFcVZDjenEiwkTrDTY2
+         jBV6OUnAt+SC5BM7j85TErPEywoo9M+rePv4j0aTVsU5i8PhltpDeD5Pc4dHtLa5q1XQ
+         5h7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPXidrINeZ0wDxrGBc4VL93TppzCGXvsA+J85c4cPkzsSi9KDzsxktvYy86yC3DaWyt36OFfQfkTPpci0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxNglt7Bh5bQJXRtqy+ptWi40DudP3rwLCtI+7nwA99bMx4Vrw
+	Ni4AKbCNuU4NhauXE7/4tcwaceZFDU1cwtHUFHfERapcL0XNVaPq5D7itImX/rWq4OuutdQzY5e
+	xuiXmOnSO/OLc3/tl9eB/M5hBVJt/tseTfqmGshd7tvPF78HCldfgh/evNx69jWud9A==
+X-Gm-Gg: ASbGncvpycHniqTenyy8dhdkrF7nWInpAFskbaxDXEKSF64IcEYV5NRzZFUD0uS0jNX
+	lCLPJ2GuMyPHmicS4Rco2G51k8u1JIuDygGSulfL5qjT5BBJKDMEUcEmMAhYaLEFTww3PRgB9KC
+	Ca0R3aWzbvhEmwcJ5bYkoVrTccR0Ds7Mk87pk/RB16QqkoPWdWCIs126wxxxkoBKzPTQiL36c4I
+	03jGC6wmXa/yvMhLoW0CKyPgZfeOfEmDQwwIet65rZ/HazNi3v8vbbCpnxx/wcR7X9IEUBNUAJI
+	Rj695XGWkJSO7mBSQmaYxTsws01gwXFSfxJBxknhvFmzqf6TooKQfds3msVkZDmhCnuuwTQRhjs
+	qSjP/Ji7tpBconpsRQenDUSqpv7H4sGeS5TUjcpso+2XcrH6DtOcFYLGGvb0XciTbxyk=
+X-Received: by 2002:a05:600c:a08e:b0:456:2ac6:ccc3 with SMTP id 5b1f17b1804b1-45868d6b040mr14029745e9.25.1753257939868;
+        Wed, 23 Jul 2025 01:05:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrPYLIbj2mPY9A575m8HAPyrIhR31gSEJiKJqJFhiM9K8YO2VigwJNsUvVl2NYwIjh9jmjYw==
+X-Received: by 2002:a05:600c:a08e:b0:456:2ac6:ccc3 with SMTP id 5b1f17b1804b1-45868d6b040mr14029325e9.25.1753257939360;
+        Wed, 23 Jul 2025 01:05:39 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f00:4000:a438:1541:1da1:723a? (p200300d82f004000a43815411da1723a.dip0.t-ipconnect.de. [2003:d8:2f00:4000:a438:1541:1da1:723a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586918b436sm15026595e9.9.2025.07.23.01.05.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 01:05:38 -0700 (PDT)
+Message-ID: <119c3422-0bb1-4806-b81c-ccf1c7aeba4d@redhat.com>
+Date: Wed, 23 Jul 2025 10:05:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: add stack trace when bad rss-counter state is
+ detected
+To: Xuanye Liu <liuqiye2025@163.com>, Kees Cook <kees@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250723072350.1742071-1-liuqiye2025@163.com>
+ <202507230031.52B5C2B53@keescook>
+ <c7a32d87-efbd-47bd-9a18-9eb51e441a7f@163.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <c7a32d87-efbd-47bd-9a18-9eb51e441a7f@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
-support for creating virtual Ethernet devices over RPMSG channels,
-allowing user-space programs to send and receive messages using a
-standard Ethernet protocol. The driver includes message handling,
-probe, and remove functions, along with necessary data structures.
+On 23.07.25 09:45, Xuanye Liu wrote:
+> 
+> 在 2025/7/23 15:31, Kees Cook 写道:
+>> On Wed, Jul 23, 2025 at 03:23:49PM +0800, Xuanye Liu wrote:
+>>> The check_mm() function verifies the correctness of rss counters in
+>>> struct mm_struct. Currently, it only prints an alert when a bad
+>>> rss-counter state is detected, but lacks sufficient context for
+>>> debugging.
+>>>
+>>> This patch adds a dump_stack() call to provide a stack trace when
+>>> the rss-counter state is invalid. This helps developers identify
+>>> where the corrupted mm_struct is being checked and trace the
+>>> underlying cause of the inconsistency.
+>> Why not just convert the pr_alert to a WARN?
+> Good idea! I'll gather more feedback from others and then update to v2.
 
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/net/ethernet/Kconfig     |  10 +++
- drivers/net/ethernet/Makefile    |   1 +
- drivers/net/ethernet/rpmsg_eth.c | 128 +++++++++++++++++++++++++++++++
- drivers/net/ethernet/rpmsg_eth.h |  75 ++++++++++++++++++
- 4 files changed, 214 insertions(+)
- create mode 100644 drivers/net/ethernet/rpmsg_eth.c
- create mode 100644 drivers/net/ethernet/rpmsg_eth.h
+Makes sense to me.
 
-diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-index f86d4557d8d7..a73a45a9ef3d 100644
---- a/drivers/net/ethernet/Kconfig
-+++ b/drivers/net/ethernet/Kconfig
-@@ -170,6 +170,16 @@ config OA_TC6
- 	  To know the implementation details, refer documentation in
- 	  <file:Documentation/networking/oa-tc6-framework.rst>.
- 
-+config RPMSG_ETH
-+	tristate "RPMsg Based Virtual Ethernet driver"
-+	depends on RPMSG
-+	help
-+	  This makes it possible for user-space programs to send and receive
-+	  rpmsg messages as a standard eth protocol.
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called rpmsg_eth.
-+
- source "drivers/net/ethernet/packetengines/Kconfig"
- source "drivers/net/ethernet/pasemi/Kconfig"
- source "drivers/net/ethernet/pensando/Kconfig"
-diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
-index 67182339469a..aebd15993e3c 100644
---- a/drivers/net/ethernet/Makefile
-+++ b/drivers/net/ethernet/Makefile
-@@ -107,3 +107,4 @@ obj-$(CONFIG_NET_VENDOR_XIRCOM) += xircom/
- obj-$(CONFIG_NET_VENDOR_SYNOPSYS) += synopsys/
- obj-$(CONFIG_NET_VENDOR_PENSANDO) += pensando/
- obj-$(CONFIG_OA_TC6) += oa_tc6.o
-+obj-$(CONFIG_RPMSG_ETH) += rpmsg_eth.o
-diff --git a/drivers/net/ethernet/rpmsg_eth.c b/drivers/net/ethernet/rpmsg_eth.c
-new file mode 100644
-index 000000000000..9a51619f9313
---- /dev/null
-+++ b/drivers/net/ethernet/rpmsg_eth.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* RPMsg Based Virtual Ethernet Driver
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#include <linux/of.h>
-+#include "rpmsg_eth.h"
-+
-+static int rpmsg_eth_rpmsg_cb(struct rpmsg_device *rpdev, void *data, int len,
-+			      void *priv, u32 src)
-+{
-+	struct rpmsg_eth_common *common = dev_get_drvdata(&rpdev->dev);
-+	struct message *msg = (struct message *)data;
-+	u32 msg_type = msg->msg_hdr.msg_type;
-+	int ret = 0;
-+
-+	switch (msg_type) {
-+	case RPMSG_ETH_REQUEST_MSG:
-+	case RPMSG_ETH_RESPONSE_MSG:
-+	case RPMSG_ETH_NOTIFY_MSG:
-+		dev_dbg(common->dev, "Msg type = %d, Src Id = %d\n",
-+			msg_type, msg->msg_hdr.src_id);
-+		break;
-+	default:
-+		dev_err(common->dev, "Invalid msg type\n");
-+		ret = -EINVAL;
-+		break;
-+	}
-+	return ret;
-+}
-+
-+/**
-+ * rpmsg_eth_get_shm_info - Get shared memory info from device tree
-+ * @common: Pointer to rpmsg_eth_common structure
-+ *
-+ * Return: 0 on success, negative error code on failure
-+ */
-+static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
-+{
-+	struct device_node *peer;
-+	const __be32 *reg;
-+	u64 start_address;
-+	int prop_size;
-+	int reg_len;
-+	u64 size;
-+
-+	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
-+	if (!peer) {
-+		dev_err(common->dev, "Couldn't get shared mem node");
-+		return -ENODEV;
-+	}
-+
-+	reg = of_get_property(peer, "reg", &prop_size);
-+	if (!reg) {
-+		dev_err(common->dev, "Couldn't get reg property");
-+		return -ENODEV;
-+	}
-+
-+	reg_len = prop_size / sizeof(u32);
-+
-+	if (reg_len == 2) {
-+		/* 32-bit address space */
-+		start_address = be32_to_cpu(reg[0]);
-+		size = be32_to_cpu(reg[1]);
-+	} else if (reg_len == 4) {
-+		/* 64-bit address space */
-+		start_address = ((u64)be32_to_cpu(reg[0]) << 32) |
-+				 be32_to_cpu(reg[1]);
-+		size = ((u64)be32_to_cpu(reg[2]) << 32) |
-+			be32_to_cpu(reg[3]);
-+	} else {
-+		dev_err(common->dev, "Invalid reg_len: %d\n", reg_len);
-+		return -EINVAL;
-+	}
-+
-+	common->port->buf_start_addr = start_address;
-+	common->port->buf_size = size;
-+
-+	return 0;
-+}
-+
-+static int rpmsg_eth_probe(struct rpmsg_device *rpdev)
-+{
-+	struct device *dev = &rpdev->dev;
-+	struct rpmsg_eth_common *common;
-+	int ret = 0;
-+
-+	common = devm_kzalloc(&rpdev->dev, sizeof(*common), GFP_KERNEL);
-+	if (!common)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, common);
-+
-+	common->port = devm_kzalloc(dev, sizeof(*common->port), GFP_KERNEL);
-+	common->dev = dev;
-+	common->rpdev = rpdev;
-+
-+	ret = rpmsg_eth_get_shm_info(common);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void rpmsg_eth_rpmsg_remove(struct rpmsg_device *rpdev)
-+{
-+	dev_dbg(&rpdev->dev, "rpmsg-eth client driver is removed\n");
-+}
-+
-+static struct rpmsg_device_id rpmsg_eth_rpmsg_id_table[] = {
-+	{ .name = "shm-eth" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(rpmsg, rpmsg_eth_rpmsg_id_table);
-+
-+static struct rpmsg_driver rpmsg_eth_rpmsg_client = {
-+	.drv.name = KBUILD_MODNAME,
-+	.id_table = rpmsg_eth_rpmsg_id_table,
-+	.probe = rpmsg_eth_probe,
-+	.callback = rpmsg_eth_rpmsg_cb,
-+	.remove = rpmsg_eth_rpmsg_remove,
-+};
-+module_rpmsg_driver(rpmsg_eth_rpmsg_client);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("MD Danish Anwar <danishanwar@ti.com>");
-+MODULE_DESCRIPTION("RPMsg Based Virtual Ethernet driver");
-diff --git a/drivers/net/ethernet/rpmsg_eth.h b/drivers/net/ethernet/rpmsg_eth.h
-new file mode 100644
-index 000000000000..56dabd139643
---- /dev/null
-+++ b/drivers/net/ethernet/rpmsg_eth.h
-@@ -0,0 +1,75 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ * Texas Instruments K3 Inter Core Virtual Ethernet Driver common header
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#ifndef __RPMSG_ETH_H__
-+#define __RPMSG_ETH_H__
-+
-+#include <linux/errno.h>
-+#include <linux/etherdevice.h>
-+#include <linux/if_ether.h>
-+#include <linux/if_vlan.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/netdevice.h>
-+#include <linux/rpmsg.h>
-+
-+#define RPMSG_ETH_SHM_MAGIC_NUM 0xABCDABCD
-+
-+enum rpmsg_eth_msg_type {
-+	RPMSG_ETH_REQUEST_MSG = 0,
-+	RPMSG_ETH_RESPONSE_MSG,
-+	RPMSG_ETH_NOTIFY_MSG,
-+};
-+
-+/**
-+ * struct message_header - message header structure for RPMSG Ethernet
-+ * @src_id: Source endpoint ID
-+ * @msg_type: Message type
-+ */
-+struct message_header {
-+	u32 src_id;
-+	u32 msg_type;
-+} __packed;
-+
-+/**
-+ * struct message - RPMSG Ethernet message structure
-+ *
-+ * @msg_hdr: Message header contains source and destination endpoint and
-+ *          the type of message
-+ *
-+ * This structure is used to send and receive messages between the RPMSG
-+ * Ethernet ports.
-+ */
-+struct message {
-+	struct message_header msg_hdr;
-+} __packed;
-+
-+/**
-+ * struct rpmsg_eth_common - common structure for RPMSG Ethernet
-+ * @rpdev: RPMSG device
-+ * @port: Ethernet port
-+ * @dev: Device
-+ */
-+struct rpmsg_eth_common {
-+	struct rpmsg_device *rpdev;
-+	struct rpmsg_eth_port *port;
-+	struct device *dev;
-+};
-+
-+/**
-+ * struct rpmsg_eth_port - Ethernet port structure for RPMSG Ethernet
-+ * @common: Pointer to the common RPMSG Ethernet structure
-+ * @buf_start_addr: Start address of the shared memory buffer for this port
-+ * @buf_size: Size (in bytes) of the shared memory buffer for this port
-+ */
-+struct rpmsg_eth_port {
-+	struct rpmsg_eth_common *common;
-+	u32 buf_start_addr;
-+	u32 buf_size;
-+};
-+
-+#endif /* __RPMSG_ETH_H__ */
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
