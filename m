@@ -1,286 +1,186 @@
-Return-Path: <linux-kernel+bounces-742902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-742903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406ABB0F808
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E21B0F80C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 18:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580EF1CC08FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D488AC437C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 16:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417DA1F4176;
-	Wed, 23 Jul 2025 16:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7C41F4628;
+	Wed, 23 Jul 2025 16:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="liLifVWL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8H4yG2s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F01C1AAA;
-	Wed, 23 Jul 2025 16:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4E92E36F0;
+	Wed, 23 Jul 2025 16:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753287901; cv=none; b=QW1UeUG3XbllswzGyEcRQlgBfzn/lRCsKI4gATDcutUxFNrNXt7BEhii3AQ4hkXXV+1phvm244c/xZTrW/tMYEOOO3ULoTH/LfeEeFt3/4FbDJL2e0m7p3+vrF8hosokIxjNi9THnQIaLdd84Wo2esVt5yowWH158S49Pt7rBAE=
+	t=1753287943; cv=none; b=Myz5xvF0sxexxb8axWfFtHp8Rr9upz/28iKJJy38xuCZryxQnycA6FIFux+tuRfhDWiQViCEW0q11Msf8kdZ/v9gZHyO5E1tRTf5N53AdJqYm3k9tanrcoEh8n/TUP+pOvqQsyem/nXQ4Q0bVWSkcE9RlUlIl8wD+zmcm2FFFZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753287901; c=relaxed/simple;
-	bh=+yH5sdRuy5JtUTts9MfUfZZCJprgFstIzCLKlBAEnhc=;
+	s=arc-20240116; t=1753287943; c=relaxed/simple;
+	bh=nLC91lUvP3zaJg6UlqQrBSAOMHuwcblVye+egF7o2Tw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxVHUOt3JNRpi4vCSA6MN4l9SNHqaEQsjZV3TKxsUeCWNL7beIebS2C9DWEl17foFps0dBM9vZL97mLRtttD2d/3BDww0Ekb2w0trfuE6EHpEDL3OBbSYggbaDxnbk7esRlWh7dtV2WuqDgLlbdWhMlENgGts8l7Gzd0g5YPGyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=liLifVWL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=zZNfuBfgB8dRySkDcZcabnnOZgPd4ahYjtj3I0BOkM4=; b=liLifVWLrTxGNp03U4ezUOaAcM
-	kl7wHLDNErluVHrsCzFpLad3A/KqCtnUpyr3eFfWTFeV57VEatuR6kyvyxrGBZ6isu2L2UwzHYOaR
-	Vj24hXdbxfa2gaUtS3K/HWa+DrZ/czeRVIrpr5mNRBnd08VndPL8P6CUVzNAjM3crXcs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uecGS-002fSW-KG; Wed, 23 Jul 2025 18:24:20 +0200
-Date: Wed, 23 Jul 2025 18:24:20 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Fan Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
- RPMSG-ETH Driver
-Message-ID: <81273487-a450-4b28-abcc-c97273ca7b32@lunn.ch>
-References: <20250723080322.3047826-1-danishanwar@ti.com>
- <20250723080322.3047826-2-danishanwar@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpjOaDEpkqh4jAWPWXzEbNgJxXluHWDAHXMOWKIdo0s3oTsczaHV7OLkTDUfmp9SgjSOrIv94pVwNpPoY5QkKLUlrRD1hLeHMZM6Z/RmwbU/B0f+rqBNFeZ4luFeUO6FEm2rEs0OHKa5Qbzd6a8wH+urbpawOYRYNfNnlIFyDAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8H4yG2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9E0C4CEE7;
+	Wed, 23 Jul 2025 16:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753287942;
+	bh=nLC91lUvP3zaJg6UlqQrBSAOMHuwcblVye+egF7o2Tw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E8H4yG2sLM3EtMIyyp3VER+MZNetfiBhRLouHhWKhwRpYBCBdtJfBQFI+9fmQ1for
+	 8B/wEdAoNqSUu4VOesl07v6HNCu9olofUWlx2A60mZ4MN7T7gyajRq/Uup2WndNjuC
+	 QiLjGI9EjELN+U/L030mP1AVQip63ygQ/teTrGgUprT9PwdmwWeqF0KCfuFpEY7SrF
+	 nF9t4CDiztR5/YLRw29ipCNmcuWXkuhx00rl0yPHncOgoNmLVOlpxtwSJ7xazqd+rx
+	 kFBfz1V69Pwb9Ie/DvVGG/DLUwYV6/jN14DRnmo5aWGyi6xNYJPfLzAfaIdj0woL3O
+	 ICHkDV7g6cfwQ==
+Date: Wed, 23 Jul 2025 21:55:31 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+	Jeff Johnson <jjohnson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	mhi@lists.linux.dev, linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, quic_vpernami@quicinc.com, 
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v4 04/11] bus: mhi: host: Add support for Bandwidth scale
+Message-ID: <76txeoaa7k3nquvegvmivjazlzdtsnsxa3jtfrlfzbndffc7dx@c2nfzty73scj>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-4-3faa8fe92b05@qti.qualcomm.com>
+ <j24c2ii33yivc7rb3vwbwljxwvhdpqwbfgt3gid2njma6t47i4@uhykehw23h2q>
+ <31c192f7-cd69-46ad-9443-5d57ae2aa86e@oss.qualcomm.com>
+ <eg2v3kctnztxcaulffu7tvysljimmyhnramyjj5gpa4vrv3yxu@g3pgwpwx37iq>
+ <2c42bbe7-79aa-42f6-8af8-65d1be7253a5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250723080322.3047826-2-danishanwar@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2c42bbe7-79aa-42f6-8af8-65d1be7253a5@oss.qualcomm.com>
 
-> --- a/Documentation/networking/device_drivers/ethernet/index.rst
-> +++ b/Documentation/networking/device_drivers/ethernet/index.rst
-> @@ -61,6 +61,7 @@ Contents:
->     wangxun/txgbevf
->     wangxun/ngbe
->     wangxun/ngbevf
-> +   rpmsg_eth
+On Fri, Jul 11, 2025 at 12:25:30PM GMT, Krishna Chaitanya Chundru wrote:
 
-This list is sorted. Please insert at the right location. I made the
-same comment to somebody else this week as well....
+[...]
 
-> +This driver is generic and can be used by any vendor. Vendors can develop their
-> +own firmware for the remote processor to make it compatible with this driver.
-> +The firmware must adhere to the shared memory layout, RPMSG communication
-> +protocol, and data exchange requirements described in this documentation.
+> > > > > +static int mhi_init_bw_scale(struct mhi_controller *mhi_cntrl,
+> > > > > +			     int bw_scale_db)
+> > > > > +{
+> > > > > +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+> > > > > +	u32 bw_cfg_offset, val;
+> > > > > +	int ret, er_index;
+> > > > > +
+> > > > > +	ret = mhi_find_capability(mhi_cntrl, MHI_BW_SCALE_CAP_ID, &bw_cfg_offset);
+> > > > > +	if (ret)
+> > > > > +		return ret;
+> > > > > +
+> > > > > +	er_index = mhi_get_er_index(mhi_cntrl, MHI_ER_BW_SCALE);
+> > > > > +	if (er_index < 0)
+> > > > > +		return er_index;
+> > > > > +
+> > > > > +	bw_cfg_offset += MHI_BW_SCALE_CFG_OFFSET;
+> > > > > +
+> > > > > +	/* Advertise host support */
+> > > > > +	val = (__force u32)cpu_to_le32(FIELD_PREP(MHI_BW_SCALE_DB_CHAN_ID, bw_scale_db) |
+> > > > > +				       FIELD_PREP(MHI_BW_SCALE_ER_INDEX, er_index) |
+> > > > > +				       MHI_BW_SCALE_ENABLED);
+> > > > > +
+> > > > 
+> > > > It is wrong to store the value of cpu_to_le32() in a non-le32 variable.
+> > > > mhi_write_reg() accepts the 'val' in native endian. writel used in the
+> > > > controller drivers should take care of converting to LE before writing to the
+> > > > device.
+> > > > 
+> > > ok then I will revert to u32.
+> > > 
+> > > I think we need a patch in the controller drivers seperately to handle
+> > > this.
+> > 
+> > Why?
+> > 
+> what I understood from your previous comment is from here we need to
+> send u32 only and the controller drivers should take care of
+> converting u32 to le32.
+> As of today controller drivers are not considering this and writing
+> u32 only.
+> So we need a seperate patch in the controller driver to convert it to
+> le32.
 
-Could you add a link to TIs firmware? It would be a good reference
-implementation. But i guess that needs to wait until the driver is
-merged and the ABI is stable.
+No. All controller drivers are using writel() to write the register. Since
+writel() converts the value to little endian from native endian, you do not need
+to do anything.
 
-> +Implementation Details
-> +----------------------
-> +
-> +- The magic number is defined as a macro in the driver source (e.g.,
-> +  ``#define RPMSG_ETH_SHM_MAGIC_NUM 0xABCDABCD``).
-> +- The firmware must write this value to the ``magic_num`` field of the head and
-> +  tail structures in the shared memory region.
-> +- During the handshake, the Linux driver reads these fields and compares them to
-> +  the expected value. If any mismatch is detected, the driver will log an error
-> +  and refuse to proceed.
+> > > > > +	mhi_write_reg(mhi_cntrl, mhi_cntrl->regs, bw_cfg_offset, val);
+> > > > > +
+> > > > > +	dev_dbg(dev, "Bandwidth scaling setup complete with event ring: %d\n",
+> > > > > +		er_index);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +
 
-So the firmware always takes the role of "primary" and Linux is
-"secondary"? With the current implementation, you cannot have Linux on
-both ends?
+[...]
 
-I don't see this as a problem, but maybe it is worth stating as a
-current limitation.
+> > > > > +	link_info.target_link_speed = MHI_TRE_GET_EV_LINKSPEED(dev_rp);
+> > > > > +	link_info.target_link_width = MHI_TRE_GET_EV_LINKWIDTH(dev_rp);
+> > > > > +	link_info.sequence_num = MHI_TRE_GET_EV_BW_REQ_SEQ(dev_rp);
+> > > > > +
+> > > > > +	dev_dbg(dev, "Received BW_REQ with seq:%d link speed:0x%x width:0x%x\n",
+> > > > > +		link_info.sequence_num,
+> > > > > +		link_info.target_link_speed,
+> > > > > +		link_info.target_link_width);
+> > > > > +
+> > > > > +	/* Bring host and device out of suspended states */
+> > > > > +	ret = mhi_device_get_sync(mhi_cntrl->mhi_dev);
+> > > > 
+> > > > Looks like mhi_device_get_sync() is going runtime_get()/runtime_put() inside
+> > > > mhi_trigger_resume(). I'm wondering why that is necessary.
+> > > > 
+> > > Before mhi_trigger_resume we are doing wake_get, which will make sure
+> > > device will not transition to the low power modes while servicing this
+> > > event. And also make sure mhi state is in M0 only.
+> > > 
+> > > As we are in workqueue this can be scheduled at some later time and by
+> > > that time mhi can go to m1 or m2 state.
+> > > 
+> > 
+> > My comment was more about the behavior of mhi_trigger_resume(). Why does it call
+> > get() and put()? Sorry if I was not clear.
+> > Get() needed for bringing out of suspend, put() is for balancing the
+> get() I belive the intention here is to trigger resume only and balance
+> pm framework.
+> 
+> That said mhi_device_get_sync() has a bug we are doing wake_get() before
+> triggering resume and also trigger resume will not guarantee that device
+> had resumed, it is not safe to do wake_get untill device is out of
+> suspend, we might need to introduce runtime_get_sync() function and new
+> API for this purpose.
+> mhi_trigger_resume makes sense in the place like this[1], where ever
+> there are register writes after trigger resume it may need  to be
+> replaced with runtime_get_sync().
+> 
+> This function needs to do mhi_cntrl->runtime_get_sync(mhi_cntrl); first
+> to make sure controller is not in suspend and then mhi_device_get_sync()
+> to make sure device is staying in M0. and in the end we balance these
+> with mhi_cntrl->runtime_put(mhi_cntrl) & mhi_device_put().
+> 
 
-> +Shared Memory Layout
-> +====================
-> +
-> +The RPMSG Based Virtual Ethernet Driver uses a shared memory region to exchange
-> +data between the host and the remote processor. The shared memory is divided
-> +into transmit and receive regions, each with its own `head` and `tail` pointers
-> +to track the buffer state.
-> +
-> +Shared Memory Parameters
-> +------------------------
-> +
-> +The following parameters are exchanged between the host and the firmware to
-> +configure the shared memory layout:
+Sounds good to me.
 
-So the host tells the firmware this? Maybe this is explained later,
-but is the flow something like:
+- Mani
 
-Linux makes an RPC call to the firmware with the parameters you list
-below. Upon receiving that RPC, the firmware puts the magic numbers in
-place. It then ACKs the RPC call? Linux then checks the magic numbers?
-
-> +1. **num_pkt_bufs**:
-> +
-> +   - The total number of packet buffers available in the shared memory.
-> +   - This determines the maximum number of packets that can be stored in the
-> +     shared memory at any given time.
-> +
-> +2. **buff_slot_size**:
-> +
-> +   - The size of each buffer slot in the shared memory.
-> +   - This includes space for the packet length, metadata, and the actual packet
-> +     data.
-> +
-> +3. **base_addr**:
-> +
-> +   - The base address of the shared memory region.
-> +   - This is the starting point for accessing the shared memory.
-
-So this is the base address in the Linux address space? How should the
-firmware convert this into a base address in its address space?
-
-> +4. **tx_offset**:
-> +
-> +   - The offset from the `base_addr` where the transmit buffers begin.
-> +   - This is used by the host to write packets for transmission.
-> +
-> +5. **rx_offset**:
-> +
-> +   - The offset from the `base_addr` where the receive buffers begin.
-> +   - This is used by the host to read packets received from the remote
-> +     processor.
-
-Maybe change 'host' to 'Linux'? Or some other name, 'primary' and
-'secondary'. The naming should be consistent throughout the
-documentation and driver.
-
-Part of the issue here is that you pass this information from Linux to
-the firmware. When the firmware receives it, it has the complete
-opposite meaning. It uses "tx_offset" to receive packets, and
-"rx_offset" to send packets. This can quickly get confusing. If you
-used names like "linux_tx_offset", the added context with avoid
-confusion.
-
-> +Shared Memory Structure
-> +-----------------------
-> +
-> +The shared memory layout is as follows:
-> +
-> +.. code-block:: text
-> +
-> +      Shared Memory Layout:
-> +      ---------------------------
-> +      |        MAGIC_NUM        |   rpmsg_eth_shm_head
-> +      |          HEAD           |
-> +      ---------------------------
-> +      |        MAGIC_NUM        |
-> +      |        PKT_1_LEN        |
-> +      |          PKT_1          |
-> +      ---------------------------
-> +      |           ...           |
-> +      ---------------------------
-> +      |        MAGIC_NUM        |
-> +      |          TAIL           |   rpmsg_eth_shm_tail
-> +      ---------------------------
-> +
-> +1. **MAGIC_NUM**:
-> +
-> +   - A unique identifier used to validate the shared memory region.
-> +   - Ensures that the memory region is correctly initialized and accessible.
-> +
-> +2. **HEAD Pointer**:
-> +
-> +   - Tracks the start of the buffer for packet transmission or reception.
-> +   - Updated by the producer (host or remote processor) after writing a packet.
-
-Is this a pointer, or an offset from the base address? Pointers get
-messy when you have multiple address spaces involved. An offset is
-simpler to work with. Given that the buffers are fixed size, it could
-even be an index.
-
-> +Information Exchanged Between RPMSG Channels
-> +--------------------------------------------
-> +
-> +1. **Requests from Host to Remote Processor**:
-
-Another place where consistent naming would be good. Here it is the
-remote processor, not firmware used earlier.
-
-> +
-> +   - `RPMSG_ETH_REQ_SHM_INFO`: Request shared memory information, such as
-> +     ``num_pkt_bufs``, ``buff_slot_size``, ``base_addr``, ``tx_offset``, and
-> +     ``rx_offset``.
-
-Is this requested, or telling? I suppose the text above uses "between"
-which is ambiguous.
-
-> +3. **Notifications from Remote Processor to Host**:
-> +
-> +   - `RPMSG_ETH_NOTIFY_PORT_UP`: Notify that the Ethernet port is up and ready
-> +     for communication.
-> +   - `RPMSG_ETH_NOTIFY_PORT_DOWN`: Notify that the Ethernet port is down.
-> +   - `RPMSG_ETH_NOTIFY_PORT_READY`: Notify that the Ethernet port is ready for
-> +     configuration.
-
-That needs more explanation. Why would it not be ready? 
-
-> +   - `RPMSG_ETH_NOTIFY_REMOTE_READY`: Notify that the remote processor is ready
-> +     for communication.
-
-How does this differ from PORT_READY?
-
-> +How-To Guide for Vendors
-> +========================
-> +
-> +This section provides a guide for vendors to develop firmware for the remote
-> +processor that is compatible with the RPMSG Based Virtual Ethernet Driver.
-> +
-> +1. **Implement Shared Memory Layout**:
-> +
-> +   - Allocate a shared memory region for packet transmission and reception.
-> +   - Initialize the `MAGIC_NUM`, `num_pkt_bufs`, `buff_slot_size`, `base_addr`,
-> +     `tx_offset`, and `rx_offset`.
-> +
-> +2. **Magic Number Requirements**
-> +
-> +   - The firmware must write a unique magic number (for example, ``0xABCDABCD``)
-
-Why "for example"? Do you have a use case where some other value
-should be used? Or can we just make this magic value part of the
-specification?
-
-> +- The driver assumes a specific shared memory layout and may not work with other
-> +  configurations.
-> +- Multicast address filtering is limited to the capabilities of the underlying
-> +  RPMSG framework.
-
-I don't think there is anything special here. The network stack always
-does perfect address filtering. The driver can help out, by also doing
-perfect address filtering, or imperfect address filtering, and letting
-more through than actually wanted. Or it can go into promiscuous mode.
-
-> +- The driver currently supports only one transmit and one receive queue.
-> +
-> +References
-> +==========
-> +
-> +- RPMSG Framework Documentation: https://www.kernel.org/doc/html/latest/rpmsg.html
-
-This results in 404 Not Found.
-
-     Andrew
+-- 
+மணிவண்ணன் சதாசிவம்
 
