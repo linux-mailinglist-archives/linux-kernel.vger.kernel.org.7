@@ -1,152 +1,191 @@
-Return-Path: <linux-kernel+bounces-743284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EABB0FCE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3588B0FCEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CE83AAA62
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6EB587999
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 22:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAA7286439;
-	Wed, 23 Jul 2025 22:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8535127146E;
+	Wed, 23 Jul 2025 22:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AOdiCa7j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LBrjVNcP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CD127F015
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430A7273D90
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753309700; cv=none; b=K3VbmxEdPh1nJP/zcKs0EAZMajXLVzYs0RMLiZIRkwQPFVmStwVjSKcov4BOsnN8Q3kef8g8qkVdQUbkOsmHk2k22jesVmEgjqrR7FN/s0TTdAK2VNkvMd5AFFbHmzvaGfZHJ1VnjhlKkrbdTW95E/JYIOum+O4/XufeKWoDRrc=
+	t=1753309714; cv=none; b=G2haouu718GRy2RfVA+ek3pahsAj4n7mosIY9JSMpZQSrauSWyGybYJKHhxWjwEmICYw9f26bFltz/Sb9OKf0qK5y9sCIfFOJHvQz6ftLLqHTcj9x8PODmOdjaLJguIUOOj01oWKW0eM6wxURpPHJ/T6CHA4yVnOaLp9S7MhoOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753309700; c=relaxed/simple;
-	bh=sgooeZjbfM6S1ri+FrVmewlkP2UIgcflyZIdd6FVHsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IO7JoNplMj3zdLWsi52W08a7yVId3rV1m3EQgjbFse0cTXHNN6o5ndEINfxFMpUblSyxm5w6qDfCHdeZw9KnG/HudFlhRj1ga6fQ40/Bn9OfthwiqWAmLPt4KozFTd/epgaq7V7JgoLaO7lfDpYUPKZg9y9dktPMICC9If1cBaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AOdiCa7j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NHDrtv025461
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:28:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=16arupX2e1S
-	BlChhr2W+V8p/tQWklYBcFD4Hu6qlLGg=; b=AOdiCa7jKX/D/Vwga3ZFEf1m3Yu
-	70HDTKS4vX9bXS197MiWBc3hLps02Zy2vNuwOL3m5uS0Sm+iGA3/72KrYX32wZCF
-	JI5OMTofh8Mu5J1Bb9BN+NCRTUj9QkwVHcLJR/7DeNHfg2j64bKATCv0OZMDYgqP
-	ZEKm8BXxZOW+fAFc4Tn5PbPZoG8Ye/PEo7DgRV7u2fHLrEIwSD60gX5d3yrQmzQX
-	ipfu4MZv0Ia9cKuBOQ35Ok3AkdQvG+eJp/BoId7FqC9+eZyU9JwzldrmIxi9MQzU
-	M66kQwrJhRrn/8yydyMLOtMbkAzbeaLj0bMV72iu6SF7XdTApiGG9D4IU4A==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3esgx4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:28:17 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fb3bb94b5cso5265516d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:28:16 -0700 (PDT)
+	s=arc-20240116; t=1753309714; c=relaxed/simple;
+	bh=VvUDt6FWFoyoDIDged2fZ1ZVOvIafQIneLMPsAZxYGs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qd+sgN+sHrpreCE3tsQt8+KANsJauPjcPWSxNqa+6xh1mNAAmQbG7yCMweBYJ/84TN/Lxm0nK0RSaQ4gec9j5K6CeRSQZqHyUQIuALtWwsyf+v9OA07fQijevtWMfVAzzXu1zjps3TTeHPBtbS9yaDnxUExGaIqJN5SVeu6kEc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LBrjVNcP; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31cb5cc3edcso283760a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 15:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753309712; x=1753914512; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=maxoCoCzZYBwjX5BKP0pvsUFSndKViTHC8/D3FpCBB0=;
+        b=LBrjVNcPtjzrPzpYwZtLwa3EPmZhQmWWQnPzuLq52zGauBkbW9ShWruo6wy214sxWf
+         bxCb5qavvd9CC7PWSZido5cPPxMIiLGn/tnZICfj6B/xpcMT3wLsV8jEkXflpjAEKRsJ
+         gULignJwl9x+nx6qKaoorm/K0WkU97+Te5LPHjjU8qX1P2/MYrA6/OvasgJWYL8/DTP4
+         Epj6X5uRa9xdnh9eQ2FmH9JkOe2HEPtZ6y5ESg5JEeTW/QbNIRE3Vt1RgzhmS7YpcKd/
+         DJCavZ+NltENwZHjAgDKbIYXxPpOX/snSdnK8sQ5/VVxICNVHSxm2lvojzscto8ZK/xy
+         nEvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753309696; x=1753914496;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16arupX2e1SBlChhr2W+V8p/tQWklYBcFD4Hu6qlLGg=;
-        b=agLt7CopKV4W18G0/7xZ8W9s5NZ/ahnhUcmu5E3Wvz+p27hfpyNIN7vvqzNOjtX67m
-         7lmGgL5TeLzvQZZOw43JgLVJidNXZd5IRLTrhoiU8kiL0sR+jeIJmFzKhHVNkjU4DOSr
-         jrUfmnTl87fYEQ06O2VA5sOIdzaT2jSxV+Jh1ceghHeBl9L+vh8l4M8NrHqo8IS8+K0h
-         N2I2fwZq0Yx/nIgv0SUTMRhXMuB/FsRBkTM76/C3J+occh9L6PBxt3mSgDd2NxrQ4c6b
-         xim9uy45bPuJkjNAEaHRRCpHim/h5gJW2DQFYyiwHdh8ee8XfQ8vMQpJ8PDb/GU4hkRE
-         6R6w==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Me1ZHQYwX05On+iPRlMpC0S2V9SF7a0Gmfw6H63bQWkwBbtR+PaDraELCyEvAoTczRrnoR+++GzSzI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6nBKknfMCilEfgjZG8AFZQ4AfhIl7fPfqMBSQfsALZToHf/Tx
-	6mLm1bXYdfHGY3C0q1b+QdHXLQ608bHwkrZaIWL1eVRDruYOwkgawVM4vYrEXhwjLaRGWuCuNlf
-	ggeaFuTfuhACkmUjNlx9cStXk5KquqETFthIKZmm1GyMjvpj+AFmZPuM2bQ4eRNV5RO0=
-X-Gm-Gg: ASbGncsxU71HXgvca0uXo/B5U6V2cfxmiUUUC0uJS9+RT1xxthqyDDjPqbwvYP7y6eq
-	ZS///ly0CmOaV9jRzyVIKTqkjD9pNST6ryLvzIc46bZdzV7ybtWGPVuwe69pBbtDdSp0dR7ifRD
-	9iF2vc18qakHByxJxru74uhTFFZIgvZGoUwJ6zMGmwfzbdL4Dg7yBCMzjDuzrMAYi0I42mxFnMm
-	c9uCE/qZew0I+CP+cBlHVDzQTfx6I4ajVGZCB/ALOhx1UhDOKnR8nim2IDpaFvbyIXt3HxoKHWD
-	us7GOEvuCOQhcNVIImAjMQo1kzwKINP0CohraNZoZarvce5eZWWI4g==
-X-Received: by 2002:a05:6214:3015:b0:704:7df7:c1a0 with SMTP id 6a1803df08f44-707004b362amr67677766d6.7.1753309695726;
-        Wed, 23 Jul 2025 15:28:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENnDd7E8dvz4OBj48g90QpOOMdiTVyaWS/Zz6TAtRGOSxYgAkQu5KM2rpchgfGqo30V4noHw==
-X-Received: by 2002:a05:6214:3015:b0:704:7df7:c1a0 with SMTP id 6a1803df08f44-707004b362amr67677536d6.7.1753309695310;
-        Wed, 23 Jul 2025 15:28:15 -0700 (PDT)
-Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad23bsm248520f8f.44.2025.07.23.15.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 15:28:14 -0700 (PDT)
-From: srinivas.kandagatla@oss.qualcomm.com
-To: andersson@kernel.org, konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH 23/23] arm64: dts: qcom: sm8650: add sound prefix for wsa2
-Date: Wed, 23 Jul 2025 23:27:37 +0100
-Message-ID: <20250723222737.35561-24-srinivas.kandagatla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
-References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1753309712; x=1753914512;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=maxoCoCzZYBwjX5BKP0pvsUFSndKViTHC8/D3FpCBB0=;
+        b=dlrseWmhIy5hWkMLNoOvpSmnECAbKGcvMhAZX+CbXeQ6/u+Ydf1GlZ3ye4M4h30SlE
+         MqnbgTeMDe68gfoS5CyHwlaQMSs7zHSI7N5dXRsfayDLcBN/BpZ2+qDOz3jO0N0dCWS/
+         yVOCS4DPeEEEf8cPcZq30QUQgmti032h/Y3B7B3X6zfxK0xmbve3JKsiLg8sGpyoVDZp
+         qyY0hMzLjMVydCoBSw2pKuZPINqV+TAae2EJZfV9fRwcNofoHpda7hB6Mw+8dKfEphJ0
+         Vshj44vPFFJ6AMGIt0XHNJuclaql4O5Mf/VF366UiMtcW/HtAmtf7mAl1LWrdNIxgVat
+         EI/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQNlvA+Gz7xoDzZB6V+OiM0Fv+ymXTpMkxQsQJnTC3jnMUEKmhe1qxNFBqhLBIsQ3tYspNenUcX+H0dn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiEin0ICM/SGTVI2WHLu1tf+ugDp3lUZrJx2cuGmy76cqj4L46
+	VCEjQXnIcvcgIBm5RSytxEp9THZrgV3hD6T3TK5iq0g3lePuk3phFFjeqtq9WMxF5IHxr2FRca1
+	V2ksBA/+zOjyQNg8LTkhG2D02Ng==
+X-Google-Smtp-Source: AGHT+IFxGNtqJ26mBeUuULBu7HleUmr3O2AVx8P8w6Q3+FKJVsiAhBbN7BqUKAMBmasnh+F58Ye1cOC9ZU84HvXLrg==
+X-Received: from pjwx11.prod.google.com ([2002:a17:90a:c2cb:b0:312:e266:f849])
+ (user=hramamurthy job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90a:e183:b0:313:15fe:4c13 with SMTP id 98e67ed59e1d1-31e507ce7f7mr7052868a91.27.1753309712524;
+ Wed, 23 Jul 2025 15:28:32 -0700 (PDT)
+Date: Wed, 23 Jul 2025 22:28:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: B5J8v7Bx7Jh3t-JUs-BpRWdZqAs6GWj5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIzMDE5MyBTYWx0ZWRfXyTLI94BVaKMO
- iuoOBGPqxKEs+V+MH4r56M71C8BZKqVjX7CNeXjYCvNP9M8xiUJry5pTDf5qc2taeokNP5+lOpY
- WZ6ztwDssU2Xc8lK+MYquAcn9wEfU8+P7PTwfGNmK0uqn3sMJ7H1hyEk7MCSGziBBzNE7z+ZC6w
- LqHkS+vVRxB2aDXLK6V50EXj7B5i1dTptd1Wzbb/h87kZ4bSK/qe5W5CfPOcq2wDAglTyZV9WHT
- 8PPYcOrWXcNTy/OA7Y/ieYia5cJsTxIMjM7AgP9w/02mA6p5CWCJQ2UqoIXXoMy4mgS0Ce0ORJ2
- htnhtbDRjtbmM42NTLzjkQ6NJZi2QgCfpMX3MledowC/z1Dt8gGqyGfxDPM2ekvAG2QWM0NQrsN
- YBQGtokslI4k0OGLxw9yOAXQrWRYskEdQv/g58LTLajMkx1jTANNQdaJcflYuUkOLA3hqMcm
-X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=68816201 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=Nfxnn_ge1f9Pje3RmyYA:9 a=zZCYzV9kfG8A:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: B5J8v7Bx7Jh3t-JUs-BpRWdZqAs6GWj5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=797 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507230193
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250723222829.3528565-1-hramamurthy@google.com>
+Subject: [PATCH net-next] gve: support unreadable netmem
+From: Harshitha Ramamurthy <hramamurthy@google.com>
+To: netdev@vger.kernel.org
+Cc: jeroendb@google.com, hramamurthy@google.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	willemb@google.com, pkaligineedi@google.com, joshwash@google.com, 
+	linux-kernel@vger.kernel.org, Mina Almasry <almasrymina@google.com>, 
+	Ziwei Xiao <ziweixiao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+From: Mina Almasry <almasrymina@google.com>
 
-WSA and WSA2 are two instances of WSA codec macro, this can lead
-dupicate dapm widgets and mixers resulting in failing to probe
-soundcard if both of these instances are part of the dai-link.
+Declare PP_FLAG_ALLOW_UNREADABLE_NETMEM to turn on unreadable netmem
+support in GVE.
 
-Correct way to address this is to add sound-name-prefix to WSA2
-instances to avoid such confilcting mixers and dapm widgets.
+We also drop any net_iov packets where header split is not enabled.
+We're unable to process packets where the header landed in unreadable
+netmem.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Use page_pool_dma_sync_netmem_for_cpu in lieu of
+dma_sync_single_range_for_cpu to correctly handle unreadable netmem
+that should not be dma-sync'd.
+
+Disable rx_copybreak optimization if payload is unreadable netmem as
+that needs access to the payload.
+
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
+Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
 ---
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ .../ethernet/google/gve/gve_buffer_mgmt_dqo.c |  5 +++
+ drivers/net/ethernet/google/gve/gve_rx_dqo.c  | 36 ++++++++++++++++---
+ 2 files changed, 36 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 5212000bf34c..8b43ded297c8 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -4526,6 +4526,7 @@ lpass_wsa2macro: codec@6aa0000 {
- 			#clock-cells = <0>;
- 			clock-output-names = "wsa2-mclk";
- 			#sound-dai-cells = <1>;
-+			sound-name-prefix = "WSA2";
- 		};
+diff --git a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
+index 8f5021e59e0a..0e2b703c673a 100644
+--- a/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_buffer_mgmt_dqo.c
+@@ -260,6 +260,11 @@ struct page_pool *gve_rx_create_page_pool(struct gve_priv *priv,
+ 		.offset = xdp ? XDP_PACKET_HEADROOM : 0,
+ 	};
  
- 		swr3: soundwire@6ab0000 {
++	if (priv->header_split_enabled) {
++		pp.flags |= PP_FLAG_ALLOW_UNREADABLE_NETMEM;
++		pp.queue_idx = rx->q_num;
++	}
++
+ 	return page_pool_create(&pp);
+ }
+ 
+diff --git a/drivers/net/ethernet/google/gve/gve_rx_dqo.c b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+index 7380c2b7a2d8..8c75a4d1e3e7 100644
+--- a/drivers/net/ethernet/google/gve/gve_rx_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+@@ -718,6 +718,24 @@ static int gve_rx_xsk_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 	return 0;
+ }
+ 
++static void gve_dma_sync(struct gve_priv *priv, struct gve_rx_ring *rx,
++			 struct gve_rx_buf_state_dqo *buf_state, u16 buf_len)
++{
++	struct gve_rx_slot_page_info *page_info = &buf_state->page_info;
++
++	if (rx->dqo.page_pool) {
++		page_pool_dma_sync_netmem_for_cpu(rx->dqo.page_pool,
++						  page_info->netmem,
++						  page_info->page_offset,
++						  buf_len);
++	} else {
++		dma_sync_single_range_for_cpu(&priv->pdev->dev, buf_state->addr,
++					      page_info->page_offset +
++					      page_info->pad,
++					      buf_len, DMA_FROM_DEVICE);
++	}
++}
++
+ /* Returns 0 if descriptor is completed successfully.
+  * Returns -EINVAL if descriptor is invalid.
+  * Returns -ENOMEM if data cannot be copied to skb.
+@@ -793,13 +811,19 @@ static int gve_rx_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 		rx->rx_hsplit_unsplit_pkt += unsplit;
+ 		rx->rx_hsplit_bytes += hdr_len;
+ 		u64_stats_update_end(&rx->statss);
++	} else if (!rx->ctx.skb_head && rx->dqo.page_pool &&
++		   netmem_is_net_iov(buf_state->page_info.netmem)) {
++		/* when header split is disabled, the header went to the packet
++		 * buffer. If the packet buffer is a net_iov, those can't be
++		 * easily mapped into the kernel space to access the header
++		 * required to process the packet.
++		 */
++		gve_free_buffer(rx, buf_state);
++		return -EFAULT;
+ 	}
+ 
+ 	/* Sync the portion of dma buffer for CPU to read. */
+-	dma_sync_single_range_for_cpu(&priv->pdev->dev, buf_state->addr,
+-				      buf_state->page_info.page_offset +
+-				      buf_state->page_info.pad,
+-				      buf_len, DMA_FROM_DEVICE);
++	gve_dma_sync(priv, rx, buf_state, buf_len);
+ 
+ 	/* Append to current skb if one exists. */
+ 	if (rx->ctx.skb_head) {
+@@ -837,7 +861,9 @@ static int gve_rx_dqo(struct napi_struct *napi, struct gve_rx_ring *rx,
+ 		u64_stats_update_end(&rx->statss);
+ 	}
+ 
+-	if (eop && buf_len <= priv->rx_copybreak) {
++	if (eop && buf_len <= priv->rx_copybreak &&
++	    !(rx->dqo.page_pool &&
++	      netmem_is_net_iov(buf_state->page_info.netmem))) {
+ 		rx->ctx.skb_head = gve_rx_copy(priv->dev, napi,
+ 					       &buf_state->page_info, buf_len);
+ 		if (unlikely(!rx->ctx.skb_head))
 -- 
-2.50.0
+2.50.0.727.gbf7dc18ff4-goog
 
 
