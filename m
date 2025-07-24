@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-743856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225F5B1048C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:49:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DDEB103C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78403A7BE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81EE27AE6CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246B82D12F7;
-	Thu, 24 Jul 2025 08:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6872750E7;
+	Thu, 24 Jul 2025 08:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LBRcX8RJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PQIdcdgC"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952082D0C7F;
-	Thu, 24 Jul 2025 08:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2F7274B3E
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346432; cv=none; b=ItKViK1eppUOB2PG+NGoMCsq/q4l/Yz6PAxn2vSMUE75EyloNKrEmmDaFevzDOXMlzDidTcB72xPQVIeZpvUSefNscBN5P/Nndv2g1mM1f7kYnIju5l1RxbNfnb33QsHlpFBebi1ZcGutGJfmvHn0VR0zpcjArurn6p1t9NUe3c=
+	t=1753346354; cv=none; b=LqWDbuGaYY/QUfxYMqvas1EfALpNwIA062ahV9jPzdLooyMALW4CtRNNvsU66n+vJnpfUu9hBflN4W8nWqDzWsYEgO8++auKrIZuu/5GVIf8Z1d67yoa1/mFeiMJIP8Zdluk6U0wbI/SzspHRmao2Lae4TxF1kl73E7QErcCaJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346432; c=relaxed/simple;
-	bh=0DgY9cU46pjIhmPm0+MTo+Bi+k/CtkPLKu052hg+mTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YsqgI8RavtlErpFsRRFuvPJELAokeqW8wBZtFojfpw/vAbmgXAuFV2t8T0X0C9zUB07dt3OS/QFI0du8FSxcl/57ZWihT0B8oOmE4a9H/wbmrjo2cTHdXxO7DMko1Qdoyu/38lxJqeQabCxPG/aZbjAXzAknpk2hqfhhRVpaiLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LBRcX8RJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753346429;
-	bh=0DgY9cU46pjIhmPm0+MTo+Bi+k/CtkPLKu052hg+mTE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LBRcX8RJRFSQT2v9ykuBE9DYadrEmw/VH4l4PViELy9uGyfu7sBNIYEyR3fsx1kiZ
-	 yTvrHatS5O6PJ+ii0OMChdf8AzMm0991NFmPobbKE+NoWWszZe2SWf/TXFcYbPs8me
-	 r2pv6TlaplaOtPvQKgPCv/j0Cxi/GS9NLiZeu5jESIZvaN6CNjHKFmEE/gTSyex+eX
-	 HPnFTVp+sbXcQodsiTdV0ag69QUbgzsuydtrfmkWT8OygG5/mWHQ14ZPG5Ib7icIG9
-	 aroAydfviw/i0f495KFi+ws5GHPFcvYGuc902otlo/U7muKMXmD5g9GRAvkpRiokrY
-	 u4KPQ8nfoh4rg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8E93B17E11EE;
-	Thu, 24 Jul 2025 10:40:26 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org,
-	robh@kernel.org
-Cc: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	chunkuang.hu@kernel.org,
-	p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	jassisinghbrar@gmail.com,
-	mchehab@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	chunfeng.yun@mediatek.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	sean.wang@kernel.org,
-	linus.walleij@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	atenart@kernel.org,
-	jitao.shi@mediatek.com,
-	ck.hu@mediatek.com,
-	houlong.wei@mediatek.com,
-	kyrie.wu@mediatek.corp-partner.google.com,
-	andy.teng@mediatek.com,
-	tinghan.shen@mediatek.com,
-	jiaxin.yu@mediatek.com,
-	shane.chien@mediatek.com,
-	olivia.wen@mediatek.com,
-	granquet@baylibre.com,
-	eugen.hristev@linaro.org,
-	arnd@arndb.de,
-	sam.shih@mediatek.com,
-	jieyy.yang@mediatek.com,
-	frank-w@public-files.de,
-	mwalle@kernel.org,
-	fparent@baylibre.com,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH 24/38] arm64: dts: mediatek: mt7986a-bpi-r3: Fix SFP I2C node names
-Date: Thu, 24 Jul 2025 10:39:00 +0200
-Message-ID: <20250724083914.61351-25-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1753346354; c=relaxed/simple;
+	bh=DPnU95ZJtHDimTEnJ4WU3skY6t7lEUuN/QC7PlHSgdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KR9Ionrs9UBTbVr+MCiZWUYYBEF510CHApE8GA9IPStIa/6+TvDiYBPK18JwsgKVJJFSPROVemd7V3xThInoCZTij2rFcsrzFpSNwPJglc3+oUkMX1LMQ+/qPYXuOT+04+TdQfME9D+v6UHRRA+qd/pdMnNR4YOTAB08UbZAPYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PQIdcdgC; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso623215a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753346352; x=1753951152; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X0HMsTBmbQ4+9APSf+6vM24W99brsJT2SqN+LugoyEE=;
+        b=PQIdcdgCHk4ie4jfyyVGcVF0PGD2IHxurDTf+t82dxpMJv7voPv76msuOhK0zu2P8K
+         REoCSJU92BMI6KgMs9UBAE/OEAMwC7SJGBi2n/axMgfDYtZQq8mYp/snWU4ajjQRTPX2
+         T9zBXfWeIWWEKgqlE+py0zwPPsJDRWccV/Hac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753346352; x=1753951152;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X0HMsTBmbQ4+9APSf+6vM24W99brsJT2SqN+LugoyEE=;
+        b=nWXEA5OeEk+qudPRDdImTp9woh1ba2bfWYtkT5u4Wg3FbnEaka1hgo6wYfxh0Wl3DC
+         Qe/CCAVD4tr3B1rlJGcgsUPt5h3BEIjc4AQZyIbptCyx94szptSEKyWdmiNjFxg536pU
+         1CUOPEg3RJwBkvt2WsK1dU4gYh86St6PY7iENzDvrjDERSCB8IsvSvNY56yW9FHdZ6SL
+         UFOETL14DUJzyYdcKzCQTkCKgrGmFjeLEIKXmk3UkMPnQdPWqKhSiOKrDBNaZLXpaSvp
+         wiCyh/jfKifxUmGk5sGPnXj5Y9+Adtdmz2jiwffXJxPs4U/WBeWRb2dJxPLc8sTg9Q4t
+         R1mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH577uYPoFSNmM8wPZq/HKI/sW85imMjbbDwhedQMa3R3t071ahdAc93B/FpcoZJ7Y47aRXPBwieIV0HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1Yw2hXUnEo0I1iM1V/Mh1wi1x2mxLPl3t9GlJ9P/TNjKg/cz8
+	bEl2a5yMJ/55i4v8i+vgOnum3QvWyT/gsnETw/q7TDKXxUixwruoXDtNMtcU4ZdD7gUKCdXdUQy
+	1aqAZCLSfly6ntceV6grI3xZDFfm32NAl1QcAZDmC
+X-Gm-Gg: ASbGncux7lWW/5bMXiPXlDFPJPpeQXs52w+lf8en3DtTjngErynAvPbiQqIeCZXNXy3
+	j+BAGsOWVRz4mC9fN299CufX76tZpJf/IIcIafUqKbs2bLliMgSzK0fNyZ4TEgKOugm3vZwcNpQ
+	VrOAtkCa3rMTpWK5z3f6IlMc1jebeAySEAxvdk+k4YLFi9fxzWBC5GZHpBByCLGj3cR6iShhTkc
+	N29YqDT8312g3WHuBPPPYuUbiHElqAROg==
+X-Google-Smtp-Source: AGHT+IF6GlHoPfQBE7VcJ/+n3gkrTpAcXrzNcm2cizHwNSOzKAmihYyhhHBa69uI0PTyutNd71gW6mxdz1twf+0MKAQ=
+X-Received: by 2002:a17:90b:6cb:b0:313:1a8c:c2d3 with SMTP id
+ 98e67ed59e1d1-31e508172ebmr7030678a91.22.1753346352248; Thu, 24 Jul 2025
+ 01:39:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250630141239.3174390-1-akuchynski@chromium.org>
+ <20250630141239.3174390-6-akuchynski@chromium.org> <2025070143-safeness-prewashed-6e9f@gregkh>
+ <CAMMMRMeKyi56Pha-X86BaQwcHGCx-xu5F67HCGZg=Yhxuk==OQ@mail.gmail.com>
+In-Reply-To: <CAMMMRMeKyi56Pha-X86BaQwcHGCx-xu5F67HCGZg=Yhxuk==OQ@mail.gmail.com>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Thu, 24 Jul 2025 10:39:00 +0200
+X-Gm-Features: Ac12FXzobt46uNoTI8Mrqq6Cj9erlIAHq47itWaRXovYE0fFMCg2hJa92bbZ6uk
+Message-ID: <CAMMMRMf_qc342=azkU-ceg=f-db2Z9NiONOu1_oRk8tmRL4RGg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] usb: typec: Implement automated mode selection
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, "Christian A. Ehrhardt" <lk@c--e.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The binding wants the node to be named "i2c-number", alternatively
-"i2c@address", but those are named "i2c-gpio-number" instead.
+Proposed sysfs entries for V3:
 
-Rename those to i2c-0, i2c-1 to adhere to the binding and suppress
-dtbs_check warnings.
+- portN/portN.M/priority, RW.
+This attribute assigns a unique priority to each mode. If a user
+attempts to input a value that is already in use, the existing mode at
+that priority will have its priority incremented by one to accommodate
+the new input. Users cannot disable a mode via this entry; disabling
+is handled by `active` for altmodes and `usb_capability` for USB4 mode
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+- portN/mode_priorities, RO.
+Provides a prioritized list of all available modes for the port,
+formatted as a space-separated string (e.g., "USB4 TBT DP").
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-index ed79ad1ae871..6d2762866a1a 100644
---- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-@@ -64,23 +64,19 @@ wps-key {
- 	};
- 
- 	/* i2c of the left SFP cage (wan) */
--	i2c_sfp1: i2c-gpio-0 {
-+	i2c_sfp1: i2c-0 {
- 		compatible = "i2c-gpio";
- 		sda-gpios = <&pio 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&pio 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <2>;
--		#address-cells = <1>;
--		#size-cells = <0>;
- 	};
- 
- 	/* i2c of the right SFP cage (lan) */
--	i2c_sfp2: i2c-gpio-1 {
-+	i2c_sfp2: i2c-1 {
- 		compatible = "i2c-gpio";
- 		sda-gpios = <&pio 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		scl-gpios = <&pio 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 		i2c-gpio,delay-us = <2>;
--		#address-cells = <1>;
--		#size-cells = <0>;
- 	};
- 
- 	leds {
--- 
-2.50.1
+- portN-partner/mode_selection, RW.
+Write: 1/0 to trigger or cancel mode selection.
+Read:  Provides a prioritized list of all available modes for the
+partner. Modes currently in progress are indicated by parentheses
+(e.g., "USB4 (TBT) DP"). Active modes are enclosed in brackets
+(e.g., "USB4 [TBT] DP").
 
+- portN-partner.M/entry_result, RO.
+Represents a mode state for this altmode, e.g. "none", "active",
+"in progress", "cable error", "timeout".
+
+- portN/usb4_priority, RW.
+- portN-partner/usb4_entry_result, RO.
+USB4 mode, not being part of `typec_altmode_group`, introduces
+additional attributes with the same meaning as alternate modes
+attributes.
+
+Please let me know if you have any questions, require further
+clarification on these proposed sysfs entries, or have objections to
+them.
+
+Thanks,
+Andrei
 
