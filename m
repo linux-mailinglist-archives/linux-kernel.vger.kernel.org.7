@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-743900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B9CB1051E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577B0B10525
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055C4189DA43
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0816172545
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD493276038;
-	Thu, 24 Jul 2025 08:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69F926158B;
+	Thu, 24 Jul 2025 08:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kau44+7l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BeV3Itep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088EAD2FB;
-	Thu, 24 Jul 2025 08:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC94F2F30
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753347486; cv=none; b=TIn5udf6aS744cTHvmb+6uwvDSVc0wIyZ3KS5IOTVZynqfeP6LqQZReZAn6ohaCh3EiyDJd1YlZGZYwhnGtS4nIyNZbQKeOZ8lCgPxARd6rYcXdBejDDatqkoclaTQIoj5h0AeCbeB/9qY3jx8a53vNBt5TY5Z7HtdqrDP/SB6M=
+	t=1753347566; cv=none; b=nyaOdZ/r+v8XoLfNlXtiU0MGsK+Ob8nUPRhz6DSvAxzR/YRVAKpCE7QPa5FcHi3rph7h4F9BK1PQl3KXJxCe9gh8GNszsSE0p6MBJJDaUEIJ9qPBw/xhm4bcmg9+rDJlGdLTPEFqS/jc8twM+onuFYIbSOOIawh8x6V2sfsz/ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753347486; c=relaxed/simple;
-	bh=GuZPM20+5KNyABcyXSsAV2hVlyTNXPHB+gGjfUh/g9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QzozTqJIjWs+qkJjyS8JCBZDAlbvTp/UG03+U1s/6Vsu5SI3wK5OFgvpGEN6oknXmW0LWV4iheT2u9f92jwRDOjXUAlzkfjb3ZY5ixCtszG7HLAjxN35JVfjXm+c63DNdshvDdLBs+vuog9SwXzhGEyhYLBdNzBIreGxc01ftrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kau44+7l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD855C4CEED;
-	Thu, 24 Jul 2025 08:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753347485;
-	bh=GuZPM20+5KNyABcyXSsAV2hVlyTNXPHB+gGjfUh/g9o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kau44+7laZSUwDctOmhk2uk5IS70MS4G8D9YzNuxq4XXoToKr5/pJuBxHCtxR4ohL
-	 Xs1zl2+mKJQhpZCfVSNRvsnFiyjrBwqNEaBvTxn+U2OtTMf3RO6x7wXJ6yD3HYl7wp
-	 R15X95pmBHOp5E1PAYxqi72BdBd2c0WqywQYzmIO/6mTZQeGWR91XUke7x4OgMTbnz
-	 lH1HqNCEIMknPCh7BftDLNRF0TilEsFlBRtUwAxj2nODbVQV/PS3/CHxcz2DrfTlxz
-	 p9U05DfFxVxUIP5SAa11caM12wFgNMTjRMU7ORxaLkAyV6JAm4mqIwHqz1PQ0Si9Y+
-	 B/WCvpGjO21rA==
-Message-ID: <e8b6a6bf-fe4a-4ff3-addf-142212368903@kernel.org>
-Date: Thu, 24 Jul 2025 10:57:58 +0200
+	s=arc-20240116; t=1753347566; c=relaxed/simple;
+	bh=S0AN7MOXHovsrn4d1TKyBPde2GjKNxCwOLdL3+XFFV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=M7ogecixCSn1nyBudWFejNH7oPT23WzdaKRBeo4JqUnOgGoxDRbrFvC70OQXcg7q8lCBuh+qeUtlOoHr1BwB/EA1nuc4X3ajs1MavNLOQ9/Wq+7rwkBJEAr/IIsDY0WB8gJ7cOGLaQ+SHXRZjbGQ07WaYDrJNwqyTrxG8A8DzOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BeV3Itep; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753347563;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KbAjULp57DFaxZp4EhQSXlWNY4PHov8q7LM6Z5vJA/c=;
+	b=BeV3ItepQKjMqK9WmJZU0Ywm/c/lwdm2FtV3SRYpeIxlSQxypiYdAj0X9D9c9Oipu7oaBM
+	Dr6NhkbnXdbEIy/Hi6KROvtRsf880EJ+4FxIRFpM0vfICguGGHgA06gAcf2zDb50Y7WxXZ
+	Nb/YQvHWjbAbvyM3G2s5n4wbk8bTYgk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-397-JVyiX-49MMOzWh4kmQmaow-1; Thu, 24 Jul 2025 04:59:22 -0400
+X-MC-Unique: JVyiX-49MMOzWh4kmQmaow-1
+X-Mimecast-MFC-AGG-ID: JVyiX-49MMOzWh4kmQmaow_1753347561
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458709feac7so2698175e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:59:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753347561; x=1753952361;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KbAjULp57DFaxZp4EhQSXlWNY4PHov8q7LM6Z5vJA/c=;
+        b=CeB9buqzf70qM3KuPDHNlX8oGN5/iyWWhQ3bK9q52bkpj3jO0hOg3Lw1NoiFsDIaFM
+         YM9ml/xrLERMCScpD131YYknWWyZcdaVcG1WMd8U97yhc5CD39o65DY88qgmF8bPRfj7
+         Z5jm5Gxj3OVv18FIDacAOnxP+I0OHmaOnNYG5q20W06eWi1ELpr516oUCjssMCcktc7H
+         mceC3co80/c6nxXb5zMyRYz5h/ioEGhUY62FEv9s1hw/IO8axUpLBEyjlREuq9npUL7V
+         6AQzTn8C1Idf2QRePI/4Y9pooTkrm4M5OQ9LV1wL3J7qSoSogqsoakapoBUkjxZzNxvA
+         pRvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsTBcxgJylCz1nflnBuVpUCYvWb1Qh0mOQPp0jDIDoQ2wVzqx5xUZ3kNnQ+SVo0AeMoSIkyZy5u9Lz9Dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUMWgeKc3ZiTDpOtpcd8zA651W4MLxxTqzLpv8ysLltc8bJwzG
+	xaHtJE4yH6aCi1x+qXWS7Jq6eZr3nrXRMATGQe6DhPGIQBnGgvJ4g76ZDqaf5V8+9Wj9gm4t3Nl
+	c3hMbDXFaZHBMDbVNIvoaLL3HS4dNsybkfPm6f/WNC4jLsJBTGdbuRW6FCOkZIb7xCQ==
+X-Gm-Gg: ASbGncsUs3oq2D8pk3aukvJsTOyzzkVmVzJlvMcxRtZIVbJC0+9W92Xtd5LX2MWvs45
+	ShgKCmnlpUvRsMxj9I47KyqrZsHNRdjH5/nCYTbHD4Ul0jhzzvxkoS5rSedPNiTQffepA6y4oeb
+	zNrhhgrzsT6xOQoqmIOfUw/Iscd8iHRz2FtSAhTuK5vwHxmNPb9aG4lqG4Svajmq9MY7eQES1r1
+	5TG5GXxYNDuCv0RPusR8W1PykEU/kMibd9G4rsdQ5JQXNElT6qwTxhX2Osk6jMQ/vSteykZ+2iw
+	IDQgcKVqnqoA111oDI1lGJ1JtDHZo1FZy1TxOiSpl3rCdBOns9oguURNJVaQxRhIo3NcIfm7RYp
+	g+u4m8U2ypnfp4zhAnb1GfCmHT7YT6gA89B488BwIr3C5NN6HdCV6GbeFJ+UPaydM
+X-Received: by 2002:a05:600c:34c8:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-4586e529e4bmr24857985e9.4.1753347560648;
+        Thu, 24 Jul 2025 01:59:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFi5+e8h65j8G/90Yb5xypCSe09/IV+5bnm/weBgPN3KMsU7GCZlI1Y32G5GAm3Vnqmz43nw==
+X-Received: by 2002:a05:600c:34c8:b0:456:2a9:f815 with SMTP id 5b1f17b1804b1-4586e529e4bmr24857545e9.4.1753347560062;
+        Thu, 24 Jul 2025 01:59:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1f:5e00:c941:d6fb:3e30:b42? (p200300d82f1f5e00c941d6fb3e300b42.dip0.t-ipconnect.de. [2003:d8:2f1f:5e00:c941:d6fb:3e30:b42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705684a8sm11879845e9.26.2025.07.24.01.59.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 01:59:19 -0700 (PDT)
+Message-ID: <86516155-f2d9-4e8d-9d27-bdcb59e2d129@redhat.com>
+Date: Thu, 24 Jul 2025 10:59:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,198 +89,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: temperature: Add driver for NXP P3T175x
- temperature sensor.
-To: Lakshay Piplani <lakshay.piplani@nxp.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com,
- gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, peterz@infradead.org,
- jstephan@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
- shashank.rebbapragada@nxp.com, Frank.Li@nxp.com, carlos.song@nxp.com,
- xiaoning.wang@nxp.com, haibo.chen@nxp.com
-References: <20250724083951.2273717-1-lakshay.piplani@nxp.com>
- <20250724083951.2273717-2-lakshay.piplani@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH 0/9] introduce PGTY_mgt_entry page_type
+To: Huan Yang <link@vivo.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel
+ <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>, Usama Arif <usamaarif642@gmail.com>,
+ Yu Zhao <yuzhao@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250724084441.380404-1-link@vivo.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250724083951.2273717-2-lakshay.piplani@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250724084441.380404-1-link@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24/07/2025 10:39, Lakshay Piplani wrote:
-> +
-> +static void p3t1755_ibi_handler(struct i3c_device *dev,
-> +				const struct i3c_ibi_payload *payload)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(&dev->dev);
-> +
-> +	dev_dbg(&dev->dev, "IBI received, handling threshold event\n");
+On 24.07.25 10:44, Huan Yang wrote:
+> Summary
+> ==
+> This patchset reuses page_type to store migrate entry count during the
+> period from migrate entry setup to removal, enabling accelerated VMA
+> traversal when removing migrate entries, following a similar principle to
+> early termination when folio is unmapped in try_to_migrate.
 
-Drop
+I absolutely detest (ab)using page types for that, so no from my side 
+unless I am missing something important.
 
-> +
-> +	// Handle threshold event via helper
-> +	p3t1755_push_thresh_event(indio_dev);
-> +}
-> +
-> +/*
-> + * Both P3T1755 and P3T1750 share the same I3C
-> + * PID (0x011B:0x152A), making runtime differentiation
-> + * impossible, so a common "p3t175x" name in sysfs
-> + * and IIO for I3C based instances.
-> + */
-> +static const struct i3c_device_id p3t1755_i3c_ids[] = {
-> +	I3C_DEVICE(0x011B, 0x152A, (void *)&p3t175x_channels_info),
-> +	{ /* sentinel */ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i3c, p3t1755_i3c_ids);
-> +
-> +static int p3t1755_i3c_probe(struct i3c_device *i3cdev)
-> +{
-> +	const struct regmap_config p3t1755_i3c_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	};
-> +
-> +	const struct i3c_device_id *id = i3c_device_match_id(i3cdev, p3t1755_i3c_ids);
-> +	const struct p3t17xx_info *chip = &p3t175x_channels_info;
-> +	struct device_node *np = i3cdev->dev.of_node;
-> +	bool alert_active_high = false;
-> +	struct i3c_ibi_setup ibi_setup;
-> +	struct regmap *regmap;
-> +	bool tm_mode = false;
-> +	int fq_bits = -1;
-> +	int ret;
-> +
-> +	regmap = devm_regmap_init_i3c(i3cdev, &p3t1755_i3c_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err_probe(&i3cdev->dev, PTR_ERR(regmap),
-> +			      "Failed to register I3C regmap %ld\n", PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
+> 
+> In my self-constructed test scenario, the migration time can be reduced
 
-Syntax is return dev_err_probe
+How relevant is that in practice?
 
-> +	}
-> +
-> +	/* Parse optional device tree property for alert polarity */
-> +	alert_active_high = of_property_read_bool(np, "nxp,alert-active-high");
-> +
-> +	/* Parse optional device tree property for thermostat mode */
-> +	tm_mode = of_property_read_bool(np, "nxp,interrupt-mode");
-> +
-> +	/* Optional fault queue length */
-> +	if (np) {
-> +		u32 fq;
-> +
-> +		if (!of_property_read_u32(np, "nxp,fault-queue", &fq)) {
-> +			fq_bits = p3t1755_fault_queue_to_bits(fq);
-> +			if (fq_bits < 0) {
-> +				dev_err_probe(&i3cdev->dev, fq_bits,
-> +					      "invalid nxp,fault-queue %u (1/2/4/6)\n", fq);
+> from over 150+ms to around 30+ms, achieving nearly a 70% performance
+> improvement. Additionally, the flame graph shows that the proportion of
+> remove_migration_ptes can be reduced from 80%+ to 60%+.
+> 
+> Notice: migrate entry specifically refers to migrate PTE entry, as large
+> folio are not supported page type and 0 mapcount reuse.
+> 
+> Principle
+> ==
+> When a page removes all PTEs in try_to_migrate and sets up a migrate PTE
+> entry, we can determine whether the traversal of remaining VMAs can be
+> terminated early by checking if mapcount is zero. This optimization
+> helps improve performance during migration.
+> 
+> However, when removing migrate PTE entries and setting up PTEs for the
+> destination folio in remove_migration_ptes, there is no such information
+> available to assist in deciding whether the traversal of remaining VMAs
+> can be ended early. Therefore, it is necessary to traversal all VMAs
+> associated with this folio.
 
-Syntax is return dev_err_probe
+Yes, we don't know how many migration entries are still pointing at the 
+page.
 
-> +				return fq_bits;
-> +			}
-> +		}
-> +	}
-> +
-> +	dev_info(&i3cdev->dev, "Using TM mode: %s\n", tm_mode ? "Interrupt" : "Comparator");
-> +	dev_info(&i3cdev->dev, "Alert polarity: %s\n",
-> +		 alert_active_high ? "Active-High" : "Active-Low");
+> 
+> In reality, when a folio is fully unmapped and before all migrate PTE
+> entries are removed, the mapcount will always be zero. Since page_type
+> and mapcount share a union, and referring to folio_mapcount, we can
+> reuse page_type to record the number of migrate PTE entries of the
+> current folio in the system as long as it's not a large folio. This
+> reuse does not affect calls to folio_mapcount, which will always return
+> zero.
+ > > Therefore, we can set the folio's page_type to PGTY_mgt_entry when
+> try_to_migrate completes, the folio is already unmapped, and it's not a
+> large folio. The remaining 24 bits can then be used to record the number
+> of migrate PTE entries generated by try_to_migrate.
 
-Drivers should be silent on success. See coding style as well.
+In the future the page type will no longer overlay the mapcount and, 
+consequently, be sticky.
 
-> +
-> +	if (id && id->data)
-> +		chip = (const struct p3t17xx_info *)id->data;
-> +
-> +	ret = p3t1755_probe(&i3cdev->dev, chip, regmap, tm_mode, alert_active_high, fq_bits);
-> +	if (ret) {
-> +		dev_err_probe(&i3cdev->dev, ret, "p3t175x probe failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (!tm_mode) {
-> +		dev_warn(&i3cdev->dev, "IBI not supported in comparator mode, skipping IBI registration\n");
-> +		return 0;
-> +	}
-> +
-> +	ibi_setup.handler = p3t1755_ibi_handler;
-> +	ibi_setup.num_slots = 4;
-> +	ibi_setup.max_payload_len = 0;
-> +
-> +	ret = i3c_device_request_ibi(i3cdev, &ibi_setup);
-> +	if (ret) {
-> +		dev_err_probe(&i3cdev->dev, ret, "Failed to request IBI: %d\n", ret);
+> 
+> Then, in remove_migration_ptes, when the nr_mgt_entry count drops to
+> zero, we can terminate the VMA traversal early.
+> 
+> It's important to note that we need to initialize the folio's page_type
+> to PGTY_mgt_entry and set the migrate entry count only while holding the
+> rmap walk lock.This is because during the lock period, we can prevent
+> new VMA fork (which would increase migrate entries) and VMA unmap
+> (which would decrease migrate entries).
 
-Syntax is return dev_err_probe
+The more I read about PGTY_mgt_entry, the more I hate it.
 
-> +		return ret;
-> +	}
-> +
-> +	ret = i3c_device_enable_ibi(i3cdev);
-> +	if (ret) {
-> +		dev_err_probe(&i3cdev->dev, ret, "Failed to enable IBI: %d\n", ret);
+> 
+> However, I doubt there is actually an additional critical section here, for
+> example anon:
+> 
+> Process Parent                          fork
+> try_to_migrate
+>                                          anon_vma_clone
+>                                              write_lock
+>                                                  avc_inster_tree tail
+>                                          ....
+>      folio_lock_anon_vma_read             copy_pte_range
+>          vma_iter                            pte_lock
+>                  ....                           pte_present copy
+>                                              ...
+>                  pte_lock
+>                      new forked pte clean
+> ....
+> remove_migration_ptes
+>      rmap_walk_anon_lock
+> 
+> If my understanding is correct and such a critical section exists, it
+> shouldn't cause any issues—newly added PTEs can still be properly
+> removed and converted into migrate entries.
+> 
+> But in this:
+> 
+> Process Parent                          fork
+> try_to_migrate
+>                                          anon_vma_clone
+>                                              write_lock
+>                                                  avc_inster_tree
+>                                          ....
+>      folio_lock_anon_vma_read             copy_pte_range
+>          vma_iter
+>                  pte_lock
+>                      migrate entry set
+>                  ....                        pte_lock
+>                                                  pte_nonpresent copy
+>                                              ....
+> ....
+> remove_migration_ptes
+>      rmap_walk_anon_lock
 
-Syntax is return dev_err_probe
+Just a note: migration entries also apply to non-anon folios.
 
-> +		i3c_device_free_ibi(i3cdev);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(&i3cdev->dev, "IBI successfully registered\n");
+-- 
+Cheers,
 
-Drivers should be silent on success. See coding style as well.
+David / dhildenb
 
-Same comments for all your other drivers here.
-
-
-Best regards,
-Krzysztof
 
