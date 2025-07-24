@@ -1,167 +1,124 @@
-Return-Path: <linux-kernel+bounces-744312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51DEB10ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A781B10AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6E75825E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAF4B583ED8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC53F2D59E3;
-	Thu, 24 Jul 2025 12:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28DB2D59E3;
+	Thu, 24 Jul 2025 13:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="eA0TL8wd"
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rqRYTOat"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220C42D4B6E;
-	Thu, 24 Jul 2025 12:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6E0184;
+	Thu, 24 Jul 2025 13:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361993; cv=none; b=oGERiacL12q6jnw8EG/2bzfODr/LQ0eUym17oqWUxORMiA11SLBw7hLiyYqAWENEjZ5wfFQaLSBNjDe9Lt08zEowPqtWyCBNVILSwsdyMf7Gi1udY6b0UEYaHQ6YJ+cviDEvD5/q/aFsqBYGuIZ/HiHkt9FhXaUhwPSTDJL2j8E=
+	t=1753362092; cv=none; b=iXQ5gYENQwYF5ai9N+Qsk9L45kxoA5OdBfkI+Q4HH3hTcXRgKvYrZJjefE4b2waO1TzUUtSJvWc/cWeSvgfnKAh0kwXGRascOHrTwu2ULPp74YMt97GJzdyoMVcDy1t/W9nGjpdC05U/Q9C8jFIdBkyGrX1iDhKKWUy1+q7RstQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361993; c=relaxed/simple;
-	bh=NesxOpaVLIXe2tLn2aFWrHA3FbsXQq8dtDyRFQH8OUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k26/Zo6jdq45I2LfP4es9sn3rmnwXCQGbtMYxTb0+PtaSLu0Vw38hgsWne75mj3DV3n0UutxmB5kAo2AOkiz/6JCmxfP938R6/2vOH2r73hcy0BHDQT5FvIazT6W77tSR4bFEOJsAqaTRf83qQH8T4ENiqXqjbtlpYrKnyzsx4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=eA0TL8wd; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NqWnKvywWYv7stEIvhc7qFZWUlwqo5/NVMaYKbrw5bo=; b=eA0TL8wddzqRfMF0QLIq04iIUi
-	oEVh8KnTYMoyhTCLFcQlip8DDG/tDWVp35+NoCny9oaUKcpxmCxjVoMZWpOmHsdYelUCT7sLScUoa
-	zp1SjZwxAhRNnCOx93wJFkWI3mhNjelXrIJ9ODXqhD0KpgGg2rjNY5lXSuJVvO5YM3GLVePjZaPJ6
-	oHoigANY3OjNXHoXrmV5yf/jdLI3neesocca82PZ3pu9ijHhE+NFOAOJ2lXc1OFun9146XYltc1Bp
-	+dCF1NUWGhhrQq6eEcXeBBy2KsJzA/LhvvbsbaTbzTwEsq16t2CyIPv6V0eUrXiJjH50E4MKnZaWI
-	YDiVzdBg==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:29701 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1uevY0-0000000Cioq-0vwt;
-	Thu, 24 Jul 2025 14:59:42 +0200
-Date: Thu, 24 Jul 2025 14:59:39 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, 
-	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Yue Haibing <yuehaibing@huawei.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] Secure Boot lock down
-Message-ID: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
-References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
- <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
+	s=arc-20240116; t=1753362092; c=relaxed/simple;
+	bh=GRSodmVdTKHr0Gnn7CB94Pt4l36sbW5lmkBA6K3Qw3M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qRvoqvGlSSf+0rQWBPdUNrHCWaPievm1lmmLXLU/fazKMjkK3/NtYjwb3f6L3o3Z13BM5I8m9ddQtDCGseKXgmksQBsukzmnKN8WAkTzf5g4I4vjKhOGPB3O8wUTivVfxg28v5CoePqNjbJaDSUoIr0IZ/pRxbYUXh40Nj7UkiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rqRYTOat; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=2yUnl4vidy4gJvXblFDoJuJNs7hErSWbP5rsO2C/gB0=; b=rqRYTOatipp8MXoMnYvt0IchBY
+	K6HjCQAtpimPUnQtSi/BNo/rhID2z3ZpYzeCo5d0nTA+EqsZqo5uResfrEERmPBEJ/EvesXgJL+pL
+	pMg1t4i0xSPMpGxNrZGdHKYQyXoWWsKrJZ36Exq8A3t6QCpWaxm8fQ3uFqFrLs7xHNTLDUcU8t3zu
+	ftz79uNn1goGeo7w3A2F+6RfZEXvpOjuNQJwC8wLypwf58/4o3AM8LoNA/PuO+GY/lg5qVStosIgY
+	GBPCcmPrkXmSbj22AvKy1UkHkeNInX+DT7hZLGIfaYV/Av2EIf/fzaSOnYT2v99DqxboLboE5UWBp
+	DGrJ3CaA==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uevZ5-0005kZ-4F; Thu, 24 Jul 2025 15:00:51 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Subject:
+ Re: [PATCH v3 08/14] drm/bridge: analogix_dp: Apply drm_bridge_connector
+ helper
+Date: Thu, 24 Jul 2025 15:00:49 +0200
+Message-ID: <10694296.nUPlyArG6x@diego>
+In-Reply-To: <20250724080304.3572457-9-damon.ding@rock-chips.com>
+References:
+ <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <20250724080304.3572457-9-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Hamza, thanks for your patch.
+Hi Damon,
 
-Thanks, Paul, for the forward. 
+Am Donnerstag, 24. Juli 2025, 10:02:58 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Damon Ding:
+> Apply drm_bridge_connector helper for Analogix DP driver.
+>=20
+> The following changes have been made:
+> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
+>   and &drm_connector_helper_funcs.
+> - Remove unnecessary parameter struct drm_connector* for callback
+>   &analogix_dp_plat_data.attach.
+> - Remove &analogix_dp_device.connector.
+> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
+>   &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
+> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
+>   &drm_bridge_funcs.edid_read().
+>=20
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Sorry for the delay, we took a bit of time to do some lore archaeology
-and discuss it with Xiu. 
+>  static enum drm_connector_status
+> -analogix_dp_detect(struct drm_connector *connector, bool force)
+> +analogix_dp_bridge_detect(struct drm_bridge *bridge)
+>  {
+> -	struct analogix_dp_device *dp =3D to_dp(connector);
+> +	struct analogix_dp_device *dp =3D to_dp(bridge);
+>  	enum drm_connector_status status =3D connector_status_disconnected;
+> =20
+>  	if (dp->plat_data->panel)
 
-As you might know, this has already been through debates in 2017 [1]. At
-that time, the decision was not to merge this behavior. 
+this needs an update to
 
-Distros have indeed carried downstream patches reflecting this behavior
-for a long time and have been affected by vulnerabilities like
-CVE-2025-1272 [2], which is caused by the magic sprinkled in
-setup_arch(). 
+ static enum drm_connector_status
+=2Danalogix_dp_bridge_detect(struct drm_bridge *bridge)
++analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector =
+*connector)
 
-While your implementation looks cleaner to me. One of the points in
-previous debates was to have a Lockdown side Kconfig knob to enable or
-not this behavior. It would gate the registration of the Lockdown LSM to
-the security_lock_kernel_down() hook. 
+to follow Andy's patch [0] that got already applied to drm-misc-next
 
-However, what bothers me is that with this patch, if UEFI Secure Boot is
-activated and a user wants to disable Lockdown, they need to go through
-disabling Secure Boot. I'm really not fond of that. A user shouldn't
-have to be forced to disable security firmware settings because of a
-kernel feature. 
+Heiko
 
-We thus might want to add a way to disable Lockdown through kernel
-cmdline. However, letting a user disable Lockdown through kernel cmdline
-would allow easy Lockdown bypasses, especially since the kernel cmdline
-as well as the initramfs are not integrity protected on most distros. A
-root user would be able to tamper with kernel cmdline and change its
-behavior across reboot. 
 
-IMHO, if someone wants to enable Lockdown, the easy and correct way is
-to set the kernel cmdline and integrity protect it using an UKI for
-example. If the chain of trust is respected, no Lockdown bypasses should
-be possible. 
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/5d156a9c3d5ea3d=
+bec192121259dee2c2f938fa1
 
-I'm still open to hearing new arguments about this patch. 
 
-[1]: https://lore.kernel.org/all/29447.1509035858@warthog.procyon.org.uk/
-[2]: https://access.redhat.com/security/cve/cve-2025-1272
-
-Best regards,
-
-Nicolas
-
----
-
-On Thu, Jul 17, 2025 at 02:22:04PM -0400, Paul Moore wrote:
-> On Wed, Jul 16, 2025 at 5:29 PM Hamza Mahfooz
-> <hamzamahfooz@linux.microsoft.com> wrote:
-> >
-> > Ping?
-> 
-> Adding the new Lockdown maintainers to the To/CC line for review in
-> case they missed it earlier.  For reference, the patchset can be found
-> at the lore link below:
-> 
-> https://lore.kernel.org/linux-security-module/1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com/
-> 
-> > On Thu, Jun 26, 2025 at 03:10:37PM -0700, Hamza Mahfooz wrote:
-> > > All major distros have had carried a version of this patch-set
-> > > out of tree for sometime now, but with a bunch of magic (typically
-> > > sprinkled in setup_arch()). Though we can avoid those architecture
-> > > specific quirks if we call efi_get_secureboot_mode() from
-> > > efisubsys_init() and that allows us to have a generic solution.
-> > >
-> > > Hamza Mahfooz (2):
-> > >   security: introduce security_lock_kernel_down()
-> > >   efi: introduce EFI_KERNEL_LOCK_DOWN_IN_SECURE_BOOT
-> > >
-> > >  drivers/firmware/efi/Kconfig  | 10 ++++++++++
-> > >  drivers/firmware/efi/efi.c    |  9 +++++++++
-> > >  include/linux/lsm_hook_defs.h |  1 +
-> > >  include/linux/security.h      |  8 ++++++++
-> > >  security/lockdown/lockdown.c  |  1 +
-> > >  security/security.c           | 15 +++++++++++++++
-> > >  6 files changed, 44 insertions(+)
-> 
-> -- 
-> paul-moore.com
 
