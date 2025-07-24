@@ -1,77 +1,134 @@
-Return-Path: <linux-kernel+bounces-743797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9785EB1036B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1A1B1036D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF445437F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8ED356448A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AAE2749FA;
-	Thu, 24 Jul 2025 08:21:52 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5121F2749F0;
+	Thu, 24 Jul 2025 08:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TrhxOXon"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8042749C3;
-	Thu, 24 Jul 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48232749DA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345311; cv=none; b=OXyy2lIUD+fngR2GSgpPtMkmX7uGmalLmDr4drpFz8e2JflOq+1WsxsKeY5uqyHXyWcO1bdVWWq5cSTJaY0j2XO0qJJc8/2nE4cHc7FrN0jgv0GH+FKFAiWu4s5+30YJyVapl+Fcpc+C13Egf99ZjZv06H7vIhGnHt/cZicXa4Y=
+	t=1753345322; cv=none; b=dmKQrppNBxwd7+E8bS7gbNabd450Y8Q/FKcGSFnjPZaaiMCmiK/4AUDyzPkpeqep7bB4XXjTNxPAmj3UVmQHnUbjISfWVfGBdP4JiYniptzrvdsqaq+MKH38vPvHHvkvcUvCVSrcsBGh++pdCATa/oaUZg414TBTKtHs1sos2WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345311; c=relaxed/simple;
-	bh=Yd25df4jbjRGJNzeO2UBwuKhBUHy+gLpWmU9wNKmASQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qWZJIJAkiWBWSx77JhyZ6ZaOJHZt5RkF6iZCVOwTUFptpV9z6Xc6jWDywAYFrir0GSKF+Bx9fJsCLkZ4dqurE1aE0ISH6S5/OUD8ChWvbaWJjDRbyXf6QoVgSWnM04Xj7lm6SDTO41MwcM4uZ7FM2hHbPdlueekyY641SQLKvlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id C245CC3E4DF2;
-	Thu, 24 Jul 2025 10:21:45 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl C245CC3E4DF2
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  Heiko Stuebner <heiko@sntech.de>,
-  Paul Elder <paul.elder@ideasonboard.com>,  Jacopo Mondi
- <jacopo.mondi@ideasonboard.com>,  Ondrej Jirman <megi@xff.cz>,
-  linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
-In-Reply-To: <175326599663.2811177.16620980968274114885@localhost> (Stefan
-	Klug's message of "Wed, 23 Jul 2025 12:19:56 +0200")
-References: <m3h5zbxkc6.fsf@t19.piap.pl> <m38qknx939.fsf@t19.piap.pl>
-	<175308758352.3134829.9472501038683860006@localhost>
-	<m31pq9y98z.fsf@t19.piap.pl>
-	<175326599663.2811177.16620980968274114885@localhost>
-Sender: khalasa@piap.pl
-Date: Thu, 24 Jul 2025 10:21:45 +0200
-Message-ID: <m3h5z2vw12.fsf@t19.piap.pl>
+	s=arc-20240116; t=1753345322; c=relaxed/simple;
+	bh=lU2qJ2eNm5bITZLmn/fIF+MliGvrvmLfk2L+Ql3Hrww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QEuSRlya84ojj2c57FDqgihveaie+vUx0lh3MVRXAIstBMTK92cRia6k7E678zirtoAt2N038ezLaczM7sneIUMrcsa3u6Cny9Mp3qGcXtoUzG//H56R/+B/PL3MnCEuuEAFKVtMdqfRPPrsJz8cP4o7dF0ecgCt5JdPlDo68FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TrhxOXon; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so538513f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753345319; x=1753950119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9qHtcMc0408Zu5EgcfjQqPB+I0ZAppu4qXBL+zV/PVo=;
+        b=TrhxOXonlTs1vq71gJDFHjcf08+mzERxwmhMCx1TW6zaI86g0V/YNBxHQ/SuS4alXx
+         DKKT4HNzsF3dpQNmeMXijTkcmrriTmLd8y6iaHV6wVvbDwd8w+IiH2DTF68qoHQaCR8L
+         PdQg1P5GWTc0sWG9ep+Fvegj55kYz196Yb4flUCQP+w1+3d0XveanadanaILFftaxpnL
+         B9Ns2Tn95xuKJKixoJCRTvJ2OIHRo8JZPIs8VHFk0hY7k4p6EI9f9k/ORYi4gmDxEI0o
+         fs8aE4PdOY2O9MAFyR5pVtIJXgJnn+7h3rYu54fBPMgXG4Kqbc5GtTtCvojPZTNyfDrT
+         guzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753345319; x=1753950119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9qHtcMc0408Zu5EgcfjQqPB+I0ZAppu4qXBL+zV/PVo=;
+        b=DdYfqego8kalfNTinylSOWwazPslVwFZoiOQSrFiPVkjg/av1b6sT5XWCrbAOYpolX
+         kr5zoK7bE2bCX+9WIGTynlNk7rYCn6ONA4COG3MtnzabL3k4lwkHdV+Uuoc77u5YNUms
+         evx4qg+yshJCxt0jFeJm9VcAZ31EWZz7M9/ii5fHuw3wYxIdqdJ5Tc5DJnzyCXuGtoh6
+         8L4vXXUZkl6fh09XiGPYRU2TIO6iA5hAWCsHbQ0cfmdtKggtJdo0nCGyC93Fa8iUhq4I
+         JlYup8kemfYQGWjhEHCoGYAa5IF3ticY+hSgk17yep0p9r8MwAy7STizQVUTwJHhwAX2
+         Ukvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUV0sY8y752W59FdulyHKwqMa3hsNQnA7zn7eNB9uhD7XQULjKYE5lJ76thyniccM+PQnK1L8BK6Bujpgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcaeV6eJI6dN0U3Rq2k/cSA2OEJbhd/2o972r08qXrzDZeIaWl
+	/VYi1NMhYTrJra6IQ7BALTInJ4R8NOVmyUepJdX/Bu7O0ighnrUBVmcM2V6Tk4r030sp2veO+Cy
+	emNM+L7i2H1Ht1x2tbbAPTA8M+l5gQVVWOsUKw/hu
+X-Gm-Gg: ASbGncujSWR8l+buyMIJHTrgDFgYB+UDNRc+AC8IeIbpMxKwr2QN5K6vy3Eu+D9Av1W
+	tQnn4K8dtJ/9VFeUNzvCfUiJP7TO5hmXV5dBW5Cl8T/pkRLPlegDIpdXBIyyqJB+nyxGaQoegeK
+	z4XBFhXCJSmqaLDWVfyceE5KRkIMvkE8oncssPBH2jzDsr3d63OoAnSJXdcpjJZo6RyaKAzE5i7
+	tepou5A4RxHJfV84Ch4QiLpZhDdOm4SNYTjUw==
+X-Google-Smtp-Source: AGHT+IFZ1bWCA0CLHrAf6RIMJ6bhocJ8Mk6HZEH6kbkHhDxkoLS0mxDLcidXvGs7uje5KS9AOA9iBiJLV+Zkel6NAA8=
+X-Received: by 2002:a05:6000:4023:b0:3b7:6828:5f6f with SMTP id
+ ffacd0b85a97d-3b768ef39b5mr5386441f8f.38.1753345318973; Thu, 24 Jul 2025
+ 01:21:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1753339262.git.zhuhui@kylinos.cn> <376014022fa799f5480f6f993f1e25b2561507e4.1753339262.git.zhuhui@kylinos.cn>
+In-Reply-To: <376014022fa799f5480f6f993f1e25b2561507e4.1753339262.git.zhuhui@kylinos.cn>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 24 Jul 2025 10:21:46 +0200
+X-Gm-Features: Ac12FXznCB8nMDpbedYxLMvA0oxkOQotm5Qo_JUE4Fp-kkB-FY9f8E_3CgrKh4Y
+Message-ID: <CAH5fLgiYnZKtrHxtTHfw1n4VbRakNa1Nid9UHPWOwfNh-QHoUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: alloc: kvec: add doc example for `as_slice` method
+To: Hui Zhu <hui.zhu@linux.dev>
+Cc: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hui Zhu <zhuhui@kylinos.cn>, 
+	Geliang Tang <geliang@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefan,
+On Thu, Jul 24, 2025 at 9:54=E2=80=AFAM Hui Zhu <hui.zhu@linux.dev> wrote:
+>
+> From: Hui Zhu <zhuhui@kylinos.cn>
+>
+> Add a practical usage example to the documentation of `KVec::as_slice()`
+> showing how to:
+> Create a new `KVec`
+> Push elements into it
+> Convert to a slice via `as_slice()`
+>
+> Co-developed-by: Geliang Tang <geliang@kernel.org>
+> Signed-off-by: Geliang Tang <geliang@kernel.org>
+> Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
+> ---
+>  rust/kernel/alloc/kvec.rs | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 3c72e0bdddb8..d384c34d1a5e 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -224,6 +224,15 @@ unsafe fn dec_len(&mut self, count: usize) -> &mut [=
+T] {
+>      }
+>
+>      /// Returns a slice of the entire vector.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v =3D KVec::new();
+> +    /// v.push(1, GFP_KERNEL);
+> +    /// v.push(2, GFP_KERNEL);
 
-> Just a quick heads up. I ran the tester and so far no unexpected
-> results. I'll run it from time to time after a reboot to see if I ever
-> hit that condition.
+These function calls are fallible, but you are ignoring the errors.
+Please use the question mark operator.
 
-Is your camera(s) connected to the first CSI?
-I cannot reproduce the problem on csi0, it seems only csi1 is
-affected. It would be consistent with NXP's workaround commit text.
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+Alice
 
