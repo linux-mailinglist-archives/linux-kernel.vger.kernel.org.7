@@ -1,331 +1,99 @@
-Return-Path: <linux-kernel+bounces-744778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1829DB110BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:17:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFDDB110B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F977587807
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 137E97B9F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D41F2EAD14;
-	Thu, 24 Jul 2025 18:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4443F2ECD1B;
+	Thu, 24 Jul 2025 18:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRKkxOu5"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="avBZvZL1"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE754723;
-	Thu, 24 Jul 2025 18:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE94F54723;
+	Thu, 24 Jul 2025 18:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753381054; cv=none; b=mCvGPpfArOemc/EpMzN4RcKm0DAvPZdOnd6jVRBCeYBVOVN+941lBC772zQT9JCLvXiYVwr8gUOVsuUCOJh0M3Db7znG4fTI/vBAzGU9kTMThnRhqBmpRYfnfcKjq8uo5krBFMt3zXSIpkI4A2q/4ttYcbAmz1fNrykgFXdh5fM=
+	t=1753381025; cv=none; b=flC64QoQRQM2HPYXWP6WEaZ4XZX51qjt4bj43JCTKp6ee2y38QhAt+sblE9Cc4sZBOXo8iP98SPhLx9PaR4SbueG2964lJJXWv88/jgpUVx45Efh2i8Uald/kM8llMN3Sj+Un2sKNcPZxGoRb2z9xk1ibk3TVqQ3mg7T+bfl8iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753381054; c=relaxed/simple;
-	bh=+XmjL4SmKD/mIhS+vn7ygaURr4JTI6WDc2xFm9NJMFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fUXmn9XWyMl0OES4TpiRY7/M3+Z944r3n3mkKy7GvKFguxbpoh4GUHG+8EB6AyYW1nDCEWDy2HTLo/1SInmLYgZuhDuhN4M6wRYYlwuo1yaH3pqVJza5nDWuOfZmlBPJthUI9vEjmRV5dGERQQC2z9aWMcy/ipeKc/a3AL2zIBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRKkxOu5; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so12800731fa.1;
-        Thu, 24 Jul 2025 11:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753381050; x=1753985850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mstO5bBA8SlBMK0W+sc+fnBo7qspVaUrHWJekQ5o+x8=;
-        b=nRKkxOu5jSEo4FoYKuOEdGXQRd2gosv3pCV7RT2fshHOavhdUglz3MX/V5Evfzd18S
-         2L3lK+UgjURNy9PY/QwHns6kBAB84lgCIUydl7dWpn9UKxrrUa/9XCU35SBtFoMMncCA
-         aFe63RYFSpNaNefXEpH0h3M1McKdiHTptmrqhdUByV8aR5Zjpel6797oyHkM7ItEcT6V
-         QjJ1lW+U9r30SVmXtJE2QjPwRnynBVyisivQye72gbTkij8ZX4561D6vey0SMt8cBMVd
-         8Y5WLWCfksrRJsQR70VePZuWRgDMRSpVTv0CN1Sa23R7vcju/vt5XXr5ZoDgJT7NxdNT
-         BdUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753381050; x=1753985850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mstO5bBA8SlBMK0W+sc+fnBo7qspVaUrHWJekQ5o+x8=;
-        b=t/iyuK5mIfHY70PprKrh/53InB+pYvaQRweIXET2fevcsQO9mzwCDK9yUVijgivAFP
-         3Va7fDJQxmUgtxCsGaIxlyzWoMiPyPhsKjmiVoC1yVKukP3OCkQz1sq6X/adciTOo98V
-         pEhmk9RFDBhVy8nhN2nGCpysPQUDLlioI2ufpqAQmQNOIifeUGDDDsvMwI4MUmthV45F
-         +fAodYM/FKQuBdt8pGbqKHyk6qbEzCHFw/gBn9slfo4RYnVz4Y+7pogGat/Qf55R4r9C
-         Mg83FS8cif7jqqKX3e0i6ejZ1pd70xtkw55fgzU2vG9IyiC/PXeXU4hm4vNIRqNvoYEK
-         g+Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6JpAuJJwl4rQqv4AErA7omvZu2t56/QdhE8YcGp/aNT6W0JVm65l9osxDy5d0v9CNwe8n/5IdCtjEqoM=@vger.kernel.org, AJvYcCWq/Hiek9J9UE4cqhyn3IEJqXx5LcZTV5I5vbaT1OfITn+KYZuWVjUy+Amb99MJw8p+mJpH9hNf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnUPqswNYp2QZhZ8c8s+ImO9geief6phEcJjAHI3thyGRJA0k2
-	sgh0Yh2dZsH+eyEbEDfGAutgihY2BRa2zF4BIStM6tjgWamUeF1vn38ye46lMlF78qxec2tgTv0
-	/xRaY4xejFoM8AtGubRQ7vyydKxXuWaw=
-X-Gm-Gg: ASbGncsLBjTres6bYHoF4eSqetEf/g8qvqtrlpc0YcXiIkVxS49MFhYb8vgFWp7K24Q
-	jpBpDrhZkxSXm6TyQw8WU7NkhNuaHd+9sJAiWALImTQzgIOWOx1CObm0v2/8QYWf8cfic4qvFa1
-	NweqHbqSpaaJvC5kUdPsRrsIBWBYSkwQA2WmhHsvAt+AX49wPFxPqKiIYuC5XfyHok2bz5fNQMd
-	ekq45o=
-X-Google-Smtp-Source: AGHT+IF0MypcK2dGjntx3r2pyL18T1BhDfo21rUZX5OIUZyEse8hxlJDbtuCftcm3hJcCuDQ2VNQSNQn/6GmBzSuwRU=
-X-Received: by 2002:a2e:a58d:0:b0:331:e667:90e5 with SMTP id
- 38308e7fff4ca-331e667abd6mr7021501fa.18.1753381050141; Thu, 24 Jul 2025
- 11:17:30 -0700 (PDT)
+	s=arc-20240116; t=1753381025; c=relaxed/simple;
+	bh=kYMchTNuGPZOGekFX6yYx/jvmFhFEmukhYxUmiScl40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+r9LcXtVbD2sLeL+lX1+ZxYoYT5YmiE5TDL6RoL9ibFY5/hkLfXmmg7on/SQmDhGLaNluVP3RQ2pLtvxogE3O/SRTz414RkkADCvtD7mRa73b3MC2Ly7981DGpQ06+BfKmGsz+XHuU1u2TYeUZDhFv7AEPCUZwngl80ek/H9UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=avBZvZL1; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pEENey2w1cevs1tsnGhBook0OChKHoGcDIcOjH49bFg=; b=avBZvZL1MdJUmnRVPUQVLk5c1y
+	WnCZeQ5XDg46LFMptIFRUSvqaHiOB7dg+AaSfB13F6iJUMFVLVFcsRvTnpXOk9+dOXeAMvMURNeKW
+	rN0QXkDD7Smay2gdCecIvRSTA4a2fW+VCRcXjXZKF+fO4LA3Mc5BuQYDhfUesfazbL4FyD1feGoaZ
+	GNUzgGtt6aa4+byLy9PEhgHifFi8lgmNg+OMyhzzSpzl8SAQcc4JI3YC8GPD+S3az5BWMAL/s9HIc
+	C3wGAeGY80Aia4gni0S4mmJlxczAQHR3J+7V7jdCO0ZYYRJ3QTp+dGcQ7xor+o2vyuGeY54I6Y1lr
+	p3k5STpA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59298)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uf0Uy-0003f4-0Q;
+	Thu, 24 Jul 2025 19:16:56 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uf0Uv-0000ww-2a;
+	Thu, 24 Jul 2025 19:16:53 +0100
+Date: Thu, 24 Jul 2025 19:16:53 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH] arm64: dts: rockchip: use MAC TX delay for ROCK 4D
+Message-ID: <aIJ4lZgfTiNmHaXF@shell.armlinux.org.uk>
+References: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710033706.71042-1-ryncsn@gmail.com> <20250710033706.71042-2-ryncsn@gmail.com>
- <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
-In-Reply-To: <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 25 Jul 2025 02:16:51 +0800
-X-Gm-Features: Ac12FXzqsdCRJwzfvRgVf_lgFJ6snqpfuboJ4Spb636Mjve2Z4ipOQIX7-yQ6oE
-Message-ID: <CAMgjq7DfPXS4PkpGK-zem2L1gZD0dekbAyHa-CPHjf=eonoFXg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] mm/shmem, swap: improve cached mTHP handling and
- fix potential hung
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Jul 25, 2025 at 1:02=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Thu, Jul 10, 2025 at 11:37=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
-rote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > The current swap-in code assumes that, when a swap entry in shmem mappi=
-ng
-> > is order 0, its cached folios (if present) must be order 0 too, which
-> > turns out not always correct.
-> >
-> > The problem is shmem_split_large_entry is called before verifying the
-> > folio will eventually be swapped in, one possible race is:
-> >
-> >     CPU1                          CPU2
-> > shmem_swapin_folio
-> > /* swap in of order > 0 swap entry S1 */
-> >   folio =3D swap_cache_get_folio
-> >   /* folio =3D NULL */
-> >   order =3D xa_get_order
-> >   /* order > 0 */
-> >   folio =3D shmem_swap_alloc_folio
-> >   /* mTHP alloc failure, folio =3D NULL */
-> >   <... Interrupted ...>
-> >                                  shmem_swapin_folio
-> >                                  /* S1 is swapped in */
-> >                                  shmem_writeout
-> >                                  /* S1 is swapped out, folio cached */
-> >   shmem_split_large_entry(..., S1)
-> >   /* S1 is split, but the folio covering it has order > 0 now */
-> >
-> > Now any following swapin of S1 will hang: `xa_get_order` returns 0, and
-> > folio lookup will return a folio with order > 0.  The
-> > `xa_get_order(&mapping->i_pages, index) !=3D folio_order(folio)` will a=
-lways
-> > return false causing swap-in to return -EEXIST.
-> >
-> > And this looks fragile.  So fix this up by allowing seeing a larger fol=
-io
-> > in swap cache, and check the whole shmem mapping range covered by the
-> > swapin have the right swap value upon inserting the folio.  And drop th=
-e
-> > redundant tree walks before the insertion.
-> >
-> > This will actually improve performance, as it avoids two redundant Xarr=
-ay
-> > tree walks in the hot path, and the only side effect is that in the
-> > failure path, shmem may redundantly reallocate a few folios causing
-> > temporary slight memory pressure.
-> >
-> > And worth noting, it may seems the order and value check before inserti=
-ng
-> > might help reducing the lock contention, which is not true.  The swap
-> > cache layer ensures raced swapin will either see a swap cache folio or
-> > failed to do a swapin (we have SWAP_HAS_CACHE bit even if swap cache is
-> > bypassed), so holding the folio lock and checking the folio flag is
-> > already good enough for avoiding the lock contention.  The chance that =
-a
-> > folio passes the swap entry value check but the shmem mapping slot has
-> > changed should be very low.
-> >
-> > Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > Cc: <stable@vger.kernel.org>
-> > ---
-> >  mm/shmem.c | 30 +++++++++++++++++++++---------
-> >  1 file changed, 21 insertions(+), 9 deletions(-)
->
-> Hi All,
->
-> Just found some issue here with this patch...
->
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 334b7b4a61a0..e3c9a1365ff4 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -884,7 +884,9 @@ static int shmem_add_to_page_cache(struct folio *fo=
-lio,
-> >                                    pgoff_t index, void *expected, gfp_t=
- gfp)
-> >  {
-> >         XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio=
-));
-> > -       long nr =3D folio_nr_pages(folio);
-> > +       unsigned long nr =3D folio_nr_pages(folio);
-> > +       swp_entry_t iter, swap;
-> > +       void *entry;
-> >
-> >         VM_BUG_ON_FOLIO(index !=3D round_down(index, nr), folio);
-> >         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-> > @@ -896,14 +898,24 @@ static int shmem_add_to_page_cache(struct folio *=
-folio,
-> >
-> >         gfp &=3D GFP_RECLAIM_MASK;
-> >         folio_throttle_swaprate(folio, gfp);
-> > +       swap =3D iter =3D radix_to_swp_entry(expected);
-> >
-> >         do {
-> >                 xas_lock_irq(&xas);
->
-> I missed a xas_reset here, also better reset iter value too.
->
-> > -               if (expected !=3D xas_find_conflict(&xas)) {
-> > -                       xas_set_err(&xas, -EEXIST);
-> > -                       goto unlock;
-> > +               xas_for_each_conflict(&xas, entry) {
-> > +                       /*
-> > +                        * The range must either be empty, or filled wi=
-th
-> > +                        * expected swap entries. Shmem swap entries ar=
-e never
-> > +                        * partially freed without split of both entry =
-and
-> > +                        * folio, so there shouldn't be any holes.
-> > +                        */
-> > +                       if (!expected || entry !=3D swp_to_radix_entry(=
-iter)) {
-> > +                               xas_set_err(&xas, -EEXIST);
-> > +                               goto unlock;
-> > +                       }
-> > +                       iter.val +=3D 1 << xas_get_order(&xas);
-> >                 }
-> > -               if (expected && xas_find_conflict(&xas)) {
-> > +               if (expected && iter.val - nr !=3D swap.val) {
-> >                         xas_set_err(&xas, -EEXIST);
-> >                         goto unlock;
-> >                 }
-> > @@ -2323,7 +2335,7 @@ static int shmem_swapin_folio(struct inode *inode=
-, pgoff_t index,
-> >                         error =3D -ENOMEM;
-> >                         goto failed;
-> >                 }
-> > -       } else if (order !=3D folio_order(folio)) {
-> > +       } else if (order > folio_order(folio)) {
-> >                 /*
-> >                  * Swap readahead may swap in order 0 folios into swapc=
-ache
-> >                  * asynchronously, while the shmem mapping can still st=
-ores
-> > @@ -2348,15 +2360,15 @@ static int shmem_swapin_folio(struct inode *ino=
-de, pgoff_t index,
-> >
-> >                         swap =3D swp_entry(swp_type(swap), swp_offset(s=
-wap) + offset);
-> >                 }
-> > +       } else if (order < folio_order(folio)) {
-> > +               swap.val =3D round_down(swap.val, 1 << folio_order(foli=
-o));
-> >         }
-> >
-> >  alloced:
-> >         /* We have to do this with folio locked to prevent races */
-> >         folio_lock(folio);
-> >         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
-> > -           folio->swap.val !=3D swap.val ||
-> > -           !shmem_confirm_swap(mapping, index, swap) ||
-> > -           xa_get_order(&mapping->i_pages, index) !=3D folio_order(fol=
-io)) {
->
-> And this part is incorrect. This `shmem_confirm_swap(mapping, index,
-> swap) ` can't be simply omitted. Some functions below before the
-> shmem_add_to_page_cache shouldn't be called on folios might have
-> already been mapped by others. This shmem_confirm_swap ensures that
-> won't happen.
->
-> It may seem like a small change, but it leads to some minor conflicts
-> in one or two following commits, the benchmark result will change too.
-> So I'll have to send a V6 I think.
->
-> We can remove this `shmem_confirm_swap`, but not in this series I
-> think, maybe after this. Need to re-arrange some functions, with some
-> clean ups for shmem_add_to_page_cache and others.
->
-> > +           folio->swap.val !=3D swap.val) {
-> >                 error =3D -EEXIST;
-> >                 goto unlock;
-> >         }
-> > --
-> > 2.50.0
-> >
->
-> In summary, I'll squash this patch into it and do a rebase of later commi=
-ts:
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index e3c9a1365ff4..4ca0b665b79e 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -898,9 +898,11 @@ static int shmem_add_to_page_cache(struct folio *fol=
-io,
->
->         gfp &=3D GFP_RECLAIM_MASK;
->         folio_throttle_swaprate(folio, gfp);
-> -       swap =3D iter =3D radix_to_swp_entry(expected);
-> +       swap =3D radix_to_swp_entry(expected);
->
->         do {
-> +               iter =3D swap;
-> +               xas_reset(&xas);
+On Thu, Jul 24, 2025 at 04:31:25PM +0200, Sebastian Reichel wrote:
+> According to the Ethernet controller device tree binding "rgmii-id"
+> means, that the PCB does not have extra long lines to add the required
+> delays. This is indeed the case for the ROCK 4D.
+> 
+> The problem is, that the Rockchip MAC Linux driver interprets the
+> interface type differently and abuses the information to configure
+> RX and TX delays in the MAC using (vendor) properties 'rx_delay' and
+> 'tx_delay'.
+> 
+> When Detlev Casanova upstreamed the ROCK 4D device tree, he used the
+> correct description for the board ("rgmii-id"). This results in no delays
+> being configured in the MAC. At the same time the PHY will provide
+> some delays.
 
-Correction: this xas_reset is not needed, the iter =3D swap is needed.
+So why can't the MAC be fixed to conform to the requirements that are
+well documented for RGMII?
 
->                 xas_lock_irq(&xas);
->                 xas_for_each_conflict(&xas, entry) {
->                         /*
-> @@ -2365,9 +2367,16 @@ static int shmem_swapin_folio(struct inode
-> *inode, pgoff_t index,
->         }
->
->  alloced:
-
-And it needs `nr_pages =3D folio_nr_pages(folio); index =3D
-round_down(index, nr_pages);` here...
-
-> -       /* We have to do this with folio locked to prevent races */
-> +       /*
-> +        * We have to do this with folio locked to prevent races.
-> +        * The shmem_confirm_swap below only checks if the first swap
-> +        * entry matches the folio, that's enough to ensure the folio
-> +        * is not used outside of shmem, as shmem swap entrie
-> +        * and swap cache folios are never partially freed.
-> +        */
->         folio_lock(folio);
->         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
-> +           !shmem_confirm_swap(mapping, index, swap) ||
->             folio->swap.val !=3D swap.val) {
->                 error =3D -EEXIST;
->                 goto unlock;
->
-> And I'll do some clean up afterward to get rid of this
-> shmem_confirm_swap. How do you think?
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
