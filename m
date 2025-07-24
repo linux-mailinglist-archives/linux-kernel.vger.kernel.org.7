@@ -1,228 +1,338 @@
-Return-Path: <linux-kernel+bounces-744891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846FFB11233
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:25:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31C8B11242
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEDB1CE2C56
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781571CE7D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE354246BD9;
-	Thu, 24 Jul 2025 20:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57B1246BD9;
+	Thu, 24 Jul 2025 20:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e3U1AQ1O"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="I+rSztEe"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FC239567
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC5B25DAFC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388711; cv=none; b=DdPCprCV1s7/ZtqgtK6qXM+M4U+gZCXNgLWN0HFNOco8oeb/O3+gF4Dn8cgqH+oSKLyoRo2bhdvEX2IGn3QqyZJknNOB0mObTXdy7BonER+CmTBYp5WUsCwflfFYIyib63jSWhyLcoGW9AqL9es5qopf4P/tySKJcmdYhfPkV2U=
+	t=1753388727; cv=none; b=sP0O9krIk2qnWWOSPvpsOWiWrOPin8EtKzn3/inZqnjfadxk7/luA08xX2Hz8EmXjIgo78xTa5oiYfZQEo+E49yJ44G5TeAZJFh3iiqWeAXE9/kTUAWdEoyaJXFYLznkVUju6kFt7BP5TGiB/CsA4lp1w5ZGxG55A/0ZXdFap+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388711; c=relaxed/simple;
-	bh=M/S0/7S8LCyDg3pVE8cNlERu5qdSEMXf/JCowNZDCoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RvaO+Y4oO/lS59QVrwzGwbRsdrhGb7PPoEiI+7xLhHdxUUOEYTKKYl6Xf9YE0VPtsvUIlHODn6hsQ7QSismWwRmXeRJcZXQ0czdKZFi84pRfIZyAStkYVhV5/+nfYt/GL9w9L5AurCTUYg2FAVLgxm2TepcV9rffEpHRYMs843s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=e3U1AQ1O; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3df2ddd39c6so4976045ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:25:09 -0700 (PDT)
+	s=arc-20240116; t=1753388727; c=relaxed/simple;
+	bh=zvtBU+DZiryJKPaGlyRisToaBx8a76/8IgaDipJlpKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pKmHTz//bjyouVvPhioL5NsGyDNckoNZF2W55roZbjV8B8qS6BQFFdVBen4Fnm/kx3MTQMaPZC7vrK+xYdzWi8a6Y7Ha+MrRpguP7/TrkJd0u73kHyHrxFyl1VhCHLf8iaRafUXmUHGSlaB4KYXS7JazJa7JF7dadb8V34ZIHj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=I+rSztEe; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-87c017978e6so71081239f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1753388708; x=1753993508; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IySQOI7GYeMgMHfhqdodve6axYgAm2CZvFEfDYNh9Yw=;
-        b=e3U1AQ1OPuAQWfJvzgmJBRjR+jjr3n7DfFKJSdDul8Moe+wZ+6wn7+L2DHVK/2pTMO
-         MgJjYaD8KlqfcEXa/xmEg3mmoIdu+uaVcq/HblmDO/o+IsoWjBzwUhWraLFuVEpwyoHV
-         tzCNlnlqXIIRG07rtY6s8URpqwZ3xWLoVhcnZAnIIlD0RKr7abn3hhOQh6S7MYK1EbZx
-         rAsbMv0ZJR55rKaIHQIl/ylSe6s/66ej3gH7pwVHq4d+XL0mGU7vCgM4RVCVUrUHSMKT
-         jkBo1B+iGf4egA5RNPu4FActQpojhD1j4ezeE0QG3QiMCMrRwaFdR7tgzMaljT/teR95
-         wQKw==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753388725; x=1753993525; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FgtiipmWphMgAJou3O815VDaDuhp8ssEMPmLvEqJK1A=;
+        b=I+rSztEepCt0+c892Ej3OxCOcmEslTQ1CmHuGDXZ/DFJLsomfFsQkCBZGz42MU1JFF
+         wxOu1ihvOgeUDXkizdxZ0Lf3Kfi6qvo3BHiOCHt8kzmTyNsWRGy2WaBUF6tyHuAdsXWx
+         zbulQWq07QSjyascbBS1o3zBygbdJzR0weJEXt8sTwY4OHzdnzS6mbA0j44ydWUHnX5j
+         jKOeZFjkp0AP1u3nuD5oKY5/HAEK5Fqgr0u5FHiN/IaVNluRlP6ni43FvKbU1s7QB5ha
+         b9OF3qyQJWonwKBPqV3CVtvAjA6R3JhU/8yi4KYj7ez8R8tSa+0l9W2RVJTNzF6cpuyG
+         q+xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753388708; x=1753993508;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IySQOI7GYeMgMHfhqdodve6axYgAm2CZvFEfDYNh9Yw=;
-        b=ZcHtEQcxD37snjMUBYsvrovskEPgcOBsF4r+UQYCZXRw0ZC4b6trFw/Hd7PMn/Ha0L
-         uLGRszWP8Qpj9RIGD4tUXc6f1CJQMdtalX7vzf73RcVz0HcXFBSIVcwfhp7g5TkmgueZ
-         yn9wKGN9JSY1cgxX3wkd87BAV4DajCWtD/CzxroITyiNaCrQEuKo/kyH3sU1of7S9x+V
-         xKlbRWZutiHA7iOJedXzEGikfhOP6OnP1L9E5PMmagGbz66HwfEqk7G2N1imrd8bAamh
-         b5cyX83pP0SqSTOJfphqIY5srSBFxITT63vhN5W0dRWxaRW97DDcBzElPPkwqaKtAq2x
-         FgPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPA8Ml1+nCZGvc/1qAoer3kDD6jdZcFmGfYwEyNDJo5mm//9J3Ace9G9Dzg9+kjAxO5il3stxBbvprfr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrGest7FnUAZ/Tsvmh/uDssg2iB1cD39cr/wJQNhIpFqM7R53q
-	W2C/efHGtDUzk0+wAHC13Xjc5jui5mY3piczkNnLh0DqEik/tM6grbABBr2eyNI4MAQ=
-X-Gm-Gg: ASbGncu1P3zgdnZ9sG+plTBkOtcaP+k2Tz1yEMVXN9/44m6131qB/OcGjUaao8g/kIM
-	pT61uCTMmAq9vkZr1SyUowOFg6B0UmlN+iIhy4DjUtZgQs035Bd6CzT72QloxxBhoCmseicaU0x
-	bcdPpw2KjTSuhmzhlMn1jUuRnDIGBqP2pVOfj7TY1xUtqQva/ZLwwoFKH0G1lZJqi6qTIPQjSmG
-	eiPXOL7a+eHchvWiERG4Rccjp7tthJ/9Jr/m4qGSxvq3JgxOY5upexhfe64j7DPN9EH4lpN2bg8
-	8mSVdAviKIEiXWQwp0v0kjHQWtV0CiTnTePLyN71eVL6VScarSQspcNRY1dm9ghIUswJv6fDUPh
-	Ovw==
-X-Google-Smtp-Source: AGHT+IGSnGleulhZWkm1BpKgp5a86MvvH3HHjml0VP9G1bidqZRg2ywUiuffylRdxrhhyavIZrakZw==
-X-Received: by 2002:a05:6e02:2302:b0:3e2:9ffc:bcde with SMTP id e9e14a558f8ab-3e32fc8e2d9mr126914855ab.6.1753388708340;
-        Thu, 24 Jul 2025 13:25:08 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8250:4e6::7d:7b])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e3b711c757sm8506605ab.23.2025.07.24.13.25.07
+        d=1e100.net; s=20230601; t=1753388725; x=1753993525;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FgtiipmWphMgAJou3O815VDaDuhp8ssEMPmLvEqJK1A=;
+        b=Q9PSznjUo1nTCSJoPfSY2wVYei4j6Oh6r7RextJr3nZVuUX66DFEyhYGol1/qzZl7J
+         jK7SM5nvGlU08VA/pJiFp++D/KAxhbG1oi315IB5R7vIrYyk5818EnQTE6NGb9l3uAcF
+         53VXK0rWh+f1qAiPJpg+k2PN/VtilZLECt4FFbKYth9SnSR+TV+WrvokVTGog6dFyjyF
+         d+f85ew/B0V/A65kzkKIASSgzp9ecgT7DV3FhPFoozkbyGXbQk8KOXDgfm68FZV7IH7K
+         21poJD9nSF0LkScOek9c3aZhApwaIULHjiDqSjBcTmHhlGAJdVmu9xdUQVmxhrasKgYJ
+         YWtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrhqI8n47BRMnepjWFPPTeWW1xgpeR5GSLX4uE1e+20vnwK4mY+q1ytuJ/8G4db9kpF0yKrYcsC3HV8so=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLTodIKUrV7r/vLNfoZ+LfIXN07lnokDblLth82JHQXdOR4Ju7
+	gSyrITBjuh47fPtpYOEbU1YhjUZj7XBWqujRO9PXy1bO8Sub7RKgZHHDrY48BWyv9Xc=
+X-Gm-Gg: ASbGncsiGqG8uemUoR9CV5tAVa1ns70Y2ZYiLMlR12fBkbYZg6/xKc4cIayQo9JrGIK
+	HeaE8KsaYRhnhH1TTBYDKTNqQmqYTl4dr3VnpkBhq3+6LyEPXedZq2BXcRXWojrptKMGSBSF++y
+	V+H71eMKojAhXfiYFp6jqIax6AgM2GlekJBbxw3HuI/GFmCGf0/1pLtuJN4SJZAFI6jma5jlgac
+	YMMa3kJ487qfwusrjZYh7onINd6UkwucCvKKU2BTOGDftZg3drdv/G5XiU91J9M8ItkjFbVDVX5
+	mAEG82+FDA/EHm/hhL7V2AuN/vvDhKdKC6crfjwsfxVh5GUpB30b1CS72wisk9sUv1ruZKIdchz
+	ZNkit4/VpbzlJcyKMg4ir4pTc0f91Tb5p7Vcn+G+q
+X-Google-Smtp-Source: AGHT+IHcP0ElOWvZrgpLuhTxBtnKJ+jEvgaRwOE0f2zEOL16hOo8jW2NcEn379cGMpxfti4Lu3eObw==
+X-Received: by 2002:a6b:d20c:0:b0:858:7b72:ec89 with SMTP id ca18e2360f4ac-87c7628a365mr403682539f.5.1753388724877;
+        Thu, 24 Jul 2025 13:25:24 -0700 (PDT)
+Received: from zoltan.localdomain ([199.59.116.160])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-87c74316a3bsm63080239f.23.2025.07.24.13.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 13:25:08 -0700 (PDT)
-Date: Thu, 24 Jul 2025 15:25:05 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	AndrewLunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel-team@cloudflare.com, jbrandeburg@cloudflare.com
-Subject: ice: General protection fault in ptp_clock_index
-Message-ID: <aIKWoZzEPoa1omlw@CMGLRV3>
+        Thu, 24 Jul 2025 13:25:24 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 5/8] rtc: spacemit: support the SpacemiT P1 RTC
+Date: Thu, 24 Jul 2025 15:25:06 -0500
+Message-ID: <20250724202511.499288-6-elder@riscstar.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250724202511.499288-1-elder@riscstar.com>
+References: <20250724202511.499288-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Add support for the RTC found in the SpacemiT P1 PMIC.  Initially
+only setting and reading the time are supported.
 
-On Linux 6.12.39, we appear to hit a race reading ethtool while the
-device is removed.
+The PMIC is implemented as a multi-function device.  This RTC is
+probed based on this driver being named in a MFD cell in the simple
+MFD I2C driver.
 
-We have automation to remove unused interfaces during early boot
-process, and when systemd is restarting the network afterwards, we
-get a page fault and get into a boot-crash-loop state. We're currently
-renaming the interface to something like unused0 to circumvent the
-issue.
+Signed-off-by: Alex Elder <elder@riscstar.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+v9: - Added Alexandre Belloni's Acked-by tag
 
-I was able to reproduce with the following snippet:
+ drivers/rtc/Kconfig           |  10 ++
+ drivers/rtc/Makefile          |   1 +
+ drivers/rtc/rtc-spacemit-p1.c | 167 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 178 insertions(+)
+ create mode 100644 drivers/rtc/rtc-spacemit-p1.c
 
-$ watch -n0.1 /sbin/ethtool -T ext0
-$ echo -n "1" | sudo tee /sys/class/net/ext0/device/remove
-
-ice 0000:41:00.0: Removed PTP clock
-
-...
-
-Oops: general protection fault, probably for non-canonical address 0xae09e2b3b0c665f1: 0000 [#1] PREEMPT SMP NOPTI
-Tainted: [O]=OOT_MODULE
-Hardware name: Lenovo HR355M-V3-G12/HR355M_V3_HPM, BIOS HR355M_V3.G.031 02/17/2025
-RIP: 0010:ptp_clock_index (drivers/ptp/ptp_clock.c:476 (discriminator 1))
-Code: 38 1b 4e 00 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 <8b> 87 94 03 00 00 e9 07 1b 4e 00 66 66 2e 0f 1f 84 00 00 00 00 00
-All code
-========
-   0:	38 1b                	cmp    %bl,(%rbx)
-   2:	4e 00 66 66          	rex.WRX add %r12b,0x66(%rsi)
-   6:	2e 0f 1f 84 00 00 00 	cs nopl 0x0(%rax,%rax,1)
-   d:	00 00
-   f:	66 90                	xchg   %ax,%ax
-  11:	90                   	nop
-  12:	90                   	nop
-  13:	90                   	nop
-  14:	90                   	nop
-  15:	90                   	nop
-  16:	90                   	nop
-  17:	90                   	nop
-  18:	90                   	nop
-  19:	90                   	nop
-  1a:	90                   	nop
-  1b:	90                   	nop
-  1c:	90                   	nop
-  1d:	90                   	nop
-  1e:	90                   	nop
-  1f:	90                   	nop
-  20:	90                   	nop
-  21:	f3 0f 1e fa          	endbr64
-  25:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
-  2a:*	8b 87 94 03 00 00    	mov    0x394(%rdi),%eax		<-- trapping instruction
-  30:	e9 07 1b 4e 00       	jmp    0x4e1b3c
-  35:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
-  3c:	00 00 00 00
-
-Code starting with the faulting instruction
-===========================================
-   0:	8b 87 94 03 00 00    	mov    0x394(%rdi),%eax
-   6:	e9 07 1b 4e 00       	jmp    0x4e1b12
-   b:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
-  12:	00 00 00 00
-RSP: 0018:ffffb5664f657c88 EFLAGS: 00010282
-RAX: ffff9f4854c201a0 RBX: ffffb5664f657d34 RCX: ffffffffc1c6a5c0
-RDX: 555485607aaada55 RSI: ffffb5664f657d34 RDI: ae09e2b3b0c6625d
-RBP: ffffb5664f657df0 R08: 0000000000000000 R09: ffff9f3124c570a8
-R10: ffffb5664f657cc0 R11: 0000000000000001 R12: ffffffffafab4680
-R13: 00007ffc828fdbb0 R14: ffff9f3124c57000 R15: ffffb5664f657d80
-FS:  00007ff5abba1340(0000) GS:ffff9f402f600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff5ac03f0c0 CR3: 0000000a8768e006 CR4: 0000000000770ef0
-PKRU: 55555554
-Call Trace:
-<TASK>
-ice_get_ts_info (drivers/net/ethernet/intel/ice/ice_ethtool.c:3776 (discriminator 1)) ice
-__ethtool_get_ts_info (net/ethtool/common.c:713)
-__ethtool_get_ts_info (net/ethtool/common.c:713)
-dev_ethtool (net/ethtool/ioctl.c:2651 net/ethtool/ioctl.c:3312 net/ethtool/ioctl.c:3390)
-? srso_alias_return_thunk (arch/x86/lib/retpoline.S:182)
-? trace_call_bpf (kernel/trace/bpf_trace.c:151 (discriminator 38))
-? security_file_ioctl (security/security.c:2909)
-? trace_call_bpf (kernel/trace/bpf_trace.c:151 (discriminator 38))
-? __x64_sys_ioctl (fs/ioctl.c:893)
-? kprobe_ftrace_handler (arch/x86/kernel/kprobes/ftrace.c:45 (discriminator 1))
-? srso_alias_return_thunk (arch/x86/lib/retpoline.S:182)
-dev_ioctl (net/core/dev_ioctl.c:720)
-sock_ioctl (net/socket.c:1242 net/socket.c:1346)
-__x64_sys_ioctl (fs/ioctl.c:51 fs/ioctl.c:907 fs/ioctl.c:893 fs/ioctl.c:893)
-osnoise_arch_unregister (??:?)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-RIP: 0033:0x7ff5abe13d1b
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-All code
-========
-   0:	00 48 89             	add    %cl,-0x77(%rax)
-   3:	44 24 18             	rex.R and $0x18,%al
-   6:	31 c0                	xor    %eax,%eax
-   8:	48 8d 44 24 60       	lea    0x60(%rsp),%rax
-   d:	c7 04 24 10 00 00 00 	movl   $0x10,(%rsp)
-  14:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
-  19:	48 8d 44 24 20       	lea    0x20(%rsp),%rax
-  1e:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
-  23:	b8 10 00 00 00       	mov    $0x10,%eax
-  28:	0f 05                	syscall
-  2a:*	89 c2                	mov    %eax,%edx		<-- trapping instruction
-  2c:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
-  31:	77 1c                	ja     0x4f
-  33:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
-  38:	64                   	fs
-  39:	48                   	rex.W
-  3a:	2b                   	.byte 0x2b
-  3b:	04 25                	add    $0x25,%al
-  3d:	28 00                	sub    %al,(%rax)
-	...
-
-Code starting with the faulting instruction
-===========================================
-   0:	89 c2                	mov    %eax,%edx
-   2:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
-   7:	77 1c                	ja     0x25
-   9:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
-   e:	64                   	fs
-   f:	48                   	rex.W
-  10:	2b                   	.byte 0x2b
-  11:	04 25                	add    $0x25,%al
-  13:	28 00                	sub    %al,(%rax)
-	...
-RSP: 002b:00007ffc828fdb20 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000056370e675800 RCX: 00007ff5abe13d1b
-RDX: 00007ffc828fdb80 RSI: 0000000000008946 RDI: 0000000000000005
-RBP: 000056370e6757e0 R08: 00007ff5abee8c60 R09: 0000000000000000
-R10: 00007ff5abd2f310 R11: 0000000000000246 R12: 00007ffc828fdd80
-R13: 0000000000000005 R14: 00007ffc828fdb80 R15: 00007ffc828fff1a
-</TASK>
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 64f6e9756aff4..31d355b103d43 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -406,6 +406,16 @@ config RTC_DRV_MAX77686
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rtc-max77686.
+ 
++config RTC_DRV_SPACEMIT_P1
++	tristate "SpacemiT P1 RTC"
++	depends on ARCH_SPACEMIT || COMPILE_TEST
++	select MFD_SPACEMIT_P1
++	default ARCH_SPACEMIT
++	help
++	  Enable support for the RTC function in the SpacemiT P1 PMIC.
++	  This driver can also be built as a module, which will be called
++	  "spacemit-p1-rtc".
++
+ config RTC_DRV_NCT3018Y
+ 	tristate "Nuvoton NCT3018Y"
+ 	depends on OF
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index 789bddfea99d8..f41fdb4fabae9 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -171,6 +171,7 @@ obj-$(CONFIG_RTC_DRV_SD2405AL)	+= rtc-sd2405al.o
+ obj-$(CONFIG_RTC_DRV_SD3078)	+= rtc-sd3078.o
+ obj-$(CONFIG_RTC_DRV_SH)	+= rtc-sh.o
+ obj-$(CONFIG_RTC_DRV_SNVS)	+= rtc-snvs.o
++obj-$(CONFIG_RTC_DRV_SPACEMIT_P1)	+= rtc-spacemit-p1.o
+ obj-$(CONFIG_RTC_DRV_SPEAR)	+= rtc-spear.o
+ obj-$(CONFIG_RTC_DRV_STARFIRE)	+= rtc-starfire.o
+ obj-$(CONFIG_RTC_DRV_STK17TA8)	+= rtc-stk17ta8.o
+diff --git a/drivers/rtc/rtc-spacemit-p1.c b/drivers/rtc/rtc-spacemit-p1.c
+new file mode 100644
+index 0000000000000..43ab62494bb4b
+--- /dev/null
++++ b/drivers/rtc/rtc-spacemit-p1.c
+@@ -0,0 +1,167 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for the RTC found in the SpacemiT P1 PMIC
++ *
++ * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
++ */
++
++#include <linux/bits.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/rtc.h>
++
++#define MOD_NAME	"spacemit-p1-rtc"
++
++/*
++ * Six consecutive 1-byte registers hold the seconds, minutes, hours,
++ * day-of-month, month, and year (respectively).
++ *
++ * The range of values in these registers is:
++ *    seconds	0-59
++ *    minutes	0-59
++ *    hours	0-59
++ *    day	0-30 (struct tm is 1-31)
++ *    month	0-11
++ *    year	years since 2000 (struct tm is since 1900)
++ *
++ * Note that the day and month must be converted after reading and
++ * before writing.
++ */
++#define RTC_TIME		0x0d	/* Offset of the seconds register */
++
++#define RTC_CTRL		0x1d
++#define RTC_EN		BIT(2)
++
++/* Number of attempts to read a consistent time stamp before giving up */
++#define RTC_READ_TRIES		20	/* At least 1 */
++
++struct p1_rtc {
++	struct regmap *regmap;
++	struct rtc_device *rtc;
++};
++
++/*
++ * The P1 hardware documentation states that the register values are
++ * latched to ensure a consistent time snapshot within the registers,
++ * but these are in fact unstable due to a bug in the hardware design.
++ * So we loop until we get two identical readings.
++ */
++static int p1_rtc_read_time(struct device *dev, struct rtc_time *t)
++{
++	struct p1_rtc *p1 = dev_get_drvdata(dev);
++	struct regmap *regmap = p1->regmap;
++	u32 count = RTC_READ_TRIES;
++	u8 seconds;
++	u8 time[6];
++	int ret;
++
++	if (!regmap_test_bits(regmap, RTC_CTRL, RTC_EN))
++		return -EINVAL;		/* RTC is disabled */
++
++	ret = regmap_bulk_read(regmap, RTC_TIME, time, sizeof(time));
++	if (ret)
++		return ret;
++
++	do {
++		seconds = time[0];
++		ret = regmap_bulk_read(regmap, RTC_TIME, time, sizeof(time));
++		if (ret)
++			return ret;
++	} while (time[0] != seconds && --count);
++
++	if (!count)
++		return -EIO;		/* Unable to get a consistent result */
++
++	t->tm_sec = time[0] & GENMASK(5, 0);
++	t->tm_min = time[1] & GENMASK(5, 0);
++	t->tm_hour = time[2] & GENMASK(4, 0);
++	t->tm_mday = (time[3] & GENMASK(4, 0)) + 1;
++	t->tm_mon = time[4] & GENMASK(3, 0);
++	t->tm_year = (time[5] & GENMASK(5, 0)) + 100;
++
++	return 0;
++}
++
++/*
++ * The P1 hardware documentation states that values in the registers are
++ * latched so when written they represent a consistent time snapshot.
++ * Nevertheless, this is not guaranteed by the implementation, so we must
++ * disable the RTC while updating it.
++ */
++static int p1_rtc_set_time(struct device *dev, struct rtc_time *t)
++{
++	struct p1_rtc *p1 = dev_get_drvdata(dev);
++	struct regmap *regmap = p1->regmap;
++	u8 time[6];
++	int ret;
++
++	time[0] = t->tm_sec;
++	time[1] = t->tm_min;
++	time[2] = t->tm_hour;
++	time[3] = t->tm_mday - 1;
++	time[4] = t->tm_mon;
++	time[5] = t->tm_year - 100;
++
++	/* Disable the RTC to update; re-enable again when done */
++	ret = regmap_clear_bits(regmap, RTC_CTRL, RTC_EN);
++	if (ret)
++		return ret;
++
++	/* If something goes wrong, leave the RTC disabled */
++	ret = regmap_bulk_write(regmap, RTC_TIME, time, sizeof(time));
++	if (ret)
++		return ret;
++
++	return regmap_set_bits(regmap, RTC_CTRL, RTC_EN);
++}
++
++static const struct rtc_class_ops p1_rtc_class_ops = {
++	.read_time = p1_rtc_read_time,
++	.set_time = p1_rtc_set_time,
++};
++
++static int p1_rtc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rtc_device *rtc;
++	struct p1_rtc *p1;
++
++	p1 = devm_kzalloc(dev, sizeof(*p1), GFP_KERNEL);
++	if (!p1)
++		return -ENOMEM;
++	dev_set_drvdata(dev, p1);
++
++	p1->regmap = dev_get_regmap(dev->parent, NULL);
++	if (!p1->regmap)
++		return dev_err_probe(dev, -ENODEV, "failed to get regmap\n");
++
++	rtc = devm_rtc_allocate_device(dev);
++	if (IS_ERR(rtc))
++		return dev_err_probe(dev, PTR_ERR(rtc),
++				     "error allocating device\n");
++	p1->rtc = rtc;
++
++	rtc->ops = &p1_rtc_class_ops;
++	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
++	rtc->range_max = RTC_TIMESTAMP_END_2063;
++
++	clear_bit(RTC_FEATURE_ALARM, rtc->features);
++	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
++
++	return devm_rtc_register_device(rtc);
++}
++
++static struct platform_driver p1_rtc_driver = {
++	.probe = p1_rtc_probe,
++	.driver = {
++		.name = MOD_NAME,
++	},
++};
++
++module_platform_driver(p1_rtc_driver);
++
++MODULE_DESCRIPTION("SpacemiT P1 RTC driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:" MOD_NAME);
+-- 
+2.43.0
 
 
