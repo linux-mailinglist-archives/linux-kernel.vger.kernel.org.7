@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-744872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95369B111F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:03:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91791B111FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF845A4AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4A11C25C0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10AE23ABA8;
-	Thu, 24 Jul 2025 20:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192D923875D;
+	Thu, 24 Jul 2025 20:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNQKAcu5"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8WwFdrC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C922D4DE;
-	Thu, 24 Jul 2025 20:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6687322E406;
+	Thu, 24 Jul 2025 20:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753387382; cv=none; b=HFxUh7G18Cn0g0fHpOrqD0lCGSOdp29kPQpGm3RYzNzI/bBFiL7Ns1yBpZfiii+8p9b9QldjN6mGQX8BfPbSqixvhyLxxDTD8usnE2QQkAVc1z0IXTubb7IMvnqvCubRvk1o0tWOolgbXy87C2w9pkT8PbxmhA+ULKptDSgx8R0=
+	t=1753387410; cv=none; b=Pl/Er7unxDm+6zfc4WqL+4pJa81LEwz4diuR1OfavolBhxt4BdYf6pu5QHO2Enqq073TqXeT3/sk2aLWRuH+9sWiM/UUClaEmarjV1exDMMYUQdVmmqK1U8hDV/MmAj2tIJoadQhM+Rd8xpN/VHiRJAKSBKTwdCliqYHY617M70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753387382; c=relaxed/simple;
-	bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fUiDuV4yGu4ZsTNMbFECVZ+h+JdWkHddb+Xin15xUDNFANxwoW0a4RYXnp28hhCqpkI696+oWKI3uIBkmj7HjsUERQWoid4sDWMp1zmdrHHBlbJ3r2cGZdpIMJRzcfiTA+UFlvZxKCsJDHD9U0PYmbw8tK3yOIM4n74KfoZdMWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNQKAcu5; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-73e5e3c6a37so880938a34.0;
-        Thu, 24 Jul 2025 13:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753387380; x=1753992180; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
-        b=jNQKAcu57gNkBjFBvSKWuCu8LNVJ7/SAY10u3Ps90JmgeMJDy7tVvXXD+qtG//nl/C
-         ixuLBhVs3iww93l8LvsQArJPfsjWd0cvF7K8vPIwCJu6yK00zYoB61CIIYFZISD2+Hyx
-         WT7Ifj8FLBiKlpdfOVbocGn2zO/cBV7nlMsU03J0EzO7qoXy49nhkBxZ6pUubbChDESX
-         VW8Gxwv8d08/RZAKczuhCjxQjK0BNJE8rNOqTxZPZXnhlukTG2MaW1mn8x+g5A6bUqHW
-         ksETnEdf2PC/F5Z3VAnJ+Zrh2KsKEHyFTrb6xo/Uo4FjC7fiudBzOdTX5AeekDE0Y/oU
-         fNiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753387380; x=1753992180;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SNV2ZucN+Q1Y8ewyvUY7RD5mmK5kS0ErsQsL+X/B/Qc=;
-        b=HRJyrBNWG3ScCwTBzhHxo0WnuFN2SW1tj/pkfRip93nRdyRU9dkCx01js3ktYx8hcv
-         cNZzUzsZMVNZP00IZhEaG/wk81FQubmXg5Fy3pQsgw/tQkNfCWsowvu1znRr7pdIPQys
-         vetpng52yEjDaNXsdBdhgTavuPerS+4oJ6ONU93zY75z6w4OYwDGjQVN0ql/E/H5dQJs
-         EUa4hy/HkRFT7XL9LWm0iDGC20uelhEnhSmdGNH6TB6q+nl8+Mx9WZDAQjBqyBv25m2w
-         WcQzVHmB3+JBUeT1CARLwAd/bX3hLbDd1qKrVbHlnN3/i07T51wArLDwMqqQGcXrs9p5
-         rE+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXKCUq31/+BBqSfutapPySJqQNHZpck1skWLfH5k+9HKnqh+ETJHZIHWh/gnddmQDV/DIJ+gTeggLqWEsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkftYkUatw52k00NjI0GdkuHlCODCi5jrVyihFxK2/9jGxP5ON
-	uGYyECQAbTeq3STSx/ocwkilrwnxbNbfp8PAgO8L9R6S5fqxk5gNFIx6AJq5g7TIjH5Z+hnwsym
-	zYG3XD1DiUBpjP5zYBfXMAy+YVhG7URg=
-X-Gm-Gg: ASbGncu+jkS8mD8F3/+Uda078x5bEbW2BOTGpPGAdjWZokhMQevBJdUbMQAt2+M9lGE
-	yb6N3HfS6VmdgxyHYAn/ktHZ59/PqGrJRlVxdsl0OFoSXrsGSYkxydhe9gzhCCWXcHcbIp4HYNL
-	BrLJhpSW70qa51GQyLGy4cg+wsD/8pH5GqeaCWdKwaGw7CdrM8f/lXbEXBsJiKiuoNN5yXZh6Sp
-	z1Q1Ydz
-X-Google-Smtp-Source: AGHT+IE+z4+xt5cvZ+sXihIbp5iDRwg5tQkdFEtlsrZEuapErCdlSkVx46rbdIIvCbU8DY+6UACyfyOSk8YZvE56+Rg=
-X-Received: by 2002:a05:6871:b1f:b0:2ff:9c45:4f51 with SMTP id
- 586e51a60fabf-306c6f9537amr6140736fac.15.1753387379904; Thu, 24 Jul 2025
- 13:02:59 -0700 (PDT)
+	s=arc-20240116; t=1753387410; c=relaxed/simple;
+	bh=fP0jCPxK1T2Ab4oOBOWBx+XZP5UkwaWLafeWg2ZgBJs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=GZDZuiA4V3qW6+MGRahMINYAj2EHMq2BrJRoPWvGZEbasYXyxRUTKjIMbUlGLQmhDAZPaEC0Jc4EFCK3DZYaBhfmkaS5LpNTZnYZ3FczsOWZ7ZgsIiP13oUUid5GerBoo4QpnW84x4kFNgBJNLzv7H62dx64Lnk3zlq2C80TBoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8WwFdrC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D066AC4CEED;
+	Thu, 24 Jul 2025 20:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753387410;
+	bh=fP0jCPxK1T2Ab4oOBOWBx+XZP5UkwaWLafeWg2ZgBJs=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=E8WwFdrC0RZ8rN7KsoVsEMrz9EqPnn13H/y/P7tAdZ247z4YBdpzTMikLpK4D0B5d
+	 mckAPFE+mrBsKdgZehZsVF1LVj0xcckG9oVDGyDOKf3sP5m6uNCJ9bRhUZQ9VOH/F8
+	 Olz0wT8gw1HaHi64LZXyA1unW6aNq+dVE0toyAZoe6dhlgfHE2MKd81Te/9ty/5vOQ
+	 seL1LFy8s0xfTYL5aJIN+IHPYw17vSqzbLN1OCYyr8dDQxFdrfjFr11Nksxt4SWA/T
+	 I5ivN9RjFm4i2abAKSt6c9ImLJOwQKIm0cgFzsDmzEGOrg6zoZpXy5HzD46w98A6KF
+	 0fzCgFpZzfBaQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Andrei Vagin <avagin@gmail.com>
-Date: Thu, 24 Jul 2025 13:02:48 -0700
-X-Gm-Features: Ac12FXyw8K1x7qoG1tqDHURxg0BFnQUWWS9fJjqqa70xX6WKuXP5HZvWasYYtZM
-Message-ID: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
-Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
-To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	criu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Jul 2025 22:03:24 +0200
+Message-Id: <DBKJYLF9E3TY.IM6UZFA0BW9I@kernel.org>
+Subject: Re: [PATCH] Partially revert "rust: drm: gem: Implement
+ AlwaysRefCounted for all gem objects automatically"
+Cc: <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <rust-for-linux@vger.kernel.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "David Airlie" <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Asahi
+ Lina" <lina+kernel@asahilina.net>, "Alyssa Rosenzweig"
+ <alyssa@rosenzweig.io>, "open list" <linux-kernel@vger.kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250724191523.561314-1-lyude@redhat.com>
+In-Reply-To: <20250724191523.561314-1-lyude@redhat.com>
 
-Hi Al and Christian,
+On Thu Jul 24, 2025 at 9:15 PM CEST, Lyude Paul wrote:
+> -// SAFETY: All gem objects are refcounted.
+> -unsafe impl<T: IntoGEMObject> AlwaysRefCounted for T {
+> -    fn inc_ref(&self) {
+> -        // SAFETY: The existence of a shared reference guarantees that t=
+he refcount is non-zero.
+> -        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
+> -    }
+> -
+> -    unsafe fn dec_ref(obj: NonNull<Self>) {
+> -        // SAFETY: We either hold the only refcount on `obj`, or one of =
+many - meaning that no one
+> -        // else could possibly hold a mutable reference to `obj` and thu=
+s this immutable reference
+> -        // is safe.
+> -        let obj =3D unsafe { obj.as_ref() }.as_raw();
+> -
+> -        // SAFETY:
+> -        // - The safety requirements guarantee that the refcount is non-=
+zero.
+> -        // - We hold no references to `obj` now, making it safe for us t=
+o potentially deallocate it.
+> -        unsafe { bindings::drm_gem_object_put(obj) };
+> -    }
+> -}
 
-The commit 12f147ddd6de ("do_change_type(): refuse to operate on
-unmounted/not ours mounts") introduced an ABI backward compatibility
-break. CRIU depends on the previous behavior, and users are now
-reporting criu restore failures following the kernel update. This change
-has been propagated to stable kernels. Is this check strictly required?
-Would it be possible to check only if the current process has
-CAP_SYS_ADMIN within the mount user namespace?
+IIUC, you'll add rust/kernel/drm/gem/shmem.rs with a new type shmem::Object=
+ that
+implements IntoGEMObject, right?
 
-Thanks,
-Andrei
+If this is correct, I think that should work.
+
+Do I miss anything?
 
