@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-744990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3AFB11351
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEFFB1136E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0333B3200
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD17AE0BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FE923B628;
-	Thu, 24 Jul 2025 21:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F7823B628;
+	Thu, 24 Jul 2025 21:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8ktJ0JY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dIzrxeZa"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017A21858A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6946C23C512
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753394173; cv=none; b=sFEMwKDxQoPYenfcBDgfvEyW1MjtJHv2NrZb2smGoxXhEHdk3jnsIJpXZsPYqfuy+lI0v4TC5OxdCPamJNTplamzCRQrlJv8yImpH5VlsaGxrCEj8PtHoKYeR7yi30nWHLl+9v4XoTS9tv7krnCQv3n6pPu9u+O7VyIf7PwPhXY=
+	t=1753394355; cv=none; b=SWZy055+tiW5tc61Fm2YWvyrhOS0f/AnxSZnOBvP/5MCnUr30nWlBtyx7Qe2g7325Rbk7ZsqpsTZRJqIM464CSEihlMVZ8eHgWc6tKzA///l4vtBxt3Lh8k6CbU5FqSuL4K7zZUTokInIPtevcRLWX+rz9xXdgLXgO/0ziSJECY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753394173; c=relaxed/simple;
-	bh=OyEn0ZzcBisPvK2osjxic9KU0NnF2AY+3vL1co7kyf0=;
+	s=arc-20240116; t=1753394355; c=relaxed/simple;
+	bh=4k0T4FtTtRJhZ8EtAIZW4FvS1POM0DpXLaGklf7ZgjU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eUKLCc9LMO4opecmax+lNxoGwl3eD1ASLccZ8kwvkEyg49lgMRZdJhnmCGNsMJNVWqgp5b/LJrRFv49C0y29kndWopYKK6tN54uOtghPR1Hj+7YGljeBOlYmt++rqW3GnfuA7zA0CTD9krjCdqZVnhAPO+MDI9TyRgRXzs9Nr9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O8ktJ0JY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753394169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TnIYE6isHOtcopFB9zBfVfcEC5sN5etTBxSjFpgZalU=;
-	b=O8ktJ0JY/n/CYiPMbATYyYbygUTzSk7rP/PNKs6IwiRRvVpNyH2QmF9xRrvfY5MReRnUdw
-	jzWyx3ZuxoOFivr7o47MojcnVLnO7Z8rbb6FlpZxwkiL7BUr5UqxjVqT4ZKEoZ3MvK4opp
-	m+dIj2hbl56/aq0GPcfVYA6qnGb1Cyg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-361-ODtjQcFdNKqR8r91Cp1HWQ-1; Thu, 24 Jul 2025 17:56:07 -0400
-X-MC-Unique: ODtjQcFdNKqR8r91Cp1HWQ-1
-X-Mimecast-MFC-AGG-ID: ODtjQcFdNKqR8r91Cp1HWQ_1753394166
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f8fd1847so506575f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:56:07 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=mmVQ6Ubo/qtukjCecCWh5mt0HKfuURPvgEwTXbjlonw84M8pMuyEGv8N1UC3L6B1JuNfsk3QasG0bYn/2imKNsRPhvdl/h0+pztHeOCMfU59Jrqej0/2NgEzVOoQMjaf0v7/jT7I8gxHkPQPhHt6O8RcPqWHoOzFlZRZqH5OKiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dIzrxeZa; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-87c0ad018d9so49780739f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:59:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1753394351; x=1753999151; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5Xorxttia45jyMhqtR43aAiPCILZbP+rrQy2ed6BrHA=;
+        b=dIzrxeZa+h66jAHidlKYfCI4Ml5ALnGiADmE9PgykLfoG3b3Lu/M98jJ6c8fiDM7wL
+         EAnvgursUix45296KOpHhzvhc2udU3BCKwYn/i6ueD6XTWbnel05RH4sx90BcPszJ72z
+         w5bRXiPThvndauXxrOyTFOmwsdwiwX8iAXP04=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753394166; x=1753998966;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TnIYE6isHOtcopFB9zBfVfcEC5sN5etTBxSjFpgZalU=;
-        b=uoWbRRzuUaSimAYKu5KJEXhPNl7mD0rUBvuCIBpGfkbWO7mjoO3HZD4hUFOiRZIzip
-         1nhQD5vgRrTMnVvoXv4WveL/lBKizYPHFJpp+tKF7JBkBbsFx67rka/8+TA1TWt35r7w
-         nl0RCl46u6rDkcexye0FQMxFyaDPcUaaid9biRth14vb+iuOBVhY03NujPaPaYVXU7FK
-         zXAPnqCj20xNM9N4jYnyWvyfj0b7TrnwSSGUwwo0mmdvBthzQ+rnB3otTKqTyuZV5D+f
-         BH5GxQNcspV2lGM3aidc7BNHgVU/8qxmXiAt5wZM7PpMU9Y5D0VPX4ZSPvWtAFqqcEHZ
-         e1Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtTGvfjKeJQKkIdE5uosASGSkQ65cRObnjKIlIXkLC1yrh3PfZW4DCum6mjEQ2T7sqJr2ofMnmtRgstvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySq0nYTmyztfD3fIQoveRtRtrdxSi91XhHuhLQnPR28DS/XyQ6
-	fcQhOolcfPYSW3/AYil//e1fi7SOqs3WX/j2yuDqkNzGfP8dprWHSViLGT3eghnaidNwt/9l4oS
-	Q6TUWtgN1vxaAC4OyffzWAiARnetia+8oy+wrLVVcX9RdYTnbYq22um77IJUlsLRtGg==
-X-Gm-Gg: ASbGncsRUR/+qAvBW8FDLwxQrdKh+rW9wchBXB82XaWoSdopfvcBRA4Pkoap6AxLXIG
-	a84F/m5+WrG6KSDkZVuTgiF/P08dg7IouI4iClRkSrQV5LcwodvWf6otPg/zgJA4TRMOoouEaEB
-	mzSiZ/r8YSEPfuhnb3Qpk5v1MapmQVfZuJ0UyhjRspzp3Ra8u3qSfnbFKUlXf+bw3OtIpTO83WI
-	aE+GTo4plmQWISTEow6bx1yXQEIhHbVyy3zhnM91PVqSJJ+9j9u5FFf3vP2T23SmQo7wUDrda8G
-	jrvcNmKPqGobnjEV6JxJSu0lPYIHpglyvkAcQYD7yB2hr04ZiI1NVuYA8F88Y773s1kIayKEmKL
-	d478kQNejA0JfYBgo7FMIod2bQFHA5h7xqCyzWcfH1BbguSidb28tgkYj5i5kH74eeTc=
-X-Received: by 2002:a5d:5d07:0:b0:3b5:dc04:3f59 with SMTP id ffacd0b85a97d-3b768f162b3mr6550284f8f.37.1753394166452;
-        Thu, 24 Jul 2025 14:56:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpj0Q/qfPPBHUfZgfVRBY+U0T8fmE6q5msKr2mfaAw9QwTWSOib0nfbwpWlSY/Dv9OPcQx1Q==
-X-Received: by 2002:a5d:5d07:0:b0:3b5:dc04:3f59 with SMTP id ffacd0b85a97d-3b768f162b3mr6550278f8f.37.1753394166010;
-        Thu, 24 Jul 2025 14:56:06 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f01:5500:ba83:3fd7:6836:62f6? (p200300d82f015500ba833fd7683662f6.dip0.t-ipconnect.de. [2003:d8:2f01:5500:ba83:3fd7:6836:62f6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705e39b1sm31164285e9.34.2025.07.24.14.56.03
+        d=1e100.net; s=20230601; t=1753394351; x=1753999151;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Xorxttia45jyMhqtR43aAiPCILZbP+rrQy2ed6BrHA=;
+        b=MWDv1TCRPndNbKG/Pt6JMMPpL+0HFZnmQ1EyQ2Njo9iIdRDVk4/bkctGi5mr5iHvbo
+         V5egfxQfUZotXvNZGJticcNm3WJjWzotQpB18dCfmpVadg2wcc0lLNwO7KrYgQLFY0o6
+         Jwkx5PfW0YDistBRLgVj6r6KVicGzWYFlYApmf5eTbwoJoKcGLr+H6CzXzbRYt4Q+K4h
+         r/HdaHmA5I3eajDcdQvz3m5OG5zDttKviotUeOzGehyjL0sE+3Z6GoDLbdqD/ycQBMSF
+         YU4X1xZlx0l+oMBwtzMKfsgzYXB4LvMlo2R88x5NoHPGeU2qDvzDk4KcxeamssrABUoF
+         jILA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR1vzYZnRoMgfccgSDiYI9EEtPFqPhD4+Y2APcoiM5b8TIF4rTr43xrj/JPKn3zsDTz35w/LZ0DkFmt94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzXJ3XL+QvWCySDiT3yXGfL7cQD6J6Gx06E0Kto5l1rVkT8ozh
+	rfUrJpvdt1WUm5fCtTdECaMwhEWLMEUyJj9QvhN+MXQsr0mPNOD8VVkhZnXK20xwMlw=
+X-Gm-Gg: ASbGncsN+b/pp16RwStshqXof8XKPCAq1+LM4csDIqZwFPxFlX0txnt9Px/fc5ohuXk
+	C/F6ccO1aFr//wL77U979HyR5sefHmFDwXZdzrFde6oVmI5rgzTUnjR4ZfzBtBaELD+Hd9l0YHf
+	3+B8IefpwWqvUXP5FmTTLROYZ02kAmXg8ZpajFFJ0k92cNtgwHdUcPHceyN0u8vRB8mKgDK1R/+
+	Wahdt02Nbcjim6MGPbuU2ztC0pQ+ba9ty/YpQfd2OYKmQHMAoSpnP+7H3i5fp3EHPJqYVWLM47f
+	VakEKRtUDSZI0yRg6BKoP+9QiCigNM32z2/vCyOBtOQEMKOIv24NlsEzH6uuBOz09PYredMmFqD
+	Og5wvovL3cSZ/GbKJwUgh7waXxRfTqmP7ag==
+X-Google-Smtp-Source: AGHT+IERe89uSYSHDFP4y+Ud0LoliQuPdbBEQmIaghSs2O1f98XNA+2k/Ls89WY65YByhL+8qTuXuw==
+X-Received: by 2002:a05:6602:641e:b0:87c:5a38:45e9 with SMTP id ca18e2360f4ac-87c64f48d4dmr1555284839f.3.1753394351310;
+        Thu, 24 Jul 2025 14:59:11 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508aea61939sm641314173.1.2025.07.24.14.59.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 14:56:05 -0700 (PDT)
-Message-ID: <85c4a092-14df-4478-811c-f3789610e4b8@redhat.com>
-Date: Thu, 24 Jul 2025 23:56:03 +0200
+        Thu, 24 Jul 2025 14:59:10 -0700 (PDT)
+Message-ID: <82bd5d44-a23d-4d49-a79a-b6792e62bd62@linuxfoundation.org>
+Date: Thu, 24 Jul 2025 15:59:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,130 +78,304 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/rmap: Add anon_vma lifetime debug check
-To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel
- <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3] iio: light: ltr390: Add debugfs register access
+ support
+To: Akshay Jindal <akshayaj.lkd@gmail.com>, anshulusr@gmail.com,
+ jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
+Cc: shuah@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250724143945.636380-1-akshayaj.lkd@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250724143945.636380-1-akshayaj.lkd@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 24.07.25 21:13, Jann Horn wrote:
-> If an anon page is mapped into userspace, its anon_vma must be alive,
-> otherwise rmap walks can hit UAF.
+On 7/24/25 08:39, Akshay Jindal wrote:
+> Add support for debugfs_reg_access through the driver's iio_info structure
+> to enable low-level register read/write access for debugging.
 > 
-> There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-> walks that seems to indicate that there can be pages with elevated mapcount
-> whose anon_vma has already been freed, but I think we never figured out
-> what the cause is; and syzkaller only hit these UAFs when memory pressure
-> randomly caused reclaim to rmap-walk the affected pages, so it of course
-> didn't manage to create a reproducer.
-> 
-> Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous pages to
-> hopefully catch such issues more reliably.
-> 
-> Implementation note: I'm checking IS_ENABLED(CONFIG_DEBUG_VM) because,
-> unlike the checks above, this one would otherwise be hard to write such
-> that it completely compiles away in non-debug builds by itself, without
-> looking extremely ugly.
-> 
-> [1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.com
-> [2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.com
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
+> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
 > ---
->   include/linux/rmap.h | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
 > 
-> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> index c4f4903b1088..ba694c436f59 100644
-> --- a/include/linux/rmap.h
-> +++ b/include/linux/rmap.h
-> @@ -449,6 +449,19 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
->   	default:
->   		VM_WARN_ON_ONCE(true);
+> Changes since v2:
+> ================
+> - merged the regmap_range of LTR390_UP_THRESH with LTR390_LOW_THRESH.
+> 
+> Changes since v1:
+> =================
+> - Replaced _[0|1|2] macros with a respective common parameterized macro.
+> - Retained base macros to avoid churn.
+> - Swapped regmap_write with regmap_read to avoid negate operator.
+> - Simplified debugfs function by directly returning return value of
+>    regmap_[read|write].
+> - Replaced [readable|writeable]_reg with regmap ranges by using
+>    [rd|wr]_table property of regmap_config.
+> - Updated the testing details with v2 changes.
+>   
+> Testing details (done for v2):
+> ==============================
+> -> Tested on Raspberrypi 4B. Follow for more details.
+
+This is way too much testing information. Summarize what you tested
+instead. It makes it easier to see the results as a summary.
+
+> 
+> akshayajpi@raspberrypi:~ $ uname -r
+> 6.12.35-v8+
+> akshayajpi@raspberrypi:~ $ uname -a
+> Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025 aarch64 GNU/Linux
+> 
+> -> Sensor Detection, overlaying of device tree and Driver loading
+> akshayajpi@raspberrypi:~ $ i2cdetect -y 1
+>       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+> 00:                         -- -- -- -- -- -- -- --
+> 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
+> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+> 70: -- -- -- -- -- -- -- --
+> 
+> akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
+> akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
+> ltr390                 16384  0
+> industrialio          110592  1 ltr390
+> regmap_i2c             12288  1 ltr390
+> 
+> 
+> 1. Disable sensor via debugfs, verify from i2cget and debugfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 | sudo tee direct_reg_access
+> 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x2
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x0 | sudo tee direct_reg_access
+> 0x0 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x0
+> 0x00
+> 
+> 2. Disable sensor via debugfs and read data status via debugfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 603
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 603
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 603
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
+> 0x28
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x7
+> 0x00
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
+> 0x7
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x0
+> 
+> 3. Re-enable sensor via debugfs and read data status via debugfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x0 0x2 | sudo tee direct_reg_access
+> 0x0 0x2
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x2
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 608
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 614
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 601
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x7 | sudo tee direct_reg_access
+> 0x7
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x8
+> 
+> 4. Enable interrupts via sysfs and verify via debugfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_either_en
+> 1
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ i2cget -f -y 1 0x53 0x19
+> 0x14
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x19 | sudo tee direct_reg_access
+> 0x19
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x14
+> 
+> 5. Write falling threshold via debugfs, verify the threshold written via sysfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x24 0x32 | sudo tee direct_reg_access
+> 0x24 0x32
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x32
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x25 0x0 | sudo tee direct_reg_access
+> 0x25 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x26 0x0 | sudo tee direct_reg_access
+> 0x26 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x0
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/events/in_illuminance_thresh_falling_value
+> 50
+> final value = 0x0 << 16 | 0x0 << 8 | 0x32 = 50
+> 
+> 6. Block light and verify interrupts getting generated.
+> -> Before blocking light
+> cat /proc/interrupts|grep ltr390
+>   58:         0          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
+> 
+> ->After blocking light
+> 58:         63          0          0          0  pinctrl-bcm2835   4 Edge      ltr390_thresh_event
+> 
+> 7. write value to a non-writeable reg via debugfs.
+> -> LTR390_ALS_DATA_0|1|2 are non-writeable registers. Writing to them gives I/O error as expected.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd 0x1 | sudo tee direct_reg_access
+> 0xd 0x1
+> tee: direct_reg_access: Input/output error
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe 0x1 | sudo tee direct_reg_access
+> 0xe 0x1
+> tee: direct_reg_access: Input/output error
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf 0x1 | sudo tee direct_reg_access
+> 0xf 0x1
+> tee: direct_reg_access: Input/output error
+> 
+> 8. read value from a non-readable reg via debugfs.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x2 |sudo tee direct_reg_access
+> 0x2
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> cat: direct_reg_access: Input/output error
+> 
+> 9. do simple raw reads from debugfs.
+> -> reading raw value via sysfs:
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 627
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 622
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
+> 616
+> 
+> -> reading via debugfs (should be in the same ballpark of sysfs)
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xd | sudo tee direct_reg_access
+> 0xd
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0xC7
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xe | sudo tee direct_reg_access
+> 0xe
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x2
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0xf | sudo tee direct_reg_access
+> 0xf
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> 0x0
+> final value = 0x0 << 16 | 0x2 << 8 | 0x70 = 624
+> 
+> 10. Testing reads on registers beyond max_register.
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x27 | sudo tee direct_reg_access
+> 0x27
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> cat: direct_reg_access: Input/output error
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ echo 0x28 | sudo tee direct_reg_access
+> 0x28
+> akshayajpi@raspberrypi:/sys/kernel/debug/iio/iio:device0 $ cat direct_reg_access
+> cat: direct_reg_access: Input/output error
+> 
+>   drivers/iio/light/ltr390.c | 53 ++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 53 insertions(+)
+> 
+> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+> index ee59bbb8aa09..b1028d027e1b 100644
+> --- a/drivers/iio/light/ltr390.c
+> +++ b/drivers/iio/light/ltr390.c
+> @@ -38,12 +38,21 @@
+>   #define LTR390_ALS_UVS_GAIN		0x05
+>   #define LTR390_PART_ID			0x06
+>   #define LTR390_MAIN_STATUS		0x07
+> +
+>   #define LTR390_ALS_DATA			0x0D
+> +#define LTR390_ALS_DATA_BYTE(n)		((LTR390_ALS_DATA) + (n))
+> +
+>   #define LTR390_UVS_DATA			0x10
+> +#define LTR390_UVS_DATA_BYTE(n)		((LTR390_UVS_DATA) + (n))
+> +
+>   #define LTR390_INT_CFG			0x19
+>   #define LTR390_INT_PST			0x1A
+> +
+>   #define LTR390_THRESH_UP		0x21
+> +#define LTR390_THRESH_UP_BYTE(n)	((LTR390_THRESH_UP) + (n))
+> +
+>   #define LTR390_THRESH_LOW		0x24
+> +#define LTR390_THRESH_LOW_BYTE(n)	((LTR390_THRESH_LOW) + (n))
+>   
+>   #define LTR390_PART_NUMBER_ID		0xb
+>   #define LTR390_ALS_UVS_GAIN_MASK	GENMASK(2, 0)
+> @@ -98,11 +107,40 @@ struct ltr390_data {
+>   	int int_time_us;
+>   };
+>   
+> +static const struct regmap_range ltr390_readable_reg_ranges[] = {
+> +	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
+> +	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_MAIN_STATUS),
+> +	regmap_reg_range(LTR390_ALS_DATA_BYTE(0), LTR390_ALS_DATA_BYTE(2)),
+> +	regmap_reg_range(LTR390_UVS_DATA_BYTE(0), LTR390_UVS_DATA_BYTE(2)),
+> +	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
+> +	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
+> +};
+> +
+> +static const struct regmap_access_table ltr390_readable_reg_table = {
+> +	.yes_ranges = ltr390_readable_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(ltr390_readable_reg_ranges),
+> +};
+> +
+> +static const struct regmap_range ltr390_writeable_reg_ranges[] = {
+> +	regmap_reg_range(LTR390_MAIN_CTRL, LTR390_MAIN_CTRL),
+> +	regmap_reg_range(LTR390_ALS_UVS_MEAS_RATE, LTR390_ALS_UVS_GAIN),
+> +	regmap_reg_range(LTR390_INT_CFG, LTR390_INT_PST),
+> +	regmap_reg_range(LTR390_THRESH_UP_BYTE(0), LTR390_THRESH_LOW_BYTE(2)),
+> +};
+> +
+> +static const struct regmap_access_table ltr390_writeable_reg_table = {
+> +	.yes_ranges = ltr390_writeable_reg_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(ltr390_writeable_reg_ranges),
+> +};
+> +
+>   static const struct regmap_config ltr390_regmap_config = {
+>   	.name = "ltr390",
+>   	.reg_bits = 8,
+>   	.reg_stride = 1,
+>   	.val_bits = 8,
+> +	.max_register = LTR390_THRESH_LOW_BYTE(2),
+> +	.rd_table = &ltr390_readable_reg_table,
+> +	.wr_table = &ltr390_writeable_reg_table,
+>   };
+>   
+>   /* Sampling frequency is in mili Hz and mili Seconds */
+> @@ -586,6 +624,20 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
 >   	}
+>   }
+>   
+> +static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
+> +						unsigned int reg, unsigned int writeval,
+> +						unsigned int *readval)
+> +{
+> +	struct ltr390_data *data = iio_priv(indio_dev);
 > +
-> +	/*
-> +	 * Anon folios must have an associated live anon_vma as long as they're
-> +	 * mapped into userspace.
-> +	 * Part of the purpose of the atomic_read() is to make KASAN check that
-> +	 * the anon_vma is still alive.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_DEBUG_VM) && PageAnonNotKsm(page)) {
-
-1) You probably don't need the CONFIG_DEBUG_VM check: the 
-VM_WARN_ON_FOLIO should make everything get optimized out ... right?
-
-2) We have a folio here, so ... better
-
-if (folio_test_anon(folio) && !folio_test_ksm(folio)) {
-	...
-}
-
-> +		unsigned long mapping = (unsigned long)folio->mapping;
-> +		struct anon_vma *anon_vma = (void *)(mapping - PAGE_MAPPING_ANON);
+> +	guard(mutex)(&data->lock);
 > +
-> +		VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
-> +	}
+> +	if (readval)
+> +		return regmap_read(data->regmap, reg, readval);
+> +
+> +	return regmap_write(data->regmap, reg, writeval);
+> +}
+> +
+>   static const struct iio_info ltr390_info = {
+>   	.read_raw = ltr390_read_raw,
+>   	.write_raw = ltr390_write_raw,
+> @@ -594,6 +646,7 @@ static const struct iio_info ltr390_info = {
+>   	.read_event_config = ltr390_read_event_config,
+>   	.write_event_value = ltr390_write_event_value,
+>   	.write_event_config = ltr390_write_event_config,
+> +	.debugfs_reg_access = ltr390_debugfs_reg_access,
+>   };
+>   
+>   static irqreturn_t ltr390_interrupt_handler(int irq, void *private)
 
-In general,
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+thanks,
+-- Shuah
 
