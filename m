@@ -1,416 +1,258 @@
-Return-Path: <linux-kernel+bounces-744752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B75B11083
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF40AB11085
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7934858125E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B96571CE845F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A8629ACC3;
-	Thu, 24 Jul 2025 17:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B292EBDC2;
+	Thu, 24 Jul 2025 17:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gL2z+VGC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/s3NRoj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBAC1B4F0A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECAA29ACC3;
+	Thu, 24 Jul 2025 17:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753379527; cv=none; b=ap8kapbh0Lmy4R1NQYe3yzm/wsQFZ5qSw7IXHjtELOLbVUlRyoDBNdu4J6Eizk8X3IvUraI9nDJMCP2rDOE9QebHMfJpaOxnu3HMCTyHoSPCCgErpu9A23wtDaQIAReLmdbm+ozcrkaIePhy3lZxGQijtnYkGTMlpA629fqTiaY=
+	t=1753379577; cv=none; b=dP053r46xHWsHkEqtYlnYVKzbts72rJTV9fZ4Y7iBq3VugFrkW+CthRQTHdiZ3J4sp92GMZJVJACSa26H8ojx5utj2Qhsx81M62RzNpyx6g6etf40UqU1giIFCyUGxgWSM+xLVVXuoMZCLpmyfPFCz6cZaRtpB9Xv3UX0l4GH/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753379527; c=relaxed/simple;
-	bh=xulrlVkaCbe/2275beVXMA45QHDKGB5Ae5qgWFg3wS0=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u+1xeYROZpx+rYBM+olUhxSkQk5QUiVcZLIE9HX/shC+0t5a4pe1yQytevC0iYI5krVYCvbNrpDXvPzR/v21UDglDoAQhJI4nDZilXiPzWRM90ydZuoHbt5CkRH/6rNnFBzXligtecP116fJjjvvON+2Dv/dLJU+FLiFOEAXqo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gL2z+VGC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753379522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TMUDtLM97rcWYkGVG6uRdOQot9w7lpbGWqyfJm/xbwk=;
-	b=gL2z+VGCP+2INSlYJOu3lLxdvee1888iZIzfjCLF6TO1QJWcJkpi7L4atL+0WNcF4FwsbI
-	5VVUhmv/DKw8cbg7ZObIkH6NHFwk9FBPVWlB3QmQo7JIhfP7/MF1MDbFa0QKA60EBEkohe
-	wY6qLER3sLjy++2I6ZklKKy66ifmT7k=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-YPNEsuhePlm9hZCFCfW1TQ-1; Thu, 24 Jul 2025 13:52:01 -0400
-X-MC-Unique: YPNEsuhePlm9hZCFCfW1TQ-1
-X-Mimecast-MFC-AGG-ID: YPNEsuhePlm9hZCFCfW1TQ_1753379521
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e623a209e0so197458885a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:52:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753379521; x=1753984321;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TMUDtLM97rcWYkGVG6uRdOQot9w7lpbGWqyfJm/xbwk=;
-        b=SGUIH8hA8KSZvARVpc1ivQz296rZocxFPupatAnHb4NlMwvt+XIuvytNuah/tb8ish
-         yYVwdv1bevy0YPg/RwXTTVa8FHrHOPiVGNPXqAYk7U/1sGvfr9w/QhFZoe3yZPHSYUfP
-         yHvDVSfJemgWu82SUnhBQ64GyJIIliRYUjBgCNNDLGDMFf6i0FcRqsmZqZH3ev3sx04c
-         hZgWLlEtlrd7MLpVZ6G7VMIuv8yA3Hg0mbXuT8AMvLqTr0/SwDg8w6yGM1bCTR3Xzch2
-         AvypGyBIy5cRxC1QuD93I24MmtIYcwm970sJUxrKztYM+hEuvsKnYU4aXmdV8l6TW/MZ
-         peKA==
-X-Gm-Message-State: AOJu0YygxK6ckqqpfw4YSDqt5HlzPoigyoso/P9AjeaMS2DiQFMfozMS
-	uOf8Y6O17peZXFa7xBaALjkdc1EC/XSz2X2QVvLdIAGFWbvaV5zbC9GXRRodHT6oNnb96zgLf5y
-	WCF0PK39cx0BZkQZpjVS29MTE+i6iE5fyb63CxcY4Hu8ymIZ9Y63FtPhyS9dfRduQog==
-X-Gm-Gg: ASbGncv0Pd8Wt47Vpsq9PH2i8Kdn/zfPqt2rNJtfrkBSIVs0FKy75m3qkijWd8E4NRK
-	3T6lHfN4O9nzAWO1ekTGqUL9y1ViSI4n0mheW5Z3J7QIWmPrgQqgNG+3R+9TbCoIjkpnRnCYeiJ
-	xbJsxnPUsLvK3+3mQIqHmb/7mrCxopUIBx3xseqHA45tARovmOk9CFllhIyEvrLoDwi9vNTxVTS
-	nEdDuVUbDS2l7iCeZ4U1NytRyJZVO2PBDnsMaAd2tbe7YnRJTWxpCMD6xjL7AVYgwmd60XDS7IP
-	6MrKMHVlqUx12HyvtF/TTA0qKGwDMyqk7orWFSNLUbGFq9A+e4BcpRalUKH15GmDomUE/ztzWIw
-	CB2X+WDNlvA==
-X-Received: by 2002:a05:620a:260e:b0:7e3:3288:8ec3 with SMTP id af79cd13be357-7e62a1d8f0bmr1280989085a.32.1753379520493;
-        Thu, 24 Jul 2025 10:52:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES5trMp/rMPFEzeFfVIg1nSSGzwsA9Bv0CIJM5M44RBZc8RPMjeN0kEexldMY6rGl08q3sjA==
-X-Received: by 2002:a05:620a:260e:b0:7e3:3288:8ec3 with SMTP id af79cd13be357-7e62a1d8f0bmr1280983985a.32.1753379519982;
-        Thu, 24 Jul 2025 10:51:59 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632e1a73dsm149328785a.58.2025.07.24.10.51.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 10:51:59 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
-Date: Thu, 24 Jul 2025 13:51:57 -0400
+	s=arc-20240116; t=1753379577; c=relaxed/simple;
+	bh=gxDP/x72vErdUhHDu7ZYb3KxsYEkC9jJpG8VMxaDJ/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOzcnKpzGKhqVypXx3T+/cQt1X0ScyGE3KbaEbSkmb9NU/iGlZe+5e4v8LT+fFNTMYsXrOlDcvD5qI9Nng9yHXKx3iQe3giTm/QdlIwbrCBJzh+N/Fm3CCcukznU7Y7DIr9Xw4Gt7c3sQgAmXQGf7MpbBfPA/87aK5wkKQPiIDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/s3NRoj; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753379574; x=1784915574;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gxDP/x72vErdUhHDu7ZYb3KxsYEkC9jJpG8VMxaDJ/0=;
+  b=K/s3NRojgbP8hqXyfqQwDzYWLuG/aQ0/DrPmbbQeJGXdqZXm5IdfRHEr
+   dX4qyuiEadd5LBfGSByOVJR59jxWs7QeiMxAZFJ6G8AoUOXhae+ExxFqF
+   eftG+jZA3pEqprFUeKWUwEfDR2Lf4AO5y3Me1jNwpgKimcTM3/y5P+fK9
+   Tg6nbo2mR1sMFhgmSYfcfxL4KqhDsxLt0KgczzlMrkgFnUJp6dVL4zP55
+   R7ODQW/LPmF8AWVSsQRiEGz4T6G2Rny3zW5268CNS027KBWPQVozyhNfy
+   u+lTX4PGtT2TLzvg2W6a4qk7NOR0NxCVZioOVmfiY3aODSrzL/oXia/hO
+   Q==;
+X-CSE-ConnectionGUID: zACTvptrT06WTR0atjdmhg==
+X-CSE-MsgGUID: KLg3zQ6eSbWK51WfuiMMBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59513949"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="59513949"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 10:52:54 -0700
+X-CSE-ConnectionGUID: v0GAKouXT6Wjl/qSpXusPg==
+X-CSE-MsgGUID: /mxl6SAJSDW+5F9O94puxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="184052772"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 24 Jul 2025 10:52:51 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uf07d-000Khb-01;
+	Thu, 24 Jul 2025 17:52:49 +0000
+Date: Fri, 25 Jul 2025 01:52:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ajay Neeli <ajay.neeli@amd.com>, git@amd.com, andi.shyti@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	michal.simek@amd.com, srinivas.goud@amd.com,
+	radhey.shyam.pandey@amd.com, Ajay Neeli <ajay.neeli@amd.com>
+Subject: Re: [PATCH v2] i2c: cadence: Add shutdown handler
+Message-ID: <202507250134.05RWuclB-lkp@intel.com>
+References: <20250724051243.22051-1-ajay.neeli@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
- often on thinkpad X220
-To: Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- peterz@infradead.org, will@kernel.org, miriam.rachel.korenblit@intel.com,
- linux-wireless@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
- John Ogness <jogness@linutronix.de>
-References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz> <aID6XPLXuGo+ViTm@duo.ucw.cz>
- <aIEC4t2EICdgomZV@duo.ucw.cz> <874iv2stk3.ffs@tglx> <87zfcurexx.ffs@tglx>
- <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
-Content-Language: en-US
-In-Reply-To: <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724051243.22051-1-ajay.neeli@amd.com>
 
-On 7/24/25 1:15 PM, Pavel Machek wrote:
-> Hi!
->
-> On Wed 2025-07-23 19:32:10, Thomas Gleixner wrote:
->> On Wed, Jul 23 2025 at 19:31, Thomas Gleixner wrote:
->>> On Wed, Jul 23 2025 at 17:42, Pavel Machek wrote:
->>>> Did kernel boot on console (w/o X), and got this: not sure if it is
->>>> related.
->>>> [  402.125635] ------------[ cut here ]------------
->>>> [  402.125638] raw_local_irq_restore() called with IRQs enabled
->>>> [  402.125645] WARNING: CPU: 3 PID: 387 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x25/0x30
->>>> [  402.125654] Modules linked in:
->>>> [  402.125661] CPU: 3 UID: 0 PID: 387 Comm: kworker/u16:5 Tainted: G S                  6.16.0-rc7+ #303 PREEMPT(voluntary)
->>>> [  402.125667] Tainted: [S]=CPU_OUT_OF_SPEC
->>>> [  402.125668] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 ) 10/12/2016
->>>> [  402.125671] Workqueue: events_unbound cfg80211_wiphy_work
->>>> [  402.125678] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
->>>> [  402.125683] Code: 90 90 90 90 90 80 3d 51 3d dc 00 00 74 05 c3 cc cc cc cc 55 48 c7 c7 c0 4f c9 85 48 89 e5 c6 05 38 3d dc 00 01 e8 9b d8 e6 fe <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
->>>> [  402.125686] RSP: 0018:ffffc9000173fb30 EFLAGS: 00010282
->>>> [  402.125691] RAX: 0000000000000000 RBX: ffffffff8616b460 RCX: 0000000000000000
->>>> [  402.125694] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 00000000ffffffff
->>>> [  402.125696] RBP: ffffc9000173fb30 R08: 0000000028935f32 R09: 0000000000000001
->>>> [  402.125699] R10: 0000000000000044 R11: ffff888100ba52c8 R12: 0000000000000001
->>>> [  402.125702] R13: ffffc9000173fbcb R14: ffffffff84301224 R15: 0000000000000000
->>>> [  402.125704] FS:  0000000000000000(0000) GS:ffff88829007f000(0000) knlGS:0000000000000000
->>>> [  402.125707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> [  402.125710] CR2: 000055967d471ee0 CR3: 0000000006046001 CR4: 00000000000606b0
->>>> [  402.125713] Call Trace:
->>>> [  402.125716]  <TASK>
->>>> [  402.125719]  console_flush_all+0x41e/0x460
->>> Can you please decode this, so we can see which part of that code it is?
->> And enable lockdep so that we can see where the interrupts were enabled?
-> Enabled lockdep and got this one. It seems resume with bad wifi signal
-> does it on 6.16...?
->
-> Is it any good? Any decoding needed?
->
-> ...
-> [   32.361445] CPU2 is up
-> [   32.361729] smpboot: Booting Node 0 Processor 3 APIC 0x3
-> [   32.361982] Disabled fast string operations
-> [   32.366800] CPU3 is up
-> [   32.370186] ACPI: PM: Waking up from system sleep state S3
-> [   32.393904] ACPI: EC: interrupt unblocked
-> [   32.396000] sdhci-pci 0000:0d:00.0: MMC controller base frequency changed to 50Mhz.
-> [   32.409738] ACPI: EC: event unblocked
-> [   32.470808] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
-> [   32.687300] usb 2-1.4: reset full-speed USB device number 4 using ehci-pci
-> [   32.758329] ata2: SATA link down (SStatus 0 SControl 300)
-> [   32.758375] ata3: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
-> [   32.762316] ata5: SATA link down (SStatus 0 SControl 300)
-> [   32.764585] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
-> [   32.764593] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
-> [   32.771931] sd 2:0:0:0: [sdb] Starting disk
-> [   32.777439] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
-> [   32.777450] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
-> [   32.782731] ata3.00: configured for UDMA/133
-> [   32.786846] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
-> [   32.858513] usb 2-1.3: reset full-speed USB device number 3 using ehci-pci
-> [   33.026331] usb 2-1.6: reset high-speed USB device number 5 using ehci-pci
-> [   33.662583] psmouse serio1: synaptics: queried max coordinates: x [..5472], y [..4448]
-> [   33.810033] PM: resume devices took 1.404 seconds
-> [   33.841597] OOM killer enabled.
-> [   33.841808] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: docking
-> [   33.843280] Restarting tasks: Starting
-> [   33.849066] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: Unable to dock!
-> [   33.852744] Restarting tasks: Done
-> [   33.888306] PM: suspend exit
-> [   33.941831] Bluetooth: hci0: BCM: chip id 63
-> [   33.944910] Bluetooth: hci0: BCM: features 0x07
-> [   33.961985] Bluetooth: hci0: BCM20702A
-> [   33.962628] Bluetooth: hci0: BCM20702A1 (001.002.014) build 0000
-> [   33.970094] Bluetooth: hci0: BCM: firmware Patch file not found, tried:
-> [   33.970993] Bluetooth: hci0: BCM: 'brcm/BCM20702A1-0a5c-21e6.hcd'
-> [   33.971410] Bluetooth: hci0: BCM: 'brcm/BCM-0a5c-21e6.hcd'
-> [   34.032198] Bluetooth: MGMT ver 1.23
-> [   34.838285] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-> [   35.166235] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
-> [   35.167828] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
-> [   35.206578] sd 0:0:0:0: [sda] Starting disk
-> [   35.238578] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE LOCK) filtered out
-> [   35.240197] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) filtered out
-> [   35.278928] ata1.00: configured for UDMA/133
-> [   35.613471] e1000e 0000:00:19.0 enp0s25: NIC Link is Down
-> [   54.283825] wlp3s0: authenticate with c8:3a:35:f0:ad:f1 (local address=a0:88:b4:62:a7:30)
->
-> [   54.284095] ================================
-> [   54.284097] WARNING: inconsistent lock state
-> [   54.284100] 6.16.0-rc7+ #305 Tainted: G S
-> [   54.284104] --------------------------------
-> [   54.284105] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
-> [   54.284108] wpa_supplicant/2940 [HC0[0]:SC0[0]:HE0:SE1] takes:
-> [   54.284114] ffffffff86263fe0 (console_owner){+.?.}-{0:0}, at: console_lock_spinning_enable+0x3d/0x60
+Hi Ajay,
 
-The lockdep warning just means that console_owner_lock is acquired both 
-in softirq context and in task context with interrupt enabled. That can 
-leads to deadlock. So the remedy is to always take console_owner_lock 
-with interrupt disabled, i.e. with 
-raw_spin_lock_irqsave/raw_spin_lock_irqrestore.
+kernel test robot noticed the following build errors:
 
-Cheers,
-Longman
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on soc/for-next linus/master v6.16-rc7 next-20250724]
+[cannot apply to xilinx-xlnx/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> [   54.284133] {IN-SOFTIRQ-W} state was registered at:
-> [   54.284135]   lock_acquire+0xdc/0x300
-> [   54.284144]   console_lock_spinning_enable+0x59/0x60
-> [   54.284148]   console_flush_all+0x2c0/0x4d0
-> [   54.284153]   console_unlock+0x55/0x100
-> [   54.284157]   vprintk_emit+0x15b/0x3a0
-> [   54.284162]   vprintk_default+0x18/0x20
-> [   54.284166]   vprintk+0x9/0x10
-> [   54.284171]   _printk+0x52/0x70
-> [   54.284177]   _credit_init_bits.part.0+0xec/0x160
-> [   54.284187]   entropy_timer+0xaa/0xc0
-> [   54.284194]   call_timer_fn+0xa7/0x260
-> [   54.284200]   expire_timers+0xef/0x1b0
-> [   54.284205]   run_timer_base+0xb0/0x140
-> [   54.284210]   run_timer_softirq+0xb/0x40
-> [   54.284215]   handle_softirqs+0xcd/0x490
-> [   54.284222]   irq_exit_rcu+0xa2/0x160
-> [   54.284227]   sysvec_apic_timer_interrupt+0x9b/0xc0
-> [   54.284236]   asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> [   54.284242]   cpuidle_enter_state+0x124/0x550
-> [   54.284247]   cpuidle_enter+0x29/0x40
-> [   54.284253]   do_idle+0x1d9/0x260
-> [   54.284262]   cpu_startup_entry+0x27/0x30
-> [   54.284270]   start_secondary+0x11e/0x140
-> [   54.284277]   common_startup_64+0x129/0x138
-> [   54.284285] irq event stamp: 35912
-> [   54.284287] hardirqs last  enabled at (35911): [<ffffffff8432d3a1>] __down_trylock_console_sem+0xb1/0xc0
-> [   54.284296] hardirqs last disabled at (35912): [<ffffffff84330651>] console_flush_all+0x3e1/0x4d0
-> [   54.284302] softirqs last  enabled at (35906): [<ffffffff85608c7e>] ieee80211_check_fast_xmit+0xce/0x820
-> [   54.284312] softirqs last disabled at (35904): [<ffffffff85608c2c>] ieee80211_check_fast_xmit+0x7c/0x820
-> [   54.284319]
->                 other info that might help us debug this:
-> [   54.284321]  Possible unsafe locking scenario:
->
-> [   54.284322]        CPU0
-> [   54.284323]        ----
-> [   54.284324]   lock(console_owner);
-> [   54.284328]   <Interrupt>
-> [   54.284329]     lock(console_owner);
-> [   54.284332]
->                  *** DEADLOCK ***
->
-> [   54.284333] 8 locks held by wpa_supplicant/2940:
-> [   54.284336]  #0: ffffffff8646f9b0 (cb_lock){++++}-{4:4}, at: genl_rcv+0x15/0x40
-> [   54.284351]  #1: ffff888103068768 (&rdev->wiphy.mtx){+.+.}-{4:4}, at: nl80211_pre_doit+0xc2/0x250
-> [   54.284367]  #2: ffffffff86344200 (console_lock){+.+.}-{0:0}, at: vprintk_default+0x18/0x20
-> [   54.284376]  #3: ffffffff86344250 (console_srcu){....}-{0:0}, at: console_flush_all+0x43/0x4d0
-> [   54.284386]  #4: ffffffff86263fe0 (console_owner){+.?.}-{0:0}, at: console_lock_spinning_enable+0x3d/0x60
-> [   54.284395]  #5: ffffffff86263f60 (printk_legacy_map-wait-type-override){+...}-{4:4}, at: console_flush_all+0x2d2/0x4d0
-> [   54.284404]  #6: ffffffff863ed2f8 (printing_lock){+...}-{3:3}, at: vt_console_print+0x55/0x470
-> [   54.284415]  #7: ffffffff86346ac0 (rcu_read_lock){....}-{1:3}, at: __flush_work+0x5e/0x550
-> [   54.284428]
->                 stack backtrace:
-> [   54.284433] CPU: 3 UID: 0 PID: 2940 Comm: wpa_supplicant Tainted: G S                  6.16.0-rc7+ #305 PREEMPT(voluntary)
-> [   54.284441] Tainted: [S]=CPU_OUT_OF_SPEC
-> [   54.284443] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 ) 10/12/2016
-> [   54.284446] Call Trace:
-> [   54.284448]  <TASK>
-> [   54.284450]  dump_stack_lvl+0x88/0xd0
-> [   54.284458]  dump_stack+0x10/0x20
-> [   54.284463]  print_usage_bug.part.0+0x237/0x2d0
-> [   54.284470]  mark_lock.part.0+0xa9c/0xfb0
-> [   54.284479]  mark_held_locks+0x4d/0x80
-> [   54.284486]  lockdep_hardirqs_on_prepare+0xff/0x1c0
-> [   54.284493]  trace_hardirqs_on+0x5a/0xe0
-> [   54.284500]  _raw_spin_unlock_irq+0x23/0x60
-> [   54.284505]  __flush_work+0x3b4/0x550
-> [   54.284513]  ? __timer_delete+0x2f/0xd0
-> [   54.284519]  ? timer_delete+0xb/0x20
-> [   54.284524]  ? try_to_grab_pending+0x12a/0x320
-> [   54.284534]  cancel_delayed_work_sync+0x65/0x70
-> [   54.284539]  fbcon_cursor+0xbe/0x160
-> [   54.284548]  hide_cursor+0x2c/0xc0
-> [   54.284553]  vt_console_print+0x45e/0x470
-> [   54.284560]  console_flush_all+0x301/0x4d0
-> [   54.284565]  ? console_flush_all+0x2d2/0x4d0
-> [   54.284569]  ? console_flush_all+0x43/0x4d0
-> [   54.284572]  ? console_flush_all+0x2d2/0x4d0
-> [   54.284579]  console_unlock+0x55/0x100
-> [   54.284584]  vprintk_emit+0x15b/0x3a0
-> [   54.284590]  vprintk_default+0x18/0x20
-> [   54.284595]  vprintk+0x9/0x10
-> [   54.284600]  _printk+0x52/0x70
-> [   54.284608]  ieee80211_mgd_auth+0x2a3/0x5e0
-> [   54.284619]  ? __this_cpu_preempt_check+0x13/0x20
-> [   54.284625]  ieee80211_auth+0x13/0x20
-> [   54.284631]  cfg80211_mlme_auth+0xeb/0x2a0
-> [   54.284640]  nl80211_authenticate+0x341/0x3a0
-> [   54.284653]  genl_family_rcv_msg_doit.constprop.0+0xd4/0x130
-> [   54.284663]  genl_rcv_msg+0x14c/0x250
-> [   54.284669]  ? __pfx_nl80211_pre_doit+0x10/0x10
-> [   54.284676]  ? __pfx_nl80211_authenticate+0x10/0x10
-> [   54.284684]  ? __pfx_nl80211_post_doit+0x10/0x10
-> [   54.284691]  ? __pfx_genl_rcv_msg+0x10/0x10
-> [   54.284697]  netlink_rcv_skb+0x55/0x100
-> [   54.284706]  genl_rcv+0x24/0x40
-> [   54.284712]  netlink_unicast+0x1e8/0x2b0
-> [   54.284718]  netlink_sendmsg+0x1e3/0x400
-> [   54.284726]  ____sys_sendmsg+0x2a0/0x2f0
-> [   54.284736]  ? copy_msghdr_from_user+0x71/0xb0
-> [   54.284744]  ___sys_sendmsg+0x85/0xd0
-> [   54.284751]  ? find_held_lock+0x31/0x90
-> [   54.284756]  ? __might_fault+0x2c/0x70
-> [   54.284762]  ? __this_cpu_preempt_check+0x13/0x20
-> [   54.284766]  ? __might_fault+0x2c/0x70
-> [   54.284771]  ? __might_fault+0x2c/0x70
-> [   54.284776]  ? debug_smp_processor_id+0x17/0x20
-> [   54.284781]  __sys_sendmsg+0x6e/0xd0
-> [   54.284788]  ? do_syscall_64+0x39/0x2c0
-> [   54.284795]  __x64_sys_sendmsg+0x1a/0x20
-> [   54.284801]  x64_sys_call+0x929/0x2150
-> [   54.284808]  do_syscall_64+0x71/0x2c0
-> [   54.284814]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [   54.284819] RIP: 0033:0x7f79e0d28fb3
-> [   54.284825] Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 90 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 55 c3 0f 1f 40 00 48 83 ec 28 89 54 24 1c 48
-> [   54.284831] RSP: 002b:00007ffc79c940b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> [   54.284837] RAX: ffffffffffffffda RBX: 000055b73b414650 RCX: 00007f79e0d28fb3
-> [   54.284840] RDX: 0000000000000000 RSI: 00007ffc79c940f0 RDI: 0000000000000006
-> [   54.284843] RBP: 000055b73b44dc70 R08: 0000000000000004 R09: 00007f79e0dfabe0
-> [   54.284846] R10: 00007ffc79c941c4 R11: 0000000000000246 R12: 000055b73b414560
-> [   54.284849] R13: 00007ffc79c940f0 R14: 00007ffc79c941c4 R15: 000055b73b453f20
-> [   54.284856]  </TASK>
-> [   54.285774] ------------[ cut here ]------------
-> [   54.285777] raw_local_irq_restore() called with IRQs enabled
-> [   54.285788] WARNING: CPU: 3 PID: 2940 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x25/0x30
-> [   54.285801] Modules linked in:
-> [   54.285807] CPU: 3 UID: 0 PID: 2940 Comm: wpa_supplicant Tainted: G S                  6.16.0-rc7+ #305 PREEMPT(voluntary)
-> [   54.285814] Tainted: [S]=CPU_OUT_OF_SPEC
-> [   54.285817] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 ) 10/12/2016
-> [   54.285820] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
-> [   54.285828] Code: 90 90 90 90 90 80 3d c2 5f e3 00 00 74 05 c3 cc cc cc cc 55 48 c7 c7 98 2f fa 85 c6 05 ac 5f e3 00 01 48 89 e5 e8 db 23 be fe <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-> [   54.285834] RSP: 0018:ffffc90001acb690 EFLAGS: 00010282
-> [   54.285839] RAX: 0000000000000000 RBX: ffffffff863ed460 RCX: 0000000000000000
-> [   54.285843] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 00000000ffffffff
-> [   54.285847] RBP: ffffc90001acb690 R08: 0000000000000000 R09: 0000000000000000
-> [   54.285850] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-> [   54.285853] R13: ffffc90001acb72b R14: 0000000000000200 R15: 0000000000000000
-> [   54.285857] FS:  00007f79e08da1c0(0000) GS:ffff88828fcf5000(0000) knlGS:0000000000000000
-> [   54.285862] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   54.285865] CR2: 000055b73b455000 CR3: 000000010b07e005 CR4: 00000000000606b0
-> [   54.285869] Call Trace:
-> [   54.285872]  <TASK>
-> [   54.285874]  console_flush_all+0x47d/0x4d0
-> [   54.285880]  ? console_flush_all+0x43/0x4d0
-> [   54.285885]  ? console_flush_all+0x2d2/0x4d0
-> [   54.285892]  console_unlock+0x55/0x100
-> [   54.285898]  vprintk_emit+0x15b/0x3a0
-> [   54.285904]  vprintk_default+0x18/0x20
-> [   54.285910]  vprintk+0x9/0x10
-> [   54.285915]  _printk+0x52/0x70
-> [   54.285924]  ieee80211_mgd_auth+0x2a3/0x5e0
-> [   54.285934]  ? __this_cpu_preempt_check+0x13/0x20
-> [   54.285940]  ieee80211_auth+0x13/0x20
-> [   54.285945]  cfg80211_mlme_auth+0xeb/0x2a0
-> [   54.285954]  nl80211_authenticate+0x341/0x3a0
-> [   54.285967]  genl_family_rcv_msg_doit.constprop.0+0xd4/0x130
-> [   54.285977]  genl_rcv_msg+0x14c/0x250
-> [   54.285984]  ? __pfx_nl80211_pre_doit+0x10/0x10
-> [   54.285991]  ? __pfx_nl80211_authenticate+0x10/0x10
-> [   54.286000]  ? __pfx_nl80211_post_doit+0x10/0x10
-> [   54.286007]  ? __pfx_genl_rcv_msg+0x10/0x10
-> [   54.286014]  netlink_rcv_skb+0x55/0x100
-> [   54.286023]  genl_rcv+0x24/0x40
-> [   54.286029]  netlink_unicast+0x1e8/0x2b0
-> [   54.286036]  netlink_sendmsg+0x1e3/0x400
-> [   54.286044]  ____sys_sendmsg+0x2a0/0x2f0
-> [   54.286052]  ? copy_msghdr_from_user+0x71/0xb0
-> [   54.286061]  ___sys_sendmsg+0x85/0xd0
-> [   54.286068]  ? find_held_lock+0x31/0x90
-> [   54.286073]  ? __might_fault+0x2c/0x70
-> [   54.286078]  ? __this_cpu_preempt_check+0x13/0x20
-> [   54.286083]  ? __might_fault+0x2c/0x70
-> [   54.286088]  ? __might_fault+0x2c/0x70
-> [   54.286094]  ? debug_smp_processor_id+0x17/0x20
-> [   54.286100]  __sys_sendmsg+0x6e/0xd0
-> [   54.286108]  ? do_syscall_64+0x39/0x2c0
-> [   54.286114]  __x64_sys_sendmsg+0x1a/0x20
-> [   54.286168]  x64_sys_call+0x929/0x2150
-> [   54.286182]  do_syscall_64+0x71/0x2c0
-> [   54.286193]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [   54.286200] RIP: 0033:0x7f79e0d28fb3
-> [   54.286207] Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 90 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 55 c3 0f 1f 40 00 48 83 ec 28 89 54 24 1c 48
-> [   54.286215] RSP: 002b:00007ffc79c940b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> [   54.286225] RAX: ffffffffffffffda RBX: 000055b73b414650 RCX: 00007f79e0d28fb3
-> [   54.286230] RDX: 0000000000000000 RSI: 00007ffc79c940f0 RDI: 0000000000000006
-> [   54.286235] RBP: 000055b73b44dc70 R08: 0000000000000004 R09: 00007f79e0dfabe0
-> [   54.286246] R10: 00007ffc79c941c4 R11: 0000000000000246 R12: 000055b73b414560
-> [   54.286247] R13: 00007ffc79c940f0 R14: 00007ffc79c941c4 R15: 000055b73b453f20
-> [   54.286266]  </TASK>
-> [   54.286269] irq event stamp: 35912
-> [   54.286273] hardirqs last  enabled at (35911): [<ffffffff8432d3a1>] __down_trylock_console_sem+0xb1/0xc0
-> [   54.286286] hardirqs last disabled at (35912): [<ffffffff84330651>] console_flush_all+0x3e1/0x4d0
-> [   54.286294] softirqs last  enabled at (35906): [<ffffffff85608c7e>] ieee80211_check_fast_xmit+0xce/0x820
-> [   54.286306] softirqs last disabled at (35904): [<ffffffff85608c2c>] ieee80211_check_fast_xmit+0x7c/0x820
-> [   54.286318] ---[ end trace 0000000000000000 ]---
-> [   54.373428] wlp3s0: send auth to c8:3a:35:f0:ad:f1 (try 1/3)
-> [   54.381882] wlp3s0: authenticated
-> [   54.386240] wlp3s0: associate with c8:3a:35:f0:ad:f1 (try 1/3)
-> [   54.392641] wlp3s0: RX AssocResp from c8:3a:35:f0:ad:f1 (capab=0x411 status=0 aid=6)
-> [   54.413392] wlp3s0: associated
->
-> Best regards,
-> 											Pavel
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Ajay-Neeli/i2c-cadence-Add-shutdown-handler/20250724-131658
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250724051243.22051-1-ajay.neeli%40amd.com
+patch subject: [PATCH v2] i2c: cadence: Add shutdown handler
+config: x86_64-buildonly-randconfig-002-20250724 (https://download.01.org/0day-ci/archive/20250725/202507250134.05RWuclB-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250725/202507250134.05RWuclB-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507250134.05RWuclB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-cadence.c:1608:53: error: use of undeclared identifier 'irq'
+    1608 |                  id->i2c_clk / 1000, (unsigned long)r_mem->start, irq);
+         |                                                                   ^
+   1 error generated.
+
+
+vim +/irq +1608 drivers/i2c/busses/i2c-cadence.c
+
+ba064873ce5d19 Lars-Peter Clausen   2023-03-17  1485  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1486  /**
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1487   * cdns_i2c_probe - Platform registration call
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1488   * @pdev:	Handle to the platform device structure
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1489   *
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1490   * This function does all the memory allocation and registration for the i2c
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1491   * device. User can modify the address mode to 10 bit address mode using the
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1492   * ioctl call with option I2C_TENBIT.
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1493   *
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1494   * Return: 0 on success, negative error otherwise
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1495   */
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1496  static int cdns_i2c_probe(struct platform_device *pdev)
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1497  {
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1498  	struct resource *r_mem;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1499  	struct cdns_i2c *id;
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1500  	int ret;
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1501  	const struct of_device_id *match;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1502  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1503  	id = devm_kzalloc(&pdev->dev, sizeof(*id), GFP_KERNEL);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1504  	if (!id)
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1505  		return -ENOMEM;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1506  
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1507  	id->dev = &pdev->dev;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1508  	platform_set_drvdata(pdev, id);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1509  
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1510  	match = of_match_node(cdns_i2c_of_match, pdev->dev.of_node);
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1511  	if (match && match->data) {
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1512  		const struct cdns_platform_data *data = match->data;
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1513  		id->quirks = data->quirks;
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1514  	}
+63cab195bf4986 Anurag Kumar Vulisha 2015-07-10  1515  
+58b924241d0a23 Shubhrajyoti Datta   2022-07-28  1516  	id->rinfo.pinctrl = devm_pinctrl_get(&pdev->dev);
+58b924241d0a23 Shubhrajyoti Datta   2022-07-28  1517  	if (IS_ERR(id->rinfo.pinctrl)) {
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1518  		int err = PTR_ERR(id->rinfo.pinctrl);
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1519  
+58b924241d0a23 Shubhrajyoti Datta   2022-07-28  1520  		dev_info(&pdev->dev, "can't get pinctrl, bus recovery not supported\n");
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1521  		if (err != -ENODEV)
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1522  			return err;
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1523  	} else {
+8bfd4ec726945c Carsten Haitzler     2022-11-28  1524  		id->adap.bus_recovery_info = &id->rinfo;
+58b924241d0a23 Shubhrajyoti Datta   2022-07-28  1525  	}
+58b924241d0a23 Shubhrajyoti Datta   2022-07-28  1526  
+c02fb2b8067a4b Dejin Zheng          2020-04-14  1527  	id->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &r_mem);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1528  	if (IS_ERR(id->membase))
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1529  		return PTR_ERR(id->membase);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1530  
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1531  	id->irq = platform_get_irq(pdev, 0);
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1532  	if (id->irq < 0)
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1533  		return id->irq;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1534  
+a1f64317bbf5fe Masahiro Yamada      2015-07-21  1535  	id->adap.owner = THIS_MODULE;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1536  	id->adap.dev.of_node = pdev->dev.of_node;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1537  	id->adap.algo = &cdns_i2c_algo;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1538  	id->adap.timeout = CDNS_I2C_TIMEOUT;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1539  	id->adap.retries = 3;		/* Default retry value. */
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1540  	id->adap.algo_data = id;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1541  	id->adap.dev.parent = &pdev->dev;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1542  	init_completion(&id->xfer_done);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1543  	snprintf(id->adap.name, sizeof(id->adap.name),
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1544  		 "Cadence I2C at %08lx", (unsigned long)r_mem->start);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1545  
+3d36dd1161ca31 Michal Simek         2025-02-06  1546  	id->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+2d1a83a4f36f1a Krzysztof Kozlowski  2020-09-02  1547  	if (IS_ERR(id->clk))
+2d1a83a4f36f1a Krzysztof Kozlowski  2020-09-02  1548  		return dev_err_probe(&pdev->dev, PTR_ERR(id->clk),
+2d1a83a4f36f1a Krzysztof Kozlowski  2020-09-02  1549  				     "input clock not found.\n");
+2d1a83a4f36f1a Krzysztof Kozlowski  2020-09-02  1550  
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1551  	id->reset = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1552  	if (IS_ERR(id->reset))
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1553  		return dev_err_probe(&pdev->dev, PTR_ERR(id->reset),
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1554  				     "Failed to request reset.\n");
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1555  
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1556  	ret = reset_control_deassert(id->reset);
+3d36dd1161ca31 Michal Simek         2025-02-06  1557  	if (ret)
+3d36dd1161ca31 Michal Simek         2025-02-06  1558  		return dev_err_probe(&pdev->dev, ret,
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1559  				     "Failed to de-assert reset.\n");
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1560  
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1561  	pm_runtime_set_autosuspend_delay(id->dev, CNDS_I2C_PM_TIMEOUT);
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1562  	pm_runtime_use_autosuspend(id->dev);
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1563  	pm_runtime_set_active(id->dev);
+db3fad841d9bf5 Topi Kuutela         2019-12-09  1564  	pm_runtime_enable(id->dev);
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1565  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1566  	id->clk_rate_change_nb.notifier_call = cdns_i2c_clk_notifier_cb;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1567  	if (clk_notifier_register(id->clk, &id->clk_rate_change_nb))
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1568  		dev_warn(&pdev->dev, "Unable to register clock notifier.\n");
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1569  	id->input_clk = clk_get_rate(id->clk);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1570  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1571  	ret = of_property_read_u32(pdev->dev.of_node, "clock-frequency",
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1572  			&id->i2c_clk);
+90224e6468e15d Andy Shevchenko      2020-03-24  1573  	if (ret || (id->i2c_clk > I2C_MAX_FAST_MODE_FREQ))
+90224e6468e15d Andy Shevchenko      2020-03-24  1574  		id->i2c_clk = I2C_MAX_STANDARD_MODE_FREQ;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1575  
+1a351b10b9671f Radu Pirea           2020-01-06  1576  #if IS_ENABLED(CONFIG_I2C_SLAVE)
+1a351b10b9671f Radu Pirea           2020-01-06  1577  	/* Set initial mode to master */
+1a351b10b9671f Radu Pirea           2020-01-06  1578  	id->dev_mode = CDNS_I2C_MODE_MASTER;
+1a351b10b9671f Radu Pirea           2020-01-06  1579  	id->slave_state = CDNS_I2C_SLAVE_STATE_IDLE;
+1a351b10b9671f Radu Pirea           2020-01-06  1580  #endif
+8b51a8e64443b9 Shubhrajyoti Datta   2021-07-13  1581  	id->ctrl_reg = CDNS_I2C_CR_ACK_EN | CDNS_I2C_CR_NEA | CDNS_I2C_CR_MS;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1582  
+a069fcd9fa1822 Lars-Peter Clausen   2023-03-17  1583  	id->fifo_depth = CDNS_I2C_FIFO_DEPTH_DEFAULT;
+a069fcd9fa1822 Lars-Peter Clausen   2023-03-17  1584  	of_property_read_u32(pdev->dev.of_node, "fifo-depth", &id->fifo_depth);
+a069fcd9fa1822 Lars-Peter Clausen   2023-03-17  1585  
+ba064873ce5d19 Lars-Peter Clausen   2023-03-17  1586  	cdns_i2c_detect_transfer_size(id);
+ba064873ce5d19 Lars-Peter Clausen   2023-03-17  1587  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1588  	ret = cdns_i2c_setclk(id->input_clk, id);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1589  	if (ret) {
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1590  		dev_err(&pdev->dev, "invalid SCL clock: %u Hz\n", id->i2c_clk);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1591  		ret = -EINVAL;
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1592  		goto err_clk_notifier_unregister;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1593  	}
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1594  
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1595  	ret = devm_request_irq(&pdev->dev, id->irq, cdns_i2c_isr, 0,
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1596  				 DRIVER_NAME, id);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1597  	if (ret) {
+a11a46d7bd0877 Ajay Neeli           2025-07-24  1598  		dev_err(&pdev->dev, "cannot get irq %d\n", id->irq);
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1599  		goto err_clk_notifier_unregister;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1600  	}
+8b51a8e64443b9 Shubhrajyoti Datta   2021-07-13  1601  	cdns_i2c_init(id);
+681d15a0f527af Vishnu Motghare      2014-12-03  1602  
+0e1929dedea367 Mike Looijmans       2017-01-16  1603  	ret = i2c_add_adapter(&id->adap);
+0e1929dedea367 Mike Looijmans       2017-01-16  1604  	if (ret < 0)
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1605  		goto err_clk_notifier_unregister;
+0e1929dedea367 Mike Looijmans       2017-01-16  1606  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1607  	dev_info(&pdev->dev, "%u kHz mmio %08lx irq %d\n",
+2264997254ca11 Lars-Peter Clausen   2023-01-07 @1608  		 id->i2c_clk / 1000, (unsigned long)r_mem->start, irq);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1609  
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1610  	return 0;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1611  
+0cbc9a2c62d267 Lars-Peter Clausen   2023-04-06  1612  err_clk_notifier_unregister:
+3501f0c6630635 Satish Nagireddy     2022-06-28  1613  	clk_notifier_unregister(id->clk, &id->clk_rate_change_nb);
+7fa32329ca0314 Shubhrajyoti Datta   2015-11-24  1614  	pm_runtime_disable(&pdev->dev);
+db3fad841d9bf5 Topi Kuutela         2019-12-09  1615  	pm_runtime_set_suspended(&pdev->dev);
+61b804548e1744 Manikanta Guntupalli 2025-02-06  1616  	reset_control_assert(id->reset);
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1617  	return ret;
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1618  }
+df8eb5691c48d3 Soren Brinkmann      2014-04-04  1619  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
