@@ -1,147 +1,126 @@
-Return-Path: <linux-kernel+bounces-744170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F6EB108F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:18:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34797B108FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC0016E2B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0793E16C746
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D62701A3;
-	Thu, 24 Jul 2025 11:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41F0270EBC;
+	Thu, 24 Jul 2025 11:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eGOYrX0S"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CStr8z/r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B1326E714
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC7233991;
+	Thu, 24 Jul 2025 11:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355904; cv=none; b=Jj3LocYrvLnkoC+EN0VYE4oGt+t8cpYOgENuPOmzJYIcT3VUzrnL4STR+sKn9K3yXFnz3KKGk1iL6MbyalcIBYEunbg0KkHE7MTL5nrHkmPfLUCpy+hmuQS3gUS1K4DkvZuzHKNml9ljXTEgi+sIrvHJo2pO5V3aGVnvCUmldZg=
+	t=1753355972; cv=none; b=TptZZscQpBCwBl2dUi/xbub5dkWilli4VvepwWfPRnfMY52CK3Ez/58JhHAbw+mfO4QRrhCHPLKIY5iEovZMAbBZv6g4oYoscZ19kzZEn0VEPECTDnOJbs0/ea+Ey2+EnQRxBmO9QpJPHudjIPQyuquTAJJ/Lzt8/MK+6dlrUD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355904; c=relaxed/simple;
-	bh=iShq7H6hmF7TANSa+lwj9jP6cRrdLcQpkywH5qX5oJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/acJs6v5h6KW4Er8GKaMiVKTiHhQe8LY4xcyo+C6riSeXkkt23He9RnwVV2G8bETV0xcfwlFnVxe/hEJaReAg7qHxwRwg+HOSBxkNDFBgrgV2pGvDeaQ+aA8PQ1Z2I55BwZjLj00gsQ4aHCMgY/O4i6mPoZyqrJpYNS3UEsm/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eGOYrX0S; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e1f3b95449so197791685a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753355901; x=1753960701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2R3FJuPQerw9JV0YLYkAB1Zc/65ATLuHrz68/27P6I=;
-        b=eGOYrX0SRK4DU6KnUV82Us0v99d67lprYkRILD91CrbaSBSiU7/o8A1KUyhdS/Bqmo
-         CRFLvhU2FMNHemhJ0tkobpZ4WQRwehP8pyP1hLv5hrs4WCncUhx+vGnF69b/jfJ1UnW6
-         BLnw8vQB51fQ7v6yoOAygM1+y8H5bcQtvDrBIk20zY+qi0nNXDITgfR2H+hlz3QFy77D
-         BbC3b/9nKddIwTtT4mM8LfzvSseCEcTgm3LGH/I9x1nIPm67MhTG0gm/9fxfK7HCdCoo
-         pl7BmBbNxOAiK05vfaPsiNZpOQRKcSd05cWDSgBNTdelaTD41l8Bj9NcMLLny/wzmXPv
-         bcoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355901; x=1753960701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2R3FJuPQerw9JV0YLYkAB1Zc/65ATLuHrz68/27P6I=;
-        b=qw96t4PvTNodnHGqRAqmztVjM2Be8RCTEV68oI2Pq79G/uacoLGSKa3CDZE5P6Da5w
-         uTzabIicbp7gwDe03vmw89//e6YzLAsqFlxlh+aE+WAeOTHfGc8KnMEywjskPCsPuYUV
-         aEozdaRdbFYnE+jHAqOuSTN4czgqtccIVG2mlqh76vN63BccWsVnxQjVt63stT9EO2IH
-         I8MdXH7/yBVUDVNTPhuf5LiNA4BhpCpB7TVDs0S68Od0uklwseQrJi842KaX4e9hv9hV
-         bYDhbxF5RHfUYVRYTBFTAEYsnxWZe1tthjLfzM3ZXphSgYeV/kJom28WDyYHyWV+0DJW
-         gfug==
-X-Forwarded-Encrypted: i=1; AJvYcCXxtTs0AcA2DutMmYQt0v+pMttvlQdKQFX/8OgOo2DpARVo5QfGpe08F/LLrW9qZqDgfEemY6AIc9JxsNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkMpgvubeIBbT9R5LGVnyePTFaVIrUJhZtujZCUkktBJWLHkmp
-	WgpLPXHfefEHmx/7C2mB8Wbf81XVEPA+CscPNE/6iiPNDU5xZYMN0QuqXRRHKgLiafsEznAvds9
-	vk0Ck2lqKFYeNwJHi0IaFyM5EBiAz5IlGIecopc8v
-X-Gm-Gg: ASbGncsd+MV4qJN+3BLOlCDCkJgZ4CKffNftNgwxUuaGGJ9ByYSGd5fw0fhK0EW4/yx
-	1SdxxCe4Hp0fWbQrHEMmrxnT8tsN5ki0q4bCZr27lF8F5mVEH0xnstdeC5m8ggqQ5WnheFAFuQR
-	lXeuxcD+Yrjn3rTPJUsBA5Yl/1MKkDpjweQUla37sNBYZ5Qu+mzwXQgOUqDKjJnFlazX/3fsaqV
-	2Z1EFE0t8DR//O7wRuY4bwMz9dX
-X-Google-Smtp-Source: AGHT+IH/FYbXs3VLoIsIYfS1+jo6yd2h8a90b8HNG6mG2vtEIffIUveiMlLYpjWCV4lqRTwOVJa1szrBkBWENt6UwkA=
-X-Received: by 2002:a05:620a:1a85:b0:7e1:aeab:41b6 with SMTP id
- af79cd13be357-7e633e3458bmr168524785a.18.1753355901021; Thu, 24 Jul 2025
- 04:18:21 -0700 (PDT)
+	s=arc-20240116; t=1753355972; c=relaxed/simple;
+	bh=s3ZnbItH7r6cLHTy+VwbS1Kg3RPe/mzeNlY5FzZW73M=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=nEbwErCeU0G0eVnF4UVDc8NSdPeFApcvjY20QO00/vlSVIU/JVq4n9juF+a89mPStWKnwO+m/B4gWo80JXf0qLmhoZr8hP4fkEzV9c6vqGV1mOeYPGOeDQppKqxk9bsIQJLtngFvtyibpftnYyn/f60Kcc5BQQZoveQHqV3068U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CStr8z/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BD5C4CEEF;
+	Thu, 24 Jul 2025 11:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753355971;
+	bh=s3ZnbItH7r6cLHTy+VwbS1Kg3RPe/mzeNlY5FzZW73M=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=CStr8z/rOsij9S3z3BJm9fHa9iakjiAXVR9PdOK5taBZURJfAPAAkHbj0KuQviY7p
+	 KiL6Uvucdwz8LxwOWz7lwhX5I2qtRnTp09/USJTZHE24W+o2XT/5ls0Mo+DqJ/EQGy
+	 4vOkkwAzobpebJvh+VgDfNRDeqyhbjww7Rd7PHdXbcy0KDnMtuIOIRC83Uv6MAlwmL
+	 VYSko7BVS+mI+5gLRGV68wZS0TlpY3UDdnSSzeclWayt2BApahaiftZuAN6c9obWp0
+	 2tUwExST1V+igIM59xAHMg7CBzYem4LQ8BDzMMNqgOtJqDmA0vvctgoZdBWhL20O8G
+	 xRs89hLXeFgbA==
+Date: Thu, 24 Jul 2025 06:19:30 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724102907.12159-1-hept.hept.hept@gmail.com>
-In-Reply-To: <20250724102907.12159-1-hept.hept.hept@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 24 Jul 2025 04:18:09 -0700
-X-Gm-Features: Ac12FXwxLxIZEnI41FmNwqSV0Z8Xhe33I7AFADwGe16L7r2GgnMMRVE98aqn6kM
-Message-ID: <CANn89i+vzHO3yferPBi1kBmVkRAd1mu9gD0S8tUPdVaDXapkVw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net/core: fix wrong return value in __splice_segment
-To: Pengtao He <hept.hept.hept@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Willem de Bruijn <willemb@google.com>, Mina Almasry <almasrymina@google.com>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Michal Luczaj <mhal@rbox.co>, 
-	Eric Biggers <ebiggers@google.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: frank-w@public-files.de, herbert@gondor.apana.org.au, 
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+ linux-phy@lists.infradead.org, krzk+dt@kernel.org, eugen.hristev@linaro.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ jiaxin.yu@mediatek.com, jitao.shi@mediatek.com, daniel.lezcano@linaro.org, 
+ linux-remoteproc@vger.kernel.org, granquet@baylibre.com, 
+ lgirdwood@gmail.com, linux-crypto@vger.kernel.org, 
+ tinghan.shen@mediatek.com, mwalle@kernel.org, sam.shih@mediatek.com, 
+ sean.wang@kernel.org, p.zabel@pengutronix.de, matthias.bgg@gmail.com, 
+ vkoul@kernel.org, mripard@kernel.org, 
+ kyrie.wu@mediatek.corp-partner.google.com, olivia.wen@mediatek.com, 
+ dri-devel@lists.freedesktop.org, atenart@kernel.org, arnd@arndb.de, 
+ conor+dt@kernel.org, shane.chien@mediatek.com, houlong.wei@mediatek.com, 
+ devicetree@vger.kernel.org, kishon@kernel.org, fparent@baylibre.com, 
+ airlied@gmail.com, tglx@linutronix.de, linux-sound@vger.kernel.org, 
+ broonie@kernel.org, andy.teng@mediatek.com, jieyy.yang@mediatek.com, 
+ mathieu.poirier@linaro.org, chunfeng.yun@mediatek.com, 
+ linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com, 
+ linux-media@vger.kernel.org, davem@davemloft.net, simona@ffwll.ch, 
+ linus.walleij@linaro.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com, 
+ andersson@kernel.org, linux-mediatek@lists.infradead.org, 
+ mchehab@kernel.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-5-angelogioacchino.delregno@collabora.com>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-5-angelogioacchino.delregno@collabora.com>
+Message-Id: <175335596838.1587473.6783798436849190740.robh@kernel.org>
+Subject: Re: [PATCH 04/38] ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks
+ and clock-names
 
-On Thu, Jul 24, 2025 at 3:29=E2=80=AFAM Pengtao He <hept.hept.hept@gmail.co=
-m> wrote:
->
-> Return true immediately when the last segment is processed,
-> avoid to walking once more in the frags loop.
->
-> Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
+
+On Thu, 24 Jul 2025 10:38:40 +0200, AngeloGioacchino Del Regno wrote:
+> Both clocks and clock-names are missing (a lot of) entries: add
+> all the used audio clocks and their description and also fix the
+> example node.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
-> v2->v1:
-> Correct the commit message and target tree.
-> v1:
-> https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmai=
-l.com/
-> ---
->  net/core/skbuff.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index ee0274417948..cc3339ab829a 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -3114,6 +3114,9 @@ static bool __splice_segment(struct page *page, uns=
-igned int poff,
->                 *len -=3D flen;
->         } while (*len && plen);
->
-> +       if (!*len)
-> +               return true;
-> +
->         return false;
->  }
->
+>  .../bindings/sound/mt8192-afe-pcm.yaml        | 106 +++++++++++++++++-
+>  1 file changed, 104 insertions(+), 2 deletions(-)
+> 
 
-Condition is evaluated twice. What about this instead ?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index ee0274417948e0eb121792a400a0455884c92e56..23b776cd98796cf8eb4d19868a0=
-506423226914d
-100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3112,7 +3112,9 @@ static bool __splice_segment(struct page *page,
-unsigned int poff,
-                poff +=3D flen;
-                plen -=3D flen;
-                *len -=3D flen;
--       } while (*len && plen);
-+               if (!*len)
-+                       return true;
-+       } while (plen);
+yamllint warnings/errors:
 
-        return false;
- }
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.example.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clock-names:3: 'aud_adc_clk' was expected
+	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.example.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clock-names:4: 'aud_adda6_adc_clk' was expected
+	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.example.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clock-names: ['aud_afe_clk', 'aud_dac_clk', 'aud_dac_predis_clk', 'aud_infra_clk', 'aud_infra_26m_clk'] is too short
+	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.example.dtb: mt8192-afe-pcm (mediatek,mt8192-audio): clocks: [[4294967295, 0], [4294967295, 7], [4294967295, 8], [4294967295, 47], [4294967295, 58]] is too short
+	from schema $id: http://devicetree.org/schemas/sound/mt8192-afe-pcm.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250724083914.61351-5-angelogioacchino.delregno@collabora.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
