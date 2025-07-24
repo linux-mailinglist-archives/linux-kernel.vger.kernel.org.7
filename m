@@ -1,145 +1,177 @@
-Return-Path: <linux-kernel+bounces-744299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4AFB10AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A73B10AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC3F188ED47
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8979A1883168
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA682D4B57;
-	Thu, 24 Jul 2025 12:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C312D46D3;
+	Thu, 24 Jul 2025 12:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWNNmJXb"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nyse4J3r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+pHhYrkt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nyse4J3r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+pHhYrkt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5317B2C3757;
-	Thu, 24 Jul 2025 12:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343A826B762
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361428; cv=none; b=JGtFh9wnNTxDgpuZQt2FcCdI71AYPnpysQR/cCZ1pX5SuZT/4Wl/LBAyPDBnAvhiO10FsUZ/iMW4L8Ggv+hK0mtCjdXTSFEDWcfPTWwwzIE8cgWMnvtswbkhNeImsNlgaFy+KVYMzQZ/QfxDrNpiyMcnFnbORt2YkR/wtQKId9I=
+	t=1753361392; cv=none; b=PoURbaxe0MtU+SZkzmJtD9zUPNzvaMX3RkbvrfqSfUJ2rfpJj7hjddjYmFhYFkPhOD9kMDVan6MpFhnCuGHuVg9yT54dPx61aBBICFr70Hw5x9q41y5Jnjw7gJoeBnyRlewKrqZbDAgfgsjAu1ii84pfYnTMRhH+Di0l0jRxk7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361428; c=relaxed/simple;
-	bh=Xq+2aOr76viJriRnJ+pzgbCo0qffhEbG7lm/rdlTwjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bQNmhBOL47elWEUHzA0sP1RblhQkdPd/qrotLizn4LU76nCRGUwjj7ezXhkxWNgdgfZg22FJl/80A4R7f9lESrahCGhfA59ED+2XXBZer0jBnqgQ3dJxLrI/Kle2WX7bWuirM1SixhQzXJcreRgOOlc9N1XJeGRlLVixhNbEzeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWNNmJXb; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a53359dea5so491747f8f.0;
-        Thu, 24 Jul 2025 05:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753361425; x=1753966225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PfVMcAjLS47xQwt22LwNV9vb4H3Sjsc0X/7OduC46U4=;
-        b=PWNNmJXbqrP/uDyeVAAVXhdRXTu5XX5/D48wJml6jD+qli3yWiciW1YT2EMAbf7xWV
-         8AYR/UsKZw8k/XCegv4rHnhQymf+skwK++qELI9C2imH3SoF8B2Qr54FFO/xgBiHTbN8
-         cN4mDSDpXMiLRS47VlsUvJjXtSILfsgSbMXBE8XzrZ7O7+fUB2Ojt/0lh1ZLsz4Y4oQa
-         9YZIMUZKmtiNP3F40Q9k9ERz4762YhYBGy53H7zZzWMcgORsUuUOkZa/2wJkxD/HeynO
-         y3lYW8SLofcZAg2AyA1vE676kxX9R4behXlLbkqteRUT94FXBwwtUP4ACoxzLwthpa39
-         AEiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753361425; x=1753966225;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PfVMcAjLS47xQwt22LwNV9vb4H3Sjsc0X/7OduC46U4=;
-        b=ooZEwbRXuBhS38v9eXs9Bgqh6jO6OGialOB3lsgnzcs/0SkmWjKZG4b2wxeNKoNkk5
-         LZz/4NAfYgY9LcatWiHGU+DKUeyQYx5y9OLecxe1yG4dDDl58qBQjQd6+cH0IGuIp5LF
-         fasFQcMa0pYsM6LF6d6SeGVWUI9+y2jKAz5grFH++IBV561GHJ0/Qa4Z/XQdw6HEc6nz
-         c1RW0bSGdwhwKou9ebIlKU2mLNc7kUEvn9+RGoDVtB3W2xUDk9KctlRuZkdj60VYD0+T
-         4ru6cZCAJ2zuze9Y99AIu8m5Cj8Ek9y8mPRHTWT7Bxf6RT8UTXkMw8RWp92y/aIyz5yv
-         u7pA==
-X-Forwarded-Encrypted: i=1; AJvYcCV96UM3Hjof/wc3GS2wBhmw3VD1hrRaLpLZVbr0puI1hxpzHY2McQRGwLnhAVWTIp61vw2JoyQ5gpNXm7I=@vger.kernel.org, AJvYcCW1wXXGPXw22baQiaRT3W6tUWDmFAlAgiI6dYlSutXG8TUPIKmzg111T7RxOe6cTTMOh0macSj1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqWG74x20T6Nf+vuE4HbHRQJc7idxCOH7xYecPszGJd4aKPrlg
-	bhkmNdyAckqztwubFb2uyXTkPEhtNCqT0UqKoVRBxfy7B+Mi1/gtJN8gjjf3w50o
-X-Gm-Gg: ASbGnctxmsvJs6v78uFcw89CF65qQic7k+zhvXI8xBL4hwpoQLuGPN7m3i/JwQcUSav
-	hv8eft409i7TGSRKYPyL+qPhqNGerEnih9oEKsaTwkyfEESJqKqqYYFPI8N02O9Lf1N3tlmVkM2
-	+cAcasJelJO7pLnPukrpzcYbHV1IeTQR1Uqp9mCkOau8JrSSpAUr0VCCBgwTz7eA2xT/TXUy/Eu
-	qUKtMDrvGajbP4DLpqzAUv4j3rvXEB2kWScQsk9asbtfwouX6Gi9ISkA3Ue/iJCKtStia+0ydZs
-	TVgTe+mYUOhCQLgmJmdTBJeJnMM+X2xfFXxtL75JX7PFbE7K/5je+9q1CcbddxuF7N6wq4Ue/1C
-	EtzOM/iMAHujHLTyJtdZr+9hsgFm8SEy7C9U=
-X-Google-Smtp-Source: AGHT+IFgSLerD2l5sm9nFan11JNgWqeTR2V8VwvZLnCysxO+YNGEGzgx1M1XpIFFSgYboxFu9aKH0w==
-X-Received: by 2002:a05:6000:22c2:b0:3a4:f35b:d016 with SMTP id ffacd0b85a97d-3b768caa12dmr6105752f8f.11.1753361424142;
-        Thu, 24 Jul 2025 05:50:24 -0700 (PDT)
-Received: from localhost.localdomain ([45.128.133.222])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc6d1b0sm2111089f8f.18.2025.07.24.05.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 05:50:23 -0700 (PDT)
-From: Oscar Maes <oscmaes92@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Maes <oscmaes92@gmail.com>
-Subject: [PATCH net-next] net: ipv4: allow directed broadcast routes to use dst hint
-Date: Thu, 24 Jul 2025 14:49:42 +0200
-Message-Id: <20250724124942.6895-1-oscmaes92@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753361392; c=relaxed/simple;
+	bh=MUiHEiFslWfuxu4LcdNZXafhiO6sVymXKZQJoz8zPT8=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=RDSbXev0HdOCpHGZPM3uVHcef5RtGevaOJuQQXpV4tywQzIiE89TT5DgKTFHn2BdpdBbKDkZ1gSFgKiUxtoRxQUFmfDrMDAMTl0fl+iVbMPhWBDrCepgee47ZYBbYnuHWLavY+zgwIBw4mifXGSUS9tCanW8vHIb2mGaJGjtv0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nyse4J3r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+pHhYrkt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nyse4J3r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+pHhYrkt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 899012191F;
+	Thu, 24 Jul 2025 12:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753361387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=olqeYXgaFAkqM0Duf7s0lQpb0HS04XjUFVNc0iTKkgo=;
+	b=nyse4J3ruKeULYfkJrMSEtBP2uNdnr/lirFYnD5KayIzCUWixGI6atPQ9yrN3qS6CrLo90
+	CPOdF3hLrI09tcGgM8gqBQo2Wi+WY438wDllgVNluMWeZVsLZN8GRbZOMYI60o8OU0SlW8
+	KiQsMnqJZAPpFcxb0w+kjTFnYzFs69I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753361387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=olqeYXgaFAkqM0Duf7s0lQpb0HS04XjUFVNc0iTKkgo=;
+	b=+pHhYrktBSIB02YWWplyIgz2Eg/Xtj2ncIey2plHAB8p0TI88F0dp2a061E6VvLHfkl8WC
+	X/7sAdm+b1RJfPAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753361387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=olqeYXgaFAkqM0Duf7s0lQpb0HS04XjUFVNc0iTKkgo=;
+	b=nyse4J3ruKeULYfkJrMSEtBP2uNdnr/lirFYnD5KayIzCUWixGI6atPQ9yrN3qS6CrLo90
+	CPOdF3hLrI09tcGgM8gqBQo2Wi+WY438wDllgVNluMWeZVsLZN8GRbZOMYI60o8OU0SlW8
+	KiQsMnqJZAPpFcxb0w+kjTFnYzFs69I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753361387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=olqeYXgaFAkqM0Duf7s0lQpb0HS04XjUFVNc0iTKkgo=;
+	b=+pHhYrktBSIB02YWWplyIgz2Eg/Xtj2ncIey2plHAB8p0TI88F0dp2a061E6VvLHfkl8WC
+	X/7sAdm+b1RJfPAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60964136DC;
+	Thu, 24 Jul 2025 12:49:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bCNkFusrgmhDFAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 24 Jul 2025 12:49:47 +0000
+Date: Thu, 24 Jul 2025 14:49:47 +0200
+Message-ID: <87seilkb2s.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.16
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-Currently, ip_extract_route_hint uses RTN_BROADCAST to decide
-whether to use the route dst hint mechanism.
+Linus,
 
-This check is too strict, as it prevents directed broadcast
-routes from using the hint, resulting in poor performance
-during bursts of directed broadcast traffic.
+please pull sound fixes for v6.16 from:
 
-Fix this in ip_extract_route_hint and modify ip_route_use_hint
-to preserve the intended behaviour.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.16
 
-Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+The topmost commit is 0d57ed922b9a9b0d36c90a992e076d850b779be5
+
+----------------------------------------------------------------
+
+sound fixes for 6.16-final
+
+Some last-minute fixes.  All changes are device-specific small fixes
+or quirks, safe to apply.
+
+----------------------------------------------------------------
+
+Dawid Rezler (1):
+      ALSA: hda/realtek - Add mute LED support for HP Pavilion 15-eg0xxx
+
+Derek Fang (1):
+      ASoC: rt5650: Eliminate the high frequency glitch
+
+Edip Hazuri (1):
+      ALSA: hda/realtek - Add mute LED support for HP Victus 15-fa0xxx
+
+Erick Karanja (1):
+      ALSA: usb-audio: qcom: Adjust mutex unlock order
+
+Guoqing Jiang (1):
+      ASoC: mediatek: mt8365-dai-i2s: pass correct size to mt8365_dai_set_priv
+
+Johan Hovold (1):
+      ASoC: mediatek: common: fix device and OF node leak
+
+Ranjani Sridharan (1):
+      ASoC: SOF: Intel: PTL: Add the sdw_process_wakeen op
+
+SHARAN KUMAR M (1):
+      ALSA: hda/realtek: Fix mute LED mask on HP OMEN 16 laptop
+
+Shuming Fan (1):
+      ASoC: SDCA: correct the calculation of the maximum init table size
+
 ---
- net/ipv4/ip_input.c | 6 ++++--
- net/ipv4/route.c    | 2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
-index fc323994b..1581b98bc 100644
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -589,8 +589,10 @@ static void ip_sublist_rcv_finish(struct list_head *head)
- static struct sk_buff *ip_extract_route_hint(const struct net *net,
- 					     struct sk_buff *skb, int rt_type)
- {
--	if (fib4_has_custom_rules(net) || rt_type == RTN_BROADCAST ||
--	    IPCB(skb)->flags & IPSKB_MULTIPATH)
-+	const struct iphdr *iph = ip_hdr(skb);
-+
-+	if (fib4_has_custom_rules(net) || ipv4_is_lbcast(iph->daddr) ||
-+	    (iph->daddr == 0 && iph->saddr == 0) || IPCB(skb)->flags & IPSKB_MULTIPATH)
- 		return NULL;
- 
- 	return skb;
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index f639a2ae8..1f212b2ce 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -2210,7 +2210,7 @@ ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- 		goto martian_source;
- 	}
- 
--	if (rt->rt_type != RTN_LOCAL)
-+	if (!(rt->rt_flags & RTCF_LOCAL))
- 		goto skip_validate_source;
- 
- 	reason = fib_validate_source_reason(skb, saddr, daddr, dscp, 0, dev,
--- 
-2.39.5
+ sound/pci/hda/patch_realtek.c                    | 4 +++-
+ sound/soc/codecs/rt5645.c                        | 1 +
+ sound/soc/mediatek/common/mtk-soundcard-driver.c | 4 ++++
+ sound/soc/mediatek/mt8365/mt8365-dai-i2s.c       | 3 +--
+ sound/soc/sdca/sdca_functions.c                  | 2 +-
+ sound/soc/sof/intel/ptl.c                        | 1 +
+ sound/usb/qcom/qc_audio_offload.c                | 6 +++---
+ 7 files changed, 14 insertions(+), 7 deletions(-)
 
 
