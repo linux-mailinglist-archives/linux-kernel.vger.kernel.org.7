@@ -1,184 +1,287 @@
-Return-Path: <linux-kernel+bounces-744308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED3BB10AC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9200B10AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CA016880C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1366AAA19CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE962D4B7C;
-	Thu, 24 Jul 2025 12:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1C52D5412;
+	Thu, 24 Jul 2025 12:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTvtEbZ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FgacAa0h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C202836BF;
-	Thu, 24 Jul 2025 12:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F5F274B24
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361697; cv=none; b=N0yQRq7TLqPSkE0UQz7FhhSPTEiSwZCcUprtEUczi4RTE8qNxhFgyW+SdqDrrYcYMhnk673h4NGGcTNxcqDFldi2FEGneZ4vIfMsS9GSnhGdYdA8SZXBTPNn2VZGI2IdG9qxClYQBjAGWhdrNMlhBlSkITQOkrM61RmGHdy+Wsc=
+	t=1753361961; cv=none; b=uHAq2AFI3T7fEN//OGMZV/AQIzLkvTDywOVNxyzX5v2GlrIPZvjtDJRscMMp6xSD1y+nLN/jxgRb3f4nw/anGevU/Ak3smg2kg4tUyQaF9eCCDtuJfqkFqtkTuKoXcsaZE9RTLwE8EaxK2ZE+SzHSCYJLxVsraoshh+aa5rCG2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361697; c=relaxed/simple;
-	bh=sp5ZCZ1GPq3m4+63AHbRNpdon7xPTVdteDhqlssT8mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rd2cvo/6F+c2t6FmFULNNf+qTDbj94tYEAp8+2I9vkz3QHHVMxmBjL/FTh4ilc8aS1CKKu9qxJmqVdDBUuybHmPw4uKMDk0gFvV0Ym8Z7CwR0sFSCRYeji7MdThdZszdA/qKDEef+4SQej7jd8TkK6LqZuZom/fI+Z2oTHywAPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTvtEbZ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5534EC4CEED;
-	Thu, 24 Jul 2025 12:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753361696;
-	bh=sp5ZCZ1GPq3m4+63AHbRNpdon7xPTVdteDhqlssT8mc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HTvtEbZ4fVPI63NBgAzGc6Z/SeUE2W6+iCih6OS5w0LbYA9Swv+Fx6hsdCW/0ltCJ
-	 EHTX96h00Sm0t0szqBO2OH4kcxWWttCkjn6vxoPkB2m0PkyHXc8gZaPt7YN5EG9NqK
-	 zvWVmlSpmij4ilZokkjNeny7eFk1sUhVpL69OSrQfq49dI5tGLDwRWbGdOeeCvG7Cq
-	 pn8yY+BUdswSUpk12PIrudCj1BVpq5iK/6NH1J3IPeT4FNgZm8+gMRSPcUPul1KjP9
-	 Oe2r3YptT/lB/aBCOeNI5m9Wj0HjQxMkQsXmRUShhxyrBKAjSGCLcU1HFwQZrP03yX
-	 CPwe1Iptj6I1g==
-Date: Thu, 24 Jul 2025 13:54:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] iio: adc: ti-adc12138: Simplify with
- devm_clk_get_enabled()
-Message-ID: <20250724135450.36f9a65f@jic23-huawei>
-In-Reply-To: <20250713-iio-clk-get-enabled-v1-1-70abc1f9ce6c@linaro.org>
-References: <20250713-iio-clk-get-enabled-v1-0-70abc1f9ce6c@linaro.org>
-	<20250713-iio-clk-get-enabled-v1-1-70abc1f9ce6c@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753361961; c=relaxed/simple;
+	bh=o+/xP/nRACgq6sYyyyENl6/+gxkfYdsCrg7JoE5NC9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ut05da2XCJjzGQAHjzDTeiuJtSWNwKwT5/zqSUFL4uquxvKX7nJRCe+5xvRE+JYv2bMQuWrZ0YndE/Dzb839IGFOAXYUrcFU8jj1X31bf9YsEpqLlIGPpqKrED9FTFSHw+SZR00v/9dejeeD30tARXKBYrr8hg/DK8tOjYHyXaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FgacAa0h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753361958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hZiwGdR7LRfu5HGHtwgbMQ2Giw34fi/j2EFOpcB/EYM=;
+	b=FgacAa0hK3abaPCd+YNFRiZpwcYs8YcOp3jejtRMrI2AHBl+nVoEr/dlFt1KhFNElAsFMg
+	UXzRAHB1spQYxByDR5LyYoyDUqn+tSi4E2SBmjfMXtF93tAlbkPDmWwSWWyeoDhsWuCxx0
+	9KeuKrdT05E406gkYamRst270Woz7KY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-q7td4VieOdeRbZQwU_ug0A-1; Thu,
+ 24 Jul 2025 08:59:13 -0400
+X-MC-Unique: q7td4VieOdeRbZQwU_ug0A-1
+X-Mimecast-MFC-AGG-ID: q7td4VieOdeRbZQwU_ug0A_1753361952
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9549419560B6;
+	Thu, 24 Jul 2025 12:59:11 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.44.32.113])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4DCF119560AA;
+	Thu, 24 Jul 2025 12:59:08 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.16-rc8
+Date: Thu, 24 Jul 2025 14:58:59 +0200
+Message-ID: <20250724125859.371031-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, 13 Jul 2025 17:59:55 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hi Linus!
 
-> Driver is getting clock and almost immediately enabling it, with the
-> devm_request_irq() as the only relevant code executed between, thus the
-> probe path and cleanups can be simplified with devm_clk_get_enabled().
-> 
-> Move devm_request_irq() earlier, so the interrupt handler will be
-> registered before clock is enabled.  This might be important in case
-> regulator supplies are enabled by other device driver and this device
-> raises interrupt immediately after clock sarts ticking.
-> 
-> The change does not reverse cleanup paths - first regulator will be
-> disabled, then clock and finally interrupt handler freed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The following changes since commit 6832a9317eee280117cd695fa885b2b7a7a38daf:
 
-Seems no one cares (or is paying attention) about the ordering change
-and we both think it is fine so applied to the testing branch of iio.git
-for 6.18. I'll rebase on rc1 once available
+  Merge tag 'net-6.16-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-07-17 10:04:04 -0700)
 
-Thanks,
+are available in the Git repository at:
 
-Jonathan
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc8
 
-> 
-> ---
-> 
-> Not tested on hardware.
-> ---
->  drivers/iio/adc/ti-adc12138.c | 30 +++++++++++-------------------
->  1 file changed, 11 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-adc12138.c b/drivers/iio/adc/ti-adc12138.c
-> index 9dc465a10ffc8d9f596e34215af685999235d690..e5ec4b073daae33d0e51cf21a3520f0ab2184828 100644
-> --- a/drivers/iio/adc/ti-adc12138.c
-> +++ b/drivers/iio/adc/ti-adc12138.c
-> @@ -38,15 +38,13 @@ enum {
->  struct adc12138 {
->  	struct spi_device *spi;
->  	unsigned int id;
-> -	/* conversion clock */
-> -	struct clk *cclk;
->  	/* positive analog voltage reference */
->  	struct regulator *vref_p;
->  	/* negative analog voltage reference */
->  	struct regulator *vref_n;
->  	struct mutex lock;
->  	struct completion complete;
-> -	/* The number of cclk periods for the S/H's acquisition time */
-> +	/* The number of conversion clock periods for the S/H's acquisition time */
->  	unsigned int acquisition_time;
->  	/*
->  	 * Maximum size needed: 16x 2 bytes ADC data + 8 bytes timestamp.
-> @@ -400,6 +398,7 @@ static int adc12138_probe(struct spi_device *spi)
->  {
->  	struct iio_dev *indio_dev;
->  	struct adc12138 *adc;
-> +	struct clk *cclk;
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
-> @@ -435,9 +434,14 @@ static int adc12138_probe(struct spi_device *spi)
->  	if (ret)
->  		adc->acquisition_time = 10;
->  
-> -	adc->cclk = devm_clk_get(&spi->dev, NULL);
-> -	if (IS_ERR(adc->cclk))
-> -		return PTR_ERR(adc->cclk);
-> +	ret = devm_request_irq(&spi->dev, spi->irq, adc12138_eoc_handler,
-> +			       IRQF_TRIGGER_RISING, indio_dev->name, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	cclk = devm_clk_get_enabled(&spi->dev, NULL);
-> +	if (IS_ERR(cclk))
-> +		return PTR_ERR(cclk);
->  
->  	adc->vref_p = devm_regulator_get(&spi->dev, "vref-p");
->  	if (IS_ERR(adc->vref_p))
-> @@ -454,18 +458,9 @@ static int adc12138_probe(struct spi_device *spi)
->  			return ret;
->  	}
->  
-> -	ret = devm_request_irq(&spi->dev, spi->irq, adc12138_eoc_handler,
-> -			       IRQF_TRIGGER_RISING, indio_dev->name, indio_dev);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = clk_prepare_enable(adc->cclk);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret = regulator_enable(adc->vref_p);
->  	if (ret)
-> -		goto err_clk_disable;
-> +		return ret;
->  
->  	if (!IS_ERR(adc->vref_n)) {
->  		ret = regulator_enable(adc->vref_n);
-> @@ -496,8 +491,6 @@ static int adc12138_probe(struct spi_device *spi)
->  		regulator_disable(adc->vref_n);
->  err_vref_p_disable:
->  	regulator_disable(adc->vref_p);
-> -err_clk_disable:
-> -	clk_disable_unprepare(adc->cclk);
->  
->  	return ret;
->  }
-> @@ -512,7 +505,6 @@ static void adc12138_remove(struct spi_device *spi)
->  	if (!IS_ERR(adc->vref_n))
->  		regulator_disable(adc->vref_n);
->  	regulator_disable(adc->vref_p);
-> -	clk_disable_unprepare(adc->cclk);
->  }
->  
->  static const struct of_device_id adc12138_dt_ids[] = {
-> 
+for you to fetch changes up to 291d5dc80eca1fc67a0fa4c861d13c101345501a:
+
+  Merge tag 'ipsec-2025-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec (2025-07-24 12:30:40 +0200)
+
+----------------------------------------------------------------
+Including fixes from can and xfrm.
+
+The TI regression notified last week is actually on our net-next tree,
+it does not affect 6.16.
+We are investigating a virtio regression which is quite hard to
+reproduce - currently only our CI sporadically hits it. Hopefully it
+should not be critical, and I'm not sure that an additional week would
+be enough to solve it.
+
+Current release - fix to a fix:
+
+  - sched: sch_qfq: avoid sleeping in atomic context in qfq_delete_class
+
+Previous releases - regressions:
+
+  - xfrm:
+    - set transport header to fix UDP GRO handling
+    - delete x->tunnel as we delete x
+
+  - eth: mlx5: fix memory leak in cmd_exec()
+
+  - eth: i40e: when removing VF MAC filters, avoid losing PF-set MAC
+
+  - eth: gve: fix stuck TX queue for DQ queue format
+
+Previous releases - always broken:
+
+  - can: fix NULL pointer deref of struct can_priv::do_set_mode
+
+  - eth: ice: fix a null pointer dereference in ice_copy_and_init_pkg()
+
+  - eth: ism: fix concurrency management in ism_cmd()
+
+  - eth: dpaa2: fix device reference count leak in MAC endpoint handling
+
+  - eth: icssg-prueth: fix buffer allocation for ICSSG
+
+Misc:
+
+  - selftests: mptcp: increase code coverage
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Chiara Meiohas (1):
+      net/mlx5: Fix memory leak in cmd_exec()
+
+Dennis Chen (1):
+      i40e: report VF tx_dropped with tx_errors instead of tx_discards
+
+Eyal Birger (1):
+      xfrm: interface: fix use-after-free after changing collect_md xfrm interface
+
+Fernando Fernandez Mancera (1):
+      xfrm: ipcomp: adjust transport header after decompressing
+
+Florian Fainelli (1):
+      net: bcmasp: Restore programming of TX map vector register
+
+Florian Westphal (1):
+      selftests: netfilter: tone-down conntrack clash test
+
+Halil Pasic (1):
+      s390/ism: fix concurrency management in ism_cmd()
+
+Haoxiang Li (1):
+      ice: Fix a null pointer dereference in ice_copy_and_init_pkg()
+
+Himanshu Mittal (1):
+      net: ti: icssg-prueth: Fix buffer allocation for ICSSG
+
+Jacek Kowalski (2):
+      e1000e: disregard NVM checksum on tgp when valid checksum bit is not set
+      e1000e: ignore uninitialized checksum word on tgp
+
+Jakub Kicinski (4):
+      Merge branch 'mlx5-misc-fixes-2025-07-17'
+      Merge branch 'selftests-mptcp-connect-cover-alt-modes'
+      Merge branch '40GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      Merge tag 'linux-can-fixes-for-6.16-20250722' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
+
+Jamie Bainbridge (1):
+      i40e: When removing VF MAC filters, only check PF-set MAC
+
+Jian Shen (2):
+      net: hns3: fix concurrent setting vlan filter issue
+      net: hns3: fixed vf get max channels bug
+
+Jijie Shao (1):
+      net: hns3: default enable tx bounce buffer when smmu enabled
+
+Kees Cook (1):
+      MAINTAINERS: Add in6.h to MAINTAINERS
+
+Kito Xu (veritas501) (1):
+      net: appletalk: Fix use-after-free in AARP proxy probe
+
+Leon Romanovsky (1):
+      xfrm: always initialize offload path
+
+Ma Ke (3):
+      bus: fsl-mc: Fix potential double device reference in fsl_mc_get_endpoint()
+      dpaa2-eth: Fix device reference count leak in MAC endpoint handling
+      dpaa2-switch: Fix device reference count leak in MAC endpoint handling
+
+Marc Kleine-Budde (1):
+      can: netlink: can_changelink(): fix NULL pointer deref of struct can_priv::do_set_mode
+
+Matthieu Baerts (NGI0) (2):
+      selftests: mptcp: connect: also cover alt modes
+      selftests: mptcp: connect: also cover checksum
+
+Nimrod Oren (1):
+      selftests: drv-net: wait for iperf client to stop sending
+
+Paolo Abeni (2):
+      Merge branch 'there-are-some-bugfix-for-the-hns3-ethernet-driver'
+      Merge tag 'ipsec-2025-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
+
+Praveen Kaligineedi (1):
+      gve: Fix stuck TX queue for DQ queue format
+
+Sabrina Dubroca (4):
+      xfrm: state: initialize state_ptrs earlier in xfrm_state_find
+      xfrm: state: use a consistent pcpu_id in xfrm_state_find
+      xfrm: delete x->tunnel as we delete x
+      Revert "xfrm: destroy xfrm_state synchronously on net exit path"
+
+Shahar Shitrit (1):
+      net/mlx5: E-Switch, Fix peer miss rules to use peer eswitch
+
+Steffen Klassert (2):
+      Merge branch 'xfrm: fixes for xfrm_state_find under preemption'
+      Merge branch 'ipsec: fix splat due to ipcomp fallback tunnel'
+
+Tobias Brunner (1):
+      xfrm: Set transport header to fix UDP GRO handling
+
+Xiang Mei (1):
+      net/sched: sch_qfq: Avoid triggering might_sleep in atomic context in qfq_delete_class
+
+Yonglong Liu (1):
+      net: hns3: disable interrupt when ptp init failed
+
+ MAINTAINERS                                        |   1 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c                    |  19 ++-
+ drivers/net/can/dev/dev.c                          |  12 +-
+ drivers/net/can/dev/netlink.c                      |  12 ++
+ drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c   |   3 +
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |  15 +-
+ .../net/ethernet/freescale/dpaa2/dpaa2-switch.c    |  15 +-
+ drivers/net/ethernet/google/gve/gve_main.c         |  67 +++++----
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  31 ++++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  36 +++--
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   9 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   6 +-
+ drivers/net/ethernet/intel/e1000e/defines.h        |   3 +
+ drivers/net/ethernet/intel/e1000e/ich8lan.c        |   2 +
+ drivers/net/ethernet/intel/e1000e/nvm.c            |   6 +
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |   6 +-
+ drivers/net/ethernet/intel/ice/ice_ddp.c           |   2 +
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c      |   4 +-
+ .../ethernet/mellanox/mlx5/core/eswitch_offloads.c | 108 +++++++-------
+ drivers/net/ethernet/ti/icssg/icssg_config.c       | 158 ++++++++++++++-------
+ drivers/net/ethernet/ti/icssg/icssg_config.h       |  80 +++++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  20 ++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h       |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_switch_map.h   |   3 +
+ drivers/s390/net/ism_drv.c                         |   3 +
+ include/linux/ism.h                                |   1 +
+ include/net/xfrm.h                                 |  15 +-
+ net/appletalk/aarp.c                               |  24 +++-
+ net/ipv4/ipcomp.c                                  |   2 +
+ net/ipv4/xfrm4_input.c                             |   3 +
+ net/ipv6/ipcomp6.c                                 |   2 +
+ net/ipv6/xfrm6_input.c                             |   3 +
+ net/ipv6/xfrm6_tunnel.c                            |   2 +-
+ net/key/af_key.c                                   |   2 +-
+ net/sched/sch_qfq.c                                |   7 +-
+ net/xfrm/xfrm_device.c                             |   1 -
+ net/xfrm/xfrm_interface_core.c                     |   7 +-
+ net/xfrm/xfrm_ipcomp.c                             |   3 +-
+ net/xfrm/xfrm_state.c                              |  69 ++++-----
+ net/xfrm/xfrm_user.c                               |   3 +-
+ tools/testing/selftests/drivers/net/lib/py/load.py |  23 ++-
+ tools/testing/selftests/net/mptcp/Makefile         |   3 +-
+ .../selftests/net/mptcp/mptcp_connect_checksum.sh  |   5 +
+ .../selftests/net/mptcp/mptcp_connect_mmap.sh      |   5 +
+ .../selftests/net/mptcp/mptcp_connect_sendfile.sh  |   5 +
+ .../selftests/net/netfilter/conntrack_clash.sh     |  45 +++---
+ 47 files changed, 549 insertions(+), 306 deletions(-)
+ create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_checksum.sh
+ create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_mmap.sh
+ create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_sendfile.sh
 
 
