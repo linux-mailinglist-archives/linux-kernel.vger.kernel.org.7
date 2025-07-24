@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-744151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F02AB108B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03CDB108EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879A3584DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6208172B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0E626CE2C;
-	Thu, 24 Jul 2025 11:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FA5FC0A;
+	Thu, 24 Jul 2025 11:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnMiIuef"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="m24rYpw0"
+Received: from smtp121.ord1d.emailsrvr.com (smtp121.ord1d.emailsrvr.com [184.106.54.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6729E3BBF0;
-	Thu, 24 Jul 2025 11:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD77B24A05D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355505; cv=none; b=rfbnsT6CcPtxCOybCpIHUxQdnODXkvq4s3hHsEMLecpp8s2skYlWbqhvp7VINN3AWXUrUrmMPSB8HIdOujJwhePq5XnRgZnixTbOiNqrQ2BZFcXR2+ri7waaaI3JoWk2VoOn9Y8KGYyKpgesjOwHRnGUzMFugGzZYzi4irprBU0=
+	t=1753355807; cv=none; b=UugipOb4rN2GNvp8L0NGbfoZwg3SeGJPNQtimtXS/ksfISL8TlR717RlfvzDGi9YhsVlffQHOJ/bdtWLjROxlbA/r47+xRJSK1Uj13yqbG1+Fl7/JxFjA0/lIqhryd9Rv8Wx9JE7V/mB7LmmxDLe2qQ6K0Mz8bM6emtNGSj2Z3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355505; c=relaxed/simple;
-	bh=LO3S7VvW0yLWS/aA7Ztz2n2SjnGIc3GFyf0h1H0tplM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o63ivUXI6V+S25JrRZk6gDEQ2Aku1FkGvPjP6rRCGZEtNSrKT7AxYNC5Vx2Fpqj1kYHC/pubvAQuSlLNUzoDlqgHvkaU0hfTuyiShteCUveBwc8jdDKyR98DO5CRnGmXwDLLs6l/l4nLM5ydd4JL6/BcOK49pTV3QZMBr5bwE4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnMiIuef; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so1735861a12.3;
-        Thu, 24 Jul 2025 04:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355502; x=1753960302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1M55MjNHLP2A27D0IMUuTEokYqJMg2OTuUCTRKpy8Hg=;
-        b=SnMiIuefE3u5BeaCN45RIK5LnACyuxDl1t1jyi8q6WhyQKYmshZOTH7ttjNLV/v35i
-         5fZmtgrQxWT76yWe4YdWx33ZVgUkSsVXgxfTyQG64waN1JiJ9//tDIAOPy/zdrkVHEa9
-         UUS2r5BQO9WKFezgkJpgfN2osP2n0H/M10EhogPqLyixRtn/yUiMMobhGHkKMl231Tb5
-         zmq+a5RXcjZBRoU5kO3dk+05UO7ZhNu7y5++Spk063rhFGq6Wpe/DaXyXP8qjcYgKV/J
-         48Zh50vaL1fzUPZOVBBZQcWIQ8TRl9O2IExiSMPX3bQd8zvwZQC90aDmCRhewSXwayBK
-         wzLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355502; x=1753960302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1M55MjNHLP2A27D0IMUuTEokYqJMg2OTuUCTRKpy8Hg=;
-        b=qpPFYSIq9gC3WNAmHlpDipvWt83WdkRstPnsoNFfDGO7dejXfWxAeha/NjVrzOC9dx
-         8eZHbBC2BJsX7xn9ogTcQJ/nr5khejswq+eauhA2TaQVrlBumYJTr5r+Sndr+piGRuvE
-         QXSu/Ok215FiJhNHkXd1kmOkfHMJb1sFflvBpckqhLvcruRTvvkOmGrq/ht8UtCuj+YV
-         vhKFAvEtx/7gwpr7e9GMa8Mwb/AHcNlxli1Ad55rouK/NjeZR1jJQL18R2e/GTLQL3zq
-         g2ouNQzPI/KkKax4xKsX89U+dz8g+pBuAYs+zyfvOgI1Qn6RM08MU55R/clY5OrzD0Ty
-         9fBg==
-X-Forwarded-Encrypted: i=1; AJvYcCV680Wwvc3KnvHP3CESVtmC+BX5RN4CHmhsXs40fI96IUKWbN+BeXK/26H0jNmvFMDnq7iDzgHT6IQn35lJXvB5DDI=@vger.kernel.org, AJvYcCVD5i5UhR9RlHVisnhEi3wPpLbLttmhRd//5iwE+FRuLvENt05sbuhIXStaabILLyPZWQKcG7U9yiWG0g==@vger.kernel.org, AJvYcCVRSgZ7qMoM2PWRsbdDrl0ynQruncxI4gwyNBd3BE0CJIam0MhXyxndduIllBQ/A7RzYaRuELh5w5N67Q==@vger.kernel.org, AJvYcCVsTzAIbaQDbgKnFVh8OywcPhlD0X/xqSDTlCXNmg1Xl/cdTa+jHyTSt5QsGvzsgzdMXhwvukFOF+x7xwsOMjpK@vger.kernel.org, AJvYcCW6tms0lRxPfpVFA/32shMB6csbBLoKI/sbWUmZ0Ro8Iot0akogrvFqSd79uDjgpfEC+ol0Cx8SM+budMB8@vger.kernel.org, AJvYcCWlq9Lht9yJjvw08JjdS3h0uqw1AiNCuYrtA+e4U/Y/qBRU8xXKEODK+RW6Q44qtOWUoSSbu/NVG4R6Nw==@vger.kernel.org, AJvYcCXIIM5gLt5M79N7lE0hbnRtg29x6X4VR0WvP3vtHHj7zNvhD/uuUivZnZP/2DZg50csGBL4e4FibZzIL9yE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjJhCQs/5qzefKUzegYNp7WicPYpkQ5af0/1xst0IXYwjJh+mI
-	XYAkCn/OD/XrsfITlObDTm94VN0Kn+1VOjB/IWtLKZCgYLu1Eur/XiurAcmVyifujLTSiaZ524k
-	rCAxMj7T9SbqdtqubPA+/PdGCswFKXh0=
-X-Gm-Gg: ASbGnct6ufrnWULytC2jFFJ9Mtu58lRL+Lbp+AtGeAIM47dL1S6tq5At4Utnki7yAeK
-	8BzS/AF4dHgphqXs5hgphcT62nv7DBw4OqWkWddox2TOWlKEOpCsUjzHA8Lpq++QRq3vvoCSJfB
-	99geqILlrop55AMx8egTtQRtQ7yDmDEFXxGNYYQ5R9pwn7w3vjGW/Grm1PAXeZNIASfQaVgRMoa
-	MMyjtGyLQ==
-X-Google-Smtp-Source: AGHT+IGQZoX+LT1IzNpJkxMjSxSTE0HFrqyLNxJY+NiaWstSlkBVLBDC3jnocxQOgR/J/b6wSO0Ggtf4mqZ5QLUuoio=
-X-Received: by 2002:a17:907:724a:b0:ae3:6068:235f with SMTP id
- a640c23a62f3a-af2f8d4a15amr677213666b.48.1753355501419; Thu, 24 Jul 2025
- 04:11:41 -0700 (PDT)
+	s=arc-20240116; t=1753355807; c=relaxed/simple;
+	bh=l1hhrAv+zcbtM8WhB81XgFPZP4CulIQB5EGj0F+Ig2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAkInbyul5+L4pq/q6tfi+D/vkvFCMimMQNQLNmlh5RpMILvmL/DODfPkr51m+KJKYGtgpaOijKeDcFDlFU+c5pjsW9kM73OZcF74YZa+WOmjPh5CqCHU9UGUoxq6nETx50mp8rPhcUEedvpZEBrIqWaSIHuIdsQCdjXlu467lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=m24rYpw0; arc=none smtp.client-ip=184.106.54.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1753355472;
+	bh=l1hhrAv+zcbtM8WhB81XgFPZP4CulIQB5EGj0F+Ig2w=;
+	h=Date:Subject:To:From:From;
+	b=m24rYpw0qZ/xRErrpQzbx05YHH6zKogzOZecuTs+g0y7gJytdID6Tes7l9PU5M3YJ
+	 i+domTznD+K1donCW4a75MyIIOUvekNRPNdOvfx6rB+0myeje2Fn2uzaEthwEDzCGj
+	 IyDLK1Un5N4hmquu1ghQoBH/W1CUh6jSHm5m/sHM=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp24.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 63CEDA00BB;
+	Thu, 24 Jul 2025 07:11:11 -0400 (EDT)
+Message-ID: <0dc7497f-0f90-4667-85e3-822ec5e98417@mev.co.uk>
+Date: Thu, 24 Jul 2025 12:11:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org> <20250724-pinctrl-gpio-pinfuncs-v3-8-af4db9302de4@linaro.org>
-In-Reply-To: <20250724-pinctrl-gpio-pinfuncs-v3-8-af4db9302de4@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 24 Jul 2025 13:11:04 +0200
-X-Gm-Features: Ac12FXzgEQ0Ku4jr2sgSveo2Ph25gzNpv1tdxFI9mpW2KmHkqCwhSh2Uki2L2dY
-Message-ID: <CAHp75VdMmfV=z75K9AmB7GsWV8C1bZPLGi33duTCt+CM79spJg@mail.gmail.com>
-Subject: Re: [PATCH v3 08/15] pinctrl: keembay: use a dedicated structure for
- the pinfunction description
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 REPOST] comedi: pcl726: Prevent invalid irq number
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Edward Adam Davis <eadavis@qq.com>, syzkaller-bugs@googlegroups.com,
+ stable@vger.kernel.org, syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+References: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
+ <20250724110754.8708-1-abbotti@mev.co.uk>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20250724110754.8708-1-abbotti@mev.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: 07c8dfe5-5051-41bb-a700-a30324994bf5-1-1
 
-On Thu, Jul 24, 2025 at 11:25=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> struct function_desc is a wrapper around struct pinfunction with an
-> additional void *data pointer. We're working towards reducing the usage
-> of struct function_desc in pinctrl drivers - they should only be created
-> by pinmux core and accessed by drivers using
-> pinmux_generic_get_function().
+On 24/07/2025 12:07, Ian Abbott wrote:
+> From: Edward Adam Davis <eadavis@qq.com>
+> 
+> The reproducer passed in an irq number(0x80008000) that was too large,
+> which triggered the oob.
+> 
+> Added an interrupt number check to prevent users from passing in an irq
+> number that was too large.
+> 
+> If `it->options[1]` is 31, then `1 << it->options[1]` is still invalid
+> because it shifts a 1-bit into the sign bit (which is UB in C).
+> Possible solutions include reducing the upper bound on the
+> `it->options[1]` value to 30 or lower, or using `1U << it->options[1]`.
+> 
+> The old code would just not attempt to request the IRQ if the
+> `options[1]` value were invalid.  And it would still configure the
+> device without interrupts even if the call to `request_irq` returned an
+> error.  So it would be better to combine this test with the test below.
+> 
+> Fixes: fff46207245c ("staging: comedi: pcl726: enable the interrupt support code")
+> Cc: <stable@vger.kernel.org> # 5.13+
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reported-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=5cd373521edd68bebcb3
+> Tested-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-Any link to the discussion and perhaps an updated in-kernel
-documentation and/or TODO?
+I forgot to append the changelog from the original email:
 
-> This driver uses the data pointer so in
-> order to stop using struct function_desc, we need to provide an
-> alternative that also wraps the mux mode which is passed to pinctrl core
-> as user data.
+V1 -> V2: combine test with old test
+V2 -> V3: fix misspelled
 
-...
+Ian
 
-> +struct keembay_pinfunction {
-> +       struct pinfunction func;
-> +       u8 mux_mode;
-> +};
-
-My gut's feeling that this type of construction will be in tons of the
-drivers, perhaps better to provide an alternative like
-struct pinfunction_with_mode {
-  ...
-};
-
-Or even with variadic arguments... (just saying)
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
