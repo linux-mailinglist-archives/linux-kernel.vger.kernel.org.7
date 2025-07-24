@@ -1,121 +1,140 @@
-Return-Path: <linux-kernel+bounces-744069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C21B107A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:24:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F82AB107A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19BBF7A6255
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219F1AA336F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2D9262FF8;
-	Thu, 24 Jul 2025 10:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B761263892;
+	Thu, 24 Jul 2025 10:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="SjhXZlLD"
-Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMfOANyf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7B0262FE2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6766325D549;
+	Thu, 24 Jul 2025 10:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352646; cv=none; b=tOXSHo5iqnvhdp8H+Xyd+9hFJcrBDcTRBFU2su2fkaYyEp7nw6WjNyg0MSI14cwqOMxY+JykOekfad+jFbhdvv8pxOgPk1AQAzlQtOk6r0SKPt+geZdTCVp9zTfboP9MJOYm/0/Iq0b2EtUI+KS8uLoVXwnlfG6JOZWnj8gMxqo=
+	t=1753352605; cv=none; b=SG71NObagBNo0+tU2fMiL35mxNMy8wnuHboCDKNpETeDRuix7PuPU2U4EV0/rmOQ+nxW/HYNuXoeBJO6Z3fEsk91W78JOybdvyxQejPemG5Os4h8EkUcZM7oKjwWiNHcWvzi7nOdtc0cb3yJUWzN3E9Wrn7KGg56RMyUEWicNLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352646; c=relaxed/simple;
-	bh=tG1OGtZVlNjh37Vvnlw6u12UxoGE7dfOLWAAvWi7ovY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tUGSJ2K3hEhUjH5a0OPTh7xNitt2MyIeVXwVuym0sTbhtyiuKfqDmLRpEVvh9Pet/kjCK+tMWLhzEeGOczk7AHDbkZdrGa2E6vU7xGk80g/H6EGA7fMJO77DgjN2lmMA3mnZOtW2A2ql24IH07Z4ikt3AWBz7F8+RoAZf3WuWrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=SjhXZlLD; arc=none smtp.client-ip=61.135.153.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753352636;
-	bh=P0tpx9o88yjWpi1MSG/TQa/3HNijRhoye0BMy9WRrpI=;
-	h=From:Subject:Date:Message-ID;
-	b=SjhXZlLDduINPY+UB10R+YNvJlxUgTmrYiRxREuvFWuGWCkL16NWF936wkrIP4z1L
-	 hFJnbN2nYKOBqp4yLTbqB/YTsKjeET8e3ZbEnyIwqox+N2UuwBLzsAbi0XwHmNJXa2
-	 M2JiUr1FkYvixAUKQtaKsSRRyEa9J0RbzXbfq8lM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 6882098E00007BAE; Thu, 24 Jul 2025 18:23:12 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1707006816422
-X-SMAIL-UIID: 31EC0702ECB946FFA8F864368ECCA907-20250724-182312-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in simple_recursive_removal (5)
-Date: Thu, 24 Jul 2025 18:22:59 +0800
-Message-ID: <20250724102300.2988-1-hdanton@sina.com>
-In-Reply-To: <688119a0.050a0220.248954.0007.GAE@google.com>
-References: 
+	s=arc-20240116; t=1753352605; c=relaxed/simple;
+	bh=I3vc9qIadyoA2Oy+WG9mC7O7L+Uss7M1nJsjNCA2cHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XmQmS8ZSxnSMppmo1F9+MiGhEBVJNG0EH7QBubcIB5PNyPMmqPVypKwP/qxrdZwgvEKBieXUpJmGA4KibncpUGaG9Oo95f8E1Yn9JKF5JhDSqpl/qbp2LUfsjukixQKQXVL/uMZ24oUJKVPpexmIq0IuPU7+HmD8HTpgS5ZplxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMfOANyf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94224C4CEED;
+	Thu, 24 Jul 2025 10:23:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753352604;
+	bh=I3vc9qIadyoA2Oy+WG9mC7O7L+Uss7M1nJsjNCA2cHA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZMfOANyfxBbXqayAEtdGW95tbNw0ftxMFv9caUNSfvDSg77M0D8AJYS3HioUCTIdD
+	 pqrTgjbrOCr6TPLf8jTKiaQ9LrrzE3IMB/ZXkePt5IIAPjrVy+wSDXFbpkVAMm7G2p
+	 lk1sihGP2gY/lAR8RrynKfY6oqa/+M01ZqRJOYaVLvblQBGDj+aoiMPpVCY3l8Zjit
+	 4ChOp3eZZpQS1rUoevVLJ++z4/fOt+Y2NpwiPKIdYLh54M3bTecjycD1HzoxLtASkw
+	 K+l5GM0grK1Fp28gUPkWG8IokJngJYcQhuwFC/rCbjUokeReHHTkcW5JKhIKiwVE4O
+	 B0focFBRPpxnw==
+Date: Thu, 24 Jul 2025 11:23:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yasin Lee <yasin.lee.x@gmail.com>
+Subject: Re: [PATCH] iio: proximity: hx9023s: use
+ IIO_DECLARE_BUFFER_WITH_TS()
+Message-ID: <20250724112317.0c9b561b@jic23-huawei>
+In-Reply-To: <57e16589-3d9c-49c1-ba91-abae23143803@baylibre.com>
+References: <20250722-iio-use-more-iio_declare_buffer_with_ts-8-v1-1-36188a3f214f@baylibre.com>
+	<57e16589-3d9c-49c1-ba91-abae23143803@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Date: Wed, 23 Jul 2025 10:19:28 -0700	[thread overview]
-> Hello,
+On Wed, 23 Jul 2025 10:07:55 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 7/22/25 5:54 PM, David Lechner wrote:
+> > Use stack-allocated IIO_DECLARE_BUFFER_WITH_TS() to declare the buffer
+> > that gets used with iio_push_to_buffers_with_ts().
+> > 
+> > We change from a struct to IIO_DECLARE_BUFFER_WITH_TS() since
+> > HX9023S_CH_NUM is 5 making channels[] larger than 8 bytes and therefore
+> > the timestamp is not always as the same position depending on the number
+> > of channels enabled in the scan.
+> > 
+> > And since the data structure is not used outside of the scope of the
+> > interrupt handler, the array does not need to be in the driver state
+> > struct and can just be stack-allocated.
+> > 
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+Given the type issue you fix in next patch, I'll sit on this one for now
+(otherwise I'd just have fixed up the below initialization that you call out)
+
++CC Yasin
+
+> > ---
+> >  drivers/iio/proximity/hx9023s.c | 13 ++++---------
+> >  1 file changed, 4 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+> > index 33781c3147286fb3e2f022201ccf7e908d0b6b12..1203fa4bc7512ea85b55d537e2459104b52407b9 100644
+> > --- a/drivers/iio/proximity/hx9023s.c
+> > +++ b/drivers/iio/proximity/hx9023s.c
+> > @@ -143,12 +143,6 @@ struct hx9023s_data {
+> >  	unsigned long chan_in_use;
+> >  	unsigned int prox_state_reg;
+> >  	bool trigger_enabled;
+> > -
+> > -	struct {
+> > -		__le16 channels[HX9023S_CH_NUM];
+> > -		aligned_s64 ts;
+> > -	} buffer;
+> > -
+> >  	/*
+> >  	 * Serialize access to registers below:
+> >  	 * HX9023S_PROX_INT_LOW_CFG,
+> > @@ -928,6 +922,7 @@ static const struct iio_trigger_ops hx9023s_trigger_ops = {
+> >  
+> >  static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
+> >  {
+> > +	IIO_DECLARE_BUFFER_WITH_TS(__le16, channels, HX9023S_CH_NUM);  
 > 
-> syzbot found the following issue on:
+> Ooof. I remembered to zero-initialize all of the scan structs in the other
+> similar patches, but forgot we need to do the same with the array to avoid
+> leaking uninitialized stack to usespace.
 > 
-> HEAD commit:    89be9a83ccf1 Linux 6.16-rc7
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11b42fd4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d6ccd49ae046542a0641
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134baf22580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d5a4f0580000
+> 	IIO_DECLARE_BUFFER_WITH_TS(__le16, channels, HX9023S_CH_NUM) = { };
+> 
+> >  	struct iio_poll_func *pf = private;
+> >  	struct iio_dev *indio_dev = pf->indio_dev;
+> >  	struct hx9023s_data *data = iio_priv(indio_dev);
+> > @@ -950,11 +945,11 @@ static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
+> >  
+> >  	iio_for_each_active_channel(indio_dev, bit) {
+> >  		index = indio_dev->channels[bit].channel;
+> > -		data->buffer.channels[i++] = cpu_to_le16(data->ch_data[index].diff);
+> > +		channels[i++] = cpu_to_le16(data->ch_data[index].diff);
+> >  	}
+> >  
+> > -	iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
+> > -				    sizeof(data->buffer), pf->timestamp);
+> > +	iio_push_to_buffers_with_ts(indio_dev, channels, sizeof(channels),
+> > +				    pf->timestamp);
+> >  
+> >  out:
+> >  	iio_trigger_notify_done(indio_dev->trig);
+> >   
 
-#syz test
-
---- x/net/mac80211/sta_info.h
-+++ y/net/mac80211/sta_info.h
-@@ -705,7 +705,7 @@ struct sta_info {
- 	struct sta_ampdu_mlme ampdu_mlme;
- 
- #ifdef CONFIG_MAC80211_DEBUGFS
--	struct dentry *debugfs_dir;
-+	struct dentry *debugfs_dir, *pd;
- #endif
- 
- 	u8 reserved_tid;
---- x/net/mac80211/debugfs_sta.c
-+++ y/net/mac80211/debugfs_sta.c
-@@ -1252,6 +1252,7 @@ void ieee80211_sta_debugfs_add(struct st
- 	 * dir might still be around.
- 	 */
- 	sta->debugfs_dir = debugfs_create_dir(mac, stations_dir);
-+	sta->pd = stations_dir;
- 
- 	DEBUGFS_ADD(flags);
- 	DEBUGFS_ADD(aid);
-@@ -1276,7 +1277,14 @@ void ieee80211_sta_debugfs_add(struct st
- 
- void ieee80211_sta_debugfs_remove(struct sta_info *sta)
- {
--	debugfs_remove_recursive(sta->debugfs_dir);
-+	struct dentry *stations_dir = sta->sdata->debugfs.subdir_stations;
-+
-+	if (!sta->debugfs_dir)
-+		return;
-+	if (!stations_dir)
-+		return;
-+	if (sta->pd == stations_dir)
-+		debugfs_remove_recursive(sta->debugfs_dir);
- 	sta->debugfs_dir = NULL;
- }
- 
---
 
