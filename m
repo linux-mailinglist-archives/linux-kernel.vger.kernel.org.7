@@ -1,169 +1,293 @@
-Return-Path: <linux-kernel+bounces-744641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064E6B10F78
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:16:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AE0B10F84
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57ACE7B2835
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:14:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BEE37BA54C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666112E543A;
-	Thu, 24 Jul 2025 16:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A955A2EA754;
+	Thu, 24 Jul 2025 16:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N3ICvg8+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PRNFm3So"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C009443
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA6F2ED17B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753373778; cv=none; b=Fziwy12LoMb8luJEaXSFXcSqOjedDUJQzr7gEeHKaBRDQTWn6ODpFdoFwYRY6ooRi06CT75pSG+wXlyynWcCMG6y2uunikp9Wf5hF/mPQv0REMRC9pap9f9p2aX2r93LynS1T+YnUUDtZwjqJK+lALutP00CppQIa0kHIXosV1w=
+	t=1753373820; cv=none; b=We7D7UrVuoElSp92gXvG4lz7JAqSy3JJ4PFOeBvqUp1tThe07N9+rHoy9wMk2S/z+R40BacPTQSw23yXFH8dBr21jp57RJrtn+hl88Emk5PmwSsC4QGY+ShjJfifixHNNVlho/j2pq686zkHZT7AmzemxizwjrH+R6DMMwn4Ua0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753373778; c=relaxed/simple;
-	bh=T0zjd7yNPvxWfOPpwR826pzNhfJVxyS0KdPO6rSVGlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQS7HUbhK271qRJGW6Ju70mb6mAtPrw8LTi22IVTE4sGfF5oiQkZsUJeBRSLuxd9gT/KAzIHchr0fv0FcAPLUfza86TKI49pkxW3Cf7h5q7/Ldt4U0Z6zrOnkZOt4NzTcZW5qsQZSTinWb3GP/xbdJOo0f9MsuhRG3IgKiE41cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N3ICvg8+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753373776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=di4gWAxFsDjFLqbJUOd8tyFS0ca5NTkMWzqIRwPP148=;
-	b=N3ICvg8+aw6QSd2xUG2iKo0NAHHO0S06Q7dfeqyoUpLIZTLj68JBIa0fe99XD/VyrP+5/7
-	9m0FMoomacKeRfkIwbgihIu7eUot3C5sz46BQ/2hvb/jSDAQ8vpAFjwVqsGi47RQoHGGch
-	ajA6mFDCuqVUMCAc3k6pKIX23JNG0Fs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-lWeaSMgEMKShzIUeRqKj-A-1; Thu, 24 Jul 2025 12:16:14 -0400
-X-MC-Unique: lWeaSMgEMKShzIUeRqKj-A-1
-X-Mimecast-MFC-AGG-ID: lWeaSMgEMKShzIUeRqKj-A_1753373773
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a579058758so535766f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:16:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753373773; x=1753978573;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=di4gWAxFsDjFLqbJUOd8tyFS0ca5NTkMWzqIRwPP148=;
-        b=lPZ70YDhje42Mg/7cw0Zwk/OVtp36OQeMMA9JNW/SuF0PsVPU9IsY4Pa8HAjNuo6+Y
-         o9GK7unCQpfd/Gzlx6ytMvn7cfvdJkZ28Pwn2vtQY47dlWme60x8rB+Id6cF/VHP+1o/
-         H40pG/Q0GTW3kvzz6fo3BJK0ZKd1UNKOcKFyYFxKTqc9rv+GKs/KpAWOS9FTp3rB70ja
-         SOqXK30wFm0aNxztUFuP1m0Dtiyo5PJ/oOUui/vrGH3LJiK/8PQD5utx5UwPwdYagwre
-         wodcU3vifQPi8G+UTA03TztJ2Lt5OudxUREr8M9D4vNHpuarLa4CkJJJJWrQ2BcE0fH2
-         aQvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/wqSK3Z3Qy6bFQocwWfXVZHGlUhEfrVpTEInZWAVFJpEiY3QofB1R+Q4w9nitkKC7uKOnUH4e7hjoJ8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCVFvICPniHenvNlVx/mlzbM7ZrBpA/Eh/t/Jdl2eHGkk8HD+a
-	qARxfBnUcElvBFcFtlsI+NfL52ZcoCoPSV8XzMLwg+mkHOe90v1S0wwtf15e/1FGPXFQ0VhfZnN
-	C3k3kbNHkExuVWwQCFMnibWodDhRpzRsFNQ4aonM7wJMmXdeP8Gvr0kGoL4CVvi2kpw==
-X-Gm-Gg: ASbGncuoGANQEF4ChlcQaBqJr31rwQ7eT27CBe2qtcaAC94E/APNE3OfiPE2R9NqKa7
-	PUk1/STJqKcZBkVJWALKIflVXObc36J+xPYwpV9UUzVK28l1CNmvo8QpZxom+fQt2HpKfSR5W1C
-	CGh2csQ5XTWC+m4MapqwtzQh5kyHGHxzvQOaR7lC/koKJkWV0PCfJq7K4TijRPJ61PWYR1BoJam
-	bBEMlC0RDjVrXKKs2+fZegxlit7uZ4aHch9xVPIb5v/tVvNggXPpKQFIRWSWFrvIvE4TzKRdZZd
-	oQYiyMSfs0UYNDv+NIJiMdpRBi8aDMHogjQpfFsXajhHhcthwTGqc5BacL+KUBw/eZ0VX18XXil
-	AGMNoiOkq+02pmMiEnk2RaPc8wdhOtP5aL0gEv9W1Y1uL5sJ+XHJq+LO1HPC0z43D
-X-Received: by 2002:a05:6000:290c:b0:3b4:990b:9ee7 with SMTP id ffacd0b85a97d-3b768cb1b11mr5816992f8f.22.1753373773346;
-        Thu, 24 Jul 2025 09:16:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEguCEVAG7lxnHoKX5dL9PwnXhiPldiban8ysf/Zd3Xyvw6UneOlwrJCPgjQknaAEGwBWPU9Q==
-X-Received: by 2002:a05:6000:290c:b0:3b4:990b:9ee7 with SMTP id ffacd0b85a97d-3b768cb1b11mr5816963f8f.22.1753373772881;
-        Thu, 24 Jul 2025 09:16:12 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:5e00:c941:d6fb:3e30:b42? (p200300d82f1f5e00c941d6fb3e300b42.dip0.t-ipconnect.de. [2003:d8:2f1f:5e00:c941:d6fb:3e30:b42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc7724esm2590591f8f.32.2025.07.24.09.16.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 09:16:12 -0700 (PDT)
-Message-ID: <ee6df343-6500-4443-9af1-4d15040e39c9@redhat.com>
-Date: Thu, 24 Jul 2025 18:16:11 +0200
+	s=arc-20240116; t=1753373820; c=relaxed/simple;
+	bh=TJg6HtvC7AL60AP0HArOHhtrDS821WGFzhzEVcX5aCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JvtrYiJQFg81SrW79xj7VpUsNAbgBE4lQeYTx+NiF+eLnwHj5UE2uNl+8ilws2PiZ5pldRLEVkeFF7SWnRgpI/9L6pMlcXAuooqOB3KYXqGnclIiIpOcJeVCUnp+/1LQ7i/PECtIm4jVzigpn1T5F6V7mv6VFJFrggr0kZ/hRVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PRNFm3So; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRKYl017685;
+	Thu, 24 Jul 2025 16:16:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=CEUH3tloZVV0/KlZuHAz7nJ/FuCLH
+	ThVgGLTH13Ooug=; b=PRNFm3SovpVSpFvtxmEcD16/h6uf67Bdma7qBNRWZfGpy
+	Knddy/8AQGqEqDWIX93tpTWIs2Jhzb9lMcsP3M+ggryhfL3KsNYBm+dwZOag3LVH
+	O6VwsaBHQSZXDUmUqhUIlc5MZ8EEp3h1JPHT8s/gViMsn8qDMMteQfuIYO5xE9pM
+	D/ExfEunbKN3PkxSYXlLhbm1qEJXfRV9DNMwPtZknlcqw/hcvhmpIaFAzUNkL27t
+	8xG+7UDVKQJUovvs/9xW3VfydGoETCid0aZ+fvlh0iBLpiAfhV2Z+ZSFuILQ/sIY
+	OuDVfOFli8OjWcVy8DF0e+ywK0AXYv2CIXVKtimjQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48056ehuuj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 16:16:29 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OFrow8014461;
+	Thu, 24 Jul 2025 16:16:28 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 24 Jul 2025 16:16:28 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNG034466;
+	Thu, 24 Jul 2025 16:16:27 GMT
+Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 24 Jul 2025 16:16:27 +0000
+From: Prakash Sangappa <prakash.sangappa@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
+        vineethr@linux.ibm.com, prakash.sangappa@oracle.com
+Subject: [PATCH V7 00/11] Scheduler time slice extension
+Date: Thu, 24 Jul 2025 16:16:14 +0000
+Message-ID: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: remove io-mapping
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250724145313.65920-1-lorenzo.stoakes@oracle.com>
- <199a9d2c-9e50-4740-b29a-6ffe906e7d9d@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <199a9d2c-9e50-4740-b29a-6ffe906e7d9d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507240123
+X-Proofpoint-ORIG-GUID: SvJ5YZ9KO4X9uOrzZxnKmExV__rAl-X-
+X-Proofpoint-GUID: SvJ5YZ9KO4X9uOrzZxnKmExV__rAl-X-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfXx1TFWIAsOv6h
+ MqM9+QP28v2yNKXMmYJ9M9foMgENq2CS7cpO2R8Pb+yd8j5v/wQ06NwPevFcbN3WCItNM+whZeq
+ aF/PhCfkKJkVyD33Nv1d+++JeNoHhVQzPItLSM8HcS1XTXhvuNvp2eV0n6F+MR+BkSA0JsmwJq9
+ 3nMLIdjGqO0eHyqJtvv1mXVKtaKFwjDS+SLVD1hj+TDpqqctSxnr+cywpNAlvz2XW5A4z+UAlt9
+ LNmM2cbj/7k8kwg13/EM024GHY/eqqGrd4uXv6UftvjXz096sWqsW7Jpsk0KTBYetWaN02vEcPh
+ VK2GhzPdUpNc0tSd/o40BmqNz35jGczW5vfQT+L+3fEg5zrG4xb/dqYvBLUaDZdkfJSfjrmVuAQ
+ iA3cngNYhrK6RmP7Fp/2DJ5ZyzPGd+DA0HodkdgkHN2qS/whAdsPfkmxQyHaWDpcNtlwQZWW
+X-Authority-Analysis: v=2.4 cv=Ef3IQOmC c=1 sm=1 tr=0 ts=68825c5d b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=meVymXHHAAAA:8
+ a=WsHKUha7AAAA:8 a=vjCvG0qzlwfpJfpLelEA:9 a=2JgSa4NbpEOStq-L5dxp:22
+ a=H4LAKuo8djmI0KOkngUh:22 cc=ntf awl=host:12061
 
-On 24.07.25 17:39, Lorenzo Stoakes wrote:
-> Sorry Andrew please ignore this for now, I'll send a v2 later.
-> 
-> I'm not having a great day here...
-> 
-> I wrongly assumed that, since this is wholly unused in practice, that nobody
-> would refer to it or include the header, but it turns out that's incorrect.
+Based on v6.16-rc3.
 
-So, do we have to keep all (and keep it in MAINTAINERS) or is it just 
-about cleaning up the headers?
+Patches 7-11 in this series are an attempt to implement the API/mechanism 
+for an RT thread to indicate not to delay scheduling it when the thread
+running on the cpu requests extending its time slice, as suggested by
+Thomas Gleixner. This is required to address the concern that with the use 
+of the proposed scheduler time slice extension feature, a normal thread 
+can delay the scheduling of an RT thread.
+
+This will require a new TIF flag(TIF_NEED_RESCHED_NODELAY), which will be 
+set on the running thread when this RT thread gets woken up and is enqueued. 
+The API is only allowed for use by RT(RR, FIFO) threads. 
+
+Implementation of TIF_NEED_RESCHED_NODELAY patches is on the lines of
+how TIF_NEED_RESCHED_LAZY was added. However, TIF_NEED_RESCHED_NODELAY
+will be effective only with the scheduler time slice extension feature
+(i.e, when CONFIG_RSEQ_RESCHED_DELAY config option is enabled).
+
+Introduces prctl APIs to set and get the sched_nodelay flag. Adds a
+new 1-bit member(sched_nodelay) to the struct task_struct to store this
+flag, as there is no more room for a new PF* flag. This flag will be 
+inherited across fork and exec. 
+
+The API provides per-thread control to decide if it can be delayed
+or not. Also, a kernel parameter is added to disable delaying scheduling of
+all RT threads, if necessary, when the scheduler time slice extension feature
+is enabled.
+
+The above change is more of an RFC, looking for feedback on the
+approach. 
+
+Patches 1-6  have been updated based on comments from the V6 patch series.
+
+---------------- cover letter previously sent --------------------------------
+A user thread can get preempted in the middle of executing a critical
+section in user space while holding locks, which can have undesirable affect
+on performance. Having a way for the thread to request additional execution
+time on cpu, so that it can complete the critical section will be useful in
+such scenario. The request can be made by setting a bit in mapped memory,
+such that the kernel can also access to check and grant extra execution time
+on the cpu. 
+
+There have been couple of proposals[1][2] for such a feature, which attempt
+to address the above scenario by granting one extra tick of execution time.
+In patch thread [1] posted by Steven Rostedt, there is ample discussion about
+need for this feature.
+
+However, the concern has been that this can lead to abuse. One extra tick can
+be a long time(about a millisec or more). Peter Zijlstra in response posted a 
+prototype solution[5], which grants 50us execution time extension only.
+This is achieved with the help of a timer started on that cpu at the time of
+granting extra execution time. When the timer fires the thread will be
+preempted, if still running. 
+
+This patchset implements above solution as suggested, with use of restartable
+sequences(rseq) structure for API. Refer [3][4] for further discussions.
+
+
+v7:
+- Addressed comments & suggestions from Thomas Gleixner & Prateek Nayak.
+  Renamed 'sched_time_delay' to 'rseq_delay_resched'. Made it a 2-bit 
+  member to store 3 states NONE, PROBE & REQUESTED as suggested by
+  Thomas Gleixner. Also refactored some code in patch 1.
+- Renamed the config option to 'CONFIG_RSEQ_RESCHED_DELAY' and
+  added it in patch 1. Added SCHED_HRTICK dependency.
+- Patches 7-11 are an attempt to implement the API/mechanism 
+  Thomas suggested. They introduce a prctl() api which lets an RT thread
+  indicate not to delay scheduling it when some thread running on
+  the cpu requests extending its time slice.
+
+v6:
+https://lore.kernel.org/all/20250701003749.50525-1-prakash.sangappa@oracle.com/
+- Rebased onto v6.16-rc3. 
+  syscall_exit_to_user_mode_prepare() & __syscall_exit_to_user_mode_work()
+  routines have been deleted. Moved changes to the consolidated routine
+  syscall_exit_to_user_mode_work()(patch 1).
+- Introduced a new config option for scheduler time slice extension
+  CONFIG_SCHED_PREEMPT_DELAY which is dependent on CONFIG_RSEQ.
+  Enabled by default(new patch 7). Is this reasonable?
+- Modified tracepoint to a conditional tracepoint(patch 5), as suggested
+  by Steven Rostedt.
+- Added kernel parameters documentation for the tunable
+  'sysctl_sched_preempt_delay_us'(patch 3)
+
+v5:
+https://lore.kernel.org/all/20250603233654.1838967-1-prakash.sangappa@oracle.com/
+- Added #ifdef CONFIG_RSEQ and CONFIG_PROC_SYSCTL for sysctl tunable
+  changes(patch 3).
+- Added #ifdef CONFIG_RSEQ for schedular stat changes(patch 4).
+- Removed deprecated flags from the supported flags returned, as
+  pointed out by Mathieu Desnoyers(patch 6).
+- Added IF_ENABLED(CONFIG_SCHED_HRTICK) check before returning supported
+  delay resched flags.
+
+v4:
+https://lore.kernel.org/all/20250513214554.4160454-1-prakash.sangappa@oracle.com
+- Changed default sched delay extension time to 30us
+- Added patch to indicate to userspace if the thread got preempted in
+  the extended cpu time granted. Uses another bit in rseq cs flags for it.
+  This should help the application to check and avoid having to call a
+  system call to yield cpu, especially sched_yield() as pointed out
+  by Steven Rostedt.
+- Moved tracepoint call towards end of exit_to_user_mode_loop().
+- Added a pr_warn() message when the 'sched_preempt_delay_us' tunable is
+  set higher then the default value of 30us.
+- Patch to add an API to query if sched time extension feature is supported. 
+  A new flag to sys_rseq flags argument called 'RSEQ_FLAG_QUERY_CS_FLAGS',
+  is added, as suggested by Mathieu Desnoyers. 
+  Returns bitmask of all the supported rseq cs flags, in rseq->flags field.
+
+v3:
+https://lore.kernel.org/all/20250502015955.3146733-1-prakash.sangappa@oracle.com
+- Addressing review comments by Sebastian and Prateek.
+  * Rename rseq_sched_delay -> sched_time_delay. Move its place in
+    struct task_struct near other bits so it fits in existing word.
+  * Use IS_ENABLED(CONFIG_RSEQ) instead of #ifdef to access
+    'sched_time_delay'.
+  * removed rseq_delay_resched_tick() call from hrtick_clear().
+  * Introduced a patch to add a tracepoint in exit_to_user_mode_loop(),
+    suggested by Sebastian.
+  * Added comments to describe RSEQ_CS_FLAG_DELAY_RESCHED flag.
+
+v2:
+https://lore.kernel.org/all/20250418193410.2010058-1-prakash.sangappa@oracle.com/
+- Based on discussions in [3], expecting user application to call sched_yield()
+  to yield the cpu at the end of the critical section may not be advisable as
+  pointed out by Linus.  
+
+  So added a check in return path from a system call to reschedule if time
+  slice extension was granted to the thread. The check could as well be in
+  syscall enter path from user mode.
+  This would allow application thread to call any system call to yield the cpu. 
+  Which system call should be suggested? getppid(2) works.
+
+  Do we still need the change in sched_yield() to reschedule when the thread
+  has current->rseq_sched_delay set?
+
+- Added patch to introduce a sysctl tunable parameter to specify duration of
+  the time slice extension in micro seconds(us), called 'sched_preempt_delay_us'.
+  Can take a value in the range 0 to 100. Default is set to 50us.
+  Setting this tunable to 0 disables the scheduler time slice extension feature.
+
+v1: 
+https://lore.kernel.org/all/20250215005414.224409-1-prakash.sangappa@oracle.com/
+
+
+[1] https://lore.kernel.org/lkml/20231025054219.1acaa3dd@gandalf.local.home/
+[2] https://lore.kernel.org/lkml/1395767870-28053-1-git-send-email-khalid.aziz@oracle.com/
+[3] https://lore.kernel.org/all/20250131225837.972218232@goodmis.org/
+[4] https://lore.kernel.org/all/20241113000126.967713-1-prakash.sangappa@oracle.com/
+[5] https://lore.kernel.org/lkml/20231030132949.GA38123@noisy.programming.kicks-ass.net/
+[6] https://lore.kernel.org/all/1631147036-13597-1-git-send-email-prakash.sangappa@oracle.com/
+
+Prakash Sangappa (11):
+  sched: Scheduler time slice extension
+  sched: Indicate if thread got rescheduled
+  sched: Tunable to specify duration of time slice extension
+  sched: Add scheduler stat for cpu time slice extension
+  sched: Add tracepoint for sched time slice extension
+  Add API to query supported rseq cs flags
+  sched: Add API to indicate not to delay scheduling
+  sched: Add TIF_NEED_RESCHED_NODELAY infrastructure
+  sched: Add nodelay scheduling
+  sched, x86: Enable nodelay scheduling
+  sched: Add kernel parameter to enable delaying RT threads
+
+ .../admin-guide/kernel-parameters.txt         |  8 ++
+ Documentation/admin-guide/sysctl/kernel.rst   |  8 ++
+ arch/x86/Kconfig                              |  1 +
+ arch/x86/include/asm/thread_info.h            |  2 +
+ include/linux/entry-common.h                  | 18 ++--
+ include/linux/entry-kvm.h                     |  4 +-
+ include/linux/sched.h                         | 47 +++++++++-
+ include/linux/thread_info.h                   | 11 ++-
+ include/trace/events/sched.h                  | 31 +++++++
+ include/uapi/linux/prctl.h                    |  3 +
+ include/uapi/linux/rseq.h                     | 19 ++++
+ init/Kconfig                                  |  7 ++
+ kernel/Kconfig.preempt                        |  3 +
+ kernel/entry/common.c                         | 36 ++++++-
+ kernel/entry/kvm.c                            |  3 +-
+ kernel/rseq.c                                 | 71 ++++++++++++++
+ kernel/sched/core.c                           | 93 ++++++++++++++++++-
+ kernel/sched/debug.c                          |  4 +
+ kernel/sched/rt.c                             | 10 +-
+ kernel/sched/sched.h                          |  1 +
+ kernel/sched/syscalls.c                       |  4 +
+ kernel/sys.c                                  | 18 ++++
+ 22 files changed, 380 insertions(+), 22 deletions(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.43.5
 
 
