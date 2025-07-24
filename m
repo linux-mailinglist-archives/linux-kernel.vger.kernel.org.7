@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-744890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148D5B11231
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:25:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BDCB11235
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34C8AC22B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524BF1CE7B44
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C9124C07F;
-	Thu, 24 Jul 2025 20:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18301253954;
+	Thu, 24 Jul 2025 20:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUCjU1/n"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="JgsZo+9c"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA26239567;
-	Thu, 24 Jul 2025 20:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B10239567
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388697; cv=none; b=OVanO6GR9DiKPS+up/Y1WoZPEChMgdOKW3jaRdAqeUU4cL+ehn4oKthfp+ROpsoWLk2cXGi/hRXtuYvWXfiZ4hsmEQDQViy6U75LIjWr6hX6ecd7P5/t9T4kB36Tgqfw7M0bFbyz1bsaCtN8MwcCAT7hYvudE6X2EzpgxHohzO0=
+	t=1753388719; cv=none; b=LAc+b/5WueGUzyLnW/b3o0H6rb0AJ3WccADapEq2AS9L+9v3nnBFblyYUWdxyD9BI77d5kcirE5gnO1bM9Vc2VZIUpWc4bCmrpD25unSfW+cNm5M962Qmor8b3ohlVv9xyS7VDfklTQY6Phso98uRfcF+MXgH4u855ciOnfFRfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388697; c=relaxed/simple;
-	bh=lR7STELFR8UBgJ3/YAxUgaCeebrZGjPWO/ydGdpQk94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UIUtGkrT7myPaucaVYuAbimiZRTektUqLD2CyA54VoiyYzU0tF78mNKWsKEcdA7mu874tk9gIxGos5P1Dbaids/qC1EcSNTZggk/1xA4CoukIOsKA7EXIpvQdUUgfOFrPB0SIFIo2RtE/mMT8vFAqKMH7oTvkD4/xzOYZnkHZfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUCjU1/n; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-313f68bc519so1129819a91.0;
-        Thu, 24 Jul 2025 13:24:55 -0700 (PDT)
+	s=arc-20240116; t=1753388719; c=relaxed/simple;
+	bh=XqFmUKYyFJuP9gT1VB2HqW1p4rCZAg9SeYxN+uj0LfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btPEtyGiZ3P5gNmpvW/zmhAqOqL+0iRq7RKHTkGMMnnGryVhupIYOIFt8lGjLdC08XVloLRU++jpw9yYjtm9iSVNtMmDRtSAqpK2vo0iaq/+488Bkd4AqFp4araONMiCYmmzvKTicTGHDx+MS1LRVlR1jrdSZYpv6zdXZYPXn44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=JgsZo+9c; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3dda399db09so16434465ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753388695; x=1753993495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8NyY2H3QimHapd9ALycOJd37zY8x0BuXHqiOgfyYuUU=;
-        b=IUCjU1/nwB2IzWDL++RLIJ25+ASB3LDlPeCALsTIATyA5gCXo6Dz2x8HNXlN3s0oym
-         qNk9G0Qg5srC4nmtiVVCXVlKZx+5FrUWnK5KDO3L3yD7Ahpgnr642QHZ+8g/YO1nc0rD
-         1UvnKCVhAdkjZ0HFxflRM0TPMZN7YMPB+qqjCOcMo4MzvWYZs8iGpXWbL63mdfZ6TVOZ
-         70FAbDynGbAbdGLjANjPMaw9u31grfnpkE0VG8OIDq73p+l4mDk/LHLiyY8MDN57NFl3
-         Iqb37eunQa3+eOmYgujbTSfyFaP33ALX7n4rzc6B7IZnYMlIHJNoivE95KVGnyTkjryE
-         Ce2g==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753388715; x=1753993515; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lrEbbbAkAppzih/TPSBGsQGG4aRG/XXDaMLZfTbNAAw=;
+        b=JgsZo+9cWFnZxYjldlepDi3rd4ZE95SQfWcAGXn3MPqHRc1jow6Hb+tyyI5X7pNxaP
+         1TFeuWiY86dsU1L4b7pUW+HzrPWxhau+hSP1Q7qK3UvsYr2AwZavTKG81wXGKi8RcfEU
+         6zaUn/VhSQuTNrfgzjikY18Cc5BbhUx8lN0RhqMbZtN9LTptaEb4rVAGfE3hBrFd/07t
+         SLTDQASrk5T6SC8d+ObTuTRNaqC9kQW1X4nZXUyAZWpg5xMQr8QDzHr+UDX9DkFFhUOY
+         L7CH5UgHTgrcoykxd76LWCuahDu0k89SMhwFZUMA+JtGbSLMR52GQEYj7JQavDwRtvtm
+         cpnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753388695; x=1753993495;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8NyY2H3QimHapd9ALycOJd37zY8x0BuXHqiOgfyYuUU=;
-        b=f+GRPHHIB015L2LMwS6aMW9JIUVZNbf0cX+TpIw0DBmNzvGfTzjkNRrBzPvhUbGLXK
-         9B82PJscPmWO2udlTvhElo62u9+uRjfly6vwWrVmBhyw1o+8G3B160+Axmx0bl9aA86v
-         YS2x+KEoaMbpFKg+hHhxvQrrOMsV6BWpMekxkOZ7X66EdE3q0jXmoTQZ6v3CMv/rcq96
-         bk/8Wr87s21rjvwWiyI7X37M5O5f8d3BP6hOFlAoNId2lM4a3x1BRNIpYXbpUBtboqpC
-         FY78dv1I0ka1TY2GYqQJpyzjZiBEa5MyZVin2xrt7RLnus8B9lXXoWAwPoNbxIlp2KC2
-         eUHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlsxW9qxCncLpj4O70EYTjqRwuFmdhLY6UXpD9m/WztzaFdCwivzNk4eJFL7c3uwg91f+nTb8zpEqK52SHhggJ6kTzpA==@vger.kernel.org, AJvYcCXpnkTXkpDlzuHwzqYJJ4G3NlTAozMu9tzYCJ7ACybOBi4NybrRQspK7HUFtWSscVzsrAuoL3a76eSbPA==@vger.kernel.org, AJvYcCXwaM/dEg6kMEXCOUuH80XotSKhRLsGLb7YJjHN/UVsrr6w1g3MOZqBVq9TkmkCz3iz5NLauPjAIjlIxg2s@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlXDNmUA2ZtafYejJN4JIFz431QWyklTsrlivf2k2DOYYnBLna
-	N3Tx7SzFr/5+qlMqed0XBvLU6oc7DVpsORJDBBJychADkXftU3LDp0kO7tkDLbx1m2KJtA==
-X-Gm-Gg: ASbGncs3u/XIbXa6lwrzheGhvuntJHfdTsFxfTXy0blklJehCx4MzdxUbik5CDlFxQh
-	s1jP+drePWowY7Z5e6KytIuy7kQcuGMVVSu82NeqgqvirVYQ6U6iPCdEo1CvSABfe0OO850U8q0
-	UzpM6Lgb5j1GWdwQc0kCE3nvSKI+2hnUNUxRzUoqDGwDvJqPXvqtJfj6MeKyC00eR9GfKiH9U0J
-	89pLVOwVnHP2qvupo0tHMyQBostbc52Y+DLk98OwNqiSpiOMsGOuKVRK55AL1uCJHNsTXdDy2Up
-	YevASjXeduOvuQoC4/Dr8rJWqFqMtGkfAN4LNOpX7O9UB+1e+o++tfuIeAg3ATaDKM+L9gioqr9
-	EMRIFQ6y3wSOXckPvUdBESEVkyW1A5V7qtReENiaUAAYEaYc584A9dQ==
-X-Google-Smtp-Source: AGHT+IG10P4peUyc/n/35gEyTkQcRjmVC8EsMzqlVVG/eJmYcI0SVLUSXI36qmAUCXvVGLA+0xWNOg==
-X-Received: by 2002:a17:90b:35c7:b0:311:ef19:824d with SMTP id 98e67ed59e1d1-31e5079f043mr11112711a91.2.1753388694677;
-        Thu, 24 Jul 2025 13:24:54 -0700 (PDT)
-Received: from c12-ThinkPad-X1-Carbon-Gen-12.. ([2404:7a80:b9a1:7100:9762:3c57:4828:75d1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e6625068bsm2023458a91.5.2025.07.24.13.24.50
+        d=1e100.net; s=20230601; t=1753388715; x=1753993515;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lrEbbbAkAppzih/TPSBGsQGG4aRG/XXDaMLZfTbNAAw=;
+        b=TBARU/PP5Q7I2wKDg2ieWoVBIw+GXXWu502S1QUGJB9AuqmRoThBeN6d9Yo+quYwKe
+         WBmbvMslsAkt4m/pisVx2zdYYmtmK2N4CsXmy5O3rfacOQsC/TKLTu3SH2wc5C8rhZl0
+         QZHdpsjgUIQY4oyoY2HXYAy7ts+UECLexXSkaYxuPXR6cwpKwKixrHP276dIjJ7/yWtA
+         2VGdxMFwMEVRlJSy/KNf2UcPgHmzM3ine/CiKanB221dYZAYCgR6zSUJPejYvz06FGZe
+         sJLuyWHUIn1IPpmvKh6NfxVE85rN/9ok9caaGbS2WP5BIdQF/mtlFio1K5d+qjlUoFIX
+         lJFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWMnvYGE/+qnJs5F0WSHuw1A1iVQkEbPv8gc2UB9aEkzFYW4YEWNLv5K0+BBn+n7XF5OA/uGWH8SllzL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTAxGFLCx+8ZlZJQD58jZDmDWtCThvxScMlNY/mg5EHIR5nsTO
+	y0L+PFhadLgbjfaWcK45okSOmEsogrxA8rEaJgUmqDB6THK+tEDxw1H+3+BpgYYymS0=
+X-Gm-Gg: ASbGncsJt9HhYblKHpKl2vtoASIHc6wnaWrGnxt+/It3aqjIQUOxpIkcCDMjIFHpK4q
+	GnsO7t3hx9V1Ir8D9Y23VPLScnb9EFxkYR9yYnjynUjtNFKNExZsf53GxaXRfHWIMIrVZ+795pR
+	cfgEMgsNP80fKAr/ftRPs0oSOnYaT+5+xFmjt56ixxcXrlmn7qqeS2JD/gVmCjzEp/EvyENCFAh
+	yUJ0JKZUpbicOPEV0tBoL4SHxmL5WxWO9V7XKmg/5PQPgqAfxGKZjc0zSRaA0oOu4Vyah0TmxIR
+	3OXkTlvHKz7YHlAMxwAmBZq7jBG2TVVbegdn+WL8svo+OeyawnjRGLB5GvJUB3RX7/4K0+QESeQ
+	kI0NEJpLW5R3dYiqPxFyYtiecAu2sE6pnY4WE6MfB
+X-Google-Smtp-Source: AGHT+IE5uFkVwfcYSkjHyZF/c2W8eIlexXUx47CDYyxHzh9kAbZHbQXPpnACm7peHUuN/ml5vSYqEw==
+X-Received: by 2002:a05:6602:1551:b0:87c:6d49:deb1 with SMTP id ca18e2360f4ac-87c6d4a568fmr1148165839f.8.1753388715572;
+        Thu, 24 Jul 2025 13:25:15 -0700 (PDT)
+Received: from zoltan.localdomain ([199.59.116.160])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-87c74316a3bsm63080239f.23.2025.07.24.13.25.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 13:24:53 -0700 (PDT)
-From: Vishnu Sankar <vishnuocv@gmail.com>
-To: dmitry.torokhov@gmail.com,
-	hmh@hmh.eng.br,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Cc: mpearson-lenovo@squebb.ca,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	vsankar@lenovo.com,
-	Vishnu Sankar <vishnuocv@gmail.com>
-Subject: [PATCH v2 2/2] platform/x86: thinkpad_acpi: Use trackpoint doubletap interface via sysfs
-Date: Fri, 25 Jul 2025 05:23:48 +0900
-Message-ID: <20250724202349.11200-2-vishnuocv@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250724202349.11200-1-vishnuocv@gmail.com>
-References: <20250724202349.11200-1-vishnuocv@gmail.com>
+        Thu, 24 Jul 2025 13:25:14 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/8] spacemit: introduce P1 PMIC support
+Date: Thu, 24 Jul 2025 15:25:01 -0500
+Message-ID: <20250724202511.499288-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,246 +104,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TrackPoint devices supporting doubletap expose a sysfs attribute under
-/sys/devices/.../trackpoint/doubletap_enabled. This patch enables
-thinkpad_acpi to detect if the system has a TrackPoint device with
-doubletap capability, and allows toggling the feature via sysfs.
+The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
+converters and 12 LDOs.  It contains a load switch, ADC channels,
+GPIOs, a real-time clock, and a watchdog timer.
 
-This avoids direct linking between subsystems and relies on sysfs
-as the interface for coordination between input and platform drivers.
+This series introduces a multifunction driver for the P1 PMIC as well
+as drivers for its regulators and RTC.
 
-Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
-Changes in v2:
-- Updated commit message to clarify dependency on trackpoint driver
-- Now handling sysfs read/write of trackpoint driver using file read/write
-- Removed sysfs attribute creation of trackpoint double tap here.
-- Reversed the logic and return false right away
-- Dropped unnecessary debug messages
-- Using dev_dbg() instead of pr_xxxx()
----
- drivers/platform/x86/thinkpad_acpi.c | 155 +++++++++++++++++++++++++--
- 1 file changed, 147 insertions(+), 8 deletions(-)
+Version 8 provided the ability in "simple-mfd-i2c.c" to specify the
+max_register value for the regmap configuration as an alternative
+to providing a "full" regmap structure.  Lee Jones asked that the
+max_register value take precedence if the regmap_config was also
+provided.
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index b59b4d90b0c7..cb981de9bbb2 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -72,6 +72,13 @@
- #include <linux/units.h>
- #include <linux/workqueue.h>
- 
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/err.h>
-+#include <linux/fcntl.h>
-+#include <linux/namei.h>
-+#include <linux/kernel_read_file.h>
-+
- #include <acpi/battery.h>
- #include <acpi/video.h>
- 
-@@ -373,7 +380,8 @@ static struct {
- 	u32 hotkey_poll_active:1;
- 	u32 has_adaptive_kbd:1;
- 	u32 kbd_lang:1;
--	u32 trackpoint_doubletap:1;
-+	u32 trackpoint_doubletap_state:1;
-+	u32 trackpoint_doubletap_capable:1;
- 	struct quirk_entry *quirks;
- } tp_features;
- 
-@@ -2879,6 +2887,107 @@ static DEVICE_ATTR_RW(hotkey_poll_freq);
- 
- #endif /* CONFIG_THINKPAD_ACPI_HOTKEY_POLL */
- 
-+/*
-+ * Trackpoint doubletap handlers
-+ * These set of functions will communicate with the sysfs attributes of TrackPoint driver
-+ * Attribute : /sys/bus/serio/devices/seriox/doubletap_enabled
-+ */
-+
-+/* Global buffer to reuse path */
-+static char trackpoint_doubletap_path[128];
-+
-+/* Function to find the correct serio path with TrackPoint attribute "doubletap_enabled" */
-+static int thinkpad_find_trackpoint_path(void)
-+{
-+	struct path serio_path;
-+	char path_buf[128];
-+	int i;
-+
-+	for (i = 0; i < 10; i++) {
-+		snprintf(path_buf, sizeof(path_buf),
-+		"/sys/bus/serio/devices/serio%d/doubletap_enabled", i);
-+
-+		if (!kern_path(path_buf, LOOKUP_FOLLOW, &serio_path)) {
-+			path_put(&serio_path);
-+			snprintf(trackpoint_doubletap_path, sizeof(trackpoint_doubletap_path),
-+				"%s", path_buf);
-+			pr_info("ThinkPad ACPI: TrackPoint doubletap found at %s\n",
-+				trackpoint_doubletap_path);
-+			return 0;
-+		}
-+	}
-+	return -ENODEV;
-+}
-+
-+/* Writing to the sysfs attribute of Trackpoint "doubletap_enabled" */
-+static int write_doubletap_sysfs_value(const void *buf, size_t count, loff_t *pos)
-+{
-+	struct file *filp;
-+	ssize_t written;
-+
-+	if (!buf)
-+		return -EINVAL;
-+
-+	filp = filp_open(trackpoint_doubletap_path, O_WRONLY | O_CREAT, 0644);
-+	if (IS_ERR(filp))
-+		return PTR_ERR(filp);
-+
-+	/* Required to avoid EINVAL from vfs checks in some cases */
-+	if (!(filp->f_mode & FMODE_CAN_WRITE)) {
-+		filp_close(filp, NULL);
-+		return -EINVAL;
-+	}
-+
-+	/* Write using kernel_write */
-+	written = kernel_write(filp, buf, count, pos);
-+	filp_close(filp, NULL);
-+
-+	return written < 0 ? written : 0;
-+}
-+
-+/* Function to read the TrackPoint doubletap status */
-+static int trackpoint_read_doubletap_status(bool *enabled)
-+{
-+	struct file *filp;
-+	loff_t pos = 0;
-+	char buf[8];
-+	ssize_t ret;
-+
-+	if (!enabled)
-+		return -EINVAL;
-+
-+	if (!trackpoint_doubletap_path[0])
-+		return -ENODEV;
-+
-+	filp = filp_open(trackpoint_doubletap_path, O_RDONLY, 0);
-+	if (IS_ERR(filp))
-+		return PTR_ERR(filp);
-+
-+	ret = kernel_read(filp, buf, sizeof(buf) - 1, &pos);
-+	filp_close(filp, NULL);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	buf[ret] = '\0'; // Safe: ret < sizeof(buf)
-+
-+	*enabled = (buf[0] == '1');
-+
-+	return 0;
-+}
-+
-+/* Function to check the TrackPoint doubletap status */
-+static int thinkpad_set_doubletap_status(bool enable)
-+{
-+	const char *val = enable ? "1" : "0";
-+	loff_t pos = 0;
-+
-+	if (!trackpoint_doubletap_path[0])
-+		return -ENODEV;
-+
-+	return write_doubletap_sysfs_value(val, strlen(val), &pos);
-+}
-+
- /* sysfs hotkey radio_sw (pollable) ------------------------------------ */
- static ssize_t hotkey_radio_sw_show(struct device *dev,
- 			   struct device_attribute *attr,
-@@ -3326,6 +3435,8 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
- 	bool radiosw_state  = false;
- 	bool tabletsw_state = false;
- 	int hkeyv, res, status, camera_shutter_state;
-+	bool dt_state;
-+	int rc;
- 
- 	vdbg_printk(TPACPI_DBG_INIT | TPACPI_DBG_HKEY,
- 			"initializing hotkey subdriver\n");
-@@ -3557,9 +3668,22 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
- 
- 	hotkey_poll_setup_safe(true);
- 
--	/* Enable doubletap by default */
--	tp_features.trackpoint_doubletap = 1;
-+	/* Checking doubletap status by default */
-+	rc = thinkpad_find_trackpoint_path();
-+	if (rc) {
-+		dev_dbg(&tpacpi_pdev->dev, "Could not find TrackPoint doubletap sysfs path\n");
-+		tp_features.trackpoint_doubletap_capable = false;
-+		return 0;
-+	}
-+	tp_features.trackpoint_doubletap_capable = true;
- 
-+	rc = trackpoint_read_doubletap_status(&dt_state);
-+	if (rc) {
-+		/* Disable if access to register fails */
-+		dt_state = false;
-+		dev_dbg(&tpacpi_pdev->dev, "Doubletap failed to check status\n");
-+	}
-+	tp_features.trackpoint_doubletap_state = dt_state;
- 	return 0;
- }
- 
-@@ -3863,9 +3987,7 @@ static bool hotkey_notify_8xxx(const u32 hkey, bool *send_acpi_ev)
- {
- 	switch (hkey) {
- 	case TP_HKEY_EV_TRACK_DOUBLETAP:
--		if (tp_features.trackpoint_doubletap)
--			tpacpi_input_send_key(hkey, send_acpi_ev);
--
-+		*send_acpi_ev = true;
- 		return true;
- 	default:
- 		return false;
-@@ -11194,6 +11316,7 @@ static struct platform_driver tpacpi_hwmon_pdriver = {
- static bool tpacpi_driver_event(const unsigned int hkey_event)
- {
- 	int camera_shutter_state;
-+	int rc;
- 
- 	switch (hkey_event) {
- 	case TP_HKEY_EV_BRGHT_UP:
-@@ -11285,8 +11408,24 @@ static bool tpacpi_driver_event(const unsigned int hkey_event)
- 		mutex_unlock(&tpacpi_inputdev_send_mutex);
- 		return true;
- 	case TP_HKEY_EV_DOUBLETAP_TOGGLE:
--		tp_features.trackpoint_doubletap = !tp_features.trackpoint_doubletap;
--		return true;
-+		if (tp_features.trackpoint_doubletap_capable) {
-+			rc = thinkpad_set_doubletap_status(!tp_features.trackpoint_doubletap_state);
-+
-+			if (rc) {
-+				dev_dbg(&tpacpi_pdev->dev, "Trackpoint doubletap toggle failed\n");
-+			} else {
-+				tp_features.trackpoint_doubletap_state =
-+					!tp_features.trackpoint_doubletap_state;
-+				dev_dbg(&tpacpi_pdev->dev, "Trackpoint doubletap is %s\n",
-+						tp_features.trackpoint_doubletap_state ? "enabled" : "disabled");
-+				return true;
-+			}
-+		}
-+		/*
-+		 * Suppress the event if Doubletap is not supported
-+		 * or if the trackpoint_set_doubletap_status() is failing
-+		 */
-+		return false;
- 	case TP_HKEY_EV_PROFILE_TOGGLE:
- 	case TP_HKEY_EV_PROFILE_TOGGLE2:
- 		platform_profile_cycle();
+This version changes a few things from v8:
+  - Alexandre Belloni's ack is added to patch 5.
+  - The max_register value in simple_mfd_data is always used if
+    it is non-zero, as requested by Lee Jones.
+  - The global regmap_config_8r_8v structure is back to being
+    const again.
+  - A new function simple_regmap_config() has been added in patch 2
+    to encapsulate the logic that determines what regmap_config
+    structure will be used.
+      - It uses regmap_config_8r_8v if simple_mfd_data is not supplied
+        for some reason.
+      - It uses regmap_config_8r_8v if the simple_mfd_data defines
+        neither regmap_config nor max_register.
+      - Otherwise, it dynamically allocates a regmap_config structure.
+        If simple_mfd_data refers to a regmap_config structure, it is
+	copied into the allocated struct; otherwise regmap_config_8r_8v
+	is copied.
+      - Finally, if the simple_mfd_data structure provides a non-zero
+        max_register value, it is used in the regmap_config.
+  - A small duplicated comment in "simple-mfd-i2c.h" is removed.
+
+  					-Alex
+
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/pmic-v9
+
+Between version 8 and version 9:
+  - The max_config value is always used if it is provided with the
+    simple_mfd_data structure.
+  - The regmap_config structure used is allocated dynamically if
+    necessary; otherwise regmap_config_8r_8v is used.
+  - A small duplicated comment is removed
+
+Here is version 8 of this series:
+  https://lore.kernel.org/lkml/20250710175107.1280221-1-elder@riscstar.com/
+
+Between version 7 and version 8:
+  - Change the global regmap_config to not be const in patch 2.
+
+Here is version 7 of this series:
+  https://lore.kernel.org/lkml/20250702213658.545163-1-elder@riscstar.com/
+
+Between version 6 and version 7:
+  - Revise patch 2 to preserve the option to provide a full regmap config
+
+Here is version 6 of this series:
+  https://lore.kernel.org/lkml/20250627142309.1444135-1-elder@riscstar.com/
+
+Between version 5 and version 6:
+  - Added Rob Herring's reviewed-by to patch 1
+  - Add the simple MFD functionality suggested by Lee Jones
+  - Update patch 3 (previously 2) accordingly
+
+Here is version 5 of this series:
+  https://lore.kernel.org/lkml/20250625164119.1068842-1-elder@riscstar.com/
+
+Between version 4 and version 5:
+  - Only check the seconds register for change when looping on read
+  - Return without re-enabling the RTC if writing registers fails
+  - If the RTC is disabled when reading, return an error
+
+Here is version 4 of this series:
+  https://lore.kernel.org/lkml/20250625164119.1068842-1-elder@riscstar.com/
+
+More complete history is available at that link.
+
+
+Alex Elder (8):
+  dt-bindings: mfd: add support the SpacemiT P1 PMIC
+  mfd: simple-mfd-i2c: specify max_register
+  mfd: simple-mfd-i2c: add SpacemiT P1 support
+  regulator: spacemit: support SpacemiT P1 regulators
+  rtc: spacemit: support the SpacemiT P1 RTC
+  riscv: dts: spacemit: enable the i2c8 adapter
+  riscv: dts: spacemit: define fixed regulators
+  riscv: dts: spacemit: define regulator constraints
+
+ .../devicetree/bindings/mfd/spacemit,p1.yaml  |  86 +++++++++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 138 +++++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |   7 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  11 ++
+ drivers/mfd/Kconfig                           |  11 ++
+ drivers/mfd/simple-mfd-i2c.c                  |  50 +++++-
+ drivers/mfd/simple-mfd-i2c.h                  |   5 +-
+ drivers/regulator/Kconfig                     |  12 ++
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/spacemit-p1.c               | 157 ++++++++++++++++
+ drivers/rtc/Kconfig                           |  10 ++
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-spacemit-p1.c                 | 167 ++++++++++++++++++
+ 13 files changed, 647 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
+ create mode 100644 drivers/regulator/spacemit-p1.c
+ create mode 100644 drivers/rtc/rtc-spacemit-p1.c
+
+
+base-commit: 9ee814bd78e315e4551223ca7548dd3f6bdcf1ae
 -- 
-2.48.1
+2.43.0
 
 
