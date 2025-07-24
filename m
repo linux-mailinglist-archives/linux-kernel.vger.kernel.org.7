@@ -1,88 +1,58 @@
-Return-Path: <linux-kernel+bounces-744690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADBDB10FD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D11AB10FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A271886722
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59A7858013F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDC61F4617;
-	Thu, 24 Jul 2025 16:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD4C1F463F;
+	Thu, 24 Jul 2025 16:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nrRaoxe3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4Ohsh4g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4211ACEDC;
-	Thu, 24 Jul 2025 16:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9451DF24F;
+	Thu, 24 Jul 2025 16:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753375311; cv=none; b=Fcpbxtj9DfLErFKfAOzbjRuW2V/zQbOFuN+YaKQVvTpq2IlPhTvGWh9aCE5lt6rd+l/0ln63zjKepyV68kg004UDqsfPMWSeyik9KqmNOk+8a1MnWhnXNUf9PkZWCDOl/TNZPt/m7F0uvNFbk1+F0G1STkYDxM5iuuj1gGWqlX8=
+	t=1753375339; cv=none; b=ISM87bhtlTL+Ga+3Q/dSkBZBfhqS6G1TCJcEa+7+R2/KxSxWqE+x26+wapFalbr5Nn3jxAhzSLZmpw+KjTzWToWgSZ+K/zwitkfFsrRm3E5QcaIsp87xzA7SpHhNWbxg9pkCBoBiQXBrEr5BYzlivWFE2V+spJuMZPtbQGQbvNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753375311; c=relaxed/simple;
-	bh=GJ7oPGiI/+5Cg12azq2uSL0OHujgc0U//kiVeas2jMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7mKvzSVDT24WwzctqoXgts0Afk5Zk7aOMom9RDeQQkle3EMPtl52eMYu73cVQs29DV5LfmsQG5cMuJubDRJWFMnuUot7UqzwsK8kbSJqp1uLm9npr99hSy1SECAkpWFnOGcxfz6pzQ8JhQ48b/209Bl2Ng9amBg0wJ3FVZKhuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nrRaoxe3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753375310; x=1784911310;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GJ7oPGiI/+5Cg12azq2uSL0OHujgc0U//kiVeas2jMI=;
-  b=nrRaoxe3hD2jaQdzIqhpTrXWz9pyX0jgZNK2dnz/xeTCBQHa80wE3KDg
-   GKXDyRZdPsAFK3ADUWeSA1aLH4CJuNIXebl4NP7M2DNUNEhNfoei49evC
-   zSmsg8V17oFmFJU3bELvBwM6ieAvQB9G1hH7iYeqVR+f6IY9ByOAKAVd3
-   UZxxn2IheoNxAyok/QTMEdby4kl8EPtjpyt5xiL5W3LLz91arw2OZi4ul
-   R4Tu2SL8xrk1GXoyt3j5XkhHHCduZzM4d4a3Y2i6jwX+OFOTxHee9d5zp
-   dBMeUrqGw8nfERi+bp5H/nRxpLahhPoSglzN6DZLNnHa15e3M5UgXVeDH
-   g==;
-X-CSE-ConnectionGUID: RtJnbSuFQNORFNY8DQc+Cg==
-X-CSE-MsgGUID: U6u/XPTTTry0w9j6m9JtiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="58322801"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="58322801"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 09:41:49 -0700
-X-CSE-ConnectionGUID: kbR/YZUgRpGnkRP9NRGpww==
-X-CSE-MsgGUID: 7yCD/4uhRS+IRX2C8Brupg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="164860147"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 24 Jul 2025 09:41:45 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uez0o-000Kdd-0x;
-	Thu, 24 Jul 2025 16:41:42 +0000
-Date: Fri, 25 Jul 2025 00:40:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Henrik Grimler <henrik@grimler.se>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maciej Purski <m.purski@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-Subject: Re: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <202507250036.RXWSmKW2-lkp@intel.com>
-References: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
+	s=arc-20240116; t=1753375339; c=relaxed/simple;
+	bh=YggnuFxZNDdHmkQCqIlbYBbAnZ7uCChcEN4xtDygVK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eMMQQYzVkV1GuikB5ImcFGL4gxXSrHABeTB5+XlclLHN4FtaU/RlRAJgew4NO7acG+ljhezaq6yEqoZjB3u/UpLgg64uY3DRLYjdLC3ZdqE/zD+Hrq1cRlIs8JKbfcTqffxOsnzJozlegzXC24X/NrDwm5VzCRlCDw58j8c9DvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4Ohsh4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01554C4CEED;
+	Thu, 24 Jul 2025 16:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753375339;
+	bh=YggnuFxZNDdHmkQCqIlbYBbAnZ7uCChcEN4xtDygVK4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=n4Ohsh4gBa2yZix3c5JN8VjoVhV+ZcFo4cc+r6Ctl3PAzduinkQK728TEo+5ZE/C3
+	 Kau0wf8vxSu2aRty3POjjY2wx4bKL4b5E78tGinmdq5AbJlw60FBscfxJEasT9JrD8
+	 n8herMmLUCb20787/6vnkt1JLOQJtQVxTlhyuElEOSr3Av6gWOqUuSx4pxZArcZesp
+	 qA6BuQJFPHgKmeSNHHsBcZDaNEADvO2MTvy389q+9LHZbp4BJBlSdqT8cTg2MHGryJ
+	 N3ifWDdKKeFWkXQqMALZcyt97kVzC7IAit1JP6w88ptLJjDUWXtqT9ZmGEE46GguN4
+	 NdP1LukyR+qbA==
+Date: Thu, 24 Jul 2025 11:42:17 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: mvebu: Use devm_add_action_or_reset()
+Message-ID: <20250724164217.GA2942464@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,38 +61,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
+In-Reply-To: <aHsgYALHfQbrgq0t@pc>
 
-Hi Henrik,
+On Sat, Jul 19, 2025 at 05:34:40AM +0100, Salah Triki wrote:
+> Replace devm_add_action() with devm_add_action_or_reset() to make code
+> cleaner.
+> 
+> Signed-off-by: Salah Triki <salah.triki@gmail.com>
+> ---
+>  drivers/pci/controller/pci-mvebu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> index a4a2bac4f4b2..755651f33811 100644
+> --- a/drivers/pci/controller/pci-mvebu.c
+> +++ b/drivers/pci/controller/pci-mvebu.c
+> @@ -1353,11 +1353,9 @@ static int mvebu_pcie_parse_port(struct mvebu_pcie *pcie,
+>  		goto skip;
+>  	}
+>  
+> -	ret = devm_add_action(dev, mvebu_pcie_port_clk_put, port);
+> -	if (ret < 0) {
+> -		clk_put(port->clk);
+> +	ret = devm_add_action_or_reset(dev, mvebu_pcie_port_clk_put, port);
+> +	if (ret < 0)
+>  		goto err;
+> -	}
 
-kernel test robot noticed the following build errors:
+Looks OK to me (and already applied, so no action necessary).
 
-[auto build test ERROR on ca2a6abdaee43808034cdb218428d2ed85fd3db8]
+But this is the only use of mvebu_pcie_port_clk_put(), which only does
+the clk_put(), so I think we could also remove
+mvebu_pcie_port_clk_put() completely and simply do this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Henrik-Grimler/drm-bridge-sii9234-fix-some-typos-in-comments-and-messages/20250721-174814
-base:   ca2a6abdaee43808034cdb218428d2ed85fd3db8
-patch link:    https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677%40grimler.se
-patch subject: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection logic to detect MHL
-config: arm64-randconfig-002-20250724 (https://download.01.org/0day-ci/archive/20250725/202507250036.RXWSmKW2-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250725/202507250036.RXWSmKW2-lkp@intel.com/reproduce)
+  port->clk = of_clk_get_by_name(child, NULL);
+  ...
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507250036.RXWSmKW2-lkp@intel.com/
+  ret = devm_add_action_or_reset(dev, clk_put, port->clk)
 
-All errors (new ones prefixed by >>):
+which would arguably make this more readable because clk_put()
+corresponds with of_clk_get_by_name(), and it's clear that port->clk
+is the target.
 
->> ld.lld: error: undefined symbol: extcon_register_notifier
-   >>> referenced by sii9234.c:928 (drivers/gpu/drm/bridge/sii9234.c:928)
-   >>>               drivers/gpu/drm/bridge/sii9234.o:(sii9234_probe) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: extcon_unregister_notifier
-   >>> referenced by sii9234.c:1009 (drivers/gpu/drm/bridge/sii9234.c:1009)
-   >>>               drivers/gpu/drm/bridge/sii9234.o:(sii9234_remove) in archive vmlinux.a
+Also, and unrelated, the "err:" label only does a return, so I think
+this function would be improved by removing the "err:" label and
+replacing all the "goto err" cases with "return -ENOMEM" or whatever.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bjorn
 
