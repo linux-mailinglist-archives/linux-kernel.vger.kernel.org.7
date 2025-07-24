@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-744919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CF9B11279
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E8EB1127D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026E916DEFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C8A4E2E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A512E5B2F;
-	Thu, 24 Jul 2025 20:41:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09142EB5D8;
-	Thu, 24 Jul 2025 20:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADCC2EBBBA;
+	Thu, 24 Jul 2025 20:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="sHG06OKO"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C970A2EACE9;
+	Thu, 24 Jul 2025 20:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753389671; cv=none; b=sbQML6wBWsv/dexQIAISSyvTwNIaglJ7XGyqlcgiOq/31M9L2vi9b5eeASDQkkKvmNZbSjUNDs5PzkpmBU5beDUm7FYWJ5bhWTLg3NKIIEOCSRFC6XX8H2X+7eZ30SbTx4f4UP5rJR0SDL8Kj3MNOJUQ3F7Tu7zMV/ZBhlybz4s=
+	t=1753389683; cv=none; b=LFyMrZ5TR0XJzoPoBbVdtZAKWwGrJmWOtqInLUROWp3BFGrZ6fCDd5M9JYCDNmSETE7/YywnLJW20ZMVrMQWpT4Cm5CxMCChWjd8pLqqXymgXLdPS65sHu5KrZl+HBIznWn4jHB7QlUgs5KF/AxJg64hy0HeZwoXy6BlNvSKEnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753389671; c=relaxed/simple;
-	bh=KV8Aom+xCAJKe5yKH2ON+CSmCTJK6vJRTJvOK8/Ai1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hvqNEPfP4vYaZ7U53n5MypzhhsVgqkEltH3B6pTzpSGBvB511fMcA4BhusBAqEDeVySY6TGSwzADcuo020Z8jzdcltdAuKK1e7EDwhqeaPDg9cyM755FNP6fXoOGhL6JdwN3ZVtFCHeGrhGh4qT/dXEQFgSO3hrHxy1Kl3B9V6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F5F6168F;
-	Thu, 24 Jul 2025 13:41:01 -0700 (PDT)
-Received: from [172.27.42.155] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 311083F66E;
-	Thu, 24 Jul 2025 13:41:07 -0700 (PDT)
-Message-ID: <89f67ab9-f8ea-488a-a94b-4a0f32e41bc5@arm.com>
-Date: Thu, 24 Jul 2025 15:41:06 -0500
+	s=arc-20240116; t=1753389683; c=relaxed/simple;
+	bh=002hO+Ofh1fDKb1Hi0cYPd6jdDlDU3XkH4nuV6x7roc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7afcbybrAvjsOsszbXjk2wlNb5clIO4cbsU2IOyt6q1k+VWGpRBzzVx6g/LTU9vjXukkXtfZ0tepnFdl4j1iHs0Uv9Dqyg8CKNQVmoXbygz/izrD6cuy8RaV3/FzNzle4N8ilQyxHWL0THDwPoMHM1TuWfG6EwvVntpbbQVtsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=sHG06OKO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ntE9lN9yf0GZvuBsbVseh5wx5kkbw8cfr+B19cWzWeY=; b=sHG06OKOfBsVyrEmU+Nsng+Quv
+	tBmcGwy/9dlkLAnE0OLR+WG/P3fE2N+u18IJXmlJXKTVGMCa6TbzjMSSIKin9tH92vLe5AE4xmjDO
+	3Z12V8AiRQXSb+PFCSbLb8LXAtj4kFi2KT/VLnTb6qiEvRLdwpt39HReFhFHUzOJ98ERZ6k9Mck6U
+	0drCIiu0ib3uW5gDi1t24+PXbv7Wl1dXpGmaz3kSqi1BmeG2ML8Caw+D+Llf1qumZc2zQLJx/OZv4
+	Ee7TFKrN0jqvFPpvSno38IHoLncr1ujJJ3/UYkBeRWc5c9Gh2di9oFKUGPzzHL2h/1Im8/LiV8zQY
+	/s5QxXgw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50006)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uf2kZ-0003pM-0T;
+	Thu, 24 Jul 2025 21:41:11 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uf2kW-00013W-0o;
+	Thu, 24 Jul 2025 21:41:08 +0100
+Date: Thu, 24 Jul 2025 21:41:08 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	richardcochran@gmail.com, o.rempel@pengutronix.de,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/4] net: phy: micrel: Introduce
+ lanphy_modify_page_reg
+Message-ID: <aIKaZNI3fo85vw1_@shell.armlinux.org.uk>
+References: <20250724200826.2662658-1-horatiu.vultur@microchip.com>
+ <20250724200826.2662658-3-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] arm64: uprobes: Add GCS support to uretprobes
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- thiago.bauermann@linaro.org, broonie@kernel.org, yury.khrustalev@arm.com,
- kristina.martsenko@arm.com, liaochang1@huawei.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Steve Capper <steve.capper@arm.com>
-References: <20250719043740.4548-1-jeremy.linton@arm.com>
- <20250719043740.4548-7-jeremy.linton@arm.com> <aIC06oEF5FV99ukl@arm.com>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <aIC06oEF5FV99ukl@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724200826.2662658-3-horatiu.vultur@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi,
+On Thu, Jul 24, 2025 at 10:08:24PM +0200, Horatiu Vultur wrote:
+> +static int lanphy_modify_page_reg(struct phy_device *phydev, int page, u16 addr,
+> +				  u16 mask, u16 set)
+> +{
+> +	int new, ret;
+> +
+> +	ret = lanphy_read_page_reg(phydev, page, addr);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	new = (ret & ~mask) | set;
+> +	if (new == ret)
+> +		return 0;
+> +
+> +	ret = lanphy_write_page_reg(phydev, page, addr, new);
 
-On 7/23/25 5:09 AM, Catalin Marinas wrote:
-> On Fri, Jul 18, 2025 at 11:37:38PM -0500, Jeremy Linton wrote:
->> @@ -159,11 +160,41 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
->>   				  struct pt_regs *regs)
->>   {
->>   	unsigned long orig_ret_vaddr;
->> +	unsigned long gcs_ret_vaddr;
->> +	int err = 0;
->> +	u64 gcspr;
->>   
->>   	orig_ret_vaddr = procedure_link_pointer(regs);
->> +
->> +	if (task_gcs_el0_enabled(current)) {
->> +		gcspr = read_sysreg_s(SYS_GCSPR_EL0);
->> +		gcs_ret_vaddr = load_user_gcs((unsigned long __user *)gcspr, &err);
->> +		if (err) {
->> +			force_sig(SIGSEGV);
->> +			goto out;
->> +		}
-> 
-> Nit: add an empty line here, I find it easier to read.
-> 
->> +		/*
->> +		 * If the LR and GCS entry don't match, then some kind of PAC/control
->> +		 * flow happened. Likely because the user is attempting to retprobe
-> 
-> I don't full get the first sentence.
+Please implement this more safely. Another user could jump in between
+the read and the write and change this same register.
 
-I'm trying to succinctly warn people about some non-obvious behavior 
-that is being maintained.
+	phy_lock_mdio_bus(phydev);
+	__phy_write(phydev, LAN_EXT_PAGE_ACCESS_CONTROL, page);
+	__phy_write(phydev, LAN_EXT_PAGE_ACCESS_ADDRESS_DATA, addr);
+	__phy_write(phydev, LAN_EXT_PAGE_ACCESS_CONTROL,
+		    (page | LAN_EXT_PAGE_ACCESS_CTRL_EP_FUNC));
+	ret = __phy_modify_changed(phydev, LAN_EXT_PAGE_ACCESS_ADDRESS_DATA,
+				   mask, set);
+	if (ret < 0)
+		phydev_err(phydev, "Error: phy_modify has returned error %d\n", 
+			   ret);
 
-Really long version:
+unlock:
+	phy_unlock_mdio_bus(phydev);
 
-So a Retprobe is intended to catch the function returning and run the 
-user specified probe logic. But the breakpoint itself isn't placed at 
-the 'ret' because there may be multiple 'ret's. Rather its intended to 
-be placed at the function entry point. When the breakpoint fires, it 
-runs this code to hijack the LR and point it at the actual probe 
-routine. Except, ha!, the breakpoint for the ret routine may not be at 
-the beginning of the function. Which is perfectly ok, even in some cases 
-desirable.
+	return ret;
 
-But, if the user say places it after LR has been spilled to the stack, 
-the hijack will be discarded when LR is restored and the probe will 
-silently fail to run. The user will then eventually figure out that they 
-are dropping a retprobe in a location where its basically a NOP. PAC 
-messes with this behavior in an inconsistent manner. Is the target 
-function's just signing the LR, or is its signing and spilling it. In 
-the latter case the probe is again just a NOP, otherwise PAC fault.
+is all that it'll take (assuming the control/address register doesn't
+need to be rewritten.)
 
-But then GCS comes along, and it needs to also update the GCS region. 
-but if we update it, and the LR gets restored its going to result in a 
-GCS exception where previously the behavior was just the probe being 
-NOPed. Now though, we have the advantage that for the most part anyplace 
-that GCS is enabled, we are also going to have PAC signing the LR. So 
-checking for LR != GCS value acts as both a sanity check and a bit of 
-safety that we aren't inside a sign/authenticate block, or that the LR 
-hasn't been tampered with via a blr/etc and we will restore a LR from 
-the stack that won't match the now updated GCS region.
-
-Hence the comment.
-
-:)
-
-
-
-
-> 
->> +		 * on something that isn't a function boundary or inside a leaf
->> +		 * function. Explicitly abort this retprobe because it will generate
->> +		 * a GCS exception.
->> +		 */
->> +		if (gcs_ret_vaddr != orig_ret_vaddr)	{
->> +			orig_ret_vaddr = -1;
->> +			goto out;
->> +		}
-> 
-> Nit: another empty line here.
-> 
->> +		put_user_gcs(trampoline_vaddr, (unsigned long __user *) gcspr, &err);
-> 
-> Nit: (... *)gcspr (no space after cast).
-> 
->> +		if (err) {
->> +			force_sig(SIGSEGV);
->> +			goto out;
->> +		}
->> +	}
->> +
->>   	/* Replace the return addr with trampoline addr */
->>   	procedure_link_pointer_set(regs, trampoline_vaddr);
->>   
->> +out:
->>   	return orig_ret_vaddr;
->>   }
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
