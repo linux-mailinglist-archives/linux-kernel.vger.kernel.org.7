@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-744333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B66B10B28
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F76B10AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876101CE38AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9333A1892944
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2942D6638;
-	Thu, 24 Jul 2025 13:15:05 +0000 (UTC)
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2172D63E1;
+	Thu, 24 Jul 2025 13:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6Eehoxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B023F2D6405;
-	Thu, 24 Jul 2025 13:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25472BE64D;
+	Thu, 24 Jul 2025 13:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753362905; cv=none; b=m+YonTJQF6SKGC2g2mPgI99apzgt7GFTiJvPhKwCmReqcTtl0z3384umuhtup3aa8w/2qgT9ZYEjd9D/+3MIyDaGQpEGe9O+2Nb0bUUIxSwy40z7EjkcGtc44yA0m8/5s1gjKOoOoAxSTDVIiAgS04vcJk1nrZ7ReJMf2uZ8tOo=
+	t=1753362586; cv=none; b=qM8vRQEXmdO61lEM9QgYPHv73qsaL1geWnmzUtktyLTB95p0GNX0dfhqtnewacd9n/6RBRxJ6md75dva4ERi5+a4cj88ZGb3ZImWNFum1Nn94LHiyWY8torXTyrYPlboH20mUKnQECap1F5Nbo2xCbC+4aPDWT1wT4U//7Vzb/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753362905; c=relaxed/simple;
-	bh=ne/XcgrgO/KJ5Vpn5Kmd1KTfFMh8OZxebN5iFuDYEM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RP9xDJCNfzdKSa+xNXYbL10zkz9slWLyA2dey0l9rXBb/aqlE6ZEYH5om7t7Nv/7iGGu8qEt/ByUAPKDTsNABCACWOgtuiSuiDHAl/8k6r4BrYS34zejdW1xkUpWBdsHM+dmDP2NtGku1lMTe7XMUL/ldH56HDj2YpS9c3wquCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-Received: from [212.42.244.71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.53.4)
-	(envelope-from <n.schier@avm.de>)
-	id 6882306d-0380-7f0000032729-7f000001eb7c-1
-	for <multiple-recipients>; Thu, 24 Jul 2025 15:09:01 +0200
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Thu, 24 Jul 2025 15:09:01 +0200 (CEST)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id 09A4980AA3;
-	Thu, 24 Jul 2025 15:09:02 +0200 (CEST)
-Received: from l-nschier-aarch64.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:6472::1])
-	by buildd.core.avm.de (Postfix) with ESMTPS id 6DAEF184464;
-	Thu, 24 Jul 2025 15:09:00 +0200 (CEST)
-Date: Thu, 24 Jul 2025 15:08:58 +0200
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Oza Pawandeep <quic_poza@quicinc.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 4/4] kstack_erase: Support Clang stack depth tracking
-Message-ID: <20250724-optimistic-armadillo-of-joviality-e59222@l-nschier-aarch64>
-References: <20250724054419.it.405-kees@kernel.org>
- <20250724055029.3623499-4-kees@kernel.org>
+	s=arc-20240116; t=1753362586; c=relaxed/simple;
+	bh=jHNW7RDukm860OgDTe9udnSJui/uXJQFBX78Vj/nqtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i8nFtzLx2fa+k+uhyqt6/LzWsQRmTf1+gP7nacBJiA6afwRbqCz4OhJbUwQYdhRHnaGNGOk5xwd7ysDu45Rey0sH4v2Rfmd/xieG97HMDsF96oJUh+u5xWh9ugMU6Ar5BVdCsctYsqlDVclIxslABUNUekAOnl5EWLotMXMmK1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6Eehoxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C17C4CEF5;
+	Thu, 24 Jul 2025 13:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753362586;
+	bh=jHNW7RDukm860OgDTe9udnSJui/uXJQFBX78Vj/nqtM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u6EehoxqAOzTsGOmobZ78OLKNI/pYR13QnMLZE2oXZb9s/9kcapv7nsBWg8y1EeEg
+	 RPJHg8wK8Q/7+WZLsuySc4zp6DcgceeQoL4tE/ZjQ2dVfsn7IVA0EGcjkFe0rs8NnA
+	 LVFXpPdJe/py/6R7XkFY53lojAWcIVXaGsa8YD2Zf4+GlG8QXNBZ2qBzD8Q6a7wGK5
+	 r9a06kjLHfddRFMDzi03wTod9BIuS9fvca39EnGtxNfiohoKJFlshmWz1zvGOrpY6p
+	 zutuid5i4/IKebzZODjGrSrcyHcm/MnjJJ6y91bcA2nhFIh9pq/J44ZD0daFuP/fwP
+	 g+x7EjEbz+63w==
+Date: Thu, 24 Jul 2025 14:09:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, robh@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: add power and energy measurement modifiers
+Message-ID: <20250724140940.2d9b4a1f@jic23-huawei>
+In-Reply-To: <1ead013c-56ef-4f11-afb9-2b11e0de7eb2@baylibre.com>
+References: <20250711130241.159143-1-antoniu.miclaus@analog.com>
+	<20250711130241.159143-2-antoniu.miclaus@analog.com>
+	<1ead013c-56ef-4f11-afb9-2b11e0de7eb2@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250724055029.3623499-4-kees@kernel.org>
-Organization: AVM GmbH
-X-purgate-ID: 149429::1753362541-3C575E1C-2FB622E2/0/0
-X-purgate-type: clean
-X-purgate-size: 870
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 10:50:28PM -0700, Kees Cook wrote:
-> Wire up CONFIG_KSTACK_ERASE to Clang 21's new stack depth tracking
-> callback[1] option.
->=20
-> Link: https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-stack-de=
-pth [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nicolas Schier <nicolas.schier@linux.dev>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: <linux-kbuild@vger.kernel.org>
-> Cc: <kasan-dev@googlegroups.com>
-> Cc: <linux-hardening@vger.kernel.org>
-> ---
+On Fri, 11 Jul 2025 14:23:14 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Acked-by: Nicolas Schier <n.schier@avm.de>
+> On 7/11/25 8:02 AM, Antoniu Miclaus wrote:
+> > Add new IIO modifiers to support power and energy measurement devices:
+> >
+
+Sorry I'm late to the game.  Busy few weeks :(
+ 
+> > Power modifiers:
+> > - IIO_MOD_ACTIVE: Real power consumed by the load
+> > - IIO_MOD_REACTIVE: Power that oscillates between source and load
+> > - IIO_MOD_APPARENT: Magnitude of complex power  
+> 
+> These make sense a modifiers since they are components of a single
+> measured value.
+
+Agreed. Oddly I thought we already had these.  Maybe there was a proposal
+at some point that never got adopted. Maybe I just had a nightmare
+
+
+
+> 
+> > - IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency  
+> 
+> This one seems like there should just be a separate channel
+> with IIO_POWER + IIO_MOD_REACTIVE since it is measuring a different
+> value.
+
+Hmm. This one is new to me. A separate channels sounds fine to me
+with a label to provide the info on what it is.
+
+> 
+> > - IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)  
+> 
+> Power factor seems like it should be a IIO_CHAN_INFO_ rather than
+> IIO_MOD_. It is also unitless, so doesn't make sense to be part
+> of power_raw which would imply that it shuold be converted to Watts.
+
+Agreed.
+
+> 
+> > 
+> > Energy modifiers:
+> > - IIO_MOD_ACTIVE_ACCUM: Accumulated active energy
+> > - IIO_MOD_APPARENT_ACCUM: Accumulated apparent energy
+> > - IIO_MOD_REACTIVE_ACCUM: Accumulated reactive energy  
+> 
+> As below, this one seems like there should be a separate
+> energy channel for accumulated energy.
+
+What sort of energy measurement isn't accumulated?  If it's
+divided by time then it's power anyway.
+
+
+> 
+> > 
+> > Signal quality modifiers:
+> > - IIO_MOD_RMS: Root Mean Square value  
+> 
+> Suprised we don't have something like this already. altvoltageY isn't
+> clear about if the value is peak-to-peak or RMS.
+
+Hohum.. My vague recollection is peak to peak, but oops we should
+have documented that better.  Someone want to audit existing drivers?
+
+> 
+> > - IIO_MOD_SWELL: Voltage swell detection
+> > - IIO_MOD_DIP: Voltage dip (sag) detection  
+> 
+> These sound like events, not modifiers.
+Agreed.  Those look fun.
+
+
+> >  What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceY_raw
+> >  KernelVersion:	3.2
+> >  Contact:	linux-iio@vger.kernel.org
+> > @@ -1593,6 +1603,12 @@ Description:
+> >  
+> >  What:		/sys/.../iio:deviceX/in_energy_input
+> >  What:		/sys/.../iio:deviceX/in_energy_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_active_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_reactive_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_apparent_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_active_accum_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_reactive_accum_raw
+> > +What:		/sys/.../iio:deviceX/in_energyY_apparent_accum_raw  
+> 
+> I think the accumulated would just be a separate channel, not a modifier.
+
+I'm confused what energy is vs accumulated energy. 
+
 
