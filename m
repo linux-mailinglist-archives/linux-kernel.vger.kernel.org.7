@@ -1,74 +1,115 @@
-Return-Path: <linux-kernel+bounces-743827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223E9B103C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41290B1049B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6BE1CC2400
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6087D1CC012B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB4227510E;
-	Thu, 24 Jul 2025 08:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935F2D46DD;
+	Thu, 24 Jul 2025 08:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CL4kXhsJ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lUB6PfHl"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22A1274B4B;
-	Thu, 24 Jul 2025 08:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599F82D3EC7;
+	Thu, 24 Jul 2025 08:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346354; cv=none; b=abCnn1qRpor8K+Gsgovf6Oo/z8gG1wuSMC6xGBprqdHCtWd5Xnr5qUMQw5R4im3UeCQEtGCcEDWkZ6bMPGquDtkDwrIttOrZiNuNs9R6X1rY4v+KXTzvxv1ckEWoUTeJnmvBdPKSu2BrtNUCAhnNLApQ3nzREnQDiZP2NiAeNIQ=
+	t=1753346448; cv=none; b=gHS4ymXw/SBKD3VoQ40e+MFTrwcJdWKYvnKYebCC/sXR+BmOKtp+4aFDYPCeIyRKlqDm8tgdS0VLLcyg8+9BpPAygURVU0RuuvQSNg0XXwIVnbh08mp6BQmLka380csFYj/r74UMJ4KwtDn69Ir82sqJZos27LHtBQdgaslFOTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346354; c=relaxed/simple;
-	bh=TbLsiYD2WKRADkZMF09I8y6SP9/pzpukwJSQWNOyHkI=;
+	s=arc-20240116; t=1753346448; c=relaxed/simple;
+	bh=gK1J/nmFCA5iQ9wSL8DiDVmGg7vxkIBM8ZUzDwIVnuc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AUc2xGfQDSxLKr4MinWFdx4UY495YfPLiASzzBgEcusJGDYJKyDtnrsDpCgrr4icLSSQN3pImzJJAm95tNutYpZnZTiDZIS3WonDaMEGJUW2HgyifoU44dfD/+pvNK4ca7BOcH+vLsSXAEX81OdL0iGMuQHyoNKE5S29sbzKI4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CL4kXhsJ; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=QgrkKoCWG99o4zoFqMynP2dKVZNIpIXxI/69VaS6bgl4ChOcc2lE7oX4o9XchU53OW6KLPheG/RUjMbq5bfREtyfNJ0L0bvEkkfHL2aXFEM8oeqCzpO79kzwK4VUqy+4XbVtJlEVVhOhLE1AeOQAohNsBNXQyZdlbafmQLCn1MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lUB6PfHl; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753346351;
-	bh=TbLsiYD2WKRADkZMF09I8y6SP9/pzpukwJSQWNOyHkI=;
+	s=mail; t=1753346444;
+	bh=gK1J/nmFCA5iQ9wSL8DiDVmGg7vxkIBM8ZUzDwIVnuc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CL4kXhsJFkH8miuh3BMC765Je/N2G6/OiELhoJkKE0fTTcK6VPA5nnf36nd8a0Rts
-	 x/HpUKo54UMft6ezx5qaZTI6KoFoa7OPYsHKVHKYe+HSgmpgUWtffIMRZL5X+eDJkt
-	 9vnDGkiUK2vyydC9jNDolpDOwKI+D+/LPttmqK4qpcTz2kKwD6rjbq2H3hKMqAU2sb
-	 6EcS48XZ8yJktXo8hq8+uFRiM4WGSkc41ulFLRzaGSoT+wRVFebD1NM7QLxRpAIr1l
-	 44GBldk+SO2BzKbME8f5gohzbLzLWiFtFQKJauumCO6e0aV5nSNpybbYPQIE3YVtin
-	 Rb3r5osQSArig==
+	b=lUB6PfHldk1/DqKfzI6izO+niovtYwIkMrvgcmL1OQwo6Tm09al+7ptOWNzR79Av8
+	 Jnelok5aFfAfnGxE3nJMexloNhycRwsPCeXNcVLo0/lNKs1R3R9vvbrVkZK8lCaurF
+	 ATEs2O4H3KD8kaFftSzEVKYvXIix3mnqQL0Y+3MI1qpgR6F1LogcB5uuLpCYo/PYlL
+	 4vMZ8i8aJqQVCwEnXAauhI/H7XWBdnVsRk/iCMzfQEeqUgXFJsIzaqvHKvdD4LDrlO
+	 GxRvOwR2QK7oBibfE2eUAJ1IoZ+fBv5qGBCvU+PcmPiTTpTav8IG67ZMKtM/nr1OAr
+	 FRHFFDMLhwi3Q==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9FC6217E1110;
-	Thu, 24 Jul 2025 10:39:10 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 723B117E11FE;
+	Thu, 24 Jul 2025 10:40:42 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: robh@kernel.org
-Cc: krzk+dt@kernel.org,
+To: linux-mediatek@lists.infradead.org,
+	robh@kernel.org
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
+	chunkuang.hu@kernel.org,
+	p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	jassisinghbrar@gmail.com,
+	mchehab@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	geert+renesas@glider.be,
-	u.kleine-koenig@baylibre.com,
+	chunfeng.yun@mediatek.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	sean.wang@kernel.org,
+	linus.walleij@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	daniel.lezcano@linaro.org,
+	tglx@linutronix.de,
+	atenart@kernel.org,
+	jitao.shi@mediatek.com,
+	ck.hu@mediatek.com,
+	houlong.wei@mediatek.com,
+	kyrie.wu@mediatek.corp-partner.google.com,
+	andy.teng@mediatek.com,
+	tinghan.shen@mediatek.com,
+	jiaxin.yu@mediatek.com,
+	shane.chien@mediatek.com,
+	olivia.wen@mediatek.com,
+	granquet@baylibre.com,
+	eugen.hristev@linaro.org,
+	arnd@arndb.de,
+	sam.shih@mediatek.com,
+	jieyy.yang@mediatek.com,
+	frank-w@public-files.de,
+	mwalle@kernel.org,
+	fparent@baylibre.com,
+	linux-crypto@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH 2/3] clk: mediatek: mt7622-aud: Add missing AFE_MRGIF clock
+	linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 30/38] arm64: dts: mediatek: pumpkin-common: Fix pinctrl node names
 Date: Thu, 24 Jul 2025 10:39:06 +0200
-Message-ID: <20250724083907.61313-2-angelogioacchino.delregno@collabora.com>
+Message-ID: <20250724083914.61351-31-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250724083907.61313-1-angelogioacchino.delregno@collabora.com>
-References: <20250724083907.61313-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,25 +118,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the AFE Merge Interface clock used for the audio subsystem.
+Fix the pinctrl node names to adhere to the bindings, as the main
+pin node is supposed to be named like "uart0-pins" and the pinmux
+node named like "pins-bus".
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mt7622-aud.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../boot/dts/mediatek/pumpkin-common.dtsi      | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index 931a0598e598..a4ea5e20efa2 100644
---- a/drivers/clk/mediatek/clk-mt7622-aud.c
-+++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -75,6 +75,7 @@ static const struct mtk_gate audio_clks[] = {
- 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
- 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
- 	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
-+	GATE_AUDIO1(CLK_AUDIO_AFE_MRGIF, "audio_afe_mrgif", "aud_mux1_sel", 25),
- 	/* AUDIO2 */
- 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
- 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
+index a356db5fcc5f..805fb82138a8 100644
+--- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
++++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
+@@ -198,8 +198,8 @@ &usb_phy {
+ };
+ 
+ &pio {
+-	gpio_keys_default: gpiodefault {
+-		pins_cmd_dat {
++	gpio_keys_default: gpio-keys-pins {
++		pins-cmd-dat {
+ 			pinmux = <MT8516_PIN_42_KPCOL0__FUNC_GPIO42>,
+ 				 <MT8516_PIN_43_KPCOL1__FUNC_GPIO43>;
+ 			bias-pull-up;
+@@ -207,7 +207,7 @@ pins_cmd_dat {
+ 		};
+ 	};
+ 
+-	i2c0_pins_a: i2c0 {
++	i2c0_pins_a: i2c0-pins {
+ 		pins1 {
+ 			pinmux = <MT8516_PIN_58_SDA0__FUNC_SDA0_0>,
+ 				 <MT8516_PIN_59_SCL0__FUNC_SCL0_0>;
+@@ -215,7 +215,7 @@ pins1 {
+ 		};
+ 	};
+ 
+-	i2c2_pins_a: i2c2 {
++	i2c2_pins_a: i2c2-pins {
+ 		pins1 {
+ 			pinmux = <MT8516_PIN_60_SDA2__FUNC_SDA2_0>,
+ 				 <MT8516_PIN_61_SCL2__FUNC_SCL2_0>;
+@@ -223,21 +223,21 @@ pins1 {
+ 		};
+ 	};
+ 
+-	tca6416_pins: pinmux_tca6416_pins {
+-		gpio_mux_rst_n_pin {
++	tca6416_pins: tca6416-pins {
++		pins-mux-rstn {
+ 			pinmux = <MT8516_PIN_65_UTXD1__FUNC_GPIO65>;
+ 			output-high;
+ 		};
+ 
+-		gpio_mux_int_n_pin {
++		pins-mux-intn {
+ 			pinmux = <MT8516_PIN_64_URXD1__FUNC_GPIO64>;
+ 			input-enable;
+ 			bias-pull-up;
+ 		};
+ 	};
+ 
+-	ethernet_pins_default: ethernet {
+-		pins_ethernet {
++	ethernet_pins_default: ethernet-pins {
++		pins-eth {
+ 			pinmux = <MT8516_PIN_0_EINT0__FUNC_EXT_TXD0>,
+ 				 <MT8516_PIN_1_EINT1__FUNC_EXT_TXD1>,
+ 				 <MT8516_PIN_5_EINT5__FUNC_EXT_RXER>,
 -- 
 2.50.1
 
