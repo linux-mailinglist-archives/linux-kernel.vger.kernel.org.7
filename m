@@ -1,135 +1,182 @@
-Return-Path: <linux-kernel+bounces-743452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE65AB0FED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:36:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F3DB0FEDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CE63A6855
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B886E1CC2840
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63721A38F9;
-	Thu, 24 Jul 2025 02:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385721AAA1C;
+	Thu, 24 Jul 2025 02:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzOFBzA1"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kig69IgF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C527E19CC3E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E67E13A41F;
+	Thu, 24 Jul 2025 02:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753324607; cv=none; b=iMZbx8xd5lwPI6eV5e+xcp4m+sdQ0p7nrWo17GsgulmELX5iayzREsMlJJwCnGbtoYe1lZNMh2HSaJlh1i1ecTtJhcIrNbi9mLm7mUMSc2pEQnDXKoBQdLIxEnj1/AQn49hxPP3UbZNCMAYJcadYri+ZCOdOzjsbBowGB8b1Cpk=
+	t=1753324823; cv=none; b=AWO9eu/5eXuLcIT2Hp0chRtb31pEVzpysnzfHf+QKz1Dp5ZZvoHzAAtT8LZWZI0yAG8WUFmIgvkpE6LuExNEOofuZkz9YeZEAv/PL5t0TmT6ynlAnOZ+IYVv2c64TfpbeIqGZL6mMZ+gfs3WdHSnv5Caj1F9bL+P43IP6JxdPGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753324607; c=relaxed/simple;
-	bh=F3SZu0w3hanjP1bIvzcHBk81Jwayj6SyiYpy4nS0ffs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cTTUwsCxf8t9Gkz4pw9xEAesnjKWWFDdfgDDx2HuEOvY3iZ+upRw8yxwA+n3zFcWWhvzUFEwbdV9wHZkPmZieufjKgmIm6Fz35ur5zIJPHJvJqjj3rNPpQdD8O29eVS7y2vhfsHXHbeJYnQxWkw0YyZ/dmHjlqQwCDYpudtw4gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzOFBzA1; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70707bafbe0so1170406d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753324604; x=1753929404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpafgB7TM97IiAPA4skXOQOxYZsSA7fW1d8osuC8fBc=;
-        b=AzOFBzA1ISHoEqckpECEoaIUg7uOldiuRX9Y9e35t52WdNDO16D+e05SLc3g6FTuf8
-         jq9dleaMzCtY+HodQx91AlFiEpSm2IlzBn5xDTnfHikh6B/PIDsmrVsLZ+j5rdp1NI3b
-         Sn2oiPbk9DGUUry2dNvRu9vyToSkp9MJe7o3+uNF4ff3J+1IA5JyDSqfMrLrszXx70RP
-         1sFeYQeCFEUxPBn4OytYDpoZ1xfb9tQjkixDj6I6+LMEjHAlhFYYugV2FIRTWfygtRcz
-         pzGBGTTIR7Xb2ujoulA1VEBQfaSfC1FMilQ9xSptYIHfJzEyuyh4f2uxRKPLwZl8vlMR
-         6YIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753324604; x=1753929404;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rpafgB7TM97IiAPA4skXOQOxYZsSA7fW1d8osuC8fBc=;
-        b=S3k/AtvqdUO/XfqbqELiwuqjvPOk7ROcJxE986MuRbTMdeohDHeFbltzV15+2JZt2c
-         k5/E7W1GPvaoTt7ZTOIX4htAtg89jruXVeT613UJ8+oNjGtt4Ekfyv18qz7aQgxTI6bz
-         /+4Zd7V/Wav/WEErOrg4DQ9pjZIP+njFKMys1CifG/2cUwmysoR73Ny7uibWwfp763jO
-         zERklcEMChPlXnCMXvGQ0XFWGntWzAg8wfHnMvD04TByIhX6yAqcc2iHjjsZSlL1omb5
-         lLjYaqWvb+WkS4PnENRHgoYsu1ww2YLMU1uRC3T1ERejRranuRDdiw9hDHexv2Bx590a
-         /2pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXy0I0QZSdqmyalg8SGUsF8ZpDUPN4j44TtAPdG3coPLp52rPtURevr42Bi3/2yY2+X5hkwHe7/04vkF6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFdZOuwwHFc7W27H8BvCe8D6Rk+u2HAQHsb5eHr2NosMf9xEQ7
-	F6mbdonMAonqyc3ozpyRlraDXl5pXZqTM//hjTEvPh7n1lV7Wp2/ZzY=
-X-Gm-Gg: ASbGncuCZddNKC4/rYe9gFU+/NU71GwXHYIzpnudyFuZdvI/69g9CPr4m96gXk90FmR
-	ob7rOborDbB4TUhVOmc5MmR4L+hYUFyNq69rbfkqjkEDE3UWTBkW/geKgxhIOzvhNptyc2BJzzd
-	qKrfv34Do4zQZrL1UE/M5KPZINFRmA6jSy2XJbIrPZ/g/P8B2/ymaKYDsQ5ZGsx768LiUXcgoFk
-	vzC7XkSYoknqa/RdW2MC++DwG9rNeYPhajR7DS2e/bN2eOOcuS+CSnGEUbFOfAGpQAGtleCNA4w
-	mXzwagFzAAFZJ93aer+RwJSjUmNnQzyRFk3WV1r1w3fwf06aUUYddwXZDkcPjmNln+1QO+JCkXD
-	Ipj3JhvJYgNMl3YHnh64=
-X-Google-Smtp-Source: AGHT+IH+P0BUAZebqc5VI30I/89y9eCXqsFCURy/3jl+T3nPNtyKbqO+NJxSPIfO3MLZIv+k6oDqOg==
-X-Received: by 2002:ac8:5ac9:0:b0:4a9:e326:277a with SMTP id d75a77b69052e-4ae6de519c0mr32351221cf.5.1753324604423;
-        Wed, 23 Jul 2025 19:36:44 -0700 (PDT)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae7e355017sm4641551cf.27.2025.07.23.19.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 19:36:44 -0700 (PDT)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com
-Cc: siqueira@igalia.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	alex.hung@amd.com,
-	vulab@iscas.ac.cn,
-	Wenjing.Liu@amd.com,
-	isabel.zhang@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] drm/amd/display: Add null pointer check in mod_hdcp_hdcp1_create_session()
-Date: Wed, 23 Jul 2025 21:36:41 -0500
-Message-Id: <20250724023641.1258831-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753324823; c=relaxed/simple;
+	bh=e1IWKLfwf+Gm+vS9RnjIYq35KCV+QHS/5qqAru5oyLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMawFMCVI8D+veaK4WJP2X+I9awM6MgHQZIWe2jLhqyWPmw9sehhIqqjC9OlTSVwJ8aXqL1GB4klm9UaqFjVhVvpSqbk2fl9EADkKqcpcp+XxrE4W0mnBhzUTO4XISv/NBD26Sl2fM4WWC32Is1wHcUiAHlscT1ngEpvZhGWyS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kig69IgF; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753324821; x=1784860821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=e1IWKLfwf+Gm+vS9RnjIYq35KCV+QHS/5qqAru5oyLM=;
+  b=Kig69IgF1FyvyLZ0VQmgrC2bcMsyI1jQWj00jx38hothNyGrUswMKM7/
+   BgSIDcUaUdGDktDdxACwynNe1pQlbdBAibUy6p8BEwlFDWRdWDTwOrU6l
+   VgRValcEezVHgc2zfOEcrwkZY/t748nZRMqD0SR74balh/Ss1xQ5pMj7I
+   sLpIENtsHLozcf7F+aTrj0GCthliGcaQPOJKtFGEyHSHI3sZId8ms7V/y
+   HJPlGU7WkQ2E0wEe1qJ5sj3UvBHrP94G7kk23ICd8LBJuCYVSPFRK6yTm
+   C5aWlqjLV90wNriP2Zu5p+WPr/623/p4RXAsxcsn4BZzkZ8q1/C4BfHQY
+   g==;
+X-CSE-ConnectionGUID: ROcsxAKfSoK4IsdBSLgCKw==
+X-CSE-MsgGUID: 9R46eQ4qTRG5yygGaFIGPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59280766"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="59280766"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 19:40:21 -0700
+X-CSE-ConnectionGUID: K5b91yXgSJm5kM4pKUbkdw==
+X-CSE-MsgGUID: /7sTt8BpTLi1waAcTH2B2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="159647355"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 23 Jul 2025 19:40:19 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uelsW-000K15-2k;
+	Thu, 24 Jul 2025 02:40:16 +0000
+Date: Thu, 24 Jul 2025 10:39:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH v2 5/5] rv: Remove struct rv_monitor::reacting
+Message-ID: <202507241015.Qun68uPH-lkp@intel.com>
+References: <58c63faec76ffb36552fcd1fdcc4b9dd841efd94.1753252872.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58c63faec76ffb36552fcd1fdcc4b9dd841efd94.1753252872.git.namcao@linutronix.de>
 
-The function mod_hdcp_hdcp1_create_session() calls the function
-get_first_active_display(), but does not check its return value.
-The return value is a null pointer if the display list is empty.
-This will lead to a null pointer dereference.
+Hi Nam,
 
-Add a null pointer check for get_first_active_display() and return
-MOD_HDCP_STATUS_DISPLAY_NOT_FOUND if the function return null.
+kernel test robot noticed the following build warnings:
 
-This is similar to the commit c3e9826a2202
-("drm/amd/display: Add null pointer check for get_first_active_display()").
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on next-20250723]
+[cannot apply to linus/master v6.16-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fixes: 2deade5ede56 ("drm/amd/display: Remove hdcp display state with mst fix")
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c | 3 +++
- 1 file changed, 3 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Cao/rv-Remove-unused-field-in-struct-rv_monitor_def/20250723-144825
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/58c63faec76ffb36552fcd1fdcc4b9dd841efd94.1753252872.git.namcao%40linutronix.de
+patch subject: [PATCH v2 5/5] rv: Remove struct rv_monitor::reacting
+config: arc-randconfig-002-20250724 (https://download.01.org/0day-ci/archive/20250724/202507241015.Qun68uPH-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250724/202507241015.Qun68uPH-lkp@intel.com/reproduce)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-index e58e7b93810b..6b7db8ec9a53 100644
---- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-+++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_psp.c
-@@ -260,6 +260,9 @@ enum mod_hdcp_status mod_hdcp_hdcp1_create_session(struct mod_hdcp *hdcp)
- 		return MOD_HDCP_STATUS_FAILURE;
- 	}
- 
-+	if (!display)
-+		return MOD_HDCP_STATUS_DISPLAY_NOT_FOUND;
-+
- 	hdcp_cmd = (struct ta_hdcp_shared_memory *)psp->hdcp_context.context.mem_context.shared_buf;
- 
- 	mutex_lock(&psp->hdcp_context.mutex);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507241015.Qun68uPH-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   kernel/trace/rv/rv_reactors.c: In function 'monitor_reactors_write':
+>> kernel/trace/rv/rv_reactors.c:211:14: warning: variable 'enable' set but not used [-Wunused-but-set-variable]
+     211 |         bool enable;
+         |              ^~~~~~
+
+
+vim +/enable +211 kernel/trace/rv/rv_reactors.c
+
+cb85c660fcd4b3a Gabriele Monaco            2025-03-05  201  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  202  static ssize_t
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  203  monitor_reactors_write(struct file *file, const char __user *user_buf,
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  204  		      size_t count, loff_t *ppos)
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  205  {
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  206  	char buff[MAX_RV_REACTOR_NAME_SIZE + 2];
+98b2531fbe93031 Nam Cao                    2025-07-23  207  	struct rv_monitor *mon;
+aef8790cfb7b07f Nam Cao                    2025-07-23  208  	struct rv_reactor *reactor;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  209  	struct seq_file *seq_f;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  210  	int retval = -EINVAL;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29 @211  	bool enable;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  212  	char *ptr;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  213  	int len;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  214  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  215  	if (count < 1 || count > MAX_RV_REACTOR_NAME_SIZE + 1)
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  216  		return -EINVAL;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  217  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  218  	memset(buff, 0, sizeof(buff));
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  219  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  220  	retval = simple_write_to_buffer(buff, sizeof(buff) - 1, ppos, user_buf, count);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  221  	if (retval < 0)
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  222  		return -EFAULT;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  223  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  224  	ptr = strim(buff);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  225  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  226  	len = strlen(ptr);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  227  	if (!len)
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  228  		return count;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  229  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  230  	/*
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  231  	 * See monitor_reactors_open()
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  232  	 */
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  233  	seq_f = file->private_data;
+98b2531fbe93031 Nam Cao                    2025-07-23  234  	mon = seq_f->private;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  235  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  236  	mutex_lock(&rv_interface_lock);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  237  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  238  	retval = -EINVAL;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  239  
+aef8790cfb7b07f Nam Cao                    2025-07-23  240  	list_for_each_entry(reactor, &rv_reactors_list, list) {
+aef8790cfb7b07f Nam Cao                    2025-07-23  241  		if (strcmp(ptr, reactor->name) != 0)
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  242  			continue;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  243  
+aef8790cfb7b07f Nam Cao                    2025-07-23  244  		if (strcmp(reactor->name, "nop"))
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  245  			enable = false;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  246  		else
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  247  			enable = true;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  248  
+a96356e99938184 Nam Cao                    2025-07-23  249  		monitor_swap_reactors(mon, reactor);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  250  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  251  		retval = count;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  252  		break;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  253  	}
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  254  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  255  	mutex_unlock(&rv_interface_lock);
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  256  
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  257  	return retval;
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  258  }
+04acadcb4453cf8 Daniel Bristot de Oliveira 2022-07-29  259  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
