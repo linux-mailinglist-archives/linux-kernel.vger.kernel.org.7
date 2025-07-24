@@ -1,169 +1,127 @@
-Return-Path: <linux-kernel+bounces-743751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11691B102D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798E5B102E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6985412E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381467BB429
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA04F2750EF;
-	Thu, 24 Jul 2025 08:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7623C26FA5A;
+	Thu, 24 Jul 2025 08:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khMPqsSL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aE5wZPbt"
+Received: from mail-m3291.qiye.163.com (mail-m3291.qiye.163.com [220.197.32.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD437275103;
-	Thu, 24 Jul 2025 08:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA42221703;
+	Thu, 24 Jul 2025 08:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344243; cv=none; b=c6a8CXgB/n6J2ggOlmdMWoCj2qQjnz3SRlalaxMkeyhw6HpTCKtpoUy64U/z/6oxdVj0giSHkBW4GBT4g/6+M++0H+eVrDtE8qvP5mD3XKdi8sWTOHMkEJOJSgsJRS9z93RjGA3JE/FFF5shdf3/hXw6ELuc7OPsjSISf7w+WqE=
+	t=1753344515; cv=none; b=Tk/KugGZTSZaeDvQCi4SrWp6Cx8M7jungTVJ42qnYrjMGiVoHHbI/esxWFxok5qlolzvBd1iAJb+m+tl6W0ZlU1ZW8Fs3TZsJQQASvAHofjpH+fp49GWNiOIPZjLlSrU7+n/Rq+cGrKu8Ue9GWytVywBO6SiLrrYu7CfcZ2AGcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344243; c=relaxed/simple;
-	bh=hJ78VH6KfiP/kPVA/V86syXh1HmFRiQnUtKrsFN/w9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lMbnyg2WtlnKNh8sTHBNdAB+/zy7OB9afdqkjTNsUgrMy8FVMc/dBqYPU1tyK0UCTD/E8k6k0xXfEqAHfIx0Ox3C92yT1N69NJIH36bM4rXBYVOvSPtiTkbSMksCwNu6BORFY86ZGAQXbpAcWhxp9sc+5HPFuAMkWjvPAirK1h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khMPqsSL; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753344242; x=1784880242;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hJ78VH6KfiP/kPVA/V86syXh1HmFRiQnUtKrsFN/w9s=;
-  b=khMPqsSLPcCD++WjGBRiMN+QYzUUtwDAFelR/TUHSxJlaQKI9ECw3OGz
-   QnAmohTUtnbqOBpWKi+inv2nVP7DhWXF4NB/Mv9TDUAL7MBxDjebDshMx
-   KYetdPNx3Og16YUXBMbRS7Xduw2+9LwgaL+FLrhNRCCvA0qDs+4hXJ04s
-   1NNBVNbhGpqVAQgK6VPpgjKi3nFt7XloHhmAH7LdOmHg4sYf3KkkCIjFT
-   Unpnrp/gX307ppSVst4u6HI7LIkfBY5VYa80eJW8QxTN5SY9t4YILTv/s
-   SRwidJj6knrgnPsDx6qIXuXdTqMZos8huHNr6fU44FgqZ88a6m8rXNXC6
-   Q==;
-X-CSE-ConnectionGUID: a7bjVq1uRReqThIW9LiJ6A==
-X-CSE-MsgGUID: E6pCpRoDRXitxITK2nSvVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66992002"
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="66992002"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:04:02 -0700
-X-CSE-ConnectionGUID: gQyNVfTXRTSLHfVeYXAguQ==
-X-CSE-MsgGUID: t20ShfOwRKCo6p1uKacpxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="160342242"
-Received: from savramon-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.60])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:03:57 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
+	s=arc-20240116; t=1753344515; c=relaxed/simple;
+	bh=f+bJznwfDNcGaCDPJA7XKPSX5TuUL/iHzNvaTBvqpig=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e5vvncnIE6N47KgPSoDH218p6huIvKC9xZlDfVYtPtWFR4I6Enmgzq9mcidCnCqtfxVta7P5JVfNkERwUh0PYQ15J/h0d1gkepqKhbwShNDZq7f8DFJYKcRfRe+trLuEuIMTwy/j6i5QYECdCozLlG5ADf39BqWllJSmPy6XS1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aE5wZPbt; arc=none smtp.client-ip=220.197.32.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c34377;
+	Thu, 24 Jul 2025 16:03:14 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v9 6/6] x86/sgx: Enable automatic SVN updates for SGX enclaves
-Date: Thu, 24 Jul 2025 11:02:15 +0300
-Message-ID: <20250724080313.605676-7-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250724080313.605676-1-elena.reshetova@intel.com>
-References: <20250724080313.605676-1-elena.reshetova@intel.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 00/14] Apply drm_bridge_connector and panel_bridge helper for the Analogix DP driver
+Date: Thu, 24 Jul 2025 16:02:50 +0800
+Message-Id: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a983b75378603a3kunmbbba7af29cef
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU1KTVZKH0JKSkhPQkkfSE9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=aE5wZPbtuRrtIKfTtfH1/ikI4T3SwqKfYIQFQF0cJgKNHKPMw5hIHuZnyzme+bRPAfqFFVFvp6NN8I7ysZI2sy6CpvDBGLi2k3yp8xSSpOhh6MEiXP7iKv6qUoIs5OJ9Xj//5OYtjK95hW+TofDYLNMxGpYuH9pcHBjhQi0YroE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=/a3ZH/e6MX3cQWLnQo0XUfQLEK6LM5ZgF2VvUtU43P0=;
+	h=date:mime-version:subject:message-id:from;
 
-== Background ==
+PATCH 1 is a small format optimization for struct analogid_dp_device.
+PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+PATCH 3 is to apply a better API for the encoder initialization.
+PATCH 4-7 are preparations for apply drm_bridge_connector helper.
+PATCH 8 is to apply the drm_bridge_connector helper.
+PATCH 9-11 are to move the panel/bridge parsing to the Analogix side.
+PATCH 12-13 are preparations for apply panel_bridge helper.
+PATCH 14 is to apply the panel_bridge helper.
 
-ENCLS[EUPDATESVN] is a new SGX instruction [1] which allows enclave
-attestation to include information about updated microcode SVN without a
-reboot. Before an EUPDATESVN operation can be successful, all SGX memory
-(aka. EPC) must be marked as “unused” in the SGX hardware metadata
-(aka.EPCM). This requirement ensures that no compromised enclave can
-survive the EUPDATESVN procedure and provides an opportunity to generate
-new cryptographic assets.
+Damon Ding (14):
+  drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+  drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+    &drm_bridge_funcs.atomic_enable
+  drm/rockchip: analogix_dp: Apply drmm_encoder_init() instead of
+    drm_simple_encoder_init()
+  drm/bridge: analogix_dp: Add &analogix_dp_plat_data.bridge
+  drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+  drm/bridge: exynos_dp: Remove unused &exynos_dp_device.connector
+  drm/bridge: analogix_dp: Remove redundant
+    &analogix_dp_plat_data.skip_connector
+  drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+  drm/bridge: analogix_dp: Add support to find panel or bridge
+  drm/rockchip: analogix_dp: Apply analogix_dp_find_panel_or_bridge()
+  drm/exynos: exynos_dp: Apply analogix_dp_find_panel_or_bridge()
+  drm/bridge: analogix_dp: Remove panel disabling and enabling in
+    analogix_dp_set_bridge()
+  drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
+    in analogix_dp_unbind()
+  drm/bridge: analogix_dp: Apply panel_bridge helper
 
-== Patch Contents ==
+ .../drm/bridge/analogix/analogix_dp_core.c    | 383 ++++++++++--------
+ .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
+ drivers/gpu/drm/exynos/exynos_dp.c            |  48 +--
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  53 +--
+ include/drm/bridge/analogix_dp.h              |   7 +-
+ 5 files changed, 248 insertions(+), 248 deletions(-)
 
-Attempt to execute ENCLS[EUPDATESVN] every time the first file descriptor
-is obtained via sgx_(vepc_)open(). In the most common case the microcode
-SVN is already up-to-date, and the operation succeeds without updating SVN.
-
-If it fails with any other error code than SGX_INSUFFICIENT_ENTROPY, this
-is considered unexpected and the *open() returns an error. This should not
-happen in practice.
-
-On contrary, SGX_INSUFFICIENT_ENTROPY might happen due
-to a pressure on the system's DRNG (RDSEED) and therefore the *open() can
-be safely retried to allow normal enclave operation.
-
-[1] Runtime Microcode Updates with Intel Software Guard Extensions,
-https://cdrdv2.intel.com/v1/dl/getContent/648682
-
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 206bf41d8325..90b7416969e4 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -921,6 +921,9 @@ EXPORT_SYMBOL_GPL(sgx_set_attribute);
- /* Counter to count the active SGX users */
- static int __maybe_unused sgx_usage_count;
- 
-+/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
-+static DEFINE_MUTEX(sgx_svn_lock);
-+
- /**
-  * sgx_update_svn() - Attempt to call ENCLS[EUPDATESVN].
-  * This instruction attempts to update CPUSVN to the
-@@ -937,7 +940,7 @@ static int __maybe_unused sgx_usage_count;
-  *  entropy in RNG.
-  * -EIO: Unexpected error, retries are not advisable.
-  */
--static int __maybe_unused sgx_update_svn(void)
-+static int sgx_update_svn(void)
- {
- 	int ret;
- 
-@@ -983,12 +986,17 @@ static int __maybe_unused sgx_update_svn(void)
- 
- int sgx_inc_usage_count(void)
- {
-+	guard(mutex)(&sgx_svn_lock);
-+
-+	if (sgx_usage_count++ == 0)
-+		return sgx_update_svn();
-+
- 	return 0;
- }
- 
- void sgx_dec_usage_count(void)
- {
--	return;
-+	sgx_usage_count--;
- }
- 
- static int __init sgx_init(void)
 -- 
-2.45.2
+2.34.1
 
 
