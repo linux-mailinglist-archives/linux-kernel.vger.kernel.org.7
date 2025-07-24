@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-743789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442A3B10362
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:22:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEFEDB102D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5332918916E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8E7AA0326
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94A02749E7;
-	Thu, 24 Jul 2025 08:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D7E271A9D;
+	Thu, 24 Jul 2025 08:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="HGyCiXrH"
-Received: from mail-m1973184.qiye.163.com (mail-m1973184.qiye.163.com [220.197.31.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMwAL61f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEE420127B;
-	Thu, 24 Jul 2025 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE322701D0;
+	Thu, 24 Jul 2025 08:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345155; cv=none; b=fPK7073B/0DrNHda43eXWn+ofbsCYj4gldd3+mfYXA/gcUgzU6GmkKfxT7LtO+oPN325QzNHKu93gESgcOF9Vs3P/faSfL8xsOr4FMppcBualHRzJWt6EvGuCghpKZVA2uWDdWTgkCKIfjja2khdXPvkNvXWJCjrCDX0fDjnP5g=
+	t=1753344343; cv=none; b=gqZWAwV+fOJ4jmDZjkiXa5/rhM5NRqwCtXIFucuZaBDt/YN5ZbR3vM7wct5GHjN8ODVLrKE1MH6CMyEVfX12UYqVBCHD0SFEIpG6m1P+3HmTWOQF52dTk7nIN8/t71NhPOj532HnPH5tqRhFMB3NCjt4Fl52GXWYn/nh0xr8woU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345155; c=relaxed/simple;
-	bh=RZSZ9r0fJEKqxIFPMG1Rfi5x4/IMYmT/tMO71w34wnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N7CAXaT3aZElwsNvLXAbZllG3RMsVB4lu+6mkJL5qKfpMp6WpNog29+07Y97fjSshbHNmMBRgIqLUPTd0yfaejg+wSGFXqwrpgv6xzKGEcZPjLWlxhpmIFPf0mnFEJqRbfSsoOTbW0yme51xSNgryRJnsZYyWbdy+KjuHtVwNVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=HGyCiXrH; arc=none smtp.client-ip=220.197.31.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c3446d;
-	Thu, 24 Jul 2025 16:03:46 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	l.stach@pengutronix.de,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 13/14] drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing in analogix_dp_unbind()
-Date: Thu, 24 Jul 2025 16:03:03 +0800
-Message-Id: <20250724080304.3572457-14-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1753344343; c=relaxed/simple;
+	bh=QQ/KUR9EUnReinV6lJwLLr0fnjQkBu0aezOtyeBubts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axJO5QLRj+Vbh2O5dOUGr9RmNXtHMmVz+wJa5PEN6lvXaNy8TiiqtwkClczC3JudcRp/ye/mUVxjlRAwZ4u3RS94USYasYeNpbtxL6xzn3Ex6cIL21azJfWgpC+KG1a6N5k+Cjx4LUR7E7xhzjSlfFWtm2iMJFhD++mE1PKKgbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMwAL61f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D984C4CEED;
+	Thu, 24 Jul 2025 08:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753344342;
+	bh=QQ/KUR9EUnReinV6lJwLLr0fnjQkBu0aezOtyeBubts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jMwAL61fiSNB5XAz4p2SUVMSHj4GsnjdjPunEMS0CWrz2TCLkANqT1xzJUjRcvNQQ
+	 cQkv0TRaEDZPgtV/oigHfWj/+Jg0O8D5V60g8GM+VKvxpZK10wM07tYX4W/VwSBTqP
+	 J3/eb9Y/iVNqRoXHHTxLaDbJ5VCPFP+zuW42sBCSWPEXyX2sTINfI2n2fLboGF12S1
+	 VYeXT5EmMHp8MMMSjmlnRfkxU9GgHbBpivtR0cZ5vqAIkkuheWdCZ8gZWKkFpUOZK7
+	 dYImub39SSfDGHOv3KPnDJYEr79kUA+uz9E/gc4E0EJdR+yIPYh+tbtO49si0YyCJ5
+	 4yQkyHskw5vqg==
+Date: Thu, 24 Jul 2025 10:05:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: rentao.bupt@gmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	Tao Ren <taoren@meta.com>
+Subject: Re: [PATCH v3 07/13] ARM: dts: aspeed: Add Facebook Wedge400-data64
+ (AST2500) BMC
+Message-ID: <20250724-overjoyed-panther-from-camelot-f2ff4f@kuoka>
+References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+ <20250723233013.142337-8-rentao.bupt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a983b75b64d03a3kunmbbba7af2a114
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkJOS1ZPHU1LQxhJTU5MSkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=HGyCiXrHnqCx8GS5WXsbwhDLzmu3IbShpWUI3HjTYJTnVe0J1y5LkUQ6KXVLSbc40SoUSzxPXxnBaJqEO2pW2blynlMsb/QPrJMlZ7S+shef5/Wslk1LELQ8nurklfV9VKu48hDgSFGuFsDZbITyfOSLDganQLI2pezAsowh7xg=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=pGrvY5dcB7+dyHxZ/J9OLimFGRuNRqhP75ULphLplEc=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250723233013.142337-8-rentao.bupt@gmail.com>
 
-The analogix_dp_unbind() should be balanced with analogix_dp_bind().
-There are no bridge enabling and panel preparing in analogix_dp_bind(),
-so it should be reasonable to remove the bridge disabing and panel
-unpreparing in analogix_dp_unbind().
+On Wed, Jul 23, 2025 at 04:30:03PM -0700, rentao.bupt@gmail.com wrote:
+> +		/*
+> +		 * PCA9548 (11-0076) provides 8 channels connecting to
+> +		 * FCM (Fan Controller Module).
+> +		 */
+> +		i2c32 = &imux32;
+> +		i2c33 = &imux33;
+> +		i2c34 = &imux34;
+> +		i2c35 = &imux35;
+> +		i2c36 = &imux36;
+> +		i2c37 = &imux37;
+> +		i2c38 = &imux38;
+> +		i2c39 = &imux39;
+> +
+> +		spi2 = &spi_gpio;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = &uart1;
+> +		bootargs = "console=ttyS0,9600n8 root=/dev/ram rw";
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ----
- 1 file changed, 4 deletions(-)
+Drop bootargs. You are duplicating stdout path and choice of root is
+definitely not a mainline user friendly.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index f4807ef337e6..bf0b1c0912e4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1610,10 +1610,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- 
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
--	analogix_dp_bridge_disable(&dp->bridge);
--
--	drm_panel_unprepare(dp->plat_data->panel);
--
- 	drm_dp_aux_unregister(&dp->aux);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
