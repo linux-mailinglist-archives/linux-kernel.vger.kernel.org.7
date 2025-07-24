@@ -1,172 +1,193 @@
-Return-Path: <linux-kernel+bounces-744190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3125B1094B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AEDB1094C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AD457AD6D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18B5164E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2764F276027;
-	Thu, 24 Jul 2025 11:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5113E2750F8;
+	Thu, 24 Jul 2025 11:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KsnNLeKq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2sl/Wn2c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC95274B24
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9B82750F6;
+	Thu, 24 Jul 2025 11:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356775; cv=none; b=Htt7n7EudHWX09vJFKaBNlWJYb6tvF6YqZTIWvQTm1SC8ZKqF31NEQiOc+NIyosc+9x2ntkYpmyT/cAArmg0wOsi/OzAswmEjhERKhKzW/u+GlM8Y1AFXkNww/X0PA6xZUwOpqOtganBroaqHLvAvIrcCmU0FbHoqVmoS197c4E=
+	t=1753356803; cv=none; b=iFPyhJsAcjBTrwTe82NxRfcRU5bPnv9iwqMcIVWj9QqWPX3iS8q1FVx90G9d8Ehy7xmnoWjjxzYUxxQ3Jay35idANRGSN0wfgkwF+LVEC+o6NBrbcJM7sK7q2ZhVi6O45zoAGh3bZ1IKadi8sMmsqVM1eRU8crCDGFK5/oyLrBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356775; c=relaxed/simple;
-	bh=9ldZRzjPyr6R/RppclDLygRd+Xb1MSv4FA3aRAISP2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PvniuFUPWoVgQUSxd3Dc63Bd6ijeUWsLpMPGeZuIt96Qw3QviYumKTClAC/W+xfGxsZDObAOANJbiAH10ahTaItVzYr0IrSqyhzO7spC3fUTPMJMKE0e+2bHf/6zauKeU5ju+NKIkKPKCyCuzL3h+M3y7AwwBENM/Mo0mTmD944=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KsnNLeKq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9TfwG018038
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:32:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Vkdub2D9Ix1D069ciMfnOnAi5gl6FNprDE8EkZawJbc=; b=KsnNLeKqMsS2T7M6
-	JOUAt83eNYVCdBQORuxYxBMrmBsGi/hyXdyd9Kr1n4RsMecLu0iq0B/SFjN0eVwK
-	KxK/GGgjCfGl4convg1Pz6b2gFTQfS4UgVInOPvJTFFqagB4N45CuoE6Fm7FogtO
-	5X9eU3YeI98Pe8xO0OEPizvz++dGhZ+Mrr50079rbsO+CJqPVjFX4eqkQcBX8KlQ
-	9gJ1Gmp3WmT8ovM/Od2AFQvG500f3gKKTQ67kt4zXfhp37b2qEL2vOepBMuNjgFW
-	/kylU9wvuUcIFTspFzaxpuCTFnFFBn7DLqRoGnhogQnF7B6tvmNLyDEy3mY+ncns
-	4IqS8Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6tpdh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:32:51 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab3f1d1571so1198001cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:32:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753356771; x=1753961571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vkdub2D9Ix1D069ciMfnOnAi5gl6FNprDE8EkZawJbc=;
-        b=Ubm4OVfLo3VTMuZFyqqW1E+3zsaLF68Gm1Ewr8z8+04Jsfscf2gSheR1JMDs4w8BPZ
-         96a4UVf6FaMj9hznqLuL8QW9PoRW5VwstWQ8x9xGnH0HNev0X3RAAAxQDwbWOVPHoh/D
-         hLIN6NNfwQpENWOGlbqGfYfQOSoMqW/tdTQaqfKkW2YrYbYsd7icvZlu2bPItJJgTXu2
-         f6zLzRbQPupJ5uZRzkWYG6W4BzsN/7OP4pz44Khh7jfunJYFzBEZY7m9YXnWTtKcq6Vq
-         6xBwsqsAxHPCQA3FHFEGLrf0KB4dK1+BdY97mexho/Chziy3DW23ifSlLH+IBunDsbj8
-         3DTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWintV7YaWPsx+DZNTq/HiduPpSRmm9B7IlnviVV0eQrxjXj7DweXJb1RMyFY6UOUTqrBOm3KqPvWWtiYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4OY8DieDFtquOQx9r0gK3nV53iHHbDsaEj0CzLpaKTwgIilrh
-	ag7s1/GizmAx5n8y0hFVXdQZKlg4p8A2ty0/nn0eMBesVmaYm0D3yVqU36kJspdp7haC16UqcSV
-	OPg9t0Y4xWufowK6v5e2nsa8buFopc0r3DbnBfOeYIqA8/QIjFUQVnxHQbVNntryaE+Y=
-X-Gm-Gg: ASbGncvOMA6YCtTLb9gZyZ/vwVrO+bI/QKoPkrOSmMsbNPqRW1yoInnERl9PQa9yFn6
-	O6gD/BMpsHoCY1GcWSN5SvNBYH2cw3xsxnVkLRDLIVLGShhR9auTfYgihnghD6ce2J+NyRqvBws
-	TzCs8K+lWPtPrLD+dNCEfMxOiYbJsIDonGWl46hlyz/AZ7erZnvVD+BmZLVsbncipjFLunn1OXN
-	0bYeyR6b63eAWrKdm6L/ZrEkN9MAPLYxmIgXjzePYZQD3xD+mHHmtoOi6tVfBjH9emE1mIhq51k
-	4FTuJqOIyLHurhINNn04Z8FNp6zMtUAvgtgv9fZM42CCnKobESnRNzKjBK9o+DWVEEwE0mbKKv6
-	Uvm5VfZVI2/hEGyEtWw==
-X-Received: by 2002:a05:622a:10:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4ae6df468f3mr41507741cf.10.1753356771053;
-        Thu, 24 Jul 2025 04:32:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKMYrc1c7gJLpPEnvGZQ+JXFEW97UbToOxYYGdHgUsXZHlT+nAbkoU5dqSLoVTSIkv4LWWHg==
-X-Received: by 2002:a05:622a:10:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4ae6df468f3mr41507511cf.10.1753356770583;
-        Thu, 24 Jul 2025 04:32:50 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd335fc6sm741550a12.67.2025.07.24.04.32.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 04:32:49 -0700 (PDT)
-Message-ID: <4ab97f28-ac2c-44d8-847c-d3a49e4f38a6@oss.qualcomm.com>
-Date: Thu, 24 Jul 2025 13:32:47 +0200
+	s=arc-20240116; t=1753356803; c=relaxed/simple;
+	bh=lDnwCdX+NKqdtDDi8VUr93VKMdqOc/4K7u67AT/OKA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CllCenxGMidQ1I5yuKsSibVQVdsdcj7WMqmGwdW9uWvrdEsrucGk0V3rFjYW714yc+LdJr01RjYWpdwVTmAU7Q/O+Pv9uaQCQ+csTubKPERNNwQ/UNXVU+ZblS/ZRWyOCYFvsDqUsV90B1u39EMNolfkRMOrZwffh3COtHcsX5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2sl/Wn2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7796C4CEED;
+	Thu, 24 Jul 2025 11:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753356803;
+	bh=lDnwCdX+NKqdtDDi8VUr93VKMdqOc/4K7u67AT/OKA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2sl/Wn2clmFwIsufObEG+et9w3xv5LRoa1hTQn3J12vJayjBFBT3eCMkG2phiZKqh
+	 8wtoCyQYfbEcs87qCIKwqYC6GGnIiGqCzHB/NbhRZUDga76m2VheLAKsYDxr8GJCwq
+	 l1LH0rLpovyOGzeb7/zmr7RCwfcJbqmzqSAJ/LTU=
+Date: Thu, 24 Jul 2025 13:33:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: samiksha.palav27@gmail.com
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: sm750fb: Add hardware acceleration for 16bpp
+ imageblit
+Message-ID: <2025072451-spokesman-chevron-5b88@gregkh>
+References: <20250724105254.3926-2-samiksha.palav27@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/23] arm64: dts: qcom: x1e80100: move dsp audio nodes to
- dedicated dts
-To: srinivas.kandagatla@oss.qualcomm.com, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250723222737.35561-2-srinivas.kandagatla@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250723222737.35561-2-srinivas.kandagatla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=688219e3 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=4r3GGkRPDdsNF_bvXIEA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: EINR8GMRd1TiW97qIbJLFt0OBOI2fM8_
-X-Proofpoint-GUID: EINR8GMRd1TiW97qIbJLFt0OBOI2fM8_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA4NyBTYWx0ZWRfX4oqHakQDcJno
- j5qKLM3rRTVfEmJXrrE3dJF1CLxYBM7oDgUGMDPL5OxC0qjNAY/vIND7QSqapHJ2v2kVqPCCDOZ
- cbPrBFntzTfKUTy/52JsOIoggR40aTccKTFBTncApAvUD6t5mSN87pUApghIO6ZZJ7s+rGmv/K5
- A16gysyzLccjUx7QTzeBHtNkEdNgiu1wHmmPFF/GGBRiGGtWQhh4nmiV8Gh36ZlIOUgXhxLpQN5
- apS5jt/lKRNZoZhdewMeoD+ww/I+7mV1W+WlCXlz0EZ3wqEjY9Mmz757IXHvyAE3pmAHI4ER+EK
- gJRr4S46gLOcJrwsx+pDwrAWWKZ21e2Tnxm1WhdwtRmeTh7FbEPRFfaL/ps6MIgmKxLLXwDrD8y
- hFKm3yye/V3/aYAzhl8lZgKLDP8CoWBwljyi6ijLt2QEZ4PodjGygK9Ohl2BdI+XImqAh7SA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 mlxlogscore=792 impostorscore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250724105254.3926-2-samiksha.palav27@gmail.com>
 
-On 7/24/25 12:27 AM, srinivas.kandagatla@oss.qualcomm.com wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+On Thu, Jul 24, 2025 at 04:22:08PM +0530, samiksha.palav27@gmail.com wrote:
+> From: shdwcodr <samiksha.palav27@gmail.com>
 > 
-> All the device tree nodes for audioreach dsp are duplicated across all
-> the SoC dtsi files, Move this to a dedicated dtsi file so to remove some
-> duplication, make it consistent across all device trees and also make it
-> easy for new SoC's to add audio support.
+> This is my first kernel patch, as mentioned in my kernel introduction.
+> I'm starting out with drivers/staging, and this patch targets the
+> sm750fb driver.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> Previously, all image depths other than 1 fell back to cfb_imageblit().
+> This patch adds support for hardware-accelerated blitting for 16bpp
+> images using sm750_hw_imageblit().
+> 
+> The fallback path for other depths remains unchanged, with a TODO
+> comment in place for future enhancements.
+> 
+> Signed-off-by: shdwcodr <samiksha.palav27@gmail.com>
 > ---
+>  drivers/staging/sm750fb/sm750.c | 53 +++++++++++++++++++++++++++++----
+>  1 file changed, 47 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+> index 1d929aca399c..e65b747fbfd0 100644
+> --- a/drivers/staging/sm750fb/sm750.c
+> +++ b/drivers/staging/sm750fb/sm750.c
+> @@ -121,12 +121,12 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+>  	sm750_hw_cursor_disable(cursor);
+>  	if (fbcursor->set & FB_CUR_SETSIZE)
+>  		sm750_hw_cursor_set_size(cursor,
+> -					fbcursor->image.width,
+> +					 fbcursor->image.width,
+>  					fbcursor->image.height);
+>  
+>  	if (fbcursor->set & FB_CUR_SETPOS)
+>  		sm750_hw_cursor_set_pos(cursor,
+> -				       fbcursor->image.dx - info->var.xoffset,
+> +					fbcursor->image.dx - info->var.xoffset,
+>  				       fbcursor->image.dy - info->var.yoffset);
+>  
+>  	if (fbcursor->set & FB_CUR_SETCMAP) {
+> @@ -249,10 +249,51 @@ static void lynxfb_ops_imageblit(struct fb_info *info,
+>  	pitch = info->fix.line_length;
+>  	Bpp = info->var.bits_per_pixel >> 3;
+>  
+> -	/* TODO: Implement hardware acceleration for image->depth > 1 */
+> -	if (image->depth != 1) {
+> -		cfb_imageblit(info, image);
+> -		return;
+> +	static void write_pixel(struct fb_info *info, int x, int y, u32 color)
+> +
+> +	{
+> +		u32 location;
+> +		u8 *fb_ptr = (u8 *)info->screen_base;
+> +
+> +		location = (y * info->fix.line_length) + (x * (info->var.bits_per_pixel / 8));
+> +
+> +		if (info->var.bits_per_pixel == 16) {
+> +			u16 c = ((color >> 8) & 0xF800) |
+> +				((color >> 5) & 0x07E0) |
+> +				((color >> 3) & 0x001F); // Convert 24-bit RGB to RGB565
+> +			*((u16 *)(fb_ptr + location)) = c;
+> +		} else if (info->var.bits_per_pixel == 32) {
+> +			*((u32 *)(fb_ptr + location)) = color;
+> +		}
+> +	}
+> +
+> +	void sm750fb_imageblit(struct fb_info *info, const struct fb_image *image)
+> +
+> +	{
+> +		/*
+> +		 * TODO: Add hardware-accelerated support for more image depths
+> +		 * Currently only 16-bit (RGB565) images are handled in fast path.
+> +		 */
+> +		if (image->depth != 16) {
+> +			cfb_imageblit(info, image);
+> +			return;
+> +		}
+> +
+> +		/* Accelerated rendering for 16-bit (RGB565) images */
+> +		const u16 *src = (const u16 *)image->data;
+> +
+> +		u32 fg_color = ((image->fg_color & 0xF800) << 8) |
+> +			       ((image->fg_color & 0x07E0) << 5) |
+> +			       ((image->fg_color & 0x001F) << 3); // RGB565 → RGB888
+> +
+> +		for (int j = 0; j < image->height; j++) {
+> +			for (int i = 0; i < image->width; i++) {
+> +				u16 pixel = src[j * image->width + i];
+> +
+> +				if (pixel) // Draw only non-zero (foreground) pixels
+> +					write_pixel(info, image->dx + i, image->dy + j, fg_color);
+> +			}
+> +		}
+>  	}
+>  
+>  	if (info->fix.visual == FB_VISUAL_TRUECOLOR ||
+> -- 
+> 2.43.0
+> 
+> 
 
-[...]
+Hi,
 
-> -				gpr {
-> -					compatible = "qcom,gpr";
-> -					qcom,glink-channels = "adsp_apps";
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-This seems to never change, maybe we can add some internal bus-like
-matching to glink that we could put a cookie in the GPR driver for?
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-> -					qcom,domain = <GPR_DOMAIN_ID_ADSP>;
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-Similarly, this never changes (unless call audio would go through
-modem and require a similar structure or something, I really don't
-know)
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
 
-> -					qcom,intents = <512 20>;
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-This is also always the very same
+thanks,
 
-> -					#address-cells = <1>;
-> -					#size-cells = <0>;
-> -
-> -					q6apm: service@1 {
-> -						compatible = "qcom,q6apm";
-> -						reg = <GPR_APM_MODULE_IID>;
-> -						#sound-dai-cells = <0>;
-> -						qcom,protection-domain = "avs/audio",
-> -									 "msm/adsp/audio_pd";
-
-These never change either
-
-Konrad
+greg k-h's patch email bot
 
