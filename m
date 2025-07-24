@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-744465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D46B10D55
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FCAB10D54
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65925C1E20
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C795C193A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5B32E427C;
-	Thu, 24 Jul 2025 14:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C0D2E3394;
+	Thu, 24 Jul 2025 14:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dryJ1YJs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdJAINky"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F52E4256;
-	Thu, 24 Jul 2025 14:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B304C81;
+	Thu, 24 Jul 2025 14:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366431; cv=none; b=V2b8llNOXzDfjviB+Bqgx8tutHG+k8AO5rmULzgsMDKTnfYugII1cdyBFcR6qnb5WdUKXMFAmjqFVCEhAOlp9wfj5zT6BRYtLOWeZdY5QfXBkWOEYnEFH3RZ5T398o465gca5fOu7xGWsbDV7LFe//sHmcUwyhNs81+gBBOg4DY=
+	t=1753366426; cv=none; b=Srm48FOb/J3A04n5LwZdvJAqG3RtAwQpHXRP9v3VvRLNKBBjQYOJNn27982oy5Bgh++8LI2OrnAVTET99ra35WIpLEC8KtK7msayr5Ftjnty0/SpB5xhn6FCdXdwNvWRKiMJTf9A+I6KQOTP9VGwELO5I+jrpXuQz0/mSFQ5GD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366431; c=relaxed/simple;
-	bh=iP21wARuzAVybuDfrhi/ZmKVWvFZlKJMhFjcyKMiDOo=;
+	s=arc-20240116; t=1753366426; c=relaxed/simple;
+	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKbt85Zm5o35TQnhmEcyfejg90OKvgqlqzfQoeBoq6bSWxsDBPNCR67mpcMLg+oG1L4bTSv2SQdWZJB2h5QcEHxGXp+GJ5UoadC/bG0vUI5siVm5rT6+sFfWusFanHO7IUoFvvrwNb+pZvldSZvk44ABTHVRbwULEv5ZVN8AP7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dryJ1YJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D418C4CEED;
-	Thu, 24 Jul 2025 14:13:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bV4yt97wmTqoSRbyOPR4MtLdR2HuLrlndYHP8lSWq+Au7K+RZLp1o+OBr/BzGnwLrhYKbBz4XHpg3XhGDi6hrbnshuQjExeDUWVxDu+tGkzboOyaor+RclDGImeQrvIBBAEGSbwoEStOUo2Ud/WUMKof31vIniR2xEp+UVDzhpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdJAINky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF99C4CEEF;
+	Thu, 24 Jul 2025 14:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753366431;
-	bh=iP21wARuzAVybuDfrhi/ZmKVWvFZlKJMhFjcyKMiDOo=;
+	s=k20201202; t=1753366426;
+	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dryJ1YJskl7pP6EZbhlVYPbvYngcJHHHtazegM1TgWqREeyogXTEgMG8ms5KvQMZ+
-	 8dUzPvtXyAkyS9XMhHK3obW288FKpbGjGbyjG/IPqimgdlHZL1Dvy5HDbSPwaW7270
-	 d86RbpCXyHX/QMs2ZVFrZcyfR7a06QLvEwdbdhQuNaiF1refGOiFIW63Nylaq1yCp5
-	 hEpYRAdAMUb6AUW55hjo+kH5H/KZFsgKcVLpT3jt8IcLUYWDmwBIN6vmWZnTz9UuOK
-	 51ekVxtKW6pMBGAr3akRpiXYjKPGgbMM8VKU3bKgdcJTL9XEISH4pVjCqye79YycuW
-	 G4XImgA+whU5Q==
-Date: Thu, 24 Jul 2025 19:43:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH RFC 2/3] PCI/pwrctrl: Allow pwrctrl core to control
- PERST# GPIO if available
-Message-ID: <uh7r37l7a2btd3p5dighewfmat2caewrlyf2lwjtslolbr5bov@jgstvnfhxur6>
-References: <20250707-pci-pwrctrl-perst-v1-0-c3c7e513e312@kernel.org>
- <20250707-pci-pwrctrl-perst-v1-2-c3c7e513e312@kernel.org>
- <aHGueAD70abjw8D_@google.com>
- <k5rf5azftn4mpztcjtvdxiligngmaz7fecdryv244m726y5rfd@mobway4c4ueh>
+	b=tdJAINkymtj2thSAy4DIKcO9znbtYUAxdqmuA3eZ06MqVqP+Tmb/aJjntKAV5PQZ2
+	 EFPhmd+7kxybeKkNguIPyVRTtlB6+zODI1Tf7euYKFDpHjquDFAYr9biL+MUrbQGaN
+	 Ek4Zfw8B9uN/Uh/2yNMfzn+0t5XEWr7HlZGc1RYI7TKy8Bd3hhsxvx+kvMorucA5IT
+	 k3Jn4d3nuBKa1sL1YGJO/tazCsGUvT1L4+Hp82vJFNI6ZTbHkFo6GFs+EONBkvbEwQ
+	 Gmm5JuixdjXR18jXx61RYWtmoOQwfWgI1ZX6iYi6hJx8dvOfCYxzGEQjiIyIVDb66J
+	 2WUBYj0Ejvj8Q==
+Date: Thu, 24 Jul 2025 14:13:41 +0000
+From: sergeh@kernel.org
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
+	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/2] Secure Boot lock down
+Message-ID: <aII_lcRmLr5n70ix@lei>
+References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
+ <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
+ <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <k5rf5azftn4mpztcjtvdxiligngmaz7fecdryv244m726y5rfd@mobway4c4ueh>
+In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
 
-On Sat, Jul 12, 2025 at 01:59:34PM GMT, Manivannan Sadhasivam wrote:
-> On Fri, Jul 11, 2025 at 05:38:16PM GMT, Brian Norris wrote:
-> > Sorry for so many individual reviews, but I've passed over this a few
-> > times and had new questions/comments several times:
-> > 
+On Thu, Jul 24, 2025 at 02:59:39PM +0200, Nicolas Bouchinet wrote:
+> Hi Hamza, thanks for your patch.
 > 
-> That's fine. I'm happy to answer as someone other than me is interested in
-> pwrctrl :)
+> Thanks, Paul, for the forward. 
 > 
-> > On Mon, Jul 07, 2025 at 11:48:39PM +0530, Manivannan Sadhasivam wrote:
-> > > PERST# is an (optional) auxiliary signal provided by the PCIe host to
-> > > components for signalling 'Fundamental Reset' as per the PCIe spec r6.0,
-> > > sec 6.6.1.
-> > 
-> > >  void pci_pwrctrl_init(struct pci_pwrctrl *pwrctrl, struct device *dev)
-> > >  {
-> > > +	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dev->parent);
-> > > +	int devfn;
-> > > +
-> > >  	pwrctrl->dev = dev;
-> > >  	INIT_WORK(&pwrctrl->work, rescan_work_func);
-> > > +
-> > > +	if (!host_bridge->perst)
-> > > +		return;
-> > > +
-> > > +	devfn = of_pci_get_devfn(dev_of_node(dev));
-> > > +	if (devfn >= 0 && host_bridge->perst[PCI_SLOT(devfn)])
-> > 
-> > This seems to imply a 1:1 correlation between slots and pwrctrl devices,
-> > almost as if you expect everyone is using drivers/pci/pwrctrl/slot.c.
-> > But there is also endpoint-specific pwrctrl support, and there's quite
-> > a bit of flexibility around what these hierarchies can look like.
-> > 
-> > How do you account for that?
-> > 
-> > For example, couldn't you have both a "port" and an "endpoint" pwrctrl? Would
-> > they both grab the same PERST# GPIO here? And might that incur excessive
-> > resets, possibly even clobbering each other?
-> > 
+> Sorry for the delay, we took a bit of time to do some lore archaeology
+> and discuss it with Xiu. 
 > 
-> If both port and endpoint nodes are present, then only one will contain
-> 'reset-gpios'. Right now, the DT binding only supports PERST#, WAKE#, CLKREQ#
-> properties in RP node, but that won't work if we have multiple lines per slot/
-> controller. Ideally, we would want the properties to be present in endpoint node
-> if available. But if we have only standard expansion slots, then it makes sense
-> to define them in the port node. But doing so, we can only expect the slot to
-> have only one instance of these properties as we cannot reliably map which
-> property corresponds to the endpoint.
+> As you might know, this has already been through debates in 2017 [1]. At
+> that time, the decision was not to merge this behavior. 
 > 
-> I've opened a dtschema issue for this:
-> https://github.com/devicetree-org/dt-schema/issues/168
+> Distros have indeed carried downstream patches reflecting this behavior
+> for a long time and have been affected by vulnerabilities like
+> CVE-2025-1272 [2], which is caused by the magic sprinkled in
+> setup_arch(). 
 > 
+> While your implementation looks cleaner to me. One of the points in
+> previous debates was to have a Lockdown side Kconfig knob to enable or
+> not this behavior. It would gate the registration of the Lockdown LSM to
+> the security_lock_kernel_down() hook. 
 
-I realized that there is no need to define these properties (PERST#, WAKE#,
-CLKREQ#) in the endpoint node (the DT binding also doesn't allow now anyway).
-These properties should just exist in the Root Port node as there can be only
-one set per hierarchy i.e., Root Complex would only use one set of these GPIOs
-per Root Port and the endpoint need to share them.
+Well, but there is a default-n kconfig.  What do you mean by "Lockdown
+side Kconfig knob"?  I'm sure I'm missing something, but not sure
+what...
 
-So I closed the dtschema issue.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+thanks,
+-serge
 
