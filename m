@@ -1,177 +1,221 @@
-Return-Path: <linux-kernel+bounces-743554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18D5B1000E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BD7B10041
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B14A967DB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D83D4E00E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBB920371E;
-	Thu, 24 Jul 2025 05:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F45207A2A;
+	Thu, 24 Jul 2025 05:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="KM5yrygk"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6mzR4u0"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C4627461;
-	Thu, 24 Jul 2025 05:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ECF207A27
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753336177; cv=none; b=l8U9jTc5YQaaDKuajxIdZCvghlCjsGZ4uTefrjUXIBgZ16DUuakUDovXpfhZtqlCaa5g9lgEd+pbfWxh4vnH3a8rkTzClwmxLj3541tbUm27qPuZTGeZLcY+UyOHxJOpZRLV3RTqPTBjBs9yf2ExIhSgsbc1TuBRJuDVaD4GFi0=
+	t=1753336281; cv=none; b=HqeLCrhAjFrzB4RALmydAhvwpjfXVJh26MzsUFjNy4uiurtxG41kLGxppshSB19CQ24eP+mf4OO2mU4EwWe+lGrDIt9timVMiHu4C1+dipdqIsScVy8vJXZOk18XF4yoVu4f4dztzhws+5z45uAilbbxuzm2stoC70WGgVrEoSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753336177; c=relaxed/simple;
-	bh=E4pvkt3WPy6wv2L0Cl4P1RKdvunQ2Cf5tLUgkOI8y3s=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QGObL84L13I3HIkMLv88dv4BofiVdoScAZpDj4BMDjVGyyGmxxiazAztDe6ybeJZlnGhn0AM2YjZxvflKiWePFjfD/fti8ROFRaVvweTM+pfx5S+E+sujV2elwoQsiPC467n+XHTNL85RCOPZP1bzKcJNZYhuUVv33xIScbIQ0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=KM5yrygk; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1753336281; c=relaxed/simple;
+	bh=QfIN2VJlZFmnJIE0R01/0M2S1pIHyVHFieThVVU9jqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C7axA0+3onJPsB9E4uXgLNZlyK5OzBNe88Me4lfiurPVsNS00smkZlIjd05upHZFLHjHqxjq4OEpb6VcX/ep7A3dVFpKQUA9kV41rxw4pYiFUU0twJJUQ08SOSe35R/RMfwRFxQIHa0yS+q1ZW2YvU2+cn5BwTKxBVpeKm1L6Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6mzR4u0; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b39011e5f8eso597850a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 22:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1753336176; x=1784872176;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=8rXWMCJs2reKmOTrDp+6hju6ytK5A3jKvfCLoVTCkSs=;
-  b=KM5yrygkO5pYo0YRUjVEyhFa8HQ8fQoFyEfzOO0/k8KkCRHwhUh8Apmt
-   yq34BLcp3+JYOxf5BPtj6gU+GCOW2Z1KsTPqJTnlydkU6HbHYuAdbU4Zs
-   Kb8MOyavb7LZcOgnuY7oGyfagwDNNT+Ueqq3ysNaCdS82LxPbxXdI7h49
-   THlVfe79rxhqonm3jDSs3qgGXDKaMYJfjjcB1eEGY0YTZHDmNldzk83lP
-   v0Xda+tSNt139N7TMmGm0SBZ6UFMmD20xa/wZBgTuK4wHXekrkjchJ0pC
-   iYVE/LTz8Awqxidc4Bg6HF+3ILqWIO4eC4c22nCGvPRWeGNCBoUVrI3sl
-   A==;
-X-IronPort-AV: E=Sophos;i="6.16,336,1744070400"; 
-   d="scan'208";a="512508763"
-Subject: RE: [PATCH] net: Fix typos
-Thread-Topic: [PATCH] net: Fix typos
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:49:33 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:10188]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.12:2525] with esmtp (Farcaster)
- id a59c0b64-55c6-44db-886d-cacb011e5613; Thu, 24 Jul 2025 05:49:31 +0000 (UTC)
-X-Farcaster-Flow-ID: a59c0b64-55c6-44db-886d-cacb011e5613
-Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 24 Jul 2025 05:49:31 +0000
-Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
- EX19D005EUA002.ant.amazon.com (10.252.50.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 24 Jul 2025 05:49:31 +0000
-Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
- EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
- 15.02.1544.014; Thu, 24 Jul 2025 05:49:31 +0000
-From: "Arinzon, David" <darinzon@amazon.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>
-Thread-Index: AQHb/A6mh9gTUEl2+0SS8UVRprZD47RAxK/A
-Date: Thu, 24 Jul 2025 05:49:31 +0000
-Message-ID: <b9e2a164eee44c5ba8b5f0b14ca7ee06@amazon.com>
-References: <20250723201528.2908218-1-helgaas@kernel.org>
-In-Reply-To: <20250723201528.2908218-1-helgaas@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20230601; t=1753336277; x=1753941077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L5ZkyeZ8stL+8iJNjVz/qRVYgE+h61bRVG1pL/fdi78=;
+        b=R6mzR4u01PMwTj44wf6v0VwvKJOGvNnp4Us5PYuRDcsoDjfPfetG1vT2L2CDhDodEW
+         +LLT2Jsg4+Vp1p2YxiqVXVvOqa0GlSU7JW1y0RHL1KlNBLfasK/mkOE7vRQIijhCCTcC
+         Uk5KbRjE0nWsAGpERrk7FrFnI+G7ciNGUVanVbXWfYP9PXOTfgKCfBL0Jtew/a/v0plp
+         6PQtD9v5KFocgBJArEAvd8nEdngyU7k7+T46Wg93p7YDJ1ji0H9GgTg8aMo/wYSzm3ej
+         Gllp03eqPh1bVCz3ZEaUwcpf98b7gIgaXpgVc2sds+hU8XJqOdfR2AJk7cUZl899lzY6
+         H69g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753336277; x=1753941077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L5ZkyeZ8stL+8iJNjVz/qRVYgE+h61bRVG1pL/fdi78=;
+        b=w6cyYIdkg3wAOe+vTOR4x7nWMLaZXPTDuNyA7on9cwJxw/OkOnpRahlhCDeSdDPMvK
+         18RCVyVlQcd13s2y8tqocuu9QehupBVuhD6mjUJ68xR3ow6PoIW60tMrCplTZayQRvkI
+         n55/68KNSEMxeeHkMcEcbxTRgSBfahGoi7K/eNQwRFAgDkUmzhNVspSNDXcjriqhLWbr
+         GXp6wihgEUbknj+DOl2pkbMbSLF7gXatI2WwRXlaN0vJXITJbrAgz7QG0YBIeiWzetK6
+         /8v0w8yv96GE5LQy2FPvOnMmU/J04s630hrHORLVaEwNTa7L61YWTeaOG6UKXLdrZmUQ
+         0VRA==
+X-Gm-Message-State: AOJu0YzmgF8ecvdXatwCWOPOHxp8Qt9ple8dMlHQef/Y8txjNGlQNlSc
+	bp7g4tIfBK518pyeGDrL7HQhtHaq3B3G0dFs3b4llB6oGTTVLh0d7ihFpu3t+gKn
+X-Gm-Gg: ASbGnctMvCMfIy/auoLEkwvQiAmWVYH2qPljMb3Lal9ars7hXKKmI4cdC+YVX2lBKsI
+	sACnJX+SPFw9+sNJME9JD02yV2JR5gMQcSYD+wjG5qVCIBP/8Muijxij7FGFmCEVgX9Cuag0oVJ
+	sUomCcW7VxlzOtUFcR4teCGyIxgOxdIM9wYGKzGy2IqwHzIc+/EhXDuJMzSWRLalGHn1lZMVWNY
+	Tfn3sh7QF0t6r0uAvToYGBBjsFToR+7fYC9MuSDrBiUEnXUSoIw3gg7M4b5NRYOVFERv/50wPyK
+	2QX+Wl6FgNJeXalpYpfyXtU6lE71aDOIlw0I4fPV1e7vVRHwTAX2I+fUNJeu750qZeSrYw4c60O
+	AU3rClFWADsLcvo+x5jGKys+hFWJsO/JvQOQ=
+X-Google-Smtp-Source: AGHT+IHDl1evI2pbV1CVaa2jR1CyuhJdTzVv1ZacKlLgjPi9khteNnINKx8VPMtR0nKTE6ppqqof1w==
+X-Received: by 2002:a17:903:ac8:b0:235:ef67:b5a0 with SMTP id d9443c01a7336-23f981cc1a3mr85928925ad.36.1753336276624;
+        Wed, 23 Jul 2025 22:51:16 -0700 (PDT)
+Received: from imran-device.. ([132.237.156.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa476eac0sm6655645ad.60.2025.07.23.22.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 22:51:16 -0700 (PDT)
+From: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
+To: pkshih@realtek.com,
+	kevin_yang@realtek.com,
+	rtl8821cerfe2@gmail.com,
+	phhuang@realtek.com,
+	damon.chen@realtek.com
+Cc: linux-kernel@vger.kernel.org,
+	Mande Imran Ahmed <immu.ahmed1905@gmail.com>
+Subject: [PATCH] net:realtek:use sysfs_emit() instead of scnprintf() for sysfs consistency
+Date: Thu, 24 Jul 2025 11:20:18 +0530
+Message-ID: <20250724055018.15878-1-immu.ahmed1905@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> From: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> Fix typos in comments and error messages.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/net/ethernet/amazon/ena/ena_admin_defs.h     |  2 +-
->  drivers/net/ethernet/broadcom/b44.c                  |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c      |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c  |  4 ++--
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_fw_defs.h  |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c     |  2 +-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h       |  2 +-
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c            |  2 +-
->  drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c      |  2 +-
->  drivers/net/ethernet/broadcom/tg3.c                  |  2 +-
->  drivers/net/ethernet/cavium/liquidio/octeon_main.h   |  2 +-
->  drivers/net/ethernet/cavium/liquidio/octeon_nic.h    |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb/pm3393.c           |  8 ++++----
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c      |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c    |  4 ++--
->  drivers/net/ethernet/chelsio/cxgb4/sge.c             |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4/t4_hw.c           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4vf/sge.c           |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4vf/t4vf_hw.c       |  2 +-
->  drivers/net/ethernet/dec/tulip/tulip_core.c          |  2 +-
->  drivers/net/ethernet/faraday/ftgmac100.c             |  2 +-
->  drivers/net/ethernet/hisilicon/hns3/hns3_enet.c      |  4 ++--
->  .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c  |  2 +-
->  drivers/net/ethernet/huawei/hinic/hinic_hw_eqs.c     |  2 +-
->  drivers/net/ethernet/huawei/hinic/hinic_hw_mbox.c    |  2 +-
->  drivers/net/ethernet/intel/i40e/i40e_ptp.c           |  2 +-
->  drivers/net/ethernet/intel/ice/devlink/port.h        |  2 +-
->  drivers/net/ethernet/intel/ice/ice_base.c            |  2 +-
->  drivers/net/ethernet/intel/ice/ice_lib.c             |  2 +-
->  drivers/net/ethernet/intel/ice/ice_ptp_hw.c          |  2 +-
->  drivers/net/ethernet/intel/igc/igc_mac.c             |  2 +-
->  drivers/net/ethernet/intel/ixgbevf/vf.c              |  2 +-
->  drivers/net/ethernet/marvell/mvneta_bm.h             |  2 +-
->  .../net/ethernet/marvell/octeontx2/af/rvu_cn10k.c    |  2 +-
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c  |  2 +-
->  drivers/net/ethernet/marvell/pxa168_eth.c            |  6 +++---
->  drivers/net/ethernet/mellanox/mlx5/core/en.h         |  2 +-
->  drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c      |  2 +-
->  drivers/net/ethernet/micrel/ks8842.c                 |  2 +-
->  drivers/net/ethernet/neterion/s2io.c                 |  4 ++--
->  drivers/net/ethernet/pensando/ionic/ionic_if.h       |  2 +-
->  drivers/net/ethernet/qlogic/qed/qed_dev.c            |  2 +-
->  drivers/net/ethernet/qlogic/qed/qed_ptp.c            |  2 +-
->  drivers/net/ethernet/qlogic/qla3xxx.c                |  2 +-
->  .../net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c    |  2 +-
->  drivers/net/ethernet/qualcomm/emac/emac-sgmii.c      |  2 +-
->  drivers/net/ethernet/sfc/mcdi_pcol.h                 |  6 +++---
->  drivers/net/ethernet/sfc/siena/farch.c               |  2 +-
->  drivers/net/ethernet/sfc/siena/mcdi_pcol.h           | 12 ++++++------
->  drivers/net/ethernet/sfc/tc_encap_actions.c          |  2 +-
->  drivers/net/ethernet/smsc/smsc911x.c                 |  2 +-
->  .../net/ethernet/stmicro/stmmac/stmmac_platform.c    |  2 +-
->  drivers/net/ethernet/sun/niu.c                       |  2 +-
->  drivers/net/ethernet/sun/niu.h                       |  4 ++--
->  drivers/net/ethernet/sun/sunhme.c                    |  2 +-
->  drivers/net/ethernet/sun/sunqe.h                     |  2 +-
->  drivers/net/ethernet/tehuti/tehuti.c                 |  2 +-
->  58 files changed, 77 insertions(+), 77 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/amazon/ena/ena_admin_defs.h
-> b/drivers/net/ethernet/amazon/ena/ena_admin_defs.h
-> index 562869a0fdba..898ecd96b96a 100644
-> --- a/drivers/net/ethernet/amazon/ena/ena_admin_defs.h
-> +++ b/drivers/net/ethernet/amazon/ena/ena_admin_defs.h
-> @@ -986,7 +986,7 @@ struct ena_admin_feature_rss_ind_table {
->         struct ena_admin_rss_ind_table_entry inline_entry;
->  };
->=20
-> -/* When hint value is 0, driver should use it's own predefined value */
-> +/* When hint value is 0, driver should use its own predefined value */
->  struct ena_admin_ena_hw_hints {
->         /* value in ms */
->         u16 mmio_read_timeout;
+Update the Realtek rtw89 wireless driver to replace scnprintf() with
+sysfs_emit() for formatting sysfs attribute output, in line with the
+recommendations from Documentation/filesystems/sysfs.rst.
 
-Reviewed for ENA. Thanks for identifying this typo.
-Shouldn't think patch be for net-next?
+This change enhances the safety and correctness of sysfs handling,
+promotes consistency throughout the kernel, and aids long-term
+maintainability.
 
-Reviewed-by: David Arinzon <darinzon@amazon.com>
+Functionality verified using ping, iperf, and connection tests to ensure
+stability after the change.
+
+Signed-off-by: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/phy.c |  8 +++----
+ drivers/net/wireless/realtek/rtw89/sar.c | 30 ++++++++++++------------
+ 2 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wireless/realtek/rtw89/phy.c
+index 76a2e26d4a10..a58aefb51fb5 100644
+--- a/drivers/net/wireless/realtek/rtw89/phy.c
++++ b/drivers/net/wireless/realtek/rtw89/phy.c
+@@ -2087,19 +2087,19 @@ EXPORT_SYMBOL(rtw89_phy_ant_gain_pwr_offset);
+ int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
+ 			 const struct rtw89_chan *chan)
+ {
+-	char *p = buf, *end = buf + bufsz;
++	char *p = buf;
+ 	s8 offset_patha, offset_pathb;
+ 
+ 	if (!rtw89_can_apply_ant_gain(rtwdev, chan->band_type)) {
+-		p += scnprintf(p, end - p, "no DAG is applied\n");
++		p += sysfs_emit(p, "no DAG is applied\n");
+ 		goto out;
+ 	}
+ 
+ 	offset_patha = rtw89_phy_ant_gain_query(rtwdev, RF_PATH_A, chan->freq);
+ 	offset_pathb = rtw89_phy_ant_gain_query(rtwdev, RF_PATH_B, chan->freq);
+ 
+-	p += scnprintf(p, end - p, "ChainA offset: %d dBm\n", offset_patha);
+-	p += scnprintf(p, end - p, "ChainB offset: %d dBm\n", offset_pathb);
++	p += sysfs_emit(p, "ChainA offset: %d dBm\n", offset_patha);
++	p += sysfs_emit(p, "ChainB offset: %d dBm\n", offset_pathb);
+ 
+ out:
+ 	return p - buf;
+diff --git a/drivers/net/wireless/realtek/rtw89/sar.c b/drivers/net/wireless/realtek/rtw89/sar.c
+index 517b66022f18..80eacada6911 100644
+--- a/drivers/net/wireless/realtek/rtw89/sar.c
++++ b/drivers/net/wireless/realtek/rtw89/sar.c
+@@ -318,7 +318,7 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
+ 	/* its members are protected by rtw89_sar_set_src() */
+ 	const struct rtw89_sar_handler *sar_hdl = &rtw89_sar_handlers[src];
+ 	const u8 fct_mac = rtwdev->chip->txpwr_factor_mac;
+-	char *p = buf, *end = buf + bufsz;
++	char *p = buf;
+ 	int ret;
+ 	s32 cfg;
+ 	u8 fct;
+@@ -326,17 +326,17 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
+ 	lockdep_assert_wiphy(rtwdev->hw->wiphy);
+ 
+ 	if (src == RTW89_SAR_SOURCE_NONE) {
+-		p += scnprintf(p, end - p, "no SAR is applied\n");
++		p += sysfs_emit(p, "no SAR is applied\n");
+ 		goto out;
+ 	}
+ 
+-	p += scnprintf(p, end - p, "source: %d (%s)\n", src,
++	p += sysfs_emit(p, "source: %d (%s)\n", src,
+ 		       sar_hdl->descr_sar_source);
+ 
+ 	ret = sar_hdl->query_sar_config(rtwdev, sar_parm, &cfg);
+ 	if (ret) {
+-		p += scnprintf(p, end - p, "config: return code: %d\n", ret);
+-		p += scnprintf(p, end - p,
++		p += sysfs_emit(p, "config: return code: %d\n", ret);
++		p += sysfs_emit(p,
+ 			       "assign: max setting: %d (unit: 1/%lu dBm)\n",
+ 			       RTW89_SAR_TXPWR_MAC_MAX, BIT(fct_mac));
+ 		goto out;
+@@ -344,10 +344,10 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
+ 
+ 	fct = sar_hdl->txpwr_factor_sar;
+ 
+-	p += scnprintf(p, end - p, "config: %d (unit: 1/%lu dBm)\n", cfg,
++	p += sysfs_emit(p, "config: %d (unit: 1/%lu dBm)\n", cfg,
+ 		       BIT(fct));
+ 
+-	p += scnprintf(p, end - p, "support different configs by antenna: %s\n",
++	p += sysfs_emit(p, "support different configs by antenna: %s\n",
+ 		       str_yes_no(rtwdev->chip->support_sar_by_ant));
+ out:
+ 	return p - buf;
+@@ -356,24 +356,24 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
+ int rtw89_print_tas(struct rtw89_dev *rtwdev, char *buf, size_t bufsz)
+ {
+ 	struct rtw89_tas_info *tas = &rtwdev->tas;
+-	char *p = buf, *end = buf + bufsz;
++	char *p = buf;
+ 
+ 	if (!rtw89_tas_is_active(rtwdev)) {
+-		p += scnprintf(p, end - p, "no TAS is applied\n");
++		p += sysfs_emit(p, "no TAS is applied\n");
+ 		goto out;
+ 	}
+ 
+-	p += scnprintf(p, end - p, "State: %s\n",
++	p += sysfs_emit(p, "State: %s\n",
+ 		       rtw89_tas_state_str(tas->state));
+-	p += scnprintf(p, end - p, "Average time: %d\n",
++	p += sysfs_emit(p, "Average time: %d\n",
+ 		       tas->window_size * 2);
+-	p += scnprintf(p, end - p, "SAR gap: %d dBm\n",
++	p += sysfs_emit(p, "SAR gap: %d dBm\n",
+ 		       RTW89_TAS_SAR_GAP >> RTW89_TAS_FACTOR);
+-	p += scnprintf(p, end - p, "DPR gap: %d dBm\n",
++	p += sysfs_emit(p, "DPR gap: %d dBm\n",
+ 		       RTW89_TAS_DPR_GAP >> RTW89_TAS_FACTOR);
+-	p += scnprintf(p, end - p, "DPR ON offset: %d dBm\n",
++	p += sysfs_emit(p, "DPR ON offset: %d dBm\n",
+ 		       RTW89_TAS_DPR_ON_OFFSET >> RTW89_TAS_FACTOR);
+-	p += scnprintf(p, end - p, "DPR OFF offset: %d dBm\n",
++	p += sysfs_emit(p, "DPR OFF offset: %d dBm\n",
+ 		       RTW89_TAS_DPR_OFF_OFFSET >> RTW89_TAS_FACTOR);
+ 
+ out:
+-- 
+2.43.0
+
 
