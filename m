@@ -1,287 +1,181 @@
-Return-Path: <linux-kernel+bounces-744309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9200B10AC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:59:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B1EB10AC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1366AAA19CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:59:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 747227BB7B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1C52D5412;
-	Thu, 24 Jul 2025 12:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FA82D5C6A;
+	Thu, 24 Jul 2025 12:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FgacAa0h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6fhnPsQ"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F5F274B24
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22A2274B24;
+	Thu, 24 Jul 2025 12:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361961; cv=none; b=uHAq2AFI3T7fEN//OGMZV/AQIzLkvTDywOVNxyzX5v2GlrIPZvjtDJRscMMp6xSD1y+nLN/jxgRb3f4nw/anGevU/Ak3smg2kg4tUyQaF9eCCDtuJfqkFqtkTuKoXcsaZE9RTLwE8EaxK2ZE+SzHSCYJLxVsraoshh+aa5rCG2E=
+	t=1753361968; cv=none; b=SwTtSl+LiAhuIE2r1BAOFRpB0/asMJjWqTAbykwr9MmeONJ/oQ5F9Vg7mv7zxCrFPuzeRrT30dWq3CbP/KvfS79lm3D9pDlDMjCFGo6ZrIb6HwDQgQN5s343+IjI5mGmxaDG4yc9nxqkL+yHzF2FllupqbyqWOPVy8WIgcg2Fu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361961; c=relaxed/simple;
-	bh=o+/xP/nRACgq6sYyyyENl6/+gxkfYdsCrg7JoE5NC9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ut05da2XCJjzGQAHjzDTeiuJtSWNwKwT5/zqSUFL4uquxvKX7nJRCe+5xvRE+JYv2bMQuWrZ0YndE/Dzb839IGFOAXYUrcFU8jj1X31bf9YsEpqLlIGPpqKrED9FTFSHw+SZR00v/9dejeeD30tARXKBYrr8hg/DK8tOjYHyXaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FgacAa0h; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753361958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hZiwGdR7LRfu5HGHtwgbMQ2Giw34fi/j2EFOpcB/EYM=;
-	b=FgacAa0hK3abaPCd+YNFRiZpwcYs8YcOp3jejtRMrI2AHBl+nVoEr/dlFt1KhFNElAsFMg
-	UXzRAHB1spQYxByDR5LyYoyDUqn+tSi4E2SBmjfMXtF93tAlbkPDmWwSWWyeoDhsWuCxx0
-	9KeuKrdT05E406gkYamRst270Woz7KY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-q7td4VieOdeRbZQwU_ug0A-1; Thu,
- 24 Jul 2025 08:59:13 -0400
-X-MC-Unique: q7td4VieOdeRbZQwU_ug0A-1
-X-Mimecast-MFC-AGG-ID: q7td4VieOdeRbZQwU_ug0A_1753361952
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9549419560B6;
-	Thu, 24 Jul 2025 12:59:11 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.44.32.113])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4DCF119560AA;
-	Thu, 24 Jul 2025 12:59:08 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.16-rc8
-Date: Thu, 24 Jul 2025 14:58:59 +0200
-Message-ID: <20250724125859.371031-1-pabeni@redhat.com>
+	s=arc-20240116; t=1753361968; c=relaxed/simple;
+	bh=ILeH+vPbG9zBvb1xqLYvczaaRyxSAcMEUH4gLkrZiGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecma8NwoOrECpFuJxaD/qahKB1XhXpXHSjKafjekIKvhdUfOBEoPLSa6yJeZ0x6ihga2mUw+s1qyj/4SmIp4rVuoWlKnj+7LsMViHT14FjNedADYDg3XM1v0vDvY5kVSrWaFmh6/hfwHTM5IySl+WLYyL0+aERwHAVXhm+4g63o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6fhnPsQ; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b271f3ae786so783038a12.3;
+        Thu, 24 Jul 2025 05:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753361966; x=1753966766; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhWB6aHdu+jk0Yh+Qo51X79+m8Mn+rAsGd/F5ZyKOlo=;
+        b=m6fhnPsQxZVEiOKQ7rBeRYAxza4tYsIBX7HbPfAT7/VtLesV8Nxmn4QNEcY0W28rR1
+         ApTg+85O6Z4+0WIEYbRQFs/FAf4ZHgJgo2fEOmvO6l+240blhxdOUnz1WCdP+3wLRD0D
+         ABUGHTG1WKbY5pCqm82IBHrOQR7BUuCRZg4cDe0as3y/VgwLeZDF1N+z/f5SfVI8OFbK
+         1XpDR6zT73zMNG+7rb5oJlWl5NRiMFjIuaD8nGBNxy6tVaUpD0H1mjOiJ/P2IjTEZ++z
+         4GtBb+z+1EFGc1Z2joFlsnQPeUg/6YB6de9cjQ+hOnPyiUMuvGfQG7bL7/g5t6QeTowp
+         1R6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753361966; x=1753966766;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EhWB6aHdu+jk0Yh+Qo51X79+m8Mn+rAsGd/F5ZyKOlo=;
+        b=S0cRo4AQMhXPBYFTLbj2byXZHnKjXHfLpZq9L//w45Oak23odnqsyCIDWSYjyurV17
+         08w7x9yxeZRxuiDNnJCl7ZcgdkdyrSu3wy+y1Kb/gX9FlwawWlIDyEVUleTnDKPcmHoc
+         3/ROEdgrATnURC3VaEt/fqOG1RnObdSihQBILdTiNWoIZDQge1sXcyhySiJzgglANRVB
+         CuwzHZSlGvGkgjJLcmlizl1OuXaQ0nsPYgSjfwTherC8DLKzuaQWcG/Zb8+nvIPu/UNF
+         VEjb4Ne17xbUPDv7j76ifeS7Zl4u9YCPredV8EHSZWtotEXhnA3Dx19uEJV9ku+S/XnK
+         Smew==
+X-Forwarded-Encrypted: i=1; AJvYcCULf8xoKuFqx7wW51z95Xxy7784bHEGbX/GrtcV9drSLMJXyjdfDhpf2GF60IiKApxMA4Wz0C5IXgg=@vger.kernel.org, AJvYcCUzsG5PMlAFYcyg5Id6yke02UT8cBezQI9M1IJ2e8c3KqTsvn72GwLz4V8lOJHGeONG1GLAXIDsPdAPEn++@vger.kernel.org, AJvYcCW+ZjBu7QdAH6jesKBtjSxKLAK4MZzBAVxff/G2i9dq6RToTnLNVgKVFvuATyh2DByaURBaJALNY2os@vger.kernel.org, AJvYcCX0W6vle1QIzcSqczGvMyF0LN/ziKiZvDX/8ySJ5KCNXxyjAdnFzDL0+BHN0zTbKU7xVpUUCYWvyx6oqlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkBolFfY25K3zQToBvnNDmbel8ywgiBOMTMDjKFW+CljwDjowK
+	QhvwH/iEaQ0CEldWRZY8MZ/a9z033BhS80fNZgJ8BuaDsapenJ9ce9eV
+X-Gm-Gg: ASbGncu4LetNZ7601eRJXV4kU33lOad0N1RbLNOXB7mSb31aDFjOBlOwkLjPbo4FCOh
+	DF566bWvnmCHEI5WPIcpbMpVMANjLruYACrC38boAQgdRyXhuI8hQL+VAaiYL3wSW765KNZn7ok
+	yp58D/swq1AG9TiJiObH1Y7p26XAHIJKjZSVWABtU4LaZvDa7JEioovftcf/Qpt/Al9uGgF/nEe
+	+yAzaztAn82eVKKppecKwyy8FAszr75F3lrLFXCAZj7vFkI/0as3xH3jHeGEcLtL1GKyd7LVvKg
+	ic7y3cYMPghDGJclCpfCQWLiIq9p66a9GT3k/syUCTB+R3f9o2zQl1YNviPuZnOBIhd5KQuR+qk
+	+WQATbpvW2vAxuYQQwT/jo5fEmEVg3lKSDIZvUKiLTDmSM7pAI+QSAysS0LG9T0/EH1XDK3o=
+X-Google-Smtp-Source: AGHT+IEyz0Ff6ha/aES/VyZFD9tPaplBcuO4Ns0mTI5dlRQR4aWCiYbR/b5l2KzTJRez7bC5yNwnww==
+X-Received: by 2002:a17:90b:1c8c:b0:316:e77:e2cf with SMTP id 98e67ed59e1d1-31e508171c4mr9383643a91.35.1753361965936;
+        Thu, 24 Jul 2025 05:59:25 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e662f635dsm1361059a91.33.2025.07.24.05.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 05:59:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8115ef31-52f8-40aa-9494-55acd0c691d1@roeck-us.net>
+Date: Thu, 24 Jul 2025 05:59:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] pwm: mc33xs2410: add hwmon support
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ dimitri.fedrau@liebherr.com
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+References: <20250723-mc33xs2410-hwmon-v5-0-f62aab71cd59@liebherr.com>
+ <20250723-mc33xs2410-hwmon-v5-1-f62aab71cd59@liebherr.com>
+ <5fblcb3bbwclh4w4dm3s5ue6eplahka5idqz6z4g6ttmhqb24p@jaqznheusac5>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <5fblcb3bbwclh4w4dm3s5ue6eplahka5idqz6z4g6ttmhqb24p@jaqznheusac5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Linus!
+On 7/24/25 00:30, Uwe Kleine-König wrote:
+> Hello Dimitri,
+> 
+> On Wed, Jul 23, 2025 at 07:34:56PM +0200, Dimitri Fedrau via B4 Relay wrote:
+>> @@ -361,6 +373,10 @@ static int mc33xs2410_probe(struct spi_device *spi)
+>>   	if (ret < 0)
+>>   		return dev_err_probe(dev, ret, "Failed to add pwm chip\n");
+>>   
+>> +	adev = devm_auxiliary_device_create(dev, "hwmon", NULL);
+>> +	if (!adev)
+>> +		return dev_err_probe(dev, -ENODEV, "Failed to register hwmon device\n");
+> 
+> Not so nice that you have to make up an error code here. But that's not
+> your fault but devm_auxiliary_device_create()'s which returns NULL on
+> error instead of an error pointer.
+> 
+>> +
+>>   	return 0;
+>>   }
+> 
+> I applied the patch for the upcoming merge window to
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-next
+> 
+> . Expecting the merge window to open on Sunday that's a bit tight
+> because I like drivers to be in next for a bit before they enter the
+> mainline. The major code change is in drivers/hwmon and I assume Guenter
+> is ok with me taking it for 6.17-rc1. If not, please object, then I'll
+> not send it to Linus and wait for the 6.18-rc1 PR.
+> 
 
-The following changes since commit 6832a9317eee280117cd695fa885b2b7a7a38daf:
+Please go ahead and apply both patches.
 
-  Merge tag 'net-6.16-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-07-17 10:04:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc8
-
-for you to fetch changes up to 291d5dc80eca1fc67a0fa4c861d13c101345501a:
-
-  Merge tag 'ipsec-2025-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec (2025-07-24 12:30:40 +0200)
-
-----------------------------------------------------------------
-Including fixes from can and xfrm.
-
-The TI regression notified last week is actually on our net-next tree,
-it does not affect 6.16.
-We are investigating a virtio regression which is quite hard to
-reproduce - currently only our CI sporadically hits it. Hopefully it
-should not be critical, and I'm not sure that an additional week would
-be enough to solve it.
-
-Current release - fix to a fix:
-
-  - sched: sch_qfq: avoid sleeping in atomic context in qfq_delete_class
-
-Previous releases - regressions:
-
-  - xfrm:
-    - set transport header to fix UDP GRO handling
-    - delete x->tunnel as we delete x
-
-  - eth: mlx5: fix memory leak in cmd_exec()
-
-  - eth: i40e: when removing VF MAC filters, avoid losing PF-set MAC
-
-  - eth: gve: fix stuck TX queue for DQ queue format
-
-Previous releases - always broken:
-
-  - can: fix NULL pointer deref of struct can_priv::do_set_mode
-
-  - eth: ice: fix a null pointer dereference in ice_copy_and_init_pkg()
-
-  - eth: ism: fix concurrency management in ism_cmd()
-
-  - eth: dpaa2: fix device reference count leak in MAC endpoint handling
-
-  - eth: icssg-prueth: fix buffer allocation for ICSSG
-
-Misc:
-
-  - selftests: mptcp: increase code coverage
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Chiara Meiohas (1):
-      net/mlx5: Fix memory leak in cmd_exec()
-
-Dennis Chen (1):
-      i40e: report VF tx_dropped with tx_errors instead of tx_discards
-
-Eyal Birger (1):
-      xfrm: interface: fix use-after-free after changing collect_md xfrm interface
-
-Fernando Fernandez Mancera (1):
-      xfrm: ipcomp: adjust transport header after decompressing
-
-Florian Fainelli (1):
-      net: bcmasp: Restore programming of TX map vector register
-
-Florian Westphal (1):
-      selftests: netfilter: tone-down conntrack clash test
-
-Halil Pasic (1):
-      s390/ism: fix concurrency management in ism_cmd()
-
-Haoxiang Li (1):
-      ice: Fix a null pointer dereference in ice_copy_and_init_pkg()
-
-Himanshu Mittal (1):
-      net: ti: icssg-prueth: Fix buffer allocation for ICSSG
-
-Jacek Kowalski (2):
-      e1000e: disregard NVM checksum on tgp when valid checksum bit is not set
-      e1000e: ignore uninitialized checksum word on tgp
-
-Jakub Kicinski (4):
-      Merge branch 'mlx5-misc-fixes-2025-07-17'
-      Merge branch 'selftests-mptcp-connect-cover-alt-modes'
-      Merge branch '40GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge tag 'linux-can-fixes-for-6.16-20250722' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
-
-Jamie Bainbridge (1):
-      i40e: When removing VF MAC filters, only check PF-set MAC
-
-Jian Shen (2):
-      net: hns3: fix concurrent setting vlan filter issue
-      net: hns3: fixed vf get max channels bug
-
-Jijie Shao (1):
-      net: hns3: default enable tx bounce buffer when smmu enabled
-
-Kees Cook (1):
-      MAINTAINERS: Add in6.h to MAINTAINERS
-
-Kito Xu (veritas501) (1):
-      net: appletalk: Fix use-after-free in AARP proxy probe
-
-Leon Romanovsky (1):
-      xfrm: always initialize offload path
-
-Ma Ke (3):
-      bus: fsl-mc: Fix potential double device reference in fsl_mc_get_endpoint()
-      dpaa2-eth: Fix device reference count leak in MAC endpoint handling
-      dpaa2-switch: Fix device reference count leak in MAC endpoint handling
-
-Marc Kleine-Budde (1):
-      can: netlink: can_changelink(): fix NULL pointer deref of struct can_priv::do_set_mode
-
-Matthieu Baerts (NGI0) (2):
-      selftests: mptcp: connect: also cover alt modes
-      selftests: mptcp: connect: also cover checksum
-
-Nimrod Oren (1):
-      selftests: drv-net: wait for iperf client to stop sending
-
-Paolo Abeni (2):
-      Merge branch 'there-are-some-bugfix-for-the-hns3-ethernet-driver'
-      Merge tag 'ipsec-2025-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
-
-Praveen Kaligineedi (1):
-      gve: Fix stuck TX queue for DQ queue format
-
-Sabrina Dubroca (4):
-      xfrm: state: initialize state_ptrs earlier in xfrm_state_find
-      xfrm: state: use a consistent pcpu_id in xfrm_state_find
-      xfrm: delete x->tunnel as we delete x
-      Revert "xfrm: destroy xfrm_state synchronously on net exit path"
-
-Shahar Shitrit (1):
-      net/mlx5: E-Switch, Fix peer miss rules to use peer eswitch
-
-Steffen Klassert (2):
-      Merge branch 'xfrm: fixes for xfrm_state_find under preemption'
-      Merge branch 'ipsec: fix splat due to ipcomp fallback tunnel'
-
-Tobias Brunner (1):
-      xfrm: Set transport header to fix UDP GRO handling
-
-Xiang Mei (1):
-      net/sched: sch_qfq: Avoid triggering might_sleep in atomic context in qfq_delete_class
-
-Yonglong Liu (1):
-      net: hns3: disable interrupt when ptp init failed
-
- MAINTAINERS                                        |   1 +
- drivers/bus/fsl-mc/fsl-mc-bus.c                    |  19 ++-
- drivers/net/can/dev/dev.c                          |  12 +-
- drivers/net/can/dev/netlink.c                      |  12 ++
- drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c   |   3 +
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |  15 +-
- .../net/ethernet/freescale/dpaa2/dpaa2-switch.c    |  15 +-
- drivers/net/ethernet/google/gve/gve_main.c         |  67 +++++----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  31 ++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  36 +++--
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   9 +-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   6 +-
- drivers/net/ethernet/intel/e1000e/defines.h        |   3 +
- drivers/net/ethernet/intel/e1000e/ich8lan.c        |   2 +
- drivers/net/ethernet/intel/e1000e/nvm.c            |   6 +
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |   6 +-
- drivers/net/ethernet/intel/ice/ice_ddp.c           |   2 +
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c      |   4 +-
- .../ethernet/mellanox/mlx5/core/eswitch_offloads.c | 108 +++++++-------
- drivers/net/ethernet/ti/icssg/icssg_config.c       | 158 ++++++++++++++-------
- drivers/net/ethernet/ti/icssg/icssg_config.h       |  80 +++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  20 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h       |   2 +
- drivers/net/ethernet/ti/icssg/icssg_switch_map.h   |   3 +
- drivers/s390/net/ism_drv.c                         |   3 +
- include/linux/ism.h                                |   1 +
- include/net/xfrm.h                                 |  15 +-
- net/appletalk/aarp.c                               |  24 +++-
- net/ipv4/ipcomp.c                                  |   2 +
- net/ipv4/xfrm4_input.c                             |   3 +
- net/ipv6/ipcomp6.c                                 |   2 +
- net/ipv6/xfrm6_input.c                             |   3 +
- net/ipv6/xfrm6_tunnel.c                            |   2 +-
- net/key/af_key.c                                   |   2 +-
- net/sched/sch_qfq.c                                |   7 +-
- net/xfrm/xfrm_device.c                             |   1 -
- net/xfrm/xfrm_interface_core.c                     |   7 +-
- net/xfrm/xfrm_ipcomp.c                             |   3 +-
- net/xfrm/xfrm_state.c                              |  69 ++++-----
- net/xfrm/xfrm_user.c                               |   3 +-
- tools/testing/selftests/drivers/net/lib/py/load.py |  23 ++-
- tools/testing/selftests/net/mptcp/Makefile         |   3 +-
- .../selftests/net/mptcp/mptcp_connect_checksum.sh  |   5 +
- .../selftests/net/mptcp/mptcp_connect_mmap.sh      |   5 +
- .../selftests/net/mptcp/mptcp_connect_sendfile.sh  |   5 +
- .../selftests/net/netfilter/conntrack_clash.sh     |  45 +++---
- 47 files changed, 549 insertions(+), 306 deletions(-)
- create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_checksum.sh
- create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_mmap.sh
- create mode 100755 tools/testing/selftests/net/mptcp/mptcp_connect_sendfile.sh
+Thanks,
+Guenter
 
 
