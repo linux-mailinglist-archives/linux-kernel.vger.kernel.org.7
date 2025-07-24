@@ -1,126 +1,165 @@
-Return-Path: <linux-kernel+bounces-744431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B05B10CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:11:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE5EB10CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89ED73A8AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854BE3AF301
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38302C327B;
-	Thu, 24 Jul 2025 14:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EA22D29B7;
+	Thu, 24 Jul 2025 14:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AHa/bb48"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVnABKCZ"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2A272625
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B499918E025
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366179; cv=none; b=IFDtH86H1y4COQaVTRaQwYnLyNdyZkRpbniGJF6dUTyndsVnHFJRH92SrewwKnCoC/PZHcOF1C655Bplois6J1tgDL/qHwOwTL6edT3/O3XZAmrlE14ONPO9T6MzP2sx1AMSe5QSeKOAtehVI77wG6Q0a/WQCdJ30HOClbFiT6s=
+	t=1753366200; cv=none; b=BGoqF44IOwIvut1Ln3EpAuFYjLvGTgz7VBKH4bIf7lnNSH03vdD0arZ92HFusmuAhfpgHVik44e1Un1nZLzXa8AKKrJAYdwmxzBT2P1yVVEEIOSff01j5nICA0K4HCkV/bWZ3yThV6CLBZ9LCU+arT5Np3LGCwZqDW6n+pnV3rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366179; c=relaxed/simple;
-	bh=mqxujfPMXOMqPImVeJOKbPVRVun15is6k/auoQTdogw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZYcUCEwdMCIgxXQUxWL/zEJcWfeR3sdIfNxnMG31huzOnvmdCAP+nA5mLV4VaA3WunxIuj06JLvVpdr9GlgdDaPlmMuh39GyNqB7MAnsOAbCiCVRcLeE2ibJOVIZPl+5QOZDIAS5co5H7xlTVFHWRDyEtYUKdC/MDsn7uT2w6TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AHa/bb48; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fac7147cb8so14280076d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:09:37 -0700 (PDT)
+	s=arc-20240116; t=1753366200; c=relaxed/simple;
+	bh=h+K0vmC3/TCo0nSo3dM3ozTwdyqP++usnAb3Eyga7r4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LmElx6msMf1gqyzJNShTXZ7GdoNIqMt+ftbhhdMDvPKuL9vatOxgr4oB+G0RBnw2+cKNBTwdyORjeLCjqGXIBxqmoi+lweUwE2/q15ENUyFOUsmogBOTrx33gW6oV+hkjHBFmzFgILHwh5jSRPK+tx9Cos7dA0NmppS5eWZI+r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SVnABKCZ; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so12034595e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753366176; x=1753970976; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kI2DQQXCIIwX47gBWMT7lpZ+yA28bBKAj+N03xB3U1A=;
-        b=AHa/bb484JyAF4N/8Ba6Lqp6WPjCuIRZtE04Gl1sjcILkiOJpbnys2j3HjO3qCLgbB
-         fTN1SQ9spohqn92ZjXnaDDXLQJr50/csRj1ue0Ad8vhUTX0X06vkBXN2b/5m0YRyuEKv
-         c6f2FkKuOiqHB31alI2C0LTNeePFbb4NqYlJ5KnW+pDHhSqnQubrZE3WDrH3/oaZrN7B
-         aM3dkBznFvbLtMIdEvXYQAs8WZSmCNh1vWQkz+sd6u97h4EWTXLiyK/8PXpSvBwGs5eN
-         TBw3DCB26Obcwirayq7QwTP86AzuK+MOZauZ+AUC7SD9ssTuBZxXX2uAF0r8KTTXcaGk
-         Kdmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753366176; x=1753970976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1753366197; x=1753970997; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kI2DQQXCIIwX47gBWMT7lpZ+yA28bBKAj+N03xB3U1A=;
-        b=ZqCwTM9myug7kuKmGcoVuAmORDbtr6SD024MgW5kjy/OZYFnLZi9Oi5C+EjK4Wry60
-         N0Yf2VRU/l2T5elrx9drH1B2pUDGDmr9y3fogmwO+U/pBVyu62p/dunt+44rfzVk32gR
-         nNVtwWUwL3kNu7Ru48f9qpGOx64QmR5TTx3G9hx1DiLWrYkK8HCPT7PhwJraUGzPTSRW
-         JIvfno2Xsm8dPwa0VG/c7IXIWu6uCspM4jbPI9gbY5VDU49SYE/aRR/NxyiBLJ0s464C
-         d2o1YZyCStrdUILkDtAQ1ABHzxNj+C8JT1CJlpTO4fP9qKuKjAH07TkOVkM0LQmWUB9T
-         4AQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaSACFEtHBONGHwXLwsSzzBLqd4ykf4ABfcQdZspuZ3UnWWkq2P5zmGqfLoW7HORVyGynPlM+/7aEK+zY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx06SkZSSjOi9TZ0B0LQzArnZqxZkhH7oBkW8FuncxJM7blOBm
-	lL/u1IRvqn65b5mbob/VVsBXzRVSH5fZPZskdsoSHaC1jozjWY4QWGJk+GFvaui1MZyJYHHKBvi
-	mqv2+TCVg3RoTNb7tBxZLRi+eJBXl6gbN4O0v8wpl
-X-Gm-Gg: ASbGncuIleb9JmIYV8XpO0mj9pbBP80/p4yx7Vz9HMGYXI3SdOjxHfF7Z97cT/UAA71
-	Y+uCjRGJ7TauLFwaVdCSDSl+OT6RPG2YEwZ+LzrksHA+Q07z7dObzFCvh2AMANClFSYPT9ym0g3
-	ge6Q1NT1OO3lgn1u3kk2njZwdIjRnyYiNHAaX3hJFQlwKrhshG640r0H2rejGk5nOGYuYWPAguX
-	hsxi3PUv8SvQtmWeJ37TWvZiWbFjMrFvLsYzQ==
-X-Google-Smtp-Source: AGHT+IFS93qS/EyttjvMCb+kr4LbAePjRP74pKE3/2WrflzzZzY5xDcZndRb1DRoC87vvmKLg3uIXeRUlu138v0qV4I=
-X-Received: by 2002:a05:6214:c22:b0:706:ea6d:e161 with SMTP id
- 6a1803df08f44-707007167e0mr87858626d6.32.1753366175902; Thu, 24 Jul 2025
- 07:09:35 -0700 (PDT)
+        bh=FtkvbalbhW467Ci/TrHI2JYa3ewJ4y6lRxO5bgqakFk=;
+        b=SVnABKCZJwuYkKSpYod2UM6gnXHDjLv5bpPspemiWXtdO32rcxuAnwj48oioQlHGwT
+         KmXV1IWz5TrJXg760IhJ1N1QmhYYcHjqff12TUHLs4HcBTxDOZNsgwQEv2Ooq0M5ac4J
+         lzPfH6c+ZwoWEMRjHEcF58dYb08mLJFo3j6NOjpeuR03tj4x1AgdIeXNxAc7Z4aoRItq
+         jM4QBHx6zmNjFCu3a/JZ+55BAX1idWLE0CWAT5X1G3f1u9yqbASTckbqUMiTAGri7QgU
+         T7ewQpOnqYuckoyTvo3fMe3wEJbOwkgvg8NTEwQ84r7pyd1E7dJaa0n4sUsAXifvk0fw
+         I6zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753366197; x=1753970997;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FtkvbalbhW467Ci/TrHI2JYa3ewJ4y6lRxO5bgqakFk=;
+        b=wKdEG1stm3/KRTy1CMgHalZecUCny4+30uCF3rZwhdqakUlnB8mqzI4XWPFimvmYMO
+         v1JY4J1IJCTdVzsfpwe6H1LeKjXAYMBCu44m8YpfBOPWZAgBsAttDRJdUZVk3oarkVVR
+         LJL+0tLoaqwJlZkoUz394gyavsT/HrzE8b734OEHXO3XelyHPq479E9VBrpClu8NcavB
+         zejSUbFxC1POKwpd1J/P7BsEkyd9itmeZF9mh9l9ePP5Jxl7CWX5WEeZGlyBkHFGbdHm
+         WUwlyXFZrIef4M96z1MlNlebpENnnUzgG4WN5swfyWhtPWYJyl4pD0ysF6sU4T2N4On9
+         UIww==
+X-Gm-Message-State: AOJu0YyoF554vjvXtwMBmIYZZ6XQB9K/utEvi3exP0F8g5jXjAu8hpJY
+	0F3O6eV27U7PCNh/lOhYZSBiQ1WmEQ3WqiQd4X52BiGrKXzRJ1hLNeuYsgal4Q+zGpg=
+X-Gm-Gg: ASbGncvOxTbaMZCqdisuKJg3D78ZZkTktpIvhiuGMJayWuXzf8wNmdNdMgX0z8Jn9Cv
+	FcTU/GHbamslDEo6+TOnyIw22CCtPxQuhaDhQIF3PpJ41IgHe9cpDz6XNQU20JMoAMMEUgOebqO
+	4laplIxgBHl7tYPZLC44Q1l/lRe+CnEHukjil1Lv7iWt6VsqHeZ5uPxq2z372xbjAqv4KhqDdiD
+	m27OWXyfsgMgsUQLBYdanvKu4mICLRWsGf1OY8F1C2EfUv+RrJar7kC0UT3hLL4+ntJ+RDLxhuI
+	RyW5SM/tNUvG2lB0j0gqMrdrMfS8Yvl3bncKoKC6Af58nKmHg6H33Z6s/eO4yae/4p0isfCgkEE
+	pJGVrx007X9eF41/CrRXGDXfIrUvK8Edh0jwHpLMB93hB41Pzzh1txOqlIpCXOsrzsfBzuAYSct
+	o=
+X-Google-Smtp-Source: AGHT+IEzBJZjwflpIGZm+EhCnzacJZTC2cyh5NeZ7fWUM4qCv/j+DuKgDh48awMiy/In3FsYO7BG9A==
+X-Received: by 2002:a05:600c:529a:b0:456:26ad:46d2 with SMTP id 5b1f17b1804b1-45868c75dfamr58753125e9.6.1753366197052;
+        Thu, 24 Jul 2025 07:09:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:e2d3:d328:dc00:f187? ([2a01:e0a:cad:2140:e2d3:d328:dc00:f187])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377dasm22037195e9.4.2025.07.24.07.09.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 07:09:56 -0700 (PDT)
+Message-ID: <d02c400f-d159-451c-b4ac-745e74986591@linaro.org>
+Date: Thu, 24 Jul 2025 16:09:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-5-glider@google.com>
- <CACT4Y+aqcDyxkBE5JaFFNGP_UjBfwwx-Wj3EONnHdhadTGYdDw@mail.gmail.com>
-In-Reply-To: <CACT4Y+aqcDyxkBE5JaFFNGP_UjBfwwx-Wj3EONnHdhadTGYdDw@mail.gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 24 Jul 2025 16:08:58 +0200
-X-Gm-Features: Ac12FXwxdn9n_fsgy-sBaQApTVNHpsQuZ09bYLlik0nb09t323N91TFtaqoJ4HA
-Message-ID: <CAG_fn=VBdzEAUHDSOfV4rTKrw6+fdtrAz-mxQwpYxdicUzGoVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/11] kcov: factor out struct kcov_state
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 06/10] pinctrl: meson: Fix typo in device table macro
+To: Alexey Gladkov <legion@kernel.org>, Masahiro Yamada
+ <masahiroy@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, linux-amlogic@lists.infradead.org,
+ linux-gpio@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <cover.1753354215.git.legion@kernel.org>
+ <c47f5e1ab68248cbc4d51dcd822829da8857ea00.1753354215.git.legion@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c47f5e1ab68248cbc4d51dcd822829da8857ea00.1753354215.git.legion@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > -       /* Buffer for coverage collection: */
-> > -       void                            *kcov_area;
-> > +       /* kcov buffer state for this task. */
->
-> For consistency: s/kcov/KCOV/
-Ack
+On 24/07/2025 15:49, Alexey Gladkov wrote:
+> The typo when using the MODULE_DEVICE_TABLE macro was not noticeable
+> because the macro was defined only if the module was built as a separate
+> module.
+> 
+> Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: linux-amlogic@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507220009.8HKbNP16-lkp@intel.com/
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+> index 385cc619df13..95525e66e5c0 100644
+> --- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+> @@ -1023,7 +1023,7 @@ static const struct of_device_id aml_pctl_of_match[] = {
+>   	{ .compatible = "amlogic,pinctrl-a4", },
+>   	{ /* sentinel */ }
+>   };
+> -MODULE_DEVICE_TABLE(of, aml_pctl_dt_match);
+> +MODULE_DEVICE_TABLE(of, aml_pctl_of_match);
+>   
+>   static struct platform_driver aml_pctl_driver = {
+>   	.driver = {
 
-
-> >         if (data->saved_kcov) {
-> > -               kcov_start(t, data->saved_kcov, data->saved_size,
-> > -                          data->saved_area, data->saved_mode,
-> > -                          data->saved_sequence);
-> > -               data->saved_mode = 0;
-> > -               data->saved_size = 0;
-> > -               data->saved_area = NULL;
-> > -               data->saved_sequence = 0;
-> > +               kcov_start(t, data->saved_kcov, t->kcov_mode,
->
-> We used to pass data->saved_mode, now we pass t->kcov_mode.
-> Are they the same here? This makes me a bit nervous.
-
-Thanks for noticing! I'll fix this one in v3.
-
-
-
-> > -       kcov_start(t, kcov, size, area, mode, sequence);
-> > +       kcov_start(t, kcov, t->kcov_mode, &state);
->
-> We used to pass kcov->mode here, now it's t->kcov_mode.
-> Are they the same here? I would prefer to restore the current version,
-> if there is no specific reason to change it.
-
-Ditto.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
