@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-744054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D3FB10783
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E35B10780
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD14E6628
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:12:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C014E4AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E902609D6;
-	Thu, 24 Jul 2025 10:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E2925FA10;
+	Thu, 24 Jul 2025 10:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TE/4246A"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+KOmwgg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65743F9D2;
-	Thu, 24 Jul 2025 10:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873EE25E828;
+	Thu, 24 Jul 2025 10:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351981; cv=none; b=AMLOk1ORVo33VvFsplgAxs+bWVAVcn4AyYqSHpoNEFx4zCaLaFAMTiFEtfPRYGXDKG8Xb0IItwY+TpzKAE7fcnR7Z3AOi41l6LESRNZVjttFaeG+kCrMxcABtN5O8dfRbhLbGvd0VE/ef6HSZJOVAhgvoUJbjNNxHffWRrHlEW0=
+	t=1753351980; cv=none; b=ENnbvfourRX/QZr9HsQK2a7cwWHfUm8x9I67OOfkwoLLdGG+pAPirXpBdFLEMhZrLXhKpuzHpCh/jJ2HDDFW6DuJQdH5aVpCwYzZQ0JP5VaLj6rAmaaO06TaM4sbCafmyMfTPirawP5SDXcJjVWGgcKaC2G/lzqf9zoN2xKGpHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351981; c=relaxed/simple;
-	bh=HOxL+KpNgulprG0Em3BSIkBd/TxigVHYURZKV823Cdc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=vDVnk1ceeYsyJ1nzwQ6dhA/pScuN4E+o9/aD8dyBUyjMlBbXJQiibccPUFhLT6VcHTOS+mLEk6LY9WmB+7ezAzFPax7gvLkTPJA2t1mTheMUrTy1gOqdq2v0VPU4cPpEQkIIisoRq/pFVnNrIAi+dzzLlJzIEdsj17mwYtMyX8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TE/4246A; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C93E840E0254;
-	Thu, 24 Jul 2025 10:12:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dbV5xy0CTZCf; Thu, 24 Jul 2025 10:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753351972; bh=8YFuASkVWjvfbK2QQR8PnCFzwm+bIBInPkRN0aHGUiQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=TE/4246ATbNvCH/YmHh0liyZvlQW7h/jW5XQ+xJfxlEIkMdTtrO6S5PMz75Xn1Gh0
-	 5AkkYEYFi79YDNoAvdcFEM8Maak89GWIRUXp2PFpCFRy5iaEpKuDsdvZD4AhQw90nh
-	 iUWJByyo7ccnyOYv8RAfOzqGRJmYpZ+slUtxuVAPHUUObOH4GJF64w1zoQ1i2xq9h8
-	 ro2h+VrRF2VGWMcJj30fZj+47Tp6ZP4XG4xbxBXW+X51dx4INXEutxMSVAeuNIbzIV
-	 dNBH9SfRVn+PmH0LFBiTEu6e2HKL1XPVbeo498bI/nh20xykk8cUR0BkVV5lV3BPqk
-	 zSLtgLCsgqscY3Vm5x/EqgkaUiCTREOZdg71ZTpzkzaNg8PMKyfTUCtZ6CxCCNLLgC
-	 QiOYmaOO+kIL68Q0l+APUu3Sh2WzDQcMLFVeyIeGblVukb8MiJjCdxGmE04D4er0Lz
-	 bTDIAu91buMYXWAxUU3s9vXhpjClC+RTz7Y1qLabqJdkj1H0zcqFhnqDEsUzMAQSnn
-	 jIQNZlQYRh4h6uvkRo4FMHM2+G4cs1NnKRa9xJ0EevWBT40MCWg1XqCRzBnGU8ybSO
-	 FK2yIfPDbiZZqdt7SdZ7Ynca5ZsJPjv1VbOi2Imd7jnFaOWBn+2wrKMDagAxWZjRiP
-	 /m40o0jRPSR7ApX8tzgbalyE=
-Received: from [IPv6:::1] (unknown [IPv6:2a02:3030:a60:70e0:1176:9e41:51e0:6730])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8F2B640E00DD;
-	Thu, 24 Jul 2025 10:12:37 +0000 (UTC)
-Date: Thu, 24 Jul 2025 13:12:33 +0300
-From: Borislav Petkov <bp@alien8.de>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Kyung Min Park <kyung.min.park@intel.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Tony Luck <tony.luck@intel.com>
-CC: xin3.li@intel.com, maciej.wieczor-retman@intel.com,
- Farrah Chen <farrah.chen@intel.com>, stable@vger.kernel.org,
- Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] x86: Clear feature bits disabled at compile-time
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
-References: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
-Message-ID: <C723416D-E1C9-4E18-A3B2-D386B1CB2041@alien8.de>
+	s=arc-20240116; t=1753351980; c=relaxed/simple;
+	bh=MKTJsXoh0ovoIVsPRZJbybf8oVQe3fF6tNG1svHyD9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e7qPJ65kx14r6AMQoX9FF5LTk+hTpS25/JNOuNOEVUjay85CcjUR8eQmq3sRo8403iK1ZVC6cEw8pwFrXRcJUdrAICZyIWlIyaNb8fkVZuUnRZ6HL0/n3kNeyQaTlu5ZDsl1ye4vfnKU8Qwht2SCRXoAK60+LQk2cKERe8aKLyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+KOmwgg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C04C4CEF4;
+	Thu, 24 Jul 2025 10:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753351979;
+	bh=MKTJsXoh0ovoIVsPRZJbybf8oVQe3fF6tNG1svHyD9Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F+KOmwgg+z7e6KttvqwjToMUUNQKbMcch6Kaqh7mZiJe+e9MtjQqK0QFMCc/r6Sja
+	 p+D1xm97+/1DEirZQdiS8y+/KFaz8D6qlqH/lfgk8mS6gp58TEMqhj6XVq6SYaXY5J
+	 zQuYjzsOKaKulq2ezVsbW2oiw0HNwtpngA5XWMEv7MyE5aSpR/zbmzYjpcXTHEcitb
+	 TfjwB0SaDiSzB8/wFtEMf3vnCWpMBWKbirWtqS8e6MvX9yNTXf0K3in3uJsMhAoGaZ
+	 Tmo1DaoDs2g06Y13IpqoEM1crzlFMx2a8w1h76uWBwcDwvJC1BSwoH7wUiLJemnoiU
+	 GobqWa0flpRbQ==
+Date: Thu, 24 Jul 2025 11:12:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sanjay Suthar <sanjaysuthar661996@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ ribalda@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com
+Subject: Re: [PATCH v3] dt-bindings: cleanup: fix duplicated 'is is' in YAML
+ docs
+Message-ID: <20250724111247.669d6955@jic23-huawei>
+In-Reply-To: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
+References: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On July 24, 2025 12:45:51 PM GMT+03:00, Maciej Wieczor-Retman <maciej=2Ewie=
-czor-retman@intel=2Ecom> wrote:
->If some config options are disabled during compile time, they still are
->enumerated in macros that use the x86_capability bitmask - cpu_has() or
->this_cpu_has()=2E
->
->The features are also visible in /proc/cpuinfo even though they are not
->enabled - which is contrary to what the documentation states about the
->file=2E Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
->split_lock_detect, user_shstk, avx_vnni and enqcmd=2E
->
->Add a DISABLED_MASK_INITIALIZER() macro that creates an initializer list
+On Tue, 22 Jul 2025 22:35:13 +0530
+Sanjay Suthar <sanjaysuthar661996@gmail.com> wrote:
 
-Where?
+> Fix minor grammatical issues by removing duplicated "is" in two devicetree
+> binding documents:
+> 
+> - net/amlogic,meson-dwmac.yaml
+> - iio/dac/ti,dac7612.yaml
+> 
+> Signed-off-by: Sanjay Suthar <sanjaysuthar661996@gmail.com>
 
->filled with DISABLED_MASKx bitmasks=2E
->
->Initialize the cpu_caps_cleared array with the autogenerated disabled
->bitmask=2E
->
->Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpui=
-nfo feature flags")
->Reported-by: Farrah Chen <farrah=2Echen@intel=2Ecom>
->Signed-off-by: Maciej Wieczor-Retman <maciej=2Ewieczor-retman@intel=2Ecom=
->
->Cc: <stable@vger=2Ekernel=2Eorg>
->---
->Changelog v3:
->- Remove Fixes: tags, keep only one at the point where the documentation
->  changed and promised feature bits wouldn't show up if they're not
->  enabled=2E
+I'd have no problem with the argument that this can go through either
+tree if there was any interaction between the files or the changes, but
+here there isn't. This is just causing potential mess if either tree ends
+up with other changes overlapping this for no benefit.  Please split into
+two patches, one for each subsystem.  You should be fine to keep the
+various tags given here for the new patches.
 
-The behavior was there before=2E Why do you keep pointing at the patch whi=
-ch documents it?
+Jonathan
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+
+> ---
+> Changes since V2:
+> - Corrected the subject line
+> - link to v2 : https://lore.kernel.org/linux-iio/20250720182627.39384-1-sanjaysuthar661996@gmail.com/T/#u
+> 
+>  Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml      | 2 +-
+>  Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> index 20dd1370660d..624c640be4c8 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.yaml
+> @@ -9,7 +9,7 @@ title: Texas Instruments DAC7612 family of DACs
+>  description:
+>    The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with
+>    guaranteed 12-bit monotonicity performance over the industrial temperature
+> -  range. Is is programmable through an SPI interface.
+> +  range. It is programmable through an SPI interface.
+>  
+>  maintainers:
+>    - Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> index 0cd78d71768c..5c91716d1f21 100644
+> --- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+> @@ -149,7 +149,7 @@ properties:
+>        - description:
+>            The first register range should be the one of the DWMAC controller
+>        - description:
+> -          The second range is is for the Amlogic specific configuration
+> +          The second range is for the Amlogic specific configuration
+>            (for example the PRG_ETHERNET register range on Meson8b and newer)
+>  
+>    interrupts:
+
 
