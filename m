@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-744193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8579B10950
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362BCB109B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91CD77BC39D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA9C3A8F5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72FB283C92;
-	Thu, 24 Jul 2025 11:35:10 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9612BE7A0;
+	Thu, 24 Jul 2025 11:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+B52w/E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6526A1339A4;
-	Thu, 24 Jul 2025 11:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967642BE642;
+	Thu, 24 Jul 2025 11:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356910; cv=none; b=Z5W5ZW0/a3OQQQsoHF4cfEGn+4RKpyRH0sKL7xAJk1Fr+Mx76lXTIi7jrJ70wFt9VPlL737aciyFnh8nRR2AoHsDKMxdEMfBiHUw5ERNdjN5coh3dakzbtXk+B4Q2Q0kQMU9A+VTYekhno1x2VEHROz4Ydv0PtcLxVHbqff4ZPI=
+	t=1753358217; cv=none; b=CI0WMPxfzzCS8gfxzygPy5qYdCo526uo9NuBA+sXLnQzhTQNqNUw3qMBgnRqC0iwGz3BvoN4QL+x89swrWm0icjMkEEcBvjqdAgTDR8aEt38VZLSHY09u2Ag9wLWPcNevCPtv+tQJw95pukqcLqJ9ewsX1gRFIVifGEzFNtEthk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356910; c=relaxed/simple;
-	bh=s9edkJMmo2+O5omNpaFOEJGj0jH3yQhnGKRUh1LPk1Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MseOMRi7fvvacbDH2Jho7blT/gnpFF0Wxe/ZIEAixnE8ek2k+c2aOdHAQ1DXB+B6taW2PdXCtvCF4qFKOCVrkFW0PtUqI86IOFlQAfjffdSpwz0eE5lEz4bnvCNbxmWHawxHa60pvzV1JvtLJPFsASvz9bds+JWgGttvVdeVoWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bnpkw4Nvwz1R8lP;
-	Thu, 24 Jul 2025 19:32:24 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 960791A0188;
-	Thu, 24 Jul 2025 19:35:05 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Jul
- 2025 19:35:04 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] ipv6: mcast: Add ip6_mc_find_idev() helper
-Date: Thu, 24 Jul 2025 19:56:31 +0800
-Message-ID: <20250724115631.1522458-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753358217; c=relaxed/simple;
+	bh=UbnLPvlzvaF+TASrvQ8CvSyZzrgpblIXwom2xhrfV3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IekphqaWKxDdjCFSxrhyd74nYunndzwjA5JM1M/cfJPx8TeAGzauSEWVlZxFBtSvILg4Mk09WfHB181d4lOTUZPqggNdo7fde5rR+47Shk6x6624KuipisVvVqa3JGcXX8tktMpIAQzyeNQjTHljUB4/oizKvpKpFslCQQxhipU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+B52w/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B35C4AF0B;
+	Thu, 24 Jul 2025 11:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753358217;
+	bh=UbnLPvlzvaF+TASrvQ8CvSyZzrgpblIXwom2xhrfV3w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O+B52w/ETUfu8M3TbhhmtQI4auBK/DIqAXLehkKPeIzJZceUdaIMxnchkcAGo3BCL
+	 qyNaX/RK4vJjIepty7runayUuhdbjpnNeVymdMYsgbGFf3wqxVDebd0nnm7z9ndq0H
+	 H3QKmjpAaAHZt0a135Uka+4lJqOXO9/K6AoyYKoyCi7TFOBkYdT8rRtV7KMMhoskFO
+	 0SCpi/CPt3Yvwq/Ao8W+MQ9oHqoDjD6tLafEiOWB8DhNooTvtb+0HlKJnw1DpWSvI9
+	 9hBIFFqvBGxOW4An2DoHrj4ppsSLymhvfa+5St3IUdEs/TmOtZG7sRN3c5PWpGNiPZ
+	 0aNa1E7OIUxdQ==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so1532057a12.2;
+        Thu, 24 Jul 2025 04:56:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURjVHwh7pIp7JcklmC/C31YPZNgy8r5gR39dLhNfACi/FO8iqPQcrOeNw3vfTe6Et6P1xatT6K706610ro@vger.kernel.org, AJvYcCV3WXZFU8ZtIFceeMUNlDwvr1XC1BcEvihisn5YGzKEXtV+qxSSJh06DHxRNkv4LJ5r8soSl92W00JMhEZJWrNUxhJH@vger.kernel.org, AJvYcCW6kLruEJRPR9RiqDaF+bSXOORT4WijT33IxfY9GVeFFmLlFnnFlzGkIaFC0Zf00SeFqEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR+IwvK5wjEA+x6KCQEEg05hBtHoVkpRKtfAJE0iKsyhkDOmNZ
+	cT1wxYHFiSPvWvOZ/wz+7i/qIdDmdA1Rp2TIbO24v0Av+v3/6WcYaNOgFpTylwPAr047s8YhZoi
+	CNN4RMqColZN9iCVk4WsPqvWAib1xryA=
+X-Google-Smtp-Source: AGHT+IHyudkQ+ID0bU15SK7aT9+KIcppMZFHtN6CrQ6Dtu9svcp+0ZZ1xB7ZVtW72pZg9dG9fKgoM+SEjXsylHLj50I=
+X-Received: by 2002:a05:6402:1d52:b0:5f7:f55a:e5e1 with SMTP id
+ 4fb4d7f45d1cf-6149b596728mr5451665a12.24.1753358215740; Thu, 24 Jul 2025
+ 04:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+References: <20250722094734.4920545b@gandalf.local.home> <2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
+ <20250723214659.064b5d4a@gandalf.local.home> <15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
+In-Reply-To: <15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 24 Jul 2025 19:56:42 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyEIVNP2UDQDr7DKqNUOZbuTtFEVDCtic-VwJB5VQ3JEknFoA6_p-1cdZw
+Message-ID: <CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic code
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-__ipv6_sock_mc_join() has the same code as ip6_mc_find_dev() to find dev,
-extract this into ip6_mc_find_dev() and add ip6_mc_find_idev() to reduce
-code duplication and improve readability.
+On Thu, Jul 24, 2025 at 9:51=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
+>
+>
+>
+> On 2025/7/24 =E4=B8=8A=E5=8D=889:46, Steven Rostedt wrote:
+> > On Thu, 24 Jul 2025 09:39:40 +0800
+> > Bibo Mao <maobibo@loongson.cn> wrote:
+> >
+> >>>    #define kvm_fpu_load_symbol      \
+> >>>     {0, "unload"},          \
+> >>>     {1, "load"}
+> >>>
+> >> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+> >
+> > Thanks,
+> >
+> > Should this go through the loongarch tree or should I take it?
+> Huacai,
+>
+> What is your point about this?
+I will take it, thanks.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/ipv6/mcast.c | 76 +++++++++++++++++++++++-------------------------
- 1 file changed, 36 insertions(+), 40 deletions(-)
+Huacai
 
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index 36ca27496b3c..3fdff47c7b84 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -169,6 +169,30 @@ static int unsolicited_report_interval(struct inet6_dev *idev)
- 	return iv > 0 ? iv : 1;
- }
- 
-+static struct net_device *ip6_mc_find_dev(struct net *net,
-+					  const struct in6_addr *group,
-+					  int ifindex)
-+{
-+	struct net_device *dev = NULL;
-+
-+	if (ifindex == 0) {
-+		struct rt6_info *rt;
-+
-+		rcu_read_lock();
-+		rt = rt6_lookup(net, group, NULL, 0, NULL, 0);
-+		if (rt) {
-+			dev = dst_dev(&rt->dst);
-+			dev_hold(dev);
-+			ip6_rt_put(rt);
-+		}
-+		rcu_read_unlock();
-+	} else {
-+		dev = dev_get_by_index(net, ifindex);
-+	}
-+
-+	return dev;
-+}
-+
- /*
-  *	socket join on multicast group
-  */
-@@ -198,21 +222,7 @@ static int __ipv6_sock_mc_join(struct sock *sk, int ifindex,
- 	mc_lst->next = NULL;
- 	mc_lst->addr = *addr;
- 
--	if (ifindex == 0) {
--		struct rt6_info *rt;
--
--		rcu_read_lock();
--		rt = rt6_lookup(net, addr, NULL, 0, NULL, 0);
--		if (rt) {
--			dev = dst_dev(&rt->dst);
--			dev_hold(dev);
--			ip6_rt_put(rt);
--		}
--		rcu_read_unlock();
--	} else {
--		dev = dev_get_by_index(net, ifindex);
--	}
--
-+	dev = ip6_mc_find_dev(net, addr, ifindex);
- 	if (!dev) {
- 		sock_kfree_s(sk, mc_lst, sizeof(*mc_lst));
- 		return -ENODEV;
-@@ -302,32 +312,18 @@ int ipv6_sock_mc_drop(struct sock *sk, int ifindex, const struct in6_addr *addr)
- }
- EXPORT_SYMBOL(ipv6_sock_mc_drop);
- 
--static struct inet6_dev *ip6_mc_find_dev(struct net *net,
--					 const struct in6_addr *group,
--					 int ifindex)
-+static struct inet6_dev *ip6_mc_find_idev(struct net *net,
-+					  const struct in6_addr *group,
-+					  int ifindex)
- {
--	struct net_device *dev = NULL;
--	struct inet6_dev *idev;
--
--	if (ifindex == 0) {
--		struct rt6_info *rt;
-+	struct inet6_dev *idev = NULL;
-+	struct net_device *dev;
- 
--		rcu_read_lock();
--		rt = rt6_lookup(net, group, NULL, 0, NULL, 0);
--		if (rt) {
--			dev = dst_dev(&rt->dst);
--			dev_hold(dev);
--			ip6_rt_put(rt);
--		}
--		rcu_read_unlock();
--	} else {
--		dev = dev_get_by_index(net, ifindex);
-+	dev = ip6_mc_find_dev(net, group, ifindex);
-+	if (dev) {
-+		idev = in6_dev_get(dev);
-+		dev_put(dev);
- 	}
--	if (!dev)
--		return NULL;
--
--	idev = in6_dev_get(dev);
--	dev_put(dev);
- 
- 	return idev;
- }
-@@ -374,7 +370,7 @@ int ip6_mc_source(int add, int omode, struct sock *sk,
- 	if (!ipv6_addr_is_multicast(group))
- 		return -EINVAL;
- 
--	idev = ip6_mc_find_dev(net, group, pgsr->gsr_interface);
-+	idev = ip6_mc_find_idev(net, group, pgsr->gsr_interface);
- 	if (!idev)
- 		return -ENODEV;
- 
-@@ -509,7 +505,7 @@ int ip6_mc_msfilter(struct sock *sk, struct group_filter *gsf,
- 	    gsf->gf_fmode != MCAST_EXCLUDE)
- 		return -EINVAL;
- 
--	idev = ip6_mc_find_dev(net, group, gsf->gf_interface);
-+	idev = ip6_mc_find_idev(net, group, gsf->gf_interface);
- 	if (!idev)
- 		return -ENODEV;
- 
--- 
-2.34.1
-
+>
+> Regards
+> Bibo Mao
+> >
+> > Either way works for me.
+> >
+> > -- Steve
+> >
+>
 
