@@ -1,107 +1,163 @@
-Return-Path: <linux-kernel+bounces-744918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B1BB11277
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CF9B11279
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8812716885C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026E916DEFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4959B2EAB91;
-	Thu, 24 Jul 2025 20:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HmnkNuvY"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59974274FE8;
-	Thu, 24 Jul 2025 20:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A512E5B2F;
+	Thu, 24 Jul 2025 20:41:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09142EB5D8;
+	Thu, 24 Jul 2025 20:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753389664; cv=none; b=ivHpBOATMdKe2DFVR9ZKIGxIVEShh775KCkzQ8m7/3cju4P7Op8Lyv48nxqp0pwMePnFu+NwpQhE+Gx4fVV2MPspfwscIMEHlNmxgVTdipXKtKHlkcx6v2ZEG2L5zbhDuXzUcEg+E9luCHCiCRq77X0AOKV8eTnguaB1D+FzagA=
+	t=1753389671; cv=none; b=sbQML6wBWsv/dexQIAISSyvTwNIaglJ7XGyqlcgiOq/31M9L2vi9b5eeASDQkkKvmNZbSjUNDs5PzkpmBU5beDUm7FYWJ5bhWTLg3NKIIEOCSRFC6XX8H2X+7eZ30SbTx4f4UP5rJR0SDL8Kj3MNOJUQ3F7Tu7zMV/ZBhlybz4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753389664; c=relaxed/simple;
-	bh=OkdhwaUZTEkA/8Ob6sZu3DY16d88qrhLi65k+2v2Mck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mH7Oavb1yGtGcd2pobcYP3RutHrJyJxTfbe6eo/eHZGRiKF0uaHsh4zF7mhGsSwTMeZqk88NiFCgEWsE73cWURJTF8u91NbZEFg6NR49aB5XjrrnqEn5n4uosbeOx7gTDynX3t38Hc/XTZbqjdTHQtGO+b8FAfMGFh3AcPFmnt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=HmnkNuvY; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23602481460so15132835ad.0;
-        Thu, 24 Jul 2025 13:41:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1753389662; x=1753994462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GOCw+zwSoBjK9tkB7mm9A7h5IvTW/rXVDxScNi1zD9A=;
-        b=HmnkNuvY80fGvnx2E96LNKsJINHmmLMtQ27u38YX62YwzL626N7ARAzFY//xjZLVRp
-         cAJ2IFa7hjixSwRKDdb17gFIYxsX2UUf99epSH+Px025UQfs4VEgdEllSYcJcBWyu9ac
-         fzUwoYnWXuiigdHtmrbHjIZ+3GGxdIU8XOt8V4ZKsIhFiMe2QSil3wFhQJqB1abYmjvp
-         65gbhaLnhIGS7mcBycOmyBHP+XfNiL9q1/x+cYRxtqdr6SEIR4j19OqkSExY+yeZ8jzr
-         mJ9pzPnFfLxoOcO0PcFIO3lVoR4i6qatzWrQEEtWUYdb9GreBSMNXAlcIwVAeNk2gEwj
-         W5Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753389662; x=1753994462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GOCw+zwSoBjK9tkB7mm9A7h5IvTW/rXVDxScNi1zD9A=;
-        b=EXhfWc2TtpoEp4rmNvK9Yagf6P2xJOw6BzzVw6j36BhQqu9m2r7dfXSNzBABRmIbXl
-         DEe0PjDwTvq30DHbe/PjI2oTygB3EML3bZjN8wcBGKQLmwrm9OJGI/bG+1gZnB763PZB
-         d7U1C9u8TGRsvGwuX2bvgoC997EcpRO8cr3enoXp1WZFw6nYTGtOJ8KhNdD8NmOJIoia
-         EqLaZafq4fwIdyUu+jw1SDo/X4AL5ll1ObcdYRLLjgJI3uS39EDC5cLwklDReSaerOZ6
-         tvpuuApPJkJ3xCBNkZgb8PEA23sxYHeH0zZ0GYmPGcbK0imizcSFUGTCDmwrjIv+9oxv
-         HL2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmFk4xcbYiFGUtGIYasmR2c5xK0ouMhLawUSh8pG3P6l8VOqf+DCRCtdHsMBXGS7DH6pxWWsEv@vger.kernel.org, AJvYcCVD0iuA88K3NHs2Cpaw0gH8/yhqyApM8ik848KmMI9owZvVVmVlkYaVuZsofbXW0V0mOL1LHMZdyAm6@vger.kernel.org, AJvYcCWh4usSYUGIDWm4RD8ONQRAPXxmSlu9GmrlEl30yrmzH/pFUMySka7ZCNVt5ST+sTdK0Wd/sSDuIAvHn7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbBpW0Lf3W24s73F9eNBJXXKtLgeH+J1n2dPiWqMtBkpoeBOmI
-	RjDW8l4N6TS3Nu3CyMJVmWMnqU3WenjC6anAX7TcwFDakoOsifpOnBjz4ZiAU9TA1jjLTuR2Q/7
-	uP/rGhKpThTJM/WSlvh9jLWdNxdsJuX4=
-X-Gm-Gg: ASbGncsGRjNFwVYl03dVUcammFCp+C7mk3c2jg5lXGEonrowl2PI8iAlanZSkg8ti5p
-	uqKFs3nKzirnOrtes4JjhSTUqE0e+SV/09uJXznJiT6PyH2NbvimiZDauVhP+yTWVtHkmEnjZYV
-	L0JozaZWqRoWX2IQoSdaGlkl3P6lOSynBjTtv18tdIeL5DkVjEucVSNKH512e75hyR8DKMN/2O1
-	AM3ZJHz6silMUbXznzRQ8bCXv0nR3OduqHXIxBZ
-X-Google-Smtp-Source: AGHT+IFdFsKgc8c9LIsxfd5vS1nUB3qzLmvj3zqtBITbHXVC4ohk11b8ZDXHVYhRfFBl3SO/aA5SL4YzLpsmblcQJaM=
-X-Received: by 2002:a17:903:2f0e:b0:235:f3b0:ae81 with SMTP id
- d9443c01a7336-23f982045b2mr113630275ad.27.1753389662549; Thu, 24 Jul 2025
- 13:41:02 -0700 (PDT)
+	s=arc-20240116; t=1753389671; c=relaxed/simple;
+	bh=KV8Aom+xCAJKe5yKH2ON+CSmCTJK6vJRTJvOK8/Ai1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hvqNEPfP4vYaZ7U53n5MypzhhsVgqkEltH3B6pTzpSGBvB511fMcA4BhusBAqEDeVySY6TGSwzADcuo020Z8jzdcltdAuKK1e7EDwhqeaPDg9cyM755FNP6fXoOGhL6JdwN3ZVtFCHeGrhGh4qT/dXEQFgSO3hrHxy1Kl3B9V6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F5F6168F;
+	Thu, 24 Jul 2025 13:41:01 -0700 (PDT)
+Received: from [172.27.42.155] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 311083F66E;
+	Thu, 24 Jul 2025 13:41:07 -0700 (PDT)
+Message-ID: <89f67ab9-f8ea-488a-a94b-4a0f32e41bc5@arm.com>
+Date: Thu, 24 Jul 2025 15:41:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724091910.21092-1-johan@kernel.org> <20250724091910.21092-3-johan@kernel.org>
-In-Reply-To: <20250724091910.21092-3-johan@kernel.org>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Thu, 24 Jul 2025 22:40:51 +0200
-X-Gm-Features: Ac12FXyKvSF6Sl1tAfpFd9vrz8AMVtFNJwy9SmqhXWKxVaxcWhy0St6W2IcNat8
-Message-ID: <CAFBinCC4SKra51msT8DCRzyBCjZ5V-Dk5g7tEtovF+ttG1QU0g@mail.gmail.com>
-Subject: Re: [PATCH 2/5] usb: dwc3: meson-g12a: fix device leaks at unbind
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Bin Liu <b-liu@ti.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/8] arm64: uprobes: Add GCS support to uretprobes
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ thiago.bauermann@linaro.org, broonie@kernel.org, yury.khrustalev@arm.com,
+ kristina.martsenko@arm.com, liaochang1@huawei.com, will@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Steve Capper <steve.capper@arm.com>
+References: <20250719043740.4548-1-jeremy.linton@arm.com>
+ <20250719043740.4548-7-jeremy.linton@arm.com> <aIC06oEF5FV99ukl@arm.com>
+Content-Language: en-US
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <aIC06oEF5FV99ukl@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 11:19=E2=80=AFAM Johan Hovold <johan@kernel.org> wr=
-ote:
->
-> Make sure to drop the references taken to the child devices by
-> of_find_device_by_node() during probe on driver unbind.
->
-> Fixes: c99993376f72 ("usb: dwc3: Add Amlogic G12A DWC3 glue")
-> Cc: stable@vger.kernel.org      # 5.2
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hi,
 
-Thank you for finding and fixing this!
+On 7/23/25 5:09 AM, Catalin Marinas wrote:
+> On Fri, Jul 18, 2025 at 11:37:38PM -0500, Jeremy Linton wrote:
+>> @@ -159,11 +160,41 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
+>>   				  struct pt_regs *regs)
+>>   {
+>>   	unsigned long orig_ret_vaddr;
+>> +	unsigned long gcs_ret_vaddr;
+>> +	int err = 0;
+>> +	u64 gcspr;
+>>   
+>>   	orig_ret_vaddr = procedure_link_pointer(regs);
+>> +
+>> +	if (task_gcs_el0_enabled(current)) {
+>> +		gcspr = read_sysreg_s(SYS_GCSPR_EL0);
+>> +		gcs_ret_vaddr = load_user_gcs((unsigned long __user *)gcspr, &err);
+>> +		if (err) {
+>> +			force_sig(SIGSEGV);
+>> +			goto out;
+>> +		}
+> 
+> Nit: add an empty line here, I find it easier to read.
+> 
+>> +		/*
+>> +		 * If the LR and GCS entry don't match, then some kind of PAC/control
+>> +		 * flow happened. Likely because the user is attempting to retprobe
+> 
+> I don't full get the first sentence.
+
+I'm trying to succinctly warn people about some non-obvious behavior 
+that is being maintained.
+
+Really long version:
+
+So a Retprobe is intended to catch the function returning and run the 
+user specified probe logic. But the breakpoint itself isn't placed at 
+the 'ret' because there may be multiple 'ret's. Rather its intended to 
+be placed at the function entry point. When the breakpoint fires, it 
+runs this code to hijack the LR and point it at the actual probe 
+routine. Except, ha!, the breakpoint for the ret routine may not be at 
+the beginning of the function. Which is perfectly ok, even in some cases 
+desirable.
+
+But, if the user say places it after LR has been spilled to the stack, 
+the hijack will be discarded when LR is restored and the probe will 
+silently fail to run. The user will then eventually figure out that they 
+are dropping a retprobe in a location where its basically a NOP. PAC 
+messes with this behavior in an inconsistent manner. Is the target 
+function's just signing the LR, or is its signing and spilling it. In 
+the latter case the probe is again just a NOP, otherwise PAC fault.
+
+But then GCS comes along, and it needs to also update the GCS region. 
+but if we update it, and the LR gets restored its going to result in a 
+GCS exception where previously the behavior was just the probe being 
+NOPed. Now though, we have the advantage that for the most part anyplace 
+that GCS is enabled, we are also going to have PAC signing the LR. So 
+checking for LR != GCS value acts as both a sanity check and a bit of 
+safety that we aren't inside a sign/authenticate block, or that the LR 
+hasn't been tampered with via a blr/etc and we will restore a LR from 
+the stack that won't match the now updated GCS region.
+
+Hence the comment.
+
+:)
+
+
+
+
+> 
+>> +		 * on something that isn't a function boundary or inside a leaf
+>> +		 * function. Explicitly abort this retprobe because it will generate
+>> +		 * a GCS exception.
+>> +		 */
+>> +		if (gcs_ret_vaddr != orig_ret_vaddr)	{
+>> +			orig_ret_vaddr = -1;
+>> +			goto out;
+>> +		}
+> 
+> Nit: another empty line here.
+> 
+>> +		put_user_gcs(trampoline_vaddr, (unsigned long __user *) gcspr, &err);
+> 
+> Nit: (... *)gcspr (no space after cast).
+> 
+>> +		if (err) {
+>> +			force_sig(SIGSEGV);
+>> +			goto out;
+>> +		}
+>> +	}
+>> +
+>>   	/* Replace the return addr with trampoline addr */
+>>   	procedure_link_pointer_set(regs, trampoline_vaddr);
+>>   
+>> +out:
+>>   	return orig_ret_vaddr;
+>>   }
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
 
