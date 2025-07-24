@@ -1,168 +1,100 @@
-Return-Path: <linux-kernel+bounces-744512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6230B10DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E43BB10DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E963BE49B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8043BAA0E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA412E541D;
-	Thu, 24 Jul 2025 14:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="o++Usffs"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1393B2E1741;
+	Thu, 24 Jul 2025 14:40:19 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDAC1632C8;
-	Thu, 24 Jul 2025 14:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D5A1632C8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367990; cv=none; b=cIR94WcfY5EpLRrSgohIT3HH2rysgA+Y0fGZh6OfCpSSBsQ6TgbLSmKCsyEipduHPLNz8GDMNMiJBLz7PNJLZkzmYNTgcDxTa6Vnz7rkp0dWMFzgbc3L4ixz9P9P8mGe8lJ1KErtMdogM5+iKXaqWqD53K3uMNa5KbdkGcoqYMo=
+	t=1753368018; cv=none; b=qN3/icxiByRBgmZxnzNogLK+PlsfYtjMO76iUkddXEb6i8yjPKwMmxHmO2+5QzyT4n4IZ3fO4wOSw5xjGAAlq5d0QdiLRYcqW3DB2Ps+O6BLh366u4TG/XxYzEpUskAx6mnLdYpy3dJ9AhM1HHKeWhgE18mONgN04tNtttOqgF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367990; c=relaxed/simple;
-	bh=xg2atMU/cA+E9kWDYocMv4tlsJgUDqoy5fxUbDfUXlg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BY0hQqCaRDoPzEeeRlI39LohJHklBQWGi7l0YC6d/MzpCrQ7YC9JoaY7FY3X+lBtVeyM870OKR7i0oRwWdhm/THPhUJi5rl9jxfvdch3kq20EHQV0eSXYQoPuppmHNLKQYk1DMDCJYqBpPyxCPNLM4a0Aq4x50gSelnJ3autE8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=o++Usffs; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753367986;
-	bh=xg2atMU/cA+E9kWDYocMv4tlsJgUDqoy5fxUbDfUXlg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=o++Usffs2STqsJCEKZag/TIYBLHnlf6S/vzpky7JztXxcvbY1cROpmwvdjuGqjV7E
-	 qOd67tWGpyJTWmDrA0/nP9jOFQD5NqjvJGNHWdP53PQ0gEr+CQe44JuLSB0Y/CvoMK
-	 iNI3A9Xc80BdW5mWCDlDrGM/NwmxLkaSx79tbEn+YghKYnsLSb/HgyFWJNB3QK3KH9
-	 kduDeYMBNn0AJ8xdfMP27nfzBXfeF964hwMjSpRgYnji9k6DLSmjRfDhAysqf7TMS9
-	 UDw0xvoejzdQNrPrXnh3gm0W14qkpdTiC5MhgXgkQSf37OAWisu83p52jmRyZ7LmPf
-	 dU7cJiIVoLUDA==
-Received: from jupiter.universe (dyndsl-091-248-210-114.ewe-ip-backbone.de [91.248.210.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 72FB617E0188;
-	Thu, 24 Jul 2025 16:39:46 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 39E0D480039; Thu, 24 Jul 2025 16:39:46 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 24 Jul 2025 16:39:42 +0200
-Subject: [PATCH net v2] net: phy: realtek: Reset after clock enable
+	s=arc-20240116; t=1753368018; c=relaxed/simple;
+	bh=Kwuoyq20gwdsTVsdtghzGtITJ0UjutoXvACwhACeCiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XUSHBMSVtwk/BytQZpf5uPnWsBitR6hGiBQy6+VygBSiTUv08H1P8epJOmLJI/QtueqO1H5Rt6cezf5v2LmgvHPxNL93Gi97QCoFaTwFI4ppreNyi382vaJwk2Pv2+AjIu6zHQV04KT2TFGMpu74CqZXxdbp5wLdy+LkkeATHTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id A052B1DA9ED;
+	Thu, 24 Jul 2025 14:40:14 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id A981C2000E;
+	Thu, 24 Jul 2025 14:40:12 +0000 (UTC)
+Date: Thu, 24 Jul 2025 10:40:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
+ Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
+ <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH 0/5] tools/verification: Improvements to rv and rvgen
+Message-ID: <20250724104011.7b4e11d9@batman.local.home>
+In-Reply-To: <20250723161240.194860-1-gmonaco@redhat.com>
+References: <20250723161240.194860-1-gmonaco@redhat.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-phy-realtek-clock-fix-v2-1-ae53e341afb7@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAK1FgmgC/4WNTQqDMBCFryKz7pSY+NO66j2KC41TDUoikxAqk
- rs3eIEu3/d43zvBExvy0BUnMEXjjbM5yFsBehnsTGimnEEKWYtWVLgvBzINW6AV9eb0ih/zxUZ
- P6qnooUc5QN7uTBlf3jdYCtBnuBgfHB/XVyyv6o82llhio0alJimqWrWvldjSdnc8Q59S+gG+D
- FyPwAAAAA==
-X-Change-ID: 20250704-phy-realtek-clock-fix-6cd393e8cb2a
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Detlev Casanova <detlev.casanova@collabora.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@collabora.com, stable@vger.kernel.org, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3041; i=sre@kernel.org;
- h=from:subject:message-id; bh=xg2atMU/cA+E9kWDYocMv4tlsJgUDqoy5fxUbDfUXlg=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGiCRbJ/xtvcileJVIl8LJxn9j7Jf26r56TdP
- il8Ob78nspdyIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJogkWyAAoJENju1/PI
- O/qawAoP/2BnLWGbH9smbQPfj88LlvRMoYRUSyHLmHdDSjR1xRrkdBbUF28+l702Mw6u0sllwx+
- TXvMSOZnVTC3vPRBnW3kTl5EndmQUk/4Ui43Glb4xrtLBoiwFq23JEXxcNhUkKwTKrZlZaOD/SG
- HF4i5+UXBdxRjXXDcpUhXn0e6KfeT/sluNi08y0IhqVTX+nU0xabXWCfIHr7Xq5IyFzEXmZ1Tbi
- Gbxeb8kszJa2s9dkk/ZvWF3qJQ1fm6EuGuowwMbBWHTVxl+RDgW1t/07ImyOzjzLalGKRusJSc6
- CqK6k+GpArYxDqGpBdRQfaMFro2B0V1+jLRjceSKwGLF6yGXaHksoR+0aaWXgcfnoWl/qWLughJ
- bCbHyp2F4SxzIAM6KrGhV0hCwjSHbCYhC5ExS3+t/W936Pe/00eJQjSMHW1AHYO6nYRqu4mX8nG
- m3QNIoIJLoDQxhMyoaHz/wqUSC/hIOFSKBjRo4h0VMUurKg7FW1D0qK6IU/8g79OUuDLW5luP0o
- rtYhsWPZ7uC0c/2fL3/tTGDZXrm0cveXDqfqPUH/y9coSsSoGz+WPQvdPLhqRN16DFgafhp+6FU
- uK0UaDVbUMNWG48gcnI2iow3glAOw0A4vNNUVI4T/kv1NbS2uSmg49O2UAP5gA/pwyLDv61y6vo
- IYtDXmoUh3C8AVIwHWOsvPQ==
-X-Developer-Key: i=sre@kernel.org; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+X-Rspamd-Queue-Id: A981C2000E
+X-Stat-Signature: a6nbh7ztt5szjp311cqzqzeut84dzrmh
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19EN9ThY9TULi3xMVLYQbWQ2504qJ9g73M=
+X-HE-Tag: 1753368012-784414
+X-HE-Meta: U2FsdGVkX1/LPy/XQXXx86Alo4Ag+RkXiQ3z2IGQglRa6MrzBt80JHCY1a041IY5I8VUuJMHgtLIWv6tzvzfrCqqA8Wv/4TJS6Md+LPNQUmwhJaILO0U1YesaEWUDZPrWamdfpFxHS+UhKydsYmTHNhq0lgnx2HYLKi6jHhs/1nsrjb/Ci02KQ0/LYno7S0wVDqq8wmt/b8iXooRZx2TutyX3e1inJGEqXh2N+T8Sx6slYGB/0U3OWRCaZlPbFYA8mBdshGdXDjoy453UL8nWx6CzHo9gfxe1570PzJSoqq0+q2aXzK/N8IZqvgYNDue81jlKVBLbXe77LonpdOW0Yo0+vYAo1GM
 
-On Radxa ROCK 4D boards we are seeing some issues with PHY detection and
-stability (e.g. link loss or not capable of transceiving packages) after
-new board revisions switched from a dedicated crystal to providing the
-25 MHz PHY input clock from the SoC instead.
+On Wed, 23 Jul 2025 18:12:35 +0200
+Gabriele Monaco <gmonaco@redhat.com> wrote:
 
-This board is using a RTL8211F PHY, which is connected to an always-on
-regulator. Unfortunately the datasheet does not explicitly mention the
-power-up sequence regarding the clock, but it seems to assume that the
-clock is always-on (i.e. dedicated crystal).
+> This series introduces various improvements to the rv/rvgen tools as
+> first posted in [1]. It also adapts generated kernel files accordingly.
+> 
+> Specifically:
+> 
+> Patch 1 fixes the behaviour of the rv tool with -s and idle tasks.
+> 
+> Patch 2 allows the rv tool to gracefully terminate with SIGTERM
+> 
+> Patch 3 adjusts dot2c not to create lines over 100 columns
+> 
+> Patch 4 properly orders nested monitors in the RV Kconfig file
 
-By doing an explicit reset after enabling the clock, the issue on the
-boards could no longer be observed.
+So keeping tools and kernel separate for RV is proving to be quite a
+pain as patch 4 has conflicts. I'm going to make a third topic branch
+just for RV. This will include anything in tools/verification and
+kernel/trace/rv. I'll restructure the patches I already added and move
+them into this branch, so that all the RV related work is there and not
+in the latency or tools branches.
 
-Note, that the RK3576 SoC used by the ROCK 4D board does not yet
-support system level PM, so the resume path has not been tested.
+So no need to separate RV into kernel and tooling anymore.
 
-Cc: stable@vger.kernel.org
-Fixes: 7300c9b574cc ("net: phy: realtek: Add optional external PHY clock")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-Changes in v2:
-- Switch to PHY_RST_AFTER_CLK_EN + phy_reset_after_clk_enable(); the
-  API is so far only used by the freescale/NXP MAC driver and does
-  not seem to be written for usage from within the PHY driver, but
-  I also don't see a good reason not to use it.
-- Also reset after re-enabling the clock in rtl821x_resume()
-- Link to v1: https://lore.kernel.org/r/20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org
----
- drivers/net/phy/realtek/realtek_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> Patch 5 returns the registration error in all DA monitor instead of 0
+> 
+> This series is based on the linux-next tree.
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index c3dcb62574303374666b46a454cd4e10de455d24..cf128af0ec0c778262d70d6dc4524d06cbfccf1f 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -230,6 +230,7 @@ static int rtl821x_probe(struct phy_device *phydev)
- 	if (IS_ERR(priv->clk))
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get phy clock\n");
-+	phy_reset_after_clk_enable(phydev);
- 
- 	ret = phy_read_paged(phydev, RTL8211F_PHYCR_PAGE, RTL8211F_PHYCR1);
- 	if (ret < 0)
-@@ -627,8 +628,10 @@ static int rtl821x_resume(struct phy_device *phydev)
- 	struct rtl821x_priv *priv = phydev->priv;
- 	int ret;
- 
--	if (!phydev->wol_enabled)
-+	if (!phydev->wol_enabled) {
- 		clk_prepare_enable(priv->clk);
-+		phy_reset_after_clk_enable(phydev);
-+	}
- 
- 	ret = genphy_resume(phydev);
- 	if (ret < 0)
-@@ -1617,7 +1620,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.resume		= rtl821x_resume,
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
--		.flags		= PHY_ALWAYS_CALL_SUSPEND,
-+		.flags		= PHY_ALWAYS_CALL_SUSPEND | PHY_RST_AFTER_CLK_EN,
- 		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
- 		.led_hw_control_get = rtl8211f_led_hw_control_get,
- 		.led_hw_control_set = rtl8211f_led_hw_control_set,
+The topic branches I'll have is:
 
----
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-change-id: 20250704-phy-realtek-clock-fix-6cd393e8cb2a
+tools - for things like rtla
+latency - for the latency tracers (osnoise, etc)
+rv - for the runtime verification work.
 
-Best regards,
--- 
-Sebastian Reichel <sre@kernel.org>
-
+-- Steve
 
