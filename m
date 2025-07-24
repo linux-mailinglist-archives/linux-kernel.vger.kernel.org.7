@@ -1,77 +1,104 @@
-Return-Path: <linux-kernel+bounces-744320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A59B10AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309D6B10AF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62FC1AE0BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:05:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDFD41891DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA322D63F7;
-	Thu, 24 Jul 2025 13:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A64D2D5432;
+	Thu, 24 Jul 2025 13:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBZh+X7o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="gMB3Z0Re"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEED2D4B5B;
-	Thu, 24 Jul 2025 13:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEACC1FECA1;
+	Thu, 24 Jul 2025 13:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753362306; cv=none; b=mdYbQ2kHspUK8zgsGKP2Yt1ohXCfi5Mu46ocrpXgurFh78OC66xKJVezoEnm93DYZBkMaWXj5pExJzhOwnjW7+s26u/mFW15yiZ4Oa3+Rkgti2H7PdspAi+1KOOb2O4YGadjansgb54AVfBEBKZPrXDmuUV29NSsanKULoop+GU=
+	t=1753362551; cv=none; b=rfxduhKPDYDeTnIwRdJXf41XLAFkM6z16tlKy7FXDpl0tMgc4h7kzPcTHRB5L6U7hVOtiV3Eno3tbjy68yPEQNZCSvXJlAgE2HumGUr6BL2aPLVgF19V6/T7wVzwMCo1yxn1L1Cmjo3YXDXpMTzd+jrtQk+KSX9q101oet0ktug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753362306; c=relaxed/simple;
-	bh=Q1M7rUk/zeWhNlVryKPIwglcePBptr3tLbsLHsZs6K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ogHEhJzM0+3QDlKOUtDLBK26ZxsUIULYMVXnV78EqaF180IH1o0B2eCQWOoPCpgQ4rmiTcRnQSlXVjm33ADWRFcqkr81D3GOh9WHqep4tYfgL4p16p/qOJNE0BSsCrJctJ61Zymu/txVhDXjAEHXPikgRlCo2+DJPljqB4WWHKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBZh+X7o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE78C4CEED;
-	Thu, 24 Jul 2025 13:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753362306;
-	bh=Q1M7rUk/zeWhNlVryKPIwglcePBptr3tLbsLHsZs6K0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aBZh+X7oQ9nXyLU8BjxDHXR512PcxsspoDQ/hBwPJ3HG/5Cp3rc4oRPdIYOHfdTQB
-	 JQlrES4CG9W9bAjPBvrZT59C8VL6y+s7qD77yiGlxHZ/u2Te1UXLQl6gXpDrvLIPec
-	 c3btQDXbCbnFf8fk4d67KclC4lAD+RKlLYn18fskYaYu1Oc9dukcTV1d+aGDQ705OR
-	 ebt5ltum2Vd6FCO6MkFt/ZXX4c6Q4ST5aex60ovaVxMIJ3hO+LdofmYMg4NiN+DZZo
-	 mU3gKTYOo38r57tNBY/hX75Qz/A2CLemtZFwOBGJPGwWPkG3e+5KgRxcEjpzJnrTXn
-	 W7Aety60KQjmQ==
-Date: Thu, 24 Jul 2025 06:05:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mihai Moldovan <ionic@ionic.de>
-Cc: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
- Denis Kenzior <denkenz@gmail.com>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S . Miller"
- <davem@davemloft.net>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
-Message-ID: <20250724060504.0cf21669@kernel.org>
-In-Reply-To: <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
-References: <cover.1753312999.git.ionic@ionic.de>
-	<8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
+	s=arc-20240116; t=1753362551; c=relaxed/simple;
+	bh=lAeQ5wByui8hUtS+uQZMIpI+P8Jp9tYUUd4AGfchuao=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dQtT6pwrgPKUi9F1T3GUf7HqVHJO0c29Ubd0Vzk2MGe0T4ZtGF6QrpX9DjgYpaH/uK23EG/iF84JB/PkPYtqywR3udhoSwEhJ7IjP20gTUVq8XIqGk3qC4lBYJDh1OWgYL0DOKdMBhT6oXBofOHBH6YVeCGWoEWtMo2lJumANrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=gMB3Z0Re; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=HYbBR/vjtvPGQp6a/iAl/VH02ieL5RdhqTwrGy8yYEg=; b=gMB3Z0Re5e0Ku5KUYsXpWeF6CW
+	QTTfHmKKsDRzxk4T4aBUpRGwLEoZrxHmYjiovGZX1VOCUh58SwscvBejmCwgkSNdaVonI2jMY1dfT
+	6EDnSdXL5pyB2j/4FW038FEkOKguyLnl1YIxkunwLitGklZFTetQ4A2KBe1p90S2t8y7RYuAnNHT6
+	iVTPEVC8iAFCxbCcJ7X91AQsohrM5Pww0SCpXexABY9T99TZuntmT9XD+bVFVq9udOzushM1nYBzT
+	TEfGEUkZR8FxrnvwukqxJ455zKRq/IPB8bzMJhvjW+ff6MxSVeYIDRcAoH9kKMIsl3vMlV5Msy8nS
+	IvCaybUw==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uevgU-0005mk-HK; Thu, 24 Jul 2025 15:08:30 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Subject:
+ Re: [PATCH v3 14/14] drm/bridge: analogix_dp: Apply panel_bridge helper
+Date: Thu, 24 Jul 2025 15:08:29 +0200
+Message-ID: <22774005.EfDdHjke4D@diego>
+In-Reply-To: <20250724080304.3572457-15-damon.ding@rock-chips.com>
+References:
+ <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <20250724080304.3572457-15-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 24 Jul 2025 01:24:01 +0200 Mihai Moldovan wrote:
->  	spin_lock_irqsave(&qrtr_nodes_lock, flags);
-> -	radix_tree_insert(&qrtr_nodes, nid, node);
-> +
-> +	if (node->ep->id > QRTR_INDEX_HALF_UNSIGNED_MAX ||
-> +	    nid > QRTR_INDEX_HALF_UNSIGNED_MAX)
-> +		return -EINVAL;
+Hi Damon,
 
-missing unlock?
--- 
-pw-bot: cr
+Am Donnerstag, 24. Juli 2025, 10:03:04 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Damon Ding:
+> In order to unify the handling of the panel and bridge, apply
+> panel_bridge helpers for Analogix DP driver. With this patch, the
+> bridge support will also become available.
+>=20
+> The following changes have ben made:
+> - Apply plane_bridge helper to wrap the panel as the bridge.
+> - Remove the explicit panel APIs calls, which can be replaced with
+>   the automic bridge APIs calls wrapped by the panel.
+> - Unify the API of getting modes to drm_bridge_get_modes().
+>=20
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+
+To keep the code bisectable, I think patches 12+13+14 need to be one patch?
+Removing the panel-handling fefore this conversion to the panel-bridge
+would produce a gap, where previously hooked up panels would not work
+if a git bisect lands directly before this patch 14, I think
+
+
+Heiko
+
+
+
 
