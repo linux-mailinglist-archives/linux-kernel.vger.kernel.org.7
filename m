@@ -1,138 +1,123 @@
-Return-Path: <linux-kernel+bounces-743754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87391B102D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57852B102E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199DE1646B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D69B1CE2097
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E5A27281F;
-	Thu, 24 Jul 2025 08:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05324273D6D;
+	Thu, 24 Jul 2025 08:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YISmjGJx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOsjIIeI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B66223327
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41938223327;
+	Thu, 24 Jul 2025 08:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344431; cv=none; b=YubAZfA2s2wX793W+peUHQwxZvRBw1fFaZsT0pk21H+G9XS2LaoDAOB/RLwe/81Of/4xk1x/3Ci5k7/0ptaLlxUh0Re7oAOhkVJ3dKX9pbIlppYfcONhXJgBJXC8GH5DfZiXaTAEZhzINdHv+pTe9+Wf85q/Hbglu1JF99MTXZ0=
+	t=1753344472; cv=none; b=G1j0/t5jEowrosZWfMfyRzUS5oRwDNGVkupyS6qgq5dWhmQqSlZxMEO/0CKG0hn30RNND34dYV2AUtYGtNLominL6xx8257NEwjtsScxFT8ErdYTPzDE3yAtkaBPFHFsqlMOdLghNmTHI2cuEvAJilvSjFgr3SuxKQpbig45mBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344431; c=relaxed/simple;
-	bh=3GfbGSqWVEhIf20dNOMc0fp14qcTv6XZ5FmBTnLwA+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BNA1cvj19ZHVVP8QzLDpMse37JiA6E6YnEQJDy79L+4G80dsJ+map30UHCuq+dHWodKy4AVGzl4AEO8t8N3drdCmknSy5iJuSuLInkPOnYq8mXfmXapSijVBCh7un8ad+LYlXJjhlhI4G2ZhQYUBiiZXXAm/9gzrD7t1w+P+bGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YISmjGJx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753344428;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yds5vhOzn4LpdsxnEOz220TpuASpaZwH3IpQhzpEW5I=;
-	b=YISmjGJx7BD0fCd9ZbSb795UkY9r8kJM6Xq5ajdfvtAnz/eyflng9vIEPTgr/LZli7n5kj
-	qqrjemY8w8+IREuDHq7cANNsD75D+Vuw73kuBAqCRvk/SRxfTAZqQbIc9Fz/RgE+j45KFR
-	Z03/l2UudVa+EnON2l/wBb4O4Ex0nLA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-l7vBBadIMIenRZy1RjtSJA-1; Thu,
- 24 Jul 2025 04:07:05 -0400
-X-MC-Unique: l7vBBadIMIenRZy1RjtSJA-1
-X-Mimecast-MFC-AGG-ID: l7vBBadIMIenRZy1RjtSJA_1753344423
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17E8318002B6;
-	Thu, 24 Jul 2025 08:07:03 +0000 (UTC)
-Received: from yiche-laptop.redhat.com (unknown [10.72.112.178])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E176218002AF;
-	Thu, 24 Jul 2025 08:06:55 +0000 (UTC)
-From: Yi Chen <yiche@redhat.com>
-To: netdev@vger.kernel.org
-Cc: netfilter-devel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	horms@kernel.org,
-	coreteam@netfilter.org,
-	fw@strlen.de
-Subject: [PATCH net v2] selftests: netfilter: ipvs.sh: Explicity disable rp_filter on interface tunl0
-Date: Thu, 24 Jul 2025 16:06:53 +0800
-Message-ID: <20250724080653.20723-1-yiche@redhat.com>
+	s=arc-20240116; t=1753344472; c=relaxed/simple;
+	bh=1SX+zcqB99cjjB9BCfDjf9tPWG4xWING89rNVeEpf+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEc2CXreFimCiai0AUKj72A8kloPuMbZIbExRzOikPmC3lCt2EWuyXHVzsnPS++QQKovGCmRUeKqfLXHRU3Lx2Q47nYbwwdqRKXpBUprq/ZUv66bt8Re2WDvU3P3YQQ3ftlbbXS/qt4foA4Y9F6BMtASAjxoC4Zt+nwoQKK9Smw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOsjIIeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0172DC4CEF1;
+	Thu, 24 Jul 2025 08:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753344471;
+	bh=1SX+zcqB99cjjB9BCfDjf9tPWG4xWING89rNVeEpf+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VOsjIIeIH9Rm+A+TaQ0V7RH51KmQgYil3OHypDB1K75Vw6Q633ZWqyufs6mpXmjgy
+	 8LsZTfLRMqu8Q3aUECPmaK6fz118qRgZxsQo52X8A22JJasuxKIhK8eiezk8hp9SAc
+	 jHnyZT944fThfEGK02iapsKBQc2GMyceVPsI5Ej6hFz/7GB9hjU2rY3MhXnDmg0Af3
+	 EmVL68MOlWu5/WtcynPwwwXn3gv5bFT1ONKBqH4E10CypSHNangIwHPWApThEuqWtj
+	 gZXy/mzxhxENu2F+hWSPwgeJkrW8aD7ChboSZ9kiIUCIRjgkp5GFEhH5TMyS7SGjaO
+	 J/E2lr1sMS9Pg==
+Date: Thu, 24 Jul 2025 11:07:47 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 02/10] PCI/P2PDMA: Introduce p2pdma_provider structure
+ for cleaner abstraction
+Message-ID: <20250724080747.GS402218@unreal>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com>
+ <20250724075145.GB30590@lst.de>
+ <20250724075533.GR402218@unreal>
+ <20250724075922.GD30590@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724075922.GD30590@lst.de>
 
-Although setup_ns() set net.ipv4.conf.default.rp_filter=0,
-loading certain module such as ipip will automatically create a tunl0 interface
-in all netns including new created ones. In the script, this is before than
-default.rp_filter=0 applied, as a result tunl0.rp_filter remains set to 1
-which causes the test report FAIL when ipip module is preloaded.
+On Thu, Jul 24, 2025 at 09:59:22AM +0200, Christoph Hellwig wrote:
+> On Thu, Jul 24, 2025 at 10:55:33AM +0300, Leon Romanovsky wrote:
+> > Please, see last patch in the series https://lore.kernel.org/all/aea452cc27ca9e5169f7279d7b524190c39e7260.1753274085.git.leonro@nvidia.com
+> > It gives me a way to call p2p code with stable pointer for whole BAR.
+> > 
+> 
+> That simply can't work.  So I guess you're trying to do the same stupid
+> things shut down before again?  I might as well not waste my time
+> reviewing this.
 
-Before fix:
-Testing DR mode...
-Testing NAT mode...
-Testing Tunnel mode...
-ipvs.sh: FAIL
+I'm not aware of anything that is not acceptable in this series.
 
-After fix:
-Testing DR mode...
-Testing NAT mode...
-Testing Tunnel mode...
-ipvs.sh: PASS
+This series focused on replacing dma_map_resource() call from v3
+https://lore.kernel.org/all/20250307052248.405803-4-vivek.kasireddy@intel.com/
+to proper API.
 
-Fixes: 7c8b89ec506e ("selftests: netfilter: remove rp_filter configuration")
+   92         if (!state) { 
+   93                 addr = pci_p2pdma_bus_addr_map(provider, phys_vec->paddr); 
+   94         } else if (dma_use_iova(state)) {                                 
+   95                 ret = dma_iova_link(attachment->dev, state, phys_vec->paddr, 0,
+   96                                     phys_vec->len, dir, DMA_ATTR_SKIP_CPU_SYNC); 
+   97                 if (ret)                                                        
+   98                         goto err_free_table;                                   
+   99                                                                               
+  100                 ret = dma_iova_sync(attachment->dev, state, 0, phys_vec->len);
+  101                 if (ret)                                                     
+  102                         goto err_unmap_dma;                                 
+  103                                                                            
+  104                 addr = state->addr;                                       
+  105         } else {                                                         
+  106                 addr = dma_map_phys(attachment->dev, phys_vec->paddr,   
+  107                                     phys_vec->len, dir, DMA_ATTR_SKIP_CPU_SYNC);
+  108                 ret = dma_mapping_error(attachment->dev, addr);                
+  109                 if (ret)                                                      
+  110                         goto err_free_table;                                 
+  111         }            
 
-v2: Fixed the format of Fixes tag.
-Signed-off-by: Yi Chen <yiche@redhat.com>
----
- tools/testing/selftests/net/netfilter/ipvs.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks
 
-diff --git a/tools/testing/selftests/net/netfilter/ipvs.sh b/tools/testing/selftests/net/netfilter/ipvs.sh
-index 6af2ea3ad6b8..9c9d5b38ab71 100755
---- a/tools/testing/selftests/net/netfilter/ipvs.sh
-+++ b/tools/testing/selftests/net/netfilter/ipvs.sh
-@@ -151,7 +151,7 @@ test_nat() {
- test_tun() {
- 	ip netns exec "${ns0}" ip route add "${vip_v4}" via "${gip_v4}" dev br0
- 
--	ip netns exec "${ns1}" modprobe -q ipip
-+	modprobe -q ipip
- 	ip netns exec "${ns1}" ip link set tunl0 up
- 	ip netns exec "${ns1}" sysctl -qw net.ipv4.ip_forward=0
- 	ip netns exec "${ns1}" sysctl -qw net.ipv4.conf.all.send_redirects=0
-@@ -160,10 +160,10 @@ test_tun() {
- 	ip netns exec "${ns1}" ipvsadm -a -i -t "${vip_v4}:${port}" -r ${rip_v4}:${port}
- 	ip netns exec "${ns1}" ip addr add ${vip_v4}/32 dev lo:1
- 
--	ip netns exec "${ns2}" modprobe -q ipip
- 	ip netns exec "${ns2}" ip link set tunl0 up
- 	ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.all.arp_ignore=1
- 	ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.all.arp_announce=2
-+	ip netns exec "${ns2}" sysctl -qw net.ipv4.conf.tunl0.rp_filter=0
- 	ip netns exec "${ns2}" ip addr add "${vip_v4}/32" dev lo:1
- 
- 	test_service
--- 
-2.50.1
-
+> 
+> 
 
