@@ -1,165 +1,296 @@
-Return-Path: <linux-kernel+bounces-743675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A31B101A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:25:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 993D4B101AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3986F7AB67D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47C258703E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5275C2417F8;
-	Thu, 24 Jul 2025 07:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE07238C23;
+	Thu, 24 Jul 2025 07:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bp13qMKX"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwT+W3vm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E69239581;
-	Thu, 24 Jul 2025 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479CF23185E;
+	Thu, 24 Jul 2025 07:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753341855; cv=none; b=TDHDAhYt8OnuFNW95x/G3OLnbNMoreHZYmhvDJQw9y0l+d8uQipQRuHg1/3ry7YN3ZGeMvIBHcn6dAR/PiF80WSMoJQlVFkNeSxiqPPkr4LmVfdOECAIG9Qj0dmnU2aiCijJN3MPk5f7bLrH3kq7l9W3WG7XHEEjFGNQS+SBE10=
+	t=1753341924; cv=none; b=SBM3JZtssH5sTIni2oaxTKgUeMNvp8sp+1W9srb0UNU0yuh9mvPdbA3hbIgooF/2DYuoTs6t0okYQwtQsDqirYeXjgkOpQIoja3MFD6+ODHXDCwaSHB8rTD+UF63DTDDkslJ0IZPsBtdcV+wTlRnS1oZZj1oROdb49Rwsu6Bin8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753341855; c=relaxed/simple;
-	bh=dUyLN2kfotLNLyofConSuTyLmjoZe/xUKspDkME1Jro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iv0/QtW4bPRgBWSwoG7fIUFD8k2rpIIV+/Zbub0p4bp7sNTYI5JwAb5vP1FHii+6nXTgK97ZvqO4Jow+7MRhdDPNxXHPdPoodNt2QdPtzMNx9IZ2Rr1+puTsB25MkyJinGk1WXnYNkmoRLO/Hm/20YKvHb+qmeRSi4YdbHczCFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bp13qMKX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561514c7f0so6310015e9.0;
-        Thu, 24 Jul 2025 00:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753341852; x=1753946652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
-        b=Bp13qMKXrCU+BYsS/+gRMgzyJrbmU9N0qr9a6lyaUMv5bUggUSfb7sqDMIllgxYLVO
-         DL1W0EmYAtjuBMPyAVpx/+ntXm/9KSBsoK5qJ2+BiAFgG3g7RM43z/3BbefobbBLmyEU
-         AJYSyxd7Tg3elwSSL8pz+bgNVFk2K9YxPPXDLryTW2PtrsMlGb+w52pLmZ2FI8PFm+Xa
-         oIb2oTh9cfyvHFaKR6aXLeINYOgbh9WEFQFhZaNojprXBWuTBj4BwfP7MluTMhi5N3Cx
-         huKQ4czLjMgUiZb4T5WLVKC9pRFymKCwZ4X1o2BFvOnIowO1CHKoeCG/l27ZbKWYSkht
-         P6SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753341852; x=1753946652;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8vH8JfnKijTJB45W87819LYq2SjUU3QszzdXJjSPeo=;
-        b=bu6WAWzFBW7nWB9y3yL6n52d8taZRVf2o7T9GUu565767khYDmvcbiyrOPaTYxcC8I
-         qxOck3PYXcPB4UJ8yaaqvv5oGuaxWviv2faspph+5bBRs4wHgVj3BXgoDTGi1zVgf2rS
-         3kY3Wk0CsGCfjliDc9ToLfHd8QJuu1Y/ARPISZkuI2hRk2ZTOnGPctX70p2EhPczfTV2
-         f66hbcTlGySTVxIWTuRGbi6PjpJ9b10XlgwpqFHQSBw1usqSPb4hMXx9bXinYq7sSkbm
-         XGYfX0wOEELJNbSfWnyk3AFd3Iyt1EF3HMX66y7kvjtowEhCUkzR3fUeLUJTAob8v7Aj
-         mW4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPgVroIh947akSqShDYWNFsTfEMwOsV7Wt2Ptn2sfXyfurlS9uTJPKWlEvlDH6Hd+dxM9QOK1qrLrEjMg@vger.kernel.org, AJvYcCXK8BGIlFlA3j2q/rrJ4jGjEPQAsC8xxzfZv9T3PnyqjAbqlfhXVia1YWo/RQr46RnKVmxjBA7uEmqc@vger.kernel.org, AJvYcCXN+UJQVm923/eDdJG7HKO6zuwxlUrPJ1fUWwAnvRdPMbGXQ+4vzBSjRJSeo9fOUidoCzriiwUkST4fUFnnjxE/Le0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/KbpUy5IuMgusRYWMyXedypqqN/gu5i5gMiv9ngFiZHOTf3XB
-	DM6OR8s5aqW7nuIxg/u0Kn9QnmZBoLWnK9ErFrNcuqB0bq4vJsVrkm8hPILO4Q==
-X-Gm-Gg: ASbGncsdng7IymGsCKF4ilOPtX/tFKhy+iZmb97okKwK0F6+SbUuqs4plHlpSNyXGGf
-	d2RX7OgPq4lNPNiAsIetOxxyN1My1EpBQF70/2jnRjNwkqRqPAHICUZmAIlIXceDghbM7hNcNss
-	/HkabYDYdgr3QTs8py8tvv99H9aJb9L/U+M4KRhj2GwFu/bhFl1hntsjNGyjSOBJTCbo/nLd48j
-	qxTfoGM/3OBHJJIEjMPoNqCRYA+L+xDTWvdQx2/g9OTbJljUV6FvGaYoflntFAKGMuVslf7AElI
-	Rf6upfGBzXCLPPhFbWJxE0x1MDjhDaHvwdMJqnl9THLMAzJZqVOWq/cVOO9lrxMjKqw++jV4YAw
-	dUykpAZAsUYxEuf54oQ7lVa4i4wM8jOBHHAe6TqoVR7ZGzOJu5blnCahK9O+/NYG+e/ZXQuMEnw
-	NH
-X-Google-Smtp-Source: AGHT+IHJ2yzAoWayRGrUS7izFIhkrxGchhvycroHp+KIHa7mpc3HqJKp+E42uRSyubs/rDl8+yH73g==
-X-Received: by 2002:a05:600c:8717:b0:455:fc16:9ed8 with SMTP id 5b1f17b1804b1-45868d4eaf7mr55550145e9.30.1753341851836;
-        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458714605c2sm3269475e9.19.2025.07.24.00.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 00:24:11 -0700 (PDT)
-Message-ID: <f5022fe7-c3f6-4bea-bb0c-98dfe461d555@gmail.com>
-Date: Thu, 24 Jul 2025 10:24:10 +0300
+	s=arc-20240116; t=1753341924; c=relaxed/simple;
+	bh=ftERaJ4090HGPKp9um5iGce89kJm6Bv+mDMMqTyhr/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKOSm8g1Jx2kxxsNZfL9w3c+8BWw9IcqA7QhefEhDjk4dRj5+4nkYyMmsmeQavrCT0Y3J8qrBzA3jcSU2PmlfxXt7kons66irHpayY0HTwiA0+FUjNY0jYaIlpIt/fZYz50zAcmZaqRPqp4nClxJb6rkVAWsXXJa4WS3KV/iWG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwT+W3vm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A468C4CEF1;
+	Thu, 24 Jul 2025 07:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753341923;
+	bh=ftERaJ4090HGPKp9um5iGce89kJm6Bv+mDMMqTyhr/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwT+W3vmgMiDaaWGe9nffKw2Wy5TMJsjNanMFLYjsmuhlEbExD87OS5iTmRghletE
+	 8d8fknPRfhruT8MKehkeD7kJRxOL+e+vmA12evg6BibdNx989nt0sZIQBC6IYswHOV
+	 4+NbUOGXnf2h2jCv1to7O8rMecvF9sBCRmpXp9tmuuxxw6yEeCF7qaBUvnqdauh4so
+	 3W72DDXPmxnoDCgxz3tSGKM/KoP2dRO0IEAPmVSx2qTbcK2JNsZ/Q0wbLFJyWAI0EZ
+	 RhTSens9nlCAvvWL1mRsXuObvZaVu5vix1qtOkJj0tMj0Mb/c4H4oLtDjjY/r5Gxy4
+	 Z3bUuHUkUIaNw==
+Date: Thu, 24 Jul 2025 09:25:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 2/4] procfs: add "pidns" mount option
+Message-ID: <20250724-ammoniak-gepinselt-6dd6255c2368@brauner>
+References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+ <20250723-procfs-pidns-api-v2-2-621e7edd8e40@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
- address space
-Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
- <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
- <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
- <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250723-procfs-pidns-api-v2-2-621e7edd8e40@cyphar.com>
 
-On 7/24/25 06:02, Sam Protsenko wrote:
-> On Wed, Jul 23, 2025 at 3:21 AM Ivaylo Ivanov
-> <ivo.ivanov.ivanov1@gmail.com> wrote:
->> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
->>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
->>>> Some device trees, like the exynos2200 one, configure the root node
->>>> with #address-cells and #size-cells set to 2. However, the usi binding
->>>> expects 32 bit address space only. Allow these determining properties to
->>> So if USI expects 32 bit, then why do we allow 64?
->>>
->>> Switching this to 2 means you use 64-bit addressing for children
->> I don't, but the main point was to avoid defining ranges for every single usi
->> node, because they are a lot.
->>
-> If all MMIO addresses in your SoC are 32-bit (they probably are), I
-> think it'd be neater to just make the entire "soc" bus 32-bit (so both
-> address and size cells = <1>), and map it to the root node's address
-> space with "ranges", like this:
->
->     soc: soc@0 {
->         compatible = "simple-bus";
->         #address-cells = <1>;
->         #size-cells = <1>;
->         ranges = <0x0 0x0 0x0 0x20000000>;
->         ...
->
-> That's how it's done in exynos850 and gs101 dts for example. This way
-> you could drop all those extra "reg = <0x0 ...>" in the child nodes,
-> also avoid declaring "ranges" arrays in each USI node (just "ranges;"
-> would be enough), and this patch won't be needed.
+On Wed, Jul 23, 2025 at 09:18:52AM +1000, Aleksa Sarai wrote:
+> Since the introduction of pid namespaces, their interaction with procfs
+> has been entirely implicit in ways that require a lot of dancing around
+> by programs that need to construct sandboxes with different PID
+> namespaces.
+> 
+> Being able to explicitly specify the pid namespace to use when
+> constructing a procfs super block will allow programs to no longer need
+> to fork off a process which does then does unshare(2) / setns(2) and
+> forks again in order to construct a procfs in a pidns.
+> 
+> So, provide a "pidns" mount option which allows such users to just
+> explicitly state which pid namespace they want that procfs instance to
+> use. This interface can be used with fsconfig(2) either with a file
+> descriptor or a path:
+> 
+>   fsconfig(procfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+>   fsconfig(procfd, FSCONFIG_SET_STRING, "pidns", "/proc/self/ns/pid", 0);
 
-Yeah, but then we'll have one more DT patch that is way bigger, changing
-every single "reg =" in /soc. And the device tree for the SoC is merged already.
+Fwiw, namespace mount options could just be VFS generic mount options.
+But it's not something that we need to solve right now.
 
-I do think that the neatest option is to avoid that and set an enum in the
-binding, as otherwise we'd be making a stylistic change that has no
-impact on functionality.
+> 
+> or with classic mount(2) / mount(8):
+> 
+>   // mount -t proc -o pidns=/proc/self/ns/pid proc /tmp/proc
+>   mount("proc", "/tmp/proc", "proc", MS_..., "pidns=/proc/self/ns/pid");
+> 
+> As this new API is effectively shorthand for setns(2) followed by
+> mount(2), the permission model for this mirrors pidns_install() to avoid
+> opening up new attack surfaces by loosening the existing permission
+> model.
+> 
+> Note that the mount infrastructure also allows userspace to reconfigure
+> the pidns of an existing procfs mount, which may or may not be useful to
+> some users.
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  Documentation/filesystems/proc.rst |  6 +++
+>  fs/proc/root.c                     | 90 +++++++++++++++++++++++++++++++++++---
+>  2 files changed, 90 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 5236cb52e357..c520b9f8a3fd 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -2360,6 +2360,7 @@ The following mount options are supported:
+>  	hidepid=	Set /proc/<pid>/ access mode.
+>  	gid=		Set the group authorized to learn processes information.
+>  	subset=		Show only the specified subset of procfs.
+> +	pidns=		Specify a the namespace used by this procfs.
+>  	=========	========================================================
+>  
+>  hidepid=off or hidepid=0 means classic mode - everybody may access all
+> @@ -2392,6 +2393,11 @@ information about processes information, just add identd to this group.
+>  subset=pid hides all top level files and directories in the procfs that
+>  are not related to tasks.
+>  
+> +pidns= specifies a pid namespace (either as a string path to something like
+> +`/proc/$pid/ns/pid`, or a file descriptor when using `FSCONFIG_SET_FD`) that
+> +will be used by the procfs instance when translating pids. By default, procfs
+> +will use the calling process's active pid namespace.
+> +
+>  Chapter 5: Filesystem behavior
+>  ==============================
+>  
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index ed86ac710384..057c8a125c6e 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+> @@ -38,12 +38,18 @@ enum proc_param {
+>  	Opt_gid,
+>  	Opt_hidepid,
+>  	Opt_subset,
+> +#ifdef CONFIG_PID_NS
+> +	Opt_pidns,
+> +#endif
+>  };
+>  
+>  static const struct fs_parameter_spec proc_fs_parameters[] = {
+> -	fsparam_u32("gid",	Opt_gid),
+> +	fsparam_u32("gid",		Opt_gid),
+>  	fsparam_string("hidepid",	Opt_hidepid),
+>  	fsparam_string("subset",	Opt_subset),
+> +#ifdef CONFIG_PID_NS
+> +	fsparam_file_or_string("pidns",	Opt_pidns),
+> +#endif
+>  	{}
+>  };
+>  
+> @@ -109,11 +115,67 @@ static int proc_parse_subset_param(struct fs_context *fc, char *value)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PID_NS
+> +static int proc_parse_pidns_param(struct fs_context *fc,
+> +				  struct fs_parameter *param,
+> +				  struct fs_parse_result *result)
+> +{
+> +	struct proc_fs_context *ctx = fc->fs_private;
+> +	struct pid_namespace *target, *active = task_active_pid_ns(current);
+> +	struct ns_common *ns;
+> +	struct file *ns_filp __free(fput) = NULL;
+> +
+> +	switch (param->type) {
+> +	case fs_value_is_file:
+> +		/* came throug fsconfig, steal the file reference */
+> +		ns_filp = param->file;
+> +		param->file = NULL;
 
-If we want the device tree to model hardware identically to how it is, then
-we'd want to define IPs per bus (which I cannot really do on my own, I don't
-even have TRMs).
+This can be shortened to:
 
-I'll leave it up to Krzysztof to decide what is best.
+ns_filp = no_free_ptr(param->file);
 
-Best regards,
-Ivaylo
+> +		break;
+> +	case fs_value_is_string:
+> +		ns_filp = filp_open(param->string, O_RDONLY, 0);
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(true);
+> +		break;
+> +	}
+> +	if (!ns_filp)
+> +		ns_filp = ERR_PTR(-EBADF);
+> +	if (IS_ERR(ns_filp)) {
+> +		errorfc(fc, "could not get file from pidns argument");
+> +		return PTR_ERR(ns_filp);
+> +	}
+> +
+> +	if (!proc_ns_file(ns_filp))
+> +		return invalfc(fc, "pidns argument is not an nsfs file");
+> +	ns = get_proc_ns(file_inode(ns_filp));
+> +	if (ns->ops->type != CLONE_NEWPID)
+> +		return invalfc(fc, "pidns argument is not a pidns file");
+> +	target = container_of(ns, struct pid_namespace, ns);
+> +
+> +	/*
+> +	 * pidns= is shorthand for joining the pidns to get a fsopen fd, so the
+> +	 * permission model should be the same as pidns_install().
+> +	 */
+> +	if (!ns_capable(target->user_ns, CAP_SYS_ADMIN)) {
+> +		errorfc(fc, "insufficient permissions to set pidns");
+> +		return -EPERM;
+> +	}
+> +	if (!pidns_is_ancestor(target, active))
+> +		return invalfc(fc, "cannot set pidns to non-descendant pidns");
 
-> Maybe I'm missing
-> some details though?
->
->> Best regards,
->> Ivaylo
->>
->>>  and
->>> allowing DMA for >32 bit. This should be the true reason - what is the
->>> address space and DMA range for children?
->>>
->>> Best regards,
->>> Krzysztof
->>>
+This made me think. If one rewrote this as:
 
+if (!ns_capable(task_active_pidns(current)->user_ns, CAP_SYS_ADMIN))
+
+if (!pidns_is_ancestor(target, active))
+
+that would also work, right? IOW, you'd be checking whether you're
+capable over your current pid namespace owning userns and if the target
+pidns is an ancestor it's also implied by the first check that you're
+capable over it.
+
+The only way this would not be true is if a descendant pidns would be
+owned by a userns over which you don't hold privileges and I wondered
+whether that's even possible? I don't think it is but maybe you see a
+way.
+
+> +
+> +	put_pid_ns(ctx->pid_ns);
+> +	ctx->pid_ns = get_pid_ns(target);
+> +	put_user_ns(fc->user_ns);
+> +	fc->user_ns = get_user_ns(ctx->pid_ns->user_ns);
+> +	return 0;
+> +}
+> +#endif /* CONFIG_PID_NS */
+> +
+>  static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  {
+>  	struct proc_fs_context *ctx = fc->fs_private;
+>  	struct fs_parse_result result;
+> -	int opt;
+> +	int opt, err;
+>  
+>  	opt = fs_parse(fc, proc_fs_parameters, param, &result);
+>  	if (opt < 0)
+> @@ -125,14 +187,24 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  
+>  	case Opt_hidepid:
+> -		if (proc_parse_hidepid_param(fc, param))
+> -			return -EINVAL;
+> +		err = proc_parse_hidepid_param(fc, param);
+> +		if (err)
+> +			return err;
+>  		break;
+>  
+>  	case Opt_subset:
+> -		if (proc_parse_subset_param(fc, param->string) < 0)
+> -			return -EINVAL;
+> +		err = proc_parse_subset_param(fc, param->string);
+> +		if (err)
+> +			return err;
+> +		break;
+> +
+> +#ifdef CONFIG_PID_NS
+> +	case Opt_pidns:
+
+I think it would be easier if we returned EOPNOTSUPP when !CONFIG_PID_NS
+instead of EINVALing this?
+
+> +		err = proc_parse_pidns_param(fc, param, &result);
+> +		if (err)
+> +			return err;
+>  		break;
+> +#endif
+>  
+>  	default:
+>  		return -EINVAL;
+> @@ -154,6 +226,12 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
+>  		fs_info->hide_pid = ctx->hidepid;
+>  	if (ctx->mask & (1 << Opt_subset))
+>  		fs_info->pidonly = ctx->pidonly;
+> +#ifdef CONFIG_PID_NS
+> +	if (ctx->mask & (1 << Opt_pidns)) {
+> +		put_pid_ns(fs_info->pid_ns);
+> +		fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
+> +	}
+> +#endif
+>  }
+>  
+>  static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+> 
+> -- 
+> 2.50.0
+> 
 
