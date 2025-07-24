@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-744143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B93B10894
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D27CB10896
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D3B176435
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DDC617D97B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011302690F9;
-	Thu, 24 Jul 2025 11:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C5B26CE30;
+	Thu, 24 Jul 2025 11:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/IOc/rj"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNScDwQR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CFF26B762;
-	Thu, 24 Jul 2025 11:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CCF26B762;
+	Thu, 24 Jul 2025 11:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355229; cv=none; b=KxrQ25lHNA9tTpHn4VHmLqa1o7KGquOEcIPn8Xf2ZDCkOTvQWF/QM3ZdBTP3ajWX5AwdSR6Ht9g/y5NdOcR1NoIbl6lzhbXxCNrLtPJ2uP6sq9ShNueb0v/XWbtNRKVt09fEK467JjY1W+7M8CFlbVWNy456kYS8FN6QyDAzkjI=
+	t=1753355235; cv=none; b=ssBE/wXB7/RKTUXBGocDfbKBZT1mqjpmpXxwoiM5c2d7xG92JQn5LPrEQjZSAKKRtbepf7tu3Z6fNOY5JqzyEJleZiPBENbIwAEUe0vF5IoDR+YTF8sHzo7mkhnn7wlkb+auDS8BSDrV16W78RwJeWTkZpKC43wQac+IvFWkSgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355229; c=relaxed/simple;
-	bh=DXwtrodih9JXts+Xu3a7jWDDhz6m3rxPn9mOHcSx1D8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f1eod4q9Xy7qxNQaOVP0lANw2CKv3/iITC1jx7Tp42Q++V1bFv1mQtlQJAIxceMF1PQpDTmhrYy9E1gAYSzME8bY/M/EA4ec6UWIWLQudXCCnoSDvsuOYXQlRdWYFFEPCdj6nH+z69s+ST8qnR/09Coxzg0CMzblGjIq6uk3kCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/IOc/rj; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3be3eabd8so200896666b.1;
-        Thu, 24 Jul 2025 04:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355226; x=1753960026; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43dwDfmrGoNVQcXDC2wAL8Jp+SeF4PP+nL7X5CzoIgA=;
-        b=l/IOc/rjY5/3FVXsUIIdoQD9wBg1aJOuMrrzs6f6OkK821MBEgTvt5la5WMIuOYWfQ
-         2si4dVVgJT0yQ+H8AdE9Yp4xdanzIYi62EaSJkJdD4aKQCis1z8qYAng2hVB1pUDGxmR
-         eQy4Cn5tFUfVOEyHer7XDU1K38vP0a+8VLK/ZGmjmXE6/f5Bqr2VKL38CD/pCJ+l9SHX
-         oL0MkF/Gbr7JdIDvMMx6l5Tu8HLrG4Q7eHBk3FYy9l37wlb11EFpl2X7sq4zn6il13jV
-         2vHvIv9Vb2ix11v5FIkuFuw1pmO90SGYfLPQyV2J9gQAVa3KM6goEFiZfW7GzSNvbGMB
-         cFKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355226; x=1753960026;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=43dwDfmrGoNVQcXDC2wAL8Jp+SeF4PP+nL7X5CzoIgA=;
-        b=vo7E2uTM4six/+hhguH/iRQzQO/UO+mURxJ3wJp41N+xrnfK1pfJBhta1FtrFmbys8
-         sX8YPzNyANth/E38rkUvCo3qHeWz1UZvXjxByt+gMpqxBimmwz/SuXvXpFY7bK+BopZb
-         0ZEyw3WG6nV8qHrCIWOJzwaupHqagFY9lovnfM9+ejbSq5mDqLp78CAeRJJ7d4igbX0g
-         bx8HUA/++M1UdlyKh+XBu5Je+2vzNn8Frj72cn8P1Z8+ag7q6ssuOrvMiXXcHPVlc8zB
-         5oVdHf3STqPimwTp3uWlSGDNNNFFhpwhjMpqIRQzUZdNs1X6rhpR4sJy4Oe/S2Oc/ni7
-         YXCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ydln8J+3BT/etmmZzgXy3WNu794K8kJKZ87D8EKfb34y1TLP5aYfSsHWROddjwPgx5AodkCZf0Mjpw==@vger.kernel.org, AJvYcCUfAixA7aV49Ap30KZCAVHUvrzNnPtQBB2hpBv9qyHIzh12gVz5RV2aehLO2SDk27GdmlkIDxTHAuVZNg==@vger.kernel.org, AJvYcCWJzDkfubWJtjPYvEkI6Pr/wL7pcGUBmeHXPSm7WiXjBORcLVW81Cu/Z9GQvFutfdSnNIJRn13fMpID6g==@vger.kernel.org, AJvYcCWNpFU0ahGBOU8WifvV9+HOchxpyompZILVYo6MhEbrScF3fJcWX5YJInNzCX7CKoBEUyjW3MbcfywVjf+q@vger.kernel.org, AJvYcCWXYQt+/cToNXnd0tmMwONosOiA018i/MfmIWR8mGQYzPiszYCbGm0ws9IUQXl9JRRVYVvArEUoPDIyq8Ni@vger.kernel.org, AJvYcCX6HGlmZ6d8aDDVQeLnnF2GESkztp52ue8Trtw46kVf0ecNh5WsQTmJGGwHaHHygddAqJ4nkE/oXmeZCKIAXzY8@vger.kernel.org, AJvYcCXu+uupEkbkcTj92MLodRFa93/L4cjvz16cQH8DnOZ2NE56y8S7tuC3keLYH99Imlyy03jMmu3wL7D4EZIBU+wgrMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQgZq21dszgV7hcTRQl2lYQVDBKnfrUK7HmdJNQ2rbnTTtOJf3
-	+x5eAbIM6LhjgAtyzxr+Lx9nI6ilKUaPTgwIHjp1Ie8goTgQPv3/1nIvLZGktzssTSs5TUk7tFj
-	wsBkSAIpr0ohjGEo+e1Zn10VbdLHGrDE=
-X-Gm-Gg: ASbGncsxPg56qdzfN3S5cyROb7r89482iDsZZEuxiTAXlG2Rp1iJR5ThivzqyYnDFhl
-	2d9WLU2ogldplCDXpXmHUqCAMhfYJ8TFvexxqpkM0aRDa7cotabKWLl5kUuVl1Y1ZJ+on2qrBAF
-	/eL/+GFVzc6Bj4N9waFo2NNaezahFpBToVSHu6cHiYvllTxGU0o7bafoDkunR5r217Xx2N7sGl+
-	bIcpFHiuw==
-X-Google-Smtp-Source: AGHT+IEQNn6mc1SbQNgvNLpYIewbgmuOfADdxy4q8WVZzoOl9KNmTiYVcFlWZZpZmc6xxLaaxaSRyyOaGbD95ShsFlU=
-X-Received: by 2002:a17:906:4785:b0:ae6:c334:af3a with SMTP id
- a640c23a62f3a-af4c1e266admr182496066b.6.1753355225671; Thu, 24 Jul 2025
- 04:07:05 -0700 (PDT)
+	s=arc-20240116; t=1753355235; c=relaxed/simple;
+	bh=WfaqMmoAiODt4F5x8vjxnsOpOuRR/rNKHYdd9asBlDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FrX/zjBHQAj/1Hy772rkhAAJ/Cq+D1Jhp1GhEXulBGZbWpOrwgKoPu1Qa0DrUEOTz0xnuWiytRMNk5VjxmRiNEiBR/UM00qMBrx6feVWmfzCuaetxFvGd+YgTfcotT/F18fDPYcJZ8+7g5r+t14aK4/U37Lw2rwaHsnW0u0OhMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNScDwQR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B7EC4CEEF;
+	Thu, 24 Jul 2025 11:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753355234;
+	bh=WfaqMmoAiODt4F5x8vjxnsOpOuRR/rNKHYdd9asBlDg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZNScDwQR9rOUTV0lvmy3FpmZTr27MyqBMrsDM0x8P95HkIORIZH2oLVPrP9e8PACp
+	 VL8uKVcKi3EVVK/o3n9akN55adzOFlTa4wQySiTiQv6Wc01eziosD+fpfGi/Mj/Sr0
+	 oYqq7LXSXtxAZylqtNzW8PQOiKT0dvv4Aq6LoK34DH8i9qRcO7qSRaf6jgZoq4p3dm
+	 Z8f4EvQtpbecprqotI3p4i+ZXDJ1i+yUZSSpu6FPvumcw15oVmATBt/WoPTQanFlTB
+	 +eTP+FtsK4tgTozN240+BcMi32Rk0doVQJP2t5+NEQOvW2FIEImXIT7TICwd7AS4Sr
+	 vygUysiqQUv3g==
+Date: Thu, 24 Jul 2025 12:07:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: ad7173: prevent scan if too many setups
+ requested
+Message-ID: <20250724120706.222da8e5@jic23-huawei>
+In-Reply-To: <aIDzAiQT0S0-ZcQo@smile.fi.intel.com>
+References: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
+	<aIDzAiQT0S0-ZcQo@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org> <20250724-pinctrl-gpio-pinfuncs-v3-7-af4db9302de4@linaro.org>
-In-Reply-To: <20250724-pinctrl-gpio-pinfuncs-v3-7-af4db9302de4@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 24 Jul 2025 13:06:29 +0200
-X-Gm-Features: Ac12FXwnivN4zoY_g5_4Ly7908cvVHMEFQ3vZsc8P3-b_-oZW11Scn4jIzuxtTQ
-Message-ID: <CAHp75VcLaVsztRtiwUkNZJRGwd5+T-x3t2VGog=0E82D3U-qLw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/15] pinctrl: keembay: release allocated memory in
- detach path
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 11:25=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Unlike all the other allocations in this driver, the memory for storing
-> the pin function descriptions allocated with kcalloc() and later resized
-> with krealloc() is never freed. Use devres like elsewhere to handle
-> that.
->
-> Note: the logic in this module is pretty convoluted and could probably
-> use some revisiting, we should probably be able to calculate the exact
-> amount of memory needed in advance or even skip the allocation
-> alltogether and just add each function to the radix tree separately.
+On Wed, 23 Jul 2025 17:34:42 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-altogether
+> On Tue, Jul 22, 2025 at 02:20:07PM -0500, David Lechner wrote:
+> > Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
+> > the maximum number of unique channel configurations.
+> > 
+> > In the AD7173 family of chips, there are some chips that have 16
+> > CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
+> > GAINx and OFFSETx registers). Since commit 92c247216918 ("iio: adc:
+> > ad7173: fix num_slots"), it is possible to have more than 8 channels
+> > enabled in a scan at the same time, so it is possible to get a bad
+> > configuration when more than 8 channels are using unique configurations.
+> > This happens because the algorithm to allocate the setup slots only
+> > takes into account which slot has been least recently used and doesn't
+> > know about the maximum number of slots available.
+> > 
+> > Since the algorithm to allocate the setup slots is quite complex, it is
+> > simpler to check after the fact if the current state is valid or not.
+> > So this patch adds a check in ad7173_update_scan_mode() after setting up
+> > all of the configurations to make sure that the actual setup still
+> > matches the requested setup for each enabled channel. If not, we prevent
+> > the scan from being enabled and return an error.
+> > 
+> > The setup comparison in ad7173_setup_equal() is refactored to a separate
+> > function since we need to call it in two places now.  
+> 
+> ...
+> 
+> > + * ad7173_setup_equal - Compare two channel setups  
+> 
+> Better naming is
+> ad7173_is_setup_equal().
+> 
+Agree.  Tweaked with following and applied to the fixes-togreg-for-6.17
+branch of iio.git + marked for stable.
 
-...
+diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+index 131cd1cf8a23..683146e83ab2 100644
+--- a/drivers/iio/adc/ad7173.c
++++ b/drivers/iio/adc/ad7173.c
+@@ -200,7 +200,7 @@ struct ad7173_channel_config {
+        /*
+         * Following fields are used to compare equality. If you
+         * make adaptations in it, you most likely also have to adapt
+-        * ad7173_setup_equal(), too.
++        * ad7173_is_setup_equal(), too.
+         */
+        struct_group(config_props,
+                bool bipolar;
+@@ -562,7 +562,7 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
+ }
+ 
+ /**
+- * ad7173_setup_equal - Compare two channel setups
++ * ad7173_is_setup_equal - Compare two channel setups
+  * @cfg1: First channel configuration
+  * @cfg2: Second channel configuration
+  *
+@@ -571,8 +571,8 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
+  *
+  * Returns: true if the setups are identical, false otherwise
+  */
+-static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
+-                              const struct ad7173_channel_config *cfg2)
++static bool ad7173_is_setup_equal(const struct ad7173_channel_config *cfg1,
++                                 const struct ad7173_channel_config *cfg2)
+ {
+        /*
+         * This is just to make sure that the comparison is adapted after
+@@ -601,7 +601,7 @@ ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *c
+        for (i = 0; i < st->num_channels; i++) {
+                cfg_aux = &st->channels[i].cfg;
+ 
+-               if (cfg_aux->live && ad7173_setup_equal(cfg, cfg_aux))
++               if (cfg_aux->live && ad7173_is_setup_equal(cfg, cfg_aux))
+                        return cfg_aux;
+        }
+        return NULL;
+@@ -1283,7 +1283,7 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+                         * have too many unique configurations requested for
+                         * the available slots and at least one was overwritten.
+                         */
+-                       if (!ad7173_setup_equal(cfg1, cfg2)) {
++                       if (!ad7173_is_setup_equal(cfg1, cfg2)) {
+                                /*
+                                 * At this point, there isn't a way to tell
+                                 * which setups are actually programmed in the
 
->         /* Reallocate memory based on actual number of functions */
-> -       new_funcs =3D krealloc(keembay_funcs, kpc->nfuncs * sizeof(*new_f=
-uncs), GFP_KERNEL);
-> +       new_funcs =3D devm_krealloc(kpc->dev, keembay_funcs,
-> +                                 kpc->nfuncs * sizeof(*new_funcs), GFP_K=
-ERNEL);
->         if (!new_funcs) {
 
-krealloc_array() ?
-
---=20
-With Best Regards,
-Andy Shevchenko
 
