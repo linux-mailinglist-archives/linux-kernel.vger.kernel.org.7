@@ -1,158 +1,83 @@
-Return-Path: <linux-kernel+bounces-743893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4CBB10524
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2BBB10514
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E03A3A94A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F371CC80D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2EA274FCA;
-	Thu, 24 Jul 2025 08:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhOgaKaf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40EA274FED;
+	Thu, 24 Jul 2025 08:56:07 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A3127144C;
-	Thu, 24 Jul 2025 08:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57EE27467A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753347335; cv=none; b=Seh3Y7EHJlLsdJLWbAO0tZBcMdU+5T/+edXfedRsyIETk/wjY8uqFc4D2qH32IMPF1+89DWIUVHyTk6nfzPuum02RYWEJzZqgcwI3OvFvZFuwCWB+7TQzCQDubjLYGBGptFv7j6zkNp2oyBxe3Rc+3JbtJPgH3eX1R4kdVpRKFE=
+	t=1753347367; cv=none; b=shuZaMDp7iy7JrVS8dFkVn3ib0bucFYPKHthZUnGxBi/BJgTyhtkrUyni99IPxv9xlh08iyK0nusQPtJaoXnfqAIpHjVywVUjzKu4gxjmFJB9T9mjcPsqbU2iR+iGAHaEdLM2tGkdOuT7UvfueJyJccGmdqs6j40I5pA6EiCn8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753347335; c=relaxed/simple;
-	bh=7Rl73eTGs9cKwu4cmtief0kRNJb/4nA5rJoiL8w0XqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JY8oLfewcyfF5t++ED9oZsJSHBNiMJIPApuT7Y+b2xrGhvgx6KeszjVcKCjHyoFnltlia1jEAkMZL7NqXQRZek3XpP54xZ3qRYxLAm+1zOf4NnM9HVfcRZbBpe+Otaq/Z18vsFpSQT8UT+/tU8C3oKmf+66ZfpQR3OSQ4NYOzrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhOgaKaf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5E2C4CEED;
-	Thu, 24 Jul 2025 08:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753347334;
-	bh=7Rl73eTGs9cKwu4cmtief0kRNJb/4nA5rJoiL8w0XqM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rhOgaKafB01JlDdf8OmBacQSgkKTNO0rtPHQuGkfk2YpR+UQC4jkIg+jZqJbYM5LJ
-	 0DIW9r+bhkHk2D1iCdal1VbYwvdmfFJ9XfQ3XvHKMuPQRIewqj0ajSGDnAVF3D9yjQ
-	 6SG7/adqin0lxOKllPMgWIp7x3coZFgazAjMDBJ6UvE0RjY0ZE+ylAqIMYeRWHvpwc
-	 KDFUDXL475ujpsLCGvjL+ubuHytUdY9FUcKlW+IdUfJDLv0TTOFePhLk8Sq56DhjHQ
-	 fG9ofvEWAbRq4hTLO719Tu37R1SIj8tQh/K6X1w9ehil3bqTeWTBZIy8egovpzbO1q
-	 YRXHVvo+4KZ9g==
-Message-ID: <03dece78-44d5-4b85-b71c-bb6794849ddd@kernel.org>
-Date: Thu, 24 Jul 2025 10:55:29 +0200
+	s=arc-20240116; t=1753347367; c=relaxed/simple;
+	bh=+tjmMrnVCoqetz3ZoVPtvqyjhAuvuYHo81EAyz+VDj0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DNdLnfTJreDWwY/TQe1eBVGP6snYYGG/Qz4w1PFOFwg7QI2OJTKlsi8xLLn84AS6qZmILAgVP791HWWvoZ2Lvg9JGkL9zpYa1PMb8X2TXCVKcXKEF+cyKVgEyWTENGV1cBJIDhK+iPMrOFK5BDmEO0BhgJ+w1mJXRxiiMKMmMH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bnlFG0YlTzQwPF;
+	Thu, 24 Jul 2025 16:54:58 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id DF92F180B60;
+	Thu, 24 Jul 2025 16:56:01 +0800 (CST)
+Received: from localhost.huawei.com (10.90.31.46) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 24 Jul 2025 16:56:01 +0800
+From: Qinxin Xia <xiaqinxin@huawei.com>
+To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+	<jonathan.cameron@huawei.com>
+CC: <prime.zeng@huawei.com>, <fanghao11@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>, <xiaqinxin@huawei.com>
+Subject: [PATCH 0/2] dma-mapping: benchmark: modify the dma_map_benchmark directory
+Date: Thu, 24 Jul 2025 16:55:58 +0800
+Message-ID: <20250724085600.4101321-1-xiaqinxin@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] memory: mtk-smi: mt8188: Add SMI reset and clamp
- for MT8188
-To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20250521063347.31578-1-friday.yang@mediatek.com>
- <20250521063347.31578-3-friday.yang@mediatek.com>
- <fe4d93d1-fb6a-4985-8316-7a76fa1a481f@kernel.org>
- <7421d8f4f3d5fdb392f46df93bfee21a97cc2e1c.camel@mediatek.com>
- <633ea291-2e02-44be-bd03-220634b3c62d@kernel.org>
- <d7e6e9f9da7adf5c806f29c577f6bf51b35fdeed.camel@mediatek.com>
- <1e9de035-9d32-45d1-9f11-33c3439143be@kernel.org>
- <2cc7a0be13d2b35b8728fb23e56097620a40fc05.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2cc7a0be13d2b35b8728fb23e56097620a40fc05.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-On 24/07/2025 10:43, Friday Yang (杨阳) wrote:
->>
->>> ignore this tag. What I intended to explain here was that I decided
->>> not
->>> to use 'devm_pm_runtime_enable' to replace 'pm_runtime_enable'
->>> functions. Unfortunately, the fake tag didn't explain this clearly
->>> in
->>> the changelog, which was my fault. To address this, I updated
->>> patchset
->>> v8 to include an explanation.
->>>
->>> In patchset v6, I replaced 'pm_runtime_enable' with
->>> 'devm_pm_runtime_enable'. However, in patchset v8, I reverted this
->>> change and included the reason for this decision in the changelog.
->>> Apologize for the delay and the trouble again.
->>
->> Nothing above is related to my question about the
->> fake/invented/questioned tag.
->>
-> 
-> I got your point, you refer to the 'reviewed-by' and 'acked-by' tag in
-> this patch.
-> These are the tags from two reviewers.
-> 
-> https://lore.kernel.org/lkml/174172361378.44650.15345202042780383326.robh@kernel.org/
+This series moves the dma_map_benchmark utility out of the selftests
+directory and fixes an ABI regression introduced in an earlier change.
+No functional behaviour of the benchmark itself is changed.
 
+Qinxin Xia (2):
+  tools/dma: move dma_map_benchmark from selftests to tools/dma
+  dma-mapping: benchmark: Add padding to ensure uABI remained consistent
 
-You are really not responding to my initial comments and keep dragging
-this discussion in some confused directions. Do we talk here about that
-patch? No.
+ include/linux/map_benchmark.h                     |  1 +
+ tools/Makefile                                    | 13 +++++++------
+ tools/dma/Makefile                                | 15 +++++++++++++++
+ tools/{testing/selftests => }/dma/config          |  0
+ .../selftests => }/dma/dma_map_benchmark.c        |  0
+ tools/testing/selftests/dma/Makefile              |  7 -------
+ 6 files changed, 23 insertions(+), 13 deletions(-)
+ create mode 100644 tools/dma/Makefile
+ rename tools/{testing/selftests => }/dma/config (100%)
+ rename tools/{testing/selftests => }/dma/dma_map_benchmark.c (100%)
+ delete mode 100644 tools/testing/selftests/dma/Makefile
 
-Best regards,
-Krzysztof
+-- 
+2.33.0
+
 
