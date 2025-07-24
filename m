@@ -1,158 +1,140 @@
-Return-Path: <linux-kernel+bounces-744347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B00AB10B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0211B10B66
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A351AE7707
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B94707BAAA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007A2D948B;
-	Thu, 24 Jul 2025 13:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QCuVB2Td"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC012D77F1;
-	Thu, 24 Jul 2025 13:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060292D9EE3;
+	Thu, 24 Jul 2025 13:29:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BB22D948D;
+	Thu, 24 Jul 2025 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753363768; cv=none; b=TA9fYMD7bVRMI1/2nxLge4BnrIE1iA1JKftCQJYAUXfCEj0ZNO3AQVoFx/dPx7Em7qfJKY6EnXKt7C3pVOn2FwZ93FtybSllyB0tSUtX7q8oK9q2HOqDdXvviZTY9aAAjKHX8h232FnmGu2kdKJiZuiArXkEOgBAW4DD13bPv+o=
+	t=1753363789; cv=none; b=stLNKTPqfNRgjbhafdgG9d9j72uyg+i7n8yTVjNdzyD0hNUlLZioE6DYkIR2ArZs9MJ7VIqNAwv2CkGpC8k6WQDjRTFGhh2wXg5SowJO3A2qZMSkfeFesvAxJ+bLTNjLX0Hf7zD3Br79fqNr9A2aaWd35Is6Q8gy44Mh9EIotsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753363768; c=relaxed/simple;
-	bh=/sm4amhRNnEpCnCNnU6yS+1uSrJndpfCw36r0SiwMuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgGalWw4uf/uGqIh1iwFMuPO2cqoTU156nAL2Fq9JJbyceJfbO0yeZyiPHTa1woSMKX7j8keCexynjR3yWVI4yYOcATR/uRy1KhN3F/V7Zu/qf6ydmdjsfErUOi+qkielSsxrYGr0PP0UjhS+komDoKb555WK5cyZgkkvFKbUxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QCuVB2Td; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753363758; x=1753968558; i=markus.elfring@web.de;
-	bh=I2PErscHQFZT+F0RZ0/8qmBqfnAkCt9N7lZmntXqAXs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=QCuVB2TdGlhANKcoKe2ONymZ2xWzkMKEamvQlxnxIyTqS04mjHZ5U85C0CyQoAug
-	 rpnUVJEaZuiwERs813Os2LCTwPtKbT3LcL3nBPjiBYzPMedVdGbNz3UFpRfKJOFxt
-	 gOo5mYSVyjtolKXN4ztCD5k/mu5miyJEV84b3OIPsWj6K3ucnm4dlKJvSx+9fOkBK
-	 UXWRGtsgy/eBf00yyZpmd/gqSMUBhTnPdTmjzSpxjx83Q2sSa1+NK3XPU/II1/zZS
-	 97c+WNFjNWk+dt6WVDGSz9y42wmUSjD1VoFqN1l9bq8L64T69Rbu3wCZ+JFlvnGuB
-	 raZ/1lNhy3CW6WUhCg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.250]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQgl2-1v1X6R2xd8-00WhIv; Thu, 24
- Jul 2025 15:29:17 +0200
-Message-ID: <fb69f55e-de06-4513-8126-e73cc51c086f@web.de>
-Date: Thu, 24 Jul 2025 15:29:15 +0200
+	s=arc-20240116; t=1753363789; c=relaxed/simple;
+	bh=Ug/ucAnqueExNi6tsOnO76I8VOjQNJA6clqwgyf0bdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8Mq45XNBSgHDE2C3r6C7APj4c05LIPZUb4Z+tD3Sxzbl3bfcJvT0b7YTejByEvrN+gWZh+kUZIBpSlqxeLwhb7HgVVYacOd96DNZcV5ghSeuyg3zTUfmEu/RtwlIrwyhAO7/weIPnEbF/fW0fXS3BWQVUb0hUXSCVBAYgvp5fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6448C1A00;
+	Thu, 24 Jul 2025 06:29:40 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C60E3F6A8;
+	Thu, 24 Jul 2025 06:29:46 -0700 (PDT)
+Date: Thu, 24 Jul 2025 14:29:44 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] coresight: Fix a NULL vs IS_ERR() bug in probe
+Message-ID: <20250724132944.GK3137075@e132581.arm.com>
+References: <7bd9fae8-a15f-412a-8800-ce47acf0b5ce@sabinyo.mountain>
+ <6fecd7d0-a5a5-4973-94ce-c63a3dff6bc7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: ad4170-4: Correctly update filter_fs after
- filter type change
-To: Jonathan Cameron <jic23@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-References: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
- <aH4n6kMQAN1zZP_V@smile.fi.intel.com> <20250724135125.5dabddb1@jic23-huawei>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250724135125.5dabddb1@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8LDc5b4kcoR/9rnhoJoDnkRake1WGekL6OsQ/KL8A6GYriNUwRA
- RMyMK28bZy6Etks7VTcogSX8cVeCofm1p7t1kR6QndvLTisZDSbyi0OmxuB2Cf3k04Yl3IS
- 9WIA78nH6wUDUYKqT3Cgkoi4RkQ2s4o/c29P1HwSIgJCf8RH5V68V9hjsTj/oiaVE9bmnGj
- g5xQZ/RzZ+zMYFWyMVxOw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KwriVkfJpy8=;96TqMnxf1WZiU29rJY91QFPetEU
- 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
- SQTD84SEGOgyZ9XGGnkpY+3BTnhUe6uLTD3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fecd7d0-a5a5-4973-94ce-c63a3dff6bc7@arm.com>
 
->>> Previously, the driver was directly using the filter type value to upd=
-ate
->>> the filter frequency (filter_fs) configuration. That caused the driver=
- to
->>> switch to the lowest filter_fs configuration (highest sampling frequen=
-cy)
->>> on every update to the filter type. Correct the filter_fs collateral u=
-pdate
->>> by clamping it to the range of supported values instead of mistakenly
->>> using the filter type to update the filter_fs.
-=E2=80=A6> I picked up v1 and made that a closes tag.  Links to email thre=
-ads are fine
-> (there was a question in v1 on this).
->=20
-> Applied to the fixes-togreg-for-6.17 branch.
+On Mon, Jul 21, 2025 at 04:46:30PM +0530, Anshuman Khandual wrote:
 
-Would you like to avoid typos anyhow for the final commit message?
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=3D=
-fixes-togreg-for-6.17&id=3De4d9886ad25adae72f38f2b12f41649b101581ae
+[...]
 
-Regards,
-Markus
+> > diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
+> > index 0e4164707eea..d542df46ea39 100644
+> > --- a/drivers/hwtracing/coresight/coresight-tnoc.c
+> > +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
+> > @@ -183,8 +183,8 @@ static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
+> >  	dev_set_drvdata(dev, drvdata);
+> >  
+> >  	drvdata->base = devm_ioremap_resource(dev, &adev->res);
+> > -	if (!drvdata->base)
+> > -		return -ENOMEM;
+> > +	if (IS_ERR(drvdata->base))
+> > +		return PTR_ERR(drvdata->base);
+> >  
+> >  	spin_lock_init(&drvdata->spinlock);
+> >  
+> 
+> Do we still have more similar instances in coresight ?
+
+It is a bit shame that I have enabled smatch for static checking but
+did not verify this series.
+
+I can confirm that the coresight driver does not have such issue in the
+current code base. After merging the CoreSight clock fix series, we
+should be able to dismiss all errors reported by smatch in CoreSight
+drivers.
+
+A side topic, I observed that smatch does not like the long functions
+in drivers/hwtracing/coresight/coresight-etm4x-core.c. So I built a
+smatch version with relaxed limits.
+
+---8<---
+
+diff --git a/smatch_implied.c b/smatch_implied.c                        
+index 9055d676..7469f1ac 100644                                         
+--- a/smatch_implied.c                                                  
++++ b/smatch_implied.c                                                  
+@@ -462,13 +462,13 @@ static int going_too_slow(void)                   
+                return 1;                                               
+        }                                                               
+                                                                        
+-       if (time_parsing_function() < 60) {                             
++       if (time_parsing_function() < 300) {                            
+                implications_off = false;                               
+                return 0;                                               
+        }                                                               
+                                                                        
+        if (!__inline_fn && printed != cur_func_sym) {                  
+-               sm_perror("turning off implications after 60 seconds"); 
++               sm_perror("turning off implications after 300 seconds");
+                printed = cur_func_sym;                                 
+        }                                                               
+        implications_off = true;                                        
+diff --git a/smatch_slist.c b/smatch_slist.c                            
+index cc3d73b7..039cdae7 100644                                         
+--- a/smatch_slist.c                                                    
++++ b/smatch_slist.c                                                    
+@@ -321,7 +321,7 @@ char *alloc_sname(const char *str)                  
+ }                                                                      
+                                                                        
+ static struct symbol *oom_func;                                        
+-static int oom_limit = 3000000;  /* Start with a 3GB limit */          
++static int oom_limit = 4000000;  /* Start with a 4GB limit */          
+ int out_of_memory(void)                                                
+ {                                                                      
+        if (oom_func)                                                   
+@@ -332,7 +332,7 @@ int out_of_memory(void)                             
+         * It works out OK for the kernel and so it should work         
+         * for most other projects as well.                             
+         */                                                             
+-       if (sm_state_counter * sizeof(struct sm_state) >= 100000000)    
++       if (sm_state_counter * sizeof(struct sm_state) >= 500000000)    
+                return 1;                                               
+                                                                        
+        /*                                                              
+
+
 
