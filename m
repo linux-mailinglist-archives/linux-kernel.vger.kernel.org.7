@@ -1,145 +1,80 @@
-Return-Path: <linux-kernel+bounces-743398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8A9B0FE38
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E56B0FE39
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9EE564E17
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FE23B4764
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B687347D5;
-	Thu, 24 Jul 2025 00:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710F3597B;
+	Thu, 24 Jul 2025 00:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nh0Bb3gm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJClTEkh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A292CA8;
-	Thu, 24 Jul 2025 00:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DD82CA8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753317635; cv=none; b=rZE2DEk+Xj8O3z0g5eibrbNuktjeztMoabTLv9plrvFB7bVJEOpw+kZQNr9CtJfFvqKzUdU11EcXVyvFDoQSllLyNoMWhiRNfLe0NG+LbjdCmRxLlgXXDbCNOBZ3u5ealGb7PwTBcTkeYTyLzP8bfMB1GiSZJW5NUq9Ejdczij0=
+	t=1753317702; cv=none; b=FeC7LYIoXkmAg2xiXwr9bEZoftIIMKtEXf2KGh5f9rdIBkD23s5zFoY0Sy0117pHVYDDGrz6OvGFDlCBmBXnoHpsQUIbX9Y0OvBk6iaVwdSrFwjP00VvaHmv7Te8wx+uFEHZYvByBiZUHQQqEx4hH7ZmuArDV6NrNHMYARaEVEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753317635; c=relaxed/simple;
-	bh=aI8q0rjLfVZPSA8wtYgSHYwmUfikQgdRXWAfBygWsRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ekzmLalW4fD09/agT2Lb4HLGDRRGjnk4cvmApXQLM92RYQDU5Z6R839apWD+DXN2k8VuaWNPRE7HiidXYvZG+ITOazBARB40QSzQkanhRvPLOsY7V42pbjexJw5TdzOasGn/iyvZiOTvS+6UBhuWdhkvEXI4BKImwfCaXp/LaqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nh0Bb3gm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC98C4CEE7;
-	Thu, 24 Jul 2025 00:40:34 +0000 (UTC)
+	s=arc-20240116; t=1753317702; c=relaxed/simple;
+	bh=k+2aOaQM61MRv2WOLCMx6/xgVuzY9DmIOEJyvJEskI8=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=TKfec2BqFarKqvnW9eTBKYj/NHJ7ImRvtF3Yk9p601GamFU/52iQGPHqTBx9k6qTmdqwy1+vZTUEtj2Z1dIzMUYoAsrCbBTr+r/5nX9X5h8gTBqRsz1sd7GafAuP9Kge0Ao2v76N43PQsfL8vZI1XtX1h5Oj3r+JXvLuxuVkNFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJClTEkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4D6C4CEE7;
+	Thu, 24 Jul 2025 00:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753317635;
-	bh=aI8q0rjLfVZPSA8wtYgSHYwmUfikQgdRXWAfBygWsRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nh0Bb3gm+4/q/sfeCbuEJVXOLV8pMcy8oie5UfLJTrKmvAleIOYnNwgFrSo908xIw
-	 /amkRatBYHkJiMYAAwVJCs1fl1O8FOb2SRBO6vN2/C5qItHbH3ujAqnwj9g0szbojT
-	 iGMZJsPQ3EYIQI4kpCxn9tQF5exW5llkCrJN3AiGTRvtK22rjvfk7CBS3RTJmcmxRb
-	 wlluxSrXVQ9Fippbq17uwdUzdSGH7PyQpJWGbEyHzaEHQaw5Wlf90GZhZze2NuhEx9
-	 WL/uQZwYADz/6sUDh4De2P1r9gRT8mqFE3m6pOmw0/9ynHqW/Vw/OvMBwG0IxKdahJ
-	 H2/gqgFZD3wBg==
-Date: Wed, 23 Jul 2025 17:40:33 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v8 01/16] perf python: Add more exceptions on error paths
-Message-ID: <aIGBAQv2Cn9qGqP1@google.com>
-References: <20250723232217.516179-1-irogers@google.com>
- <20250723232217.516179-2-irogers@google.com>
+	s=k20201202; t=1753317702;
+	bh=k+2aOaQM61MRv2WOLCMx6/xgVuzY9DmIOEJyvJEskI8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RJClTEkhEmyJOJdxQ37EkgRlCXqvgclQyBMwnAaHa2jptFAh4hK6E0K6lmtm28BRv
+	 kHCnGH+cWGOqeZzzS7BQSvz/awNoMNrKKuFL67WQUDYQsc7ZdfDpGOiZZwJ94KAxmQ
+	 fHhmnKsAk2Bz+Od4GxvzGcP/T0xEXaOH+Pds/qncI2C20wACMduWEsd2jfPgYMK2MV
+	 6nWfxo+bSy/N5dqKIg+qTEKKnM9SnNoAnElupQ/Zp8oTy5So3DsffRK8gr43S9nPFN
+	 zvE2sBZseAn9SvKntLwA3Dd6yJ3BTsL+q+C+/KT/2hjCNTfyYLcFn7ISHPL8IQ7shj
+	 JaNTYSuAupOnA==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uek1o-00000000WYg-0ZhB;
+	Wed, 23 Jul 2025 20:41:44 -0400
+Message-ID: <20250724004126.185765796@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 23 Jul 2025 20:41:26 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/2] ring-buffer: Updates for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250723232217.516179-2-irogers@google.com>
 
-On Wed, Jul 23, 2025 at 04:22:02PM -0700, Ian Rogers wrote:
-> Returning NULL will cause the python interpreter to fail but not
-> report an error. If none wants to be returned then Py_None needs
-> returning. Set the error for the cases returning NULL so that more
-> meaningful interpreter behavior is had.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/for-next
 
-Nit: I still don't get what "add more exceptions" means.  What I'm
-seeing is adding more error messages.  Also returning NULL from this
-function won't pass it to the interpreter as the convert checks the
-return value.
+Head SHA1: de4342e4feeb28701561a24ce55fc0bf82dfab45
 
-But anyway, looks good to me.
 
-Thanks,
-Namhyung
+Colin Ian King (1):
+      ring-buffer: make the const read-only 'type' static
 
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/python.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 2f28f71325a8..3affde0ad15a 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -475,13 +475,19 @@ static PyObject *pyrf_event__new(const union perf_event *event)
->  	if ((event->header.type < PERF_RECORD_MMAP ||
->  	     event->header.type > PERF_RECORD_SAMPLE) &&
->  	    !(event->header.type == PERF_RECORD_SWITCH ||
-> -	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE))
-> +	      event->header.type == PERF_RECORD_SWITCH_CPU_WIDE)) {
-> +		PyErr_Format(PyExc_TypeError, "Unexpected header type %u",
-> +			     event->header.type);
->  		return NULL;
-> +	}
->  
->  	// FIXME this better be dynamic or we need to parse everything
->  	// before calling perf_mmap__consume(), including tracepoint fields.
-> -	if (sizeof(pevent->event) < event->header.size)
-> +	if (sizeof(pevent->event) < event->header.size) {
-> +		PyErr_Format(PyExc_TypeError, "Unexpected event size: %zd < %u",
-> +			     sizeof(pevent->event), event->header.size);
->  		return NULL;
-> +	}
->  
->  	ptype = pyrf_event__type[event->header.type];
->  	pevent = PyObject_New(struct pyrf_event, ptype);
-> @@ -1199,8 +1205,10 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
->  		return NULL;
->  
->  	md = get_md(evlist, cpu);
-> -	if (!md)
-> +	if (!md) {
-> +		PyErr_Format(PyExc_TypeError, "Unknown CPU '%d'", cpu);
->  		return NULL;
-> +	}
->  
->  	if (perf_mmap__read_init(&md->core) < 0)
->  		goto end;
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
+Steven Rostedt (1):
+      ring-buffer: Remove ring_buffer_read_prepare_sync()
+
+----
+ include/linux/ring_buffer.h |  4 +--
+ kernel/trace/ring_buffer.c  | 65 ++++++++-------------------------------------
+ kernel/trace/trace.c        | 14 +++-------
+ kernel/trace/trace_kdb.c    |  8 +++---
+ 4 files changed, 19 insertions(+), 72 deletions(-)
 
