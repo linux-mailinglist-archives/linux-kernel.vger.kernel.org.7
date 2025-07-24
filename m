@@ -1,124 +1,88 @@
-Return-Path: <linux-kernel+bounces-744044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FF7B10752
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4521AB10754
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1B81749B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F30E1CC1ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3678525DD0C;
-	Thu, 24 Jul 2025 10:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE5D25DB1D;
+	Thu, 24 Jul 2025 10:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezvtvU99"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjwqsnFD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9062417C6;
-	Thu, 24 Jul 2025 10:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD4225DB12
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351404; cv=none; b=HL12Dum+tuI39e6vp92XdddJQ9MTCaScuTqNaor2J+TmE9Y13J0S7Vs5vg1HcXv8oOVVTwIQdGsYh4Qv4DYyOXBmIn67ugkcOsAE8BxToW5YrCfioLSPo+cncbebDSuHousi7sbJMKFJINrwWK3m+GcNynNfqxIZ31d0jlDGKuk=
+	t=1753351425; cv=none; b=HPXHH0tZuwlrXb7EoYlok6AKmermGcZOvsPMbkdBThKrbOURQZlARyfsuhIe0q5B+EPu68z5AQ6yYGiFEea18VmqyrFokGbcXoNUkDQKgG68kHrllmq5W4nliRH+EnwtEK5T9NuVxdD1iMlHYUzOmLRfIV8Kx8bKNuc4GXo8UrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351404; c=relaxed/simple;
-	bh=BkGnaoDjwlnG5d1b9npKldBWzlpT8LO20JP5ekflE2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ddrp48jI72Qm07SbjRq+n83+Q9O+hYqpTsAxy0JYA3f+mSQeQqUpLdtKa4AslyFkRxyQEYV3JEsyCfNsp/1DogRClivqhCXQGCG0FnOXfRguI+dz0l1o3xKNcJdZQEhq/RMl+cl4JshMzP8Aog8NgDJiPA4TnIF63UbKlvgpAoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezvtvU99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E522C4CEF4;
-	Thu, 24 Jul 2025 10:03:20 +0000 (UTC)
+	s=arc-20240116; t=1753351425; c=relaxed/simple;
+	bh=20uopEcddKtOz2si11V0GlpOFH798R4/RoR91R0ERDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUSQ4t1lk+R4UjAdqARNSHHT3k1x9u3CwkNTwOdizczT39GbkI4cjH++YQLa7zu4Burnt5c1zK7Vx3+yO1sQX1/rDN0wUyvvG0IIiV1I23qFWxt+iNfChDiz/DmB5eSYHGcwQeD+Vd6h1X1I8r+u1TSluKOmp/SQSeYPJmjLgNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjwqsnFD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F70C4CEED;
+	Thu, 24 Jul 2025 10:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753351404;
-	bh=BkGnaoDjwlnG5d1b9npKldBWzlpT8LO20JP5ekflE2E=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ezvtvU99gUA8Pun4WBy42bxlMvIvPkqC2pO0ZHyvJBrHuz4idjHJY2dEZcXRPO38Z
-	 3qHJHg0VSEYUbIxTccizxFMPuOYcxTe80/GsJXOTNdO4s5agRJxg9QFqnagwqWM1lP
-	 U2ZxNSr71pPHD9+kmA7r+ChyEZc8i0lLCT5TEz1OQYXz2AcIME49N6DZWUgFAuedlx
-	 t1fVoRFuC6bHNW/cq14YjHgwan9906/30ATj+NuvS6P5eWtpg6OF/yRN0A7/nDgfix
-	 0JsQDaYcN2AN/xvPryMf/B+bNf9qCsM4Th7mY8pYSZ4nXBPb4rBJrN0ZeFuZOLYkBP
-	 ONfZBqjKQcA5Q==
-Message-ID: <83f69759-da06-4a20-8185-3f24f2ac5794@kernel.org>
-Date: Thu, 24 Jul 2025 12:03:19 +0200
+	s=k20201202; t=1753351424;
+	bh=20uopEcddKtOz2si11V0GlpOFH798R4/RoR91R0ERDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjwqsnFDaHw/giRbw6Vl10tXHvW49hp6s8+GLLwMHBGdg8o7Kbk6L0VQcl9W9XUC1
+	 caNB2jJE75tRr4BZSIgSG5ircpDkmlVCpN2HGfBe1q9qxakFoJjdddD9I2i56fwS12
+	 zig9eFZAYrgoVg2aXfQp9L9yv2jtaxwKUmpDMrnBbMNcckR3SZJ5R7nOgyXy3k2QJj
+	 CQ5X9ZF6GUwG9hN0yigjBHCdgppO/n9gCYWOEezQln+jxtlssk9Qq7mLaMMelXfGy4
+	 smqo9aZZtGDYngZ3OfRPaneCyBcI9Z3TOjTVKshhcfEAplO+hk8e+Vvu8NvYtku3OM
+	 1t/Q9I2CxZuPw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1uesnb-000000006u3-1nU1;
+	Thu, 24 Jul 2025 12:03:39 +0200
+Date: Thu, 24 Jul 2025 12:03:39 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Douglas Anderson <dianders@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/bridge: fix OF node leak
+Message-ID: <aIIE-zomDEuBb6eZ@hovoldconsulting.com>
+References: <20250708085124.15445-1-johan@kernel.org>
+ <20250708085124.15445-2-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/13] dt-bindings: arm: aspeed: add Facebook
- Wedge400-data64 board
-To: rentao.bupt@gmail.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Tao Ren <taoren@meta.com>
-References: <20250723233013.142337-1-rentao.bupt@gmail.com>
- <20250723233013.142337-7-rentao.bupt@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250723233013.142337-7-rentao.bupt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708085124.15445-2-johan@kernel.org>
 
-On 24/07/2025 01:30, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
+On Tue, Jul 08, 2025 at 10:51:23AM +0200, Johan Hovold wrote:
+> Make sure to drop the OF node reference taken when creating the aux
+> bridge device when the device is later released.
 > 
-> Document the new compatibles used on Meta/Facebook Wedge400-data64
-> board.
-> 
-> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Any chance we can get this one into 6.17-rc1?
 
-Best regards,
-Krzysztof
+Johan
 
