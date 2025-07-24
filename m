@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-743786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB28B10355
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBCBB102EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571AF1770C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E6316AA5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260372749D3;
-	Thu, 24 Jul 2025 08:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C97F273D75;
+	Thu, 24 Jul 2025 08:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WVnfcPt4"
-Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YfDYoGjC"
+Received: from mail-m32114.qiye.163.com (mail-m32114.qiye.163.com [220.197.32.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38786272815;
-	Thu, 24 Jul 2025 08:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F16E272E48;
+	Thu, 24 Jul 2025 08:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345124; cv=none; b=qMxtj22+XvL7itfkk+FUYpJPJKoGThEfymFd9vov9B8HRhuyFMNfxA7Ii5Nb/BIOgekrp7chnOGp4ofFUwiqe0wtC9LGZMf1UnB9BSoeEzrRXM8Ktm/TuaWXFaT+u6+c2VsIvRFzPl5KRuKHEJ4PyDMXuuv2TGHMhxAiWVsI4vw=
+	t=1753344516; cv=none; b=HJDyYriud1rC+wo6yVzf3xAGt8MF2pyQwtXQzvBh9xSbvWO3HphuG49Ftnt2DHwnf2umR+BJ78b6G2qobgUZkWOw911YInQej6gYd6+cRZUO1zEpUdWPmUKMIZ974SDEoN4YmJLtqHBqhtiMaEQjwaqjn/YkysWck3IWwnIEuZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345124; c=relaxed/simple;
-	bh=HP9g5bPVTqd5Z2/EK+046wExGnLQZ3/+isZpXOi9GLw=;
+	s=arc-20240116; t=1753344516; c=relaxed/simple;
+	bh=1IfZl5n2m0tZRI7GC00+4Jmyv+FwiI2Y9ybSvWp/PjQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mwq2bEgZaoBmTYfOb+wJbiE+xDTt6DBozW+LgC3mXV80H6oqyFRsDC2Uk9vpo69c1p8sU5H7lSTQw7zY+IelrxnFDwturnntmJgMwNxR5WqZcp98dNBxYGCgJ+/o+ejPfX15lGKwtXObFv6vWHcyH0yOXXaCGzzj1ZTMYWvgY+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WVnfcPt4; arc=none smtp.client-ip=45.254.49.244
+	 MIME-Version; b=bKUN7Si6jqVUiapqSDWHB2afs1HjlV+ofvxEQZNi4qMzPWi1HNdQlwZY5nKAUmgcesCIxuXwstY8fR/CM80+ZIiXubxqLswsRClu0taRjHCLfzI8EAA+gZ2W2RWBfntUcv9ncbYMLp8DMu/mXs9fRTZQ4R7SE+GVsG2x0bk5DG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YfDYoGjC; arc=none smtp.client-ip=220.197.32.114
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c34397;
-	Thu, 24 Jul 2025 16:03:17 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c343b6;
+	Thu, 24 Jul 2025 16:03:22 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -63,9 +63,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 01/14] drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
-Date: Thu, 24 Jul 2025 16:02:51 +0800
-Message-Id: <20250724080304.3572457-2-damon.ding@rock-chips.com>
+Subject: [PATCH v3 03/14] drm/rockchip: analogix_dp: Apply drmm_encoder_init() instead of drm_simple_encoder_init()
+Date: Thu, 24 Jul 2025 16:02:53 +0800
+Message-Id: <20250724080304.3572457-4-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
 References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
@@ -76,48 +76,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a983b75423b03a3kunmbbba7af29d8f
+X-HM-Tid: 0a983b75552c03a3kunmbbba7af29e17
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUpPQ1YYH0NMQxpIGkpOHUNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx5PS1YYSkwfHh1LTxgZSEtWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=WVnfcPt4YsVlDYzPgdhutJ+2/5lpTO/LBQueT1WX656ov2q2LJvh+E7zPYIBWA1x6FiWVyV/aA4B8bk2F77ZdWsxuGuZUQgF5He2dR5xA1ypYzJQMctdyfuoTsILnJXwaxq4i96+tj6SPvwHmLZFu35IdH7JRlcEITISWVY/Mis=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=p8Q9no+T4MDXxyIkiNkZJti3sEtvUKV9beBUeeO4aS0=;
+	b=YfDYoGjCgbqbap6Xope3CMOTeL5G4HyiADww89thVcDx5PrOC2nhPJRGR8xm9EXI5ETC4Nb0u8x7ex5r3ooVPQp6UmDQitJW0ytrB5iAhfuQdM7zc5l3PVWiaUNkO0F1YFlPeXViN197gGK1K68UvMECzNB8v12ArF99gLt0JkE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=zPlxZWDQIK3s2FJH/2CXtRJ9gZ/3RtAB+yN2+4NuAvE=;
 	h=date:mime-version:subject:message-id:from;
 
-Use the tap instead of the space for &analogix_dp_device.aux and
-&analogix_dp_device.force_hpd.
+Compared with drm_simple_encoder_init(), drmm_encoder_init() can handle
+the cleanup automatically through registering drm_encoder_cleanup() with
+drmm_add_action().
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index b86e93f30ed6..91b215c6a0cf 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -156,7 +156,7 @@ struct analogix_dp_device {
- 	struct drm_device	*drm_dev;
- 	struct drm_connector	connector;
- 	struct drm_bridge	bridge;
--	struct drm_dp_aux       aux;
-+	struct drm_dp_aux	aux;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
-@@ -166,7 +166,7 @@ struct analogix_dp_device {
- 	struct phy		*phy;
- 	int			dpms_mode;
- 	struct gpio_desc	*hpd_gpiod;
--	bool                    force_hpd;
-+	bool			force_hpd;
- 	bool			fast_train_enable;
- 	bool			psr_supported;
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index d30f0983a53a..4ed6bf9e5377 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -29,7 +29,6 @@
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_probe_helper.h>
+-#include <drm/drm_simple_kms_helper.h>
  
+ #include "rockchip_drm_drv.h"
+ 
+@@ -377,8 +376,7 @@ static int rockchip_dp_drm_create_encoder(struct rockchip_dp_device *dp)
+ 							     dev->of_node);
+ 	DRM_DEBUG_KMS("possible_crtcs = 0x%x\n", encoder->possible_crtcs);
+ 
+-	ret = drm_simple_encoder_init(drm_dev, encoder,
+-				      DRM_MODE_ENCODER_TMDS);
++	ret = drmm_encoder_init(drm_dev, encoder, NULL, DRM_MODE_ENCODER_TMDS, NULL);
+ 	if (ret) {
+ 		DRM_ERROR("failed to initialize encoder with drm\n");
+ 		return ret;
 -- 
 2.34.1
 
