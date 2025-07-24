@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-744865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D18B111E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FF3B111DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A304A1CC7344
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472AE1CC5A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934E72EE60B;
-	Thu, 24 Jul 2025 19:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFC72EE275;
+	Thu, 24 Jul 2025 19:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i4AKkCYH"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iAqnqtNz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AF72ED878
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570BB20012B;
+	Thu, 24 Jul 2025 19:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753386211; cv=none; b=nGTajNHP2jQZFrWBzEzDDn6gKM1OuZTy7lfgf8ZXco79O0p7doxRAh9kQLFRopLOqtTB50x8IEs52QmHYJCYZgeKP4ZImukjEei0oE/YG9hZ2WTnL3JnZKRkG7y1E8ir6cAEzJwF4H4qsEbdzEkUik2AX765hKv0BBTudhTuEFU=
+	t=1753386197; cv=none; b=bZ1unCG6nr2Glyrrn6Tf002MDPU7GbgzPtckToo7ruePZOe+TMSp8SYHyty+/9fkFQWMQTujGw615oD3FOTETGSWkb2XjZT6QXne2eEeqQ5wKKrSh2lrAYRxJ6vet1KQPHmlaA91ef9VJdV0xM4iBglr1ozA82z0a1kY0tREuUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753386211; c=relaxed/simple;
-	bh=N3/Qfff+MoqPwHhtX3FSg753RB58bl1HwzaHnvCqAwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n3Or4XyfEI9XoOCuUMFxGmfzJdMU/MuyB2MLoPIsQ3EDFLT72yflWif0EKCPC19HuwYWm61KWdPAu0OFHNCuecIWkNwDRl14W01OHY9h0+8QuS+GLkKbaf0frTNQ6jBvMvw7rSW0S7i5cikSNFtwkt+mSCkHRKHG8/gs1XG7pDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i4AKkCYH; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a51481a598so756905f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753386208; x=1753991008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N3/Qfff+MoqPwHhtX3FSg753RB58bl1HwzaHnvCqAwM=;
-        b=i4AKkCYHaAGTBNBRqPnoJ0EQ6hto6LpYbJCUBmgLmvfQeuZTp5p3NLcrih/10DyIpz
-         NhSJ6yK+J0gAzLMCxkwV7Zrfeqyw5oUhD+EYNZeViV6FYRfHTvwddrSXxmk/L2ILJGiP
-         h40H0gbKyvRZprHlImX2DqogXzDtA0QFZniXaNOGM2YGkl6hbx7P/5ADlZllLoZnTu/x
-         qxXgZQb6ZGMEIdmZIIK2UP0sB8L31cmeyiRG4kjj0bYEIi6iQHo5wCFdZexQGcQHwrz9
-         QllzkoafHCCVgm+2gxQSALVXI6qGA2rziT7QKYlKA6f35cNxkU38+yBeAcbQLIfZJgbG
-         oIgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753386208; x=1753991008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N3/Qfff+MoqPwHhtX3FSg753RB58bl1HwzaHnvCqAwM=;
-        b=rIjB0kXdjUiNVOnN/p+szcLAVwlCbAfrPSNqdmDSpwnf/Bzaw+9CvQz3Q+wqK4qdPS
-         70ecRBpD9sgB4nqW/doHZT7XiNxAbhiQKTMlR0mjTkNVJ6Vvxv4YLGe2OteEX4hKq2Lm
-         TYR1RwGjy+3c53Coxlgw7pgAwomxadY3c6cBiffWV48691eCEFp+kZseY0/9K2/9xy+h
-         MhimF8ECryQsPn2VEZitXGM0F+LJ68LbThZfsdiV6g5F1TCrxl0eVmualpvReS2LyYO6
-         uG55uMaRZQobQpGzGEfnZjA82bOxVkFgrelcOUslDqnCCxYkaOrjPHUw0YwcPissCR7L
-         qnrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUojl8C14HCZhX7L3T0A8mKOPXvn//eh62uy0mzQl0yylqEmLHPd2uSliEZOF5TP4HX+DGwBQXbdtoKDlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl3gV2JW9AR5F2nqv8OGAPJnXABnUf/Zv2K4uqCcv11L4cXBB+
-	aFbo/7FuFA77cXKOLlEfQPxXX9/eDDZJXo36OHS8lsWSNxMkzOtapYBfEUfrTgktmZRn02c6JoO
-	eYYZ4oqeQnEQUAMTqw+6XJBmKLRZoMNhVk9MrcmOP
-X-Gm-Gg: ASbGncuAo7g2IDzbMfiEaCCSyPub8C3zHdBNTnKRK8RB+1lmizPQfqmX/1mph/RXuV5
-	OBRJIj7YhHmZ30xocBUufdWscFVFHAtKzuxbtEad2jmrLppI7ruSknDbkO7C7K8tjy3g5osxfXb
-	b3hM4/+aZjn5EZyiSDRrjmLFMmca6flEKTPfJMq27iw0S7pyLyQDmWuGtB9OyytO0p/wbn2Zu3Q
-	ASQc36J
-X-Google-Smtp-Source: AGHT+IEJXTUMtKf9WUEYieIzzqOgdbbD44V9CUoTAHleAc1QgRFRzG63MnoYVM9dHoyIuJNxvwtK0SXAQAcx9FqkZIk=
-X-Received: by 2002:a05:6000:420e:b0:3b6:d6c:a740 with SMTP id
- ffacd0b85a97d-3b768f12c2fmr7238924f8f.54.1753386207467; Thu, 24 Jul 2025
- 12:43:27 -0700 (PDT)
+	s=arc-20240116; t=1753386197; c=relaxed/simple;
+	bh=BId8e81gEFbSFqQY1v7cyxqjQV93EVWZIRUWU0ayerY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L1K5j/JT7hvTTt+a2NDxLbOcOZGjXMCvm7FxIQ7/9gK203eTP4qTCLD9BI3jUO5LD5mz+LTOYfHfLdbb1axtrFSGjc0XqxEj/xA0VA1Gj1OzbcWhMK3+8LWtqfn4huHxwEjIE2dogh5+BgWnPOCJql7xuTMCqDujrtnJTLcaYzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iAqnqtNz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA45BC4CEED;
+	Thu, 24 Jul 2025 19:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753386196;
+	bh=BId8e81gEFbSFqQY1v7cyxqjQV93EVWZIRUWU0ayerY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iAqnqtNz1uRqNS23At5/mUzFZeS8mUM207bmCXhN4Un2PnfkiSL3yhMXeuFlyuwyT
+	 WaYmwFnLtFHlA5eXbRrfSBrFP4Myi6wOdTB68tAB/UkOzyymPtMpe5SfYT7X5/ZYfD
+	 j7wE1SDdg+sgN0CCa22Lvacy3zIG5m3Ow7hhKJE0=
+Date: Thu, 24 Jul 2025 15:43:15 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+Cc: dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, joe@perches.com, 
+	corbet@lwn.net, apw@canonical.com, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] checkpatch: validate commit tag ordering
+Message-ID: <20250724-rapid-auk-of-wind-f6d94a@lemur>
+References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724172005.11641-1-boqun.feng@gmail.com>
-In-Reply-To: <20250724172005.11641-1-boqun.feng@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 24 Jul 2025 21:43:15 +0200
-X-Gm-Features: Ac12FXzSYxR8EsluxdqS7KPCR4B8Ka9Zn_z3dos28qvERgIXeElszOdjjbfHGcY
-Message-ID: <CAH5fLghU_3V4xS4npv3YtL891pLGcp=rp-CcBb0Tq3g4gbdSDQ@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: list: Add an example for `ListLinksSelfPtr` usage
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	I Hsin Cheng <richard120310@gmail.com>, 
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>, Tamir Duberstein <tamird@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
 
-On Thu, Jul 24, 2025 at 7:20=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> It appears that the support for `ListLinksSelfPtr` is dead code at the
-> moment [1]. Altough some tests were added at [2] for impl `ListItem`
-> using `ListLinksSelfPtr` field, still we could use more examples
-> demonstrating and testing the usage of `ListLinksSelfPtr`. Hence add an
-> example similar to `ListLinks` usage.
->
-> The example is mostly based on Alice's usage in binder driver [3].
->
-> Link: https://lore.kernel.org/rust-for-linux/20250719183649.596051-1-ojed=
-a@kernel.org/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20250709-list-no-offset-v4-5=
--a429e75840a9@gmail.com/ [2]
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-4-08=
-ba9197f637@google.com/ [3]
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+On Thu, Jul 24, 2025 at 09:20:32AM +0200, Hendrik Hamerlinck wrote:
+> Modified the checkpatch script to ensure that commit tags (e.g.,
+> Signed-off-by, Reviewed-by, Acked-by, Tested-by, etc.) appear in the
+> correct order according to kernel conventions [1].
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+As already indicated, this is the convention used by the TIP tree and is not
+universal. Moreover, there is a lot more nuance to how trailers are used, with
+many other subsystems strongly preferring chain-of-custody boundaries. For
+example, the following trailers indicate a history of how the patch was
+reviewed:
+
+| Suggested-by: Sug Gester <sug@example.com>
+| Signed-off-by: Alex Dev <alex@example.com>          -- boundary 1
+| Acked-by: Acker Mack <acker@example.com>
+| Tested-by: Test Rogen <test@example.com>
+| Signed-off-by: Sub Maintainer <sub@example.com>     -- boundary 2
+| Reviewed-by: Rev Yewer <rev@example.com>
+| Tested-by: Integration Bot <int@example.com>
+| Link: https://patch.msgid.link/foomsgid@exmple.com
+| Signed-off-by: Main Tainer <main@example.com>       -- boundary 3
+
+There are three chain of custody boundaries in the example above and in the
+chain-of-custody scenario the trailers should NOT be moved around between
+these boundaries, because each of the boundaries indicates what each
+signed-off-by person is claiming as their responsibility.
+
+Everything above boundary 1 is claimed by Alex Dev; all trailers above
+boundary 2 were collected and applied by Sub Maintainer; all trailers
+above boundary 3 were collected and applied by Main Tainer. Alex Dev has no
+responsibility for the tag provided by the Integration Bot, so moving their
+signed-off-by to the bottom of this series of trailer would imply that they
+are.
+
+I would leave the trailer order entirely alone and out of tools like
+checkpatch, so this is a gentle but firm NACK from me.
+
+-K
 
