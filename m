@@ -1,164 +1,259 @@
-Return-Path: <linux-kernel+bounces-744840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84B3B11177
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:14:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D52B1117B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949C5AA271B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F9C17A045
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2B22C15A2;
-	Thu, 24 Jul 2025 19:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBEE2EA723;
+	Thu, 24 Jul 2025 19:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IHr2C+Rr"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJq1br8H"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C81FC3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FAB274B3C;
+	Thu, 24 Jul 2025 19:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384440; cv=none; b=eBbcyvPeSALJG/iY7Dy5Twsn6jiIFHOxCk3vtUV0uRoUkuiwwTlV0puYKa8FyqNU2PZPjolCDlPktEOOnH/EwhOMyuQq0tydoCtLXDMef9jwMj455OQhnAV38BiN2V75AWenE15Ow+xGtJFjEuucup3qrzh/v7sG3+61+tF/4iY=
+	t=1753384465; cv=none; b=kq9SkJuxwtSjh+dvUHNBZ3O+I6s7QX6GYL0lVGkbEGJDIrsenukawxMqx5cl8kyjX7JsqiawxiC+YYRK1hKpF7Yd0lRgDrYQ/ddVNhJuONWGJbs4z7DpTTWjFJ2rhtAoWkcNRkkWfr0AX6PdPmf+xJ7hHkkS52gD999+ojWSae8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384440; c=relaxed/simple;
-	bh=SKCMXsnSeRtRSHspFusROaZkjfL2iP9BROPQgWT4iv8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MpYAxhqnVRT2A77ZMCVkd4TaaTDi6mMZ8YO7SUT/9FnTr/m+935zDT8X6aV8q/qniluFwxPVn7P3Mr23fv78NU9z9ZN8GHfnCD8e3TGpBd2Tx+Kx0l6LbCleXtt5FBBRCsYuDBiKT6Nzqf8ns549ngtrwHD/Zn6egYHehFJYURY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IHr2C+Rr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so14575e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:13:58 -0700 (PDT)
+	s=arc-20240116; t=1753384465; c=relaxed/simple;
+	bh=9JY7p80c86n6GjRiruyjjExy0MOzgPy1y+oe7BuOM1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PrGWy6z6b3ny1MmRTWEGXhzun5YBjQGt9FYP1B1o3XgnR5otb8v3Saoy7h098BmQuERbEQK3W4nhgY67n7BWwik43ZMtPTPNigC+SgmBIVgy4zmJgB5+cy6eMLhw9DFlH2UVlSneN1Z8HLedIK1CKreOwY2xf6IQrJB9YV/11WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJq1br8H; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4abc006bcadso17142071cf.0;
+        Thu, 24 Jul 2025 12:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753384437; x=1753989237; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvqjKgmAxHvS61kQHKCMppQbPZSjiiJdgG3hMaDeD04=;
-        b=IHr2C+RrsbHn1ZYn1rU1NJ1FMD0VheYekMRO2/VncrBAf9+Je0/F/O3A+erZu2Urwb
-         apVJrjCxdzHX+9MlNf1++bxjVbjtS/exKQeLIR5mBvre+WCFQ1ErK+YzTReS8EGSMaw6
-         mAg973uK4xiVn6JyHmzZDr/b7vQpa+/JMKKq8SkXH6YealCGZj9cPLylSde/qs+4f3Wq
-         P1KrWQo8MChcWahC/HpqbIDQyooZ/NRRrtpgXD4fTtdTGR0Q7KsPYQY0RV4ATOAgvcT9
-         OefnkBPuJBbJnCrCMKkWUu7gCR0Bq2ZBIUZJREQJe9b7URwXazsdCygRyeXyCl26vMfN
-         rYMA==
+        d=gmail.com; s=20230601; t=1753384463; x=1753989263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2jOSnyBDxczFG/IHSIdGMkE63XZ2hP+zlYXbjMuUNLc=;
+        b=aJq1br8HeFmH4qOa3iZ/UnttxtHLSTMkn4llPcmfZFh8+UfUdHPVwDGnT4hH8SMyh6
+         0ZsjvKv8wcXUyMZ5azjvvqkHjRW8IPZPyt7QBbZM4manHDsML70yAuDd9d8Tb4wVuYbZ
+         YgC9lcuPzyT2Ittj5HBGAb9HHNiRH6EwSwSJ9OpZhIXiiPoxzxq47Qdr55pM4Fr6vBKZ
+         GtOD9iiOwglFRULV97Org+5WmM0aA3hqvfWbZqlEWGpQRNQcIo02OVeCbhxv098vf2H6
+         Ipu9hHPeoAVwBdR8bgM8d/9QVp0YDI8EBp3ULykiJohN603WHH5zpIsU2j4sYw8sTFrd
+         /IVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753384437; x=1753989237;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wvqjKgmAxHvS61kQHKCMppQbPZSjiiJdgG3hMaDeD04=;
-        b=wcDzgK/HasazY+QwV0CgO6QyZwRCxU/ivuyD12bIkuLcW1YWu1ntjkIWYkpiN2J99T
-         3E244fMRjHfyzBrYB67AQHN2E+0CyUC7cCsf0tTSRcvva+i0CmQ0cP7z8MMRKsgFQ8Md
-         kV1CU4KKekv80auxqOHqxtTQUWxK/19kbG1HBeUp/758fJ2OlaJRBVxROWQDqx5sX3i7
-         15PIKhpMLiD32v3VHdXhf/whl1Hp8IiHn2Ep6OvOO+BGkeyTINon9qo4EjTapV/xBKW8
-         eD2Vgbd0FsHBJeZzFS+eYlineb8wq2A8eK0YNx4848+ZHVf7j3ItTRU0KMbzGTo/S0AP
-         sKWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb/Zlj/94X/N0jLgBYqu8m4hECjuRK5VXyDCsXe1/XjuXdxkE/5TI6MeuqUNGQIJn26Igtt8JaEPmz55o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq0vvh2loSHXP75F1L4nrvP5C6PZ1GVcoGkkhzJ0IoCdZmXrcJ
-	9k1RQ2PPwX6WJNAY3yW+3syvKU3JBx+S5Lq0lgDDr7s3MsQRWOEyzvcT/SGXe8Pkcg==
-X-Gm-Gg: ASbGncs0ubH1Lf9w59ygwTGFAUNNEfiGaJw6oV+b1uOQqSuSGcHkLubwBSrFc3TzBA9
-	gIo6sdQyuo7w/u/HZPRqQ6u87JTkGCLO5FEty02iXsRJq7dZCJUPoM/wNHHgrG8IkJcL608YMn3
-	leqZywdXbcXHgOKwoDdxyOwv++hvPxFAgCaWivIg58PIHQLZJJoxGARolcn74ivN493I76Rmy1E
-	zHOBVMH1DgXYWA2Yq07OPsRqz/pkYX3xca/ki3+h2ry9vTIxlmGf2r2cKtgNMm0A4qCvR8OOd6n
-	1AXw8ZNpmIlvUn+9sU0D3x9X5M5NxVhvcMxHOB6UcmKEErUdwxC4bVOrjX1CNh0FfS6lA+tQPZl
-	aCTRaalB61vty1rZD/5nS
-X-Google-Smtp-Source: AGHT+IG6HqoTeM/LvEaoDun56uV6GbzB2LcdJNB2rWhSL7A+EL6K8+TGgrzGYXW7vR/+FcFvXmR4cA==
-X-Received: by 2002:a05:600c:3ba9:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-458730842b5mr158385e9.2.1753384436268;
-        Thu, 24 Jul 2025 12:13:56 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:5757:f399:9323:7f5])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f338sm28555995e9.13.2025.07.24.12.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 12:13:55 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Thu, 24 Jul 2025 21:13:50 +0200
-Subject: [PATCH] mm/rmap: Add anon_vma lifetime debug check
+        d=1e100.net; s=20230601; t=1753384463; x=1753989263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2jOSnyBDxczFG/IHSIdGMkE63XZ2hP+zlYXbjMuUNLc=;
+        b=QY8gL1z3TC2JyKFGbzCRKffApoYmIYQdei+tWcFJTam374Acv87ftgEfXOZCxERRan
+         eLKjUxlH9H4P/O5qsUmHRaUTWigok2f8eBt+uYFQMxPIIywJQFl1w/j1GxuSXUwGyO5X
+         LFuVSF+PKBNI7eQrniNniU8zSLCGRbMhai1Igif+CaomZW2xE+V1gagdlt5fmV2UKrl8
+         QHL2tev8UyeEB45pK/xA/IK5Xy6zyyMwq8bM9kokbAyCP5LfVc6iVh6rc2xGIgOjd7MV
+         tpCpEuqwuBWVXLY+kiN+5Lm+qglquFo8CXVQh4JAnWbwvMu0djkZgW2hJIr/2d6sQ3dW
+         HBeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRIS9RgTCIXKFryfYc5uOfVPK/AGpRV+XFfPRkDekGootYxbl8zRtS9QErmBvAdAOh9THmEozctC/mKjF@vger.kernel.org, AJvYcCWZRJRgBHZ5w8R7d7TWbiYolY+euhhgN9TZ78FLPKD51bUKIqCfyWXvFtCgI/PsJ5F3GfTiXs8bEq3mYYLU@vger.kernel.org, AJvYcCXhxVYAtRdcbJRTp1IsDxRjYmDuG3uj/D1OrKYCC1YqyieNKJqhgtTuaJBremKotOkHN7aLcpmIMhKN@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkz04Hhe9Ue8tXPWrFR3I74GF0gQUWhE/3mgXcFU7RaJ93O7aT
+	sBBJ/FfUrf2BxHLwxYPJr/mwQPmH+ZZcND2NC3T2nQoW6mgxOTWKwmrQj66a+m3o28OCOJylg90
+	TSxMov2qVX3psSgM9i3SaZQtFQ5UEsJI=
+X-Gm-Gg: ASbGncvbMTyG85acHbkH7wHYOLps6iB9rCb9Vth3Po2pgeMXNyFoR4NVcJs26LV7Ph3
+	IZBwPdQ5lGjOHsZNdpbVMrvfgFFIxslRIsCVym+bZaq8jLXtBQ2IS5eoSZekSG0qNiZMv1EOqld
+	8ApHbsZg57Fiqs7ERpp1UGKx1cWS88uqmT9Jds88Ac8jB3CalHSpdw2fa7MMXz3nGv42eNbE84q
+	Bb47sE=
+X-Google-Smtp-Source: AGHT+IGm06QE4HAxdtDrbkTCJlc3WBllGjE2CLQfWltUi2scOuGwGhLY9rcqQVvFXqhFOXNUBQN8GPgnjRiXL0ZxnAk=
+X-Received: by 2002:a05:622a:2486:b0:4ab:db27:4775 with SMTP id
+ d75a77b69052e-4ae6e0370b9mr94057441cf.54.1753384462745; Thu, 24 Jul 2025
+ 12:14:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
-X-B4-Tracking: v=1; b=H4sIAO6FgmgC/x3MQQqAIBBA0avErBswKaSuEi3GnGwWaShFIN09a
- fkW/xfInIQzTE2BxLdkiaGiaxtYdwqeUVw1aKUHZXSPFGK4D8KLNnRsL480OqvY9p0xFmp3Jt7
- k+Z/z8r4fpYaNUmMAAAA=
-X-Change-ID: 20250724-anonvma-uaf-debug-a9db0eb4177b
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Rik van Riel <riel@surriel.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753384432; l=2125;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=SKCMXsnSeRtRSHspFusROaZkjfL2iP9BROPQgWT4iv8=;
- b=CmyTLcNCTvv132ht3agMAqhsH0w3t2N0h4jtV81qEiHKf4I9vTMHkGg5eUxTETvXZtqOUenLw
- vMLIuok4ECtDxn4DH/9iAKnXiTygPuCPBxz3AtOVG5JcraxI3tYwM5K
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
+ <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
+ <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
+In-Reply-To: <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 24 Jul 2025 12:14:10 -0700
+X-Gm-Features: Ac12FXzB5jWOM2jLEHuea3HtXx8QVU4kwGFHqdvioSKikDPZlGiijO3gRX8BQys
+Message-ID: <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
+Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
+ at fuse_iomap_writeback_range
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If an anon page is mapped into userspace, its anon_vma must be alive,
-otherwise rmap walks can hit UAF.
+On Wed, Jul 23, 2025 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
+g> wrote:
+> >
+> > On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
+> > > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@kerne=
+l.org> wrote:
+> > > >
+> > > > [cc Joanne]
+> > > >
+> > > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
+> > > > > Regressions found while running LTP msync04 tests on qemu-arm64 r=
+unning
+> > > > > Linux next-20250721, next-20250722 and next-20250723 with 16K and=
+ 64K
+> > > > > page size enabled builds.
+> > > > >
+> > > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
+> > > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
+> > > > >
+> > > > > No warning noticed with 4K page size.
+> > > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
+> > > >
+> > > > You might want to cc Joanne since she's been working on large folio
+> > > > support in fuse.
+> > > >
+> > > > > First seen on the tag next-20250721.
+> > > > > Good: next-20250718
+> > > > > Bad:  next-20250721 to next-20250723
+> > >
+> > > Thanks for the report. Is there a link to the script that mounts the
+> > > fuse server for these tests? I'm curious whether this was mounted as =
+a
+> > > fuseblk filesystem.
+> > >
+> > > > >
+> > > > > Regression Analysis:
+> > > > > - New regression? Yes
+> > > > > - Reproducibility? Yes
+> > > > >
+> > > > > Test regression: next-20250721 arm64 16K and 64K page size WARNIN=
+G fs
+> > > > > fuse file.c at fuse_iomap_writeback_range
+> > > > >
+> > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > > >
+> > > > > ## Test log
+> > > > > ------------[ cut here ]------------
+> > > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
+> > > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/419=
+0
+> > > >
+> > > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
+> > > >
+> > > > /me speculates that this might be triggered by an attempt to write =
+back
+> > > > some 4k fsblock within a 16/64k base page?
+> > > >
+> > >
+> > > I think this can happen on 4k base pages as well actually. On the
+> > > iomap side, the length passed is always block-aligned and in fuse, we
+> > > set blkbits to be PAGE_SHIFT so theoretically block-aligned is always
+> > > page-aligned, but I missed that if it's a "fuseblk" filesystem, that
+> > > isn't true and the blocksize is initialized to a default size of 512
+> > > or whatever block size is passed in when it's mounted.
+> >
+> > <nod> I think you're correct.
+> >
+> > > I'll send out a patch to remove this line. It doesn't make any
+> > > difference for fuse_iomap_writeback_range() logic whether len is
+> > > page-aligned or not; I had added it as a sanity-check against sketchy
+> > > ranges.
+> > >
+> > > Also, I just noticed that apparently the blocksize can change
+> > > dynamically for an inode in fuse through getattr replies from the
+> > > server (see fuse_change_attributes_common()). This is a problem since
+> > > the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
+> > > think we will have to cache the inode blkbits in the iomap_folio_stat=
+e
+> > > struct unfortunately :( I'll think about this some more and send out =
+a
+> > > patch for this.
+> >
+> > From my understanding of the iomap code, it's possible to do that if yo=
+u
+> > flush and unmap the entire pagecache (whilst holding i_rwsem and
+> > mmap_invalidate_lock) before you change i_blkbits.  Nobody *does* this
+> > so I have no idea if it actually works, however.  Note that even I don'=
+t
+> > implement the flush and unmap bit; I just scream loudly and do nothing:
+>
+> lol! i wish I could scream loudly and do nothing too for my case.
+>
+> AFAICT, I think I just need to flush and unmap that file and can leave
+> the rest of the files/folios in the pagecache as is? But then if the
+> file has active refcounts on it or has been pinned into memory, can I
+> still unmap and remove it from the page cache? I see the
+> invalidate_inode_pages2() function but my understanding is that the
+> page still stays in the cache if it has has active references, and if
+> the page gets mmaped and there's a page fault on it, it'll end up
+> using the preexisting old page in the page cache.
 
-There have been syzkaller reports a few months ago[1][2] of UAF in rmap
-walks that seems to indicate that there can be pages with elevated mapcount
-whose anon_vma has already been freed, but I think we never figured out
-what the cause is; and syzkaller only hit these UAFs when memory pressure
-randomly caused reclaim to rmap-walk the affected pages, so it of course
-didn't manage to create a reproducer.
+Never mind, I was mistaken about this. Johannes confirmed that even if
+there's active refcounts on the folio, it'll still get removed from
+the page cache after unmapping and the page cache reference will get
+dropped.
 
-Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous pages to
-hopefully catch such issues more reliably.
+I think I can just do what you suggested and call
+filemap_invalidate_inode() in fuse_change_attributes_common() then if
+the inode blksize gets changed. Thanks for the suggestion!
 
-Implementation note: I'm checking IS_ENABLED(CONFIG_DEBUG_VM) because,
-unlike the checks above, this one would otherwise be hard to write such
-that it completely compiles away in non-debug builds by itself, without
-looking extremely ugly.
-
-[1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.com
-[2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.com
-
-Signed-off-by: Jann Horn <jannh@google.com>
----
- include/linux/rmap.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index c4f4903b1088..ba694c436f59 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -449,6 +449,19 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
- 	default:
- 		VM_WARN_ON_ONCE(true);
- 	}
-+
-+	/*
-+	 * Anon folios must have an associated live anon_vma as long as they're
-+	 * mapped into userspace.
-+	 * Part of the purpose of the atomic_read() is to make KASAN check that
-+	 * the anon_vma is still alive.
-+	 */
-+	if (IS_ENABLED(CONFIG_DEBUG_VM) && PageAnonNotKsm(page)) {
-+		unsigned long mapping = (unsigned long)folio->mapping;
-+		struct anon_vma *anon_vma = (void *)(mapping - PAGE_MAPPING_ANON);
-+
-+		VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
-+	}
- }
- 
- /*
-
----
-base-commit: 01a412d06bc5786eb4e44a6c8f0f4659bd4c9864
-change-id: 20250724-anonvma-uaf-debug-a9db0eb4177b
-
--- 
-Jann Horn <jannh@google.com>
-
+>
+> I don't think I really need to have it removed from the page cache so
+> much as just have the ifs state for all the folios in the file freed
+> (after flushing the file) so that it can start over with a new ifs.
+> Ideally we could just flush the file, then iterate through all the
+> folios in the mapping in order of ascending index, and kfree their
+> ->private, but I'm not seeing how we can prevent the case of new
+> writes / a new ifs getting allocated for folios at previous indexes
+> while we're trying to do the iteration/kfreeing.
+>
+> >
+> > void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits)
+> > {
+> >         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
+> >
+> >         if (inode->i_blkbits =3D=3D new_blkbits)
+> >                 return;
+> >
+> >         if (!S_ISREG(inode->i_mode))
+> >                 goto set_it;
+> >
+> >         /*
+> >          * iomap attaches per-block state to each folio, so we cannot a=
+llow
+> >          * the file block size to change if there's anything in the pag=
+e cache.
+> >          * In theory, fuse servers should never be doing this.
+> >          */
+> >         if (inode->i_mapping->nrpages > 0) {
+> >                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
+> >                         inode->i_mapping->nrpages > 0);
+> >                 return;
+> >         }
+> >
+> > set_it:
+> >         inode->i_blkbits =3D new_blkbits;
+> > }
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/co=
+mmit/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c884
+> >
+> > --D
+> >
+> > >
+> > > Thanks,
+> > > Joanne
+> > >
 
