@@ -1,170 +1,145 @@
-Return-Path: <linux-kernel+bounces-744297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD5CB10A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4AFB10AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E80AE6545
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC3F188ED47
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17432D5425;
-	Thu, 24 Jul 2025 12:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA682D4B57;
+	Thu, 24 Jul 2025 12:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrmnmbdB"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWNNmJXb"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2B62D3A6C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5317B2C3757;
+	Thu, 24 Jul 2025 12:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361343; cv=none; b=hx662C/7zHqtCpx/1tFpnZEYxqinqcldBBYvE+mzG4BG6Imt1Z0wt3A2GKHy/Vx9H8LuvArG8/x4U6R8xF+C8zisuKb2qO8RmAhT7yOpVtPTKSS/d0QP5OabpAIn1IxKEQo3PxD4NewMgsiMDjpnU5DK/sv5I5ZgLUs6s6t1IGk=
+	t=1753361428; cv=none; b=JGtFh9wnNTxDgpuZQt2FcCdI71AYPnpysQR/cCZ1pX5SuZT/4Wl/LBAyPDBnAvhiO10FsUZ/iMW4L8Ggv+hK0mtCjdXTSFEDWcfPTWwwzIE8cgWMnvtswbkhNeImsNlgaFy+KVYMzQZ/QfxDrNpiyMcnFnbORt2YkR/wtQKId9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361343; c=relaxed/simple;
-	bh=xqXmrWxuJdb1D3OvBiTINZzzM4LYKaxmKPJIjhUeUSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQlI9LTkHFKKRA8Jgiu4hFZfzVICpvYBof4ZWSxgwGkwSjV4MfvXY/azmzxmhFIoUGewNFDVJAq336UmSKpRwtVn4MStmfSZ7XluXrH38VAQlIXL5STcWMg2GA4znZrhPTOR2zBgl2wC1mGdVNjTDsHxu7ybbJjLXloM6/Y08cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrmnmbdB; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ba6d5737-863b-4cf1-8b26-f74e494e9b19@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753361338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ETtec1nSuP+hVZkxKzZmMe2vA06bPL9ep3oiEZZE7HA=;
-	b=CrmnmbdBVMXMSlrCft2rcgVZyyCdeTDB7/DcJSUxacfRYisfPmex3H7KIOwZSrodoRkoR3
-	3GoJreDfBMh7qvquzIkZwuceFg8UD2D7539w9vdDwYiwmrF4NVhQ9PK+rjhIQQHWXu7QtL
-	j7L8RqOl+uPqiTgGFnmlwoEx2EALDHw=
-Date: Thu, 24 Jul 2025 20:48:45 +0800
+	s=arc-20240116; t=1753361428; c=relaxed/simple;
+	bh=Xq+2aOr76viJriRnJ+pzgbCo0qffhEbG7lm/rdlTwjA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bQNmhBOL47elWEUHzA0sP1RblhQkdPd/qrotLizn4LU76nCRGUwjj7ezXhkxWNgdgfZg22FJl/80A4R7f9lESrahCGhfA59ED+2XXBZer0jBnqgQ3dJxLrI/Kle2WX7bWuirM1SixhQzXJcreRgOOlc9N1XJeGRlLVixhNbEzeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWNNmJXb; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a53359dea5so491747f8f.0;
+        Thu, 24 Jul 2025 05:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753361425; x=1753966225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PfVMcAjLS47xQwt22LwNV9vb4H3Sjsc0X/7OduC46U4=;
+        b=PWNNmJXbqrP/uDyeVAAVXhdRXTu5XX5/D48wJml6jD+qli3yWiciW1YT2EMAbf7xWV
+         8AYR/UsKZw8k/XCegv4rHnhQymf+skwK++qELI9C2imH3SoF8B2Qr54FFO/xgBiHTbN8
+         cN4mDSDpXMiLRS47VlsUvJjXtSILfsgSbMXBE8XzrZ7O7+fUB2Ojt/0lh1ZLsz4Y4oQa
+         9YZIMUZKmtiNP3F40Q9k9ERz4762YhYBGy53H7zZzWMcgORsUuUOkZa/2wJkxD/HeynO
+         y3lYW8SLofcZAg2AyA1vE676kxX9R4behXlLbkqteRUT94FXBwwtUP4ACoxzLwthpa39
+         AEiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753361425; x=1753966225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PfVMcAjLS47xQwt22LwNV9vb4H3Sjsc0X/7OduC46U4=;
+        b=ooZEwbRXuBhS38v9eXs9Bgqh6jO6OGialOB3lsgnzcs/0SkmWjKZG4b2wxeNKoNkk5
+         LZz/4NAfYgY9LcatWiHGU+DKUeyQYx5y9OLecxe1yG4dDDl58qBQjQd6+cH0IGuIp5LF
+         fasFQcMa0pYsM6LF6d6SeGVWUI9+y2jKAz5grFH++IBV561GHJ0/Qa4Z/XQdw6HEc6nz
+         c1RW0bSGdwhwKou9ebIlKU2mLNc7kUEvn9+RGoDVtB3W2xUDk9KctlRuZkdj60VYD0+T
+         4ru6cZCAJ2zuze9Y99AIu8m5Cj8Ek9y8mPRHTWT7Bxf6RT8UTXkMw8RWp92y/aIyz5yv
+         u7pA==
+X-Forwarded-Encrypted: i=1; AJvYcCV96UM3Hjof/wc3GS2wBhmw3VD1hrRaLpLZVbr0puI1hxpzHY2McQRGwLnhAVWTIp61vw2JoyQ5gpNXm7I=@vger.kernel.org, AJvYcCW1wXXGPXw22baQiaRT3W6tUWDmFAlAgiI6dYlSutXG8TUPIKmzg111T7RxOe6cTTMOh0macSj1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqWG74x20T6Nf+vuE4HbHRQJc7idxCOH7xYecPszGJd4aKPrlg
+	bhkmNdyAckqztwubFb2uyXTkPEhtNCqT0UqKoVRBxfy7B+Mi1/gtJN8gjjf3w50o
+X-Gm-Gg: ASbGnctxmsvJs6v78uFcw89CF65qQic7k+zhvXI8xBL4hwpoQLuGPN7m3i/JwQcUSav
+	hv8eft409i7TGSRKYPyL+qPhqNGerEnih9oEKsaTwkyfEESJqKqqYYFPI8N02O9Lf1N3tlmVkM2
+	+cAcasJelJO7pLnPukrpzcYbHV1IeTQR1Uqp9mCkOau8JrSSpAUr0VCCBgwTz7eA2xT/TXUy/Eu
+	qUKtMDrvGajbP4DLpqzAUv4j3rvXEB2kWScQsk9asbtfwouX6Gi9ISkA3Ue/iJCKtStia+0ydZs
+	TVgTe+mYUOhCQLgmJmdTBJeJnMM+X2xfFXxtL75JX7PFbE7K/5je+9q1CcbddxuF7N6wq4Ue/1C
+	EtzOM/iMAHujHLTyJtdZr+9hsgFm8SEy7C9U=
+X-Google-Smtp-Source: AGHT+IFgSLerD2l5sm9nFan11JNgWqeTR2V8VwvZLnCysxO+YNGEGzgx1M1XpIFFSgYboxFu9aKH0w==
+X-Received: by 2002:a05:6000:22c2:b0:3a4:f35b:d016 with SMTP id ffacd0b85a97d-3b768caa12dmr6105752f8f.11.1753361424142;
+        Thu, 24 Jul 2025 05:50:24 -0700 (PDT)
+Received: from localhost.localdomain ([45.128.133.222])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc6d1b0sm2111089f8f.18.2025.07.24.05.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 05:50:23 -0700 (PDT)
+From: Oscar Maes <oscmaes92@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Oscar Maes <oscmaes92@gmail.com>
+Subject: [PATCH net-next] net: ipv4: allow directed broadcast routes to use dst hint
+Date: Thu, 24 Jul 2025 14:49:42 +0200
+Message-Id: <20250724124942.6895-1-oscmaes92@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/1] netfilter: load nf_log_syslog on enabling
- nf_conntrack_log_invalid
-Content-Language: en-US
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: fw@strlen.de, coreteam@netfilter.org, davem@davemloft.net,
- edumazet@google.com, horms@kernel.org, kadlec@netfilter.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, pabeni@redhat.com, zi.li@linux.dev,
- Lance Yang <ioworker0@gmail.com>
-References: <20250526085902.36467-1-lance.yang@linux.dev>
- <aIIl9u1TY84Q9mnD@calendula>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <aIIl9u1TY84Q9mnD@calendula>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Currently, ip_extract_route_hint uses RTN_BROADCAST to decide
+whether to use the route dst hint mechanism.
 
+This check is too strict, as it prevents directed broadcast
+routes from using the hint, resulting in poor performance
+during bursts of directed broadcast traffic.
 
-On 2025/7/24 20:24, Pablo Neira Ayuso wrote:
-> Hi,
-> 
-> On Mon, May 26, 2025 at 04:59:02PM +0800, Lance Yang wrote:
->> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
->> index 2f666751c7e7..cdc27424f84a 100644
->> --- a/net/netfilter/nf_conntrack_standalone.c
->> +++ b/net/netfilter/nf_conntrack_standalone.c
->> @@ -14,6 +14,7 @@
->>   #include <linux/sysctl.h>
->>   #endif
->>   
->> +#include <net/netfilter/nf_log.h>
->>   #include <net/netfilter/nf_conntrack.h>
->>   #include <net/netfilter/nf_conntrack_core.h>
->>   #include <net/netfilter/nf_conntrack_l4proto.h>
->> @@ -543,6 +544,29 @@ nf_conntrack_hash_sysctl(const struct ctl_table *table, int write,
->>   	return ret;
->>   }
->>   
->> +static int
->> +nf_conntrack_log_invalid_sysctl(const struct ctl_table *table, int write,
->> +				void *buffer, size_t *lenp, loff_t *ppos)
->> +{
->> +	int ret, i;
->> +
->> +	ret = proc_dou8vec_minmax(table, write, buffer, lenp, ppos);
->> +	if (ret < 0 || !write)
->> +		return ret;
->> +
->> +	if (*(u8 *)table->data == 0)
->> +		return ret;
-> 
-> What is this table->data check for? I don't find any similar idiom
-> like this in the existing proc_dou8vec_minmax() callers.
+Fix this in ip_extract_route_hint and modify ip_route_use_hint
+to preserve the intended behaviour.
 
-My intention was to avoid the unnecessary nf_log_is_registered()
-calls when a user disables the feature by writing '0' to the sysctl.
+Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+---
+ net/ipv4/ip_input.c | 6 ++++--
+ net/ipv4/route.c    | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-But it's not a big deal. I will remove this check in v3 ;)
-
->> +
->> +	/* Load nf_log_syslog only if no logger is currently registered */
->> +	for (i = 0; i < NFPROTO_NUMPROTO; i++) {
->> +		if (nf_log_is_registered(i))
->> +			return ret;
->> +	}
->> +	request_module("%s", "nf_log_syslog");
->> +
->> +	return ret;
->> +}
->> +
->>   static struct ctl_table_header *nf_ct_netfilter_header;
->>   
->>   enum nf_ct_sysctl_index {
->> @@ -649,7 +673,7 @@ static struct ctl_table nf_ct_sysctl_table[] = {
->>   		.data		= &init_net.ct.sysctl_log_invalid,
->>   		.maxlen		= sizeof(u8),
->>   		.mode		= 0644,
->> -		.proc_handler	= proc_dou8vec_minmax,
->> +		.proc_handler	= nf_conntrack_log_invalid_sysctl,
->>   	},
->>   	[NF_SYSCTL_CT_EXPECT_MAX] = {
->>   		.procname	= "nf_conntrack_expect_max",
->> diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
->> index 6dd0de33eebd..c7dd5019a89d 100644
->> --- a/net/netfilter/nf_log.c
->> +++ b/net/netfilter/nf_log.c
->> @@ -125,6 +125,33 @@ void nf_log_unregister(struct nf_logger *logger)
->>   }
->>   EXPORT_SYMBOL(nf_log_unregister);
->>   
->> +/**
->> + * nf_log_is_registered - Check if any logger is registered for a given
->> + * protocol family.
->> + *
->> + * @pf: Protocol family
->> + *
->> + * Returns: true if at least one logger is active for @pf, false otherwise.
->> + */
->> +bool nf_log_is_registered(u_int8_t pf)
->> +{
->> +	int i;
->> +
->> +	/* Out of bounds. */
-> 
-> No need for this comment, please remove it.
-
-OK, will remove it.
-
-Thanks,
-Lance
-
-> 
->> +	if (pf >= NFPROTO_NUMPROTO) {
->> +		WARN_ON_ONCE(1);
->> +		return false;
->> +	}
+diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
+index fc323994b..1581b98bc 100644
+--- a/net/ipv4/ip_input.c
++++ b/net/ipv4/ip_input.c
+@@ -589,8 +589,10 @@ static void ip_sublist_rcv_finish(struct list_head *head)
+ static struct sk_buff *ip_extract_route_hint(const struct net *net,
+ 					     struct sk_buff *skb, int rt_type)
+ {
+-	if (fib4_has_custom_rules(net) || rt_type == RTN_BROADCAST ||
+-	    IPCB(skb)->flags & IPSKB_MULTIPATH)
++	const struct iphdr *iph = ip_hdr(skb);
++
++	if (fib4_has_custom_rules(net) || ipv4_is_lbcast(iph->daddr) ||
++	    (iph->daddr == 0 && iph->saddr == 0) || IPCB(skb)->flags & IPSKB_MULTIPATH)
+ 		return NULL;
+ 
+ 	return skb;
+diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+index f639a2ae8..1f212b2ce 100644
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -2210,7 +2210,7 @@ ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+ 		goto martian_source;
+ 	}
+ 
+-	if (rt->rt_type != RTN_LOCAL)
++	if (!(rt->rt_flags & RTCF_LOCAL))
+ 		goto skip_validate_source;
+ 
+ 	reason = fib_validate_source_reason(skb, saddr, daddr, dscp, 0, dev,
+-- 
+2.39.5
 
 
