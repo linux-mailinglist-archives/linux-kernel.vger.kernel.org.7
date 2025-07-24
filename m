@@ -1,477 +1,215 @@
-Return-Path: <linux-kernel+bounces-744842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA456B1117C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0149DB11167
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E5E07AF3AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A16F168D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EC428A405;
-	Thu, 24 Jul 2025 19:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71E12ED859;
+	Thu, 24 Jul 2025 19:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="boSq+Jru"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/iISoze"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D12ECD3D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074052D9EE1;
+	Thu, 24 Jul 2025 19:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384509; cv=none; b=Gm06B2ngv68totQLzDZkfa89qWR/asJl/oJA83nI9sjN6cWFvkLRriMDSwpS8j8fwFLFDHcGe0jWvbawJ4KTon3Bh1QwvWvurEZDZ6ZLs6whoE1HpJNuUds+M5jS9ltIVIMFYJvL2kSzeta9nEsrUa4I+hjenxg1F3Yl+Kc2+NU=
+	t=1753384087; cv=none; b=KAavie70N4UAoi2PWfJoCGFm0dIDvZ/HE5o1FvP+1+P2UUN+0H8pL6DarSepvw0pOlXeXA77OunO0XUMbKppIjS2Dq2X8qcB+vxgJ2xu0pHHotYTZ4wFjUK7X+2P9k3nkISTOyHbOUJvPmt/GfLg86GINn7Fz/KLqNvHikuQU4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384509; c=relaxed/simple;
-	bh=itEhRIVR9wH0XL59GwhTw36oCEtz/+K23ATwCNdEu10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MXNu8l1HWpzTFWHyZHwPXJyJzIBpPDuu23JvBs3LzVTgokhuIQIdeaTsg2P8B/69aFSHtxvIlMvn9/SfemNnEumgVF2U9BrQMoFCHh8Ty1u7ykgaUugqG7QgXlJ1ZTTY1w2lDc4w6gsuXBIBu3m5k9E7uunCFCzQaqIlOsimzwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=boSq+Jru; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753384505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JroCquJ2N/9P4PgYxL/uw2uhd9P40fm8biIZJBC9nOc=;
-	b=boSq+Jru0iO38lFwrbTw6sIg/3vuZOtmP9naCB0bOzrBsATi6L6r+Zh6a9q1XOKKsyvPrm
-	Bi5dLD2MfzMSK1ov1bklWK7oGiu+74veuGvqkDC869uLRdFfX/C9EcV89C7VqQO1vH4vj8
-	gnBLtewjGB0QNyNA6gsa/cdwfyNUXEg=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-EZJw4-iNOMOgBXDiS8mm7A-1; Thu, 24 Jul 2025 15:15:04 -0400
-X-MC-Unique: EZJw4-iNOMOgBXDiS8mm7A-1
-X-Mimecast-MFC-AGG-ID: EZJw4-iNOMOgBXDiS8mm7A_1753384503
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-612be84c047so1664748a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753384503; x=1753989303;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JroCquJ2N/9P4PgYxL/uw2uhd9P40fm8biIZJBC9nOc=;
-        b=gL+QDFex/MOG02c3HHDUqiAUAWElZ/BOL9toMSFyVGhUA3qfxnF21DgedKiPsUP+rC
-         p33qOxG2WIt9kjaA6dH8fsWP6KfAf7UhQeQZ5OwR0xjoJ4TqvgykJd52ZtaalPnm3VjF
-         qxcmzHBFgXoWTLZ2dEon/GQd6JrqAaCQWIhsnOjm+AM6JSyFQ0NRn7zELsWWKZW3UjBW
-         Njnt3VuzTY3J9JfVcwXc40DalgY6S0/9AfxPvvIu6KEY3HgH9xJYWq8ddhIH+wK1gT0o
-         Hhy/yHVGtfThgvYMSvxVtBvlGWY8AGazDT/ffyoV4DznKsWOhpPrUBZywy4scAK47Jyj
-         TDfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx4efAQSwboM2RnBYXnmqIXfUoPjkQpAwN/ZAqXTMNebPVnAaNz2+R9tyM8y6hjklXpiEzVKHr8uUxYFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhiONIuEydYj2Y8rUk4AO64h/nVMk96Qzdc8lBpWJyteNW57nE
-	TRsliATF52gCUIHssfFwqkXpdZDr4qnrx+3O88TFRgv68S+nyDXEpMTCpcYfQF/eMfbkk8V8sOH
-	io34SNl1AIMmgJ2PX3XwB2NJ8QYQ5CwPDR/fgsA3RQM+M5XgO5NVHSdbLASeX/uezYQ==
-X-Gm-Gg: ASbGncu7Pxw8Av7QqGsOkhsPwocpOiY2R6zERr1cYbDPFL8oH3yqGmoTlZrx+3mamdM
-	MtVXCxQG7YmcPxppViZ7NxiV4DizIDtjZXbv0jmjKJiojin/QnKkNxgqrUSWaA2Oc1jkGj6dJ15
-	xx7r0GAI5dpPedlRLOKR5Oc/gohOygavknWG9BkTvNrVfBaEf1kXo51icP18ABz1fsqz6U1FH+0
-	IBOm12McmwAb/Ixb2dWNY2+JLAdpQmwt2RwoberUlTKD7+U4y8BJQY0zv+kpa3ogwPG6LDsS0jl
-	WnrjmuAFy1ZZWFY3ClhAuZhGLGar503hYiE4+28RBhiEamWsjosztWbMf5zRkUkxAaJghAyb8US
-	vp7XZZQEs9VJM8mxVWYBCBdtFyJAuCnyCXdQhVMRJF1sgLslu92IbE0JtPajZGkQNuY4=
-X-Received: by 2002:a17:906:c110:b0:ae3:f524:b51 with SMTP id a640c23a62f3a-af2f66c11afmr841802166b.10.1753384502836;
-        Thu, 24 Jul 2025 12:15:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEu0koRqgoAG3Cni1RYCd4sAXADnOmfGnRrtCgM7GWwt7Ol/1KPVQcp4wXhSJm6qyxTuGAPAA==
-X-Received: by 2002:a05:6000:208a:b0:3a5:25e0:1851 with SMTP id ffacd0b85a97d-3b768eb077emr7272886f8f.7.1753384071638;
-        Thu, 24 Jul 2025 12:07:51 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f01:5500:ba83:3fd7:6836:62f6? (p200300d82f015500ba833fd7683662f6.dip0.t-ipconnect.de. [2003:d8:2f01:5500:ba83:3fd7:6836:62f6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc605cfsm2899678f8f.13.2025.07.24.12.07.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 12:07:51 -0700 (PDT)
-Message-ID: <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
-Date: Thu, 24 Jul 2025 21:07:49 +0200
+	s=arc-20240116; t=1753384087; c=relaxed/simple;
+	bh=uWh4x+mR1n0u6bohy+lADKX0ne5hhZ3KsRUW7OuUvt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIsviycNKYrSkEhal9XfmQautvZ2xgubAk7fnLlrl4Y5PRQGe8PPS2oWBo7nWbcfJgrdTyfzUkP9MVEZtPebYk9f+nCc3SPezv3Bk+Ws9sCPafchXWUZa8H1iBg4Yja6+9vLyDYzsBShLtZnjBZXtcRx9lOWmvPPZ1blfPb7isc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/iISoze; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753384086; x=1784920086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=uWh4x+mR1n0u6bohy+lADKX0ne5hhZ3KsRUW7OuUvt4=;
+  b=f/iISozeEf4ZojgY7VwtQa8xfVW0uYEN2B349LmlIoQcq6GHNRoc4sh3
+   CQHQ0leNXEAwalT99A3CzjbgBWnIBo2gsMu4EhU63nqdJxg1dJf7xYHMq
+   /Ll2+jHO6EBoOAUo5s4rg6zn25hNr3adhRFIFhCVUPLTH0zknxDIEyxIs
+   bLJOxsG+u2t31nRKa+rt2uEWx8QYFyl//x8rQYpTL5GuFdbLuQycYC3Mp
+   cZfC1sXm7V2MavrEmI2k9lPMs1loMfcI5EysWSiTHJiCWQEr/HOX2FwTT
+   Kbe0OKPvyqCEbPz5JyDIcj46EMXVxiS/Pr4GuecEwTzFeOfdfQdpHlPDq
+   g==;
+X-CSE-ConnectionGUID: ESI0mMHPRAenqn4Q8245Cg==
+X-CSE-MsgGUID: uOXSBpMLScSqMcUE+KsTxg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="58335932"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="58335932"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 12:08:05 -0700
+X-CSE-ConnectionGUID: HowpdGPpT2Knv1J3PNZTqg==
+X-CSE-MsgGUID: kvCZJ5m3TMqKc+0Uh0u9dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="165773359"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO localhost) ([10.124.223.185])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 12:08:04 -0700
+Date: Thu, 24 Jul 2025 12:08:03 -0700
+From: David Box <david.e.box@linux.intel.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, bhelgaas@google.com, 
+	vicamo.yang@canonical.com, kenny@panix.com, ilpo.jarvinen@linux.intel.com, 
+	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/ASPM: Allow controller drivers to override default
+ ASPM and CLKPM link state
+Message-ID: <fiuyebro52meyyri2qamj3h2eijjebl3uhgnalo7wwjholwml7@rgpmcegwjxid>
+References: <20250720190140.2639200-1-david.e.box@linux.intel.com>
+ <c6757u3xdyxxuodcjsbpdje7m4qiq26tug5lfxvpbs5wm7r56l@ksy4yge7kg35>
+ <CAJZ5v0jZrPyW9+Ccoo955Y4oje2SiAQA9aCChAoPgM28SJqf5g@mail.gmail.com>
+ <arotuyooaoo6ustmp5gnoj64pkpyvcc3plekh4yt46siuemlik@sv6tjxnggznx>
+ <CAJZ5v0hDEX_ZMiAZU-PwriCpURiw04f=JLAVwP9UJ54wv3HBEg@mail.gmail.com>
+ <scajymgengcxt6e4ekl53hteig4mgu34wwif2r737xvtcdghg4@ej4qn2rbcxzg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
- Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250721090942.274650-1-david@redhat.com>
- <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <scajymgengcxt6e4ekl53hteig4mgu34wwif2r737xvtcdghg4@ej4qn2rbcxzg>
 
-On 24.07.25 20:57, Usama Arif wrote:
+On Thu, Jul 24, 2025 at 10:18:47PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Jul 24, 2025 at 11:58:40AM GMT, Rafael J. Wysocki wrote:
+> > On Wed, Jul 23, 2025 at 11:27 PM David Box <david.e.box@linux.intel.com> wrote:
+> > >
+> > > On Wed, Jul 23, 2025 at 01:54:41PM +0200, Rafael J. Wysocki wrote:
+> > > > On Mon, Jul 21, 2025 at 10:24 AM Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > > >
+> > > > > On Sun, Jul 20, 2025 at 12:01:37PM GMT, David E. Box wrote:
+> > > > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> > > > > > visible to firmware and do not receive BIOS-provided default ASPM and CLKPM
+> > > > > > configuration. As a result, devices behind such domains operate without
+> > > > > > proper power management, regardless of platform intent.
+> > > > > >
+> > > > > > To address this, allow controller drivers to supply an override for the
+> > > > > > default link state by setting aspm_dflt_link_state for their associated
+> > > > > > pci_host_bridge. During link initialization, if this field is non-zero,
+> > > > > > ASPM and CLKPM defaults are derived from its value instead of being taken
+> > > > > > from BIOS.
+> > > > > >
+> > > > > > This mechanism enables drivers like VMD to achieve platform-aligned power
+> > > > > > savings by statically defining the expected link configuration at
+> > > > > > enumeration time, without relying on runtime calls such as
+> > > > > > pci_enable_link_state(), which are ineffective when ASPM is disabled
+> > > > > > globally.
+> > > > > >
+> > > > > > This approach avoids per-controller hacks in ASPM core logic and provides a
+> > > > > > general mechanism for domains that require explicit control over link power
+> > > > > > state defaults.
+> > > > > >
+> > > > > > Link: https://lore.kernel.org/linux-pm/0b166ece-eeec-ba5d-2212-50d995611cef@panix.com
+> > > > > > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> > > > > > ---
+> > > > > >
+> > > > > > Changes from RFC:
+> > > > > >
+> > > > > >   -- Rename field to aspm_dflt_link_state since it stores
+> > > > > >      PCIE_LINK_STATE_XXX flags, not a policy enum.
+> > > > > >   -- Move the field to struct pci_host_bridge since it's being applied to
+> > > > > >      the entire host bridge per Mani's suggestion.
+> > > > > >   -- During testing noticed that clkpm remained disabled and this was
+> > > > > >      also handled by the formerly used pci_enable_link_state(). Add a
+> > > > > >      check in pcie_clkpm_cap_init() as well to enable clkpm during init.
+> > > > > >
+> > > > > >  drivers/pci/controller/vmd.c | 12 +++++++++---
+> > > > > >  drivers/pci/pcie/aspm.c      | 13 +++++++++++--
+> > > > > >  include/linux/pci.h          |  4 ++++
+> > > > > >  3 files changed, 24 insertions(+), 5 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> > > > > > index 8df064b62a2f..6f0de95c87fd 100644
+> > > > > > --- a/drivers/pci/controller/vmd.c
+> > > > > > +++ b/drivers/pci/controller/vmd.c
+> > > > > > @@ -730,7 +730,7 @@ static void vmd_copy_host_bridge_flags(struct pci_host_bridge *root_bridge,
+> > > > > >  }
+> > > > > >
+> > > > > >  /*
+> > > > > > - * Enable ASPM and LTR settings on devices that aren't configured by BIOS.
+> > > > > > + * Enable LTR settings on devices that aren't configured by BIOS.
+> > > > > >   */
+> > > > > >  static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+> > > > > >  {
+> > > > > > @@ -770,7 +770,6 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+> > > > > >        * PCIe r6.0, sec 5.5.4.
+> > > > > >        */
+> > > > > >       pci_set_power_state_locked(pdev, PCI_D0);
+> > > > >
+> > > > > This call becomes useless now.
+> > >
+> > > Missed this. I'll remove it.
+> > >
+> > > > >
+> > > > > > -     pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> > > > > >       return 0;
+> > > > > >  }
+> > > > > >
+> > > > > > @@ -785,6 +784,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+> > > > > >       resource_size_t membar2_offset = 0x2000;
+> > > > > >       struct pci_bus *child;
+> > > > > >       struct pci_dev *dev;
+> > > > > > +     struct pci_host_bridge *vmd_host_bridge;
+> > > > > >       int ret;
+> > > > > >
+> > > > > >       /*
+> > > > > > @@ -911,8 +911,14 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+> > > > > >               return -ENODEV;
+> > > > > >       }
+> > > > > >
+> > > > > > +     vmd_host_bridge = to_pci_host_bridge(vmd->bus->bridge);
+> > > > > > +
+> > > > > > +#ifdef CONFIG_PCIEASPM
+> > > > > > +     vmd_host_bridge->aspm_dflt_link_state = PCIE_LINK_STATE_ALL;
+> > > > > > +#endif
+> > > > >
+> > > > > I think it is better to provide an API that accepts the link state. We can
+> > > > > provide a stub if CONFIG_PCIEASPM is not selected. This will avoid the ifdef
+> > > > > clutter in the callers. Like:
+> > > > >
+> > > > > void pci_set_default_link_state(struct pci_host_bridge *host_bridge,
+> > > > >                                 unsigned int state)
+> > > > > {
+> > > > > #ifdef CONFIG_PCIEASPM
+> > > > >          host_bridge->aspm_default_link_state = state;
+> > > > > #endif
+> > > > > }
+> > > > >
+> > > > > Or you can stub the entire function to align with other ASPM APIs.
+> > > > >
+> > > > > One more thought: Since this API is only going to be called by the host bridge
+> > > > > drivers, we can place it in drivers/pci/controller/pci-host-common.c and name it
+> > > > > as pci_host_common_set_default_link_state().
+> > >
+> > > This would require VMD to select PCI_HOST_COMMON just to set one field in a
+> > > common struct. Seems heavy-handed. Thoughts? Also, with this and dropping the D0
+> > > call, I'll split the VMD cleanup into a separate patch again.
+> > 
+> > So maybe define a __weak pci_host_set_default_pcie_link_state() doing
+> > nothing in the ASPM core and let VMD override it with its own
+> > implementation?
+> > 
 > 
-> 
-> On 21/07/2025 10:09, David Hildenbrand wrote:
->> People want to make use of more THPs, for example, moving from
->> THP=never to THP=madvise, or from THP=madvise to THP=never.
->>
->> While this is great news for every THP desperately waiting to get
->> allocated out there, apparently there are some workloads that require a
->> bit of care during that transition: once problems are detected, these
->> workloads should be started with the old behavior, without making all
->> other workloads on the system go back to the old behavior as well.
->>
->> In essence, the following scenarios are imaginable:
->>
->> (1) Switch from THP=none to THP=madvise or THP=always, but keep the old
->>      behavior (no THP) for selected workloads.
->>
->> (2) Stay at THP=none, but have "madvise" or "always" behavior for
->>      selected workloads.
->>
->> (3) Switch from THP=madvise to THP=always, but keep the old behavior
->>      (THP only when advised) for selected workloads.
->>
->> (4) Stay at THP=madvise, but have "always" behavior for selected
->>      workloads.
->>
->> In essence, (2) can be emulated through (1), by setting THP!=none while
->> disabling THPs for all processes that don't want THPs. It requires
->> configuring all workloads, but that is a user-space problem to sort out.
->>
->> (4) can be emulated through (3) in a similar way.
->>
->> Back when (1) was relevant in the past, as people started enabling THPs,
->> we added PR_SET_THP_DISABLE, so relevant workloads that were not ready
->> yet (i.e., used by Redis) were able to just disable THPs completely. Redis
->> still implements the option to use this interface to disable THPs
->> completely.
->>
->> With PR_SET_THP_DISABLE, we added a way to force-disable THPs for a
->> workload -- a process, including fork+exec'ed process hierarchy.
->> That essentially made us support (1): simply disable THPs for all workloads
->> that are not ready for THPs yet, while still enabling THPs system-wide.
->>
->> The quest for handling (3) and (4) started, but current approaches
->> (completely new prctl, options to set other policies per processm,
->>   alternatives to prctl -- mctrl, cgroup handling) don't look particularly
->> promising. Likely, the future will use bpf or something similar to
->> implement better policies, in particular to also make better decisions
->> about THP sizes to use, but this will certainly take a while as that work
->> just started.
->>
->> Long story short: a simple enable/disable is not really suitable for the
->> future, so we're not willing to add completely new toggles.
->>
->> While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
->> completely for these processes, this scares many THPs in our system
->> because they could no longer get allocated where they used to be allocated
->> for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
->> problem for relevant workloads, because "not THPs" is certainly worse
->> than "THPs only when advised".
->>
->> Could we simply relax PR_SET_THP_DISABLE, to "disable THPs unless not
->> explicitly advised by the app through MAD_HUGEPAGE"? *maybe*, but this
->> would change the documented semantics quite a bit, and the versatility
->> to use it for debugging purposes, so I am not 100% sure that is what we
->> want -- although it would certainly be much easier.
->>
->> So instead, as an easy way forward for (3) and (4), an option to
->> make PR_SET_THP_DISABLE disable *less* THPs for a process.
->>
->> In essence, this patch:
->>
->> (A) Adds PR_THP_DISABLE_EXCEPT_ADVISED, to be used as a flag in arg3
->>      of prctl(PR_SET_THP_DISABLE) when disabling THPs (arg2 != 0).
->>
->>      For now, arg3 was not allowed to be set (-EINVAL). Now it holds
->>      flags.
->>
->> (B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
->>      PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
->>
->>      For now, it would return 1 if THPs were disabled completely. Now
->>      it essentially returns the set flags as well.
->>
->> (C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
->>      the semantics clearly.
->>
->>      Fortunately, there are only two instances outside of prctl() code.
->>
->> (D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
->>      with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
->>
->>      Fortunately, we only have to extend vma_thp_disabled().
->>
->> (E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
->>      disabled completely
->>
->>      Only indicating that THPs are disabled when they are really disabled
->>      completely, not only partially.
->>
->> The documented semantics in the man page for PR_SET_THP_DISABLE
->> "is inherited by a child created via fork(2) and is preserved across
->> execve(2)" is maintained. This behavior, for example, allows for
->> disabling THPs for a workload through the launching process (e.g.,
->> systemd where we fork() a helper process to then exec()).
->>
->> There is currently not way to prevent that a process will not issue
->> PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
->> to PR_SET_THP_DISABLE through another flag if ever required. The known
->> users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
->> that is not added for now.
->>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Mike Rapoport <rppt@kernel.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Usama Arif <usamaarif642@gmail.com>
->> Cc: SeongJae Park <sj@kernel.org>
->> Cc: Jann Horn <jannh@google.com>
->> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Cc: Yafang Shao <laoar.shao@gmail.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> ---
->>
->> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
->> think there might be real use cases where we want to disable any THPs --
->> in particular also around debugging THP-related problems, and
->> "THP=never" not meaning ... "never" anymore. PR_SET_THP_DISABLE will
->> also block MADV_COLLAPSE, which can be very helpful. Of course, I thought
->> of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
->> I just don't like the semantics.
->>
->> "prctl: allow overriding system THP policy to always"[1] proposed
->> "overriding policies to always", which is just the wrong way around: we
->> should not add mechanisms to "enable more" when we already have an
->> interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
->> weird otherwise.
->>
->> "[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
->> setting the default of the VM_HUGEPAGE, which is similarly the wrong way
->> around I think now.
->>
->> The proposals by Lorenzo to extend process_madvise()[3] and mctrl()[4]
->> similarly were around the "default for VM_HUGEPAGE" idea, but after the
->> discussion, I think we should better leave VM_HUGEPAGE untouched.
->>
->> Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
->> we essentially want to say "leave advised regions alone" -- "keep THP
->> enabled for advised regions",
->>
->> The only thing I really dislike about this is using another MMF_* flag,
->> but well, no way around it -- and seems like we could easily support
->> more than 32 if we want to, or storing this thp information elsewhere.
->>
->> I think this here (modifying an existing toggle) is the only prctl()
->> extension that we might be willing to accept. In general, I agree like
->> most others, that prctl() is a very bad interface for that -- but
->> PR_SET_THP_DISABLE is already there and is getting used.
->>
->> Long-term, I think the answer will be something based on bpf[5]. Maybe
->> in that context, I there could still be value in easily disabling THPs for
->> selected workloads (esp. debugging purposes).
->>
->> Jann raised valid concerns[6] about new flags that are persistent across
->> exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
->> consider it having a similar security risk as our existing
->> PR_SET_THP_DISABLE, but devil is in the detail.
->>
->> This is *completely* untested and might be utterly broken. It merely
->> serves as a PoC of what I think could be done. If this ever goes upstream,
->> we need some kselftests for it, and extensive tests.
->>
->> [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
->> [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
->> [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
->> [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
->> [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
->> [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
->>
->> ---
->>   Documentation/filesystems/proc.rst |  5 +--
->>   fs/proc/array.c                    |  2 +-
->>   include/linux/huge_mm.h            | 20 ++++++++---
->>   include/linux/mm_types.h           | 13 +++----
->>   include/uapi/linux/prctl.h         |  7 ++++
->>   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
->>   mm/khugepaged.c                    |  2 +-
->>   7 files changed, 78 insertions(+), 29 deletions(-)
->>
->> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
->> index 2971551b72353..915a3e44bc120 100644
->> --- a/Documentation/filesystems/proc.rst
->> +++ b/Documentation/filesystems/proc.rst
->> @@ -291,8 +291,9 @@ It's slow but very precise.
->>    HugetlbPages                size of hugetlb memory portions
->>    CoreDumping                 process's memory is currently being dumped
->>                                (killing the process may lead to a corrupted core)
->> - THP_enabled		     process is allowed to use THP (returns 0 when
->> -			     PR_SET_THP_DISABLE is set on the process
->> + THP_enabled                 process is allowed to use THP (returns 0 when
->> +                             PR_SET_THP_DISABLE is set on the process to disable
->> +                             THP completely, not just partially)
->>    Threads                     number of threads
->>    SigQ                        number of signals queued/max. number for queue
->>    SigPnd                      bitmap of pending signals for the thread
->> diff --git a/fs/proc/array.c b/fs/proc/array.c
->> index d6a0369caa931..c4f91a784104f 100644
->> --- a/fs/proc/array.c
->> +++ b/fs/proc/array.c
->> @@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
->>   	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
->>   
->>   	if (thp_enabled)
->> -		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
->> +		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
->>   	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
->>   }
->>   
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index e0a27f80f390d..c4127104d9bc3 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -323,16 +323,26 @@ struct thpsize {
->>   	(transparent_hugepage_flags &					\
->>   	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
->>   
->> +/*
->> + * Check whether THPs are explicitly disabled through madvise or prctl, or some
->> + * architectures may disable THP for some mappings, for example, s390 kvm.
->> + */
->>   static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>   		vm_flags_t vm_flags)
->>   {
->> +	/* Are THPs disabled for this VMA? */
->> +	if (vm_flags & VM_NOHUGEPAGE)
->> +		return true;
->> +	/* Are THPs disabled for all VMAs in the whole process? */
->> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
->> +		return true;
->>   	/*
->> -	 * Explicitly disabled through madvise or prctl, or some
->> -	 * architectures may disable THP for some mappings, for
->> -	 * example, s390 kvm.
->> +	 * Are THPs disabled only for VMAs where we didn't get an explicit
->> +	 * advise to use them?
->>   	 */
->> -	return (vm_flags & VM_NOHUGEPAGE) ||
->> -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
->> +	if (vm_flags & VM_HUGEPAGE)
->> +		return false;
->> +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
->>   }
-> 
-> 
-> Hi David,
+> No. There are other controller drivers (like pcie-qcom) going to use this API.
+> So please move it to the pci-host-common library as it should be.
 
-Hi!
+I was going to suggest that it could simply stay in aspm.c.
+pci_enable_link_state_() is there and currently only used by controllers as
+well.
 
-> 
-> Over here, with MMF_DISABLE_THP_EXCEPT_ADVISED, MADV_HUGEPAGE will succeed as vm_flags has
-> VM_HUGEPAGE set, but MADV_COLLAPSE will fail to give a hugepage (as VM_HUGEPAGE is not set
-> and MMF_DISABLE_THP_EXCEPT_ADVISED is set) which I feel might not be the right behaviour
-> as MADV_COLLAPSE is "advise" and the prctl flag is PR_THP_DISABLE_EXCEPT_ADVISED?
-
-THPs are disabled for these regions, so it's at least consistent with 
-the "disable all", but ...
-
-> 
-> This will be checked in multiple places in madvise_collapse: thp_vma_allowable_order,
-> hugepage_vma_revalidate which calls thp_vma_allowable_order and hpage_collapse_scan_pmd
-> which also ends up calling hugepage_vma_revalidate.
- > > A hacky way would be to save and overwrite vma->vm_flags with 
-VM_HUGEPAGE at the start of madvise_collapse
-> if VM_NOHUGEPAGE is not set, and reset vma->vm_flags to its original value at the end of madvise_collapse
-> (Not something I am recommending, just throwing it out there).
-
-Gah.
-
-> 
-> Another possibility is to pass the fact that you are in madvise_collapse to these functions
-> as an argument, this might look ugly, although maybe not as ugly as hugepage_vma_revalidate
-> already has collapse control arg, so just need to take care of thp_vma_allowable_orders.
-
-Likely this.
-
-> 
-> Any preference or better suggestions?
-
-What you are asking for is not MMF_DISABLE_THP_EXCEPT_ADVISED as I 
-planned it, but MMF_DISABLE_THP_EXCEPT_ADVISED_OR_MADV_COLLAPSE.
-
-Now, one could consider MADV_COLLAPSE an "advise". (I am not opposed to 
-that change)
-
-Indeed, the right way might be telling vma_thp_disabled() whether we are 
-in collapse.
-
-Can you try implementing that on top of my patch to see how it looks?
-
--- 
-Cheers,
-
-David / dhildenb
-
+David
 
