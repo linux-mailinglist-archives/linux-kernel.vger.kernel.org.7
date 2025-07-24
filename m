@@ -1,154 +1,160 @@
-Return-Path: <linux-kernel+bounces-744383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DE2B10C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAC1B10C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA123BDF55
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A133AE742
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C662DC325;
-	Thu, 24 Jul 2025 13:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B063C2E041B;
+	Thu, 24 Jul 2025 13:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/rhJZXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d8mwFVix"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883DB18E025;
-	Thu, 24 Jul 2025 13:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A573B18E025;
+	Thu, 24 Jul 2025 13:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365072; cv=none; b=kQPZavjc+yy/nI4XvhUJoVv0m6q4c7xbIaQcep5cYcOhXbUBLNpYqEn8PN8NyrKVD6PXO21ejANDRF03hqP3tHeka1hpfYaucTAOK+cN8UwprPXXwOsp/rAzWE8TsZ0OBvuuD5IZ0Lsu/hbLyiwHC/aUPZCvDhGwn7D3rAiVkQE=
+	t=1753365101; cv=none; b=sampfWWc9MECCBFS8G3LtZ3g5C6PcMYCtj/D8v42glRL1ZePpEqiTSL7QwdpYXabhVNI0/MrcP9bhjyu12E7Cvr4nGt1BtgPrF+L9taA1Aw+ZKnSRsjmqV4dPH0hTE5kspA7oL/yxoJsKZXIUeZGtSXujKGhCPoXFlpR8mXKMpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365072; c=relaxed/simple;
-	bh=a5F5WdeNr+6UL1FTjKLm8yq2/Q45+2nnNzBSMbUAfjw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hd7rRkyqGmd8mviwF9qh4f8w58rmxnVZaAJXro076xJsTqXXn/iiMjxcN1vvKpX/S1JwBBC/KY/ZN6QCiTne4GN18FuGiVsX2mFfIy6CsfupaIQTrFkWgrccCSEXz93EYhsVF4tTfkg7yC3ZV1VpxpP7vMo9CARcsjzA1ljuPJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/rhJZXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73387C4CEF5;
-	Thu, 24 Jul 2025 13:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753365072;
-	bh=a5F5WdeNr+6UL1FTjKLm8yq2/Q45+2nnNzBSMbUAfjw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=p/rhJZXJPL+hUu5+jASgQUGlnPJUr1Xc29vibLZ8cNKZe01Mj5RN+KYj7LDB+xhJb
-	 o/hSi4YULMPs3UbgtcGgxe/YDYUPUE8xO8HC5+Jmd0ahq+2sKqaMEivl3B75n/w2sQ
-	 tJaL41C7P/tqlizhqTU9Uq/xra5sXzQCbNBMnnzr+UXC/Uw0f+7ppybFg/Ny7vEvC8
-	 iRMRIWOpswAtwWBK926ekJULZhZcKmwdDTC/Sqteu2FiAd0MNEXULYbRqpCM8ANcGX
-	 JP0Zv3NVzmYt9jbIeeGkxoajWjxhIStbkfPpciaPsAuweTqnEBCI7LztQrWQ6+Nd9/
-	 VQf1lb2KCJLXQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Mark Brown <broonie@kernel.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Michael Walle <mwalle@kernel.org>,  Miquel
- Raynal <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  linux-spi@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 2/3] mtd: spi-nor: Add a driver for the VIA/WonderMedia
- serial flash controller
-In-Reply-To: <CABjd4YyRScBgDbi8Sk0D3vxcmLF8+YBetUdkfhrS_4Y7M+gS1g@mail.gmail.com>
-References: <20250510-wmt-sflash-v1-0-02a1ac6adf12@gmail.com>
-	<20250510-wmt-sflash-v1-2-02a1ac6adf12@gmail.com>
-	<mafs01psu89sx.fsf@kernel.org>
-	<CABjd4YyRScBgDbi8Sk0D3vxcmLF8+YBetUdkfhrS_4Y7M+gS1g@mail.gmail.com>
-Date: Thu, 24 Jul 2025 15:51:08 +0200
-Message-ID: <mafs0h5z1snn7.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1753365101; c=relaxed/simple;
+	bh=A9bwIrJRxNNdderC3N4yfoQuVVWuFM3HdHlRwblbGSo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Sb22XgTbRbV1sfpOlORURTBAXIHuXLIWPtKKQ7B6yqJ7qpSlZ+Lv9Z+Vs81+74tTfyytZTF6YgRYIQKvVaApMlqH0CuzAJtvTE1yg+bWrQd+nZndpETjwAhFBcWnOmEYvMdhMCoXrZXOBN5j1srQ84vu9NLRrnWZ3hvUz+bh4dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d8mwFVix; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OA0lhj031506;
+	Thu, 24 Jul 2025 13:51:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jyLV8i7wRnKFP/6p+6N7p8
+	ZtV3DeBlsECF50H98gTgU=; b=d8mwFVixsPy5QMiPHuOGgeYIwDY08hU44TSbQB
+	klP6JNP8hBdh9AUju4UyO2le3ZRRQxFk/vmaf3RycvnSDiDLp36rMAP3q5pNDhXU
+	wbvbZDNA4l28jzPR/9mJZOZtkRhfKbU22fJcHFFO5UbUiPWQ6YoI4nnVShipBXYo
+	arkiFWUWGu+AJedikPETO5xbtdl8mOrYpbEgjZm48/jdeVyD0cTKiluUXGhkLNQf
+	QaH6gYe8EDj8r344vXCNpyAapSBYC8i+eT5sdec/7qEX/q8YK6frbKIi0rdU5TdZ
+	xl7SPthu6Lfhg9acfkb2iQwsFBDyQ5Q8Fgv+bdbHVJq1DvEA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048vf90y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 13:51:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56ODpQW8012102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 13:51:26 GMT
+Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 24 Jul 2025 06:51:22 -0700
+From: Vivek.Pernamitta@quicinc.com
+Subject: [PATCH 0/4] net: mhi : Add support to enable ethernet interface
+Date: Thu, 24 Jul 2025 19:21:16 +0530
+Message-ID: <20250724-b4-eth_us-v1-0-4dff04a9a128@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFQ6gmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcyMT3SQT3dSSjPjSYl1L8zSDFNOkRCBloQRUX1CUmpZZATYrOra2FgD
+ 6R8BeWwAAAA==
+X-Change-ID: 20250724-b4-eth_us-97f0d5ba7f08
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Manivannan Sadhasivam
+	<mani@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        Vivek Pernamitta
+	<quic_vpernami@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753365082; l=1642;
+ i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
+ bh=A9bwIrJRxNNdderC3N4yfoQuVVWuFM3HdHlRwblbGSo=;
+ b=kBwX7SIVNIo2GmsRmSKTaSto0Mdc8SYIiCngVSieJamZq50xgxhBNrzg9DmqXWbheDx63oZHM
+ pPQ07PWKzuvALmNQhzqTm0QImOUXN8GCRG4fC4sg4Bi5iT9owui7/RZ
+X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
+ pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fjHMX2Oz5MsGKuGCLSz2NVGuJmJ5YJaC
+X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=68823a5e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=m4bhzUhuyDQp0F8wBj4A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEwNSBTYWx0ZWRfX1VqTaSx/gJ7r
+ fr8CASlZwDzDPcB/7tk2X+Mx0lv9Ul9L4bskuaJrinWRvabVym9x2IMdOCPHDU2AHvccm7Xf3fC
+ aVetlByNwFPlk3nVAoremORlSMrYXu//CtZvo1iEbEbRx3HIxOnHIX4rgTtTBu3YGkga54+GQj7
+ 2NlcW14g/+zRXEUWaw31Yk/IXRBSgX00h+lZtvPE/Tt5/thhLbhZK0ClSPT7oUI8VDaVKN6UcFQ
+ ypOJhkM6yILaDSoe74E0MwZ1Ifih8qJBKRMt3CZ0RqEn5IjNyPgpF6rgFgM7JoLR9MBgoPq1Wh5
+ a0zY7xIbAcPGxgtgaufzwauQxyARFOOnLmGoiblqCxNbeJ6/z0Ua9Ex8U2o4H6NAcTyuUTzWDBu
+ b0yFJQm5odQkxNwyY7xycTHYC27IIzNvEVYXqzvQhu0cEvH60FOSKps7l2Y55cbhWu4zhHul
+X-Proofpoint-ORIG-GUID: fjHMX2Oz5MsGKuGCLSz2NVGuJmJ5YJaC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=765
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1011
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507240105
 
-Hi Alexey,
+- Add support to enable ethernet network device for MHI NET driver
+  currenlty we have support only NET driver.
+  so new client can be configured to be Ethernet type over MHI by
+  setting "mhi_device_info.ethernet_if = true"
 
-This email got buried in my inbox somewhere...
+- Change the naming format for MHI network interfaces to improve clarity
+  when multiple MHI controllers are connected.
 
-On Mon, May 12 2025, Alexey Charkov wrote:
+  Currently, MHI NET device interfaces are created as mhi_swip<n>/mhi_hwip<n>
+  for each channel. This makes it difficult to distinguish between channels
+  when multiple EP/MHI controllers are connected, as we cannot map the
+  corresponding MHI channel to the respective controller and channel.
+  To address this, create a new MHI interface name based on the device name and
+  channel name.
 
-> Hi Pratyush,
->
-> On Mon, May 12, 2025 at 1:20=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
-rg> wrote:
->>
->> Hi Alexey,
->>
->> On Sat, May 10 2025, Alexey Charkov wrote:
->>
->> > The controller is tailored to SPI NOR flash memory and abstracts away =
-all
->> > SPI communications behind a small set of MMIO registers and a physical
->> > memory mapping of the actual chip contents.
->> >
->> > It doesn't expose chip probing functions beyond reading the ID though,=
- so
->> > use lower level chip opcodes via the "programmable command mode" of the
->> > controller and the kernel's SPI NOR framework to avoid hard-coding chip
->> > parameters for each ID the way the vendor kernel does it.
->> >
->> > Currently tested on a WonderMedia WM8950 SoC with a Macronix MX25L4005A
->> > flash chip (APC Rock board), but should work on all VIA/WonderMedia So=
-Cs
->> >
->> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
->> > ---
->> >  MAINTAINERS                                  |   1 +
->> >  drivers/mtd/spi-nor/controllers/Kconfig      |  14 +
->> >  drivers/mtd/spi-nor/controllers/Makefile     |   1 +
->> >  drivers/mtd/spi-nor/controllers/wmt-sflash.c | 525 ++++++++++++++++++=
-+++++++++
->>
->> Drivers in drivers/mtd/spi-nor/controllers/ are deprecated, and we want
->> to eventually get rid of the API. The expected way is for drivers to use
->> SPI MEM (drivers/spi/spi-mem.c). SPI MEM drivers are usually more
->> general and not tailored specifically to SPI NOR flashes, so it might be
->> a bit tricky to write drivers for specialized hardware with it. But I
->> think the drivers/spi/spi-intel.c driver is written for similar kind of
->> hardware so it should be possible.
->
-> Oops. I've had a look at spi-mem, and it seems like it's not a
-> particularly fitting abstraction for this controller.
->
-> From what I understood, spi-mem primarily expects to be talking SPI
-> opcodes to the controller, and for the controller/driver to bring
-> their own chip probing routines. This controller on the other hand
-> abstracts the opcodes away, and wants someone to tell it what its
-> flash chip can do (the controller itself can only get a chip ID in
-> "normal" mode, and it needs to somehow know the chip size and
-> standard/fast read capability of the chip). So pretty much the
-> opposite, huh.
+- Add support for new MHI channels for M-plane, NETCONF and S-plane.
 
-Does it use SFDP to figure out which opcodes to use? Then it feels very
-similar to intel-spi. See [0] for example. I know this is fitting a
-square peg in a round hole, but if it isn't too painful then it would
-make maintenance on SPI NOR end a bit easier.
+Initial post for Ethernet support in MHI driver is posted here
+https://lore.kernel.org/all/1689762055-12570-1-git-send-email-quic_vpernami@quicinc.com/
 
-Mika (+Cc), you did the conversion of intel-spi to SPI MEM. Maybe you
-can share how painful/easy the conversion was, and if it ended up being
-maintainable?
+Signed-off-by: 
 
->
-> In the end, I only need something like spi_nor_detect() and can do the
-> rest directly on top of the MTD framework without touching any SPI
-> opcodes after the detection is done. Is there any other non-deprecated
-> framework that can provide something like this? Maybe physmap? It
-> looks even older than SPI NOR though :)
+---
+Vivek Pernamitta (4):
+      net: mhi: Rename MHI interface to improve clarity
+      net: mhi : Add support to enable ethernet interface
+      net: mhi: Add MHI IP_SW1, ETH0 and ETH1 interface
+      bus: mhi: host: pci: Enable IP_SW1, IP_ETH0 and IP_ETH1 channels for QDU100
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/spi/spi-intel.c#n905
+ drivers/bus/mhi/host/pci_generic.c |   8 +++
+ drivers/net/mhi_net.c              | 100 +++++++++++++++++++++++++++++++------
+ 2 files changed, 93 insertions(+), 15 deletions(-)
+---
+base-commit: 9ee814bd78e315e4551223ca7548dd3f6bdcf1ae
+change-id: 20250724-b4-eth_us-97f0d5ba7f08
 
---=20
-Regards,
-Pratyush Yadav
+Best regards,
+-- 
+Vivek Pernamitta <<quic_vpernami@quicinc.com>>
+
 
