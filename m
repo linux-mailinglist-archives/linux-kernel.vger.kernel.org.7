@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-744667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FE7B10FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:34:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12A7B10FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0931CE0EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:34:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD827BD509
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE2E2EBDD9;
-	Thu, 24 Jul 2025 16:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390A72ECD24;
+	Thu, 24 Jul 2025 16:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XjM5KkS9"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVilWEzi"
+Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9442EBBAC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598A62EBDC7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753374808; cv=none; b=CHhaiCKgcdzbusErq3WJxx+VeZMQhxBdmY43F2+QqUtflVFa1l2KWf5VWrY1TcrRjJoxPewbSvNZUOizd94KDk3HzyM4AQ3X8TYvZif8V3Jc6leRXfk2m9n1+GbjRj/K7Nf3hGWvPREmn9ULKlA0/+e81ALV3XrDwSNIGU+a9/Q=
+	t=1753374810; cv=none; b=R7hJypg8E4nWYz3rKfpC3OFJZpUnD6+KlO3Ugyc7rYz0SkX8z550mQYsyGJYXtufaGIPG2+85OgGcczVmAU5GY6aZ8wqUKd0dWeb/u/kHpJ6hdvPh80FhCMMG+ce3uU0yUwpwYwk8r3ZjjX0l0j41XGzSq5Bs+3BINM+T6/SOiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753374808; c=relaxed/simple;
-	bh=i87jvX210l24c7RqxS+bUYqmgL8+oZvqMbe8qDfav9Y=;
+	s=arc-20240116; t=1753374810; c=relaxed/simple;
+	bh=jWmhHDZHMj/3vn0T7Yg57/66qyMX0GILKf6742UzDIc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=J4ivDgiWPcA5S3NRMeLxV9lZl1sS9w5ctmDit+KgCXV33bQu5ZLUolytP6U+zMGhfImX7/EEz+02VUh8t4p6KrBSaI1/ubtosgcQSHLGwGpbK2WlL9Bxo202Q40sOHOKjjQ1XXmu9Hy33sd8YgBWcwCd1c7Py3r9NN4L9q1HP14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XjM5KkS9; arc=none smtp.client-ip=209.85.210.202
+	 To:Content-Type; b=eZqgUk+l50IHbDdITLKbgbJyfCzoLpbgV+DGL1gxTFabcrSwKvZL6GblmqaLdO00M6KvAkaO8AFyJFGJu5dWeZszTO3cYxcPdqinDgPheJ47tPt8CEuv+ts2XFAAifnQRI9XTo4cUA6tCbyGwnjq0E2r9aU37r1Y+Z0XcokzixE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fVilWEzi; arc=none smtp.client-ip=209.85.210.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-756a4884dfcso1257230b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:33:26 -0700 (PDT)
+Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-73e542afa9dso1531006a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:33:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753374806; x=1753979606; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753374807; x=1753979607; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=62dSX49aFLikEjIUMEVRlCmIJbHK4eeNScGSo/Mzprs=;
-        b=XjM5KkS9vBcw5ali616l9FMbzTggDUX60SKh6sdl4g3HEcwSmVVeoY4mWb8AOBRITC
-         r5HcghPWgfWOscXnZ4XeuSHSweuudWilg6KWATrilLU3IjPTtoJJY8pEJvpUwXRFQJpQ
-         eHVv+4i+fMOUQucr+vNQy4TmCM6R/Oxx5GdMX8DjSoXQMjSsDL+mgCIIF0JJcvIOLOnD
-         nW3CPHG+QTmYk5sw6ulwdDWx4Ak9nuTqyxPNBJWoc3r6jFudxyGTblqhIJsJbBXsALQT
-         zzjeiQL57iIvZskL+MQAfv6T2LgaOWdvREw3SbtYaCfRJC/mjzLL9qsA0GoErxfBctzy
-         ykVg==
+        bh=k8rjfFzd/+TAfQBkNwQcdwCN90rmJcS2goaVAmuWKh4=;
+        b=fVilWEzisKewcIKQ/VuE2GrYq9psuDo2oh9HyLZBQTd5LpWOPtth/D2aVt/+pO5Lil
+         4b7d2w4t2sawZ1rnqJSvEd7Fvt3vELwTdEbYz61DH/I6Pz7zIXcuGIeIsUtudHJfHJKr
+         6bblw3HAPLifH/rNQWOoAUerLV2L4LpdulUUoy4Cok1tjix7tddGtIvVIuDoWAAaxmmZ
+         R6+RRKkFxt5iOqINr+rqK0rs7Mn/DeIUlPui+xS0ZftOiLPSqwP66yDpHotYEOIaHR1T
+         JTRAJOm2Bgt5RWVTqncPXSKdjGfoyDFLYZUKJmruLI0pY2B2YM/lR2gc9rOsjS7AMkBk
+         d49w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753374806; x=1753979606;
+        d=1e100.net; s=20230601; t=1753374807; x=1753979607;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=62dSX49aFLikEjIUMEVRlCmIJbHK4eeNScGSo/Mzprs=;
-        b=CSS/DnB+Sq1XJovLDQVhXF2jOfUoHfLQp6/evD8XQyCKQ+a/X1CukRbA+YlOeVAiFV
-         QojhXPk4GCPT/k7pICCvwRI/h9PGycwnWdnU1dn24+8J4PotZkUzFVOvssPQLSWHBLA7
-         TXRvnAJcRrslyibCyY05tzP7H0J5iw0J/XIVe93pNn8rWAx1A1ReYjRkPpGtO4GcNKCo
-         s556ZSD1YrtHOlHOS/tgHKhenKhyiUjAGa8CZ/AZahaEbWFtxdrgP5QqxYTpw6odYLr0
-         6GRzNq+7WD98Uop253EbcZaNoAY3pUDip3cE37o9JNI3n/+iBpuyBKecj601wiOgK6JR
-         Ac3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXhyFF9NwKRxttLIliR4ImYf+0xImyhhK6WkKDcxGvTCY2C1cEm7V5TqdXAWj2u4HLnNE0oCs5sixAWYzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywR8KGd2SMdhJSYJNJ70ASRQgB1KzSBV4f5mojvKcQpAFIC2Qc
-	rqHrfN1MEbe6RKxzqkTxghtiDZ0Wg9FTpZtn7yUUcYo/8dsWN9gNRr9clVsStnZxgpORYRy9PMf
-	B1Jmd6+wtLw==
-X-Google-Smtp-Source: AGHT+IFZCjFgmdaI3NnelSKPac8n0knclpKXQWik2c3NFOqFyfb4a3FQ6KRAvAGmmyaW3sKiM5KoSl2FkuwJ
-X-Received: from pfvf6.prod.google.com ([2002:a05:6a00:1ac6:b0:747:a8e8:603e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:d80f:b0:220:82c7:309c
- with SMTP id adf61e73a8af0-23d48fe74b2mr12168299637.7.1753374805136; Thu, 24
- Jul 2025 09:33:25 -0700 (PDT)
-Date: Thu, 24 Jul 2025 09:32:44 -0700
+        bh=k8rjfFzd/+TAfQBkNwQcdwCN90rmJcS2goaVAmuWKh4=;
+        b=CO0QGAHJIbofDUDCrj5ncVlIBsKEVFDBmAqUrE5gQFhUIAuf4DfjrPSv40INwm7+1o
+         uHH14MXflS8ckZH2lrk0O7ii9I+bspE42Raq8JEK9dycmW87DPl8rW0zvDrWBToyyBkc
+         +AdRS78xSACcAPBcwLf42835dqZPidCakYPlWjRr+i3IH0hmfyV5F9cfD9kPQemvP9xF
+         kJSZBlp1YPkkrbM3tts/ryvIgFRgUIVslzbI6KTkjvMF/JKsa0SJvKIzBxB9gQpVXT7M
+         hqURBCS0ZvQBDmBG0sP1V/D2HtGtUK8LupT8Tny7NIWb0yvlgLMXbEoP0e2GJl2UFStb
+         Cwvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVONoP31AJJ4qpzRnI0UzMQsmCQASGNEOgtrR2wfR53BHlgI9qCacVM6S1hypKUY3MYiNZFeL9tVKmWS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbymLWtimXqw/AVKIGAcTzrdvYfzL2KGVKR6kbmLfPgqDNyFek
+	k7nUUBiHyS8yxPbJwAdezLuPJMBAkWOSrTQVyhxEGI/TTJTDZQP+sw704Fe1bLRAvz8kF0Z8S+k
+	wscSQS81n/Q==
+X-Google-Smtp-Source: AGHT+IGeB/DLDZyaNVsHJ4AdldqG7OAmJC6adn7cWB80Ve9eLfKQAPhnQItfzN+IISZ5vKzoha8DgZyIV7TB
+X-Received: from oabti11.prod.google.com ([2002:a05:6871:890b:b0:2c8:7806:5ad0])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:270e:b0:735:b9db:5939
+ with SMTP id 46e09a7af769-74088ab9e84mr6005118a34.10.1753374807417; Thu, 24
+ Jul 2025 09:33:27 -0700 (PDT)
+Date: Thu, 24 Jul 2025 09:32:45 -0700
 In-Reply-To: <20250724163302.596743-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250724163302.596743-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250724163302.596743-5-irogers@google.com>
-Subject: [PATCH v6 04/22] perf build-id: Mark DSO in sample callchains
+Message-ID: <20250724163302.596743-6-irogers@google.com>
+Subject: [PATCH v6 05/22] perf build-id: Ensure struct build_id is empty
+ before use
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -103,53 +104,246 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Previously only the sample IP's map DSO would be marked hit for the
-purposes of populating the build ID cache. Walk the call chain to mark
-all IPs and DSOs.
+If a build ID is read then not all code paths may ensure it is empty
+before use. Initialize the build_id to be zero-ed unless there is
+clear initialization such as a call to build_id__init.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/build-id.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ tools/perf/bench/inject-buildid.c  | 2 +-
+ tools/perf/builtin-buildid-cache.c | 8 ++++----
+ tools/perf/tests/pe-file-parsing.c | 2 +-
+ tools/perf/tests/sdt.c             | 2 +-
+ tools/perf/util/build-id.c         | 6 +++---
+ tools/perf/util/debuginfo.c        | 2 +-
+ tools/perf/util/probe-event.c      | 3 ++-
+ tools/perf/util/probe-finder.c     | 3 ++-
+ tools/perf/util/symbol-minimal.c   | 2 +-
+ tools/perf/util/symbol.c           | 5 +++--
+ tools/perf/util/synthetic-events.c | 2 +-
+ 11 files changed, 20 insertions(+), 17 deletions(-)
 
+diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
+index f55c07e4be94..aad572a78d7f 100644
+--- a/tools/perf/bench/inject-buildid.c
++++ b/tools/perf/bench/inject-buildid.c
+@@ -80,7 +80,7 @@ static int add_dso(const char *fpath, const struct stat *sb __maybe_unused,
+ 		   int typeflag, struct FTW *ftwbuf __maybe_unused)
+ {
+ 	struct bench_dso *dso = &dsos[nr_dsos];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 
+ 	if (typeflag == FTW_D || typeflag == FTW_SL)
+ 		return 0;
+diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+index 3f7739b21148..e936a34b7d37 100644
+--- a/tools/perf/builtin-buildid-cache.c
++++ b/tools/perf/builtin-buildid-cache.c
+@@ -175,7 +175,7 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	int err;
+ 	struct nscookie nsc;
+ 
+@@ -198,7 +198,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+ static int build_id_cache__remove_file(const char *filename, struct nsinfo *nsi)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	struct nscookie nsc;
+ 
+ 	int err;
+@@ -275,7 +275,7 @@ static int build_id_cache__purge_all(void)
+ static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
+ {
+ 	char filename[PATH_MAX];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 
+ 	if (!dso__build_id_filename(dso, filename, sizeof(filename), false))
+ 		return true;
+@@ -303,7 +303,7 @@ static int build_id_cache__fprintf_missing(struct perf_session *session, FILE *f
+ static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	struct nscookie nsc;
+ 
+ 	int err;
+diff --git a/tools/perf/tests/pe-file-parsing.c b/tools/perf/tests/pe-file-parsing.c
+index fff58b220c07..30c7da79e109 100644
+--- a/tools/perf/tests/pe-file-parsing.c
++++ b/tools/perf/tests/pe-file-parsing.c
+@@ -24,7 +24,7 @@ static int run_dir(const char *d)
+ {
+ 	char filename[PATH_MAX];
+ 	char debugfile[PATH_MAX];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	char debuglink[PATH_MAX];
+ 	char expect_build_id[] = {
+ 		0x5a, 0x0f, 0xd8, 0x82, 0xb5, 0x30, 0x84, 0x22,
+diff --git a/tools/perf/tests/sdt.c b/tools/perf/tests/sdt.c
+index 919712899251..de4c7916b40d 100644
+--- a/tools/perf/tests/sdt.c
++++ b/tools/perf/tests/sdt.c
+@@ -28,7 +28,7 @@ static int target_function(void)
+ static int build_id_cache__add_file(const char *filename)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	int err;
+ 
+ 	err = filename__read_build_id(filename, &bid);
 diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index aa35dceace90..3386fa8e1e7e 100644
+index 3386fa8e1e7e..1abd5a670665 100644
 --- a/tools/perf/util/build-id.c
 +++ b/tools/perf/util/build-id.c
-@@ -42,10 +42,20 @@
- 
- static bool no_buildid_cache;
- 
-+static int mark_dso_hit_callback(struct callchain_cursor_node *node, void *data __maybe_unused)
-+{
-+	struct map *map = node->ms.map;
-+
-+	if (map)
-+		dso__set_hit(map__dso(map));
-+
-+	return 0;
-+}
-+
- int build_id__mark_dso_hit(const struct perf_tool *tool __maybe_unused,
- 			   union perf_event *event,
- 			   struct perf_sample *sample,
--			   struct evsel *evsel __maybe_unused,
-+			   struct evsel *evsel,
- 			   struct machine *machine)
+@@ -95,7 +95,7 @@ int build_id__snprintf(const struct build_id *build_id, char *bf, size_t bf_size
+ int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuild_id_size)
  {
- 	struct addr_location al;
-@@ -63,6 +73,11 @@ int build_id__mark_dso_hit(const struct perf_tool *tool __maybe_unused,
- 		dso__set_hit(map__dso(al.map));
+ 	char notes[PATH_MAX];
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	int ret;
  
- 	addr_location__exit(&al);
+ 	if (!root_dir)
+@@ -112,7 +112,7 @@ int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuil
+ 
+ int filename__snprintf_build_id(const char *pathname, char *sbuild_id, size_t sbuild_id_size)
+ {
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	int ret;
+ 
+ 	ret = filename__read_build_id(pathname, &bid);
+@@ -849,7 +849,7 @@ static int filename__read_build_id_ns(const char *filename,
+ 
+ static bool dso__build_id_mismatch(struct dso *dso, const char *name)
+ {
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	bool ret = false;
+ 
+ 	mutex_lock(dso__lock(dso));
+diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
+index b5deea7cbdf2..a44c70f93156 100644
+--- a/tools/perf/util/debuginfo.c
++++ b/tools/perf/util/debuginfo.c
+@@ -103,7 +103,7 @@ struct debuginfo *debuginfo__new(const char *path)
+ 	char buf[PATH_MAX], nil = '\0';
+ 	struct dso *dso;
+ 	struct debuginfo *dinfo = NULL;
+-	struct build_id bid;
++	struct build_id bid = { .size = 0};
+ 
+ 	/* Try to open distro debuginfo files */
+ 	dso = dso__new(path);
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index cb777b878a48..e11c1be5c6d5 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1063,7 +1063,6 @@ static int sprint_line_description(char *sbuf, size_t size, struct line_range *l
+ static int __show_line_range(struct line_range *lr, const char *module,
+ 			     bool user)
+ {
+-	struct build_id bid;
+ 	int l = 1;
+ 	struct int_node *ln;
+ 	struct debuginfo *dinfo;
+@@ -1088,6 +1087,8 @@ static int __show_line_range(struct line_range *lr, const char *module,
+ 			ret = -ENOENT;
+ 	}
+ 	if (dinfo->build_id) {
++		struct build_id bid;
 +
-+	sample__for_each_callchain_node(thread, evsel, sample, PERF_MAX_STACK_DEPTH,
-+					/*symbols=*/false, mark_dso_hit_callback, /*data=*/NULL);
+ 		build_id__init(&bid, dinfo->build_id, BUILD_ID_SIZE);
+ 		build_id__snprintf(&bid, sbuild_id, sizeof(sbuild_id));
+ 	}
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index b74f6fe24bb6..5ffd97ee4898 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -848,7 +848,6 @@ static int probe_point_lazy_walker(const char *fname, int lineno,
+ /* Find probe points from lazy pattern  */
+ static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
+ {
+-	struct build_id bid;
+ 	char sbuild_id[SBUILD_ID_SIZE] = "";
+ 	int ret = 0;
+ 	char *fpath;
+@@ -858,6 +857,8 @@ static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
+ 
+ 		comp_dir = cu_get_comp_dir(&pf->cu_die);
+ 		if (pf->dbg->build_id) {
++			struct build_id bid;
 +
+ 			build_id__init(&bid, pf->dbg->build_id, BUILD_ID_SIZE);
+ 			build_id__snprintf(&bid, sbuild_id, sizeof(sbuild_id));
+ 		}
+diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
+index c73fe2e09fe9..7201494c5c20 100644
+--- a/tools/perf/util/symbol-minimal.c
++++ b/tools/perf/util/symbol-minimal.c
+@@ -317,7 +317,7 @@ int dso__load_sym(struct dso *dso, struct map *map __maybe_unused,
+ 		  struct symsrc *runtime_ss __maybe_unused,
+ 		  int kmodule __maybe_unused)
+ {
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	int ret;
+ 
+ 	ret = fd__is_64_bit(ss->fd);
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 573c65da9fe0..e816e4220d33 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1813,7 +1813,6 @@ int dso__load(struct dso *dso, struct map *map)
+ 	struct symsrc *syms_ss = NULL, *runtime_ss = NULL;
+ 	bool kmod;
+ 	bool perfmap;
+-	struct build_id bid;
+ 	struct nscookie nsc;
+ 	char newmapname[PATH_MAX];
+ 	const char *map_path = dso__long_name(dso);
+@@ -1874,6 +1873,8 @@ int dso__load(struct dso *dso, struct map *map)
+ 	 */
+ 	if (!dso__has_build_id(dso) &&
+ 	    is_regular_file(dso__long_name(dso))) {
++		struct build_id bid = { .size = 0, };
 +
- 	thread__put(thread);
- 	return 0;
- }
+ 		__symbol__join_symfs(name, PATH_MAX, dso__long_name(dso));
+ 		if (filename__read_build_id(name, &bid) > 0)
+ 			dso__set_build_id(dso, &bid);
+@@ -2122,7 +2123,7 @@ static bool filename__readable(const char *file)
+ 
+ static char *dso__find_kallsyms(struct dso *dso, struct map *map)
+ {
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	char sbuild_id[SBUILD_ID_SIZE];
+ 	bool is_host = false;
+ 	char path[PATH_MAX];
+diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+index 68bb7c5fe1b1..b7ebee95536f 100644
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -368,7 +368,7 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
+ 					     struct machine *machine,
+ 					     bool is_kernel)
+ {
+-	struct build_id bid;
++	struct build_id bid = { .size = 0, };
+ 	struct nsinfo *nsi;
+ 	struct nscookie nc;
+ 	struct dso *dso = NULL;
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
