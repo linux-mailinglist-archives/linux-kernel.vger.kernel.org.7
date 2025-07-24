@@ -1,158 +1,201 @@
-Return-Path: <linux-kernel+bounces-745041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8703DB11402
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46858B1140A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1BD97BCA65
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526A3AE1E5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E29223C505;
-	Thu, 24 Jul 2025 22:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CADA242936;
+	Thu, 24 Jul 2025 22:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyCbavAi"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SvLnwKim"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0E523C4ED
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA4323BCE4;
+	Thu, 24 Jul 2025 22:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396367; cv=none; b=gk8mZDMCGIVf/pD5cKU3Xpc0jnnv1OmRjVQwLZWajwUXugDvVKV8UhYKGzrD4F2GVwYGQsGOkerdm3uFZRYnqL1ygbTdXhhlDIalU+1pIGMqDm1O0tPkbwd/tWs/ejsa+szG2BhHNsC2BTr4DGV07MKxMEspGA90l8JwyZ2Jby4=
+	t=1753396435; cv=none; b=V1Vd3A3iLPX047PvfREHwIESWy0FYLNemvNScxw4gHFa0/OlNG9840Rb+OepXlmg2wagrwo4opPRwWi8AUohNz5TH8CRc8wTfYQ/LugWw2SwwNZGGHa15212Kn94mX4A9bPbOios3Jih+83JzLHQfv3v9o4YuMBPEfon8Xxxh94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396367; c=relaxed/simple;
-	bh=/X4FypA9ner9RdUyFi3gZVeAiwJRATDSBMzUcNSjRiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=M1//r0lcb9jtDpQl0cK+7RoQzG5nc2oo1UU6zNbL7+swySopScnO4eqVlcrbnWR8o4pQmMtKILVLQnnbPKQFCF0K71HkfXLwM5lBk6ErGQMG14+i0BuQ5kCe54E1FMKCe7MeBN0AZZu2Y/CANZRusuDOvC0qGbc462b9gpvwZrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyCbavAi; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-875acfc133dso62486339f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1753396365; x=1754001165; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BowG7/XkE6ZK3mV0bM7DLAubbfXolAHIJu1TtPOGrqQ=;
-        b=fyCbavAiWbigFIlD1j6BYztnwJiiF7GzRsPYIcNxrVLgT1g4dSphPAGv0ECNOivA64
-         W83pYLMp0f/sCUzAzey1NRN0/JoKe18IyvfD5PICFoJdFyD+B7mxd5JRe0umw1yu5UHe
-         jw8bC/Lsaw8RuAmD065a248fu3Dqmjj1t0AHQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753396365; x=1754001165;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BowG7/XkE6ZK3mV0bM7DLAubbfXolAHIJu1TtPOGrqQ=;
-        b=LN3Lz+buvJOpCWmvRtZT15AajWVSYMy1qZL82wLExeLSMiIg6+k50sv12yrDx2zCJp
-         IGD2+aBgmSZaINJOE6q0xnRjas7dye+Xl0bqz074KONn1T8QflFYktF4lqaf+pphIL9E
-         IFHzLsfssF7jgW7M6GDUswXQD3WYiya+tAco+ymNepp/Rx/al2b1f23nznIuhEhAR4xC
-         l3ApjUZvbEsG7SseN6ZvGDy3J+BPsNONYWnoT2mK8CIHcSXihyNJoL8Cn44F4TcM+8tx
-         xcD6qFFbBER1d9zOSPnf8S/lyXEwhdutm/O+12cqxmn0/J5FgKEyaXoJwR/X4pap2DMh
-         h8wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPNs5bE7QUybyDZ4vIdJpCI7TZ9c6DZdg1G4742QSNYYUrKqvMXLs5box75oQMYg5aBjcHp/CrNtIWR4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/rxAncbIhQBo+oSDCOPyXlTZ25DUV2B33aCl+7LgMa4Rr8Xsk
-	E/tZfEje1MyiH+96mKzhmSsCHAXKqCVV8YBT94Oe0UXWiFc3O4kytWk7q1po+GscnDs=
-X-Gm-Gg: ASbGncv7aiXvxxYnlNzq5ZT/IywrAbsmKAVLZSKinaKkSZ3AY8uOXtG6zxdAF3VundU
-	5CDa6Q+7VYSCjFGmM69obLwA3G6YqG+RmMs/gkAA+k1u9itOOhSi2T472M85OM/mIdMBaNGfMmG
-	M1BOBCYWvNzAe3rhuyjcepVAF5abbKauFlnqb7eWdhOoNsyrnT9zg04mKscw09SO/0CdOiDGE4Z
-	29Hx1G3i1CKYK4rp+XAfBnOtMEEnwLN8SrN44CsXOXCtJlzSVGFj7/FgbKcx5WjamWeAPGMA1Oa
-	bzchKbAjSPBaaCDNKTMzwBH0uzXeFMoUMvhRFwLinWXy5Rhv8PHCW4rL+r+676ivjlzz928Fgft
-	CFYmEx0aveY5l8MdFkp1Q84/puN4THZV4WA==
-X-Google-Smtp-Source: AGHT+IEbKOiXyxveiaYhBw5qiIEbptLsXga1ZudzEZCJ+xlt8zDOaAHzQB3cjEB5pgnwF9SJ20+qEA==
-X-Received: by 2002:a92:cdaa:0:b0:3e2:abbc:c0c with SMTP id e9e14a558f8ab-3e32fcb809dmr148251935ab.7.1753396364899;
-        Thu, 24 Jul 2025 15:32:44 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508aeab7426sm650512173.54.2025.07.24.15.32.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 15:32:44 -0700 (PDT)
-Message-ID: <c6eb6734-93d3-4a59-8869-49ecc438fff9@linuxfoundation.org>
-Date: Thu, 24 Jul 2025 16:32:43 -0600
+	s=arc-20240116; t=1753396435; c=relaxed/simple;
+	bh=ZU7QPNVicHahHGP/x1GNBLKUwIzvGJeMk8fuXUXOr/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tLROW2tW1E/Xj2uceACFv32uaw9pjPtLAOf+/7U2mVerhGmg0kN3pkeXFFunrn2gD8yZJJwVwaMWuCSdsXnIRvik5aoS5dLVmklX1+t1JwCHytEJH/XcVUcsPtSjJNVd1tg0/Vr2IUGbnnvok3GyoDbONj1wRwEPt9G3Snyvshw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SvLnwKim; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1979F10391E80;
+	Fri, 25 Jul 2025 00:33:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753396424; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=saNao2TEFsS6+fbp/fnBqwGoKqCJ4jz58yV/lw4xvXk=;
+	b=SvLnwKimY2Sxa1GWeZaRqlyc+eQ+h8ljACW/kjPUzJOphgQQZdbRFsGHAsjpa3I4XPrJbR
+	8g1zufVcyriv/KCDY/uyt5r714ej6k5laGQ10aeEQzVf5V+FbeDBYNGGzfUjDAhFIWpZlg
+	tWGIvNg5QKbR/aUfZs34jCXcR8jFWPZ/BqTJbVi61ROea33UhhYXsU0o7gt6Xo+BP2X8c6
+	2RpHUBbpPu5x815mkV9NVTfbKu3ewLCb0gpKyNgVq+SXVildi3Zllsd4TFeWuZWH2o25bU
+	0LSkqmXr0ciaJpGCXclfXgmTKBOKtQwq0fTacVLpwvbd2mOwFEg4jLnjNj/jHg==
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Simon Horman <horms@kernel.org>,
+	Lukasz Majewski <lukasz.majewski@mailbox.org>
+Subject: [net-next v16 00/12] net: mtip: Add support for MTIP imx287 L2 switch driver
+Date: Fri, 25 Jul 2025 00:33:06 +0200
+Message-Id: <20250724223318.3068984-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/tsc: Replace do_div() with div64_u64()/div64_ul()
-To: Niko Nikolov <nikolay.niko.nikolov@gmail.com>, shuah@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250724215339.11390-1-nikolay.niko.nikolov@gmail.com>
-Content-Language: en-US
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250724215339.11390-1-nikolay.niko.nikolov@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 7/24/25 15:53, Niko Nikolov wrote:
-> Replace do_div() with the recommended division helpers to avoid
-> truncation and follow kernel best practices, as flagged by static
-> analysis.
+From: Lukasz Majewski <lukasz.majewski@mailbox.org>
 
-You are making more changes than what change log indicates.
+This patch series adds support for More Than IP's L2 switch driver embedded
+in some NXP's SoCs. This one has been tested on imx287, but is also available
+in the vf610.
 
-> 
-> ./arch/x86/kernel/tsc.c:409:1-7:
-> WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
-> ./arch/x86/kernel/tsc.c:492:1-7:
-> WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
-> ./arch/x86/kernel/tsc.c:831:2-8:
-> WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+In the past there has been performed some attempts to upstream this driver:
 
-It is hard to see where you are addressing the above warnings with all
-the other changes.
+1. The 4.19-cip based one [1]
+2. DSA based one for 5.12 [2] - i.e. the switch itself was treat as a DSA switch
+   with NO tag appended.
+3. The extension for FEC driver for 5.12 [3] - the trick here was to fully reuse
+   FEC when the in-HW switching is disabled. When bridge offloading is enabled,
+   the driver uses already configured MAC and PHY to also configure PHY.
 
-Also you don't have the right reviewers cc'ed
+All three approaches were not accepted as eligible for upstreaming.
 
-> 
-> Signed-off-by: Niko Nikolov <nikolay.niko.nikolov@gmail.com>
-> ---
->   arch/x86/kernel/tsc.c | 185 +++++++++++++++++++++---------------------
->   1 file changed, 91 insertions(+), 94 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-> index 87e749106dda..96f40759340e 100644
-> --- a/arch/x86/kernel/tsc.c
-> +++ b/arch/x86/kernel/tsc.c
-> @@ -34,13 +34,13 @@
->   #include <asm/uv/uv.h>
->   #include <asm/sev.h>
->   
-> -unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
-> +unsigned int __read_mostly cpu_khz; /* TSC clocks / usec, not used here */
->   EXPORT_SYMBOL(cpu_khz);
->   
->   unsigned int __read_mostly tsc_khz;
->   EXPORT_SYMBOL(tsc_khz);
->   
-> -#define KHZ	1000
-> +#define KHZ 1000
+The driver from this series has floowing features:
 
-What changed here?
+1. It is fully separated from fec_main - i.e. can be used interchangeable
+   with it. To be more specific - one can build them as modules and
+   if required switch between them when e.g. bridge offloading is required.
 
->   
->   /*
->    * TSC can be unstable due to cpufreq or due to unsynced TSCs
-> @@ -55,13 +55,13 @@ int tsc_clocksource_reliable;
->   static int __read_mostly tsc_force_recalibrate;
->   
->   static struct clocksource_base art_base_clk = {
-> -	.id    = CSID_X86_ART,
-> +	.id = CSID_X86_ART,
+   To be more specific:
+        - Use FEC_MAIN: When one needs support for two ETH ports with separate
+          uDMAs used for both and bridging can be realized in SW.
 
-Tabs removed? Why?
+        - Use MTIPL2SW: When it is enough to support two ports with only uDMA0
+          attached to switch and bridging shall be offloaded to HW. 
 
->   };
->   static bool have_art;
->   
+2. This driver uses MTIP's L2 switch internal VLAN feature to provide port
+   separation at boot time. Port separation is disabled when bridging is
+   required.
 
-Same questions for the rest of the format changes.
+3. Example usage:
+        Configuration:
+        ip link set lan0 up; sleep 1;
+        ip link set lan1 up; sleep 1;
+        ip link add name br0 type bridge;
+        ip link set br0 up; sleep 1;
+        ip link set lan0 master br0;
+        ip link set lan1 master br0;
+        bridge link;
+        ip addr add 192.168.2.17/24 dev br0;
+        ping -c 5 192.168.2.222
 
-thanks,
--- Shuah
+        Removal:
+        ip link set br0 down;
+        ip link delete br0 type bridge;
+        ip link set dev lan1 down
+        ip link set dev lan0 down
+
+4. Limitations:
+        - Driver enables and disables switch operation with learning and ageing.
+        - Missing is the advanced configuration (e.g. adding entries to FBD). This is
+          on purpose, as up till now we didn't had consensus about how the driver
+          shall be added to Linux.
+
+5. Clang build:
+	make LLVM_SUFFIX=-19 LLVM=1 mrproper
+	cp ./arch/arm/configs/mxs_defconfig .config
+	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 menuconfig
+	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 LOADADDR=0x40008000 uImage dtbs
+
+        make LLVM_SUFFIX=-19 LLVM=1 mrproper
+        make LLVM_SUFFIX=-19 LLVM=1 allmodconfig
+        make LLVM_SUFFIX=-19 LLVM=1 W=1 drivers/net/ethernet/freescale/mtipsw/ | tee llvm_build.log
+        make LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 | tee llvm_build.log
+
+6. Kernel compliance checks:
+	make coccicheck MODE=report J=4 M=drivers/net/ethernet/freescale/mtipsw/
+	~/work/src/smatch/smatch_scripts/kchecker drivers/net/ethernet/freescale/mtipsw/
+
+7. GCC
+        make mrproper
+        make allmodconfig
+        make W=1 drivers/net/ethernet/freescale/mtipsw/
+
+Links:
+[1] - https://github.com/lmajewski/linux-imx28-l2switch/commits/master
+[2] - https://github.com/lmajewski/linux-imx28-l2switch/tree/imx28-v5.12-L2-upstream-RFC_v1
+[3] - https://source.denx.de/linux/linux-imx28-l2switch/-/tree/imx28-v5.12-L2-upstream-switchdev-RFC_v1?ref_type=heads
+
+Lukasz Majewski (12):
+  dt-bindings: net: Add MTIP L2 switch description
+  ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2 switch description
+  ARM: dts: nxp: mxs: Adjust XEA board's DTS to support L2 switch
+  net: mtip: The L2 switch driver for imx287
+  net: mtip: Add buffers management functions to the L2 switch driver
+  net: mtip: Add net_device_ops functions to the L2 switch driver
+  net: mtip: Add mtip_switch_{rx|tx} functions to the L2 switch driver
+  net: mtip: Extend the L2 switch driver with management operations
+  net: mtip: Extend the L2 switch driver for imx287 with bridge
+    operations
+  ARM: mxs_defconfig: Enable CONFIG_NFS_FSCACHE
+  ARM: mxs_defconfig: Update mxs_defconfig to 6.16-rc5
+  ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2
+    switch
+
+ .../bindings/net/nxp,imx28-mtip-switch.yaml   |  150 ++
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/nxp/mxs/imx28-xea.dts       |   56 +
+ arch/arm/boot/dts/nxp/mxs/imx28.dtsi          |    9 +-
+ arch/arm/configs/mxs_defconfig                |   13 +-
+ drivers/net/ethernet/freescale/Kconfig        |    1 +
+ drivers/net/ethernet/freescale/Makefile       |    1 +
+ drivers/net/ethernet/freescale/mtipsw/Kconfig |   13 +
+ .../net/ethernet/freescale/mtipsw/Makefile    |    4 +
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.c  | 1957 +++++++++++++++++
+ .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |  651 ++++++
+ .../ethernet/freescale/mtipsw/mtipl2sw_br.c   |  132 ++
+ .../ethernet/freescale/mtipsw/mtipl2sw_mgnt.c |  443 ++++
+ 13 files changed, 3426 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Kconfig
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/Makefile
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
+ create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.c
+
+-- 
+2.39.5
+
 
