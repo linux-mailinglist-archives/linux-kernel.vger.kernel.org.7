@@ -1,171 +1,118 @@
-Return-Path: <linux-kernel+bounces-744843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC62B1117F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1D5B11184
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228CD17245D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A7B16359F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688E2ECD17;
-	Thu, 24 Jul 2025 19:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AED255F59;
+	Thu, 24 Jul 2025 19:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T1kKsWBM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ftgx5yqI"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5D71FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D832E1FB3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384559; cv=none; b=urzjTGdSTREr+dRzLQ6EckrDLGpvvjIQIgebY6bK4WWOUaZuOfD7Hxgbt7KYsqhu3lIaVaJei6VozSpp7OOm83C9Mjbg3giS7d3L2ZXJMECsfhB8fjhBM70pHoUZTKDJ+bFzECvj73WqQ184bkgKb5bvXol4/UmYR55OY+mh5A4=
+	t=1753384700; cv=none; b=UQ1kRyaY8K2nFOla8gxThpL3N8Avqj7hDHGar19vXlFQU3GxfO5MGW2YEyz2HlwLQ836CxvSXOBBEhBmVcuZDTUFozVW1AM+nFMEoKDpN+O2sDKpAB10YlhVNxoIBIXDaBX31T1P+2NNRrJz50qPv3Lg1eDu9rNGA6iyD0sBMs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384559; c=relaxed/simple;
-	bh=KDENvryqaFfe+ipMBxs4HEr3VYyPiM26hvi5lpcTx/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bqgh8Kwx/xxHLcJ53F2ucNDGFT05sAdqFp0qlr7F2vDmVuYRUkX0jKMqHMDqlJ6Mr9hLgJqolBg58Uo0Frnnw/0kZG5LJN5lEczKUcDAOekKmZaIt4ucM/pu5EI5RWDtoK7KTlULSGV5lAsuc2VKC4YAGJaK8T34/P9hqhdsMlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T1kKsWBM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753384556;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rDZbSpivZvNtqNNz2nVMJ9AyhIB6jJidbuEul+8M8EM=;
-	b=T1kKsWBMVlX+YUf6pdnwKNLOnQBErfYC/urNBTy0xTbkZxwX+YNhkAlF3g2IyiE/mx1eHj
-	0x4D+ps+2g7qS8sfzSRgIY+JZUXhHIBoH5PmJszakDzCMvRStdaZpGfQtO2bVadZbt69Zl
-	V1tq2QWW9W8tgKjE8QdgwXBBsPXLu7g=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-399-_7VPjU56PVStwyCwyxYvTQ-1; Thu,
- 24 Jul 2025 15:15:51 -0400
-X-MC-Unique: _7VPjU56PVStwyCwyxYvTQ-1
-X-Mimecast-MFC-AGG-ID: _7VPjU56PVStwyCwyxYvTQ_1753384549
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2213B1956056;
-	Thu, 24 Jul 2025 19:15:48 +0000 (UTC)
-Received: from chopper.lyude.net (unknown [10.22.88.223])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D5C4B1966665;
-	Thu, 24 Jul 2025 19:15:42 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] Partially revert "rust: drm: gem: Implement AlwaysRefCounted for all gem objects automatically"
-Date: Thu, 24 Jul 2025 15:15:18 -0400
-Message-ID: <20250724191523.561314-1-lyude@redhat.com>
+	s=arc-20240116; t=1753384700; c=relaxed/simple;
+	bh=GuZwGYLI+XKgX3g6bp48oh1cnV8nx+q7GNk1m3f+cv8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QjI6/0mRNsJ+FW4KqO/7TxeNfPJzUnLMtEuobeDa/2r2ZPDFMI77yC1+HbslkNe2RBhwi4o0VPlzlG0dLmze8aq7qR9OYtm4SCh6DBq4go4JMjd3yuutLkg/qep1d02O1q3TyE7qzWApbJXB88u3yWDLS2+vCK48317Er0hHORQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ftgx5yqI; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-73e810dc03bso276443a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1753384698; x=1753989498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/WtHerWg4b/PvYvoi1jOtoBEkjJBfw4DbZ1mKGQlK7E=;
+        b=ftgx5yqIN18G1AGc1GysL2IrVCWXOsbbHTPCnPuLYa6K2QFTCLmtO2PTkeAcjBFDmU
+         uOYZaWrNThU+3JlncyIRXcpuXzRhkO52Tlw2cUc8+6ZGuNc+8QSTNnBUYRQnbY4GHw77
+         S7o3vMvvajCKvEZIuX1zG3dNIgtpimn3qwcno=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753384698; x=1753989498;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WtHerWg4b/PvYvoi1jOtoBEkjJBfw4DbZ1mKGQlK7E=;
+        b=nRzBhLNjWOu2nrt5zGOoeYjjPEZKoc572KAWu7eGl0e5ly1idbxyfizSGvI4PI5uDm
+         riAvieW2y6quF3iRz31JF/SFK9FsPSfeGGDpZu2q9bniuDDSzKVwoegErCr63++il9OT
+         oVYd6MMPToe6asgS2Jf4Vp5VJY+HFwRTFtFZUhtUmZTiiQEhPZjVDV6SrFiCRGLLcYD9
+         yaSIqxR6O2IVwTyObSYv04kH13MdpTW9UUnvnNHjMnntl12q0oXQ4cfvSxZbJoIl7cHx
+         4Gh5E4D/zzwq7FcbZESiPnj+q5yyLUNM2zwHtSJcQZBnGmUd/f8rC6NPvJdwO+4z6m6g
+         ut9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX/FlW7tidYilJqmyMNg4IGkEx4oLH/HCrimIV39M9d83JwrjYtKyczkg7YAhHSJpPs4YDnLArYGY4aymY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6jNQP/944J7lOCX//zfHL2jLUir2uFOuopfNzmKOue3zNPHG+
+	TUe9BY43zOkIwL7TqNRAU4Y/ig/Kb0gQZfeDJtw9XMEqMCuQA5mseCpKtc82buTHSVTF6Sbexpn
+	lhb5x
+X-Gm-Gg: ASbGncvHivHoVPE6OdmsC38GF62x0YEEH5FA9tBHIt3gfC7+OU0oWUX3LyMj2jHQxWM
+	ycKdCVkp2kw1fyy/YMfL/XHAVN3NUIwxXyWBb6FpHoEjARbmoGVcCVrLHMHSdrFGEvNrv9hgiHR
+	H3qXeqG4CEI0Ci6Nu+tN9t41Yc6zK0GnZj3mY6ldTxDOZd5rTjOQQZszegJ5m0PSjoz4k+yNVTr
+	veU7Am8Cso9/kA+wkOmDH1RfGq5inVRxMyJ65RIpXI8akevAX89GmsmqrVEbP+VJ2/2zziS1+wu
+	/e/UpuNIfduPF9vSGGlZplBs7Bc5rZ4qCiOQoS3VZBdV4TcPRVy0gWD8EhH0ll8VgGdxcrfLFzd
+	VMTeXvnsC7uK0bwplltrQTJp8MOotXHNYFw==
+X-Google-Smtp-Source: AGHT+IEUTT6232SQ1StpplGMujNfYLMj8RDUEQUykk/oyYKKyc7meHhp+AdRCjc0bN5C/ycM7Zqn2g==
+X-Received: by 2002:a05:6830:6689:b0:727:345d:3b83 with SMTP id 46e09a7af769-74088ac4c3amr6082385a34.23.1753384697537;
+        Thu, 24 Jul 2025 12:18:17 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7412d18d95fsm361195a34.21.2025.07.24.12.18.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 12:18:17 -0700 (PDT)
+Message-ID: <ed6f49c8-d47c-4cf9-889a-76f6886e1a86@linuxfoundation.org>
+Date: Thu, 24 Jul 2025 13:18:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: Code of Conduct violation complaint
+From: Shuah Khan <skhan@linuxfoundation.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "conduct@kernel.org" <conduct@kernel.org>,
+ kernel list <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+ <aHanGu9nOGOegUg2@duo.ucw.cz>
+ <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
+Content-Language: en-US
+In-Reply-To: <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I made a very silly mistake with this commit that managed to slip by
-because I forgot to mzke sure rvkms was rebased before testing my work last
-- we can't do blanket implementations like this due to rust's orphan rule.
+On 7/17/25 10:32, Shuah Khan wrote:
+  
+> Hi Pavel,
+> 
+> The Code of Conduct Committee holds these conversation privately
+> with the people involved. Looks like you cc'ed the mailing list.
+> Respecting your choice, we can continue this conversation publicly.
+> 
+> Chose one or all of these threads to apologize to the developer
+> directly.
 
-The code -does- build just fine right now, but it doesn't with the ongoing
-bindings for gem shmem. So, just revert this and we'll introduce a macro
-for implementing AlwaysRefCounted individually for each type of gem
-implementation.
+If you haven't already done so, chose one or all of these
+threads to apologize to the developer and cc code of conduct list.
 
-Note that we leave the IntoGEMObject since it is true that all gem objects
-are refcounted, so any implementations that are added should be
-implementing AlwaysRefCounted anyhow.
+> 
+> https://lore.kernel.org/all/aG2B6UDvk2WB7RWx@duo.ucw.cz/
+> https://lore.kernel.org/all/aG2ClcspT5ESNPGk@duo.ucw.cz/
+> https://lore.kernel.org/all/aG2BjYoCUYUaLGsJ@duo.ucw.cz/
+> 
 
-This reverts commit 38cb08c3fcd3f3b1d0225dcec8ae50fab5751549.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/drm/gem/mod.rs | 36 ++++++++++++++++--------------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
-
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index 4cd69fa84318c..db65807dbce88 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -54,26 +54,6 @@ pub trait IntoGEMObject: Sized + super::private::Sealed + AlwaysRefCounted {
-     unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
- }
- 
--// SAFETY: All gem objects are refcounted.
--unsafe impl<T: IntoGEMObject> AlwaysRefCounted for T {
--    fn inc_ref(&self) {
--        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
--    }
--
--    unsafe fn dec_ref(obj: NonNull<Self>) {
--        // SAFETY: We either hold the only refcount on `obj`, or one of many - meaning that no one
--        // else could possibly hold a mutable reference to `obj` and thus this immutable reference
--        // is safe.
--        let obj = unsafe { obj.as_ref() }.as_raw();
--
--        // SAFETY:
--        // - The safety requirements guarantee that the refcount is non-zero.
--        // - We hold no references to `obj` now, making it safe for us to potentially deallocate it.
--        unsafe { bindings::drm_gem_object_put(obj) };
--    }
--}
--
- /// Trait which must be implemented by drivers using base GEM objects.
- pub trait DriverObject: BaseDriverObject<Object<Self>> {
-     /// Parent `Driver` for this object.
-@@ -287,6 +267,22 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
-     }
- }
- 
-+// SAFETY: Instances of `Object<T>` are always reference-counted.
-+unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-+        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
-+    }
-+
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
-+        let obj = unsafe { obj.as_ref() };
-+
-+        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
-+    }
-+}
-+
- impl<T: DriverObject> super::private::Sealed for Object<T> {}
- 
- impl<T: DriverObject> Deref for Object<T> {
-
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
--- 
-2.50.0
-
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
