@@ -1,274 +1,443 @@
-Return-Path: <linux-kernel+bounces-744868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854AAB111EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88E8B111EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB0E5A1DB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66CE546704
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC222F16C;
-	Thu, 24 Jul 2025 19:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50AB211A11;
+	Thu, 24 Jul 2025 19:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwGR8K4l"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n3YfzABE"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56069443;
-	Thu, 24 Jul 2025 19:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753386704; cv=none; b=bD4OzcYFzDBaEE674rfkUTwuj5/6dUL3kGJ8Zul/UIUQle8fMFxaDjzvfr35RkPKWOpBw1TotfPyDi++Gof9OjVYAHT9Y9dWoQfOVLq4WqZWcZ7YLXmMvRBNBJU9viv4AiCwLyZnk5Zn4ciAiLcO3wtNafgReFUZAIEg1fp1C5Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753386704; c=relaxed/simple;
-	bh=Aw4tKkf7vnFAyiPYG1UxauwwJZix8GEIGwPUv2Otdl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEYLR/PjVjZ7S0hfCt14OpxA4gWXS1rlRFAKNGPuup4CuMRlKrZZz6YlrhuVh4aG770yWHlpq6l1qD9gGvKFuWTjWCE8qkCnktdo0Skj0Nc9ssdMLm/MmX0cYVFuvmXU5lrlmn0iNyjSZJ4RylkgQoob3RHL45sJp9lBzFeN9Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwGR8K4l; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3ec622d2fso221517866b.1;
-        Thu, 24 Jul 2025 12:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753386701; x=1753991501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Aw4tKkf7vnFAyiPYG1UxauwwJZix8GEIGwPUv2Otdl0=;
-        b=EwGR8K4l5xbS9Pa6aBpKHcvLwlMF0RK8w8uFICMRSZ02Ao/gddN9c3W8P+ZhAg8xT9
-         nfnLg1M161f+ri2ucRD0TQpbMEC4Vbpy8SgD1A1blUvXANMmO+jwueTO6YxXbk1ElZzE
-         VcPfycKNyXaLDXwPkng+M/nKvvnTd5UI2JGlXz3wIbsoQ2VPvvToXHnGHsIOBb9dPeA7
-         vj7d2bvrt6IughVhx5mGamogDFsSUBCoR602wWIRBQ3Q5uSDUTrxJTyfoefwv2Zgi488
-         VHCOJht2MiYzGq6kUJc1UR2p/iRkgnT1eEd+HDoMp+MW0oLU4rXtGqADbszhgilWzY0e
-         n3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753386701; x=1753991501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Aw4tKkf7vnFAyiPYG1UxauwwJZix8GEIGwPUv2Otdl0=;
-        b=NjTdlaAb0o1bP9c3suWwH5tBE20BldK1zNXyUU3jpIyYL0hy4Rg/5qLrMwIk0OkPEU
-         bucx5OeU+1ovPEp2VuJihu1rSItlqx3A80FW5x/Y+asHbiuUYiGkCumUDzr0nLbz27/u
-         PJgs7Bl9f+h2/gex24/jrxGiY3QNNCvndkeOPk5LiWTr13/z7VIIXTvoGmpNPToDd0vl
-         /23xHixyRPJ9zY1KaRyhuTZkaAJpqIpQAgMm4+zWsO0xi+j+r057KkB4SZKDZg8mLVCX
-         ecSAEfYoMgf+WNTsoTLiWRMUmjEQExCCvt3GvSSQatNn9IDs1eGzJtr9qxjyt5aKVzHP
-         cUsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKtrcAHBMtrMy2n3nwwTkwiEWPfw77TtJF+Hs3/2Padu+vaDXrHOwwYNX70EW4LsZpM7KfiNnYkSJA/VyV@vger.kernel.org, AJvYcCW1+IPIFk9PitDZzPHMBpul/pBJVvqN7TFl4R+G81VNABbuCT9FEQNUO8fyhbWwziwAVwHvqvead+H+n+Ds@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKxnMviiqsNLKLL37NwFGq6tKs2VggFt0P6/NnF3bynS2JC3Z3
-	KcJ6tKQL5YB/IynV1CcDA/rlL2un11/dDyMC/4CdnK2dluwJ4bCWdmLhMyDOPNFuVTDMqJxkTC6
-	JxrrxiGJRpFHT6/Yyy1lajPWnarbsfWM=
-X-Gm-Gg: ASbGncs0g38LeKatbPgn55oiFLVoOtgnTYrQB6r2j0zt0SagYf1jAVof/CkNISudRRI
-	nxznahMwopo1BP0/xW5QYfGzCURVduYt/vQgDTIqFrmT8hhN8HlVB/rz8mSkl4bNEF+8BKvOQBV
-	pVzsVunzl3M73ZxfmJ7mTTKaNbwr5AG69fquknO5JDTp2+2YiT9h9VJe1Ro3fumklxe/QmCwes/
-	ok+kaQ=
-X-Google-Smtp-Source: AGHT+IEpfMgrZQTYrobwW6AEICMyWuvU/Pdswxst/8Sh09FzJvr8Lysgrd7kM9WjvU+6lB8ItwbEaV+/GIn+aEnHeQY=
-X-Received: by 2002:a17:907:6d11:b0:af2:4238:167 with SMTP id
- a640c23a62f3a-af2f8e514b0mr858092066b.48.1753386700624; Thu, 24 Jul 2025
- 12:51:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0E82E370F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753386947; cv=fail; b=k0/fi1tKtOTsT/tBv8znCuZdDbmbOceZ0LrpLGXMu/iLTdkdL0MESOUiX81iwJ1Tbz/aWao7TpJUckrF1mr66k9V1svm+YIEhbP8w3SMY1v6i/HwJScvBPT7YUMnaiXnHM0JUWmERC0o6xJ8ROcJCLXPuOye9XBR7Ezy0o4uIao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753386947; c=relaxed/simple;
+	bh=OeeP6C3/xy7Ch8OMfxVWh+fVuL8jlnq8YUgN07zJbhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LqGX3P+q3bGD5Or/xHTgNNNdP7qBBUoxSpskS/2f7uDrDcVaY1jfMSW14IMu14+EEXmQIgiEN5046RRyuBlJ2zw9cbphCgEgs06RWZumwkRv0tDGEx0pgPQWn7SaeYDbt/uksd2ZGg/mmQOqXkvxibpOXtpyH56rsMJhd7TIddc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n3YfzABE; arc=fail smtp.client-ip=40.107.243.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NpkC3iJe827z7ceTEh7IT6N/AMGFRYeoCVSwcnlY2HUjOlsjagfXcysFikizsqYaSznA9Co/RBZNwAdowVx+kCoPO/qAQTzvyWUtEr8nogL9rvuRhNcF1klYnE33CwXkCmkRKowS7HOv6eENAgne8O9ViUWJLE+6wTY6Pqq+0zsT8DEgEp1Mj8miEUJnhEJRyCA3vOwRy71YyzhvHn+cNLquGIU31X9wjB5Z9TMOqkFJJbV1HCOpu66LUHfG1W4TGrOEmNCEuES3pgXfeGJ1vwGoSHsQm96K+Fo9NfF8VmnDSsO1iPptGfKDi+KnoGjv9+i4m18H+3dutef7l0lEfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VA4GfeyegDuFFcMP1ryb/lQ3pabDbR5khwWz5rpG1hA=;
+ b=LzLNjF3kJ793jGNdZ64fnxheLEbEbx2CQy4VdKXKXRaDWpp0MfKD0pQ//ibDu7ANmK2xB+6ZLxz5GGR6lmVHTLXiqfqXWVYkp9h1p2ZDykVHLtW8W2WJT35AaoDmKfM4MkLOukdPGLadK8NDyjgjNnxvGFJx4Mm0IyeaAc6TAFQ8Od9QX2XoCFyNZ2YKyDm+sFi9wLueDVTLoZ4dkx9lrGO0YAe+Z5ROiGIZVpv4RUg7Nf52uD8fqa/7FWP0VWBNWFbAgyfOAAoai9367Z5nuNCh1U6Zlz9rXbqZLgKvRTyCQKMJoZioHCx6zPIdyF0hRbNkBwd14HLnCS7opS2xQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VA4GfeyegDuFFcMP1ryb/lQ3pabDbR5khwWz5rpG1hA=;
+ b=n3YfzABEdwgxEDjqIG591UIkYbF94ert/GVgD7mguWf4HJcs5aupWU/k45r0rEr3gi+fW6FwUNrBs5Dhi5Jdz7PHFc7E23eJggxohmLxyJMGsii+gnSO5VfPqP54SJTJHyHfYFVTdd0ZuL68FsUkz0rfLAcGb1Y0Ty15ahvKlLkXKLRhQQt9dKsyj9cwkmhcJYHD75D6CiLSvrtlTIzHYRYjkeeD3fti/YnX65Mkr3Uyi3gu5Efyl416xfdv3qbaqpbaVnz5+TYGs6fEwbbuHMWrDhgW6CwE2mpvvK1WiRrl1m1vOmeTs/ehjxrdls1r+UIVa7bCT4tFvvSxvvTxbQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ SN7PR12MB8102.namprd12.prod.outlook.com (2603:10b6:806:359::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
+ 2025 19:55:41 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.037; Thu, 24 Jul 2025
+ 19:55:41 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
+ willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+ anshuman.khandual@arm.com, peterx@redhat.com, joey.gouly@arm.com,
+ ioworker0@gmail.com, baohua@kernel.org, kevin.brodsky@arm.com,
+ quic_zhenhuah@quicinc.com, christophe.leroy@csgroup.eu,
+ yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org,
+ hughd@google.com, yang@os.amperecomputing.com
+Subject: Re: [PATCH v5 6/7] mm: Optimize mprotect() by PTE batching
+Date: Thu, 24 Jul 2025 15:55:37 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <AE5CBFC7-5701-407D-BA22-C7B8733AA244@nvidia.com>
+In-Reply-To: <20250718090244.21092-7-dev.jain@arm.com>
+References: <20250718090244.21092-1-dev.jain@arm.com>
+ <20250718090244.21092-7-dev.jain@arm.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BL0PR0102CA0043.prod.exchangelabs.com
+ (2603:10b6:208:25::20) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617221456.888231-1-paullawrence@google.com>
- <CAOQ4uxgaxkJexvUFOFDEAbm+vW4A1qkmvqZJEYkZGR5Mp=gtrg@mail.gmail.com>
- <CAL=UVf707OokQUuhzbvrweFziLVmiDD3TFs_WG2hRY0-snw7Wg@mail.gmail.com>
- <CAOQ4uxhUK6EeCUZ36+LhT7hVt7pH9BKYLpxF4bhU4MM0kT=mKg@mail.gmail.com>
- <CAOQ4uxjX1Cs-UYEKZfNtCz_31JiH74KaC_EdU07oxX-nCcirFQ@mail.gmail.com>
- <CAL=UVf5W9eJF4FL6aRG4e1VoFWg8jj4X4af=j-OGdU=QxmPuwA@mail.gmail.com>
- <CAOQ4uxgqS0cK6ovwjMjSFndiFBUP1Z9ZXdAoCJayeo4W00nGLg@mail.gmail.com> <CAL=UVf7zTcmd32jgQStXFWKGpUGXLPqX19uPx_Xzqm_k7QGj0Q@mail.gmail.com>
-In-Reply-To: <CAL=UVf7zTcmd32jgQStXFWKGpUGXLPqX19uPx_Xzqm_k7QGj0Q@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 24 Jul 2025 21:51:29 +0200
-X-Gm-Features: Ac12FXxiJANvpe4AMDenrADvZ3QSdEpsM7KQsI3L2jOvx5X-Xgv0jEoHkBgsAk4
-Message-ID: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] RFC: Extend fuse-passthrough to directories
-To: Paul Lawrence <paullawrence@google.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SN7PR12MB8102:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26bf0352-ac14-4fe5-6558-08ddcaec11ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/SwiPQ0Rd6jLQUC3rk3Fx+IA0KgVUS7LvFiO4UTG3ZG1gQ2FgBBm2U1GW/bT?=
+ =?us-ascii?Q?nMYd8ALR8X4HYC9UDL91nYvqylbB05WEXS/yAWnaPG4cHIo32Ba7W4o/RAeM?=
+ =?us-ascii?Q?Ekjwjogv6KyCjgTmyD1l39MwBjm5iT+iN6bl+ZZ61D26HHrq3pIzhxYu7Djn?=
+ =?us-ascii?Q?/UnJKFPuRn0TPG/aMP2RSINd7YpjUkBdnUmTvDJzgBwFyG9ONSFkya74pZdB?=
+ =?us-ascii?Q?2rcPX7p3gGmHTa+FxUQ/TubDVmAW8j+tw1N4yYhXVAklyq6LnpMX4NYeNzHj?=
+ =?us-ascii?Q?iKU1YS9EJcgjellM62zFPFgG8y7QCdJ7i/BbKtl4TcOKDp0tTrhRFcXepRA6?=
+ =?us-ascii?Q?4CvPVf6X22O0//whJhnfYj/yMU9FZ2Sj9FPJmJxIKRgw82NEO8lSZ2Kd6kgq?=
+ =?us-ascii?Q?1V7xnNdF3ktMPwUe6E/MpyrzM/w3auVe7SSKZCygaUHgsK7QWKfXzGX8xm1a?=
+ =?us-ascii?Q?XvcQUNlGt73i1Ggo4yEAhY9mdiMusu0sb4klAFR4XzV14g+v03RQaIQHWGR5?=
+ =?us-ascii?Q?+afd3VTtXMjsge2ZXLqaTkjOmqVIA+/NPaun175Bdw5tWex0L+JxWp79mQo0?=
+ =?us-ascii?Q?sZVD7lpAaUwzjGqxlKAFDzRdrYUW7Jqlzy7z/1yEIcQTqsoxayttJxAk5D7J?=
+ =?us-ascii?Q?7VgzKQ//XSIfsqnipJzKK6vZU4b/vqNa6bXBYf+Bl+cURL30fAbDl+ErwU5B?=
+ =?us-ascii?Q?LKhFDDgjpl/Lla7jlCa+SzdCXwBFO+c9E6OqBQNdWbZ3BslJIs7kXOMz+K8V?=
+ =?us-ascii?Q?K+UuDKTeC7BdSlSCzLISCGOEnOBX1ttECOCPDn2yR2q39+M8KEJ1lXUolXSV?=
+ =?us-ascii?Q?4yIvPhoJURSeGE39EytvO/uyv+AJ8+XcziRNfgRDfr3cpoGiqyFZBOOU2iY8?=
+ =?us-ascii?Q?xS8ha0fWjzdpyHYFiJzomVO23VOI8Bkrn2YmKWLYfpUlgBcjQGKUhaemJxrk?=
+ =?us-ascii?Q?vXMFPJoxUf6qz0M9JsHZnumYi0NirQEiMcXLAbFSvsN89c7fw2BDQ83TAWrM?=
+ =?us-ascii?Q?8nd4co9k6Z05I5oJNRk8cE986uUyqIIfaOeSU2qbEy/7d/Q31Xsf0PuQwZ6y?=
+ =?us-ascii?Q?rShvX4Wc+Md+2QAdBtec6dFTm6nTjGeKd8/Jr3Xez5a7nGpIjLX5uLr5338v?=
+ =?us-ascii?Q?gHWqZuC8L6X6V0UOca2vcRWbfG5tIt3K7975PST0iVqQ6wMRgsjLBPFCLrYP?=
+ =?us-ascii?Q?ORzUHI9rbXeZ/Lq6VEVfnOIsQCbf8uuqpM7RgG8fXGS32e5VpnQ0BHXpQtN2?=
+ =?us-ascii?Q?Yy7+/mlwze9rCdtdambxYA1CuV/tar2Vbsk4l3Uscy4CRj+uTookPvjM3APC?=
+ =?us-ascii?Q?mu4By3X6PAL6Wr0DJckyVM4y9zd0Ki8ovED2Tvul294eswGPI5S9nKc5jjNn?=
+ =?us-ascii?Q?rr23yF/gxys9iSX2zxw0po51opZE5NQ1MRGM2FzJ8tiVXauhIzZfmx65M8C0?=
+ =?us-ascii?Q?FwGKfNrSF3s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mHM4PW2epiMIedDBL0yQqBnzgFTUQaOvErOPP3wJwNRzdfXjEn+/tnflOiVU?=
+ =?us-ascii?Q?+Zxb+wrsTfwoetIFL3mrWqTO1tnhJT3hREZ9MMNCAwp2Vknn4QCy+PUf+jP+?=
+ =?us-ascii?Q?S9kRVV2VEkHsRgtqnFKxyVaD9+SHoo8Y6qxb2L4dFIE/57yghDoop8S6FHog?=
+ =?us-ascii?Q?VqBn+n3OnVJbeWKYUzAYkUeqne5sQHQOBnfAJLXtvPTLn+64Lbkuyh5tlNHs?=
+ =?us-ascii?Q?cybf9xnkQFNfKA+oFShI5Ugodz8k28yU8wcVLM3QjqN3tKL48eM/s0Zp2+Ih?=
+ =?us-ascii?Q?DL2Ni+17NIgk0kI0jtBHuhar5sZb7PcZHHaGkhw4PbhWAGP4DdhSPzKsF6gG?=
+ =?us-ascii?Q?XSVyHZS4FFKh9LDEshwfWKddOANnWCDtTVl7ja2eGsVkZZQzQ0lyutFkWwdY?=
+ =?us-ascii?Q?KEAdLLChcB31HCIG1V/VK8AmXzc929ztgH+C1G6g45ytU5PVllk6p6NPZ1dJ?=
+ =?us-ascii?Q?hGdl9ffQQAiBkSJkGnObX2EDGi4ASfVGOfGTWnVg9fHmMwVVtbJjEA/n6QvU?=
+ =?us-ascii?Q?9NekE/lDwrTiQpQgPgSxqwnFkYhkJEW7UJXNDVF/4wt0f55fiNOVbSoYUq+Y?=
+ =?us-ascii?Q?NMCQKMDLzpOIWJsthZnhnz8ANrLy+nIvlhgD5UARH1Opm9eVSVXiwMtEcIec?=
+ =?us-ascii?Q?pIqhn9Fp+CnZDERA7AlGXQVnszVqMqQChZnShALElxSsNUvjAGztL+Ogz+s2?=
+ =?us-ascii?Q?cNfVVITqeD1Wp+7g2UnV1AAliS3nKheNoPvkgiDYeNzWPZzWJsGwM0cu+N0Q?=
+ =?us-ascii?Q?vntMSsYR527N8PO8MIEW0WUUNW7ruTby8bPHsVWNUWjc2XMrFs9ieH5cQiH7?=
+ =?us-ascii?Q?aqpiiOTzrx89cKWIsnLQgk2Xndd7J4imUHEW0ANNF6phWUDHWw+piG97PIh4?=
+ =?us-ascii?Q?yqaGnm2vFtJcPSIGZwcjb/XTLAfFNf/e3KaiKFWzLhJTxnWPy2uWqCdFHYqX?=
+ =?us-ascii?Q?SRrmYgBZckxjZmofSJVtpJ9qWywfpP3Xa8N8f7NOYL7VyS6SrRqsmpBn4NgX?=
+ =?us-ascii?Q?Tn2ZHtLUCTNT7NaQMkeAsICmN6jtRzwxoX4Kkvg8uQh6VG8CzRAI8RYe/1MU?=
+ =?us-ascii?Q?8ZFmTl/52SqA8cwj4qUg5e6ENMqWCsVYhp2a4ppd8IqpN/p0E/WP3vhijysb?=
+ =?us-ascii?Q?fdGM1iCGvq5MPbKxRuXczjB3/0DHo1SvgsNdua3JRLjaz4pSGl4pVk0gkVYz?=
+ =?us-ascii?Q?Mfo1fmGC/h1q4Kq1LEmfxNogZ2sQVzJG8M5J8+PnWb8olif/ncPR86StIsD6?=
+ =?us-ascii?Q?Ca9aKdMuhvPwJpA8Iu2GPt10YER3cUdfFbXBDSbab4WKhdSqTybQW0JecyJY?=
+ =?us-ascii?Q?MdbNSsHlS7CLNoV++yfQbjFTpx5Yzw0TtzPKcKl+CXrFpiqQx51WOTE1gFcD?=
+ =?us-ascii?Q?X1sb+nZOUCOBkv4vrQKUoiKRHKsg+LnmxMviISciS00hf9D1y69rKNbrkKhd?=
+ =?us-ascii?Q?hnfESfz8Q3Io0kltk68G2J8Cij3ffIvK7XvoGCpJ9yCN1DaCLbxk2vuwOG82?=
+ =?us-ascii?Q?8T7rZgw50F4JR3eQTgCcdro9/29FBIxCkdhaCaeHP+dBQHu5TsiMY+UCf+Fy?=
+ =?us-ascii?Q?8taSOWA3Dxx1L7m+mmU1fOm+XgsGs8jwfw8YPbBt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26bf0352-ac14-4fe5-6558-08ddcaec11ba
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 19:55:41.6581
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l3cu3jv8vt4kWoHk/fx18xC1VcJZmOviDSaDsN2X5L3RcXvmV8gdFrlMm7Qq/Vg4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8102
 
-On Wed, Jul 23, 2025 at 8:30=E2=80=AFPM Paul Lawrence <paullawrence@google.=
-com> wrote:
->
-> > FUSE_CREATE already returns two out args.
-> > How were you planning to extend it?
->
-> Excellent point. However, FUSE_CREATE (and FUSE_TMPFILE) already has
-> fuse_open_out as the second argument, so the backing_id can be passed
-> in there. Does that sound acceptable? I'll admit that at first this
-> seemed clunky to me, but the more I think about it, the more natural
-> it seems - create is really an open, so it follows that paradigm, and
-> the new paradigm is used only for FUSE_LOOKUP.
->
+On 18 Jul 2025, at 5:02, Dev Jain wrote:
 
-Yes, you are right. FUSE_CREATE already has backing_id anyway.
-
-> FUSE_READDIRPLUS is harder, it seems to me. We would need to break ABI
-> compatibility - I can't see any sane alternative. A clean way would be
-> to have a FUSE_READDIR_PASSTHROUGH opcode. This implies that there's a
-> flag FUSE_PASSTHROUGH_MASK covering all of this new functionality
-> which would also enable this new opcode. (It could, alternatively,
-> change the behavior of FUSE_READDIRPLUS but I suspect no one is going
-> to like that idea.)
-
-Let's leave readdirplus for the very end.
-It's not very important for the first version IMO.
-
+> Use folio_pte_batch to batch process a large folio. Note that, PTE
+> batching here will save a few function calls, and this strategy in cert=
+ain
+> cases (not this one) batches atomic operations in general, so we have
+> a performance win for all arches. This patch paves the way for patch 7
+> which will help us elide the TLBI per contig block on arm64.
 >
-> Does this seem reasonable?
+> The correctness of this patch lies on the correctness of setting the
+> new ptes based upon information only from the first pte of the batch
+> (which may also have accumulated a/d bits via modify_prot_start_ptes())=
+=2E
+>
+> Observe that the flag combination we pass to mprotect_folio_pte_batch()=
 
-Yes. sounds good to me.
+> guarantees that the batch is uniform w.r.t the soft-dirty bit and the
+> writable bit. Therefore, the only bits which may differ are the a/d bit=
+s.
+> So we only need to worry about code which is concerned about the a/d bi=
+ts
+> of the PTEs.
+>
+> Setting extra a/d bits on the new ptes where previously they were not s=
+et,
+> is fine - setting access bit when it was not set is not an incorrectnes=
+s
+> problem but will only possibly delay the reclaim of the page mapped by
+> the pte (which is in fact intended because the kernel just operated on =
+this
+> region via mprotect()!). Setting dirty bit when it was not set is again=
 
-Thanks,
-Amir.
+> not an incorrectness problem but will only possibly force an unnecessar=
+y
+> writeback.
+>
+> So now we need to reason whether something can go wrong via
+> can_change_pte_writable(). The pte_protnone, pte_needs_soft_dirty_wp,
+> and userfaultfd_pte_wp cases are solved due to uniformity in the
+> corresponding bits guaranteed by the flag combination. The ptes all
+> belong to the same VMA (since callers guarantee that [start, end) will
+> lie within the VMA) therefore the conditional based on the VMA is also
+> safe to batch around.
+>
+> Since the dirty bit on the PTE really is just an indication that the fo=
+lio
+> got written to - even if the PTE is not actually dirty but one of the P=
+TEs
+> in the batch is, the wp-fault optimization can be made. Therefore, it i=
+s
+> safe to batch around pte_dirty() in can_change_shared_pte_writable()
+> (in fact this is better since without batching, it may happen that
+> some ptes aren't changed to writable just because they are not dirty,
+> even though the other ptes mapping the same large folio are dirty).
+>
+> To batch around the PageAnonExclusive case, we must check the correspon=
+ding
+> condition for every single page. Therefore, from the large folio batch,=
 
->
-> Thanks,
-> Paul
->
->
->
->
-> On Wed, Jul 23, 2025 at 9:53=E2=80=AFAM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Tue, Jul 22, 2025 at 11:13=E2=80=AFPM Paul Lawrence <paullawrence@go=
-ogle.com> wrote:
-> > >
-> > > I spent a little time with these patches. I wrote my own to set the
-> > > backing file at lookup time by adding an optional second out struct.
-> >
-> > FUSE_CREATE already returns two out args.
-> > How were you planning to extend it?
-> >
-> > > Is there a reason we should not do this? It seems the most natural
-> > > solution.
-> > >
-> > > After a while, I began to wonder if what I was planning was actually
-> > > the same as your vision. I decided to jot down my thoughts to see if
-> > > you agree with them. Also I was confused as to why you were adding th=
+> we process sub batches of ptes mapping pages with the same
+> PageAnonExclusive condition, and process that sub batch, then determine=
+
+> and process the next sub batch, and so on. Note that this does not caus=
 e
-> > > ability to set backing files to GETATTR.
-> >
-> > It is a demo. It demonstrates that passthrough can be set up sooner tha=
-n
-> > open time. It was not my intention to keep it this way.
-> >
-> > > So here are my notes.
-> > >
-> > > Design of fuse passthrough for all operations
-> > >
-> > > Goal:
-> > >
-> > > When a fuse filesystem implements a stacking filesystem over an
-> > > underlying file system, and a significant fraction of the calls will
-> > > simply be passed to the underlying file system, provide a mechanism t=
-o
-> > > pass those calls through without going to user space. This is
-> > > primarily to enhance performance, though it might simplify the daemon
-> > > somewhat too.
-> > >
-> > > Current state:
-> > >
-> > > Currently passthrough allows a backing file to be set at file open
-> > > time. If a backing file is set, all read/write operations will be
-> > > forwarded to the backing file.
-> > >
-> > > Design:
-> > >
-> > > Add ability to set backing file on the found inode in response to a
-> > > positive lookup. This file might be opened with O_PATH for performanc=
+> any extra overhead; if suppose the size of the folio batch is 512, then=
+
+> the sub batch processing in total will take 512 iterations, which is th=
 e
-> > > reasons. The lookup api would be modified to have an optional second
-> > > out struct that contains the backing file id. Note that we will use
-> > > the backing file ioctl to create this id to remove any security
-> > > concerns.
-> > >
-> > > The ioctl will also take a 64-bit integer to define which operations
-> > > will be passed through, the operations mask. This will have one bit
-> > > for each of the existing FUSE_OPERATIONS, at least the ones that act
-> > > on inodes/files.
-> > >
-> > > Then when fuse fs is considering calling out to the daemon with an
-> > > opcode, fuse fs will check if the inode has a backing file and mask.
-> > > If it does, and the specific opcode bit is set, fuse fs will instead
-> > > call out to a kernel function in backing.c that can perform that
-> > > operation on the backing file correctly.
-> > >
-> > > Details:
-> > >
-> > > Question: Will it be possible to change the mask/backing file after
-> > > the initial setting? My feeling is that it might well be useful to be
-> > > able to set the mask, the file not so much. Situations would be (for
-> > > example) a caching file system that turns off read forwarding once th=
-e
-> > > whole file is downloaded.
-> > >
-> >
-> > Generally, enabling passthrough from a point in time until the end of
-> > inode lifetime is easier than turning it off, but also there are many
-> > dependencies between passthrough ops and inode state so it will
-> > require a lot of care to enable *some* operations mid inode lifetime.
-> >
-> > > FUSE_OPEN will, if the backing file has been set, reopen it as a file
-> > > (not a path) if needed. This is whether or not FUSE_OPEN is passed
-> > > through.
-> > >
-> > > If FUSE_OPEN is passed through, user space will not get the chance to
-> > > assign a file handle ID to the opened file. It will still be possible
-> > > to pass FUSE_READ etc to the daemon - the daemon will still have the
-> > > node id and be able to read data based on that.
-> > >
-> >
-> > Not sure I understand what you mean, but we do support per file opt-out=
- of
-> > passthrough with FOPEN_DIRECT_IO even when the inode is already
-> > set up for passthrough.
-> >
-> > > FUSE_LOOKUP can return a 0 node id, but only if *all* operations on
-> > > that node as marked as passthrough.
-> >
-> > Not sure why this is but I will be open to understanding.
-> > Will need an elaborate design of the inode lifetime in this case.
-> >
-> > >
-> > > Suggestion: During FUSE_LOOKUP, if FUSE_GETATTR is set in the mask,
-> > > ignore the passed in attributes and read them from the backing file.
-> >
-> > My patches already implement that when GETATTR is in the mask.
-> >
-> > >
-> > > Random, non-exhastive list of considerations:
-> > >
-> > > FUSE_FORGET can only be marked passthrough if the node id is 0.
-> > >
-> > > FUSE_CREATE returns a new node id and file handle. It would need the
-> > > ability to set backing files.
-> > >
-> > > If FUSE_LOOKUP is marked for passthrough, then looked up inodes will
-> > > be prepopulated with a backing O_PATH file and a mask will all bits
-> > > set.
-> > >
-> > > FUSE_RENAME takes two nodes and names, and moves one to the other. If
-> > > one is passthrough and one is not, there is no obvious way of
-> > > performing a rename. Either fall back to copy/delete or return EXDEV
-> >
-> > Good question.
-> >
-> > My patches were meant to provide you the basic infrastructure to enter
-> > this playground and show that you do not need backing dentry/inode
-> > beyond what is already available.
-> >
-> > I hope this is enough for you to start experimenting and sending RFC pa=
-tches
-> > with design doc!
-> >
-> > Thanks,
-> > Amir.
+> same as what we would have done before.
+>
+> For pte_needs_flush():
+>
+> ppc does not care about the a/d bits.
+>
+> For x86, PAGE_SAVED_DIRTY is ignored. We will flush only when a/d bits
+> get cleared; since we can only have extra a/d bits due to batching,
+> we will only have an extra flush, not a case where we elide a flush due=
+
+> to batching when we shouldn't have.
+>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  mm/mprotect.c | 125 +++++++++++++++++++++++++++++++++++++++++++++-----=
+
+>  1 file changed, 113 insertions(+), 12 deletions(-)
+>
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index a1c7d8a4648d..2ddd37b2f462 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -106,7 +106,7 @@ bool can_change_pte_writable(struct vm_area_struct =
+*vma, unsigned long addr,
+>  }
+>
+>  static int mprotect_folio_pte_batch(struct folio *folio, pte_t *ptep,
+> -				    pte_t pte, int max_nr_ptes)
+> +				    pte_t pte, int max_nr_ptes, fpb_t flags)
+>  {
+>  	/* No underlying folio, so cannot batch */
+>  	if (!folio)
+> @@ -115,7 +115,7 @@ static int mprotect_folio_pte_batch(struct folio *f=
+olio, pte_t *ptep,
+>  	if (!folio_test_large(folio))
+>  		return 1;
+>
+> -	return folio_pte_batch(folio, ptep, pte, max_nr_ptes);
+> +	return folio_pte_batch_flags(folio, NULL, ptep, &pte, max_nr_ptes, fl=
+ags);
+>  }
+>
+>  static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> @@ -177,6 +177,102 @@ static bool prot_numa_skip(struct vm_area_struct =
+*vma, unsigned long addr,
+>  	return ret;
+>  }
+>
+> +/* Set nr_ptes number of ptes, starting from idx */
+> +static void prot_commit_flush_ptes(struct vm_area_struct *vma, unsigne=
+d long addr,
+> +		pte_t *ptep, pte_t oldpte, pte_t ptent, int nr_ptes,
+> +		int idx, bool set_write, struct mmu_gather *tlb)
+> +{
+> +	/*
+> +	 * Advance the position in the batch by idx; note that if idx > 0,
+> +	 * then the nr_ptes passed here is <=3D batch size - idx.
+> +	 */
+> +	addr +=3D idx * PAGE_SIZE;
+> +	ptep +=3D idx;
+> +	oldpte =3D pte_advance_pfn(oldpte, idx);
+> +	ptent =3D pte_advance_pfn(ptent, idx);
+> +
+> +	if (set_write)
+> +		ptent =3D pte_mkwrite(ptent, vma);
+> +
+> +	modify_prot_commit_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes);
+> +	if (pte_needs_flush(oldpte, ptent))
+> +		tlb_flush_pte_range(tlb, addr, nr_ptes * PAGE_SIZE);
+> +}
+> +
+> +/*
+> + * Get max length of consecutive ptes pointing to PageAnonExclusive() =
+pages or
+> + * !PageAnonExclusive() pages, starting from start_idx. Caller must en=
+force
+> + * that the ptes point to consecutive pages of the same anon large fol=
+io.
+> + */
+> +static int page_anon_exclusive_sub_batch(int start_idx, int max_len,
+> +		struct page *first_page, bool expected_anon_exclusive)
+> +{
+> +	int idx;
+> +
+> +	for (idx =3D start_idx + 1; idx < start_idx + max_len; ++idx) {
+> +		if (expected_anon_exclusive !=3D PageAnonExclusive(first_page + idx)=
+)
+> +			break;
+> +	}
+> +	return idx - start_idx;
+> +}
+> +
+> +/*
+> + * This function is a result of trying our very best to retain the
+> + * "avoid the write-fault handler" optimization. In can_change_pte_wri=
+table(),
+> + * if the vma is a private vma, and we cannot determine whether to cha=
+nge
+> + * the pte to writable just from the vma and the pte, we then need to =
+look
+> + * at the actual page pointed to by the pte. Unfortunately, if we have=
+ a
+> + * batch of ptes pointing to consecutive pages of the same anon large =
+folio,
+> + * the anon-exclusivity (or the negation) of the first page does not g=
+uarantee
+> + * the anon-exclusivity (or the negation) of the other pages correspon=
+ding to
+> + * the pte batch; hence in this case it is incorrect to decide to chan=
+ge or
+> + * not change the ptes to writable just by using information from the =
+first
+> + * pte of the batch. Therefore, we must individually check all pages a=
+nd
+> + * retrieve sub-batches.
+> + */
+> +static void commit_anon_folio_batch(struct vm_area_struct *vma,
+> +		struct folio *folio, unsigned long addr, pte_t *ptep,
+> +		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
+> +{
+> +	struct page *first_page =3D folio_page(folio, 0);
+> +	bool expected_anon_exclusive;
+> +	int sub_batch_idx =3D 0;
+> +	int len;
+> +
+> +	while (nr_ptes) {
+> +		expected_anon_exclusive =3D PageAnonExclusive(first_page + sub_batch=
+_idx);
+> +		len =3D page_anon_exclusive_sub_batch(sub_batch_idx, nr_ptes,
+> +					first_page, expected_anon_exclusive);
+> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, len,
+> +				       sub_batch_idx, expected_anon_exclusive, tlb);
+> +		sub_batch_idx +=3D len;
+> +		nr_ptes -=3D len;
+> +	}
+> +}
+> +
+> +static void set_write_prot_commit_flush_ptes(struct vm_area_struct *vm=
+a,
+> +		struct folio *folio, unsigned long addr, pte_t *ptep,
+> +		pte_t oldpte, pte_t ptent, int nr_ptes, struct mmu_gather *tlb)
+> +{
+> +	bool set_write;
+> +
+> +	if (vma->vm_flags & VM_SHARED) {
+> +		set_write =3D can_change_shared_pte_writable(vma, ptent);
+> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
+> +				       /* idx =3D */ 0, set_write, tlb);
+> +		return;
+> +	}
+> +
+> +	set_write =3D maybe_change_pte_writable(vma, ptent) &&
+> +		    (folio && folio_test_anon(folio));
+> +	if (!set_write) {
+> +		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
+> +				       /* idx =3D */ 0, set_write, tlb);
+> +		return;
+> +	}
+> +	commit_anon_folio_batch(vma, folio, addr, ptep, oldpte, ptent, nr_pte=
+s, tlb);
+> +}
+> +
+>  static long change_pte_range(struct mmu_gather *tlb,
+>  		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>  		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+> @@ -206,8 +302,9 @@ static long change_pte_range(struct mmu_gather *tlb=
+,
+>  		nr_ptes =3D 1;
+>  		oldpte =3D ptep_get(pte);
+>  		if (pte_present(oldpte)) {
+> +			const fpb_t flags =3D FPB_RESPECT_SOFT_DIRTY | FPB_RESPECT_WRITE;
+>  			int max_nr_ptes =3D (end - addr) >> PAGE_SHIFT;
+> -			struct folio *folio;
+> +			struct folio *folio =3D NULL;
+>  			pte_t ptent;
+>
+>  			/*
+> @@ -221,11 +318,16 @@ static long change_pte_range(struct mmu_gather *t=
+lb,
+>
+>  					/* determine batch to skip */
+>  					nr_ptes =3D mprotect_folio_pte_batch(folio,
+> -						  pte, oldpte, max_nr_ptes);
+> +						  pte, oldpte, max_nr_ptes, /* flags =3D */ 0);
+>  					continue;
+>  				}
+>  			}
+>
+> +			if (!folio)
+> +				folio =3D vm_normal_folio(vma, addr, oldpte);
+> +
+> +			nr_ptes =3D mprotect_folio_pte_batch(folio, pte, oldpte, max_nr_pte=
+s, flags);
+> +
+>  			oldpte =3D modify_prot_start_ptes(vma, addr, pte, nr_ptes);
+
+Here both mprotect_folio_pte_batch() and modify_prot_start_ptes()
+can collect dirty and access bits from PTEs in the batch. But
+modify_prot_start_ptes() clears PTEs to prevent concurrent hardware
+modification. It took me a while to figure this out, since I was
+wondering why oldpte is not used after mprotect_folio_pte_batch().
+
+I wish folio_pte_batch_flags() used by mprotect_folio_pte_batch()
+can take a function pointer to allow either read PTEs or clear
+PTEs, so that there could be one function. But that could
+complicate folio_pte_batch_flags(). Just a comment. :)
+
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+Best Regards,
+Yan, Zi
 
