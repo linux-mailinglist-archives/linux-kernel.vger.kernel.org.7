@@ -1,151 +1,328 @@
-Return-Path: <linux-kernel+bounces-745095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162EAB114C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:40:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D34B114CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD1B1CE4740
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D332AE3AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042A82459E3;
-	Thu, 24 Jul 2025 23:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0F7242D99;
+	Thu, 24 Jul 2025 23:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRIW9KGH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Z6AVl/AR"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932B241C8C;
-	Thu, 24 Jul 2025 23:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77BB2417C3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400283; cv=none; b=F7EUOLQK34GTWEa8Erc5sgnZnEVSgxjiRhBsw1/C8Q4HNCDFuQESNRoE+wbG+3CL15WZtFaAXICRm6gMlpB+LxaGbli4+wFJpI2U+wEtqp0yRPW91HYk54fDm+l07A9FJ3PQ+vzJk0UkOHUkR+ySZQ0Wjg4Wdg2dJO4efWdDxNQ=
+	t=1753400310; cv=none; b=tsXCfV6fsbJCUjoBuPibqenmevUUuHpjHS13VgNehMDm+23jK1YprwHr4xFUN5wgjk1QnN+g3MgoeHe41kP7C3WFQurAdk3DjWvbptNOiGKGMc6LW8L5CD8dsTK3N0cCQnkLRYOhWwaFwnD9FifhZfoG4lAEhw1Bp2NE5eJ/FXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400283; c=relaxed/simple;
-	bh=b5hCToxNeuwTg9pHwy7ASyHLcQ4WXMdqVI9hwgI69ks=;
+	s=arc-20240116; t=1753400310; c=relaxed/simple;
+	bh=6U9CDriPOyZt+5CDrYvvE4ecGhG3P1TQb1zMnvqMNKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X24N4kPtu6aVMlqyjVbJInsJT6YL6Ql8YuV7v8N4I5eR8/M0lkCAAMZcmw8gp+8u8vymG0egSESyak1awThBnUYKjwAsJm3nnIzGv9fr7urG5v6KvYXAyvmZOW3FrtI6YGxfMU1NMBxpEw8byx3W9C3adpwwqo9ezZu5AN7Nu6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRIW9KGH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB12C4CEED;
-	Thu, 24 Jul 2025 23:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753400282;
-	bh=b5hCToxNeuwTg9pHwy7ASyHLcQ4WXMdqVI9hwgI69ks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lRIW9KGHcqL0Fmk+5ttu/lxjwJbU/eFI84L7Hj2MdW1ul6fOEUBmOnNycwc827Q4i
-	 LJEsZJ4GrO/oavqNwFPm9QRw9JUObG/+JjzR4v93D3Z/GX86s3koBwvt/aib1W/GAM
-	 3RexJjMDXqALCzOv+OU2x4dAPCS7pO0Y31VMtBcJ6qNYaNPH6sRFA3Mnsp8YtAIEBs
-	 z3FgN22qFgnMhUL3M9Kn9FiIpuoW6nQxO/phd+Q1+C0IteuDAAlQ0Y242fixPEdh1m
-	 DqLjhm17PE65XTYxL6aNBrQ0qbhAUzoCYsp2B2mMVvwDSjijsYmA9fI8vyAmTLKO38
-	 kzpv0dDDyGK6w==
-Date: Thu, 24 Jul 2025 16:38:02 -0700
-From: Kees Cook <kees@kernel.org>
-To: Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
-	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
-	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH v6 3/3] include: Set tsk->comm length to 64 bytes
-Message-ID: <202507241634.C0346AC@keescook>
-References: <20250724123612.206110-1-bhupesh@igalia.com>
- <20250724123612.206110-4-bhupesh@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIDyuxXKbqCDzvCGcJ1Mwgh9tUFXSy4W8XV3PRt4rDXN4kyiKNOj3AQYO4qNgGUPRB93sHDtn6hSO/VINusa2UC34eG4P4lG3vpEX8WkgS0mzSJGWacQKG8TcR+Ca7oSi//OmCwg93BQbO56ctfTCyb5pBV/KrpWHLGkix6VnGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Z6AVl/AR; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-236377f00a1so13540275ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753400308; x=1754005108; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ahgvr94dH2dhBsqXaRkVzEMYNkCZUV1gRwiq2yUA2cU=;
+        b=Z6AVl/ARRdN+KfbA0pKtpPOBjOfjwx7O+18ARHxzb0d4ofPI9mbwn0y2+vjHYbLFah
+         e/fIcOqh+SJgigPBk2O0UgT2EDX3chlerI8ZhS7NWFwCx1c8p7wGPuCeXpamA0X67sgr
+         j1E2x21vTU5mXrsb8OmuroitTy8ZngHwxhBfWar8GQ/7hbHfse07lxd1fWU2xklc5hUK
+         9taLWXUXVacEf6n4KcL2TCHuF7l0b2usciBPbrqQctoNNtBIyDZP/l0dAaU9hPvff26j
+         wLC03q2DSGKJ8NopdqYR6OmXITQG2s5UW31eFMz0bvbJJd5TJkaMANIrPWys3sN+JGkx
+         utbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753400308; x=1754005108;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ahgvr94dH2dhBsqXaRkVzEMYNkCZUV1gRwiq2yUA2cU=;
+        b=khnEjahGMpQhctWg9Wr9pRGb8hZlf6LpATvYuonCU05bFSfvQ6UPDggk5SnDT/LLl9
+         C7KX/uXBa6Cat6c/phl3pbt+oklFbB/70Bh9h44JIsDHTvqSpF6HAj/zfa8V1diu+Vj3
+         Y0L8ziI+llHuGG3E+sB7abqBAqtUx+nWrZGRYHUEv0+xSkK+2toJV4ZYnRrWKd/WxC05
+         3iYKMS4XJJa/usH9rqCd/UF0c1WXb2/rtPmdrM1p6YtQuhtuHmaLtaZ9Z0I1KGrS+2PT
+         BpEYgjAE9ckCyeZYpnl3iDxOGStcAQnFkQpgOadCNSnuw9eY6T3oDeCWxeLlMj6zbPrz
+         ZPKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh1E0HxplwhYL8IwmR8wqVCQdPSeIJ5HyJBN/zyzP50uPuNw5VFJGMQcCJjM5Z5l7sGfWcsmvpJXGY1wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Tdw4wO6qbznI515oGlKzhkkezEwRbaRKfHfYCKx6KraE84OK
+	7L5teS+cfvYjOYKqJa5ZywDKIoQe+7j8ApRc5loBoV6rZpo+6mVISLATJNj/zH03n7I=
+X-Gm-Gg: ASbGncsWLwC3pq8OTgMsheuqYPjdxOcVJv3kRpd4R1271K4dmoKOn75PFWpJ6qDj6aG
+	MhBKCftcWPIo/qzjrASUQPE0idh9kY2m2v+Tu1HYwsEr0NLrAeZtHD++6IPRIKoypZkbVUNMDBP
+	nbgGASyFEBbmaXAPzKKBo9drDyzYhR7QgdOdTPB7nxREHOr/MtHr9Vpd6jGT0izt31q/N/fptNY
+	sBJ0Djs5Y8fFelFYKgC55dVbn9bYTb5YjH56MKbn63e7ca6E8Cxdv86igOlT/5bDDLedvRzq9Y/
+	SpiLcfbyRVTFGzKzeCQiOn7aWOToxvTiDiOxo/4UOoKW6mqa54xWLDowdhTEoUybx+fHzG5wLbh
+	MHIx5ojXTBvWLZjpwz2YzrFxAhPcFoYo2
+X-Google-Smtp-Source: AGHT+IHh57JQMjYQf6z5v8YtVS4etBElbIsePwBBM2zn5y0zWRQdQdP1YcFar+ZP2TEVlhG5eL2aKg==
+X-Received: by 2002:a17:903:8c8:b0:23f:6fa4:1567 with SMTP id d9443c01a7336-23f98146861mr104261895ad.8.1753400308145;
+        Thu, 24 Jul 2025 16:38:28 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48dc9a2sm23532065ad.126.2025.07.24.16.38.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 16:38:27 -0700 (PDT)
+Date: Thu, 24 Jul 2025 16:38:24 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Monk Chiang <monk.chiang@sifive.com>,
+	Kito Cheng <kito.cheng@sifive.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, cleger@rivosinc.com, samitolvanen@google.com,
+	apatel@ventanamicro.com, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, charlie@rivosinc.com,
+	samuel.holland@sifive.com, bjorn@rivosinc.com, fweimer@redhat.com,
+	jeffreyalaw@gmail.com, heinrich.schuchardt@canonical.com,
+	andrew@sifive.com, ved@rivosinc.com
+Subject: Re: [PATCH 00/11] riscv: fine grained hardware assisted kernel
+ control-flow integrity
+Message-ID: <aILD8LeUypdAKc8a@debug.ba.rivosinc.com>
+References: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250724123612.206110-4-bhupesh@igalia.com>
+In-Reply-To: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
 
-On Thu, Jul 24, 2025 at 06:06:12PM +0530, Bhupesh wrote:
-> Historically due to the 16-byte length of TASK_COMM_LEN, the
-> users of 'tsk->comm' are restricted to use a fixed-size target
-> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
-> 
-> To fix the same, we now use a 64-byte TASK_COMM_EXT_LEN and
-> set the comm element inside 'task_struct' to the same length:
->        struct task_struct {
-> 	       .....
->                char    comm[TASK_COMM_EXT_LEN];
-> 	       .....
->        };
-> 
->        where TASK_COMM_EXT_LEN is 64-bytes.
-> 
-> Now, in order to maintain existing ABI, we ensure that:
-> 
-> - Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm'
->   truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
-> - New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
->  'tsk->comm' supported up to the maximum of 'TASK_COMM_EXT_LEN' (64-bytes).
-> 
-> Note, that the existing users have not been modified to migrate to
-> 'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
-> dealing with only a 'TASK_COMM_LEN' long 'tsk->comm'.
-> 
-> Signed-off-by: Bhupesh <bhupesh@igalia.com>
-> ---
->  include/linux/sched.h | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 8bbd03f1b978..b6abb759292c 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -317,6 +317,7 @@ struct user_event_mm;
->   */
->  enum {
->  	TASK_COMM_LEN = 16,
-> +	TASK_COMM_EXT_LEN = 64,
->  };
->  
->  extern void sched_tick(void);
-> @@ -1159,7 +1160,7 @@ struct task_struct {
->  	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
->  	 *     zero-padded
->  	 */
-> -	char				comm[TASK_COMM_LEN];
-> +	char				comm[TASK_COMM_EXT_LEN];
->  
->  	struct nameidata		*nameidata;
->  
-> @@ -1954,7 +1955,7 @@ extern void kick_process(struct task_struct *tsk);
->  
->  extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
->  #define set_task_comm(tsk, from) ({			\
-> -	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
-> +	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
->  	__set_task_comm(tsk, from, false);		\
->  })
->  
-> @@ -1974,6 +1975,10 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
->  #define get_task_comm(buf, tsk) ({			\
->  	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
->  	strscpy_pad(buf, (tsk)->comm);			\
-> +	if ((sizeof(buf)) == TASK_COMM_LEN)		\
-> +		buf[TASK_COMM_LEN - 1] = '\0';		\
-> +	else						\
-> +		buf[TASK_COMM_EXT_LEN - 1] = '\0';	\
+Well I forgot to apply "RFC" prefix in subject. Sorry about that.
 
-strscpy_pad() will already make sure buf is NUL-terminated, so I don't
-see why there is a need for explicit final byte termination? (And even
-if we do need it, then it should just be buf[sizeof(buf) - 1] otherwise
-using a buf that is < TASK_COMM_EXT_LEN but > TASK_COMM_LEN will have
-a spurious NUL byte write beyond its buffer.)
+-Deepak
 
--- 
-Kees Cook
+On Thu, Jul 24, 2025 at 04:36:53PM -0700, Deepak Gupta wrote:
+>This patch series enables fine grained control-flow integrity for kernel
+>on riscv platform. I did send out a RFC patchset [1] more than an year ago.
+>Since it's been a while, I am resetting the versioning and calling it a RFC
+>due to following reasons
+>
+>- This is first (in a while)  and I may have missed things.
+>- Earlier patchset were not fine-grained kcfi. This one is.
+>- Toolchain used to compile kernel is still in development.
+>- On asm indirect callsites, setting up label need toolchain support.
+>
+>It is based on 6.16-rc1 with user cfi enabling patchset(v18)[2] applied on it.
+>Hardware guarantee on kernel's control flow integrity is enforced via zicfilp
+>and zicfiss riscv cpu extensions. Please take a look at user cfi enabling
+>patchset for more details and references on these cpu extensions.
+>
+>Toolchain
+>----------
+>As mentioned earlier toolchain used to develop this patchset are still in
+>development. But you can grab them here [3]. This is how I configure and
+>compile toolchain.
+>
+>$ ./riscv-gnu-toolchain/configure \
+>--prefix=/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_funcsig \
+>--with-arch=rv64gc_zicfilp_zicfiss_zicsr_zifencei_zimop_zcmop \
+>--enable-debug-info --enable-linux --disable-gdb  --with-abi=lp64d \
+>--with-label-scheme=func-sig \
+>--with-linux-headers-src=/scratch/debug/linux/kbuild/usr/include
+>
+>$ make -j$(nproc)
+>
+>If `-fcf-protection=full` is selected, toolchain is enabled to generate
+>labeled landing pad instruction at the start of the function. And
+>shadow stack push to save return address and sspopchk instruction in
+>the return path.
+>
+>riscv kernel control-flow integrity
+>------------------------------------
+>
+>As with normal user software, enabling kernel control flow integrity also
+>require forward control flow integrity and backward control flow integrity.
+>This patchset introduces CONFIG_RISCV_KERNEL_CFI config, hw assisted riscv
+>kernel cfi is enabled only when `CONFIG_RISCV_KERNEL_CFI=y`. Selecting
+>CONFIG_RISCV_KERNEL_CFI is dependent on CONFIG_RISCV_USER_CFI.
+>
+>To compile kernel, please clone the toolchain (link provided above), build
+>it and use that toolchain bits to compile the kernel. When you do `menuconfig`
+>select `Kernel features` --> `riscv userspace control flow integrity`.
+>When you select `riscv userspace control flow integrity`, then `hw assisted
+>riscv kernel control flow integrity (kcfi)` will show up. Select both and
+>build.
+>
+>I have tested kcfi enabled kernel with full userspace exercising (unlabeled
+>landing pads) cfi starting with init process. In my limited testing, this
+>boots. There are some wrinkles around what labeling scheme should be used
+>for vDSO object. This patchset is using labeled landing pads for vDSO.
+>We may end up using unlabeled landing pad for vDSO for maximum compatibility.
+>But that's a future discussion.
+>
+>Qemu command line to launch:
+>/scratch/debug/open_src/qemu/build_zicfilp/qemu-system-riscv64 \
+>  -nographic \
+>  -monitor telnet:127.0.0.1:55555,server,nowait \
+>  -machine virt \
+>  -cpu rv64,zicond=true,zicfilp=true,zicfiss=true,zimop=true,zcmop=true,v=true,vlen=256,vext_spec=v1.0,zbb=true,zcb=true,zbkb=true,zacas=true \
+>  -smp 2 \
+>  -m 8G \
+>  -object rng-random,filename=/dev/urandom,id=rng0 \
+>  -device virtio-rng-device,rng=rng0 \
+>  -drive file=/scratch/debug/open_src/zisslpcfi-toolchain/buildroot/output/images/rootfs.ext2,format=raw,id=hd0 \
+>  -append "root=/dev/vda rw, no_hash_pointers, loglevel=8, crashkernel=256M, console=ttyS0, riscv_nousercfi=all" \
+>  -serial mon:stdio \
+>  -kernel /scratch/debug/linux/kbuild/arch/riscv/boot/Image \
+>  -device e1000,netdev=net0 \
+>  -netdev user,id=net0,hostfwd=tcp::10022-:22 \
+>  -virtfs local,path=/scratch/debug/sources/spectacles,mount_tag=host0,security_model=passthrough,id=host0\
+>  -bios /scratch/debug/open_src/opensbi/build/platform/generic/firmware/fw_jump.bin
+>
+>Backward kernel control flow integrity
+>---------------------------------------
+>This patchset leverages on existing infrastructure of software based shadow
+>call stack support in kernel. Differences between software based shadow call
+>stack and riscv hardware shadow stack are:
+>
+>- software shadow call stack is writeable while riscv hardware shadow stack
+>  is writeable only via specific shadow stack instructions.
+>
+>- software shadow call stack grows from low memory to high memory while riscv
+>  hardware shadow stack grows from high memory to low memory (like a normal
+>  stack).
+>
+>- software shadow call stack on riscv uses `gp` register to hold shadow stack
+>  pointer while riscv hardware shadow stack has dedicated `CSR_SSP` register.
+>
+>Thus its ideal use existing shadow call stack plumbing and create hooks into
+>it to apply riscv hardware shadow stack mechanisms on it.
+>
+>This patchset introduces `CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK` along the lines
+>of `CONFIG_ARCH_HAS_USER_SHADOW_STACK`.
+>
+>Forward kernel control-flow integrity
+>--------------------------------------
+>Enabling forward kernel control-flow integrity is mostly toolchain work where
+>it emits a landing pad instruction at the start of address-taken function.
+>zicfilp allows landing pads to be labeled with a 20-bit immediate value.
+>Compiler used here is following the scheme of normalizing function prototype
+>to a string using C++ itanium rules (with some modifications). See more details
+>here [4]. Compiler generates a 128bit md5 hash over this string and uses
+>first non-zero (scanning from MSB) 20bit segment from the 128-bit hash as label
+>value.
+>
+>This is still a work in progress and feedback/comments are welcome.
+>
+>I would like to thank Monk Chiang and Kito Cheng for helping and continue to
+>support from the toolchain side.
+>
+>[1] - https://lore.kernel.org/lkml/CABCJKuf5Jg5g3FVpU22vNUo4UituPEM7QwvcVP8YWrvSPK+onA@mail.gmail.com/T/#m7d342d8728f9a23daed5319dac66201cc680b640
+>[2] - https://lore.kernel.org/all/20250711-v5_user_cfi_series-v18-0-a8ee62f9f38e@rivosinc.com/
+>[3] - https://github.com/sifive/riscv-gnu-toolchain/tree/cfi-dev
+>[4] - https://github.com/riscv-non-isa/riscv-elf-psabi-doc/pull/434
+>
+>To: Paul Walmsley <paul.walmsley@sifive.com>
+>To: Palmer Dabbelt <palmer@dabbelt.com>
+>To: Albert Ou <aou@eecs.berkeley.edu>
+>To: Alexandre Ghiti <alex@ghiti.fr>
+>To: Masahiro Yamada <masahiroy@kernel.org>
+>To: Nathan Chancellor <nathan@kernel.org>
+>To: Nicolas Schier <nicolas.schier@linux.dev>
+>To: Andrew Morton <akpm@linux-foundation.org>
+>To: David Hildenbrand <david@redhat.com>
+>To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>To: Liam R. Howlett <Liam.Howlett@oracle.com>
+>To: Vlastimil Babka <vbabka@suse.cz>
+>To: Mike Rapoport <rppt@kernel.org>
+>To: Suren Baghdasaryan <surenb@google.com>
+>To: Michal Hocko <mhocko@suse.com>
+>To: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+>To: Bill Wendling <morbo@google.com>
+>To: Monk Chiang <monk.chiang@sifive.com>
+>To: Kito Cheng <kito.cheng@sifive.com>
+>To: Justin Stitt <justinstitt@google.com>
+>Cc: linux-riscv@lists.infradead.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: linux-kbuild@vger.kernel.org
+>Cc: linux-mm@kvack.org
+>Cc: llvm@lists.linux.dev
+>Cc: rick.p.edgecombe@intel.com
+>Cc: broonie@kernel.org
+>Cc: cleger@rivosinc.com
+>Cc: samitolvanen@google.com
+>Cc: apatel@ventanamicro.com
+>Cc: ajones@ventanamicro.com
+>Cc: conor.dooley@microchip.com
+>Cc: charlie@rivosinc.com
+>Cc: samuel.holland@sifive.com
+>Cc: bjorn@rivosinc.com
+>Cc: fweimer@redhat.com
+>Cc: jeffreyalaw@gmail.com
+>Cc: heinrich.schuchardt@canonical.com
+>Cc: monk.chiang@sifive.com
+>Cc: andrew@sifive.com
+>Cc: ved@rivosinc.com
+>
+>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>---
+>Deepak Gupta (11):
+>      riscv: add landing pad for asm routines.
+>      riscv: update asm call site in `call_on_irq_stack` to setup correct label
+>      riscv: indirect jmp in asm that's static in nature to use sw guarded jump
+>      riscv: exception handlers can be software guarded transfers
+>      riscv: enable landing pad enforcement
+>      mm: Introduce ARCH_HAS_KERNEL_SHADOW_STACK
+>      scs: place init shadow stack in .shadowstack section
+>      riscv/mm: prepare shadow stack for init task
+>      riscv: scs: add hardware shadow stack support to scs
+>      scs: generic scs code updated to leverage hw assisted shadow stack
+>      riscv: Kconfig & Makefile for riscv kernel control flow integrity
+>
+> Makefile                               |  2 +-
+> arch/riscv/Kconfig                     | 37 +++++++++++++++++++++++++-
+> arch/riscv/Makefile                    |  8 ++++++
+> arch/riscv/include/asm/asm.h           |  2 +-
+> arch/riscv/include/asm/linkage.h       | 42 +++++++++++++++++++++++++++++
+> arch/riscv/include/asm/pgtable.h       |  4 +++
+> arch/riscv/include/asm/scs.h           | 48 +++++++++++++++++++++++++++-------
+> arch/riscv/include/asm/sections.h      | 22 ++++++++++++++++
+> arch/riscv/include/asm/thread_info.h   | 10 +++++--
+> arch/riscv/kernel/asm-offsets.c        |  1 +
+> arch/riscv/kernel/compat_vdso/Makefile |  2 +-
+> arch/riscv/kernel/entry.S              | 21 ++++++++-------
+> arch/riscv/kernel/head.S               | 23 ++++++++++++++--
+> arch/riscv/kernel/vdso/Makefile        |  2 +-
+> arch/riscv/kernel/vmlinux.lds.S        | 12 +++++++++
+> arch/riscv/lib/memset.S                |  6 ++---
+> arch/riscv/mm/init.c                   | 29 +++++++++++++++-----
+> include/linux/init_task.h              |  5 ++++
+> include/linux/scs.h                    | 26 +++++++++++++++++-
+> init/init_task.c                       | 12 +++++++--
+> kernel/scs.c                           | 38 ++++++++++++++++++++++++---
+> mm/Kconfig                             |  6 +++++
+> 22 files changed, 314 insertions(+), 44 deletions(-)
+>---
+>base-commit: cc0fb5eb25ea00aefd49002b1dac796ea13fd2a0
+>change-id: 20250616-riscv_kcfi-f851fb2128bf
+>--
+>- debug
+>
 
