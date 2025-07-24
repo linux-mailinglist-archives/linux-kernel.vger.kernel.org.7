@@ -1,396 +1,331 @@
-Return-Path: <linux-kernel+bounces-744776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4538FB110B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:16:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1829DB110BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D30E1CE8209
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F977587807
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B54E2ECD38;
-	Thu, 24 Jul 2025 18:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D41F2EAD14;
+	Thu, 24 Jul 2025 18:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ke5hphPR"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRKkxOu5"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3052D46D4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE754723;
+	Thu, 24 Jul 2025 18:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753380967; cv=none; b=nsQPhwPCo1YBVPaAKaMGvwLl5QtoLcVj4mnfcubxRNDguMU+ywhOVXj9vRYK5bioUAqmXnGdPHi5X7bYd9p8fSQ0/IoYiRUzrnIphSHxJsuNULBilMthwScum4LQXmFyq5VAqEqKmhxyETXn5E6plcNpZmz0aPifBW6Hk2lqcJo=
+	t=1753381054; cv=none; b=mCvGPpfArOemc/EpMzN4RcKm0DAvPZdOnd6jVRBCeYBVOVN+941lBC772zQT9JCLvXiYVwr8gUOVsuUCOJh0M3Db7znG4fTI/vBAzGU9kTMThnRhqBmpRYfnfcKjq8uo5krBFMt3zXSIpkI4A2q/4ttYcbAmz1fNrykgFXdh5fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753380967; c=relaxed/simple;
-	bh=XJJ/JfvOvQVQQlfwsQmk3p8nNpWFvIz3xpR4a6LHYcw=;
+	s=arc-20240116; t=1753381054; c=relaxed/simple;
+	bh=+XmjL4SmKD/mIhS+vn7ygaURr4JTI6WDc2xFm9NJMFA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sYeHuOctyuAoplCwNgdGLdivb82XBbFceYrAkLWXxdjr8xweEeiN1UYdaHQP0oWnCGWZRFLDLt+1vPE3Eu4B27lxbShY3tVGdVdswVj33PWA1oMU7v6pgxcnMecvyo4CTsva/tVXk8dA+ayc6VoAyLgCqVu3UXwAFBxPzD8sGdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ke5hphPR; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553b5165cf5so1594821e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=fUXmn9XWyMl0OES4TpiRY7/M3+Z944r3n3mkKy7GvKFguxbpoh4GUHG+8EB6AyYW1nDCEWDy2HTLo/1SInmLYgZuhDuhN4M6wRYYlwuo1yaH3pqVJza5nDWuOfZmlBPJthUI9vEjmRV5dGERQQC2z9aWMcy/ipeKc/a3AL2zIBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRKkxOu5; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so12800731fa.1;
+        Thu, 24 Jul 2025 11:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753380963; x=1753985763; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRnkmNXtWAx0OvnHuRzyqidxZKn4ESWiP9VSOgI1TiA=;
-        b=Ke5hphPR9pK7MiJ9u2mkGyq5xBmUphkP/Mfy7JVW2JXCpK47ccTiNmr/GU36U3+7Oy
-         cyqZRbA5aEKvAy6J80B02O2qsQRag0qKqvPH+hamVTCQiVUEFCjMa45OsRyexYDYpniO
-         h07ApMM49aaZobahZY+EL+F9kYDFnrNFaR/A4=
+        d=gmail.com; s=20230601; t=1753381050; x=1753985850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mstO5bBA8SlBMK0W+sc+fnBo7qspVaUrHWJekQ5o+x8=;
+        b=nRKkxOu5jSEo4FoYKuOEdGXQRd2gosv3pCV7RT2fshHOavhdUglz3MX/V5Evfzd18S
+         2L3lK+UgjURNy9PY/QwHns6kBAB84lgCIUydl7dWpn9UKxrrUa/9XCU35SBtFoMMncCA
+         aFe63RYFSpNaNefXEpH0h3M1McKdiHTptmrqhdUByV8aR5Zjpel6797oyHkM7ItEcT6V
+         QjJ1lW+U9r30SVmXtJE2QjPwRnynBVyisivQye72gbTkij8ZX4561D6vey0SMt8cBMVd
+         8Y5WLWCfksrRJsQR70VePZuWRgDMRSpVTv0CN1Sa23R7vcju/vt5XXr5ZoDgJT7NxdNT
+         BdUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753380963; x=1753985763;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rRnkmNXtWAx0OvnHuRzyqidxZKn4ESWiP9VSOgI1TiA=;
-        b=G/1Oxylq8m2cZZ7xSnw1quLfU3WZ5+vLkpk6ipwRZrklLorEnAdv1Z11C6eFc5Qzc1
-         rwoPL82lHL/i9wCc7F4deHSV5H+VeX+c5+ntmi1V3w1wt7uB9XUbRgXi1w9ndnh8ro3T
-         TqFyvUwJa+Uswog3ZMFFrc7XqLIoSE80Ky5KF7R73efEBloVRBnd66N6eDQn9TOHsKyN
-         F/Q3MywWNuOrbY7NMfct8hRywPvGHGGFIIMCrzcsSgz6KCRjOhNlklobqVAHJujBYebg
-         T94w8tVSHbWJYaZikkj4hn33+DxVP7a/5nwrFDL4Tswlebxr+lnPzWrX5g4z1cb0FUCm
-         CLOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGX9/NBE4oM+ZqL3767DT3bJCvcdz8/Bf6+xy7xVg0FbHJUxrkJZJoI7t78yX38pJ0r/2fm0KS4GGHaSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvD/VzGr/FlvYygUIig+gK/DOz4L4XRhM1wcg2kG7KvQ5XgVNo
-	PgIcpHY+MJ5AYUUwDk3ovP2aRzqk1KwsFPPiWBE6lmq/iGxQWISoxEAvyxjlzGEW5J2OebQTH9d
-	POuE=
-X-Gm-Gg: ASbGncudnm8bq0RYMHyMd2CdDWl3nrkpce8wa1NDOYLBVg+54fJ+nsMnw/dX0BpIYOG
-	U34Ei98psbRxtwHGSjqSZfEHMbnb/Dsz0yvtmhvu0tjYt1CXgr8e/63GBFhbFCtC0IhcvGyD2u7
-	LzdyDzg5Y8p2jQFCqCGLeYPkdmJRCHNBvzcPNprSrM4EIUo1F3m6AqZxmiTmx+FM46V+2wdH0LY
-	Pot4ioXmUBdFfp5Ec1UVYyuiUNhcfRYq31GCBWOL/JOSQCRh2I34XMFdGdtvAqm6Ph2YyvXIPJ8
-	q9TJ5Do0QGT/qngMS9+ik/QVtsy9azHBMdimWR27bHOTQ4iwoJyd7ui7sk0I7OveOMEj70vcPG2
-	n/OmxY7vHgC75JlGwz6Tlpg9U31ndSmknw5+tuBdwOwBw9d5ns8pHjQCXOAfxIKH4KMkDzek=
-X-Google-Smtp-Source: AGHT+IFEVMoHGnpK8P/VRZyCCFiO/uYAhIsq1+6Z+tLseciEcgqlrAq1AjyrvAJkHxvTUUSdz8XBfQ==
-X-Received: by 2002:a05:6512:1045:b0:553:2cfd:5958 with SMTP id 2adb3069b0e04-55a5132e358mr2521344e87.8.1753380962964;
-        Thu, 24 Jul 2025 11:16:02 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53c712desm465555e87.121.2025.07.24.11.16.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 11:16:02 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553d771435fso1376495e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWntOvHu58Ktb0mzDoPES+GCn/fQK1znbztvFYixEmvy03pZ4iURwN1ZTHGaNjHy9wTPwACrCcjjEXo034=@vger.kernel.org
-X-Received: by 2002:a05:6512:2011:b0:550:e608:410b with SMTP id
- 2adb3069b0e04-55a513b3587mr1980785e87.33.1753380960869; Thu, 24 Jul 2025
- 11:16:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753381050; x=1753985850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mstO5bBA8SlBMK0W+sc+fnBo7qspVaUrHWJekQ5o+x8=;
+        b=t/iyuK5mIfHY70PprKrh/53InB+pYvaQRweIXET2fevcsQO9mzwCDK9yUVijgivAFP
+         3Va7fDJQxmUgtxCsGaIxlyzWoMiPyPhsKjmiVoC1yVKukP3OCkQz1sq6X/adciTOo98V
+         pEhmk9RFDBhVy8nhN2nGCpysPQUDLlioI2ufpqAQmQNOIifeUGDDDsvMwI4MUmthV45F
+         +fAodYM/FKQuBdt8pGbqKHyk6qbEzCHFw/gBn9slfo4RYnVz4Y+7pogGat/Qf55R4r9C
+         Mg83FS8cif7jqqKX3e0i6ejZ1pd70xtkw55fgzU2vG9IyiC/PXeXU4hm4vNIRqNvoYEK
+         g+Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6JpAuJJwl4rQqv4AErA7omvZu2t56/QdhE8YcGp/aNT6W0JVm65l9osxDy5d0v9CNwe8n/5IdCtjEqoM=@vger.kernel.org, AJvYcCWq/Hiek9J9UE4cqhyn3IEJqXx5LcZTV5I5vbaT1OfITn+KYZuWVjUy+Amb99MJw8p+mJpH9hNf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnUPqswNYp2QZhZ8c8s+ImO9geief6phEcJjAHI3thyGRJA0k2
+	sgh0Yh2dZsH+eyEbEDfGAutgihY2BRa2zF4BIStM6tjgWamUeF1vn38ye46lMlF78qxec2tgTv0
+	/xRaY4xejFoM8AtGubRQ7vyydKxXuWaw=
+X-Gm-Gg: ASbGncsLBjTres6bYHoF4eSqetEf/g8qvqtrlpc0YcXiIkVxS49MFhYb8vgFWp7K24Q
+	jpBpDrhZkxSXm6TyQw8WU7NkhNuaHd+9sJAiWALImTQzgIOWOx1CObm0v2/8QYWf8cfic4qvFa1
+	NweqHbqSpaaJvC5kUdPsRrsIBWBYSkwQA2WmhHsvAt+AX49wPFxPqKiIYuC5XfyHok2bz5fNQMd
+	ekq45o=
+X-Google-Smtp-Source: AGHT+IF0MypcK2dGjntx3r2pyL18T1BhDfo21rUZX5OIUZyEse8hxlJDbtuCftcm3hJcCuDQ2VNQSNQn/6GmBzSuwRU=
+X-Received: by 2002:a2e:a58d:0:b0:331:e667:90e5 with SMTP id
+ 38308e7fff4ca-331e667abd6mr7021501fa.18.1753381050141; Thu, 24 Jul 2025
+ 11:17:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
- <20250724120840.GL11202@pendragon.ideasonboard.com> <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
- <20250724155101.GA17890@pendragon.ideasonboard.com>
-In-Reply-To: <20250724155101.GA17890@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 24 Jul 2025 20:15:48 +0200
-X-Gmail-Original-Message-ID: <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwZ8FXtJgrp5RAT5nu5B8p5f9k2i-x7S1tdmRh1ThkXammGMBlz8NwmaeY
-Message-ID: <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Drop stream->mutex
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hans Verkuil <hans@jjverkuil.nl>
+References: <20250710033706.71042-1-ryncsn@gmail.com> <20250710033706.71042-2-ryncsn@gmail.com>
+ <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
+In-Reply-To: <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 25 Jul 2025 02:16:51 +0800
+X-Gm-Features: Ac12FXzqsdCRJwzfvRgVf_lgFJ6snqpfuboJ4Spb636Mjve2Z4ipOQIX7-yQ6oE
+Message-ID: <CAMgjq7DfPXS4PkpGK-zem2L1gZD0dekbAyHa-CPHjf=eonoFXg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/8] mm/shmem, swap: improve cached mTHP handling and
+ fix potential hung
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent
-
-On Thu, 24 Jul 2025 at 17:51, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Fri, Jul 25, 2025 at 1:02=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
 >
-> (CC'ing Hans Verkuil)
->
-> On Thu, Jul 24, 2025 at 05:41:06PM +0200, Ricardo Ribalda wrote:
-> > On Thu, 24 Jul 2025 at 14:08, Laurent Pinchart wrote:
-> > > On Thu, Jul 17, 2025 at 07:56:45AM +0000, Ricardo Ribalda wrote:
-> > > > Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
-> > > > helpers"), the IOCTLs are serialized. Due to this there is no more need
-> > > > to protect ctrl, cur_format or cur_frame from concurrent access.
-> > > >
-> > > > Drop stream->mutex after thanking it for years of good service.
-> > > >
-> > > > Use this opportunity to do fix some CodeStyle.
-> > >
-> > > Is that about the following change only:
-> > >
-> > > -       if (format == NULL || frame == NULL) {
-> > > +       if (!format || !frame)
-> > >
-> > > or is there something else I missed ?
+> On Thu, Jul 10, 2025 at 11:37=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
+rote:
 > >
-> > I believe that's it.
+> > From: Kairui Song <kasong@tencent.com>
 > >
-> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > > ---
-> > > >  drivers/media/usb/uvc/uvc_driver.c   |  4 ----
-> > > >  drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
-> > > >  drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
-> > > >  drivers/media/usb/uvc/uvcvideo.h     |  6 ------
-> > > >  4 files changed, 10 insertions(+), 47 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > > > index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > > > @@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
-> > > >       if (stream->async_wq)
-> > > >               destroy_workqueue(stream->async_wq);
-> > > >
-> > > > -     mutex_destroy(&stream->mutex);
-> > > > -
-> > > >       usb_put_intf(stream->intf);
-> > > >
-> > > >       kfree(stream->formats);
-> > > > @@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
-> > > >       if (stream == NULL)
-> > > >               return NULL;
-> > > >
-> > > > -     mutex_init(&stream->mutex);
-> > > > -
-> > > >       stream->dev = dev;
-> > > >       stream->intf = usb_get_intf(intf);
-> > > >       stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
-> > > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> > > > index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_metadata.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> > > > @@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
-> > > >        * Metadata buffers would still be perfectly parseable, but it's more
-> > > >        * consistent and cleaner to disallow that.
-> > > >        */
-> > > > -     mutex_lock(&stream->mutex);
-> > > > -
-> > > >       if (vb2_is_busy(&stream->meta.queue.queue))
-> > > > -             ret = -EBUSY;
-> > > > -     else
-> > > > -             stream->meta.format = fmt->dataformat;
-> > > > +             return -EBUSY;
-> > > >
-> > > > -     mutex_unlock(&stream->mutex);
-> > > > +     stream->meta.format = fmt->dataformat;
-> > > >
-> > > >       return ret;
-> > >
-> > >         return 0;
-> > >
-> > > >  }
-> > > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
-> > > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> > > > @@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
-> > > >        * developers test their webcams with the Linux driver as well as with
-> > > >        * the Windows driver).
-> > > >        */
-> > > > -     mutex_lock(&stream->mutex);
-> > > >       if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
-> > > >               probe->dwMaxVideoFrameSize =
-> > > >                       stream->ctrl.dwMaxVideoFrameSize;
-> > > >
-> > > >       /* Probe the device. */
-> > > >       ret = uvc_probe_video(stream, probe);
-> > > > -     mutex_unlock(&stream->mutex);
-> > > >       if (ret < 0)
-> > > >               return ret;
-> > > >
-> > > > @@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> > > >       struct uvc_streaming *stream = handle->stream;
-> > > >       const struct uvc_format *format;
-> > > >       const struct uvc_frame *frame;
-> > > > -     int ret = 0;
-> > > >
-> > > >       if (fmt->type != stream->type)
-> > > >               return -EINVAL;
-> > > >
-> > > > -     mutex_lock(&stream->mutex);
-> > > >       format = stream->cur_format;
-> > > >       frame = stream->cur_frame;
-> > > >
-> > > > -     if (format == NULL || frame == NULL) {
-> > > > -             ret = -EINVAL;
-> > > > -             goto done;
-> > > > -     }
-> > > > +     if (!format || !frame)
-> > > > +             return -EINVAL;
-> > > >
-> > > >       fmt->fmt.pix.pixelformat = format->fcc;
-> > > >       fmt->fmt.pix.width = frame->wWidth;
-> > > > @@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
-> > > >       fmt->fmt.pix.xfer_func = format->xfer_func;
-> > > >       fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
-> > > >
-> > > > -done:
-> > > > -     mutex_unlock(&stream->mutex);
-> > > > -     return ret;
-> > > > +     return 0;
-> > > >  }
-> > > >
-> > > >  static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> > > > @@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
-> > > >       if (ret < 0)
-> > > >               return ret;
-> > > >
-> > > > -     mutex_lock(&stream->mutex);
-> > > > -     if (vb2_is_busy(&stream->queue.queue)) {
-> > > > -             ret = -EBUSY;
-> > > > -             goto done;
-> > > > -     }
-> > > > +     if (vb2_is_busy(&stream->queue.queue))
-> > > > +             return -EBUSY;
-> > > >
-> > > >       stream->ctrl = probe;
-> > > >       stream->cur_format = format;
-> > > >       stream->cur_frame = frame;
-> > > >
-> > > > -done:
-> > > > -     mutex_unlock(&stream->mutex);
-> > > > -     return ret;
-> > > > +     return 0;
-> > > >  }
-> > > >
-> > > >  static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> > > > @@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
-> > > >       if (parm->type != stream->type)
-> > > >               return -EINVAL;
-> > > >
-> > > > -     mutex_lock(&stream->mutex);
-> > > >       numerator = stream->ctrl.dwFrameInterval;
-> > > > -     mutex_unlock(&stream->mutex);
-> > > >
-> > >
-> > > You can drop the blank line here.
-> > >
-> > > >       denominator = 10000000;
-> > > >       v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
-> > > > @@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> > > >       uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
-> > > >               timeperframe.numerator, timeperframe.denominator, interval);
-> > > >
-> > > > -     mutex_lock(&stream->mutex);
-> > > >
-> > >
-> > > Double blank line.
-> > >
-> > > > -     if (uvc_queue_streaming(&stream->queue)) {
-> > > > -             mutex_unlock(&stream->mutex);
-> > > > +     if (uvc_queue_streaming(&stream->queue))
-> > > >               return -EBUSY;
-> > > > -     }
-> > > >
-> > > >       format = stream->cur_format;
-> > > >       frame = stream->cur_frame;
-> > > > @@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
-> > > >
-> > > >       /* Probe the device with the new settings. */
-> > > >       ret = uvc_probe_video(stream, &probe);
-> > > > -     if (ret < 0) {
-> > > > -             mutex_unlock(&stream->mutex);
-> > > > +     if (ret < 0)
-> > > >               return ret;
-> > > > -     }
-> > > >
-> > > >       stream->ctrl = probe;
-> > > >       stream->cur_frame = frame;
-> > > > -     mutex_unlock(&stream->mutex);
-> > > >
-> > > >       /* Return the actual frame period. */
-> > > >       timeperframe.numerator = probe.dwFrameInterval;
-> > > > @@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
-> > > >
-> > > >       sel->r.left = 0;
-> > > >       sel->r.top = 0;
-> > > > -     mutex_lock(&stream->mutex);
-> > > >       sel->r.width = stream->cur_frame->wWidth;
-> > > >       sel->r.height = stream->cur_frame->wHeight;
-> > > > -     mutex_unlock(&stream->mutex);
-> > > >
-> > > >       return 0;
-> > > >  }
-> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > > > index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
-> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > > > @@ -469,12 +469,6 @@ struct uvc_streaming {
-> > > >       const struct uvc_format *cur_format;
-> > > >       const struct uvc_frame *cur_frame;
-> > > >
-> > > > -     /*
-> > > > -      * Protect access to ctrl, cur_format, cur_frame and hardware video
-> > > > -      * probe control.
-> > > > -      */
-> > > > -     struct mutex mutex;
-> > > > -
-> > >
-> > > Could you please instead keep this mutex and drop uvc_video_queue.mutex
-> > > ? The rationale is that the same lock is now used to protect the queue
-> > > operations and to serialize the ioctls. It's therefore a higher-level
-> > > lock, which should be stored in the higher-level object, not in the
-> > > queue.
-> > >
-> > > You can then also drop the lock assignment in uvc_queue.c that reads
-> > >
-> > >         queue->queue.lock = &queue->mutex;
-> > >
-> > > as videobuf2 and the V4L2 core will use the video device lock when no
-> > > queue lock is set. The comment at the top of uvc_queue.c may need to be
-> > > updated.
+> > The current swap-in code assumes that, when a swap entry in shmem mappi=
+ng
+> > is order 0, its cached folios (if present) must be order 0 too, which
+> > turns out not always correct.
 > >
-> > Are we sure that it is exactly the same?
+> > The problem is shmem_split_large_entry is called before verifying the
+> > folio will eventually be swapped in, one possible race is:
 > >
-> > There are places in videobuf2-core.c where we do not use video device lock.
+> >     CPU1                          CPU2
+> > shmem_swapin_folio
+> > /* swap in of order > 0 swap entry S1 */
+> >   folio =3D swap_cache_get_folio
+> >   /* folio =3D NULL */
+> >   order =3D xa_get_order
+> >   /* order > 0 */
+> >   folio =3D shmem_swap_alloc_folio
+> >   /* mTHP alloc failure, folio =3D NULL */
+> >   <... Interrupted ...>
+> >                                  shmem_swapin_folio
+> >                                  /* S1 is swapped in */
+> >                                  shmem_writeout
+> >                                  /* S1 is swapped out, folio cached */
+> >   shmem_split_large_entry(..., S1)
+> >   /* S1 is split, but the folio covering it has order > 0 now */
 > >
-> > Eg:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/common/videobuf2/videobuf2-core.c#n2056
+> > Now any following swapin of S1 will hang: `xa_get_order` returns 0, and
+> > folio lookup will return a folio with order > 0.  The
+> > `xa_get_order(&mapping->i_pages, index) !=3D folio_order(folio)` will a=
+lways
+> > return false causing swap-in to return -EEXIST.
 > >
-> > I'd rather keep the assignment to be in the safe side.
+> > And this looks fragile.  So fix this up by allowing seeing a larger fol=
+io
+> > in swap cache, and check the whole shmem mapping range covered by the
+> > swapin have the right swap value upon inserting the folio.  And drop th=
+e
+> > redundant tree walks before the insertion.
+> >
+> > This will actually improve performance, as it avoids two redundant Xarr=
+ay
+> > tree walks in the hot path, and the only side effect is that in the
+> > failure path, shmem may redundantly reallocate a few folios causing
+> > temporary slight memory pressure.
+> >
+> > And worth noting, it may seems the order and value check before inserti=
+ng
+> > might help reducing the lock contention, which is not true.  The swap
+> > cache layer ensures raced swapin will either see a swap cache folio or
+> > failed to do a swapin (we have SWAP_HAS_CACHE bit even if swap cache is
+> > bypassed), so holding the folio lock and checking the folio flag is
+> > already good enough for avoiding the lock contention.  The chance that =
+a
+> > folio passes the swap entry value check but the shmem mapping slot has
+> > changed should be very low.
+> >
+> > Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Cc: <stable@vger.kernel.org>
+> > ---
+> >  mm/shmem.c | 30 +++++++++++++++++++++---------
+> >  1 file changed, 21 insertions(+), 9 deletions(-)
 >
-> There are lots of places where the vdev lock is used is the queue has no
-> lock. Hans, was is an oversight not to do it in __vb2_wait_for_done_vb()
-> ? If we don't want to support not setting the queue lock that's OK, but
-> we should then drop code that uses vdev->lock instead.
+> Hi All,
 >
-> We can keep the assignment for the time being to be safe until that
-> issue gets resolved, but I'd still like to use the stream mutex instead
-> of the queue mutex.
-
-The problem with using the stream mutex is that the meta device and
-the capture device have the same uvc_streaming, but they need a
-different mutex.
-
-So if you do something like this:
-
-console0 # yavta -c /dev/video1 &
-
-console1# yavta -c /dev/video0 &
-
-You end in a deadlock. Where the DQBUF of video1 do not let you use video0
-
-We can add a second mutex to uvc_streaming.... but I think this is a
-bit overkill.
-
-Any ideas?
-
-
+> Just found some issue here with this patch...
 >
-> > > >       /* Buffers queue. */
-> > > >       unsigned int frozen : 1;
-> > > >       struct uvc_video_queue queue;
-> > > >
-> > > > ---
-> > > > base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
-> > > > change-id: 20250716-uvc-onelocksless-b66658e01f89
+> >
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 334b7b4a61a0..e3c9a1365ff4 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -884,7 +884,9 @@ static int shmem_add_to_page_cache(struct folio *fo=
+lio,
+> >                                    pgoff_t index, void *expected, gfp_t=
+ gfp)
+> >  {
+> >         XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio=
+));
+> > -       long nr =3D folio_nr_pages(folio);
+> > +       unsigned long nr =3D folio_nr_pages(folio);
+> > +       swp_entry_t iter, swap;
+> > +       void *entry;
+> >
+> >         VM_BUG_ON_FOLIO(index !=3D round_down(index, nr), folio);
+> >         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> > @@ -896,14 +898,24 @@ static int shmem_add_to_page_cache(struct folio *=
+folio,
+> >
+> >         gfp &=3D GFP_RECLAIM_MASK;
+> >         folio_throttle_swaprate(folio, gfp);
+> > +       swap =3D iter =3D radix_to_swp_entry(expected);
+> >
+> >         do {
+> >                 xas_lock_irq(&xas);
 >
-> --
-> Regards,
+> I missed a xas_reset here, also better reset iter value too.
 >
-> Laurent Pinchart
+> > -               if (expected !=3D xas_find_conflict(&xas)) {
+> > -                       xas_set_err(&xas, -EEXIST);
+> > -                       goto unlock;
+> > +               xas_for_each_conflict(&xas, entry) {
+> > +                       /*
+> > +                        * The range must either be empty, or filled wi=
+th
+> > +                        * expected swap entries. Shmem swap entries ar=
+e never
+> > +                        * partially freed without split of both entry =
+and
+> > +                        * folio, so there shouldn't be any holes.
+> > +                        */
+> > +                       if (!expected || entry !=3D swp_to_radix_entry(=
+iter)) {
+> > +                               xas_set_err(&xas, -EEXIST);
+> > +                               goto unlock;
+> > +                       }
+> > +                       iter.val +=3D 1 << xas_get_order(&xas);
+> >                 }
+> > -               if (expected && xas_find_conflict(&xas)) {
+> > +               if (expected && iter.val - nr !=3D swap.val) {
+> >                         xas_set_err(&xas, -EEXIST);
+> >                         goto unlock;
+> >                 }
+> > @@ -2323,7 +2335,7 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >                         error =3D -ENOMEM;
+> >                         goto failed;
+> >                 }
+> > -       } else if (order !=3D folio_order(folio)) {
+> > +       } else if (order > folio_order(folio)) {
+> >                 /*
+> >                  * Swap readahead may swap in order 0 folios into swapc=
+ache
+> >                  * asynchronously, while the shmem mapping can still st=
+ores
+> > @@ -2348,15 +2360,15 @@ static int shmem_swapin_folio(struct inode *ino=
+de, pgoff_t index,
+> >
+> >                         swap =3D swp_entry(swp_type(swap), swp_offset(s=
+wap) + offset);
+> >                 }
+> > +       } else if (order < folio_order(folio)) {
+> > +               swap.val =3D round_down(swap.val, 1 << folio_order(foli=
+o));
+> >         }
+> >
+> >  alloced:
+> >         /* We have to do this with folio locked to prevent races */
+> >         folio_lock(folio);
+> >         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
+> > -           folio->swap.val !=3D swap.val ||
+> > -           !shmem_confirm_swap(mapping, index, swap) ||
+> > -           xa_get_order(&mapping->i_pages, index) !=3D folio_order(fol=
+io)) {
+>
+> And this part is incorrect. This `shmem_confirm_swap(mapping, index,
+> swap) ` can't be simply omitted. Some functions below before the
+> shmem_add_to_page_cache shouldn't be called on folios might have
+> already been mapped by others. This shmem_confirm_swap ensures that
+> won't happen.
+>
+> It may seem like a small change, but it leads to some minor conflicts
+> in one or two following commits, the benchmark result will change too.
+> So I'll have to send a V6 I think.
+>
+> We can remove this `shmem_confirm_swap`, but not in this series I
+> think, maybe after this. Need to re-arrange some functions, with some
+> clean ups for shmem_add_to_page_cache and others.
+>
+> > +           folio->swap.val !=3D swap.val) {
+> >                 error =3D -EEXIST;
+> >                 goto unlock;
+> >         }
+> > --
+> > 2.50.0
+> >
+>
+> In summary, I'll squash this patch into it and do a rebase of later commi=
+ts:
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index e3c9a1365ff4..4ca0b665b79e 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -898,9 +898,11 @@ static int shmem_add_to_page_cache(struct folio *fol=
+io,
+>
+>         gfp &=3D GFP_RECLAIM_MASK;
+>         folio_throttle_swaprate(folio, gfp);
+> -       swap =3D iter =3D radix_to_swp_entry(expected);
+> +       swap =3D radix_to_swp_entry(expected);
+>
+>         do {
+> +               iter =3D swap;
+> +               xas_reset(&xas);
 
+Correction: this xas_reset is not needed, the iter =3D swap is needed.
 
+>                 xas_lock_irq(&xas);
+>                 xas_for_each_conflict(&xas, entry) {
+>                         /*
+> @@ -2365,9 +2367,16 @@ static int shmem_swapin_folio(struct inode
+> *inode, pgoff_t index,
+>         }
+>
+>  alloced:
 
--- 
-Ricardo Ribalda
+And it needs `nr_pages =3D folio_nr_pages(folio); index =3D
+round_down(index, nr_pages);` here...
+
+> -       /* We have to do this with folio locked to prevent races */
+> +       /*
+> +        * We have to do this with folio locked to prevent races.
+> +        * The shmem_confirm_swap below only checks if the first swap
+> +        * entry matches the folio, that's enough to ensure the folio
+> +        * is not used outside of shmem, as shmem swap entrie
+> +        * and swap cache folios are never partially freed.
+> +        */
+>         folio_lock(folio);
+>         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
+> +           !shmem_confirm_swap(mapping, index, swap) ||
+>             folio->swap.val !=3D swap.val) {
+>                 error =3D -EEXIST;
+>                 goto unlock;
+>
+> And I'll do some clean up afterward to get rid of this
+> shmem_confirm_swap. How do you think?
 
