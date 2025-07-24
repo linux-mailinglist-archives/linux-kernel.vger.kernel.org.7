@@ -1,185 +1,125 @@
-Return-Path: <linux-kernel+bounces-744052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E449EB1077B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D3FB10783
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B920A1CE3088
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD14E6628
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443FA260566;
-	Thu, 24 Jul 2025 10:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E902609D6;
+	Thu, 24 Jul 2025 10:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ijxS9fxT"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TE/4246A"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6B525F99F;
-	Thu, 24 Jul 2025 10:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65743F9D2;
+	Thu, 24 Jul 2025 10:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351898; cv=none; b=ed6IxOp+mREmOXeGmHgEtbM6BnhOlyscxA64A6G9s1e3D7N9mCxbZP2xIlV2BFV1w3rZX6AxNgQDc1DRkN/KJ37C563vp44AOQn3eSQq/EzqkWGCAbuOKIw9nlSjV4fr1G/QsFX/o8K18XCT/yi8bxlAVYycGppRlrARZTEcH0c=
+	t=1753351981; cv=none; b=AMLOk1ORVo33VvFsplgAxs+bWVAVcn4AyYqSHpoNEFx4zCaLaFAMTiFEtfPRYGXDKG8Xb0IItwY+TpzKAE7fcnR7Z3AOi41l6LESRNZVjttFaeG+kCrMxcABtN5O8dfRbhLbGvd0VE/ef6HSZJOVAhgvoUJbjNNxHffWRrHlEW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351898; c=relaxed/simple;
-	bh=DAQfeQC0jG4xrZVWdpFfPkLxQjD6DzR41cG4qSNbeDw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WJwwHKYN/GG3m9tMKi8HPmI10Lgwe5eRuc6c8THJWw/f2GFwQkHXY9axDw3KUYjoBG+VEWGJLzaZ/M7CFMFbBUO5eh52kFKowGFLn+jcFjGdIeFV+pmZLJBpKY9pg+2FveQIEuzEzML4jonOawBZ0AoThsr3GsXVZ84lsnlr0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ijxS9fxT; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NNT20X002947;
-	Thu, 24 Jul 2025 03:11:08 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=ip1EblJiKkhZYWLhItDti03
-	7UWJiiJPdv9IzNmLe6cs=; b=ijxS9fxT+WaTxsR1dA7KlbGa/43NO4ujrB3QyY5
-	3hB1NN2fB3Z3lK71r2wJdV6zqbGsiyafIKo8zESz87Omfcb7MM/76yEYdeP/HOxj
-	uwWiR2tcdn/Vwls77F+wN1Fp8cQZBqAM6KY8tNMjB7GgwccZp6VpXUxoFvAJ5wqY
-	lC1kILO5vXUjLy2nlmFlE5e83Jx4J82cczEEoiA+oo4eHxHGBgoTTNc+1gjn+eMJ
-	4Dd+Z9g7PbdHlE5e3eQ+Ew6Em1Vewsj8TDjbSygM8miCHqYRVWAimhrtV+HwIIB/
-	OTNYSWytjFa0mw894pOckM7bg9N2ZXd6Q62v+cv53R+tpAA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4839euh1wm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 03:11:08 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 24 Jul 2025 03:11:08 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 24 Jul 2025 03:11:08 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id 9FDB83F704E;
-	Thu, 24 Jul 2025 03:11:03 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hariprasad Kelam <hkelam@marvell.com>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        "Subbaraya
- Sundeep" <sbhatta@marvell.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        "Andrew Lunn" <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>,
-        Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: [net-next PatchV3] Octeontx2-pf: ethtool: Display "Autoneg" and "Port" fields
-Date: Thu, 24 Jul 2025 15:40:57 +0530
-Message-ID: <20250724101057.2419425-1-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753351981; c=relaxed/simple;
+	bh=HOxL+KpNgulprG0Em3BSIkBd/TxigVHYURZKV823Cdc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=vDVnk1ceeYsyJ1nzwQ6dhA/pScuN4E+o9/aD8dyBUyjMlBbXJQiibccPUFhLT6VcHTOS+mLEk6LY9WmB+7ezAzFPax7gvLkTPJA2t1mTheMUrTy1gOqdq2v0VPU4cPpEQkIIisoRq/pFVnNrIAi+dzzLlJzIEdsj17mwYtMyX8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TE/4246A; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C93E840E0254;
+	Thu, 24 Jul 2025 10:12:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dbV5xy0CTZCf; Thu, 24 Jul 2025 10:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753351972; bh=8YFuASkVWjvfbK2QQR8PnCFzwm+bIBInPkRN0aHGUiQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=TE/4246ATbNvCH/YmHh0liyZvlQW7h/jW5XQ+xJfxlEIkMdTtrO6S5PMz75Xn1Gh0
+	 5AkkYEYFi79YDNoAvdcFEM8Maak89GWIRUXp2PFpCFRy5iaEpKuDsdvZD4AhQw90nh
+	 iUWJByyo7ccnyOYv8RAfOzqGRJmYpZ+slUtxuVAPHUUObOH4GJF64w1zoQ1i2xq9h8
+	 ro2h+VrRF2VGWMcJj30fZj+47Tp6ZP4XG4xbxBXW+X51dx4INXEutxMSVAeuNIbzIV
+	 dNBH9SfRVn+PmH0LFBiTEu6e2HKL1XPVbeo498bI/nh20xykk8cUR0BkVV5lV3BPqk
+	 zSLtgLCsgqscY3Vm5x/EqgkaUiCTREOZdg71ZTpzkzaNg8PMKyfTUCtZ6CxCCNLLgC
+	 QiOYmaOO+kIL68Q0l+APUu3Sh2WzDQcMLFVeyIeGblVukb8MiJjCdxGmE04D4er0Lz
+	 bTDIAu91buMYXWAxUU3s9vXhpjClC+RTz7Y1qLabqJdkj1H0zcqFhnqDEsUzMAQSnn
+	 jIQNZlQYRh4h6uvkRo4FMHM2+G4cs1NnKRa9xJ0EevWBT40MCWg1XqCRzBnGU8ybSO
+	 FK2yIfPDbiZZqdt7SdZ7Ynca5ZsJPjv1VbOi2Imd7jnFaOWBn+2wrKMDagAxWZjRiP
+	 /m40o0jRPSR7ApX8tzgbalyE=
+Received: from [IPv6:::1] (unknown [IPv6:2a02:3030:a60:70e0:1176:9e41:51e0:6730])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8F2B640E00DD;
+	Thu, 24 Jul 2025 10:12:37 +0000 (UTC)
+Date: Thu, 24 Jul 2025 13:12:33 +0300
+From: Borislav Petkov <bp@alien8.de>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Kyung Min Park <kyung.min.park@intel.com>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Tony Luck <tony.luck@intel.com>
+CC: xin3.li@intel.com, maciej.wieczor-retman@intel.com,
+ Farrah Chen <farrah.chen@intel.com>, stable@vger.kernel.org,
+ Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86: Clear feature bits disabled at compile-time
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
+References: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
+Message-ID: <C723416D-E1C9-4E18-A3B2-D386B1CB2041@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: VRx4VX0zEwzvcvOS4CebCj8taCJOZNgc
-X-Authority-Analysis: v=2.4 cv=SK5CVPvH c=1 sm=1 tr=0 ts=688206bc cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=5rgwPVzteBU-ZFRzDRMA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: VRx4VX0zEwzvcvOS4CebCj8taCJOZNgc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3NiBTYWx0ZWRfX6Orc3fYY70mx OEVFX7ozJf2o8CASrRAJjPApPiUW1Y04Jc1eWq5k+j46C1gCOyOobh3CgA4UQMAoekIsmEQFBAT EDGlR3T/CweW9TdKrswf16m9+p8PXmjp4/pgQeER3NQ7iOrXDeScy4h3ztEZhr213lhztxrKDdB
- Dm8FQlRNxM8sbSoFdQpDUfXkQPYhhkkpmBy67WOQjDWF6BFRHHVrarI9MaRanDkf1YISBkCZ5pw i5JNEPr46X1nOLpxqoJ7bFd5+AQ8thVVyJm18knmFuX1H9rSAEBLsIEwchAptvgUVgBcAP52uw+ Glr+M1pEOKWaDp4mWvF3NfpvKGjvS7pqYLOF0kLA/h10ygLUrY6Ua0g70gAwIvid2I0SfuBlqW+
- 67vt02f8Eo7lbMmuY55vcqEBOHWiZXXquJ3u6GYMXRvz0hZ1zCzBYYjft2RQ+lQy87yWLUuZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The Octeontx2/CN10k netdev drivers access a shared firmware structure
-to obtain link configuration details, such as supported and advertised
-link modes. This patch adds support to display the same.
+On July 24, 2025 12:45:51 PM GMT+03:00, Maciej Wieczor-Retman <maciej=2Ewie=
+czor-retman@intel=2Ecom> wrote:
+>If some config options are disabled during compile time, they still are
+>enumerated in macros that use the x86_capability bitmask - cpu_has() or
+>this_cpu_has()=2E
+>
+>The features are also visible in /proc/cpuinfo even though they are not
+>enabled - which is contrary to what the documentation states about the
+>file=2E Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
+>split_lock_detect, user_shstk, avx_vnni and enqcmd=2E
+>
+>Add a DISABLED_MASK_INITIALIZER() macro that creates an initializer list
 
-ethtool eth1
-Settings for eth1:
-    Supported ports: [ ]
-    Supported link modes:  10000baseCR/Full
-	                   10000baseSR/Full
-                           10000baseLR/Full
-    Supported pause frame use: No
-    Supports auto-negotiation: Yes
-    Supported FEC modes: None
-    Advertised link modes: Not reported
-    Advertised pause frame use: No
-    Advertised auto-negotiation: Yes
-    Advertised FEC modes: None
-    Speed: 10000Mb/s
-    Duplex: Full
-    Port: Twisted Pair
-    PHYAD: 0
-    Transceiver: internal
-    Auto-negotiation: on
-    MDI-X: Unknown
-    Current message level: 0x00000000 (0)
-    Link detected: yes
+Where?
 
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
-V3 * Fix port types in firmware 
+>filled with DISABLED_MASKx bitmasks=2E
+>
+>Initialize the cpu_caps_cleared array with the autogenerated disabled
+>bitmask=2E
+>
+>Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpui=
+nfo feature flags")
+>Reported-by: Farrah Chen <farrah=2Echen@intel=2Ecom>
+>Signed-off-by: Maciej Wieczor-Retman <maciej=2Ewieczor-retman@intel=2Ecom=
+>
+>Cc: <stable@vger=2Ekernel=2Eorg>
+>---
+>Changelog v3:
+>- Remove Fixes: tags, keep only one at the point where the documentation
+>  changed and promised feature bits wouldn't show up if they're not
+>  enabled=2E
 
-V2 * Add validation for 'port' parameter
-    include full output of ethtool ethx
+The behavior was there before=2E Why do you keep pointing at the patch whi=
+ch documents it?
 
- .../marvell/octeontx2/nic/otx2_ethtool.c      | 24 +++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-index 998c734ff839..95a7aa2b6b69 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-@@ -1184,11 +1184,13 @@ static void otx2_get_link_mode_info(u64 link_mode_bmap,
- 	}
- 
- 	if (req_mode == OTX2_MODE_ADVERTISED)
--		linkmode_copy(link_ksettings->link_modes.advertising,
--			      otx2_link_modes);
-+		linkmode_or(link_ksettings->link_modes.advertising,
-+			    link_ksettings->link_modes.advertising,
-+			    otx2_link_modes);
- 	else
--		linkmode_copy(link_ksettings->link_modes.supported,
--			      otx2_link_modes);
-+		linkmode_or(link_ksettings->link_modes.supported,
-+			    link_ksettings->link_modes.supported,
-+			    otx2_link_modes);
- }
- 
- static int otx2_get_link_ksettings(struct net_device *netdev,
-@@ -1209,6 +1211,10 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
- 		ethtool_link_ksettings_add_link_mode(cmd,
- 						     supported,
- 						     Autoneg);
-+	if (rsp->fwdata.advertised_an)
-+		ethtool_link_ksettings_add_link_mode(cmd,
-+						     advertising,
-+						     Autoneg);
- 
- 	otx2_get_link_mode_info(rsp->fwdata.advertised_link_modes,
- 				OTX2_MODE_ADVERTISED, cmd);
-@@ -1218,6 +1224,16 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
- 				OTX2_MODE_SUPPORTED, cmd);
- 	otx2_get_fec_info(rsp->fwdata.supported_fec,
- 			  OTX2_MODE_SUPPORTED, cmd);
-+
-+	switch (rsp->fwdata.port) {
-+	case PORT_TP:
-+	case PORT_FIBRE:
-+		cmd->base.port = rsp->fwdata.port;
-+		break;
-+	default:
-+		cmd->base.port = PORT_NONE;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.34.1
-
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
