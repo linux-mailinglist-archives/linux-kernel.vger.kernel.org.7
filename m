@@ -1,152 +1,191 @@
-Return-Path: <linux-kernel+bounces-744496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CD2B10D9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1F1B10D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A117B9CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3CA51C2293E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6EF2E5428;
-	Thu, 24 Jul 2025 14:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFB4290BAB;
+	Thu, 24 Jul 2025 14:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="22ZpNB7p"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOmjRNZa"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F782E541F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6793A2957C2;
+	Thu, 24 Jul 2025 14:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367399; cv=none; b=lbEm6EG9Ei2ZZVcVYebztzrlU5+oCpKaptjNfDZkU7sRbN073Ki/2I36AyuGuDqjpWJCku8gd8dsecYJWN59HtjMqUtSHaNlmSF+7L9mcPHoAutTlmqdPS432RCSlTOPHbBQuVKDYRIkMpj2/GRq32bGKx8MfW1Lvy0n9981TUs=
+	t=1753367418; cv=none; b=doE3WyZ1aFtrkBe08GE4FzaUNQwvfzbk4A0CYtcD50Zck6ewnYqQSQIdOYnqXdL9NDxSFC7xo/T2fHOs95EY5BZMA6LllN1Oe8i8kcaPFj9YmNkl/o9VoINJOQp2kLgfQwt6yHPidrKAliN7vuC1y9hdCflhTcrv9u3fho2rHVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367399; c=relaxed/simple;
-	bh=Zm3GWu27PL8Ou4KIRUdlSpQpRr+ffaqvTuKRCLmF1ZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GzShmUI+4WB/nnCGjWaFTE3BJBChX8ds7jCGsfulYdt65v8vfhBg3VpJvYgLUFbL/QvQDukbxF5v36bqIDP2Mp3kuI4QtFeJdEiFgTW5gp6Sq+5tdFaPWTGWFuHLzjPOYg95Utdw0MI2iZGWNLnKTwB7iPtKolc3lwzsPn8WwuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=22ZpNB7p; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso12332a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:29:57 -0700 (PDT)
+	s=arc-20240116; t=1753367418; c=relaxed/simple;
+	bh=U6vS/rkhunq9/uDsYb96AdTjl24qQuRknjxvA2eCvHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ILghg8YBkYoMpEr5aoKSs6bgLV4JOTEPNoAtDqdTBeQa5+OEniJqwC3uAN8m6TcS8VTM5bA/PpA4AuaBjnRG5GM+GcPmH2UDDlbI24RKxQlbxUMYG/DWxV5g05E4NszMJYw/E2TAwgoJvQJxhmpWCHTlMpZ/+45xIuisryxfnNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOmjRNZa; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234d3261631so9550695ad.1;
+        Thu, 24 Jul 2025 07:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753367396; x=1753972196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FlhcpDPJ/zf5PjQewozCSVSh7GoDUgf457I2X0B4PcQ=;
-        b=22ZpNB7pOTGTBcak60w/k0Vzh3D+a8ZPQ2H+xaLCaYLIZiPXDAtUZYhqIj1wuy1Cmr
-         1yOrh2YgVMeXHm5TOSHDOBooHMwdX5TTYiWfupWJqav6PWwTexxCFJcKjLBOZsMB6XJ/
-         uMcHuOSdjn+99YgfbnF4FoypVBTE8kN26PNFZipPz6ZmHtLASsZyXRVweprFcj+K6k8d
-         w9Abe2bWE33SlSjMwjd71IbHOlRQk+e3iP5vhawz1PiyUAjkAEhWNfcQV5Cu06rAEiF4
-         TesHKrXwxHtw5CVjSsmgTFPcuC0XAHVabJ2xV05eo4CrFHu/gzXlzteBnu//17gDg/2i
-         cQnw==
+        d=gmail.com; s=20230601; t=1753367415; x=1753972215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0KpcZO3ax4ADqwCkWeWobRMdcAxiAjewjQZcz/x2QVA=;
+        b=XOmjRNZaEP6r42yrBwMasCa5skOHoEGP+xvqctsbL0pNDIKmgr3upVuKcsXwfZaKCq
+         EsiVfcsnd0ZzDybSxEOweH3Nly3xUqkCLA8w+ylVXpB9ELL3FKFaiCCvJtC5YTAmpsBz
+         CrM7fOkwLVOsVzjO5klaHSfPA1fjUL5T8FCNgzS0dd3eOzZvGgwHQZGaH2yKmSIhoHjr
+         zoi47gghbw7buaAQD/abWvYpE85EV4u1scpr9H2h4HOgclLU4E7Qf0538aWUzXApzdvW
+         MROqq88F2BqhEuf/QVm8p79C7x9VrsgS1S1soCsavWufluJLmRKt2XvCpi0wy5hxZXuq
+         yUhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753367396; x=1753972196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753367416; x=1753972216;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FlhcpDPJ/zf5PjQewozCSVSh7GoDUgf457I2X0B4PcQ=;
-        b=RVKe9jBLuxLCIvarprfjEPaVBESR+uwgLyUk73cSQ2VZsPZ1I93F1lortZeYJKvZNJ
-         3uYn3k3UML6NhXVWvvLtKoalTPRc+KkNF3ykkwkzu8C5l3fatWW1+tcMwFBHCDBmkjSQ
-         o7lPhsbCC5VrmlzmUbnydMl8S10PYlR/kcKqqtuvwlio7fjggNeXYFwEEJZgwMHm76al
-         5XKqEQGpoijtYzGYoynbpxab2JLdlxdJMq/l5+HJ0C5OJMpE2ktH1qlWSAsw53RMQ1Cw
-         RvAeCQwBH19nQJfwkaE+3/65hq+OrgxO3KILwnzATzK9+lK+mYKpgA3Z00qQ5m5WTyKt
-         O+FA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5lDYkiydYEroZ/aj6TroxeVHop3BmQg/uzsg2Q7f/nz/U3JfjmfX/PGoQGBzsgt2rSUXz2lkAv1/bW+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1+/4Drl1MrAodjgllMnjxlO+V9aKGhMopRBaYXc+OW2x7VMFs
-	QSK10UplaWlnKbG4OxPHTOKOVW0Fo9oPE0PVE232w1+yTBq+3PT+PDTUsEEW2PwjsemeRMfQ71H
-	2jioEbmFbxm2E0AJ9I67JfZibsfpeBTAq/3tkUipt
-X-Gm-Gg: ASbGncuKcqJoJr6yHhv9Db5qy6H9IyMVTSDkUym4vExNQzLOWfYCSJDRjQx2Es/ghNB
-	6hwNbGiG/YJBFLH9BHXapjUC0yKztTT9OZTrSKE8MeJ7oULKv+2ZW2qe9EVQCOIwAeh0vwJrkmo
-	ENnx2KJhMz+OQlS36GT8Yt7Ncx9GisY474JRjaissXVD4FCYqHlKEeeZzUzHHqdfBdxaqRoUjAk
-	kd3pNe7s1vTTrGAvfWW/TUgCMZgbVdZS+SDL5tbVRGf7ZpR
-X-Google-Smtp-Source: AGHT+IFnzfnkL7IMifLfz57vgfmQBM0IvNePvt8oCAV9PXZXiY5Zcoi2sHhp40dEdBN6gXkrNPjSmbr628hsdVXAWto=
-X-Received: by 2002:a05:6402:20ca:b0:60e:3d45:c65a with SMTP id
- 4fb4d7f45d1cf-614cce46f4emr80233a12.5.1753367395396; Thu, 24 Jul 2025
- 07:29:55 -0700 (PDT)
+        bh=0KpcZO3ax4ADqwCkWeWobRMdcAxiAjewjQZcz/x2QVA=;
+        b=L/uYTOTjn84V5dcnwv11sJJSZipNd506xlpVOvCA/JEyg0AOKyCs+WpVRcrsb/zG4p
+         aNv1vv/O3vhz4aFQ089CLJPmHdNarMJ6ttQHvwoc8qjKEb+qdnjxpUHPpvXuzwB7ZTBV
+         O/b5nDmSpzoAeKgz8lhgDLxV6iekKsj8WdJp5S1kZhYoWiQrCv/RxPshkWRMAGq3H5ba
+         c/8tyz/Li8znByaLuieIssFhLLZ8GOCkL6HPdfHMc/+cYx9AK9ss+YkTBZHV2gjtu1+9
+         I19uWWgCIFV0vlP/Gs+vdCiIQy9ujr6afcmQHFaOeuzQVFMgtGNI2IoswsglB8/y4/NI
+         QOng==
+X-Forwarded-Encrypted: i=1; AJvYcCWhC39oHjWeXFx3Nzs1SPE1yFmLcxXOQcOJZ0OBTxARb9NVrQj8D0+xWaXxRPfbeJe/V3revyqNA9CZ@vger.kernel.org, AJvYcCXfo7QyBwR/koCm3XXSolAZelKg72JWVo/e/lrDNXRIlRykZUvteA3pjz38FulMsd5vZvAvFWtCf9beGiJn@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZuRhneF/I93nQ6SlAVDap2t5AHH5n0Ftgi/sI9j/eeeMxNz6R
+	2ws6/StVr/eMwVpaYYVnC1s2RJOSGaVHQzJuLVKSHNp+EEMb8apiKaEw
+X-Gm-Gg: ASbGncsHxmv46u5e9YBH7RWklRQag1lB2yyWidEy0hTihOVoj61vxZvXRKhmTVMwRGi
+	m7Z/M6w+Zfmbo3Jt6c2qOniqcGEDqJbqfWVcyw4/5HxY1rOHvrpd82V2F642Ufc3845ORlWGkMi
+	CI4PH1wIEeYqn2iXIQ1s3Igvz4DtuPU4El0Eac4NcVbDHH1tyL0KVTqPiXDjTK3QPln29MOOxMI
+	qSSapjxfuEjvI5eUWAxH6wyEDaWCN8M2kOs0T2C4QNTmE0sugUjRUfIJwDt0B2ksqQT2G74z+R3
+	mrkzaMtW2iXU7MSmkJSK9OXYQzve+ZFXCC422bVGt4iCRSRaxAQhvyI5w6A6NHauz4VuFge73+S
+	mRDEr0hygCvmezJIKZXoy7pOkElD+VRM2pwA=
+X-Google-Smtp-Source: AGHT+IE8Wpfxjjlh35P0E2ph1hvwZSlHV94Aw4orZ58yOLdr7iKQyeRgBa19laUwwEli2Ideo2TTIA==
+X-Received: by 2002:a17:903:2352:b0:234:8a4a:adb4 with SMTP id d9443c01a7336-23f9817696bmr120501805ad.21.1753367415303;
+        Thu, 24 Jul 2025 07:30:15 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa47601f6sm17346765ad.42.2025.07.24.07.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 07:30:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 24 Jul 2025 07:30:13 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Zhang Yi <yi.zhang@huawei.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Baokun Li <libaokun1@huawei.com>,
+	linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	julia.lawall@inria.fr, yangerkun@huawei.com,
+	libaokun@huaweicloud.com
+Subject: Re: [PATCH v3 15/17] ext4: convert free groups order lists to xarrays
+Message-ID: <914ea234-cfd3-4790-b1c5-1f2cb3814a79@roeck-us.net>
+References: <20250714130327.1830534-1-libaokun1@huawei.com>
+ <20250714130327.1830534-16-libaokun1@huawei.com>
+ <b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net>
+ <20250724045456.GA80823@mit.edu>
+ <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
- <16c97e30-19c9-41e8-b73b-c0b3c8eceff3@suse.cz> <CAG48ez1qhjQNHC+3572udqVWHTANFpQ0ngxn_4ZDC9F8NCXsFA@mail.gmail.com>
- <c53b22c3-9f7f-4793-9d10-f4df861a3e32@suse.cz> <CAG48ez2cGX3e5bqgcw0OEnho29+YhwG2eOrHRgNwGAA_Nb65nw@mail.gmail.com>
- <CAJuCfpEcjH+W83At8WSkgzO=JvZmapg6dPaXmuSRS4ufhSha4w@mail.gmail.com>
- <CAJuCfpHk_k5eVhAZTK=jJvES9311Hyo_YXxY-S56EAYSBuRVRQ@mail.gmail.com>
- <702ab3bb-db4c-49cb-bb77-4e864cae610e@suse.cz> <dbc20783-0ff5-4902-bd73-e9282bfd87ba@lucifer.local>
-In-Reply-To: <dbc20783-0ff5-4902-bd73-e9282bfd87ba@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 24 Jul 2025 07:29:42 -0700
-X-Gm-Features: Ac12FXwkwryuiZ7qVX6VVH1hTJoQ17odUJToEjarcBlX6QEUdlzMhlFWhWvKrTQ
-Message-ID: <CAJuCfpEVrpHACx2G2=Gq7YadxkA-DnFpFmbUij=Xr1=w7yrLbg@mail.gmail.com>
-Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
- vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Linux-MM <linux-mm@kvack.org>, 
-	kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
 
-On Thu, Jul 24, 2025 at 3:53=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Jul 24, 2025 at 10:38:06AM +0200, Vlastimil Babka wrote:
-> > On 7/24/25 04:30, Suren Baghdasaryan wrote:
-> > > So, I think vma_refcount_put() can mmgrab(vma->mm) before calling
-> > > __refcount_dec_and_test(), to stabilize that mm and then mmdrop()
-> > > after it calls rcuwait_wake_up(). What do you think about this
-> > > approach, folks?
-> >
-> > Yeah except it would be wasteful to do for all vma_refcount_put(). Shou=
-ld be
-> > enough to have this version (as Jann suggested) for inval_end_read: par=
-t of
-> > lock_vma_under_rcu.
+On Thu, Jul 24, 2025 at 07:14:58PM +0800, Zhang Yi wrote:
+> On 2025/7/24 12:54, Theodore Ts'o wrote:
+> > On Wed, Jul 23, 2025 at 08:55:14PM -0700, Guenter Roeck wrote:
+> >> Hi,
+> >>
+> >> On Mon, Jul 14, 2025 at 09:03:25PM +0800, Baokun Li wrote:
+> >>> While traversing the list, holding a spin_lock prevents load_buddy, making
+> >>> direct use of ext4_try_lock_group impossible. This can lead to a bouncing
+> >>> scenario where spin_is_locked(grp_A) succeeds, but ext4_try_lock_group()
+> >>> fails, forcing the list traversal to repeatedly restart from grp_A.
+> >>>
+> >>
+> >> This patch causes crashes for pretty much every architecture when
+> >> running unit tests as part of booting.
+> > 
+> > I'm assuming that you're using a randconfig that happened to enable
+> > CONFIG_EXT4_KUNIT_TESTS=y.
+> > 
+> > A simpler reprducer is to have a .kunitconfig containing:
+> > 
+> > CONFIG_KUNIT=y
+> > CONFIG_KUNIT_TEST=y
+> > CONFIG_KUNIT_EXAMPLE_TEST=y
+> > CONFIG_EXT4_KUNIT_TESTS=y
+> > 
+> > ... and then run :./tools/testing/kunit/kunit.py run".
+> > 
+> > The first failure is actually with [11/17] ext4: fix largest free
+> > orders lists corruption on mb_optimize_scan switch, which triggers a
+> > failure of test_mb_mark_used.
+> > 
+> > Baokun, can you take a look please?   Many thanks!
+> > 
+> 
+> Hi Ted and Guenter,
+> 
+> I'm sorry for this regression, we didn't run these tests. Baokun is
+> currently on a business trip, so I help to look into this issue. The
+> reason for the failure is that the variable initialization in the
+> mb unit tests are insufficient, but this series relies on them.
+> 
+> Could you please try the following diff? I have tested it on my
+> machine, and the issue does not recur. If every thing looks fine, I
+> will send out the official patch.
+> 
 
-Yes, definitely.
+Confirmed to fix the problem. Please feel free to add
 
-> > I think we need it also for the vma_refcount_put() done
-> > in vma_start_read() when we fail the seqcount check? I think in that ca=
-se
-> > the same thing can be happening too, just with different race windows?
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Yes.
+Thanks,
+Guenter
 
-> >
-> > Also as Jann suggested, maybe it's not great (or even safe) to perform
-> > __mmdrop() under rcu? And maybe some vma_start_read() users are even mo=
-re
-> > restricted? Maybe then we'd need to make __mmdrop_delayed() not RT-only=
-, and
-> > use that.
->
-> Agreed that doing this under RCU seems unwise.
->
-> I know PTL relies on this as well as zap PTE page table reclaim, likely t=
-hese
-> wouldn't interact with an mm going away (you'd hope!) but it seems unwise=
- to
-> play around with assumptions here.
-
-__mmdrop_delayed() is a viable option but I would hate adding
-mm->delayed_drop for !CONFIG_PREEMPT_RT just for this one case.
-Alternatively, we don't need to be in the rcu read section when we
-call vma_end_read() inside lock_vma_under_rcu(). We refcounted the
-vma, so it's locked and stable, no need for RCU at that point. We can
-move rcu_read_unlock() before vma_end_read(). However that's not the
-case with the vma_refcount_put() inside vma_start_read(). We could
-change vma_start_read() semantics so that it drops rcu_read_lock
-before it returns. That way we could do vma_refcount_put() after
-rcu_read_unlock() in both places.  The retry case in
-lock_vma_under_rcu() would have to reacquire rcu_read_lock() but that
-retry is not the usual path, so should not affect overall locking
-performance. What do you think about this alternative?
+> Thanks,
+> Yi.
+> 
+> 
+> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+> index d634c12f1984..a9416b20ff64 100644
+> --- a/fs/ext4/mballoc-test.c
+> +++ b/fs/ext4/mballoc-test.c
+> @@ -155,6 +155,7 @@ static struct super_block *mbt_ext4_alloc_super_block(void)
+>  	bgl_lock_init(sbi->s_blockgroup_lock);
+> 
+>  	sbi->s_es = &fsb->es;
+> +	sbi->s_sb = sb;
+>  	sb->s_fs_info = sbi;
+> 
+>  	up_write(&sb->s_umount);
+> @@ -802,6 +803,8 @@ static void test_mb_mark_used(struct kunit *test)
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+> 
+>  	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+>  	for (i = 0; i < TEST_RANGE_COUNT; i++)
+>  		test_mb_mark_used_range(test, &e4b, ranges[i].start,
+> @@ -875,6 +878,8 @@ static void test_mb_free_blocks(struct kunit *test)
+>  	ext4_unlock_group(sb, TEST_GOAL_GROUP);
+> 
+>  	grp->bb_free = 0;
+> +	grp->bb_largest_free_order = -1;
+> +	grp->bb_avg_fragment_size_order = -1;
+>  	memset(bitmap, 0xff, sb->s_blocksize);
+> 
+>  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
+> 
+> 
+> 
 
