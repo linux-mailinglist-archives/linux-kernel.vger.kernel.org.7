@@ -1,136 +1,99 @@
-Return-Path: <linux-kernel+bounces-743645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3570CB10144
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D71B10146
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29EEF7B1DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9313B86F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F512236FD;
-	Thu, 24 Jul 2025 07:04:13 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12978224AF3;
+	Thu, 24 Jul 2025 07:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ucw3yVGA"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62E21F2382
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7971F2382
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340653; cv=none; b=XzKtSbacg4PpXuqk+f06Xx7ig7uQGaTCubHEVRlIpR4TBHAfOX5kUXjwS35pnOks6qmG5MkE/ByqStteqosOHubdjRpSOh3oSxjYDVkSrAn3ZqyTAh8yMDFBJ5eQTm4woEUsbPXEktGWE8uhvVVzbTg+iOTUfXR3i/P8pQDkiNA=
+	t=1753340761; cv=none; b=C9KIkEM2TUaKhLd9XAKjJQoQ2Gl7ejJ/gMnatOb1PTDmQ7UbX8Z8mFmLphJNZ9zg1IpQ1fys0ro6SeBFjjRB+7sb/vwKVkIcDCRJx2GSY6p+OWlfYMWFZ9N6BQR37x7Nvvvamt0zKx9NFpi745MKYXhMYKK3ZgXkBbWSIxJoU5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340653; c=relaxed/simple;
-	bh=h/ScP4oDhq8irGt/LdHFl95HdTUuOBpD9FntN1yGWh4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s7/Gl7RZSKHlgehlKgTiZFCAwWbEypjvltpKC8yX6DtWOO5D/PIxQKHdeArg99zJ1N7M36m1+9lokx+V++PNDGMfNNFXAwPEA0DbB6PYLJOk7agsV6ZYuBJEPZTQ8z/ryltstY+3fRP9mi59VB9o4V+WZF2FzmJFflsF+aMtPEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 879A81402FE;
-	Thu, 24 Jul 2025 07:04:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id 66A2F8000F;
-	Thu, 24 Jul 2025 07:04:08 +0000 (UTC)
-Message-ID: <7d938f5514c8e4705cab01e776648fd2b6be0edd.camel@perches.com>
-Subject: Re: [PATCH v3] checkpatch: warn about novice phrases in commit
- messages
-From: Joe Perches <joe@perches.com>
-To: Ignacio =?ISO-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>, Andy
- Whitcroft <apw@canonical.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn
-	 <lukas.bulwahn@gmail.com>, linux-kernel@vger.kernel.org
-Date: Thu, 24 Jul 2025 00:04:07 -0700
-In-Reply-To: <20250724032842.69739-1-ignacio.pena87@gmail.com>
-References: <20250723030257.66560-1-ignacio.pena87@gmail.com>
-	 <20250724032842.69739-1-ignacio.pena87@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1753340761; c=relaxed/simple;
+	bh=aom4ik6NbQLJBpPAsZFZJSGuc3xewHhssefGt5HVSqA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=j2SkFNS6VsPkX8k1kVqW+iPKM3xgaZCYLELW99gZF6diVtnPZEcQ6CtKW7Mrgo+qRQqvW1ZlImMchzpsAEIDqV5Afbtg1NWXawXxCb2qYZxAYLpviHn5z/a1J2WE97hmGFKnAfVbBt6ZmtCqdf+TT9Y0vhz9S7DlX9sTo7t1nZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ucw3yVGA; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4561bc2f477so2896455e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753340758; x=1753945558; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E9slyRDPcGtY3E1cTdlfeJMl5k9N8J/CpAiLJlmmRwU=;
+        b=Ucw3yVGAA53OsNVEE4JJB4/70u6a8Sq0bVMPZRFECIRbkAi2yh1asRQhRhrQ/JRsfA
+         PqgVyJ2L7RJpncfAOBsz72pONAwd1ys9JTYKN+cRx3cv97CSRODk0GqF4+9ykIc5Tonp
+         W0J7RdXs/231uoT6wQKobTnmoJW3VKlRQQ+pFFNa3o550/R/zp+mS/R6UT18pTKu5q1B
+         i7X5dmFVi+Xrr5/X9YQ2c/5WwUJVQ9FQYrJzrPdp9T6/jmw018X8FIuLpb9PQ5loHEdC
+         kxh8bqelJRV+HNtqpqy2L6gml9KJvHSowuEP1vxuHsiBz189QtVqA7uDYSk+0GY+RaZ6
+         MEMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753340758; x=1753945558;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E9slyRDPcGtY3E1cTdlfeJMl5k9N8J/CpAiLJlmmRwU=;
+        b=UEv2EzDp6bIUHfsjuUcjDBzUIUoT9w0dN0r/vwtNc4et1oNirkYlhhxHPSOcUepHhP
+         rRcTsSN81R50QT9aMVes6IB3BPlZruOH89fjV4k8jYr109tYeHu7zUProCgmu3YX/QtT
+         ng062uyeZq6WzDcmmFTa2KWVsVBDY5zPPrCRaEd+DFw4QKQyP3hJMWhVxEPKzDY+66cY
+         PaeLaDIDTstHtweFd0p81pEM6Qf6acaO2vYiBDS9wTgJ2Oekv1y5RaVpkP9FZGHrxkBM
+         xi16I+hjRACxfx3hIMuLWone0V7dyTBjhYxyv/nRgFEUw5ERLng5d7zfOlv1ciM5nE0a
+         H7fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOKH/QNzAdA6Ee7g8cK4EFX0pPtMmcx1UbbS4k32byfaxvTCu+Ck7PVOpcuruilpchfnm116QVhQc7mRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1+QdK57ZnH9G8M0y02oFgLlQmWEk2DqGzeWj1sJuuqsXUuOnY
+	6+V5Hdrc1zkhJBS+5ePFb4oGmnDwFixSTMDCjmG07EUZgD3NTZhYNhOtnlZUdAFPoJP5JP6wopB
+	Axz9DbiXffCsiNAzsBw==
+X-Google-Smtp-Source: AGHT+IGyTjyBp4hfzmrFDQCSBkvhVeBIjabcRMfTMV10Ea44IJ7TP+ZbQw0R2vGl0rPk+/+EWHeAEtNqrbSrHOk=
+X-Received: from wmpz20.prod.google.com ([2002:a05:600c:a14:b0:442:dc75:51ef])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600d:d:b0:456:207e:fd83 with SMTP id 5b1f17b1804b1-45869ea827amr41426465e9.4.1753340758482;
+ Thu, 24 Jul 2025 00:05:58 -0700 (PDT)
+Date: Thu, 24 Jul 2025 07:05:57 +0000
+In-Reply-To: <20250722150110.23565-4-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Rspamd-Queue-Id: 66A2F8000F
-X-Stat-Signature: 9p96rochbuwb36rjmx6mgyni565u1d54
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX199ZmwGBN5Ht/ga45rMsrqFyYM+0hWQevs=
-X-HE-Tag: 1753340648-774483
-X-HE-Meta: U2FsdGVkX1/xz4YYZdYQbECLMHNYsSTsopP/CAN7zeUtK8YRnN23XZ1nsQrem91nt53xtbvMJDa5mNvyWfiJvMYm9TGBdemkgTd5ZdYc6+PawiMFf8uhPGM+3QHicgJTJjo/dsha33KhULZmxBO4GX5K+UdcHEQFx3N250gPKqR2V/Qb7nXBur5xc7ymrVp60kfRjCOViI5qwWUqHyBTqbkSGoAi9ZDde8VdHPo53ieFBQ2godSnr3SJ5UbcYJZ3WBAHFiv56TiPHMoFepbRG9SZ0e883KxlXML+mCbikdRwHA4MggysFRQaWKjni5IqT+8aA26arjmpBaltip68+UBdZ80TafqM5odYr+i5rAOnjTCYvMf4dPBnslNXD/djVlfc1o0R4vNIET0gLfFkZ3Bhsh3FqP7yFwz7qh6bnbKslEtoAWGipU9ELIx5MKacYyzVF7ql//k=
+Mime-Version: 1.0
+References: <20250722150110.23565-1-dakr@kernel.org> <20250722150110.23565-4-dakr@kernel.org>
+Message-ID: <aIHbVWzX4NiZaQ7K@google.com>
+Subject: Re: [PATCH v2 3/3] driver: rust: expand documentation for driver infrastructure
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, 2025-07-23 at 23:28 -0400, Ignacio Pe=F1a wrote:
-> Add detection for common phrases that make patches appear less
-> confident. These phrases are often used by newcomers and can make
-> their contributions seem less professional or uncertain.
->=20
-> The regex uses qr{} syntax as suggested for better readability and
-> potential pre-compilation benefits.
+On Tue, Jul 22, 2025 at 05:00:01PM +0200, Danilo Krummrich wrote:
+> Add documentation about generic driver infrastructure, representing a
+> guideline on how the generic driver infrastructure is intended to be
+> used to implement bus specific driver APIs.
+> 
+> This covers aspects such as the bus specific driver trait, adapter
+> implementation, driver registration and custom device ID types.
+> 
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Unneessary paragraph.
-
->=20
-> Examples of detected phrases:
-> - 'please apply/merge/consider/review'
-> - 'hope this helps'
-> - 'my first patch/contribution'
-> - 'newbie/beginner here'
-> - 'not sure if (this is) correct'
-> - 'sorry if/for'
->=20
-> This helps newcomers learn the expected communication style in
-> kernel development, where direct and confident communication is
-> preferred.
->=20
-> Link: https://docs.kernel.org/process/submitting-patches.html#describe-yo=
-ur-changes
-> Suggested-by: Joe Perches <joe@perches.com>
-
-I did not suggest this.
-I am merely trying to improve the patch and its readability.
-I do not need to have any credit for this.
-
-> Signed-off-by: Ignacio Pe=F1a <ignacio.pena87@gmail.com>
-> ---
-> Changes in v3:
-> - Use qr{} syntax instead of // for the regex (Joe Perches)
-> - Remove comment about the suggestion (Joe Perches)
-> - Drop the SHA enforcement patch based on maintainer feedback
-
-This last line should be part of a cover letter to the patch set
-rather than added to this specific patch.
-
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3266,6 +3266,14 @@ sub process {
->  			     "A patch subject line should describe the change not the tool th=
-at found it\n" . $herecurr);
->  		}
-> =20
-> +# Check for novice phrases in commit message
-> +		if ($in_commit_log && !$non_utf8_charset) {
-
-You still haven't answered why $!non_utf8_charset is useful.
-
-> +			if ($line =3D~ qr{\b(?:please\s+(?:apply|merge|consider|review)|hope\=
-s+this\s+helps|my\s+first\s+(?:patch|contribution)|(?:newbie|beginner)\s+he=
-re|not\s+sure\s+if\s+(?:this\s+is\s+)?correct|sorry\s+(?:if|for))\b}i) {
-
-And this is still not human readable.
-I much prefer describing each phrase on a separate line like:
-
-			my $novice_phrases =3D qr{(?xi:
-				please\s+(?:apply|merge|consider|review) |
-				hope\s+this\s+helps |
-				my\s+first\s+(?:patch|contribution) |
-				(?:newbie|beginner)\s+here |
-				not\s+sure\s+if\s+(?:this\s+is\s+)?correct |
-				sorry\s+(?:if|for)
-			)};
-
-			if ($line =3D~ /\b$novice_phrase\b/) {
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
