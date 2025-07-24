@@ -1,157 +1,151 @@
-Return-Path: <linux-kernel+bounces-744144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D27CB10896
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F269B10897
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DDC617D97B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6985A5C91
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C5B26CE30;
-	Thu, 24 Jul 2025 11:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2057526CE0A;
+	Thu, 24 Jul 2025 11:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNScDwQR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nfp76cqG"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CCF26B762;
-	Thu, 24 Jul 2025 11:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B9D26056C;
+	Thu, 24 Jul 2025 11:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355235; cv=none; b=ssBE/wXB7/RKTUXBGocDfbKBZT1mqjpmpXxwoiM5c2d7xG92JQn5LPrEQjZSAKKRtbepf7tu3Z6fNOY5JqzyEJleZiPBENbIwAEUe0vF5IoDR+YTF8sHzo7mkhnn7wlkb+auDS8BSDrV16W78RwJeWTkZpKC43wQac+IvFWkSgo=
+	t=1753355242; cv=none; b=j7jDaA+uaLEJb8OYv8XdgmdxMHu5EqRYYfYsvGhJb1zKoBlxritHJwIeGlPb5i/y2oP/9y//swHS3yTUQE7BqkrBQ3jINrLNMQ7EdMO4+kySX2J93Zo2EXV071/qU+56uO3atkBbIP03AheUpqihhIVozl2IQ3goBaaw0vmOqPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355235; c=relaxed/simple;
-	bh=WfaqMmoAiODt4F5x8vjxnsOpOuRR/rNKHYdd9asBlDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FrX/zjBHQAj/1Hy772rkhAAJ/Cq+D1Jhp1GhEXulBGZbWpOrwgKoPu1Qa0DrUEOTz0xnuWiytRMNk5VjxmRiNEiBR/UM00qMBrx6feVWmfzCuaetxFvGd+YgTfcotT/F18fDPYcJZ8+7g5r+t14aK4/U37Lw2rwaHsnW0u0OhMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNScDwQR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B7EC4CEEF;
-	Thu, 24 Jul 2025 11:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753355234;
-	bh=WfaqMmoAiODt4F5x8vjxnsOpOuRR/rNKHYdd9asBlDg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZNScDwQR9rOUTV0lvmy3FpmZTr27MyqBMrsDM0x8P95HkIORIZH2oLVPrP9e8PACp
-	 VL8uKVcKi3EVVK/o3n9akN55adzOFlTa4wQySiTiQv6Wc01eziosD+fpfGi/Mj/Sr0
-	 oYqq7LXSXtxAZylqtNzW8PQOiKT0dvv4Aq6LoK34DH8i9qRcO7qSRaf6jgZoq4p3dm
-	 Z8f4EvQtpbecprqotI3p4i+ZXDJ1i+yUZSSpu6FPvumcw15oVmATBt/WoPTQanFlTB
-	 +eTP+FtsK4tgTozN240+BcMi32Rk0doVQJP2t5+NEQOvW2FIEImXIT7TICwd7AS4Sr
-	 vygUysiqQUv3g==
-Date: Thu, 24 Jul 2025 12:07:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: adc: ad7173: prevent scan if too many setups
- requested
-Message-ID: <20250724120706.222da8e5@jic23-huawei>
-In-Reply-To: <aIDzAiQT0S0-ZcQo@smile.fi.intel.com>
-References: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
-	<aIDzAiQT0S0-ZcQo@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753355242; c=relaxed/simple;
+	bh=Xu48WpKj0SsCQWP/vCqMAOJbDzRPfDPK4MEn1Op/Olk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mc7ZPBTPWsxYN9HbuwxA+JFmNbX+F4ogMaUmqHWtoRYhtGqdcGGx/YQ6GuLtYBUg+ss2lX0nHFvnoqpwZ1FF6ZJN73not4+DL4h0B7RZrhe4+6zfIfZYXS0yYHi+JEGgxYxoskvddHG6Q5Al5ogB9l8tGm7y/pvUMZJwxjpg3c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nfp76cqG; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4e2b5ffb932so258079137.0;
+        Thu, 24 Jul 2025 04:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753355239; x=1753960039; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MbPVMkEFJD6XkQQplvkRbG2dZqiB1ksd2yrntVRJPnM=;
+        b=Nfp76cqGTCwp/DF/hHBTINgpMBXqbtUXQ6jYz8a/+oGIbUOMJsjkAVqbvwinLxjxFW
+         oP9Duz5uGMuSxAh9rOsnN9W0J8B8cluIEaAMDy/okNXIhe5Ncz9Y65cBgSqVqvWl161H
+         IWofAlDECAh0PAPO28LJkLFuDVx95VlTUZ1H5RihwgiN3aI/lRdDVo3Jw7vJcyOnXpDT
+         oF56JKlBo2E3S5+uG6sMYxTvIqjfluJ5pfveP9xHupADZp4N8HkCvK2bB1LOoXt7w8PM
+         GexpfQLyWJOASoYh82LpAnJsUSZnKD27LRQ+IuWZAKQLi2+WiuylPmIzfLPDORKegyan
+         em/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753355239; x=1753960039;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MbPVMkEFJD6XkQQplvkRbG2dZqiB1ksd2yrntVRJPnM=;
+        b=qHmFKWZ6oGpLqtS23nioGgJrZu8ssJ8iogFBnuUhGIZW89b9FRnURcYQhzjKmHi9+q
+         YlIQ3W1h1LyLr1USpG7B1PrlSeooo8UnFgsivTx6BCCqqrbEnhPqtQwyo/rSyUxeLGb+
+         dt5yGlgi/5aq1M6k99XuY/oxZHhbw26GvlsZXa2xd2SdhKatRygGBBGULQ4stz2xyrbx
+         umz7k92oPRpFBXAaO3iPA3VWrJD4xUhzI7XDVQTVVQI6M2HDtzSmpohjK1QcKGaF9KZf
+         0eM21bl0Z5oihD2BX51fTQjXUI3iikQQUlEiRb42G0qgCLUMGQzltdgEp1BXzn2pzEfM
+         oNdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEaIWcq+RbhuZ1fXVQE4g6ooBVwJRgANg8nkPPDUqvKo3uHFjZqdttC3rgV/1KBnR3VT6VLKSj5cXGNYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc2dQaVvmaXC/Jnudo7BJ5oBe9dfMbtXzHCLI0/rRkx9OAJf24
+	aCZRpxjBvdnouUV2Uf32qIAkoMzCVbMsbeaaeXIJozQ8PmW6FACUk9Fdey9ObYSpUN62hQdAO1T
+	h3LrgYiZUMUNlfmZzr4RJZLniNYhVIio=
+X-Gm-Gg: ASbGncv21ufrylsbuhgVHt15wro9nC//0242itIEoD+75otmckO6AqpBjb85sT3GbIc
+	pDyFxWakMAanUu4e/IIPCIh8QCC40z/HPdCmoK/Htecn9QlR/6wAEAlIEQaCNa6HCdsV5sk48T2
+	VAj0CzzeiDafQC2oaX6LviA5BOzOJxJb0jRO1YbmBlXzALouEqGvESuMDbaTtOBoB0SYHH4YEU1
+	KmtyOMHCbKTOX/VgBfpQ3ypBSaeSa6/GQCWcb1o64zHoUiveJs=
+X-Google-Smtp-Source: AGHT+IHbQScuCfcy9d/Im06JXgoGrv0k2Wa14IPyUvV/QjDXnVixbwCarcR2uPJdlf++LVVFiIIya/cociO1mM4ofqA=
+X-Received: by 2002:a05:6102:f10:b0:4df:8259:eab with SMTP id
+ ada2fe7eead31-4fa151ee312mr2582077137.19.1753355239410; Thu, 24 Jul 2025
+ 04:07:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250716104334.44020-1-victorshihgli@gmail.com>
+In-Reply-To: <20250716104334.44020-1-victorshihgli@gmail.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Thu, 24 Jul 2025 19:07:07 +0800
+X-Gm-Features: Ac12FXzQ8sqCHRAiCyvdT--M_8TyMxjlQVWigzFl0KuNyWKROQMrH_6VSTulRT4
+Message-ID: <CAK00qKAqLwz17_DKvmcb1nqT8x=YpyUO8_hfTigs=HSkNF=02A@mail.gmail.com>
+Subject: Re: [PATCH V1] mmc: sdhci-pci-gli: GL9763e: Mask the replay timer
+ timeout of AER
+To: ulf.hansson@linaro.org, adrian.hunter@intel.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	benchuanggli@gmail.com, ben.chuang@genesyslogic.com.tw, 
+	HL.Liu@genesyslogic.com.tw, Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Jul 2025 17:34:42 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+Hi, Ulf and Adrian
 
-> On Tue, Jul 22, 2025 at 02:20:07PM -0500, David Lechner wrote:
-> > Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
-> > the maximum number of unique channel configurations.
-> > 
-> > In the AD7173 family of chips, there are some chips that have 16
-> > CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
-> > GAINx and OFFSETx registers). Since commit 92c247216918 ("iio: adc:
-> > ad7173: fix num_slots"), it is possible to have more than 8 channels
-> > enabled in a scan at the same time, so it is possible to get a bad
-> > configuration when more than 8 channels are using unique configurations.
-> > This happens because the algorithm to allocate the setup slots only
-> > takes into account which slot has been least recently used and doesn't
-> > know about the maximum number of slots available.
-> > 
-> > Since the algorithm to allocate the setup slots is quite complex, it is
-> > simpler to check after the fact if the current state is valid or not.
-> > So this patch adds a check in ad7173_update_scan_mode() after setting up
-> > all of the configurations to make sure that the actual setup still
-> > matches the requested setup for each enabled channel. If not, we prevent
-> > the scan from being enabled and return an error.
-> > 
-> > The setup comparison in ad7173_setup_equal() is refactored to a separate
-> > function since we need to call it in two places now.  
-> 
-> ...
-> 
-> > + * ad7173_setup_equal - Compare two channel setups  
-> 
-> Better naming is
-> ad7173_is_setup_equal().
-> 
-Agree.  Tweaked with following and applied to the fixes-togreg-for-6.17
-branch of iio.git + marked for stable.
+Please help to review this patch and let me know if there is anything
+that needs to be modified.
+Thanks.
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 131cd1cf8a23..683146e83ab2 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -200,7 +200,7 @@ struct ad7173_channel_config {
-        /*
-         * Following fields are used to compare equality. If you
-         * make adaptations in it, you most likely also have to adapt
--        * ad7173_setup_equal(), too.
-+        * ad7173_is_setup_equal(), too.
-         */
-        struct_group(config_props,
-                bool bipolar;
-@@ -562,7 +562,7 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
- }
- 
- /**
-- * ad7173_setup_equal - Compare two channel setups
-+ * ad7173_is_setup_equal - Compare two channel setups
-  * @cfg1: First channel configuration
-  * @cfg2: Second channel configuration
-  *
-@@ -571,8 +571,8 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
-  *
-  * Returns: true if the setups are identical, false otherwise
-  */
--static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
--                              const struct ad7173_channel_config *cfg2)
-+static bool ad7173_is_setup_equal(const struct ad7173_channel_config *cfg1,
-+                                 const struct ad7173_channel_config *cfg2)
- {
-        /*
-         * This is just to make sure that the comparison is adapted after
-@@ -601,7 +601,7 @@ ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *c
-        for (i = 0; i < st->num_channels; i++) {
-                cfg_aux = &st->channels[i].cfg;
- 
--               if (cfg_aux->live && ad7173_setup_equal(cfg, cfg_aux))
-+               if (cfg_aux->live && ad7173_is_setup_equal(cfg, cfg_aux))
-                        return cfg_aux;
-        }
-        return NULL;
-@@ -1283,7 +1283,7 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
-                         * have too many unique configurations requested for
-                         * the available slots and at least one was overwritten.
-                         */
--                       if (!ad7173_setup_equal(cfg1, cfg2)) {
-+                       if (!ad7173_is_setup_equal(cfg1, cfg2)) {
-                                /*
-                                 * At this point, there isn't a way to tell
-                                 * which setups are actually programmed in the
+Thanks, Victor Shih
 
-
+On Wed, Jul 16, 2025 at 6:43=E2=80=AFPM Victor Shih <victorshihgli@gmail.co=
+m> wrote:
+>
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>
+> Due to a flaw in the hardware design, the GL9763e replay timer frequently
+> times out when ASPM is enabled. As a result, the warning messages will
+> often appear in the system log when the system accesses the GL9763e
+> PCI config. Therefore, the replay timer timeout must be masked.
+>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> ---
+>  drivers/mmc/host/sdhci-pci-gli.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pc=
+i-gli.c
+> index 4c2ae71770f7..eb3954729a3c 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -1754,6 +1754,7 @@ static int gl9763e_add_host(struct sdhci_pci_slot *=
+slot)
+>  static void gli_set_gl9763e(struct sdhci_pci_slot *slot)
+>  {
+>         struct pci_dev *pdev =3D slot->chip->pdev;
+> +       int aer;
+>         u32 value;
+>
+>         pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+> @@ -1780,6 +1781,14 @@ static void gli_set_gl9763e(struct sdhci_pci_slot =
+*slot)
+>         value |=3D FIELD_PREP(GLI_9763E_HS400_RXDLY, GLI_9763E_HS400_RXDL=
+Y_5);
+>         pci_write_config_dword(pdev, PCIE_GLI_9763E_CLKRXDLY, value);
+>
+> +       /* mask the replay timer timeout of AER */
+> +       aer =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ERR);
+> +       if (aer) {
+> +               pci_read_config_dword(pdev, aer + PCI_ERR_COR_MASK, &valu=
+e);
+> +               value |=3D PCI_ERR_COR_REP_TIMER;
+> +               pci_write_config_dword(pdev, aer + PCI_ERR_COR_MASK, valu=
+e);
+> +       }
+> +
+>         pci_read_config_dword(pdev, PCIE_GLI_9763E_VHS, &value);
+>         value &=3D ~GLI_9763E_VHS_REV;
+>         value |=3D FIELD_PREP(GLI_9763E_VHS_REV, GLI_9763E_VHS_REV_R);
+> --
+> 2.43.0
+>
 
