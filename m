@@ -1,191 +1,232 @@
-Return-Path: <linux-kernel+bounces-744497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1F1B10D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:30:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F34B10DA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3CA51C2293E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:31:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A0027BAEF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFB4290BAB;
-	Thu, 24 Jul 2025 14:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B16C2E54D7;
+	Thu, 24 Jul 2025 14:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOmjRNZa"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QySJgUX7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ucHKu6mr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QySJgUX7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ucHKu6mr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6793A2957C2;
-	Thu, 24 Jul 2025 14:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA7923AE79
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367418; cv=none; b=doE3WyZ1aFtrkBe08GE4FzaUNQwvfzbk4A0CYtcD50Zck6ewnYqQSQIdOYnqXdL9NDxSFC7xo/T2fHOs95EY5BZMA6LllN1Oe8i8kcaPFj9YmNkl/o9VoINJOQp2kLgfQwt6yHPidrKAliN7vuC1y9hdCflhTcrv9u3fho2rHVk=
+	t=1753367453; cv=none; b=J8j9D2DJa+ec+RkU/bunyyrnseKeo5KH0wEb1Nns8ZUf6lDdpDBY4UxtxyS61OeK4RUUdHS2d3C3Iam2w96ak5mO7aog+HTz668AvGbXtmQpJWVUR4yOhU4s5WwEfsIW/PoSaXcpHF1L1+OwL4/fS9bHjn41LsATLTVCLPOES+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367418; c=relaxed/simple;
-	bh=U6vS/rkhunq9/uDsYb96AdTjl24qQuRknjxvA2eCvHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILghg8YBkYoMpEr5aoKSs6bgLV4JOTEPNoAtDqdTBeQa5+OEniJqwC3uAN8m6TcS8VTM5bA/PpA4AuaBjnRG5GM+GcPmH2UDDlbI24RKxQlbxUMYG/DWxV5g05E4NszMJYw/E2TAwgoJvQJxhmpWCHTlMpZ/+45xIuisryxfnNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOmjRNZa; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234d3261631so9550695ad.1;
-        Thu, 24 Jul 2025 07:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753367415; x=1753972215; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0KpcZO3ax4ADqwCkWeWobRMdcAxiAjewjQZcz/x2QVA=;
-        b=XOmjRNZaEP6r42yrBwMasCa5skOHoEGP+xvqctsbL0pNDIKmgr3upVuKcsXwfZaKCq
-         EsiVfcsnd0ZzDybSxEOweH3Nly3xUqkCLA8w+ylVXpB9ELL3FKFaiCCvJtC5YTAmpsBz
-         CrM7fOkwLVOsVzjO5klaHSfPA1fjUL5T8FCNgzS0dd3eOzZvGgwHQZGaH2yKmSIhoHjr
-         zoi47gghbw7buaAQD/abWvYpE85EV4u1scpr9H2h4HOgclLU4E7Qf0538aWUzXApzdvW
-         MROqq88F2BqhEuf/QVm8p79C7x9VrsgS1S1soCsavWufluJLmRKt2XvCpi0wy5hxZXuq
-         yUhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753367416; x=1753972216;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0KpcZO3ax4ADqwCkWeWobRMdcAxiAjewjQZcz/x2QVA=;
-        b=L/uYTOTjn84V5dcnwv11sJJSZipNd506xlpVOvCA/JEyg0AOKyCs+WpVRcrsb/zG4p
-         aNv1vv/O3vhz4aFQ089CLJPmHdNarMJ6ttQHvwoc8qjKEb+qdnjxpUHPpvXuzwB7ZTBV
-         O/b5nDmSpzoAeKgz8lhgDLxV6iekKsj8WdJp5S1kZhYoWiQrCv/RxPshkWRMAGq3H5ba
-         c/8tyz/Li8znByaLuieIssFhLLZ8GOCkL6HPdfHMc/+cYx9AK9ss+YkTBZHV2gjtu1+9
-         I19uWWgCIFV0vlP/Gs+vdCiIQy9ujr6afcmQHFaOeuzQVFMgtGNI2IoswsglB8/y4/NI
-         QOng==
-X-Forwarded-Encrypted: i=1; AJvYcCWhC39oHjWeXFx3Nzs1SPE1yFmLcxXOQcOJZ0OBTxARb9NVrQj8D0+xWaXxRPfbeJe/V3revyqNA9CZ@vger.kernel.org, AJvYcCXfo7QyBwR/koCm3XXSolAZelKg72JWVo/e/lrDNXRIlRykZUvteA3pjz38FulMsd5vZvAvFWtCf9beGiJn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZuRhneF/I93nQ6SlAVDap2t5AHH5n0Ftgi/sI9j/eeeMxNz6R
-	2ws6/StVr/eMwVpaYYVnC1s2RJOSGaVHQzJuLVKSHNp+EEMb8apiKaEw
-X-Gm-Gg: ASbGncsHxmv46u5e9YBH7RWklRQag1lB2yyWidEy0hTihOVoj61vxZvXRKhmTVMwRGi
-	m7Z/M6w+Zfmbo3Jt6c2qOniqcGEDqJbqfWVcyw4/5HxY1rOHvrpd82V2F642Ufc3845ORlWGkMi
-	CI4PH1wIEeYqn2iXIQ1s3Igvz4DtuPU4El0Eac4NcVbDHH1tyL0KVTqPiXDjTK3QPln29MOOxMI
-	qSSapjxfuEjvI5eUWAxH6wyEDaWCN8M2kOs0T2C4QNTmE0sugUjRUfIJwDt0B2ksqQT2G74z+R3
-	mrkzaMtW2iXU7MSmkJSK9OXYQzve+ZFXCC422bVGt4iCRSRaxAQhvyI5w6A6NHauz4VuFge73+S
-	mRDEr0hygCvmezJIKZXoy7pOkElD+VRM2pwA=
-X-Google-Smtp-Source: AGHT+IE8Wpfxjjlh35P0E2ph1hvwZSlHV94Aw4orZ58yOLdr7iKQyeRgBa19laUwwEli2Ideo2TTIA==
-X-Received: by 2002:a17:903:2352:b0:234:8a4a:adb4 with SMTP id d9443c01a7336-23f9817696bmr120501805ad.21.1753367415303;
-        Thu, 24 Jul 2025 07:30:15 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa47601f6sm17346765ad.42.2025.07.24.07.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 07:30:14 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 24 Jul 2025 07:30:13 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Zhang Yi <yi.zhang@huawei.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Baokun Li <libaokun1@huawei.com>,
-	linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	julia.lawall@inria.fr, yangerkun@huawei.com,
-	libaokun@huaweicloud.com
-Subject: Re: [PATCH v3 15/17] ext4: convert free groups order lists to xarrays
-Message-ID: <914ea234-cfd3-4790-b1c5-1f2cb3814a79@roeck-us.net>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
- <20250714130327.1830534-16-libaokun1@huawei.com>
- <b0635ad0-7ebf-4152-a69b-58e7e87d5085@roeck-us.net>
- <20250724045456.GA80823@mit.edu>
- <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
+	s=arc-20240116; t=1753367453; c=relaxed/simple;
+	bh=zRccYEeOCo5yGF+Kiw5gyY3/ovTjRnxmvM9z7LK3Lc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eaL+IShtwqr9dUfuZpOCQsCyOAd6hY6PgnO6pwUL6OVsdAHJoiXzhlvFAEHDxqsK698BpsghpxO6t67QDRKP33xtsvbIGEgp7Ld/ikZGyF2pA3tYZxRwYUfMfrehHTbkSi70OB3UAm3u8SwRvGIGZhHmCkaMcIlw6zbtVtPROqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QySJgUX7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ucHKu6mr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QySJgUX7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ucHKu6mr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id ADA651F399;
+	Thu, 24 Jul 2025 14:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753367449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
+	b=QySJgUX7+KOApssRwOKHV7U6qg2d6ujMNn1BGeFL82Q4/ihFfkiN+Exq8tyOkXu6h1Eq18
+	kgKardLPFG371Xdnh/SQxt4rulUQb+V59W8OIf2CGRwH5NmD5iG3pZU6mMSlQsS+gcEAe8
+	TSogh0dyrTNbWzoexaiBHnZbFjxyP6M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753367449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
+	b=ucHKu6mrc95YXAPNa1GzCLHur1JIrH8blfy44QJsIPvHWNpDMGQeLAs9/6Y/3QmLZP4MAQ
+	nq6zNu6eBGz4HPCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753367449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
+	b=QySJgUX7+KOApssRwOKHV7U6qg2d6ujMNn1BGeFL82Q4/ihFfkiN+Exq8tyOkXu6h1Eq18
+	kgKardLPFG371Xdnh/SQxt4rulUQb+V59W8OIf2CGRwH5NmD5iG3pZU6mMSlQsS+gcEAe8
+	TSogh0dyrTNbWzoexaiBHnZbFjxyP6M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753367449;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
+	b=ucHKu6mrc95YXAPNa1GzCLHur1JIrH8blfy44QJsIPvHWNpDMGQeLAs9/6Y/3QmLZP4MAQ
+	nq6zNu6eBGz4HPCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 932F1136DC;
+	Thu, 24 Jul 2025 14:30:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GrxqHZlDgmhwMwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 24 Jul 2025 14:30:49 +0000
+Message-ID: <9cad7b86-4b77-4881-9cbf-637b6a61695d@suse.cz>
+Date: Thu, 24 Jul 2025 16:30:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef789a81-f326-4af6-8e9b-a13b5b20412b@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/14] slab: add sheaf support for batching kfree_rcu()
+ operations
+Content-Language: en-US
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250723-slub-percpu-caches-v5-2-b792cd830f5d@suse.cz>
+ <aIEQQ0MW5e8KMvVL@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aIEQQ0MW5e8KMvVL@pc636>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Thu, Jul 24, 2025 at 07:14:58PM +0800, Zhang Yi wrote:
-> On 2025/7/24 12:54, Theodore Ts'o wrote:
-> > On Wed, Jul 23, 2025 at 08:55:14PM -0700, Guenter Roeck wrote:
-> >> Hi,
-> >>
-> >> On Mon, Jul 14, 2025 at 09:03:25PM +0800, Baokun Li wrote:
-> >>> While traversing the list, holding a spin_lock prevents load_buddy, making
-> >>> direct use of ext4_try_lock_group impossible. This can lead to a bouncing
-> >>> scenario where spin_is_locked(grp_A) succeeds, but ext4_try_lock_group()
-> >>> fails, forcing the list traversal to repeatedly restart from grp_A.
-> >>>
-> >>
-> >> This patch causes crashes for pretty much every architecture when
-> >> running unit tests as part of booting.
-> > 
-> > I'm assuming that you're using a randconfig that happened to enable
-> > CONFIG_EXT4_KUNIT_TESTS=y.
-> > 
-> > A simpler reprducer is to have a .kunitconfig containing:
-> > 
-> > CONFIG_KUNIT=y
-> > CONFIG_KUNIT_TEST=y
-> > CONFIG_KUNIT_EXAMPLE_TEST=y
-> > CONFIG_EXT4_KUNIT_TESTS=y
-> > 
-> > ... and then run :./tools/testing/kunit/kunit.py run".
-> > 
-> > The first failure is actually with [11/17] ext4: fix largest free
-> > orders lists corruption on mb_optimize_scan switch, which triggers a
-> > failure of test_mb_mark_used.
-> > 
-> > Baokun, can you take a look please?   Many thanks!
-> > 
+On 7/23/25 18:39, Uladzislau Rezki wrote:
+> On Wed, Jul 23, 2025 at 03:34:35PM +0200, Vlastimil Babka wrote:
+>>  static bool
+>>  need_offload_krc(struct kfree_rcu_cpu *krcp)
+>>  {
+>> @@ -1952,6 +1973,9 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>>  	if (!head)
+>>  		might_sleep();
+>>  
+>> +	if (kfree_rcu_sheaf(ptr))
+>> +		return;
+>> +
+>>
+> I have a question here. kfree_rcu_sheaf(ptr) tries to revert freeing
+> an object over one more newly introduced path. This patch adds infra
+> for such purpose whereas we already have a main path over which we
+> free memory.
 > 
-> Hi Ted and Guenter,
+> Why do not we use existing logic? As i see you can do:
 > 
-> I'm sorry for this regression, we didn't run these tests. Baokun is
-> currently on a business trip, so I help to look into this issue. The
-> reason for the failure is that the variable initialization in the
-> mb unit tests are insufficient, but this series relies on them.
+>    if (unlikely(!slab_free_hook(s, p[i], init, true))) {
+>         p[i] = p[--sheaf->size];
+>         continue;
+>    }
 > 
-> Could you please try the following diff? I have tested it on my
-> machine, and the issue does not recur. If every thing looks fine, I
-> will send out the official patch.
-> 
+> in the kfree_rcu_work() function where we process all ready to free objects.
 
-Confirmed to fix the problem. Please feel free to add
+I'm not sure I understand. In kfree_rcu_work() we process individual
+objects. There is no sheaf that you reference in the code above?
+Or are you suggesting we add e.g. a "channel" of sheaves to process in
+addition to the existing channels of objects?
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+> I mean, for slab objects we can replace kfree_bulk() and scan all pointers
+> and free them over slab_free_hook().
 
-Thanks,
-Guenter
+The desired outcome after __rcu_free_sheaf_prepare() is to take the whole
+sheaf and have it reused, not free individual objects. So we call
+slab_free_hook() in __rcu_free_sheaf_prepare() but don't actually free
+individual objects as necessary.
 
-> Thanks,
-> Yi.
+> Also we do use a pooled API and other improvements to speed up freeing.
+
+It could be useful to know the details as in Suren's measurements there's
+issues with kfree_rcu() using sheaves when lazy rcu is used. Is the
+kfree_rcu() infra avoiding being too lazy somehow? We could use the same
+techniques for sheaves.
+
+> Thanks!
 > 
-> 
-> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
-> index d634c12f1984..a9416b20ff64 100644
-> --- a/fs/ext4/mballoc-test.c
-> +++ b/fs/ext4/mballoc-test.c
-> @@ -155,6 +155,7 @@ static struct super_block *mbt_ext4_alloc_super_block(void)
->  	bgl_lock_init(sbi->s_blockgroup_lock);
-> 
->  	sbi->s_es = &fsb->es;
-> +	sbi->s_sb = sb;
->  	sb->s_fs_info = sbi;
-> 
->  	up_write(&sb->s_umount);
-> @@ -802,6 +803,8 @@ static void test_mb_mark_used(struct kunit *test)
->  	KUNIT_ASSERT_EQ(test, ret, 0);
-> 
->  	grp->bb_free = EXT4_CLUSTERS_PER_GROUP(sb);
-> +	grp->bb_largest_free_order = -1;
-> +	grp->bb_avg_fragment_size_order = -1;
->  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
->  	for (i = 0; i < TEST_RANGE_COUNT; i++)
->  		test_mb_mark_used_range(test, &e4b, ranges[i].start,
-> @@ -875,6 +878,8 @@ static void test_mb_free_blocks(struct kunit *test)
->  	ext4_unlock_group(sb, TEST_GOAL_GROUP);
-> 
->  	grp->bb_free = 0;
-> +	grp->bb_largest_free_order = -1;
-> +	grp->bb_avg_fragment_size_order = -1;
->  	memset(bitmap, 0xff, sb->s_blocksize);
-> 
->  	mbt_generate_test_ranges(sb, ranges, TEST_RANGE_COUNT);
-> 
-> 
-> 
+> --
+> Uladzislau Rezki
+
 
