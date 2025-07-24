@@ -1,165 +1,167 @@
-Return-Path: <linux-kernel+bounces-744972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3C2B11329
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2B7B1132D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9D01CC8263
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47ED1CC82A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B334322B8C5;
-	Thu, 24 Jul 2025 21:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD03923ABB6;
+	Thu, 24 Jul 2025 21:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SQcUy6ux"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g0nz3SDx"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4927AF9E8
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D9A23AB8B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392757; cv=none; b=ciCbA9B1v+StecmXCxnQs3lF3zlUu50kkgHQE0IAK78uX3QmuSBcF6UJk7Jb7q1dYrZZRUCSGWTB0t7m/njyKNqazwkWDRYJbgQkFtQKviR8MCxI2m4HhxXowVzWEoWvHi8HgfEsJZkN0P50s/LCGgQ7Za951wu2T9a5g0B0t58=
+	t=1753392766; cv=none; b=gKag37bhMOzb8Uj1FoFayyNvsOotorB34B//8vIkIz2vvBxtKxfgeiyUfEm3+GsePxZ5sJjTsgskht7ikQL5xEehSyfG868ZqcWRFhdcJ0KYMfCMeDoP4+I2jz+e1Widq6K/iXyT9VurnV7x/53k2lAFfhk4sR/xoosw2ZLleUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392757; c=relaxed/simple;
-	bh=2cGQ56dbsxK1druA/XiJMH+oxCfrEx6kK6FcnWfJKjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=naW8ZNI4X/REl75ZjqJPeHFs87VAbNZ5poJQS7bhWELKWNlV0nxu4WdSxgGGiFnDBGWSDkJOEjRiZlkcTHAqNJeA0ABaqaEbZO0/2hkgMrYPHkCTqGikzlD4/NFMch7Y8mVwMUGJdm8Y9CLksO9iIZDl+xJgUStGyd4e5AC1GtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SQcUy6ux; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753392754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=azr2brsZ6Ua8mVeqP54+Ze96cYo9iUAaUmwXzQQMwtE=;
-	b=SQcUy6uxLin3kYmEdEefT72XhVJCYwGsjYpdYzHOW1358NQhq3cI4ysq93b8NzYO4Dhz6C
-	As/8B4ULfuhQeMc91sga/FGJnbHn0D1xrdQavHrcMjbFPBQbvIARCFLgrtMMTr3O79qGzl
-	2rbjdkr5hRse+3UU/3atArdYcuWplOA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-M4bhmrB7P3qQZ92op6cQxg-1; Thu, 24 Jul 2025 17:32:32 -0400
-X-MC-Unique: M4bhmrB7P3qQZ92op6cQxg-1
-X-Mimecast-MFC-AGG-ID: M4bhmrB7P3qQZ92op6cQxg_1753392751
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so965364f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:32:32 -0700 (PDT)
+	s=arc-20240116; t=1753392766; c=relaxed/simple;
+	bh=iTA3fYqQ4emz1zx8tzsB+YpeoXqNPn/gMJ9GAQza/z0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Yulkg9w5XKzsDZpMLCWn6qefu6f03uwrR+TKQh39QK0mWiOtVQEtoXwXSr9YVRBp2IlmO6OZ+uMz1uxukMUX3b/KDN8ybVFR0FZnQCfzQ/AuGCJ/4s115mVRuV4Rqy/NiOcTsWKVIFByjnoyKE4Z5LzqP1ZkrcpMePEkfTj3KwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g0nz3SDx; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31332dc2b59so1438087a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753392763; x=1753997563; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NvSjYH70GaCjL6u46m/BG5Q88RqNK9QtwmXnyyczbEM=;
+        b=g0nz3SDx7yaG+iLrUGzY8TC93grJQPCFUMjfT9/hR2sQf9xrwQ26Wojr67gBI6HeYv
+         alEl4i6voxvlA33sKvGmuLM/KGVh3MqaU//NK6NcwkRYvlQWvhVm9TBloeUgIm3RGs44
+         OQSYlgarOnjHgQaYzVZm3K0XuHIv2bXZyZ1ilOoolQuAUOYhT/gtGja5119NJyOBj0lt
+         U506eqUQGGKK/8b8MYjl55696JLo2eUiWLTr9OflAYLHTeE3RF1rhdmbI9Zk/EAa3OJ3
+         ReW51PdkrGpjUc4Xg33TsIO3YiOOkBkyE6U7EBURAZLQbG1wVNZ8HezkxyFK41Ay9NcG
+         Y8Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753392751; x=1753997551;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=azr2brsZ6Ua8mVeqP54+Ze96cYo9iUAaUmwXzQQMwtE=;
-        b=r9r6GG/8l/lpdYeNc+ZsdC9Apdw186I0Jd1I9Oc3u3noVhYE2w/mBMUBjbBzwWdx2R
-         tgNRzreWQOjHceAISvDL3I6UzyaHvyz7YcLjZvSqNaIZ3voRPA5ZW6rBWk7sGIUnNSak
-         G2cZAkRsrV24F1pB6hxmrCM0XRtNhBoUZen8OThGVFwiEIMtcDw13efWCj+cNdBtNOls
-         HJG0G+owkHd4RIi1ywZIiBEnwXRI344rjTJI1W8IgKIe/dtgJn9bSH5zWcfN8ZNFWa5h
-         vv+ze5D5nPGuTvQ/u0Uw0dfAdZpAOh5Kl/EKkJDlQqkz4+Q2cyRHiPprrbp53Pozl5Oc
-         6YRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2sBVDzAn/BgWmbD5GqqdQKtiea2gCLE7kFWXenY1tzjBIdckfJIjAKGGzthaLT1KaRdmaRvrCT4SfJYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/UYBZc99GNLWJq4+zfEhXD9xPFBPyD/yG2pupOWm+JxTtatuY
-	8BJ+2zb+81Be/lEPndfY9M+TsVaeQvnvjtKCMjkiXwZyCDcA4mnHX75d3lVMyIGbWOg3iSFRywL
-	D5VIegJbc+jGBI6/+T6a5ASXSTEpzmk1wqQxSLtdNeAOwn38QG334iCDTsPrtrFKbFg==
-X-Gm-Gg: ASbGncvHNaq5vzzkEfLxWwB09UO3MnOUoq2PZRHDxArMOJ+YVfaVPmgMI6csLSSY4YH
-	EfL5KhFarAz4VOagC+hVXSlkW47Ai0BmsJi+trtSq2BM91tKDGvuOn0VtxFHn7PzCBQweW8TLPe
-	EkDLz74EJTGRdadsMgU/7AXhEI5RKX6KXs3NUWxn29Xr6UyHZ3pKJ3/F8PeGZuoIHSl/QViMq6N
-	e5k8r6iuxmo+xV1y2T0twoewvAQoXX0c2MT7FO/8Bp9X1jR5Ub3QwP+jmgkBUDXcKOv846b2L04
-	JNy3caLLprokhrLgjvZlTNGDBtr7BXttwXUlDvKVm53DjSIg1D2PgVnBlnf05b55iCElj4I=
-X-Received: by 2002:a05:6000:1a85:b0:3a3:4baa:3f3d with SMTP id ffacd0b85a97d-3b768c9c13dmr6966259f8f.6.1753392751358;
-        Thu, 24 Jul 2025 14:32:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBbZa9GDR0ki0Hy0VjprS/a9IUEWZpzBMehLKY4L1dDoNNRYdZKztKjdVKH6ITX6Do3wdiKg==
-X-Received: by 2002:a05:6000:1a85:b0:3a3:4baa:3f3d with SMTP id ffacd0b85a97d-3b768c9c13dmr6966239f8f.6.1753392750862;
-        Thu, 24 Jul 2025 14:32:30 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1acc3.dip0.t-ipconnect.de. [87.161.172.195])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad2b4sm3213491f8f.47.2025.07.24.14.32.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 14:32:30 -0700 (PDT)
-Message-ID: <e0a22433-541c-40b0-92bb-34b0596db642@redhat.com>
-Date: Thu, 24 Jul 2025 23:32:29 +0200
+        d=1e100.net; s=20230601; t=1753392763; x=1753997563;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NvSjYH70GaCjL6u46m/BG5Q88RqNK9QtwmXnyyczbEM=;
+        b=sfEYlNRz8CWgzem+D2wp8igkewtHK0aH+drYXH8E5ZdCJiYX29wLeOzKQrUzPmtAIp
+         pYE2spF2u0P8pRwbtxmNXGyxyAmCtCOOzzMIh3OyhXQiFhXw5oULTxnBf3a09y4z51nY
+         Jl2sOSywjJPpSUNN90KqUDp3KNrj3jEvK0XLumNphyzFq15xG6UgW6L9wIe++3Bl8JBh
+         vGhWyF/mv/aukE+BdZgezFaThwJFbrDZv3SBC1Sv2flbH2RP112V/sqD2dKbOXUw1eiG
+         NRx9WN2KhTYQAWh7MhSqc20ZqIn+vwcXsg+x/z0N0JN19ndyAeavsQoi/k3eKKL3cacH
+         /Vxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWy9EkTI8JtkKHy2Xtii2AAJFBYh/Er8wYbb3tO/yTsqcYK24x422tTzCvJYyncWv+39h9GVY0vSrVq++c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEOTycY/3CL7G1RBrxMCMdTZk0AVEgooSBf/yN61tjOFPIcAdP
+	S2sz0+PI6O0minQ0Mjj+9lTgSvTgst7mL3Atv+7DfhInILkWml3+ln6psTG62mNlIgjw2F5AE8A
+	0DXw1TA==
+X-Google-Smtp-Source: AGHT+IGd5zJlVgGMj67wifl9Rtgk5UsqczFyGEvXcZTPXC/otKhxMg0VOQF6IjGRxzrGojiZezAj4FCHURo=
+X-Received: from pjee15.prod.google.com ([2002:a17:90b:578f:b0:311:ff0f:6962])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc44:b0:311:ad7f:3299
+ with SMTP id 98e67ed59e1d1-31e507dae6emr11516236a91.25.1753392762999; Thu, 24
+ Jul 2025 14:32:42 -0700 (PDT)
+Date: Thu, 24 Jul 2025 14:32:41 -0700
+In-Reply-To: <3cc16f7d-c650-43f2-b0ca-d99c427cd69b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
-To: Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
- <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
- <202507241352.22634450C9@keescook>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <202507241352.22634450C9@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
+ <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local> <20250723183426.GA1158000@yaz-khff2.amd.com>
+ <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de> <aIKehTDgP-Nu36ol@google.com>
+ <3cc16f7d-c650-43f2-b0ca-d99c427cd69b@amd.com>
+Message-ID: <aIKmeclza-9TDe4U@google.com>
+Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
+From: Sean Christopherson <seanjc@google.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>, 
+	David Arcari <darcari@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-> As an aside, why should discard work in this case even without step 4?
-> Wouldn't setting "read-only" imply you don't want the memory to change
-> out from under you? I guess I'm not clear on the semantics: how do memory
-> protection bits map to madvise actions like this?
+On Thu, Jul 24, 2025, Mario Limonciello wrote:
+> On 7/24/2025 3:58 PM, Sean Christopherson wrote:
+> > On Wed, Jul 23, 2025, Borislav Petkov wrote:
+> > > On July 23, 2025 9:34:26 PM GMT+03:00, Yazen Ghannam <yazen.ghannam@amd.com> wrote:
+> > > > On Tue, Jul 22, 2025 at 06:56:15PM +0200, Borislav Petkov wrote:
+> > > > > On Mon, Jul 21, 2025 at 06:11:54PM +0000, Yazen Ghannam wrote:
+> > > > > > The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
+> > > > > > commonly used error response from hardware. This may occur due to a real
+> > > > > > hardware issue or when running in a VM.
+> > > > > 
+> > > > > Well, which is it Libing is reporting? VM or a real hw issue?
+> > > > > 
+> > > > 
+> > > > In this case, it was a VM.
+> > > > 
+> > > > > If it is a VM, is that -1 the only thing a VMM returns when reading that
+> > > > > MMIO address or can it be anything?
+> > > > > 
+> > > > > If latter, you need to check X86_FEATURE_HYPERVISOR.
+> > > > > 
+> > > > > Same for a real hw issue.
+> > > > > 
+> > > > > IOW, is -1 the *only* invalid data we can read here or are we playing
+> > > > > whack-a-mole with it?
+> > > > > 
+> > > > 
+> > > > I see you're point, but I don't think we can know for sure all possible
+> > > > cases. There are some reserved bits that shouldn't be set. But these
+> > > > definitions could change in the future.
+> > > > 
+> > > > And it'd be a pain to try and verify combinations of bits and configs.
+> > > > Like can bit A and B be set together, or can bit C be set while running
+> > > > in a VM, or can bit D ever be set on Model Z?
+> > > > 
+> > > > The -1 (all bits set) is the only "applies to all cases" invalid data,
+> > > > since this is a common hardware error response. So we can at least check
+> > > > for this.
+> > > > 
+> > > > Thanks,
+> > > > Yazen
+> > > 
+> > > I think you should check both: HV or -1.
+> > > 
+> > > HV covers the VM angle as they don't emulate this
+> > 
+> > You can't possibly know that.  If there exists a hardware spec of any kind, it's
+> > fair game for emulation.
+> > 
+> > > and we simply should disable this functionality when running as a guest.
+> > > 
+> > > -1 covers the known-bad hw value.
+> > 
+> > And in a guest, -1, i.e. 0xffffffff is all but guaranteed to come from the VMM
+> > providing PCI master abort semantics for reads to MMIO where no device exists.
+> > That's about as "architectural" of behavior as you're going to get, so I don't
+> > see any reason to assume no VMM will every emulate whatever this feature is.
+> 
+> I don't really understand why there would be any value in a VMM emulating
+> this feature.  It's specifically about the reason the hardware saw for the
+> last reboot.  Those reasons are *hardware reasons*.  IE, you're never going
+> to see a thermal event as the reason a guest was rebooted.
 
-They generally don't affect MADV_DONTNEED behavior. The only documented 
-(man page) reason for EPERM in the man page is related to MADV_HWPOISON.
+Not necessarily.  There are a variety of use cases for doing nearly-full passthrough
+of bare metal state into a VM, e.g. to deprivilege the "main" OS, interpose and/or
+isolate select resources, etc.  I don't think it's too far fetched to imagine one
+or more such use cases exposing this range of MMIO to the guest _and_ also setting
+the HYPERVISOR bit in CPUID.
 
--- 
-Cheers,
+But whether or not there's a legitimate use case is beside the point.  I'm not
+arguing this is at all useful for VMs.  I'm arguing _against_ splattering
+X86_FEATURE_HYPERVISOR checks all over the place just because an error was first
+(or only) observed while running in a VM.
 
-David / dhildenb
+If a VMM is operating out of spec, then fix the VMM.  If the behavior is legal
+but unexpected, then address it in the guest.  Neither of those requires gating
+code on X86_FEATURE_HYPERVISOR.
 
+> CF9 reset or ACPI power state transition are about all I can envision for
+> guest reboot reasons.  And even then do you *want* the to really have the
+> VMM track the reasons for a guest reboot?
 
