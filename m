@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-744598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1052BB10F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 105D1B10F0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B204318839E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BBA1883B6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214A31DF244;
-	Thu, 24 Jul 2025 15:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AB22D193C;
+	Thu, 24 Jul 2025 15:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WpcGsrgq"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363731CEACB;
-	Thu, 24 Jul 2025 15:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igiezwh5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF44EACD;
+	Thu, 24 Jul 2025 15:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753371907; cv=none; b=kWEo2YgMf/fh2KI+ImEneMsiPJhFOD7xPdkwKUFEuHezUQajDzbAlzDmjlM6PUmniXNOJu7CM3n6JfI61C68MVG49Fxw+pw0XUHe7eGs2YgsK2JMiUxcz0mxLIC0OTvibHmBYO3Z/TmN22PKh6dQnhcg8RXrxPvOWHJG9HOIRXw=
+	t=1753372008; cv=none; b=kzepY+wwgP2Cue8KD0Rd5i8VhM/ZtQo97J7YltG4ACHih/WiI8G2m1sogotLbBTZotawVkvp+D/lw0u8vtem6xCqnIntdcvVG9pA0Lu6CI/2LnkSUxEYz23Lsktj8fFjDEI612+WMATgQ1O+oTy2w34dEGPG74HYCjqg3yqGxvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753371907; c=relaxed/simple;
-	bh=Sut9AK6eBSBo5Xf359xq0POPeBFo3x/4OxeinLlZrF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ACTfvfYVodBY0yzIM+BWB/mwDQ7ZdRu+uWVRFRWxLkvEfc8pnCoieaKHMpRdiqF9lvsGGnAz9dKM5b9raynEr4dD+X3xz5GCzGYH9ou1puZclDORlR1Xc5pgsGZUe6U/ZTOK9dqWzu3tDjr/KR+y7/gPYTQrrvS18+hRpfytqLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WpcGsrgq; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.160.255] (unknown [4.194.122.162])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 394F92021893;
-	Thu, 24 Jul 2025 08:45:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 394F92021893
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753371905;
-	bh=6GmVVQeJlIU2XQdswsleagO9eH3yur/FrYwVVfEmvsw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WpcGsrgqBsvogPoY75H9g+7p2Mnicn4prnXfHM77HUX912RmqSUex/r8XgA992vNm
-	 /xxWVMBdoLbmP8r2/NIfu0eAZ1FIPiCplvekzFFzyGbXUQS7BzuOMyfHxuJNx8y4HD
-	 1FRmWydbpOVY1UD+wTnJs/9uu88avu9qy8t+VbeA=
-Message-ID: <5160e0ab-f588-481c-9585-98b6f2944407@linux.microsoft.com>
-Date: Thu, 24 Jul 2025 21:14:59 +0530
+	s=arc-20240116; t=1753372008; c=relaxed/simple;
+	bh=aUpzQk5F+ilIOEzUj6sp1Y3UrATILLsScrYyimr2cio=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=a2hOJYUZIu2WAGhgPIFnaQZDiEwH2utQUi3W2aj15XccivsD/fktarAv5kLEGKd+X9rY/kU9ds8KAgeISyeJ+I7WQG++LHEHcoo4O2b1CBByGpznazCjYy2o5tqT+eVhE0UwMKrbKOnat1Xi/2Jo37jwBtOWjQgHlGnQ2PCXP/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igiezwh5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C84C4CEED;
+	Thu, 24 Jul 2025 15:46:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753372007;
+	bh=aUpzQk5F+ilIOEzUj6sp1Y3UrATILLsScrYyimr2cio=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=igiezwh5C8BzR9EP4Lp0hAlQriRoSrADvo/x0CxXe1BRddjMVzItKwhDwPEc7UgT0
+	 2OpaQGr+mGeIeVMY2psKbDI6Ofeab/8lTifqJOiEU5bm1gKLbh6CZJQRC80qB70wbW
+	 0KYIz+EJOPaQdfd2kj40Gnxgtcc26nBd5D5K5YQkBbmXh4j70e0HGq+nR8k8JfgEA/
+	 ihEQoissumegwwVyHvyfzbokqym1z3iT9urW7jinQUoDaWj3ura2aVEmWqP+hGWAMf
+	 IcV9VW57oT5Jl2N+cWXbYZB4U1HKn/UyjgsWzQFRq1ZUa03WttqKaIxf1vQkHZAy0v
+	 BkDbpZ0F0UZMQ==
+Date: Thu, 24 Jul 2025 10:46:46 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Arinzon, David" <darinzon@amazon.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] net: Fix typos
+Message-ID: <20250724154646.GA2939522@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/2] Drivers: hv: Introduce new driver - mshv_vtl
-To: Markus Elfring <Markus.Elfring@web.de>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>,
- linux-hyperv@vger.kernel.org
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Alok Tiwari <alok.a.tiwari@oracle.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250724082547.195235-1-namjain@linux.microsoft.com>
- <fe2487c2-1af1-49e2-985e-a5b724b00e88@web.de>
- <558412b1-d90a-486a-8af4-f5c906c04cca@linux.microsoft.com>
- <8cfe5678-b8c0-471c-8ad2-2c232c4bbc24@web.de>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <8cfe5678-b8c0-471c-8ad2-2c232c4bbc24@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9e2a164eee44c5ba8b5f0b14ca7ee06@amazon.com>
 
+On Thu, Jul 24, 2025 at 05:49:31AM +0000, Arinzon, David wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > Fix typos in comments and error messages.
 
+> ...
+> Reviewed for ENA. Thanks for identifying this typo.
+> Shouldn't think patch be for net-next?
 
-On 7/24/2025 4:56 PM, Markus Elfring wrote:
-> …
-> 
->>> Do you see opportunities to extend guard applications for further data structures?
-> …
-> 
->> So I actually extended using guard to all the other places where I was
->> using manual mutex lock/unlock. I had to reorganize the code a bit,
->> which made the overall flow simpler and more robust. If I am missing
->> something, please let me know.
-> 
-> Can you imagine that similar adjustments will become helpful at further
-> source code places also according to other pairs of function/macro calls?
-> https://elixir.bootlin.com/linux/v6.16-rc7/source/include/linux/rcupdate.h#L1155-L1167
-> 
-> How do you think about to fiddle any more with “constructors” and “destructors”?
-> 
-> Regards,
-> Markus
+Thanks.  It is actually based on net-next (56613001dfc9 ("Merge branch
+'mlx5-next' of git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux"))
+but I forgot to mention that in the subject line.
 
-I have one other usage of rcu_read_lock/unlock in the code, which I feel 
-is fine in its current form.
-
-Thanks,
-Naman Jain
+> Reviewed-by: David Arinzon <darinzon@amazon.com>
 
