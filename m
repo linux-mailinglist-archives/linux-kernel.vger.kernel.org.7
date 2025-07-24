@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-744000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE1FB10695
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F266B10697
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E69DB7B5FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A447A8260
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F39256C70;
-	Thu, 24 Jul 2025 09:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ga0S4BPE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CBE2571D7;
+	Thu, 24 Jul 2025 09:36:36 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974E52561A7;
-	Thu, 24 Jul 2025 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0AF2571A9;
+	Thu, 24 Jul 2025 09:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753349784; cv=none; b=bEOWmxzJY75YZJQ9BQ6SgWfMLc8T8WicH5aDblkHqLd+7PUJJJkrneGkXXMsw1hVCJiPc5CTYz3vZUhsIko/Zi97n14MngFPQ56wALoJfBiepvtMtkufh4QKl5sBtXo1eLEKVsACG1PU+ThdL3s4xo4uqZ1oqIMvmwlTK/XRp9U=
+	t=1753349796; cv=none; b=UnK9mt9yA0p82MwowS+TjXTwGZ5EvdzgtkwCjOl0rh5+35+XOD627L+Yhz0ltrX2vpd3fDXB04cBiokPBv22HeAO6YsqoTKadbFNXy8XUEhGbVqLGeS6uJ3vVjZ3l+6Qiid4Fd8G0ZRkEMUcXPjDVplcrCL7POIe9ZD/wgLsnyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753349784; c=relaxed/simple;
-	bh=XCziqESd+YYVhw/cl0OMsGz/+9Lqhbo2tR7bJ32WGSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvFvKiO539h9DAEg/N4ThnGE8BmItwRmILKMUS6UfumJc5G6lzgLTu6JQcjmuJ4c0yku1c54HlxJnhysHlDNjxjzUVAwi8wrxgC30V9utiDJOavCDYzq+uXdyC2I1sbDy4k3KCQIWm3oSV6Ov6l9B/AE7AlwnZWZ2xG13PqpSo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ga0S4BPE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F47C4CEF5;
-	Thu, 24 Jul 2025 09:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753349784;
-	bh=XCziqESd+YYVhw/cl0OMsGz/+9Lqhbo2tR7bJ32WGSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ga0S4BPERhpnLwJftdqgOrH6zMXuZzd+NyTRW/7olHY7XM2Z1ek79eiNId5bKRI+Y
-	 zKzllaJ97FdY6MnoPqVDJgOLt3dV4lN4oQbCBsGh143t/ggUoX3MZ7NsGLA44rfIpz
-	 i4hqwcM9J2hojJZwf0NqWbOO+blUMkzcV0JI8qr4=
-Date: Thu, 24 Jul 2025 11:36:15 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
- secure calls
-Message-ID: <2025072446-ensnare-hardhead-12f5@gregkh>
-References: <20250722-eud_mode_manager_secure_access-v7-1-40e9a4569895@oss.qualcomm.com>
+	s=arc-20240116; t=1753349796; c=relaxed/simple;
+	bh=IeDZzNY8Lkhxxaf4jgwee3J6do3OsmJ8iaVtWkR7R/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mZVaJ51WlycgyxeiIUvoigkb/PHbEJ71f6Fgd7uRCubpz2nQU4u1T+Y9CXS2HSSgZQpOLtKWR5qnu82DfOEptG+Kh1AAi4cFDp1vbVvutyxkoLWTt7lOd4O8whSvyi4WH/TzJX754ImyYsMsO+U61Go5IcixgsgtCSjX3jl+dNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ab6c180e687111f0b29709d653e92f7d-20250724
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:34417389-8d6c-4d35-b3d9-c23a2e177b40,IP:0,U
+	RL:0,TC:0,Content:18,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:18
+X-CID-META: VersionHash:6493067,CLOUDID:5a8f49b782a304558edab8f448bdce11,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ab6c180e687111f0b29709d653e92f7d-20250724
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1076584789; Thu, 24 Jul 2025 17:36:26 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 4AEBEE008FAA;
+	Thu, 24 Jul 2025 17:36:26 +0800 (CST)
+X-ns-mid: postfix-6881FE9A-95038790
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id EDAFCE008FA2;
+	Thu, 24 Jul 2025 17:36:24 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] cpufreq: Avoid get_governor() for first policy
+Date: Thu, 24 Jul 2025 17:36:21 +0800
+Message-Id: <20250724093621.61871-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250722-eud_mode_manager_secure_access-v7-1-40e9a4569895@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 05:01:53PM +0530, Komal Bajaj wrote:
-> EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
-> as read-only for operating system running at EL1, enforcing access
-> restrictions that prohibit direct memory-mapped writes via writel().
-> 
-> Attempts to write to this region from HLOS can result in silent failures
-> or memory access violations, particularly when toggling EUD (Embedded
-> USB Debugger) state. To ensure secure register access, modify the driver
-> to use qcom_scm_io_writel(), which routes the write operation to Qualcomm
-> Secure Channel Monitor (SCM). SCM has the necessary permissions to access
-> protected memory regions, enabling reliable control over EUD state.
-> 
-> SC7280, the only user of EUD is also affected, indicating that this could
-> never have worked on a properly fused device.
-> 
-> Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Changes in v7:
-> - Updated the commit message as per Greg's comment
-> - Link to v6: https://lore.kernel.org/r/20250721-eud_mode_manager_secure_access-v6-1-fe603325ac04@oss.qualcomm.com
-> 
-> Changes in v6:
-> - Propagating the error code from disable_eud(), per Dmitry's suggestion
-> - Link to v5: https://lore.kernel.org/r/20250715-eud_mode_manager_secure_access-v5-1-e769be308d4a@oss.qualcomm.com
-> 
-> usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through secure calls
-> 
-> Changes in v5:
-> * Changed select QCOM_SCM to depends on QCOM_SCM in Kconfig per Greg's review
-> * Link to v4: https://lore.kernel.org/all/20250709065533.25724-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v4:
-> * Added error logging in disable_eud() for SCM write failures, per Konrad’s suggestion
-> * Link to v3: https://lore.kernel.org/all/20250708085208.19089-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v3:
-> * Moved secure write before normal writes
-> * Added error checking in disable_eud()
-> * Use ENOMEM error code if platform_get_resource() fails
-> * Select QCOM_SCM driver if USB_QCOM_EUD is enabled
-> * Link to v2: https://lore.kernel.org/all/20250627125131.27606-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v2:
-> * Drop separate compatible to be added for secure eud
-> * Use secure call to access EUD mode manager register
-> * Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_molvera@quicinc.com/
-> ---
->  drivers/usb/misc/Kconfig    |  1 +
->  drivers/usb/misc/qcom_eud.c | 33 ++++++++++++++++++++++++---------
->  2 files changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-> index 6497c4e81e951a14201ad965dadc29f9888f8254..73ebd3257625e4567f33636cdfd756344b9ed4e7 100644
-> --- a/drivers/usb/misc/Kconfig
-> +++ b/drivers/usb/misc/Kconfig
-> @@ -147,6 +147,7 @@ config USB_APPLEDISPLAY
->  config USB_QCOM_EUD
->  	tristate "QCOM Embedded USB Debugger(EUD) Driver"
->  	depends on ARCH_QCOM || COMPILE_TEST
-> +	depends on QCOM_SCM
+When a cpufreq driver registers the first policy, it may attempt to
+initialize the policy governor from `last_governor`. However, this is
+meaningless for the first policy instance, because `last_governor` is
+only updated when policies are removed (e.g. during CPU offline).
 
-You now are preventing this code from ever being able to be built in any
-testing systems, including mine, so I don't even know if this patch
-builds or not.
+The `last_governor` mechanism is intended to restore the previously
+used governor across CPU hotplug events. For the very first policy,
+there is no "previous governor" to restore, so calling
+get_governor(last_governor) is unnecessary and potentially confusing.
 
-You did not even document this in the changelog :(
+This patch skips looking up `last_governor` when registering the first
+policy. Instead, it directly uses the default governor after all
+governors have been registered and are available.
 
-{sigh}
+This avoids meaningless lookups, reduces unnecessary module reference
+handling, and simplifies the initial policy path.
 
-greg k-h
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ drivers/cpufreq/cpufreq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index d7426e1d8bdd..b5ebd4519eab 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1121,9 +1121,9 @@ static int cpufreq_init_policy(struct cpufreq_polic=
+y *policy)
+ 	int ret;
+=20
+ 	if (has_target()) {
+-		/* Update policy governor to the one used before hotplug. */
+-		gov =3D get_governor(policy->last_governor);
+-		if (gov) {
++		if (policy->last_governor[0] !=3D '\0') {
++			/* Update policy governor to the one used before hotplug. */
++			gov =3D get_governor(policy->last_governor);
+ 			pr_debug("Restoring governor %s for cpu %d\n",
+ 				 gov->name, policy->cpu);
+ 		} else {
+--=20
+2.25.1
+
 
