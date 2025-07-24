@@ -1,215 +1,92 @@
-Return-Path: <linux-kernel+bounces-745103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEDEB114F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:52:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A85B114F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628E47BAADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC07189B5BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0290924EAB2;
-	Thu, 24 Jul 2025 23:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1550724728E;
+	Thu, 24 Jul 2025 23:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EjIvrUbX"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAp72SLD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA7824729F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679CF22B8C5;
+	Thu, 24 Jul 2025 23:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753401114; cv=none; b=mZfKxAzcrFTepiVl5MI878E5laMBE7TMpKAN4nU+llXu6Bq47juWJGBr8L+pel5mY49HHPXZpLG/S1nZHHhh35/Xv6kIv9dNosZGpODTg+KiXHEyc3KxXXjEccRBhusfSAC1bAWvB0CzI3hlHaU7XTtQGXYds/Q5rgskP41eGe4=
+	t=1753401252; cv=none; b=qr6O6B4lSlGmvaXKJ5+C4AtSl8QKkRLAFE/Zob0VHfDOC0gfmGTUrUafP+O+QQWy50TCSU9atQRgrnZ0ImYSJoL2ujpzI2hQd4OdWY7rz+Wk1m+/CY6CkjnGYCH9RQ+8lpSUxnwS/KC+mzCKKkpB/OfdiWxkMgpO8WOVa8PiMeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753401114; c=relaxed/simple;
-	bh=PbhuF28EjBx215+y3nH5KKOGVTzqm1E8HWrMnJyh3B4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AaWipVotcTOxiMBcBzZHjG1O+33dsG8BwF8VZOs+xsUYJ6yOxvbug3e2lwDQRpX/+YFf3xdV4XmS05ndyl2moMMZ8PUHcR2hbJXFEeb17JCTMB3b3wKxoa/8YQD8MryVO4iJJblHcVEJwFAJYrXQjWmpjQ+3e2rMCwojC78ajs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EjIvrUbX; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-87c3902f73fso199340739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753401110; x=1754005910; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYe5nu6TpLkMvmAmuxkk2nqtf0ZOE6ibYgo684ah5AQ=;
-        b=EjIvrUbXn9TrQd2Cka7u3NOQ8Q2UxiqcUPi119FMuhmfOcGSWOMOhAkOf3WBz9QupA
-         VeV7HiADBTxfhDPpvc6p0wBy5ng8+UWZQ67/ft99ixTYnADS1Vfygc5bCGDxwJJtJ6Fb
-         UF+eAcSqP2J2CIV7m8EhuSJlu2VNxaGwK5ProxvubHRmsQBk7vZqlfrL1I3bBMpn3jCl
-         3cM+EdJK5aFM52vTYZ+z9a5R3v3AEMeMbgXC16UWaB6Q+H7FT0jRP0saejquPvFCilPo
-         CuywCQBIRnzagRXebRmT1CTg0P6U595J3UL+5KLcWhZ/iAZFRzhRrW9rolehfPjOK4Er
-         WrTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753401110; x=1754005910;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYe5nu6TpLkMvmAmuxkk2nqtf0ZOE6ibYgo684ah5AQ=;
-        b=EVdQX0TYL+ols30R9dPFuWnmc3HUZ0F//zRQZJh1MCd81NFScLKdHpi/HPcw804++m
-         5VjsgOY5Y9PtVJoTWHZLKgdvbMOAvYbDzBw4cLBbI7coL/+DUU8EK7L1amhcm4Y7/9U2
-         qO+Lw+wVqEPmzfet2z3n6/yG43mCTvRP1TA9lJOEwM+/E+gZgHMTuZGU4Kkux44v22PG
-         5U0qUwWFzZzRcFGJ8iY6FiZ6oUGzl4sQCirTLl1mM4tJHouIg3pjn9bJ3XKrr5JCH5RS
-         la+vXS7UYrLj8CGgf9OXwK8mkCkXsnZKc3vyF+ZDjDv8+zGtYq9GgKFaVd9A+1/3yvR0
-         KgOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPfU8SKpon4vIi/ApAerFNkvlhGNy0zAzEBSM+hpXDN/Z/ELjHKVPj+BcbNlQUE9TWFlHrNtD+BRfWTC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK7kHuIS4cwVwIphtvX/7sQgDyddIyCLPThYejakSWnNCnhN+z
-	E6HnpfvIl6FpHwf7ujeZDyLhObloi6IY09crnjdfRu2l/LIndikNTdk9sK0txF5WoclT8Rkb6ak
-	Sk/EmhxtRBw==
-X-Google-Smtp-Source: AGHT+IGf/ljX3JnjXsIdWRx5WECI21rxocKvZGW0v63GazO3Xk3AULXotlNLZG82JFTKddhPsrZEmgpTkGDk
-X-Received: from iobfm16.prod.google.com ([2002:a05:6602:b90:b0:86c:9981:d21d])
- (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:1486:b0:87c:1424:6189
- with SMTP id ca18e2360f4ac-87c761bf0famr649235039f.3.1753401110609; Thu, 24
- Jul 2025 16:51:50 -0700 (PDT)
-Date: Thu, 24 Jul 2025 23:51:44 +0000
-In-Reply-To: <20250724235144.2428795-1-rananta@google.com>
+	s=arc-20240116; t=1753401252; c=relaxed/simple;
+	bh=Q9jh7CkBbhldMF1J1smRrxzkFS3p/4ns7ni/1yXL+gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/8OBs8tZQCX3iZS7eDW7QYbGBMPLQPb5NkfJtqW/kqZhy8+S6tfIyxrE9VGZ0sEJWRWM/voUZ1IaTGbTOzJeQHQHLChRZDubo9XHBKkCNDIEbEj13dxflDV6z3tDg9ThJ6ZG6CpBBzYWylILh5hgziUjsOhT41tMvcSorZzTyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAp72SLD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1ECC4CEED;
+	Thu, 24 Jul 2025 23:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753401252;
+	bh=Q9jh7CkBbhldMF1J1smRrxzkFS3p/4ns7ni/1yXL+gQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VAp72SLDWjoJQolLVXqmG89HQuXI4rOyYoT/r7/OmhpCUYd3IVuD/mPrCpYWwKkNF
+	 LEbV3b2QQhWgssePkS/zTeBB+ng03J+rOQGTOZpBxI8GxxFAR2+ChFaVstdP6Mb8Yn
+	 xv4OmBCg7EyZLF2/skP2LRXrcItJ5ABYURm7kRkMVBFg6f9v8s2XSEz6Xb6qcwCOb+
+	 pR+eHV8HgqkUoJucQ/7EODEKIASEaxRqB0EbcLqC9yVjGy10BoXl6/oPZQpYkHmnuz
+	 7WqMpSL88i8Sk29xWaqzC3ldqwH9xYcjAjglXQOMAQhUQaVMX8VlTvSqvDhbI60wuV
+	 Ncne9e7ef+GLA==
+Date: Thu, 24 Jul 2025 16:54:11 -0700
+From: Kees Cook <kees@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
+Message-ID: <202507241651.5E9C803C70@keescook>
+References: <20250724175439.76962-1-linux@treblig.org>
+ <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
+ <202507241337.F9595E1D@keescook>
+ <aIKhvubVqgeXIlrj@gallifrey>
+ <202507241418.34AFD28C@keescook>
+ <20250724194556.105803db@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250724235144.2428795-1-rananta@google.com>
-X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250724235144.2428795-3-rananta@google.com>
-Subject: [PATCH 2/2] KVM: arm64: Destroy the stage-2 page-table periodically
-From: Raghavendra Rao Ananta <rananta@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-Cc: Raghavendra Rao Anata <rananta@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724194556.105803db@gandalf.local.home>
 
-When a large VM, specifically one that holds a significant number of PTEs,
-gets abruptly destroyed, the following warning is seen during the
-page-table walk:
+On Thu, Jul 24, 2025 at 07:45:56PM -0400, Steven Rostedt wrote:
+> My thought is to treat AI as another developer. If a developer helps you
+> like the AI is helping you, would you give that developer credit for that
+> work? If so, then you should also give credit to the tooling that's helping
+> you.
+> 
+> I suggested adding a new tag to note any tool that has done non-trivial
+> work to produce the patch where you give it credit if it has helped you as
+> much as another developer that you would give credit to.
 
- sched: CPU 0 need_resched set for > 100018840 ns (100 ticks) without schedule
- CPU: 0 UID: 0 PID: 9617 Comm: kvm_page_table_ Tainted: G O 6.16.0-smp-DEV #3 NONE
- Tainted: [O]=OOT_MODULE
- Call trace:
-  show_stack+0x20/0x38 (C)
-  dump_stack_lvl+0x3c/0xb8
-  dump_stack+0x18/0x30
-  resched_latency_warn+0x7c/0x88
-  sched_tick+0x1c4/0x268
-  update_process_times+0xa8/0xd8
-  tick_nohz_handler+0xc8/0x168
-  __hrtimer_run_queues+0x11c/0x338
-  hrtimer_interrupt+0x104/0x308
-  arch_timer_handler_phys+0x40/0x58
-  handle_percpu_devid_irq+0x8c/0x1b0
-  generic_handle_domain_irq+0x48/0x78
-  gic_handle_irq+0x1b8/0x408
-  call_on_irq_stack+0x24/0x30
-  do_interrupt_handler+0x54/0x78
-  el1_interrupt+0x44/0x88
-  el1h_64_irq_handler+0x18/0x28
-  el1h_64_irq+0x84/0x88
-  stage2_free_walker+0x30/0xa0 (P)
-  __kvm_pgtable_walk+0x11c/0x258
-  __kvm_pgtable_walk+0x180/0x258
-  __kvm_pgtable_walk+0x180/0x258
-  __kvm_pgtable_walk+0x180/0x258
-  kvm_pgtable_walk+0xc4/0x140
-  kvm_pgtable_stage2_destroy+0x5c/0xf0
-  kvm_free_stage2_pgd+0x6c/0xe8
-  kvm_uninit_stage2_mmu+0x24/0x48
-  kvm_arch_flush_shadow_all+0x80/0xa0
-  kvm_mmu_notifier_release+0x38/0x78
-  __mmu_notifier_release+0x15c/0x250
-  exit_mmap+0x68/0x400
-  __mmput+0x38/0x1c8
-  mmput+0x30/0x68
-  exit_mm+0xd4/0x198
-  do_exit+0x1a4/0xb00
-  do_group_exit+0x8c/0x120
-  get_signal+0x6d4/0x778
-  do_signal+0x90/0x718
-  do_notify_resume+0x70/0x170
-  el0_svc+0x74/0xd8
-  el0t_64_sync_handler+0x60/0xc8
-  el0t_64_sync+0x1b0/0x1b8
+We've got tags to choose from already in that case:
 
-The warning is seen majorly on the host kernels that are configured
-not to force-preempt, such as CONFIG_PREEMPT_NONE=y. To avoid this,
-instead of walking the entire page-table in one go, split it into
-smaller ranges, by checking for cond_resched() between each range.
-Since the path is executed during VM destruction, after the
-page-table structure is unlinked from the KVM MMU, relying on
-cond_resched_rwlock_write() isn't necessary.
+Suggested-by: LLM
 
-Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
----
- arch/arm64/kvm/mmu.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+or
 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 2942ec92c5a4..6c4b9fb1211b 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -387,6 +387,40 @@ static void stage2_flush_vm(struct kvm *kvm)
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
- 
-+/*
-+ * Assume that @pgt is valid and unlinked from the KVM MMU to free the
-+ * page-table without taking the kvm_mmu_lock and without performing any
-+ * TLB invalidations.
-+ *
-+ * Also, the range of addresses can be large enough to cause need_resched
-+ * warnings, for instance on CONFIG_PREEMPT_NONE kernels. Hence, invoke
-+ * cond_resched() periodically to prevent hogging the CPU for a long time
-+ * and schedule something else, if required.
-+ */
-+static void stage2_destroy_range(struct kvm_pgtable *pgt, phys_addr_t addr,
-+			      phys_addr_t end)
-+{
-+	u64 next;
-+
-+	do {
-+		next = stage2_range_addr_end(addr, end);
-+		kvm_pgtable_stage2_destroy_range(pgt, addr, next - addr);
-+
-+		if (next != end)
-+			cond_resched();
-+	} while (addr = next, addr != end);
-+}
-+
-+static void kvm_destroy_stage2_pgt(struct kvm_pgtable *pgt)
-+{
-+	if (!is_protected_kvm_enabled()) {
-+		stage2_destroy_range(pgt, 0, BIT(pgt->ia_bits));
-+		kvm_pgtable_stage2_destroy_pgd(pgt);
-+	} else {
-+		pkvm_pgtable_stage2_destroy(pgt);
-+	}
-+}
-+
- /**
-  * free_hyp_pgds - free Hyp-mode page tables
-  */
-@@ -984,7 +1018,7 @@ int kvm_init_stage2_mmu(struct kvm *kvm, struct kvm_s2_mmu *mmu, unsigned long t
- 	return 0;
- 
- out_destroy_pgtable:
--	KVM_PGT_FN(kvm_pgtable_stage2_destroy)(pgt);
-+	kvm_destroy_stage2_pgt(pgt);
- out_free_pgtable:
- 	kfree(pgt);
- 	return err;
-@@ -1081,7 +1115,7 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
- 	write_unlock(&kvm->mmu_lock);
- 
- 	if (pgt) {
--		KVM_PGT_FN(kvm_pgtable_stage2_destroy)(pgt);
-+		kvm_destroy_stage2_pgt(pgt);
- 		kfree(pgt);
- 	}
- }
+Co-developed-by: LLM <not@human.with.legal.standing>
+Signed-off-by: LLM <not@human.with.legal.standing>
+
+The latter seems ... not good, as it implies DCO SoB from a thing that
+can't and hasn't acknowledged the DCO.
+
 -- 
-2.50.1.470.g6ba607880d-goog
-
+Kees Cook
 
