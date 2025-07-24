@@ -1,158 +1,152 @@
-Return-Path: <linux-kernel+bounces-744581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82884B10EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE22BB10EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F108EAE4622
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:30:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96946170877
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59712EA748;
-	Thu, 24 Jul 2025 15:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB22D3EDF;
+	Thu, 24 Jul 2025 15:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYVFqr9q"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VX7+Xb6f"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6490285CA6;
-	Thu, 24 Jul 2025 15:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D662EA479
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753371057; cv=none; b=BmWMWIi2RwG7KPoN71kEpw/h2RFi8gRVGw5gzOVRIRyEyTwYgehFN6cSthBZNSffv3GrH8XJo/gkLNx3S4aOTzfF1KHgYtZ/TveWF4DVXLgKfjaqZEfgVnUIg87LZD7kfyuECBA08lKlea5lvfYa8i8UnU/2eHvp07eV9pWoYG4=
+	t=1753371088; cv=none; b=mAY8rp50MLE50l44g5sogfthG28hIuRX9cTilBLsDW/pLSklDP3pUA9P5DhW/jOMQG6DhrsGUcFqaYMRkbWaWhwS6YtGMUMtytfF/TQRe4UaxEknzrCQH5GCCNFFQOj5bvjq0D9fBR4fhWxPTg++5uz09Nqd65wIqifVYuzGQXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753371057; c=relaxed/simple;
-	bh=oEyTAtEPc9vesVtOJTzjCDgWf5g1dqPtjTmkp+aTkKg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KE8hIZEShSsagsjyYYgv90+IE/b938jpAv/LIN1OitrdXwaM+PJc9YGypUrjbQiTm//ZCPfssbai/BYb0hq/Dfm+4we++bIM5XbYhZbFLj2yL4y8iTqdf7FcqVBxNrVCqf+ZLSMR25mSxDU2u0RNAf/w7/gK9tLvfLJwquPa9Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYVFqr9q; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so1229626b3a.0;
-        Thu, 24 Jul 2025 08:30:55 -0700 (PDT)
+	s=arc-20240116; t=1753371088; c=relaxed/simple;
+	bh=+Dulj+iTI3ino3AiwM/woAISMYXNwrb0Ix3LW6bh0M8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qjqlQpI/D3CvlHs++WPbHkBilbXIC/N5dEkiC2ezwkoelINqhTZHVT5dR/loEXM99qG3RcLNolNWA1qgCPAcMp+YT8GLL3v6bnYbBN3B1fgGVnZa0y5cWXshOESxZx9L7MKs5zAHxWMLz800Z+zZbNS3iYo905oXWLh8s4jkBNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VX7+Xb6f; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-607c91a207dso1373621a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:31:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753371055; x=1753975855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gssr82r4eh7ZkbBhA3woKxWVUDGOM/d4DYOG6IoOCmI=;
-        b=cYVFqr9q7bq3nDWRIudPwTJNHMtkap5cvyNs5QuTO05Qr+ELncVlufXdZ5HwDBkRHQ
-         SawJN0d+T3+31ISVwFoa4X+22p8h0DhC0489eCkvvYO4cR6bmwbsNqG41sOuMvjOW5kJ
-         5ZCmd9v7wMtDtDnY8Heaa4oWEE4XqdLnAElLYdfriNVooWw/wyPXJzDkdeel10ppgNDv
-         ELiddxx5PCYU5SBQRbcFnDuYJwkf+/i9ZoXyZtHoITDmC4N4QfXhiqbv0wZWlIM2pWCs
-         hp0VXG2wCRYkkPlZ3XM0Uv0mloX7+HRj2ugcC/chrYvw01M/gG42jzcHO9s+fJ4iXYUR
-         Yk/g==
+        d=google.com; s=20230601; t=1753371085; x=1753975885; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SkEsdQ4L/pIchUqNG93CRYH8IJsJl5uVsGM6GRXeRvQ=;
+        b=VX7+Xb6fZu92p1lqjGtKiuo/MMKrH9Ng6LXobKjUOH6d35rczbN+fDOXcBrdYj+UXH
+         Xf3msZPB8EwEHQTz5Hl3VEXEt6di+zGXnOWhoqqAlRVVfV5QZaEdzUe3muXxarbhsiXy
+         1uPLSegpld0+XzT3Iz7lUyfHKRKITkySgLs2IEM979FUY+OrR015tKsvXA3RA+nqn7Fe
+         hyjTXiXrtFwKqVo6z0hqJJ2smCGRdou4SmIQHRQ9OZrm6PnoAa66crAqsMJb3UcALSAH
+         VYTMPqKKEA6Wj4HBXKsauqn94pFQgEFxJ2DLNIONYPPFm0HVw0WHRdN8KbkImdperHXk
+         BIxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753371055; x=1753975855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gssr82r4eh7ZkbBhA3woKxWVUDGOM/d4DYOG6IoOCmI=;
-        b=oydymi0lOoNqMkWwNqktb6ZU/mbK6sstsRrs/GzeSI3WqcTvmgoOA7XfYBowdq5Jqr
-         MPUU3jL4zOWe7MmdC1JRtRzOsalbjJfUNYZY9roErfwFUWBvKBz+uBtE5dBDzHi1UXGx
-         AA8qd65bCbMBaAYVeb+OwdkHB6AREbwm+KFlLAFlmOshjJ5RdnSsh3Zw8p8UrRKZEkxv
-         piA++9IESvZ7iA34gl07BhJItpjT5UqPj2cp53Uh3Xf3tSP19PM0H12XnLq0TRqVBYLq
-         nLbmuyN9eWAFx8MgnP39afKfxhNJ62Ry1n1KlxEDgzC0MVZ2zMYIh7cPtOnqs38J2OuJ
-         aJpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSzhUVm7ObbisuGWoKg6gTwYzz3pfEQNhnCZ9Y2kJrBBrIbKqM/4/1hulbc6vg65zOrhtCW4QBfRWQ@vger.kernel.org, AJvYcCWxZ9sjJNxKGBuxyIeKjssvnqLMx/H6Nd8SQhs2Ac7tTU+Zr1YJhEaGZGsIkG3Fvw2a0ryOXUcy931D7jjE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt+thTvO65K2gHn1/sF7nbqc0luHmah1yfhcBU9teNV4J87gzP
-	HlgeQvCrecAVTKQbkDXQ06Tvvn0MYIO3yMvRz+cT12TpWaXuGqVn5ZQXTfXM9eCywec=
-X-Gm-Gg: ASbGnctLP0aqR/7NbzPJHQV5cez1U54SLbJOA09UZsjKntwVmHhq6dm9xpSqd3rTjnl
-	tnWZu6d49VtV5DSr87Mlb6tEkz9OB4QgQmdW6g0fvI+Qop5HrJE4u/Fh12UXJxRdshKFZbyxiJH
-	7lxJm75MUhbjiTOCfmR/vWOVetRcGv7w2K9GX/UcjD5sVm0QGJOwD2Lay3LDzbCs/dV0QmqlU6/
-	MbE5yKwwVlCLbTxsG4fr+90j5fhgm/WDm+AJkrt3pPf8mjuWDd3fCkUTojsRR+a4b14P3d+yR+I
-	0/hQMNpZNj3pbjsdfMpkoLZREHx5I8tfjNjBNk2NL6QM5JQTN1beuyEtxLqeVObHRVPCL+7/dks
-	w4zGAYzo8arToo+jDWdGHrUZFiEbeApYxqcRgoBjPY7wQWwmA+KVtYnL6vb1YUabo
-X-Google-Smtp-Source: AGHT+IGzZgydZ34GP3VtRK6Ub7++NtVagSY5tR5d2dAFwoPTyun3szY1zfLoa5yJRffui44PJ2DU0w==
-X-Received: by 2002:a17:902:e948:b0:215:6c5f:d142 with SMTP id d9443c01a7336-23fa5d5ec54mr39073715ad.20.1753371054655;
-        Thu, 24 Jul 2025 08:30:54 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:c408:a82f:ebb8:7335:2344:5a58])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f3d3sm18381885ad.40.2025.07.24.08.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 08:30:54 -0700 (PDT)
-From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kevinpaul468@gmail.com
-Subject: [PATCH] ext4: prevent module unload while filesystem is in use
-Date: Thu, 24 Jul 2025 21:00:44 +0530
-Message-Id: <20250724153044.149890-1-kevinpaul468@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1753371085; x=1753975885;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SkEsdQ4L/pIchUqNG93CRYH8IJsJl5uVsGM6GRXeRvQ=;
+        b=no7yHItuCIAZCWkGzxeSYhOiH9XkMyuQ6/RZDMj2n1C8AiFP8MO2U9fnbTGiFwdcP6
+         /kuUW5DexUFdzFpJR2mou9DLebaVouaqrftMr7JzxqaYvwouCr3FAjps/TWz2tC+dNlu
+         euubJKPU91/DRnapHj48A14tXa1o0qG+w0eu3OzgLlTC6GawTMDYJZV5QI3pxObPUiIW
+         4Z02/j435Q0JT9yx9lmWUJEUzYIeQCtBYyIdAToyCrgIngegQ0d2VHzoYBuChSj9+X7G
+         44zXeSHa1GBGQhZFUCuVwXUHr0QOwLraBKcwmOWU1Kgo03bTBPgAvouPSQ8YLAxjPw8s
+         Knzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8zlEnxH3XHkpnBYWpLp3fKVvctbCfWfcLK9B60EbCw5LeC86Qz6spcUdPiFvu9zucde+xvOwqLaB93J0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHMnotx95PEtlRjRT/q/kA52HXPJ8iT9d8ecviuGYWRM6a06oM
+	S8a6JgmXk0k6smsRZQEobZ+IWQppnZJ1oY4x0rILQeTzVSLBgkyylbWmLFqUHAlqFs7BLS97xKG
+	6Lh4uyndzP9U2Wgsh7Rf3IyJ3aEFJuw==
+X-Google-Smtp-Source: AGHT+IGephgNH4LuU4bJdMk2LAYalDyAVdQFiFmvCHw7m4ai9Esg7UkatB3g3mrEK/1PSLN2IGMF2mT8tO5ci6gvMtA=
+X-Received: from edis29.prod.google.com ([2002:a50:d49d:0:b0:60e:414b:751d])
+ (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a50:a687:0:b0:602:1b8b:2925 with SMTP id 4fb4d7f45d1cf-6149b5a2ef6mr4796857a12.29.1753371085371;
+ Thu, 24 Jul 2025 08:31:25 -0700 (PDT)
+Date: Thu, 24 Jul 2025 17:31:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
+Message-ID: <20250724153115.125311-1-jprusakowski@google.com>
+Subject: [f2fs-dev] [PATCH v2] f2fs: vm_unmap_ram() may be called from an
+ invalid context
+From: Jan Prusakowski <jprusakowski@google.com>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	Jan Prusakowski <jprusakowski@google.com>, Chao Yu <chao@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-preventing attempt to unload the ext4 module while the fs is still actively
-mounted by adding a check before exit
+When testing F2FS with xfstests using UFS backed virtual disks the
+kernel complains sometimes that f2fs_release_decomp_mem() calls
+vm_unmap_ram() from an invalid context. Example trace from
+f2fs/007 test:
 
-The crash occurs because ext4_inode_cache still contain objects
-in use when kmem_cache_destroy is called
+f2fs/007 5s ...  [12:59:38][    8.902525] run fstests f2fs/007
+[   11.468026] BUG: sleeping function called from invalid context at mm/vmalloc.c:2978
+[   11.471849] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 68, name: irq/22-ufshcd
+[   11.475357] preempt_count: 1, expected: 0
+[   11.476970] RCU nest depth: 0, expected: 0
+[   11.478531] CPU: 0 UID: 0 PID: 68 Comm: irq/22-ufshcd Tainted: G        W           6.16.0-rc5-xfstests-ufs-g40f92e79b0aa #9 PREEMPT(none)
+[   11.478535] Tainted: [W]=WARN
+[   11.478536] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   11.478537] Call Trace:
+[   11.478543]  <TASK>
+[   11.478545]  dump_stack_lvl+0x4e/0x70
+[   11.478554]  __might_resched.cold+0xaf/0xbe
+[   11.478557]  vm_unmap_ram+0x21/0xb0
+[   11.478560]  f2fs_release_decomp_mem+0x59/0x80
+[   11.478563]  f2fs_free_dic+0x18/0x1a0
+[   11.478565]  f2fs_finish_read_bio+0xd7/0x290
+[   11.478570]  blk_update_request+0xec/0x3b0
+[   11.478574]  ? sbitmap_queue_clear+0x3b/0x60
+[   11.478576]  scsi_end_request+0x27/0x1a0
+[   11.478582]  scsi_io_completion+0x40/0x300
+[   11.478583]  ufshcd_mcq_poll_cqe_lock+0xa3/0xe0
+[   11.478588]  ufshcd_sl_intr+0x194/0x1f0
+[   11.478592]  ufshcd_threaded_intr+0x68/0xb0
+[   11.478594]  ? __pfx_irq_thread_fn+0x10/0x10
+[   11.478599]  irq_thread_fn+0x20/0x60
+[   11.478602]  ? __pfx_irq_thread_fn+0x10/0x10
+[   11.478603]  irq_thread+0xb9/0x180
+[   11.478605]  ? __pfx_irq_thread_dtor+0x10/0x10
+[   11.478607]  ? __pfx_irq_thread+0x10/0x10
+[   11.478609]  kthread+0x10a/0x230
+[   11.478614]  ? __pfx_kthread+0x10/0x10
+[   11.478615]  ret_from_fork+0x7e/0xd0
+[   11.478619]  ? __pfx_kthread+0x10/0x10
+[   11.478621]  ret_from_fork_asm+0x1a/0x30
+[   11.478623]  </TASK>
 
-This is a log of the bug produced by crepro given by a local syzkaller
+This patch modifies in_task() check inside f2fs_read_end_io() to also
+check if interrupts are disabled. This ensures that pages are unmapped
+asynchronously in an interrupt handler.
 
-[  301.647795] BUG ext4_inode_cache (Tainted: G  R                ): Objects remaining on __kmem_cache_shutdown()
-[  301.652120] -----------------------------------------------------------
-[  301.652120] 
-[  301.653366] Object 0xffff88800ec88008 @offset=8
-[  301.653877] Allocated in ext4_alloc_inode+0x27/0x1a0 [ext4] age=46055 cpu=0 pid=616
-[  301.655766]  ext4_alloc_inode+0x27/0x1a0 [ext4]
-[  301.657063]  alloc_inode+0x2b/0x120
-[  301.657570]  iget_locked+0x1ae/0x3e0
-[  301.658137]  __ext4_iget+0x243/0x1af0 [ext4]
-[  301.659197]  ext4_lookup+0x1b5/0x3e0 [ext4]
-[  301.660784]  __lookup_slow+0xd1/0x1f0
-[  301.661575]  walk_component+0x1a7/0x250
-[  301.662411]  path_lookupat+0x9a/0x2f0
-[  301.663179]  filename_lookup+0x14e/0x2e0
-[  301.663947]  vfs_statx+0xb9/0x240
-[  301.664622]  __do_sys_newstat+0x62/0xd0
-[  301.665376]  do_syscall_64+0x80/0x2c0
-[  301.666091]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
 
-Was not able to reproduce on my host system
-Tested in a Qemu instance
+Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
 
-Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fs/ext4/super.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c7d39da7e733..c6c77369a252 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -7480,8 +7480,24 @@ static int __init ext4_init_fs(void)
- 	return err;
- }
- 
-+static void ext4_busy_check(struct super_block *sb, void *data)
-+{
-+	int *is_busy = data;
-+	*is_busy = 1;
-+}
-+
- static void __exit ext4_exit_fs(void)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d1a2616d41be..0acc25f996b3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -280,7 +280,7 @@ static void f2fs_read_end_io(struct bio *bio)
  {
-+
-+	int is_busy = 0;
-+
-+	iterate_supers_type(&ext4_fs_type, ext4_busy_check, &is_busy);
-+
-+	if (is_busy) {
-+		pr_warn("ext4: Cannot unload module, filesystem is still in use.\n");
-+		return;
-+	}
-+
- 	ext4_destroy_lazyinit_thread();
- 	unregister_as_ext2();
- 	unregister_as_ext3();
+ 	struct f2fs_sb_info *sbi = F2FS_F_SB(bio_first_folio_all(bio));
+ 	struct bio_post_read_ctx *ctx;
+-	bool intask = in_task();
++	bool intask = in_task() && !irqs_disabled();
+ 
+ 	iostat_update_and_unbind_ctx(bio);
+ 	ctx = bio->bi_private;
 -- 
-2.39.5
+2.50.1.487.gc89ff58d15-goog
 
 
