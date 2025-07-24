@@ -1,202 +1,248 @@
-Return-Path: <linux-kernel+bounces-744754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34C4B11086
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:54:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12780B11088
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DD67B89D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6871C27F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B75D2EBDD5;
-	Thu, 24 Jul 2025 17:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259372EBDF6;
+	Thu, 24 Jul 2025 17:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xutrl/IK"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZrUQyF50"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06161B4F0A;
-	Thu, 24 Jul 2025 17:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936D02EB5DB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753379683; cv=none; b=rrP0OfEGn0+8lgScPolLqQzHI/FOEp2wGdvWT0pyU+n0dc1dHxFtsagJswck23+6Yh+t51I7NDKf83dUoxvXQ5MCm1gytpMg2lF6Vqd1KDt9qGbKa+dMuPBzt5ojujnBl+DLeiuBklpQyU4Vw4q4jKefbl4wXgYIb0+GA0APZkk=
+	t=1753379719; cv=none; b=JSHh1Yjp5qXPEqbzDhYME+VkvBLvmokhxqT+LBmqb4CAOObwRr0qr80iJvDrsP+D0q3jpSpRJdlLTjxBjvpP3A3IiN+tgOEP47nICS5v93MPS8dG+uc8qLufsgPfSoSygAQ8Kp+/iik00uiTMM6XqJIsVzEEqMCOf61hF1XsxGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753379683; c=relaxed/simple;
-	bh=SrbecWajszZ0E7Rg4tKhBbbcd9ooXEENh6iDv5K1md8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4C2UZF0PzTAI2lgA6A7QjhE21A6UKSeBDz6VtuNM5J8g2AGPVqAG3v+9pwoq9UHKCD0PiBi+6RHFRELRIZge/2C39W1Fz7OwH3BoAmGKgwAMXufuMse/Wbn/5AkoYMi35NB+BT9OWLwsWgiCn4wtJU15snJJm+P3XW/regLi18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xutrl/IK; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e29d5f7672so113415385a.3;
-        Thu, 24 Jul 2025 10:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753379680; x=1753984480; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8rY/YBmfcluTP6Wi3nMV778eBkdB5PVNXljMRuZhg5g=;
-        b=Xutrl/IKIVoQS+O4Ow0wJxdknO1mnnvexoDo4Fmaz23AkmRyU5GjR3aTjMbfsgfiih
-         GTncjqMMrx79Iu6J5RshHH0zuXkw2utrbC6cjM2MYpwxWJJW0rjdwsQ99u+dt7J/jVnU
-         ogxiqslIAwAbv3O8qBSU5i3HWTO+cp93C+MF0cSIWbnw+8wZ7gyspbNroLjNnn1JBBIy
-         5bdNL/p+S8ywvbUcfSXX0HkcmjsTj6CZLDc3ux4RqV9ej3qojUHQO1D73bcnKqFpnyzF
-         u/tM0DxAiqRBtntW6L879CLMIYiZo7p4XBPjciZcu+SWEDTli6/CfJNVvAGz+MNspe3d
-         7EmA==
+	s=arc-20240116; t=1753379719; c=relaxed/simple;
+	bh=tOs26KRtmV6mDd9FBUeqleTNtYXTTAx6edkamt7a/u8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZESo48LGSWzhRETaxodtblXyHRXRMlWRE0fnfqdHOejTA3Fw1cho9/J711AQvZPWpTcool5LMo0seoEhsVormYL2bwEj+bwnA8Z77wE/4lNWs/wLibnaRs3kuN42t9akC1gsXzvUdIHmrUekHXK8jVXPJsHWM6g2iu7qtMRxPUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZrUQyF50; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753379715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sb9NyX6HkO5e0E/mML5WjpVZTTUu1vQ1eTJL7HSygWM=;
+	b=ZrUQyF50Ec9xYjYy+ggiF1CS2gCO6D9Ugy1cv4jhAiruqdKhe1mcTfRl/Vh5OMd4RMY+cG
+	0z5tHp17dnt7WfeO+ywIBgmp8N4U+XebYVK0TvmA8qalqt6n5FsycYUCNfyM4NTnT3eOmd
+	TQBqF5H5ctO13UyHlta0NXslmHDxSW4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-BzpWtgiKNgqCxBvWsv0eYw-1; Thu, 24 Jul 2025 13:55:14 -0400
+X-MC-Unique: BzpWtgiKNgqCxBvWsv0eYw-1
+X-Mimecast-MFC-AGG-ID: BzpWtgiKNgqCxBvWsv0eYw_1753379713
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e32df3ace0so102255385a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:55:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753379680; x=1753984480;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8rY/YBmfcluTP6Wi3nMV778eBkdB5PVNXljMRuZhg5g=;
-        b=Hy6rsfKzGI6D8QlBJi9HNUXbRpcs8fj8qng8z4btKGlG9MigsNlRJqd8k40Ep8anQp
-         bRM+EtJgOFD/yZ9IOwNd9xIniwOLIn9t1lnShDAA890Mby6NpTisJeAya0JfgdlUDwoh
-         LDTDE0BPgux+IT+U3JwpRfSKSnvwdaX/6P5wHHfbNU3q4R0gyOrsb7tjXKSAqGyrLv9W
-         UnekS7UM+rRp5WHkW3J7zGw3Fw0LJPr14jZeJn6EclXbhVmPujF+7KenWNelqmbkRLcj
-         HS5u32hUYFfJQwBLJrDKuIZFdGd4jK9cE3PylyEBCl+tVGnO7FE3+24RpMlo1/N5DtJs
-         p79A==
-X-Forwarded-Encrypted: i=1; AJvYcCXyw5nQVwWPW35FJhD7bk434rTQgXKrZseGDtJE2SPf6/Kjhz+5TmAD/Z1Pi7uz0z0ECZLi7pAFFo3ZTOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJL3NYqszyrQ+EivpO2zdUipvvkTBSHPxhXmRK6LfT+YK/NoVN
-	Cvt6xi/ujhoQoxxZMRFD8OkgiBeEN5y69VjziI7naXmvswa7RD30W2/PmXtOKQ==
-X-Gm-Gg: ASbGnctPYXYCRaGNkHiCShT7UAUf0BC5duqw4FLpmHQ5ZgHTL6hb3X+sYhMkmW/RnqF
-	abBzeZsuXSgeK9hBzZWeXBunrtiTzh/xDgEz6L+QVybIE9cdbu3qoBtRepwj4gk92IJ99n07HTs
-	fY5BgQJVpuyu48cYQk5n2N0NhDUOzlZJaRK9D2hOJlu3PJrmGaJ6dY1WdjyiXhiEZARRje2zJll
-	j4tMtXcyaWvrFhwSbRSwi9g/osrsMgyAIaw/jy6IK85CBVJc7owHwn3EwGN2jaTj4nOPoxjRXyD
-	/2rlV32ORrijoEF264G30kUYCaWYNTRm/DxAtPTCX1/K4oDFpEqar7L678tFphBtY4BgIw1oXyb
-	coIUfgmpsUvGS2ICJTAxNi4J59/eEyc7bELH/iiibEiuRL9wqwDwkWDhQ+5rByw65exsb83IVT9
-	AeVR1u9nWuDY1H+qZbr39SnYo=
-X-Google-Smtp-Source: AGHT+IG5y4w2WgnuRSjklyIYU9frH4en/w0/K+mowFhQ8WZSo86SvdD0+GCUMBbv4+OvZCuP/lalVg==
-X-Received: by 2002:a05:620a:1986:b0:7e3:2d1d:bda0 with SMTP id af79cd13be357-7e62a096683mr931743085a.2.1753379680368;
-        Thu, 24 Jul 2025 10:54:40 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632e4c4dfsm144051285a.89.2025.07.24.10.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 10:54:40 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 77A17F40068;
-	Thu, 24 Jul 2025 13:54:39 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 24 Jul 2025 13:54:39 -0400
-X-ME-Sender: <xms:X3OCaJXn_qfNVaSqHWgh7BJjkJbV5OB2SMaKvRD21VrynZAtSUFUWg>
-    <xme:X3OCaLEU1gEc8nnvljTB97R1NOsM3Uq1RTAsmzjZicsFJxFpl5IH28W7Ts24e3380
-    crKZZU_mRwBPNC0fg>
-X-ME-Received: <xmr:X3OCaDCuj9Ll2xDVu5PeDbCezjMFtsqfy1wwBms6_ijOP-09f1uaogY7heE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekudeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnheptdduvedtffevfefgleefveekgeetudeigffhkeegvefffeeikeehlefhtdeiteeu
-    necuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgtrhhttgdrrhhsnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    eplhihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhushhtqdhfohhrqdhl
-    ihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlih
-    hnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrg
-    gurdhorhhgpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthht
-    ohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:X3OCaDz9q_4BrfdQJTbBRxC8HcRpgXKNisu4L6zWZACNQUyt3K_v1A>
-    <xmx:X3OCaEBWNw1ch5obsD5RMgOgBO-r4sCbwMVguiAm286m6kZdEggkmg>
-    <xmx:X3OCaMBYrKVKc91oBp2uPFltNkABiS0tOm3l7-tz-OiaCrLKC3-JwA>
-    <xmx:X3OCaP7gOBXFAYpcXjMT3Bnrwl-icQd_w_sVOe-q4yCSI7nnf-M3UA>
-    <xmx:X3OCaI2_Om2DamPpGm_zMwdk-0kQWt7rIHFx4uDCoW4olsxVBZNJtcNH>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Jul 2025 13:54:38 -0400 (EDT)
-Date: Thu, 24 Jul 2025 10:54:37 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH] rust: lock: Export Guard::do_unlocked()
-Message-ID: <aIJzXV8XyIo5O3F6@tardis-2.local>
-References: <20250724172615.436901-1-lyude@redhat.com>
+        d=1e100.net; s=20230601; t=1753379713; x=1753984513;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sb9NyX6HkO5e0E/mML5WjpVZTTUu1vQ1eTJL7HSygWM=;
+        b=foQL8DcSWugJa8B+d2LzFKD55TUQd+VKyMvJF3JvzUKVGNymhFmZkgJKU9EGTF9VGm
+         mjaLjHNUdTpCHUNKWqEHphLOp0m/nVw0eb7suBmmt/98MiPlu2MBO5iThGrZCaFNMpbn
+         fh48G3XQOSQhBRiBTX/bMjjiOhFFYuvWsSb6FzCiieiZ1tHoIVmDTIU/VIsoqKVJFapJ
+         ZrgiC2oEPJS8keMNnNmOZsh9TEcxaEvSC7j8+AcjIpuA7xfAdardWKSW3V4JG9AL9c/6
+         Ld7zaAE/MHJ1NXDvNdSazEWiTmpVjZkLPAxWVCI4EpV0Rg4akMhDqg9lv7C5LgNjCf6P
+         qEqg==
+X-Gm-Message-State: AOJu0Yz2CcexC3iVXPP4PQnu7RhjKxX7TUjTycIk9XAGJdIP4+R4a4lU
+	kmq7L4hR5AK76UkRCyPAQssfDz5T+XtXULIRBuoWSTKykDrEJlFSAAEcptPoZy1MnOi2T0E1ZHr
+	EQy+2LLiIKp8U6MUZ5oBdA59kjMzCiqvBcBqJeljba9xj4wBX4hdB4Nv0BDDglNYwHalFljfqOX
+	Kt
+X-Gm-Gg: ASbGncunL1ARgncJY/uRZOmUu6aCiRjS32r/+iYe0oJRAjoJB/bEttIzTDfEkTY20q+
+	hQwE7zCcDIqXrNC74eRs6RZiK413U/EQ3XjI4TEJQW7GAMEP/4B3cfWFF22jk2GxjFXtdsEUrzD
+	2Xc2aYZG+PcpkoTFXFtYtq404y8cPJXM2oYRwFN+kK9D4hIeF3Mnkhs+GL+OTCk3g88v4uAu/0y
+	Hh4hT8f+kodjPm4r4eSFLcgYJa3kaWzciIatC/4gglo2IRqsH6y48nv3zJP+HxDXwkplTsDPx66
+	BhMspAA+sCoazU+4T2SaUr9313IL3rS0lKUqU8KiStYz9zktheOmqseYhJHOdjPirDJ6AKLciNy
+	DuwgALqIXkg==
+X-Received: by 2002:a05:620a:5353:b0:7e3:3f89:c01a with SMTP id af79cd13be357-7e62a15a53bmr879514385a.37.1753379712736;
+        Thu, 24 Jul 2025 10:55:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNzT+O/9E+D3J8x4YytLTlDXXmB6dZWwHL+/k43VbIFqmWTuGHYvCgiPcjJXtbBbS5/s5Ukg==
+X-Received: by 2002:a05:620a:5353:b0:7e3:3f89:c01a with SMTP id af79cd13be357-7e62a15a53bmr879511985a.37.1753379712269;
+        Thu, 24 Jul 2025 10:55:12 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632e3881csm151723485a.75.2025.07.24.10.55.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 10:55:11 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <dd50a074-0988-4a4d-a78f-7862e87dbab0@redhat.com>
+Date: Thu, 24 Jul 2025 13:55:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724172615.436901-1-lyude@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
+ often on thinkpad X220
+To: Pavel Machek <pavel@ucw.cz>, Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, will@kernel.org, miriam.rachel.korenblit@intel.com,
+ linux-wireless@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+ John Ogness <jogness@linutronix.de>
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz> <aID6XPLXuGo+ViTm@duo.ucw.cz>
+ <aIEC4t2EICdgomZV@duo.ucw.cz> <874iv2stk3.ffs@tglx> <87zfcurexx.ffs@tglx>
+ <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
+ <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
+Content-Language: en-US
+In-Reply-To: <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 01:25:00PM -0400, Lyude Paul wrote:
-> In RVKMS, I discovered a silly issue where as a result of our HrTimer for
-> vblank emulation and our vblank enable/disable callbacks sharing a
-> spinlock, it was possible to deadlock while trying to disable the vblank
-> timer.
-> 
-> The solution for this ended up being simple: keep track of when the HrTimer
-> could potentially acquire the shared spinlock, and simply drop the spinlock
-> temporarily from our vblank enable/disable callbacks when stopping the
-> timer. And do_unlocked() ended up being perfect for this.
-> 
-> Since this seems like it's useful, let's export this for use by the rest of
-> the world and write short documentation for it.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+On 7/24/25 1:51 PM, Waiman Long wrote:
+> On 7/24/25 1:15 PM, Pavel Machek wrote:
+>> Hi!
+>>
+>> On Wed 2025-07-23 19:32:10, Thomas Gleixner wrote:
+>>> On Wed, Jul 23 2025 at 19:31, Thomas Gleixner wrote:
+>>>> On Wed, Jul 23 2025 at 17:42, Pavel Machek wrote:
+>>>>> Did kernel boot on console (w/o X), and got this: not sure if it is
+>>>>> related.
+>>>>> [  402.125635] ------------[ cut here ]------------
+>>>>> [  402.125638] raw_local_irq_restore() called with IRQs enabled
+>>>>> [  402.125645] WARNING: CPU: 3 PID: 387 at 
+>>>>> kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x25/0x30
+>>>>> [  402.125654] Modules linked in:
+>>>>> [  402.125661] CPU: 3 UID: 0 PID: 387 Comm: kworker/u16:5 Tainted: 
+>>>>> G S                  6.16.0-rc7+ #303 PREEMPT(voluntary)
+>>>>> [  402.125667] Tainted: [S]=CPU_OUT_OF_SPEC
+>>>>> [  402.125668] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 
+>>>>> 8DET73WW (1.43 ) 10/12/2016
+>>>>> [  402.125671] Workqueue: events_unbound cfg80211_wiphy_work
+>>>>> [  402.125678] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
+>>>>> [  402.125683] Code: 90 90 90 90 90 80 3d 51 3d dc 00 00 74 05 c3 
+>>>>> cc cc cc cc 55 48 c7 c7 c0 4f c9 85 48 89 e5 c6 05 38 3d dc 00 01 
+>>>>> e8 9b d8 e6 fe <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 
+>>>>> 90 90 90 90 90 90
+>>>>> [  402.125686] RSP: 0018:ffffc9000173fb30 EFLAGS: 00010282
+>>>>> [  402.125691] RAX: 0000000000000000 RBX: ffffffff8616b460 RCX: 
+>>>>> 0000000000000000
+>>>>> [  402.125694] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 
+>>>>> 00000000ffffffff
+>>>>> [  402.125696] RBP: ffffc9000173fb30 R08: 0000000028935f32 R09: 
+>>>>> 0000000000000001
+>>>>> [  402.125699] R10: 0000000000000044 R11: ffff888100ba52c8 R12: 
+>>>>> 0000000000000001
+>>>>> [  402.125702] R13: ffffc9000173fbcb R14: ffffffff84301224 R15: 
+>>>>> 0000000000000000
+>>>>> [  402.125704] FS:  0000000000000000(0000) 
+>>>>> GS:ffff88829007f000(0000) knlGS:0000000000000000
+>>>>> [  402.125707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> [  402.125710] CR2: 000055967d471ee0 CR3: 0000000006046001 CR4: 
+>>>>> 00000000000606b0
+>>>>> [  402.125713] Call Trace:
+>>>>> [  402.125716]  <TASK>
+>>>>> [  402.125719]  console_flush_all+0x41e/0x460
+>>>> Can you please decode this, so we can see which part of that code 
+>>>> it is?
+>>> And enable lockdep so that we can see where the interrupts were 
+>>> enabled?
+>> Enabled lockdep and got this one. It seems resume with bad wifi signal
+>> does it on 6.16...?
+>>
+>> Is it any good? Any decoding needed?
+>>
+>> ...
+>> [   32.361445] CPU2 is up
+>> [   32.361729] smpboot: Booting Node 0 Processor 3 APIC 0x3
+>> [   32.361982] Disabled fast string operations
+>> [   32.366800] CPU3 is up
+>> [   32.370186] ACPI: PM: Waking up from system sleep state S3
+>> [   32.393904] ACPI: EC: interrupt unblocked
+>> [   32.396000] sdhci-pci 0000:0d:00.0: MMC controller base frequency 
+>> changed to 50Mhz.
+>> [   32.409738] ACPI: EC: event unblocked
+>> [   32.470808] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
+>> [   32.687300] usb 2-1.4: reset full-speed USB device number 4 using 
+>> ehci-pci
+>> [   32.758329] ata2: SATA link down (SStatus 0 SControl 300)
+>> [   32.758375] ata3: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+>> [   32.762316] ata5: SATA link down (SStatus 0 SControl 300)
+>> [   32.764585] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE 
+>> LOCK) filtered out
+>> [   32.764593] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) 
+>> filtered out
+>> [   32.771931] sd 2:0:0:0: [sdb] Starting disk
+>> [   32.777439] ata3.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE 
+>> LOCK) filtered out
+>> [   32.777450] ata3.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) 
+>> filtered out
+>> [   32.782731] ata3.00: configured for UDMA/133
+>> [   32.786846] iwlwifi 0000:03:00.0: Radio type=0x1-0x2-0x0
+>> [   32.858513] usb 2-1.3: reset full-speed USB device number 3 using 
+>> ehci-pci
+>> [   33.026331] usb 2-1.6: reset high-speed USB device number 5 using 
+>> ehci-pci
+>> [   33.662583] psmouse serio1: synaptics: queried max coordinates: x 
+>> [..5472], y [..4448]
+>> [   33.810033] PM: resume devices took 1.404 seconds
+>> [   33.841597] OOM killer enabled.
+>> [   33.841808] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: docking
+>> [   33.843280] Restarting tasks: Starting
+>> [   33.849066] ACPI: \_SB_.PCI0.LPC_.EC__.BAT1: Unable to dock!
+>> [   33.852744] Restarting tasks: Done
+>> [   33.888306] PM: suspend exit
+>> [   33.941831] Bluetooth: hci0: BCM: chip id 63
+>> [   33.944910] Bluetooth: hci0: BCM: features 0x07
+>> [   33.961985] Bluetooth: hci0: BCM20702A
+>> [   33.962628] Bluetooth: hci0: BCM20702A1 (001.002.014) build 0000
+>> [   33.970094] Bluetooth: hci0: BCM: firmware Patch file not found, 
+>> tried:
+>> [   33.970993] Bluetooth: hci0: BCM: 'brcm/BCM20702A1-0a5c-21e6.hcd'
+>> [   33.971410] Bluetooth: hci0: BCM: 'brcm/BCM-0a5c-21e6.hcd'
+>> [   34.032198] Bluetooth: MGMT ver 1.23
+>> [   34.838285] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+>> [   35.166235] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE 
+>> LOCK) filtered out
+>> [   35.167828] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) 
+>> filtered out
+>> [   35.206578] sd 0:0:0:0: [sda] Starting disk
+>> [   35.238578] ata1.00: ACPI cmd f5/00:00:00:00:00:a0(SECURITY FREEZE 
+>> LOCK) filtered out
+>> [   35.240197] ata1.00: ACPI cmd ef/10:03:00:00:00:a0(SET FEATURES) 
+>> filtered out
+>> [   35.278928] ata1.00: configured for UDMA/133
+>> [   35.613471] e1000e 0000:00:19.0 enp0s25: NIC Link is Down
+>> [   54.283825] wlp3s0: authenticate with c8:3a:35:f0:ad:f1 (local 
+>> address=a0:88:b4:62:a7:30)
+>>
+>> [   54.284095] ================================
+>> [   54.284097] WARNING: inconsistent lock state
+>> [   54.284100] 6.16.0-rc7+ #305 Tainted: G S
+>> [   54.284104] --------------------------------
+>> [   54.284105] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
+>> [   54.284108] wpa_supplicant/2940 [HC0[0]:SC0[0]:HE0:SE1] takes:
+>> [   54.284114] ffffffff86263fe0 (console_owner){+.?.}-{0:0}, at: 
+>> console_lock_spinning_enable+0x3d/0x60
+>
+> The lockdep warning just means that console_owner_lock is acquired 
+> both in softirq context and in task context with interrupt enabled. 
+> That can leads to deadlock. So the remedy is to always take 
+> console_owner_lock with interrupt disabled, i.e. with 
+> raw_spin_lock_irqsave/raw_spin_lock_irqrestore.
 
-Seems reasonable.
+I suppose that this lock can also be acquired in hardirq context. So a 
+similar HARDIRQ warning can be printed if that happens first.
 
-> ---
-> You can find an example usage of this here:
-> 
->   https://gitlab.freedesktop.org/lyudess/linux/-/blob/rvkms-slim/drivers/gpu/drm/rvkms/crtc.rs
-> 
->  rust/kernel/sync/lock.rs | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index e82fa5be289c1..60eb98805a489 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -228,7 +228,13 @@ pub fn lock_ref(&self) -> &'a Lock<T, B> {
->          self.lock
->      }
->  
-> -    pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
-> +    /// Unlock this [`Guard`]'s lock temporarily, execute `cb`, and then re-lock it.
+Regards,
+Longman
 
-I would like to change this line as the following to be consistent with
-other comments in the file.
-
-/// Releases this [`Guard`]'s lock temporary, executes `cb` and then re-acquires it.
-
-> +    ///
-> +    /// This can be useful for situations where you may need to do a temporary unlock dance to avoid
-> +    /// issues like circular locking dependencies.
-> +    ///
-
-Could you add an "# Examples" section here with a simple example?
-Thanks!
-
-Otherwise it looks good to me, thanks!
-
-Regards
-Boqun
-
-> +    /// If the closure returns a value, it will be returned by this function.
-> +    pub fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
->          // SAFETY: The caller owns the lock, so it is safe to unlock it.
->          unsafe { B::unlock(self.lock.state.get(), &self.state) };
->  
-> 
-> base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
-> -- 
-> 2.50.0
-> 
 
