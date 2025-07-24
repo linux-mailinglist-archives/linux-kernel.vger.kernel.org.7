@@ -1,123 +1,295 @@
-Return-Path: <linux-kernel+bounces-744662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B82B10FAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369E5B10FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E157B84FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B61A1CC4E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27CC1F0E47;
-	Thu, 24 Jul 2025 16:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3AC1E5B6F;
+	Thu, 24 Jul 2025 16:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akxe8H/c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tTRuIRkq"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1326D8F7D;
-	Thu, 24 Jul 2025 16:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5FE8F7D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753374727; cv=none; b=ng+d29K5KUXKGQvxO2oJmrMpu/GmJFZXBoqKg/SemXOSKJIaZq/OhbP2tCfohiJZFPUMF+IKwyFWqPhrGREiRS7mJFdEOawpDqjSd8EuG7Q+NpYZ+jkyUpXgsqTa5FnE3oF0KGpRk/TVPIUElIhvU2NLfMVDggSuRqKOkhBw2Jo=
+	t=1753374795; cv=none; b=SChVzmQv8qJvL6l6cyFb7aMwFWSQ6WKX0bkXKqC5aHOIaTbBEAApSTOG1eMkllIKikMQdV1EtM2fjN9UswiBB3Tu/yrBKk2jdNFDicoF6RdvIisafLq6qWkP+DrA+nVd376a82mkulZtq2wvRk4wQjobUs28+viDCm4TwolQJTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753374727; c=relaxed/simple;
-	bh=LhuhjAjmd1hufnv97WR89cPyw5PBvrFjoK0j4KlZ13M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KL5/O08Z388derp4m5NaJtvKo46zf6DszIv1iNZ+jvL9EjdEBe1h5NAhYIGyrnI1aAX15gNPngsdqjg65vm5EFKNSXXe6+3I1JZKJlQLGW8PUGBNG/fhLwaP+ONMJGC0lgyh0FiaLOCOIk8GFDsWUeB1BUvm1oFtBqlVUa/jXwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akxe8H/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A72C4CEED;
-	Thu, 24 Jul 2025 16:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753374726;
-	bh=LhuhjAjmd1hufnv97WR89cPyw5PBvrFjoK0j4KlZ13M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akxe8H/cb9Ldvqi7eOPFHuxO5Qc0RqwNhdhjC5G1ECK+LwFYHQJi0eYyWMC8HODaw
-	 miptezOwRUknq6dNH+b7S+fTvBfI4dSfVmHCqi6hJSiLEKKym75/cxwKmhl4Q92+cL
-	 hzZpH+sI2DjkbnI2IrMkQH5wvFUWMAIXr0KkzBMfTK6GuHFaFGNTPbfdTrkvsKtdPp
-	 06y/5BNam++9xdSTEt/CHvPUQMWtADL8ifJm0dDoA7aY2rYUGPkbxfzOadeb6YHvNE
-	 dVG4mgR7cTr9wCjSycq1Edxdye+WfZP4/RooLE47+VS3mh7WbsWJ6/9NIq0dVfb3zr
-	 VX2JE8t2Kh7RA==
-Date: Thu, 24 Jul 2025 09:32:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: hch@lst.de, cem@kernel.org, dan.j.williams@intel.com,
-	willy@infradead.org, jack@suse.cz, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] xfs: reject max_atomic_write mount option for no
- reflink
-Message-ID: <20250724163206.GN2672029@frogsfrogsfrogs>
-References: <20250724081215.3943871-1-john.g.garry@oracle.com>
- <20250724081215.3943871-4-john.g.garry@oracle.com>
+	s=arc-20240116; t=1753374795; c=relaxed/simple;
+	bh=GkagUxGPd40m21OGzhG1u2Wfyqr+vADuEMC8AVe0mzM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=fZtKSEVcsi8jyx+dZOxaoYzRJG5xBjyfLJcc125z4gZYO8TUxPFqxmO/KzHjhvUtn0y2SATPnyP2BqRdRTvK9BHgmNmyPluBe4E2xASSQ3cP7QxpJkXZ5DAmmcu6dVR7t85RL0zuj3WFlNYHpufBm1DdgaFgbYTq4IxgDiKTGkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tTRuIRkq; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23536f7c2d7so19418575ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753374794; x=1753979594; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PMUeODdFKN3+xA1VGSzNxeyp9RhfPqFKimrtY3VuKmo=;
+        b=tTRuIRkqOoPKB6XMXzYasPzaVMHfNDIddXv7zFElOsmn+6dIw0P0QYuZ+s3Ad3ZRol
+         +0HoYH5gv5KoFQ1IOOVb4zVDR+3IwSZYGPi2P72BUbJIVtweyOksyVvE7wqsSl9Yo6DO
+         tgVaeTPZfnOfRK4CRSViLNAWh4v3JD6TUTMCxY9csmPlU7FeOGOAcFmB9vpohPpFYeXj
+         JUDsvvD5VowVIEAdprjRQN5q6BI7ebzF87ykdiahcnMtHKgitgGYuzmYBaDbkLNkouJN
+         iWCs3SkgXtUxV8MLD2cPVX6LwvBVcCHQjSo8r1xRnNdBaSAUz41Pl1yQQuToDLmurR13
+         bp+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753374794; x=1753979594;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PMUeODdFKN3+xA1VGSzNxeyp9RhfPqFKimrtY3VuKmo=;
+        b=jAId53batIGmZsqrNilfeAYe2+cyHE5pu+9s2YWC8JXX+3jfaKrYkmIHbKI3W3dNUu
+         bv0qtxWtNlk2wGawfANpyTvfJrSaPgvxjFEpR+HUdrCBBOvCxBjWMIHXaNwvQCQNpMKt
+         ex6JcTZG9jZe97lOgpkSox0P9FAapqJEpr0czH7/gvrJaMLQ2ADUoGytZmJLuxgS65rR
+         lUrK7LPJt9s/kKRYeo4hKxKSPdY7hP9qXGqncEVykyUoeWVGQr0BuZjU+X6eDM7H0HQl
+         aySNaRQgEMb9mMnAyYGVSAyDuun/zkA1c9raMhB1JecBUmKAm87ymRpWbsne0pD6tlkk
+         kCfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0QbRXL73mKH9uF+AUr33X2d3HiObIzGp2m9HsUCdracUwUFZfguta5+4jnYxcoeoA6tYiJoHcMNZvALQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzADD/f+0wT6vYOAYguwQgzdd137IAGbALFy8GzydBJVGPEXJOs
+	lr6J4b4wPne5WsvMsgHB6hIPJi9ozY/pIoH/b6ypgyBIyuINnlAC6f0nswGP5DRgbKGnHR7C7BX
+	dfP2XO8Du7Q==
+X-Google-Smtp-Source: AGHT+IEg88zwA+Qq5dqXP51SbEt5Xx2TG50/3JFk/LwUBXxURdK/VprD1tC1Unk3UpZ2ejVxo8TpC77njy70
+X-Received: from plbkb7.prod.google.com ([2002:a17:903:3387:b0:223:690d:fd84])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef43:b0:235:f078:4746
+ with SMTP id d9443c01a7336-23f981b196cmr109807915ad.42.1753374793548; Thu, 24
+ Jul 2025 09:33:13 -0700 (PDT)
+Date: Thu, 24 Jul 2025 09:32:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724081215.3943871-4-john.g.garry@oracle.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250724163302.596743-1-irogers@google.com>
+Subject: [PATCH v6 00/22] perf: Make code more generic with modern defaults
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Graham Woodward <graham.woodward@arm.com>, Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+	Zhongqiu Han <quic_zhonhan@quicinc.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Athira Rajeev <atrajeev@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, Chun-Tse Shao <ctshao@google.com>, 
+	Yujie Liu <yujie.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Levi Yun <yeoreum.yun@arm.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Matt Fleming <matt@readmodwrite.com>, 
+	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, Zixian Cai <fzczx123@gmail.com>, 
+	Steve Clevenger <scclevenger@os.amperecomputing.com>, Ben Gainey <ben.gainey@arm.com>, 
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, Martin Liska <martin.liska@hey.com>, 
+	"=?UTF-8?q?Martin=20Li=C5=A1ka?=" <m.liska@foxlink.cz>, Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 24, 2025 at 08:12:15AM +0000, John Garry wrote:
-> If the FS has no reflink, then atomic writes greater than 1x block are not
-> supported. As such, for no reflink it is pointless to accept setting
-> max_atomic_write when it cannot be supported, so reject max_atomic_write
-> mount option in this case.
-> 
-> It could be still possible to accept max_atomic_write option of size 1x
-> block if HW atomics are supported, so check for this specifically.
-> 
-> Fixes: 4528b9052731 ("xfs: allow sysadmins to specify a maximum atomic write limit at mount time")
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+This patch series combines:
+"perf: Default use of build IDs and improvements"
+https://lore.kernel.org/lkml/20250428213409.1417584-1-irogers@google.com/
+"Remove global perf_env"
+https://lore.kernel.org/lkml/20250527064153.149939-1-irogers@google.com/
+"Generic weight struct, use env for sort key and header"
+https://lore.kernel.org/lkml/20250521135500.677508-1-irogers@google.com/
+This is done as the last 2 series depend on each other and the
+cleanups in the 1st have the potential to conflict with them.
 
-/me wonders if "mkfs: allow users to configure the desired maximum
-atomic write size" needs a similar filter?
+"perf: Default use of build IDs and improvements"
 
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Build ID mmap2 events have been available since Linux v5.12 and avoid
+certain races. Enable these by default as discussed in:
+https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
 
---D
+The dso_id is used to indentify a DSO that may change by being
+overwritten. The inode generation isn't present in /proc/pid/maps and
+so was already only optionally filled in. With build ID mmap events
+the other major, minor and inode varialbes aren't filled in. Change
+the dso_id implementation to make optional values explicit, rather
+than injecting a dso_id we want to improve it during find operations,
+add the buildid to the dso_id for sorting and so that matching fails
+when build IDs vary between DSOs.
 
-> ---
->  fs/xfs/xfs_mount.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 0b690bc119d7..1ec70f4e57b4 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -784,6 +784,25 @@ xfs_set_max_atomic_write_opt(
->  		return -EINVAL;
->  	}
->  
-> +	if (xfs_has_reflink(mp))
-> +		goto set_limit;
-> +
-> +	if (new_max_fsbs == 1) {
-> +		if (mp->m_ddev_targp->bt_awu_max ||
-> +		    (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_awu_max)) {
-> +		} else {
-> +			xfs_warn(mp,
-> + "cannot support atomic writes of size %lluk with no reflink or HW support",
-> +				new_max_bytes >> 10);
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		xfs_warn(mp,
-> + "cannot support atomic writes of size %lluk with no reflink support",
-> +				new_max_bytes >> 10);
-> +		return -EINVAL;
-> +	}
-> +
->  set_limit:
->  	error = xfs_calc_atomic_write_reservation(mp, new_max_fsbs);
->  	if (error) {
-> -- 
-> 2.43.5
-> 
-> 
+Mark the callchain for buildids and not just the sample IP, fixing
+missing DSOs.
+
+Fix sample__for_each_callchain_node to populate the map even when
+symbols aren't computed.
+
+Other minor bits of build_id clean up.
+
+"Remove global perf_env"
+
+The global perf_env is used to hold host information, but it is also
+used as a fallback in a number of cases where the information may be
+bogus. Restructure the code so that the perf_env of the session is
+accessed. When necessary a locally scoped host perf_env is created and
+used.
+
+Cleaning up the inconsistency was requested by Kan Liang in:
+https://lore.kernel.org/lkml/c56c9e23-cf6e-4040-aee8-da13d5157dcf@linux.intel.com/
+
+"Generic weight struct, use env for sort key and header"
+
+The arch directory is a barrier to cross-platform development as files
+and behaviors within it are inherently platform specific. Sample
+parsing should be generic but the PERF_SAMPLE_WEIGHT_STRUCT handling
+was only present if building for x86 or powerpc. The sort key and
+headers should be specific to the session that is being executed and
+not to the machine perf is being run upon. These patches clean this
+and associated code up.
+
+v6: Fix v5 review feedback from Namhyung (thanks Namhyung!).
+
+v5: Drop merged 1st patch. Rebase and fix breakages in new/changed code.
+
+v4: Shorten to "weight3" histogram and sample variable, but comment
+    its use (Namhyung). Fix evsel__env use in `perf trace` where no
+    session was present. Assert the session is never passed a NULL
+    host_env when there is no data file and its associated env.
+
+Ian Rogers (22):
+  perf build-id: Reduce size of "size" variable
+  perf build-id: Truncate to avoid overflowing the build_id data
+  perf build-id: Change sprintf functions to snprintf
+  perf build-id: Mark DSO in sample callchains
+  perf build-id: Ensure struct build_id is empty before use
+  perf dso: Move build_id to dso_id
+  perf jitdump: Directly mark the jitdump DSO
+  perf record: Make --buildid-mmap the default
+  perf session: Add accessor for session->header.env
+  perf evlist: Change env variable to session
+  perf header: Clean up use of perf_env
+  perf test: Avoid use perf_env
+  perf session: Add host_env argument to perf_session__new
+  perf top: Make perf_env locally scoped
+  perf bench synthesize: Avoid use of global perf_env
+  perf machine: Explicitly pass in host perf_env
+  perf auxtrace: Pass perf_env from session through to mmap read
+  perf trace: Avoid global perf_env with evsel__env
+  perf env: Remove global perf_env
+  perf sample: Remove arch notion of sample parsing
+  perf test: Move PERF_SAMPLE_WEIGHT_STRUCT parsing to common test
+  perf sort: Use perf_env to set arch sort keys and header
+
+ tools/perf/Documentation/perf-record.txt      |   4 +-
+ tools/perf/arch/powerpc/util/Build            |   1 -
+ tools/perf/arch/powerpc/util/event.c          |  60 ------
+ tools/perf/arch/x86/include/arch-tests.h      |   1 -
+ tools/perf/arch/x86/tests/Build               |   1 -
+ tools/perf/arch/x86/tests/arch-tests.c        |   2 -
+ tools/perf/arch/x86/tests/sample-parsing.c    | 125 ------------
+ tools/perf/arch/x86/util/event.c              |  46 -----
+ tools/perf/bench/inject-buildid.c             |   2 +-
+ tools/perf/bench/synthesize.c                 |  27 ++-
+ tools/perf/builtin-annotate.c                 |   6 +-
+ tools/perf/builtin-buildid-cache.c            |  22 +--
+ tools/perf/builtin-buildid-list.c             |  11 +-
+ tools/perf/builtin-c2c.c                      |  69 ++++---
+ tools/perf/builtin-diff.c                     |   2 +-
+ tools/perf/builtin-inject.c                   |  41 ++--
+ tools/perf/builtin-kallsyms.c                 |  21 ++-
+ tools/perf/builtin-kmem.c                     |   2 +-
+ tools/perf/builtin-kvm.c                      |   4 +-
+ tools/perf/builtin-kwork.c                    |   2 +-
+ tools/perf/builtin-lock.c                     |   4 +-
+ tools/perf/builtin-mem.c                      |   2 +-
+ tools/perf/builtin-record.c                   |  64 ++++---
+ tools/perf/builtin-report.c                   |  27 ++-
+ tools/perf/builtin-sched.c                    |   8 +-
+ tools/perf/builtin-script.c                   |  18 +-
+ tools/perf/builtin-stat.c                     |  23 +--
+ tools/perf/builtin-timechart.c                |   2 +-
+ tools/perf/builtin-top.c                      |  60 +++---
+ tools/perf/builtin-trace.c                    |  38 ++--
+ tools/perf/include/perf/perf_dlfilter.h       |   2 +-
+ tools/perf/perf.c                             |   3 -
+ tools/perf/tests/code-reading.c               |   6 +-
+ tools/perf/tests/dlfilter-test.c              |  51 ++---
+ tools/perf/tests/dwarf-unwind.c               |  10 +-
+ tools/perf/tests/hists_cumulate.c             |   8 +-
+ tools/perf/tests/hists_filter.c               |   8 +-
+ tools/perf/tests/hists_link.c                 |   8 +-
+ tools/perf/tests/hists_output.c               |  10 +-
+ tools/perf/tests/mmap-thread-lookup.c         |   6 +-
+ tools/perf/tests/pe-file-parsing.c            |   2 +-
+ tools/perf/tests/sample-parsing.c             |  14 ++
+ tools/perf/tests/sdt.c                        |   2 +-
+ tools/perf/tests/symbols.c                    |  12 +-
+ tools/perf/tests/topology.c                   |  39 ++--
+ tools/perf/ui/browser.h                       |   4 +-
+ tools/perf/ui/browsers/header.c               |   4 +-
+ tools/perf/ui/browsers/hists.c                |   2 +-
+ tools/perf/util/amd-sample-raw.c              |   2 +-
+ tools/perf/util/arm-spe.c                     |   2 +-
+ tools/perf/util/auxtrace.c                    |  13 +-
+ tools/perf/util/auxtrace.h                    |   6 +-
+ tools/perf/util/bpf-event.c                   |   2 +-
+ tools/perf/util/branch.c                      |   2 +-
+ tools/perf/util/build-id.c                    |  63 ++++---
+ tools/perf/util/build-id.h                    |   8 +-
+ tools/perf/util/data-convert-bt.c             |  16 +-
+ tools/perf/util/data-convert-json.c           |  36 ++--
+ tools/perf/util/debug.c                       |   9 +-
+ tools/perf/util/debuginfo.c                   |   2 +-
+ tools/perf/util/disasm.c                      |   2 +-
+ tools/perf/util/dlfilter.c                    |   2 +-
+ tools/perf/util/dso.c                         | 111 ++++++-----
+ tools/perf/util/dso.h                         |  75 ++++----
+ tools/perf/util/dsos.c                        |  20 +-
+ tools/perf/util/env.c                         |   3 +-
+ tools/perf/util/env.h                         |   2 -
+ tools/perf/util/event.c                       |   2 +-
+ tools/perf/util/event.h                       |   5 -
+ tools/perf/util/evlist.h                      |   2 +-
+ tools/perf/util/evsel.c                       |  29 ++-
+ tools/perf/util/evsel.h                       |   1 +
+ tools/perf/util/header.c                      | 178 ++++++++++--------
+ tools/perf/util/hist.c                        |   4 +-
+ tools/perf/util/hist.h                        |   3 +-
+ tools/perf/util/intel-tpebs.c                 |   4 +-
+ tools/perf/util/jitdump.c                     |  21 ++-
+ tools/perf/util/machine.c                     |  44 ++---
+ tools/perf/util/machine.h                     |   6 +-
+ tools/perf/util/map.c                         |  15 +-
+ tools/perf/util/map.h                         |   5 +-
+ tools/perf/util/probe-event.c                 |  10 +-
+ tools/perf/util/probe-file.c                  |   4 +-
+ tools/perf/util/probe-finder.c                |   5 +-
+ tools/perf/util/s390-cpumsf.c                 |   2 +-
+ tools/perf/util/sample-raw.c                  |   7 +-
+ tools/perf/util/sample-raw.h                  |   2 +-
+ tools/perf/util/sample.h                      |   6 +-
+ .../scripting-engines/trace-event-python.c    |   7 +-
+ tools/perf/util/session.c                     |  19 +-
+ tools/perf/util/session.h                     |   7 +-
+ tools/perf/util/sort.c                        |  95 ++++++----
+ tools/perf/util/sort.h                        |   5 +-
+ tools/perf/util/symbol-minimal.c              |   2 +-
+ tools/perf/util/symbol.c                      |   7 +-
+ tools/perf/util/symbol_conf.h                 |   2 +-
+ tools/perf/util/synthetic-events.c            |  54 ++++--
+ tools/perf/util/tool.c                        |   2 +-
+ 98 files changed, 923 insertions(+), 894 deletions(-)
+ delete mode 100644 tools/perf/arch/powerpc/util/event.c
+ delete mode 100644 tools/perf/arch/x86/tests/sample-parsing.c
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
