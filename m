@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-744725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616E8B1104F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E9B11053
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E1A9189C54F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41ED15A1C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7D62EBBA7;
-	Thu, 24 Jul 2025 17:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA62EBB88;
+	Thu, 24 Jul 2025 17:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/gwTcWu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo4HP9qj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D5A1E5B6F;
-	Thu, 24 Jul 2025 17:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B240C1E5B6F;
+	Thu, 24 Jul 2025 17:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753377847; cv=none; b=odL1O3z1g9ixN6v67dkE7zbMCaATu1H+VwG+C3gGbEUdbhIH1n0JSDX4acAGaIFLEPHJKP6Zp3rClP9DT+zfa84DCZS100tfAS0ZWi5qAfbhXUcAGZEK87nEuoes7yUqi1dtN11hEdwyvUe58LtMVSd18lw+Iuj5OP2L4C4Q9XQ=
+	t=1753377884; cv=none; b=aPaaCIBeIoS50KJVFYmfyUVbuJesE3XoGIsT4lmTrRml+QLW3P9lpW+FXSZERUWUbgG96T0JbURjt5boA5ATatig0LwK7k4xq8ph5QCioz8LP/UdSn54x53jSYPX1G4pRqkNn/6N7PkVS1IPIdpEoLpSpP+rXQ79auOHsxl7HSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753377847; c=relaxed/simple;
-	bh=NSPDTm3RpSgjTZrzLusFL5QBI95JaHmhAin4q3oEx3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g2f6MiUTLwwden+K2YVSFptMafr++qRBxh51buvfcOF2cxwaV06zFZEV9H+nDRJhMGHS7a/LIYVZ0oexQ0uaSdrFn4oXlEjWx9urWRDR2uY98VZA+GpI+LOu7806C/qPN/GKlKs7+SoUpUrEQgBQOvCLhAn/mJN8JSF6xk81YT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/gwTcWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B27EC4CEF1;
-	Thu, 24 Jul 2025 17:24:03 +0000 (UTC)
+	s=arc-20240116; t=1753377884; c=relaxed/simple;
+	bh=5v+6sLWT2JVv2tQxwXZrtzOuzBW2sPjmsZrpfsMk3SY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eb/GPlGUT1Y1UURVL5ID1ODdDdl5kcXFKGmRNqv3MyJr5sdCVzsCi+bacdOtHdq841J/AOhCGqyybQepnOrL8fPrzFp7FrP5Dv9JWWvjYkFPsce7E/0qLThevF1+6zHaT96Xa6RgQtJnGKbD2JYEJO8WlsKdaddG1XuMsr0dL/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo4HP9qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4317FC4CEED;
+	Thu, 24 Jul 2025 17:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753377846;
-	bh=NSPDTm3RpSgjTZrzLusFL5QBI95JaHmhAin4q3oEx3s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z/gwTcWuN+DoliAeu/v98641wE29hhdgY1gEOj4PN3z/ZvVwFgmxNcy45TwtVfA9H
-	 GDueToHR64nwd4XmOREBX8ozpp3E4dbk421fDykzUeZZNcYD8Ovbk+f55QOniMe2jW
-	 Q+9jSl1/Eo1OFrYkF2azqNSnlXIuVUDuRQksad823aBzXQzi44Sgc0Je+nPrYdOVF5
-	 +eAPase7hR9aMNtrHqp573OKDpSnwbLMpmeqgDeriZCUTvMzIT+lwwamgfSpIAUOnz
-	 XD7qfzRsQpT4XGkuNIXj3oV8E5s6RSIE3mbgg+8bpXtbeQHbzTOQITkiNoEWMv8EPS
-	 AP5v7Xh/k3yQA==
-Date: Thu, 24 Jul 2025 19:24:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>, Alexandre Courbot
- <gnurou@gmail.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Albert Esteve <aesteve@redhat.com>, Jason Wang
- <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, gurchetansingh@google.com,
- daniel.almeida@collabora.com, adelva@google.com, changyeon@google.com,
- nicolas.dufresne@collabora.com, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, virtualization@lists.linux.dev, Alexandre
- Courbot <acourbot@google.com>
-Subject: Re: [PATCH v3] media: add virtio-media driver
-Message-ID: <20250724191833.253b8f40@foz.lan>
-In-Reply-To: <CANiDSCt9nGP=r8VxkZH76a1i+xEd+RCJ71=6qx0_iPYdrn+GoQ@mail.gmail.com>
-References: <20250412-virtio-media-v3-1-97dc94c18398@gmail.com>
-	<CANiDSCsmbiveo4GHX54_q7-1CeKiDAVaGnb8+jsCybM+pyA7Fw@mail.gmail.com>
-	<20250601113425.4d5a3d89@foz.lan>
-	<CANiDSCt9nGP=r8VxkZH76a1i+xEd+RCJ71=6qx0_iPYdrn+GoQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1753377884;
+	bh=5v+6sLWT2JVv2tQxwXZrtzOuzBW2sPjmsZrpfsMk3SY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xo4HP9qj61T/9+5j2qTf6oFZ0LieIfFtww1kckJi6Ypx2BurwTBEMaK+0CHMRuYBF
+	 3wptLnCo9IDUsdm1JDkuajyFnqxG719li02ENTLNc4UOMXdwskgFYYfI49UupCv3T3
+	 Xic1TD2Fj8XG9QeZebq/Dq2vDKdVoTj7OWj6NXlbN387wJd3YiIo2625YmhmesjYy7
+	 Q2w4qarlPAAdwfTfZYsOdjQQQa5/pYZ8UcBP3UmuAHaGR+Sa+NofaEQxTo5ruAu2eL
+	 WkhE1+605zNlCeJywNEVkLkJWI55b3tYNbZiSKUk4pqhSzET2nDnMSgiSJONx9xSLh
+	 odHExFQISx2Jw==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aec5a714ae9so163010166b.3;
+        Thu, 24 Jul 2025 10:24:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVoUT1WQkGOf1UOsZx8ps7vSSnUCI7RhIyj7jZuaZcL9DBQbSDjPbOKTWaGAOE4jXMqeWftUEe2ZqKIU+K9@vger.kernel.org, AJvYcCXzKS9Jw78/nXCONwzKXOIEZmyMNk2Nz2DEgt6Z6A8IDS8qEzk3at8GEfGsMnXM9dNTwT3AwG5LKfLpUxQL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDMC06pvsvuB10ensQhKAHy4qklIMdW1d3VeuS4rlmBnpI9WFr
+	0hI1+1NAZ4tWLOtUykavqjQuPwPwpC4znfuQsm5tJJ95wI67TAwN91iZvFYryBLF8VveRRrn35c
+	HxDsE/jrSHsMF7RkSwfUMiOoJ5YtZqA==
+X-Google-Smtp-Source: AGHT+IFo55rmjjLqbcaAhGBJ/ERMN7a6ahY+65NfrJ3IaCAqER+bDUI3Z3JrteeZr+zlXqaj2XuM64IibOVOM3hwD+k=
+X-Received: by 2002:a17:906:c145:b0:ae3:d0f5:d7af with SMTP id
+ a640c23a62f3a-af2f8c508e7mr804806166b.48.1753377880786; Thu, 24 Jul 2025
+ 10:24:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250626-topic-ubwc_central-v6-0-c94fa9d12040@oss.qualcomm.com> <20250626-topic-ubwc_central-v6-1-c94fa9d12040@oss.qualcomm.com>
+In-Reply-To: <20250626-topic-ubwc_central-v6-1-c94fa9d12040@oss.qualcomm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 24 Jul 2025 12:24:29 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLviOtUjzyq6Yg5tksxV3ANuxorX7kXcn6ibFi+mPwTog@mail.gmail.com>
+X-Gm-Features: Ac12FXwCDn6y_9vJ9au7o-GRGF7JsHqqOrUkXvxuG-gjRGmKFHzrUxOXk3K7DII
+Message-ID: <CAL_JsqLviOtUjzyq6Yg5tksxV3ANuxorX7kXcn6ibFi+mPwTog@mail.gmail.com>
+Subject: Re: [PATCH v6 01/14] soc: qcom: Add UBWC config provider
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Akhil P Oommen <akhilpo@oss.qualcomm.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Sun, 1 Jun 2025 12:01:22 +0200
-Ricardo Ribalda <ribalda@chromium.org> escreveu:
+On Thu, Jun 26, 2025 at 4:02=E2=80=AFAM Konrad Dybcio <konradybcio@kernel.o=
+rg> wrote:
+>
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>
+> Add a file that will serve as a single source of truth for UBWC
+> configuration data for various multimedia blocks.
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/soc/qcom/Kconfig       |   8 ++
+>  drivers/soc/qcom/Makefile      |   1 +
+>  drivers/soc/qcom/ubwc_config.c | 251 +++++++++++++++++++++++++++++++++++=
+++++++
+>  include/linux/soc/qcom/ubwc.h  |  65 +++++++++++
+>  4 files changed, 325 insertions(+)
 
-> Hi Mauro
-> 
-> On Sun, 1 Jun 2025 at 11:34, Mauro Carvalho Chehab
-> <mchehab+huawei@kernel.org> wrote:
-> >
-> > Em Wed, 28 May 2025 18:23:02 +0200
-> > Ricardo Ribalda <ribalda@chromium.org> escreveu:
-> >  
-> > > > +static int scatterlist_builder_add_userptr(struct scatterlist_builder *builder,
-> > > > +                                          unsigned long userptr,
-> > > > +                                          unsigned long length)
-> > > > +{
-> > > > +       int ret;
-> > > > +       int nents;  
-> > > Could you initialize nents and sg_list?
-> > > old versions of gcc are a bit picky
-> > > https://gitlab.freedesktop.org/linux-media/users/ribalda/-/jobs/77042562#L4381  
-> >
-> > Please don't. In this specific case, ret is always initialized:
-> >  
-> > > +       struct virtio_media_sg_entry *sg_list;
-> > > +
-> > > +       ret = __scatterlist_builder_add_userptr(builder, userptr, length,
-> > > +                                               &sg_list, &nents);  
-> >
-> > nents and sg_list may or may not be initialized at the function,
-> > but initializing it is wrong, as, when they are not initialized, the
-> > ret code shall catch it (and if not, we *do* want gcc to warn).
-> >
-> > So, if our CI is warning about that due to an old version, please upgrade
-> > the version at the CI runner.  
-> 
-> The main version of gcc works fine. It is the minimal version (8.1) required by
-> https://www.kernel.org/doc/html/next/process/changes.html
-> that  complains.
+> +static const struct of_device_id qcom_ubwc_configs[] __maybe_unused =3D =
+{
+> +       { .compatible =3D "qcom,apq8096", .data =3D &msm8998_data },
+> +       { .compatible =3D "qcom,msm8917", .data =3D &msm8937_data },
+> +       { .compatible =3D "qcom,msm8937", .data =3D &msm8937_data },
 
-Ricardo, 
+This compatible is not documented.
 
-gcc 8.1 was released in May 2, 2018. I don't think it makes sense to
-address bogus warnings with that old gcc versions. I would just disable
-WERROR for such versions on our CI tests.
-
----
-
-Alexandre/Michael,
-
-I need a couple of full days to properly review virtio-media. 
-I was planning to do it during this Kernel cycle, but I ended
-allocating too much time just to be able to create a crossvm
-that would allow testing it. Afterwards, I got sidetracked with other 
-issues. I won't be able to review it in time for this merge window.
-
-I'm planning to do it at the beginning of the next merge cycle.
-
-Thanks,
-Mauro
+Rob
 
