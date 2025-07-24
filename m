@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-744553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27443B10E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45853B10E5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F055A568540
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C8E4E72A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3392E8DF2;
-	Thu, 24 Jul 2025 15:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5752E973A;
+	Thu, 24 Jul 2025 15:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ppoOmU2x"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z6NHWnJj"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359BA2C15B4;
-	Thu, 24 Jul 2025 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987EB255240
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370227; cv=none; b=m7BE3+My+lyXGJ++i4N2d86VPp7hdQ95THsHd+1DILr/DZDqvaStzVg2WIHpaqwPBZNwttMsw4gpwj6Ewf+5EGrE1R2PcpK6KTVADD28NzIDHhi5VeumGWCJdWsMrKzp0SWXIIh590BBL7T/OGAE7FOiMApJ3jwBK4k6/SKmssg=
+	t=1753369952; cv=none; b=Qe+yiZrii/QEDKXLaTvwK/DddXlHMY0V58Z9JsglHJuqFkeqjEcSxNfGcPnii28ICRhbyj54xDAhsImHOq9ZgbYkTiP7FY1OpyUzjLSx3s3sjqFkbdrAo4IJdMro9G/vIflfhF99x5+K9MSTO+35V8ln6OsEB5Fh3CaNYhl82Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370227; c=relaxed/simple;
-	bh=uJzdGUBtBgVW8BdZUFfCCfm2zVes30Z48ZK35qOdPZE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=IX75Aq4D5036+B7oP1+i6btaKBGu5l1fGnx7NIzSpZPWHnu9wqq2SYIu/aD20s6D/NVfXabyTEUO6EnlkuQt3Tw3gPqSQvai2P4UHVPaL6P8o9ZhvOy8W4pU6HdYmOuGOV8sAgc9T1FnK91BoiUw+c1RGcdrJBobsiYwNo68w90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ppoOmU2x; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753370213; bh=6bvvqlpAyY79RK+sigJVkCZdDmBjNUAbhE8K4FBSbPg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ppoOmU2xW5RZ8arwjhi0lN/+FOoKoWDdCcF/IEw4kD/BRz9rMuqNtmPnPMnaSkmbv
-	 HH1WwuxrOae7lqcTtL1hmZ9kukgdIlYVDiLPcIc22iWrrqJ9t5C6x3JC1KNO8gqiMU
-	 MX7hRHyRDAqkjnRouqmRwD+EyTj2qXV8139zV0bo=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 2199CEA2; Thu, 24 Jul 2025 23:08:25 +0800
-X-QQ-mid: xmsmtpt1753369705tlfk7bzra
-Message-ID: <tencent_DFFF86C192DEC64EC99B6EF96EDE4C986706@qq.com>
-X-QQ-XMAILINFO: NC4p7XQIBeahYieLnHxjb3blod5K9WyF3LD6sJikRBWE38rp70KalLI+36X4I/
-	 OVuAuNnVMb8BUXKgrqz6MhkWNpYVQB9YLb0qIWp2T0kM+fElAypjLcHnDaxzsST5ioQogU8yiiY2
-	 rEXdecgYQmB9CJe1odmAtLspa4TOR4RIxiCEJ/GPQ6kOYsvxiXZNnsQwCEPqORBxludN+F1dRHwk
-	 relicG3ZMZxVm90S8yz6tKseIDscVHmldg3BUQGft+npH4r548lPKaq/bB95zRMTluM74x4Ddz8u
-	 SzIlARX0d8pk7Dh3n4RUmh5e+E8W5xu+6Lg5v9jOgKX87S60aiK3SSC1XmlP4XKaVhiCRBOiP41m
-	 ooEa6MpYlvQAbQow6FFVXeBIXpCUaxrxssOUOW+VgQ12DoDDhjOJ+tJ/xL2NcDZOojQ/mZ3DfG5X
-	 2CJNDdyJ7VDgidfiDcVW0zmTOExIPbtv975D3bIWeam7LlRCRFDq5h6Ivskz0qzEizF95um3sthU
-	 egtcfK+ZOeJvx8BhRiuN+23Y6BaFQos/s5xf30NVdRj/kd+p8i2TZfOO+F6bZZpHfvJzBbL0zN5N
-	 Pj6JcNS9thMnxbgcSuOAYaQSGs6iFtdknV6bxFrPZ9R3qJ8GR7Am3bVsgIiCLvXtWDeGAipGQ3xz
-	 GKSt47kCk0pl8TazJDs2a4tNhtC2fTUHlDnds7N7FJ4imhB0+6M148/SMViOBYQ7ceobnSaD65Bz
-	 J3yPT/6W1na48i7sUXeWA0EzZllPQ8u+znBMz8L8EukV7foI/gVBY5UikYxrnhn5LWhkX4UepYF1
-	 UZnuWHZ6gmaVhwQk9ZCizT8QE53tumU2pIUD+UAqOL08KV7uCfEV76SN+5CcVyeA+Mp75PE2iZsH
-	 Ye1PYRgFkHmHXEwNrwZ0vX1UluWCpErn1gQf+bC/HaYctmHErQmHfsTNtKsocsTGbSVCbs93txWB
-	 okSW+hJ/R+fknxcWm8XSvJKVa5IC0IhBsB3y0+0HklxYHSSbBGgOgPXsej2ZOS
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
-Cc: frank.li@vivo.com,
-	glaubitz@physik.fu-berlin.de,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	slava@dubeyko.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] hfs: Prevent the use of bnodes without entries
-Date: Thu, 24 Jul 2025 23:08:26 +0800
-X-OQ-MSGID: <20250724150825.763872-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <68811963.050a0220.248954.0005.GAE@google.com>
-References: <68811963.050a0220.248954.0005.GAE@google.com>
+	s=arc-20240116; t=1753369952; c=relaxed/simple;
+	bh=kqXvn/StDWrS77Y+1IlIaBQTJAyFT2n+pM6JuFAK6gU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uiUzYSP9dDzDd4PSuGn/ZaKblOHvZIJ6+0a3wpJYdRgh2EcqtzTdr05gxcy7lEPEnEEhUmZj4xv7/ONd68aQqevGULghjymn8idOFuaZ/kh2ACSwYUxo/m3TfL6q89uPKwD5Rm5/OxWmFRnbLT1VTL4XcAewWTkTKD06w9Q60NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z6NHWnJj; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso10932a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753369949; x=1753974749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kqXvn/StDWrS77Y+1IlIaBQTJAyFT2n+pM6JuFAK6gU=;
+        b=Z6NHWnJjnwi6TggyJP41L5IVJlOQh2PdOym2BqhARhelfqIvQhH86ulfQpMh6X4iaX
+         gpejRnREbb7/YFcF5y+Hsinr02MV71TmtzrcF+0GiUjJ8cLNNQosMNKoO1nX6/6/4CRa
+         BoJ002zsToN8+kklri2U4FYSMsy41WKQyoxhf6GUNsGlAT5BweXab5QvQat95jD3lgwD
+         esAUr76GK+FaLYNN9uU35slTW+w7UsEjDC9QCqtEAZh5MhI1UMMmPtTa3JedtYAnMblE
+         e2qMl9+n7SUGmPBO1uSg0VljFJKWUW5+iDiiWtNGFclWHf6HAQ/wHL3tl8Y7NqaQsq6i
+         i2DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753369949; x=1753974749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kqXvn/StDWrS77Y+1IlIaBQTJAyFT2n+pM6JuFAK6gU=;
+        b=jtSxBz2sDm3dcgVsTb8FkAkQvUuZ1Ow2J1kZzH2iRQApvRF5BNEjh1WCJAa77TTULz
+         GPM4QrMLJElbuGARGkQGgRVxNqTYvyzPcW/fdV0wRdRRvltizz+1RbJG+CFOB6gzHbI/
+         tlMpW9q2ct+YzHXS42+WVk6JlKTRwRNkSbHAjSczybG8BFvFUHPiG0W6akoJ7JEclWMV
+         1N16hIq8yLkfCl9Y/j+wU/cbucFp+yt+GOSDLZjfuXevSKqZez/6ue5OPs39WDNJjHEI
+         ikFVRZGkcHqM34uJWJz08ZSm8shV8wBzjMI6CkVjO9oU3yaZpHBb04p/AsZg6pHKBLU7
+         po3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkKumetYFU+Bwc7x2lkwvLM67y+o44OllNBjoj5btukKmSn6LouaOgbIsLRDSTrV3l3HqsO/wVjLkoE9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBWeiMZdjIuH2t3labspeqLoPkoYNU0VcRU+Z1mWlWM7LhFEt2
+	8K5WsmsJ5gk9Ww5fPGZmkPIt0MNbRk8hc9bfGq4wkywQINF/yISglhZPDPNcxqfj2xXw7QPslLL
+	HhsNTIFfFZgDlXn94eGKn9f3I27zLwFHd20+mYVxB
+X-Gm-Gg: ASbGncvRwGLYMoXhJTGCMDsETuWp7l1sVIjlmgRccKF3REIsG5v19FL7XJgchU1ORim
+	/kQkT9mFB3LMPq3eJPT9pbZcwGsSqVbOQj2mNCUwNwbLZQmkSfO5xhE6lti+g6rH546MLaEfE1v
+	n1Xok16Wz/jiP83W46wQkBPifH9BKZBe6gde0Pz3tvBLZ0QRO0hgc6NOu+QZIYQ1WIqODhP2hNS
+	wkYsu/fYNv8cY3Ubi/tbs2QFRBetNmc9Q==
+X-Google-Smtp-Source: AGHT+IHBGlAlpqkzcDHZbw2sNCslvhmGfaM9b4Nex1wG/5/Ri659NtJD16WWqjDzjVjGRO0jWUwlf3ajnKnPpgKPR/w=
+X-Received: by 2002:a50:d7ca:0:b0:612:ef17:7853 with SMTP id
+ 4fb4d7f45d1cf-614cce4afe5mr78429a12.7.1753369948492; Thu, 24 Jul 2025
+ 08:12:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250723-kasan-tsbrcu-noquarantine-v1-1-846c8645976c@google.com> <45cd4505-39a0-404d-9840-a0a75fcc707f@suse.cz>
+In-Reply-To: <45cd4505-39a0-404d-9840-a0a75fcc707f@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 24 Jul 2025 17:11:51 +0200
+X-Gm-Features: Ac12FXyEpQmBUWM62BqVW--MRdpwMGBL7kBF9xwxQYUchJD8HK0S4n7Iw79CZgM
+Message-ID: <CAG48ez0KjPqqDdzejsjhaHSuJG_0Q8zhyi-7rYq9gSZJergVVw@mail.gmail.com>
+Subject: Re: [PATCH] kasan: skip quarantine if object is still accessible
+ under RCU
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If the number of entries in the bnode is 0, the bnode is considered
-invalid.
+On Thu, Jul 24, 2025 at 12:14=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+> On 7/23/25 16:59, Jann Horn wrote:
+> > Currently, enabling KASAN masks bugs where a lockless lookup path gets =
+a
+> > pointer to a SLAB_TYPESAFE_BY_RCU object that might concurrently be
+> > recycled and is insufficiently careful about handling recycled objects:
+> > KASAN puts freed objects in SLAB_TYPESAFE_BY_RCU slabs onto its quarant=
+ine
+> > queues, even when it can't actually detect UAF in these objects, and th=
+e
+> > quarantine prevents fast recycling.
+> >
+> > When I introduced CONFIG_SLUB_RCU_DEBUG, my intention was that enabling
+> > CONFIG_SLUB_RCU_DEBUG should cause KASAN to mark such objects as freed
+> > after an RCU grace period and put them on the quarantine, while disabli=
+ng
+> > CONFIG_SLUB_RCU_DEBUG should allow such objects to be reused immediatel=
+y;
+> > but that hasn't actually been working.
+>
+> Was the "allow reuse immediately" not working also before you introduced
+> CONFIG_SLUB_RCU_DEBUG, or is it a side-effect of that? IOW should we add =
+a
+> Fixes: here?
 
-Reported-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=41ba9c82bce8d7101765
-Tested-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/hfs/bfind.c | 2 ++
- 1 file changed, 2 insertions(+)
+This was already an issue before. I think it got broken by refactoring
+in commit b556a462eb8df6b6836c318d23f43409c40a7c7e ("kasan: save free
+stack traces for slab mempools"), but I don't think it was necessarily
+an intentionally supported feature.
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index ef9498a6e88a..1d6f2bbafa7a 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -133,6 +133,8 @@ int hfs_brec_find(struct hfs_find_data *fd)
- 			goto invalid;
- 		if (bnode->type != (--height ? HFS_NODE_INDEX : HFS_NODE_LEAF))
- 			goto invalid;
-+		if (!bnode->num_recs)
-+			goto invalid;
- 		bnode->parent = parent;
- 
- 		res = __hfs_brec_find(bnode, fd);
--- 
-2.43.0
+> > I discovered such a UAF bug involving SLAB_TYPESAFE_BY_RCU yesterday; I
+> > could only trigger this bug in a KASAN build by disabling
+> > CONFIG_SLUB_RCU_DEBUG and applying this patch.
+> >
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+Thanks!
 
