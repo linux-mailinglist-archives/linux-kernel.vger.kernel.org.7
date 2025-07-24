@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-744749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98277B11079
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:43:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A25B1107D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AA8AA7A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7BF5A78AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE602EBBA8;
-	Thu, 24 Jul 2025 17:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893FD2EB5DB;
+	Thu, 24 Jul 2025 17:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B8d55PVo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kSRcuRqp"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D0F2EAD09;
-	Thu, 24 Jul 2025 17:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6714B1B4F0A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753378991; cv=none; b=aUBQIgHcHbS4G3L3JKwNHFbecZfIzA/gw0qfIvu1AitzFcHt/9pki+0+A+uTgcrUeumzGe8AdB3Ni0uiDGQKlEY+t7lJmoXMhxauHu4zunTMfeKniUxdrbO3TKCQ+ZtUCVS0e7rYOC+PxyWPXuNYMlDg6+jaqyre+ihsEk0cGkY=
+	t=1753379189; cv=none; b=kO74CsSllaXVv12SBNykrFng1mrwRKMf5yfbRi0zR7+VIHeJvLaeTxbEp0+fRqVe3FtSzWY8d2qfBshCAWgW2iC0WnxgmBXGhu7pYOf8aiyvjFeaQPs0IPedlVHu0dkQatGU/0ZYwFqoEO9CxVRNO353Eodd4wrjj5PxWAXxZbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753378991; c=relaxed/simple;
-	bh=XBj+J3IHgG7t/JlO+SdMmc57hogwgLS7tgmyXFVGizY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o5XQ5Tqi905P8n3VzzsSn7oz2B7y1QZf8+2XXVwFCr1O3OeAclw0WAZF7HwgBfl9wbG+f9CtHl6iw3NmvNsYerFPJx609H9xfbbA2xCugAInBfcVdzCmd6PJ7CXO80wbNySKntHIrbxvbCrhD/cFxfo9lyv+G/9z3TuufK4vanI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B8d55PVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D58C4CEF1;
-	Thu, 24 Jul 2025 17:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753378990;
-	bh=XBj+J3IHgG7t/JlO+SdMmc57hogwgLS7tgmyXFVGizY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=B8d55PVoNTDXwnsE32+FlMm64ukVfbED/wo28dwad5w/vHUCiIJVqvNN0Xz86ABiy
-	 cnpjoCHZPdhzyt0S9bq29ejP4cPvXeWQ1lU3WvJBLe2p/wcjibkEtwpfkY7H1s+e8M
-	 Geg0uaShbuxDndvVXu0Fog5iVI4h+vFl9kfRZyF9ggTAu9xY/vHewaA4Cs+/RVBn1k
-	 wxRJx7TlRGp25VpBZyMjvMim+kN4f9sO4++D5woNayeAYn9Ry4ohebe/Qr5LItm5iW
-	 12sOpDmXYvEUUGsmIJ2h6w+A1PNQ8utxxotcsk+dUoyt5u2mzkKSB9Tj9pm+29WR3r
-	 udQZZb9imEOew==
-Date: Thu, 24 Jul 2025 19:43:06 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-Message-ID: <20250724194306.27b98194@foz.lan>
-In-Reply-To: <875xfhabv0.fsf@trenco.lwn.net>
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
-	<58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
-	<20250712163155.GA22640@pendragon.ideasonboard.com>
-	<20250713002517.7f52b0e9@foz.lan>
-	<875xfhabv0.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1753379189; c=relaxed/simple;
+	bh=i/Kpz+Ste+Djqg4BpNd41PAeFUiI434DZcyDd+zWh+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQtSFYTof51sJ2EBJTnZRo9cpaKCbRrA3tVzgpLOgpQsHPGsN9qHGke+8uvr8wKeFka2mCZPPVkcEQZBwKw2IPqFQMj6KvwEn+7TziLD6c1tZc8pI3pUG28r39kRtlpwIRtiihGrqxRrs+umr4I4oM1Cxz8RZA1mDJ1iClrvFrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kSRcuRqp; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZCg+1QoRbgtlHKqHHRGHpdwt2kaPrsylpaRAX7tlZ98=; b=kSRcuRqp2hSV2mCRQ5JKkdZmnI
+	rChDz5dy7d9lgGVJ8iIjVuUvhVEi6Fj+1IhO1mNpVSnTSKrVDMuJBo5TxayvowmGemNxdNuWfx0GV
+	3Cgf65hQMP8zGV5ajpGa6GN/K9sJS1XqkQyEQQfPTOw8g09CWvnc+duS64f33U8AklDHI1SlKXz4H
+	4UOybKFir40fJsuqS68elFYqRNl5t4UDm0RRr2LMvzFwWtS0qtl2Xqtw2W6u08WH2SncRLmJ/Gz3e
+	rVwf2vEn32V13KSb2CqvK5TAbTuZ1zW89R/mg9y2a/XCNj/65vE/jNeMXkGlpOj3Gozm+wfbJgCo6
+	vP4mgNRg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40504)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uf014-0003co-15;
+	Thu, 24 Jul 2025 18:46:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uf00z-0000v7-0L;
+	Thu, 24 Jul 2025 18:45:57 +0100
+Date: Thu, 24 Jul 2025 18:45:56 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: ardb@kernel.org, linus.walleij@linaro.org, ebiggers@google.com,
+	nathan@kernel.org, lumag@kernel.org, dave@vasilevsky.ca,
+	ruanjinjie@huawei.com, kees@kernel.org, liuyuntao12@huawei.com,
+	linux-arm-kernel@lists.infradead.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm: allow single CPU configuration by adjusting NR_CPUS
+ range and defaults
+Message-ID: <aIJxVDBXyFgrz8AV@shell.armlinux.org.uk>
+References: <20250724172603.18701-1-suchitkarunakaran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724172603.18701-1-suchitkarunakaran@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Em Thu, 24 Jul 2025 08:42:59 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Thu, Jul 24, 2025 at 10:56:03PM +0530, Suchit Karunakaran wrote:
+> Previously, the NR_CPUS config for ARM required a minimum of 2 CPUs.
+> This patch changes the minimum NR_CPUS to 1 when SMP is not enabled,
+> sets range to exactly 1 if !SMP, allowing only a single CPU setting and
+> adds conditional defaults:
+>     - default to 1 if SMP is disabled (uniprocessor)
+>     - default to 4 if SMP is enabled (multiprocessor)
 > 
-> > Maybe I can place instead CONFIG_DRM_I915_WERROR.
-> 
-> I've held off on this series on the expectation that a new version would
-> come.  I guess, at this point, it will be a post-merge-window thing?
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
 
-Feel free to postpone. I have already a new version of it here somewhere on
-my branches, but I had to take some days off. So, I ended not sending you
-the (probably) final version.
+This hasn't been tested. NR_CPUS depends on SMP, so if SMP is not
+enabled, then NR_CPUS doesn't exist in the configuration. Therefore,
+providing a default for !SMP is meaningless. 
 
-I intend to send what I have here during the merge window for you to
-review and apply post-merge-window.
-
-Thanks,
-Mauro
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
