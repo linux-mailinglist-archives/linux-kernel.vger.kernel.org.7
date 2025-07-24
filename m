@@ -1,251 +1,457 @@
-Return-Path: <linux-kernel+bounces-744154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8889CB108B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:13:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33E9B108C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8621CE7943
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3863A583B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD43726C3B0;
-	Thu, 24 Jul 2025 11:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66D726D4C6;
+	Thu, 24 Jul 2025 11:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MGjEHAjB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SAg18EsO"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8822571B0;
-	Thu, 24 Jul 2025 11:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355595; cv=fail; b=IolLHPxrotttIk8Ea1izhjOnpx5c0cbjnZoTYD7YplwLFf0FqfwF6+MaCt9Q1Gg5jOND1grk+M1MbuUjczlDOhKFyNN7bA0icAk7L5rqw5JY00OoiQUgiisu47+fLVmanEiDGwkvSTar8JBtLufPSY3xmsUqQ2GpyexCFTXAp2k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355595; c=relaxed/simple;
-	bh=tU1lSY7vo0DWba7sYC1+pLaBBrj/BiKxgAI93bjnzMs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G6t59HRPQh5nHWstZHez0b85POsMzPRWExoMWGArRwgryMk4aKEWJehSVrnZ3oaQOWBoiNbbJN/Wmzc8u51ledKTLPIj+6xRwttSxGNOWt4eFIDYaRwsZcob2SrprY5GP/ZIN8IH2WI0NudemLhYtDETaauELltY5M07aZl5wrA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MGjEHAjB; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753355593; x=1784891593;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=tU1lSY7vo0DWba7sYC1+pLaBBrj/BiKxgAI93bjnzMs=;
-  b=MGjEHAjBLU44qL/W1Aeo0vCve+69PlbkG7V6lb9yX/d9fd6tSDbVkRH9
-   Ube4jbxRGulnM4zRwuqljzrv8V+dsMON4t48m67WytMQ8R+1uERXlDBVA
-   7hTWwG4LuL891GSPKZbXw+fC9602V44RhFq6kNG4x95lBVfdEUwLNy+80
-   EXjWCFk+hNZOvY9ERpKTj5G+885wn4eBDvgrtfnqIzPuFC+xxjrzunFM+
-   Mnu+0SU6DVI00L+UpVewb+++quDJyKskpI1HQq9Ng4oe6k01h54iwtUIL
-   m3IxEpgdgH5ZOhIk8Kg5kCHfHKsJtU+sX+MAGN3Ts1+hSN7g5CNrt49/S
-   w==;
-X-CSE-ConnectionGUID: XtNebRTZRhyeCTft0qy7Kw==
-X-CSE-MsgGUID: 7QixO/8VQBeNaPIZ+Q/sOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="54878193"
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="54878193"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 04:13:12 -0700
-X-CSE-ConnectionGUID: tI2yLJWaRR2xAjABVwS5EA==
-X-CSE-MsgGUID: A9gTYDKyTTKUQceH4xdtOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="197303751"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 04:13:13 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 04:13:12 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 24 Jul 2025 04:13:12 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.74) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 04:13:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KiUyQEGpTNFL+h1DoZRFcxZVJU/M3a9RBORF2ifHY6N2mR9bvA9pUU6W0F8VVKhocKgl22I4G/c0LQ5PH2ZOJOoQ4RsbBTqcm7IePOVlODqlI0HSNfB3MYzTnfEyyOiqC4SjdJAxlIOeWQHZsdZk3U2a4gd4jQk7R3yIQREo4F1bac/DWMrMqlcptgoaSiE4j9cyfsvZBIC3dMIO8QjonWKgaVQDa7L68sgZ/nY613tsvLERr6A1FV/eb6bBMqSKG98qF9XLuwLvtB3vYC8lK1wvl3CMB3gvb08Frp9KzLudr9cwKueM8e32DGuWkdjzuMay6CFRKxMUP1lHzdD7BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tU1lSY7vo0DWba7sYC1+pLaBBrj/BiKxgAI93bjnzMs=;
- b=D/hhcOERAqDdo76KQVe0to+SFlFOjngZ2h8opMD6QC09fVitIpfjvstF/24aC0TVgN6MvP1Bx1LiWgqXTG8AKrqE8sSqGe+qQt9Bgy+32+PKSnsvMyhDS4W6VjIVdoDPWTuxjVZ04B9ZKX4EFLBU4XnLxWwAH1DMQ391Ea4TRkdNkvN33qfCWqFQgi3CnpNuXngSJtv8Aqq+F26IkMzR5YZcLf2VESVOwuyFDlfR/k+RBa043xSxV2CpvgAdhcjRV4nM3b6Qqaw23Srane9mLuYT7xBFUH4g58NSu3Jp/M2ISEQG16PbMMTV/wrcPvcA7J9Q4lDbuMz3uMG4ulLtpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by BL3PR11MB6316.namprd11.prod.outlook.com (2603:10b6:208:3b3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Thu, 24 Jul
- 2025 11:12:58 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%4]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 11:12:58 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "mingo@kernel.org"
-	<mingo@kernel.org>, "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
-	"Annapurve, Vishal" <vannapurve@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
-	"Bondarevska, Nataliia" <bondarn@google.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "Raynor, Scott" <scott.raynor@intel.com>
-Subject: Re: [PATCH v9 6/6] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-Thread-Topic: [PATCH v9 6/6] x86/sgx: Enable automatic SVN updates for SGX
- enclaves
-Thread-Index: AQHb/HGK60dfSRXjp02uNG1v9X+jQ7RBHuaA
-Date: Thu, 24 Jul 2025 11:12:58 +0000
-Message-ID: <156919280fe6b1e01a81bb89f8850e72a6bfe077.camel@intel.com>
-References: <20250724080313.605676-1-elena.reshetova@intel.com>
-	 <20250724080313.605676-7-elena.reshetova@intel.com>
-In-Reply-To: <20250724080313.605676-7-elena.reshetova@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|BL3PR11MB6316:EE_
-x-ms-office365-filtering-correlation-id: 1a7b8631-864c-4f8a-c234-08ddcaa30c1e
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?WmRXZTNnVmxRWkJaM0VmWHhzZzBGeXNnSEgzUVFQV3dTYS96T2FlK0J4MWJG?=
- =?utf-8?B?STk5QzJVNzJNQU53QUl4dW5HM3lSUXNPYmxLNytQKzlBSlZ3bDJPbGQ2dWdr?=
- =?utf-8?B?UVRybGZkenpPL1kzK1E3aCtBRGlqNlkyTmJ6b0pxSmhiVXJqM042c1lLKzYy?=
- =?utf-8?B?eDVHTy9ZeFVPNkpmNHM5bGplSVp4c2JHZjJMYWsrTHZ3Z25kQnh5QkFFVGlt?=
- =?utf-8?B?NG9uQzV0YkwrTnpvL3Y2ZDJFOTBaSHlKVzFYV0dwYUg2d3NQS1VkcXRCMlNj?=
- =?utf-8?B?OU9sdGV6UHZpMlBoK0E1ODdZVU0xQ1YvQkZOc1lNbGNSVXNoKzRtNnFjOEtQ?=
- =?utf-8?B?alNreUVqd0k5cU5COUcvVXJzQi9zMUJNRmUrbWNoL0pMQWMzeTJqS0VGWFMv?=
- =?utf-8?B?OXl1VFpwelZycEVsUG9BRytZc3NqODZ4eEhPS0szcDlBQy9RWGJWYklxb3B0?=
- =?utf-8?B?NnJBK1RiNDAxWkw1MXdRTDZhSTRyUnVLcWhzTmtWMVZ3OHhoNnM3R0diNU5q?=
- =?utf-8?B?Q0ExSko1bVh4T1psdnFjaFpqUDVMUkd2Ly9Wb2w4YVZhc21GYWcwU0JaYTNJ?=
- =?utf-8?B?Q1J6ZERWUXp4bGZIMVozV05QUEdBU3Q0N0Q1NTZSVk00VWxFSXNRNERGWEd2?=
- =?utf-8?B?NkJwYys0S3hXbFJzQkU5K2FVb0tyd3BEeFNGc3J5b1g5Qy9YL3RoR3duemI2?=
- =?utf-8?B?cUpSb2xzL0JobWFob0NCKzF0cVpiazQ4RVI4QzA5cm1BRjJzLzBzT3hRekZL?=
- =?utf-8?B?RkRmR2JxSjA1STRkc3BpTkNuYmdOb2JOYVFyT0dvTmRrUFkvWDB5a2lodW1Q?=
- =?utf-8?B?YjYxZjBFN1NUYndmUE9TdHpWc3JrTFdsM1lKNnRyd1ZDa3FIN1JjWFYyaXUx?=
- =?utf-8?B?cmhXTENYM2h3S3d4MHlpMDhLN1dua0E4S1VnenV5RGpocUJPUFhYRFIrUkRw?=
- =?utf-8?B?VFl5eFVmdXhDZU5nbG10RWN3Qk5ENGdnd3k1aDZqbElnZXVtMVYvTFczYTA0?=
- =?utf-8?B?eWlKT1ppRmRGUGNybFVyVTVheGZ4ZDZmcDNuWmp4TkVNV2gwSTN0YWpHTllX?=
- =?utf-8?B?Um4ya2VIWmVSYlNKUU1zb2hhVzM2dVJyL0JZT0JRTmRvaS9QNmJwaU1xUEJh?=
- =?utf-8?B?T08yTkdrUDlDS0VCS1F4MzlPeCt5N1Fua2Q2SEdEWGxRYit4MEFRSC9rR0d4?=
- =?utf-8?B?V2Y5NXBsZHRBSzFLVStocldpSkRUU3hMWUlZMUxrQ1F1ampna2FvK0M3Qi9V?=
- =?utf-8?B?dEdoVUJpdFkvS1RXWVI4d3Z5elU2d1JDQXl3MW56UFU2NXZaVms1Y0hHZFZD?=
- =?utf-8?B?TlVQTjBTSjFFbkM4andzbmp3d2xtL1dsN0pqejFVRUtmQWU0SXRNeW1rdFE5?=
- =?utf-8?B?Vi9nTnRFSGpxSCt3SzhpYmw4Mk9QUDBrUS83M0FEeHl0aFNUQmZkNDBIb2dY?=
- =?utf-8?B?TnVWRVBPZmx6YXpSSmRUZGM4U050NEo0Zm1uWUtDYmF6OFQ3cmxNVWpnUUhD?=
- =?utf-8?B?aDB0MnhBQ2V0UHN6VXNuUFV2RUR6STV6dGlKeVdydm5Ja1JkTUhxeWxNNDFO?=
- =?utf-8?B?TjN6YkVhUldQZmhkKzg0and3aXhsZGUyQWh0WUZGUHhJWG1GeFppRzJNenNs?=
- =?utf-8?B?Tzh2alI2ejJyU0tOZDRkNzNkY3hORjQ5QkZmajhmY3hZc296V2doUXVydHJ1?=
- =?utf-8?B?Uzd3bmprV2J6L1VLa29zYVVJc0FyT0dqS2x6T2EvdlpsZHROemhpVFlBb1lV?=
- =?utf-8?B?MmViajZveVc3R1ZnNVplbWI0bTl2cnA3M2JLeUJFa3dscHlyMHlidzFyVGFz?=
- =?utf-8?B?TlByeG1reURyTTNjV2F0dXhLbTdQR0hHanlxNENmSW11bzV6RHRpY3B2eW9a?=
- =?utf-8?B?VmNNVVVnRUR5cHJXeTNuVjVLVU5LZmRtaktuc0ZLUnRVUXI3L1BtOGVYQjFu?=
- =?utf-8?B?ZzZkZlRqTm1WZ2JXK3ZrNm1aTCtQcHFtUDRja3F3aUVhVHJBejZ2eHhiMU4w?=
- =?utf-8?Q?7Noy+QhpEjxG8mlFcTCnqJnwX4w6eY=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TWd5UDJJYnVUeUxIdkVRSkkzRXJpRjF6YmY2Um5mRkQ3V1hJQU5pSU5NYWdP?=
- =?utf-8?B?MHlDU1RyNUZ2SmE2NUxiTERyYzN3WlVCWXBKT0h6VzhOcGdHZ3drL09HTS9I?=
- =?utf-8?B?eXN0ZmlPL0xaWitZU1g0QXdQaWZ2MzJ6RFVvRFgrNEFoNkxjZHk3TjBxRjQ0?=
- =?utf-8?B?bjJWN21IQ25FOEk5WW9Wd1RqSnliZzVmQ3pmb1BRK2xUNlA3bnducDJGVHF1?=
- =?utf-8?B?KzZCZ3p2Q3J6RHg0bFZOTzBGdFlzNXl5NlZZcVY5R2dWYW8yNkVEa28xaVpu?=
- =?utf-8?B?RGRGRkN3WTBqLzV5ZHVNMUVHWk8zUHdEb2t6UWoxQ2c3VXZZenlxNGcxQWtH?=
- =?utf-8?B?NXErSG1zeVNKK21pVUJYUHp5bFRzQ2o2NHFVenVpTWZsbWRQVFFYbjlTZlZY?=
- =?utf-8?B?QmpUU29WeVNVVDF1eXh3T3BmVHVwNkFBakwyNGRhV1JyYVFWUDVCSFhQNFVw?=
- =?utf-8?B?cXN3TE5YTzV6UEhQZVc0YzNCNEdDcENEYW40Z1lOUnBYNU40cWtzdE9XL3VU?=
- =?utf-8?B?MnVGYVVUKy9sSDJjdlJoT0pFTE5pdEdPSTM4ck1vZXRLR0htL3ZXbXFjWEFa?=
- =?utf-8?B?M0pKTU1MMTBBVDBjZHdYdjlmTkVKeDZIa1crLzIrODdiMmRhdzVHTWtMekMx?=
- =?utf-8?B?M1BRNjlhcTZaK09wUFpVZEhqMGxlYzFFelBBczhieGhJRGtuVjF3NVpkZW1E?=
- =?utf-8?B?Lzgvc0FOL0VmUkVycm8zSjdBMjRvVGhQSnZRUjUzRlpOR1U4djQ0SFJjVUJn?=
- =?utf-8?B?ZG5vRzk4UUNaWjZBS2NaTGpNYXhtcWhCT0JvTGlUV3MrR29NalRybmt2TkM3?=
- =?utf-8?B?MlVhUWdtN3pXVW5Dbi9EdmNqYzB4T1g2TGROaTRxT0RsVVpzOWpYRHJicko1?=
- =?utf-8?B?UTgzR2YzaUFlREkzVWdlOWhiNEUwdzBuVXlaRmNmZE9oWktCQk5tOUFRL3FU?=
- =?utf-8?B?VzZDYmlVeXFzVHFIWVRRa1FxSGhVYXUxTE1MLzYrcVJoWFVrQm1Ua0xpL2xK?=
- =?utf-8?B?RVZxYS96cFZxNlFhcGhVcU5TLytLd3VZYmpPZnlwcWpFQWppMCtOOW5kZE5v?=
- =?utf-8?B?TGlsR3VQOHNCNVQyU1Q3Nk8rWS9hRXBOOEV3WnM2cnpSN0NRVXNXWlJwNXRx?=
- =?utf-8?B?bWpDVFEydFhqZjBYS00xTUd3V3ZvUTBBbnRBZHB1VGpaS2RFd1FqMzY3SUZQ?=
- =?utf-8?B?RkJOemNYS2N3Z0xaQkRKUGZqTzFzbVdlZWFCVjB4b25WeFcyM2JlQk5uQ205?=
- =?utf-8?B?WnZPU0M0aXBkdklUODZKYkZFSUZ1bll5UUg3cUx6L3NFVTNmTGVGZ1F2MEZS?=
- =?utf-8?B?UWRNeUdRczViRW5MWWRzZ2ZpdHJUd3FHVlJPeC9hT1F5U0c0MjZQaDJFTFls?=
- =?utf-8?B?UzZnWjJxcGxiZXN6c1lQRXJhSEQ0Yk8wUVdieDhpSUtOSXhtOXMxSWdOdFRz?=
- =?utf-8?B?RStKblBseWpIMlVwSVhtejZIVTVFR1d4dE90Qnc3ajBDRVF5Wk1DbTZiUk5p?=
- =?utf-8?B?Y3ZYUXExVFo2WkZMU2xqRmkrZnNyekRzVndDVnNjNnZyQ3VHZ1gxMjFSbUxz?=
- =?utf-8?B?em1oQWdNWHIyL2NYcnJMd3hHUzNTRTJiZUZaQzFqbFc1WUpWekhvenFnZXZM?=
- =?utf-8?B?b1U2MjVjcFpDV1diejcxeFFpWkRMZWlQSVNZOThWRjFhaHV1T0dlemNNQ2RW?=
- =?utf-8?B?Yk4raHVURHpQSzhGOHlHdTZyUVpvdVBBRWhNSWhYQ1VEY0lKNy8wcUtLc2pU?=
- =?utf-8?B?YTkvcS9YOGQyYWtWMXZ6SXV2Um91akdsZzNDMExYcjJzMkdXQ25la2dCekhz?=
- =?utf-8?B?TlRYd3JTQnJaL3JQWmZlTXNnSzk1djl2MG8vYUcyN3lmMEczNk5MZkV6RXpE?=
- =?utf-8?B?L2FtWEg0c1RTQjlESWt0a3p2ck9hV3Q2RFF4Z3FIaW5KandUa3JGYVIwZkJy?=
- =?utf-8?B?WkJGRGJNdUh1RTNnZmh1aUg0bXhWcU8zb055RFJIWm1TOEVGVTRwQm9pOEJl?=
- =?utf-8?B?Qm1peVdRcFVTWW0rSk1Oc2VNQzFvNWl6UWUzRDJjdUo4VHVpTnBrNUhkTkxn?=
- =?utf-8?B?VXQzQ2N4K3d6R3pEZ2l2bjMvaDRaRUZwZ2ZUYlQ4S2x2dnlVUDNQWEpIZmx2?=
- =?utf-8?Q?HzQyuW0TwgaZ09XRO0pNShL+U?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1436840DD4CC2545B1F67C1A475E90BE@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C6C2571B0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753355641; cv=none; b=AGwroGw1TzAKybjqQjo/wDk97q5nfKvn1JQA8qY0GqnQ4o65yfrPZdoVgp4H7AOxu71AHqJtk6YbaR+EVtiKVeoVkrwm4yCD6/j/qNpeZs8POio++7ibIQi9GaEPvH6C9Gd7lFNNhGdwprlxF34Bv0wTN6Ex/vO4k1WMBxWTlug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753355641; c=relaxed/simple;
+	bh=EzzIiAoijePLKsMHhDEAi/RsAbRH40rRrq9ogMFdd+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvdQm9ODIOn9zABJLK8fbKrDyvd/5KCet/S9UwMkO+qf0PwHVo65FrafeKATCqkPCD2LXgAyExgfUqznxhy26E7BwFBfz36WRKthWT9ki2Kg9/wI6jzjwdT/hXQ3IeFMLQMx8o0QiYXCgwSzvs+mF6Ls7ssG0Ew//KCRqlmKI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SAg18EsO; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af3322b7b9eso14314166b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753355637; x=1753960437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fU1t/gY+fvQSdT58b4/oSddCY0LCDKCOWarJB5CkkMo=;
+        b=SAg18EsOLyTlcEIggrJs4dxUidrILahWTxK/qJQ80M93sOUFVd7+t/vtavi0h0SnrP
+         k+0xFwfjoMJr2xkwiBNC2qjx3qfs1oXz0Jq4edcFMK0qOAiC3HR0h5vvn0Jq9ow1Oftj
+         GJUnzGrfg+vp3kViTzEGOVpEK1Gmexv+QNUsn/DNmse7MsXr7NLv+6txsvO7KoRa+gDP
+         rBCxcQxzvbmIWRDOl+BTUDJ/hTuTIAUb0l5T2guaGSepPamskNOCAu2lHHxgkT1ZUbgo
+         zmkaH2I2H1Fx5FzoGpthoiaqYQIF1XmMRu0HggPZAsUydA5kebjQIxYsLl9EGD/hQd23
+         zs2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753355637; x=1753960437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fU1t/gY+fvQSdT58b4/oSddCY0LCDKCOWarJB5CkkMo=;
+        b=AO3cmSac1wTwqF7tpp7F3iGp8GOhBepANuFzOkB/2XrhO+o63akxjm6P2t+pR3wO97
+         OLgW3U1ta76bQI3SnZql2Pod4CKQrkrEvtEcnwBgD/O+n0ZKaFtrkf7Z52/Nf5T/xKIf
+         rL09IQKKouXfBjbZjzuB8oLPaeqd0LHbgB8mDd856D3/9KxP9EO5CXOjwm72gFS5LA0G
+         oWyv6k+iwLMZzQ01/zwQfaKGCb5jQs6BTYTxyLnGPain3o6MzL9dIeAWppcmjHWDd3Wx
+         VisDFez2h1r/AWQuzMISttOEWupQL9Bn6eEI36u9GxzoSATKa9zCHApn3FtH8VgdRac4
+         yt7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWvw8hxtaZOy7EA+iNydfeewz9/ucWCN6JwgXTipsXThDppHV5gpAYsmQ2JoVqegkjQhof/+DGtbPDgtJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJq4HY/DLp5Q0+b35JEjNbkz4c7Fxf/59fIrVyP/gfmHEDpVWx
+	NIeGzpwQ9AYB+jwNZVNsrj57H+sSkKOJRZ7Kuf1m9R9Pp0IFKo89lpRwolmFibzlm2xQynzoAwO
+	+SHqF
+X-Gm-Gg: ASbGncvjDH7Kh0A8KTIk8FCox7/lkeacVIpwp5uCysaYv1kPtFPGKNnBb/zO6q2yYHp
+	wSQ8glLCMLkyNLZBJ2XfeCfAG9xGsFJGpbMIXu7952StXhwTKd8EJVU87+6a0icucmV8eHNRNbm
+	VFCBBz3H8clmaF9cTLTP3qkAa9FszBYYn+K5sVUoLm+9Ml/8SrEszmGqxQNQ3I0N0Cnpd0klDWv
+	j6/b2OUgOolFaxc5WDwb/4WCeGrqxs+Rv6Cm/lXPI96pEkYYCet4h/0RNB74Cpc9LyylHhpkhCd
+	D85ci0nLwUvX6Prg7PPyOOBs+sx2fDWzfjfu+ge2tm4FVZgMmCHRRrundATEHTSYmS/Q42xa337
+	X1BYwY4CV/kKsVeTJ9IpmIIL0CqUb0unJ
+X-Google-Smtp-Source: AGHT+IFl8bw5VcqnaZyFMvU5N/+Z9FnZSRMF08+PL/sdFu/kNwhhTBGIr/Ez+0UF8NF5JU+4/pUhLA==
+X-Received: by 2002:a17:907:1ca4:b0:ae6:eff8:bab0 with SMTP id a640c23a62f3a-af2f927c442mr230489466b.15.1753355636774;
+        Thu, 24 Jul 2025 04:13:56 -0700 (PDT)
+Received: from kuoka.. ([178.197.203.90])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47cc6b416sm98680266b.40.2025.07.24.04.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 04:13:55 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lucas Stankus <lucas.p.stankus@gmail.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Dan Robertson <dan@dlrobertson.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	=?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	Stefan Popa <stefan.popa@analog.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Alexandru Lazar <alazar@startmail.com>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Angelo Compagnucci <angelo.compagnucci@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	David Heidelberg <david@ixit.cz>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Andreas Klinger <ak@it-klinger.de>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] dt-bindings: iio: Drop unused header includes in examples
+Date: Thu, 24 Jul 2025 13:13:46 +0200
+Message-ID: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a7b8631-864c-4f8a-c234-08ddcaa30c1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2025 11:12:58.7933
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TepTq5ksgZH90gpnoB+u5OLrprFuA3ZgcJVzcjNWsbz6T0lcViHNE+m1yyR3TWQhYsKuOV2s2AFCr2O77RXVNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6316
-X-OriginatorOrg: intel.com
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13440; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=EzzIiAoijePLKsMHhDEAi/RsAbRH40rRrq9ogMFdd+Q=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoghVp1lbwagOVzqnb4D4tPHa76QycwmUcOD8wG
+ rj1LtwZ+vyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIIVaQAKCRDBN2bmhouD
+ 13FoD/43m/JIqB7zoemYOwgQTGXeBr2NHqZX3JjU1PNOPdslHa6EEIzjX9tPb84kF5Y3xi1LeHy
+ hv/4VRTOzK3anln9OLWQCpNvOe9DKZAQBLPbA0TbvUB0Q960y/xUjwFNUH54C9dQDbxJTrTDzxz
+ jAC14J5MbleGVZ9wh1eLFN8kRo2kUxcoG0AhkIC2KPncOCLDa8v4LwsEDdKhZaOwzBC+Rwax27A
+ JYQeOzUCHOF96sj1TT03AugZHXGbvMLR4b4KyAPEuW6S7lrb+ou6nT5LfnC9UyFAkCxgp+zCzVh
+ 4EeIzgZZ86ChXCF3JEuVEuA/P5BRmCFvZIXbdDn8iOgBKrgpFuoVdCY90DvOo3L4FGPQbfz1nw3
+ FTVpdwglTDSDct0eDWw8RunTiavSfgmrc9si53ghRwX9Mc54xsf9APpRiV4r2B3+UrWVFNUuF2Z
+ mRN36MocYerVvVC+azuA3RqoYGq75hrElFxtHXP5QJRHvEskyGtvLmUR+kwh+Yl30gKgjKb3woC
+ CGABbDDz6cvHXwrwKSWa+XnYH4phU7sVHcROxQWdamZnrYnfWusRIHDmVYXZZqLOadUHIXhQqyE
+ KcKz4F3CMJ0XF5p5YWuZgpm9d6QYksD8isNOm7ZRGLUe0QrvAH7UKdh1yW6/hq2+brXKjMeWBDk cFazX3wrd9S/cEA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-T24gVGh1LCAyMDI1LTA3LTI0IGF0IDExOjAyICswMzAwLCBSZXNoZXRvdmEsIEVsZW5hIHdyb3Rl
-Og0KPiA9PSBCYWNrZ3JvdW5kID09DQo+IA0KPiBFTkNMU1tFVVBEQVRFU1ZOXSBpcyBhIG5ldyBT
-R1ggaW5zdHJ1Y3Rpb24gWzFdIHdoaWNoIGFsbG93cyBlbmNsYXZlDQo+IGF0dGVzdGF0aW9uIHRv
-IGluY2x1ZGUgaW5mb3JtYXRpb24gYWJvdXQgdXBkYXRlZCBtaWNyb2NvZGUgU1ZOIHdpdGhvdXQg
-YQ0KPiByZWJvb3QuIEJlZm9yZSBhbiBFVVBEQVRFU1ZOIG9wZXJhdGlvbiBjYW4gYmUgc3VjY2Vz
-c2Z1bCwgYWxsIFNHWCBtZW1vcnkNCj4gKGFrYS4gRVBDKSBtdXN0IGJlIG1hcmtlZCBhcyDigJx1
-bnVzZWTigJ0gaW4gdGhlIFNHWCBoYXJkd2FyZSBtZXRhZGF0YQ0KPiAoYWthLkVQQ00pLiBUaGlz
-IHJlcXVpcmVtZW50IGVuc3VyZXMgdGhhdCBubyBjb21wcm9taXNlZCBlbmNsYXZlIGNhbg0KPiBz
-dXJ2aXZlIHRoZSBFVVBEQVRFU1ZOIHByb2NlZHVyZSBhbmQgcHJvdmlkZXMgYW4gb3Bwb3J0dW5p
-dHkgdG8gZ2VuZXJhdGUNCj4gbmV3IGNyeXB0b2dyYXBoaWMgYXNzZXRzLg0KPiANCj4gPT0gUGF0
-Y2ggQ29udGVudHMgPT0NCg0KTml0OiB5b3UgY2FuIHVzZSAiU29sdXRpb24iIGluc3RlYWQgb2Yg
-IlBhdGNoIENvbnRlbnRzIi4NCg0KPiANCj4gQXR0ZW1wdCB0byBleGVjdXRlIEVOQ0xTW0VVUERB
-VEVTVk5dIGV2ZXJ5IHRpbWUgdGhlIGZpcnN0IGZpbGUgZGVzY3JpcHRvcg0KPiBpcyBvYnRhaW5l
-ZCB2aWEgc2d4Xyh2ZXBjXylvcGVuKCkuIEluIHRoZSBtb3N0IGNvbW1vbiBjYXNlIHRoZSBtaWNy
-b2NvZGUNCj4gU1ZOIGlzIGFscmVhZHkgdXAtdG8tZGF0ZSwgYW5kIHRoZSBvcGVyYXRpb24gc3Vj
-Y2VlZHMgd2l0aG91dCB1cGRhdGluZyBTVk4uDQoNCihTb3JyeSBJIGZvcmdvdCB0byBzYXkgdGhp
-cyBpbiB0aGUgcHJldmlvdXMgdmVyc2lvbnMpOg0KDQpJZiBJIHJlYWQgdGhlIHBzZXVkbyBjb2Rl
-IGNvcnJlY3RseSwgd2hlbiB0aGUgU1ZOIGlzIGFscmVhZHkgdXAtdG8tZGF0ZSwNCnRoZSBFVVBE
-QVRFU1ZOIGRvZXNuJ3QgdXBkYXRlIFNWTiBidXQgaXQgcmUtZ2VuZXJhdGVzIGNyeXB0byBhc3Nl
-dHMNCmFueXdheS4NCg0KVGhpcyBpcyBubyBoYXJtIHBlciB0aGUgcHNldWRvIGNvZGUsIHNpbmNl
-IHRoZSAiY3J5cHRvIGFzc2V0cyIgaXMgYWN0dWFsbHkNCnRoZSBDUl9CQVNFX0tFWSB3aGljaCBp
-cyBvbmx5IHVzZWQgYnkgRVdCL0VMRFUgZmxvdyBwZXIgdGhlIFNETS4NCg0KSW4gb3RoZXIgd29y
-ZHMsIGl0IGRvZXNuJ3QgaW1wYWN0IG90aGVyIGVuY2xhdmUgdmlzaWJsZSBrZXlzICh0aG9zZSBm
-cm9tDQpFR0VUS0VZKSBzdWNoIGFzIHNlYWxpbmcga2V5Lg0KDQpJIHRoaW5rIHRoaXMgaXMgaW1w
-b3J0YW50LiAgQmVjYXVzZSBpZiBlbmNsYXZlIHZpc2libGUga2V5cyBzdWNoIGFzDQpzZWFsaW5n
-IGtleSBhcmUgbG9zdCBvbiBFVVBEQVRFU1ZOIHdoZW4gU1ZOIGlzIGFscmVhZHkgdXAtdG8tZGF0
-ZSAod2hpY2gNCmlzIHRoZSBtb3N0IGNvbW1vbiBjYXNlKSwgaXQgd2lsbCBicmluZyBzaWduaWZp
-Y2FudCB2aXNpYmxlIGltcGFjdCB0bw0KZW5jbGF2ZS4gIEUuZy4sIG9uZSBlbmNsYXZlIGNvdWxk
-IGZpbmQgaXRzIHNlY3JldCBlbmNyeXB0ZWQgYnkgc2VhbGluZyBrZXkNCmNvdWxkIG5ldmVyIGJl
-IHJldHJpZXZlZCBhZnRlciBpdCByZXN0YXJ0cy4NCg0KQXNzdW1pbmcgSSBkaWRuJ3QgbWlzcyBh
-bnl0aGluZywgY2FuIHdlIGFsc28gbWVudGlvbiB0aGlzIGluIHRoZQ0KY2hhbmdlbG9nPw0K
+Drop includes of headers which example code does not use.  No functional
+impact.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml  | 1 -
+ Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml    | 2 --
+ Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml     | 1 -
+ Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml       | 1 -
+ Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml   | 1 -
+ Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 1 -
+ Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml    | 1 -
+ Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml       | 1 -
+ Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml    | 1 -
+ .../devicetree/bindings/iio/imu/invensense,icm42600.yaml        | 2 --
+ Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml     | 2 --
+ Documentation/devicetree/bindings/iio/light/st,vl6180.yaml      | 1 -
+ .../bindings/iio/magnetometer/voltafield,af8133j.yaml           | 1 -
+ Documentation/devicetree/bindings/iio/pressure/bmp085.yaml      | 1 -
+ 20 files changed, 26 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+index 5887021cc90f..3dc973b98f81 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
+@@ -37,7 +37,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
+index 0c5b64cae965..3a8c69eecfde 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml
+@@ -57,7 +57,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -73,7 +72,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+index 84d949392012..a23a626bfab6 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+@@ -56,7 +56,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -72,7 +71,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
+index c07261c71013..f39e2912731f 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl355.yaml
+@@ -58,7 +58,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -74,7 +73,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+index 62465e36a590..88aa67bf2280 100644
+--- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
+@@ -37,7 +37,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -52,7 +51,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
+index 457a709b583c..85c9537f1f02 100644
+--- a/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma255.yaml
+@@ -107,7 +107,6 @@ examples:
+         };
+     };
+   - |
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+index 8723a336229e..c5fedcf998f2 100644
+--- a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+@@ -40,7 +40,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+       #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+index f64d99b35492..53de921768ac 100644
+--- a/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
++++ b/Documentation/devicetree/bindings/iio/accel/kionix,kxsd9.yaml
+@@ -57,7 +57,6 @@ examples:
+         };
+     };
+   - |
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+index ddec9747436c..705adbe88def 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7091r5.yaml
+@@ -93,7 +93,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+index 21ee319d4675..62d906e24997 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+@@ -379,7 +379,6 @@ unevaluatedProperties: false
+ examples:
+   # Example AD7173-8 with external reference connected to REF+/REF-:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+ 
+     spi {
+diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+index c28db0d635a0..b9dc04b0d307 100644
+--- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.yaml
+@@ -278,7 +278,6 @@ examples:
+   - |
+     #include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
+     #include <dt-bindings/iio/qcom,spmi-adc7-pm8350.h>
+-    #include <dt-bindings/interrupt-controller/irq.h>
+ 
+     pmic {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+index 2a8ad4fdfc6b..f0a1347ba4db 100644
+--- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+@@ -50,7 +50,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml b/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
+index 775eee972b12..044b66a3b00c 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/ti,adc128s052.yaml
+@@ -44,7 +44,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
+index bf5a43a81d59..71f9f9b745cb 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1298.yaml
+@@ -59,7 +59,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+index 4cacc9948726..3a725ece7ec4 100644
+--- a/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+@@ -44,7 +44,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+index d4d4e5c3d856..119e28a833fd 100644
+--- a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
+@@ -74,7 +74,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -91,7 +90,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
+index 688100b240bc..2930b3386703 100644
+--- a/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
++++ b/Documentation/devicetree/bindings/iio/imu/nxp,fxos8700.yaml
+@@ -47,7 +47,6 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+@@ -63,7 +62,6 @@ examples:
+         };
+     };
+   - |
+-    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml b/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
+index 27c36ab7990d..8598fb631aac 100644
+--- a/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
++++ b/Documentation/devicetree/bindings/iio/light/st,vl6180.yaml
+@@ -32,7 +32,6 @@ required:
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     i2c {
+         #address-cells = <1>;
+         #size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml b/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
+index b6ab01a6914a..ed42dc5afb99 100644
+--- a/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
++++ b/Documentation/devicetree/bindings/iio/magnetometer/voltafield,af8133j.yaml
+@@ -44,7 +44,6 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    #include <dt-bindings/interrupt-controller/irq.h>
+     #include <dt-bindings/gpio/gpio.h>
+     i2c {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+index 706b7e24f182..b9ea37317b53 100644
+--- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
++++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+@@ -109,7 +109,6 @@ examples:
+     };
+   - |
+     # include <dt-bindings/gpio/gpio.h>
+-    # include <dt-bindings/interrupt-controller/irq.h>
+     spi {
+         #address-cells = <1>;
+         #size-cells = <0>;
+-- 
+2.48.1
+
 
