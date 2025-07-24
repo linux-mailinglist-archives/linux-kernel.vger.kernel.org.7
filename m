@@ -1,259 +1,353 @@
-Return-Path: <linux-kernel+bounces-744037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576ADB10731
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:59:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1366BB10728
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7742AC7018
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE245849BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88AF25A35F;
-	Thu, 24 Jul 2025 09:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FE225A33F;
+	Thu, 24 Jul 2025 09:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PJ3UFuvk";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="C/J8DsZr"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lw+McJPC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1296725A35E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351154; cv=fail; b=uBxJKoBRCLzZy3ViCfHTlJMhz+6vgXboKasjjrMUuRaCeWz3yqwDf2oi5Nqfj3adsTgzQGkEcCIuH2K9QxFyF4CL52LBpSsEfyyoIHSms4v5Iwq5JrAoXAEd46c0gkgPPa7jO+IW8GDFyXGIvfQfMQnCMruptPDxYQwb67A9qSg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351154; c=relaxed/simple;
-	bh=2si7F9RfH7Y7BNejSOCZ8KRCKc6bFtDTdNoAIRMDNxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UaJJvDF+qVRFfAAtCPhOFp2AqlYXONnT+que79oGSS5RIVLKFEdinY7jNCjyq6OEDpF59I9iASu+Vnvh41mryZxWoLbFUwe37HuO21rtxMFtfXl2dYCFvpD35Bl+mFaurh1zQJXPK1AUdziDNILuCKMRwyRjKrh+rknOiipbqB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PJ3UFuvk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=C/J8DsZr; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O6trnp007835;
-	Thu, 24 Jul 2025 09:58:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=2si7F9RfH7Y7BNejSOCZ8KRCKc6bFtDTdNoAIRMDNxE=; b=
-	PJ3UFuvkYTlpVmW2wMgp4tEvSrpL8SDCQfQ1hlCv7T81Saj9og68AanYcmlUaISX
-	bNbuF2tU9KCHHihHl8V1WZ1jMD2U8r5CfE9jFZuh2Ch+37FnsfCiM9smmESdGAVh
-	zWWQRRzkoA4NeDOw2aaJQfnXh5pCN9L6LjOgfysRbMIHVH0cyH6tnFL1UdWHQXnE
-	cRRQw5Ru/nPe8egUR8TCbKFZZ60i+mYiw5MOfr67IWozDEHcMqblKLS3kMo9mWra
-	s7NeNZUNaUrt79EFoQIIQEescLnWZFywJgcUzjFmCpDv1sD3ULyB50LaEdHAZqgj
-	MQCCnqq0pzf6bhSRlyR2ug==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805hphbfb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Jul 2025 09:58:18 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9598u006053;
-	Thu, 24 Jul 2025 09:58:17 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2070.outbound.protection.outlook.com [40.107.95.70])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801tbnhv5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Jul 2025 09:58:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PuxXaeWYBEBV/TBPpvrxSRah/7jgBVzUV0iavtUjTw1Mm+DjNRVSIWBQqdDzMCiwgeEp/w2tcVj/kdUa9ijq8AjUgklzrNoOC2bOybOyekUpzf8uo03qk5rsi/OlQpSVN2wZpX4McnsCesiWPoIxYtZoB1S/2Yv7xKG280krw8QLxT5v6ZljlSZNgcdZZGSWxZ+JRbk1jO2Injtuyt9HLMU99rK93wPg78PXj4z1v4IJjNwpbnR0/4qXHvXJ7/hViFRZEPWJ2nkavBB4xlusH56VEQVlgvVY7DuTtc/1wcwWhxFl1CnGB6tArTgg5XEiwK9NyS6yqrNBvrJeC+9CYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2si7F9RfH7Y7BNejSOCZ8KRCKc6bFtDTdNoAIRMDNxE=;
- b=wK6AVvO/2Vm/6OaobEwc0iNzAggSxJj2FyEaOKyUAA6CzufWuBqb0F6BJknfxXZOitrpWOvFhKxnpNxXxiKGKXoRhuOEIRBgUph6p9pJh1XhpaESiWib+p8vW5cZrFogZiXlZxp2w378xaGy0Gss+ACmE0w6gMzXBYIDpCxz1T+zuO68wa00ZtqmP6UEs5sF33qMN7Eu+rrI//xQzfCgp/BUrYVam6+ZK1eurhWYUIzpEMrEL2A+6K3s0RFl+bCCpzUGVrwbITl9DtOXhf97okPcXYWPiR40q+uiPS8PxeYLxOS+G6nT1E1AIREtwKHGPXYln+NbwFzkCBeYdE28qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2si7F9RfH7Y7BNejSOCZ8KRCKc6bFtDTdNoAIRMDNxE=;
- b=C/J8DsZr9eyJyWmA+vPkcnTsxirD3Y/510QMoXUijotqJocsKprcGDfZWtH/M/3fvlbdfMet8zSgICr0yr7v8P8ltMl6932WIYuzXIa1wE4zL+/titk74EhvlTRu2d+8WxqqK9nA95Y1ewZ7qsPqClrtNl9Wy1ai8YmNu+Kk+cs=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH0PR10MB5778.namprd10.prod.outlook.com (2603:10b6:510:12b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Thu, 24 Jul
- 2025 09:58:14 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.019; Thu, 24 Jul 2025
- 09:58:14 +0000
-Date: Thu, 24 Jul 2025 10:58:11 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Huan Yang <link@vivo.com>
-Cc: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Usama Arif <usamaarif642@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/9] introduce PGTY_mgt_entry page_type
-Message-ID: <a7f8b628-14f0-49ae-bf71-14c4a3f4fd89@lucifer.local>
-References: <20250724084441.380404-1-link@vivo.com>
- <86516155-f2d9-4e8d-9d27-bdcb59e2d129@redhat.com>
- <cc560d48-884d-4c8f-9fb0-565d74ad769a@vivo.com>
- <e9bb93a6-1e95-40e5-ad10-a60d80735432@redhat.com>
- <6d14e212-418e-4734-b256-b75c6fade25c@redhat.com>
- <23b986e2-80d6-432f-8188-7a11d6915c9f@redhat.com>
- <cd253bcb-3ffa-4871-ae11-59d158fafada@vivo.com>
- <f21b75f9-0650-44c2-bf47-516390364a8b@lucifer.local>
- <10484264-e863-46e9-9797-d2d76a531557@vivo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10484264-e863-46e9-9797-d2d76a531557@vivo.com>
-X-ClientProxiedBy: LNXP265CA0031.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5c::19) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08FB257440;
+	Thu, 24 Jul 2025 09:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753351134; cv=none; b=W9ZrLDtK4Eouuq7CO7apmJFfifJcSCEY1/SE6DjOkWhzyz6K6ywxTyM/ORZNQio6EJUoUmt8c52AgcGtoaeT/TbTXVFizY/ZYsljlVxGIe6wf1tRhNXI5YGZgb1C5JXFohRUQD223p01qlju/03Pr9Bz4/Exv6sKddw67wTsHj4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753351134; c=relaxed/simple;
+	bh=4KcbXiAk6KU/vgJDDoU5l9DZUfzMiDCuLPIQqZu6bm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QYUe7cjUWfwDtHC60QgSbUBNaqfhcBeK9E3Ok/Q6FGKmxjlSQ3jyZ1UMeHJom/RxRmk3B0sP+w1SnorFPvgoVw/Dlo4UxeMLukyx5f3YUeG2ubPx4LM2yovfJONeU0X/bG4PnugmwV1WJToIDdPyUkc/Ml98ZNxplUAPNaD8vy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lw+McJPC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3A7C4CEF8;
+	Thu, 24 Jul 2025 09:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753351134;
+	bh=4KcbXiAk6KU/vgJDDoU5l9DZUfzMiDCuLPIQqZu6bm4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lw+McJPC8yKTl5Q4n+FKt+drPNo9Hjojl9UiOHdx9f8H/TuTXRZZaBVN+JZFVCXzn
+	 odol8RKPHqCd8aoeoltXS5ZK4B+C/dI4Zecpg1i2DU/bhrY7C0Fkw+3WZClu6n+Wpa
+	 WUmAKhZ4ZKfKxNRYcZnvlY4wYpEI5QQG01WoLlwf21YdMcHlVz9oRXqY6ecnTU0bL/
+	 a16jTfBWbk4R+o+C/YZ009IW2Y9uFJfPqRJpoTNF6WoGlXNlciLiGwoS58PvvedrB5
+	 GcCPt+FNVM0SYMHTE0yhcO0aNFs9hBeHkT8O4K8XevRd8Oo9Dc/0xD2qM9EBUFQQQZ
+	 NVCkaVHZqAc7w==
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c09f8369cso374897a34.3;
+        Thu, 24 Jul 2025 02:58:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXhquWq5n5v01uJHjS+OJs29T96jJwQKHXzgn4mH5rj/EmtxH1jEPHWhEzJNhiq28O64RzEDfQlXpz@vger.kernel.org, AJvYcCV/hzWutxg4jyoO9AKvx1hB6NYElhXbh78paBBKpblxv+7ZSN1+vUChEChKLisIwOvijLyCZ8j60M+Z/z0=@vger.kernel.org, AJvYcCVWauBh6KXmaHiRQgbSNK0+qHjeiEEG49LAQJlj4wQpp5x3nw4giy5WyX5H6b9njYJL6uyQLJqF/6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW4JbXLLazDnJA4gHZJoih24uv0P4qAqY8nzb/o9HNcTKmDmzk
+	6v0G/wE5gDE+YI61g+qQykALP30ohZdj/EOzg1WYr9/eqc0WkX02KbQ3zEPPNCnz5KC7c2cRrCY
+	K0eWU/hwLCGJTKuYV0NgGT6dYMe0szKc=
+X-Google-Smtp-Source: AGHT+IEvVUcaL09saG7JvMSWU2BvT8HuFgwXOot+6fLdqKzHF4Ko/+EjvNeckIwhnzGvMOUmxiZcTHwJ7vlG6jxShwg=
+X-Received: by 2002:a4a:ec44:0:b0:615:a6d2:348a with SMTP id
+ 006d021491bc7-6187d959488mr3918147eaf.6.1753351133238; Thu, 24 Jul 2025
+ 02:58:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB5778:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ef917ef-55f6-4f7d-db97-08ddca989b21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eGFuUkdxMDQ4K2FvcFF0aUZadE9mSkh3dlg1UzdDS0ZBZnEvaUxxNUYxMnRQ?=
- =?utf-8?B?c3dXcXlDOWNCeDMzQUtPZnU3QU1vamdzQS8wbnM5ZFFiNDhER3h3VEFJS2tI?=
- =?utf-8?B?TFphUXRyaDJBYjRwZDVTdW1uMmk5eUF2T3hmN2RkZmJmRS9yY2VkVjBOdnpQ?=
- =?utf-8?B?WG1ZMFp6YWkvS0ZFSWRLbjJGNS9CeFBXd1o3VE9aZHMxS3JjQys5c0lwcDdr?=
- =?utf-8?B?d1Fra3pZRCtqNjV3Qjlka3VlQkhaREMwQjVLYkRoZEt2UGlrNE83d3NISERX?=
- =?utf-8?B?SHRjSUVNallwY1ZBU2ZhcXE2czdvUnNVVmlxQWhEUFdJRGdqT3ViQnZwK202?=
- =?utf-8?B?SkNHYUNLZTVKdVdOMmpDU0w1dTZDM2FLaDBsaDJaZ0FCeFdtOUpDdVBwWk1n?=
- =?utf-8?B?amduRUtzaUhIb2MzYWZPMHZtbEI5ZVFGSHAreEtnZGFENlBkSEJkdG1xTlZx?=
- =?utf-8?B?Y2hEWFNJOXM5QkdJQlpIaVdTL2trajUzUDljbENQdERuVlRyYkFDZWRSWnd1?=
- =?utf-8?B?Q1Bkd0F0ZmhlZWxGSGNWUzFOdjZnMlM2MGkrY0lRck5OMnRrRXRJTkw5eFhE?=
- =?utf-8?B?MFIxZ0EyS3FUZldnVk5HYlNzbTE2R3FnS0RVZCtVMHgzalgvM3Z5S0FXeldu?=
- =?utf-8?B?QnVaZG9naXVIM2tmTmkrVmpkZUhEK1lySE9jSER2LytZajdKdnBQa1RhcnlB?=
- =?utf-8?B?QmxPcGI5THpoRHMwQ1lUM2l4S2tZV0VTMjRFK2tweTVnYTJ6V0dGd0tQZkhw?=
- =?utf-8?B?YzZKWVdCTXdrVklQTXBvcS9EZ2hPTFlCSkp6dVowMEFIaGZFWUVLSVJBZkRM?=
- =?utf-8?B?SS84VkpZWjN0MXd0ZnE2U01lZURiQjVScFRUSkJGcTUvdFBhRGJnZ3NDczV0?=
- =?utf-8?B?V1Y4eHVIaXIyR0ZrY2pUQmtCaERVY091NG5yUGViTjFYa0JpQWFJYkNSaTY2?=
- =?utf-8?B?dld0WEFvemFWOTJqT2daQnZTd0pSR3lqWmI3MENHajZjVURla3hWamxjUFFl?=
- =?utf-8?B?TERoUlJjd2ltN21TSForelJNR1lXQW5pUjlqQTZYVnJ1QjNNNHVweDRud0Iw?=
- =?utf-8?B?RFlhZm0xU2g0K1YrTnZVWDlndE1zcS9FSlNEZVlvdVFHVmFqRFRMd0R0S05I?=
- =?utf-8?B?VzdHdnFFbWp0SHdxRCtrN3l2RkluaFNvdlpxMEpTWmVFeitzbjZZWlVVdE5C?=
- =?utf-8?B?YXhLQnh2RG14T0ZtbkhCd0xhc21rMTd5WUVqdkI5WGxhMElIdjRvTUJ4Z2ZU?=
- =?utf-8?B?L1dla2V0MzIvWk5xa25ieHI3NlllSC94c05VVVRPeWF1MEY3ZkY3bHF4MFNS?=
- =?utf-8?B?SmozWm5DREhvK0Y0ajVYM1RJTDNteGdUV0FyTEtRbjVYbisvMk9MWG1tYlNp?=
- =?utf-8?B?Z0FNbS9tanhEUEI1UFA5UTJFZy9yUlBhUmNzdFpDM3B1b0V0N2crcExCcVFa?=
- =?utf-8?B?MnFuZ0tQbjkwa0VQUGVBbG5YU3RTb2djaGtBeXdadkV3ZGFvQk4yK0MxeWM2?=
- =?utf-8?B?eGVnQzQrY2VxVE9SdEcwa1BMM2taQlBDQ3duYkloRCtHOFRhcHlkL0JHU29Q?=
- =?utf-8?B?YjhRTVB1V294UjdqWGFJVXh0cG04TWtYQjhzdlZ5eVlsWEt3QXpNZVZwbi9X?=
- =?utf-8?B?UzVsSHNwZ3MxUmRsenhKNnRMTXFLM3NBSzJqbTBWQlYvUUwrY2dLWERUTWJo?=
- =?utf-8?B?K2Y0MEZ2VVBUTk96T0V2UlZPUW5RaG5UNUdtYkJTUFF0bzJWdXBQU1R5ampY?=
- =?utf-8?B?WEFEQ3UrNkdFT2lPMkFjU3pXRzdFR2ZsUGpuNWd6TjJnMUJlNkMwVW9lcUtx?=
- =?utf-8?B?UHBPck8wN044OTRTK0ZmNkkyM2ZzQjQxV1BPK0Z5azJnWG5jWjhTRG9rZFFa?=
- =?utf-8?B?aVRyZGpzc3ZrcG5NUUNRT0RLdnhuN0x5U2xEZnYrckVTNTZTQkE4ejBuSlps?=
- =?utf-8?Q?doJtI1rATAg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bmU4VmEyeEpJTDZ2cDZuSlpsanBrN1ZUZDBLbW9jYisyK2tRS2lLVFh0aXZ2?=
- =?utf-8?B?UldqeVVOZThqbW9Sc252aTlPWDBpbVpJeXp5R1hGL1A2THVVMkhuQ0Q5em1i?=
- =?utf-8?B?TGZId3ZPSTBiTjFQdXFwdUdJYVArWDh6bVJMcEtlRWIvVzd3SW5CZnpBN1Jq?=
- =?utf-8?B?elBVM2FTK01kNkpQY3V3OWM3TmhQazkraGZYaGFsNkUzWStHMzA5Y3RvR2Fn?=
- =?utf-8?B?WE10Y1NHWFJ1TWRmN2NzQyswTmUvZmVvai95YVRkNktaR2R4MlJxZVVGdjB6?=
- =?utf-8?B?cW1zWUNySkJxdldOZUhkcEZKNDRBMFl6NDJTOEUySnF6bDB5dS9WSitDdjA4?=
- =?utf-8?B?Y0R4Z2EzWmNnT0pSZlRMdCt4dnRuQjBhSWxUY2ZhbmZMdmRRUCt6Q29IbnVp?=
- =?utf-8?B?ZnlGQXpKSWF6UE1Idm1ZV2FOSjBkelZyRDdNRFJ0RFZkOEJkM3owOEZBTnVs?=
- =?utf-8?B?UmlxdmNPS05IbXI4R0Q2bFMxQ1hoelp1VDBtME1jSTM5L0NObDZ3VTlReEsr?=
- =?utf-8?B?ekNIUzFTeWwwUThmaUJXSGovYVh2Z1k4MjhGRjFFYXdrZENaWjNKajZmeHZ2?=
- =?utf-8?B?Ti9Oa203eEk3ZXlRS1hkeWlKZ2Y0WTJtV3dnOVFHR1k3Tmk1OG41cU5Qb2k2?=
- =?utf-8?B?RnJhcGRkT2RaNG9XY1NvdzlpTDlBN1lnOGcvOXVOK1hlYmVEUm54Y3phaXZP?=
- =?utf-8?B?Kzl0S3hYdENtZEtLd3RTeGhGT2ZDMzJrakxqeXVDdjhnL1lTUEhKZGxuKzBk?=
- =?utf-8?B?dXRwUHlDM1lOZzAvMjVmRHZKcmoybmZDL3Yrc2NIMVBqbjliSmF3ZVBsNVI1?=
- =?utf-8?B?UW1KbVZpeUlvc3IwdkdnQjRnL05FQTRqV1llMEdCQjR1MUk3eUl3OTIwY0lX?=
- =?utf-8?B?Rm1MbzNrZVU5UW9lcEtidWZqcXN1dWczYXk2NHBnZkR2WDQ3RnRTV3ZOdklu?=
- =?utf-8?B?cTl5aS9NSG5xQ2IxdnZyWnJMZE1zb004bCs2YWdGZWVrbXhabFQ4eFBSQTBp?=
- =?utf-8?B?NGpXUytKd0VPZ1E5R2gvTVdTZ2ErMGpwUkRFVjRtcStZZlo4MlJScFNxVmor?=
- =?utf-8?B?YmUyaTg0Q1ZaUmw5UUdTRFF5S1ZDdGEzYlhrTm0ranI0MGtINmMzMlJDN252?=
- =?utf-8?B?UmtvdkJBanhhWjErSnlsMXptZTNVVko5UXFTVWpLcllCQ3BZKzExL3BXSVhL?=
- =?utf-8?B?ZjRjTWpXVk1VMCtDMlF2aDZlelhaM25qSzVzeEZCMWZZbkYzNDVrNVNjVVVZ?=
- =?utf-8?B?TndlTm5qNy9uR2JYeFozY0xCZEY4amFxWnZJMWRTVVBtS2FuOWV2NzgxV3I5?=
- =?utf-8?B?NHBYYm4wVHF4L0JyTng3NFlYa0N6YnhVcHJwSHZ6NGljTFFMYzdyTGJ2d24v?=
- =?utf-8?B?R2RCTFUwRndURklwTXdLR2txY0gwRWJyWXNSKzNrSTB2KzMrejFmc0VwVExD?=
- =?utf-8?B?cnl2WlFJVC9OUUFqYXhxb0dydTgzVHI2UDJLYXI2T2pLeUV2T0Q4VlBoR011?=
- =?utf-8?B?SzdIcVFzMVczcmJoSkZVUGE5a093YjNqUUpWdzl1QzY0Nk5wbnVaMW9seHlR?=
- =?utf-8?B?TWV6ZkVRQ0QyOHNZT25LWXlLZGhVaVI3MzRjY2ZPNXNCU2hoUXlXUjFZdzNw?=
- =?utf-8?B?WWhTMUxnRC9pN3FSTHJMcTdmZkYyUzFHQUd2Sm9WTjdaUXNkNDRnZkIzcDA3?=
- =?utf-8?B?djBSeFpHWUo0bnl1cWQzc0hwT1IrZy9xWU9VQ2xVT0NYa3hrTTBlbXByYyto?=
- =?utf-8?B?Y2RYNEVlWW1IUjdmVmYxTlZ3b01qSkVwazdDUFZxNmRpMWZzN1pXU1RGa2ZH?=
- =?utf-8?B?UlVUV3FTcGl1bkp5SURRZXc4THJzeWlSSkhVTTBjRFNReVBtU0ZXRGhFcG5B?=
- =?utf-8?B?dnQvL3llSHpUQ0hUT3RDWEVsRGxFWGZBRmQ1U21Zd1U0OU1rU2VDWTlOa2E4?=
- =?utf-8?B?T0RzNXpuc3FMbnhZZTRYOTJzUDUyeGhKeis0SmE0bjlNR21qNnlUY3lJMVVC?=
- =?utf-8?B?WjFMRUYxZGM1OWlJZmg4cCtJVGVaMUl4c1F0QjNwVVFzRjRiS1JjMnRTWXZo?=
- =?utf-8?B?S3JXdzR1UFNXekJIWGpJcmJRVmVTZnl1VHpHM1Q4cWQxVys4alpPNm5wTE1u?=
- =?utf-8?B?dDU5SllyY3pTVml0RWRMb2xrTDJWZEtqWkZHclF4S3lyb091dFJHVUE1RDRm?=
- =?utf-8?B?N2c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jvMZuxxXEp8IpnpJBXhFKL+KuAhjnhVRwCgvPGSzflJZ2EOe54SAYqmCpqPWkS2vFFft+4NOij0k1TGmgQctmFbmYmZZdnQ51cJIGFVRdWdYUhytoGrDM/Zh52nxybxIR42qAVZj1XEXNe9w8zLInmqdtuwJv0Xv/SUYJnMiRIOzeLzomuKtKE5VoEbEYmknR8p9H6LgL9+iLzdmohZB1xDN6UbMpwA66zH2zHEwpgT2L2Lni+1yByq05mcFAgjcLC0m8XcVZ7almZURafyPwzY1qdzMRzQyh7Gv4akA426+KdGT18MBbJH7sBLG0YeEAem9/0fMjjg11SppzJ5Wuw+wRBBUvSsUntMW00J7w9wZy9AdfOyRXZHPeK2eRUuoE5A08O15Xr0pm/k+muQCR7/xMj71UEZZ46juCP9BBH6avSbq8vZxBkVTbb5z27YgG7wr9qAGAWFpy7QtIBMWjlOxtRGkkKUIwXdxk7RCgjh3cXr0EfRV1iV8DYK/LjZa8GoSchFKLSKSf1jWR9B4IhH6vpt/atCCoGFbFuMGHtKUGXfTMB0OW30mH1rbPUyfPSC4i14EULJCq4kTBzOMyCtKfuEzQgWGBRR2yn5eqXc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ef917ef-55f6-4f7d-db97-08ddca989b21
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 09:58:14.3883
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DyZaM15BZQFGdR/Ch5EaJQty6hhPFv9NpGC9ZAfDxAJN/BbvlO/K4QT1ZDTKLfb4au6ziW46r8j84ylUPF537le/W5E9gyQ6ZehE7fgQ2Fo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5778
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507240073
-X-Proofpoint-ORIG-GUID: VIwec6rehG-TYD0SoLEaloE-cxJfCzC_
-X-Authority-Analysis: v=2.4 cv=YY+95xRf c=1 sm=1 tr=0 ts=688203ba cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=bQDVWgSrMSpXkyIF4woA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: VIwec6rehG-TYD0SoLEaloE-cxJfCzC_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3MyBTYWx0ZWRfX5fxUGyVcv8+k
- IbdV1/1fmUrP/vqpPoSHT2LAfgZUI/UlceIUWh4uMo/a3cVSFg0frrHCQ97VcoeYgnhZ0luzC45
- BxK0ivgnl7dgDuV+jVyN/Dg4up/Eo0MGA9FcxafmE2e62SQ5t6D3DMS57ulRDoIKTjAUSPsbQ1U
- cN1YT6FWyuYBuXJQUOCAnK9iBeP2vfcYsb0Olvrr3c53QzuxpLHsSMtW9DcFoozySqZKOMJ5+5o
- 18TkwCjy3/jnwe2RJVsgv5Yb1uulLFur2u1mNw/ATig9+JruRfzxP72IT8qMgv9hqWSO10gCsDG
- 7PhI3uq4IL4hEV0se2xUyWW5SKBHf41oAoqU5pIVBeOpin8eWPBxh/2RMMs+LcHDyf3Nl311QU5
- S1TJ8DHJH4ko9pd1wrGsVLR+U4OZwAjTpMl68qLdZ224fOhrfxrlR62KTvN/AshxHnc4jRKD
+References: <20250720190140.2639200-1-david.e.box@linux.intel.com>
+ <c6757u3xdyxxuodcjsbpdje7m4qiq26tug5lfxvpbs5wm7r56l@ksy4yge7kg35>
+ <CAJZ5v0jZrPyW9+Ccoo955Y4oje2SiAQA9aCChAoPgM28SJqf5g@mail.gmail.com> <arotuyooaoo6ustmp5gnoj64pkpyvcc3plekh4yt46siuemlik@sv6tjxnggznx>
+In-Reply-To: <arotuyooaoo6ustmp5gnoj64pkpyvcc3plekh4yt46siuemlik@sv6tjxnggznx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Jul 2025 11:58:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hDEX_ZMiAZU-PwriCpURiw04f=JLAVwP9UJ54wv3HBEg@mail.gmail.com>
+X-Gm-Features: Ac12FXzHRJ85hgVv_l3XWTJ-C4BbF4wouOGVrAAO-azI8wwa5-WFrcSxuTPgTiA
+Message-ID: <CAJZ5v0hDEX_ZMiAZU-PwriCpURiw04f=JLAVwP9UJ54wv3HBEg@mail.gmail.com>
+Subject: Re: [PATCH] PCI/ASPM: Allow controller drivers to override default
+ ASPM and CLKPM link state
+To: David Box <david.e.box@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, bhelgaas@google.com, 
+	vicamo.yang@canonical.com, kenny@panix.com, ilpo.jarvinen@linux.intel.com, 
+	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 05:56:09PM +0800, Huan Yang wrote:
+On Wed, Jul 23, 2025 at 11:27=E2=80=AFPM David Box <david.e.box@linux.intel=
+.com> wrote:
 >
-> 在 2025/7/24 17:45, Lorenzo Stoakes 写道:
-> > Having looked at anon rmap in detail, I have come to think the only sensible way
-> > forward is something fairly bold.
+> On Wed, Jul 23, 2025 at 01:54:41PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Jul 21, 2025 at 10:24=E2=80=AFAM Manivannan Sadhasivam <mani@ke=
+rnel.org> wrote:
+> > >
+> > > On Sun, Jul 20, 2025 at 12:01:37PM GMT, David E. Box wrote:
+> > > > Synthetic PCIe hierarchies, such as those created by Intel VMD, are=
+ not
+> > > > visible to firmware and do not receive BIOS-provided default ASPM a=
+nd CLKPM
+> > > > configuration. As a result, devices behind such domains operate wit=
+hout
+> > > > proper power management, regardless of platform intent.
+> > > >
+> > > > To address this, allow controller drivers to supply an override for=
+ the
+> > > > default link state by setting aspm_dflt_link_state for their associ=
+ated
+> > > > pci_host_bridge. During link initialization, if this field is non-z=
+ero,
+> > > > ASPM and CLKPM defaults are derived from its value instead of being=
+ taken
+> > > > from BIOS.
+> > > >
+> > > > This mechanism enables drivers like VMD to achieve platform-aligned=
+ power
+> > > > savings by statically defining the expected link configuration at
+> > > > enumeration time, without relying on runtime calls such as
+> > > > pci_enable_link_state(), which are ineffective when ASPM is disable=
+d
+> > > > globally.
+> > > >
+> > > > This approach avoids per-controller hacks in ASPM core logic and pr=
+ovides a
+> > > > general mechanism for domains that require explicit control over li=
+nk power
+> > > > state defaults.
+> > > >
+> > > > Link: https://lore.kernel.org/linux-pm/0b166ece-eeec-ba5d-2212-50d9=
+95611cef@panix.com
+> > > > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> > > > ---
+> > > >
+> > > > Changes from RFC:
+> > > >
+> > > >   -- Rename field to aspm_dflt_link_state since it stores
+> > > >      PCIE_LINK_STATE_XXX flags, not a policy enum.
+> > > >   -- Move the field to struct pci_host_bridge since it's being appl=
+ied to
+> > > >      the entire host bridge per Mani's suggestion.
+> > > >   -- During testing noticed that clkpm remained disabled and this w=
+as
+> > > >      also handled by the formerly used pci_enable_link_state(). Add=
+ a
+> > > >      check in pcie_clkpm_cap_init() as well to enable clkpm during =
+init.
+> > > >
+> > > >  drivers/pci/controller/vmd.c | 12 +++++++++---
+> > > >  drivers/pci/pcie/aspm.c      | 13 +++++++++++--
+> > > >  include/linux/pci.h          |  4 ++++
+> > > >  3 files changed, 24 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/=
+vmd.c
+> > > > index 8df064b62a2f..6f0de95c87fd 100644
+> > > > --- a/drivers/pci/controller/vmd.c
+> > > > +++ b/drivers/pci/controller/vmd.c
+> > > > @@ -730,7 +730,7 @@ static void vmd_copy_host_bridge_flags(struct p=
+ci_host_bridge *root_bridge,
+> > > >  }
+> > > >
+> > > >  /*
+> > > > - * Enable ASPM and LTR settings on devices that aren't configured =
+by BIOS.
+> > > > + * Enable LTR settings on devices that aren't configured by BIOS.
+> > > >   */
+> > > >  static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdat=
+a)
+> > > >  {
+> > > > @@ -770,7 +770,6 @@ static int vmd_pm_enable_quirk(struct pci_dev *=
+pdev, void *userdata)
+> > > >        * PCIe r6.0, sec 5.5.4.
+> > > >        */
+> > > >       pci_set_power_state_locked(pdev, PCI_D0);
+> > >
+> > > This call becomes useless now.
 >
-> Woo, that's really interesting. I'm looking forward to this.
+> Missed this. I'll remove it.
+>
+> > >
+> > > > -     pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > @@ -785,6 +784,7 @@ static int vmd_enable_domain(struct vmd_dev *vm=
+d, unsigned long features)
+> > > >       resource_size_t membar2_offset =3D 0x2000;
+> > > >       struct pci_bus *child;
+> > > >       struct pci_dev *dev;
+> > > > +     struct pci_host_bridge *vmd_host_bridge;
+> > > >       int ret;
+> > > >
+> > > >       /*
+> > > > @@ -911,8 +911,14 @@ static int vmd_enable_domain(struct vmd_dev *v=
+md, unsigned long features)
+> > > >               return -ENODEV;
+> > > >       }
+> > > >
+> > > > +     vmd_host_bridge =3D to_pci_host_bridge(vmd->bus->bridge);
+> > > > +
+> > > > +#ifdef CONFIG_PCIEASPM
+> > > > +     vmd_host_bridge->aspm_dflt_link_state =3D PCIE_LINK_STATE_ALL=
+;
+> > > > +#endif
+> > >
+> > > I think it is better to provide an API that accepts the link state. W=
+e can
+> > > provide a stub if CONFIG_PCIEASPM is not selected. This will avoid th=
+e ifdef
+> > > clutter in the callers. Like:
+> > >
+> > > void pci_set_default_link_state(struct pci_host_bridge *host_bridge,
+> > >                                 unsigned int state)
+> > > {
+> > > #ifdef CONFIG_PCIEASPM
+> > >          host_bridge->aspm_default_link_state =3D state;
+> > > #endif
+> > > }
+> > >
+> > > Or you can stub the entire function to align with other ASPM APIs.
+> > >
+> > > One more thought: Since this API is only going to be called by the ho=
+st bridge
+> > > drivers, we can place it in drivers/pci/controller/pci-host-common.c =
+and name it
+> > > as pci_host_common_set_default_link_state().
+>
+> This would require VMD to select PCI_HOST_COMMON just to set one field in=
+ a
+> common struct. Seems heavy-handed. Thoughts? Also, with this and dropping=
+ the D0
+> call, I'll split the VMD cleanup into a separate patch again.
 
-Haha thanks, I found the one person in the world who's excited by anon rmap :P
+So maybe define a __weak pci_host_set_default_pcie_link_state() doing
+nothing in the ASPM core and let VMD override it with its own
+implementation?
 
-Or rather, the only OTHER person ;)
+> >
+> > I agree with the above except for the new function name.  I'd call it
+> > pci_host_set_default_pcie_link_state()
+>
+> Sounds good.
+>
+> >
+> > > > +
+> > > >       vmd_copy_host_bridge_flags(pci_find_host_bridge(vmd->dev->bus=
+),
+> > > > -                                to_pci_host_bridge(vmd->bus->bridg=
+e));
+> > > > +                                vmd_host_bridge);
+> > > >
+> > > >       vmd_attach_resources(vmd);
+> > > >       if (vmd->irq_domain)
+> > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > > > index 29fcb0689a91..6f5b34b172f9 100644
+> > > > --- a/drivers/pci/pcie/aspm.c
+> > > > +++ b/drivers/pci/pcie/aspm.c
+> > > > @@ -380,6 +380,7 @@ static void pcie_clkpm_cap_init(struct pcie_lin=
+k_state *link, int blacklist)
+> > > >       u16 reg16;
+> > > >       struct pci_dev *child;
+> > > >       struct pci_bus *linkbus =3D link->pdev->subordinate;
+> > > > +     struct pci_host_bridge *host =3D pci_find_host_bridge(link->p=
+dev->bus);
+> > > >
+> > > >       /* All functions should have the same cap and state, take the=
+ worst */
+> > > >       list_for_each_entry(child, &linkbus->devices, bus_list) {
+> > > > @@ -394,7 +395,10 @@ static void pcie_clkpm_cap_init(struct pcie_li=
+nk_state *link, int blacklist)
+> > > >                       enabled =3D 0;
+> > > >       }
+> > > >       link->clkpm_enabled =3D enabled;
+> > > > -     link->clkpm_default =3D enabled;
+> > > > +     if (host && host->aspm_dflt_link_state & PCIE_LINK_STATE_CLKP=
+M)
+> > > > +             link->clkpm_default =3D 1;
+> > > > +     else
+> > > > +             link->clkpm_default =3D enabled;
+> > > >       link->clkpm_capable =3D capable;
+> > > >       link->clkpm_disable =3D blacklist ? 1 : 0;
+> > > >  }
+> > > > @@ -794,6 +798,7 @@ static void pcie_aspm_cap_init(struct pcie_link=
+_state *link, int blacklist)
+> > > >       u32 parent_lnkcap, child_lnkcap;
+> > > >       u16 parent_lnkctl, child_lnkctl;
+> > > >       struct pci_bus *linkbus =3D parent->subordinate;
+> > > > +     struct pci_host_bridge *host;
+> > > >
+> > > >       if (blacklist) {
+> > > >               /* Set enabled/disable so that we will disable ASPM l=
+ater */
+> > > > @@ -866,7 +871,11 @@ static void pcie_aspm_cap_init(struct pcie_lin=
+k_state *link, int blacklist)
+> > > >       }
+> > > >
+> > > >       /* Save default state */
+> > > > -     link->aspm_default =3D link->aspm_enabled;
+> > > > +     host =3D pci_find_host_bridge(parent->bus);
+> > >
+> > > You can initialize 'host' while defining it.
+> > >
+> > > Also, please add a comment on why we are doing this. The inline comme=
+nt for the
+> > > member is not elaborate enough:
+> > >
+> > >         /*
+> > >          * Use the default link state provided by the Host Bridge dri=
+ver if
+> > >          * available. If the BIOS is not able to provide default ASPM=
+ link
+> > >          * state for some reason, the Host Bridge driver could do.
+> > >          */
+> > >
+> > > > +     if (host && host->aspm_dflt_link_state)
+> > > > +             link->aspm_default =3D host->aspm_dflt_link_state;
+> > > > +     else
+> > > > +             link->aspm_default =3D link->aspm_enabled;
+> >
+> > Or
+> >
+> > link->aspm_default =3D pci_host_get_default_pcie_link_state(parent);
+> > if (link->aspm_default)
+> >         link->aspm_default =3D link->aspm_enabled;
+> >
+> > and make pci_host_get_default_pcie_link_state() return 0 on failures.
+> >
+> > Then you can put all of the relevant information into the
+> > pci_host_get_default_pcie_link_state() kerneldoc comment.
+>
+> Sure. I'll add get/set APIs (plus the !) and put the comment there.
 
-Cheers, Lorenzo
+Sounds good!
+
+> > > >
+> > > >       /* Setup initial capable state. Will be updated later */
+> > > >       link->aspm_capable =3D link->aspm_support;
+> > > > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > > > index 05e68f35f392..930028bf52b4 100644
+> > > > --- a/include/linux/pci.h
+> > > > +++ b/include/linux/pci.h
+> > > > @@ -614,6 +614,10 @@ struct pci_host_bridge {
+> > > >       unsigned int    size_windows:1;         /* Enable root bus si=
+zing */
+> > > >       unsigned int    msi_domain:1;           /* Bridge wants MSI d=
+omain */
+> > > >
+> > > > +#ifdef CONFIG_PCIEASPM
+> > > > +     unsigned int    aspm_dflt_link_state;   /* Controller provide=
+d link state */
+> > >
+> > >         /* Controller provided default link state */
+> > >
+> > >
+> > > Nit: Please expand 'default' as 'dflt' is not a commonly used acronym=
+ for
+> > > 'default'.
+> >
+> > I agree.
+>
+> Will do.
+
+Thanks!
 
