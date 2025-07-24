@@ -1,166 +1,128 @@
-Return-Path: <linux-kernel+bounces-744783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE548B110DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:28:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DCEB110E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF091CE1A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:28:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A5BB7BB396
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFEA2ECD0A;
-	Thu, 24 Jul 2025 18:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74A2ECE99;
+	Thu, 24 Jul 2025 18:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+8kGjCm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNJHIdcA"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED9C1DA23
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B85F28A405;
+	Thu, 24 Jul 2025 18:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753381688; cv=none; b=Qer/PLJd1AcIuiSPsC7ZVykXettzljD8CzT0ikn3KRKjsd9OeWmjFNWRb0MgM/mqxiW29ucxsfvELRlXHFKKHrU8PYUbScbuvlfAYtiToG/i6Z1H7VZ3fZEkLjGxTh6VaxRiTCU9hstJERY7DJIlYoeYLsMC8K8luPF5mUgVzwE=
+	t=1753381803; cv=none; b=Sd4xA4FgExmOf4L2HmuhvC3RrSOys+sWkoIKa/RFhXlS1K2sgiTpGLtWTMBRjDvmXP4R42QLyG1OaPRd2CPRAI9tyxwVm/QmfdEenm2LNjTUvaaC3qSy1umQYlyqs6QXpKPFeCJl9HU9oJNBOBUpWVpsgcW/tstlJA+A0Ci0plc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753381688; c=relaxed/simple;
-	bh=UiEmd3XmX4QQfkOmFQm6Q0KYqOc0JXWHqr44DKyO5ak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G2fIQ0wjiIZzUGQ5DhkNsTtNwpI+en3nQzJWve5w3P0TK5l+jZ0O0URci1FTp9cneY0UYenkIQ3hapRXczR9xfmiN93LJ9eFqk13iTB9ECkoX7EsDMISDjqokuDF3Gn22Be6rzVNLd8ugcYp1Ku2JfW+TEY8u6z+3zlEahRzRgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+8kGjCm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753381685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=J5I5SK+Y5zDIrC/mG42eswNPXScwy6ArRLIIL/8+Cv4=;
-	b=e+8kGjCmZSsY9rHy0ep5wslHoUPGwrBdhf8vUrXy2K7mEJZtsG/pTrKRQmRrRZb1/ScU+s
-	yud7PeIc+4OoOXJx5JTVPwCDYwuhDgUllkP4cwuSx8V/xvffoofiL7l5s/6o52/kY920yQ
-	rykOXCURVBeMpmb1Guc7DwnsAYNfWaU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-5gec1t6HPZOrO1T6LlFsZg-1; Thu,
- 24 Jul 2025 14:28:04 -0400
-X-MC-Unique: 5gec1t6HPZOrO1T6LlFsZg-1
-X-Mimecast-MFC-AGG-ID: 5gec1t6HPZOrO1T6LlFsZg_1753381682
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D95CB19560A3;
-	Thu, 24 Jul 2025 18:28:01 +0000 (UTC)
-Received: from chopper.lyude.net (unknown [10.22.88.223])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C7488300018D;
-	Thu, 24 Jul 2025 18:27:56 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>,
+	s=arc-20240116; t=1753381803; c=relaxed/simple;
+	bh=EpaMIxWsBUPuhKYaLifcZ0NMSt1WzkvvfjimSjf3bwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RiZIYjCs7B4y4SeG/L42VKXUD0JcbDoulbNhq9nTFHffNqz0G0vNfIk3GoKwCRw6g0py0TzDfvpb7c3BpS8sKsfn7sysn1ClHLvv9XK8UwD27AP7ex1U/n0AEG1t0zk+WI5FQyzHNBstfOKOC3pRSZsKSd+b8zPqeIIt8oguLgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNJHIdcA; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23636167afeso11908095ad.3;
+        Thu, 24 Jul 2025 11:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753381801; x=1753986601; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WaAiBzsaAc/lbPRxNN6yjLeFfWl5531LYpt2gKVqrbA=;
+        b=jNJHIdcAluwImWojp5a20P1Sz49qQ2CZEDnfj2CHGKv/SZRN9jD4+7G/WdAX7v0Cm+
+         GKyL60XO2+e1rlI+oZDT48AUxqF/l1VJowFiUlcL9f6wjTlYgrIVYXq2VHp6PicQvcmN
+         5mHLsUrNPwrEEk3i5OdAHu8KxEFT+WnCd8llChkwFfUrQhxszvWo7qQvhJ2p57Ggtupy
+         Zdu+ub+J0Ze/fRijTWgfcx5pLnWROpq7O2NyNFdX941mOZNBSMxBoPdzzQXwh3Cztik9
+         XLyU62j0SLxmni3ZsH6mTfAphZh16wNlgAIJLz6dAus4lsJmGuJ3a81/fpLuW4+9Esfl
+         dDTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753381801; x=1753986601;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WaAiBzsaAc/lbPRxNN6yjLeFfWl5531LYpt2gKVqrbA=;
+        b=smm/9iivZrUzF4piJ6hwGoCw2XsUwG3P+6yszkc0BJU91ccRPo5oyTFilw3WcZBaVE
+         ogLju4dzX+mH1QW9uKAyzRrA4IBR+UZxAtn3xGhaCO5amLC2XwVnU2rvBgsrTl8h6Gnf
+         nltNfE88seNIYf/2lPawUVrlsoxUjqVtFUwusQn1U9SMHlXn4tdIDEk/sLaOqYv7tZ57
+         gXBvVoJKGgPVTqX88+0i+5PpbjvDBl3VYhXyBphNOZQI6NoDQXSVCyce1W3s6GOt9h+7
+         SeVUN1jllZMLE40MKiQT6A11ntVs/7W833uQE5RtWkWPFbMc2i0OmBo3eFwbm61z6M/C
+         u/TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwyUiGHXJvax4cxC5ubFmqah6WQhB8LoxXJS+wWNVwbmm9//MxIxxhpYMS8Jye5yrOWIJnfLy8luf3vhGO@vger.kernel.org, AJvYcCVYRGeBbUfrHfZes/q8RYzc9fzPsP4mLwKKaGGl7p2Tbum3pE+ZgANlL/snrzq5EOy/UIpCSdwyGYPrRzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfie4IFmJDSdIw86OzarfAiVKfWhNuIQLnzJaO9NJen/2gDRfx
+	WyBEI6WgPJkAHz77kOXPUqdsaoJg+gPwl7RAPymG7ya98XJhiQTes2wS
+X-Gm-Gg: ASbGncviy9M+rEhQuQFZDk9kbmL9pNQ2tcZ9V46NTSmDOI3EPAIPx4pgodLh6qXS/kC
+	cv9tu/dOSyNNgioSabcSW/Ru7PXlwR6QvWqYyG3fMzThUNmOMcMPY8wMm3hmGKsOIItJ0Fseuai
+	e65urSUtSMQqf3kTaCvBKE1SAQjSZT6NR9fKy1zpUW4Qm8Bm3igkDxBxjou53DrBa6+Wr02Ln4I
+	U8xHAlz+G61CZyT3OndjtiY0W5sj9oGXpNJFA0RLr2e41OYOu3gBPb5vzarhkx/W+ZDLAVU85As
+	3/E4XvaH4pUQ5zIJ/lMCeMhmnC6plox3u7OuHlo+7p/DJaUiYHO1dbHK6/xGn8HqBP+EeZmgJbD
+	nr/p3naOFBuOdIMSWBAXgWEYE2MxZB5GgYNo=
+X-Google-Smtp-Source: AGHT+IGRfjee+c8gg5iN2tNL1LkNioumGX4ihN3LxA3wTboZxTKi2NJ9OUnmuBQgdXUKZS3K6AvLNQ==
+X-Received: by 2002:a17:902:cec4:b0:23d:fa76:5c3b with SMTP id d9443c01a7336-23f9814e9a7mr127456245ad.22.1753381800503;
+        Thu, 24 Jul 2025 11:30:00 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f7fdsm20823965ad.17.2025.07.24.11.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 11:29:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 24 Jul 2025 11:29:58 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2] rust: lock: Export Guard::do_unlocked()
-Date: Thu, 24 Jul 2025 14:27:16 -0400
-Message-ID: <20250724182754.549489-1-lyude@redhat.com>
+Subject: Re: [PATCH] lib/crypto: tests: Annotate worker to be on stack
+Message-ID: <b4bdb833-5fdd-48e6-989a-1d4059e9cd81@roeck-us.net>
+References: <20250721231917.3182029-1-linux@roeck-us.net>
+ <20250722031603.GA1298@sol>
+ <a534e0ad-35db-45f5-a1c9-9bd34cd3dafd@roeck-us.net>
+ <20250724162615.GA26800@sol>
+ <57d41f7c-44ea-4097-a7ae-458e785fd694@roeck-us.net>
+ <20250724173657.GB26800@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724173657.GB26800@sol>
 
-In RVKMS, I discovered a silly issue where as a result of our HrTimer for
-vblank emulation and our vblank enable/disable callbacks sharing a
-spinlock, it was possible to deadlock while trying to disable the vblank
-timer.
+On Thu, Jul 24, 2025 at 10:36:57AM -0700, Eric Biggers wrote:
+> > 
+> > Configuration file and decoded stacktrace are at
+> > 
+> > http://server.roeck-us.net/qemu/crypto/
+> > 
+> > Please let me know if you need anything else.
+> 
+> Thanks!  It seems the kconfig is actually unrelated; what matters is how
+> the kernel is being run.  It reproduces only in QEMU with KVM disabled.
+> It doesn't reproduce with KVM enabled or on bare metal.
+> 
+> The crashed instruction is 'vinserti128 $0x1,0x30(%rsi),%ymm8,%ymm8'.
+> 
+> I think it's a QEMU bug: its implementation of vinserti128 reads 32
+> bytes from memory instead of 16.  I'll report it to qemu-devel once I
+> have a bit more information.
+> 
+> It will be the second QEMU bug found by the crypto tests this month....
+> https://lore.kernel.org/r/20250710052824.GA608727@sol/ was the first.
+> 
 
-The solution for this ended up being simple: keep track of when the HrTimer
-could potentially acquire the shared spinlock, and simply drop the spinlock
-temporarily from our vblank enable/disable callbacks when stopping the
-timer. And do_unlocked() ended up being perfect for this.
+Oh well :-(. Thanks for tracking it down. I'll disable this test
+for the time being for x86 tests. I'll let you know if I see it
+or something similar for other architectures.
 
-Since this seems like it's useful, let's export this for use by the rest of
-the world and write short documentation for it.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-
----
-V2:
-* Fix documentation for do_unlocked
-* Add an example
-
-You can find an example usage of this here:
-
-https://gitlab.freedesktop.org/lyudess/linux/-/blob/rvkms-slim/drivers/gpu/drm/rvkms/crtc.rs
-
- rust/kernel/sync/lock.rs | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index e82fa5be289c1..e43ee5e2e4b9f 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -228,7 +228,41 @@ pub fn lock_ref(&self) -> &'a Lock<T, B> {
-         self.lock
-     }
- 
--    pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
-+    /// Releases this [`Guard`]'s lock temporary, executes `cb` and then re-acquires it.
-+    ///
-+    /// This can be useful for situations where you may need to do a temporary unlock dance to avoid
-+    /// issues like circular locking dependencies.
-+    ///
-+    /// If the closure returns a value, it will be returned by this function.
-+    ///
-+    /// # Examples
-+    ///
-+    /// The following example shows how to use [`Guard::do_unlocked`] to temporarily release a lock,
-+    /// do some work, then re-lock it.
-+    ///
-+    /// ```
-+    /// # use kernel::{new_spinlock, sync::lock::{Backend, Guard, Lock}};
-+    /// # use pin_init::stack_pin_init;
-+    ///
-+    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
-+    ///     // Address-equal means the same lock.
-+    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
-+    /// }
-+    ///
-+    /// stack_pin_init! {
-+    ///     let l = new_spinlock!(42)
-+    /// }
-+    ///
-+    /// let mut g = l.lock();
-+    /// let val = *g;
-+    ///
-+    /// // The lock will be released, but only temporarily
-+    /// g.do_unlocked(|| assert_eq!(val, 42));
-+    ///
-+    /// // `g` originates from `l` and should be relocked now.
-+    /// assert_held(&g, &l);
-+    /// ```
-+    pub fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
-         // SAFETY: The caller owns the lock, so it is safe to unlock it.
-         unsafe { B::unlock(self.lock.state.get(), &self.state) };
- 
-
-base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
--- 
-2.50.0
-
+Thanks,
+Guenter
 
