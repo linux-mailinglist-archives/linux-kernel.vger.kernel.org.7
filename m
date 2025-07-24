@@ -1,232 +1,161 @@
-Return-Path: <linux-kernel+bounces-744498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F34B10DA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:32:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9427BB10DA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A0027BAEF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FBF1C81ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B16C2E54D7;
-	Thu, 24 Jul 2025 14:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB6277CA2;
+	Thu, 24 Jul 2025 14:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QySJgUX7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ucHKu6mr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QySJgUX7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ucHKu6mr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lSMuodqp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA7923AE79
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA0AA937;
+	Thu, 24 Jul 2025 14:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367453; cv=none; b=J8j9D2DJa+ec+RkU/bunyyrnseKeo5KH0wEb1Nns8ZUf6lDdpDBY4UxtxyS61OeK4RUUdHS2d3C3Iam2w96ak5mO7aog+HTz668AvGbXtmQpJWVUR4yOhU4s5WwEfsIW/PoSaXcpHF1L1+OwL4/fS9bHjn41LsATLTVCLPOES+E=
+	t=1753367497; cv=none; b=gYubV1NgJHkG6DCbuTeVNmpSRlGwv7IPgwpL8a7M5mIs64rZkTH99dYSdsaY6DOGQLuvSYidlU0hBc8/K1HTjY7KpoKVEG7yoPcK/8+iIXbbIp6x+lifyNK+Nu4oBwwj2ERR/VGYAlpa5w1ZKeNY5TThMtso5Ghz5zLJM8cRnTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367453; c=relaxed/simple;
-	bh=zRccYEeOCo5yGF+Kiw5gyY3/ovTjRnxmvM9z7LK3Lc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eaL+IShtwqr9dUfuZpOCQsCyOAd6hY6PgnO6pwUL6OVsdAHJoiXzhlvFAEHDxqsK698BpsghpxO6t67QDRKP33xtsvbIGEgp7Ld/ikZGyF2pA3tYZxRwYUfMfrehHTbkSi70OB3UAm3u8SwRvGIGZhHmCkaMcIlw6zbtVtPROqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QySJgUX7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ucHKu6mr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QySJgUX7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ucHKu6mr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1753367497; c=relaxed/simple;
+	bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UZwF9V8SuxGpoAC3qE1nvcnwrDtehgsRX3h9z1vREvhnGy7gXRS6PC3G1bgI1SypBJQsAGxWsr+ZqGF+biRTVOvnYCn6g4ezVWI+DvPEAr4xeNgz8yz0t/YLXLCp69/6v9Lf4kfJRbpfSXsiHOpY4pOvqcOdCbZlGBVFYtEe6tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lSMuodqp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753367493;
+	bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lSMuodqp7YZ23b38WJ2oV1WBi/fZCKhs4ma5VVLSiqYHgwSS0IYRYWhNg8xEu9vKv
+	 nT0U1beQPVNKE2vHcuzK7w63mbpITTrT9m7Isp1RE57o00oCk0yx9uslrBaYeStGYo
+	 tmBQSgqbR6UuoQXt3xiQIbALojBr6qlGBmrWH1U1ixxfRqWuo+8tIjqmyPeXKuxUrr
+	 ZlriQmuVFgYsImJ5jAA9v11QpPyZvsGDSg5hlaUeWCq5QZQNngzZZO9XFYAClYFVjA
+	 RD0uW4jl68BclIwhFNNsRD09gw0p9yySbMl9ND/InXNzt28GWYtiuW/QcBQ7Api17G
+	 OsQ7a+70z1xvw==
+Received: from jupiter.universe (dyndsl-091-248-210-114.ewe-ip-backbone.de [91.248.210.114])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ADA651F399;
-	Thu, 24 Jul 2025 14:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753367449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
-	b=QySJgUX7+KOApssRwOKHV7U6qg2d6ujMNn1BGeFL82Q4/ihFfkiN+Exq8tyOkXu6h1Eq18
-	kgKardLPFG371Xdnh/SQxt4rulUQb+V59W8OIf2CGRwH5NmD5iG3pZU6mMSlQsS+gcEAe8
-	TSogh0dyrTNbWzoexaiBHnZbFjxyP6M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753367449;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
-	b=ucHKu6mrc95YXAPNa1GzCLHur1JIrH8blfy44QJsIPvHWNpDMGQeLAs9/6Y/3QmLZP4MAQ
-	nq6zNu6eBGz4HPCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753367449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
-	b=QySJgUX7+KOApssRwOKHV7U6qg2d6ujMNn1BGeFL82Q4/ihFfkiN+Exq8tyOkXu6h1Eq18
-	kgKardLPFG371Xdnh/SQxt4rulUQb+V59W8OIf2CGRwH5NmD5iG3pZU6mMSlQsS+gcEAe8
-	TSogh0dyrTNbWzoexaiBHnZbFjxyP6M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753367449;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k4Tsq+b880kK49R6CSOyZ9PmBo7u0+b5eMyTxU0Yb8Y=;
-	b=ucHKu6mrc95YXAPNa1GzCLHur1JIrH8blfy44QJsIPvHWNpDMGQeLAs9/6Y/3QmLZP4MAQ
-	nq6zNu6eBGz4HPCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 932F1136DC;
-	Thu, 24 Jul 2025 14:30:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GrxqHZlDgmhwMwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Jul 2025 14:30:49 +0000
-Message-ID: <9cad7b86-4b77-4881-9cbf-637b6a61695d@suse.cz>
-Date: Thu, 24 Jul 2025 16:30:49 +0200
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5C15917E0B72;
+	Thu, 24 Jul 2025 16:31:33 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 07205480039; Thu, 24 Jul 2025 16:31:33 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Date: Thu, 24 Jul 2025 16:31:25 +0200
+Subject: [PATCH] arm64: dts: rockchip: use MAC TX delay for ROCK 4D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/14] slab: add sheaf support for batching kfree_rcu()
- operations
-Content-Language: en-US
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250723-slub-percpu-caches-v5-2-b792cd830f5d@suse.cz>
- <aIEQQ0MW5e8KMvVL@pc636>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aIEQQ0MW5e8KMvVL@pc636>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Message-Id: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALxDgmgC/x3MTQ5AMBBA4avIrE1C1U9cRSzaGkxEyVSEiLtrL
+ L/Few8EEqYAbfKA0MmBNx+Rpwm42fiJkIdoUJkqs1pplKUo6wplc4secJ9vPHhlPwWsrCarrWn
+ U6CD2u9DI1//u+vf9AMmpQXtrAAAA
+X-Change-ID: 20250724-rk3576-rock4d-phy-timings-6b4eb4ba82fc
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Andrew Lunn <andrew@lunn.ch>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2874; i=sre@kernel.org;
+ h=from:subject:message-id; bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGiCQ8ROUfuRfo4mNRUGEaWZbqk0Wkbt8RBEL
+ w3/ULol4z1cW4kCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJogkPEAAoJENju1/PI
+ O/qaMSUP/13LhvhKXd0+OszgpGriuOkZE/79bCvrU1METdH/ofIq1UZMuht+thZw7M2dZejhYhB
+ LNgFfxK3ci+Ffmrt+Wl+m3ZG3fZ4itWPPRtmbS2Lpy3XZk9zsjw4TBZmwoELGT2A7RwQFC+iINr
+ gJMEHVDY5UlsnyonFSt8qu5Cy0vymNH+FqIDypFTP6uA6EX6PbpF17QqGlfGCrp2TppxBBKL8X1
+ sb9AFtoGFfrBUHwxVvCVPepWzOQdrS3CUHZ5oktAIS+eK6wO2fZoxHKPYwcFS+TxaN1RcJnM5kA
+ +M4FbuhevnUybNLdvxvoFevajz5bXo9J9PajrIlGnwXI3sPnVUioeymlPI9q7LLOhXAKMMIyVN2
+ kPMyjqTTW8Onfp4akskSaC0mNSNBPmvvvxvFjVdyPf7gJOGrEMuuA4ur9xUxObr4eQrtAuwoCBS
+ z/GMx1hWtvPnRZxVpeJXU6ZUNSwQYLyxhnZ/42vKgJjD4NQKzNgsTmldR9w5eoJAJmtZmktunQz
+ vfcT1zXSPNC3EuraiEKcS3p1RxUwnJlyCbgOiHhYyNBHmGwRCzeF+4toNmA+YfDRY5SWEcgfbel
+ OyF07/JiK8f7u31M2BgdHFbqhXdiHMHMEzHBae8QepHDNONnUWn5P1QbyoQAyxNcykXPVBUmjrl
+ GewoN3r2NJh5VXpayUnctgQ==
+X-Developer-Key: i=sre@kernel.org; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On 7/23/25 18:39, Uladzislau Rezki wrote:
-> On Wed, Jul 23, 2025 at 03:34:35PM +0200, Vlastimil Babka wrote:
->>  static bool
->>  need_offload_krc(struct kfree_rcu_cpu *krcp)
->>  {
->> @@ -1952,6 +1973,9 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
->>  	if (!head)
->>  		might_sleep();
->>  
->> +	if (kfree_rcu_sheaf(ptr))
->> +		return;
->> +
->>
-> I have a question here. kfree_rcu_sheaf(ptr) tries to revert freeing
-> an object over one more newly introduced path. This patch adds infra
-> for such purpose whereas we already have a main path over which we
-> free memory.
-> 
-> Why do not we use existing logic? As i see you can do:
-> 
->    if (unlikely(!slab_free_hook(s, p[i], init, true))) {
->         p[i] = p[--sheaf->size];
->         continue;
->    }
-> 
-> in the kfree_rcu_work() function where we process all ready to free objects.
+According to the Ethernet controller device tree binding "rgmii-id"
+means, that the PCB does not have extra long lines to add the required
+delays. This is indeed the case for the ROCK 4D.
 
-I'm not sure I understand. In kfree_rcu_work() we process individual
-objects. There is no sheaf that you reference in the code above?
-Or are you suggesting we add e.g. a "channel" of sheaves to process in
-addition to the existing channels of objects?
+The problem is, that the Rockchip MAC Linux driver interprets the
+interface type differently and abuses the information to configure
+RX and TX delays in the MAC using (vendor) properties 'rx_delay' and
+'tx_delay'.
 
-> I mean, for slab objects we can replace kfree_bulk() and scan all pointers
-> and free them over slab_free_hook().
+When Detlev Casanova upstreamed the ROCK 4D device tree, he used the
+correct description for the board ("rgmii-id"). This results in no delays
+being configured in the MAC. At the same time the PHY will provide
+some delays.
 
-The desired outcome after __rcu_free_sheaf_prepare() is to take the whole
-sheaf and have it reused, not free individual objects. So we call
-slab_free_hook() in __rcu_free_sheaf_prepare() but don't actually free
-individual objects as necessary.
+This works to some degree, but is not a stable configuration. All five
+ROCK 4D production boards, which have recently been added to the Collabora
+LAVA lab for CI purposes have trouble with data not getting through
+after a connection has been established.
 
-> Also we do use a pooled API and other improvements to speed up freeing.
+Using the same delay setup as the vendor device tree fixes the
+functionality (at the cost of not properly following the DT binding).
+As we cannot fix the driver behavior for RK3576 (some other boards
+already depend on this), let's update the ROCK 4D DT instead.
 
-It could be useful to know the details as in Suren's measurements there's
-issues with kfree_rcu() using sheaves when lazy rcu is used. Is the
-kfree_rcu() infra avoiding being too lazy somehow? We could use the same
-techniques for sheaves.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+There is an additional problem, that the link does not come up in the
+first place. This has been handled by the recently merged (and less
+questionable) DT changes [0] combined with a PHY driver patch to trigger
+a PHY reset after the clock has been enabled [1] (I will send a new
+version of that patch after this one). Stable network support on the
+ROCK 4D requires all patches.
 
-> Thanks!
-> 
-> --
-> Uladzislau Rezki
+[0] https://lore.kernel.org/linux-rockchip/20250704-rk3576-rock4d-phy-handling-fixes-v1-1-1d64130c4139@kernel.org/
+[1] https://lore.kernel.org/netdev/20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org/
+---
+ arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+index 0388d72076bf79ee4f20ac1d3bc04fe1859f857b..f105ed675d3671e93916c830a9a17dc240ca5fda 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+@@ -237,7 +237,7 @@ &cpu_l3 {
+ &gmac0 {
+ 	clock_in_out = "output";
+ 	phy-handle = <&rgmii_phy0>;
+-	phy-mode = "rgmii-id";
++	phy-mode = "rgmii-rxid";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&eth0m0_miim
+ 		     &eth0m0_tx_bus2
+@@ -246,6 +246,8 @@ &eth0m0_rgmii_clk
+ 		     &eth0m0_rgmii_bus
+ 		     &ethm0_clk0_25m_out>;
+ 	status = "okay";
++	tx_delay = <0x20>;
++	rx_delay = <0x00>;
+ };
+ 
+ &gpu {
+
+---
+base-commit: e05818ef75bee755fc56811cb54febf4174d7cf2
+change-id: 20250724-rk3576-rock4d-phy-timings-6b4eb4ba82fc
+
+Best regards,
+-- 
+Sebastian Reichel <sre@kernel.org>
 
 
