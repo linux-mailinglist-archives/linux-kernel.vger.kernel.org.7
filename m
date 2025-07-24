@@ -1,313 +1,251 @@
-Return-Path: <linux-kernel+bounces-744712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83053B11021
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23775B1101D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4228716AB71
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533285A054D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAF02EAD1D;
-	Thu, 24 Jul 2025 17:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0752EA723;
+	Thu, 24 Jul 2025 17:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcSp8PLl"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="16iJlk6i"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F122083;
-	Thu, 24 Jul 2025 17:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753376593; cv=none; b=f2KkUeStsxsY0ZquIA++9a2Zy7HwcBkdWYxghKD08DFz7LX5z+2tOS9ADE908q4n3krljNq752BXiyIe20OZsftpFxdtC9iQJuVrbtu77Ed6MYmsPEOa2NRhXrPYfzeyB1uVjdQ7rr0lJj9qahDio7ppbfp4xetsBj+3cSo+CuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753376593; c=relaxed/simple;
-	bh=rwSPoon0E7mhNdh+2hHRnGAvqDzdRjJyRJp84+Blkz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tDo5oiG+x8HphcXxWh0VFIm5dU9WpwhPPhObEsH0og/9p/aVhhefPDmvwZIY99nbFaD0batY9rGS4KqIJmlRaY+OjUrIV9VskSQc8LpKjRsHp7Tw/0QziNyVmxs/OJ8JEF5SPMhS4BTjcY2m1VbtC5DVVEQfsQttbDei9FHElU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcSp8PLl; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so14865391fa.1;
-        Thu, 24 Jul 2025 10:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753376587; x=1753981387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0FGOOiPVQqYASE7Wmz67+AH5G3BHXQxt/qem1BnGLQw=;
-        b=hcSp8PLlB7Gj8bBXHv9nTlss+9iLw/3oTi9AgS61Nat9HYAzUAlW9M3L3Yh5tTYzPH
-         wfX+avzB2xA6qlbImm97klU7x86sXM6yt3/cfhtsT3VBBgeJqxjwZejJyzpnnm4A3Uvg
-         iaPVOlHCl4/NVDy8Mdsye8UhimlnL6nBj1P5Z0EmwmnRuhs9bb/94PQkB/7XgwoA3tz5
-         qRUSQdxSUR/7x8GQOFa276XxbXjkSB2HmtYzbrsptz+OrzO3EuK88NRMCF7YXa+1T8BH
-         iP7yGRTz4iNzeKHi3RHwuZtvcT38pmD7Ut+C0cvBqsyrBWpno0rOnxFLB8951YTsg12o
-         9+WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753376587; x=1753981387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0FGOOiPVQqYASE7Wmz67+AH5G3BHXQxt/qem1BnGLQw=;
-        b=qflYQmQGHU+ygwTU+9tDYkxypx1F57cC6Ha/j+C4XCLQe7cighT1O4QALx/mNCz7mZ
-         2KD6+cXFR5eM6+ejblJxEwE3g+2ituUvuyzasAvESSmvh0UNXJAK8ADyCd96UoU9BY1W
-         Bl+oJmcyCuVMx4rMSsDfhJwFTOP7Kl6NxcSHkE3til+y2F+tSgWiRS4/AJ2aR0MDRAbI
-         Qg4XRqPAFmHLwXmhURu7jozmIEnKqA2xzn4KSukkA88lcuaEjmLJ1hAbWaIZJSTeId5f
-         Jo8bGlrjUe7YKtJmLWmso/HJr3jKjk0msedMMkd4T2iuykpnufYHha/8OVcZOCgK5nZI
-         3GXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCdUMQu1wD9fXnfEXO0pEyQefn8E2sKJyDdbI72d+Ybh2RJPgCvZR27kO1MvqQEk3SuTsJLMM9@vger.kernel.org, AJvYcCX7MxqPLX1/6xrtwrYzWb8Rbj4ZhSto6HuCyIC4ak/PQiVSdWwSysK7U02XOkBib0TwuWqDAav5OBzpTjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEyqZ3UvIrOAlzmhPtBlv7KmrpoPlHKXVMZF3m2JK930Ckzpof
-	9JXGjFeJBSHqGY4sEjYJr7uVdKy583X2AbtrWKwld9OlT32EE+65enYeH+h8mtReRqbIs1HaiZW
-	3yfhjiqLwkXmFLALI3s7z6qWW+HmULxA=
-X-Gm-Gg: ASbGncvilIQUtbeTniI6kTLLmFj3Y0yHIS9HAaXEqKUdDz9oCE1bCJzgyTzsY/ltGgY
-	NeLOPgKX0iDVVAfCcvVST2R02OYWXweKbEHuDGAnpUgB3VBUDJxNvauhClOH6hzX7BeF1CQDC3W
-	CqSvcDRZZmyFHX+9M2w79CPTA0VeucryutSgRr4tnRS0FzqrMAiuoCi13tmhZTnxPaCcvAMcX72
-	1noOIs=
-X-Google-Smtp-Source: AGHT+IH2SK9nNFgrAJTPUO9UuVWjDcmLx1aMVGa4BQ7jWyaoMvsByiN2oGkEo7mQNMXKziQVY3Jn0YtJZ4JLlWl3sdU=
-X-Received: by 2002:a2e:a00f:0:b0:32e:aaa0:e68c with SMTP id
- 38308e7fff4ca-331e25b98eamr7355731fa.19.1753376587111; Thu, 24 Jul 2025
- 10:03:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1E022083;
+	Thu, 24 Jul 2025 17:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753376578; cv=fail; b=QA8cmlYTonPnf651W0dtGiginx9ROqwIRqF4bs+1ivMeFiPq/Xrxu0yAk/yVmLrCkHc8oN8yNd1zDkBtvmFkwDznCZDYY2bZt+9v4PbcKnnAq+yiURKWaC7vD0aMZfr3kPw7rEiozMAU2fPn1ifdKM5hZ0i1Qbtf+6eFGIsSjLo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753376578; c=relaxed/simple;
+	bh=J0JyqbUbiT+TFzBYy8PqLcTNZgZZ5s3pE0j9kaCf2z4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KVaD+dffQDq6cv3bP/EZE058YxcZ+52f0ovR6qU43VhUIpoOvvTfXzJWLTD9x4nAogjpAYHQvssHbtzLol7WqM4y2jhzxEE5s4LWN/Bq+PTkOEiScJ6YAKQnp0sNiNa6l6ricrTm2pE8GKCV8aHO12D/vvdBEnEDfW7O1yebKzQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=16iJlk6i; arc=fail smtp.client-ip=40.107.93.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t2sY9+jgDt0D5Q/TqAYPAb5mOhtm6WWP37Ditm5B03tOiEcdfUQGQ2sANQw7qYyytfkuiUqoY2rANDl7dFIZHEdhgwHMcTRv4z7dyxCtpim6enCKoEOzdqdxoPGK9zfcdOr7GcSgi7n8I/6ok9i7f9K3/M1eEhRyuLEs3um5Iq0wbFfqIaLj5NLH83ypngg0Pq3wlXbVQTpMTGYU8DkIQ7H0nDH4aW8caXNVg+rwY6KZD0j9lscS1fOJ/Or1Rue+mnU1yve6tM16Osr/iVHs86/C9UztboCNgjSPsjKglIIEB/TUO1pq3pYcetJi8W+bzTDJ78ILD9CvLvHRa41QQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qbNEjvNT1cLiAiV9OkGdRiAccNN5bdK0OD7gM3LgheA=;
+ b=bVOXew0WyTWY5/YO3uS8a0+McCx8m2I1ZJNqd5Rnk+W3qfT8wT0vps8ZoFmp05FVBzlrR4vLJfgiLMnjv6w5EXzW01GRPTsqBPzvVyhqi6nX9YAb0jbl4HLB4v9GaEhZNXmyQgkN1myCW1r0JKHT2RYvowzIcDgrqeNMT3IgpGq3xBvNozb4wluxEzPsA2CCFA12rqlkqVualIUO/8+bcP/syfwkaro8Gr1pxIFY6NCb1in8GQvM2Obt56YFKcr8C/WY6ibZOHZFk8YZTDQOt+s+NMQZZXIV8Z2/BgRYJPLS0Wb8yHqi9ZvlEud2Ypq6ziKr/8iYCwaEnBrEkw+f3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qbNEjvNT1cLiAiV9OkGdRiAccNN5bdK0OD7gM3LgheA=;
+ b=16iJlk6ir9DJEilwlwFiixW2WX8WzPcJktIp7d76RJYHGhTvDHRvfwRFtrN0sZOjnDATxyOxHTKjhzhOq0cjPPMPdgnoWQevzrwaXfzeZsR3qku1iKdgeZ7bhN/U6NSCDERPrSCuKShSsNwK0CqsIqgjvaZW8PNTC5l1iE58O8g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ PH7PR12MB5952.namprd12.prod.outlook.com (2603:10b6:510:1db::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.22; Thu, 24 Jul 2025 17:02:52 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%5]) with mapi id 15.20.8964.021; Thu, 24 Jul 2025
+ 17:02:50 +0000
+Message-ID: <536c6bde-fe1c-400b-a8bc-bb40a23ef9fa@amd.com>
+Date: Thu, 24 Jul 2025 12:02:46 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 04/17] CXL/AER: Introduce CXL specific AER driver file
+To: dan.j.williams@intel.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
+ dave.jiang@intel.com, alison.schofield@intel.com, bhelgaas@google.com,
+ shiju.jose@huawei.com, ming.li@zohomail.com,
+ Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+ dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+ lukas@wunner.de, Benjamin.Cheatham@amd.com,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250626224252.1415009-1-terry.bowman@amd.com>
+ <20250626224252.1415009-5-terry.bowman@amd.com>
+ <6881896b8570_14c356100de@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: "Bowman, Terry" <terry.bowman@amd.com>
+In-Reply-To: <6881896b8570_14c356100de@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9PR13CA0075.namprd13.prod.outlook.com
+ (2603:10b6:806:23::20) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710033706.71042-1-ryncsn@gmail.com> <20250710033706.71042-2-ryncsn@gmail.com>
-In-Reply-To: <20250710033706.71042-2-ryncsn@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 25 Jul 2025 01:02:28 +0800
-X-Gm-Features: Ac12FXz-JktFoi6dxbYyvTuXYPqprk55h_78M1lLvSRdsUEznKRvFtJBvXljRws
-Message-ID: <CAMgjq7A+DBw=z8RPP-P1hcCH4Mid0txfmKqgqXghoE_v7zGEoA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] mm/shmem, swap: improve cached mTHP handling and
- fix potential hung
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|PH7PR12MB5952:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70276acf-412c-43f3-6ea5-08ddcad3ec30
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V0MzYmFjS3pVcG5OQVF2TW1maGQ3aTFqb3A3YlhwekV0bUUzQ3BLNU56VW0z?=
+ =?utf-8?B?ejBWQk5xc0pVZHNWSHNIMDNQWW9BWXNYQWFlQ1E4WGpwcmFtQndMK1Y5M0pH?=
+ =?utf-8?B?U3hPL243eThZK3ZWVUlvRWxoMmNkYkdwMG81YmUyMys4aFFqZVhLNmZ0ZjBV?=
+ =?utf-8?B?SUxQU0JQZ093TUNieWFZdmgrZjRnb3R3QndsczlkcDZsL0huSTB2RHBaRFpl?=
+ =?utf-8?B?cElsSGRDY2U0M1QrQUxGdXFnSXpwZGlFaU9HdURWQ2E5U3kyeXVVcTFUMzhK?=
+ =?utf-8?B?RFcyZ0tra0NiSWZEWC8ySmx4S0FUUFZQRzk0SkRQd3FVWWtpaGFXVkdkVytX?=
+ =?utf-8?B?UFFZY1JENGI1Wjcza0Q0dU5SZDQxNzNFZTZrUkZQa2hQY0NiL3dOeTRNUS9o?=
+ =?utf-8?B?eTNJOWVqcFoxK2VianhaUGVWSGthaVV0Zm4rM05QNE9jekdrS2gxK0pzNXhz?=
+ =?utf-8?B?SUExZWVTRmZ3WVFoWEZzVmJIOUQrTER4NkFCemRYeHdCaS9lOWZGTCtva2xw?=
+ =?utf-8?B?WXVDNEkxMEVlOTcwUUhpM0psL3lHVnhhemI1VHRONHU2MWlFUFZ2RHBoSWtT?=
+ =?utf-8?B?ZmFrVDRJQ1NVR3c5RlJyV1R0TjVpTXhCSGorSkY4Y2lnK3k1QkVTZkV4UGZP?=
+ =?utf-8?B?NXg5NHBVMXozNEFIWU5yaUJ2YVJySUFIMlRadGFlcDFvRTByT1ZneElRYVlJ?=
+ =?utf-8?B?UEdidFpnWEgzZCsvV21ZREFSRlNIQ0JqaE1wOFBBdlI5V25mMEhyS0RsRkdp?=
+ =?utf-8?B?MjJEK2RNSFQ5Q3dyUTdjVy9MN0xPY3QvY0l4RXBZbUVkcWZMZTFkcnVicGor?=
+ =?utf-8?B?UmpoU3QrUlVPOWFzK0VrVXFMODQ4QnhUOHV5ZEJTQ0ZNMHRqSmpVOHJLT0ty?=
+ =?utf-8?B?ZGJTUndMaUxKZkdsbzlEcXVlUG01OUtVVW13VWJ4Qk1mbHZVOWRPdUZsRGZn?=
+ =?utf-8?B?Wk5aMmVuZVV4ZCtIMEdCVmJHd0RjWjVHNjhSZmhYVGV4NHNhUzdqZ0w0Zk93?=
+ =?utf-8?B?UkIwRGVYQ21ma1UzcUNsbTFSa0tveXZ1bFpRaGpqakxnT3RnU3FWQ08xSi9l?=
+ =?utf-8?B?Rkc3d3h6UkNBdG5ya2h2cHlaQ3lkbGsyaTlIVDNReGkyZk5SdnFSSHVxQTNl?=
+ =?utf-8?B?emtqdCs5SHBYT2s5WWZiQkJPaDJ5TkxxSkh3Y1d3V3ppOFFkOFc4dUk4QUxN?=
+ =?utf-8?B?QTFTWk9udS9xRmNFV2JwSnd3ZE9wdlUvclptREFrWjZ0TFNjRnVwcXJ4eXpt?=
+ =?utf-8?B?ajlJaEJOdms3R1FsTjhrOExQQ09HNmsyUkJtSzRZYzZTUlQ3TU5Ib1hPTFVT?=
+ =?utf-8?B?ektwTnJuenE3Vmw5Rm9qeEdXR3VoR1NocVMvMXR5V3o2OStsb3JVcjNmVkRG?=
+ =?utf-8?B?QWh0clZyVm9LVW5SRGpQbjUyMFd0NDRibVhpcS9pRi9sK0NVNzNmeElrY05N?=
+ =?utf-8?B?N09ScFhXMGdjdjBvUS9TT0xheDJ2UkI5NnBFRlFLeEYyK0FKSzdrV2hmcHlv?=
+ =?utf-8?B?NlViWEFWeW05eFc1MjFSN1JWaDVXamZXY0t2UmNKbklsbmhSd1VjejFPK2pH?=
+ =?utf-8?B?V0x4QXlhMnI1dTRXWXpxUFhLRjUxcFZyNXVtZ3FZclhCTTF2eVpkcVBSejNi?=
+ =?utf-8?B?N1F3ZGc0dXAwcE82YnRXS0RuMUt2QkdmRHdPZDB2TUlmUTUwZ1ArcDBYaFAx?=
+ =?utf-8?B?T0xoVGpJcENIWmFzblp0N0IzamJGTmh0b0xRMERYaWw3Q2YrOHdXUTBCV0Iz?=
+ =?utf-8?B?ZklSRlNQM1gvM0xCWk9LMzFJVVNVUXRHR3lYWG03enJEbGJpc3huRHRxWXYz?=
+ =?utf-8?B?bXBMdUdESUxIaEhIeXdYY2RlVFlYbUdqR0VqWXBaTWRPZkFZSWhiZ2dzWk9Z?=
+ =?utf-8?B?VWJaQit4amk0REtCRjhtNThyWE1Gc2hKNURTNWJkRGIrdXJBR2RyeDJqRkxj?=
+ =?utf-8?B?cUVjZk9kdEN0eklnYnNEZVNOZktoNm9kR0xNMlR6SWNXNnQ0eUhUSkk2Z1FQ?=
+ =?utf-8?B?RjlhZUVvUURnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dUhKL09ybDhEait6eEd1Y3FRWnN4TnExMWkwVm9TQkVjY2dYNHB3NEY4Q01T?=
+ =?utf-8?B?Mk94bEsxZjlTQUl1NllSTmVTbjFEMVYwTGdJQkVnay9JZFpGN25kdTEzM1Bm?=
+ =?utf-8?B?MzhMT0dQRkRjT01ieVJQZVQ0bFVkY09IMjRlVlV5UTlYaUx2OGFTQlVBS1JN?=
+ =?utf-8?B?Tm1qeWxRbGFEeFdqd2JKLys1MmtUUVczUWRFQmhLbzMxenpCK2Zia1U5d0FH?=
+ =?utf-8?B?UENKY3ZxbEhCbkVCN3dWRmpmKytwSmVqVW82SUdNeEFEdEgxOWExNTYybS92?=
+ =?utf-8?B?SGhDd3FtUjd4cWpOdVNYb2trbTRjVlFRNzhWV3ZpamJuSkF1T09PM2MzNzNn?=
+ =?utf-8?B?eXBJMlIycHRiUkFFdDZXVnpYakRvaWtHWUZ6YVdkT3hnOXVGTUtGQW5iWkxJ?=
+ =?utf-8?B?aE4rUTFBZ3lOV3pydVVDNElPUzZ3SzFXRktLZTEyUEtaTW1pWTg4YURRZ3cx?=
+ =?utf-8?B?cDB5RXRwakZvVHNZOGtnSUVxOVlFMTU0K2hnS3VwZHhpUkxIeVJvWVlmV2Vr?=
+ =?utf-8?B?cGJsS0tvSFRqTjJ5enJWeUdBdE5vU29MV0lTNGpFbkx1WXNXZjUwUjAwS05T?=
+ =?utf-8?B?RTJHZjJzV04vUTM1WlVLSnhjM3dnTFVYNFJWc0ZESUVPZTFpOEZZSlc0Z3I5?=
+ =?utf-8?B?T3paOTdVd0l6bFl6YmthQ0pZd2MyVUhyRjJEOGhEYTdudjZuVXd6VWkrOXgw?=
+ =?utf-8?B?UkRHZUJua09NYXk0bGdmUXA3eTRmbzZQaUJ4NnF1b1N3cUVDNXRQUlY4Wkdy?=
+ =?utf-8?B?MjlHbXhIWWk3Q1ljdlZ0clpnd0JwK1NFSzFBaExRRU1NajdsWCtEa05vL1BX?=
+ =?utf-8?B?SkYwNmJ3QzNUdVJ0amtnZFBiU3I0eE9hb3QxUUNOZk1QeE9qTEVLejhSdnNq?=
+ =?utf-8?B?VVRUVlFsQTZqWDBoaXpBdm5xZ0N5eEFZMURvWmhGaXVmRkw3ajFoZ0VHSmFL?=
+ =?utf-8?B?a3ZYRHFMdUpjR0dJYXpFeElWVDA3QUJxTzd0c2lESE1mcDlzMzZOcmZ0RGd3?=
+ =?utf-8?B?RjZaN05ubnNrTjRUdytPd214YWJ6ajdaeG9tUnZhOXMxSlBaUjlUWi9URzdm?=
+ =?utf-8?B?Y1BORW1IUGMrWm9mZFp4ekZza1NxZVFvemlLMUJLaVV5dEFzdU9YbE1WakZG?=
+ =?utf-8?B?ZitrVllSVW5TKzQyUXR2YUpzVFhQbjc3NXVBMHRIT0JXYUFXOWlHRjllbWdD?=
+ =?utf-8?B?MlVNemoxTmVWbS82bEZpdHExa3ZFK2liVHhhQllnSVY0MnVwdDFYNUFLaHp4?=
+ =?utf-8?B?UllUMlJwdmlyZVhqS3VkUm1NSkZ6SHYyclJ5RHdBV0RuMERSZ2dVR2JUTWZm?=
+ =?utf-8?B?d3NBUzc1UURRWVYwVE1BTGgwc0EvUW8yOEYySUIvRnB1ZDNycDRRQ1FRNTlH?=
+ =?utf-8?B?ZTBFUGdENStYQ3NFOWVFbmZITWlhMVo2MTF5YW95VFVnVkZibWlsOWdMaGJD?=
+ =?utf-8?B?R1cyTmFPS21MWDhxeVZBTmxiSjZBUkQ4THdNN0tJTCttQjVxUklldW8rS0s0?=
+ =?utf-8?B?bDFNeEozT3FicStFMXFvWnhqTGFmYUFUTmdtbE1NSlhpbjFvVUdwYlQyc25y?=
+ =?utf-8?B?S0daanZTMkZLM2pLcjEvVFVXYkRHZ25kYjNOL2lVc3drNUVXREdFSEQyVms0?=
+ =?utf-8?B?YzJ6ZDREVERMTTdManJ2YmJadGhoNHF0REZxRHFJS0tDY3diZTNkUUZDWHJo?=
+ =?utf-8?B?TE5ITld5allHdDhWNjdtc1ZSbE5DN1J3THBGQkhHbjZnSTRNOXdVR2lHM2dh?=
+ =?utf-8?B?SWhLbTVoQ0JJQnFmY2E0V25GanllRmRCWDFpWnVya3dNV05vdDBCajAyaDhT?=
+ =?utf-8?B?UjNrR1Y4L0lUNlQ1Z2J4ZlZzaVQzWG9nVTBvZ3hPWDA2T1lWSjhtY252MEJC?=
+ =?utf-8?B?TG80SitIc2c0RmlRdzBvWjVhU2ZqR0Q1NS9GQTVEOGdBRlZ1OUtxMUtTeDNo?=
+ =?utf-8?B?QUVMV3JoWmhPN3lVdWdhb1ZLblpyblFheFZUUEUwRUFZUDQxNURwTEh4RUNq?=
+ =?utf-8?B?c0pRTnhkbU12aURUMnRHTWZ5QlgvalhiNXNtL2lwVEV6YkFrZ2VaWDNvbllL?=
+ =?utf-8?B?TmRvcGJ0WFZzUEwzUGhhTnl6V09GMXFJQVhjWWhjWDJLeC9valdPbG42aUxv?=
+ =?utf-8?Q?HbPfYbLWfOk15DJEYzLigXQnB?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70276acf-412c-43f3-6ea5-08ddcad3ec30
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 17:02:50.8285
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TzBu7tP2dr34Ubes7bnV+3ZihmazxOEbh7lpjmKSZXoygeojAXRfk247/Ot+8lTQCp43m3u+4l8b5v5UnchPiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5952
 
-On Thu, Jul 10, 2025 at 11:37=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> The current swap-in code assumes that, when a swap entry in shmem mapping
-> is order 0, its cached folios (if present) must be order 0 too, which
-> turns out not always correct.
->
-> The problem is shmem_split_large_entry is called before verifying the
-> folio will eventually be swapped in, one possible race is:
->
->     CPU1                          CPU2
-> shmem_swapin_folio
-> /* swap in of order > 0 swap entry S1 */
->   folio =3D swap_cache_get_folio
->   /* folio =3D NULL */
->   order =3D xa_get_order
->   /* order > 0 */
->   folio =3D shmem_swap_alloc_folio
->   /* mTHP alloc failure, folio =3D NULL */
->   <... Interrupted ...>
->                                  shmem_swapin_folio
->                                  /* S1 is swapped in */
->                                  shmem_writeout
->                                  /* S1 is swapped out, folio cached */
->   shmem_split_large_entry(..., S1)
->   /* S1 is split, but the folio covering it has order > 0 now */
->
-> Now any following swapin of S1 will hang: `xa_get_order` returns 0, and
-> folio lookup will return a folio with order > 0.  The
-> `xa_get_order(&mapping->i_pages, index) !=3D folio_order(folio)` will alw=
-ays
-> return false causing swap-in to return -EEXIST.
->
-> And this looks fragile.  So fix this up by allowing seeing a larger folio
-> in swap cache, and check the whole shmem mapping range covered by the
-> swapin have the right swap value upon inserting the folio.  And drop the
-> redundant tree walks before the insertion.
->
-> This will actually improve performance, as it avoids two redundant Xarray
-> tree walks in the hot path, and the only side effect is that in the
-> failure path, shmem may redundantly reallocate a few folios causing
-> temporary slight memory pressure.
->
-> And worth noting, it may seems the order and value check before inserting
-> might help reducing the lock contention, which is not true.  The swap
-> cache layer ensures raced swapin will either see a swap cache folio or
-> failed to do a swapin (we have SWAP_HAS_CACHE bit even if swap cache is
-> bypassed), so holding the folio lock and checking the folio flag is
-> already good enough for avoiding the lock contention.  The chance that a
-> folio passes the swap entry value check but the shmem mapping slot has
-> changed should be very low.
->
-> Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: <stable@vger.kernel.org>
-> ---
->  mm/shmem.c | 30 +++++++++++++++++++++---------
->  1 file changed, 21 insertions(+), 9 deletions(-)
 
-Hi All,
 
-Just found some issue here with this patch...
-
+On 7/23/2025 8:16 PM, dan.j.williams@intel.com wrote:
+> Terry Bowman wrote:
+>> The CXL AER error handling logic currently resides in the AER driver file,
+>> drivers/pci/pcie/aer.c. CXL specific changes are conditionally compiled
+>> using #ifdefs.
+>>
+>> Improve the AER driver maintainability by separating the CXL specific logic
+>> from the AER driver's core functionality and removing the #ifdefs.
+>> Introduce drivers/pci/pcie/cxl_aer.c and move the CXL AER logic into the
+>> new file.
+>>
+>> Update the makefile to conditionally compile the CXL file using the
+>> existing CONFIG_PCIEAER_CXL Kconfig.
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>> ---
+> After reading patch5 I want to qualify my Reviewed-by:...
 >
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 334b7b4a61a0..e3c9a1365ff4 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -884,7 +884,9 @@ static int shmem_add_to_page_cache(struct folio *foli=
-o,
->                                    pgoff_t index, void *expected, gfp_t g=
-fp)
->  {
->         XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio))=
-;
-> -       long nr =3D folio_nr_pages(folio);
-> +       unsigned long nr =3D folio_nr_pages(folio);
-> +       swp_entry_t iter, swap;
-> +       void *entry;
+>>  drivers/pci/pci.h          |   8 +++
+>>  drivers/pci/pcie/Makefile  |   1 +
+>>  drivers/pci/pcie/aer.c     | 138 -------------------------------------
+>>  drivers/pci/pcie/cxl_aer.c | 138 +++++++++++++++++++++++++++++++++++++
+> This is a poor name for this file because the functionality only relates to
+> code that supports a dead-end generation of RCH / RCD hardware platforms. 
 >
->         VM_BUG_ON_FOLIO(index !=3D round_down(index, nr), folio);
->         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-> @@ -896,14 +898,24 @@ static int shmem_add_to_page_cache(struct folio *fo=
-lio,
+> I do agree that it should be removed from aer.c so typical PCIe AER
+> maintenance does not need to trip over that cruft.
 >
->         gfp &=3D GFP_RECLAIM_MASK;
->         folio_throttle_swaprate(folio, gfp);
-> +       swap =3D iter =3D radix_to_swp_entry(expected);
+> Please call it something like rch_aer.c so it is tucked out of the way,
+> sticks out as odd in any future diffstat, and does not confuse from the
+> CXL VH error handling that supports current and future generation
+> hardware.
 >
->         do {
->                 xas_lock_irq(&xas);
+> Perhaps even move it to its own silent Kconfig symbol with a deprecation
+> warning, something like below, so someone remembers to delete it.
 
-I missed a xas_reset here, also better reset iter value too.
+cxl_rch_handle_error_iter() and cxl_rch_handle_error() need to be moved from pci/pcie/cxl_aer.c
+into cxl/core/native_ras.c introduced in this series. There is no RCH or VH handling in cxl_aer.c. 
+cxl_aer.c serves to detect if an error is a CXL error and if it is then it forwards it to the 
+CXL drivers using the kfifo introduced later. I will update the commit message stating more 
+will be added later.
 
-> -               if (expected !=3D xas_find_conflict(&xas)) {
-> -                       xas_set_err(&xas, -EEXIST);
-> -                       goto unlock;
-> +               xas_for_each_conflict(&xas, entry) {
-> +                       /*
-> +                        * The range must either be empty, or filled with
-> +                        * expected swap entries. Shmem swap entries are =
-never
-> +                        * partially freed without split of both entry an=
-d
-> +                        * folio, so there shouldn't be any holes.
-> +                        */
-> +                       if (!expected || entry !=3D swp_to_radix_entry(it=
-er)) {
-> +                               xas_set_err(&xas, -EEXIST);
-> +                               goto unlock;
-> +                       }
-> +                       iter.val +=3D 1 << xas_get_order(&xas);
->                 }
-> -               if (expected && xas_find_conflict(&xas)) {
-> +               if (expected && iter.val - nr !=3D swap.val) {
->                         xas_set_err(&xas, -EEXIST);
->                         goto unlock;
->                 }
-> @@ -2323,7 +2335,7 @@ static int shmem_swapin_folio(struct inode *inode, =
-pgoff_t index,
->                         error =3D -ENOMEM;
->                         goto failed;
->                 }
-> -       } else if (order !=3D folio_order(folio)) {
-> +       } else if (order > folio_order(folio)) {
->                 /*
->                  * Swap readahead may swap in order 0 folios into swapcac=
-he
->                  * asynchronously, while the shmem mapping can still stor=
-es
-> @@ -2348,15 +2360,15 @@ static int shmem_swapin_folio(struct inode *inode=
-, pgoff_t index,
->
->                         swap =3D swp_entry(swp_type(swap), swp_offset(swa=
-p) + offset);
->                 }
-> +       } else if (order < folio_order(folio)) {
-> +               swap.val =3D round_down(swap.val, 1 << folio_order(folio)=
-);
->         }
->
->  alloced:
->         /* We have to do this with folio locked to prevent races */
->         folio_lock(folio);
->         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
-> -           folio->swap.val !=3D swap.val ||
-> -           !shmem_confirm_swap(mapping, index, swap) ||
-> -           xa_get_order(&mapping->i_pages, index) !=3D folio_order(folio=
-)) {
+Dave Jiang introduced cxl/core/pci_aer.c I understand the name is still up for possible change.
+The native_ras.c changes in this series is planned to be moved into cxl/core/pci_aer.c for v11. 
+The files were created with the same purpose but we used different filenames and need to converge.
 
-And this part is incorrect. This `shmem_confirm_swap(mapping, index,
-swap) ` can't be simply omitted. Some functions below before the
-shmem_add_to_page_cache shouldn't be called on folios might have
-already been mapped by others. This shmem_confirm_swap ensures that
-won't happen.
+Let me know if you still want the rename to rch_aer.c.
 
-It may seem like a small change, but it leads to some minor conflicts
-in one or two following commits, the benchmark result will change too.
-So I'll have to send a V6 I think.
+-Terry
 
-We can remove this `shmem_confirm_swap`, but not in this series I
-think, maybe after this. Need to re-arrange some functions, with some
-clean ups for shmem_add_to_page_cache and others.
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index 17919b99fa66..da88358bbb4f 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -58,6 +58,13 @@ config PCIEAER_CXL
+>  
+>  	  If unsure, say Y.
+>  
+> +# Restricted CXL Host (RCH) error handling supports first generation CXL
+> +# hardware and can be deprecated in 7-10 years when only CXL Virtual Host
+> +# (CXL specification version 2+) hardware remains in service
+> +config RCH_AER
+> +	def_bool y
+> +	depends on PCIEAER_CXL
+> +
+>  #
+>  # PCI Express ECRC
+>  #
 
-> +           folio->swap.val !=3D swap.val) {
->                 error =3D -EEXIST;
->                 goto unlock;
->         }
-> --
-> 2.50.0
->
-
-In summary, I'll squash this patch into it and do a rebase of later commits=
-:
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e3c9a1365ff4..4ca0b665b79e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -898,9 +898,11 @@ static int shmem_add_to_page_cache(struct folio *folio=
-,
-
-        gfp &=3D GFP_RECLAIM_MASK;
-        folio_throttle_swaprate(folio, gfp);
--       swap =3D iter =3D radix_to_swp_entry(expected);
-+       swap =3D radix_to_swp_entry(expected);
-
-        do {
-+               iter =3D swap;
-+               xas_reset(&xas);
-                xas_lock_irq(&xas);
-                xas_for_each_conflict(&xas, entry) {
-                        /*
-@@ -2365,9 +2367,16 @@ static int shmem_swapin_folio(struct inode
-*inode, pgoff_t index,
-        }
-
- alloced:
--       /* We have to do this with folio locked to prevent races */
-+       /*
-+        * We have to do this with folio locked to prevent races.
-+        * The shmem_confirm_swap below only checks if the first swap
-+        * entry matches the folio, that's enough to ensure the folio
-+        * is not used outside of shmem, as shmem swap entrie
-+        * and swap cache folios are never partially freed.
-+        */
-        folio_lock(folio);
-        if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
-+           !shmem_confirm_swap(mapping, index, swap) ||
-            folio->swap.val !=3D swap.val) {
-                error =3D -EEXIST;
-                goto unlock;
-
-And I'll do some clean up afterward to get rid of this
-shmem_confirm_swap. How do you think?
 
