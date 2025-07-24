@@ -1,126 +1,165 @@
-Return-Path: <linux-kernel+bounces-744102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF1CB107FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9985FB10803
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D6F5A3086
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:45:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2695A2727
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9FE267F4C;
-	Thu, 24 Jul 2025 10:44:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34017267B9B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC9A2690EC;
+	Thu, 24 Jul 2025 10:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XSb8hnrQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075E81FDD;
+	Thu, 24 Jul 2025 10:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353898; cv=none; b=bDGHRaTEqRqm6GsmLTUXGdJnqaGVfjH54g4KfwgDOZ69r9THejo3EaWhF+xON8SupSRX/uV5cGjmX4SWliN47NOaH89pfL3uLYhEbssmPG4S261uRyuoOY2oRS4mNsUEzBYpDynWRYhU4SDVSQsyXrEzXufyTDZ3Uei7DngE+0Y=
+	t=1753353972; cv=none; b=Ow55CzkTMSMdGEerHXOQK8P5uwZmUS8R/quXRkvQAAsNmgyqXseKBbfdh/73tEZHfRX+XRtHzQwVuj+OjwGabZZ3/rBW0XibbzfafB/+0x2TmrbrE4sba846mD3GsrCZmivwhpCQ81TCYElEjxn65CFhq8OCxEN5hB9K9fxDe5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353898; c=relaxed/simple;
-	bh=RgHZddi0ynsrr+kGHbof42zzgia/mOAOnkJdUPLnkIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6/jHVmkmYFscgP+3HS5e2Y+ErcuAddfp/mQUI6uulK+OvbvbxWdIKgPdypO7SPjljjJJWJRVL7XchS18IXHnPkoJ/B9q4XcA1Y+QVLHzmCp40i2JX2+KzSUzOwSTV86156BnDSPnDrdh85ubX8NSQXx6Kxrk6t4AcyzsHjM6ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E29BE1A00;
-	Thu, 24 Jul 2025 03:44:48 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3ECE3F5A1;
-	Thu, 24 Jul 2025 03:44:53 -0700 (PDT)
-Date: Thu, 24 Jul 2025 11:44:47 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: build failure with crosstools gcc 15.1.0
-Message-ID: <aIIOn-5Zndlb2tDG@J2N7QTR9R3>
-References: <8362b484-ea77-4825-8ccb-d5acad660102@oss.qualcomm.com>
- <617201f8-1ad7-4403-b195-8c80d35ea30f@app.fastmail.com>
+	s=arc-20240116; t=1753353972; c=relaxed/simple;
+	bh=UVfFglqDP7SGTOdQNAVRwkBbVVWG0gISNs18EqhC7E4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b4OYgU2eU3uHh1UZCpK7PO1qz9H6qFnYDUItWiVYxfaJfSwp2NaihRhVHeX8BOtNEfBqzHeDUu6cddmESdBem0TqUpd+JM5hUaqYCTbIhkid2hI3I0bNg5oMckzYFtLn7AR0vazU3zsjtWhIB2PWwBec3hLM77uFrEnYvBNvx8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XSb8hnrQ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753353971; x=1784889971;
+  h=from:to:cc:subject:date:message-id:reply-to:mime-version:
+   content-transfer-encoding;
+  bh=UVfFglqDP7SGTOdQNAVRwkBbVVWG0gISNs18EqhC7E4=;
+  b=XSb8hnrQq9aO9kNU8jmLEEnBjwRhfVXB0oR3QqCAf/iJ06WJt/+1BIH+
+   9HwI9oYgLWPJ9cP8kndgQdXQVLtf2Fk0SU0MEhmmoAi+elBI2eiwnpmpd
+   Nyw4bCXSUtD/tjEntvQOB+AjyUeGFoB3zT3RYh56EaTiJI0cgtJST3uZ2
+   ZwBSXU40fILh/qTS5EZoKWi30X8hDb5G0x+PWaC0VHxAOCLKgX0nd60A6
+   uQWylgP3XGQQdYdCjBC8xsNz7PzUT0PozTonyy/nm1iIz48FAnBHCTL1+
+   HRUKLpFEfWKIqEBA8i7SohdLDHZ9Po3syFEuYwSwsMlZGh8Vz3vSe9M+/
+   Q==;
+X-CSE-ConnectionGUID: jY5l7oQ8ToisMNWBw3DEsg==
+X-CSE-MsgGUID: umm/LLzwRjyFSndkGUUlOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55767455"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="55767455"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 03:46:10 -0700
+X-CSE-ConnectionGUID: Jhc+iC4+QR+gHfgEjjBrqw==
+X-CSE-MsgGUID: a/dI7zPiT9uyLI1WBSgNBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="160886532"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.18])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 03:46:05 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Kyung Min Park <kyung.min.park@intel.com>
+Cc: xin3.li@intel.com,
+	maciej.wieczor-retman@intel.com,
+	Farrah Chen <farrah.chen@intel.com>,
+	stable@vger.kernel.org,
+	Borislav Petkov <bp@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v3] x86: Clear feature bits disabled at compile-time
+Date: Thu, 24 Jul 2025 12:45:35 +0200
+Message-ID: <20250724104539.2416468-1-maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.49.0
+Reply-To: 20250724094554.2153919-1-maciej.wieczor-retman@intel.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <617201f8-1ad7-4403-b195-8c80d35ea30f@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 04, 2025 at 03:25:49PM +0200, Arnd Bergmann wrote:
-> On Mon, Jun 23, 2025, at 21:52, Jeff Johnson wrote:
-> > I've been using crosstools gcc 14.2.0.
-> >
-> > Today I saw that gcc 15.1.0 has been added to crosstools:
-> > https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/15.1.0/
-> >
-> > But when I try it I'm getting an error:
-> >   LD      vmlinux.o
-> > vmlinux.o: warning: objtool: ncsi_process_next_channel() falls through 
-> > to next function ncsi_channel_monitor.cold()
-> > vmlinux.o: error: objtool [elf.c:1360]: elf_write: elf_update failed: 
-> > invalid section alignment
-> > make[5]: *** [scripts/Makefile.vmlinux_o:72: vmlinux.o] Error 1
-> > make[5]: *** Deleting file 'vmlinux.o'
-> > make[5]: Target '__default' not remade because of errors.
-> > make[4]: *** [Makefile:1217: vmlinux_o] Error 2
-> > make[4]: Target 'all' not remade because of errors.
-> > make[3]: *** [debian/rules:80: build-arch] Error 2
-> > make[3]: Target 'binary' not remade because of errors.
-> > dpkg-buildpackage: error: make -f debian/rules binary subprocess 
-> > returned exit status 2
-> > make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
-> > make[1]: *** 
-> > [/local/mnt/workspace/jjohnson/kernel/laptop-debug/Makefile:1635: 
-> > bindeb-pkg] Error 2
-> > make: *** [Makefile:248: __sub-make] Error 2
-> > make: Target 'bindeb-pkg' not remade because of errors.
-> >
-> > This is with a simple x86 make C=1 W=1 -j8 bindeb-pkg
-> >
-> > Any thoughts?
-> 
-> Hi Jeff,
-> 
-> Sorry for the late reply, have you figured it out in the meantime?
-> 
-> I couldn't immediately reproduce it, so it may already be fixed
-> in linux-next.
+If some config options are disabled during compile time, they still are
+enumerated in macros that use the x86_capability bitmask - cpu_has() or
+this_cpu_has().
 
-FWIW, I consistently see the same objtool splat for v6.16-rc7 and
-next-20250724, built with GCC 15.1.0 from the kernel.org cross
-toolchains page, e.g.
+The features are also visible in /proc/cpuinfo even though they are not
+enabled - which is contrary to what the documentation states about the
+file. Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
+split_lock_detect, user_shstk, avx_vnni and enqcmd.
 
-$ git clean -fdx
-$ usekorg 15.1.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- defconfig
-$ usekorg 15.1.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- -j56
+Add a DISABLED_MASK_INITIALIZER macro that creates an initializer list
+filled with DISABLED_MASKx bitmasks.
 
-The build machine is Debian 11.10 on x86-64., and 'usekorg ${VERSION}'
-is my script to put the relevant kernel.org cross toolchain binaries
-into my $PATH.
+Initialize the cpu_caps_cleared array with the autogenerated disabled
+bitmask.
 
-Doing the same with the 14.2.0 binaries, e.g.
+Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
+Reported-by: Farrah Chen <farrah.chen@intel.com>
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: <stable@vger.kernel.org>
+---
+Resend:
+- Fix macro name to match with the patch message.
+- Add Peter's SoB.
 
-$ git clean -fdx
-$ usekorg 14.2.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- defconfig
-$ usekorg 14.2.0 make ARCH=x86_64 CROSS_COMPILE=x86_64-linux- -j56
+Changelog v3:
+- Remove Fixes: tags, keep only one at the point where the documentation
+  changed and promised feature bits wouldn't show up if they're not
+  enabled.
+- Don't use a helper to initialize cpu_caps_cleared, just statically
+  initialize it.
+- Remove changes to cpu_caps_set.
+- Rewrite patch message to account for changes.
 
-... builds successfully, but there are some objtool warnings:
+Changelog v2:
+- Redo the patch to utilize a more generic solution, not just fix the
+  LAM and FRED feature bits.
+- Note more feature flags that shouldn't be present.
+- Add fixes and cc tags.
 
-|   LD      vmlinux.o
-| vmlinux.o: warning: objtool: x86_init_dev_msi_info+0x58: relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: .export_symbol+0x3e78: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: .export_symbol+0x31140: data relocation to !ENDBR: stpcpy+0x0
-| vmlinux.o: warning: objtool: dmar_msi_controller+0x58: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: intcapxt_controller+0x58: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: hpet_msi_controller+0x58: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: ioapic_ir_chip+0x58: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
-| vmlinux.o: warning: objtool: ioapic_chip+0x58: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
+ arch/x86/kernel/cpu/common.c       | 3 ++-
+ arch/x86/tools/cpufeaturemasks.awk | 6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-Mark.
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 77afca95cced..a9040038ad9d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -704,7 +704,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
+ }
+ 
+ /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
+-__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
++__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long)) =
++	DISABLED_MASK_INITIALIZER;
+ __u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/tools/cpufeaturemasks.awk b/arch/x86/tools/cpufeaturemasks.awk
+index 173d5bf2d999..1eabbc69f50d 100755
+--- a/arch/x86/tools/cpufeaturemasks.awk
++++ b/arch/x86/tools/cpufeaturemasks.awk
+@@ -84,5 +84,11 @@ END {
+ 		printf "\t) & (1U << ((x) & 31)))\n\n";
+ 	}
+ 
++		printf "\n#define DISABLED_MASK_INITIALIZER\t\t\t\\";
++		printf "\n\t{\t\t\t\t\t\t\\";
++		for (i = 0; i < ncapints; i++)
++			printf "\n\t\tDISABLED_MASK%d,\t\t\t\\", i;
++		printf "\n\t}\n\n";
++
+ 	printf "#endif /* _ASM_X86_CPUFEATUREMASKS_H */\n";
+ }
+-- 
+2.49.0
+
 
