@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-745076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FEDB11490
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC78BB1149C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01D85A5651
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0421726EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C368242D68;
-	Thu, 24 Jul 2025 23:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F03242D93;
+	Thu, 24 Jul 2025 23:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ypv9ArK+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="HEdsJ+5B";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="UeXuyF0x"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C39E5D8F0;
-	Thu, 24 Jul 2025 23:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F442417C3;
+	Thu, 24 Jul 2025 23:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400051; cv=none; b=PgYZP+Qs7SdM7zWUgkbg5U4QxHx8GcjFPUFpQJ4KttHDyw4wnPUfUqY9hsBiEh6in67UTTl+82xhx3L94RqJtX8eABXxCqsuxfU6gXqRYexFlb6IxF1d8mLVJTe53xc+M1+9B5r07L5tkThxP/cawtePUXebuKLF+WYkrnNOTPE=
+	t=1753400066; cv=none; b=IFMHRWmodMo5fmpDCwnEx62T2SXUWrwm3rnRNb/3x0LszJJWnOg/DDURlxUBExgvxzuIBf7d0N+r3MSOybJ9GvIyfJxX6ea3q0oG1sCluLXrJ8QqOMFN0wiu5cJVRj4XRErGXry1nwHH0PPeVEarZ4KMIoW7qwxdB4tDFCgOkyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400051; c=relaxed/simple;
-	bh=V/nVDfUDu3zSIVPxQrgq0fLEk+npFlmaZe5/m6YKPSc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aG9V5y33qRGoJHhV4+OzOQ+8GHu5V3O8yNX/SQp0LIZ+jEBmnL4pKCsES8VFDWS6HmZABlzvmFNjiCxCHGDngB7+tacYbokkf/aE1qZaXE8e7lUVGv6sttH123LHktYvKElT3rfU095cZ/XMEN+dzgcXTtGDAjQUzrsSVlHXzsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ypv9ArK+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D46C4CEEF;
-	Thu, 24 Jul 2025 23:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753400050;
-	bh=V/nVDfUDu3zSIVPxQrgq0fLEk+npFlmaZe5/m6YKPSc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Ypv9ArK+bgmMc8teMUqXtnSAPN0MNSo+G0YqQESAZ/g8tiixTe3dRHOOdLQZf3AUi
-	 PaAebzgijsBynRI4Ii33DPDe0mT+d7eJn9KVTuP1BEnMcV/LSxamLMPXfNDy0bkr1h
-	 I7Gmmkia+LNw4kXBZu/7wu3ZYOg+R2QC1U+2rA9GTq0d4iqdlrWzszngmQYQCoiX6E
-	 OOpDoH24aknAi5Nl9yzeOCH1EVY5U9+DcFHtenrlAYgxO5SqANqpBcktfWgkxOPaOn
-	 DwQ2438D5NC8W7RFOJpS6Dc/MxZxx7HyHJm8XGAAvy2+PtBxq/WZODctPMgD9dSwad
-	 PzzSFFZ48DSDw==
-From: Mark Brown <broonie@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Longbin Li <looong.bin@gmail.com>, 
- Zixian Zeng <sycamoremoon376@gmail.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- sophgo@lists.linux.dev, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com>
-References: <20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com>
-Subject: Re: (subset) [PATCH v4 0/4] spi: sophgo: Add SPI NOR controller
- for SG2042
-Message-Id: <175340004627.192002.3302155786508203444.b4-ty@kernel.org>
-Date: Fri, 25 Jul 2025 00:34:06 +0100
+	s=arc-20240116; t=1753400066; c=relaxed/simple;
+	bh=DHaKhk7Q7aNey7uhHw3907c5pOFD9XNr0CX/GKMTrmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYuItUGwMiw93iCvGjA8IfKCWwTY8bh1/HkiU4nMydr8rUsVO9MQrUWQxgpJ9o88+u0gzyRprF6WvZF6daxhSzx0pyrpAR4FrDXjYMx44TNlDyWdOK+11J27w7s9shbojpEhZRLiuzXfqYYv6DYpTQ9Hr662u1cND4hAoLJZD3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=HEdsJ+5B; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=UeXuyF0x; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 1E90C60281; Fri, 25 Jul 2025 01:34:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753400055;
+	bh=DxcPnYvgss5L9/yxk39bT5oq0THwPqr7O/TdLTVsmyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HEdsJ+5BImOlOMKwqRu6FNdi11jUTmWtPVKjJDbV2NPOvmxOLQgZI1R/pQ3rFUQjs
+	 51I0wVwkJ36etLLvNwOh2v5qYdU2f95qqHBMynMHOyX7IQlk7PdA6tZkP34T4UKzgf
+	 nmeaGYDknTHYE8tROnrAGNJe0781D2XkGp9JJkk5L2awxfDC+jYsJiB+IrVf3QBC+t
+	 bsuimiZzKNmc9lPqZF9kjwl0v9fYWPvCmhnAd50BksG+lroiW4FB7kc6PgFGJDI7Of
+	 RrMsQwFJ4uYmE9VBQVp0I4Me9yAYopSJhsVp+qoeIJUsicHfVtep8L9uSTDYyGjYBI
+	 6wjMhI5Ea2hDA==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id 3211660264;
+	Fri, 25 Jul 2025 01:34:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753400052;
+	bh=DxcPnYvgss5L9/yxk39bT5oq0THwPqr7O/TdLTVsmyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UeXuyF0xh7XMUEXc4YiCYGAnYzSKWEy2tJp+Zcf2LKFkphzAeDS2xLXdg48KVPB9R
+	 uIUHZxufE8MO5UXRkM662yg+3Gr3JCqLp+5THRlTO9slvqU9SzOE1mVo0x0yFVJQE7
+	 lQjRUa684+J56I6yxiR6D88uNsI7ETZwaDuERRbTHW/THJSCNKAMCEI9gxO187Vbj0
+	 /UwgpLMuFkqToETSZ3YfY080Aq5yQLpuCfOWfq3YG2lJVY/SQsEM2uMWr9U60tRZ6k
+	 Q1UTpUa77CKrYcbNKuoj2BleG76jLAotTBKQNRxS+ZMtuWnec+HGwMPLD5PBNS44Gk
+	 vCWGXI8/UbFKg==
+Date: Fri, 25 Jul 2025 01:34:08 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com, netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
+Message-ID: <aILC8COcZTQsj6sG@calendula>
+References: <20250508081313.57914-1-xiafei_xupt@163.com>
+ <20250522091954.47067-1-xiafei_xupt@163.com>
+ <aIA0kYa1oi6YPQX8@calendula>
+ <aIJQqacIH7jAzoEa@strlen.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aIJQqacIH7jAzoEa@strlen.de>
 
-On Sun, 20 Jul 2025 16:31:42 +0800, Zixian Zeng wrote:
-> Add support SPI NOR flash memory controller for SG2042, using upstreamed
-> SG2044 SPI NOR driver.
+On Thu, Jul 24, 2025 at 05:26:33PM +0200, Florian Westphal wrote:
+> Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> > > +				net_warn_ratelimited("nf_conntrack: table full in netns %u, dropping packet\n",
+> > > +						     net->ns.inum);
+> > 
+> > This is slightly better, but it still does not say what packet has
+> > been dropped, right?
+> > 
+> > Probably a similar approach to nf_tcp_log_invalid() would better here.
+> >
+> > Thus, nf_log infrastructure could be used as logging hub.
+> > 
+> > Logging the packet probably provides more context information than
+> > simply logging the netns inode number.
 > 
-> Tested on SG2042 Pioneer Box, read, write operations.
-> Thanks Chen Wang who provided machine and guidance.
-> 
-> 
-> [...]
+> Hmm, the conntrack table is full, and packet creates a new flow.
+> What would logging the packet tell us what the printk message doesn't?
 
-Applied to
+I was thinking, does the packet logging exposes already the
+net->ns.inum? IIUC the goal is to find what netns is dropping what
+packet and the reason for the packet drop, not only in this case but
+in every case, to ease finding the needle in the stack. If so, then it
+probably makes sense to consolidate this around nf_log()
+infrastructure.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Anyway, maybe I'm overdoing, I'll be fine with this approach if you
+consider it good enough to improve the situation.
 
-Thanks!
-
-[1/4] spi: dt-bindings: spi-sg2044-nor: Change SOPHGO SG2042
-      commit: 7438379cfc47046f7507dfdb54906acf56288b9f
-[2/4] spi: spi-sg2044-nor: Add configurable chip_info
-      commit: 5653b4f8840801d9d141ba6a6c10e7cc15040c5b
-[3/4] spi: spi-sg2044-nor: Add SPI-NOR controller for SG2042
-      commit: f6b159431697c903da1418e70c825faa0cddbdae
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks.
 
