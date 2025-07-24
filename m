@@ -1,100 +1,141 @@
-Return-Path: <linux-kernel+bounces-744514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E43BB10DD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B73B10DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8043BAA0E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5845A10B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1393B2E1741;
-	Thu, 24 Jul 2025 14:40:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BC02E54B4;
+	Thu, 24 Jul 2025 14:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="m+jt14ln"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D5A1632C8
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47A92E5407;
+	Thu, 24 Jul 2025 14:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753368018; cv=none; b=qN3/icxiByRBgmZxnzNogLK+PlsfYtjMO76iUkddXEb6i8yjPKwMmxHmO2+5QzyT4n4IZ3fO4wOSw5xjGAAlq5d0QdiLRYcqW3DB2Ps+O6BLh366u4TG/XxYzEpUskAx6mnLdYpy3dJ9AhM1HHKeWhgE18mONgN04tNtttOqgF0=
+	t=1753368026; cv=none; b=A/xRDYWj96inTXQpHisOsIJ5pL1JyVDV0+q9FD6lMviWOLOSPWuDR7a3JnwVu4eaCkIQnsA9WBZ0M6A2ZHENkLjZ2g+yW3bdmV6NcpaxZf0jodhSw6z8ijRopiYe06GDct1Z9lwDVjcUm06Pd02aJLEZeFx1NoDIsVMdynfkaUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753368018; c=relaxed/simple;
-	bh=Kwuoyq20gwdsTVsdtghzGtITJ0UjutoXvACwhACeCiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XUSHBMSVtwk/BytQZpf5uPnWsBitR6hGiBQy6+VygBSiTUv08H1P8epJOmLJI/QtueqO1H5Rt6cezf5v2LmgvHPxNL93Gi97QCoFaTwFI4ppreNyi382vaJwk2Pv2+AjIu6zHQV04KT2TFGMpu74CqZXxdbp5wLdy+LkkeATHTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id A052B1DA9ED;
-	Thu, 24 Jul 2025 14:40:14 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id A981C2000E;
-	Thu, 24 Jul 2025 14:40:12 +0000 (UTC)
-Date: Thu, 24 Jul 2025 10:40:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH 0/5] tools/verification: Improvements to rv and rvgen
-Message-ID: <20250724104011.7b4e11d9@batman.local.home>
-In-Reply-To: <20250723161240.194860-1-gmonaco@redhat.com>
-References: <20250723161240.194860-1-gmonaco@redhat.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753368026; c=relaxed/simple;
+	bh=ZrIDXZN4Ude9qm+64/fqR7Czwe9P160iQT2jxQem3H0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LLW1/fFilL/iWBKBZegnpNofKRjODLaNMydtCDrDbLNrkU+8M8pH/DJ3YWAoJNckRf8LMU5XdIQB/LMqCinGA7LKiYq4ViegnDK5vj+a50aE3nl1mtaGXslqxZoCJ6y3RLTWfBo/rL2LVnt/qQnWm9zYC27Hb46BYlEyYHjNjMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=m+jt14ln; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E12ED40AA9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1753368024; bh=lWnVtqjyg7h+NvEXwPQ7inlN3CEUVmi4sKfntgVUcAE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=m+jt14lnAbL1u0tismNpXDPhBzxJept4Z3jkMipaQCxP7PWxoL+ligiXqAKafW60w
+	 mAffkKSrYYXxDGU8LoB/96BDAzRENq0uo5mWOOo18UsF4voNTadVRtgpXQdQbB6eLg
+	 xDg/U9GmCNhkXiZgtlpndtHAgbXQDXlPwHBgvnNakyGAZ7O2MqXYweGaVONv/NtwDJ
+	 BViY1qrkf2P1XQPPhcqhgy056wP3xl+9UPMGZSZIVAJqCNs7RQQ5wcwqLTYlYXArLB
+	 mivMU7lF0fA4PvOMqbSRa2J9LtCLvu3kWA/QuJyzwi3eqcr83G2Hfkp2fX3F0uIjZc
+	 5HDYv3b10+9Cw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id E12ED40AA9;
+	Thu, 24 Jul 2025 14:40:23 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Kees Cook <mchehab+huawei@kernel.org>,
+ linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2] sphinx: kernel_abi: fix performance regression with
+ O=<dir>
+In-Reply-To: <e25673d87357457bc54ee863e97ff8f75956580d.1752752211.git.mchehab+huawei@kernel.org>
+References: <e25673d87357457bc54ee863e97ff8f75956580d.1752752211.git.mchehab+huawei@kernel.org>
+Date: Thu, 24 Jul 2025 08:40:23 -0600
+Message-ID: <87ecu5abzc.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A981C2000E
-X-Stat-Signature: a6nbh7ztt5szjp311cqzqzeut84dzrmh
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19EN9ThY9TULi3xMVLYQbWQ2504qJ9g73M=
-X-HE-Tag: 1753368012-784414
-X-HE-Meta: U2FsdGVkX1/LPy/XQXXx86Alo4Ag+RkXiQ3z2IGQglRa6MrzBt80JHCY1a041IY5I8VUuJMHgtLIWv6tzvzfrCqqA8Wv/4TJS6Md+LPNQUmwhJaILO0U1YesaEWUDZPrWamdfpFxHS+UhKydsYmTHNhq0lgnx2HYLKi6jHhs/1nsrjb/Ci02KQ0/LYno7S0wVDqq8wmt/b8iXooRZx2TutyX3e1inJGEqXh2N+T8Sx6slYGB/0U3OWRCaZlPbFYA8mBdshGdXDjoy453UL8nWx6CzHo9gfxe1570PzJSoqq0+q2aXzK/N8IZqvgYNDue81jlKVBLbXe77LonpdOW0Yo0+vYAo1GM
+Content-Type: text/plain
 
-On Wed, 23 Jul 2025 18:12:35 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> This series introduces various improvements to the rv/rvgen tools as
-> first posted in [1]. It also adapts generated kernel files accordingly.
-> 
-> Specifically:
-> 
-> Patch 1 fixes the behaviour of the rv tool with -s and idle tasks.
-> 
-> Patch 2 allows the rv tool to gracefully terminate with SIGTERM
-> 
-> Patch 3 adjusts dot2c not to create lines over 100 columns
-> 
-> Patch 4 properly orders nested monitors in the RV Kconfig file
+> The logic there which adds a dependency note to Sphinx cache
+> is not taking into account that the build dir may not be
+> the source dir. This causes a performance regression:
+>
+> $ time make O=/tmp/foo SPHINXDIRS=admin-guide htmldocs
+>
+> 	[OUTDATED]
+> 	Added: set()
+> 	Changed: {'abi-obsolete', 'abi-removed', 'abi-stable-files', 'abi-obsolete-files', 'abi-stable', 'abi', 'abi-removed-files', 'abi-testing-files', 'abi-testing', 'gpio/index', 'gpio/obsolete'}
+> 	Removed: set()
+> 	All docs count: 385
+> 	Found docs count: 385
+>
+> 	real    0m11,324s
+> 	user    0m15,783s
+> 	sys     0m1,164s
+>
+> To get the root cause of the problem (ABI files reported as changed),
+> I used this changeset:
+>
+> 	diff --git a/Documentation/conf.py b/Documentation/conf.py
+> 	index e8766e689c1b..ab486623bd8b 100644
+> 	--- a/Documentation/conf.py
+> 	+++ b/Documentation/conf.py
+> 	@@ -571,3 +571,16 @@ def setup(app):
+> 	     """Patterns need to be updated at init time on older Sphinx versions"""
+>
+> 	     app.connect('config-inited', update_patterns)
+> 	+    app.connect('env-get-outdated', on_outdated)
+> 	+
+> 	+def on_outdated(app, env, added, changed, removed):
+> 	+    """Track cache outdated due to added/changed/removed files"""
+> 	+    print("\n[OUTDATED]")
+> 	+    print(f"Added: {added}")
+> 	+    print(f"Changed: {changed}")
+> 	+    print(f"Removed: {removed}")
+> 	+    print(f"All docs count: {len(env.all_docs)}")
+> 	+    print(f"Found docs count: {len(env.found_docs)}")
+> 	+
+> 	+    # Just return what we have
+> 	+    return added | changed | removed
+>
+> Reported-by: Akira Yokosawa <akiyks@gmail.com>
+> Closes: https://lore.kernel.org/linux-doc/c174f7c5-ec21-4eae-b1c3-f643cca90d9d@gmail.com/
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+> v2: updated description. No changes at the diff itself
+>
+>  Documentation/sphinx/kernel_abi.py | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+> index db6f0380de94..4c4375201b9e 100644
+> --- a/Documentation/sphinx/kernel_abi.py
+> +++ b/Documentation/sphinx/kernel_abi.py
+> @@ -146,8 +146,10 @@ class KernelCmd(Directive):
+>                  n += 1
+>  
+>              if f != old_f:
+> -                # Add the file to Sphinx build dependencies
+> -                env.note_dependency(os.path.abspath(f))
+> +                # Add the file to Sphinx build dependencies if the file exists
+> +                fname = os.path.join(srctree, f)
+> +                if os.path.isfile(fname):
+> +                    env.note_dependency(fname)
+>  
 
-So keeping tools and kernel separate for RV is proving to be quite a
-pain as patch 4 has conflicts. I'm going to make a third topic branch
-just for RV. This will include anything in tools/verification and
-kernel/trace/rv. I'll restructure the patches I already added and move
-them into this branch, so that all the RV related work is there and not
-in the latency or tools branches.
+Applied, thanks.
 
-So no need to separate RV into kernel and tooling anymore.
-
-> 
-> Patch 5 returns the registration error in all DA monitor instead of 0
-> 
-> This series is based on the linux-next tree.
-
-The topic branches I'll have is:
-
-tools - for things like rtla
-latency - for the latency tracers (osnoise, etc)
-rv - for the runtime verification work.
-
--- Steve
+jon
 
