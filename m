@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-743722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3CCB1026E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A78BB10274
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51251CE1268
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0831D1CE1DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D85272804;
-	Thu, 24 Jul 2025 07:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2F2272E60;
+	Thu, 24 Jul 2025 07:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="drU9aUC0"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fbqPQ2bU"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0479627144C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C625272E47
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343688; cv=none; b=K1wirQRz0UAoRXqdoPMfCRzHrgd18X3Y/4hl+ahabY0HVZcIRv/0mZimTAe/vJOQN0RqE0TXE5ANpdCl1qdmpFdPzyOCmkiCgB+/P2uITDhN8P/cUTzUPBNXeYHicrKf5mv3kZT1zmExwr+nTdI3qRmv8UBEYk75dEcauBTD5pg=
+	t=1753343691; cv=none; b=U80SqubkkaArbC8LSTb+RbAgvxTB1nKQM3JgsjbHdj/yhRkogX6cFXL7xE+OGJCcK5D1lxriow+UvsJTXfGyXhkxTkgY5f/QDqMnoXmaA+xKqhgMk81Hx6Afe8SUUb1STeVieBaESJJU5ij2SXoOcOpUdpd8XZasf1mt0LcwBzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343688; c=relaxed/simple;
-	bh=CdaYOnb1fT0dOSjxWvCijusOmY1anMO+IiPPIZ2HYKA=;
+	s=arc-20240116; t=1753343691; c=relaxed/simple;
+	bh=82M7kduRWRwnXxavLqTVQBEIeyc/P1MLwrB0Zw1JLj8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tYST29gsxs/yPw96IaSq4R4mLEEQEnf6bYz0PQ8YrcDHgqvMqhM3Zuab0LBqiocVWq4hRMwG7ibuIISxyixQNxloeVRzmPHiu1WFqCx6idHl8F/WK5PexiTmb2QAhdp4qDwmRD0a9SQpwSNYsIbXKaGIu5SWdGLf84Fi125lvKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=drU9aUC0; arc=none smtp.client-ip=95.215.58.179
+	 MIME-Version; b=GgkVNkjbSHZrGaTj5I2Ifp0oNNFRIIr9Bkn/b8Gx/ZUuOjitHEyKZ42xxZqAwtyaaaaZXzXeljsBnFQtXXK4tazIu5Xjc8Dex/ofdRTlVbOvP42vtq44KeyS5Wognzv8OQDFmb3kI7ioU0qFM3k9FWKat8iPLqQ1UfE2WGReGak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fbqPQ2bU; arc=none smtp.client-ip=95.215.58.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753343684;
+	t=1753343687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aclP+/7iJas2ebXPYU6OTuB0cYx+hB/y7RGCUOBq25M=;
-	b=drU9aUC03185OtaJTh5yzVVz6uCGXq4BABDjsn4fro/8RHh11tJd7jBULW8g+uwOO6pcRP
-	Q0tdA0PnNyxVkFG4COyDsln81aEBnYULjwSgGX9Ywd/3b60g2IrEnQEeDNFP/jFO0C68BE
-	KnbmjUD7tGyOVFlxjGtT4nPIcQonqFQ=
+	bh=yijtlKWNOMxxyKll6m4irmOIbOxOroj9qUMsO8ydTXM=;
+	b=fbqPQ2bU6NHvzPywHOpIT3u7Qkj+kK58FHmiO66/4/BOuLyMgKwn18N640DBajlLHVqTy5
+	L1isfu2PxU1N1Q+zQVzIpsWswRTU2wnf0EzverL2lZP3heEbz88bsKFVNfVnN8gHe8AcGD
+	YSmOblRFIGYVjnhPhi4nyU0kw0MjIY4=
 From: Hui Zhu <hui.zhu@linux.dev>
 To: Danilo Krummrich <dakr@kernel.org>,
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
@@ -60,9 +60,9 @@ To: Danilo Krummrich <dakr@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Hui Zhu <zhuhui@kylinos.cn>,
 	Geliang Tang <geliang@kernel.org>
-Subject: [PATCH v3 1/2] rust: allocator: add unit tests of kmalloc, vmalloc and kvmalloc
-Date: Thu, 24 Jul 2025 15:54:18 +0800
-Message-Id: <32d7663b7d07d13564bdfb6a1ec4cde1be8b8f80.1753339262.git.zhuhui@kylinos.cn>
+Subject: [PATCH v3 2/2] rust: alloc: kvec: add doc example for `as_slice` method
+Date: Thu, 24 Jul 2025 15:54:19 +0800
+Message-Id: <376014022fa799f5480f6f993f1e25b2561507e4.1753339262.git.zhuhui@kylinos.cn>
 In-Reply-To: <cover.1753339262.git.zhuhui@kylinos.cn>
 References: <cover.1753339262.git.zhuhui@kylinos.cn>
 Precedence: bulk
@@ -76,91 +76,39 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Hui Zhu <zhuhui@kylinos.cn>
 
-Add KUnit test cases to validate the functionality of Rust allocation
-wrappers (kmalloc, vmalloc, kvmalloc).
-
-The tests include:
-Basic allocation tests for each allocator using a 1024-byte Blob
-structure initialized with a 0xfe pattern.
-Large alignment (> PAGE_SIZE) allocation testing using an 8192-byte
-aligned LargeAlignBlob structure.
-Verification of allocation constraints:
-- kmalloc successfully handles large alignments.
-- vmalloc and kvmalloc correctly fail for unsupported large alignments.
-Content verification through byte-by-byte pattern checking.
+Add a practical usage example to the documentation of `KVec::as_slice()`
+showing how to:
+Create a new `KVec`
+Push elements into it
+Convert to a slice via `as_slice()`
 
 Co-developed-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Geliang Tang <geliang@kernel.org>
 Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
 ---
- rust/kernel/alloc/allocator.rs | 57 ++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ rust/kernel/alloc/kvec.rs | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index aa2dfa9dca4c..430d1f664fdf 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -187,3 +187,60 @@ unsafe fn realloc(
-         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags) }
+diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+index 3c72e0bdddb8..d384c34d1a5e 100644
+--- a/rust/kernel/alloc/kvec.rs
++++ b/rust/kernel/alloc/kvec.rs
+@@ -224,6 +224,15 @@ unsafe fn dec_len(&mut self, count: usize) -> &mut [T] {
      }
- }
-+
-+#[macros::kunit_tests(rust_allocator_kunit)]
-+mod tests {
-+    use super::*;
-+    use kernel::prelude::*;
-+
-+    const TEST_SIZE: usize = 1024;
-+    const LARGE_ALIGN_TEST_SIZE: usize = kernel::page::PAGE_SIZE * 4;
-+    #[repr(align(128))]
-+    struct Blob([u8; TEST_SIZE]);
-+    // This structure is used to test the allocation of alignments larger
-+    // than PAGE_SIZE.
-+    // Since this is not yet supported, avoid accessing the contents of
-+    // the structure for now.
-+    #[allow(dead_code)]
-+    #[repr(align(8192))]
-+    struct LargeAlignBlob([u8; LARGE_ALIGN_TEST_SIZE]);
-+
-+    #[test]
-+    fn test_kmalloc() -> Result<(), AllocError> {
-+        let blob = KBox::new(Blob([0xfeu8; TEST_SIZE]), GFP_KERNEL)?;
-+        for b in blob.0.as_slice().iter() {
-+            assert_eq!(*b, 0xfeu8);
-+        }
-+
-+        let blob = KBox::new(LargeAlignBlob([0xfdu8; LARGE_ALIGN_TEST_SIZE]), GFP_KERNEL)?;
-+        for b in blob.0.as_slice().iter() {
-+            assert_eq!(*b, 0xfdu8);
-+        }
-+
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn test_vmalloc() -> Result<(), AllocError> {
-+        let blob = VBox::new(Blob([0xfeu8; TEST_SIZE]), GFP_KERNEL)?;
-+        for b in blob.0.as_slice().iter() {
-+            assert_eq!(*b, 0xfeu8);
-+        }
-+
-+        assert!(VBox::<LargeAlignBlob>::new_uninit(GFP_KERNEL).is_err());
-+
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn test_kvmalloc() -> Result<(), AllocError> {
-+        let blob = KVBox::new(Blob([0xfeu8; TEST_SIZE]), GFP_KERNEL)?;
-+        for b in blob.0.as_slice().iter() {
-+            assert_eq!(*b, 0xfeu8);
-+        }
-+
-+        assert!(KVBox::<LargeAlignBlob>::new_uninit(GFP_KERNEL).is_err());
-+
-+        Ok(())
-+    }
-+}
+ 
+     /// Returns a slice of the entire vector.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// let mut v = KVec::new();
++    /// v.push(1, GFP_KERNEL);
++    /// v.push(2, GFP_KERNEL);
++    /// assert_eq!(v.as_slice(), &[1, 2]);
++    /// ```
+     #[inline]
+     pub fn as_slice(&self) -> &[T] {
+         self
 -- 
 2.43.0
 
