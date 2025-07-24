@@ -1,178 +1,164 @@
-Return-Path: <linux-kernel+bounces-744365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BDDB10BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B29B10BB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CA2189089E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90E217790B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F027B2D9488;
-	Thu, 24 Jul 2025 13:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DE22D3A9C;
+	Thu, 24 Jul 2025 13:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8DuW1mVW"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q+sozftc"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C913BC0C;
-	Thu, 24 Jul 2025 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2204A2C1586
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753364355; cv=none; b=trk88nXrqw0haUHofEFcHgOkqLevii2b3N64T6hbLOjz0B8ey/Y6116mgp1YjTBPmeW/He/v2y2cO/GcRLj8R6Jw1+Z9oa2GIM5uQqtHTTQbKZ1F2zQMQv8b0mBfEZRRtk3Su/9uetYMX4BUgJXx4nR/Xw5mTkvUZibplFLY0tA=
+	t=1753364315; cv=none; b=iCbmN+jxr51zU01I83y1+lzSK1DsxsQSaKdu2uwDmr+oavcF1tX5vgK/KMM9WEitpM32P+08T/FJ+OXr788EmDicWp6+oYBv80kv0NQZK5LZT3bmRpj7BSsl5yqtKjN6Zq7pxhnN4JDYz3pDOU1NoQ3tnkc5NSNE4UOqCXyHkiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753364355; c=relaxed/simple;
-	bh=GGKPx34LBUi+sDBe9RnkRVW9eRR9QWY4VywRj+xNMhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mSlrYnzcMWcPbbzuKmMDpI8pmyL8coS9BIM1tWG5CWHZKIJ8Al1XEU8OxAK9tFwM4kp6N6/RTynvLQH2BZUBNcmAAdSqYQMAbgCLelz6W3M49LfNMUcPqd4Qp3Jyms/AwOJ9YK7Kdpf60ie87xRp7wu7+z3GEgMq8BpbXOaJwY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8DuW1mVW; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODAgol018828;
-	Thu, 24 Jul 2025 15:38:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	w9y6lMVKoGSGbAQ4r7YRTQAIypLEALnPa938lwZnu4s=; b=8DuW1mVWb5Zmz+q0
-	7RKe020XQCaScSNVrCjpPnmByr2ryfDEsJqHwQPObJeuAtdyS46qENjf789qB2Gn
-	Y9jkz0gnExfyBxnDdCXcKF/U1bvmXiPSL0WnENoFzkBrzJOHYylmsIvuGCerLywl
-	ZaA9oZ7lKwFoF195X342XP1lYemLrGWn/qjVkHL6zChh+CpYuigHX7/+E62GiSba
-	SVAHo4H6Hei4POCBjTIbbBtR678I3fMIdBg41DlglPcRw9/urX+wij9vSihPDcRp
-	TxPHyIN2JW2TvS5/OuWkzhrAFqWa9uAwPyPD4tuvxnn6RfeIub6Uo+oLKBm8zZIJ
-	H13+MA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g91e0a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 15:38:57 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4750C4005D;
-	Thu, 24 Jul 2025 15:37:50 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 594A6763978;
-	Thu, 24 Jul 2025 15:36:56 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Jul
- 2025 15:36:55 +0200
-Message-ID: <99737d4f-488d-4208-91aa-83ce52957147@foss.st.com>
-Date: Thu, 24 Jul 2025 15:36:52 +0200
+	s=arc-20240116; t=1753364315; c=relaxed/simple;
+	bh=IbVnVuUXikFBJJ9Ko98F0sau5TC35CHjqvTzNtUUNGk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X3tVigsLfjVfSd/tpEfs6oBLcx/ChESUkCju2Cirt7GDf3ywTVsSfv9GjwvJRTTiESBF2f6oFTmKGi02geRB5oJFzOquNzmwJWPmJNWweZyitqYMV1i0mFK6S5uKoJQTJCClCgBTPowDFYBk7QuyGRm3OWPjhIxU+o9Dnh0W9C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q+sozftc; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4561ca74829so10774305e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753364312; x=1753969112; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IbVnVuUXikFBJJ9Ko98F0sau5TC35CHjqvTzNtUUNGk=;
+        b=q+sozftcdPDo3Rgjq2URBuvYArk0JTw/ZPhw+XSpGKXn4o8ATX2alAnwdnXaJ1M8Ou
+         KpqsTfm1qJtptZx1vVE60x/w6Vk7+1GOljmtnoWGuAOsQIVrZgbTPa8ihoJsNEWP6coF
+         5zH/s/NvaJA/nzejqNpweaMZzDHkEZfw2lJFHwoL5wg3zifYXJEV1q6AZbRGRGSvcyp8
+         e+Gy7eCzbWYca3Zs7pXUGwOoIiRkd/lZ6RBIKMdu2Y9b9rYf2O6mmruC/h3m7l0B/tDc
+         0BtYqOn1oRnhxb1tUAffPdiXyHIxCivoxNBoJpi7TXWrpLFpU9wVHv5O8Dp2h9tDbwKw
+         ghrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753364312; x=1753969112;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IbVnVuUXikFBJJ9Ko98F0sau5TC35CHjqvTzNtUUNGk=;
+        b=bwsZ5IYRr7vFOygJGkxuLbukcdz+PRjBj8vuWiPr9cBHXJi9+dJmpqPnQFZ8MCzaP6
+         OOI9iuOclDanEizjxOLSCl1dv4WuL9819gaVCQmpHnE99645TUjytLt9/7dAj+xa0zHG
+         cMcPp6dBvgXc+QQCX3ctkSC35GFFSqEN1ls3GDLniOpDhQUHJJT8RTgnX8hWJS+tADMb
+         DHrN1hnIRTchoU58vdUaarp4MKd/dpsm0Xg1POsbojoDcGHXiE0UJN9n1L7diEIiPakK
+         3zFwc/pGEZhx5NOHfze8l5jfmYGjyFJ6r0FGK0c+2ZwavrNPhbNRrgZuCXvqNJUfc7AB
+         /tew==
+X-Forwarded-Encrypted: i=1; AJvYcCVzWPx1X9MhJuqXS4PoWDl37xSpaSyJWfvCxJFKhNlKaMWvPIACtdve9QzT6gMZvNsPH72oTdOWmApdfx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUOl6/3EfNe51OrhNbhWzx5kDdL+U8lTyfqHXfGIOauVccX+El
+	oBAh2v5g+HKEDS4KMVvLWsGjpjXyD4/d/+dqOTj6j1dk8Yykur96m8bIa89n/mWzW0Q=
+X-Gm-Gg: ASbGncsr9puEBEjJVhcC1vSEbrI+58YrSkryQn4Ny161zZ6Dq3ZIaWeaMVwlMCwavFd
+	7kPT9ntVEm80yntUE8DUF1ta/qh9ubO+E341ESh4LGcB+ode7OZ8ZcyGNP10XxKeRw47b6OXR2q
+	IhP5c9aKlgM/44BMUenDHUz9KlXWrnP08IFhN4hQpugy1IPIZSbcIBuzg6ZeoPMg9L7nEkagoyN
+	xUYGQQtdfGivgpfPDde/gBPZRlJHPmOeWNcoSAxOWkqFhTCtWt/M2YYxVQA5SIV2XJ6IX9eCw4q
+	JPdAIhmj4umcsB5aUHJYNxXdTDH5ln74yPeZfMegmyJzn7oA2Wi+3gzX6DGAy4C7o3hYAFNpUCX
+	dcIWK/mDY1aY/Rc0q6oWZFg4Vag==
+X-Google-Smtp-Source: AGHT+IFTJQA9Boc7JWTCl6LSd+k2ItcXOgwaQYa0NFEIhnO4z236I53hOupq7tKoQvq6tlGKFF+E+A==
+X-Received: by 2002:a05:600c:190e:b0:456:1e5a:8880 with SMTP id 5b1f17b1804b1-45868c9cf1bmr63195165e9.13.1753364312430;
+        Thu, 24 Jul 2025 06:38:32 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705678c1sm20842055e9.25.2025.07.24.06.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 06:38:32 -0700 (PDT)
+Message-ID: <766fa03c4a9a2667c8c279be932945affb798af0.camel@linaro.org>
+Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
+ (with time limit)
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Alim Akhtar	
+ <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
+ Assche	 <bvanassche@acm.org>, "James E.J. Bottomley"	
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"	
+ <martin.petersen@oracle.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam	 <mani@kernel.org>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, 	linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Thu, 24 Jul 2025 14:38:30 +0100
+In-Reply-To: <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
+References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
+	 <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
+	 <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 0/2] Add pinctrl_pm_select_init_state helper
- function
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-References: <20250723210753.GA2911683@bhelgaas>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <20250723210753.GA2911683@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
 
-
-
-On 7/23/25 23:07, Bjorn Helgaas wrote:
-> On Wed, Jul 23, 2025 at 01:32:52PM +0200, Linus Walleij wrote:
->> On Thu, Jul 17, 2025 at 8:33 AM Christian Bruel
->> <christian.bruel@foss.st.com> wrote:
->>
->>> We have the helper functions pinctrl_pm_select_default_state and
->>> pinctrl_pm_select_sleep_state.
->>> This patch adds the missing pinctrl_pm_select_init_state function.
->>>
->>> The STM32MP2 needs to set the pinctrl to an initial state during
->>> pm_resume, just like in probe. To achieve this, the function
->>> pinctrl_pm_select_init_state is added.
->>>
->>> This allows a driver to balance pinctrl_pm_select_sleep_state()
->>> with pinctrl_pm_select_default_state() and
->>> pinctrl_pm_select_init_state() in pm_runtime_suspend and pm_runtime_resume.
->>>
->>> Christian Bruel (2):
->>>    pinctrl: Add pinctrl_pm_select_init_state helper function
->>>    PCI: stm32: use pinctrl_pm_select_init_state() in
->>>      stm32_pcie_resume_noirq()
->>
->> If Bjorn Helgaas is OK with it I can apply this to the pinctrl tree.
->>
->> Otherwise I can also just apply patch 1/2, but that doesn't solve
->> any problem.
-> 
-> The stm32 driver has been posted and is on this branch of the PCI
-> tree:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dwc-stm32&id=5a972a01e24b
-> 
-> but it's not in mainline (or even in pci/next) yet, so you would only
-> be able to apply patch 2/2 if you took the whole driver, which is
-> probably more than you would want to do.
-> 
-> I haven't put it in pci/next yet because it doesn't build when
-> CONFIG_PINCTRL is not defined:
-> 
->    https://lore.kernel.org/r/20250716192418.GA2550861@bhelgaas
-> 
-> I don't know enough about pinctrl to know why stm32 needs this when
-> nobody else seems to.  I doubt it's really unique, so maybe it's just
-> not doing the right thing here.
-
-The STM32MP2 is unique because the core clock is gated on CLKREQ#. 
-Consequently, it is not possible to access the core registers from DBI 
-when no card is attached, causing the board to freeze. I don't know 
-another platform with this limitation
-
-To fix this, we use a GPIO to de-assert CLKREQ# during probe and restore 
-the pin to its default AF mode afterward. This works perfectly for 
-probe, but we lack functionality for PM resume unless we explicitly 
-select the state with pinctrl_pm_select_XXX_state().
-
-For reference, the init_state functionality was introduced in
-https://lkml.org/lkml/2015/10/21/1
-
-If we prefer not to extend the pinctrl API in patch 1/2, I can fix the 
-case in patch 2/2 only with something like:
-
-in stm32_pcie_probe()
-      pinctrl = devm_pinctrl_get(dev);
-
-      if(pinctrl!= -ENODEV) // PINCTRL is defined
-           pinctrl_init = pinctrl_lookup_state(stm32_pcie>pinctrl, 
-PINCTRL_STATE_IN
-
-in stm32_pcie_resume_noirq()
-    if (pinctrl) {
-           ret = pinctrl_select_state(stm32_pcie->pinctrl, 
-stm32_pcie->pinctrl_init);
-
-What do you advise ?
-
-thank you
-
-Christian
-
-
-
-> 
-> Bjorn
+T24gVGh1LCAyMDI1LTA3LTI0IGF0IDEzOjU0ICswMjAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
+PiBPbiAyNC8wNy8yMDI1IDEzOjQ0LCBBbmRyw6kgRHJhc3ppayB3cm90ZToKPiA+IE9uIFRodSwg
+MjAyNS0wNy0yNCBhdCAxMDo1NCArMDEwMCwgQW5kcsOpIERyYXN6aWsgd3JvdGU6Cj4gPiA+IGZp
+byByZXN1bHRzIG9uIFBpeGVsIDY6Cj4gPiA+IMKgwqAgcmVhZCAvIDEgam9iwqDCoMKgwqAgb3Jp
+Z2luYWzCoMKgwqAgYWZ0ZXLCoMKgwqAgdGhpcyBjb21taXQKPiA+ID4gwqDCoMKgwqAgbWluIElP
+UFPCoMKgwqDCoMKgwqDCoCA0LDY1My42MMKgwqAgMiw3MDQuNDDCoMKgwqAgMyw5MDIuODAKPiA+
+ID4gwqDCoMKgwqAgbWF4IElPUFPCoMKgwqDCoMKgwqDCoCA2LDE1MS44MMKgwqAgNCw4NDcuNjDC
+oMKgwqAgNiwxMDMuNDAKPiA+ID4gwqDCoMKgwqAgYXZnIElPUFPCoMKgwqDCoMKgwqDCoCA1LDQ4
+OC44MsKgwqAgNCwyMjYuNjHCoMKgwqAgNSwzMTQuODkKPiA+ID4gwqDCoMKgwqAgY3B1ICUgdXNy
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgMS44NcKgwqDCoMKgwqDCoCAxLjcywqDCoMKgwqDCoMKgwqAg
+MS45Nwo+ID4gPiDCoMKgwqDCoCBjcHUgJSBzeXPCoMKgwqDCoMKgwqDCoMKgwqAgMzIuNDbCoMKg
+wqDCoMKgIDI4Ljg4wqDCoMKgwqDCoMKgIDMzLjI5Cj4gPiA+IMKgwqDCoMKgIGJ3IE1CL3PCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDIxLjQ2wqDCoMKgwqDCoCAxNi41MMKgwqDCoMKgwqDCoCAyMC43
+Ngo+ID4gPiAKPiA+ID4gwqDCoCByZWFkIC8gOCBqb2JzwqDCoMKgIG9yaWdpbmFswqDCoMKgIGFm
+dGVywqDCoMKgIHRoaXMgY29tbWl0Cj4gPiA+IMKgwqDCoMKgIG1pbiBJT1BTwqDCoMKgwqDCoMKg
+IDE4LDIwNy44MMKgIDExLDMyMy4wMMKgwqAgMTcsOTExLjgwCj4gPiA+IMKgwqDCoMKgIG1heCBJ
+T1BTwqDCoMKgwqDCoMKgIDI1LDUzNS44MMKgIDE0LDQ3Ny40MMKgwqAgMjQsMzczLjYwCj4gPiA+
+IMKgwqDCoMKgIGF2ZyBJT1BTwqDCoMKgwqDCoMKgIDIyLDUyOS45M8KgIDEzLDMyNS41OcKgwqAg
+MjEsODY4Ljg1Cj4gPiA+IMKgwqDCoMKgIGNwdSAlIHVzcsKgwqDCoMKgwqDCoMKgwqDCoMKgIDEu
+NzDCoMKgwqDCoMKgwqAgMS40McKgwqDCoMKgwqDCoMKgIDEuNjcKPiA+ID4gwqDCoMKgwqAgY3B1
+ICUgc3lzwqDCoMKgwqDCoMKgwqDCoMKgIDI3Ljg5wqDCoMKgwqDCoCAyMS44NcKgwqDCoMKgwqDC
+oCAyNy4yMwo+ID4gPiDCoMKgwqDCoCBidyBNQi9zwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA4OC4x
+MMKgwqDCoMKgwqAgNTIuMTDCoMKgwqDCoMKgwqAgODQuNDgKPiA+ID4gCj4gPiA+IMKgwqAgd3Jp
+dGUgLyAxIGpvYsKgwqDCoCBvcmlnaW5hbMKgwqDCoCBhZnRlcsKgwqDCoCB0aGlzIGNvbW1pdAo+
+ID4gPiDCoMKgwqDCoCBtaW4gSU9QU8KgwqDCoMKgwqDCoMKgIDYsNTI0LjIwwqDCoCAzLDEzNi4w
+MMKgwqDCoCA1LDk4OC40MAo+ID4gPiDCoMKgwqDCoCBtYXggSU9QU8KgwqDCoMKgwqDCoMKgIDcs
+MzAzLjYwwqDCoCA1LDE0NC40MMKgwqDCoCA3LDIzMi40MAo+ID4gPiDCoMKgwqDCoCBhdmcgSU9Q
+U8KgwqDCoMKgwqDCoMKgIDcsMTY5LjgwwqDCoCA0LDYwOC4yOcKgwqDCoCA3LDAxNC42Ngo+ID4g
+PiDCoMKgwqDCoCBjcHUgJSB1c3LCoMKgwqDCoMKgwqDCoMKgwqDCoCAyLjI5wqDCoMKgwqDCoMKg
+IDIuMzTCoMKgwqDCoMKgwqDCoCAyLjIzCj4gPiA+IMKgwqDCoMKgIGNwdSAlIHN5c8KgwqDCoMKg
+wqDCoMKgwqDCoCA0MS45McKgwqDCoMKgwqAgMzkuMzTCoMKgwqDCoMKgwqAgNDIuNDgKPiA+ID4g
+wqDCoMKgwqAgYncgTUIvc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjguMDLCoMKgwqDCoMKgIDE4
+LjAwwqDCoMKgwqDCoMKgIDI3LjQyCj4gPiA+IAo+ID4gPiDCoMKgIHdyaXRlIC8gOCBqb2JzwqDC
+oCBvcmlnaW5hbMKgwqDCoCBhZnRlcsKgwqDCoCB0aGlzIGNvbW1pdAo+ID4gPiDCoMKgwqDCoCBt
+aW4gSU9QU8KgwqDCoMKgwqDCoCAxMiw2ODUuNDDCoCAxMyw3ODMuMDDCoMKgIDEyLDYyMi40MAo+
+ID4gPiDCoMKgwqDCoCBtYXggSU9QU8KgwqDCoMKgwqDCoCAzMCw4MTQuMjDCoCAyMiwxMjIuMDDC
+oMKgIDI5LDYzNi4wMAo+ID4gPiDCoMKgwqDCoCBhdmcgSU9QU8KgwqDCoMKgwqDCoCAyMSw1Mzku
+MDTCoCAxOCw1NTIuNjPCoMKgIDIxLDEzNC42NQo+ID4gPiDCoMKgwqDCoCBjcHUgJSB1c3LCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAyLjA4wqDCoMKgwqDCoMKgIDEuNjHCoMKgwqDCoMKgwqDCoCAyLjA3
+Cj4gPiA+IMKgwqDCoMKgIGNwdSAlIHN5c8KgwqDCoMKgwqDCoMKgwqDCoCAzMC44NsKgwqDCoMKg
+wqAgMjMuODjCoMKgwqDCoMKgwqAgMzAuNjQKPiA+ID4gwqDCoMKgwqAgYncgTUIvc8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgODQuMTjCoMKgwqDCoMKgIDcyLjU0wqDCoMKgwqDCoMKgIDgyLjYyCj4g
+PiAKPiA+IEdpdmVuIHRoZSBzZXZlcmUgcGVyZm9ybWFuY2UgZHJvcCBpbnRyb2R1Y2VkIGJ5IHRo
+ZSBjdWxwcml0Cj4gPiBjb21taXQsIGl0IG1pZ2h0IG1ha2Ugc2Vuc2UgdG8gaW5zdGVhZCBqdXN0
+IHJldmVydCBpdCBmb3IKPiA+IDYuMTYgbm93LCB3aGlsZSB0aGlzIHBhdGNoIGhlcmUgY2FuIG1h
+dHVyZSBhbmQgYmUgcHJvcGVybHkKPiA+IHJldmlld2VkLiBBdCBsZWFzdCB0aGVuIDYuMTYgd2ls
+bCBub3QgaGF2ZSBhbnkgcGVyZm9ybWFuY2UKPiA+IHJlZ3Jlc3Npb24gb2Ygc3VjaCBhIHNjYWxl
+Lgo+IAo+IFRoZSBvcmlnaW5hbCBjaGFuZ2Ugd2FzIGRlc2lnbmVkIHRvIHN0b3AgdGhlIGludGVy
+cnVwdCBoYW5kbGVyCj4gdG8gc3RhcnZlIHRoZSBzeXN0ZW0gYW5kIGNyZWF0ZSBkaXNwbGF5IGFy
+dGlmYWN0IGFuZCBjYXVzZQo+IHRpbWVvdXRzIG9uIHN5c3RlbSBjb250cm9sbGVyIHN1Ym1pc3Np
+b24uIFdoaWxlIGltcGVyZmVjdCwKPiBpdCB3b3VsZCByZXF1aXJlIHNvbWUgZmluZSB0dW5pbmcg
+Zm9yIHNtYWxsZXIgY29udHJvbGxlcnMKPiBsaWtlIG9uIHRoZSBQaXhlbCA2IHRoYXQgd2hlbiBs
+ZXNzIHF1ZXVlcy4KCldlbGwsIHRoZSBwYXRjaCBoYXMgc29sdmVkIG9uZSBwcm9ibGVtIGJ5IGNy
+ZWF0aW5nIGFub3RoZXIgcHJvYmxlbS4KSSBkb24ndCB0aGluayB0aGF0J3MgaG93IHRoaW5ncyBh
+cmUgbm9ybWFsbHkgZG9uZS4gQSA0MCUgYmFuZHdpZHRoCmFuZCBJT1BTIGRyb3AgaXMgbm90IG5l
+Z2xpZ2libGUuCgpBbmQgd2hpbGUgSSBhbSByZWZlcmVuY2luZyBQaXhlbCA2IGFib3ZlIGFzIGl0
+J3MgdGhlIG9ubHkgZGV2aWNlCkkgaGF2ZSBhdmFpbGFibGUgdG8gdGVzdCwgSSBzdXNwZWN0IGFs
+bCA8IHY0IGNvbnRyb2xsZXJzIC8gZGV2aWNlcwphcmUgYWZmZWN0ZWQgaW4gYSBzaW1pbGFyIHdh
+eSwgZ2l2ZW4gdGhlIG5hdHVyZSBvZiB0aGUgY2hhbmdlLgoKCkNoZWVycywKQW5kcmUnCg==
 
 
