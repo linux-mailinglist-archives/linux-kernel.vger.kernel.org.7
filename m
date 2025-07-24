@@ -1,98 +1,156 @@
-Return-Path: <linux-kernel+bounces-743401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A516AB0FE3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:41:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EA8B0FE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBCF7A3DD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E76458544A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7045C56B81;
-	Thu, 24 Jul 2025 00:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B127261B;
+	Thu, 24 Jul 2025 00:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW+1P+Hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QYmR6lJb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D258522097
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEB517BA9;
+	Thu, 24 Jul 2025 00:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753317702; cv=none; b=fE8I14ht4LUYQknpEMJxN124n9iYtiNh8XjFfzwM0wcNn9WswzwGqRF1Ky54IFnqjxkRONbA6sGE6dRAl3xznD+rHyt3rephdTVEB57HNaz9oSCM01PQz4QX2yndNCq1uEAUIgLm4xvE6aZFX1XZ2h+P0FMmXI1H84cLVmndCbU=
+	t=1753318067; cv=none; b=FrEoph269vW2dTSM3+sNn86u3BkksX4QV4JZXCWdBm5hxSh/2F/TfFY+8gqfAxM3BizRJYcigJ21wPvMDaJpnV96/SLGPLJf1ufu5eeTTLnz9wLfSFB8s/2H65gJFse/ewbQSA668f+QRXPMJCz4tLcDLrLM2J39UXIplwugXLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753317702; c=relaxed/simple;
-	bh=KMxs7psGGosQjH9QdtBMuoUtdhJLQWMZ/LGiAx+f+i4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Is43JYX4Ol1KUsZyPw0vBY/RYX2/sGZ+hYDZXsI+fbX4/N8+pwz6BxIDiEcJvulwmhFdWy0eiWv1ZYXLJjzwQ1bJU3S6v7J5NQdlwv/s261tIRgHc1IiXjnr71wXuR4XX5CFmLqk1pkFevVNn45BqQM1lgTDEncwdsuQF6uibJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW+1P+Hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD7AC4CEF6;
-	Thu, 24 Jul 2025 00:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753317702;
-	bh=KMxs7psGGosQjH9QdtBMuoUtdhJLQWMZ/LGiAx+f+i4=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=TW+1P+Hs4SzU5kUKi3shw3k2gtO8rx1qos/IFLFfWcHUJwpvzcjrLb0cHXSEvPTS9
-	 EmNmWyCvgQZ+nVzwZRYRw4KbbYlGPHKMUGXeRqHnH8bSpimq/ndgNUZKNdl1aPpodf
-	 RGi32E78pPcX7hqZh0mz88NWDk5MXpCmI5hXy3hkpL2o8BnkR0ZIU+OyrHLiyAPJww
-	 lo3qEdvpmPcYg7gA+7HIS020raSy0C+e2xHuvZW4HJNkOsUJO8+/6qfyJ1PIV936Ca
-	 4kf55/CdOkig+pfUmVbGbnzSSLuL//zJVZ4wIoLMu2aJ10ABe0q6PfYVOKTDX3mXo2
-	 nACYNl5Sr8AMA==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1uek1o-00000000WZg-20bc;
-	Wed, 23 Jul 2025 20:41:44 -0400
-Message-ID: <20250724004144.331778474@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 23 Jul 2025 20:41:28 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Colin Ian King <colin.i.king@gmail.com>
-Subject: [for-next][PATCH 2/2] ring-buffer: make the const read-only type static
-References: <20250724004126.185765796@kernel.org>
+	s=arc-20240116; t=1753318067; c=relaxed/simple;
+	bh=BmMmbppmGyaXZsmxkGbnEXQFP5vbfJ1gnIi9OAhLHlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4cpvrleBEDe1oteOEVNZyf8Nsm3v0iMRZpdYHO/AL7d8TjV+NCIxXNWml3o05vV0VT4UpPI9hdXZuB8ZCaJ2wZk5TwFAYap0uUPAGx6IkK4PrFonsNJaIoUi4dFOqReFfdRZ8+RqH0nEBP7WfKRlGbmylGhnKORBAE2n5fqfhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QYmR6lJb; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753318066; x=1784854066;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BmMmbppmGyaXZsmxkGbnEXQFP5vbfJ1gnIi9OAhLHlc=;
+  b=QYmR6lJbtDiNOXgy+WtcaeKMYVBI0OYa1JSb7r1ldxo2f/A5JT5KFYo9
+   tL3T0oI9JjklF9x74n0bGv2eCEnjDK97plis1zNLhz2g1jKDN8US7QIHt
+   7P2LBEqAzvriyfPQJ9PtK/2QTr13xnl+6NEk1x3NkJ8n+FyXQBEzb2+74
+   VWIJHGYH2wOb7dFae5BU+seINBG779k70ks9Yysh6KBdy1amBfKzuHIaL
+   nAijXdnk9VO8gfUnqmD/1tL/X4VOAck2DoGyjwhq1xqKPJ5kyQVPSwN4R
+   Dp1oafEwCvH9dLDTRUVA85G48quq0Z1lpgE0W2I3P+AKrJxXhyh88GL1P
+   A==;
+X-CSE-ConnectionGUID: yRRjJthsTfCZu7P5tzA3IQ==
+X-CSE-MsgGUID: 42bH1MjlROWVSUL5ZdGyCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="67043685"
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="67043685"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 17:47:46 -0700
+X-CSE-ConnectionGUID: kQ0H7RmCT/684unnTbWIxw==
+X-CSE-MsgGUID: /RXN2o4wSUGRTQkIqVRPBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,335,1744095600"; 
+   d="scan'208";a="163990975"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Jul 2025 17:47:43 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uek7Y-000Jxd-2p;
+	Thu, 24 Jul 2025 00:47:40 +0000
+Date: Thu, 24 Jul 2025 08:46:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
+	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, git@amd.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vineeth.karumanchi@amd.com
+Subject: Re: [PATCH net-next 6/6] net: macb: Add MACB_CAPS_QBV capability
+ flag for IEEE 802.1Qbv support
+Message-ID: <202507240825.lVN6sSiB-lkp@intel.com>
+References: <20250722154111.1871292-7-vineeth.karumanchi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722154111.1871292-7-vineeth.karumanchi@amd.com>
 
-From: Colin Ian King <colin.i.king@gmail.com>
+Hi Vineeth,
 
-Don't populate the read-only 'type' on the stack at run time,
-instead make it static.
+kernel test robot noticed the following build warnings:
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250714160858.1234719-1-colin.i.king@gmail.com
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[auto build test WARNING on net-next/main]
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 903d9db75e12..5176e0270f07 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -4216,7 +4216,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_unlock_commit);
- 
- static const char *show_irq_str(int bits)
- {
--	const char *type[] = {
-+	static const char * type[] = {
- 		".",	// 0
- 		"s",	// 1
- 		"h",	// 2
+url:    https://github.com/intel-lab-lkp/linux/commits/Vineeth-Karumanchi/net-macb-Define-ENST-hardware-registers-for-time-aware-scheduling/20250722-234618
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250722154111.1871292-7-vineeth.karumanchi%40amd.com
+patch subject: [PATCH net-next 6/6] net: macb: Add MACB_CAPS_QBV capability flag for IEEE 802.1Qbv support
+config: parisc-randconfig-r131-20250724 (https://download.01.org/0day-ci/archive/20250724/202507240825.lVN6sSiB-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20250724/202507240825.lVN6sSiB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507240825.lVN6sSiB-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/ethernet/cadence/macb_main.c:282:16: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] bottom @@     got restricted __le32 [usertype] @@
+   drivers/net/ethernet/cadence/macb_main.c:282:16: sparse:     expected unsigned int [usertype] bottom
+   drivers/net/ethernet/cadence/macb_main.c:282:16: sparse:     got restricted __le32 [usertype]
+   drivers/net/ethernet/cadence/macb_main.c:284:13: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [usertype] top @@     got restricted __le16 [usertype] @@
+   drivers/net/ethernet/cadence/macb_main.c:284:13: sparse:     expected unsigned short [usertype] top
+   drivers/net/ethernet/cadence/macb_main.c:284:13: sparse:     got restricted __le16 [usertype]
+   drivers/net/ethernet/cadence/macb_main.c:3645:39: sparse: sparse: restricted __be32 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3650:39: sparse: sparse: restricted __be32 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3655:40: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3655:69: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3680:20: sparse: sparse: restricted __be32 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3684:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [assigned] [usertype] w0 @@     got restricted __be32 [usertype] ip4src @@
+   drivers/net/ethernet/cadence/macb_main.c:3684:20: sparse:     expected unsigned int [assigned] [usertype] w0
+   drivers/net/ethernet/cadence/macb_main.c:3684:20: sparse:     got restricted __be32 [usertype] ip4src
+   drivers/net/ethernet/cadence/macb_main.c:3694:20: sparse: sparse: restricted __be32 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3698:20: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [assigned] [usertype] w0 @@     got restricted __be32 [usertype] ip4dst @@
+   drivers/net/ethernet/cadence/macb_main.c:3698:20: sparse:     expected unsigned int [assigned] [usertype] w0
+   drivers/net/ethernet/cadence/macb_main.c:3698:20: sparse:     got restricted __be32 [usertype] ip4dst
+   drivers/net/ethernet/cadence/macb_main.c:3708:21: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3708:50: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3714:30: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3715:30: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3722:36: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3723:38: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3726:38: sparse: sparse: restricted __be16 degrades to integer
+   drivers/net/ethernet/cadence/macb_main.c:3762:9: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/cadence/macb_main.c:3762:9: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/cadence/macb_main.c:3816:25: sparse: sparse: cast from restricted __be32
+   drivers/net/ethernet/cadence/macb_main.c:3816:25: sparse: sparse: cast from restricted __be32
+>> drivers/net/ethernet/cadence/macb_main.c:5352:42: sparse: sparse: Initializer entry defined twice
+   drivers/net/ethernet/cadence/macb_main.c:5353:10: sparse:   also defined here
+
+vim +5352 drivers/net/ethernet/cadence/macb_main.c
+
+  5348	
+  5349	static const struct macb_config versal_config = {
+  5350		.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_JUMBO |
+  5351			MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_BD_RD_PREFETCH | MACB_CAPS_NEED_TSUCLK |
+> 5352			MACB_CAPS_QUEUE_DISABLE, MACB_CAPS_QBV,
+  5353		.dma_burst_length = 16,
+  5354		.clk_init = macb_clk_init,
+  5355		.init = init_reset_optional,
+  5356		.jumbo_max_len = 10240,
+  5357		.usrio = &macb_default_usrio,
+  5358	};
+  5359	
+
 -- 
-2.47.2
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
