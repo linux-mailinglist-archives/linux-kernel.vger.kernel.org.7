@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-743718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FA6B10263
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3D0B1026C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C9E545CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B201F5465DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0515426F45D;
-	Thu, 24 Jul 2025 07:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6499227056D;
+	Thu, 24 Jul 2025 07:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVQbuari"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o69N/2u0"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6182826E711;
-	Thu, 24 Jul 2025 07:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CF626F45D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343653; cv=none; b=Y9eeeaIcm3UZwF+LrFMbMBlsg7nI/yohMeruK4SaFchrlw1BhzyAxJ9uW88XkdywAGBrzgBiDYH+hWDEhijZtkwZHEkxHTFWB8Z2BkyJrNfakRjCpGjsidFlWHdW21rS7XidJGrnqeoIW7MbxF2GxyBAIh7VvvMHES8mHdt+/58=
+	t=1753343684; cv=none; b=ApvBHhcF6PqvRHXqc0zmcWjlvx5jF53dCmSR0SOjgq3qVVTL7wGLnTs8Dv7kqzl5UX0A1s4DMbnpv0vYREJninbecNNxahuGfGM5Q1qih5mgqhiq3o+RwKN1tj58rOyQQXgyNQ6gjo8WWlrVMe7EJsBdOlu0e9xZNi+2d82O3ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343653; c=relaxed/simple;
-	bh=fedaKSVKoXWJCia4hWOYvIVKJSIrOlYT8OjCgkSiOmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXPjDrddxHOhds8uO+22a0TOzW4R75JnCaTUumS4EkmNZu6QSp8zyECGlrY/alDPawACeT8gc2PJa9GgAzQVjxzty88hp8Tf57lysaKjKsdVv9J6SWa8VL+Vea/02mYWgrMpr8NLUooDFWJPxHXp5YAttvgN8Ox5A7hQeBRWmr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVQbuari; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59CD5C4CEED;
-	Thu, 24 Jul 2025 07:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753343652;
-	bh=fedaKSVKoXWJCia4hWOYvIVKJSIrOlYT8OjCgkSiOmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hVQbuariQMeGlvpf5+/GWEx713YyM9MPKM5KQ601HdQVS5vhpB7/mKfwKY9waABvc
-	 lzeAJ1a0wBQp4pTGKr8KwYrOnQTeuhl9ljDXfw0lR2Pxlh95HcFNqp5xw1T+85fonQ
-	 Ws6dM8jr82IALG7HD+9jqaZDVQGpiFvDdI3tCrzQsudEpLWWFL76MBQDKdoKh3oN4m
-	 wIIm8GY6DEcPdii55F3mTnj5Gl2cNmMB5Y9hUK3fAqUdOiFhYp0tnkFxI5uonCfEQP
-	 CEXOpMkaUb1kKbyE/V1g/dppXzYaws8KcRDiSDciHZzGefQkMYs46ntPJF2rQ2g5k4
-	 sF/nDAWvXTKeQ==
-Date: Thu, 24 Jul 2025 09:54:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Donald Shannon <donalds@nvidia.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	joel@jms.id.au, andrew@codeconstruct.com.au, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v7 0/2] Adding device tree and binding for NVIDIA
- GB200-UT3.0b
-Message-ID: <20250724-affable-gorgeous-dragon-130ac6@kuoka>
-References: <20250723222350.200094-1-donalds@nvidia.com>
+	s=arc-20240116; t=1753343684; c=relaxed/simple;
+	bh=ACD2zYINIxgfFz8EBjJPvfzFI6fX2nmWkQaGYNKCjrk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rib4uJKeG1RK+2IuW9xebIQVFm9nJ3CxoEgA8tGdPnkS+6qeptJzwBwQx9VjW38LIjTkO5jmqFuoTzxoVlSj7SGFePoPHMPilC03paqWScszbC3smmMAZ+B04778tk1IW+/G51q6cAF68Ss44U5H7u0t8M5MAV6Y/wZnLdbivU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o69N/2u0; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753343679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oGI12C/lmT3zYBkqkvKfsU15BIp6uudBd0KMDRTc1F0=;
+	b=o69N/2u0jEFLyQQV1rkIL1dCnLMulYl6OorLIqUadUK/3KzuSJRUO+oQmdh36y6fgO9lLZ
+	xbN+oJki6gAddRVxAZTO8Wv56LV7PvVXSWQ+H8anIRWbex5QFo68QqiNME9IGjq3UlCWjg
+	M2m2p1kvG/4ZlIYOqRzzk+/PnDx/pjM=
+From: Hui Zhu <hui.zhu@linux.dev>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hui Zhu <zhuhui@kylinos.cn>
+Subject: [PATCH v3 0/2] rust: alloc: kvec doc example and allocator unit tests
+Date: Thu, 24 Jul 2025 15:54:17 +0800
+Message-Id: <cover.1753339262.git.zhuhui@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250723222350.200094-1-donalds@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 23, 2025 at 03:23:48PM -0700, Donald Shannon wrote:
-> Patch 1 adds the binding for the NVIDIA GB200-UT3.0b platform.
-> Patch 2 adds the device tree for the NVIDIA GB200-UT3.0b platform.
-> 
-> This is an Aspeed AST2600 based unit testing platform for GB200.
-> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
-> differences, additional gpio expanders, and voltage regulator gating
-> some devices.
-> 
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
-> 
-> Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-> Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> ---
-> Changes v1 -> v2:
->   - Changed phy-mode to rgmii-id [Lunn]
->   - Removed redundant max-speed for mac0 [Lunn]
->   - Fixed typo from gb200nvl to gb200 in Makefile
-> Changes v2 -> v3:
->  - Fixed whitespace issues [Krzysztof]
->  - Fixed schema validation issues from my end ( there are still issues
->  with the aspeed dtsi file that are not related to this new dts)
->  [Herring]
->  - Reordered to follow style guide [Krzysztof]
->  - Removed redundant status okays
->  - Changed vcc to vdd for the power gating on the gpio expanders
-> Changes v3 -> v4:
->   - Added changelog [Krzysztof]
->   - Added nvidia,gb200-ut30b board binding [Krzysztof]
->   - Removed unused imports
->   - Reordered a couple other style guide violations
->   - Added back in a couple needed "status okay"s
-> Changes v4 -> v5:
->  - Resumed my patch after a pause
->  - Don't plan to make this include of nvidia-gb200nvl-bmc due to some
->  platform differences
->  - Fixed io expanders that weren't gated by the 3.3V standby regulator
->  - Fixed incorrect interrupt pin for one IO expander
->  - Removed some IO expanders and I2C busses
-> Changes v5 -> v6:
->  - Fixed subject line
->  - Added missing gpio-key compatible type to buttons
-> Changes v6 -> v7:
->   - Removed Acked-by Krzysztof
+From: Hui Zhu <zhuhui@kylinos.cn>
 
-Why? You did not even give me chance to respond to your reply.
+This series includes two Rust patches:
 
-Best regards,
-Krzysztof
+Patch 1 adds KUnit tests for Rust allocation wrappers (kmalloc, vmalloc,
+kvmalloc). It covers basic allocations, large alignments, and checks for
+expected failures. Each test verifies content integrity through byte
+pattern checks.
+
+Patch 2 improves the documentation for `KVec::as_slice()` by adding a
+code example. This shows how to use the method with push operations and
+assertions.
+
+Both patches are co-developed with Geliang Tang. Tested on x86_64 using
+KUnit.
+
+Changelog:
+v3:
+According to the comments of Danilo and Boqun, move KVec test to doc
+example and move VBox to allocator unit tests.
+v2:
+According to the comments of Danilo, updated the commit to samples the
+usage of VBox and KVec.
+
+Hui Zhu (2):
+  rust: allocator: add unit tests of kmalloc, vmalloc and kvmalloc
+  rust: alloc: kvec: add doc example for `as_slice` method
+
+ rust/kernel/alloc/allocator.rs | 57 ++++++++++++++++++++++++++++++++++
+ rust/kernel/alloc/kvec.rs      |  9 ++++++
+ 2 files changed, 66 insertions(+)
+
+-- 
+2.43.0
 
 
