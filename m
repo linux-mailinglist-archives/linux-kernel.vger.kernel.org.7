@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-743428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9C7B0FE8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:00:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C03B0FE95
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A22D53A35CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA00588143
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2C8192B75;
-	Thu, 24 Jul 2025 01:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988EB1AC43A;
+	Thu, 24 Jul 2025 02:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XaojIzGj"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZpVLHS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E701946DF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5A518DB02;
+	Thu, 24 Jul 2025 02:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753322391; cv=none; b=udteOLcRkLIVNNPYbClPx3a0JAs0Nh/SzUib5sUIvxvRxLbP6iY2Iknx6SnhAAWfGDRHVrKV4vkJFnjbV3/OinEFdF3FZfMStE9dZSG/NYcQoAqbrZpkCLxMcFNbDNYiXticB412We6PrEWgSYhnC0eXf538IcwjU9I+E5OFN0U=
+	t=1753322423; cv=none; b=BDK8MMcQJsROla0tAso9qMoof9sOwmqLcs0C87Y6ARkKbYNvrXDBPXU2j0jlwh8yJmkeS0Ai8c/J7hSnlSuLL1k+BPEI/xjU8lNzyAeGhej8qBZmYo1MoyFeDmDp+iY7c1dsimkHkZJ+D7XNNmkiqNTgV016F6fKLfivpJA8DJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753322391; c=relaxed/simple;
-	bh=LQc6ia5Ttf0UF4TlP5SysjISVYvdpp6f5vOaMclCMIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAutR58r+oAJ0B5MpsG4B3uPINzrqEO/It/Lmz8zyqts8OwUpw7KhH7ueJkg1/g9DujkqILVuJlPLvG1wwGND/rXW2fAFfxuGHqWqiccotdFR5oDwRNVdvlZmhB+sjMEPt5aokkcniBYE/lNFujZJGT9g6FswqsZg6MS23ge/aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XaojIzGj; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0de1c378fso62625966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753322387; x=1753927187; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pv2/YAjQGx18dZmEkcBB7XSK6g1uvGZpGDr9HxLVLZs=;
-        b=XaojIzGj2yxLATeOG9V392lMZybhNs8DSgBWsQbQaEvRylyShPm0gBLPCEkYitXxyE
-         l9qyFoCfEdGEOwNXvBduRo4Ox43YQKqXXECiB14NTchopvBupZNX6AhLGMbTKZXagR8j
-         DUAJ5oxr3pmvmyeXbuwnYrBWHQd+AIW4lXNb4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753322387; x=1753927187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pv2/YAjQGx18dZmEkcBB7XSK6g1uvGZpGDr9HxLVLZs=;
-        b=F4jx6RlpuU9gOmjJvEganEj198ReUGRjD0Lc3Ui4GJ3PKtQuaCQfHdsrM0q+nAwjHK
-         wKwFfTf6WKmaTj0ZOYkc+SPspL7PVzbAIYY99Ek0jzrqUJQd8mp+7l/+dleJHXxUEj0z
-         zuekSH5eu3vEKQe39jo5jWiKhGAic8xxoji6eVQRxs02TFipOnBaW9gPdwB8TYMKbtsL
-         3pv96vIFMdi85FqVCZJhGJlEtxZG/7IQkZv8Bh4Y2zfVlOwLxjbWTuag05HERlW4YLdB
-         LdIyGce0hPK6MdkzEe0lEI1QWTgR/9wCRosjyTAf7676GHZUEr0HThWjghh4z4qCvVZ/
-         2IDA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2pKQerWmo73wvp9Whj1u5aULTO1LjFyTO28bhhDMlYvz9l3kbis2jAbvIC/b8fC0iQsHC8jQXB8zA2uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWCx620ocuJf50/JZtmupeANGmBxXyloBHy1TMSQfHGYU4XDwx
-	XMrih7qTfPjFyPe+44jw9vkx2ldtoF/WpGaLOlxF1nWzNShO535qupwfgBWZ83ug07pcUuxEDhs
-	Sy9Kuh+MXuw==
-X-Gm-Gg: ASbGncvRYw6fI0USnMd360N5tZ6LmntEZznaaBCCl1ozpLvM2njRkBpmZfjz3Scne07
-	SESmsB0GoaGELt39O2x48nsuDBuAE31mtVYBtb8ML/DQzFUvw1yQTeG3uyThLaWoWjHCu1IRerK
-	5qvPVavwoeE3I0729YlIXGccD21SyezljuhJxZmhyPSMOkJQUc+A8E6qq4m/N7FB1PlLcAZBkz9
-	7eyA3Wd6x1GwhUbi7TAFMLb7t6dwwa2pgyGinlUZJOZ70wa9IbWXSWp3z6TdU7Kf805+fPcDeHr
-	+OaGxAsB7t87AgiwmTDgbxTRdFZNG6gArN9JuDioc1vnvc4k/VYteT2tmAaGAk+icj+lBvDspGP
-	JXvZFSSu9AJd9EOEPBQwG4dMm6PmhsVgaNIa1oZQ/OgZnY8XCmKcptdr/3scVKnBR95qMLRUu
-X-Google-Smtp-Source: AGHT+IELUCeTFvssSwtLfBNDDH/eDqH+4Jtpex3/hRI3u4xptiCqb3nw6z8NzMnvxiR1eqzy+malbw==
-X-Received: by 2002:a17:907:7ea3:b0:ae2:9291:9226 with SMTP id a640c23a62f3a-af2f927ac3bmr418621566b.59.1753322387431;
-        Wed, 23 Jul 2025 18:59:47 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47c58bb5bsm37326466b.20.2025.07.23.18.59.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 18:59:46 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-612b67dcb89so913481a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:59:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlmVeD1BYBD/aAoYo4vyRrsK8c4wBqWI5KdHeIbfy+gvM54PfgNRIblXqHCbmgQ5b43DVzx7B4yv6ah0M=@vger.kernel.org
-X-Received: by 2002:a05:6402:4404:b0:608:6501:6a1f with SMTP id
- 4fb4d7f45d1cf-6149b415545mr4129336a12.1.1753322386209; Wed, 23 Jul 2025
- 18:59:46 -0700 (PDT)
+	s=arc-20240116; t=1753322423; c=relaxed/simple;
+	bh=BpiBxoeu56d35+/JzOYrXKdHXbJJT/hxC16C6lp6gcA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=c8/wn9trpgTF+jGw3d0JfMdYKisQsq+YDEfk34uzE1+mnI8TFIkd1oeALKeqP6T8SQq32jWm9gTb4pBjG4v8ShoX4/tOTp43mDV0VQMFyaziOk2BhYWdBgQnv2QrzGYSv1nLQrnvhNYvh0KJyyPvff/DFEVJWtDVKFxujbrsowY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZpVLHS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766C4C4CEEF;
+	Thu, 24 Jul 2025 02:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753322423;
+	bh=BpiBxoeu56d35+/JzOYrXKdHXbJJT/hxC16C6lp6gcA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=FZpVLHS3icbEQYbRG1+helDdBFX+wQpCFSiakNNIv0ThNYsWN8+wKwU2x1N3sV8Gv
+	 DXyX6qd9uvS9jbrnH0u1AgyvOaQft9DZtNjlPlsDXjoox7TvcPgZF/8wxi/eoD80UI
+	 pIvFlEM4HcIYFB8rWvVJbTSH6/DXIoGZ9E25Df4gXS0SPlyC1AGBcuDyjGXIo4nkX8
+	 X35iuPt2DKaZYuJFYaIKvTAJD2ICgAWE1rhevidTMwzKKjRKBODq2DoqE4ZEKRvMtb
+	 TxPoHsoPDEoXYaEYxkkgSrElK9ZWMvipIX7CN8ER7eNLHuBZQez7JQAhtnpZdBVBWh
+	 97HvXJttZJJ3w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD9E383BF4E;
+	Thu, 24 Jul 2025 02:00:42 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9twUCJj4X-2jf0VG5+A2YN9Gk8hjOAhJ2hxq4SdgZfvtMA@mail.gmail.com>
-In-Reply-To: <CAPM=9twUCJj4X-2jf0VG5+A2YN9Gk8hjOAhJ2hxq4SdgZfvtMA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 23 Jul 2025 18:59:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
-X-Gm-Features: Ac12FXyCiDBFkm6GlVYN3UTcVigsgGQehFrUCzri7NOS0-ukmGslf3n2m6dCQDc
-Message-ID: <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.16-rc8/final (resend in txt for sure)
-To: Dave Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v12 00/12] Split netmem from struct page
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175332244124.1844642.1793292791852018522.git-patchwork-notify@kernel.org>
+Date: Thu, 24 Jul 2025 02:00:41 +0000
+References: <20250721021835.63939-1-byungchul@sk.com>
+In-Reply-To: <20250721021835.63939-1-byungchul@sk.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, kernel_team@skhynix.com, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, akpm@linux-foundation.org,
+ andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com,
+ david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-rdma@vger.kernel.org,
+ bpf@vger.kernel.org, vishal.moola@gmail.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
+ xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, sgoutham@marvell.com, gakula@marvell.com,
+ sbhatta@marvell.com, hkelam@marvell.com, bbhushan2@marvell.com,
+ tariqt@nvidia.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, danishanwar@ti.com, rogerq@kernel.org,
+ nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, aleksander.lobakin@intel.com,
+ horms@kernel.org, m-malladi@ti.com, krzysztof.kozlowski@linaro.org,
+ matthias.schiffer@ew.tq-group.com, robh@kernel.org, imx@lists.linux.dev,
+ intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-On Wed, 23 Jul 2025 at 17:40, Dave Airlie <airlied@gmail.com> wrote:
->
-> (this time for sure, plain text).
+Hello:
 
-I knew you could do it! Third time's the charm!
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-I hope I don't need to worry about the branch contents as much as I
-apparently need to worry about your email sending capabilities?
+On Mon, 21 Jul 2025 11:18:23 +0900 you wrote:
+> Hi all,
+> 
+> The MM subsystem is trying to reduce struct page to a single pointer.
+> See the following link for your information:
+> 
+>    https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
+> 
+> [...]
 
-            Linus
+Here is the summary with links:
+  - [net-next,v12,01/12] netmem: introduce struct netmem_desc mirroring struct page
+    https://git.kernel.org/netdev/net-next/c/f3d85c9ee510
+  - [net-next,v12,02/12] netmem: use netmem_desc instead of page to access ->pp in __netmem_get_pp()
+    https://git.kernel.org/netdev/net-next/c/38a436d4e264
+  - [net-next,v12,03/12] netmem, mlx4: access ->pp_ref_count through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/89ade7c73065
+  - [net-next,v12,04/12] netdevsim: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/6fd824342a57
+  - [net-next,v12,05/12] mt76: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/87dda483e63f
+  - [net-next,v12,06/12] net: fec: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/65589e860a80
+  - [net-next,v12,07/12] octeontx2-pf: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/58831a178551
+  - [net-next,v12,08/12] iavf: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/c8d6830e32eb
+  - [net-next,v12,09/12] idpf: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/fc16f6a5877d
+  - [net-next,v12,10/12] mlx5: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/5445a5f71209
+  - [net-next,v12,11/12] net: ti: icssg-prueth: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/c0bcfabd7752
+  - [net-next,v12,12/12] libeth: xdp: access ->pp through netmem_desc instead of page
+    https://git.kernel.org/netdev/net-next/c/9dfd871a3e2e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
