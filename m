@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-744697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F8CB10FE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:50:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67135B10FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29EEC7B685D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 143187BA156
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933BE1F7060;
-	Thu, 24 Jul 2025 16:50:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F22317A318
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42142E9EBA;
+	Thu, 24 Jul 2025 16:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6Mui2C5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F831885AB;
+	Thu, 24 Jul 2025 16:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753375808; cv=none; b=s9QbtOawYeoQNov+9yR9ZCOSipMprJlQh1ncqhV/TVfcqTyiUY1gcDIXo81lklHxjlA2IXoWL7Kx39i3enPuoXnMPfMZcXEpuuQISOtPGlQ+Wz2Jtyy7VhQZdIUWDNIh5cLc+J/AukjhxJEBRlkirG6NzcbzArpPKvHTwYbNK8o=
+	t=1753375910; cv=none; b=kzOBApAPxN9OWmCST61LlhyjCdycECr4URKOOwo+4c3GswZlwPEA3bSEpuzj4+pUiZZ6OLyBWYSz8AlQ0AKbnB3tVedMKM6UEGfssVQaPZU1O9wZjAG3KRitjHu4Iafj8Z2CY6d/JN0drvN5aqGboTW3G89dYjiky5JTUx+6NNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753375808; c=relaxed/simple;
-	bh=YeVAZzteT4zgkKxLC4/qHJBjmXXMmD1AoAy921YmNuU=;
+	s=arc-20240116; t=1753375910; c=relaxed/simple;
+	bh=/qsjcK1VomkE6apG8nnNlFvhA9m0+QqNzjR+5Fxg+Is=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qb6kUjHFuWjSnE64GMJxAS0pZ7VJecxyDzm+VEw0poUgZDriwePIq+HmQAgYmuoALuSjC9J8Nws+/SL2ouEOnyOcojLPpKEUV2+W1/y0suYScId1Yy9lKChlR+FM81awPHCk84No/Vka+AbLKKhtNAr/32fmlJLVqYlA7ekVajA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FE791A00
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:49:58 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B57463F66E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:50:04 -0700 (PDT)
-Date: Thu, 24 Jul 2025 17:49:53 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=irPkGBjZ92oJ0e4NwW5fzsE8yosRle6aN6ZcL7B7S+lakZK6rBAGBC50sBsfnTbgWfut1Fh7i/CwSZx4J+YoxUfCcIMwSkL3uciZTLXGZqcC/+pBC1GLkSIbSmNpt484CFwByin/nzl14OnRW2SB4YhrWvX65Rj4SqLygw6va9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6Mui2C5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE55C4CEED;
+	Thu, 24 Jul 2025 16:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753375909;
+	bh=/qsjcK1VomkE6apG8nnNlFvhA9m0+QqNzjR+5Fxg+Is=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y6Mui2C5tmXU92YDRwif2Mv8GN3Rww19l97ok3n4wucIqTW0YYNIzW3tVdnGxY3JX
+	 xuAGIYiPsPaCOoXjQUWgIDrVFz/G8GxIBdEffgFAJ/YAaTadlAJIGX+917xzE2HtIo
+	 E6kkxS3nQUm6udeXCgLtede73JjXH+MfRbN4X3HivD2rHdniDyPw/MwIXgM8GIjdFW
+	 IG6zKKzjQeyzjqjkMvGNBpaYCNxyMXt4aGTPhacUpnLEpVEF7R5UNO8kgev+g6Us48
+	 PgV86blSd9jc+illN6kiLcgvSrT4X+UGN4n7od+vVnebf53fqWMq9IAddqZADolhQe
+	 Kxrxq6W+WlOLg==
+Date: Thu, 24 Jul 2025 17:51:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: E Shattow <e@freeshell.de>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 6/6] drm/panthor: Add support for Mali-Gx20 and
- Mali-Gx25 GPUs
-Message-ID: <aIJkMV1J41ZB1pYH@e110455-lin.cambridge.arm.com>
-References: <20250724124210.3675094-1-karunika.choo@arm.com>
- <20250724124210.3675094-7-karunika.choo@arm.com>
+Subject: Re: [PATCH] riscv: dts: starfive: jh7110-common: drop no-sdio
+ property from mmc1
+Message-ID: <20250724-equal-limb-2922f240961e@spud>
+References: <20250724075600.239522-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cnNW1JdvRKUTQWKq"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724124210.3675094-7-karunika.choo@arm.com>
+In-Reply-To: <20250724075600.239522-1-e@freeshell.de>
 
-On Thu, Jul 24, 2025 at 01:42:10PM +0100, Karunika Choo wrote:
-> This patch adds firmware binary and GPU model naming support for
-> Mali-Gx20 and Mali-Gx25 GPUs.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+--cnNW1JdvRKUTQWKq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Liviu
+On Thu, Jul 24, 2025 at 12:55:53AM -0700, E Shattow wrote:
+> Drop no-sdio property avoids a delete-property on variant board dts
+> having an SDIO wireless module connected to mmc1.
 
+I'm struggling to understand why this change is correct.
+
+If there are specific boards that have wireless modules connected
+instead of using sdcards, how come the no-sdio property isn't moved to the
+the boards that do have sdcard slots?
+The property was added for the visionfive 2, and only on mmc1, so should
+it be retained for boards that match the visionfive 2 in terms of how
+they use mmc?
+
+Could you add an explanation for why removing this entirely is the right
+thing to do, rather than only removing it for these variant boards?
+
+Cheers,
+Conor.
+
+>=20
+> Signed-off-by: E Shattow <e@freeshell.de>
 > ---
->  drivers/gpu/drm/panthor/panthor_fw.c |  2 ++
->  drivers/gpu/drm/panthor/panthor_hw.c | 18 ++++++++++++++++++
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index fa6e0b48a0b2..9bf06e55eaee 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1405,3 +1405,5 @@ MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch12.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch13.8/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index 8c041e1074a1..4f2858114e5e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -35,6 +35,24 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  		fallthrough;
->  	case GPU_PROD_ID_MAKE(11, 3):
->  		return "Mali-G615";
-> +	case GPU_PROD_ID_MAKE(12, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G720-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G720";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(12, 1):
-> +		return "Mali-G620";
-> +	case GPU_PROD_ID_MAKE(13, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G925-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G725";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(13, 1):
-> +		return "Mali-G625";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> -- 
-> 2.49.0
-> 
+>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv=
+/boot/dts/starfive/jh7110-common.dtsi
+> index 2eaf01775ef5..a315113840e5 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
+> @@ -299,7 +299,6 @@ &mmc1 {
+>  	assigned-clock-rates =3D <50000000>;
+>  	bus-width =3D <4>;
+>  	bootph-pre-ram;
+> -	no-sdio;
+>  	no-mmc;
+>  	cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
+>  	disable-wp;
+>=20
+> base-commit: 28fa0dcb571ab8f3be4d919f0e20e01d4e44bcb1
+> --=20
+> 2.50.0
+>=20
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+--cnNW1JdvRKUTQWKq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaIJkoQAKCRB4tDGHoIJi
+0nruAP4xPM53+ej1ekU6nUQOQC/2pzo3n5HZ/BIJTBv4xIrFnwEA5r77WDc8ja6u
+5CLU8h7EQVS/wCiiIrq3JkQUwk+NNww=
+=QPBu
+-----END PGP SIGNATURE-----
+
+--cnNW1JdvRKUTQWKq--
 
