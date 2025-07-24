@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-744486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10512B10D70
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDF8B10D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3341C87858
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B4B5427EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36D61E130F;
-	Thu, 24 Jul 2025 14:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0252E3387;
+	Thu, 24 Jul 2025 14:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IvdPYPa8"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2+HlHoaO"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E30E2DA74A;
-	Thu, 24 Jul 2025 14:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8442E11B0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366994; cv=none; b=eVojj3UAubb/ii3HuWf7eA9kc0iC/p3vPq6+4TWByrv2hTVNa2yau22SacwxGD+gbQyStD46lpYzps52Mzzpfa6egIuFAtEM4YkHCKvR3zd6hv3GJjZiQApdUqAx80VxCt1yXVusAkTCL560F1bA4LY62jhMyf9TMK+m2kGCD6o=
+	t=1753367106; cv=none; b=O2Bds6UR/4EqB8iZPSB1vttD10CQcxP8QnaEtczi7yErv4HgfmzF83XuGIBzBcVHv3CSYpPuJ+zfZUvAkdfJuyHpo1FzsU4gpLEQR8F552mA/Av5NL2at2H1U9nPdKdSdaAJXhZkxNnAm5SHeSDXjwI9Sc/Je7xIrJRGM8cMzTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366994; c=relaxed/simple;
-	bh=6Cz7GV6Zqf2gSNVM0mNkF0gdFV7Ea6eFphF/n7avkxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LxEotbpM3u/ctOIqdBmH4+sLHYBW6tcdwsHH+GFekEEqFv7QT+RNzQ8FjrxDAr3nItdkYB0CuNN4gjlKnshO0rdhc/oi/z0wfvTwTUKrZ/nzbJxpNvMFsLOvkZOhcM4Nowiz42Pv1C0+7M6Py9cr3rDMaqMBEqN9dEDapSq2soc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IvdPYPa8; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3AA5140E026A;
-	Thu, 24 Jul 2025 14:23:09 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sF_U7XUFOYGo; Thu, 24 Jul 2025 14:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753366986; bh=CXrtkrbk3JW8sRHE4cFKjVLIz7pLtFMQKpN/mwKXvJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IvdPYPa8jr5yt7k2Y+fNvcjRuak3n2kQLKDQ1QO2jJvbfHeWu9QPoznlgTboJhuaG
-	 5yZHtC1cEKM4XWgKq2ujjzfGuw+A1SLCyOgFeqomxBlt7Bh7ctEWLnOUbxtbZuABhq
-	 8L3q0d3bGwXEbtI2jkbNTRwaIcL/qztm+gWeTsa7BSKYkFbcDJ4Y3Nv9Oi/iWioDDJ
-	 L5YzDwIXZ1NvwsORtdz5Lmi3hdxBxJyLVPaQnTNkTn9vKwK6jxabBipajjF8R8BS2M
-	 kOx+ifDAudokRdF9SzRaO5vkis9nwgtU32F5XynOWk8exRxexZV+3EK7SadZR24eTn
-	 mtsrrXLxuGneJR2OB9VoSyw8rs0/H2ExXXekqED0dAi7OqkISZe4k0mz9/seb3C0C6
-	 xoMXUzthy+YPBIOUL20KvfDJN7yrFPMRFmKS+SsSVTsReMlZJI5CH62C09ziDqLk5z
-	 KelICRu9B3sPv8GlbKReZJ9g2ZvdcC3HCuS8pzCTcfQe9sm+ACLLOFoVjL+CjTeWai
-	 W2tl59yCx3toL9aVXYbs4i5zWiPAScZJWi93ddhz1P3ZJ8fo9B+SB23fQ5EVFA/Fph
-	 xvCh9pdd2P5FojkpL8hkv/BK3jewKa2s+G8xt4vfcmHrI7V7IlYVtyIXZscZatYIRj
-	 aVuMaYRhq/mJjV3Z4NrkDHYA=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5138440E0269;
-	Thu, 24 Jul 2025 14:22:51 +0000 (UTC)
-Date: Thu, 24 Jul 2025 16:24:52 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kyung Min Park <kyung.min.park@intel.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>, xin3.li@intel.com,
-	Farrah Chen <farrah.chen@intel.com>, stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] x86: Clear feature bits disabled at compile-time
-Message-ID: <20250724142452.GAaIJCNFO9tLS_ezVV@renoirsky.local>
-References: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
- <C723416D-E1C9-4E18-A3B2-D386B1CB2041@alien8.de>
- <bc4w3nbkjzyrwmcjodrrwg7klgg532gre5v6fiwe3jvrww5egp@zezyxzny3ux4>
+	s=arc-20240116; t=1753367106; c=relaxed/simple;
+	bh=tfa+6qezgu9C6sQHtR8RqJsOg7dClKGTFK37obBkvWI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aGl+81Y2DTYoDsGqCHt3xptGTdoq0VhmZDL++T0SWR3YEZP2OGGavPsvIdAAn2jtYr7tO9edGZ7Gul7N+sjp+YD0tOyus+fkVfb0OnXuR5lnm58YNuUD2+8nGmqXtRQIKcPgSLAcB7U6sGkPo1JikQGoO4UDptbUCQXqM6JEKCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2+HlHoaO; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b773767fddso193617f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753367103; x=1753971903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NDwsomuNdj41hPlMWXxN9KpqGOWNIeXBjQB5e/Iw7d8=;
+        b=2+HlHoaOpGMRBkyrfCsGbcyWR5Zr72YHFEW6t/iSRvc/8ZhkpFZERulVw8m6ySJhue
+         Wny1dQNbDu+lg+JxmJmLOSkzoAzllKzDrjFSHZ30+MfzI6/ewrxM7Lmar+3Vob6O6Aa4
+         avubPFaCsT4h1vW/tC0tg9OdIHob3ngobWLFsDe5zObNHairVpDIVoYbstIWCv1tld8s
+         BJq/ccFL3DKGbwiY4Ri711HYZtIyT5tCo8L/Vqljtlx7rBqb5EzOSi69mkesdL2CIzHD
+         1lob5Vba4/NcwFnr8pyI2Fvul+OvFSGbBrKHXeW1KCK6umGLDWMgbier3jgxbSHvrl60
+         rsCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753367103; x=1753971903;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NDwsomuNdj41hPlMWXxN9KpqGOWNIeXBjQB5e/Iw7d8=;
+        b=Yk85BoXa9z36OxucQ7ZlyvrXQb71+Y+QX+AgFn0GJuP36t8jDnRqJdbmBcCriijx2C
+         SiIWmtqztlLck1i6pg47r4S63DsaFEBRir5tPOuQgbAUDe2hzzyqIT9Y7vLm1EoDWIZy
+         FOuf6DupJtTXRSn7jMsGsaz6x95132AbnSFs5Pr3Z+oXq2PnM1asgc9CTeVMiWSkoJN3
+         /Krvm5T/Lb0zbcF6bRShoufXh3aN5UvuiNDm4C5Gp2ShIx0S8RJPjMYkY7mlVGgeeYjM
+         dxEyrtsnkzCtTZIrvknEbKgpcUg/mp2HIzmSRT1GDggUK/RdZofIzb2p7l3omV/MIGZw
+         iawA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE+X92fSLrl0r06uLAA93BfIu6O8Jpkb8XuLkcI2gG0RlvXZqYutxoDzCElI2qbQ7UEEcJjMgu86WF5M4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK71785XJ1z86kvAVMGxiYtC1ePsBaRQugTBSJLhSXeDjurtLB
+	8WMy/T7vrlf+DDABQcvg7n98G4ddZLNyrO8UBpRKGvJynPE1h/1vfcaSYn/LGDoJ2XY=
+X-Gm-Gg: ASbGncugao7+2cydy83QxCg2/4YG5I5DpsG+StTrjoaT062wBcesw7Ox8qf84d//C0o
+	ZixmVptdDKjcTePIMkzbB9AXg4GP/n1htBL6P5A7jy3NsqhnUFvvtOXI4NDw/UXIfQkfG8Q2gb+
+	RIV+eyXotzfljey9F63dx87SPu0N7V9CONIjOGoXHm7ddmbSfnFzwomzyUxVIe2yXtppaof9+4B
+	1B5DY20aAkKtifUHKaW7obynqg2w0m+PMV31k0XvyuupldA8efIY3hQTGLx2hRd57k06RO+bCYR
+	4x/mXrBm6kXAuD/Ox4bWeW8G/WsL2HD6qfNeQ+YGkChJbAiCfYJ+IvQ1jbjM234KfZW1Sc11vLw
+	9P34G6TX/f7yGWQxTSiq9C+0=
+X-Google-Smtp-Source: AGHT+IFVpPmoVaFnnyv2Q8MVKhGmzvbvMJGKR9lhr6Bsj/oTsmU/UJpFU4LVtR/XBu0GzRRucBDVnA==
+X-Received: by 2002:a05:6000:2283:b0:3b7:58be:8fc with SMTP id ffacd0b85a97d-3b768f1f235mr5772547f8f.43.1753367102982;
+        Thu, 24 Jul 2025 07:25:02 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:f44c:20db:7ada:b556])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870568fb1sm21858075e9.27.2025.07.24.07.25.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 07:25:02 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Arnd Bergmann <arnd@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Peng Fan <peng.fan@nxp.com>,
+	Lee Jones <lee@kernel.org>,
+	Koichiro Den <koichiro.den@canonical.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH] gpiolib: make legacy interfaces optional
+Date: Thu, 24 Jul 2025 16:25:01 +0200
+Message-ID: <175336709883.93776.16672644078934370200.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250722153634.3683927-1-arnd@kernel.org>
+References: <20250722153634.3683927-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bc4w3nbkjzyrwmcjodrrwg7klgg532gre5v6fiwe3jvrww5egp@zezyxzny3ux4>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 12:59:47PM +0200, Maciej Wieczor-Retman wrote:
-> As I wrote in the v2 thread, based on what's in the documentation added at the
-> commit I pointed out, the behavior is a bug.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-That's all missing the whole idea of Fixes: tags and backports.
 
-Your patch must point to the correct faulty commit which causes this
-behavior or to none, which means backport everywhere. And I already
-explained this to you.
+On Tue, 22 Jul 2025 17:35:43 +0200, Arnd Bergmann wrote:
+> The traditional interfaces are only used on a small number of ancient
+> boards. Make these optional now so they can be disabled by default.
+> 
+> 
 
-Pointing to a commit documenting this doesn't make the tree *before*
-that all of a sudden not affected.
+Applied, thanks!
 
-What I would do is, I'd go through all stable trees and check whether
-they're affected. If they are, you craft backports for all of them. You
-were already asking Greg what to do.
+[1/1] gpiolib: make legacy interfaces optional
+      https://git.kernel.org/brgl/linux/c/678bae2eaa812662929a83b3de399645e9de93ad
 
-But pointing to some innocuous commit and deciding that that is the
-culprit is not what you should do.
-
-Thx.
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
