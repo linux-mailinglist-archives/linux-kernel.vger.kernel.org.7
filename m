@@ -1,234 +1,275 @@
-Return-Path: <linux-kernel+bounces-744792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FAFB110FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033A5B11101
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47730AE3283
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF3B5A4972
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469E029ACC3;
-	Thu, 24 Jul 2025 18:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C66A2701D6;
+	Thu, 24 Jul 2025 18:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Sq4Ac64Y"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OyaNlm1N"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD0D2701D6;
-	Thu, 24 Jul 2025 18:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753382387; cv=fail; b=U572XjCo5bKjLWUFoL98OOOWOU2w55MPD88kUDvgJfP9fyu3Vh8KxUWrlncuj1maCHisdqcj3vZr9ASDsHIXhoCjQSkKYOzbPW2e9zoqBuCs1Nd/1dGgjCEscHmJEhcbHyVNmqbLjq7zGB9EcVZY/PG8A1/iW/rjKKS4rMPU0zI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753382387; c=relaxed/simple;
-	bh=ciMGo+l96eMiWkSA61mJJhYfT3JQ6tEy13lcAhS8NVg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pdujQmw1Ee1/4inQd4D4lfGRq+PP5IhMIDunnbRHCE7rR8U/TkAxYvDDza8U+Yp179H3ZCGP4Bk8XHdUgiu5oe5rMPAE0bd6glHNbaHhnULzotAUCoV7Vo0LS6bYlq5pli6wOuaHJ2j7HVjccDIzW5bPzkOfR/wWkcLcDKHZh0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Sq4Ac64Y; arc=fail smtp.client-ip=40.107.236.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pZ36rb5CrEOUQ4hCG8o3qkZ+dNpaQ3LrVTpx9fAXCI0u/eZBZLZlFwsPNteQExCKG/vLZ2+/hVtOH9j68x70fSihLBju9ZL9QFRbvx+FjwIvLNdguG4YsYqfcgv3Upvh0ubmf+wlxTHTKgTLJvzgXWEvgnLvmUoEpnpg7q3BLSyPhfuBK4xYkQ+Aw3Ttwu/OIdwhaBlPMogDkb3YHa/xAV4YOhCoucqVp6W6bIMr7ZHkuddmk8GE4kS9qxd2rXLi/Z6E1kl4BD75dV2RRBHQDNTizAvPrrQMg6z9gGESS6p2U61uFYl8Tv5RZeD1C1mXZancj8oU5fEDnnPawDPf0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NEC0VemRdq0/N7lx+hZJJTGGMpSOQZlh9yrD2F6iLG8=;
- b=gDw9j7X5H/o8REaKL+vB6ucIEv7fR3OyRu4ZkK5/XOZ8B1kbFpIEyCULVAOGvlSV8uyMJiymTjHtosLm7RYzokBnA2vvcGvi4WqhOjqlA1nK09O53hENpH2IsiDVjmk+NcQ26rxLpOeJFZ2CdlS5O6CZx+rY2SMEUu8EqQmTDZbLPhVdh43JeqV5xSYxXWCd8nIHkuIcCB0fzJWjUenwtnufg6jERp5+oGrxW7J6qy/Z0Dx/eft/WRKV7XUTHzCLTasGKSWdiV7fh2pbEaiheqEktErlxMs9/TdfC0wkI+lEmtWmkKhDR/eUn/JlpDaIIDBZy0x0pfa5NKKkEoN88w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NEC0VemRdq0/N7lx+hZJJTGGMpSOQZlh9yrD2F6iLG8=;
- b=Sq4Ac64YJsva7EAhhbkvJOLx2vdsIP9cwZFM2Q82xMNw+sKLoBeZlQyisWmE5hMi5F/veETOzFezeOAr8TB8M1pWWPUcIdIo1Ri/k6DKuPbp8DSgv9RuFGCqaoW4IMz/5wcoqmt3qbErj85aejCDld3BPeEgP50eN/3KYKAcu9w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
- by SA3PR12MB7902.namprd12.prod.outlook.com (2603:10b6:806:305::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Thu, 24 Jul
- 2025 18:39:42 +0000
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607%7]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 18:39:42 +0000
-Message-ID: <a6a3ff44-a755-44aa-a862-89717c80f805@amd.com>
-Date: Thu, 24 Jul 2025 13:39:40 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (k10temp) Add thermal support for AMD Family
- 1Ah-based models
-To: Bjorn Helgaas <helgaas@kernel.org>, Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-hwmon@vger.kernel.org, linux@roeck-us.net, jdelvare@suse.com,
- yazen.ghannam@amd.com, linux-kernel@vger.kernel.org
-References: <20250724154423.GA2939389@bhelgaas>
-Content-Language: en-US
-From: "Naik, Avadhut" <avadnaik@amd.com>
-In-Reply-To: <20250724154423.GA2939389@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9P223CA0029.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:806:26::34) To CH0PR12MB5388.namprd12.prod.outlook.com
- (2603:10b6:610:d7::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E005A26CE2A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753382416; cv=none; b=gIL6fvVUwUAQb+IrN86nbPnOXS/ihSt9NkU2hul6un7sfoxKA+Kj8sJ9TXOYAKXdpYYsYn4HIiTMjn1ONA5fXiTh7D1w2EmBs/aTrJZTioyNtNjinQ+FHe8QVs545T5my6GCRcVm3r0RCs+oyM5cQn/tupYwpL+q7GzrRseT5HU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753382416; c=relaxed/simple;
+	bh=8GkZkXvRavBH9B3NFyyarkpIMnKHJRPaj9XdVoFyU2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rp8HKSZb5z1MsI0X/T9FBTQIthM+JRJN6Yu7PQodouMwQjLCABdWl7zDUZ3G062Z796b2QIPBD2ti3H6yCup8ecg1lHBCD5KQaVbF7FlsfbNST9SH3fl/TLcxC10Bz6i5ga0wi41PfLACm5SbgwUOiWu0tPV27UaDexd0cEPgZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OyaNlm1N; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2ffaa4b4f32so31577fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753382414; x=1753987214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1BMNHZLCVEeiqDvQaiWaHPR4yi2NaTZkc3BJ0ttGl9Y=;
+        b=OyaNlm1NcbDByicM7WWsifKr6iAMLDLlvPeQobtW1gfjOBXs576Ve74iA7uUgt5NpA
+         jUfTQe9wD8v8F57rzaAGwEAlzVzlmBkvAhml1NFkuGIaR5mGtn2QQ2PGGXx2kVroChd4
+         8AAzLc7i8J3Omc1CwTY0Rx46DdeUS57HsLhwk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753382414; x=1753987214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1BMNHZLCVEeiqDvQaiWaHPR4yi2NaTZkc3BJ0ttGl9Y=;
+        b=fu6A5WipT5+0LdRyI2coer2pTsrQp7Fj2B7zFgGjk1J2OjiRrpDvLMvlJxPSpt0TwF
+         t6/y+Xg8FFnGoIhqM4ikye3kbOVQ5sR6B4wSEsDriLbSkmtXYbrUwkvlIaleuxcYA1F3
+         +wLIQ7kukokhWVYB+QWSnyX1jAprAZzMOrK9OPTFF3MnqxaOjbtW7Skt88EgkmhKToqZ
+         /0QqNYdNsEAm4cnLMhkYDwzMgZlP8NxAhxv1T80kndpA83gu4beFDu26YrFtyplttkxm
+         lLsC74CZjsSGbFWcgdZCJLuvGCSXeux8ZRUT+ZvWbhC5Aw53ePbzZsoZo64BRm9k1zeY
+         1qBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwVi6TPyworBhbjIcRZqDQzGit9kRMm9+4zrdWbvEV5DZQb5+PpJL6lTUmHyW8fxY7NDTb/PjKjNc84uA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTTAvpgH5IECW9Yf05pF8DpfSFLLTe6xRwdJpT5NCe7KkoHiRd
+	CPOWDllKbU9z/DpfDf7v3ECE0Dr8XOMxDLEPnI8MlSTC4s98f8HkSSN9saMbYbwUGMRK6Nh6nu8
+	MNdmruB56IiVZkB2zk6ahNiKzwOP7GFgtF5tgNah4
+X-Gm-Gg: ASbGncvvz1JNPhYhpP4m7pJpBHVq9v2NTPXL7K4826Psxujzhn7wmPUvxALxooBANnK
+	AqDwoXsjtA5mIVz7CY8bhTBRSMJW/9e/IIqY8Hkzu0V1PJdiECpedEv0AYowgm9FLVLw88hWoQF
+	40m8w5lzQw31Oko6h5wgZmJJ5VcbGGUGI9NQQCJQNCkaIfa3BxAZFV8ONnvH4lI0uWQoo9O+fZE
+	KM96A7d/MgeQtKmD/S+dTmjJtIqfFSAExdV
+X-Google-Smtp-Source: AGHT+IHIg+HNobqPln9IVjLqjazZFObcWO0xYiJwOyYA5v6NMPyUL45KIuuKS1EbBH0g5KjtFnTF/JHPrS1eWYH49pw=
+X-Received: by 2002:a05:6871:3427:b0:2c1:b4ce:e43b with SMTP id
+ 586e51a60fabf-306c735ce5cmr2179176fac.12.1753382413658; Thu, 24 Jul 2025
+ 11:40:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|SA3PR12MB7902:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ac5bc79-55b9-4953-57d6-08ddcae1741b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QTA4ekhJK09TSlZrak4zZnk0THErYXVZSytlRU1MbVI5Vk5jKzBqZlNNRzhp?=
- =?utf-8?B?ckFIY1F1ZVZtYU1kS0hUZGJ0QWxXT3A1V3NLNkRKSnhSTjl0aW8ybW4vRUI5?=
- =?utf-8?B?MGhNVmtBRDlMOHQ5clRLek1lVGFFblorN2NOQXlNL2FQZURSeGNaL1RGRTNO?=
- =?utf-8?B?dnlMeGt5WnBVMFJxajdqeXdnZ3JEbCtnNk44and0cGJjQ2NpQTd1UWl4N202?=
- =?utf-8?B?bWxiMXNIVEk5MHlLRU9pQi9hK0t0RWxTUEM0dDNWWTJneXR6MjFGMVhRRWdu?=
- =?utf-8?B?ZjNLT3J2OVdPc2FadGt5KzIweGdkd29RTjBCdUU3S1ZTMjZQVlphcXQ4eEdX?=
- =?utf-8?B?K3hOVUNuakx4eWI0b25TalBhc2J2ZkxDUG1lTkhqR25VdzE3Y2hmN2RYdEpS?=
- =?utf-8?B?UlE4bEdsL1BUaXNWVGE1N2k5OWxmMHJpNXNSM2ozMG1ZQjh5NGw4SUM4MGY5?=
- =?utf-8?B?d1ZlWWlWbS8xZGpUNVEvRXJaL0RhdG9LOHR2RmIvZVJkczl5SnFOS29DRzlr?=
- =?utf-8?B?RUJ3NFVlbHI5cEpmaEpHeDFSVUlnSDdJdTd6Nk00dGpnNjBWY09sVG45NFFZ?=
- =?utf-8?B?Uk1IZFAyVmJZT3lZWVdwZE9ydEVOeEh1bGlWZ2wxWDZ0eW5ZUlBDM2UyanZO?=
- =?utf-8?B?TG1YRE1zRllqMUZtVGhYMXdXYlVWMFdZaW9PKzhnMWVrS1hreG5zdC9nZHVp?=
- =?utf-8?B?bnNtUHlzUSs2NnM0MjdiTTBDOU5IRi8rNlErQURQNHdxY25WelZuMCtMeVF6?=
- =?utf-8?B?amx6OCtMNmNZUGlLaXgyNXR6RERwdG1ZUXowWDEwTDZrS2ZkRjNZd3o0R1NI?=
- =?utf-8?B?SjJLbnI3UnpjRTV6R1ZTcGJXM0E1VTN2cjJyaURzMzlLQ0x1TXdwa2RzajBs?=
- =?utf-8?B?K1pIVzNFTXo4OHFDckM5ZmdCVld1eTVqcnZTbktjTXJCVjA4MzZoQ3Q3aVlJ?=
- =?utf-8?B?b3BrU3JwcE85M203TjQ4MytEYkdLM21nZEhvQ3VnMllRNmFZalFLZFpQTEgx?=
- =?utf-8?B?SnV4QlFMNE5CRVEwSXRSRGFFazI1ZjJZbHkyRHYwZ3hWaWcxYjh2dEJPVGh3?=
- =?utf-8?B?eEYvaktEMzJpMVdncGZJVmhyMWpvYXdMRlFTek9TelJITWJYWlF5QUM0RC9h?=
- =?utf-8?B?SzFwN1hkQ2M2WHlQcHFCR3BpN2dGdlhYVFBxUXFnZjliZGlncmtnUzNuMStr?=
- =?utf-8?B?SFdjMG0rMnVyUjM3QlRuQ29HSVVkdDVZTE9LSkVCcWphQW5ob3liTjlML1pH?=
- =?utf-8?B?dUthMFAxNjhUekppdE1JMUR2ZzRlUVVDUmNoa2J6TU1xc09qWHNPRlAvREIz?=
- =?utf-8?B?RUtkTWhSZU5GT3hpUlBnbjF3cUZoZjl3MUZJVmRrSUU1WkRRNEkrQTNnK0tM?=
- =?utf-8?B?TUVlYnRpVmxaTWtFZ3VlUmxJUDUvdkNwKytWMVplWUZzc3JTQ3IzcTFpbmow?=
- =?utf-8?B?LzY1WXNKbFA5SEp3Q0hseXNVSnRzMmpXUnpnQUQySFJOTzNZZ2ZydmJSMFFr?=
- =?utf-8?B?WEY3dlRnNE55Q2dLUHlhSk8xb2R6c01BdzRUSEh2L2JtTE1mczRNbjQyamNJ?=
- =?utf-8?B?bjVlUnhiMDFaUDNzcW1aVVJ4U3ZlNHVCSzUxV01MbE45cithM3NXOGpZcDRa?=
- =?utf-8?B?bHBUbCt2ZGpWbWI0dGplVlloVWNCdk4yUkNHN0tMd0lMT09ocWR5a1NnUStY?=
- =?utf-8?B?NkpIT0wwQ0FZaHJpTFlkRVVpajRLS0NvQ1JjM3Nwa3JQS0tBUCtSWGVyWVBI?=
- =?utf-8?B?K2VpTHRlRXdHb05RcjZZWUFnVG04MUhWdnZIY3ZXbU1JRCtJeUJpcnJRUW5h?=
- =?utf-8?B?Lyt3S09ibDA5VXlZWGFkN05tejVHRzhvYnE3TG9TU3pyUWJBNmRyTi9tMTlM?=
- =?utf-8?B?YXQ1M2pndkRlQnpuMnpWQTVoUmQ4UTRJZmZRdndkbkFBcEFVYStKaUZkVnB4?=
- =?utf-8?Q?xBkor6eKKOU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2hmVFZydGZjNHhQbnBLQU1EbG5Fc0E3b2xWd3J3RFdRdmNBRTJRZ3ZRQ1VK?=
- =?utf-8?B?T1dpclBNY0RQdHRuZGNGVkZhcXRSNEJ6Y051QUtPclZ1REJmNjdMSy9iNjlq?=
- =?utf-8?B?ZXhTNklLWHB6OFBjR09tcC83OUpmOVJDRUkzbnhKVFd4YWduV3ZLeXo0NVNy?=
- =?utf-8?B?UkZNdkRsTm1ncmFneHRJZi9ZQkhyRlBCUnErUDFlZWVjN0xad1RmMWRaVjRN?=
- =?utf-8?B?ZWdwUHhUU1VvUGhhMjdYRDRQVmUwTzNpcVh0Znl2dWVWOTE4Y3NoR3hnMVpz?=
- =?utf-8?B?NHJFNUZORFJ2UGhnUi84aVJXSHFlb2VPRTd0RDl6Tml1azZPa0x3Y1JFTTUz?=
- =?utf-8?B?NHBIempFd2tWSTB4MUdFSHd4enlWMTV0YWowRVhlaERyY2FIN1NlWVhTZ0l1?=
- =?utf-8?B?MkNPY0ZvUGVFRmt5RUgwTnNneUJBMlQ4aGxYdkxXSlkzL2JGTThLRkRvbEVJ?=
- =?utf-8?B?TVNkem5tUE9QbGowYTFCcjhXbm0zaWhMbTkzcktha3BMTDExZHpSK09yTThO?=
- =?utf-8?B?aGdHeU5GZVowY1Rya0txRjlSbUxHbnUva28vQnJ6RzN2bDBDamFNS1pySnNH?=
- =?utf-8?B?RHJnV0NXQmQvVFNYdUFHS2s5QUk1ZXltaXVsN0NlYWtsWUd5Vk9YeU1rd0M0?=
- =?utf-8?B?elowV1ZPcStpZituRUVyK0FXSFU0YjN4M0RZYlUwYUl0TGlBZDJtMEI5Zlln?=
- =?utf-8?B?cGZaSnkvb1ZYK0NVckM3b1NuRFlpL1lIelpVbHhxZDExSUkxRkp4eVJkR2Fn?=
- =?utf-8?B?YXVSamhyZnU3UWtoK3dIUG5Zckd4ZFJiaE90ZmNRWisxeFRKZ1dBMkhnR2wy?=
- =?utf-8?B?R2dFbU9BNzFmV09IbU15MU5DSitJaEIvM25aVGh6bkRBdHBLOEFqYkx6b21x?=
- =?utf-8?B?ZXVZb2o5TjZkMHBOaGVQcW9NNC9ybi9qU3dQb2VQdzNvbWdDZE42QWVFNFlD?=
- =?utf-8?B?a3g2ZDhEaEVxMjdlSWs5MkNxd1VVaFRMM21pQUVvc2VBZ2RPbVVEMERFbE56?=
- =?utf-8?B?QnZYcjEyZUtMZWdRTmprdGpWdWtlazNESE92VHZsRklHMHlFSE5aKzhHSHJ5?=
- =?utf-8?B?TWdCbVN3UmgyeWVGSitVL1AxMElIMGlZbEpMc1p5WHA5UExKOEJKMklRbmsx?=
- =?utf-8?B?VXh0MlpVL3VORTJBZzhVMmpkcUhyRUsvRUJiQ3UyOHplcU9pZmExdnBHMzBB?=
- =?utf-8?B?S2U5T2hHQU9ReDBCQ1BRakVpdjQ2UkxDUmZHSVhMMnZVbTdJMXEzWkhqT1lS?=
- =?utf-8?B?czU3by9HN1l1M3NrTWdpOXVRYVNnVk9sRGpEMzA0YWNTQkpza3k2RGVTRlcx?=
- =?utf-8?B?enZvS0VuaVZsRkFLZ2YxN3d1NjdxMzc1UHFHZDRGZmJsaWNnbEF0dXdiWEg4?=
- =?utf-8?B?aWZEeDZObmVCRGxhdWxjOElwck03ckJLaFpOVXVOL011WS9LbUtOZ2g2cEsw?=
- =?utf-8?B?YUZQUG5DOXcwQkpQYTRyWWxUOEhBOGhzUzgyZGViQjdzT0svanVJMTNKdFVG?=
- =?utf-8?B?YXlHSmdqQU8wTXMxaERrTGk3OHlJS3NMazVVYzRrOXM2cVA2Z1JpMHZseW1P?=
- =?utf-8?B?Z0lydzkrQy9WaXJaMlRPQlRNem5xNm91a09lWlRNbXd4a0J1eVczMHQ1TFdj?=
- =?utf-8?B?SEZVbFlkdlJZbHhjbEdWM0ZpYS93cGFnZFR3ZzZSOGpnZXNqNWpnRG1NaXlw?=
- =?utf-8?B?eGFXU3R4eFNRcGdDWDQ5b2FycWw3RExQQVBGbnJWUGNEUDl3RUdaVDlOdld0?=
- =?utf-8?B?WHRSN3J2NjR5NGxSYjBUWFB5cmc5Qkk4OEh5bzVOSFRwUG5kRzdsdVQ3Z1FT?=
- =?utf-8?B?NEtCR2hGSjZJYmpQQnhGSTBPV2ZYaXVSVnppOGp2Uzl4NkRLNW1HeWZGQ2lM?=
- =?utf-8?B?Tnl4Y1hmTVRWWTdnRkF2RldYTmFlRERMSnBPcXBja3BQQ1h1YzEyRUJnRzB6?=
- =?utf-8?B?R3VoeG1xem1UNFY5emhrTGVSRllZYzBtTC82M1MydXBtR25pZEhjVk1IbENz?=
- =?utf-8?B?Z2tld002QWNKVHBLMGJjWUw0NjNBNzRJTXl6YlByZElFcGx1bGV3OFhTRlhY?=
- =?utf-8?B?a055d2t4dFAxMExrNjNaL1B0YklzMStMUTV4OTlIcVF3MFo5dmhXQmdicGI2?=
- =?utf-8?Q?p4oW/1AD505G91Xd7tPyXLXaI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac5bc79-55b9-4953-57d6-08ddcae1741b
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 18:39:42.3221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 51r6X1yWWbr6a7cKdhXLLAEFvX9eQXHZ22SIoDtIRj7F8hv7SWPTOd+ClVH+Yp3yB78tVcYNCKdLsO4DIIES4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7902
+References: <cover.1752687069.git.lorenzo.stoakes@oracle.com> <ac51c2a3c68a2475149b54180ff012fffab72c02.1752687069.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <ac51c2a3c68a2475149b54180ff012fffab72c02.1752687069.git.lorenzo.stoakes@oracle.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 24 Jul 2025 11:40:01 -0700
+X-Gm-Features: Ac12FXznMGya-BnO3U5H6mKpJLmpNyl0TeBQAlHn33pD748OLsKUzh_9L0k-wdw
+Message-ID: <CABi2SkXHyF+dHo7Rv5V1jPZ4B5_v4Hva-A4XphtRMQJTrw_jqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] mm/mseal: small cleanups
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Lorenzo,
 
+On Wed, Jul 16, 2025 at 10:38=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> Drop the wholly unnecessary set_vma_sealed() helper(), which is used only
+> once, and place VMA_ITERATOR() declarations in the correct place.
+>
+> Retain vma_is_sealed(), and use it instead of the confusingly named
+> can_modify_vma(), so it's abundantly clear what's being tested, rather th=
+en
+> a nebulous sense of 'can the VMA be modified'.
+>
+> No functional change intended.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Jeff Xu <jeffxu@chromium.org>
 
-On 7/24/2025 10:44, Bjorn Helgaas wrote:
-> On Wed, Jul 23, 2025 at 08:23:38PM +0000, Avadhut Naik wrote:
->> Add thermal info support for newer AMD Family 1Ah-based models.
->>
->> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
->> ---
->>  drivers/hwmon/k10temp.c | 2 ++
->>  include/linux/pci_ids.h | 2 ++
->>  2 files changed, 4 insertions(+)
->>
->> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
->> index babf2413d666..7765cd57d746 100644
->> --- a/drivers/hwmon/k10temp.c
->> +++ b/drivers/hwmon/k10temp.c
->> @@ -556,7 +556,9 @@ static const struct pci_device_id k10temp_id_table[] = {
->>  	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F3) },
->>  	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3) },
->>  	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3) },
->> +	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_1AH_M50H_DF_F3) },
->>  	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3) },
->> +	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_1AH_M90H_DF_F3) },
->>  	{ PCI_VDEVICE(HYGON, PCI_DEVICE_ID_AMD_17H_DF_F3) },
->>  	{}
->>  };
->> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
->> index e2d71b6fdd84..ae87b6c72981 100644
->> --- a/include/linux/pci_ids.h
->> +++ b/include/linux/pci_ids.h
->> @@ -583,8 +583,10 @@
->>  #define PCI_DEVICE_ID_AMD_19H_M78H_DF_F3 0x12fb
->>  #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3 0x12c3
->>  #define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3 0x16fb
->> +#define PCI_DEVICE_ID_AMD_1AH_M50H_DF_F3 0x12cb
->>  #define PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3 0x124b
->>  #define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3 0x12bb
->> +#define PCI_DEVICE_ID_AMD_1AH_M90H_DF_F3 0x127b
-> 
-> Per the comment at top:
-> 
->  *      Do not add new entries to this file unless the definitions
->  *      are shared between multiple drivers.
-> 
-> I would suggest adding these #defines to k10temp.c itself.
-> 
-Okay. Will move these definitions to k10temp.c
-
->>  #define PCI_DEVICE_ID_AMD_MI200_DF_F3	0x14d3
->>  #define PCI_DEVICE_ID_AMD_MI300_DF_F3	0x152b
->>  #define PCI_DEVICE_ID_AMD_VANGOGH_USB	0x163a
->>
->> base-commit: a2609b707b58561b9e52f92f3f571d0510201f2f
->> -- 
->> 2.43.0
->>
-
--- 
-Thanks,
-Avadhut Naik
-
+Thanks and regards
+-Jeff
+> ---
+>  mm/madvise.c  |  2 +-
+>  mm/mprotect.c |  2 +-
+>  mm/mremap.c   |  2 +-
+>  mm/mseal.c    |  9 +--------
+>  mm/vma.c      |  4 ++--
+>  mm/vma.h      | 20 ++------------------
+>  6 files changed, 8 insertions(+), 31 deletions(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index dc3d8497b0f4..da6e0e7c00b5 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1286,7 +1286,7 @@ static bool can_madvise_modify(struct madvise_behav=
+ior *madv_behavior)
+>         struct vm_area_struct *vma =3D madv_behavior->vma;
+>
+>         /* If the VMA isn't sealed we're good. */
+> -       if (can_modify_vma(vma))
+> +       if (!vma_is_sealed(vma))
+>                 return true;
+>
+>         /* For a sealed VMA, we only care about discard operations. */
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 88709c01177b..807939177065 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -605,7 +605,7 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_g=
+ather *tlb,
+>         unsigned long charged =3D 0;
+>         int error;
+>
+> -       if (!can_modify_vma(vma))
+> +       if (vma_is_sealed(vma))
+>                 return -EPERM;
+>
+>         if (newflags =3D=3D oldflags) {
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 5b7fe8f36074..8e93eca86721 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -1649,7 +1649,7 @@ static int check_prep_vma(struct vma_remap_struct *=
+vrm)
+>                 return -EFAULT;
+>
+>         /* If mseal()'d, mremap() is prohibited. */
+> -       if (!can_modify_vma(vma))
+> +       if (vma_is_sealed(vma))
+>                 return -EPERM;
+>
+>         /* Align to hugetlb page size, if required. */
+> diff --git a/mm/mseal.c b/mm/mseal.c
+> index 1308e88ab184..adbcc65e9660 100644
+> --- a/mm/mseal.c
+> +++ b/mm/mseal.c
+> @@ -15,11 +15,6 @@
+>  #include <linux/sched.h>
+>  #include "internal.h"
+>
+> -static inline void set_vma_sealed(struct vm_area_struct *vma)
+> -{
+> -       vm_flags_set(vma, VM_SEALED);
+> -}
+> -
+>  static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *=
+vma,
+>                 struct vm_area_struct **prev, unsigned long start,
+>                 unsigned long end, vm_flags_t newflags)
+> @@ -36,7 +31,7 @@ static int mseal_fixup(struct vma_iterator *vmi, struct=
+ vm_area_struct *vma,
+>                 goto out;
+>         }
+>
+> -       set_vma_sealed(vma);
+> +       vm_flags_set(vma, VM_SEALED);
+>  out:
+>         *prev =3D vma;
+>         return ret;
+> @@ -53,7 +48,6 @@ static int check_mm_seal(unsigned long start, unsigned =
+long end)
+>  {
+>         struct vm_area_struct *vma;
+>         unsigned long nstart =3D start;
+> -
+>         VMA_ITERATOR(vmi, current->mm, start);
+>
+>         /* going through each vma to check. */
+> @@ -78,7 +72,6 @@ static int apply_mm_seal(unsigned long start, unsigned =
+long end)
+>  {
+>         unsigned long nstart;
+>         struct vm_area_struct *vma, *prev;
+> -
+>         VMA_ITERATOR(vmi, current->mm, start);
+>
+>         vma =3D vma_iter_load(&vmi);
+> diff --git a/mm/vma.c b/mm/vma.c
+> index fc502b741dcf..75fd2759964b 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -1351,7 +1351,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap=
+_struct *vms,
+>                 }
+>
+>                 /* Don't bother splitting the VMA if we can't unmap it an=
+yway */
+> -               if (!can_modify_vma(vms->vma)) {
+> +               if (vma_is_sealed(vms->vma)) {
+>                         error =3D -EPERM;
+>                         goto start_split_failed;
+>                 }
+> @@ -1371,7 +1371,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap=
+_struct *vms,
+>         for_each_vma_range(*(vms->vmi), next, vms->end) {
+>                 long nrpages;
+>
+> -               if (!can_modify_vma(next)) {
+> +               if (vma_is_sealed(next)) {
+>                         error =3D -EPERM;
+>                         goto modify_vma_failed;
+>                 }
+> diff --git a/mm/vma.h b/mm/vma.h
+> index 85db5e880fcc..b123a9cdedb0 100644
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -559,31 +559,15 @@ struct vm_area_struct *vma_iter_next_rewind(struct =
+vma_iterator *vmi,
+>  }
+>
+>  #ifdef CONFIG_64BIT
+> -
+>  static inline bool vma_is_sealed(struct vm_area_struct *vma)
+>  {
+>         return (vma->vm_flags & VM_SEALED);
+>  }
+> -
+> -/*
+> - * check if a vma is sealed for modification.
+> - * return true, if modification is allowed.
+> - */
+> -static inline bool can_modify_vma(struct vm_area_struct *vma)
+> -{
+> -       if (unlikely(vma_is_sealed(vma)))
+> -               return false;
+> -
+> -       return true;
+> -}
+> -
+>  #else
+> -
+> -static inline bool can_modify_vma(struct vm_area_struct *vma)
+> +static inline bool vma_is_sealed(struct vm_area_struct *vma)
+>  {
+> -       return true;
+> +       return false;
+>  }
+> -
+>  #endif
+>
+>  #if defined(CONFIG_STACK_GROWSUP)
+> --
+> 2.50.1
+>
 
