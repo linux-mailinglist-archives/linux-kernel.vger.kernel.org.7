@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-744943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E70B112D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:09:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA88B112D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113087B9398
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8413A55EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C8E1494C3;
-	Thu, 24 Jul 2025 21:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8792627FC;
+	Thu, 24 Jul 2025 21:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUkk4GhT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSepwrjY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB992EE275;
-	Thu, 24 Jul 2025 21:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0B42EE616;
+	Thu, 24 Jul 2025 21:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753391353; cv=none; b=utwpkxrq6vAHWP1mL7lnAqGlbyAD1ib8H63anJHoQdZfpOW0BSU8cizUTIXiBO4Nzyd1A0pqLDKOF3U+JhKLq2aJALQnuJ9VHRCyMfkPHdH2pondgPoCT0Mw6+qQdoIvZLkigONA65i5bLKf01+4xQQE0RmGhODqc92DHwhfAtU=
+	t=1753391356; cv=none; b=iLWatgp9SbwY9z73cRKF+0cOJMcF2r/Rb5cvo4Y6gQK0WxL/8B/5D4xRUJPsZN6Eq7FhDNZs7gQRHvkrsEMYj7/bVcGY4f1j4PLNN2Y1wCu2f1U+OSyfYDQ3MD42lfxlqIJC7RYl3Dopg8WGwCmG7ov+bPcjU+KPdQbibF7MmDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753391353; c=relaxed/simple;
-	bh=nFlm8N0bOxTn7QBOexrfKe5KaYKZqvAsJ+gie68l0VQ=;
+	s=arc-20240116; t=1753391356; c=relaxed/simple;
+	bh=nWp31srlWOly544EzYSydGTw01FUN6i0u3AAl2ah1sE=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NbSCeuVSknBzDrcKqngxPF2Ha4dpahUhLfOWme84DCgHKigIJz2sfYQQF1fGFnN3dMbvOJy7lk1DKReIn3VwpkEcA4p8u1MaxYDNtotsQXW6xoiBG+nKjGyHNSoT/cSBjZGSWoy6aGO+859PcXffyRRjYfSPjDneHJ+QYqhfAA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUkk4GhT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E71C4CEF5;
-	Thu, 24 Jul 2025 21:09:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=moXw8qjVA/aw1GeIaNpUV4KsOMSgH7hYQ1BYgPuDA5L8CBaTXm6zcZnHSvV2TE3nVLgykyaq9+g7fmZrDgtFbtUfL1U5iSyY7wHK3hZv+nhJNNEj4jbMdIbxFzWyb4dBHqLQXiBjYj1VVXh8WgHuf+vYiYIQxqZu99S1wOHpYMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSepwrjY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BD2C4CEF5;
+	Thu, 24 Jul 2025 21:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753391353;
-	bh=nFlm8N0bOxTn7QBOexrfKe5KaYKZqvAsJ+gie68l0VQ=;
+	s=k20201202; t=1753391356;
+	bh=nWp31srlWOly544EzYSydGTw01FUN6i0u3AAl2ah1sE=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=DUkk4GhTTHugFUqVtTWmlwUrEFfwmGfHtrK9yl8rWQyM5WPueNYoV2PwHnR0ztEmk
-	 aLkrOonnw96yHpvs6WZw8a8E1Um6yOqNnT/NB/HCb24WS+yCO7VTPY1HHYQbBerg6N
-	 lfNUtFXwAFzilduSb2eUndNmg5WU1e51CfMXd19u2FbjpZHi77/Nqj53439L6wrN+o
-	 phjjmJYWtHrVv17sbAAD+tlKp7gc22tYuKOLw7LUmelwCD0hayFlqmNkiRQnerT2/4
-	 TwwRvwNqasJt4XsiqPMgP7qNNtKwRrBoVKhIXkcRBkDT7Tbrc97QnRFZe8RdYtiOtJ
-	 U/b6+Ma3IlNTw==
+	b=gSepwrjYRHTadeORqfLdJJj+3A5uUgVNePHG2U2rxx0RxjUgeRkA8SD5R6E7W0Tqk
+	 B0fIKoVSPZZsj9OhUXd4zAFk1438aywHt/cseC0oSCJtKbvB+w5yZMpj6bSZ/7ADMX
+	 GhwVrY0Vaod6B4sgsx/UJB1V05XjCWpHcBC8yy3FqpsPdsfNtkIf70TCYrodVxsbLA
+	 zsVSZtn0KHqqAneBwN+VztaWKUmybaFZCIZEAQwt3gRECNgvn0DjNg370fAPdc9sAM
+	 9NpyUM/m6Bqh+D+IWde95lOIdzaZbOioE92BQicoNFL/C0reV5JHFc8tlsDFM0yHG9
+	 P/EQf23ZcC52A==
 From: Mark Brown <broonie@kernel.org>
-To: claudiu.beznea@tuxon.dev, andrei.simion@microchip.com, 
- lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, nicolas.ferre@microchip.com, 
- alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Varshini Rajendran <varshini.rajendran@microchip.com>
-In-Reply-To: <20250610065005.64070-1-varshini.rajendran@microchip.com>
-References: <20250610065005.64070-1-varshini.rajendran@microchip.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: atmel,at91-ssc: add
- microchip,sam9x7-ssc
-Message-Id: <175339134961.153218.9352688179256813035.b4-ty@kernel.org>
-Date: Thu, 24 Jul 2025 22:09:09 +0100
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ shawnguo@kernel.org, linux-kernel@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Chancel Liu <chancel.liu@nxp.com>
+In-Reply-To: <20250723073725.787844-1-chancel.liu@nxp.com>
+References: <20250723073725.787844-1-chancel.liu@nxp.com>
+Subject: Re: [PATCH v2] ASoC: imx-card: Add WM8524 support
+Message-Id: <175339135330.153218.9643329948012933654.b4-ty@kernel.org>
+Date: Thu, 24 Jul 2025 22:09:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,8 +62,9 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Tue, 10 Jun 2025 12:20:05 +0530, Varshini Rajendran wrote:
-> Add microchip,sam9x7-ssc to DT bindings documentation.
+On Wed, 23 Jul 2025 16:37:25 +0900, Chancel Liu wrote:
+> WM8524 is a stereo DAC. Add support for this codec in imx-card ASoC
+> machine driver.
 > 
 > 
 
@@ -75,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: dt-bindings: atmel,at91-ssc: add microchip,sam9x7-ssc
-      commit: da98e8b97058c73b5c58e9976af2e7286f1c799b
+[1/1] ASoC: imx-card: Add WM8524 support
+      commit: 2260bc6ea8bd57aec92cbda770de9cc95232f64d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
