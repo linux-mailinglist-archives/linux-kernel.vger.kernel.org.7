@@ -1,124 +1,82 @@
-Return-Path: <linux-kernel+bounces-744314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A781B10AD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E223B10AD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAF4B583ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6471F1CC2012
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28DB2D59E3;
-	Thu, 24 Jul 2025 13:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCE126529B;
+	Thu, 24 Jul 2025 13:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rqRYTOat"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EChqeJB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6E0184;
-	Thu, 24 Jul 2025 13:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE2F184
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753362092; cv=none; b=iXQ5gYENQwYF5ai9N+Qsk9L45kxoA5OdBfkI+Q4HH3hTcXRgKvYrZJjefE4b2waO1TzUUtSJvWc/cWeSvgfnKAh0kwXGRascOHrTwu2ULPp74YMt97GJzdyoMVcDy1t/W9nGjpdC05U/Q9C8jFIdBkyGrX1iDhKKWUy1+q7RstQ=
+	t=1753362086; cv=none; b=jL97sU3264j9W0XysFOonKd8WzNi3O/0yOiB+PUQsXhE95de+jRoydJKUcFTjET/nXdzM1SiAU10PHaBlV2yqq4Mo7u+BCDnANF81TGchzQm9i6fFgw0xFYyDPJH0In6DWtxXCkBc3Rhcb5IPxT0vkmsd+yxVsw2xTmxW73oLks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753362092; c=relaxed/simple;
-	bh=GRSodmVdTKHr0Gnn7CB94Pt4l36sbW5lmkBA6K3Qw3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qRvoqvGlSSf+0rQWBPdUNrHCWaPievm1lmmLXLU/fazKMjkK3/NtYjwb3f6L3o3Z13BM5I8m9ddQtDCGseKXgmksQBsukzmnKN8WAkTzf5g4I4vjKhOGPB3O8wUTivVfxg28v5CoePqNjbJaDSUoIr0IZ/pRxbYUXh40Nj7UkiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rqRYTOat; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=2yUnl4vidy4gJvXblFDoJuJNs7hErSWbP5rsO2C/gB0=; b=rqRYTOatipp8MXoMnYvt0IchBY
-	K6HjCQAtpimPUnQtSi/BNo/rhID2z3ZpYzeCo5d0nTA+EqsZqo5uResfrEERmPBEJ/EvesXgJL+pL
-	pMg1t4i0xSPMpGxNrZGdHKYQyXoWWsKrJZ36Exq8A3t6QCpWaxm8fQ3uFqFrLs7xHNTLDUcU8t3zu
-	ftz79uNn1goGeo7w3A2F+6RfZEXvpOjuNQJwC8wLypwf58/4o3AM8LoNA/PuO+GY/lg5qVStosIgY
-	GBPCcmPrkXmSbj22AvKy1UkHkeNInX+DT7hZLGIfaYV/Av2EIf/fzaSOnYT2v99DqxboLboE5UWBp
-	DGrJ3CaA==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uevZ5-0005kZ-4F; Thu, 24 Jul 2025 15:00:51 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Damon Ding <damon.ding@rock-chips.com>
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Damon Ding <damon.ding@rock-chips.com>
-Subject:
- Re: [PATCH v3 08/14] drm/bridge: analogix_dp: Apply drm_bridge_connector
- helper
-Date: Thu, 24 Jul 2025 15:00:49 +0200
-Message-ID: <10694296.nUPlyArG6x@diego>
-In-Reply-To: <20250724080304.3572457-9-damon.ding@rock-chips.com>
-References:
- <20250724080304.3572457-1-damon.ding@rock-chips.com>
- <20250724080304.3572457-9-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1753362086; c=relaxed/simple;
+	bh=X1gt0rB4BXfQtDvaqL6R+6uofnYdLYegVfaylDXX96w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldiFCttU2mELwyYceCrDxNAR+0Pi6a0MqxElLQ6leZXQxmiU0EcDIfryka+CCOYSKrwBdYEf4kFA+sr5x7cn9Q3HWVEyMDT2b8HRADkRb2IPb9wHkdxPoKYhuakC7hA9DutMj6GR4c2Ixho1KMvTEzEbKGRIVDPeGidMkGY2Kus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EChqeJB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F8EC4CEED;
+	Thu, 24 Jul 2025 13:01:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753362085;
+	bh=X1gt0rB4BXfQtDvaqL6R+6uofnYdLYegVfaylDXX96w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EChqeJB0/ObgkQSrAUMOF1yJCPu5p+GAVOdbBMI++bPtxCH816pVP5tuhhxlR2uAL
+	 +u0imyXSyDGdQBVjcveiZCjiu2mdoxDF/bPLVucOck0hMS8IWOk8wZCmY2GbjAEKfY
+	 nfZKfKlw4tDh+gdoocYH8WWfchuFkvBiGPnQhowArARWHNOy/QgwaKD5z9uu/BdHMF
+	 H5LdxsMoGcTP3+sBLMKRUD5/nsi4ZNKCP1oWUMiHT1FlHr3AzW9DUdt+tKPvPHSg8r
+	 IfQT2WQdTiU4ilrRAaomvxGjCGUGqHu7l3igrBwB3z+znx5fRfEN9YtLaa/ZkcyGxK
+	 xMH3/8aake6uw==
+Date: Thu, 24 Jul 2025 15:01:22 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v8 6/7] cgroup/cpuset: Fail if isolated and nohz_full
+ don't leave any housekeeping
+Message-ID: <aIIuostDifK5ympc@localhost.localdomain>
+References: <20250714133050.193108-9-gmonaco@redhat.com>
+ <20250714133050.193108-15-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250714133050.193108-15-gmonaco@redhat.com>
 
-Hi Damon,
+Le Mon, Jul 14, 2025 at 03:30:57PM +0200, Gabriele Monaco a écrit :
+> Currently the user can set up isolated cpus via cpuset and nohz_full in
+> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
+> domain isolated nor nohz full). This can be a problem for other
+> subsystems (e.g. the timer wheel imgration).
+> 
+> Prevent this configuration by blocking any assignation that would cause
+> the union of domain isolated cpus and nohz_full to covers all CPUs.
+> 
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 
-Am Donnerstag, 24. Juli 2025, 10:02:58 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Damon Ding:
-> Apply drm_bridge_connector helper for Analogix DP driver.
->=20
-> The following changes have been made:
-> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->   and &drm_connector_helper_funcs.
-> - Remove unnecessary parameter struct drm_connector* for callback
->   &analogix_dp_plat_data.attach.
-> - Remove &analogix_dp_device.connector.
-> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
->   &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
-> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
->   &drm_bridge_funcs.edid_read().
->=20
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 
->  static enum drm_connector_status
-> -analogix_dp_detect(struct drm_connector *connector, bool force)
-> +analogix_dp_bridge_detect(struct drm_bridge *bridge)
->  {
-> -	struct analogix_dp_device *dp =3D to_dp(connector);
-> +	struct analogix_dp_device *dp =3D to_dp(bridge);
->  	enum drm_connector_status status =3D connector_status_disconnected;
-> =20
->  	if (dp->plat_data->panel)
-
-this needs an update to
-
- static enum drm_connector_status
-=2Danalogix_dp_bridge_detect(struct drm_bridge *bridge)
-+analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector =
-*connector)
-
-to follow Andy's patch [0] that got already applied to drm-misc-next
-
-Heiko
-
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/5d156a9c3d5ea3d=
-bec192121259dee2c2f938fa1
-
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
