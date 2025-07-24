@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-744555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CDAB10E84
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:22:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51B9B10E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A293B1FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:22:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2611D00402
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A03F2E9EBA;
-	Thu, 24 Jul 2025 15:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8DTsl4I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891692797B1;
-	Thu, 24 Jul 2025 15:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F4E2E9EBA;
+	Thu, 24 Jul 2025 15:22:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274F92797B1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370554; cv=none; b=uGmUole4L0MqJlKCr1eK8qJxIuPiMpXnPnsbHQERXHXMo0JmzcVeMvxrhbi4MAk0GTJIMasHu6InjimcDRn6DJ2y18Z24G1ZL8ITv2klj2H1pLq5BC/JiSJ5TYmvKyZXYb7HBrRD4zCBzjbz3y9hWWaTsTBQo444WzRTEy4C5x8=
+	t=1753370571; cv=none; b=kgq/v7NUeFJNBhdHSQz2zdNepgfeJwRio9oTsiDY/8ZsBJ8ybM7TZzBvEkk+2hcbg4dLpufrusmLG814ZDrsEPOuntqumHVCbCom7IacK8S5HmZMxS4V8Sae4aHhBB7kOaFEfrlpRnbk0f9zoKGPt8E5m1BP6lTXAAHYDKWcsnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370554; c=relaxed/simple;
-	bh=kCc9+bv8prY7vXYH1dhbb3wufC7xyXoXKhvFlF8VvVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KllgbuKJTzhMHkniU5Ux4hrSH7yzrO3pm5aCK3SzjlubIMg7hG3hK0mHnXGe+qlpT+PW3QILd0r2DAPHLrw56JvNef7GdglOxbFu/fRKaMSytP7OMdANbOxDO/Z69ZvGw1HLTlmPD8UbGXx1xgppRV9ooPm5Ragx84fRA4tJZcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8DTsl4I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49462C4CEED;
-	Thu, 24 Jul 2025 15:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753370554;
-	bh=kCc9+bv8prY7vXYH1dhbb3wufC7xyXoXKhvFlF8VvVw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k8DTsl4I23MMfQo4NKAPI7MSebhFYaBPGUp9Fp6hiCUBwsm5rVp+uqQQ5I3iDgKLI
-	 Wptoq50sRQQ+l2iM0Wb4CFi9oiq8oBCsmLOezRDj/W8mmz70LyK2Bf6smqKEiyMLBD
-	 mbif1CdT0MFEZygdIJcU9mtqRutHaT8xEpOqGW5sKPkiqS/7ICk5/DiccmJqXoen/1
-	 zU2sVZeCIJIT/C7QOLtCMnwbMAQjbbAqKSntFAnndsOqqa6MLQoOTe8YKHs4w/fmTr
-	 Ou49Rw7TPRdXeKEIeklvscOVLhkKQZWiMQNz/7OvK8OXqENkNIViOO+4Y47QV3/PBD
-	 UhwA+4QayPoKg==
-Date: Thu, 24 Jul 2025 16:22:27 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, Alex Lanzano
- <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Rubusch
- <l.rubusch@gmail.com>
-Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
-Message-ID: <20250724162227.065d20a0@jic23-huawei>
-In-Reply-To: <aHd2s987EMCdgdrJ@smile.fi.intel.com>
-References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
-	<20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
-	<aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
-	<aHYIBReTFqJMtiXW@smile.fi.intel.com>
-	<vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
-	<aHd2s987EMCdgdrJ@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753370571; c=relaxed/simple;
+	bh=F7T9nvv0uLffYhCRh87EZr0EoG1kA4a/EwoD/IwlL6A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L8HGnf0ijMfeJDtV+mlXl/Y50EF/0OjziOEPuuqE7U9YM95JA/kYrUcHbBMFz2SvWYBSZ1joq7Z1uMDs2raXDxZh+TZKMBLt1yd48ilXQesI/TqXiViY2ccZSLHINAGCJCDzrP2HBbM9tetczzKFCD2FL0a1AzixkdsAkQXytlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE9231A00;
+	Thu, 24 Jul 2025 08:22:41 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A7233F6A8;
+	Thu, 24 Jul 2025 08:22:46 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v5 00/10] coresight: Fix and improve clock usage
+Date: Thu, 24 Jul 2025 16:22:30 +0100
+Message-Id: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALZPgmgC/32N0QrCMAxFf2Xk2UpWO9188j9klBlTV3SrtFKU0
+ X837gOEvJzcm5MFEkfPCY7VApGzTz7MAs2mAhqH+cbKX4VBo25wrw9qiJOlZJ1/W3oEuttsFGt
+ zqbl2bacR5PIZWfLVeu6FR59eIX7WJ9n8tv99MqiQGBE72rWuPUlrS2GCvpTyBQjWqbK0AAAA
+X-Change-ID: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, 
+ Yeoreum Yun <yeoreum.yun@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753370566; l=3664;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=F7T9nvv0uLffYhCRh87EZr0EoG1kA4a/EwoD/IwlL6A=;
+ b=9Th4KNs/INGYG9r1I/3sSGrUqCwEhs2YCEhlfVXn5x/5bFlIVFfmsHk3j8CO/Gtqnc+lRi48p
+ T3QnZZqmu70CmsUSSJIhmQDhYd9mYuXl7W1TonNdYjtzd5yLSCO7z5n
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-On Wed, 16 Jul 2025 12:53:55 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+This series fixes and improves clock usage in the Arm CoreSight drivers.
 
-> On Tue, Jul 15, 2025 at 08:55:35PM -0300, Gustavo Silva wrote:
-> > On Tue, Jul 15, 2025 at 10:49:25AM +0300, Andy Shevchenko wrote:  
-> > > On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:  
-> > > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:  
-> 
-> ...
-> 
-> > > > > +/* 9.81 * 1000000 m/s^2 */
-> > > > > +#define BMI270_G_MEGA_M_S_2				9810000  
-> > > > 
-> > > > I thought this is MICRO...  
-> > > 
-> > > Btw, what if we use the device on poles and on equator (or even on orbital
-> > > station)? I'm wondering if this constant should be defined in units.h or
-> > > even in uAPI that user space may add a correction if needed.
-> > >   
-> > I certainly hadn't thought about these scenarios.
-> > FWIW, the accelerometer scale values also assume g = 9.81 m/s^2.
-> > For example, 0.000598 = 2 * 9.81 / 32768  
-> 
-> Right, but this should be supplied to user space somehow. OTOH the measure error
-> may be high enough (what is the precision of the measurements by the way?) that
-> it will neglect the differences in the 'g' constant.
-> 
-> All the details are given in [1].
-> 
-> [1]: https://en.wikipedia.org/wiki/Gravity_of_Earth#:~:text=The%20precise%20strength%20of%20Earth's,/s2)%20by%20definition.
-> 
+Based on the DT binding documents, the trace clock (atclk) is defined in
+some CoreSight modules, but support is absent. In most cases, the issue
+is hidden because the atclk clock is shared by multiple CoreSight
+modules and the clock is enabled anyway by other drivers. The first
+three patches address this issue.
 
-These sensors don't measure relative to g.
-That's annoying marketing which is why I held firm for m/s^2 for IIO :)
-So what they measure for a given acceleration does not change depending
-on where we are on earth. You should use a 'fixed' standard value for
-conversion from marketing values in g to m/s^2..
+The programming clock (pclk) management in CoreSight drivers does not
+use the devm_XXX() variant APIs, the drivers needs to manually disable
+and release clocks for errors and for normal module exit.  However, the
+drivers miss to disable clocks during module exit. The atclk may also
+not be disabled in CoreSight drivers during module exit. By using devm
+APIs, patches 04 and 05 fix clock disabling issues.
 
-Or maybe I'm missing something!
+Another issue is pclk might be enabled twice in init phase - once by
+AMBA bus driver, and again by CoreSight drivers. This is fixed in
+patch 06.
 
-Jonathan
-  
+Patches 07 to 10 refactor the clock related code. Patch 07 consolidates
+the clock initialization into a central place. Patch 08 polishes driver
+data allocation. Patch 09 makes the clock enabling sequence consistent.
+Patch 09 removes redundant condition checks and adds error handling in
+runtime PM.
+
+This series has been verified on Arm64 Juno platform, for both DT and
+ACPI modes.
+
+---
+Changes in v5:
+- Skip clock management for ACPI devices (Suzuki).
+- Link to v4: https://lore.kernel.org/r/20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com
+
+Changes in v4:
+- Separated patch 07 into two patches, one is for clock consolidation
+  and another is for polishing driver data allocation (Anshuman).
+
+Changes in v3:
+- Updated subjects for patches 04 and 05 (Anshuman).
+- Refined condition checking "if (dev_is_amba(dev))" in patch 07
+  (Anshuman).
+
+---
+Leo Yan (10):
+      coresight: tmc: Support atclk
+      coresight: catu: Support atclk
+      coresight: etm4x: Support atclk
+      coresight: Appropriately disable programming clocks
+      coresight: Appropriately disable trace bus clocks
+      coresight: Avoid enable programming clock duplicately
+      coresight: Consolidate clock enabling
+      coresight: Refactor driver data allocation
+      coresight: Make clock sequence consistent
+      coresight: Refactor runtime PM
+
+ drivers/hwtracing/coresight/coresight-catu.c       | 53 ++++++++---------
+ drivers/hwtracing/coresight/coresight-catu.h       |  1 +
+ drivers/hwtracing/coresight/coresight-core.c       | 48 ++++++++++++++++
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 41 +++++---------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c  | 24 +++-----
+ drivers/hwtracing/coresight/coresight-etb10.c      | 18 ++----
+ drivers/hwtracing/coresight/coresight-etm3x-core.c | 17 ++----
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 32 ++++++-----
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  4 +-
+ drivers/hwtracing/coresight/coresight-funnel.c     | 66 ++++++++--------------
+ drivers/hwtracing/coresight/coresight-replicator.c | 63 ++++++++-------------
+ drivers/hwtracing/coresight/coresight-stm.c        | 34 +++++------
+ drivers/hwtracing/coresight/coresight-tmc-core.c   | 48 ++++++++--------
+ drivers/hwtracing/coresight/coresight-tmc.h        |  2 +
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 36 +++++-------
+ include/linux/coresight.h                          | 31 +---------
+ 16 files changed, 228 insertions(+), 290 deletions(-)
+---
+base-commit: a80198ba650f50d266d7fc4a6c5262df9970f9f2
+change-id: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+
+Best regards,
+-- 
+Leo Yan <leo.yan@arm.com>
+
 
