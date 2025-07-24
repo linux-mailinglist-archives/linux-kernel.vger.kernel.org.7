@@ -1,112 +1,182 @@
-Return-Path: <linux-kernel+bounces-744081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4DCB107CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:30:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F597B107CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702AB3AF1D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:30:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A32EF7B510D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB5626563F;
-	Thu, 24 Jul 2025 10:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC2523D29F;
+	Thu, 24 Jul 2025 10:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kFGqNdSq"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MWaSIdnG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43372238140
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E28A19343B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353038; cv=none; b=JoZLt/PvNe9xRKpRvH9gdPykF6+NsyYWOpyuZe82pAwJYEUL1707BPrpwNZml3eEZqgVJGbbrWICvjQEufzItEFM/sx1A+bMzZkYcco0eukhqsDrIrGHfIMytkpDTS+mOiLXb4IrgpkZWOA3Ak9JVMmJOI9T3RiqGOD24bm7dD8=
+	t=1753353147; cv=none; b=dHmtjpkrsn8jpLx4H3euj1V5DCTAZC3xBMFbTLBhIWEC8Wsfw0/ZMuit9j8RrSuEMw2LOUFd0ARcAZg2Nz0/p8oiphwip1jQekhN/06RxCDKiPuRHPcpZqSWJKC2OQ4XPGtKfGoDpmj2d6hN7fnNOPV1hRmD6IyKtr6gr2blSpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353038; c=relaxed/simple;
-	bh=vozlwhWTTZeaBLTOrUwLbKibMiWfdaAf3uRpxQQtEhc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FFMimglYoCDAsIfu3wT99PmOA9bs2uVMVdnPoUYBMSqkO7HkyqJwou5eHTllTCbCu00ECYspBLkOczMNuKXDO72zHPFWihg0FFaPFW4IfSB7S2NT6j3yHSY5Aeg3dGGQyqUrdPth4DDV9a4mhO48jvgU9VLJbOboZMYJ9UvSljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kFGqNdSq; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-607434dbc78so1018736a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753353035; x=1753957835; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oP7cxGwm/mObhghxpyauLVJ+5M/Q63eusIkmXcjkDec=;
-        b=kFGqNdSqxZ0PMEnHkzyd3Z+XpiCz9r6ip8/ptcFhLP5l50gDhuJo8pu2ZTsn8Rav5x
-         /Y82/5G5b0MIQYeTew2JuoovtMJeap0962CYR0UNS1qRNcJK1XZ9pA6IBVhLngaach/H
-         YIwE2WpcDpX9Wjdwmj4dcT+u1LCFJm16zYv6YFtU/5mma7FhVu3mBkitPt+MFx0RhajX
-         3FN+9HjKaNpNYm+NsG7pj7T/Fduy5zqTmOXENnyB0JXAZCMt4fJlhLD9btFcR7pwnzZG
-         pKt+pLAgcN2NGurtI/TOWwd/NqMgnDgffmA+XhZYsUjYHPhQYDSITY8hKHc9PRXmRbBd
-         sorQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753353035; x=1753957835;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oP7cxGwm/mObhghxpyauLVJ+5M/Q63eusIkmXcjkDec=;
-        b=Dsuoh/gwOeaZvTuTlBieSvDyE85FbXG8TNHjeiHNebYFlDSqjE527xxvizQKrFBVo3
-         iXPkVpPyrySFdkvcMVfP1wYLU+U7/QcFNfthtUb5IZK3a0jnM3euHuXCvkmbd465+MrK
-         GL/hY3iK29hjauultBgDB+X0Gi9YaS0a2GlJ7NAV8GY0lYVJnP5ObgKF9YtGpvUUMtM8
-         0OLvBU4Pt3ZmL1c02McaCQUNukVSFxQNORaPYbcSREP5lpIQKqxu1t17Vcu19x1uA1l6
-         LV241+LM41QmO6Nd9qFzDUzoB/vTcCVWx0oGcFwx7BlegbyRxBNxMs9lG2HsZPAyjCre
-         5+RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6uxdVuB6923vsGgQGKv7kBngjFX93y7TKxJZW6717zUFkPnFJPJhtk0UG4/xJSRuMhoEl9Kd61tSlfgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXtsVFW06v4bCcmlLoUYD7RLtUtY21IFTF7/D1G+YqxRqTpWjO
-	a0RwdfJAzN57uYTI4Jxff079hxvYHt8UscqCzyMSOQ07RFxnZE/tOGlNWJDyOppi/dUDtFxteEQ
-	A69vVKTG/YSsYjkeoSxFvl7/T7iZGgQ==
-X-Google-Smtp-Source: AGHT+IEW+Ka9VvSms6hDdZ18FHwhQB5dVK6OecnLWTKMyUjuUm/tV39mW4FcyUnZaaFb0VWGkqSjAPHaBgv3/9+78w4=
-X-Received: from edr13.prod.google.com ([2002:a05:6402:44cd:b0:614:d2e4:82d0])
- (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:2743:b0:609:7ed1:c791 with SMTP id 4fb4d7f45d1cf-6149b5a6cb9mr5507870a12.32.1753353035529;
- Thu, 24 Jul 2025 03:30:35 -0700 (PDT)
-Date: Thu, 24 Jul 2025 12:30:16 +0200
+	s=arc-20240116; t=1753353147; c=relaxed/simple;
+	bh=itHtoJ3M+ZeANRW0vAxkLr2MjBaEu5vwDE7ZADcfbA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZfJDX2KvNOzSHEDiWEnQrEfr7meamns4otAchQz4ND/Pdl1m25FCnC5LKrhD+E3AexaP9ABf3eDU6X3XlLGNeshXYxQXUgvH3gWjmf/vyQfkkWHplkRQeYhwXgRX2y2HN0ZbSjeBmtiptZ/Q8hkd4njOh5+bpfef8V4ybQqhEwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MWaSIdnG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753353143;
+	bh=itHtoJ3M+ZeANRW0vAxkLr2MjBaEu5vwDE7ZADcfbA4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MWaSIdnGoBwiZtZtbKK6XVz7WtAtEYZN8QFphI/pokVgkCFCXOweirTeO9wMLhAjM
+	 hbcWaqG8twtORyImZ8qfVHe53KxT9YFsorWXjGY8duDUGYl8leyK1aRWNxuXroMZ8w
+	 ANW2H5sexn0CouRfNFEuT08ZNoRGHBOfuSSAefkQ7SwtjeprR1WgVzjxm4OnBZaA4U
+	 sle4dpBTPm6ZSXrCz1/8BC9vpk20D73T9kawJm7J0U3AVKKVtISIvaqpc5d54YrZBn
+	 PHqJ8xT0SHcXoHWgls97p7ROY28YaFiIYWYiTyNj0f31CCRubYCYtv+GRnvhwm2Fh4
+	 uXeOf3YlnXj/Q==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4894F17E046D;
+	Thu, 24 Jul 2025 12:32:22 +0200 (CEST)
+Message-ID: <230f25cb-52cb-4ae0-81a1-85e8de873891@collabora.com>
+Date: Thu, 24 Jul 2025 13:32:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250724103016.5164-1-jprusakowski@google.com>
-Subject: [PATCH] f2fs: vm_unmap_ram() may be called from an invalid context
-From: Jan Prusakowski <jprusakowski@google.com>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Jan Prusakowski <jprusakowski@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] drm/rockchip: vop2: Add high color depth support
+To: Andy Yan <andyshrk@163.com>
+Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Algea Cao <algea.cao@rock-chips.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
+ <20250721-rk3588-10bpc-v1-1-e95a4abcf482@collabora.com>
+ <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
+ <c5624dad-93cb-4cc3-88ad-808dcc43274d@collabora.com>
+ <12451b41.7627.1983ba589ec.Coremail.andyshrk@163.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <12451b41.7627.1983ba589ec.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When testing F2FS with xfstests using UFS backed virtual disks the
-kernel complains sometimes that f2fs_release_decomp_mem() calls
-vm_unmap_ram() from an invalid context.
+Hi Andy,
 
-This patch modifies in_task() check inside f2fs_read_end_io() to also
-check if interrupts are disabled. This ensures that pages are unmapped
-asynchronously in an interrupt handler.
+On 7/24/25 11:56 AM, Andy Yan wrote:
+> 
+> 
+> 
+> Hello Cristian，
+> 在 2025-07-22 14:16:26，"Cristian Ciocaltea" <cristian.ciocaltea@collabora.com> 写道：
+>> Hi Andy,
+>>
+>> On 7/22/25 5:24 AM, Andy Yan wrote:
+>>>
+>>> Hello Cristian，
+>>>
+>>> At 2025-07-22 01:39:04, "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com> wrote:
+>>>> Take the bits per color channel into consideration when computing DCLK
+>>>> rate.
+>>>>
+>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>> ---
+>>>> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 3 +++
+>>>> 1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>>> index 186f6452a7d359f079662bc580850929632ea8fe..a714bcbb02de16267e7febbaeb1eb270c70aaef2 100644
+>>>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>>> @@ -1731,6 +1731,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
+>>>> 		clock *= 2;
+>>>> 	}
+>>>>
+>>>> +	if (vcstate->output_bpc > 8)
+>>>> +		clock = DIV_ROUND_CLOSEST(clock * vcstate->output_bpc, 8);
+>>>
+>>>
+>>> This seems not right,  regardless of the value of bpc, the dclk of VOP must be
+>>> consistent with mode->crtc_clock.
+>>> If the dclk of VOP is increased in accordance with the BPC ratio here, then the refresh rate of VOP will also increase proportionally.
+>>> This would be inconsistent with the timing described in the mode.
+>>> For a hight color depth,  the frequency needs to be increased for the HDMI PHY's clock.
+>>
+>> The HDMI PHY's clock is actually computed at HDMI connector framework level
+>> [1], taking into account the current bpc value, which is determined as part
+>> of hdmi_compute_config() [2].
+>>
+>> That means conn_state->hdmi.tmds_char_rate in
+>> dw_hdmi_qp_rockchip_encoder_atomic_check() does already include the bpc
+>> related adjustment, and we pass that directly to the PHY via
+>> phy_configure().  Note there's still the need to handle bpc separately via
+>> phy_configure_opts in order to setup CMN_REG(0086) [3].
+>>
+>> Since VOP2 switches to PHY PLL as DCLK source for modes up to 4K@60Hz, it
+>> needs to take color depth into account, to keep them in sync.  As a matter
+>> of fact, the clock adjustment in VOP2 is mainly necessary for legacy
+> 
+> 
+> There might be a misunderstanding here. The values of hdmi.tmds_char_rate and vop dclk are not always equal in all cases.
+> For vop dclk always match mode->clock,  hdmi.tmds_char_rate will adjust with bpc.
+> For example,  for a 4KP30 YUV444 8 bit,   vop->dclk = hdmi.tmds_char_rate = 297MHZ,
+> for 4KP30 YUV444 10 bit,  hdmi.tmds_char_rate = 1.25 * vop->dclk.
+> 
+> In fact, for the HDMI PHY, there are two clocks. One is a clock with the same frequency as the HDMI PLL, namely.tmds_char_rate,
+>  and the other is a clock obtained by further frequency division of the HDMI PLL, which can be supplied to the vop dclk.
+> 
+>                       ----------------------- >tmds_char_rate 
+>                       |
+> PHY PLL------|
+> 
+>                       |
+>                       ------DIV(REG0086[3-1])-->vop dclk.
 
-Fixes: bff139b (f2fs: handle decompress only post processing in softirq)
+Oh, I missed the fact there's a divider between PLL and DCLK.
+All this makes sense now, thanks for clarifying!
 
-Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
+Cristian
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d1a2616d41be..0acc25f996b3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -280,7 +280,7 @@ static void f2fs_read_end_io(struct bio *bio)
- {
- 	struct f2fs_sb_info *sbi = F2FS_F_SB(bio_first_folio_all(bio));
- 	struct bio_post_read_ctx *ctx;
--	bool intask = in_task();
-+	bool intask = in_task() && !irqs_disabled();
- 
- 	iostat_update_and_unbind_ctx(bio);
- 	ctx = bio->bi_private;
--- 
-2.50.0.727.gbf7dc18ff4-goog
+> So in this case, my suggestion is still to follow the implementation of our BSP kernel:
+> On the crtc side, it shoud set dclk as the mode->clock.
+> At the PHY side(rk_hdptx_phy_clk_set_rate) when set the vop dclk, it should adjust the PLL clock according to the bpc:
+> if (bpc > 8)
+>                 bit_rate = clock * 10 / 8;
+> 
+> 
+> 
+>> reasons, since HDPTX PHY allowed changing TMDS char rate via the Common
+>> Clock Framework API.  We landed a proper solution for that via the HDMI PHY
+>> API, hence the plan would be to make CCF API readonly after the switch to
+>> PHY API is completed, which means VOP2 shouldn't deal anymore with clock
+>> calculations when using the PHY PLL as DCLK source.
+>>
+>> Regardless, I should probably move this clock adjustment to the conditional
+>> block handling DCLK source switch.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n525
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n608
+>> [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c?h=v6.16-rc7#n1034
 
 
