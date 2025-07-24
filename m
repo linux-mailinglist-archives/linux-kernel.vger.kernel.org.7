@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-743720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242ADB1026D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BDCB10276
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615381C83031
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793715462F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931E727055F;
-	Thu, 24 Jul 2025 07:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8912272803;
+	Thu, 24 Jul 2025 07:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQ1RJw1j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmgGnxFd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA4426D4E1;
-	Thu, 24 Jul 2025 07:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D441126FA5A;
+	Thu, 24 Jul 2025 07:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343667; cv=none; b=un8uVV9/izFjQqVaBVviQmkKPASkBGtE0i5sokIAu5gL/jVgK7B+cEYCZTEy3nT9NmStmagjYfhnh6vt9D3pdyhkwMI/fuNahUWN5Jl0Zn4vgxfOSG7jur5xRCs3YfSuoOsk2PPHjYmuPc8L3xWbrp/bvEkToo3wH2N5x0NGQBg=
+	t=1753343738; cv=none; b=kJj3Zs6T1hXnNam5TDJOarz9UyfxZ+289nyy9Z6mGtwU9mbSoK2+t2x8MQ4n54RjS/CEccC8Nf05uarBLmBfzqTCxGjdwip5/SPx1SH0lZtX8TPnv5/pnXAhURK6SXCf3CvatFKe83eJ9wJhCmr/toE9fvhHIRIUYAB77I6RVs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343667; c=relaxed/simple;
-	bh=i2i4FvAvcuu68l81dS/YVmY3OFVFW2LN9O82CoVKe7I=;
+	s=arc-20240116; t=1753343738; c=relaxed/simple;
+	bh=RejzoqE1QxLnfVJEcMygPRhvHl4TUui1JW/EXqf2Ekw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKjhySs7ClWSlHwt5/bu27k3/Us8ICPogChOk0elxmAo0wE9ajLFpUvWKT8TguxzZVAO8VjsQj162CZiTi8n9D2w8rogo2WNIdbQeyA7FMQK395s5G0esTTKLxbM7rIZWALMV2fjZqXExN/c91Q4MWEy1lobV/iRQ0zBnbTTGSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQ1RJw1j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17996C4CEED;
-	Thu, 24 Jul 2025 07:54:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=epesPL9P0x/luY6UROV1ZFMyOJ+xSMoppWuFCTwe7vZRMTTExrURCMhYzKDJZkU5RvhHp0AOfKLShF6yxDMnSiAwrhM7bcScVR/D4MOQs/pnRoqYW82Iydu3+edTW+1b8BHsr2rpmw0Q44CLLWUT3VilACTLD1rzCNALlm9kYGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmgGnxFd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01868C4CEED;
+	Thu, 24 Jul 2025 07:55:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753343666;
-	bh=i2i4FvAvcuu68l81dS/YVmY3OFVFW2LN9O82CoVKe7I=;
+	s=k20201202; t=1753343737;
+	bh=RejzoqE1QxLnfVJEcMygPRhvHl4TUui1JW/EXqf2Ekw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lQ1RJw1jj5vQdH0uQDIh+j8DzG4WT0pzw1BFCODaK/ai5Be+TDcZckKWh6m7BRM0X
-	 Qc0N6jpaWb3Wp65fn5U8Fy1XO6H4Uexv+t5Z9AeZs0M1+6hzF9Ylb+z9LeDT8Ws/rN
-	 mr8nkjmOgTlmFkOhMemTJ0VOjd0I7ylq92bPH+8q0ao28yYivPvYLpfRwDgQqFrvP/
-	 7/jCbKR6hNfiLqmNh6DRmPgSYOqTEsWq7FYERfSrDMQmtSMWIoh3WL3K7VB6JgaJxb
-	 wWau+MTJmlC1y0iWM2ky+Zwcru9Lc4oqIZxNneD2pcRcqIQ8BRtyxUt/1/c1Otvg1W
-	 hzyyArKWXSZNA==
-Date: Thu, 24 Jul 2025 09:54:24 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Donald Shannon <donalds@nvidia.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	joel@jms.id.au, andrew@codeconstruct.com.au, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v7 1/2] dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b
- board
-Message-ID: <20250724-sweet-radiant-stoat-10d86d@kuoka>
-References: <20250723222350.200094-1-donalds@nvidia.com>
- <20250723222350.200094-2-donalds@nvidia.com>
+	b=BmgGnxFd0m0ax8BCXu8Z23nkYEvrbYb+kfQKhThhtk3fHD05jyqUumNras/XMac1K
+	 fNsR+wJhnDxgDW3B0m/HYoEQYDy1trcfoIv3oJ5G6lK6WxOJgRTPmYPyorkEbtucoO
+	 lstjt+ChPXcIFyADPo+xmzPFYCtn+am83vuGKyQI9REWZ+4QOBGiYXPyVWpj/Mf6Qq
+	 1sj2VY/rutJ5LfhdVsfBdfsSZKWAiRCmF5WPvyewWqqP7ARQWZMzXtSEGh/Zr+/bJF
+	 bksCHkNXFT6a8dFppzN/TYVK3Vt0jyt6BKBOSqke/cENn8f6Uq9rDv+qbrJJvq5YYP
+	 D7SDuGtahnLuA==
+Date: Thu, 24 Jul 2025 10:55:33 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 02/10] PCI/P2PDMA: Introduce p2pdma_provider structure
+ for cleaner abstraction
+Message-ID: <20250724075533.GR402218@unreal>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com>
+ <20250724075145.GB30590@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723222350.200094-2-donalds@nvidia.com>
+In-Reply-To: <20250724075145.GB30590@lst.de>
 
-On Wed, Jul 23, 2025 at 03:23:49PM -0700, Donald Shannon wrote:
-> This is an Aspeed AST2600 based unit testing platform for GB200.
-> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
-> differences, additional gpio expanders, and voltage regulator gating
-> some devices.
+On Thu, Jul 24, 2025 at 09:51:45AM +0200, Christoph Hellwig wrote:
+> On Wed, Jul 23, 2025 at 04:00:03PM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Extract the core P2PDMA provider information (device owner and bus
+> > offset) from the dev_pagemap into a dedicated p2pdma_provider structure.
+> > This creates a cleaner separation between the memory management layer and
+> > the P2PDMA functionality.
+> > 
+> > The new p2pdma_provider structure contains:
+> > - owner: pointer to the providing device
+> > - bus_offset: computed offset for non-host transactions
+> > 
+> > This refactoring simplifies the P2PDMA state management by removing
+> > the need to access pgmap internals directly. The pci_p2pdma_map_state
+> > now stores a pointer to the provider instead of the pgmap, making
+> > the API more explicit and easier to understand.
 > 
-> Reference to Ast2600 SOC [1].
-> Reference to Blackwell GB200NVL Platform [2].
+> I really don't see how anything becomes cleaner or simpler here.
+> It adds a new structure that only exists embedded in the exist one
+> and more code for no apparent benefit.
+
+Please, see last patch in the series https://lore.kernel.org/all/aea452cc27ca9e5169f7279d7b524190c39e7260.1753274085.git.leonro@nvidia.com
+It gives me a way to call p2p code with stable pointer for whole BAR.
+
+Thanks
+
 > 
-> Link: https://www.aspeedtech.com/server_ast2600/ [1]
-> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
-> Signed-off-by: Donald Shannon <donalds@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index 456dbf7b5ec8..624581db2330 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -99,6 +99,7 @@ properties:
->                - inventec,starscream-bmc
->                - inventec,transformer-bmc
->                - jabil,rbp-bmc
-> +              - nvidia,gb200-ut30b
->                - nvidia,gb200nvl-bmc
->                - qcom,dc-scm-v1-bmc
->                - quanta,s6q-bmc
-> -- 
-> 2.43.0
 > 
 
