@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-743874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2A7B104F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BFAB104F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EEDAC1202
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF793AA4E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2A72777E1;
-	Thu, 24 Jul 2025 08:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6791D277803;
+	Thu, 24 Jul 2025 08:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ck5mLxGT"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="MHig1tkN"
 Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012003.outbound.protection.outlook.com [52.101.126.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5461F0E29
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5C12135B9
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.3
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346748; cv=fail; b=cu1YjG+6g2DqwCPDP5AEu5NszGBXXNNiRLQpRN5GiNeBdPb2UA3KPDXpKbI3h4kF7gB5FPGQCX3HbZrAzxOt3QQO9Fj4KVtvg/3pArkjsKAj8CTEgbywDJIWf5OHEG/W28YE5cK7AP9WgK/XCHgulR1QrnkTRMfDL4SKqiAx5Zc=
+	t=1753346750; cv=fail; b=K7PzPaWDBueLUgJ3kTbasTmjg8X5IqCqqHP542LUPWD0t6G7pnES2k+ZN4CF3RtPlQQP9Pt9tK8TLZMvwtWgKnAefpnHiHCNJLsVZcNwqn5lZFp65XDOpBxTx7Cfb68L+qiN3qIY8uRUJU3olDUdAacZ8gRrsYa9ZwnhfxDkuBo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346748; c=relaxed/simple;
-	bh=bvhKHW8hVOWgPeThbqE9O0sULR4xFt/E3EaQx6GX/jk=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mOkGXoTw//0Hbdl1tQqvl3K/HwvwY6P9j4P029Yf1/V1+323TXw3CdnBcyed0o7IzOM1oq3WIcWbKp/Uhppl4MZhCErtmcitshtkVIg0ZWFgcWIhYiCOFo2HkQmurlCZSzrM7bEGDoeBtzl5BMIAyXkN0zulpyT0XP9fLhAn4dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ck5mLxGT; arc=fail smtp.client-ip=52.101.126.3
+	s=arc-20240116; t=1753346750; c=relaxed/simple;
+	bh=6T+aEF3D2QTWHgjjcqDvz5EIBhssGAalCmffdNyyGxY=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P/4GzPn2bzOu3s6NsqTnifJoOcGWY2O32r8BeH9MWFWxPdCulrWQ+FnrONNUWFXx/MlAQwmujkEO4X2tomZ2oNJAEJ2afbd2kZifOiQ62ClFo/j1Pb5EklSwMkd8pwfcbadoP7oRYpZ3UC2zkP/crKNsVBjDoCOx0iVV/NWybMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=MHig1tkN; arc=fail smtp.client-ip=52.101.126.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gul6mbE3bafU5VkBV6kXHRsev6x/sEZm0O5uVAcRbhFtIGJ3RXhwrnErbI973F/MSViOGQjGOPmSNtR3eZ6CFR3PPLOayUo6JL2sLU9Yixieff2wdknYj9Arx1Jruh3jbHQlxx3/tEKMKp/qt9Cz7QESghBz5FdShjeH6KfxVCkXU2+iSDXirIzZF4NQouiWlOfD7acHXFVdinHKhr6PWoGbSD2tSw7AwIDaPxS1mlrJiZUYm95T/0XLErAvh8ML6EAiH7FQWDbbmC7Is7VpU7Z3oSjyHQYAWlvXfnFJJRSPf0zpboHFfk4Y+7ecqP9nYE2wwYXKYlV6HX3W3s+V2w==
+ b=TiOROehli7+/U2bTFBQ5hBEqiGwAuM/qVqo9qTjO1VT6/rz2hUULWLEZXeHEJOm0v4yhlc0NRm6Rtu70Qn1N4u8Q5YOA2Wk+uFCU2Wo76EDnKzCxLIgm2LZHLPIQFRKd5dnpu4j+tg/m2AgOgw8s7gd5qydOcFJ81z9EtGLG5Q01pcg4/lqBM7etLpPGjgek42lFILd/s49uqBgoqjt31rupxkcDa1eTaNNXxUQknlEC2C83mO3RXc+z+90g9qS+dGdyCAAGFE3CMBTxyhhCmj3m+dhh+8mu5i7EFX2Dxmew8wkLPkS6yCDyZBqrbfsMTiFvCvblJg/lNbP+9yVkbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j2gZ1GPAYaRQwe04UEG7fyjmBPSujJfK3+RGx1T7+Mw=;
- b=oelT+Yb3Y87xmqeXaoBOTokVDM+2qNk/WPLmLwHkLOrLUBivK8bM3hHarqR4X6VCyyd48ckyGEg+Woxt093A/f58VNFzzColbTXO6CtTvoISnkwxT4bDfc5IS8H4aRnxDHFDtA9qjAdMmUtSsGGpLOrZ67jDPuJUAeTuxqPWnSTOyczcpUEx1pVhuC9YlAk1xq+HaIPILmXE2SSdr570yUcnZ7YputBDVEwrAvRhVKiTAXqOkgaRTz03MWtZSQmLL/BZn8dqodsyt5UcLdE+4bbW7rhW/+nnXSRjQtfjB40jQ96x+iYzXzanyp8PeqQZXeSoT5FDib5blC4AiDJuMQ==
+ bh=J2Dq90EgzDzKGh7Zr8kmf6dOAjvyPb8DO2vog7rCgno=;
+ b=NAliPpJeyaw+JGL74f5VituZ2jgd5kkfxQ1od2fdsENDy3JjoqhTozS+Ubgu516xt8qnNuExu/A1tvDbGWKY6KOQuZesVfAU9r6nCtiTST4gH6mzHTxto3w6vkw8B9e8eoQS4Xsj8+rYimZRPFi5fiQmFiEqKUXAmHWFe+kkCLdQP4yD0AjDnXMsAUfx62EdBfZTpStgg72UW3Fj63MjomlOBoOrej12jIRHB8yOgHgNXnm/jqNZGEG10h/xQrouPDTJiMhXu85Cc+WOckYAWbdUmc8WS8bPfXvLe+LUnsDc0cVaGA9A8aH5pmIlOxWbcG4qjPED8bgKq0PLpkfWRg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j2gZ1GPAYaRQwe04UEG7fyjmBPSujJfK3+RGx1T7+Mw=;
- b=Ck5mLxGTWH3qjGk0HUU6d7ZnCNXm/GMeroWUHkxjX6ZyrEoNYWXqJPSiva2cHEWOgIWyCR2w71JoViXnz+ONJtHP6rYhy7Nlf3tILaFjJ5KvGuPyMHb8WAkvlWqqcQDE7OsyBshP1jS+q7/qjT6ZnDtTReRqLN45PlNJaPIEAdgdIAKAkPSIzumv7M/Sx7VoqgTwIEt1KIlwIwycT0N11lKAMAwZan5Q8BGKTwLX3gVMZR260ImuAyPHxro1+4MVZqXmS/N70Rsu0GsvSXrddXjz78z/Um7Fcaqrqx6LbhEdZ5HNLOF3kZgB6+pcrDxrzsK/cMKpBbygLwGs/Jef1Q==
+ bh=J2Dq90EgzDzKGh7Zr8kmf6dOAjvyPb8DO2vog7rCgno=;
+ b=MHig1tkNLeXk7AA4MJTTKAfgMwAw2n+KLu4FFLA91nrvS5q8MVAXj0e56UqBS3Z+NeoRqqui/PvYSQ1y1PpeU3ZwOxF9Mulgv2aQ4oksW5ZLqjE0iGQ/ddN9mdhGDJgj+/9KaJIE1Q3HgPCia2E+yaS3ef4Sqmd191F/pPObjxB1q9PfL6PyQGnl76S2eMygOotrOFNKajPgTHR2KgLSYT5hAWd0iw8Rl7beKgpO0b9xuVc1VCsI500VBG1DjuWVzG/iiDjTZVGnC+9TRTMjqir5AmqFafgMNCf4DuYblll3beH+HmAJ3fV3OK9H8XWnXwIQAssqc91KddX9KodgLQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
  by PS1PPF2A261C07C.apcprd06.prod.outlook.com (2603:1096:308::247) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
- 2025 08:45:40 +0000
+ 2025 08:45:46 +0000
 Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
  ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
  ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 08:45:40 +0000
+ 08:45:46 +0000
 From: Huan Yang <link@vivo.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@redhat.com>,
@@ -82,13 +83,16 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Yu Zhao <yuzhao@google.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/9] introduce PGTY_mgt_entry page_type
-Date: Thu, 24 Jul 2025 16:44:28 +0800
-Message-Id: <20250724084441.380404-1-link@vivo.com>
+	linux-kernel@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [RFC PATCH 1/9] mm: introduce PAGE_TYPE_SHIFT
+Date: Thu, 24 Jul 2025 16:44:29 +0800
+Message-Id: <20250724084441.380404-2-link@vivo.com>
 X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250724084441.380404-1-link@vivo.com>
+References: <20250724084441.380404-1-link@vivo.com>
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: TYWP286CA0006.JPNP286.PROD.OUTLOOK.COM
  (2603:1096:400:178::16) To PUZPR06MB5676.apcprd06.prod.outlook.com
  (2603:1096:301:f8::10)
@@ -100,340 +104,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PS1PPF2A261C07C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 108ab952-754e-4aae-4357-08ddca8e77b8
+X-MS-Office365-Filtering-Correlation-Id: 4c575e92-59c6-45f1-75c2-08ddca8e7b37
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3RSWTkxUVdIUlNYb1JVbWEzNjUyeTV2UG9WS3QwdG9YaWUxK1U2RHBTNlpy?=
- =?utf-8?B?dXhGWUtUMFZJY3dOSGFqTnY5dGR5dGNrbDhyTGozMlp5a0piVmNpeDR0bXY5?=
- =?utf-8?B?UmFmVC9LV0dLcUtxa1YvWWVtcEh3QzJReXY0N1AzT0hFYVpNWGVVV0w2aTA2?=
- =?utf-8?B?ZEo5ei9OSVdLUzFpalF3OGZzc2JiT3JQcXdyVDJQTDNmbHpOdmQwWUEwLzlR?=
- =?utf-8?B?WE1nUGJTeWFHUTJkNkFlZDZqZEdZM05xYUdFWUxud2I1ZTl3RU9yV0ZKUlRX?=
- =?utf-8?B?VHdjWkdFakdUZ2VQNnJPanF4M1BRQVhBODMrU1NWQ3ZtRlk5SjRGRUtxUWpK?=
- =?utf-8?B?bkJCODdwY3dRK1VuSERsV2drRzI2Z01uakl0bmQ4ZEJpRXFkSEo4ZjQ3amZj?=
- =?utf-8?B?ZkRoY3ZFYk1hbEVYTzFQR0hHcURkRm1oSDFhaFg3UlUzbTJEa2RLWUkrNU9I?=
- =?utf-8?B?Wjhud2daWmxVREF2VXYxemcveUd0Um11cDdUZ25mK1dEc3pYVzVsQSt1ZFZV?=
- =?utf-8?B?ZVJXMVE0UTZkNHZQVytZTEZqajJTaUpJd1BqUDJmbjVxMVR5S1RoU3JSS3d6?=
- =?utf-8?B?QzJ3bDJVNmlFZFNEbjY2ZHloUzlmdThzNHIyQ05HWUlyUENNL0MrR1k0bmtJ?=
- =?utf-8?B?NGZob1dZWE9UdjRtTExGY2xvTVVRaTQzRFhzVXl6TXJ3Tm5aSXMxTjlHZTIw?=
- =?utf-8?B?cnJwT0VlQVhLSm1VOHVvQlNPdXdWWWNsVUJnVUhOd2lNc0IyNDVKY2REY2NX?=
- =?utf-8?B?SmNuY2J5RnZySVlRYm4xUU05UHd3TmszMGpQRVpIVE1EdzVReXBad0ErNS9j?=
- =?utf-8?B?eG10Q2cyVWR1Nk01Z2I4clFEb2tzcDZVN1c1NnRhdXM2cHhSdG42QmV0azNn?=
- =?utf-8?B?WVR0WkxIL3Vua1luMGlycXZINzhEOVhpYThBNThjYTdKbUQ2REdtdFlBVUVl?=
- =?utf-8?B?VGZDZGRlclV3L1BUOXlCVXRncnhEalplVkxKQ2hIenZwRDFQTCtqVzYxMTRS?=
- =?utf-8?B?WWZZWGYvTlZvS05pd2xOVEJ2bE9BZEVUU2JxZE9lUkEzSmdsdzFSQU1UcWxi?=
- =?utf-8?B?UHIxRjJmYmIrajJ0elliUkc3VU1KSVZwZzBSRW9TUm9ZQ0hpWk9YNlFnWmtM?=
- =?utf-8?B?UjZwaUR0akladStoang0cDlRdytsbEtUenc4ZUxhYUR1N005WXh2bExacnNQ?=
- =?utf-8?B?dzE3LzRJem5UQWhMSFFFUmdhQWxxa3hHQ1FPck1QTWtyMEdyOTVXaml5cno4?=
- =?utf-8?B?SGtxMXdPRGRBazBrYzNKY01xY1dMN2grU1lrZjlDd0NSbWlyNVNFV25mSUxM?=
- =?utf-8?B?QTRVRkJ5NGU4NkJWdVpjcVQ3VUdJZHVrbnJsVFkvcjNpbkppcjFNeW5tLzZp?=
- =?utf-8?B?a29jUnVYc3JXLzY3UGFwU3NQai9jZWV4dVR1Nk5LU0hwRThmRVFiUWlWKzZ6?=
- =?utf-8?B?VnZxaUtKdU82RGVxZzV6NU9XMGl0cDRXbjVObWllZ3M0c0FIRCtYc2hyQ3lT?=
- =?utf-8?B?VFdWV0o5a2ZQMHRHS1F5UC9KQmE4dXJKTjNpczBwbU9OTm1QNHdqM1dRdVNt?=
- =?utf-8?B?eENIUlhrT2NYeEtpNUV5VTJ5aitrMGpOaHNIYWVtWWZham5QQlNNVkM4cTZP?=
- =?utf-8?B?bzNkdHVFSHc4MS9ZUUkxSzljRlZYOExhMVI1RFA2VnpmRXowSEZ6cDVLQWs3?=
- =?utf-8?B?Zk9jUDczNEN4dmE3NGJBUzVLekh2R1RyN1ZGS21KdmpKMGlJeUVLUXNLb3lI?=
- =?utf-8?B?MWpDT2lGZ2RId1pFTkJ6YitlMHhOcDdDVkM3bjFGTkVLWUxMV3g1QWJEcmN0?=
- =?utf-8?B?dWtnbHZNczE1aUdTUWpIYXh1OU1qc3F5QlVtQlhjWVV5Mzd3Qnorb0t3NzUz?=
- =?utf-8?B?QjJrM1F3cjlvUjBFcW1nczZVYVJKUTJ1aVpNanJDUE5QaElnZXM3MjZFVkZG?=
- =?utf-8?B?T1VoUitzOWVybS9zRW9BMU4vRnZTdC9rVk9WanlKWWhpUDdqSjRTRjFzN3BQ?=
- =?utf-8?Q?Kxq7vgRdUXQxzmR8sl2mFBdTJBa2n0=3D?=
+	=?us-ascii?Q?iQhyJZD/LnzlJNoQixYXlsYxdKmyjgI6YuC1Bs4a/rxHuV89MzjrgIPTPTa9?=
+ =?us-ascii?Q?de7DSoVdLMj7xrH1GgaceDQRUzJVapzKews2570vK7sYPk6LZL16vnLdrCj5?=
+ =?us-ascii?Q?Rc49M7nh2+mtJD+1xDTsFxQcJFkMTgWhlzx4jH+ZmLdHIbT6GWjWJ5e2IdbT?=
+ =?us-ascii?Q?5vOybkkER7ziOVMwaG+T0dCnFFiOQTW/97TKxYIEp8U4dflAFzxH1m00SQVm?=
+ =?us-ascii?Q?Zp0QrxeNoxgMyWWUjwomQnEe8uPCMqwZKQfAXcpH7vb3RzN0z/ow1gTrX3tQ?=
+ =?us-ascii?Q?tqbt8KyXAZktc+V9T9kbHf++4ErFKzneP7EmQmNugdqL9plgSmq2P6TRHgN9?=
+ =?us-ascii?Q?/0vbyPhV41Cm5ilUGgVRKVf9c9sMfmlWqeLZm/w/T477gKrMQ9E+k5lqsbPU?=
+ =?us-ascii?Q?c9nmRUr61W0dTV4ydDJlbvIXkCS1VQAmrABDZezrj9z5KBkWnPmx3AsuG8o7?=
+ =?us-ascii?Q?evc3bHwFRLkNg7b/dGPLF8a5Onerd0qeErp8M6PX2Z5tV7m+WzUNuuj4ltF5?=
+ =?us-ascii?Q?yNBfreiS5MJGbreLZKcxASl0kBjLxnDaU1QWaIkHaxG0xdwQnTR8+RdhsD1q?=
+ =?us-ascii?Q?oGwzPcX4CGUZfpYXi4zIgUfHofuku+Z3b+r+qse02KgvYtERSRmM6g0vCwKO?=
+ =?us-ascii?Q?PlvdTZd/5VK6MCVIZ7EVbFBfBHf5bF0PUCaNSbmMw8QYcj3qLCqp2K+MN1qP?=
+ =?us-ascii?Q?tsFm67ydczUW3qXIqEFKxfkcOdRfRFpRfK6q6R5r/ewadzJRjisbtwo7bDbi?=
+ =?us-ascii?Q?bEkkFuvi0Jig0aDPyuYA+RApeinwAFvGaL27M549Ds0SyG1GJZKMG3EKKag8?=
+ =?us-ascii?Q?cjSwcWC+wy5vtmHRba8ohwJEyjpRJ0zTBzC+YLMiM8ZVAxPpXa/zG6d13ewW?=
+ =?us-ascii?Q?ZXeIFfnsqaSuv+lxzcg072DXOlMbaCE206CpeqpisKKnmo0Lwg3cT4+vE9W1?=
+ =?us-ascii?Q?yHeCoqzkB362cNmQ3W8NFUlAS0DPjrqBMA1jdR0dM3dcPnT0ZGikOOWtJeWB?=
+ =?us-ascii?Q?CZ7MMYt3jFm7DXOho3ctjjwS7fS5llE0EaPQM7pKsEczL4fU7xnjz/DhN+Yh?=
+ =?us-ascii?Q?YzRww9mywPvRikPGKEs+bbrp0W3MKId/AEc2kexN2I2tmUQ4Giv0MMIjV9Kr?=
+ =?us-ascii?Q?QqVH86t8v4oV4LcCovF65NRFo8VAg2SktN1CUZbQaLFMj2lm1vUIse9RK5Wk?=
+ =?us-ascii?Q?jIk/U1RFxhyA/i2abE+M5L4946f/piyQkZ2euaeVYHCSkOdOWKWlPsH3HySk?=
+ =?us-ascii?Q?mGNiV5I3+P+uIsdRW9Y8db4KetQTpVYtMVMxrzrbLDkH1HGd5dDLSTRBpz/3?=
+ =?us-ascii?Q?7okyAQK7LxVj5ILqbcjz8fS50V4hFeWY6eFnzGc8AkZu4S7/xUhjmjmljKfa?=
+ =?us-ascii?Q?3hGlI9V7tMLHhQtD07ucXG22hZ9Q46VgxdSwZ4AojNMSyhI024dquzM0axBi?=
+ =?us-ascii?Q?rIX2OFejzAFuDrgHcyLobxIKIyHLHcTyNLkb6ZFz7IaQusDeHbZYCfb+bGGz?=
+ =?us-ascii?Q?oD4OhNbscdy8b/8=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHNMOE9hU0IzOHowRmREa0VCWW41aUtJMFE1SDRQSGo4ajhBTUt3Z2dkanI0?=
- =?utf-8?B?Wk1VTW90dDNDU0FkUHNkM0FaenN1VlRrR2tReUlZOXJGVzZEbFVuQmdaZ1JH?=
- =?utf-8?B?N00yeDcrYzF4V3hWcmhOcEdvSm10OHNvdlh4Ymt0Y2lNdXhlZGR1b21HUSto?=
- =?utf-8?B?NUl6Y012OXpROWVnbE9xL3VBTnpMS3RHQ2p6ZG1RN0JTdHRMMlRiV2JscEZn?=
- =?utf-8?B?YjdqOENIcU1DanhFMUFTSWYvVzNNODJPTUIvbHhoenV1OG5UaUdrRnlEemtM?=
- =?utf-8?B?bFJCb0pKWlRIS1lXS0ltamNHQmRHRkYwenhBbVB2b1oxbXk2Sk9xVm91ODFo?=
- =?utf-8?B?U2NTb1R0VUt2c2d6Rm1OSGF1aHo2UFdpWEs0ZTFtZ0RzYWNKbTJxV1hXQ0gz?=
- =?utf-8?B?WG9XbDZVaWFhYzVON2xJWGx5ZSs4dVBZODZSYytNZC83Z1dxNHI2WmZGV1pz?=
- =?utf-8?B?bXRzNEZPYWF3ZERuTS94MFFrTEdncHdKdnBJb0JlbHlpYVRJUjZJUjYyUWdl?=
- =?utf-8?B?aHhhZzRGTnVuNTk1dGM1MlNpOWg5YmwwMlFLZExtcGtrVk9mUHBUSS9IcFFm?=
- =?utf-8?B?MU1ZRnNtelFLcGxUd0w2Z1FybXNiQldYYWRhUGI5b0QrN2FBQXhOZWdFejdD?=
- =?utf-8?B?dlhpd0dMY0ZvckswUkpFRlByT3VuQ3N4NmViSnBET1kyZitNVE5CbWhFZThT?=
- =?utf-8?B?emJVWUhzQk0wdnJESlU0dFNSQW45RlBmWlJoTXpmZU1jODhSODJ0N0FWcXpx?=
- =?utf-8?B?ZUlaVWFGVjFDZFRWdDRqZjBRckdRRnpiL2UyOGdIN0xObUNpQkM1R1FCS0U1?=
- =?utf-8?B?a3JCa2IvQUphUHRVWkFKUElFVDl5eW9ndUdSSzR6ODVqM0VxZlc0Z0tyeVNw?=
- =?utf-8?B?MWwzOEFhUEo2T05DY1lSc3lrbXlLV3lYOGpHcVhjMHFIV1AvSW9lelYySFdk?=
- =?utf-8?B?bThLcFo3Z3lldVRvNFZSMUl4NUIvVUh1VUFTbXdnMWs3VisyNGYzRnlUa1V3?=
- =?utf-8?B?T0NqSCthVUhzQ092NlVtNTlvM0lCeFV0STNZOGd3VnVPbnhVWWduelJvN0xU?=
- =?utf-8?B?bHhzcDZaR0w5a3pFS29nenlkUTdHd0lGRFh5Rmp2bHRMeWxzeEMrSnJwZHdQ?=
- =?utf-8?B?WHhQYUJYbEVHNEtYeWR3R2lOSEpFYTlTb0ErWE5NZnJRRVFZRmNLYlNjM1FZ?=
- =?utf-8?B?SHZDUmNJSlZGaGEyZ282N29kSjI4RFJWd04zVFpJM3pZMkhKMFUxeWZBTzQ4?=
- =?utf-8?B?OGpnSjJ2NGUwVHBLeUhZeFNENjIrNGptVFNLMGtqdmRYNFN5NzV6d0ZoZ0l1?=
- =?utf-8?B?ZGYyNlpNVkZLZ04xNGRpMnc5WkZ5SFlhQmd1YmZHUkE5N3VldnJ6bXZIa0pa?=
- =?utf-8?B?QzJQNUFWdXN3S3kzZi9YaW1xelovQ1E5SU9LRThhZEpUTEhrWVdSeVc5bHZj?=
- =?utf-8?B?QXlVbWRJRlJ3YlRDSTVHbzZtNGc2L3lySXNaRktob2hTZnZoaDVIRTBLSjk0?=
- =?utf-8?B?UFYvcWd1MG94bWpBemdSb0ZoQS83bytPT21xV2hNeFJ3YkpMTlJQcUk3d0Ix?=
- =?utf-8?B?QmQ2NUhLaGhBOWlGeERpVWxYdnJXQmRLNG53dzMwRXhLcnUzMXNIYlp3UjFr?=
- =?utf-8?B?bi9Gbk5JN0sxakRJYi8xakc3THdQTzZieG5ydFBjdlhyWmErWHBXc0pUWGtX?=
- =?utf-8?B?NUNabW9GekdGVzBNUVNEeEtYbWdOdStWRHNJZDU5dk91VzQ5ZVFRTVB6aHp6?=
- =?utf-8?B?aXE5UllNbXM4NEFiY2t5a09PK3I3YWFWMGNaUnFmSDUyK1RNZVVDYzVwMHlk?=
- =?utf-8?B?MitCcDI5Wkx3THVBb2VzS2x4SDR0MmY4MjErcEtsc0NKL3VqYlJFWXJkNmxL?=
- =?utf-8?B?ZW5nYUs0bW9yUkRoaERZRkdKUEhsQUg5Q2ZJd2ZxTmlGRm9YTHBkRGpJdUNi?=
- =?utf-8?B?WUl0Ynk2R21xa0lhWGVoS3hFY2ljcGVvdHZvTnIrdVdxYlVNNytOOUs1SHh4?=
- =?utf-8?B?cW15RG1ZVUFvcUtCcis0QVh5SUsvbzAzQTdQcmVBdmdhVFdqU0xQbTh3Mldk?=
- =?utf-8?B?emlJLzY3ajRoSkxtK3Ztak42Z2N2MVZOVmZkRHVWVVdpelhodHdFU2IwOHVI?=
- =?utf-8?Q?AJP5j5/M+0P4WB3657ui78ZPV?=
+	=?us-ascii?Q?QBuatK691xoAliKuxKLfDYSv/fL9mprG/d1rHK5wF1FSvFsxT6kei93Ye/14?=
+ =?us-ascii?Q?AKhw/THRUT8EmTr2+5GZvp1wo/TLC2NPm0Lhgcis4bZQ+ajrr4ochsMnUyut?=
+ =?us-ascii?Q?5FoPLdxtSSNajIOG+LwiINYYduKFlwMUYqPX7J8ZnDv+A/Ac4ZRNByN+3mUX?=
+ =?us-ascii?Q?QtccdnlTBNbfZwcDRSjBkvjuAvn+LUPbNITAxaHnTcLX0sIhcgrA1JTVsTsa?=
+ =?us-ascii?Q?2lD8QfXPbwVR9v8APxTbCFvvLnSc9Xv8lJ0U7AbcnlnbMCyKz6nS/3auYPNi?=
+ =?us-ascii?Q?5zmEc1POkdC+8cbN166MjjN8KjGREFPv2rZDNcrSw2ag3g/HJcBhD4JKEQHP?=
+ =?us-ascii?Q?+XujtLty1FjBjIHhFcHT9UAaPBojahyqt3knxcg+BP9jTmBq9pEmQqXa+jgB?=
+ =?us-ascii?Q?sX0ZbTakcCHxptu1BB+cHMJ8IeYPXEquTLb5Pso6JY9DZj6PSfbZtKSua+Pr?=
+ =?us-ascii?Q?Kk7u5YrcF9E9ndv23RUt9aqZPX8gVAW94bPa4gB2HI+0XtdepTfBuk5voaya?=
+ =?us-ascii?Q?MoGtU9Ket208jGnoQxextI47uMJ1lcXMgGmp0oJRFe4KqSoD4uoGjaIkDqGm?=
+ =?us-ascii?Q?2AXMd+Nt+/2Ob3Nnf7+PYR15cWxhuGGPqY6PsrS/c1rrpXLL8+RACfEYpahV?=
+ =?us-ascii?Q?EWoDncP8cLVL2tkWCo6hPE9BGeLNBhIhvVHVAzVW/UdJMEfi3RT5HSM6RoOE?=
+ =?us-ascii?Q?2fmzQLkziYp+qNRc46no77oJFoboItvfKaMJ1W+Co/pkbnfUGtRGbcGxKguC?=
+ =?us-ascii?Q?vRkXeSRLZIXL9WqHf40b+hBGdtREVeXFXe2AMeHlnAi9e0+dFmexkwaBvLiv?=
+ =?us-ascii?Q?erwPqzFYMCbc2LRf94X+8R19UvojYm4kyjhz6c5ctRwgosr8cfoSFEx3BGAb?=
+ =?us-ascii?Q?dySWyLdQ9PQHGze/PEbODT10X6eTKbVbcfvEErTNZfOVS1r5oAsYzT9MNUr4?=
+ =?us-ascii?Q?NVMFeo4DANYfCq1cst7SqO2AEusgXXFi4NZD/KtzNKFXolMvOQ8mh/NfucCD?=
+ =?us-ascii?Q?ZLswXwZbwd0rXVv54YYXD5qVU+l1YXBwRqte7diF+MC75MUCuTcD/7Gtrjc4?=
+ =?us-ascii?Q?MYIl0Z7BR/Oc9mQYWRXjLsPwApNo368nVq1oS0Pzs+exgoo3jn4+Yv3hM7y8?=
+ =?us-ascii?Q?BRXBrCKehDlNBcvQ6RVZTQ/t4dvwhq65I5WWFueZnEtYB98z5uHrfrWTU5so?=
+ =?us-ascii?Q?MfENs3b77uA4anClaFQEpf8dWNtY6mLxr7O6rRrbWpnmyI6to97TuzO79ZLf?=
+ =?us-ascii?Q?TwvGNFQTMLP3E2UQqWMWkq5VQcW5zdNKKjhAJjGQLYqZoKF98THAjsn+sUqB?=
+ =?us-ascii?Q?XZqlkQ9FyYmmUUGVGn1+e6OqaIAUezPx6PPZmO2gIFfYv+K1F07D06hSeLYG?=
+ =?us-ascii?Q?tc90R97gHelu9A3yGPrDeOAyO5PgLCHVfmDLSNBv9fAyHFZH4utQ6xs58lsI?=
+ =?us-ascii?Q?fsjaWNYdTx2wGNG3jkNzitSmqwl5KiM6Hgg3uEvItksIRi1/BBQi5a4886Xw?=
+ =?us-ascii?Q?vdlavj7pjdNT7C9yxfdSYKxir+tFrQtlRdJqVl/dG5Esv8eHAI/N/xlKhXpJ?=
+ =?us-ascii?Q?b9YfnbStTD2sqeaDQwuoONumc1SB1FYWI1sfV5d1?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 108ab952-754e-4aae-4357-08ddca8e77b8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c575e92-59c6-45f1-75c2-08ddca8e7b37
 X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 08:45:40.1133
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 08:45:45.9664
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z06Hg8Q6f1KfpzQQmHr77xeQivUGAu6n+543qeaeSxOq3uFLxpiskNJ+UUCEKwHdeERkbbhHTJSVcvEL5KroFA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qig340DZ5cq6G+bHwFc+daupBAwtCvjC99RTGZYAHCbfTpbO/MUfAV7iwBNlXOmpttltZH5qJFX9YNUGCA5vdw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF2A261C07C
 
-Summary
-==
-This patchset reuses page_type to store migrate entry count during the
-period from migrate entry setup to removal, enabling accelerated VMA
-traversal when removing migrate entries, following a similar principle to
-early termination when folio is unmapped in try_to_migrate.
+The current shift value for page_type is 24. To avoid hardcode, define
+a macro called PAGE_TYPE_SHIFT and PAGE_TYPE_MASK.
 
-In my self-constructed test scenario, the migration time can be reduced
-from over 150+ms to around 30+ms, achieving nearly a 70% performance
-improvement. Additionally, the flame graph shows that the proportion of
-remove_migration_ptes can be reduced from 80%+ to 60%+.
+No functional change.
 
-Notice: migrate entry specifically refers to migrate PTE entry, as large
-folio are not supported page type and 0 mapcount reuse.
+Signed-off-by: Huan Yang <link@vivo.com>
+---
+ include/linux/page-flags.h | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-Principle
-==
-When a page removes all PTEs in try_to_migrate and sets up a migrate PTE
-entry, we can determine whether the traversal of remaining VMAs can be
-terminated early by checking if mapcount is zero. This optimization
-helps improve performance during migration.
-
-However, when removing migrate PTE entries and setting up PTEs for the
-destination folio in remove_migration_ptes, there is no such information
-available to assist in deciding whether the traversal of remaining VMAs
-can be ended early. Therefore, it is necessary to traversal all VMAs
-associated with this folio.
-
-In reality, when a folio is fully unmapped and before all migrate PTE
-entries are removed, the mapcount will always be zero. Since page_type
-and mapcount share a union, and referring to folio_mapcount, we can
-reuse page_type to record the number of migrate PTE entries of the
-current folio in the system as long as it's not a large folio. This
-reuse does not affect calls to folio_mapcount, which will always return
-zero.
-
-Therefore, we can set the folio's page_type to PGTY_mgt_entry when
-try_to_migrate completes, the folio is already unmapped, and it's not a
-large folio. The remaining 24 bits can then be used to record the number
-of migrate PTE entries generated by try_to_migrate.
-
-Then, in remove_migration_ptes, when the nr_mgt_entry count drops to
-zero, we can terminate the VMA traversal early.
-
-It's important to note that we need to initialize the folio's page_type
-to PGTY_mgt_entry and set the migrate entry count only while holding the
-rmap walk lock.This is because during the lock period, we can prevent
-new VMA fork (which would increase migrate entries) and VMA unmap
-(which would decrease migrate entries).
-
-However, I doubt there is actually an additional critical section here, for
-example anon:
-
-Process Parent                          fork
-try_to_migrate
-                                        anon_vma_clone
-                                            write_lock
-                                                avc_inster_tree tail
-                                        ....
-    folio_lock_anon_vma_read             copy_pte_range
-        vma_iter                            pte_lock
-                ....                           pte_present copy
-                                            ...
-                pte_lock
-                    new forked pte clean
-....
-remove_migration_ptes
-    rmap_walk_anon_lock
-
-If my understanding is correct and such a critical section exists, it
-shouldn't cause any issues—newly added PTEs can still be properly
-removed and converted into migrate entries.
-
-But in this:
-
-Process Parent                          fork
-try_to_migrate
-                                        anon_vma_clone
-                                            write_lock
-                                                avc_inster_tree
-                                        ....
-    folio_lock_anon_vma_read             copy_pte_range
-        vma_iter
-                pte_lock
-                    migrate entry set
-                ....                        pte_lock
-                                                pte_nonpresent copy
-                                            ....
-....
-remove_migration_ptes
-    rmap_walk_anon_lock
-
-If the parent process first acquires the pte_lock to set a migrate
-entry, the child process will then directly copy the non-present migrate
-entry, resulting in an increase in migrate entries. However, since the
-newly added VMA is positioned later in the rb tree of the folio's
-anon_vma, when we traverse to this child-process-added migrate entry,
-the count of migrate entries will still be correctly recorded, and this
-will not cause any issues.
-
-If I misunderstand, please correct me. :)
-
-After a folio exits try_to_migrate and before remove_migration_ptes
-acquires the rmap lock, the system can perform normal fork and unmap
-operations. Therefore, we need to increment or decrement the migrate
-entry count recorded in the folio (if it's of type PGTY_mgt_entry) when
-handling copy/zap_nonpresent_pte.
-
-When performing remove_migration_ptes during migration to start removing
-migrate entries, we need to dynamically decrement the recorded migrate
-entry count. Once this count reaches zero, it indicates there are no
-remaining migrate entries in the associated VMAs that need to be cleared
-and replaced with the destination PFN. This allows us to safely
-terminate the VMA traversal early.
-
-However, it's important to note that if issues occur during migration
-requiring an undo operation, PGTY_mgt_entry can no longer be used. This
-is because the dst needs to be set back to the src, and the presence of
-PGTY_mgt_entry would interfere with the normal usage of mapcount when
-setup rmap info.
-
-Test
-==
-I set up a 2-node test environment using QEMU, and used mbind to trigger
-page migration between nodes for the specified VMA.
-
-The core idea of the test scenario is to create a situation where the
-number of VMAs that need to be itered in the anon_vma is significantly
-larger than the folio's mapcount.
-
-To achieve this, I constructed an exaggerated scenario: the parent
-process allocates 5MB of memory and binds it to node0, then immediately
-forks 1000 child processes. Each child process runs and immediately
-memset all this memory to complete COW-ed. Afterwards, the parent process
-calls mbind to migrate the memory from node0 to node1, while recording
-the time consumed during this period.
-Additionally, perf is used to capture a flame graph during the mbind
-execution.
-
-The time cost results are as follows:
-    Patch1-9               Normal(f817b6d)
-      18ms                    197ms
-      58ms                    152ms
-      40ms                    120ms
-
-The hot path show in fireflame:
-    Patch1-9
-      move_to_new_folio        38.89%
-      remove_migration_ptes    61.11%
-      ---------------------
-      move_to_new_folio        32.76%
-      remove_migration_ptes    67.24%
-      ---------------------
-      move_to_new_folio        37.50%
-      remove_migration_ptes    62.50%
-
-    Normal(f817b6d)
-      move_to_new_folio        11.43%
-      remove_migration_ptes    87.43%
-      ---------------------
-      move_to_new_folio        13.91%
-      remove_migration_ptes    86.09%
-      ---------------------
-      move_to_new_folio        12.50%
-      remove_migration_ptes    85.83%
-
-Can easy see that cost time optimized by approximately 75.3%.
-And the proportion of the remove_migration_ptes function path
-has decreased by approximately 20%.
-
-Simplify Test Code:
-
-```c
-#define size (5 << 20)
-#define CHILD_COUNT 1000
-
-int *buffer = (int *)mmap(NULL, size, PROT_READ | PROT_WRITE,
-                        MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-
-unsigned long mask = 1UL << 0;
-mbind(buffer, size, MPOL_BIND, &mask, 2, 0);
-// let all page-faulted in node 0
-memset(buffer, 0, size);
-
-// fork child.
-pid_t children[CHILD_COUNT];
-for (int i = 0; i < CHILD_COUNT; i++) {
-    pid_t pid = fork();
-    if (pid == 0) {
-        // let all child process COW-ed
-        memset(buffer, 0, size);
-        sleep(100000);
-    } else {
-        children[i] = pid;
-    }
-}
-
-// maybe you need sleep to wait child process COW-ed
-sleep(10);
-
-
-// You can use perf watch here
-mask = 1UL << 1;
-// migrate this buffer from node 0 -> node 1
-mbind(buffer, size, MPOL_BIND, &mask, 4, MPOL_MF_MOVE);
-
-```
-Notice: this code removed many error assert and resource clean
-action, time record ...
-
-Why RFC
-==
-Memory migration is one of the most general-purpose modules.
-My own tests cannot cover all system scenarios, and there
-may be omissions or misunderstandings in the code modifications.
-
-If good enough, I will send the formal patch.
-
-Patch 1-7 do some code clean work.
-Patch 8 prepare for PGTY_mgt_entry.
-Patch 9 apply it.
-
-Huan Yang (9):
-  mm: introduce PAGE_TYPE_SHIFT
-  mm: add page_type value helper
-  mm/rmap: simplify rmap_walk invoke
-  mm/rmap: add args in rmap_walk_control done hook
-  mm/rmap: introduce exit hook
-  mm/rmap: introduce migrate_walk_arg
-  mm/migrate: rename rmap_walk_arg folio
-  mm/migrate: infrastructure for migrate entry page_type.
-  mm/migrate: apply migrate entry page_type
-
- include/linux/page-flags.h | 106 +++++++++++++++++++++++++++++++++++--
- include/linux/rmap.h       |   7 ++-
- mm/ksm.c                   |   2 +-
- mm/memory.c                |   2 +
- mm/migrate.c               |  38 ++++++++++---
- mm/rmap.c                  |  85 ++++++++++++++++++-----------
- 6 files changed, 193 insertions(+), 47 deletions(-)
-
---
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 4fe5ee67535b..3c7103c2eee4 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -961,9 +961,12 @@ enum pagetype {
+ 	PGTY_mapcount_underflow = 0xff
+ };
+ 
++#define PAGE_TYPE_SHIFT		24
++#define PAGE_TYPE_MASK		((1 << PAGE_TYPE_SHIFT) - 1)
++
+ static inline bool page_type_has_type(int page_type)
+ {
+-	return page_type < (PGTY_mapcount_underflow << 24);
++	return page_type < (PGTY_mapcount_underflow << PAGE_TYPE_SHIFT);
+ }
+ 
+ /* This takes a mapcount which is one more than page->_mapcount */
+@@ -980,7 +983,8 @@ static inline bool page_has_type(const struct page *page)
+ #define FOLIO_TYPE_OPS(lname, fname)					\
+ static __always_inline bool folio_test_##fname(const struct folio *folio) \
+ {									\
+-	return data_race(folio->page.page_type >> 24) == PGTY_##lname;	\
++	return data_race(folio->page.page_type >> PAGE_TYPE_SHIFT)      \
++	       == PGTY_##lname;						\
+ }									\
+ static __always_inline void __folio_set_##fname(struct folio *folio)	\
+ {									\
+@@ -988,7 +992,8 @@ static __always_inline void __folio_set_##fname(struct folio *folio)	\
+ 		return;							\
+ 	VM_BUG_ON_FOLIO(data_race(folio->page.page_type) != UINT_MAX,	\
+ 			folio);						\
+-	folio->page.page_type = (unsigned int)PGTY_##lname << 24;	\
++	folio->page.page_type = (unsigned int)PGTY_##lname		\
++					      << PAGE_TYPE_SHIFT;	\
+ }									\
+ static __always_inline void __folio_clear_##fname(struct folio *folio)	\
+ {									\
+@@ -1002,14 +1007,16 @@ static __always_inline void __folio_clear_##fname(struct folio *folio)	\
+ FOLIO_TYPE_OPS(lname, fname)						\
+ static __always_inline int Page##uname(const struct page *page)		\
+ {									\
+-	return data_race(page->page_type >> 24) == PGTY_##lname;	\
++	return data_race(page->page_type >> PAGE_TYPE_SHIFT)		\
++	       == PGTY_##lname;						\
+ }									\
+ static __always_inline void __SetPage##uname(struct page *page)		\
+ {									\
+ 	if (Page##uname(page))						\
+ 		return;							\
+ 	VM_BUG_ON_PAGE(data_race(page->page_type) != UINT_MAX, page);	\
+-	page->page_type = (unsigned int)PGTY_##lname << 24;		\
++	page->page_type = (unsigned int)PGTY_##lname			\
++					<< PAGE_TYPE_SHIFT;		\
+ }									\
+ static __always_inline void __ClearPage##uname(struct page *page)	\
+ {									\
+-- 
 2.34.1
 
 
