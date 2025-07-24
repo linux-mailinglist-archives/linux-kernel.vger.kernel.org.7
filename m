@@ -1,160 +1,140 @@
-Return-Path: <linux-kernel+bounces-744933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5C3B112B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:56:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA23B112BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A267B14EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0732F7A5ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB5F2E9EA6;
-	Thu, 24 Jul 2025 20:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7535827702F;
+	Thu, 24 Jul 2025 20:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iG98kHGv"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XWdD4XZr"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF1D257AC6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B19231840
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753390558; cv=none; b=IqqeBSr18zwxLc36zmplJH7I4gLjVm0SeKz1yuXFU8AX13pCBv+uQerUCZFNA+0wpOepMWjJuiq3qCU1k4Q/PQYqDlz/d3zq0WbQsbOJ6UckZ4Vw2Fa5/IY+BcjmRXqt/BJDKpnRIAHhCH0ifo8iFycPl8yISlgTomQlnsZ1JR8=
+	t=1753390728; cv=none; b=Ar6KBPhMATlXEJ35/90Q5cds2CBcpVco84JxZldljtZnPwEQu3K2Pn9EkbcNzJwCIUnuHHTh0QGxgNu35hYWw8z0ZhDgnOOpV3d4Ujgein+rNfhrfsmde6fsRRazHyc1KmNKgE1H8nxcMdn8Xp6CjItMY3L08vmxIuPpWHeKktw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753390558; c=relaxed/simple;
-	bh=WVnPqwTo77Pc+iMCvphoAqe39pYBfadoUM7KubCgV6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKq9klFJcOeA2agade4AM2+KtwJpi9W53TzTJyAezQbICNbRB+yYvDrQvaPWXS/imROFkDSrUVJEq4rtmoR26fxcf9Awe3ygctIbSx/twDNclE8ZxKogG+ys4hnn0mz2oE5QtHsRtcpKrU+RWU1xx/KI6hjaELvrbzPmdT8nneM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iG98kHGv; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1753390728; c=relaxed/simple;
+	bh=cyO7L9yYcKPjjy+NefV6hDuPIR264Y/WcXCJuKdz9uM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Sx+iscw5Moi5l4flYdSo1NJ8qpaGEuMKACOHLq2U7IaWBbtHu5/ru7M+aso7BqrvqOqCjkcRX+B18QpFAR+3maxw5eqHDG3CHEcrvbIcUZxLkoVK3TYbWLCbWCDVQjepcFem6hN1+so/dJgH3ZN95/qhLr2wXhxj9tPEGKIqznU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XWdD4XZr; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23dd9ae5aacso21155ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:55:56 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso1643800a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753390556; x=1753995356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTENdrjrQjKdf4LTtk0rNbYwdganBE87alZpnHbaQAo=;
-        b=iG98kHGv+4soZt94pLIU6HJWV0pOIzRqBCBpxZc3N4mZG3fb1UC9x+jI7jWRkr/qDu
-         C2nJ1No/RBjSn75j2MVsVldqXIdCaWKEWYv9Rjn+Vnlnyu3khKgl4uN3qgnURbEBHTqW
-         9Glf5V47VzVpOWaVYumv4Umvdgz3usZyFaA+DCc0wk1FO5Y4re7nDs8LWtzpQ04IMSAg
-         /dkr+pIsOuWMNz6ekW5U3jPbl4Uh4vrd+OTzVPQ+QCnOYnBoJXDsu4+9dPir52yLK2Ss
-         m8Vy9QIEuyk4bJmfTu0pWtgMQgUKVMs0beWmNH10ka46KiulBJdGpoS5K/sVhBLjYsKL
-         ZT/A==
+        d=google.com; s=20230601; t=1753390727; x=1753995527; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=njtRraa3yeDh+Mc2BX5WYec5QxIq/WkdRO/yIMvTr98=;
+        b=XWdD4XZrSCFOQkgY1PPHqv2lfnsOh4Gxlj6YsvIUSclFOS27dp8wpqykgXd7A2+98+
+         G0nbpct7hElztqurp3+AlXPdC0cWBqp5YuRgZzzb7jziWJ4iTL/D0u/tF6JWIWspjBzJ
+         4NoUbixhn6nInYrTwnLlofXiTZGDmlqzP7zJfMreeBZqWRUGVX9RbX4H+mANE8yXZ0wd
+         kkkgOjfERYEpim2Zh4nhIz40pyvoSgBPtIFoLqkFK7qyMmqaSFkLT+KmIvfWZDOtZH/0
+         /5FswY+Hn98hld2Ultytc/ZfxJzBkXtGzJyEqEPxCHIBGOT39sYtOk0zvkYGDRDR13Qy
+         w6hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753390556; x=1753995356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTENdrjrQjKdf4LTtk0rNbYwdganBE87alZpnHbaQAo=;
-        b=F+L0OD+I9BgOPa/IVqkYfKb8HtOJNB+GswZBJ94sMN+1E9iStu29MN7SFIgdD4BzMv
-         cXetiG4ESEAz0KlXsyF/4dd90rSA/Zb/4Fzo2mCO8y4Hle1625GSeJodKFzV5fHh4Wbw
-         j+YQgG6Phw+ouQ7HyYnJXxBSHjGlHoU7juz5sSm8+KQmWSoGbUQ3UtQbCg2khWkDeqH4
-         +Eu3m8RoOwJzkpE7Qs55CzXTWz8z2EaHs4J2feIb6B7V3tRxZv+6jBKOf6yCHGyROGrR
-         c1l0y3UdomRNjQSCcp9E7Hb2DwSHZFMONO7XTMyJQD+Lsle2rwgBiyngSMgPHf/3XEcP
-         wR2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9gcQxLZPlPtJ7jEtGuf42mZ4aznrg9guczMUPshyJNlsgILhOd63R6jRxSJ9NIhmfqDvGiLKFk0dJInY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQq6+q+YFjKSfczEVI4bsyyQe12KBsb89FSigwxxrwnPvbGRIz
-	uLisuCd6jta46NfLj7jEnhGqvEP1JJ983/rs9OXFDErVxnfZyPSKr84pntTUPUmyZw==
-X-Gm-Gg: ASbGnctsIIoSDPNe2GDvVHK6w7gAPprY2ipeDUE8m6ELthjCUm7ZmNyK0e9PNK+wn3z
-	gbMuMxBc7EGB+LbvPKzgTpedX/Vlvs9kHxgGE2MrQswjl9bIPRbvHsuGCBsB2mzniNm23Y+mn48
-	u30gW5dOMn0Ht0TeAduKEGfHgZ8ARQqjlS9dOrF3A1b43gPFxEXrVyhaBQ1b8/e3M4K2NwlYHMT
-	BYmCuak04tEab4DttrkhgDp/toF51aSPS0geMACHtK92S0XBm44AxVaPVdMYbH7ulXCo/OM7K/c
-	1Gyicwa7A7+s4YAXpQfgCYFb24ZwQwsnG37hwTuBMsNQ620HzJBsftzqieox5aq1adHli8xPBkU
-	b7oOWDrXIKGZxjbu8BzqidRiOQXIblmZKPtxf/vhzd22SSsT/s+yQmLQY
-X-Google-Smtp-Source: AGHT+IHAKLnuNj4dfO0gvzhHyjc+lG/rACu6++zv+Qt1qddir1QwuV7zgtdYIfUhlyrA+12IZWRoQw==
-X-Received: by 2002:a17:902:ef48:b0:223:ff93:322f with SMTP id d9443c01a7336-23fada587f0mr920885ad.2.1753390556054;
-        Thu, 24 Jul 2025 13:55:56 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475deafsm22232285ad.11.2025.07.24.13.55.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 13:55:55 -0700 (PDT)
-Date: Thu, 24 Jul 2025 20:55:50 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, will@kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aIKd1owebUNQeN1-@google.com>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
- <aIDlsUvF2Xbdelvx@google.com>
- <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
- <aIEwzM7mKUI8-h9U@google.com>
+        d=1e100.net; s=20230601; t=1753390727; x=1753995527;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=njtRraa3yeDh+Mc2BX5WYec5QxIq/WkdRO/yIMvTr98=;
+        b=ss+x8UhLOi0U16bScGlkUM3n5mE/H/7/p933f6GVvengzb3KLR7ofn5BQB4evdZJA1
+         zIIu1IhWpscFnda0vvkYmvf/JnyjmU7eT4CaQhlFJU96wbJv7LihzsplGQn3H2mQWmlo
+         1Nt6V7SwwTf5tQPBD9q33yulXTos7fGtON/PpYFKckPtvmgwThqxQmalvLHSDFmPKRne
+         MovnLws0RSF6dF0gVgSCvYm3qewFW5KBVRzckEqo5pAlOX+NdXivgV5OwKo19PzWFBo5
+         UKgLzyJbvwvGVeNECOBr8FBU97qw+3F1JZMGBEnLFQDebEYt1L/1jPzZfLoJk87NSGzU
+         1M+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUI0XeTpbhfBjnXawMh42o2KLRhGRh9l/dyj8CpimbvrQS+9nFLe4SebpgE+g4gpPdmz9lu1TCqXMnUQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yytzcld2TJTlzesWNz++IImdmawUpB45V9KWJjyv5E4ypfIYSzM
+	d9zruiO/dzgcPa9n3PWavBQmCW2IZD6ngj9prj49weQr4qQWz3MFkgqMuD5p+Y4qBPkKptVi6Bg
+	7s8nLYw==
+X-Google-Smtp-Source: AGHT+IHonk8y2V0EPehspPsFSLsvcO05OzPpzTiZDecGiCSRMrTE72dXrjsNEv9iHbfHB3ZX17mg0IKKhH4=
+X-Received: from pjv5.prod.google.com ([2002:a17:90b:5645:b0:309:f831:28e0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3844:b0:315:6f2b:ce53
+ with SMTP id 98e67ed59e1d1-31e507dc1c7mr10900583a91.25.1753390726710; Thu, 24
+ Jul 2025 13:58:46 -0700 (PDT)
+Date: Thu, 24 Jul 2025 13:58:45 -0700
+In-Reply-To: <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIEwzM7mKUI8-h9U@google.com>
+Mime-Version: 1.0
+References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
+ <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local> <20250723183426.GA1158000@yaz-khff2.amd.com>
+ <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
+Message-ID: <aIKehTDgP-Nu36ol@google.com>
+Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Libing He <libhe@redhat.com>, David Arcari <darcari@redhat.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jul 23, 2025 at 06:58:20PM +0000, Pranjal Shrivastava wrote:
-> On Wed, Jul 23, 2025 at 11:05:26AM -0700, Nicolin Chen wrote:
-> > On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
-> > > On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
-> > > > @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
-> > > >  	phys_addr_t page0_base;
-> > > >  	int ret;
-> > > >  
-> > > > +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
+On Wed, Jul 23, 2025, Borislav Petkov wrote:
+> On July 23, 2025 9:34:26 PM GMT+03:00, Yazen Ghannam <yazen.ghannam@amd.com> wrote:
+> >On Tue, Jul 22, 2025 at 06:56:15PM +0200, Borislav Petkov wrote:
+> >> On Mon, Jul 21, 2025 at 06:11:54PM +0000, Yazen Ghannam wrote:
+> >> > The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
+> >> > commonly used error response from hardware. This may occur due to a real
+> >> > hardware issue or when running in a VM.
+> >> 
+> >> Well, which is it Libing is reporting? VM or a real hw issue?
+> >> 
+> >
+> >In this case, it was a VM.
+> >
+> >> If it is a VM, is that -1 the only thing a VMM returns when reading that
+> >> MMIO address or can it be anything?
+> >> 
+> >> If latter, you need to check X86_FEATURE_HYPERVISOR.
+> >> 
+> >> Same for a real hw issue.
+> >> 
+> >> IOW, is -1 the *only* invalid data we can read here or are we playing
+> >> whack-a-mole with it?
+> >> 
+> >
+> >I see you're point, but I don't think we can know for sure all possible
+> >cases. There are some reserved bits that shouldn't be set. But these
+> >definitions could change in the future.
+> >
+> >And it'd be a pain to try and verify combinations of bits and configs.
+> >Like can bit A and B be set together, or can bit C be set while running
+> >in a VM, or can bit D ever be set on Model Z? 
+> >
+> >The -1 (all bits set) is the only "applies to all cases" invalid data,
+> >since this is a common hardware error response. So we can at least check
+> >for this.
+> >
+> >Thanks,
+> >Yazen
+> 
+> I think you should check both: HV or -1.
+> 
+> HV covers the VM angle as they don't emulate this
 
-Sorry, if this wasn't clear in the previous comment. I meant this
-comment must be updated, the "unsupported type" wasn't rejected in
-vintf_size, rather the type got corrupted which brought us here. Had the
-vintf_size rejected it, we wouldn't be calling the init op.
+You can't possibly know that.  If there exists a hardware spec of any kind, it's
+fair game for emulation.
 
-Thanks,
-Praan
+> and we simply should disable this functionality when running as a guest.
+> 
+> -1 covers the known-bad hw value.
 
-> > > > +	if (WARN_ON(vsmmu->core.type != IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV))
-> > > > +		return -EOPNOTSUPP;
-> > > > +
-> > > 
-> > > Nit: I don't think we'd expect a call to this if the vintf_size returned
-> > > 0? I see that in iommufd_viommu_alloc_ioctl, we already have a check:
-> > 
-> > It's added in the previous patch where I explained that this is
-> > to detect data corruption. When something like that happens, it
-> > would be often illogical.
-> > 
-> 
-> Right.. I got mis-led by the comment, my point is that if an
-> "unsupported type" was rejected in _get_vintf_size, we wouldn't be here
-> calling viommu_init since we error out based on the check in
-> iommufd_viommu_alloc_ioctl.. but yes, if there was some data corruption
-> that changed the viommu type between these calls, I guess it makes sense
-> to check and error out here.
-> 
-> > > And call ops->viommu_init only when the above isn't met. Thus,
-> > > if we still end up calling ops->viommu_init, shouldn't we BUG_ON() it?
-> > > I'd rather have the core code handle such things (since the driver is
-> > > simply implementing the ops) and BUG_ON() something that's terribly
-> > > wrong..
-> > 
-> > BUG_ON is discouraged following the coding style:
-> > https://docs.kernel.org/process/coding-style.html#use-warn-rather-than-bug
-> > 
-> 
-> Noted. Thanks.
-> 
-> > > I can't see any ops->viommu_init being called elsewhere atm, let me
-> > > know if there's a different path that I missed..
-> > 
-> > I see it as a precaution that should never get triggered. But in
-> > case that it happens, I don't want it to proceed further wasting
-> > precious HW resource given that this function allocates a VINTF.
-> > 
-> 
-> Agreed.
-> 
-> > Nicolin
-> 
-> Praan
+And in a guest, -1, i.e. 0xffffffff is all but guaranteed to come from the VMM
+providing PCI master abort semantics for reads to MMIO where no device exists.
+That's about as "architectural" of behavior as you're going to get, so I don't
+see any reason to assume no VMM will every emulate whatever this feature is.
 
