@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-743626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFF5B1010A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1DDB1010B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C321CC5C57
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640F51CC59CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF02221FB6;
-	Thu, 24 Jul 2025 06:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478C3221F34;
+	Thu, 24 Jul 2025 06:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="a797IIi8"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EiyeNwW9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723DA20F088
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8584BA36
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753339568; cv=none; b=f97O+/KxIGg7COgCnHue8kQ8FIbr23nH1Iwegbj6BCfU1LP9EtAcUObQc1dQFj3HtPw3P2U7EA9MCNgc/WbCV97T6uE1maGhWBBSE+IcwFQ0tiPFb/YVSXtk6jZxYaQyksNnJvLD7cYiEQ0zeUhjwfN6frUniFOvtP7EmII3cAs=
+	t=1753339657; cv=none; b=hXum434B2aIvE73zDTKPS9fDa+9Dw2BW1uVyhWWC5Zn8/vM5M4RvNqO2H+tdx/Fj1xW2AjcwrfqKWzhT/rin5APCduPDvUw6cIdGGuZH1ksx649q+RVXXqaR6218WdFy6pPzIVbp5KrzzKxMMVa5HmoRfYutSRVNs1V1u2RkaSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753339568; c=relaxed/simple;
-	bh=E8K92WFLqixwgt8J2cex/loEksjjno4gWYC7Q3w7a8g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=G6cfLn7SixiFuCeGw2yvnbcCnZHI8QZv1EWW9XHNAElQvbNv/27FoAzYaE1tRCtWLiEdzhQWsskkBXDPhCCzvxe8qGGhhagexqET2RSa6oH8r6b8QwXlZE/sUVj9d+1moaN++Pv959d1MjSpqnaxQbLVH+BqDJtuuisTmxglpgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=a797IIi8; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-ae708b0e83eso137278066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 23:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1753339565; x=1753944365; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O05wjEScA4kxCQO8+MTTv2LGUA2bVFgF29zptnElwW8=;
-        b=a797IIi8N3j5cNCflbBeedwgZ+4BEGPc8ZuLFQqDrJpHsBvRjT7it5c6GWTTCe6M9+
-         CSeoAAh9CsyUGQwpEemgRnaA0BuWG9r0VVnrsvVqwqi5T+hHGRgt0h62ZkelpnWRibIP
-         WQastMIl/Mpmb1JH9gdkd2P1QCkoyn6/RXW2BKs6vY6QF5ayAxsFTtF+P8RWbXWx/tWa
-         iwkncC9uhXG2BKuomXFXO5O0T2Pbg1ZM7gHA32+pC4h80xtWIl5Y74XCCBAZLfKVtusi
-         L/V7vA01Lb10Lr4yurpoBKIZ2QUkE5C9cp8ga8+wAWi/W0VHoECKVjJMa3rMkVuISVxp
-         0xFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753339565; x=1753944365;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O05wjEScA4kxCQO8+MTTv2LGUA2bVFgF29zptnElwW8=;
-        b=kFeLIamYjhGA9oIIQvSVY/ud7Fa5VlGDKZ+lGNjzEv1MVbvh1C5ymzgD4Q9Kf/iWwD
-         zWBiI81TC3dmXKjMPM8ZevOrxoX0N8AItoH+yp6YxabGBukV5bjPN9d41/OXq2R8S/is
-         5pJJBKNkNOhpqB1UBMqTkrU61eaMv7YBWvILTN7fj/FrQpsETGiIRmJYokhhZ0mgRf1w
-         gSzDCvXtu3WcD+gSnbPRQbuKlQO8vsrx5zw0m6gM8jsNIqg7nNVX1NGMil4s3cg08PNR
-         xduAWFY9Q9wgDHocMDOECrzxDAxbbfBmfeRU/Eo5xLKZBjX4y88uChiTQEJ1zYLqYc02
-         e6dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUI+pQrOn02sGQBWlHoUn3VZgeSONzO45o0m6RvjcX87iqxxPyMFi/hZ4vhlNb2MOXZ2KbHlJeOwtVMv4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzowj/8HGtzFwUs59BpXxLf6iWhlGQIPEikY/XhL8+9674sccLR
-	mc+HIB5OUDEN9AxJCSZQlMX3XdZp5aWRWx1ev4QIk77WNqPhSFFW9ZVjKpvGTNgBd1Q=
-X-Gm-Gg: ASbGnct+me5n17AqMhdA7p+A5ukajX2POeGX7aMJah3S1L6fplcaNn6HbBvw0C85vb7
-	QmiFt/bXWjJwJuMWOWg5UJA4UA1ty0PPUM00IXkWic5azdt0bI/fr73zT6b3c6c7OKPM2FmXZz6
-	ZJau82ilhrGEZjSOPX+YosWXYBXvF0CVYtNizodVVG+f7q55MRt54xwP+vJj+3qcK22Et/g/aL1
-	HXLqgytGsDru13jurHIM0HlASHjJyj3PHKcMYbXXWbDwkIH/b1NshU/FHPsPl8tzNP51yW+Dkgy
-	AmC90egJBmqJSU/AZ+vam1j4hHBS63UmZ+8hlpew2V6diBaYHmySvclwd7yIcf1/8FVpyUrcSni
-	qgLQvyVr/uxTm6nJdwuotjFUOrzCe/so4vK44RAxbNgZ4Ttcb1tWH3NAMM3FJmhFjWiSJj4XbSl
-	WZ1A==
-X-Google-Smtp-Source: AGHT+IHOJhHzF3e38nSkhr/JtaCTAW1NS3tTTx4AD/Gh7AcSikLRvVdo/lBTRPnndwMlCRIqVf21aw==
-X-Received: by 2002:a17:906:f585:b0:ae9:bf1c:50a4 with SMTP id a640c23a62f3a-af2f866213bmr566893066b.36.1753339564518;
-        Wed, 23 Jul 2025 23:46:04 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47ff42cc4sm63770166b.139.2025.07.23.23.46.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 23:46:04 -0700 (PDT)
+	s=arc-20240116; t=1753339657; c=relaxed/simple;
+	bh=csTsbkp93NJRtM4YbopZiMpO/7B2FNB1bYVQvq4Gu8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erzvq3cMeOgGPAgHfPiMFH8qiXHMURxUDE4ZkrN5zOuxSS+lxAc9QVJwpdNg4AwRUC9+8e1lMnacUOUSYl9CSCHVhWsc9Yi4k3z0Az9varNhb4yC82NndelgzNuuLNYGy7fAaCSPGdNaY/P6S6zfkxfCWz7HNp8XUKkIsjj4IWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EiyeNwW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C39FC4CEF1;
+	Thu, 24 Jul 2025 06:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753339657;
+	bh=csTsbkp93NJRtM4YbopZiMpO/7B2FNB1bYVQvq4Gu8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EiyeNwW9FSXVQdf4EQIVZt5/CPNXF5UMFZvCWr4eXLRAEYT/QVUbSIL6Yn8BxFDfB
+	 APMYAPa9KV5RKE4rOUMR60FhZQuZWKMNRfHF2LsW4nfglewY4O4/bnyU4XcQR/DYMU
+	 FP2UNyPz58ah+A2siP1KKh6qJPrUYZovswwCSXMTz9OeGGDIfF7tnkEzR6AqnL48l2
+	 kJNL5ORY4Bg7SuXvcsYsC1+kER29kfT4O0lsyCRc73L58wNWEq0w9J0GdxIfZQLdnb
+	 GidBmwLI0QEl4x+mR2E29CADPKupMoF/T2EOd5XcGXlCZcdv+ISbHe9lDlrLUkdbzA
+	 S52eZLseracTQ==
+Date: Thu, 24 Jul 2025 09:47:32 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>,
+	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>
+Cc: Francois Dugast <francois.dugast@intel.com>, airlied@gmail.com,
+	akpm@linux-foundation.org, apopple@nvidia.com, baohua@kernel.org,
+	baolin.wang@linux.alibaba.com, dakr@kernel.org, david@redhat.com,
+	donettom@linux.ibm.com, jane.chu@oracle.com, jglisse@redhat.com,
+	kherbst@redhat.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, lyude@redhat.com, peterx@redhat.com,
+	ryan.roberts@arm.com, shuah@kernel.org, simona@ffwll.ch,
+	wangkefeng.wang@huawei.com, willy@infradead.org, ziy@nvidia.com,
+	Balbir Singh <balbirs@nvidia.com>, jgg@nvidia.com
+Subject: Re: [PATCH] mm/hmm: Do not fault in device private pages owned by
+ the caller
+Message-ID: <20250724064732.GQ402218@unreal>
+References: <9ae3e014-c7d0-4d58-af0e-925bcd9e4cfd@nvidia.com>
+ <20250722193445.1588348-1-francois.dugast@intel.com>
+ <023ab16d-f3af-487e-a7ce-929bf7b2fe3e@nvidia.com>
+ <aIG+gqY2YRqBeKlh@lstrano-desk.jf.intel.com>
+ <dad71615-0eba-4a8d-abfc-979fb815511c@redhat.com>
+ <aIHLWnjzKWma1NLC@lstrano-desk.jf.intel.com>
+ <368fa1c1-fccc-445d-bd22-0053fd2db29c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 24 Jul 2025 08:46:03 +0200
-Message-Id: <DBK303WXZ3OB.8SX718AMMYH8@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- <linux-sound@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Wesley
- Cheng" <quic_wcheng@quicinc.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v3 0/3] Enable USB audio offloading on Fairphone 4
- smartphone
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Mark Brown" <broonie@kernel.org>, "Srinivas Kandagatla"
- <srini@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250723-fp4-usb-audio-offload-v3-0-6be84ed4fc39@fairphone.com>
- <175328933413.84720.17376811405962157319.b4-ty@kernel.org>
-In-Reply-To: <175328933413.84720.17376811405962157319.b4-ty@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <368fa1c1-fccc-445d-bd22-0053fd2db29c@redhat.com>
 
-On Wed Jul 23, 2025 at 6:48 PM CEST, Mark Brown wrote:
-> On Wed, 23 Jul 2025 16:03:37 +0200, Luca Weiss wrote:
->> Updated description for v3:
->> Add the missing bits for the sound subsystem to enable USB audio
->> offloading on the Fairphone 4. This is mostly sndcard enablement now.
->>=20
->>=20
->
-> Applied to
->
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-=
-next
->
-> Thanks!
->
-> [1/3] ASoC: dt-bindings: qcom,q6afe: Document q6usb subnode
->       commit: b102c9d89fecd72be83eaab9b384285e2d0dc940
-> [2/3] ASoC: dt-bindings: qcom,sm8250: Add Fairphone 4 sound card
->       commit: d664e75317e19bb79b6d207f7729e35eca504a6a
-> [3/3] ASoC: qcom: sm8250: Add Fairphone 4 soundcard compatible
->       commit: c58c35ef6ae62e36927f506a5afc66610b7261d9
+On Thu, Jul 24, 2025 at 09:04:36AM +0300, Mika Penttilä wrote:
+> 
+> On 7/24/25 08:57, Matthew Brost wrote:
+> > On Thu, Jul 24, 2025 at 08:46:11AM +0300, Mika Penttilä wrote:
+> >> On 7/24/25 08:02, Matthew Brost wrote:
+> >>> On Thu, Jul 24, 2025 at 10:25:11AM +1000, Balbir Singh wrote:
+> >>>> On 7/23/25 05:34, Francois Dugast wrote:
+> >>>>> When the PMD swap entry is device private and owned by the caller,
+> >>>>> skip the range faulting and instead just set the correct HMM PFNs.
+> >>>>> This is similar to the logic for PTEs in hmm_vma_handle_pte().
+> >>>>>
+> >>>>> For now, each hmm_pfns[i] entry is populated as it is currently done
+> >>>>> in hmm_vma_handle_pmd() but this might not be necessary. A follow-up
+> >>>>> optimization could be to make use of the order and skip populating
+> >>>>> subsequent PFNs.
+> >>>> I think we should test and remove these now
+> >>>>
+> >>> +Jason, Leon – perhaps either of you can provide insight into why
+> >>> hmm_vma_handle_pmd fully populates the HMM PFNs when a higher-order page
+> >>> is found.
+> >>>
+> >>> If we can be assured that changing this won’t break other parts of the
+> >>> kernel, I agree it should be removed. A snippet of documentation should
+> >>> also be added indicating that when higher-order PFNs are found,
+> >>> subsequent PFNs within the range will remain unpopulated. I can verify
+> >>> that GPU SVM works just fine without these PFNs being populated.
+> >> afaics the device can consume the range as smaller pages also, and some
+> >> hmm users depend on that.
+> >>
+> > Sure, but I think that should be fixed in the device code. If a
+> > large-order PFN is found, the subsequent PFNs can clearly be inferred.
+> > It's a micro-optimization here, but devices or callers capable of
+> > handling this properly shouldn't force a hacky, less optimal behavior on
+> > core code. If anything relies on the current behavior, we should fix it
+> > and ensure correctness.
+> 
+> Yes sure device code can be changed but meant to say we can't just
+> delete those lines without breaking existing users.
 
-Thanks, appreciate it!
+Mika is right. RDMA subsystem and HMM users there need to be updated.
 
-Regards
-Luca
+We have special flag (IB_ACCESS_HUGETLB) that prepare whole RDMA stack
+to handle large order PFNs. If this flag is not provided, we need to
+fallback to basic device page size (4k) and for that we expect fully
+populated PFN list.
 
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
-
+Thanks
 
