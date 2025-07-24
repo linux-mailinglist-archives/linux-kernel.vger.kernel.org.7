@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-744616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A51B10F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447C1B10F33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945641D022D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFB85AA7FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C022EAB96;
-	Thu, 24 Jul 2025 15:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486AC2EA493;
+	Thu, 24 Jul 2025 15:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dipFsxOL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJMzFNTp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9082EA142;
-	Thu, 24 Jul 2025 15:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635D4274FE8;
+	Thu, 24 Jul 2025 15:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372285; cv=none; b=Klwek2ams04UypR+lvbv58DxZ2dLowiQQe4HlNoxbLcxKe6DKXnbFQXPtNEmMmGMoogjyp1SzXrS4kQ3+8X+lCvDeYWpFR3h5ow17bNdKDx8/5zELilQNV6J1NpvXmA86TNPKMN+Nh3gyG1hHAfMSj8qIQnTqlv+VFwRTiCAO4U=
+	t=1753372518; cv=none; b=Tahai+p9kTjDIIdY8kHYI2u5fWpKW8yDVQfZl8lBAdib8L73zKi5ZPdrEpWdPXNsX0VMBc/cUbWrzOaGxIct7cQmPJV2wCbhoSPZ/xvilSLeDJYop2cHzwd1HXA8Q89vzNdU74TM80EW4E6f2JZ7HVSkS0UgwtHblo5SM4fd2k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753372285; c=relaxed/simple;
-	bh=1ge4D9flOXAuVIts9W508hRo5GpACuOYYM9W6/tsUog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g3+R1p2z4aTU1ZM/YCSKrIl0Bn/sMwuA0Ol5mEwqxZQKMcETL+YtGbM3a2YjCvO5duhyWmVDBNF4qnREdXvCZuyJRFSR2M1RyzZjRzisyHCr0rhLzG6HIpy8dEuvgqqg8olGm0UFFs6JzR2Ch8RsLLuK/gmuUKi2vva6G+VfI0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dipFsxOL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=841zC2Csr85cTavsucPR9yszjss8BCSvwiJmornsOZ4=; b=dipFsxOLF+O/7PNONN9fA+tmfI
-	r0/k1NhJR56ETFx7iQNjhzYFKwuZY70M8OWlq8vE4SVINnqQfqQK3xeRjp695GEIjkT69sMhR0ljG
-	baoKhaI4VDTne5f/s6cXGs0jQ+e2ANtioX1VshDhrut4dAfhOOWfqFEQNebN1s+aQQdw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ueyE0-002mMX-Op; Thu, 24 Jul 2025 17:51:16 +0200
-Date: Thu, 24 Jul 2025 17:51:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH] arm64: dts: rockchip: use MAC TX delay for ROCK 4D
-Message-ID: <f22243f5-759a-4ff2-8d14-6edb49d87c52@lunn.ch>
-References: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
+	s=arc-20240116; t=1753372518; c=relaxed/simple;
+	bh=EsIZpvN9Ch3cTP+9Ex/zXKHMeTPVN9yv0ivHS6Z8KKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ENZO7JzrTVX6f3W+FtXKLk2EInuzYzRn6tKFyb4OWTTRd6bmsaDgx/J6bJ+M6dWhUMnU6s3lGZjtbGJH5OrnoXzYQ34vYWeGrXxfTuSwL9u/1DotsrzeSmeizFrrIvaF4PivCjZmgiAn5HadJ3aHHhn3ImDeBN9Zi4OC99EiXws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJMzFNTp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-234d3103237so19735ad.0;
+        Thu, 24 Jul 2025 08:55:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753372517; x=1753977317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nDNGFNvdoRGiaNnGVahZQG+zj4STjDcT82+GQkhVmQk=;
+        b=YJMzFNTpzjFzAOR+eBQolicNqScTnnpgp5Pv29+lwJVQzFTz3z676+szcGVT/SRoOt
+         sQFI3HPSJq2mMp6qJuLlGMbLf/Q2/O5C8Pq4O3xaINtZK4GJryh8klXuPowrhtfsfPo3
+         O6QVra2rouiBAwTYfGb/rDBoTLmMreiyoyr2K5bp9HDCIuT7vE62pQNqB7Mtq75Uo4wW
+         tYUpKxSAsUU3KKfu4LMpg1ShHm10xGexA0jWeWnt4ep88mv493f58kIiOP77c51okLQr
+         BBN+XJ9Rkhze4XDfTlAoIVnRJYMyUkqQsAffBJr7jUiV5sdLYUPQFT47IuUaUzhA3+Sb
+         +jyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753372517; x=1753977317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nDNGFNvdoRGiaNnGVahZQG+zj4STjDcT82+GQkhVmQk=;
+        b=DWkefm1wCkB/bwU0jA2dvOolUTJ0/M5ach+GzHdklwJt8UqQPocD6PEB3IX8tebSkh
+         +asiqeA+LSlTTOqTDZfOPPzONUe46sNLerYNkzvu0gYT14DzHIf803vNyaqWsUpKH/Rp
+         8ZBQU/v5vBACjY/rV374vUL/CXjyKv1OiT4QD8T1HNivCG3BzaULpiwgIT8/Zm7ySvmG
+         ziHv/yzrB5iY9LVkUq0pGkaaXhdmbT7kQADTb13F2Ew5n6mzULpLXl340nNSQrJgPOMu
+         BVp5Hqi3VvWFp3ad5zuaic14ORssk1U6HaCHdHW5jbkZA/Yn7WQK4/AWVB5Vj/uVkwjx
+         fuOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNaO/kPo39IW43Rjq8cg0lUeNM78bH6yG/G5c91sQNhUN8oxqxnYiCqBnJUyLvPAGW8ndQkuAXWlwX+l2uLJw=@vger.kernel.org, AJvYcCVv6TO0WfRkxTJR+gFLevjvNhyD6WR98D76DjZ2+MyKoY7wkgsEyXcxRq/7oJ6P7c8f0a3F/ML9KwQ4aH0=@vger.kernel.org, AJvYcCW917WofPOXebN2RouEOlsTDTLnob0lP6JVqowi0g9iibB1sHKjA+6VYrUUl0+PsxY/9386MdnTzIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa/MYJw3lieUpvyqRLhVXYxjM12IOjQu8wD8zr7/Lw3XGEgBdZ
+	1+kmanGI3Q9eV4HkMoVEYh9Wpy3SMLGYJsxKeOrQOxmbsMOgrsSZLCqGlCcI7LRg+qCLZdNRyKn
+	g7Rhmk8ZAtSzrHWOTePMCjEUAK1ibtXA=
+X-Gm-Gg: ASbGncuiXh72pLuzbKYn7BTkY6If3YfrPPbyWngF5USZV7rkry0P8nGBfFaO47zZSWg
+	YX+GDIRUGdAGWbw1xpgZpnKd4MgFoVa0FR85Fpm1y+vI9H8ezXTPdBTv/qiBm673NxYpY7/m5lo
+	mAqN6Hru9WXdSDVVSk8D06gPJE3lb8sXYc9YR2kHLJEDMmjHOT1XafbBompNr741E2ZxeBJr/tw
+	GvAgOcV
+X-Google-Smtp-Source: AGHT+IE9TH8HU85JOWM2XUgTJeIUAyMZz1QgX87GmzRjEtJOV2NYpn5aqC+FGTCUCJ6G3NKU158izj5o14hVG+dK26U=
+X-Received: by 2002:a17:903:3e13:b0:234:d7b2:2abe with SMTP id
+ d9443c01a7336-23f9815353fmr31098505ad.7.1753372516448; Thu, 24 Jul 2025
+ 08:55:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
+References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
+ <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com> <9884efc6-c6c5-49f1-b582-55bba8397521@oss.qualcomm.com>
+In-Reply-To: <9884efc6-c6c5-49f1-b582-55bba8397521@oss.qualcomm.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 24 Jul 2025 17:55:03 +0200
+X-Gm-Features: Ac12FXzQMwnafpXjFV6CDFKO4uvN-01wgnqGuQBCiqSqrfTaP7C85N-A7DHR8uc
+Message-ID: <CANiq72n31LBnLdAtZH0VBzVGau-ddWCp=5=Bra=boRE4RiCZGw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Add initial interconnect (icc_path) Rust abstractions
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->  &gmac0 {
->  	clock_in_out = "output";
->  	phy-handle = <&rgmii_phy0>;
-> -	phy-mode = "rgmii-id";
-> +	phy-mode = "rgmii-rxid";
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&eth0m0_miim
->  		     &eth0m0_tx_bus2
-> @@ -246,6 +246,8 @@ &eth0m0_rgmii_clk
->  		     &eth0m0_rgmii_bus
->  		     &ethm0_clk0_25m_out>;
->  	status = "okay";
-> +	tx_delay = <0x20>;
-> +	rx_delay = <0x00>;
+On Thu, Jul 24, 2025 at 2:36=E2=80=AFPM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> Regarding the users, I don't have any specific promises on a consumer
+> of these abstractions in a short term, although the ICC API is rather
+> common (especially across the major arm-based SoCs), so it shouldn't be
+> long before someone needs it.
 
-What does 0x20 mean? Is it less than 2ns, or greater than 2ns?
+In general, abstractions cannot be added unless there is a known user
+that is coming upstream (or developed in-tree over time, like Nova and
+Tyr).
 
-Have you tried "rgmii-id" and small values for tx_delay? If the
-hardware needs 2.1ns, for example, the MAC could add 0.1ns and the PHY
-adds the default 2ns. That would allow you to conform to the DT
-binding.
+There is also the "Rust reference driver" approach/exception to help C
+maintainers bootstrap the Rust side, which you may be able to take
+advantage of:
 
-What PHY is this? Have you looked it you can control the delays the
-PHY adds? If you actually need a delay of 1.9ns, maybe the PHY can be
-configured to do this? That would also allow you to conform to the DT
-binding.
+    https://rust-for-linux.com/rust-reference-drivers
 
-	Andrew
+At the end of the day, it depends on the particular case and the
+maintainers, of course.
+
+I hope that helps.
+
+Cheers,
+Miguel
 
