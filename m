@@ -1,167 +1,117 @@
-Return-Path: <linux-kernel+bounces-743702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD0DB10217
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:41:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A05CB1021C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5847A3A925F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E805D580AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7AD25EFBF;
-	Thu, 24 Jul 2025 07:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F2625F99B;
+	Thu, 24 Jul 2025 07:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="na51dqax"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muIKNQxT"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E86B2A1BB;
-	Thu, 24 Jul 2025 07:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119B32A1BB;
+	Thu, 24 Jul 2025 07:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753342867; cv=none; b=OO/CBeveUZVgWHYuK7vqRbb48xpoaYJSlaN/1P+UdxmS09A9yPz3hHdSf3abKB6OhmTyVKi0hnZJUYPL5ffwU2CU+NDb2M/I3gaq+EPUYDcck/THqDpZv8K8O7ICVBZecOo9mYPv/bi3hUlu35j3pSBpliBOmil6dGGNB54h7BY=
+	t=1753342901; cv=none; b=RYBWGxe7sXiC0cQIo6OOjETSvAfAlFqYQVfdq6HVdgYIrawjbNAjNSHu1YysacEmU7zt+WhI1uAw9BhpM3GNRHrWzf8zlgVSoYMiCXaLekQh9+Q0rjn8tq4/kA7SPSYTYtyMXjrumZsgkAcJ8seQlfXrWKTyBJzRLMzEo7cfJ7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753342867; c=relaxed/simple;
-	bh=o3VrKMzKat7v0pDU7VIO6g56NwTueA3Yfn1CRRUWWGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=atuY2lrvPEZdUr74Er0qeeTa9iZEtlEC6JQ2R9ReZWa1smaQUglHDo8iy4MD/3jAGZiD+XNTVRjozAHC+tTsjhr9fi3pnIim4pwjCwyQAdb7KU6iBOQs1q1dYhOjlqQWvG1xtULXeS2tSCw19/uH2clMYZ+586IzuhnmZXQmQcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=na51dqax; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXNvd001453;
-	Thu, 24 Jul 2025 07:40:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZceUf3hvGHbpx2o1VY0t/FpMt/Mhu/kv9tj/tj2oaLk=; b=na51dqax/s+Go3Bg
-	AkWHr/faV+Ak3IjkyLxdvwXFgj1hjoCzZ0lIrQs3j+mEh27VpFfIhnQok9ItFtro
-	MfBYwrGygPfQTS+jXB7cFe1bo5WDpQC1ET64wtaIOvzZUvPqRgCdHiYMeU9dPKBD
-	Kvuq7gRKTiIX6GBTAXBnZr1Rkc0JitApmt2M1wUs0TDUSu6zXlIhzuWqCOxdAP29
-	g2GAu0oj7yzuXf8HFIYplC929rcZo58g2N2jHUQIikAFWiGFEXp+sIvhPCMRrwgi
-	KtD/sF4vgeLZ9/4E4c/ILawaRa6xV7wJ58/kREwX4ZF7FcZFyo1tzwewjO+6f2TK
-	m8fj9w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482b1ueedg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 07:40:58 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56O7ewuq031584
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 07:40:58 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 24 Jul
- 2025 00:40:55 -0700
-Message-ID: <c7041754-7be9-44f5-89a4-03bb21e2d342@quicinc.com>
-Date: Thu, 24 Jul 2025 15:40:52 +0800
+	s=arc-20240116; t=1753342901; c=relaxed/simple;
+	bh=15kiuH3ohjQJSoHhfQ8LHf28SKY6AQ3QsaNQSEmr6Vs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dYKdosxYzJdMJkIpnGh7hRjaO8HERMwIOEwOox0tXukB8OgqfZwzSNl0p2hFXxnIfo8VT2VUO6LR7beB9fr6gb9b+Ruvl2W8MVUKsKlVkRcJq5HsB5k2e7fIY5Zc0r00aPKfOMvxmwYRsKZNtZLcOLUiP4mKom/R6ittFqD60XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=muIKNQxT; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a524caf77eso102970f8f.3;
+        Thu, 24 Jul 2025 00:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753342898; x=1753947698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPukqAQVodQ+f3FEJLymtMhVNsFtmLOaRlS57pNUN2Y=;
+        b=muIKNQxTln0lbU6MB4LLXJCq7bKPxMVyC9f6v3wvyGiTQrn5MPtej/KbgWRAvsgpYa
+         fr/3UTI8dZVSdlA/x9ZNzaS2YXlUy3JTjnviQqLA55ix//AMz6N+MsNDOFNa6APKT73+
+         VoIB0HVV3yWZXCJpuuz/ufUP8aKNK71cK7Ycp546p9iB87X1ae6m9DSWRAhAvtwPo+rg
+         ZuwVJzQQ8BS4dp7e/4JnDaVUf673+H2josZ1WAI8XUE4WTbRRKGH/cVADC0UT1+ssftc
+         W7wIHZtgq8OtmWQWbSvwaRJn989PbeeOVPk/68Upqj+e2cA9C5rTzhihZAPG19tMl87E
+         o1BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753342898; x=1753947698;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JPukqAQVodQ+f3FEJLymtMhVNsFtmLOaRlS57pNUN2Y=;
+        b=HOoxUlGBdndhDYxK9fDj/6tc0pflEEBmldx6Q2KCBbUYa19sIroanDXtTDNyMbvNPG
+         w3dpev4WOM0jvM0wwjDCnxff1VuBNgia0KtVntf4p7g/yjgFpp134ZjDblOyRgFutG6v
+         ULPz5N1JF2gLLHsEq01spbip4P8GKfT5Km5hxBV2Jtoc0WLYxRG2YWBdJ/aCpG3EqwRl
+         s2HSkvOIh63nmpM2KYohq7wCw3vKz0gZsW2mj+msRrFFbbIMpaKvqURRCLHPJQ/KaJnW
+         BlmuFP8JMEfi35wO3tLUgQDYyslCLIEYpT791pwpPNA/fcdm5VU2WcmRWlcAkdJnwqOD
+         zDYw==
+X-Gm-Message-State: AOJu0YxLWld7z6fPbBcc9WGf4jLD6cYAEtxOExgMtRD1/9kZe3JlXWGh
+	2CXJ9jmmronAYG/YjPsljlDSxSQBPXBTCtZYYE2J3gjOh2zw+9w7t79cCKfV1TzpoC0=
+X-Gm-Gg: ASbGnctJl9uITqJcb+kEKmNFtnbDsv+eF2Gs/gctUN6u+og7Zj0FRNTiFZC5dM859U7
+	ItyjQOJbbP9Zigicj3ruvOjJ9Y6vSQdH42flLB5wBusqbkqsutWqIN4GijmTSHLLGWZi+DvoTa5
+	RuDQu67gnuCLJhY+Wy2Wt17IOMTguE34adRbfH1mLsg4/HeRy4DY+yzppLFsHtKg9rr/qsphgT4
+	L1Px7DwCLw+pbSDEdgCrX0MOd488yNi+4d8hiKl9dqeQ8iWvDSi8cDq6x6zXmz8T8n1FC43JstX
+	qiDCYLmt33iK4U3qQ9J/ngjG+XU9SAJEubh6L6jFITiWZgCLPEb83ek5B6sY1dF7KI2xzXc6phy
+	/Ogti9vvTad7uuI7PR6pbiLJZp9PVpI99fwRKA7+2lZwn+1Oac+opW6MeubIzwcaHT/+8IDhUIg
+	==
+X-Google-Smtp-Source: AGHT+IGMqDgnd2dp69JMoacwHLJXu2KcSrmTFUlFcELvESQxSjQZDAcLUTBy/0JShke64012QJsI4g==
+X-Received: by 2002:a05:600c:1c19:b0:453:c08:a1fa with SMTP id 5b1f17b1804b1-45868b337cemr20344165e9.0.1753342897979;
+        Thu, 24 Jul 2025 00:41:37 -0700 (PDT)
+Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586ec63d29sm13108555e9.1.2025.07.24.00.41.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 00:41:37 -0700 (PDT)
+From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	sre@kernel.org,
+	pali@kernel.org,
+	skhan@linuxfoundation.org,
+	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+Subject: [PATCH] power: supply: bq2415x: replace deprecated strcpy() with strscpy()
+Date: Thu, 24 Jul 2025 09:41:33 +0200
+Message-Id: <20250724074133.33637-1-miguelgarciaroman8@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: hamoa-iot-evk: Enable display support
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250723-x1e-evk-dp-v1-1-be76ce53b9b8@quicinc.com>
- <6wwcxwgcf4wm4ekb3d4ukkyyqsseaawo6l66umzxim4kcilynm@fc6mwj6ymnes>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <6wwcxwgcf4wm4ekb3d4ukkyyqsseaawo6l66umzxim4kcilynm@fc6mwj6ymnes>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=LdY86ifi c=1 sm=1 tr=0 ts=6881e38a cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=6oUO4QyBuBcHVGqS9G8A:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA1MyBTYWx0ZWRfX6IFggY9PReRh
- 5/E+eV8SXPH3Ibd5abz6zKscWga4cyldQPGUaOAEXt0A2ylIzI6rR5sj0yLg6kcfn3ZX6VSg+4H
- ZTxkwtCK+rC6crWDGLInWWPcaqKMZW4qxVKSFLd6mq9b7SxmIts9yxHw8OOHRoXHLZWtdY6afHd
- 5iKAi3FsjNccEH5s0SqYTsQyxXYmnS8kTlq7pp2Nf9Ozyn4Ya2BsoeNlmQCMXRogqgU8v9Ld2ml
- kGue0uBc5QLT6q1V+DeplAXRaj6RX00p1Tq/QkA3r37y8/zbNQWzOWctHuIMH54OMccshrS7SQF
- vQAHvnXvxr9UzPUJC3XORJEeW2yM+ppZcN3U01XWdx/XCT3HlNMM52pVHZHpca4dzsCzxxdv/kk
- apeLHOy3AdcJCrH4TWew8Ai3/UnHZwWhDAybCo+VRpREBMMpmstyGK7Xi1u+/F4Yj3mHZXUi
-X-Proofpoint-ORIG-GUID: oTlahIG6SJvwbjLspVP3mzMI_bMIvc-O
-X-Proofpoint-GUID: oTlahIG6SJvwbjLspVP3mzMI_bMIvc-O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=816 bulkscore=0 spamscore=0
- suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507240053
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+strcpy() is deprecated for NUL-terminated strings. Replace it with
+strscpy() for revstr (local fixed-size buffer).
 
+Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
+---
+ drivers/power/supply/bq2415x_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2025/7/23 19:21, Dmitry Baryshkov wrote:
-> On Wed, Jul 23, 2025 at 02:14:55PM +0800, Yongxing Mou wrote:
->> Enable DisplayPort support on all three USB-C ports of the
->> hamoa-iot-evk platform.
->>
->> Unlike most X1E-based boards, this platform uses FSUSB42 USB
->> switches for the USB0 Type-C port, while USB1 and USB2 rely on
->> Parade PS8830 retimers for Alt Mode switching.
->>
->> Support for the PS8830 retimers was already included in the
->> initial DTS, so this change adds support for the FSUSB42 switches.
->>
->> Due to limitations in the USB/DP combo PHY driver, DisplayPort
->> functionality is limited to 2 lanes instead of the maximum 4,
->> consistent with other X1E-based platforms.
->>
->> The platform also supports embedded DisplayPort (eDP) by default.
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> ---
->> This change made top of initial DTS:
->> https://lore.kernel.org/all/20250716-hamoa_initial-v1-0-f6f5d0f9a163@oss.qualcomm.com/
->> ---
->>   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 156 +++++++++++++++++++++++++++++
->>   1 file changed, 156 insertions(+)
->> +
->> +	ports {
->> +		port@1 {
->> +			reg = <1>;
->> +			mdss_dp3_out: endpoint {
-> 
-> Add empty endpoint to x1e80100.dtsi, then patch it here like you do for
-> all other DP endpoints.
-> 
-Hi So i need to add mdss_dp3_out: endpoint {} in x1e80100.dtsi and 
-+&mdss_dp3_out {
-+       data-lanes = <0 1 2 3>;
-...
-in board dts..  is this understanding correct?
-
-i just wondering that here can we just follow other x1e80100-based dts?
-others 8 x1e80100-based board dts all introduce edp-panel in this way..
->> +				data-lanes = <0 1 2 3>;
->> +				link-frequencies = /bits/ 64 <1620000000 2700000000
->> +							      5400000000 8100000000>;
->> +
->> +				remote-endpoint = <&edp_panel_in>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
-> 
+diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
+index 9e3b9181ee76..fa66d6b74555 100644
+--- a/drivers/power/supply/bq2415x_charger.c
++++ b/drivers/power/supply/bq2415x_charger.c
+@@ -1516,7 +1516,7 @@ static int bq2415x_power_supply_init(struct bq2415x_device *bq)
+ 
+ 	ret = bq2415x_detect_revision(bq);
+ 	if (ret < 0)
+-		strcpy(revstr, "unknown");
++		strscpy(revstr, "unknown", sizeof(revstr));
+ 	else
+ 		sprintf(revstr, "1.%d", ret);
+ 
+-- 
+2.34.1
 
 
