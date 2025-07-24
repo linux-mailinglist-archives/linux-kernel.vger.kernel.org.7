@@ -1,287 +1,332 @@
-Return-Path: <linux-kernel+bounces-744615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8EEB10F2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B374B10F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D308D3A5B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4215AE03C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1BA2EB5A1;
-	Thu, 24 Jul 2025 15:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D5F2EA17B;
+	Thu, 24 Jul 2025 15:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="rsc8qM/5"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013037.outbound.protection.outlook.com [40.107.159.37])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Fu11raA6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E392E03EC;
-	Thu, 24 Jul 2025 15:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372271; cv=fail; b=LFCOz3k9sQ6wCwJe99KsK4abCWOUFdqkvdG0v5bqogufyqJEfCxOQDD+jFHkPyl20GlENbfsRtTlGKva2OOXaDdPDLQ4i9IrGRhWqe3eE/qhXBQAlo6RWSSufdyEUxPlJnVwlDWyCeqlRh8G2P0hj1BzskruXCxkHHiyz3YqVLY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753372271; c=relaxed/simple;
-	bh=LlAaqiDK3Ruzf9gvsf47gKQWvV87auG0mTkSgk47rtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lPgS26kV+MMUKI/2xzu4zDPRTYt4/AhUGU0A1IrrUiiLlPGbeRWbLFJ8aejHaz1Yhc+PqmtnbM0g1cSJ+BKIfuqRrk1s6jnXORO5+h6rmeskvWnOyUfi/Z3ijHOL4oW2oHCNix9UJa1jU7qt6lsEP3EKY5M2HFd/3LSo2YjDafw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=rsc8qM/5; arc=fail smtp.client-ip=40.107.159.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k1zj1rjnFho2aMdCxWgyCs5D3NYjQIKn2tJHjMfWUdZYmQRo3fvqHkYP0okn0rlXAZ2ZYEV4mkZoGe/puoeJ39NYKEDonAfctK+0j6ew7UXEbX6gKtDpEZtMdLpilKbNcTWN496SzVPMtcOmS4AVn8uDqsKBAc/40kBsbQ0liDCoGA79oZPl+9x5JGw7pZP0ad5ByU9dQqhZ8V0FnbIjbNvcNiaIEFbXrzPeHHzBP3LxoIDbIYfSxZR3czMmtfdoFdkpX0c45x2+XBhA+BdY7mXMVRcWj/WgAMH36WYy+2yv493eupGB8cLgpYJDgeMtE035bJ15jXhWUmp88Uy9ZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Il7OsZM3U1ZHkIuSLZ251Fylpkw2yYbooNZG5DqMWvA=;
- b=dFLvT4zbKzAIAFeFqmC49HuaN8FjPO1GUoJWR3WqYujIoj9Mx4MBIxitLgjnmNSm5z+0ArFynqoct5GtmqLC4QRvF+a3RdDPIYT48wWJ47n0aDA/5VhvI1scQGh70TQj9XbRL0RSPnXOZH0HTcaOQtebWZqeAdorPuCZqwfeC2f8nT83BlbRKGX3yK74H3nKN71HLrE2ymk82pLuNKzn+Pjg52zVLLbPBviuM3Ou7GR8OJs8kkb0b9EjV2mGeytCHry7BdW3T0CqIuo3crm7md5hQ01ysTyK+7ALUZjvJNCOx5gh7+DThXSr3yU0sBRFAQnVWQySurY1iSA4e2rAoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Il7OsZM3U1ZHkIuSLZ251Fylpkw2yYbooNZG5DqMWvA=;
- b=rsc8qM/5oJJDtpN5Bq/8NLaDqjA48udIqKj7IU2o+B7a5rhD+xIA+N5I3n6HXFEszcAPRWCs7yFSgEkU9bMxSfgpCahbhwzhs6qYgBn43gwTQawD0HFbCf8rTbymJcbpXDtWjrMjhnHpuVZzvcArz2weLvkpTxraijPDRrr42JP1HUuVf6LV0Cs34vg5MguvO6RsrDaw//6427RsE6jaci4+gYfL+tsVFd768kquJ35iDqJCc5RjPEMOpRI4DqGNag2jr2LDUTS5diufMLRsA373Ipwov8K6v52Xh53RdmTjfvtqYvD265n0gVF3Z9qmPpfqYBr4t0w4pwM+vTVezw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nokia.com;
-Received: from PAXPR07MB8771.eurprd07.prod.outlook.com (2603:10a6:102:246::20)
- by AMBPR07MB10732.eurprd07.prod.outlook.com (2603:10a6:20b:6a8::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
- 2025 15:51:06 +0000
-Received: from PAXPR07MB8771.eurprd07.prod.outlook.com
- ([fe80::e125:c4ef:b872:5c60]) by PAXPR07MB8771.eurprd07.prod.outlook.com
- ([fe80::e125:c4ef:b872:5c60%4]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 15:51:06 +0000
-From: Wladislav Wiebe <wladislav.wiebe@nokia.com>
-To: tglx@linutronix.de,
-	corbet@lwn.net,
-	jirislaby@kernel.org
-Cc: akpm@linux-foundation.org,
-	paulmck@kernel.org,
-	rostedt@goodmis.org,
-	Neeraj.Upadhyay@amd.com,
-	david@redhat.com,
-	bp@alien8.de,
-	arnd@arndb.de,
-	fvdl@google.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wladislav.wiebe@nokia.com,
-	peterz@infradead.org
-Subject: [PATCH v4] genirq: add support for warning on long-running IRQ handlers
-Date: Thu, 24 Jul 2025 17:50:59 +0200
-Message-ID: <20250724155059.2992-1-wladislav.wiebe@nokia.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0260.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::7) To PAXPR07MB8771.eurprd07.prod.outlook.com
- (2603:10a6:102:246::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593E22D193C;
+	Thu, 24 Jul 2025 15:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753372269; cv=none; b=mDe1jva652r4gnRTLDHJZSljmxyv10/XbwtXplRRPk4SZjMpJ/LPAA69KJ2GOXTpGHO4rlGB+cAz0JYosqcRWioPEDxyaKdjvyAHx81CQwgxRJ47AoLNqlTmzZ5gNPd5LyDfJby9Hv2rxCgLsg7nGWAAhMEDMfa9waE27mKc9Uo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753372269; c=relaxed/simple;
+	bh=DmwXao2MHnWUKgXoHeUaQdO3WFQeDOtuM0avIl9e1GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=siEj2A46thWUh5Ix5Kz1zAo0feYQj5yVZFAeqB3dyzKW6pHH81zQ7+1TYBxzSbwns8T3NGWKXg7Q/dNx62mjjHpn/jWb0WmWJjo2D70EW87/V6lMPcumcsoR5DNrxkJ3CY478cHdfMS11LkLhKwk4FuxlL5dI6/v/FlVHKy6fZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Fu11raA6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4DB2EC79;
+	Thu, 24 Jul 2025 17:50:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753372226;
+	bh=DmwXao2MHnWUKgXoHeUaQdO3WFQeDOtuM0avIl9e1GQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fu11raA6eEW+LAQ82hcm54n5yqMxfBE+BMkb1ssbteVi8/uwY/enlENPHZtNN2kBR
+	 RT3G+/gB8audu39EFVrgB0a02bzky0a2P/m4GwEmP8omKR0c4tnHFZlAzoctM1h9U0
+	 TBPte06bWg7Xx+qh0LMNESlOVnbByKHDSA42qVKo=
+Date: Thu, 24 Jul 2025 18:51:01 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hans Verkuil <hans@jjverkuil.nl>
+Subject: Re: [PATCH] media: uvcvideo: Drop stream->mutex
+Message-ID: <20250724155101.GA17890@pendragon.ideasonboard.com>
+References: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
+ <20250724120840.GL11202@pendragon.ideasonboard.com>
+ <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR07MB8771:EE_|AMBPR07MB10732:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13569f67-88cc-4142-2748-08ddcac9e6b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KEXro/cOEKvafrBEWHZ2T7cWaOyq9e4rkstUdWfo1BaaPL6Z27igyc+95dj7?=
- =?us-ascii?Q?/c6I1NuiNMLtZjIMLCqe92/GzbER3N4MNXE/cu9rhQrzPx2b0ioizIn5oH8s?=
- =?us-ascii?Q?glQ6JyDOEOC+RC/nLamy+6uc1qx44+u6L2Wy5ai/5gGS7Xex2kdL3SLFz9qT?=
- =?us-ascii?Q?ZNcckjZY6dJ22GZzRGuocFG+yYDBn2MpQKhrgtYOO+owP5vh69AKRcfuhpjJ?=
- =?us-ascii?Q?WcPLUkKALQLi+6igyhG3qbHs1Ye1N7cpaUCaTZnRHtzz/HKbo7Bt6eTy6J2M?=
- =?us-ascii?Q?lR3h4Lwi+2imMc4dZpC2ZjpWS3UBJwOl9uTyaQDl/HmSQqvFLSxjBa9TsU4n?=
- =?us-ascii?Q?fnjtmk3MgS+EIBPq2RMmM0nllIzpYdn4iLCPwpmmKxf7ld9e6DhanAxIfCNK?=
- =?us-ascii?Q?T74lZyAGOnYlWWVfXE33w4fw5kQ9Wkg4cSqH7cXsO6ZsuvYNXJEesgMNTDDV?=
- =?us-ascii?Q?vRMmEhGhKle0a/Vfqyf6HRga7YPFqpD1OQWb12H4tk/qBT8Wwk9xQ2sNn6/o?=
- =?us-ascii?Q?4be1oTY2QrvxqgIcHqdrt0ZU2j8M5vNeQ90VzUuPrIljvaCQhgRDGtujdkb6?=
- =?us-ascii?Q?0g/3w/JogRj2uCe+dlfYSF6cyMT5MV6D5GgPNXAxok5jVHF5pEMJZzoW50R9?=
- =?us-ascii?Q?8Iusb52hHCBLsYZQN4rUI0QQUksVGTUd66e+u49uJaEhTa6r0HGqMaRg5xkj?=
- =?us-ascii?Q?V6pqtZJWa3fjmq0ecdgSVW7b/xxEwPUWuib8mk9IfEOdT0GPnQOnu35S/NNv?=
- =?us-ascii?Q?YlY/vyNhmFErKfXkPXo98KrY6FgtVL8ToHcX6nbfG7jysIBCQxcFEuOHk0KT?=
- =?us-ascii?Q?kW7YO42SQinm4JhjIhRgwBF0Bhd27OB5F0l04LS9/nIpQUUP/BKGES0dN/yG?=
- =?us-ascii?Q?tOsE1DRIl9rNXKoaQIc1EuMCKPhVHpn5XtEpnXxsrACBNSGN7ANYHsW2faC4?=
- =?us-ascii?Q?JmSaQGpWTKqzJIWoQL0vqQVIc5Toaihql3cZNFCrxvEeVTInfUIyreJTsY6d?=
- =?us-ascii?Q?Jp28bw77K0skZ2EblIGsf44+z4Q/w6lGGxe/wDzqXl7ITmMlxdFQb7bxuE1V?=
- =?us-ascii?Q?6jbXTjHWo1mCWbebpnU2UMHEHPGImj7pcGXRcgFPXTpDLEkCTbJpGlHkVbM8?=
- =?us-ascii?Q?iKQOembFWSZGLZL2ckW+yNdj5yllSooqrnGmfu6KOwFkFuuzvTtVLOHlM5W9?=
- =?us-ascii?Q?+sz8WpOhf0maHGKYVGb2zjQTsfiL4XaPmbHKvHMOC/5GtVl7daxAM65VP3BM?=
- =?us-ascii?Q?S5EDppYRmSmIUNUoCNvwftP7osQFv+PkSMIJRj7n9j8TX4MGVM2Z4gqF6De2?=
- =?us-ascii?Q?TO9k+LeA1jDt/Mr77VR7Vw5AjT4PWpK4ZE2/XNexnd8JAK6UvDZbtnslCMtP?=
- =?us-ascii?Q?Y6Xwu79geI+E1+DjL9+snABBIX9cuiokm1//fqKV3/1P5m/E7KwXQvP+6YVJ?=
- =?us-ascii?Q?3UQGY6sugVk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR07MB8771.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NRmY9KlF5mU1FT/OCY0/emVnzLpOvQ913EWVlOQKNp5bdq03Oth0ypgx1ELj?=
- =?us-ascii?Q?jHhX+IIXh5vZDtO12oS+++6zLTKNL76LdZ52qjpeIEQje3tqzM/l4Th8Q6O6?=
- =?us-ascii?Q?zeRR9mkqnSLvVH96eOHgkXQETccC7/eZcL1tLkSqeC6G5y+oAjh6tDQmjjlT?=
- =?us-ascii?Q?I3ft/dJuw9ywNPKbz39LvBF6WlDDQiRmFFu8JhQbO6JTZnykQChRZFnV8oJv?=
- =?us-ascii?Q?YxhdxKzUjIXr5Q0n/B80hpIfBstFaKsmImg5NmbwtRWbsCHaWoiZ+7VkVY14?=
- =?us-ascii?Q?d2eTh92eBV7owv/tAqh+fuhnBVTMYDec1b/JJSxZyaZi52IdzTrbjAY3LfcS?=
- =?us-ascii?Q?bRQm7C9rUA6Cg+S3kt9uSHsjZGjRG7ReUMHSgeE+0iGGQbW26I3Ajt7Dz+lt?=
- =?us-ascii?Q?yITMDDs6V6vH3DHhGb1kxN0AFgyWGpybKGdlvYunsEFPZ2pXenH6sziD4oGA?=
- =?us-ascii?Q?rIVJNAu7vThnd/lPv89A0cH22FqyPCzm1O48ICzisRzn4gYGzB9y9qBdj69H?=
- =?us-ascii?Q?thg2jUop6xlVsAU8zWZiDLq7EO3+yc443zNbF0Mpdjd7bL9yMENvFvCtEIrd?=
- =?us-ascii?Q?HHuUdVlX6bilI4jllWUrcmlJ2aEw3rH8Cv262bGp+NhV9ASAJoGiGQOJFmZ3?=
- =?us-ascii?Q?c6ttJfKbSDsBwQoh4xtKi/ba51U1EnLnYB14WtaN0W9RFyVdTuGcPndRM5KV?=
- =?us-ascii?Q?8EQYrh9h448hDktMZiasTVrZBA5DmIzCNPqvDvBGX7jg7+B2BkXt4+m9ojZc?=
- =?us-ascii?Q?BwZiA6gvSO8Fy8EOL7p4UsABkII0pTeoR7w7i9V8xm/TaXvzstfjZds2qo8K?=
- =?us-ascii?Q?eQhLeYqhh+N637dj6SsjjQGVzT4SQ3d+Eoo1HO3fIHSmWn/hUMYYo+1hzGN8?=
- =?us-ascii?Q?hVwEAGvoXxWn83MqO4uGrVkZJttcz9tWXVpQ6dqRqGfc58XMvRmattf7kjlC?=
- =?us-ascii?Q?KtIiL58I93t5qd0juJCujlQnO5elxMyOOOcq6E+FEUVJH7ooOko8hi+BgbCL?=
- =?us-ascii?Q?Cr750f85wNjFJ2sNBloZZB4sFGisiLHS98muVEJKBM+m2rpDXNtyHNYYxc7z?=
- =?us-ascii?Q?7bVyuIq+oxz1elNB2qto29rVTeh2PqRkk5+9nLfXqDaIDHfx8MDTjjIFUpg1?=
- =?us-ascii?Q?xJs9XKdTFIonDLUCysyuQmzHp8R0O7X2RIRW8jv/9I2cn5jcPWmUewXpSoWI?=
- =?us-ascii?Q?Ph7OJNqIQcoRJUoN2+kiPumdzjqe8RBHm3ZtZiMlOraGb4+we7SadK73OcsA?=
- =?us-ascii?Q?+D8i0QWiUeeheVP3N4OGuTU8ppGIE2jBlGaeJUhFGuRRb8p9xwwsM5WtSUus?=
- =?us-ascii?Q?G2FJhJzVsGv9+7aCcP+A7QaRkiBBuQ12gwQrNM5CbB9RkkVdbXmOgAQQQifi?=
- =?us-ascii?Q?irxOgl2DLzvbNmGomvZAwfNiMoLvVgXBqOBBeDyZEcoUFIzLz1Pv/lKzRFR/?=
- =?us-ascii?Q?lv1QFJYmkdzUDoz75iY68bUw41nee7b3Dep8qEVVRAkJ58CHGr7wTjhnK0e4?=
- =?us-ascii?Q?77VIIDxFuksALuHA9I33ZWd8hbJMBCiBt21t717ZfbE8L0/h/i7CmkDn9aGX?=
- =?us-ascii?Q?pNs6mzTwW8zwYwnUc3/Hkh1JYCM0RhEQMRgLSpMpEXBkOlmoUTmBXSTrQOwW?=
- =?us-ascii?Q?7g=3D=3D?=
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13569f67-88cc-4142-2748-08ddcac9e6b3
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR07MB8771.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 15:51:06.5592
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: emZQ0l1c7e7CWTZc8MbBQc9kVXFCpaXskzyEYBlFQtEppVYMn81qqgCm1zIF4kfna77SzDh6LM5LwAeM1Lf02aQIiEXuvQPfJ8qHvN5hSSk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR07MB10732
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
 
-Introduce a mechanism to detect and warn about prolonged IRQ handlers.
-With a new command-line parameter (irqhandler.duration_warn_us=),
-users can configure the duration threshold in microseconds when a warning
-in such format should be emitted:
+(CC'ing Hans Verkuil)
 
-"[CPU14] long duration of IRQ[159:bad_irq_handler [long_irq]], took: 1330 us"
+On Thu, Jul 24, 2025 at 05:41:06PM +0200, Ricardo Ribalda wrote:
+> On Thu, 24 Jul 2025 at 14:08, Laurent Pinchart wrote:
+> > On Thu, Jul 17, 2025 at 07:56:45AM +0000, Ricardo Ribalda wrote:
+> > > Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
+> > > helpers"), the IOCTLs are serialized. Due to this there is no more need
+> > > to protect ctrl, cur_format or cur_frame from concurrent access.
+> > >
+> > > Drop stream->mutex after thanking it for years of good service.
+> > >
+> > > Use this opportunity to do fix some CodeStyle.
+> >
+> > Is that about the following change only:
+> >
+> > -       if (format == NULL || frame == NULL) {
+> > +       if (!format || !frame)
+> >
+> > or is there something else I missed ?
+> 
+> I believe that's it.
+> 
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  drivers/media/usb/uvc/uvc_driver.c   |  4 ----
+> > >  drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
+> > >  drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
+> > >  drivers/media/usb/uvc/uvcvideo.h     |  6 ------
+> > >  4 files changed, 10 insertions(+), 47 deletions(-)
+> > >
+> > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
+> > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > @@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
+> > >       if (stream->async_wq)
+> > >               destroy_workqueue(stream->async_wq);
+> > >
+> > > -     mutex_destroy(&stream->mutex);
+> > > -
+> > >       usb_put_intf(stream->intf);
+> > >
+> > >       kfree(stream->formats);
+> > > @@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
+> > >       if (stream == NULL)
+> > >               return NULL;
+> > >
+> > > -     mutex_init(&stream->mutex);
+> > > -
+> > >       stream->dev = dev;
+> > >       stream->intf = usb_get_intf(intf);
+> > >       stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
+> > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> > > index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
+> > > --- a/drivers/media/usb/uvc/uvc_metadata.c
+> > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> > > @@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
+> > >        * Metadata buffers would still be perfectly parseable, but it's more
+> > >        * consistent and cleaner to disallow that.
+> > >        */
+> > > -     mutex_lock(&stream->mutex);
+> > > -
+> > >       if (vb2_is_busy(&stream->meta.queue.queue))
+> > > -             ret = -EBUSY;
+> > > -     else
+> > > -             stream->meta.format = fmt->dataformat;
+> > > +             return -EBUSY;
+> > >
+> > > -     mutex_unlock(&stream->mutex);
+> > > +     stream->meta.format = fmt->dataformat;
+> > >
+> > >       return ret;
+> >
+> >         return 0;
+> >
+> > >  }
+> > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
+> > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > @@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+> > >        * developers test their webcams with the Linux driver as well as with
+> > >        * the Windows driver).
+> > >        */
+> > > -     mutex_lock(&stream->mutex);
+> > >       if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
+> > >               probe->dwMaxVideoFrameSize =
+> > >                       stream->ctrl.dwMaxVideoFrameSize;
+> > >
+> > >       /* Probe the device. */
+> > >       ret = uvc_probe_video(stream, probe);
+> > > -     mutex_unlock(&stream->mutex);
+> > >       if (ret < 0)
+> > >               return ret;
+> > >
+> > > @@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> > >       struct uvc_streaming *stream = handle->stream;
+> > >       const struct uvc_format *format;
+> > >       const struct uvc_frame *frame;
+> > > -     int ret = 0;
+> > >
+> > >       if (fmt->type != stream->type)
+> > >               return -EINVAL;
+> > >
+> > > -     mutex_lock(&stream->mutex);
+> > >       format = stream->cur_format;
+> > >       frame = stream->cur_frame;
+> > >
+> > > -     if (format == NULL || frame == NULL) {
+> > > -             ret = -EINVAL;
+> > > -             goto done;
+> > > -     }
+> > > +     if (!format || !frame)
+> > > +             return -EINVAL;
+> > >
+> > >       fmt->fmt.pix.pixelformat = format->fcc;
+> > >       fmt->fmt.pix.width = frame->wWidth;
+> > > @@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> > >       fmt->fmt.pix.xfer_func = format->xfer_func;
+> > >       fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
+> > >
+> > > -done:
+> > > -     mutex_unlock(&stream->mutex);
+> > > -     return ret;
+> > > +     return 0;
+> > >  }
+> > >
+> > >  static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> > > @@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> > >       if (ret < 0)
+> > >               return ret;
+> > >
+> > > -     mutex_lock(&stream->mutex);
+> > > -     if (vb2_is_busy(&stream->queue.queue)) {
+> > > -             ret = -EBUSY;
+> > > -             goto done;
+> > > -     }
+> > > +     if (vb2_is_busy(&stream->queue.queue))
+> > > +             return -EBUSY;
+> > >
+> > >       stream->ctrl = probe;
+> > >       stream->cur_format = format;
+> > >       stream->cur_frame = frame;
+> > >
+> > > -done:
+> > > -     mutex_unlock(&stream->mutex);
+> > > -     return ret;
+> > > +     return 0;
+> > >  }
+> > >
+> > >  static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> > > @@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> > >       if (parm->type != stream->type)
+> > >               return -EINVAL;
+> > >
+> > > -     mutex_lock(&stream->mutex);
+> > >       numerator = stream->ctrl.dwFrameInterval;
+> > > -     mutex_unlock(&stream->mutex);
+> > >
+> >
+> > You can drop the blank line here.
+> >
+> > >       denominator = 10000000;
+> > >       v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
+> > > @@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> > >       uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
+> > >               timeperframe.numerator, timeperframe.denominator, interval);
+> > >
+> > > -     mutex_lock(&stream->mutex);
+> > >
+> >
+> > Double blank line.
+> >
+> > > -     if (uvc_queue_streaming(&stream->queue)) {
+> > > -             mutex_unlock(&stream->mutex);
+> > > +     if (uvc_queue_streaming(&stream->queue))
+> > >               return -EBUSY;
+> > > -     }
+> > >
+> > >       format = stream->cur_format;
+> > >       frame = stream->cur_frame;
+> > > @@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> > >
+> > >       /* Probe the device with the new settings. */
+> > >       ret = uvc_probe_video(stream, &probe);
+> > > -     if (ret < 0) {
+> > > -             mutex_unlock(&stream->mutex);
+> > > +     if (ret < 0)
+> > >               return ret;
+> > > -     }
+> > >
+> > >       stream->ctrl = probe;
+> > >       stream->cur_frame = frame;
+> > > -     mutex_unlock(&stream->mutex);
+> > >
+> > >       /* Return the actual frame period. */
+> > >       timeperframe.numerator = probe.dwFrameInterval;
+> > > @@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
+> > >
+> > >       sel->r.left = 0;
+> > >       sel->r.top = 0;
+> > > -     mutex_lock(&stream->mutex);
+> > >       sel->r.width = stream->cur_frame->wWidth;
+> > >       sel->r.height = stream->cur_frame->wHeight;
+> > > -     mutex_unlock(&stream->mutex);
+> > >
+> > >       return 0;
+> > >  }
+> > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
+> > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > @@ -469,12 +469,6 @@ struct uvc_streaming {
+> > >       const struct uvc_format *cur_format;
+> > >       const struct uvc_frame *cur_frame;
+> > >
+> > > -     /*
+> > > -      * Protect access to ctrl, cur_format, cur_frame and hardware video
+> > > -      * probe control.
+> > > -      */
+> > > -     struct mutex mutex;
+> > > -
+> >
+> > Could you please instead keep this mutex and drop uvc_video_queue.mutex
+> > ? The rationale is that the same lock is now used to protect the queue
+> > operations and to serialize the ioctls. It's therefore a higher-level
+> > lock, which should be stored in the higher-level object, not in the
+> > queue.
+> >
+> > You can then also drop the lock assignment in uvc_queue.c that reads
+> >
+> >         queue->queue.lock = &queue->mutex;
+> >
+> > as videobuf2 and the V4L2 core will use the video device lock when no
+> > queue lock is set. The comment at the top of uvc_queue.c may need to be
+> > updated.
+> 
+> Are we sure that it is exactly the same?
+> 
+> There are places in videobuf2-core.c where we do not use video device lock.
+> 
+> Eg:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/common/videobuf2/videobuf2-core.c#n2056
+> 
+> I'd rather keep the assignment to be in the safe side.
 
-The implementation uses local_clock() to measure the execution duration of the
-generic IRQ per-CPU event handler.
+There are lots of places where the vdev lock is used is the queue has no
+lock. Hans, was is an oversight not to do it in __vb2_wait_for_done_vb()
+? If we don't want to support not setting the queue lock that's OK, but
+we should then drop code that uses vdev->lock instead.
 
-Signed-off-by: Wladislav Wiebe <wladislav.wiebe@nokia.com>
----
-V3 -> V4: convert us to ns in setup path to avoid shift operation in compare path
-	  based on V3 review:
-	  https://lore.kernel.org/lkml/20250723182836.1177-1-wladislav.wiebe@nokia.com/
-V2 -> V3: Addressed review comments based on v2:
-	  https://lore.kernel.org/lkml/20250714084209.918-1-wladislav.wiebe@nokia.com/
-	  - refactor commit message
-	  - switch from early_param() to __setup()
-	  - comment on approximation of nano to microseconds conversion
-	  - move ts_start to if() branch
-	  - align pr_warn arguments
-	  - surround else block with brackets as well
-	  - invert the condition and drop the "else {}" in cmdline arg. check
-	  - make struct irqaction *action function param. const
-	    in irqhandler_duration_check()
-	  - print smp_processor_id() return as unsigned int
-	  - fix warning text "on IRQ[...]" -> "of IRQ[...]"
-V1 -> V2: refactor to use local_clock() instead of jiffies and replace
-	  Kconfig knobs by a new command-line parameter.
-V1 link:  https://lore.kernel.org/lkml/20250630124721.18232-1-wladislav.wiebe@nokia.com/
+We can keep the assignment for the time being to be safe until that
+issue gets resolved, but I'd still like to use the stream mutex instead
+of the queue mutex.
 
- .../admin-guide/kernel-parameters.txt         |  5 ++
- kernel/irq/handle.c                           | 49 ++++++++++++++++++-
- 2 files changed, 53 insertions(+), 1 deletion(-)
+> > >       /* Buffers queue. */
+> > >       unsigned int frozen : 1;
+> > >       struct uvc_video_queue queue;
+> > >
+> > > ---
+> > > base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+> > > change-id: 20250716-uvc-onelocksless-b66658e01f89
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e4b7015718bb..441943dfd0f3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2259,6 +2259,11 @@
- 			for it. Intended to get systems with badly broken
- 			firmware running.
- 
-+	irqhandler.duration_warn_us= [KNL]
-+			Warn if an IRQ handler exceeds the specified duration
-+			threshold in microseconds. Useful for identifying
-+			long-running IRQs in the system.
-+
- 	irqpoll		[HW]
- 			When an interrupt is not handled search all handlers
- 			for it. Also check all handlers each timer
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 088e5c01075c..4233ead7cbc3 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -141,6 +141,44 @@ void __irq_wake_thread(struct irq_desc *desc, struct irqaction *action)
- 	wake_up_process(action->thread);
- }
- 
-+static DEFINE_STATIC_KEY_FALSE(irqhandler_duration_check_enabled);
-+static u64 irqhandler_duration_threshold_ns __ro_after_init;
-+
-+static int __init irqhandler_duration_check_setup(char *arg)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(arg, 0, &val);
-+	if (ret) {
-+		pr_err("Unable to parse irqhandler.duration_warn_us setting: ret=%d\n", ret);
-+		return 0;
-+	}
-+
-+	if (!val) {
-+		pr_err("Invalid irqhandler.duration_warn_us setting, must be > 0\n");
-+		return 0;
-+	}
-+
-+	irqhandler_duration_threshold_ns = val * 1000;
-+	static_branch_enable(&irqhandler_duration_check_enabled);
-+
-+	return 1;
-+}
-+__setup("irqhandler.duration_warn_us=", irqhandler_duration_check_setup);
-+
-+static inline void irqhandler_duration_check(u64 ts_start, unsigned int irq,
-+					     const struct irqaction *action)
-+{
-+	u64 delta_ns = local_clock() - ts_start;
-+
-+	if (unlikely(delta_ns > irqhandler_duration_threshold_ns)) {
-+		pr_warn_ratelimited("[CPU%u] long duration of IRQ[%u:%ps], took: %llu us\n",
-+				    smp_processor_id(), irq, action->handler,
-+				    delta_ns >> 10);
-+	}
-+}
-+
- irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc)
- {
- 	irqreturn_t retval = IRQ_NONE;
-@@ -160,7 +198,16 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc)
- 			lockdep_hardirq_threaded();
- 
- 		trace_irq_handler_entry(irq, action);
--		res = action->handler(irq, action->dev_id);
-+
-+		if (static_branch_unlikely(&irqhandler_duration_check_enabled)) {
-+			u64 ts_start = local_clock();
-+
-+			res = action->handler(irq, action->dev_id);
-+			irqhandler_duration_check(ts_start, irq, action);
-+		} else {
-+			res = action->handler(irq, action->dev_id);
-+		}
-+
- 		trace_irq_handler_exit(irq, action, res);
- 
- 		if (WARN_ONCE(!irqs_disabled(),"irq %u handler %pS enabled interrupts\n",
 -- 
-2.39.3.dirty
+Regards,
 
+Laurent Pinchart
 
