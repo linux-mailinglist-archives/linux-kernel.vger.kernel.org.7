@@ -1,282 +1,396 @@
-Return-Path: <linux-kernel+bounces-744775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D830DB110B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4538FB110B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B255586F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D30E1CE8209
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE302ECD0A;
-	Thu, 24 Jul 2025 18:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B54E2ECD38;
+	Thu, 24 Jul 2025 18:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0rLGBNG"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ke5hphPR"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15802E9728;
-	Thu, 24 Jul 2025 18:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3052D46D4
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753380940; cv=none; b=mDKzT/eD44GnztCJ6Qr9mUk0+uClPdtuaSTsQg1zgnpRCCyS+OcyMVny61EQHLanj54W3WMH5QdE1MXH/XE+937XpuSB6hey/p4L9fI2RIsNZAVBciRi4gzq3y2aVMVWnSN8Y5cSsMcMMTG2I0AHOSnzQM3vK+0lNJW0TxYFfhI=
+	t=1753380967; cv=none; b=nsQPhwPCo1YBVPaAKaMGvwLl5QtoLcVj4mnfcubxRNDguMU+ywhOVXj9vRYK5bioUAqmXnGdPHi5X7bYd9p8fSQ0/IoYiRUzrnIphSHxJsuNULBilMthwScum4LQXmFyq5VAqEqKmhxyETXn5E6plcNpZmz0aPifBW6Hk2lqcJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753380940; c=relaxed/simple;
-	bh=ed2YNaYrOCo6zmuYoA2XtMW6sFsIJraaNm7yPtxfH8Q=;
+	s=arc-20240116; t=1753380967; c=relaxed/simple;
+	bh=XJJ/JfvOvQVQQlfwsQmk3p8nNpWFvIz3xpR4a6LHYcw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X60oEoK9ohLr7yz9u1BT34B4cWR27EiTxoSW7fzBvsApbQN5HBmGR0OZQvPZgKqbbmT9a6VqTmzvcIeGyelH3KHjVBwpwZstb5Zb2uWHI4qgB3XMfF5NN32LFjnWTPZTK5s0t8cZWIMpmwrqSvIyKu3y8HViLLb3trT7PFrDfcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0rLGBNG; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32f2947ab0bso10487531fa.3;
-        Thu, 24 Jul 2025 11:15:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=sYeHuOctyuAoplCwNgdGLdivb82XBbFceYrAkLWXxdjr8xweEeiN1UYdaHQP0oWnCGWZRFLDLt+1vPE3Eu4B27lxbShY3tVGdVdswVj33PWA1oMU7v6pgxcnMecvyo4CTsva/tVXk8dA+ayc6VoAyLgCqVu3UXwAFBxPzD8sGdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ke5hphPR; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553b5165cf5so1594821e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753380936; x=1753985736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kh00RZW4bz0bQrExQnvNGV+vIhXj01vFWScu+jCpYQM=;
-        b=c0rLGBNGnWeftmr2Z9U5rngTMOgGn8tW9+NDfSPVL4BzfCXqsOzYuKWb5Ch6MYKUkz
-         nmdDe9STrCwITlJTSyruRDOYn8KwS18avwUJQba4Q3cU4bswHGm1QpB3ToNMbCoTzFhl
-         USciSkjpCODNhXMLrgCvglr+ZihQ/XerAoiyHMB725rw/qz9+Z885mC32557kxvRQuAi
-         I6MKVKoszWpNvKZpQtjLGBLx5dXHixaVSIwyh+A6sgwvTY/zYmZI4/OcD4cen/zoVkLi
-         lGVciBgtD2GEQSlRLgTKwp7qcU0we8yADP19iIvBA/MAoUMxrnZKWIi6C2xXRHIAEaLp
-         rn1g==
+        d=chromium.org; s=google; t=1753380963; x=1753985763; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rRnkmNXtWAx0OvnHuRzyqidxZKn4ESWiP9VSOgI1TiA=;
+        b=Ke5hphPR9pK7MiJ9u2mkGyq5xBmUphkP/Mfy7JVW2JXCpK47ccTiNmr/GU36U3+7Oy
+         cyqZRbA5aEKvAy6J80B02O2qsQRag0qKqvPH+hamVTCQiVUEFCjMa45OsRyexYDYpniO
+         h07ApMM49aaZobahZY+EL+F9kYDFnrNFaR/A4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753380936; x=1753985736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kh00RZW4bz0bQrExQnvNGV+vIhXj01vFWScu+jCpYQM=;
-        b=gVltYRTyA0PELOeTAbTlX4b+WE61tt5gxFL1tALg2JThJ5p1wNH9MwCzMkRxw7gz4P
-         fL2e/d3MXtmgmJkGkIncxqzOUl49vU5BPllgKIb8/2tPuX07Yg04y+DpoqNzu0Jlq9Sc
-         lUr2lN17c7eZBwCcNCxY7xfEaRbdYCTckMcG+rcMF2HYcOuT8nfFmUMooIDt9n2P9wGa
-         vFgkURD4si53HNGvCXPVRDFAi0HaFQsa3/VYoVg3lpYDXFVOK77JrbnO+Xm0T84IIGuP
-         jdYwO5Rq3wx1Bwt7ge/wVwryu/G2wcXovPq2QMiXrE+LajXFLmLWh4bLfDf35GZ+6Yfx
-         nlpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl4ISu7ul8fDJwDkaszJq3UUE6s2DsykRfZM5OoQU/MJx3lcPV706klI3apvjqmjKRjCPCpjDPQBCNE5tT1YM=@vger.kernel.org, AJvYcCWb+zCPBjqXm73XpeXASKEps9GcnCpYG/fUw3JbwG/ENP+eS+iePxgtnPOsWCXaDxW4QRCV2jCMBrHVI0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmbWJDJ2OEzJ+qOj6j7cAw9QJs+LINGFN32l9H8+4z8X6siogu
-	i2vABb4Izye0caCSa8Ud4bZlvl17h/wm2WYuCuIoUdiKnMNmkP9ZSnMqbrG9UioSrVYU4QRmzxu
-	l0h+CFmBApqwlbexM5UzPMv6FoX+HB5A00FnsTcw=
-X-Gm-Gg: ASbGncvNjAU2CaS5Ntmu2L7auzUt058R7syAjuHsG9N0vkdVAhILKSCHavwAipCjWdx
-	tsOsAeqd8YNPrQnTwxephdOftUAlNoV9Lu1IHkY9gXl8jp25qj8n4sJTCzb8xyKxK1NsKd8/CZ0
-	l/woKQzXWOsoNpLCf1Rl7PZV5UyAOHaYDq0wG3Pe6+6lRj+W1fy4Hi75++QSwij0BOcYnkn02M6
-	6xrj7xf
-X-Google-Smtp-Source: AGHT+IGQo5ZRoXqf8/1duG3i2vvlZGxGhWUgslLWVR8nz8h0t2ZuMQ8tS3eP/eS6kOj4I3xTwLYTNZRGjtBwhwZIiYQ=
-X-Received: by 2002:a2e:bc28:0:b0:32b:7ddd:279e with SMTP id
- 38308e7fff4ca-330dfcf9b59mr21242851fa.14.1753380935533; Thu, 24 Jul 2025
- 11:15:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753380963; x=1753985763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rRnkmNXtWAx0OvnHuRzyqidxZKn4ESWiP9VSOgI1TiA=;
+        b=G/1Oxylq8m2cZZ7xSnw1quLfU3WZ5+vLkpk6ipwRZrklLorEnAdv1Z11C6eFc5Qzc1
+         rwoPL82lHL/i9wCc7F4deHSV5H+VeX+c5+ntmi1V3w1wt7uB9XUbRgXi1w9ndnh8ro3T
+         TqFyvUwJa+Uswog3ZMFFrc7XqLIoSE80Ky5KF7R73efEBloVRBnd66N6eDQn9TOHsKyN
+         F/Q3MywWNuOrbY7NMfct8hRywPvGHGGFIIMCrzcsSgz6KCRjOhNlklobqVAHJujBYebg
+         T94w8tVSHbWJYaZikkj4hn33+DxVP7a/5nwrFDL4Tswlebxr+lnPzWrX5g4z1cb0FUCm
+         CLOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGX9/NBE4oM+ZqL3767DT3bJCvcdz8/Bf6+xy7xVg0FbHJUxrkJZJoI7t78yX38pJ0r/2fm0KS4GGHaSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvD/VzGr/FlvYygUIig+gK/DOz4L4XRhM1wcg2kG7KvQ5XgVNo
+	PgIcpHY+MJ5AYUUwDk3ovP2aRzqk1KwsFPPiWBE6lmq/iGxQWISoxEAvyxjlzGEW5J2OebQTH9d
+	POuE=
+X-Gm-Gg: ASbGncudnm8bq0RYMHyMd2CdDWl3nrkpce8wa1NDOYLBVg+54fJ+nsMnw/dX0BpIYOG
+	U34Ei98psbRxtwHGSjqSZfEHMbnb/Dsz0yvtmhvu0tjYt1CXgr8e/63GBFhbFCtC0IhcvGyD2u7
+	LzdyDzg5Y8p2jQFCqCGLeYPkdmJRCHNBvzcPNprSrM4EIUo1F3m6AqZxmiTmx+FM46V+2wdH0LY
+	Pot4ioXmUBdFfp5Ec1UVYyuiUNhcfRYq31GCBWOL/JOSQCRh2I34XMFdGdtvAqm6Ph2YyvXIPJ8
+	q9TJ5Do0QGT/qngMS9+ik/QVtsy9azHBMdimWR27bHOTQ4iwoJyd7ui7sk0I7OveOMEj70vcPG2
+	n/OmxY7vHgC75JlGwz6Tlpg9U31ndSmknw5+tuBdwOwBw9d5ns8pHjQCXOAfxIKH4KMkDzek=
+X-Google-Smtp-Source: AGHT+IFEVMoHGnpK8P/VRZyCCFiO/uYAhIsq1+6Z+tLseciEcgqlrAq1AjyrvAJkHxvTUUSdz8XBfQ==
+X-Received: by 2002:a05:6512:1045:b0:553:2cfd:5958 with SMTP id 2adb3069b0e04-55a5132e358mr2521344e87.8.1753380962964;
+        Thu, 24 Jul 2025 11:16:02 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53c712desm465555e87.121.2025.07.24.11.16.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 11:16:02 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553d771435fso1376495e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWntOvHu58Ktb0mzDoPES+GCn/fQK1znbztvFYixEmvy03pZ4iURwN1ZTHGaNjHy9wTPwACrCcjjEXo034=@vger.kernel.org
+X-Received: by 2002:a05:6512:2011:b0:550:e608:410b with SMTP id
+ 2adb3069b0e04-55a513b3587mr1980785e87.33.1753380960869; Thu, 24 Jul 2025
+ 11:16:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-lock-class-key-cleanup-v1-0-85fa506b8ca4@google.com>
- <20250723-lock-class-key-cleanup-v1-2-85fa506b8ca4@google.com> <aIDn8OFzUbVXQVTF@tardis.local>
-In-Reply-To: <aIDn8OFzUbVXQVTF@tardis.local>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 24 Jul 2025 14:14:59 -0400
-X-Gm-Features: Ac12FXzBjXoJcGsrmHKYnZUSb1oVHPLcl_B1ZDlVrMauZ900Uh8s_b53SLXMYVI
-Message-ID: <CAJ-ks9mQJ5Ed-zd_p9aNAxACn7m-DhcacEpSCwtyixdjtG3gxg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: sync: clean up LockClassKey and its docs
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250717-uvc-onelocksless-v1-1-91a1b834186a@chromium.org>
+ <20250724120840.GL11202@pendragon.ideasonboard.com> <CANiDSCvvAX27u4_qnKxbSqWVWybsZFV-367eSv8ig85-cCeDTw@mail.gmail.com>
+ <20250724155101.GA17890@pendragon.ideasonboard.com>
+In-Reply-To: <20250724155101.GA17890@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 24 Jul 2025 20:15:48 +0200
+X-Gmail-Original-Message-ID: <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
+X-Gm-Features: Ac12FXwZ8FXtJgrp5RAT5nu5B8p5f9k2i-x7S1tdmRh1ThkXammGMBlz8NwmaeY
+Message-ID: <CANiDSCsojmQdCQqYXBFStPwGJ3n+-04_+dqTx+tsUrT+dRSC2Q@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Drop stream->mutex
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hans Verkuil <hans@jjverkuil.nl>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 9:49=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
+Hi Laurent
+
+On Thu, 24 Jul 2025 at 17:51, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 >
-> On Wed, Jul 23, 2025 at 11:49:34AM +0000, Alice Ryhl wrote:
-> > Several aspects of the code and documentation for this type is
-> > incomplete. Also several things are hidden from the docs. Thus, clean i=
-t
-> > up and make it easier to read the rendered html docs.
+> (CC'ing Hans Verkuil)
+>
+> On Thu, Jul 24, 2025 at 05:41:06PM +0200, Ricardo Ribalda wrote:
+> > On Thu, 24 Jul 2025 at 14:08, Laurent Pinchart wrote:
+> > > On Thu, Jul 17, 2025 at 07:56:45AM +0000, Ricardo Ribalda wrote:
+> > > > Since commit c93d73c9c2cf ("media: uvcvideo: Use vb2 ioctl and fop
+> > > > helpers"), the IOCTLs are serialized. Due to this there is no more need
+> > > > to protect ctrl, cur_format or cur_frame from concurrent access.
+> > > >
+> > > > Drop stream->mutex after thanking it for years of good service.
+> > > >
+> > > > Use this opportunity to do fix some CodeStyle.
+> > >
+> > > Is that about the following change only:
+> > >
+> > > -       if (format == NULL || frame == NULL) {
+> > > +       if (!format || !frame)
+> > >
+> > > or is there something else I missed ?
 > >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
->
-> This looks good to me. One thing below:
->
-> >  rust/kernel/sync.rs | 55 ++++++++++++++++++++++++++++++++++++++-------=
---------
-> >  1 file changed, 40 insertions(+), 15 deletions(-)
+> > I believe that's it.
 > >
-> > diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-> > index 9545bedf47b67976ab8c22d8368991cf1f382e42..5019a0bc95446fe30bad02c=
-e040a1cbbe6d9ad5b 100644
-> > --- a/rust/kernel/sync.rs
-> > +++ b/rust/kernel/sync.rs
-> > @@ -26,7 +26,9 @@
-> >  pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
-> >  pub use locked_by::LockedBy;
+> > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > ---
+> > > >  drivers/media/usb/uvc/uvc_driver.c   |  4 ----
+> > > >  drivers/media/usb/uvc/uvc_metadata.c |  8 ++------
+> > > >  drivers/media/usb/uvc/uvc_v4l2.c     | 39 ++++++++----------------------------
+> > > >  drivers/media/usb/uvc/uvcvideo.h     |  6 ------
+> > > >  4 files changed, 10 insertions(+), 47 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > index 775bede0d93d9b3e5391914aa395326d3de6a3b1..3039e6a533b82dd917050d416c9ced8756d69170 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > @@ -183,8 +183,6 @@ static void uvc_stream_delete(struct uvc_streaming *stream)
+> > > >       if (stream->async_wq)
+> > > >               destroy_workqueue(stream->async_wq);
+> > > >
+> > > > -     mutex_destroy(&stream->mutex);
+> > > > -
+> > > >       usb_put_intf(stream->intf);
+> > > >
+> > > >       kfree(stream->formats);
+> > > > @@ -201,8 +199,6 @@ static struct uvc_streaming *uvc_stream_new(struct uvc_device *dev,
+> > > >       if (stream == NULL)
+> > > >               return NULL;
+> > > >
+> > > > -     mutex_init(&stream->mutex);
+> > > > -
+> > > >       stream->dev = dev;
+> > > >       stream->intf = usb_get_intf(intf);
+> > > >       stream->intfnum = intf->cur_altsetting->desc.bInterfaceNumber;
+> > > > diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> > > > index 229e08ff323eed9129d835b24ea2e8085bb713b8..d1d4fade634bd3f8b12bbaa75388db42aecc25ea 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_metadata.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> > > > @@ -100,14 +100,10 @@ static int uvc_meta_v4l2_set_format(struct file *file, void *fh,
+> > > >        * Metadata buffers would still be perfectly parseable, but it's more
+> > > >        * consistent and cleaner to disallow that.
+> > > >        */
+> > > > -     mutex_lock(&stream->mutex);
+> > > > -
+> > > >       if (vb2_is_busy(&stream->meta.queue.queue))
+> > > > -             ret = -EBUSY;
+> > > > -     else
+> > > > -             stream->meta.format = fmt->dataformat;
+> > > > +             return -EBUSY;
+> > > >
+> > > > -     mutex_unlock(&stream->mutex);
+> > > > +     stream->meta.format = fmt->dataformat;
+> > > >
+> > > >       return ret;
+> > >
+> > >         return 0;
+> > >
+> > > >  }
+> > > > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > index 160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22..d7be4d59f0c73b983aa01321f4acc8f8bf6e83ef 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > > > @@ -329,14 +329,12 @@ static int uvc_v4l2_try_format(struct uvc_streaming *stream,
+> > > >        * developers test their webcams with the Linux driver as well as with
+> > > >        * the Windows driver).
+> > > >        */
+> > > > -     mutex_lock(&stream->mutex);
+> > > >       if (stream->dev->quirks & UVC_QUIRK_PROBE_EXTRAFIELDS)
+> > > >               probe->dwMaxVideoFrameSize =
+> > > >                       stream->ctrl.dwMaxVideoFrameSize;
+> > > >
+> > > >       /* Probe the device. */
+> > > >       ret = uvc_probe_video(stream, probe);
+> > > > -     mutex_unlock(&stream->mutex);
+> > > >       if (ret < 0)
+> > > >               return ret;
+> > > >
+> > > > @@ -395,19 +393,15 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> > > >       struct uvc_streaming *stream = handle->stream;
+> > > >       const struct uvc_format *format;
+> > > >       const struct uvc_frame *frame;
+> > > > -     int ret = 0;
+> > > >
+> > > >       if (fmt->type != stream->type)
+> > > >               return -EINVAL;
+> > > >
+> > > > -     mutex_lock(&stream->mutex);
+> > > >       format = stream->cur_format;
+> > > >       frame = stream->cur_frame;
+> > > >
+> > > > -     if (format == NULL || frame == NULL) {
+> > > > -             ret = -EINVAL;
+> > > > -             goto done;
+> > > > -     }
+> > > > +     if (!format || !frame)
+> > > > +             return -EINVAL;
+> > > >
+> > > >       fmt->fmt.pix.pixelformat = format->fcc;
+> > > >       fmt->fmt.pix.width = frame->wWidth;
+> > > > @@ -419,9 +413,7 @@ static int uvc_ioctl_g_fmt(struct file *file, void *fh,
+> > > >       fmt->fmt.pix.xfer_func = format->xfer_func;
+> > > >       fmt->fmt.pix.ycbcr_enc = format->ycbcr_enc;
+> > > >
+> > > > -done:
+> > > > -     mutex_unlock(&stream->mutex);
+> > > > -     return ret;
+> > > > +     return 0;
+> > > >  }
+> > > >
+> > > >  static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> > > > @@ -441,19 +433,14 @@ static int uvc_ioctl_s_fmt(struct file *file, void *fh,
+> > > >       if (ret < 0)
+> > > >               return ret;
+> > > >
+> > > > -     mutex_lock(&stream->mutex);
+> > > > -     if (vb2_is_busy(&stream->queue.queue)) {
+> > > > -             ret = -EBUSY;
+> > > > -             goto done;
+> > > > -     }
+> > > > +     if (vb2_is_busy(&stream->queue.queue))
+> > > > +             return -EBUSY;
+> > > >
+> > > >       stream->ctrl = probe;
+> > > >       stream->cur_format = format;
+> > > >       stream->cur_frame = frame;
+> > > >
+> > > > -done:
+> > > > -     mutex_unlock(&stream->mutex);
+> > > > -     return ret;
+> > > > +     return 0;
+> > > >  }
+> > > >
+> > > >  static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> > > > @@ -466,9 +453,7 @@ static int uvc_ioctl_g_parm(struct file *file, void *fh,
+> > > >       if (parm->type != stream->type)
+> > > >               return -EINVAL;
+> > > >
+> > > > -     mutex_lock(&stream->mutex);
+> > > >       numerator = stream->ctrl.dwFrameInterval;
+> > > > -     mutex_unlock(&stream->mutex);
+> > > >
+> > >
+> > > You can drop the blank line here.
+> > >
+> > > >       denominator = 10000000;
+> > > >       v4l2_simplify_fraction(&numerator, &denominator, 8, 333);
+> > > > @@ -519,12 +504,9 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> > > >       uvc_dbg(stream->dev, FORMAT, "Setting frame interval to %u/%u (%u)\n",
+> > > >               timeperframe.numerator, timeperframe.denominator, interval);
+> > > >
+> > > > -     mutex_lock(&stream->mutex);
+> > > >
+> > >
+> > > Double blank line.
+> > >
+> > > > -     if (uvc_queue_streaming(&stream->queue)) {
+> > > > -             mutex_unlock(&stream->mutex);
+> > > > +     if (uvc_queue_streaming(&stream->queue))
+> > > >               return -EBUSY;
+> > > > -     }
+> > > >
+> > > >       format = stream->cur_format;
+> > > >       frame = stream->cur_frame;
+> > > > @@ -556,14 +538,11 @@ static int uvc_ioctl_s_parm(struct file *file, void *fh,
+> > > >
+> > > >       /* Probe the device with the new settings. */
+> > > >       ret = uvc_probe_video(stream, &probe);
+> > > > -     if (ret < 0) {
+> > > > -             mutex_unlock(&stream->mutex);
+> > > > +     if (ret < 0)
+> > > >               return ret;
+> > > > -     }
+> > > >
+> > > >       stream->ctrl = probe;
+> > > >       stream->cur_frame = frame;
+> > > > -     mutex_unlock(&stream->mutex);
+> > > >
+> > > >       /* Return the actual frame period. */
+> > > >       timeperframe.numerator = probe.dwFrameInterval;
+> > > > @@ -941,10 +920,8 @@ static int uvc_ioctl_g_selection(struct file *file, void *fh,
+> > > >
+> > > >       sel->r.left = 0;
+> > > >       sel->r.top = 0;
+> > > > -     mutex_lock(&stream->mutex);
+> > > >       sel->r.width = stream->cur_frame->wWidth;
+> > > >       sel->r.height = stream->cur_frame->wHeight;
+> > > > -     mutex_unlock(&stream->mutex);
+> > > >
+> > > >       return 0;
+> > > >  }
+> > > > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > > > index 757254fc4fe930ae61c9d0425f04d4cd074a617e..86765b9d7935f0888476249c3fb826cd7f36b35c 100644
+> > > > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > > > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > > > @@ -469,12 +469,6 @@ struct uvc_streaming {
+> > > >       const struct uvc_format *cur_format;
+> > > >       const struct uvc_frame *cur_frame;
+> > > >
+> > > > -     /*
+> > > > -      * Protect access to ctrl, cur_format, cur_frame and hardware video
+> > > > -      * probe control.
+> > > > -      */
+> > > > -     struct mutex mutex;
+> > > > -
+> > >
+> > > Could you please instead keep this mutex and drop uvc_video_queue.mutex
+> > > ? The rationale is that the same lock is now used to protect the queue
+> > > operations and to serialize the ioctls. It's therefore a higher-level
+> > > lock, which should be stored in the higher-level object, not in the
+> > > queue.
+> > >
+> > > You can then also drop the lock assignment in uvc_queue.c that reads
+> > >
+> > >         queue->queue.lock = &queue->mutex;
+> > >
+> > > as videobuf2 and the V4L2 core will use the video device lock when no
+> > > queue lock is set. The comment at the top of uvc_queue.c may need to be
+> > > updated.
 > >
-> > -/// Represents a lockdep class. It's a wrapper around C's `lock_class_=
-key`.
-> > +/// Represents a lockdep class.
-> > +///
-> > +/// Wraps the kernel's `struct lock_class_key`.
-> >  #[repr(transparent)]
-> >  #[pin_data(PinnedDrop)]
-> >  pub struct LockClassKey {
-> > @@ -34,6 +36,10 @@ pub struct LockClassKey {
-> >      inner: Opaque<bindings::lock_class_key>,
-> >  }
+> > Are we sure that it is exactly the same?
 > >
-> > +// SAFETY: Unregistering a lock class key from a different thread than=
- where it was registered is
-> > +// allowed.
-> > +unsafe impl Send for LockClassKey {}
-> > +
-> >  // SAFETY: `bindings::lock_class_key` is designed to be used concurren=
-tly from multiple threads and
-> >  // provides its own synchronization.
-> >  unsafe impl Sync for LockClassKey {}
-> > @@ -41,28 +47,30 @@ unsafe impl Sync for LockClassKey {}
-> >  impl LockClassKey {
-> >      /// Initializes a statically allocated lock class key.
-> >      ///
-> > -    /// This is usually used indirectly through the [`static_lock_clas=
-s!`] macro.
-> > +    /// This is usually used indirectly through the [`static_lock_clas=
-s!`] macro. See its
-> > +    /// documentation for more information.
-> >      ///
-> >      /// # Safety
-> >      ///
-> >      /// The destructor must never run on the returned `LockClassKey`.
-> > -    #[doc(hidden)]
-> >      pub const unsafe fn new_static() -> Self {
-> >          LockClassKey {
-> >              inner: Opaque::uninit(),
-> >          }
-> >      }
+> > There are places in videobuf2-core.c where we do not use video device lock.
 > >
-> > -    /// Initializes a dynamically allocated lock class key. In the com=
-mon case of using a
-> > -    /// statically allocated lock class key, the static_lock_class! ma=
-cro should be used instead.
-> > +    /// Initializes a dynamically allocated lock class key.
-> > +    ///
-> > +    /// In the common case of using a statically allocated lock class =
-key, the
-> > +    /// [`static_lock_class!`] macro should be used instead.
-> >      ///
-> >      /// # Examples
-> > +    ///
-> >      /// ```
-> > -    /// # use kernel::c_str;
-> > -    /// # use kernel::alloc::KBox;
-> > -    /// # use kernel::types::ForeignOwnable;
-> > -    /// # use kernel::sync::{LockClassKey, SpinLock};
-> > -    /// # use pin_init::stack_pin_init;
-> > +    /// use kernel::c_str;
->
-> We can probably change the use `optional_name!()` to make
-> core::ffi::CStr -> kernel::str::CStr more smooth.
->
-> > +    /// use kernel::types::ForeignOwnable;
-> > +    /// use kernel::sync::{LockClassKey, SpinLock};
-> > +    /// use pin_init::stack_pin_init;
-> >      ///
-> >      /// let key =3D KBox::pin_init(LockClassKey::new_dynamic(), GFP_KE=
-RNEL)?;
-> >      /// let key_ptr =3D key.into_foreign();
-> > @@ -80,7 +88,6 @@ impl LockClassKey {
-> >      /// // SAFETY: We dropped `num`, the only use of the key, so the r=
-esult of the previous
-> >      /// // `borrow` has also been dropped. Thus, it's safe to use from=
-_foreign.
-> >      /// unsafe { drop(<Pin<KBox<LockClassKey>> as ForeignOwnable>::fro=
-m_foreign(key_ptr)) };
-> > -    ///
-> >      /// # Ok::<(), Error>(())
-> >      /// ```
-> >      pub fn new_dynamic() -> impl PinInit<Self> {
-> > @@ -90,7 +97,10 @@ pub fn new_dynamic() -> impl PinInit<Self> {
-> >          })
-> >      }
+> > Eg:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/common/videobuf2/videobuf2-core.c#n2056
 > >
-> > -    pub(crate) fn as_ptr(&self) -> *mut bindings::lock_class_key {
-> > +    /// Returns a raw pointer to the inner C struct.
-> > +    ///
-> > +    /// It is up to the caller to use the raw pointer correctly.
-> > +    pub fn as_ptr(&self) -> *mut bindings::lock_class_key {
-> >          self.inner.get()
-> >      }
-> >  }
-> > @@ -98,14 +108,28 @@ pub(crate) fn as_ptr(&self) -> *mut bindings::lock=
-_class_key {
-> >  #[pinned_drop]
-> >  impl PinnedDrop for LockClassKey {
-> >      fn drop(self: Pin<&mut Self>) {
-> > -        // SAFETY: self.as_ptr was registered with lockdep and self is=
- pinned, so the address
-> > -        // hasn't changed. Thus, it's safe to pass to unregister.
-> > +        // SAFETY: `self.as_ptr()` was registered with lockdep and `se=
-lf` is pinned, so the address
-> > +        // hasn't changed. Thus, it's safe to pass it to unregister.
-> >          unsafe { bindings::lockdep_unregister_key(self.as_ptr()) }
-> >      }
-> >  }
-> >
-> >  /// Defines a new static lock class and returns a pointer to it.
-> > -#[doc(hidden)]
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// use kernel::c_str;
-> > +/// use kernel::sync::{static_lock_class, Arc, SpinLock};
-> > +///
-> > +/// fn new_locked_int() -> Result<Arc<SpinLock<u32>>> {
-> > +///     Arc::pin_init(SpinLock::new(
-> > +///         42,
-> > +///         c_str!("new_locked_int"),
+> > I'd rather keep the assignment to be in the safe side.
 >
-> We could use `optional_name!()` here to avoid another usage of
-> `c_str!()`.
+> There are lots of places where the vdev lock is used is the queue has no
+> lock. Hans, was is an oversight not to do it in __vb2_wait_for_done_vb()
+> ? If we don't want to support not setting the queue lock that's OK, but
+> we should then drop code that uses vdev->lock instead.
 >
-> That said, I'm not sure whether we should replace `c_str!()` in the
-> example of `new_dynamic()` right now in this series, I think that
-> depends on two things: 1) whether this series goes into tip or rust-next
-> for 6.18 and 2) when we are expecting to land the replacement of
-> `c_str!()`.
+> We can keep the assignment for the time being to be safe until that
+> issue gets resolved, but I'd still like to use the stream mutex instead
+> of the queue mutex.
+
+The problem with using the stream mutex is that the meta device and
+the capture device have the same uvc_streaming, but they need a
+different mutex.
+
+So if you do something like this:
+
+console0 # yavta -c /dev/video1 &
+
+console1# yavta -c /dev/video0 &
+
+You end in a deadlock. Where the DQBUF of video1 do not let you use video0
+
+We can add a second mutex to uvc_streaming.... but I think this is a
+bit overkill.
+
+Any ideas?
+
+
 >
-> Miguel and Tamir, any thought?
+> > > >       /* Buffers queue. */
+> > > >       unsigned int frozen : 1;
+> > > >       struct uvc_video_queue queue;
+> > > >
+> > > > ---
+> > > > base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+> > > > change-id: 20250716-uvc-onelocksless-b66658e01f89
 >
+> --
 > Regards,
-> Boqun
-
-I don't think this patch meaningfully changes the complexity of the
-cstr migration. The changes are just a few tokens.
-
 >
-> > +///         static_lock_class!(),
-> > +///     ), GFP_KERNEL)
-> > +/// }
-> > +/// ```
-> >  #[macro_export]
-> >  macro_rules! static_lock_class {
-> >      () =3D> {{
-> > @@ -117,6 +141,7 @@ macro_rules! static_lock_class {
-> >          $crate::prelude::Pin::static_ref(&CLASS)
-> >      }};
-> >  }
-> > +pub use static_lock_class;
-> >
-> >  /// Returns the given string, if one is provided, otherwise generates =
-one based on the source code
-> >  /// location.
-> >
-> > --
-> > 2.50.0.727.gbf7dc18ff4-goog
-> >
+> Laurent Pinchart
+
+
+
+-- 
+Ricardo Ribalda
 
