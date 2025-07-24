@@ -1,100 +1,156 @@
-Return-Path: <linux-kernel+bounces-745029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1A9B113E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98A5B11396
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307121CE4578
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE3D3A9480
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914D223BCF8;
-	Thu, 24 Jul 2025 22:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D81723BD04;
+	Thu, 24 Jul 2025 22:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="KJMRc2su"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FJUetJB8"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2F823815D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC768237704
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396109; cv=none; b=ibUN7VN13YceiO/0cTwzAZyptczpYlV3eB4h1N/htQX2HCciQYSuhYFQDOuRlXD17PwSLPoO2ysfXNKwMuC3+ywkNwMAA2IFqjOplQgq2B7ulWo+bAqIJMHdiOI70Xc1SzVi/XPtD5+8fTnUdQ/Uai+HiGojHtTIZB3krYiQOKs=
+	t=1753395014; cv=none; b=MaX//fHk9BIqP521HV9kXL8fhg9eYhojErqu3KFBJ7hwXDuUIyfazhGTqPGzxYTWHqoQSbO3jME43Z85JScFgLcakLWkmSyrLwpcRzx/dWTz0uTjij9rJe+AEfddjesX2twKXfrAasHjaAjeeWT+nVeraCHekscIgUR4mJJk6NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396109; c=relaxed/simple;
-	bh=3H7etlGw/Nhe6HAVo2NT3EYuY9jejwRantnF0G+Fhj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTp23I6vmqVKbmmZq0DB0289tOk/UKPGDGxFI2+xUjBzsAufiYwAda1DtZiMCyISNkYCMp8ug1FYevg1bYizyOQ5n+GB1yHRQkNvYLW7IN5jObD9gXP1rhIzc7xG2yxiRoUDY9CvjUUcy34hFmpIXyjSoP2BRymlbph/JdyZOVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=KJMRc2su; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
-	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
-	bh=G1GIx/bTld7i3jsye2tQQaAkpBwO5F07jwxGvhnvPvo=; b=KJMRc2suV9oemaajHLxPMMOGLm
-	qnIexYONwqIsa7DrXH7k3JRaSL3025hxN4tyP+8IUyAc6L7Mdomr11tbdcrM7tdtSDmHH/Mo8HMHk
-	V655wS7asI5KIYt5TLhhCnrdypwarOK37XBFPywJaFArChP4uieK9W7OlSle+zyjdDTFJkCwjc8Cw
-	vpVEyznQ3bnqTFTMBNu5TmtyDwrkQkUugxLLk47zYTn6mlf8/f+dIs+rvQQekljKpFxzy6GZQ/oS2
-	suLq6bvms6guIufwl49pKPD/GLkzCwRs5i8kxcfQt9vI2LCzmzq6fFpeMe4fhsAZX4AItpgG7vAAM
-	dxm1usuw==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1uf47U-00DlP2-0d;
-	Fri, 25 Jul 2025 00:08:56 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: linux-kernel@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE)
-Cc: Aurelien Jarno <aurelien@aurel32.net>
-Subject: [PATCH] riscv: uaccess: fix __put_user_nocheck for unaligned accesses
-Date: Fri, 25 Jul 2025 00:08:52 +0200
-Message-ID: <20250724220853.1969954-1-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1753395014; c=relaxed/simple;
+	bh=UdytL1FJTf9FaEisCwAkzanpYRlTkzs24z/QVlmQXW8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n3q8kyN5zdOeTJdPDp7dfqz4tmJi++BksX9OODu6TQ8V7akKGBcZn/7Rl2JoXtC8a/bLGVyK1pQEwl49VAoV3RAoh3tnQFUJyMgo/dcOffGbJtBRsINe9J0ASk4l22O84RmUBSrmm4NStAKkKXhfR3MigmQj88QG3lZa/GxoDaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FJUetJB8; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a528243636so975266f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1753395010; x=1753999810; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQn8Lgb6ASas/h9P+50eo8xeiLL6WELb3IiOBUGM25U=;
+        b=FJUetJB8N3mH8L0DQhLsutp1Gy+jPQ/lfcO5Eu7eSp/om6498DACfuAhx5zbZbNSGW
+         JXMRR+Csllq9xeEyC8bQvxFH483jQ9tr9KTnyRjQEkTLYNtV2SsY8Y37aSYI3t8yW4jI
+         Uu2Lgo3fRieOs46D7Q+Y/UwX8HqhpmLr+3x4KQ2Ee1eXUzXZMyNQdx7sM0sQwLuEkfwN
+         S8DlNqDQKWZ/TPJDjDMxlz4XzZiO7XwfwH+oiv5T3Ce7Mrz/70Z/YQShibzcVOxTmM4h
+         zbn6vpHBGz8YeaU+3MeUEQ9xg1MLJMU6GKboNQnpGpwcmJT0pBOddWe7JmT0tT1Vcngp
+         j51A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753395010; x=1753999810;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sQn8Lgb6ASas/h9P+50eo8xeiLL6WELb3IiOBUGM25U=;
+        b=h7ZLVgWG6pRf7dXs5ADsrxAyJXg571cMEUyDbFiIfebWZiLYlKQXwZPXyIuESxHASg
+         6IKcbTtiSSKwGSKMn/OYTF1QgNe5/UX+AxygX01Xyi2xrSKW3h54H5bzW1DnlMEuMPb5
+         XpLwHz+PWDTYaPMv0uRTE9MpwlpwTo3ttRZcE6AfQeVjsQiBlXG6WRAHK2PJMBPkcT83
+         h53MHSJonbuHhH97/L+1Pdoo3AJZ0CdTgu5pt4h5s4rhuh1S2dDf8fZCByZBmmd3Z0MV
+         qTf7xUNxl0b9dG0fDGGGig4dLI9n8Wv0LYQl8J5k4EpQvrGI3sdL6Y4mRLqNEzHXT4+H
+         TJTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVY1lw//jczI46DcaBNkoKKzinyyKb9fQiwJXlpJ9lkjGW4WLj+dbjgJp72x9c+cVKOTRlGy8zwgHUUtBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI0Ux/u+9irO3g2T1senQmSRKFRVq5cXm6R8oG7LLawCVoni94
+	81kOGuCKEbG5AXv3zAz64imqTFaLcB4AJdNFVCwehH5fuGPsxOr28DcPdJ0Na91P4YA=
+X-Gm-Gg: ASbGncudZ4qC9S4gzNRNgY7q6A/Pm+xMdNJm/Bg6K1dR3rk0vCOf69kFZ82hufPGXeW
+	OK2A31iR9b5Sul2fd8mQorgrWPkSgE9dq3Q9kfXZVUWX1Y/kMtex3aXVr+Rvi3CqTMwKblkBSpq
+	EDmJhCeWcYWcWt3ZfYplO8j5JcUjd5ynKaftnhldDUxuZN2DeJPMBjfR/6YKPIGsaZZa/Pc5bc6
+	QUIql60F8LH97OZp24QyVrJAcna4f7Ek4MW6NT+XpuCRg+ogJIxgqBdifP5xvWqgfKxFSU+aOvl
+	LIe8xHEqeC7dkAeIYLOYD95W/JMbxN7gF34QBnnve/+HjhMMWuYbqU3b8M8kYadquJkUlEosdS7
+	WO63K66b5HA==
+X-Google-Smtp-Source: AGHT+IG4su4wyL8UbjfJS52FAtE34nXae6Z1/n7g4NnbDSzlRT3NDv3SYUXlGMG0qhso7NqgFWHkHg==
+X-Received: by 2002:a5d:5f89:0:b0:3a4:e841:b236 with SMTP id ffacd0b85a97d-3b768f1ab75mr7320147f8f.33.1753395010192;
+        Thu, 24 Jul 2025 15:10:10 -0700 (PDT)
+Received: from localhost ([177.45.162.214])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b3f6c1177e9sm2012118a12.57.2025.07.24.15.10.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 15:10:09 -0700 (PDT)
+From: =?utf-8?B?UmljYXJkbyBCLiBNYXJsacOocmU=?= <rbm@suse.com>
+Date: Thu, 24 Jul 2025 19:09:48 -0300
+Subject: [PATCH] selftests/bpf: Install test modules into $INSTALL_PATH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250724-bpf-next_for-next-v1-1-109f8d291080@suse.com>
+X-B4-Tracking: v=1; b=H4sIACuvgmgC/zXMwQqDMBCE4VeRPbtUo8XSV5FSkjjRvUTZSBHEd
+ 28UvM1/mG+nBBUkehc7KX6SZI456rIgP9k4gmXITaYyz6ozLbslcMS2fsOs1+BQD2jQOnj/ovx
+ bFEG2y+w/uZ1NYKc2+umUbuBxA3Qcf5CYGj6HAAAA
+X-Change-ID: 20250724-bpf-next_for-next-f1de3e4becc8
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Ricardo_B=2E_Marli=C3=A8re?= <rbm@suse.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1311; i=rbm@suse.com;
+ h=from:subject:message-id; bh=UdytL1FJTf9FaEisCwAkzanpYRlTkzs24z/QVlmQXW8=;
+ b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBogq8+XZdcMwhu+5M4LUywbP0HD/mlYec09Cjpr
+ 1977BFOpw+JAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCaIKvPgAKCRDJC4p8Y4ZY
+ pkGTD/4gZwZP0wf+mk7BXAxuzPyQna14XOcPfq+t82xaXJDRViY9f9Bow2n8yVv0m4KjSsEr4hm
+ nVWc6BP+0c/+WU92QVeTLL54Gcvcoc5Lh4gB1lRS7RUYVhN/787J6pJt8ta5MgtKDIfiuyoU3sU
+ PiEWdC8nEXft/Mcvw+ErgctUWdsqAOdf3gNBdDsv8TZUrYXvtaVtcHGa2uKz8HuU/7/H9FLxu1y
+ D3NFXtvOPSaIbjV+H8VPxP+c8rrE7gu+R+Y8P+AeNjQsoHd8R6Su8FliYUKyCPryUVLu9qQ6ovk
+ Ye0zTlWyFNKXncKzokiBjlISwe47ypCCYTqru2lyXg7nBpJhT7XKDLYNLTWEHFiXiTsGS4JSwJO
+ Lgl1rm3U9QVeMxo6P6e4NGrdFfZV3HC5iSas9iPA8pAlAVX/fuJFDtEGixP+u5yJ0YwSXucjGI7
+ tLV1cnH1Mw/uqd2bYrUgiCNmS6v0V5zaI/GmM9s7bQi+jQcvDHVuQ9/kGiBWjOpbtcSp2IMfyoE
+ CzcSNdxkkCpjZoHKUzEbNjI5wChyt2GQ2Kz1hD37rtOCtcPXv8Ik8gsbpUYa+RfQPfWxlZMVPEe
+ bTRr/r+kVrYc+NT4vZAnJv0lWQkMlim3pwscViYkz3EGNWCHBQD7S935J12/PgYtwFnd/bHNL72
+ FxHyRKqOigFoOcQ==
+X-Developer-Key: i=rbm@suse.com; a=openpgp;
+ fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-The type of the value to write should be determined by the size of the
-destination, not by the value itself, which may be a constant. This
-aligns the behavior with x86_64, where __typeof__(*(__gu_ptr)) is used
-to infer the correct type.
+The tests expect the modules to be in the same working directory, but when
+using a different $INSTALL_PATH they are not copied over.
 
-This fixes an issue in put_cmsg, which was only writing 4 out of 8
-bytes to the cmsg_len field, causing the glibc tst-socket-timestamp test
-to fail.
-
-Fixes: ca1a66cdd685 ("riscv: uaccess: do not do misaligned accesses in get/put_user()")
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Ricardo B. Marlière <rbm@suse.com>
 ---
- arch/riscv/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ # cd tools/testing/selftests/kselftest_install && ./run_kselftest.sh -t bpf:test_verifier
+TAP version 13
+1..1
+ # timeout set to 0
+ # selftests: bpf: test_verifier
+ # Can't find bpf_testmod.ko kernel module: -2
+not ok 1 selftests: bpf: test_verifier # exit=1
+---
+ tools/testing/selftests/bpf/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index b88a6218b7f24..22e3f52a763d1 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -311,7 +311,7 @@ do {								\
- do {								\
- 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&	\
- 	    !IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {	\
--		__inttype(x) ___val = (__inttype(x))x;			\
-+		__typeof__(*(__gu_ptr)) ___val = (x);		\
- 		if (__asm_copy_to_user_sum_enabled(__gu_ptr, &(___val), sizeof(*__gu_ptr))) \
- 			goto label;				\
- 		break;						\
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 4863106034dfbcd35f830432322f054d897bb406..56b0565af8a76a9e784836a836935dd22e814fc0 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -877,5 +877,7 @@ override define INSTALL_RULE
+ 	@for DIR in $(TEST_INST_SUBDIRS); do		  \
+ 		mkdir -p $(INSTALL_PATH)/$$DIR;   \
+ 		rsync -a $(OUTPUT)/$$DIR/*.bpf.o $(INSTALL_PATH)/$$DIR;\
++		rsync -a $(OUTPUT)/$$DIR/*.ko $(INSTALL_PATH)/$$DIR;\
++		rsync -a $(OUTPUT)/*.ko $(INSTALL_PATH);\
+ 	done
+ endef
+
+---
+base-commit: f227e9ed4fe4f2fed40e4725d6c10860d30c2ea2
+change-id: 20250724-bpf-next_for-next-f1de3e4becc8
+
+Best regards,
 -- 
-2.47.2
+Ricardo B. Marlière <rbm@suse.com>
 
 
