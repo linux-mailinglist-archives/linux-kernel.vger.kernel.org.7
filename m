@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-744782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B287CB110D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:26:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE548B110DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F7C1CE1492
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF091CE1A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9065E2ECD3E;
-	Thu, 24 Jul 2025 18:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFEA2ECD0A;
+	Thu, 24 Jul 2025 18:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VzrLbIo/"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+8kGjCm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E01F54723
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED9C1DA23
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753381585; cv=none; b=dqHwEuUaZ3/WI49tCXfxkfOkbC0Zm1k31rcUjfitj+hBG7rjpxU2E3ot3u46YvDRjvr199A7h7NXj1hsCmiw7W+LPZzwmNewODoy7gITIRB8+B9Xn4vtJPXSd4OCnE5QU3kF4U4Ke7njHMe/Qu3QWr/yj6W8spAxMCjH+/CTpmk=
+	t=1753381688; cv=none; b=Qer/PLJd1AcIuiSPsC7ZVykXettzljD8CzT0ikn3KRKjsd9OeWmjFNWRb0MgM/mqxiW29ucxsfvELRlXHFKKHrU8PYUbScbuvlfAYtiToG/i6Z1H7VZ3fZEkLjGxTh6VaxRiTCU9hstJERY7DJIlYoeYLsMC8K8luPF5mUgVzwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753381585; c=relaxed/simple;
-	bh=TXNQ1dQYoFfA5ydiwjnJAvHRo1WgmH9K/hwSeP3YA1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubRR4Z9MgjZvgliasjHrX2s9nNXhMwxUEQBsi3GpFy5lq7L2R57tHl9xWzY5OEj94EUkZnfayC8qMW3vWhp0Ji4QkxSkNu9WINlAk13u+AgCRMDi0WUQM7mKiqGGPU9drPYETEAwJD0bXc3Sbrfjft/Xr2S6zvlYeiTsOGPYq98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VzrLbIo/; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-86cf3dd8c97so101827439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1753381582; x=1753986382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JP/Q9c1F0J5OzCcFyiKpcsCDFDVLpA+plFcxQ8cGq2k=;
-        b=VzrLbIo/M5f/x1QHBKiT1A25YoW6GtYUkFAEJr/WY9drHPN9TnWHE+0M+H59Sr8WPD
-         Sxdons+LLO7x3xKTST623W2+ZsnmFXtSLbirnLyagkuioCJ6/erjou7e3l+/pKbZT7WW
-         JZnG3VBXA/AiJou5cy4gZtAHZUrZQmDtI13sU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753381582; x=1753986382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JP/Q9c1F0J5OzCcFyiKpcsCDFDVLpA+plFcxQ8cGq2k=;
-        b=CRXqYNQG4dj6HeiLYs2VQHOFyOHYaYYc06glSWeSI6Kig1/+iEEN4l7wOSK+KY5XGo
-         5SYjLrOms9ZqNHc2Lk0dI6sGcBKYwjVOIHZK67Pkxsej6IMLUjHFZa2I+lySxsn83xI3
-         3+8jX5woq4pcmQXcmS8Lb8DkmJ4j1k8w9FmvQqRlHdt1Ct9bJrvqUGLBNlj26QheGrqV
-         7I9+gCqPUCBHTbeRISJpbPTNL/KX2KRz9SqWfZi3++UgsDV4jvxVdTp5dDCWc8FsB7r4
-         l9glDzDP8oYQLYCDkJj1YUG/M3/GpcOVSl8TIzHxfAadYoit0iBvVKUCw6Wl63Rr9xwJ
-         ub1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUO0js5PT8ZzpcjPfEVT4THuKbdBUwHROhlb4HytofHXAjCMerNUTcmtiFLIVmYuI+Uza80YwoWidzPSEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Z4SzlXPjz7VNAPr9knwuN3CGXJVd7yBKYy8xzOX2gHq2mejy
-	TSjjiYRDJZT8NAE8uyPPfNhuds1S0kHlVgmlyY5vBMSnPPtUhFFT4x8NP7QBrI8kW4lWIoIv07F
-	XaOWs
-X-Gm-Gg: ASbGncsC3ZtYbcUdN20yLeB0uKXPIae2++8Q43YOSMefiT7FFNuE6HtDXUfpvZ5U+YT
-	cVnj4ztDLuu+HrxIimnYWMG+3KBm8xZhDf0QM5H+D3OHcIuZLv/WT9euEK5Ws/cgy6fcJAq+XeZ
-	KoVYs2PGcs+3u5aohhUJrtvZdre9CRZCj31icrnyMel6QKTxszuQZOBir4H3xllptWU0gXQzaQr
-	X2O7saBxZTib9bC2G3dUgaO8yQ6VPhBZXzaFfjtZhDxrrUFpSTTBN9IGHkIw9YNl5/TT/8cawa2
-	lHmyRSdzBcu9da4ct5RTqcHWd5e2GYfqaUC/EMYUntI4cznMaUEpX4yWKMR/gOjhZ2pwtHQzWWQ
-	/TYPYe23n17cyOplTDAqVWL8dut7lYAtGJw==
-X-Google-Smtp-Source: AGHT+IGxGg2PimE89nzDS27+nd+r7DTRhNNw6kwLpoYVpMTkB9Sco1x4a5uD4TwwRC93Q4bw645b2g==
-X-Received: by 2002:a05:6e02:338e:b0:3e2:9bc2:8be7 with SMTP id e9e14a558f8ab-3e3354de804mr125742155ab.10.1753381582336;
-        Thu, 24 Jul 2025 11:26:22 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e3b7012bb0sm7810905ab.0.2025.07.24.11.26.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 11:26:21 -0700 (PDT)
-Message-ID: <90c793c3-91fd-4808-8fea-cbd07d2098e0@linuxfoundation.org>
-Date: Thu, 24 Jul 2025 12:26:21 -0600
+	s=arc-20240116; t=1753381688; c=relaxed/simple;
+	bh=UiEmd3XmX4QQfkOmFQm6Q0KYqOc0JXWHqr44DKyO5ak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G2fIQ0wjiIZzUGQ5DhkNsTtNwpI+en3nQzJWve5w3P0TK5l+jZ0O0URci1FTp9cneY0UYenkIQ3hapRXczR9xfmiN93LJ9eFqk13iTB9ECkoX7EsDMISDjqokuDF3Gn22Be6rzVNLd8ugcYp1Ku2JfW+TEY8u6z+3zlEahRzRgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+8kGjCm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753381685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=J5I5SK+Y5zDIrC/mG42eswNPXScwy6ArRLIIL/8+Cv4=;
+	b=e+8kGjCmZSsY9rHy0ep5wslHoUPGwrBdhf8vUrXy2K7mEJZtsG/pTrKRQmRrRZb1/ScU+s
+	yud7PeIc+4OoOXJx5JTVPwCDYwuhDgUllkP4cwuSx8V/xvffoofiL7l5s/6o52/kY920yQ
+	rykOXCURVBeMpmb1Guc7DwnsAYNfWaU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-5gec1t6HPZOrO1T6LlFsZg-1; Thu,
+ 24 Jul 2025 14:28:04 -0400
+X-MC-Unique: 5gec1t6HPZOrO1T6LlFsZg-1
+X-Mimecast-MFC-AGG-ID: 5gec1t6HPZOrO1T6LlFsZg_1753381682
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D95CB19560A3;
+	Thu, 24 Jul 2025 18:28:01 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.88.223])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C7488300018D;
+	Thu, 24 Jul 2025 18:27:56 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2] rust: lock: Export Guard::do_unlocked()
+Date: Thu, 24 Jul 2025 14:27:16 -0400
+Message-ID: <20250724182754.549489-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/pidfd: Fix duplicate-symbol warnings for
- SCHED_ CPP symbols
-To: paulmck@kernel.org
-Cc: Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <5b53702c-0dab-46c4-9cb0-448b4da36c2e@paulmck-laptop>
- <f82e3092-31ab-4ceb-a51f-208d13e7b2ec@linuxfoundation.org>
- <dbb9ca63-15d5-4547-beb4-5c4044938967@paulmck-laptop>
- <cc7e4fe7-299f-4bf3-af46-df6551d61997@paulmck-laptop>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <cc7e4fe7-299f-4bf3-af46-df6551d61997@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 7/23/25 17:13, Paul E. McKenney wrote:
-> The pidfd selftests run in userspace and include both userspace and kernel
-> header files.  On some distros (for example, CentOS), this results in
-> duplicate-symbol warnings in allmodconfig builds, while on other distros
-> (for example, Ubuntu) it does not.
-> 
-> Therefore, use #undef to get rid of the userspace definitions in favor
-> of the kernel definitions.
-> 
-> Other ways of handling this include splitting up the selftest code so
-> that the userspace definitions go into one translation unit and the
-> kernel definitions into another (which might or might not be feasible)
-> or to adjust compiler command-line options to suppress the warnings
-> (which might or might not be desirable).
-> 
-> [ paulmck: Apply Shuah Khan feedback. ]
+In RVKMS, I discovered a silly issue where as a result of our HrTimer for
+vblank emulation and our vblank enable/disable callbacks sharing a
+spinlock, it was possible to deadlock while trying to disable the vblank
+timer.
 
-Looks good to me.
+The solution for this ended up being simple: keep track of when the HrTimer
+could potentially acquire the shared spinlock, and simply drop the spinlock
+temporarily from our vblank enable/disable callbacks when stopping the
+timer. And do_unlocked() ended up being perfect for this.
 
-thanks,
--- Shuah
+Since this seems like it's useful, let's export this for use by the rest of
+the world and write short documentation for it.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+
+---
+V2:
+* Fix documentation for do_unlocked
+* Add an example
+
+You can find an example usage of this here:
+
+https://gitlab.freedesktop.org/lyudess/linux/-/blob/rvkms-slim/drivers/gpu/drm/rvkms/crtc.rs
+
+ rust/kernel/sync/lock.rs | 36 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index e82fa5be289c1..e43ee5e2e4b9f 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -228,7 +228,41 @@ pub fn lock_ref(&self) -> &'a Lock<T, B> {
+         self.lock
+     }
+ 
+-    pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
++    /// Releases this [`Guard`]'s lock temporary, executes `cb` and then re-acquires it.
++    ///
++    /// This can be useful for situations where you may need to do a temporary unlock dance to avoid
++    /// issues like circular locking dependencies.
++    ///
++    /// If the closure returns a value, it will be returned by this function.
++    ///
++    /// # Examples
++    ///
++    /// The following example shows how to use [`Guard::do_unlocked`] to temporarily release a lock,
++    /// do some work, then re-lock it.
++    ///
++    /// ```
++    /// # use kernel::{new_spinlock, sync::lock::{Backend, Guard, Lock}};
++    /// # use pin_init::stack_pin_init;
++    ///
++    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
++    ///     // Address-equal means the same lock.
++    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
++    /// }
++    ///
++    /// stack_pin_init! {
++    ///     let l = new_spinlock!(42)
++    /// }
++    ///
++    /// let mut g = l.lock();
++    /// let val = *g;
++    ///
++    /// // The lock will be released, but only temporarily
++    /// g.do_unlocked(|| assert_eq!(val, 42));
++    ///
++    /// // `g` originates from `l` and should be relocked now.
++    /// assert_held(&g, &l);
++    /// ```
++    pub fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
+         // SAFETY: The caller owns the lock, so it is safe to unlock it.
+         unsafe { B::unlock(self.lock.state.get(), &self.state) };
+ 
+
+base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
+-- 
+2.50.0
+
 
