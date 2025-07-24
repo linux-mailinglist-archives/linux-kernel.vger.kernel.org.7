@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-744875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90270B111FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:08:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81E0B11202
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1D1AE6922
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97AAF5A7BB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB46423ABA8;
-	Thu, 24 Jul 2025 20:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AE8242D6E;
+	Thu, 24 Jul 2025 20:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wo7OKpkx"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cyyooH5S"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE171FC3;
-	Thu, 24 Jul 2025 20:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A6822173A;
+	Thu, 24 Jul 2025 20:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753387693; cv=none; b=A76zlYq/6L1F/q3PDD7PpmaEA+pRBIThZHry6jdvUmxCRObx1ueAm0r5YDi1wGKWmdE/LiAvOX0CANeXaTnFoeTv8++hkbjSoIznOtFCGf/Fl4SGnJIS2MEdtg0//Hbg0+ONdmXewDu7CbKHHOQKgLKAgJdc7TkDjb+9VZOpCXc=
+	t=1753387930; cv=none; b=jGGFPulYTW+8eH4IItspi1ahG3NAI2dXeYqwUhXfd45yHh2wd3FVjIOkPP8MdlKprO9s/oBQwuRDViDfsP31OaiQW93voDtyf3dLsLNcyZ1k3DH8f9E22egFvnw7utns3YK8uc05iMIfvfzF+enNrp3CbGDB/Rw3s8HPUQcvn1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753387693; c=relaxed/simple;
-	bh=8QQdEzJ82nd35nwhRkeUVOhoRBlEZSyFuM+s01Ovw30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iTd/MbOiLOoOD3r3Zq6PuNFjO5qnJebFtVHuHACbG9q2PCllIowkON0szYtFEQuf1STUC9BQgVXbV3jM2KVLjGQ3ALfoOgHHv+viCNPpmD2ZqPDrg9PWMU1+D4m7Tp0AHj0SWkASeOSdEn2l+YwDZzJZFrHe6mmp82lFlIHwR9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wo7OKpkx; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b31ef5f24b7so25337a12.0;
-        Thu, 24 Jul 2025 13:08:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753387691; x=1753992491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aq6vSt/gKpynoxg46L4WtPmYZt0C/ql1cFaqfd18uko=;
-        b=Wo7OKpkxKPBxEpZo5TYQGnLRJBh8Vd80l3cnXRmSiD7x8IPS3B2V6BmrEsZKClXQab
-         ncBL0XRSdE6wzIBcFIxozxhPm+rGT1mNNu2G7DAH3FHqzKm44L9FMBuRGbTpxNoF2b0U
-         cLaxqj8NuHOfbLajCHx0YVEtnWkmWiL3thgzRbRIHPma9d6qIlF6Ryt77I3wEcUhHw+n
-         O+S2EXsGSEShPu7eaxcBDKj0kjZ9P7feJSR+MwfOPOXycdPzlze+Dhk/TQmg8PrFKt4e
-         gWcYMbJPRT04ftBbiLnBpt4IUgLSwdUfy44f7gwn7R60F+T201dU+56N9Q4zVklCcsXi
-         RL4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753387691; x=1753992491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aq6vSt/gKpynoxg46L4WtPmYZt0C/ql1cFaqfd18uko=;
-        b=P9uJxK/vBMkAbKxDg2Zs/Y/dq2lpp3JHkRgwWVDk+oSSM5bLY2sq2fTODszvnJFRGr
-         P+OHwEkDgLEQXQlMWXLyUDuTwYXKJgCa+JzdvOFJegDHPazd04dlm8B3m2Bg8n/XlkNa
-         peaMQgA1jxhzVAtvyAPMrd5318JUnxlgEl41c9PQXLMlH+TDnDDqiOKo/g9Foe5qtj7a
-         gsdhgrxp3A2DB2zVo85Xu/H5nsf1UUkfbvW03jWUtKYoWN3v8uKrWRMUi5JTcnX+kk0B
-         pNc7VrHJkwJMlm7lB3i8XHyQMDeNuTdRapstIWn0lwrZaPa12xmGAWdVawNqh6peCLb5
-         tk5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVxZybFvjGrewL1nDY8NLUI1Sf4l8UFwzyhA8pYY161JKvGe73xgY4nP6K/InUKzwVR9zx8tuzAPggAqVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzglghkpHRLVC2Yyzc7KhGFvW3zVaLBFApdfjoBt/t9ybmRO3kO
-	rv7n0DyWg+FXaYCFmBGp3zPhjUjRcj783gFWqnotENylAdwbAvBKd9b1hpzg99QZGPGuICuOD8y
-	0Zte/UDr3uX2fWW2AqFHaguXUDlyD1Ec=
-X-Gm-Gg: ASbGnctZCmh1HFG4GYEQt4oVPnduI9wjsxqL5rpNJOS/phwX1zNajJ69QCydaqGRWnO
-	fdQHt3g5jKi81Ltz7PctSPvmYdGL7RbGt6R7YNbzPaFsZXiB75U9MRE5M1YG4BHi6M1Duqj3ZDq
-	BIDsxgHdW8Sa0x7J38NLCO8Ofx307XqB9xLusiKjkw5MTHaMqcm/VfQpetzqQIp32+vQAWT/Gj9
-	pjlF6n2
-X-Google-Smtp-Source: AGHT+IFdiuukc345cAZZvkOT7+Y9gWk8ZjyBMJdQTx0HdnJk1zh8Gb998xz2jy8Wsp9xj/Ow2MFFK8i7tfbMctUdlqM=
-X-Received: by 2002:a17:903:1c6:b0:234:f4a3:f73e with SMTP id
- d9443c01a7336-23f981ba426mr48600555ad.9.1753387691128; Thu, 24 Jul 2025
- 13:08:11 -0700 (PDT)
+	s=arc-20240116; t=1753387930; c=relaxed/simple;
+	bh=FOF2ZUPzsIrWmpxjF8/IvQjXpVzNV6SG7wqmwUAXHjs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZlA1FBTnFNJkYq0mNhUeGRC8qxl7OMQLI9Lltu2xU2GYIBrGWA4S/k6yf29NOpAS5vYrAEgpNRMMgz2HKa6+GzgxBPlMEJFFA/l6xhWplSxiTUHXqQUiXY5leiw0bNdJxTf/Rn27qPLyyK+mNk0LG3yt78wX8hMlV5bbHEToSrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cyyooH5S; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1753387930; x=1784923930;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FOF2ZUPzsIrWmpxjF8/IvQjXpVzNV6SG7wqmwUAXHjs=;
+  b=cyyooH5STsdPXCLiSv39MjQsc/WNf4V4miY5f1cA5cAlnTGHFERph/Xn
+   NpJjgXz1lG79kU2m7/2CE0IjixSngrWUHMw2FpYTY4153ac8O+ELlWXYD
+   6knjTvpx23GPwi1AOspSpzRV7YaY11I2/K7vP66TMuKEtO5PiGOnkOxJ7
+   2UUbcgJ6m6veuOrnvgTm/odezBVc6vR5NW/iVD0x4OIZnRfWAfe7hx0tD
+   N1NlgEx3K67SKks2MrtqBNVP0H6hMM+7ReyxsKkryodUY7PetxN7hECnD
+   R1/vHihtyvf3gvad3nd/f+M9NFaMfox3OMR2pi868eAGhQ3hOEJBAY/wV
+   g==;
+X-CSE-ConnectionGUID: dPxjunYJTo2XkJR5vJWM1w==
+X-CSE-MsgGUID: 6uIkbeiGQzuJn9APdrF0sg==
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="44383317"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jul 2025 13:12:09 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 24 Jul 2025 13:11:27 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 24 Jul 2025 13:11:25 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <o.rempel@pengutronix.de>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net-next v2 0/4] net: phy: micrel: Add support for lan8842
+Date: Thu, 24 Jul 2025 22:08:22 +0200
+Message-ID: <20250724200826.2662658-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724182754.549489-1-lyude@redhat.com>
-In-Reply-To: <20250724182754.549489-1-lyude@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 24 Jul 2025 22:07:58 +0200
-X-Gm-Features: Ac12FXzzZZe_kHvMkGVNuul-TLDgBsy-aFznsv7bkrP8VpvStsRg3BMYdLRuXFs
-Message-ID: <CANiq72k3jOKNxsDwCE8XPhb=SddwOnCh20ATpFX_H_99r7u04w@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: lock: Export Guard::do_unlocked()
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jul 24, 2025 at 8:28=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
-:
->
-> +    /// Releases this [`Guard`]'s lock temporary, executes `cb` and then=
- re-acquires it.
+Add support for LAN8842 which supports industry-standard SGMII.
+While add this the first 3 patches in the series cleans more the
+driver, they should not introduce any functional changes.
 
-temporarily?
+v1->v2:
+- add the first 3 patches to clean the driver
+- drop fast link failure support
+- implement reading the statistics in the new way
 
-> +    /// If the closure returns a value, it will be returned by this func=
-tion.
+Horatiu Vultur (4):
+  net: phy: micrel: Start using PHY_ID_MATCH_MODEL
+  net: phy: micrel: Introduce lanphy_modify_page_reg
+  net: phy: micrel: Replace hardcoded pages with defines
+  net: phy: micrel: Add support for lan8842
 
-Perhaps we can simplify by avoiding the conditional:
+ drivers/net/phy/micrel.c   | 727 +++++++++++++++++++++++++------------
+ include/linux/micrel_phy.h |   1 +
+ 2 files changed, 497 insertions(+), 231 deletions(-)
 
-    It returns the value returned by the closure.
+-- 
+2.34.1
 
-> +    /// # use pin_init::stack_pin_init;
-> +    ///
-> +    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lo=
-ck<T, B>) {
-
-We need to remove the newline to avoid an empty line in the rendered output=
-.
-
-Cheers,
-Miguel
 
