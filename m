@@ -1,196 +1,319 @@
-Return-Path: <linux-kernel+bounces-745082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD63B114A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:35:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04244B114AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99502AC6D76
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:35:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AEF27B7AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC9924338F;
-	Thu, 24 Jul 2025 23:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B9F24293C;
+	Thu, 24 Jul 2025 23:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sNhqj4hp"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2067.outbound.protection.outlook.com [40.92.19.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xntmUQ80"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19955D8F0;
-	Thu, 24 Jul 2025 23:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400108; cv=fail; b=sn7YB/ozpcbJwE6qeTj4GoDs2zKeHIyBg/pGokAmNb3GSsd9FAHvqcs01M8t8wMfkyZZrpWB/i2GnW69uc//5VfGMG9wP+/koT9pl8KSHHkiqzs/IP4xNHS7lLPat3vFtHAgxSLEoj17biLF4iXA+9J/caHfX9+KZVLF33DPG1Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400108; c=relaxed/simple;
-	bh=VAuYqBj0KJ+TB+cH0Gaql2ea6+hpMEYQm6yE8D0wHGE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=o4N7CqCAdJ39GALv7y3eTw2sgIcAmGAVhbf09twYCIC+adkA75IjTVrtFWYkmVdXyvsQMg+qbOGKJYDLIl1Msn654S7SWaoiBNqm2EPQp/7huwT+2dNsKawXMeTpACv2ChRkkVZ9CgSzyuv5NSdehd9N5cr+GEfTTqlqEX7D52s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sNhqj4hp; arc=fail smtp.client-ip=40.92.19.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FDzxkggaEM82POzlqBm2w9hcCjE17/pCKxWXTlLAJM57WXgBEBGx3JSccK6XQR+zYiVnzdktFFxBoYwob6MCkgzPYAP+i/cQ1AvSQNyqlJZANZOAm8189sGef1jC6aJdSthjFLrciwRMEB6HxfoFQk7Ei1CHu9bfqDoqlWrqlvCiCCv++wps98P8267A1bWewpBftwkVVoEI4Do7ENd1m5ZvSdjhaBrRWVGh+GHRYD7YohiTbrxIQj8f2qo3LxEe/q2qZcPqSLbelT/RUkkfJu8i7ZWEoPLKCRfY3twtiwFagdnY2OkekCcC6FkMyHJr3WWEbfMvcCQC9aNHhKJFEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TfImfGXnWxL1nCEXBxL/UcpqUHf3nftoYS5/RVBrxm8=;
- b=ghPhzt66oWfDJyFt231uVGji5EBMZYjiZTHksj62MolsEPzIwnmnisqtRUp0hnpfAIZnE6Rv7XCND6cjkxBc6ysV5SARtudSRGP9nVwowolucXTV9tnE3OKNyDlrVoYll+yzxAPr7F5kAtiKrktnS++Iq7dA+02DNzSBeRCmlVgM8z9YS2suFjP4vQemrYetJbUBh64WX4SldTevIs105OBmjuaoCCKSE3KBSiR9M+uDqGUtZSmSrRfMQfEeSr18uludZxndkqfsJU53+JA58KlzWAjlax9NQvbfhb6wvM5/H8odhmoccQ1nx/8vA4y2RsMCdyi5geqNaWkJh2EcZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TfImfGXnWxL1nCEXBxL/UcpqUHf3nftoYS5/RVBrxm8=;
- b=sNhqj4hpgVl3O3gRGUz6p3Xo7b23YMu8uNgslpgRREpG4v54yp9anXgfNUcTdOx/tUxSMJr3Z3lQVZn4NSex6YWhh1XG2KLH5+a2qbxxtiIoQQRQWAlNZDupGGjJef+xeF77UUTUft6DztfJrqYikRNIA9qOhikdSE2AeQNlgN4vImdCDu7P3ICcqSjrF+15Qu4eCCQvLoRRkCcasNHfq+2ZfX6LkRXYDOPWVvZIJWe9ZT4vY/1tYTyPonYvPst1f4PQ+r8w6EtyCB1cSGysGXVceEkKV/DpTS2xn3Ldqwm861+x6069OroB+lmm7VYOhw2qhU+u5jktDZE3Ow2qhg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DS0PR02MB9498.namprd02.prod.outlook.com (2603:10b6:8:df::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Thu, 24 Jul
- 2025 23:35:04 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 23:35:04 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Tianyu Lan <ltykernel@gmail.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de"
-	<arnd@arndb.de>, "Neeraj.Upadhyay@amd.com" <Neeraj.Upadhyay@amd.com>
-CC: Tianyu Lan <tiala@microsoft.com>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH V3 4/4] x86/hyperv: Allow Hyper-V to inject STIMER0
- interrupts
-Thread-Topic: [RFC PATCH V3 4/4] x86/hyperv: Allow Hyper-V to inject STIMER0
- interrupts
-Thread-Index: AQHb/ASg8tbpRbyKK0eIdlAzezyw37RB5Vsw
-Date: Thu, 24 Jul 2025 23:35:04 +0000
-Message-ID:
- <SN6PR02MB4157E36F3C23833A4C9F393AD45EA@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250723190308.5945-1-ltykernel@gmail.com>
- <20250723190308.5945-5-ltykernel@gmail.com>
-In-Reply-To: <20250723190308.5945-5-ltykernel@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS0PR02MB9498:EE_
-x-ms-office365-filtering-correlation-id: 7a7fba1f-7948-4cf6-8bed-08ddcb0ab7b9
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799012|41001999006|8060799015|8062599012|15080799012|440099028|40105399003|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Lnc6YSl5+HOBLbnZLUEGZ9cp10+tckHBfo910X4DDW7RgIk8RxipZLjmmD7I?=
- =?us-ascii?Q?vCwM89C13Z2WIvfbnr3RHe6LD+JJqPz0Aw7ipzTtUdJdxGhd4MUfK4kJP1Mk?=
- =?us-ascii?Q?wlNmtoh6lRVm1ysIWYBj3NQLRL2R7Rp4HejfcUGkTjcI0c0H+iM5Ezen0AAP?=
- =?us-ascii?Q?8KvUJ3j7QuO6DZQMVKdR/oq17/3Brkq1uZOjHH9wnEs6WdUy4ReUgURA377S?=
- =?us-ascii?Q?35F1Fs/Uqb5qPnXVoI4VWDSv4uta92jTnuqgabB8zl5QunixCduvs2/RiAJa?=
- =?us-ascii?Q?6CAZVWCbxgSuf9SirWQzmp8klXL/fR/6x+TaynQ3Wd6tiEIJUXG8+59O2bVP?=
- =?us-ascii?Q?HFcwEpCy86caoyjlpYD1Ct9nBAsQJEdAdSExNJEGlMxvO2c3cMEEIPb7dMej?=
- =?us-ascii?Q?B9Ob2FxhoKFCTF79x8b9kOh0BhEec/5qi+WZeq8A+u6F00Ne//U6T9VkC55t?=
- =?us-ascii?Q?GnsrFlWob4d7qNPi9JCr34X/kYC3DjV0JT6T/Icyh1ZGVSFzUJ4ERB/310b5?=
- =?us-ascii?Q?9+Gzd38Gg15KO1dSvJxoRmUxzZ3ZJleg0uRN5FIhgmTvO++eibNJ+AV72YoA?=
- =?us-ascii?Q?hlz0kNjMnqLgAZz68iXUuHB2AM/Esu5XKKBMn0AlMOBZ5G6tufWObjP6+5MJ?=
- =?us-ascii?Q?9j57o5crioaftw8Tcdd4+qkLHM2Z7BIxeAkW2bdymyB3wSohish4puAPC0i8?=
- =?us-ascii?Q?HJijNuF2ji6e32ynDxRFASU2d/OMElL241PozcB3D0HkDOiah8Xt57eN6sfq?=
- =?us-ascii?Q?+QB21/jERloak0F3/gHJwkSziDuSz5JLrWs7SUns7FfAJc3AAybHYziO3cb6?=
- =?us-ascii?Q?dW4GygA8uo30ZX5s0TevuAtFGdf3b1Y8onNJS04+3IxxuXciI25Zf+r6Vw8C?=
- =?us-ascii?Q?RWk27Lb3mpNbllUfik6H3b3Ah9jabC8rzFkPNJARVnreNYZQdYaY3QVwy9nk?=
- =?us-ascii?Q?O2Uvj0/OQKDlY+kyNP9cerDBOO1fw/roQxmABTjRUayGwNEPCUD5HQD1Byj/?=
- =?us-ascii?Q?5vxVUn9fBKQeJ11ooGCmhp5ujh/3HQ9meWx8LRV7Wid/t7KCv5IS0X/x2txs?=
- =?us-ascii?Q?gRp4t4yrFVQoCGW4Ipt0OjoE9QdSogZPl9R2r0WenUDd7aPy0MZO/jmYQ10b?=
- =?us-ascii?Q?4WlRL6IbAOMcyHaPMe/vaaG3HW5DYJgQ6A=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?gojwwOoJVmRVI3tHR4fnBJb3+odHRqQf+0kkuw26mtrUr31ISX/7iF7GIZpW?=
- =?us-ascii?Q?p6wkxoflN3+9MqqGc8kAkg4KIDNfWQ2ScnUOGBZXDeU8y0FkqDwp9aanYmDf?=
- =?us-ascii?Q?w+phACZ48LEIn7DnMP3P+b5j8re2Ws878Mrmz+GYMnWixiLoAngrh2qnyTEG?=
- =?us-ascii?Q?j1uxDmFOIt08CBI9bxyEI3W8eA2GZSS22tyf5+FNoz8JtDyVFmR5bCAAwiVU?=
- =?us-ascii?Q?uYUHvcfqSob6I7BwUM6P8ZvhgNwujFstJPghQC0+s3CL5du0UPK+om/Hnix4?=
- =?us-ascii?Q?bOUcBLTyW0fV/sE5jmVR0V8RyRidX1KiEtZga2RYidBSJVq7ao7ouL/rRzoj?=
- =?us-ascii?Q?S79ip8liWpTPGm1Gp3cjLzY/+TtITsoz/jaUe4b1X2Ii1EvPW9DSHaB6rNl6?=
- =?us-ascii?Q?ABTdtEGbFzwrlSygjnXvlqdk1SEcGASz30APdnMvMVCO57TfiMd0L8TigPx8?=
- =?us-ascii?Q?IJUo4pJsgq8CdAFnUUNiVuXq+p0C4DaynTMOHi1a94Dg9J/EUHtEv0Mq2CY3?=
- =?us-ascii?Q?WSUasuM4lPoN92yYbbtggvYB+7qZ3KmIvRaPyaDpneVZ6DjaauLB3tteK30J?=
- =?us-ascii?Q?HeM+inn5Azeo77orSm26zIGibk8kgf90RLo30V2VnPGopVU6rEn0uiH8VIKy?=
- =?us-ascii?Q?ZaSAGDsP5aeDZklMtK1haqjSZCqXUJ9zFcCAxyfwLQY74zVaU0DU84IFlhnV?=
- =?us-ascii?Q?0AtPA6o9ftWoFVrFSVx4dMXsyF3GAY31K5HmyTkh7YpRP2ukB23sSeyOFGph?=
- =?us-ascii?Q?HzIKaLjdIOUsrOlCpRUphJvKHuF3iGjnQGDFGrwYRQ1swq9g8iWfXo/at9a0?=
- =?us-ascii?Q?8DVS+Q+zmLKAR92m4/uLG9jgYG3IMwmQ0uhJcOJXnGv317GjHmd44zms6Smh?=
- =?us-ascii?Q?aiEzaR48boaVzf5UbBMva26NSYyzDCmqrEpx2dFQ49XdmfohJ/JgqjUgtaIr?=
- =?us-ascii?Q?a6RfiVVNi4y5glJbonoF+6EUlKLPe2KHhBbfUMSO0uc7IhmfpZMgfV0Ehhm1?=
- =?us-ascii?Q?ccxnJ5e/lrt7UtdfNn9lNtO1VY70mj23DZ7cIcuqifGJjupIz+yM+ApweHst?=
- =?us-ascii?Q?5roaEgPy/82ieBZjWs9zZ1Ncg74+I9CgEEwVwz7uqAE6/IPrJfrpVoiXB+gY?=
- =?us-ascii?Q?aUomOdiUJzKZ60sL4B1zZHBkkXvY8pvhgUL1sZo3V+svLw0Hw7UlImtpnL2N?=
- =?us-ascii?Q?s5Nu85z8/pKFefBgJVBDpQrg8y2usDFFZsJ/7z31FfpOX9Oy0R8cf5SSTCM?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA70E12DDA1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753400227; cv=none; b=kedaI7w3tZzfCKvKolySJLnuV/97wJ1NvxoS0GHANGYugpGMEZDWS8Tr1QfaFVkj5cG38GynCNI6L6F3FIDz4Uspa8LWMVCQ031zkjlrpBJiQ/tFdCInLGfyCvl4c+UV66DGAjCeNXSrV7Y9y9qd1EtDMMjqhtZlbVs8ND1y7aY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753400227; c=relaxed/simple;
+	bh=OYEsvWI+7LpwTezqF4Qm5CPF9lFolmJzH6gAS9dw9e0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HFlV1F7jUpvgX5lPpLqd/Ka8PIkXM/J6BjkXIqm4lEEzrUwFmG1p89xWgWFZkGe/afQgCbSvf6bim4iS/iMouX/oMs+hsV6g5PBtGrxN5zYSiKV9g1DrbLNiaX8Zn8E9kieQ4xDTF42Bk3WtXJ28nPM7hY8c5dSbzsKlBJdIskM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xntmUQ80; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23c8a5053c2so12909525ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1753400225; x=1754005025; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+gXzIdU61xINYweA3A+NL6d5ZRp4vso9nWy72/uM8k=;
+        b=xntmUQ8069CCEJZ1+QsoUa/CvcNa9mMZvT0YRFlsFr8zQ6G5mY2qc6/vmfCwRDE3kE
+         Eh7XW3iwq5Q3G3dJtHb4np7agFL/CwurX3xieAfKa+/JSWCEfY3UObHqTfy1Vfrr248D
+         NETsvI0msfI102Tb9klP2VXTAhHaSWBiVljTsBtTO6MdGvcwvE3oALpaud2YXuWBsiQ/
+         Gfc+Gn4+9QWIOrbhXBDxqIrK3ZW06tBOphX7pYE3LTpcKHyIhklKhLSnIyvz1MkXsXEp
+         9SuGb2xmA1EJMWFY/+n3tLlIEhvEg8gjhbhxpzN6cHGCWATB00hpcWcmmlbjZkandQB8
+         wnPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753400225; x=1754005025;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C+gXzIdU61xINYweA3A+NL6d5ZRp4vso9nWy72/uM8k=;
+        b=UDTvJLwd6kzOF8waNxpJ+TMJBwSsK9evYnpMqgzPAfIBvMdrSb62TPT6ALJ5xXCuJG
+         1PFYzYHYvpzA9MZbBopVXQjcYoBBIXih2bDcnSAPSJ3J1PFCL0mW08dSMvpUWAmwgzLk
+         Ic6EDrgIrGwlVDl3JqQiry7gq78e3s8m6TyulGN6kBJqxxmtExw4JN1pANKFfGfCqmw1
+         W4VYynDejdWjTUhTk2FBiGEWCMnpbiitVAa9ZCgFHs3H6i5A9OaQ8NRKxoWz1B3xz6Jx
+         NY13YrabUisAAScaDhzRKDR2GgejtsB6KEXKPBWcWJ8pxYN0kn64cfRBlKUusLqW0V2E
+         /DrA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0HcNIVV4NPdnq3axD5Kufx2QfkQwvPSmn8ONIPPi4Mz+A+PTAex88gSVVsVbumMnJ2HYFixwX+u1VyWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr3VjSg6LUTR4Se17nGC/JIzZavsNxQebDSBIqyJXCiqhPLYxI
+	r882s0zHT06gH/YOJxIPUCzr88BL9Q6Vbf12PcqzTklLGG5EKXsfMxva/rqUbKLLtqM=
+X-Gm-Gg: ASbGncu8LlNqb9wOFu/vCWjB+3Tq44tBHOmKPJKNRa6Fus7H57F0tCKMlM2D/gbATyT
+	/W0ATeEHYL4Knl9QDVIDX8sutDGpCz/ghvHOi9TiqX/wX1IVWIC4hWpSq2vcbSGJ5kxsgtID5Rt
+	lZGnT48DRw7UzR7Fl86QTBxXnbJ/KHsYzRjB8yftTPUPgQGpnjaUjaAvUvBogeLVhrkcJhdZQBZ
+	xwLsLpAkVoMjVb3gD7AgXZIsZk0P3GgVTU8QiroSbfwiAoWllsw/Gb3c1byIH1+FC4FEy/clClI
+	booYrApVLfzTwHVjkmjuKsBs2q1IuTRhLZglWMQNXZF0iIrnWK28lhTZlYJuS753ClpNh1BB9iH
+	oNGb80wmz/rNFwb7UQgq7ZAyNPGW0uz9L
+X-Google-Smtp-Source: AGHT+IFr7l7kjkqrXt81vLsMKucPZmY9zD/JPe8FlvG5PsYFoAY8mYZhkhl/H2Tn5r65e1Axf3ZuZg==
+X-Received: by 2002:a17:903:1b63:b0:223:653e:eb09 with SMTP id d9443c01a7336-23f98161f8dmr123171695ad.7.1753400224864;
+        Thu, 24 Jul 2025 16:37:04 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48bc706sm23598685ad.106.2025.07.24.16.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 16:37:04 -0700 (PDT)
+From: Deepak Gupta <debug@rivosinc.com>
+Subject: [PATCH 00/11] riscv: fine grained hardware assisted kernel
+ control-flow integrity
+Date: Thu, 24 Jul 2025 16:36:53 -0700
+Message-Id: <20250724-riscv_kcfi-v1-0-04b8fa44c98c@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a7fba1f-7948-4cf6-8bed-08ddcb0ab7b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2025 23:35:04.8860
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR02MB9498
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJXDgmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDM0Mz3aLM4uSy+OzktEzdNAtTw7QkI0Mji6Q0JaCGgqLUtMwKsGHRsbW
+ 1AHi6z7JcAAAA
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Monk Chiang <monk.chiang@sifive.com>, 
+ Kito Cheng <kito.cheng@sifive.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, 
+ rick.p.edgecombe@intel.com, broonie@kernel.org, cleger@rivosinc.com, 
+ samitolvanen@google.com, apatel@ventanamicro.com, ajones@ventanamicro.com, 
+ conor.dooley@microchip.com, charlie@rivosinc.com, samuel.holland@sifive.com, 
+ bjorn@rivosinc.com, fweimer@redhat.com, jeffreyalaw@gmail.com, 
+ heinrich.schuchardt@canonical.com, andrew@sifive.com, ved@rivosinc.com, 
+ Deepak Gupta <debug@rivosinc.com>
+X-Mailer: b4 0.13.0
 
-From: Tianyu Lan <ltykernel@gmail.com> Sent: Wednesday, July 23, 2025 12:03=
- PM
->=20
-> When Secure AVIC is enabled, call Secure AVIC
-> function to allow Hyper-V to inject STIMER0 interrupt.
->=20
-> Signed-off-by: Tianyu Lan <tiala@microsoft.com>
-> ---
->  arch/x86/hyperv/hv_init.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> index 3d1d3547095a..591338162420 100644
-> --- a/arch/x86/hyperv/hv_init.c
-> +++ b/arch/x86/hyperv/hv_init.c
-> @@ -132,6 +132,10 @@ static int hv_cpu_init(unsigned int cpu)
->  		wrmsrq(HV_X64_MSR_VP_ASSIST_PAGE, msr.as_uint64);
->  	}
->=20
-> +	/* Allow Hyper-V stimer vector to be injected from Hypervisor. */
-> +	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-> +		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, true);
-> +
->  	return hyperv_init_ghcb();
->  }
->=20
-> @@ -239,6 +243,9 @@ static int hv_cpu_die(unsigned int cpu)
->  		*ghcb_va =3D NULL;
->  	}
->=20
-> +	if (ms_hyperv.misc_features & HV_STIMER_DIRECT_MODE_AVAILABLE)
-> +		apic_update_vector(cpu, HYPERV_STIMER0_VECTOR, false);
-> +
->  	hv_common_cpu_die(cpu);
->=20
->  	if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
-> --
-> 2.25.1
->=20
+This patch series enables fine grained control-flow integrity for kernel
+on riscv platform. I did send out a RFC patchset [1] more than an year ago.
+Since it's been a while, I am resetting the versioning and calling it a RFC
+due to following reasons
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+- This is first (in a while)  and I may have missed things.
+- Earlier patchset were not fine-grained kcfi. This one is.
+- Toolchain used to compile kernel is still in development.
+- On asm indirect callsites, setting up label need toolchain support.
+
+It is based on 6.16-rc1 with user cfi enabling patchset(v18)[2] applied on it.
+Hardware guarantee on kernel's control flow integrity is enforced via zicfilp
+and zicfiss riscv cpu extensions. Please take a look at user cfi enabling
+patchset for more details and references on these cpu extensions.
+
+Toolchain
+----------
+As mentioned earlier toolchain used to develop this patchset are still in
+development. But you can grab them here [3]. This is how I configure and
+compile toolchain.
+
+$ ./riscv-gnu-toolchain/configure \
+--prefix=/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_funcsig \
+--with-arch=rv64gc_zicfilp_zicfiss_zicsr_zifencei_zimop_zcmop \
+--enable-debug-info --enable-linux --disable-gdb  --with-abi=lp64d \
+--with-label-scheme=func-sig \
+--with-linux-headers-src=/scratch/debug/linux/kbuild/usr/include
+
+$ make -j$(nproc)
+
+If `-fcf-protection=full` is selected, toolchain is enabled to generate
+labeled landing pad instruction at the start of the function. And
+shadow stack push to save return address and sspopchk instruction in
+the return path.
+
+riscv kernel control-flow integrity
+------------------------------------
+
+As with normal user software, enabling kernel control flow integrity also
+require forward control flow integrity and backward control flow integrity.
+This patchset introduces CONFIG_RISCV_KERNEL_CFI config, hw assisted riscv
+kernel cfi is enabled only when `CONFIG_RISCV_KERNEL_CFI=y`. Selecting
+CONFIG_RISCV_KERNEL_CFI is dependent on CONFIG_RISCV_USER_CFI.
+
+To compile kernel, please clone the toolchain (link provided above), build
+it and use that toolchain bits to compile the kernel. When you do `menuconfig`
+select `Kernel features` --> `riscv userspace control flow integrity`.
+When you select `riscv userspace control flow integrity`, then `hw assisted
+riscv kernel control flow integrity (kcfi)` will show up. Select both and
+build.
+
+I have tested kcfi enabled kernel with full userspace exercising (unlabeled
+landing pads) cfi starting with init process. In my limited testing, this
+boots. There are some wrinkles around what labeling scheme should be used
+for vDSO object. This patchset is using labeled landing pads for vDSO.
+We may end up using unlabeled landing pad for vDSO for maximum compatibility.
+But that's a future discussion.
+
+Qemu command line to launch:
+/scratch/debug/open_src/qemu/build_zicfilp/qemu-system-riscv64 \
+  -nographic \
+  -monitor telnet:127.0.0.1:55555,server,nowait \
+  -machine virt \
+  -cpu rv64,zicond=true,zicfilp=true,zicfiss=true,zimop=true,zcmop=true,v=true,vlen=256,vext_spec=v1.0,zbb=true,zcb=true,zbkb=true,zacas=true \
+  -smp 2 \
+  -m 8G \
+  -object rng-random,filename=/dev/urandom,id=rng0 \
+  -device virtio-rng-device,rng=rng0 \
+  -drive file=/scratch/debug/open_src/zisslpcfi-toolchain/buildroot/output/images/rootfs.ext2,format=raw,id=hd0 \
+  -append "root=/dev/vda rw, no_hash_pointers, loglevel=8, crashkernel=256M, console=ttyS0, riscv_nousercfi=all" \
+  -serial mon:stdio \
+  -kernel /scratch/debug/linux/kbuild/arch/riscv/boot/Image \
+  -device e1000,netdev=net0 \
+  -netdev user,id=net0,hostfwd=tcp::10022-:22 \
+  -virtfs local,path=/scratch/debug/sources/spectacles,mount_tag=host0,security_model=passthrough,id=host0\
+  -bios /scratch/debug/open_src/opensbi/build/platform/generic/firmware/fw_jump.bin
+
+Backward kernel control flow integrity
+---------------------------------------
+This patchset leverages on existing infrastructure of software based shadow
+call stack support in kernel. Differences between software based shadow call
+stack and riscv hardware shadow stack are:
+
+- software shadow call stack is writeable while riscv hardware shadow stack
+  is writeable only via specific shadow stack instructions.
+
+- software shadow call stack grows from low memory to high memory while riscv
+  hardware shadow stack grows from high memory to low memory (like a normal
+  stack).
+
+- software shadow call stack on riscv uses `gp` register to hold shadow stack
+  pointer while riscv hardware shadow stack has dedicated `CSR_SSP` register.
+
+Thus its ideal use existing shadow call stack plumbing and create hooks into
+it to apply riscv hardware shadow stack mechanisms on it.
+
+This patchset introduces `CONFIG_ARCH_HAS_KERNEL_SHADOW_STACK` along the lines
+of `CONFIG_ARCH_HAS_USER_SHADOW_STACK`.
+
+Forward kernel control-flow integrity
+--------------------------------------
+Enabling forward kernel control-flow integrity is mostly toolchain work where
+it emits a landing pad instruction at the start of address-taken function. 
+zicfilp allows landing pads to be labeled with a 20-bit immediate value. 
+Compiler used here is following the scheme of normalizing function prototype
+to a string using C++ itanium rules (with some modifications). See more details
+here [4]. Compiler generates a 128bit md5 hash over this string and uses
+first non-zero (scanning from MSB) 20bit segment from the 128-bit hash as label
+value.
+
+This is still a work in progress and feedback/comments are welcome.
+
+I would like to thank Monk Chiang and Kito Cheng for helping and continue to
+support from the toolchain side.
+
+[1] - https://lore.kernel.org/lkml/CABCJKuf5Jg5g3FVpU22vNUo4UituPEM7QwvcVP8YWrvSPK+onA@mail.gmail.com/T/#m7d342d8728f9a23daed5319dac66201cc680b640
+[2] - https://lore.kernel.org/all/20250711-v5_user_cfi_series-v18-0-a8ee62f9f38e@rivosinc.com/
+[3] - https://github.com/sifive/riscv-gnu-toolchain/tree/cfi-dev
+[4] - https://github.com/riscv-non-isa/riscv-elf-psabi-doc/pull/434
+
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+To: Alexandre Ghiti <alex@ghiti.fr>
+To: Masahiro Yamada <masahiroy@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nicolas.schier@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Liam R. Howlett <Liam.Howlett@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+To: Mike Rapoport <rppt@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+To: Michal Hocko <mhocko@suse.com>
+To: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+To: Bill Wendling <morbo@google.com>
+To: Monk Chiang <monk.chiang@sifive.com>
+To: Kito Cheng <kito.cheng@sifive.com>
+To: Justin Stitt <justinstitt@google.com>
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: llvm@lists.linux.dev
+Cc: rick.p.edgecombe@intel.com
+Cc: broonie@kernel.org
+Cc: cleger@rivosinc.com
+Cc: samitolvanen@google.com
+Cc: apatel@ventanamicro.com
+Cc: ajones@ventanamicro.com
+Cc: conor.dooley@microchip.com
+Cc: charlie@rivosinc.com
+Cc: samuel.holland@sifive.com
+Cc: bjorn@rivosinc.com
+Cc: fweimer@redhat.com
+Cc: jeffreyalaw@gmail.com
+Cc: heinrich.schuchardt@canonical.com
+Cc: monk.chiang@sifive.com
+Cc: andrew@sifive.com
+Cc: ved@rivosinc.com
+
+Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+---
+Deepak Gupta (11):
+      riscv: add landing pad for asm routines.
+      riscv: update asm call site in `call_on_irq_stack` to setup correct label
+      riscv: indirect jmp in asm that's static in nature to use sw guarded jump
+      riscv: exception handlers can be software guarded transfers
+      riscv: enable landing pad enforcement
+      mm: Introduce ARCH_HAS_KERNEL_SHADOW_STACK
+      scs: place init shadow stack in .shadowstack section
+      riscv/mm: prepare shadow stack for init task
+      riscv: scs: add hardware shadow stack support to scs
+      scs: generic scs code updated to leverage hw assisted shadow stack
+      riscv: Kconfig & Makefile for riscv kernel control flow integrity
+
+ Makefile                               |  2 +-
+ arch/riscv/Kconfig                     | 37 +++++++++++++++++++++++++-
+ arch/riscv/Makefile                    |  8 ++++++
+ arch/riscv/include/asm/asm.h           |  2 +-
+ arch/riscv/include/asm/linkage.h       | 42 +++++++++++++++++++++++++++++
+ arch/riscv/include/asm/pgtable.h       |  4 +++
+ arch/riscv/include/asm/scs.h           | 48 +++++++++++++++++++++++++++-------
+ arch/riscv/include/asm/sections.h      | 22 ++++++++++++++++
+ arch/riscv/include/asm/thread_info.h   | 10 +++++--
+ arch/riscv/kernel/asm-offsets.c        |  1 +
+ arch/riscv/kernel/compat_vdso/Makefile |  2 +-
+ arch/riscv/kernel/entry.S              | 21 ++++++++-------
+ arch/riscv/kernel/head.S               | 23 ++++++++++++++--
+ arch/riscv/kernel/vdso/Makefile        |  2 +-
+ arch/riscv/kernel/vmlinux.lds.S        | 12 +++++++++
+ arch/riscv/lib/memset.S                |  6 ++---
+ arch/riscv/mm/init.c                   | 29 +++++++++++++++-----
+ include/linux/init_task.h              |  5 ++++
+ include/linux/scs.h                    | 26 +++++++++++++++++-
+ init/init_task.c                       | 12 +++++++--
+ kernel/scs.c                           | 38 ++++++++++++++++++++++++---
+ mm/Kconfig                             |  6 +++++
+ 22 files changed, 314 insertions(+), 44 deletions(-)
+---
+base-commit: cc0fb5eb25ea00aefd49002b1dac796ea13fd2a0
+change-id: 20250616-riscv_kcfi-f851fb2128bf
+--
+- debug
 
 
