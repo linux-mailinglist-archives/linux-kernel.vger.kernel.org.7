@@ -1,160 +1,107 @@
-Return-Path: <linux-kernel+bounces-744231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89900B109DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:02:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0CDB109DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703AC5A4FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50FB21CE3C7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7412BF002;
-	Thu, 24 Jul 2025 12:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91EC2C1586;
+	Thu, 24 Jul 2025 12:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ag76d2cM"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1NHubdb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A0726A1B8;
-	Thu, 24 Jul 2025 12:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7BB26A1B8;
+	Thu, 24 Jul 2025 12:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358549; cv=none; b=nSQQzVPns+ROTw+PeOYho2ya/YhD/rHrhDWXVgbE2+Cb+x1h5ENBmGKjiyWyrtOurw1Xixm0NypSaQsISIuTTgURxeWMR5Pjt1HDhCzMPRza5ezNjX0Li5uqJdFHQpuUKWGkEmyiuVin+y63ebXPAY1QuVRpy6nPhrSVk4/F9wI=
+	t=1753358566; cv=none; b=UuSc2ov7PiBiIBsyOJiMEpefQJ1Bo7/ohXGkDKCQ8pvUVCLgs8Cv0TaB5b654Vt3azvlW6Xmqefz8J7XgAbLbNobTRM/JMVtIFWPwGmC1Rtn3GPwRnJhxdKxOx34j4u0Bx4XxvH3Gq0wrpFya1JI+1mrcL9nbbsXsbJzhD8sGns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358549; c=relaxed/simple;
-	bh=K6wFiF3aPVQCcd7WPZ3i1vEqpPjmDklDm5kgow4PrgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EsR0gvUvtRw3uTnj6iQCHkEDwqHiN41zP5YPQd/Wwr0RI70xEBJb951Q1XVBDnENug0Se7SgjHucDxoALtIC0x5QwVnD7xaIPG4VoYgDWhkaApmpdbNMwajFd/IEhCdnXnpMIa0hdrX2Oy5/RKQvS9QTO7NrAIKmUgvfXyzW3Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ag76d2cM; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b26f5f47ba1so824762a12.1;
-        Thu, 24 Jul 2025 05:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753358547; x=1753963347; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMARVpWb7qO6j5xEl6IUDVhdkLX0mNgAEw0wIm4jH8A=;
-        b=Ag76d2cMM3TAX7+XZJRfhrFe5uLXOnpWwyX9gbSE+9YL5BTv9u4xA6MzIUSQTnTaym
-         WIScK6eGta0ACiACiDRIzTrMLWq9wYjq7cJBIhOoJ/+AUr43dWilAQHTQ7XSOzKCkVf8
-         /seTga1w8hEbQG0vkYHb03IeZl8MUepEYaRMVYL3IHNLXtzeCYksDANnU44RxePaF45G
-         bNAN5W6RIIEDdiOLT+I1VPKIWqmnNZxAfkDP9tsqRqKvCxdjrmmzYtmBdBNcROE9T1CR
-         yDesa76AdS+6xnKSb3sEQIUerwypr+dQjfpx75Sqf3guV109+/v7ZM4DWQSbnKmBI90z
-         G6Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753358547; x=1753963347;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HMARVpWb7qO6j5xEl6IUDVhdkLX0mNgAEw0wIm4jH8A=;
-        b=LdZhth1YnN+FKKeLaP/l9ujmM9AsgmoL3+rVWSLAHTs3j26th7B4xO9WII8+deYRN9
-         +15x5x8RC8X4Xed7H67MeCtjACFeKsOKobR/b+wlOzNplVB2SBmf5lQ812SoD9+0/Xk7
-         FYF/RW71nLBsy2h7oBi0UN3yaWkVQGECbOtAe5UPYtPPm+OiDMBEgp6qHpkBoixKXjWv
-         Yo6DmESfG0Ni+pRl7P9PmuyjytmsE3AOrQjMna90zAP250y/pc1vht6Ps9oYwUoI3LMo
-         zaIFXpc3wHZg+2ziFODaDfF/EPXTDWAi7z3SgwuzRQJvs1kb4bl73Gy7vmvPFGPeM6iY
-         z1Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCU56ueH9cUhq7xQkRLh0J7d2e4fTdAnReOy0m9FHY387Kl1j7fApiMNn9l4b/fCu1xT8d4Fnt0QtBc/pX0=@vger.kernel.org, AJvYcCVPcx/WMi0FHdyqJMpl4x5/TUxbjO04FXd/0rSAnf6uqq7vSYu0x2t0WPb9JxMI4WTvYVVbFqdI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTXtoOLM6Tw9ex9lmwGVnqme9A6UqrivltWGLt7a+9HA+ZVcnl
-	q4u1WaAlZ25yDW32ciLELN3oWVA/XoCG1cX6zYBTnadCMoKxvOIVvIr5MzjfJA==
-X-Gm-Gg: ASbGncuYvU24MtUSwMOzrAge3bSvDTzMGTdSVZUCsaeAmw5pBrKS8u1x4m0/53qP8mW
-	0KcGaMofEnqx1JBKfUanrlmfNoCXnSmCD7qQYBFjl6Z3+9VXTnVnBh2xyCnatWvFyO3E22HKaSc
-	OlqY0eQkWlYbFH3UtTe+8ySyGW3Cb/64M3p1XQHW4xBb9zYEZWcMSD73OaSL+X8W5Zi4z2/7+h8
-	g6st2HQfZiQjMYUYDBGIDIRSZjp4iip2JdXxiXxol5ae+gwGyDYjkLxIKJa4emlhds266i5T2/a
-	ujImSeKeIQA487pvhMFaGK16JtinaYhaYi5dVlM/vDSXgcs7Yg4+QBGTNxWHHaqPPBq34x7m05l
-	psNa+pOvGHi5G/MoFYiVc+3WwEFDrY74J4/m4YQ==
-X-Google-Smtp-Source: AGHT+IEdl6Fbt8I3BHrC7vXu5S0UB6jJDmdyqjs5D0XQ3FmP16D8pEHXvbvPP7Y+LLvSVyuO+nAoGw==
-X-Received: by 2002:a05:6a20:7491:b0:235:86fd:cc99 with SMTP id adf61e73a8af0-23d490ef288mr11402252637.24.1753358545424;
-        Thu, 24 Jul 2025 05:02:25 -0700 (PDT)
-Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b0649833sm1529502b3a.141.2025.07.24.05.02.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 05:02:24 -0700 (PDT)
-From: Pengtao He <hept.hept.hept@gmail.com>
-To: edumazet@google.com
-Cc: aleksander.lobakin@intel.com,
-	almasrymina@google.com,
-	davem@davemloft.net,
-	ebiggers@google.com,
-	hept.hept.hept@gmail.com,
-	horms@kernel.org,
-	kerneljasonxing@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	mhal@rbox.co,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	willemb@google.com
-Subject: Re: [PATCH net-next v2] net/core: fix wrong return value in __splice_segment
-Date: Thu, 24 Jul 2025 20:02:11 +0800
-Message-ID: <20250724120211.30050-1-hept.hept.hept@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CANn89i+vzHO3yferPBi1kBmVkRAd1mu9gD0S8tUPdVaDXapkVw@mail.gmail.com>
-References: <CANn89i+vzHO3yferPBi1kBmVkRAd1mu9gD0S8tUPdVaDXapkVw@mail.gmail.com>
+	s=arc-20240116; t=1753358566; c=relaxed/simple;
+	bh=gC7/IIv94UYiIF+2wRA2qk2JP6efc/iZNut4/NBExbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFIHTAqZd4CQd+MXQaSsc9DopI0WOxAeYJlN5AXFEq4u3UGYgmxkrz9j2L8eieLbJcBXDV9Yh3G5CARn0vPxTlSscW5X/42eX/1U3GFcBcKj8XscJaHUj+Gq0R6lKRFG+7AgT+QgKJjmDc10uBNNkVZWBRFSO21hHJg80eXe7N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1NHubdb; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753358565; x=1784894565;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gC7/IIv94UYiIF+2wRA2qk2JP6efc/iZNut4/NBExbU=;
+  b=T1NHubdblyl/DBkHq9Q0bAzt/oPgpn6wZW9QYbrOAjHJ+p32GYaX3Kow
+   fIHs172hd1U81n/xpiXM98jL6ylTS0z+AG0CLv0X/jQzsnLiwc+UX8z7d
+   ooa/SZn/7L+Nu5nWjnuubwSFedOV0jL7ixMn80iHMSfdit6cOmQM2Ma6K
+   o/wduRJ7X3TQZ7/PqlUUtP6ssZGWsa+3ZyFz7cx3b5qaamLmkQHrM72lA
+   ZlYYzmMIe9xyPgi7E0+CGfcCFlthLYSMaWq76lCy/6b3uZosqTi7XAhiU
+   PgpL8bpAUqRHyeFDQH0IkrF/U7XJl5anTeLt4b198Ya8xmNwAyAxAE5Pc
+   A==;
+X-CSE-ConnectionGUID: Sma6i95aQ+GpjxwU4GBq/A==
+X-CSE-MsgGUID: 06ut4kYcQh+NTBUMfUEA+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55518791"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="55518791"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:02:44 -0700
+X-CSE-ConnectionGUID: LXkrErb3R5W2QB9gcKSz0Q==
+X-CSE-MsgGUID: 0dMvp4U9QTqt8cdLwKHtFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="197330820"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:02:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ueuek-00000000Ysk-3Zaa;
+	Thu, 24 Jul 2025 15:02:38 +0300
+Date: Thu, 24 Jul 2025 15:02:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7280a: Remove unused macros
+Message-ID: <aIIg3m1eXC3dNfeM@smile.fi.intel.com>
+References: <aIIQ3xxCNfpTouxQ@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIIQ3xxCNfpTouxQ@pc>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-> >
-> > Return true immediately when the last segment is processed,
-> > avoid to walking once more in the frags loop.
-> >
-> > Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
-> > ---
-> > v2->v1:
-> > Correct the commit message and target tree.
-> > v1:
-> > https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmai=
-> l.com/
-> > ---
-> >  net/core/skbuff.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> > index ee0274417948..cc3339ab829a 100644
-> > --- a/net/core/skbuff.c
-> > +++ b/net/core/skbuff.c
-> > @@ -3114,6 +3114,9 @@ static bool __splice_segment(struct page *page, uns=
-> igned int poff,
-> >                 *len -=3D flen;
-> >         } while (*len && plen);
-> >
-> > +       if (!*len)
-> > +               return true;
-> > +
-> >         return false;
-> >  }
-> >
-> 
-> Condition is evaluated twice. What about this instead ?
-> 
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index ee0274417948e0eb121792a400a0455884c92e56..23b776cd98796cf8eb4d19868a0=
-> 506423226914d
-> 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -3112,7 +3112,9 @@ static bool __splice_segment(struct page *page,
-> unsigned int poff,
->                 poff +=3D flen;
->                 plen -=3D flen;
->                 *len -=3D flen;
-> -       } while (*len && plen);
-> +               if (!*len)
-> +                       return true;
-> +       } while (plen);
-> 
->         return false;
->  }
-> 
-Ok, this is better.
+On Thu, Jul 24, 2025 at 11:54:23AM +0100, Salah Triki wrote:
+> This is to fix the following warnings when compiling the ad7280a driver using
+> LLVM=1 and W=2:
 
-Thanks.
+W=2 ?! No, please don't do that. W=2 is for informative purposes. Better spend
+your efforts against W=1 which are still plenty in the kernel.
+
+
+On top of that, often the definitions is a (arguable not the best) piece of
+documentation of the HW, we don't drop them because they are unused (today).
+
+NAK.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
