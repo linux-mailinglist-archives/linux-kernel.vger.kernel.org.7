@@ -1,127 +1,256 @@
-Return-Path: <linux-kernel+bounces-745063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6E2B11459
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819E7B1145B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77C43A8BF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8121C22C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D5A23D286;
-	Thu, 24 Jul 2025 23:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CD823D286;
+	Thu, 24 Jul 2025 23:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LK/VBakt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSLVJCpj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272125D8F0;
-	Thu, 24 Jul 2025 23:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3828223C4F8;
+	Thu, 24 Jul 2025 23:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753398631; cv=none; b=hfp9Dxcj1EQuER3FBza6li/I2Yd53BA7wcme/uNI0mzSMLLJV9GbK/MmBlYP0Fc4CCZUJDq9fLAUFXb7b1E0taLspeH0ln+1AhGELQxD4HXDuNXERilEn8ivHyEiamq8+B9A5136N3TWwMH7OMCAwto+n/itQItnHfEm4+84v0Y=
+	t=1753398643; cv=none; b=Nl0RQvpBvpkntqRPYlWfy72wUWBE2VJ2RS41IQ6pVNzS7J943Ub/5/5obnf9YCGmDy+UPKn+ru1PP5L5Ox9I8w0Gie8YBDqa5jzKHEisurQNKamF3eFc32E7s93EWTu/wQPUycTdPxMWA64pEwF24uE4VfKJzKCMFHiOeei4u0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753398631; c=relaxed/simple;
-	bh=5QF7XQ0L8h22/WiqgEsgKHIytbIiPXuvxgRIQrTSArM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgvLSboEM8ak2lVB/LIUauSWqOyKnJJHt33yhAVhZGhtRyxPmuOMRPCe2x0cNaO57GGYb8cHU4xTdZ/sUxkPHw5ZZ7b132gfV0Ol58UTOjBUXWfXzj9LsNideXWFui9BP5WfEQD4Nroprf5fYD+jOCScXS212me845R8utFSVx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LK/VBakt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87631C4CEED;
-	Thu, 24 Jul 2025 23:10:28 +0000 (UTC)
+	s=arc-20240116; t=1753398643; c=relaxed/simple;
+	bh=ctpeYJqI/YS0Fz29wSZX7bb68pB9rc2aEqPRsFb/1KE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lMvis+JyZPDrGyvzUzRg5JrOsp6enJ3HJUdmxG2+lZlpT1zXThKyhuf57nPzf5zJXNLpAtM0uzkJ+6ra2awd5pUEekac6PH+QDkuy3hAFmAStXCvL2NNdH6mNsLeUxpFoIUrQrWEb05YVNMmAxeQRsMdQH0LlDXGEdOhdRMynmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSLVJCpj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 991B9C4CEED;
+	Thu, 24 Jul 2025 23:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753398630;
-	bh=5QF7XQ0L8h22/WiqgEsgKHIytbIiPXuvxgRIQrTSArM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LK/VBakt4CDvhVmLLvojGsNOL+rvUZvu7vmOS71UHTrg6RLTfuq3eoE+DmUu+mppT
-	 ljynWt3/pEdxU+fy0TqaXGhh6gD2EOVHe/LNPiPxvoMpeJhIjZcZAzORwQV2mJcBaI
-	 0fy5AruUoV6y9JG1ratXLpoGU/eBr8b70flZwLMbgLEqWRGm4mH2M/DJo9x/P6EsNb
-	 9iJ5sZZV69dJ3u4yAUPZgLvB1ASdeTGYxgA6g/J9u17mqkZM4FubXhEzTALN060KfX
-	 KefdTkW2o8wBQaCs25pfZNq0Svh6DWlMyg6HuWKqrxdEBez5jH0C7OOTPW1pmsgcDO
-	 JoO2O+yeh3wsw==
-Date: Thu, 24 Jul 2025 16:10:25 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] kbuild: userprogs: use correct linker when mixing clang
- and GNU ld
-Message-ID: <20250724231025.GA3620641@ax162>
-References: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
+	s=k20201202; t=1753398642;
+	bh=ctpeYJqI/YS0Fz29wSZX7bb68pB9rc2aEqPRsFb/1KE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=lSLVJCpjYwUU6EPqgYYzdE0EdZ8oDFYV/0lJmwugU9tGIjO60nUjs09D8lBXA2yD2
+	 Fg+poR+eB1EfvBNYE2i3RVYyZPST5UK5sfIj0LypqPXmp1bLQmkPURstpTK+B6NMSp
+	 /Sfgh0pY4nlMuB4/0ij4qBxIT6xYfSu0rWD5a5iWx9teYnuxBtAVIOpRb4pEi2dvr6
+	 /+sNmOe5f5CmDySNo8eMIeR8BaeiOIXW+stkdtE+1inF9pSsOOSVuhZ3wj5IbR5BCb
+	 L9VNWckESPamfiqs1XMgM9OgC7CiGY92IF4J3JD1+WqxMkRUfrloP9aTViDrQ2cT2n
+	 UDut2GywlmQhg==
+Date: Thu, 24 Jul 2025 18:10:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: bhelgaas@google.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Joyce Ooi <joyce.ooi@intel.com>, Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH] PCI: controller: use dev_fwnode()
+Message-ID: <20250724231041.GA3079592@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
+In-Reply-To: <20250723065907.1841758-1-jirislaby@kernel.org>
 
-On Thu, Jul 24, 2025 at 10:32:45AM +0200, Thomas Weiﬂschuh wrote:
-> The userprogs infrastructure does not expect clang being used with GNU ld
-> and in that case uses /usr/bin/ld for linking, not the configured $(LD).
-> This fallback is problematic as it will break when cross-compiling.
-> Mixing clang and GNU ld is used for example when building for SPARC64,
-> as ld.lld is not sufficient; see Documentation/kbuild/llvm.rst.
+[+cc Arnd, Nam]
+
+On Wed, Jul 23, 2025 at 08:59:07AM +0200, Jiri Slaby (SUSE) wrote:
+> All irq_domain functions now accept fwnode instead of of_node. But many
+> PCI controllers still extract dev to of_node and then of_node to fwnode.
 > 
-> Relax the check around --ld-path so it gets used for all linkers.
+> Instead, clean this up and simply use the dev_fwnode() helper to extract
+> fwnode directly from dev. Internally, it still does dev => of_node =>
+> fwnode steps, but it's now hidden from the users.
 > 
-> Fixes: dfc1b168a8c4 ("kbuild: userprogs: use correct lld when linking through clang")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Link: https://lore.kernel.org/all/4ee9c7c0-4a3f-4afa-ae5a-7fd8a750c92b@kernel.org/
+> Link: https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
+
+Thanks, Jiri, I applied this on pci/controller/msi-parent for v6.17;
+it's at
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/msi-parent
+
+The dev_fwnode() conversions touched the same places as Nam's changes
+to use msi_create_parent_irq_domain().  The previous dev_fwnode()
+conversions were *before* Nam's changes and these are *after*, and it
+all ended up looking more complicated than I wanted, so I squashed all
+the dev_fwnode() conversions together in
+https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=a103d2dede56
+("PCI: controller: Use dev_fwnode() instead of of_fwnode_handle()")
+and then added Nam's msi_create_parent_irq_domain() patches on top.
+
+So a103d2dede56 ("PCI: controller: Use dev_fwnode() instead of
+of_fwnode_handle()") ends up *looking* different from the patch below,
+but I think having them all together makes it more obvious that
+they're all making the same conversion, and I think the end result is
+identical.
+
+Bjorn
+
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczy≈Ñski" <kwilczynski@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+> Cc: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Cc: Joyce Ooi <joyce.ooi@intel.com>
+> Cc: Ryder Lee <ryder.lee@mediatek.com>
+> Cc: Jianjun Wang <jianjun.wang@mediatek.com>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Daire McNamara <daire.mcnamara@microchip.com>
 > ---
-> Nathan, you originally proposed the check for $(CONFIG_LD_IS_LLD) [0],
-> could you take a look at this?
-
-I would expect this to be okay but I have not explicitly tested it. I
-had not considered the case of GNU ld being used since aside from
-sparc64, there is not another architecture that supports clang but not
-ld.lld.
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
 > ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pci/controller/dwc/pcie-designware-host.c    | 3 +--
+>  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 3 +--
+>  drivers/pci/controller/pcie-altera-msi.c             | 3 +--
+>  drivers/pci/controller/pcie-mediatek.c               | 4 +---
+>  drivers/pci/controller/pcie-xilinx-dma-pl.c          | 3 +--
+>  drivers/pci/controller/pcie-xilinx-nwl.c             | 3 +--
+>  drivers/pci/controller/plda/pcie-plda-host.c         | 3 +--
+>  7 files changed, 7 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Makefile b/Makefile
-> index c09766beb7eff4780574682b8ea44475fc0a5188..e300c6546c845c300edb5f0033719963c7da8f9b 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1134,7 +1134,7 @@ KBUILD_USERCFLAGS  += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD
->  KBUILD_USERLDFLAGS += $(filter -m32 -m64 --target=%, $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
-
-Does KBUILD_USERCFLAGS respect LLVM_IAS? sparc64 does not use the
-integrated assembler yet (as far as I am aware) so I think we probably
-need to filter '--prefix=' and '-fno-integrated-as' to avoid further
-issues with assembling?
-
->  # userspace programs are linked via the compiler, use the correct linker
-> -ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
-> +ifneq ($(CONFIG_CC_IS_CLANG),)
-
-At this point, I think this can just become
-
-  ifdef CONFIG_CC_IS_CLANG
-
->  KBUILD_USERLDFLAGS += --ld-path=$(LD)
->  endif
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 4af7da14b350..952f8594b501 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -214,9 +214,8 @@ static const struct irq_domain_ops dw_pcie_msi_domain_ops = {
+>  int dw_pcie_allocate_domains(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(pci->dev->of_node);
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(pci->dev),
+>  		.ops		= &dw_pcie_msi_domain_ops,
+>  		.size		= pp->num_vectors,
+>  		.host_data	= pp,
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> index d17e887b6b61..dbc72c73fd0a 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> @@ -439,13 +439,12 @@ static const struct irq_domain_ops msi_domain_ops = {
+>  static int mobiveil_allocate_msi_domains(struct mobiveil_pcie *pcie)
+>  {
+>  	struct device *dev = &pcie->pdev->dev;
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct mobiveil_msi *msi = &pcie->rp.msi;
 >  
-> 
-> ---
-> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-> change-id: 20250723-userprogs-clang-gnu-ld-7a1c16fc852d
-> 
-> Best regards,
+>  	mutex_init(&msi->lock);
+>  
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(dev),
+>  		.ops		= &msi_domain_ops,
+>  		.host_data	= pcie,
+>  		.size		= msi->num_of_vectors,
+> diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
+> index 2e48acd632c5..ea2ca2e70f20 100644
+> --- a/drivers/pci/controller/pcie-altera-msi.c
+> +++ b/drivers/pci/controller/pcie-altera-msi.c
+> @@ -166,9 +166,8 @@ static const struct irq_domain_ops msi_domain_ops = {
+>  
+>  static int altera_allocate_domains(struct altera_msi *msi)
+>  {
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(msi->pdev->dev.of_node);
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(&msi->pdev->dev),
+>  		.ops		= &msi_domain_ops,
+>  		.host_data	= msi,
+>  		.size		= msi->num_of_vectors,
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 3ac5d14dd543..24cc30a2ab6c 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -487,12 +487,10 @@ static const struct msi_parent_ops mtk_msi_parent_ops = {
+>  
+>  static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  {
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(port->pcie->dev->of_node);
+> -
+>  	mutex_init(&port->lock);
+>  
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(port->pcie->dev),
+>  		.ops		= &msi_domain_ops,
+>  		.host_data	= port,
+>  		.size		= MTK_MSI_IRQS_NUM,
+> diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> index fbc379fd118b..b037c8f315e4 100644
+> --- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> @@ -465,9 +465,8 @@ static int xilinx_pl_dma_pcie_init_msi_irq_domain(struct pl_dma_pcie *port)
+>  	struct device *dev = port->dev;
+>  	struct xilinx_msi *msi = &port->msi;
+>  	int size = BITS_TO_LONGS(XILINX_NUM_MSI_IRQS) * sizeof(long);
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(port->dev->of_node);
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(port->dev),
+>  		.ops		= &dev_msi_domain_ops,
+>  		.host_data	= port,
+>  		.size		= XILINX_NUM_MSI_IRQS,
+> diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+> index de76c836915f..05b8c205493c 100644
+> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+> @@ -498,10 +498,9 @@ static int nwl_pcie_init_msi_irq_domain(struct nwl_pcie *pcie)
+>  {
+>  #ifdef CONFIG_PCI_MSI
+>  	struct device *dev = pcie->dev;
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct nwl_msi *msi = &pcie->msi;
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(dev),
+>  		.ops		= &dev_msi_domain_ops,
+>  		.host_data	= pcie,
+>  		.size		= INT_PCI_MSI_NR,
+> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
+> index 92866840875e..8e2db2e5b64b 100644
+> --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> @@ -153,13 +153,12 @@ static const struct msi_parent_ops plda_msi_parent_ops = {
+>  static int plda_allocate_msi_domains(struct plda_pcie_rp *port)
+>  {
+>  	struct device *dev = port->dev;
+> -	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct plda_msi *msi = &port->msi;
+>  
+>  	mutex_init(&port->msi.lock);
+>  
+>  	struct irq_domain_info info = {
+> -		.fwnode		= fwnode,
+> +		.fwnode		= dev_fwnode(dev),
+>  		.ops		= &msi_domain_ops,
+>  		.host_data	= port,
+>  		.size		= msi->num_vectors,
 > -- 
-> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 2.50.1
 > 
 
