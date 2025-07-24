@@ -1,125 +1,149 @@
-Return-Path: <linux-kernel+bounces-744911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7218CB11263
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC95B11265
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A111D0014D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7695F172103
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4AC2ED878;
-	Thu, 24 Jul 2025 20:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9369727A915;
+	Thu, 24 Jul 2025 20:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KevnvUtX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lrmsMLvm"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530C42ED157
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B408274FE8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388997; cv=none; b=B3XR8BsLadaZWAnF6O58igh+pSesdhQXSnZLUJUwL1ti4myyx92BNOkvWDyyddXULVd1/5O3Drqb9lgk/V/aiGRyjTQXZPiR6xjpqkrhfELDxi/Ssfq1f3PZXLdhnNKMBF1Z8pJ0YGT4sNgWUlbFdtiHjGUlaPI14krHyXXrmCo=
+	t=1753389074; cv=none; b=sJzuAeNoSKJ0oQUL+JDhBdBVC/4jHg0ivqn0pdaR8TcPckYEQoPwo3q6k+BEuQN2Wc3XiZTnS16RSE58IFVvWLtBKx67GilNWlK5K/mB/v4Qqa8jxv9Zn3UT2ySmlK5qzIdpXTZ2sFtKIH+qHsj6AZiRgWOUV+P20q2+dV5UWRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388997; c=relaxed/simple;
-	bh=yUA0VWIyeHlYZOjb7vM/j98AYzNvhPEn+9fx/2KTsoc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rbEnoRQQXWygY9hpVY1dViO9vFmFR7XirboDLtj6cZ89DT48el0FOaZdOEB7QSxZE/Cih0HhcFrC9KrLSZ10ElLMUa2i5b3VUaMRyZ8ZvUHjp9ZmkCeV6gN2kX6PaLnwidL36Y7DNJveQCTqs9BZQEzt+7h+Uk9eCH59L58DNME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KevnvUtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FCDC4CEF1;
-	Thu, 24 Jul 2025 20:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753388996;
-	bh=yUA0VWIyeHlYZOjb7vM/j98AYzNvhPEn+9fx/2KTsoc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KevnvUtX5M3vEuUgXUMFOB6wdBE2Cl4dD87KoJAfI2S01De7sTGzSI8LnAeDg/zX5
-	 TB6RrHoSyAJstZ47NiKG1HXcyxwy/WQz6+kQWzY3oJL2DUE+hWXSpSanCnyIbMqevI
-	 7klEuEP8npU44j8zrJnGajTL2lX/Ah/LnGjew1IGXe/LThFsZENfXrEzSsQVu5Hp7G
-	 PJBJqO+IJ0Y+ue5YfmQHxHJymN77sARvGvSCXKOJMR7tbnXnZktCEb51+Uvqy66E7A
-	 RfH8e3mev60G61s9jrkYcxULvNfMDO3PiEdYjmeqLIV79HDE3I+tEsygj3ZJBlHBKY
-	 ftW+ZEWpHbJAw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF0C383BF4E;
-	Thu, 24 Jul 2025 20:30:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753389074; c=relaxed/simple;
+	bh=xr4h4NT0jwcMU2B5nPm5uz55z+/LrSO92SZvY/onUEo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jtOjwTbAMezxDsbpaOY+W4dRb59OkckVS8jCyfrcsdG2B48RrgcHy06bFZi7qLr4EcMEygrOJkX1hlXobjjVr6KDgwyyUowZAvDxwftJta/HTM/+LlEcqBpgQlqrdOlLV3am6LhsFSeYug01RnCLL9hzwjDXSLIX8Tni8GaWp8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lrmsMLvm; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7492da755a1so1255945b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753389072; x=1753993872; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rDiDRr/Nq67IcbEOn/9DxcYykCFSVaBcSB5snb6HDUg=;
+        b=lrmsMLvm0fjaR+f46uNsslvtNlSUtsAUUvLdaxI4hrs6t9NnDcfbDpi5/bNSwLADjn
+         vshMUnVZ3aNFY2aGjszxvhOo9UwUcho7xIg8wBt3DwkmrwtiXXAOQS+l9HozpzlmxHW2
+         4XTsgN2BBd6AMsEtXCJioH9HfyjI5im6C/+WvYlvqokaHazD8+OQKVi+K9JHQUoICk8c
+         y1j9dtkfKMUJ6q7/NjVKYSaMRXtm31Ru1edtpYv7eGOTL656wkp1rIHadEvLJPoSgqWY
+         +XWzaB/Umop9MIl+Qr+m8If1wdcSOmiNttGdBDJjfc9HEpptT6fDgqFv9f999EZUuN+C
+         AwlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753389072; x=1753993872;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rDiDRr/Nq67IcbEOn/9DxcYykCFSVaBcSB5snb6HDUg=;
+        b=lc2Dz32ChlgO8ZgIKvpQAxmt8N0XmfV/8vnjvXKp8mNqAbS1PPTvnEMAPm+8ZbYhEn
+         6UmbCotJWsnhza96KWtItH8qJb5xgDvxith6OawuK3+lSHEdbS0i6KB1uwbDS6GqOhyc
+         eFxK/9ALKAMm/M62wnLcsSmKOrgydfpCyG8EnKPxeLQxNrx++HMzFnF4Wvm5lb8h4wA/
+         3ziO17IQrdD945F2Yr6zuv/WlFewqRYCalobZ/QZsii21//mqf7ar1IwFooQK4ehh05t
+         +Q+rhhU1UQl5uau5d+I/zOZJVwC3MT5gl42IUPhuhkjkM01uvcN6XCeLRx0Yl46KvyC7
+         C1GA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/r1n1C3rT+yxjwUefvqy11CJWQL3RAhL0WBfjTPprFalactF+ox5lU8QQJD8QD5ql3A4Tk2oOVCLGuhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw73ys5YAWhWmoz6V6kUQOwhPprsFWN9zYk5LlX5d001ZgM69iV
+	OGsZWI7tKGwgMm2eNtNm8JlsKChIR+6dpntJv89lgPNfyhEPse++0UhyrD8a8fY+8jl0TJ9mGVi
+	DS78F0g==
+X-Google-Smtp-Source: AGHT+IFa2gMK2RpRyNs7pkOkWZnaVUgjRpZNHMpdUN+cIzXcMHUn31YL9+KEzJOBPLlJHnzq/CppzAI6uwA=
+X-Received: from pfbcj15.prod.google.com ([2002:a05:6a00:298f:b0:747:7188:c30])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:22c6:b0:748:2d1d:f7b3
+ with SMTP id d2e1a72fcca58-760356fb061mr12488600b3a.22.1753389072461; Thu, 24
+ Jul 2025 13:31:12 -0700 (PDT)
+Date: Thu, 24 Jul 2025 13:31:11 -0700
+In-Reply-To: <20250714102011.758008629@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: vm_unmap_ram() may be called from an
- invalid context
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <175338901449.2519964.11721744043840464584.git-patchwork-notify@kernel.org>
-Date: Thu, 24 Jul 2025 20:30:14 +0000
-References: <20250724153115.125311-1-jprusakowski@google.com>
-In-Reply-To: <20250724153115.125311-1-jprusakowski@google.com>
-To: Jan Prusakowski <jprusakowski@google.com>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Mime-Version: 1.0
+References: <20250714102011.758008629@infradead.org>
+Message-ID: <aIKYD1Csd4IjmD54@google.com>
+Subject: Re: [PATCH v3 00/16] objtool: Detect and warn about indirect calls in
+ __nocfi functions
+From: Sean Christopherson <seanjc@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com, 
+	ardb@kernel.org, kees@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	gregkh@linuxfoundation.org, jpoimboe@kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-efi@vger.kernel.org, 
+	samitolvanen@google.com, ojeda@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Thu, 24 Jul 2025 17:31:15 +0200 you wrote:
-> When testing F2FS with xfstests using UFS backed virtual disks the
-> kernel complains sometimes that f2fs_release_decomp_mem() calls
-> vm_unmap_ram() from an invalid context. Example trace from
-> f2fs/007 test:
+On Mon, Jul 14, 2025, Peter Zijlstra wrote:
 > 
-> f2fs/007 5s ...  [12:59:38][    8.902525] run fstests f2fs/007
-> [   11.468026] BUG: sleeping function called from invalid context at mm/vmalloc.c:2978
-> [   11.471849] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 68, name: irq/22-ufshcd
-> [   11.475357] preempt_count: 1, expected: 0
-> [   11.476970] RCU nest depth: 0, expected: 0
-> [   11.478531] CPU: 0 UID: 0 PID: 68 Comm: irq/22-ufshcd Tainted: G        W           6.16.0-rc5-xfstests-ufs-g40f92e79b0aa #9 PREEMPT(none)
-> [   11.478535] Tainted: [W]=WARN
-> [   11.478536] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   11.478537] Call Trace:
-> [   11.478543]  <TASK>
-> [   11.478545]  dump_stack_lvl+0x4e/0x70
-> [   11.478554]  __might_resched.cold+0xaf/0xbe
-> [   11.478557]  vm_unmap_ram+0x21/0xb0
-> [   11.478560]  f2fs_release_decomp_mem+0x59/0x80
-> [   11.478563]  f2fs_free_dic+0x18/0x1a0
-> [   11.478565]  f2fs_finish_read_bio+0xd7/0x290
-> [   11.478570]  blk_update_request+0xec/0x3b0
-> [   11.478574]  ? sbitmap_queue_clear+0x3b/0x60
-> [   11.478576]  scsi_end_request+0x27/0x1a0
-> [   11.478582]  scsi_io_completion+0x40/0x300
-> [   11.478583]  ufshcd_mcq_poll_cqe_lock+0xa3/0xe0
-> [   11.478588]  ufshcd_sl_intr+0x194/0x1f0
-> [   11.478592]  ufshcd_threaded_intr+0x68/0xb0
-> [   11.478594]  ? __pfx_irq_thread_fn+0x10/0x10
-> [   11.478599]  irq_thread_fn+0x20/0x60
-> [   11.478602]  ? __pfx_irq_thread_fn+0x10/0x10
-> [   11.478603]  irq_thread+0xb9/0x180
-> [   11.478605]  ? __pfx_irq_thread_dtor+0x10/0x10
-> [   11.478607]  ? __pfx_irq_thread+0x10/0x10
-> [   11.478609]  kthread+0x10a/0x230
-> [   11.478614]  ? __pfx_kthread+0x10/0x10
-> [   11.478615]  ret_from_fork+0x7e/0xd0
-> [   11.478619]  ? __pfx_kthread+0x10/0x10
-> [   11.478621]  ret_from_fork_asm+0x1a/0x30
-> [   11.478623]  </TASK>
+> Hi!
 > 
-> [...]
+> On kCFI (CONFIG_CFI_CLANG=y) builds all indirect calls should have the CFI
+> check on (with very few exceptions). Not having the CFI checks undermines the
+> protection provided by CFI and will make these sites candidates for people
+> wanting to steal your cookies.
+> 
+> Specifically the ABI changes are so that doing indirect calls without the CFI
+> magic, to a CFI adorned function is not compatible (although it happens to work
+> for some setups, it very much does not for FineIBT).
+> 
+> Rust people tripped over this the other day, since their 'core' happened to
+> have some no_sanitize(kcfi) bits in, which promptly exploded when ran with
+> FineIBT on.
+> 
+> Since this is very much not a supported model -- on purpose, have objtool
+> detect and warn about such constructs.
+> 
+> This effort [1] found all existing [2] non-cfi indirect calls in the kernel.
+> 
+> Notably the KVM fastop emulation stuff -- which is completely rewritten -- the
+> generated code doesn't look horrific, but is slightly more verbose. I'm running
+> on the assumption that instruction emulation is not super performance critical
+> these days of zero VM-exit VMs etc. Paolo noted that pre-Westmere (2010) cares
+> about this.
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: vm_unmap_ram() may be called from an invalid context
-    https://git.kernel.org/jaegeuk/f2fs/c/08a7efc5b02a
+Yeah, I'm confident the fastop stuff isn't performance critical.  I'm skeptical
+that fastops were _ever_ about raw performance.  
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Running with EPT disabled to force emulation of Big RM, with OVMF and a 64-bit
+Linux guest, I get literally zero hits on fastop().  With SeaBIOS and a 32-bit
+Linux guest, booting a 24 vCPU VM hits <40 fastops.
+
+Maybe there are some super legacy workloads that still heavily utilize Big RM,
+but if they exist, I've no idea what they are, and AFAICT that was never the
+motivation.
+
+As highlighted in the original cover letter[*], fastops reduced the code footprint
+of kvm/emulate.o by ~2500 bytes.  And as called out by commit e28bbd44dad1 ("KVM:
+x86 emulator: framework for streamlining arithmetic opcodes"), executing a proxy
+for the to-be-emulated instruction is all about functional correctness, e.g. to
+ensure arithmetic RFLAGS match exactly.  Nothing suggests that performance was ever
+a motivating factor.
+
+I strongly suspect that the "fastop" name was a fairly arbitrary choice, and the
+framework needed to be called _something_.  And then everyone since has assumed
+that the motivation for fastops was to go fast, when in fact that was just a happy
+side effect of the implementation.
+
+https://lore.kernel.org/all/1356179217-5526-1-git-send-email-avi.kivity@gmail.com
 
 
+So, with the _EX goof fixed, and "KVM: x86:" for all the relevant KVM patches:
+
+Acked-by: Sean Christopherson <seanjc@google.com>
+
+
+P.S. Thanks a ton for cleaning this up!
 
