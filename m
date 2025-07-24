@@ -1,82 +1,214 @@
-Return-Path: <linux-kernel+bounces-744742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020F4B11069
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:36:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10245B1106C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C490E4E08C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A6F58490A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F402EAB7A;
-	Thu, 24 Jul 2025 17:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587AC2EBDD8;
+	Thu, 24 Jul 2025 17:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9/S1+Ib"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YBkgsVL/"
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B21E04BD
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53A71E04BD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753378556; cv=none; b=RmYQAnGT+anRYufxqiVEx3d+okJN4lFv1+W/1KBsvkwKyhMk2Jylcu5j0gUBnXviAPcODRICVLL10WGptDnkc2ve9f2MqwPd3pu3Ipc6WS7pNYQrjmw/PEmQ/qr+IufdYutVXvATk20xAvv28OGREpf/8ZyC92jjQKD3tiEd4uo=
+	t=1753378567; cv=none; b=m1HdKqoGJMQ4QCJObpwzNH6+Nlhu3UWR0BIf8clj6Ws4CaQQTaAn8dzzQpZ53zFkizMYlObUwYMTRXroL3y0ps+ci6lDshwdfFuDSgbOOBz3HCykJhcuAVTTVK8tr6rZY2rukPNVDAJ92d3Iu6NMjeV+Dr+gw+DpUc3h8fHniEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753378556; c=relaxed/simple;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=PYhLK5dCOa1NFsmLQqBou+P5wudywrwEVuZ22oxSUxQ/v0Nqy/0dEDtUK4J/18E7p9ccZbcya1U336YMEY7bA+64XfRAXXq4ZhHDDzHHUFKI12c3Zm7ayRMmZjwa1oBxqW25NS/cSUKKU0CU+WGetpdawBds2/QKQkWj9qAJmaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9/S1+Ib; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32e14ce168eso13788571fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753378553; x=1753983353; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=X9/S1+IbATlpy/X5R7S2XnqaLfG8OHeI9+hIPhSA7Z9HwIe4okvLjKS0E5/nsaHqzL
-         9n7s0z5czv5e4xH2U7G08x6VSdirmQdfXdeo6jPQCVvRXx6OFBayRWPWaoYmhpWm620b
-         qSfE3OZP4im6N4HqrEJ8QtgOoSV97nssInAmwEhoHGtqYJbc2PZZXKdoeTF5LczqoU+Y
-         ugqQo5dcoLn8Ak4eeeHDdlw+UxD5Vtu5X+CK++P+yncgCqnPlV6I2MvpQmX4/w8zvW4F
-         ZAr1l+fstPlEUQqQDvk7R5vFj0jPSb0+U8h/K+ueTslDRdHv+mDbBUhxrQm8MQCdPqEg
-         P7+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753378553; x=1753983353;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=wLKtLRX4wc08NhWp8QkvBW6RIIT0cA6em6Abr2c9H40tLF9F84RhyGCg1M6F2aI7B8
-         w+Wo8iczrnP+gFegv2OCNIiiYGxohhOz4CqIwLECnj+Bo51dSZtBEaglQbeE3Xwj36pW
-         bpdguf+FanFE/f3OvSF0yi6CjMmLrc2JmfXW4SbvGAUSvnVV0U928t+4sOfKazGbN4hf
-         SPWmm3Zz6LAtjR7spgVjPatQ/Wb9Kfb80v7ezEctLQl5IdfoIj3E95BStFnotDiMc+/v
-         1dXN+t/KRMskvKig/MLZEzJHfWGAgzzrg1Jlue6H0mL7pS2k/SBhv58oMXLxpKColMZm
-         0oiQ==
-X-Gm-Message-State: AOJu0YxztGNvmtoLaA6esPhPDWfcSOnTfZGi08APhOG0J1kVmkWTbdtn
-	WpprEZhJLfOOLE2jtLCeWTAizps7lqEc7F1HJZZqvPZLwBQa/qRjWIVXLUzHqMs6cxFXHneeSSx
-	15/5A+yamy4Y+BIiAXMZtR/U+0xhE9x+IFQ==
-X-Gm-Gg: ASbGnctLVKcmsydhsVZphQMoTwttiuYXfmCLEPLx6on6FbofQ2OR3npXCurSaJrcWXE
-	wzeZCD3CBex6bP2d27fW38oqkwE/NcERkKWDfWm/7J3uz4I36pkTRBcFwPw8tjsHvlNfvEztKl0
-	ZKh4XloedD5Iu1wEszvVIqORV/1XEjG9evEQLLjjPSjluZQd25cl7HyrvZuVvBCpNrLAJikbi9k
-	Z6GtUFd+4qg+2t6CM/tRrxEBfNlRAnryr1idiGQ
-X-Google-Smtp-Source: AGHT+IG5UWErXwKC6ykhKSvk02ApXpPii/e89KpwgSyCw+Ph2U9uQ67z+/5Z4PGEBik41cAA09seiiyp+c0UXxg4uCs=
-X-Received: by 2002:a05:651c:50f:b0:32b:9792:1887 with SMTP id
- 38308e7fff4ca-330dfc273ccmr18850481fa.11.1753378552947; Thu, 24 Jul 2025
- 10:35:52 -0700 (PDT)
+	s=arc-20240116; t=1753378567; c=relaxed/simple;
+	bh=D2M/54N8zJdjcIvoq97yxEel8qGk9C9JommktQkhxgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrAteMyb+1Wup/fl3+v1jV6zA7tTFcX7f/x5ser8ZLY5Nlxl2TKq8XXzrwDCcBC+77/W/31+a7TZLitloxxYsyLfibekkJz4H+1nqomkltzcPq13zyAlXCnwXqUJVHfwMqTlnAVbPBGAKGEMCEUZUosCKYOPiqMZB+sGdSfFBdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YBkgsVL/; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bnypN0JkbzZFV;
+	Thu, 24 Jul 2025 19:35:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1753378555;
+	bh=HbR89xL0fAs890Zk4g+qtVNW0JcpnRM+e9fsbsymfzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YBkgsVL/y/clichoX+1MWFq35vB9gAha7jDqPq3GNLrkjbKlA1dq6EwQchjig3Ci8
+	 1bVaB4Cpj8L7lWGdAH8lrtKArewe0lM3Jz3rrUKQXRafhD7sUaeYYpZz5YKndRT1d/
+	 0GR03WaeVnf4t+P7BIXoYtfVPSaXZzE1AIK6HLJg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bnypM0b6NzxQB;
+	Thu, 24 Jul 2025 19:35:55 +0200 (CEST)
+Date: Thu, 24 Jul 2025 19:35:54 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
+	Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+Message-ID: <20250724.ij7AhF9quoow@digikod.net>
+References: <474C8D99-6946-4CFF-A925-157329879DA9@meta.com>
+ <175210911389.2234665.8053137657588792026@noble.neil.brown.name>
+ <B33A07A6-6133-486D-B333-970E1C4C5CA3@meta.com>
+ <2243B959-AA11-4D24-A6D0-0598E244BE3E@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jay <jaymaacton@gmail.com>
-Date: Thu, 24 Jul 2025 13:35:41 -0400
-X-Gm-Features: Ac12FXw3XmaMmOE_PdKDmHDdjO5PPpWRkX3oCOSodJ1U2mphcmGDwNyl93eGlUI
-Message-ID: <CAPpvP8LBrgK7T8s=tg_LWOEQ0NW_GyQvzHeYYqnh-cw942UDYQ@mail.gmail.com>
-Subject: unsubscribe
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2243B959-AA11-4D24-A6D0-0598E244BE3E@meta.com>
+X-Infomaniak-Routing: alpha
 
+On Mon, Jul 14, 2025 at 09:09:42PM +0000, Song Liu wrote:
+> 
+> > On Jul 9, 2025, at 11:28 PM, Song Liu <songliubraving@meta.com> wrote:
+> 
+> [...]
+> 
+> >>>> It isn't clear to me that vfs_walk_ancestors() needs to return anything.
+> >>>> All the communication happens through walk_cb()
+> >>>> 
+> >>>> walk_cb() is called with a path, the data, and a "may_sleep" flag.
+> >>>> If it needs to sleep but may_sleep is not set, it returns "-ECHILD"
+> >>>> which causes the walk to restart and use refcounts.
+> >>>> If it wants to stop, it returns 0.
+> >>>> If it wants to continue, it returns 1.
+> >>>> If it wants a reference to the path then it can use (new)
+> >>>> vfs_legitimize_path() which might fail.
+> >>>> If it wants a reference to the path and may_sleep is true, it can use
+> >>>> path_get() which won't fail.
+> >>>> 
+> >>>> When returning -ECHILD (either because of a need to sleep or because
+> >>>> vfs_legitimize_path() fails), walk_cb() would reset_data().
+> >>> 
+> >>> This might actually work. 
+> >>> 
+> >>> My only concern is with vfs_legitimize_path. It is probably safer if 
+> >>> we only allow taking references with may_sleep==true, so that path_get
+> >>> won’t fail. In this case, we will not need walk_cb() to call 
+> >>> vfs_legitimize_path. If the user want a reference, the walk_cb will 
+> >>> first return -ECHILD, and call path_get when may_sleep is true.
+> >> 
+> >> What is your concern with vfs_legitimize_path() ??
+> >> 
+> >> I've since realised that always restarting in response to -ECHILD isn't
+> >> necessary and isn't how normal path-walk works.  Restarting might be
+> >> needed, but the first response to -ECHILD is to try legitimize_path().
+> >> If that succeeds, then it is safe to sleep.
+> >> So returning -ECHILD might just result in vfs_walk_ancestors() calling
+> >> legitimize_path() and then calling walk_cb() again.  Why not have
+> >> walk_cb() do the vfs_legitimize_path() call (which will almost always
+> >> succeed in practice).
+> > 
+> > After reading the emails and the code more, I think I misunderstood 
+> > why we need to call vfs_legitimize_path(). The goal of “legitimize” 
+> > is to get a reference on @path, so a reference-less walk may not
+> > need legitimize_path() at all. Do I get this right this time? 
+> > 
+> > However, I still have some concern with legitimize_path: it requires
+> > m_seq and r_seq recorded at the beginning of the walk, do we want
+> > to pass those to walk_cb()? IIUC, one of the reason we prefer a 
+> > callback based solution is that it doesn’t expose nameidata (or a
+> > subset of it). Letting walk_cb to call legitimize_path appears to 
+> > defeat this benefit, no? 
 
+Yes, walk_cb() should be very light and non-blocking/non-sleepable.  If
+the caller cannot give these guarantees, then it can just pass NULL
+instead of a valid walk_cb(), and continue the walk (if needed) by
+calling the vfs_walk_ancentors() helper again, which would not benefit
+from the RCU optimization in this case.
+
+Before this patch series land, handling of disconnected directories
+should be well defined, or at least let the caller deal with it.  How do
+you plan to handle disconnected directories for the eBPF use case?  See
+https://lore.kernel.org/all/20250719104204.545188-1-mic@digikod.net/
+Unfortunately, this issue is not solved for Landlock yet.
+
+> > 
+> > 
+> > A separate question below. 
+> > 
+> > I still have some question about how vfs_walk_ancestors() and the 
+> > walk_cb() interact. Let’s look at the landlock use case: the user 
+> > (landlock) just want to look at each ancestor, but doesn’t need to 
+> > take any references. walk_cb() will check @path against @root, and 
+> > return 0 when @path is the same as @root. 
+> > 
+> > IIUC, in this case, we will record m_seq and r_seq at the beginning
+> > of vfs_walk_ancestors(), and check them against mount_lock and 
+> > rename_lock at the end of the walk. (Maybe we also need to check 
+> > them at some points before the end of the walk?) If either seq
+> > changed during the walk, we need to restart the walk, and take
+> > reference on each step. Did I get this right so far? 
+
+I think so.  You should get some inspiration from prepend_path().
+
+> > 
+> > If the above is right, here are my questions about the 
+> > reference-less walk above: 
+> > 
+> > 1. Which function (vfs_walk_ancestors or walk_cb) will check m_seq 
+> >   and r_seq? I think vfs_walk_ancestors should check them. 
+
+Yes, walk_cb() should be as simple as possible: the simpler version
+should just return a constant.
+
+> > 2. When either seq changes, which function will call reset_data?
+> >   I think there are 3 options here:
+> >  2.a: vfs_walk_ancestors calls reset_data, which will be another
+> >       callback function the caller passes to vfs_walk_ancestors. 
+> >  2.b: walk_cb will call reset_data(), but we need a mechanism to
+> >       tell walk_cb to do it, maybe a “restart” flag?
+> >  2.c: Caller of vfs_walk_ancestors will call reset_data(). In 
+> >       this case, vfs_walk_ancestors will return -ECHILD to its
+> >       caller. But I think this option is NACKed. 
+> > 
+> > I think the right solution is to have vfs_walk_ancestors check
+> > m_seq and r_seq, and have walk_cb call reset_data. But this is
+> > Different to the proposal above. 
+
+I'm not sure a reset_data() would be useful if walk_cb() never sleep.
+
+If we really need such reset_data(), a fourth option would be for
+walk_cb() to return a specific value (an enum instead of a bool) to
+trigger the reset.
+
+> > 
+> > Do my questions above make any sense? Or maybe I totally 
+> > misunderstood something?
+> 
+> Hi Neil, 
+> 
+> Did my questions/comments above make sense? I am hoping we can 
+> agree on some design soon. 
+> 
+> Christian and Mickaël, 
+> 
+> Could you please also share your thoughts on this?
+> 
+> Current requirements from BPF side is straightforward: we just
+> need a mechanism to “walk up one level and hold reference”. So
+> most of the requirement comes from LandLock side. 
+
+Have you thought about how to handle disconnected directories?
+
+> 
+> Thanks,
+> Song
+> 
 
