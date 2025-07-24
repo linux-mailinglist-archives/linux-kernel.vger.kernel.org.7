@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-743686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F12AB101C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D7CB101CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1BF1CC717E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138C83B424C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879BB25BF15;
-	Thu, 24 Jul 2025 07:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7DA25EFBF;
+	Thu, 24 Jul 2025 07:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBF3EF7E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wcm48Xl9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62222580CB;
-	Thu, 24 Jul 2025 07:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2408A7261B;
+	Thu, 24 Jul 2025 07:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753342221; cv=none; b=eZuWt2cjbFCi04HCR65wXjvUr4WM1BQu/dIhO9Hz7mCp+8zOTrrqum8YZQp15T06n50C5KhnmnNr7+xM9bRwL4Bbwr6fqNeEn6nlVG5CeFJx/lBlZFIkY3hybW3JcWxkbTOlwR7jp7NuWUUjCiFpp0zllh9a1CLr4s/KbfATF8k=
+	t=1753342240; cv=none; b=sOrMCb+O0lNHQBe//AmEmyfgHifQOty/WQfPgwSgivVU2qv7RWZEuIrMIzG3Zyf8TcAcZ7jhVYiic6dK1j2DTfRMxj27hSZUmGnrMM5GA0p0TZFJHh7jbrRJYpfuLBiF4AN6qGEJgiWW1hzaEUxKv25xiTXL8UrizZedhG0qG5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753342221; c=relaxed/simple;
-	bh=tmnXMDHJx/99hkHb3MwTeUa8K/p+mLiagTzuITcb9zg=;
+	s=arc-20240116; t=1753342240; c=relaxed/simple;
+	bh=buVHH0+g5I3c2w2cFnoX8kRWvieO8kmsLByaMPNsBgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoCruqD1os1ZsV/NlNTPJUbitKcVVsTRhxOFU+QqvXPEU1WadDL/ZtrUEeJN77lJqLIg6iZgHMdXNeqERDjn+vrrwJILQ9l34oaIae1cxVCesEgolur6R1Caf/W2X56BjeaPBrIzJCN95PAUGGYTxY/QIPOsR8U7VG8rsQ6R968=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBF3EF7E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06408C4CEED;
-	Thu, 24 Jul 2025 07:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753342219;
-	bh=tmnXMDHJx/99hkHb3MwTeUa8K/p+mLiagTzuITcb9zg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBF3EF7EocOh+SjTFd6bvXybnpQogIGqj5/9zY/yOovidzXAObOU96sGA1FB3D0Fd
-	 wGSpAnik1aaSvmpSCdPuunLZg4ze5TnIhdkh7jifObhTwMl3UcGTS+aC7yqa6TNWOV
-	 PXCsvCi2WfLiLUIRrGTSEw/58sNjcESfrFxfskf28QLE9+o06PlugI12jo2UU59het
-	 Kb15zPHn9dc9bC4ClvKVv75zXmAmswUIsAeK1COfz0fH7dbIzLLWitHdcsEMPI0ZLf
-	 8ORTE2H9Bn/TAGv+u0S6324VwudGvuEFRV30EZapeKqhrMdJMCz8zxRRD+3qMK6yxN
-	 ykDa3sWtElZ3A==
-Date: Thu, 24 Jul 2025 09:30:16 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: dimitri.fedrau@liebherr.com, Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH v5 1/2] pwm: mc33xs2410: add hwmon support
-Message-ID: <5fblcb3bbwclh4w4dm3s5ue6eplahka5idqz6z4g6ttmhqb24p@jaqznheusac5>
-References: <20250723-mc33xs2410-hwmon-v5-0-f62aab71cd59@liebherr.com>
- <20250723-mc33xs2410-hwmon-v5-1-f62aab71cd59@liebherr.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZ0bevE96rHcA1zJ1ruR6L7/Mj4DKJxmOEZIq6XwUr/guiRA4RcB/R+R4ShWSH3o7OCiAQghW3ag9zBLVve48u/6ShseSxxOv+1RMPxGs76IAYHorK0oOMPsYsMBv7gIyrtrJQel8ts0eqLQrO2xvuog1aQ+T2YMaboXPnVlLII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wcm48Xl9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x0ieeULae3wZoXFYbacES0pRJT+dyok9yRpzdF6F6T0=; b=Wcm48Xl9he+9gkl3mD7JfqaQce
+	x8ztVwaaQNB53A5F0yo+KJrnZBPNw4lAAfrPl0N8sY5OVPJkJwDMEuhieCsS8U2mg6MaQuEwoJP8A
+	xMtVgtwNnUmpskEXT899TV8M6A/t15OZ56RkAqlELlIhtEg6MJI7GHk5/pnYN3CooEIxTiMxJOupF
+	e/fzMsUaHaqch4kbHHT4PsbtVhXeYYpulwGUn4Mg0RNT9PSKNDvu085SQy4hz65m6cPkTug6Yab24
+	Ok2AgKIsmRhAGwRl+UsJpcNYYufuJ2+ztViaJE6jZJ4iGTvhPqtPDql8iGT7pCunDpG/dtx/NVm61
+	BqqmT/kw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueqPS-00000006i6Y-1TLE;
+	Thu, 24 Jul 2025 07:30:34 +0000
+Date: Thu, 24 Jul 2025 00:30:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yonatan Maman <ymaman@nvidia.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alistair Popple <apopple@nvidia.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 4/5] RDMA/mlx5: Enable P2P DMA with fallback mechanism
+Message-ID: <aIHhGi3adOiLykJn@infradead.org>
+References: <20250718115112.3881129-1-ymaman@nvidia.com>
+ <20250718115112.3881129-5-ymaman@nvidia.com>
+ <aH3mTZP7w8KnMLx1@infradead.org>
+ <aIBdKhzft4umCGZO@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ltkty334uks52aqs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723-mc33xs2410-hwmon-v5-1-f62aab71cd59@liebherr.com>
+In-Reply-To: <aIBdKhzft4umCGZO@ziepe.ca>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Wed, Jul 23, 2025 at 12:55:22AM -0300, Jason Gunthorpe wrote:
+> On Mon, Jul 21, 2025 at 12:03:41AM -0700, Christoph Hellwig wrote:
+> > On Fri, Jul 18, 2025 at 02:51:11PM +0300, Yonatan Maman wrote:
+> > > From: Yonatan Maman <Ymaman@Nvidia.com>
+> > > 
+> > > Add support for P2P for MLX5 NIC devices with automatic fallback to
+> > > standard DMA when P2P mapping fails.
+> > 
+> > That's now how the P2P API works.  You need to check the P2P availability
+> > higher up.
+> 
+> How do you mean?
+> 
+> This looks OKish to me, for ODP and HMM it has to check the P2P
+> availability on a page by page basis because every single page can be
+> a different origin device.
+> 
+> There isn't really a higher up here...
 
---ltkty334uks52aqs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/2] pwm: mc33xs2410: add hwmon support
-MIME-Version: 1.0
+The DMA API expects the caller to already check for connectability,
+why can't HMM do that like everyone else?
 
-Hello Dimitri,
-
-On Wed, Jul 23, 2025 at 07:34:56PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> @@ -361,6 +373,10 @@ static int mc33xs2410_probe(struct spi_device *spi)
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret, "Failed to add pwm chip\n");
-> =20
-> +	adev =3D devm_auxiliary_device_create(dev, "hwmon", NULL);
-> +	if (!adev)
-> +		return dev_err_probe(dev, -ENODEV, "Failed to register hwmon device\n"=
-);
-
-Not so nice that you have to make up an error code here. But that's not
-your fault but devm_auxiliary_device_create()'s which returns NULL on
-error instead of an error pointer.
-
-> +
->  	return 0;
->  }
-
-I applied the patch for the upcoming merge window to
-
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-
-=2E Expecting the merge window to open on Sunday that's a bit tight
-because I like drivers to be in next for a bit before they enter the
-mainline. The major code change is in drivers/hwmon and I assume Guenter
-is ok with me taking it for 6.17-rc1. If not, please object, then I'll
-not send it to Linus and wait for the 6.18-rc1 PR.
-
-Best regards
-Uwe
-
---ltkty334uks52aqs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiB4QUACgkQj4D7WH0S
-/k74oQgAqOmDUlgET+KF+bAbcRInPenXCNIa+ras9CAuOvWfwDvk7GGrhkWyxPBR
-RrviW1kudBEMVlRFE16cEMJGulcHOcZU2Y4idLvG7IYwUBJZIOlFv0neX5HaZ2Wt
-6dz8sqxNFnvp+qfHkIpwQoqJ3eUuyoFkMawO2WNs7ZgRit0psaw6AVdCbv11c+U9
-R9QQAWcdtCSbxNq83bdj9l7AaWZ+YKeMsRXIOhxrA0OG+3CfBnWgbgi3O9K4y+iJ
-zrMqbR0tXyHV53RZ+rm9AZlzIgExGg489uoI7cH8W6w92J9M2n15WtLARKVl9sxc
-+LV4eyF+bAlGvCdxJstZJThBVKJ/eQ==
-=2+RC
------END PGP SIGNATURE-----
-
---ltkty334uks52aqs--
 
