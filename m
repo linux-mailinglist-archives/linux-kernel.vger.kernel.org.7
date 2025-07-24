@@ -1,94 +1,205 @@
-Return-Path: <linux-kernel+bounces-744579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95138B10EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 432C6B10EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C0C3B7085
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13D5AC7A9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5022E9EDF;
-	Thu, 24 Jul 2025 15:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6602EA483;
+	Thu, 24 Jul 2025 15:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRemamHC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H94zABVE"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB41991DD;
-	Thu, 24 Jul 2025 15:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1AE2E36ED;
+	Thu, 24 Jul 2025 15:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370899; cv=none; b=TcEBegy6LiLuZsXN+JNtPj/w7SbQYzvZjzVQlFIZhYPtJ3G48bcgdrFwo9wubSeViN+z8/5OWQqntaQfwxINnjP6u6Fv0iWCl5wB3yBTm5h6W4eAwJazYH6CCEorOp5VvVhIDh2cZD2s1BtSdojGbhOTjAVbDhFKvKn793SlsMQ=
+	t=1753371049; cv=none; b=b7jN/PqDnrtw3EHw4vapS8PFQo4XT6LpJIFsdtvTAArTNwwzy/1+j+XH/BkLwra7WK3FlxwlLdHoIoPrScdXgE5NKdghV3mysQGIuw5wFlAUucEUmpkzKQe8A3KuzbCiuuuWmQECvHl+QIpfGlSsjna5RMP05fCLJArkMRA19Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370899; c=relaxed/simple;
-	bh=Sm/Zvebbu1bNwWT2jtlvN/rqsm/jqBuHeyrtvaK/OJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fI3WKXYPj++jeJoFdpgKCFG4P1JlaAqmG4gZ4VburzPRKytV8xPiKqoOYSKdgdVreFploc80amGnk6az+4gPiNnQCUhwERMoQY+QNbPnHUxsmVoeKM/mGp8Vpy+jz+0jZgwu4ZPKum3JDlOo+9Cp7pjut+jdai2z4YteNoCokVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRemamHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE35C4CEF7;
-	Thu, 24 Jul 2025 15:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753370898;
-	bh=Sm/Zvebbu1bNwWT2jtlvN/rqsm/jqBuHeyrtvaK/OJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sRemamHCavmxiqkxiIpSQdeLtkQcomj/lJUyJSltGBqApqQdW9FQZGytGLdxzhZq5
-	 1yqFeLAMj2oTonRHrszzvqB8nfjluRi0No8YDT1mqVzWtFWNVPo8TJsbqZixsD+HGt
-	 yS/+0Ul/5ZNnysMh33CIp6DCoikuwanXMrPjfxxAvoXpVIZ+h9+vOlBXI04mlwOPiF
-	 3FW5sTQM5ZM65l+48C5fXc+yhmMndyS4itCsJkyzy1guWSzuEL5FYscOYFQoIJyRqx
-	 V1nVJy+sSKHrzNIIgr1eX4bCkKcXuBOLOO9MyQ/r3xUcI2Jmmt5p/vSq5J5VuSzrZC
-	 ZgWhFqpr3Zyhw==
-Date: Thu, 24 Jul 2025 16:28:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, Alex Lanzano
- <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Rubusch
- <l.rubusch@gmail.com>
-Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
-Message-ID: <20250724162810.214414fe@jic23-huawei>
-In-Reply-To: <aHd1qDR3jNTKBbun@smile.fi.intel.com>
-References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
-	<20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
-	<aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
-	<j7vqnxx3d6cws2zsveqohr6iqtno5thlauypnowlijifiwx5ow@6arfipnjkfh7>
-	<aHd1qDR3jNTKBbun@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753371049; c=relaxed/simple;
+	bh=s6n0+4J3j3E/bwSmPKHNNlPN0uXRfALwz6qCZuavh+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c0FRVgPwoTYM2AFJix7+46mr00iSCU/S8EREOGux1yH3eJmxMxujVUxEN6pizwtZf5sTGEu8FI7Gb/GN0siRF6UZlmfwUKPq+npUf0zHb8n8+sPIp7BfpVrkfoKotEPZaDRILRlaDXRM7QuavtvKCOEo8bxlbIGvR3Vku0QX4iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H94zABVE; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ab63f8fb91so9156571cf.0;
+        Thu, 24 Jul 2025 08:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753371047; x=1753975847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bns7Kk0Rpa4pq4zt0eqAHfJ1qsmgjPeI84GDNp5EYCw=;
+        b=H94zABVEXHxKIMJCrQBkxzt72LMwdnIDpYPLTS+q0fd0y8Ti6if0SaHkg+XRDcri7c
+         Z++nGEuvG8/3aUoYIYzBgh5/BUkSVrBBG6d4+cF+eofLgVcg0kUXydpPqo+fRqzSjnTi
+         HRYWOEY/FLF3v3qe+sHYegXDkcdVaykA1kUlHUywYA6oFB/KBOyU4ZAdPmXMjBzwwwJu
+         e9Wu5niOC3xWyxPxmHombGhHg5En3JLf43GPGGIof64GJZ1lEpQLCB+NqMBSGYemRBvJ
+         72vFyT/1EaZgB3MsSLPgRL9ztn1Yl5djwDjfDeZoXHcLq50GiNHktcSqkBt1fLH3W/+R
+         GTMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753371047; x=1753975847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bns7Kk0Rpa4pq4zt0eqAHfJ1qsmgjPeI84GDNp5EYCw=;
+        b=YM06WEwLZdlB8KywtXlChw5FDPnAMLUl6yQcWVGoOE5RKBk35uAQmqRxSAL+aelx9a
+         HLLUzXt/1cOKBQS7JAQr67uqYjvGB83x4BNJq0IUFvM3tajeBGCEo0ZWrx8TSfbM8eV1
+         Lkv8Zre7CFTRzkK8L5vm1Qt005ko2A47+AKW/pwoNtDrwlQA1qAIshciH3HIHoWu8Jxx
+         B60hghWSMVvKRhr78jX/a9pZYtK3+Q02XS/OOPzVcoqe8slFLHeyFogt3aQwDzCgolgv
+         W7D76GEo1grmxlv7yIyolHSCRKNdv8gMRZQclfM06I4hUf1YUrU7nDbahE3eD3vmIWoI
+         yJMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKElG4POiazA2yJGT4U9hUd+CMIZnyJDqKtDFk/lfQrWcXOwCOKf6cABZ34mkS+jJciYHJkow3W+1VY5c3@vger.kernel.org, AJvYcCXZ/CdVVSn0B+4AzZa17Q8IPYKsubUGoYR8afOdzbAi0PO+Fehl2lt3khoDom64QCup09s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXge/FORnU6p1otbyOjmbjNaQLw93+ciqWLvjupPV8sppJL86E
+	G5tqMdrAigWW92xY3YotTQDtaA8Y3TbNEW0sXoOUdZD5ETBkSqoEqnXX1UFe836d3mvMXZXTYjD
+	Rgc8FDzSKPH2cFlTRoX2D+zjj9YCgXak=
+X-Gm-Gg: ASbGnctpCGAgudH9njojdoRKJrX4S/BnrvjlkuA+9UrGnIZ+Ei25yIEyPEdbvvWqums
+	yMXABW59l84l0Ysxo0O0P7reakz4i2pqqUqevQVEvGYcqMMa9KG1jwaN6ALytoPSzEDyTB6ejhb
+	+6rq6rc/ZWYZeRB9EuTPyFwftwbI71Ar5I0rM/yReiNG+6i0q00OTNZtpIHPK4Yxp4mj+Q9WLse
+	uONSYY=
+X-Google-Smtp-Source: AGHT+IFneajSujJFQ97vJcxifdOb9B3fL1wtrAniITfCV3VYjoOZ3QlmTUWuT4bgBenSgy2Gnd2jFCXUqEkPtzVI9bw=
+X-Received: by 2002:a05:622a:10e:b0:4ab:5429:f961 with SMTP id
+ d75a77b69052e-4ae6df467a1mr98689901cf.35.1753371046736; Thu, 24 Jul 2025
+ 08:30:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+In-Reply-To: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+From: Vincent Li <vincent.mc.li@gmail.com>
+Date: Thu, 24 Jul 2025 08:30:35 -0700
+X-Gm-Features: Ac12FXzYVMc9LtJ5ub-Hay_uu6iwvZYf5WJFpfcdpSQsl15oaprz3hONyJyeCuw
+Message-ID: <CAK3+h2zirm6cV2tAbd38RSYSF3=B1qZ+9jm_GZPsAPrMtaozmg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Support trampoline for LoongArch
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, hengqi.chen@gmail.com, chenhuacai@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Jul 2025 12:49:28 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+On Thu, Jul 24, 2025 at 7:19=E2=80=AFAM Chenghao Duan <duanchenghao@kylinos=
+.cn> wrote:
+>
+> v4:
+> 1. Delete the #3 patch of version V3.
+>
+> 2. Add 5 NOP instructions in build_prologue().
+>    Reserve space for the move_imm + jirl instruction.
+>
+> 3. Differentiate between direct jumps and ftrace jumps of trampoline:
+>    direct jumps skip 5 instructions.
+>    ftrace jumps skip 2 instructions.
+>
+> 4. Remove the generation of BL jump instructions in emit_jump_and_link().
+>    After the trampoline ends, it will jump to the specified register.
+>    The BL instruction writes PC+4 to r1 instead of allowing the
+>    specification of rd.
+>
+> -----------------------------------------------------------------------
+> Historical Version:
+> v3:
+> 1. Patch 0003 adds EXECMEM_BPF memory type to the execmem subsystem.
+>
+> 2. Align the size calculated by arch_bpf_trampoline_size to page
+> boundaries.
+>
+> 3. Add the flush icache operation to larch_insn_text_copy.
+>
+> 4. Unify the implementation of bpf_arch_xxx into the patch
+> "0004-LoongArch-BPF-Add-bpf_arch_xxxxx-support-for-Loong.patch".
+>
+> 5. Change the patch order. Move the patch
+> "0002-LoongArch-BPF-Update-the-code-to-rename-validate_.patch" before
+> "0005-LoongArch-BPF-Add-bpf-trampoline-support-for-Loon.patch".
+>
+> URL for version v3:
+> https://lore.kernel.org/all/20250709055029.723243-1-duanchenghao@kylinos.=
+cn/
+> ---------
+> v2:
+> 1. Change the fixmap in the instruction copy function to set_memory_xxx.
+>
+> 2. Change the implementation method of the following code.
+>         - arch_alloc_bpf_trampoline
+>         - arch_free_bpf_trampoline
+>         Use the BPF core's allocation and free functions.
+>
+>         - bpf_arch_text_invalidate
+>         Operate with the function larch_insn_text_copy that carries
+>         memory attribute modifications.
+>
+> 3. Correct the incorrect code formatting.
+>
+> URL for version v2:
+> https://lore.kernel.org/all/20250618105048.1510560-1-duanchenghao@kylinos=
+.cn/
+> ---------
+> v1:
+> Support trampoline for LoongArch. The following feature tests have been
+> completed:
+>         1. fentry
+>         2. fexit
+>         3. fmod_ret
+>
+> TODO: The support for the struct_ops feature will be provided in
+> subsequent patches.
+>
+> URL for version v1:
+> https://lore.kernel.org/all/20250611035952.111182-1-duanchenghao@kylinos.=
+cn/
+> -----------------------------------------------------------------------
+>
+> Chenghao Duan (4):
+>   LoongArch: Add larch_insn_gen_{beq,bne} helpers
+>   LoongArch: BPF: Update the code to rename validate_code to
+>     validate_ctx
+>   LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+>   LoongArch: BPF: Add bpf trampoline support for Loongarch
+>
+> Tiezhu Yang (1):
+>   LoongArch: BPF: Add struct ops support for trampoline
+>
+>  arch/loongarch/include/asm/inst.h |   3 +
+>  arch/loongarch/kernel/inst.c      |  60 ++++
+>  arch/loongarch/net/bpf_jit.c      | 521 +++++++++++++++++++++++++++++-
+>  arch/loongarch/net/bpf_jit.h      |   6 +
+>  4 files changed, 589 insertions(+), 1 deletion(-)
+>
+> --
+> 2.25.1
+>
 
-> On Tue, Jul 15, 2025 at 08:52:41PM -0300, Gustavo Silva wrote:
-> > On Tue, Jul 15, 2025 at 10:37:21AM +0300, Andy Shevchenko wrote:  
-> > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:  
-> 
-> ...
-> 
-> > > Is this already documented in ABI?
-> > >   
-> > Not yet. Should this have a device-specific ABI entry?  
-> 
-> I don't know, but what I can say is that change is no-go without documented ABI.
-> 
+Tested the whole patch series and it resolved the xdp-tool xdp-filter issue
 
-Indeed. Seems this particular combination has yet shown up (or we missed
-it for docs).  Add appropriate events/in_accel_value_available
-entry to Documentation/ABI/sysfs-bus-iio
+[root@fedora ~]# xdp-loader status
+CURRENT XDP PROGRAM STATUS:
 
-Whilst you are there, good to check that all the other ABI for this device
-is listed in there.  Given we mostly construct ABI from a bunch of parts, it
-is easy to miss entries for particular combinations of channel type and thing.
+Interface        Prio  Program name      Mode     ID   Tag
+  Chain actions
+---------------------------------------------------------------------------=
+-----------
+lo                     xdp_dispatcher    skb      53   4d7e87c0d30db711
+ =3D>              10     xdpfilt_alw_all           62
+320c53c06933a8fa  XDP_PASS
+dummy0                 <No XDP program loaded!>
+sit0                   <No XDP program loaded!>
+enp0s3f0               <No XDP program loaded!>
+wlp3s0                 <No XDP program loaded!>
 
-Jonathan
+you can add Tested-by: Vincent Li <vincent.mc.li@gmail.com>
 
