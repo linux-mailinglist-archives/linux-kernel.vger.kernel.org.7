@@ -1,388 +1,167 @@
-Return-Path: <linux-kernel+bounces-744060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93ECDB10790
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE90FB10786
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AFD13B8C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172EF17D24A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B21C262815;
-	Thu, 24 Jul 2025 10:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C45E260582;
+	Thu, 24 Jul 2025 10:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N7iz2Wn+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOvxIEhd"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B439A7F9;
-	Thu, 24 Jul 2025 10:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352291; cv=fail; b=jEyKS8/RW7EY0KH0cI1HycSRwuDD/oR97Wl+toMCR/9/ZN6h+CzhmF/6umWWSdBfXLNR9OODUcxs4nUq1GstSvce3NkNMqE0aZVLSC0++k7jsbKfv9RvKNLbzFPBMHlvycw3a9jCRaS+iSOaegwPnLbn20OzBrMEXpZnCiZcFhM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352291; c=relaxed/simple;
-	bh=B337WhNPcLdv+qs+n1fpS5oLPhymtZspMsu2nVRgCeo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sMAhbs6UVdbNT/2/jufjQuhhBgM+AlTs1qa8owjW21xpVrh074OYmK1gLQESArfKctl+lJ266+dMWedfN6WLxh5r0NIiCwCQ9e7lKnt9ifeAhRN5b6gP991pRk3DSr4NfB+PZI5JRZKpL6WxNfkKlIQ5L5UJWVwGaH2gKO49bzg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N7iz2Wn+; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753352290; x=1784888290;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=B337WhNPcLdv+qs+n1fpS5oLPhymtZspMsu2nVRgCeo=;
-  b=N7iz2Wn+AQaPZPW/N7XOTBPYt7C0NwwDGVzmUfTpLZHwAc6y/ZBrexEC
-   3jtF6Q/QVu5WBXGTkKXJ5auqP9W0rTGnbGa64gNXUP5iWPyoXqceUwIQn
-   2qNLu3GJBFyP87dVeI73WV0gM6REMm+YtlCVlha5StVauCbRrVPcNTgS4
-   1CyxU/WVmPMkPsy52Yw2bS/Nl3HRN7azmCxIJ9TYPuHlBScP4WZFMTf8/
-   m6BDweBRwe9OZh/sF+hVdsbxsoVh3eW1iW+uja8RZ4wvO5IhUXVY7fgLG
-   0n87U2dqIH9cebUi4mOK3A+V6ibgY+KpE/iB6NhP9PGyw3j69LWEv3y5J
-   g==;
-X-CSE-ConnectionGUID: WpwhZSHDRq6aeie53i+28g==
-X-CSE-MsgGUID: mugXXFnySWSsa3LH3e6wsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55506044"
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208,223";a="55506044"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 03:18:09 -0700
-X-CSE-ConnectionGUID: jnmkZg1lSj6auC6FevJRUQ==
-X-CSE-MsgGUID: Nl76dFvxTLuSRQ7tx9wJYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208,223";a="164632640"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 03:18:09 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 03:18:08 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 24 Jul 2025 03:18:08 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.47)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 03:18:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cgq1mpfPRSG6mdBNaifjaCgdLj8lQKYIWS+hgDalFgF4blhO9Yr6919joXcTEUrimp46xTJxVTW61ZhSnrBSRQR3dWjH0hx4fbncrt6Vqr22rnW2MujM/uzK1sU28DQwUajEKVaObWml9mpdOc6vCBfbBSuXrxaMFn4EXjdl1KyhpgX8QsJa7UMe2GbB02V0ARXfoZHVJ+L+qE2t2HwHZpOAwNFt1CWED0Z6HeK9ig/E46v2/WFirthBROanJ521ROMSUaFNeUIdThN6CzGdzSzYufkzgqGpRMOafoArGXx5ULKOcDtLYKCetx+GuIp3WuG+KEUanQ38npW/+iileQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nxoqPbCo8aD74POFHJSRUEUzmkuWmEhkTaxp5IyBBLw=;
- b=NBIrQ9Hdf9fOUdyV99/yTudV1aWgnImUoG+jrAcFwAYiDoWn1TTeQtmeK0VuB2SJQovQQfCow/8NsHEgBQub8bPXajz8TaNpbzmCL6T/u2W2K7kg9sMS0goUR67OrKymXvW9CROsv6XDBgFmfCPd0GcDjEB8P69TZbafpOGhH1VRrNOOklAqSpv86LB2feXNyE4zAEGKvnO+0HUSOHLs5nL5UYKwXLAIg8TuMaVboNPjQHf9sNfUGGEwtR9WPsx2XBrs3rgXjE90KgmeKyJjoOFuHvVqM405inNv3C4ge2oSeG3RJLEafRf6EOJIui/MFjPRYqJj26OvBSt9HQdEKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
- by PH0PR11MB4904.namprd11.prod.outlook.com (2603:10b6:510:40::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
- 2025 10:18:05 +0000
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.8964.021; Thu, 24 Jul 2025
- 10:18:05 +0000
-Date: Thu, 24 Jul 2025 12:13:25 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Kyung Min Park
-	<kyung.min.park@intel.com>, Ricardo Neri
-	<ricardo.neri-calderon@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
-	<xin3.li@intel.com>, Farrah Chen <farrah.chen@intel.com>,
-	<stable@vger.kernel.org>, Borislav Petkov <bp@suse.de>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] x86: Clear feature bits disabled at compile-time
-Message-ID: <7rugd7emqxsfq4jhfz47weezipfoskf43xslgzgwea2rvun7z6@3tdprstsluw4>
-References: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
-Content-Type: multipart/mixed; boundary="qcl4oja5xcm7xybw"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
-X-ClientProxiedBy: DU2P251CA0028.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:230::32) To MN2PR11MB3934.namprd11.prod.outlook.com
- (2603:10b6:208:152::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CD025FA10;
+	Thu, 24 Jul 2025 10:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753352065; cv=none; b=hHHfnkuo4pYKKW1NcEG2wGjmhBLDlRlKly65GMvEbwA/Y+PP9PKHPX1jU4N+WRbVuoDZkIJdKIge9JI/sW4Qi4JbvTtsYD3hs14lp3zH6y//ihuxARrkE6lfq6sm5KkWBGerlTgiUHiNaAZQKGh+nN1qXVnN16dM1+2r6BnBuY0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753352065; c=relaxed/simple;
+	bh=j/tNROBJ9AqaM/+F/rmOXFHzO6aVOQ/0E5dPcthSGq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BXY1uwk0Bca0uYIAV1HLAkY76vmpPorJPFQAlN7pXDq1az3NVpY4JyL0V3kxdyP1LIMCYmBbPhNGE7epFsUxWjJ26Yr0hMAHFoBI0VXVcF4fQdLgLmSYvGNHj9H4PbXi8nYnI3ONykAo6y2quc+PAPc0a/y9sHKam760w17ZXc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOvxIEhd; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3de2b02c69eso3989175ab.1;
+        Thu, 24 Jul 2025 03:14:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753352063; x=1753956863; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zoxQrE9BQllINJgA23hOAwgoifAhEszw6BlmYIQoAW8=;
+        b=VOvxIEhd5xgO4Dm+vHyxrJNul3L0D3LoL5JxBdkX487Q5c6hJsHm8yn2q8HCZBLj1n
+         /MFg5LfY2SUzETrwuiZndxiT1+Jykj9oyHbXNSS+3GOHGnAvJ5yA8ce6ffA99LI7iiY0
+         P/c9WJQGrQ0jSlbIFbej0uTIIZFDlPlNkybZXHY3/coDrK1P0qR3owko8mtoBDcEjQIy
+         6kWiPEYO4ludeFcDF0WepAsI6LZ5QTjqN3/uh6/gIjkGYT+2bUXVdwC5VbNKRL3hHd9V
+         s6qStlwk7FKmh9jh19io/3EGkZVy2opoQHSzdA8ye/u+38kDNwiKDwEJsBLSBAfWT74J
+         6AKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753352063; x=1753956863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zoxQrE9BQllINJgA23hOAwgoifAhEszw6BlmYIQoAW8=;
+        b=VH8+vxa3ckxvBA77hGeuPZS6c0EJNeowuh0i9RdK04LbVYHQ/0RCH9uCLNcc3u4vjI
+         bhOWWP0dOiBNRrT2GMP2HvbYPVHg4m67GCHCiMOuc00zHSv9UeJd30iE6NGuomGKXmfc
+         LZc3uJwJVxmQuUsf6cXzt6m3Aa11lt+ngRj/mZAiCLjEiD0u60eQY1je4W6R6dn/QRYl
+         G3fSmGTcXlOcStQdMBUzE8q0pdswB0yQ0/y9slszGLWjMpcjfYH3+5c23n8hpNRpXc5C
+         a0s8pn6UOuv6WwpDOj2MpQGX3XMbocrPXoQmQgCIyZiAXInKACaOc9XTptRiT5T3LqP5
+         q88w==
+X-Forwarded-Encrypted: i=1; AJvYcCUz2ILIO9XFDs+YzOkIS5Z1Mz3wnRwAUHz12Y4qR/u9TkF2vIvojXHraz62qXDoAFMt1I4dOxy9n7TsCpjx@vger.kernel.org, AJvYcCWbIlBHpZoYAcIABgfkb6HZLf2BJS1fCmsQVHoT9enK9fm8Cyz8xIK/Eq1GSKAnoVi3gHV7e25VDbfk@vger.kernel.org, AJvYcCX7EnApAad/Lv7NkZ1CMBKPtyIuZSLn3/yhJoAEtMRvAXj5caYdiVJtLEtf+TkhuL+EAZcus9ZpeNRxOP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQjwLCgOrQFZ8IoYabMv3FcU7aCqHYc59kCygzHwhY/+3yqEx6
+	+RNVa1Jf6rldD7I3m564kzJ4kVQ1TsimE5m4iX6mJ0+Zg1mbfaLcbAielV3ZiVlMx6L3rHTxfEL
+	m5VDNFmUVKu/AnFt2egqseaJCIiJK2nc=
+X-Gm-Gg: ASbGncshhLWcAJF2Ypp5dnVp7Tyt6ispUW1HSJU9BpMvyeHSC/ecVBjEZvegjrSHyxI
+	crIrjekH5TMGYAeatipF+EiCeRnGCmr0OimezMEouhyPlN0HdMBV9K3yRH+sD0uAar4uOvcE/wI
+	JBRE6+9P7Uva7DN10x0mOeQ3W3QsDC9CbHLDOlyFHfFsdOUTDBMBxiUS/gCCNe3liKJZQxDTfbF
+	Fme0VM=
+X-Google-Smtp-Source: AGHT+IFuX+HkjjMmIqfOcPi1Vf9XVVv1BJDb7TK2k3LjKb0AvDjYDmsh1XyejNfF4igxDfky969ahsCQGQoG5Rin4/s=
+X-Received: by 2002:a05:6e02:1945:b0:3e2:a40e:d29f with SMTP id
+ e9e14a558f8ab-3e3418d71c5mr88504975ab.9.1753352063278; Thu, 24 Jul 2025
+ 03:14:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|PH0PR11MB4904:EE_
-X-MS-Office365-Filtering-Correlation-Id: b842b2b8-9e9f-4777-02b3-08ddca9b60ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|4053099003;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?o2pLyeMZVNq2sT6J9TKbiGbLKZz3+NqVWrCnraueAcat3F0qOq9261g9d0?=
- =?iso-8859-1?Q?+IiCEfJ+G1PoHhJ4nOQtrxl+zIspwK9tNdShuh5HcPzVQ6tpHqr5Jxi9zo?=
- =?iso-8859-1?Q?FGOGLD7zQaJpVisT+boTrizQwsrpeMBdzxK/cFwGX72z3czLEeN0UHQzlB?=
- =?iso-8859-1?Q?clJGOok6FErSgNlG+NToIrA11o54kxXOG7R6FGPGT/TzYgVskmuhSebeJI?=
- =?iso-8859-1?Q?nUjBESIT2UG56lw0QgixPv44luL8MEj1wELxu9Is3RP7kRAGufRj4YC8ca?=
- =?iso-8859-1?Q?k/tfnz4HEmMIkjFRvTP2LFVJAl8hGcCVZT31km729znSoWICecZTXeCYNH?=
- =?iso-8859-1?Q?xwLRgotPRVaReG27yOv64jrO2XKmgf+hl6vCeAq1L7C9QkZ/SFZrmSkWYN?=
- =?iso-8859-1?Q?xMMAb1epf3s6FlhKsFW3bAQtY1omwcdVJ/p8C//4VW+PBeQDiXr5IXF6h6?=
- =?iso-8859-1?Q?nyYaMlYXxnwEF2EZTAo3jMXIFhOwdYSPEBWCvRgVQ6roj85hcX/IE7CrJe?=
- =?iso-8859-1?Q?Hy26REJG3WsD4WgVLieCT7H967VTWoLiqBTp2d18CoMhUwRDZuzSWIWt2o?=
- =?iso-8859-1?Q?Sd9e0ewiVrrjUjLMN2pawYQ3JYGBCSCn1Eo5aGWCOIJJNcyga4G01FByUY?=
- =?iso-8859-1?Q?v/JqfrcvzRRmLONrJiF6LdyBVVnActPUJ4KUOlh2eK5obXbAEuzbPHybZ9?=
- =?iso-8859-1?Q?vb8BH3zjlcZQhJFNNBgyk78nuW/mOMOSwTvC0lDVY/GD2ypnSZWvgv0kJN?=
- =?iso-8859-1?Q?hQ4qlqoAmhs+3PmDwjF+6d/NNPVwl/0CeidsLCUqIjKa3FZrpdSf1e4Dme?=
- =?iso-8859-1?Q?4iMFRyaDLVRohESarmsnUqfbx3rg5TRSm4GybINbKKODBbJ1hWbR0dVpFc?=
- =?iso-8859-1?Q?jzPgaMkwV4tG8oDeOCZIOpgvCHdbDgmotHDxrD+y7f7IjWO7Ff/mchIhnC?=
- =?iso-8859-1?Q?LLW7hv842RsW+p3AYf81FX1u7ZAT+tn8QS6yMlVpA4tjCk7ZwgXmh21YvH?=
- =?iso-8859-1?Q?dI1sCAF19C0F5b4NcOaOGUINuGM1EnH+lUhAsvANjUk9OVC0ivH7oBGbDy?=
- =?iso-8859-1?Q?V30DIoWwzsjwvsBO4tXfG2QFKqgeIFNToJ9i6qPANJgD8931Ikux04sfkz?=
- =?iso-8859-1?Q?3VyFOTooXa9llJ1JcAFTL+qJ8DKah9HMDyCR9wFqph2Uh6ebWFpFDII82D?=
- =?iso-8859-1?Q?rs4y7+VDwFsV+tkV+yEq903tDwKP/IKIwfwtkISEWLKuCrAYi3FlR48cA6?=
- =?iso-8859-1?Q?6D6L48Bl2GlNOWJjJOCbRAfN+13jtrzYRYASVnnXEdnKF6cBAzInQS/j0s?=
- =?iso-8859-1?Q?SNN0qqoNTWfSIYrqT6lpaSCMZdf4wI5FH3pM5KFsrnfvI5K7UtQJiLd9tW?=
- =?iso-8859-1?Q?+Dpr7wAPyqLehpbx/wn+Q3fGTFaYfzsBhy9znOnLRs7CPNOJN2MiWAm1x7?=
- =?iso-8859-1?Q?fMp8og7LdcaX6zmE6Bkyf772rjBbwf2AV2T/4oiXk2OzJ4VEV/o9EVoO7z?=
- =?iso-8859-1?Q?4=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(4053099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?pKQTIaHqZjxjxnWzeIYRkXvnslY/zJNIzjvqoPCWHwyVQ5pC2i6XBCWtXj?=
- =?iso-8859-1?Q?7beEnAMWWxB5dPGl2sjG8R5qXF2LZaQQh54Lnx6exBERoClA4ysg0cdRFY?=
- =?iso-8859-1?Q?a0lB5xJtevEHZx45AsPs//MIu2FvKcoxEyaGPzS1xG7EIUsBuLmprJSDyp?=
- =?iso-8859-1?Q?aJFhoFHP8oiTiDEYvd0TgncY/ago5wFktHYhLqeECI/Qbz7ZJtby5u+aGH?=
- =?iso-8859-1?Q?yp+3ZWODHcJ5i640pN6VlC+NH6VYaZcZpSq87pit8png0RSBqDgEIhrSTs?=
- =?iso-8859-1?Q?RrKBqMtWb5xFbAb6OjrXd2gIIvEY/4RHD9pITikxqMW6m/d2zcEChtBBdX?=
- =?iso-8859-1?Q?uwPQh3UW++Iu3zKyNUd+i7aWov4m5av6xN2+PeSo+KGgXbhHcpacBShpB7?=
- =?iso-8859-1?Q?j0R1Em/NsVxHLnK+V6ufNn5dUxPBWWjYrsX6zS27FJ93MB/XtZvBA3kMIZ?=
- =?iso-8859-1?Q?oLGlKpJwWZsBKf/kNKlHgwc8bjnDA8kK9CIOT3N/WBUWqz25xY+u1eYqTb?=
- =?iso-8859-1?Q?8b9xvqzY6dwzOjTg8WrSIKSxp8Dm2nN3dn+MCDRga94vVazNEEaI2KCoxT?=
- =?iso-8859-1?Q?Wkw9KCo9pasC2ekAHchUsxDcPw8afkFg694QYO3PwDK9od2mF1H7u2OCkh?=
- =?iso-8859-1?Q?tfzKvccYMTTr//VfITbzgBpth8r3VLtipPDpFCNHSx7fgEIVlpLPZbZUPZ?=
- =?iso-8859-1?Q?eNjOiiks5U5C/R2fcB9vTZwEo1x+oIXDPAx5Ho0s320ifQKMsXBzPWSurB?=
- =?iso-8859-1?Q?xHc4+Z+JUXGVLgLHbZwuCGO3zUVZDiyn7Equ6gD1yrpFE6qNxy0zavgdxH?=
- =?iso-8859-1?Q?Fvf+rSwR/WbAuGaKiuvia5+a1TsH+XSkpLkEbHSNADsUh29Qq51mHMzoOR?=
- =?iso-8859-1?Q?fDminGQEoYsM7vuZWOxi2DRJ1r6vp2oaE4NW+CtX3DVbt3OhOhbnw8sI4c?=
- =?iso-8859-1?Q?A3PNMduk8Ttpp677p8oPxHYkomRUPExcwSYAMebwDLqqYuLkQ8R45mIFs9?=
- =?iso-8859-1?Q?zAgA3Y8wj2ZqLGNWEgiqeZbqexNP76HeDE4OUvDMuwxDdBDx9Tfyrm1Ckc?=
- =?iso-8859-1?Q?trqYq3eT7dJWAD53bAOaaLdWGq2A7SgvfOlgigVM9/ek1pZe2u392kCqxo?=
- =?iso-8859-1?Q?A+Yp8faLxVT4UzVHAEhj1exHdLHo8UYZmnEewIdnEhSsC0aGk+HKTGxqae?=
- =?iso-8859-1?Q?fic4Gj9E5GNRJW/YcHEJBU8FG6wBonEgdtwfPuPUfT+GVYGcrjqaxBjKWJ?=
- =?iso-8859-1?Q?h6EqTPA/JfDMTxIlUlE7kOs9jX9PYTpvMmn45p/TFKNxVlDH0iJkeUxTuq?=
- =?iso-8859-1?Q?L+PBjBIzEInoXgLLz++sHBD2WA85t7c5AStGRbYKuEjtrLc/HsQsZK8rHt?=
- =?iso-8859-1?Q?GJX6xtKkHhPk/Own3jHsg/HNSWyoJ9/Ekhh+PNxVB+JLpF3HphKK6sMY43?=
- =?iso-8859-1?Q?E2op7AdxmGhTKW89yYQzyN5liNY89m3XFGUD3wz+eUiBEjRgku7vzcsnpU?=
- =?iso-8859-1?Q?pPBxfYBVTrheCGoGr0JdsoRfpUHeuY4dYL4NJs1zCeSC0CBW6yV4PM/otr?=
- =?iso-8859-1?Q?6sUQ1M9P8p4NHR9/pEEljbHXI5GOKKmOl/yWWPPcSV4rQSsAkocO68reUS?=
- =?iso-8859-1?Q?BAYju/S4HNtrb/0DFhAtmGhu/s6Kr3oNF2zuRanL3eND5rI6bQur4xsvIB?=
- =?iso-8859-1?Q?WC2y0xxloqGqeyViI0Q=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b842b2b8-9e9f-4777-02b3-08ddca9b60ea
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 10:18:05.3649
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cF/PClWInNOfIz+BnWjVwfMmsocQjBpX7l/wBzIdE1+6uETGCZsp+CS1zDK8ysEzInY/FDMQZ2MJ7v0Wi0SXF3BHTjEndf7SVmYDjFQKrL0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4904
-X-OriginatorOrg: intel.com
+References: <20250724072248.1517569-1-shengjiu.wang@nxp.com>
+ <20250724072248.1517569-3-shengjiu.wang@nxp.com> <87jz3ykpju.wl-tiwai@suse.de>
+ <20250724-fair-sheep-of-success-e02586-mkl@pengutronix.de>
+In-Reply-To: <20250724-fair-sheep-of-success-e02586-mkl@pengutronix.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 24 Jul 2025 18:14:10 +0800
+X-Gm-Features: Ac12FXy8l34qKKJsPON1hex-xaVDf1J211wM6fAeHOddOjpvI8f17HQ8iYSYGc8
+Message-ID: <CAA+D8AN2B_RZ9iZ3qE5zMBfs7BMAkruSRQupoXyrsr7Tt+Gfkg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] ALSA: Add definitions for the bits in IEC958 subframe
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Takashi Iwai <tiwai@suse.de>, Shengjiu Wang <shengjiu.wang@nxp.com>, imx@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com, 
+	festevam@gmail.com, simona@ffwll.ch, robh@kernel.org, rfoss@kernel.org, 
+	airlied@gmail.com, tiwai@suse.com, jernej.skrabec@gmail.com, 
+	p.zabel@pengutronix.de, luca.ceresoli@bootlin.com, devicetree@vger.kernel.org, 
+	conor+dt@kernel.org, tzimmermann@suse.de, jonas@kwiboo.se, victor.liu@nxp.com, 
+	s.hauer@pengutronix.de, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	linux-sound@vger.kernel.org, perex@perex.cz, 
+	linux-arm-kernel@lists.infradead.org, neil.armstrong@linaro.org, 
+	lumag@kernel.org, dianders@chromium.org, kernel@pengutronix.de, 
+	cristian.ciocaltea@collabora.com, krzk+dt@kernel.org, shawnguo@kernel.org, 
+	l.stach@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---qcl4oja5xcm7xybw
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+On Thu, Jul 24, 2025 at 3:40=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.=
+de> wrote:
+>
+> On 24.07.2025 09:37:09, Takashi Iwai wrote:
+> > On Thu, 24 Jul 2025 09:22:44 +0200,
+> > Shengjiu Wang wrote:
+> > >
+> > > The IEC958 subframe format SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE are us=
+ed
+> > > in HDMI and DisplayPort to describe the audio stream, but hardware de=
+vice
+> > > may need to reorder the IEC958 bits for internal transmission, so nee=
+d
+> > > these standard bits definitions for IEC958 subframe format.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > ---
+> > >  include/sound/asoundef.h | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > >
+> > > diff --git a/include/sound/asoundef.h b/include/sound/asoundef.h
+> > > index 09b2c3dffb30..7efd61568636 100644
+> > > --- a/include/sound/asoundef.h
+> > > +++ b/include/sound/asoundef.h
+> > > @@ -12,6 +12,15 @@
+> > >   *        Digital audio interface                                   =
+   *
+> > >   *                                                                  =
+        *
+> > >   *******************************************************************=
+*********/
+> > > +/* IEC958 subframe format */
+> > > +#define IEC958_SUBFRAME_PREAMBLE_MASK      (0xf)
+> > > +#define IEC958_SUBFRAME_AUXILIARY_MASK     (0xf<<4)
+> > > +#define IEC958_SUBFRAME_SAMPLE_24_MASK     (0xffffff<<4)
+> > > +#define IEC958_SUBFRAME_SAMPLE_20_MASK     (0xfffff<<8)
+> > > +#define IEC958_SUBFRAME_VALIDITY   (0x1<<28)
+> > > +#define IEC958_SUBFRAME_USER_DATA  (0x1<<29)
+> > > +#define IEC958_SUBFRAME_CHANNEL_STATUS     (0x1<<30)
+> > > +#define IEC958_SUBFRAME_PARITY             (0x1<<31)
+> >
+> > I'd use "U" suffix as it can reach to the MSB.
+> > Also, you can put spaces around the operators to align with the
+> > standard format, too.  I guess you followed to the other code there,
+> > but following to the standard coding style would be better.
+> >
+> > With those addressed, feel free to take my ack for this patch:
+>
+> Or make use of the BIT() and GEN_MASK() helpers.
 
-Hello Greg,
+Is it acceptable to include the headers in this file?
 
-I'd like to ask you for guidence on how to proceed with backporting this change
-to the 5.10 stable kernel and newer ones.
-
-I prepared a patch that is applicable on 5.10.240, and doesn't use the 6.14
-disabled feature bit infrastructure - the disabled bitmask is simply open coded.
-And as far as I tested the patch compiles and works in QEMU.
-
-I wanted to ask if I should submit that patch to the stable ML separately? If
-so, should I do it for 5.10 only or all the stable ones separately? (if they
-have different lenghts of the disabled bitmask) Or do you prefer to backport it
-/ apply it yourself?
-
-I'm putting the backported patch both as attachment to this message for easier
-downloading, and in text below to make commenting on it easier:
-
-	From 7dd94f58d28ac98dc39bebc8ce8479039bc069c8 Mon Sep 17 00:00:00 2001
-	From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-	Date: Thu, 24 Jul 2025 08:34:33 +0200
-	Subject: [PATCH] x86: Clear feature bits disabled at compile time
-
-	If some config options are disabled during compile time, they still are
-	enumerated in macros that use the x86_capability bitmask - cpu_has() or
-	this_cpu_has().
-
-	The features are also visible in /proc/cpuinfo even though they are not
-	enabled - which is contrary to what the documentation states about the
-	file.
-
-	Mainline upstream kernel autogenerates the disabled masks at compile
-	time, but this infrastructure was introduced in the 6.14 kernel. To
-	backport this, open code the DISABLED_MASK_INITIALIZER macro instead.
-
-	Initialize the cpu_caps_cleared array with the disabled bitmask.
-
-	Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
-	Reported-by: Farrah Chen <farrah.chen@intel.com>
-	Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-	Cc: <stable@vger.kernel.org>
-	---
-	 arch/x86/include/asm/disabled-features.h | 26 ++++++++++++++++++++++++
-	 arch/x86/kernel/cpu/common.c             |  3 ++-
-	 2 files changed, 28 insertions(+), 1 deletion(-)
-
-	diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-	index 170c87253340..a84e62cdae57 100644
-	--- a/arch/x86/include/asm/disabled-features.h
-	+++ b/arch/x86/include/asm/disabled-features.h
-	@@ -106,4 +106,30 @@
-	 #define DISABLED_MASK21	0
-	 #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 23)
-	 
-	+#define DISABLED_MASK_INITIALIZER	\
-	+	{				\
-	+		DISABLED_MASK0,		\
-	+		DISABLED_MASK1,		\
-	+		DISABLED_MASK2,		\
-	+		DISABLED_MASK3,		\
-	+		DISABLED_MASK4,		\
-	+		DISABLED_MASK5,		\
-	+		DISABLED_MASK6,		\
-	+		DISABLED_MASK7,		\
-	+		DISABLED_MASK8,		\
-	+		DISABLED_MASK9,		\
-	+		DISABLED_MASK10,	\
-	+		DISABLED_MASK11,	\
-	+		DISABLED_MASK12,	\
-	+		DISABLED_MASK13,	\
-	+		DISABLED_MASK14,	\
-	+		DISABLED_MASK15,	\
-	+		DISABLED_MASK16,	\
-	+		DISABLED_MASK17,	\
-	+		DISABLED_MASK18,	\
-	+		DISABLED_MASK19,	\
-	+		DISABLED_MASK20,	\
-	+		DISABLED_MASK21,	\
-	+	}
-	+
-	 #endif /* _ASM_X86_DISABLED_FEATURES_H */
-	diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-	index 258e28933abe..a3c323acff5f 100644
-	--- a/arch/x86/kernel/cpu/common.c
-	+++ b/arch/x86/kernel/cpu/common.c
-	@@ -588,7 +588,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
-	 }
-	 
-	 /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
-	-__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-	+__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long)) =
-	+	DISABLED_MASK_INITIALIZER;
-	 __u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-	 
-	 void load_percpu_segment(int cpu)
-	-- 
-	2.49.0
-
--- 
-Kind regards
-Maciej Wieczór-Retman
-
---qcl4oja5xcm7xybw
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: attachment;
-	filename="v3-0001-x86-Clear-feature-bits-disabled-at-compile-time.patch"
-
-From 7dd94f58d28ac98dc39bebc8ce8479039bc069c8 Mon Sep 17 00:00:00 2001
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Date: Thu, 24 Jul 2025 08:34:33 +0200
-Subject: [PATCH] x86: Clear feature bits disabled at compile time
-
-If some config options are disabled during compile time, they still are
-enumerated in macros that use the x86_capability bitmask - cpu_has() or
-this_cpu_has().
-
-The features are also visible in /proc/cpuinfo even though they are not
-enabled - which is contrary to what the documentation states about the
-file.
-
-Mainline upstream kernel autogenerates the disabled masks at compile
-time, but this infrastructure was introduced in the 6.14 kernel. To
-backport this, open code the DISABLED_MASK_INITIALIZER macro instead.
-
-Initialize the cpu_caps_cleared array with the disabled bitmask.
-
-Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
-Reported-by: Farrah Chen <farrah.chen@intel.com>
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: <stable@vger.kernel.org>
----
- arch/x86/include/asm/disabled-features.h | 26 ++++++++++++++++++++++++
- arch/x86/kernel/cpu/common.c             |  3 ++-
- 2 files changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 170c87253340..a84e62cdae57 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -106,4 +106,30 @@
- #define DISABLED_MASK21	0
- #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 23)
- 
-+#define DISABLED_MASK_INITIALIZER	\
-+	{				\
-+		DISABLED_MASK0,		\
-+		DISABLED_MASK1,		\
-+		DISABLED_MASK2,		\
-+		DISABLED_MASK3,		\
-+		DISABLED_MASK4,		\
-+		DISABLED_MASK5,		\
-+		DISABLED_MASK6,		\
-+		DISABLED_MASK7,		\
-+		DISABLED_MASK8,		\
-+		DISABLED_MASK9,		\
-+		DISABLED_MASK10,	\
-+		DISABLED_MASK11,	\
-+		DISABLED_MASK12,	\
-+		DISABLED_MASK13,	\
-+		DISABLED_MASK14,	\
-+		DISABLED_MASK15,	\
-+		DISABLED_MASK16,	\
-+		DISABLED_MASK17,	\
-+		DISABLED_MASK18,	\
-+		DISABLED_MASK19,	\
-+		DISABLED_MASK20,	\
-+		DISABLED_MASK21,	\
-+	}
-+
- #endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 258e28933abe..a3c323acff5f 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -588,7 +588,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
- }
- 
- /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
--__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-+__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long)) =
-+	DISABLED_MASK_INITIALIZER;
- __u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
- 
- void load_percpu_segment(int cpu)
--- 
-2.49.0
+Best regards
+Shengjiu Wang
 
 
---qcl4oja5xcm7xybw--
+>
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde          |
+> Embedded Linux                   | https://www.pengutronix.de |
+> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
