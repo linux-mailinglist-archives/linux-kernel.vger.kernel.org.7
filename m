@@ -1,330 +1,358 @@
-Return-Path: <linux-kernel+bounces-744360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75452B10B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:35:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6301B10BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DAE1C20735
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90AFBB00DDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0012E2E3384;
-	Thu, 24 Jul 2025 13:32:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8853A2D97B0;
+	Thu, 24 Jul 2025 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hyp9VFVd";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Unukcs9I"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96842DCF6D;
-	Thu, 24 Jul 2025 13:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753363966; cv=none; b=ZZ/GsXj+4OYid4eRHBfqGG29MKUI8hmmi8N0GfT69fH5tbINq0bjYRZCEPpfkMDjrJutjgw5w/FG7weXtWTuWwBK1PJZDrH6IwaAD1JKjVgJZPLHqtpNA6or0T+bBvRre4Rtv4UlWdB0iAz+fgjV4l2/vp8gaxjLNiMY2uQCUm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753363966; c=relaxed/simple;
-	bh=hNULJ87ZxtX6Iu4BqQ00wfoBZmqcZio6prsPuynj+08=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cLJqih7xhWvWy+XYpH0c8NSjADusYOOEby3zRGG/+WAseV9CjWEltHwROVAbxTb79GWDEq5shgDSEXK06pD2KjDks5SYXotkyuwb+nGfTqr9csMnKY1LVJpo+pLaDfWyFbdwT72R4MDra4xREH89eCncPAI/UQUbtmU7ILlxzBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bnsM7063Bz2FbQF;
-	Thu, 24 Jul 2025 21:30:27 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 558C518001B;
-	Thu, 24 Jul 2025 21:32:41 +0800 (CST)
-Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Jul 2025 21:32:39 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Fu Guiming <fuguiming@h-partners.com>, Meny Yossefi
-	<meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
-	<lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>, Suman Ghosh <sumang@marvell.com>, Przemek
- Kitszel <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v11 8/8] hinic3: Interrupt request configuration
-Date: Thu, 24 Jul 2025 21:32:11 +0800
-Message-ID: <70888d73b07c0a2e1d345807d519742ece6ff219.1753240706.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <cover.1753240706.git.zhuyikai1@h-partners.com>
-References: <cover.1753240706.git.zhuyikai1@h-partners.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B412127D77D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753364081; cv=fail; b=vEdBjt95Ar6/4pGJICRlFSqmiGtLzqKrOpv7XVz3+GadsrynSbt8DQm7eOWdwlCUlH0YgnhmAk5nzNB0nupzLoqrucsD63aZ1DdXx0pidlOYk9HMlUumK6FdQDDJQsz73k95K6wl5pIEhidGBLrn/U+L5kOB/Poeb9tF5Nls4dw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753364081; c=relaxed/simple;
+	bh=z90GcQ5OHjwJHT+lDSN9L9IyzDKSR6sOzElxzIyFSLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NTZEwL3AHL6vFZYegDEWC+KPs1wXrVJ1Qx48Dv+3pwNYz+dWZ35UbWzNgnajEs7R863dJIPtpAUw6EcJHPUnC+HsooOV5CL4FDlj2/V9BtOczydNh5JLDGhG48Kk5lDukp3CKEa6MGSU4F547cVBvkuPz+RKykGpd6PcGNvbT4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Hyp9VFVd; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Unukcs9I; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRIng008343;
+	Thu, 24 Jul 2025 13:34:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=x0mppO2il0BYZNwx
+	i0AxPu8GvbnFpDa9BjkC2iQ6KSQ=; b=Hyp9VFVdyb5lueOu/h4C2DYucMxzwXqF
+	6hSNZLWwvO/nJTMY3bBmVKBP/aWzrghDYRgdTofbuCtaeWUY3aMppXaplkqHEsWU
+	ChlMWGdsc4iK+bgb/nNkYBchJM92isX6kBDtrSpG6Ne5nKoZlbH/YFGwy1BBarch
+	69sUM/S+83lsGfipq1O6fgEtjTau6CRzDYPWbmh6M6Ytn8/SYh4vlAojGaywMmHv
+	y0GLWvwob4itdTXmEu1tQM1nhiwjE+EbBjWv36uuUVOcaueEzSs+j2sdhJYAEIfx
+	JYiJJpGX1l8k+OMP8AOKJ2L9Pto848kXRtmfVVbn2zuKo0l7FyD6Rw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805tx9n8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 13:34:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OC99ti014657;
+	Thu, 24 Jul 2025 13:34:23 GMT
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010010.outbound.protection.outlook.com [52.101.56.10])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tj6bra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 13:34:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uxsArRY2SBsPFUDGRuabSUP1PIuP0/DN4dpCyK1QVMahT3LPbsAVZ1jjTAj7EC8/CXbXXijbLT7sv8lrLQeNKNIubTXmetXDwJ6WUzwKomz8pHtOTU5reB2MeW5wNhgxXy0GbVEispA+FHLtlugRp6CqN1gUzkRWB6BRixqgXhNUl6OrFz/E5KpJR+7HPfBI3wZfCuD2AxtuzfZa6wjfgeBaMno40rI5+wqoTDMg1YvI4PhuPU/5GeprBYwZOApkau0bCGB+vBrVfI+tZMPc/L7WKivxw+g5757ktKNZDhSqpyEHYIwHgc/7ADtRDLkQVx/fdthkISO5eIzjPNlgwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x0mppO2il0BYZNwxi0AxPu8GvbnFpDa9BjkC2iQ6KSQ=;
+ b=yf8RD8pK67VoZTxKU9N6I722uGG3Al+qpL6xddzE8AlTbO5dAfR4uadDtzdYdLIzEEOx8jGgi4EtQ3Yq9fmsJ7BJPTGOUdp/u1aJqwEuyk+SSEhzPRKGfTluo/HyMwvNX4XoZz6aowrp7h0lmq8hLcR4H2bhNf3HNsX3PkVf4tXwiyZPKb2atPtErM3AbYwBbLRKWzeM94WWIzTFObmn2gz8sKKIlvJIGgVKt/xWe0IQIf+8DyuUn1/RH6gZL2nEMnrJ1FNU9GhQjJccwE+irV7U/tORGtyLB3MOa/a+Mtx35LATAhHBghZbF/mWOT2sG7S5Fd2aGJBPAFTu9QHtyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x0mppO2il0BYZNwxi0AxPu8GvbnFpDa9BjkC2iQ6KSQ=;
+ b=Unukcs9IgCQE3P2L2ztKMF7pXw1pVxjCzfubJMaSa6gQEq9U4IWFMN5OWh8MCt88OwBhsG4yvQrwxZ1tTum/mt9kUSKmh1rha1axILjmopVymoYUZvavsFHdO8rr0tjuzFGmdjzrIp/ZVzllvsszYnPZ+EazjNTAYsKhkZZoArw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM4PR10MB6110.namprd10.prod.outlook.com (2603:10b6:8:8b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.35; Thu, 24 Jul
+ 2025 13:34:14 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.019; Thu, 24 Jul 2025
+ 13:34:14 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH v3] MAINTAINERS: add MM MISC section, add missing files to MISC and CORE
+Date: Thu, 24 Jul 2025 14:33:56 +0100
+Message-ID: <20250724133356.49487-1-lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO0P265CA0007.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:355::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM4PR10MB6110:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf5ada25-92b2-4e7d-3449-08ddcab6c7da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6biOasW3WI7p+lu+dor3DWOLomsdyOkP//2xNT7s4dso36Cx55lCeP5d02ml?=
+ =?us-ascii?Q?d0pI45EFQjJaEkQra7NA/Oolv5CoiMOsu5IDthmP3xBRPMES2hFD1JRpXLzg?=
+ =?us-ascii?Q?hy1Ht8ywGP6zSeI5ivn6YD3A977cAlc6M880+XdoFgVQQu8xR9lqoByqMp7e?=
+ =?us-ascii?Q?ZXKGX1LAyObR5DE9LfCL/FizPMacbQ3Hli542hE46Xqi9d2EZhQopeNS35kK?=
+ =?us-ascii?Q?xSo5TtWAUSqOSBVFF9z6e8csNxBBcp9IY1T8pfzta15VZ2xS6NAbhsONT9zH?=
+ =?us-ascii?Q?xDa9zjWb2jYag4dpobH71pt5HNXGJ5XCIbMBS09xhzYuqExlTMcc5wJGWB3L?=
+ =?us-ascii?Q?Yzc/4FO3VkJGOzh7ydTRuOAy92FnfUQHK67T1PdqG/wC7zDEhCYAunZttOaT?=
+ =?us-ascii?Q?03qf6DcZ64uOnW8ozHqueUld9hXUkyUE+MhTV6qa/H0Ep016OkjK/n22IVWE?=
+ =?us-ascii?Q?7KCGWJ6J/gKiz+0m4mtt2RE6P3DxHQLxcxrJ/MwuUnb2pDbGqS1RNKsLDVnz?=
+ =?us-ascii?Q?pgjKJce6nBcztonf+Rbo90rdAJ+zN9FtBvZjrkJf2ZcIEVPNyLWe63JkykZA?=
+ =?us-ascii?Q?0D2/lGzFyI0M1ALQt2lK5IjQNhBjTunqHmPw4daFBp3HuxMxIq8/XYDe7/SR?=
+ =?us-ascii?Q?CXmv+CDAELA+xUW3Ix3TOWiRLcqWBT+2bcAa0c3F2pQ1IhG3NFpw0mxiNN5K?=
+ =?us-ascii?Q?NJUrrPGD2TmXy6ZbgqfYJxwzcdsO+jrF9WgtzkE5NooPGukF6TGbq60vcwbu?=
+ =?us-ascii?Q?ZFnZw1Vbls6UtMnm0LMAuCirRRVa2o8HhfRk78uv2a+8moSwG80U5TNmg8KO?=
+ =?us-ascii?Q?RaUnCUfPKgvWgUEhopGi7E9rgzt6I6NTEqxNKkyQ8JFOtHufU5xVKjAnHoD5?=
+ =?us-ascii?Q?aqCjx77qZLwFVaYTyrwKVJ4WQRa/5M4UZY1QvCZpy955lXrysD9p2yaY91GA?=
+ =?us-ascii?Q?V8daw1k52+r7iBfbT8zfhjUCctRsXNHxLN8FyDLmEcaHTdIHoh0UD6bg2fWW?=
+ =?us-ascii?Q?tWHCiEqIrycxN3gRV41IzTxa0BwyZOwNDq0PIpCHTp/nM/Nh6WK03QlinBYF?=
+ =?us-ascii?Q?sc1k3EW51xfBWRW6lsNlbNwNcdL1JtHJ7oDwH6nkxhLKYbzL9Z7mnnT5dpkt?=
+ =?us-ascii?Q?Zk6MFqjlqqs+IuaszSTFqM8Ip7m4789xQ1s44ezwzOLizCFrrIe+2tIQFFSM?=
+ =?us-ascii?Q?VE/CfcPAx+H2LhFSUAPw4L7gDeT1CLFTprbAEAbL9N85kS9D680Q9+Z8/Q/P?=
+ =?us-ascii?Q?F0aupiCSPDVxG0dmzKOOdJOsT+ge91UDpqDLgM6U/SA4g37ZRtwHjkzzj6+v?=
+ =?us-ascii?Q?qY6XwmUn12k0DW/4VAbAM7Rdhns5lbWdZNPgm3i4apSTyOVplx2520ENhkBR?=
+ =?us-ascii?Q?RxUQzUj0xkuH4SEJCZhL1XS1iMGt?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CxJYPZm2suoU1a8sLsgDL37yXMWf7C4SUwhzkWJpxYs6LR4t8yRcy6b8Btmg?=
+ =?us-ascii?Q?Mxdt23Fn5o4o/YMl12CwE9q51COTxEDB9gOhwkGiLdrSTTCwlXgULthJ+M8a?=
+ =?us-ascii?Q?QDgaAevNMPuioiPJShNZG8tGLaRBzwJdZFwo7giKHxJ9CLak0mg8Ev5kYMae?=
+ =?us-ascii?Q?XijcKXS+94+8o007GzJh+YS+070mDODviAmkamzKz8DdMy6qnZ851NRx3mst?=
+ =?us-ascii?Q?zJQgCongBTXBuyBIW2FL1HBs7ydqC8Itqy+h/Ttb2mZSwJGrU1cyFFiPz8I+?=
+ =?us-ascii?Q?iFxDR6c1oY1MgRVMFa4fmcQinv3PcTmYOnm9IfJD1WZupsoJwPpKrXdWnFYA?=
+ =?us-ascii?Q?Ru0yPg3ERaVwpsu990YliOVQ4hpVareqD1B1fZzLEwdTjlxNSgfSNvQydowJ?=
+ =?us-ascii?Q?emysgxlmcjaJhCj51GF9itvJMR+xnBWayqt0qnu5VwhEJc3JUXCaa6ioEfyu?=
+ =?us-ascii?Q?j+lnpNVloxFDJ4sZjR/mD1HI8oGdb2GZVkV8URJSxXb1YmgEcruao1LTuj3z?=
+ =?us-ascii?Q?8bDXkZiF47mOwxMOymN0WIC636nB7liCTLNKxgVgSoMxWA6c5wfoFKMUu/xF?=
+ =?us-ascii?Q?ic4WzYOClataiSUDUq8YBJz2j/xhI/bH+57i34S4RGgegVnTEbGDFoeJTNbi?=
+ =?us-ascii?Q?PdFNYcPZEYsUcFuAWJDgkb0rimUykjhnlo+B7ALv8tdkp7b4TfNiW8wsO6Sl?=
+ =?us-ascii?Q?M+LBQRpYsOZSN107oD3b7sYJxYlLCz34IarFaW4ek2n/Zu29oo8NnPc/vvwq?=
+ =?us-ascii?Q?qiHmJHR9dJdHGoM6g+76lO0c6O8Wieup0I6bkTsn5Nltp39OUoSJgmcTpilR?=
+ =?us-ascii?Q?ywaMs6232Nj+66ABdc+4ILSZJW9XqNEXAdkOBm1wc+pVcqoKpbtoSXU0xndc?=
+ =?us-ascii?Q?43w4enNWe1AUi3qUrIXcvLzzic345PmT7HVKdfjeHnk98dXYrubjN4wCmiqX?=
+ =?us-ascii?Q?XZtPd3Ks1VfCJ0z6hujmOXmYfL5NUDOL1h7frXNm4JgLDGXNzwWC5x+xaKmn?=
+ =?us-ascii?Q?IdCFhVS7g0lTG2dpRyGpec5LuVAwgkPPDDcygis487SUT5wp5lQcVNCIXzzY?=
+ =?us-ascii?Q?gI17RQeqpeCRyJ+xiy6ZEqp+W9C6EmdadrT5W5dnVOAy7I+WbY36EFGtIucL?=
+ =?us-ascii?Q?PFlRQpYymhjqmj4Iig48KKYP3XqNbQAfqLj5JSBlDhswkxiFEVjXKU7l4Zj7?=
+ =?us-ascii?Q?hrIFRAagioOxL7n7/7R2ac5JDVhf1o3m2dHqnxlA7Fp1gSD3ICof5ZiHhU4c?=
+ =?us-ascii?Q?lxNNawWy082KsdKGNDOG+H7UmP6yCsiHvWIlaX9/BddEyiOd0JgdRRO7a0Cy?=
+ =?us-ascii?Q?X6Y96x/ygIuI75VEWptRI1dfG1z1mhPVShxMBsTpJP1W/frUt7GDDqP+BMxM?=
+ =?us-ascii?Q?3R2xWoky3hMiQfLz+jA86rvfYl3prhtwR/Un8Z2ET2GyNwk6eplqyHwbMG4w?=
+ =?us-ascii?Q?ke2m0TTfofXwoKp/fXWRrfrOmqiuYPQeqBcYcj2ttFNgVfoQxNrKNC1vzhol?=
+ =?us-ascii?Q?3msJrjUDUhwhgD15D1suhCnir1+ug+Iw+5NljZ27GmPewj2iaGvZrgiCVM4Q?=
+ =?us-ascii?Q?zB7eDGV2isHebst/+cZNbGmiVLpnlOnlx6zZWo4yDZjeZPe6DDGGIwrynJe6?=
+ =?us-ascii?Q?2g=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	vc8o4RPQ2k2bcV84xcSrWatqnL5oEKGO4I2cOXlnyrzT0OvtfbMTW40AcFXxLvaw1YpBgtW8Xvnbf/G7HWsxtChlLmA6Osli1IRuxLKhCkcsoGk8bt9j5rO0hOQj2ZRVApm13EnJB3RpGrSPjtQmnzq9QioVAcwepeWGFo2oruuQM4Exb9CMzhkcF2DzNZTXK8bwKybqrFdnpZiqwVbhmnvBsVRbuSsM8DK7ikacpQQwPiskYl+UILcbltNEXw+fNHtj74V4bvrkUTwYjjBh3dJqfeqB5tCHx+NyhGKQvPUukKkywoCQl669hUgNhfVquX5qHT0zsiiMcgLWrqngLWjzPOSCPgcg+ZFLa95s32v8zApXYrGTp9F+e4mGb77TFFgSAJ4iazaCFm9s9qNe06cW5j5tU+jeXBCNE/VC4FgZR4of4NHPsiXiAZ0V2nkeJdytiVUb6tYTihNw6/ERikxvOmOvxfOK98fVj6+9XgKAHEetVSUP1AAlWB+8TL7xRZr/L2ek8M5Jm+RNWpuqx2LUDV840REk+TL7jEJqn5nO3IJu4Je0jUs9uNgxVgMqvK6DMV2arFF/nwoHAsOGnOibQ3RgVZvYMBw0od8x0KQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf5ada25-92b2-4e7d-3449-08ddcab6c7da
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 13:34:14.6848
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5CBAR9XwzzhIMdpB4Rz2ikm5hL7uMb+4h68A9u6vAMvqB9vJ1FlJ1Ydyr7ha9yl6CjwHujej7PP4nqkTGH4KyeO286kgDCedmQ6108ZwWU0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6110
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507240102
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEwMiBTYWx0ZWRfX0OrOcsjd5QhF
+ qZJ4dG9zEMRqNpWV+9Dl4jY5otsOlu3qrPH93/3KHtWFc+PG0jUxFU/6xYm98FU7ZXX94HLyWfo
+ jipxj+OH/Xez2u3dLYUI6vlfE9UslYVRmXL67Dhqsw3TYDahkCJRax+HqA22sUjYDY5vI6p0caZ
+ xHdf471XWkMJzpj7mPIA7h4BxMzQGqbLbKnbbIZju5MHmuGmPkG7ahn5dK7BBjsr5DRKjmeXvfC
+ q/byABt7VnPuFIoqIdMXwuDhl75doY0BOHq88jwVh0I7b5EX157ZGsxLVsLCZAzDIJq+N3s6th8
+ 7IYuLPPtpEmpn7gjX8kxO7W7pNVN6UBDlKpAfpOtwJ3hRLBkEV0vDv3acSPL6GD+CDVzhYMRSpH
+ CU8A6JxaFJnznqoqYUDazZtqKq+UfCm1386zONxMSvTbRM5Y29S0jbJsZUpab3b6pwL+TR6x
+X-Proofpoint-GUID: 0nulXctdTIWDWLFRKmo3l47gG1JDFdk-
+X-Authority-Analysis: v=2.4 cv=IsYecK/g c=1 sm=1 tr=0 ts=68823660 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=1-S1nHsFAAAA:8 a=Z4Rwk6OoAAAA:8 a=37rDS-QxAAAA:8
+ a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=iox4zFpeAAAA:8 a=zzIyDT9sRKWamUAvEncA:9
+ a=gK44uIRsrOYWoX5St5dO:22 a=HkZW87K1Qel5hWWM3VKY:22 a=k1Nq6YrhK2t884LQW06G:22
+ a=WzC6qhA0u3u7Ye7llzcV:22 cc=ntf awl=host:12061
+X-Proofpoint-ORIG-GUID: 0nulXctdTIWDWLFRKmo3l47gG1JDFdk-
 
-Configure interrupt request initialization.
-It allows driver to receive packets and management information
-from HW.
+Add a MEMORY MANAGEMENT - MISC section to contain files that are not
+described by other sections, moving all but the catch-all mm/ and tools/mm/
+from MEMORY MANAGEMENT to MEMORY MANAGEMENT - CORE and MEMORY MANAGEMENT -
+MISC as appropriate.
 
-Co-developed-by: Xin Guo <guoxin09@huawei.com>
-Signed-off-by: Xin Guo <guoxin09@huawei.com>
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
+In both sections add remaining missing files. At this point, with the other
+recent MAINTAINERS changes, this should now mean that every memory
+management-related file has a section and assigned maintainers/reviewers.
+
+Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
+CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
+related for this to be sensible.
+
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  31 ++++
- .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 ++
- .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 136 +++++++++++++++++-
- .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   4 -
- 4 files changed, 178 insertions(+), 6 deletions(-)
+v3:
+* Rebased on mm-new.
+* Remove mempool.h as pending patch going through slab tree will put in slab
+  section as per Vlastimil.
+* Eliminated duplicate entries as per Vlastimil and David.
+* Added mmu_notifier and ptdump entries to core as per David.
+* Add some missing header files.
+* Dropped io-mapping, which will be removed in a subsequent patch.
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-index 434696ce7dc2..7adcdd569c7b 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-@@ -8,6 +8,37 @@
- #include "hinic3_hwif.h"
- #include "hinic3_mbox.h"
- 
-+int hinic3_set_interrupt_cfg_direct(struct hinic3_hwdev *hwdev,
-+				    const struct hinic3_interrupt_info *info)
-+{
-+	struct comm_cmd_cfg_msix_ctrl_reg msix_cfg = {};
-+	struct mgmt_msg_params msg_params = {};
-+	int err;
-+
-+	msix_cfg.func_id = hinic3_global_func_id(hwdev);
-+	msix_cfg.msix_index = info->msix_index;
-+	msix_cfg.opcode = MGMT_MSG_CMD_OP_SET;
-+
-+	msix_cfg.lli_credit_cnt = info->lli_credit_limit;
-+	msix_cfg.lli_timer_cnt = info->lli_timer_cfg;
-+	msix_cfg.pending_cnt = info->pending_limit;
-+	msix_cfg.coalesce_timer_cnt = info->coalesc_timer_cfg;
-+	msix_cfg.resend_timer_cnt = info->resend_timer_cfg;
-+
-+	mgmt_msg_params_init_default(&msg_params, &msix_cfg, sizeof(msix_cfg));
-+
-+	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_COMM,
-+				       COMM_CMD_CFG_MSIX_CTRL_REG, &msg_params);
-+	if (err || msix_cfg.head.status) {
-+		dev_err(hwdev->dev,
-+			"Failed to set interrupt config, err: %d, status: 0x%x\n",
-+			err, msix_cfg.head.status);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int hinic3_func_reset(struct hinic3_hwdev *hwdev, u16 func_id, u64 reset_flag)
- {
- 	struct comm_cmd_func_reset func_reset = {};
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-index c33a1c77da9c..2270987b126f 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-@@ -8,6 +8,19 @@
- 
- struct hinic3_hwdev;
- 
-+struct hinic3_interrupt_info {
-+	u32 lli_set;
-+	u32 interrupt_coalesc_set;
-+	u16 msix_index;
-+	u8  lli_credit_limit;
-+	u8  lli_timer_cfg;
-+	u8  pending_limit;
-+	u8  coalesc_timer_cfg;
-+	u8  resend_timer_cfg;
-+};
-+
-+int hinic3_set_interrupt_cfg_direct(struct hinic3_hwdev *hwdev,
-+				    const struct hinic3_interrupt_info *info);
- int hinic3_func_reset(struct hinic3_hwdev *hwdev, u16 func_id, u64 reset_flag);
- 
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-index 8b92eed25edf..33eb9080739d 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-@@ -38,7 +38,7 @@ static int hinic3_poll(struct napi_struct *napi, int budget)
- 	return work_done;
- }
- 
--void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
-+static void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(irq_cfg->netdev);
- 
-@@ -50,7 +50,7 @@ void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
- 	napi_enable(&irq_cfg->napi);
- }
- 
--void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
-+static void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
- {
- 	napi_disable(&irq_cfg->napi);
- 	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
-@@ -60,3 +60,135 @@ void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
- 	netif_stop_subqueue(irq_cfg->netdev, irq_cfg->irq_id);
- 	netif_napi_del(&irq_cfg->napi);
- }
-+
-+static irqreturn_t qp_irq(int irq, void *data)
-+{
-+	struct hinic3_irq_cfg *irq_cfg = data;
-+	struct hinic3_nic_dev *nic_dev;
-+
-+	nic_dev = netdev_priv(irq_cfg->netdev);
-+	hinic3_msix_intr_clear_resend_bit(nic_dev->hwdev,
-+					  irq_cfg->msix_entry_idx, 1);
-+
-+	napi_schedule(&irq_cfg->napi);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int hinic3_request_irq(struct hinic3_irq_cfg *irq_cfg, u16 q_id)
-+{
-+	struct hinic3_interrupt_info info = {};
-+	struct hinic3_nic_dev *nic_dev;
-+	struct net_device *netdev;
-+	int err;
-+
-+	netdev = irq_cfg->netdev;
-+	nic_dev = netdev_priv(netdev);
-+	qp_add_napi(irq_cfg);
-+
-+	info.msix_index = irq_cfg->msix_entry_idx;
-+	info.interrupt_coalesc_set = 1;
-+	info.pending_limit = nic_dev->intr_coalesce[q_id].pending_limit;
-+	info.coalesc_timer_cfg =
-+		nic_dev->intr_coalesce[q_id].coalesce_timer_cfg;
-+	info.resend_timer_cfg = nic_dev->intr_coalesce[q_id].resend_timer_cfg;
-+	err = hinic3_set_interrupt_cfg_direct(nic_dev->hwdev, &info);
-+	if (err) {
-+		netdev_err(netdev, "Failed to set RX interrupt coalescing attribute.\n");
-+		qp_del_napi(irq_cfg);
-+		return err;
-+	}
-+
-+	err = request_irq(irq_cfg->irq_id, qp_irq, 0, irq_cfg->irq_name,
-+			  irq_cfg);
-+	if (err) {
-+		qp_del_napi(irq_cfg);
-+		return err;
-+	}
-+
-+	irq_set_affinity_hint(irq_cfg->irq_id, &irq_cfg->affinity_mask);
-+
-+	return 0;
-+}
-+
-+static void hinic3_release_irq(struct hinic3_irq_cfg *irq_cfg)
-+{
-+	irq_set_affinity_hint(irq_cfg->irq_id, NULL);
-+	free_irq(irq_cfg->irq_id, irq_cfg);
-+}
-+
-+int hinic3_qps_irq_init(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct pci_dev *pdev = nic_dev->pdev;
-+	struct hinic3_irq_cfg *irq_cfg;
-+	struct msix_entry *msix_entry;
-+	u32 local_cpu;
-+	u16 q_id;
-+	int err;
-+
-+	for (q_id = 0; q_id < nic_dev->q_params.num_qps; q_id++) {
-+		msix_entry = &nic_dev->qps_msix_entries[q_id];
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+
-+		irq_cfg->irq_id = msix_entry->vector;
-+		irq_cfg->msix_entry_idx = msix_entry->entry;
-+		irq_cfg->netdev = netdev;
-+		irq_cfg->txq = &nic_dev->txqs[q_id];
-+		irq_cfg->rxq = &nic_dev->rxqs[q_id];
-+		nic_dev->rxqs[q_id].irq_cfg = irq_cfg;
-+
-+		local_cpu = cpumask_local_spread(q_id, dev_to_node(&pdev->dev));
-+		cpumask_set_cpu(local_cpu, &irq_cfg->affinity_mask);
-+
-+		snprintf(irq_cfg->irq_name, sizeof(irq_cfg->irq_name),
-+			 "%s_qp%u", netdev->name, q_id);
-+
-+		err = hinic3_request_irq(irq_cfg, q_id);
-+		if (err) {
-+			netdev_err(netdev, "Failed to request Rx irq\n");
-+			goto err_release_irqs;
-+		}
-+
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_SET_MSIX_AUTO_MASK);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_ENABLE);
-+	}
-+
-+	return 0;
-+
-+err_release_irqs:
-+	while (q_id > 0) {
-+		q_id--;
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+		qp_del_napi(irq_cfg);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_DISABLE);
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_CLR_MSIX_AUTO_MASK);
-+		hinic3_release_irq(irq_cfg);
-+	}
-+
-+	return err;
-+}
-+
-+void hinic3_qps_irq_uninit(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct hinic3_irq_cfg *irq_cfg;
-+	u16 q_id;
-+
-+	for (q_id = 0; q_id < nic_dev->q_params.num_qps; q_id++) {
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+		qp_del_napi(irq_cfg);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_DISABLE);
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_CLR_MSIX_AUTO_MASK);
-+		hinic3_release_irq(irq_cfg);
-+	}
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-index 9577cc673257..9fad834f9e92 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-@@ -85,8 +85,4 @@ void hinic3_set_netdev_ops(struct net_device *netdev);
- int hinic3_qps_irq_init(struct net_device *netdev);
- void hinic3_qps_irq_uninit(struct net_device *netdev);
- 
--/* Temporary prototypes. Functions become static in later submission. */
--void qp_add_napi(struct hinic3_irq_cfg *irq_cfg);
--void qp_del_napi(struct hinic3_irq_cfg *irq_cfg);
--
- #endif
--- 
-2.43.0
+v2:
+* Propagate ack (thanks Mike!)
+* Retain MEMORY MANAGEMENT section to contain the global mm/ and tools/mm/
+  directories and remove from MEMORY MANAGEMENT - MISC section, I misunderstood
+  how these catch-alls would work. As reported by Vlastimil.
+* Update cover letter and subject to reflect the above.
+https://lore.kernel.org/all/20250723095823.21940-1-lorenzo.stoakes@oracle.com/
 
+v1:
+https://lore.kernel.org/all/20250722192704.164758-1-lorenzo.stoakes@oracle.com/
+
+ MAINTAINERS | 72 ++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 58 insertions(+), 14 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8905c56c4644..cb02e18e93cd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15741,22 +15741,8 @@ S:	Maintained
+ W:	http://www.linux-mm.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+ T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
+-F:	Documentation/admin-guide/mm/
+-F:	Documentation/mm/
+-F:	include/linux/gfp.h
+-F:	include/linux/gfp_types.h
+-F:	include/linux/memory_hotplug.h
+-F:	include/linux/memory-tiers.h
+-F:	include/linux/mempolicy.h
+-F:	include/linux/mempool.h
+-F:	include/linux/mmzone.h
+-F:	include/linux/mmu_notifier.h
+-F:	include/linux/pagewalk.h
+-F:	include/trace/events/ksm.h
+ F:	mm/
+ F:	tools/mm/
+-F:	tools/testing/selftests/mm/
+-N:	include/linux/page[-_]*
+
+ MEMORY MANAGEMENT - CORE
+ M:	Andrew Morton <akpm@linux-foundation.org>
+@@ -15771,18 +15757,40 @@ L:	linux-mm@kvack.org
+ S:	Maintained
+ W:	http://www.linux-mm.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
++F:	include/linux/gfp.h
++F:	include/linux/gfp_types.h
++F:	include/linux/highmem.h
+ F:	include/linux/memory.h
+ F:	include/linux/mm.h
+ F:	include/linux/mm_*.h
++F:	include/linux/mmzone.h
+ F:	include/linux/mmdebug.h
++F:	include/linux/mmu_notifier.h
+ F:	include/linux/pagewalk.h
++F:	include/linux/pgtable.h
++F:	include/linux/ptdump.h
++F:	include/linux/vmpressure.h
++F:	include/linux/vmstat.h
+ F:	kernel/fork.c
+ F:	mm/Kconfig
+ F:	mm/debug.c
++F:	mm/folio-compat.c
++F:	mm/highmem.c
+ F:	mm/init-mm.c
++F:	mm/internal.h
++F:	mm/maccess.c
+ F:	mm/memory.c
++F:	mm/mmu_notifier.c
++F:	mm/mmzone.c
+ F:	mm/pagewalk.c
++F:	mm/pgtable-generic.c
++F:	mm/ptdump.c
++F:	mm/sparse-vmemmap.c
++F:	mm/sparse.c
+ F:	mm/util.c
++F:	mm/vmpressure.c
++F:	mm/vmstat.c
++N:	include/linux/page[-_]*
+
+ MEMORY MANAGEMENT - EXECMEM
+ M:	Andrew Morton <akpm@linux-foundation.org>
+@@ -15845,6 +15853,42 @@ F:	mm/mempolicy.c
+ F:	mm/migrate.c
+ F:	mm/migrate_device.c
+
++MEMORY MANAGEMENT - MISC
++M:	Andrew Morton <akpm@linux-foundation.org>
++M:	David Hildenbrand <david@redhat.com>
++R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
++R:	Liam R. Howlett <Liam.Howlett@oracle.com>
++R:	Vlastimil Babka <vbabka@suse.cz>
++R:	Mike Rapoport <rppt@kernel.org>
++R:	Suren Baghdasaryan <surenb@google.com>
++R:	Michal Hocko <mhocko@suse.com>
++L:	linux-mm@kvack.org
++S:	Maintained
++W:	http://www.linux-mm.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
++F:	Documentation/admin-guide/mm/
++F:	Documentation/mm/
++F:	include/linux/cma.h
++F:	include/linux/dmapool.h
++F:	include/linux/ioremap.h
++F:	include/linux/memory-tiers.h
++F:	include/linux/page_idle.h
++F:	mm/backing-dev.c
++F:	mm/cma.c
++F:	mm/cma_debug.c
++F:	mm/cma_sysfs.c
++F:	mm/dmapool.c
++F:	mm/dmapool_test.c
++F:	mm/early_ioremap.c
++F:	mm/fadvise.c
++F:	mm/ioremap.c
++F:	mm/mapping_dirty_helpers.c
++F:	mm/memory-tiers.c
++F:	mm/page_idle.c
++F:	mm/pgalloc-track.h
++F:	mm/process_vm_access.c
++F:	tools/testing/selftests/mm/
++
+ MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
+ M:	Andrew Morton <akpm@linux-foundation.org>
+ M:	Mike Rapoport <rppt@kernel.org>
+--
+2.50.1
 
