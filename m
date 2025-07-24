@@ -1,105 +1,123 @@
-Return-Path: <linux-kernel+bounces-744732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C2EB1105B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25406B1105E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7088AE3DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5878D1CE7705
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AA52EBBB0;
-	Thu, 24 Jul 2025 17:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693AE2ECD00;
+	Thu, 24 Jul 2025 17:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0sk+V9R"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wv1vfFm2"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DB02EB5DA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CAA2EB5D1;
+	Thu, 24 Jul 2025 17:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753378201; cv=none; b=rlsOZduNa9mHHUbegIbHUm8yQfMbo2TBhJqma3Q3vpPwCloS71/0S99q/GvfLJGf0mW9UssFg+DZcl12vMPc7l4H/FwUqR5yamy2+mdReMGVAXfFt/PwekLPLtXET6qTWWqTJJmkoapY3b8OvRNjiTZ57fzvhEBnI+IvvzjifoA=
+	t=1753378202; cv=none; b=Qkiw1HODwkZYx/Oo3Wg6TlcrBz2y5Y10/f7AvdeHi8npX00WHFiV23HwQk8/hvmtNZ6GAgjgcKJOmIvrBSHfij0LcbA3BC73GD27SN3+qSNmbuQVuC5uu3hZcMwmaUz2vm4NQ27gVdt1TRfno7NGlBQlc/Vrt4Oj2KeZWpI0qN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753378201; c=relaxed/simple;
-	bh=06S9RKRfp+cnfs/TJq14GArVdEgaYHDcxuCml+aYm/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IMsR2L2ZoA/MXuH9pwQ6YmCai+qfHZMKi+D/wnkYBLtiOgli8BadckoTnQd3KOdEmvEM916NRYq2LpFJH9cwdlETH3NVXLpZtpbrvnjIn1zHgSk30hKL+At6eNCAdfOAZxrZnP/pwpiMlWUGWTiUQiMupZ2zudxw6S4zc7eWQNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0sk+V9R; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8dbe824ee8so1157732276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753378199; x=1753982999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06S9RKRfp+cnfs/TJq14GArVdEgaYHDcxuCml+aYm/M=;
-        b=Q0sk+V9R3HUzJgbcO2la+R9O+iaCMm3Ro8QFKtw0s8saajM5/RrYm0OAD9NUYyNnEV
-         7OYkoYDdN/LN/fP9/n0kDMRTRSvWfjnuCkFL6s4ZPYosBn+vybiaX5iaSY77eVWxXrdu
-         bBzYLUNoJBdUgTnMVYUQnA46lB3AGOiaVO5NrHz5kluTPRZbCxkSG03U1Tdtz208w/DC
-         fJFjRvcnrgPLkZaOw9Wxrcj7tlYYy7pvNrT/iNyle8BMey46238AAwJEuNSL3fj9E629
-         dkrDoxS9/Oj1ABf439s1t+1nHZeNaR7IXVdUpqyawBPtZTqf0AKhao/endqbCTSJ92Jd
-         VTcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753378199; x=1753982999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06S9RKRfp+cnfs/TJq14GArVdEgaYHDcxuCml+aYm/M=;
-        b=FWzeaLfKjcrL3ZJVQFRBcrmBMzP94oHz5oUu309vz6Qk6z7AjSz+kSZFDfMBveWawt
-         fXcVuZxVzm2R7WMLGNJbvjrKFOKR/6yz4ScZt9AVMCoOjtc5OJFPjdZO5No0TUiWs9/a
-         XKO5xR5n3Urp6YFE2SoHOcy5NgPwozwE6LfEBvC94F0p4Xb6Jbu4mJlotdmHcGGMUMCj
-         t89K97VFiV1YostcOxPgsaBQYTnxApXsjKFGFPr3pLlSOMh4QKjTxxPgNxY9w5o7WxDO
-         a2ygtHsE8sJ7/Qev18EP2rA3+cI2zsVt6MF2pBwGmD0+r/7knGcvMCpLD0KfIzRx0O2B
-         UtTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjGBZMnn6aODu6AVdMIF/e3hg6hofkPC7rBuQukkf9WH9Bp5j0/by3a6pxgYFh4w5mE9HVOjGeBSLao18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwZjfbOaJMsW9OyFCISTRVT/uV8UzVEVGmNmq1MF1wcDGJmQhU
-	gLU2IMSUA9c2XMT6/aQz8e2ZSqc2e3dddBhyBzU+p+zIEtZyh9Y16QImXEBnHo35Wfo9gJHTSY4
-	nXfhIoia5QNsKutigZZNSIqNysZ7xn1M=
-X-Gm-Gg: ASbGncvGOLubdD3p3traZI4B9HhwkGYbS5HF1yS6q5Hki+9fQ0DGZ+Ye3ZU9kzPzHLh
-	DB4YldCWebKXixdxnCGF/5Fx9jGf7dWIjId76uK/aGALhXiOSzWasUrWnPbOroE31pGcecowjqw
-	i6paWQ6a6t34q5qCkzUqwW26ox/by2Xl2ll1LmXQ02MfRY8DTrMzHvFAFoeZGbEVidQI1Qu0qZv
-	NzS3VmR
-X-Google-Smtp-Source: AGHT+IGXCqJpGzDcK9DhCmm34b5oIP6A3t7lWhlHgTRkUbgYJM4J/Cv5Rh+zxMzSX3h6njctRUMch60LPfM1KZ4JPoE=
-X-Received: by 2002:a05:6902:108f:b0:e8b:bd51:f480 with SMTP id
- 3f1490d57ef6-e8dc58ce28fmr9558146276.6.1753378198933; Thu, 24 Jul 2025
- 10:29:58 -0700 (PDT)
+	s=arc-20240116; t=1753378202; c=relaxed/simple;
+	bh=rQfYK/pFckju0/m5ZMT8YpMb/ONrLOdCFi/xBbvE/uA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tiXTMbLMpjpuEzqE4k5pm0f1DgzpNzV3Vd4WBQoisgczN90EiMztGGV4jOYB7YlXaKHzKjc4QLcxt8fYho6c8NH9DRRMr1UJGsTW5mxTLyXLWpUC/sp9vk4B19/mUMvH8r4ETemPggQL4T2+8PRngH/pvtnt36qaT6bYmtaDdQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wv1vfFm2; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Po5cQ5B/7KTWzepFKNX6CQz+apgwh63MuU5rCZ6VX0c=; b=Wv1vfFm2JPt52XUREKd070yyYY
+	dhdxbyMhkHeGmeswXVjXfJ8nru4JdQUlggRKS6XIpXdDk6VJ39UpEZHkigZ2R6GZe4GFRJUAFnuJA
+	2V8QaLXb3sPybGmrQORiid1/Qo3LZtjLLbqYJ5SGsDtWe8dcu9ivnUhSUTWzgRYUARJ2P98HUQU7g
+	p1+l4NC9gDJ9iiujLfD/HE6duEGwUObgilSFLKp9tQlgVXJB8UOwIxUf7feiMdlf0iSGu/VvJf/iD
+	AOwphfU29eHKmsqXFO0k7NnmnEuv0JOKB64RqW0kx4FVBZd3L3vyKvaE/NXOS0VVOfgQpUQYW5SL/
+	IDwGvdEQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uezlW-000000088OB-2C3D;
+	Thu, 24 Jul 2025 17:29:58 +0000
+Message-ID: <dfb7415f-130f-4581-88b9-ee18c9ef8518@infradead.org>
+Date: Thu, 24 Jul 2025 10:29:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724064051.431879-2-moonhee.lee.ca@gmail.com> <20250724155832.GU2580412@ZenIV>
-In-Reply-To: <20250724155832.GU2580412@ZenIV>
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Thu, 24 Jul 2025 10:29:47 -0700
-X-Gm-Features: Ac12FXxZSBVFS9UvJkmSwqLpfRfSy-CrpvvZo-9vMPZ5dvXz5x5nsuFmQ_UZOHM
-Message-ID: <CAF3JpA6FguWASZM98DWsvEasOAHH2WVkSmcY0D-V6V=-DFjoJQ@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
- simple_recursive_removal (5)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: mention MIT license as a compatible license with
+ GPLv2
+To: Aditya Garg <gargaditya08@live.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <PN3PR01MB95977C87764A556FFD49FB72B85EA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025072459-tweezers-dingbat-b748@gregkh>
+ <PN3PR01MB95978770C2DC8D5CDB28426FB85EA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <PN3PR01MB95978770C2DC8D5CDB28426FB85EA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 8:58=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
-> It might paper over the specific reproducer, but that's not a fix...
-> I'm not familiar with that code; will check the details, but in
-> this form it is obviously still racy.
 
-Thanks for the feedback, Al.
 
-Agreed, this only papers over the issue. I'm tracing the
-sta_info_destroy() path to confirm the race and will follow up with a
-proper fix if confirmed.
+On 7/24/25 3:41 AM, Aditya Garg wrote:
+> 
+> 
+> On 24/07/25 4:08 pm, Greg KH wrote:
+>> On Thu, Jul 24, 2025 at 10:03:41AM +0000, Aditya Garg wrote:
+>>> MIT is a widely used permissive free software license that is compatible
+>>> with the GPLv2 license. This change adds it to the list of compatible
+>>> licenses with GPLv2 in the kernel documentation.
+>>
+>> No, please don't.  This isn't a proper place for talking about the
+>> different license interactions.
+> 
+> Ohk
+> 
+>>
+>>>
+>>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+>>> ---
+>>>  Documentation/process/1.Intro.rst | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/process/1.Intro.rst b/Documentation/process/1.Intro.rst
+>>> index 25ca49f7a..c3465e3aa 100644
+>>> --- a/Documentation/process/1.Intro.rst
+>>> +++ b/Documentation/process/1.Intro.rst
+>>> @@ -235,9 +235,9 @@ code must be compatible with version 2 of the GNU General Public License
+>>>  (GPLv2), which is the license covering the kernel distribution as a whole.
+>>>  In practice, that means that all code contributions are covered either by
+>>>  GPLv2 (with, optionally, language allowing distribution under later
+>>> -versions of the GPL) or the three-clause BSD license.  Any contributions
+>>> -which are not covered by a compatible license will not be accepted into the
+>>> -kernel.
+>>> +versions of the GPL), the three-clause BSD license or the MIT license.
+>>
+>> You forgot a ',' anyway :(
+> 
+> While it is no longer relevant, I wonder where you wanted the comma. Maybe you meant "the three-clause BSD license, or the MIT license"?
 
---=20
-moon
+In general we accept the use of the series/serial/Oxford comma (", or") or not using it,
+but I suppose that $maintainers can determine otherwise.
+
+from Documentation/doc-guide/contributing.rst:
+
+ - The question of whether a period should be followed by one or two spaces
+   is not to be debated in the context of kernel documentation.  Other
+   areas of rational disagreement, such as the "Oxford comma", are also
+   off-topic here.
+
+-- 
+~Randy
+
 
