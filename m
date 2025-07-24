@@ -1,110 +1,205 @@
-Return-Path: <linux-kernel+bounces-744266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7967B10A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CE7B10A53
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9E717CB73
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8113A5E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB647FC0A;
-	Thu, 24 Jul 2025 12:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2169C2D29A9;
+	Thu, 24 Jul 2025 12:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofEmwhS9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="oKKf19rc"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0380F2D12EE;
-	Thu, 24 Jul 2025 12:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D3B2D12E2;
+	Thu, 24 Jul 2025 12:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360534; cv=none; b=J1XFthu2WbS14WSLb74Rt+/OZ2yYLrIBkprfEdGv/XBZ59zM/1PuKWV230+pmpZiRn7UUeJwoth/l7kEAMvqIqggdaRZGl9oGAmNwbNfsvv5Kh2SVXzbpyMtpzsfhB51Z2OHQea2d9tpvIXA0KNlmFv62Kr3T+IlOVmpx6xR+O0=
+	t=1753360603; cv=none; b=N2c8ASvKAinHW2pc5rqluZNbHPFe9cHsmf/PYydXx1I93p49R0oUtwsuC2iytSexbXpImSzNd7p6xyQhs5js9xUGMRZt498BHO/8V5+/7u/+RLnrrMxYeXs5O67hJgWsfSBb0s7X4jrGYcJy1hdJrrnz/wlWVTLrdIoxcj06hGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360534; c=relaxed/simple;
-	bh=r+ZX3Es5yVhtnwa0qN+J3zKdrHltGFF3te0S2kpbSmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNIG59shBCbaunR1+oDZD+vtOWkaPtFbKca/FuQo+4O26vjlhgL8ZgjkCNzTx/86/RM2+UO8zUODgKDYKqSbdHYUnwutQqt6G19bzZY57UKTHh+Mld/l2Dzn6fF8fqbfCof+aj4+zqqoyFAZonbzH1LDaFjJGskmxiVjtGnqeLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofEmwhS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1145CC4CEED;
-	Thu, 24 Jul 2025 12:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753360533;
-	bh=r+ZX3Es5yVhtnwa0qN+J3zKdrHltGFF3te0S2kpbSmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ofEmwhS9Ugx7wxJO1zhgyrAfVPef58C7fkmlZaC94qqXoPe8mkhudepD1Mzm4a5Wy
-	 uF1Ca58XZM9+xPIoPeB6iJga3GX1Cfsd2qK1VzKcxpG1AzipUzLzx5+4LF3aIgW9E7
-	 1ijfw6oms1mt8/2oae1sgGCNoMIXQphjhbgiF1N7OL2qS+yLR/4Oe1XmRtIuFL0eTI
-	 6gH/yridgg3QksGtuO2BCYToU7hUmm7EVvksJ6vfgtZZChVcNAc9lPaTGoWnGnfn0L
-	 fReI8aGF0PYC7Y8szvE0nP10H3+Ag7CZjKHKZnKizNs20GvtNb750LcIjc57BshCQE
-	 4WWjnI5Nkin/w==
-Date: Thu, 24 Jul 2025 13:35:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Varshini.Rajendran@microchip.com
-Cc: claudiu.beznea@tuxon.dev, Andrei.Simion@microchip.com,
-	lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
-	alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dt-bindings: atmel,at91-ssc: add
- microchip,sam9x7-ssc
-Message-ID: <68996241-d49d-4680-863c-38e30e403bac@sirena.org.uk>
-References: <20250610065005.64070-1-varshini.rajendran@microchip.com>
- <7989c547-2346-4e1e-8327-0c085885faf9@microchip.com>
+	s=arc-20240116; t=1753360603; c=relaxed/simple;
+	bh=p7zaguJl0jOOEfM8gRKljVBTfrRIt+bLNBe08BQu42c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZIwoqRLtE/HDw1nIzRwxjChrNPI+1x/dRYntv3ovahcxDLmnH+7ACSCL1xlkdzejQ8U7NYmUCPa7wvGJ0Zm0gs0eP0Zw9piQPvuOBdK7J3e5WE4SmKZbkDcyWZlACWg2+nxWKCiwL/SxzHMu4/kGZ2Y5u9/hkHahiz/qdP7iQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=oKKf19rc; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=kTMLqhd8ACCARh9s+Oizrnftx6KSLEeKOV2ICyEnYoY=; b=oKKf19rcSSkXTmh1MA4PBQ476N
+	Dv3eNo+L1JatFoA7T5mrN2+0OjQpe9OOPJeq+sLXSTrhk1TnBydE5RZQfkN722JNdB79sqWpM/S/k
+	SIBrZlAONRmg1WSKBvqyRC/RxwEYhSxCQF6b6z7TwiE8egFWj/r02JlskgE0vh6BWhOCzakc61IKE
+	e80rAKtvATtYf6XkZ3nbtIbfiRbic7M/JoxsKYtuMxugNwJTADNPT6JCwx44KstSCLVdWH5aqjQcO
+	lHDHjmRULKVLzCGI5kDyND0+Uz8TE5nsLCM1RnktS+EKRpEzC3OIkBNRIAXv+r0HQd3g47yrH9Mv3
+	mn74TWMg==;
+Received: from [223.233.78.24] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uevBR-003BPU-D2; Thu, 24 Jul 2025 14:36:25 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	kees@kernel.org,
+	torvalds@linux-foundation.org
+Subject: [PATCH v6 0/3] Add support for long task name
+Date: Thu, 24 Jul 2025 18:06:09 +0530
+Message-Id: <20250724123612.206110-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GMCgj9FRHPHzUIgs"
-Content-Disposition: inline
-In-Reply-To: <7989c547-2346-4e1e-8327-0c085885faf9@microchip.com>
-X-Cookie: Did I say 2?  I lied.
+Content-Transfer-Encoding: 8bit
 
+Changes since v5:
+================
+- v5 can be seen here: https://lore.kernel.org/lkml/20250716123916.511889-1-bhupesh@igalia.com/ 
+- As suggested by Linus, replaced 'tsk->comm' with 'tsk->comm_str' locally, and verified basic
+  thread names and then changed 'tsk->comm_str' back to 'tsk->comm'. So essentially now 'tsk->comm'
+  is TASK_COMM_EXT_LEN i.e. 64-bytes long.
 
---GMCgj9FRHPHzUIgs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v4:
+================
+- v4 can be seen here: https://lore.kernel.org/lkml/20250521062337.53262-1-bhupesh@igalia.com/ 
+- As suggested by Kees, replaced tsk->comm with tsk->comm_str, inside 'task_struct'
+  where TASK_COMM_EXT_LEN is 64-bytes.
 
-On Mon, Jul 21, 2025 at 05:26:22AM +0000, Varshini.Rajendran@microchip.com =
-wrote:
-> Hi,
->=20
-> Gentle reminder to merge this patch.
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
 
---GMCgj9FRHPHzUIgs
-Content-Type: application/pgp-signature; name="signature.asc"
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
 
------BEGIN PGP SIGNATURE-----
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiCKI8ACgkQJNaLcl1U
-h9Bt9Qf+Jror8xXrRp6GCl/0eJcVWRMzPkxTLvGzSnt10RAB7m5ivevvZcYq5FAV
-VJOozlsvMXpskkSyilo1gWpI8C/P0su943W6j7JP+vvrA6zeut9Mq6nnSuQuVq7h
-DiTeCXC9lS4g4xGYms25dLpMNd/hb/I1LbCCZcoyRklbVb4QpS+XwJvP47b+h5bI
-x0yXHh7nQMpeLlJdQRZejOy1CKGu6ViVtZ3ZuLV8hQu/l72jYSGJiwYeZvY9dOZL
-cZXLTWBYjBFvBXWSopSdl+oB1fNhrjKyLXBX++hxIzYg8ntVtqCEtFpVDBs9ivaM
-cSQcqvLcvIzGftir3L8A+J+A8nwegw==
-=pK06
------END PGP SIGNATURE-----
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
 
---GMCgj9FRHPHzUIgs--
+Via this patchset, Linus suggested 'tsk->comm' is made 64-byte long
+and equal to TASK_COMM_EXT_LEN.
+
+To avoid any surprises / bug,s I replaced 'tsk->comm' with
+'tsk->comm_str' locally inside 'task_struct' and checked compilation
+of code and basic working of thread names:
+
+       struct task_struct {
+	       ..............
+               char    comm_str[TASK_COMM_EXT_LEN];
+	       ..............
+       };
+
+       where TASK_COMM_EXT_LEN is 64-bytes.
+
+Once done, I changed the name back to 'tsk->comm'.
+
+To ensure that the existing ABI and userspace continues to work
+as intended, we ensure that:
+
+- Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm'
+  truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
+- New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
+ 'tsk->comm' supported up to a maximum of 'TASK_COMM_EXT_LEN' (64-bytes).
+
+Note, that the existing users have not been modified to migrate to
+'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
+dealing with only a 'TASK_COMM_LEN' long 'tsk->comm_str'.
+
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (3):
+  exec: Remove obsolete comments
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+  include: Set tsk->comm length to 64 bytes
+
+ include/linux/coredump.h       |  3 ++-
+ include/linux/sched.h          | 15 +++++++++------
+ include/trace/events/block.h   |  5 +++++
+ include/trace/events/oom.h     |  1 +
+ include/trace/events/osnoise.h |  1 +
+ include/trace/events/signal.h  |  1 +
+ include/trace/events/task.h    |  2 ++
+ 7 files changed, 21 insertions(+), 7 deletions(-)
+
+-- 
+2.38.1
+
 
