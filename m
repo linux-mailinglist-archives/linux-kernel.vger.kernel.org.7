@@ -1,239 +1,244 @@
-Return-Path: <linux-kernel+bounces-743903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AC2B1052A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 077A3B1052D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768F316471B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24F94561552
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A949A2750F4;
-	Thu, 24 Jul 2025 09:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4542750EF;
+	Thu, 24 Jul 2025 09:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qR8wZUg2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DDQIX3Ag"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7D917996;
-	Thu, 24 Jul 2025 09:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1672750E2
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753347787; cv=none; b=KH0g7ZxG5R+TeI2Dv402p20gtozTAD/6HPNwJakSHHfcr5jDFEA5wB4wVSaEEhm7aetnLvYSMNXbTTeCDe7suDAw7/rr1WPDPE+gmCrJ/bcfUOvF/RcdkIhTRr9yvKRHFWhu6C++QxfB9SZWz5zsfbMwJZAjhgJ1M7wKvFKJN48=
+	t=1753347842; cv=none; b=JZE/jjbs5GWm4qH5ZWHYuN+OcoeKfwGi7pnjWrmXtUCjcQasFIGCVBW05M7ITKbJ576dUBJkReuehiBpEQa2u+ZTUDnX7uQcBvWm47GHH9PvT96HPD1AvDH+8l96MdXFYAcpcWjYIb1y2FgWhnsC+c+slygKO4RDaJ3BUw5MzGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753347787; c=relaxed/simple;
-	bh=PxzwG0gXXRflyI0Y8xrQQzzEp28aI6sOScugqA9mOV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rqx20Dx9Mre9wWC6lql+VosWP6ckfs57IbC60+t7eqZ68qOp21iBvxYXiGC1S8ZsrQhWSJKveKnXsQehM8AUc/YEGiEPh+rWHtYLgoQ2hdVnk7VC8AwmVAAmjwgyjyj822mSmTCyatHphB3g74vabJ+GeniQS9hC7mjiKf33Xc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qR8wZUg2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EDFC4CEED;
-	Thu, 24 Jul 2025 09:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753347785;
-	bh=PxzwG0gXXRflyI0Y8xrQQzzEp28aI6sOScugqA9mOV4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qR8wZUg23F2cxVS3krxhN76dgS+hR3IcRYzEchL0nchepTuFECZQ+BQ+YUxEioiWC
-	 yWAE9lOT+ZQdH98r4gdjZshTVnXf5FtDp1ZL1KsozBiR5zHDHViAh+eJudJekhYwSs
-	 HbvXFhC7W7gX1AiZNbeVkfs4n0DodB/xaqLCjFS+pN3fG5AWCpuzwvCp4V6zJLahsZ
-	 s+mBaGmwOAk6/UIotFUX/Xh6cLGaHe8XkZ33T0SfSqhxv4e6R1LvSejgNzamMddams
-	 gGazOgyCR3QPJvTp5Zx20BvlIsgjB2c27A0Mu9E7OJDDyw0aTdQtRbGe0X1TXiFZnk
-	 vMZ+oJYzzCdOA==
-Message-ID: <184bf60f-f803-48a0-a854-badc14584e53@kernel.org>
-Date: Thu, 24 Jul 2025 11:02:58 +0200
+	s=arc-20240116; t=1753347842; c=relaxed/simple;
+	bh=kWJTwskOGOSmv/NQrgz31Leg1z4OQaq1fZa768ssmlI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UOF9tbd+25d5J7wkly/PE1MIVfICAP4JYGHbclsf+uiyvWlBMDT7aXykE27NkqCYIJCYmkHmso9YcF5vXxKaH4O0ZjSH8WBiibIENgy9ccMLFLNZdxbEj5LpoOhoyVyyZRI9l4foHPkCxCPckH290LISqLU7Z38b4Qac3Fv6SfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DDQIX3Ag; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso638749a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753347839; x=1753952639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hPWtuv4lJrSEvpGaLUbqBCZfWpn4k+RWv0aELj6So1Q=;
+        b=DDQIX3AgcZdFt3UpS03ir2euDYoeHqLKM+cUiPCJNIzCDhmTiOw67BXcRzzAOPLRi5
+         ZaJpOMbzD7Wr8hSxTm57Y5ptxA0j/ueZlSvpHdXNB7gy+eUMX4r9E2NfYx3s7aE4yv7p
+         EotCPZjHWEV2vuNUjF+JxLmx4EziYQv+y0JTlT+uJa0OuOopSvq4kt7m0lT0UDwRHsK3
+         8sqyicTHLERu3WkH67QGzXo6Oz5jMkeuW5GR+O4wMK8xv3gD56mS6X8haV4QYSDVrOGl
+         3UV9vVM1hwKZfMSRlU0pkQ3gf88L0tO5uru7yUww7dOZFtSXeRrVnBHsTaHdP9lsclUB
+         wQdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753347839; x=1753952639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hPWtuv4lJrSEvpGaLUbqBCZfWpn4k+RWv0aELj6So1Q=;
+        b=c5/ruFufVLy+IYmlsdLWwd2ngkiuvw/OgUORxn5yi9rJpR1NhSsBYTt+vCvgJE7uJ/
+         dcAyUIubwW1lG0umylTVYp64XH4Izhc7jmBbGrcEkJ0bbf6Z6AUrXFQ0cPTkgPtfI+eu
+         A/O5kqPZziXbe1wgiqXU5oRqVDpwR/hSCb72a1jmpchcdG+mJOA2aZz591ZODnytPqoA
+         niEStT0ERSoYu2hxhRLUtL6wO72zzdRJcV0RKrixI7hjJvrUgjWK8FZLsYz9pKqMqaYX
+         ztbla4zkcVMlbbAUiD8Hx8A91gz0BAJixtV/gHu0rSG4qgmNmQOgQhvg0eTLdJSqww4+
+         U99A==
+X-Forwarded-Encrypted: i=1; AJvYcCWtVW5B87gLVeOY4QhWdKeetsoM4rBwMONRdhde9I9b4H2mMIQB3EQAEj5p+WspdrrpOW8MOMyAlaigRcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh0WB7ymTS0UsRTgvErpFswQb7dQcY0RG7st0RtuIcYfjRnzS9
+	S0JK9aPwiLNVBeDkmgSMFif3N6EAmGRx8flT++ht193IfB3nFXRYDHSItrHoYQQp2Peg6a1xVAK
+	EDxie3NbAivIPbKq1OJWj5RXyWskZ62ADXHkOgCJAdA==
+X-Gm-Gg: ASbGnctDzV18B3ZPEGdz9Da6XKRvqHpXNX34jcSlpo3KISO42Q9K84P/o32Q7gTd8rb
+	secxYEudbj0BoS8sduKnLY48GPqmgzJkC6Z81taiYlMtj+vSzEzcsltlUm45xb9LfxXP8+aLLoY
+	5ZEu/UrWGQw7Rm9JOBFwRS6ZxJYCy2ICif/EV3UHOTVbq1VBL0GadtrVC6rA/BbxN2Fa4AjNXxx
+	z/Wmk6CppXVB75kVAkcRjKoY2eR7obf8KTFXKHo
+X-Google-Smtp-Source: AGHT+IFQuCZwC1KeXNgkUur9CNJFKiakMhZbBzuGLWlcXfAg67p+c2MHmy9HoJGZDp+ZIAF4SeIn13PYIWXKtaoTtKY=
+X-Received: by 2002:a17:90b:3809:b0:311:a561:86f3 with SMTP id
+ 98e67ed59e1d1-31e5079f069mr9091570a91.6.1753347839489; Thu, 24 Jul 2025
+ 02:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: temperature: Add NXP P3T175x
- support.
-To: Lakshay Piplani <lakshay.piplani@nxp.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com,
- gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, peterz@infradead.org,
- jstephan@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
- shashank.rebbapragada@nxp.com, Frank.Li@nxp.com, carlos.song@nxp.com,
- xiaoning.wang@nxp.com, haibo.chen@nxp.com
-References: <20250724083951.2273717-1-lakshay.piplani@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250724083951.2273717-1-lakshay.piplani@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250722134340.596340262@linuxfoundation.org>
+In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 24 Jul 2025 14:33:47 +0530
+X-Gm-Features: Ac12FXwSfwTHUsil6PSiJplqyXKkYTYZxM7m8ENCaVQBaeqVIZ618kQJLz7zxTQ
+Message-ID: <CA+G9fYsXDqfR6t8szOBXXd7G1zp6TJ3oU_rPFx0NbNq0SrUZbw@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/07/2025 10:39, Lakshay Piplani wrote:
-> Add bindings for the NXP P3T175x (P3T1755/P3T1750)
-> digital temperature sensor, supporting both I2C &
-> I3C interfaces.
-> 
+On Tue, 22 Jul 2025 at 19:27, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.40 release.
+> There are 158 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.40-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Subject: drop full stop.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,p3t1755
-> +      - nxp,p3t1750
+## Build
+* kernel: 6.12.40-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 596aae841edf981aab1df1845e6df012bed94594
+* git describe: v6.12.39-159-g596aae841edf
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.39-159-g596aae841edf
 
-Keep the list sorted.
+## Test Regressions (compared to v6.12.37-168-gd50d16f00292)
 
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      In I2C mode, the device supports up to 32 static addresses.
-> +      In I3C mode, the 'reg' property encodes a triplet of
-> +      <static-address BCR PID> used for device matching.
-> +      Static address is optional if matching is done via PID.
-> +
-> +  nxp,interrupt-mode:
-> +    type: boolean
-> +    description: |
-> +      Enables interrupt mode (TM = 1), where alerts are latched until
-> +      cleared by a register read.
-> +      Required for IBI support over I3C. On I2C, both interrupt and
-> +      comparator mode support events.
+## Metric Regressions (compared to v6.12.37-168-gd50d16f00292)
 
-Both properties are redundant because they are implied by the bus, no?
+## Test Fixes (compared to v6.12.37-168-gd50d16f00292)
 
-> +
-> +  nxp,alert-active-high:
-> +    type: boolean
-> +    description: |
-> +      Only applicable for I2C mode.
-> +      Sets the polarity of ALERT pin to active high, if true.
+## Metric Fixes (compared to v6.12.37-168-gd50d16f00292)
 
-Why are you encoding standard interrupt flags as a new property?
+## Test result summary
+total: 322673, pass: 295025, fail: 7381, skip: 19752, xfail: 515
 
-> +      Ignored in I3C mode (which uses IBI signaling).
-> +
-> +  nxp,fault-queue:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 6]
-> +    description: |
-> +      Number of consecutive temperature limit
-> +      violations required before an alert is triggered.
-> +      valid values:- 1, 2, 4 or 6.
-> +      If unspecified, hardware default (2) is used.
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 23 passed, 2 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 47 passed, 2 failed
 
-Why would that be board level configuration?
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
 
-> +
-> +  assigned-address:
-
-:true
-
-and that's it... unless you want to make sure it has a type also for I2C
-case? How other I3C device binding solve it?
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0x1
-> +    maximum: 0xff
-> +    description: |
-> +      Dynamic address to be assigned to this device. In case static address is
-> +      present (first cell of the reg property != 0), this address is assigned
-> +      through SETDASA. If static address is not present, this address is assigned
-> +      through SETNEWDA after assigning a temporary address via ENTDAA.
-
-But for sure no need to duplicate common schema.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        temp-sensor@48 {
-> +            compatible = "nxp,p3t1755";
-> +            reg = <0x48>;
-> +            nxp,interrupt-mode;
-> +            nxp,fault-queue = <6>;
-> +            interrupt-parent = <&gpio2>;
-> +            interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-> +
-> +  - |
-> +    i3c {
-> +      #address-cells = <3>;
-> +      #size-cells = <0>;
-> +      temp-sensor@48,236152a00 {
-> +        reg = <0x48 0x236 0x152a00>;
-> +        assigned-address = <0x50>;
-> +      };
-> +    };
-> +
-> +  - |
-> +    i3c {
-
-Drop this example.
-
-
-Best regards,
-Krzysztof
+--
+Linaro LKFT
+https://lkft.linaro.org
 
