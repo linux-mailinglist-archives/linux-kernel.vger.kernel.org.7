@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-743723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A78BB10274
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242ADB1026D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0831D1CE1DDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615381C83031
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2F2272E60;
-	Thu, 24 Jul 2025 07:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931E727055F;
+	Thu, 24 Jul 2025 07:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fbqPQ2bU"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQ1RJw1j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C625272E47
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA4426D4E1;
+	Thu, 24 Jul 2025 07:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343691; cv=none; b=U80SqubkkaArbC8LSTb+RbAgvxTB1nKQM3JgsjbHdj/yhRkogX6cFXL7xE+OGJCcK5D1lxriow+UvsJTXfGyXhkxTkgY5f/QDqMnoXmaA+xKqhgMk81Hx6Afe8SUUb1STeVieBaESJJU5ij2SXoOcOpUdpd8XZasf1mt0LcwBzY=
+	t=1753343667; cv=none; b=un8uVV9/izFjQqVaBVviQmkKPASkBGtE0i5sokIAu5gL/jVgK7B+cEYCZTEy3nT9NmStmagjYfhnh6vt9D3pdyhkwMI/fuNahUWN5Jl0Zn4vgxfOSG7jur5xRCs3YfSuoOsk2PPHjYmuPc8L3xWbrp/bvEkToo3wH2N5x0NGQBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343691; c=relaxed/simple;
-	bh=82M7kduRWRwnXxavLqTVQBEIeyc/P1MLwrB0Zw1JLj8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GgkVNkjbSHZrGaTj5I2Ifp0oNNFRIIr9Bkn/b8Gx/ZUuOjitHEyKZ42xxZqAwtyaaaaZXzXeljsBnFQtXXK4tazIu5Xjc8Dex/ofdRTlVbOvP42vtq44KeyS5Wognzv8OQDFmb3kI7ioU0qFM3k9FWKat8iPLqQ1UfE2WGReGak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fbqPQ2bU; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753343687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yijtlKWNOMxxyKll6m4irmOIbOxOroj9qUMsO8ydTXM=;
-	b=fbqPQ2bU6NHvzPywHOpIT3u7Qkj+kK58FHmiO66/4/BOuLyMgKwn18N640DBajlLHVqTy5
-	L1isfu2PxU1N1Q+zQVzIpsWswRTU2wnf0EzverL2lZP3heEbz88bsKFVNfVnN8gHe8AcGD
-	YSmOblRFIGYVjnhPhi4nyU0kw0MjIY4=
-From: Hui Zhu <hui.zhu@linux.dev>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hui Zhu <zhuhui@kylinos.cn>,
-	Geliang Tang <geliang@kernel.org>
-Subject: [PATCH v3 2/2] rust: alloc: kvec: add doc example for `as_slice` method
-Date: Thu, 24 Jul 2025 15:54:19 +0800
-Message-Id: <376014022fa799f5480f6f993f1e25b2561507e4.1753339262.git.zhuhui@kylinos.cn>
-In-Reply-To: <cover.1753339262.git.zhuhui@kylinos.cn>
-References: <cover.1753339262.git.zhuhui@kylinos.cn>
+	s=arc-20240116; t=1753343667; c=relaxed/simple;
+	bh=i2i4FvAvcuu68l81dS/YVmY3OFVFW2LN9O82CoVKe7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKjhySs7ClWSlHwt5/bu27k3/Us8ICPogChOk0elxmAo0wE9ajLFpUvWKT8TguxzZVAO8VjsQj162CZiTi8n9D2w8rogo2WNIdbQeyA7FMQK395s5G0esTTKLxbM7rIZWALMV2fjZqXExN/c91Q4MWEy1lobV/iRQ0zBnbTTGSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQ1RJw1j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17996C4CEED;
+	Thu, 24 Jul 2025 07:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753343666;
+	bh=i2i4FvAvcuu68l81dS/YVmY3OFVFW2LN9O82CoVKe7I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lQ1RJw1jj5vQdH0uQDIh+j8DzG4WT0pzw1BFCODaK/ai5Be+TDcZckKWh6m7BRM0X
+	 Qc0N6jpaWb3Wp65fn5U8Fy1XO6H4Uexv+t5Z9AeZs0M1+6hzF9Ylb+z9LeDT8Ws/rN
+	 mr8nkjmOgTlmFkOhMemTJ0VOjd0I7ylq92bPH+8q0ao28yYivPvYLpfRwDgQqFrvP/
+	 7/jCbKR6hNfiLqmNh6DRmPgSYOqTEsWq7FYERfSrDMQmtSMWIoh3WL3K7VB6JgaJxb
+	 wWau+MTJmlC1y0iWM2ky+Zwcru9Lc4oqIZxNneD2pcRcqIQ8BRtyxUt/1/c1Otvg1W
+	 hzyyArKWXSZNA==
+Date: Thu, 24 Jul 2025 09:54:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Donald Shannon <donalds@nvidia.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	joel@jms.id.au, andrew@codeconstruct.com.au, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: arm: aspeed: Add NVIDIA GB200-UT3.0b
+ board
+Message-ID: <20250724-sweet-radiant-stoat-10d86d@kuoka>
+References: <20250723222350.200094-1-donalds@nvidia.com>
+ <20250723222350.200094-2-donalds@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250723222350.200094-2-donalds@nvidia.com>
 
-From: Hui Zhu <zhuhui@kylinos.cn>
+On Wed, Jul 23, 2025 at 03:23:49PM -0700, Donald Shannon wrote:
+> This is an Aspeed AST2600 based unit testing platform for GB200.
+> UT3.0b is different than nvidia-gb200nvl-bmc due to networking topology
+> differences, additional gpio expanders, and voltage regulator gating
+> some devices.
+> 
+> Reference to Ast2600 SOC [1].
+> Reference to Blackwell GB200NVL Platform [2].
+> 
+> Link: https://www.aspeedtech.com/server_ast2600/ [1]
+> Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
+> Signed-off-by: Donald Shannon <donalds@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
 
-Add a practical usage example to the documentation of `KVec::as_slice()`
-showing how to:
-Create a new `KVec`
-Push elements into it
-Convert to a slice via `as_slice()`
+<form letter>
+This is a friendly reminder during the review process.
 
-Co-developed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
----
- rust/kernel/alloc/kvec.rs | 9 +++++++++
- 1 file changed, 9 insertions(+)
+It looks like you received a tag and forgot to add it.
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 3c72e0bdddb8..d384c34d1a5e 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -224,6 +224,15 @@ unsafe fn dec_len(&mut self, count: usize) -> &mut [T] {
-     }
- 
-     /// Returns a slice of the entire vector.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// let mut v = KVec::new();
-+    /// v.push(1, GFP_KERNEL);
-+    /// v.push(2, GFP_KERNEL);
-+    /// assert_eq!(v.as_slice(), &[1, 2]);
-+    /// ```
-     #[inline]
-     pub fn as_slice(&self) -> &[T] {
-         self
--- 
-2.43.0
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
 
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 456dbf7b5ec8..624581db2330 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -99,6 +99,7 @@ properties:
+>                - inventec,starscream-bmc
+>                - inventec,transformer-bmc
+>                - jabil,rbp-bmc
+> +              - nvidia,gb200-ut30b
+>                - nvidia,gb200nvl-bmc
+>                - qcom,dc-scm-v1-bmc
+>                - quanta,s6q-bmc
+> -- 
+> 2.43.0
+> 
 
