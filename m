@@ -1,252 +1,164 @@
-Return-Path: <linux-kernel+bounces-744839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B149B11176
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:13:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84B3B11177
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434911CE3BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949C5AA271B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D902EA462;
-	Thu, 24 Jul 2025 19:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2B22C15A2;
+	Thu, 24 Jul 2025 19:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="el2lrjsv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IHr2C+Rr"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D61F1EF39F;
-	Thu, 24 Jul 2025 19:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C81FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384378; cv=none; b=GAbjgOV/n1bJC7mgdDOQFpwjmV7mSA7eqIB+fwRxc7WsK2UB6VohKkhiuyUKxRDkoUyTGg6N63T6dLCXxg+fysvRamivc405W+PjQaX0+oBZmYdZoCXQdo7QkzmbBjP7yghKF2iVAAR1c0Ujtm0KSOAq+2aotuam4XeS2Zx+r6U=
+	t=1753384440; cv=none; b=eBbcyvPeSALJG/iY7Dy5Twsn6jiIFHOxCk3vtUV0uRoUkuiwwTlV0puYKa8FyqNU2PZPjolCDlPktEOOnH/EwhOMyuQq0tydoCtLXDMef9jwMj455OQhnAV38BiN2V75AWenE15Ow+xGtJFjEuucup3qrzh/v7sG3+61+tF/4iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384378; c=relaxed/simple;
-	bh=vJUICzDD4InKrsoQB68IGsYa0ViATbp7jHPQDQJKJro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pfokurdYEjyHonrIGJK5iFY1EoQL0OKrqwS8UksZBqVKsCj1GIkLh4uf25mXK8YYJi7pw8MZ4lHHwUAFQBjItk09MzbUHLw36jfBZd2Fik+LGPPDN92bfKtWunqIkCeXHBoS++2xnmd88JrbK956V0CNdgs+qj3qz3O8faehNQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=el2lrjsv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA53AC4AF09;
-	Thu, 24 Jul 2025 19:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753384377;
-	bh=vJUICzDD4InKrsoQB68IGsYa0ViATbp7jHPQDQJKJro=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=el2lrjsvqhzZAFl//OlR33T5TS45RCmzC8FuesQsM5qxvLYYUH90Y89B/4nmzH8bd
-	 b7AWBPS1fOgOwagOlvgshlC/gra6eQM7/sSD4WE1ED1bc3v3bI/GMdK+xDJk3uSZqa
-	 zKJ1iJLzIo/jz3CnLVRtzXE/VJWCHZ9Zyz5mpOpquk5DgQh1/kwtDDT0+3F9qAIYbp
-	 dhwRzGnAUEauIrALUafw0nYqxDCwk7fiAUXAk85WB+IwZHb+8EAHMqqcxO+O7jo/yt
-	 2ITzSn+DKJOssJpDo1fGT7dhT7026KyMUJIY83ZCzemYlXxWb+M6KyfpPNDm13GsfW
-	 LdNJ5QB6OKHRw==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615da180061so707494eaf.2;
-        Thu, 24 Jul 2025 12:12:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGNkZWM3//Fb0lA4itMtTFne0F+pgi30/O7d2P2JpH3/ZUSdQKQbHn4hfnW+qTANZhKnMcgnii4llihds=@vger.kernel.org, AJvYcCVu+pTLm8avNE0Yu2EXVM/Fy0Wl9DB/aJHkideQFsbKY5TEJ7zjDxhCKC0LfFTRQvTUgVRV/M74jgM=@vger.kernel.org, AJvYcCXFK17hfMZhuMX9noOoLDfw1+KvZKfKat5Xih5AT3SupSYN5Vwf/wjZkENpu9xDYT0q/q1szQLZJbYy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9wug23ZKFcXOPK73hlbk8Mo1aYGpd6JeVE5vj5UsVGYYkuZJB
-	yJXg5y4xS1vc7yCOw/6J1PceZuLyR7iewS0F4bKa6/+BKbleBHcbSZkk6C9KmpzZyF9wqDfC7mp
-	QRR4wsezBQUVsXJuX7Oe6TRgTDfszTHc=
-X-Google-Smtp-Source: AGHT+IFbB46Hjxj4k6TmuR4peJJBucCkWQW1c8okqZZI2QqIZpTGocMp9N0FBCmeOFIfDNehhDb7L4EdiflXxYavJmE=
-X-Received: by 2002:a05:6820:1356:b0:615:fc41:b0b3 with SMTP id
- 006d021491bc7-6187d8ed440mr6856151eaf.7.1753384376975; Thu, 24 Jul 2025
- 12:12:56 -0700 (PDT)
+	s=arc-20240116; t=1753384440; c=relaxed/simple;
+	bh=SKCMXsnSeRtRSHspFusROaZkjfL2iP9BROPQgWT4iv8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MpYAxhqnVRT2A77ZMCVkd4TaaTDi6mMZ8YO7SUT/9FnTr/m+935zDT8X6aV8q/qniluFwxPVn7P3Mr23fv78NU9z9ZN8GHfnCD8e3TGpBd2Tx+Kx0l6LbCleXtt5FBBRCsYuDBiKT6Nzqf8ns549ngtrwHD/Zn6egYHehFJYURY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IHr2C+Rr; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so14575e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753384437; x=1753989237; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvqjKgmAxHvS61kQHKCMppQbPZSjiiJdgG3hMaDeD04=;
+        b=IHr2C+RrsbHn1ZYn1rU1NJ1FMD0VheYekMRO2/VncrBAf9+Je0/F/O3A+erZu2Urwb
+         apVJrjCxdzHX+9MlNf1++bxjVbjtS/exKQeLIR5mBvre+WCFQ1ErK+YzTReS8EGSMaw6
+         mAg973uK4xiVn6JyHmzZDr/b7vQpa+/JMKKq8SkXH6YealCGZj9cPLylSde/qs+4f3Wq
+         P1KrWQo8MChcWahC/HpqbIDQyooZ/NRRrtpgXD4fTtdTGR0Q7KsPYQY0RV4ATOAgvcT9
+         OefnkBPuJBbJnCrCMKkWUu7gCR0Bq2ZBIUZJREQJe9b7URwXazsdCygRyeXyCl26vMfN
+         rYMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753384437; x=1753989237;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wvqjKgmAxHvS61kQHKCMppQbPZSjiiJdgG3hMaDeD04=;
+        b=wcDzgK/HasazY+QwV0CgO6QyZwRCxU/ivuyD12bIkuLcW1YWu1ntjkIWYkpiN2J99T
+         3E244fMRjHfyzBrYB67AQHN2E+0CyUC7cCsf0tTSRcvva+i0CmQ0cP7z8MMRKsgFQ8Md
+         kV1CU4KKekv80auxqOHqxtTQUWxK/19kbG1HBeUp/758fJ2OlaJRBVxROWQDqx5sX3i7
+         15PIKhpMLiD32v3VHdXhf/whl1Hp8IiHn2Ep6OvOO+BGkeyTINon9qo4EjTapV/xBKW8
+         eD2Vgbd0FsHBJeZzFS+eYlineb8wq2A8eK0YNx4848+ZHVf7j3ItTRU0KMbzGTo/S0AP
+         sKWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXb/Zlj/94X/N0jLgBYqu8m4hECjuRK5VXyDCsXe1/XjuXdxkE/5TI6MeuqUNGQIJn26Igtt8JaEPmz55o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq0vvh2loSHXP75F1L4nrvP5C6PZ1GVcoGkkhzJ0IoCdZmXrcJ
+	9k1RQ2PPwX6WJNAY3yW+3syvKU3JBx+S5Lq0lgDDr7s3MsQRWOEyzvcT/SGXe8Pkcg==
+X-Gm-Gg: ASbGncs0ubH1Lf9w59ygwTGFAUNNEfiGaJw6oV+b1uOQqSuSGcHkLubwBSrFc3TzBA9
+	gIo6sdQyuo7w/u/HZPRqQ6u87JTkGCLO5FEty02iXsRJq7dZCJUPoM/wNHHgrG8IkJcL608YMn3
+	leqZywdXbcXHgOKwoDdxyOwv++hvPxFAgCaWivIg58PIHQLZJJoxGARolcn74ivN493I76Rmy1E
+	zHOBVMH1DgXYWA2Yq07OPsRqz/pkYX3xca/ki3+h2ry9vTIxlmGf2r2cKtgNMm0A4qCvR8OOd6n
+	1AXw8ZNpmIlvUn+9sU0D3x9X5M5NxVhvcMxHOB6UcmKEErUdwxC4bVOrjX1CNh0FfS6lA+tQPZl
+	aCTRaalB61vty1rZD/5nS
+X-Google-Smtp-Source: AGHT+IG6HqoTeM/LvEaoDun56uV6GbzB2LcdJNB2rWhSL7A+EL6K8+TGgrzGYXW7vR/+FcFvXmR4cA==
+X-Received: by 2002:a05:600c:3ba9:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-458730842b5mr158385e9.2.1753384436268;
+        Thu, 24 Jul 2025 12:13:56 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:5757:f399:9323:7f5])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f338sm28555995e9.13.2025.07.24.12.13.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 12:13:55 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Thu, 24 Jul 2025 21:13:50 +0200
+Subject: [PATCH] mm/rmap: Add anon_vma lifetime debug check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720190140.2639200-1-david.e.box@linux.intel.com>
- <c6757u3xdyxxuodcjsbpdje7m4qiq26tug5lfxvpbs5wm7r56l@ksy4yge7kg35>
- <CAJZ5v0jZrPyW9+Ccoo955Y4oje2SiAQA9aCChAoPgM28SJqf5g@mail.gmail.com>
- <arotuyooaoo6ustmp5gnoj64pkpyvcc3plekh4yt46siuemlik@sv6tjxnggznx>
- <CAJZ5v0hDEX_ZMiAZU-PwriCpURiw04f=JLAVwP9UJ54wv3HBEg@mail.gmail.com>
- <scajymgengcxt6e4ekl53hteig4mgu34wwif2r737xvtcdghg4@ej4qn2rbcxzg> <fiuyebro52meyyri2qamj3h2eijjebl3uhgnalo7wwjholwml7@rgpmcegwjxid>
-In-Reply-To: <fiuyebro52meyyri2qamj3h2eijjebl3uhgnalo7wwjholwml7@rgpmcegwjxid>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 24 Jul 2025 21:12:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hLJwOe-__7DpEEOcZpxan12VOUhucv+WxkYuh-Q+YOGQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxtROj7PeUT4GLAuydg_OgUJXnKEwptFmCPBLKFJ9bCV_yA-gwfF01KB7I
-Message-ID: <CAJZ5v0hLJwOe-__7DpEEOcZpxan12VOUhucv+WxkYuh-Q+YOGQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/ASPM: Allow controller drivers to override default
- ASPM and CLKPM link state
-To: David Box <david.e.box@linux.intel.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, bhelgaas@google.com, 
-	vicamo.yang@canonical.com, kenny@panix.com, ilpo.jarvinen@linux.intel.com, 
-	nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250724-anonvma-uaf-debug-v1-1-29989ddc4e2a@google.com>
+X-B4-Tracking: v=1; b=H4sIAO6FgmgC/x3MQQqAIBBA0avErBswKaSuEi3GnGwWaShFIN09a
+ fkW/xfInIQzTE2BxLdkiaGiaxtYdwqeUVw1aKUHZXSPFGK4D8KLNnRsL480OqvY9p0xFmp3Jt7
+ k+Z/z8r4fpYaNUmMAAAA=
+X-Change-ID: 20250724-anonvma-uaf-debug-a9db0eb4177b
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Rik van Riel <riel@surriel.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753384432; l=2125;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=SKCMXsnSeRtRSHspFusROaZkjfL2iP9BROPQgWT4iv8=;
+ b=CmyTLcNCTvv132ht3agMAqhsH0w3t2N0h4jtV81qEiHKf4I9vTMHkGg5eUxTETvXZtqOUenLw
+ vMLIuok4ECtDxn4DH/9iAKnXiTygPuCPBxz3AtOVG5JcraxI3tYwM5K
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Thu, Jul 24, 2025 at 9:08=E2=80=AFPM David Box <david.e.box@linux.intel.=
-com> wrote:
->
-> On Thu, Jul 24, 2025 at 10:18:47PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Jul 24, 2025 at 11:58:40AM GMT, Rafael J. Wysocki wrote:
-> > > On Wed, Jul 23, 2025 at 11:27=E2=80=AFPM David Box <david.e.box@linux=
-.intel.com> wrote:
-> > > >
-> > > > On Wed, Jul 23, 2025 at 01:54:41PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Mon, Jul 21, 2025 at 10:24=E2=80=AFAM Manivannan Sadhasivam <m=
-ani@kernel.org> wrote:
-> > > > > >
-> > > > > > On Sun, Jul 20, 2025 at 12:01:37PM GMT, David E. Box wrote:
-> > > > > > > Synthetic PCIe hierarchies, such as those created by Intel VM=
-D, are not
-> > > > > > > visible to firmware and do not receive BIOS-provided default =
-ASPM and CLKPM
-> > > > > > > configuration. As a result, devices behind such domains opera=
-te without
-> > > > > > > proper power management, regardless of platform intent.
-> > > > > > >
-> > > > > > > To address this, allow controller drivers to supply an overri=
-de for the
-> > > > > > > default link state by setting aspm_dflt_link_state for their =
-associated
-> > > > > > > pci_host_bridge. During link initialization, if this field is=
- non-zero,
-> > > > > > > ASPM and CLKPM defaults are derived from its value instead of=
- being taken
-> > > > > > > from BIOS.
-> > > > > > >
-> > > > > > > This mechanism enables drivers like VMD to achieve platform-a=
-ligned power
-> > > > > > > savings by statically defining the expected link configuratio=
-n at
-> > > > > > > enumeration time, without relying on runtime calls such as
-> > > > > > > pci_enable_link_state(), which are ineffective when ASPM is d=
-isabled
-> > > > > > > globally.
-> > > > > > >
-> > > > > > > This approach avoids per-controller hacks in ASPM core logic =
-and provides a
-> > > > > > > general mechanism for domains that require explicit control o=
-ver link power
-> > > > > > > state defaults.
-> > > > > > >
-> > > > > > > Link: https://lore.kernel.org/linux-pm/0b166ece-eeec-ba5d-221=
-2-50d995611cef@panix.com
-> > > > > > > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> > > > > > > ---
-> > > > > > >
-> > > > > > > Changes from RFC:
-> > > > > > >
-> > > > > > >   -- Rename field to aspm_dflt_link_state since it stores
-> > > > > > >      PCIE_LINK_STATE_XXX flags, not a policy enum.
-> > > > > > >   -- Move the field to struct pci_host_bridge since it's bein=
-g applied to
-> > > > > > >      the entire host bridge per Mani's suggestion.
-> > > > > > >   -- During testing noticed that clkpm remained disabled and =
-this was
-> > > > > > >      also handled by the formerly used pci_enable_link_state(=
-). Add a
-> > > > > > >      check in pcie_clkpm_cap_init() as well to enable clkpm d=
-uring init.
-> > > > > > >
-> > > > > > >  drivers/pci/controller/vmd.c | 12 +++++++++---
-> > > > > > >  drivers/pci/pcie/aspm.c      | 13 +++++++++++--
-> > > > > > >  include/linux/pci.h          |  4 ++++
-> > > > > > >  3 files changed, 24 insertions(+), 5 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/contr=
-oller/vmd.c
-> > > > > > > index 8df064b62a2f..6f0de95c87fd 100644
-> > > > > > > --- a/drivers/pci/controller/vmd.c
-> > > > > > > +++ b/drivers/pci/controller/vmd.c
-> > > > > > > @@ -730,7 +730,7 @@ static void vmd_copy_host_bridge_flags(st=
-ruct pci_host_bridge *root_bridge,
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  /*
-> > > > > > > - * Enable ASPM and LTR settings on devices that aren't confi=
-gured by BIOS.
-> > > > > > > + * Enable LTR settings on devices that aren't configured by =
-BIOS.
-> > > > > > >   */
-> > > > > > >  static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *u=
-serdata)
-> > > > > > >  {
-> > > > > > > @@ -770,7 +770,6 @@ static int vmd_pm_enable_quirk(struct pci=
-_dev *pdev, void *userdata)
-> > > > > > >        * PCIe r6.0, sec 5.5.4.
-> > > > > > >        */
-> > > > > > >       pci_set_power_state_locked(pdev, PCI_D0);
-> > > > > >
-> > > > > > This call becomes useless now.
-> > > >
-> > > > Missed this. I'll remove it.
-> > > >
-> > > > > >
-> > > > > > > -     pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL)=
-;
-> > > > > > >       return 0;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > @@ -785,6 +784,7 @@ static int vmd_enable_domain(struct vmd_d=
-ev *vmd, unsigned long features)
-> > > > > > >       resource_size_t membar2_offset =3D 0x2000;
-> > > > > > >       struct pci_bus *child;
-> > > > > > >       struct pci_dev *dev;
-> > > > > > > +     struct pci_host_bridge *vmd_host_bridge;
-> > > > > > >       int ret;
-> > > > > > >
-> > > > > > >       /*
-> > > > > > > @@ -911,8 +911,14 @@ static int vmd_enable_domain(struct vmd_=
-dev *vmd, unsigned long features)
-> > > > > > >               return -ENODEV;
-> > > > > > >       }
-> > > > > > >
-> > > > > > > +     vmd_host_bridge =3D to_pci_host_bridge(vmd->bus->bridge=
-);
-> > > > > > > +
-> > > > > > > +#ifdef CONFIG_PCIEASPM
-> > > > > > > +     vmd_host_bridge->aspm_dflt_link_state =3D PCIE_LINK_STA=
-TE_ALL;
-> > > > > > > +#endif
-> > > > > >
-> > > > > > I think it is better to provide an API that accepts the link st=
-ate. We can
-> > > > > > provide a stub if CONFIG_PCIEASPM is not selected. This will av=
-oid the ifdef
-> > > > > > clutter in the callers. Like:
-> > > > > >
-> > > > > > void pci_set_default_link_state(struct pci_host_bridge *host_br=
-idge,
-> > > > > >                                 unsigned int state)
-> > > > > > {
-> > > > > > #ifdef CONFIG_PCIEASPM
-> > > > > >          host_bridge->aspm_default_link_state =3D state;
-> > > > > > #endif
-> > > > > > }
-> > > > > >
-> > > > > > Or you can stub the entire function to align with other ASPM AP=
-Is.
-> > > > > >
-> > > > > > One more thought: Since this API is only going to be called by =
-the host bridge
-> > > > > > drivers, we can place it in drivers/pci/controller/pci-host-com=
-mon.c and name it
-> > > > > > as pci_host_common_set_default_link_state().
-> > > >
-> > > > This would require VMD to select PCI_HOST_COMMON just to set one fi=
-eld in a
-> > > > common struct. Seems heavy-handed. Thoughts? Also, with this and dr=
-opping the D0
-> > > > call, I'll split the VMD cleanup into a separate patch again.
-> > >
-> > > So maybe define a __weak pci_host_set_default_pcie_link_state() doing
-> > > nothing in the ASPM core and let VMD override it with its own
-> > > implementation?
-> > >
-> >
-> > No. There are other controller drivers (like pcie-qcom) going to use th=
-is API.
-> > So please move it to the pci-host-common library as it should be.
->
-> I was going to suggest that it could simply stay in aspm.c.
-> pci_enable_link_state_() is there and currently only used by controllers =
-as
-> well.
+If an anon page is mapped into userspace, its anon_vma must be alive,
+otherwise rmap walks can hit UAF.
 
-This sounds reasonable to me.
+There have been syzkaller reports a few months ago[1][2] of UAF in rmap
+walks that seems to indicate that there can be pages with elevated mapcount
+whose anon_vma has already been freed, but I think we never figured out
+what the cause is; and syzkaller only hit these UAFs when memory pressure
+randomly caused reclaim to rmap-walk the affected pages, so it of course
+didn't manage to create a reproducer.
+
+Add a VM_WARN_ON_FOLIO() when we add/remove mappings of anonymous pages to
+hopefully catch such issues more reliably.
+
+Implementation note: I'm checking IS_ENABLED(CONFIG_DEBUG_VM) because,
+unlike the checks above, this one would otherwise be hard to write such
+that it completely compiles away in non-debug builds by itself, without
+looking extremely ugly.
+
+[1] https://lore.kernel.org/r/67abaeaf.050a0220.110943.0041.GAE@google.com
+[2] https://lore.kernel.org/r/67a76f33.050a0220.3d72c.0028.GAE@google.com
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ include/linux/rmap.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index c4f4903b1088..ba694c436f59 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -449,6 +449,19 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+ 	default:
+ 		VM_WARN_ON_ONCE(true);
+ 	}
++
++	/*
++	 * Anon folios must have an associated live anon_vma as long as they're
++	 * mapped into userspace.
++	 * Part of the purpose of the atomic_read() is to make KASAN check that
++	 * the anon_vma is still alive.
++	 */
++	if (IS_ENABLED(CONFIG_DEBUG_VM) && PageAnonNotKsm(page)) {
++		unsigned long mapping = (unsigned long)folio->mapping;
++		struct anon_vma *anon_vma = (void *)(mapping - PAGE_MAPPING_ANON);
++
++		VM_WARN_ON_FOLIO(atomic_read(&anon_vma->refcount) == 0, folio);
++	}
+ }
+ 
+ /*
+
+---
+base-commit: 01a412d06bc5786eb4e44a6c8f0f4659bd4c9864
+change-id: 20250724-anonvma-uaf-debug-a9db0eb4177b
+
+-- 
+Jann Horn <jannh@google.com>
+
 
