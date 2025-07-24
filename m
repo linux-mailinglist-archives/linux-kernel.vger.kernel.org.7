@@ -1,74 +1,60 @@
-Return-Path: <linux-kernel+bounces-744274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F92B10A68
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:39:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B9B10A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07885436BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBF65A1E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C03271457;
-	Thu, 24 Jul 2025 12:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE832D12EE;
+	Thu, 24 Jul 2025 12:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QaQNRK3Q"
-Received: from mail-m32121.qiye.163.com (mail-m32121.qiye.163.com [220.197.32.121])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="hVFxuh/p"
+Received: from smtp119.iad3a.emailsrvr.com (smtp119.iad3a.emailsrvr.com [173.203.187.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D72D29B1;
-	Thu, 24 Jul 2025 12:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021AF2367A6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360777; cv=none; b=UlpS8MFmlx5MkgCSJNBM+iGloh2K4Y1/COjGI6av/pJJOZX1nF3CWKlrLbeX+vRXVvQx8804b0zaEcAJDbjeJ4IKypAsXHLmwnyppW0ZzbvV9/eXGs/7BhAu5UrIvxL6sTBKoMVSh8wahtVYYjgsKGWOgbfKonJOMy2r2+U8Kn0=
+	t=1753360010; cv=none; b=brPXQ0o5B1Aub82CqPbNYcEl+mAy2fXVOYwXASQq455ytLkR0uYYP05hO/cNfWizXXyusnAu+OOR2mjHcSBojajfHX8H/boiPaCcv57I3zm0jJ6wjZ4OLvTG7q19Y5Hhih+tsl25zKLRLgJzLlrI0utly+zwFCl8hzjs1TnNWBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360777; c=relaxed/simple;
-	bh=Bc8Dpcjbg42WAE07UJNo2a4cH1Xlm64jzkwIyqufsmk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EU/rERquL5gRZ0oDLuW/APiOtUdpJWdFtRMJNBxHU3H9qGWcMkFKp74w1v0BYfKgUlHe/eOdwDkWy1cWEGP32jtyyA3o83uBHB/ZUyHH0pIo8+oOAaqJNn1OUn6uygi+ZYnviLlHZn4jIIsoJBl6JBH43mciMKaoVInN/vayqF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QaQNRK3Q; arc=none smtp.client-ip=220.197.32.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c343f2;
-	Thu, 24 Jul 2025 16:03:31 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	l.stach@pengutronix.de,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 07/14] drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
-Date: Thu, 24 Jul 2025 16:02:57 +0800
-Message-Id: <20250724080304.3572457-8-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1753360010; c=relaxed/simple;
+	bh=FgikwVrQ/haYskWg5QjV35IHi0o0Gmu+BMVh7fy950c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NsnMXMFoLQg/Y6QAGhBJMtv/HGyCmm5B3jAYf6oKkUw/79lYqRB7sNE/eP07CyFn0vmu9+JEYyNzURUoAI/Bz+SieomevBoKJfIrQVzQaRlo3fYk/eVhxDktdKTvA0iMiIfONDMYRyBufZowNupqnMud9XA6HGB3Mp/IHFsZkXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=hVFxuh/p; arc=none smtp.client-ip=173.203.187.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1753355293;
+	bh=FgikwVrQ/haYskWg5QjV35IHi0o0Gmu+BMVh7fy950c=;
+	h=From:To:Subject:Date:From;
+	b=hVFxuh/ph1fFxIiEemCBcufQSwxF3ah8i+HcQqx3UY9kOgITgW1YDSZEp+UUjhtg1
+	 1HkKhsOf2z7mj5LW0RtRmk1Uws5o6PdHbe/ko3Hv8O8TrzCjMU/CbHcUPEQ3SiYYug
+	 xvxWN2YElH4mCR5KSBQK591pet0BC7cubIjsvTJI=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp23.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 01C6E250C1;
+	Thu, 24 Jul 2025 07:08:11 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	Edward Adam Davis <eadavis@qq.com>,
+	syzkaller-bugs@googlegroups.com,
+	stable@vger.kernel.org,
+	syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com,
+	Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH V3 REPOST] comedi: pcl726: Prevent invalid irq number
+Date: Thu, 24 Jul 2025 12:07:36 +0100
+Message-ID: <20250724110754.8708-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
+References: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,70 +62,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a983b757bb003a3kunmbbba7af29f23
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU9DHlZIGhlLHh0fTktJHUxWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=QaQNRK3QEGCcr5kiHPuIHkgcxwxZtAhGh7KZXSv29zNte3URKg0wUa9bu8qS6hgxowGmIX2YTVbButpC/J9K2Z3HPT2yA2mYWAZHB7urymGWtCPNZaP+dRgl2zAj/qFwGwE3S2a6au3+M1/bGIaZ3AOXecsrea6VUDG39HzcFvU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=elZsTON64Rbs8eA/23hDRwUKSVNerPscCvmr/a9VXzY=;
-	h=date:mime-version:subject:message-id:from;
+X-Classification-ID: 56291058-866a-4d1e-89ad-fca7897b07d3-1-1
 
-The &analogix_dp_plat_data.skip_connector related check can be replaced
-by &analogix_dp_plat_data.bridge.
+From: Edward Adam Davis <eadavis@qq.com>
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+The reproducer passed in an irq number(0x80008000) that was too large,
+which triggered the oob.
 
-------
+Added an interrupt number check to prevent users from passing in an irq
+number that was too large.
 
-Changes in v3:
-- Squash the Exynos side commit and the Analogix side commit together.
+If `it->options[1]` is 31, then `1 << it->options[1]` is still invalid
+because it shifts a 1-bit into the sign bit (which is UB in C).
+Possible solutions include reducing the upper bound on the
+`it->options[1]` value to 30 or lower, or using `1U << it->options[1]`.
+
+The old code would just not attempt to request the IRQ if the
+`options[1]` value were invalid.  And it would still configure the
+device without interrupts even if the call to `request_irq` returned an
+error.  So it would be better to combine this test with the test below.
+
+Fixes: fff46207245c ("staging: comedi: pcl726: enable the interrupt support code")
+Cc: <stable@vger.kernel.org> # 5.13+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5cd373521edd68bebcb3
+Tested-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- drivers/gpu/drm/exynos/exynos_dp.c                 | 1 -
- include/drm/bridge/analogix_dp.h                   | 1 -
- 3 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/comedi/drivers/pcl726.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 0106e7e0f093..8ce7ceb70be4 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1050,7 +1050,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 		return -EINVAL;
- 	}
- 
--	if (!dp->plat_data->skip_connector) {
-+	if (!dp->plat_data->bridge) {
- 		connector = &dp->connector;
- 		connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 004ab9db5216..d8bea1a00815 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -234,7 +234,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
--	dp->plat_data.skip_connector = !!bridge;
- 
- out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 15cb6b706e9f..202e5eafb2cc 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -30,7 +30,6 @@ struct analogix_dp_plat_data {
- 	struct drm_bridge *bridge;
- 	struct drm_encoder *encoder;
- 	struct drm_connector *connector;
--	bool skip_connector;
- 
- 	int (*power_on)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
+diff --git a/drivers/comedi/drivers/pcl726.c b/drivers/comedi/drivers/pcl726.c
+index 0430630e6ebb..b542896fa0e4 100644
+--- a/drivers/comedi/drivers/pcl726.c
++++ b/drivers/comedi/drivers/pcl726.c
+@@ -328,7 +328,8 @@ static int pcl726_attach(struct comedi_device *dev,
+ 	 * Hook up the external trigger source interrupt only if the
+ 	 * user config option is valid and the board supports interrupts.
+ 	 */
+-	if (it->options[1] && (board->irq_mask & (1 << it->options[1]))) {
++	if (it->options[1] > 0 && it->options[1] < 16 &&
++	    (board->irq_mask & (1U << it->options[1]))) {
+ 		ret = request_irq(it->options[1], pcl726_interrupt, 0,
+ 				  dev->board_name, dev);
+ 		if (ret == 0) {
 -- 
-2.34.1
+2.47.2
 
 
