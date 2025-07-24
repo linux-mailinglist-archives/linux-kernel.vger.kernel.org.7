@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-744961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE0EB112FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E48B11300
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444F07BE087
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:20:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF6D17BE3A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B10F2EE289;
-	Thu, 24 Jul 2025 21:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3DE2EE5EA;
+	Thu, 24 Jul 2025 21:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWBIpQB+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KDAP1sUn"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7315B661;
-	Thu, 24 Jul 2025 21:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7033E2EBDF5
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392095; cv=none; b=BOrUFSwQgUhMXVHHPcLJH71oJucx3KIPSI3SqcSj0QGXzqOU3ykZaG3fRAa/ePB4Q+VXy2Bi97w819uGGefIUFDx4h9AmpDKOWDY9bS233MghOAv9fOUg1llngXa5kIEW79jVrwTSi50DVwSYFuMODy2Y6CKY58fSok2D+nDWsM=
+	t=1753392110; cv=none; b=nFaobKiKP/7dX+AKrfoyAux4pvWKARr1AWFNbK0L4GnwDq4a5HAqg0n3kLjJkNXnQYBFBmNXdGvRpM93qGKNLXjejBrUfrcltvzSJZh/iMuUtbRqTrlARxz/Poq1W6rqQdvlAUqJBlABvd2/uUcU4KObyiyFilGeEEfV4LrskPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392095; c=relaxed/simple;
-	bh=zP2DdL1xyvFlCv0kqOkPf2j+8jsIWjQBQpmTzHlCJOI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=maEnuUDEhiA0nvaEei28WSL2HYbeKs+YM4B0WqfuQkHjeTNijuIYXTbk0FN2M43C+qB4uSU/wum3Dx7N+1vz13Fl0AAuN68Sk95h0tX4bHz6BOBpJJZ6vqvjR724EwrOb6i2/ROHOVm1w3WODib1UD5zo3UnQd8N8GE5YleLIzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWBIpQB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AFEC4CEED;
-	Thu, 24 Jul 2025 21:21:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753392095;
-	bh=zP2DdL1xyvFlCv0kqOkPf2j+8jsIWjQBQpmTzHlCJOI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lWBIpQB+HvMkPLdKaaZhUjh/jHk9/ugOCKjA70G3i1pTlkvpOicBB0zMpD1sJSV9I
-	 q4/gQJ7hFE3JvMdecit2W2oljAPHTJ7JNs7RAWxoNdCv/n5KjexhVzPd9uUNQ0kFKw
-	 d/li68Cb44Ohg+7YharoiO1YeXA6Chw7xlNLCHuJbj5oZrCUk5be3H6v0SU+ue31s1
-	 aTVkYURhgOYpH9VRFeki3CHlQ86CJKP6FH5vmylhCRAUBe+ecHQbSbXgjANkXW1TP2
-	 L6QxGU6DiU/s2rsgoiul9alp7wfYaF0IJd/gf0ovcPaApFfhty0ZosOCEkQjHInmQt
-	 9CuQlsrepLCxg==
-From: Mark Brown <broonie@kernel.org>
-To: Sunny Luo <sunny.luo@amlogic.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20250718-spisg-v5-0-b8f0f1eb93a2@amlogic.com>
-References: <20250718-spisg-v5-0-b8f0f1eb93a2@amlogic.com>
-Subject: Re: [PATCH v5 0/3] support for amlogic the new SPI IP
-Message-Id: <175339209371.157729.12033130863447409564.b4-ty@kernel.org>
-Date: Thu, 24 Jul 2025 22:21:33 +0100
+	s=arc-20240116; t=1753392110; c=relaxed/simple;
+	bh=y1SIf7gY43SwKa7IR0gF6UJkqjIsuRGzDo7QEIv7M80=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qebKgV4kZTm/OMcZb7jKya6HY82IIBdZzhFh6qdJK+KBC3ms4OzZEpbYV4NSPyaCHKKoQLxvR+wVN9Lw0MuhkbclO11MpSiKCeJ/Rq7i5HH5iASYXTNzPdmHC6FvUqij1Fw6OwBjbfdI1O5p9Qeeg6XHAbBQpeVhfYYoc92Exus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KDAP1sUn; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--salomondush.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748d96b974cso1291527b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753392109; x=1753996909; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/z17J3MJSAj5T5y3QojA2SOzybnkEbHLfb3RK0Rs3s=;
+        b=KDAP1sUnx5g6oQjaMm1W7ZI5yqss0ELQiP2kqQ59rAuqoWDBUMR/1xMYkpP6j83eqf
+         IQsTukJEcWnxN31NTcLh/wCjCjzEL5RxTEYS33Ya7Hw4VXlgZBNER8cZxJoo/36VgL2u
+         ZC1pafPPAhlGRtK8yw6tWaJHiRVbQzv8xC0az+SZh6PZk8Ej9oUtsX47WCnh8QyEYn5j
+         cxYI7mmhgASTAJECrI8Yhf/8fF6pWmRO/iwKXRnwdbOCOknsXHHN8sjetYA9GwMcK0c1
+         l9iOqec4CimewV2a1gHihFLGLtn9uqhRDjupRrhHaOHPzu/NcEJF3wXI3aVbipEYJiG3
+         H1tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753392109; x=1753996909;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/z17J3MJSAj5T5y3QojA2SOzybnkEbHLfb3RK0Rs3s=;
+        b=G/JYXQF3Qmi24nqP1qlGn1MqCwF2grdMVj2Ja22wVMK4Jf/eXKYwvhlq9sexp2Jq60
+         n9hVIZQSq/ePzMh7taWT93Sg44EJ3rgTlXDe8YJVVPrKFzTZJ9zKXGxzDuXBQBC9Cgft
+         msAjNnNM+KeIbHfzL3061Lh6nxKj2LDAwWHUJusXSZzBCYES2Ivdx2NChhgsDVO4Fgs0
+         lrmwXxl72YEuRTAoN+dkukOpEGnfeqtXqxHvXSa74ZXJ72irsMsqd5pw3+W2je16CQ8u
+         jMJldU6SAATwNaJ6H7pyk5R4fX3NmNPy3tnsr4x8ydlDwTFyc8ieWAgjlAMecMddsAjp
+         XR5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX3fEZBN2Po7SKWTxf+/1RezElel52eOT38uH0Yf/EhJA3kB6BPKF2EEqf9pR2mOy7+cWIpX31grElljdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymXdg7eRnbxFuF6A61QGHQkrbOmQWAyfjOOTabNnEPAvmRFKM4
+	L451sLwp2BQqOs2G4Fgpg/XnGuXd5ympKqF0XhvFHFUFtbPBfatVJ3gX/gspqEtLaeW799mEHz4
+	yjDTMtijSlYwXGK7R713vlmnXXQ==
+X-Google-Smtp-Source: AGHT+IEJ9XYOWVgjjXZ78n5qyUTxKXo4rnIJzirVFj5roXLp7h/SZ8Os1OF5p+0AkWDbfIK/trpg4rsoj9Lv2j7KrQ==
+X-Received: from pfbmy24-n2.prod.google.com ([2002:a05:6a00:6d58:20b0:748:df52:fdc5])
+ (user=salomondush job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:14ce:b0:73d:fefb:325 with SMTP id d2e1a72fcca58-76034c002ffmr12500904b3a.5.1753392108676;
+ Thu, 24 Jul 2025 14:21:48 -0700 (PDT)
+Date: Thu, 24 Jul 2025 21:21:37 +0000
+In-Reply-To: <CAPE3x153br+UdtWYnxdtAX7hz2OwKYovQeWdeOCWvicTxDayeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Mime-Version: 1.0
+References: <CAPE3x153br+UdtWYnxdtAX7hz2OwKYovQeWdeOCWvicTxDayeQ@mail.gmail.com>
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250724212137.105270-1-salomondush@google.com>
+Subject: [PATCH v2] scsi: sd: fix sd shutdown to issue START STOP UNIT command appropriately
+From: Salomon Dushimirimana <salomondush@google.com>
+To: salomondush@google.com
+Cc: James.Bottomley@hansenpartnership.com, bvanassche@acm.org, 
+	ipylypiv@google.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	martin.petersen@oracle.com, vishakhavc@google.com, dlemoal@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 18 Jul 2025 09:52:15 +0800, Xianwei Zhao wrote:
-> Introduced support for the new SPI IP (SPISG). The SPISG is
-> a communication-oriented SPI controller from Amlogic,supporting
-> three operation modes: PIO, block DMA, and scatter-gather DMA.
-> 
-> Add the drivers and device tree bindings corresponding to the SPISG.
-> 
-> 
-> [...]
+Commit aa3998dbeb3a ("ata: libata-scsi: Disable scsi device
+manage_system_start_stop") enabled libata EH to manage device power mode
+trasitions for system suspend/resume and removed the flag from
+ata_scsi_dev_config. However, since the sd_shutdown() function still
+relies on the manage_system_start_stop flag, a spin-down command is not
+issued to the disk with command "echo 1 > /sys/block/sdb/device/delete"
 
-Applied to
+sd_shutdown() can be called for both system/runtime start stop
+operations, so utilize the manage_run_time_start_stop flag set in the
+ata_scsi_dev_config and issue a spin-down command during disk removal
+when the system is running. This is in addition to when the system is
+powering off and manage_shutdown flag is set. The
+manage_system_start_stop flag will still be used for drivers that still
+set the flag.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Fixes: aa3998dbeb3a ("ata: libata-scsi: Disable scsi device manage_system_start_stop")
+Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+Change-Id: I820269189d1a2ee03795b8c0db41aa50c0cb484d
+---
+ drivers/scsi/sd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks!
-
-[1/3] spi: dt-bindings: Add binding document of Amlogic SPISG controller
-      commit: 78d35a20783941c8ba5cf912349728c6e1bee84b
-[2/3] spi: Add Amlogic SPISG driver
-      commit: cef9991e04aed3305c61c392e880f6e01a0c2ea4
-[3/3] MAINTAINERS: Add an entry for Amlogic spi driver
-      commit: 0ef2a9779e9decee52a85bc393309b3e068a74a6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index eeaa6af294b81..282000c761f8e 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -4173,7 +4173,9 @@ static void sd_shutdown(struct device *dev)
+ 	if ((system_state != SYSTEM_RESTART &&
+ 	     sdkp->device->manage_system_start_stop) ||
+ 	    (system_state == SYSTEM_POWER_OFF &&
+-	     sdkp->device->manage_shutdown)) {
++	     sdkp->device->manage_shutdown) ||
++	    (system_state == SYSTEM_RUNNING &&
++	     sdkp->device->manage_runtime_start_stop)) {
+ 		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
+ 		sd_start_stop_device(sdkp, 0);
+ 	}
+-- 
+2.50.1.470.g6ba607880d-goog
 
 
