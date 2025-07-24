@@ -1,129 +1,90 @@
-Return-Path: <linux-kernel+bounces-744392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE83B10C3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:56:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662B9B10C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7470C7A8FDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BB157BB2B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972A92D5418;
-	Thu, 24 Jul 2025 13:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xDuFrqtb"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3C62E7BD7;
+	Thu, 24 Jul 2025 13:56:39 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FAA2DC359
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5492E5B18;
+	Thu, 24 Jul 2025 13:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365381; cv=none; b=jn4OrtXvABhwqKsj1T7Ik1bKWXFGee7TTZUvNNylAkl0dsDCNNqQGrhy2wdCCIrhanFto0QSxrJu07RyXgrBpveWe9rtW1nvDYy+sx+SMu4Z0BFVPot3vVUWIARijXYYV1T69UML8NdSQ4xiuCfityq27pf1NS6FnhxqC39gOvM=
+	t=1753365397; cv=none; b=tZSYtUmpOpFA2HVArxak1ZU6PoHtVfEl6bOjnssRoyEMkps2DEIvvTO1Tl9/Cq2o5PGklUo5FJxpbkn6ALj7F/56edfYtGEVUpdhCVLVVRpUk1qb6jEw/ukhn3AbSxQEc3akzZCDHNRRE3DJaBbME7Ww7CWfU7Sb36RBMe8JLZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365381; c=relaxed/simple;
-	bh=9y7t1P4tvOdzFMOWceniFW8wFyn3duqWiK+tb2TQtTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVdmeEKwH2Rh4SDQ99/d8feKbaQoknBxX90PLPbNQ9bpAXNGGCxhpGfmvj/ZjEKIWYSrNWu426dZzi+2K10Q8L/GeTZhiIjWWxLAQ7vTr8grcInR4Xl+vyUWW4ZP0xPqpLpaoeKJDkrF27auVZjuxGMmQjd4tb0GXJO8DxhwLew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xDuFrqtb; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <991cbb9a-a1b5-4ab8-9deb-9ecea203ce0f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753365364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=THb9OA/TiR1XzVuDY0Y6uYlj9r+f68Q+8bbXSQessY8=;
-	b=xDuFrqtbleTFYgMfG/+dzmiNOf9WfMjEIQ+vyWpBK7H0ruFRSJm9fUTbxjbSvdfuMKPNup
-	r1xVULgxavPiqQwoeGmwnAxOGIs91rie3H09SadgDcQYy9/1R/Wnlc/3Y3qQuo9RgbGV/3
-	CY27SJIBzQmoYxre91whlvlQd+hSBpE=
-Date: Thu, 24 Jul 2025 09:55:59 -0400
+	s=arc-20240116; t=1753365397; c=relaxed/simple;
+	bh=zXgA8lHW0hAXguf0NySAm846eipCgZK0RLnszlxmNEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jh2v5LoNjAY9EFXr+aQi/nKSIZyV3hE7CgbFI0ptAJPEvYRg8e/BLvDql+MNNeWrK5nGjxrxveDmwKJdCk76YLQ5Axcr8NDP2fwU6lrOiXcG1PTseTkTmfwQkYccWe4qYOLu+w+LIZLar1Gl9FKTfmchzZ4wIA/ZLemCVdwwfVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 2F6A8112CE8;
+	Thu, 24 Jul 2025 13:56:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 7E2EF20016;
+	Thu, 24 Jul 2025 13:56:30 +0000 (UTC)
+Date: Thu, 24 Jul 2025 09:56:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ivan Pravdin <ipravdin.official@gmail.com>
+Cc: bristot@kernel.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtla: clarify trace option syntax in documentation and
+ usage help
+Message-ID: <20250724095627.572c1cff@batman.local.home>
+In-Reply-To: <20250723015233.173630-1-ipravdin.official@gmail.com>
+References: <20250723015233.173630-1-ipravdin.official@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2 1/4] auxiliary: Support hexadecimal ids
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
- Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org,
- Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org,
- Ira Weiny <ira.weiny@intel.com>
-References: <2025071637-doubling-subject-25de@gregkh>
- <719ff2ee-67e3-4df1-9cec-2d9587c681be@linux.dev>
- <2025071747-icing-issuing-b62a@gregkh>
- <5d8205e1-b384-446b-822a-b5737ea7bd6c@linux.dev>
- <2025071736-viscous-entertain-ff6c@gregkh>
- <03e04d98-e5eb-41c0-8407-23cccd578dbe@linux.dev>
- <2025071726-ramp-friend-a3e5@gregkh>
- <5ee4bac4-957b-481a-8608-15886da458c2@linux.dev>
- <20250720081705.GE402218@unreal>
- <e4b5e4fa-45c4-4b67-b8f1-7d9ff9f8654f@linux.dev>
- <20250723081356.GM402218@unreal>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250723081356.GM402218@unreal>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Queue-Id: 7E2EF20016
+X-Stat-Signature: u1x4nsdsrq3sbbrj159i8ikb6kk7wp3r
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1979Ti/pUfl2nQHOueWSP8llgjuM4vcdOE=
+X-HE-Tag: 1753365390-589962
+X-HE-Meta: U2FsdGVkX18VDHmHgh2esz13Ti8MTfMv6D4JNqbRv25UTYFowtc6dFfbfrHP4Iwa56telsCl/iB6Lk5iwhMleJHRH3ajowTqROyWuWQIgL08mkXGS0AF7ZCupd+Miv6Gy2SjuUepWrgTAYiH7+Dn++JMiBvClCop4lxt9x6zOJB5gM+xNaucHtmBFGopl6dQpIXx1iyLuwD3nEfqpT6LqLX0bV83G87iMuNS9NujPHPO0zRKomUAbkis3Z/rVJUthExUoKLOBNfFl4EBAWpcPk/IYyeuzCdqHuUZEUB876YH4zzEvaX6EhLRXJV776LnyHf1y2GNnbysbhgH09bZfcLNlV2IrjDw
 
-On 7/23/25 04:13, Leon Romanovsky wrote:
-> On Mon, Jul 21, 2025 at 10:29:32AM -0400, Sean Anderson wrote:
->> On 7/20/25 04:17, Leon Romanovsky wrote:
->> > On Thu, Jul 17, 2025 at 01:12:08PM -0400, Sean Anderson wrote:
->> >> On 7/17/25 12:33, Greg Kroah-Hartman wrote:
->> > 
->> > <...>
->> > 
->> >> Anyway, if you really think ids should be random or whatever, why not
->> >> just ida_alloc one in axiliary_device_init and ignore whatever's
->> >> provided? I'd say around half the auxiliary drivers just use 0 (or some
->> >> other constant), which is just as deterministic as using the device
->> >> address.
->> > 
->> > I would say that auxiliary bus is not right fit for such devices. This
->> > bus was introduced for more complex devices, like the one who has their
->> > own ida_alloc logic.
->> 
->> I'd say that around 2/3 of the auxiliary drivers that have non-constant
->> ids use ida_alloc solely for the auxiliary bus and for no other purpose.
->> I don't think that's the kind of complexity you're referring to.
->> 
->> >> Another third use ida_alloc (or xa_alloc) so all that could be
->> >> removed.
->> > 
->> > These ID numbers need to be per-device.
->> 
->> Why? They are arbitrary with no semantic meaning, right?
+On Tue, 22 Jul 2025 21:52:33 -0400
+Ivan Pravdin <ipravdin.official@gmail.com> wrote:
+
+> When using `rtla timerlat {top,hist}`, the `-t/--trace` option is
+> optional. However, when providing a filename, the long option requires
+> an equal sign (`=`), i.e., `--trace=<file>`. This is because the
+> command-line parser treats `--trace` without `=` as a flag with no
+> value, leading to unexpected behavior.
 > 
-> Yes, officially there is no meaning, and this is how we would like to
-> keep it.
+> Valid usage:
+>     - `-t[file]`
+>     - `-t=[file]`
+>     - `--trace=[file]`
 > 
-> Right now, they are very correlated with with their respective PCI function number.
-> Is it important? No, however it doesn't mean that we should proactively harm user
-> experience just because we can do it.
+> Invalid usage:
+>     - `-t [file]`
+>     - `--trace [file]`
+
+I wonder if the better fix would be to make the above valid?
+
+-- Steve
+
+
 > 
-> [leonro@c ~]$ l /sys/bus/auxiliary/devices/
-> ,,,
-> rwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.0 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
-> 8:00.0/mlx5_core.rdma.0
-> lrwxrwxrwx 1 root root 0 Jul 21 15:25 mlx5_core.rdma.1 -> ../../../devices/pci0000:00/0000:00:02.7/0000:0
-> 8:00.1/mlx5_core.rdma
-
-Well, I would certainly like to have semantic meaning for ids. But apparently
-that is only allowed if you can sneak it past the review process.
-
---Sean
-
+> Clarify valid usage in documentation and help message.
+> 
+> Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
 
