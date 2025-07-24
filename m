@@ -1,252 +1,185 @@
-Return-Path: <linux-kernel+bounces-744051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D92B10776
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E449EB1077B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4AF4E4A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B920A1CE3088
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9708925F980;
-	Thu, 24 Jul 2025 10:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443FA260566;
+	Thu, 24 Jul 2025 10:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDr6LT7X"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ijxS9fxT"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4018A25F7A4;
-	Thu, 24 Jul 2025 10:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6B525F99F;
+	Thu, 24 Jul 2025 10:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351824; cv=none; b=fKNwJcyyeQ0xzv0ZzNJ2Ep5Q6KTLJrkUyRrMsRPbCal7SAvLTeSoZchoJgqPO7HpcW5rQ/oRW3Spa11jrrjQn1HJ3twgILS2hxZilJOxCRoJNblndQETHrI4cOVLxv/plvlKX+3X8ijeAocz8zIPZGyTTgSFYpUNcjhLg1EL6+I=
+	t=1753351898; cv=none; b=ed6IxOp+mREmOXeGmHgEtbM6BnhOlyscxA64A6G9s1e3D7N9mCxbZP2xIlV2BFV1w3rZX6AxNgQDc1DRkN/KJ37C563vp44AOQn3eSQq/EzqkWGCAbuOKIw9nlSjV4fr1G/QsFX/o8K18XCT/yi8bxlAVYycGppRlrARZTEcH0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351824; c=relaxed/simple;
-	bh=c7QMAmpVaB48eq1HG5t3StXl8CnTj69VjPU/BHyPuSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nc0bS9S2qlMnF3d++4aEj3sUMl89RA2yOULUqwckJNrNSwy/guLuBkkxC/96v+vBVWb8uAelHNGed/ksuDO4/R7ibLkQsqpI7qPZT2nHmEhAv19E/iycWXQ9R8TV7vLWtKxd06xrVluYVvaExMuC3urU568X0aSQIVwbecBeZqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDr6LT7X; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso6671715ab.0;
-        Thu, 24 Jul 2025 03:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753351822; x=1753956622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+meAXBdOYjti/xHVnSu9+/vlo6BxGcgq1eAbTOjxvs=;
-        b=gDr6LT7Xzv9hLLY/xA+SbN59y97bbeqphDs981wuJGdMlGhxlnzv/4wT6TAwkiPCvK
-         1ppjSb607Cjqc41yDXdFxtbZayIkvRRErJv7Zkg8SHpy3u9N7O7btopDWgrIgIrWiVzx
-         xnqMsJdHt2QDqBEY6I1DpcYIcORLtvLRJYuHSRyJjvI90/2ytwEBztyiubwa3yFpyZQ3
-         H96/a/Z66qG2GoTvioCkjchd5eYjAa7PwiUqA1Ybnk7A8ajxSLvpuv7MN+twMup5+1z2
-         2w/j0b5ltF/4h4KGV2e2whkI469FbOtzBA6pVOLfEbSLpD6bo5XAn9S4NEk2proNfs3B
-         C62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753351822; x=1753956622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+meAXBdOYjti/xHVnSu9+/vlo6BxGcgq1eAbTOjxvs=;
-        b=qKxySJnZVk9ClXTRsH74T60eqJkpPApwbHncV9JIfvY63v9+JbdvLGJby1g4reaeCx
-         f3zaqsWHTtRbUiMUmndvwo6OrduixI48GOLb2BHaBoyYyAzIeM/NnAcJHGoOGMGxcfLL
-         yiPmoGXvLkSNCFrD0kZxklMzqdGZUXFwxw87TY/fd/1TUNnyVHdS80ZTxfFO6yttkepg
-         jesyyvVocJGcWMFIg/MrJelUMfMQeDkxyzZisnQVnpqnZi0miMbqEmjmTTEiv1DIlKLi
-         gYyEXT3UmvbMhDcMvt1Ucr0I1Z4HSqeNoN/MEXJ9px4E7TU7mL6xHaupnXXpXVm2p5AS
-         ikSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+e+su+k0YD8LM6nY9CVtyDIOpwxcbkEfFZvCFzgA51aP36Ce0JlDKEJHaSoY4dPmJZ+nt3dLaNPY7Tgk=@vger.kernel.org, AJvYcCVj1NpCXDI3FpEGv9fKdP4zzkurgdGbyrnVX7pzqGRLyleQQz5lXqJuazbGyPv0hTmlI2JJguj2Iopn9bCi@vger.kernel.org, AJvYcCWp+KaDO2cxXwLQnwxNa72HLDeZ/HH447Cnpa4TruBRmq3QdcBDp0q9B3OpKzWtCZnwjWOEQEScHZFf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLynVV5j5tvOzbXsnzFg82FJRZZT5Lnpi6DvGb5TtTjS5sNCOX
-	Vs5wv9BMAoaiccAgw++vwIwx/cVl+kpa51LXlDtOFfgHlo5ewttJawlJyDKMZZSHTeWnD8DsltR
-	pjesG7F60lSMRl1/lFSXYCWQiDheDVwkrkrB5
-X-Gm-Gg: ASbGnctwzpEc5rtArnNG+aYcJOYu8sKFIIn1Ll2cbX1l5DtnqayFSJziTciFHNrlt8h
-	xcC/0fgzTXIY6Wl3LhnLXCfVJHH2AJ1SHLAYe6ksT/v4cBIIOjCDuGHYuOesCieL5wyZkmBkWD1
-	D/bLx2c1KYHjbNmitakKY05lg43EzZrXIQz+OQtyoPhxAkwsImv3t2TAZtN1DZ0WH/bHO8vyquO
-	qWU7H0=
-X-Google-Smtp-Source: AGHT+IF7M0baFlK3062K6BXEoa8kOdw9KDdHsQbjFyV5neQ+2sKDdzPXmbuSGlkwEtGraleUJvxc24KLjX8I3/Jqb8w=
-X-Received: by 2002:a92:cd8d:0:b0:3dd:d321:79ab with SMTP id
- e9e14a558f8ab-3e335535dc5mr117038895ab.18.1753351822074; Thu, 24 Jul 2025
- 03:10:22 -0700 (PDT)
+	s=arc-20240116; t=1753351898; c=relaxed/simple;
+	bh=DAQfeQC0jG4xrZVWdpFfPkLxQjD6DzR41cG4qSNbeDw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WJwwHKYN/GG3m9tMKi8HPmI10Lgwe5eRuc6c8THJWw/f2GFwQkHXY9axDw3KUYjoBG+VEWGJLzaZ/M7CFMFbBUO5eh52kFKowGFLn+jcFjGdIeFV+pmZLJBpKY9pg+2FveQIEuzEzML4jonOawBZ0AoThsr3GsXVZ84lsnlr0ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ijxS9fxT; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NNT20X002947;
+	Thu, 24 Jul 2025 03:11:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=ip1EblJiKkhZYWLhItDti03
+	7UWJiiJPdv9IzNmLe6cs=; b=ijxS9fxT+WaTxsR1dA7KlbGa/43NO4ujrB3QyY5
+	3hB1NN2fB3Z3lK71r2wJdV6zqbGsiyafIKo8zESz87Omfcb7MM/76yEYdeP/HOxj
+	uwWiR2tcdn/Vwls77F+wN1Fp8cQZBqAM6KY8tNMjB7GgwccZp6VpXUxoFvAJ5wqY
+	lC1kILO5vXUjLy2nlmFlE5e83Jx4J82cczEEoiA+oo4eHxHGBgoTTNc+1gjn+eMJ
+	4Dd+Z9g7PbdHlE5e3eQ+Ew6Em1Vewsj8TDjbSygM8miCHqYRVWAimhrtV+HwIIB/
+	OTNYSWytjFa0mw894pOckM7bg9N2ZXd6Q62v+cv53R+tpAA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4839euh1wm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 03:11:08 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 24 Jul 2025 03:11:08 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 24 Jul 2025 03:11:08 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 9FDB83F704E;
+	Thu, 24 Jul 2025 03:11:03 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [net-next PatchV3] Octeontx2-pf: ethtool: Display "Autoneg" and "Port" fields
+Date: Thu, 24 Jul 2025 15:40:57 +0530
+Message-ID: <20250724101057.2419425-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724072248.1517569-1-shengjiu.wang@nxp.com>
- <20250724072248.1517569-2-shengjiu.wang@nxp.com> <20250724-straight-lorikeet-of-novelty-9124f8@kuoka>
-In-Reply-To: <20250724-straight-lorikeet-of-novelty-9124f8@kuoka>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Thu, 24 Jul 2025 18:10:10 +0800
-X-Gm-Features: Ac12FXwoUiu0ZopeKo51pKtd4fVW0e5JyUbFY0Gq7Yw0jp0bxpzJja68FGRxr2Q
-Message-ID: <CAA+D8ANV74k1=_m7HfCO2n7nCU7mH=QMrd0CS5eMqGqDHn9HEw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: display: imx: add HDMI PAI for i.MX8MP
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
-	l.stach@pengutronix.de, perex@perex.cz, tiwai@suse.com, 
-	linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: VRx4VX0zEwzvcvOS4CebCj8taCJOZNgc
+X-Authority-Analysis: v=2.4 cv=SK5CVPvH c=1 sm=1 tr=0 ts=688206bc cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=5rgwPVzteBU-ZFRzDRMA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: VRx4VX0zEwzvcvOS4CebCj8taCJOZNgc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3NiBTYWx0ZWRfX6Orc3fYY70mx OEVFX7ozJf2o8CASrRAJjPApPiUW1Y04Jc1eWq5k+j46C1gCOyOobh3CgA4UQMAoekIsmEQFBAT EDGlR3T/CweW9TdKrswf16m9+p8PXmjp4/pgQeER3NQ7iOrXDeScy4h3ztEZhr213lhztxrKDdB
+ Dm8FQlRNxM8sbSoFdQpDUfXkQPYhhkkpmBy67WOQjDWF6BFRHHVrarI9MaRanDkf1YISBkCZ5pw i5JNEPr46X1nOLpxqoJ7bFd5+AQ8thVVyJm18knmFuX1H9rSAEBLsIEwchAptvgUVgBcAP52uw+ Glr+M1pEOKWaDp4mWvF3NfpvKGjvS7pqYLOF0kLA/h10ygLUrY6Ua0g70gAwIvid2I0SfuBlqW+
+ 67vt02f8Eo7lbMmuY55vcqEBOHWiZXXquJ3u6GYMXRvz0hZ1zCzBYYjft2RQ+lQy87yWLUuZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
 
-On Thu, Jul 24, 2025 at 4:52=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Thu, Jul 24, 2025 at 03:22:43PM +0800, Shengjiu Wang wrote:
-> > Add binding for the i.MX8MP HDMI parallel Audio interface block.
-> >
-> > In fsl,imx8mp-hdmi-tx.yaml, add port@2 that linked to pai_to_hdmi_tx.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 12 ++++
-> >  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 69 +++++++++++++++++++
-> >  2 files changed, 81 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,i=
-mx8mp-hdmi-pai.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,imx8m=
-p-hdmi-tx.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,imx8m=
-p-hdmi-tx.yaml
-> > index 05442d437755..6211ab8bbb0e 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-=
-tx.yaml
-> > +++ b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-=
-tx.yaml
-> > @@ -49,6 +49,10 @@ properties:
-> >          $ref: /schemas/graph.yaml#/properties/port
-> >          description: HDMI output port
-> >
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: Parallel audio input port
->
-> Which data path this represents? Feels like you are duplicating ASoC
-> dai-links/cells...
+The Octeontx2/CN10k netdev drivers access a shared firmware structure
+to obtain link configuration details, such as supported and advertised
+link modes. This patch adds support to display the same.
 
-Here it means from HDMI PAI to HDMI TX controller. not the ASoC dai link.
+ethtool eth1
+Settings for eth1:
+    Supported ports: [ ]
+    Supported link modes:  10000baseCR/Full
+	                   10000baseSR/Full
+                           10000baseLR/Full
+    Supported pause frame use: No
+    Supports auto-negotiation: Yes
+    Supported FEC modes: None
+    Advertised link modes: Not reported
+    Advertised pause frame use: No
+    Advertised auto-negotiation: Yes
+    Advertised FEC modes: None
+    Speed: 10000Mb/s
+    Duplex: Full
+    Port: Twisted Pair
+    PHYAD: 0
+    Transceiver: internal
+    Auto-negotiation: on
+    MDI-X: Unknown
+    Current message level: 0x00000000 (0)
+    Link detected: yes
 
-On i.MX8MP, for HDMI audio, it is separated into several hardware modules:
-1. Aud2HTX
-   driver:  sound/soc/fsl/fsl_aud2htx.c
-2. HDMI PAI
-   driver:  this patch set
-3. HDMI TX controller audio part
-    driver: drivers/gpu/drm/bridge/synopsys/dw-hdmi-gp-audio.c
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+V3 * Fix port types in firmware 
 
-Aud2HTX is in the Audio subsystem,  HDMI PAI and HDMI TX are in the
-HDMI subsystem. The full data path is
-Aud2htx -> HDMI PAI -> HDMI TX controller.
+V2 * Add validation for 'port' parameter
+    include full output of ethtool ethx
 
->
->
-> > +
-> >      required:
-> >        - port@0
-> >        - port@1
-> > @@ -98,5 +102,13 @@ examples:
-> >                      remote-endpoint =3D <&hdmi0_con>;
-> >                  };
-> >              };
-> > +
-> > +            port@2 {
-> > +                reg =3D <2>;
-> > +
-> > +                endpoint {
-> > +                    remote-endpoint =3D <&pai_to_hdmi_tx>;
-> > +                };
-> > +            };
-> >          };
-> >      };
-> > diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-h=
-dmi-pai.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdm=
-i-pai.yaml
-> > new file mode 100644
-> > index 000000000000..4f99682a308d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai=
-.yaml
-> > @@ -0,0 +1,69 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/imx/fsl,imx8mp-hdmi-pai.yam=
-l#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Freescale i.MX8MP HDMI Parallel Audio Interface
-> > +
-> > +maintainers:
-> > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
-> > +
-> > +description:
-> > +  The HDMI TX Parallel Audio Interface (HTX_PAI) is a bridge between t=
-he
-> > +  Audio Subsystem to the HDMI TX Controller.
->
-> What is Audio Subsystem? Like Linux Audio or some name matching actual
-> hardware?
+ .../marvell/octeontx2/nic/otx2_ethtool.c      | 24 +++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-Audio subsystem is the name for hardware.
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+index 998c734ff839..95a7aa2b6b69 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+@@ -1184,11 +1184,13 @@ static void otx2_get_link_mode_info(u64 link_mode_bmap,
+ 	}
+ 
+ 	if (req_mode == OTX2_MODE_ADVERTISED)
+-		linkmode_copy(link_ksettings->link_modes.advertising,
+-			      otx2_link_modes);
++		linkmode_or(link_ksettings->link_modes.advertising,
++			    link_ksettings->link_modes.advertising,
++			    otx2_link_modes);
+ 	else
+-		linkmode_copy(link_ksettings->link_modes.supported,
+-			      otx2_link_modes);
++		linkmode_or(link_ksettings->link_modes.supported,
++			    link_ksettings->link_modes.supported,
++			    otx2_link_modes);
+ }
+ 
+ static int otx2_get_link_ksettings(struct net_device *netdev,
+@@ -1209,6 +1211,10 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
+ 		ethtool_link_ksettings_add_link_mode(cmd,
+ 						     supported,
+ 						     Autoneg);
++	if (rsp->fwdata.advertised_an)
++		ethtool_link_ksettings_add_link_mode(cmd,
++						     advertising,
++						     Autoneg);
+ 
+ 	otx2_get_link_mode_info(rsp->fwdata.advertised_link_modes,
+ 				OTX2_MODE_ADVERTISED, cmd);
+@@ -1218,6 +1224,16 @@ static int otx2_get_link_ksettings(struct net_device *netdev,
+ 				OTX2_MODE_SUPPORTED, cmd);
+ 	otx2_get_fec_info(rsp->fwdata.supported_fec,
+ 			  OTX2_MODE_SUPPORTED, cmd);
++
++	switch (rsp->fwdata.port) {
++	case PORT_TP:
++	case PORT_FIBRE:
++		cmd->base.port = rsp->fwdata.port;
++		break;
++	default:
++		cmd->base.port = PORT_NONE;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
->
->
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: fsl,imx8mp-hdmi-pai
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    const: apb
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  port:
-> > +    $ref: /schemas/graph.yaml#/properties/port
-> > +    description: Output to the HDMI TX controller.
->
-> And how do you plug it into sound card? Where are any DAI links?
-
-The hardware data path is Aud2htx -> HDMI PAI -> HDMI TX controller.
-
-From a software point of view. the path is
-Aud2htx -> hdmi_codec  (ALSA sound card)
-hdmi_codec -> dw-hdmi-gp-audio -> hdmi_pai
-
-hdmi_codec is registered by dw-hdmi-gp-audio.c,  hdmi_codec will call
-the function in dw-hdmi-gp-audio.c, dw-hdmi-gp-audio.c will call the
-function in hdmi pai driver.
-
-Aud2htx is cpu dai in ALSA
-hdmi-codec.c is the codec dai in ALSA
-Above is the dai link for ALSA, they already exist in the kernel.
-
-The HDMI PAI is the bridge, which is covered by this patch set.
-
-Best regards
-Shengjiu Wang
->
-> Best regards,
-> Krzysztof
->
 
