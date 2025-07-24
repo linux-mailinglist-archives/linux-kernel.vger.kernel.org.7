@@ -1,108 +1,91 @@
-Return-Path: <linux-kernel+bounces-744184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F006B1092D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:28:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD7CB10933
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C15E1C85E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:28:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16937BB6EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6162727FE;
-	Thu, 24 Jul 2025 11:28:28 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECA32741CE;
+	Thu, 24 Jul 2025 11:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQCkfeLt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D904D2701DA;
-	Thu, 24 Jul 2025 11:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31DE2727FB;
+	Thu, 24 Jul 2025 11:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356507; cv=none; b=jPhN2kN7NRrnpCx9Gc7hwjikxqIVkS4mK/R01Bdg8ryBaUEPIlIiULhotBHti7e+R6SbWyWjXgxHgPgham0aW2u9rCmyHLBbpdX4wzAFXVV2GUuopsW1osgP+1hQ+BNCFQd+f/p+LUSa22TUhyw+Tz/1CUDZ8MZtWJAdOOywXBE=
+	t=1753356553; cv=none; b=ZDOCVB9QO8xGgvin0/DPgSHRJDfBswmPTA9y70WKTFZ4vDTUjCrsgUsErEubP+ezQKlK1KxSEzdkn16wPSvHtMhVpOq1XF0WjwSU9GDkQo6gwCemGdSrV431QOXXKX6uxCF2fdMCfQTv0cyonhxepHzaKeWdDqF+RpIcEOswe/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356507; c=relaxed/simple;
-	bh=Q47uJytf0tbZ1v/g40pUETBSdeGUQHTBCLOSXJWcuhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q4hH0eTrFuBLOOjpT8db9OIrT/GTMqBzgU5nXtmrJ3JBPLcxBioqFWZN4xhZVBPulXN+KiuJPSiHuUzCu+JcomMqSrec5HzcOEmxpuwhCI6micSGa5owSPOdDzJvRPOu4rky77BuN8EFKp8Ij0+xFS8LH6mKUBprcu//2+25yYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bnpbg6NZNz2RVsC;
-	Thu, 24 Jul 2025 19:26:07 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 940E2140109;
-	Thu, 24 Jul 2025 19:28:22 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Jul
- 2025 19:28:22 +0800
-Message-ID: <456c9900-1ce3-4a87-8c29-46e65e1240cb@huawei.com>
-Date: Thu, 24 Jul 2025 19:28:21 +0800
+	s=arc-20240116; t=1753356553; c=relaxed/simple;
+	bh=vfRWEHwE1WupHh9d1wNg7F2X3YqFuo1TCz1gE5FR/iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NOEBMO/NB+zf0WKgsefO5/9KtKLuVO7dU3Vi1e8lq4PwWKlMdeOkDO0JArZ/WJCiG2DObisQYMPcF/37Ez1g7gY3yOReu4MhpREzM5D27Ll415IMcyqIV+tn506c106bAnuahlGqMKLKM/GnHGyed6Xr1k1EDwvuvd1dnnV4Iyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQCkfeLt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A12B9C4CEEF;
+	Thu, 24 Jul 2025 11:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753356553;
+	bh=vfRWEHwE1WupHh9d1wNg7F2X3YqFuo1TCz1gE5FR/iY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oQCkfeLtEcCkCiFH87k5apZyG4QV6RQbKrhzKi846orAGUavlQrdmcgcUYArGezmW
+	 z3red/XQSHH/gJZ6yMg5MI7uRPllZNbZeUQx1dZXTBzmlvbHR1DpkIYLBrSlo2cEKI
+	 2YnifCA14Cz30bXCjrMwrUWpRdLnAjoVPICDiwnkJD7HXdXgKXfTvyl8cPGdtsY06U
+	 gxG3cE3yt0nZtnULbTqUxqrHfR65H9fwTI7A3pMHjrhQF8KNkLhxQOrZMdPTl1heg4
+	 Pn0fbJOKpziP/YY2JeyZopsLoPvWd3xas6uJ7BLFEasWA5u7K7X++/oazXEjQNJwD4
+	 YHxR/bL7ZH8hw==
+Date: Thu, 24 Jul 2025 12:29:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: magnetometer: Fix spelling mistake
+ "Magenetometer" -> "Magnetometer"
+Message-ID: <20250724122906.6baceef8@jic23-huawei>
+In-Reply-To: <20250724104743.139892-1-colin.i.king@gmail.com>
+References: <20250724104743.139892-1-colin.i.king@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpufreq: Avoid get_governor() for first policy
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>, "rafael J . wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250724093621.61871-1-zhangzihuan@kylinos.cn>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <20250724093621.61871-1-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemh100008.china.huawei.com (7.202.181.93)
 
-On 2025/7/24 17:36, Zihuan Zhang wrote:
+On Thu, 24 Jul 2025 11:47:43 +0100
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> When a cpufreq driver registers the first policy, it may attempt to
-> initialize the policy governor from `last_governor`. However, this is
-> meaningless for the first policy instance, because `last_governor` is
-> only updated when policies are removed (e.g. during CPU offline).
+> There is a spelling mistake in the HID_SENSOR_MAGNETOMETER_3D Kconfig,
+> fix it.
 > 
-> The `last_governor` mechanism is intended to restore the previously
-> used governor across CPU hotplug events. For the very first policy,
-> there is no "previous governor" to restore, so calling
-> get_governor(last_governor) is unnecessary and potentially confusing.
-> 
-> This patch skips looking up `last_governor` when registering the first
-> policy. Instead, it directly uses the default governor after all
-> governors have been registered and are available.
-> 
-> This avoids meaningless lookups, reduces unnecessary module reference
-> handling, and simplifies the initial policy path.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Applied. Tah
 > ---
->  drivers/cpufreq/cpufreq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/iio/magnetometer/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index d7426e1d8bdd..b5ebd4519eab 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1121,9 +1121,9 @@ static int cpufreq_init_policy(struct cpufreq_policy *policy)
->  	int ret;
->  
->  	if (has_target()) {
-> -		/* Update policy governor to the one used before hotplug. */
-> -		gov = get_governor(policy->last_governor);
-> -		if (gov) {
-> +		if (policy->last_governor[0] != '\0') {
-> +			/* Update policy governor to the one used before hotplug. */
-> +			gov = get_governor(policy->last_governor);
-
-What if gov is null here? For example, the last governor has been removed.
-The default governor should be used in this situation I think.
-
->  			pr_debug("Restoring governor %s for cpu %d\n",
->  				 gov->name, policy->cpu);
->  		} else {
+> diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+> index 3debf1320ad1..c7809e5aa3a4 100644
+> --- a/drivers/iio/magnetometer/Kconfig
+> +++ b/drivers/iio/magnetometer/Kconfig
+> @@ -123,7 +123,7 @@ config HID_SENSOR_MAGNETOMETER_3D
+>  	select IIO_BUFFER
+>  	select HID_SENSOR_IIO_COMMON
+>  	select HID_SENSOR_IIO_TRIGGER
+> -	tristate "HID Magenetometer 3D"
+> +	tristate "HID Magnetometer 3D"
+>  	help
+>  	  Say yes here to build support for the HID SENSOR
+>  	  Magnetometer 3D.
 
 
