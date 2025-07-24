@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-744645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4A8B10F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5823B10F8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134DA3AA0CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DB0175F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28B42EAD06;
-	Thu, 24 Jul 2025 16:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6878A2ED87C;
+	Thu, 24 Jul 2025 16:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ITXEcKcU"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Zm7l2r+g"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE182EA493
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380AF2ED859
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753373806; cv=none; b=iMN3ZV82XCOoy8mavlzWNAyLmRMtRsAutid0JcO/KYKGCENeqPCYP2zjDZahYUd2LgJAJJK95kdO0g9hkIMYmlB0xODCtM/U6Vl9RgQz/ViMAazRBNEjTfskdSyfULrcr3uSYCTnuBhSqVUAp1JB37qGTOoPSctil4HB3LPR5JQ=
+	t=1753373822; cv=none; b=Xb1KhS8xdOhxh8Kvv50GJuHsLxvTk9imCxRUtPgl8w7pw1gukAP+Qw80KMrTGe/jD4kTPkViml3lwa2P0B5to8Zp05lOX9eqiIZT7H7P3mt0eAAMpsCy9aWLuAe0nCqRL3D9Vgxi8a96QiUTxJ1qHa9IGN3P6YaksKguiS+7mqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753373806; c=relaxed/simple;
-	bh=bOkwpVY/Gsv62eCQGe3o5VZGmAnmYb8l9xLj4n61gLQ=;
+	s=arc-20240116; t=1753373822; c=relaxed/simple;
+	bh=p7BICrBXt18Q5mn56gsDeVJElBImXEVjdFKPj1y2d+M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IOW2p17stOKqrl6GKyQ4oqr6sOE1lv6GUxYbsRH/l0HfG26Sx8qHFbrfWqKt7PuNkZKR3d9Z5VIQZGuGGY1wWBL09E7wlPahUiQeihOBtPLQX7LdXz6E1aA7yISXgQ5uRd5F4XNHETJLIi4LNZvOLRD5ymeIHXddm1f6uqAvXcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ITXEcKcU; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version; b=iSUhtKqrozFgmGlnY2cl9h+uKcWorUXfPuRzJJwAtyN7bBDOByf3sq3Z6Vd/JZhXCpFz+QRerlc+a12cij+v/pgnB/5KumlczC1lKZWCyVkr5zWOkADP+GdntxUXnbS8zEYN0c9gh5Yqbi5UJW974X6cLLBfB0Pqc92T3l6JAEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Zm7l2r+g; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRRdk002850;
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODROF0022324;
 	Thu, 24 Jul 2025 16:16:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=iUmhe
-	cKkWU+OIR3wXYc7zBqQzdcel+64iEjdQOLWYtE=; b=ITXEcKcUPBcqkFmN3Ci9U
-	D2LeprRN9gKVIMBjxWy7yS92aTtvwFBniwSuTu/XOIARwXiIvVgD5DgZfBgEXkaF
-	5XjqWj7OidZSojKPsaTFvR+2yQG8XLXWCWtKYXjAoCN34Ek4RleQ7fCMehFNDx8G
-	z42a7MQpl0I+sCnbqKGLx4YhI4aE1QMP+M7NdrOgTxvsolckgufQgYiYXh0tZCjo
-	zpHr+P10ux7aR1pM11lUfa9tPd6s6RBZsjAn9G6K7SggHqdCFTWoMwSJPXRYa1r+
-	xIADoy13zjIuE54hOLApY2Rg2dFKDhKKBI3tT7dYvSrY52TXi9W2hB12/5tc1Lc3
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=Rxzbr
+	XG6TMluERJ7iS9k/2q5owET8hmYAVD2ax9w6MY=; b=Zm7l2r+gggwMbEXaPpVS4
+	TVikEUtBa02J5iqVZBxK+SwQgSXTZCaoVCYj0aNdXPiTf950cojwymZHn8UuHgpj
+	R5IxUlo8/GdJeuSweo7UV1op6/4fuviO7OS//uobfXnAF6agQZMBUDDqSbxxdN4a
+	SMh5WhYplhfnqoupa2ZpoVQwn9aHh8iIUhJYQ6GDZiswci+lgwuCZvGfRBCvt4Hq
+	XHq6KH6QHXh4orNSKuo5lpSMWlWihsSoHHbzRMLVexUIEZgNidmBaEyC7kZ5uBSK
+	hMXPuXusiUm6fubAJmr7cJH3KqLVpslfMG9EW4qJd4xyxwKgVe++f6HfCzDLaWlK
 	Q==
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 482cwhveb7-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e9syck-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Jul 2025 16:16:31 +0000 (GMT)
+	Thu, 24 Jul 2025 16:16:32 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OEu250014553;
-	Thu, 24 Jul 2025 16:16:30 GMT
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OFiYlc014492;
+	Thu, 24 Jul 2025 16:16:31 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfrg-1
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfru-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 24 Jul 2025 16:16:30 +0000
+	Thu, 24 Jul 2025 16:16:31 +0000
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNS034466;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNU034466;
 	Thu, 24 Jul 2025 16:16:30 GMT
 Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-7
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-8
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Thu, 24 Jul 2025 16:16:30 +0000
 From: Prakash Sangappa <prakash.sangappa@oracle.com>
@@ -66,9 +66,9 @@ To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
         tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
         vineethr@linux.ibm.com, prakash.sangappa@oracle.com
-Subject: [PATCH V7 06/11] Add API to query supported rseq cs flags
-Date: Thu, 24 Jul 2025 16:16:20 +0000
-Message-ID: <20250724161625.2360309-7-prakash.sangappa@oracle.com>
+Subject: [PATCH V7 07/11] sched: Add API to indicate not to delay scheduling
+Date: Thu, 24 Jul 2025 16:16:21 +0000
+Message-ID: <20250724161625.2360309-8-prakash.sangappa@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
 References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
@@ -86,70 +86,84 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adult
  suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2507240123
-X-Proofpoint-GUID: yh9zTwq3BvkqmRkFCyaZ5oPXayHU44RB
-X-Proofpoint-ORIG-GUID: yh9zTwq3BvkqmRkFCyaZ5oPXayHU44RB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX/AGEUbNoFjD3
- SP0l2aEWqPSzDGkWn4CMnLD1aLv8MWZwTHh4Q8IUpftusBWmzjIY/yDCDDB0s291wkeX9gvT3f3
- 6e2UrvqgRn7Fwliqtv7XW9TYde1guLDndQvbdwuC5lxN/PKgfqOZw+x4bK4pkAVFfvW9UMxGuci
- UMfJ8RDo5guoIcf2AML7o0PPDbgTpKLfnQHvdJ/+sB0opvs9cThlK3kBwcCSqYTvCw2VqMfBwET
- qRk7dPWykOqBveB4UBy5m60xqZfgrdimiGWDL7902MQHGJGAAZE0M+e+3nrBH4xbg72/Wocvjz1
- k/aNqbmN9dkSbtltg6jlNY89muV+qZZcUzFEe+ktwCv+II9inrCCvTTPxGUIX04QkFdsFcICokE
- z1E2ARZL7gIeQV9Vwv2kOCXoLAJ7W2MCDkOPZ1VEPZpeRo8JKMgm73FcRyXiaDfRzCxDbNYK
-X-Authority-Analysis: v=2.4 cv=IPoCChvG c=1 sm=1 tr=0 ts=68825c5f b=1 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=eqbfzppX c=1 sm=1 tr=0 ts=68825c60 b=1 cx=c_pps
  a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=XZOol5B-I9QkcwWuj0oA:9 cc=ntf
+ a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=xGzrbLGfahxIBTsCyEoA:9 cc=ntf
  awl=host:12061
+X-Proofpoint-GUID: _qVD9nUPXC0Uv4aUR5V7ymW9OJv8kQxb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX5idxh2+P0Di7
+ v0ungqGPyA2dkieZ7krOSAN0BH8q3BbDSHDVag0/y+0+XtmWICnnBrv60x8g+GYmxWp5R+OtHxN
+ uDChuSzHCqDw6R6kUbDsa1SZaABMxRsxjcKLz4VCZp8kAF3IS3U+L5deO4y0lkfbqSN9Us6u7Gw
+ s3yW6YwQOe3Z5M0hty6k3qoe0G/A8pB7fN9RWgkt1/wLTo9WFj5Cy1f1cFL3JT81Zn0vbgKczlU
+ rb8D62aHKF2GCK1EUyoJiz3wKrr0TO4taVarmdZiDYmVvAXlFFbfy4tcmKYcFY9yLgnxzdtiGG+
+ 1CphUgi8IZk7HM9F9g3gVcbZAz/kRHUY7J7DwXmW9K6ZeBamoCTu9jmZgZd3VYigHGgUdCxdiyH
+ sR48IULXEa3Gkk4OZU6bjQmY5KTOEsgeT25zF6xQkOLPRNWLRxL0k8/SNAB/5JO6yRy9KiEE
+X-Proofpoint-ORIG-GUID: _qVD9nUPXC0Uv4aUR5V7ymW9OJv8kQxb
 
-For the API, add a new flag to sys_rseq 'flags' argument called
-RSEQ_FLAG_QUERY_CS_FLAGS.
+Add an API for user threads to request scheduler to not delay
+scheduling it when woken up to run. This is allowed only for RT threads.
 
-When this flag is passed it returns a bit mask of all the supported
-rseq cs flags in the user provided rseq struct's 'flags' member.
-
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
 ---
- include/uapi/linux/rseq.h |  1 +
- kernel/rseq.c             | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
+ include/linux/sched.h      |  1 +
+ include/uapi/linux/prctl.h |  3 +++
+ kernel/sys.c               | 18 ++++++++++++++++++
+ 3 files changed, 22 insertions(+)
 
-diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-index 015534f064af..44baea9dd10a 100644
---- a/include/uapi/linux/rseq.h
-+++ b/include/uapi/linux/rseq.h
-@@ -20,6 +20,7 @@ enum rseq_cpu_id_state {
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 5c5868c555f0..3e8eb64658d1 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1062,6 +1062,7 @@ struct task_struct {
+ #endif
+ 	unsigned			in_nf_duplicate:1;
+ 	unsigned			rseq_delay_resched:2;
++	unsigned			sched_nodelay:1;
+ #ifdef CONFIG_PREEMPT_RT
+ 	struct netdev_xmit		net_xmit;
+ #endif
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 6f9912c65595..907300cd4469 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -379,4 +379,7 @@ struct prctl_mm_map {
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+ # define PR_FUTEX_HASH_GET_IMMUTABLE	3
  
- enum rseq_flags {
- 	RSEQ_FLAG_UNREGISTER = (1 << 0),
-+	RSEQ_FLAG_QUERY_CS_FLAGS = (1 << 1),
- };
- 
- enum rseq_cs_flags_bit {
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 6ca3ca959b66..7f4daeba6d0d 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -550,6 +550,21 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 		return 0;
- 	}
- 
-+	/*
-+	 * Return supported rseq_cs flags.
-+	 */
-+	if (flags & RSEQ_FLAG_QUERY_CS_FLAGS) {
-+		u32 rseq_csflags = RSEQ_CS_FLAG_DELAY_RESCHED |
-+				   RSEQ_CS_FLAG_RESCHEDULED;
-+		if (!IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
++/* TASK sched nodelay request */
++#define PR_SET_SCHED_NODELAY		79
++#define PR_GET_SCHED_NODELAY		80
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a088a6b1ac23..2f8b4512c6e4 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2890,6 +2890,24 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	case PR_FUTEX_HASH:
+ 		error = futex_hash_prctl(arg2, arg3, arg4);
+ 		break;
++	case PR_SET_SCHED_NODELAY:
++		if (arg3 || arg4 || arg5)
 +			return -EINVAL;
-+		if (!rseq)
++		if (current->sched_class != &rt_sched_class)
 +			return -EINVAL;
-+		if (copy_to_user(&rseq->flags, &rseq_csflags, sizeof(u32)))
-+			return -EFAULT;
-+		return 0;
-+	}
++		if (arg2)
++			current->sched_nodelay = 1;
++		else
++			current->sched_nodelay = 0;
++		break;
++	case PR_GET_SCHED_NODELAY:
++		if (arg2 || arg3 || arg4 || arg5)
++			return -EINVAL;
++		if (current->sched_class != &rt_sched_class)
++			return -EINVAL;
++		error = (current->sched_nodelay == 1);
++		break;
 +
- 	if (unlikely(flags))
- 		return -EINVAL;
- 
+ 	default:
+ 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
+ 		error = -EINVAL;
 -- 
 2.43.5
 
