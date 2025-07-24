@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-744945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433E7B112D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B058B112DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E28C189122D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9301891511
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B267F2ECD00;
-	Thu, 24 Jul 2025 21:11:20 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996BB2E9EA6;
+	Thu, 24 Jul 2025 21:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIHUfffS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8711494C3;
-	Thu, 24 Jul 2025 21:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BA9217F31;
+	Thu, 24 Jul 2025 21:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753391480; cv=none; b=MStmh4h4xM7KInCwX1r7YX08qrE6OIiStRVc/Z/850eG6jYQvU+tw5ZOMjX++r77Qq6F9zw0KCuLsgSpxb3MdDKa04c3xjgkOC/6Ez50viX5kyVRDnlMIrSO29JAhFGqoMrlE3edlqsft0iUkBuJhO+Z+VmuuknC0JmPuKyXtQw=
+	t=1753391489; cv=none; b=rfAqrarM43CoLiVnY8HGmq0vsllipvsYXU/P4+8+0ILU3LHHBrCpM2TfuReHW6qWqvvs+eHENseq7SNqezI/GYAqTkpMZVlYSMYTKR69J2GrKwHWdlxbrDWybzQFzW0mFvMi5mSdBHgzEhzNnGBqQVskAHSv065ZfBAhI06dJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753391480; c=relaxed/simple;
-	bh=Sg/5pE6bUeWBvnfigj1Hnnl3+6CiShL1sby6PguO+14=;
+	s=arc-20240116; t=1753391489; c=relaxed/simple;
+	bh=FcG103BTDIRwcd06zh7pGj3Lo6KRz/c3RYa3jUnalm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CB1Y0/+qhFrCSWiZW4RCJHVjQpWVd2YZPDG8d6H9e1EpcZhPN8/f75P3bVemaIqXcBQHgJL3yT+vb1fRTgXvwlkPcIGDdRssyzi9ukOuoGdNvOEXaNOqf+PgkoPcUisTNN1zAl3sZ4pIqO6X/Z1/prd47vHMsLa0HJCgrrpxWuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id EE945340D1F;
-	Thu, 24 Jul 2025 21:11:17 +0000 (UTC)
-Date: Fri, 25 Jul 2025 05:11:13 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: lee@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mat.jonczyk@o2.pl, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 6/8] riscv: dts: spacemit: enable the i2c8 adapter
-Message-ID: <20250724211113-GYA748868@gentoo>
-References: <20250724202511.499288-1-elder@riscstar.com>
- <20250724202511.499288-7-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BA/BwKQ0QVmYHdJO1c9DNrUxKBsK12x9hqvHBEzW0M7n6aI7w21D83MFVZ8hOfN3X3GEWKGtipO5WvNUYfL0xsjXJHrpVoG9XkeYJMzSwhG+9z3UjlbGYOD3+VIwBAUBOFBSRu70bmwm5lk4QYQxTcna1sJBCYD8I636D4PBieU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIHUfffS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4CAC4CEED;
+	Thu, 24 Jul 2025 21:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753391488;
+	bh=FcG103BTDIRwcd06zh7pGj3Lo6KRz/c3RYa3jUnalm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eIHUfffSFpfVhsn6XRx65By98JfdoAUdY2+BouZju7v/aUex4CSumVwnDH4c6jpJE
+	 cysKnX8kzBv5ElkWh17v14zihdGntSyu/beSFCRhOMwgt45NdkUTx938++Wi5V6APC
+	 fTnrSTAfIVbo537nEvGtZ/BESvUJEHrM0efEQACTIHH0q/Lo73iMmj2hQ/+njYrIN5
+	 VkvejTZG4W9aJnT5JIgqLIse4PzNIQKFDcE+TqR9aKxEvsXNg7XZaA/+tKBRu/pGle
+	 /UPvNUyib+xVvyjpdHnpwKHFDn3ZQByrzwzO1ShsqJAX7uEItoPlfioN4BEyCoGaiP
+	 foUgYouTCj/lw==
+Date: Thu, 24 Jul 2025 14:11:27 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Yao Zi <ziyao@disroot.org>
+Subject: Re: [GIT PULL] clk: thead: Updates for v6.17, part 2
+Message-ID: <aIKhf41ky1gzdOIV@x1>
+References: <aIKcFzsCvvz0PCBW@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,102 +56,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724202511.499288-7-elder@riscstar.com>
+In-Reply-To: <aIKcFzsCvvz0PCBW@x1>
 
-Hi Alex,
-
-On 15:25 Thu 24 Jul     , Alex Elder wrote:
-> Define properties for the I2C adapter that provides access to the
-> SpacemiT P1 PMIC.  Enable this adapter on the Banana Pi BPI-F3.
+On Thu, Jul 24, 2025 at 01:48:23PM -0700, Drew Fustini wrote:
+> Hi Stephen,
 > 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 15 +++++++++++++++
->  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    |  7 +++++++
->  arch/riscv/boot/dts/spacemit/k1.dtsi            | 11 +++++++++++
->  3 files changed, 33 insertions(+)
+> I'm sending this followup PR in case there is still time to include it
+> for your 6.17 PR. Yao Zi refactored mux clk registration which fixes an
+> orphan mux clk issue which would occur when booting with mainline uboot.
+[snip]
+> Michal Wilczynski (1):
+>       clk: thead: Mark essential bus clocks as CLK_IGNORE_UNUSED
 > 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> index fe22c747c5012..7c9f91c88e01a 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> @@ -40,6 +40,21 @@ &emmc {
->  	status = "okay";
->  };
->  
-> +&i2c8 {
-> +	pinctrl-0 = <&i2c8_cfg>;
-> +	pinctrl-names = "default";
-..
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-I think these two can be moved into dtsi, as they are
-common and fixed properties for the i2c controller
-
-> +	status = "okay";
-> +
-> +	pmic@41 {
-> +		compatible = "spacemit,p1";
-> +		reg = <0x41>;
-> +		interrupts = <64>;
-..
-> +		status = "okay";
-status property here can be dropped as enabled by default
-> +	};
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_2_cfg>;
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> index 3810557374228..96d7a46d4bf77 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> @@ -11,6 +11,13 @@
->  #define K1_GPIO(x)	(x / 32) (x % 32)
->  
->  &pinctrl {
-> +	i2c8_cfg: i2c8-cfg {
-> +		i2c8-0-pins {
-> +			pinmux = <K1_PADCONF(93, 0)>,	/* PWR_SCL */
-> +				 <K1_PADCONF(94, 0)>;	/* PWR_SDA */
-> +		};
-> +	};
-> +
->  	uart0_2_cfg: uart0-2-cfg {
->  		uart0-2-pins {
->  			pinmux = <K1_PADCONF(68, 2)>,
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index abde8bb07c95c..2a5a132d5a774 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -459,6 +459,17 @@ pwm7: pwm@d401bc00 {
->  			status = "disabled";
->  		};
->  
-> +		i2c8: i2c@d401d800 {
-> +			compatible = "spacemit,k1-i2c";
-> +			reg = <0x0 0xd401d800 0x0 0x38>;
-..
-> +			interrupts = <19>;
-I'd suggest to move interrupts property after clock, see my similar
-comment
-https://lore.kernel.org/all/20250724121916-GYA748228@gentoo/
-
-> +			clocks = <&syscon_apbc CLK_TWSI8>,
-> +				 <&syscon_apbc CLK_TWSI8_BUS>;
-> +			clock-names = "func", "bus";
-> +			clock-frequency = <400000>;
-> +			status = "disabled";
-> +		};
-> +
->  		pinctrl: pinctrl@d401e000 {
->  			compatible = "spacemit,k1-pinctrl";
->  			reg = <0x0 0xd401e000 0x0 0x400>;
-> -- 
-> 2.43.0
+> Yao Zi (2):
+>       clk: thead: th1520-ap: Correctly refer the parent of osc_12m
+>       clk: thead: th1520-ap: Describe mux clocks with clk_mux
 > 
+>  drivers/clk/thead/clk-th1520-ap.c | 109 +++++++++++++++++---------------------
+>  1 file changed, 48 insertions(+), 61 deletions(-)
 
--- 
-Yixun Lan (dlan)
+My apologies, I failed to just send the delta between thead-clk-for-v6.17 and
+thead-clk-for-v6.17-p2.
+
+The following is the correct text of the pull request. Hopefull this is
+acceptable?
+
+Thanks,
+Drew
+
+--
+The following changes since commit d274c77ffa202b70ad01d579f33b73b4de123375:
+
+  clk: thead: th1520-ap: Correctly refer the parent of osc_12m (2025-07-13 12:46:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/thead-clk-for-v6.17-p2
+
+for you to fetch changes up to 54edba916e2913b0893b0f6404b73155d48374ea:
+
+  clk: thead: th1520-ap: Describe mux clocks with clk_mux (2025-07-22 15:40:54 -0700)
+
+----------------------------------------------------------------
+T-HEAD clock changes for v6.17, part 2
+
+One more improvement for the T-HEAD TH1520 clock controller this cycle:
+
+Yao Zi has fixed an issue where the c910 mux clk could end up as an
+orphan in CCF when the bootloader reparents it to the c910-i0 mux clk.
+The solution is to refactor the handling of mux clocks by embedding a
+clk_mux structure directly in ccu_mux. This allows the mux clocks to be
+registered with devm_clk_hw_register() without allocating any new clk_hw
+pointer which solves the orphan issue.
+
+This change has been tested in linux-next. The LPi4a still boots okay
+without clk_ignore_unused and peripherals like serial, emmc and ethernet
+are functional. The file /sys/kernel/debug/clk/c910/clk_possible_parents
+now correctly outputs: "c910-i0 cpu-pll1"
+
+Link: https://lore.kernel.org/linux-riscv/20250722080535.60027-2-ziyao@disroot.org/
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+
+----------------------------------------------------------------
+Yao Zi (1):
+      clk: thead: th1520-ap: Describe mux clocks with clk_mux
+
+ drivers/clk/thead/clk-th1520-ap.c | 95 +++++++++++++++------------------------
+ 1 file changed, 37 insertions(+), 58 deletions(-)
+
 
