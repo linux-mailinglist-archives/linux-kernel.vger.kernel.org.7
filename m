@@ -1,1095 +1,278 @@
-Return-Path: <linux-kernel+bounces-743885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA0AB10505
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12A8B104E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD91117100D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB714E5FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88092288C8A;
-	Thu, 24 Jul 2025 08:49:12 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD7527584E;
+	Thu, 24 Jul 2025 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EcsQUE6o"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30568277CBA;
-	Thu, 24 Jul 2025 08:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850782750FC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346951; cv=none; b=shgBfyLOMi8qqBWUwUjXspzxRnlLPuQ+74Ki135SnVGvL3Czj19WVVRiJbze+LpLzACHoJeMd/RiKQ1tEcTjTgtp/LHrjQAfJc3kuivX+Ym0onv+mm58bSr7awAlHgNV9VrMmFfE75BYzSpKhA8wTz6zbPlST4vc15uQN+VETvM=
+	t=1753346516; cv=none; b=lNnwPNBXq2UqlM7s91exANHLMgqjEfmv/cF2ImUG1OrXaIOSjP2mwAqSGjdeqTXrbSeFXMgkGuv1OxPuTboZEWeODuEyolv6L7a0s847WNu81C5HtQAnvPz1UjfSQeKlebQ6ZAp309wHFY/KCnR3+zDpxvJvoYrJO6ttAQP/wvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346951; c=relaxed/simple;
-	bh=m3zhxzHfxUVF4ffM8QWR7IDBqgXl+7MK2fHwCnBGz2k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p3eNuG5HnH6wRMIYhTWHvIOEm+n8oCVOg6+Yqp7Fh0sxK6KKaCitz3KGmUdgcn4oHLIuEnqKg4t8N5E8TvXb+PAZRb+lGVmUXkTXNzppiGXlYFKBTcndnXsroCAi/yrG6nYNb8wOc5bUwJCe+dHRsJhtAWRfowR3jvqynwwJubo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A5185200575;
-	Thu, 24 Jul 2025 10:39:59 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F051201B58;
-	Thu, 24 Jul 2025 10:39:59 +0200 (CEST)
-Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 685591800097;
-	Thu, 24 Jul 2025 16:39:57 +0800 (+08)
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	marcelo.schmitt1@gmail.com,
-	gregkh@linuxfoundation.org,
-	viro@zeniv.linux.org.uk,
-	peterz@infradead.org,
-	jstephan@baylibre.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com,
-	Frank.Li@nxp.com,
-	carlos.song@nxp.com,
-	xiaoning.wang@nxp.com,
-	haibo.chen@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [PATCH 2/2] iio: temperature: Add driver for NXP P3T175x temperature sensor.
-Date: Thu, 24 Jul 2025 14:09:51 +0530
-Message-Id: <20250724083951.2273717-2-lakshay.piplani@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250724083951.2273717-1-lakshay.piplani@nxp.com>
-References: <20250724083951.2273717-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1753346516; c=relaxed/simple;
+	bh=rnF+oib9L2Skeeylwk63DB1XU4v0B5lhktdPZQZmpLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CzPjIu4J9aPw/LhBP2+eFESVS+pHsXArBw9hgdwX40v/S49XsEZXnK+jb1vPvqmNAbMI2ZoRywylAfSMh+gdoAZ0g0FqBLOPjYBXCF1WnzTiQn2SD+ENSgd5U/i0j6Nu+dRMmu2uosDcxSCuvq9TMu0Nqjad1of1K3fCzKaS/dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EcsQUE6o; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXU8H031272
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NcSQxl+jVI7Me55KCzMwMtBdepNG4E+Ro3RKSYD+KgE=; b=EcsQUE6oQbOB6gV6
+	fW/e8YgGlrgDCPe8iUIYyzlH1uzn9SPmPUnU+2ZfPKsBW6tH/Ck9pAdfr2SipWGI
+	gnTv2/ZWNtn+tLNtKoYxPtE6JxXssP9L8/dSb9jGG3/8x5j5zQlAN/5odq9Er/Rx
+	zMRa1rAYymBg7RREKjyl+ovZLSChN5CHnMQW843I4B/Z1etqA2DbAEHgrhM54sCv
+	4bcgBT+Sq45J0Gqh6tAxnzz49whXpnbEWATBkH6ME4EjmlmsdQcFo1GR3pOubVLF
+	fq6DjTVR3fugEK1hc0j4RPdQK3F1aNuPaw59RKl82uoGm0QJJi6CdqirS4ZjwAUA
+	PtF60g==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048vecx1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:53 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2c37558eccso563837a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:41:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753346513; x=1753951313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NcSQxl+jVI7Me55KCzMwMtBdepNG4E+Ro3RKSYD+KgE=;
+        b=NtbRwIlLD3C8no4tppA2HjeP+7Q5o9tjTPqhNMUuAFYd4FO47xQTWoMQUgZIoeqhNO
+         MyXGSRKupv3hz7UShkroLDUhTsW9ac2TsB7fP9W8+rQsCrBVFy+5GE2O6JQr+2+CVI2n
+         quKr2A1TEhhYBJT6B+z+PWJglPHmyiEuMRyvU61G22CG1GY29USJ+VnCMU2hUWW/Fpsi
+         ZWydzBWzq7iiM0Vrwo2AElzK9h9lLjM/AuYJKf7NtzJnxllYs6t8d0tHTouSut5xuYxX
+         B7uve6XuZ9v2QXpIikle7nu0ifJvA5LySLoA6SCqcDklJdAaU4RSdMYZ4cFWrgJTwFMK
+         YJAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUObDe0bLv3pN88GyRvqhIo15OOo7AGIFXGO6jHuYiZehcwqOy8NV6usWmXqHEoyJqRFYJm7bDJrGzAKts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJSglui14KO/u7qen7BnLnjz7A+Uf/Agd4lC/HGKs3h2+hj2U/
+	L9z35XDFAjgoeQaCF6I+ffWGqIX1XaZ3GqUfU48YcPUu1vxNiNoyv1S7e9F2lRJNhO7VwkmTvSh
+	a/C9/NKOWod9KaA4bncuSzWZMidNZL1CQUFG0tYbhw2GQE7l0FhbBfkpQMSCUdk9ZQgFND0jLaa
+	4FboGA8o3Ys7jb0h7OgJ99CbjgOVVEbePsNi/kBAC4hg==
+X-Gm-Gg: ASbGncvmoLJQOxTvOIbPCkpLni9Tzvo/Sl2bLea47Eu2M/N24YctL5ers9LbiMD3i00
+	T4vRn5578+VnVPwWzf/ZNGNy/wqi6+EyLZRwhAFLynSvi8qtnu4Rf6KXUrplgE341ardkjsujRN
+	z3j4JYQiRxYI0ZPS2yul6eX5nOBAPDAUY0dBc=
+X-Received: by 2002:a17:903:40ce:b0:234:ef42:5d6d with SMTP id d9443c01a7336-23f98160d78mr85101355ad.23.1753346512454;
+        Thu, 24 Jul 2025 01:41:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSyCdU8c5GLoMY06XIHDleMAFGJhzG6lduNlXjRkOM6bAsMFhgLYqcBatDA4hvNaRMBi5/zQqFRDpuPCkf3pg=
+X-Received: by 2002:a17:903:40ce:b0:234:ef42:5d6d with SMTP id
+ d9443c01a7336-23f98160d78mr85100995ad.23.1753346512006; Thu, 24 Jul 2025
+ 01:41:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-2-quic_rdwivedi@quicinc.com> <2ihbf52nryduic5vzlqdldzgx2fe4zidt4hzcugurqsuosiawq@qs66zxptpmqf>
+ <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
+In-Reply-To: <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Thu, 24 Jul 2025 11:41:40 +0300
+X-Gm-Features: Ac12FXzMKMuF_0OUA3EGJwZLmjVM8hRhGRUkVzF5il0fHysdmUBOWLdVHSEcSgQ
+Message-ID: <CAO9ioeWLLW1UgJfByBAXp9-v81AqmRV9Acs5Eae9k4Gkr1U0MA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and rate limiting
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: JF9Ll_a1IVQNEOSKa-ZIPUidQyeVcnJJ
+X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=6881f1d1 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=COk6AnOGAAAA:8 a=kyiDCW8mUpRo50OuNtQA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA2MiBTYWx0ZWRfX8uPj4cjOGEjn
+ B0xuzTZ5Ty66tI/4TQg+DhDrY//ACw0c69jhpcA4fuJs1IV06rdAA8UZKYyxFh3czJbMTWALUKy
+ 7V8CW/RJPkDTMvE7KHJCn6I7R8rWV97stG+lpgclFYGYMvp8UJspNDBuYV9EjltOCBazZZRd+OF
+ dQIL/HGKMiiVqtAWJm+uMDyPf+cpBKiUd/2xlBzBUInxY4eY4FsmKdICENVsoV4VyAWH3Bodakg
+ OdOPKXH9BkA5hhPn7KFbd4dwShAn8exwQfMD58UnWea1UJGNvlnvgcjCHKhNXFU2FpsUdI/wLQO
+ /z8dkt/rSvxNgAmsh0by8dhiSylffTcppW25q19otLqC8caixegg0wvO934WJQPwU6+Mk9vU/L8
+ HRfU+a2xabnLvgTKDJ4tnO73e1eka5M6GyOuKJggXa9Su0aV91Rwg3xFuOexePjw89DyFZDG
+X-Proofpoint-ORIG-GUID: JF9Ll_a1IVQNEOSKa-ZIPUidQyeVcnJJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_01,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507240062
 
-Add support for the NXP P3T175x (P3T1755/P3T1750)
-family of temperature sensor devices. These devices
-communicates via both I2C or I3C interfaces.
+On Thu, 24 Jul 2025 at 10:35, Ram Kumar Dwivedi
+<quic_rdwivedi@quicinc.com> wrote:
+>
+>
+>
+> On 23-Jul-25 12:24 AM, Dmitry Baryshkov wrote:
+> > On Tue, Jul 22, 2025 at 09:41:01PM +0530, Ram Kumar Dwivedi wrote:
+> >> Add optional device tree properties to limit Tx/Rx gear and rate durin=
+g UFS
+> >> initialization. Parse these properties in ufs_qcom_init() and apply th=
+em to
+> >> host->host_params to enforce platform-specific constraints.
+> >>
+> >> Use this mechanism to cap the maximum gear or rate on platforms with
+> >> hardware limitations, such as those required by some automotive custom=
+ers
+> >> using SA8155. Preserve the default behavior if the properties are not
+> >> specified in the device tree.
+> >>
+> >> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> >> ---
+> >>  drivers/ufs/host/ufs-qcom.c | 28 ++++++++++++++++++++++------
+> >>  1 file changed, 22 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> >> index 4bbe4de1679b..5e7fd3257aca 100644
+> >> --- a/drivers/ufs/host/ufs-qcom.c
+> >> +++ b/drivers/ufs/host/ufs-qcom.c
+> >> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_=
+hba *hba)
+> >>       * If the HS-G5 PHY gear is used, update host_params->hs_rate to =
+Rate-A,
+> >>       * so that the subsequent power mode change shall stick to Rate-A=
+.
+> >>       */
+> >> -    if (host->hw_ver.major =3D=3D 0x5) {
+> >> -            if (host->phy_gear =3D=3D UFS_HS_G5)
+> >> -                    host_params->hs_rate =3D PA_HS_MODE_A;
+> >> -            else
+> >> -                    host_params->hs_rate =3D PA_HS_MODE_B;
+> >> -    }
+> >> +    if (host->hw_ver.major =3D=3D 0x5 && host->phy_gear =3D=3D UFS_HS=
+_G5)
+> >> +            host_params->hs_rate =3D PA_HS_MODE_A;
+> >
+> > Why? This doesn't seem related.
+>
+> Hi Dmitry,
+>
+> I have refactored the patch to put this part in a separate patch in lates=
+t patchset.
+>
+> Thanks,
+> Ram.
+>
+> >
+> >>
+> >>      mode =3D host_params->hs_rate =3D=3D PA_HS_MODE_B ? PHY_MODE_UFS_=
+HS_B : PHY_MODE_UFS_HS_A;
+> >>
+> >> @@ -1096,6 +1092,25 @@ static void ufs_qcom_set_phy_gear(struct ufs_qc=
+om_host *host)
+> >>      }
+> >>  }
+> >>
+> >> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
+> >> +{
+> >> +    struct ufs_host_params *host_params =3D &host->host_params;
+> >> +    struct device_node *np =3D host->hba->dev->of_node;
+> >> +    u32 hs_gear, hs_rate =3D 0;
+> >> +
+> >> +    if (!np)
+> >> +            return;
+> >> +
+> >> +    if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
+> >
+> > These are generic properties, so they need to be handled in a generic
+> > code path.
+>
+> Hi Dmitry,
+>
+>
+> Below is the probe path for the UFS-QCOM platform driver:
+>
+> ufs_qcom_probe
+>   =E2=94=94=E2=94=80 ufshcd_platform_init
+>        =E2=94=94=E2=94=80 ufshcd_init
+>             =E2=94=94=E2=94=80 ufs_qcom_init
+>                  =E2=94=94=E2=94=80 ufs_qcom_set_host_params
+>                       =E2=94=94=E2=94=80 ufshcd_init_host_params (initial=
+ized with default values)
+>                            =E2=94=94=E2=94=80 ufs_qcom_get_hs_gear (overr=
+ides gear based on controller capability)
+>                                 =E2=94=94=E2=94=80 ufs_qcom_set_phy_gear =
+(further overrides based on controller limitations)
+>
+>
+> The reason I added the logic in ufs-qcom.c is that even if it's placed in=
+ ufshcd-platform.c, the values get overridden in ufs-qcom.c.
+> If you prefer, I can move the parsing logic API to ufshcd-platform.c but =
+still it needs to be called from ufs-qcom.c.
 
-Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
----
- drivers/iio/temperature/p3t/Kconfig        |  89 ++++
- drivers/iio/temperature/p3t/Makefile       |   5 +
- drivers/iio/temperature/p3t/p3t1755.h      |  60 +++
- drivers/iio/temperature/p3t/p3t1755_core.c | 513 +++++++++++++++++++++
- drivers/iio/temperature/p3t/p3t1755_i2c.c  | 142 ++++++
- drivers/iio/temperature/p3t/p3t1755_i3c.c  | 147 ++++++
- 6 files changed, 956 insertions(+)
- create mode 100644 drivers/iio/temperature/p3t/Kconfig
- create mode 100644 drivers/iio/temperature/p3t/Makefile
- create mode 100644 drivers/iio/temperature/p3t/p3t1755.h
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_core.c
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_i2c.c
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_i3c.c
+I was thinking about ufshcd_init() or similar function.
 
-diff --git a/drivers/iio/temperature/p3t/Kconfig b/drivers/iio/temperature/p3t/Kconfig
-new file mode 100644
-index 000000000000..258ff77a0b2d
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/Kconfig
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+menuconfig IIO_P3T1755
-+	tristate "NXP P3T1755 temperature sensor support"
-+	help
-+	  Enable support for the NXP P3T1755 digital temperature sensor family.
-+
-+	  The P3T1755 is a high-accuracy temperature sensor with programmable
-+	  alert limits and fault queue settings. It supports both I2C and I3C
-+	  interfaces for communication and can be used in a variety of embedded
-+	  and industrial applications where precise thermal monitoring is required.
-+
-+	  This option enables common functionality shared across all supported
-+	  variants and interfaces. You must also select the appropriate interface
-+	  (I2C or I3C) and corresponding driver to enable full support
-+
-+
-+if IIO_P3T1755
-+
-+choice
-+	prompt "Interface for P3T1755"
-+	help
-+	  Select the hardware interface used to communicate with the NXP P3T1755
-+	  temperature sensor.
-+
-+	  The P3T1755 supports both I2C and I3C interfaces. Choose the interface
-+	  that matches your hardware configuration. Only one interface can be
-+	  selected at a time. You must also enable the corresponding driver option
-+	  to build support for the selected interface
-+
-+
-+config IIO_P3T1755_I2C
-+	bool "Use I2C interface"
-+	depends on I2C
-+	help
-+	  Select this option if the P3T1755 temperature sensor is connected via
-+	  the I2C bus.
-+
-+	  This enables support for configuring and communicating with the sensor
-+	  over the I2C interface. You must also enable the corresponding I2C driver
-+	  (IIO_P3T1755_I2C_DRIVER) to build full support for this interface.
-+
-+
-+config IIO_P3T1755_I3C
-+	bool "Use I3C interface"
-+	depends on I3C
-+	help
-+	  Select this option if the P3T1755 temperature sensor is connected via
-+	  the I3C bus.
-+
-+	  This enables support for configuring and communicating with the sensor
-+	  over the I3C interface. I3C offers improved performance and lower power
-+	  consumption compared to I2C, making it suitable for advanced applications.
-+
-+	  You must also enable the corresponding I3C driver (IIO_P3T1755_I3C_DRIVER)
-+	  to build full support for this interface.
-+
-+endchoice
-+
-+config IIO_P3T1755_I2C_DRIVER
-+	tristate "Build I2C driver"
-+	depends on IIO_P3T1755_I2C
-+	select REGMAP_I2C
-+	help
-+	  Enable this option to build the I2C driver for the NXP P3T1755 temperature sensor.
-+
-+	  This driver provides support for communication with the P3T1755 sensor
-+	  over the I2C bus, allowing temperature data to be read and configuration
-+	  registers to be accessed via the Industrial I/O (IIO) subsystem.
-+
-+	  Select this if your hardware connects the sensor using I2C and you want
-+	  to include the driver either built-in or as a loadable module.
-+
-+
-+config IIO_P3T1755_I3C_DRIVER
-+	tristate "Build I3C driver"
-+	depends on IIO_P3T1755_I3C
-+	select REGMAP_I3C
-+	help
-+	  Enable this option to build the I3C driver for the NXP P3T1755 temperature sensor.
-+
-+	  This driver provides support for communication with the P3T1755 sensor
-+	  over the I3C bus, allowing temperature readings and configuration access
-+	  through the Industrial I/O (IIO) subsystem.
-+
-+	  Select this if your hardware connects the sensor using I3C and you want
-+	  to include the driver either built-in or as a loadable module
-+
-+endif
-diff --git a/drivers/iio/temperature/p3t/Makefile b/drivers/iio/temperature/p3t/Makefile
-new file mode 100644
-index 000000000000..7d33b507f1f1
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_IIO_P3T1755) += p3t1755_core.o
-+obj-$(CONFIG_IIO_P3T1755_I2C) += p3t1755_i2c.o
-+obj-$(CONFIG_IIO_P3T1755_I3C) += p3t1755_i3c.o
-diff --git a/drivers/iio/temperature/p3t/p3t1755.h b/drivers/iio/temperature/p3t/p3t1755.h
-new file mode 100644
-index 000000000000..d71a78460239
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755.h
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#ifndef P3T1755_H
-+#define P3T1755_H
-+
-+#include <linux/device.h>
-+#include <linux/iio/iio.h>
-+
-+#define P3T1755_REG_TEMP		0x0
-+#define P3T1755_REG_CFGR		0x1
-+#define P3T1755_REG_LOW_LIM		0x2
-+#define P3T1755_REG_HIGH_LIM		0x3
-+
-+#define P3T1755_SHUTDOWN_BIT		BIT(0)
-+#define P3T1755_TM_BIT			BIT(1)
-+#define P3T1755_POL_BIT			BIT(2)
-+#define P3T1755_R0_BIT			BIT(5)
-+#define P3T1755_R1_BIT			BIT(6)
-+#define P3T1755_ONE_SHOT_BIT		BIT(7)
-+
-+#define P3T1755_FAULT_QUEUE_SHIFT	3
-+#define P3T1755_FAULT_QUEUE_MASK	GENMASK(4, 3)
-+
-+#define P3T1755_RESOLUTION_10UC		62500
-+
-+extern const struct p3t17xx_info p3t1755_channels_info;
-+extern const struct p3t17xx_info p3t1750_channels_info;
-+extern const struct p3t17xx_info p3t175x_channels_info;
-+
-+enum p3t1755_hw_id {
-+	P3T1755_ID = 0,
-+	P3T1750_ID,
-+};
-+
-+struct p3t17xx_info {
-+	const char *name;
-+	const struct iio_chan_spec *channels;
-+	int num_channels;
-+};
-+
-+/* Device-specific data structure */
-+struct p3t1755_data {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	bool tm_mode;
-+	bool alert_active_high;
-+};
-+
-+int p3t1755_fault_queue_to_bits(int val);
-+int p3t1755_probe(struct device *dev, const struct p3t17xx_info *chip,
-+		  struct regmap *regmap, bool tm_mode, bool alert_active_high, int fq_bits);
-+int p3t1755_get_temp_and_limits(struct p3t1755_data *data,
-+				int *temp_mc, int *thigh_mc, int *tlow_mc);
-+void p3t1755_push_thresh_event(struct iio_dev *indio_dev);
-+
-+#endif /* P3T1755_H */
-diff --git a/drivers/iio/temperature/p3t/p3t1755_core.c b/drivers/iio/temperature/p3t/p3t1755_core.c
-new file mode 100644
-index 000000000000..8ffa7bb09ca5
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_core.c
-@@ -0,0 +1,513 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/err.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/module.h>
-+#include <linux/bitops.h>
-+#include <linux/types.h>
-+#include <linux/kernel.h>
-+#include <linux/regmap.h>
-+#include <linux/device.h>
-+#include <linux/limits.h>
-+#include <linux/iio/events.h>
-+
-+#include "p3t1755.h"
-+
-+// Internal attribute enum for custom sysfs handlers
-+enum p3t1755_attr_index {
-+	P3T1755_ATTR_THERMOSTAT_MODE,
-+	P3T1755_ATTR_TRIGGER_ONE_SHOT,
-+	P3T1755_ATTR_FAULT_QUEUE_LENGTH,
-+};
-+
-+// Conversion rate table: maps bits to sampling frequency
-+static const struct {
-+	u8 bits;
-+	int freq_hz;
-+} p3t1755_samp_freqs[] = {
-+	{ 0x00, 36 }, // 27.5 ms
-+	{ 0x01, 18 }, // 55 ms (default)
-+	{ 0x02, 9 }, // 110 ms
-+	{ 0x03, 4 }, // 220 ms
-+};
-+
-+// Fault Queue values supported by hardware
-+static const int p3t1755_fault_queue_values[] = { 1, 2, 4, 6 };
-+
-+int p3t1755_fault_queue_to_bits(int val)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(p3t1755_fault_queue_values); i++)
-+		if (p3t1755_fault_queue_values[i] == val)
-+			return i;
-+	return -EINVAL;
-+}
-+
-+int p3t1755_get_temp_and_limits(struct p3t1755_data *data,
-+				int *temp_mc, int *thigh_mc, int *tlow_mc)
-+{
-+	u8 buf[2];
-+	int ret;
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_TEMP, buf, 2);
-+	if (ret) {
-+		dev_dbg(data->dev, "Failed to read TEMP register: %d\n", ret);
-+		return ret;
-+	}
-+	*temp_mc = (((buf[0] << 8) | buf[1]) >> 4) * P3T1755_RESOLUTION_10UC / 1000;
-+	dev_dbg(data->dev, "TEMP raw: 0x%02x%02x, temp_mc: %d\n",
-+		buf[0], buf[1], *temp_mc);
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_HIGH_LIM, buf, 2);
-+	if (ret) {
-+		dev_dbg(data->dev, "Failed to read HIGH_LIM register: %d\n", ret);
-+		return ret;
-+	}
-+	*thigh_mc = (((buf[0] << 8) | buf[1]) >> 4) * P3T1755_RESOLUTION_10UC / 1000;
-+	dev_dbg(data->dev, "HIGH_LIM raw: 0x%02x%02x, thigh_mc: %d\n",
-+		buf[0], buf[1], *thigh_mc);
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_LOW_LIM, buf, 2);
-+	if (ret) {
-+		dev_dbg(data->dev, "Failed to read LOW_LIM register: %d\n", ret);
-+		return ret;
-+	}
-+	*tlow_mc = (((buf[0] << 8) | buf[1]) >> 4) * P3T1755_RESOLUTION_10UC / 1000;
-+	dev_dbg(data->dev, "LOW_LIM raw: 0x%02x%02x, tlow_mc: %d\n",
-+		buf[0], buf[1], *tlow_mc);
-+
-+	dev_dbg(data->dev, "Successfully read all temperature values\n");
-+	return 0;
-+}
-+EXPORT_SYMBOL_NS_GPL(p3t1755_get_temp_and_limits, IIO_P3T1755);
-+
-+void p3t1755_push_thresh_event(struct iio_dev *indio_dev)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	enum iio_event_direction dir;
-+	int ret, temp, thigh, tlow;
-+	unsigned int cfgr;
-+
-+	/* Read CFGR register to both check device mode
-+	 * and implicitly clear the ALERT latch.
-+	 * As per Datasheet: "Any register read will
-+	 * clear the interrupt"
-+	 */
-+	ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &cfgr);
-+	if (ret) {
-+		dev_dbg(data->dev, "Failed to read CFGR register: %d\n", ret);
-+		return;
-+	}
-+
-+	if (cfgr & P3T1755_SHUTDOWN_BIT) {
-+		dev_dbg(data->dev, "Device is in shutdown mode, skipping event push\n");
-+		return;
-+	}
-+
-+	ret = p3t1755_get_temp_and_limits(data, &temp, &thigh, &tlow);
-+	if (ret) {
-+		dev_dbg(data->dev, "Failed to get temperature and limits: %d\n", ret);
-+		return;
-+	}
-+
-+	// Determine event direction based on threshold crossing
-+	if (temp >= thigh) {
-+		dir = IIO_EV_DIR_RISING;
-+	} else if (temp <= tlow) {
-+		dir = IIO_EV_DIR_FALLING;
-+	} else {
-+		dev_dbg(data->dev, "Temperature within limits: no event triggered (T=%d, TH=%d, TL=%d)\n",
-+			temp, thigh, tlow);
-+		return;
-+		}
-+
-+	dev_dbg(data->dev, "Threshold event: %s (T=%d, TH=%d, TL=%d)\n",
-+		dir == IIO_EV_DIR_RISING ? "RISING" : "FALLING",
-+		temp, thigh, tlow);
-+
-+	iio_push_event(indio_dev, IIO_MOD_EVENT_CODE(IIO_TEMP, 0, IIO_NO_MOD,
-+						     IIO_EV_TYPE_THRESH, dir),
-+		       iio_get_time_ns(indio_dev));
-+}
-+EXPORT_SYMBOL_NS_GPL(p3t1755_push_thresh_event, IIO_P3T1755);
-+
-+static int p3t1755_read_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *channel, int *val,
-+			    int *val2, long mask)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	u8 buf[2];
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		// Read raw 12-bit temperature register (two bytes)
-+		ret = regmap_bulk_read(data->regmap, P3T1755_REG_TEMP, buf, 2);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read temperature register\n");
-+			return ret;
-+		}
-+		*val = ((buf[0] << 8) | buf[1]) >> 4;
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_ENABLE:
-+		// Read configuration register to check shutdown bit
-+		ret = regmap_read(data->regmap, P3T1755_REG_CFGR, val);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read configuration register\n");
-+			return ret;
-+		}
-+		dev_dbg(data->dev, "Read CONFIG: 0x%02x\n", *val);
-+		*val = !(*val & P3T1755_SHUTDOWN_BIT); // Return 1 if enabled, 0 if shutdown
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_PROCESSED:
-+		// Read temperature and convert to celsius using resolution
-+		ret = regmap_bulk_read(data->regmap, P3T1755_REG_TEMP, buf, 2);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read temperature register\n");
-+			return ret;
-+		}
-+		*val = (((buf[0] << 8) | buf[1]) >> 4) *
-+		       P3T1755_RESOLUTION_10UC / 1000;
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SAMP_FREQ: {
-+		unsigned int cfgr;
-+		int ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &cfgr);
-+
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read configuration register\n");
-+			return ret;
-+		}
-+
-+		u8 sel = (cfgr >> 5) & 0x03; // Extract R1:R0 sampling rate bits
-+
-+		if (sel >= ARRAY_SIZE(p3t1755_samp_freqs))
-+			return -EINVAL;
-+
-+		*val = p3t1755_samp_freqs[sel].freq_hz;
-+		return IIO_VAL_INT;
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int p3t1755_write_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, int val,
-+			     int val2, long mask)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_ENABLE:
-+		// Toggle shutdown bit to enable/disable sensor
-+		ret = regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+					 P3T1755_SHUTDOWN_BIT,
-+					 val == 0 ? P3T1755_SHUTDOWN_BIT : 0);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to update SHUTDOWN bit\n");
-+			return ret;
-+		}
-+		return 0;
-+	case IIO_CHAN_INFO_SAMP_FREQ: {
-+		u8 sel = 0xFF;
-+
-+		// Match desired frequency with supported values
-+		for (int i = 0; i < ARRAY_SIZE(p3t1755_samp_freqs); i++) {
-+			if (p3t1755_samp_freqs[i].freq_hz == val) {
-+				sel = i;
-+				break;
-+			}
-+		}
-+		if (sel == 0xFF)
-+			return -EINVAL;
-+
-+		// Update conversion rate bits R1:R0 in CFGR register
-+		return regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+					  P3T1755_R0_BIT | P3T1755_R1_BIT,
-+					  sel << 5);
-+	}
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int p3t1755_read_event_value(struct iio_dev *indio_dev,
-+				    const struct iio_chan_spec *chan,
-+				    enum iio_event_type type,
-+				    enum iio_event_direction dir,
-+				    enum iio_event_info info, int *val,
-+				    int *val2)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int reg;
-+	u8 buf[2];
-+	int ret;
-+
-+	if (type != IIO_EV_TYPE_THRESH || info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	/* Select high or low limit register based on direction */
-+	reg = (dir == IIO_EV_DIR_RISING) ? P3T1755_REG_HIGH_LIM :
-+					   P3T1755_REG_LOW_LIM;
-+
-+	/* Convert raw register value to temperature in milli°C */
-+	ret = regmap_bulk_read(data->regmap, reg, buf, 2);
-+	if (ret < 0) {
-+		dev_err(data->dev, "Failed to read Thigh or Tlow register\n");
-+		return ret;
-+	}
-+	*val = (((buf[0] << 8) | buf[1]) >> 4) * P3T1755_RESOLUTION_10UC / 1000;
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int p3t1755_write_event_value(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     enum iio_event_type type,
-+				     enum iio_event_direction dir,
-+				     enum iio_event_info info, int val,
-+				     int val2)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int reg;
-+	u8 buf[2];
-+	int regval;
-+
-+	if (type != IIO_EV_TYPE_THRESH || info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	/* Select high or low limit register based on direction */
-+	reg = (dir == IIO_EV_DIR_RISING) ? P3T1755_REG_HIGH_LIM :
-+					   P3T1755_REG_LOW_LIM;
-+
-+	/* Convert temperature in milli°C to register format */
-+	regval = DIV_ROUND_CLOSEST(val * 1000, P3T1755_RESOLUTION_10UC) << 4;
-+	buf[0] = regval >> 8;
-+	buf[1] = regval & 0xff;
-+
-+	return regmap_bulk_write(data->regmap, reg, buf, 2);
-+}
-+
-+static int p3t1755_trigger_one_shot(struct p3t1755_data *data)
-+{
-+	unsigned int config;
-+	int ret;
-+
-+	ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &config);
-+	if (ret < 0) {
-+		dev_err(data->dev, "Failed to read configuration register\n");
-+		return ret;
-+	}
-+
-+	/* One-shot mode is only allowed when the device is in shutdown mode */
-+	if (!(config & P3T1755_SHUTDOWN_BIT))
-+		return -EBUSY;
-+	/* Set the one-shot bit to trigger a single temperature conversion */
-+	config |= P3T1755_ONE_SHOT_BIT;
-+
-+	return regmap_write(data->regmap, P3T1755_REG_CFGR, config);
-+}
-+
-+static ssize_t p3t1755_attr_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct iio_dev_attr *iattr = to_iio_dev_attr(attr);
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int val;
-+	int ret;
-+
-+	switch (iattr->address) {
-+	case P3T1755_ATTR_THERMOSTAT_MODE:
-+		/* Read TM bit from configuration register */
-+		ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &val);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read configuration register\n");
-+			return ret;
-+		}
-+		return sysfs_emit(buf, "%d\n", !!(val & P3T1755_TM_BIT));
-+	case P3T1755_ATTR_FAULT_QUEUE_LENGTH:
-+		/* Read fault queue length bits and map to user-visible value */
-+		ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &val);
-+		if (ret < 0) {
-+			dev_err(data->dev, "Failed to read configuration register\n");
-+			return ret;
-+		}
-+		val = (val & P3T1755_FAULT_QUEUE_MASK) >> P3T1755_FAULT_QUEUE_SHIFT;
-+		if (val > 3)
-+			return -EINVAL;
-+		return sysfs_emit(buf, "%d\n", p3t1755_fault_queue_values[val]);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static ssize_t p3t1755_attr_store(struct device *dev, struct device_attribute *attr,
-+				  const char *buf, size_t count)
-+{
-+	struct iio_dev_attr *iattr = to_iio_dev_attr(attr);
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	int ret, val;
-+	bool enable;
-+
-+	switch (iattr->address) {
-+	case P3T1755_ATTR_TRIGGER_ONE_SHOT:
-+		/* Trigger a one-shot conversion if input is '1' */
-+		ret = kstrtobool(buf, &enable);
-+		if (ret || !enable)
-+			return ret ? ret : -EINVAL;
-+		ret = p3t1755_trigger_one_shot(data);
-+		return ret ?: count;
-+	case P3T1755_ATTR_FAULT_QUEUE_LENGTH:
-+		/* Set fault queue length if input matches supported values */
-+		ret = kstrtoint(buf, 10, &val);
-+		if (ret)
-+			return ret;
-+		for (int i = 0; i < ARRAY_SIZE(p3t1755_fault_queue_values); i++) {
-+			if (val == p3t1755_fault_queue_values[i]) {
-+				ret = regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+							 P3T1755_FAULT_QUEUE_MASK,
-+							 i << P3T1755_FAULT_QUEUE_SHIFT);
-+				return ret ?: count;
-+			}
-+		}
-+		return -EINVAL;
-+	default:
-+		return -EINVAL;
-+		}
-+	}
-+
-+static IIO_DEVICE_ATTR(thermostat_mode, 0444, p3t1755_attr_show,
-+		NULL, P3T1755_ATTR_THERMOSTAT_MODE);
-+
-+static IIO_DEVICE_ATTR(trigger_one_shot, 0200, NULL, p3t1755_attr_store,
-+		P3T1755_ATTR_TRIGGER_ONE_SHOT);
-+
-+static IIO_DEVICE_ATTR(fault_queue_length, 0664, p3t1755_attr_show,
-+		p3t1755_attr_store, P3T1755_ATTR_FAULT_QUEUE_LENGTH);
-+
-+static const struct iio_event_spec p3t1755_events[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_RISING,
-+		.mask_separate = BIT(IIO_EV_INFO_VALUE)
-+	},
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_FALLING,
-+		.mask_separate = BIT(IIO_EV_INFO_VALUE)
-+	},
-+};
-+
-+static const struct iio_chan_spec p3t175x_channels[] = {
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_PROCESSED) |
-+				      BIT(IIO_CHAN_INFO_ENABLE) |
-+				      BIT(IIO_CHAN_INFO_SAMP_FREQ),
-+		.event_spec = p3t1755_events,
-+		.num_event_specs = ARRAY_SIZE(p3t1755_events),
-+	},
-+};
-+
-+const struct p3t17xx_info p3t1755_channels_info = {
-+	.name = "p3t1755",
-+	.channels = p3t175x_channels,
-+	.num_channels = ARRAY_SIZE(p3t175x_channels)
-+};
-+EXPORT_SYMBOL_NS(p3t1755_channels_info, IIO_P3T1755);
-+
-+const struct p3t17xx_info p3t1750_channels_info = {
-+	.name = "p3t1750",
-+	.channels = p3t175x_channels,
-+	.num_channels = ARRAY_SIZE(p3t175x_channels)
-+};
-+EXPORT_SYMBOL_NS(p3t1750_channels_info, IIO_P3T1755);
-+
-+const struct p3t17xx_info p3t175x_channels_info = {
-+	.name = "p3t175x",
-+	.channels = p3t175x_channels,
-+	.num_channels = ARRAY_SIZE(p3t175x_channels)
-+};
-+EXPORT_SYMBOL_NS(p3t175x_channels_info, IIO_P3T1755);
-+
-+static struct attribute *p3t1755_attributes[] = {
-+	&iio_dev_attr_thermostat_mode.dev_attr.attr,
-+	&iio_dev_attr_trigger_one_shot.dev_attr.attr,
-+	&iio_dev_attr_fault_queue_length.dev_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group p3t1755_attr_group = {
-+	.attrs = p3t1755_attributes,
-+};
-+
-+static const struct iio_info p3t1755_info = {
-+	.read_raw = p3t1755_read_raw,
-+	.write_raw = p3t1755_write_raw,
-+	.read_event_value = p3t1755_read_event_value,
-+	.write_event_value = p3t1755_write_event_value,
-+	.attrs = &p3t1755_attr_group,
-+};
-+
-+int p3t1755_probe(struct device *dev, const struct p3t17xx_info *chip,
-+		  struct regmap *regmap, bool tm_mode, bool alert_active_high, int fq_bits)
-+{
-+	struct p3t1755_data *data;
-+	struct iio_dev *iio_dev;
-+	int ret;
-+
-+	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-+	if (!iio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(iio_dev);
-+	data->dev = dev;
-+	data->regmap = regmap;
-+	data->tm_mode = tm_mode;
-+	data->alert_active_high = alert_active_high;
-+
-+	iio_dev->name = chip->name;
-+	iio_dev->modes = INDIO_DIRECT_MODE;
-+	iio_dev->info = &p3t1755_info;
-+	iio_dev->channels = chip->channels;
-+	iio_dev->num_channels = chip->num_channels;
-+
-+	dev_set_drvdata(dev, iio_dev);
-+
-+	/* Configure thermostat mode and alert polarity and (optional) fault queue */
-+	ret = regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+				 P3T1755_TM_BIT | P3T1755_POL_BIT,
-+				(tm_mode ? P3T1755_TM_BIT : 0) |
-+				(alert_active_high ? P3T1755_POL_BIT : 0));
-+	if (ret) {
-+		dev_err_probe(data->dev, ret, "Failed to update TM and POL bits\n");
-+		return ret;
-+	}
-+
-+	if (fq_bits >= 0) /* -1 means "leave reset default" */
-+		regmap_update_bits(data->regmap, P3T1755_REG_CFGR, P3T1755_FAULT_QUEUE_MASK,
-+				   fq_bits << P3T1755_FAULT_QUEUE_SHIFT);
-+
-+	ret = devm_iio_device_register(dev, iio_dev);
-+	if (ret)
-+		dev_info(dev, "Temperature sensor failed to register: %d\n", ret);
-+	else
-+		dev_info(dev, "Temperature sensor registered successfully\n");
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_NS(p3t1755_probe, IIO_P3T1755);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T175x Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/iio/temperature/p3t/p3t1755_i2c.c b/drivers/iio/temperature/p3t/p3t1755_i2c.c
-new file mode 100644
-index 000000000000..3be8bc8b5e2d
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_i2c.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/slab.h>
-+#include <linux/regmap.h>
-+#include <linux/of.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/events.h>
-+
-+#include "p3t1755.h"
-+
-+static const struct regmap_config p3t1755_i2c_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static irqreturn_t p3t1755_irq_handler(int irq, void *dev_id)
-+{
-+	struct iio_dev *indio_dev = dev_id;
-+
-+	dev_dbg(&indio_dev->dev, "IRQ triggered, processing threshold event\n");
-+
-+	// Handle threshold event via helper
-+	p3t1755_push_thresh_event(indio_dev);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct of_device_id p3t1755_i2c_of_match[] = {
-+	{ .compatible = "nxp,p3t1755", .data = &p3t1755_channels_info },
-+	{ .compatible = "nxp,p3t1750", .data = &p3t1750_channels_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, p3t1755_i2c_of_match);
-+
-+static const struct i2c_device_id p3t1755_i2c_id_table[] = {
-+	{ "p3t1755", (kernel_ulong_t)&p3t1755_channels_info },
-+	{ "p3t1750", (kernel_ulong_t)&p3t1750_channels_info},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, p3t1755_i2c_id_table);
-+
-+static int p3t1755_i2c_probe(struct i2c_client *client)
-+{
-+	struct device_node *np = client->dev.of_node;
-+	bool alert_active_high = false;
-+	const struct p3t17xx_info *chip;
-+	struct p3t1755_data *data;
-+	struct iio_dev *iio_dev;
-+	unsigned long irq_flags;
-+	struct regmap *regmap;
-+	bool tm_mode = false;
-+	int fq_bits = -1;
-+	int ret;
-+
-+	regmap = devm_regmap_init_i2c(client, &p3t1755_i2c_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err_probe(&client->dev, PTR_ERR(regmap),
-+			      "Failed to register i2c regmap %ld\n", PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	/* Parse optional device tree property for alert polarity */
-+	alert_active_high = of_property_read_bool(np, "nxp,alert-active-high");
-+
-+	/* Parse optional device tree property for thermostat mode */
-+	tm_mode = of_property_read_bool(np, "nxp,interrupt-mode");
-+
-+	/* Optional fault queue length */
-+	if (np) {
-+		u32 fq;
-+
-+		if (!of_property_read_u32(np, "nxp,fault-queue", &fq)) {
-+			fq_bits = p3t1755_fault_queue_to_bits(fq);
-+			if (fq_bits < 0) {
-+				dev_err_probe(&client->dev, fq_bits,
-+					      "invalid nxp,fault-queue %u (1/2/4/6)\n", fq);
-+				return fq_bits;
-+			}
-+		}
-+	}
-+
-+	dev_info(&client->dev, "Using TM mode: %s\n",
-+		 tm_mode ? "Interrupt" : "Comparator");
-+	dev_info(&client->dev, "Alert polarity: %s\n",
-+		 alert_active_high ? "Active-High" : "Active-Low");
-+
-+	chip = device_get_match_data(&client->dev);
-+	if (!chip)
-+		chip = (const struct p3t17xx_info *)i2c_match_id(p3t1755_i2c_id_table,
-+			client)->driver_data;
-+
-+	dev_info(&client->dev, "Registering p3t175x temperature sensor");
-+
-+	ret = p3t1755_probe(&client->dev, chip, regmap,
-+			    tm_mode, alert_active_high, fq_bits);
-+
-+	if (ret) {
-+		dev_err_probe(&client->dev, ret, "p3t175x probe failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Setup IRQ if available */
-+	if (client->irq > 0) {
-+		iio_dev = dev_get_drvdata(&client->dev);
-+		data = iio_priv(iio_dev);
-+
-+		if (tm_mode)
-+			irq_flags = alert_active_high ? IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
-+		else
-+			irq_flags = (IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING);
-+
-+		ret = devm_request_threaded_irq(&client->dev, client->irq, NULL,
-+						p3t1755_irq_handler, irq_flags | IRQF_ONESHOT,
-+						"p3t175x", iio_dev);
-+		if (ret)
-+			dev_err_probe(&client->dev, ret, "Failed to request IRQ: %d\n", ret);
-+		}
-+
-+		return ret;
-+}
-+
-+static struct i2c_driver p3t1755_driver = {
-+	.driver = {
-+		.name = "p3t175x_i2c",
-+		.of_match_table = p3t1755_i2c_of_match,
-+	},
-+	.probe = p3t1755_i2c_probe,
-+	.id_table = p3t1755_i2c_id_table,
-+};
-+module_i2c_driver(p3t1755_driver);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T175x I2C Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_P3T1755);
-diff --git a/drivers/iio/temperature/p3t/p3t1755_i3c.c b/drivers/iio/temperature/p3t/p3t1755_i3c.c
-new file mode 100644
-index 000000000000..37e782241c9a
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_i3c.c
-@@ -0,0 +1,147 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/i3c/device.h>
-+#include <linux/i3c/master.h>
-+#include <linux/slab.h>
-+#include <linux/regmap.h>
-+#include <linux/of.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/events.h>
-+
-+#include "p3t1755.h"
-+
-+static void p3t1755_ibi_handler(struct i3c_device *dev,
-+				const struct i3c_ibi_payload *payload)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(&dev->dev);
-+
-+	dev_dbg(&dev->dev, "IBI received, handling threshold event\n");
-+
-+	// Handle threshold event via helper
-+	p3t1755_push_thresh_event(indio_dev);
-+}
-+
-+/*
-+ * Both P3T1755 and P3T1750 share the same I3C
-+ * PID (0x011B:0x152A), making runtime differentiation
-+ * impossible, so a common "p3t175x" name in sysfs
-+ * and IIO for I3C based instances.
-+ */
-+static const struct i3c_device_id p3t1755_i3c_ids[] = {
-+	I3C_DEVICE(0x011B, 0x152A, (void *)&p3t175x_channels_info),
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(i3c, p3t1755_i3c_ids);
-+
-+static int p3t1755_i3c_probe(struct i3c_device *i3cdev)
-+{
-+	const struct regmap_config p3t1755_i3c_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	};
-+
-+	const struct i3c_device_id *id = i3c_device_match_id(i3cdev, p3t1755_i3c_ids);
-+	const struct p3t17xx_info *chip = &p3t175x_channels_info;
-+	struct device_node *np = i3cdev->dev.of_node;
-+	bool alert_active_high = false;
-+	struct i3c_ibi_setup ibi_setup;
-+	struct regmap *regmap;
-+	bool tm_mode = false;
-+	int fq_bits = -1;
-+	int ret;
-+
-+	regmap = devm_regmap_init_i3c(i3cdev, &p3t1755_i3c_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err_probe(&i3cdev->dev, PTR_ERR(regmap),
-+			      "Failed to register I3C regmap %ld\n", PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	/* Parse optional device tree property for alert polarity */
-+	alert_active_high = of_property_read_bool(np, "nxp,alert-active-high");
-+
-+	/* Parse optional device tree property for thermostat mode */
-+	tm_mode = of_property_read_bool(np, "nxp,interrupt-mode");
-+
-+	/* Optional fault queue length */
-+	if (np) {
-+		u32 fq;
-+
-+		if (!of_property_read_u32(np, "nxp,fault-queue", &fq)) {
-+			fq_bits = p3t1755_fault_queue_to_bits(fq);
-+			if (fq_bits < 0) {
-+				dev_err_probe(&i3cdev->dev, fq_bits,
-+					      "invalid nxp,fault-queue %u (1/2/4/6)\n", fq);
-+				return fq_bits;
-+			}
-+		}
-+	}
-+
-+	dev_info(&i3cdev->dev, "Using TM mode: %s\n", tm_mode ? "Interrupt" : "Comparator");
-+	dev_info(&i3cdev->dev, "Alert polarity: %s\n",
-+		 alert_active_high ? "Active-High" : "Active-Low");
-+
-+	if (id && id->data)
-+		chip = (const struct p3t17xx_info *)id->data;
-+
-+	ret = p3t1755_probe(&i3cdev->dev, chip, regmap, tm_mode, alert_active_high, fq_bits);
-+	if (ret) {
-+		dev_err_probe(&i3cdev->dev, ret, "p3t175x probe failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (!tm_mode) {
-+		dev_warn(&i3cdev->dev, "IBI not supported in comparator mode, skipping IBI registration\n");
-+		return 0;
-+	}
-+
-+	ibi_setup.handler = p3t1755_ibi_handler;
-+	ibi_setup.num_slots = 4;
-+	ibi_setup.max_payload_len = 0;
-+
-+	ret = i3c_device_request_ibi(i3cdev, &ibi_setup);
-+	if (ret) {
-+		dev_err_probe(&i3cdev->dev, ret, "Failed to request IBI: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = i3c_device_enable_ibi(i3cdev);
-+	if (ret) {
-+		dev_err_probe(&i3cdev->dev, ret, "Failed to enable IBI: %d\n", ret);
-+		i3c_device_free_ibi(i3cdev);
-+		return ret;
-+	}
-+
-+	dev_info(&i3cdev->dev, "IBI successfully registered\n");
-+	return 0;
-+}
-+
-+static void p3t1755_i3c_remove(struct i3c_device *i3cdev)
-+{
-+	/* Unwind IBI registration to ensure clean shutdown */
-+	i3c_device_disable_ibi(i3cdev);
-+	i3c_device_free_ibi(i3cdev);
-+}
-+
-+static struct i3c_driver p3t1755_driver = {
-+	.driver = {
-+		.name = "p3t175x_i3c",
-+	},
-+	.probe = p3t1755_i3c_probe,
-+	.remove = p3t1755_i3c_remove,
-+	.id_table = p3t1755_i3c_ids,
-+};
-+module_i3c_driver(p3t1755_driver);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T175x I3C Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_P3T1755);
--- 
-2.25.1
+>
+> Thanks,
+> Ram.
+>
+>
+> >
+> > Also, the patch with bindings should preceed driver and DT changes.
+>
+> Hi Dmitry,
+>
+> I have reordered the patch series to place the DT binding change as the f=
+irst patch in latest patchset.
+>
+> Thanks,
+> Ram.
+>
+>
+> >
+> >> +            host_params->hs_tx_gear =3D hs_gear;
+> >> +            host_params->hs_rx_gear =3D hs_gear;
+> >> +            host->phy_gear =3D hs_gear;
+> >> +    }
+> >> +
+> >> +    if (!of_property_read_u32(np, "limit-rate", &hs_rate))
+> >> +            host_params->hs_rate =3D hs_rate;
+> >> +}
+> >> +
+> >>  static void ufs_qcom_set_host_params(struct ufs_hba *hba)
+> >>  {
+> >>      struct ufs_qcom_host *host =3D ufshcd_get_variant(hba);
+> >> @@ -1337,6 +1352,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+> >>      ufs_qcom_advertise_quirks(hba);
+> >>      ufs_qcom_set_host_params(hba);
+> >>      ufs_qcom_set_phy_gear(host);
+> >> +    ufs_qcom_parse_limits(host);
+> >>
+> >>      err =3D ufs_qcom_ice_init(host);
+> >>      if (err)
+> >> --
+> >> 2.50.1
+> >>
+> >
+>
 
+
+--=20
+With best wishes
+Dmitry
 
