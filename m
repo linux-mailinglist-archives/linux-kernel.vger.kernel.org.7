@@ -1,40 +1,51 @@
-Return-Path: <linux-kernel+bounces-744566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5526AB10ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:31:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04996B10E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB81116B951
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0A91D0103B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F192EA47C;
-	Thu, 24 Jul 2025 15:23:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCB42EBBA0
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A132EACE3;
+	Thu, 24 Jul 2025 15:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcRDUQQ5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66782E9EB0;
+	Thu, 24 Jul 2025 15:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370588; cv=none; b=QfoIUGs3oYsuLUvkVw1p36ZSZt34INhF2ioJPCAGDIGOHd+V56ARxzcLN1D3MAJ7J3UZgdXLf1DeWwaUDEythKHA5jtRDWxbhzfLXaA8RU8SNvCM9e8j3d9FW/PAhcit0nwgfq/1XfyIPXog0KK+L9PGuMj6rGMYIhf9/2HodDg=
+	t=1753370614; cv=none; b=O1Uq+peXjLgu+tsibdyw1A1CLjhm3cQbp6jnaN9HU2eWqv4fb9WwTYlAw9uskbaBW6y9If/IADNnAV3Ejs7tx/8KAl94rFVDsfGvnB0itdUy7G16CmRIeYGGu6cnk8r/pxSXj85lI/42jYY9bfjJXNgqLH4swodJQkq0L2NDtGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370588; c=relaxed/simple;
-	bh=QYQq2YcDQOXsLMTAkPoxjDTuSL9GWCMfBPj887Rmhpg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aJV/+96XblokHXFu2XLDBBRS+R+hlPxGpXT6EDH4a9XRQFEZtqNOPtQL9OQnccVL0Fb5IzNW2Hab7B0R35crLVyQ+MbS4rR+RyHLzjux4MmfwvWZEcvwXDIj76QoAucXaXcZP7+gT+vtggtuNpiuTaxJ/xhpCn0MxBWzXg3RwJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 988A91A00;
-	Thu, 24 Jul 2025 08:22:59 -0700 (PDT)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 754CF3F6A8;
-	Thu, 24 Jul 2025 08:23:04 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-Date: Thu, 24 Jul 2025 16:22:40 +0100
-Subject: [PATCH v5 10/10] coresight: Refactor runtime PM
+	s=arc-20240116; t=1753370614; c=relaxed/simple;
+	bh=yOZQ+GI825AT4Y9e0GYEa/xkkwvxuVvBv4OUaPISJY0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bAqPylQ3tEthSpF5Q91EQleZkuDvFFlfiD84fR7TLffB/0czNf4Z2Nt38i9Han4N3WOecvVpbzDvNZPb2WAs0mc5NUqNuHbIee4PuqHEyp5vTu4CGEHiQ0lPFgO+tiVIpipu9hhXtF3tHOBBmfBDJfuI1ojE1c1vTpHo7Jqh9/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcRDUQQ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 38D33C4CEED;
+	Thu, 24 Jul 2025 15:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753370614;
+	bh=yOZQ+GI825AT4Y9e0GYEa/xkkwvxuVvBv4OUaPISJY0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=NcRDUQQ5HSO4+5zD0F/DdOwWIfZB87+0dxOlIN2TaGnbRAOX206ZhTT7WPpzqNBbW
+	 xJhQmA3AlYm7X+KdJnqUSWRKsKfPEt/MMRUEtFLXXunHAudDxRsE3IUze/inK2D3Nu
+	 Tz+Z/aRic5jt7MJQDzP+KhlxgKFIqG/ukgHawvE7XEyN1ErBweeBhhqc2yKAvuSn+u
+	 l3hy/R4O+DWPObWIx6UHcrtO3Kd6tNOvQppIbxAquwS0S8jBzSegPIQ1zSbhD1g2AO
+	 KYfYAg0sVzOn4KpNHhIsS20btVeZQzMmevaB6M72jETXClCgj21HYx3uDW5CPFnGe4
+	 z8a13lJ2z6ZOw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271D1C87FC5;
+	Thu, 24 Jul 2025 15:23:34 +0000 (UTC)
+From: Aleksa Paunovic via B4 Relay <devnull+aleksa.paunovic.htecgroup.com@kernel.org>
+Subject: [PATCH v5 0/7] riscv: Add support for xmipsexectl
+Date: Thu, 24 Jul 2025 17:23:24 +0200
+Message-Id: <20250724-p8700-pause-v5-0-a6cbbe1c3412@htecgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,317 +54,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-arm_cs_fix_clock_v4-v5-10-63f648dae021@arm.com>
-References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
-In-Reply-To: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Anshuman Khandual <anshuman.khandual@arm.com>, 
- Yeoreum Yun <yeoreum.yun@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-B4-Tracking: v=1; b=H4sIAOxPgmgC/1XMSw6DIBSF4a2YOy4NIbzsqPswDixchUGFgJI2h
+ r2X2lGH/0nOd0DG5DHDrTsgYfHZh7WFuHRg3LQuSLxtDYwyQTnjJGpFKYnTnpFY85C876VGxqE
+ 9YsLZv05tGFs7n7eQ3ide+Hf9OZKJP6dwQok0ylo1a6GEvLsNzZLCHq8mPGGstX4AeZlCiqoAA
+ AA=
+X-Change-ID: 20250424-p8700-pause-dcb649968e24
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Jonathan Corbet <corbet@lwn.net>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ Djordje Todorovic <djordje.todorovic@htecgroup.com>, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>, 
+ Aleksandar Rikalo <arikalo@gmail.com>, 
+ Raj Vishwanathan4 <rvishwanathan@mips.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753370566; l=10111;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=QYQq2YcDQOXsLMTAkPoxjDTuSL9GWCMfBPj887Rmhpg=;
- b=KjUTuMRSUD2BOqBkGHc3f5mHu+v+pNB8dxVJy3z8V3s8TXvhx4req4oIcRBz5TOfgDJzkLgwG
- o2NonGqz40KDWLRorZrHcBaeyfE5hSFCrOQg32zxtvAJigD+jx/ueUm
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753370612; l=3458;
+ i=aleksa.paunovic@htecgroup.com; s=20250514; h=from:subject:message-id;
+ bh=yOZQ+GI825AT4Y9e0GYEa/xkkwvxuVvBv4OUaPISJY0=;
+ b=8sv1pYiJyHX9Ir2MqQDmuaDGp5IItTyI1Q74xTDUYU67WFrZyJTy0rOANBrhUcUPV1BdZrmL6
+ Z7DoXZG8AMmBqkrWvbRDVaHs8M5HJSmaYR2esPqHrzX36LObGdCgI1T
+X-Developer-Key: i=aleksa.paunovic@htecgroup.com; a=ed25519;
+ pk=gFVSVYLKAgJiS5qCnDyUMGOFuczv8C6o0UmRs+fgisA=
+X-Endpoint-Received: by B4 Relay for aleksa.paunovic@htecgroup.com/20250514
+ with auth_id=403
+X-Original-From: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+Reply-To: aleksa.paunovic@htecgroup.com
 
-The validation for driver data pointers and clock pointers are redundant
-in the runtime PM callbacks.  After a driver's probing, its driver data
-and clocks have been initialized successfully, this ensures it is safe
-to access driver data and clocks in the runtime PM callbacks.  A corner
-case is a clock pointer is NULL, in this case, the clock core layer can
-handle it properly.  So remove these redundant checking.
+This patch series adds support for the xmipsexectl vendor extension.
+A new hardware probe key has also been added to allow userspace to probe for MIPS vendor extensions.
 
-In runtime resume, respect values returned from clock function and add
-error handling.
+Additionally, since the standard Zihintpause PAUSE instruction encoding is not supported on some MIPS CPUs,
+an errata was implemented for replacing this instruction with the xmipsexectl MIPS.PAUSE alternative encoding.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
+Signed-off-by: Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
 ---
- drivers/hwtracing/coresight/coresight-cpu-debug.c  |  8 +++-----
- drivers/hwtracing/coresight/coresight-ctcu-core.c  |  8 ++------
- drivers/hwtracing/coresight/coresight-etb10.c      |  8 ++------
- drivers/hwtracing/coresight/coresight-etm3x-core.c |  8 ++------
- drivers/hwtracing/coresight/coresight-funnel.c     | 21 +++++++++++----------
- drivers/hwtracing/coresight/coresight-replicator.c | 20 +++++++++++---------
- drivers/hwtracing/coresight/coresight-stm.c        | 20 +++++++++++---------
- drivers/hwtracing/coresight/coresight-tpiu.c       | 20 +++++++++++---------
- 8 files changed, 53 insertions(+), 60 deletions(-)
+Changes in v5:
+- Add MIPS.IHB and MIPS.EHB instructions
+- Rebase on alex-for-next
+- Address other smaller comments pointed out by Alexandre
+- Link to v4: https://lore.kernel.org/r/20250625-p8700-pause-v4-0-6c7dd7f85756@htecgroup.com
 
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 3edfb5d3d02056afcaab4da575d1101c68aeac80..5f21366406aae03edef9e4fb737e19941afb9ac2 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -731,8 +731,8 @@ static int debug_runtime_suspend(struct device *dev)
- {
- 	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
-+	clk_disable_unprepare(drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -740,9 +740,7 @@ static int debug_runtime_resume(struct device *dev)
- {
- 	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
--	return 0;
-+	return clk_prepare_enable(drvdata->pclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-index 75b5114ef652e4a47c53fbd2b7811c1bab575645..c586495e9a088a63cec481a82fd9f4ec7c645160 100644
---- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
-+++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-@@ -278,8 +278,7 @@ static int ctcu_runtime_suspend(struct device *dev)
- {
- 	struct ctcu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->apb_clk))
--		clk_disable_unprepare(drvdata->apb_clk);
-+	clk_disable_unprepare(drvdata->apb_clk);
- 
- 	return 0;
- }
-@@ -288,10 +287,7 @@ static int ctcu_runtime_resume(struct device *dev)
- {
- 	struct ctcu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->apb_clk))
--		clk_prepare_enable(drvdata->apb_clk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->apb_clk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 8e81b41eb22264f17606050fa8da277aae05c5cc..35db1b6093d154d67dc567df42f838e2ba3d1d58 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -809,8 +809,7 @@ static int etb_runtime_suspend(struct device *dev)
- {
- 	struct etb_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
- 
- 	return 0;
- }
-@@ -819,10 +818,7 @@ static int etb_runtime_resume(struct device *dev)
- {
- 	struct etb_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->atclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-index baba2245b1dfb31f4bf19080e20c33df3a5b854f..45630a1cd32fbd05ec8b2a6979f0174cacce365e 100644
---- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-@@ -925,8 +925,7 @@ static int etm_runtime_suspend(struct device *dev)
- {
- 	struct etm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
- 
- 	return 0;
- }
-@@ -935,10 +934,7 @@ static int etm_runtime_resume(struct device *dev)
- {
- 	struct etm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--
--	return 0;
-+	return clk_prepare_enable(drvdata->atclk);
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index 9dcfc5ce8845d9e01bb956dddab0d64de51ec397..3b248e54471a38f501777fe162fea850d1c851b3 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -284,11 +284,8 @@ static int funnel_runtime_suspend(struct device *dev)
- {
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
--
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
- 	return 0;
- }
-@@ -296,13 +293,17 @@ static int funnel_runtime_suspend(struct device *dev)
- static int funnel_runtime_resume(struct device *dev)
- {
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index e53095603b0c0419bc96a66b23d15bb54e75e634..e6472658235dc479cec91ac18f3737f76f8c74f0 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -323,24 +323,26 @@ static int replicator_runtime_suspend(struct device *dev)
- {
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int replicator_runtime_resume(struct device *dev)
- {
- 	struct replicator_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index 7b1e289f17ab2000816d8641fe0a79759452d3b4..e68529bf89c9815a8118955bf3114ad1ed4fb346 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -957,24 +957,26 @@ static int stm_runtime_suspend(struct device *dev)
- {
- 	struct stm_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int stm_runtime_resume(struct device *dev)
- {
- 	struct stm_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index 1c5c2a82971490888c45508c68b516ab7dbf3eeb..9463afdbda8ad74eee78c72185fe7603f81b7888 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -206,24 +206,26 @@ static int tpiu_runtime_suspend(struct device *dev)
- {
- 	struct tpiu_drvdata *drvdata = dev_get_drvdata(dev);
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->atclk);
-+	clk_disable_unprepare(drvdata->pclk);
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_disable_unprepare(drvdata->pclk);
- 	return 0;
- }
- 
- static int tpiu_runtime_resume(struct device *dev)
- {
- 	struct tpiu_drvdata *drvdata = dev_get_drvdata(dev);
-+	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
-+	ret = clk_prepare_enable(drvdata->pclk);
-+	if (ret)
-+		return ret;
- 
--	if (drvdata && !IS_ERR(drvdata->atclk))
--		clk_prepare_enable(drvdata->atclk);
--	return 0;
-+	ret = clk_prepare_enable(drvdata->atclk);
-+	if (ret)
-+		clk_disable_unprepare(drvdata->pclk);
-+
-+	return ret;
- }
- #endif
- 
+This is a continuation of a previous series, which did not implement the full
+xmipsexectl vendor extension. The title was updated accordingly.
 
+Changes in v4:
+- Add support for the xmipsexectl vendor extension
+- Remove the ifdef/else from errata_list.h
+- Replace the ifdef/else with a hwprobe call in the userspace code.
+
+Link to v3:
+https://lore.kernel.org/linux-riscv/20250129131703.733098-1-arikalo@gmail.com/
+
+---
+Aleksa Paunovic (6):
+      dt-bindings: riscv: Add xmipsexectl ISA extension description
+      riscv: Add xmipsexectl as a vendor extension
+      riscv: Add xmipsexectl instructions
+      riscv: hwprobe: Add MIPS vendor extension probing
+      riscv: hwprobe: Document MIPS xmipsexectl vendor extension
+      riscv: Add tools support for xmipsexectl
+
+Djordje Todorovic (1):
+      riscv: errata: Fix the PAUSE Opcode for MIPS P8700
+
+ Documentation/arch/riscv/hwprobe.rst               |  9 +++
+ .../devicetree/bindings/riscv/extensions.yaml      |  6 ++
+ arch/riscv/Kconfig.errata                          | 23 ++++++++
+ arch/riscv/Kconfig.vendor                          | 13 +++++
+ arch/riscv/errata/Makefile                         |  1 +
+ arch/riscv/errata/mips/Makefile                    |  5 ++
+ arch/riscv/errata/mips/errata.c                    | 67 ++++++++++++++++++++++
+ arch/riscv/include/asm/alternative.h               |  3 +
+ arch/riscv/include/asm/cmpxchg.h                   |  3 +-
+ arch/riscv/include/asm/errata_list.h               | 13 ++++-
+ arch/riscv/include/asm/errata_list_vendors.h       |  5 ++
+ arch/riscv/include/asm/hwprobe.h                   |  3 +-
+ arch/riscv/include/asm/vdso/processor.h            |  3 +-
+ arch/riscv/include/asm/vendor_extensions/mips.h    | 37 ++++++++++++
+ .../include/asm/vendor_extensions/mips_hwprobe.h   | 22 +++++++
+ arch/riscv/include/asm/vendorid_list.h             |  1 +
+ arch/riscv/include/uapi/asm/hwprobe.h              |  1 +
+ arch/riscv/include/uapi/asm/vendor/mips.h          |  3 +
+ arch/riscv/kernel/alternative.c                    |  5 ++
+ arch/riscv/kernel/sys_hwprobe.c                    |  4 ++
+ arch/riscv/kernel/vendor_extensions.c              | 10 ++++
+ arch/riscv/kernel/vendor_extensions/Makefile       |  2 +
+ arch/riscv/kernel/vendor_extensions/mips.c         | 22 +++++++
+ arch/riscv/kernel/vendor_extensions/mips_hwprobe.c | 23 ++++++++
+ arch/riscv/mm/init.c                               |  1 +
+ tools/arch/riscv/include/asm/vdso/processor.h      | 27 +++++----
+ 26 files changed, 298 insertions(+), 14 deletions(-)
+---
+base-commit: b6a4bae2f16162876842127d7507dad84e404f8f
+change-id: 20250424-p8700-pause-dcb649968e24
+
+Best regards,
 -- 
-2.34.1
+Aleksa Paunovic <aleksa.paunovic@htecgroup.com>
+
 
 
