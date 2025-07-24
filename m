@@ -1,154 +1,100 @@
-Return-Path: <linux-kernel+bounces-744066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB07B1079C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45061B1079F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCF8E7B321F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:19:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84C7B7B392C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047F0264614;
-	Thu, 24 Jul 2025 10:21:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB255262FF3;
-	Thu, 24 Jul 2025 10:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ADF2638AF;
+	Thu, 24 Jul 2025 10:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phDo8jra"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7A62367A6;
+	Thu, 24 Jul 2025 10:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352462; cv=none; b=gZb4KPZKbZOK1RNm5YSWyfhmPAyHcjZaQWG7PZz+VS5TbqePbh1AcloOFdNgLZP/Vj/Zmawmae52OSsuPeWS8fwyF2l1GtlWoV0+Y9TFOD5qqxqNZf83Azuwm0ErSkOtPxoOnZgKV6eQlMeDn1U/eoAzpZeODot4sgWWkrhpOTk=
+	t=1753352482; cv=none; b=tuGwFFfV67GgLG8LLbl8QiuIwL3143Z3uBAlXkVBOhLb17LPu0JiLMYwatFt8Tcc2tJyuQ/boBubcYAP2w//S2grJ/Q3HQVBWwWkLfycFlLHc0+H+HSrWWBNkcb9ysBcF25NEO78oDtZe72IM+Wwexf9W4RPIUzHO/i+NMQXgyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352462; c=relaxed/simple;
-	bh=s6SDiuf1JGEJzNwn+W11KAgth1FmcWTdcwKz2O28CnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3fPC3/Kimku4rUddB5/A58u8O58ZCsaGD3HBgjC++lm545rFu6dp6lzY3WkP4eUZVO+63Nx5hO5zcPpSFbbhMbpVlV/8YzVvuEPiZxAbMG9ngaclwtbCDg1qsTussEkVHrIwENCKy4rqVrUN3vOmhbpSmL64d3Y4mz3T3wBXb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 047311A00;
-	Thu, 24 Jul 2025 03:20:47 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A55DC3F5A1;
-	Thu, 24 Jul 2025 03:20:49 -0700 (PDT)
-Date: Thu, 24 Jul 2025 11:20:47 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>
-Subject: Re: [PATCH v9 34/43] arm64: RME: Propagate number of breakpoints and
- watchpoints to userspace
-Message-ID: <20250724102047.GB2753450@e124191.cambridge.arm.com>
-References: <20250611104844.245235-1-steven.price@arm.com>
- <20250611104844.245235-35-steven.price@arm.com>
+	s=arc-20240116; t=1753352482; c=relaxed/simple;
+	bh=tfgrRYHo0vXYtdtTDaVJnEB+ORbrQpP2ZOHprCaV6Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uZXOqKs87zkv8wUkSnRr7z+MuKJNYX8T+UkM1Lx6rClYSvgDWmHOQzZMKoZt0gj+9FtsjiPk7NuR/hQtrNDroAI9WV3OmrLBKVF6ZHuqpGiZP22Ha+q4ZkXO75Rz6nqUPIiRKstf09CsGUJNa1Ae0AIkkJYKCfhxtnRfsjrASTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phDo8jra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AAC2C4CEED;
+	Thu, 24 Jul 2025 10:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753352482;
+	bh=tfgrRYHo0vXYtdtTDaVJnEB+ORbrQpP2ZOHprCaV6Ic=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=phDo8jraqdctHHXAGuipz9dVCiO5sLm9QbiFCAKLPd1dDKTqNw9OISbRGMMN1Z8gB
+	 F5hfkhbtcmkAsCT0loBMniwr2yybBYtdWoUG3edzCqEQQj/R0Co83OPFo4yfyxy7eZ
+	 r1OigGixiVn77GEjYwd3E/5dgsFpMl3Qm5Of8UaYj0DRfpHRV4Z5fCWOX6mADBFEzu
+	 aOxIrqcv1RcrZDxomwRiDTSGKkC306rLAiMFPuhZooqg6lNT5BrMtMQwnvv7/vwBJ0
+	 LTvJ076PxJA3ldtDDIV/r51TSOhE93jEw+UPeTjdXyAFTiXX55/f9dhNKe20cgYTzr
+	 yQnYu9U+Yyn+Q==
+Date: Thu, 24 Jul 2025 11:21:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: sca3300: fix uninitialized iio scan data
+Message-ID: <20250724112114.47865250@jic23-huawei>
+In-Reply-To: <20250723-iio-accel-sca3300-fix-uninitialized-iio-scan-data-v1-1-12dbfb3307b7@baylibre.com>
+References: <20250723-iio-accel-sca3300-fix-uninitialized-iio-scan-data-v1-1-12dbfb3307b7@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611104844.245235-35-steven.price@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 11, 2025 at 11:48:31AM +0100, Steven Price wrote:
-> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+On Wed, 23 Jul 2025 10:29:12 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> Fix potential leak of uninitialized stack data to userspace by ensuring
+> that the `channels` array is zeroed before use.
 > 
-> The RMM describes the maximum number of BPs/WPs available to the guest
-> in the Feature Register 0. Propagate those numbers into ID_AA64DFR0_EL1,
-> which is visible to userspace. A VMM needs this information in order to
-> set up realm parameters.
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Fixes: edeb67fbbf4b ("iio: accel: sca3300: use IIO_DECLARE_BUFFER_WITH_TS")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied to a temporary fixes-togreg-for-6.17 branch.
 
-Reviewed-by: Joey Gouly <joey.gouly@arm.com>
+Will sort this out after the merge window.
 
+J
 > ---
->  arch/arm64/include/asm/kvm_rme.h |  2 ++
->  arch/arm64/kvm/rme.c             | 22 ++++++++++++++++++++++
->  arch/arm64/kvm/sys_regs.c        |  2 +-
->  3 files changed, 25 insertions(+), 1 deletion(-)
+>  drivers/iio/accel/sca3300.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-> index af5150c084ce..c8564d5aaff4 100644
-> --- a/arch/arm64/include/asm/kvm_rme.h
-> +++ b/arch/arm64/include/asm/kvm_rme.h
-> @@ -94,6 +94,8 @@ void kvm_init_rme(void);
->  u32 kvm_realm_ipa_limit(void);
->  u32 kvm_realm_vgic_nr_lr(void);
+> diff --git a/drivers/iio/accel/sca3300.c b/drivers/iio/accel/sca3300.c
+> index bda370c0f660b2a603d7d70dbe5e088bf96eca7a..8380b237831cec8e7520335dd9f78a2f30531448 100644
+> --- a/drivers/iio/accel/sca3300.c
+> +++ b/drivers/iio/accel/sca3300.c
+> @@ -477,7 +477,7 @@ static irqreturn_t sca3300_trigger_handler(int irq, void *p)
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct sca3300_data *data = iio_priv(indio_dev);
+>  	int bit, ret, val, i = 0;
+> -	IIO_DECLARE_BUFFER_WITH_TS(s16, channels, SCA3300_SCAN_MAX);
+> +	IIO_DECLARE_BUFFER_WITH_TS(s16, channels, SCA3300_SCAN_MAX) = { };
 >  
-> +u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
-> +
->  bool kvm_rme_supports_sve(void);
->  
->  int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> index 12cc34192b97..ce8e48ab8753 100644
-> --- a/arch/arm64/kvm/rme.c
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -87,6 +87,28 @@ u32 kvm_realm_vgic_nr_lr(void)
->  	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
->  }
->  
-> +u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val)
-> +{
-> +	u32 bps = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_NUM_BPS);
-> +	u32 wps = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_NUM_WPS);
-> +	u32 ctx_cmps;
-> +
-> +	if (!kvm_is_realm(vcpu->kvm))
-> +		return val;
-> +
-> +	/* Ensure CTX_CMPs is still valid */
-> +	ctx_cmps = FIELD_GET(ID_AA64DFR0_EL1_CTX_CMPs, val);
-> +	ctx_cmps = min(bps, ctx_cmps);
-> +
-> +	val &= ~(ID_AA64DFR0_EL1_BRPs_MASK | ID_AA64DFR0_EL1_WRPs_MASK |
-> +		 ID_AA64DFR0_EL1_CTX_CMPs);
-> +	val |= FIELD_PREP(ID_AA64DFR0_EL1_BRPs_MASK, bps) |
-> +	       FIELD_PREP(ID_AA64DFR0_EL1_WRPs_MASK, wps) |
-> +	       FIELD_PREP(ID_AA64DFR0_EL1_CTX_CMPs, ctx_cmps);
-> +
-> +	return val;
-> +}
-> +
->  static int get_start_level(struct realm *realm)
->  {
->  	/*
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index da2d390ce9a5..b974eddfad53 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1847,7 +1847,7 @@ static u64 sanitise_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val)
->  	/* Hide BRBE from guests */
->  	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
->  
-> -	return val;
-> +	return kvm_realm_reset_id_aa64dfr0_el1(vcpu, val);
->  }
->  
->  static int set_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
-> -- 
-> 2.43.0
+>  	iio_for_each_active_channel(indio_dev, bit) {
+>  		ret = sca3300_read_reg(data, indio_dev->channels[bit].address, &val);
 > 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250723-iio-accel-sca3300-fix-uninitialized-iio-scan-data-c31f13b4b520
+> 
+> Best regards,
+
 
