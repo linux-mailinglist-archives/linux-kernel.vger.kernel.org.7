@@ -1,85 +1,124 @@
-Return-Path: <linux-kernel+bounces-744043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E90B1074C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FF7B10752
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F671189DA56
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1B81749B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FF425E47D;
-	Thu, 24 Jul 2025 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3678525DD0C;
+	Thu, 24 Jul 2025 10:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoqGpyPO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezvtvU99"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A207A2417C6;
-	Thu, 24 Jul 2025 10:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9062417C6;
+	Thu, 24 Jul 2025 10:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351398; cv=none; b=rYivGgcBkoc/ohi65RiUpCiCJAufIRWsF46W8y4kNHlfu1p/+a3vDDgg6ZatfWXRhk7EzzwRc7cAFQgfyTvx/TQdoycpUJ8mixlaIwIe3zTdD5LfumBllt5uxGdU4nXgK2+Z1SJpD8UYvDQqlFtRhrzEt9yTCOwLSxxGbLOpwrY=
+	t=1753351404; cv=none; b=HL12Dum+tuI39e6vp92XdddJQ9MTCaScuTqNaor2J+TmE9Y13J0S7Vs5vg1HcXv8oOVVTwIQdGsYh4Qv4DYyOXBmIn67ugkcOsAE8BxToW5YrCfioLSPo+cncbebDSuHousi7sbJMKFJINrwWK3m+GcNynNfqxIZ31d0jlDGKuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351398; c=relaxed/simple;
-	bh=CpX8taPohlNsyyzWSAeGLJY8Fbv6VGx8LxV+/HQ6BjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttTPbBgkP9JmSkWaE8M01mXicG1RK6BOWaqKZUkEW9NXYKLn8vwBx4ku3R8bRorUgYIEiswrDebBZiebMsV/yAn3AtXmjue5ykektiddVCWQzXXvzvRwKlw5AU7oXW953wGajCKnUwF52qfrfjQKWmeGQ5FdAFBtnloHVBgRLcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoqGpyPO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE2BC4CEED;
-	Thu, 24 Jul 2025 10:03:16 +0000 (UTC)
+	s=arc-20240116; t=1753351404; c=relaxed/simple;
+	bh=BkGnaoDjwlnG5d1b9npKldBWzlpT8LO20JP5ekflE2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ddrp48jI72Qm07SbjRq+n83+Q9O+hYqpTsAxy0JYA3f+mSQeQqUpLdtKa4AslyFkRxyQEYV3JEsyCfNsp/1DogRClivqhCXQGCG0FnOXfRguI+dz0l1o3xKNcJdZQEhq/RMl+cl4JshMzP8Aog8NgDJiPA4TnIF63UbKlvgpAoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezvtvU99; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E522C4CEF4;
+	Thu, 24 Jul 2025 10:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753351398;
-	bh=CpX8taPohlNsyyzWSAeGLJY8Fbv6VGx8LxV+/HQ6BjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eoqGpyPOIUt4chO8DE4EdiHR2BT4nofDHbygqT4TMClaamQLfXjf3Kt6hq9iixl4A
-	 R/MgrhIvhWCK82IBHWM1tmuZ0xPBk+vLP+ESYQ/3jgH5f5i7udemJ2s98ZL+UtAeQr
-	 Ucxt0RH5aO81+28amocZoflsei3A4Eg6w6+QXkVwPRwW0ebCqxDKffxkpyhwi8fX0o
-	 ZM9MHtp3LPnurG+0Xjueb0+GBViB2DFZ0vHcxMEgeAljWIUDiOB1l0V+99V4CLYoS1
-	 xME2yP1TGVwB/dUXQcqdMwBnrW8EMNvzjFEn0W/MCt/CNmm5ZdbMbUTQCxN5pNbDZu
-	 U0PwA7t9YMNiw==
-Date: Thu, 24 Jul 2025 11:03:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robert Marko <robert.marko@sartura.hr>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mfd tree
-Message-ID: <20250724100314.GW11056@google.com>
-References: <20250724115409.030d0d08@canb.auug.org.au>
+	s=k20201202; t=1753351404;
+	bh=BkGnaoDjwlnG5d1b9npKldBWzlpT8LO20JP5ekflE2E=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ezvtvU99gUA8Pun4WBy42bxlMvIvPkqC2pO0ZHyvJBrHuz4idjHJY2dEZcXRPO38Z
+	 3qHJHg0VSEYUbIxTccizxFMPuOYcxTe80/GsJXOTNdO4s5agRJxg9QFqnagwqWM1lP
+	 U2ZxNSr71pPHD9+kmA7r+ChyEZc8i0lLCT5TEz1OQYXz2AcIME49N6DZWUgFAuedlx
+	 t1fVoRFuC6bHNW/cq14YjHgwan9906/30ATj+NuvS6P5eWtpg6OF/yRN0A7/nDgfix
+	 0JsQDaYcN2AN/xvPryMf/B+bNf9qCsM4Th7mY8pYSZ4nXBPb4rBJrN0ZeFuZOLYkBP
+	 ONfZBqjKQcA5Q==
+Message-ID: <83f69759-da06-4a20-8185-3f24f2ac5794@kernel.org>
+Date: Thu, 24 Jul 2025 12:03:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724115409.030d0d08@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/13] dt-bindings: arm: aspeed: add Facebook
+ Wedge400-data64 board
+To: rentao.bupt@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ Tao Ren <taoren@meta.com>
+References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+ <20250723233013.142337-7-rentao.bupt@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250723233013.142337-7-rentao.bupt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 24 Jul 2025, Stephen Rothwell wrote:
-
-> Hi all,
+On 24/07/2025 01:30, rentao.bupt@gmail.com wrote:
+> From: Tao Ren <rentao.bupt@gmail.com>
 > 
-> After merging the mfd tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
+> Document the new compatibles used on Meta/Facebook Wedge400-data64
+> board.
 > 
-> WARNING: unmet direct dependencies detected for MFD_AT91_USART
->   Depends on [n]: HAS_IOMEM [=y] && (ARCH_MICROCHIP || COMPILE_TEST [=n])
->   Selected by [y]:
->   - SERIAL_ATMEL [=y] && TTY [=y] && HAS_IOMEM [=y] && COMMON_CLK [=y] && (ARCH_AT91 [=y] || ARCH_LAN969X || COMPILE_TEST [=n])
-> 
-> Probably introduced by commit
-> 
->   ef37a1e24857 ("mfd: at91-usart: Make it selectable for ARCH_MICROCHIP")
+> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
 
-Thanks Stephen.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I have reverted this now.
-
--- 
-Lee Jones [李琼斯]
+Best regards,
+Krzysztof
 
