@@ -1,165 +1,194 @@
-Return-Path: <linux-kernel+bounces-743792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB73B10361
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:22:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C43B10364
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79BB15A1BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18F7163082
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652822749F9;
-	Thu, 24 Jul 2025 08:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50822749CF;
+	Thu, 24 Jul 2025 08:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y09Qmn33"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h71r/Vgw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2723C2749CF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99F32749C9
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753345210; cv=none; b=H36TS/Z+M5yo4iBJSs+SYf7lZI78q/H9iwTqTokgmMpGVfndwWH0H73iCk1hXxIebFlIwMUOoES7YMg8azkkOqGzYXlZ49ibyjZ7oeRyrDA5xLg69C+m4MoofieKMpOFQrFGODdVurfNSDtLriZ7p3E8y2z+n3Dn1L1hBsziMZY=
+	t=1753345249; cv=none; b=jPhDxCN8hRMwYIBgsVbM3mTs2lwqrc7+/dZk4SJ3W85HPHjFQt8wD2yyjz2pY0ycN7ErLs4BYNZJbTRNjrrT72fg1mrjXjrWZDS/ACR7Wel3RKNSe6gFaQUAy50sAbVe1byQ+/tagioGtRyj/vxr/bM2YmeLcyF2XdLqo5CFrS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753345210; c=relaxed/simple;
-	bh=zdjUOV5VLfUOfX2jC9gvpXSoRGzu77A6WDjzl1O8nQ8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Id76oGvTCDBmJIG/viQla93HuiK2zN/WFE9fjJVQtL7DT5eVJELs9fu0wrHdvMbyOxHeaFaseonQZHElnCrQcIyKBvICpJjUTYJjvxyfd7DXNASzrFohCoq60HIRtxe/bOxwtwJpfh7yh4kyUicra5wtodNCqefBXnD2a0dtfLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y09Qmn33; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b611665b96so407341f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753345206; x=1753950006; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7FdmlstLnkttVYH+Av5Wxpm50CkHTFn7Ud/HRCiiFb0=;
-        b=y09Qmn33Yf/W6u1vtuFTxWrNLOj9RxDvPsuIYx+RA4ODSMombJc/9/NZFtMeDoddRg
-         xuQYjlMJA3+v58PIsDv4JJEl2pdDClog7/eqxFVoj6JMoF28eAFHl+1GldT5b/EDkGYF
-         HsvSfh+nk3aNgDTSTpxTezhj/d54zu8voEEEMO4sCErtKqYNiW+1tumGksfySb+rNyp3
-         8K5PBr5hVA90F0vxCfflWOHsLrpo+I8kWv4u8U0sl38xG0ZaZdabf0Ilnpuv5pHWvGIF
-         ICLJS87zM6zTybPtembdwLzGh/mHrWbg5i++04n+yBT155AR4n/KI+B2v3UtpIovZEIT
-         x+xg==
+	s=arc-20240116; t=1753345249; c=relaxed/simple;
+	bh=PY6FA72lx+rsHdWf/O1btP/hvDoM5PWlZyolAQrsaaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b8n6bKgr8JKHtEGBl7unQpstlZIDVb9fl4Y8NZpqMFWDPyz4bF7t5FVz6IgsO4RnzMAQCUD/HFHgXwXK2eZ8yproDdRSY2jxLfbPeei7YSgFaUl+bc47cEGxdh8rTRVkpOxotp/ccqgsyUILbSy7POlBoJyef7BppO4fSLjpDGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h71r/Vgw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753345245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ty1Nmgr/yohBN38P9mzD5LZanNswcBU4P2JN0tNImlQ=;
+	b=h71r/VgwubB1cae1WsAI0QVWAvw0P3FY3VhTeFHD/2/ZtGgEV9w6WTyyn5ixpkec/LDXLD
+	7FxJuKGub+V1vWUiFlQPe1OhiYbvvdmETVOtcbZF+NpdAHzvdN1KBacDFhpI7yc+NAq2RH
+	qV9VOB9CjSOfo/3EpKgwurcpzbXPLvQ=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-552-boLw1cRPP_O9sD5X5PqlGg-1; Thu, 24 Jul 2025 04:20:44 -0400
+X-MC-Unique: boLw1cRPP_O9sD5X5PqlGg-1
+X-Mimecast-MFC-AGG-ID: boLw1cRPP_O9sD5X5PqlGg_1753345243
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e819e8eb985so857238276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:20:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753345206; x=1753950006;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7FdmlstLnkttVYH+Av5Wxpm50CkHTFn7Ud/HRCiiFb0=;
-        b=hMn+cMCaIb7B+/yWz+S8hrjsK97LvRWTAtq2RvEF3DvtZVTG4YRNAQInXvYRkQUNIk
-         aw/KEjFGjFoezW3VN49WI/gWF8RBPdLrFWVg1Dbt168xp+GWdgLeIlW3h2mQs477NxLE
-         6j8hHUwkif54LmTuzAE5qbsHRZ7FDy356wHPAtVdhTlxi7SyNAhRLIhwEk9csIhggtqv
-         LqWlAtc15Kh8UAKCFUUod0yeMT2U/P2BEvu/tc6LxQHx7E19vICi5SDcPdIqNJbIBgc0
-         Y6WL8qAs36JXgsAtINDcE2edU9+D9SWRpPbB1RW4qUjxht9DdixvCA0h9OtKYLEF89CE
-         sFVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/8QH24h6nM8+oHghsOf37/cOCDCQq1rVVpFjJiHYEyMhWbfazANsw3IYJmhgxyvmQCa190TeruqHvYs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+zexBjV/FYOlzkL80uL9X0iDFpV3LQ5//5hxFlayF16Z3SM4x
-	FEcYYYzcqROdWN5OnrSZBvxrj19HJW79BFr3Mi3iazE77b89zSM57zpW7NVdMWuvjwc=
-X-Gm-Gg: ASbGnctmZzp1dbm8lART4y9Aaz5siiZ1Jx8pfzjW37l6nsMOBkxLEwwqjJxLb9gGGqs
-	5c1VNrNdtkpmSV6Sq/FXrXYvZfvAA576Z7OJfcPVqWPsAHgPkqjfZ7kLhSXN1Bnot9x8uBGl39z
-	AlMHuNKpa1oVbmYN3iphizCcy/LZIfGIHqdwfDRb16R56k0hvVH2mYbj77V+4Ejswdz5ppS3JEo
-	qnObHP6sOg45xEM7eIDuSaKTMOOZaUbYARd6koUIVTPjgpl3eJnDV3x2rG5JjfRnW8ZRc7kg7Lq
-	D+YJMcx8OYxwhFTsf6Pi5gqJnERmP0bjsVOcx/ierWwIUdwDEeALTOhvyQBcQGYDSr9ByrMDTjy
-	FW3Z6hm9WTlY3mlQDDr+3V5+avq0lzir8
-X-Google-Smtp-Source: AGHT+IGHiElzTF/gXef/+TO8x62wPd+zvsVrwxUQ5wkCAUo0PV/PAIhvByy+nqqydTSRIhHh52MS9g==
-X-Received: by 2002:a05:6000:40da:b0:3a4:ee3f:8e1e with SMTP id ffacd0b85a97d-3b768f026fdmr4924247f8f.39.1753345206330;
-        Thu, 24 Jul 2025 01:20:06 -0700 (PDT)
-Received: from [172.20.10.3] ([78.246.240.195])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc71437sm1382862f8f.29.2025.07.24.01.20.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 01:20:05 -0700 (PDT)
-Message-ID: <f36b7706-5b92-4187-986a-8dd8378051cc@linaro.org>
-Date: Thu, 24 Jul 2025 10:20:03 +0200
+        d=1e100.net; s=20230601; t=1753345243; x=1753950043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ty1Nmgr/yohBN38P9mzD5LZanNswcBU4P2JN0tNImlQ=;
+        b=efYdbtH0ERbfSfKouyI/xVUu5oeHwZ2Zi/vMZ2kXTRTW5ziOyE+reiKLOdE2Y1e9Ds
+         cBNdGxge5RIw4kEFB3ghEL+JknrGa5eSl2X6oHlMvXI7a6lDHBEx8AE3tD5RGYWEOQO1
+         A3Vx8re6919mgyAGFMEOHkyr8pqTtMMjUccENMf0Oa39CzyKjgJEbSSdpaI5ox6mFrV/
+         PoQvBZC7fel9jf9qw6744lRdsKHS3iws2a1xFEU741NP5bJk0/992YZbYSjlQgVRdH4m
+         lNIh3bRua5p4KQw1BqrDcAijIiKk+Q2b2WagBss+f5jGct9aVs98F2/r88ASpI4Nxb2U
+         P7oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxq8bhHYgFNcqHAhRqTClkjXnNM5J2KWGQhTB7yYF1MX5RsnzIaNwJFu0wJxIgeYVDFjbAFYpMMaoEjyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt69Lq2JcnTAm46TuTj8hL7pQjoTrmJz11f2itvyudkNrPIbCO
+	tSz03UUEJiFYPUe1J0qgqw/5skO2YFexjZ89vEJiqEA7bTHK8MTV9M7ILQeacmFS2/eh9+jLxzU
+	zhuMjL5vR6nAaS9L01G+G1EbLanDS5RqVWckhcXEyH147G8AVqF+41TUa0RkcmlyFFjHNsOv1pF
+	Ek03xkD0TjpwOVuRfm/xhayrfTkihmIe2jGuWYRYha
+X-Gm-Gg: ASbGnctQTOC7bMob4j9ultEYxRa1IeOPAud9fniU4WoklB1aSGjmuKa6EX23K53BBzb
+	u2hslkFYOq8yREZ7dXZ0Xd+DvXDKh6p0w3m9VMG4fI/kwprjLyIKbgNqabHX8loNL+tr5WEpXD2
+	5bRRA16xAG4LPtNRYugarX+w==
+X-Received: by 2002:a05:6902:310f:b0:e87:b33c:7981 with SMTP id 3f1490d57ef6-e8dc595b0abmr6776102276.33.1753345243354;
+        Thu, 24 Jul 2025 01:20:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhtmOQZoG8MJqXUBbHZjrjfL2o69nkUHbskfHC38XgsD1gmsQVJ+5FqH2fq1iw+bluM/HBXchsFWiPGsWmksc=
+X-Received: by 2002:a05:6902:310f:b0:e87:b33c:7981 with SMTP id
+ 3f1490d57ef6-e8dc595b0abmr6776091276.33.1753345242975; Thu, 24 Jul 2025
+ 01:20:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 21/23] arm64: dts: qcom: sm8550: add sound prefix for wsa2
-To: srinivas.kandagatla@oss.qualcomm.com, andersson@kernel.org,
- konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250723222737.35561-22-srinivas.kandagatla@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250723222737.35561-22-srinivas.kandagatla@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <238b803af900dfc5f87f6ddc03805cc42da2ca35.1753332902.git.xmu@redhat.com>
+ <aIHRwwOl-FS8KOV0@fedora>
+In-Reply-To: <aIHRwwOl-FS8KOV0@fedora>
+From: Xiumei Mu <xmu@redhat.com>
+Date: Thu, 24 Jul 2025 16:20:31 +0800
+X-Gm-Features: Ac12FXzu1I7NXeznfsc628RU_1n_SK2CsVM_ZFesDKVFeRN_1fJs6j-4D1IwnIg
+Message-ID: <CADdRzaF5Ck86fyEYaeWjvoVt=8qEhNKJ8J3ye+x0cb9EATqQ7Q@mail.gmail.com>
+Subject: Re: [PATCH net] selftests: rtnetlink.sh: remove esp4_offload after test
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Long Xin <lxin@redhat.com>, 
+	Sabrina Dubroca <sd@queasysnail.net>, Shannon Nelson <sln@onemain.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+resent the reply again with "plain text mode"
 
-On 24/07/2025 00:27, srinivas.kandagatla@oss.qualcomm.com wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> 
-> WSA and WSA2 are two instances of WSA codec macro, this can lead
-> dupicate dapm widgets and mixers resulting in failing to probe
+On Thu, Jul 24, 2025 at 2:25=E2=80=AFPM Hangbin Liu <liuhangbin@gmail.com> =
+wrote:
+>
+> Hi Xiumei,
+> On Thu, Jul 24, 2025 at 12:55:02PM +0800, Xiumei Mu wrote:
+> > The esp4_offload module, loaded during IPsec offload tests, should
+> > be reset to its default settings after testing.
+> > Otherwise, leaving it enabled could unintentionally affect subsequence
+> > test cases by keeping offload active.
+>
+> Would you please show which subsequence test will be affected?
+>
+Any general ipsec case, which expects to be tested by default
+behavior(without offload).
+esp4_offload will affect the performance.
 
+> >
+> > Fixes: 2766a11161cc ("selftests: rtnetlink: add ipsec offload API test"=
+)
+>
+> It would be good to Cc the fix commit author. You can use
+> `./scripts/get_maintainer.pl your_patch_file` to get the contacts you
+> need to Cc.
 
-duplicate
+I used the script to generate the cc list.
+and I double checked the old email of the author is invalid
+added his personal email in the cc list:
 
-> soundcard if both of these instances are part of the dai-link.
-> 
-> Correct way to address this is to add sound-name-prefix to WSA2
-> instances to avoid such confilcting mixers and dapm widgets.
+Shannon Nelson <shannon.nelson@oracle.com>. -----> Shannon Nelson
+<sln@onemain.com>
 
-conflicting
+ get the information from here:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=
+=3Da1113cefd7d6
 
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> ---
->   arch/arm64/boot/dts/qcom/sm8550.dtsi | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> index d35d2b9b438d..5f748f6eb27a 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> @@ -2811,6 +2811,7 @@ lpass_wsa2macro: codec@6aa0000 {
->   			#clock-cells = <0>;
->   			clock-output-names = "wsa2-mclk";
->   			#sound-dai-cells = <1>;
-> +			sound-name-prefix = "WSA2";
->   		};
->   
->   		swr3: soundwire@6ab0000 {
+>
+> > Signed-off-by: Xiumei Mu <xmu@redhat.com>
+> > ---
+> >  tools/testing/selftests/net/rtnetlink.sh | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/s=
+elftests/net/rtnetlink.sh
+> > index 2e8243a65b50..5cc1b5340a1a 100755
+> > --- a/tools/testing/selftests/net/rtnetlink.sh
+> > +++ b/tools/testing/selftests/net/rtnetlink.sh
+> > @@ -673,6 +673,11 @@ kci_test_ipsec_offload()
+> >       sysfsf=3D$sysfsd/ipsec
+> >       sysfsnet=3D/sys/bus/netdevsim/devices/netdevsim0/net/
+> >       probed=3Dfalse
+> > +     esp4_offload_probed_default=3Dfalse
+> > +
+> > +     if lsmod | grep -q esp4_offload; then
+> > +             esp4_offload_probed_default=3Dtrue
+> > +     fi
+>
+> If the mode is loaded by default, how to avoid the subsequence test to be
+> failed?
 
+The module is not loaded by default, but some users or testers may
+need to load esp4_offload in their own environments.
+Therefore, resetting it to the default configuration is the best
+practice to prevent this self-test case from impacting subsequent
+tests
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>
+> >
+> >       if ! mount | grep -q debugfs; then
+> >               mount -t debugfs none /sys/kernel/debug/ &> /dev/null
+> > @@ -766,6 +771,7 @@ EOF
+> >       fi
+> >
+> >       # clean up any leftovers
+> > +     [ $esp4_offload_probed_default =3D=3D false ] && rmmod esp4_offlo=
+ad
+>
+> The new patch need to pass shellcheck. We need to double quote the variab=
+le.
+
+Thanks your comment, I will add double quote in patchv2
+
+>
+> Thanks
+> Hangbin
+> >       echo 0 > /sys/bus/netdevsim/del_device
+> >       $probed && rmmod netdevsim
+> >
+> > --
+> > 2.50.1
+> >
+>
+
 
