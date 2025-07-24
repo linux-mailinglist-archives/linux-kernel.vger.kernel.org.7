@@ -1,329 +1,228 @@
-Return-Path: <linux-kernel+bounces-744896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8DCB11240
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846FFB11233
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6753AC2B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEDB1CE2C56
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5997A266B6C;
-	Thu, 24 Jul 2025 20:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE354246BD9;
+	Thu, 24 Jul 2025 20:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="N5MlcpK6"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e3U1AQ1O"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0325A2AE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653FC239567
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388727; cv=none; b=Xb2d++PF1X/BlIiD47NY/kBTN57ptLIq6blzDIUFpqyJgWysoXn6HKZABJYdOVbbUiEpyd5/JLrC2EMqKkyJCCE9XUDsV8qYabTLTkwnhf43G0OEYUg6VUMlrG4VKKJoAoanlfDo9R+IoZQlGWVaw2CKnppnIXvc2z4sFg5fT4s=
+	t=1753388711; cv=none; b=DdPCprCV1s7/ZtqgtK6qXM+M4U+gZCXNgLWN0HFNOco8oeb/O3+gF4Dn8cgqH+oSKLyoRo2bhdvEX2IGn3QqyZJknNOB0mObTXdy7BonER+CmTBYp5WUsCwflfFYIyib63jSWhyLcoGW9AqL9es5qopf4P/tySKJcmdYhfPkV2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388727; c=relaxed/simple;
-	bh=9yAQfyGYVLXyfkkTfqeVQq5G8Mv2h6aGEzS6CgeOAAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A0NnAM+k+Pq/03EigVMQ0oQ5QvdBqZKQzRXxAzx2Qzqeu1/Z91WSWwRELinHXWJ2IcW6AbapEYwxPbDmGaloDTYcKSGPCwH56xRDT24bRQ6hkqOvwKMykuoQu+MyzwE0KDoE9rrYTn0W27Bf8bOtYbqG4tKgaW5FUFxuHPBtBpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=N5MlcpK6; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-87c4bacb68eso43731839f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:25:23 -0700 (PDT)
+	s=arc-20240116; t=1753388711; c=relaxed/simple;
+	bh=M/S0/7S8LCyDg3pVE8cNlERu5qdSEMXf/JCowNZDCoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RvaO+Y4oO/lS59QVrwzGwbRsdrhGb7PPoEiI+7xLhHdxUUOEYTKKYl6Xf9YE0VPtsvUIlHODn6hsQ7QSismWwRmXeRJcZXQ0czdKZFi84pRfIZyAStkYVhV5/+nfYt/GL9w9L5AurCTUYg2FAVLgxm2TepcV9rffEpHRYMs843s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=e3U1AQ1O; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3df2ddd39c6so4976045ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753388723; x=1753993523; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lc2aqqc97NOP0EfL+BSZC9Lj19cWycz2K5gJfriPT8I=;
-        b=N5MlcpK6fEylzdeky4PnSYqrHQrypsGCGjbGrn9S4rPryi6Yl6jwjOd3rWDGcm9Z+n
-         NzmIv65jJEx8BiEwjFdSWbJAmNYhnjfNwnsTbC+drsvc9Lksev0HmshvUd6WgX2bOHkV
-         4OgW74UCaKQzyvMnZkyxvOIrytwO5EVbGX9CnVJR8156Iks8f1p0zqvt2/E54bkrJxq4
-         /Z3b7GlMUldCpnM4NufmY6UBrLa6Rxr8lIlOU77zIdawtH4ZZ1fkzqKb6Bd4vWqCfj9G
-         LYOhAaDRzMAAoFIA2sgRsHRXGgnkJdQWpvLeY66T4tG7DvLzcbfneZlA0PWoXANPazkO
-         0MZQ==
+        d=cloudflare.com; s=google09082023; t=1753388708; x=1753993508; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IySQOI7GYeMgMHfhqdodve6axYgAm2CZvFEfDYNh9Yw=;
+        b=e3U1AQ1OPuAQWfJvzgmJBRjR+jjr3n7DfFKJSdDul8Moe+wZ+6wn7+L2DHVK/2pTMO
+         MgJjYaD8KlqfcEXa/xmEg3mmoIdu+uaVcq/HblmDO/o+IsoWjBzwUhWraLFuVEpwyoHV
+         tzCNlnlqXIIRG07rtY6s8URpqwZ3xWLoVhcnZAnIIlD0RKr7abn3hhOQh6S7MYK1EbZx
+         rAsbMv0ZJR55rKaIHQIl/ylSe6s/66ej3gH7pwVHq4d+XL0mGU7vCgM4RVCVUrUHSMKT
+         jkBo1B+iGf4egA5RNPu4FActQpojhD1j4ezeE0QG3QiMCMrRwaFdR7tgzMaljT/teR95
+         wQKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753388723; x=1753993523;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lc2aqqc97NOP0EfL+BSZC9Lj19cWycz2K5gJfriPT8I=;
-        b=CR8zco1RX+vJ77CYeScofb+VPPrPXg7qvlx8lOiTNmcOU7uEHOIJU14y9yVYZ5JkDK
-         6Yq/bx310Q/pEo2W7ntnyEFptXKwe8HXexja8mUdKj5dfI5wXTmaZzA3p+csBcAbOMb6
-         rHDDjfk4dGKPgnuaWphCjnZNSaESRFORp67TOyH+Z2drCSxI2v2U1zn9Tly3FlT53orh
-         gSPKqwUdvUl/I/e/0EzLUX+tJQ98yepeuXsJ9Et17wssyjsj7aviBd38Uld6+6whzyt8
-         KT4cR3gNMdaiE1wO8//jVNCj9sqJLmONynu4MD97piuUDfOOQBEVHBvS8sLb1sN8m4G9
-         R6Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRmyVN93+5mWaiRxbX//mKhOKf472V/xdLb+qaX1+iowzDSZTDDSJb/QBCU6DlIdowMJKwr9X8q77mmPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyk0Ft7aDX8tadN1ay4lgWO7AM2mW8YM3ArfRlNoXQP1ERSqo7
-	Vr/r2AJ20ASsAv7tuXcsKwHmo77PjmTo958mCxZ/sFyogmZCMK4CoE5wEruh3gA2RxBxLDJpjCk
-	O63ni
-X-Gm-Gg: ASbGncuoeGDqkiAn/TzBLV0XNfM4Dpn8ntcrSyxfJeC8cp27CZqnFgSfDl2VoCt7/OH
-	Yd+AIJbZVeUjKlargb1DMAAvlXg6WWx9JY9KGOFF3P8Itq9IEe/52eqzjL/9U8m1Jwbc28vW+4Z
-	ZJoNLVL+EpM4XR1TtITB/SUC66IvWRzGeCDzCI7MMe2OhHWXI/r/Jrzadsfa1p+DHdL7rFjUrH2
-	9+qfsxEjqeE2Z4oUl4edtko0lKEl+b2GPDBC6lSrkWZ9na7uom781/xvcPCf0sEqRrC1kc8O2fF
-	edMurGucFEDdgjyFMVPpgOhJWGskEbzUTFHazzr6mFdo9cecTAjdiJqbeP5Lfp4ruk1wpcRz8Ug
-	EdUEW/fdr+q/kiQ3P1OmScDJP5DE4G43LVeJJLvUW
-X-Google-Smtp-Source: AGHT+IG5crWSYMqOT4gzv3/s0kwhaMnMRggcqK/SrWQWiRkfz5Jy1E/lYbJb+xTUBrb7PdJVKYvuFQ==
-X-Received: by 2002:a05:6602:3710:b0:876:19b9:1aaa with SMTP id ca18e2360f4ac-87c65037cbamr1427124639f.9.1753388723127;
-        Thu, 24 Jul 2025 13:25:23 -0700 (PDT)
-Received: from zoltan.localdomain ([199.59.116.160])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-87c74316a3bsm63080239f.23.2025.07.24.13.25.21
+        d=1e100.net; s=20230601; t=1753388708; x=1753993508;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IySQOI7GYeMgMHfhqdodve6axYgAm2CZvFEfDYNh9Yw=;
+        b=ZcHtEQcxD37snjMUBYsvrovskEPgcOBsF4r+UQYCZXRw0ZC4b6trFw/Hd7PMn/Ha0L
+         uLGRszWP8Qpj9RIGD4tUXc6f1CJQMdtalX7vzf73RcVz0HcXFBSIVcwfhp7g5TkmgueZ
+         yn9wKGN9JSY1cgxX3wkd87BAV4DajCWtD/CzxroITyiNaCrQEuKo/kyH3sU1of7S9x+V
+         xKlbRWZutiHA7iOJedXzEGikfhOP6OnP1L9E5PMmagGbz66HwfEqk7G2N1imrd8bAamh
+         b5cyX83pP0SqSTOJfphqIY5srSBFxITT63vhN5W0dRWxaRW97DDcBzElPPkwqaKtAq2x
+         FgPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPA8Ml1+nCZGvc/1qAoer3kDD6jdZcFmGfYwEyNDJo5mm//9J3Ace9G9Dzg9+kjAxO5il3stxBbvprfr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrGest7FnUAZ/Tsvmh/uDssg2iB1cD39cr/wJQNhIpFqM7R53q
+	W2C/efHGtDUzk0+wAHC13Xjc5jui5mY3piczkNnLh0DqEik/tM6grbABBr2eyNI4MAQ=
+X-Gm-Gg: ASbGncu1P3zgdnZ9sG+plTBkOtcaP+k2Tz1yEMVXN9/44m6131qB/OcGjUaao8g/kIM
+	pT61uCTMmAq9vkZr1SyUowOFg6B0UmlN+iIhy4DjUtZgQs035Bd6CzT72QloxxBhoCmseicaU0x
+	bcdPpw2KjTSuhmzhlMn1jUuRnDIGBqP2pVOfj7TY1xUtqQva/ZLwwoFKH0G1lZJqi6qTIPQjSmG
+	eiPXOL7a+eHchvWiERG4Rccjp7tthJ/9Jr/m4qGSxvq3JgxOY5upexhfe64j7DPN9EH4lpN2bg8
+	8mSVdAviKIEiXWQwp0v0kjHQWtV0CiTnTePLyN71eVL6VScarSQspcNRY1dm9ghIUswJv6fDUPh
+	Ovw==
+X-Google-Smtp-Source: AGHT+IGSnGleulhZWkm1BpKgp5a86MvvH3HHjml0VP9G1bidqZRg2ywUiuffylRdxrhhyavIZrakZw==
+X-Received: by 2002:a05:6e02:2302:b0:3e2:9ffc:bcde with SMTP id e9e14a558f8ab-3e32fc8e2d9mr126914855ab.6.1753388708340;
+        Thu, 24 Jul 2025 13:25:08 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac5:8250:4e6::7d:7b])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e3b711c757sm8506605ab.23.2025.07.24.13.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 13:25:22 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: lee@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: mat.jonczyk@o2.pl,
-	dlan@gentoo.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	linux.amoon@gmail.com,
-	troymitchell988@gmail.com,
-	guodong@riscstar.com,
-	linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 4/8] regulator: spacemit: support SpacemiT P1 regulators
+        Thu, 24 Jul 2025 13:25:08 -0700 (PDT)
 Date: Thu, 24 Jul 2025 15:25:05 -0500
-Message-ID: <20250724202511.499288-5-elder@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250724202511.499288-1-elder@riscstar.com>
-References: <20250724202511.499288-1-elder@riscstar.com>
+From: Frederick Lawler <fred@cloudflare.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	AndrewLunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel-team@cloudflare.com, jbrandeburg@cloudflare.com
+Subject: ice: General protection fault in ptp_clock_index
+Message-ID: <aIKWoZzEPoa1omlw@CMGLRV3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for the regulators found in the SpacemiT P1 PMIC.  This
-PMIC provides 6 buck converters and 12 LDO regulators.
+Hi,
 
-The PMIC is implemented as a multi-function device.  These regulators
-are probed based on this driver being named in a MFD cell in the simple
-MFD I2C driver.
+On Linux 6.12.39, we appear to hit a race reading ethtool while the
+device is removed.
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/Kconfig       |  12 +++
- drivers/regulator/Makefile      |   1 +
- drivers/regulator/spacemit-p1.c | 157 ++++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 drivers/regulator/spacemit-p1.c
+We have automation to remove unused interfaces during early boot
+process, and when systemd is restarting the network afterwards, we
+get a page fault and get into a boot-crash-loop state. We're currently
+renaming the interface to something like unused0 to circumvent the
+issue.
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 7423954153b07..3e7feeebf8aca 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1395,6 +1395,18 @@ config REGULATOR_SLG51000
- 	  The SLG51000 is seven compact and customizable low dropout
- 	  regulators.
- 
-+config REGULATOR_SPACEMIT_P1
-+	tristate "SpacemiT P1 regulators"
-+	depends on ARCH_SPACEMIT || COMPILE_TEST
-+	select MFD_SPACEMIT_P1
-+	default ARCH_SPACEMIT
-+	help
-+	  Enable support for regulators implemented by the SpacemiT P1
-+	  power controller.  The P1 implements 6 high-efficiency buck
-+	  converters and 12 programmable LDO regulators.  To compile this
-+	  driver as a module, choose M here.  The module will be called
-+	  "spacemit-pmic".
-+
- config REGULATOR_STM32_BOOSTER
- 	tristate "STMicroelectronics STM32 BOOSTER"
- 	depends on ARCH_STM32 || COMPILE_TEST
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index be98b29d6675d..278f5b8d1c7d7 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -162,6 +162,7 @@ obj-$(CONFIG_REGULATOR_S5M8767) += s5m8767.o
- obj-$(CONFIG_REGULATOR_SC2731) += sc2731-regulator.o
- obj-$(CONFIG_REGULATOR_SKY81452) += sky81452-regulator.o
- obj-$(CONFIG_REGULATOR_SLG51000) += slg51000-regulator.o
-+obj-$(CONFIG_REGULATOR_SPACEMIT_P1) += spacemit-p1.o
- obj-$(CONFIG_REGULATOR_STM32_BOOSTER) += stm32-booster.o
- obj-$(CONFIG_REGULATOR_STM32_VREFBUF) += stm32-vrefbuf.o
- obj-$(CONFIG_REGULATOR_STM32_PWR) += stm32-pwr.o
-diff --git a/drivers/regulator/spacemit-p1.c b/drivers/regulator/spacemit-p1.c
-new file mode 100644
-index 0000000000000..d437e6738ea1e
---- /dev/null
-+++ b/drivers/regulator/spacemit-p1.c
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for regulators found in the SpacemiT P1 PMIC
-+ *
-+ * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
-+ * Derived from code from SpacemiT.
-+ *	Copyright (c) 2023, SPACEMIT Co., Ltd
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/bits.h>
-+#include <linux/device.h>
-+#include <linux/linear_range.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/driver.h>
-+
-+#define MOD_NAME	"spacemit-p1-regulator"
-+
-+enum p1_regulator_id {
-+	P1_BUCK1,
-+	P1_BUCK2,
-+	P1_BUCK3,
-+	P1_BUCK4,
-+	P1_BUCK5,
-+	P1_BUCK6,
-+
-+	P1_ALDO1,
-+	P1_ALDO2,
-+	P1_ALDO3,
-+	P1_ALDO4,
-+
-+	P1_DLDO1,
-+	P1_DLDO2,
-+	P1_DLDO3,
-+	P1_DLDO4,
-+	P1_DLDO5,
-+	P1_DLDO6,
-+	P1_DLDO7,
-+};
-+
-+static const struct regulator_ops p1_regulator_ops = {
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.set_voltage_time_sel   = regulator_set_voltage_time_sel,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+};
-+
-+/* Selector value 255 can be used to disable the buck converter on sleep */
-+static const struct linear_range p1_buck_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 0, 170, 5000),
-+	REGULATOR_LINEAR_RANGE(1375000, 171, 254, 25000),
-+};
-+
-+/* Selector value 0 can be used for suspend */
-+static const struct linear_range p1_ldo_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 11, 127, 25000),
-+};
-+
-+/* These define the voltage selector field for buck and LDO regulators */
-+#define BUCK_MASK		GENMASK(7, 0)
-+#define LDO_MASK		GENMASK(6, 0)
-+
-+#define P1_ID(_TYPE, _n)	P1_ ## _TYPE ## _n
-+#define P1_ENABLE_REG(_off, _n)	((_off) + 3 * ((_n) - 1))
-+
-+#define P1_REG_DESC(_TYPE, _type, _n, _s, _off, _mask, _nv, _ranges)	\
-+	{								\
-+		.name			= #_type #_n,			\
-+		.supply_name		= _s,				\
-+		.of_match		= of_match_ptr(#_type #_n),	\
-+		.regulators_node	= of_match_ptr("regulators"),	\
-+		.id			= P1_ID(_TYPE, _n),		\
-+		.n_voltages		= _nv,				\
-+		.ops			= &p1_regulator_ops,		\
-+		.owner			= THIS_MODULE,			\
-+		.linear_ranges		= _ranges,			\
-+		.n_linear_ranges	= ARRAY_SIZE(_ranges),		\
-+		.vsel_reg		= P1_ENABLE_REG(_off, _n) + 1,	\
-+		.vsel_mask		= _mask,			\
-+		.enable_reg		= P1_ENABLE_REG(_off, _n),	\
-+		.enable_mask		= BIT(0),			\
-+	}
-+
-+#define P1_BUCK_DESC(_n) \
-+	P1_REG_DESC(BUCK, buck, _n, "vcc", 0x47, BUCK_MASK, 254, p1_buck_ranges)
-+
-+#define P1_ALDO_DESC(_n) \
-+	P1_REG_DESC(ALDO, aldo, _n, "vcc", 0x5b, LDO_MASK, 117, p1_ldo_ranges)
-+
-+#define P1_DLDO_DESC(_n) \
-+	P1_REG_DESC(DLDO, dldo, _n, "buck5", 0x67, LDO_MASK, 117, p1_ldo_ranges)
-+
-+static const struct regulator_desc p1_regulator_desc[] = {
-+	P1_BUCK_DESC(1),
-+	P1_BUCK_DESC(2),
-+	P1_BUCK_DESC(3),
-+	P1_BUCK_DESC(4),
-+	P1_BUCK_DESC(5),
-+	P1_BUCK_DESC(6),
-+
-+	P1_ALDO_DESC(1),
-+	P1_ALDO_DESC(2),
-+	P1_ALDO_DESC(3),
-+	P1_ALDO_DESC(4),
-+
-+	P1_DLDO_DESC(1),
-+	P1_DLDO_DESC(2),
-+	P1_DLDO_DESC(3),
-+	P1_DLDO_DESC(4),
-+	P1_DLDO_DESC(5),
-+	P1_DLDO_DESC(6),
-+	P1_DLDO_DESC(7),
-+};
-+
-+static int p1_regulator_probe(struct platform_device *pdev)
-+{
-+	struct regulator_config config = { };
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	/*
-+	 * The parent device (PMIC) owns the regmap.  Since we don't
-+	 * provide one in the config structure, that one will be used.
-+	 */
-+	config.dev = dev->parent;
-+
-+	for (i = 0; i < ARRAY_SIZE(p1_regulator_desc); i++) {
-+		const struct regulator_desc *desc = &p1_regulator_desc[i];
-+		struct regulator_dev *rdev;
-+
-+		rdev = devm_regulator_register(dev, desc, &config);
-+		if (IS_ERR(rdev))
-+			return dev_err_probe(dev, PTR_ERR(rdev),
-+					     "error registering regulator %s\n",
-+					     desc->name);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver p1_regulator_driver = {
-+	.probe = p1_regulator_probe,
-+	.driver = {
-+		.name = MOD_NAME,
-+	},
-+};
-+
-+module_platform_driver(p1_regulator_driver);
-+
-+MODULE_DESCRIPTION("SpacemiT P1 regulator driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:" MOD_NAME);
--- 
-2.43.0
+I was able to reproduce with the following snippet:
+
+$ watch -n0.1 /sbin/ethtool -T ext0
+$ echo -n "1" | sudo tee /sys/class/net/ext0/device/remove
+
+ice 0000:41:00.0: Removed PTP clock
+
+...
+
+Oops: general protection fault, probably for non-canonical address 0xae09e2b3b0c665f1: 0000 [#1] PREEMPT SMP NOPTI
+Tainted: [O]=OOT_MODULE
+Hardware name: Lenovo HR355M-V3-G12/HR355M_V3_HPM, BIOS HR355M_V3.G.031 02/17/2025
+RIP: 0010:ptp_clock_index (drivers/ptp/ptp_clock.c:476 (discriminator 1))
+Code: 38 1b 4e 00 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 <8b> 87 94 03 00 00 e9 07 1b 4e 00 66 66 2e 0f 1f 84 00 00 00 00 00
+All code
+========
+   0:	38 1b                	cmp    %bl,(%rbx)
+   2:	4e 00 66 66          	rex.WRX add %r12b,0x66(%rsi)
+   6:	2e 0f 1f 84 00 00 00 	cs nopl 0x0(%rax,%rax,1)
+   d:	00 00
+   f:	66 90                	xchg   %ax,%ax
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	90                   	nop
+  14:	90                   	nop
+  15:	90                   	nop
+  16:	90                   	nop
+  17:	90                   	nop
+  18:	90                   	nop
+  19:	90                   	nop
+  1a:	90                   	nop
+  1b:	90                   	nop
+  1c:	90                   	nop
+  1d:	90                   	nop
+  1e:	90                   	nop
+  1f:	90                   	nop
+  20:	90                   	nop
+  21:	f3 0f 1e fa          	endbr64
+  25:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+  2a:*	8b 87 94 03 00 00    	mov    0x394(%rdi),%eax		<-- trapping instruction
+  30:	e9 07 1b 4e 00       	jmp    0x4e1b3c
+  35:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  3c:	00 00 00 00
+
+Code starting with the faulting instruction
+===========================================
+   0:	8b 87 94 03 00 00    	mov    0x394(%rdi),%eax
+   6:	e9 07 1b 4e 00       	jmp    0x4e1b12
+   b:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  12:	00 00 00 00
+RSP: 0018:ffffb5664f657c88 EFLAGS: 00010282
+RAX: ffff9f4854c201a0 RBX: ffffb5664f657d34 RCX: ffffffffc1c6a5c0
+RDX: 555485607aaada55 RSI: ffffb5664f657d34 RDI: ae09e2b3b0c6625d
+RBP: ffffb5664f657df0 R08: 0000000000000000 R09: ffff9f3124c570a8
+R10: ffffb5664f657cc0 R11: 0000000000000001 R12: ffffffffafab4680
+R13: 00007ffc828fdbb0 R14: ffff9f3124c57000 R15: ffffb5664f657d80
+FS:  00007ff5abba1340(0000) GS:ffff9f402f600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff5ac03f0c0 CR3: 0000000a8768e006 CR4: 0000000000770ef0
+PKRU: 55555554
+Call Trace:
+<TASK>
+ice_get_ts_info (drivers/net/ethernet/intel/ice/ice_ethtool.c:3776 (discriminator 1)) ice
+__ethtool_get_ts_info (net/ethtool/common.c:713)
+__ethtool_get_ts_info (net/ethtool/common.c:713)
+dev_ethtool (net/ethtool/ioctl.c:2651 net/ethtool/ioctl.c:3312 net/ethtool/ioctl.c:3390)
+? srso_alias_return_thunk (arch/x86/lib/retpoline.S:182)
+? trace_call_bpf (kernel/trace/bpf_trace.c:151 (discriminator 38))
+? security_file_ioctl (security/security.c:2909)
+? trace_call_bpf (kernel/trace/bpf_trace.c:151 (discriminator 38))
+? __x64_sys_ioctl (fs/ioctl.c:893)
+? kprobe_ftrace_handler (arch/x86/kernel/kprobes/ftrace.c:45 (discriminator 1))
+? srso_alias_return_thunk (arch/x86/lib/retpoline.S:182)
+dev_ioctl (net/core/dev_ioctl.c:720)
+sock_ioctl (net/socket.c:1242 net/socket.c:1346)
+__x64_sys_ioctl (fs/ioctl.c:51 fs/ioctl.c:907 fs/ioctl.c:893 fs/ioctl.c:893)
+osnoise_arch_unregister (??:?)
+entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+RIP: 0033:0x7ff5abe13d1b
+Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+All code
+========
+   0:	00 48 89             	add    %cl,-0x77(%rax)
+   3:	44 24 18             	rex.R and $0x18,%al
+   6:	31 c0                	xor    %eax,%eax
+   8:	48 8d 44 24 60       	lea    0x60(%rsp),%rax
+   d:	c7 04 24 10 00 00 00 	movl   $0x10,(%rsp)
+  14:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+  19:	48 8d 44 24 20       	lea    0x20(%rsp),%rax
+  1e:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
+  23:	b8 10 00 00 00       	mov    $0x10,%eax
+  28:	0f 05                	syscall
+  2a:*	89 c2                	mov    %eax,%edx		<-- trapping instruction
+  2c:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+  31:	77 1c                	ja     0x4f
+  33:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+  38:	64                   	fs
+  39:	48                   	rex.W
+  3a:	2b                   	.byte 0x2b
+  3b:	04 25                	add    $0x25,%al
+  3d:	28 00                	sub    %al,(%rax)
+	...
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 c2                	mov    %eax,%edx
+   2:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+   7:	77 1c                	ja     0x25
+   9:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+   e:	64                   	fs
+   f:	48                   	rex.W
+  10:	2b                   	.byte 0x2b
+  11:	04 25                	add    $0x25,%al
+  13:	28 00                	sub    %al,(%rax)
+	...
+RSP: 002b:00007ffc828fdb20 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 000056370e675800 RCX: 00007ff5abe13d1b
+RDX: 00007ffc828fdb80 RSI: 0000000000008946 RDI: 0000000000000005
+RBP: 000056370e6757e0 R08: 00007ff5abee8c60 R09: 0000000000000000
+R10: 00007ff5abd2f310 R11: 0000000000000246 R12: 00007ffc828fdd80
+R13: 0000000000000005 R14: 00007ffc828fdb80 R15: 00007ffc828fff1a
+</TASK>
 
 
