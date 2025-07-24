@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-743465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF3EB0FEFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5483B0FF0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E58EA1C86A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CAC27B0D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D11D435F;
-	Thu, 24 Jul 2025 02:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813EE1D63C6;
+	Thu, 24 Jul 2025 03:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuQDzZ8i"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZ7gOIW+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB16B22097;
-	Thu, 24 Jul 2025 02:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849E11BF58;
+	Thu, 24 Jul 2025 03:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753325812; cv=none; b=gU7cR5UcaD98R+GpJuRxQ3t4kccFm8x6bOGXreABeNRybqokv9Bf4mhuReU/GTX/VCR+2pqYhFD+dD9AoDFBO7w9qfKZ/ep1LFRJZTCoxyvJ7piF+9wZt3noARZpwFBf3o4opSIyQHEZJtDmPYzYuxtvQos7ZBSkuBr88Zfd+I4=
+	t=1753326204; cv=none; b=FiC7TtQoXmb8o2lN0Uk5Kk2GCxIQotIZ42CYrQFrA7HbJiLnrTHhx2jjjGxOBfP4QgNPvdiRTE4wUF1FbmOGfuPdm2VddPSy94wuyYm4bnhE7gwKlSVjqrhMsEqaW4e6Whmk9qtKXIgAUFEWczFRrBKZL/CjS2de8NNu6nkDemY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753325812; c=relaxed/simple;
-	bh=ip9ziZYE5eZvikPAFgwXSpayvsK86shMh5uv/cgNrvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WLyq2TIBLBlT7Io52gZZno3ygmxo5aLGFvG3nGdh9eosic5jL9/aMLdjlovVU8fch/ItEA1eb8shXDGZBm09q4omeUzB8527vs9KCEBIwTY0Ge+IIJe+l4CNeEMpNhuggrjV4jMkDJqMs9l+qN8+xTGXOUaGwkzQq6OadllnToI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuQDzZ8i; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e32cf22fdfso57225085a.0;
-        Wed, 23 Jul 2025 19:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753325810; x=1753930610; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Tya8198c6y5rCjUglNzcQUyG1Q0GYdplJmKHDjoJPmk=;
-        b=VuQDzZ8iRVpuLDo6CwfGb5CCnlF0v0q3QUVAr+6torWT5CswE3VqTl7o/mvqxpN7Ys
-         PX8RsoYWvidgc87UaHkITbHkqHO1Lf0Qi0AXeWQE+fJ1ZO/4Xwa7lOTovwfBwlZgEUkz
-         kn0tn53hqKetpQDzpkosNj7CwGtRW7mst7/n9e40tqzemXjUJRfSZpkst8Bytq1p/uhd
-         5yz3uQF38HmXYOLrrF6LAy//c11UKZfT9jQNV5lwIb5akhQMIN7rjSKhe/qOzn1thK/t
-         xjg/d1/tjS3uxBoEPoctKjjPCLdRniSavzFW+ebOdFaXLek9WnJk9YYV8JuaEzUlNtZ9
-         lHBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753325810; x=1753930610;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tya8198c6y5rCjUglNzcQUyG1Q0GYdplJmKHDjoJPmk=;
-        b=JYSYlVfZ0JS+4qPmtcmeVvUQTjG22dLWSM3gJu5GwWYAMEMB2CWJaZlIXBsIhqdHaw
-         gd0PPMWYXST3988XGRPnzHZ6VPwhT7Vi3SgzwKN3vom69+g9RlVIzWu3eopdjPVswBzG
-         7cHO3CdJQBynPj21GsyAwv6cHurgIgvTJiUZQ6ElCCdTmW+5fMg57RBgks3QXtC9v4wU
-         O/vwp40iRW4oO07eW2gf+D6rslWIfIZS6eomb2jSWS//qZehz4nuDTvlirQaDLrSeJAd
-         MFCzWdGgfIDrN9FCNQKTbMZTbMSrEO6xhFYJ8i4FCyfxvpGQ6EqMKwPFHrTf6UzetCbB
-         zBdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWpPItpEXVFgauXzJSwcQz4h0NWhr9Qw8sQWD0rv8AOlu5bezBv5A/0daLVEZmjC7GBLiQq9H45ueIQQ==@vger.kernel.org, AJvYcCV+u4JUDtRd0lqiLxuFozD0TH8iiBQsuOxmbtMzSHbjB1BNmFOpbSG/vqisvoCb/vu0LfixoQeN3dHm8Si+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtwO1lbIJqvBytSgQQZOgHRYeBZ0q2H4dYEyDh03/KZKSDTxqN
-	52RbZBo6EtUPk7MRfz4DCNGlZzWkl19bx032QAqgafm6GJbSXJzLWu8y
-X-Gm-Gg: ASbGncss7kvqC+GG6khhziXKn1J02NmVFrg2l1/Uyg4/2zYOdUMZud5pfwYLt24m0pC
-	ujeVmOPSsw5e2uwwDmocieNKRP85jNYSEZ43EUf2Z9V7IMFqhyegRmBInAyygHF/bteZwtOfEOx
-	5TjnO7f7z7mBfrl+5lorFG9nLKeE6MZzqt6OMi2hJh+s8XEGM0X8O4NgTgX5pADbXW6QjzzILXd
-	b8Sm3dbfQ39C7aVYViG2dOZ0RTpCvGMEBEnDPGEOv3SWuthibTQ2cRdtPxkPQNUn8vm5iofb4Gt
-	LF4oJB6UZnE3pSxJ3l/vLUCqOsHL9WtHQMd1IN2UvG5peEUQRANQ/vOgk2A7EbfzGjKEj25PzFU
-	2f24atpHJxg==
-X-Google-Smtp-Source: AGHT+IE520yI5+0BPKLPxQW3nyViV/NFLkZpgJ6MunrUBo0qqOXFxpUrTpHAPcr4S00JME2ig8XXiQ==
-X-Received: by 2002:a05:620a:3bcc:b0:7d3:fb3a:675b with SMTP id af79cd13be357-7e62a1573d5mr588472885a.35.1753325809726;
-        Wed, 23 Jul 2025 19:56:49 -0700 (PDT)
-Received: from pc ([165.51.88.28])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632d6413csm50641385a.29.2025.07.23.19.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 19:56:49 -0700 (PDT)
-Date: Thu, 24 Jul 2025 03:56:45 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Helge Deller <deller@gmx.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] fbdev: atmel_lcdfb: Fix potential NULL dereference
-Message-ID: <aIGg7erPjz1qJQ1F@pc>
+	s=arc-20240116; t=1753326204; c=relaxed/simple;
+	bh=kmKfDqwToB2wQazMZlvCLP2VSC7ACpEaqy/OGDLkVTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YgOUPMJyRH4HET6T/MJxPh/p5VHlgvmiX1TxIFjopfAIXNmN3oFToMVWb3oKkgf2OWEDec6hCSjLaH7xS9Rz6vVr5pGjuZqbssnHu580MKBYQAwKMjB/as3FjfVtPTjP+qv6Y8AvrUcbyil+0bwodf87tlZKsn9rATIFRF/7Vl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZ7gOIW+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753326203; x=1784862203;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kmKfDqwToB2wQazMZlvCLP2VSC7ACpEaqy/OGDLkVTc=;
+  b=fZ7gOIW+9IKbq6xarDRChBZEVlYmaEYqAZpxWZL5PWUSpW7b3QDXubEY
+   K3z05xjHmxXrKvt4FGKjhy0mNbpi6KK2iUAbLa7k5fZ5SG0ouI1U9/U3r
+   mU7CTWxQfnHPv6pUIOrbwAmo/xHiHqVTm+2ZaXchP6NKFvOPKrxyCzW+S
+   KDWxCVjSSJg77wx2XV99wjCqeU7e74LrObwda8QeFCalieXDgrc3aALE7
+   ddSaDKFuQwlzmK1nPOoSgamOfIN9JxHtZrfCpgoUBLC5NJpQ1HzZMywwR
+   Iqy5CtkYvkzOl3F9mXCRJ/nXtk5QhREo5g6oxq1TB35GWR05P4QB6NvVX
+   g==;
+X-CSE-ConnectionGUID: Mf5cPKQFSzWKCYVkRZEIaA==
+X-CSE-MsgGUID: IM0OYFkMTQ6s5Grz7TmFUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55501045"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="55501045"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 20:03:23 -0700
+X-CSE-ConnectionGUID: NOnQGpbMQ5KTds/Btk2D2w==
+X-CSE-MsgGUID: bAlQREAIR+6Es9SYo8nZXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="197049249"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 20:03:18 -0700
+Message-ID: <2a1ffe30-b0a6-45b3-8dcb-feaa285e1e5b@linux.intel.com>
+Date: Thu, 24 Jul 2025 11:01:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Yu Zhang <zhangyu1@linux.microsoft.com>,
+ Dave Hansen <dave.hansen@intel.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>,
+ iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
+ <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
+ <326c60aa-37f3-458d-a534-6e0106cc244b@intel.com>
+ <20250710132234.GL1599700@nvidia.com>
+ <62580eab-3e68-4132-981a-84167d130d9f@intel.com>
+ <6dn5n5cge7acmmfgb5zi7ctcbn5hiqyr2xhmgbdxohqydhgmtt@47nnr4tnzlnh>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <6dn5n5cge7acmmfgb5zi7ctcbn5hiqyr2xhmgbdxohqydhgmtt@47nnr4tnzlnh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-of_match_device() returns NULL in case of failure, so check its return
-value before casting and accessing to data field in order to prevent NULL
-dereference.
+On 7/11/25 16:17, Yu Zhang wrote:
+> On Thu, Jul 10, 2025 at 08:26:06AM -0700, Dave Hansen wrote:
+>> On 7/10/25 06:22, Jason Gunthorpe wrote:
+>>>> Why does this matter? We flush the CPU TLB in a bunch of different ways,
+>>>> _especially_ when it's being done for kernel mappings. For example,
+>>>> __flush_tlb_all() is a non-ranged kernel flush which has a completely
+>>>> parallel implementation with flush_tlb_kernel_range(). Call sites that
+>>>> use_it_ are unaffected by the patch here.
+>>>>
+>>>> Basically, if we're only worried about vmalloc/vfree freeing page
+>>>> tables, then this patch is OK. If the problem is bigger than that, then
+>>>> we need a more comprehensive patch.
+>>> I think we are worried about any place that frees page tables.
+>> The two places that come to mind are the remove_memory() code and
+>> __change_page_attr().
+>>
+>> The remove_memory() gunk is in arch/x86/mm/init_64.c. It has a few sites
+>> that do flush_tlb_all(). Now that I'm looking at it, there look to be
+>> some races between freeing page tables pages and flushing the TLB. But,
+>> basically, if you stick to the sites in there that do flush_tlb_all()
+>> after free_pagetable(), you should be good.
+>>
+>> As for the __change_page_attr() code, I think the only spot you need to
+>> hit is cpa_collapse_large_pages() and maybe the one in
+>> __split_large_page() as well.
+>>
+>> This is all disturbingly ad-hoc, though. The remove_memory() code needs
+>> fixing and I'll probably go try to bring some order to the chaos in the
+>> process of fixing it up. But that's a separate problem than this IOMMU fun.
+>>
+> Could we consider to split the flush_tlb_kernel_range() into 2 different
+> versions:
+> - the one which only flushes the CPU TLB
+> - the one which flushes the CPU paging structure cache and then notifies
+>    IOMMU to do the same(e.g., in pud_free_pmd_page()/pmd_free_pte_page())?
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/video/fbdev/atmel_lcdfb.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ From the perspective of an IOMMU, there is no need to split. IOMMU SVA
+only allows the device to access user-space memory with user
+permission. Access to kernel address space with privileged permission
+is not allowed. Therefore, the IOMMU subsystem only needs a callback to
+invalidate the paging structure cache.
 
-diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
-index 9dfbc5310210..b1017ac9c73b 100644
---- a/drivers/video/fbdev/atmel_lcdfb.c
-+++ b/drivers/video/fbdev/atmel_lcdfb.c
-@@ -922,6 +922,7 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	struct device *dev = &sinfo->pdev->dev;
- 	struct device_node *np =dev->of_node;
- 	struct device_node *display_np;
-+	const struct of_device_id *match;
- 	struct atmel_lcdfb_power_ctrl_gpio *og;
- 	bool is_gpio_power = false;
- 	struct fb_videomode fb_vm;
-@@ -930,8 +931,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
- 	int ret;
- 	int i;
- 
--	sinfo->config = (struct atmel_lcdfb_config*)
--		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
-+	match = of_match_device(atmel_lcdfb_dt_ids, dev);
-+	if (!match)
-+		return -ENODEV;
-+
-+	sinfo->config = (struct atmel_lcdfb_config *)match->data;
- 
- 	display_np = of_parse_phandle(np, "display", 0);
- 	if (!display_np) {
--- 
-2.43.0
-
+Thanks,
+baolu
 
