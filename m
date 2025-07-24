@@ -1,90 +1,74 @@
-Return-Path: <linux-kernel+bounces-743738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105DFB102A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAEDB102C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 327B95A031B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2DF1706AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB8F273D92;
-	Thu, 24 Jul 2025 08:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E04272801;
+	Thu, 24 Jul 2025 08:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="tk7/7LQx"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013034.outbound.protection.outlook.com [40.107.162.34])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BnfDBOwG"
+Received: from mail-m32120.qiye.163.com (mail-m32120.qiye.163.com [220.197.32.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158EC273D86;
-	Thu, 24 Jul 2025 08:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344161; cv=fail; b=Vp73SxAc6rXA3dXiWYIfRcvkHYdCAiiT0sIV4GW13/V7O76EwR+Zv3fLN+0nbMIth4zmXBDv1fhZmsktogZzErn1JDYY5rVhhxAHo7lZE83Z6eUrLTLWjeerE20rTaBd/m1W8rrapndgxRGOuWIaPoU+E7cO9ULZYcDT6wqKPvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344161; c=relaxed/simple;
-	bh=fwSizUpSkqsnZx5PqQ/dxN4Pdii1OKCwjFrF7t2a6dQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oC6/ahfNoIiNUjoDOniwv08PtUXps5huZqUOEmjdLBuc5gzEAG5AnDBRRuSfTS8Aad7BI6MlPXCIQvwvHv+yybTUnb6hl/fXKXgrA6Vz3f64+neuP8LLnbUhZbVg1W2J9pYboOMJ3+8wopaogmHEOzVnm/92JqW4AykIzsfbdlc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=tk7/7LQx; arc=fail smtp.client-ip=40.107.162.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w9KgkdYE8qFTgRqC3xX+ax20RsmlmMbt2BqXaNByRZnj+YvPIYtKJtxjTxVVHWNhLqRuagBZsBKpzZxYXXsiPrGKLwq1SeB98Y6Lq6Po3g0teBMYTk/Jjn/H1+b/H5QjMjnHZraj1YfELCRAevdZC28ECg0UTlNMqW/GkS64LMs0oXiJyLblWwtxh4yS5Tj0C3j6nPhfZzgfRYr2v1CgOOJ2ylmq55vCOEIR1eNVzfvhMx9uR5xJaXV7dgTTRp851i449WXvzAkNQ6uUCDCLKDG2nMfdaY3/vfPt0f/FIJLKBCtCEFHG5FyoVyvDtBcDc9u7Kh3ydtmAvYjorRczlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gnCNIOfn1E2adG2rM9z752G9+Fco4Niri/25c0/8rM8=;
- b=ZOrqjVGcWZItgUF7/Ia+xyJHjOM3dLJsdqk4fLshrpJV8uvGHTlNF59IoMnOMrWGh4CX8Jk5SbevClMPeCwcpBje5rRgT9/RuufH4wNC9XznsVe5jAyvs60eJUwCOEvu+qXjuPBnxFmSjPK82MNWAtr6JbtGwgbK6GOZGlQPp+62XhFNTh0IYsZEmKWfwpMmRmUi3FOmdGgjf1nhP3F3WP+Q0VV1MD4JrXbijEHDcKsQRs4JktR41L551I4khrsMOkEo/IELQ3q24Tyif6SzSrEeZpUwZpFh10kcTvrkS54Xl7rBmdGrGcFYGpNyJ4O7jyW6LEUWpBil8fcDRoNO7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
- pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=leica-geosystems.com.cn; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gnCNIOfn1E2adG2rM9z752G9+Fco4Niri/25c0/8rM8=;
- b=tk7/7LQxTvXqoG6OFmvagliIeUsPh9LDZ22WNGL7PIyWe+ahD3bzJ1TT+lOzY3mgaBe6O5QTdMDUfDZtYX6zxf5uisUSqR068adPtUee7bR30SQg9gMvztkuvKHDw4x1V8jSKD4a3dSYMaT6PwhM1GMDQIZkQdHUcc72ZN2zX0Y=
-Received: from PAZP264CA0046.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1fc::8)
- by VI1PR06MB6479.eurprd06.prod.outlook.com (2603:10a6:800:12d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Thu, 24 Jul
- 2025 08:02:32 +0000
-Received: from AM2PEPF0001C70E.eurprd05.prod.outlook.com
- (2603:10a6:102:1fc:cafe::7f) by PAZP264CA0046.outlook.office365.com
- (2603:10a6:102:1fc::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.22 via Frontend Transport; Thu,
- 24 Jul 2025 08:02:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- AM2PEPF0001C70E.mail.protection.outlook.com (10.167.16.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Thu, 24 Jul 2025 08:02:32 +0000
-Received: from GEO-W5CG2253GWB.lgs-net.com ([10.132.33.42]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Thu, 24 Jul 2025 10:02:31 +0200
-From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A43327147D;
+	Thu, 24 Jul 2025 08:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.120
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753344213; cv=none; b=XQ4PgSW8caLVMenm4HxlIXqL+dyP1szhk8Mhevg2cXLJ0Y653Ax32n91RniiGJzN2X8qtMEcBzbSj/dQP+YPkpjg4StnXUyNjTGBvg35Jdsh5ctQU8T7wlGWLitj4aOZVTJcAgUkSGeFXwqP9yqy9ZuaBl6qMwzu4s1lYQEIDdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753344213; c=relaxed/simple;
+	bh=3xQYD58mFmghAcfEZ+1U73cxFtAHLs1gyXKdCXJgmsQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Vs3t6bgB0MfZ0mTzuVXTkYtHYYKgRTu6QYhFckx+923D9655yKsm0RDI5ciBE3xkHDtT4plavfST31cfbGQ29ckjd5dPq55/O09TuTS+pVUrQIQXCb81OIfx1ARHezmc5E0pDKVhNgS8yJnaNo2FBeI5LGMBpxLOxaajyYHX2N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BnfDBOwG; arc=none smtp.client-ip=220.197.32.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c343ac;
+	Thu, 24 Jul 2025 16:03:19 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Qing-wu.Li@leica-geosystems.com.cn
-Subject: [PATCH V8 2/2] leds: pwm: Add optional GPIO enable pin support
-Date: Thu, 24 Jul 2025 16:02:21 +0800
-Message-ID: <20250724080221.7562-3-Qing-wu.Li@leica-geosystems.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250724080221.7562-1-Qing-wu.Li@leica-geosystems.com.cn>
-References: <20250724080221.7562-1-Qing-wu.Li@leica-geosystems.com.cn>
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 02/14] drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to &drm_bridge_funcs.atomic_enable
+Date: Thu, 24 Jul 2025 16:02:52 +0800
+Message-Id: <20250724080304.3572457-3-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,124 +76,226 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Jul 2025 08:02:31.0691 (UTC) FILETIME=[4E8CB5B0:01DBFC71]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM2PEPF0001C70E:EE_|VI1PR06MB6479:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fd495326-da11-45a5-54b5-08ddca887156
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T5vJklXhIsQk/w3m3iCU4e84MgqB2KJaEzY1OKL0E/txh4N8rG4Jp32t+Eyx?=
- =?us-ascii?Q?A0+DyC9Z+As3e6nWBU0jAyKnMU8mp0vW4lbSBgmOz/9671c4+gr6Nb4jXgDx?=
- =?us-ascii?Q?ylH6QJ2BQTjgmXPAqphPCJbAmxlH4erN2iQyThl2fcHVyu+kONXpj+d9NONr?=
- =?us-ascii?Q?Kn2jWJLDYhcssrXduuE/FoBNxO38WA+RT5gcRgLhc8jBvnqFHxeCTo45jLFH?=
- =?us-ascii?Q?2JeUatlhJX9em7coUQV8EkH5kq1eMNHurCgjPCJaXIItioETk/C3LqsYp5n0?=
- =?us-ascii?Q?udAYjYAqmL+X8vReGrqUdonjXJXqgT/DljIpCKusnOjKii64KbCowHjID4dZ?=
- =?us-ascii?Q?Oh03T8LWAUHciF0gqPOur7vGMeiI+VzmFSAgghMmYhgsABei5lFiF5PbfEMF?=
- =?us-ascii?Q?W8xXrWcEC6h2ClW+a1QbaRI7I5OvorJQLx48haIJBMFwkPv+5xgqhh0uYt6J?=
- =?us-ascii?Q?0bXLGMJqHXxfBYHpq5wQYwEl7OI8YHHCoDhQYn9yPmC1KpkA+GO/9aAsuUXo?=
- =?us-ascii?Q?mveKMG5zdAwOnsbwCiYQ8UsGppQfFkTxNwCMJ03AJ39hZ+hALsiKzkUSJGUN?=
- =?us-ascii?Q?WWkDOb2Xm/vvAjBwELfA6WJz8Qw8dclOpwhvVp2EfSjshkdrLiXqrtaFZJ4K?=
- =?us-ascii?Q?NbdNvIUTyP5hURna5u82++EsPuBHQB0fNaODbqDZ2ghfs99ugtXAuvrwUrqG?=
- =?us-ascii?Q?QGvg8aHr+vcK/MGH656/Het2/Dts+/+47VPphP0BJE8K9pn/DemVrG+oqa43?=
- =?us-ascii?Q?Qz8awuY6KFgTRgsKdvyLngY+oV/Ax+bm4C59vqfq9AKjrHnUMe2xeKebUh/v?=
- =?us-ascii?Q?scNpFTyLmDip8Idcm7Jf6nYja9K3VmQPvTHM8owHzHeHniiU7pgexUb1DzEI?=
- =?us-ascii?Q?mSjC/mPG3cRAWTX6YZ6MJRj7zpYskD9HFs31X8wkP3BxzBWrra4pD0Ib1Djx?=
- =?us-ascii?Q?d4jvSGMFi2fj2IjmuIFM0mbHqg/gMSLHfwHUw550dhWoYDQy4qixDRyFpTCE?=
- =?us-ascii?Q?x/LRRQsuiDKYFzgblsaFBIqJgvpJuRRDKhWynz1cF5nAuuWgwNdtCORr7UvL?=
- =?us-ascii?Q?/+DCEc3pkcAX/AoiGBOVdrGy6u2yzHktu2NCfxfarCFNa9BdyJzT/Ixw5uPh?=
- =?us-ascii?Q?sewm+lPxEAsThrsHQcISpeAEZiLJUug702uW1ud+MeKxbJ8hmITELyFDCOca?=
- =?us-ascii?Q?ocYB+H/QDF4TlHpEf3fdUOFbUcIyvTtPQn4IkUE/dveI7lj6AoXJhc/Zxcwn?=
- =?us-ascii?Q?vzoSelr1cfcJMFFQslU5yWAU/qR/+VerljTbVQWq8p6SZKMto3EKuyctsndN?=
- =?us-ascii?Q?I1BYTKMYbAIWhvRPakr8flokSpdJiFGiqxFzLOUfLk0SrCQbb43kNVf9eDxO?=
- =?us-ascii?Q?bFmznTs64wofJQBf3D9U1M8+SmWfZ4nShuEbgYHvQUV43/yOaUDCRQXjfs12?=
- =?us-ascii?Q?DmwZ6DYPLSmNXoLQ0pJwENimWf5Y7vHzaFAagc0etlo5Uu0KE7gAZQXmFJkj?=
- =?us-ascii?Q?fJ6sFcQ7+QxxuhOwgSugsLxYw0D1y0i5H7b6?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com.cn
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 08:02:32.1372
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd495326-da11-45a5-54b5-08ddca887156
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C70E.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB6479
+X-HM-Tid: 0a983b754bd503a3kunmbbba7af29de8
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5NTVYeGkJIQhkdQk0fSE1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=BnfDBOwGRxTL7kryxwnR4u/GLr0CZh28iSz8X6EV2jJWwz16teYYaO0UR5gtmvpek/2Xky+o4vVveJEmP6DdC99hc6onQga9pHeEer7NcxQFj849c8Npk5yaIpdVBzfP/whC8LJ223QbuemPTvay5azih8x6qYVjggJDjImdWz0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=iRIQPqf5FgKCUcwwQNJRIfqVXyG5a6BwS2hQtnRVAHU=;
+	h=date:mime-version:subject:message-id:from;
 
-Add support for optional GPIO-based enable pin control to PWM LED driver.
-Some PWM LED driver chips like TPS92380 and LT3743 require a separate
-enable signal in addition to PWM control. Implement support for such
-GPIO control through the "enable-gpios" device tree property, activating
-the pin when LED brightness is non-zero and deactivating it when off.
+According to the include/drm/drm_bridge.h, the callback
+&drm_bridge_funcs.mode_set is deprecated and it should be better to
+include the mode setting in the &drm_bridge_funcs.atomic_enable instead.
 
-Tested on i.MX8MP EVK with TPS92380 LED driver chip
-
-Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/leds/leds-pwm.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 161 +++++++++---------
+ 1 file changed, 82 insertions(+), 79 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index c73134e7b9514..08a1f735166ad 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/pwm.h>
- #include <linux/slab.h>
-+#include <linux/gpio/consumer.h>
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index ed35e567d117..0106e7e0f093 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1177,12 +1177,88 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	return ret;
+ }
  
- struct led_pwm {
- 	const char	*name;
-@@ -29,6 +30,7 @@ struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
- 	struct pwm_state	pwmstate;
-+	struct gpio_desc	*enable_gpio;
- 	unsigned int		active_low;
- };
- 
-@@ -51,6 +53,8 @@ static int led_pwm_set(struct led_classdev *led_cdev,
- 	if (led_dat->active_low)
- 		duty = led_dat->pwmstate.period - duty;
- 
-+	gpiod_set_value_cansleep(led_dat->enable_gpio, brightness == LED_OFF ? 0 : 1);
++static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
++					const struct drm_display_mode *mode)
++{
++	struct analogix_dp_device *dp = to_dp(bridge);
++	struct drm_display_info *display_info = &dp->connector.display_info;
++	struct video_info *video = &dp->video_info;
++	struct device_node *dp_node = dp->dev->of_node;
++	int vic;
 +
- 	led_dat->pwmstate.duty_cycle = duty;
- 	/*
- 	 * Disabling a PWM doesn't guarantee that it emits the inactive level.
-@@ -132,6 +136,22 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		break;
- 	}
- 
-+	/*
-+	 * Claim the GPIO as GPIOD_ASIS and set the value
-+	 * later on to honor the different default states
-+	 */
-+	led_data->enable_gpio = devm_fwnode_gpiod_get(dev, fwnode, "enable", GPIOD_ASIS, NULL);
++	/* Input video interlaces & hsync pol & vsync pol */
++	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
++	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
++	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
 +
-+	if (IS_ERR(led_data->enable_gpio)) {
-+		if (PTR_ERR(led_data->enable_gpio) == -ENOENT)
-+			/* Enable GPIO is optional */
-+			led_data->enable_gpio = NULL;
-+		else
-+			return PTR_ERR(led_data->enable_gpio);
++	/* Input video dynamic_range & colorimetry */
++	vic = drm_match_cea_mode(mode);
++	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
++	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR601;
++	} else if (vic) {
++		video->dynamic_range = CEA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
++	} else {
++		video->dynamic_range = VESA;
++		video->ycbcr_coeff = COLOR_YCBCR709;
 +	}
 +
-+	gpiod_direction_output(led_data->enable_gpio, !!led_data->cdev.brightness);
++	/* Input vide bpc and color_formats */
++	switch (display_info->bpc) {
++	case 12:
++		video->color_depth = COLOR_12;
++		break;
++	case 10:
++		video->color_depth = COLOR_10;
++		break;
++	case 8:
++		video->color_depth = COLOR_8;
++		break;
++	case 6:
++		video->color_depth = COLOR_6;
++		break;
++	default:
++		video->color_depth = COLOR_8;
++		break;
++	}
++	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
++		video->color_space = COLOR_YCBCR444;
++	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
++		video->color_space = COLOR_YCBCR422;
++	else
++		video->color_space = COLOR_RGB;
 +
- 	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
- 	if (ret) {
- 		dev_err(dev, "failed to register PWM led for %s: %d\n",
++	/*
++	 * NOTE: those property parsing code is used for providing backward
++	 * compatibility for samsung platform.
++	 * Due to we used the "of_property_read_u32" interfaces, when this
++	 * property isn't present, the "video_info" can keep the original
++	 * values and wouldn't be modified.
++	 */
++	of_property_read_u32(dp_node, "samsung,color-space",
++			     &video->color_space);
++	of_property_read_u32(dp_node, "samsung,dynamic-range",
++			     &video->dynamic_range);
++	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
++			     &video->ycbcr_coeff);
++	of_property_read_u32(dp_node, "samsung,color-depth",
++			     &video->color_depth);
++	if (of_property_read_bool(dp_node, "hsync-active-high"))
++		video->h_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "vsync-active-high"))
++		video->v_sync_polarity = true;
++	if (of_property_read_bool(dp_node, "interlaced"))
++		video->interlaced = true;
++}
++
+ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 					     struct drm_atomic_state *old_state)
+ {
+ 	struct analogix_dp_device *dp = to_dp(bridge);
+ 	struct drm_crtc *crtc;
+-	struct drm_crtc_state *old_crtc_state;
++	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
+ 	int timeout_loop = 0;
+ 	int ret;
+ 
+@@ -1190,6 +1266,11 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	if (!crtc)
+ 		return;
+ 
++	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
++	if (!new_crtc_state)
++		return;
++	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
++
+ 	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
+ 	/* Not a full enable, just disable PSR and continue */
+ 	if (old_crtc_state && old_crtc_state->self_refresh_active) {
+@@ -1296,83 +1377,6 @@ static void analogix_dp_bridge_atomic_post_disable(struct drm_bridge *bridge,
+ 		DRM_ERROR("Failed to enable psr (%d)\n", ret);
+ }
+ 
+-static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+-				const struct drm_display_mode *orig_mode,
+-				const struct drm_display_mode *mode)
+-{
+-	struct analogix_dp_device *dp = to_dp(bridge);
+-	struct drm_display_info *display_info = &dp->connector.display_info;
+-	struct video_info *video = &dp->video_info;
+-	struct device_node *dp_node = dp->dev->of_node;
+-	int vic;
+-
+-	/* Input video interlaces & hsync pol & vsync pol */
+-	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+-	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
+-	video->h_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NHSYNC);
+-
+-	/* Input video dynamic_range & colorimetry */
+-	vic = drm_match_cea_mode(mode);
+-	if ((vic == 6) || (vic == 7) || (vic == 21) || (vic == 22) ||
+-	    (vic == 2) || (vic == 3) || (vic == 17) || (vic == 18)) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR601;
+-	} else if (vic) {
+-		video->dynamic_range = CEA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	} else {
+-		video->dynamic_range = VESA;
+-		video->ycbcr_coeff = COLOR_YCBCR709;
+-	}
+-
+-	/* Input vide bpc and color_formats */
+-	switch (display_info->bpc) {
+-	case 12:
+-		video->color_depth = COLOR_12;
+-		break;
+-	case 10:
+-		video->color_depth = COLOR_10;
+-		break;
+-	case 8:
+-		video->color_depth = COLOR_8;
+-		break;
+-	case 6:
+-		video->color_depth = COLOR_6;
+-		break;
+-	default:
+-		video->color_depth = COLOR_8;
+-		break;
+-	}
+-	if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR444)
+-		video->color_space = COLOR_YCBCR444;
+-	else if (display_info->color_formats & DRM_COLOR_FORMAT_YCBCR422)
+-		video->color_space = COLOR_YCBCR422;
+-	else
+-		video->color_space = COLOR_RGB;
+-
+-	/*
+-	 * NOTE: those property parsing code is used for providing backward
+-	 * compatibility for samsung platform.
+-	 * Due to we used the "of_property_read_u32" interfaces, when this
+-	 * property isn't present, the "video_info" can keep the original
+-	 * values and wouldn't be modified.
+-	 */
+-	of_property_read_u32(dp_node, "samsung,color-space",
+-			     &video->color_space);
+-	of_property_read_u32(dp_node, "samsung,dynamic-range",
+-			     &video->dynamic_range);
+-	of_property_read_u32(dp_node, "samsung,ycbcr-coeff",
+-			     &video->ycbcr_coeff);
+-	of_property_read_u32(dp_node, "samsung,color-depth",
+-			     &video->color_depth);
+-	if (of_property_read_bool(dp_node, "hsync-active-high"))
+-		video->h_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "vsync-active-high"))
+-		video->v_sync_polarity = true;
+-	if (of_property_read_bool(dp_node, "interlaced"))
+-		video->interlaced = true;
+-}
+-
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+@@ -1381,7 +1385,6 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_enable = analogix_dp_bridge_atomic_enable,
+ 	.atomic_disable = analogix_dp_bridge_atomic_disable,
+ 	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
+-	.mode_set = analogix_dp_bridge_mode_set,
+ 	.attach = analogix_dp_bridge_attach,
+ };
+ 
 -- 
-2.43.0
+2.34.1
 
 
