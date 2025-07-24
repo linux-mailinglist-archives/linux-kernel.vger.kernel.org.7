@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-744167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03CDB108EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:16:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8A0B108B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6208172B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:16:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025F17A886D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FA5FC0A;
-	Thu, 24 Jul 2025 11:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1F426E153;
+	Thu, 24 Jul 2025 11:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="m24rYpw0"
-Received: from smtp121.ord1d.emailsrvr.com (smtp121.ord1d.emailsrvr.com [184.106.54.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZQRW4qh"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD77B24A05D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4326C3A4;
+	Thu, 24 Jul 2025 11:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355807; cv=none; b=UugipOb4rN2GNvp8L0NGbfoZwg3SeGJPNQtimtXS/ksfISL8TlR717RlfvzDGi9YhsVlffQHOJ/bdtWLjROxlbA/r47+xRJSK1Uj13yqbG1+Fl7/JxFjA0/lIqhryd9Rv8Wx9JE7V/mB7LmmxDLe2qQ6K0Mz8bM6emtNGSj2Z3w=
+	t=1753355514; cv=none; b=DEBeKm9r8K1dfmVHLZftnrLq7Ar3Oct1mMD7I64s98n7ncWzLH+gl0igrtPJuQ+7xFNVC+orj8rDX6VBOPDxDP9yAUDhsuN87v/FrSNftJ2TK1wbIFV+aV2wJeknJEN6A4UBmNvzqaYjLy/s4WTh8R1BWjeqtfgR6RscGqpelXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355807; c=relaxed/simple;
-	bh=l1hhrAv+zcbtM8WhB81XgFPZP4CulIQB5EGj0F+Ig2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nAkInbyul5+L4pq/q6tfi+D/vkvFCMimMQNQLNmlh5RpMILvmL/DODfPkr51m+KJKYGtgpaOijKeDcFDlFU+c5pjsW9kM73OZcF74YZa+WOmjPh5CqCHU9UGUoxq6nETx50mp8rPhcUEedvpZEBrIqWaSIHuIdsQCdjXlu467lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=m24rYpw0; arc=none smtp.client-ip=184.106.54.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1753355472;
-	bh=l1hhrAv+zcbtM8WhB81XgFPZP4CulIQB5EGj0F+Ig2w=;
-	h=Date:Subject:To:From:From;
-	b=m24rYpw0qZ/xRErrpQzbx05YHH6zKogzOZecuTs+g0y7gJytdID6Tes7l9PU5M3YJ
-	 i+domTznD+K1donCW4a75MyIIOUvekNRPNdOvfx6rB+0myeje2Fn2uzaEthwEDzCGj
-	 IyDLK1Un5N4hmquu1ghQoBH/W1CUh6jSHm5m/sHM=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp24.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 63CEDA00BB;
-	Thu, 24 Jul 2025 07:11:11 -0400 (EDT)
-Message-ID: <0dc7497f-0f90-4667-85e3-822ec5e98417@mev.co.uk>
-Date: Thu, 24 Jul 2025 12:11:10 +0100
+	s=arc-20240116; t=1753355514; c=relaxed/simple;
+	bh=rW6eweYjEhNfddmRprGQiSK1Ka0W7aGE0mUZqAQYMHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OY7l8jgE5I3oADHMotF+pVxt+gyeCp9EZWlxsCMVvZ+qKCEgJGzg2+EGcsXnDRKjfTZ3hsUBznckmF3LIXJck1TQi1h0Ixm4FA5hDqCKhYiYvG+LQ88jYZHSPqnQ3RLpfo0Eb8H1qFvc5+wAjn1A/AsaXrmuNmMt4ie/s9W3jPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZQRW4qh; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so5258345e9.0;
+        Thu, 24 Jul 2025 04:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753355511; x=1753960311; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
+        b=nZQRW4qhnSOMIOAN19ORRYMQUDmJnSw+IGVyQs7XoYfmJa61ZblGakL4QC5jNEnXvz
+         M6J7+DrKOhoLSTySQC+KZzxaoXTVmCsiz459aXmYkxF65frHLMJD4lKAO15dbiGAOeE0
+         NZ5NGqT+xRFmQn7X7x6b/g0t1W4wmn4Mc42W1pKAcEMQSdzVouN5SMYMORkOownsJVBN
+         5+4tS7nfpxFH9nx9KXxiGu+5Wnne2tvAhaKX7myiqGORACt/sKNxxFfxXQyFy5eSWkpF
+         zVvgnNhWuhx21gNMOr9HwxDIkEZydwUPIJ+HZXOPmCEhzP72BPIDUus4KL0M8pRsC5rj
+         UwNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753355511; x=1753960311;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
+        b=qBhCeS1OokrH5nBqO/9cFKx1WbGIBSGXQ+9i94cfVP5SaVTMvT5p/cPtqAwDWm1uNi
+         Wp2uJTxSRNWxT6yN06xrhGg+gpsx3D9Ur5SmbtLeSodUV+cEMRMYgcqYs3aUtXr8TOjd
+         xnutSdJlPis9K0G7vNwAY8bI6qcmRNFGHhd4xTJfdgNn9Xrs4NhvohcphYIrZHJcbO8h
+         D0721HvZFINJgeN1F/mTJmzdUOcoQog74wtXf03p9JAeJOcDixcuwLHRcwoh8ikOWHVQ
+         P/4kK9+DIwpEMFfAQAdnyUX9cIgUAF/6luT1GEbv8lr9SPRd7XU391hEYzPRI7QnB6Ga
+         LtZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUazdnbHH48NvoNv8ReBX4d8PC2TJIvFhWbb3oMXKSdu05KKQ+IthaBuCz6SWxLO1Z6AqR+7zB6FuiCtQ==@vger.kernel.org, AJvYcCVdPW2m/Hkv32WoPX+5wG3uk+TE4zJHAng5zZ5p+r/WvC3nP8nFgnHGJX+DMKm5gRPi/nrK+6E/bnIEv7PQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJjjqok0dzJewCNpdysisfUMc682tD2RsIyDbOOEasEZrwSj/a
+	sfL88TIIpbssnO7WARZwk5DImeoxpJCGIeH4aD+s/48On4dXBU78/BXT
+X-Gm-Gg: ASbGncsEJJuJ6S3xLh8+d0JZ/SYY+NWDoZyAmput1peHPYxZAGHD7CzT23fsQJMj1gS
+	E4YLmdUofzReeFD/1X2M3da2FMbrQBWDhPOLoMU4Zc97UDHufXU1ZwLrtq1Sg+krfafupyACQs4
+	BYGm4nUpa4FmEhvLNGY5aAxlrI00bmT0zmxZBuxqozvxSwImIa1v6wnpVbF+jd91QC1IOv67y3z
+	dkw80Fb02Jz7R0DeSWTm21NUAqXNCfXkTShokdydFGUzMwHNz9636LIJY9JqX4VrKSxu0pn9i8D
+	CpJfpOJrk0e3rkPSLsky+BR5NhjWQr4SlYeaRcViONM5nevO5eHdphM6CNCUXKhKZfbI8opsoGm
+	eBLQsEbeOo0SzZeluMnkj
+X-Google-Smtp-Source: AGHT+IHMwXOEmt/B+iD3qWA3UbigtYtOjMkSnVDF9plV1h01nJZP8fGi99c3B5hKHH66bYOCZTFXBw==
+X-Received: by 2002:a05:600c:358c:b0:456:11db:2f1e with SMTP id 5b1f17b1804b1-45868ca7563mr60549065e9.15.1753355510864;
+        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532b5asm16008315e9.5.2025.07.24.04.11.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] HID: Kconfig: Fix spelling mistake "enthropy" -> "entropy"
+Date: Thu, 24 Jul 2025 12:11:18 +0100
+Message-ID: <20250724111118.141114-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 REPOST] comedi: pcl726: Prevent invalid irq number
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- H Hartley Sweeten <hsweeten@visionengravers.com>,
- Edward Adam Davis <eadavis@qq.com>, syzkaller-bugs@googlegroups.com,
- stable@vger.kernel.org, syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-References: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
- <20250724110754.8708-1-abbotti@mev.co.uk>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20250724110754.8708-1-abbotti@mev.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: 07c8dfe5-5051-41bb-a700-a30324994bf5-1-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 24/07/2025 12:07, Ian Abbott wrote:
-> From: Edward Adam Davis <eadavis@qq.com>
-> 
-> The reproducer passed in an irq number(0x80008000) that was too large,
-> which triggered the oob.
-> 
-> Added an interrupt number check to prevent users from passing in an irq
-> number that was too large.
-> 
-> If `it->options[1]` is 31, then `1 << it->options[1]` is still invalid
-> because it shifts a 1-bit into the sign bit (which is UB in C).
-> Possible solutions include reducing the upper bound on the
-> `it->options[1]` value to 30 or lower, or using `1U << it->options[1]`.
-> 
-> The old code would just not attempt to request the IRQ if the
-> `options[1]` value were invalid.  And it would still configure the
-> device without interrupts even if the call to `request_irq` returned an
-> error.  So it would be better to combine this test with the test below.
-> 
-> Fixes: fff46207245c ("staging: comedi: pcl726: enable the interrupt support code")
-> Cc: <stable@vger.kernel.org> # 5.13+
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reported-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=5cd373521edd68bebcb3
-> Tested-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+There is a spelling mistake in the HID_U2FZERO description. Fix it.
 
-I forgot to append the changelog from the original email:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hid/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-V1 -> V2: combine test with old test
-V2 -> V3: fix misspelled
-
-Ian
-
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index a57901203aeb..79997553d8f9 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -1243,7 +1243,7 @@ config HID_U2FZERO
+ 
+ 	  U2F Zero supports custom commands for blinking the LED
+ 	  and getting data from the internal hardware RNG.
+-	  The internal hardware can be used to feed the enthropy pool.
++	  The internal hardware can be used to feed the entropy pool.
+ 
+ 	  U2F Zero only supports blinking its LED, so this driver doesn't
+ 	  allow setting the brightness to anything but 1, which will
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+2.50.0
+
 
