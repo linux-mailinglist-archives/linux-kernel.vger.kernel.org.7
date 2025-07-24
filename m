@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-743425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C22FB0FE80
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FCDB0FE82
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BF51886DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436BF3B3F2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540BF191F66;
-	Thu, 24 Jul 2025 01:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA8E192D8A;
+	Thu, 24 Jul 2025 01:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MO3RFTi7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6A614286;
-	Thu, 24 Jul 2025 01:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EnAfWo6y"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020614286;
+	Thu, 24 Jul 2025 01:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753322056; cv=none; b=W6FPc+++Oj68aMv+pOTW8AJJsoVk9NR1H2Kjb3piRbPCIH+hyl9iqrQv/9UkC9Wt0krpHiX+tSh1cMWxfMujL0up0FWSDEUFICGzBmOM7dQN7J2S6udpozB9rqAqn88rP83I/Ccp44ramaoJ30tuJ8Z2JsWcEIVlDgsNc0Wx0FM=
+	t=1753322088; cv=none; b=AUQJ82FI/7VEkPlr9RpBePnOqHqi28LYzjmJFyW2bG+PFOofNwN16osW0XKnrjhtbLwnO30ZPyHA3QIn1hrA1h7/dkwppAYjptoth4XPPLX5KgF2QdGzId6llcZyovmHXYhwcvuQl+lKo8OuybsGrEiYLqsdaG8va3ZU+ifsul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753322056; c=relaxed/simple;
-	bh=Pxu4/cpKolXWOoqW21DUGXbB+YPHAVPh65XJhh0scbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BlWkyZAGHkzDxcL/bRb03Dxb1F1RTl/RrgEoXcQOtnQAdKZRVccTLuV3xOC9Pl1Y2k9VgfCLucz9/PUoswmW146DHV7DQEBUB2Z0gTflzU15mXqt2r2cg/h53oe7hanqOm+mx84uttbBn2N3An1RGck1UpvBI76qVaSoSwM2iPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MO3RFTi7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753321880;
-	bh=Vjl8/nZPuhZeTZ6S3dzmBFZBP0glFW1rzB9CsZefNRg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MO3RFTi7/Oc7Y6rX8VBIq2Sdp6F2FiiA/gqOAg2OK1mS4C5mjDgLxH8/Gx1mYjuGu
-	 tcDN9Sxybrl9+Uj+wY7K4VgPNk2iM9DDZT+2E5sf95pmi1FX03Wb+6JOVdkFX6fkoi
-	 qkFsqjjO2V3z3Dql6UXazUti5RgC2jb3i4Y1iwGRAs51sEACGoOTLz/2yCYfDGqprP
-	 72DkUfR8oxYyVeRk/Vs9HYX3DRUwn2qKb75HgdUjmL/Dfu67ORHBPO22Rfz/7brcGZ
-	 4mGebRL6E8GCWPvQvdzs0yjLoKs1Y7aIo4ua8Qjym3GoguAANmG2T0NKMJrg4u/xHT
-	 IPWSM47DY/+iA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bnYrQ6xc0z4x21;
-	Thu, 24 Jul 2025 11:51:18 +1000 (AEST)
-Date: Thu, 24 Jul 2025 11:54:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Robert Marko <robert.marko@sartura.hr>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mfd tree
-Message-ID: <20250724115409.030d0d08@canb.auug.org.au>
+	s=arc-20240116; t=1753322088; c=relaxed/simple;
+	bh=TL2oFXIDdFEaQTeHY749EzPbR4yInffmqFMXyr9J8h4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BW90IuiDmN+qR+3gwgfUDUEYl7mOU8XzHd0PHGFk0EzOIkyPLY1CyXWxofcs88NlbjuqwDoiFdmuU8tQBBVwjEdl+d45hezsRmZ6cM1YpusJFfFN60CUXRMmZZMRotr7saDFQuMURUAl8+w1JwjkXqUCrpkt7O4eTeLAqjdP0Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EnAfWo6y; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=gt99ZL11NftF0tgwHS5Fp8cvOJq8ExHVRAMy6E/IxNA=;
+	b=EnAfWo6y+d1amiyQamzEYsuwyveMSeXEAx8zntSG+JnIbzl+ZXyMhrSpocSKP7
+	JsY2X6gIgA/CLH1GMKc4OjlcnyMN6rn6nTPYbMYSSoZZy6nUeKHmozktFG5t+VmD
+	XXj4I9CaS4Ehr7OpCwLQxYtLnAYklmdjJ7QNhUX9IL2QE=
+Received: from [10.42.12.6] (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3NWpQkoFodDt5Gw--.23202S2;
+	Thu, 24 Jul 2025 09:54:26 +0800 (CST)
+Message-ID: <07dd7e42-b2c4-4fbb-87f3-ab888d11256d@163.com>
+Date: Thu, 24 Jul 2025 09:54:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IkWpXAPTaSq+deO95ar+Slc";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] mm/filemap: Avoid modifying iocb->ki_flags for
+ AIO in filemap_get_pages()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Chi Zhiling <chizhiling@kylinos.cn>
+References: <20250723101825.607184-1-chizhiling@163.com>
+ <20250723101825.607184-3-chizhiling@163.com>
+ <aIDy076Sxt544qja@casper.infradead.org>
+Content-Language: en-US
+From: Chi Zhiling <chizhiling@163.com>
+In-Reply-To: <aIDy076Sxt544qja@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3NWpQkoFodDt5Gw--.23202S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJryUGF4fWw43Jr4xCFWxJFb_yoW8WrWUpr
+	WrAa4vka1xXa1UZrWfAw12qa1jg34DJayrA3W7Ka1DAr98t3sakF4ftFyjkay7Jrn8XF4I
+	va10yFykAFW0yrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRSD7-UUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiFASUnWiBj9Y5sAAAsg
 
---Sig_/IkWpXAPTaSq+deO95ar+Slc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2025/7/23 22:33, Matthew Wilcox wrote:
+> On Wed, Jul 23, 2025 at 06:18:24PM +0800, Chi Zhiling wrote:
+>> From: Chi Zhiling <chizhiling@kylinos.cn>
+>>
+>> Setting IOCB_NOWAIT in filemap_get_pages() for AIO is only used to
+>> indicate not to block in the filemap_update_page(), with no other purpose.
+>> Moreover, in filemap_read(), IOCB_NOWAIT will be set again for AIO.
+>>
+>> Therefore, adding a parameter to the filemap_update_page function to
+>> explicitly indicate not to block serves the same purpose as indicating
+>> through iocb->ki_flags, thus avoiding modifications to iocb->ki_flags.
+>>
+>> This patch does not change the original logic and is preparation for the
+>> next patch.
+> 
+> Passing multiple booleans to a function is an antipattern.
+> Particularly in this case, since we could just pass iocb->ki_flags
+> to the function.
+> 
+> But I think there's a less complicated way to do what you want.
+> Just don't call filemap_update_page() if there are uptodate folios
+> in the batch:
+> 
+> +++ b/mm/filemap.c
+> @@ -2616,9 +2616,10 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+>                          goto err;
+>          }
+>          if (!folio_test_uptodate(folio)) {
+> -               if ((iocb->ki_flags & IOCB_WAITQ) &&
+> -                   folio_batch_count(fbatch) > 1)
+> -                       iocb->ki_flags |= IOCB_NOWAIT;
+> +               if (folio_batch_count(fbatch) > 1) {
+> +                       err = -EAGAIN;
+> +                       goto err;
+> +               }
 
-Hi all,
 
-After merging the mfd tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Yes, this is a completely better way.
 
-WARNING: unmet direct dependencies detected for MFD_AT91_USART
-  Depends on [n]: HAS_IOMEM [=3Dy] && (ARCH_MICROCHIP || COMPILE_TEST [=3Dn=
-])
-  Selected by [y]:
-  - SERIAL_ATMEL [=3Dy] && TTY [=3Dy] && HAS_IOMEM [=3Dy] && COMMON_CLK [=
-=3Dy] && (ARCH_AT91 [=3Dy] || ARCH_LAN969X || COMPILE_TEST [=3Dn])
 
-Probably introduced by commit
+Would you mind if I add
+"Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>"
+in the next version?
 
-  ef37a1e24857 ("mfd: at91-usart: Make it selectable for ARCH_MICROCHIP")
+>                  err = filemap_update_page(iocb, mapping, count, folio,
+>                                            need_uptodate);
+>                  if (err)
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
 
---Sig_/IkWpXAPTaSq+deO95ar+Slc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiBkkEACgkQAVBC80lX
-0Gzsrwf+OIxm78//JeVQAHE9jVrgfX+ZnbCO0RJbF1JjNndG6wOAMz7mvGL32SR+
-DK0hiobHD9/Xw6/iBb+p5kBOgyYmvEtfjZMgVrAcyb120goLeanICQBxNZin0Pve
-SPLUtUSEAzl+nzVlNAOdWMIRUn0BdmYcAzl4hoXCQR4S+vblW7VnwNWHQbddikC2
-/3WF/9J5bu/4nQMbqqsrN62LaLeSpr1jJsMQDK7iG2/1PX/ffVUesx3WWvyKouy+
-S5p0W8iXxpjwkkMgG/ClcR1G64v7R6jCoiPUQaAEBQOJWJG1c2z4URswJH67EgYY
-0Uk3Rd3QLdpVT2surX0/+TkLZw+EWg==
-=z55g
------END PGP SIGNATURE-----
-
---Sig_/IkWpXAPTaSq+deO95ar+Slc--
 
