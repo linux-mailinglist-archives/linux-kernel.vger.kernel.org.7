@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-744344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85EEB10B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C48B10B61
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A211AAC72C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C83D1887123
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82372D839F;
-	Thu, 24 Jul 2025 13:28:49 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9122D94B7;
+	Thu, 24 Jul 2025 13:28:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A062D77E6;
-	Thu, 24 Jul 2025 13:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840572D8DC0;
+	Thu, 24 Jul 2025 13:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753363729; cv=none; b=Bhqpq7YEYN2dIfsDyHRsT7iqQ1Qb+9cq69/CxvHK0TPWPDYHpv5aTC4gbytwfzAO+dcwtC9zFZku6g7pwz42GiYoxhI2vZQ01s7gnSpSex/VnEpjAk/SSU7aQrrAW7V31o/rsx+XPEolg7Xp0yZecsYPoeV4G5YHUteSsX783ik=
+	t=1753363732; cv=none; b=gGil2drJRO2G1bXpNyRro2DPsDS4H051jSGVCsgBJ3wPV60ITXUZ72IZRaoLvuAdSHZvAj3Di6qST8xw4TBly5sR+KfDx4FGQBQCB5bCnsieDlO38GVdf/8pj8Q+Ip8yTQHhar0US6p0jUuMA6xB3H41eEfkOHtp02G/GI1ed00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753363729; c=relaxed/simple;
-	bh=fYPUXqFBbw0xpzxJxfrowRn/yVuViXf7gAOlAaYo8gs=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=HcBALZI+qEO4ZPZQaFH6mTcT08zlYd/FyHQlSldv/PKg6NayruJBO/2sYu0lRi4P1uWj99Yo086giLes/JAgN0jdTT3maB6DtFbmCqtgZwL5LPbtwT94w65sb2wub/lCmON0zAdPPECz9o/FhIdmOuwMtKi2S6Ewb7IwBCEJGsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bnsK26B36z501bS;
-	Thu, 24 Jul 2025 21:28:38 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 56ODSYil097922;
-	Thu, 24 Jul 2025 21:28:34 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 24 Jul 2025 21:28:37 +0800 (CST)
-Date: Thu, 24 Jul 2025 21:28:37 +0800 (CST)
-X-Zmail-TransId: 2afb68823505ffffffffe3f-08e37
-X-Mailer: Zmail v1.0
-Message-ID: <20250724212837119BP9HOs0ibXDRWgsXMMir7@zte.com.cn>
+	s=arc-20240116; t=1753363732; c=relaxed/simple;
+	bh=vV62/6+8qhjhjo2/XqTRg9qrR4S18P9SqG3ZCVFf4q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PIzhtkbcFNHUvadE3rGXUAkCSxfC+sP63KVymehHi6AAcRntzD2IcX28SGodSYASsydUKe688DXlzCzDGWEJEGzscft4qzN4EMKpOg81EAWr/aDZMztXKtFEa2XnkMVZSqCRhXCy94mIwKrEPxc5LoJWzGpQTqtIkWLXk1uy2OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id DDE751DA81B;
+	Thu, 24 Jul 2025 13:28:48 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id C889820025;
+	Thu, 24 Jul 2025 13:28:46 +0000 (UTC)
+Date: Thu, 24 Jul 2025 09:28:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc/thp: tracing: Hide hugepage events under
+ CONFIG_PPC_BOOK3S_64
+Message-ID: <20250724092847.1aa83756@batman.local.home>
+In-Reply-To: <20250612101259.0ad43e48@batman.local.home>
+References: <20250612101259.0ad43e48@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <dumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <davem@davemloft.net>, <jiri@resnulli.us>,
-        <xiyou.wangcong@gmail.com>, <jhs@mojatatu.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <jiang.kun2@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <he.peilin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0XSBuZXQvc2NoZWQ6IEFkZCBwcmVjaXNlIGRyb3AgcmVhc29uIGZvciBwZmlmb19mYXN0IHF1ZXVlIG92ZXJmbG93cw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56ODSYil097922
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Thu, 24 Jul 2025 21:28:38 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68823506.000/4bnsK26B36z501bS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C889820025
+X-Stat-Signature: wwqsp3ycupd37f9jfqojdzid69kub8ro
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+rR41YkZ4vfPDuaVGPm5LjEQ+o87duC2E=
+X-HE-Tag: 1753363726-693272
+X-HE-Meta: U2FsdGVkX19TwKwFZE33d1YoVfppyNpdv/tncGvkHsZwMXaWnKE14AaArR6yFSehWaptxorH5BRbkpqvjBpmgqIAkUbK4csDkVsaN/jxHJXJ24Uoln1FdOMJaLuV2+u+trOzamfPkgOJv6Fg6/08hRiLVz4wABcvUtwkD9Hki9pHTrrBht/0CUs8D96Do1EtswbMe+r093l7NiwM9NKNTeUdKUn2kVYjcFgtRgfFyk2W3RNViePsGFdTzB8iGRYr+RgIELl2fhr2Jv6JvcDoUxlpuf/xhrurqovaYpdqHxpbdbfRIk9Xi8QmqXkOK6EsFengFjcaV3RveOifvzgL9a0HEnOL6JIDZQucAmMhUwXijoyEF3xPUnyjG854LrQ/Sl+ORHuGs/CDnzUlprRh2JC38MpQXAZC
 
-From: Fan Yu <fan.yu9@zte.com.cn>
 
-Currently, packets dropped by pfifo_fast due to queue overflow are
-marked with a generic SKB_DROP_REASON_QDISC_DROP in __dev_xmit_skb().
+Anyone have any issues with this patch? Should I take it in my tree?
 
-This patch adds explicit drop reason SKB_DROP_REASON_QDISC_OVERLIMIT
-for queue-full cases, providing better distinction from other qdisc drops.
+-- Steve
 
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
----
- net/sched/sch_generic.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index 16afb834fe4a..1e008a228ebd 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -740,6 +740,8 @@ static int pfifo_fast_enqueue(struct sk_buff *skb, struct Qdisc *qdisc,
- 	err = skb_array_produce(q, skb);
+On Thu, 12 Jun 2025 10:12:59 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
- 	if (unlikely(err)) {
-+		tcf_set_drop_reason(skb, SKB_DROP_REASON_QDISC_OVERLIMIT);
-+
- 		if (qdisc_is_percpu_stats(qdisc))
- 			return qdisc_drop_cpu(skb, qdisc, to_free);
- 		else
--- 
-2.25.1
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> The events hugepage_set_pmd, hugepage_set_pud, hugepage_update_pmd and
+> hugepage_update_pud are only called when CONFIG_PPC_BOOK3S_64 is defined.
+> As each event can take up to 5K regardless if they are used or not, it's
+> best not to define them when they are not used. Add #ifdef around these
+> events when they are not used.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+> Note, I will be adding code soon that will make unused events cause a warning.
+> 
+>  include/trace/events/thp.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/trace/events/thp.h b/include/trace/events/thp.h
+> index f50048af5fcc..c8fe879d5828 100644
+> --- a/include/trace/events/thp.h
+> +++ b/include/trace/events/thp.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/types.h>
+>  #include <linux/tracepoint.h>
+>  
+> +#ifdef CONFIG_PPC_BOOK3S_64
+>  DECLARE_EVENT_CLASS(hugepage_set,
+>  
+>  	    TP_PROTO(unsigned long addr, unsigned long pte),
+> @@ -66,6 +67,7 @@ DEFINE_EVENT(hugepage_update, hugepage_update_pud,
+>  	    TP_PROTO(unsigned long addr, unsigned long pud, unsigned long clr, unsigned long set),
+>  	    TP_ARGS(addr, pud, clr, set)
+
+>  );
+> +#endif /* CONFIG_PPC_BOOK3S_64 */
+>  
+>  DECLARE_EVENT_CLASS(migration_pmd,
+>  
+
 
