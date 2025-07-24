@@ -1,436 +1,139 @@
-Return-Path: <linux-kernel+bounces-744716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFA1B1102B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DF9B11036
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87241894ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D004AA25E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C37E2DCF6B;
-	Thu, 24 Jul 2025 17:07:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45F62EB5A6;
+	Thu, 24 Jul 2025 17:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtrt+9Or"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E73F1E04BD
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CB81E04BD;
+	Thu, 24 Jul 2025 17:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753376825; cv=none; b=iGg/jmrgbqnVqKS34MpSqT9G6uVqSJlArox2Ve+8PJvyQ/iilKE1BJf6Bu1GTlrC/kMpzqP0/u2Sf6JxfWoCqYrvsu25iuQrZtbQ+lEbAdwLDRQ7KK502scM8guKY61zeP+R/FFR8KkyZbBHz/QrDujJbejZb2mG4wGPm+h4xoM=
+	t=1753376909; cv=none; b=oWl3hXNsPqPQ/toz5uKOxBitRk7iktZr08BeBBlxgLnQyNTsFuX8l5+9ezRpuQf/cBCR1wIGIME9d0F5KFIp9zl2Wy2s8CF0ztYELSTNaWYWaL39iWt1OJvzXup4M9jTGLic3jcB65fC+z2MpmdNgO+oLAw4uw2lnKRXHQi6/d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753376825; c=relaxed/simple;
-	bh=grBOVcvzdNWgLLHD8txl+SZJQZ6S8gDJak00Sdzd2Ok=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OvRzwgWlCbRB+yXz57UX7ElK2HN61vb22PLOYg7foZRvn/4zpTCAYE9OD0CABuFmKjb+mVYaRD6L/pLDChQXUbe9CRI5d259t0OpGeEJHFGGmakZfkCy9SD+oqpOIycWovbbcLwikzzAUZo9sIBqsGAwpOPgbyGjhfIKNURPOiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c73351935so104483939f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:07:03 -0700 (PDT)
+	s=arc-20240116; t=1753376909; c=relaxed/simple;
+	bh=qYSnfnL2VgMMjK8m+ljl891kemuRYs9JU2Qv0COLK9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tsb5U4HOz9hr5rBqwXmZLp8Kb7gxoxtDwgLOn0btN4V0dIhj8YYizq2+cGROKwnFwoW08iMQJhtu8/2fRH8rlfyIQIWstOJ3wsqIkRMvo5tiDGPc9yLh5yM6y83G86vZ8H7QYJDN5dLdZBzW7PsQ19QFQSX+pRDOfIIdKOZuzhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtrt+9Or; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23694cec0feso12831155ad.2;
+        Thu, 24 Jul 2025 10:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753376907; x=1753981707; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fGE95oQU+G3JZiNfJBXGaa5iowQ3KE+3XsZUyctMNlw=;
+        b=mtrt+9OrFPT1hUVVtmb3yKXOi11UU7SXOWI50lys/pLral8JzyoH23n1h83W9pW5Tn
+         eMu9O0ULQLRXB4FgjqI7CV/n636pjwuLNKM8Jwfy02pIAwZ02YqW9y+fbizpzWa5R8Hx
+         3zYCZ57ClVNUDwg1rC3AqATnPzKzZyE36pt25rQGjQrWJvit/ohNPSWzgh7FFDfE1TuB
+         ykjuNljw6iAWzhwloHnyoY5hBt+UjgjegD01Ko/ytM82FME8/3SsaZpUdowYhls34l5z
+         hnsK8N5fylRPo8kzgbbqgljNuZQ5qqoz+F5hsunesMWIThHQabEWcn7rSXw7XntfvPhI
+         4H7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753376822; x=1753981622;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WPUTiPToLoOKNTFm6wMwxJy6rqFRpQyNTA8Ab+dojuo=;
-        b=wT6efrWorPxtFTM7uTNUt/d3Nak6X9Yp4FHxnIipFWVnuuiDzeQn2QRD7RetNMFJB/
-         eahyx5vTB5q+cujNlYpDRvZbEbDH1ufzNbIv9gz/iHmnriYYxzssPXnVaj0UjqNI34eR
-         iC3hT9khaAqKSH6yQ3oBh6ph/76u9wZGZFeOe7g2uBDhDJqMp0R/AHL9bsNO4i9XUFom
-         ObVMTsWEcK9mGeTgmwCW8iYH115PF0pNCJt7ausTsqnbCxPQmMuJLpaurreGnrziEQBu
-         XSOP2WgVyIPTiDgvaBNalcWFBfqmpRHfzaM/jM6yViLEEhYV03ZEDan6RuIQ2RRtXuV8
-         RbLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5s6eI1lFMMTAZcsA2A+gbJADWZtpH4+ZLxaWnpTMuDxkhwGf6/jalC2Rc69Zn7JklHz/LKlY9nf3JdVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPG62Nbaj2mz8OUHmLaMpfddW+CtVlzL0qlKALJ7pGGH2QBTWQ
-	TJx5Am8WqqLq0jU/Mcoy0k/3lsxvkGjN7BMJ5ckemTlXngmA8VCHXR3AKA3S2QJwzEjenFDS/T5
-	dO0Ygc0AGIK7Yc/PMI7RKrwehrj1Wclh4i5MQcCCISffq20Pbmz/EuxD8lck=
-X-Google-Smtp-Source: AGHT+IHaER4b5nwzwnKTE+l4EPilr2cdNnwG5/Lwa6T1npJ4jP6wIqw86vUZroOS1IEzJcfkq4tZ1BusvYmsna/qsUH3ik93fS85
+        d=1e100.net; s=20230601; t=1753376907; x=1753981707;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGE95oQU+G3JZiNfJBXGaa5iowQ3KE+3XsZUyctMNlw=;
+        b=tGcP0+1y6G8F1fxqas5O7UKYkLoqLG6ZuAau0BxjwqCoP67G699vEPBcqcAbTVKoC3
+         WIYmd5eJr/B7M+dLyNVBuhs9bmfLmdNCl1bo4yRA/i8uhplKlgx8BPjI4tPudLgk74bb
+         j8GPQPipDmI3baKgifsCyVKvFIeiKKWsKTUOVp8MUrAy47Sn7ozxoJ4fuB5YphHMTOW0
+         +w/Ht8tdMZNKNzEdwLSIPSuHADxVVoEDZ5w5U7jRk940XwBM3sx8NKBKmK+qwEBCG8wo
+         EKEeREpLBM7wF8VsqPV1KcZ298qFLLv09Eotlpkv4WXreLCVCdlI08h7wwZJVvi+fdwk
+         oiaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbuo9mVAu3yXrz8MVwqRwnzke6froydE33WzW0V9xdsIqaRaGKnVbHCmLCPCr9txMlyZT+m+CJ@vger.kernel.org, AJvYcCWnBDjOcIDgA7jhgQkUGqCw3wOyYauGJSUZngfB3lj8JqdEJ2+S7/2GcN+RWy/MAEY14jodBYi981VK@vger.kernel.org, AJvYcCXBkbgAHGEXF6+EZUP2fqWrFeMoJYFbssAFcR998ikWavEgTUIbRZ3dTzxcjB+PBIo/zbDkDywFkIzd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD/FcKVQ4kK3uzTbTg6Ox0Q/oOKprVLHRg5ihEnDhnXPaqKPo3
+	wyKRMgacsUfuHsWb6u/K+yATIbwRjXC8soI1C3g6AgQW+z+TAf6K+TlXmnOq4liBNs4=
+X-Gm-Gg: ASbGnctrtKDVZ0hKEZ/tQ+oBFh7lkTdv+4yxZbIO/1H/rXyln4SsznXjx84oOWMijT7
+	/wpK3BhTxFwKcQpPHq0ihxczq3N/bC7S8ujl8H9z4EagoVb0yys1zzUdL/uI/HH2OZODdyC49DH
+	J7flgs6OCmlwSvWavcQv/FjdS45isU7jpiiKKucFaQqGPF+oBe1yamz3bk9r3IX/YEXMbUkoe/J
+	kCMbEix6KPFPoMfVziF9pe/9bE1d/LkL1reG8gPI6FLiciC67/J9U6Wr9lXfKw4lu0zNzMXmzKr
+	ZKYhn5Oj+sh6YjLEIxadZjRJTB3DOhXMrsmZmb29PKm4mg3reAdR34nozyr17jzMLb3fYdK9Koz
+	ogRtgDn3+MQGIqvHqPNYHt7mWdmRCWUKgAxEdloY=
+X-Google-Smtp-Source: AGHT+IECIHPgvbnvMyXkL6JhqYISUuCy4X6A0DDs5uMshC624UH9yIdwB+tffpJsfG2tPfQ34zHI+g==
+X-Received: by 2002:a17:903:3d10:b0:235:eb8d:7fff with SMTP id d9443c01a7336-23f981bb92bmr94356815ad.28.1753376907010;
+        Thu, 24 Jul 2025 10:08:27 -0700 (PDT)
+Received: from [192.168.1.134] ([49.207.192.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48dd816sm19783735ad.136.2025.07.24.10.08.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 10:08:26 -0700 (PDT)
+Message-ID: <8f4358e8-ecd6-4d86-8326-25d21c3a4ea2@gmail.com>
+Date: Thu, 24 Jul 2025 22:38:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:490:b0:87c:1cc3:c10c with SMTP id
- ca18e2360f4ac-87c761bf0eamr440436139f.4.1753376822531; Thu, 24 Jul 2025
- 10:07:02 -0700 (PDT)
-Date: Thu, 24 Jul 2025 10:07:02 -0700
-In-Reply-To: <20250724141910.3055-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68826836.a00a0220.2f88df.002e.GAE@google.com>
-Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_new_lci
-From: syzbot <syzbot+0fc08dad8f34563208d5@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: cleanup: fix duplicated 'is is' in YAML
+ docs
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ ribalda@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com
+References: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
+ <20250724111247.669d6955@jic23-huawei>
+Content-Language: en-US
+From: Sanjay Suthar <sanjaysuthar661996@gmail.com>
+In-Reply-To: <20250724111247.669d6955@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 24/07/25 15:42, Jonathan Cameron wrote:
+> On Tue, 22 Jul 2025 22:35:13 +0530
+> Sanjay Suthar <sanjaysuthar661996@gmail.com> wrote:
+>
+>> Fix minor grammatical issues by removing duplicated "is" in two devicetree
+>> binding documents:
+>>
+>> - net/amlogic,meson-dwmac.yaml
+>> - iio/dac/ti,dac7612.yaml
+>>
+>> Signed-off-by: Sanjay Suthar <sanjaysuthar661996@gmail.com>
+> I'd have no problem with the argument that this can go through either
+> tree if there was any interaction between the files or the changes, but
+> here there isn't. This is just causing potential mess if either tree ends
+> up with other changes overlapping this for no benefit.  Please split into
+> two patches, one for each subsystem.  You should be fine to keep the
+> various tags given here for the new patches.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Thanks for the review. I understand your concern regarding splitting the 
+changes. My intention was that, since the fix is a trivial and identical 
+grammatical correction across both subsystems, it didn’t seem necessary 
+to separate them.
 
-time autogenerated kernel key: 411d18369abccd4be36dd14e96620bc309eb5008'
-[   25.412267][    T1] zswap: loaded using pool 842/zsmalloc
-[   25.421935][    T1] Demotion targets for Node 0: null
-[   25.427682][    T1] Demotion targets for Node 1: null
-[   25.433317][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Valid=
-ating architecture page table helpers
-[   28.252798][    T1] Key type .fscrypt registered
-[   28.257691][    T1] Key type fscrypt-provisioning registered
-[   28.267169][    T1] kAFS: Red Hat AFS client v0.1 registering.
-[   28.296016][    T1] Btrfs loaded, assert=3Don, ref-verify=3Don, zoned=3D=
-yes, fsverity=3Dyes
-[   28.304390][    T1] Key type big_key registered
-[   28.309206][    T1] Key type encrypted registered
-[   28.314392][    T1] AppArmor: AppArmor sha256 policy hashing enabled
-[   28.321182][    T1] ima: No TPM chip found, activating TPM-bypass!
-[   28.327936][    T1] Loading compiled-in module X.509 certificates
-[   28.354527][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
-ey: 411d18369abccd4be36dd14e96620bc309eb5008'
-[   28.365562][    T1] ima: Allocated hash algorithm: sha256
-[   28.371787][    T1] ima: No architecture policies found
-[   28.379012][    T1] evm: Initialising EVM extended attributes:
-[   28.385545][    T1] evm: security.selinux (disabled)
-[   28.391065][    T1] evm: security.SMACK64 (disabled)
-[   28.396482][    T1] evm: security.SMACK64EXEC (disabled)
-[   28.401998][    T1] evm: security.SMACK64TRANSMUTE (disabled)
-[   28.408073][    T1] evm: security.SMACK64MMAP (disabled)
-[   28.413867][    T1] evm: security.apparmor
-[   28.418143][    T1] evm: security.ima
-[   28.422521][    T1] evm: security.capability
-[   28.427059][    T1] evm: HMAC attrs: 0x1
-[   28.434195][    T1] PM:   Magic number: 1:949:995
-[   28.439749][    T1] net rose29: hash matches
-[   28.444908][    T1] video4linux vbi18: hash matches
-[   28.450516][    T1] usb usb45-port2: hash matches
-[   28.455917][    T1] tty ttyd8: hash matches
-[   28.460252][    T1] tty ttyab: hash matches
-[   28.464866][    T1] memory memory38: hash matches
-[   28.469977][    T1] netconsole: network logging started
-[   28.476739][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
-[   28.489150][    T1] rdma_rxe: loaded
-[   28.494456][    T1] cfg80211: Loading compiled-in X.509 certificates for=
- regulatory database
-[   28.505596][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   28.513895][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
-c7248db18c600'
-[   28.525102][    T1] clk: Disabling unused clocks
-[   28.527624][    T9] faux_driver regulatory: Direct firmware load for reg=
-ulatory.db failed with error -2
-[   28.530137][    T1] ALSA device list:
-[   28.540193][    T9] faux_driver regulatory: Falling back to sysfs fallba=
-ck for: regulatory.db
-[   28.544007][    T1]   #0: Dummy 1
-[   28.556175][    T1]   #1: Loopback 1
-[   28.559884][    T1]   #2: Virtual MIDI Card 1
-[   28.568164][    T1] check access for rdinit=3D/init failed: -2, ignoring
-[   28.575043][    T1] md: Waiting for all devices to be available before a=
-utodetect
-[   28.582883][    T1] md: If you don't use raid, use raid=3Dnoautodetect
-[   28.589636][    T1] md: Autodetecting RAID arrays.
-[   28.594942][    T1] md: autorun ...
-[   28.598571][    T1] md: ... autorun DONE.
-[   28.750006][    T1] EXT4-fs (sda1): orphan cleanup on readonly fs
-[   28.758280][    T1] EXT4-fs (sda1): mounted filesystem 4f91c6db-4997-4bb=
-4-91b8-7e83a20c1bf1 ro with ordered data mode. Quota mode: none.
-[   28.771327][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
-ce 8:1.
-[   28.781669][    T1] devtmpfs: mounted
-[   28.859632][    T1] Freeing unused kernel image (initmem) memory: 26452K
-[   28.870416][    T1] Write protecting the kernel read-only data: 215040k
-[   28.892858][    T1] Freeing unused kernel image (text/rodata gap) memory=
-: 1720K
-[   28.905960][    T1] Freeing unused kernel image (rodata/data gap) memory=
-: 1368K
-[   29.008924][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   29.017291][    T1] x86/mm: Checking user space page tables
-[   29.103385][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   29.116866][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
-ic=3D1': parameter not found
-[   29.127235][    T1] Run /sbin/init as init process
-[   29.672955][ T5182] mount (5182) used greatest stack depth: 24104 bytes =
-left
-[   29.718622][ T5183] EXT4-fs (sda1): re-mounted 4f91c6db-4997-4bb4-91b8-7=
-e83a20c1bf1 r/w.
-mount: mounting devtmpfs on /dev failed: Device or resource busy
-mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
-y
-mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
-ory
-[   29.917588][ T5187] mount (5187) used greatest stack depth: 21768 bytes =
-left
-Starting syslogd: OK
-Starting acpid: OK
-Starting klogd: OK
-Running sysctl: OK
-Populating /dev using udev: [   31.260209][ T5217] udevd[5217]: starting ve=
-rsion 3.2.14
-[   31.564308][ T5218] udevd[5218]: starting eudev-3.2.14
-[   31.572722][ T5217] udevd (5217) used greatest stack depth: 20200 bytes =
-left
-[   39.981780][ T5298] ------------[ cut here ]------------
-[   39.987880][ T5298] AppArmor WARN apparmor_unix_stream_connect: ((({ typ=
-eof(*(new_ctx->label)) *__UNIQUE_ID_rcu2213 =3D (typeof(*(new_ctx->label)) =
-*)({ do { __attribute__((__noreturn__)) extern void __compiletime_assert_22=
-14(void) __attribute__((__error__("Unsupported access size for {READ,WRITE}=
-_ONCE()."))); if (!((sizeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof=
-((new_ctx->label)) =3D=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D =
-sizeof(int) || sizeof((new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new=
-_ctx->label)) =3D=3D sizeof(long long))) __compiletime_assert_2214(); } whi=
-le (0); (*(const volatile typeof( _Generic(((new_ctx->label)), char: (char)=
-0, unsigned char: (unsigned char)0, signed char: (signed char)0, unsigned s=
-hort: (unsigned short)0, signed short: (signed short)0, unsigned int: (unsi=
-gned int)0, signed int: (signed int)0, unsigned long: (unsigned long)0, sig=
-ned long: (signed long)0, unsigned long long: (unsigned long long)0, signed=
- long long: (signed long long)0, default: ((new_ctx->label)))) *)&((new_ctx=
-->label))); }); ;=20
-[   39.988383][ T5298] WARNING: security/apparmor/lsm.c:1211 at apparmor_un=
-ix_stream_connect+0x5fa/0x650, CPU#1: udevadm/5298
-[   40.093629][ T5298] Modules linked in:
-[   40.097754][ T5298] CPU: 1 UID: 0 PID: 5298 Comm: udevadm Not tainted 6.=
-16.0-rc7-next-20250724-syzkaller-g9ee814bd78e3-dirty #0 PREEMPT(full)=20
-[   40.110934][ T5298] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 07/12/2025
-[   40.121356][ T5298] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
-[   40.128151][ T5298] Code: 00 3b fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
-f e8 bb 00 3b fd 90 48 c7 c7 80 33 fd 8b 48 c7 c6 31 52 c7 8d e8 f7 7f fe f=
-c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 98 00 3b fd be 02 00 00 00 eb 0a e8
-[   40.147953][ T5298] RSP: 0018:ffffc90002ea7c38 EFLAGS: 00010246
-[   40.154059][ T5298] RAX: cf750a2836ea2b00 RBX: 1ffff110060bf730 RCX: fff=
-f888025c05a00
-[   40.162334][ T5298] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
-0000000000002
-[   40.170652][ T5298] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
-ff110170e484a
-[   40.178878][ T5298] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
-f8880305fb980
-[   40.187005][ T5298] R13: 1ffff110061438f8 R14: 0000000000000000 R15: 000=
-000000000002f
-[   40.195124][ T5298] FS:  00007f3c0e04d880(0000) GS:ffff8881258a2000(0000=
-) knlGS:0000000000000000
-[   40.204276][ T5298] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   40.211158][ T5298] CR2: 00007f3c0d87ae00 CR3: 00000000272b4000 CR4: 000=
-00000003526f0
-[   40.219275][ T5298] Call Trace:
-[   40.222564][ T5298]  <TASK>
-[   40.225597][ T5298]  security_unix_stream_connect+0xcb/0x2c0
-[   40.231517][ T5298]  unix_stream_connect+0x8fc/0x1010
-[   40.236832][ T5298]  __sys_connect+0x316/0x440
-[   40.241544][ T5298]  ? count_memcg_event_mm+0x21/0x260
-[   40.246904][ T5298]  ? __pfx___sys_connect+0x10/0x10
-[   40.252181][ T5298]  __x64_sys_connect+0x7a/0x90
-[   40.257000][ T5298]  do_syscall_64+0xfa/0x3b0
-[   40.261527][ T5298]  ? lockdep_hardirqs_on+0x9c/0x150
-[   40.266888][ T5298]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   40.272978][ T5298]  ? clear_bhb_loop+0x60/0xb0
-[   40.277772][ T5298]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   40.283684][ T5298] RIP: 0033:0x7f3c0d8a7407
-[   40.288636][ T5298] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
-0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
-f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   40.309777][ T5298] RSP: 002b:00007fff5ce448e0 EFLAGS: 00000202 ORIG_RAX=
-: 000000000000002a
-[   40.319130][ T5298] RAX: ffffffffffffffda RBX: 00007f3c0e04d880 RCX: 000=
-07f3c0d8a7407
-[   40.327724][ T5298] RDX: 0000000000000013 RSI: 000055c2ae585948 RDI: 000=
-0000000000003
-[   40.336911][ T5298] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
-0000000000000
-[   40.345329][ T5298] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
-07fff5ce44940
-[   40.353678][ T5298] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
-0000000000000
-[   40.362476][ T5298]  </TASK>
-[   40.366429][ T5298] Kernel panic - not syncing: kernel: panic_on_warn se=
-t ...
-[   40.373855][ T5298] CPU: 1 UID: 0 PID: 5298 Comm: udevadm Not tainted 6.=
-16.0-rc7-next-20250724-syzkaller-g9ee814bd78e3-dirty #0 PREEMPT(full)=20
-[   40.387072][ T5298] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 07/12/2025
-[   40.397386][ T5298] Call Trace:
-[   40.400703][ T5298]  <TASK>
-[   40.403622][ T5298]  dump_stack_lvl+0x99/0x250
-[   40.408303][ T5298]  ? __asan_memcpy+0x40/0x70
-[   40.412885][ T5298]  ? __pfx_dump_stack_lvl+0x10/0x10
-[   40.418073][ T5298]  ? __pfx__printk+0x10/0x10
-[   40.422681][ T5298]  vpanic+0x281/0x750
-[   40.426738][ T5298]  ? __pfx__printk+0x10/0x10
-[   40.431319][ T5298]  ? __pfx_vpanic+0x10/0x10
-[   40.435807][ T5298]  ? is_bpf_text_address+0x292/0x2b0
-[   40.441220][ T5298]  ? is_bpf_text_address+0x26/0x2b0
-[   40.446734][ T5298]  panic+0xb9/0xc0
-[   40.450573][ T5298]  ? __pfx_panic+0x10/0x10
-[   40.455599][ T5298]  __warn+0x334/0x4c0
-[   40.459567][ T5298]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   40.465718][ T5298]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   40.471790][ T5298]  report_bug+0x2be/0x4f0
-[   40.476573][ T5298]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   40.482630][ T5298]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   40.488771][ T5298]  ? apparmor_unix_stream_connect+0x5fc/0x650
-[   40.495061][ T5298]  handle_bug+0x84/0x160
-[   40.499294][ T5298]  exc_invalid_op+0x1a/0x50
-[   40.503832][ T5298]  asm_exc_invalid_op+0x1a/0x20
-[   40.508675][ T5298] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
-[   40.515337][ T5298] Code: 00 3b fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
-f e8 bb 00 3b fd 90 48 c7 c7 80 33 fd 8b 48 c7 c6 31 52 c7 8d e8 f7 7f fe f=
-c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 98 00 3b fd be 02 00 00 00 eb 0a e8
-[   40.535366][ T5298] RSP: 0018:ffffc90002ea7c38 EFLAGS: 00010246
-[   40.541439][ T5298] RAX: cf750a2836ea2b00 RBX: 1ffff110060bf730 RCX: fff=
-f888025c05a00
-[   40.549422][ T5298] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
-0000000000002
-[   40.557719][ T5298] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
-ff110170e484a
-[   40.565865][ T5298] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
-f8880305fb980
-[   40.573915][ T5298] R13: 1ffff110061438f8 R14: 0000000000000000 R15: 000=
-000000000002f
-[   40.582336][ T5298]  ? apparmor_unix_stream_connect+0x5f9/0x650
-[   40.588408][ T5298]  security_unix_stream_connect+0xcb/0x2c0
-[   40.594232][ T5298]  unix_stream_connect+0x8fc/0x1010
-[   40.599535][ T5298]  __sys_connect+0x316/0x440
-[   40.604198][ T5298]  ? count_memcg_event_mm+0x21/0x260
-[   40.609852][ T5298]  ? __pfx___sys_connect+0x10/0x10
-[   40.615074][ T5298]  __x64_sys_connect+0x7a/0x90
-[   40.619915][ T5298]  do_syscall_64+0xfa/0x3b0
-[   40.624425][ T5298]  ? lockdep_hardirqs_on+0x9c/0x150
-[   40.629702][ T5298]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   40.635763][ T5298]  ? clear_bhb_loop+0x60/0xb0
-[   40.640550][ T5298]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   40.646442][ T5298] RIP: 0033:0x7f3c0d8a7407
-[   40.650863][ T5298] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
-0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
-f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   40.670744][ T5298] RSP: 002b:00007fff5ce448e0 EFLAGS: 00000202 ORIG_RAX=
-: 000000000000002a
-[   40.679610][ T5298] RAX: ffffffffffffffda RBX: 00007f3c0e04d880 RCX: 000=
-07f3c0d8a7407
-[   40.687939][ T5298] RDX: 0000000000000013 RSI: 000055c2ae585948 RDI: 000=
-0000000000003
-[   40.696264][ T5298] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
-0000000000000
-[   40.704492][ T5298] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
-07fff5ce44940
-[   40.712559][ T5298] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
-0000000000000
-[   40.720633][ T5298]  </TASK>
-[   40.724029][ T5298] Kernel Offset: disabled
-[   40.728710][ T5298] Rebooting in 86400 seconds..
+However, I’m open to either approach — keeping it as a single patch or 
+splitting it if that's preferred. As I’m still new to this process, I’ll 
+defer to @krzysztof and the DT maintainers for the final call on how 
+this should be handled.
 
+Please let me know the preferred direction, and I’ll be happy to update 
+accordingly.
 
-syzkaller build log:
-go env (err=3D<nil>)
-AR=3D'ar'
-CC=3D'gcc'
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_ENABLED=3D'1'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-CXX=3D'g++'
-GCCGO=3D'gccgo'
-GO111MODULE=3D'auto'
-GOAMD64=3D'v1'
-GOARCH=3D'amd64'
-GOAUTH=3D'netrc'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOCACHEPROG=3D''
-GODEBUG=3D''
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFIPS140=3D'off'
-GOFLAGS=3D''
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build4223422955=3D/tmp/go-build -gno-record-gc=
-c-switches'
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.24.4'
-GOWORK=3D''
-PKG_CONFIG=3D'pkg-config'
+Best regards,
 
-git status (err=3D<nil>)
-HEAD detached at 85deaf45cc
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D85deaf45cc57320362fabb5ef83eb8cf413f4274 -X g=
-ithub.com/google/syzkaller/prog.gitRevisionDate=3D20250722-150712"  -o ./bi=
-n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"85deaf45cc57320362fabb5ef83eb8cf41=
-3f4274\"
-/usr/bin/ld: /tmp/ccImJGwk.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D1574b0a2580000
-
-
-Tested on:
-
-commit:         9ee814bd Add linux-next specific files for 20250724
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D83210eaba5794b8=
-3
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D0fc08dad8f3456320=
-8d5
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D17f1c0a25800=
-00
+Sanjay Suthar
 
 
