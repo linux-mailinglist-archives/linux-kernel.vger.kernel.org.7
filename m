@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-743752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFEDB102D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FF0B102DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B8E7AA0326
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:05:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F1117B9615
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D7E271A9D;
-	Thu, 24 Jul 2025 08:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FBD26F45D;
+	Thu, 24 Jul 2025 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMwAL61f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZjkI5Loe"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE322701D0;
-	Thu, 24 Jul 2025 08:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684FE223327
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344343; cv=none; b=gqZWAwV+fOJ4jmDZjkiXa5/rhM5NRqwCtXIFucuZaBDt/YN5ZbR3vM7wct5GHjN8ODVLrKE1MH6CMyEVfX12UYqVBCHD0SFEIpG6m1P+3HmTWOQF52dTk7nIN8/t71NhPOj532HnPH5tqRhFMB3NCjt4Fl52GXWYn/nh0xr8woU=
+	t=1753344401; cv=none; b=gvTmwpTStEX625BthjGy67AtdvSweaEgn9vp7xgq/skhzAVHbavbTyduStiItbBEvXtXrTF5gF1mZMfmor2itk0XnFiU48hJMur6DzkfqjK+HTVs6ywGRBF/Kiu2b4FR6a3EEZTk39bqJoc9rWjUBWKhrEHN7tShZLGuE8Dwsmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344343; c=relaxed/simple;
-	bh=QQ/KUR9EUnReinV6lJwLLr0fnjQkBu0aezOtyeBubts=;
+	s=arc-20240116; t=1753344401; c=relaxed/simple;
+	bh=PNwT/8zDWcuVBAHKnP5js2HoP+0ShQO7JHv+8inHsIQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axJO5QLRj+Vbh2O5dOUGr9RmNXtHMmVz+wJa5PEN6lvXaNy8TiiqtwkClczC3JudcRp/ye/mUVxjlRAwZ4u3RS94USYasYeNpbtxL6xzn3Ex6cIL21azJfWgpC+KG1a6N5k+Cjx4LUR7E7xhzjSlfFWtm2iMJFhD++mE1PKKgbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMwAL61f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D984C4CEED;
-	Thu, 24 Jul 2025 08:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753344342;
-	bh=QQ/KUR9EUnReinV6lJwLLr0fnjQkBu0aezOtyeBubts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jMwAL61fiSNB5XAz4p2SUVMSHj4GsnjdjPunEMS0CWrz2TCLkANqT1xzJUjRcvNQQ
-	 cQkv0TRaEDZPgtV/oigHfWj/+Jg0O8D5V60g8GM+VKvxpZK10wM07tYX4W/VwSBTqP
-	 J3/eb9Y/iVNqRoXHHTxLaDbJ5VCPFP+zuW42sBCSWPEXyX2sTINfI2n2fLboGF12S1
-	 VYeXT5EmMHp8MMMSjmlnRfkxU9GgHbBpivtR0cZ5vqAIkkuheWdCZ8gZWKkFpUOZK7
-	 dYImub39SSfDGHOv3KPnDJYEr79kUA+uz9E/gc4E0EJdR+yIPYh+tbtO49si0YyCJ5
-	 4yQkyHskw5vqg==
-Date: Thu, 24 Jul 2025 10:05:40 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: rentao.bupt@gmail.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v3 07/13] ARM: dts: aspeed: Add Facebook Wedge400-data64
- (AST2500) BMC
-Message-ID: <20250724-overjoyed-panther-from-camelot-f2ff4f@kuoka>
-References: <20250723233013.142337-1-rentao.bupt@gmail.com>
- <20250723233013.142337-8-rentao.bupt@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXimfwXKaf4LT15Xi1nxfAxrgLJyYookYRHCSKBC3+3KqzIMYCyshkDwpOy8PXH3OISCVPSt6dAxqG9BCLxT9k6IrxV+GyqBy80DGbg6MHutRnrc6IzFL0iN8bboCE4SWw2wxWN35ObEh34RoC8TxhdfLU7YimuBHIoJ+s572Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZjkI5Loe; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Jul 2025 16:06:03 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753344396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lj4FB2FyquD4iJUJMuRwd+hUUVbBfQpKLuMnnFCzouo=;
+	b=ZjkI5LoehTRNiNCMF1r9FRCRUnUaGEkWGIqeJSxMfgAt/Y+qbHXuywtfu3YNE7iSolBY+w
+	pGuRNnSeAsyLccEezhWG0m/Lo7lMVR0DlDc9YF4gT9bDoaXQkoXcPp4asup4XM2lUSv6xX
+	1uAbPPfe1FukcshTzIOYV3NE2RwtPnA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hui Zhu <hui.zhu@linux.dev>
+To: Boqun Feng <boqun.feng@gmail.com>, Danilo Krummrich <dakr@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Hui Zhu <zhuhui@kylinos.cn>, Geliang Tang <geliang@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: Re: [PATCH v2] rust: add a sample alloc usage
+Message-ID: <aIHpayMmbIqpyuig@teawaterdeMacBook-Pro.local>
+References: <20250717095053.49239-1-hui.zhu@linux.dev>
+ <DBEAFCFHFU35.1IZI3ZSJSIRAY@kernel.org>
+ <aHkhVwD7WKm1dSsa@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723233013.142337-8-rentao.bupt@gmail.com>
+In-Reply-To: <aHkhVwD7WKm1dSsa@Mac.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 23, 2025 at 04:30:03PM -0700, rentao.bupt@gmail.com wrote:
-> +		/*
-> +		 * PCA9548 (11-0076) provides 8 channels connecting to
-> +		 * FCM (Fan Controller Module).
-> +		 */
-> +		i2c32 = &imux32;
-> +		i2c33 = &imux33;
-> +		i2c34 = &imux34;
-> +		i2c35 = &imux35;
-> +		i2c36 = &imux36;
-> +		i2c37 = &imux37;
-> +		i2c38 = &imux38;
-> +		i2c39 = &imux39;
-> +
-> +		spi2 = &spi_gpio;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &uart1;
-> +		bootargs = "console=ttyS0,9600n8 root=/dev/ram rw";
+Hi Danilo and Boqun,
 
-Drop bootargs. You are duplicating stdout path and choice of root is
-definitely not a mainline user friendly.
+On Thu, Jul 17, 2025 at 09:14:15AM -0700, Boqun Feng wrote:
+> On Thu, Jul 17, 2025 at 01:19:05PM +0200, Danilo Krummrich wrote:
+> > (Cc: Lorenzo, Vlastimil, Liam, Uladzislau)
+> > 
+> > On Thu Jul 17, 2025 at 11:50 AM CEST, Hui Zhu wrote:
+> > > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > > index bd2faad63b4f..7c3e68d9ada5 100644
+> > > --- a/samples/rust/Makefile
+> > > +++ b/samples/rust/Makefile
+> > > @@ -10,6 +10,7 @@ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+> > >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+> > >  obj-$(CONFIG_SAMPLE_RUST_DRIVER_AUXILIARY)	+= rust_driver_auxiliary.o
+> > >  obj-$(CONFIG_SAMPLE_RUST_CONFIGFS)		+= rust_configfs.o
+> > > +obj-$(CONFIG_SAMPLE_RUST_ALLOC)		+= rust_alloc.o
+> > 
+> > I think adding an example for large alignment is fine, but let's do this in a
+> > doc-test on VBox in rust/kernel/alloc/kbox.rs. I think adding a separate module
+> 
+> I would suggest using #[kunit_tests(..)], which is similar to how
+> doc-test run, for it if we only use it for test purposes.
+> 
+> Regards,
+> Boqun
+> 
+> > for this is overkill.
+> > 
+> > Note that doc-tests are executed on boot if CONFIG_RUST_KERNEL_DOCTESTS=y.
+> > 
+> [...]
 
-Best regards,
-Krzysztof
+I sent version v3 that move vbox code to allocator as unit tests and add
+move kvec::as_slice to doc example.
+
+Best,
+Hui
 
 
