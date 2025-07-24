@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-743823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B8BB103B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:38:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9465BB103BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C86E3B8A59
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A5B1C2590A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AD274B59;
-	Thu, 24 Jul 2025 08:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5F6274FC1;
+	Thu, 24 Jul 2025 08:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1K017Ay4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c7lH1Gvx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QAKurpH/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCAC274B37;
-	Thu, 24 Jul 2025 08:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D195D274B37;
+	Thu, 24 Jul 2025 08:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346303; cv=none; b=E4pm8co1P9JMvjH0B1SmTeQ9Hrx7EikCj3iudMhvK+tdYQNjkwQPx86/YRIM1sylpsf778e/S0FwTY2DNRHdNqbKh6cxSXhP3VTZfX6PuvQiKVtr2mJn9Nf7a5GKOYzJxf7zlSkfqXSRjZLmdXkofHIXS7F2j2Qkw4Vjanq59os=
+	t=1753346353; cv=none; b=WY6900U6fisak9m4HLo1MgNZGBjctsYgNuDpePm2+CFzPqz1pHR+STc112OQiSrXcZYJ5huG4+yXii8MH6Zzt5TazPcvosOzNSwU92VcfFmXJSKqb6bU366nO8FN13nXplSosxDvmMB4uMeDcsVx2g80j6jMky1zInkoRqm7m5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346303; c=relaxed/simple;
-	bh=xkmAuchO85PXJX6a5YJj/SsULjLX5eE61/0pFhqyTbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3iFGkKet3pkQlEn7qJRmDUiw/wYKCGPFgvU2LkMn7tVswfATypENf9VU9y7/gR4uzjqpvNVqDaPOuBLjj64q0naw0poHRtv2zZQApxS4yZ7xKrCLXMz7GEmEymorgtrHBepY1bDpFuT6yb3U3mZttjhmDw8gwbbhwcOjaI1Xyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1K017Ay4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c7lH1Gvx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Jul 2025 10:38:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753346299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
-	b=1K017Ay4LjE/Tiz3tzMHvqQ6/w6geRLJA3i+jcUyOBS8HcXbY8ry9Hywk3fjnfcgJzYhjE
-	xDEEiqM7fjkX1bIERVXGXe9wajuRrG1qyrYUK6GqKEbzr61pRAsGh7+sc3v5MgtEar1T8v
-	Bo2MAw9G34Va8xx/xS/4zsjN6DlVTbE1PZd0EQ/5MLoTsalTc+KxODzavJHaghDNvlwfDy
-	/bDba1tMpLGLrJK4PEIl/4arkdILj90VDMAAAxOzaLvmpMqYcAq1+jH7EgfDEEJOxJ0pJH
-	nsc9fNTLSvbyuvSO+Nn8sZEhRFLl/oGcJd+H9Jxuer8xs+AQsSSErutShgVxFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753346299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gjP9VTQcQv8SUZ/OchZ93SeeJHdOv3bj7hY4mJLpZUY=;
-	b=c7lH1GvxJpP+TlVwmmbf6h7ApUcZFBC3nBNiLkDtqWFXw+auY1gCrjQ9igrjn0N9iHD81c
-	ON9bImb9aXUqmtCw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
-Message-ID: <20250724103305-c034585a-d090-4998-a40e-af3b5cca5ef6@linutronix.de>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
- <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
- <20250722063411.GC15403@lst.de>
- <20250723090039-b619abd2-ecd2-4e40-aef9-d0bbb1e5875e@linutronix.de>
- <20250724072918.GA29512@lst.de>
+	s=arc-20240116; t=1753346353; c=relaxed/simple;
+	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZM70HYjRHVC7Xh2kfglm/YGbbm4y9xBPQHUBY7+koKTyiVc5m4IruyXmR/O8JwO/60nnlZtNnNxNfE59KuJ9Vy0Ua3AoCJXSTv0aH3lk/bmW4IFGKUIncDwYA9G0UZC94AbowGOF2sGEhbwhLlEV3uEY/6e8s/fwC1uylVLqWSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QAKurpH/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753346344;
+	bh=rjcZHS4zMiYwGcIC7g009niYBuPFGQqt0YpNefU9dyA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QAKurpH/cGlJDYa3bpE9sc3ZroFZ7RvOgUgOMxeTqXFFjvK7yrfRgUp3i29v6aPDO
+	 pXWKtIl/Q3181+IoYdWf6mZB8D/GW5j/FQokVoESudhWnbovMvszgprUeoMWaZB6/Y
+	 NQj6LiGUvYJFXJqBzZ7U9aS9MeSz6pARSkLemnSAsZJNhWSTOHDWX3nDp9JR2kA9Wh
+	 R7LOpSwSLt7UQFYrLn2Xtdx8Ke/ZQoTJafaGT/A4UP0UNSN7Nvx/lEJSWcHk8g3+xY
+	 2sObhWmefeDSoHgSC3o/SLB67hLFoce9if6Zezw7BFngpsXkbVc4gEgsC4KRXOem3o
+	 XRYq9tXygKGSw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 87CDE17E0FC2;
+	Thu, 24 Jul 2025 10:39:03 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	u.kleine-koenig@baylibre.com,
+	geert+renesas@glider.be,
+	chun-jie.chen@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] clk: mediatek: mt8195-infra_ao: Fix parent for infra_ao_hdmi_26m
+Date: Thu, 24 Jul 2025 10:38:28 +0200
+Message-ID: <20250724083828.60941-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250724072918.GA29512@lst.de>
 
-On Thu, Jul 24, 2025 at 09:29:18AM +0200, Christoph Hellwig wrote:
-> On Wed, Jul 23, 2025 at 09:01:16AM +0200, Thomas Weißschuh wrote:
-> > On Tue, Jul 22, 2025 at 08:34:11AM +0200, Christoph Hellwig wrote:
-> > > On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
-> > > > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
-> > > 
-> > > Overly long commit message here.
-> > 
-> > 75 characters are allowed, no?
-> 
-> 73.
+The infrastructure gate for the HDMI specific crystal needs the
+top_hdmi_xtal clock to be configured in order to ungate the 26m
+clock to the HDMI IP, and it wouldn't work without.
 
-Documentation/process/submitting-patches.rst:
+Reparent the infra_ao_hdmi_26m clock to top_hdmi_xtal to fix that.
 
-	The canonical patch message body contains the following:
+Fixes: e2edf59dec0b ("clk: mediatek: Add MT8195 infrastructure clock support")
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	  (...)
+diff --git a/drivers/clk/mediatek/clk-mt8195-infra_ao.c b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
+index bb648a88e43a..ad47fdb23460 100644
+--- a/drivers/clk/mediatek/clk-mt8195-infra_ao.c
++++ b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
+@@ -103,7 +103,7 @@ static const struct mtk_gate infra_ao_clks[] = {
+ 	GATE_INFRA_AO0(CLK_INFRA_AO_CQ_DMA_FPC, "infra_ao_cq_dma_fpc", "fpc", 28),
+ 	GATE_INFRA_AO0(CLK_INFRA_AO_UART5, "infra_ao_uart5", "top_uart", 29),
+ 	/* INFRA_AO1 */
+-	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "clk26m", 0),
++	GATE_INFRA_AO1(CLK_INFRA_AO_HDMI_26M, "infra_ao_hdmi_26m", "top_hdmi_xtal", 0),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_SPI0, "infra_ao_spi0", "top_spi", 1),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC0, "infra_ao_msdc0", "top_msdc50_0_hclk", 2),
+ 	GATE_INFRA_AO1(CLK_INFRA_AO_MSDC1, "infra_ao_msdc1", "top_axi", 4),
+-- 
+2.50.1
 
-	  - The body of the explanation, line wrapped at 75 columns, which will
-	    be copied to the permanent changelog to describe this patch.
-
-
-scripts/checkpatch.pl:
-
-	# Check for line lengths > 75 in commit log, warn once
-			if ($in_commit_log && !$commit_log_long_line &&
-			    length($line) > 75 &&
-			      (...)) {
-				WARN("COMMIT_LOG_LONG_LINE",
-				     "Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n" . $herecurr);
-				$commit_log_long_line = 1;
-			}
-
-
-What am I missing?
 
