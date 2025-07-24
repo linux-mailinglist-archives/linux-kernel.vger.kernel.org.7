@@ -1,186 +1,250 @@
-Return-Path: <linux-kernel+bounces-744462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01F3B10D45
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00F1B10D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0131721E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23ACB02F03
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB3C2DBF45;
-	Thu, 24 Jul 2025 14:13:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7162D5C97
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305792E2674;
+	Thu, 24 Jul 2025 14:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="pwq5tdM2"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970CB4C81;
+	Thu, 24 Jul 2025 14:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366401; cv=none; b=BFv7t7xJpJ7Qs65G+7r2UoORCiBB8E797bl51X1xuw9KQnPXBBZy0Cd7KvuF1osBjS4fRm5dsS+W9P7AultnQMe8HRoGEhwE6AIhq+CzypcC3fvHIpAkwLgLK50ilHZKHdV0ivO4+YGCGbVpGyPN1mcEftxTg6cKp748ckHvFaQ=
+	t=1753366422; cv=none; b=bwGVwBlaLzfSqth9D2+Ck/FjQB+R2VelZuQhJXTngNU32Li3pNwvjYwuPyCMGirFGo5M5O/AnAArXpKkADdOjwcGm2WH3/nvk9N3jU8FBzfyTv6g7miNEvO7ZsgCJC0rIBRQS8vQGgklOWEhSdhoPSCHBIr8uRHJZWkfhWDj5nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366401; c=relaxed/simple;
-	bh=9yD5qowNf+3o65b72QRPPjF5YvE3rW9R+UjlazwDXsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ge57KSMYFu72a16WOZf4uqtw3lmGpgWs5q4jatsFIkvU5NOg1N9AzHBcQXdn3kAyvZ3TwGIX12tMyruSsCd7tnyHRlGllEzO0B5CH+a2Pek+2jbm1zHYK9Qkpec0Dnvhaku3Y/3+2L2hDAXMKY9t7rUPUys4/wwhZyfsCzrhIa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DA3F1A00;
-	Thu, 24 Jul 2025 07:13:12 -0700 (PDT)
-Received: from [10.57.84.166] (unknown [10.57.84.166])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDAB03F66E;
-	Thu, 24 Jul 2025 07:13:15 -0700 (PDT)
-Message-ID: <48e482f2-e7a8-4d6a-bf16-ad29f9331e3b@arm.com>
-Date: Thu, 24 Jul 2025 15:13:14 +0100
+	s=arc-20240116; t=1753366422; c=relaxed/simple;
+	bh=uYaq9vVkbSUr+tB940oFmDR9L9mTXUEkazEXEditOQk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bh+sCBkZnXHrNkFI9nBBc7q+IzO4gx59UoupZp/dt2ufqXyeug6RiZvBk47YbYjtJMm31UFdAssXkuOON3uOEK0+BQ+4ub/ORScll0Q43aFoS1E0XM7AyV3lO5kPVlzBpDSgbqx/9P+37/CVfkHYXDS1Oxkbf1N1APtpeWtdjgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=pwq5tdM2; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3A3B040AD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1753366414; bh=FDYBYXhi2fpIXmidMih0lla5P8/HwKyQKaeA3qjglN4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pwq5tdM2vDY6APoBJuNEplILNdsyaU8ylKRxeCbXe8XwZITdA49KYYVSYTry8HpKV
+	 11JU1pkrDwmKYTn4Fl/PSS7PRD9lEUq9GYeo/HlJaKcFNthhWNgGaSbErWZpRksXU/
+	 2vcUlKH47OM35KhDFiJKYjv9eHZYQfJhlwveoisq76XE1Ph/wNujQEY4mwi+2EPI03
+	 C6Ge6wReBlahOFy06igmvLpUfGmMHNmMAtE5bIWSddnTvAo8pP5gNfRizJLIkJVMoq
+	 n+gO3mVS2lc+fqlOMygB0N/vI5gck9MYQxuB1GcL+iBGKHLpcflufHKZM8r4X1ng6W
+	 uqNwh/ttjzzkw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 3A3B040AD2;
+	Thu, 24 Jul 2025 14:13:34 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
+ pmladek@suse.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ eugen.hristev@linaro.org, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org
+Subject: Re: [RFC][PATCH v2 02/29] Documentation: add kmemdump
+In-Reply-To: <20250724135512.518487-3-eugen.hristev@linaro.org>
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-3-eugen.hristev@linaro.org>
+Date: Thu, 24 Jul 2025 08:13:33 -0600
+Message-ID: <87zfctad82.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 17/36] arm_mpam: Add cpuhp callbacks to probe MSC
- hardware
-Content-Language: en-GB
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250711183648.30766-18-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-In-Reply-To: <20250711183648.30766-18-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi James,
+Eugen Hristev <eugen.hristev@linaro.org> writes:
 
-On 11/07/2025 19:36, James Morse wrote:
-> Because an MSC can only by accessed from the CPUs in its cpu-affinity
-> set we need to be running on one of those CPUs to probe the MSC
-> hardware.
-> 
-> Do this work in the cpuhp callback. Probing the hardware will only
-> happen before MPAM is enabled, walk all the MSCs and probe those we can
-> reach that haven't already been probed.
-> 
-> Later once MPAM is enabled, this cpuhp callback will be replaced by
-> one that avoids the global list.
-> 
-> Enabling a static key will also take the cpuhp lock, so can't be done
-> from the cpuhp callback. Whenever a new MSC has been probed schedule
-> work to test if all the MSCs have now been probed.
-> 
-> CC: Lecopzer Chen <lecopzerc@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+> Document the new kmemdump kernel feature.
+
+Thanks for including documentation!
+
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 > ---
->   drivers/platform/arm64/mpam/mpam_devices.c  | 149 +++++++++++++++++++-
->   drivers/platform/arm64/mpam/mpam_internal.h |   8 +-
->   2 files changed, 152 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-> index 0d6d5180903b..89434ae3efa6 100644
-> --- a/drivers/platform/arm64/mpam/mpam_devices.c
-> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
-> @@ -4,6 +4,7 @@
->   #define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
->   
->   #include <linux/acpi.h>
-> +#include <linux/atomic.h>
->   #include <linux/arm_mpam.h>
->   #include <linux/cacheinfo.h>
->   #include <linux/cpu.h>
-> @@ -21,6 +22,7 @@
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
->   #include <linux/types.h>
-> +#include <linux/workqueue.h>
->   
->   #include <acpi/pcc.h>
->   
-> @@ -39,6 +41,16 @@ struct srcu_struct mpam_srcu;
->   /* MPAM isn't available until all the MSC have been probed. */
->   static u32 mpam_num_msc;
->   
-> +static int mpam_cpuhp_state;
-> +static DEFINE_MUTEX(mpam_cpuhp_state_lock);
+>  Documentation/debug/index.rst    | 17 ++++++
+>  Documentation/debug/kmemdump.rst | 98 ++++++++++++++++++++++++++++++++
+>  MAINTAINERS                      |  1 +
+>  3 files changed, 116 insertions(+)
+>  create mode 100644 Documentation/debug/index.rst
+>  create mode 100644 Documentation/debug/kmemdump.rst
+>
+> diff --git a/Documentation/debug/index.rst b/Documentation/debug/index.rst
+> new file mode 100644
+> index 000000000000..9a9365c62f02
+> --- /dev/null
+> +++ b/Documentation/debug/index.rst
+> @@ -0,0 +1,17 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +/*
-> + * mpam is enabled once all devices have been probed from CPU online callbacks,
-> + * scheduled via this work_struct. If access to an MSC depends on a CPU that
-> + * was not brought online at boot, this can happen surprisingly late.
-> + */
-> +static DECLARE_WORK(mpam_enable_work, &mpam_enable);
+> +===
+> +kmemdump
+> +===
 > +
->   /*
->    * An MSC is a physical container for controls and monitors, each identified by
->    * their RIS index. These share a base-address, interrupts and some MMIO
-> @@ -78,6 +90,22 @@ LIST_HEAD(mpam_classes);
->   /* List of all objects that can be free()d after synchronise_srcu() */
->   static LLIST_HEAD(mpam_garbage);
->   
-> +static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
-> +{
-> +	WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
-> +	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+> +.. toctree::
+> +   :maxdepth: 1
 > +
-> +	return readl_relaxed(msc->mapped_hwpage + reg);
-> +}
+> +   kmemdump
 > +
-> +static inline u32 _mpam_read_partsel_reg(struct mpam_msc *msc, u16 reg)
-> +{
-> +	lockdep_assert_held_once(&msc->part_sel_lock);
-> +	return __mpam_read_reg(msc, reg);
-> +}
+> +.. only::  subproject and html
 > +
-> +#define mpam_read_partsel_reg(msc, reg)        _mpam_read_partsel_reg(msc, MPAMF_##reg)
+> +   Indices
+> +   =======
 > +
->   #define init_garbage(x)	init_llist_node(&(x)->garbage.llist)
->   
->   static struct mpam_vmsc *
-> @@ -513,9 +541,84 @@ int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
->   	return err;
->   }
->   
-> -static void mpam_discovery_complete(void)
-> +static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   {
-> -	pr_err("Discovered all MSC\n");
-> +	u64 idr;
-> +	int err;
+> +   * :ref:`genindex`
+
+Please don't create a new top-level directory for just this tool - I've
+been working for years to get Documentation/ under control.  This seems
+best placed under Documentation/dev-tools/ ?
+
+
+> diff --git a/Documentation/debug/kmemdump.rst b/Documentation/debug/kmemdump.rst
+> new file mode 100644
+> index 000000000000..3301abcaed7e
+> --- /dev/null
+> +++ b/Documentation/debug/kmemdump.rst
+> @@ -0,0 +1,98 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +	lockdep_assert_held(&msc->probe_lock);
+> +==========================
+> +kmemdump
+> +==========================
+
+A nit, but it's nicer to match the markup line lengths with the enclosed
+text. 
+
+> +This document provides information about the kmemdump feature.
 > +
-> +	mutex_lock(&msc->part_sel_lock);
-> +	idr = mpam_read_partsel_reg(msc, AIDR);
-> +	if ((idr & MPAMF_AIDR_ARCH_MAJOR_REV) != MPAM_ARCHITECTURE_V1) {
-> +		pr_err_once("%s does not match MPAM architecture v1.0\n",
-> +			    dev_name(&msc->pdev->dev));
-The error message need only mention the major revision. You've added 
-support for v1.1 and v1.0.> +		err = -EIO;
-> +	} else {
-> +		msc->probed = true;
-> +		err = 0;
-> +	}
-> +	mutex_unlock(&msc->part_sel_lock);
+> +Overview
+> +========
 > +
-> +	return err;
-> +}
-[snip]
+> +kmemdump is a mechanism that allows any driver or producer to register a
+> +chunk of memory into kmemdump, to be used at a later time for a specific
+> +purpose like debugging or memory dumping.
+> +
+> +kmemdump allows a backend to be connected, this backend interfaces a
+> +specific hardware that can debug or dump the memory registered into
+> +kmemdump.
+> +
+> +kmemdump Internals
+> +=============
+> +
+> +API
+> +----
+> +
+> +A memory region is being registered with a call to `kmemdump_register` which
+
+Please just say kmemdump_register() - that will let our carefully
+written automatic markup machinery do its thing.  Among other things, it
+will create a cross-reference link to the kerneldoc documentation for
+this function (if any).  All function references should be written that
+way. 
+
+> +takes as parameters the ID of the region, a pointer to the virtual memory
+> +start address and the size. If successful, this call returns an unique ID for
+> +the allocated zone (either the requested ID or an allocated ID).
+> +IDs are predefined in the kmemdump header. A second registration with the
+> +same ID is not allowed, the caller needs to deregister first.
+> +A dedicated NO_ID is defined, which has kmemdump allocate a new unique ID
+> +for the request and return it. This case is useful with multiple dynamic
+> +loop allocations where ID is not significant.
+> +
+> +The region would be registered with a call to `kmemdump_unregister` which
+> +takes the id as a parameter.
+> +
+> +For dynamically allocated memory, kmemdump defines a variety of wrappers
+> +on top of allocation functions which are given as parameters.
+> +This makes the dynamic allocation easy to use without additional calls
+> +to registration functions. However kmemdump still exposes the register API
+> +for cases where it may be needed (e.g. size is not exactly known at allocation
+> +time).
+> +
+> +For static variables, a variety of annotation macros are provided. These
+> +macros will create an annotation struct inside a separate section.
+> +
+> +
+> +Backend
+> +-------
+> +
+> +Backend is represented by a `struct kmemdump_backend` which has to be filled
+
+Structures, too, can be mentioned without explicit markup.
+
+> +in by the backend driver. Further, this struct is being passed to kmemdump
+> +with a `backend_register` call. `backend_unregister` will remove the backend
+> +from kmemdump.
+> +
+> +Once a backend is being registered, all previously registered regions are
+> +being sent to the backend for registration.
+> +
+> +When the backend is being removed, all regions are being first deregistered
+> +from the backend.
+> +
+> +kmemdump will request the backend to register a region with `register_region`
+> +call, and deregister a region with `unregister_region` call. These two
+> +functions are mandatory to be provided by a backend at registration time.
+> +
+> +Data structures
+> +---------------
+> +
+> +`struct kmemdump_backend` represents the kmemdump backend and it has two
+> +function pointers, one called `register_region` and the other
+> +`unregister_region`.
+> +There is a default backend that does a no-op that is initially registered
+> +and is registered back if the current working backend is being removed.
+
+Rather than this sort of handwavy description, why not just use the
+kerneldoc comments you have written for this structure?
+
+> +The regions are being stored in a simple fixed size array. It avoids
+> +memory allocation overhead. This is not performance critical nor does
+> +allocating a few hundred entries create a memory consumption problem.
+> +
+> +The static variables registered into kmemdump are being annotated into
+> +a dedicated `.kemdump` memory section. This is then walked by kmemdump
+> +at a later time and each variable is registered.
+> +
+> +kmemdump Initialization
+> +------------------
+> +
+> +After system boots, kmemdump will be ready to accept region registration
+> +from producer drivers. Even if the backend may not be registered yet,
+> +there is a default no-op backend that is registered. At any time the backend
+> +can be changed with a real backend in which case all regions are being
+> +registered to the new backend.
+> +
+> +backend functionality
+> +-----------------
+> +
+> +kmemdump backend can keep it's own list of regions and use the specific
+> +hardware available to dump the memory regions or use them for debugging.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7e8da575025c..ef0ffdfaf3de 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13620,6 +13620,7 @@ F:	drivers/iio/accel/kionix-kx022a*
+>  KMEMDUMP
+>  M:	Eugen Hristev <eugen.hristev@linaro.org>
+>  S:	Maintained
+> +F:	Documentation/debug/kmemdump.rst
+>  F:	drivers/debug/kmemdump.c
+>  F:	include/linux/kmemdump.h
+
 Thanks,
 
-Ben
-
+jon
 
