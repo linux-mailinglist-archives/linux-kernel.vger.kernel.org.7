@@ -1,252 +1,290 @@
-Return-Path: <linux-kernel+bounces-743454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B64B0FEDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA3AB0FEDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E661CC2712
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB6F54674F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA93C1A38F9;
-	Thu, 24 Jul 2025 02:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="hnTrK6aU"
-Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3CF1A3BD7;
+	Thu, 24 Jul 2025 02:40:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0960413A41F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890319F420
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753324798; cv=none; b=BdosNrmXoYJb8R4dOHQS3nIwIn/shGHK0lnpb4IUjHYwf3yHU8y2dlrDnBIOdLohdolXsmE/4vNt9xzzd+3xWagbOsOX2uDN0dcnsjPVs5Kbb53y0U3oArZ8Dgzd26rInM6CSGce7vpryXGOwX/V3cIW9mtowt/xL7vqXkf3kQs=
+	t=1753324805; cv=none; b=YG6nUy1rX6nwfksvQm1lCHvLU4Tz2qwaElJFaN2GKbXIaseZ0EsvGPZenQ5unYeVPwXXts0R23h9FjSDsovd8x458O3r0lU8zOjhr6J8+Nimtd7ihxm2eqrmWG3ghT0nQHUvxg3lUAveU1/m+Nfg7IVCERDsYsJG+utiXbDLhQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753324798; c=relaxed/simple;
-	bh=uPlh/YWX4gV2j+/e8PX8tFDcfpt6QXFzRYCQvBZYddQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaOkURKRWps9V0YRPQHfymy6sywh1xFP76fz60FXvM/N1M8hSMcJoXQopSFeQS9mXo9REyer2C+3YPP24b4AihLvIbNGLIP+0z/QWWEb85o8uFTJPmUDOJA/mYFJTy316le9B+5V7XJ/t1lbHWHE3hc7bOK1EtKxwwPGuomsKkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=hnTrK6aU; arc=none smtp.client-ip=139.138.36.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1753324796; x=1784860796;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=uPlh/YWX4gV2j+/e8PX8tFDcfpt6QXFzRYCQvBZYddQ=;
-  b=hnTrK6aUt/a+R5BeX06rR8iWkdNRxqLEdl0WMfKn9l9BkXHzgnbEq/RS
-   O2aJBuGSvTzAetcYK5gGhlhnUmbpoTa6c2qIxrxnLLBgesKkFnHR9ThrC
-   LqzDaNIkSjsV3WRVYlh+5l3+VAI9kjs39IreNUaZ7Jlm0w87vx5/BFzKw
-   pZfohus0KYaE6bTFo76CZiKYu019VQ65Cq02QPQ53PImMj7TRsYk6ZzrD
-   fFxxh5pRvOCdiW9q93M9m2xXGLHnRhxU0ywTrEhgMJO4CF7T22q4sgDWi
-   lx34N1CVWmLVXWHLnsk0qBbF3lRpiyAZlzN9kVPS5loTLU8fkObe4cFvT
-   w==;
-X-CSE-ConnectionGUID: P2LuWKqKRvihFbcbtRInRg==
-X-CSE-MsgGUID: bpaWRR2RTNOHeBwBjZTLYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="194633424"
-X-IronPort-AV: E=Sophos;i="6.16,336,1744038000"; 
-   d="scan'208";a="194633424"
-Received: from unknown (HELO az2nlsmgr4.o.css.fujitsu.com) ([20.61.8.234])
-  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 11:39:51 +0900
-Received: from az2nlsmgm4.fujitsu.com (unknown [10.150.26.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr4.o.css.fujitsu.com (Postfix) with ESMTPS id 327B142A307
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:39:51 +0000 (UTC)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm4.fujitsu.com (Postfix) with ESMTPS id 95E301000380
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:39:50 +0000 (UTC)
-Received: from [192.168.22.105] (unknown [10.167.135.81])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id C9EC11A000B;
-	Thu, 24 Jul 2025 10:39:40 +0800 (CST)
-Message-ID: <85d83be2-02f8-4ef6-91c7-ff920e47d834@fujitsu.com>
-Date: Thu, 24 Jul 2025 10:39:40 +0800
+	s=arc-20240116; t=1753324805; c=relaxed/simple;
+	bh=TINu4WjsijKuYKaID/S8zCJBrj/JBJGUZJuo1YMQ8oc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HUEs7Myl9LKhWp/PpNAp59/dH9IjwsZUL8Z+qOgHPWRwsljeOW26Fld5w9APr/FcIht1SB3X9nsvt9gBt5OjFzWm0Dp+WspspQUfZggDzZc3Kc4n8+fWUtkLr0Ll98EcSVuF3eiWmSSLNFhJMpOJ63yDCDpGt7bMxy6v77p52ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86a5def8869so129419939f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753324802; x=1753929602;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tj4ZvMBWNxKs9jopZVdqbFJYzwTtQQfAQvZ4NrQ7TwQ=;
+        b=rDtdPNxA+3fqBkgLgTVTcAjMKrDJcDEd7Pos7Suh68xSNH/M4W9viNAC07c9IE2fIp
+         0c0Vi3zaMoXM/EH4qOIWIMxAWZ9ZBEWGykAwXA9oTX03iAhSnMsVi2EvBe6lPslt4+t6
+         luAAcGok9nzUh+Faylleh9HsWVmWz99hdMSksuHPYDuG05mFEsQUFYAxm07gIEQUBvsF
+         mCV16Q+o6KeSo0OFZQFpTLVxtlFcP9r/+Aq8uTGReocMOqqiLf9O/wUQfg4xUCZskdLt
+         XceIQDNc2VwCDHRf1xprnoCFEFEjGDlYV7fP1ibOw9k73G+rJ9JGwwoIJy66a8QgbNm5
+         Pdug==
+X-Forwarded-Encrypted: i=1; AJvYcCU87WW0F2ob1s1RqTLpno3OgjwgkSLNXYkPsuTPZ7Nk6CFyNF2XbQZh5litxaFr1sUm0hMh1Xt6i0npfbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmezVakKWCtzKPBd5J769/4i2ji6HYYSAmDUxhmsT+EleEAGFr
+	KyvelZF1ZnLhZzNp5oYC3REJTh8nV8WzympDxOWfePmtmgIKSV1IE8Nx+g4vkGTGFGE0s2Bc6jh
+	DfoViwucGJNHAl1UeinPCRYSS35h2nju3W/K6Ks2+A0giUyO+A/TdPrsAmKw=
+X-Google-Smtp-Source: AGHT+IHf4DRLzGt7IUP795aoNPD8zrTfN2AcoKl0NI8CJCRBreo6WK0y7GlxHRHuCd4osCuJ+wdg4nV+P7q/2zk1FdFl4AZMqz3G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
- counting
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- akpm@linux-foundation.org, y-goto@fujitsu.com, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
- vschneid@redhat.com, Li Zhijian <lizhijian@fujitsu.com>,
- Ben Segall <bsegall@google.com>
-References: <20250722141650.1821721-1-ruansy.fnst@fujitsu.com>
- <87cy9r38ny.fsf@DESKTOP-5N7EMDA>
-From: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <87cy9r38ny.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5d:8d10:0:b0:873:f23:ff5 with SMTP id ca18e2360f4ac-87c6506b76fmr692359039f.12.1753324802453;
+ Wed, 23 Jul 2025 19:40:02 -0700 (PDT)
+Date: Wed, 23 Jul 2025 19:40:02 -0700
+In-Reply-To: <20250724022251.2875-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68819d02.050a0220.248954.000e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
+ simple_recursive_removal (5)
+From: syzbot <syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in lockref_get
+
+wlan1: send auth to aa:09:b7:99:c0:d7 (try 2/3)
+wlan1: send auth to aa:09:b7:99:c0:d7 (try 3/3)
+wlan1: authentication with aa:09:b7:99:c0:d7 timed out
+==================================================================
+BUG: KASAN: slab-use-after-free in __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+BUG: KASAN: slab-use-after-free in _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+Read of size 1 at addr ffff888042a47b40 by task kworker/u4:4/169
+
+CPU: 0 UID: 0 PID: 169 Comm: kworker/u4:4 Not tainted 6.16.0-rc7-syzkaller-gf9af7b5d9349-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound cfg80211_wiphy_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x230 mm/kasan/report.c:480
+ kasan_report+0x118/0x150 mm/kasan/report.c:593
+ __kasan_check_byte+0x2a/0x40 mm/kasan/common.c:557
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5845
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ lockref_get+0x15/0x60 lib/lockref.c:50
+ dget include/linux/dcache.h:345 [inline]
+ simple_recursive_removal+0x35/0x690 fs/libfs.c:611
+ debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
+ ieee80211_sta_debugfs_remove+0x4f/0x80 net/mac80211/debugfs_sta.c:1281
+ __sta_info_destroy_part2+0x352/0x450 net/mac80211/sta_info.c:1501
+ __sta_info_destroy net/mac80211/sta_info.c:1517 [inline]
+ sta_info_destroy_addr+0xf5/0x140 net/mac80211/sta_info.c:1529
+ ieee80211_destroy_auth_data+0x12d/0x260 net/mac80211/mlme.c:4597
+ ieee80211_sta_work+0x11cf/0x3600 net/mac80211/mlme.c:8310
+ cfg80211_wiphy_work+0x2dc/0x460 net/wireless/core.c:435
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 5860:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4148 [inline]
+ slab_alloc_node mm/slub.c:4197 [inline]
+ kmem_cache_alloc_lru_noprof+0x1c6/0x3d0 mm/slub.c:4216
+ __d_alloc+0x31/0x6f0 fs/dcache.c:1690
+ d_alloc fs/dcache.c:1769 [inline]
+ d_alloc_parallel+0xe0/0x14e0 fs/dcache.c:2533
+ __lookup_slow+0x116/0x3d0 fs/namei.c:1802
+ start_creating+0x22e/0x3c0 fs/debugfs/inode.c:391
+ debugfs_create_dir+0x28/0x420 fs/debugfs/inode.c:586
+ ieee80211_sta_debugfs_add+0x12c/0x850 net/mac80211/debugfs_sta.c:1254
+ sta_info_insert_finish net/mac80211/sta_info.c:892 [inline]
+ sta_info_insert_rcu+0xfac/0x1940 net/mac80211/sta_info.c:960
+ sta_info_insert+0x16/0xc0 net/mac80211/sta_info.c:965
+ ieee80211_prep_connection+0x10cd/0x1600 net/mac80211/mlme.c:8854
+ ieee80211_mgd_auth+0xee3/0x1770 net/mac80211/mlme.c:9119
+ rdev_auth net/wireless/rdev-ops.h:486 [inline]
+ cfg80211_mlme_auth+0x62f/0x9c0 net/wireless/mlme.c:291
+ cfg80211_conn_do_work+0x501/0xd10 net/wireless/sme.c:183
+ cfg80211_sme_connect net/wireless/sme.c:626 [inline]
+ cfg80211_connect+0x1862/0x21a0 net/wireless/sme.c:1525
+ nl80211_connect+0x17bc/0x1cd0 net/wireless/nl80211.c:12303
+ genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 15:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2381 [inline]
+ slab_free mm/slub.c:4643 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4745
+ rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+ rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:164
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Last potentially related work creation:
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ __call_rcu_common kernel/rcu/tree.c:3094 [inline]
+ call_rcu+0x157/0x9c0 kernel/rcu/tree.c:3214
+ __dentry_kill+0x4d2/0x660 fs/dcache.c:688
+ dput+0x19f/0x2b0 fs/dcache.c:911
+ find_next_child+0x1e5/0x250 fs/libfs.c:603
+ simple_recursive_removal+0xf4/0x690 fs/libfs.c:619
+ debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
+ ieee80211_debugfs_remove_netdev net/mac80211/debugfs_netdev.c:1021 [inline]
+ ieee80211_debugfs_recreate_netdev+0xbf/0x1460 net/mac80211/debugfs_netdev.c:1034
+ drv_remove_interface+0x1fa/0x590 net/mac80211/driver-ops.c:125
+ _ieee80211_change_mac net/mac80211/iface.c:277 [inline]
+ ieee80211_change_mac+0x912/0x12c0 net/mac80211/iface.c:309
+ netif_set_mac_address+0x2fc/0x4c0 net/core/dev.c:9688
+ do_setlink+0x88c/0x41c0 net/core/rtnetlink.c:3093
+ rtnl_changelink net/core/rtnetlink.c:3759 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
+ rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4055
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888042a47a70
+ which belongs to the cache dentry of size 312
+The buggy address is located 208 bytes inside of
+ freed 312-byte region [ffff888042a47a70, ffff888042a47ba8)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x42a46
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff88803ff67101
+flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000040 ffff88801b6db780 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000150015 00000000f5000000 ffff88803ff67101
+head: 04fff00000000040 ffff88801b6db780 dead000000000100 dead000000000122
+head: 0000000000000000 0000000000150015 00000000f5000000 ffff88803ff67101
+head: 04fff00000000001 ffffea00010a9181 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Reclaimable, gfp_mask 0xd20d0(__GFP_RECLAIMABLE|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4739, tgid 4739 (udevd), ts 37957937697, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2451 [inline]
+ allocate_slab+0x8a/0x3b0 mm/slub.c:2619
+ new_slab mm/slub.c:2673 [inline]
+ ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
+ __slab_alloc mm/slub.c:3949 [inline]
+ __slab_alloc_node mm/slub.c:4024 [inline]
+ slab_alloc_node mm/slub.c:4185 [inline]
+ kmem_cache_alloc_lru_noprof+0x288/0x3d0 mm/slub.c:4216
+ __d_alloc+0x31/0x6f0 fs/dcache.c:1690
+ d_alloc fs/dcache.c:1769 [inline]
+ d_alloc_parallel+0xe0/0x14e0 fs/dcache.c:2533
+ lookup_open fs/namei.c:3639 [inline]
+ open_last_lookups fs/namei.c:3816 [inline]
+ path_openat+0xa3b/0x3830 fs/namei.c:4052
+ do_filp_open+0x1fa/0x410 fs/namei.c:4082
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_openat fs/open.c:1468 [inline]
+ __se_sys_openat fs/open.c:1463 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1463
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888042a47a00: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fa fb
+ ffff888042a47a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888042a47b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff888042a47b80: fb fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00
+ ffff888042a47c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
+Tested on:
 
-在 2025/7/23 11:09, Huang, Ying 写道:
-> Ruan Shiyang <ruansy.fnst@fujitsu.com> writes:
-> 
->> From: Li Zhijian <lizhijian@fujitsu.com>
->>
->> ===
->> Changes since v2:
->>    1. According to Huang's suggestion, add a new stat to not count these
->>    pages into PGPROMOTE_CANDIDATE, to avoid changing the rate limit
->>    mechanism.
->> ===
-> 
-> This isn't the popular place for changelog, please refer to other patch
-> email.
-
-OK. I'll move this part down below.>
->> Goto-san reported confusing pgpromote statistics where the
->> pgpromote_success count significantly exceeded pgpromote_candidate.
->>
->> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
->>   # Enable demotion only
->>   echo 1 > /sys/kernel/mm/numa/demotion_enabled
->>   numactl -m 0-1 memhog -r200 3500M >/dev/null &
->>   pid=$!
->>   sleep 2
->>   numactl memhog -r100 2500M >/dev/null &
->>   sleep 10
->>   kill -9 $pid # terminate the 1st memhog
->>   # Enable promotion
->>   echo 2 > /proc/sys/kernel/numa_balancing
->>
->> After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
->> $ grep -e pgpromote /proc/vmstat
->> pgpromote_success 2579
->> pgpromote_candidate 0
->>
->> In this scenario, after terminating the first memhog, the conditions for
->> pgdat_free_space_enough() are quickly met, and triggers promotion.
->> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
->> not in PGPROMOTE_CANDIDATE.
->>
->> To solve this confusing statistics, introduce this
->> PGPROMOTE_CANDIDATE_NOLIMIT to count the missed promotion pages.  And
->> also, not counting these pages into PGPROMOTE_CANDIDATE is to avoid
->> changing the existing algorithm or performance of the promotion rate
->> limit.
->>
->> Perhaps PGPROMOTE_CANDIDATE_NOLIMIT is not well named, please comment if
->> you have a better idea.
-> 
-> Yes.  Naming is hard.  I guess that the name comes from the promotion
-> that isn't rate limited.  I have asked Deepseek that what is the good
-> abbreviation for "not rate limited".  Its answer is "NRL".  I don't know
-> whether it's good.  However, "NOT_RATE_LIMITED" appears too long.
-
-"NRL" Sounds good to me.
-
-I'm thinking another one: since it's not rate limited, it could be 
-migrated quickly/fast.  How about PGPROMOTE_CANDIDATE_FAST?
-
-
-> 
->>
->>
-> 
-> The empty line is unnecessary.
-
-OK.>
->> Cc: Huang Ying <ying.huang@linux.alibaba.com>
-> 
-> Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
-
-OK.
-
-
---
-Thanks,
-Ruan.
-
-> 
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Juri Lelli <juri.lelli@redhat.com>
->> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Ben Segall <bsegall@google.com>
->> Cc: Mel Gorman <mgorman@suse.de>
->> Cc: Valentin Schneider <vschneid@redhat.com>
->> Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
->> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
->> Signed-off-by: Ruan Shiyang <ruansy.fnst@fujitsu.com>
->> ---
->>   include/linux/mmzone.h | 2 ++
->>   kernel/sched/fair.c    | 6 ++++--
->>   mm/vmstat.c            | 1 +
->>   3 files changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->> index 283913d42d7b..6216e2eecf3b 100644
->> --- a/include/linux/mmzone.h
->> +++ b/include/linux/mmzone.h
->> @@ -231,6 +231,8 @@ enum node_stat_item {
->>   #ifdef CONFIG_NUMA_BALANCING
->>   	PGPROMOTE_SUCCESS,	/* promote successfully */
->>   	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
->> +	PGPROMOTE_CANDIDATE_NOLIMIT,	/* candidate pages without considering
->> +					 * hot threshold */
->>   #endif
->>   	/* PGDEMOTE_*: pages demoted */
->>   	PGDEMOTE_KSWAPD,
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 7a14da5396fb..12dac3519c49 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -1940,11 +1940,14 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
->>   		struct pglist_data *pgdat;
->>   		unsigned long rate_limit;
->>   		unsigned int latency, th, def_th;
->> +		long nr = folio_nr_pages(folio);
->>   
->>   		pgdat = NODE_DATA(dst_nid);
->>   		if (pgdat_free_space_enough(pgdat)) {
->>   			/* workload changed, reset hot threshold */
->>   			pgdat->nbp_threshold = 0;
->> +			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NOLIMIT,
->> +					    nr);
->>   			return true;
->>   		}
->>   
->> @@ -1958,8 +1961,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
->>   		if (latency >= th)
->>   			return false;
->>   
->> -		return !numa_promotion_rate_limit(pgdat, rate_limit,
->> -						  folio_nr_pages(folio));
->> +		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
->>   	}
->>   
->>   	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
->> diff --git a/mm/vmstat.c b/mm/vmstat.c
->> index a78d70ddeacd..ca44a2dd5497 100644
->> --- a/mm/vmstat.c
->> +++ b/mm/vmstat.c
->> @@ -1272,6 +1272,7 @@ const char * const vmstat_text[] = {
->>   #ifdef CONFIG_NUMA_BALANCING
->>   	"pgpromote_success",
->>   	"pgpromote_candidate",
->> +	"pgpromote_candidate_nolimit",
->>   #endif
->>   	"pgdemote_kswapd",
->>   	"pgdemote_direct",
-> 
-> ---
-> Best Regards,
-> Huang, Ying
+commit:         f9af7b5d Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=174640a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6ccd49ae046542a0641
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=151a40a2580000
 
 
