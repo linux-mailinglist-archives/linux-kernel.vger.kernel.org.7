@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-745098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA26B114DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A104B114E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D125A5A16
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D073D1CC692E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6FD247288;
-	Thu, 24 Jul 2025 23:46:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A133624729F;
+	Thu, 24 Jul 2025 23:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW17cz/E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF4323505F;
-	Thu, 24 Jul 2025 23:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2FF2E370F;
+	Thu, 24 Jul 2025 23:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400764; cv=none; b=ZnIJhTj3NdHgCwxMJ2ym2qbwEE8xBAlz4zPe6oAD55JDBdSAaaEjc1M6myhhTDng7DI6rqkfvrjdYyADAEwPuvAF7jRaMG9RfWFJhDly+movtXN++u3uXV8lfLkiGxT1xGSIv7J2tR/Byku9VkENiayRqWTeELjMPNvZWTC6Nsw=
+	t=1753400986; cv=none; b=juiPegc0kezCkC2oK7ZiUzfURK4K3c1xbI5D+Pmn+9oquDeSq47mq8mBa/WOWB6UEHAgRZnl7GPOzH7kgv9nLxbQJQ2kH/lxQOi/vW3nGJRxCxbKm+CoY6LqSqTxMj4YUl27+0Ju0acI/eyIYgeHVk8bNkan74lnYMuv1KHP+LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400764; c=relaxed/simple;
-	bh=9YsPgnjWiFE8FdaTddixtOAuCO18p0RNAZIkar0SXDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GJq3c9+to4+fjhUJFA+h8gqaJjqj84Cr0DsBaYYlxxA9mJyXbETs2rlGU010KTdS6VIl4OdWF6MzA8nPk5+a2dSO1gPSr+3POG/MWtKQw7K36sfnaCm0iSrBnLhdoMMqFpXlCSYgw5DQrDhQwHH50An9VQu85CJzSOA1QtNvPLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 3EE581A0555;
-	Thu, 24 Jul 2025 23:45:55 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 564AA2000E;
-	Thu, 24 Jul 2025 23:45:53 +0000 (UTC)
-Date: Thu, 24 Jul 2025 19:45:56 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kees Cook <kees@kernel.org>
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, Konstantin Ryabitsev
- <konstantin@linuxfoundation.org>, corbet@lwn.net,
- workflows@vger.kernel.org, josh@joshtriplett.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <20250724194556.105803db@gandalf.local.home>
-In-Reply-To: <202507241418.34AFD28C@keescook>
-References: <20250724175439.76962-1-linux@treblig.org>
-	<20250724-alluring-fuzzy-tanuki-6e8282@lemur>
-	<202507241337.F9595E1D@keescook>
-	<aIKhvubVqgeXIlrj@gallifrey>
-	<202507241418.34AFD28C@keescook>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753400986; c=relaxed/simple;
+	bh=yMwOVWXuZtxnuZSKywwnjOh8HTftfAM04cVJJa9ebcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBagZPc2nSt4LFwTOaV6Xj3s5+1DOa3ZQ2PDiDSRqX/twkxtc5uIl+ixT6GfKorevB4OxzJyV03ScJpwzdTjV4UpbYdPluf8aFlGHUP0fTOK9yiahAi4GAEd5J22Upa422IBHwWQwJ+2knMdn1OaikjfhHDbIc7D6I5trJZTAG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW17cz/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6103CC4CEED;
+	Thu, 24 Jul 2025 23:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753400983;
+	bh=yMwOVWXuZtxnuZSKywwnjOh8HTftfAM04cVJJa9ebcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TW17cz/EEZaZJmmAANQIcH721CVqiYs4LQJri53qVRx99HG1jZN0YeCm+1tRjrZ//
+	 Js/j4lVsCcFwwUP0dpNXXlxianCp7nwBPxuD13aaNZcrqJrHOkNKo88vzUd0slfVr4
+	 OBXRpHcT8p4UmBYpoWowl95Q3YE2D0bTrkeJ2BuBy8SM8wPSFkeQxJ1D8JcAFVYk7+
+	 WSbj5pSUAsPPICBiMuAfcU/14xU79isfbnly6OiAMYgg7uBvBnidj5xY6FrzxAIgzh
+	 z7fpjzt+CBzhIMAvNsmNP1tzvobW45LNqeGvkHyXv9OcMANdijzSMQAi4aw7aq8Uzz
+	 dIDSeiovGZNSA==
+Date: Thu, 24 Jul 2025 16:49:43 -0700
+From: Kees Cook <kees@kernel.org>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH v6 2/3] treewide: Switch memcpy() users of 'task->comm'
+ to a more safer implementation
+Message-ID: <202507241640.572BF86C70@keescook>
+References: <20250724123612.206110-1-bhupesh@igalia.com>
+ <20250724123612.206110-3-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 564AA2000E
-X-Stat-Signature: jcmte6d8p7mnsf3r15shzxhp6q18wgfc
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+yNO9VbZbkVyeRZNPi2XKXi8bwscADxmE=
-X-HE-Tag: 1753400753-595998
-X-HE-Meta: U2FsdGVkX19PziNYj9FSpPojIyDzoh8bU6QlLhFo+pNW3MfsqwxWIOojJmLaAjiovssyW07wjHEfRrDHqbQu+DUCY/F1jFPeCK0nF5ZFHkAGivFhHAksQEhB+ufD9I0b77VfqG1Ji5ge69PP7hMqHaKd3eKgaw5kILDXzdrhZFlEgk8QmnWmKmpjW1mw9t3GiZIu9sut8FHTGdfI8yw6F21e4/ivmhiajbm7iN7VevVEdk0d/wvK8wzRD1pBGr0VFoWcEn/aMMSla3/+uxOZ4QIoHRT2xgq+RqZpn8UQEvp8UGjbhnigpYafhaGmHD4qkSBFTiukJRqNx8lmtvwq/DlR42Y8q++rM0T3fqMEIybsPUJM3LelVl8RwgKrVHA9ojACsbod+eIQEWGDOlMwdg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724123612.206110-3-bhupesh@igalia.com>
 
-On Thu, 24 Jul 2025 14:20:03 -0700
-Kees Cook <kees@kernel.org> wrote:
-
-> On Thu, Jul 24, 2025 at 09:12:30PM +0000, Dr. David Alan Gilbert wrote:
-> > * Kees Cook (kees@kernel.org) wrote:  
-> > > [...]
-> > > do for Coccinelle or other scripts. It's a bit buried in the Researcher
-> > > Guidelines[1], but we have explicitly asked for details about tooling:
-> > > 
-> > >   When sending patches produced from research, the commit logs should
-> > >   contain at least the following details, so that developers have
-> > >   appropriate context for understanding the contribution.
-> > >   ...
-> > >   Specifically include details about any testing, static or dynamic
-> > >   analysis programs, and any other tools or methods used to perform the
-> > >   work.
-> > > 
-> > > Maybe that needs to be repeated in SubmittingPatches?  
-> > 
-> > 'produced from research' is narrowing things down a bit too much I think
-> > when it's people using the tools as their normal way of working.  
-
-So I did bring this up in the last TAB meeting. I brought it up because I
-found out from reading an LWN[1] article that I received a patch fully
-written in AI without knowledge that it was written with AI. If I had known,
-I would have examined the patch a little more thoroughly, and would have
-discovered a very minor mistake in the patch.
-
+On Thu, Jul 24, 2025 at 06:06:11PM +0530, Bhupesh wrote:
+> As Linus mentioned in [1], currently we have several memcpy() use-cases
+> which use 'current->comm' to copy the task name over to local copies.
+> For an example:
 > 
-> Right -- as currently written we have the explicit guideline for
-> "produced from research" and kind of an unwritten rule to detail any
-> complex tools involved for regular development (e.g. Coccinelle,
-> syzkaller, etc). We could generalize the existing statement and repeat
-> it in a better location?
+>  ...
+>  char comm[TASK_COMM_LEN];
+>  memcpy(comm, current->comm, TASK_COMM_LEN);
+>  ...
+> 
+> These should be modified so that we can later implement approaches
+> to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
+> in a more modular way (follow-up patch does the same):
+> 
+>  ...
+>  char comm[TASK_COMM_LEN];
+>  memcpy(comm, current->comm, TASK_COMM_LEN);
+>  comm[TASK_COMM_LEN - 1] = '\0';
+>  ...
 
-When a patch is generated by Coccinelle, checkpatch or any other tool, it
-should most definitely be mentioned in the change log.
+Why not switch all of these to get_task_comm()? It will correctly handle
+the size check and NUL termination.
 
-I strongly believe the same goes for AI. Now the argument is where do we
-draw the line? If you are using AI that helps write your code, do you need
-to disclose it every time?
+In an earlier thread[1], I pointed out that since __set_task_comm() always
+keeps a final NUL byte, we're always safe to use strscpy(). (We want to
+block over-reads and over-writes but don't care about garbled reads.)
 
-My thought is to treat AI as another developer. If a developer helps you
-like the AI is helping you, would you give that developer credit for that
-work? If so, then you should also give credit to the tooling that's helping
-you.
+In the new case of copying into a smaller buffer, strscpy() will always
+handle writing the final NUL byte.
 
-I suggested adding a new tag to note any tool that has done non-trivial
-work to produce the patch where you give it credit if it has helped you as
-much as another developer that you would give credit to.
+The only special cases I can think of would be non-fixed-sized
+destination buffers, which get_task_comm() doesn't like since it can't
+validate how to safely terminate the buffer. The example you give above
+isn't that, though.
 
--- Steve
+-Kees
 
+[1] https://lore.kernel.org/all/202411301244.381F2B8D17@keescook/
 
-[1] https://lwn.net/Articles/1026558/
+-- 
+Kees Cook
 
