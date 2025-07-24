@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-744508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69712B10DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22DFB10DCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72D23177828
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C71F1CC814A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B6D274B27;
-	Thu, 24 Jul 2025 14:37:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6962E542A;
+	Thu, 24 Jul 2025 14:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsTFWnGt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630D61991DD
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3562676E9;
+	Thu, 24 Jul 2025 14:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367824; cv=none; b=ch/ObUkB+a8VWjGtPqfkcEQmC1K3BkCr81vnMWbQinAZ/Fzf/WcghsZx+3G4vZ4IZOR0/c09HskPNgiyzZk/HITtssa2R9qNhn0vDHTwycaV0Ml+B1XLEWR2gcoy9QznELamp0ILG+IFUtnhc1uxJq5fpa5NU9y8wlpZIXktkx8=
+	t=1753367900; cv=none; b=JmHcScdsEWlS4i0gK+5XJKbasOU/lZh1geAYTjyV61F/2bVqCEmBKXLIQkgdO/K8UT+Xn8LQDWxH2vdNRICGkaWBp21HotjzzanGQ5kVD0eNM5Gj5voyz5vrabavm61tmxdKGlwcbe/tsv3ofD8qjPTy7JZuuMfvDXWwaMG5k0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367824; c=relaxed/simple;
-	bh=lrZGovMfzr3uWw6ywdu3gQ7QC2dY2ZiLkUdsg73gBYQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YDMGbs0g8X02VuvM9M6hpOV0WB3lkyZw0NPEz67SaODgrM4UfofhijU5xOep94tBIPlsRDAJBC3iR6xvutB68L8nXw28fRTEw61/pbkZz2VcTOGIoIXkzil1CB64pad0KheFEJIR0K43ymiVmJe7r7b3/t3I0oIMo8NY0FQPIws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e26ad54369so24747895ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:37:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753367822; x=1753972622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VnsYI8YKyGb65+gy6ObeUjKR0Rc4w8XZ4XYDxw2JU78=;
-        b=CktiGHltEWexL537nuKUQmqcXLC2JxyzZxXEsOO6S0lUMGanqN/+zULG4epV32/kfJ
-         MkCobG+R7PO1t7admyH2oY/jQeZ4e1nwq90ZaeBZCijGauIeFkGeVrbgp0zf/DlZPcoZ
-         6J6fedvnViiTkH7CuHTcugb5nbrEE7fCQ3nbRTvuDj1DOF2vfWziy9X+gmrKh9spQPiw
-         zfjirpyHJp6ZbBatIKLeamDc45Azq+0kjUyBfkdUq/vHIYmG6AjRyprI1Fwjj4hw+BVC
-         yZ1p0zHyKZPmuI4esqbj/aLc9aGIf3vl8pQNQQZrxQzIlZR+KWFKfjR613g3gWhBbTyo
-         neMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtea/uj9wPqgLhffUqQ5K912P/Soa/nXT5nWAFvZs71K1ZFBQgbPLweYRiP1fvONAM1hS7ownnRVS1gaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJvg9rx+761b026qUsJ/4yQwh/RzsInpiqfib8Z+h5Y1ZfwtkA
-	hNpgwaPjzd48JZlR2g8E+Ur5bFZpYudUvzbf4edz93LuIifC4wsPslMG3bLbRpaFDXXAzsfUgXI
-	f/1/+FcdoFQutD0jDtj3IPXOMzUZmwushoNVM1ebQPY3gZ0Jrt2scyvrWSZQ=
-X-Google-Smtp-Source: AGHT+IERoU1yT7l8iHA7Ue4j2KCrPAHlncDFmBiCxEjvwU8YdVsV4w5ZKsyuZX04fkC70WLhUX8b5zz2uwits1ygwE6y0PLFxSFZ
+	s=arc-20240116; t=1753367900; c=relaxed/simple;
+	bh=J+2CIa+PZT6ZTjOXWq7tTssnqG+kDDgqLvO7Suiluns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BDCD59d7bye5Qb23HLAfbxG/3Lz8WbD5YNRTIqWsISmKH67K600aNlGMC4zdgM1TkfRTVounQkTfZcxOn+SLzoAlFChrpkShBivrBBk3H57zHmyShU2XOmFMEgrlSV2FgCQP5MgFEEevYpHYhK0CHvp/qBeX4JP/wgU/cwe7PFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsTFWnGt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49ADFC4CEED;
+	Thu, 24 Jul 2025 14:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753367899;
+	bh=J+2CIa+PZT6ZTjOXWq7tTssnqG+kDDgqLvO7Suiluns=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HsTFWnGtUktymKD/MzWoKPp9mMJ8J7hdPiYRwnH/gX9Yyk0YWoi1zQuKcwMKkqmTZ
+	 U4ENjChvi76/4WavXvO4QCBxC+2/YMObnfkttI8vQEU8YE6ce1JGsY+nABrE8iT1N5
+	 fsvrjy6Sxq4P7KFt0/HSAoKCCJm7TauRFzfFrz6pICC7V4MzcBlBoLnlO+UYMVH66T
+	 vWl/Xg2sk05tWJpYL02rUUx+Ym3KdwHC0Fni5rYKRSUMQJ3cdo5OA+RLTP9X2GeOVi
+	 gcc4BWEYQEwm7naAtF2czbFwmrqIiUbUyKnYg8p7mp1iHOkqkI4XCi0RqrKtP3/AuB
+	 ILa9KQXLxxcXg==
+Message-ID: <217dfc7f-97d6-4598-ad6a-1cb48464c91c@kernel.org>
+Date: Thu, 24 Jul 2025 16:38:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3497:b0:3e3:b4ff:15e3 with SMTP id
- e9e14a558f8ab-3e3b97cf3bbmr31859135ab.4.1753367822441; Thu, 24 Jul 2025
- 07:37:02 -0700 (PDT)
-Date: Thu, 24 Jul 2025 07:37:02 -0700
-In-Reply-To: <681853be.a70a0220.254cdc.0045.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6882450e.a00a0220.2f88df.002a.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING in osif_xfer/usb_submit_urb
-From: syzbot <syzbot+4687ab80180e5d724f51@syzkaller.appspotmail.com>
-To: andi.shyti@kernel.org, gregkh@linuxfoundation.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wsa+renesas@sang-engineering.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/8] Implement vendor resets for PSCI SYSTEM_RESET2
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Stephen Boyd <swboyd@chromium.org>, Andre Draszik
+ <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Elliot Berman <elliot.berman@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250721-arm-psci-system_reset2-vendor-reboots-v12-0-87bac3ec422e@oss.qualcomm.com>
+ <beb26682-d2e4-40e6-89ac-87f18c0401d0@broadcom.com>
+ <56599da9-0200-72b5-012e-942a1fc954b2@oss.qualcomm.com>
+ <a1d3264f-a46a-42c4-b518-a66c8e0b70b4@kernel.org>
+ <f4725f3f-1b45-ebd2-aaf4-4f986a44eb8e@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <f4725f3f-1b45-ebd2-aaf4-4f986a44eb8e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 24/07/2025 16:04, Shivendra Pratap wrote:
+>>>> For the sysfs bits, should not we be seeing "psci" instead of "reboot-mode" twice in this path:
+>>>>
+>>>> # cat /sys/class/reboot-mode/reboot-mode/reboot_modes
+>>>> powercycle
+>>> As per current patch, we create a class named - "reboot-mode".
+>>> /sys/class/reboot-mode
+>>>
+>>> Then comes the DT node name of the registering driver.
+>>> /sys/class/reboot-mode/<DT node name of the registering driver>/
+>>
+>> This means that node name becomes part of the ABI? I am not happy about
+>> it. Where is such ABI documented? Because your last patch tells
+>> something completely else!
+>>
+>> I strongly insist using compatible as way to find your device, not node
+>> names.
+> It will look better to switch to compatible. Will define a compatible for
+> psci reboot-mode binding and align the patch to use the compatible for sysfs.
+> Current patch defines reboot-mode as a property to psci, hope its fine to
+> define a compatible for this property like "psci-vendor-reset" or
+> "psci-reboot-modes"?
 
-commit 56ad91c1aa9c18064348edf69308080b03c9dc48
-Author: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date:   Thu May 22 06:42:35 2025 +0000
 
-    i2c: robotfuzz-osif: disable zero-length read messages
+Hm, sorry, what? That's not what I ask, but considering inconsistency
+mentioned here and in actual ABI document I do not even know what to
+suggest.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15b114f0580000
-start commit:   4f79eaa2ceac kbuild: Properly disable -Wunterminated-strin..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a9a25b7a36123454
-dashboard link: https://syzkaller.appspot.com/bug?extid=4687ab80180e5d724f51
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103081cc580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ba139b980000
+> 
+>>
+>> In any case you need to document such ABI in Devicetree bindings,
+>> because sysfs ABI is not enough.
+> should reboot-mode Devicetree binding document this ABI? Can you
+> please share some more detail on this?
 
-If the result looks correct, please mark the issue as fixed by replying with:
 
-#syz fix: i2c: robotfuzz-osif: disable zero-length read messages
+The binding for the device, whose node name you are using here as ABI,
+should document the ABI.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Best regards,
+Krzysztof
 
