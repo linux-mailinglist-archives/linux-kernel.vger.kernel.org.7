@@ -1,77 +1,86 @@
-Return-Path: <linux-kernel+bounces-744971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D47B11322
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:27:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3C2B11329
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9BE75A691D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9D01CC8263
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5888F2EF296;
-	Thu, 24 Jul 2025 21:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B334322B8C5;
+	Thu, 24 Jul 2025 21:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SM+lRFo7"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SQcUy6ux"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20142EE979
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4927AF9E8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392451; cv=none; b=IciYs6uPgucWJgOONY1ypZDy+05pzSGuiiqfcEMAnLGh8H2fCV7lgXhrRKZ00ytt8Wzva9Vbq+in20NPAAM4TmBhhbOXixebX+1CqIb9bBRzrOeQy9hUA046R/t2RAg98/D1eBfTfC4zT7KnxfKtwBRGoXB8otx5Gf0G9sNXmxY=
+	t=1753392757; cv=none; b=ciCbA9B1v+StecmXCxnQs3lF3zlUu50kkgHQE0IAK78uX3QmuSBcF6UJk7Jb7q1dYrZZRUCSGWTB0t7m/njyKNqazwkWDRYJbgQkFtQKviR8MCxI2m4HhxXowVzWEoWvHi8HgfEsJZkN0P50s/LCGgQ7Za951wu2T9a5g0B0t58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392451; c=relaxed/simple;
-	bh=wNCd3EJBV8JmYYmxRVMwzijvsmCmObXzyS6voU1YqDg=;
+	s=arc-20240116; t=1753392757; c=relaxed/simple;
+	bh=2cGQ56dbsxK1druA/XiJMH+oxCfrEx6kK6FcnWfJKjw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qrEKXQzOObiFzKWcTmRSJ/wo8VqlspS3Pg/LYhvk1aM6DMejFkIzBDrmONulcu1SsSXp1FVLGveITu4Loy8KTHKrCfYhcn5PvWxGZLmZaJSb8iZiwt7vF1MdlCOCKkic3O41AgnzaCRO9eTT8sYWNUDYKfvzyDuvFGToFlncd6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SM+lRFo7; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e638975262so43073285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:27:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753392448; x=1753997248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eb7LwTrwfKZRGwsWl7FQwuOc+LHKc/Q1TZHaaM57R8o=;
-        b=SM+lRFo7N1mbFZfA3hHMXOBmBgQhT2Q5Jqm4GiZ7DzeSol+W2X6WyFPGADIx7r+aB5
-         1rultwrb5EaOiP11okmK8Ot0hzKrfh3mc5nMW6clw8Lgp4HIRPP4dJSuHhXR2pbUxF+v
-         084CeppGGsxQpw9hKcs62wSthkFAkMFGLwKjs=
+	 In-Reply-To:Content-Type; b=naW8ZNI4X/REl75ZjqJPeHFs87VAbNZ5poJQS7bhWELKWNlV0nxu4WdSxgGGiFnDBGWSDkJOEjRiZlkcTHAqNJeA0ABaqaEbZO0/2hkgMrYPHkCTqGikzlD4/NFMch7Y8mVwMUGJdm8Y9CLksO9iIZDl+xJgUStGyd4e5AC1GtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SQcUy6ux; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753392754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=azr2brsZ6Ua8mVeqP54+Ze96cYo9iUAaUmwXzQQMwtE=;
+	b=SQcUy6uxLin3kYmEdEefT72XhVJCYwGsjYpdYzHOW1358NQhq3cI4ysq93b8NzYO4Dhz6C
+	As/8B4ULfuhQeMc91sga/FGJnbHn0D1xrdQavHrcMjbFPBQbvIARCFLgrtMMTr3O79qGzl
+	2rbjdkr5hRse+3UU/3atArdYcuWplOA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-168-M4bhmrB7P3qQZ92op6cQxg-1; Thu, 24 Jul 2025 17:32:32 -0400
+X-MC-Unique: M4bhmrB7P3qQZ92op6cQxg-1
+X-Mimecast-MFC-AGG-ID: M4bhmrB7P3qQZ92op6cQxg_1753392751
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so965364f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:32:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753392448; x=1753997248;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eb7LwTrwfKZRGwsWl7FQwuOc+LHKc/Q1TZHaaM57R8o=;
-        b=SEpyhv84LzzKRFZoNTbfwFa21GozsdQLDRshoJZrpIAJ3US07c0X8aAyCo0AzRKjAt
-         P9z3MQ8Du7wJGl8OeGCfsLBohPQG2PgG07/KhMWbWXlSm6z2v0jNGWaKfc9Lg7IV9hxo
-         4Fzzp6UB8B8hYgBitk0G4OcT+nhRyFUZF3jenwLaLhE6gXXgeSVBFyv0F0CicxUxK6iV
-         goxRfCFW/AIjtkaqofzxT+G2wRjfhTMMoLK3dB0hlTU3IDthA9e90FveeUqz5QyRS5HT
-         EMg70HTQfUaOblWlg4WhS7yS16mVeMQ8H60cKX7QUzMamnpekTHwg0PPGY87df8xHH3o
-         RCJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZg8w87iN5LGr6EsBWWZfOjImuFN2xQasQptDgNcyhcu3R1BuOCSBC3Qm9IDzyaG33EfJbjekwKabEJ5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+PCBzXZjrPhswBmrEjP9jBR/mSt3tjFV4y13ccc1CulxEZNOh
-	zwFGlGvDgZOsMamkshGXo5wFR5+JyViJtlx8vHx07k++jBRaJI4Lm31JYnSJHu5EgQ==
-X-Gm-Gg: ASbGncvMijDDN7Ifj/tG+Zz0uAE/8U5njabuKszatYtwCaJko+PAJpm9sHbhFi6kAnX
-	ZU8d3rH4phtWnG69HaZpwNdQEQ1AvRTG2uqSZRqacKNq+Jw+6M2FSzNm4f696eWVcYuidNLbhgc
-	xLGiuuZ8V4Gr7duZM0f1+WPXHNDHd4wVPCOaHnbPIxiN/9ET88Xi5x5uipPNpadm4HXmxcxIE0E
-	Xpgig9Hs4Pb98Srk6aSDYgWMol+Q2GI7fFHHnMHjefXvNau3pnzLlhdrJNUv2xS6cqljGUvfDc1
-	VrunxgQbHUGIuEaufuUHlwiSMgfYYtOiCFgb4w/ajtqY1WCURwacCs4emdBgy6rv5heQ1luk53I
-	Z2QK0OmzkcHFN5Bpx9t20ZFZVj1jetKYYjjRoe+q6LDgBFvBZfJuf3i0gz+T5BaFPxAjUQrex
-X-Google-Smtp-Source: AGHT+IFXe1AUozr/VBWe0gYnK+qQoY2TYFea6yXJGINXUcVKLGT6eNnGYGkrp3ZYYhKBw7J09w5K5w==
-X-Received: by 2002:a05:6214:500d:b0:6fb:4e82:6e8 with SMTP id 6a1803df08f44-7070051b347mr106591216d6.14.1753392447547;
-        Thu, 24 Jul 2025 14:27:27 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070faec0b9sm18388806d6.5.2025.07.24.14.27.21
+        d=1e100.net; s=20230601; t=1753392751; x=1753997551;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=azr2brsZ6Ua8mVeqP54+Ze96cYo9iUAaUmwXzQQMwtE=;
+        b=r9r6GG/8l/lpdYeNc+ZsdC9Apdw186I0Jd1I9Oc3u3noVhYE2w/mBMUBjbBzwWdx2R
+         tgNRzreWQOjHceAISvDL3I6UzyaHvyz7YcLjZvSqNaIZ3voRPA5ZW6rBWk7sGIUnNSak
+         G2cZAkRsrV24F1pB6hxmrCM0XRtNhBoUZen8OThGVFwiEIMtcDw13efWCj+cNdBtNOls
+         HJG0G+owkHd4RIi1ywZIiBEnwXRI344rjTJI1W8IgKIe/dtgJn9bSH5zWcfN8ZNFWa5h
+         vv+ze5D5nPGuTvQ/u0Uw0dfAdZpAOh5Kl/EKkJDlQqkz4+Q2cyRHiPprrbp53Pozl5Oc
+         6YRw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2sBVDzAn/BgWmbD5GqqdQKtiea2gCLE7kFWXenY1tzjBIdckfJIjAKGGzthaLT1KaRdmaRvrCT4SfJYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/UYBZc99GNLWJq4+zfEhXD9xPFBPyD/yG2pupOWm+JxTtatuY
+	8BJ+2zb+81Be/lEPndfY9M+TsVaeQvnvjtKCMjkiXwZyCDcA4mnHX75d3lVMyIGbWOg3iSFRywL
+	D5VIegJbc+jGBI6/+T6a5ASXSTEpzmk1wqQxSLtdNeAOwn38QG334iCDTsPrtrFKbFg==
+X-Gm-Gg: ASbGncvHNaq5vzzkEfLxWwB09UO3MnOUoq2PZRHDxArMOJ+YVfaVPmgMI6csLSSY4YH
+	EfL5KhFarAz4VOagC+hVXSlkW47Ai0BmsJi+trtSq2BM91tKDGvuOn0VtxFHn7PzCBQweW8TLPe
+	EkDLz74EJTGRdadsMgU/7AXhEI5RKX6KXs3NUWxn29Xr6UyHZ3pKJ3/F8PeGZuoIHSl/QViMq6N
+	e5k8r6iuxmo+xV1y2T0twoewvAQoXX0c2MT7FO/8Bp9X1jR5Ub3QwP+jmgkBUDXcKOv846b2L04
+	JNy3caLLprokhrLgjvZlTNGDBtr7BXttwXUlDvKVm53DjSIg1D2PgVnBlnf05b55iCElj4I=
+X-Received: by 2002:a05:6000:1a85:b0:3a3:4baa:3f3d with SMTP id ffacd0b85a97d-3b768c9c13dmr6966259f8f.6.1753392751358;
+        Thu, 24 Jul 2025 14:32:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBbZa9GDR0ki0Hy0VjprS/a9IUEWZpzBMehLKY4L1dDoNNRYdZKztKjdVKH6ITX6Do3wdiKg==
+X-Received: by 2002:a05:6000:1a85:b0:3a3:4baa:3f3d with SMTP id ffacd0b85a97d-3b768c9c13dmr6966239f8f.6.1753392750862;
+        Thu, 24 Jul 2025 14:32:30 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1acc3.dip0.t-ipconnect.de. [87.161.172.195])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcad2b4sm3213491f8f.47.2025.07.24.14.32.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 14:27:26 -0700 (PDT)
-Message-ID: <136af381-5c31-49dd-98fe-1703a2cd57df@broadcom.com>
-Date: Thu, 24 Jul 2025 14:27:20 -0700
+        Thu, 24 Jul 2025 14:32:30 -0700 (PDT)
+Message-ID: <e0a22433-541c-40b0-92bb-34b0596db642@redhat.com>
+Date: Thu, 24 Jul 2025 23:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,114 +88,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] MAINTAINERS: Include dmesg.py under PRINTK entry
-To: John Ogness <john.ogness@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
- <kbingham@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Uladzislau Rezki <urezki@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
- Ilya Leoshkevich <iii@linux.ibm.com>, Etienne Buira <etienne.buira@free.fr>,
- Antonio Quartulli <antonio@mandelbit.com>, Illia Ostapyshyn
- <illia@yshyn.com>, "open list:COMMON CLK FRAMEWORK"
- <linux-clk@vger.kernel.org>,
- "open list:PER-CPU MEMORY ALLOCATOR" <linux-mm@kvack.org>,
- "open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>,
- "open list:KASAN" <kasan-dev@googlegroups.com>,
- "open list:MAPLE TREE" <maple-tree@lists.infradead.org>,
- "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>,
- "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>
-References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
- <20250625231053.1134589-13-florian.fainelli@broadcom.com>
- <84v7oic2qx.fsf@jogness.linutronix.de>
+Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
+To: Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
+ <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
+ <202507241352.22634450C9@keescook>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <84v7oic2qx.fsf@jogness.linutronix.de>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <202507241352.22634450C9@keescook>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/26/25 01:43, John Ogness wrote:
-> On 2025-06-25, Florian Fainelli <florian.fainelli@broadcom.com> wrote:
->> Include the GDB scripts file under scripts/gdb/linux/dmesg.py under the
->> PRINTK subsystem since it parses internal data structures that depend
->> upon that subsystem.
->>
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> ---
->>   MAINTAINERS | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 224825ddea83..0931440c890b 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -19982,6 +19982,7 @@ S:	Maintained
->>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
->>   F:	include/linux/printk.h
->>   F:	kernel/printk/
->> +F:	scripts/gdb/linux/dmesg.py
-> 
-> Note that Documentation/admin-guide/kdump/gdbmacros.txt also contains a
-> similar macro (dmesg). If something needs fixing in
-> scripts/gdb/linux/dmesg.py, it usually needs fixing in
-> Documentation/admin-guide/kdump/gdbmacros.txt as well.
-> 
-> So perhaps while at it, we can also add here:
-> 
-> F:	Documentation/admin-guide/kdump/gdbmacros.txt
+> As an aside, why should discard work in this case even without step 4?
+> Wouldn't setting "read-only" imply you don't want the memory to change
+> out from under you? I guess I'm not clear on the semantics: how do memory
+> protection bits map to madvise actions like this?
 
-Thanks, v2 coming up.
+They generally don't affect MADV_DONTNEED behavior. The only documented 
+(man page) reason for EPERM in the man page is related to MADV_HWPOISON.
+
 -- 
-Florian
+Cheers,
+
+David / dhildenb
+
 
