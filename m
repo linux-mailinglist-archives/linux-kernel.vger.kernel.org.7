@@ -1,126 +1,158 @@
-Return-Path: <linux-kernel+bounces-745040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D299B11400
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:34:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8703DB11402
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A90AE2E54
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:33:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1BD97BCA65
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EDF2459F1;
-	Thu, 24 Jul 2025 22:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E29223C505;
+	Thu, 24 Jul 2025 22:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f6pz76tU"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyCbavAi"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96D243968
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0E523C4ED
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396359; cv=none; b=NywFRHNKOEiE7IGR5N6/Q4Ek82Cq+/J5wwZnBTHR40TxPn9sXwhcPKWjrQ4YssNnfRCZLbNMA8pBh/1pmnv/l7VtKIgSUsSDNhnSPE+WQvDbTFPEzYH4MtTm9nIelVkiMjdsQbtPAYdj0UrODWQtJoef96aw2gN/bbqQKUTl/4E=
+	t=1753396367; cv=none; b=gk8mZDMCGIVf/pD5cKU3Xpc0jnnv1OmRjVQwLZWajwUXugDvVKV8UhYKGzrD4F2GVwYGQsGOkerdm3uFZRYnqL1ygbTdXhhlDIalU+1pIGMqDm1O0tPkbwd/tWs/ejsa+szG2BhHNsC2BTr4DGV07MKxMEspGA90l8JwyZ2Jby4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396359; c=relaxed/simple;
-	bh=4N95PHaH5sTwnPpy+bRhfgpn+/S4W3TV/v5oApqGZh8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VE+cuFL/Grggs6cvgT95FoglNqO8XfIJJK8bDiIzeGOH5GmNvaTlV46CklZMWgqDZHQkB0pueUlfx4QDl+tb7zJm/Ul4+ci7ksXxlJI3Ddn4Bfbs0Zv9Caqv9Ns02bASL5ejlbTRFp48j1H0gtRGvTdFvB8lIOqoFNQdLToR8tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f6pz76tU; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2354ba59eb6so22614985ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:32:37 -0700 (PDT)
+	s=arc-20240116; t=1753396367; c=relaxed/simple;
+	bh=/X4FypA9ner9RdUyFi3gZVeAiwJRATDSBMzUcNSjRiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=M1//r0lcb9jtDpQl0cK+7RoQzG5nc2oo1UU6zNbL7+swySopScnO4eqVlcrbnWR8o4pQmMtKILVLQnnbPKQFCF0K71HkfXLwM5lBk6ErGQMG14+i0BuQ5kCe54E1FMKCe7MeBN0AZZu2Y/CANZRusuDOvC0qGbc462b9gpvwZrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyCbavAi; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-875acfc133dso62486339f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:32:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753396357; x=1754001157; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l30q4xjgSSq02GIRwkV5JkxzVEDFHasp0ZpBbR5DA+c=;
-        b=f6pz76tUwhT6aRhJrd4AwFaRjwyTq9hvQjspqSvTCqjPPwoE5isDKW5fjnzMvUHKJs
-         H2I7OtHf1DXX0IZRJZlBer3693ARAw/botWss/g3e77HFdNignoe93i7txYOOfq8jzUn
-         nK7R/yxA0DiTXpINVRy4lqac2OtSCgxLRs3eRv/8DCtI93r0UiY6cKP3ioH/dJKlAl/g
-         luL0xqREQyuB3RgBaSnDC6z5jSw4IjD92KfZGwVnFZWyWa7WfYG68ctFB5esj7s55/lY
-         JkRxS8WijFvjhXky6qh8bDgiR942xCCOqvUj3xdiDeP+3dBYogzKzAaDlVJW4XcwktUg
-         AFNw==
+        d=linuxfoundation.org; s=google; t=1753396365; x=1754001165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BowG7/XkE6ZK3mV0bM7DLAubbfXolAHIJu1TtPOGrqQ=;
+        b=fyCbavAiWbigFIlD1j6BYztnwJiiF7GzRsPYIcNxrVLgT1g4dSphPAGv0ECNOivA64
+         W83pYLMp0f/sCUzAzey1NRN0/JoKe18IyvfD5PICFoJdFyD+B7mxd5JRe0umw1yu5UHe
+         jw8bC/Lsaw8RuAmD065a248fu3Dqmjj1t0AHQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753396357; x=1754001157;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l30q4xjgSSq02GIRwkV5JkxzVEDFHasp0ZpBbR5DA+c=;
-        b=kkuGgSKLoaGLYxx+yW1rUm0Epu9ijYqGnmhSXr8f7DhrP6zQznmfDgEF+PTRvXslY0
-         9Ocwz3ugH/uPOpXWrtRzdUcDJKHvsJP8apV2/XYRQb5rA5TNDqyVh5d9JwbtQTiq++v7
-         9ZfDTWfbLWwJDDgjsb57vNNhknYqNsICzEvUfgWqBqzYwpl6fzp8iPxlogYZzFejlZPR
-         2MMXL8dfzvDliVJiTeSGgvbNv2HqWk6a6m/ib9pWi4+NgJSTDDUve9UhatC2hWq1Oee3
-         sM3wmJMILG/44kgebLIYlAWlo1euxwzUF1ioWrDu6AU52BL4fKVPvjaasQZZHXZyBA3h
-         QN9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2kpEVxUpHvU4bpBXztWGFd+4TLqjsGWdN9KNK2G1/pPAaD1Zvgeob2jUcUw3RmA0tIw9tI9PJFPmkTgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSiU2jibB3/ktiouCQ/e+sEJ787iBnimaxSfAMV5Aw8MbhABoy
-	fingZrKyQQ+mvZ7ZjQ37aodYcuSOTzLJf+d6TD9gj/Q9xMueel+oBj2hLvt4/bOTJ3tCgwiO6uD
-	lwvBdhRbyhNd4F+g+PYp5T+4XdZpoSw==
-X-Google-Smtp-Source: AGHT+IEtA2E9+sMjT0EnxYfMCkPY3zq5lHvnVQxkTuwFfK+T/mp7UOYRrBkZNv+MUuGcmJKgNUMqUZbXZBtd12P/kOI=
-X-Received: from pjoo3.prod.google.com ([2002:a17:90b:5823:b0:311:a879:981f])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:291:b0:234:df51:d16c with SMTP id d9443c01a7336-23f981b8595mr141323515ad.45.1753396357152;
- Thu, 24 Jul 2025 15:32:37 -0700 (PDT)
-Date: Thu, 24 Jul 2025 22:32:30 +0000
-In-Reply-To: <20250724223225.1481960-6-samitolvanen@google.com>
+        d=1e100.net; s=20230601; t=1753396365; x=1754001165;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BowG7/XkE6ZK3mV0bM7DLAubbfXolAHIJu1TtPOGrqQ=;
+        b=LN3Lz+buvJOpCWmvRtZT15AajWVSYMy1qZL82wLExeLSMiIg6+k50sv12yrDx2zCJp
+         IGD2+aBgmSZaINJOE6q0xnRjas7dye+Xl0bqz074KONn1T8QflFYktF4lqaf+pphIL9E
+         IFHzLsfssF7jgW7M6GDUswXQD3WYiya+tAco+ymNepp/Rx/al2b1f23nznIuhEhAR4xC
+         l3ApjUZvbEsG7SseN6ZvGDy3J+BPsNONYWnoT2mK8CIHcSXihyNJoL8Cn44F4TcM+8tx
+         xcD6qFFbBER1d9zOSPnf8S/lyXEwhdutm/O+12cqxmn0/J5FgKEyaXoJwR/X4pap2DMh
+         h8wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNs5bE7QUybyDZ4vIdJpCI7TZ9c6DZdg1G4742QSNYYUrKqvMXLs5box75oQMYg5aBjcHp/CrNtIWR4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/rxAncbIhQBo+oSDCOPyXlTZ25DUV2B33aCl+7LgMa4Rr8Xsk
+	E/tZfEje1MyiH+96mKzhmSsCHAXKqCVV8YBT94Oe0UXWiFc3O4kytWk7q1po+GscnDs=
+X-Gm-Gg: ASbGncv7aiXvxxYnlNzq5ZT/IywrAbsmKAVLZSKinaKkSZ3AY8uOXtG6zxdAF3VundU
+	5CDa6Q+7VYSCjFGmM69obLwA3G6YqG+RmMs/gkAA+k1u9itOOhSi2T472M85OM/mIdMBaNGfMmG
+	M1BOBCYWvNzAe3rhuyjcepVAF5abbKauFlnqb7eWdhOoNsyrnT9zg04mKscw09SO/0CdOiDGE4Z
+	29Hx1G3i1CKYK4rp+XAfBnOtMEEnwLN8SrN44CsXOXCtJlzSVGFj7/FgbKcx5WjamWeAPGMA1Oa
+	bzchKbAjSPBaaCDNKTMzwBH0uzXeFMoUMvhRFwLinWXy5Rhv8PHCW4rL+r+676ivjlzz928Fgft
+	CFYmEx0aveY5l8MdFkp1Q84/puN4THZV4WA==
+X-Google-Smtp-Source: AGHT+IEbKOiXyxveiaYhBw5qiIEbptLsXga1ZudzEZCJ+xlt8zDOaAHzQB3cjEB5pgnwF9SJ20+qEA==
+X-Received: by 2002:a92:cdaa:0:b0:3e2:abbc:c0c with SMTP id e9e14a558f8ab-3e32fcb809dmr148251935ab.7.1753396364899;
+        Thu, 24 Jul 2025 15:32:44 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508aeab7426sm650512173.54.2025.07.24.15.32.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 15:32:44 -0700 (PDT)
+Message-ID: <c6eb6734-93d3-4a59-8869-49ecc438fff9@linuxfoundation.org>
+Date: Thu, 24 Jul 2025 16:32:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250724223225.1481960-6-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=853; i=samitolvanen@google.com;
- h=from:subject; bh=4N95PHaH5sTwnPpy+bRhfgpn+/S4W3TV/v5oApqGZh8=;
- b=owGbwMvMwCUWxa662nLh8irG02pJDBlNW6oPVFdXMfZ1b3i/oViLecokq1PaTWvD/rEEzLV9L
- XfoS9/EjlIWBjEuBlkxRZaWr6u37v7ulPrqc5EEzBxWJpAhDFycAjCR8wcZ/kfOXf/X9MMFhtYQ
- xVSuoNPiJ7t9nU5aTri79v7eivOBDoKMDHMEDi9+d11Np4HT/+q958yCvDuUDjuE5D8IC0/MjAo 5yAkA
-X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250724223225.1481960-10-samitolvanen@google.com>
-Subject: [PATCH bpf-next 4/4] bpf, btf: Enforce destructor kfunc type with CFI
-From: Sami Tolvanen <samitolvanen@google.com>
-To: bpf@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tsc: Replace do_div() with div64_u64()/div64_ul()
+To: Niko Nikolov <nikolay.niko.nikolov@gmail.com>, shuah@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250724215339.11390-1-nikolay.niko.nikolov@gmail.com>
+Content-Language: en-US
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250724215339.11390-1-nikolay.niko.nikolov@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ensure that registered destructor kfuncs have the same type
-as btf_dtor_kfunc_t to avoid a kernel panic on systems with
-CONFIG_CFI_CLANG enabled.
+On 7/24/25 15:53, Niko Nikolov wrote:
+> Replace do_div() with the recommended division helpers to avoid
+> truncation and follow kernel best practices, as flagged by static
+> analysis.
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- kernel/bpf/btf.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+You are making more changes than what change log indicates.
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 0aff814cb53a..2b0ebd46db4a 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8856,6 +8856,13 @@ static int btf_check_dtor_kfuncs(struct btf *btf, const struct btf_id_dtor_kfunc
- 		 */
- 		if (!t || !btf_type_is_ptr(t))
- 			return -EINVAL;
-+
-+		if (IS_ENABLED(CONFIG_CFI_CLANG)) {
-+			/* Ensure the destructor kfunc type matches btf_dtor_kfunc_t */
-+			t = btf_type_by_id(btf, t->type);
-+			if (!btf_type_is_void(t))
-+				return -EINVAL;
-+		}
- 	}
- 	return 0;
- }
--- 
-2.50.1.470.g6ba607880d-goog
+> 
+> ./arch/x86/kernel/tsc.c:409:1-7:
+> WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
+> ./arch/x86/kernel/tsc.c:492:1-7:
+> WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+> ./arch/x86/kernel/tsc.c:831:2-8:
+> WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
 
+It is hard to see where you are addressing the above warnings with all
+the other changes.
+
+Also you don't have the right reviewers cc'ed
+
+> 
+> Signed-off-by: Niko Nikolov <nikolay.niko.nikolov@gmail.com>
+> ---
+>   arch/x86/kernel/tsc.c | 185 +++++++++++++++++++++---------------------
+>   1 file changed, 91 insertions(+), 94 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+> index 87e749106dda..96f40759340e 100644
+> --- a/arch/x86/kernel/tsc.c
+> +++ b/arch/x86/kernel/tsc.c
+> @@ -34,13 +34,13 @@
+>   #include <asm/uv/uv.h>
+>   #include <asm/sev.h>
+>   
+> -unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
+> +unsigned int __read_mostly cpu_khz; /* TSC clocks / usec, not used here */
+>   EXPORT_SYMBOL(cpu_khz);
+>   
+>   unsigned int __read_mostly tsc_khz;
+>   EXPORT_SYMBOL(tsc_khz);
+>   
+> -#define KHZ	1000
+> +#define KHZ 1000
+
+What changed here?
+
+>   
+>   /*
+>    * TSC can be unstable due to cpufreq or due to unsynced TSCs
+> @@ -55,13 +55,13 @@ int tsc_clocksource_reliable;
+>   static int __read_mostly tsc_force_recalibrate;
+>   
+>   static struct clocksource_base art_base_clk = {
+> -	.id    = CSID_X86_ART,
+> +	.id = CSID_X86_ART,
+
+Tabs removed? Why?
+
+>   };
+>   static bool have_art;
+>   
+
+Same questions for the rest of the format changes.
+
+thanks,
+-- Shuah
 
