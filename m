@@ -1,142 +1,254 @@
-Return-Path: <linux-kernel+bounces-743466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D34B0FF0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:02:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3174B0FF0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A1FAA4C53
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E1AAA4B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F60E1CEADB;
-	Thu, 24 Jul 2025 03:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AD61DED7B;
+	Thu, 24 Jul 2025 03:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BK0SgjM1"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnYQFBIs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D3E1BF58
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89891BF58;
+	Thu, 24 Jul 2025 03:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753326161; cv=none; b=LkKeRWliUaio+f2ioXC6+tC3Abtn4he1uFNrMKYwicF7KRD4gtjKMYDWgCrl5AQpBpOO7JMF/FgwMeg/s2ard1rOmcCgYYBnbKxp2q6dS7LUbuUu4SNuXvi9vvwjXkAlKT0NTvLWCKM8MRiZcEqaEHT1i4Gps30z6ruKK8/SjJM=
+	t=1753326164; cv=none; b=FFae6JqD3OIzCDcCv/DOPzac+vM57/8GhOh7fvrgdKGgd5pBAiIHzkHcYZRRyfitssRG8ay089iDDAlH4//gydQVkqhTh9/LMGnd2HqOif9FVEBib6bmb+wcLbu+6NIjzNUEpk3pPFXXjuBcPfxBx4dtFntA2q7tkUElqgWwG5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753326161; c=relaxed/simple;
-	bh=DRqbgA/rfP/Lt72tSXhOwfuAln34SEWpdKk2oJ3oZzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JECpLFqcitHfs1RvzQc8IzTnlRBMGD9knU1am77Ku7csGW9Vz/VgOLrwKfnsehIS3R/L8Oiqf9YDlVlSJmoJwDnjV2nFYWRHp3vuqBqtZZ/PQm8RLfwSe0YUB26qX/kV7pAG8pHgtxXG+Y/v+uHiACpj0j6uGwMDmFoE27Q6dF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BK0SgjM1; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7196cb401d4so5817277b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753326157; x=1753930957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4szIC/lsRfoeS9xWMEZR5DrnZmuFrT5s30XlGRR6/U=;
-        b=BK0SgjM1Ny1jk5rTSIg/ig+VfYG9BRxEct3dpBnQK90wbc3NvOqwqxiWbmgHN0ojsb
-         Yki5u8GdUBMtOwD5c0Ztokufi1LLZzjuG1A/a5/PVCNfGTQz2z2p6fL8l1Csxdpqh7oO
-         KAjBuY79vdJpU/tpTJxBB7VMinj1alftr3Mj9d4bQbeN2ZV7rJsV/L5bi8Y9lCnhLCIA
-         vpnUJ8hyMYJyFvpNxMvJjSVFE8nnoHyKAjfdY69xX4KT3UuI9onkKbpLfUPWmDQbzady
-         cnan5aJLALr0NGshULRYQo5ZeHZA5OUlHZ70v6AczA/Mdk/UsgSJK7PBGR/c8/+1fZNQ
-         bFUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753326157; x=1753930957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G4szIC/lsRfoeS9xWMEZR5DrnZmuFrT5s30XlGRR6/U=;
-        b=wJ15yHlfT5uMytspGfEka5FKMYXfgrCZ8Qk+IrriqNOS6KlSeJMasfFgqzl8YUAf5B
-         ff7Cbm7+QAoKdcuXLFp4+hqKs9FgYWDGCoQpe8xI4F1FG2N9vnnAeWD+vdHJiwVn4muL
-         jFijN6VDBTWwuyXQP9vs/YRw+ZEoaoPiBVgvVQ5tRQ6Suq6KJ3leXPcdcjiQVeEwvAPq
-         Kz28gefmo9q11qJlUj7+oO2POnN8Dy2IE0Tl5KMMQnd/5EgWdbcsxBaMv2AulLBOViXQ
-         mH45wfMvAqFUhuSfvPqjIA/MG6Sb8IF1NAIku67ZEQC3Lam0R9GXKd9CJlQOTvZf9ajY
-         zC7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFbiNqFJFEnagWe7sejCqFTGB9Y5JrOQ9UWXRJFRlp6mhLe+tK6J+qmX9Zc3hxUlVE1WO66bWo1Manoxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZalFutnPBPLui5yJOk4OZABrxADxfQeZQKM1w4QWJpJr4hmv/
-	6TRopLOt8TYq87UAGxVohMug3lMz3MmIaymwPtzGaxDEhgJIdwUmWX7WLqXvMMS/Y+bQy4o9SG5
-	os+t1Iv+m7MovzvpEPtpjQpAs7UKzh8GxX3LV5Toy+Q==
-X-Gm-Gg: ASbGncvIOKdBsAUFFsEnFhgKdDjdIo8Aaq0xWBvF/y2qd7dRgD+8k6ZKey1a8UCxFkb
-	v3CCYbXiObwY5oFYi3SMpVInxo/T450EAdr/q01fKlP9aHsV+Gvg0rv6HyTg9fUPOEQuLRI01tE
-	m5czgvzETmhXiW1iKVStH3A/Tv/A34IJGcUubVm+uobOecbc9rE9O8pG7URNhhvvmmcbiSgu/bV
-	Foqblc=
-X-Google-Smtp-Source: AGHT+IEIMtv289DTIkybfPfffRPAzee3+9DmTAuYGJM3UvEoqefg4H82jx7CiRhNSKxNLqGq+1drRcysqqTEjMpfosA=
-X-Received: by 2002:a05:690c:22c4:b0:70f:83af:7dab with SMTP id
- 00721157ae682-719b41e5925mr66244057b3.4.1753326156883; Wed, 23 Jul 2025
- 20:02:36 -0700 (PDT)
+	s=arc-20240116; t=1753326164; c=relaxed/simple;
+	bh=U/p79L70a5VpLNTwIstkAAGIPIzYyjodcgovbz6Gjk8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OA2k9asUkxy6A6eFaxjxW955cEKkrwkA2QpTpPXEa/wjOF+7tfivUYTyn0C8oHbdHL1FCQt6fZNfc7iT4jU2qNj22rkPl2oabfgjv6Ji9mG4XhXCKcIy6FOGASmsyVrF5rIGFMuolqRaw4p3xCAWo27Kcw+metrcNv05kaVtQU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnYQFBIs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB54C4CEEF;
+	Thu, 24 Jul 2025 03:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753326164;
+	bh=U/p79L70a5VpLNTwIstkAAGIPIzYyjodcgovbz6Gjk8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UnYQFBIspKIpgcTKkFbrqWtyT2XR4DQd+96VCjOiHvjB/FldfOtoDJc9loXFVSVqw
+	 Nwe0+5tVF6ajPHvCXl1NThkJSNIpMf32Y8R7dr9QvS+DZqhHCIp/I+H+mymFxIy8Xb
+	 OBhO6AUSkGxvREgEr/KZpX5MdlcsxNBKCuno94iLNb5Y0DlG1CETho8b9/oXQmPOqf
+	 RQfvcuHuW6r4axiwfzI/ASIHI70q2IhiaMQkhS7aOpAwmDnHLYuwQMJBVRiUoBYL3L
+	 9bp/68PRf2509LEO188gGvPAd2+CHhlb5GA7m30x2SGaMGAZpm00Iz4r0oLKH0B/tE
+	 lxAhJdyqsRhnw==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] string_helpers: Add KUnit tests for memcpy_and_pad()
+Date: Wed, 23 Jul 2025 20:02:40 -0700
+Message-Id: <20250724030233.work.486-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
- <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka> <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
-In-Reply-To: <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 23 Jul 2025 22:02:25 -0500
-X-Gm-Features: Ac12FXzQwje0qjCw-CvN4blAJTQm7ENnYNl_ILs69QPBbFxu9MyH6hiUp_sqjVc
-Message-ID: <CAPLW+4kPN65uX0tyG_F-4u5FQpPnwX9y6F1zrobq5UyVbks+-w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
- address space
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7895; i=kees@kernel.org; h=from:subject:message-id; bh=U/p79L70a5VpLNTwIstkAAGIPIzYyjodcgovbz6Gjk8=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmNiwIs7k2aFfTBP9oq1sTtsnS3+OlGxjW8z9YcX3Cn1 mjjtJjmjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgImse8HIcGQC+5Nez5NsTttX zPPycLDdaS0Xd3ix88cP5s/fmhzPmcPw3+HTrS1LHMVZ9Bk8+o89VVlfrTeDf+HFzOYCnvOxt0S eMAAA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 3:21=E2=80=AFAM Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
->
-> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
-> > On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
-> >> Some device trees, like the exynos2200 one, configure the root node
-> >> with #address-cells and #size-cells set to 2. However, the usi binding
-> >> expects 32 bit address space only. Allow these determining properties =
-to
-> > So if USI expects 32 bit, then why do we allow 64?
-> >
-> > Switching this to 2 means you use 64-bit addressing for children
->
-> I don't, but the main point was to avoid defining ranges for every single=
- usi
-> node, because they are a lot.
->
+Add KUnit test coverage for memcpy_and_pad():
 
-If all MMIO addresses in your SoC are 32-bit (they probably are), I
-think it'd be neater to just make the entire "soc" bus 32-bit (so both
-address and size cells =3D <1>), and map it to the root node's address
-space with "ranges", like this:
+- Basic functionality with padding, exact fit, and truncation cases
+- Edge cases with zero counts and different padding values
+- Structure copying with endian-safe validation
 
-    soc: soc@0 {
-        compatible =3D "simple-bus";
-        #address-cells =3D <1>;
-        #size-cells =3D <1>;
-        ranges =3D <0x0 0x0 0x0 0x20000000>;
-        ...
+The tests validate both string and structured data copying behavior,
+ensuring the function works correctly across different boundary
+conditions. Each test uses unique padding values to detect any potential
+cross-contamination.
 
-That's how it's done in exynos850 and gs101 dts for example. This way
-you could drop all those extra "reg =3D <0x0 ...>" in the child nodes,
-also avoid declaring "ranges" arrays in each USI node (just "ranges;"
-would be enough), and this patch won't be needed. Maybe I'm missing
-some details though?
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+This patch was LLM assisted! It did well, but missed the entire concept of
+copying non-byte-array objects originally. I tweaked a bunch of the tests.
+---
+ lib/tests/string_helpers_kunit.c | 156 +++++++++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
 
-> Best regards,
-> Ivaylo
->
-> >  and
-> > allowing DMA for >32 bit. This should be the true reason - what is the
-> > address space and DMA range for children?
-> >
-> > Best regards,
-> > Krzysztof
-> >
->
+diff --git a/lib/tests/string_helpers_kunit.c b/lib/tests/string_helpers_kunit.c
+index c853046183d2..38c26b9fb871 100644
+--- a/lib/tests/string_helpers_kunit.c
++++ b/lib/tests/string_helpers_kunit.c
+@@ -611,10 +611,166 @@ static void test_unescape(struct kunit *test)
+ 		test_string_escape(test, "escape 1", escape1, i, TEST_STRING_2_DICT_1);
+ }
+ 
++/* Test structure for memcpy_and_pad structure copying tests */
++struct test_struct {
++	u8 byte1;
++	u16 word1;
++	u8 byte2;
++	u32 dword1;
++	u8 byte3;
++} __packed;
++
++static void test_memcpy_and_pad(struct kunit *test)
++{
++	char dest[20];
++	const char *src = "hello";
++	struct test_struct struct_dest[3];
++	const struct test_struct struct_src = {
++		.byte1 = 0xAA,
++		.word1 = 0xBBCC,
++		.byte2 = 0xDD,
++		.dword1 = 0xEEFF1122,
++		.byte3 = 0x33
++	};
++	u8 *struct_bytes;
++	int i;
++
++	/* Test 1: Basic functionality - dest_len > count */
++	memset(dest, 0xFF, sizeof(dest));  /* Fill with known pattern */
++	memcpy_and_pad(dest, 10, src, 5, 0x11);
++	KUNIT_EXPECT_MEMEQ(test, dest, "hello", 5);
++	/* Check padding */
++	for (i = 5; i < 10; i++)
++		KUNIT_EXPECT_EQ(test, (unsigned char)dest[i], 0x11);
++	/* Ensure we didn't write past dest_len */
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[10], 0xFF);
++
++	/* Test 2: dest_len == count */
++	memset(dest, 0xFF, sizeof(dest));
++	memcpy_and_pad(dest, 5, src, 5, 0x22);
++	KUNIT_EXPECT_MEMEQ(test, dest, "hello", 5);
++	/* No padding should occur */
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[5], 0xFF);
++
++	/* Test 3: dest_len < count (truncation) */
++	memset(dest, 0xFF, sizeof(dest));
++	memcpy_and_pad(dest, 3, src, 5, 0x33);
++	KUNIT_EXPECT_MEMEQ(test, dest, "hel", 3);
++	/* No padding should occur, and nothing beyond dest_len should be touched */
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[3], 0xFF);
++
++	/* Test 4: Zero count */
++	memset(dest, 0xFF, sizeof(dest));
++	memcpy_and_pad(dest, 5, src, 0, 0x44);
++	/* Should be all padding */
++	for (i = 0; i < 5; i++)
++		KUNIT_EXPECT_EQ(test, (unsigned char)dest[i], 0x44);
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[5], 0xFF);
++
++	/* Test 5: Zero dest_len */
++	memset(dest, 0xFF, sizeof(dest));
++	memcpy_and_pad(dest, 0, src, 5, 0x55);
++	/* Should do nothing */
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[0], 0xFF);
++
++	/* Test 6: Different padding characters */
++	memset(dest, 0xFF, sizeof(dest));
++	memcpy_and_pad(dest, 8, "hi", 2, '\0');
++	KUNIT_EXPECT_MEMEQ(test, dest, "hi", 2);
++	for (i = 2; i < 8; i++)
++		KUNIT_EXPECT_EQ(test, dest[i], '\0');
++
++	/* Test 7: Negative pad value (should work as unsigned char) */
++	memset(dest, 0x00, sizeof(dest));
++	memcpy_and_pad(dest, 5, "a", 1, -1);
++	KUNIT_EXPECT_EQ(test, dest[0], 'a');
++	for (i = 1; i < 5; i++)
++		KUNIT_EXPECT_EQ(test, (unsigned char)dest[i], 0xFF);
++
++	/* Test 8: Single byte operations */
++	memset(dest, 0x00, sizeof(dest));
++	memcpy_and_pad(dest, 1, "X", 1, 0x88);
++	KUNIT_EXPECT_EQ(test, dest[0], 'X');
++	KUNIT_EXPECT_EQ(test, (unsigned char)dest[1], 0x00);
++
++	/* Test 9: Large pad scenario */
++	memset(dest, 0x00, sizeof(dest));
++	memcpy_and_pad(dest, 15, "test", 4, 0x99);
++	KUNIT_EXPECT_MEMEQ(test, dest, "test", 4);
++	for (i = 4; i < 15; i++)
++		KUNIT_EXPECT_EQ(test, (unsigned char)dest[i], 0x99);
++
++	/* Test 10: Structure copying - full copy with padding */
++	memset(struct_dest, 0xFF, sizeof(struct_dest));
++	memcpy_and_pad(struct_dest, sizeof(struct_dest), &struct_src, sizeof(struct_src), 0x55);
++
++	/* Verify first struct copied correctly */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte1, struct_src.byte1);
++	KUNIT_EXPECT_EQ(test, struct_dest[0].word1, struct_src.word1);
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte2, struct_src.byte2);
++	KUNIT_EXPECT_EQ(test, struct_dest[0].dword1, struct_src.dword1);
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte3, struct_src.byte3);
++
++	/* Verify padding area - remaining struct elements should be filled with 0x55 */
++	struct_bytes = (u8 *)&struct_dest[1];
++	for (i = 0; i < sizeof(struct_dest) - sizeof(struct_src); i++)
++		KUNIT_EXPECT_EQ(test, struct_bytes[i], 0x55);
++
++	/* Test 11: Structure copying - partial copy with padding */
++	memset(struct_dest, 0xFF, sizeof(struct_dest));
++	memcpy_and_pad(struct_dest, sizeof(struct_src) * 2, &struct_src,
++		       sizeof(struct_src) / 2, 0x77);
++
++	/* Verify partial struct data copied (first 4 bytes of 9-byte struct) */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte1, struct_src.byte1);   /* offset 0: copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].word1, struct_src.word1);   /* offset 1-2: copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte2, struct_src.byte2);   /* offset 3: copied */
++	/* offset 4 and beyond should be padding since only 4 bytes were copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].dword1, 0x77777777);
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte3, 0x77);
++
++	/* Second struct should be entirely padding */
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte1, 0x77);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].word1, 0x7777);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte2, 0x77);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].dword1, 0x77777777);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte3, 0x77);
++
++	/* Test 12: Structure copying - truncation (dest_len < count, no padding) */
++	memset(struct_dest, 0xFF, sizeof(struct_dest));
++	memcpy_and_pad(struct_dest, sizeof(struct_src) - 2, &struct_src, sizeof(struct_src), 0x99);
++
++	/* Verify truncated data - only first 7 bytes of 9-byte struct copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte1, struct_src.byte1);    /* offset 0: copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].word1, struct_src.word1);    /* offset 1-2: copied */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte2, struct_src.byte2);    /* offset 3: copied */
++	/* offset 4-7: dword1 partially copied (first 3 bytes), last byte remains 0xFF */
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
++	KUNIT_EXPECT_EQ(test, struct_dest[0].dword1, 0xFFFF1122); /* LE: 22 11 FF FF */
++#else
++	KUNIT_EXPECT_EQ(test, struct_dest[0].dword1, 0xEEFF11FF); /* BE: EE FF 11 FF */
++#endif
++	/* byte3 should remain as initialization since truncated at 7 bytes */
++	KUNIT_EXPECT_EQ(test, struct_dest[0].byte3, 0xFF);
++
++	/* Remaining struct elements should be untouched */
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte1, 0xFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].word1, 0xFFFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte2, 0xFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].dword1, 0xFFFFFFFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[1].byte3, 0xFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[2].byte1, 0xFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[2].word1, 0xFFFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[2].byte2, 0xFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[2].dword1, 0xFFFFFFFF);
++	KUNIT_EXPECT_EQ(test, struct_dest[2].byte3, 0xFF);
++}
++
+ static struct kunit_case string_helpers_test_cases[] = {
+ 	KUNIT_CASE(test_get_size),
+ 	KUNIT_CASE(test_upper_lower),
+ 	KUNIT_CASE(test_unescape),
++	KUNIT_CASE(test_memcpy_and_pad),
+ 	{}
+ };
+ 
+-- 
+2.34.1
+
 
