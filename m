@@ -1,144 +1,210 @@
-Return-Path: <linux-kernel+bounces-744687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D8DB10FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBFFB10FCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381865C0280
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCED85C0E3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A8D2EB5B4;
-	Thu, 24 Jul 2025 16:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3932EBDEB;
+	Thu, 24 Jul 2025 16:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fQamVq7i"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Q04iZbE/"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E958E8F7D;
-	Thu, 24 Jul 2025 16:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0137D8F7D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753375080; cv=none; b=iWfnQVMMUhe/Z53GQ4+3dyA72Z5MaunGi9vs0blxkZEyNjhgY8lyEIH1V/nLqyLsBL06IBeMxdBhiHeWwLgnYh+wKqdiBBjdpxEsYP/XZhXHw4t+nOB97gBT0ARnG1zmM8o6lMqOPX9k+E+TPHQChCbJfroP0DXZ6dKFXJ5sLEI=
+	t=1753375089; cv=none; b=EQeqJSH+rRXRgM6myO6mGlMqFwJv6mKq7n1xMLPMNAII8SFx218uoEOtLoJfTzmEhM7iXIVG6+YSJroTBcsCZrFvZAx7dfeziRaEhfJunG42zd5KVKIPGc/BBzTPgZsHYUHs+++BrYQ+JJ/1phApt5M4m3BNGN9rhM0aD9pUmy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753375080; c=relaxed/simple;
-	bh=OXH8GmJZvpZLoq1JxdBZ8cdu2Ka5GQMselFH6Jtg44c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3PlrvSZCRgAlkG4WquKqoyciLnbhlENsGOASebQdgKGty1DjQ8oC+mGGhak5WdlTeFy/4HXMqtvgTJ97Ukrmmb0mbQazeDRZXmZ7QMJQJ6aNVvYwpY6qgkuo0AkPQR+alllduJSyiVwAsAKQ8/LbIoNGFSw6j+8YzkmF+Z2O08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fQamVq7i; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=DEdQcTV0U+iw+S/8LeqtsI4CCRmQHF+4d/FyF/4p8jE=; b=fQamVq7i79nXoR63qwAm66YW3O
-	5U54kPNusnGYcHr/pNY7NUzhoy/TKltzpc7DBlRuVvCAURExdeRxAYUX4cFKpG956svMVn7h8DtoP
-	j4E9Xmfr/IsVttZb8CtK3XnhO2EKrJ6mJcg1oHomCfvyPfk8uCxKCCuRH5ko3lWlCbYA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ueywX-002mWy-Ct; Thu, 24 Jul 2025 18:37:17 +0200
-Date: Thu, 24 Jul 2025 18:37:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Fan Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
- RPMSG-ETH Driver
-Message-ID: <0a002a5b-9f1a-4972-8e1c-fa9244cec180@lunn.ch>
-References: <20250723080322.3047826-1-danishanwar@ti.com>
- <20250723080322.3047826-2-danishanwar@ti.com>
- <81273487-a450-4b28-abcc-c97273ca7b32@lunn.ch>
- <b61181e5-0872-402c-b91b-3626302deaeb@ti.com>
+	s=arc-20240116; t=1753375089; c=relaxed/simple;
+	bh=/z1ZWH3AmE7m9qEL3wKFxAKY/0SRkQE/svi19xO62Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3MoQQXDjWKZlrLAPojHAcC9CNupGQrDOhOK5YFz6mBe/gOVEyh8uJ9CIm00A2WDbylQr49tKdRhempXErU14mvXgTw/jn+dDYi6/gutK+Nv70mfgAHBG/9C5mNUPdCueEpJdwEVp6/LtDXers8E87a65MxnzDpytyng3SzGqjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Q04iZbE/; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e33d36491dso163474985a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753375087; x=1753979887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=usvpr9L47YioWJ8ShpR64dzUqJAyhLB53MAvoTv4bGE=;
+        b=Q04iZbE/gWcxVdZLo9vdedJCnFu1t9m6ZJ16MkcbwthM5i1Z6tfGC85Xt7z8S+dkdA
+         j48NOjw90YQP7yGQ76MCtrHLF8jYO0ng9JDcQot4pp6E7nwijTr9Fx97zrDedd9Z+8Wg
+         ICHO1vzMHutBPY9wdxrBUAw9yaqdKq+ovBUMU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753375087; x=1753979887;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usvpr9L47YioWJ8ShpR64dzUqJAyhLB53MAvoTv4bGE=;
+        b=aKEk1n6W+9st0bgN/+g7sQnB5Q6ydfkwUMH8Gx3BJv2wAfTB6koymRtBnksId+ZTnw
+         QQxpny2oLi9dUFCacO0sXJNHqQ3S2XUVMRqJgOBY0R6jRaDrISp5fj3YCkgRG1IYxmVZ
+         QSPVAq2KK0m3nvzjqfEyeJqtdL3HfZESLtVNrnwoZ3b3j8ysupR8OtlCmtw9kiavT/XY
+         gTbzCi/sdb8zVu2fzPnnWW0/kIsrMecQs8D9PYp0AvWGegQ/3kJy5olPMeOHc2Sz4Xg1
+         RW4IzYW4EUJcGcKRAf/WqXONs/BY8wDX3sR8mkKzu9lslKoTiyp5PIT6LQbmBdwjHnNT
+         Txlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb9Gp1R3zKNEcSiq6GSH1v3bfsnRIXNXSYSAEnowlEKz+3ssSeVuNYoAJnF2WyTmiyvNfIfjrrMW8rxik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy55lGTeXMwyVKDupAYZJZeJc7XMhYsFF7nPt31LkHwpVYnP/hQ
+	JlK14zp6Eu7xj2hwfL14FUVbP5vhR3JKVJgC+NAU+SpjH0H11FaeWv7Tm9KDcxUT5w==
+X-Gm-Gg: ASbGncsF/1RozMRfMpqqFiJVVkQd8dnwS/8TXcLABRvDqfNgEuVZgKvX1ecBuu4Ufph
+	FqPxMS5AkobbFWZS2oUB/vIpC73BphUQbHCAcjW3Iogz2gtP++gHUHg853pZRjnykOr0tn5N4WA
+	s8BVdx9hfEOryrR7ovG9JI1Xkk2BcgPKMMy8OuxxCD4SOogQIcFsswtOEC24SQLYxmXwauSJsh3
+	YPwLlXdfTnH5wwz/Q7SpOOBPb+7IgOwVy18y1qdI1mmPcxvQxbG90nnYfwA6RtsGGHWBLzxb8/E
+	urbqWGGR6x1lNU+twXSYAaNd87SWq7dJU+FzKfz4o1+VOIJi+/YUuXnh3KtnAjSwmHxBdXhX4QY
+	93I1Cw4kHLnzdTtE63dl/BKPFNZh8+1fRKdgpNDq5zDHK41EuxxcAekGfWh5qTw==
+X-Google-Smtp-Source: AGHT+IGrgbcYhJ+tVe3J1al7OGjEmLmXFRtcoTyoF9bk75cMfSPlGVBH45dTALz6kduphv5+Hg8Jbg==
+X-Received: by 2002:a05:620a:400f:b0:7e3:3682:6dea with SMTP id af79cd13be357-7e62a0b2e23mr1083347685a.15.1753375086232;
+        Thu, 24 Jul 2025 09:38:06 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e632e3c84asm139033985a.83.2025.07.24.09.38.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 09:38:05 -0700 (PDT)
+Message-ID: <20fad5dc-b0c7-4f16-b8ad-5f8ddceacfc0@broadcom.com>
+Date: Thu, 24 Jul 2025 09:38:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b61181e5-0872-402c-b91b-3626302deaeb@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/8] Implement vendor resets for PSCI SYSTEM_RESET2
+To: Arnd Bergmann <arnd@arndb.de>,
+ Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Stephen Boyd <swboyd@chromium.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Srinivas Kandagatla <srini@kernel.org>,
+ Elliot Berman <elliot.berman@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250721-arm-psci-system_reset2-vendor-reboots-v12-0-87bac3ec422e@oss.qualcomm.com>
+ <beb26682-d2e4-40e6-89ac-87f18c0401d0@broadcom.com>
+ <56599da9-0200-72b5-012e-942a1fc954b2@oss.qualcomm.com>
+ <a1d3264f-a46a-42c4-b518-a66c8e0b70b4@kernel.org>
+ <f4725f3f-1b45-ebd2-aaf4-4f986a44eb8e@oss.qualcomm.com>
+ <36f62026-9517-42bd-8f9a-92f39fcdc136@app.fastmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <36f62026-9517-42bd-8f9a-92f39fcdc136@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Linux first send a rpmsg request with msg type = RPMSG_ETH_REQ_SHM_INFO
-> i.e. requesting for the shared memory info.
+On 7/24/25 07:43, Arnd Bergmann wrote:
+> On Thu, Jul 24, 2025, at 16:04, Shivendra Pratap wrote:
+>> On 7/24/2025 6:18 PM, Krzysztof Kozlowski wrote:
+>>> On 24/07/2025 14:24, Shivendra Pratap wrote:
 > 
-> Once firmware recieves this request it sends response with below fields,
+>>> I strongly insist using compatible as way to find your device, not node
+>>> names.
+>> It will look better to switch to compatible. Will define a compatible for
+>> psci reboot-mode binding and align the patch to use the compatible for sysfs.
+>> Current patch defines reboot-mode as a property to psci, hope its fine to
+>> define a compatible for this property like "psci-vendor-reset" or
+>> "psci-reboot-modes"?
+>>
 > 
-> 	num_pkt_bufs, buff_slot_size, base_addr, tx_offset, rx_offset
+> How about using the reboot driver name as the identifier in sysfs
+> instead of the compatible string? That would make it independent of
+> devicetree.
+
++1
+
 > 
-> In the device tree, while reserving the shared memory for rpmsg_eth
-> driver, the base address and the size of the shared memory block is
-> mentioned. I have mentioned that in the documentation as well
-
-If it is in device tree, why should Linux ask for the base address and
-length? That just seems like a source of errors, and added complexity.
-
-In general, we just trust DT. It is a source of truth. So i would
-delete all this backwards and forwards and just use the values from
-DT. Just check the magic numbers are in place.
-
-> The same `base_addr` is used by firmware for the shared memory. During
-> the rpmsg callback, firmware shares this `base_addr` and during
-> rpmsg_eth_validate_handshake() driver checks if the base_addr shared by
-> firmware is same as the one described in DT or not. Driver only proceeds
-> if it's same.
-
-So there is a big assumption here. That both are sharing the same MMU,
-or maybe IOMMU. Or both CPUs have configured their MMU/IOMMU so that
-the pages appear at the same physical address. I think this is a
-problem, and the design should avoid anything which makes this
-assumptions. The data structures within the share memory should only
-refer to offsets from the base of the shared memory, not absolute
-values. Or an index into the table of buffers, 0..N.
-
-> >> +2. **HEAD Pointer**:
-> >> +
-> >> +   - Tracks the start of the buffer for packet transmission or reception.
-> >> +   - Updated by the producer (host or remote processor) after writing a packet.
-> > 
-> > Is this a pointer, or an offset from the base address? Pointers get
-> > messy when you have multiple address spaces involved. An offset is
-> > simpler to work with. Given that the buffers are fixed size, it could
-> > even be an index.
-> > 
+> I had a related idea to provide some namespacing on the actual
+> reboot syscall parameter, as we have two (or more) orthogonal
+> concepts here, when there is more than one reboot driver and
+> drivers support multiple modes.
 > 
-> Below are the structure definitions.
+> E.g. you could use
 > 
-> struct rpmsg_eth_shared_mem {
-> 	struct rpmsg_eth_shm_index *head;
-> 	struct rpmsg_eth_shm_buf *buf;
-> 	struct rpmsg_eth_shm_index *tail;
-> } __packed;
+>      syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
+>              LINUX_REBOOT_CMD_RESTART2, "watchdog");
 > 
-> struct rpmsg_eth_shm_index {
-> 	u32 magic_num;
-> 	u32 index;
-> }  __packed;
+> vs
+> 
+>      syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
+>              LINUX_REBOOT_CMD_RESTART2, "psci");
+> 
+> to pick one of the drivers, or
+> 
+>      syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
+>              LINUX_REBOOT_CMD_RESTART2, "bootloader");
+> 
+>      syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
+>              LINUX_REBOOT_CMD_RESTART2, "recovery");
+> 
+> to ask for a reboot from any driver that supports a mode, or
+> combine the two and ask a specific mode in a specific driver like
+> 
+>      syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
+>              LINUX_REBOOT_CMD_RESTART2, "psci:bootloader");
 
-So index is the index into the array of fixed size buffers. That is
-fine, it is not a pointer, so you don't need to worry about address
-spaces. However, head and tail are pointers, so for those you do need
-to worry about address spaces. But why do you even need them? Just put
-the indexes directly into rpmsg_eth_shared_mem. The four index values
-can be in the first few words of the shared memory, fixed offset from
-the beginning, KISS.
+Yes that seems entirely adequate as well.
 
-	Andrew
+If there is a single reboot driver registered say "psci" then you could 
+go with the short hand of specifying "bootloader" which would be 
+functionally equivalent to "psci:bootloader". That is, the driver name 
+becomes optional. This would maintain user-space compatibility with 
+existing systems that already support custom reboot modes.
+-- 
+Florian
 
