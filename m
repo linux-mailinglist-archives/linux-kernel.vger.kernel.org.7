@@ -1,417 +1,292 @@
-Return-Path: <linux-kernel+bounces-744901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E20B1124E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:27:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6874BB111FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCECC1CE821B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:28:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D41017C867
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB85248F74;
-	Thu, 24 Jul 2025 20:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D41523ABBD;
+	Thu, 24 Jul 2025 20:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="b4bYRW4h"
-Received: from sonic314-20.consmr.mail.sg3.yahoo.com (sonic314-20.consmr.mail.sg3.yahoo.com [106.10.240.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="frZIPqiU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0198A23A9B0
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388753; cv=none; b=RhtLBgb5nns74dRwSUvLRMDiV2bL5ZeMHYcqyh8nUMOzdP8GSeDsSehgR3VSqyHFDpHhF4JqSfo454UjLdg7uyitHMDA1AFnBHyh1cdob0B3M3UnAq9qzhS/ih9/KKfQv3ggxm4AVHVXamUPEMmlCw1mhtlWmL5UuKrAmNLlWVc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388753; c=relaxed/simple;
-	bh=S6ZDYt5O6xm5jRZ8gLx8OKGczxEr7L+6GVvi+61FWA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pfhj8SpV1KJGrxG4/996JxumXNXTCjXP6EzYLh6LDDndArBefRjnevhzxzDz3YfE76XcUcT8JbDetJBWpZXFpnKKc9M4mneOkueFamyiWIfAoP9oiCpebvEJRMFo7PJheTOHZgk/TTuskYf00OZQLJET2TQpWHbWe1RY4aaQe9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=b4bYRW4h; arc=none smtp.client-ip=106.10.240.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753388749; bh=NGurmw6gZodHcnbTMwXOTOH3ALt8HpOyovrDsN5l9yo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=b4bYRW4hrBlM+r04ouHc7JS+cmv+25Y0bKw2+u5zc8IF7JeczrMZJjiKltGcF/WuWOkN11M6Up4oUF8Y6j5t3Xa8eA7p5IIw3Yub3IG4XJzgGixupi7ZTu5PLLaXL1J27PXhfVJlhtrH4LHlmOoKJHHsqUe2fX3qx13zwWCE+VQZmjmDurNar+2C1BpHR6MdYyXC9rDmYnJWewgKrhQDIEbGGPqNgZ63UGYvsSDwJieD5L+JE3cyXNTKPaqXL92ytD3iyI5qQRNtw3was++f0Clqr3C6d+3/aNXept/7fJyKy16USlRou7cltX9pVdrd5HRO0h912qlx68EFUHqwrw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753388749; bh=ZRfs+ppjhEXATltzrKEpo4Y8RMpuziyhk0qc/0hk4bO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=iN5hvoW+M95sqlxQf9laXAuDAHB926Cy0TvrdIqTKwugnkP30oI7pG8oVhv0AksfmO6pN9iO+oiF2VcocHV9NTCe8mpaxQEtwPw8mdBiesmv+sVHx1XkipzylyfTmGHMWUZlShTRhJBIlMbdUHGkq/nlF6FQt6+JIis7SXRtkIEfD5O5lwO/XXTv5xo7uPl1t9t1CxymbHnMtYCbxoJ4GvXzvloN5JOb77PZNXCPh2DQOdfh4I0x0FvsPXx3eg7U78809zFu3YkolhnS02UcdB/YvDZ2V2QwA91Ur55xzOOqpLUucZZC/aNzyHw05QFf/WBxQV6KLtAIGDpmhWwPAA==
-X-YMail-OSG: YpIzeaAVM1kIbF2U2g7NWXcgrG1QItkbQ7NbKby3Xl1SNcSjZ4fHa.ybUbCE52X
- 2GOFg0lW7Jn_yKsyJi.H.GYx5aZ7mjouvtAJqufH1h7iC3_tFdIlikw8bnLiJPHbsuyLybpxB9jv
- gXKWKFrgQGbtJdA_S2OlPMRIjEIPl6hVDCyu3IYgbhPUrk0BOmBjRuksXwUBr8ogSqOet5LTkH8k
- EGknVYb2Skd39XujJUn.OHuRvVUYQzecN20haVTU78R.QGxUd6oqLWSEyXRYAQsj874d1Dmcso4G
- 9qUzpXggKAy4EuQ0wG5GsLFR2gdrigxb8maED8hh.BtSdDZEYLNBZ4B_ELRCm7VaQwakaPWqjqPR
- Vh4tRz0z6HQGDlX_w084BhrAUPn0.lq2_o3kgE.WpoJgtnTa4QbjSkCPndpfa01UWNahZuUxuzg8
- xLEl4RxZuV0_yoEhjbWmmrgJCVhNzhV.GzA1MFJV3H201wws1s8oRDQyK1FlcV7eht.YCE.f4KsA
- UKmH1iFCQXqYWXUgojW9v3ULii7bkEtyNOL0nIu21yEy0sSpM6bpUKbixSabqkIW8enNNSBtSdPI
- wO.dkBJTcnj02KYacr5XV.tZv0LNynDeHoDjcRVubbEjFFPR4i4b2OZafeV9_eGVT1vd2z1PKBru
- t6fVnN3g0v_3g2s9a2zHg_0TCTaceI7uVZuSclMQnvxu5cONs4LhosMVxNBv6sbe153CsJ5v0ftI
- Pvq93rIpn0MTlVOl09.ES4.0MoV5n8dN3NbkemhTM8Pn3beJVPwipmxEweW.YVP_FJzc2XiTiyK3
- kRZO9YKdUsR90RmCJCFPj_FniYSCJ0PvOg4KmAs_vCRWEwAYxqX46z01mvA_Pm4DxGxWgiTh2dXw
- u58n3x2kVatfeQWcpUGy6OGCsi3P5Y7ESAvSznevIbLvN7s9kJCYzKQu2vJZ4U2l6wkCAoWVo2rN
- HkDZdYkuxDRGKnrFcqrhv_c_tHabq0Kz_PeZMstgJnQt_xD80NyAX3uWV8rlZvcKksj1Z7Hbh2T5
- ljitfTCFhpKib2NVkZwqAoJCHuHsiMlc4AMQo3aLVEmEbA1Rl4L2z1aum03yt4naZLNMQLttKdBm
- 4tLm5xi25WypVlADPC3P9qaXar9V68MYtR3y_z6Dy1blKWREihRa6.jwdz_o56dOp6J0L7Lh1Ckd
- oXaD.HYWD7DZzLYnFCekZEO2rpfARs57tp8zELqhs.r3bTqQuDBz2gu23Az.ulIM2sQzJG4FFP0R
- SWIUum6bXCZo9MkhLMuAPme29TgIj03vzy0Z8XsRRPwnVGKzVX..5WasnQhdZeZyT3winPkWCxIF
- 69iMUQ4rM4lyyzD481CrtvrFhR9mK5SCjLQh1F66LIy4BOs2ViOpkX8P4QoaDKPcC71UptE6WYkI
- 6_itXcnjtAPOoHVeXg3T.6How_yKv59jbx_wGta2KN3NSnFNBqKNdC4dBHDFciznjQfC8dXrMF_h
- MxTFuRoWwI0GGDfdzO2k51Ouf74QxS.hAvbFWaAJLu6CdyZPSisUSzneJRgoPwk6zsDTiX1.XHcQ
- zN_tLlQ0XxzPnJeUkUXrfOzAIG9MK1FgQhjIhsEU4K7RGM8eyr1VQKcIKxGfUQljGD4jXuCkcECT
- oHCywpk_uVVzhMfvbFH4.5QE1JYnREGbZaxXfzUgti4N852piGl4RPi1nBfYhZg8St1thK1_7rpn
- NrYwvnHsB03XPU41EH5bXnwxH3HPeguzgskCn19gKzLNhp.7FCLdv7PJRjoz.ToojZJVpMJz3zb9
- 7ukX4Kl6LN9_ogLGLM0bicsQiGPT_sM4oE1lKq53qe0nO7mTnLASLs9GI0q5NZqcupyjYNsleGGF
- 8kFT634oymWFHTqG7SQsz9P_QMOXQEOYZWbFy0cB7Zaw4CMzdPtWV1whEHTr07ybe9wxQi4i.AL4
- uE8.gyHUYxfgp0kmAThwn2jDpBkF1EmVsfe9U_NxzgaELlwpdU2zgMBDOmE.tmgkETROm9IiB66q
- BuKzdZHgN3Sj4on_IIs3RjAsPpLclYX09HTmJTnBJ0Xxm86ybEtXQgYbYd6P8uvphNB.lZETM3Yb
- mkBn5bFZyqaP4Xwl7k8ZgtzneVXAz2n3TvgOo1ykMGNKfdJJw5kju2Hda_Xas9bezOHUJafe1Z6x
- 7TujpWD8IyFyEHTyjX7yvn2XAFpt1ruarwVa2sfpv7j71BQ.uWrg3KTxzYjLyF1fo94WHfO_0_QT
- ZM6MVWmZMbcIv3qAMG05sDS8adVIkuI7LADtVeFczNvLVXB4U4XoTBOg9EUTvORJg1C5e3kiNcm1
- lgHSkgK8Vwsyie8iQ_L31
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: d22fbf55-e853-4b46-a9b7-92f47fb303b9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.sg3.yahoo.com with HTTP; Thu, 24 Jul 2025 20:25:49 +0000
-Received: by hermes--production-ne1-9495dc4d7-vm8nz (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ba5944df1bf98b049dd2dbc2e489772b;
-          Thu, 24 Jul 2025 20:05:29 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	yoshfuji@linux-ipv6.org,
-	dsahern@kernel.org,
-	steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	sashal@kernel.org,
-	idosch@nvidia.com,
-	razor@blackwall.org,
-	petrm@nvidia.com,
-	kuniyu@amazon.com
-Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	stable@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	syzbot <syzkaller@googlegroups.com>
-Subject: [PATCH v2 6.1] net: add netdev_lockdep_set_classes() to virtual drivers
-Date: Thu, 24 Jul 2025 15:05:22 -0500
-Message-ID: <20250724200524.172820-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <1753367981-e2a8d101@stable.kernel.org>
-References: <1753367981-e2a8d101@stable.kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFAB1FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753387593; cv=fail; b=YObBkEQ2FFcFKz92iOdrJavtbfTGj4yVyPttPd0agsqvfNWrG+A716BZvq6R/UCt+IB1iVKuYZOi3MyG2OZla8pwh2LcpavilHxwy1TeJrOpmEH5t8ZFGMqJP+nSy7hLcZt7DNEX6VNzmLtHBIKtYWrfQrtbcx1VX3SEz9kX5iY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753387593; c=relaxed/simple;
+	bh=s+QxaukGKaEMB55swxD+FtQqtIzfyswgDsHs5h1R5Y8=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=kvXohjFIMdMuh8eHOV0UlJpwOBIbpUiT3g2Fdfc60ocH2yQZZ/veN4gDG+ET67bjrEaHl3k55V3ZjhZKKedIZnh+akbdV4Mxs4dF/sQP5QAZVUL++uskBM71oVn5NiX1PerNLkNFQYl+0k2EUUoQr2R6PA7lqZXuPc/bRg/jOIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=frZIPqiU; arc=fail smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OIVBY5018354
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:06:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=ghjYCcoi70a3DT/GPTNXgHY+d5i1oC4W4b8jAW86eew=; b=frZIPqiU
+	f2/wrDtddjgEnYmsagjV7uhNxVvMLpq+Gio5KY8yu3yOxoVzsVg3uqgQ0RE8aemY
+	k33cUiGhsXtWeMqOpoxVO+PM7ZWMfnBRPNqjlsFmugRxaUn+67pTPZYdWi3FetXO
+	yINd7qbsgMai7e1zSRTDmHbGBa0a9FtcURS2BR9oN5/c1udwXwOQp973evIChmPm
+	P0HTusprE9cN5/egHH3L66o6kDm4UGvAiaUlb84Jd4nm+3U+mrjMoyBOesRH3DUL
+	/sDV/mfyTb8YVJNnFBCJwY2cvmTewvxzpqOle6ZR5q0CoVs99uUWlESM6li0llHW
+	m83KLVdBUZkoFw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff5551h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:06:25 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56OK4aoX002030
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:06:24 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff55519-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 20:06:23 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56OK6N59005622;
+	Thu, 24 Jul 2025 20:06:23 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2065.outbound.protection.outlook.com [40.107.93.65])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 482ff55515-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 20:06:23 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tSu88rn1WSMNOcMRLp1cKzImPf1r8FsQ8MPZDbjKu630+FLf+YeO0q++49OeNwjwFPk8vrOzpC7Ud9DnjroslhHdgcMBaRJt6UouE86411f3esYbXVgdE3OPtFvJ6bfA1Id5oqD794gUgnvoOTupFh524mSbx45BWQ9pWfGvmqpVzfT2CCYpjwrZ4xoPQqb8JoHTyCOlSQdqdTjyFoq6C7dmG65qU++EzdHh37O3Vbhr/ONr132DeVzmTc+lURLnqIkEV23AcploEyXSE5w6DIGS9Pev+ti6YB4qK8noiqS/DhVBQLAS7ga0GML6CogQAneUD6SbRBmp0i72iJWAdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C7l9flnhiNIg1i8wPt4FbmDnD4ipJkIFXzcjHkd7f74=;
+ b=klaWYkf1HhFB6kLorEH8a6ygOoCXa9c29wOdGHI0KBD5g5Dro0Wg/R689PgFJlsmrwP4MC0FpVwbJUFMEAW5y0zJMnKpGCKWhAVG0BUfRAVUDMeYt04Fuhgq4Gc2NTcb3Zt/wB41lDKE0yUrQarjwZPELfk471zIHxV1BHfveAaum1rHBTsIzDLgIqah1DgrtNN9e2sNnTyBQ0LZkYQkNFe1gx3HQVXZESnqWkGSfX9cliS6Z737Pr0meO2l8X7WYS7DjB6dlC2pRBrb//l45Txl0so6Pqp9PrYJCAM/DHCwWBbmDPdHFdIVNaS6GYF2rXPGQnmujzSFDDjXl/421w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SJ0PR15MB5821.namprd15.prod.outlook.com (2603:10b6:a03:4e4::8)
+ by SJ2PR15MB5645.namprd15.prod.outlook.com (2603:10b6:a03:4cd::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Thu, 24 Jul
+ 2025 20:06:20 +0000
+Received: from SJ0PR15MB5821.namprd15.prod.outlook.com
+ ([fe80::266c:f4fd:cac5:f611]) by SJ0PR15MB5821.namprd15.prod.outlook.com
+ ([fe80::266c:f4fd:cac5:f611%4]) with mapi id 15.20.8880.030; Thu, 24 Jul 2025
+ 20:06:20 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com"
+	<syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com>,
+        "eadavis@qq.com"
+	<eadavis@qq.com>
+CC: "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de"
+	<glaubitz@physik.fu-berlin.de>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "slava@dubeyko.com" <slava@dubeyko.com>
+Thread-Topic: [EXTERNAL] [PATCH] hfs: Prevent the use of bnodes without
+ entries
+Thread-Index: AQHb/K4UfpflhoUCl0GMNs1yVkAMfbRBs3qA
+Date: Thu, 24 Jul 2025 20:06:20 +0000
+Message-ID: <0ead1ebdbbecc1802e3ffed0867ba6a2c567e415.camel@ibm.com>
+References: <68811963.050a0220.248954.0005.GAE@google.com>
+	 <tencent_DFFF86C192DEC64EC99B6EF96EDE4C986706@qq.com>
+In-Reply-To: <tencent_DFFF86C192DEC64EC99B6EF96EDE4C986706@qq.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR15MB5821:EE_|SJ2PR15MB5645:EE_
+x-ms-office365-filtering-correlation-id: 3988be5f-59fb-4b2f-53e3-08ddcaed8e90
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|38070700018|7053199007;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UDZlR2tmRHozZlNxRkZRR2h0Mm5ETlE4dkU4NSticHBNa0h0MmpScHl2VDNO?=
+ =?utf-8?B?RmEzY3BmbHVKQUNTSVY0cGwvYmp6eXFIZVB2THpQSkFHYnNDczVQZndiYVdE?=
+ =?utf-8?B?eDUzSjJ1ZkdxdllFbzRhT0VDSDNiQlFFN0hQWXJDbFhVY3A5N0U1QU5lUDR5?=
+ =?utf-8?B?N2xURXNTUmZiVDhUWFpDcGhqRDdod3VuRE00d3djRzdIcXpMaHUvaFAydnVH?=
+ =?utf-8?B?KzQvaFFSdTZUVTJ1ZTFLZkM2bnZJaU5Xa2t4R3FabTJCK0J3R0lmUDl4bVNC?=
+ =?utf-8?B?SzFJZ2diaFVMZnMrMlhuRXhPUXFyenpzRWtpVmJTdXAwcE5ZaDRrNDl0YlIz?=
+ =?utf-8?B?clNYdmY3eTdLS1lQdUg1QnJkdm1OTmlsbTVlbXJQOVFHU3dGMlVDY1FUTVMy?=
+ =?utf-8?B?eWRTa29lRFlxVHNjZEp5KyszZnMxV3pZdExwSjNZVjZQeklpSlhKTHNRckF3?=
+ =?utf-8?B?NzZLMWU0M0tDTGZ3aXRZcU44azdBRithRjRyQ3Jjc0RiWHE0QjM4WjZ2Wkxw?=
+ =?utf-8?B?c0xlZzlBS0JPV2xOWTdnc0p6bC9OWDVoQmZMM3pqWkJaTlIvc0I1cVg4b0dT?=
+ =?utf-8?B?T1M4N055TkFUaUZOZ2lQY21WWDNGMkp3RWMxZHAyS1FnZU5IQ3dMY0orNXJi?=
+ =?utf-8?B?Njl4NEFDVDZ4WGpzS2Y4a1htU1IwUTlQNFh0MVNWMDBTcXRway90eG8yQ3NC?=
+ =?utf-8?B?TElueUpYYkhraCtDOTVHTWlWa0ZpR3IrVHIydlpYV1dlRm1LbkVMcGlyVnRT?=
+ =?utf-8?B?K1VGVjhHR3JKV3M0aFJsY1pCUUZIVzhmbG52ZlF2VFdIVURyQmwybmFMdk1Z?=
+ =?utf-8?B?dU5HUXZwT3RmSmVleXZ0eDliVVhSNlViZ25CS3hnZ0RRcVIxRzIwaVhQREg2?=
+ =?utf-8?B?aWZGNnZUZXRYTmZKbzRSb3hpYkhuY2dhdE14enpWRDRCYWd4N0g4MlFmeHJC?=
+ =?utf-8?B?eHdwMldkd3hobXVWdU9rN1hrbGV4VUwwVk05eUxlSElpbWFVS1dGWmc1eWND?=
+ =?utf-8?B?R3hiVWhNZkFEVTdOT3g3MGt2SHBaazBMaEM0RDBsQnpmbUlCbFIxSDI2cjVt?=
+ =?utf-8?B?VnFJblBVN2p0YXlEVC9VYUgwTXkyVWFJRkUvNVduL2EzblVtWStWNnBnTUJs?=
+ =?utf-8?B?TDhaRDZZTDRLd0hqdXpmU25vV1kxMDBsSE54b0U1T2F0ZFRCMVlnNHFDeXU1?=
+ =?utf-8?B?QTJzZFVGbGN4VGJUWjJMeFRuOXJneFp2QUZsbDFBem1HQUpjMGV4T0tSTUxJ?=
+ =?utf-8?B?YTZRZ3c0MnFlMm9yZGVneXZsK09xQW5WS3hLa2FqR1gxT3FFb0JoaWpnc0pT?=
+ =?utf-8?B?SWptTGNzbjdWNUdvYVJHbUxabjZHM1NXeUl4VmhTeGQzNzE4a1N5QzFBM0hR?=
+ =?utf-8?B?UVVnVHpRYlM2d0dQdDdTejR1WHRVSE5Mc3dFd0VyOU1WVEdYU0xqMWM1dmlj?=
+ =?utf-8?B?Wmc0QVpQS3JJWEpPL1JOTVQ4aWo0Um9uV2NxWHFlUXo5RW1XRDBXc3h0YXA4?=
+ =?utf-8?B?UzBaQUlpY3FRWFlCQ1pSUUROR1daNnJMV3ZzMUd0aHAwZ0JXYlhuMHh2VjJr?=
+ =?utf-8?B?SlErTCtXZm1yREczSlR1ek41V3o2eDc4cEdEQ3NyODFVYkl5bU5aTzQ2UW9B?=
+ =?utf-8?B?QzFvVHZEd3ZWK3YyM1N6bmlRZWRJVWQ1SnZBZVpRVFltamVJWUR5MXhMTVNx?=
+ =?utf-8?B?THZiQWg2MW9DczhSL29iUG9JNUJ1Q282MDRIb055a0NzUEh3c2FLYzhDaUl1?=
+ =?utf-8?B?OEtjQTh4K0E0dzFlTndMZlR6elk3aFNjNzduMmUyeFFIenFwYmFHTERDL0s5?=
+ =?utf-8?B?Z1lQMllubmovYk1EQ0ZqUVE4WnU1c0lxMmlGVjF5SnZ2cUdDVGJoK3pIN2FC?=
+ =?utf-8?B?cUlVdm4wZG1hcUNOSUVJQzJUN2JSOW90YWdnWGdCOGQ0RUJMSlBhZi9iN2dE?=
+ =?utf-8?Q?Nxd36xN4yOo=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB5821.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Qm1kN21BQjZweUd5SVgySDEveGY5eVl0TWxyR0xqL2xyZ2c1cmNCS04rQ3Yr?=
+ =?utf-8?B?bWtNODVEV2lJdUZmVCtBK3RZOEgxSVlIdVJiSVg2aWxjaW1IRk0wbFdNb0JW?=
+ =?utf-8?B?STB4VEx1eHg3TFBXM1NBM09ZMUMzNFRlVHdCZ0RmWlEydTE1UnlyMXBuMFp2?=
+ =?utf-8?B?S2g1ZTdGa1FDTVRnZnFLWG5JYlQ5T0NVa2NHTDhxY3dxM3crL0NCS3dhd2N1?=
+ =?utf-8?B?V1F1dC9IMUtBTmtyWmJkOExjcEJEc2N0UXhJQ2ZWaFVTb1BoMStlL201cGtJ?=
+ =?utf-8?B?Q2hIK2JRU3VYSzY1Mm9vV3ovdFZZdVU1VEJDRjl6WXBRRkZZYkVBNXdKc1I2?=
+ =?utf-8?B?ZmtGYzRQR1RGbENodGpXTGhhM0tGcWtBWVNsWDcrTWRqejZmWTU1OVczbG1t?=
+ =?utf-8?B?eElHbTN3dG1nZFg2Sjh1Tk1Tc25DNWZHSTkzbS9NK1V1UGxaMk5PTXpmRXZR?=
+ =?utf-8?B?c2lrNlp5WUkzd25zd3FkWlFxeFo5ZDh2bU9uaGtBa2R5Z0dvTGF3TDYzb20w?=
+ =?utf-8?B?TWZEckZVbFNIemVkc0tncTNPQ0V3Zm9WK3pxZkptazU1WVg0WGd2TGg4Uk1Q?=
+ =?utf-8?B?WkNhbmFMNGUzY2Nidjd3MmE3SGFoTGhLdEVrby9PM0V3d3hGaGdpVnhVWVYr?=
+ =?utf-8?B?clNtRlJNNnE0RUt0cHI0MzVhdW93U0xRMXhERUFvVVZvVDJIbnRpN0tzTEJu?=
+ =?utf-8?B?Y05VVTRBM1FuRW1MTW5WTTZ4bWRRZkRhYkdYa0M0c21NeDl0R1orcXBYS1lI?=
+ =?utf-8?B?SE9ac2tHa1Vzd2R3YTJMT1VrMktQbDBnYXpUNWNFOG5HOHd0c1RnZmxOT1Z0?=
+ =?utf-8?B?SjBtUXhtb1ZMZTFRTmJxeENzaTFYSG8zWFYwd3RHWDJoblFZeUE3eVBsVjc2?=
+ =?utf-8?B?YUJOVWRoMk5LdnpuUWFTVWJCOTk2S21xb2RQTVNBMk90YlJ6QlJCT0UxbWty?=
+ =?utf-8?B?V2RpOWJIMlJ4Vis3OXVxRlJxMHY1c0MzSTY5cEpWaENWL3M0ZUxKMG80QTdT?=
+ =?utf-8?B?TXR2MVVnU1dUOVdlWVNsUDFaK0Z0cTNTUm5FbUtrY20yRXlwZDRtRngrTVRk?=
+ =?utf-8?B?U2VMZGdJZ2FzOHJGc25qUmhzYlNmMjlDTUVPS2s4Tm5wSW5QVTNoa3dJTDNH?=
+ =?utf-8?B?eXRvN2gzNUNpVEVHaGJYc0xJZWJDWUdxRDB6S29PZ1o0TitibEVKY1ZnZ3JI?=
+ =?utf-8?B?MzdvV0ZQMjU2UG9Cd3laYWFsdWtPSG5ZbzJvWVVSOWRHclR2YVJGbkVtVHFN?=
+ =?utf-8?B?K1pGK3l0Q0hjRStkbkdwWm42UEwwb0wwTmZiTjBpNmVyTm82ejRUazY5Z0lC?=
+ =?utf-8?B?aUxTR0hGWXU2eG0yekZTbVk1NkcwZmZ5cGRnMEh3QXRhSkplVVExLzhnQkRo?=
+ =?utf-8?B?ak15WFBBaVJac0ZPK3Z3Ym9YYmlVQXU3M1QzcHV0VTBNWTh1c0ZIVDgwa1k2?=
+ =?utf-8?B?U0V3T3pWb3pMaTgrYkF0M1hDMU9TU2ZqOE8vRkJRY21MT3J6OHRwc0UrbW10?=
+ =?utf-8?B?Mk5kY25aS3hoOWl1SnpVTi9yUXJHaGptdTJpdURSUGEyTnRJY3pNVXNXeTFT?=
+ =?utf-8?B?dlBNTHQ5eDZtbUt6czhjWEUwQ2tmdXR0Vis2NFBGQnplQzVPNCtaSlAyRyt5?=
+ =?utf-8?B?M21iM3JITEg4cnhYNXc2ZGM3eHEwc1Q5SnZDbTFTQ2xVU0FVaFp2bW4vT1A2?=
+ =?utf-8?B?aElSK3A3d2FkY0E1bXdWczhNM1NEM2ZtNUNST2ZPbkROaWNnMWgvTVk5TnBu?=
+ =?utf-8?B?RkpGVFg2ZUNMbTVQaXdWdkxCRnp5QzZTckRGd3hHZEpEQ0ZUbmVhN21mM25N?=
+ =?utf-8?B?RkdaV285UENpdlFOcmRHaS9oOEdNa2gvdHY3UHk0bWNSSVQrQ0Y5UVJYZ3A0?=
+ =?utf-8?B?MzgvdXZsdlVLdkVpL2pRcXdGRlR4NGpyUXc4OWx6TFVkaXNsS1ZKNkFCSldI?=
+ =?utf-8?B?WHZPRnVtNzdVZkZqSW1FUTNha2R4Nkh2T3B2WFlaVHpXOGF3R2lmeGxqUVZZ?=
+ =?utf-8?B?VkxBRXNkbVpodm9Ka29TWXVDV0hMVERTQW9UMlB6bWlkSThHb1hzMWhJU3Fk?=
+ =?utf-8?B?MXZGclBHMzFNb0h5Nk1hODBHa0xFa0F2bVJaU0xBNUxxejVKQjFWSWhoeVcx?=
+ =?utf-8?B?dVJNRmNQdHhDcy9pcjNFMUhxTnBZTlFmTVYyb29ZS0h2V0tRNU5iM0Jwc2g4?=
+ =?utf-8?Q?qKSHxnBpW/weoAybplxdFQo=3D?=
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB5821.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3988be5f-59fb-4b2f-53e3-08ddcaed8e90
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2025 20:06:20.4155
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gUL9q0eWKxZnsg/P/IiSybaFWLi91g3xl2/6vvdauRi4PRXfLBQTw5z+Sx1GzlNqoY0zc/Fx8PE2NkBW0zGrlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR15MB5645
+X-Proofpoint-ORIG-GUID: -LDa33XlK1MiG7twbON2_0HSiVQw7w01
+X-Proofpoint-GUID: gUZfxPDoDpKtaJzmQ16HQNgFyF3CF4dH
+X-Authority-Analysis: v=2.4 cv=Ae2xH2XG c=1 sm=1 tr=0 ts=6882923f cx=c_pps
+ p=wCmvBT1CAAAA:8 a=RjtLz+qli6Ia6ygbqnDkgw==:117
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=n15javzGqmNhUcao:21 a=xqWC_Br6kY4A:10
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=edf1wS77AAAA:8 a=P-IC7800AAAA:8
+ a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=dZbOZ2KzAAAA:8 a=xM42AZ8UZk31C9XkhmIA:9
+ a=QEXdDO2ut3YA:10 a=DcSpbTIhAlouE1Uv7lRv:22 a=d3PnA9EDa4IxuAV0gXij:22
+ a=6z96SAwNL0f8klobD5od:22 a=cQPPKAXgyycSBL8etih5:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDE1MyBTYWx0ZWRfXwx6MSMBiaUYv
+ FuA5WM3gBg15VCaaLN0R6yAhANzcxjSPm7DQp5pi7TKNQnop+pMtLTIrNDezXvHRsuG3MYa1m0q
+ 7Rhr/74CKl72STXjp6Vru7ZiMELyG+/wTyvUsmw7951hBCchOTpUGVqIfWE1fFRWKO8Go71GlQK
+ 1TCfFIkV9+0Eew4AUNF1e7MzTTk9YXczhkOsdSferP90o6O5+QYJEyUf5o1g/oGLCttYhMygG3/
+ SGc13K169YhFJEIlpy7InwRquww1lMLEDIZM6H+XkOXKKEh8BdojMUA/b71lHWgtHrPn42M/a19
+ wdwhVW3DihRZcU+qsLdt8dIUqxK/tfzO1HBGgzXkCrVP2iBiliDz9IZJp3+JfO3lEhODMHN/Cl3
+ 11Cp9Qi69EW53ZRNY3jQeibk4TpVPZgpb1pwsDZKcxgTUIRtVez/uRQdxp+u404vzXqxxEUY
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4D12CDF17EEDBF49AC4213FC38180509@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re:  [PATCH] hfs: Prevent the use of bnodes without entries
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_04,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ clxscore=1011 phishscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 classifier=spam authscore=99 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=2 engine=8.19.0-2505280000
+ definitions=main-2507240153
 
-commit 0bef512012b1cd8820f0c9ec80e5f8ceb43fdd59 upstream.
+On Thu, 2025-07-24 at 23:08 +0800, Edward Adam Davis wrote:
+> If the number of entries in the bnode is 0, the bnode is considered
+> invalid.
+>=20
+> Reported-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D41ba9c82bce8d7101765 =20
+> Tested-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  fs/hfs/bfind.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+> index ef9498a6e88a..1d6f2bbafa7a 100644
+> --- a/fs/hfs/bfind.c
+> +++ b/fs/hfs/bfind.c
+> @@ -133,6 +133,8 @@ int hfs_brec_find(struct hfs_find_data *fd)
+>  			goto invalid;
+>  		if (bnode->type !=3D (--height ? HFS_NODE_INDEX : HFS_NODE_LEAF))
+>  			goto invalid;
+> +		if (!bnode->num_recs)
+> +			goto invalid;
 
-Based on a syzbot report, it appears many virtual
-drivers do not yet use netdev_lockdep_set_classes(),
-triggerring lockdep false positives.
+If b-tree node hasn't records, then it doesn't mean that it's invalid. Beca=
+use,
+if we go into invalid way, then we show the message that node is corrupted =
+[1]:
 
-WARNING: possible recursive locking detected
-6.8.0-rc4-next-20240212-syzkaller #0 Not tainted
+invalid:
+	pr_err("inconsistency in B*Tree (%d,%d,%d,%u,%u)\n",
+	       height, bnode->height, bnode->type, nidx, parent);
+	res =3D -EIO;
 
-syz-executor.0/19016 is trying to acquire lock:
- ffff8880162cb298 (_xmit_ETHER#2){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
- ffff8880162cb298 (_xmit_ETHER#2){+.-.}-{2:2}, at: __netif_tx_lock include/linux/netdevice.h:4452 [inline]
- ffff8880162cb298 (_xmit_ETHER#2){+.-.}-{2:2}, at: sch_direct_xmit+0x1c4/0x5f0 net/sched/sch_generic.c:340
+But it is not true because the node simply has no records. It could be inva=
+lid
+if bnode->num_recs < 0.
 
-but task is already holding lock:
- ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
- ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: __netif_tx_lock include/linux/netdevice.h:4452 [inline]
- ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: sch_direct_xmit+0x1c4/0x5f0 net/sched/sch_generic.c:340
+Also, I've sent the patch [2] already. I believe it should fix the issue. A=
+m I
+wrong here?
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+Thanks,
+Slava.
 
-       CPU0
-  lock(_xmit_ETHER#2);
-  lock(_xmit_ETHER#2);
+[1] https://elixir.bootlin.com/linux/v6.16-rc6/source/fs/hfs/bfind.c#L152
+[2]
+https://lore.kernel.org/linux-fsdevel/20250703214912.244138-1-slava@dubeyko=
+.com/
 
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-9 locks held by syz-executor.0/19016:
-  #0: ffffffff8f385208 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
-  #0: ffffffff8f385208 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x82c/0x1040 net/core/rtnetlink.c:6603
-  #1: ffffc90000a08c00 ((&in_dev->mr_ifc_timer)){+.-.}-{0:0}, at: call_timer_fn+0xc0/0x600 kernel/time/timer.c:1697
-  #2: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:298 [inline]
-  #2: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:750 [inline]
-  #2: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: ip_finish_output2+0x45f/0x1360 net/ipv4/ip_output.c:228
-  #3: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: local_bh_disable include/linux/bottom_half.h:20 [inline]
-  #3: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: rcu_read_lock_bh include/linux/rcupdate.h:802 [inline]
-  #3: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: __dev_queue_xmit+0x2c4/0x3b10 net/core/dev.c:4284
-  #4: ffff8880416e3258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: spin_trylock include/linux/spinlock.h:361 [inline]
-  #4: ffff8880416e3258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: qdisc_run_begin include/net/sch_generic.h:195 [inline]
-  #4: ffff8880416e3258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_xmit_skb net/core/dev.c:3771 [inline]
-  #4: ffff8880416e3258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_queue_xmit+0x1262/0x3b10 net/core/dev.c:4325
-  #5: ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
-  #5: ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: __netif_tx_lock include/linux/netdevice.h:4452 [inline]
-  #5: ffff8880223db4d8 (_xmit_ETHER#2){+.-.}-{2:2}, at: sch_direct_xmit+0x1c4/0x5f0 net/sched/sch_generic.c:340
-  #6: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:298 [inline]
-  #6: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:750 [inline]
-  #6: ffffffff8e131520 (rcu_read_lock){....}-{1:2}, at: ip_finish_output2+0x45f/0x1360 net/ipv4/ip_output.c:228
-  #7: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: local_bh_disable include/linux/bottom_half.h:20 [inline]
-  #7: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: rcu_read_lock_bh include/linux/rcupdate.h:802 [inline]
-  #7: ffffffff8e131580 (rcu_read_lock_bh){....}-{1:2}, at: __dev_queue_xmit+0x2c4/0x3b10 net/core/dev.c:4284
-  #8: ffff888014d9d258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: spin_trylock include/linux/spinlock.h:361 [inline]
-  #8: ffff888014d9d258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: qdisc_run_begin include/net/sch_generic.h:195 [inline]
-  #8: ffff888014d9d258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_xmit_skb net/core/dev.c:3771 [inline]
-  #8: ffff888014d9d258 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_queue_xmit+0x1262/0x3b10 net/core/dev.c:4325
-
-stack backtrace:
-CPU: 1 PID: 19016 Comm: syz-executor.0 Not tainted 6.8.0-rc4-next-20240212-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-Call Trace:
- <IRQ>
-  __dump_stack lib/dump_stack.c:88 [inline]
-  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
-  check_deadlock kernel/locking/lockdep.c:3062 [inline]
-  validate_chain+0x15c1/0x58e0 kernel/locking/lockdep.c:3856
-  __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-  lock_acquire+0x1e4/0x530 kernel/locking/lockdep.c:5754
-  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-  _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-  spin_lock include/linux/spinlock.h:351 [inline]
-  __netif_tx_lock include/linux/netdevice.h:4452 [inline]
-  sch_direct_xmit+0x1c4/0x5f0 net/sched/sch_generic.c:340
-  __dev_xmit_skb net/core/dev.c:3784 [inline]
-  __dev_queue_xmit+0x1912/0x3b10 net/core/dev.c:4325
-  neigh_output include/net/neighbour.h:542 [inline]
-  ip_finish_output2+0xe66/0x1360 net/ipv4/ip_output.c:235
-  iptunnel_xmit+0x540/0x9b0 net/ipv4/ip_tunnel_core.c:82
-  ip_tunnel_xmit+0x20ee/0x2960 net/ipv4/ip_tunnel.c:831
-  erspan_xmit+0x9de/0x1460 net/ipv4/ip_gre.c:720
-  __netdev_start_xmit include/linux/netdevice.h:4989 [inline]
-  netdev_start_xmit include/linux/netdevice.h:5003 [inline]
-  xmit_one net/core/dev.c:3555 [inline]
-  dev_hard_start_xmit+0x242/0x770 net/core/dev.c:3571
-  sch_direct_xmit+0x2b6/0x5f0 net/sched/sch_generic.c:342
-  __dev_xmit_skb net/core/dev.c:3784 [inline]
-  __dev_queue_xmit+0x1912/0x3b10 net/core/dev.c:4325
-  neigh_output include/net/neighbour.h:542 [inline]
-  ip_finish_output2+0xe66/0x1360 net/ipv4/ip_output.c:235
-  igmpv3_send_cr net/ipv4/igmp.c:723 [inline]
-  igmp_ifc_timer_expire+0xb71/0xd90 net/ipv4/igmp.c:813
-  call_timer_fn+0x17e/0x600 kernel/time/timer.c:1700
-  expire_timers kernel/time/timer.c:1751 [inline]
-  __run_timers+0x621/0x830 kernel/time/timer.c:2038
-  run_timer_softirq+0x67/0xf0 kernel/time/timer.c:2051
-  __do_softirq+0x2bc/0x943 kernel/softirq.c:554
-  invoke_softirq kernel/softirq.c:428 [inline]
-  __irq_exit_rcu+0xf2/0x1c0 kernel/softirq.c:633
-  irq_exit_rcu+0x9/0x30 kernel/softirq.c:645
-  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1076 [inline]
-  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1076
- </IRQ>
- <TASK>
-  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
- RIP: 0010:resched_offsets_ok kernel/sched/core.c:10127 [inline]
- RIP: 0010:__might_resched+0x16f/0x780 kernel/sched/core.c:10142
-Code: 00 4c 89 e8 48 c1 e8 03 48 ba 00 00 00 00 00 fc ff df 48 89 44 24 38 0f b6 04 10 84 c0 0f 85 87 04 00 00 41 8b 45 00 c1 e0 08 <01> d8 44 39 e0 0f 85 d6 00 00 00 44 89 64 24 1c 48 8d bc 24 a0 00
-RSP: 0018:ffffc9000ee069e0 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff8880296a9e00
-RDX: dffffc0000000000 RSI: ffff8880296a9e00 RDI: ffffffff8bfe8fa0
-RBP: ffffc9000ee06b00 R08: ffffffff82326877 R09: 1ffff11002b5ad1b
-R10: dffffc0000000000 R11: ffffed1002b5ad1c R12: 0000000000000000
-R13: ffff8880296aa23c R14: 000000000000062a R15: 1ffff92001dc0d44
-  down_write+0x19/0x50 kernel/locking/rwsem.c:1578
-  kernfs_activate fs/kernfs/dir.c:1403 [inline]
-  kernfs_add_one+0x4af/0x8b0 fs/kernfs/dir.c:819
-  __kernfs_create_file+0x22e/0x2e0 fs/kernfs/file.c:1056
-  sysfs_add_file_mode_ns+0x24a/0x310 fs/sysfs/file.c:307
-  create_files fs/sysfs/group.c:64 [inline]
-  internal_create_group+0x4f4/0xf20 fs/sysfs/group.c:152
-  internal_create_groups fs/sysfs/group.c:192 [inline]
-  sysfs_create_groups+0x56/0x120 fs/sysfs/group.c:218
-  create_dir lib/kobject.c:78 [inline]
-  kobject_add_internal+0x472/0x8d0 lib/kobject.c:240
-  kobject_add_varg lib/kobject.c:374 [inline]
-  kobject_init_and_add+0x124/0x190 lib/kobject.c:457
-  netdev_queue_add_kobject net/core/net-sysfs.c:1706 [inline]
-  netdev_queue_update_kobjects+0x1f3/0x480 net/core/net-sysfs.c:1758
-  register_queue_kobjects net/core/net-sysfs.c:1819 [inline]
-  netdev_register_kobject+0x265/0x310 net/core/net-sysfs.c:2059
-  register_netdevice+0x1191/0x19c0 net/core/dev.c:10298
-  bond_newlink+0x3b/0x90 drivers/net/bonding/bond_netlink.c:576
-  rtnl_newlink_create net/core/rtnetlink.c:3506 [inline]
-  __rtnl_newlink net/core/rtnetlink.c:3726 [inline]
-  rtnl_newlink+0x158f/0x20a0 net/core/rtnetlink.c:3739
-  rtnetlink_rcv_msg+0x885/0x1040 net/core/rtnetlink.c:6606
-  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2543
-  netlink_unicast_kernel net/netlink/af_netlink.c:1341 [inline]
-  netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1367
-  netlink_sendmsg+0xa3c/0xd70 net/netlink/af_netlink.c:1908
-  sock_sendmsg_nosec net/socket.c:730 [inline]
-  __sock_sendmsg+0x221/0x270 net/socket.c:745
-  __sys_sendto+0x3a4/0x4f0 net/socket.c:2191
-  __do_sys_sendto net/socket.c:2203 [inline]
-  __se_sys_sendto net/socket.c:2199 [inline]
-  __x64_sys_sendto+0xde/0x100 net/socket.c:2199
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7fc3fa87fa9c
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Link: https://lore.kernel.org/r/20240212140700.2795436-4-edumazet@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
----
-Changes in v2:
-- With previous patch, Not able to apply on the 6.1 branch. Updated the
-  code changes in 6.1 branch. 
-- Link to v1:https://lore.kernel.org/all/20250724043010.129297-1-sumanth.gavini@yahoo.com/
----
- drivers/net/dummy.c            | 1 +
- drivers/net/geneve.c           | 1 +
- drivers/net/loopback.c         | 1 +
- drivers/net/veth.c             | 1 +
- drivers/net/vxlan/vxlan_core.c | 1 +
- net/ipv4/ip_tunnel.c           | 1 +
- net/ipv6/ip6_gre.c             | 2 ++
- net/ipv6/ip6_tunnel.c          | 1 +
- net/ipv6/ip6_vti.c             | 1 +
- net/ipv6/sit.c                 | 1 +
- 10 files changed, 11 insertions(+)
-
-diff --git a/drivers/net/dummy.c b/drivers/net/dummy.c
-index aa0fc00faecb..f05d4194eb09 100644
---- a/drivers/net/dummy.c
-+++ b/drivers/net/dummy.c
-@@ -71,6 +71,7 @@ static int dummy_dev_init(struct net_device *dev)
- 	if (!dev->lstats)
- 		return -ENOMEM;
- 
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- 
-diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
-index 3dd5c69b05cb..b31441fc99fc 100644
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -349,6 +349,7 @@ static int geneve_init(struct net_device *dev)
- 		gro_cells_destroy(&geneve->gro_cells);
- 		return err;
- 	}
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- 
-diff --git a/drivers/net/loopback.c b/drivers/net/loopback.c
-index b213397672d2..8dc6a4df93c7 100644
---- a/drivers/net/loopback.c
-+++ b/drivers/net/loopback.c
-@@ -144,6 +144,7 @@ static int loopback_dev_init(struct net_device *dev)
- 	dev->lstats = netdev_alloc_pcpu_stats(struct pcpu_lstats);
- 	if (!dev->lstats)
- 		return -ENOMEM;
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index e1e7df00e85c..ce90b093bb45 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -1373,6 +1373,7 @@ static void veth_free_queues(struct net_device *dev)
- 
- static int veth_dev_init(struct net_device *dev)
- {
-+	netdev_lockdep_set_classes(dev);
- 	return veth_alloc_queues(dev);
- }
- 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index 747ce00dd321..50dacdc1b6a7 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2998,6 +2998,7 @@ static int vxlan_init(struct net_device *dev)
- 	if (err)
- 		goto err_free_percpu;
- 
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- 
- err_free_percpu:
-diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-index 73d7372afb43..90e55b9979e6 100644
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -1298,6 +1298,7 @@ int ip_tunnel_init(struct net_device *dev)
- 
- 	if (tunnel->collect_md)
- 		netif_keep_dst(dev);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(ip_tunnel_init);
-diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-index b3e2d658af80..718fcad69cf1 100644
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1537,6 +1537,7 @@ static int ip6gre_tunnel_init_common(struct net_device *dev)
- 	ip6gre_tnl_init_features(dev);
- 
- 	netdev_hold(dev, &tunnel->dev_tracker, GFP_KERNEL);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- 
- cleanup_dst_cache_init:
-@@ -1929,6 +1930,7 @@ static int ip6erspan_tap_init(struct net_device *dev)
- 	ip6erspan_tnl_link_config(tunnel, 1);
- 
- 	netdev_hold(dev, &tunnel->dev_tracker, GFP_KERNEL);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- 
- cleanup_dst_cache_init:
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index a82d382193e4..2a470c0c38ae 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1902,6 +1902,7 @@ ip6_tnl_dev_init_gen(struct net_device *dev)
- 	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len - t_hlen;
- 
- 	netdev_hold(dev, &t->dev_tracker, GFP_KERNEL);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- 
- destroy_dst:
-diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
-index cb71463bbbab..add7276986f1 100644
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -937,6 +937,7 @@ static inline int vti6_dev_init_gen(struct net_device *dev)
- 	if (!dev->tstats)
- 		return -ENOMEM;
- 	netdev_hold(dev, &t->dev_tracker, GFP_KERNEL);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- 
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index cc24cefdb85c..eb4c8e2a2b12 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1460,6 +1460,7 @@ static int ipip6_tunnel_init(struct net_device *dev)
- 		return err;
- 	}
- 	netdev_hold(dev, &tunnel->dev_tracker, GFP_KERNEL);
-+	netdev_lockdep_set_classes(dev);
- 	return 0;
- }
- 
--- 
-2.43.0
+>  		bnode->parent =3D parent;
+> =20
+>  		res =3D __hfs_brec_find(bnode, fd);
 
 
