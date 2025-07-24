@@ -1,105 +1,377 @@
-Return-Path: <linux-kernel+bounces-743392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F88B0FE21
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A25B0FE22
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 929697BA816
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B7D3A4324
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEAD13AC1;
-	Thu, 24 Jul 2025 00:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F44F9C1;
+	Thu, 24 Jul 2025 00:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDWZ22Op"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUDhKlcd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C2B4430;
-	Thu, 24 Jul 2025 00:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8141B4A21;
+	Thu, 24 Jul 2025 00:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753316389; cv=none; b=n2pOJA0nwPXNqWF+tzPIfTBdX67Uffu4lBiCKsdW5/aHxtWd9/L+OZ9DJS7PPrSJuWhMtKpTKdTonhbBI/eibU3r6Mudjvm6B5cDDUkaQUE/RfQZ4LE1LlQeanbR8xSaUcLmzSV1eWs287kTeSWEP7wA5LKLWBmXW0LzsVGHqJ0=
+	t=1753316412; cv=none; b=TN1IIjjNwjNJDRT+pnMkJ5wbHhCKMy2H5pSHcSCuZo6YNbRLhY9aEaVdwE7yJr0hXF6X3UU3uwFOt+33cS1UucUmeIU54jT1pq3rUW19cn74hqVHC7UjJtp/XzT0vYPd8xCk/YoxIMOsAQ7t6pNFXD0aSuLF/pHgl6WldxCJB3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753316389; c=relaxed/simple;
-	bh=NtHxaMnN5aPuveNsuyUdcuILPJrVtVSf0qXi3bKHF/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dN/3MBYhdzFLNHIQNMI/lotc1g0HNdHj+WPeiSzjI432v3hZKKKDMWv2ghmQ0OSwdKRNzzH+JNCiNY3ZK51ca+dKXZtD8VBOel+oFHQNjEiFtK8p8folv6hl+3wi1hHh2gPb8LPDgXzv0xVH4YxLmOQsXWIJqlY1YsI2F50f/7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDWZ22Op; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD4BC4CEE7;
-	Thu, 24 Jul 2025 00:19:48 +0000 (UTC)
+	s=arc-20240116; t=1753316412; c=relaxed/simple;
+	bh=ZU7oU0PDwlGMFiAiw4TsKoZP5zaWChHVEF5OPdPsT/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smz1a5LSNEJvbW7zyvBK1+FStaUeJcJNIgvdqQG2YVWN3yCjuiVDNWxFW87YMMgtpeI94BdoVbuj8/LMh+0UPBEB3JE/r0XNYye7MwmdS5crE0no2x2lt1utabSqhKLb7esTtm8kM8BgjpTsctq79rQ51GbKzmu+hFxwjnFjFmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUDhKlcd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7314BC4CEE7;
+	Thu, 24 Jul 2025 00:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753316389;
-	bh=NtHxaMnN5aPuveNsuyUdcuILPJrVtVSf0qXi3bKHF/g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CDWZ22OpxTaQfb34su+edsg9+mDZy9BbyeKsWF2RRppprjH2vrNCfuuAOljkQVObA
-	 Z/vPSSlcxUgpManz4hDTufyZ5t8zw5kCINf9XjrpCK8xPrMOANGbjokkNaSEUhFx8L
-	 a+CsTVI6yD4AoZT4E7Kh+vPXYQWpmJaYJenz8Bh+XqD1DBQbsDoomKq9qwjHIrpLzV
-	 Awbql54Mf0GIuIfuC+EEzzHWVB6HF/zx2bESvmwNkUicswxoxhhii61eW6MF/2mkcX
-	 ALN9PBesmIsYesPJ5GtKHllzB4714FoKz+86/tj2maNTa18VUkWMb+HRvtTdKwE0SN
-	 PQLglTEQPB4Dg==
-Date: Wed, 23 Jul 2025 17:19:47 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Meghana Malladi <m-malladi@ti.com>
-Cc: <namcao@linutronix.de>, <jacob.e.keller@intel.com>, <sdf@fomichev.me>,
- <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
- <ast@kernel.org>, <pabeni@redhat.com>, <edumazet@google.com>,
- <davem@davemloft.net>, <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix skb handling for
- XDP_PASS
-Message-ID: <20250723171947.76995990@kernel.org>
-In-Reply-To: <20250721124918.3347679-1-m-malladi@ti.com>
-References: <20250721124918.3347679-1-m-malladi@ti.com>
+	s=k20201202; t=1753316412;
+	bh=ZU7oU0PDwlGMFiAiw4TsKoZP5zaWChHVEF5OPdPsT/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hUDhKlcdFwCZ9kMrSni3fQBkF5RGCdTSlV79gXUGZE21GYlqgswVPL97Uo0wn5UG8
+	 nX7u4EUMRho7SwmWf0E6Wl8oPj9RQS7UziZgMMZMiZqOe3BVigq8oL4tEhHlegVsBZ
+	 POLjX5d+CED2MIYHtGfu0PmrfsA9zBqnNXQC6RPeBNZwRz+VCzDmXSrK5DhrygEPYr
+	 pCN7H6LexmoGcOSbumx5k1oVer+nAgpowGqQ0JPT096Gq+UyEOPurMXR9VUdccFTIO
+	 PY2KoGBJyEN59oVKwdAGb/n8U8ZLm/Hd3K7ajU2nD3XcenqF7v2c3IqjXSfntb5LHv
+	 K8VYWHPwFGjHA==
+Date: Wed, 23 Jul 2025 17:20:09 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v7 03/16] perf parse-events: Remove non-json software
+ events
+Message-ID: <aIF8OToitmp8Uj_T@google.com>
+References: <20250714164405.111477-1-irogers@google.com>
+ <20250714164405.111477-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250714164405.111477-4-irogers@google.com>
 
-On Mon, 21 Jul 2025 18:19:18 +0530 Meghana Malladi wrote:
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-> index 12f25cec6255..a0e7def33e8e 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-> @@ -757,15 +757,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
->  		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
+On Mon, Jul 14, 2025 at 09:43:51AM -0700, Ian Rogers wrote:
+> Remove the hard coded encodings from parse-events. This has the
+> consequence that software events are matched using the sysfs/json
+> priority, will be case insensitive and will be wildcarded across PMUs.
+> As there were software and hardware types in the parsing code, the
+> removal means software vs hardware logic can be removed and hardware
+> assumed.
+> 
+> Now the perf json provides detailed descriptions of software events,
+> remove the previous listing support that didn't contain event
+> descriptions. When globbing is required for the "sw" option in perf
+> list, use string PMU globbing as was done previously for the tool PMU.
+
+Oh, you explained the issues here.  Great, I've seen you posted v8.
+Will continue there.
+
+Thanks,
+Namhyung
+
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-list.c      | 19 ++++++-------
+>  tools/perf/util/parse-events.c | 51 ----------------------------------
+>  tools/perf/util/parse-events.h |  1 -
+>  tools/perf/util/parse-events.l | 38 +++++++++----------------
+>  tools/perf/util/parse-events.y | 29 ++++++++-----------
+>  tools/perf/util/print-events.c |  2 --
+>  6 files changed, 33 insertions(+), 107 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+> index e9b595d75df2..674bb0afbf93 100644
+> --- a/tools/perf/builtin-list.c
+> +++ b/tools/perf/builtin-list.c
+> @@ -623,16 +623,17 @@ int cmd_list(int argc, const char **argv)
+>  		else if (strcmp(argv[i], "sw") == 0 ||
+>  			 strcmp(argv[i], "software") == 0) {
+>  			char *old_pmu_glob = default_ps.pmu_glob;
+> +			static const char * const sw_globs[] = { "software", "tool" };
 >  
->  		*xdp_state = emac_run_xdp(emac, &xdp, page, &pkt_len);
-> -		if (*xdp_state == ICSSG_XDP_PASS)
-> -			skb = xdp_build_skb_from_buff(&xdp);
-> -		else
-> +		if (*xdp_state != ICSSG_XDP_PASS)
->  			goto requeue;
-> -	} else {
-> -		/* prepare skb and send to n/w stack */
-> -		skb = napi_build_skb(pa, PAGE_SIZE);
->  	}
+> -			print_symbol_events(&print_cb, ps, PERF_TYPE_SOFTWARE,
+> -					event_symbols_sw, PERF_COUNT_SW_MAX);
+> -			default_ps.pmu_glob = strdup("tool");
+> -			if (!default_ps.pmu_glob) {
+> -				ret = -1;
+> -				goto out;
+> +			for (size_t j = 0; j < ARRAY_SIZE(sw_globs); j++) {
+> +				default_ps.pmu_glob = strdup(sw_globs[j]);
+> +				if (!default_ps.pmu_glob) {
+> +					ret = -1;
+> +					goto out;
+> +				}
+> +				perf_pmus__print_pmu_events(&print_cb, ps);
+> +				zfree(&default_ps.pmu_glob);
+>  			}
+> -			perf_pmus__print_pmu_events(&print_cb, ps);
+> -			zfree(&default_ps.pmu_glob);
+>  			default_ps.pmu_glob = old_pmu_glob;
+>  		} else if (strcmp(argv[i], "cache") == 0 ||
+>  			 strcmp(argv[i], "hwcache") == 0)
+> @@ -679,8 +680,6 @@ int cmd_list(int argc, const char **argv)
+>  			default_ps.event_glob = s;
+>  			print_symbol_events(&print_cb, ps, PERF_TYPE_HARDWARE,
+>  					event_symbols_hw, PERF_COUNT_HW_MAX);
+> -			print_symbol_events(&print_cb, ps, PERF_TYPE_SOFTWARE,
+> -					event_symbols_sw, PERF_COUNT_SW_MAX);
+>  			print_hwcache_events(&print_cb, ps);
+>  			perf_pmus__print_pmu_events(&print_cb, ps);
+>  			print_tracepoint_events(&print_cb, ps);
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index a59ae5ca0f89..1ae481c9802b 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -84,57 +84,6 @@ const struct event_symbol event_symbols_hw[PERF_COUNT_HW_MAX] = {
+>  	},
+>  };
 >  
-> +	/* prepare skb and send to n/w stack */
-> +	skb = napi_build_skb(pa, PAGE_SIZE);
->  	if (!skb) {
->  		ndev->stats.rx_dropped++;
->  		page_pool_recycle_direct(pool, page);
-
-I'm not sure this is correct. We seem to hardcode headroom to
-PRUETH_HEADROOM lower in this function. If XDP adds or removes
-network headers and then returns XDP_PASS we'll look for the packet 
-at the wrong offset.
-
-We just merged some XDP tests, could you try running 
-tools/testing/selftests/drivers/net/xdp.py ? 
-Some general instructions can be found here:
-https://github.com/linux-netdev/nipa/wiki/Running-driver-tests
-
-Not sure how stable the test is for all NICs but I think the 
- xdp.test_xdp_native_adjst_head_grow_data
-test case will exercise what I'm suspecting will fail.
+> -const struct event_symbol event_symbols_sw[PERF_COUNT_SW_MAX] = {
+> -	[PERF_COUNT_SW_CPU_CLOCK] = {
+> -		.symbol = "cpu-clock",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_TASK_CLOCK] = {
+> -		.symbol = "task-clock",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_PAGE_FAULTS] = {
+> -		.symbol = "page-faults",
+> -		.alias  = "faults",
+> -	},
+> -	[PERF_COUNT_SW_CONTEXT_SWITCHES] = {
+> -		.symbol = "context-switches",
+> -		.alias  = "cs",
+> -	},
+> -	[PERF_COUNT_SW_CPU_MIGRATIONS] = {
+> -		.symbol = "cpu-migrations",
+> -		.alias  = "migrations",
+> -	},
+> -	[PERF_COUNT_SW_PAGE_FAULTS_MIN] = {
+> -		.symbol = "minor-faults",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_PAGE_FAULTS_MAJ] = {
+> -		.symbol = "major-faults",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_ALIGNMENT_FAULTS] = {
+> -		.symbol = "alignment-faults",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_EMULATION_FAULTS] = {
+> -		.symbol = "emulation-faults",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_DUMMY] = {
+> -		.symbol = "dummy",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_BPF_OUTPUT] = {
+> -		.symbol = "bpf-output",
+> -		.alias  = "",
+> -	},
+> -	[PERF_COUNT_SW_CGROUP_SWITCHES] = {
+> -		.symbol = "cgroup-switches",
+> -		.alias  = "",
+> -	},
+> -};
+> -
+>  static const char *const event_types[] = {
+>  	[PERF_TYPE_HARDWARE]	= "hardware",
+>  	[PERF_TYPE_SOFTWARE]	= "software",
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+> index b47bf2810112..62dc7202e3ba 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -264,7 +264,6 @@ struct event_symbol {
+>  	const char	*alias;
+>  };
+>  extern const struct event_symbol event_symbols_hw[];
+> -extern const struct event_symbol event_symbols_sw[];
+>  
+>  char *parse_events_formats_error_string(char *additional_terms);
+>  
+> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+> index 4af7b9c1f44d..2034590eb789 100644
+> --- a/tools/perf/util/parse-events.l
+> +++ b/tools/perf/util/parse-events.l
+> @@ -117,12 +117,12 @@ do {								\
+>  	yyless(0);						\
+>  } while (0)
+>  
+> -static int sym(yyscan_t scanner, int type, int config)
+> +static int sym(yyscan_t scanner, int config)
+>  {
+>  	YYSTYPE *yylval = parse_events_get_lval(scanner);
+>  
+> -	yylval->num = (type << 16) + config;
+> -	return type == PERF_TYPE_HARDWARE ? PE_VALUE_SYM_HW : PE_VALUE_SYM_SW;
+> +	yylval->num = config;
+> +	return PE_VALUE_SYM_HW;
+>  }
+>  
+>  static int term(yyscan_t scanner, enum parse_events__term_type type)
+> @@ -391,28 +391,16 @@ r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
+>  <<EOF>>			{ BEGIN(INITIAL); }
+>  }
+>  
+> -cpu-cycles|cycles				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES); }
+> -stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+> -stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> -instructions					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS); }
+> -cache-references				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES); }
+> -cache-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES); }
+> -branch-instructions|branches			{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
+> -branch-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES); }
+> -bus-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BUS_CYCLES); }
+> -ref-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_REF_CPU_CYCLES); }
+> -cpu-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_CLOCK); }
+> -task-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_TASK_CLOCK); }
+> -page-faults|faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS); }
+> -minor-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MIN); }
+> -major-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MAJ); }
+> -context-switches|cs				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES); }
+> -cpu-migrations|migrations			{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS); }
+> -alignment-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_ALIGNMENT_FAULTS); }
+> -emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EMULATION_FAULTS); }
+> -dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
+> -bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
+> -cgroup-switches					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CGROUP_SWITCHES); }
+> +cpu-cycles|cycles				{ return sym(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
+> +stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+> +stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> +instructions					{ return sym(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
+> +cache-references				{ return sym(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
+> +cache-misses					{ return sym(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
+> +branch-instructions|branches			{ return sym(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
+> +branch-misses					{ return sym(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
+> +bus-cycles					{ return sym(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
+> +ref-cycles					{ return sym(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
+>  
+>  {lc_type}			{ return str(yyscanner, PE_LEGACY_CACHE); }
+>  {lc_type}-{lc_op_result}	{ return str(yyscanner, PE_LEGACY_CACHE); }
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index f888cbb076d6..a2361c0040d7 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -55,7 +55,7 @@ static void free_list_evsel(struct list_head* list_evsel)
+>  %}
+>  
+>  %token PE_START_EVENTS PE_START_TERMS
+> -%token PE_VALUE PE_VALUE_SYM_HW PE_VALUE_SYM_SW PE_TERM
+> +%token PE_VALUE PE_VALUE_SYM_HW PE_TERM
+>  %token PE_EVENT_NAME
+>  %token PE_RAW PE_NAME
+>  %token PE_MODIFIER_EVENT PE_MODIFIER_BP PE_BP_COLON PE_BP_SLASH
+> @@ -66,10 +66,8 @@ static void free_list_evsel(struct list_head* list_evsel)
+>  %token PE_TERM_HW
+>  %type <num> PE_VALUE
+>  %type <num> PE_VALUE_SYM_HW
+> -%type <num> PE_VALUE_SYM_SW
+>  %type <mod> PE_MODIFIER_EVENT
+>  %type <term_type> PE_TERM
+> -%type <num> value_sym
+>  %type <str> PE_RAW
+>  %type <str> PE_NAME
+>  %type <str> PE_LEGACY_CACHE
+> @@ -306,24 +304,19 @@ PE_NAME sep_dc
+>  	$$ = list;
+>  }
+>  
+> -value_sym:
+> -PE_VALUE_SYM_HW
+> -|
+> -PE_VALUE_SYM_SW
+> -
+>  event_legacy_symbol:
+> -value_sym '/' event_config '/'
+> +PE_VALUE_SYM_HW '/' event_config '/'
+>  {
+>  	struct list_head *list;
+> -	int type = $1 >> 16;
+> -	int config = $1 & 255;
+>  	int err;
+> -	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
+>  
+>  	list = alloc_list();
+>  	if (!list)
+>  		YYNOMEM;
+> -	err = parse_events_add_numeric(_parse_state, list, type, config, $3, wildcard);
+> +	err = parse_events_add_numeric(_parse_state, list,
+> +				       PERF_TYPE_HARDWARE, $1,
+> +				       $3,
+> +				       /*wildcard=*/true);
+>  	parse_events_terms__delete($3);
+>  	if (err) {
+>  		free_list_evsel(list);
+> @@ -332,18 +325,18 @@ value_sym '/' event_config '/'
+>  	$$ = list;
+>  }
+>  |
+> -value_sym sep_slash_slash_dc
+> +PE_VALUE_SYM_HW sep_slash_slash_dc
+>  {
+>  	struct list_head *list;
+> -	int type = $1 >> 16;
+> -	int config = $1 & 255;
+> -	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
+>  	int err;
+>  
+>  	list = alloc_list();
+>  	if (!list)
+>  		YYNOMEM;
+> -	err = parse_events_add_numeric(_parse_state, list, type, config, /*head_config=*/NULL, wildcard);
+> +	err = parse_events_add_numeric(_parse_state, list,
+> +				       PERF_TYPE_HARDWARE, $1,
+> +				       /*head_config=*/NULL,
+> +				       /*wildcard=*/true);
+>  	if (err)
+>  		PE_ABORT(err);
+>  	$$ = list;
+> diff --git a/tools/perf/util/print-events.c b/tools/perf/util/print-events.c
+> index e233bacaa641..c1a8708b55ab 100644
+> --- a/tools/perf/util/print-events.c
+> +++ b/tools/perf/util/print-events.c
+> @@ -521,8 +521,6 @@ void print_events(const struct print_callbacks *print_cb, void *print_state)
+>  {
+>  	print_symbol_events(print_cb, print_state, PERF_TYPE_HARDWARE,
+>  			event_symbols_hw, PERF_COUNT_HW_MAX);
+> -	print_symbol_events(print_cb, print_state, PERF_TYPE_SOFTWARE,
+> -			event_symbols_sw, PERF_COUNT_SW_MAX);
+>  
+>  	print_hwcache_events(print_cb, print_state);
+>  
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
