@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-743876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B57FB104F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:56:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22D8B104F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D7BAC82EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50368173094
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491A2277808;
-	Thu, 24 Jul 2025 08:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E6283130;
+	Thu, 24 Jul 2025 08:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FtFflH1M"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012067.outbound.protection.outlook.com [52.101.126.67])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CbGvmHvj"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013021.outbound.protection.outlook.com [40.107.44.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B499C281351
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6EC28312F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346756; cv=fail; b=Hm6PvKljHN7ZdkKA+rvq0SO9F0K5YU4oQAEMs2Sr/Sow5UQHpZyM2gzLjiBv4FsLIiVJTTBrAmMZ9gWFFAQctB+ZghPvoX6ceqdMiuIp+OoxZNkoC6P2Ha0ZW8tkKxYNi83z2PA917uI8PI05Jd9goB7UYgT6YNDRVYsLEBOiVU=
+	t=1753346762; cv=fail; b=pSzHlKXqpZyZviPlFDnBV/WUU4hAhK1AD9HyvYhY2alBSCgH850ZPdkQ8181yU+QlZlFk/Z8YCWiltk3j+GB6g6GxnxlG/rADSZQuancsgF4KphPt2ZYb67zUxQj0sxULd4h43iE72c6toInyP9Z+AgjB94GNPdSqJBz+DHZxRw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346756; c=relaxed/simple;
-	bh=dUUWnprE5+sH6kgW6CumqkRZVzQPtkuxSyAN364Rj5g=;
+	s=arc-20240116; t=1753346762; c=relaxed/simple;
+	bh=wKNhWC2/g4ntPW2LMhG7TF13WX1OcPZogWiFfMfw+T4=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pzUejXTPRIxYEXJ3ybuUBNcehahFhyXsbIPSVgzev9aDdfby2lZnpAVp+hcRroenRvILnhPGm8+lWI+o3sL9lzJM1l+zF2ciFwmUaojrwb6hYOr9Xp+objG5YN+q+Sgu6fwaHbKhWEnG23s56aHe1oG1NgP3Zdaixb/6yWakwZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FtFflH1M; arc=fail smtp.client-ip=52.101.126.67
+	 Content-Type:MIME-Version; b=UlrYcYCUjeVM7wW2Doe8a17eK5WajH/egzuokBB6boHCGc1kUbAJnNHNav22/gW8NOyPrCJQVOtMtP3WS/olEptQRiS2ikdEhl3ZH8N15xuR0EFLsaEovYaHezasXm2KfMuFN+meEKnWMcmIm8bfrOFWgwkqiMUsrSMcsew/cJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CbGvmHvj; arc=fail smtp.client-ip=40.107.44.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yZdvyoFdYK+//o54f2uyN2IveOZIX9pINmfsBJy+QkzAd6qhg5s+Tfkg6H0MdZ+VHy2AdaDe8tj6rwrlE7NY1kuDJxYLSGg6nzy0sDoy5bqN9YAtg0q4U6S+kyycjQNGb3ytFo2vBf87XJcck/rEw3H/U55Iiegew9EiEU/CK3rP/ZgiNRByQYI6EySNWk0li86bq20MK8qkQGHefiRwyJKuFWSMOU7ok9ffxTccqIR4xm+CuqPqOftE9xHZHI+pMj+/CGrrLFkh/WPyJHXuACOK2wauPpczNCHUWt3XNzLOOK92whsCOo3GneTNej/A/yafX9gArcbhsoKWmytX3A==
+ b=uehbQ6Okh9r9S5RLHu19xqtNQEYYLzQE66kMTKl/HH45zgVf4tW0/mCBt51OZEZRx1oPaBzhxN3WSpoSchWlYlJ61JE9cUgCyf79WKYS9BJ6L+ODZ4k60nNUIg/zZDJ6asTxXshd4wuyBdnPOlGqzC3jNQh0LEZvaBz8fctgFjt3QDO9QvtgTsYLvZGhtwWq9YrIOxLHuMxbvxIuXt6K9NGit3opXL+GT22ObTqC1nKynZhBenVBhEfEPFy3w1LGFB+fLRu0uBoVS274jwadZW4fN8aibldkyONnqgYnT2Yl/mhaXnJ51WLHzzs7XsY2Mhvnu57g5SW6vPIkoAcEfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6ihrKI6OO5XXX9pXkYvcTjPs9USsoHTJoTgUdpaxsnY=;
- b=oN3xrXYKNlNR/HZ5+RK7L/5v6xebMPZ+8BQ/a2N1+a83lo+uoiHNrVkl37Hm0qJB5SXMVmKuekHM90Ha4Y5uAS82NEqK/YAcLNUBsSYW5c2eaRDmdE06mMuluhD99GvrjnHT2ZDSxmbfNOqK8ZTjwGmcc0nKeiRs4iBYYqSiFwk9vLDsVxxKbBnbQPz6E0LP9Jyi/6JM6lpl3HTw5ZBVfIuyo2+i88Pzolf2lrIaIAnhyECfw7hcbaNpZ4o1e772tslwwm+RHwjM6XxvwIvGlbNC+UxVuvQIssnCLiDC1FvlMXlUldhY2U7lH01Pyc5HqzEagfXL/XepDFD8vyPz8g==
+ bh=8kn2GaycyyXzgFMT6FCRYwpVY16Rm8fBrN+3KIgdEQs=;
+ b=WdM5BhlNOWFubjjifxr1NgscjVYy16dMOEtW2Cz+hKcKl/XhdtwrFTFEsA8gdPaF4+CgSdVbAceqZMbCc2d37t2rJMo8FkcAskdJvRzRUT347/zpCKGwr+zA2xCHFL/qZWJmh09XI8NmegTohN8JEucnPKX60tu05myDiBEwIs62tMRFUQkH+pPkGv1LiSONIUKmyOOLhOuLbcguENfGB6JRJLgquk82QH5CfgVjzFQdpnGAm2CBBFMNHF4zLWRCJuNCR4VHH2GISG688/XqFtsFIY5ZVze3I5KLLmW4dZFSMxmK2k1RW9CHwtz8JV+zjh41GKKPCa/nmJ0a8K8lTA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6ihrKI6OO5XXX9pXkYvcTjPs9USsoHTJoTgUdpaxsnY=;
- b=FtFflH1MIG4E98Pkym+RH/D4mUcP/fNi6XhXTTGVWvpgHCkE7FfmNE12yLptK0sjNRNUle/tO9pjDceYD+hLnYzepSaAtBNaI+tdVhm81Xh+oPwWVstUN/qehDGnWQ150X6YqZRV5y+iMMeBVcu2ciqCLnfYtfkgOn/f3gH0kCNCxj6wa1uBwCUMqn3DICYCf+U11lJPYK9DEci6j8R67DBEO+6WgMhpiKGvoHBWgSqdhna7uXrT8rGAzU8Mc0pK2D38/o4tinOt9feHEgstOGVBMxBpH+Atxa0lLTA+2jp7WGxYjbsb6yz8V0u2jEDqos4JhwJorow7zqvqXAw98A==
+ bh=8kn2GaycyyXzgFMT6FCRYwpVY16Rm8fBrN+3KIgdEQs=;
+ b=CbGvmHvj2EpzP8wS3uKBMlnNm428w95IvgRGZxlM+oJg6qMSgHoOHpBHguS+Orc24eebf/wJSU9XQz/qak7odfAgH19J+kZZ4OqiNyAGh4mIMm2xw76l+iY+YxgEc+SmPi2z4hSR9ug0Hzvs/LEf1zMN/nNh7gV61/71AUG3wvpOgrqFQPAG5n2FE3S7SBzIGac5PRF0UYDnXX0gHw+MzM55YtrS1OroUtYjMK3sjgUBNLB77l3bF9Qfbla836otwm4ZUzwrlT/IytH8NZA+Z2qhhvVpwuMwslm8yncbNzDzGPK1raLoPPW9WcwNMj/hyLbhQOSuTHE/o6nPYWQMuQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
  by PS1PPF2A261C07C.apcprd06.prod.outlook.com (2603:1096:308::247) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
- 2025 08:45:51 +0000
+ 2025 08:45:57 +0000
 Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
  ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
  ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 08:45:51 +0000
+ 08:45:57 +0000
 From: Huan Yang <link@vivo.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@redhat.com>,
@@ -83,11 +83,10 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Yu Zhao <yuzhao@google.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [RFC PATCH 2/9] mm: add page_type value helper
-Date: Thu, 24 Jul 2025 16:44:30 +0800
-Message-Id: <20250724084441.380404-3-link@vivo.com>
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 3/9] mm/rmap: simplify rmap_walk invoke
+Date: Thu, 24 Jul 2025 16:44:31 +0800
+Message-Id: <20250724084441.380404-4-link@vivo.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250724084441.380404-1-link@vivo.com>
 References: <20250724084441.380404-1-link@vivo.com>
@@ -104,119 +103,256 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|PS1PPF2A261C07C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7048dcb9-4f0e-49b0-44d2-08ddca8e7ea7
+X-MS-Office365-Filtering-Correlation-Id: 2a195ebe-ee42-405b-1d37-08ddca8e8229
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wLRiQnMBdiUllkSMFo2ISzmGsDq7vaZSIxABhJyKaFcHXpO7qzFougID0VTm?=
- =?us-ascii?Q?KWt5xr/PDXvjp3QcCa2bzYiCEbGlEc4V4rEVfweSpvoBlYOuJdi2PaAKfjE2?=
- =?us-ascii?Q?EhcKZ/quMfTY5vXSsEWECClgECQLdQF+q+DNVSVPvdOSBP9hdWAHorCjDz+4?=
- =?us-ascii?Q?vRXH5fpnvDSQu7iTwBD0N3MlNlJSEWVSGuc0f7KcpYGfMso43Ddb8yjb16Vi?=
- =?us-ascii?Q?kfVWRNp69FjZju2PBGGrCQdAKIeXjNTgowcx2vunHYMh+cY7aN+c/Jrfk+V+?=
- =?us-ascii?Q?z2IEn21UnZ/Eu21KvCqsLosLhKmo6BrD1mC+idXnLkozeq35pKlV0qgUaJAT?=
- =?us-ascii?Q?O4PP3hZCW0Df1/e7hp7fVX7HJMa04VabYZjgazlMV3XJIXEaRdaFcKCGEaCs?=
- =?us-ascii?Q?EPfoqxCN0ZUQ80MJzHNkd1IuIVlEXPC9NZN4GmbyKA2uSC0AvsfOlncyokYp?=
- =?us-ascii?Q?oRKYvmzBEDOWGdzH9QROMaffD7tlNPs2DBrOBMAKxRBzMx3ckj9a7NWcK8nY?=
- =?us-ascii?Q?Zs4ChhLgwjLSoNi9MYJuY8uFntmy5n6XH1L17z+iid6r0m8ArC/hlfRc5nfQ?=
- =?us-ascii?Q?Tca+/JAWwbvcNIQhK8iInRevxMs7HAwh5CusMY8FIrLRxW3bzzcdKPaTPHea?=
- =?us-ascii?Q?3UeSLzgyyIRz5ctB6I6Vi4OtF1k460N3rX6OYNhVQldhG4Y6dovh8vsL0xLd?=
- =?us-ascii?Q?cSKn+VwjpVI2DtkgerpOEAKAUMl3RPAL/CaWBUeVwY7iebjfnyy29sPjNjN5?=
- =?us-ascii?Q?KN2lqLyTITq9xX2vLRcadH+saOfKDjMwmAAu4noO/GGOImYlD5w+L2fXjxye?=
- =?us-ascii?Q?njM4H6SznEAl6XG0XuZfIZAeoRNqn7XkkGHXmeD8KJEICQh5VksxLN1G1aZ7?=
- =?us-ascii?Q?1ATGNwHCPlSx2atnnVjWe9v1xzrzWgR/gGeClDmwQINZif7E1KceomF4gfK5?=
- =?us-ascii?Q?xsbkUda8Lv9vwq/4IHkcvh14uX0+68fon6EreyyxZ27yLYev67jM710AZ/KJ?=
- =?us-ascii?Q?Tt93dc/hUTXdiwbiNsJtvlZqayrs0GgoWeYQcicpEkFYcsDeB52nDUdTa9ZC?=
- =?us-ascii?Q?wQuna/Bcrcz1H7oJGkG0xaKW9b3lyWuI2ChKskpTmkRrZUFeLlU2ObPwlZ7M?=
- =?us-ascii?Q?2/WyBHQ3e8YOCUAYdV4Y95R93qiImWdTlw65Ph/cD8E7rw+ve5xuyHtB0p+d?=
- =?us-ascii?Q?qTflg7BP1ZND2OWXaxm2OnZ7MlSO09zPwqAqj8dLVgY47o60MvI+m/qnSEzN?=
- =?us-ascii?Q?xtRnsfT+/NVRv1tIdi3LZuOyxKlnp52OsYZp7bKmgUXcgdvH8ib02JFqpgXn?=
- =?us-ascii?Q?hBmiEdJ4k/vQ+IVX8wAVBGUJ4c6sT/TFShNjUEiR3JOA6BIpmwIUulxx3cRs?=
- =?us-ascii?Q?b1nT0NZZySMauUAb9eyz0cxMSAXr5/hmOWz8PSkjZLk3SoSSMx+Y3nxuQShj?=
- =?us-ascii?Q?Lp05mcHobtjBFWqXJAfkO5PxIggCYbgQ316UsOMYcVQq/LDFE+b95Ax2J+3i?=
- =?us-ascii?Q?u51jCrzGX7EvRCA=3D?=
+	=?us-ascii?Q?60ilzuUtbYYs3P+UqQU2OIEO2KHcklwBYhnejQ6Hb88nf5hDQ80VGM6NoMxo?=
+ =?us-ascii?Q?piNOcqyCxOgfeTAaerBDReNyjXiFafBOgJM9yNfAjwwxCJ+CAwXpLXwP+tYD?=
+ =?us-ascii?Q?mDANOFMJHslbAQ/IMn9vci5HS1zcaonnt8fM1cgZMDAeZEuMeqxmwRIz+kQF?=
+ =?us-ascii?Q?8QX6VfM847TJftHk8VHf0W00jqEqhpvuzO1CBqhX6vYjpiN0AXVVSvyHMEPl?=
+ =?us-ascii?Q?6OQLh9tkOmBy8hMkt2iNjXXkNqn7DF0eroi4SGBImQC3/6BqGJhMSrFYPn85?=
+ =?us-ascii?Q?Kqv5Ae73GwsF+Il62RscABtJhyIUIOhdIUj4syQgHuJHotqdAbfF2uIZngco?=
+ =?us-ascii?Q?cdNhIALceLbzNrK/P1EhalAnfQPGsngNoVo3pZ4gC22IXKREA9lYal1c2Th/?=
+ =?us-ascii?Q?bU1V4RGld708NiwxM6CQARDqo3C8GYd0pWZyQYsqFGalJrO7rfKhnr5sCr3O?=
+ =?us-ascii?Q?4p8SoF4PLIW1jngNMPBtf/LHEgLQybQmGE8rprsFfWBeIidJvbuzb7Xqbb9f?=
+ =?us-ascii?Q?Qx2dfV+LpyaKMVoMt50IPOKFjhyDvljzYeIzU+j/BL8X71c1SrjM9uZwQu/3?=
+ =?us-ascii?Q?jhKEvF+/4RUd9bo+aZtldVFRetl2UrfwLB8BdbxQ/zrFL2fWE7MHQUMeEBJe?=
+ =?us-ascii?Q?oyNz0redsQLo6Y/lJ481ZxllDNppI3iIYUoe5x1+8c8MJas6FXrStEgh6j4p?=
+ =?us-ascii?Q?yGQ3mLqdqUakWelj9OFiwPyQpgGY+2MQf1JkHfYlrFWLsfl18p31i6CW9JT3?=
+ =?us-ascii?Q?STVsAKOq0dwvwIJXGkDixMbF578B56G5FzKgdgwfMGV/S1Q/OB7OFK4LdwWi?=
+ =?us-ascii?Q?xS9uCLNbdY2Ont2wHtbfMUwbX0HJWgY6ZcUMI7Jxv4uySvzFL8G6KslC9h7k?=
+ =?us-ascii?Q?CfHuNz9jQHWPYofqDR1/ijcexj0Fs4tXv4y3XxvX6aufKT2/fOPsayGsatTn?=
+ =?us-ascii?Q?aYvsvnlSJSWgeXgJsbOC1y0Pr2HQuIoj2oTJcdlMifvYJZ7prLMuCzT/yRJ/?=
+ =?us-ascii?Q?8KUeq+WhLC1CXCuk6IM2Xfj9LUXzdSevVO/lqpOZwYeNDXuzcFHR5Mrz+9Mn?=
+ =?us-ascii?Q?qt4hdSX4Sl1LMHf9AHfZCOoZIwTcDdaJ1rT88lO3QjLrs9FD71kVA7me//qN?=
+ =?us-ascii?Q?nYDJIveKnKhGG9O7E1vimDQn0KigzeKwN1jDw8dW61TwpPofn/VRxRlFm6tB?=
+ =?us-ascii?Q?fsvQSixywnfsULa2MPsE2es0GCHmIBiAmCFY4wv0PXa52Bokqv2/VccNxF9N?=
+ =?us-ascii?Q?Deyih0y84ZKa6PuDbLYJW5LYWr0SYvcYdH9d3OEypfEEYO+skeCPMklJGFka?=
+ =?us-ascii?Q?De3/YofU6EiVb3W+DG9kjYcA9BN8K3iZlNjJXmEq1IUYnwkX7KXhfztOHtOx?=
+ =?us-ascii?Q?zjscYWwKKA8bkoDvVnYpSZznWqMmAmu3z+Y8R3ordklL99Frf/MfIrjGaDq/?=
+ =?us-ascii?Q?DNsbPXXLGPqB7bN+xan8i6PAf1lybpZxFOErYrqppKMoBu05j7Vmx/fzNobc?=
+ =?us-ascii?Q?6RsPS5cdz27MBCg=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Qt/L+mJkAmDZbxADRrTzEu5CE1tLR2LjrgChgN0jtgdbi1J9CsXCT+B7PBZC?=
- =?us-ascii?Q?Ncm8Y27qJMVElwu1imxDPe+LOp388Zyed55dHxwcGxMK5LrtCDmE7h/TSbX4?=
- =?us-ascii?Q?lfgFQVI/M/nIMZ6rxrMM+lp0iucAJ1+0pOxjhxKUJEHo2G8jC/NZGeZzZo3Q?=
- =?us-ascii?Q?FZ5hligrqC5qq/PheaR73KV6YvAoirLn2sM/2QKV5IbP6UaXKSiRdHZm6j4h?=
- =?us-ascii?Q?HI4/2PKqiBamiOLeAAQB8w28z3oXqLAo0tzfFeIg6QU2F5fFWqY5LVLAOSbf?=
- =?us-ascii?Q?dlKm4BJtPBceLrlUpsJhR3xRqY8Q8zk5oDye1Q54w0nt+pMLZUGPXmG8Q/e6?=
- =?us-ascii?Q?NShaoumdQttwdvN8u1WQZjijzyWNpFHlVk9NiQEjqyCfMNRimYnL5QrVV5at?=
- =?us-ascii?Q?K8fyIbCgaFxIJXdW6c8B9ya1piif/X4WJIfKAITP2xo4k+lLx+SQ2pdbj1/i?=
- =?us-ascii?Q?mfWeHoVRK/e3Te8wvC+ACzDMhVf88/MbKapRVnW2uNQ6xf7Hqtq9nYXsE/rl?=
- =?us-ascii?Q?BtSn/OVhDC21q2/tJJb1KlCN9touvJgHvFQsF+PoL2GUfIy2JYRr7mIf7/WO?=
- =?us-ascii?Q?ipeNcG2vrcpYze3Y3AbOhc4dCesjbAv83AL9OIex5YI333gG+9wWlKyj3iu1?=
- =?us-ascii?Q?oQpGVYgqd7n8ljEfa1WIv8gW92V890pyn/WkLAy5SuGUt3qOAbLAZ5k7Ohrz?=
- =?us-ascii?Q?oBEJdXmS6NVIY1w2k6VV8WGWPQSzngIcWzaLvHtOix5cftnce9oJ5vBGr4H0?=
- =?us-ascii?Q?Mel70UoPVtN91VcqaJ3Yg4u0u5qDGx25nhj4TuzvGNvmSDgMpGeTjUcl5ZLB?=
- =?us-ascii?Q?jn210iG6POnajyk9zaw1gYWCW1AsF8qktPID/gc4yazR+ZsdmZOoXNwm9F9p?=
- =?us-ascii?Q?ZWxltq/0a41BD85R6LkFxuVwVZnPNGHcozH7HmpYEXb20vec4oS/NKDO+eL3?=
- =?us-ascii?Q?kzWnJzyD4BOl8zNEadvcaGQytzRxe1yP9K3wToauKf3Mg9yfQAK4e5H69mAQ?=
- =?us-ascii?Q?cdEvLMJmyQtM7/rJhg2dAhm0eg34MmagiB0jjtleo4NZ4GF/b4EHhvnZ0zyN?=
- =?us-ascii?Q?Wp2iCk8Xw9QXigB8UlIJgP5lZHuFxtaiVJB+9cYjzhP7RxlO6J5Mahf1R2gb?=
- =?us-ascii?Q?d6wXwmMNzij4EchYSqICiSdhFXLeaM8F4x1n1qOUurM8gm74/aLdXua2yoKE?=
- =?us-ascii?Q?ZZiJ1v9Xl7ihYIllNTRGbBMeOVov0RKn9pDi97cd3jlsJ1mMmwGBREQ3khIh?=
- =?us-ascii?Q?w8ObZF7E6kzW/LlFEJZQQ+3nWTQq1kq6UZADW9V2zgIS2vgiw65evT6nLyXl?=
- =?us-ascii?Q?JCg9xLeXTkzMXx8sMyVUUq8PPQvx5KbsKBnmWjSj4zmHTkt2VNLDxEG1nYKj?=
- =?us-ascii?Q?mUq9T92KuvGQXyAECSqx382qcJmBb/kgWA0hkqXpItxGZFdqBtn/Db1/KvgJ?=
- =?us-ascii?Q?A9szFjTqiYKJVOeAv0qDl9f7it8SBuk/E9+3YQZRo2P3fXu8ezIe2figk0tz?=
- =?us-ascii?Q?Oc5QZ3rLVt17C88qDAn62roW7TavgpdFZ3UJDNf9CazwoFNG9iiAkXOBMv3n?=
- =?us-ascii?Q?qDwUj1kQ1pvoJ85smih3oLlKfQz5NyCDEhfo+tWh?=
+	=?us-ascii?Q?Hp3WvDE9XHiMQDkqnIr9AHTpaR3SPE7hv+FQth/GCssXFfMePDlA4qCkKajx?=
+ =?us-ascii?Q?QmlfpSnRs2htwNAGSWMLra9XGOA6QXI3fUhIu/JZUydb4snYpXY7beapBT1/?=
+ =?us-ascii?Q?Mlj+lvVpzVC1yGPXUSSSH+PcXqm5TqaD4AReBBA6k4PNX64vp9HScbmZXE/H?=
+ =?us-ascii?Q?i/mwhvfoelPQAgWSKmFc/DT/92YNKGZwj5RZvdQueGhCMr1oPSuyj9/rhGET?=
+ =?us-ascii?Q?pYXONHxh3ssWxXQwMCRsOVb5MmgK11ppCnRzBNaXsB7I1jK/a4xuXYUSKSJM?=
+ =?us-ascii?Q?u929o22mf3UBxMz1OvAI4C6pwW83tJF5t5kShxdwU42dKjFgqc7ZiO+s63uL?=
+ =?us-ascii?Q?qekT6FVKvU/8FIU9YiHxTG2VR5Vp/5lleQKZFZfQWRbTVaN7kNZhIHyMNgvi?=
+ =?us-ascii?Q?/ybRPWMf81rX2FTsw0caSAoxOIceDZNY7THKTqs6tl6IlK4AOR+SVmnb1iD0?=
+ =?us-ascii?Q?q2fd1us3Nz4TsA+QlxxrBjLMSBHlBgi7LNkcwUh776PkaugWyhCu3ElgjsG2?=
+ =?us-ascii?Q?L5QypoW0iz1fMdqApPIgypQzYh9j+VOBww/Q10R+7RAGgBo1jB8k5y1LCIwF?=
+ =?us-ascii?Q?QNH6USbXG5Mg54Yq036zhzXgwmsy3Z8AJ0UHhdZUy+jqE0XySlyXrEClnc6y?=
+ =?us-ascii?Q?EmhUJ5myxa89HpMRDtktE27Z6TA/MQrwoO+Gh14u+Vwhp36dGP9I76kZ6183?=
+ =?us-ascii?Q?B2uCH3Pxe5UVlKaRlwGlOjKKj77PQDHtPKc6RiS7CMT6NH/4cqrN2CXc+tbe?=
+ =?us-ascii?Q?KzahAGocFdSJ5ctOjgL+cavofB7ddHMl0t9RkDrLf+5vqKBQDeAPru4uwWEe?=
+ =?us-ascii?Q?mV1mNef+q0HGfKv7FmhDm3L1gtw3zv6d3z5LrcGK4662mREFYm8konpc7vN/?=
+ =?us-ascii?Q?4PcvPFyZazItxkSjO1wNsPJgOUQwroVBSHUTgq4SH+yc4p9hO4Dqliylo7fn?=
+ =?us-ascii?Q?RLCyuXF/LXNHSPU1M7sl45YK5Zc9+dI6WwR+EqyQO16IZj82t4EZZCW40kTf?=
+ =?us-ascii?Q?kcQA8O/ZBWbZR3hqtAnR1Xza1/cXDHT/+cjpGjrxjfRkEfj5etDmXJV8bQ23?=
+ =?us-ascii?Q?QyBdTqnh9DUDt5vo5Xca+XclePnaEiV9nAea8fqT194lxhudC9grT5I5Mte6?=
+ =?us-ascii?Q?r4VbA1XgpzZWdqB3Lh0pRWWTp2RZkFbj0gFRMb/V8K4xcj7v6AJd1WLlVQr6?=
+ =?us-ascii?Q?wqa+9EJ+kdhic9kuB93rGT6Dlz/JTd3ayn6KHTf1qTv9vmRr9eHfhXJEC6nk?=
+ =?us-ascii?Q?xEDQ9W53VEjJFHWtiKYw5M/ood71XsawER+Z9uaQf+7WP9qCgdSsBQ32w56J?=
+ =?us-ascii?Q?XfLj90MtV/3gF7oSmSLbKacxQlRdht3LzgFLJtU7Ykrb+tk9Q2s0WaZoLpRN?=
+ =?us-ascii?Q?J+O3i8Ly7NpXwBWmpYceEyqhJb+a+yks4jAmVYIOkFmKvoLSH9+ZBTS791oQ?=
+ =?us-ascii?Q?kQYen8NwUas2Tyo9idWV7tvto9DEnki6x4Pb5lG2mom4Qeli+SsIbaQXCrGx?=
+ =?us-ascii?Q?QRrCYUJttg3VyzeRQTdqbHvJjbNQStz73fGMz5Vq7GCjn0wLaXL59bKVymqV?=
+ =?us-ascii?Q?NBb1YMrFj/X9bvzxdRLWXmzRBPIvfq+Goip9VVNV?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7048dcb9-4f0e-49b0-44d2-08ddca8e7ea7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a195ebe-ee42-405b-1d37-08ddca8e8229
 X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 08:45:51.7070
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 08:45:57.6571
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o5dkF/VkrTG807dGDhrVsMwcf1sAqOW6bY/lspcUIT+0tHtHNImrm7hkXF2XwHCPMexG8hkwrVw9J88d36DPMQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: dnT+Wcet/HqaKsV3KQGgC+hRORCLSpBh0FjkSxuZn1Ctfg1wnfdt1I0IAKquhA+BFDTW8BD6p55eyvqJQKuSQw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF2A261C07C
 
-Add two helper functions __SetPageXXXValue and __GetPageXXXValue to
-assist in assigning values to the specified page_type. Since the current
-page_type value is not supported on large folio, only the page version
-of the helper functions is provided.
+Currently, the rmap walk is split into two functions: rmap_walk_locked
+and rmap_walk, but their implementation functionality is very similar.
+
+This patch simplifies the rmap walk function and moves the locked
+parameter to rmap walk control.
+
+No functional change.
 
 Signed-off-by: Huan Yang <link@vivo.com>
 ---
- include/linux/page-flags.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ include/linux/rmap.h |  3 ++-
+ mm/migrate.c         |  6 ++----
+ mm/rmap.c            | 43 ++++++++++++++++---------------------------
+ 3 files changed, 20 insertions(+), 32 deletions(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 3c7103c2eee4..52c9435079d5 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -1024,6 +1024,23 @@ static __always_inline void __ClearPage##uname(struct page *page)	\
- 		return;							\
- 	VM_BUG_ON_PAGE(!Page##uname(page), page);			\
- 	page->page_type = UINT_MAX;					\
-+}									\
-+static __always_inline void __PageSet##uname##Value(struct page *page,	\
-+						    unsigned int value) \
-+{									\
-+	if (!Page##uname(page))						\
-+		return;							\
-+	if (unlikely(value > (PAGE_TYPE_MASK)))				\
-+		return;							\
-+	WRITE_ONCE(page->page_type, (unsigned int)PGTY_##lname		\
-+				    << PAGE_TYPE_SHIFT | value);	\
-+}									\
-+static __always_inline unsigned int __PageGet##uname##Value(		\
-+				    struct page *page)			\
-+{									\
-+	if (!Page##uname(page))						\
-+		return 0;						\
-+	return READ_ONCE(page->page_type) & PAGE_TYPE_MASK;		\
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 45904ff413ab..f0d17c971a20 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -996,6 +996,7 @@ void remove_migration_ptes(struct folio *src, struct folio *dst, int flags);
+  * arg: passed to rmap_one() and invalid_vma()
+  * try_lock: bail out if the rmap lock is contended
+  * contended: indicate the rmap traversal bailed out due to lock contention
++ * locked: already locked before invoke rmap_walk
+  * rmap_one: executed on each vma where page is mapped
+  * done: for checking traversing termination condition
+  * anon_lock: for getting anon_lock by optimized way rather than default
+@@ -1005,6 +1006,7 @@ struct rmap_walk_control {
+ 	void *arg;
+ 	bool try_lock;
+ 	bool contended;
++	bool locked;
+ 	/*
+ 	 * Return false if page table scanning in rmap_walk should be stopped.
+ 	 * Otherwise, return true.
+@@ -1018,7 +1020,6 @@ struct rmap_walk_control {
+ };
+ 
+ void rmap_walk(struct folio *folio, struct rmap_walk_control *rwc);
+-void rmap_walk_locked(struct folio *folio, struct rmap_walk_control *rwc);
+ struct anon_vma *folio_lock_anon_vma_read(const struct folio *folio,
+ 					  struct rmap_walk_control *rwc);
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 8cf0f9c9599d..a5a49af7857a 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -355,15 +355,13 @@ void remove_migration_ptes(struct folio *src, struct folio *dst, int flags)
+ 
+ 	struct rmap_walk_control rwc = {
+ 		.rmap_one = remove_migration_pte,
++		.locked = flags & RMP_LOCKED,
+ 		.arg = &rmap_walk_arg,
+ 	};
+ 
+ 	VM_BUG_ON_FOLIO((flags & RMP_USE_SHARED_ZEROPAGE) && (src != dst), src);
+ 
+-	if (flags & RMP_LOCKED)
+-		rmap_walk_locked(dst, &rwc);
+-	else
+-		rmap_walk(dst, &rwc);
++	rmap_walk(dst, &rwc);
  }
  
  /*
+diff --git a/mm/rmap.c b/mm/rmap.c
+index a312cae16bb5..bae9f79c7dc9 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -2253,14 +2253,12 @@ void try_to_unmap(struct folio *folio, enum ttu_flags flags)
+ 	struct rmap_walk_control rwc = {
+ 		.rmap_one = try_to_unmap_one,
+ 		.arg = (void *)flags,
++		.locked = flags & TTU_RMAP_LOCKED,
+ 		.done = folio_not_mapped,
+ 		.anon_lock = folio_lock_anon_vma_read,
+ 	};
+ 
+-	if (flags & TTU_RMAP_LOCKED)
+-		rmap_walk_locked(folio, &rwc);
+-	else
+-		rmap_walk(folio, &rwc);
++	rmap_walk(folio, &rwc);
+ }
+ 
+ /*
+@@ -2581,6 +2579,7 @@ void try_to_migrate(struct folio *folio, enum ttu_flags flags)
+ 		.rmap_one = try_to_migrate_one,
+ 		.arg = (void *)flags,
+ 		.done = folio_not_mapped,
++		.locked = flags & TTU_RMAP_LOCKED,
+ 		.anon_lock = folio_lock_anon_vma_read,
+ 	};
+ 
+@@ -2607,10 +2606,7 @@ void try_to_migrate(struct folio *folio, enum ttu_flags flags)
+ 	if (!folio_test_ksm(folio) && folio_test_anon(folio))
+ 		rwc.invalid_vma = invalid_migration_vma;
+ 
+-	if (flags & TTU_RMAP_LOCKED)
+-		rmap_walk_locked(folio, &rwc);
+-	else
+-		rmap_walk(folio, &rwc);
++	rmap_walk(folio, &rwc);
+ }
+ 
+ #ifdef CONFIG_DEVICE_PRIVATE
+@@ -2795,17 +2791,16 @@ static struct anon_vma *rmap_walk_anon_lock(const struct folio *folio,
+  * rmap method
+  * @folio: the folio to be handled
+  * @rwc: control variable according to each walk type
+- * @locked: caller holds relevant rmap lock
+  *
+  * Find all the mappings of a folio using the mapping pointer and the vma
+  * chains contained in the anon_vma struct it points to.
+  */
+-static void rmap_walk_anon(struct folio *folio,
+-		struct rmap_walk_control *rwc, bool locked)
++static void rmap_walk_anon(struct folio *folio, struct rmap_walk_control *rwc)
+ {
+ 	struct anon_vma *anon_vma;
+ 	pgoff_t pgoff_start, pgoff_end;
+ 	struct anon_vma_chain *avc;
++	bool locked = rwc->locked;
+ 
+ 	if (locked) {
+ 		anon_vma = folio_anon_vma(folio);
+@@ -2908,14 +2903,14 @@ static void __rmap_walk_file(struct folio *folio, struct address_space *mapping,
+  * rmap_walk_file - do something to file page using the object-based rmap method
+  * @folio: the folio to be handled
+  * @rwc: control variable according to each walk type
+- * @locked: caller holds relevant rmap lock
+  *
+  * Find all the mappings of a folio using the mapping pointer and the vma chains
+  * contained in the address_space struct it points to.
+  */
+-static void rmap_walk_file(struct folio *folio,
+-		struct rmap_walk_control *rwc, bool locked)
++static void rmap_walk_file(struct folio *folio, struct rmap_walk_control *rwc)
+ {
++	bool locked = rwc->locked;
++
+ 	/*
+ 	 * The folio lock not only makes sure that folio->mapping cannot
+ 	 * suddenly be NULLified by truncation, it makes sure that the structure
+@@ -2933,23 +2928,17 @@ static void rmap_walk_file(struct folio *folio,
+ 
+ void rmap_walk(struct folio *folio, struct rmap_walk_control *rwc)
+ {
++	/* no ksm support for now if locked */
++	VM_BUG_ON_FOLIO(rwc->locked && folio_test_ksm(folio), folio);
++	/* if already locked, why try lock again? */
++	VM_BUG_ON(rwc->locked && rwc->try_lock);
++
+ 	if (unlikely(folio_test_ksm(folio)))
+ 		rmap_walk_ksm(folio, rwc);
+ 	else if (folio_test_anon(folio))
+-		rmap_walk_anon(folio, rwc, false);
+-	else
+-		rmap_walk_file(folio, rwc, false);
+-}
+-
+-/* Like rmap_walk, but caller holds relevant rmap lock */
+-void rmap_walk_locked(struct folio *folio, struct rmap_walk_control *rwc)
+-{
+-	/* no ksm support for now */
+-	VM_BUG_ON_FOLIO(folio_test_ksm(folio), folio);
+-	if (folio_test_anon(folio))
+-		rmap_walk_anon(folio, rwc, true);
++		rmap_walk_anon(folio, rwc);
+ 	else
+-		rmap_walk_file(folio, rwc, true);
++		rmap_walk_file(folio, rwc);
+ }
+ 
+ #ifdef CONFIG_HUGETLB_PAGE
 -- 
 2.34.1
 
