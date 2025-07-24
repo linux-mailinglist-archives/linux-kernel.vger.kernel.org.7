@@ -1,443 +1,296 @@
-Return-Path: <linux-kernel+bounces-744888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6B8B11227
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:24:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03702B11226
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9367D7B9999
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:22:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B85AC1943
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70319253B56;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064571FC3;
 	Thu, 24 Jul 2025 20:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="Qo7PzteH"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UuTFjmKZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C0E24678C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388629; cv=none; b=EvhfT2ng/1jrJVKEqHuyTfGhssBTKIsJfBFxWwpFa9Yc4MqWjSveiYDJIV3g4IQO1jF8ptK1Ox/LMSmYfaeq72u1Qm/cYsA4wd/C4eTsjO2lWv3Awg3RVNw3FMhRSSfCAk6Yqd+i9mF01bUt6zksCHF9f73VS+cr+8amswkDZRs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCB423BF83;
+	Thu, 24 Jul 2025 20:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753388629; cv=fail; b=KrqTRuI8QAOTp8C7SR9Kz4HWv1ek6sDmLoaMzj62+Gtc9CKMVVBjBhw94WtKto28piMfQzTgQOd9kIYh7rNpKLfvrsMjQTE76CGONO0HEh/KaLAZF8HMRe2FcCkUorOhNulB9+4VJw+0A9r8zKMKfaPpW0FCMMFTV4b8tjrtzhc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753388629; c=relaxed/simple;
-	bh=D2nzBWw+rmym8ekiQRD854CLb41uACrLZoLRZZVu8PU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=raHCNnPb+ojlgVeQhqqk482HbWjfVsU2anghrHpA5B6GpM8cxKq5EAMb4BY42IVL2ccf7zq+30IHNDDPZfFD3liZGAc+qReX3R7RVnmz1MoeZXh/Axa3K57IC/HhfMaR87uKLIomLIP1U7t3QtMy55HqiyMba58Y+XQGJzuAuJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=Qo7PzteH; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234fcadde3eso19306615ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753388627; x=1753993427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSasu8evaUWWMoOuuhmm9nOEmDXvMxCw6Wpj8VzSApY=;
-        b=Qo7PzteHv8TERiRydqWZshlKRNKHqIDFGCC+ORpg6gGRIe6YbU/f1uemwfSAyQ5QTH
-         VBw8ntKTDJ1VNdp72WiJfgqdEJPYx5u6luasQU8SM1W5qDGHLPMoayaDizd/HfW2EAkU
-         4dzB7HKwIYzn3fAzdFjcQfczSNLpmmb80ALrZYghSGA718vuhGlt8tA68qn4P718gKGB
-         HO1z75JXc7R4OTdZdpWmon/ilJqc/eObqxSdUHNhcdTPoZAK4LqjSilGwo9khrNOYag8
-         WKdG3ixJxyZfOpD3dawAXHNbLjb+Ym5AwpVBTd4DPNLD/Xzxp1VWM4UGtYeGznCQmcnv
-         WvPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753388627; x=1753993427;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iSasu8evaUWWMoOuuhmm9nOEmDXvMxCw6Wpj8VzSApY=;
-        b=Po8IDYM5Nr5T+TmocDcA10lK14amXRrxFyP3azfIms6NLdStWLjf/gd373PKKIe9y4
-         TpdJZJjkr8Q/5zH02o+dRpDTqxo4fWgp3rY2i2fHbcLVY8slC0TvKZtJWoVqXF+TluWx
-         /giRi48/GKnM1HfW9sVRKGnipmtHzvTJRY+S1e/WnuMytKpzfR8WP99D5XwuXPfMogSH
-         aGt6cMuZ4vLEVgNR27rMIRq5YX06gYK0gHFChwaTp4fu7+ycOjtjb1JGdXsKvF7Q33ms
-         +j8jli/xUcgOBnOHNxIz5zWQg42HRJLBxPIkC+RpwdOF2hYwXl6Z22VQLlrymYjb/hvh
-         ydeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP9iW5JItcb6V6LtJZ6EqHQpNiDXKKQlCQq+I/5O3B6ukEgZWRD9N/34WgKdiErcSP4XbLiHJqsT5oWBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNrkMQX8V5xg3PCETQpIHIf/pz86xIHs+URNUUCDSHf4ixgyh/
-	nEHJhOUaXTmfNevzbri0dJS5DWOfs7E/t/OTRkDo4nF/Zi28kiHKAWUiIvk51X7wbMk=
-X-Gm-Gg: ASbGncvPNmM6TWBEkeLJHfSRKX57F5H+qsch8Kq8sr8fzsKhB75E+TgU0AlDpjhOcIG
-	I8xpO55y/KOEZmeOpZCQZFH66HTtF/KDGqWa476V5BYweBkvY47BK2wHmwaNnDvQqi4+drQEwE+
-	sD0KOfI/2KtTA9rBDrOUBJWxvCIaU+Ot/Ci8XGyVjyhQKY8NNtYzFUJkNW9MGEZb2HNPYcVsRgR
-	TgzpPFgcXCmcASw9dwMMn285c9E7LFRciLkvnZ5N4DvkYa7WhlvIRCg5tkgpTxJsO6JPfO4rQoo
-	Z+IVVM40BYD49najjZI/IJa03qIv/oW7IgggAYuM3cRj/IsNO2ffSfTlxRjHEvJJYs9rqdyGuN7
-	bYP09AsucI2N35BIl1k0hzb76wtv7l6Rcr6kFxnVkkxYuoKTdIQ==
-X-Google-Smtp-Source: AGHT+IHRgNWTC8OCTxYdaCU+FIFDMdBosmCQabhWPX3aueV8WhIlOuTIXZOUF8mCDwZ02ObeqMYCyw==
-X-Received: by 2002:a17:903:fab:b0:23d:d2d2:b511 with SMTP id d9443c01a7336-23f9813f2dfmr113683615ad.19.1753388626899;
-        Thu, 24 Jul 2025 13:23:46 -0700 (PDT)
-Received: from mystery-machine.tail542cf.ts.net ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48dbfccsm22077815ad.138.2025.07.24.13.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 13:23:46 -0700 (PDT)
-From: Brigham Campbell <me@brighamcampbell.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	linus.walleij@linaro.org,
-	neil.armstrong@linaro.org,
-	jessica.zhang@oss.qualcomm.com,
-	sam@ravnborg.org
-Cc: dianders@chromium.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Brigham Campbell <me@brighamcampbell.com>
-Subject: [PATCH 2/2] drm/panel: novatek-nt35560: Fix bug and clean up
-Date: Thu, 24 Jul 2025 14:23:38 -0600
-Message-ID: <20250724202338.648499-3-me@brighamcampbell.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250724202338.648499-1-me@brighamcampbell.com>
-References: <20250724202338.648499-1-me@brighamcampbell.com>
+	bh=O/RyO8diHPIQN4yMwETLKyVvlLJXzTw0D1PbTMdEQXU=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=UjVM/HijXNbbS4EmgPp6PgB1wOPpTWVRziaE1uIwmT/UxXGjJwBA+5scaQibPv2G5t2WLeBJjjKI8JJ8lKRvrwa1bzux86SKLpM2QJnQncNG7LS5kYEywPfFyBZdl3WoMavVrML2n6egpJuv7X/bX90DEKqZOPG1/wQnF+JnfpY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UuTFjmKZ; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753388628; x=1784924628;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=O/RyO8diHPIQN4yMwETLKyVvlLJXzTw0D1PbTMdEQXU=;
+  b=UuTFjmKZt0PtXC/XIkn6KOCpIY8YPSQWIrKUC3dCt+hZR2aN714bJAt2
+   sixFO7UHJJj1j8NQQBh6/OLSWWNvXOfFHTQllr2TbwQQBoInbHR2NMkQ2
+   D3RdKvwHF6B8bqes7E9saogxLjVFQ006SykKBoCbiRS3nMVVVdzFj3XL5
+   5epjvZ6SBZndKjhJsjSEuM06JtwcSzpe7enqSw0BGrbytqfXfuHlBn6rt
+   o2pucusmfOs0qIqzWyY6VWJD7lDPJqsim0o5THSI7tI16yoFyxVKn1mgh
+   KSX+lXwNpkltOGuaK9wXUu+ufmqti64xo4J7rZdIB1dDzYFQvQ9/jVPOG
+   Q==;
+X-CSE-ConnectionGUID: uzQE7ZHWS+qLylBFKyQOkw==
+X-CSE-MsgGUID: fby+SMZGT2aWlsx2hWk7ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55824928"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="55824928"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 13:23:47 -0700
+X-CSE-ConnectionGUID: +sjFxesHS5yshgeJI6OSZQ==
+X-CSE-MsgGUID: k413S/r2RDmopR34ONz/Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="159653632"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 13:23:47 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 24 Jul 2025 13:23:46 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 24 Jul 2025 13:23:46 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.68)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 24 Jul 2025 13:23:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WSRd7Nq6mNo2yb1rDpsUdi2L6DjfAeHxrdVgGPoJsDVufJzR0kCNrH8ZdubClvtMtAFadEjgR6T+SYMbkPDxmFvF+54zvogc8cj9jz9c9WZY1t5Q4U8cMf9Gglb5DVxNosIGVZcmPBwGbB/3SBXvkm1tBwwlc1WZ+6+3n75QcFBKi587bnDhNYzldWy7ubgDNQpvqwRbgOW3250FMQruReaJliRLo+QfZtdVYj72isJpbhYxMYjmlnNNb/qRnytAY6DoNHVDauy8qbKZhGu3FfE00Sf2UqGpjf4zukyzpPnX3UlsIcpUpaYaJwdR5P7nr/F+a4vTb+wofrlY2jop3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bgY1Kr4h3DsTsC45JZtVPPwnCspagR4cwEjLv803fzE=;
+ b=dVsEvLN0pdT0XaS64eP9xSxHbda6DJDApxCcan6IQp6DkZ6lRuNPOOFsKhCcg0JUGFn8fCdmXNjH6mBNwAqIUqfA3soN0yzFJwWaSbTk0Y5mGZRhRocDSGgqUtjvvPQ7NHk6nThqQOjUUUTmDIlZakrTNlW5GoWHgHjXM7By/pzxk0BzbeEgWrMZp9B8moS1Xx4suVPewnIHdj691XYb8+47IsgaIt9MnQCRWjoe2tnpgfkoxSXqiExvw+SIwaifF+o93SQ8HiWOrSB8zbtAeWcwxqR52Bk4PwVCCVC7csgtBPDtgVaIeEIZu7F94pLhq3JCbJ6YQuZCfwdhQ4iScA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com (2603:10b6:806:2f1::13)
+ by MN0PR11MB5964.namprd11.prod.outlook.com (2603:10b6:208:373::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Thu, 24 Jul
+ 2025 20:23:44 +0000
+Received: from SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec]) by SA3PR11MB8118.namprd11.prod.outlook.com
+ ([fe80::c4e2:f07:bdaa:21ec%6]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
+ 20:23:43 +0000
+From: <dan.j.williams@intel.com>
+Date: Thu, 24 Jul 2025 13:23:41 -0700
+To: "Bowman, Terry" <terry.bowman@amd.com>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Message-ID: <6882964d627d8_134cc710044@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <536c6bde-fe1c-400b-a8bc-bb40a23ef9fa@amd.com>
+References: <20250626224252.1415009-1-terry.bowman@amd.com>
+ <20250626224252.1415009-5-terry.bowman@amd.com>
+ <6881896b8570_14c356100de@dwillia2-xfh.jf.intel.com.notmuch>
+ <536c6bde-fe1c-400b-a8bc-bb40a23ef9fa@amd.com>
+Subject: Re: [PATCH v10 04/17] CXL/AER: Introduce CXL specific AER driver file
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: SJ0PR05CA0044.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f::19) To SA3PR11MB8118.namprd11.prod.outlook.com
+ (2603:10b6:806:2f1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR11MB8118:EE_|MN0PR11MB5964:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86c80556-c3db-486d-0336-08ddcaeffc56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TCs4d3ROeldmMk9PUy83YUt6QmlRQnVQQUE4MkE0c2ZaQnoxUW5hZGFPT2hC?=
+ =?utf-8?B?Q3YyZEVJQ2lKWlFGUThka2pxM1krWXR1UTFNTHRyQmw5WGNjQjBTVVlhMGow?=
+ =?utf-8?B?QkNYWEYxNTFiMk5GT1Y5Wk5wWHVyazBjVndaNzhTQ29PcHlIOHVteEFrRFBO?=
+ =?utf-8?B?dUdIQ1g0TXZSa3MrRmM2dmR6UDEyRTVlN3VyRGFmVXRDZVBNeWx1TTVUSHpC?=
+ =?utf-8?B?SjJPRzFOdC8wZWNOQ0NXbE4wSmQ5VlgyUWhkTC84THBCZ0hUcndjVWhNd016?=
+ =?utf-8?B?eGVSNXBWMkJhUytsd2xLNUJzWHNYSW8vb3VjQmMzRFlJckc3SUxtYlRWYnls?=
+ =?utf-8?B?RitLOU1ya3YxLzNpdkJ0a0F6TVBMRWFoTjkrMWxUdmRYejcrYndBNzI4eVUx?=
+ =?utf-8?B?RnZpV0NldCt1VjRhYmVvS3BpdHhpbC9RaEp2UzRwSEVKekVhQkY5QmtyNlRG?=
+ =?utf-8?B?ZzV6KzJDRWc1aHFlb0JUZFlEWWY4a1RaL1NOWXN6dHViZUFLMGVmd05GUFZX?=
+ =?utf-8?B?NG5jcWhySUY0Q29WTGRNeVZBNHJpUmhjTy9iU1BRdzZSSk9id3NUTXJrb3oy?=
+ =?utf-8?B?NlU2cm8wbXdkdDl0QzJsVEc0eHZyOVF0UXJVK09TU3N0SmpFTlUxNTA0bTh0?=
+ =?utf-8?B?UDMzbVBEaVJKd0pja0NVQ3V6Z3hBeExvb2E3di9rMk14VStjeGJ6NGJseG1Q?=
+ =?utf-8?B?YmowY004ZktWV1JiSFE1djMxcVFjODdjVk9iNi9ZWkJiaHFZRVVZMjVhMXNP?=
+ =?utf-8?B?MndmUENGTndFU1ZGdGRubUp0V3lEdEREVGtFWG9qRlc2dUwwcFhPbEFrMnlv?=
+ =?utf-8?B?NHRDMDVNTkY1OERwcDNPOGNYdlBiVyt5VkRURDhFWklHREtrSEtKRmU5RmNT?=
+ =?utf-8?B?R09wVHBzelNJWlBrWXdnaHczdVlXbGdHeUxiZjFWb0wwTjg5c0dOcVl5bHNS?=
+ =?utf-8?B?K2l0d3VtdDlKNE5qODIxMCticHZTLzFCekQwOXJUSDBTUHFURnJMNUVEL0Jw?=
+ =?utf-8?B?aHpPbTF4Vy9pUjFoMCsvUGtBdTFTL25ad0RxaVRYcDB6NG8rMWZ2TnJxQmVq?=
+ =?utf-8?B?SDZpNW50ZnRZTmRUTGp5M3RLRmZDd0JBYjB1R1gvaWluRnNGSzdnZ0V0Z0N1?=
+ =?utf-8?B?a2lNRC9uZ0JpNXFSVTVhaStteGZ4ZThXQWhQbm9CUnd6b3RmT3BVdmUzUWVB?=
+ =?utf-8?B?UGxVTXRXd0hCUlpXRS9aZFlHeE1FVU1JNjgycC9PQmVNaWRHSWxmaFRLOU9U?=
+ =?utf-8?B?R2taL25mR3Vac3hpeklxM1dydGpQTmxvT2dVcmg1bzRvdGZMWDlqdWkzQzg1?=
+ =?utf-8?B?Q3NLSE5QR0JrUmdJdlhIV1JVWmg5VDRTL0dWZEV2K0ppYk9XQW5OdEdEY2hX?=
+ =?utf-8?B?WUF3ZUUwL2VVOUxQbWlCejd1OXJqS3A5N3JRUXVOSXhvaUpITHRFSGFIRGhr?=
+ =?utf-8?B?VkZsNDgva3djMEsvdjNpeUMzREgvL21pQmJUek1EQVF1RW9RQjdXeU9uTk9H?=
+ =?utf-8?B?NTdrblh0V2xSVjRrbGdlVkI2SEIwTVplZmZmdlFwZ1NYN3pPVUFNTDd0MDVM?=
+ =?utf-8?B?ak9BT2xOeW5tM3Y0SEY1dTQwWmF2ZDJKVzNpRzlIYTVXVUJLcExsUDZ0aHhY?=
+ =?utf-8?B?RXpnbjlyYVpGOXEraWN1OWFreEpETWZpV1dNT0svY0xPR2h1aGZQLysvUGRx?=
+ =?utf-8?B?N1duRkZ0VnNqMFVzUGNJWmdKbEJmay9KTFF3TXBGOGMxUkdDMnRQcVozdkVT?=
+ =?utf-8?B?eWx6K3g3Z09EYlQzQmc1Y2hOLzFsWUJscTRSL09ITHJCckdDZ2ZqM1Fzc2tQ?=
+ =?utf-8?B?TitmcnRiRG1VRlREcGtqWXBLQm1YRXQwQUpNVS8zUDkyclZaMVVUb0luR2lt?=
+ =?utf-8?B?RVBFeEtCeWtTY3FvNklYeU05RUxQOFpwcnAvN1dPeXl6TythZFk4WHJhSjhV?=
+ =?utf-8?B?VUIrdTBFY3pzQjFOVEIwZ1lPUnhWZ1RBQk5uQ3JHT2FyR2hrZWpYUlBvUGZK?=
+ =?utf-8?B?NHl5cWZwUUV3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8118.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V21tS3pBK3FLeGY3VFdQTWJETTVjQnNSalN3VWN4b1FQem9nSFRTdlo0dVRV?=
+ =?utf-8?B?RFlFZm5HZ0lNQ0E1cWxxL2NNenRxdStJckgxYktFZDBBUDg3U01HQ2lJbDdr?=
+ =?utf-8?B?ZTlsdzFKM2hsSEhWN1JuZE5MNVdMNEFRM2JWT2RQZXdaUWIray9HUWhQQzdi?=
+ =?utf-8?B?bnNQUUsvclZQNmtlaEx4M2srVERoR2ZreHVwWENyRWs4dWR5dmhOam5HWTAz?=
+ =?utf-8?B?aUhZT2VqNGxzb01Zay9HSVJ0aDFZalNNbWFBZ2R2Y2pVazJ5NGt2U0cxVUxz?=
+ =?utf-8?B?YmtEdDZLUnJGdUZIOFRvcEdPUGZlSEN5UFM3WVIveEo0UFh3c0JsQjlYcmVm?=
+ =?utf-8?B?Mk1ZWlVRcnQ4M1hxSWxyNCtXWTBBclo4cXVRWGs0MFgwVUZTbHovNGNDZDBL?=
+ =?utf-8?B?U2NYQnR3TVhtMldHWWI1M0M1b2Y0U0lWZGsyb3RQOUhIWTFtS0pjTmt4Tlg0?=
+ =?utf-8?B?MXFMZnQ3UDZiZjNCZFk5dC9ma0JCMVJFTkNScUErUlpla1hNc3RzTDd3UXAx?=
+ =?utf-8?B?VURNTVlKcXdQb0hNVXNqdEo5a0FiTW9UM0J5dUxzdVJOWjJrNzU2UEtxV3lt?=
+ =?utf-8?B?b0FBbGlYT3FvVnNuSFQwUnJub2JBMjZTaTZhR1I2Q1dLZkFtWlpJNWVNdUls?=
+ =?utf-8?B?UXlFMEgrK0JBZHhZLzlEK1RrQmlKWWJUZFVtMlU0MTlCcmE5SCtsNFUxZCtp?=
+ =?utf-8?B?TUl6Z1pCZ21oS0FjeWlVYjY1V0w5aitILzJjWTUrbDVKMW4veEV3R2IzKzhi?=
+ =?utf-8?B?V0lUc1hpUzFEY0ZVamVoN3QveE1jWXNzTDhPaHRHWENId2RPdXR5R2s2TGtu?=
+ =?utf-8?B?eXZkd3lhbXFYRm1EN3JWNCthb1BTdm9xUHYybmsvd2syVXdjVU5PQy9MNVRE?=
+ =?utf-8?B?TUg3THE1WHF5NlJaeEh4WWIycUNxQmMxMDh5TXJORVhINHppRnJZaGdnVnJ0?=
+ =?utf-8?B?bURTY1VKN1YvaWtsYi81MUVnc000dVU2SmowWURzMG91U3RxSmY5aEgrdUF3?=
+ =?utf-8?B?cTJXWlBQNmdaZlRhSUhaeFRVZ2Jtem1lYU9YY2Q3bGE2ekg1SWdObkJFdU0w?=
+ =?utf-8?B?TEVRdWUycXYwakc2TGR4Y2NrZEUreEdDdENhZGZiUzc2dkpRem1RREMxWmxp?=
+ =?utf-8?B?bFRSLzl2ZXBkbzU3eWd0M2NwUytCdThJbWhhM0lzSnVqRlhGNFpuaG5yaHpZ?=
+ =?utf-8?B?R0V0bHRia3ZZdGFQdzFwMUo2dFhnMSt6aGFHWm1NYVZteFZCT3FET0VBMCtI?=
+ =?utf-8?B?bHBNRGNvOE00NWY5VnRVZE5QdFk4amZoVU00ZlE4bjhZQjBEN3psa2ZJN0dF?=
+ =?utf-8?B?d3NIRG04c3dFdlg1dnNqaEQrYURhQlJXdUhwNG82Q0RRdUNKdnlFaXRLL2c2?=
+ =?utf-8?B?ME1Cc3lHaGlMOGU3MkdzV2dnc1p2S0hxQ0R3TU9UQmpVOG9tWnBKWkJyV0w1?=
+ =?utf-8?B?Um0vb3ptS3dNN2lOL205QkgxSWRVTXN3YXk2Qzh4ME9teVZFYnc3QmgrR25K?=
+ =?utf-8?B?aEhUdndPRmxTUXIwTE1SUlNFMG1yUU5ucXJUZmQrclZZVW9OTWY2RmtpQTBo?=
+ =?utf-8?B?eFpZdlFhRmVtcS9SaFhaN011OE5EVXA1dVNDQlRvNC9OQjl5bSsrbmkxd2JB?=
+ =?utf-8?B?bFdvZGxQbW45QnN1N3hQTy9nT3E1dUhBTVVyaTRMYXJpSVhFQTNEaFdqQXNk?=
+ =?utf-8?B?UG1JOHVwUE5Nd01nU3NmWkhZQ2F0UGZEQ0Rjb2p1Z0xJYjZKMzdETnFYVVVo?=
+ =?utf-8?B?WmZFNEV0Y2d6ZmtCY3Vtcm5ZUE85b25PTE55azA5YnZGZFg3Z3I2SVkrK1BT?=
+ =?utf-8?B?SUlnZXpRS3ZOa1V4cFlXZ1NVM0UyYjRienRHTHM1cDBZV01UNHVBdkFGbjJk?=
+ =?utf-8?B?elk0MzlYM0JMSHJ4VldZTjd3WjhkK2JCSlBsZkRGVTdGSlpZNVh6anFFWlFU?=
+ =?utf-8?B?cVNHMk5rcjBLWnF1SUJNRklRNzZGc2hENk1BTkIzNjVaOTJCVHdqQ3p2eWlW?=
+ =?utf-8?B?bHhnOWRYVlYreS9RY2NsdWtWenRRYjc5UHg0Y0lMRHNKSEtMY29Ya09xRTR2?=
+ =?utf-8?B?Z0pVVXdFZk9qcGFqdUpMN0xaalhjT0ZENVQyVjBsTnY3bVBEeEs4WjVqWlB6?=
+ =?utf-8?B?S2w0eHRDeWRRdmV5QzdxR0Z6bU9GT0trdEpYcjRZUkxpSHNwbjlIZko3dVpi?=
+ =?utf-8?B?alE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86c80556-c3db-486d-0336-08ddcaeffc56
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8118.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 20:23:43.8054
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: y2kNcJZVXTLiWudiL6goerUPVi4ZJc00XoKvKw/C1hcBpTSSi4b4iAaxjNunbOOk5yAsXt6wfFiYzFhfJzfBmb5mdr+pmkHrxNuYzhYqx58=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5964
+X-OriginatorOrg: intel.com
 
-Fix bug in nt35560_set_brightness() which causes the function to
-erroneously report an error. mipi_dsi_dcs_write() returns either a
-negative value when an error occurred or a positive number of bytes
-written when no error occurred. The buggy code reports and error under
-either condition.
-
-Update driver to use the "multi" variants of MIPI functions which
-facilitate improved error handling and cleaner driver code.
-
-Fixes: 7835ed6a9e86 ("drm/panel-sony-acx424akp: Modernize backlight handling")
-Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
----
-
-The usage of the u8 array, mipi_buf_out, in nt35560_set_brightness() may
-be a little curious. It's useful here because pwm_ratio and pwm_div
-aren't constant, therefore we must store them in a buffer at runtime.
-
-Using mipi_dsi_dcs_write_{seq,buffer}_multi() in place of
-mipi_dsi_dcs_write() gives the added benefit that kmalloc() isn't used
-to write mipi commands.
-
-The jdi-lpm102a188a driver's unprepare() function will ignore errors
-reported by mipi_dsi_dcs_{set_display_off,enter_sleep_mode}. This
-driver, however, will fail to unprepare the panel if either function
-returns an error. The behavior of the jdi-lpm102a188a panel makes more
-sense to me, but I strongly prefer not to change the behavior of this
-driver without personally having access to hardware to test.
-
-Removed information from a comment which was made obsolete by commit
-994ea402c767 ("drm/panel: Rename Sony ACX424 to Novatek NT35560")
-
- drivers/gpu/drm/panel/panel-novatek-nt35560.c | 212 ++++++------------
- 1 file changed, 66 insertions(+), 146 deletions(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35560.c b/drivers/gpu/drm/panel/panel-novatek-nt35560.c
-index 98f0782c8411..60758ce1401e 100644
---- a/drivers/gpu/drm/panel/panel-novatek-nt35560.c
-+++ b/drivers/gpu/drm/panel/panel-novatek-nt35560.c
-@@ -148,24 +148,21 @@ static inline struct nt35560 *panel_to_nt35560(struct drm_panel *panel)
- static int nt35560_set_brightness(struct backlight_device *bl)
- {
- 	struct nt35560 *nt = bl_get_data(bl);
--	struct mipi_dsi_device *dsi = to_mipi_dsi_device(nt->dev);
--	int period_ns = 1023;
-+	struct mipi_dsi_multi_context dsi_ctx = {
-+		.dsi = to_mipi_dsi_device(nt->dev)
-+	};
- 	int duty_ns = bl->props.brightness;
-+	static u8 mipi_buf_out[2];
-+	int period_ns = 1023;
- 	u8 pwm_ratio;
- 	u8 pwm_div;
--	u8 par;
--	int ret;
- 
- 	if (backlight_is_blank(bl)) {
- 		/* Disable backlight */
--		par = 0x00;
--		ret = mipi_dsi_dcs_write(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
--					 &par, 1);
--		if (ret) {
--			dev_err(nt->dev, "failed to disable display backlight (%d)\n", ret);
--			return ret;
--		}
--		return 0;
-+		mipi_dsi_dcs_write_seq_multi(&dsi_ctx,
-+					     MIPI_DCS_WRITE_CONTROL_DISPLAY,
-+					     0x00);
-+		return dsi_ctx.accum_err;
- 	}
- 
- 	/* Calculate the PWM duty cycle in n/256's */
-@@ -176,62 +173,28 @@ static int nt35560_set_brightness(struct backlight_device *bl)
- 
- 	/* Set up PWM dutycycle ONE byte (differs from the standard) */
- 	dev_dbg(nt->dev, "calculated duty cycle %02x\n", pwm_ratio);
--	ret = mipi_dsi_dcs_write(dsi, MIPI_DCS_SET_DISPLAY_BRIGHTNESS,
--				 &pwm_ratio, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to set display PWM ratio (%d)\n", ret);
--		return ret;
--	}
- 
--	/*
--	 * Sequence to write PWMDIV:
--	 *	address		data
--	 *	0xF3		0xAA   CMD2 Unlock
--	 *	0x00		0x01   Enter CMD2 page 0
--	 *	0X7D		0x01   No reload MTP of CMD2 P1
--	 *	0x22		PWMDIV
--	 *	0x7F		0xAA   CMD2 page 1 lock
--	 */
--	par = 0xaa;
--	ret = mipi_dsi_dcs_write(dsi, 0xf3, &par, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to unlock CMD 2 (%d)\n", ret);
--		return ret;
--	}
--	par = 0x01;
--	ret = mipi_dsi_dcs_write(dsi, 0x00, &par, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to enter page 1 (%d)\n", ret);
--		return ret;
--	}
--	par = 0x01;
--	ret = mipi_dsi_dcs_write(dsi, 0x7d, &par, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to disable MTP reload (%d)\n", ret);
--		return ret;
--	}
--	ret = mipi_dsi_dcs_write(dsi, 0x22, &pwm_div, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to set PWM divisor (%d)\n", ret);
--		return ret;
--	}
--	par = 0xaa;
--	ret = mipi_dsi_dcs_write(dsi, 0x7f, &par, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to lock CMD 2 (%d)\n", ret);
--		return ret;
--	}
-+	mipi_buf_out[0] = MIPI_DCS_SET_DISPLAY_BRIGHTNESS;
-+	mipi_buf_out[1] = pwm_ratio;
-+	mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, mipi_buf_out,
-+					ARRAY_SIZE(mipi_buf_out));
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf3, 0xaa);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7d, 0x01);
-+
-+	mipi_buf_out[0] = 0x22;
-+	mipi_buf_out[1] = pwm_div;
-+	mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, mipi_buf_out,
-+					ARRAY_SIZE(mipi_buf_out));
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7f, 0xaa);
- 
- 	/* Enable backlight */
--	par = 0x24;
--	ret = mipi_dsi_dcs_write(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
--				 &par, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to enable display backlight (%d)\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
-+				     0x24);
- 
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static const struct backlight_ops nt35560_bl_ops = {
-@@ -244,32 +207,23 @@ static const struct backlight_properties nt35560_bl_props = {
- 	.max_brightness = 1023,
- };
- 
--static int nt35560_read_id(struct nt35560 *nt)
-+static void nt35560_read_id(struct mipi_dsi_multi_context *dsi_ctx)
- {
--	struct mipi_dsi_device *dsi = to_mipi_dsi_device(nt->dev);
-+	struct device dev = dsi_ctx->dsi->dev;
- 	u8 vendor, version, panel;
- 	u16 val;
--	int ret;
- 
--	ret = mipi_dsi_dcs_read(dsi, NT35560_DCS_READ_ID1, &vendor, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "could not vendor ID byte\n");
--		return ret;
--	}
--	ret = mipi_dsi_dcs_read(dsi, NT35560_DCS_READ_ID2, &version, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "could not read device version byte\n");
--		return ret;
--	}
--	ret = mipi_dsi_dcs_read(dsi, NT35560_DCS_READ_ID3, &panel, 1);
--	if (ret < 0) {
--		dev_err(nt->dev, "could not read panel ID byte\n");
--		return ret;
--	}
-+	mipi_dsi_dcs_read_multi(dsi_ctx, NT35560_DCS_READ_ID1, &vendor, 1);
-+	mipi_dsi_dcs_read_multi(dsi_ctx, NT35560_DCS_READ_ID2, &version, 1);
-+	mipi_dsi_dcs_read_multi(dsi_ctx, NT35560_DCS_READ_ID3, &panel, 1);
-+
-+	if (dsi_ctx->accum_err < 0)
-+		return;
- 
- 	if (vendor == 0x00) {
--		dev_err(nt->dev, "device vendor ID is zero\n");
--		return -ENODEV;
-+		dev_err(&dev, "device vendor ID is zero\n");
-+		dsi_ctx->accum_err = -ENODEV;
-+		return;
- 	}
- 
- 	val = (vendor << 8) | panel;
-@@ -278,16 +232,18 @@ static int nt35560_read_id(struct nt35560 *nt)
- 	case DISPLAY_SONY_ACX424AKP_ID2:
- 	case DISPLAY_SONY_ACX424AKP_ID3:
- 	case DISPLAY_SONY_ACX424AKP_ID4:
--		dev_info(nt->dev, "MTP vendor: %02x, version: %02x, panel: %02x\n",
-+		dev_info(&dev,
-+			 "MTP vendor: %02x, version: %02x, panel: %02x\n",
- 			 vendor, version, panel);
- 		break;
- 	default:
--		dev_info(nt->dev, "unknown vendor: %02x, version: %02x, panel: %02x\n",
-+		dev_info(&dev,
-+			 "unknown vendor: %02x, version: %02x, panel: %02x\n",
- 			 vendor, version, panel);
- 		break;
- 	}
- 
--	return 0;
-+	return;
- }
- 
- static int nt35560_power_on(struct nt35560 *nt)
-@@ -322,92 +278,56 @@ static void nt35560_power_off(struct nt35560 *nt)
- static int nt35560_prepare(struct drm_panel *panel)
- {
- 	struct nt35560 *nt = panel_to_nt35560(panel);
--	struct mipi_dsi_device *dsi = to_mipi_dsi_device(nt->dev);
--	const u8 mddi = 3;
-+	struct mipi_dsi_multi_context dsi_ctx = {
-+		.dsi = to_mipi_dsi_device(nt->dev)
-+	};
- 	int ret;
- 
- 	ret = nt35560_power_on(nt);
- 	if (ret)
- 		return ret;
- 
--	ret = nt35560_read_id(nt);
--	if (ret) {
--		dev_err(nt->dev, "failed to read panel ID (%d)\n", ret);
--		goto err_power_off;
--	}
-+	nt35560_read_id(&dsi_ctx);
- 
--	/* Enabe tearing mode: send TE (tearing effect) at VBLANK */
--	ret = mipi_dsi_dcs_set_tear_on(dsi,
-+	/* Enable tearing mode: send TE (tearing effect) at VBLANK */
-+	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx,
- 				       MIPI_DSI_DCS_TEAR_MODE_VBLANK);
--	if (ret) {
--		dev_err(nt->dev, "failed to enable vblank TE (%d)\n", ret);
--		goto err_power_off;
--	}
- 
- 	/*
- 	 * Set MDDI
- 	 *
- 	 * This presumably deactivates the Qualcomm MDDI interface and
- 	 * selects DSI, similar code is found in other drivers such as the
--	 * Sharp LS043T1LE01 which makes us suspect that this panel may be
--	 * using a Novatek NT35565 or similar display driver chip that shares
--	 * this command. Due to the lack of documentation we cannot know for
--	 * sure.
-+	 * Sharp LS043T1LE01
- 	 */
--	ret = mipi_dsi_dcs_write(dsi, NT35560_DCS_SET_MDDI,
--				 &mddi, sizeof(mddi));
--	if (ret < 0) {
--		dev_err(nt->dev, "failed to set MDDI (%d)\n", ret);
--		goto err_power_off;
--	}
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, NT35560_DCS_SET_MDDI, 3);
- 
--	/* Exit sleep mode */
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret) {
--		dev_err(nt->dev, "failed to exit sleep mode (%d)\n", ret);
--		goto err_power_off;
--	}
--	msleep(140);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 140);
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret) {
--		dev_err(nt->dev, "failed to turn display on (%d)\n", ret);
--		goto err_power_off;
--	}
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
- 	if (nt->video_mode) {
--		/* In video mode turn peripheral on */
--		ret = mipi_dsi_turn_on_peripheral(dsi);
--		if (ret) {
--			dev_err(nt->dev, "failed to turn on peripheral\n");
--			goto err_power_off;
--		}
-+		mipi_dsi_turn_on_peripheral_multi(&dsi_ctx);
- 	}
- 
--	return 0;
+Bowman, Terry wrote:
+> On 7/23/2025 8:16 PM, dan.j.williams@intel.com wrote:
+> > Terry Bowman wrote:
+> >> The CXL AER error handling logic currently resides in the AER driver f=
+ile,
+> >> drivers/pci/pcie/aer.c. CXL specific changes are conditionally compile=
+d
+> >> using #ifdefs.
+> >>
+> >> Improve the AER driver maintainability by separating the CXL specific =
+logic
+> >> from the AER driver's core functionality and removing the #ifdefs.
+> >> Introduce drivers/pci/pcie/cxl_aer.c and move the CXL AER logic into t=
+he
+> >> new file.
+> >>
+> >> Update the makefile to conditionally compile the CXL file using the
+> >> existing CONFIG_PCIEAER_CXL Kconfig.
+> >>
+> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> >> ---
+> > After reading patch5 I want to qualify my Reviewed-by:...
+> >
+> >>  drivers/pci/pci.h          |   8 +++
+> >>  drivers/pci/pcie/Makefile  |   1 +
+> >>  drivers/pci/pcie/aer.c     | 138 ------------------------------------=
 -
--err_power_off:
--	nt35560_power_off(nt);
--	return ret;
-+	if (dsi_ctx.accum_err < 0)
-+		nt35560_power_off(nt);
-+	return dsi_ctx.accum_err;
- }
- 
- static int nt35560_unprepare(struct drm_panel *panel)
- {
- 	struct nt35560 *nt = panel_to_nt35560(panel);
--	struct mipi_dsi_device *dsi = to_mipi_dsi_device(nt->dev);
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {
-+		.dsi = to_mipi_dsi_device(nt->dev)
-+	};
- 
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret) {
--		dev_err(nt->dev, "failed to turn display off (%d)\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+> >>  drivers/pci/pcie/cxl_aer.c | 138 ++++++++++++++++++++++++++++++++++++=
 +
-+	if (dsi_ctx.accum_err < 0)
-+		return dsi_ctx.accum_err;
- 
--	/* Enter sleep mode */
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret) {
--		dev_err(nt->dev, "failed to enter sleep mode (%d)\n", ret);
--		return ret;
--	}
- 	msleep(85);
- 
- 	nt35560_power_off(nt);
--- 
-2.50.1
+> > This is a poor name for this file because the functionality only relate=
+s to
+> > code that supports a dead-end generation of RCH / RCD hardware platform=
+s.=20
+> >
+> > I do agree that it should be removed from aer.c so typical PCIe AER
+> > maintenance does not need to trip over that cruft.
+> >
+> > Please call it something like rch_aer.c so it is tucked out of the way,
+> > sticks out as odd in any future diffstat, and does not confuse from the
+> > CXL VH error handling that supports current and future generation
+> > hardware.
+> >
+> > Perhaps even move it to its own silent Kconfig symbol with a deprecatio=
+n
+> > warning, something like below, so someone remembers to delete it.
+>=20
+> cxl_rch_handle_error_iter() and cxl_rch_handle_error() need to be moved f=
+rom pci/pcie/cxl_aer.c
+> into cxl/core/native_ras.c introduced in this series. There is no RCH or =
+VH handling in cxl_aer.c.=C2=A0
+> cxl_aer.c serves to detect if an error is a CXL error and if it is then i=
+t forwards it to the=C2=A0
+> CXL drivers using the kfifo introduced later. I will update the commit me=
+ssage stating more=C2=A0
+> will be added later.
 
+Wait, this set moves the same function to a new file twice in the same
+set? I had not gotten that far along, but that's not acceptable.
+
+The reasons I had assumed that the rch bits would remain as a vestigial
+drivers/pci/pcie/rch_aer.c file to be cut from the kernel later are:
+
+- The goal of forwarding protocol errors to the cxl_core is that the
+  cxl_core maintains a cxl_port hierarchy. For the RCH case there is no
+  hierarchy and little to no value in being able disposition or decorate
+  error reports with the cxl_port driver.
+
+- The RCH code requires a series of new PCI core exports for this
+  one-off unfortunate mistake of history where the CXL specification
+  tried way too hard to hide the presence of CXL. If this code is
+  already on a deprecation path, that contraindicates new exports.
+
+> Dave Jiang introduced cxl/core/pci_aer.c I understand the name is still u=
+p for possible change.
+> The native_ras.c changes in this series is planned to be moved into cxl/c=
+ore/pci_aer.c for v11.=C2=A0
+> The files were created with the same purpose but we used different filena=
+mes and need to converge.
+
+Why not put this stuff in the existing cxl/core/ras.c? I do expect that
+we want to route CPER reports to cxl_port objects at some point, so the
+"native" distinction is more confusing than beneficial as far as I can
+see.=
 
