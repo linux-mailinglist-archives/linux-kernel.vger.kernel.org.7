@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-744254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360B9B10A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 615CDB109E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBF65A1E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9065A5C4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE832D12EE;
-	Thu, 24 Jul 2025 12:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81802C1586;
+	Thu, 24 Jul 2025 12:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="hVFxuh/p"
-Received: from smtp119.iad3a.emailsrvr.com (smtp119.iad3a.emailsrvr.com [173.203.187.119])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y+zEs39m"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021AF2367A6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BE224FBFF
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360010; cv=none; b=brPXQ0o5B1Aub82CqPbNYcEl+mAy2fXVOYwXASQq455ytLkR0uYYP05hO/cNfWizXXyusnAu+OOR2mjHcSBojajfHX8H/boiPaCcv57I3zm0jJ6wjZ4OLvTG7q19Y5Hhih+tsl25zKLRLgJzLlrI0utly+zwFCl8hzjs1TnNWBw=
+	t=1753358825; cv=none; b=hfEmxEwkaSUTygoW0gY2pkf9sLBwgOFEFr4rN2bi7qEri14MaoS8r2ddEvS9p7+vZQfgUTdpOMg9INfiPMREWrxWNpkyqlxDO1FBtDkuqpFIxJ8yeNAhYkaeTNH8Lhbkyid5OhOEF3FTJcXW1rk6UFhJNDz0aFJDXyh1sjHF+0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360010; c=relaxed/simple;
-	bh=FgikwVrQ/haYskWg5QjV35IHi0o0Gmu+BMVh7fy950c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NsnMXMFoLQg/Y6QAGhBJMtv/HGyCmm5B3jAYf6oKkUw/79lYqRB7sNE/eP07CyFn0vmu9+JEYyNzURUoAI/Bz+SieomevBoKJfIrQVzQaRlo3fYk/eVhxDktdKTvA0iMiIfONDMYRyBufZowNupqnMud9XA6HGB3Mp/IHFsZkXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=hVFxuh/p; arc=none smtp.client-ip=173.203.187.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1753355293;
-	bh=FgikwVrQ/haYskWg5QjV35IHi0o0Gmu+BMVh7fy950c=;
-	h=From:To:Subject:Date:From;
-	b=hVFxuh/ph1fFxIiEemCBcufQSwxF3ah8i+HcQqx3UY9kOgITgW1YDSZEp+UUjhtg1
-	 1HkKhsOf2z7mj5LW0RtRmk1Uws5o6PdHbe/ko3Hv8O8TrzCjMU/CbHcUPEQ3SiYYug
-	 xvxWN2YElH4mCR5KSBQK591pet0BC7cubIjsvTJI=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 01C6E250C1;
-	Thu, 24 Jul 2025 07:08:11 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Edward Adam Davis <eadavis@qq.com>,
-	syzkaller-bugs@googlegroups.com,
-	stable@vger.kernel.org,
-	syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com,
-	Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH V3 REPOST] comedi: pcl726: Prevent invalid irq number
-Date: Thu, 24 Jul 2025 12:07:36 +0100
-Message-ID: <20250724110754.8708-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
-References: <tencent_3C66983CC1369E962436264A50759176BF09@qq.com>
+	s=arc-20240116; t=1753358825; c=relaxed/simple;
+	bh=Lm1PUCVP7YrsEOgLlcfttiA2dAxskPHeqhjheTvAtis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ULokq9UmicAZkvMzEP5kL+mR9xd9Qebp4HC0qgCS8hswwgGiECapYYoevfyDZc6DShDwC6u/X2ulEwU18iHEKtOnDeD4pEEbfB4U+DSMrd3t/KLNV4FHjOEPP4LpMdq51720+afh+HbdBWCZ/WivEvzfxtDGJ1U2EC3Ffcs6rik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y+zEs39m; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bdd8f5de-acd5-4c09-b3a4-ec6af54b396c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753358820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nY2Ue6HqUfFSMWwiEeojRR9Dn6sZyi4ONs19yYgfpm0=;
+	b=Y+zEs39mUTpRn+Gxf/ZSJswL5+3uHTkHVJ1dZsouQSdDlwNbZ18ZKpjSPUORQqe9x6Wl/h
+	ciHKJ82UoClLCYj5dZUHU3eZ9V1q+UP6Oxg2aR17YAvJgYOeoBIBkRDxGh5TAHrdq9d6gM
+	K4OfnebiGAWFm9WnIQLpyRo+QC/2zZw=
+Date: Thu, 24 Jul 2025 20:06:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 56291058-866a-4d1e-89ad-fca7897b07d3-1-1
+Subject: Re: [PATCH v2] hung_task: Add detection count to hung task warning
+ message
+Content-Language: en-US
+To: Ye Liu <ye.liu@linux.dev>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Ye Liu <liuye@kylinos.cn>, linux-kernel@vger.kernel.org
+References: <20250724072326.2031432-1-ye.liu@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250724072326.2031432-1-ye.liu@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Edward Adam Davis <eadavis@qq.com>
 
-The reproducer passed in an irq number(0x80008000) that was too large,
-which triggered the oob.
 
-Added an interrupt number check to prevent users from passing in an irq
-number that was too large.
+On 2025/7/24 15:23, Ye Liu wrote:
+> From: Ye Liu <liuye@kylinos.cn>
+> 
+> Add [#N] to hung task warnings to show occurrence count.
+> This helps quickly identify warning order when multiple
+> messages appear in logs.
 
-If `it->options[1]` is 31, then `1 << it->options[1]` is still invalid
-because it shifts a 1-bit into the sign bit (which is UB in C).
-Possible solutions include reducing the upper bound on the
-`it->options[1]` value to 30 or lower, or using `1U << it->options[1]`.
+Hmm... once we have this number, what do we do with it?
 
-The old code would just not attempt to request the IRQ if the
-`options[1]` value were invalid.  And it would still configure the
-device without interrupts even if the call to `request_irq` returned an
-error.  So it would be better to combine this test with the test below.
+While I totally get the desire for a quick reference number, my thinking
+is that the hung_task_detect_count counter is the intended and more
+reliable way for users to check.
 
-Fixes: fff46207245c ("staging: comedi: pcl726: enable the interrupt support code")
-Cc: <stable@vger.kernel.org> # 5.13+
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reported-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5cd373521edd68bebcb3
-Tested-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/comedi/drivers/pcl726.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+But like I said before, let's see what Andrew thinks ;)
 
-diff --git a/drivers/comedi/drivers/pcl726.c b/drivers/comedi/drivers/pcl726.c
-index 0430630e6ebb..b542896fa0e4 100644
---- a/drivers/comedi/drivers/pcl726.c
-+++ b/drivers/comedi/drivers/pcl726.c
-@@ -328,7 +328,8 @@ static int pcl726_attach(struct comedi_device *dev,
- 	 * Hook up the external trigger source interrupt only if the
- 	 * user config option is valid and the board supports interrupts.
- 	 */
--	if (it->options[1] && (board->irq_mask & (1 << it->options[1]))) {
-+	if (it->options[1] > 0 && it->options[1] < 16 &&
-+	    (board->irq_mask & (1U << it->options[1]))) {
- 		ret = request_irq(it->options[1], pcl726_interrupt, 0,
- 				  dev->board_name, dev);
- 		if (ret == 0) {
--- 
-2.47.2
+Thanks,
+Lance
+
+> 
+> Signed-off-by: Ye Liu <liuye@kylinos.cn>
+> 
+> Changes in v2:
+> - Directly use sysctl_hung_task_detect_count.
+> - Link to v1:https://lore.kernel.org/all/20250721031755.1418556-1-ye.liu@linux.dev/
+> ---
+>   kernel/hung_task.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 8708a1205f82..231afdb68bb2 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -232,8 +232,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>   	if (sysctl_hung_task_warnings || hung_task_call_panic) {
+>   		if (sysctl_hung_task_warnings > 0)
+>   			sysctl_hung_task_warnings--;
+> -		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+> -		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
+> +		pr_err("INFO: task %s:%d blocked for more than %ld seconds. [#%ld]\n",
+> +		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ,
+> +		       sysctl_hung_task_detect_count);
+>   		pr_err("      %s %s %.*s\n",
+>   			print_tainted(), init_utsname()->release,
+>   			(int)strcspn(init_utsname()->version, " "),
 
 
