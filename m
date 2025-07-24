@@ -1,92 +1,166 @@
-Return-Path: <linux-kernel+bounces-745100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA53B114E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:50:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67A3B114E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FDB1CC7AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900373AE12D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB81247DE1;
-	Thu, 24 Jul 2025 23:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683262472A6;
+	Thu, 24 Jul 2025 23:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcukdJL/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a7W/wyIn"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78987244688;
-	Thu, 24 Jul 2025 23:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6CC2441A0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753401016; cv=none; b=FK3tkAwLkb06g8O0dOId43U6KWyU8fFYqlmhX4aBumZNArbzVo6sxz+/lmv4qpJ+icGTSJusRTIRxvBSqNcTaBP3yxQC1fwlbzjc5OrGckIpKfWT7q1+22oiGA3eabc9OJE1EgNM8UbWQsHOw52Kg2FQ760eQncmC7hPQxwLHrw=
+	t=1753401110; cv=none; b=TE4AIhiUfH77lCznyUOHJt+NCX4k8q/AynEyJiYZ6TuEQEgUdBmoxCe4EBolxnkCJt4Mpp+FjQf5VRMF709nlvIuvpiRkv4/ziMuTKotWIlMuDCWMg2fyyLT5RzG/5hx9no0Zjj8JntnS5KPxIQziOikMxWy8Rjvj9D86AGGhFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753401016; c=relaxed/simple;
-	bh=J6zs3FFWOtVduMYpXGiST9B8M7PoDvH4oTJVHYKE6SU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCaYJrDZOzYvjAgM86WG7HM4Hupca4ZrQdSfXuqjvYeWitO1bstQNCqCM716GtDLb4tlWvxygQJKQd+VUAvlEBfgE1d4PsxWwdqsj1AaqpPjRPN6Mu4/YB7ENH558YWcGOP60ozL1WKEa1WwULWliGsaroqM9yXWuoMZby0inPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcukdJL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1548C4CEED;
-	Thu, 24 Jul 2025 23:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753401014;
-	bh=J6zs3FFWOtVduMYpXGiST9B8M7PoDvH4oTJVHYKE6SU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RcukdJL/ITnC9B/6oSNZkRN7qMgCr3fx+HQWcklBTgNH0czFn29ZzFJh/7RGswJFB
-	 XhAQlsk1vQf3rsk79Q+E6SzCG+0/fOMNSfgQWx2q90/IFeRmylGKbYImHUbt7rXBLI
-	 SqTbIw+G6lsg5tscwPTOo1hO+3HSrh2JDeOf+AG1Brwvcg/TiYy0bs4986CzTaZ0GI
-	 YsItvCVhIOdqN4j76ivNLyQEmhDnobMc7nF22MNtsVExgD4pyBMZZMGYe9BEJl9IS3
-	 IzHClgqaNelOaEjSZ86OyHBpr1zvQpSdshxTttFjLw8NMs9lIUuuXmDqLYdk5WiEBn
-	 n7unBcDgXNtqg==
-Date: Thu, 24 Jul 2025 16:50:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
-	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
-	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-trace-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH v6 1/3] exec: Remove obsolete comments
-Message-ID: <202507241650.ADBB05F@keescook>
-References: <20250724123612.206110-1-bhupesh@igalia.com>
- <20250724123612.206110-2-bhupesh@igalia.com>
+	s=arc-20240116; t=1753401110; c=relaxed/simple;
+	bh=tsqTBiiUtIi3vn7VFW3l6S+Foh9dSWRS7ErMls5dXjg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LlGW33NyEPphmS9mzrwuoCRZajXvEvROCmN5iWyYuITEKlfTHbIUAohW9ttz/Z8DHX4m97vnO+x9ftSG5ZSkl9T8MG15Y8y5ObgUPJuU7ipD9JPEw5huI7afUOXZc09zrjsJ8kHirexvBZI20MDB0hZvheX/5mEO5WgUCur+ro0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a7W/wyIn; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-87c0915ba7dso91641139f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753401108; x=1754005908; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yBgNXOzVYMuT3p5X0sPGb1CyLZHQHf4C3ha7d+WUCs8=;
+        b=a7W/wyInyEFcZmYVja+XnUfo972bzgeeP8nN3HHN7vBnh4/DxBfzvIN5f/OEd6rWv/
+         eNcad5gUk0IXHRSaEjYY8Tx8+FS0/ozMcxyQmCXqKuaBht9ODU1qZ9+P9lHd2djo4NI2
+         ARKwdn4mPQaYQbmaU92SYXpdIH5bZ7+lWoPfXx4/QeX2oPLguR/4xosIwuIcrv9ba406
+         adSUclfXoOZgvE3k00U+EcbkZdHRSRZHc3VATjmo1pJrRWR+60mIR+aQQIc8ZCq4JCGz
+         U0RnYYxifpoNn+CXSEM8GAzwcWJgwfmcvdQycV4InTw02kq5FMEKJRNuJpPMjFWcCyxl
+         3rAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753401108; x=1754005908;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yBgNXOzVYMuT3p5X0sPGb1CyLZHQHf4C3ha7d+WUCs8=;
+        b=T+KDICh/Dg+uikEVu0hqF2Dog7AvArRsDzZS/hMWEIrGf3k/I3jqZtZmkNmZEOk62V
+         +5UL/nJmOU58Fox7Xl2XyWFJrLXJVRVq3p1nw16/LJ3dRa94mJxSKiW9YdQ49+BGIGjs
+         +hyqRPsq0r7Fj4SOTYTNgleDejVIPbtUaTx19gXntoE4JU1gcc7pVRIFeAJlh/ak1+OV
+         8xxP+VZey0Ik+C99rz3pNJfGHNsKiblafyDkQkOqoCT8BRwgjMhPDoys8mWyKjG8wK4X
+         59Y6GRX6isgkTbKLXEsqHixdGTCirbVx23IpZovldbyQUxymSxyBndCQJYwiT8ZBW253
+         geqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXknsXix0qw0sjd4fWjIWVJnFKy5FLK82nnQe7Qj7+8SGZO20uQglQJufHjpVVUF4qUSvjAOuZpFTbvtkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+YBauEoE3dhIRkrGCgxvlr56UdWlIS14IdXEyIlLzmHqXyuQR
+	bVlHZhV/iA+By7xnPDkxLXoxEkQ0PxZA3vlDmJHEo/Xams+HC2OFW2LizYRTS/CJArTEV1Htwa3
+	rm1kcxXWlug==
+X-Google-Smtp-Source: AGHT+IGJJw5L0nOEev3xzncdd7QXg/JvCOjo9FLlOHz8os9ojHiaM/jdOkQnSqh8f7hlvencNdgmFK+BlV4o
+X-Received: from ioqc13.prod.google.com ([2002:a6b:7d0d:0:b0:87c:3255:3907])
+ (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:b8e:b0:876:7876:a587
+ with SMTP id ca18e2360f4ac-87c64dc5c35mr1439425539f.0.1753401108447; Thu, 24
+ Jul 2025 16:51:48 -0700 (PDT)
+Date: Thu, 24 Jul 2025 23:51:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724123612.206110-2-bhupesh@igalia.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
+Message-ID: <20250724235144.2428795-1-rananta@google.com>
+Subject: [PATCH 0/2] KVM: arm64: Destroy the stage-2 page-table periodically
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: Raghavendra Rao Anata <rananta@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 24, 2025 at 06:06:10PM +0530, Bhupesh wrote:
-> Patch 3a3f61ce5e0b ("exec: Make sure task->comm is always NUL-terminated"),
-> replaced 'strscpy_pad()' with 'memcpy()' implementations inside
-> '__set_task_comm()'.
-> 
-> However a few left-over comments are still there, which mention
-> the usage of 'strscpy_pad()' inside '__set_task_comm()'.
-> 
-> Remove those obsolete comments.
-> 
-> While at it, also remove an obsolete comment regarding 'task_lock()'
-> usage while handing 'task->comm'.
-> 
-> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+Hello,
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+When destroying a fully-mapped 128G VM abruptly, the following scheduler
+warning is observed:
 
+  sched: CPU 0 need_resched set for > 100018840 ns (100 ticks) without schedule
+  CPU: 0 UID: 0 PID: 9617 Comm: kvm_page_table_ Tainted: G O 6.16.0-smp-DEV #3 NONE
+  Tainted: [O]=OOT_MODULE
+  Call trace:
+      show_stack+0x20/0x38 (C)
+      dump_stack_lvl+0x3c/0xb8
+      dump_stack+0x18/0x30
+      resched_latency_warn+0x7c/0x88
+      sched_tick+0x1c4/0x268
+      update_process_times+0xa8/0xd8
+      tick_nohz_handler+0xc8/0x168
+      __hrtimer_run_queues+0x11c/0x338
+      hrtimer_interrupt+0x104/0x308
+      arch_timer_handler_phys+0x40/0x58
+      handle_percpu_devid_irq+0x8c/0x1b0
+      generic_handle_domain_irq+0x48/0x78
+      gic_handle_irq+0x1b8/0x408
+      call_on_irq_stack+0x24/0x30
+      do_interrupt_handler+0x54/0x78
+      el1_interrupt+0x44/0x88
+      el1h_64_irq_handler+0x18/0x28
+      el1h_64_irq+0x84/0x88
+      stage2_free_walker+0x30/0xa0 (P)
+      __kvm_pgtable_walk+0x11c/0x258
+      __kvm_pgtable_walk+0x180/0x258
+      __kvm_pgtable_walk+0x180/0x258
+      __kvm_pgtable_walk+0x180/0x258
+      kvm_pgtable_walk+0xc4/0x140
+      kvm_pgtable_stage2_destroy+0x5c/0xf0
+      kvm_free_stage2_pgd+0x6c/0xe8
+      kvm_uninit_stage2_mmu+0x24/0x48
+      kvm_arch_flush_shadow_all+0x80/0xa0
+      kvm_mmu_notifier_release+0x38/0x78
+      __mmu_notifier_release+0x15c/0x250
+      exit_mmap+0x68/0x400
+      __mmput+0x38/0x1c8
+      mmput+0x30/0x68
+      exit_mm+0xd4/0x198
+      do_exit+0x1a4/0xb00
+      do_group_exit+0x8c/0x120
+      get_signal+0x6d4/0x778
+      do_signal+0x90/0x718
+      do_notify_resume+0x70/0x170
+      el0_svc+0x74/0xd8
+      el0t_64_sync_handler+0x60/0xc8
+      el0t_64_sync+0x1b0/0x1b8
+
+The host kernel was running with CONFIG_PREEMPT_NONE=y, and since the
+page-table walk operation takes considerable amount of time for a VM
+with such a large number of PTEs mapped, the warning is seen.
+
+To mitigate this, split the walk into smaller ranges, by checking for
+cond_resched() between each range. Since the path is executed during
+VM destruction, after the page-table structure is unlinked from the
+KVM MMU, relying on cond_resched_rwlock_write() isn't necessary.
+
+Patch-1 splits the kvm_pgtable_stage2_destroy() function into separate
+'walk' and 'free PGD' parts.
+
+Patch-2 leverages the split and performs the walk periodically over
+smaller ranges and calls cond_resched() between them.
+
+Thank you.
+Raghavendra
+
+Raghavendra Rao Ananta (2):
+  KVM: arm64: Split kvm_pgtable_stage2_destroy()
+  KVM: arm64: Destroy the stage-2 page-table periodically
+
+ arch/arm64/include/asm/kvm_pgtable.h | 19 ++++++++++++
+ arch/arm64/kvm/hyp/pgtable.c         | 23 ++++++++++++--
+ arch/arm64/kvm/mmu.c                 | 46 +++++++++++++++++++++++++---
+ 3 files changed, 80 insertions(+), 8 deletions(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-Kees Cook
+2.50.1.470.g6ba607880d-goog
+
 
