@@ -1,131 +1,124 @@
-Return-Path: <linux-kernel+bounces-744028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174A2B10713
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49C4B10715
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC29AA5CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A02189C511
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C3E257AF0;
-	Thu, 24 Jul 2025 09:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0562580CC;
+	Thu, 24 Jul 2025 09:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/lAKvXk"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DIhshwtA"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7AB256C73
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6885257AF0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753350924; cv=none; b=plKTPlZ/LMWO7amy33jp0xiSt1L5HVR/xK3x70uGtw0twEHKV40RJfIMy/hdEL8uaN/RsBIYhJlejghDQOyl5jjaQn342hdivJf6J3Mjt7iKHIAI1lNSqo+5T0xcagoRTiJ8J44jM/Snzilu0/3RmoVI/+nsBXK7qfpHtik/fYk=
+	t=1753350949; cv=none; b=F1PKZ0bTlI23y51474rB8nEHolkM41HHnei6LpKULdjtGm9zvtyNN6L///6EAjlFErApnmRC15K2n/4qdGZjy3EeMOYJb81mJoHp9mAL64c437qt2pkOr15c7sktAmBGz7J9WcXcD8UJE7OjnZee6KnSO553RWSh8gGmhkCUkVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753350924; c=relaxed/simple;
-	bh=ttx1sn8LRJJ7tFRoMIFeaQa8OLFqq3HWpSLFnn0BMsM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JIslGlIEv7gfLJq7PNOlcP24uJ0q5+LR1l2jN1VQaPLllrvFfptLoSsDCfU16lAFYqBTzeCZEI9zRemr2W97riA12g1wJO0dr0qn4MvQC/JbmQO8ix3/82OAJt/mEhbtlicLbkHUOwxV2e0tZXhoGltquHC7E0api15tZ6+ixk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e/lAKvXk; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a575a988f9so447797f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:55:22 -0700 (PDT)
+	s=arc-20240116; t=1753350949; c=relaxed/simple;
+	bh=T6z/JcKCr3nrlWauYV3AJcOoEaGVBeYh9OPAnzcSIV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kc8tZICpVxMeN7UkaXZKqE9qv1pEX4A89YlX1lxNlekCpJjiX6ic3ybrjAIflo3rdX0TsR/IcqDxq6Nhf2wHrmPKyzU6FBaSOORm2XBzxLznYTv+pmm/SDSwqDd1e4BUUJ5oPly1hwDniB6KG2sQGizB0i1DJLWzvEib5Qo+wYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DIhshwtA; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso8353225e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753350921; x=1753955721; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ttx1sn8LRJJ7tFRoMIFeaQa8OLFqq3HWpSLFnn0BMsM=;
-        b=e/lAKvXkgPfr3bvUnr7si/NEmjRxLq234D/1igBvzqyxZSAp7LjD41+/EyuFiK1qsE
-         spfey5/tseazXT1fzkU6DbqSH6kAas5II5RWTezbZVkMrXh5h/ovDK4HKHTc+1qTXHuF
-         PE23IBBtK4yWG4C+dSMr9B+gH163HtDIsrxzD1Q2Qep12Sof8gHvo4VtKcvWz24IoWSL
-         xS7XhRBK7RV7dhK95Ka0VIQppag42yQm12cKbatIwRb1hThmqwaolYRAf8rULNeSKlIe
-         dgnxah8N3NaYL3h0D20AOyYUx2Cb2DVhL1xMHkWawadacToNkn7zCe1ETZMSVLT3rDfD
-         aDPA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753350946; x=1753955746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hkXB2c1oP/E/k06GcTgcZXpElzLoIFNZDVG4i5HTvOM=;
+        b=DIhshwtAZ55KMcQMYusrJpUWFhyxPh76H4UOO0xPXHCwnEYEFNIPC+lGNgxLtcINLR
+         yEdbPFoPmW6AOR5vF6Vs8DXXIbdi/WkHVhB/DdN2UhwzJJk14V54OhaRdiwcfnaUUBjD
+         BoK/qcH93Vw+GdK3E2ToxAaLZ2ZV8Rzs0aQZUqkJUmu1gdupJQ7Esu0rjw8bBgFv3DlZ
+         Ms1OYTg8ll9/5lwGD66wRAJDl1HIzFzoPdr4Y/WNLYYhuuZ77VDtxmi2AJP+Oi/PuBz4
+         vM0Yh5FnNHTDxwudx+IfQ+pypSIiIb7vPFQPdveCQptloCOzjjSvuPsarNOpZ8pnoEve
+         B8XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753350921; x=1753955721;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ttx1sn8LRJJ7tFRoMIFeaQa8OLFqq3HWpSLFnn0BMsM=;
-        b=FKEdz7u84O3y/YBhuWdJptNpSG5d7okaZT21XnpEq/T/FwzsXYzlIqf1Wjv0PXX3Lk
-         emub0oXqtFI2qHeYBRtaIs3zAv2rMmWEp5CV2l4KOzLl24pjOzC1p35B1FEIibO1XLpB
-         BAkEZ8eq/5tNnn20o+nCrs8FdZL7ZQfNroUTXWvFVwoWVzsnP7MmIrqqGyUg/BadIkq0
-         htkEroGjMNpLfsRIyFJpQZ5JiSLDZ3swTsEY0dbVkZtyjZCZGIdM76BNTLdPi1sekaM1
-         Vgg21ZtxB0LiANMsbk8WQOTUkIH7fIIqQwMHbsGjsFlkfGD0llcTAyMlWsNbu3G2zhJm
-         sXnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSm+Z0+jH8fxMr2Pp/2E8fyjwOIK8jQMLEtJmaEasnUZEUTTQ6bjOjeMdXbpda6YF1NrdHbegx7Poq+ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMS1o7H/EiLZhirVvPRUKYgEmDNuUyHBLBPpFkt6DzA1F6AKZD
-	dqN8rDu/70HCN4yJ4lQyXKWknWMITgJ3dx6xdtJbyH9HcI8iMIzhrv5JKKGSuvCsNTQ=
-X-Gm-Gg: ASbGncuO6ehFlmwd5CE2Xt/ljSKGyw1tT6sLL/aJ4F4NJE0UqzPvd8BTGL2cXVdAZoG
-	WB4SX7gKV9hu07rG4tLbcQtn8HESg/xgoF8/3pY2T9mo2ac2NA4moTLqzewX4WqLQAE/QfPUuse
-	XMVU15JSTzAvN8C+nwMhckwuq6RE6j3MaZNQ45al6NFSk+fAAJf6lR5S0fLCivOrCCP1kEGaXzI
-	ep0IQ6/G2FgLF/4SHS9eJrcnOh/6Mns21dDcBUvIlX8Nk22Kc5Raox7Ln6sMrRcEEdSNr8mIchi
-	SDqKipS1UEdNqoEIfRxIBzopbBV2yHsh6H2ULiCtIHH4zbMbEIkA29qLB+QdqfyN3rwpVWYVnDO
-	Sv1UJz4jY/ADWcQT6d2eb831pJg==
-X-Google-Smtp-Source: AGHT+IFV7Jhqi3f7BMO1Zhr2G2rdE07bHjsE7MXYjkCsg5wMsHZGyAO9YBqYnRTTTcCErgswHUlrzQ==
-X-Received: by 2002:a05:6000:22ca:b0:3b7:6804:9362 with SMTP id ffacd0b85a97d-3b768eedffbmr5348368f8f.26.1753350921106;
-        Thu, 24 Jul 2025 02:55:21 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054c4c7sm13946445e9.12.2025.07.24.02.55.20
+        d=1e100.net; s=20230601; t=1753350946; x=1753955746;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hkXB2c1oP/E/k06GcTgcZXpElzLoIFNZDVG4i5HTvOM=;
+        b=F+UPlioL0hVZNzdZTThgnj4J0eClQ7XGGXKTChUMpnJ7Gu+AWgjTCxEAJpdpJ+zL1V
+         KEg5R9nfjijQgoUXGZxkU1NWbGy7pLGFdz3iKgxNrjsRHZ358yjxKB/0Bct3dnbRVCmm
+         zrMJiWsG4cotmuoV2Li9BmxVtH1d75b296hoMCKUUBHli01lsCDU3QYQ+OEIdW8ZD+IB
+         UImJJDii+en8GvYAlYYoV+MFRABdTgPmPoZ5qra2wVEOmgDZEnovu3OriZT0wbixkm4S
+         ESlPWdmArm84yXBNRyrevb9sPyqVOpeScUXzOC1epqV3igSVfStfo6oLBGh3Ee275CHD
+         lS/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWo84vdMjwecvwc3K+YF6b07iyOXLa3l7YSj1suAUsooQQXhpvJ7kdYKksKZaIU9CyoxfeFnW7NLvK4sB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNQFWdONX33Vs35SyYhSI/mYGXJ3DIABgyF+VCYveXJHUIA+0e
+	cLsmwi8yLNQ8L08ClLZDHg/7DD50YoYfRuJ5S265Sw0g/gXJhjlitii9U1MONilyRQ8=
+X-Gm-Gg: ASbGnctPigli2rV9EsadwxoCZRDWD0T+QpbgnJ777dVeGPXqVcWOAbcOttfTrsMVyuX
+	+ErwQobHxIwi2xFM6vqyq844wp8Nhdo4+CJ0KYwvUhe8O1KmZD6z2viqjU/gs/o4pOTIsBfd1vo
+	2ilmDeRSTaIyzJ6FlFOKhRcATBUseAuEqva4KcGbEiXx3tx88aoWGx7JEHf+VVZ3huuJmidOPQn
+	c+SRZw5ZAzBwb4nm6faZma+Ka9VQaFBZmhg4ZaadG41F2cY2zpV+78+RF2u+F26Prrop4GRvOd+
+	G+YuNfikHxklUXg8dYF/fVSGU4iRxwZmOcytYKmAQwcBCGD2WaoXOnG3163hl4IWofEmuRDPJA/
+	vZTn6zflnwxhj/aDh90/o+jk=
+X-Google-Smtp-Source: AGHT+IGRP/pIwNEZN/YSf647P0VBiKuokrllq5cryuGfggOfcoyMAvsAeQOTeSXR8LCaWYe+gmrK6w==
+X-Received: by 2002:a05:600c:37c8:b0:456:cdf:1ecd with SMTP id 5b1f17b1804b1-45868d76755mr53246535e9.31.1753350945830;
+        Thu, 24 Jul 2025 02:55:45 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:f44c:20db:7ada:b556])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586f88cfe3sm10532965e9.0.2025.07.24.02.55.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 02:55:20 -0700 (PDT)
-Message-ID: <059e02cfed79d51b1efd398822d98eafd4cbf5fb.camel@linaro.org>
-Subject: Re: [PATCH RFT v3 3/3] ufs: core: delegate the interrupt service
- routine to a threaded irq handler
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Bart Van Assche <bvanassche@acm.org>, Neil Armstrong	
- <neil.armstrong@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Avri
- Altman	 <avri.altman@wdc.com>, "James E.J. Bottomley"	
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"	
- <martin.petersen@oracle.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Griffin
-	 <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 24 Jul 2025 10:55:19 +0100
-In-Reply-To: <f6573ba6fcb43f0c41239be728905fa2e936961e.camel@linaro.org>
-References: 
-	<20250407-topic-ufs-use-threaded-irq-v3-0-08bee980f71e@linaro.org>
-		 <20250407-topic-ufs-use-threaded-irq-v3-3-08bee980f71e@linaro.org>
-		 <1e06161bf49a3a88c4ea2e7a406815be56114c4f.camel@linaro.org>
-		 <68631d36-6bb2-4389-99c1-288a63c82779@acm.org>
-	 <f6573ba6fcb43f0c41239be728905fa2e936961e.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build1 
+        Thu, 24 Jul 2025 02:55:45 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Yao Zi <ziyao@disroot.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/5] rockchip: Add power controller support for RK3528
+Date: Thu, 24 Jul 2025 11:55:43 +0200
+Message-ID: <175335094187.68378.6716301267666015992.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250723085654.2273324-1-jonas@kwiboo.se>
+References: <20250723085654.2273324-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-07-22 at 10:22 +0100, Andr=C3=A9 Draszik wrote:
-> On Mon, 2025-07-21 at 08:28 -0700, Bart Van Assche wrote:
-> > On 7/21/25 5:04 AM, Andr=C3=A9 Draszik wrote:
-> > > I don't know much about UFS at this stage, but could the code simply
-> > > check for the controller version and revert to original behaviour
-> > > if < v4? Any thoughts on such a change?
-> >=20
-> > I'm not sure that's the best possible solution. A more elegant solution
-> > could be to remove the "if (!hba->mcq_enabled || !hba->mcq_esi_enabled)=
-"
-> > check, to restrict the number of commands completed by=20
-> > ufshcd_transfer_req_compl() and only to return IRQ_WAKE_THREAD if more
-> > commands are pending than a certain threshold.
->=20
-> Thanks Bart. I'll try that instead,
-
-I went with a time limit instead of counting the requests in the end,
-because that should be more deterministic:
-
-https://lore.kernel.org/r/20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.=
-org
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-Cheers,
-Andre'
+On Wed, 23 Jul 2025 08:56:42 +0000, Jonas Karlman wrote:
+> The Rockchip RK3528 support multiple power domains, one PD_GPU that can
+> fully be powered down, and other that can be idle requested.
+> 
+> Vendor kernel flag all power domains on RK3528 as always-on, this takes
+> a different route and instead tries to describe all devices power-domain
+> in the device tree, even for controllers with unsupported runtime status.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/5] dt-bindings: gpio: rockchip: Allow use of a power-domain
+      https://git.kernel.org/brgl/linux/c/cc2f156a33278d9b23b5cf8f738c55c842d0f225
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
