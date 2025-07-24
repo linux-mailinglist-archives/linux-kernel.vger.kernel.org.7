@@ -1,297 +1,207 @@
-Return-Path: <linux-kernel+bounces-745060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1FCB1144D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053CBB11453
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35ECC5A620F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93B51C20912
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CEB23CEE5;
-	Thu, 24 Jul 2025 23:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D3223BCF1;
+	Thu, 24 Jul 2025 23:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CuBK/RRT"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012045.outbound.protection.outlook.com [52.101.66.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbB10xXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE761C1AAA;
-	Thu, 24 Jul 2025 23:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753398113; cv=fail; b=gm7EUG3cUSEVgMBKcloapIzdSHwfm92n9sw7FoUgWWEXm7I7O2sjUT6LO6CMfVX3mRiAK3EN6IxQ9n1KqfMgZEDWKUITs8xLQTMLEUGe9peDwEq0dPDUKfr7AeoBzEI2H/Ds6pGgJuJUyfMovTekLR0Uk5jEAqwb61iq3LKmrmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753398113; c=relaxed/simple;
-	bh=mYdCMFxyw+AIyLBi9kc6mBMmY4iOkMHm1QbljGrxPd8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=PeV8rOfhWtgC3rvyLwmHbQH1JYG8i+cknh5KCwqXr4dVCKZrr+G0+br9CVpsxceomfmprEgc1eO0bLswNXNXkZ6l8Go9efvqn0DLWiK8XP15LTRTWXFy0o4D3ORqHDp/xGDTPFaHUogiJi4QnPvp1nWXxEofMyOIeLAsVSVpRg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CuBK/RRT; arc=fail smtp.client-ip=52.101.66.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qg4yhqaVXsgZj8o3ex6Zz7KyOrHy/lyM31tCHROvJVU5ZKG3fmWIAsRkNluZkfrHaFHJ97LRnyhTC7tpC3YYoZE4uOMBvXpISAGZ5I8Td6fH67uQr2p7n8DZWd49ghT24GMhreU68PK6Ql4NMikIwJAr5VnNZyCQTdPzN1Hh/qAs1zY5Ajm/X5bMSqtt3hTmsiY5CuHeSLcRdK7dQkrYnQL1NgWP+4vNvUjfAEa9fhqg2jHtni2Y+havL55jlPHb2TKkQjQNsKOWLxsIiMwj4GJYvM73PHjTEuxCLtraqj7zIVmZTfKA5oM8tmo+K3F4VrFFHuKYVhvVwTGbohonpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1AUXoH0PNisA6jvSn2Vbpf5lgtJO78nHwoPYUibnP0o=;
- b=YdoeynRNcFjs22V8Bi3ckFn8/x/tuRrDumuF3ZxSH18Cq0eSydWDqr2Ce2gSK4ywdr+f8W0LT97UGaJW8bu8iLpctkELuN8omSUCW3jRDSg/PuUoX/tpsg9VVJLo1Uh9o2sZlARRkU9yE4HT4/GL1sbHEapDz971gMdjF4pGT/u3cpVyh4qObPUTJeDihi14opzyxAnhBlCXriv8PRFj+yrXxr5tqYzcRSOkLA4Lq4pemJIZn208yzG2P+nrSzELiGkKLzPwvEXwxVpKygKlpjteX73/ABRfQxhyQ41WjNuw6qG+6zSK0RJJNEF+SlG+IQemIgzH7/tqpVn/gx4D0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1AUXoH0PNisA6jvSn2Vbpf5lgtJO78nHwoPYUibnP0o=;
- b=CuBK/RRTMRQEOqTDCvnVh7iIGkiqwvwoSjIAigh+q9oEOZ+ZAde4AlU8e6rzXpJq3aHACXJHR4uz6eD4HH1xJdflITXKz37ZaOZECFN6/7/R+27ypYvrBj9CMJui1AHPwEtmdHrd2bMS6xt9VvMutT//wKPlMgD8qe1jez/baD5xatacBzpTPDyHzIkIi4vnsDXrNYHvFKYGgJKGip3tviFHwgY1b+iuS/yTGhXiFehASX5Ckdz4n6nXbAc7DQf1v1uQkiubauolZd3aQZ6Fu8ygfrRQEKVbUwA8Rl6uQ2/XSR/ZTO4PH/w07vuv7hdtGjQAg4/vhImttINtlMKiag==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8846.eurprd04.prod.outlook.com (2603:10a6:102:20d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Thu, 24 Jul
- 2025 23:01:47 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8943.029; Thu, 24 Jul 2025
- 23:01:47 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip (AT91) SoC support)
-Cc: imx@lists.linux.dev
-Subject: [RESEND v3 1/1] dt-bindings: ieee802154: Convert at86rf230.txt yaml format
-Date: Thu, 24 Jul 2025 19:01:24 -0400
-Message-Id: <20250724230129.1480174-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0208.namprd05.prod.outlook.com
- (2603:10b6:a03:330::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FCA223336
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753398356; cv=none; b=aSv23W6nzcZQzIfE2mibIX4xHXlyq2jfM0W9jj0N9ulRGAmNWzLs559iGw/8YcIZ+Uy8q2Ibmxs16aUoO4PQ/AhNOZkeCNrcw+jyjfDfkaMHJocQT0al5I5IXY0GjXJY4bS97+ytxfONaJuiUXTAe5tmLpkHn4ns1CkFDE6nKtw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753398356; c=relaxed/simple;
+	bh=bwlCmZDub3rNysUebRkTD9K6cse7Y8U+BJ89vVoxRnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pyyRCcdFdR7M1Hz2E+stPmUGsvoh+NXDolihmakiE4sRnlMgcnNTClrDwZmS7sPO8YwS8zz/1akiJwBYtC9USAY3coMOac3Ygnce1btB+xR4DEorih12Tu+RP62jbjnXIDklltMALACTlS/Uljxb5rex53no85+rPS7uS20Qk0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbB10xXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5A7C4CEED;
+	Thu, 24 Jul 2025 23:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753398355;
+	bh=bwlCmZDub3rNysUebRkTD9K6cse7Y8U+BJ89vVoxRnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KbB10xXIGws9uZ4LK+MQIlacJzjvRTB/j+UXRtb1zRP01IGOCGMePQjmrG4sqpEBO
+	 2/fyJE4rQP4gttWpEHXEJ12AZV1dFeK31+WvEm5CZtwSAzQP5WpZSdb9sP9s4qFN0X
+	 7/bnpUYapJ+Z/kwXLtRSgbKKZ9xNFBBHSfZn9Z5AU08T/R1v1hLzOe+5gV6R1hkAx+
+	 awqGq9jU68+DfTny0MMThB2NJxbiLAA555Dd4FEuVy76g65chNQaEB2GKjB+7SHebV
+	 m9E8DmssqRJM7l1Sf0stobnF1xBbNX+L/AJ3v7hxXagD1WHwW2ZjURYduLRGWNNG/i
+	 B6gYMWNqSNolg==
+Date: Fri, 25 Jul 2025 01:05:52 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v8 7/7] timers: Exclude isolated cpus from timer migration
+Message-ID: <aIK8UFz3A7hNc1sq@pavilion.home>
+References: <20250714133050.193108-9-gmonaco@redhat.com>
+ <20250714133050.193108-16-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8846:EE_
-X-MS-Office365-Filtering-Correlation-Id: dfe81410-be96-42aa-f0d4-08ddcb06111a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|19092799006|366016|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GFzPcBWi56Kw64rSSnvG/CTiortQbVa/SP0EOeZkK+39H3uqV4uLF6ET3LAz?=
- =?us-ascii?Q?r3h8n5YF1V53T+fDpy9SGtLVKVrGokMs8YB86O0eenKVo4s7zGOTAIhZPtwD?=
- =?us-ascii?Q?p+H+pxDMG76Q/3FHFbpLPaL718U+PAeprrP8W405MfKBHYHV7E4lwHxOt66e?=
- =?us-ascii?Q?UyVFC5cYU/hxZtK0/quGw1zW9eqMgCY2KAle5Qhf80Fegad4T9rFXAUf6Es1?=
- =?us-ascii?Q?hOyBYSJ5TIMXZSn9QX4uAzzGIh+JgCWi/buUmchYYeYtaqZYI9jVf0bmGOLE?=
- =?us-ascii?Q?jA5NbZvtyOEMC5xCYLYGVnWarVzYFH3n9qGEs2abXduHW8MHPxDz08j6inYU?=
- =?us-ascii?Q?d82yEOO/A1k3jno1oEzPIiU4SmBtGRvFpOrQZf99HUDf0TgYNgnK+sGg5L9T?=
- =?us-ascii?Q?jY7M5Ostpl8Nvt/N1oqGDNffSUfst7xIAgJQWEWR+QIajX3oxvk6A6VLEJMj?=
- =?us-ascii?Q?dBIEIvu826fXi2stSbKGf+J5N/hWy3KF5ANv7PqZ4Yt5pdZU33VKEJYDQ56W?=
- =?us-ascii?Q?YBEdIGWKHBkH4kW/Y9LWwac4nz5ZcxU3ndcD91hrBUxiVcVHa3NDbq5e6DXn?=
- =?us-ascii?Q?43InNgDjh4A+bWy71Am+Zs4q/9fMe55NsbKpSyCZATnijVluKUI62x9ZwXpj?=
- =?us-ascii?Q?ygA3ZBdeNL6WHxr61+XeBhIybG+nDKHsjmuLEww4z4wjduTNF5HlP+6tAEXK?=
- =?us-ascii?Q?hN31ZujujSe7aV1CyHo4q7E+NKdI8WOteg3+JqV9Ekzg4oho/cAj4+RJoF2S?=
- =?us-ascii?Q?gs1w++RowtTi79y3qXJJ+dk6JT/9BSiLm/x/sWFPw81curZaQdJyugx9FoT3?=
- =?us-ascii?Q?j5hZCF6QA+U9g68vCgH6SaqCxwBugOPfboc/EpZpaHW3FumiqdbxFf7FOZIa?=
- =?us-ascii?Q?rwUpCWSheBtVLpsWgf/a9j7s8wWKCSYNk7kTG/HThCb27/qRFobHhMm95VJZ?=
- =?us-ascii?Q?ojQlj4LmNTlPbuP5OxwUCjuR7umIt1hmMzCEeF1cfZo52jffHmw5kUjCs67y?=
- =?us-ascii?Q?z6S/VstuhcPyv9tjzOlB5ZqwjYxdHxvc0aPv2aOLzLnRGFJEqvAosPndJ8Cm?=
- =?us-ascii?Q?KOp+4HjhrRfdYm1YFmpmYCozWnViTRULHmGOqm2gMJGhWa/dxnieGzKI5ccC?=
- =?us-ascii?Q?f1SASYYebdGm4E2Ies3WA4RAk5Au9U4iVQr05JqgWOjhbNSdkyTb83Dr8xvN?=
- =?us-ascii?Q?MS44PE2Vob1u1f1Pp4OD2T4ppLL9QEU+GSNUVOFQuy38d7t8o7JQ1WhiBl3k?=
- =?us-ascii?Q?IL+QXG3NdcZUegA0Zvqn1AEY8iP/G9Q4bGTJX+tsTj0TXji8FPFOps3LVWOy?=
- =?us-ascii?Q?Ey8Xe6G0BbBl5idNToyjIr/dTvaVP0fIFNNdpBoFodJie9E8/oDC/bezmaMu?=
- =?us-ascii?Q?ww/mQppcPyEkMgkjq0gTrGmiLgvScf/hVVtb54UJDqw3hy5DS6QEaV7z95xb?=
- =?us-ascii?Q?UlM3r9UMqBbl/L+sWb0tU870XA9YWATn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(19092799006)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sAaAipkNwyhDhT5pO1w+GkI7IauId6ia9DBCY0pNk6cVtnwCNUcBqoCNLp+Q?=
- =?us-ascii?Q?uYKmfFVtNCZlQXY2wQZtmIfoBzipR9HO+L+/UOgptE6Fd7l8ExDBlstbcnZq?=
- =?us-ascii?Q?CZZG2CozIrXeAhf4ZSETYD6w4JmdOB3QSIqyktRSnK4shzMSW7gn1LQq1Bbt?=
- =?us-ascii?Q?xUg1xIxmcCGxEkXRxGcAq61Dxbekx5aYrQV30TLBMBVIKyRRIMIBir8SDSuf?=
- =?us-ascii?Q?/LxRwAUcapyVETG71VeFu9r1TTqz80htgHvPdeLBgH72oWkEQtjOeoSGQ2OJ?=
- =?us-ascii?Q?9gMN/tD2aQhlRrSDF4FjqXEi7sAvrRNasEpXLc27q0XCrWTH7m0jcJyV2QOL?=
- =?us-ascii?Q?cx4rGqTfX2WuYkMGlB4B1OZSjrbg8G42Yz7Ns5sUkpbzRV/QOjmxB7591V4n?=
- =?us-ascii?Q?kZzwk/qKveKIQpTu6+15KLTZtK3OpqYBZtocJvD57KM8Px8XNpg2cHoY3kJF?=
- =?us-ascii?Q?IdbTVu1ZCGmQip9Pfmp1+qDCgdC+mrFuTpv83esiY47EZl4stdrXel98Gvvy?=
- =?us-ascii?Q?S0rQS+W8fmHDzo19PgZh0oAepoDWcW5WGCHONayC+sxdDLJ+Bd11loCVZyhc?=
- =?us-ascii?Q?prjEiyr6YmULRP9LWVTqgdf5P6gexZDwOjDszn566YSaAz7Mxlw2s7BYUljQ?=
- =?us-ascii?Q?Ae0b6BRuF3YVGxAli5FwQGD2Pdj2S5ZafFINgt9zTgbgXPWzwZu9yButUkIo?=
- =?us-ascii?Q?A9ByOk0fKoqqecBObn3GzwOJYl4MPIWocFm/mMQSICazYuKuEgSAYnrZ0MWo?=
- =?us-ascii?Q?2XPSSHfwZsZ6iLFrXvz7q/5qK7CnntSqaxruWCtCJ/gLO1q12wVrNnPzQD6k?=
- =?us-ascii?Q?ILylHXzpkwV5k1FJYclqMo+ceLMmQTb4s7ak9gFYu/rJuCIE5mdeTEa+iVye?=
- =?us-ascii?Q?xNCoD8PXR395Srjd3DQ1cfNdzO9Dxny1dxymtOCjhriWEgCGJFPnIVqzVXYd?=
- =?us-ascii?Q?qtmUAz5qVHXjPcSZoizj4csoCHZaTCjBCF3ciCtRBbyxh7/pN5u5aL4gK2Jr?=
- =?us-ascii?Q?6YyC8fjdpM3zi4fy0nZROPMQiXNhXr5RKORdes5sCMsdalGT9/+LSDKfbyJD?=
- =?us-ascii?Q?sPQe+RnJCV/rnLHqQraPFl1hub34luy60SvZ/vjgh3XOQM7YUdOCSGSF4SsE?=
- =?us-ascii?Q?SAsLQafPHFOVDlZaKsEx0E2RtLJyVchzqmzFovq4Spr8ZX63bMacZirjhZPE?=
- =?us-ascii?Q?3QgJTZLIcvqH0oLReSGQs7fh3LyDvg+RWYU0jqWwcWhKyIbp5EOubakqWBNd?=
- =?us-ascii?Q?Ki4hDVZPL+q26c5FB8bvavFQxiANbDVZiZx6wtOTC1csDWgJz4R/s2pKNoLQ?=
- =?us-ascii?Q?5QO9tfXpEQGAk5Q+iF0ZhDB2odbmCmJ0F+N1xuCkDXSk+65maaFcJgyHNglk?=
- =?us-ascii?Q?MZtFi0Ji+GP0X7RIj1Bnr/K6DGtf3M+R+gblSsq8ZKlGybehk4qZsYCSLZ5r?=
- =?us-ascii?Q?6kKCH7Z6bZCbxCSN5qnskGenDUEQ0Y+gBZ25lRURCluJDHtMhosMefRKJAk5?=
- =?us-ascii?Q?utxRRI+NgcGpAnZhVd3narYTwh3/YZ8DgRot6f8/uArO1U4QDJr7cYJKaXaQ?=
- =?us-ascii?Q?g0V4hLBHSspSwsNWZ1k=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfe81410-be96-42aa-f0d4-08ddcb06111a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 23:01:47.6521
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KcXnlhIaOqfov606C13m6hMAlQX39tOXujfHWpdUBddVhyNWsiSic1TSQ+4PWzTIynbLd8OfqIdbd05AdnBwaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8846
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250714133050.193108-16-gmonaco@redhat.com>
 
-Convert at86rf230.txt yaml format.
+Le Mon, Jul 14, 2025 at 03:30:58PM +0200, Gabriele Monaco a écrit :
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index 878fd3af40ecb..c07cc9a2b209d 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/timerqueue.h>
+>  #include <trace/events/ipi.h>
+> +#include <linux/sched/isolation.h>
+>  
+>  #include "timer_migration.h"
+>  #include "tick-internal.h"
+> @@ -428,6 +429,9 @@ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
+>   */
+>  static cpumask_var_t tmigr_available_cpumask;
+>  
+> +/* Enabled during late initcall */
+> +static bool tmigr_exclude_isolated __read_mostly;
 
-Additional changes:
-- Add ref to spi-peripheral-props.yaml.
-- Add parent spi node in examples.
+This variable is still annoying.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Resent v3 include Rob's review tag
+> +
+>  #define TMIGR_NONE	0xFF
+>  #define BIT_CNT		8
+[...]  
+> +int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
+> +{
+> +	cpumask_var_t cpumask;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
+> +		return -ENOMEM;
+> +
+> +	cpumask_and(cpumask, exclude_cpumask, tmigr_available_cpumask);
+> +	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
+> +	on_each_cpu_cond_mask(tmigr_should_isolate_cpu, tmigr_cpu_isolate, NULL,
+> +			      1, cpumask);
+> +
+> +	cpumask_andnot(cpumask, cpu_online_mask, exclude_cpumask);
+> +	cpumask_andnot(cpumask, cpumask, tmigr_available_cpumask);
+> +	on_each_cpu_mask(cpumask, tmigr_cpu_unisolate, NULL, 1);
+> +
+> +	free_cpumask_var(cpumask);
+> +	return 0;
+> +}
+> +
+> +static int __init tmigr_init_isolation(void)
+> +{
+> +	cpumask_var_t cpumask;
+> +
+> +	tmigr_exclude_isolated = true;
+> +	if (!housekeeping_enabled(HK_TYPE_DOMAIN))
+> +		return 0;
+> +	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
+> +		return -ENOMEM;
+> +	cpumask_andnot(cpumask, tmigr_available_cpumask,
+> +		       housekeeping_cpumask(HK_TYPE_DOMAIN));
+> +	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
+> +	on_each_cpu_cond_mask(tmigr_should_isolate_cpu, tmigr_cpu_isolate, NULL,
+> +			      1, cpumask);
 
-change in v3
-- add maximum: 0xf for xtal-trim
-- drop 'u8 value ...' for xtal-trim's description
+And this is basically repeating the same logic as before but in reverse.
 
-change in v2
-- xtal-trim to uint8
----
- .../bindings/net/ieee802154/at86rf230.txt     | 27 --------
- .../net/ieee802154/atmel,at86rf233.yaml       | 66 +++++++++++++++++++
- 2 files changed, 66 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/ieee802154/at86rf230.txt
- create mode 100644 Documentation/devicetree/bindings/net/ieee802154/atmel,at86rf233.yaml
+Here is a proposal: register the online/offline callbacks later, on
+late_initcall(). This solves two problems:
 
-diff --git a/Documentation/devicetree/bindings/net/ieee802154/at86rf230.txt b/Documentation/devicetree/bindings/net/ieee802154/at86rf230.txt
-deleted file mode 100644
-index 168f1be509126..0000000000000
---- a/Documentation/devicetree/bindings/net/ieee802154/at86rf230.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* AT86RF230 IEEE 802.15.4 *
+1) The online/offline callbacks are called for the first time in the right
+   place. You don't need that tmigr_exclude_isolated anymore.
+
+2) You don't need to make the on_each_cpu_cond_mask() call anymore in
+   tmigr_init_isolation(). In fact you don't need that function. The
+   online/offline callbacks already take care of everything.
+
+Here is a patch you can use (only built tested):
+
+commit ad21e35e05865e2d37a60bf5d77b0d6fa22a54ee
+Author: Frederic Weisbecker <frederic@kernel.org>
+Date:   Fri Jul 25 00:06:20 2025 +0200
+
+    timers/migration: Postpone online/offline callbacks registration to late initcall
+    
+    During the early boot process, the default clocksource used for
+    timekeeping is the jiffies. Better clocksources can only be selected
+    once clocksource_done_booting() is called as an fs initcall.
+    
+    NOHZ can only be enabled after that stage, making global timer migration
+    irrelevant up to that point.
+    
+    Therefore, don't bother with trashing the cache within that tree from
+    the SMP bootup until NOHZ even matters.
+    
+    Make the CPUs available to the tree on late initcall, after the right
+    clocksource had a chance to be selected. This will also simplify the
+    handling of domain isolated CPUs on further patches.
+    
+    Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 2f6330831f08..f730107d948d 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -1484,6 +1484,17 @@ static int tmigr_cpu_online(unsigned int cpu)
+ 	return 0;
+ }
+ 
++/*
++ * NOHZ can only be enabled after clocksource_done_booting(). Don't
++ * bother trashing the cache in the tree before.
++ */
++static int __init tmigr_late_init(void)
++{
++	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
++				 tmigr_cpu_online, tmigr_cpu_offline);
++}
++late_initcall(tmigr_late_init);
++
+ static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
+ 			     int node)
+ {
+@@ -1846,18 +1857,9 @@ static int __init tmigr_init(void)
+ 
+ 	ret = cpuhp_setup_state(CPUHP_TMIGR_PREPARE, "tmigr:prepare",
+ 				tmigr_cpu_prepare, NULL);
+-	if (ret)
+-		goto err;
 -
--Required properties:
--  - compatible:		should be "atmel,at86rf230", "atmel,at86rf231",
--			"atmel,at86rf233" or "atmel,at86rf212"
--  - spi-max-frequency:	maximal bus speed, should be set to 7500000 depends
--			sync or async operation mode
--  - reg:		the chipselect index
--  - interrupts:		the interrupt generated by the device. Non high-level
--			can occur deadlocks while handling isr.
+-	ret = cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
+-				tmigr_cpu_online, tmigr_cpu_offline);
+-	if (ret)
+-		goto err;
 -
--Optional properties:
--  - reset-gpio:		GPIO spec for the rstn pin
--  - sleep-gpio:		GPIO spec for the slp_tr pin
--  - xtal-trim:		u8 value for fine tuning the internal capacitance
--			arrays of xtal pins: 0 = +0 pF, 0xf = +4.5 pF
+-	return 0;
 -
--Example:
--
--	at86rf231@0 {
--		compatible = "atmel,at86rf231";
--		spi-max-frequency = <7500000>;
--		reg = <0>;
--		interrupts = <19 4>;
--		interrupt-parent = <&gpio3>;
--		xtal-trim = /bits/ 8 <0x06>;
--	};
-diff --git a/Documentation/devicetree/bindings/net/ieee802154/atmel,at86rf233.yaml b/Documentation/devicetree/bindings/net/ieee802154/atmel,at86rf233.yaml
-new file mode 100644
-index 0000000000000..32cdc30009cc0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/ieee802154/atmel,at86rf233.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/ieee802154/atmel,at86rf233.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: AT86RF230 IEEE 802.15.4
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - atmel,at86rf212
-+      - atmel,at86rf230
-+      - atmel,at86rf231
-+      - atmel,at86rf233
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpio:
-+    maxItems: 1
-+
-+  sleep-gpio:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 7500000
-+
-+  xtal-trim:
-+    $ref: /schemas/types.yaml#/definitions/uint8
-+    maximum: 0xf
-+    description: |
-+      Fine tuning the internal capacitance arrays of xtal pins:
-+        0 = +0 pF, 0xf = +4.5 pF
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        zigbee@0 {
-+            compatible = "atmel,at86rf231";
-+            reg = <0>;
-+            spi-max-frequency = <7500000>;
-+            interrupts = <19 4>;
-+            interrupt-parent = <&gpio3>;
-+            xtal-trim = /bits/ 8 <0x06>;
-+        };
-+    };
--- 
-2.34.1
-
+ err:
+-	pr_err("Timer migration setup failed\n");
++	if (ret)
++		pr_err("Timer migration setup failed\n");
+ 	return ret;
+ }
+ early_initcall(tmigr_init);
 
