@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel+bounces-743725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43E1B1027C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763F0B1028C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE85E5860FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 457DE1C830BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420827056D;
-	Thu, 24 Jul 2025 07:56:56 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A474F27280F;
+	Thu, 24 Jul 2025 07:59:31 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEFD225D6;
-	Thu, 24 Jul 2025 07:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376C022AE75;
+	Thu, 24 Jul 2025 07:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343816; cv=none; b=BZGc8L0V3ooAse/572DeUMYAgmEfBGUvubi1UA9pLO7Dcop1rLo4rTX/MDg6ondCJXcWXsclG26GiaN1s7bWwU6xUhMqUYq6dgYpZ4uSjq8/X1759JR+A52BgTCuAQW0K9g0wTTuMew8gIEQjJXqC7QSPozkk4pvdg8mReXc0AE=
+	t=1753343971; cv=none; b=BuMx1qBjU780ysLr4sUKFE5GhLMZX6ivgm2froxB6KE/4bzWB7GbjQME1eZ/zDEwIMUmhHTg7EO9PIKAb8Otb9aikofzvPzXztVJuZtpoNQ6aLK+1QJbIOOGlUmc4EoTBm/JjCg45r7evqeS5TxTOTlj0BhHUyJKi3ZvZQli4ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343816; c=relaxed/simple;
-	bh=ghBB/PHxWvRV+AUck2mi8CWGeB3M55wT/OdGADJT6W0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QrSR82RzoDO60lglU8+Xl/Aj7j6LE2co3LbXSJXH2BsTGHlU6F1N7LJqeXrwNr49eIPtzvnBAVU1VM7txJMFABtgp6223RO6DCSVEVrSW/sSOT4NZ2lEOLpEnJt41zcmp4RrtfZgJoT5rWEEKgxDqh2GxDSE99YU7vZMYv5t9ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id A8DFDB4D05E5;
-	Thu, 24 Jul 2025 09:56:48 +0200 (CEST)
-From: E Shattow <e@freeshell.de>
-To: Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: E Shattow <e@freeshell.de>,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: dts: starfive: jh7110-common: drop no-sdio property from mmc1
-Date: Thu, 24 Jul 2025 00:55:53 -0700
-Message-ID: <20250724075600.239522-1-e@freeshell.de>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753343971; c=relaxed/simple;
+	bh=ljWAxX5kJwfu5zdNW//mA3LUzMWTGA4ERqpR/Py2W5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzvaTgkTMaGJv2fdOXMt3rk0T47194ovgWOCllLKYNSZKWEXNwkUZ//xol6I7RIdagN3n/52KePmzMyjbPZ19UQGit/5ofX8iFezdrdDpUtsOB+nf/PsWQBYF6ffUzb8oK4e9EjX+NAQ3he0Y6fP5vIMuec5xW7Wb1BG9RFvYnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B200368AFE; Thu, 24 Jul 2025 09:59:22 +0200 (CEST)
+Date: Thu, 24 Jul 2025 09:59:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 02/10] PCI/P2PDMA: Introduce p2pdma_provider structure
+ for cleaner abstraction
+Message-ID: <20250724075922.GD30590@lst.de>
+References: <cover.1753274085.git.leonro@nvidia.com> <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com> <20250724075145.GB30590@lst.de> <20250724075533.GR402218@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724075533.GR402218@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Drop no-sdio property avoids a delete-property on variant board dts
-having an SDIO wireless module connected to mmc1.
+On Thu, Jul 24, 2025 at 10:55:33AM +0300, Leon Romanovsky wrote:
+> Please, see last patch in the series https://lore.kernel.org/all/aea452cc27ca9e5169f7279d7b524190c39e7260.1753274085.git.leonro@nvidia.com
+> It gives me a way to call p2p code with stable pointer for whole BAR.
+> 
 
-Signed-off-by: E Shattow <e@freeshell.de>
----
- arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-index 2eaf01775ef5..a315113840e5 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-@@ -299,7 +299,6 @@ &mmc1 {
- 	assigned-clock-rates = <50000000>;
- 	bus-width = <4>;
- 	bootph-pre-ram;
--	no-sdio;
- 	no-mmc;
- 	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
- 	disable-wp;
-
-base-commit: 28fa0dcb571ab8f3be4d919f0e20e01d4e44bcb1
--- 
-2.50.0
+That simply can't work.  So I guess you're trying to do the same stupid
+things shut down before again?  I might as well not waste my time
+reviewing this.
 
 
