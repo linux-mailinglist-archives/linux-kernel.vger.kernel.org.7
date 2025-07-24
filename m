@@ -1,295 +1,122 @@
-Return-Path: <linux-kernel+bounces-743404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF76B0FE48
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA21B0FE4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9181C27D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 00:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEA24E64ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ACB7DA6C;
-	Thu, 24 Jul 2025 00:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61207081E;
+	Thu, 24 Jul 2025 01:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7+oln4Z"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcwPJVMQ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C009F61FFE;
-	Thu, 24 Jul 2025 00:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54F228399;
+	Thu, 24 Jul 2025 01:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753318718; cv=none; b=V3I95EbSC6wUnvGlqUnCLx8RU8YVOQUSGxlKqs+R069Fodwqr8IhjpByNOcteLG1Y2LaROzBhFGECKsNqCxzk0PStGgsQYWmMSudCCeGNQZxTWYnGPPyZU0BkoXHfK8wEIPnj4x1IxQn5yiiusfFCbpCrgmoWbLY7aJleIzlFkQ=
+	t=1753319035; cv=none; b=QPPlFaIUyPL8SmWPRLiNygEpXU8BP+GL38+21PrECDs7yaAyD7K1XIqkE3AdSRvyA03kGC0tbgUk+9/pX2YS005joVopgpWKLtHNLlRJme3h5U2ca/OKk0hPTmj8rFW2dLL+J8bP1DP5g38JZ1gA39CdiZcm3MDpOUsn/Jj+5ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753318718; c=relaxed/simple;
-	bh=aeNOdkpst+H3RxGW9+/APqV1DMPFE1EPMf73zoYY3KY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jRjQpMoxu7myihX788VB4uqrOOY69LePmJ4CKJyv/BKsTR0mGyfKiVCfLoiMbmPDr0/BwFXK8Synt3t33XYTE+vQfzz6JiwelwjD3WDS+KQTolwGZLXsIWrOYUJF90S1wM+D/Gnh+043mTw9LnbciaLS8By/bsW5VivT7ZkPl98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7+oln4Z; arc=none smtp.client-ip=209.85.128.178
+	s=arc-20240116; t=1753319035; c=relaxed/simple;
+	bh=oxMLT292oAQr1YDKS+b1hRMncAE3wMbx4SjGB8Xtl/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+im2ZmW7/4KRejgGTbACvKrx306pH9O7omQ88k8xV65o7qsw/a9Tp4Zoc3165n5Kt/ZTNMTiCoDLqQs+Wdltzosi2lVqH0cwX1RxLwLBjdU6Arajvk8Fk8dRC69YmDJwbUeZQov+xVD16E+nAlCi1aPrDHLnhAgQ2o0KFiqpyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcwPJVMQ; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-719c4aa9b19so5501897b3.0;
-        Wed, 23 Jul 2025 17:58:35 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23c8f179e1bso4365275ad.1;
+        Wed, 23 Jul 2025 18:03:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753318714; x=1753923514; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iPFpMxy87NH4c5TqUDIA7jr+NS6eKhkoz9Gcmalsvpw=;
-        b=A7+oln4ZeR7HjoE7Ahx/5+4oowv1UKatI+KVJLXmwOExZGrT5FP4GSwNNqEnkp4dPG
-         sZWPiuxzFh1wHZCi1aTFDFwpxnfONyVweepf+hUUbX53T719qzwXYpslBnByfb8vUzTS
-         vyTXA6XV0Lsz4j9iD2wEfpvbewiEbe1Up/k4nWAc+vpUYMNeVO4/mwfMh+FM5E9wVKbp
-         WOFOcyvksgrI+EP+b2Wj3IhddGwHAweFk1U+EmXaubtZ2wrYkUxxo4MOaXFzS61HN/Ty
-         o9+/dxWlNS17BH/amiSVf4YlRNjiTv4H3odbUdut2uBw/9CFq2K8AgtbvhYSsYoiWtwK
-         BQhg==
+        d=gmail.com; s=20230601; t=1753319033; x=1753923833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ola36QVTNrbThBTKVTSKPubN1/zqev6+ed2BRlcpJ0o=;
+        b=WcwPJVMQhtklk6/LHewIjw/zYzKTuKfFTQoSJ/SBSxnT3DUg7cHcBq8rI1b0GIa2BT
+         ybwUMqw56UT/uos0bfJC+h+uYaDWQmoHHukHfZEM6QHgmGHOdFu8KmtIJU07EjAraDqu
+         MbdOPi9Nw2g6oUNnF9S10MjH/MToIh8zgRZOeI+Jvw/u3nM+pE2W3yPo5ivih25DEGJ1
+         2/ZiyWhzR1BDX2oSr0WJ7LgR97QQ/UxCTyUNdIBg2e+A4PxcBZ04ZugYDG6xUCKFT4F0
+         jjzr7SUhBX0acr1vps0fhmikTSdnN7vGR0/Pa9UE6DmzS9IMlRDzj1x0hzSypNvKSEuG
+         ghFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753318714; x=1753923514;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iPFpMxy87NH4c5TqUDIA7jr+NS6eKhkoz9Gcmalsvpw=;
-        b=NIjlozqxkq8EA0BVh6Z6KALjMJHq+f7eur6BMEzgWXUzMqspW4zsLb5sGSFphBCJVR
-         lOTOAjUxDzNTsztGk35wUOOwPPmP2PUSBZN+g6yixQoljlTdraxD4rYsONSEkDjZSI9V
-         ZsVzJKHhV79RbslZzM/qdTXXq1SjYOZ2HcuHsYxbqAGpcDAErPJlU3ipD7UzeC8oYs0P
-         HYMR5HwJDQFhMnH9mCFLEd03+cjTfUEQoqdKIDeZV2zHd97zPxVn0H3+E6+x28cLan3I
-         BOiuRcUB+1WCNKL2bG9X5UhmiHbSveIjrmHNO2nV2NDRJre4T4hF7ji7iKI3q8GAokiJ
-         6K3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGkI0o3Ip7iCeoxCC9+Mh4C/ZyhNp3iN62Jru4cGXMCCyQpLbEMmtDYQlMu8xeRqX5Xua6LOnju3tpXlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb0vMr1ATmmOkU3NW7V1CX5LN5sBFsWB6yQ3PMJocQb+Bmtvfk
-	5bEpSY6SiVPReQ9eZGRVwcCtxzYm3UeQwkPmpiBCPk2dyKLdRo1uxoz+dnUyoclYKe7bEdo7dpd
-	7yg8zSEU8FRC8m50YxmLg0zH/rMzRnKE=
-X-Gm-Gg: ASbGncvE/x7/guPpcOeQQdQ6nZXGwvN8WNcy6LEx30CEx1TFrQfcCJak4fT21b731PA
-	oz2O3KSTDVKRXbU4OT9SfTfU+/xTrxH/kwXMIzBbz+KjvDwrdw1xkT+OCUJJAYvkaush07MVugu
-	IJjkR8LLyGqcyRifQmNAiPSDeId3H+3+AQwL5N4IMDnZeBofJ1BgxB1oc1UFZIrMmjGSlQmUsFL
-	Z2eb/a8nhPLk/3X4g==
-X-Google-Smtp-Source: AGHT+IEKWhln8H30QD7NO+17lYtb8FhsmUsXEZDWPI+9p2I/3xxnBz0+VdNNkrB6fsBjUTJVRlBe0+fZdoIRqSeyITM=
-X-Received: by 2002:a81:d20b:0:b0:719:cd4b:c30b with SMTP id
- 00721157ae682-719cd4bc86bmr2117827b3.16.1753318714567; Wed, 23 Jul 2025
- 17:58:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753319033; x=1753923833;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ola36QVTNrbThBTKVTSKPubN1/zqev6+ed2BRlcpJ0o=;
+        b=tyWrHNHbVgTyoa8Je5ypDmCXm5MgqHLdhC2shg6rhNzB/HOy6+HYFMlVmSRXPBL6Iw
+         izEr/bByomlttOgXTf/YGwHhbs2b2d7EjU8Qsu06oid74X5RfJCKyBz2foCSVGUYE/1B
+         I2oB5XEg80/57R31VV+2ADcY7jTgb4OTA4Y/IaxUraEg4o6XsoJAWgFmDq89ApxlAVH+
+         QFYqZLkAce/8LGYUWRcPPwz6FzGnJGrap7hJuHS1b8OBXDTKiVX8EGP6KiM8iN1VDS+I
+         y7u7RT4f+yxhZHsz7cZEwBcLhimfnXlr2R7Rfzk79A7o11en8mOOLvZTdiIAPsIM7Ybb
+         G52Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUpQZD2Hb+0IwIQujP0AxFCaGJyWN12ilepfuTvT8ExHTH7X/W3y4PyQB+HZWF7kNNj0pHJa996jORVTpSf@vger.kernel.org, AJvYcCWytgZFQGF0QzHRBujxJxzhtijW0ehtBW4jWszVPGBRwL4TspkRuu7LQOAE+2eGZHDRVJhCLKb1AOaW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7YNC1CLUjz42WYx8xOR1YSP5M6tq3cdxRjh9riKAMKL+4VGRx
+	lko+gke7HF74KkIlWpg3dXjacI3f1A2DTG1TzI2Vc7PBNoJiq2cHIN1H
+X-Gm-Gg: ASbGnctnv+Yz7yfb8XsVeE27RFn4C10Vs+6vwOKnc9kH2uqxFkB1/ZJVShq76emCKcH
+	+xNX27t6GdP/+alk5HOeNtdr49rVJLv6njiJ5PnPaOdspYh6DNa8Zdne9npxq0WrQUNcAocHxCQ
+	BRAdCRvq7AqEjsdARx3o8A6YqosWWWD4mbbca1IYQprjKzmA6R8UbqmR2drxwPJGC6lydR2zoih
+	x37ts0V8pXUbtBsJ/skh9nNN8qUexOEn6nnaNGoBJNm/8VY7IaGvx36giDBFziH25QXBLJHBpwv
+	Wa1P6S1CWBiRAh9fNNPX7ltg8BnUm+2zf7gkPv0oxgrbWrV+oSKWMhMhh9W5AWssn69IFbxLEqR
+	caFbAK2y64hqu66BjtPKEhDSuhCKk6wbF6mDvykE4LVLhZe6sDo2peqI2WL7osiEw2iu2hKIdO/
+	0=
+X-Google-Smtp-Source: AGHT+IFgaOGMceKN4aw59L0CUk1l7GDQtyX01Zhw6G9VYFu6+CkQUCsVgi4C70MsUhb+musZe+qrOg==
+X-Received: by 2002:a17:903:1a2c:b0:234:e7aa:5d9b with SMTP id d9443c01a7336-23f9814c6damr56396695ad.23.1753319032958;
+        Wed, 23 Jul 2025 18:03:52 -0700 (PDT)
+Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48f04afsm2229035ad.163.2025.07.23.18.03.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 18:03:52 -0700 (PDT)
+Date: Wed, 23 Jul 2025 18:03:49 -0700
+From: Tao Ren <rentao.bupt@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Tao Ren <taoren@meta.com>
+Subject: Re: [PATCH v3 10/13] ARM: dts: aspeed: Add Facebook Fuji-data64
+ (AST2600) Board
+Message-ID: <aIGGdbIX9HaV4dB/@localhost.localdomain>
+References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+ <20250723233013.142337-11-rentao.bupt@gmail.com>
+ <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rujra Bhatt <braker.noob.kernel@gmail.com>
-Date: Thu, 24 Jul 2025 06:28:23 +0530
-X-Gm-Features: Ac12FXzWLZCu9_iFO4o3Y-QlOvSlPpvCwUteuoM3xt4L68v9cQ8Aw1J0zIlz5eQ
-Message-ID: <CAG+54DbmHbw4MWUSF3x1qQC4bF7Uuu8mDD7aAZyBtbJ1D51MUw@mail.gmail.com>
-Subject: [PATCH] scsi:st.c replace snprintf() with sysfs_emit()
-To: Kai.Makisara@kolumbus.fi, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
 
-replace snprintf() with sysfs_emit() or sysfs_emit_at() in st.c file to
-follow kernel's guidelines from Documentation/filesystems/sysfs.rst
-This improves safety, consistency and easier to maintain and update it
-in the future.
+On Thu, Jul 24, 2025 at 02:03:20AM +0200, Andrew Lunn wrote:
+> > +&mac3 {
+> > +	status = "okay";
+> > +	phy-mode = "rgmii";
+> 
+> Does the PCB have extra long clock lines to implement the 2ns delay?
+> 
+> 	Andrew
 
-Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
----
- drivers/scsi/st.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+Hi Andrew,
 
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 74a6830b7ed8..38badba472d7 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -4564,25 +4564,25 @@ module_exit(exit_st);
- /* The sysfs driver interface. Read-only at the moment */
- static ssize_t try_direct_io_show(struct device_driver *ddp, char *buf)
- {
--       return scnprintf(buf, PAGE_SIZE, "%d\n", try_direct_io);
-+       return sysfs_emit_at(buf, PAGE_SIZE, "%d\n", try_direct_io);
- }
- static DRIVER_ATTR_RO(try_direct_io);
+Thank you for catching it. I didn't notice the settings because the file
+is copied from the exiting fuji.dts with minor changes.
 
- static ssize_t fixed_buffer_size_show(struct device_driver *ddp, char *buf)
- {
--       return scnprintf(buf, PAGE_SIZE, "%d\n", st_fixed_buffer_size);
-+       return sysfs_emit_at(buf, PAGE_SIZE, "%d\n", st_fixed_buffer_size);
- }
- static DRIVER_ATTR_RO(fixed_buffer_size);
+The delay is currently introduced on MAC side (by manually setting SCU
+registers), but I guess I can update phy-mode to "rgmii-id" so the delay
+can be handled by the PHY?
 
- static ssize_t max_sg_segs_show(struct device_driver *ddp, char *buf)
- {
--       return scnprintf(buf, PAGE_SIZE, "%d\n", st_max_sg_segs);
-+       return sysfs_emit_at(buf, PAGE_SIZE, "%d\n", st_max_sg_segs);
- }
- static DRIVER_ATTR_RO(max_sg_segs);
 
- static ssize_t version_show(struct device_driver *ddd, char *buf)
- {
--       return scnprintf(buf, PAGE_SIZE, "[%s]\n", verstr);
-+       return sysfs_emit_at(buf, PAGE_SIZE, "[%s]\n", verstr);
- }
- static DRIVER_ATTR_RO(version);
+Thanks,
 
-@@ -4608,7 +4608,7 @@ static ssize_t debug_flag_store(struct device_driver *ddp,
-
- static ssize_t debug_flag_show(struct device_driver *ddp, char *buf)
- {
--       return scnprintf(buf, PAGE_SIZE, "%d\n", debugging);
-+       return sysfs_emit_at(buf, PAGE_SIZE, "%d\n", debugging);
- }
- static DRIVER_ATTR_RW(debug_flag);
- #endif
-@@ -4632,7 +4632,7 @@ defined_show(struct device *dev, struct
-device_attribute *attr, char *buf)
-        struct st_modedef *STm = dev_get_drvdata(dev);
-        ssize_t l = 0;
-
--       l = snprintf(buf, PAGE_SIZE, "%d\n", STm->defined);
-+       l = sysfs_emit_at(buf, PAGE_SIZE, "%d\n", STm->defined);
-        return l;
- }
- static DEVICE_ATTR_RO(defined);
-@@ -4644,7 +4644,7 @@ default_blksize_show(struct device *dev, struct
-device_attribute *attr,
-        struct st_modedef *STm = dev_get_drvdata(dev);
-        ssize_t l = 0;
-
--       l = snprintf(buf, PAGE_SIZE, "%d\n", STm->default_blksize);
-+       l = sysfs_emit_at(buf, PAGE_SIZE, "%d\n", STm->default_blksize);
-        return l;
- }
- static DEVICE_ATTR_RO(default_blksize);
-@@ -4658,7 +4658,7 @@ default_density_show(struct device *dev, struct
-device_attribute *attr,
-        char *fmt;
-
-        fmt = STm->default_density >= 0 ? "0x%02x\n" : "%d\n";
--       l = snprintf(buf, PAGE_SIZE, fmt, STm->default_density);
-+       l = sysfs_emit_at(buf, PAGE_SIZE, fmt, STm->default_density);
-        return l;
- }
- static DEVICE_ATTR_RO(default_density);
-@@ -4670,7 +4670,7 @@ default_compression_show(struct device *dev,
-struct device_attribute *attr,
-        struct st_modedef *STm = dev_get_drvdata(dev);
-        ssize_t l = 0;
-
--       l = snprintf(buf, PAGE_SIZE, "%d\n", STm->default_compression - 1);
-+       l = sysfs_emit_at(buf, PAGE_SIZE, "%d\n", STm->default_compression - 1);
-        return l;
- }
- static DEVICE_ATTR_RO(default_compression);
-@@ -4699,7 +4699,7 @@ options_show(struct device *dev, struct
-device_attribute *attr, char *buf)
-        options |= STp->immediate_filemark ? MT_ST_NOWAIT_EOF : 0;
-        options |= STp->sili ? MT_ST_SILI : 0;
-
--       l = snprintf(buf, PAGE_SIZE, "0x%08x\n", options);
-+       l = sysfs_emit_at(buf, PAGE_SIZE, "0x%08x\n", options);
-        return l;
- }
- static DEVICE_ATTR_RO(options);
-@@ -4718,7 +4718,7 @@ static ssize_t
-position_lost_in_reset_show(struct device *dev,
-        struct st_modedef *STm = dev_get_drvdata(dev);
-        struct scsi_tape *STp = STm->tape;
-
--       return sprintf(buf, "%d", STp->pos_unknown);
-+       return sysfs_emit(buf, "%d", STp->pos_unknown);
- }
- static DEVICE_ATTR_RO(position_lost_in_reset);
-
-@@ -4735,7 +4735,7 @@ static ssize_t read_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long long)atomic64_read(&STm->tape->stats->read_cnt));
- }
- static DEVICE_ATTR_RO(read_cnt);
-@@ -4753,7 +4753,7 @@ static ssize_t read_byte_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long
-long)atomic64_read(&STm->tape->stats->read_byte_cnt));
- }
- static DEVICE_ATTR_RO(read_byte_cnt);
-@@ -4769,7 +4769,7 @@ static ssize_t read_ns_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long
-long)atomic64_read(&STm->tape->stats->tot_read_time));
- }
- static DEVICE_ATTR_RO(read_ns);
-@@ -4786,7 +4786,7 @@ static ssize_t write_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long long)atomic64_read(&STm->tape->stats->write_cnt));
- }
- static DEVICE_ATTR_RO(write_cnt);
-@@ -4803,7 +4803,7 @@ static ssize_t write_byte_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long
-long)atomic64_read(&STm->tape->stats->write_byte_cnt));
- }
- static DEVICE_ATTR_RO(write_byte_cnt);
-@@ -4820,7 +4820,7 @@ static ssize_t write_ns_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long
-long)atomic64_read(&STm->tape->stats->tot_write_time));
- }
- static DEVICE_ATTR_RO(write_ns);
-@@ -4838,7 +4838,7 @@ static ssize_t in_flight_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long long)atomic64_read(&STm->tape->stats->in_flight));
- }
- static DEVICE_ATTR_RO(in_flight);
-@@ -4858,7 +4858,7 @@ static ssize_t io_ns_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long
-long)atomic64_read(&STm->tape->stats->tot_io_time));
- }
- static DEVICE_ATTR_RO(io_ns);
-@@ -4877,7 +4877,7 @@ static ssize_t other_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long long)atomic64_read(&STm->tape->stats->other_cnt));
- }
- static DEVICE_ATTR_RO(other_cnt);
-@@ -4895,7 +4895,7 @@ static ssize_t resid_cnt_show(struct device *dev,
- {
-        struct st_modedef *STm = dev_get_drvdata(dev);
-
--       return sprintf(buf, "%lld",
-+       return sysfs_emit(buf, "%lld",
-                       (long long)atomic64_read(&STm->tape->stats->resid_cnt));
- }
- static DEVICE_ATTR_RO(resid_cnt);
---
-2.43.0
+Tao
 
