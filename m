@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-744270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C90B10A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275BDB10A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E2F7B4423
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:36:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3AC584B0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0DC2D46D3;
-	Thu, 24 Jul 2025 12:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3686B2D4B5F;
+	Thu, 24 Jul 2025 12:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YmObt6aa"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OT7nSb+t"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC48D2D238B;
-	Thu, 24 Jul 2025 12:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D01F2D29B1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360612; cv=none; b=pCXLCpwvWG1J9CTYYdLgURSxzZCruVmQL8ecs7YRQGyjf3/pei33Go2NrvSYs7Y3WTH24N4V47ehw9cnKDsAtGbbuEA1WVQ19O/E1NPWJcOiSCqOfdTkrJQAA8Qd7j2C7k94qpF7Hnu+vVCm5VA3CsTdMcqjdfl0TGVE5s3lBak=
+	t=1753360621; cv=none; b=DsmR3lDerR2dUOVfENaJTaHU3F8fas3rOYNdE7Rwy1B+S22DorpAeGQJ0gWKv6X4JrLZoiml0Steq281CYaK7e6G5CByNE0zRrWf0TvTAkdEklLox24QSKmZoKnUjYd8PlMBuWHJV8mfggg9Z6aOx6bNFtj+RHhgrv/dAPo4jhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360612; c=relaxed/simple;
-	bh=ZTxbfBR4e9g+Vo8kn1KwzFv9oZCibHXpEedTrwXLllA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rmhBZpsUZRS6/H24u0WDALz+8dwDAwOezpsnuzKER54F2TQOss5iBv74OXDGX+NhCJV3h512wF6OGHQFYEvY0PCH4CGGHzLOsNAIfvg3wQxclGpr0ou9uyqZoxTL+RA/c/U4D8gA7jwHCz4UOSH1+x5qYL2HbAteM4ZL4q68tzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YmObt6aa; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Ay/n4segqzBtdJcxqD3V5D84mQe9aCStMnYXrz6ny88=; b=YmObt6aaSGJMlOElGiwShkA2s/
-	x+rR+nIVtETN4fxSYbthlIKDkyjCfgR7qOqA2UrOGd6LqO9gw+PYxxgZeFBICgr7qUdtBFjLfFM7W
-	Nv6FYxDlDTRkKpz7GL0fSTbio5vcycsCc4PJA8PCHRR1bHBai76XHK/b43JKemwkCIWlhbbfMAkTb
-	gqSIPF5a/3ltQT2Oof/c5JVFCWpFY3GVTi9kubC7jULyNgI/FYDBiLBzkTqvdzXSqfrewsSh5ATab
-	kwkzlCsK1mZ1XhkC/u2qTga8BFUrn9aoaENc/c1pPMTM8oBR6w0dtJKqrpK08kecCVUjhPzt7lpqE
-	YouuGFPg==;
-Received: from [223.233.78.24] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uevBm-003BPU-Nn; Thu, 24 Jul 2025 14:36:47 +0200
-From: Bhupesh <bhupesh@igalia.com>
-To: akpm@linux-foundation.org
-Cc: bhupesh@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	oliver.sang@intel.com,
-	lkp@intel.com,
-	laoar.shao@gmail.com,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl,
-	peterz@infradead.org,
-	willy@infradead.org,
-	david@redhat.com,
-	viro@zeniv.linux.org.uk,
-	keescook@chromium.org,
-	ebiederm@xmission.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-trace-kernel@vger.kernel.org,
-	kees@kernel.org,
-	torvalds@linux-foundation.org
-Subject: [PATCH v6 3/3] include: Set tsk->comm length to 64 bytes
-Date: Thu, 24 Jul 2025 18:06:12 +0530
-Message-Id: <20250724123612.206110-4-bhupesh@igalia.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250724123612.206110-1-bhupesh@igalia.com>
-References: <20250724123612.206110-1-bhupesh@igalia.com>
+	s=arc-20240116; t=1753360621; c=relaxed/simple;
+	bh=LcSIW0NY6oVfU7XhBiAcCwSmXdrPSxDV38BCQfAwyXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AbNaRauYj3ig0M/45FMOAzmehB9WZmofIM8MJ4Tt26OjZRkTrPEiVIYWkFnG+O+t6aGqIPH8P6SPCeBf5iP5k5UtqaR7kw7c4NBaiTNExPNosGodz7kJoCD4ttQdAnwREe0uFI5/qn1LiJ6gm8+QC2bQhvMcRD+L5HfqJ/SOWlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OT7nSb+t; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9afC2029601
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dSR4gbUU/2tBPcpsP9lRCwcwfrmXksikVD3aXPQ1sts=; b=OT7nSb+tMmsWHalP
+	bvt32Eq5DE67wqxcWNQ7RmlVdqStcAEJFIjE2DJFh+TcX4H4wuzmlNY8+wFQMBHu
+	fHjjjd63XJZ9fnZtWr/Yb4tOKntSmW2GmhE2Xrmklb6qU25PTFD9RqJfMw7B4Lvy
+	GORgShFwNatTr4X70ZqzDU/YpFjkRrBMYxfitQzC/Efda7iKJYgCkBZeWk/MzVyS
+	dpwB4WatGXFuqgXc/srS110j5GcI4rjehJG8KyVFJvDRACxL8dGkbf5YCWn/Qo9j
+	J6W9buqT+4WaYjBTTXEaLeq4HS6zIixg6DrYqJzVqSTk/fHNTFFmzeA6ewEG/QGK
+	CY/Icg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4826t1g1rr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:58 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e33e133f42so28468485a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:36:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753360618; x=1753965418;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dSR4gbUU/2tBPcpsP9lRCwcwfrmXksikVD3aXPQ1sts=;
+        b=OQvwENwsKl+fOccSQAuA1kf5AYsR5WFO/Amh7e2OvRZA+rjvQJNw0zl4NETr1I3jW3
+         TJjIDyrgCkijhruR99aeMD5urvVLfv1hlV+Fgtme7PM1qWXkM5rf4thyQQE4OkNMsjgI
+         Ul3BTQD7on86Co5kh8YpOB05ZZvj/hkwsj7jxpQX8z9cGJG+JU5y3+f4kDP6nKNS5iww
+         1tuKoRor0xjrZIKxmMGCjrBn9nPrf/xgK1agPuRRVhz9afzGY9I8QbY4MOkVYlnj+Yu/
+         fi95ySISfsqFntlbhuSPGXAbhjgy0JFf1ssB2a9qChEvJwPc5bDzx3Z7GkMmD6yqjkf2
+         Md3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXbP8NW6V9mZujcG8DqP0DuDRIkUtlOeS/DU8WcOm/S7Vn4OyKc/kGH1itBfkvdVfF4hnQaJ5oy8gxK4Rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb1W+2ZrBf46fgd65FnLS+B/2jbvWnNhq338x0SI4Ml86pysXq
+	54Q1Tow51xlQNf5Qt3Co15DPUtgkSip5OyE7ZScaorRg+ZnT+8KJOYXOaU41a0PC+2ArOu0qTsW
+	cbNu2UHNH5xvZDrAlIb6njFK7vLGamB/skHrNeZDy3FMLFzdc8Crz9Hol/8Q03G0gt74=
+X-Gm-Gg: ASbGncvEzYX0ZnddGcMJ8NIyVrAuLqxS0IOQKEtm0Qg38spxB2BhXameTeiwdft5hnl
+	utpR2lYjmrqIPvfLairA513KEeeqKayK84UqbG7ut9iUtGCEbfb6L4IWlEe31t/GN0ZQh+icQdL
+	GNf+80hmK7s84B6tndCTdAxR2e0eEXh7K4OR0K7Js2yLLTgWSLAG81nmRMtjMUpTPvm1nkc/3o5
+	wGISSt5VCeIImoxBiJ3Pd4r4IN5EKqCkDdMIKQj1HTVAiSINEwnav2q6RMFGrRYXkjyWI3CAX3c
+	VWephWTQoIcQSVuFx0KWCZbWFWK16V2sujQmr2mexmQ+e+qq55d2TRDEgsd/Uak+9QgDKbkiutW
+	4yORuX+vIbiULjMqcIw==
+X-Received: by 2002:a05:620a:d88:b0:7e2:ee89:205a with SMTP id af79cd13be357-7e62a0e4ff5mr305362185a.5.1753360618062;
+        Thu, 24 Jul 2025 05:36:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtobSdcxMw45bMRgVyfiSZ4iD7n9YDnCcddnf4qk7/DbB2ZWWg10WQWjbeX0X1bWYDwrezTw==
+X-Received: by 2002:a05:620a:d88:b0:7e2:ee89:205a with SMTP id af79cd13be357-7e62a0e4ff5mr305359385a.5.1753360617552;
+        Thu, 24 Jul 2025 05:36:57 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47c496eefsm108992066b.25.2025.07.24.05.36.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 05:36:53 -0700 (PDT)
+Message-ID: <9884efc6-c6c5-49f1-b582-55bba8397521@oss.qualcomm.com>
+Date: Thu, 24 Jul 2025 14:36:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Add initial interconnect (icc_path) Rust abstractions
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+        Benno Lossin <lossin@kernel.org>,
+        Andreas Hindborg <a.hindborg@kernel.org>,
+        Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+        Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
+ <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: hBeYzsSxlg9iRpzW4xCd5ecjmw7ZDhq_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA5NSBTYWx0ZWRfXwp7DXHXEtNO0
+ ytMRfmuuC+/5ZZcaG6c384X3pdUVU8ppnaLWMJ7IZTqm4onEuift/ye3sbMEpIxvOV86ROAAvuj
+ VRgaTg84mssCpVfV3HUcC3PjfSMYVdyxEGWuxgdtI9pRPIU4WLPCaeUQRk3hfo2d5mganA1BLNW
+ bGmCcPeJhxl7tKBDjFlLI1hNtHZXGW/G+p+X8ETSCMberNsz+Y62KHrAvLsYXxT94gITjaQOJSZ
+ Uq4ioh5JYx3xghesgMSWiW1UCeM9lR7Pd5QjvbN6fgwNOA//q1kMI5Wh0buTr6uxu7dcADu2l3L
+ g4+gaS+dXKyNBT1FqVL/5VOc/3xj0Tz1bzSZ7SAaVNpeeKEx1kJ5LMpNDA3c9gZFkFDi47wuWqE
+ QW3U1wTPZl0ojm/xDM7k3QiXOq20Nr60Pn+9vsiDEiorqCgRyaiwyCzwoy5IJlsKj4/LqPRa
+X-Authority-Analysis: v=2.4 cv=E8/Npbdl c=1 sm=1 tr=0 ts=688228ea cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=1ihfflFO6Zl3b22XxKoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: hBeYzsSxlg9iRpzW4xCd5ecjmw7ZDhq_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015 phishscore=0
+ mlxlogscore=927 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507240095
 
-Historically due to the 16-byte length of TASK_COMM_LEN, the
-users of 'tsk->comm' are restricted to use a fixed-size target
-buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
+On 7/23/25 12:22 PM, Miguel Ojeda wrote:
+> On Tue, Jul 22, 2025 at 11:14 PM Konrad Dybcio <konradybcio@kernel.org> wrote:
+>>
+>> icc_path is in essence very similar to `struct clk`, so the newly
+>> propsed bindings are understandably based on the corresponding
+>> common_clk module.
+>> This is the interconnect consumer part, with the corresponding ICC
+>> provider changes coming in some near future.
+>>
+>> I attached a sample driver making use of these, to ease any testing
+>> or CI work (as the title says, please don't merge it though).
+> 
+> Thanks!
+> 
+> The usual two main questions for new abstractions are whether the
+> maintainers of the C side want to see this happen (and how will it be
+> maintained etc.) and what users of the abstractions are expected
+> upstream.
 
-To fix the same, we now use a 64-byte TASK_COMM_EXT_LEN and
-set the comm element inside 'task_struct' to the same length:
-       struct task_struct {
-	       .....
-               char    comm[TASK_COMM_EXT_LEN];
-	       .....
-       };
+I haven't talked to Georgi about this. I can volunteer for
+code-janitoring, but as you can tell I'll still need your oversight
 
-       where TASK_COMM_EXT_LEN is 64-bytes.
+Regarding the users, I don't have any specific promises on a consumer
+of these abstractions in a short term, although the ICC API is rather
+common (especially across the major arm-based SoCs), so it shouldn't be
+long before someone needs it.
 
-Now, in order to maintain existing ABI, we ensure that:
+Konrad
 
-- Existing users of 'get_task_comm'/ 'set_task_comm' will get 'tsk->comm'
-  truncated to a maximum of 'TASK_COMM_LEN' (16-bytes) to maintain ABI,
-- New / Modified users of 'get_task_comm'/ 'set_task_comm' will get
- 'tsk->comm' supported up to the maximum of 'TASK_COMM_EXT_LEN' (64-bytes).
-
-Note, that the existing users have not been modified to migrate to
-'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
-dealing with only a 'TASK_COMM_LEN' long 'tsk->comm'.
-
-Signed-off-by: Bhupesh <bhupesh@igalia.com>
----
- include/linux/sched.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 8bbd03f1b978..b6abb759292c 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -317,6 +317,7 @@ struct user_event_mm;
-  */
- enum {
- 	TASK_COMM_LEN = 16,
-+	TASK_COMM_EXT_LEN = 64,
- };
- 
- extern void sched_tick(void);
-@@ -1159,7 +1160,7 @@ struct task_struct {
- 	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
- 	 *     zero-padded
- 	 */
--	char				comm[TASK_COMM_LEN];
-+	char				comm[TASK_COMM_EXT_LEN];
- 
- 	struct nameidata		*nameidata;
- 
-@@ -1954,7 +1955,7 @@ extern void kick_process(struct task_struct *tsk);
- 
- extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
- #define set_task_comm(tsk, from) ({			\
--	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
-+	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
- 	__set_task_comm(tsk, from, false);		\
- })
- 
-@@ -1974,6 +1975,10 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
- #define get_task_comm(buf, tsk) ({			\
- 	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
- 	strscpy_pad(buf, (tsk)->comm);			\
-+	if ((sizeof(buf)) == TASK_COMM_LEN)		\
-+		buf[TASK_COMM_LEN - 1] = '\0';		\
-+	else						\
-+		buf[TASK_COMM_EXT_LEN - 1] = '\0';	\
- 	buf;						\
- })
- 
--- 
-2.38.1
-
+> 
+> For the first part, some subsystems prefer to maintain it themselves,
+> others prefer to have someone else lead a separate sub-entry in
+> `MAINTAINERS` (e.g. "... [RUST]"), possibly with its own branch too.
+> 
+> Cheers,
+> Miguel
 
