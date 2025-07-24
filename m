@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-744699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1437B10FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC15B10FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EB617BA2F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:51:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBEFF7B0373
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA052EAB7A;
-	Thu, 24 Jul 2025 16:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5CB2EAB91;
+	Thu, 24 Jul 2025 16:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IC+in0sx"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JT8cmGuI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0851885AB;
-	Thu, 24 Jul 2025 16:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94262274FED;
+	Thu, 24 Jul 2025 16:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753375937; cv=none; b=IzvOIMFjMekUKh98UKHr7V58j7Px1WeYaNTJT7rUlj2Lmx8VgFotMvaadEGHxESmD5Ot6Fzy7e+Svykdw9YapqubqWBChkVhPLzbHf6FYI0cn4tacRfWIpKODuOUCFdYeMhZcMvaBH6s5oCzOHPb/kEmRrSrg0COdejsDPoS5Ho=
+	t=1753376098; cv=none; b=uGABJsD0F7wFKkQw1zTAxZBj/vd+wJHYHxzTUAbYCfvDoqj5+ocZr7+Vo5qoKs7Kj7mOU2U1AZPhBo9otZTTv3P7niVFysppiYBRMset+xpviCtyAXzNOdXqy//pjvHIVujYny9pKgTBtrBnFLIp4KNxCFNgxsr6CZM0karOOvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753375937; c=relaxed/simple;
-	bh=tFNUcls/ACieVxAMjd/u79UbJBIfsHpFAKeS4sD7ozU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0NLVHR8cxbHqbvnRLWpsUHJkIcMuqVpn4Jo6vwxgLnjpIDi6miEfxi8XmTsASaRrYax/pvJtkDX7JwDGeaiCdrSuJlJkzlnKE/ypapupkG5//R082WZXmmVyq6grz7tiqM8KHt+qNH9oLypZ/mPE+/zqELa2Lkx9h5RNcpwksM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IC+in0sx; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cpoYxDZTbBdRV4hzabqDonIa6m7T4w9CFRBSDIFBvPA=; b=IC+in0sxB6ZOprZlgRuuB8AjEl
-	x4EWIC8wdpUI687JJh1g/B2bF2ef1zgE0LS0H1AG+prdPjZqag5LKojUcRWU18t0+ZSpSlGV+QDbH
-	7VCjb712oY/sax646Em2AanynPrTQt93Xe7dwV9MJjD9vaHciELIJuHVtpE7CPnLWQ8bYyr8a/g5F
-	ziVx8AkdXTSruBbVxGpGvXutW0bN8g/94K9DCxzWiqSwWm1IloKshfxL/gTo8qtBcsnJJExESPWyE
-	n5exkFKQ63R0ouoUuNSSTj2xLJVQsGpfVeKxowaKBAHH3ZyWK2U6N5WNaWwtqSQL7WPLKdZ3WXccN
-	ZDZrlsuw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47076)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uezAo-0003Xc-2s;
-	Thu, 24 Jul 2025 17:52:03 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uezAk-0000t2-2x;
-	Thu, 24 Jul 2025 17:51:58 +0100
-Date: Thu, 24 Jul 2025 17:51:58 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com, stable@vger.kernel.org
-Subject: Re: [PATCH net v2] net: phy: realtek: Reset after clock enable
-Message-ID: <aIJkrh9_4o6flHPE@shell.armlinux.org.uk>
-References: <20250724-phy-realtek-clock-fix-v2-1-ae53e341afb7@kernel.org>
+	s=arc-20240116; t=1753376098; c=relaxed/simple;
+	bh=+8vMFcg7Tsq0mO858hZbLULWT+KkS4qq2g4dlZowKp0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FD9sa7Vi8EOpctOSrBV/LKSMvQfckfvSsx/oKOA31e5S/nhd5gEDD8wZa7s7pZKcK6E8hBinop0xXrXulmbGJLGiiu+rSu8oN6/ex3Mjhyb1/1zxvwPLCYnhsNncRcAud3GluLwmZ867mVHt1vmKC6MRPc3lJ2rHsnvA1+d1gVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JT8cmGuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C2BC4CEED;
+	Thu, 24 Jul 2025 16:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753376098;
+	bh=+8vMFcg7Tsq0mO858hZbLULWT+KkS4qq2g4dlZowKp0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JT8cmGuIREx1jz6ZKLidnrP3vP9wPZx5FmQO9CyMH5soqG65rEsumGoy4WN8AjO/U
+	 7WsBfIfnZIm1ggedysQicNr1LPjOapqk3qhhU9l1rerj4X+QcSa3Ix6/GvflBrclNj
+	 Z2gR8+K+BhKr71/Ra9zSNujcESjfYviYz3sfjXMX3OwH+LQM2yzpGffprDW3h7ik1N
+	 WXj+rIl/FRCFyUgMsZ4yhcC/gHsqCJRzU/qHooOZzjU38AJuOLmZBZV/X2yA9801w8
+	 ywA0I2dtPAWwQEkilqnoVpGAn2+EHUopUPGgpRkcQ6k6emfEWPp5Tlj+jqB67IfJt4
+	 ZFj8Vc46xiugA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] drm: nova-drm: fix 32-bit arm build
+Date: Thu, 24 Jul 2025 18:54:41 +0200
+Message-ID: <20250724165441.2105632-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-phy-realtek-clock-fix-v2-1-ae53e341afb7@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 04:39:42PM +0200, Sebastian Reichel wrote:
-> On Radxa ROCK 4D boards we are seeing some issues with PHY detection and
-> stability (e.g. link loss or not capable of transceiving packages) after
-> new board revisions switched from a dedicated crystal to providing the
-> 25 MHz PHY input clock from the SoC instead.
-> 
-> This board is using a RTL8211F PHY, which is connected to an always-on
-> regulator. Unfortunately the datasheet does not explicitly mention the
-> power-up sequence regarding the clock, but it seems to assume that the
-> clock is always-on (i.e. dedicated crystal).
-> 
-> By doing an explicit reset after enabling the clock, the issue on the
-> boards could no longer be observed.
-> 
-> Note, that the RK3576 SoC used by the ROCK 4D board does not yet
-> support system level PM, so the resume path has not been tested.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7300c9b574cc ("net: phy: realtek: Add optional external PHY clock")
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
-> Changes in v2:
-> - Switch to PHY_RST_AFTER_CLK_EN + phy_reset_after_clk_enable(); the
->   API is so far only used by the freescale/NXP MAC driver and does
->   not seem to be written for usage from within the PHY driver, but
->   I also don't see a good reason not to use it.
-> - Also reset after re-enabling the clock in rtl821x_resume()
-> - Link to v1: https://lore.kernel.org/r/20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org
-> ---
->  drivers/net/phy/realtek/realtek_main.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-> index c3dcb62574303374666b46a454cd4e10de455d24..cf128af0ec0c778262d70d6dc4524d06cbfccf1f 100644
-> --- a/drivers/net/phy/realtek/realtek_main.c
-> +++ b/drivers/net/phy/realtek/realtek_main.c
-> @@ -230,6 +230,7 @@ static int rtl821x_probe(struct phy_device *phydev)
->  	if (IS_ERR(priv->clk))
->  		return dev_err_probe(dev, PTR_ERR(priv->clk),
->  				     "failed to get phy clock\n");
-> +	phy_reset_after_clk_enable(phydev);
+In 32-bit arm, the build fails with:
 
-Should this depend on priv->clk existing?
+    error[E0308]: mismatched types
+      --> drivers/gpu/drm/nova/file.rs:42:28
+       |
+    42 |         getparam.set_value(value);
+       |                  --------- ^^^^^ expected `u64`, found `u32`
+       |                  |
+       |                  arguments to this method are incorrect
+       |
+    note: method defined here
+      --> drivers/gpu/drm/nova/uapi.rs:29:12
+       |
+    29 |     pub fn set_value(&self, v: u64) {
+       |            ^^^^^^^^^        ------
+    help: you can convert a `u32` to a `u64`
+       |
+    42 |         getparam.set_value(value.into());
+       |                                 +++++++
 
->  
->  	ret = phy_read_paged(phydev, RTL8211F_PHYCR_PAGE, RTL8211F_PHYCR1);
->  	if (ret < 0)
-> @@ -627,8 +628,10 @@ static int rtl821x_resume(struct phy_device *phydev)
->  	struct rtl821x_priv *priv = phydev->priv;
->  	int ret;
->  
-> -	if (!phydev->wol_enabled)
-> +	if (!phydev->wol_enabled) {
->  		clk_prepare_enable(priv->clk);
-> +		phy_reset_after_clk_enable(phydev);
+The reason is that `Getparam::set_value` takes a `u64` (from the UAPI),
+but `pci::Device::resource_len()` returns a `resource_size_t`, which is a
+`phys_addr_t`, which may be 32- or 64-bit.
 
-Should this depend on priv->clk existing?
+Thus add an `into()` call to support the 32-bit case, while allowing the
+Clippy lint that complains in the 64-bit case where the type is the same.
 
-I'm thinking about platforms such as Jetson Xavier NX, which I
-believe uses a crystal, and doesn't appear to suffer from any
-problems.
+Fixes: cdeaeb9dd762 ("drm: nova-drm: add initial driver skeleton")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+As discussed, it may be best to have a newtype, or at least a function
+to perform this -- here it is the minimal fix nevertheless.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+ drivers/gpu/drm/nova/file.rs | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nova/file.rs b/drivers/gpu/drm/nova/file.rs
+index 7e59a34b830d..4fe62cf98a23 100644
+--- a/drivers/gpu/drm/nova/file.rs
++++ b/drivers/gpu/drm/nova/file.rs
+@@ -39,7 +39,8 @@ pub(crate) fn get_param(
+             _ => return Err(EINVAL),
+         };
+
+-        getparam.set_value(value);
++        #[allow(clippy::useless_conversion)]
++        getparam.set_value(value.into());
+
+         Ok(0)
+     }
+
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+--
+2.50.1
 
