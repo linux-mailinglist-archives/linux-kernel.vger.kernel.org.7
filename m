@@ -1,124 +1,78 @@
-Return-Path: <linux-kernel+bounces-745052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564FEB11423
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:37:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A18B1143A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BD265A7B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:37:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C4D7AD7D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F572550BA;
-	Thu, 24 Jul 2025 22:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5211114A4F9;
+	Thu, 24 Jul 2025 22:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="US2p18qN"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgaNBmkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8D52528EF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9B03595D;
+	Thu, 24 Jul 2025 22:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396451; cv=none; b=JhtVOXWdl7IAZVK2ULEYgmQCkc8GPYvdiU8wNjqqWLbpV3JRmTwgerRx6a58LqaKfvfwNYUjqPH0rBapGGdG3a/nvlIAYhwDmvkFCZHB/X3xDfUoguiKDPuuyEXbIH7dmLfE9zfVcbFFNgdjD5EHOEQ2G62WL3sYpc3HKpfJb0w=
+	t=1753396943; cv=none; b=j5LiGz00zDUTohqdwkaIiAYZWS+Nz72Tvd8SCjoclffUcJjnLmX1VQr6olYfMkgBdt36L90HNIaR5V5e5N91ozZGxNjn4NE8/lhBu9AeqfKS/c+UBz+zEpebd2HQJEFHtjqv+lxQm9kzhL9vIRHwG7bqCFidb3CbSyPA0BuUfUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396451; c=relaxed/simple;
-	bh=xOXxAx2oIYNb8vCpPM8S2JbT5dI3/juv2Ui5zwEncwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GArs1eX1vS+UR7Y361h6IWMSFv9qnHYKjUGWdntUfdR87F9+V6YGQKytoFI8W5+3PySJd3SU/N6W3Rcc6vBGGDwtbJIct/lPja3LzYsA9yPkNIkRNk2DoonsdUVOQuyctANZhq8wf54i+53AT1nTA309A29g9gGAJW9oFouCp0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=US2p18qN; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso4242a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753396448; x=1754001248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xOXxAx2oIYNb8vCpPM8S2JbT5dI3/juv2Ui5zwEncwM=;
-        b=US2p18qN5PcFHi1u1gmly3VWqlDIqcxxWAQ9o3M5wn90HoPNy4bcVO+WV7cMF7iJ9z
-         pBCp8VFhoA5fW3ttUuUcHsh2SGYkOoxG+9blr4CYtQV/a2INNkc3+4a7UQpiUoURcQAD
-         4FHF2UPqcmjyLJJwX+F1/1WQK0hiOv5Q8lp70=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753396448; x=1754001248;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xOXxAx2oIYNb8vCpPM8S2JbT5dI3/juv2Ui5zwEncwM=;
-        b=cdT8pOjSIOfNvGheu5c/8aeEQ1DvGj4VIQsqU8IrfkXJqb8RbmCcbnuE1OkaOTrTER
-         w6IF8VYQiCYyQVJ1lNs7ytRgps+SvWA2WwvYbyHPhkTmWYskSJW29E1iJOUPHXjHpIto
-         yVcxBloTSCadKZuMUBzssm4d88NN3TbhaTNoOQuPQjeBhnZBtbNZivV0nleR28e0mV1W
-         KnRQY3mnGmMIEtNpQc5usR0KsBkE+6alpQ4EkzXzYdvoS1PbXq39ojS4YI7YdgzbK0Of
-         CnliJU0MK7g9AffbTdhhKkYb0PluYMtFqE44mgUchsjc+gexiOV4LgczhhdXcLBaTvGw
-         uzLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXg+/v7ZJJsvnRgFhWPS0YKESEPkW006h4ii7fYnOeq4JMtK8WGUwd25hkWyc35R1zuAkRcjkUUpTS8Mpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxowwx6jfKep8RxPzp5wzJ3StEb3/l4s4hLnEFxXtU36Z2E1Ulw
-	qnnu0/z7WGY4JIHECzAVYuYneqQusUkhFjIsB3aZje/irfpC5JxY9OU3uGssTHYCTu1QJFcyUoF
-	eHHgWCvJ57NeKDNnzRRmoRow2CeiydYQxtFNGRpg0
-X-Gm-Gg: ASbGnctNbd72jFc9xZe0G69Kvu9mUjZd8JLXM8+jodO/EG5p5tnfRFxpv/dVhRk/1gK
-	w0NeUV9Cr0kas/ZL9fmC0DPL47IyErqqAcYlzVbTioTE9BxgxUgK6HBcAnpnNWV0X5LYKQYTFzZ
-	MHaLDMOjYloqYmzyOes+/F53rMC6gcCCnnJJp+SOph4XG3hQlNJd65WncauXLAZCyM9YXMbBujo
-	fp5h/AmvkqNg+7teMU29yJXym8ZSdCJ
-X-Google-Smtp-Source: AGHT+IGw7888sY4RAxWgOIpBS2jsqbLS1GSQw9Ezb4XYcelgTGp5K5TJlI+fh66ZnLxrY/LAEeaPSDPFviU6dhf0M5o=
-X-Received: by 2002:aa7:cd50:0:b0:612:e537:f075 with SMTP id
- 4fb4d7f45d1cf-614ea7376b0mr11607a12.7.1753396447893; Thu, 24 Jul 2025
- 15:34:07 -0700 (PDT)
+	s=arc-20240116; t=1753396943; c=relaxed/simple;
+	bh=kyaUc0YxRHWNhwRKUIjwnjMSiD8luSmM157tsQrBxdA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dBe8j1c4YJQb77fXm2PYqfe8EXAO7NzYJdtDIM/QzsDcAwSP0FzKLeVk7YcoPoBM30LuSAH+fdhsIweqj4IDFLUamMBsTB5dcZdhUDd+qZ91npThjpfatvB02xeUgI+jBqIidR0tSbmH2Kwq/Yo/IyX2v/l/W2CA++hnffkjaNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgaNBmkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A38BC4CEED;
+	Thu, 24 Jul 2025 22:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753396943;
+	bh=kyaUc0YxRHWNhwRKUIjwnjMSiD8luSmM157tsQrBxdA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=qgaNBmkFJfr9vLsL3r8eFNtu4lYulXUBdAsCcurRQ27/3JeVtoFGVeRdr4Lq+te8x
+	 RSsZDBnI8cK8oiKk/2aADlpWew4pp2WYuSgrCDunb07k8i0XbwPYyfA1RguJL52NWH
+	 8CNIB9SoeJOY51Qd6FzXLWSEBWikOXvhsFj2zeAPEwuyJqxXtMeO2d8kG+BkMARBu9
+	 3ER8uigNA6UiPDD3B/RIhlAIDkX4V77VSHiRQEUmPQR+JoOQ9Jh7XpaQ/gLvy11bM2
+	 SujP++quEJ1sjlvaqXyKAInTx5qL8I3Lbd4Ev09AYtfG2H8ifr1bokpZBQVowyYA1n
+	 j+9Kw2RzmZltg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34DF5383BF4E;
+	Thu, 24 Jul 2025 22:42:42 +0000 (UTC)
+Subject: Re: [GIT PULL] PCI fixes for v6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250724221009.GA3059501@bhelgaas>
+References: <20250724221009.GA3059501@bhelgaas>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250724221009.GA3059501@bhelgaas>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-4
+X-PR-Tracked-Commit-Id: 8c493cc91f3a1102ad2f8c75ae0cf80f0a057488
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 94ce1ac2c9b4925c39fc976dc3f4421fc9230942
+Message-Id: <175339696086.2557347.17923563816988546273.pr-tracker-bot@kernel.org>
+Date: Thu, 24 Jul 2025 22:42:40 +0000
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Jim Quinlan <james.quinlan@broadcom.com>, Lukas Wunner <lukas@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
- <20250723-ddrperfm-upstream-v4-5-1aa53ca319f4@foss.st.com>
- <CAODwPW_kex5Agqxg_i-XC308scEpUJU0me55G7iZ8nB9LC0acg@mail.gmail.com> <204401b4-b483-47e2-ae73-0994b39bd30c@foss.st.com>
-In-Reply-To: <204401b4-b483-47e2-ae73-0994b39bd30c@foss.st.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Thu, 24 Jul 2025 15:33:55 -0700
-X-Gm-Features: Ac12FXyGMQKjEAnwbki0mRBqxHKS-33YCATLZ5m_kBV4BCbWy_vAFu3BOhmvtmo
-Message-ID: <CAODwPW9drKEAMfQvQHV8eMTyf5KCHB4SN400JiUs0pgjoXy=sw@mail.gmail.com>
-Subject: Re: [PATCH v4 05/20] dt-bindings: memory: factorise LPDDR props into
- SDRAM props
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-Cc: Julius Werner <jwerner@chromium.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-> > I don't think this will identify a part unambiguously, I would expect
-> > the DDR revision ID to be specific to the part number. (In fact, we're
-> > also not sure whether manufacturer+revision identifies LPDDR parts
-> > unambiguously for every vendor, we just didn't have anything more to
-> > work with there.) I would suggest to use either `ddrX-YYYY,AAA...,ZZ`
-> > or `ddrX-YYYY,ZZ,AAA...` (where AAA... is the part number string from
-> > SPD 329-348 without the trailing spaces). The first version looks a
-> > bit more natural but it might get confusing on the off chance that
-> > someone uses a comma in a part number string.
->
-> The first one seems better indeed.
-> If the manufacturer put a comma in the part number we should handle it
-> at a software level to me and if it is a devicetree error it is up to
-> the devicetree writer to fix it.
-> What do you think ?
+The pull request you sent on Thu, 24 Jul 2025 17:10:09 -0500:
 
-Not sure what you mean by "handle it at a software level"? Using comma
-characters in the part number is not illegal according to the SPD
-spec, as far as I can tell.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-4
 
-That said, it is still possible to disambiguate this as long as the
-revision number is always there, you just have to look for the last
-comma from the end (so e.g. the string `ddr4-1234,some,part,567,89`
-could be unambiguously parsed as manufacturer ID 0x1234, part number
-`some,part,567` and revision ID 0x89, the parsing code just needs to
-be a bit careful). So maybe this is not actually a problem.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/94ce1ac2c9b4925c39fc976dc3f4421fc9230942
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
