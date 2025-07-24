@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-743711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C0BB1023C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:49:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825ADB10241
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C1DAC3733
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA643B8182
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEA126AAA3;
-	Thu, 24 Jul 2025 07:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396B526B765;
+	Thu, 24 Jul 2025 07:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUpsX3lg"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AapSjLHu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDE31C6FF5;
-	Thu, 24 Jul 2025 07:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E1219882B;
+	Thu, 24 Jul 2025 07:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753343350; cv=none; b=hMS6SmsF7FT2UTAUJz89tdZJmKjcN//LykO2DsvBp+omzye5oVpVufJN6JXNUXv3qwSRuQUzB2Nd7g2ldmfvqgQTdvR4SEMjUXzmMEKrxHJN92gTZL35m11WQ3DoLowC+QfqlA62ILjGDpUMah0dnL5TJsHWw5b/YEv81YXSnYM=
+	t=1753343389; cv=none; b=OyO4ljAOabsoWqICV2n1aST+WGza8104qD6ppNLZ+SPoetUoMTr5fhXHo7EGY0WiXhp/g78JbzKjtRRWpjhO/WxsRxjatprlq1REdLV+q144RCNTQhmzDMyY7pxrsUdhEg56jvk3okj4HiFXJPESJW1xtHM/pCCsKgRbV/p9l0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753343350; c=relaxed/simple;
-	bh=d/8QVK8y6ws/QbHuiFBL8hVTd/dAilTt+zbJtKU4EAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EXBe8h5ECnICLEwSB2S5Xt1V6mQDdJz0orhonxx7rN12FYsR+764uguu2gW30gCqsw5eBLwOPAqWck0r7vQo974ENlDM8wjUvUfUAOPU7W9MrlRgJtoaR7yxpEniAi6O6beF4vEKpgsnGlI8zWJ/UJDwOOvQXbMcgeBWBfYITFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUpsX3lg; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso441925276.0;
-        Thu, 24 Jul 2025 00:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753343347; x=1753948147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/8QVK8y6ws/QbHuiFBL8hVTd/dAilTt+zbJtKU4EAs=;
-        b=EUpsX3lgpFwfN+tE2he4V6QBkcK9dNsWjULujyejqFat8p7v6rCg3aLmpbq/bzSeLg
-         nWzNNLdiZor2BVR78EDyrAP+10etS7nhUVAZKjb7U6Xf4+38REcobeK7ZGJP5yT5xDTj
-         CAMS3/DZESFJ7/tmBhg+1CxUt5xsCWSIxbtcrIJHhmNWEc1Fud0NPAwsyjD8AZdiWojP
-         Y2ZLOvb/ILl9TCjR2mwSypkbE7YbsEbisjrQXTXxOwWTcn0CgD3Z+fA5hzDM6QPFzRhm
-         t+v1/z9JBjb+pMU5cdj3blGk5vpK/a0UhXY5rmteVwADjJErSTWWQ4TJhmKScO7cWOn+
-         NtvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753343347; x=1753948147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d/8QVK8y6ws/QbHuiFBL8hVTd/dAilTt+zbJtKU4EAs=;
-        b=b+w5LNEfMM4kHcjgswN+hvqTchrRtvUyNuiGYZVh33WDHhSStGjZIrlRSbXo4cl4bo
-         vWLPClqIYbeWcnZ99C1uJkUV/AKimZVmslj8qdfHldtTgne4hTcxMA8TOPYZ9gBqonob
-         xque4KvEBsGUwxfMWzpXNzk2W7+bgFyLeZBxa2EcikpNOMRUn6iZ9y9HrjGlM/4bba+L
-         OFsZD/ho/R+mr2aKJpHP6sXXKydJUaCHKxq/ZE2lXspN0YKM+IS6+WsQK3DXzU2/SHHJ
-         UXnyFT6A69TGc2pIPOFhyHn0iD9rCvoeqQjsa4mYmw5ICNZdjWGIgfncUNL5U+9lJkYg
-         chJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKrEDrs/caDHuG4fBzvBhFaxko/abigq4AT8KuNlTWmMzTiCfsN/ReF7dMpni52VVR1RZ1TOM21tuqCIyrsw==@vger.kernel.org, AJvYcCVvyCYbrUDdAkTWZp6p5yLTNmT2ub+tteMPYdsGfBsMsWpbM28q5gyo1Y/4zJbwpgU0I46f1/kH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjgA2+49XLVvYtGc+y7rX0ACBH3txntDyDcs1/Cw1fNzIb5YbX
-	+u0vSNiLXThLvP15p06AnWamj9piwMsCXpKsWuJM2xxlHJITQgZVe0EKrgcDeTPNAE/b0k9BoY5
-	iYpgImJEf5TBK/BS6ZsjlMYai93Jm2ko=
-X-Gm-Gg: ASbGncutJvVvipaEBF1dXJtJxvVTfr9AEGAWoH2G2T7S2XGAQj/AkX9ZDhTZ5WDHoG4
-	RV3DxbmaOMtFRbXy2vx9Wisv18Iz7pG9j8GERREKTSgUo3qnD5uCZT/4QooGRUr/a87umUO67Dv
-	M3CMgXpJXv/bOCt0gZa2OfvDKri1J6AYsl9qJ7/vvNb3nyItVfzG/kPQfEZTYXKek/TJi+8lMGO
-	sceGnar
-X-Google-Smtp-Source: AGHT+IH7A4sB9RjOrAs7qrdWDTw5qFH4C3xm7jLLxKBplQo6vBecYXyV1xeaYMiKq9tnqtcJInBRTdVLgmoBF+xv2UY=
-X-Received: by 2002:a05:6902:18d6:b0:e89:83ee:3bf with SMTP id
- 3f1490d57ef6-e8dc5862cc7mr7840966276.13.1753343347605; Thu, 24 Jul 2025
- 00:49:07 -0700 (PDT)
+	s=arc-20240116; t=1753343389; c=relaxed/simple;
+	bh=HC7IYoXji6jKfEBrN293aCaxM5q93xg9Cf9+C3xf31Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DsrvYZl82EQsmbgCVlRR0S/jH6OUoASCXOG93R+pgdoErVGPUK+tJQQEmlF5GWLpKQioJAae5djs3IzosXtmcUSFsebBKnon77xCjP0ojEaDHDOMRVMrh0L5HW+QXQM/1hVvVG6QSdwIagKw4nD6EmtvwKqJF8d9DK6he0XPt80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AapSjLHu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274A9C4CEED;
+	Thu, 24 Jul 2025 07:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753343389;
+	bh=HC7IYoXji6jKfEBrN293aCaxM5q93xg9Cf9+C3xf31Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AapSjLHubWxWfQD5G3m2rU72aqMAoUxcKdrPDWe5Y0pP1wxGHv7ycAFG8SbnAsrCi
+	 CzVeaFiNljXRoMy34cSQZ+/QWNGvZVWlRiX+brBk9O2hd764dvO2stDmKRNErH/3hj
+	 BnY9cvYJGHDFFgvNaTnsyqHnTPrQ/vPhhrC0sAhRjL2fvjoTEQ02HR0drE1ksWNk88
+	 6uQaacGqy/sWpIKMp1JKP8n1nZ4C38/qiGgjcao0VXfLVWPpsiRuihAnF/rMI34yj0
+	 Twfi4o33e76hvmMlfwaU7EiISzV0BFTiHt5Qsd+6ozuxv4OGh+8wR9/fsTWD4c9uhq
+	 umHDeoK6ef9AA==
+Message-ID: <a759f9fb-8e91-42ed-8709-b45281b8e964@kernel.org>
+Date: Thu, 24 Jul 2025 09:49:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724071555.442634-2-moonhee.lee.ca@gmail.com> <b81013d8f7cccb19ab126aebc7bc442c641d0f4a.camel@sipsolutions.net>
-In-Reply-To: <b81013d8f7cccb19ab126aebc7bc442c641d0f4a.camel@sipsolutions.net>
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Thu, 24 Jul 2025 00:48:56 -0700
-X-Gm-Features: Ac12FXxmJH-eMjOV40LUbD_GpkxkzA2LCDE6kmfZUjiuahwQV2PQa_PqdwVCFZA
-Message-ID: <CAF3JpA5vCOK72Ojy4FTa_MVGz=yYnJ5=vd8x6prMiC7UxBGWuQ@mail.gmail.com>
-Subject: Re: [PATCH wireless-next] wifi: mac80211: fix use-after-free risk in
- sta debugfs removal
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, 
-	syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and rate
+ limiting
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 12:18=E2=80=AFAM Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> Maybe so, but it really looks like a bandaid?! Why are we trying to
-> remove it twice in the first place?
+On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
+> +{
+> +	struct ufs_host_params *host_params = &host->host_params;
+> +	struct device_node *np = host->hba->dev->of_node;
+> +	u32 hs_gear, hs_rate = 0;
+> +
+> +	if (!np)
+> +		return;
+> +
+> +	if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
 
-Thanks, Johannes. I agree this patch is only defensive and does not
-address the root cause.
+You cannot use ABI before you document it. Read submitting patches in DT.
 
-I am currently tracing the sta_info_destroy flow to determine whether
-this is caused by a duplicate free or an unsynchronized access to
-sta->debugfs_dir. If the race is confirmed, I will follow up with a
-more complete fix that properly handles the lifecycle.
+Best regards,
+Krzysztof
 
