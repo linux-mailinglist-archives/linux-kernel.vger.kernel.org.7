@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-744908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCA8B11260
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:30:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA05B11261
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC265812CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901731C83DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F882D9EE1;
-	Thu, 24 Jul 2025 20:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64D32E7F1D;
+	Thu, 24 Jul 2025 20:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY4mg5v7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKEgLJa1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E43291C17
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550252E5B2F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753388993; cv=none; b=YUhRr+bM5ZBFQRkLh/jtnKgtxZYUJZvHmfituLMksXlOigs4DMfguwNleuECDS4cNOtsP9iPoBzKgsM60mHdk4Atlob+kRWOq2LIFscVO6rIv5bHoQviqx0cD5nJJ7jXPVtdZbYECEhVfEFynrd1VPRF7hdxXQY2J4Qa/l61Zgg=
+	t=1753388994; cv=none; b=tJFGnllQEFSzGvyDlPOJxrcYQ5m6fmk+3zEljoKjNIkjceY6sF3rEo34+/2qwI5G5OpR+opVgwmIK7XFClWXmhGHodeA2HGq641t7LTcV4R4Xv4epIlBSkFJQqQWwi7VTie12fmGmkZgMzYitmpJuplpaNwpvhcskJdGQJI/qGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753388993; c=relaxed/simple;
-	bh=BZpbmUrqv5U1Lw5E78QhNGYMQWS5dqtWVkYTRYBinaU=;
+	s=arc-20240116; t=1753388994; c=relaxed/simple;
+	bh=LYDvAi+oLveMgY3YmOkXpDoCDiOLM8woIasqX1I8qZY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UAvXb22m3/L6sn8J4ckrtOzgTxLiuG5v13EkbW4rHe9QnevOUyDKDBZGGEytk3FXoyGMg1yCvJ5Mtp5vNuxRu4bTjgtpimxoynS+Ory3Ohu3MlI9EFNxmQPr9x2CtneCZkeefs9qs0C4yCqKaN3fCmbNc1kqJPEYjDbYsA2RAb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PY4mg5v7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64501C4CEED;
-	Thu, 24 Jul 2025 20:29:52 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KzUNqCG0ctk26lMirxujoo+kBVEnAajExHN/Cj0GHL1sJvHCbPUp6yM0flio1y13bq/0dJ5vniqGlbgxfFYuYbG/bXnrru7HcUUFSPoCX1wwQ4Mkv5BH/bAaDSgBqrZ6hRYDW5a2idiyul9EB3aU2nnYOHqweaUKgzwVhRGA7Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKEgLJa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF8FC4CEF4;
+	Thu, 24 Jul 2025 20:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753388992;
-	bh=BZpbmUrqv5U1Lw5E78QhNGYMQWS5dqtWVkYTRYBinaU=;
+	s=k20201202; t=1753388993;
+	bh=LYDvAi+oLveMgY3YmOkXpDoCDiOLM8woIasqX1I8qZY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PY4mg5v73VvkCedsRsFwhKvzFW8s37UvJI5cApze9k4JR8ik8IJ5rqaPgsFR2ocDG
-	 HYXV64XQjXedHEzOlOO6twfMc9++HgjIQpmK74hKoGeTmM3ByiZ0XiDh81ckE7plJ8
-	 rotc2ZO4xj+2RPx9rYwOZaiQU1BP0Y/W1lT3sBHHn+uzpSk1CU0T9a9HMyYeVxC31I
-	 yj9dsOKZ2jLVyTOPkObBdZj3tdV3Ub+FxU8O/3W1ncQqQNr8MPTR1tizl6NnjLVvJo
-	 ZIGj/Y7HjoqGmwCVSr4usb25hLBEu8hxt1zh09nkPzrq4s+sDsQksDQnUVmwoBUx5W
-	 FBLczeD23r1ng==
+	b=gKEgLJa1elFugQ6mzuAcPZM7Ri9Nio7lgRkOCpEHtyN1WKBCj4FNcqOTmEw+pRg3i
+	 C0hkR+gKfnTp82MfabcNqNlzSHJdTuE+w8VIr1pU2OQtj2FhiT1GbgF0+9h2ZDEFBm
+	 VjtBTITIs8Ku/xRqjMPlHITsFJiI+PVdobmwXo6E6fcK4dsZAG3W+6AOA7KfCbfcct
+	 3rIs5waVwQFh8/2OjpwFyva9u+LvwWqarE4bF02rei3oI8KMu0kxuS6cJA+bZQLjJS
+	 Lz9WhOJPu/cPnYyLm1qSdstNFcMMDL6KCSHbWJ0UOLdlrRoLpoRXI8dYacvOPpd9Ss
+	 BnK0uVoTL+yTA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D0D383BF4E;
-	Thu, 24 Jul 2025 20:30:11 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADDC383BF4E;
+	Thu, 24 Jul 2025 20:30:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,34 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: merge the two conditions to avoid code
- duplication
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: zone: wait for inflight dio
+ completion,
+ excluding pinned files read using dio
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <175338901026.2519964.16198621184448578981.git-patchwork-notify@kernel.org>
-Date: Thu, 24 Jul 2025 20:30:10 +0000
-References: <20250723145837.187089-1-masonzhang.linuxer@gmail.com>
-In-Reply-To: <20250723145837.187089-1-masonzhang.linuxer@gmail.com>
-To: mason.zhang <masonzhang.linuxer@gmail.com>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+ <175338901149.2519964.13246019745046353367.git-patchwork-notify@kernel.org>
+Date: Thu, 24 Jul 2025 20:30:11 +0000
+References: <20250722060240.1469-1-yohan.joung@sk.com>
+In-Reply-To: <20250722060240.1469-1-yohan.joung@sk.com>
+To: yohan.joung <yohan.joung@sk.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, pilhyun.kim@sk.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 23 Jul 2025 22:58:37 +0800 you wrote:
-> No functional changes.
+On Tue, 22 Jul 2025 15:02:40 +0900 you wrote:
+> read for the pinfile using Direct I/O do not wait for dio write.
 > 
-> Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
+> Signed-off-by: yohan.joung <yohan.joung@sk.com>
 > ---
->  fs/f2fs/gc.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+>  fs/f2fs/file.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: merge the two conditions to avoid code duplication
-    https://git.kernel.org/jaegeuk/f2fs/c/b93bf64e349b
+  - [f2fs-dev,v3] f2fs: zone: wait for inflight dio completion, excluding pinned files read using dio
+    https://git.kernel.org/jaegeuk/f2fs/c/3bf1bab503a5
 
 You are awesome, thank you!
 -- 
