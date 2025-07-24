@@ -1,389 +1,194 @@
-Return-Path: <linux-kernel+bounces-744817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95073B11139
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6F1B1113D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CB647BDBF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DEBF1891F02
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B94205E02;
-	Thu, 24 Jul 2025 18:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAB623F41F;
+	Thu, 24 Jul 2025 18:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrWamkk6"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PPH0mY6Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A327057D;
-	Thu, 24 Jul 2025 18:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C222066CE
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753383282; cv=none; b=u4KmNeXHiba/39/98Nx/OSTKaA7JnDexGQLTWzVmIoSasVtq3yxCMDe7CcBfylXOE+QXhYs0Nb+FO/MqjcqZy/03OvqeGR5asSYm+41jK6CCo3rFITvPCKYg6v1jBvaQ+Wl9yH+A+0dMZYQsIMSbgdfL+vhlFkkF59YQOVwOM6E=
+	t=1753383387; cv=none; b=r80Z0ghO5ChYLybaLERqK83g/HS7bADHZwtfOJmDDOs6I9ScaopuKyeJHMqQ2QHPon0Q9+LtjzBB7b4VBLt2uVK9Uh0jqKGr1E7bhbE1RTk99sD7IDYZKclt+P5jrjQAqgBkfGHHZQTzIrZBk50hL12VY9MfJqEEEF8ND01OnIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753383282; c=relaxed/simple;
-	bh=UZLedV5uA6EjpO7MgEOW3w2GJr+5eSJTDyDVyLPNRsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vDsTJ/6ZD5erS3Dd47c2QfZhCe3pgM1PYsNFIeXWUX6Z/7raVMcy67SzkATEWs4X9LB5M/4nfIirjI/Db21q60/DxDqGd9ExhAAo5qhh0UkCeeZVQH+Z4b2ZgNKf74d8wfkW2vFK0wa3tBxoW9peucMgpIhG7tsaUI3CZm6Wmkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrWamkk6; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-33097e1133fso12724791fa.1;
-        Thu, 24 Jul 2025 11:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753383275; x=1753988075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ijSk7QskYjpTyK8bVw3INdFGsVMtzdXh/QKVQVcOkU=;
-        b=mrWamkk6DvH/MJ9bAdSQkTSkfN2zkN5iIlPODMxLcIun33Ys+wZWorpBXZ1cbuxk35
-         JBKJmCjGT3ovhrNGnTPvThQ+91ZO3VF2Ot95uk6XWbK5VinoraxGAjq8ELAn8hlqNZeH
-         YNFm68juvycxgh5eXNAaKQIIuu9xbOpe9soovBtkTlhgJJBNZwoZzFv+Gv/1oZthKiSs
-         Vf/iCIuySWiVGzWvzdAqfAGbuTwSL5BSxOBo3ac3X/hArSI3wbG/1rxibypfujvMMnw8
-         ruxE7O884VbDCZ94hzmw0BFfSIWT4XoxkJ5W+PtzkTiSJw9Fbg5ZM1yA8Ir0FkGA0Nb4
-         L6Cg==
+	s=arc-20240116; t=1753383387; c=relaxed/simple;
+	bh=9lojJqofrOhZnH+VEQ+1Kl/VSqDCPoyu5awFrbdtJzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j8aq9eL7tKBQW97T2xqTZf0AuMgxUz85G4NYGLHmsCHw0LTNb4qtHEPhbzmE7Kdn/ykcXOweJEF9xn7vblxQdUUfAMMtpI+M1ZlhszQ33x26k41FRyjG26BNrUEGCS3cRRYjjoXS1Ly8ytFMuajrVukj4Y3anVdb73tgzsyKKC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PPH0mY6Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753383385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z5RE8ieixVr1FZvK/cEBWikusS31nqX+pPuAGM1SJ/k=;
+	b=PPH0mY6YC/r3sSRHuVz58kJuJXhRbcPa7pBw2K13tOzL7TZhrcHu9yrd7HKUKdquAyRjoq
+	hhUx6dVQxWEqyVWGP7KVXT1b/X8q73Cdx4T/YQ8FpESx6FkEmTDhtZ8TE7EQO+qSIG2oBJ
+	XeE7zDInFJMFlMvKUA8FbqrBkGrv1pc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-EIM2D-1DNQWgr6KJmXOqEw-1; Thu, 24 Jul 2025 14:56:22 -0400
+X-MC-Unique: EIM2D-1DNQWgr6KJmXOqEw-1
+X-Mimecast-MFC-AGG-ID: EIM2D-1DNQWgr6KJmXOqEw_1753383381
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4560f28b2b1so4830645e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:56:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753383275; x=1753988075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ijSk7QskYjpTyK8bVw3INdFGsVMtzdXh/QKVQVcOkU=;
-        b=S9zQGinCtPun28mg7T1ftJw7jzFxf1yeVNL9aGNt5MjyCWsEGwg/kKCCXDa3iGf4Gh
-         X9mWqMcyuTUPbzSQO2s/GZvHvrS8lPUmf1rFqSvIunKjRfqogGSz1ysdd2lLe5f4YYoQ
-         DLzKuqL3+ZLYAxUgei90bLehyUAJs/alqUlbBGMj1LHx2XtG0nAeb+EAUEimIlVAxyow
-         ETFxE46Hu7wFEhis4YyZUz+DakNf3X2fpo8qZoGLhnC8asGUh+ulA362JKmML/peZFz1
-         A9wUUJETxUIkZgtuctumtAyysopfemLGYb0j15FhmMQQKSXhCHm8BiBBN/O1yYtj3Jr/
-         W7dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWITD/EuoKcvad2I1pwpmB/cZvcJjZaK4gboPeavupACkh/lk959kKdZRYcEzwzayg2AeuT0Urgh0I=@vger.kernel.org, AJvYcCWR6W6dZ7jmiGQAhjhcBXCa5zZRfqSaMwNA6JawRW1u1tl++odILfSMev79s7trAanKFBgDArGvV/0+7EbS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFFWwOszO+ajpveNrXLPRfh8qC/1gW07By7V5M0nQd6N6eiEJf
-	ouEVmcjvgKf2Sd97wXWzv/ZNWLH/JfDgKnW8ddRNaZyXhpG5XuuMYljg2qZ9xjCyG1SzjBDNUaF
-	++BcpN2Gs4wYWWgUQ+ZZUj6pWFanQUpk=
-X-Gm-Gg: ASbGncshFMQaJmNN+J/TM7wfHnDEo36UjiG765Jg2wy8zI3yuG62HS0BufGloWPw5Bz
-	skyOWvCARlb2511BAZqcemvVkgz9S1RFZZQAC/A5a7twvpA+efLZrcC5s+8u0ZKaQcXgrNA6QfD
-	wDHxu6fCqUCBqekzu+NCcGb8Urf3p/WL4Pkdkh1V5gNwQir3Q9bxt7qcE9Ps4K5Sg4uLFoTwmjM
-	EX7IrGUdFeSCBYfOhNmAW4AiVYSIENzeE872RD0lg==
-X-Google-Smtp-Source: AGHT+IG9EuHm1P3KrGqSFeyfqN4yloIzeuOPQ8o8aTK9HGHxo5BWMxso5dDhyeQoGOcUiunlzsc9rLb4u2ZasQF8jAc=
-X-Received: by 2002:a05:651c:1986:b0:32b:80e1:300d with SMTP id
- 38308e7fff4ca-330dfaa6f52mr29091311fa.0.1753383274213; Thu, 24 Jul 2025
- 11:54:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753383381; x=1753988181;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z5RE8ieixVr1FZvK/cEBWikusS31nqX+pPuAGM1SJ/k=;
+        b=KGJEHAt6JUDrQ868vzhEnlZeSU/BwBjQUo9o2puh4a4PuabDKfOHGKrzt9HXExwYnm
+         7fu1Xq/t6KWPaLZ6Ow/X0LJzE9BqOm4aK4pp7FaUrJzH2dr9jKjfuDwuxam7ORAVuBzh
+         5ukhzeoL1Er6r6w//457xI4ZBX2Yz0rndPE1LWC75HZoxDUEqjOXBP8K/fDeaGxZ8cLu
+         jEGrVJe684WUPdHGkThz6AWxRq+vSSrlFvbp4n1J2wB1OkGeHby9ijQkmYEGiP7L4urF
+         fFjp1PURi6SV5EGXXCdbcH0FLN4xhwUB8iq8zMML3cYyKbadcETY3D7xQn8O8fwKbQaG
+         hfUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFe6GKfHPqHGK9zn6NM0HpaA/U7e8+SRFhA2mzgNU3CzO8NKBUgqg1+nbrODHAEP7tg/GN/XY+Nc2/YgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpYHuC/3PMZtd0I0YDrZ0l1ATw9CyiWdBNKoOAMhaW+W5hb2vt
+	xvzyrVM5q5KPxzuCBFHHhQDmdGnYL9fB5zwTA+hhRzIyMLw4WlpyqI5dVvegm8kHfi8Qj8waknn
+	ig8OtywD7y9ADpmzizTAiEDCelbZXICC4MJa41VwNKlYMyVBjp4wsQqcE6sm0t4QwLw==
+X-Gm-Gg: ASbGncvMd6tSmzKV8nScFrd63eEtVaaNrcN26R+3BInGgntRrDXoMITfzuu5CVQagQv
+	X8v8dObkWCmF0S/uwh8ceCUVRXAVukwX16pxmrBJtJjYsepmebIqeuDEoI3zNlo2/+WcirC+8+i
+	E/2jOs4+KlvX1gM17tTfvZfO4YTF5OlymlKzlcJ4SsnPovlwDSN5uacproVBndxvZOHOKlRD6YP
+	WL2CpzxTGm3pqRmaYg+TsRQFTnteulUCvWBL7zLZ3J12Fvyc8D77TrXAsQzQTWBNDfwK/U7GgkP
+	0uqtrWVy0IBAp0HMUg9szEj8W9+w+1eiKR0+o3b51c7NmZb8XsmTt1EyTaSYZNufrArKTE90B4j
+	9MenlUlOfDtbRCk540qX0ZNDRjPb5Wk5ul3CriErVVipwC+4Up68m0/g5+6ujz8TnEgc=
+X-Received: by 2002:a05:600c:811a:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45868c9d30emr69908185e9.12.1753383381315;
+        Thu, 24 Jul 2025 11:56:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdAyXbzNe22IPRDjuVXzdwdHtPaDK0O9XtZTaXqXhWLNbVy9ZJqhMpYUuuk34Bnx9LVuwZMw==
+X-Received: by 2002:a05:600c:811a:b0:456:2142:7fa6 with SMTP id 5b1f17b1804b1-45868c9d30emr69908035e9.12.1753383380769;
+        Thu, 24 Jul 2025 11:56:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f01:5500:ba83:3fd7:6836:62f6? (p200300d82f015500ba833fd7683662f6.dip0.t-ipconnect.de. [2003:d8:2f01:5500:ba83:3fd7:6836:62f6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc60501sm2970578f8f.2.2025.07.24.11.56.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 11:56:20 -0700 (PDT)
+Message-ID: <ab45d2f2-a34e-4ec7-8a49-03d166e6215a@redhat.com>
+Date: Thu, 24 Jul 2025 20:56:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721195419.526920-1-akshayaj.lkd@gmail.com> <20250721195419.526920-2-akshayaj.lkd@gmail.com>
-In-Reply-To: <20250721195419.526920-2-akshayaj.lkd@gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Fri, 25 Jul 2025 00:24:22 +0530
-X-Gm-Features: Ac12FXx1yG3AE99wuna7d6P9cuBv9SHxx6lTYY2ihETbWOs36a7qMy3z0Vg4JvQ
-Message-ID: <CAE3SzaTFgLsLCw-bqSTygaanCpHKHGRj7ssGim84WjB-DxZPVA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iio: light: ltr390: Add conditional data freshness
- check with sysfs control
-To: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org
-Cc: shuah@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] mm/mseal: update madvise() logic
+To: Jeff Xu <jeffxu@chromium.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+ linux-hardening@vger.kernel.org
+References: <cover.1752687069.git.lorenzo.stoakes@oracle.com>
+ <ec480dc1fd4ce04bb11c0acac6c6da78dc6f4156.1752687069.git.lorenzo.stoakes@oracle.com>
+ <CABi2SkU75e7tXcpgnLbDhqSJBWVPOvmfMh2uPsU3mUjMUhhYqw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <CABi2SkU75e7tXcpgnLbDhqSJBWVPOvmfMh2uPsU3mUjMUhhYqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 1:25=E2=80=AFAM Akshay Jindal <akshayaj.lkd@gmail.c=
-om> wrote:
->
-> Add logic to check the sensor=E2=80=99s data freshness status bit before =
-reading
-> data, and skip reads if the data is stale.
->
-> Introduce a new boolean sysfs attribute, `data_fresh_check_enable`, to al=
-low
-> users to enable or disable this behavior at runtime:
->
->   - 1: Enable data freshness check (default)
->   - 0: Disable data freshness check
->
-> This provides flexibility to choose between ensuring fresh data and allow=
-ing
-> faster reads when occasional staleness is acceptable.
->
-> Document the new attribute under Documentation/ABI/testing/sysfs-bus-iio.
->
-> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
-> ---
-> -> Tested on Raspberrypi 4B. Follow for more details.
->
-> akshayajpi@raspberrypi:~ $ uname -r
-> 6.12.35-v8+
-> akshayajpi@raspberrypi:~ $ uname -a
-> Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025=
- aarch64 GNU/Linux
->
-> -> Sensor Detection, overlaying of device tree and Driver loading
-> akshayajpi@raspberrypi:~ $ i2cdetect -y 1
->      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-> 00:                         -- -- -- -- -- -- -- --
-> 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> 50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
-> 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-> 70: -- -- -- -- -- -- -- --
-> akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
-> akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
-> ltr390                 16384  0
-> industrialio          110592  1 ltr390
-> regmap_i2c             12288  1 ltr390
->
-> -> Sysfs Attribute Creation validation
-> akshayajpi@raspberrypi:~ $ ls -ltrh /sys/bus/iio/devices/iio\:device0/
-> total 0
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 uevent
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 name
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 waiting_for_supplier
-> lrwxrwxrwx 1 root root    0 Jul 21 23:52 subsystem -> ../../../../../../.=
-./bus/iio
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 scale_available
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 sampling_frequency_available
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 sampling_frequency
-> drwxr-xr-x 2 root root    0 Jul 21 23:52 power
-> lrwxrwxrwx 1 root root    0 Jul 21 23:52 of_node -> ../../../../../../../=
-firmware/devicetree/base/soc/i2c@7e804000/ltr390@53
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_uvindex_scale
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_uvindex_raw
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 integration_time_available
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 integration_time
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_illuminance_scale
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_illuminance_raw
-> drwxr-xr-x 2 root root    0 Jul 21 23:52 events
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 dev
-> -rw-r--r-- 1 root root 4.0K Jul 21 23:52 data_fresh_check_enable<-----
-> -r--r--r-- 1 root root 4.0K Jul 21 23:52 data_fresh
->
-> -> Default value 1 for data_fresh_check_enable
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh
-> 1
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh_check_enable
-> 1
->
-> -> Disable fresh measurement in the sensor
-> akshayajpi@raspberrypi:~ $ i2cset -f -y 1 0x53 0x0 0x0
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh_check_enable
-> 1
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh_check_enable
-> 1
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> 647
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh
-> 0
->
-> -> Since data_fresh_enable_check is enabled by default, driver skips
->    stale data read and emits -EAGAIN.
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temp=
-orarily unavailable
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temp=
-orarily unavailable
-> akshayajpi@raspberrypi:~ $
->
-> -> Disable data_fresh_check_en
-> akshayajpi@raspberrypi:~ $ echo 0 | sudo tee /sys/bus/iio/devices/iio\:de=
-vice0/data_fresh_check_enable
-> 0
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh_check_enable
-> 0
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh
-> 0
->
-> -> Since freshness check is disabled, driver reads and prints stale
->    data.
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> 647
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> 647
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> 647
->
-> -> Re-enabling freshness check, results in driver emitting -EAGAIN.
-> akshayajpi@raspberrypi:~ $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:de=
-vice0/data_fresh_check_enable
-> 1
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fre=
-sh_check_enable
-> 1
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temp=
-orarily unavailable
-> akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illum=
-inance_raw
-> cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temp=
-orarily unavailable
->
->  Documentation/ABI/testing/sysfs-bus-iio | 12 ++++++
->  drivers/iio/light/ltr390.c              | 55 ++++++++++++++++++++++++-
->  2 files changed, 66 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/=
-testing/sysfs-bus-iio
-> index 5d176d46c15d..da881e16ee3d 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -2397,3 +2397,15 @@ Description:
->
->                 Provides userspace visibility into data_freshness status =
-which
->                 can be used for debugging and informational use.
-> +
-> +What:          /sys/.../iio:deviceX/data_fresh_check_enable
-> +KernelVersion: 6.16
-> +Contact:       linux-iio@vger.kernel.org
-> +Description:
-> +               Read-write boolean attribute controlling whether the driv=
-er
-> +               checks the data freshness status bit before reading senso=
-r data.
-> +
-> +               0 - Freshness check disabled
-> +               1 - Enable check; driver will skip reading stale data (de=
-fault)
-> +
-> +               This flag affects the behavior of data reads.
-> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-> index 5af0ffd3df1d..b13f01835aeb 100644
-> --- a/drivers/iio/light/ltr390.c
-> +++ b/drivers/iio/light/ltr390.c
-> @@ -98,6 +98,7 @@ struct ltr390_data {
->         enum ltr390_mode mode;
->         int gain;
->         int int_time_us;
-> +       bool data_fresh_check_en;
->  };
->
->  static const struct regmap_config ltr390_regmap_config =3D {
-> @@ -199,10 +200,40 @@ static ssize_t data_fresh_show(struct device *dev,
->         return sysfs_emit(buf, "%d\n", !!(status & LTR390_DATA_STATUS_MAS=
-K));
->  }
->
-> +static ssize_t data_fresh_check_enable_show(struct device *dev,
-> +               struct device_attribute *attr, char *buf)
-> +{
-> +       struct ltr390_data *data =3D iio_priv(dev_to_iio_dev(dev));
-> +
-> +       guard(mutex)(&data->lock);
-> +
-> +       return sysfs_emit(buf, "%d\n", data->data_fresh_check_en);
-> +}
-> +
-> +static ssize_t data_fresh_check_enable_store(struct device *dev,
-> +               struct device_attribute *attr,
-> +               const char *buf, size_t len)
-> +{
-> +       int ret;
-> +       bool data_fresh_check_en;
-> +       struct ltr390_data *data =3D iio_priv(dev_to_iio_dev(dev));
-> +
-> +       ret =3D kstrtobool(buf, &data_fresh_check_en);
-> +       if (ret)
-> +               return ret;
-> +
-> +       guard(mutex)(&data->lock);
-> +
-> +       data->data_fresh_check_en =3D data_fresh_check_en;
-> +       return len;
-> +}
-> +
->  static IIO_DEVICE_ATTR_RO(data_fresh, 0);
-> +static IIO_DEVICE_ATTR_RW(data_fresh_check_enable, 0);
->
->  static struct attribute *ltr390_attributes[] =3D {
->         &iio_dev_attr_data_fresh.dev_attr.attr,
-> +       &iio_dev_attr_data_fresh_check_enable.dev_attr.attr,
->         NULL
->  };
->
-> @@ -214,7 +245,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device=
-,
->                            struct iio_chan_spec const *chan, int *val,
->                            int *val2, long mask)
->  {
-> -       int ret;
-> +       int ret, status;
->         struct ltr390_data *data =3D iio_priv(iio_device);
->
->         guard(mutex)(&data->lock);
-> @@ -226,6 +257,16 @@ static int ltr390_read_raw(struct iio_dev *iio_devic=
-e,
->                         if (ret < 0)
->                                 return ret;
->
-> +                       if (data->data_fresh_check_en) {
-> +                               ret =3D ltr390_register_read(data, LTR390=
-_MAIN_STATUS);
-> +                               if (ret < 0)
-> +                                       return ret;
-> +
-> +                               status =3D ret;
-> +                               if (!(status & LTR390_DATA_STATUS_MASK))
-> +                                       return -EAGAIN;
-> +                       }
-> +
->                         ret =3D ltr390_register_read(data, LTR390_UVS_DAT=
-A);
->                         if (ret < 0)
->                                 return ret;
-> @@ -236,6 +277,16 @@ static int ltr390_read_raw(struct iio_dev *iio_devic=
-e,
->                         if (ret < 0)
->                                 return ret;
->
-> +                       if (data->data_fresh_check_en) {
-> +                               ret =3D ltr390_register_read(data, LTR390=
-_MAIN_STATUS);
-> +                               if (ret < 0)
-> +                                       return ret;
-> +
-> +                               status =3D ret;
-> +                               if (!(status & LTR390_DATA_STATUS_MASK))
-> +                                       return -EAGAIN;
-> +                       }
-> +
->                         ret =3D ltr390_register_read(data, LTR390_ALS_DAT=
-A);
->                         if (ret < 0)
->                                 return ret;
-> @@ -687,6 +738,8 @@ static int ltr390_probe(struct i2c_client *client)
->         data->gain =3D 3;
->         /* default mode for ltr390 is ALS mode */
->         data->mode =3D LTR390_SET_ALS_MODE;
-> +       /* default value for data_fresh_check_en is 1 */
-> +       data->data_fresh_check_en =3D 1;
-I agree that this will break the user behaviour.
-Before dumping this off, I wanted to explore an idea.
-What if this remains disabled by default, i.e. data->data_fresh_check_en =
-=3D 0;
-So this way the regular sensor read_data calls will not break, and
-based on demand,
-the application can configure the driver to check for data freshness,
-by toggling the sysfs attribute to 1.
-i.e. echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/data_fresh_check_e=
-nable
+> 
+> To summarize all the discussion points so far:
+> 1. It's questionable behavior for madvise to allow destructive
+> behavior for read-only anonymous mappings, regardless of mseal state.
+ > 2. We could potentially fix point 1 within madvise itself, without> 
+involving mseal, as Linus desires.
 
-Thanks,
-Akshay
+IIUC: disallow madvise(MADV_DONTNEED) without PROT_WRITE.
+
+I am 99.99999% sure that that would break user case, unfortunately.
+
+> 3. Android userspace uses destructive madvise to free up RAM, but I
+> need to take a closer look at the patterns and usage to understand why
+> they do that.
+
+I am shocked that you question why they would use MADV_DONTNEED instead 
+of ...
+
+ > 4. We could ask applications to switch to non-destructive madvise,> 
+like MADV_COLD or MADV_PAGEOUT. Or, another option is that we could
+> switch the kernel to use non-destructive madvise implicitly for
+> destructive madvise in suitable situations.
+
+... MADV_COLD / MADV_PAGEOUT.
+
+I am also shocked that you think asking apps to switch would not make us 
+break user space.
+
+> 5. We could investigate more based on vma->anon_vma
+
+Or we do what sealing is supposed to do.
+
+With the hope that this sealing fix here would not break user space.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
