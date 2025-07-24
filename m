@@ -1,227 +1,139 @@
-Return-Path: <linux-kernel+bounces-743933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379B4B105A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67799B105AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350DC164015
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B4117E0AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AA8274B38;
-	Thu, 24 Jul 2025 09:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB24259C85;
+	Thu, 24 Jul 2025 09:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SD/VDEXE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="XDoIcopH"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4704426B769
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0800618786A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753348851; cv=none; b=oqLwETXAlFYL4OL1WOVVp5ySGXF6GLnAINd8GFyXnPkLf8/9UdSuvQDx22G09LBfXksjEersWIyymkZy3nQ0xIRIn4g+BR+rc11zH2cbqJCx89U2mXs5hWEUDoL0m8NuVm1WCAFerxFkzKw2JA5pRTamr5uacZloB98kGbCXLZw=
+	t=1753348903; cv=none; b=uboczZN6nVWURYrpN1Xoqda4QOJ/J4cSMJBrEajrf2Km3gQoJEFayGvm7fJQooPxCB+pPlNqJ2sy8GORfQeTqsfjVgwNH2tXnOkZQ940nKRo57Po3/q20apP3RdZcnLZQVrDixclJMJ6qNWB55XruTSJJqIfv16HsCqV0xx16qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753348851; c=relaxed/simple;
-	bh=2AYrd8i4rjljZsg1is2IvokN9g26qL4AFgFaYJkwEps=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=NQ2xQY3q45PRyq2nBqnIZx+f7Orf9CrGj1OblegnxXdB9Mnk7ThFOGWnaidKc87kraV9Ju9uFRlBqAE2d0JBgzeVxqtvsnnliLemYauQOuoeYhvPCOFdBPWjz6EuXol3ue1iIiCYIJN1rmZs7WD/I3SvxqIEQs8GTBnLqxXrzBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SD/VDEXE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753348848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o0KQOXhvdl0E5NsfW0rWRgN9O8Gb98pd0x7UFntxo6M=;
-	b=SD/VDEXExAwnoeuceWyiK7yNraRyzHmWRKQgxGxLtxBMFM07vkz++zX3kknp8g0YszLGw1
-	ab25eQljFcI/c4CCWzXLR8rtzrfNwtXVPTZB0c13KpWgU54zs5ajRjRL2tasKR91uWrXiI
-	jWexXtXlWgcZ960uPltjAROUUIx8Y38=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-UDZBMlUYPq64_CfFF9p6GQ-1; Thu, 24 Jul 2025 05:20:46 -0400
-X-MC-Unique: UDZBMlUYPq64_CfFF9p6GQ-1
-X-Mimecast-MFC-AGG-ID: UDZBMlUYPq64_CfFF9p6GQ_1753348846
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a5281ba3a4so271201f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:20:46 -0700 (PDT)
+	s=arc-20240116; t=1753348903; c=relaxed/simple;
+	bh=MBz4iwUTBD7tFCHnZ6+JubnfKialJN7mn8OjnqBcvbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DR05rhWKPx2jUl8C8PNzpdcZzCfXTL22yZhHmydHTqAXWQXJJ5gQcoiTUHe/tlOYXwk2EshfWqcxGqyXI5OKuTFK9dFBP6qeqs1J/pviHesMw3bO+k/aeyzJPEIfH63cqaJyIjcXgrCGcC2Fz11RHizeGq2+MZCArzKmI0QN2jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=XDoIcopH; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-237311f5a54so5399625ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1753348900; x=1753953700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqvPnkRrB7oXEkshrPQipnY6iopteZAJShBNqYK6f24=;
+        b=XDoIcopHCuNuSSCKQzXGmm7VBoNcN4CJRKRSRKKaD0g1mYIszd9lLpFrRt6EHiLphV
+         knp785rzEgqTkzGmR7+wCsOcKz7xgMaFInzje5I7QFJXUzSUvy3QF3yGkxkoOD0lujO3
+         JmYFB+hl/cE/gBN31Xy/08r4OT0ugBaiX79rSfiDjtkVYqyDbeSEwTDL8V7OjcK24j+C
+         Gbf0R+QINXonJaBlbOfnowv/0oZ7QfaYNTOXwwA4IGDdzGYomnjhA7oaH5hUmSdpWxaf
+         8EKPX/+2lddJlCOW6Sn/EEozQ06vQOMaa1A93tnY3ALG0ngOEDOW/cCNw8lALpGJE4KU
+         hWCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753348845; x=1753953645;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:from:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o0KQOXhvdl0E5NsfW0rWRgN9O8Gb98pd0x7UFntxo6M=;
-        b=SCw3ZykOm/4QC26o4XutxmT8hqWi75fM+GVA6El+ewOOk5WhLWWheCQod5oVNQv6md
-         bX+BrL95u5Yv7UXkk6ymVQaFPHbbbPn5ByQYpJr5X+w+Gqq+B+AqxxFlj67KHdsk+ii0
-         c45tbPBI6ad0ruJ0e9PcMJJpp9P9BEt9Frz4ODNrM4CpmZBV9R0yJV5Vi0SsuzxvFJql
-         82BgZjS7ojRmC05lGgsXK6Dko+1ha7oZ84D30EwvVaJViI2iK7SVs6AhTyI4+8SlNA63
-         PjlaO0yIMnJxwrVLk/jVNSE9VZSDpNybj1Navy/iq9GRHPM71g+iWWuFzETmzfn1gjP2
-         1+Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPxdndDpYNYhM2qaiWhG+71f+rwc6FU20Mta7o/3HkaaZMKcuzK3obrZgofZIc/pEDdzfDQy5GT5VlhKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcVjOlL25fLeBIGemK+Y30fjw+Rhyo/vedEjLvs/OdGWUDyhPA
-	iHmhB+ktsjcz0zP0kf14KJEH3hY+agks7OCjSTkWFRqk907Yci02AXTfHPEY9mxiwhW+CTqhuEW
-	74SSxDabX93E1Yf5r9DGhLvkF5+L0ubTfUbcvzEQ2kcGuvpgFxZIIKcxRTYrOUy2Gaw==
-X-Gm-Gg: ASbGnctCy12FoZebMrl6/eiEnlWGrUKYECOfL2EWv4u80tux1yC9qsl6hVhmYkCaQF7
-	I0ookioWb2nLA9DrxdOX4odejIutB1KILjCukKgzOMA86mW440C185tcCzA2MEoJHLqwwyzzFBf
-	hsMe0sPvbf1PSUCHlk9QHHjQ4Q2xIuSRWpddBqpzkcXqf/TrZxnAZaMaWooDeoYcCUOvOdWn2pZ
-	HPVFCoPgm5QQfySVBFHSyMhz600kYw7qrbVheC+5Ovry8gFWVARHDv1nIK/uIA0YCqSQ23HAM6q
-	lfL0aZVq0kixLKR5k6DcFVtj3Qk/aNlgXC8PJsOPQWakxU9vhlT6jGfXCB92eyud670av1/K5g/
-	R7OKDWY0NDfiq6WB7jdneZ2vWxuBeOpewIKvTA95G7b/4misliwAZ0JOR2z97g4Am
-X-Received: by 2002:a05:6000:230f:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3b768ecf387mr4907855f8f.7.1753348845479;
-        Thu, 24 Jul 2025 02:20:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8sP+bhjvLf/wV0ECiS76roKzHB7SD6ppw8rkCNfToaFey0aWT3TtUeqzBvR1r2m9NLAMX9Q==
-X-Received: by 2002:a05:6000:230f:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3b768ecf387mr4907818f8f.7.1753348844926;
-        Thu, 24 Jul 2025 02:20:44 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:5e00:c941:d6fb:3e30:b42? (p200300d82f1f5e00c941d6fb3e300b42.dip0.t-ipconnect.de. [2003:d8:2f1f:5e00:c941:d6fb:3e30:b42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705545bcsm12688485e9.20.2025.07.24.02.20.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 02:20:44 -0700 (PDT)
-Message-ID: <6d14e212-418e-4734-b256-b75c6fade25c@redhat.com>
-Date: Thu, 24 Jul 2025 11:20:42 +0200
+        d=1e100.net; s=20230601; t=1753348900; x=1753953700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqvPnkRrB7oXEkshrPQipnY6iopteZAJShBNqYK6f24=;
+        b=YbqYwW+XxXp1RS+06cj62SaOaAPq6FgVsqvN2L7ldomOFtL1Dd+wVCQCanuF4ENKRi
+         EtxR6MvVRMTs2crm3hVfD7w6SuuL6nL3SdSCuR+h5ITXuKUguknQdQvV6y21pELitzQn
+         WNZuMDrhI9acmG5rfGVQuCaDTgOTGF6d+oRuX5I0/SLlJYm8+NjnaocNwzXfFsey9hIC
+         8doSu1xE2YIsWDEnDhrZZebyXvTIaGo3BBZh0CH68mKoor0dCqxlQvKZfEnc/4pwMpUb
+         VoynSFiqGt+WY2EZdH5dNQaN6Ga9SQkc3SwG0JmoDssKkQ19dPdLdn113n2VMKIg7lqB
+         LojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB06fZMwRUkWGP+1DL2ml7IGv5Eu7NEnpksmQ5cnsnaaedIYkN6UiOXlnzga7OQMjJB9C0SZcSW8G3+i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMSg4tobT78B2+lZtr/QuWkmhyuTxWHt3iP/eF327M0LW279xk
+	kdalLqNP2jgTcP3JwairsA+VGALKzrDqOHpsHpzZhNeIdzvqVJN8WQNvT6yC9aseqlw=
+X-Gm-Gg: ASbGncv/5AiFQAHF5KPX/5G7YfNh1HEWdWJoL0XluQkUPyaS0bav6EMIi6A5yM9E0So
+	bkxK80Ufq88SVWX7U12ROShiREI2Tl0+0tXsA3GqygyIIPqfK2gcPc0kF8dFzl1qXkzmBO/f1qZ
+	QXijpE1jXh9KY/ALHpSxY9eynHQq9TPb7fZZg/HAfGsn1ZZcPFo7fwXBZdEECTRFudciPAR3+q0
+	wVOE19YLNm/qVl7u+Z0jyoJnooloLCHpvFiwZrqQMSeNURX3OjQbkmHjgR1MOFP69wOy1eo0jz1
+	IxxVDyaszVGGfrXIfqZWwypQdNr22NLlc9k6GXrV4u5zaTJA8a8oAyZXLnEST3utdk+KLVwSAmB
+	lgikEgrLgE7bGjlkQol9//7aHDKAnPUBZzUXS2QjDwpylqSlWfSYpUFU=
+X-Google-Smtp-Source: AGHT+IE2cTDYuQ//Nl54CzxM9h7KhUuyIL211ZcA/xCbsrshSiP5Plf/oiQW3J4mDHHU2oBPU65F3w==
+X-Received: by 2002:a17:903:40ca:b0:234:966c:a2f3 with SMTP id d9443c01a7336-23f981b27d6mr89262515ad.27.1753348899997;
+        Thu, 24 Jul 2025 02:21:39 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:fd43:1ae:25a:bcd3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31e66384406sm912306a91.33.2025.07.24.02.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 02:21:39 -0700 (PDT)
+From: "Guan-Chun.Wu" <409411716@gms.tku.edu.tw>
+To: rafael@kernel.org
+Cc: lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Guan-Chun.Wu" <409411716@gms.tku.edu.tw>
+Subject: [PATCH] ACPI: PM: Use nearest power-manageable ancestor
+Date: Thu, 24 Jul 2025 17:20:58 +0800
+Message-Id: <20250724092058.10075-1-409411716@gms.tku.edu.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] introduce PGTY_mgt_entry page_type
-From: David Hildenbrand <david@redhat.com>
-To: Huan Yang <link@vivo.com>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel
- <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Christian Brauner <brauner@kernel.org>, Usama Arif <usamaarif642@gmail.com>,
- Yu Zhao <yuzhao@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250724084441.380404-1-link@vivo.com>
- <86516155-f2d9-4e8d-9d27-bdcb59e2d129@redhat.com>
- <cc560d48-884d-4c8f-9fb0-565d74ad769a@vivo.com>
- <e9bb93a6-1e95-40e5-ad10-a60d80735432@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <e9bb93a6-1e95-40e5-ad10-a60d80735432@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24.07.25 11:12, David Hildenbrand wrote:
-> On 24.07.25 11:09, Huan Yang wrote:
->>
->> 在 2025/7/24 16:59, David Hildenbrand 写道:
->>> On 24.07.25 10:44, Huan Yang wrote:
->>>> Summary
->>>> ==
->>>> This patchset reuses page_type to store migrate entry count during the
->>>> period from migrate entry setup to removal, enabling accelerated VMA
->>>> traversal when removing migrate entries, following a similar
->>>> principle to
->>>> early termination when folio is unmapped in try_to_migrate.
->>>
->>> I absolutely detest (ab)using page types for that, so no from my side
->>> unless I am missing something important.
->>>
->>>>
->>>> In my self-constructed test scenario, the migration time can be reduced
->>>
->>> How relevant is that in practice?
->>
->> IMO, any folio mapped < nr vma in mapping(anon_vma, addresss_space),
->> will benefit from this.
->>
->> So, all pages that have been COW-ed by child processes can be skipped.
-> 
-> For small anon folios, you could use the anon-exclusive marker to derive
-> "there can only be a single mapping".
-> 
-> It's stored alongside the migration entry.
-> 
-> So once you restored that single migration entry, you can just stop the
-> walk.
+When a device’s power_manageable flag is false, we currently only
+fall back to the direct parent’s power state.  In a deep hierarchy
+there may be a more distant ancestor that does support power
+management.
 
-Essentially, something (untested) like this:
+Walk up the parent chain until we find the closest power_manageable
+ancestor and use its power state.  If none is found, default to
+ACPI_STATE_D0 (fully on).
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 425401b2d4e14..aa5bf96b1daee 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -421,6 +421,15 @@ static bool remove_migration_pte(struct folio *folio,
-  
-                 /* No need to invalidate - it was non-present before */
-                 update_mmu_cache(vma, pvmw.address, pvmw.pte);
-+
-+               /*
-+                * If the small anon folio is exclusive, here can be exactly one
-+                * page mapping -- the one we just restored.
-+                */
-+               if (!folio_test_large(folio) && (rmap_flags & RMAP_EXCLUSIVE)) {
-+                       page_vma_mapped_walk_done(&pvmw);
-+                       break;
-+               }
-         }
-  
-         return true;
+Signed-off-by: Guan-Chun.Wu <409411716@gms.tku.edu.tw>
+---
+ drivers/acpi/device_pm.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+index dbd4446025ec..81b47fb00e80 100644
+--- a/drivers/acpi/device_pm.c
++++ b/drivers/acpi/device_pm.c
+@@ -84,8 +84,23 @@ int acpi_device_get_power(struct acpi_device *device, int *state)
+ 	parent = acpi_dev_parent(device);
+ 
+ 	if (!device->flags.power_manageable) {
+-		/* TBD: Non-recursive algorithm for walking up hierarchy. */
+-		*state = parent ? parent->power.state : ACPI_STATE_D0;
++		/*
++		 * If the device itself is not power-manageable,
++		 * walk up the parent hierarchy to find the closest
++		 * ancestor that is power-manageable.
++		 * Use that ancestor's power state as an estimate
++		 * for this device. If no such ancestor exists,
++		 * default to D0 (Fully On).
++		 */
++		struct acpi_device *ancestor = parent;
++		/*
++		 * Keep traversing up until a power-manageable ancestor
++		 * is found or the root is reached
++		 */
++		while (ancestor && !ancestor->flags.power_manageable)
++			ancestor = acpi_dev_parent(ancestor);
++		/* Use the found ancestor's power state, or D0 if none is found */
++		*state = ancestor ? ancestor->power.state : ACPI_STATE_D0;
+ 		goto out;
+ 	}
+ 
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
