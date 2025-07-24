@@ -1,104 +1,84 @@
-Return-Path: <linux-kernel+bounces-743418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A560B0FE6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64575B0FE6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 195613B3B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A29E1C885B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB52819004A;
-	Thu, 24 Jul 2025 01:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LDuaODLg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153B118DF80;
+	Thu, 24 Jul 2025 01:47:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF2C322A;
-	Thu, 24 Jul 2025 01:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C3E2E401;
+	Thu, 24 Jul 2025 01:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753321572; cv=none; b=LrM9kJcORHmK8W5Ow0H32pUgVY/oCFnyUmNSzHoffLPI998+9GBYnrXH+Ydz2LnAwNAPvInn92uNWg1PmQXOiH/fbuthPvnK8yAJh3WQ/2voesx/qjmTNDrMRN/mosDgb0G6NpkVVvlmnm36iokkpGpNafiu7vjGX2rzW8vBqbk=
+	t=1753321631; cv=none; b=JfGl+v1jjrEdiIaug/S5VIlAMMxk6m/wzDXfoTFTevX4hOApHlaX8GZqC7R0TVJLwcvlZMAhPjIKlE+JP0AK4IWN59c9Z9fyc3YVDIqu/fC7iJykqrqt8vw7JdM8hfE8y8Le/gy2MWxRP2kHlf1xbdRz4kW90uf2MXnSwf8T+Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753321572; c=relaxed/simple;
-	bh=jsYUxgEAO69vk9BPS/HTeZcBQgr2lvQnpyVORNVQFQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d6v9+llR6etWf7N/xLFa/tamutIgYc0SHVwsH2DpT6PgVxkQI+BwBVkk4FQQNGDXEKqM17n8cMfA0/NzjWwfyifnSP0fzD0czD+z9h2TIX81gGZCrqhBUwdMkpRP278lELbk/1C9RJl9y0wmcLjftrd3IThyF9hAT0WzMVfIMi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LDuaODLg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753321386;
-	bh=XgWpHiyMuqv0YlpcHsAmRkj1uS26KWifRjpZ5SuTk0g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LDuaODLgJjdJ+7wgX0vAJvuFem0HVqcvMYX+5IsQndVgnQWtJ+DllUdaCtbTw0PdI
-	 lTcH75kWKuAgvVRuBfCV0s1uY95UcrpRLMCKnL4VlKVhsTNQS1FZ92NHi8lIuC99/o
-	 X8gYqsosmr43SPuOf8r43aYympQ7VAPuRxBqWp5gNk4TDSZhPYs9pYoEfiVf4KIQZu
-	 zl+IdMDqWVtZldbXMmsJsL+P/J2gru+2rVak6K7FmOHTl7XyiUbKNvA+FCuo8thCHN
-	 i2yxlpI36bJTh4UusE1NYsbcPXDm2igud1Ij7eaBvqQ/qJZ/4QHlGpy+6gdz3jtQos
-	 BbjKazWkTL+uw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bnYfx4bHPz4x3p;
-	Thu, 24 Jul 2025 11:43:05 +1000 (AEST)
-Date: Thu, 24 Jul 2025 11:45:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Johannes Berg <johannes@sipsolutions.net>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the wireless-next tree
-Message-ID: <20250724114555.2894a009@canb.auug.org.au>
+	s=arc-20240116; t=1753321631; c=relaxed/simple;
+	bh=JGAPT2y5vCJk7CHZcqulhAcsd3hJ86zVp2npp+8zxIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XbceFpHiawrXUnHjjXNSdD9As+n0q2+xhnJn0YFgv+3BCG5FWRFetx8sRagjN9jR0uzPiX6/HYxzFzmqbfXBy4x3YTkjOET8jvK4Qyno9UdfvjVJVyJg4mE6IDZFk6wxsNHvoFMCmejVXqMrosZw9TL+ObGY4MvGlBtIpnmvQa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 30F29140257;
+	Thu, 24 Jul 2025 01:47:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 15E862000F;
+	Thu, 24 Jul 2025 01:46:57 +0000 (UTC)
+Date: Wed, 23 Jul 2025 21:46:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, Tianrui Zhao <zhaotianrui@loongson.cn>, Huacai
+ Chen <chenhuacai@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of
+ generic code
+Message-ID: <20250723214659.064b5d4a@gandalf.local.home>
+In-Reply-To: <2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
+References: <20250722094734.4920545b@gandalf.local.home>
+	<2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//cR9IByZinQTBaUlQdfNpna";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_//cR9IByZinQTBaUlQdfNpna
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hwzx9b664hbnaqgib6b3t6gt3tjoitbi
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 15E862000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+R71P4igtfWWN1YfuNJBdwIDm4LxWkQLI=
+X-HE-Tag: 1753321617-46973
+X-HE-Meta: U2FsdGVkX18On4fhUvlFtAwON6K9H7h8+QKr1p2cROfk+XC700B0IdFLooO3C4BVn1CUAvUakMAIGuzInJsyCTlEdjojcaqPhWX1nYYgJiKqnbqxWDo0lu/++sQaUzUyudYKijmSc4Jzx8MshNfyAi7xFrHweb0yOixVPvdKgCE6kcIPBC17qgv1Z0F4f5fpvIYb+gxaptVTIn6RKQsazQMRHWSo0iTeyBByaFeCa4pt9YdW6uUzsDJ6TWTGkhrAUTimxfHlvsJOYbkci6QsCzp5K4AaJSXvrXe8Fjech8gAWEIrGN+gP/cugt26IELeS8pu/CjwFK4npecydlbRUUb3dvg1Sd7CZhfPr74AXJE=
 
-Hi all,
+On Thu, 24 Jul 2025 09:39:40 +0800
+Bibo Mao <maobibo@loongson.cn> wrote:
 
-The following commit is also in the mm-nonmm-unstable tree as a different
-commit (but the same patch):
+> >   #define kvm_fpu_load_symbol	\
+> >   	{0, "unload"},		\
+> >   	{1, "load"}
+> >   
+> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
 
-  6d0a67c600a6 ("wifi: brcmfmac: Fix typo "notifer"")
+Thanks,
 
-This is commit
+Should this go through the loongarch tree or should I take it?
 
-  e84da36528f1 ("wifi: brcmfmac: fix typo "notifer"")
+Either way works for me.
 
-in the mm-nonmm-unstable tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//cR9IByZinQTBaUlQdfNpna
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiBkFMACgkQAVBC80lX
-0Gwd3wf+J62BljLLJYBR6//R1C3J3TkbEz6Vo7Iz26S4jcRh0CFu1WsSXcx6y9uG
-Spqe5FcgZZ/4+bJsQx6CTpJVNIBZwlOtiw+xMro2ZlFObKS6Wl6a9z38jQhUyVaI
-zER1QYOkE6sVXEevws/evt/cCUErkRjJXRnYzfG4xah/XSlruutECoc1d98mDJzo
-wU+qCEsLA2kF7mewb6Z8Epa95xnJkPyLCCG1XV0mvBpfc/bz+gnzhPQ80pwDwZuK
-bmLi/leEqH2gMsM3Je08gRqddGgmYpGjwe9M2AJS/cXV45nV/wJTWCSiIq79FxcV
-s2obcApfierqghAXR28Yl8CYNIBZfQ==
-=M457
------END PGP SIGNATURE-----
-
---Sig_//cR9IByZinQTBaUlQdfNpna--
+-- Steve
 
