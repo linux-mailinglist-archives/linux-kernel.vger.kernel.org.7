@@ -1,89 +1,100 @@
-Return-Path: <linux-kernel+bounces-744994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77F0B11391
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:07:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1A9B113E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603E23A9AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307121CE4578
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635CA235C1E;
-	Thu, 24 Jul 2025 22:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914D223BCF8;
+	Thu, 24 Jul 2025 22:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksI732Z4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="KJMRc2su"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8F8230BCC;
-	Thu, 24 Jul 2025 22:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2F823815D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753394820; cv=none; b=NxapVaGFer6Lh6DDFPn3BW8894qM8yjE2p7Zn7ONlI1ex/p5X9icLjaP70gjW8joEFNVTHCDBkIfrXPREceayXSDkBOcy153mWqUWeKJpN83yawksyBsWutjK8nJBb2X3onKofdx1HP9IU3VcR6uVx5r3nnIQ4baP4mcS5q9NMw=
+	t=1753396109; cv=none; b=ibUN7VN13YceiO/0cTwzAZyptczpYlV3eB4h1N/htQX2HCciQYSuhYFQDOuRlXD17PwSLPoO2ysfXNKwMuC3+ywkNwMAA2IFqjOplQgq2B7ulWo+bAqIJMHdiOI70Xc1SzVi/XPtD5+8fTnUdQ/Uai+HiGojHtTIZB3krYiQOKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753394820; c=relaxed/simple;
-	bh=H4bI8MigaMkypNpkii9+xYRtzoc4ShGUP1lY8l1HJE4=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZkOKQ3QI5LgJ8jNXobpSF1lbQ5eG9idYOo6Mic7+fHr72jpcj3MUyvF8gg6WEL3qqqkhzc4fgwVNHURRDpaCSbYKVz4TzwPZXnGhENYkb3wQqfqTp5U+sumHUF/s4U1k11aPtTiq4PgzQbigy/sTS64b/PUCtkyhPWcv5i6NXWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksI732Z4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AEF4C4CEED;
-	Thu, 24 Jul 2025 22:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753394820;
-	bh=H4bI8MigaMkypNpkii9+xYRtzoc4ShGUP1lY8l1HJE4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ksI732Z46/mkBky8OU6QC/3H2CN751lTILAbTuLw6NiZGamBTd1OUolE0tXAR4/6C
-	 fw059+tkbgkFjNHv5H7qVTdtJSD2udS2vVY5LeJr75oeUtESTg82jCFe/KLzIACpnR
-	 w56OsBpfZs41hMG4VbdTc1SIPCjVmsnmLgYJTcZmGBKyHsF05KaZWELHF43jOeYfuw
-	 ezlp3wsvZ7x/ceRFeX5ZLyDWGPF9wQuwfLhjMnMnZfTe/GmHkyi8YpSETZVXnnq2nl
-	 McadAsd+WCHeHnE6RkNIzDYll06qorlWxiklF7dOnNZpHMGXFNPAhYz6QlmTF1J+mw
-	 U1ajbwJndOmoQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753396109; c=relaxed/simple;
+	bh=3H7etlGw/Nhe6HAVo2NT3EYuY9jejwRantnF0G+Fhj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTp23I6vmqVKbmmZq0DB0289tOk/UKPGDGxFI2+xUjBzsAufiYwAda1DtZiMCyISNkYCMp8ug1FYevg1bYizyOQ5n+GB1yHRQkNvYLW7IN5jObD9gXP1rhIzc7xG2yxiRoUDY9CvjUUcy34hFmpIXyjSoP2BRymlbph/JdyZOVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=KJMRc2su; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
+	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
+	bh=G1GIx/bTld7i3jsye2tQQaAkpBwO5F07jwxGvhnvPvo=; b=KJMRc2suV9oemaajHLxPMMOGLm
+	qnIexYONwqIsa7DrXH7k3JRaSL3025hxN4tyP+8IUyAc6L7Mdomr11tbdcrM7tdtSDmHH/Mo8HMHk
+	V655wS7asI5KIYt5TLhhCnrdypwarOK37XBFPywJaFArChP4uieK9W7OlSle+zyjdDTFJkCwjc8Cw
+	vpVEyznQ3bnqTFTMBNu5TmtyDwrkQkUugxLLk47zYTn6mlf8/f+dIs+rvQQekljKpFxzy6GZQ/oS2
+	suLq6bvms6guIufwl49pKPD/GLkzCwRs5i8kxcfQt9vI2LCzmzq6fFpeMe4fhsAZX4AItpgG7vAAM
+	dxm1usuw==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1uf47U-00DlP2-0d;
+	Fri, 25 Jul 2025 00:08:56 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: linux-kernel@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE)
+Cc: Aurelien Jarno <aurelien@aurel32.net>
+Subject: [PATCH] riscv: uaccess: fix __put_user_nocheck for unaligned accesses
+Date: Fri, 25 Jul 2025 00:08:52 +0200
+Message-ID: <20250724220853.1969954-1-aurelien@aurel32.net>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aIKcFzsCvvz0PCBW@x1>
-References: <aIKcFzsCvvz0PCBW@x1>
-Subject: Re: [GIT PULL] clk: thead: Updates for v6.17, part 2
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>
-Date: Thu, 24 Jul 2025 15:06:58 -0700
-Message-ID: <175339481888.3513.6668397032978631593@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
 
-Quoting Drew Fustini (2025-07-24 13:48:23)
-> Hi Stephen,
->=20
-> I'm sending this followup PR in case there is still time to include it
-> for your 6.17 PR. Yao Zi refactored mux clk registration which fixes an
-> orphan mux clk issue which would occur when booting with mainline uboot.
->=20
-> Thanks,
-> Drew
->=20
-> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd13544=
-94:
->=20
->   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/th=
-ead-clk-for-v6.17-p2
->=20
-> for you to fetch changes up to 54edba916e2913b0893b0f6404b73155d48374ea:
->=20
->   clk: thead: th1520-ap: Describe mux clocks with clk_mux (2025-07-22 15:=
-40:54 -0700)
->=20
-> ----------------------------------------------------------------
+The type of the value to write should be determined by the size of the
+destination, not by the value itself, which may be a constant. This
+aligns the behavior with x86_64, where __typeof__(*(__gu_ptr)) is used
+to infer the correct type.
 
-Thanks. Pulled into to clk-next
+This fixes an issue in put_cmsg, which was only writing 4 out of 8
+bytes to the cmsg_len field, causing the glibc tst-socket-timestamp test
+to fail.
+
+Fixes: ca1a66cdd685 ("riscv: uaccess: do not do misaligned accesses in get/put_user()")
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+---
+ arch/riscv/include/asm/uaccess.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index b88a6218b7f24..22e3f52a763d1 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -311,7 +311,7 @@ do {								\
+ do {								\
+ 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&	\
+ 	    !IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {	\
+-		__inttype(x) ___val = (__inttype(x))x;			\
++		__typeof__(*(__gu_ptr)) ___val = (x);		\
+ 		if (__asm_copy_to_user_sum_enabled(__gu_ptr, &(___val), sizeof(*__gu_ptr))) \
+ 			goto label;				\
+ 		break;						\
+-- 
+2.47.2
+
 
