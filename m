@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-743651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80F8B10161
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:13:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3CAB10165
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2704E0E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBA654140F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F56227E82;
-	Thu, 24 Jul 2025 07:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697E62288D5;
+	Thu, 24 Jul 2025 07:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4s4SrmY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uMw1sUWg"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9963E1E130F;
-	Thu, 24 Jul 2025 07:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2F9226D0C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753341206; cv=none; b=avweYgXb8spq1/txJjqiWRwi4s57FkyK4WGZr1dC8QQrj+zNvHdU4FQkEi1Mx+p3E9aXA9BgCyOZEWNKOdv5Mokc/qKUouW1xJfIROtADIc9gd0yDeremDaevKm5b4EZV2tkudpmhom2zORSWbIFALTz+5Ow9X7yiazgN179QUo=
+	t=1753341265; cv=none; b=NBZCxlXC2puvAHD9avph7grXOsuzDQqrQEyk7+0N20huzEd3e6KbKpRFj8h7oecSGLXZ/KfvvIpFN5I+f7fSI9mfhHzhiHpDknnNod586wJ2h7zldphcRyIvG7uYupTGGthG8c+gPi//13YhGV2KGY8qVO9F60y1RhTI8lYFEB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753341206; c=relaxed/simple;
-	bh=Djgyw+14cam0JHlAy53oBdh9WyVfI/y9BnmlZTxCbms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GXNxIoWTq+hTKiopoPfBPGcHrPggXILcuzcW4I8BHjJtfcW66F/vAwtiYqhIL2qUfHaurXIPTRO6TZOw1N2QrdxaxTpRNOpbRGJWkBmY1j43mtiFxRdvTXHYgesIjAriAGf+D3+BjD+sZG8VoLEX/oTG1YH/0dhtDG1LIr1bJPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4s4SrmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7922DC4CEF1;
-	Thu, 24 Jul 2025 07:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753341206;
-	bh=Djgyw+14cam0JHlAy53oBdh9WyVfI/y9BnmlZTxCbms=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h4s4SrmYJUNqI9s0WT/UIpXJ+HyuzqbRMajc5ZDpX99NzynmM05pGxpWs1GnL4NZp
-	 0ubWWtZ9tLbyqGtUJatM7K9xlic6ZBs6OjZ66JZpAZQzsTOwjQySIrKaaSUwfCTOGJ
-	 bFLjKJSLISSOTCTI97e9zSiCZvwQZsAwojDXbYKUeKTu8SKy+A1rcc1q2TPSueFoUd
-	 ckAu8TLJ3oDUeBDeQ+6BAXwB39BytGMuRZh4y/jmXH/ti1rUaKjVXY0B0y8h8P4tjC
-	 hmdPBedabmx0FlLRFqSz8EJYGVoBuY02dsGneb5VdD6PzFe6nS0cd+3B8d+GkeD3N3
-	 U4cALvLa6CaTw==
-Message-ID: <ff6a882e-8601-493d-8d8a-f7ba3a744fa9@kernel.org>
-Date: Thu, 24 Jul 2025 09:13:19 +0200
+	s=arc-20240116; t=1753341265; c=relaxed/simple;
+	bh=rE5qWWZjndiq49hxBlZf+jiV7j0uDbdzOEQLJLes2Yo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TU7pR+jpE5DukXQaKtPPClasYh3fxkCC0+zfso3c8JCxg28hxCM8J0WFAh/AcMxFG3boqjzz7xyX6UT7UwGIZ3ake9nK5Sq9q6Fc7y3b16IWgYxHaOPrLK9Rwyhu9rVO4C6OHcZFG1Ft5cuGYjR5OvTEC12lPxZm6M0CFW4oE3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uMw1sUWg; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8dd5602497so522291276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753341262; x=1753946062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
+        b=uMw1sUWgd/kyEaVHyO0gCQsjPlh8i4zKQIw7iR1q+McYVsnggcp0xEcI4LcZHxerIg
+         J6Dqhxb83bm3fBqU53lfOuvQrsG3cev/82p61m8rG7GxK3wQruIPEcbauLdU9MS7G3wV
+         nxOLADZhnvMJx2QY2gcXZ857x9Y9QG1BJWLYnVkQTtz/oZFEdbOy7fvQlgRZ/q1I2ubD
+         ER3jW2pedmhsaXP+NUUOvkKF+FBeIChp4nEDp/8jWB/xM6w2abcRBPiuf733sdTDfjDy
+         54Wk1AT6nEmmxNLng9yuZK7HjSmAWouIYXSAqVvCRT+XPkRhMH3+psFrJibni2F378Mo
+         CJYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753341262; x=1753946062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RYtiTl2/vcB5JjeNMht3FQUGQbOf7Sw/0g0qYc0qYCs=;
+        b=I3S2lRDl8KuIYHk4ZvOuknwNfEHfHSBI2aQHUl7S0lckK50U1NBczDmk03qhf3NufD
+         T5Rzmn3I44zPBsxnz0N1Vyzl6q9REgNtjSwPNSzIg3cETPQ9JFNWpm4otpxLXiohEs67
+         MF8SbdOWcuhzW3bKk7LBru+9G+gJ3UL7OSsqfIssP86N/wqRHmnX+t1PyX7rP7NYkU/B
+         y5b0iDMs4jXOhHyQyKFjXvLRoRWsQdS7/mKhhlkQgMQkC1jG9aIdrg9lty0DqmN/Gbzm
+         sAh1uHU2/1RN6jq/yE00M6PKP2DB9NIRadCNOlcTBVtnb8MN0Xong4jt5XqIjbho4PYr
+         Z3Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSWGbzzIoQj+/l0ptRVobKiZPK28IzYxkDmgQ7KKXsWHZPksdJIvuaPC698iszTGRVmJTwLqFYS5OucAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+sB+9S6H8U+7zw26YbJE6cD5Qa/spKRFciqlTtLk3/FNcI+xJ
+	d8kOAbqRK9zf60oov4zJt/ZUjXOhIF2BRV+unPGBkRgpvtatyQqN77C7c2ByVu6qBmk2GVceHNq
+	cYB37PFuAkaYtUPdm4lhvfaIa6REhkJNCDpojYwQXog==
+X-Gm-Gg: ASbGnctolM0mVtvCUzx2BoEHbZs0SwP70PzEKYZhOHNpgSld81SxcO1FLJTzTcxx0uR
+	P9UoyCdGgYaFeuVO683dPXGsQfTCMR4G0mpaM3qNJ77imTl+w7FSSIJOJcvLbMsjGWEWCjBFBOx
+	8wz5mnP1JMW7Vh1AsBfyDKP8QQ8M9ZOt/oURHGeM1/X+y3BsC4/p6IkXBzU5zUCkO85VgfbS1bO
+	HWJcmo=
+X-Google-Smtp-Source: AGHT+IFmnBw44RVqEQy61JKuL0iFrYaWpRDyxUhMmlPDwRzFw5AwUBOybBBoOUdWV5mpQDmcfwgotc7Tx/G30sPFLxE=
+X-Received: by 2002:a05:6902:4a0c:b0:e8b:d37b:86fa with SMTP id
+ 3f1490d57ef6-e8dc5a86969mr7074336276.37.1753341261694; Thu, 24 Jul 2025
+ 00:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH 2/3] dt-bindings: display: panel: Add waveshare
- DPI panel support
-To: Joseph Guo <qijian.guo@nxp.com>
-Cc: Robert Foss <rfoss@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, David Airlie <airlied@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Ying Liu <victor.liu@nxp.com>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Rob Herring (Arm)" <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20250716-waveshare-v1-0-81cb03fb25a3@nxp.com>
- <20250716-waveshare-v1-2-81cb03fb25a3@nxp.com>
- <175305199815.3017932.12028214384187991932.robh@kernel.org>
- <DB7PR04MB401079D15E5B4E93EC9DF994945EA@DB7PR04MB4010.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DB7PR04MB401079D15E5B4E93EC9DF994945EA@DB7PR04MB4010.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CGME20250714055853epcas2p1c8a30bbc61045c6a359d32989cfaf2f9@epcas2p1.samsung.com>
+ <20250714055440.3138135-1-sw617.shin@samsung.com> <20250714055440.3138135-2-sw617.shin@samsung.com>
+In-Reply-To: <20250714055440.3138135-2-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 24 Jul 2025 02:14:10 -0500
+X-Gm-Features: Ac12FXyeh_teX33m6-oCCNN--bnf0arq8tqlpYQ5bLEOmvlZqoOtQ8w9OKWGEX4
+Message-ID: <CAPLW+4=Gsd9VNv6T_e2QMWkPNbjp4c2GQEYpD9icU3r+0QuPww@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND 1/5] watchdog: s3c2410_wdt: Replace hardcoded
+ values with macro definitions
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/07/2025 08:56, Joseph Guo wrote:
->>>
->>
->> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> [Joseph] Thank you Rob. The PATCH 3/3 is not reviewed yet. Could you kindly take a look?
+On Mon, Jul 14, 2025 at 12:59=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.=
+com> wrote:
+>
+> Modify the code to utilize macro-defined values instead of hardcoded
+> values. The value 0x100 in the s3c2410wdt_set_heartbeat function represen=
+ts
+> S3C2410_WTCON_PRESCALE_MAX + 1, but it is hardcoded, making its meaning
+> difficult to understand and reducing code readability.
+>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+> ---
 
-Why? It is not relevant to DT.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Anyway, contentless pings after a week are not helping.
-
-Best regards,
-Krzysztof
+>  drivers/watchdog/s3c2410_wdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 40901bdac426..95f7207e390a 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -587,7 +587,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>         if (count >=3D 0x10000) {
+>                 divisor =3D DIV_ROUND_UP(count, 0xffff);
+>
+> -               if (divisor > 0x100) {
+> +               if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
+>                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
+);
+>                         return -EINVAL;
+>                 }
+> --
+> 2.25.1
+>
+>
 
