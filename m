@@ -1,87 +1,132 @@
-Return-Path: <linux-kernel+bounces-743642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1792B1013F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9B5B10142
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5225AA2F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A483B7C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A77220F23;
-	Thu, 24 Jul 2025 07:03:09 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512A6221736;
+	Thu, 24 Jul 2025 07:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oWGWHEL5"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6B31F2382
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9921F2382
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340588; cv=none; b=I+GZCpk0AsFc2YcMAKP/IJ6pTRYbK82csdQH5eH8h0Xr8kuLw+b3tLAEEQBHAEWCOUflcTLCJhk68fy92XY30e9ByAWxNxEGtv/YP+nA7yQCfNmWSarBG2nXI1A8X5RVShgRYwflIh/XwNGIOWq0K0rWkY02H/LSCUg9Hg80smM=
+	t=1753340643; cv=none; b=jreKJFNBst9b1JjzdyIHnbQYBWevafym34iPHZ/xefLKCt6MKCePugPgiC9GhmZMv2AXpI1QbuD1RDsRKoxnyDHx80YwUUQRv5dtIKeOnycjxwgtiWcxL8m5nZWE7TNRwyeJhLa+HLTwf0nUJnc76V9Q4DR2M2L4+DaVpet3uy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340588; c=relaxed/simple;
-	bh=YOyODkHGBO9vR3EZYlRl3PosD22drik4E0pMEj5dKHs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IwINMjpZ5lymdEx728cvjgvYaujXTOd9Z3Xi/L6J/zydSsKmLRIiLV4IeV5A8c7zEiM7JRedhhpAghE5UE1iAIGhpsk6To72YIGP4WYwFPXIdvoWFqAj8knrkPUdH4M7Tm7PjUISGYfw+25mMduNlb/9AR60bXnknnUz476MtxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c18a52977so74225839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:03:07 -0700 (PDT)
+	s=arc-20240116; t=1753340643; c=relaxed/simple;
+	bh=QTJ7r7C3ZFO7a5agDautUThWpNI+VJE5Oz9r3BgT+gU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VL4+T4BmMxN8DHuyfAX9VDw7Bqat95KLSJmtkAxYlSidCIr5E7yn2WRIn8IfABn86PLYtPs3aE2rvjVYv4hJBLp5G16/vCKHTKl0K2OcHUv062tz2974aSAAZz+jip5poz79Mj45zcvj2FwBnZy1dBWLKO/khNSFa2xtFrsEBpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oWGWHEL5; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso495650f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753340640; x=1753945440; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=27meuAR7DraeZHJ6a+OjhaNc/M42e/MMGfGfJFDEHo0=;
+        b=oWGWHEL5k7rUg/QemyPOiqgSygCXc6IxzGIt+1EOCwHX7xujRPPfxZMS3YV3LMT7ib
+         qZGGUBqx0KG0G2IMkQHU0O40ZfIQ6QBIIlmytsEmDL8TKycFMd1xsUfiCxzJDtalgwk/
+         ZKxC3A87fsx6Pz0ONu0wEVHEy+WCONihDWSLtS1UVvbBbal87lXT7/uzhRP8w+TIgysi
+         +RX+Dld4btDaUreh/YlZibZjLuDhRUNT3wp5uAydQg23wRbayHw0M6eAlqu5TmMX6eeb
+         wSnPGA2qTY9MPpDHPjKLbxH4sPWoSOmIsrUXqPkuEiOc1g6RFy1j+W4r9bLBLH+m8VRf
+         lZFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753340586; x=1753945386;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQWpXqGPrvVPEsI1/rTv2fKt73p+91t9xYJ+DrK/fHs=;
-        b=FESkryHXpZYOkO1qvenfV3BCFhOrXs370/7hsRac81Oycmfsh2o5bejxsLRIlroQ+5
-         NRH/vVzCsNgYGhGF1xJZ+8RPVRuh2h4Z28GYIL2Lz9FIT2WGArLtkHmq7K+3rX4o+uNn
-         yRjwBhZnwIVwspDQhn6i62quMqScHriDmRBv3GfLqlv4C8NOj2n39rauwIZTDQ22/CuM
-         FdmKPnVYATDCtABYdXMXJ2YP3+aXkKX/eRYJ+tqHMral75N/QLFoAsP3ZwVm5HjN2lM/
-         kLOdSGoLObX2c9glK0JzoWq/7fBbLfcaa+jcH4eyne9AW/X4SfLmMl3CwXA/W236kZEo
-         82rw==
-X-Gm-Message-State: AOJu0YzL+rXzKEHoaNCaMNIrjOoCmBLsOP8ERSl0myqKNSHHl4SbD9F6
-	if3udtCHQAkn5ESbThKa+fHezyWKrWOlrV48CJ0Lz+saMGV75aSYSDZPyJUNt+J+Z3jI0Ufwed8
-	fJjSJ1NZ82Qk/RrGRpflkdjLxPb4kFvqF8TSI4iYBT1fo0eis3aXxJpLhDDI=
-X-Google-Smtp-Source: AGHT+IFsUzZlgE0impW8BT0Yj3glS+s5tffWPwoMTK0afSWWOwBqsCk6qPFEBgmSSWigemtV8jqDdAxuXpKvzFB5AM0tg0acpIBB
+        d=1e100.net; s=20230601; t=1753340640; x=1753945440;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=27meuAR7DraeZHJ6a+OjhaNc/M42e/MMGfGfJFDEHo0=;
+        b=NB/sgeukF+Eu2sQ5omTJiQQF15eeuKlmgQL7K2+DVPCZraF4Hcl/KU4vEPHOBpOFRM
+         GBKuIcIYhimJ9N4O5hlVLUxKVyrcn2fvb/YA2kKQU/nydbqnndYWxIHjOgufX/MpwN02
+         /86O3YiHpyvdaxaHaAmcPDC23Yh8asY0bAphOknQTNMQ0fbDGYc2nFnWNC23il7woKPc
+         mVui6bQCrXNyyawE7FYmppfuwDaGmIBLxxjRMbb794CY5TEl4m2a6xWNoXh+56xaUaKa
+         ibRCVEZaSauTCc/4il1q52LRYNJebfIARSPBB04L4XTg24/bv8gU2dGPBs4S3AnB5zWT
+         KYpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvn/kZlpbHbYpM0ftOoKi2Q1kzb2LxXpUt5owz2n3Y088T8Qpl0hBhm3HbElq3x0PqR6fb0UuYK2vWN6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhzolZdfkgdKrrIV1DCLGEO80y2fPuKJfOaOy7keCbTd6N7p2f
+	ZKJ9fbAtLNdbXaUB+LVxni/govPGMppogzq0ks6bn4T118m3uONluYQNt36yWJPj9W5+4CAPevo
+	Ysoe29ey9JoZFhkyRLQ==
+X-Google-Smtp-Source: AGHT+IEwKScPW/JogOSPYSdhmRfbWJWflQktLJJpf5TzQWj4h0zY5hW7bYqP/Uefc4NUfmbZblwANGYrRFWJFkA=
+X-Received: from wmbez5.prod.google.com ([2002:a05:600c:83c5:b0:456:13a2:2e7e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:40dc:b0:3a5:2e9c:edb with SMTP id ffacd0b85a97d-3b768f27001mr5035044f8f.47.1753340640361;
+ Thu, 24 Jul 2025 00:04:00 -0700 (PDT)
+Date: Thu, 24 Jul 2025 07:03:59 +0000
+In-Reply-To: <20250722150110.23565-3-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:490:b0:87c:6d3a:e88a with SMTP id
- ca18e2360f4ac-87c6d3aea5dmr761861339f.2.1753340586456; Thu, 24 Jul 2025
- 00:03:06 -0700 (PDT)
-Date: Thu, 24 Jul 2025 00:03:06 -0700
-In-Reply-To: <20250724064051.431879-2-moonhee.lee.ca@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6881daaa.a00a0220.2f88df.0015.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
- simple_recursive_removal (5)
-From: syzbot <syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, moonhee.lee.ca@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250722150110.23565-1-dakr@kernel.org> <20250722150110.23565-3-dakr@kernel.org>
+Message-ID: <aIHa31DiaRvNK1Kb@google.com>
+Subject: Re: [PATCH v2 2/3] device: rust: expand documentation for Device
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hello,
+On Tue, Jul 22, 2025 at 05:00:00PM +0200, Danilo Krummrich wrote:
+> The documentation for the generic Device type is outdated and deserves
+> much more detail.
+> 
+> Hence, expand the documentation and cover topics such as device types,
+> device contexts, as well as information on how to use the generic device
+> infrastructure to implement bus and class specific device types.
+> 
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+A few nits below, but in general looks good.
 
-Reported-by: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com
-Tested-by: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Tested on:
+> -/// This structure represents the Rust abstraction for a C `struct device`. This implementation
+> -/// abstracts the usage of an already existing C `struct device` within Rust code that we get
+> -/// passed from the C side.
+> +/// This structure represents the Rust abstraction for a C `struct device`. A [`Device`] can either
+> +/// exist as temporary reference (see also [`Device::from_raw`]), which is only valid within a
+> +/// certain scope or as [`ARef<Device>`], owning a dedicated reference count.
 
-commit:         3630f043 Merge tag 'iwlwifi-next-2025-07-23' of https:..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a740a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=51ebcb9cd994f900
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ccd49ae046542a0641
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1449d0a2580000
+Doesn't there need to be a comma between "scope" and "or"?
 
-Note: testing is done by a robot and is best-effort only.
+It's possible that I'm confusing the danish and english comma rules, but
+I got confused when reading this.
+
+> +/// # Implementing Class Devices
+> +///
+> +/// Class device implementations require less infrastructure and depend slightly more on the
+> +/// specific subsystem.
+> +///
+> +/// An example implementation for a class device could look like this.
+> +///
+> +/// ```ignore
+> +/// #[repr(C)]
+> +/// #[pin_data]
+> +/// pub struct Device<T: class::Driver> {
+> +///     dev: Opaque<bindings::class_device_type>,
+> +///     #[pin]
+> +///     data: T::Data,
+
+Should the `dev` field not also be pinned?
+
+Alice
 
