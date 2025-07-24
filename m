@@ -1,187 +1,82 @@
-Return-Path: <linux-kernel+bounces-744741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61822B11068
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:34:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020F4B11069
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5DC51D00782
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C490E4E08C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A632ED15C;
-	Thu, 24 Jul 2025 17:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F402EAB7A;
+	Thu, 24 Jul 2025 17:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D6oahllJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="va0Pnudz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9/S1+Ib"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0787A2ECD23;
-	Thu, 24 Jul 2025 17:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B21E04BD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 17:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753378427; cv=none; b=AHzI58evfKTo9FAu2ZK2+wVLCWqo5FojZziTyF8QPFDgHImF3x9IIbDftVHHwcFgf2dmf952ELiNjJ7YEGsRGBCsv5/4dhfoalM8xxS+J+P3wo/hFhUWOJdZm+bc451+TuBgxMVtAlnCgIF6+uzicdwBvo0gMRXaFta338y0vfQ=
+	t=1753378556; cv=none; b=RmYQAnGT+anRYufxqiVEx3d+okJN4lFv1+W/1KBsvkwKyhMk2Jylcu5j0gUBnXviAPcODRICVLL10WGptDnkc2ve9f2MqwPd3pu3Ipc6WS7pNYQrjmw/PEmQ/qr+IufdYutVXvATk20xAvv28OGREpf/8ZyC92jjQKD3tiEd4uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753378427; c=relaxed/simple;
-	bh=fP5avm7xzAqqGo4XnEJHq7hCYGbG9fC5uQHA6BI2dlg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XcUay8XA9xTdLtA5Ai4AlAAkLxn9ch3wmXjOHXJFM7fdQSs+HG4Ki5NybmC+JZHhGEqp2XsgusV+cGvWO+MjBrIIISK6kB6SKsg1XDkoB/JH8JoQd46jVLGyaQuWNH3sfufFqGlvUbotgs/SkD+UUSZNX2iqYJiLokrZJl2c0vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D6oahllJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=va0Pnudz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753378422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QfvL53dE2Amlb8t0pQ4UVtNU6qhDm01tFHkqVVPuo4=;
-	b=D6oahllJQDz516puMwl3kkmnGKz/VxJMFJPRMNSHvKxC7KVt+KgwDHGnVOSFV81NIkRVs0
-	Vfn8T+xboXp9QM39+PmOHy6O77umAOhcqrCgOTtfFXv7gq/jd+FzprRqLSIwBrISwMnqjR
-	Hbgec0CR2Q1356MoT/QmjoTlaS26mHfS3K4M9Y8uEk6h9HWlTCMuIYSeURDRThwLgxbZsI
-	mbTYa3tuOVY8/4vFZdu6k5P4jHjnh6ouxy4sMslTwFdBrTxedW3KCH8hesUVxyd71UCW+m
-	uLYDLDPo8O1NXCDMQzur6zn41qcBKM6cZCiU5IEeGU6NGj68sFDSWc+gRfZxkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753378422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QfvL53dE2Amlb8t0pQ4UVtNU6qhDm01tFHkqVVPuo4=;
-	b=va0PnudzrU9oZ5HKh0FQiiw6cnzlcfSnsd5DTtctiCxBdogTGeavnuM2SXhnn/REpYazA9
-	U+n49vxmRYDXFgAw==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v3 5/5] rv: Remove struct rv_monitor::reacting
-Date: Thu, 24 Jul 2025 19:33:30 +0200
-Message-Id: <a6c16f845d2f1a09c4d0934ab83f3cb14478a71d.1753378331.git.namcao@linutronix.de>
-In-Reply-To: <cover.1753378331.git.namcao@linutronix.de>
-References: <cover.1753378331.git.namcao@linutronix.de>
+	s=arc-20240116; t=1753378556; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=PYhLK5dCOa1NFsmLQqBou+P5wudywrwEVuZ22oxSUxQ/v0Nqy/0dEDtUK4J/18E7p9ccZbcya1U336YMEY7bA+64XfRAXXq4ZhHDDzHHUFKI12c3Zm7ayRMmZjwa1oBxqW25NS/cSUKKU0CU+WGetpdawBds2/QKQkWj9qAJmaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9/S1+Ib; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32e14ce168eso13788571fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753378553; x=1753983353; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=X9/S1+IbATlpy/X5R7S2XnqaLfG8OHeI9+hIPhSA7Z9HwIe4okvLjKS0E5/nsaHqzL
+         9n7s0z5czv5e4xH2U7G08x6VSdirmQdfXdeo6jPQCVvRXx6OFBayRWPWaoYmhpWm620b
+         qSfE3OZP4im6N4HqrEJ8QtgOoSV97nssInAmwEhoHGtqYJbc2PZZXKdoeTF5LczqoU+Y
+         ugqQo5dcoLn8Ak4eeeHDdlw+UxD5Vtu5X+CK++P+yncgCqnPlV6I2MvpQmX4/w8zvW4F
+         ZAr1l+fstPlEUQqQDvk7R5vFj0jPSb0+U8h/K+ueTslDRdHv+mDbBUhxrQm8MQCdPqEg
+         P7+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753378553; x=1753983353;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=wLKtLRX4wc08NhWp8QkvBW6RIIT0cA6em6Abr2c9H40tLF9F84RhyGCg1M6F2aI7B8
+         w+Wo8iczrnP+gFegv2OCNIiiYGxohhOz4CqIwLECnj+Bo51dSZtBEaglQbeE3Xwj36pW
+         bpdguf+FanFE/f3OvSF0yi6CjMmLrc2JmfXW4SbvGAUSvnVV0U928t+4sOfKazGbN4hf
+         SPWmm3Zz6LAtjR7spgVjPatQ/Wb9Kfb80v7ezEctLQl5IdfoIj3E95BStFnotDiMc+/v
+         1dXN+t/KRMskvKig/MLZEzJHfWGAgzzrg1Jlue6H0mL7pS2k/SBhv58oMXLxpKColMZm
+         0oiQ==
+X-Gm-Message-State: AOJu0YxztGNvmtoLaA6esPhPDWfcSOnTfZGi08APhOG0J1kVmkWTbdtn
+	WpprEZhJLfOOLE2jtLCeWTAizps7lqEc7F1HJZZqvPZLwBQa/qRjWIVXLUzHqMs6cxFXHneeSSx
+	15/5A+yamy4Y+BIiAXMZtR/U+0xhE9x+IFQ==
+X-Gm-Gg: ASbGnctLVKcmsydhsVZphQMoTwttiuYXfmCLEPLx6on6FbofQ2OR3npXCurSaJrcWXE
+	wzeZCD3CBex6bP2d27fW38oqkwE/NcERkKWDfWm/7J3uz4I36pkTRBcFwPw8tjsHvlNfvEztKl0
+	ZKh4XloedD5Iu1wEszvVIqORV/1XEjG9evEQLLjjPSjluZQd25cl7HyrvZuVvBCpNrLAJikbi9k
+	Z6GtUFd+4qg+2t6CM/tRrxEBfNlRAnryr1idiGQ
+X-Google-Smtp-Source: AGHT+IG5UWErXwKC6ykhKSvk02ApXpPii/e89KpwgSyCw+Ph2U9uQ67z+/5Z4PGEBik41cAA09seiiyp+c0UXxg4uCs=
+X-Received: by 2002:a05:651c:50f:b0:32b:9792:1887 with SMTP id
+ 38308e7fff4ca-330dfc273ccmr18850481fa.11.1753378552947; Thu, 24 Jul 2025
+ 10:35:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+From: Jay <jaymaacton@gmail.com>
+Date: Thu, 24 Jul 2025 13:35:41 -0400
+X-Gm-Features: Ac12FXw3XmaMmOE_PdKDmHDdjO5PPpWRkX3oCOSodJ1U2mphcmGDwNyl93eGlUI
+Message-ID: <CAPpvP8LBrgK7T8s=tg_LWOEQ0NW_GyQvzHeYYqnh-cw942UDYQ@mail.gmail.com>
+Subject: unsubscribe
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The field 'reacting' in struct rv_monitor is set but never used. Delete it.
-
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- include/linux/rv.h            |  1 -
- kernel/trace/rv/rv_reactors.c | 19 +++++--------------
- 2 files changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 2f867d6f72ba..80731242fe60 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -104,7 +104,6 @@ struct rv_monitor {
- #ifdef CONFIG_RV_REACTORS
- 	struct rv_reactor	*reactor;
- 	__printf(1, 2) void	(*react)(const char *msg, ...);
--	bool			reacting;
- #endif
- 	struct list_head	list;
- 	struct rv_monitor	*parent;
-diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.c
-index a8e849e6cd85..106f2c4740f2 100644
---- a/kernel/trace/rv/rv_reactors.c
-+++ b/kernel/trace/rv/rv_reactors.c
-@@ -160,7 +160,7 @@ static const struct seq_operations monitor_reactors_seq=
-_ops =3D {
-=20
- static void monitor_swap_reactors_single(struct rv_monitor *mon,
- 					 struct rv_reactor *reactor,
--					 bool reacting, bool nested)
-+					 bool nested)
- {
- 	bool monitor_enabled;
-=20
-@@ -173,7 +173,6 @@ static void monitor_swap_reactors_single(struct rv_moni=
-tor *mon,
- 		rv_disable_monitor(mon);
-=20
- 	mon->reactor =3D reactor;
--	mon->reacting =3D reacting;
- 	mon->react =3D reactor->react;
-=20
- 	/* enable only once if iterating through a container */
-@@ -181,8 +180,7 @@ static void monitor_swap_reactors_single(struct rv_moni=
-tor *mon,
- 		rv_enable_monitor(mon);
- }
-=20
--static void monitor_swap_reactors(struct rv_monitor *mon,
--				  struct rv_reactor *reactor, bool reacting)
-+static void monitor_swap_reactors(struct rv_monitor *mon, struct rv_reacto=
-r *reactor)
- {
- 	struct rv_monitor *p =3D mon;
-=20
-@@ -190,7 +188,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
-n,
- 		list_for_each_entry_continue(p, &rv_monitors_list, list) {
- 			if (p->parent !=3D mon)
- 				break;
--			monitor_swap_reactors_single(p, reactor, reacting, true);
-+			monitor_swap_reactors_single(p, reactor, true);
- 		}
- 	/*
- 	 * This call enables and disables the monitor if they were active.
-@@ -198,7 +196,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
-n,
- 	 * All nested monitors are enabled also if they were off, we may refine
- 	 * this logic in the future.
- 	 */
--	monitor_swap_reactors_single(mon, reactor, reacting, false);
-+	monitor_swap_reactors_single(mon, reactor, false);
- }
-=20
- static ssize_t
-@@ -210,7 +208,6 @@ monitor_reactors_write(struct file *file, const char __=
-user *user_buf,
- 	struct rv_reactor *reactor;
- 	struct seq_file *seq_f;
- 	int retval =3D -EINVAL;
--	bool enable;
- 	char *ptr;
- 	int len;
-=20
-@@ -243,12 +240,7 @@ monitor_reactors_write(struct file *file, const char _=
-_user *user_buf,
- 		if (strcmp(ptr, reactor->name) !=3D 0)
- 			continue;
-=20
--		if (strcmp(reactor->name, "nop"))
--			enable =3D false;
--		else
--			enable =3D true;
--
--		monitor_swap_reactors(mon, reactor, enable);
-+		monitor_swap_reactors(mon, reactor);
-=20
- 		retval =3D count;
- 		break;
-@@ -439,7 +431,6 @@ int reactor_populate_monitor(struct rv_monitor *mon)
- 	 * Configure as the rv_nop reactor.
- 	 */
- 	mon->reactor =3D get_reactor_rdef_by_name("nop");
--	mon->reacting =3D false;
-=20
- 	return 0;
- }
---=20
-2.39.5
 
 
