@@ -1,161 +1,301 @@
-Return-Path: <linux-kernel+bounces-744038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F8EB10737
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4666CB10736
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37D51CE639B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 981A4AC82FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730E925B2FF;
-	Thu, 24 Jul 2025 09:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KhWEsc1g"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28C625A354;
+	Thu, 24 Jul 2025 09:59:48 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695F25A2D8
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2935825A2C2;
+	Thu, 24 Jul 2025 09:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351163; cv=none; b=OSrtdB2YAmQI1r6uiG01nU/Bz4OiJ9B0oWnbb5cpRs5qwHrS++IfqVmrM0EXIgsInCD5bAwktOS6n+L/DD4GEd8hG8TKylNoYo2OLf1hoq/kat0XYPVzQ7noPOdLYCAVPEKLrshEXkFItorjhxMFaBDWBemagOuKV3qbtoYDdMw=
+	t=1753351188; cv=none; b=k0i+AuVrsTn5mYChwNg46rj8N+OlY3sBl7vQhmbYi2MqxP3YxZyHQ1CFsmqVtUEASr2XRN8fGiY4quapaikSeYZEScvw9CLRlc5bVhl+pvRXVYmgquOH6VEBS3Yp7jptusB/hDACpqnCQqMESn5zanlZtOSP/8qHIAMmXCljVOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351163; c=relaxed/simple;
-	bh=Mb7Inz480w151UZyKAwiCb96cBzXuYWMullMv0nJPVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VN5t1SQQwl3I3A6VPlNF/f/9o13MMReR7eCePoE9JCMe3XTMhfYaLRfcahg17wHT6Tsh0HNesNVZ5FpjDgeXp5lAnELTepeMSUioAOfmSs18msR43ZWXJFCIdwQ0fng3/i5yaLDFWyB2C8ERns4AtMbNHegXH9gQROUzlye19XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KhWEsc1g; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23dea2e01e4so9768875ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753351161; x=1753955961; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4UaKwh5IJYpiaFnLbein8rzkhfpQ+t8tr+rzAQBDK48=;
-        b=KhWEsc1grTY63HK1UcFYf8BqS42OHR+OEyKqunM+zXKUJXMKhQ9nQgd9MqohK9c5Tx
-         vgD490VqntR4DUJC7aiqa2/W1Oi/Lrhzmq+vCvK4lDhjNewrGgySAGLMDbGmYQ4T8/BH
-         VB5zJDYp9vipZBArme0kU24HRoXthESo4Fv/t+bt1A7JyO21rKwOiw960GH8mzOHC8Eu
-         lnviDg/iBJhdiX7c7KbXM5kPF6CP9uWb1LxzYoSqQgwPbJnThq40o++GcAD29tog92Sc
-         AxHurspKlr5n1CZ6y+hWHKBGEwXH0WjrlwC2OkiG/oRZC62NBhN599geJ16MsSH86tE8
-         iW1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753351161; x=1753955961;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4UaKwh5IJYpiaFnLbein8rzkhfpQ+t8tr+rzAQBDK48=;
-        b=tOIf/w4pAFy9QBfxY21wILosdpZaPNfIuCA2fBEwMcQB0Puby05OlzpgIJL3CnqbmC
-         t/SBYYyunC/i2VOhPewHgVr7ZpTr2cKLEcD+mwk5F2MEENBxnWLpAP0EfS0J60djDxQQ
-         3/9Fprn0RnNzpjaPApvz2GQaDOKiuHXiWr52Fyoq6CSe1ZYzT1hE9XC31wMgXJQoBsHr
-         szB6DVdo06QBgcvZXKvAyB1ixrOJmy3JODB6TdXI8w+AvaFNgGItmSTqDM7zCFRde/xV
-         5k4Bocz+5p99CvwKkgBhFPQhf2aXFis62aYW0TRlU96YRBKf8P5g4jQk16WCnXzNdJy1
-         4IZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUstfr1W5Bny1J4vdTW75LEzCAVoIVVNcJH+hD7CyXIYjgfVbuBJhDNRZ7bI8VfMT7VtfFCxhjUwjfXq0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCvlpO82SU9unhapbrNAHZ1bT5qScqOXePiEKI+M27N+KKCz8I
-	HkVgj9IqFlGBvb5i9hCbAZvwFR9f2cDmYO7oi4V7XPuQmh7lL3T08n6OwXi5jBgThDjgtVmzVze
-	h7OxHTHIb5QmFUc3bEIEDCLCTKotwtyI5w2cbp+5jkA==
-X-Gm-Gg: ASbGnct0m5hbD8+v8miw7ruHqmaytqTgXizOPTPAKBSvehL2eqlYWWC7OzkiwSwSGja
-	CF7f/sLBX9nbZL1IGrvr35/1I3GBDmTuIxcKy5j7NgFpzEmX+AmzELEwNlvXZ7hVKrsY9M7nCoy
-	hhDj1NLx/qRh31Hyq/42hJakCvc+g0o9eZGQFwDitJA5Fssh9Ry5mgaJ/9YMnKQgbNfXMB3+Cu8
-	lC4ieaLrH2OiZ1EtvxVCt6hbBMu8YT0tv/Ll7ru
-X-Google-Smtp-Source: AGHT+IGgBbqETCdYXqkCDv3Xdf3DYFAHcB3/99F/8XFC3iGfdWKp9wQNATBmpOAYkeL/nrq+kCpX+uoUSEHtoaSUEbk=
-X-Received: by 2002:a17:903:3bc7:b0:23e:3249:612e with SMTP id
- d9443c01a7336-23f981a0b45mr94173785ad.34.1753351161461; Thu, 24 Jul 2025
- 02:59:21 -0700 (PDT)
+	s=arc-20240116; t=1753351188; c=relaxed/simple;
+	bh=e8Kr6qHidQg5GTpisUorURaei4mV2rg75pt3clWPQRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CXjj4l1/rohoeHzyvNuiJActXuIx/cR3DhbxOozCzbhdl1VcuscvUW4P8Tt0NsbJ5qSLPVXwvDi3gLTn0WBMjkzLnUKUFw636IoOXWbojxXPGuDckmqh3bXeki7J/Zyc2zVSAZWnFy/Dfj9LHfUT73JQTbq3oD6b5blk7GH2TfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [143.105.119.201])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 59289B4D0DFE;
+	Thu, 24 Jul 2025 11:59:42 +0200 (CEST)
+Message-ID: <d12350a6-bd8c-416d-8c57-2d96e47bacbd@freeshell.de>
+Date: Thu, 24 Jul 2025 02:59:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com>
- <ef216301-a7e6-4c9d-9153-8ce8b0a4111f@app.fastmail.com> <4f506337-3481-41db-a2a4-5b4676f22eda@quicinc.com>
-In-Reply-To: <4f506337-3481-41db-a2a4-5b4676f22eda@quicinc.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 24 Jul 2025 15:29:10 +0530
-X-Gm-Features: Ac12FXwSH-tonDffdzQola6o5OJixZN0fswngpNfmWoStiUzFGt6E6s4psUF8ng
-Message-ID: <CA+G9fYuGdo0MUeF0Du3oAtwzYQZhc999pBrz5x5v9P4qw0UbTQ@mail.gmail.com>
-Subject: Re: arm64 dragonboard 410c Internal error Oops dev_pm_opp_put core_clks_enable
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	linux-clk <linux-clk@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, quic_vgarodia@quicinc.com, 
-	quic_dikshita@quicinc.com, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Benjamin Copeland <ben.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] riscv: dts: starfive: add Milk-V Mars CM
+ system-on-module
+To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, E Shattow <e@freeshell.de>
+References: <20250724094912.253723-1-e@freeshell.de>
+ <20250724094912.253723-3-e@freeshell.de>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20250724094912.253723-3-e@freeshell.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Jul 2025 at 18:58, Renjiang Han <quic_renjiang@quicinc.com> wrote:
->
-> On 7/18/2025 7:28 PM, Arnd Bergmann wrote:
-> > On Fri, Jul 18, 2025, at 13:13, Naresh Kamboju wrote:
-> >> The following Boot regressions are noticed on the Linux
-> >> next-20250708with gcc-13 and clang-20 toolchains for the dragonboard
-> >> 410c device.
-> >> [   12.629924] x5 : 0000000000000002 x4 : 00000000c0000000 x3 :
-> >> 0000000000000001
-> >> [   12.629939] x2 : 0000000000000002 x1 : ffffffffffffffde x0 :
-> >> ffffffffffffffee
-> >> [   12.629956] Call trace:
-> >> [   12.629962]  dev_pm_opp_put+0x24/0x58 (P)
-> >> [   12.629981]  core_clks_enable+0x54/0x148 venus_core
-> >> [   12.630064]  core_power_v1+0x78/0x90 venus_core
-> >> [   12.691130]  venus_runtime_resume+0x6c/0x98 venus_core
-> >> [   12.817608] Code: 910003fd f9000bf3 91004013 aa1303e0 (f9402821)
-> >> All code
-> >> ========
-> >>     0: 910003fd mov x29, sp
-> >>     4: f9000bf3 str x19, [sp, #16]
-> >>     8: 91004013 add x19, x0, #0x10
-> >>     c: aa1303e0 mov x0, x19
-> >>    10:* f9402821 ldr x1, [x1, #80] <-- trapping instruction
-> > It's loading from 'x1', which is an error pointer ffffffffffffffde
-> > (-EISCONN).  The caller was modified by Renjiang Han (added to Cc)
-> > in commit b179234b5e59 ("media: venus: pm_helpers: use opp-table
-> > for the frequency").
-> >
-> > The new version of the code is now
-> >
-> > static int core_clks_enable(struct venus_core *core)
-> >   {
-> >          const struct venus_resources *res = core->res;
-> > +       struct device *dev = core->dev;
-> > +       unsigned long freq = 0;
-> > +       struct dev_pm_opp *opp;
-> >          unsigned int i;
-> >          int ret;
-> >
-> > +       opp = dev_pm_opp_find_freq_ceil(dev, &freq);
-> > +       dev_pm_opp_put(opp);
-> >
-> > Where the 'opp' pointer is the error code and gets passed
-> > into dev_pm_opp_put() without checking for the error condition.
-> Thank you for pointing it out.
-> I have submitted the following patch to fix this issue.
+Oops... wrong S-o-by email address on this patch.
 
-I have applied this [1] patch set on top of the Linux next tree and
-performed testing. The previously reported regressions [a] are no
-longer observed.
+On 7/24/25 02:48, E Shattow wrote:
+> Milk-V Mars CM is a System-on-Module based on the StarFive VisionFive 2
+> board and Radxa CM3 System-on-Module compatible with the Raspberry Pi
+> CM4IO Classic IO Board.
+> 
+> Mars CM SoM features:
+> 
+> - StarFive JH7110 System on Chip with RV64GC up to 1.5GHz
+> - AXP15060 Power Management Unit
+> - LPDDR4 2GB / 4GB / 8GB DRAM memory
+> - BL24C04F 4K bits (512 x 8) EEPROM
+> - GigaDevice 25LQ128EWIG QSPI NOR Flash 16M or SoC ROM UART loader for
+>   boot (selectable by GPIO)
+> - eMMC5.0 8GB / 16GB / 32GB flash storage onboard
+> - AP6256 via SDIO 2.0 onboard wireless connectivity WiFi 5 + Bluetooth
+>   5.2 (optional, present in models with WiFi feature)
+> - 1x Motorcomm YT8531C Gigabit Ethernet PHY
+> - IMG BXE-4-32 Integrated GPU with 3D Acceleration:
+>   - H.264 & H.265 4K@60fps Decoding
+>   - H.265 1080p@30fps Encoding
+>   - JPEG encoder / decoder
+> 
+> Additional features available via 2x 100-pin connectors for CM4IO Board:
+> - 1x HDMI 2.0
+> - 1x MIPI DSI (4-lanes)
+> - 1x 2CH Audio out (via GPIO)
+> - 1x MIPI CSI (2x2-lanes or 1x4-lanes)
+> - 1x USB 2.0
+> - 1x PCIe 1-lane Host, Gen 2 (5Gbps)
+> - Up to 28x GPIO, supporting 3.3V
+> - UART x6
+> - PWM x8
+> - I2C x7
+> - SPI
+> - I2S
+> 
+> Link to Milk-V Mars CM schematics: https://github.com/milkv-mars/mars-files/tree/main/Mars-CM_Hardware_Schematices
+> Link to StarFive JH7110 Technical Reference Manual: https://doc-en.rvspace.org/JH7110/TRM/index.html
+> Link to Raspberry Pi CM4IO datasheet: https://datasheets.raspberrypi.com/cm4io/cm4io-datasheet.pdf
+> 
+> Add the devicetree file to make use of StarFive JH7110 common supported
+> features PMIC, EEPROM, UART, I2C, GPIO, eMMC, PCIe, PWM DAC, QSPI Flash,
+> PWM, and Ethernet. Also configure the common SD Card interface mmc1 for
+> onboard SDIO BT+WiFi.
+> 
+> Signed-off-by: E Shattow <e@freenode.de>
 
-Thank you for providing the fix.
+Should be @freeshell.de
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> ---
+>  arch/riscv/boot/dts/starfive/Makefile         |   1 +
+>  .../dts/starfive/jh7110-milkv-marscm-emmc.dts | 163 ++++++++++++++++++
+>  2 files changed, 164 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
+> index b3bb12f78e7d..79742617ddab 100644
+> --- a/arch/riscv/boot/dts/starfive/Makefile
+> +++ b/arch/riscv/boot/dts/starfive/Makefile
+> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
+>  
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
+> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-marscm-emmc.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> new file mode 100644
+> index 000000000000..59766cdb912b
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+> @@ -0,0 +1,163 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2025 E Shattow <e@freeshell.de>
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/pinctrl/starfive,jh7110-pinctrl.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include "jh7110-common.dtsi"
+> +
+> +/ {
+> +	model = "Milk-V Mars CM";
+> +	compatible = "milkv,marscm-emmc", "starfive,jh7110";
+> +
+> +	aliases {
+> +		i2c1 = &i2c1;
+> +		i2c3 = &i2c3;
+> +		i2c4 = &i2c4;
+> +		serial3 = &uart3;
+> +	};
+> +
+> +	sdio_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		reset-gpios = <&sysgpio 33 GPIO_ACTIVE_LOW>;
+> +	};
+> +};
+> +
+> +&gmac0 {
+> +	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
+> +	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
+> +	starfive,tx-use-rgmii-clk;
+> +	status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +};
+> +
+> +&i2c2 {
+> +	status = "disabled";
+> +};
+> +
+> +&i2c6 {
+> +	status = "disabled";
+> +};
+> +
+> +&mmc1 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	mmc-pwrseq = <&sdio_pwrseq>;
+> +	non-removable;
+> +	status = "okay";
+> +
+> +	ap6256: wifi@1 {
+> +		compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-fmac";
+> +		reg = <1>;
+> +		interrupt-parent = <&sysgpio>;
+> +		interrupts = <34 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "host-wake";
+> +		pinctrl-0 = <&wifi_host_wake_irq>;
+> +		pinctrl-names = "default";
+> +	};
+> +};
+> +
+> +&pcie0 {
+> +	status = "okay";
+> +};
+> +
+> +&phy0 {
+> +	rx-internal-delay-ps = <1500>;
+> +	tx-internal-delay-ps = <1500>;
+> +	motorcomm,rx-clk-drv-microamp = <3970>;
+> +	motorcomm,rx-data-drv-microamp = <2910>;
+> +	motorcomm,tx-clk-10-inverted;
+> +	motorcomm,tx-clk-100-inverted;
+> +	motorcomm,tx-clk-1000-inverted;
+> +	motorcomm,tx-clk-adj-enabled;
+> +};
+> +
+> +&pwm {
+> +	status = "okay";
+> +};
+> +
+> +&spi0 {
+> +	status = "okay";
+> +};
+> +
+> +&sysgpio {
+> +	uart1_pins: uart1-0 {
+> +		tx-pins {
+> +			pinmux = <GPIOMUX(16, GPOUT_SYS_UART1_TX,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			bias-disable;
+> +			drive-strength = <12>;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +		};
+> +
+> +		rx-pins {
+> +			pinmux = <GPIOMUX(17, GPOUT_LOW,
+> +					      GPOEN_DISABLE,
+> +					      GPI_SYS_UART1_RX)>;
+> +			bias-pull-up;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +		};
+> +
+> +		cts-pins {
+> +			pinmux = <GPIOMUX(3, GPOUT_LOW,
+> +					     GPOEN_DISABLE,
+> +					     GPI_SYS_UART1_CTS)>;
+> +			bias-disable;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +		};
+> +
+> +		rts-pins {
+> +			pinmux = <GPIOMUX(2, GPOUT_SYS_UART1_RTS,
+> +					     GPOEN_ENABLE,
+> +					     GPI_NONE)>;
+> +			bias-disable;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +		};
+> +	};
+> +
+> +	usb0_pins: usb0-0 {
+> +		vbus-pins {
+> +			pinmux = <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			bias-disable;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +			slew-rate = <0>;
+> +		};
+> +	};
+> +
+> +	wifi_host_wake_irq: wifi-host-wake-irq {
+> +		wake-pins {
+> +			pinmux = <GPIOMUX(34, GPOUT_LOW,
+> +					      GPOEN_DISABLE,
+> +					      GPI_NONE)>;
+> +			input-enable;
+> +		};
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	uart-has-rtscts;
+> +	pinctrl-0 = <&uart1_pins>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> +
+> +&usb0 {
+> +	dr_mode = "host";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&usb0_pins>;
+> +	status = "okay";
+> +};
 
-[1] https://lore.kernel.org/linux-arm-msm/20250723-fallback_of_opp_table-v1-1-20a6277fdded@quicinc.com
-
-Reference link:
-[a] https://lore.kernel.org/all/CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com/
-
-Lava test job link,
- - https://lkft.validation.linaro.org/scheduler/job/8366971#L2573
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-E
 
