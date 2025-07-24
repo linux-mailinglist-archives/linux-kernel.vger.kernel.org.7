@@ -1,190 +1,78 @@
-Return-Path: <linux-kernel+bounces-743749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49FCCB102CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:06:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C694B102C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8406D3B15DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A227B4D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CF1274FEB;
-	Thu, 24 Jul 2025 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GKiL17nR"
-Received: from mail-m21466.qiye.163.com (mail-m21466.qiye.163.com [117.135.214.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF25272E6F;
+	Thu, 24 Jul 2025 08:03:22 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2662274B5D;
-	Thu, 24 Jul 2025 08:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350772153F1;
+	Thu, 24 Jul 2025 08:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344236; cv=none; b=iQhKdDB1sVfkYykmRRkKZ2MXtYSUhZK4/J9wOPsyn21HnN8GUJ7Qm4JCM8SamNsLv0FLmxs7n8uocb8wZPvpNVQVpulu20CqxQwsNwE1XXNyc1ZH6z0UM6Znk32Uyl/dXTSk9DmqinRRCxXyEL52vmee7EKwCGusbae1mwxGRDc=
+	t=1753344201; cv=none; b=kSRdj0YJ8rLXiFenwVjFDJ2OlZpKwV2VHuFvgy3OPbThg5Qs9VTqakz0osIU4hIFvvWBJa+mVy/ZqqINfErcXR8r5wNZutldf73xqu+YmJKUG33FXclhzEvYZJuIihSYytUb3SBGPSyJGLCyhmQuFx9p8b8+MxL5JVBV2e4ZsHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344236; c=relaxed/simple;
-	bh=YtoCltJJgGb4q3IXwvGLRo0EnyzEvYPslp59puxyseU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lWXJD5norDhThAjwgIJRXEqQB1m3UwBhNLt1rbwl9JM2uQZrOtff+Q5oUwCcp6N9FXvbz0VDf6t5CQBbcJ85eBQiC0maEGbsY0iwVtY2VU/oqU/ZoO6XNXyyNQ0PUEznkhPRHx635m2gc1AiasPWaQnzfiQTFqWhIo6RBdrP8kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GKiL17nR; arc=none smtp.client-ip=117.135.214.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c3447a;
-	Thu, 24 Jul 2025 16:03:49 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	l.stach@pengutronix.de,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 14/14] drm/bridge: analogix_dp: Apply panel_bridge helper
-Date: Thu, 24 Jul 2025 16:03:04 +0800
-Message-Id: <20250724080304.3572457-15-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1753344201; c=relaxed/simple;
+	bh=49v1E/7ewNuQu1DVPLRW30sxbH70wkeU4OA49WI/cBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NLd5zTENaoXIhT/OmoXSic2rYAMLBoNI0N8WacjMVDmHD8k6BCodNcaMfzhC5VJt108uBEF6QrecF/hM5Wq5x10nUFV1A1VEmzLGAbGzBMMjC1RavnWht2n5W6yWCdGqw50hF2XouQQczLduFj/jaBQl6tArmIM1Fk7MLGitrKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id BD46068BEB; Thu, 24 Jul 2025 10:03:13 +0200 (CEST)
+Date: Thu, 24 Jul 2025 10:03:13 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	Leon Romanovsky <leonro@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
+Message-ID: <20250724080313.GA31887@lst.de>
+References: <cover.1753274085.git.leonro@nvidia.com> <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a983b75bf9c03a3kunmbbba7af2a153
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ09JQlZMSEtNSxpCQklLThhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=GKiL17nRWTjV+7m8krZ83CHFbhr6lLO+8pOW2q615Pyd5woG/FDZnWVErQrSFeS/YQda0ENtSXS7aGN0AHhkNsJLM1XAY6wokiSjh+glHH2DvFBvhm5ETYm5TzLisJ3Gx36DnP9veDd9QTXvaUUiGBK1So5Ra77F2PelVk/OH24=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=nAwTUjL16khgdMfMVgzSxegkq3E4EUqY6J74Ws+fERM=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-In order to unify the handling of the panel and bridge, apply
-panel_bridge helpers for Analogix DP driver. With this patch, the
-bridge support will also become available.
+On Wed, Jul 23, 2025 at 04:00:06PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Export the pci_p2pdma_map_type() function to allow external modules
+> and subsystems to determine the appropriate mapping type for P2PDMA
+> transfers between a provider and target device.
 
-The following changes have ben made:
-- Apply plane_bridge helper to wrap the panel as the bridge.
-- Remove the explicit panel APIs calls, which can be replaced with
-  the automic bridge APIs calls wrapped by the panel.
-- Unify the API of getting modes to drm_bridge_get_modes().
-
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 30 +++++++++++--------
- 1 file changed, 17 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index bf0b1c0912e4..18f631c83300 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -948,11 +948,7 @@ static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_co
- 	struct analogix_dp_device *dp = to_dp(bridge);
- 	int num_modes = 0;
- 
--	if (dp->plat_data->panel)
--		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
--
--	if (dp->plat_data->bridge)
--		num_modes += drm_bridge_get_modes(dp->plat_data->bridge, connector);
-+	num_modes += drm_bridge_get_modes(dp->plat_data->bridge, connector);
- 
- 	if (dp->plat_data->get_modes)
- 		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
-@@ -995,7 +991,7 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge)
- 	struct analogix_dp_device *dp = to_dp(bridge);
- 	enum drm_connector_status status = connector_status_disconnected;
- 
--	if (dp->plat_data->panel)
-+	if (drm_bridge_is_panel(dp->plat_data->bridge))
- 		return connector_status_connected;
- 
- 	if (!analogix_dp_detect_hpd(dp))
-@@ -1080,8 +1076,6 @@ static void analogix_dp_bridge_atomic_pre_enable(struct drm_bridge *bridge,
- 	/* Don't touch the panel if we're coming back from PSR */
- 	if (old_crtc_state && old_crtc_state->self_refresh_active)
- 		return;
--
--	drm_panel_prepare(dp->plat_data->panel);
- }
- 
- static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
-@@ -1236,7 +1230,6 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 	while (timeout_loop < MAX_PLL_LOCK_LOOP) {
- 		if (analogix_dp_set_bridge(dp) == 0) {
- 			dp->dpms_mode = DRM_MODE_DPMS_ON;
--			drm_panel_enable(dp->plat_data->panel);
- 			return;
- 		}
- 		dev_err(dp->dev, "failed to set bridge, retry: %d\n",
-@@ -1254,16 +1247,12 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
--	drm_panel_disable(dp->plat_data->panel);
--
- 	disable_irq(dp->irq);
- 
- 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 
- 	pm_runtime_put_sync(dp->dev);
- 
--	drm_panel_unprepare(dp->plat_data->panel);
--
- 	dp->fast_train_enable = false;
- 	dp->psr_supported = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
-@@ -1599,6 +1588,21 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		goto err_unregister_aux;
- 	}
- 
-+	if (dp->plat_data->panel) {
-+		dp->plat_data->bridge = devm_drm_panel_bridge_add(dp->dev, dp->plat_data->panel);
-+		if (IS_ERR(dp->plat_data->bridge)) {
-+			ret = PTR_ERR(bridge);
-+			goto err_unregister_aux;
-+		}
-+	}
-+
-+	ret = drm_bridge_attach(dp->encoder, dp->plat_data->bridge, bridge,
-+				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+	if (ret) {
-+		dev_err(dp->dev, "failed to attach following panel or bridge (%d)\n", ret);
-+		goto err_unregister_aux;
-+	}
-+
- 	return 0;
- 
- err_unregister_aux:
--- 
-2.34.1
+External modules have no business doing this.
 
 
