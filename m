@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-744582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE22BB10EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0A9B10ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96946170877
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E97D1D00E8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB22D3EDF;
-	Thu, 24 Jul 2025 15:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7F2E9722;
+	Thu, 24 Jul 2025 15:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VX7+Xb6f"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c7HwVXaX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BRw6ZFVp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D662EA479
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048D4264A74
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753371088; cv=none; b=mAY8rp50MLE50l44g5sogfthG28hIuRX9cTilBLsDW/pLSklDP3pUA9P5DhW/jOMQG6DhrsGUcFqaYMRkbWaWhwS6YtGMUMtytfF/TQRe4UaxEknzrCQH5GCCNFFQOj5bvjq0D9fBR4fhWxPTg++5uz09Nqd65wIqifVYuzGQXc=
+	t=1753371099; cv=none; b=MprKEOZFlAhykHhon3YxoDblkPZvIMz8MzW2I+YGcuJBfd6lIKGSPDp40k7aAHqIfznQ7yzvPCM/aNwsPh+2OLARdNwyOhn6yP3PtBWYIV9pMCMeftwm1Nu06CAZou8ElIe4P9dX+EufilAU6NIq88uOcSKq5/RkYs6wOoZXXVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753371088; c=relaxed/simple;
-	bh=+Dulj+iTI3ino3AiwM/woAISMYXNwrb0Ix3LW6bh0M8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qjqlQpI/D3CvlHs++WPbHkBilbXIC/N5dEkiC2ezwkoelINqhTZHVT5dR/loEXM99qG3RcLNolNWA1qgCPAcMp+YT8GLL3v6bnYbBN3B1fgGVnZa0y5cWXshOESxZx9L7MKs5zAHxWMLz800Z+zZbNS3iYo905oXWLh8s4jkBNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VX7+Xb6f; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jprusakowski.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-607c91a207dso1373621a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753371085; x=1753975885; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SkEsdQ4L/pIchUqNG93CRYH8IJsJl5uVsGM6GRXeRvQ=;
-        b=VX7+Xb6fZu92p1lqjGtKiuo/MMKrH9Ng6LXobKjUOH6d35rczbN+fDOXcBrdYj+UXH
-         Xf3msZPB8EwEHQTz5Hl3VEXEt6di+zGXnOWhoqqAlRVVfV5QZaEdzUe3muXxarbhsiXy
-         1uPLSegpld0+XzT3Iz7lUyfHKRKITkySgLs2IEM979FUY+OrR015tKsvXA3RA+nqn7Fe
-         hyjTXiXrtFwKqVo6z0hqJJ2smCGRdou4SmIQHRQ9OZrm6PnoAa66crAqsMJb3UcALSAH
-         VYTMPqKKEA6Wj4HBXKsauqn94pFQgEFxJ2DLNIONYPPFm0HVw0WHRdN8KbkImdperHXk
-         BIxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753371085; x=1753975885;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SkEsdQ4L/pIchUqNG93CRYH8IJsJl5uVsGM6GRXeRvQ=;
-        b=no7yHItuCIAZCWkGzxeSYhOiH9XkMyuQ6/RZDMj2n1C8AiFP8MO2U9fnbTGiFwdcP6
-         /kuUW5DexUFdzFpJR2mou9DLebaVouaqrftMr7JzxqaYvwouCr3FAjps/TWz2tC+dNlu
-         euubJKPU91/DRnapHj48A14tXa1o0qG+w0eu3OzgLlTC6GawTMDYJZV5QI3pxObPUiIW
-         4Z02/j435Q0JT9yx9lmWUJEUzYIeQCtBYyIdAToyCrgIngegQ0d2VHzoYBuChSj9+X7G
-         44zXeSHa1GBGQhZFUCuVwXUHr0QOwLraBKcwmOWU1Kgo03bTBPgAvouPSQ8YLAxjPw8s
-         Knzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8zlEnxH3XHkpnBYWpLp3fKVvctbCfWfcLK9B60EbCw5LeC86Qz6spcUdPiFvu9zucde+xvOwqLaB93J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHMnotx95PEtlRjRT/q/kA52HXPJ8iT9d8ecviuGYWRM6a06oM
-	S8a6JgmXk0k6smsRZQEobZ+IWQppnZJ1oY4x0rILQeTzVSLBgkyylbWmLFqUHAlqFs7BLS97xKG
-	6Lh4uyndzP9U2Wgsh7Rf3IyJ3aEFJuw==
-X-Google-Smtp-Source: AGHT+IGephgNH4LuU4bJdMk2LAYalDyAVdQFiFmvCHw7m4ai9Esg7UkatB3g3mrEK/1PSLN2IGMF2mT8tO5ci6gvMtA=
-X-Received: from edis29.prod.google.com ([2002:a50:d49d:0:b0:60e:414b:751d])
- (user=jprusakowski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a50:a687:0:b0:602:1b8b:2925 with SMTP id 4fb4d7f45d1cf-6149b5a2ef6mr4796857a12.29.1753371085371;
- Thu, 24 Jul 2025 08:31:25 -0700 (PDT)
-Date: Thu, 24 Jul 2025 17:31:15 +0200
+	s=arc-20240116; t=1753371099; c=relaxed/simple;
+	bh=PuCvx93fI5WdSWBXONt7HX4oa3CPR9Z1RgAoUB9SGwo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EkEgg0bsPRS8X3DFWG6YAJ+fm1hOTxWcX+9EnGSoHTq1Xi5GS7WkqQjXfWDezj27h030kb3eC83n+awJzjhkp/SU0WAvHutLXqlH4M73+O2Az5oSk+2bXRn3mFLqUMKljKoSGZCcsqEl5e9H+U5n/84UqdQWCnJh5r1gWgm0mPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c7HwVXaX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BRw6ZFVp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753371095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1G3MekQgMVdwkAz8QZdfoDsQVqrzOU3Isg5G6JFJk70=;
+	b=c7HwVXaXAoPccKBLP72b+Qcbs/fvfae0+AMWy0d2iie2Tx3/yVShL/bXaFORJwjrrqout4
+	/j4Rfk7MZaooCKV5wP/iH6GVo6wr/ce4J+rcoPlOQ6gdb2s5qER6EjprZi1Rh7ZF8J03vN
+	4+NQ/Rc8lQfuK0tHZy32INmbzfMW36NQbsHQEUQ7YwNBpdHCcXiodwyEXFwkB624ePxcEY
+	wXgmhQ9ZwAwcz2gieJzKU2EaYptJGltQjxfG1/XQ7WPBhuHF250gxayjr4vTSkEEDKgY6J
+	fPWpghay1vgx9Xlgxm7mP4WDFxTeK9BedtTEccByfslVmj3xUqH5TaWXtcTIxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753371095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1G3MekQgMVdwkAz8QZdfoDsQVqrzOU3Isg5G6JFJk70=;
+	b=BRw6ZFVpFFgUc0u8GEK5C3NVWTJiUHIMwf2BmcAJ3FLGvmjZar/BFJZPWzAhKfNeIGdagD
+	VjKc2Vaa05V8a+Bg==
+To: syzbot <syzbot+e84a763987edd173d82f@syzkaller.appspotmail.com>,
+ anna-maria@linutronix.de, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [syzbot] [kernel?] KMSAN: uninit-value in hrtimer_wakeup
+In-Reply-To: <68820e8e.a00a0220.2f88df.0022.GAE@google.com>
+References: <68820e8e.a00a0220.2f88df.0022.GAE@google.com>
+Date: Thu, 24 Jul 2025 17:31:35 +0200
+Message-ID: <87cy9pr4fc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250724153115.125311-1-jprusakowski@google.com>
-Subject: [f2fs-dev] [PATCH v2] f2fs: vm_unmap_ram() may be called from an
- invalid context
-From: Jan Prusakowski <jprusakowski@google.com>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	Jan Prusakowski <jprusakowski@google.com>, Chao Yu <chao@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-When testing F2FS with xfstests using UFS backed virtual disks the
-kernel complains sometimes that f2fs_release_decomp_mem() calls
-vm_unmap_ram() from an invalid context. Example trace from
-f2fs/007 test:
+On Thu, Jul 24 2025 at 03:44, syzbot wrote:
+> HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1693938c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5227c65742122bdd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e84a763987edd173d82f
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/c9e297bb553f/disk-bf61759d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7f2d1bf53414/vmlinux-bf61759d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9a4f67426eab/bzImage-bf61759d.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e84a763987edd173d82f@syzkaller.appspotmail.com
+>
+> =====================================================
+> BUG: KMSAN: uninit-value in hrtimer_wakeup+0xcb/0xd0 kernel/time/hrtimer.c:1997
+>  hrtimer_wakeup+0xcb/0xd0 kernel/time/hrtimer.c:1997
 
-f2fs/007 5s ...  [12:59:38][    8.902525] run fstests f2fs/007
-[   11.468026] BUG: sleeping function called from invalid context at mm/vmalloc.c:2978
-[   11.471849] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 68, name: irq/22-ufshcd
-[   11.475357] preempt_count: 1, expected: 0
-[   11.476970] RCU nest depth: 0, expected: 0
-[   11.478531] CPU: 0 UID: 0 PID: 68 Comm: irq/22-ufshcd Tainted: G        W           6.16.0-rc5-xfstests-ufs-g40f92e79b0aa #9 PREEMPT(none)
-[   11.478535] Tainted: [W]=WARN
-[   11.478536] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   11.478537] Call Trace:
-[   11.478543]  <TASK>
-[   11.478545]  dump_stack_lvl+0x4e/0x70
-[   11.478554]  __might_resched.cold+0xaf/0xbe
-[   11.478557]  vm_unmap_ram+0x21/0xb0
-[   11.478560]  f2fs_release_decomp_mem+0x59/0x80
-[   11.478563]  f2fs_free_dic+0x18/0x1a0
-[   11.478565]  f2fs_finish_read_bio+0xd7/0x290
-[   11.478570]  blk_update_request+0xec/0x3b0
-[   11.478574]  ? sbitmap_queue_clear+0x3b/0x60
-[   11.478576]  scsi_end_request+0x27/0x1a0
-[   11.478582]  scsi_io_completion+0x40/0x300
-[   11.478583]  ufshcd_mcq_poll_cqe_lock+0xa3/0xe0
-[   11.478588]  ufshcd_sl_intr+0x194/0x1f0
-[   11.478592]  ufshcd_threaded_intr+0x68/0xb0
-[   11.478594]  ? __pfx_irq_thread_fn+0x10/0x10
-[   11.478599]  irq_thread_fn+0x20/0x60
-[   11.478602]  ? __pfx_irq_thread_fn+0x10/0x10
-[   11.478603]  irq_thread+0xb9/0x180
-[   11.478605]  ? __pfx_irq_thread_dtor+0x10/0x10
-[   11.478607]  ? __pfx_irq_thread+0x10/0x10
-[   11.478609]  kthread+0x10a/0x230
-[   11.478614]  ? __pfx_kthread+0x10/0x10
-[   11.478615]  ret_from_fork+0x7e/0xd0
-[   11.478619]  ? __pfx_kthread+0x10/0x10
-[   11.478621]  ret_from_fork_asm+0x1a/0x30
-[   11.478623]  </TASK>
+...
 
-This patch modifies in_task() check inside f2fs_read_end_io() to also
-check if interrupts are disabled. This ensures that pages are unmapped
-asynchronously in an interrupt handler.
+> Local variable t created at:
+>  hrtimer_nanosleep+0x48/0x480 kernel/time/hrtimer.c:2142
+>  common_nsleep+0x118/0x160 kernel/time/posix-timers.c:1353
 
-Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
+This makes absolutely no sense. hrtimer_nanosleep() initializes the
+local variable
 
-Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
+      struct hrtimer_sleeper t;
 
-Reviewed-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+in two steps:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d1a2616d41be..0acc25f996b3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -280,7 +280,7 @@ static void f2fs_read_end_io(struct bio *bio)
- {
- 	struct f2fs_sb_info *sbi = F2FS_F_SB(bio_first_folio_all(bio));
- 	struct bio_post_read_ctx *ctx;
--	bool intask = in_task();
-+	bool intask = in_task() && !irqs_disabled();
- 
- 	iostat_update_and_unbind_ctx(bio);
- 	ctx = bio->bi_private;
--- 
-2.50.1.487.gc89ff58d15-goog
+      hrtimer_setup_sleeper_on_stack(&t, clockid, mode);
+      hrtimer_set_expires_range_ns(&t.timer, rqtp, current->timer_slack_ns);
+      
+and the complaint in hrtimer_wakeup() is:
+
+ 1989 static enum hrtimer_restart hrtimer_wakeup(struct hrtimer *timer)
+ 1990 {
+ 1991         struct hrtimer_sleeper *t =
+ 1992                 container_of(timer, struct hrtimer_sleeper, timer);
+ 1993         struct task_struct *task = t->task;
+ 1994 
+ 1995         t->task = NULL;
+ 1996         if (task)
+ 1997                 wake_up_process(task);    <---- here
+ 1998 
+ 1999         return HRTIMER_NORESTART;
+ 2000 }
+
+t->task was initialized:
+
+ 2027 static void __hrtimer_setup_sleeper(struct hrtimer_sleeper *sl,
+ 2028                                     clockid_t clock_id, enum hrtimer_mode mode)
+ 2029 {
+ ...
+ 2054         __hrtimer_setup(&sl->timer, hrtimer_wakeup, clock_id, mode);
+ 2055         sl->task = current;              <---- here
+ 2056 }
+
+This code hasn't changed in a very long time. Looks like KMSAN is confused...
 
 
