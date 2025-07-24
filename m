@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-744970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC18BB1131D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D47B11322
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1071C27C13
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9BE75A691D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15132EE971;
-	Thu, 24 Jul 2025 21:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5888F2EF296;
+	Thu, 24 Jul 2025 21:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Uh0PrygV"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SM+lRFo7"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1302EE979
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20142EE979
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392432; cv=none; b=pkOL6kLNd/PP1aoRdzYpHopA5xHbgZz8+jrHIiwsBgKOOajO5pTMwkomhT/5TjCN33Qd8hpQ8gql300z8mNg2m69jXw4pGARJ2QEqbnbjQrvEHOxeu61UEJxtv+9O74IropakuEi1QT/8pDGwQ6wtp9s8QW8MKIzghnsh3bIrAY=
+	t=1753392451; cv=none; b=IciYs6uPgucWJgOONY1ypZDy+05pzSGuiiqfcEMAnLGh8H2fCV7lgXhrRKZ00ytt8Wzva9Vbq+in20NPAAM4TmBhhbOXixebX+1CqIb9bBRzrOeQy9hUA046R/t2RAg98/D1eBfTfC4zT7KnxfKtwBRGoXB8otx5Gf0G9sNXmxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392432; c=relaxed/simple;
-	bh=9yo7PAzDWZnWGDhWTQcvkkaMcI5yuLUZBspBv87afKk=;
+	s=arc-20240116; t=1753392451; c=relaxed/simple;
+	bh=wNCd3EJBV8JmYYmxRVMwzijvsmCmObXzyS6voU1YqDg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaqWxgcLn+IVUd7MjlbAoOta2dfwD9ltkwdxliNhHs47Qb9wmnIiFMqp2WA7VQR2RP5cPW1PAX4JcwexyVefD5MgJ4sPV6XDlmR7wcVW0raNncr2LaIXfIs9z92TRFqOtwF92HeuIcI8GCrtRXoPhVepa44k94YTuAQ1idSsJIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Uh0PrygV; arc=none smtp.client-ip=209.85.219.54
+	 In-Reply-To:Content-Type; b=qrEKXQzOObiFzKWcTmRSJ/wo8VqlspS3Pg/LYhvk1aM6DMejFkIzBDrmONulcu1SsSXp1FVLGveITu4Loy8KTHKrCfYhcn5PvWxGZLmZaJSb8iZiwt7vF1MdlCOCKkic3O41AgnzaCRO9eTT8sYWNUDYKfvzyDuvFGToFlncd6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SM+lRFo7; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-701046cfeefso22739836d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:27:09 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e638975262so43073285a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753392429; x=1753997229; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1753392448; x=1753997248; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BrQZvefTT8J72h8dUnTdsjaXor2WmZQIMIJXwY4LKOg=;
-        b=Uh0PrygVY/mCdTHTcdOUZsaALA/JD4sqRsUhiX0x4u3R38kw44E0b+x+cAZvc/tHud
-         40VHZypReravUhnHEGSNk5QrQ/7sSct4InVKwI/MZSGI9sDjCzPnZlUXBbiHSA6SoG6j
-         IUP1nF4vqHzKaSuMTaUtJ4FpdWHd0JCcj9vcQ=
+        bh=eb7LwTrwfKZRGwsWl7FQwuOc+LHKc/Q1TZHaaM57R8o=;
+        b=SM+lRFo7N1mbFZfA3hHMXOBmBgQhT2Q5Jqm4GiZ7DzeSol+W2X6WyFPGADIx7r+aB5
+         1rultwrb5EaOiP11okmK8Ot0hzKrfh3mc5nMW6clw8Lgp4HIRPP4dJSuHhXR2pbUxF+v
+         084CeppGGsxQpw9hKcs62wSthkFAkMFGLwKjs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753392429; x=1753997229;
+        d=1e100.net; s=20230601; t=1753392448; x=1753997248;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BrQZvefTT8J72h8dUnTdsjaXor2WmZQIMIJXwY4LKOg=;
-        b=DAukP1+JlnI8mZaNRwm35Ev8t6+QvO0hA3i/KNF6Tjx03kZHrW4OnHgZmRwKbHUZzY
-         eQ2K9WP+aDJXBjeP1lEmVhthU8QgtMMQfcuwkYv+donNvBddmH26vhtb5JviJISL1RSZ
-         VuidI/fqEq5HR7/Du+mjF1HHlbxQ7NadCTjr2amvff3dMh2WN2ZousXk9FBKwN4QtKx7
-         NmeKp53U8tz4zSSdYPZ9T1qn0PUwCIUayv9+fqV0oX3lSS8PbPqtIgpc+MgIEyBqlu41
-         J7T+gpclX21xHKppq9PCxHoDMYAgRgkYCxnKOnpwhz82zr6HxABoxEOOCWkTrjJeJrkx
-         8CJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCml+oqvyWKn97uuIW5CYkBun09V+qrkRt4Xwgrfwm+VGxAa9PIz5kqs1Sys/SUORm80unk7zPFS7SYeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2yNF4hts6wlDk5/OAD9VATUa6diT09mv3cKx4Q9EDyn2CafMr
-	hfq3/rswtB7TzimJrInjHNe1eS7Ds8tmxRMlbFVb/TS8rPrCmgyIdnoOQ3KmlSaFAQ==
-X-Gm-Gg: ASbGncvK8QY4eEa7HqLL6PBU5+tZz3Mex7XEwDHgrSJyOsWftCh96/SIqSTtkz/+ySD
-	IEXiH/r/Y9Nd4EQQD/+polBlDvKBSUUovfFCD6KiuF65WEH9VlBwWUBB6lWQhwDTOQjpgTYP9IP
-	YdyfL0vt3/0zuasmL1TLKfnRu0jeqDQkJLFAzDHpLzZCZERtcAan3oc+GLG3q2KxMv/VIuvBfvT
-	s+e+i/uRuHioLVMothaigxjP9T4S93uomBSa+PhjLvdjvS4ed4C0KGLuc8dd8QstjRkR/R47ocq
-	51D7i55g8ib0yUSlxidc7eCX4I3us6XH+XFqEoEcoE9K1WF0BOGkxkKQXNp+ZVOo27CBQNulBMp
-	z1HPyp83BLSlnQa2iBArvWju80Gm23XiGMTRiGox1ZV+9B6sjkog1ojmODHRiGg==
-X-Google-Smtp-Source: AGHT+IH/5Hg4SYzXScd2JZ5u442inXbwL+/GXKWv2N03daX9+cThsM2yzxMXOEyM0Xu49jU1K7FUEw==
-X-Received: by 2002:a05:6214:c22:b0:706:ea6d:e161 with SMTP id 6a1803df08f44-707007167e0mr108054966d6.32.1753392428572;
-        Thu, 24 Jul 2025 14:27:08 -0700 (PDT)
+        bh=eb7LwTrwfKZRGwsWl7FQwuOc+LHKc/Q1TZHaaM57R8o=;
+        b=SEpyhv84LzzKRFZoNTbfwFa21GozsdQLDRshoJZrpIAJ3US07c0X8aAyCo0AzRKjAt
+         P9z3MQ8Du7wJGl8OeGCfsLBohPQG2PgG07/KhMWbWXlSm6z2v0jNGWaKfc9Lg7IV9hxo
+         4Fzzp6UB8B8hYgBitk0G4OcT+nhRyFUZF3jenwLaLhE6gXXgeSVBFyv0F0CicxUxK6iV
+         goxRfCFW/AIjtkaqofzxT+G2wRjfhTMMoLK3dB0hlTU3IDthA9e90FveeUqz5QyRS5HT
+         EMg70HTQfUaOblWlg4WhS7yS16mVeMQ8H60cKX7QUzMamnpekTHwg0PPGY87df8xHH3o
+         RCJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZg8w87iN5LGr6EsBWWZfOjImuFN2xQasQptDgNcyhcu3R1BuOCSBC3Qm9IDzyaG33EfJbjekwKabEJ5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+PCBzXZjrPhswBmrEjP9jBR/mSt3tjFV4y13ccc1CulxEZNOh
+	zwFGlGvDgZOsMamkshGXo5wFR5+JyViJtlx8vHx07k++jBRaJI4Lm31JYnSJHu5EgQ==
+X-Gm-Gg: ASbGncvMijDDN7Ifj/tG+Zz0uAE/8U5njabuKszatYtwCaJko+PAJpm9sHbhFi6kAnX
+	ZU8d3rH4phtWnG69HaZpwNdQEQ1AvRTG2uqSZRqacKNq+Jw+6M2FSzNm4f696eWVcYuidNLbhgc
+	xLGiuuZ8V4Gr7duZM0f1+WPXHNDHd4wVPCOaHnbPIxiN/9ET88Xi5x5uipPNpadm4HXmxcxIE0E
+	Xpgig9Hs4Pb98Srk6aSDYgWMol+Q2GI7fFHHnMHjefXvNau3pnzLlhdrJNUv2xS6cqljGUvfDc1
+	VrunxgQbHUGIuEaufuUHlwiSMgfYYtOiCFgb4w/ajtqY1WCURwacCs4emdBgy6rv5heQ1luk53I
+	Z2QK0OmzkcHFN5Bpx9t20ZFZVj1jetKYYjjRoe+q6LDgBFvBZfJuf3i0gz+T5BaFPxAjUQrex
+X-Google-Smtp-Source: AGHT+IFXe1AUozr/VBWe0gYnK+qQoY2TYFea6yXJGINXUcVKLGT6eNnGYGkrp3ZYYhKBw7J09w5K5w==
+X-Received: by 2002:a05:6214:500d:b0:6fb:4e82:6e8 with SMTP id 6a1803df08f44-7070051b347mr106591216d6.14.1753392447547;
+        Thu, 24 Jul 2025 14:27:27 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070fc9d5e3sm18704486d6.53.2025.07.24.14.27.02
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070faec0b9sm18388806d6.5.2025.07.24.14.27.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 14:27:07 -0700 (PDT)
-Message-ID: <f084e692-7fd5-417c-8e49-860c2ce47d33@broadcom.com>
-Date: Thu, 24 Jul 2025 14:27:02 -0700
+        Thu, 24 Jul 2025 14:27:26 -0700 (PDT)
+Message-ID: <136af381-5c31-49dd-98fe-1703a2cd57df@broadcom.com>
+Date: Thu, 24 Jul 2025 14:27:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,9 +79,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] MAINTAINERS: Include GDB scripts under MEMORY
- MANAGEMENT entry
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/16] MAINTAINERS: Include dmesg.py under PRINTK entry
+To: John Ogness <john.ogness@linutronix.de>, linux-kernel@vger.kernel.org
 Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
  <kbingham@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Dennis Zhou <dennis@kernel.org>,
@@ -89,7 +88,6 @@ Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
  Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
  Sergey Senozhatsky <senozhatsky@chromium.org>,
  Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
  Andrey Ryabinin <ryabinin.a.a@gmail.com>,
@@ -118,8 +116,8 @@ Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
  "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>,
  "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>
 References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
- <20250625231053.1134589-9-florian.fainelli@broadcom.com>
- <04116d0f-2815-4583-853e-e4295fb3d014@redhat.com>
+ <20250625231053.1134589-13-florian.fainelli@broadcom.com>
+ <84v7oic2qx.fsf@jogness.linutronix.de>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -154,40 +152,41 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <04116d0f-2815-4583-853e-e4295fb3d014@redhat.com>
+In-Reply-To: <84v7oic2qx.fsf@jogness.linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 6/27/25 10:10, David Hildenbrand wrote:
-> On 26.06.25 01:10, Florian Fainelli wrote:
->> Include the GDB scripts file under scripts/gdb/linux/ that deal with
->> memory mamagenement code under the MEMORY MANAGEMENT subsystem since
->> they parses internal data structures that depend upon that subsystem.
+On 6/26/25 01:43, John Ogness wrote:
+> On 2025-06-25, Florian Fainelli <florian.fainelli@broadcom.com> wrote:
+>> Include the GDB scripts file under scripts/gdb/linux/dmesg.py under the
+>> PRINTK subsystem since it parses internal data structures that depend
+>> upon that subsystem.
 >>
 >> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 >> ---
->>   MAINTAINERS | 4 ++++
->>   1 file changed, 4 insertions(+)
+>>   MAINTAINERS | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
 >> diff --git a/MAINTAINERS b/MAINTAINERS
->> index cad5d613cab0..52b37196d024 100644
+>> index 224825ddea83..0931440c890b 100644
 >> --- a/MAINTAINERS
 >> +++ b/MAINTAINERS
->> @@ -15812,6 +15812,10 @@ F:    include/linux/mmu_notifier.h
->>   F:    include/linux/pagewalk.h
->>   F:    include/trace/events/ksm.h
->>   F:    mm/
->> +F:    scripts/gdb/linux/mm.py
->> +F:    scripts/gdb/linux/page_owner.py
->> +F:    scripts/gdb/linux/pgtable.py
->> +F:    scripts/gdb/linux/slab.py
+>> @@ -19982,6 +19982,7 @@ S:	Maintained
+>>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
+>>   F:	include/linux/printk.h
+>>   F:	kernel/printk/
+>> +F:	scripts/gdb/linux/dmesg.py
 > 
-> Probably they should go to the corresponding sub-sections. At least 
-> slab.py?
+> Note that Documentation/admin-guide/kdump/gdbmacros.txt also contains a
+> similar macro (dmesg). If something needs fixing in
+> scripts/gdb/linux/dmesg.py, it usually needs fixing in
+> Documentation/admin-guide/kdump/gdbmacros.txt as well.
 > 
+> So perhaps while at it, we can also add here:
+> 
+> F:	Documentation/admin-guide/kdump/gdbmacros.txt
 
-Sounds good, thanks!
-
+Thanks, v2 coming up.
 -- 
 Florian
 
