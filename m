@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-743622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B696BB100FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558AFB10105
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1045518928BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2644E1CC586D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024C2226D0A;
-	Thu, 24 Jul 2025 06:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BAD221703;
+	Thu, 24 Jul 2025 06:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0BxHbfx"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b="nOuwXpfe";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bxoElTiS"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC875221703
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125211F09B3;
+	Thu, 24 Jul 2025 06:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753339339; cv=none; b=GOcaGuSE2qTR0VvKU/FdEud1MJGRQ5AEWpU0HxcSgKL5QpLWSHl9ELwEIw5Jg6/wvM7S7IYgu8Hz3gf2WjigjJklv3WhTP5YGI+JnSuR8GoDISbCwdol3KvagryaRMiqAuhjjv75DgqCSfe3zD4GH7U31OYcjfbkJH2enDaUxJo=
+	t=1753339551; cv=none; b=PEMkqJnNHywjjCUdUDCoRBYVDsiaL1sNuuNPJjPYZJzC8VzUzMRfv822m6zAkczbkH1FAwGiQ9lXsRUfyoxa7YBiDSdbAZE+o7bjM3tY0MpQ8oU0USqYM1ZvYBGszAUj43O+tz0z/JEI9O+Nzq25kR1zsGSmYxp125AUDSAB8Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753339339; c=relaxed/simple;
-	bh=Qm21j2pfERLfTsVWz+jb5fiVokJz7t4P3c1orFuj8Jg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jN6/qJZ8Rn31xEeiuy4nDItv4Davlgl0Y0kfhhuxeuVlz+qDmS4PmrH8/spEcKL7MonwG7oig2PNlHKTUYZFt+bomA3RiYw619m2CyuMryhkZZKEMfG+dVpaXhx2tA8TL0InsJeOzfW99qkncHuYo3k/OAn+I+1w1MnF+355AQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0BxHbfx; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23c8a5053c2so4965965ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 23:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753339337; x=1753944137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IB7EzD8hLBdajv6lhetUBhSMSuQl0RkekyBjrxZKRzU=;
-        b=H0BxHbfx/8cnZ7Dh5hMkReHVJUoDH8fqQzbLHLtEWGf2dJwxerGOSUuTNJj6Ziv1jW
-         lIL06znYOZiw2Apbho9OPUeb63HzfGqaOuvgHqs8V65VwFXAVOEWaVxWpjKfUZPFuPC0
-         6coaSLh2ZScf1UICdPuzOrKg1bcEALFG/t6caolu8BzJ58DviInJWQ5N8MPc0arXRv8a
-         VXj6+nLVeEePg2LTRFV22ez6ZVIZjYLiTSO6xllsFYBoi/dLUO/oHBtTu8yDpeDU1L5D
-         +VQUeufHWGpKmHAJoelt3za4CA0BZsPw4jduCkCS6LIr3X1XuNtDQEpj7OTwahKFdAC9
-         iB0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753339337; x=1753944137;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IB7EzD8hLBdajv6lhetUBhSMSuQl0RkekyBjrxZKRzU=;
-        b=FKIpwJEdHFK80ogitoSzrCAeK5kv/2ST2taxwoMoYc3HrfIGM08TF2Ykui0OWk+lO6
-         n8XZZL/dnwPoEo3p3u88Gw7grPb5tM2o0lhnlonn4P5YFUJsUTahaGxVRo8dgQb2piQz
-         lwJZCBGDc6qCqjod0C4/oBGOwDbuOYpk1AmEFbzlI3c0tgKXN+N/7vlSz1Qjm/LRG8U8
-         ItdlXO5h0CHSoKA9ahkTYbp74lDCw/0NYklUfhQONAJv5kTeWjh1FfTPoJJ81GdvoJa5
-         GcEd6lOxmyKmUOqGUiA/UNb676wN06Drt+IkShLo3SKM7Nys6+KMLvqcnrvB3ANFbfec
-         IsMQ==
-X-Gm-Message-State: AOJu0YysUvPUgKGc4mYT82yxOhXzTJ1dQROY12cuV1DttCYN1e0kcSlr
-	t0SbpxxpTLgNrl8Zq+c6Qq6cp0I28HVCeN0EBmNinRudBCC2k3WZpca0
-X-Gm-Gg: ASbGnctdqkt6uLE0pPEwQlRyqNl4QYq3p+5ZJLljCun22M24n4/mIrcdELHnVgZ/Gbo
-	f3++4YdsCQzo00j4AeaDHWokV5+5YREHsCdFvbCj2ze4dlQWeqCVtK33eNxZheMx2Ym0U4v1D/F
-	nrX/HigCVKd/827UxNp3ao2OBCntiAgS6D9x4zByzKf/LbCoXVsd7M5GGHqmy0qBLgujMsonoly
-	zUNHSBPzkLmIv8gSL/bbGD0RlCkKuP/aZdU4XMblH+w5zHqsDsa/ZMkaRB/ig3ucb9mrhXo133W
-	0r86+Q8nSe4uNQZyZ86NRQ7XyryxMsFWUSUsczawjU6TOFw1+rCzAH45UNB2vRwWjXNC8RocTLC
-	2W96vtblR3unm3lL5UlmvtGC+ZoU8BUneOPDkErZ1iBcFMD6cOjbpmpeWZj+YNzqKUKHnfxjXj8
-	X7otFj
-X-Google-Smtp-Source: AGHT+IH5SfiT+AWni92x5xi3TruXZz/fL3dlXNb5j7kH3CucqhbpejNh24pIDvDWCl7WiNZ2PkVkZg==
-X-Received: by 2002:a17:902:ef0f:b0:236:9726:7264 with SMTP id d9443c01a7336-23f98161fb3mr78743455ad.5.1753339336835;
-        Wed, 23 Jul 2025 23:42:16 -0700 (PDT)
-Received: from p920.moonheelee.internal (d173-180-147-14.bchsia.telus.net. [173.180.147.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa476e988sm7713255ad.54.2025.07.23.23.42.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 23:42:16 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [syzbot] [fs?] [wireless?] general protection fault in simple_recursive_removal (5)
-Date: Wed, 23 Jul 2025 23:40:52 -0700
-Message-ID: <20250724064051.431879-2-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753339551; c=relaxed/simple;
+	bh=CNTKy5Ekwec43maVw/2PGAUTzfACs4ZdRxFkuNjagx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jtb/AdkgpufWEgDkGFCU/rSYxCenQ1MzMTfqCYY+BwV4XmpQrkZHOOra9a77Cl5nhqjP/WlxhEbIfqNKOdoiSzgbShQvuLf1jwGvfpjtK92YvGqnj6sB6qGUwOH952CnCK7GCdq3godWY65DtskybXFMCuiTTszSD78KWWC34PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com; spf=pass smtp.mailfrom=kylemanna.com; dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b=nOuwXpfe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bxoElTiS; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylemanna.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0DF26140264D;
+	Thu, 24 Jul 2025 02:45:48 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Thu, 24 Jul 2025 02:45:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kylemanna.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to; s=fm3; t=1753339548; x=
+	1753425948; bh=Qb0coPdRXBvqznDliea1RrAC7V15frrSEXkZB1G3E/Q=; b=n
+	OuwXpfe/pwyy8zfQb9i5rO1b5nnI4DV0A2CSyZqQFBgD7qP9W7tsH6ewgtUQ9XN6
+	KWDLLcTXebyde7RYX7E0H8foMpPEYxY8LiRabry3ZSw2wP5hcoIjEVsnGyrimT5H
+	LSeg7ZI4+ZAYobrT5fc+4K89Z8XQvwnbZuzIaF+jw2XBBYHUj78S8fP2IwBDlFuM
+	VMGuyAwWbHElWQaanDIZ4BId3hnP0TpdwIrlAlQVvjumqcX+rN1Nd6CgWSfavQxy
+	qrRD8+mI7boMTmnlus2nQ0xcGH/ZywZRs/WAz0Nzm0/jUXjpWGpvvN+KPtlHvMPL
+	v2yej0ncA+M/LNbcNzsgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1753339548; x=1753425948; bh=Qb0coPdRXBvqznDliea1RrAC7V15
+	frrSEXkZB1G3E/Q=; b=bxoElTiSnRWWpIaue1rJocr/4298DCUJHzkDCLdvkkhF
+	nOxMtrsQRdXGCtPAzeUFsNK9ZdKqSLQZ+ETyjnl56Fpv9xlY3pN6ugClHDqjSFno
+	L1UePtCv5zr/8mIJ+RlasSYOeuigli9VqYzI8yKbuXjZXF0MEmfyb3gBIG4KTl/G
+	7JMAp9GnLTaqjh8fU/iSR3uC0PINPOM4euXJrORU++wQHWn+kHzSM6lvgkVCSTKm
+	x+6aHW/EjGorORoUp2IRm2whQQcZjN+rkKVQJqETHGxq29CHNAvS0HsE7ESF7mEf
+	l3Nk3zJjjoPFU7EqDpD0FERAYspEjoz6SuyXpHgPtw==
+X-ME-Sender: <xms:mtaBaL8OkIO1_RV4ZQGaRlEyHDlR8_eUcxZ9971736aRiZcjcO3h-Q>
+    <xme:mtaBaNN3NPIzAQxneLvV5qsrUDatKWyW5SY_43urosG43-J10qBkNhBJfIh7h7QjG
+    lPPqLbpuaCJtTE4hg>
+X-ME-Received: <xmr:mtaBaIFogd8N9yy_PYFUedruuslwn6ZJMgWjYioZJ85set4Yxd-Nu9v5xZRkeApyoje_3O7avT0RFDT7rN3f6DuhaAEeAPb2UBrC8Za8oUHc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejleeliecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepmfihlhgvucforghn
+    nhgruceokhihlhgvsehkhihlvghmrghnnhgrrdgtohhmqeenucggtffrrghtthgvrhhnpe
+    dthfehvdevgedutedtjedvjeduleelgeetgfdtjedtleehhfdvjefgjedvveeufeenucff
+    ohhmrghinhepihhnthgvlhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehkhihlvgeskhihlhgvmhgrnhhnrgdrtghomhdpnhgspghr
+    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhnhidrlh
+    hutghksehinhhtvghlrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhr
+    tghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopehqihhugi
+    hurdiihhhuohesihhnthgvlhdrtghomhdprhgtphhtthhopehjrghmvghsfigvshhtohhn
+    jhgvrhhnihhgrghnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrmhgvshdrmhhorh
+    hsvgesrghrmhdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihiud
+    drlhgrihesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:mtaBaLxygmytz7VC-GvuV40hfsLHKeIwf2cdQE1kvP6nR3uMnsJIoA>
+    <xmx:mtaBaJpAWobihGkQWSM5eVyprLwye42PKQXlpccaU7256TuvG9iN0g>
+    <xmx:mtaBaBn_X-GNavQ8JFIaF22FRPgxlELXaHhctvSv9biHn4sE-0C2Wg>
+    <xmx:mtaBaDWziXNlephSsWL8YzpRpKj5hmjvY-a9w0YdU3zYVVlfvPS9Dg>
+    <xmx:nNaBaC5Yr5QaxJGCFcpGVLbTF1AMPMUqKiz3L0t4KR5PwOixKA7oPP-j>
+Feedback-ID: iac74403c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 24 Jul 2025 02:45:45 -0400 (EDT)
+From: Kyle Manna <kyle@kylemanna.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Jason Baron <jbaron@akamai.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	James Jernigan <jameswestonjernigan@gmail.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Yi Lai <yi1.lai@intel.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kyle Manna <kyle@kylemanna.com>
+Subject: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC support
+Date: Wed, 23 Jul 2025 23:44:15 -0700
+Message-ID: <20250724064415.1134574-1-kyle@kylemanna.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+Host Device IDs (DID0) correspond to:
+* Intel Core i7-12700K
+* Intel Core i5-12600K
 
-A NULL pointer dereference may occur in ieee80211_sta_debugfs_remove()
-when debugfs_remove_recursive() is called on a dentry whose inode has
-already been freed. This can happen due to a race between STA teardown
-and debugfs cleanup.
+See documentation:
+* 12th Generation Intel® Core™ Processors Datasheet
+    * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
+    * https://edc.intel.com/output/DownloadPdfDocument?id=8297 (PDF)
 
-Fix this by checking that both sta->debugfs_dir and its d_inode are
-valid before invoking debugfs_remove_recursive().
-
-This avoids the crash reported in syzbot bug:
-
-  wlan1: send auth to aa:09:b7:99:c0:d7 (try 2/3)
-  wlan1: send auth to aa:09:b7:99:c0:d7 (try 3/3)
-  wlan1: authentication with aa:09:b7:99:c0:d7 timed out
-  Oops: general protection fault, probably for non-canonical address 0xdffffc0000000029: 0000 [#1] SMP KASAN NOPTI
-  KASAN: null-ptr-deref in range [0x0000000000000148-0x000000000000014f]
-  CPU: 0 UID: 0 PID: 171 Comm: kworker/u4:4 Not tainted 6.16.0-rc7-syzkaller #0 PREEMPT(full)
-  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-  Workqueue: events_unbound cfg80211_wiphy_work
-  RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
-  Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f   92 c0 c3 cc cc cc cc cc 66 66 66 66 66 66 2e
-  RSP: 0018:ffffc90001977400 EFLAGS: 00010202
-  RAX: dffffc0000000000 RBX: ffffffff8b713286 RCX: ca5c1933e35f3700
-  RDX: 0000000000000000 RSI: ffffffff8b713286 RDI: 0000000000000029
-  RBP: ffffffff824067f0 R08: 0000000000000001 R09: 0000000000000000
-  R10: dffffc0000000000 R11: ffffed10085cf24c R12: 0000000000000000
-  R13: 0000000000000148 R14: 0000000000000148 R15: 0000000000000001
-  FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000001b2f55ffff CR3: 000000005030a000 CR4: 0000000000352ef0
-  Call Trace:
-   <TASK>
-   __kasan_check_byte+0x12/0x40 mm/kasan/common.c:556
-   kasan_check_byte include/linux/kasan.h:399 [inline]
-   lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5845
-   down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
-   inode_lock include/linux/fs.h:869 [inline]
-   simple_recursive_removal+0x90/0x690 fs/libfs.c:616
-   debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
-   ieee80211_sta_debugfs_remove+0x40/0x70 net/mac80211/debugfs_sta.c:1279
-   __sta_info_destroy_part2+0x352/0x450 net/mac80211/sta_info.c:1501
-   __sta_info_destroy net/mac80211/sta_info.c:1517 [inline]
-   sta_info_destroy_addr+0xf5/0x140 net/mac80211/sta_info.c:1529
-   ieee80211_destroy_auth_data+0x12d/0x260 net/mac80211/mlme.c:4597
-   ieee80211_sta_work+0x11cf/0x3600 net/mac80211/mlme.c:8310
-   cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
-   process_one_work kernel/workqueue.c:3238 [inline]
-   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
-   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
-   kthread+0x70e/0x8a0 kernel/kthread.c:464
-   ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
-   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-   </TASK>
-
+Signed-off-by: Kyle Manna <kyle@kylemanna.com>
 ---
- net/mac80211/debugfs_sta.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/edac/ie31200_edac.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
-index 49061bd4151b..912b69abab52 100644
---- a/net/mac80211/debugfs_sta.c
-+++ b/net/mac80211/debugfs_sta.c
-@@ -1276,7 +1276,8 @@ void ieee80211_sta_debugfs_add(struct sta_info *sta)
+diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
+index a53612be4b2f..2078c12bbed2 100644
+--- a/drivers/edac/ie31200_edac.c
++++ b/drivers/edac/ie31200_edac.c
+@@ -94,6 +94,8 @@
  
- void ieee80211_sta_debugfs_remove(struct sta_info *sta)
- {
--	debugfs_remove_recursive(sta->debugfs_dir);
-+	if (sta->debugfs_dir && sta->debugfs_dir->d_inode)
-+		debugfs_remove_recursive(sta->debugfs_dir);
- 	sta->debugfs_dir = NULL;
- }
+ /* Alder Lake-S */
+ #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
++#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668
++#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648
  
+ #define IE31200_RANKS_PER_CHANNEL	8
+ #define IE31200_DIMMS_PER_CHANNEL	2
+@@ -741,6 +743,8 @@ static const struct pci_device_id ie31200_pci_tbl[] = {
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_3), (kernel_ulong_t)&rpl_s_cfg},
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_4), (kernel_ulong_t)&rpl_s_cfg},
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1), (kernel_ulong_t)&rpl_s_cfg},
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2), (kernel_ulong_t)&rpl_s_cfg},
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3), (kernel_ulong_t)&rpl_s_cfg},
+ 	{ 0, } /* 0 terminated list. */
+ };
+ MODULE_DEVICE_TABLE(pci, ie31200_pci_tbl);
 -- 
-2.43.0
+2.50.1
 
 
