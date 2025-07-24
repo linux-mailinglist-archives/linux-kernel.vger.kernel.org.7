@@ -1,211 +1,160 @@
-Return-Path: <linux-kernel+bounces-744237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913D9B109ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:10:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04585B109F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784023ACB6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4A53AF5C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFEF2C15A3;
-	Thu, 24 Jul 2025 12:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD182C15A2;
+	Thu, 24 Jul 2025 12:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b="xBQ+pmeC"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="URcCBSV5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6837F248869
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA7C28D829
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358998; cv=none; b=tq1R1z1IdPWFJW4XbGOkSobNpti15X/DxTXbOcCwuwLZpKbf7VgdtvIhsd7V4wT8bfm4cIrw0Y1WH1KymDnKqXOmWZFOjkKv8HKA9W2n5jrXK2TOnbPMmhCXMmVGEA0H8HGD31nxio1ThcU3dS2epr4P+r7do8v1W10RDBakoTc=
+	t=1753359072; cv=none; b=LxmSLJ/WnJno+3sw4AnNxBvLYcaWDAUBxqV0Z6l0wWS9eHIlxHVmlYiVOZ39I+GduPYKxj64Jl6q9vS9M5BNWT59ZozOrvfJsX6SgE5QcgoX3+F8VrS0Ndc42JTH0TYiyOcXZgNdAst4bWt5N13pJbKrY6fObVA1nfs04df6Qw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358998; c=relaxed/simple;
-	bh=AAzmXavI/AStflPpJygGxpFfxnHmYYbjfFhzOslO1ts=;
-	h=MIME-Version:from:Date:Message-ID:Subject:To:Content-Type; b=GlEqU/d8tMqI7HgvKGUB6D/9SQgL00o8R2VY1l/mxQNBYC4RCteW/pEZxZ44leej+3fKFegIGPlrPkdo9NKNg3GBxh5v2biKBXn14Z9iV+Q1h2R8O/oJ7ujibLLUIMQKiIjr1cVFby9HEtxsUrpZZutby8REOmXoRtWNePNW9MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20230601.gappssmtp.com header.i=@starlabs-systems.20230601.gappssmtp.com header.b=xBQ+pmeC; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so158026366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:09:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=starlabs-systems.20230601.gappssmtp.com; s=20230601; t=1753358992; x=1753963792; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WvOmaLn/ULPYZJZtgeT74ERNl1YMD2oKsbtoKHFeHPg=;
-        b=xBQ+pmeCRG9qjXpq/R5RCvvq/o+jY0AU5IE55ZyH0wwzJP19vzyyH4oY3xK6wBAhbp
-         Hxrr2i5mCZQfjL8urc2VO7xM4j+1kpls3WOd5PY0FlAeJzsHzb8V8KbX2ope1uXydIrH
-         cCGO58alOU8sZqo02z74bFEllV5iMn43cWtNbfp4EP2DlJY3+sP3H0NSsbz3JvhqQRAd
-         gTKk/I2vWZ6ku7Z76MWIIUigfvdQacQ43+ZXGhGmFlJxtdUgZ6qtSz604j2jTLGcdMxm
-         edBv5eisO7iE5LIbzb4+C5YLzY5RvnIxiny1wfcGhq4TGpRXff8A+BpEGBE9vVVBt1V8
-         uylw==
+	s=arc-20240116; t=1753359072; c=relaxed/simple;
+	bh=UxsS2GjHcScoiiigsJgJiik/r8vQ5BSRyqxBk1r1+DI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pJQIcszK3Lyqw/elIXHW8M8J0E6spGhBZJJYBvC7bOi4tyGR31febdNu1lNneNO24oRvDeqH0JhUup4EAAXhQidfymiN224i+GfPSa+z6RgghhuODDhJrrgCgFIyxDEeb0hvLj6wHeMj5gQK9XBu/YGQuxLZtMB8liDiyqGd+tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=URcCBSV5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753359069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5mkKNHB1ujzJMQ37K0nRPi6hxxvezhtgPMBlD0jPTNs=;
+	b=URcCBSV5P+8YxmWXNg7cq0ihivASl4IoZ0lZyO4rvUGr8epn5U6OGAZaF4V4SuFt/c9+L+
+	KYw0+7Q6a/QDE+91qxe04r77cJQbW0UoX05wGkDL1V1Xn5fZNvYWhXUM+ZVk8EWDnQb62h
+	snN/KHz+b4g5n/kv/TGF5WojtM6y3kQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-rrIoEYKHMImxYjHSyAT0xQ-1; Thu, 24 Jul 2025 08:11:08 -0400
+X-MC-Unique: rrIoEYKHMImxYjHSyAT0xQ-1
+X-Mimecast-MFC-AGG-ID: rrIoEYKHMImxYjHSyAT0xQ_1753359067
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45611579300so6241175e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:11:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753358993; x=1753963793;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WvOmaLn/ULPYZJZtgeT74ERNl1YMD2oKsbtoKHFeHPg=;
-        b=omtGUGXBfhj2EqUXcmSRDPp4okXdtyHc4oTerBEDHwRN08SV6x4SYfQXez6T39Q8/5
-         2FHZYwOMIXinNUx/GzvTm+X7NdsTxaWN/INhZ5kjmBJ/0OmAV3zpu896fT1HMbzJi1xe
-         1Aqr6f2itHolBuk/raAGxFp9MVTO9MH/PUl1GhbYfSVkJQgWa+VkaDD7KXdSGww/DTvD
-         68SbJ8A0zCC2snmxDeGFv64q1bqiQcwEeMhl1cERLcXoVLrUtIB3+7WRjdE4BqIgK9Ro
-         CxkRtWk7pcUpFqne9qwCU72KaRhWeSeeQ2Mz/1TTH8US/ZzrGPdWh8ph10Lj3J1H5jRW
-         wZcA==
-X-Gm-Message-State: AOJu0YzMPuAHT9ESsAJExpVr58g6apBssHnRznrXV2xvKRvUsAw5vBKE
-	iCDHfsg+PYOxUW0Lbyy2PSQLEpxFT6/1kqUUE3g5JmHRjvhn74tnnkUuoyYbF4ydKWZED5qEdOT
-	j5+GjFOb0PtbFLkc8NZSxJe7Zc3keJ782TlDcFs8uOeScveYwAKs1aYAF
-X-Gm-Gg: ASbGncsNnEi1uHeY/1RlovZxJM6lDPoqs+NzymL6ocrrt+fpn3RuELavUjkN90Lolm+
-	EQ2i1ZXEFAn4fKDzzzqpVTBnsN83HVjRuKCnMwaD7/gs6tBkEmnvZm0+69Z6Z8jj9Wvny1NMi8r
-	15Ghf7616VE4YLHYG3XtErDVN4hBSCQAthCcwqwGbTnvnKEEDJszi2LFGpLVkUfHgBr6y6+gVCH
-	nXEl5Dh
-X-Google-Smtp-Source: AGHT+IGNWM6S21bzU0XoTWR974rIys3veGAIybXrExisEh/rDnRYzg9D6JZ1GRFWeZPcXPF4f/r9JIiwi2O6aGtI9cA=
-X-Received: by 2002:a17:907:3c93:b0:ae9:c789:13f9 with SMTP id
- a640c23a62f3a-af2f8860f32mr627333466b.30.1753358992323; Thu, 24 Jul 2025
- 05:09:52 -0700 (PDT)
-Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 24 Jul 2025 12:09:50 +0000
-Received: from 239600423368 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 24 Jul 2025 12:09:50 +0000
+        d=1e100.net; s=20230601; t=1753359067; x=1753963867;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5mkKNHB1ujzJMQ37K0nRPi6hxxvezhtgPMBlD0jPTNs=;
+        b=nrwK1mtXN8ro5HcDNZWncnyeji4QO5fNOBIb7a1oL2sA8SkN1tZouL+Zq9d9O4yXgN
+         WmbwB6cWiHMHuos62V8BnfhFp3K8sbE/EbPX3od2jTXSdIC2graf58KHlytIAxUM0pAa
+         lR1LGFfAAc2snH/LmWyaxSfvyzW3KTEcAduwq/90bVSBYzjJ98NsG0juYLSxVGNrqrJE
+         kBBO9XerhO/TTmU9fwbEnmXKVGQV43VpAhUE3+/5XI4b3M02zu4ZMlFN8z+2Djs7QEMc
+         X5jKVFJXL9zPJAYHTE7ia+yDuXGZ0nfPi1iReMYJOvdeuWhrXfgOK0fSHSXu+o9bTKvq
+         JTZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpSQFXOcur5oAqElmJaNSI0kHvRtNnzOazW+U4CoZCkvDalwivj7FBYQOY7eex/8Xvtqs9y2JxsBPUoJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWJvrBxRJ7ld2sewqqAJsTUhgP3VNAK/5/MfiYylI1c56HrOOQ
+	YlFWJJhKvI46LiYGZiSZEiyEaAQum+09TTqRfwIpCaREn26Sqr4Ci0GKAYiP9c1VGnSHeD2sDlf
+	nFnycKdyjdC5rUvYIsZoGNr1hgGQWKlLskYo5pq7QjC5f9UTAk+10wshZcRxEAvxKPw==
+X-Gm-Gg: ASbGncvEtVBOBqxkz51jUJwmDD/OLiE4Sa7qtp8at19ePZV5uYXr6mur/Ugv4okR4aO
+	/xW17CyTQ7mTbYLGJP2kwpN9i9RauBd3IDmzwDYGpFpQcSVQcOOYIC6peAAAvlJ7Zb7j0tMRF78
+	pyQ5KMGxs3nRKqKlrPF6eoFhlA9ZFuBLMpzJ+Dgr2isSEE5Fmh4Vm1LfG/F92qQLbUA02wIS6Ks
+	G3ZMouWP/f4DxweJ/RLS/iZCzJI/2LeI8rSI3+gTXtG7y3AVshv5cDtLa8s/Yp3yLijAybFD1en
+	uR+9X3INrg6zGjFFN2eyedO1K6UJKUg+BBJcau87rtkhg62rmQxeUbQk6EJKsbOeGT/03qnkwv6
+	pCVx3rpCzkPzTB7n/jp4rQZo=
+X-Received: by 2002:a05:6000:1886:b0:3a5:27ba:479c with SMTP id ffacd0b85a97d-3b768effafdmr5361206f8f.43.1753359067064;
+        Thu, 24 Jul 2025 05:11:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqEH23+Rs8PjWmI9mi/mJrpP114BgbVWsJt01naHoZe9YaHAc0Dr+Zfm3Qw2dd4ZeDKZbtRw==
+X-Received: by 2002:a05:6000:1886:b0:3a5:27ba:479c with SMTP id ffacd0b85a97d-3b768effafdmr5361179f8f.43.1753359066657;
+        Thu, 24 Jul 2025 05:11:06 -0700 (PDT)
+Received: from [192.168.1.167] (cpc76484-cwma10-2-0-cust967.7-3.cable.virginm.net. [82.31.203.200])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc6055dsm2054443f8f.7.2025.07.24.05.11.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 05:11:05 -0700 (PDT)
+Message-ID: <c6a5d07d-4c00-4047-b86f-cce27177e353@redhat.com>
+Date: Thu, 24 Jul 2025 13:11:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-from: Sean Rhodes <sean@starlabs.systems>
-Date: Thu, 24 Jul 2025 12:09:50 +0000
-X-Gm-Features: Ac12FXwbJuTRIR4gq5N73MLa7PHYJhAMniyxljVyz5WYYG8XsKgP_uL_5IUD4YM
-Message-ID: <CABtds-0E8gfvtEZMrKmof4656wxkUKkGphfkSS=tb_4tQH2RRQ@mail.gmail.com>
-Subject: [PATCH] mmc: rtsx_usb_sdmmc: fix SDR104 timings
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [gfs2?] KASAN: slab-use-after-free Write in
+ gfs2_qd_dealloc (3)
+Content-Language: en-US
+To: syzbot <syzbot+42a37bf8045847d8f9d2@syzkaller.appspotmail.com>,
+ agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68821f8f.a00a0220.2f88df.0024.GAE@google.com>
+From: Andrew Price <anprice@redhat.com>
+In-Reply-To: <68821f8f.a00a0220.2f88df.0024.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From 21134948f99d3c232671392f53b83b5575dda2fc Mon Sep 17 00:00:00 2001
-From: Sean Rhodes <sean@starlabs.systems>
-Date: Thu, 24 Jul 2025 10:53:20 +0100
-Subject: [PATCH] mmc: rtsx_usb_sdmmc: fix SDR104 timings
+On 24/07/2025 12:57, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in move_to_new_folio
+> 
+> ------------[ cut here ]------------
+> gfs2_meta_aops does not implement migrate_folio
 
-With the current rtsx_usb driver, SDR104 SD cards do not work due to
-incorrect timing configuration. This causes data corruption when the
-card is accessed.
+This is a separate issue, fixed in for-next.
 
-Fix this by copying the working timing configuration from the 11 year
-old RTS5139 staging driver, which was removed in commit 00d8521dcd23
-("staging: remove rts5139 driver code"). These values are known to
-function correctly.
+Andy
 
-Tested using a SanDisk Extreme microSDXC 128GB (previously affected),
-plus several other cards. Copied ~1GB of data, tested rapid removal/
-insertion, suspend/resume (S3), and verified data integrity afterwards.
+> WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 fallback_migrate_folio mm/migrate.c:942 [inline]
+> WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 30 Comm: kcompactd1 Not tainted 6.16.0-rc7-syzkaller-g25fae0b93d1d-dirty #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:fallback_migrate_folio mm/migrate.c:942 [inline]
+> RIP: 0010:move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
+> Code: 0d 01 90 42 80 7c 3d 00 00 74 0a 48 8b 7c 24 20 e8 2f 53 fe ff 48 8b 44 24 20 48 8b 30 48 c7 c7 20 bb 97 8b e8 bb b7 5e ff 90 <0f> 0b 90 90 49 bf 00 00 00 00 00 fc ff df e9 7e fd ff ff e8 62 d2
+> RSP: 0018:ffffc90000516fd0 EFLAGS: 00010246
+> RAX: daec11f2299abc00 RBX: ffffea000100abc0 RCX: ffff888030f88000
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: 1ffff1100887b921 R08: 0000000000000003 R09: 0000000000000004
+> R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: ffffea00014e3d40
+> R13: ffff8880443dc7e8 R14: ffffea000100abc8 R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fce2e39a000 CR3: 0000000057fda000 CR4: 0000000000352ef0
+> Call Trace:
+>  <TASK>
+>  migrate_folio_move mm/migrate.c:1301 [inline]
+>  migrate_folios_move mm/migrate.c:1653 [inline]
+>  migrate_pages_batch+0x1c34/0x2830 mm/migrate.c:1900
+>  migrate_pages_sync mm/migrate.c:1930 [inline]
+>  migrate_pages+0x1bcc/0x2930 mm/migrate.c:2039
+>  compact_zone+0x23f4/0x4ad0 mm/compaction.c:2683
+>  compact_node+0x1d2/0x280 mm/compaction.c:2952
+>  kcompactd+0xbc8/0x1290 mm/compaction.c:3250
+>  kthread+0x70e/0x8a0 kernel/kthread.c:464
+>  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> 
+> 
+> Tested on:
+> 
+> commit:         25fae0b9 Merge tag 'drm-fixes-2025-07-24' of https://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12eac0a2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+> dashboard link: https://syzkaller.appspot.com/bug?extid=42a37bf8045847d8f9d2
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=118ee0a2580000
+> 
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sean Rhodes <sean@starlabs.systems>
----
- drivers/mmc/host/rtsx_usb_sdmmc.c | 54 +++++++++++++++++++------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c
-b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index d229c2b83ea9..a56c725d99fb 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -1036,7 +1036,7 @@ static int sd_set_power_mode(struct rtsx_usb_sdmmc *host,
- }
-
- static int sd_set_timing(struct rtsx_usb_sdmmc *host,
--		unsigned char timing, bool *ddr_mode)
-+			 unsigned char timing, bool *ddr_mode)
- {
- 	struct rtsx_ucr *ucr = host->ucr;
-
-@@ -1046,50 +1046,64 @@ static int sd_set_timing(struct rtsx_usb_sdmmc *host,
-
- 	switch (timing) {
- 	case MMC_TIMING_UHS_SDR104:
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1,
-+				 0x0C | SD_ASYNC_FIFO_RST,
-+				 SD_30_MODE | SD_ASYNC_FIFO_RST);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_SOURCE, 0xFF,
-+				 CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_PUSH_POINT_CTL,
-+				 SD20_TX_SEL_MASK, SD20_TX_14_AHEAD);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_SAMPLE_POINT_CTL,
-+				 SD20_RX_SEL_MASK, SD20_RX_14_DELAY);
-+		break;
-+
- 	case MMC_TIMING_UHS_SDR50:
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1,
--				0x0C | SD_ASYNC_FIFO_RST,
--				SD_30_MODE | SD_ASYNC_FIFO_RST);
-+				 0x0C | SD_ASYNC_FIFO_RST,
-+				 SD_30_MODE | SD_ASYNC_FIFO_RST);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_SOURCE, 0xFF,
--				CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
-+				 CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_PUSH_POINT_CTL,
-+				 SD20_TX_SEL_MASK, SD20_TX_14_AHEAD);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_SAMPLE_POINT_CTL,
-+				 SD20_RX_SEL_MASK, SD20_RX_14_DELAY);
- 		break;
-
- 	case MMC_TIMING_UHS_DDR50:
- 		*ddr_mode = true;
-
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1,
--				0x0C | SD_ASYNC_FIFO_RST,
--				SD_DDR_MODE | SD_ASYNC_FIFO_RST);
-+				 0x0C | SD_ASYNC_FIFO_RST,
-+				 SD_DDR_MODE | SD_ASYNC_FIFO_RST);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_SOURCE, 0xFF,
--				CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
-+				 CRC_VAR_CLK0 | SD30_FIX_CLK | SAMPLE_VAR_CLK1);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_PUSH_POINT_CTL,
--				DDR_VAR_TX_CMD_DAT, DDR_VAR_TX_CMD_DAT);
-+				 DDR_VAR_TX_CMD_DAT, DDR_VAR_TX_CMD_DAT);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_SAMPLE_POINT_CTL,
--				DDR_VAR_RX_DAT | DDR_VAR_RX_CMD,
--				DDR_VAR_RX_DAT | DDR_VAR_RX_CMD);
-+				 DDR_VAR_RX_DAT | DDR_VAR_RX_CMD,
-+				 DDR_VAR_RX_DAT | DDR_VAR_RX_CMD);
- 		break;
-
- 	case MMC_TIMING_MMC_HS:
- 	case MMC_TIMING_SD_HS:
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1,
--				0x0C, SD_20_MODE);
-+				 0x0C, SD_20_MODE);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_SOURCE, 0xFF,
--				CRC_FIX_CLK | SD30_VAR_CLK0 | SAMPLE_VAR_CLK1);
-+				 CRC_FIX_CLK | SD30_VAR_CLK0 | SAMPLE_VAR_CLK1);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_PUSH_POINT_CTL,
--				SD20_TX_SEL_MASK, SD20_TX_14_AHEAD);
-+				 SD20_TX_SEL_MASK, SD20_TX_14_AHEAD);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_SAMPLE_POINT_CTL,
--				SD20_RX_SEL_MASK, SD20_RX_14_DELAY);
-+				 SD20_RX_SEL_MASK, SD20_RX_14_DELAY);
- 		break;
-
- 	default:
--		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD,
--				SD_CFG1, 0x0C, SD_20_MODE);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_CFG1, 0x0C, SD_20_MODE);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, CARD_CLK_SOURCE, 0xFF,
--				CRC_FIX_CLK | SD30_VAR_CLK0 | SAMPLE_VAR_CLK1);
--		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD,
--				SD_PUSH_POINT_CTL, 0xFF, 0);
-+				 CRC_FIX_CLK | SD30_VAR_CLK0 | SAMPLE_VAR_CLK1);
-+		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_PUSH_POINT_CTL,
-+				 SD20_TX_SEL_MASK, SD20_TX_14_AHEAD);
- 		rtsx_usb_add_cmd(ucr, WRITE_REG_CMD, SD_SAMPLE_POINT_CTL,
--				SD20_RX_SEL_MASK, SD20_RX_POS_EDGE);
-+				 SD20_RX_SEL_MASK, SD20_RX_14_DELAY);
- 		break;
- 	}
-
--- 
-2.48.1
 
