@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-744219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362BCB109B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08727B109B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA9C3A8F5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059B41CE31DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9612BE7A0;
-	Thu, 24 Jul 2025 11:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+B52w/E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B77A2BE642;
+	Thu, 24 Jul 2025 11:57:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967642BE642;
-	Thu, 24 Jul 2025 11:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895892BE625
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358217; cv=none; b=CI0WMPxfzzCS8gfxzygPy5qYdCo526uo9NuBA+sXLnQzhTQNqNUw3qMBgnRqC0iwGz3BvoN4QL+x89swrWm0icjMkEEcBvjqdAgTDR8aEt38VZLSHY09u2Ag9wLWPcNevCPtv+tQJw95pukqcLqJ9ewsX1gRFIVifGEzFNtEthk=
+	t=1753358226; cv=none; b=o9/UqdFpQsrlUaW6ublsYAJLGkFE1s/Znvg4u9fI6zM1aGl/EDIad0659WCilPcRmDOD35ZAAzmVJkDiRqg/pD1q3KZO4YF9zZOM9WhRRXFgOnSzGlCHF8znWSF8E/fSiG9h2CTIs6V0yg92yuYcIWesWd8YLOFf9XVKki4fDHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358217; c=relaxed/simple;
-	bh=UbnLPvlzvaF+TASrvQ8CvSyZzrgpblIXwom2xhrfV3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IekphqaWKxDdjCFSxrhyd74nYunndzwjA5JM1M/cfJPx8TeAGzauSEWVlZxFBtSvILg4Mk09WfHB181d4lOTUZPqggNdo7fde5rR+47Shk6x6624KuipisVvVqa3JGcXX8tktMpIAQzyeNQjTHljUB4/oizKvpKpFslCQQxhipU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+B52w/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B35C4AF0B;
-	Thu, 24 Jul 2025 11:56:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753358217;
-	bh=UbnLPvlzvaF+TASrvQ8CvSyZzrgpblIXwom2xhrfV3w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O+B52w/ETUfu8M3TbhhmtQI4auBK/DIqAXLehkKPeIzJZceUdaIMxnchkcAGo3BCL
-	 qyNaX/RK4vJjIepty7runayUuhdbjpnNeVymdMYsgbGFf3wqxVDebd0nnm7z9ndq0H
-	 H3QKmjpAaAHZt0a135Uka+4lJqOXO9/K6AoyYKoyCi7TFOBkYdT8rRtV7KMMhoskFO
-	 0SCpi/CPt3Yvwq/Ao8W+MQ9oHqoDjD6tLafEiOWB8DhNooTvtb+0HlKJnw1DpWSvI9
-	 9hBIFFqvBGxOW4An2DoHrj4ppsSLymhvfa+5St3IUdEs/TmOtZG7sRN3c5PWpGNiPZ
-	 0aNa1E7OIUxdQ==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so1532057a12.2;
-        Thu, 24 Jul 2025 04:56:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURjVHwh7pIp7JcklmC/C31YPZNgy8r5gR39dLhNfACi/FO8iqPQcrOeNw3vfTe6Et6P1xatT6K706610ro@vger.kernel.org, AJvYcCV3WXZFU8ZtIFceeMUNlDwvr1XC1BcEvihisn5YGzKEXtV+qxSSJh06DHxRNkv4LJ5r8soSl92W00JMhEZJWrNUxhJH@vger.kernel.org, AJvYcCW6kLruEJRPR9RiqDaF+bSXOORT4WijT33IxfY9GVeFFmLlFnnFlzGkIaFC0Zf00SeFqEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR+IwvK5wjEA+x6KCQEEg05hBtHoVkpRKtfAJE0iKsyhkDOmNZ
-	cT1wxYHFiSPvWvOZ/wz+7i/qIdDmdA1Rp2TIbO24v0Av+v3/6WcYaNOgFpTylwPAr047s8YhZoi
-	CNN4RMqColZN9iCVk4WsPqvWAib1xryA=
-X-Google-Smtp-Source: AGHT+IHyudkQ+ID0bU15SK7aT9+KIcppMZFHtN6CrQ6Dtu9svcp+0ZZ1xB7ZVtW72pZg9dG9fKgoM+SEjXsylHLj50I=
-X-Received: by 2002:a05:6402:1d52:b0:5f7:f55a:e5e1 with SMTP id
- 4fb4d7f45d1cf-6149b596728mr5451665a12.24.1753358215740; Thu, 24 Jul 2025
- 04:56:55 -0700 (PDT)
+	s=arc-20240116; t=1753358226; c=relaxed/simple;
+	bh=WkTHvxCudTJ+htgOxmMBuNNdNOV2TnDRvTf/bcR9QmY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PWXkeggJrBxtl+Tgxet3lYv/XyJ3Lj9+ZaWmUnfW4WbEgFl2tzSrRxCia+L50kmRu11RgOrTMh9vk8qMBn4IaRJrkmR7K7DZu6aG6ffa5eCGhNLFhG7RRTFmLTKDzpcMkMnzeX7dEnUSIKbCSkQBir6Kn96sdHEx+xLM64+BZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87b89891d5dso182001539f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:57:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753358223; x=1753963023;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVsAhpNRkWrO5l1ARhX9Th8dO5mHiSeSKk1eXlQht4E=;
+        b=pyo5G7u05NcuRgvXmqlJu7LZPJdlai7yvuy/wsOGzwsB8yqVW4zb/ZMQTk+YaAYPJM
+         k5wLd3BzdZkkeK5/SKgVT8zmJG5K8Nj/Xx/spR0vIxzw/z20UOm1SE5v21yR4UxzUB4i
+         9aMOSAlGTE395BFW2/qm9NPpD1Zw7L34OkQqWX2I/zWokx8Owm7+LZtX6+eYFvDNTAUv
+         KJ4J2NwvqM8UhY8CSBkmQHooY+U2oq9JBGM0im3tCS7SHH42x7sx08VuYrkVR4FziLph
+         M/PwrqV92bAIASk3Q4ix0Z7vOalSg7dErWG+j1PkX+LItJGp0PvfZmn+ZxRtpdPEWVJg
+         BRhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUm28lGvllVGTOONF14++38jGHE92A2Rscd3m5amk+Csd9J8zLZ7evJhCTJCHzec51Af1FXQdFdAdKbIcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVly7cITa08eN18aljE6YshlJx57T+8H4jKoDiL7vGXkQzEifN
+	TCegaDP0spCWBcTbKehonDnmyV+MWUv+JQQ+4BsLnpmQUsWF5pEIuo/zunRithpmHhEYb0uxalD
+	PpQBglNYBuuRlbB2+Nhab1bLSwO4MShFzXCM8PgE1asayfaD/KEOD73fSggI=
+X-Google-Smtp-Source: AGHT+IFfrFXHvzXS64pTAv1/aR/NBSGN3z1S3C28Yojo2Hh8GtMRjf4Iw1VrR5I4xw5vI0dt45XUhrqs64V2s/mTW08+d3U4K0EO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722094734.4920545b@gandalf.local.home> <2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
- <20250723214659.064b5d4a@gandalf.local.home> <15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
-In-Reply-To: <15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 24 Jul 2025 19:56:42 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyEIVNP2UDQDr7DKqNUOZbuTtFEVDCtic-VwJB5VQ3JEknFoA6_p-1cdZw
-Message-ID: <CAAhV-H4TGus35B6ONdkSOMwWw+H6NRmHStV-Xu7vUYYrkDGfUQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic code
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+X-Received: by 2002:a05:6602:6d1c:b0:87c:2e82:5a6a with SMTP id
+ ca18e2360f4ac-87c64f95c36mr1338819639f.4.1753358223607; Thu, 24 Jul 2025
+ 04:57:03 -0700 (PDT)
+Date: Thu, 24 Jul 2025 04:57:03 -0700
+In-Reply-To: <3d164a94-b643-411b-9f22-3bb02af4e4f0@redhat.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68821f8f.a00a0220.2f88df.0024.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] KASAN: slab-use-after-free Write in
+ gfs2_qd_dealloc (3)
+From: syzbot <syzbot+42a37bf8045847d8f9d2@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, anprice@redhat.com, gfs2@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 24, 2025 at 9:51=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
->
->
-> On 2025/7/24 =E4=B8=8A=E5=8D=889:46, Steven Rostedt wrote:
-> > On Thu, 24 Jul 2025 09:39:40 +0800
-> > Bibo Mao <maobibo@loongson.cn> wrote:
-> >
-> >>>    #define kvm_fpu_load_symbol      \
-> >>>     {0, "unload"},          \
-> >>>     {1, "load"}
-> >>>
-> >> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-> >
-> > Thanks,
-> >
-> > Should this go through the loongarch tree or should I take it?
-> Huacai,
->
-> What is your point about this?
-I will take it, thanks.
+Hello,
 
-Huacai
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in move_to_new_folio
 
->
-> Regards
-> Bibo Mao
-> >
-> > Either way works for me.
-> >
-> > -- Steve
-> >
->
+------------[ cut here ]------------
+gfs2_meta_aops does not implement migrate_folio
+WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 fallback_migrate_folio mm/migrate.c:942 [inline]
+WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
+Modules linked in:
+CPU: 0 UID: 0 PID: 30 Comm: kcompactd1 Not tainted 6.16.0-rc7-syzkaller-g25fae0b93d1d-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:fallback_migrate_folio mm/migrate.c:942 [inline]
+RIP: 0010:move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
+Code: 0d 01 90 42 80 7c 3d 00 00 74 0a 48 8b 7c 24 20 e8 2f 53 fe ff 48 8b 44 24 20 48 8b 30 48 c7 c7 20 bb 97 8b e8 bb b7 5e ff 90 <0f> 0b 90 90 49 bf 00 00 00 00 00 fc ff df e9 7e fd ff ff e8 62 d2
+RSP: 0018:ffffc90000516fd0 EFLAGS: 00010246
+RAX: daec11f2299abc00 RBX: ffffea000100abc0 RCX: ffff888030f88000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 1ffff1100887b921 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: ffffea00014e3d40
+R13: ffff8880443dc7e8 R14: ffffea000100abc8 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fce2e39a000 CR3: 0000000057fda000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ migrate_folio_move mm/migrate.c:1301 [inline]
+ migrate_folios_move mm/migrate.c:1653 [inline]
+ migrate_pages_batch+0x1c34/0x2830 mm/migrate.c:1900
+ migrate_pages_sync mm/migrate.c:1930 [inline]
+ migrate_pages+0x1bcc/0x2930 mm/migrate.c:2039
+ compact_zone+0x23f4/0x4ad0 mm/compaction.c:2683
+ compact_node+0x1d2/0x280 mm/compaction.c:2952
+ kcompactd+0xbc8/0x1290 mm/compaction.c:3250
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+Tested on:
+
+commit:         25fae0b9 Merge tag 'drm-fixes-2025-07-24' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12eac0a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=42a37bf8045847d8f9d2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=118ee0a2580000
+
 
