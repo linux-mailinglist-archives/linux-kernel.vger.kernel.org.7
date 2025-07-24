@@ -1,187 +1,191 @@
-Return-Path: <linux-kernel+bounces-744217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A135B109A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DB0B109AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46552AE06D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8B6AE2024
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11DC2BE64D;
-	Thu, 24 Jul 2025 11:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4AC2BE64C;
+	Thu, 24 Jul 2025 11:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0rg0Gn9"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JtWQumYZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BFF1F4C83
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCED2BE628
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358092; cv=none; b=kYRyaPs89dV3/Wc6ReSe3yk5UOwozfSCPn0DiRlDpuupZPkFf/rN3T8EWuqH/gYdrPFCFnhzKKlmf3dKK/IcVADUa8BCNUmuTOkKwr1uxazgucA6GrmUo3cFrdH+P9ojd/ACqcWnCuCgAdlcPomD92ZUVsrGAy/ni0z05wvwsWQ=
+	t=1753358132; cv=none; b=nSDQtvYgPDXCCEtjUq1Qor3AoPIqcVJs2+E2Z+mZVSPlzQ1YYYr6YFRuwgn50YTn5onoPYmS1IYigw5BVWzQtpsy+5QxWJUlXBqsPks0peCNBAnI/kWYk1zY/f3NxghNOtG9laLtKpothzDRZUGMeSfyMMB4EXGQNnIQonTmVWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358092; c=relaxed/simple;
-	bh=uBAETq3ZJFHM+cady4LCKCozZZLmtjkngw6fkneCqLI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=H9Q8jSc3+srO6Z+c48knpxdioHP6j/p9gO0nH7+PeLxlIb5BHVy1kEnagTRCv8+/l8+rEaRiAAH6IxmQWTYAjYJhx8+6Uq9UAxUtgRROjkTuM6RwetxfvZG4AkS+KUF4U76D+0MRurEYuqCK9NFd7N3DT4YHG2e2Wc3rpWUJ/Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0rg0Gn9; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a510432236so661268f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753358089; x=1753962889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=up8iyGGWArwKLq6YJECftqTB1hFXDbYaDoTw/k4feT4=;
-        b=S0rg0Gn9szwtuPXuCtrTbqAlFf0e+LO/P6IskBNFPDcP4BPO04myW4mFy9KLYWjE4I
-         ZmXGIURgZvFEJAJ6KByDIlPMVO9QE9VMCq5VgKuuxmZj6F4K5r7UznIqEZvXEeUTG4l1
-         4CVVftbnmj8cYloiG+D56XkhK6OctBXMZLy0QPv99b3bxYQ3YvfqtT/w6wEMrefsHndx
-         JxBhJSmfhpS3yug3FOuw3ul+JImFNuMf5XBNIP5xgJxT4UKrqN7jRWRat5dfI9YNdMOz
-         b4SpL697AwtJzKFTRtg/t85Qg5cg1ZtrARbr5Rc+KM+qI0UOFZ1Yjc4iLLN+tkzV7Pzf
-         T2ig==
+	s=arc-20240116; t=1753358132; c=relaxed/simple;
+	bh=jfCb++kTsyb3iig2h1ycKbyRXElJw3YUbi8qzbAl8/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKxzhnHUgyhcXlQcTa7OlrrFFSP31KAhwxBvmbXzMXB81icf6cOkY86txWpWLsoegXISOGl2hIEdbS3iPHv/O703uSxbhVDvcrAg1slz3/YxC2Ll8jGU/TJWe5WWjae1RY3isp2/Gc78uyiArEOJGvGkBC9ZdOOfVMEL501HZxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JtWQumYZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9ePmA006564
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:55:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mINbh0hT0mOMLjUaQwlGXcWW
+	ToNWDwkhWfpfbCEFXxs=; b=JtWQumYZJkZLJV4AipaSDwxut0syaib3lRas6zal
+	9hzcGjFLqShot4RHdNHklOX5WV+cPhH47AAe8yqT0jX2d8dZgOUbuVwDQN3OKcIo
+	pBJnKVL2u527aYZm/oNeiLL+semul1dK55OAdm1vjxvEljN2GLcEAIlh/uo/IQnN
+	M/daUF+SHZ/V3H5qR5zNd3iJ5CTzl317BIg/R3VLv9vHtebx4LuqPL39ye3qbMjo
+	dn/BtO5izWiF09IRSUhHoca91PjSQQn6OGqTH3NALZKHEmPZ7bsVy3zkYTl7E/Si
+	5rnvn6vHyUC/lAVtRld3HfnxzmR/Bbwj4BInBbpO5p/ZKQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047qgm2x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:55:28 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70713aa9fd6so8506716d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 04:55:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753358089; x=1753962889;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=up8iyGGWArwKLq6YJECftqTB1hFXDbYaDoTw/k4feT4=;
-        b=dvaTGxiK+RE+Jh8Ot7LSolGnL3BKXVHx4RY112x6IAcAU1GaqYnIKe8KOm3EwM5tRo
-         8eohFffSiy3m2WkUTHBBG5TavWQVjqYOGfZ5oj317E+SuJhLJ8GCSDtaEMnOfxhpwB1j
-         a38bakxCG6vOsIKb5fhBOOYKhV4Z6PuKbN2pddxSrUG7+OY5xcyBEmHWPziE+nq0v1/+
-         7B1XB6ZHzPnhh6ra0KHZoLfiMWjbz/srhiQHz3XZuwX3R7eTbvi2xTR3yFKNoCs88v/K
-         +A4wQCwyk5S7BQDJpvccvtazc01vm31+RraEB1md7TpdPEJAU88jpOhbeehGs1bG+Hif
-         LU2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMBAcRhpLCTc3w+VivaaDawfbBJ4UHIhEn7GHRJV1hugbPNiKptVRg9mSZXUEJGzgEPzWlVgv26v6JoI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzevUswmmpAgr6Ax1ifItAzKRZi6RerT0c1NQO+Z50Lmlc3owX
-	YtO+hgaNfiYJISIyAvXSMEHN+k1gy+EI/iOMEizVqZkpHjvic53XCfhOOteTHg+otnQ=
-X-Gm-Gg: ASbGncvgsICXdhl86SNhXAEyjiQDc10LUzubwogUDv/gOF1i7Y4aaid6lZalKO4Xfv8
-	5rzk1VYX7Y1uYu8UCvTNheSF18Gro69MbIswF/rodRt2AJD7/BKtA8qGkYGh8Gdwd3NiCCzZsMs
-	fyrsLzrXPJEsB8N4SqP3cSe3nrDGoxi6m2uMMtjZ0IGAvAhk2FYFW6wnaOECerMM6e+0ajm5Bvq
-	eflL4qOuJgYzLfS0G1zs6D/NFMSOMkAXEvb39tBrdn17w+VXKIjSFSDISciAfJbbnn4yCmf1mOJ
-	eJani8oNFuadXq56nJ75Drv6N9Oil/+Wf/S1ysgy7XF8ulsaP+vGbQHG/Hqf4c0yejjvfga7R27
-	NCur5gq7jAvY3PWPVtzV0CWv3SgrVH34Bm5N0HrNcHD8204vFn14+N73s5MxzBxKNMKZ3Ob09ZH
-	XOV9Qm+RG+aw==
-X-Google-Smtp-Source: AGHT+IGkvmVoNuPoxFqTHfr4B3gyBNvW57QEhDXs+PJErWDJ57DPnQPQLKebMOInDjfI8Vd0mUaJNQ==
-X-Received: by 2002:a05:6000:188b:b0:3a5:8934:4940 with SMTP id ffacd0b85a97d-3b768f2d2e0mr5421338f8f.50.1753358088704;
-        Thu, 24 Jul 2025 04:54:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:e2d3:d328:dc00:f187? ([2a01:e0a:cad:2140:e2d3:d328:dc00:f187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4fdasm18395585e9.28.2025.07.24.04.54.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 04:54:48 -0700 (PDT)
-Message-ID: <53bfd619-4066-4dcb-b3f0-d04177e05355@linaro.org>
-Date: Thu, 24 Jul 2025 13:54:46 +0200
+        d=1e100.net; s=20230601; t=1753358127; x=1753962927;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mINbh0hT0mOMLjUaQwlGXcWWToNWDwkhWfpfbCEFXxs=;
+        b=faXcL3hRo5G0G4mvi5PKvgbF70VwGZnqB4fSICGseBSUKl0omeGhak/rDw3DMMg4a2
+         /BVdKkE6uTQOhDpDzmrJe4LIlrxRkYFed6P1bdAGoHe/HZsCd0Nt2R0u37ycxvdZEJx3
+         Jr01gRiHgTsrLhd5s4bHCR6vK9QRevkQeB+9VoG8PuIR8WtovJpUrbjnGjHBKxkfYQmg
+         zXL9gjGc+1N3rCcUD9q6ProVzLk3dpD70M7Z8uwa902pMM8tqqaHxlvMYJ1LxlGaTfvm
+         9DMizKPg0SN9/F4KGJVtFN7ehCidiAkmecuE2mkn6hnwoXEVjWrC4nvLpIhSxD1TS0vG
+         fWvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ8xP3TxtVTF2+E7ySpEgYR5r3brYk7k3BMnrpt3KZkNL7H4TJACS2sp+/z983myL+lZl0cSSeHS2PKMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuT8iu2HKlNVN4iK96dzQnpSnjY/RElaHyJdYCOCmVKndqLQ5g
+	0NvuJkHXrH7R3FWVuLSXXwZW4mJK/DcgrF3AIsdQF7rxhtLFxCMxQ+qmuQb0UCF6T+zDH5xBgRc
+	Wby9ieZcOOCEgc46KleShMhrSr5xCBB1ZI5yEBGrCgO/p7E4NxY2KOtQIOEyODiOvcJfMDVPQjF
+	Q=
+X-Gm-Gg: ASbGnctWgij26VgqIaNs7RiBGV2SY/rcMxfjHF+T6Ytd8Y2a5QeTuohScvli9fzB2tw
+	m5/hbXz20zeK6RuAbcGyUHt31lUMcYFqhK2nS6udpdZIfUcOqQtpuVuz/6DhJDqgs8eoOYFxU2X
+	SLLpxVYzd6l3SeElmgbcKgW6mZRitVkXqg41X+Si74Xk9U+ZxsmvBYQGkJbSZug1qUoiVUxf/pp
+	bT8JKZIDfxqen8dcNzfFHZOaTJqHAh+jljTUoMUG7qaFu7f4lewYt+yhiBchj1XzvS7i0SCedhN
+	6l0YMwEzn8ayiyuVqFM5YyKqEwpMDRGiNn/w4wWuzCZNWNpcs06lWfqZq+2cphdGLBbJLja2Kir
+	Tu/3mYV7z15n55NT83r73GW6uXOPH3utoYd0sAiPf45Q8HLwUBF0t
+X-Received: by 2002:ad4:5aae:0:b0:704:f3ef:cbc2 with SMTP id 6a1803df08f44-707006800c0mr78839436d6.33.1753358126487;
+        Thu, 24 Jul 2025 04:55:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGd1t3+gJxk8pnw1F60NxFlYtusGeWg+p73JrUwlRncJWEKckPZk4d7/2qrIO4VrYiW8onn3Q==
+X-Received: by 2002:ad4:5aae:0:b0:704:f3ef:cbc2 with SMTP id 6a1803df08f44-707006800c0mr78839116d6.33.1753358125983;
+        Thu, 24 Jul 2025 04:55:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53b2286asm327797e87.32.2025.07.24.04.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 04:55:25 -0700 (PDT)
+Date: Thu, 24 Jul 2025 14:55:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Mahadevan <quic_mahap@quicinc.com>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        cros-qcom-dts-watchers@chromium.org,
+        Abhinav Kumar <abhinav.kumar@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Yongxing Mou <quic_yongmou@quicinc.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: display/msm: add stream pixel clock
+ bindings for MST
+Message-ID: <5nqzjnrivsuuttslzfecdwzigkqhdipy2wbjmgaa5mijr3w5hl@rbz47vnykzzn>
+References: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
+ <20250717-dp_mst_bindings-v3-4-72ce08285703@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
- (with time limit)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>,
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com,
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
- <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <f2b85e49152b80a63b20aa5ad67dfbee1190e356.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717-dp_mst_bindings-v3-4-72ce08285703@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA4OSBTYWx0ZWRfX4hel85BMqTig
+ 8J28saIHnm5wvjh7ALA5ph9QCNhszJQw4rHovEPOOD4mRHdjR31RbTgF1gyxrYLG9vIZZGi3H6B
+ +prwkWKXe2lj33WHa8UhiOiHW9/Q7GB2h3THg8KK1vomjX4AB934+DzrctGwoDqETlClNUDF/UG
+ 5fnu4kk9Y6HFO0Sc7fMRSJKgClyqERP9XsnpiQeHz5teCY3+KuLTnXQtXicHsq0jTDFEeBQf9/q
+ taDzYEIs9DC0ZYkfhaoR6T0LegCNXZp0fenF/YBEGEmkBC22+Mu/4fF7qrgao9Ar3w94lSGU19i
+ 9CElK9Ak/KP7R3peu6dMyD6ULUUaAobM3AhxKm51dsU+gOhf/1/UxgDDQfR8O7m7ztO9uBoOQ1m
+ SjLH+TTx1VJGV9kOaFw5I9DIg5qL9wMDCmQD3sKnkcITF1xRH60CTBH+qe+Ng2bN8/eeLJQL
+X-Proofpoint-ORIG-GUID: Ae5wLN4ONiBuEfZnVizcjzQ1u6K7O8Ih
+X-Proofpoint-GUID: Ae5wLN4ONiBuEfZnVizcjzQ1u6K7O8Ih
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=68821f30 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=TLo0AdDBy_HI3n6x0gMA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=810 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507240089
 
-On 24/07/2025 13:44, André Draszik wrote:
-> On Thu, 2025-07-24 at 10:54 +0100, André Draszik wrote:
->> fio results on Pixel 6:
->>    read / 1 job     original    after    this commit
->>      min IOPS        4,653.60   2,704.40    3,902.80
->>      max IOPS        6,151.80   4,847.60    6,103.40
->>      avg IOPS        5,488.82   4,226.61    5,314.89
->>      cpu % usr           1.85       1.72        1.97
->>      cpu % sys          32.46      28.88       33.29
->>      bw MB/s            21.46      16.50       20.76
->>
->>    read / 8 jobs    original    after    this commit
->>      min IOPS       18,207.80  11,323.00   17,911.80
->>      max IOPS       25,535.80  14,477.40   24,373.60
->>      avg IOPS       22,529.93  13,325.59   21,868.85
->>      cpu % usr           1.70       1.41        1.67
->>      cpu % sys          27.89      21.85       27.23
->>      bw MB/s            88.10      52.10       84.48
->>
->>    write / 1 job    original    after    this commit
->>      min IOPS        6,524.20   3,136.00    5,988.40
->>      max IOPS        7,303.60   5,144.40    7,232.40
->>      avg IOPS        7,169.80   4,608.29    7,014.66
->>      cpu % usr           2.29       2.34        2.23
->>      cpu % sys          41.91      39.34       42.48
->>      bw MB/s            28.02      18.00       27.42
->>
->>    write / 8 jobs   original    after    this commit
->>      min IOPS       12,685.40  13,783.00   12,622.40
->>      max IOPS       30,814.20  22,122.00   29,636.00
->>      avg IOPS       21,539.04  18,552.63   21,134.65
->>      cpu % usr           2.08       1.61        2.07
->>      cpu % sys          30.86      23.88       30.64
->>      bw MB/s            84.18      72.54       82.62
+On Thu, Jul 17, 2025 at 04:28:46PM -0700, Jessica Zhang wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > 
-> Given the severe performance drop introduced by the culprit
-> commit, it might make sense to instead just revert it for
-> 6.16 now, while this patch here can mature and be properly
-> reviewed. At least then 6.16 will not have any performance
-> regression of such a scale.
-
-The original change was designed to stop the interrupt handler
-to starve the system and create display artifact and cause
-timeouts on system controller submission. While imperfect,
-it would require some fine tuning for smaller controllers
-like on the Pixel 6 that when less queues.
-
-Neil
-
+> On some chipsets such as qcom,sa8775p-dp, qcom,sm8650-dp and some more,
+> the display port controller can support more than one pixel stream
+> (multi-stream transport).
 > 
-> Cheers,
-> Andre'
+> These chipsets can support up to 4 stream pixel clocks for display port
+> controller. To support MST on these platforms, add the appropriate
+> stream pixel clock bindings
+> 
+> Since this mode is not supported on all chipsets, add exception
+> rules and min/max items to clearly mark which chipsets support
+> only SST mode (single stream) and which ones support MST.
+> 
+> Note: On chipsets that do support MST, the number of streams supported
+> can vary between controllers. For example, SA8775P supports 4 MST
+> streams on mdss_dp0 but only 2 streams on mdss_dp1.
+> 
+> In addition, many chipsets depend on the "sm8350-dp" compatibility
+> string but not all (ex. SM6350) support MST. Because of these reasons,
+> the min/maxItem for MST-supported platforms is a range of 5-8.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> ---
+>  .../bindings/display/msm/dp-controller.yaml        | 36 +++++++++++++++++++++-
+>  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 10 ++++--
+>  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   |  6 ++--
+>  .../bindings/display/msm/qcom,sc7280-mdss.yaml     |  6 ++--
+>  .../bindings/display/msm/qcom,sm8750-mdss.yaml     |  6 ++--
+>  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   |  6 ++--
+>  6 files changed, 59 insertions(+), 11 deletions(-)
 
+I've cross-checked. We need to stop declaring SM6350 as compatible with
+SM8350, it doesn't provide MST support (and so there will be a need for
+a driver update too). Other than that, please document DP MST on SDM845.
+With those changes in place, I think, all platforms will be covered.
+
+-- 
+With best wishes
+Dmitry
 
