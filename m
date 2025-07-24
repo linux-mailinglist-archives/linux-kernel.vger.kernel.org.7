@@ -1,108 +1,50 @@
-Return-Path: <linux-kernel+bounces-744192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A0DB1094E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE898B10951
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38913ACA78
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4C4168E26
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3704227FB2D;
-	Thu, 24 Jul 2025 11:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11822750EF;
+	Thu, 24 Jul 2025 11:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Lhi4KC0j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oJcOTe0r"
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zaN7MlZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6BA1339A4;
-	Thu, 24 Jul 2025 11:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A2623D291
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356894; cv=none; b=WSl8LtaW9YuxnGJ3wC3qq8Kpnf7mVLuCm36FhiCPCx7g8SCE7ssTTV9NXJ/jPpeqNO6WxUfp7eBSnPsmcLwAnwxxly8XIijc1eYvX+1ZjvrCYQbQaYHykJHdbqoB6eeMkaae/r8RPby6V46FSJ7+cVCJcLNAR0CkoodueAW8ELE=
+	t=1753357035; cv=none; b=M0tpHubTT2zHzz35LmdViYhy+nTcycf/P0f9NBDiksR2qlzcrzBRB2I3FvQbTRsD3Gtf8UCFCCxKCN/Ztj0WsCE6sutELlmpLnaLS56Q8p5c9uqhW2HYyhYeaxpTsyXbt2EVD0Gks9aLe+wScv2Mg4CKOU6T44kidRdt9AkQTnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356894; c=relaxed/simple;
-	bh=SoMhZ76vgVDSFxSBf5IMdj3LjxZmenzhbkKzcjKrPjo=;
+	s=arc-20240116; t=1753357035; c=relaxed/simple;
+	bh=0vwcLDs25+aKjY8qa1rOAxbgBVI2bfhtVr6US5L7qe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PxtC+Mqegfb1VfDLiurve5wTxBDR2WHbUgiDXDWHlDJx6bNSMbth0JW1fUn6bMrkTZOd7/h1a7ZQ0oUWb2lqWEjGNtU5uaYzyW2+4MY7lixcFLeEutMzgoLzV+2vP+bMzhNxzUVqGiR8xwxsGWd1v46IcC7eF1lYXsG94ynMgvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=Lhi4KC0j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oJcOTe0r; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id 3EFF2130208F;
-	Thu, 24 Jul 2025 07:34:50 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 24 Jul 2025 07:34:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1753356890; x=1753364090; bh=ayZPjTbnqa
-	GMIbyiNla0DcfzBuX0r5Ej8CoWt6fQIes=; b=Lhi4KC0jV5xluRUm3bB4L3qaNU
-	vOo5/p9eXlVCqRsHi7pOaVZp+J5CgVYVZAa488ZVbJf/yQ4IpD9WWnztUooPNGdw
-	MHdsJ7wWBvbMVI/lvJWdCn4EFmP0lHitMHBZr+CXC1MsgOl8dLetnTkoSBzfL1Gg
-	vrYPl6IYJxoMromhpQLNMlEARyfV+Po9EyI1S4Y/UPLVl0CfDa9kBpPqFYkQ4aEe
-	SNHu5sQ+cpK133mSdxh66I+wtgMLuTYEzPB1ee61LY/N151BPvmNlYpH2VL9AB6S
-	Xii8nDOonqwxIlyWQn8GKUnDwDASXGN05ptZrYJqb5SeeiCcg9wcDz95Tpkg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1753356890; x=1753364090; bh=ayZPjTbnqaGMIbyiNla0DcfzBuX0r5Ej8Co
-	Wt6fQIes=; b=oJcOTe0rddHdGy0Enco7O1vQm2Qa5J+HfVZoBqhLJ/XIo19uNPU
-	GTItOr7WHfyrsrvUr0zJ1OjrDtDqgOnJ78uO/EsZgSbUd95A57gYOZix1X9yewQG
-	PbNtUfX6UoYPokh+EGYJi7zPLeKG8WFPB4zMm2p6RwZfgCcV/1Dy6r8lMn1cYI9J
-	3cXaCyhAHDvAj+rcD/4Rha1/+6wJTxaBYBooAhu9FSoI+SdqWKNWdrT4jtCVLs5/
-	hp+c8Sr2/CODJWqzN2Sg5ednC+JBvIRPuj+ko5HTMJhm5uZu3PhXHvDTzPYyZ1up
-	cRrTqs7KrXwNW3+31tcLCfEXN/YhTAC5Zeg==
-X-ME-Sender: <xms:WBqCaBP2qsMkAA92ATxwMcYgrjgzSkE6JkcSglknOOJ6Zq3g6OlCbA>
-    <xme:WBqCaBHu2EYcBG3hh7VSbE8PGLrbQwBRj8IX5eeNcaemg9EQORSUgz8uXmL6judlm
-    cmTUqqCf3MvtA>
-X-ME-Received: <xmr:WBqCaAuLXeT3NqKlh_vzdPi4qrKKcp-vX1D_8oYhfG_vzhnFS1LQc4sTpGTU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdektdehhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
-    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
-    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
-    homhdpnhgspghrtghpthhtohepfedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    pehmrggtihgvjhdrfihivggtiihorhdqrhgvthhmrghnsehinhhtvghlrdgtohhmpdhrtg
-    hpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhg
-    ohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
-    hpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgt
-    phhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhphgrseiihihtoh
-    hrrdgtohhmpdhrtghpthhtoheprhhitggrrhguohdrnhgvrhhiqdgtrghluggvrhhonhes
-    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtohhnhidrlhhutghksehinh
-    htvghlrdgtohhm
-X-ME-Proxy: <xmx:WRqCaOuWvZo97rBqo12hiVnjqFcJfYmT9jZihR7Fuc0jSTgo6Ypw0g>
-    <xmx:WRqCaBEflHAII7P-tohTvuxl6k4evOFix52LYGP3HUW0SmCXLCemHA>
-    <xmx:WRqCaBIS3zPB8RHHBIes3Th1MyhPtOxsuXZs-yDc1tAYBeqimgO4QQ>
-    <xmx:WRqCaBaq9paiRHvwv4sgKjrXjxDn_ZKUsFUdzKCBnSWF7VsekJ3pUQ>
-    <xmx:WhqCaPEMluCYz4aD5oAFgb0LZvnBBK48apnGq4UJD2QUd_fNzc2WOT96>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Jul 2025 07:34:48 -0400 (EDT)
-Date: Thu, 24 Jul 2025 13:34:44 +0200
-From: Greg KH <greg@kroah.com>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Kyung Min Park <kyung.min.park@intel.com>, xin3.li@intel.com,
-	maciej.wieczor-retman@intel.com,
-	Farrah Chen <farrah.chen@intel.com>, stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] x86: Clear feature bits disabled at
- compile-time
-Message-ID: <2025072440-prepaid-resilient-9603@gregkh>
-References: <20250724104539.2416468-1-maciej.wieczor-retman@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XHKZLv+vb/DJGkgRWvBz9Jp7Sx/lBFCL0PehIKn8aEpzbBiednQDxHXKzi1eylHCuO7mcQRb90UupJ79MKiFDegWinyisqQ25Y8oqHymGA+VA2vfGLORZfMQ9AHrwT9bS1ZYqGMmG1RXGTFW2fB0tWjDjNKDm4ZHuylVSatNrWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zaN7MlZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4BCC4CEED;
+	Thu, 24 Jul 2025 11:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753357034;
+	bh=0vwcLDs25+aKjY8qa1rOAxbgBVI2bfhtVr6US5L7qe0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zaN7MlZohFhYM6OJLqafY9WmKlkTIFfntnXmY0vnPgAfssawQ8QnzK3WiT4YMmrcq
+	 3XVM6A4LIdp7wt2PnoFTjvBR3zOG6xpIyAc3SPuzLuNl+xrdmb6XIYrFG62aLvw2P2
+	 o8nLi8udO5F2i0+OMXZQ2f6ENX9iM4jJhtKiQgto=
+Date: Thu, 24 Jul 2025 13:37:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Liya Huang <1425075683@qq.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/base/faux: Remove unnecessary match callback
+Message-ID: <2025072450-stony-spearhead-03f0@gregkh>
+References: <tencent_5782606120514CBCC9339FD79EBC411FB607@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,39 +53,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724104539.2416468-1-maciej.wieczor-retman@intel.com>
+In-Reply-To: <tencent_5782606120514CBCC9339FD79EBC411FB607@qq.com>
 
-Your reply-to is messed up :(
-
-On Thu, Jul 24, 2025 at 12:45:35PM +0200, Maciej Wieczor-Retman wrote:
-> If some config options are disabled during compile time, they still are
-> enumerated in macros that use the x86_capability bitmask - cpu_has() or
-> this_cpu_has().
+On Thu, Jul 24, 2025 at 06:37:23PM +0800, Liya Huang wrote:
+> The faux_match() function always returns 1, indicating a successful match.
+> The driver core function driver_match_device() already handles this case
+> by defaulting to 1 if the bus->match callback is NULL.
 > 
-> The features are also visible in /proc/cpuinfo even though they are not
-> enabled - which is contrary to what the documentation states about the
-> file. Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
-> split_lock_detect, user_shstk, avx_vnni and enqcmd.
+> The implementation in driver_match_device() is:
+>   return drv->bus->match ? drv->bus->match(dev, drv) : 1;
 > 
-> Add a DISABLED_MASK_INITIALIZER macro that creates an initializer list
-> filled with DISABLED_MASKx bitmasks.
+> Therefore, the faux_match() callback is redundant and can be removed to
+> simplify the code, with no change in functionality.
 > 
-> Initialize the cpu_caps_cleared array with the autogenerated disabled
-> bitmask.
-> 
-> Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
-> Reported-by: Farrah Chen <farrah.chen@intel.com>
-> Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> Cc: <stable@vger.kernel.org>
 > ---
-> Resend:
-> - Fix macro name to match with the patch message.
+> drivers/base/faux: Remove unnecessary match callback
+> 
+> The faux_match() function always returns 1, indicating a successful match.
+> The driver core function driver_match_device() already handles this case
+> by defaulting to 1 if the bus->match callback is NULL.
+> 
+> The implementation in driver_match_device() is:
+>   return drv->bus->match ? drv->bus->match(dev, drv) : 1;
+> 
+> Therefore, the faux_match() callback is redundant and can be removed to
+> simplify the code, with no change in functionality.
 
-That's a v4, not a RESEND.
-
-Doesn't Intel have a "Here is how to submit a patch to the kernel"
-training program you have to go through?
+Why is the changelog text here twice?  How did git send-email get this
+wrong?
 
 confused,
 
