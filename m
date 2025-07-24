@@ -1,81 +1,185 @@
-Return-Path: <linux-kernel+bounces-744519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC512B10DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0F4B10DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C977561A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C01188F943
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A052E542F;
-	Thu, 24 Jul 2025 14:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9A62E5B2E;
+	Thu, 24 Jul 2025 14:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="WkMCGVKO"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JKU2CX+F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JoCnefbw"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD35C241CB6;
-	Thu, 24 Jul 2025 14:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06917242D8B;
+	Thu, 24 Jul 2025 14:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753368181; cv=none; b=j9TfSelgdyr5KbKVCFh2rCqsZGbu1ytbNQLSRp+H2/8rdbvYv+lTJke2lUEcVziQRlxOcl000LJKRxQKcgN8wliH/MZVG4lJwcxwHG+nvw+17/HkAudy/MkLNOeHlegB0XEHTxHJUmNZ3BEx2ItN5u96OcbbbH6xyFI01ZgQhbE=
+	t=1753368253; cv=none; b=GFeWoCTInPWO0zYZzbfs2ljpShT4GeTOi0nJR91nAwSm0Go5d16n2eXRpHIp+pOzt6IuUTNUF36pZOQmGz0VD+VEZHsNVtruEWgYp4eHPQZop3ikqLterVuyeF2r0CUTFnnGufftuq2acEd1+T2OcVKj1qp3uyd8fEFF9hqH4mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753368181; c=relaxed/simple;
-	bh=gWdqwwJRWgCCHxAKLC3KVDPQamVK6Ux+vM+aaJDtuQ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VQkm94cjKFrbJLMsrq7+YU2+jqeSHuur5asxokfefnXOQRPAOZZ8f/Qk4fopsNu7jjtHzBw9vSTrsA9osAIG61aR85t1e7mknGWKlL2GWesUv3hCd4qiB8CHRbNif4qoAwXfM+h0F5onhDks8+VU5+UR2eekAACpbLkVxJQ3okY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=WkMCGVKO; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E709C40AA9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1753368180; bh=dLLKTqBJqEdbTUtFmPcwiPVYUCE8arLRWG95PAklrHk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=WkMCGVKOXRXlvlnmNg3/3aJ5gA+P/XFvRQDw784XBR4GGC0AgEOI2Qfy3RsFw7pwm
-	 acXhnl2jvlBf6ez1TaaeNI/nOdF+icmSMSBhV3bJoF2k/F0pmow5zNZNU8v/ouCwiB
-	 ujXWqcQQ79pinGUlD1psPxC6DNrkSluiq+vPPaNCuIMZY1kHqP1ojBT6IHyqi4y5eG
-	 TRG8L6dcjZhbuEjEex4D61lMbnGiWgZ82V+1s4GdUj0cWUuHPiLuqktOG6z6J+nOjs
-	 kVFAnZdQ2yiiAlEp1GBcsL3aG4/Q9fuYg54WArMfQaRE5HFb12vaIGwbIoFOswsPE1
-	 z/OaE9IwaymMg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E709C40AA9;
-	Thu, 24 Jul 2025 14:42:59 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- linux-kernel@vger.kernel.org, workflows@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-In-Reply-To: <20250713002517.7f52b0e9@foz.lan>
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
- <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
- <20250712163155.GA22640@pendragon.ideasonboard.com>
- <20250713002517.7f52b0e9@foz.lan>
-Date: Thu, 24 Jul 2025 08:42:59 -0600
-Message-ID: <875xfhabv0.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1753368253; c=relaxed/simple;
+	bh=v8Ucrw2n+yihght+34Qwy6z3bm5qRWlJ9gePLzXKPXc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KwDv+zHD0WT8n2BE8i6XRwItFKoP+4jXcy0PpcUM8fhmO+Bj8bKWRgTgVxNmxNPOFt3fC7PcvYXrGkPWEn8RfZfr8aATiJPjkGDC6zR1AeakLUcLyDAXEp+ZWakEzjD0hrz1SW1vfmNALoKZfJiLFZy991TdlhCQSgifgXPh/ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JKU2CX+F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JoCnefbw; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 47B4F1D0016C;
+	Thu, 24 Jul 2025 10:44:10 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 24 Jul 2025 10:44:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753368250;
+	 x=1753454650; bh=JamhdNl4dTJLx3yXRICkjdGl8QlQkTi8DTbesVHoqrc=; b=
+	JKU2CX+FGWUagV4JQOeb0mwj5Gk7wI02FowNJey+riPnzuOrcXZv+zS/RULFVj1y
+	WSKtvby7WQca8Yw2sb/zancTctCzkwiHGduID6uduyl62gSWX9qD+dZeFW/YHXP5
+	PPP27ciLVtuBAHS9FEjzVv/74Qz63/N6/1lwzD8lORakhYjl0ByMDta4otUI89DQ
+	VqBsRLcwKWYqbbcOua1TOhqHEBYShZO+GZZwRZBg2a25q1VXuFRD1097/d9iuVnH
+	HFIGE527fLMOSTWA6TzQpgfS2rW/yXQ7mRFsSrMHLsfRJs7JUZq1x+a5Lm2La9cR
+	vqRD8jn9kldvwNb983LyNg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753368250; x=
+	1753454650; bh=JamhdNl4dTJLx3yXRICkjdGl8QlQkTi8DTbesVHoqrc=; b=J
+	oCnefbw55XPeundRqd0PQD+BfRNfvul2eCqLdxjJ3bzkLTUl3KQU74nKSn+pqEV1
+	W6Dv0PU6L8cKo1t+asOs/0xVa8HBsW3KV7U7gYN0BQO/VXkLMgXzbFcXqW90+nr2
+	Bxx7L8XLBoZLlX5+IpuEVndWPIvNvMnF82d5fvzzfh2EJU2LR/5CxLY/xcopfRpo
+	NLm7kFH9+5KVeKbSAbleo1g15rPPP0p3dxeesnhuqzDawzq639kCcZP/BHqmZEQJ
+	4XrFuNUQggb0FybWvV9TvtOnPF3pcqEO+SSP6yQJkoHnEGEt2KkF2gMqDBBfM+92
+	JT52c79r0V2cx6gMA/vCw==
+X-ME-Sender: <xms:uUaCaHAnPexKnsQ3Dk0AZSqQwKUzAst79JaPGAktrWyzPtpg3oRaog>
+    <xme:uUaCaNiGrkqq7Zek8s1bL3jvo7z65E4GbjFgbDjwbZOfLykUG857S1IecTaw98DT4
+    dRIZXitepX2-Yi6liI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdektdelvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhouhhvihhkrdgthhgrkhhrrghvrghrthihsegrrhhmrdgtohhmpd
+    hrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphht
+    thhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsuhguvg
+    gvphdrhhholhhlrgesrghrmhdrtghomhdprhgtphhtthhopehflhhorhhirghnrdhfrghi
+    nhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheptghrohhsqdhqtghomh
+    dqughtshdqfigrthgthhgvrhhssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehs
+    figsohihugestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtoheprghnuggvrhhsshhonh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:uUaCaEXZBu6yk1VPDQP0HGcmV22HvohaVuM03F3MAFW1KxfnqJ2c_Q>
+    <xmx:uUaCaFABSoVK15_6YA28JsJFg_KWSddstFxVVLYfQ156MD3TWCtPQA>
+    <xmx:uUaCaPq5Tt4fWg4StMeBCIXZHnXFgrQDgLb9TXGreupGcu4dJp_cCQ>
+    <xmx:uUaCaJ3naF4CHCzmTjC1n9_jhJgTgm1r-0VNDjp-Oc9Y2ARhmBquWQ>
+    <xmx:ukaCaDB9fqHd5sczdwjl8ppjqRMePYBL_j59o_OykN9ZilsFfaeSOLql>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id EC469700065; Thu, 24 Jul 2025 10:44:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: T8f78d0e2b9c43c44
+Date: Thu, 24 Jul 2025 16:43:48 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Shivendra Pratap" <shivendra.pratap@oss.qualcomm.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Souvik Chakravarty" <Souvik.Chakravarty@arm.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Andy Yan" <andy.yan@rock-chips.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, "Vinod Koul" <vkoul@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
+Cc: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
+ "Mukesh Ojha" <mukesh.ojha@oss.qualcomm.com>,
+ "Stephen Boyd" <swboyd@chromium.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, "Elliot Berman" <quic_eberman@quicinc.com>,
+ "Srinivas Kandagatla" <srini@kernel.org>,
+ "Elliot Berman" <elliot.berman@oss.qualcomm.com>,
+ "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>
+Message-Id: <36f62026-9517-42bd-8f9a-92f39fcdc136@app.fastmail.com>
+In-Reply-To: <f4725f3f-1b45-ebd2-aaf4-4f986a44eb8e@oss.qualcomm.com>
+References: 
+ <20250721-arm-psci-system_reset2-vendor-reboots-v12-0-87bac3ec422e@oss.qualcomm.com>
+ <beb26682-d2e4-40e6-89ac-87f18c0401d0@broadcom.com>
+ <56599da9-0200-72b5-012e-942a1fc954b2@oss.qualcomm.com>
+ <a1d3264f-a46a-42c4-b518-a66c8e0b70b4@kernel.org>
+ <f4725f3f-1b45-ebd2-aaf4-4f986a44eb8e@oss.qualcomm.com>
+Subject: Re: [PATCH v12 0/8] Implement vendor resets for PSCI SYSTEM_RESET2
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Thu, Jul 24, 2025, at 16:04, Shivendra Pratap wrote:
+> On 7/24/2025 6:18 PM, Krzysztof Kozlowski wrote:
+>> On 24/07/2025 14:24, Shivendra Pratap wrote:
 
-> Maybe I can place instead CONFIG_DRM_I915_WERROR.
+>> I strongly insist using compatible as way to find your device, not node
+>> names.
+> It will look better to switch to compatible. Will define a compatible for
+> psci reboot-mode binding and align the patch to use the compatible for sysfs.
+> Current patch defines reboot-mode as a property to psci, hope its fine to
+> define a compatible for this property like "psci-vendor-reset" or
+> "psci-reboot-modes"?
+>
 
-I've held off on this series on the expectation that a new version would
-come.  I guess, at this point, it will be a post-merge-window thing?
+How about using the reboot driver name as the identifier in sysfs
+instead of the compatible string? That would make it independent of
+devicetree.
 
-Thanks,
+I had a related idea to provide some namespacing on the actual
+reboot syscall parameter, as we have two (or more) orthogonal
+concepts here, when there is more than one reboot driver and
+drivers support multiple modes.
 
-jon
+E.g. you could use
+
+    syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, 
+            LINUX_REBOOT_CMD_RESTART2, "watchdog");
+
+vs
+
+    syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, 
+            LINUX_REBOOT_CMD_RESTART2, "psci");
+
+to pick one of the drivers, or
+
+    syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, 
+            LINUX_REBOOT_CMD_RESTART2, "bootloader");
+
+    syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, 
+            LINUX_REBOOT_CMD_RESTART2, "recovery");
+
+to ask for a reboot from any driver that supports a mode, or
+combine the two and ask a specific mode in a specific driver like
+
+    syscall(__NR_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, 
+            LINUX_REBOOT_CMD_RESTART2, "psci:bootloader");
+
+   Arnd
 
