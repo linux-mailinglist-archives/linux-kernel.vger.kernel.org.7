@@ -1,290 +1,287 @@
-Return-Path: <linux-kernel+bounces-743455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA3AB0FEDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:40:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87265B0FEE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB6F54674F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:40:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289CD7AA849
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3CF1A3BD7;
-	Thu, 24 Jul 2025 02:40:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596E21B041A;
+	Thu, 24 Jul 2025 02:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IrPzbTt/"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890319F420
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FFB1A76DA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753324805; cv=none; b=YG6nUy1rX6nwfksvQm1lCHvLU4Tz2qwaElJFaN2GKbXIaseZ0EsvGPZenQ5unYeVPwXXts0R23h9FjSDsovd8x458O3r0lU8zOjhr6J8+Nimtd7ihxm2eqrmWG3ghT0nQHUvxg3lUAveU1/m+Nfg7IVCERDsYsJG+utiXbDLhQo=
+	t=1753324849; cv=none; b=S7r0PoHWDgT1cV129qHLu4lowU4PEeRPB0jSCdSZDF1P+MI2SXW1VPgPa4SXPUn9eAZGeCz24nYEdqdxua+19KIG5n8vWRgXIt8hw3DgePtbNaxio6eVkJnNEF5TMda4RU6qqZJRiLMiYGvJCVDgktiUmY6DNFvAioszUNmO9s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753324805; c=relaxed/simple;
-	bh=TINu4WjsijKuYKaID/S8zCJBrj/JBJGUZJuo1YMQ8oc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HUEs7Myl9LKhWp/PpNAp59/dH9IjwsZUL8Z+qOgHPWRwsljeOW26Fld5w9APr/FcIht1SB3X9nsvt9gBt5OjFzWm0Dp+WspspQUfZggDzZc3Kc4n8+fWUtkLr0Ll98EcSVuF3eiWmSSLNFhJMpOJ63yDCDpGt7bMxy6v77p52ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86a5def8869so129419939f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:40:03 -0700 (PDT)
+	s=arc-20240116; t=1753324849; c=relaxed/simple;
+	bh=IfmxGFwXAOPgwm5Aeu9KgzFUl7eGC8GZ29NIYXgZojA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QjQz8SyQe+IDdL+hrIbCxOgBbwt75tY3UXo9rQUH2R7IIYeOX9apeSJIfsz5uEBFl1xjSKeQvAggwSpD5jbpi9Jeh8bp46/+2lciLQjSW+6+GdCVVyVi3d2MjbGwzcdaT82G3bDz4255vc2o6qXsoBRQKjO0znp1BkedTk/7J1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IrPzbTt/; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2349f096605so4967225ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1753324846; x=1753929646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XMDqjQQCjg3m1Fdvyg+HpLMuE8v9dmDLtXOuYMQG03A=;
+        b=IrPzbTt/0W4S+ePWCr2Px6P8UySqd0Te7WCQ22VYmeKlLNZ7NHtMoGbGuqofIEJ6pI
+         nHerTeALUCi4vnsceiN9/vIN6Klg01hCkVc4nkbkrx1NqTe59ckoDEZzt8b3Fr0HQOWp
+         2XBo56FxBpBIWEp0ywSdHnaOoUf+BYvuE6V2nrHUA4WUVx2G9zo8niI2UoHaR0Ox2kB0
+         Ilz9OwD5SD3nNSmZbdYhZ6WOTw1JrYwXXww7Z2CMOMqXSoXDby7nn+corTcMBZ5l31mA
+         NIhDqfuskg+tzfVdKpYxihwIcjh0mbDZje3Sg3GQ6wqp0JcSg19UIeajQ5THP9oD1ZqD
+         8FrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753324802; x=1753929602;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tj4ZvMBWNxKs9jopZVdqbFJYzwTtQQfAQvZ4NrQ7TwQ=;
-        b=rDtdPNxA+3fqBkgLgTVTcAjMKrDJcDEd7Pos7Suh68xSNH/M4W9viNAC07c9IE2fIp
-         0c0Vi3zaMoXM/EH4qOIWIMxAWZ9ZBEWGykAwXA9oTX03iAhSnMsVi2EvBe6lPslt4+t6
-         luAAcGok9nzUh+Faylleh9HsWVmWz99hdMSksuHPYDuG05mFEsQUFYAxm07gIEQUBvsF
-         mCV16Q+o6KeSo0OFZQFpTLVxtlFcP9r/+Aq8uTGReocMOqqiLf9O/wUQfg4xUCZskdLt
-         XceIQDNc2VwCDHRf1xprnoCFEFEjGDlYV7fP1ibOw9k73G+rJ9JGwwoIJy66a8QgbNm5
-         Pdug==
-X-Forwarded-Encrypted: i=1; AJvYcCU87WW0F2ob1s1RqTLpno3OgjwgkSLNXYkPsuTPZ7Nk6CFyNF2XbQZh5litxaFr1sUm0hMh1Xt6i0npfbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmezVakKWCtzKPBd5J769/4i2ji6HYYSAmDUxhmsT+EleEAGFr
-	KyvelZF1ZnLhZzNp5oYC3REJTh8nV8WzympDxOWfePmtmgIKSV1IE8Nx+g4vkGTGFGE0s2Bc6jh
-	DfoViwucGJNHAl1UeinPCRYSS35h2nju3W/K6Ks2+A0giUyO+A/TdPrsAmKw=
-X-Google-Smtp-Source: AGHT+IHf4DRLzGt7IUP795aoNPD8zrTfN2AcoKl0NI8CJCRBreo6WK0y7GlxHRHuCd4osCuJ+wdg4nV+P7q/2zk1FdFl4AZMqz3G
+        d=1e100.net; s=20230601; t=1753324846; x=1753929646;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XMDqjQQCjg3m1Fdvyg+HpLMuE8v9dmDLtXOuYMQG03A=;
+        b=D2q5IdXJbYt/bIQyVcsY8W4dKj3AN4wdDOwvdWDlnMqaSDWlNy/mcRvCQ3DaPvN+E7
+         ybiKEgHrrwT1TUN0LlARr/+GCC9YCBntsKdfhMArdD5NH3mdPx81iwsTmvAGZkDd3ul8
+         Ckl7kjWJ+lcOT4YEKW7xgoU4aVABwkRvmqowDRgzEDEyMNWLHOcjuz4dl9sZ+ld8Xr5O
+         GtAdupGJQha28bWzezS+BpJ312Vl/luOb1+E8IaNu0mbdZI8vw1DMqJuWq5+E4wQqQuj
+         uZ5fNbg+ceKwJtniP4g6KH8hlSVDFbz1208F16WHsC0+Ou8ieOpnwj0f1Z2BixWErQX9
+         r3Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMyee5P/sM1LtqL+p8DQ0vwIad3M6Z2iiPnrgWV0YjijahhF5xQUilknKBCayVwehK8tn8rgDsK5OBTss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPWAG8auCwhhIRWWcHeX1E2JVtbItVrBYuRUcRRErUdTmVlyXX
+	ux8lEe0OshWDBZiA5cp/HLKvDBRApALLiFTtiiGd1e7HjAPZPoUm5pjhhsY5t24ekUM=
+X-Gm-Gg: ASbGnctVn2hcPbsFQMUa0mljC3bYSPSdp+Hq9k7hOur/71OmrHkHwMEA5O1E+0Piix6
+	kyhBYUOSsgT301KZaOxpL1uORYiCMQU/J6zbEZtASyqAdI+iJmVSOz8pjdF728XH4c5/uRciXeG
+	wBMR73mMYMP3mL9SDriDiDgXNl3p5RfpDxh5M9Ds+mccnajaIxFunk6/tmWIA/W/T5Fhx5ilc9W
+	LnvVLNYIZrxKA/kuWdXIN3h/tTy3Ny2hmLr2UArLBUVkO0V/Yx7mVlI070L79mU+G+f3XEHjZ7z
+	zR2PizrGzPaNOokZASaayYLcTmU4tSKBkCT2fPTnWo40DHC50Cf35hqzb9CkuF4ZjUgdQdFyowa
+	nOwHp0GwYWy3k7PeW0pRhoBpj8haSdCmO/q1JyuqS+g7KwyEsaw==
+X-Google-Smtp-Source: AGHT+IEBkFOJwOonnV0vdCxfjovFfviZCegG5ZM8HrGSCts+SkehAeNf110hY1sWS/eW0Y0itTjfPQ==
+X-Received: by 2002:a17:903:1ac8:b0:234:b123:b4ff with SMTP id d9443c01a7336-23f9814759dmr90270625ad.21.1753324846233;
+        Wed, 23 Jul 2025 19:40:46 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48fa164sm3321195ad.172.2025.07.23.19.40.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 23 Jul 2025 19:40:45 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: farman@linux.ibm.com
+Cc: akpm@linux-foundation.org,
+	alex.williamson@redhat.com,
+	david@redhat.com,
+	jgg@ziepe.ca,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	peterx@redhat.com
+Subject: Re: [PATCH v4 2/5] vfio/type1: optimize vfio_pin_pages_remote()
+Date: Thu, 24 Jul 2025 10:40:38 +0800
+Message-ID: <20250724024038.75436-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <f22a8b5b50a140339222bed77f4b670d9008f29b.camel@linux.ibm.com>
+References: <f22a8b5b50a140339222bed77f4b670d9008f29b.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8d10:0:b0:873:f23:ff5 with SMTP id ca18e2360f4ac-87c6506b76fmr692359039f.12.1753324802453;
- Wed, 23 Jul 2025 19:40:02 -0700 (PDT)
-Date: Wed, 23 Jul 2025 19:40:02 -0700
-In-Reply-To: <20250724022251.2875-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68819d02.050a0220.248954.000e.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
- simple_recursive_removal (5)
-From: syzbot <syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Wed, 23 Jul 2025 10:41:34 -0400, farman@linux.ibm.com wrote:
+ 
+> On Wed, 2025-07-23 at 15:09 +0800, lizhe.67@bytedance.com wrote:
+> > On Tue, 22 Jul 2025 12:32:59 -0400, farman@linux.ibm.com wrote:
+> >  
+> > > On Thu, 2025-07-10 at 16:53 +0800, lizhe.67@bytedance.com wrote:
+> > > > From: Li Zhe <lizhe.67@bytedance.com>
+> > > > 
+> > > > When vfio_pin_pages_remote() is called with a range of addresses that
+> > > > includes large folios, the function currently performs individual
+> > > > statistics counting operations for each page. This can lead to significant
+> > > > performance overheads, especially when dealing with large ranges of pages.
+> > > > Batch processing of statistical counting operations can effectively enhance
+> > > > performance.
+> > > > 
+> > > > In addition, the pages obtained through longterm GUP are neither invalid
+> > > > nor reserved. Therefore, we can reduce the overhead associated with some
+> > > > calls to function is_invalid_reserved_pfn().
+> > > > 
+> > > > The performance test results for completing the 16G VFIO IOMMU DMA mapping
+> > > > are as follows.
+> > > > 
+> > > > Base(v6.16-rc4):
+> > > > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > > > VFIO MAP DMA in 0.047 s (340.2 GB/s)
+> > > > ------- AVERAGE (MAP_POPULATE) --------
+> > > > VFIO MAP DMA in 0.280 s (57.2 GB/s)
+> > > > ------- AVERAGE (HUGETLBFS) --------
+> > > > VFIO MAP DMA in 0.052 s (310.5 GB/s)
+> > > > 
+> > > > With this patch:
+> > > > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > > > VFIO MAP DMA in 0.027 s (602.1 GB/s)
+> > > > ------- AVERAGE (MAP_POPULATE) --------
+> > > > VFIO MAP DMA in 0.257 s (62.4 GB/s)
+> > > > ------- AVERAGE (HUGETLBFS) --------
+> > > > VFIO MAP DMA in 0.031 s (517.4 GB/s)
+> > > > 
+> > > > For large folio, we achieve an over 40% performance improvement.
+> > > > For small folios, the performance test results indicate a
+> > > > slight improvement.
+> > > > 
+> > > > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+> > > > Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
+> > > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> > > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > > ---
+> > > >  drivers/vfio/vfio_iommu_type1.c | 83 ++++++++++++++++++++++++++++-----
+> > > >  1 file changed, 71 insertions(+), 12 deletions(-)
+> > > 
+> > > Hi,
+> > > 
+> > > Our CI started flagging some crashes running vfio-ccw regressions on the -next kernel beginning with
+> > > next-20250717, and bisect points to this particular commit.
+> > > 
+> > > I can reproduce by cherry-picking this series onto 6.16-rc7, so it's not something else lurking.
+> > > Without panic_on_warn, I get a handful of warnings from vfio_remove_dma() (after starting/stopping
+> > > guests with an mdev attached), before eventually triggering a BUG() in vfio_dma_do_unmap() running a
+> > > hotplug test. I've attached an example of a WARNING before the eventual BUG below. I can help debug
+> > > this if more doc is needed, but admit I haven't looked at this patch in any detail yet.
+> > > 
+> > > Thanks,
+> > > Eric
+> > > 
+> > > [  215.671885] ------------[ cut here ]------------
+> > > [  215.671893] WARNING: CPU: 10 PID: 6210 at drivers/vfio/vfio_iommu_type1.c:1204
+> > > vfio_remove_dma+0xda/0xf0 [vfio_iommu_type1]
+> > > [  215.671902] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> > > [  215.671946] CPU: 10 UID: 107 PID: 6210 Comm: qemu-system-s39 Kdump: loaded Not tainted 6.16.0-
+> > > rc7-00005-g4ff8295d8d61 #79 NONE 
+> > > [  215.671950] Hardware name: IBM 3906 M05 780 (LPAR)
+> > > [  215.671951] Krnl PSW : 0704c00180000000 000002482f7ee55e (vfio_remove_dma+0xde/0xf0
+> > > [vfio_iommu_type1])
+> > > [  215.671956]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+> > > [  215.671959] Krnl GPRS: 006d010100000000 000000009d8a4c40 000000008f3b1c80 0000000092ffad20
+> > > [  215.671961]            0000000090b57880 006e010100000000 000000008f3b1c80 000000008f3b1cc8
+> > > [  215.671963]            0000000085b3ff00 000000008f3b1cc0 000000008f3b1c80 0000000092ffad20
+> > > [  215.671964]            000003ff867acfa8 000000008f3b1ca0 000001c8b36c3be0 000001c8b36c3ba8
+> > > [  215.671972] Krnl Code: 000002482f7ee550: c0e53ff9fcc8	brasl	%r14,00000248af72dee0
+> > >            000002482f7ee556: a7f4ffcf		brc	15,000002482f7ee4f4
+> > >           #000002482f7ee55a: af000000		mc	0,0
+> > >           >000002482f7ee55e: a7f4ffa9		brc	15,000002482f7ee4b0
+> > >            000002482f7ee562: 0707		bcr	0,%r7
+> > >            000002482f7ee564: 0707		bcr	0,%r7
+> > >            000002482f7ee566: 0707		bcr	0,%r7
+> > >            000002482f7ee568: 0707		bcr	0,%r7
+> > > [  215.672006] Call Trace:
+> > > [  215.672008]  [<000002482f7ee55e>] vfio_remove_dma+0xde/0xf0 [vfio_iommu_type1] 
+> > > [  215.672013]  [<000002482f7f03de>] vfio_iommu_type1_detach_group+0x3de/0x5f0 [vfio_iommu_type1] 
+> > > [  215.672016]  [<000002482f7d4c4e>] vfio_group_detach_container+0x5e/0x180 [vfio] 
+> > > [  215.672023]  [<000002482f7d2ce0>] vfio_group_fops_release+0x50/0x90 [vfio] 
+> > > [  215.672027]  [<00000248af25e1ee>] __fput+0xee/0x2e0 
+> > > [  215.672031]  [<00000248aef19f18>] task_work_run+0x88/0xd0 
+> > > [  215.672036]  [<00000248aeef559a>] do_exit+0x18a/0x4e0 
+> > > [  215.672042]  [<00000248aeef5ab0>] do_group_exit+0x40/0xc0 
+> > > [  215.672045]  [<00000248aeef5b5e>] __s390x_sys_exit_group+0x2e/0x30 
+> > > [  215.672048]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> > > [  215.672054]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> > > [  215.672058] Last Breaking-Event-Address:
+> > > [  215.672059]  [<000002482f7ee4aa>] vfio_remove_dma+0x2a/0xf0 [vfio_iommu_type1]
+> > > [  215.672062] ---[ end trace 0000000000000000 ]---
+> > > [  219.861940] ------------[ cut here ]------------
+> > > 
+> > > ...
+> > > 
+> > > [  241.164333] ------------[ cut here ]------------
+> > > [  241.164340] kernel BUG at drivers/vfio/vfio_iommu_type1.c:1480!
+> > > [  241.164358] monitor event: 0040 ilc:2 [#1]SMP 
+> > > [  241.164363] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> > > [  241.164399] CPU: 14 UID: 107 PID: 6581 Comm: qemu-system-s39 Kdump: loaded Tainted: G        W  
+> > > 6.16.0-rc7-00005-g4ff8295d8d61 #79 NONE 
+> > > [  241.164403] Tainted: [W]=WARN
+> > > [  241.164404] Hardware name: IBM 3906 M05 780 (LPAR)
+> > > [  241.164406] Krnl PSW : 0704e00180000000 000002482f7f132a (vfio_dma_do_unmap+0x4aa/0x4b0
+> > > [vfio_iommu_type1])
+> > > [  241.164413]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+> > > [  241.164415] Krnl GPRS: 0000000000000000 000000000000000b 0000000040000000 000000008cfdcb40
+> > > [  241.164418]            0000000000001001 0000000000000001 0000000000000000 0000000040000000
+> > > [  241.164419]            0000000000000000 0000000000000000 00000001fbe7f140 000000008cfdcb40
+> > > [  241.164421]            000003ff97dacfa8 0000000000000000 00000000871582c0 000001c8b4177cd0
+> > > [  241.164428] Krnl Code: 000002482f7f131e: a7890000		lghi	%r8,0
+> > >            000002482f7f1322: a7f4feeb		brc	15,000002482f7f10f8
+> > >           #000002482f7f1326: af000000		mc	0,0
+> > >           >000002482f7f132a: 0707		bcr	0,%r7
+> > >            000002482f7f132c: 0707		bcr	0,%r7
+> > >            000002482f7f132e: 0707		bcr	0,%r7
+> > >            000002482f7f1330: c0040000803c	brcl	0,000002482f8013a8
+> > >            000002482f7f1336: eb6ff0480024	stmg	%r6,%r15,72(%r15)
+> > > [  241.164458] Call Trace:
+> > > [  241.164459]  [<000002482f7f132a>] vfio_dma_do_unmap+0x4aa/0x4b0 [vfio_iommu_type1] 
+> > > [  241.164463]  [<000002482f7f1d08>] vfio_iommu_type1_ioctl+0x1c8/0x370 [vfio_iommu_type1] 
+> > > [  241.164466]  [<00000248af27704e>] vfs_ioctl+0x2e/0x70 
+> > > [  241.164471]  [<00000248af278610>] __s390x_sys_ioctl+0xe0/0x100 
+> > > [  241.164474]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> > > [  241.164477]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> > > [  241.164481] Last Breaking-Event-Address:
+> > > [  241.164482]  [<000002482f7f1238>] vfio_dma_do_unmap+0x3b8/0x4b0 [vfio_iommu_type1]
+> > > [  241.164486] Kernel panic - not syncing: Fatal exception: panic_on_oops
+> > 
+> > Thanks for the report. After a review of this commit, it appears that
+> > only the changes to vfio_find_vpfn() could plausibly account for the
+> > observed issue (I cannot be absolutely certain). Could you kindly test
+> > whether the issue persists after applying the following patch?
+> 
+> Hi Zhe,
+> 
+> Thank you for the quick patch! I applied this and ran through a few cycles of the previously-
+> problematic tests, and things are holding up great.
+> 
+> It's probably a fixup to the commit here, but FWIW:
+> 
+> Tested-by: Eric Farman <farman@linux.ibm.com>
+> 
+> Thanks,
+> Eric
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in lockref_get
+Thank you for your feedback. Also I anticipate that this fix-up patch
+will leave the optimizations introduced in the original submission
+essentially unaffected.
 
-wlan1: send auth to aa:09:b7:99:c0:d7 (try 2/3)
-wlan1: send auth to aa:09:b7:99:c0:d7 (try 3/3)
-wlan1: authentication with aa:09:b7:99:c0:d7 timed out
-==================================================================
-BUG: KASAN: slab-use-after-free in __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-BUG: KASAN: slab-use-after-free in _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-Read of size 1 at addr ffff888042a47b40 by task kworker/u4:4/169
+Thanks,
+Zhe
 
-CPU: 0 UID: 0 PID: 169 Comm: kworker/u4:4 Not tainted 6.16.0-rc7-syzkaller-gf9af7b5d9349-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x230 mm/kasan/report.c:480
- kasan_report+0x118/0x150 mm/kasan/report.c:593
- __kasan_check_byte+0x2a/0x40 mm/kasan/common.c:557
- kasan_check_byte include/linux/kasan.h:399 [inline]
- lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5845
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- lockref_get+0x15/0x60 lib/lockref.c:50
- dget include/linux/dcache.h:345 [inline]
- simple_recursive_removal+0x35/0x690 fs/libfs.c:611
- debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
- ieee80211_sta_debugfs_remove+0x4f/0x80 net/mac80211/debugfs_sta.c:1281
- __sta_info_destroy_part2+0x352/0x450 net/mac80211/sta_info.c:1501
- __sta_info_destroy net/mac80211/sta_info.c:1517 [inline]
- sta_info_destroy_addr+0xf5/0x140 net/mac80211/sta_info.c:1529
- ieee80211_destroy_auth_data+0x12d/0x260 net/mac80211/mlme.c:4597
- ieee80211_sta_work+0x11cf/0x3600 net/mac80211/mlme.c:8310
- cfg80211_wiphy_work+0x2dc/0x460 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 5860:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4148 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- kmem_cache_alloc_lru_noprof+0x1c6/0x3d0 mm/slub.c:4216
- __d_alloc+0x31/0x6f0 fs/dcache.c:1690
- d_alloc fs/dcache.c:1769 [inline]
- d_alloc_parallel+0xe0/0x14e0 fs/dcache.c:2533
- __lookup_slow+0x116/0x3d0 fs/namei.c:1802
- start_creating+0x22e/0x3c0 fs/debugfs/inode.c:391
- debugfs_create_dir+0x28/0x420 fs/debugfs/inode.c:586
- ieee80211_sta_debugfs_add+0x12c/0x850 net/mac80211/debugfs_sta.c:1254
- sta_info_insert_finish net/mac80211/sta_info.c:892 [inline]
- sta_info_insert_rcu+0xfac/0x1940 net/mac80211/sta_info.c:960
- sta_info_insert+0x16/0xc0 net/mac80211/sta_info.c:965
- ieee80211_prep_connection+0x10cd/0x1600 net/mac80211/mlme.c:8854
- ieee80211_mgd_auth+0xee3/0x1770 net/mac80211/mlme.c:9119
- rdev_auth net/wireless/rdev-ops.h:486 [inline]
- cfg80211_mlme_auth+0x62f/0x9c0 net/wireless/mlme.c:291
- cfg80211_conn_do_work+0x501/0xd10 net/wireless/sme.c:183
- cfg80211_sme_connect net/wireless/sme.c:626 [inline]
- cfg80211_connect+0x1862/0x21a0 net/wireless/sme.c:1525
- nl80211_connect+0x17bc/0x1cd0 net/wireless/nl80211.c:12303
- genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 15:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4745
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
- smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:164
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Last potentially related work creation:
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3094 [inline]
- call_rcu+0x157/0x9c0 kernel/rcu/tree.c:3214
- __dentry_kill+0x4d2/0x660 fs/dcache.c:688
- dput+0x19f/0x2b0 fs/dcache.c:911
- find_next_child+0x1e5/0x250 fs/libfs.c:603
- simple_recursive_removal+0xf4/0x690 fs/libfs.c:619
- debugfs_remove+0x5b/0x70 fs/debugfs/inode.c:805
- ieee80211_debugfs_remove_netdev net/mac80211/debugfs_netdev.c:1021 [inline]
- ieee80211_debugfs_recreate_netdev+0xbf/0x1460 net/mac80211/debugfs_netdev.c:1034
- drv_remove_interface+0x1fa/0x590 net/mac80211/driver-ops.c:125
- _ieee80211_change_mac net/mac80211/iface.c:277 [inline]
- ieee80211_change_mac+0x912/0x12c0 net/mac80211/iface.c:309
- netif_set_mac_address+0x2fc/0x4c0 net/core/dev.c:9688
- do_setlink+0x88c/0x41c0 net/core/rtnetlink.c:3093
- rtnl_changelink net/core/rtnetlink.c:3759 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
- rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x75c/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888042a47a70
- which belongs to the cache dentry of size 312
-The buggy address is located 208 bytes inside of
- freed 312-byte region [ffff888042a47a70, ffff888042a47ba8)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x42a46
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff88803ff67101
-flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000040 ffff88801b6db780 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000150015 00000000f5000000 ffff88803ff67101
-head: 04fff00000000040 ffff88801b6db780 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000150015 00000000f5000000 ffff88803ff67101
-head: 04fff00000000001 ffffea00010a9181 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Reclaimable, gfp_mask 0xd20d0(__GFP_RECLAIMABLE|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4739, tgid 4739 (udevd), ts 37957937697, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2451 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2619
- new_slab mm/slub.c:2673 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
- __slab_alloc mm/slub.c:3949 [inline]
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- kmem_cache_alloc_lru_noprof+0x288/0x3d0 mm/slub.c:4216
- __d_alloc+0x31/0x6f0 fs/dcache.c:1690
- d_alloc fs/dcache.c:1769 [inline]
- d_alloc_parallel+0xe0/0x14e0 fs/dcache.c:2533
- lookup_open fs/namei.c:3639 [inline]
- open_last_lookups fs/namei.c:3816 [inline]
- path_openat+0xa3b/0x3830 fs/namei.c:4052
- do_filp_open+0x1fa/0x410 fs/namei.c:4082
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_openat fs/open.c:1468 [inline]
- __se_sys_openat fs/open.c:1463 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1463
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff888042a47a00: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fa fb
- ffff888042a47a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888042a47b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff888042a47b80: fb fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00
- ffff888042a47c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
-Tested on:
-
-commit:         f9af7b5d Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=174640a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ccd49ae046542a0641
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=151a40a2580000
-
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -344,7 +344,7 @@ static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
+> >  
+> >  static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> >  {
+> > -       return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
+> > +       return vfio_find_vpfn_range(dma, iova, iova + 1);
+> >  }
 
