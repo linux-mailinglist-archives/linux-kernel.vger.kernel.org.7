@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-744367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66323B10BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:46:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79A7B10BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222891C841C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:46:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8EE7B477D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39F62D97B7;
-	Thu, 24 Jul 2025 13:46:17 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAB52DA746;
+	Thu, 24 Jul 2025 13:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANbxX7AD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265D52E36ED;
-	Thu, 24 Jul 2025 13:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941F42405F5;
+	Thu, 24 Jul 2025 13:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753364777; cv=none; b=bf8XNfEfcOLHmIVfQIlGYKyzR4KS2Yk5x0pypr781Zei0a+wUvxHi4aZtHK5q1ym9JpSxCW3mYP1S4nhiRKxNjNLfQpS2gXV7XzbLeCqAwxh0XWA3asKwXT7fQ+3jIM49LDWmHLUVt9IEsEcnGbiNpTYm66HVY/3DPL0SooBhbI=
+	t=1753364865; cv=none; b=UncfJSA45EGNRN3EH0/aF8o3w3fRHRlMEa47fc10gKkg8LvppIwCLThkdY37l9AQGa3a4dHz2Fd0FGth9XlcPlNG0BMhwh9dLZUHG2VAx6vTbjpFpRrlwN+PR2aQIwzFd1ceIa5Yy6jxCE8obSWFhT927jJPkt3h4u1t0AlZbxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753364777; c=relaxed/simple;
-	bh=HBVLMcAC805Vc0bL+DlWEg/wfzjMVIf2kRhXBdlwe+k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CyTLSCsB8JsrUzjS6UtUA9BN+sTJ5eKwzYCGGR0IrgdgRsyshLncWMckwGmcK/3qu/mDvskZELvayIiGg0fDl+AEcQtvPCBQjn1kOT43RCehgikrW04lmVoDIIxXcSj5yWjmCKF6o25znv61eppIWphj2cf3wW2WspghTkrlYtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bnsfh6f4zz2FbQF;
-	Thu, 24 Jul 2025 21:43:56 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4BABE140109;
-	Thu, 24 Jul 2025 21:46:11 +0800 (CST)
-Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Jul 2025 21:46:09 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: <horms@kernel.org>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<fuguiming@h-partners.com>, <gongfan1@huawei.com>, <guoxin09@huawei.com>,
-	<gur.stavi@huawei.com>, <helgaas@kernel.org>, <jdamato@fastly.com>,
-	<kuba@kernel.org>, <lee@trager.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
-	<meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
-	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <sumang@marvell.com>,
-	<vadim.fedorenko@linux.dev>, <wulike1@huawei.com>, <zhoushuai28@huawei.com>,
-	<zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
-Date: Thu, 24 Jul 2025 21:45:51 +0800
-Message-ID: <20250724134551.30168-1-gongfan1@huawei.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20250723081908.GW2459@horms.kernel.org>
-References: <20250723081908.GW2459@horms.kernel.org>
+	s=arc-20240116; t=1753364865; c=relaxed/simple;
+	bh=T7mTc756K4A4iujyDowIYqpyD7zuMTFqZk+H5sCd9/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nfek8EiayjMbP/c2N1FEuyiv1wo+dtSPid0jlwh9AusQSrcf+w6UHgMl1qNHt1Mip30qnuQL6oGd9YjiOanjI7zrLOk4lMJ6+oaykyMJqbqD9d00OGGEuTN9cRRh1PZY4NaFFpzTSVQsxt58RbSdaSWaEMq602kBxysnAq+j6zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANbxX7AD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A507C4CEED;
+	Thu, 24 Jul 2025 13:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753364865;
+	bh=T7mTc756K4A4iujyDowIYqpyD7zuMTFqZk+H5sCd9/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ANbxX7ADhECryySFBP6Lbo6hXw00bnr60O1SLhbyGIdn3fuCEPBB4cwgsBhfE1Qs6
+	 23PvilF4IcqHqi0D76bPutdiWojfGuSfLgV/jFuGr6voE6hK4ZQmC3WF5tpK1wnmbG
+	 j+6qN8KsHokjUCRlUzjTR2m3CcOGOiTiZ3MBkoPtek0dv0DMwMPTNg98/z+ZQLNyBM
+	 5h3KLV7iDjNF9WFEisjObrZcXbm2NrRmuNDBjwenyYHkhi+/qgD6jRJzAmve3vy2fo
+	 cTEM/970d9ChAgOXIPeqQG+CWz73/I8y5EA57cS1Raa1m9RNW2PYofEPOUsUJeqwZM
+	 7PWqFSz9FKPeA==
+Date: Thu, 24 Jul 2025 14:47:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: eraretuya@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v11 8/8] docs: iio: describe inactivity and free-fall
+ detection on the ADXL345
+Message-ID: <20250724144738.77024c1d@jic23-huawei>
+In-Reply-To: <CAFXKEHa4M-Tp-y4dvNeWgYtUGo_ymyS7kqGbkhf+NJnmrrRxqg@mail.gmail.com>
+References: <20250702230315.19297-1-l.rubusch@gmail.com>
+	<20250702230315.19297-9-l.rubusch@gmail.com>
+	<20250706171611.7b4ae1a1@jic23-huawei>
+	<CAFXKEHa4M-Tp-y4dvNeWgYtUGo_ymyS7kqGbkhf+NJnmrrRxqg@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> > +
-> > +/* Data provided to/by cmdq is arranged in structs with little endian fields but
-> > + * every dword (32bits) should be swapped since HW swaps it again when it
-> > + * copies it from/to host memory.
-> > + */
->
-> This scheme may work on little endian hosts.
-> But if so it seems unlikely to work on big endian hosts.
->
-> I expect you want be32_to_cpu_array() for data coming from hw,
-> with a source buffer as an array of __be32 while
-> the destination buffer is an array of u32.
->
-> And cpu_to_be32_array() for data going to the hw,
-> with the types of the source and destination buffers reversed.
->
-> If those types don't match your data, then we have
-> a framework to have that discussion.
->
->
-> That said, it is more usual for drivers to keep structures in the byte
-> order they are received. Stored in structures with members with types, in
-> this case it seems that would be __be32, and accessed using a combination
-> of BIT/GENMASK, FIELD_PREP/FIELD_GET, and cpu_to_be*/be*_to_cpu (in this
-> case cpu_to_be32/be32_to_cpu).
-> 
-> An advantage of this approach is that the byte order of
-> data is only changed when needed. Another is that it is clear
-> what the byte order of data is.
+On Sun, 20 Jul 2025 20:49:48 +0200
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-There is a simplified example:
+> Hi
+>=20
+> On Sun, Jul 6, 2025 at 6:16=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Wed,  2 Jul 2025 23:03:15 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > Describe the inactivity detection additionally using the free-fall
+> > > register. Due to the controversial discussions on the mailing list, t=
+his
+> > > section of the documentation will be committed separately to allow fo=
+r a
+> > > more focused and detailed elaboration of the topic.
+> > >
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > ---
+> > >  Documentation/iio/adxl345.rst | 25 +++++++++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > >
+> > > diff --git a/Documentation/iio/adxl345.rst b/Documentation/iio/adxl34=
+5.rst
+> > > index 8ee01b8b87f4..c5525267ea12 100644
+> > > --- a/Documentation/iio/adxl345.rst
+> > > +++ b/Documentation/iio/adxl345.rst
+> > > @@ -150,6 +150,31 @@ functions, so that one follows the other. The au=
+to-sleep function puts the
+> > >  sensor into sleep mode when inactivity is detected, reducing power c=
+onsumption
+> > >  to the sub-12.5=E2=80=AFHz rate.
+> > >
+> > > +The inactivity time is configurable between 1 and 255 seconds. In ad=
+dition to
+> > > +inactivity detection, the sensor also supports free-fall detection, =
+which, from
+> > > +the IIO perspective, is treated as a fall in magnitude across all ax=
+es. In
+> > > +sensor terms, free-fall is defined using an inactivity period rangin=
+g from 0.000
+> > > +to 1.000 seconds.
+> > > +
+> > > +The driver behaves as follows:
+> > > +* If the configured inactivity period is 1 second or more, the drive=
+r uses the
+> > > +  sensor's inactivity register. This allows the event to be linked w=
+ith
+> > > +  activity detection, use auto-sleep, and be either AC- or DC-couple=
+d.
+> > > +
+> > > +* If the inactivity period is less than 1 second, the event is treat=
+ed as plain
+> > > +  inactivity or free-fall detection. In this case, auto-sleep and co=
+upling
+> > > +  (AC/DC) are not applied.
+> > > +
+> > > +* If an inactivity time of 0 seconds is configured, the driver selec=
+ts a
+> > > +  heuristically determined default period (greater than 1 second) to=
+ optimize
+> > > +  power consumption. This also uses the inactivity register.
+> > > +
+> > > +Note: It is recommended to use the activity, inactivity, or free-fal=
+l registers
+> > > +when operating with an ODR between 12.5=E2=80=AFHz and 400=E2=80=AFH=
+z. =20
+> >
+> > This seems a tiny bit backwards.   It is recommend that the activity, i=
+nactivity or
+> > free-fall registers are only used when operating with an ODR...
+> > =20
+>=20
+> Ehm, Doesn't the sensor always have an ODR?=20
+I was lazy. The ODR... was meant to be ODR between 12.5 Hz and 400 Hz (so o=
+riginal text
+for that bit).
 
-Here is a 64 bit little endian that may appear in cmdq:
-__le64 x
-After the swap it will become:
-__be32 x_lo
-__be32 x_hi
-This is NOT __be64.
-__be64 looks like this:
-__be32 x_hi
-__be32 x_lo
+> The real question is which
+> ODR should be configured. There are recommendations for specific
+> features. I may have either misunderstood or misdocumented this part.
+>=20
+> > As currently written it seems to be recommending that if you want those=
+ sampling
+> > frequencies you should also enable one of these detectors.
+> > =20
+>=20
+> Ah, no. The other way around, when someone wants one of events
+> detected, the recommended frequencies should be used. I'll have a look
+> at it.
 
-So the swapped data by HW is neither BE or LE. In this case, we should use
-swab32 to obtain the correct LE data because our driver currently supports LE.
-This is for compensating for bad HW decisions.
+Sounds like you got my rubbish explanation.
 
-> > +void hinic3_cmdq_buf_swab32(void *data, int len)
-> > +{
-> > +	u32 *mem = data;
-> > +	u32 i;
-> > +
-> > +	for (i = 0; i < len / sizeof(u32); i++)
-> > +		mem[i] = swab32(mem[i]);
-> > +}
->
-> This seems to open code swab32_array().
+>=20
+> > Reminds me of the classic London underground sign that said "Dogs must =
+be
+> > carried." which raised the question of how people with out dogs were me=
+ant to travel.
+> >
+> > Otherwise this new section looks good to me.  Thanks,
+> >
+> > Jonathan
+> >... =20
+>=20
+> Best,
+> Lothar
 
-We will use swab32_array in next patch.
-Besides, we will use LE for cmdq structs to avoid confusion and enhance
-readability.
 
