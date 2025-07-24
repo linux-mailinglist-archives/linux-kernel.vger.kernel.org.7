@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-744012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67150B106E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BFEB106F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2990A7A3F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DC93A7B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB0D252917;
-	Thu, 24 Jul 2025 09:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EnuBEIBt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4ZcUlrKE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF23255E2F;
+	Thu, 24 Jul 2025 09:49:59 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5295825392C;
-	Thu, 24 Jul 2025 09:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73D61F4606;
+	Thu, 24 Jul 2025 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753350488; cv=none; b=auA9FEC8DDHcOOvUvqhSPl0oyPP4cmleuH381iP3fhrlppeIQFq4+D5QBEXRk/vHKl0cgv22dhrPgKalwSqya4KyIqxP1fjgpRIHohoABiRjEvLhh50LqpauoEUQZiXSUxKYDx9msRVP1ga/U1gzoAkjLyU3SQJI1FLsNgR1X0g=
+	t=1753350598; cv=none; b=VK1In5Da9xzHfrluoi7Z9A9GD4NFc6uIZTbnk6SBidkWeT/7N2eNpHNb2NYXW6VMCcNJsgpP6mF9Vg43LgyTTBdClbZ2RdJtsq7QSoxuXCAdw6IPv1VASguns4EoZeGCY4qsuPiXdZUDM0ZyxZmgUOrPh5ijez8lmVMEVXrMyeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753350488; c=relaxed/simple;
-	bh=/1tWzqL7UxMp1H+AfaF6+XpjaUZmflmMx1fjd44oxGo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F5OxV+Cf7LYemHUHi1JVaJiDim+/FWd8H+4BNEJ12yP699q5wBuAJdmH+a8PUxGXKshK+u6XyzzckhaPO+etLU4wwLWGXd1pYke/4JuMcGuYuADRQUkFT7fdQkufgc51gIOjmiN0r3MaQmSmQRuahSWHA80bEaAxdHS7Z2uZPp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EnuBEIBt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4ZcUlrKE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753350484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ajMk0Gfoce2q99uKJCUvLtkGhsdcJhVATHmyd91KLBY=;
-	b=EnuBEIBtbTVMESbdrMdzJgS+0EBGAw9EWJDPShNlGPe0+pbhzz+83m3w4pgBmd9FtzYW4r
-	cjvDKRTF/Fz2wnmKotqCeCKnNVXp97um6ZwVZSwgD05r3/24gkGQ3XDdVQq58QKj7Zjr+u
-	J6bi7YQEVbNHb9+ftpTY8/FpzNOdE9DAKuRkLyk3CbofdeivdSbLnIyLULrr3SH/GcR4XE
-	vhBcjeVMaLU91HwcYerOvxwH2g8Y8p74kNTbI9RXIm8TukwbmL9TG4VPt7pm3Q8Y5Je95T
-	/XjsWF6nxL7zJfDFwFUOq1fHxEIiHYGzsH8VIG/v9o82vqTthyQk/t7Mm4cg4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753350484;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ajMk0Gfoce2q99uKJCUvLtkGhsdcJhVATHmyd91KLBY=;
-	b=4ZcUlrKEypgBxE3J2UYXZN76IFEv2nz50YtzGhfuGPtJVr5gVUh1U9JUf6OzOdsNknd+i3
-	Bpq9gl+GG555c2Bg==
-To: Jiri Slaby <jirislaby@kernel.org>, Wladislav Wiebe
- <wladislav.wiebe@nokia.com>, corbet@lwn.net, jirislaby@kernel.org
-Cc: akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, bp@alien8.de, arnd@arndb.de,
- fvdl@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org
-Subject: Re: [PATCH v3] genirq: add support for warning on long-running IRQ
- handlers
-In-Reply-To: <aeeb783d-d921-450c-885d-c8e8b328f81b@kernel.org>
-References: <20250723182836.1177-1-wladislav.wiebe@nokia.com>
- <aeeb783d-d921-450c-885d-c8e8b328f81b@kernel.org>
-Date: Thu, 24 Jul 2025 11:47:38 +0200
-Message-ID: <87ldodrkcl.ffs@tglx>
+	s=arc-20240116; t=1753350598; c=relaxed/simple;
+	bh=0NPue2eQZiUVKuoMSC8bqNQVgW4t927OHHBU3I/s5j8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LD/kl0proqZaxcVTMtVyWGqXr/t4bxNC7Y/u1q29mgoy2g2Gxw2hqDu3/kriqZDYPY69RoERr4T2wrPXp29+fB4P9915oItXPN6SNlwsNDrw60/px6maJt+Ks3vjD5lbhspRxjNo3m6kwvH5HZjhobkMzkvgdzREY4+pL7fMQkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id A911DB4D0064;
+	Thu, 24 Jul 2025 11:49:51 +0200 (CEST)
+From: E Shattow <e@freeshell.de>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	E Shattow <e@freeshell.de>,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v1 0/4] riscv: dts: starfive: Add Milk-V Mars CM (Lite) SoM
+Date: Thu, 24 Jul 2025 02:48:43 -0700
+Message-ID: <20250724094912.253723-1-e@freeshell.de>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24 2025 at 07:18, Jiri Slaby wrote:
+Milk-V Mars CM and Mars CM Lite System-on-Module both are based on the
+StarFive JH7110 SoC and compatible with the Raspberry Pi CM4IO Classic IO
+Board carrier. Mars CM Lite is Mars CM without the eMMC storage component
+on mmc0 and the mmc0 interface configured instead for SD Card use. The
+optional WiFi+BT chipset is connected via SDIO on the mmc1 interface that
+would otherwise be connected to an SD Card slot on the StarFive
+VisionFive2 reference design.
 
-> On 23. 07. 25, 20:28, Wladislav Wiebe wrote:
->> Introduce a mechanism to detect and warn about prolonged IRQ handlers.
->> With a new command-line parameter (irqhandler.duration_warn_us=),
->> users can configure the duration threshold in microseconds when a warning
->> in such format should be emitted:
->> 
->> "[CPU14] long duration of IRQ[159:bad_irq_handler [long_irq]], took: 1330 us"
->> 
->> The implementation uses local_clock() to measure the execution duration of the
->> generic IRQ per-CPU event handler.
-> ...> +static inline void irqhandler_duration_check(u64 ts_start, 
-> unsigned int irq,
->> +					     const struct irqaction *action)
->> +{
->> +	/* Approx. conversion to microseconds */
->> +	u64 delta_us = (local_clock() - ts_start) >> 10;
->
-> Is this a microoptimization -- have you measured what speedup does it 
-> bring? IOW is it worth it instead of cleaner "/ NSEC_PER_USEC"?
+Add the related devicetree files for both Milk-V Mars CM and Milk-V Mars
+CM Lite describing the currently supported features, namely PMIC, UART,
+I2C, GPIO, eMMC or SD Card, WiFi+BT, QSPI Flash, and Ethernet.
 
-A 64-bit division is definitely more expensive than a shift operation
-and on 32-bit w/o a 64-bit divide instruction it's more than horribly
-slow.
+Caveat with vendor AP6256 firmware files present the firmware loading is
+successful but subsequently fails IRQ wake initialization. Common GPIO
+conflicts for "WiFi" optioned boards having this module:
 
-> Or instead, you could store the diff in irqhandler_duration_threshold_ns 
-> (mind that "_ns") and avoid the shift and div completely.
+pwmdac_pins:
+ - AP6256: WL_REG_ON>>WIFI_REG_ON_H_GPIO33
+ - AP6256: WL_HOST_WAKE>>WIFI_WAKE_HOST_H_GPIO34
 
-That's the right thing to do. The setup code can do a *1000 and be done.
+i2c2_pins:
+ - AP6256: UART_CTS_N<<UART1_RTSn_GPIO2
+ - AP6256: UART_RTS_N>>UART1_CTSn_GPIO3
 
-> And what about the wrap? Don't you need abs_diff()?
+i2c6_pins:
+ - AP6256: UART_RXD<<UART_TX_GPIO16
+ - AP6256: UART_TXD>>UART_RX_GPIO17
 
-~500 years after boot :)
+Tested successfully for basic mmc0 storage, USB, and network functionality on:
+- Milk-V Mars CM 8GB
+- Milk-V Mars CM Lite 4GB
+- Milk-V Mars CM Lite WiFi 8GB
 
-Thanks,
+E Shattow (4):
+  dt-bindings: riscv: starfive: add milkv,marscm-emmc
+  riscv: dts: starfive: add Milk-V Mars CM system-on-module
+  dt-bindings: riscv: starfive: add milkv,marscm-lite
+  riscv: dts: starfive: add Milk-V Mars CM Lite system-on-module
 
-        tglx
+ .../devicetree/bindings/riscv/starfive.yaml   |   2 +
+ arch/riscv/boot/dts/starfive/Makefile         |   2 +
+ .../dts/starfive/jh7110-milkv-marscm-emmc.dts | 163 ++++++++++++++++
+ .../dts/starfive/jh7110-milkv-marscm-lite.dts | 176 ++++++++++++++++++
+ 4 files changed, 343 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-emmc.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+
+
+base-commit: 28fa0dcb571ab8f3be4d919f0e20e01d4e44bcb1
+-- 
+2.50.0
+
 
