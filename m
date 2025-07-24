@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-744139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939B5B10874
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:04:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F81B10871
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E52B17B38B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AB24E15E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5097E26B2CE;
-	Thu, 24 Jul 2025 11:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E226A1BE;
+	Thu, 24 Jul 2025 11:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrMa5O3s"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmYwwP0L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235D623FC54;
-	Thu, 24 Jul 2025 11:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB702F43;
+	Thu, 24 Jul 2025 11:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355034; cv=none; b=E4VCNPXAFygbUhUtX7hDnPFdPjUVyT0uTpNBWmyn5Nm6PD4Mqt6GSLYdGMt21XgiIG9avvRrycEddgS1ICpBEL0EE/ujDLC5wTkJ9pOfONqx6SAbPhJOZTUD4WS2PBuxmg/qJIKBAYSr2CFr4dauPtq3ob4bpaxfRb+/Fjpya0w=
+	t=1753355017; cv=none; b=Cx92u+D14JUmuyX3Hc7AqmvP9IHThsD1mmyAlC/Pii22eo98w0Ha2B7Gm3K6iOS7KoTLNjnh2WpMzPYofsE3G3uRvg1qTURRkkRLm+hh0FjFULD0t7cq2gGI8MNFbhvN+B3fFwaLBPSpmW/4/FP/kpLV1s6JQ+6XvTW8gTZXe0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355034; c=relaxed/simple;
-	bh=5WR3YyhrnUDnJVyMFMePoMQk+H2Y2gJczMHXovelp6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MqqkZavqdawhvwK2jJnk7vEK5gVzip4DgvJ+Nd3h80ZG4bea1tOkLkzOAYj4vkkcIyZI8xAO68IIROgVncuwt6XpwBUwIqK5sJWvNoHfQf0oNLJmxaixV69WLz3nXKz2fnkwd+WveZGHcQYiYY27fhvVgWlMexGl8vyCR9KQIC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrMa5O3s; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45629703011so5787715e9.0;
-        Thu, 24 Jul 2025 04:03:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355031; x=1753959831; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4BO0LugBH9HnRi2SesdTxjFzr6y+8KlqsNdWixdTRhk=;
-        b=RrMa5O3soRGmDUkw/x8mIdGGxRSFNTokPFMcFGASJDAP4S+jgEXRfpuHzyQpM16K01
-         EbDB8w5MK/p9h98xpN+BGS6mlcA48yHYr0qPC9gWmTFK9IC0wcW/CtmxHcY7yxPaAry9
-         4JvR8ZNBcY/gBf3f0CUg+bHMZmrWqHAH2lLR0g02WNlRMv+g/lyWrUKixqQNqiY4L18v
-         3Q4IjztJdfczLAqko+x40lMAaGU8rAvX8rTKhoEaQ1z2SO9GVEfpjt6K842BzhLYRCfI
-         +mIIX2EgMRtUUz/ASzm7BRlcoNnu+wflq6TekIxlvwhFY4AjvcoHyBfiilMZFWzCQ/dm
-         ep6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355031; x=1753959831;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4BO0LugBH9HnRi2SesdTxjFzr6y+8KlqsNdWixdTRhk=;
-        b=WP2AkDprmI3J9ksX8WL/QtFw/Bh3QCGAxciMmWfbHPGXg4P3dkW2WV9N68mfGy4sqR
-         pMe2b3hVt3AdiHTvpxIZdVs8PIrVB3UtHI94p0R0lHKh66MD/sqqXRUsy/D7s3/P2L+0
-         XpyJgK7iF4lWzBXQWsn2RfpjCBai5mcP5VXYj6OrjT9ElpeqKnuynoWH9DH6cN3X2vFo
-         L75JjqyVvTIakJwHrrmRInon9Qrl1BzBTdbakLq43xZmVmc7OOjcytfj32NAcjISMV76
-         tIuW79KZKyNX72WZsCBg3i2izmWirLM908xpVh3hCWa/JXve4H2Tlgcy3U+nU+d7GqsV
-         Xfwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzwxhx3Jp86eMtBcrCr3JagcNsr2PzXiOD31B1f2jO+eS/q9gC8rZmeb1CijQu9VfZTRbbTchTlZkmDRI=@vger.kernel.org, AJvYcCWWPYTxfm5ASORwZzSqFlu3/L2EUZgd5w+vo/A2+IRLFkChZ49GZe6A4bFSXA1kK1Ad04w3S0TuwGohNdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz26NNHK/SbBqvuXCJytb87id86NlsbTRXZIOU8sOxP08eVpHfO
-	m5lbjf/HVP873hbYzj6+d8666Ioj+J/LKAEpEw6Gi63TdHittfyjp/Ug
-X-Gm-Gg: ASbGnct8KxACZoIJg1Mr9kXiBRqFSI3EJPN9Wfekoml8FORHHsW01Ze/yR7VxvsYGkG
-	P9F8Qjmdx1EsNCNpkimHkQbiVKY8bj283HBGhIgYeU1CZQ1UsjW1CeLCbCOc0g5wWg7fl9aZLG4
-	5y7mcZUFAsE1SJUb0e8llh5AooJtp7JmCWmpq/BJOuLJl43UhuHukgVujEHHfxF/B3TMHZ2Y8+t
-	6SR4uL7r1AtCN775wk3QgGzrjMK/JvSX7ZYvO+D8q0c1SnCadN6BRrmpxUjXu3nlgLTSfxX07Tq
-	6UcXLks3LEC6pV2EHrvjLcO63AkqTlqF7PDsZlbIj+UeimSTR5uAdoE1gpgxw6TFc34ekj7a7Nk
-	D+54E7JaZQmJhgWBjw0It
-X-Google-Smtp-Source: AGHT+IHeIgYUhMAED1s/zSMayTQsBvAjmPpTfLT7EAOQtX4ff7O+VmXQ6PzHyT1cibrfeoGpSbvJDw==
-X-Received: by 2002:a05:600c:4e47:b0:456:1560:7c5f with SMTP id 5b1f17b1804b1-45868c9d3c0mr62970365e9.14.1753355031254;
-        Thu, 24 Jul 2025 04:03:51 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532af4sm16463945e9.4.2025.07.24.04.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:03:50 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: Kconfig: Fix spelling mistake "Tehnology" -> "Technology"
-Date: Thu, 24 Jul 2025 12:03:18 +0100
-Message-ID: <20250724110318.140684-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753355017; c=relaxed/simple;
+	bh=FB4qQxbauwuEdw7MX721tC+DjFmD6TO78Gayu3O5ISU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eaq3lsoPxJU6Rjsppe1gmrvcFM1tgMUCkpSCUi6JxtSq7h16pB4y3ZJ1t/DCniZ4UVe63tlUiyoBiDu0PJXv2TAO7fyBzDS00xY5FKkGEI5sITmLjOp2whgIyl/aR0f4PcKvteoq/wFGy/gNkWdglOJaij/xmScBRukL1Vpym0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmYwwP0L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3D6C4CEED;
+	Thu, 24 Jul 2025 11:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753355017;
+	bh=FB4qQxbauwuEdw7MX721tC+DjFmD6TO78Gayu3O5ISU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RmYwwP0LqiMHdFdVwx9v33yWcWYMoZWF/x6qvfooZkStI1qOrPd5y604YwZ1F1T2x
+	 0r8nIIhhl2a5NTiceHZbIAVFCC9mnstST0UloUBisf0uSO/lGt0q+cS6JE8JuDAbJ2
+	 FWsQ1N9MB579MFs17Jt202aPHdjdN/AP4lxzvmcMwKbYAMuK/LW3L2JcIG5mwEOHcI
+	 vVX27HFa/9TnAv5OGj3oV54jyQ3wcmOyfgEG2oUATKlc7xs+qaHjeYPEadyShrjSkS
+	 O5PbUVeQbuOS91TWus34cxAUerldnGwuuwA3szlj9LWwKnFeEa6aLQdwJ2pgMo1XG+
+	 VA1VJxaF7tRKw==
+Date: Thu, 24 Jul 2025 12:03:29 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2] iio: proximity: isl29501: fix buffered read on
+ big-endian systems
+Message-ID: <20250724120329.671dc192@jic23-huawei>
+In-Reply-To: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
+References: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There are spelling mistakes in the DVB_DS3000 and DVB_TS2020
-config. Fix them.
+On Tue, 22 Jul 2025 15:54:21 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/dvb-frontends/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Fix passing a u32 value as a u16 buffer scan item. This works on little-
+> endian systems, but not on big-endian systems.
+> 
+> A new local variable is introduced for getting the register value and
+> the array is changed to a struct to make the data layout more explicit
+> rather than just changing the type and having to recalculate the proper
+> length needed for the timestamp.
+> 
+> Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+ok. This probably is the best minimal fix but there is a bunch of other type
+confusion around this in the driver (not as far as I can see actual bugs though).
 
-diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
-index 2ef2ff2a38ff..bcc97ca86ed5 100644
---- a/drivers/media/dvb-frontends/Kconfig
-+++ b/drivers/media/dvb-frontends/Kconfig
-@@ -163,7 +163,7 @@ config DVB_CX24123
- 	  A DVB-S tuner module. Say Y when you want to support this frontend.
- 
- config DVB_DS3000
--	tristate "Montage Tehnology DS3000 based"
-+	tristate "Montage Technology DS3000 based"
- 	depends on DVB_CORE && I2C
- 	default m if !MEDIA_SUBDRV_AUTOSELECT
- 	help
-@@ -270,7 +270,7 @@ config DVB_TDA826X
- 	  A DVB-S silicon tuner module. Say Y when you want to support this tuner.
- 
- config DVB_TS2020
--	tristate "Montage Tehnology TS2020 based tuners"
-+	tristate "Montage Technology TS2020 based tuners"
- 	depends on DVB_CORE && I2C
- 	select REGMAP_I2C
- 	default m if !MEDIA_SUBDRV_AUTOSELECT
--- 
-2.50.0
+Might be good to circle back and make the val parameter of isl29501_register_read()
+a u16 as a follow up.
+
+Applied to my temporary fixes-togreg-for-6.17 branch on iio.git and marked
+for stable.
+
+Thanks,
+
+Jonathan
+
+
+
+> ---
+> Changes in v2:
+> - Use u16 to match channel scan_type and introduce new local u32 variable
+>   for getting the register value.
+> - Reword subject and commit message since we now consider this a bug fix.
+> - Fix not zero-initializing the new struct.
+> - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com
+> ---
+>  drivers/iio/proximity/isl29501.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
+> index d1510fe2405088adc0998e28aa9f36e0186fafae..f69db6f2f380313b8444ee21399ee3a9faed6f04 100644
+> --- a/drivers/iio/proximity/isl29501.c
+> +++ b/drivers/iio/proximity/isl29501.c
+> @@ -938,12 +938,18 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct isl29501_private *isl29501 = iio_priv(indio_dev);
+>  	const unsigned long *active_mask = indio_dev->active_scan_mask;
+> -	u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
+> -
+> -	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
+> -		isl29501_register_read(isl29501, REG_DISTANCE, buffer);
+> +	u32 value;
+> +	struct {
+> +		u16 data;
+> +		aligned_s64 ts;
+> +	} scan = { };
+> +
+> +	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask)) {
+> +		isl29501_register_read(isl29501, REG_DISTANCE, &value); 
+> +		scan.data = value;
+> +	}
+>  
+> -	iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
+> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
+>  	iio_trigger_notify_done(indio_dev->trig);
+>  
+>  	return IRQ_HANDLED;
+> 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
+> 
+> Best regards,
 
 
