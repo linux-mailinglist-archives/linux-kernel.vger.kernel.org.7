@@ -1,199 +1,114 @@
-Return-Path: <linux-kernel+bounces-743729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF37DB10293
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2F2B10299
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB53E58806F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74DD1C8451C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F1F273D88;
-	Thu, 24 Jul 2025 08:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6204921D5BC;
+	Thu, 24 Jul 2025 08:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LM0qJgU4"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="1ouAnOyP"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19497273D6D;
-	Thu, 24 Jul 2025 08:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6A22517AF
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344026; cv=none; b=JML8sk/9speOOF/EriCjH9CeNtREe3kZ369WV+qj8aEDf4ciI3k64kVAW2WavxMXz14y8wPGpV59zvSoKNTioc9EMd7I/SOVvJuh/5MK9DQJyWBMbldLhzSZ2qgEYMi4voccIK5w6hBHXDWrX7fpEfJprdNdrBh8RFertoKR5v8=
+	t=1753344074; cv=none; b=GPjlAKeh1YzYXXecuXoSZ2WPNwu8yO1ZIDcUWhKkCsxCylcfCtthbFQAa8FTmkFbSGSlqPxYShrtttCCs4+afbHpSon1BVF8qfevcO5XrC0i9mWc2kgHOYLMOQ3/f9vNxv2L8+PAuS7HhMoEO07z5UTLsgsHFIBUeHr4Tv73goA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344026; c=relaxed/simple;
-	bh=MZ9iUvSan3K97ELZMhoz0roLdqaBdfjuluYaezK//9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SrFIwbcIZY76S7FAaxbUPfYXNVvinMsLYW/wAKaMNpAqOFIZpdukOvSg/gdYVdW0gMb36OP65Twt3henwm6+0v+tyE/gkpwkvbsrqVl5bC+1VtX9shNGJSVq1+5ABQHQ5vhFk3H8Cz2R9ijP7ahsLhaxuVzY7xISzF8/QV81a00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LM0qJgU4; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753344013; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=nhf3IJcOYSpRMKrPjWNbbcWsyyetTfh18hHD10/wjt4=;
-	b=LM0qJgU4u3MDZ4uXZY0UGAAgXezfj9n+F21ea/Zs1EaUNgZuGmDXXuUMSFhk4EZ+Zgway65Xq5HoDg9Anh0CXBNHLbeDhp7yoU4IWJJiNPwMvbKAA5XP1aLNS1ZNR4FnOYMcByX4VJ2HGicBQtTqEii5phlGG8enCPWtFkr6uQo=
-Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wjlb2GV_1753344010 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 24 Jul 2025 16:00:11 +0800
-Message-ID: <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
-Date: Thu, 24 Jul 2025 16:00:09 +0800
+	s=arc-20240116; t=1753344074; c=relaxed/simple;
+	bh=jPZXQ1fFo+Qnqi9JBZiSzhdyPYYUfy+we4OAHFyWwZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mmc97Hak8HrDQhDSIX40ICR5EKzaOyWAIo5pGNVjY/UhJ0BF9WXAujLnaqVZW9c6l2+GCCz9+FI0426ePPwHWrwhI0Yrf4h8UYhSIt8Pt1NCEB5VNX0BBZ28Bg+ddwTf2lNTdko4657InMTjsArw01ivZ/o8l0jOqSdoH5QxvNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=1ouAnOyP; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7183d264e55so7278057b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1753344072; x=1753948872; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jPZXQ1fFo+Qnqi9JBZiSzhdyPYYUfy+we4OAHFyWwZQ=;
+        b=1ouAnOyPhYhJwB4yXyCRDlwVYOt69a/1rwT+/vss43d99wD7oEQr7tcwtFwvXEPaVb
+         +h44ijHd8q35blJZVhgUeFhDRn/L0NLRRpXTfPAVK3uQRWi/7D1VQrn4bYMp05QJQ12u
+         NRSmz9L6jUofUUrgLUZU3ptaUsrwIQR8M4A/sb8LnPDylLnsHVP5O/yKrSIVrfUFs8nZ
+         /k9121c9ADc6aLKu/YbhfZpH5+4YfIUFJaZOn0z8gWHAiEtB/FWGIQ0KB0OPQvMsidTo
+         rrKfFCc2/rvDlTxgsgapc6vEZwRAYz/6/FzdIqiRaQOvumRa8hnxaY2FICJvwUNSCZuP
+         eeTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753344072; x=1753948872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jPZXQ1fFo+Qnqi9JBZiSzhdyPYYUfy+we4OAHFyWwZQ=;
+        b=XxjXRnFJwLZ+T5UGKKBwYLwA2hyWofuTMr/m/rK9RJbXZhHlMjolbc7kI9kygex0pe
+         Rz9O6C9cxr42FI7u4+IkAlGAaRxeFWmGdfNsjU2TnEYCMUfcpmjOzRo25H9hIvDDcJDr
+         /jC6ApmGT2to0EQNmrcfGx0pcHNYxb9/sM86AUZ0YRQJB0w0Or7voLmZI7gAnQ9WGoKG
+         5PtKSf8Y7p5ywtvl1jywBQWZD18G3OdnoxHPKoPgXgIG+H1Jcob37sOselNRc69hXf/m
+         hTq7UZPiLH5SBs+Re3zCkRCZVoCgS1gqUw9F/mENEDZSmCfutJSu7jIiC0CNJek8hEfx
+         obLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVj5ItXpCkXWKEhvrh+be/IlNcTE6LkKmRJRroB6+odoBxGlVfEbxZuRXpa/Br+583MToPH74OW9DymmjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwkKI5Wbmu68rdXy2Hi+nxuq+WpwXXl2irxbsayf4lCGuP2Z/e
+	9G1p7D/UWyYz6+hA3A+yfTEaJwRroA+JYN4fKISvRGrYePuhNarvFLRkm8ecNUreO/wJ7pTqsuH
+	/K39ktRIUKEdNVOmp8g5jdxKMua7QQNcj0iPuNLr3WQ==
+X-Gm-Gg: ASbGncv8o2PI9cBooQGbMZdmiCfoxip/JEv7WQUuziSHiajUdwqUFZoTfRJUXwZuRNv
+	4jfdde98mlIcqNNC3BAOCyNAUta4TxJodTq+XVAnA0zXWk176wCPFLma3J+BEJRu4GFqT4+4Yli
+	mbZxPrRG4datHVuad9GrF/VutSf1HCQHGY1qNvbchfjOZfWuaUIaTMc/fnwNNCQ5jAn+Z3RWMk3
+	3/u1JpZRNZuC9sSfCV522vgVFJNTo87zF1mKU/h+Q==
+X-Google-Smtp-Source: AGHT+IGGUZbhiR9IUlqNv9m/wQVXhvGAvZakNMpySeQRLyZqWCzHCQ7JR7cfsHKSfms6Ri+PP3YPooNgbQaM9igRZ8k=
+X-Received: by 2002:a05:690c:6382:b0:710:e7ad:9d41 with SMTP id
+ 00721157ae682-719b416239bmr73383627b3.12.1753344072196; Thu, 24 Jul 2025
+ 01:01:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
-To: Breno Leitao <leitao@debian.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
- Borislav Petkov <bp@alien8.de>, Robert Moore <robert.moore@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- acpica-devel@lists.linux.dev, osandov@osandov.com, konrad.wilk@oracle.com,
- linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org, kernel-team@meta.com
-References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250723-leds-is31fl3236a-v6-0-210328058625@thegoodpenguin.co.uk>
+ <20250723-leds-is31fl3236a-v6-1-210328058625@thegoodpenguin.co.uk> <de3ded0d-6d05-43fe-9ac9-b8bf29bd7d53@kernel.org>
+In-Reply-To: <de3ded0d-6d05-43fe-9ac9-b8bf29bd7d53@kernel.org>
+From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Date: Thu, 24 Jul 2025 09:01:00 +0100
+X-Gm-Features: Ac12FXzbWOhwGHI2oZtiOXY1iVFd8-eis8oWuz_X6csMbEke0f93YRLAKfk30DI
+Message-ID: <CAA6zWZJ5wVgzh60Oj-4a4Uc8bvQ-VccGfjww-EjcjdM7Y0L_7g@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
+	Lucca Fachinetti <luccafachinetti@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Breno,
+> <form letter>
+> This is an automated instruction, just in case, because many review tags
+> are being ignored. If you know the process, you can skip it (please do
+> not feel offended by me posting it here - no bad intentions intended).
+> If you do not know the process, here is a short explanation:
+>
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+> of patchset, under or above your Signed-off-by tag, unless patch changed
+> significantly (e.g. new properties added to the DT bindings). Tag is
+> "received", when provided in a message replied to you on the mailing
+> list. Tools like b4 can help here. However, there's no need to repost
+> patches *only* to add the tags. The upstream maintainer will do that for
+> tags received on the version they apply.
+>
+> Full context and explanation:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+> </form letter>
 
-在 2025/7/23 00:56, Breno Leitao 写道:
-> Introduce a generic infrastructure for tracking recoverable hardware
-> errors (HW errors that did not cause a panic) and record them for vmcore
-> consumption. This aids post-mortem crash analysis tools by preserving
-> a count and timestamp for the last occurrence of such errors.
-> 
-> Add centralized logging for three common sources of recoverable hardware
-> errors:
+Noted. Thanks for your time.
 
-The term "recoverable" is highly ambiguous. Even within the x86
-architecture, different vendors define errors differently. I'm not
-trying to be pedantic about classification. As far as I know, for 2-bit
-memory errors detected by scrub, AMD defines them as deferred errors
-(DE) and handles them with log_error_deferred, while Intel uses
-machine_check_poll. For 2-bit memory errors consumed by processes, both
-Intel and AMD use MCE handling viado_machine_check(). Does your
-HWERR_RECOV_MCE only focus on synchronous UE errors handled in
-do_machine_check? What makes it special?
-
-> 
->    - PCIe AER Correctable errors
->    - x86 Machine Check Exceptions (MCE)
->    - APEI/CPER GHES corrected or recoverable errors
-> 
-> hwerror_data is write-only at kernel runtime, and it is meant to be
-> read from vmcore using tools like crash/drgn. For example, this is how
-> it looks like when opening the crashdump from drgn.
-> 
-> 	>>> prog['hwerror_data']
-> 	(struct hwerror_info[3]){
-> 		{
-> 			.count = (int)844,
-> 			.timestamp = (time64_t)1752852018,
-> 		},
-> 		...
-> 
-> This helps fleet operators quickly triage whether a crash may be
-> influenced by hardware recoverable errors (which executes a uncommon
-> code path in the kernel), especially when recoverable errors occurred
-> shortly before a panic, such as the bug fixed by
-> commit ee62ce7a1d90 ("page_pool: Track DMA-mapped pages and unmap them
-> when destroying the pool")
-> 
-> This is not intended to replace full hardware diagnostics but provides
-> a fast way to correlate hardware events with kernel panics quickly.
-> 
-> Suggested-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changes in v3:
-> - Add more information about this feature in the commit message
->    (Borislav Petkov)
-> - Renamed the function to hwerr_log_error_type() and use hwerr as
->    suffix (Borislav Petkov)
-> - Make the empty function static inline (kernel test robot)
-> - Link to v2: https://lore.kernel.org/r/20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org
-> 
-> Changes in v2:
-> - Split the counter by recoverable error (Tony Luck)
-> - Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
-> ---
->   arch/x86/kernel/cpu/mce/core.c |  3 +++
->   drivers/acpi/apei/ghes.c       |  8 ++++++--
->   drivers/pci/pcie/aer.c         |  2 ++
->   include/linux/vmcore_info.h    | 14 ++++++++++++++
->   kernel/vmcore_info.c           | 18 ++++++++++++++++++
->   5 files changed, 43 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 4da4eab56c81d..cb225a42eebbb 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -45,6 +45,7 @@
->   #include <linux/task_work.h>
->   #include <linux/hardirq.h>
->   #include <linux/kexec.h>
-> +#include <linux/vmcore_info.h>
->   
->   #include <asm/fred.h>
->   #include <asm/cpu_device_id.h>
-> @@ -1692,6 +1693,8 @@ noinstr void do_machine_check(struct pt_regs *regs)
->   out:
->   	instrumentation_end();
->   
-> +	/* Given it didn't panic, mark it as recoverable */
-> +	hwerr_log_error_type(HWERR_RECOV_MCE);
->   clear:
->   	mce_wrmsrq(MSR_IA32_MCG_STATUS, 0);
->   }
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index a0d54993edb3b..ebda2aa3d68f2 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -43,6 +43,7 @@
->   #include <linux/uuid.h>
->   #include <linux/ras.h>
->   #include <linux/task_work.h>
-> +#include <linux/vmcore_info.h>
->   
->   #include <acpi/actbl1.h>
->   #include <acpi/ghes.h>
-> @@ -1136,13 +1137,16 @@ static int ghes_proc(struct ghes *ghes)
->   {
->   	struct acpi_hest_generic_status *estatus = ghes->estatus;
->   	u64 buf_paddr;
-> -	int rc;
-> +	int rc, sev;
->   
->   	rc = ghes_read_estatus(ghes, estatus, &buf_paddr, FIX_APEI_GHES_IRQ);
->   	if (rc)
->   		goto out;
->   
-> -	if (ghes_severity(estatus->error_severity) >= GHES_SEV_PANIC)
-> +	sev = ghes_severity(estatus->error_severity);
-> +	if (sev == GHES_SEV_RECOVERABLE || sev ==  GHES_SEV_CORRECTED)
-> +		hwerr_log_error_type(HWERR_RECOV_GHES);
-
-APEI does not define an error type named GHES. GHES is just a kernel
-driver name. Many hardware error types can be handled in GHES (see
-ghes_do_proc), for example, AER is routed by GHES when firmware-first
-mode is used. As far as I know, firmware-first mode is commonly used in
-production. Should GHES errors be categorized into AER, memory, and CXL
-memory instead?
-
-Thanks.
-Shuai
+Kind regards,
+Pawel
 
