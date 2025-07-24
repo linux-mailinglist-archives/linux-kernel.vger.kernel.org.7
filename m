@@ -1,171 +1,224 @@
-Return-Path: <linux-kernel+bounces-744228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13B4B109D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0923B109D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8114DAE558E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29AF1CE094B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B32C08CC;
-	Thu, 24 Jul 2025 12:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0645F2BE638;
+	Thu, 24 Jul 2025 12:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xw7x+ypb"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M/5S5VVj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9BD24FBFF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164726A1B8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358442; cv=none; b=bmM3km6QkO0C8P2tW5a+yalJ+nxKahHQnFliW5SHSII2+pE/1FIOWS0ZE0tc3V83h4LgbPdmZqwkcUonh4qKLACQJzaG95IrcRQlgbL8+paGJ+KwoOvkJCW7J+f3S03mgRoiY1fqHcO6zoX3uOUNhwnmWFZQ7TjdRhiVSfivkcE=
+	t=1753358473; cv=none; b=EG1221qZF5Im76SLsfnGTA2mOK+yIPbC0ViLn+JtU/qqNTESYUGt+bfhl5UctK6WOIaYaodIPZW279wpNTfPtlVQYQfu5ZzIgW6ynZCX2t7RX+nA4kvyEKZ4mGSqetN/MqqTPfU9ivRL7ngdmZzCfHuL5kpteVeOR9of9sIwsaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358442; c=relaxed/simple;
-	bh=wGiIiRAIDkig7sxg1xtk3QqmzHhGVY0/EmsPGPBKEyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wy3iftXkLtFjSwSz6eGvEnkwTGZhdBv6MNnBz9GsA/ThjQShGcaJj0hELM3p1oCSwTPXYrQlb6MVk6NvE/pbNY1n4nPMMAkI9G3miis8Vm82fUjB7e1PSQ27/atpj5rV/hG82U5eu2QT9kNEPud8nBP2j6Zk0NhYa5qqzEz4QB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xw7x+ypb; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so10324885e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753358439; x=1753963239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EINZOXVlzKHZGGq4O4rIz4L+9+YS3Z+ducrMiJrOlAk=;
-        b=Xw7x+ypbLLHYdQIn7zVWrotslFPsohuK0hF4uzYrPam/2+lPNqFGj2dJTIsJ0hA2Qs
-         /5zNhcU/VkyLw4xmDeTrkp0iPNVn7ITnyvQdsQFgpiXSx4BgtdGw10gB6EEyVyRhPg9O
-         lkjq4AOV2MJnwxOxyWOueqCeRLDln9GeHsprbW+o8pXZRV0kl+mBi30AnI5gda+OA7WR
-         EYMrwbPnBgT/GCDKhHk50KkWLwtSaPrdlG0CJDBm+9HqT3x2G06IZ6siUj98MW42WaZU
-         QBWJp6sNztmAxveVU7ZfQAGUp1+0WtmCTpAFs0QFjkUTtUJP8c9AVmLQJtP00KJP6exq
-         jOJg==
+	s=arc-20240116; t=1753358473; c=relaxed/simple;
+	bh=9uu1S1qj04g/juKK/9B5wbVnmOsk3FvMiKkw5w2j0+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOFuch+z3nB7fTwWC30AXOjHPgTwn6tZvBJAFKjWV99HecgCxSDDGuKRbTiqQLagrY/nUFNMR93mN+4h2P2PtgblrboCkEHaK19n3emASLKv0D2dCr3CtLQPTRq/YqpLDvLcP7V2xB4S9WxGIKbQCTuwibsIbpMtceJXv/aBIcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M/5S5VVj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9a9fZ005788
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:01:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5WrE6w+Y+/lZU3NCVD/cyIQyDMA0J81+VswNVXgVvAE=; b=M/5S5VVjf1KTAqru
+	xFleTf90vUOlmPvX/YZNXPtjcgzVwMXKbqFUEL8q+xNpDIhmm6IZ9PUFBBqNKM+A
+	0k/UslC5F6JYKuzyi5ptSDvi60GrOoFZqWDeEUe7IrIse5GxHHYTrbrf7At1lt2C
+	TUCaONH0Y3jnN3fC4EdsZvXjIWjSuM0Gg2L3cIP3jHzeqtFgVWWTp/EEtwKLJPZP
+	CbS4nNYu1kOcPqya5d4D1/dQWJBpYeDPIEyEy/zNaSlQBqaOaSVI0SPl4uI7ayyh
+	yDuafSFmHQNy8se5qkHue75vW1zx6sO2noT+nDK0+Xh+/l0VCpJP1mO0TJAwszou
+	GWkV4A==
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047qgmmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:01:10 +0000 (GMT)
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4f32e552e80so196512137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:01:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753358439; x=1753963239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EINZOXVlzKHZGGq4O4rIz4L+9+YS3Z+ducrMiJrOlAk=;
-        b=e9y2d2SaboBGqahnV0igfhWltzDIB8KAx3+JTOcm1s2Tw3LPAS+Lp5QRA2YrrMLnQX
-         LUWCMZSIYqUPdhu19w772u9B/Rmo+2Oez3+VW3DkzMz5G+y60vpGEACRrBYMIqofgWl8
-         q+ycYraiSDgqMEf/S+vdLcjANLJBgTiBd4ue8XOdqqv/sIUeS89s4zrSsyz+bFnTxmDY
-         rYfY0+0sINib4ukIdDaF9UfBj5pfcHhMsdPsAxNt913rfNyGNXJbQO6XKyypQIgdB9EM
-         8ZUaNs2YIj7ypD9AKFdZtVlcENrz2WuJdjsxmN56GJ+zRyttRibI6RC7ohYb8XT4plTt
-         nY+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5KbR+yR7db24vosfD8vgN+daD2N/XpdCCx2NF2d5wY3A6+ANCFJPeLbvIkf9ziM8qSQLHrIWNVi25gcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHwBHtgFpZ6JlBgi5KKxIUxKSr0zV10+95gbTJxMLgFI9vAVBb
-	R0nSHs19A/u2i496Bj8+qP1aB5JP6nIJ4FqljY5NKz9Joxza/7H0blRb
-X-Gm-Gg: ASbGncvsdO5MISL63YE2WajG/WjiScoC3i+f/XiBP2a8PcQmPl25gxm4t90Mh0NvKPs
-	geRRv1BPaFW6jg2HjJ2m/86YhhskWyU4dwF5FTzJDUiCtwj4a5uCVdHks1vHVOZMC3Ppsq59OgG
-	X493y2y63VKg9TAHLu/eic6Itbd4HhOe+/4Ujy+8apyKDCgOYPyYVHF36A942Gnxw+Zk1QcsDlT
-	OwyNs/oB50GGtZkTm539j+BQs0Ow8b9EPO1Rum2re5GOgQ6DxXP2zeH6sFzbwEwwuXVLv3fV8SD
-	XeUlyQ1tPUFk3vp9Mh5TLCCx7jCRnUzkOOCUAPe73mhq4muiL9DtbTahBcf0qqXoD0UARzxicki
-	g9QRM09aMUNWAuCRIYbmgX6KoOtgAY1HStYJxq8QWPB/fhEjDQ3w6JYNGfGt6
-X-Google-Smtp-Source: AGHT+IGr5gLnp+t2zorbGJJocajx56mOkDi7xvJeKiramoBLhLHRy8yVD/VTL2ErCgecBgFDX0vMtg==
-X-Received: by 2002:a05:600c:6309:b0:456:1a87:a6ba with SMTP id 5b1f17b1804b1-45869dad525mr51445545e9.33.1753358438530;
-        Thu, 24 Jul 2025 05:00:38 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bccc5sm17738625e9.22.2025.07.24.05.00.37
+        d=1e100.net; s=20230601; t=1753358469; x=1753963269;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WrE6w+Y+/lZU3NCVD/cyIQyDMA0J81+VswNVXgVvAE=;
+        b=P43vKlnDYgzheKYBwWLD9yweF4Eob3FPTHmHGBeHiDhZe5kvNpOPLLa4nDJNQytYQ1
+         hm8nWwczKPG69lc9opEWqnftONU557UeVNbWPZexMgIbMqAY9QwEh+irEXm7dK90DU4w
+         ojVXxyyhNAfiRLKwHmfAxZnX/yNSGLvH23lLw5J6EGtVk4VZw8IoVYvjliMWUHgSmrpk
+         JoT7cdw1oGAnyaVSc1eOal/r5xy4T+rEA8kZ0lF4mV6Z/G0zwxcXCm5Z6Setsee82Ksa
+         Z6u1y82JRhbAEmZP/CiwAjBpmcVJItmJmUJ6IsYNxAtLUuOqomtEDs1lU9/oXv1HJ3JG
+         9+8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUAt+iK72nTz0a7JgAuhQeysCq4VGwpLuFWmbMN1DxRwqcIubcRqK0eANlpCg3RCm7q6qpor/6W7XPvuDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOfnVnmBj63fFtcMGDfUxgAxgF9RWKAIgCz/hE499lyuhtgo9k
+	NaWmVjnBvSiKAVEzcBCNH+EqEei0+Jg5c8GCFCOARoTr0lKGHLg7mjRs/2sCzU48My65lj1c/A7
+	+sB7KHmO1O/ZxTadhB2r+Mzvb+/XUvhLPsmVAw1vyTElCTgJgVoAtGk/wYXyB2PNMVX7dJGd9K0
+	c=
+X-Gm-Gg: ASbGncv/9zQEkbkvPuRMu6NKs9Zi8LZE5g4uRZkH5kk//4BLBzKAXVbTy9o2S0S2dzo
+	kPUbuxqXYAl78eFLo+rBlX4YoIPVEYS7YKxf87ytXGYqzPtCh+EK1MJohwnSJfMWJtoYm1LzE1k
+	/F2JsCIgIDDCXoHrYnxwn9RZOwX7br/jVHBZ3v6iGzrPNeuJ04OYwOC8H8eOA/1xq05vN2YqoXK
+	q7/XNNy4vg092DHEelbede9atOch55Y1xqKYcV6NQ/K/ak/27KQ+An72/DGMHVISj4M3BDRRn+X
+	2AsY9As+zvilQ18e9cLzAo87w8Nap2voDlWBe19UrhGb0XQENfstJrt8ykBdecfa+5ByDKuy6Vu
+	FryjA7xOlheoE8kM79Qs+ijwBhebCMnvji6MMvfUbl15Y7Bvm1vwS
+X-Received: by 2002:a05:6102:5a99:b0:4e9:968b:4414 with SMTP id ada2fe7eead31-4fa1521851fmr2754339137.22.1753358467138;
+        Thu, 24 Jul 2025 05:01:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETM2Dk540eywCV0gAGXNNbz9noJyr0KH7DW1dRdy4yZ58LU0VXkl2WQyJmUeGaYGW1uVpMTA==
+X-Received: by 2002:a05:6102:5a99:b0:4e9:968b:4414 with SMTP id ada2fe7eead31-4fa1521851fmr2753800137.22.1753358464426;
+        Thu, 24 Jul 2025 05:01:04 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53b2288csm325180e87.23.2025.07.24.05.01.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 05:00:38 -0700 (PDT)
-Date: Thu, 24 Jul 2025 13:00:37 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Li,Rongqing" <lirongqing@baidu.com>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
-Message-ID: <20250724130037.1ae77797@pumpkin>
-In-Reply-To: <20250724082547.GB10980@redhat.com>
-References: <20250721130422.GA31640@redhat.com>
-	<20250721192053.58843751@pumpkin>
-	<20250722105034.GA2845@redhat.com>
-	<20250722130947.0c97c96a@pumpkin>
-	<20250722132147.GB2845@redhat.com>
-	<20250722230341.5a1cc5e5@pumpkin>
-	<20250723093825.GA12884@redhat.com>
-	<20250723224831.4492ec75@pumpkin>
-	<20250724081125.GA10980@redhat.com>
-	<20250724082547.GB10980@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Thu, 24 Jul 2025 05:01:03 -0700 (PDT)
+Date: Thu, 24 Jul 2025 15:01:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@quicinc.com
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
+ qualcomm controllers
+Message-ID: <tpervpypkne6lasl3fn3v52xutl3zfuytalo3cveoe4us63rrb@p2w4cvt2jf7a>
+References: <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq>
+ <10c90fee-ce7f-4034-9028-4252f19cb67f@quicinc.com>
+ <CAA8EJpoLLDXFQk-ViuaioKrECzMV0aUrcOj4v+Ufs4oHY53mrw@mail.gmail.com>
+ <064d3eed-c2ea-4b41-85b2-d2a5a922f8c7@quicinc.com>
+ <ehgjdszjr34xppmkrkicb4pnq326nor26tqu2ekop6ew2j3y3h@pm45aiipzuc5>
+ <48c73675-a73f-46f1-81a9-f701a2cf00a5@quicinc.com>
+ <c1ebdaf1-92bb-4f73-bca9-35246d7c10e1@oss.qualcomm.com>
+ <ca83b841-aea0-4233-93fe-02a7b5985af4@quicinc.com>
+ <1a0a5178-fcf0-49b6-8e4c-1393c0f4f229@oss.qualcomm.com>
+ <22848e2e-bd7d-486c-b481-c624d230d327@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <22848e2e-bd7d-486c-b481-c624d230d327@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA5MCBTYWx0ZWRfX0JjfRaYX2ui4
+ Od9n2XYEiN25tAgdDLndE8BO69kDu18yIznLPQFgY1ANQif7qnbBvNeBR0PBYRvgbHhxvnhIZAq
+ vP3GJ9H6m6CmQZQnBnAxqEClX3TVQ3Ubo9DUJn2n5FGFmfos6kmLtwNP+o86uziHplMPvhsba/9
+ tvpgn/NdvFLmtf5qM34TbXA4mQQg1hC4n8qfm23z9KPQc68oyqRxuhxx03KlhCKAGtfyYtuGYnX
+ 4/L3rKU1GkixWfE+8WTeIbX8qCzgMaypuVXlaoSlK/WW2wktPzQtTPzIh6H0Hn56SCEDG8akwLY
+ 8dWpsOKdMGT5fk3Zp4p/yrU55eiGU6JIoTczXhL22yWEP1UO3pUdPSXojijw0HW4RxtWZzSOfkq
+ l+sxuFSKYs3I30udUCVbFEHzLZ9bFlyWJgszS8m55Xuug4FAp2HRA7JJ6jMgxXzH3ln8Y5sI
+X-Proofpoint-ORIG-GUID: ibkwC7Y2yAgTsbXxpjk0DAZbcgKhPlHS
+X-Proofpoint-GUID: ibkwC7Y2yAgTsbXxpjk0DAZbcgKhPlHS
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=68822086 cx=c_pps
+ a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=6h7372fjVO4yHBa2uBUA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=-aSRE8QhW-JAV6biHavz:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507240090
 
-On Thu, 24 Jul 2025 10:25:48 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
-
-> On 07/24, Oleg Nesterov wrote:
-> > On 07/23, David Laight wrote:  
-> > >
-> > > On Wed, 23 Jul 2025 11:38:25 +0200
-> > > Oleg Nesterov <oleg@redhat.com> wrote:  
-> > > >
-> > > > to remove the conditional branch and additional variable. Your version
-> > > > is probably beterr... But this is without WARN/BUG.  
-> > >
-> > > I wish there was a way of doing a WARN_ONCE from asm with a single instruction.
-> > > Then you could put one after your 2:
-> > > Otherwise is it a conditional and a load of inlined code.
-> > >  
-> > > > So, which version do you prefer?  
-> > >
-> > > I wish I knew :-)  
-> >
-> > ;-)
-> >
-> > David, you understand this asm magic indefinitely better than me. Plus you are
-> > working on the generic code. Can you send the patch which looks right to you?
-> > I agree in advance with anything you do.
-> >
-> > I got lost. Now I don't even understand if we want to add BUG and/or WARN into
-> > mul_u64_u64_div_u64().  
+On Thu, Jul 24, 2025 at 04:45:38PM +0530, Sarthak Garg wrote:
 > 
-> Forgot to mention... Not that I think this is a good idea, but if we don't
-> use BUG/WARN, we can probably add EX_FLAG_ and do something like below.
-
-I'd not looked there.
-That is certainly best if WARN/BUG is deemed unnecessary.
-(That is the type of question I'd defer to 'management'!)
-
 > 
-> Oleg.
+> On 5/21/2025 9:11 PM, Dmitry Baryshkov wrote:
+> > On 21/05/2025 18:36, Sarthak Garg wrote:
+> > > 
+> > > 
+> > > On 5/21/2025 8:19 PM, Dmitry Baryshkov wrote:
+> > > > On 21/05/2025 17:35, Sarthak Garg wrote:
+> > > > > 
+> > > > > 
+> > > > > On 5/21/2025 6:25 PM, Dmitry Baryshkov wrote:
+> > > > > > On Wed, May 21, 2025 at 12:46:49PM +0530, Sarthak Garg wrote:
+> > > > > > > 
+> > > > > > > 
+> > > > > > > On 11/15/2024 6:53 PM, Dmitry Baryshkov wrote:
+> > > > > > > > On Fri, 15 Nov 2024 at 12:23, Sarthak Garg
+> > > > > > > > <quic_sartgarg@quicinc.com> wrote:
+> > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > On 11/4/2024 4:19 PM, Dmitry Baryshkov wrote:
+> > > > > > > > > > On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
+> > > > > > > > > > > Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
+> > > > > > > > > > > This enables runtime PM for eMMC/SD card.
+> > > > > > > > > > 
+> > > > > > > > > > Could you please mention, which
+> > > > > > > > > > platforms were tested with this patch?
+> > > > > > > > > > Note, upstream kernel supports a lot of
+> > > > > > > > > > platforms, including MSM8974, I
+> > > > > > > > > > think the oldest one, which uses SDHCI.
+> > > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > This was tested with qdu1000 platform.
+> > > > > > > > 
+> > > > > > > > Are you sure that it won't break other platforms?
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Thanks for your valuable comment.
+> > > > > > > I am not sure about the older platforms so to avoid issues on older
+> > > > > > > platforms we can enable this for all SDCC version 5.0 targets ?
+> > > > > > 
+> > > > > > No, there are still a lot of platforms. Either explain why this is
+> > > > > > required for all v5 platforms (and won't break those) or
+> > > > > > find some other
+> > > > > > way, e.g. limit the change to QDU1000, explaining why it is _not_
+> > > > > > applicable to other platforms.
+> > > > > > 
+> > > > > 
+> > > > > Thanks for your comment.
+> > > > 
+> > > > No need to.
+> > > >  >> I agree with your concern but for me also its not possible
+> > > > to test on
+> > > > > all the platforms.
+> > > > 
+> > > > Sure.
+> > > > >> Lets say if I want to enable this caps for QDU1000 for which it has
+> > > > > been tested and on any other upcoming target after testing,
+> > > > > then how can I proceed to enable?
+> > > > 
+> > > > Let's start from the beginning: why do you want to enable it on QDU1000?
+> > > > 
+> > > 
+> > > QDU1000 is one latest available target where we have enabled this
+> > > and tested. This has been enabled to save power.
+> > 
+> > Isn't it a powered device? How much power is the save? Is it worth it?
+> > 
 > 
-> --- a/arch/x86/mm/extable.c
-> +++ b/arch/x86/mm/extable.c
-> @@ -38,6 +38,9 @@ static bool ex_handler_default(const struct exception_table_entry *e,
->  	if (e->data & EX_FLAG_CLEAR_DX)
->  		regs->dx = 0;
->  
-> +	if (e->data & EX_FLAG_XXX_AX)
-> +		regs->ax = -1ul;
+> Sorry I just did basic sanity on QDU1000 device to confirm its not breaking
+> any eMMC functionality and we have also tested SD card on SM8550 as well.
+> For power no's we have stared internal discussions and based on target
+> available for power profiling with eMMC device we will come back.
 
-That would need to set %eax to a 64bit ~0u;
-I don't think the above would sign extend the value.
+So, again, _why_ do we want to enable it? If you haven't measured the
+actual power savings, then it's obviously not a primary reason.
 
-Makes me think - always bad.
-I wonder how hard it would be to implement EX_FLAG_WARN_ONCE.
-Mostly it would need a writeable bitmap with one bit for each
-extable entry.
+As for the v5 targets only, they start from SDM845. Have you tested it?
+Does it bring any actual benefits?
 
-	David
-
-
-> +
->  	regs->ip = ex_fixup_addr(e);
->  	return true;
->  }
-> 
-
+-- 
+With best wishes
+Dmitry
 
