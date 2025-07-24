@@ -1,123 +1,79 @@
-Return-Path: <linux-kernel+bounces-744084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F307B107D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:34:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B740B107D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F340178F12
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:34:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B0A7B6C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8910C2673B0;
-	Thu, 24 Jul 2025 10:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465E2266B59;
+	Thu, 24 Jul 2025 10:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TYC8IUXc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1KNec3km"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D3619343B;
-	Thu, 24 Jul 2025 10:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818B219343B;
+	Thu, 24 Jul 2025 10:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353234; cv=none; b=V7/pqc3XQR4MswK/PrxOBV530lj39HNXpCgsDFeZaEExr5fAOf4FWRwKO20mSluKTtnWMAw9SVzza/aHb56QPAEC8n4EJyTkePOf03fWuecCxqi2pCmlc39kW2bWev8lyzP4N+E9EFrbdrygtmWMsf6w51dZb78XMKhmCAdwWJc=
+	t=1753353282; cv=none; b=EEToNU/15oW452M3fnFExoxu/YVppsRSJixbwamYRW1jtYaAz8HhIDUZGFsyo2wRQXm5AiVBXgMRjIOhXoyIroHsSCb2ERzm0YR4WwOp1Xx5sC6ivyqG7E2ORGU3ouzVUGuQjFCNZR1v4z/JjWw/aVHjhAwVfYPAnJ7ScwUeWsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353234; c=relaxed/simple;
-	bh=y/uu0aYzrMdiv8TgRJvZW5gaZjEdUg5E1PbYZgM2PUQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pB6mtMXt26MiQIXCZa6Lk6adsXn/A+DqGD0eUAhLgsK4EDrILiEZfEVrgTgJy0jp8sZoobACTfMDxK6B+81JhcNsO0AtwwpApFeYy5wbfbqXnV0yTf81TKHtch4DdP9acmxGPGuZbQtzP/qmQJmtafsxcDxVdj5i3BlBkjw3Nmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TYC8IUXc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9gKcm012566;
-	Thu, 24 Jul 2025 10:33:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=y/uu0aYzrMdiv8TgRJvZW5ga
-	ZjEdUg5E1PbYZgM2PUQ=; b=TYC8IUXc8GezEH1UJ9yUd1aP7emMn+ETo8qc3lCJ
-	c7lCJ1dpLsrsPWx4IzKTccgL62qvMcCvNr4Qi9MG4VXKKOW5u2biqPDYWfvAUUnR
-	n797lEeMebluqwI7evxcGlI2rS+08hjgSZmvEWdN/lFClpijNiN8Va6bLU5Ezv9u
-	WU7LP6UZtFYZJ6XDz7eyUgkfLmZ2YFJq+UsujZ1KiY9cTceUzDmLKXfHQeBV2RRs
-	5IZH7YGLfVBp8/8DDM23iLIEe9LjxAoXpgcoIEalFrOiwzUCnP7LMnz6CCc/unsy
-	L+XNAUefWKpO5fEUqKUNX9q/e4UDztt+mmp39pIbqnk+sg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482d3hxd2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 10:33:46 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56OAXjAT005388
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 10:33:45 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 24 Jul 2025 03:33:40 -0700
-Date: Thu, 24 Jul 2025 16:03:37 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_mdalam@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] Enable cpufreq for IPQ5424
-Message-ID: <aIIMAZ9tkTiU6QR2@hu-varada-blr.qualcomm.com>
-References: <20250724102540.3762358-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1753353282; c=relaxed/simple;
+	bh=NDilOfv7K6odjmyecSbZuzdlKXMxM+WWIVS998QQo3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1wibBr6pc03E0Yw2suhEG24OMzSufgZgA3JehPfmtVqu3ql94A8CWfxUsdE7DPcJ044kCuxAOZbPOWtmz9LrqpkD46rG+pLRXbCtxxk0QP0M6dgspgDeZV8aly3BzVZ2B+fuM2TVDMcOQrxtLL5L/TLRlwlICmDFSOWkJshd5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1KNec3km; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555F7C4CEED;
+	Thu, 24 Jul 2025 10:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753353282;
+	bh=NDilOfv7K6odjmyecSbZuzdlKXMxM+WWIVS998QQo3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1KNec3kmD3NefOaBgg+wriwqMsUWXfJ90MwZjClDvBeLrf39THwDx43argCqG7l/t
+	 5O0F5IifB2D/7g44XpBGoJafHitZRfYLH6tMLavWmlCdS/Xu5pycrVEaDk8gNhnVCm
+	 9VSD2OjH+duR1e/VAYOUQP6+bRisD4wRYp2fszcE=
+Date: Thu, 24 Jul 2025 12:34:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Kyung Min Park <kyung.min.park@intel.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, xin3.li@intel.com,
+	Farrah Chen <farrah.chen@intel.com>, stable@vger.kernel.org,
+	Borislav Petkov <bp@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86: Clear feature bits disabled at compile-time
+Message-ID: <2025072459-emergency-slighting-9d60@gregkh>
+References: <20250724094554.2153919-1-maciej.wieczor-retman@intel.com>
+ <7rugd7emqxsfq4jhfz47weezipfoskf43xslgzgwea2rvun7z6@3tdprstsluw4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724102540.3762358-1-quic_varada@quicinc.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=G8UcE8k5 c=1 sm=1 tr=0 ts=68820c0a cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=EsjwHSjgO5qIK9K-dSAA:9 a=CjuIK1q_8ugA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3OCBTYWx0ZWRfX8yRi87NCOKG0
- D1y7nfET0qAUeeIh6ke4II7S4IKmEIuLe7A5/Xgxuim+bp5u4u4iC8MQ+aa+0M4Jtt44LHM9OMm
- 9b6Tl9CSqq1Xx61zqk2CEXCahWac1xlwO3uSKk0ZsVddClisyhkS5pL2DBH9sdYwWobS4BML5aX
- YXfHLpYLaG9WVpl9hKL2sq2W6Tgex4uu/KA5X7i5EsNLvvWnoldMKcQdTqQn9vjqcGso7/vJH/t
- P4VWIg/whSVy0Q4ESYmtPC763VcQ59yyiyyMBMpcvcFuWPa1cowm1uvEhLK+LIJRiqe/DMapKA0
- SnitJW3r2lYxzrQ0WmTwpE0RSeL8WhUpAulZQIVr/kq/bQycN1yTt6fZX3C1J5eFPqSDRWZ+MJb
- zxf1VqFdW7v6dxpGj53vKn8mhjFPTctXKbSWslhbMgi0qzFo1dJzjcyfE96AOXKynQzmG711
-X-Proofpoint-GUID: 3mcmkAv4zAa_nTwQ6GWOhXHV_4UkBp1x
-X-Proofpoint-ORIG-GUID: 3mcmkAv4zAa_nTwQ6GWOhXHV_4UkBp1x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- bulkscore=0 impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=611 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507240078
+In-Reply-To: <7rugd7emqxsfq4jhfz47weezipfoskf43xslgzgwea2rvun7z6@3tdprstsluw4>
 
-On Thu, Jul 24, 2025 at 03:55:36PM +0530, Varadarajan Narayanan wrote:
-> CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
-> Add support for the APSS PLL, RCG and clock enable for ipq5424.
-> The PLL, RCG register space are clubbed. Hence adding new APSS driver
-> for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
-> modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
->
-> v2: https://lore.kernel.org/linux-arm-msm/20250723110815.2865403-1-quic_varada@quicinc.com/
->
-> v1: https://lore.kernel.org/linux-arm-msm/20250127093128.2611247-1-quic_srichara@quicinc.com/
+On Thu, Jul 24, 2025 at 12:13:25PM +0200, Maciej Wieczor-Retman wrote:
+> Hello Greg,
+> 
+> I'd like to ask you for guidence on how to proceed with backporting this change
+> to the 5.10 stable kernel and newer ones.
 
-Ignore this, missed Kryzstof's comments. Will post a new version
-after addressing those comments.
+Don't worry about it UNTIL your patch lands in Linus's tree.  Then, if
+it doesn't apply to a specific stable branch, just send us a working
+backport.  Not too complex :)
 
-Thanks
-Varada
+thanks,
+
+greg k-h
 
