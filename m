@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-744068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F82AB107A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62719B107E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219F1AA336F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F11AA0BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B761263892;
-	Thu, 24 Jul 2025 10:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C226D267AF2;
+	Thu, 24 Jul 2025 10:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMfOANyf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b="IVZvlrzM"
+Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6766325D549;
-	Thu, 24 Jul 2025 10:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3C2676E9;
+	Thu, 24 Jul 2025 10:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352605; cv=none; b=SG71NObagBNo0+tU2fMiL35mxNMy8wnuHboCDKNpETeDRuix7PuPU2U4EV0/rmOQ+nxW/HYNuXoeBJO6Z3fEsk91W78JOybdvyxQejPemG5Os4h8EkUcZM7oKjwWiNHcWvzi7nOdtc0cb3yJUWzN3E9Wrn7KGg56RMyUEWicNLY=
+	t=1753353625; cv=none; b=tLzj/79ZXCyhZ+PzUS88TiWlpsNaqeFUjcx5OxSD9S4BirrlInzcAogzzpu6JIdyqeH+yPqupp9w7/nMUlwNAHpdJ4N7DiffKy5DJAQF30uKTMVUagiz9m9E7P6DFre7/aVGsZEXOCLitLUs/HOnUTSSyc1QWZgHUK90LpRDUjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352605; c=relaxed/simple;
-	bh=I3vc9qIadyoA2Oy+WG9mC7O7L+Uss7M1nJsjNCA2cHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XmQmS8ZSxnSMppmo1F9+MiGhEBVJNG0EH7QBubcIB5PNyPMmqPVypKwP/qxrdZwgvEKBieXUpJmGA4KibncpUGaG9Oo95f8E1Yn9JKF5JhDSqpl/qbp2LUfsjukixQKQXVL/uMZ24oUJKVPpexmIq0IuPU7+HmD8HTpgS5ZplxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMfOANyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94224C4CEED;
-	Thu, 24 Jul 2025 10:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753352604;
-	bh=I3vc9qIadyoA2Oy+WG9mC7O7L+Uss7M1nJsjNCA2cHA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZMfOANyfxBbXqayAEtdGW95tbNw0ftxMFv9caUNSfvDSg77M0D8AJYS3HioUCTIdD
-	 pqrTgjbrOCr6TPLf8jTKiaQ9LrrzE3IMB/ZXkePt5IIAPjrVy+wSDXFbpkVAMm7G2p
-	 lk1sihGP2gY/lAR8RrynKfY6oqa/+M01ZqRJOYaVLvblQBGDj+aoiMPpVCY3l8Zjit
-	 4ChOp3eZZpQS1rUoevVLJ++z4/fOt+Y2NpwiPKIdYLh54M3bTecjycD1HzoxLtASkw
-	 K+l5GM0grK1Fp28gUPkWG8IokJngJYcQhuwFC/rCbjUokeReHHTkcW5JKhIKiwVE4O
-	 B0focFBRPpxnw==
-Date: Thu, 24 Jul 2025 11:23:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yasin Lee <yasin.lee.x@gmail.com>
-Subject: Re: [PATCH] iio: proximity: hx9023s: use
- IIO_DECLARE_BUFFER_WITH_TS()
-Message-ID: <20250724112317.0c9b561b@jic23-huawei>
-In-Reply-To: <57e16589-3d9c-49c1-ba91-abae23143803@baylibre.com>
-References: <20250722-iio-use-more-iio_declare_buffer_with_ts-8-v1-1-36188a3f214f@baylibre.com>
-	<57e16589-3d9c-49c1-ba91-abae23143803@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753353625; c=relaxed/simple;
+	bh=0vefUBiAWQYh2/3REMI7EF97twDh4DDuzRSmvvySUiU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g4hFWrkK+Lwxv+DFJ8N+Z0vq6707uNlP8OSI72tuiD9iOnMMCr/T2VOawzfARUjAY0kxaVQl0MRwBz5YkiiBKjERnehipS3wDx5RlCK/RaiqPIOGplQw3mcnjit6BTs0vKt2cUQHD+Iu+A6x47PoyKc83sNapFRF3+r49qjTi0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b=IVZvlrzM; arc=none smtp.client-ip=91.199.251.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
+DKIM-Signature: v=1; a=rsa-sha256; d=aladdin.ru; s=mail; c=simple/simple;
+	t=1753352697; h=from:subject:to:date:message-id;
+	bh=0vefUBiAWQYh2/3REMI7EF97twDh4DDuzRSmvvySUiU=;
+	b=IVZvlrzM7XgROlM2SvvSleF3Z4ZrFYTtzyDrPbeVBCmEJ/V2dNFwVdTWpX3OV6lzkW/V7w+FV28
+	OAEtMGbHy0IJyJCo+EX1c4DIgrziMlH7zrHxS2g76b3OqLV3moS3hvqh3Ptqkr3Cqf1+2hspCxbB9
+	Cp+Il7vDkPM/OzLKtW6DLnxfC2VIj0lEtAnfAGPR+U9yEUxY9v/6O8KSDSqQlni0pJf37WH1OMziZ
+	VqXj8i2aAlkhCqr06cWaGh7FsZQPVImiLmJ9hiJSyF81ESBJX+SXzf0sS3VFlzKL77Nk6o682AIwi
+	M8plSBHPJuKsL/KXSS17vqxi+20fPH307i3A==
+From: Daniil Dulov <d.dulov@aladdin.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Harry Wentland
+	<harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira
+	<siqueira@igalia.com>, Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
+	<airlied@linux.ie>, Simona Vetter <simona@ffwll.ch>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, "Rodrigo
+ Siqueira" <rodrigo.siqueira@amd.com>, Jerry Zuo <jerry.zuo@amd.com>, Alex
+ Hung <alex.hung@amd.com>, Daniel Wheeler <daniel.wheeler@amd.com>
+Subject: [PATCH 5.10] drm/amd/display: Pass non-null to dcn20_validate_apply_pipe_split_flags
+Date: Thu, 24 Jul 2025 13:24:48 +0300
+Message-ID: <20250724102449.63028-1-d.dulov@aladdin.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCH-2016-03.aladdin.ru (192.168.1.103) To
+ EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-On Wed, 23 Jul 2025 10:07:55 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+From: Alex Hung <alex.hung@amd.com>
 
-> On 7/22/25 5:54 PM, David Lechner wrote:
-> > Use stack-allocated IIO_DECLARE_BUFFER_WITH_TS() to declare the buffer
-> > that gets used with iio_push_to_buffers_with_ts().
-> > 
-> > We change from a struct to IIO_DECLARE_BUFFER_WITH_TS() since
-> > HX9023S_CH_NUM is 5 making channels[] larger than 8 bytes and therefore
-> > the timestamp is not always as the same position depending on the number
-> > of channels enabled in the scan.
-> > 
-> > And since the data structure is not used outside of the scope of the
-> > interrupt handler, the array does not need to be in the driver state
-> > struct and can just be stack-allocated.
-> > 
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-Given the type issue you fix in next patch, I'll sit on this one for now
-(otherwise I'd just have fixed up the below initialization that you call out)
+commit 5559598742fb4538e4c51c48ef70563c49c2af23 upstream.
 
-+CC Yasin
+[WHAT & HOW]
+"dcn20_validate_apply_pipe_split_flags" dereferences merge, and thus it
+cannot be a null pointer. Let's pass a valid pointer to avoid null
+dereference.
 
-> > ---
-> >  drivers/iio/proximity/hx9023s.c | 13 ++++---------
-> >  1 file changed, 4 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
-> > index 33781c3147286fb3e2f022201ccf7e908d0b6b12..1203fa4bc7512ea85b55d537e2459104b52407b9 100644
-> > --- a/drivers/iio/proximity/hx9023s.c
-> > +++ b/drivers/iio/proximity/hx9023s.c
-> > @@ -143,12 +143,6 @@ struct hx9023s_data {
-> >  	unsigned long chan_in_use;
-> >  	unsigned int prox_state_reg;
-> >  	bool trigger_enabled;
-> > -
-> > -	struct {
-> > -		__le16 channels[HX9023S_CH_NUM];
-> > -		aligned_s64 ts;
-> > -	} buffer;
-> > -
-> >  	/*
-> >  	 * Serialize access to registers below:
-> >  	 * HX9023S_PROX_INT_LOW_CFG,
-> > @@ -928,6 +922,7 @@ static const struct iio_trigger_ops hx9023s_trigger_ops = {
-> >  
-> >  static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
-> >  {
-> > +	IIO_DECLARE_BUFFER_WITH_TS(__le16, channels, HX9023S_CH_NUM);  
-> 
-> Ooof. I remembered to zero-initialize all of the scan structs in the other
-> similar patches, but forgot we need to do the same with the array to avoid
-> leaking uninitialized stack to usespace.
-> 
-> 	IIO_DECLARE_BUFFER_WITH_TS(__le16, channels, HX9023S_CH_NUM) = { };
-> 
-> >  	struct iio_poll_func *pf = private;
-> >  	struct iio_dev *indio_dev = pf->indio_dev;
-> >  	struct hx9023s_data *data = iio_priv(indio_dev);
-> > @@ -950,11 +945,11 @@ static irqreturn_t hx9023s_trigger_handler(int irq, void *private)
-> >  
-> >  	iio_for_each_active_channel(indio_dev, bit) {
-> >  		index = indio_dev->channels[bit].channel;
-> > -		data->buffer.channels[i++] = cpu_to_le16(data->ch_data[index].diff);
-> > +		channels[i++] = cpu_to_le16(data->ch_data[index].diff);
-> >  	}
-> >  
-> > -	iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
-> > -				    sizeof(data->buffer), pf->timestamp);
-> > +	iio_push_to_buffers_with_ts(indio_dev, channels, sizeof(channels),
-> > +				    pf->timestamp);
-> >  
-> >  out:
-> >  	iio_trigger_notify_done(indio_dev->trig);
-> >   
+This fixes 2 FORWARD_NULL issues reported by Coverity.
+
+Reviewed-by: Rodrigo Siqueira <rodrigo.siqueira@amd.com>
+Signed-off-by: Jerry Zuo <jerry.zuo@amd.com>
+Signed-off-by: Alex Hung <alex.hung@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+[ Daniil: Changes to dcn21_fast_validate_bw() were dropped since the function
+  is not inplemented in 5.10.y. Also dcn20 and dcn21 were moved from
+  drivers/gpu/drm/amd/display/dc to drivers/gpu/drm/amd/display/dc/resource
+  since commit 8b8eed05a1c6 ("drm/amd/display: Refactor resource into component
+  directory"). The path is changed accordingly to apply the patch on 5.10.y ]
+Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+---
+Backport fix for CVE-2024-49923
+
+ drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+index b4bff3b3d842..029aba780d83 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+@@ -2847,6 +2847,7 @@ bool dcn20_fast_validate_bw(
+ {
+ 	bool out = false;
+ 	int split[MAX_PIPES] = { 0 };
++	bool merge[MAX_PIPES] = { false };
+ 	int pipe_cnt, i, pipe_idx, vlevel;
+ 
+ 	ASSERT(pipes);
+@@ -2869,7 +2870,7 @@ bool dcn20_fast_validate_bw(
+ 	if (vlevel > context->bw_ctx.dml.soc.num_states)
+ 		goto validate_fail;
+ 
+-	vlevel = dcn20_validate_apply_pipe_split_flags(dc, context, vlevel, split, NULL);
++	vlevel = dcn20_validate_apply_pipe_split_flags(dc, context, vlevel, split, merge);
+ 
+ 	/*initialize pipe_just_split_from to invalid idx*/
+ 	for (i = 0; i < MAX_PIPES; i++)
+-- 
+2.34.1
 
 
