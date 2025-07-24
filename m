@@ -1,288 +1,449 @@
-Return-Path: <linux-kernel+bounces-744264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0ADB10A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:35:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE98BB10A4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 400EA4E66FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37EFB17AB45
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7AE2D2386;
-	Thu, 24 Jul 2025 12:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4B2D12E2;
+	Thu, 24 Jul 2025 12:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kSjAf4gR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qveIGIp7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6402741AB;
-	Thu, 24 Jul 2025 12:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360471; cv=fail; b=rII+ibeEDE5Tbe9iVlPoARkCnD7pbybvRomwau2Ksrlml/koI2gwsRjbcKjx/idlN0guZnUMV7xDzQUxLNzymJbZzvwg7ziO4I2Zx7M2eqCM/ORQ7htgxxTMkTNuJM02fm7Ja73TjhepJOPJtPDaO1swiudDL1FkKNkD9vHD0wc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360471; c=relaxed/simple;
-	bh=uY4B+MFcopj08i0bU4ZZ+1J8NTpsjfsg4Pot5kSMx0A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FsZzrXl5Ko+jH2xBhawUnSHmS+rMpEizIU3ck6IbpXs5MTMfKb5lJWcu6Krh7xPSC8oyvBua3yVZiV5oUV2XXtkIs0QmfEemazwl4qNfkmceMqYpvNrF9kJQ2xWMb8EPdnqsUa3BwRlAZhezemGG6+5QbHcoL89kkkAjnyum+hY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kSjAf4gR; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753360470; x=1784896470;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=uY4B+MFcopj08i0bU4ZZ+1J8NTpsjfsg4Pot5kSMx0A=;
-  b=kSjAf4gRckOYLwyXJXFjxkPwSsd+C7sVrP1rHGosQjJtw2DETIL0q43Q
-   7UMj6zQXny0WuayTA0Mw9GOwMGJq6OIRmEMjXiLFVlHIJFfxtKe/KqTiC
-   cpXLEr/Z+oDH3Z9IS9oBUVDy3DXAVuJIY8vkkmgNfYtQBdw7CEte1iT1w
-   +2B0esqZAmS/E5vawrndpbuAwEH6s5fT+ALcmCWl+2Y0CLj08sL6Yquj/
-   b9+2gOy5EYZgmZrXkniZA9XVsgMtjWYxKru0tYTs67hSUF8e0ViqK0hPv
-   AKrjFkP+wQJIwktbIeEZkHGU6tBvcpBI+ibQeg1mxxUoL0s18rH97TJFC
-   g==;
-X-CSE-ConnectionGUID: acdXzNXDTiqKh3MjJWzFsw==
-X-CSE-MsgGUID: Uye3Ir8PQ0WiJrgjKIcD1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66745267"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="66745267"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:34:29 -0700
-X-CSE-ConnectionGUID: DvEojG2NSpCTBMBxlBT73A==
-X-CSE-MsgGUID: fKLcW2H8TtavnH3BWp1A/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="191126539"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:34:25 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 05:34:24 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 24 Jul 2025 05:34:24 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.52)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 24 Jul 2025 05:34:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wzsXI3x+IPX7dqpSaMFyceLYurwktOYlvGmAK4DfjktQDldtRexTRb9rdSdOjBlEiU3QpoWd2zmj7BOUNU8dTYpwA9wtXfqXHie9oChfiJaUhFyc0OKmL9jmuBwBzay3cuKt4EJc7a1pNdlobb8VIMXBha8/qEQpHCQ3z542WuRdfATpUVU1qrhIPcIDJ2ZHcDb/VMHDhJa5r1mgc3e3RlHpMDcSxgD9hD6KOSZ/mRNsQ8Y0qQyaipIorUUdfrsTXSnbxt0PLvth/ifls2RsEQCxQvXwgDVsEcUXSjrrFH2sPsfexYdyWVSufapkCTXIwSbcUKpkhc9I3LCSsHtOUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uY4B+MFcopj08i0bU4ZZ+1J8NTpsjfsg4Pot5kSMx0A=;
- b=XbkHeOrCZV4PPUVhlQ2KiGA+UD7yIXliBztfRjnJFoks1fy2L9M+XZlDyR1EheIRYZ3bOYXvr94IGyCqVo7PLoRHmWPvfwCB+n9oSmaD1I8jlv1B+R5RRZUUlFaqLdsApLJeh10iFboTETCQ6ldq/ngs9y468eteLjTj+F5Dij43OH39cCRJ9Ai2YD+4EWKpON+yRrYLrUFFnGEs6B/DxpmrKSXyIDrnXtokQtiPXbs4IVtAxaW6PyEH3Rh+o7q6LueDsXOtGbD0mYTxeGo6gQCbFSUnHJn5ywk5tw7xerLPYedP+Sbq6XZfEwJkzgap3gSR88iXeJMJ7pBH8OUAxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5750.namprd11.prod.outlook.com (2603:10b6:8:11::17) by
- PH0PR11MB4808.namprd11.prod.outlook.com (2603:10b6:510:39::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.21; Thu, 24 Jul 2025 12:33:49 +0000
-Received: from DM8PR11MB5750.namprd11.prod.outlook.com
- ([fe80::4df9:c236:8b64:403a]) by DM8PR11MB5750.namprd11.prod.outlook.com
- ([fe80::4df9:c236:8b64:403a%3]) with mapi id 15.20.8901.030; Thu, 24 Jul 2025
- 12:33:49 +0000
-From: "Reshetova, Elena" <elena.reshetova@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "mingo@kernel.org"
-	<mingo@kernel.org>, "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
-	"Annapurve, Vishal" <vannapurve@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
-	"Bondarevska, Nataliia" <bondarn@google.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "Raynor, Scott" <scott.raynor@intel.com>
-Subject: RE: [PATCH v9 2/6] x86/sgx: Introduce a counter to count the
- sgx_(vepc_)open()
-Thread-Topic: [PATCH v9 2/6] x86/sgx: Introduce a counter to count the
- sgx_(vepc_)open()
-Thread-Index: AQHb/HF+x2tOyBNVj0mdfu/GrVni5bRBEX4AgAAhfyA=
-Date: Thu, 24 Jul 2025 12:33:48 +0000
-Message-ID: <DM8PR11MB575050AECA6A18D871750F08E75EA@DM8PR11MB5750.namprd11.prod.outlook.com>
-References: <20250724080313.605676-1-elena.reshetova@intel.com>
-	 <20250724080313.605676-3-elena.reshetova@intel.com>
- <83553a7287b495326a2f923afd3f6aec9cabd69e.camel@intel.com>
-In-Reply-To: <83553a7287b495326a2f923afd3f6aec9cabd69e.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5750:EE_|PH0PR11MB4808:EE_
-x-ms-office365-filtering-correlation-id: 8c4b145e-c2bb-4fb6-437f-08ddcaae570d
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|7053199007;
-x-microsoft-antispam-message-info: =?utf-8?B?blJ1QjloS0tRODZDend2YjZkLzZvSERzSUFFaERxNkJTTTVkbjFCckxBTHhZ?=
- =?utf-8?B?RndKSW0wU0lnc24yT1BOR2FGWnRFcTlLdTBBUnhpZTRHTWJjZEdqU0ZJN1JB?=
- =?utf-8?B?cUNQZGoxek1KZ0grRnAxUldGQWtkWVgwcU9UMVdiTS9URkgzczk5a0x5bjBv?=
- =?utf-8?B?ME82bS9IdEt2Y3VYOG5YYTlmWjBEOEtFeGkxNE9wb2phV0U2VnVheHlTeUZ1?=
- =?utf-8?B?SlFIN2x4UnRWUVMvNmhNeDQ1U3lqbitBTW5rTTU1c042TDhtVENZNk11UGJM?=
- =?utf-8?B?cmtwcWRzVFJqK3ZhRVUrd1VUL2o2ZjRxbzE2Ky8wUk9POFVYNnlMdGF6NFI1?=
- =?utf-8?B?ZkdSSXMxUFBUV2ROR0pQbVdiTFlPbGgzRDNOT0hWQUhkaE5yNDBFUTUwOEgr?=
- =?utf-8?B?U0xYcElQUjlFMDlFUUFIeHk4c2NLbGxVanJtUTQyUjBOSEoxR1RlZjhCYUpI?=
- =?utf-8?B?NnVvRUZNaCs5cFcvb01ZK3dCbEF4Ujd3QzU2UDM1bzJnMzliRlp0eGpRRzkx?=
- =?utf-8?B?S3hBRVhrT2FyNG5EdnpHRy83b245Yi8zL2NTQkQ2dlhYSVFrd0V2b3BtKyt6?=
- =?utf-8?B?YjYweEIraEZBVzZNQjZUNFMybEx6ck5JM0FsVEkxdzZ0TnZhbFVPRGxaZXZF?=
- =?utf-8?B?V3VxdjI3djBhRVQzZ1N6M3JiRHVsY1huRmxnM1FNd0l1S3pySk56OXdpNlRI?=
- =?utf-8?B?bXJqZW9jYm1FMUVyUTM5b2xYdVVTMDFBRHZrQk1JNmxXcll0Ykx5NzJObTZO?=
- =?utf-8?B?NGlrVFR0VGwxbDg0VVlBMml0NkgwN1drbCs1WktMeXVYQkZ3eWNYaldYMWJz?=
- =?utf-8?B?ekJEdnV5ZW1nVEtjS0dJUE1mN2ZyaDFLdkQyVEhxZE9vcEpackJyeUMyN0Mw?=
- =?utf-8?B?eXVIVEUzS01xZG5jbkFQRk5jOXE3cjFpNkFnSitrTGE3YkdicUpPbkRhKzRW?=
- =?utf-8?B?OW94K1lRYnJTR2l2ZW8xdUVIUnIzZXRWR1ZYbndVYUhPRHdvWkhQWVpmUUFr?=
- =?utf-8?B?aTIralgreVZyZklHWnJHeFd4OEpUYVY1emF4S08vNmpNcldja0xpeURXRVN2?=
- =?utf-8?B?TXI4N1ZjTHpXNCs5SGJ2MFMzSU5qU2tzdGZkL1ZaMG5rZEFRekdvNHE1RHA5?=
- =?utf-8?B?Vkxyb2dKSUZVSEluWjdmUHlmbFgycUM1K04rQkhTWHJJbnk2M2ljcXpyYVRq?=
- =?utf-8?B?WDN4ZmFaM2VKUUZTVWRYQTB2akVnejc4RU9PUGNCRUd3dVZTNDAvY2RiK1dQ?=
- =?utf-8?B?RURtNllqT0pkZ2h6Vm10aEMweHF5K2VvWE9yTmpiQkNuc0txQUh4a0JCbzEr?=
- =?utf-8?B?d0dmMTBaNjl3YUJ3N010SlhBdzBuMHR0aUFmWVRtVW5iTEpsaHJjUUZma0g2?=
- =?utf-8?B?bXB0L3d6RXljTGpuT3Jpc1FhbGxhV3B6d0w4TGJscTN5UTdPUUdUbnFLczNu?=
- =?utf-8?B?Wk1NTko5QnJOUXJwdEtidW5jVGRtUFY3ZU1XWXRzUWJCWWQ5M2VRZk9QUXhi?=
- =?utf-8?B?azladldaYk5YVzNSUHFxeFE3bE00dFFpenZaV1BmMEdvdTVySkFNYlBDcXhF?=
- =?utf-8?B?MlY2ZWVOMmdhWTI1Vi9PT0RTaU1MZ2hCL0RmSHV5MDFHakpQS2tqU1pkV1U1?=
- =?utf-8?B?OGRDOXhvdUxGZDVVZ0RreU5wSjluWkZuL2pEWnhGcGF0WGMvMlZwTlpFa0Z1?=
- =?utf-8?B?eW5yNlFRaHg3cENwOG9mNDArTlBqMnI3TVhwKzhESVNPYUlPWk4zS3lCeFJ1?=
- =?utf-8?B?QmUrYmdZRkZOY2w5UFhPaWhUSDdSZTlycHdYWVFxWGtHS1hIcEZoeU1nQ1pw?=
- =?utf-8?B?Z000NjBDdUU2WTdlUGQ3TDUvWDhUT1l5aGtqR1VmaEhFUldPTkd0eklSMzBY?=
- =?utf-8?B?YmhOUGxZWGZqbGZNZ1BoVXZhOHYvTlB5bG55TW5HTUFHUWNvK1NxWXp0blJk?=
- =?utf-8?B?NXQzNTFHOU45ZzUzbkE5enRqb3ZEbTVVaEFrbkhxeGxneWhtbk1sVEZHTDk3?=
- =?utf-8?B?b1JXSXZTSTN3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5750.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ek5FbjBSY1JsdkRxMFNjUTA5UmkzbUFzUW5EckRmdS9LZldrMnFrOFlRYkhG?=
- =?utf-8?B?S2FuTGIrT0xGcml6Ykp6eVUycEpsektBdTRZNGM0RUF3VUdlOWRkMGZZVmZp?=
- =?utf-8?B?cDZsYmRTbVQ0Y3QwNmZKcUdURzRpUGJXbm5NaXQ0QUdXbW5TVmUvNG5LNThv?=
- =?utf-8?B?NDFpQWhpWGZrRHBVSWRBMEtxa3d0Q0xBQ245UDdiaUxBVHJWcFJEa05mNnAz?=
- =?utf-8?B?YUsxSy9tZXc3eXdXOGo1WlZBTkQwU2JiWmpHbW92YlNENTB5a2g5TU8yVjBI?=
- =?utf-8?B?Mkp6TTFwVWg0dExYN0x4N0pnWTNaK3BqSGl2WWhFSFJVR0xPczRRZnczY1li?=
- =?utf-8?B?WDdSZlg0NmM2MTRzRVlSek04UThBRUJucjFhc1VoQUhKdW5vdm1xNXhrOUlD?=
- =?utf-8?B?NStKd1BxelM0dk41eXphaVVCc3RXR2FKWlFmb2VZK05VLzkyUTFpbVVjblB1?=
- =?utf-8?B?a1VYOTl5ZEFEMFA1Z1lrSkIxMEtNdE0wcS85aVVxanpqSDNrL3V0dmhrSzhl?=
- =?utf-8?B?VTUvSGxsbWJrZEozclkvZ1BBZ0F0eHFSZ0sxcWxBRm1yRnNMU1VuR3F2ZTZk?=
- =?utf-8?B?MzdtbC8vbnI3QktQVnhSWjZUMk9peFBLendLb0JsNU1PWjdSUGFvbkRMTk0v?=
- =?utf-8?B?QUh2M3FNVjltelVDZ1JvSTRyTy9DN05iTjVUeDJQSWQ4WEFkU09VbXo5VUlh?=
- =?utf-8?B?TXNvcmJFVTVwZCtXaUxwQ0hhcXdHM0JuQTlsenRQZVdweVp1ekxOQ25rdFJk?=
- =?utf-8?B?KzJGQlR1bFZkdEFvYi9GNG9naXZHbWlOZlVDUDN1M25ZVUxVK25YYkRrMFds?=
- =?utf-8?B?cUxSL2lxRzV6bXU3cFdQTyt1UXJDdnd4SVVvZi9ZVFpkU29sU2VTYXlQWVBN?=
- =?utf-8?B?dFQzYW16SEtpSHdnVk1vTExZWm5VanYxZVByQ3JNVWVabWYxbmRFMS9oVGxr?=
- =?utf-8?B?WkxETVU2YmhEQUJsTW9JSDNUS3VwY05zemlOM0E1NXdKMHI1MUpjY2p3dTcw?=
- =?utf-8?B?TmYrQklRb0RHZ2VKVVVibStGN1ovWHU1R0NxQklUUEpLZjA1WWlyVHNnTlBt?=
- =?utf-8?B?QjZnLzAwMGFiU0tmNjhoMnRRV2wwZmU3a3U1RkRCMEZlTForYXR5QlZmQzJP?=
- =?utf-8?B?eXd2YUJDajlmeGc2cGZFYUQvV2lHaGE4VmptcWYxSHpNa1FOaXdHQVZ3VjZF?=
- =?utf-8?B?enY2OERPNkoxdVl6Q3VVbnFUMEVLM1Nta2pOdFhiSS9QSFNQd3dkLzhoSDBw?=
- =?utf-8?B?dzJZdlJjckJTQjl0VFM4OFo0Z0JRRVdreTRMUGs3N2pEelQ2S29CbHN3VStI?=
- =?utf-8?B?SGtseExsSkxWdmRXSjFmeDdIdFZuN1Q3TFp0Wk4rZktWZXB1OWVrUCtMNkpj?=
- =?utf-8?B?bDA5VDloUm1rdytrbjlESENUY2cyOHkyZWwwK3hqZStZN2V2WXBRVkp5TWxo?=
- =?utf-8?B?czRNclVTWFQ2Y1RHajNUbDNGN1Vubi9NMGlUL0svWXVTTmxQL3lXdjZHdU9K?=
- =?utf-8?B?OXNOaTdpeEdzd0Y0T1JHSzdhcXc1aEJFbUFIMUdxZ056SytnTTZSaE02Rkh2?=
- =?utf-8?B?bCs0VjZwZS80NnVxL0pMRklCa05aVEkvMXNNcEJ5b2dxeGZPVFppT0ZjeGhN?=
- =?utf-8?B?SlRqYmdEKzJVZGVnZUI1NGxlam81amp1QUJSNVJ4UjNrRWU3V0xPbmprWitu?=
- =?utf-8?B?cXIvdDRGbEVLWmw5WERXVGZQbDNCUUtMb0Y2QlIzZkxhS3AyTFRHSUo1TTJK?=
- =?utf-8?B?N1h6ZEVNSkpQVGJkU3V6MGFMdi83K09PSjNwTkNDVGZwWUt0OVROdmJxNVdM?=
- =?utf-8?B?NkYvNnROYmRHMFRJODBiYm1aODhscHZFZDVpNVZNbGtWc2psSjVBTklvYm5E?=
- =?utf-8?B?SnFOcWhaRmpYeVNkQnpMYlpObHpYWEtzM2dTR2Nvc1VDbWhyN1NGZlM2MmNv?=
- =?utf-8?B?LzJWYUJqQ3FxRkNXTlRWY25Md21MSFVOWmZPbmMwVEUwajNET3plemRsditU?=
- =?utf-8?B?Njg0ejRuZUVia28waHZ2VzM3Z2xTZDZnOUhxV2xRWFVISTJ1YVAxY0FsU3R5?=
- =?utf-8?B?WUNhVmh4bWo2RUNBRUM2bUZmOHBldzZGRHFrVkdwUEJrZFFpYjdqVytNVjlT?=
- =?utf-8?B?VlVsb2szVFBvK3h1K2NHZlZPZlFMK0FzbktDekhCaldWUGdJWGhhRWdUSVh6?=
- =?utf-8?B?dUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A972D12EB;
+	Thu, 24 Jul 2025 12:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753360508; cv=none; b=Ru1uJAXtLrnzY5nU3cXjPUpfzYUJN6cbAjPT2084EwqFQ8lyemr0Y27NNKdswRnekEnTAOZvll0DG+RVTFFwVVHh9WdZ9Pqa8JVFWVb07gs2+n7XaFAgbeK/Og8m0Txyp8BDOjpwNPu2EqP9Z4W1RI/NdsBRLpXvKhVs24ueNQk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753360508; c=relaxed/simple;
+	bh=z9qTDkmexw9CL4omG17ZERfW8qSWMjksf56EVOHN6fc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bsZGMtMatVMBTseRw3J7hBQIdgbZd6LES9AqZZtQOLNdJzVBMRnJ3uiCNFGV+f8oAjlxM/L7Rbn8nmR0D0bOZTV1XSP/AWQvl6zJUCcpW2y3P0l62Thq07xNgd0E3RJD5xZp/Ckrel1BGejfWk2BbTKbNxn0t4qZmbP23sQsHYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qveIGIp7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE515C4CEF7;
+	Thu, 24 Jul 2025 12:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753360507;
+	bh=z9qTDkmexw9CL4omG17ZERfW8qSWMjksf56EVOHN6fc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=qveIGIp7fevyePiqFKs6KEAGzFNxaVFIktBkPo5vBDLn4ROIJyBS7Y7mwKWzF1Fri
+	 49xJblSZqgjyURhzF/l/RfLMLpmjf60JYR4Khla5HARKIR9g4ki7fxtZWPtKJJWGrZ
+	 +QmlT2VvnqV+lLHxIoeub5tC1wkqc5L+nkm907RecYmMxsiWRF+7xJSqSxggj9sqnY
+	 8vLsQP/8UMQ4ab7Y6+DzOGprgTtoZCirzh/124SLSMvWBXJySMLyFfjKjAtcI9rIiC
+	 uaBbMQcA05Ppt8UkvEVsfMWbDIfsfvo6a1nBNvdy5zcVQzik9cAigZhVDvMpAYo3M+
+	 8pELFHc6jbibg==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-615a4b50215so25998eaf.1;
+        Thu, 24 Jul 2025 05:35:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXxnxF9QkCO+QyrDv1LQxx1mZhohqyTaSyzZ78zwYIchuo6FecgUbI4Aj78sbErS8ntojSt4XXBPHI@vger.kernel.org, AJvYcCXdXMwt/d/UaevURHZQjzxXPToKJWj3mj3pD935XBtwjECMUt3pACN6A+OU2FXw92ec0oINVLoW5R5Np+eb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrQH99SeT1nMFdysfJPSb42ZVcx6u3coknWHidctJs6FruQAWn
+	fFduH8oAPQ94ADfSEEk0GCkvh11v8kk+9syacibjQgAX4UHnEjrKn3nWV7jsdd24d6DAOuWjSv6
+	SJGJspYqeHHggqdxyhVVQfTfRKKuE/Kg=
+X-Google-Smtp-Source: AGHT+IG3QehhTqHfl/UjErYL896J4JvJCCUoSsHQbMU5WpRk04NVVjNdcrsuBzIDn7aP8gjlkQH05LxcDolkZibF8/c=
+X-Received: by 2002:a05:6820:997:b0:615:a212:2db0 with SMTP id
+ 006d021491bc7-61888a1400cmr5563687eaf.7.1753360507065; Thu, 24 Jul 2025
+ 05:35:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5750.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c4b145e-c2bb-4fb6-437f-08ddcaae570d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2025 12:33:49.0024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tLnG9yXtSGGpGLjb0UZ15f4OQmLa2iYDAI6h9Mg4rR6JwbKxXpQ91Idleq6rBlsdbx5tpKQ62D2Tcy773uaTBA9oSyuNy+EOPtTgVlmhzzE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4808
-X-OriginatorOrg: intel.com
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Jul 2025 14:34:55 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jRGpZP4DDNVq0+27BmxhahpOHX-kZKGWxwrWy-JwQjHA@mail.gmail.com>
+X-Gm-Features: Ac12FXxut8QWz1hFs-nCj-Q9ZhNUY09aJMCo29hIr0R1AuA6arGRvajcqwDBzLk
+Message-ID: <CAJZ5v0jRGpZP4DDNVq0+27BmxhahpOHX-kZKGWxwrWy-JwQjHA@mail.gmail.com>
+Subject: [GIT PULL] Power management updates for v6.17-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, 
+	"Chanwoo Choi (samsung.com)" <chanwoo@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBIdWFuZywgS2FpIDxrYWkuaHVh
-bmdAaW50ZWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgSnVseSAyNCwgMjAyNSAxOjI1IFBNDQo+
-IFRvOiBSZXNoZXRvdmEsIEVsZW5hIDxlbGVuYS5yZXNoZXRvdmFAaW50ZWwuY29tPjsgSGFuc2Vu
-LCBEYXZlDQo+IDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+DQo+IENjOiBzZWFuamNAZ29vZ2xlLmNv
-bTsgbWluZ29Aa2VybmVsLm9yZzsgU2NhcmxhdGEsIFZpbmNlbnQgUg0KPiA8dmluY2VudC5yLnNj
-YXJsYXRhQGludGVsLmNvbT47IHg4NkBrZXJuZWwub3JnOyBqYXJra29Aa2VybmVsLm9yZzsNCj4g
-QW5uYXB1cnZlLCBWaXNoYWwgPHZhbm5hcHVydmVAZ29vZ2xlLmNvbT47IGxpbnV4LWtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc7DQo+IE1hbGxpY2ssIEFzaXQgSyA8YXNpdC5rLm1hbGxpY2tAaW50ZWwu
-Y29tPjsgQWt0YXMsIEVyZGVtDQo+IDxlcmRlbWFrdGFzQGdvb2dsZS5jb20+OyBDYWksIENob25n
-IDxjaG9uZ2NAZ29vZ2xlLmNvbT47IEJvbmRhcmV2c2thLA0KPiBOYXRhbGlpYSA8Ym9uZGFybkBn
-b29nbGUuY29tPjsgbGludXgtc2d4QHZnZXIua2VybmVsLm9yZzsgUmF5bm9yLCBTY290dA0KPiA8
-c2NvdHQucmF5bm9yQGludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2OSAyLzZdIHg4
-Ni9zZ3g6IEludHJvZHVjZSBhIGNvdW50ZXIgdG8gY291bnQgdGhlDQo+IHNneF8odmVwY18pb3Bl
-bigpDQoNClRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgcmV2aWV3IEthaSENCg0KPiANCj4g
-DQo+ID4NCj4gPiArc3RhdGljIGludCBzZ3hfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1
-Y3QgZmlsZSAqZmlsZSkNCj4gPiArew0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+ID4gKwlyZXQg
-PSBzZ3hfaW5jX3VzYWdlX2NvdW50KCk7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJldHVybiBy
-ZXQ7DQo+ID4gKw0KPiA+ICsJcmV0ID0gX19zZ3hfb3Blbihpbm9kZSwgZmlsZSk7DQo+ID4gKwlp
-ZiAocmV0KSB7DQo+ID4gKwkJc2d4X2RlY191c2FnZV9jb3VudCgpOw0KPiA+ICsJCXJldHVybiBy
-ZXQ7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4g
-IHN0YXRpYyBpbnQgc2d4X3JlbGVhc2Uoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUg
-KmZpbGUpDQo+ID4gIHsNCj4gPiAgCXN0cnVjdCBzZ3hfZW5jbCAqZW5jbCA9IGZpbGUtPnByaXZh
-dGVfZGF0YTsNCj4gPiBAQCAtMTI2LDcgKzE0Myw3IEBAIHN0YXRpYyBsb25nIHNneF9jb21wYXRf
-aW9jdGwoc3RydWN0IGZpbGUgKmZpbGVwLA0KPiB1bnNpZ25lZCBpbnQgY21kLA0KPiA+DQo+ID4g
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25zIHNneF9lbmNsX2ZvcHMgPSB7DQo+
-ID4gIAkub3duZXIJCQk9IFRISVNfTU9EVUxFLA0KPiA+IC0JLm9wZW4JCQk9IF9fc2d4X29wZW4s
-DQo+ID4gKwkub3BlbgkJCT0gc2d4X29wZW4sDQo+IA0KPiBJZiB5b3UgbWVyZ2UgdGhlIGZpcnN0
-IHBhdGNoIHRvIHRoaXMgb25lLCB5b3UgY2FuIGF2b2lkIHN1Y2ggY2h1bmsgaW4gdGhlDQo+IGRp
-ZmYuDQoNClllcywgYWdyZWUsIEkgd291bGQgaGF2ZSBsaWtlbHkgc3F1YXNoZWQgd2hvbGUgdGhp
-cyBzZXJpZXMgaW50byBvbmUgcGF0Y2gsDQpidXQgaW4gdGhpcyBjYXNlIEkgZm9sbG93ZWQgSmFy
-a2tvJ3Mgc3VnZ2VzdGlvbiB0byBkbyByZW5hbWluZyBvZiB0aGUNCmZ1bmN0aW9ucyBpbiB0aGUg
-c2VwYXJhdGUgcGF0Y2guIA0KDQo+IA0KPiBJbiBmYWN0LCBJIHRoaW5rIG1lcmdpbmcgdGhlIGZp
-cnN0IHBhdGNoIHRvIHRoaXMgb25lIG1ha2VzIHNlbnNlIGJlY2F1c2UNCj4gX19zZ3hfb3Blbigp
-IG9ubHkgbWFrZXMgc2Vuc2Ugd2hlbiB5b3UgaGF2ZSBzZ3hfaW5jX3VzYWdlX2NvdW50KCkuDQoN
-ClllcywgYWdyZWUsIGJ1dCBhZ2FpbiB0aGlzIHdvdWxkIGJlIGFnYWluc3QgdGhlIHN1Z2dlc3Rp
-b24gSSBnb3QgcHJldmlvdXNseS4NCg0KPiANCj4gWy4uLl0NCj4gDQo+ID4NCj4gPiArLyogQ291
-bnRlciB0byBjb3VudCB0aGUgYWN0aXZlIFNHWCB1c2VycyAqLw0KPiA+ICtzdGF0aWMgaW50IF9f
-bWF5YmVfdW51c2VkIHNneF91c2FnZV9jb3VudDsNCj4gDQo+IEFzIHJlcGxpZWQgdG8gdGhlIHBh
-dGNoIDYsIEkgdGhpbmsgeW91IGNhbiBqdXN0IGludHJvZHVjZSB0aGlzIHZhcmlhYmxlIGluDQo+
-IHRoYXQgcGF0Y2guDQoNClllcywgbm93IHRoYXQgSSBkcm9wcGVkIHRoZSBzZ3hfdXNhZ2VfY291
-bnQgZnVsbHkNCkkgZ3Vlc3MgaXQgY2FuIGJlIGFsc28gZGVmaW5lZCBpbiBwYXRjaCA2LCBhbGJl
-aXQgaXQgd2FzIGEgYml0DQptb3JlIGxvZ2ljYWwgaW1vIHRvIGhhdmUgaXQgZGVmaW5lZCBhcyB1
-bnVzZWQgYWxyZWFkeSBoZXJlDQpzaW5jZSB3ZSBhcmUgaW50cm9kdWNpbmcgY291bnRpbmcgcHJp
-bWl0aXZlcy4gDQoNCj4gDQo+ID4gKw0KPiA+ICtpbnQgc2d4X2luY191c2FnZV9jb3VudCh2b2lk
-KQ0KPiA+ICt7DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArdm9pZCBzZ3hf
-ZGVjX3VzYWdlX2NvdW50KHZvaWQpDQo+ID4gK3sNCj4gPiArCXJldHVybjsNCj4gPiArfQ0KPiA+
-ICsNCj4gPg0KPiANCj4gWy4uLl0NCj4gDQo+ID4gQEAgLTI2NSw2ICsyNjYsNyBAQCBzdGF0aWMg
-aW50IF9fc2d4X3ZlcGNfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiBzdHJ1Y3QgZmlsZSAq
-ZmlsZSkNCj4gPiAgCXZlcGMgPSBremFsbG9jKHNpemVvZihzdHJ1Y3Qgc2d4X3ZlcGMpLCBHRlBf
-S0VSTkVMKTsNCj4gPiAgCWlmICghdmVwYykNCj4gPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gPiAr
-DQo+IA0KPiBVbmludGVuZGVkIGNoYW5nZT8NCg0KVXBzLCB5ZXMsIG1pc3NlZCB0aGlzIG9uZSwg
-d2lsbCBmaXguDQoNCj4gDQo+ID4gIAltdXRleF9pbml0KCZ2ZXBjLT5sb2NrKTsNCj4gPiAgCXhh
-X2luaXQoJnZlcGMtPnBhZ2VfYXJyYXkpOw0KPiA+DQo+ID4gQEAgLTI3Myw2ICsyNzUsMjMgQEAg
-c3RhdGljIGludCBfX3NneF92ZXBjX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwNCj4gc3RydWN0
-IGZpbGUgKmZpbGUpDQo+ID4gIAlyZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBp
-bnQgc2d4X3ZlcGNfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlsZSkN
-Cj4gPiArew0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+ID4gKwlyZXQgPSBzZ3hfaW5jX3VzYWdl
-X2NvdW50KCk7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJldHVybiByZXQ7DQo+ID4gKw0KPiA+
-ICsJcmV0ID0gIF9fc2d4X3ZlcGNfb3Blbihpbm9kZSwgZmlsZSk7DQo+ID4gKwlpZiAocmV0KSB7
-DQo+ID4gKwkJc2d4X2RlY191c2FnZV9jb3VudCgpOw0KPiA+ICsJCXJldHVybiByZXQ7DQo+ID4g
-Kwl9DQo+ID4gKw0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gIHN0YXRpYyBs
-b25nIHNneF92ZXBjX2lvY3RsKHN0cnVjdCBmaWxlICpmaWxlLA0KPiA+ICAJCQkgICB1bnNpZ25l
-ZCBpbnQgY21kLCB1bnNpZ25lZCBsb25nIGFyZykNCj4gPiAgew0KPiA+IEBAIC0yOTEsNyArMzEw
-LDcgQEAgc3RhdGljIGxvbmcgc2d4X3ZlcGNfaW9jdGwoc3RydWN0IGZpbGUgKmZpbGUsDQo+ID4N
-Cj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgc2d4X3ZlcGNfZm9wcyA9
-IHsNCj4gPiAgCS5vd25lcgkJPSBUSElTX01PRFVMRSwNCj4gPiAtCS5vcGVuCQk9IF9fc2d4X3Zl
-cGNfb3BlbiwNCj4gPiArCS5vcGVuCQk9IHNneF92ZXBjX29wZW4sDQo+IA0KPiBEaXR0byB0byBz
-Z3hfb3BlbigpLg0KDQpZZXMsIGlmIHBhdGNoZXMgYXJlIG1lcmdlZCwgdGhpcyB3b3VsZCBnbyBh
-d2F5Lg0KSmFya2tvLCBhcmUgb2sgd2l0aCBtZXJnaW5nIG9yIGRvIHlvdSBzdGlsbCBiZWxpZXZl
-IGl0DQppdCBiZXR0ZXIgdG8gaGF2ZSBpdCBhcyBzZXBhcmF0ZSBwYXRjaGVzPyANCg0KQmVzdCBS
-ZWdhcmRzLA0KRWxlbmEuDQo=
+Hi Linus,
+
+I'm sending this early because I will be mostly offline next week
+and I'm not planning to add anything to it.
+
+Please pull from the tag
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.17-rc1
+
+with top-most commit 40c28199550d5cdace4583bfe723a7636b170a90
+
+ Merge branches 'pm-misc' and 'pm-tools'
+
+on top of commit ebd6884167eac94bae9f92793fcd84069d9e4415
+
+ PM: sleep: Update power.completion for all devices on errors
+
+to receive power management updates for 6.17-rc1.
+
+Traditionally, cpufreq is the part with the largest number of updates
+that include core fixes and cleanups as well as updates of several
+assorted drivers, but there are also quite a few updates related
+to system sleep, mostly focused on asynchronous suspend and resume of
+devices and on making the integration of system suspend and resume with
+runtime PM easier.
+
+Runtime PM is also updated to allow some code duplication in drivers
+to be eliminated going forward and to work more consistently overall
+in some cases.
+
+Apart from that, there are some driver core updates related to PM
+domains that should help to address ordering issues with devm_ cleanup
+routines relying on PM domains, some assorted devfreq updates including
+core fixes and cleanups, tooling updates, and documentation and
+MAINTAINERS updates.
+
+Specifics:
+
+ - Fix two initialization ordering issues in the cpufreq core and a
+   governor initialization error path in it, and clean it up (Lifeng
+   Zheng)
+
+ - Add Granite Rapids support in no-HWP mode to the intel_pstate cpufreq
+   driver (Li RongQing)
+
+ - Make intel_pstate always use HWP_DESIRED_PERF when operating in the
+   passive mode (Rafael Wysocki)
+
+ - Allow building the tegra124 cpufreq driver as a module (Aaron Kling)
+
+ - Do minor cleanups for Rust cpufreq and cpumask APIs and fix MAINTAINERS
+   entry for cpu.rs (Abhinav Ananthu, Ritvik Gupta, Lukas Bulwahn)
+
+ - Clean up assorted cpufreq drivers (Arnd Bergmann, Dan Carpenter,
+   Krzysztof Kozlowski, Sven Peter, Svyatoslav Ryhel, Lifeng Zheng)
+
+ - Add the NEED_UPDATE_LIMITS flag to the CPPC cpufreq driver (Prashant
+   Malani)
+
+ - Fix minimum performance state label error in the amd-pstate driver
+   documentation (Shouye Liu)
+
+ - Add the CPUFREQ_GOV_STRICT_TARGET flag to the userspace cpufreq
+   governor and explain HW coordination influence on it in the
+   documentation (Shashank Balaji)
+
+ - Fix opencoded for_each_cpu() in idle_state_valid() in the DT cpuidle
+   driver (Yury Norov)
+
+ - Remove info about non-existing QoS interfaces from the PM QoS
+   documentation (Ulf Hansson)
+
+ - Use c_* types via kernel prelude in Rust for OPP (Abhinav Ananthu)
+
+ - Add HiSilicon uncore frequency scaling driver to devfreq (Jie Zhan)
+
+ - Allow devfreq drivers to add custom sysfs ABIs (Jie Zhan)
+
+ - Simplify the sun8i-a33-mbus devfreq driver by using more devm
+   functions (Uwe Kleine-K=C3=B6nig)
+
+ - Fix an index typo in trans_stat() in devfreq (Chanwoo Choi)
+
+ - Check devfreq governor before using governor->name (Lifeng Zheng)
+
+ - Remove a redundant devfreq_get_freq_range() call from
+   devfreq_add_device() (Lifeng Zheng)
+
+ - Limit max_freq with scaling_min_freq in devfreq (Lifeng Zheng)
+
+ - Replace sscanf() with kstrtoul() in set_freq_store() (Lifeng Zheng)
+
+ - Extend the asynchronous suspend and resume of devices to handle
+   suppliers like parents and consumers like children (Rafael Wysocki)
+
+ - Make pm_runtime_force_resume() work for drivers that set the
+   DPM_FLAG_SMART_SUSPEND flag and allow PCI drivers and drivers that
+   collaborate with the general ACPI PM domain to set it (Rafael
+   Wysocki)
+
+ - Add kernel parameter to disable asynchronous suspend/resume of
+   devices (Tudor Ambarus)
+
+ - Drop redundant might_sleep() calls from some functions in the device
+   suspend/resume core code (Zhongqiu Han)
+
+ - Fix the handling of monitors connected right before waking up the
+   system from sleep (tuhaowen)
+
+ - Clean up MAINTAINERS entries for suspend and hibernation (Rafael
+   Wysocki)
+
+ - Fix error code path in the KEXEC_JUMP flow and drop a redundant
+   pm_restore_gfp_mask() call from it (Rafael Wysocki)
+
+ - Rearrange suspend/resume error handling in the core device suspend
+   and resume code (Rafael Wysocki)
+
+ - Fix up white space that does not follow coding style in the
+   hibernation core code (Darshan Rathod)
+
+ - Document return values of suspend-related API functions in the
+   runtime PM framework (Sakari Ailus)
+
+ - Mark last busy stamp in multiple autosuspend-related functions in the
+   runtime PM framework and update its documentation (Sakari Ailus)
+
+ - Take active children into account in pm_runtime_get_if_in_use() for
+   consistency (Rafael Wysocki)
+
+ - Fix NULL pointer dereference in get_pd_power_uw() in the dtpm_cpu
+   power capping driver (Sivan Zohar-Kotzer)
+
+ - Add support for the Bartlett Lake platform to the Intel RAPL power
+   capping driver (Qiao Wei)
+
+ - Add PL4 support for Panther Lake to the intel_rapl_msr power capping
+   driver (Zhang Rui)
+
+ - Update contact information in the PM ABI docs and maintainer
+   information in the power domains DT binding (Rafael Wysocki)
+
+ - Update PM header inclusions to follow the IWYU (Include What You Use)
+   principle (Andy Shevchenko)
+
+ - Add flags to specify power on attach/detach for PM domains, make the
+   driver core detach PM domains in device_unbind_cleanup(), and drop
+   the dev_pm_domain_detach() call from the platform bus type (Claudiu
+   Beznea)
+
+ - Improve Python binding's Makefile for cpupower (John B. Wyatt IV)
+
+ - Fix printing of CORE, CPU fields in cpupower-monitor (Gautham Shenoy)
+
+Thanks!
+
+
+---------------
+
+Aaron Kling (3):
+      cpufreq: Export disable_cpufreq()
+      cpufreq: dt: Add register helper
+      cpufreq: tegra124: Allow building as a module
+
+Abhinav Ananthu (3):
+      rust: cpufreq: Ensure C ABI compatibility in all unsafe
+      rust: cpufreq: use c_ types from kernel prelude
+      rust: opp: use c_* types via kernel prelude
+
+Andy Shevchenko (1):
+      PM: Don't use "proxy" headers
+
+Arnd Bergmann (1):
+      cpufreq: armada-8k: make both cpu masks static
+
+Chanwoo Choi (1):
+      PM / devfreq: Fix a index typo in trans_stat
+
+Claudiu Beznea (3):
+      PM: domains: Add flags to specify power on attach/detach
+      PM: domains: Detach on device_unbind_cleanup()
+      driver core: platform: Drop dev_pm_domain_detach() call
+
+Dan Carpenter (1):
+      cpufreq: armada-8k: Fix off by one in armada_8k_cpufreq_free_table()
+
+Darshan Rathod (1):
+      PM: hibernate: Fix up white space that does not follow coding style
+
+Gautham R. Shenoy (2):
+      pm: cpupower: Fix the snapshot-order of tsc,mperf, clock in mperf_sto=
+p()
+      pm: cpupower: Fix printing of CORE, CPU fields in cpupower-monitor
+
+Jie Zhan (2):
+      PM / devfreq: Allow devfreq driver to add custom sysfs ABIs
+      PM / devfreq: Add HiSilicon uncore frequency scaling driver
+
+John B. Wyatt IV (1):
+      cpupower: Improve Python binding's Makefile
+
+Krzysztof Kozlowski (1):
+      cpufreq: brcmstb-avs: Fully open-code compatible for grepping
+
+Li RongQing (1):
+      cpufreq: intel_pstate: Add Granite Rapids support in no-HWP mode
+
+Lifeng Zheng (13):
+      cpufreq: CPPC: Remove cpu_data_list
+      cpufreq: CPPC: Do not return a value from populate_efficiency_class()
+      cpufreq: CPPC: Remove forward declaration of cppc_cpufreq_register_em=
+()
+      PM / devfreq: governor: Replace sscanf() with kstrtoul() in
+set_freq_store()
+      PM / devfreq: Limit max_freq with scaling_min_freq
+      PM / devfreq: Remove redundant devfreq_get_freq_range() calling
+in devfreq_add_device()
+      PM / devfreq: Check governor before using governor->name
+      cpufreq: Contain scaling_cur_freq.attr in cpufreq_attrs
+      cpufreq: Remove duplicate check in __cpufreq_offline()
+      cpufreq: Initialize cpufreq-based frequency-invariance later
+      cpufreq: Init policy->rwsem before it may be possibly used
+      cpufreq: Move the check of cpufreq_driver->get into
+cpufreq_verify_current_freq()
+      cpufreq: Exit governor when failed to start old governor
+
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust file entry in CPU HOTPLUG
+
+Prashant Malani (1):
+      cpufreq: CPPC: Mark driver with NEED_UPDATE_LIMITS flag
+
+Qiao Wei (1):
+      powercap: intel_rapl: Add support for Bartlett Lake platform
+
+Rafael J. Wysocki (18):
+      PM: sleep: Make async resume handle consumers like children
+      PM: sleep: Make async suspend handle suppliers like parents
+      PM: Use true/false as power.needs_force_resume values
+      PM: Move two sleep-related functions under CONFIG_PM_SLEEP
+      PM: Make pm_runtime_force_resume() work with DPM_FLAG_SMART_SUSPEND
+      PM: runtime: Clear power.needs_force_resume in pm_runtime_reinit()
+      PM: Check power.needs_force_resume in pm_runtime_force_suspend()
+      PM: runtime: Introduce __rpm_get_driver_callback()
+      PM: sleep: Add strict_midlayer flag to struct dev_pm_info
+      ACPI: PM: Set/clear power.strict_midlayer in prepare/complete
+      PCI/PM: Set power.strict_midlayer in pci_pm_init()
+      cpufreq: intel_pstate: Always use HWP_DESIRED_PERF in passive mode
+      PM: sleep: Clean up MAINTAINERS entries for suspend and hibernation
+      kexec_core: Fix error code path in the KEXEC_JUMP flow
+      kexec_core: Drop redundant pm_restore_gfp_mask() call
+      PM: runtime: Take active children into account in
+pm_runtime_get_if_in_use()
+      PM: sleep: Rearrange suspend/resume error handling in the core
+      PM: docs: Use my kernel.org address in ABI docs and DT bindings
+
+Ritvik Gupta (1):
+      rust: cpumask: Replace `MaybeUninit` and `mem::zeroed` with `Opaque` =
+APIs
+
+Sakari Ailus (6):
+      PM: runtime: Document return values of suspend-related API functions
+      PM: runtime: Mark last busy stamp in pm_runtime_put_autosuspend()
+      PM: runtime: Mark last busy stamp in pm_runtime_put_sync_autosuspend(=
+)
+      PM: runtime: Mark last busy stamp in pm_runtime_autosuspend()
+      PM: runtime: Mark last busy stamp in pm_request_autosuspend()
+      Documentation: PM: *_autosuspend() functions update last busy time
+
+Shashank Balaji (2):
+      cpufreq: userspace: set CPUFREQ_GOV_STRICT_TARGET flag
+      cpufreq: docs: userspace: Explain HW coordination influence
+
+Sivan Zohar-Kotzer (1):
+      powercap: dtpm_cpu: Fix NULL pointer dereference in get_pd_power_uw()
+
+Sven Peter (1):
+      cpufreq: apple: drop default ARCH_APPLE in Kconfig
+
+Svyatoslav Ryhel (1):
+      drivers: cpufreq: add Tegra114 support
+
+Tudor Ambarus (1):
+      PM: sleep: add kernel parameter to disable asynchronous suspend/resum=
+e
+
+Ulf Hansson (1):
+      Documentation: power: Remove info about non-existing QoS interfaces
+
+Uwe Kleine-K=C3=B6nig (1):
+      PM / devfreq: sun8i-a33-mbus: Simplify by using more devm functions
+
+Yury Norov [NVIDIA] (1):
+      cpuidle: dt: fix opencoded for_each_cpu() in idle_state_valid()
+
+Zhang Rui (1):
+      powercap: intel_rapl_msr: Add PL4 support for Panther Lake
+
+Zhongqiu Han (1):
+      PM: sleep: Drop superfluous might_sleep() calls
+
+shouyeliu (1):
+      Documentation: amd-pstate:fix minimum performance state label error
+
+tuhaowen (1):
+      PM: sleep: console: Fix the black screen issue
+
+---------------
+
+ Documentation/ABI/testing/sysfs-class-devfreq      |   9 +
+ Documentation/ABI/testing/sysfs-devices-power      |  34 +-
+ Documentation/ABI/testing/sysfs-power              |  26 +-
+ Documentation/admin-guide/kernel-parameters.txt    |  12 +
+ Documentation/admin-guide/pm/amd-pstate.rst        |   2 +-
+ Documentation/admin-guide/pm/cpufreq.rst           |   4 +-
+ .../devicetree/bindings/power/power-domain.yaml    |   2 +-
+ Documentation/power/pm_qos_interface.rst           |   7 -
+ Documentation/power/runtime_pm.rst                 |  50 +-
+ MAINTAINERS                                        |  10 +-
+ drivers/acpi/device_pm.c                           |   4 +
+ drivers/amba/bus.c                                 |   4 +-
+ drivers/base/auxiliary.c                           |   2 +-
+ drivers/base/dd.c                                  |   2 +
+ drivers/base/platform.c                            |   9 +-
+ drivers/base/power/common.c                        |   9 +-
+ drivers/base/power/main.c                          | 155 +++--
+ drivers/base/power/runtime.c                       | 154 +++--
+ drivers/clk/qcom/apcs-sdx55.c                      |   2 +-
+ drivers/cpufreq/Kconfig.arm                        |   3 +-
+ drivers/cpufreq/armada-8k-cpufreq.c                |   5 +-
+ drivers/cpufreq/brcmstb-avs-cpufreq.c              |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c                     |  61 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   1 +
+ drivers/cpufreq/cpufreq-dt.c                       |  11 +
+ drivers/cpufreq/cpufreq-dt.h                       |   2 +
+ drivers/cpufreq/cpufreq.c                          |  56 +-
+ drivers/cpufreq/cpufreq_userspace.c                |   1 +
+ drivers/cpufreq/intel_pstate.c                     |   6 +-
+ drivers/cpufreq/tegra124-cpufreq.c                 |  49 +-
+ drivers/cpuidle/dt_idle_states.c                   |  14 +-
+ drivers/devfreq/Kconfig                            |  11 +
+ drivers/devfreq/Makefile                           |   1 +
+ drivers/devfreq/devfreq.c                          |  23 +-
+ drivers/devfreq/governor_userspace.c               |   6 +-
+ drivers/devfreq/hisi_uncore_freq.c                 | 658 +++++++++++++++++=
+++++
+ drivers/devfreq/sun8i-a33-mbus.c                   |  38 +-
+ drivers/gpu/drm/display/drm_dp_aux_bus.c           |   2 +-
+ drivers/i2c/i2c-core-base.c                        |   2 +-
+ drivers/mmc/core/sdio_bus.c                        |   2 +-
+ drivers/pci/pci-driver.c                           |   4 +
+ drivers/powercap/dtpm_cpu.c                        |   2 +
+ drivers/powercap/intel_rapl_common.c               |   1 +
+ drivers/powercap/intel_rapl_msr.c                  |   1 +
+ drivers/rpmsg/rpmsg_core.c                         |   2 +-
+ drivers/soundwire/bus_type.c                       |   2 +-
+ drivers/spi/spi.c                                  |   2 +-
+ drivers/tty/serdev/core.c                          |   2 +-
+ include/acpi/cppc_acpi.h                           |   1 -
+ include/linux/devfreq.h                            |   4 +
+ include/linux/device.h                             |  27 +
+ include/linux/pm.h                                 |  13 +-
+ include/linux/pm_domain.h                          |  10 +-
+ include/linux/pm_runtime.h                         | 203 ++++++-
+ kernel/kexec_core.c                                |   4 +-
+ kernel/power/console.c                             |   7 +-
+ kernel/power/main.c                                |   9 +
+ kernel/power/snapshot.c                            |  12 +-
+ rust/kernel/cpufreq.rs                             |  60 +-
+ rust/kernel/cpumask.rs                             |  13 +-
+ rust/kernel/opp.rs                                 |   8 +-
+ tools/power/cpupower/bindings/python/Makefile      |  12 +-
+ .../cpupower/utils/idle_monitor/cpupower-monitor.c |   4 -
+ .../cpupower/utils/idle_monitor/mperf_monitor.c    |   4 +-
+ 64 files changed, 1403 insertions(+), 455 deletions(-)
 
