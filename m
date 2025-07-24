@@ -1,182 +1,228 @@
-Return-Path: <linux-kernel+bounces-743697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A2FB10209
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:37:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2210B1020E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C889A3B2311
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8523A5F70
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F339E25A323;
-	Thu, 24 Jul 2025 07:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7293526B2DB;
+	Thu, 24 Jul 2025 07:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cWzsA12f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r6vgAEi5"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C88229B02;
-	Thu, 24 Jul 2025 07:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A926738D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753342598; cv=none; b=LOJRCrAG5WIsgSx3rYuj25fEqByjPFr8rEcyrOcFULCi7MdT+fr5todzl2qdWts/Y2Iu2ppGi3bSrVehbbSYET7Qf5jr7d2YG3im9QUUJL27sB3+nJt2PWgUG1MWX6Ww52h09AWFPgCAbuG3f8RlkuRqs/es8e+KaviV/Q39Wo0=
+	t=1753342622; cv=none; b=R5CvE8M/WDylihPAzikaupWF6Jnn9KDLX4Yiks0+2OEx3caaxP2braIBI+vJnIvlpYB/CxnNqtAOIhMs6U/OSppLvZzi+MfTm+jXkkccvdm7wCFh3h0aDC5wHbP94YIi0AbGl0byBWMq3sPbbHkPn2MnSZEPlyKunH65nZE2d8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753342598; c=relaxed/simple;
-	bh=8hArgnR3Xspo67UySiPkrkARt/FHZ3ZDNi6yM3UJwBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l+nZTu7cXsZuhpr1BZsRWRoiufHDvyn2Q6mHEI6vdLPThLD0V8BdqU/vKXnrHamwHRzwPbViuaF8UKXFdXNTBM5CPYLjnvpxHCtVH72CHXLMO1llsA4Yp2l+TIgxyWZ+j512Wqj/vMNUjQLH6SNQBshSfwPQPeQNJ9Cf87hgs3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cWzsA12f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXHl5028529;
-	Thu, 24 Jul 2025 07:36:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o8Usl2QLEW7pbqprF9FBNGE5XVt4zJMfMv4iaDCg0eU=; b=cWzsA12fSHbaqZ0N
-	O/iepvBZYKMOypdBVEOtc9/oxoBamUK2Kn74aXjn/yd6H5g3HEZBUTEKKFMVsOyd
-	5Ru0UHqAKEsjs+IM7Gar/8hVeBlmBYXV6e1KW45OgLEoTQgGTBcxIDq4S2bhHNzf
-	KbH3LuKdA3Brp4h4+P1Hq1SghLLURrDXBhd4fQ+mI2h1c+SyF584L1vaSz9jyMzn
-	moM5uGl/kpsb05DOm8nbN4To9ZHwZL8br1mGfISBFSwioR/RipTyFxrFBYFcuifE
-	ycakhYR1M6F0Et9PP+6AFQ3vUbet8XxK3cD+82fu3BPoTCodzJERr74oRoRwVz1E
-	HArr5g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4826t1f5n2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 07:36:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56O7aON5008187
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 07:36:24 GMT
-Received: from [10.216.5.39] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 24 Jul
- 2025 00:36:17 -0700
-Message-ID: <cbe1f27d-44ad-41d2-9bc7-fa9211d52a30@quicinc.com>
-Date: Thu, 24 Jul 2025 13:06:13 +0530
+	s=arc-20240116; t=1753342622; c=relaxed/simple;
+	bh=PvGLJeq0K9YhTyqqaktIUjdw5HD+7whbw0yBy3JSSvg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IkfZSXpCL4GlFeTV+Tr0LQGcJgM3emhsHBKZdJ1En8ksBz3CCAHK8ClKtd5JA507NL21/oJ6iVVBEoIpKtPXkJjxhQF5ti3PmD0tLZEPwzN3duh1dgo/BohAmHNEdZq9WjCBzl2OO8wR0+jonunYimQ1yn1ZH6Vco+3qUlAuq+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r6vgAEi5; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753342611; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=P6saxIttai/NSTgVrkSSj21N3ELBMaOxdIJSLIFoS5k=;
+	b=r6vgAEi5VajCOo2tY6PDP9jQno6S17LMRkMrJhAbxPXe3uAJBpGX6pJ9gIZJ2LJfmVyoQJHQJHWzE8pc+YMr+j/lDFIS4s64bjaYiqj87yJyew+ZCJ8vU2sIBLeDFPGPR8br8yuNPLsqRmFIvR+HA57nEwAkgTuOThZo6b4AHrM=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WjlKIg3_1753342609 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 24 Jul 2025 15:36:50 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  lkp@intel.com,
+  akpm@linux-foundation.org,  y-goto@fujitsu.com,  mingo@redhat.com,
+  peterz@infradead.org,  juri.lelli@redhat.com,
+  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
+  rostedt@goodmis.org,  mgorman@suse.de,  vschneid@redhat.com,  Li Zhijian
+ <lizhijian@fujitsu.com>,  Ben Segall <bsegall@google.com>
+Subject: Re: [PATCH RFC v3] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
+ counting
+In-Reply-To: <85d83be2-02f8-4ef6-91c7-ff920e47d834@fujitsu.com> (Shiyang
+	Ruan's message of "Thu, 24 Jul 2025 10:39:40 +0800")
+References: <20250722141650.1821721-1-ruansy.fnst@fujitsu.com>
+	<87cy9r38ny.fsf@DESKTOP-5N7EMDA>
+	<85d83be2-02f8-4ef6-91c7-ff920e47d834@fujitsu.com>
+Date: Thu, 24 Jul 2025 15:36:48 +0800
+Message-ID: <87wm7y3ur3.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: ufs: qcom: Document HS gear and rate
- limit properties
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <James.Bottomley@hansenpartnership.com>,
-        <martin.petersen@oracle.com>, <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-4-quic_rdwivedi@quicinc.com>
- <6yhnlwyuimkrlifmmdihcsuhws6qkdjzmjxdupu6cevu24nmi6@f4vk5dffjie2>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <6yhnlwyuimkrlifmmdihcsuhws6qkdjzmjxdupu6cevu24nmi6@f4vk5dffjie2>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: c7a6Av9_1Pu_u_55MsmnK7KIQ_op3NXn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA1MyBTYWx0ZWRfX+kkKcKhxiYgp
- MhAxojmH96+eSuh5q/K5ySTPk2dZdwpLvNTR5ONN8t2NPb/JqBAQEBpbz6xBHqE1BDEo7OvANC5
- m/a6p+bMPj0CP9IGSWGPT/4dtJJtEujZFHKYCf3uBiZ+F1rMfE/s6q55CnVsb+JDFEv9/gZnmhp
- pnJHQlh3l7du3zZsyM7hablsZ3+dRWhuYEF5mUwCdePQWH0atBCuKXR1RDEHkBwIGILpMFqVL84
- fXRdoo3R4LJ+mw6uMA+s6Bcc66iYoAi4FWN7EpgKbFTf4OQu8X/V3rxyqcLFV9rd3xxskh/dbhR
- jANCbDH0srIvP9YuIz9RI+I71uvW8dKD5Uq0RCSjPVuxVQ4lH+3e4D2UWHiUxgo9JuDQqM8JNOt
- 3I0z+/fQCrBtde12O24j0WvHMF9WlaMi/QNYeTLq7ByaQ6EQzbH1O48QXUGc9s9FfKSfECKb
-X-Authority-Analysis: v=2.4 cv=E8/Npbdl c=1 sm=1 tr=0 ts=6881e279 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=id758TG4R-jbu1JBe3wA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: c7a6Av9_1Pu_u_55MsmnK7KIQ_op3NXn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015 phishscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507240053
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Shiyang Ruan <ruansy.fnst@fujitsu.com> writes:
 
+> =E5=9C=A8 2025/7/23 11:09, Huang, Ying =E5=86=99=E9=81=93:
+>> Ruan Shiyang <ruansy.fnst@fujitsu.com> writes:
+>>=20
+>>> From: Li Zhijian <lizhijian@fujitsu.com>
+>>>
+>>> =3D=3D=3D
+>>> Changes since v2:
+>>>    1. According to Huang's suggestion, add a new stat to not count these
+>>>    pages into PGPROMOTE_CANDIDATE, to avoid changing the rate limit
+>>>    mechanism.
+>>> =3D=3D=3D
+>> This isn't the popular place for changelog, please refer to other
+>> patch
+>> email.
+>
+> OK. I'll move this part down below.>
+>>> Goto-san reported confusing pgpromote statistics where the
+>>> pgpromote_success count significantly exceeded pgpromote_candidate.
+>>>
+>>> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
+>>>   # Enable demotion only
+>>>   echo 1 > /sys/kernel/mm/numa/demotion_enabled
+>>>   numactl -m 0-1 memhog -r200 3500M >/dev/null &
+>>>   pid=3D$!
+>>>   sleep 2
+>>>   numactl memhog -r100 2500M >/dev/null &
+>>>   sleep 10
+>>>   kill -9 $pid # terminate the 1st memhog
+>>>   # Enable promotion
+>>>   echo 2 > /proc/sys/kernel/numa_balancing
+>>>
+>>> After a few seconds, we observeed `pgpromote_candidate < pgpromote_succ=
+ess`
+>>> $ grep -e pgpromote /proc/vmstat
+>>> pgpromote_success 2579
+>>> pgpromote_candidate 0
+>>>
+>>> In this scenario, after terminating the first memhog, the conditions for
+>>> pgdat_free_space_enough() are quickly met, and triggers promotion.
+>>> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
+>>> not in PGPROMOTE_CANDIDATE.
+>>>
+>>> To solve this confusing statistics, introduce this
+>>> PGPROMOTE_CANDIDATE_NOLIMIT to count the missed promotion pages.  And
+>>> also, not counting these pages into PGPROMOTE_CANDIDATE is to avoid
+>>> changing the existing algorithm or performance of the promotion rate
+>>> limit.
+>>>
+>>> Perhaps PGPROMOTE_CANDIDATE_NOLIMIT is not well named, please comment if
+>>> you have a better idea.
+>> Yes.  Naming is hard.  I guess that the name comes from the
+>> promotion
+>> that isn't rate limited.  I have asked Deepseek that what is the good
+>> abbreviation for "not rate limited".  Its answer is "NRL".  I don't know
+>> whether it's good.  However, "NOT_RATE_LIMITED" appears too long.
+>
+> "NRL" Sounds good to me.
+>
+> I'm thinking another one: since it's not rate limited, it could be
+> migrated quickly/fast.  How about PGPROMOTE_CANDIDATE_FAST?
 
-On 23-Jul-25 12:32 AM, Dmitry Baryshkov wrote:
-> On Tue, Jul 22, 2025 at 09:41:03PM +0530, Ram Kumar Dwivedi wrote:
->> Add documentation for two new optional properties:
->>   - limit-hs-gear
->>   - limit-rate
->>
->> These properties allow platforms to restrict the maximum high-speed
->> gear and rate used by the UFS controller. This is required for
->> certain automotive platforms with hardware constraints.
-> 
-> Please reformat other way around: describe the actual problem (which
-> platforms, which constraints, what breaks, etc). Then describe your
-> solution.
-> 
-Hi Dmitry,
+This sounds good to me, Thanks!
 
-I have addressed this in latest patchset.
+---
+Best Regards,
+Huang, Ying
 
-Thanks,
-Ram.
-
-
->>
->> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>
+>>=20
+>>>
+>>>
+>> The empty line is unnecessary.
+>
+> OK.>
+>>> Cc: Huang Ying <ying.huang@linux.alibaba.com>
+>> Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
+>
+> OK.
+>
+>
+> --
+> Thanks,
+> Ruan.
+>
+>>=20
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>> Cc: Juri Lelli <juri.lelli@redhat.com>
+>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+>>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>> Cc: Ben Segall <bsegall@google.com>
+>>> Cc: Mel Gorman <mgorman@suse.de>
+>>> Cc: Valentin Schneider <vschneid@redhat.com>
+>>> Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
+>>> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+>>> Signed-off-by: Ruan Shiyang <ruansy.fnst@fujitsu.com>
+>>> ---
+>>>   include/linux/mmzone.h | 2 ++
+>>>   kernel/sched/fair.c    | 6 ++++--
+>>>   mm/vmstat.c            | 1 +
+>>>   3 files changed, 7 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>>> index 283913d42d7b..6216e2eecf3b 100644
+>>> --- a/include/linux/mmzone.h
+>>> +++ b/include/linux/mmzone.h
+>>> @@ -231,6 +231,8 @@ enum node_stat_item {
+>>>   #ifdef CONFIG_NUMA_BALANCING
+>>>   	PGPROMOTE_SUCCESS,	/* promote successfully */
+>>>   	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
+>>> +	PGPROMOTE_CANDIDATE_NOLIMIT,	/* candidate pages without considering
+>>> +					 * hot threshold */
+>>>   #endif
+>>>   	/* PGDEMOTE_*: pages demoted */
+>>>   	PGDEMOTE_KSWAPD,
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 7a14da5396fb..12dac3519c49 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -1940,11 +1940,14 @@ bool should_numa_migrate_memory(struct task_str=
+uct *p, struct folio *folio,
+>>>   		struct pglist_data *pgdat;
+>>>   		unsigned long rate_limit;
+>>>   		unsigned int latency, th, def_th;
+>>> +		long nr =3D folio_nr_pages(folio);
+>>>     		pgdat =3D NODE_DATA(dst_nid);
+>>>   		if (pgdat_free_space_enough(pgdat)) {
+>>>   			/* workload changed, reset hot threshold */
+>>>   			pgdat->nbp_threshold =3D 0;
+>>> +			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NOLIMIT,
+>>> +					    nr);
+>>>   			return true;
+>>>   		}
+>>>   @@ -1958,8 +1961,7 @@ bool should_numa_migrate_memory(struct
+>>> task_struct *p, struct folio *folio,
+>>>   		if (latency >=3D th)
+>>>   			return false;
+>>>   -		return !numa_promotion_rate_limit(pgdat, rate_limit,
+>>> -						  folio_nr_pages(folio));
+>>> +		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+>>>   	}
+>>>     	this_cpupid =3D cpu_pid_to_cpupid(dst_cpu, current->pid);
+>>> diff --git a/mm/vmstat.c b/mm/vmstat.c
+>>> index a78d70ddeacd..ca44a2dd5497 100644
+>>> --- a/mm/vmstat.c
+>>> +++ b/mm/vmstat.c
+>>> @@ -1272,6 +1272,7 @@ const char * const vmstat_text[] =3D {
+>>>   #ifdef CONFIG_NUMA_BALANCING
+>>>   	"pgpromote_success",
+>>>   	"pgpromote_candidate",
+>>> +	"pgpromote_candidate_nolimit",
+>>>   #endif
+>>>   	"pgdemote_kswapd",
+>>>   	"pgdemote_direct",
 >> ---
->>  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
->> index 6c6043d9809e..9dedd09df9e0 100644
->> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
->> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
->> @@ -111,6 +111,16 @@ properties:
->>      description:
->>        GPIO connected to the RESET pin of the UFS memory device.
->>  
->> +  limit-hs-gear:
-> 
-> If the properties are generic, they should go to the ufs-common.yaml. If
-> not (but why?), then they should be prefixed with 'qcom,' prefix, as
-> usual.
-
-Hi Dmitry,
-
-I have added qcom prefix in latest patchset.
-
-Thanks,
-Ram.
-
-
-> 
->> +    maxItems: 1
->> +    description:
->> +      Limit max phy hs gear
->> +
->> +  limit-rate:
->> +    maxItems: 1
->> +    description:
->> +      Limit max phy hs rate
->> +
->>  required:
->>    - compatible
->>    - reg
->> -- 
->> 2.50.1
->>
-> 
-
+>> Best Regards,
+>> Huang, Ying
 
