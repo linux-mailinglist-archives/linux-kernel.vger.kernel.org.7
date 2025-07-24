@@ -1,154 +1,79 @@
-Return-Path: <linux-kernel+bounces-743624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558AFB10105
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:46:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F83B10107
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2644E1CC586D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D6E1CC5890
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BAD221703;
-	Thu, 24 Jul 2025 06:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4429B2264D7;
+	Thu, 24 Jul 2025 06:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b="nOuwXpfe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bxoElTiS"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (1024-bit key) header.d=gztozed.com header.i=@gztozed.com header.b="cbdtbgTx"
+Received: from mail-m21466.qiye.163.com (mail-m21466.qiye.163.com [117.135.214.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125211F09B3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0BF1FF5EC;
 	Thu, 24 Jul 2025 06:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753339551; cv=none; b=PEMkqJnNHywjjCUdUDCoRBYVDsiaL1sNuuNPJjPYZJzC8VzUzMRfv822m6zAkczbkH1FAwGiQ9lXsRUfyoxa7YBiDSdbAZE+o7bjM3tY0MpQ8oU0USqYM1ZvYBGszAUj43O+tz0z/JEI9O+Nzq25kR1zsGSmYxp125AUDSAB8Wg=
+	t=1753339553; cv=none; b=TanfSMIFSUcivrc0SXnW5o3bQKWRcbhvHnEX5D9mHKA2sawWAXxq61Sehnkq4vSahx+A7XJlR1KFameqAaiUva8maNOWLMihcqgTbbY4rnUAHcb0LOHY9wBranBzHpX7H9j3uUtu+VAa8Sl3eOfQvxQnZyy34EGmdrnW1ikFe8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753339551; c=relaxed/simple;
-	bh=CNTKy5Ekwec43maVw/2PGAUTzfACs4ZdRxFkuNjagx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jtb/AdkgpufWEgDkGFCU/rSYxCenQ1MzMTfqCYY+BwV4XmpQrkZHOOra9a77Cl5nhqjP/WlxhEbIfqNKOdoiSzgbShQvuLf1jwGvfpjtK92YvGqnj6sB6qGUwOH952CnCK7GCdq3godWY65DtskybXFMCuiTTszSD78KWWC34PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com; spf=pass smtp.mailfrom=kylemanna.com; dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b=nOuwXpfe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bxoElTiS; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylemanna.com
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0DF26140264D;
-	Thu, 24 Jul 2025 02:45:48 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 24 Jul 2025 02:45:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kylemanna.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm3; t=1753339548; x=
-	1753425948; bh=Qb0coPdRXBvqznDliea1RrAC7V15frrSEXkZB1G3E/Q=; b=n
-	OuwXpfe/pwyy8zfQb9i5rO1b5nnI4DV0A2CSyZqQFBgD7qP9W7tsH6ewgtUQ9XN6
-	KWDLLcTXebyde7RYX7E0H8foMpPEYxY8LiRabry3ZSw2wP5hcoIjEVsnGyrimT5H
-	LSeg7ZI4+ZAYobrT5fc+4K89Z8XQvwnbZuzIaF+jw2XBBYHUj78S8fP2IwBDlFuM
-	VMGuyAwWbHElWQaanDIZ4BId3hnP0TpdwIrlAlQVvjumqcX+rN1Nd6CgWSfavQxy
-	qrRD8+mI7boMTmnlus2nQ0xcGH/ZywZRs/WAz0Nzm0/jUXjpWGpvvN+KPtlHvMPL
-	v2yej0ncA+M/LNbcNzsgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1753339548; x=1753425948; bh=Qb0coPdRXBvqznDliea1RrAC7V15
-	frrSEXkZB1G3E/Q=; b=bxoElTiSnRWWpIaue1rJocr/4298DCUJHzkDCLdvkkhF
-	nOxMtrsQRdXGCtPAzeUFsNK9ZdKqSLQZ+ETyjnl56Fpv9xlY3pN6ugClHDqjSFno
-	L1UePtCv5zr/8mIJ+RlasSYOeuigli9VqYzI8yKbuXjZXF0MEmfyb3gBIG4KTl/G
-	7JMAp9GnLTaqjh8fU/iSR3uC0PINPOM4euXJrORU++wQHWn+kHzSM6lvgkVCSTKm
-	x+6aHW/EjGorORoUp2IRm2whQQcZjN+rkKVQJqETHGxq29CHNAvS0HsE7ESF7mEf
-	l3Nk3zJjjoPFU7EqDpD0FERAYspEjoz6SuyXpHgPtw==
-X-ME-Sender: <xms:mtaBaL8OkIO1_RV4ZQGaRlEyHDlR8_eUcxZ9971736aRiZcjcO3h-Q>
-    <xme:mtaBaNN3NPIzAQxneLvV5qsrUDatKWyW5SY_43urosG43-J10qBkNhBJfIh7h7QjG
-    lPPqLbpuaCJtTE4hg>
-X-ME-Received: <xmr:mtaBaIFogd8N9yy_PYFUedruuslwn6ZJMgWjYioZJ85set4Yxd-Nu9v5xZRkeApyoje_3O7avT0RFDT7rN3f6DuhaAEeAPb2UBrC8Za8oUHc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejleeliecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepmfihlhgvucforghn
-    nhgruceokhihlhgvsehkhihlvghmrghnnhgrrdgtohhmqeenucggtffrrghtthgvrhhnpe
-    dthfehvdevgedutedtjedvjeduleelgeetgfdtjedtleehhfdvjefgjedvveeufeenucff
-    ohhmrghinhepihhnthgvlhdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehkhihlvgeskhihlhgvmhgrnhhnrgdrtghomhdpnhgspghr
-    tghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhnhidrlh
-    hutghksehinhhtvghlrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhr
-    tghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomhdprhgtphhtthhopehqihhugi
-    hurdiihhhuohesihhnthgvlhdrtghomhdprhgtphhtthhopehjrghmvghsfigvshhtohhn
-    jhgvrhhnihhgrghnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrmhgvshdrmhhorh
-    hsvgesrghrmhdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihiud
-    drlhgrihesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:mtaBaLxygmytz7VC-GvuV40hfsLHKeIwf2cdQE1kvP6nR3uMnsJIoA>
-    <xmx:mtaBaJpAWobihGkQWSM5eVyprLwye42PKQXlpccaU7256TuvG9iN0g>
-    <xmx:mtaBaBn_X-GNavQ8JFIaF22FRPgxlELXaHhctvSv9biHn4sE-0C2Wg>
-    <xmx:mtaBaDWziXNlephSsWL8YzpRpKj5hmjvY-a9w0YdU3zYVVlfvPS9Dg>
-    <xmx:nNaBaC5Yr5QaxJGCFcpGVLbTF1AMPMUqKiz3L0t4KR5PwOixKA7oPP-j>
-Feedback-ID: iac74403c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Jul 2025 02:45:45 -0400 (EDT)
-From: Kyle Manna <kyle@kylemanna.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Jason Baron <jbaron@akamai.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	James Jernigan <jameswestonjernigan@gmail.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>,
-	linux-edac@vger.kernel.org,
+	s=arc-20240116; t=1753339553; c=relaxed/simple;
+	bh=58PWjPqunF3iX2dK3INwhy756h+S4hx6vClG7WT4twg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IwT3EPvFnhfStDspSDIwNNCMrqNAr6Eud412EZoQmSXNiwe0xTbYHDSsepC0uNPikaMyGB1MAMGUaBoIuxyslOFYMatx6+bkOBAEzRY0i0AdmET7XWdkhfQYizstG3+Ov0HLwYwSwiWGzD0zIJ0FYOoT9xdjPlWHyU4Yawx/dms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gztozed.com; spf=pass smtp.mailfrom=gztozed.com; dkim=pass (1024-bit key) header.d=gztozed.com header.i=@gztozed.com header.b=cbdtbgTx; arc=none smtp.client-ip=117.135.214.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gztozed.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gztozed.com
+Received: from localhost.localdomain (unknown [IPV6:240e:6b0:200:4::42])
+	by smtp.qiye.163.com (Hmail) with ESMTP id d90d321c;
+	Thu, 24 Jul 2025 14:45:39 +0800 (GMT+08:00)
+From: wangyongyong@gztozed.com
+To: wangyongyong@gztozed.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kyle Manna <kyle@kylemanna.com>
-Subject: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC support
-Date: Wed, 23 Jul 2025 23:44:15 -0700
-Message-ID: <20250724064415.1134574-1-kyle@kylemanna.com>
-X-Mailer: git-send-email 2.50.1
+	netdev@vger.kernel.org,
+	pabeni@redhat.com
+Subject: Re: [PATCH] net: clear offline CPU backlog.state in dev_cpu_dead()
+Date: Thu, 24 Jul 2025 14:45:39 +0800
+Message-Id: <20250724064539.1279356-1-wangyongyong@gztozed.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250723083808.1220363-1-wangyongyong@gztozed.com>
+References: <20250723083808.1220363-1-wangyongyong@gztozed.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSEtMVhgZT09NHktDGkxJHlYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJT0seQU0ZS0FJS0tBT0FBT0lZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+X-HM-Tid: 0a983b2e2fed0230kunm8b8d6b2f2f47bc
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MQw6ARw6DjdIFzwhIwwpPk4f
+	NTYKChRVSlVKTE5ISEhCTk9LT09JVTMWGhIXVQwaFRwCFBUcAhQVHDscAQ8UAR4fVRgUFkVZV1kS
+	C1lBWUlPSx5BTRlLQUlLS0FPQUFPSVlXWQgBWUFKSkJLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=cbdtbgTxV3a/uIqWm8tEP+R4vu06zr4MnQ2uNvCVSJT6j2vZVGU4Ae6tcUz31urxxC2y6dHPSBwceBMm06FpChnKNY57AQfLH9OmUtDw1aHpdHF8UCKb9IrtUHteYSDwTFifMeBem7OmH9Sc73qlrPlevoAMHJNPd9R7Yv9CP1g=; s=default; c=relaxed/relaxed; d=gztozed.com; v=1;
+	bh=CeOluBcsfmo9xZ9iNcrmhKdw4JPARKEPnOU5dPKkv0c=;
+	h=date:mime-version:subject:message-id:from;
 
-Host Device IDs (DID0) correspond to:
-* Intel Core i7-12700K
-* Intel Core i5-12600K
+Hi all,
 
-See documentation:
-* 12th Generation Intel® Core™ Processors Datasheet
-    * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
-    * https://edc.intel.com/output/DownloadPdfDocument?id=8297 (PDF)
+I apologize for missing the earlier discussion about this issue ([https://lore.kernel.org/netdev/b3ecb218932daa656a796cfa6e9e62b9.squirrel@www.codeaurora.org/]). 
+While working on, I encountered what appeared to be the same problem, but I now realize the historical discussion already covers this case.
+I should have researched more thoroughly before sending the patch.
+I appreciate your time in reviewing my previous patch, and I'm sorry for any inconvenience caused by the duplicate submission.
 
-Signed-off-by: Kyle Manna <kyle@kylemanna.com>
----
- drivers/edac/ie31200_edac.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index a53612be4b2f..2078c12bbed2 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -94,6 +94,8 @@
- 
- /* Alder Lake-S */
- #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
-+#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668
-+#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648
- 
- #define IE31200_RANKS_PER_CHANNEL	8
- #define IE31200_DIMMS_PER_CHANNEL	2
-@@ -741,6 +743,8 @@ static const struct pci_device_id ie31200_pci_tbl[] = {
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_3), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_4), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1), (kernel_ulong_t)&rpl_s_cfg},
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2), (kernel_ulong_t)&rpl_s_cfg},
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3), (kernel_ulong_t)&rpl_s_cfg},
- 	{ 0, } /* 0 terminated list. */
- };
- MODULE_DEVICE_TABLE(pci, ie31200_pci_tbl);
--- 
-2.50.1
-
+Best regards.
 
