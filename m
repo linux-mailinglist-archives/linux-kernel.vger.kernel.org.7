@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-744185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBEFB1092F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:29:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F006B1092D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F404E55AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C15E1C85E33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC612741AB;
-	Thu, 24 Jul 2025 11:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRP1rFf0"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6162727FE;
+	Thu, 24 Jul 2025 11:28:28 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2E72727E4;
-	Thu, 24 Jul 2025 11:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D904D2701DA;
+	Thu, 24 Jul 2025 11:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356533; cv=none; b=uDOgOkeDDUkgoFuGVP47zFsioYOZbzPfFM3PaxE4Bc8pAp96TfPsRd6Azjzem9IOcTaWQ0mdUK2UtPTsFuO+TY7osO0IKjm1Br+tPqX+1bo+rPObRDggYbDyyMs9B6MIMM2f5f8tQ/2xn+YBbJtjczrFtxcvDlg7XtY88jMeaGY=
+	t=1753356507; cv=none; b=jPhN2kN7NRrnpCx9Gc7hwjikxqIVkS4mK/R01Bdg8ryBaUEPIlIiULhotBHti7e+R6SbWyWjXgxHgPgham0aW2u9rCmyHLBbpdX4wzAFXVV2GUuopsW1osgP+1hQ+BNCFQd+f/p+LUSa22TUhyw+Tz/1CUDZ8MZtWJAdOOywXBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356533; c=relaxed/simple;
-	bh=0IaLIP2KkubPcx7b9qvtF9U4GI61/YekRlyAlo76kSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DyHyHuh1VXdLAXWS97EYud9lgYXJDcRxxgUknEQgPbOYffnTv6lWTvYSC6AmLuTsu833+YXCo5ah/Zh3n8oVIe1pZSa2zYa90hy++jAEhtbNvFzH+J/PTZQKjSi1pzGIVDihsMxIBSk7URpE91rPIBkqWjXT/YWflwYUfZLIIeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRP1rFf0; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so8795355e9.3;
-        Thu, 24 Jul 2025 04:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753356530; x=1753961330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QPotOZ8Ga3dXelFzNNAZNVkNalbstbUanKtcLwNmZx0=;
-        b=RRP1rFf0xHGi0aKIjGKIHT+2KMUm+tmsJc12pT/LPAdiR08Z28ovD/LnWej32bvCyA
-         csN7wACbl3jWDw5y7hkM6XhbIuEE2yKomANyibTvUagThtaNRUCZMviLeza9qh2kOlW9
-         6LCiaDjRm9J626cWzGONSmImhLSoGkIXlstGrMBJf5eYAtzwk6funHD05MRjPsbdHqw2
-         blNpCt7H3P1COOsDWETyjTmsPZ1i7N7cdpHsOiWgY/Iv4CMb1Dk3UlXarfpWb9GBrNen
-         eIMqwNKDCrIqaTu8SauldzigidB9W7FZ4sQqeM1RG3BDmC2wbotWROccfKffcB7SczoS
-         GY6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753356530; x=1753961330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QPotOZ8Ga3dXelFzNNAZNVkNalbstbUanKtcLwNmZx0=;
-        b=h4StS26yzxVH4cGspFI4egT7qnYhFUO1d4fV8th+HzSIH9VySpiu993eoExm2evaRh
-         ejyH80lVQf5z+f098XDveamJQ96NQiyDPzfEfYaue17kOYftkruR5U6f051TMgobm9Ne
-         58XsiH4IuN5qxVNd3UHzI/iYcTJ/9Fxxy58rHNZQZMszJgR5OYPa8oTPNSvGRtliUU6d
-         J6E7+pixiaHzP3N6LWfTwOm2NylgrSkA36mouKBGi1BNlgWo9AztpPUlUJ35mn4yMHVI
-         8RuPlIf7Dce/GYHajTeoGmt0+JZW42TgPEVn74Fg3QH6h+VXikSOh0CYS+QU1K8SwXB5
-         caLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVza0tbLteUqrCPGav2CO2wLLm37eTPxWYco8qXCQcR1eVYnIRywCJR+UpF2J3Tvk5tZTd+/4VqaLam@vger.kernel.org, AJvYcCWwqpZSsfHd6hxeoRHxkA1VL/THc4BeL2UE4UI3S7npf0DIyVeBqVrAkMgKbr0rGF1qrj75RTKOT+DBb3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSYOBhTDLSjgWl55aCGYHGCDVorss6usHxDtBN4SvxOrq4isoI
-	pE/g06J9QWFgBkE80j1KZO6s/DFKkVAQ+McQHETyTenlOISjMLiJmFrGvUeKyoQYqt8=
-X-Gm-Gg: ASbGnctj72k7NO/iUHf7j/IPgRIR/YUIqSJFCKY0xjoE6v8IKTE43YyxbBR102uAgeI
-	RMPgddn2o5frIEutZXcuNu8JL5bTP95CI7YDskZ0zSBOg7OCxHcZtf1tWCumtTX/ybwaGUey+yc
-	UrHyQtuW87VbHHBwQayphCV54JT7vdjBoR2v5FhgChJwV0XCHlPtJ4E4SF7KQQ+BXxOr5RTG4cd
-	hEXpCzM7v3BoucbkR/KiBCvPdUySpA6DTMP0BjNpeFUNUXtzINilM9IyiHLQ0F5vktFoZ+rfdhz
-	4m1qZkjKDMbDEKb0ylyPiEr5OWrgSilC3UiWX7Fh7kFFJOptbtLiaQ05JsSrmj5X/egEMJq6w7j
-	ufv7PTSkaAUwS0uG2BkVo
-X-Google-Smtp-Source: AGHT+IH1EhcurvPnQijuAxK51VLX1iOh6PM1RpmsVzMiEDdXmQ4OtxzDVBwoAGD/kvqdAI3D8wG/9g==
-X-Received: by 2002:a05:600c:46d2:b0:456:e39:ec1a with SMTP id 5b1f17b1804b1-45868c84329mr68770685e9.14.1753356530123;
-        Thu, 24 Jul 2025 04:28:50 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4fcfsm16633565e9.29.2025.07.24.04.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:28:49 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mmc: Kconfig: Fix spelling mistake "referrered" -> "referred"
-Date: Thu, 24 Jul 2025 12:28:17 +0100
-Message-ID: <20250724112817.142784-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753356507; c=relaxed/simple;
+	bh=Q47uJytf0tbZ1v/g40pUETBSdeGUQHTBCLOSXJWcuhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q4hH0eTrFuBLOOjpT8db9OIrT/GTMqBzgU5nXtmrJ3JBPLcxBioqFWZN4xhZVBPulXN+KiuJPSiHuUzCu+JcomMqSrec5HzcOEmxpuwhCI6micSGa5owSPOdDzJvRPOu4rky77BuN8EFKp8Ij0+xFS8LH6mKUBprcu//2+25yYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bnpbg6NZNz2RVsC;
+	Thu, 24 Jul 2025 19:26:07 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 940E2140109;
+	Thu, 24 Jul 2025 19:28:22 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Jul
+ 2025 19:28:22 +0800
+Message-ID: <456c9900-1ce3-4a87-8c29-46e65e1240cb@huawei.com>
+Date: Thu, 24 Jul 2025 19:28:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpufreq: Avoid get_governor() for first policy
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>, "rafael J . wysocki"
+	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250724093621.61871-1-zhangzihuan@kylinos.cn>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <20250724093621.61871-1-zhangzihuan@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-There are two spelling mistakes in the config. Fix them.
+On 2025/7/24 17:36, Zihuan Zhang wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mmc/host/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> When a cpufreq driver registers the first policy, it may attempt to
+> initialize the policy governor from `last_governor`. However, this is
+> meaningless for the first policy instance, because `last_governor` is
+> only updated when policies are removed (e.g. during CPU offline).
+> 
+> The `last_governor` mechanism is intended to restore the previously
+> used governor across CPU hotplug events. For the very first policy,
+> there is no "previous governor" to restore, so calling
+> get_governor(last_governor) is unnecessary and potentially confusing.
+> 
+> This patch skips looking up `last_governor` when registering the first
+> policy. Instead, it directly uses the default governor after all
+> governors have been registered and are available.
+> 
+> This avoids meaningless lookups, reduces unnecessary module reference
+> handling, and simplifies the initial policy path.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/cpufreq/cpufreq.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index d7426e1d8bdd..b5ebd4519eab 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -1121,9 +1121,9 @@ static int cpufreq_init_policy(struct cpufreq_policy *policy)
+>  	int ret;
+>  
+>  	if (has_target()) {
+> -		/* Update policy governor to the one used before hotplug. */
+> -		gov = get_governor(policy->last_governor);
+> -		if (gov) {
+> +		if (policy->last_governor[0] != '\0') {
+> +			/* Update policy governor to the one used before hotplug. */
+> +			gov = get_governor(policy->last_governor);
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 7232de1c0688..4afa0130779d 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -359,7 +359,7 @@ config MMC_SDHCI_S3C
- 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
--	  often referrered to as the HSMMC block in some of the Samsung
-+	  often referred to as the HSMMC block in some of the Samsung
- 	  S3C6410, S5Pv210 and Exynos (Exynso4210, Exynos4412) SoCs.
- 
- 	  If you have a controller with this interface (thereforeyou build for
-@@ -401,7 +401,7 @@ config MMC_SDHCI_SPEAR
- 	depends on OF
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
--	  often referrered to as the HSMMC block in some of the ST SPEAR range
-+	  often referred to as the HSMMC block in some of the ST SPEAR range
- 	  of SoC
- 
- 	  If you have a controller with this interface, say Y or M here.
--- 
-2.50.0
+What if gov is null here? For example, the last governor has been removed.
+The default governor should be used in this situation I think.
+
+>  			pr_debug("Restoring governor %s for cpu %d\n",
+>  				 gov->name, policy->cpu);
+>  		} else {
 
 
