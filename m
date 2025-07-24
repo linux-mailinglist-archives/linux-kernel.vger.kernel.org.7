@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-744049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72834B10766
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:06:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71B0B10773
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 221917B2968
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5AF567639
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD125F798;
-	Thu, 24 Jul 2025 10:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0489425F97E;
+	Thu, 24 Jul 2025 10:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oa8ghlW6"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JZU4xHJx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE6525E47D;
-	Thu, 24 Jul 2025 10:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4F0257423;
+	Thu, 24 Jul 2025 10:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351586; cv=none; b=ZcDbY1T0s72T2uOuOyOEm/UJv1UFq8gvwnuJvRZja/qyhlis785b//THxDAtwKjmmnMSXOLfhyQjDyY4/n7sM+kyWe7hM2JvsjJLyCLh7/VPA4G0AGuhMCD2rI0ge4shCBYuGdcfiHA3EHcxeV1lLU9JcqYJ+MD+2Lxgy7iPOVw=
+	t=1753351810; cv=none; b=e5Cn1hrbI5SGMtyOJWpTR3l94dkk5LeL1geavcFKBL0we90aAXI5VTO89M2TM2a7ebXOP2S6LmQr9ZeYxNkYdSbmfX7MCAxBgi7IK4rDFnoriR2DGgqtqRPbSJ4/JihM+YqRJxRvKwplvlRwf2m7d2bPmNopSLBDb29NuWtvM7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351586; c=relaxed/simple;
-	bh=uqcAan/WHcwl+faf1cDvlJ3T6UYWofW7UzVI0/0cUzc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IJ0F2zGGnyC3yjl+i5tDA2YtLTlqBCXa/s3li+Huqp8M1FCxX5eGSiiBP5wRcmji/VI+6nk0Qr5POZWXaQFgC/aVrDlQ4bBY4JS6HMbw8aQ9hMIFbHgN8/c1pZByocvX5dJ15KxCVqjh6PIL6xVIuijNRlLJPpFrfE0nVHwC6Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oa8ghlW6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74b52bf417cso593528b3a.0;
-        Thu, 24 Jul 2025 03:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753351585; x=1753956385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6PTtVikJ5rldJ7a0Bx4KyzH4Gmr3XIo2PlqHaVbjSgs=;
-        b=Oa8ghlW6NvAzpIV6bzNb0mWfAJab2xojwStakEWsMTf0m2e255LGxBhHbm+X+5qCgg
-         7QYBSiP6J0BbkaVWq9Ur9CJiBGqIbugjL6RNoniDmYlP9CroRjhNohdwVQOQVWYvdTRE
-         83zM89tsNG3S5khyPINiwsj8dmI+u9u0dnF67ELWHCUSlljFONmw5S+iqDO7yx4EkXNA
-         +4bYPRQGL1NhypyOo7nPBYUuyVlK8AHAtRHqtst8PWwFOCS1K+fqLYWuN+OSYfu2iBLo
-         sk9hvfbThwcZXLUauIkof/jJpz7+LEmejmis35HMgn9P1p2gtIv8GQvx9B3FdTO+VraW
-         5j2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753351585; x=1753956385;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6PTtVikJ5rldJ7a0Bx4KyzH4Gmr3XIo2PlqHaVbjSgs=;
-        b=XgqF3Td53xf3LKO4edBPBWbJLznqv7uv4EQe5bEbsmmQ5SVqGqUbixy4FvY1VuTnL2
-         OlEiutGS+ASNV5CfhPJmnpZG5mZfj/q4/89Ad/65rFXblItW6C144LpCKTMihHx3+wAz
-         YlmjRtKzIlZ6Bm57Z03NdV7JZ83MmUKv8Ns74Cpep2/exGuj+Glb6Wp/vNl4YvqEjA9m
-         GtzArJKyVuNmnMiTkU+CMX2Qxe2S14ciylwKmiOF2oCtUQLNwCGKMbP3S3vff4SKuixC
-         bdMPmRoOpFDpk5Am7ZOMlII1esX6PMJNgSIMoYlra+b8UGetg6rpuY9eOeIxK1aMFsvF
-         7kcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUrjOPuPgE3pELcgu9PMTUxn8RWi4tkN5PoBoqf3oDi5m0TiuPjtMsp7NBsTPW0hPCyAoBVs1FMaFGoP0=@vger.kernel.org, AJvYcCXwq2gYX1G2Lz69AL2hTEIBKHxUSZwCyB45df3pTOoWnxQIsuH+1HymE/Xy1oLYO+1c+euXuY9r@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZSGoMlsRkQUKMJyoUr28sQ8DE9RjeZ/J2Bet9Gv0O79SJeoQU
-	qv6Z2rx91lazgyyOhU+VVWW5qxNuHeF4e6c1JytC98NayNqCKPYlwOUp
-X-Gm-Gg: ASbGncuF7tKXwFjtG+LmoNWngV+eGGi1FuVgaDVcSUGPtztLEOcYQqayzJdNbIr9jJ7
-	qreM4ArN7YR3Hw7b7vLnH3uxvsniAtW4uGxrpudisc4ei89kzUs3LnZZREyqADAIZZ+S5/lH99E
-	/kendTCErdPFD/c73Dx0IH4cVtEIwU9/9UETyK/UMT7ml5ijJmutLMXe90EzR5VpXPvRYzIfpNX
-	M4CXFXhCFjbuA0VMwSKWdcxo8J5qdLVJmPNVSW5N5elv+T1QVzAhetH2Kb6F04Ck4+tJe7O3eH1
-	xMI3Exvcy6raBKGGu3dhq0rq7OV/T3ZOh39RfMnc7uClOxF/p9zPbqu9vsEURpIeHty36aZGKvO
-	qJev/A9FulfFCd7bNKiLCt1swQwvAe55CC9nQZA==
-X-Google-Smtp-Source: AGHT+IGHBZVavTurxO5YvmggetR2PsZcO4wfnUG6mLgmBsI2k/NAxeY7NUsB8mzhqPMJDLCKaNzScA==
-X-Received: by 2002:a05:6a00:14cd:b0:73c:b86:b47f with SMTP id d2e1a72fcca58-76033b17f44mr9632273b3a.4.1753351584638;
-        Thu, 24 Jul 2025 03:06:24 -0700 (PDT)
-Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ae1588d2sm1230548b3a.41.2025.07.24.03.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:06:24 -0700 (PDT)
-From: Pengtao He <hept.hept.hept@gmail.com>
-To: willemdebruijn.kernel@gmail.com
-Cc: aleksander.lobakin@intel.com,
-	almasrymina@google.com,
-	davem@davemloft.net,
-	ebiggers@google.com,
-	edumazet@google.com,
-	hept.hept.hept@gmail.com,
-	horms@kernel.org,
-	kerneljasonxing@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	mhal@rbox.co,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	willemb@google.com
-Subject: Re: [PATCH] net/core: fix wrong return value in __splice_segment
-Date: Thu, 24 Jul 2025 18:06:10 +0800
-Message-ID: <20250724100610.6702-1-hept.hept.hept@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <6880e365b84d2_334c6729452@willemb.c.googlers.com.notmuch>
-References: <6880e365b84d2_334c6729452@willemb.c.googlers.com.notmuch>
+	s=arc-20240116; t=1753351810; c=relaxed/simple;
+	bh=uQzWvURU4lR+pbczJKLhLxw0bqhAiazUuWm1Gc0CJPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Yt8J36HOIiJDncIafjjC7MdiGUvYSeadp9a/H6sCZTJkD9d2mcQulwsK7m1IHbqPfkrMpdFsVI3yK8sfZDfukXX4pDj9viirDU1vusNW/NK/wMVp7VhhqBhnUjYT6Uv3D4MAQTZ0Yfo+EPffC8IuTC6p1ZRyJ3J78G7rgOuIrL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JZU4xHJx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9UsrP022192;
+	Thu, 24 Jul 2025 10:10:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PlWxCPBa+jQkIvHdRLN268OyKsYFqTmFZB0uVTu9BqY=; b=JZU4xHJxFyvuefwF
+	BgcZLv4QLoFtuUbskr0iZf6YZggolSwm4xC5duUc8uV5DGVfkcbyy0XfUTHAaydL
+	26wsusKUqI5LkWeZN0kpdG19L5DCs/OCx5yGckgcjlKa7cz1eVYZhBU0ZbaLCxae
+	hogH9G2oqUI9wyF15hBYwzAA5ZzszoqQ8nItUeWrd5cLPWL7pBgb2ll0ya39Vzu8
+	l3E8g3Fzq2EU8PldWWBcPAibXq4l3kMnDoYEMs9CQASHoX3wui9Jyy6bHU7jvX2Y
+	zh4WyaEeYmPw6P1FSPGODS+MBSVrhxgvMnL7zOEZR9nZ6SrsPLPtKddE6J24wLhb
+	pLEXlw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48313kjypm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 10:10:05 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56OAA4qD021026
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 10:10:04 GMT
+Received: from [10.216.10.236] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 24 Jul
+ 2025 03:10:00 -0700
+Message-ID: <665bb169-8942-c3c9-c882-9b281cdca34a@quicinc.com>
+Date: Thu, 24 Jul 2025 15:39:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2] media: venus: pm_helpers: add fallback for the
+ opp-table
+Content-Language: en-US
+To: Renjiang Han <quic_renjiang@quicinc.com>, <quic_qiweil@quicinc.com>,
+        <quic_wangaow@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>
+References: <20250724-fallback_of_opp_table-v2-1-2fc61f2407dc@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250724-fallback_of_opp_table-v2-1-2fc61f2407dc@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3NSBTYWx0ZWRfX19eHRWojybXb
+ GTBjCToUU5Gpu1lWAQmsCw4jV6b+kfS/cxpgkKZuAsmV0N3yU70YAzxtysm+84CBU24lMK39VDR
+ HF9WQF9b8bwA/c0iYIIhTL7OGppnGc1DzDRxp5dm7T0jRCNHLbF0QXIbRbqh4/XJi/gucvJgBYr
+ eRUv1UGgimYE6CkKtkuyPhYVvvsNjJ4CuKmaa30011cyJ9AUBAEk2pi2LS38WwjjMD6wu00htyv
+ dkmQ03tVY7B9Wm0X8yXDBg/4JiZ0EFQWGVFKHmGdjNp4e1Ve0eJh1pVP/eiPZR8FIFuLSmR3C1H
+ 1n6ZItpX4OFeFzOvNhOtkSBOhV7AS3dWNw4lfZdC3nkxrMmcsgWZRdx050aelvUljKq8QHuihXX
+ /b4xpUhBQtLsTHdAIrZBgo6U6chwkWbgyLcjE0fuBieXmxv9AfdQhG7kOxxFcJvor7KFufy+
+X-Proofpoint-ORIG-GUID: 7DGBAtOAhqwxOX0xJe7V60x-8N77iEQ2
+X-Proofpoint-GUID: 7DGBAtOAhqwxOX0xJe7V60x-8N77iEQ2
+X-Authority-Analysis: v=2.4 cv=C/TpyRP+ c=1 sm=1 tr=0 ts=6882067d cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=iWKRvkjQqEvONqlByQsA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 mlxscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507240075
 
-> Pengtao He wrote:
-> > Return true immediately when the last segment is processed,
-> > without waiting for the next segment.
+
+On 7/24/2025 1:23 PM, Renjiang Han wrote:
+> Since the device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX
+> do not include an opp-table and have not configured opp-pmdomain, they
+> still need to use the frequencies defined in the driver's freq_tbl.
 > 
-> This can use a bit more explanation. Which unnecessary wait is
-> avoided.
+> Both core_power_v1 and core_power_v4 functions require core_clks_enable
+> function during POWER_ON. Therefore, in the core_clks_enable function,
+> if calling dev_pm_opp_find_freq_ceil to obtain the frequency fails,
+> it needs to fall back to the freq_tbl to retrieve the frequency.
 > 
-> The boolean return from __skb_splice_bits has a bit odd semantics. But
-> is ignored by its only caller anyway.
+> Fixes: b179234b5e59 ("media: venus: pm_helpers: use opp-table for the frequency")
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+> Since device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX do not
+> contain an opp-table and have not configured opp-pmdomain, they still
+> need to use the frequencies defined in the driver's freq_tbl.
 > 
-> The relevant __splice_segment that can cause an early return is in the
-> frags loop. But I see no waiting operation in here.
-
-Sorry, I didn't express it clearly.
-There is no wait operation, just avoid to walking once more
-in the frags loop before return true.
-
+> Therefore, if calling dev_pm_opp_find_freq_ceil to obtain the frequency
+> fails in the core_clks_enable, it needs to fall back to the freq_tbl to
+> retrieve the frequency.
 > 
-> Aside from that, the commit also should target [PATCH net-next],
-> assuuming that this is an optimization, not a fix.
+> Validated this series on QCS615 and msm8916.
 
-Ok, the prefix [PATCH net-next] will be used.
-
-
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
