@@ -1,136 +1,268 @@
-Return-Path: <linux-kernel+bounces-744552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF75CB10E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 665AEB10E7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40B0568472
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8851703E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD1A2E9EBA;
-	Thu, 24 Jul 2025 15:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884AD2E9EB4;
+	Thu, 24 Jul 2025 15:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dhjY7Olt"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LoPzUSrn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0592E8DF2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA79347D5;
+	Thu, 24 Jul 2025 15:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370225; cv=none; b=ThX5Ay/H/dgWm+Gi55ZzICk5BC01WCNdLB3btk+2evdxe1MCUS/5fKWOA1Bv3PGGIVcKX9b32OZxKFunlex58BO84++TI0sASHqIrZzicWP0KpPtkezzflul/5szLiUojRreQ8IPkHC7VWObtLfX4z4aeZNDTnC/TbxKtzz+TII=
+	t=1753370313; cv=none; b=ew+O15E5/6mE5V5cEaQ8fi32mIquEBnZsI3b3mSS61ERfAkYbnbQR6+ilp2F43JEZQ7DGtdbLbAxcIOvBja5sgFMM1JkNq6iS3P/AgpviOqAb2Ko712nM16MskAkHV8ibKmOITLczL6yjuiKvNESab6kRXnvmNR5RqAUVJ2EANw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370225; c=relaxed/simple;
-	bh=rRtJDDGQNkuc0IDMIF8Hm5MSrjYukLVoLEvXaEsR1bY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=oHVj+pABv7N/07pDRL20TBT5XpzQXyCZIfUudh9MK4cACLhB9P9yFsYmQkvRT7tFQfM0q0P3yMKQ+P4ocH6QrX2BS6zmaXPGbGSEw5ufdqJSkfVNGcLelIFLCLN/klOeW3PrQXotUouobxiP5dygCmlCKBpE4j5PGnwGfc2sjqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dhjY7Olt; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-455b00339c8so7748815e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753370222; x=1753975022; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ZljJ9jOeuFt5jY4KeARy4p3x6G+xgYYvDLqDLNf7nc=;
-        b=dhjY7OltHsxm/AGoY3QSsmkF2UkF/PFkRg/gZZrLCWFX7Hjvyr5WOO6WCvgSxdr76w
-         3Fpicaep8bZzv6FoD0NEmDpE90pdhTq3l+KQDSK/ypv+2rK9S2iZ9TeG5JNnfougRLre
-         nRZqm48H6ngL5rcIsVpMn+X+g+B2eHzuPce1J3T/zZfug4QPPgFSAo3Z9KHW1Un78gik
-         k7GAHek8eH0PAmZ5M+B+fVSGNFJr2h7Yhc+5LnBv/fEifosmSQc14lK0kaYhJXEsorFD
-         hxXvVxqRrYmrvBEpOkJplngc4NaP5eZpVnvto64gxhjFsSDmsr/FjNrowryW6Ozf2j1X
-         NKnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753370222; x=1753975022;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9ZljJ9jOeuFt5jY4KeARy4p3x6G+xgYYvDLqDLNf7nc=;
-        b=f8O4/ggrNlAgQBGTDUxgyMNYmuWOCNMG8t2lnslb3gSDA2RaL4R3/BISfAGiWMmwFS
-         +C5qyn4ToWyY32DoNM5uDEQeOKwI6G57jRXNsKLTuUVnmsHMLEs3YajNyXWnu/DbmcGN
-         a8hJmozia+ujBAMrD0BFaPWhy3p5rv44YoKmlPKRGDjvm1HywN/u4BO/uGf8o+XL9h8r
-         dAUJtt0FoxfXvuGVF2UnuzCo85m+HpgPQkLU+jnS/ujOE2898T8zB87ZeeajRYhAB2Jo
-         2g7JkUlNd+uW2RaVof/P8BVYewetL13s1bnJSDFQMs1cGf3EFoehAsu8nSCHsao8F7jI
-         lg6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyswjTBjP1ip37c/9lzY+9sqMj3xbmSS1cW4ezEerzE92u0r2fBK1ReXdlNwi3WUoXz57hiNK2uWl6RqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzluGffBeSYBKTvYS3WUwltLXo6pQKk1bdCmJRgS8VuYkm3zNUO
-	PKZkBC7Y0UShD6dULSLU370RPuvibL1nwyvrXtvvQrlGVa7anW5f91gEyalYbd2bGq0=
-X-Gm-Gg: ASbGncvtWZgyLbnHtx60TRJHDXQfAl7YcUSW3VVfBU+/x4dkvQVFpErQh9Oienp+sUi
-	quPklSAMcNnik8TMeNBxFG0AmINVBn/jwRnwsuNoe7j1xLDxDbeJo4z1Ug/ou2uJvlgx2GrgjRi
-	eznj8MKZyUIN375VlBfwF3N4C/CuWT1EIk92OceRUjC/YEdVD5pLjICKUy1B6gL/XOMnZoOWoTV
-	EZftCwtX6QqMZL8MLfIopFQNFlMJOqfJc/gwxf8LfGMd77zFwcprSWH4LMoExlbvBfBy9hVjzH5
-	1ZOmcIU7z0OUgNm4pbzLMzIyn9x3FQU+iApFl7ni2D3uHB6QiX9zA20xZgugkxlugVrf8oXc2KO
-	6XyjLDbhXbP12zNR0q7I65BV6oxY=
-X-Google-Smtp-Source: AGHT+IGJIwXjAl0x8bo9+v9cZ8DYgapXIAGw1HX/4H1PrXe4j7vZaMGeCQer0wRpipUiu61pr3zj2g==
-X-Received: by 2002:a05:6000:26c9:b0:3b3:9cb4:43f9 with SMTP id ffacd0b85a97d-3b768cb12c7mr6437878f8f.16.1753370221540;
-        Thu, 24 Jul 2025 08:17:01 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b77078b1absm2257447f8f.1.2025.07.24.08.17.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 08:17:01 -0700 (PDT)
+	s=arc-20240116; t=1753370313; c=relaxed/simple;
+	bh=+bp6pfjFYbsKUp64YHHqLCc5uIl+4qZHCE84GxhUcHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J2tkXIktfDJHUfglU/jWDkPEjfvFKWLzVyEayF1MSKiPndc+VuFVJ/njZ336dap5qOFOAOPpyeUTfI3Yiifjm43CblzqRLCQpcT4uvDA7V6v2gdFcwNQqtoR0fKdpDFFWbAs0gVHsege1VtRlMpHXyhwXKETFIlAB3nXGm4nmf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LoPzUSrn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B19C4CEED;
+	Thu, 24 Jul 2025 15:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753370313;
+	bh=+bp6pfjFYbsKUp64YHHqLCc5uIl+4qZHCE84GxhUcHU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LoPzUSrn6r1oXxb3kNWN4MtXMDylnjukws8Eed4h76plciZYjuQdZKsPSyXZ+PRCs
+	 eIjt7QadV3qJM0q1SD5SBIqf6ZEq8Nt3zsXTV+pdJEAnj9SEpBnOKnrKdAStVn8ld8
+	 vPe95RerhCKQdJai2hXcUGkECzpmsqM7Z4yEpoV8YqdPDFEI8eg9aGzzUJCZfgT4E0
+	 /GzO3OZotadoLxuBlYAWpt6jv09cHslne3hPY0KfRCyhRJQdsS3VJycJtBNG1aSqSf
+	 pYjJjVlF2eaivil87NuFLKdBfd353lhVQH3/uenQQXSZ0ugrEdft7ZD9tZWnXBF6xj
+	 murJ3JuU0V2zg==
+Date: Thu, 24 Jul 2025 16:18:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Bough Chen <haibo.chen@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Nuno S?
+ <noname.nuno@gmail.com>, Primoz Fiser <primoz.fiser@norik.com>, David
+ Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "upstream@lists.phytec.de"
+ <upstream@lists.phytec.de>, "andrej.picej@norik.com"
+ <andrej.picej@norik.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
+ properties
+Message-ID: <20250724161820.66e37f6c@jic23-huawei>
+In-Reply-To: <DU0PR04MB9496FCE8DF07CD0E270B72AF905DA@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20250710073905.1105417-1-primoz.fiser@norik.com>
+	<20250710073905.1105417-2-primoz.fiser@norik.com>
+	<2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
+	<20250713160247.0f22bbfe@jic23-huawei>
+	<de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
+	<6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
+	<20250721093847.GD4844@nxa18884-linux.ap.freescale.net>
+	<DU0PR04MB9496FCE8DF07CD0E270B72AF905DA@DU0PR04MB9496.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 24 Jul 2025 16:17:00 +0100
-Message-Id: <DBKDVB96ZC98.NOF39E05HZ8H@linaro.org>
-Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>, "Jaroslav
- Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
- <srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: sound: add bindings for pm4125
- audio codec
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Lee Jones" <lee@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
- <20250711-pm4125_audio_codec_v1-v2-1-13e6f835677a@linaro.org>
- <20250718134334.GF11056@google.com>
-In-Reply-To: <20250718134334.GF11056@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri Jul 18, 2025 at 2:43 PM BST, Lee Jones wrote:
-> On Fri, 11 Jul 2025, Alexey Klimov wrote:
->
->> The audio codec IC is found on Qualcomm PM4125/PM2250 PMIC.
->> It has TX and RX soundwire slave devices hence two files are added.
->>=20
->> While at this, also add pattern for respecive node in mfd
->> qcom,spmi-pmic schema so the devicetree for this audio block of
->> PMIC can be validated properly.
->>=20
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |   4 +-
->>  .../bindings/sound/qcom,pm4125-codec.yaml          | 134 ++++++++++++++=
-+++++++
->>  .../devicetree/bindings/sound/qcom,pm4125-sdw.yaml |  79 ++++++++++++
->
-> Do you have to submit these all in a single patch?
+On Mon, 21 Jul 2025 09:09:06 +0000
+Bough Chen <haibo.chen@nxp.com> wrote:
 
-qcom,pm4125-codec.yaml and qcom,pm4125-sdw.yaml describe one device (sub-de=
-vice)
-and change for qcom,spmi-pmic.yaml is needed to avoid failing dtbs check.
+> > -----Original Message-----
+> > From: Peng Fan (OSS) <peng.fan@oss.nxp.com>
+> > Sent: 2025=E5=B9=B47=E6=9C=8821=E6=97=A5 17:39
+> > To: Nuno S? <noname.nuno@gmail.com>
+> > Cc: Primoz Fiser <primoz.fiser@norik.com>; Jonathan Cameron
+> > <jic23@kernel.org>; David Lechner <dlechner@baylibre.com>; Bough Chen
+> > <haibo.chen@nxp.com>; Nuno Sa <nuno.sa@analog.com>; Andy Shevchenko
+> > <andy@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn Guo
+> > <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> > <festevam@gmail.com>; linux-iio@vger.kernel.org; imx@lists.linux.dev;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linux-kernel@vger.kernel.org; upstream@lists.phytec.de;
+> > andrej.picej@norik.com
+> > Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration =
+properties
+> >=20
+> > On Mon, Jul 14, 2025 at 05:11:31PM +0100, Nuno S? wrote: =20
+> > >On Mon, 2025-07-14 at 07:56 +0200, Primoz Fiser wrote: =20
+> > >> Hi all,
+> > >>
+> > >> On 13. 07. 25 17:02, Jonathan Cameron wrote: =20
+> > >> > On Thu, 10 Jul 2025 10:46:44 -0500
+> > >> > David Lechner <dlechner@baylibre.com> wrote:
+> > >> > =20
+> > >> > > On 7/10/25 2:39 AM, Primoz Fiser wrote: =20
+> > >> > > > From: Andrej Picej <andrej.picej@norik.com>
+> > >> > > >
+> > >> > > > Document i.MX93 ADC calibration properties and how to set them.
+> > >> > > >
+> > >> > > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > >> > > > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> > >> > > > ---
+> > >> > > > ??.../bindings/iio/adc/nxp,imx93-adc.yaml???????????? | 21
+> > >> > > > +++++++++++++++++++
+> > >> > > > ??1 file changed, 21 insertions(+)
+> > >> > > >
+> > >> > > > diff --git
+> > >> > > > a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-
+> > >> > > > adc.yaml
+> > >> > > > b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > >> > > > index c2e5ff418920..d1c04cf85fe6 100644
+> > >> > > > ---
+> > >> > > > a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
+> > >> > > > +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.y
+> > >> > > > +++ aml
+> > >> > > > @@ -52,6 +52,27 @@ properties:
+> > >> > > > ???? "#io-channel-cells":
+> > >> > > > ???????? const: 1
+> > >> > > > ??
+> > >> > > > +?? nxp,calib-avg-en:
+> > >> > > > +?????? default: 1
+> > >> > > > +?????? description:
+> > >> > > > +?????????? Enable or disable calibration averaging function (=
+AVGEN).
+> > >> > > > +?????? $ref: /schemas/types.yaml#/definitions/uint32
+> > >> > > > +?????? enum: [ 0, 1 ]
+> > >> > > > +
+> > >> > > > +?? nxp,calib-nr-samples:
+> > >> > > > +?????? default: 512
+> > >> > > > +?????? description:
+> > >> > > > +?????????? Selects number of samples (NRSMPL) to be used duri=
+ng =20
+> > calibration. =20
+> > >> > > > +?????? $ref: /schemas/types.yaml#/definitions/uint32
+> > >> > > > +?????? enum: [ 16, 32, 128, 512 ] =20
+> > >> >
+> > >> > Allow 1 as a value and drop the enabled above.???? Averaging over 1
+> > >> > sample is same as no averaging and gives simpler binding.
+> > >> > =20
+> > >> > > > +
+> > >> > > > +?? nxp,calib-t-sample:
+> > >> > > > +?????? default: 22
+> > >> > > > +?????? description:
+> > >> > > > +?????????? Selects sample time (TSAMP) of calibration
+> > >> > > > +conversions in ADC
+> > >> > > > clock cycles
+> > >> > > > +?????? $ref: /schemas/types.yaml#/definitions/uint32
+> > >> > > > +?????? enum: [ 8, 16, 22, 32 ]
+> > >> > > > +
+> > >> > > > ??required:
+> > >> > > > ???? - compatible
+> > >> > > > ???? - reg?? =20
+> > >> > >
+> > >> > > This seem like things that should be set at runtime rather than
+> > >> > > in the devicetree. Unless there is some justification on why
+> > >> > > these values depend on how the chip is wired up? =20
+> > >>
+> > >> It depends how ADC 1.8V Vref is wired up, especially how noisy it is.
+> > >> =20
+> > >> >
+> > >> > Further to that, I'd like to see some explanation of why we care to
+> > >> > change it at all. Is it ever a bad idea to enable averaging and
+> > >> > pick a large number of samples for calibration? =20
+> > >>
+> > >> This is a snippet from the i.MX93 TRM, chapter Analog-to-Digital
+> > >> Converter (SAR_ADC) describing calibration steps:
+> > >>
+> > >> 1. Wait for deassertion of functional reset.
+> > >> 2. Configure SAR controller operating clock (MCR[ADCLKSE] =3D 0).
+> > >> 3. Bring ADC out of Power-down state (MCR[PWDN] =3D 0).
+> > >> 4. Configure desired calibration settings (default values kept for
+> > >> highest accuracy maximum time).
+> > >> ??? MCR[TSAMP]: Sample time for calibration conversion ???
+> > >> MCR[NRSMPL]: Number of samples in averaging ??? MCR[AVGEN]: Averaging
+> > >> function enable in calibration 5. Run calibration by writing a one to
+> > >> MCR[CALSTART].
+> > >> 6. Check calibration run status in MSR[CALBUSY]???wait until
+> > >> MSR[CALBUSY] =3D 0; alternatively, MSR[ADCSTAT] can be used to check
+> > >> status.
+> > >> 7. Check calibration pass/fail status in MSR[CALFAIL] field. If
+> > >> MSR[CALFAIL] =3D 1 then calibration failed. Detailed status can be
+> > >> checked in CALSTAT.
+> > >>
+> > >>
+> > >> See point 4).
+> > >>
+> > >> Not sure why would there be an option to configure i.MX93 ADC
+> > >> calibration parameters if one use-case (max accuracy max time) to
+> > >> rule them all?
+> > >> =20
+> > >
+> > >Sometimes HW guys just want to give you some options. Does not mean we
+> > >have to use them all :).
+> > >
+> > >I guess what Jonathan is interested in, is to understand in what
+> > >conditions the defaults are no good for the calibration? If we can have
+> > >a set of values that should pretty much always work, no need to further
+> > >complicate the bindings or the driver. =20
+> >=20
+> > Just my understanding, it is hard to use one fixed settings to fit all =
+kinds of
+> > conditions.
+> >=20
+> >                  Noise induced from PCB tracks  Electro- magnetic noise
+> > 		     |                           |
+> > 		     V                           V
+> >  ---------
+> > |SOC(ADC)|   <---------------------------------<- (~) external Signal
+> >  ---------
+> >                  ^                 ^
+> >                  |                 |
+> >              I/O coupled noise    Internal noise
+> >=20
+> >=20
+> > So OEM A's board may needs different settings compared with OEM B's boa=
+rd. =20
+>=20
+> The noise on Vref did impact the calibration, we did get report from cust=
+omer, and IC guys suggested to do like the following patch, what's your com=
+ments?
+>=20
+> https://patchwork.kernel.org/project/linux-iio/patch/20250423-adcpatch-v1=
+-1-b0e84c27ae98@nxp.com/
 
-In theory I can split soundwire slave bindings from IC bindings itself and
-I may get questions why bindgings for one device is submitted in two steps.
+To me warning and accepting a failed calibration is better than tweaking se=
+ttings.
 
-If you really want me to do this, then please let me know.
-Otherwise I don't see huge benefits of splitting it since they
-are logically and physically connected.
+The reason is I'm still failing to understand why we should (for example) r=
+educe the
+time over which the signal is averaged.  Why would that make it more likely=
+ to pass
+in some noise conditions than another set?  It might increase the chance of=
+ passing
+I guess, but it's still likely to fail sometimes.
 
-BR,
-Alexey
+Jonathan
+
+>=20
+> Regards
+> Haibo Chen=20
+> >=20
+> > Regards,
+> > Peng
+> >  =20
+> > >
+> > >- Nuno S?? =20
+> > >> On the other hand, public TRM doesn't give much more information and=
+ =20
+> > >> > =20
+
 
