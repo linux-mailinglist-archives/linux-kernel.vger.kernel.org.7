@@ -1,94 +1,164 @@
-Return-Path: <linux-kernel+bounces-744306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1EBB10ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:54:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26EEB10ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E511881F01
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29F4188D062
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1542D4B68;
-	Thu, 24 Jul 2025 12:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC2A2D5427;
+	Thu, 24 Jul 2025 12:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZBpdSnxs"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bf6yVMhO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AAA2D46DF;
-	Thu, 24 Jul 2025 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DDE2D3ED7;
+	Thu, 24 Jul 2025 12:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361640; cv=none; b=dKPkBJqs3ZMPit12VcLd8xOo5FRtpaT0Rhmt3hjBzvomCLpP0UTXzqRKakc47LU4HWGe491FTuKpBu6L0V0OXSNJvDsMDCCWeE3CmoG+iuF+gE5HaLXLbepDUAYoMJprbkbA21fu7F8Aj+C+AftjYr9OZzdKAkF+tpW8Yq8C9ns=
+	t=1753361646; cv=none; b=SlEkQ5XYbSeKdF/yfESdColid7Ou+e1cnqC7iTyrUDM2iTXadSRtF3WNSq40ex3zUsJAYmC+rJvvpI+Whr/6aFGS/EcIekmaXbMGL1ltu4gfHU84ugosxxAQjdh1NlwCtEizWqif8AD+Qkx9A9KVXBsOwqFNZnVAhhmtXDYsYSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361640; c=relaxed/simple;
-	bh=4nKgSBvNF6KNqFuR3NRAg8Z96QH5x2/xGsDT5KpIPKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPLDNUDS1UEMY7NZM5Cy/f+Ufoyzy0wXSoalOk7YYNgc2z2OqTgjKnJSr8iLZjYKJ/NGKGGsy6GJdQOVA8umbAc4enweBgTwxGuRHl7dArNFyEoWOEB5gHVug5Z1Cvk8aY0MsTtY5dm3H4DJ1kmkGHIVI62cSd2lVqnaUSOiuBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZBpdSnxs; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=n3/g4/jBSS+544GxD3Uqs3+ihWOI9sn+j4nRaeUAg7Y=; b=ZBpdSnxsorutDmupx/4WVEj1SW
-	1bm4a1Sl3LhmC7jKATKv6Bj5YVbhDxxMPBxAXZG6W+WhjzDrpfbfTQgHmOFy8klPSGkde/Myqk3Pb
-	SHKyusWfHkjVxeysakRsTlCMlY406YskhV+RB00hIFeaHeEgYDfq9m/MRcdqhX6PzFYo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uevS7-002lEV-5u; Thu, 24 Jul 2025 14:53:39 +0200
-Date: Thu, 24 Jul 2025 14:53:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tao Ren <rentao.bupt@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v3 10/13] ARM: dts: aspeed: Add Facebook Fuji-data64
- (AST2600) Board
-Message-ID: <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
-References: <20250723233013.142337-1-rentao.bupt@gmail.com>
- <20250723233013.142337-11-rentao.bupt@gmail.com>
- <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
- <aIGGdbIX9HaV4dB/@localhost.localdomain>
+	s=arc-20240116; t=1753361646; c=relaxed/simple;
+	bh=o/HNMzmoL5jVJLbw/YCLhzRdjr7O65GLHlcUxrOksEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XPHrbQkIcAeOnKyZKorDQQ4OiCEyT1WBajs+3c7x4QwlSv8svdNIOA+f03t2K796rhhopZSdJq6I/Icp/YK6dB/NAgYlkGWRMeJdtXFtJfNfraiHRA80qOMSalxzTXLt0ZXPkEndkmK2Vu64TqjMQuDLv1ZBo2vqCy7abGQ7ny4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bf6yVMhO; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753361645; x=1784897645;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=o/HNMzmoL5jVJLbw/YCLhzRdjr7O65GLHlcUxrOksEQ=;
+  b=Bf6yVMhOeRIsghxSHSJD5FMRjub9HB4iu4YJ/RGj4MrUgJOjdXfuBpJU
+   APoF/Vaw26XH3Idypn8KvSxOAdgDxXF/EFXOzkDbipk5LqO86dN5PFO06
+   8Fbp3jm99ZN0P+wtSxWLiv8IwyfiiUoYlJuqTkjyjGUracDtcXzD33gYg
+   UXWVzwrZitgOZ8yeqtJflDcWSth932KXOHUUlBPSKoLquwu7ugy9JaTsA
+   TFirSTXOokNxWn4Yc9ukAcfVfVbIQaTGI5gQLmmvuMMQvS0SeuYD1GdF9
+   w7q+VO5cARmMWyrIvYcHpmwN26/1BKaQmZpSQDZwbmlj9fz83c1oDF3V3
+   Q==;
+X-CSE-ConnectionGUID: tIwSoiWlSt2K79Q+plyrhA==
+X-CSE-MsgGUID: xG6kZDVHQCqP7EbY0igc2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55778212"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="55778212"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:54:04 -0700
+X-CSE-ConnectionGUID: MvuiZzvORyu+oi7jI86Kdg==
+X-CSE-MsgGUID: 8PZcJ1kUTCmTpJpYRniPwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="159981097"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.18])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:54:00 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Kyung Min Park <kyung.min.park@intel.com>,
+	Tony Luck <tony.luck@intel.com>
+Cc: xin3.li@intel.com,
+	maciej.wieczor-retman@intel.com,
+	Farrah Chen <farrah.chen@intel.com>,
+	stable@vger.kernel.org,
+	Borislav Petkov <bp@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] x86: Clear feature bits disabled at compile-time
+Date: Thu, 24 Jul 2025 14:53:46 +0200
+Message-ID: <20250724125346.2792543-1-maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIGGdbIX9HaV4dB/@localhost.localdomain>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 06:03:49PM -0700, Tao Ren wrote:
-> On Thu, Jul 24, 2025 at 02:03:20AM +0200, Andrew Lunn wrote:
-> > > +&mac3 {
-> > > +	status = "okay";
-> > > +	phy-mode = "rgmii";
-> > 
-> > Does the PCB have extra long clock lines to implement the 2ns delay?
-> > 
-> > 	Andrew
-> 
-> Hi Andrew,
-> 
-> Thank you for catching it. I didn't notice the settings because the file
-> is copied from the exiting fuji.dts with minor changes.
-> 
-> The delay is currently introduced on MAC side (by manually setting SCU
-> registers), but I guess I can update phy-mode to "rgmii-id" so the delay
-> can be handled by the PHY?
+If some config options are disabled during compile time, they still are
+enumerated in macros that use the x86_capability bitmask - cpu_has() or
+this_cpu_has().
 
-That would be good, if it works. The problem with the current code is
-that those SCU registers are not set as part of the MAC driver, so it
-is hard to know what value they have.
+The features are also visible in /proc/cpuinfo even though they are not
+enabled - which is contrary to what the documentation states about the
+file. Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
+split_lock_detect, user_shstk, avx_vnni and enqcmd.
 
-	Andrew
+Add a DISABLED_MASK_INITIALIZER macro that creates an initializer list
+filled with DISABLED_MASKx bitmasks.
+
+Initialize the cpu_caps_cleared array with the autogenerated disabled
+bitmask.
+
+Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
+Reported-by: Farrah Chen <farrah.chen@intel.com>
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: <stable@vger.kernel.org>
+---
+Changelog v4:
+- Fix macro name to match with the patch message.
+- Add Peter's SoB.
+
+Changelog v3:
+- Remove Fixes: tags, keep only one at the point where the documentation
+  changed and promised feature bits wouldn't show up if they're not
+  enabled.
+- Don't use a helper to initialize cpu_caps_cleared, just statically
+  initialize it.
+- Remove changes to cpu_caps_set.
+- Rewrite patch message to account for changes.
+
+Changelog v2:
+- Redo the patch to utilize a more generic solution, not just fix the
+  LAM and FRED feature bits.
+- Note more feature flags that shouldn't be present.
+- Add fixes and cc tags.
+
+ arch/x86/kernel/cpu/common.c       | 3 ++-
+ arch/x86/tools/cpufeaturemasks.awk | 6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 77afca95cced..a9040038ad9d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -704,7 +704,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
+ }
+ 
+ /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
+-__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
++__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long)) =
++	DISABLED_MASK_INITIALIZER;
+ __u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/tools/cpufeaturemasks.awk b/arch/x86/tools/cpufeaturemasks.awk
+index 173d5bf2d999..1eabbc69f50d 100755
+--- a/arch/x86/tools/cpufeaturemasks.awk
++++ b/arch/x86/tools/cpufeaturemasks.awk
+@@ -84,5 +84,11 @@ END {
+ 		printf "\t) & (1U << ((x) & 31)))\n\n";
+ 	}
+ 
++		printf "\n#define DISABLED_MASK_INITIALIZER\t\t\t\\";
++		printf "\n\t{\t\t\t\t\t\t\\";
++		for (i = 0; i < ncapints; i++)
++			printf "\n\t\tDISABLED_MASK%d,\t\t\t\\", i;
++		printf "\n\t}\n\n";
++
+ 	printf "#endif /* _ASM_X86_CPUFEATUREMASKS_H */\n";
+ }
+-- 
+2.49.0
+
 
