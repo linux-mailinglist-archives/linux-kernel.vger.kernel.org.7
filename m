@@ -1,429 +1,372 @@
-Return-Path: <linux-kernel+bounces-744426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DEBB10CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A3FB10CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B3DB3B8578
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3A0B04DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55982DECCA;
-	Thu, 24 Jul 2025 14:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5cXUpYw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933C026A1AC;
-	Thu, 24 Jul 2025 14:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2972D8DBA;
+	Thu, 24 Jul 2025 14:03:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579572E36ED
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365701; cv=none; b=jx0PqUSBuhy2BpG3AVYvpgGHEmkczdFfzoYlGwLkca7WQhWdM+vCsdKtzn/I+0xUN8o7BD1lc58ZTt2VbaZR/sdfgKGGgYw7zho1NjGOaHVxVeyP+b2pipD8mgm0uxaUDN/BaorYY3lx5/hSNuIHFg3meFp+r46muLE+Wyg+9zs=
+	t=1753365785; cv=none; b=B9kCQupFXxGk+dp7c+Y3xcOrJk0TBRsr6UluprMUwOsdkXONZGcZU+JV55xsI0oWpvOcvblNa3ieqfuENJxwNRhk/WEuNXpaIYDmNMuSbvQQj67bcRRnx8vUYCSzR4nygC4FG0ZSeiplVxSLfrl6nNd2pY1SzaOahFEXPWYk5b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365701; c=relaxed/simple;
-	bh=Bl2z6UzBE2b4Fs8m5F+n8N6Lz4INOiTKISDcUCJVU6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y8Og/ZJKwTpsnwTVAAS90REJp9k0b2M9NcEIUTWah+MuR75RPTMK+Jl8appiJNr5bI+xHF8vtGaPcAM8vz+ARSYzH0NSbqFj+gI9tDiBRMo3nKtHOqt5Ih103tKqmd30jDcmJUArlx6l5M7eAAAiHWUE1/rPsNA8VMC7tItMLgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5cXUpYw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF647C4CEF5;
-	Thu, 24 Jul 2025 14:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753365701;
-	bh=Bl2z6UzBE2b4Fs8m5F+n8N6Lz4INOiTKISDcUCJVU6Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T5cXUpYwzxh8ggJkSRCDhW/e0NBtjNCthqiOkZzLZudAyo18SbV43HJa1hT4pwMtH
-	 EKDTk80HOFN3U2Qvjo1UJANcDC6j4zLpmH1up7UHBEV/8+3jv91R6UcIqDFn4jno5j
-	 vd9zUbCpijiXDIUUfAapbS1nc7zJTC9lXKbg46KBP96YOgri48IjQXPQccW1MyRaLV
-	 pgqooFlkRaC9wwDiFLBoiPv9TNscMy9/T25K+hDUIHfDVYRwsjSzi65XAtYCYkVkrD
-	 /pM8+uheplEaLjRbzwuR/0BYb0c3+Ns62BJADtRFQnyeKg1r1wC3hLcOrrlbsS8Pcx
-	 GQGF5M2z5Mvuw==
-From: Philipp Stanner <phasta@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH] drm/sched: Extend and update documentation
-Date: Thu, 24 Jul 2025 16:01:22 +0200
-Message-ID: <20250724140121.70873-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1753365785; c=relaxed/simple;
+	bh=Lms1F2LL7lXU4Ksry1IIkZGA1UdmGyd6lV4pwPOAU/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kogf+IhMBp0WkaAI2ct1FPO2EBkYBFwoJXeVe724II+NZEePADMnqCVXUlUc/laKMFGfebAYdXHlguVv87iei8jFotOlR88xLlMH6EbPaDvSJ3vNi+Pt1pYjljFjBg0ZrstRHZ2X3v/pd24Uxjauu1w2SCquXsDt/9zejcOqi08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB21D1A00;
+	Thu, 24 Jul 2025 07:02:55 -0700 (PDT)
+Received: from [10.57.84.166] (unknown [10.57.84.166])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 01D7E3F66E;
+	Thu, 24 Jul 2025 07:02:58 -0700 (PDT)
+Message-ID: <45acead9-d734-42b2-a1cc-a565dbf5fe60@arm.com>
+Date: Thu, 24 Jul 2025 15:02:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 16/36] arm_mpam: Add MPAM MSC register layout
+ definitions
+Content-Language: en-GB
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-17-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-17-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Philipp Stanner <pstanner@redhat.com>
+Hi James,
 
-The various objects and their memory lifetime used by the GPU scheduler
-are currently not fully documented.
+Nit: The file uses a mixture of tabs and spaces.
 
-Add documentation describing the scheduler's objects. Improve the
-general documentation at a few other places.
+On 11/07/2025 19:36, James Morse wrote:
+> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
+> (MSCs) with an identity/configuration page.
+> 
+> Add the definitions for these registers as offset within the page(s).
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>   drivers/platform/arm64/mpam/mpam_internal.h | 268 ++++++++++++++++++++
+>   1 file changed, 268 insertions(+)
+> 
+> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
+> index d49bb884b433..9110c171d9d2 100644
+> --- a/drivers/platform/arm64/mpam/mpam_internal.h
+> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
+> @@ -150,4 +150,272 @@ extern struct list_head mpam_classes;
+>   int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>   				   cpumask_t *affinity);
+>   
+> +/*
+> + * MPAM MSCs have the following register layout. See:
+> + * Arm Architecture Reference Manual Supplement - Memory System Resource
+> + * Partitioning and Monitoring (MPAM), for Armv8-A. DDI 0598A.a
 
-Co-developed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-The first draft for this docu was posted by Christian in late 2023 IIRC.
+I've been checking this against 
+https://developer.arm.com/documentation/ihi0099/latest/ as that looks to 
+be the current document although hopefully the contents are 
+non-contradictory.> + */
+> +#define MPAM_ARCHITECTURE_V1    0x10
+> +
+> +/* Memory mapped control pages: */
+> +/* ID Register offsets in the memory mapped page */
+> +#define MPAMF_IDR               0x0000  /* features id register */
+> +#define MPAMF_MSMON_IDR         0x0080  /* performance monitoring features */
+> +#define MPAMF_IMPL_IDR          0x0028  /* imp-def partitioning */
+> +#define MPAMF_CPOR_IDR          0x0030  /* cache-portion partitioning */
+> +#define MPAMF_CCAP_IDR          0x0038  /* cache-capacity partitioning */
+> +#define MPAMF_MBW_IDR           0x0040  /* mem-bw partitioning */
+> +#define MPAMF_PRI_IDR           0x0048  /* priority partitioning */
+> +#define MPAMF_CSUMON_IDR        0x0088  /* cache-usage monitor */
+> +#define MPAMF_MBWUMON_IDR       0x0090  /* mem-bw usage monitor */
+> +#define MPAMF_PARTID_NRW_IDR    0x0050  /* partid-narrowing */
+> +#define MPAMF_IIDR              0x0018  /* implementer id register */
+> +#define MPAMF_AIDR              0x0020  /* architectural id register */
+> +
+> +/* Configuration and Status Register offsets in the memory mapped page */
+> +#define MPAMCFG_PART_SEL        0x0100  /* partid to configure: */
+> +#define MPAMCFG_CPBM            0x1000  /* cache-portion config */
+> +#define MPAMCFG_CMAX            0x0108  /* cache-capacity config */
+> +#define MPAMCFG_CMIN            0x0110  /* cache-capacity config */
+> +#define MPAMCFG_MBW_MIN         0x0200  /* min mem-bw config */
+> +#define MPAMCFG_MBW_MAX         0x0208  /* max mem-bw config */
+> +#define MPAMCFG_MBW_WINWD       0x0220  /* mem-bw accounting window config */
+> +#define MPAMCFG_MBW_PBM         0x2000  /* mem-bw portion bitmap config */
+> +#define MPAMCFG_PRI             0x0400  /* priority partitioning config */
+> +#define MPAMCFG_MBW_PROP        0x0500  /* mem-bw stride config */
+> +#define MPAMCFG_INTPARTID       0x0600  /* partid-narrowing config */
+> +
+> +#define MSMON_CFG_MON_SEL       0x0800  /* monitor selector */
+> +#define MSMON_CFG_CSU_FLT       0x0810  /* cache-usage monitor filter */
+> +#define MSMON_CFG_CSU_CTL       0x0818  /* cache-usage monitor config */
+> +#define MSMON_CFG_MBWU_FLT      0x0820  /* mem-bw monitor filter */
+> +#define MSMON_CFG_MBWU_CTL      0x0828  /* mem-bw monitor config */
+> +#define MSMON_CSU               0x0840  /* current cache-usage */
+> +#define MSMON_CSU_CAPTURE       0x0848  /* last cache-usage value captured */
+> +#define MSMON_MBWU              0x0860  /* current mem-bw usage value */
+> +#define MSMON_MBWU_CAPTURE      0x0868  /* last mem-bw value captured */
+> +#define MSMON_CAPT_EVNT         0x0808  /* signal a capture event */
+> +#define MPAMF_ESR               0x00F8  /* error status register */
+> +#define MPAMF_ECR               0x00F0  /* error control register */
+> +
+> +/* MPAMF_IDR - MPAM features ID register */
+> +#define MPAMF_IDR_PARTID_MAX            GENMASK(15, 0)
+> +#define MPAMF_IDR_PMG_MAX               GENMASK(23, 16)
+> +#define MPAMF_IDR_HAS_CCAP_PART         BIT(24)
+> +#define MPAMF_IDR_HAS_CPOR_PART         BIT(25)
+> +#define MPAMF_IDR_HAS_MBW_PART          BIT(26)
+> +#define MPAMF_IDR_HAS_PRI_PART          BIT(27)
+> +#define MPAMF_IDR_HAS_EXT               BIT(28)
+MPAMF_IDR_EXT. The field name is ext rather than has_ext. > +#define 
+MPAMF_IDR_HAS_IMPL_IDR          BIT(29)
+> +#define MPAMF_IDR_HAS_MSMON             BIT(30)
+> +#define MPAMF_IDR_HAS_PARTID_NRW        BIT(31)
+> +#define MPAMF_IDR_HAS_RIS               BIT(32)
+> +#define MPAMF_IDR_HAS_EXT_ESR           BIT(38)
+MPAMF_IDR_HAS_EXTD_ESR. Missing D.> +#define MPAMF_IDR_HAS_ESR 
+     BIT(39)
+> +#define MPAMF_IDR_RIS_MAX               GENMASK(59, 56)
+> +
+> +/* MPAMF_MSMON_IDR - MPAM performance monitoring ID register */
+> +#define MPAMF_MSMON_IDR_MSMON_CSU               BIT(16)
+> +#define MPAMF_MSMON_IDR_MSMON_MBWU              BIT(17)
+> +#define MPAMF_MSMON_IDR_HAS_LOCAL_CAPT_EVNT     BIT(31)
+> +
+> +/* MPAMF_CPOR_IDR - MPAM features cache portion partitioning ID register */
+> +#define MPAMF_CPOR_IDR_CPBM_WD                  GENMASK(15, 0)
+> +
+> +/* MPAMF_CCAP_IDR - MPAM features cache capacity partitioning ID register */
+> +#define MPAMF_CCAP_IDR_HAS_CMAX_SOFTLIM         BIT(31)
+> +#define MPAMF_CCAP_IDR_NO_CMAX                  BIT(30)
+> +#define MPAMF_CCAP_IDR_HAS_CMIN                 BIT(29)
+> +#define MPAMF_CCAP_IDR_HAS_CASSOC               BIT(28)
+> +#define MPAMF_CCAP_IDR_CASSOC_WD                GENMASK(12, 8)
+> +#define MPAMF_CCAP_IDR_CMAX_WD                  GENMASK(5, 0)
+nit: Field ordering differs from the other registers.> +
+> +/* MPAMF_MBW_IDR - MPAM features memory bandwidth partitioning ID register */
+> +#define MPAMF_MBW_IDR_BWA_WD            GENMASK(5, 0)
+> +#define MPAMF_MBW_IDR_HAS_MIN           BIT(10)
+> +#define MPAMF_MBW_IDR_HAS_MAX           BIT(11)
+> +#define MPAMF_MBW_IDR_HAS_PBM           BIT(12)
+> +#define MPAMF_MBW_IDR_HAS_PROP          BIT(13)
+> +#define MPAMF_MBW_IDR_WINDWR            BIT(14)
+> +#define MPAMF_MBW_IDR_BWPBM_WD          GENMASK(28, 16)
+> +
+> +/* MPAMF_PRI_IDR - MPAM features priority partitioning ID register */
+> +#define MPAMF_PRI_IDR_HAS_INTPRI        BIT(0)
+> +#define MPAMF_PRI_IDR_INTPRI_0_IS_LOW   BIT(1)
+> +#define MPAMF_PRI_IDR_INTPRI_WD         GENMASK(9, 4)
+> +#define MPAMF_PRI_IDR_HAS_DSPRI         BIT(16)
+> +#define MPAMF_PRI_IDR_DSPRI_0_IS_LOW    BIT(17)
+> +#define MPAMF_PRI_IDR_DSPRI_WD          GENMASK(25, 20)
+> +
+> +/* MPAMF_CSUMON_IDR - MPAM cache storage usage monitor ID register */
+> +#define MPAMF_CSUMON_IDR_NUM_MON        GENMASK(15, 0)
+> +#define MPAMF_CSUMON_IDR_HAS_OFLOW_CAPT	BIT(24)
+> +#define MPAMF_CSUMON_IDR_HAS_CEVNT_OFLW	BIT(25)
+> +#define MPAMF_CSUMON_IDR_HAS_OFSR	BIT(26)
+> +#define MPAMF_CSUMON_IDR_HAS_OFLOW_LNKG	BIT(27)
+> +#define MPAMF_CSUMON_IDR_HAS_XCL	BIT(29)
+> +#define MPAMF_CSUMON_IDR_CSU_RO		BIT(30)
+> +#define MPAMF_CSUMON_IDR_HAS_CAPTURE    BIT(31)
+> +
+> +/* MPAMF_MBWUMON_IDR - MPAM memory bandwidth usage monitor ID register */
+> +#define MPAMF_MBWUMON_IDR_NUM_MON       GENMASK(15, 0)
+> +#define MPAMF_MBWUMON_IDR_HAS_RWBW      BIT(28)
+> +#define MPAMF_MBWUMON_IDR_LWD           BIT(29)
+> +#define MPAMF_MBWUMON_IDR_HAS_LONG      BIT(30)
+> +#define MPAMF_MBWUMON_IDR_HAS_CAPTURE   BIT(31)
+> +
+> +/* MPAMF_PARTID_NRW_IDR - MPAM PARTID narrowing ID register */
+> +#define MPAMF_PARTID_NRW_IDR_INTPARTID_MAX      GENMASK(15, 0)
+> +
+> +/* MPAMF_IIDR - MPAM implementation ID register */
+> +#define MPAMF_IIDR_PRODUCTID    GENMASK(31, 20)
+> +#define MPAMF_IIDR_PRODUCTID_SHIFT	20
+> +#define MPAMF_IIDR_VARIANT      GENMASK(19, 16)
+> +#define MPAMF_IIDR_VARIANT_SHIFT	16
+> +#define MPAMF_IIDR_REVISON      GENMASK(15, 12)
+> +#define MPAMF_IIDR_REVISON_SHIFT	12
+> +#define MPAMF_IIDR_IMPLEMENTER  GENMASK(11, 0)
+> +#define MPAMF_IIDR_IMPLEMENTER_SHIFT	0
+> +
+> +/* MPAMF_AIDR - MPAM architecture ID register */
+> +#define MPAMF_AIDR_ARCH_MAJOR_REV       GENMASK(7, 4)
+> +#define MPAMF_AIDR_ARCH_MINOR_REV       GENMASK(3, 0)
+> +
+> +/* MPAMCFG_PART_SEL - MPAM partition configuration selection register */
+> +#define MPAMCFG_PART_SEL_PARTID_SEL     GENMASK(15, 0)
+> +#define MPAMCFG_PART_SEL_INTERNAL       BIT(16)
+> +#define MPAMCFG_PART_SEL_RIS            GENMASK(27, 24)
+> +
+> +/* MPAMCFG_CMAX - MPAM cache capacity configuration register */
+> +#define MPAMCFG_CMAX_SOFTLIM            BIT(31)
+> +#define MPAMCFG_CMAX_CMAX               GENMASK(15, 0)
+> +
+> +/* MPAMCFG_CMIN - MPAM cache capacity configuration register */
+> +#define MPAMCFG_CMIN_CMIN               GENMASK(15, 0)
+> +
+> +/*
+> + * MPAMCFG_MBW_MIN - MPAM memory minimum bandwidth partitioning configuration
+> + *                   register
+> + */
+> +#define MPAMCFG_MBW_MIN_MIN             GENMASK(15, 0)
+> +
+> +/*
+> + * MPAMCFG_MBW_MAX - MPAM memory maximum bandwidth partitioning configuration
+> + *                   register
+> + */
+> +#define MPAMCFG_MBW_MAX_MAX             GENMASK(15, 0)
+> +#define MPAMCFG_MBW_MAX_HARDLIM         BIT(31)
+> +
+> +/*
+> + * MPAMCFG_MBW_WINWD - MPAM memory bandwidth partitioning window width
+> + *                     register
+> + */
+> +#define MPAMCFG_MBW_WINWD_US_FRAC       GENMASK(7, 0)
+> +#define MPAMCFG_MBW_WINWD_US_INT        GENMASK(23, 8)
+> +
+> +/* MPAMCFG_PRI - MPAM priority partitioning configuration register */
+> +#define MPAMCFG_PRI_INTPRI              GENMASK(15, 0)
+> +#define MPAMCFG_PRI_DSPRI               GENMASK(31, 16)
+> +
+> +/*
+> + * MPAMCFG_MBW_PROP - Memory bandwidth proportional stride partitioning
+> + *                    configuration register
+> + */
+> +#define MPAMCFG_MBW_PROP_STRIDEM1       GENMASK(15, 0)
+> +#define MPAMCFG_MBW_PROP_EN             BIT(31)
+> +
+> +/*
+> + * MPAMCFG_INTPARTID - MPAM internal partition narrowing configuration register
+> + */
+> +#define MPAMCFG_INTPARTID_INTPARTID     GENMASK(15, 0)
+> +#define MPAMCFG_INTPARTID_INTERNAL      BIT(16)
+> +
+> +/* MSMON_CFG_MON_SEL - Memory system performance monitor selection register */
+> +#define MSMON_CFG_MON_SEL_MON_SEL       GENMASK(15, 0)
+> +#define MSMON_CFG_MON_SEL_RIS           GENMASK(27, 24)
+> +
+> +/* MPAMF_ESR - MPAM Error Status Register */
+> +#define MPAMF_ESR_PARTID_OR_MON GENMASK(15, 0)Probably a better name but PARTID_MON is in the specification.> +#define 
+MPAMF_ESR_PMG           GENMASK(23, 16)
+> +#define MPAMF_ESR_ERRCODE       GENMASK(27, 24)
+> +#define MPAMF_ESR_OVRWR         BIT(31)
+> +#define MPAMF_ESR_RIS           GENMASK(35, 32)
+> +
+> +/* MPAMF_ECR - MPAM Error Control Register */
+> +#define MPAMF_ECR_INTEN         BIT(0)
+> +
+> +/* Error conditions in accessing memory mapped registers */
+> +#define MPAM_ERRCODE_NONE                       0
+> +#define MPAM_ERRCODE_PARTID_SEL_RANGE           1
+> +#define MPAM_ERRCODE_REQ_PARTID_RANGE           2
+> +#define MPAM_ERRCODE_MSMONCFG_ID_RANGE          3
+> +#define MPAM_ERRCODE_REQ_PMG_RANGE              4
+> +#define MPAM_ERRCODE_MONITOR_RANGE              5
+> +#define MPAM_ERRCODE_INTPARTID_RANGE            6
+> +#define MPAM_ERRCODE_UNEXPECTED_INTERNAL        7
+> +
+> +/*
+> + * MSMON_CFG_CSU_FLT - Memory system performance monitor configure cache storage
+> + *                    usage monitor filter register
+> + */
+> +#define MSMON_CFG_CSU_FLT_PARTID       GENMASK(15, 0)
+> +#define MSMON_CFG_CSU_FLT_PMG          GENMASK(23, 16)
+> +
+> +/*
+> + * MSMON_CFG_CSU_CTL - Memory system performance monitor configure cache storage
+> + *                    usage monitor control register
+> + * MSMON_CFG_MBWU_CTL - Memory system performance monitor configure memory
+> + *                     bandwidth usage monitor control register
+> + */
+> +#define MSMON_CFG_x_CTL_TYPE           GENMASK(7, 0)
+> +#define MSMON_CFG_x_CTL_OFLOW_STATUS_L BIT(15)
+No OFLOW_STATUS_L for csu.> +#define MSMON_CFG_x_CTL_MATCH_PARTID   BIT(16)
+> +#define MSMON_CFG_x_CTL_MATCH_PMG      BIT(17)
+> +#define MSMON_CFG_x_CTL_SCLEN          BIT(19)
+> +#define MSMON_CFG_x_CTL_SUBTYPE        GENMASK(23, 20)
+GENMASK(22,20)> +#define MSMON_CFG_x_CTL_OFLOW_FRZ      BIT(24)
+> +#define MSMON_CFG_x_CTL_OFLOW_INTR     BIT(25)
+> +#define MSMON_CFG_x_CTL_OFLOW_STATUS   BIT(26)
+> +#define MSMON_CFG_x_CTL_CAPT_RESET     BIT(27)
+> +#define MSMON_CFG_x_CTL_CAPT_EVNT      GENMASK(30, 28)
+> +#define MSMON_CFG_x_CTL_EN             BIT(31)
+> +
+> +#define MSMON_CFG_MBWU_CTL_TYPE_MBWU			0x42
+> +#define MSMON_CFG_MBWU_CTL_TYPE_CSU			0x43
+> +
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_NONE                 0
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_READ                 1
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_WRITE                2
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_BOTH                 3
+I'm not sure where these come from? SUBTYPE is marked unused in the 
+spec. Remove?> +
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_MAX                  3
+> +#define MSMON_CFG_MBWU_CTL_SUBTYPE_MASK                 0x3
+Remove for same reason.> +
+> +/*
+> + * MSMON_CFG_MBWU_FLT - Memory system performance monitor configure memory
+> + *                     bandwidth usage monitor filter register
+> + */
+> +#define MSMON_CFG_MBWU_FLT_PARTID               GENMASK(15, 0)
+> +#define MSMON_CFG_MBWU_FLT_PMG                  GENMASK(23, 16)
+> +#define MSMON_CFG_MBWU_FLT_RWBW                 GENMASK(31, 30)
+> +
+> +/*
+> + * MSMON_CSU - Memory system performance monitor cache storage usage monitor
+> + *            register
+> + * MSMON_CSU_CAPTURE -  Memory system performance monitor cache storage usage
+> + *                     capture register
+> + * MSMON_MBWU  - Memory system performance monitor memory bandwidth usage
+> + *               monitor register
+> + * MSMON_MBWU_CAPTURE - Memory system performance monitor memory bandwidth usage
+> + *                     capture register
+> + */
+> +#define MSMON___VALUE          GENMASK(30, 0)
+> +#define MSMON___NRDY           BIT(31)
+> +#define MSMON_MBWU_L_VALUE     GENMASK(62, 0)
+This gets renamed in the series. I think all registers layout 
+definitions can be added in this commit.> +/*
+> + * MSMON_CAPT_EVNT - Memory system performance monitoring capture event
+> + *                  generation register
+> + */
+> +#define MSMON_CAPT_EVNT_NOW    BIT(0)
+> +
+>   #endif /* MPAM_INTERNAL_H */
+Thanks,
 
-This is an updated version. Please review.
-
-@Christian: As we agreed on months (a year?) ago I kept your Signed-off
-by. Just tell me if there's any issue or sth.
----
- Documentation/gpu/drm-mm.rst           |  36 ++++
- drivers/gpu/drm/scheduler/sched_main.c | 228 ++++++++++++++++++++++---
- include/drm/gpu_scheduler.h            |   5 +-
- 3 files changed, 238 insertions(+), 31 deletions(-)
-
-diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
-index d55751cad67c..95ee95fd987a 100644
---- a/Documentation/gpu/drm-mm.rst
-+++ b/Documentation/gpu/drm-mm.rst
-@@ -556,12 +556,48 @@ Overview
- .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-    :doc: Overview
- 
-+Job Object
-+----------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Job Object
-+
-+Entity Object
-+-------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Entity Object
-+
-+Hardware Fence Object
-+---------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Hardware Fence Object
-+
-+Scheduler Fence Object
-+----------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Scheduler Fence Object
-+
-+Scheduler and Run Queue Objects
-+-------------------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Scheduler and Run Queue Objects
-+
- Flow Control
- ------------
- 
- .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-    :doc: Flow Control
- 
-+Error and Timeout handling
-+--------------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Error and Timeout handling
-+
- Scheduler Function References
- -----------------------------
- 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 5a550fd76bf0..2e7bc1e74186 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -24,48 +24,220 @@
- /**
-  * DOC: Overview
-  *
-- * The GPU scheduler provides entities which allow userspace to push jobs
-- * into software queues which are then scheduled on a hardware run queue.
-- * The software queues have a priority among them. The scheduler selects the entities
-- * from the run queue using a FIFO. The scheduler provides dependency handling
-- * features among jobs. The driver is supposed to provide callback functions for
-- * backend operations to the scheduler like submitting a job to hardware run queue,
-- * returning the dependencies of a job etc.
-+ * The GPU scheduler is shared infrastructure intended to help drivers managing
-+ * command submission to their hardware.
-  *
-- * The organisation of the scheduler is the following:
-+ * To do so, it offers a set of scheduling facilities that interact with the
-+ * driver through callbacks which the latter can register.
-  *
-- * 1. Each hw run queue has one scheduler
-- * 2. Each scheduler has multiple run queues with different priorities
-- *    (e.g., HIGH_HW,HIGH_SW, KERNEL, NORMAL)
-- * 3. Each scheduler run queue has a queue of entities to schedule
-- * 4. Entities themselves maintain a queue of jobs that will be scheduled on
-- *    the hardware.
-+ * In particular, the scheduler takes care of:
-+ *   - Ordering command submissions
-+ *   - Signalling dma_fences, e.g., for finished commands
-+ *   - Taking dependencies between command submissions into account
-+ *   - Handling timeouts for command submissions
-  *
-- * The jobs in an entity are always scheduled in the order in which they were pushed.
-+ * All callbacks the driver needs to implement are restricted by dma_fence
-+ * signaling rules to guarantee deadlock free forward progress. This especially
-+ * means that for normal operation no memory can be allocated in a callback.
-+ * All memory which is needed for pushing the job to the hardware must be
-+ * allocated before arming a job. It also means that no locks can be taken
-+ * under which memory might be allocated.
-  *
-- * Note that once a job was taken from the entities queue and pushed to the
-- * hardware, i.e. the pending queue, the entity must not be referenced anymore
-- * through the jobs entity pointer.
-+ * Optional memory, for example for device core dumping or debugging, *must* be
-+ * allocated with GFP_NOWAIT and appropriate error handling if that allocation
-+ * fails. GFP_ATOMIC should only be used if absolutely necessary since dipping
-+ * into the special atomic reserves is usually not justified for a GPU driver.
-+ *
-+ * Note especially the following about the scheduler's historic background that
-+ * lead to sort of a double role it plays today:
-+ *
-+ * In classic setups N ("hardware scheduling") entities share one scheduler,
-+ * and the scheduler decides which job to pick from which entity and move it to
-+ * the hardware ring next (that is: "scheduling").
-+ *
-+ * Many (especially newer) GPUs, however, can have an almost arbitrary number
-+ * of hardware rings and it's a firmware scheduler which actually decides which
-+ * job will run next. In such setups, the GPU scheduler is still used (e.g., in
-+ * Nouveau) but does not "schedule" jobs in the classical sense anymore. It
-+ * merely serves to queue and dequeue jobs and resolve dependencies. In such a
-+ * scenario, it is recommended to have one scheduler per entity.
-+ */
-+
-+/**
-+ * DOC: Job Object
-+ *
-+ * The base job object (&struct drm_sched_job) contains submission dependencies
-+ * in the form of &struct dma_fence objects. Drivers can also implement an
-+ * optional prepare_job callback which returns additional dependencies as
-+ * dma_fence objects. It's important to note that this callback can't allocate
-+ * memory or grab locks under which memory is allocated.
-+ *
-+ * Drivers should use this as base class for an object which contains the
-+ * necessary state to push the command submission to the hardware.
-+ *
-+ * The lifetime of the job object needs to last at least from submitting it to
-+ * the scheduler (through drm_sched_job_arm()) until the scheduler has invoked
-+ * &struct drm_sched_backend_ops.free_job and, thereby, has indicated that it
-+ * does not need the job anymore. Drivers can of course keep their job object
-+ * alive for longer than that, but that's outside of the scope of the scheduler
-+ * component.
-+ *
-+ * Job initialization is split into two stages:
-+ *   1. drm_sched_job_init() which serves for basic preparation of a job.
-+ *      Drivers don't have to be mindful of this function's consequences and
-+ *      its effects can be reverted through drm_sched_job_cleanup().
-+ *   2. drm_sched_job_arm() which irrevokably arms a job for execution. This
-+ *      initializes the job's fences and the job has to be submitted with
-+ *      drm_sched_entity_push_job(). Once drm_sched_job_arm() has been called,
-+ *      the job structure has to be valid until the scheduler invoked
-+ *      drm_sched_backend_ops.free_job().
-+ *
-+ * It's important to note that after arming a job drivers must follow the
-+ * dma_fence rules and can't easily allocate memory or takes locks under which
-+ * memory is allocated.
-+ */
-+
-+/**
-+ * DOC: Entity Object
-+ *
-+ * The entity object (&struct drm_sched_entity) is a container for jobs which
-+ * should execute sequentially. Drivers should create an entity for each
-+ * individual context they maintain for command submissions which can run in
-+ * parallel.
-+ *
-+ * The lifetime of the entity *should not* exceed the lifetime of the
-+ * userspace process it was created for and drivers should call the
-+ * drm_sched_entity_flush() function from their file_operations.flush()
-+ * callback. It is possible that an entity object is not alive anymore
-+ * while jobs previously fetched from it are still running on the hardware.
-+ *
-+ * This is done because all results of a command submission should become
-+ * visible externally even after a process exits. This is normal POSIX
-+ * behavior for I/O operations.
-+ *
-+ * The problem with this approach is that GPU submissions contain executable
-+ * shaders enabling processes to evade their termination by offloading work to
-+ * the GPU. So when a process is terminated with a SIGKILL the entity object
-+ * makes sure that jobs are freed without running them while still maintaining
-+ * correct sequential order for signaling fences.
-+ *
-+ * All entities associated with a scheduler have to be torn down before that
-+ * scheduler.
-+ */
-+
-+/**
-+ * DOC: Hardware Fence Object
-+ *
-+ * The hardware fence object is a dma_fence provided by the driver through
-+ * &struct drm_sched_backend_ops.run_job. The driver signals this fence once the
-+ * hardware has completed the associated job.
-+ *
-+ * Drivers need to make sure that the normal dma_fence semantics are followed
-+ * for this object. It's important to note that the memory for this object can
-+ * *not* be allocated in &struct drm_sched_backend_ops.run_job since that would
-+ * violate the requirements for the dma_fence implementation. The scheduler
-+ * maintains a timeout handler which triggers if this fence doesn't signal
-+ * within a configurable amount of time.
-+ *
-+ * The lifetime of this object follows dma_fence refcounting rules. The
-+ * scheduler takes ownership of the reference returned by the driver and
-+ * drops it when it's not needed any more.
-+ *
-+ * See &struct drm_sched_backend_ops.run_job for precise refcounting rules.
-+ */
-+
-+/**
-+ * DOC: Scheduler Fence Object
-+ *
-+ * The scheduler fence object (&struct drm_sched_fence) encapsulates the whole
-+ * time from pushing the job into the scheduler until the hardware has finished
-+ * processing it. It is managed by the scheduler. The implementation provides
-+ * dma_fence interfaces for signaling both scheduling of a command submission
-+ * as well as finishing of processing.
-+ *
-+ * The lifetime of this object also follows normal dma_fence refcounting rules.
-+ */
-+
-+/**
-+ * DOC: Scheduler and Run Queue Objects
-+ *
-+ * The scheduler object itself (&struct drm_gpu_scheduler) does the actual
-+ * scheduling: it picks the next entity to run a job from and pushes that job
-+ * onto the hardware. Both FIFO and RR selection algorithms are supported, with
-+ * FIFO being the default and the recommended one.
-+ *
-+ * The lifetime of the scheduler is managed by the driver using it. Before
-+ * destroying the scheduler the driver must ensure that all hardware processing
-+ * involving this scheduler object has finished by calling for example
-+ * disable_irq(). It is *not* sufficient to wait for the hardware fence here
-+ * since this doesn't guarantee that all callback processing has finished.
-+ *
-+ * The run queue object (&struct drm_sched_rq) is a container for entities of a
-+ * certain priority level. This object is internally managed by the scheduler
-+ * and drivers must not touch it directly. The lifetime of a run queue is bound
-+ * to the scheduler's lifetime.
-+ *
-+ * All entities associated with a scheduler must be torn down before it. Drivers
-+ * should implement &struct drm_sched_backend_ops.cancel_job to avoid pending
-+ * jobs (those that were pulled from an entity into the scheduler, but have not
-+ * been completed by the hardware yet) from leaking.
-  */
- 
- /**
-  * DOC: Flow Control
-  *
-  * The DRM GPU scheduler provides a flow control mechanism to regulate the rate
-- * in which the jobs fetched from scheduler entities are executed.
-+ * at which jobs fetched from scheduler entities are executed.
-  *
-- * In this context the &drm_gpu_scheduler keeps track of a driver specified
-- * credit limit representing the capacity of this scheduler and a credit count;
-- * every &drm_sched_job carries a driver specified number of credits.
-+ * In this context the &struct drm_gpu_scheduler keeps track of a driver
-+ * specified credit limit representing the capacity of this scheduler and a
-+ * credit count; every &struct drm_sched_job carries a driver-specified number
-+ * of credits.
-  *
-- * Once a job is executed (but not yet finished), the job's credits contribute
-- * to the scheduler's credit count until the job is finished. If by executing
-- * one more job the scheduler's credit count would exceed the scheduler's
-- * credit limit, the job won't be executed. Instead, the scheduler will wait
-- * until the credit count has decreased enough to not overflow its credit limit.
-- * This implies waiting for previously executed jobs.
-+ * Once a job is being executed, the job's credits contribute to the
-+ * scheduler's credit count until the job is finished. If by executing one more
-+ * job the scheduler's credit count would exceed the scheduler's credit limit,
-+ * the job won't be executed. Instead, the scheduler will wait until the credit
-+ * count has decreased enough to not overflow its credit limit. This implies
-+ * waiting for previously executed jobs.
-  */
- 
-+/**
-+ * DOC: Error and Timeout handling
-+ *
-+ * Errors are signaled by using dma_fence_set_error() on the hardware fence
-+ * object before signaling it with dma_fence_signal(). Errors are then bubbled
-+ * up from the hardware fence to the scheduler fence.
-+ *
-+ * The entity allows querying errors on the last run submission using the
-+ * drm_sched_entity_error() function which can be used to cancel queued
-+ * submissions in &struct drm_sched_backend_ops.run_job as well as preventing
-+ * pushing further ones into the entity in the driver's submission function.
-+ *
-+ * When the hardware fence doesn't signal within a configurable amount of time
-+ * &struct drm_sched_backend_ops.timedout_job gets invoked. The driver should
-+ * then follow the procedure described in that callback's documentation.
-+ *
-+ * (TODO: The timeout handler should probably switch to using the hardware
-+ * fence as parameter instead of the job. Otherwise the handling will always
-+ * race between timing out and signaling the fence).
-+ *
-+ * The scheduler also used to provided functionality for re-submitting jobs
-+ * and, thereby, replaced the hardware fence during reset handling. This
-+ * functionality is now deprecated. This has proven to be fundamentally racy
-+ * and not compatible with dma_fence rules and shouldn't be used in new code.
-+ *
-+ * Additionally, there is the function drm_sched_increase_karma() which tries
-+ * to find the entity which submitted a job and increases its 'karma' atomic
-+ * variable to prevent resubmitting jobs from this entity. This has quite some
-+ * overhead and resubmitting jobs is now marked as deprecated. Thus, using this
-+ * function is discouraged.
-+ *
-+ * Drivers can still recreate the GPU state in case it should be lost during
-+ * timeout handling *if* they can guarantee that forward progress will be made
-+ * and this doesn't cause another timeout. But this is strongly hardware
-+ * specific and out of the scope of the general GPU scheduler.
-+ */
- #include <linux/export.h>
- #include <linux/wait.h>
- #include <linux/sched.h>
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index 323a505e6e6a..0f0687b7ae9c 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -458,8 +458,8 @@ struct drm_sched_backend_ops {
- 	struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
- 
- 	/**
--	 * @timedout_job: Called when a job has taken too long to execute,
--	 * to trigger GPU recovery.
-+	 * @timedout_job: Called when a hardware fence didn't signal within a
-+	 * configurable amount of time. Triggers GPU recovery.
- 	 *
- 	 * @sched_job: The job that has timed out
- 	 *
-@@ -506,7 +506,6 @@ struct drm_sched_backend_ops {
- 	 * that timeout handlers are executed sequentially.
- 	 *
- 	 * Return: The scheduler's status, defined by &enum drm_gpu_sched_stat
--	 *
- 	 */
- 	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
- 
--- 
-2.49.0
+Ben
 
 
