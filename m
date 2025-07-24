@@ -1,200 +1,227 @@
-Return-Path: <linux-kernel+bounces-743665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83793B10189
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:21:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF46DB10191
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708623A60C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA396563DC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823AA1FBE87;
-	Thu, 24 Jul 2025 07:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4205228CB5;
+	Thu, 24 Jul 2025 07:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="s8jNm+X1"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="d73PELfu"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011044.outbound.protection.outlook.com [52.101.65.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18BD1F3FF8
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753341656; cv=none; b=pYfcbNrhHn+wFib0wELl5ONroaL871OSe8d/vPPKSfmYmWFoKWPXYMiq/+r5KOSBpv3Pojp1YBFyzQrhlveSX2gooTGRMY4XQwsBx9FtNjvcT29LzspBpib0rtjLsdV/P6fdAawfs0YkofjngzXH4ZedpDqqgexPPrLGSEKOGM0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753341656; c=relaxed/simple;
-	bh=4NHFOrnlJxQrpWKVDw/v6IQ1txu4TtPqma6pCCMo7x0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bQ/gBD8zbGW7SXep9MUQfmwrR4+H6WFqih8VFv2IO2jwW/8vE49bWwNvSBgpNQoKdoYKpvh8A0hvlFp0udAGqD5+dfSX8CqlwQRpNv9FGXRzxhJR80ub5bBX7Zmx8AECU43xv2pVW2e4gDdyRDQnHtjrviz+rY6AgPAQsBIqpLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=s8jNm+X1; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so498315f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1753341652; x=1753946452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S6sDyX31bMtEXVDsFLGoanfMyP7wfjYxyF/aDso/gRs=;
-        b=s8jNm+X1lhGTKwKpyoL2ZYDc2ZfEldwQCKHTBf/VTBLPW3cs6UNLK5FzJELejo2c7Y
-         OT7vKjw/h6BPBpJlE7GpFPV8exrOBCv2wfdQDv4FE7xg0XeR4+PBMsa8Q3Qc4ar7fEgL
-         ltWXoSNji4J3RJpn3EoBYAD2pMJYlncIIBYrCqu45lzxe8AeFjtt2hmNIXNDqLc8FdxO
-         hU1/6oDZKyh3GLaKIihVy4tm+vk1tdjZ5fDgEpaYcukPha/VQhAMCMri8EyWsLVjkQnj
-         wYPYeUU7mZ0WEHoXEEHJ1ROmSXF12bbhfcHlEHSLc4vMqk4DUQjUnuX0JZtpSdfZ08kR
-         azuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753341652; x=1753946452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S6sDyX31bMtEXVDsFLGoanfMyP7wfjYxyF/aDso/gRs=;
-        b=GV8lBR9tDWHNLUpJVSqWne7MwN7FSUbYnO4l1n22njN4EjQh6vIDETb40I2+t/TWBz
-         WRcPirZ2B0QqgQdot94JLE7305qOb0J8N+U3tI0uougJzcat+yR/Gt15d0BSrtK+zFKr
-         sOMYYOFGGsQ1CEX6vUR781a+eI0eOc7wtTcTdyIGVyXin/GtWg5ii4M1Bs1S/yqVT1N5
-         4wrsx7e2Ka3W04SUNNWs80/yJ6ZXIM0yMXg99pxugR8CZxENP9MBue6VnirVhZKJwpmY
-         1SBfq5CxjJ/KvQJfn/5t5/fbYx33vAUZUGNOdvVyDCVFtqsXHpg9+mKkxzWwCWYyc7Yi
-         53AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFPbD+qaIL70JGYw3q2ueg/qaFMw1mLrWcel1r/vzTqkWQPy3IYauDb2SYkZvBgg4mFLDwZjwJ+FC5YU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx355533EH7X4vsQhvwHDKyz1YkRJYcCofyUi1tdDsKFfXjTeGz
-	kJEC2TCMCDuAQrRvqETN2YQKbk9aeuc0Ov3mN8seUyDmx8PrbPCJiZe9UsC9rnlxSdM=
-X-Gm-Gg: ASbGncszdMmY79gWB+IPSeExyXH2g80aDFvDPwt+qeORC+9w7qrmypR2tzYYWfJkn8/
-	+ELs8tVHLcCIleKyY0/SoFaRl0wZSaZPKAEz13q2KtIm9zXSFAUzm3+O9upjU+Njeo+QFhU1pYY
-	mYqUB6lrKDfCaNNQqrwu2OPZY/ueYwCwvi7ePx/hZzzLDEwGwEfrCDnWW3v2QHfHGYk1UiZ3VXL
-	FN/cqUtGuVESIgFCUPeg01EseLY7YMP5XaonfBXs6V5cbQWbZ7yTD4atKDGZgB8duHK+gGkAGSu
-	X400sv6j/ggyS2INv8i12B0Ak6GxqA1F7G1rwUTfkEM97FtUedzKbFE8ufMeGhhmgu6JnnT48Ey
-	45COfcMiH7SJh+AVpc+/4AY8gDXdQknpdXHU70D4NThdnoPaULg==
-X-Google-Smtp-Source: AGHT+IGtoPxWfQ+wEpGjs7bUDWFQ1oeDB2sB8phuc/KoP2/+fvLeJ4l89nxhivkNTcUZ5qQxIwrrZw==
-X-Received: by 2002:a5d:64e1:0:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3b768f079a1mr5008877f8f.46.1753341651795;
-        Thu, 24 Jul 2025 00:20:51 -0700 (PDT)
-Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:871b:95ed:fb39:f517])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc6d32dsm1253844f8f.24.2025.07.24.00.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 00:20:51 -0700 (PDT)
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-To: dwaipayanray1@gmail.com,
-	lukas.bulwahn@gmail.com,
-	joe@perches.com,
-	corbet@lwn.net,
-	apw@canonical.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871DE1F3FF8;
+	Thu, 24 Jul 2025 07:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753341804; cv=fail; b=JN8mOU7jUpnt7UrAWyr2sJ/WS2h9vVVY/UUFW8n00XPi0OcVzAC38kgRVbSr3h/x2K6CtLSIkICMl2uvV2zg20wNJlzk5YVbyu9ILR9czQhyHNl2ufpRgSfI13kt+F2x13uirLSxwHjEkdbL09SfMqKpdJQccHK7sCeauEyD3F0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753341804; c=relaxed/simple;
+	bh=HCRac6qM8hZBqq9Lq0LZdRqb7KKAXNAW/8otL0+Wvto=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=q3xVsBIedH1iVGLvT6iYHMvj4NXjsWGpa8KL0EyHp0HVJ9NA454WzOXul+47teOZWcJiPz21ZB1QyIQ0jgztU+4Jm7RVTgl1TmQ+0XD1InVXWKIe+hfe+u34Q8V88Mb/YNvwa/FoFKR9ftbNxrLXrKFdSoNwcFVsdUDwfvLR2ME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=d73PELfu; arc=fail smtp.client-ip=52.101.65.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JzYKtLSLk+Umd5SRPU8fd+StENgtfd7w3AMeXL+zk6h3hy4OQ5dXFaLUFnGJjSFNvJCylklw4hX+rNQ3pfjeN1lFRj5hEYP06Fcy+ANBJ9HWE+WTKSEQkDWtb8LJfwvL9dhP6bnMKClIrF6Esq9oGuXOyO4u2zI2KhidaQt790eey2QVw+GN6ttS7yJIdniuDDe6HIytpwokFUWeFRKEucc9CGqYrgpAf5RgnCrbsPgY1Jllxa89e6rPCK+dYgCeRN/gDpYAF3Q5ppE8YVftcyaTxSWQJ3r1jahKEjE611KJRZhxLLTfbKhObRzkQ81CT9+dTvOxjrqyNjxSPfUzbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AjTil86IfMqQ9gWsJoJimyjfwWfXqIgyw8TfV/IbSYU=;
+ b=R8DRb9TAw9cxEb+agkNdFUL6OuJ/+8l5fYsfIi3VkUbQ3IYhG/4Q5blR7kmeOjA420wFdZtN5KiPPJbusZt7NWdEw62D2Gkp0IdFPANMP2navBjXSXnUc5R2j2jTZxvePobxlhJIncli3NCcFGlcnY02i01il6sYS0CFkmW1gNrNktgGHn3ewXGiM/QiLU7mEj01O5JDql9Nv8p7u9VCtO/3+H2bKkme9pWR7iFtzNjYeX65QnCnzKRZfa8mbiCgCMH759aRAXJPAhrdhnyjKasBFTqpLxM1t/j7eARnHc5Yr4hcEGHVsZGm/nYm8X1TBBlPNN/Fyx4phFpUQXI/8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AjTil86IfMqQ9gWsJoJimyjfwWfXqIgyw8TfV/IbSYU=;
+ b=d73PELfuaZxsg46tJj5NW4GyU9voy0orgjfUX7Ic8V+9PcFmFW4rWmssYMQHsNcE+zPy3c9hVc1+lGmqR1k/adxCYYWINX8N3UNMSSA8NF0Hy/u8RtlpXPd0gkjjkoP/XYe+hHdPBhQaIJEGpGn9eycYIZYM5HQkLtCPPyK1ncRos47Nt8W9NTWqGDbwb0WrN00GjqYyG7hp0U1fdttYlwa3g5ra/Zkd2HFP5DMlizMv1WLCcI3Pn2UYMxwuJoNXn4N/qlo09Xvx9grgs5ko6t0Z6wBa/WJKf9hu0LM3091B6BhDhWAATr0MINc4+QGADZUTbMQTZUQGJovyMAk9Kw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by AM0PR04MB6915.eurprd04.prod.outlook.com (2603:10a6:208:187::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 24 Jul
+ 2025 07:23:15 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%5]) with mapi id 15.20.8964.021; Thu, 24 Jul 2025
+ 07:23:15 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	lumag@kernel.org,
+	dianders@chromium.org,
+	cristian.ciocaltea@collabora.com,
+	luca.ceresoli@bootlin.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Subject: [PATCH] checkpatch: validate commit tag ordering
-Date: Thu, 24 Jul 2025 09:20:32 +0200
-Message-ID: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
-X-Mailer: git-send-email 2.43.0
+	victor.liu@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	l.stach@pengutronix.de,
+	shengjiu.wang@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH v2 0/6] drm/bridge: imx: Add HDMI PAI driver on i.MX8MP
+Date: Thu, 24 Jul 2025 15:22:42 +0800
+Message-Id: <20250724072248.1517569-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MA0PR01CA0104.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:af::10) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AM0PR04MB6915:EE_
+X-MS-Office365-Filtering-Correlation-Id: a08e4933-d104-44f1-fd48-08ddca82f446
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|19092799006|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?78V3s+MlVPsO5QzecWkMkXeIou2Y6mSl1IZS2qkbSd+ImvYp1ehliXH8qZFv?=
+ =?us-ascii?Q?myNkCTTbXllBQC+OMevKOqXjyxf7f9ouT5ZuvPPyfl2vAj+bVxJs1XgBhk9Z?=
+ =?us-ascii?Q?w5DrbZHyneEVJxDZDWTuxEu94qmkp9jkDYWuk7ocsBfxGLDKjiknOTB2WolH?=
+ =?us-ascii?Q?9aD/1OmGVMaguBOOraCuTSyVeburlJISSRU19IvAMfH3dzlmqU7uGNfSrpr2?=
+ =?us-ascii?Q?FolmtLSkwnwKy6T+YHl1C+rQJtwZCIBPCWlYCeWzTDR/zsyx6R1bHPIgp03c?=
+ =?us-ascii?Q?7gHg6k7feXoW3FlJ35nadultjtwaGq6R5xFGoGRn3TjGCqCguokY0iTK48Xf?=
+ =?us-ascii?Q?JFP9J21f7v5m1L53AwibIQzvhKVX2y3f2sBz7W/IrcCYsycJ2Uszej9R92qL?=
+ =?us-ascii?Q?GBQ+obszcgS7TjUrsxdwJsJcvXghV+BK5M8lzNxWyea3Fau76ddsgyoEFU/w?=
+ =?us-ascii?Q?NA7cDTvEgtJq+/LGpm68DAyGxNkqxm7cv8sqqrDHex28viaZg9cgAbJATypC?=
+ =?us-ascii?Q?/oj+72OgcuoGYS79rorr0eBNflpz4S409Po4mynzIkqIvKqtNRX6RrX08K1z?=
+ =?us-ascii?Q?PzP47mXeHX8nql5CmaRb+MoN2qbhhcVa2nwrYWmwFTZ6fct+1uOMV1/LUdyj?=
+ =?us-ascii?Q?DBrzUNVNuSa4GIZV/hL+xa1B+FQRen15kj58WUhUt/2NdGyKdDecsEYbB6Ii?=
+ =?us-ascii?Q?kdy0fldyOfkFxpAcNcHMbBRQOmTaxOpLXkEjNsZ7VFhrAJAshqGOuhliW8QJ?=
+ =?us-ascii?Q?JSNg83fXhA2xq1r97Sjt/pP/ShrqlIgfMQAnVEQHNhdoIRqgMLShQC8k1z7M?=
+ =?us-ascii?Q?QsY2knNa33MJhXjE6nHveQdg4PJlb/DHvBtKGXP6cVNJIdK+OcqckvYvVyVY?=
+ =?us-ascii?Q?L/MoIq12L35qZVIcqIUK/y+JXaM0Wzjtc+vU96d1Xpr7DU/f3K6whMrmI8yb?=
+ =?us-ascii?Q?KzKJJzru6FYslR+saUWxQo76zBAbZyl6gD4+mNKR78k0NbiOoJGTgAjQlHNR?=
+ =?us-ascii?Q?33OjK8bLE8YPf242zd4fRa4G3csWSHgD7KhfFws7+U1ai9gYGf0FaE2G0kNr?=
+ =?us-ascii?Q?vgGDKbMZyyCqPVB2FcV00QDVcv+jm3zafcTgKvWDPztX3satj8hKG/vGsRbn?=
+ =?us-ascii?Q?HFkLXOmpJKtCVg+N/1ZWyda0pKilcuGffHNAEHzC9bw5mpXSYuLpYCc3pXFD?=
+ =?us-ascii?Q?T9G0caXxbDCU1462jZhilDk3TaB/Udvqk6yqucGyXikh4epn42hUiTy41lr2?=
+ =?us-ascii?Q?3Ns9sR0gLmDCjmibqT4JxHq2XHV7bspgdc3TYXUwDuMRKNORgV+g8YyrBFT6?=
+ =?us-ascii?Q?7/E6O9KQ0VCGsz4RPvLay+3fIhBAlCLGJ2lRHrs0GnWXdTjjBI2xGk7fZrX4?=
+ =?us-ascii?Q?B2geK/fNuD4gP9OpSu3zYiz4dSkhMq6lhqwfD0yMVyJS9yUpmpgX6ObET/sF?=
+ =?us-ascii?Q?kWUDs+cpskDw8FEBD1nB+1CPwQuDyxvjR3JqKBsp2w4y6cUVseGLoFRUpSAv?=
+ =?us-ascii?Q?SnjVBP2fDBzKMgE=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?2GySwniPuSBmLiHXact9kuuGTpLmL4poY7rtWO4MG2vmcdrqsHxcNsk/WlSd?=
+ =?us-ascii?Q?vlgqRpMAULqewxMDhFPxElSFRLkv0fqRqHPxvxCD7/H1VYbCrTu7sNUkX7gK?=
+ =?us-ascii?Q?auIZwOsNgD+goraXqt9sl9A0TN5YYkxf3k6xCCoGeBsAi9gVUYZC1MKJ/QuE?=
+ =?us-ascii?Q?FbZNyyF0CNEfogO/YhNt31PjTorhKJv8nPI6q3n51I/2P4/yyJQa7UX9QRu2?=
+ =?us-ascii?Q?LePYTpWc1wsr57FFwqmXyOkiks+k+SSavdJ2Wr9yrmZtfo8e8JMzrhi/VJ7F?=
+ =?us-ascii?Q?JT8EGctfpj1YtjwSYNqh+FK6Rx+VYGe7ezV0p3lGDgc81ExhNVNBA0MX/asJ?=
+ =?us-ascii?Q?cjBsrrHmHjugqySFgjl8VU58K62Zljnr8+T7RFK+GTSSFzQXymoO1vpojAVA?=
+ =?us-ascii?Q?LaN6c1KIbmRSA/9A73V1K8uW+e6mVOehaRcvOJPQoC69bBcI+X+AoveVfUzi?=
+ =?us-ascii?Q?qXWV5hrO34h38t7rUuEGoDMW4AjpCvsd2LIjmBk59CQQWPVz88W2O0fUPZuE?=
+ =?us-ascii?Q?EpSaFqJDyaB5wA3rx+4fJLHz83l9skvOpahgdc6PiLKWw8g5g8qnaCSrexRK?=
+ =?us-ascii?Q?GRdQJnMWtQDutN0RGGK8SXMGOCg/LS9X4QZnnqmkOWfW4G8oVu5jrzpOuZX+?=
+ =?us-ascii?Q?pIuWVxBj1lWGo4DArABSlTr/s8WspFMldN90OuskGF8DgReyQa7R1HLYoEW0?=
+ =?us-ascii?Q?/xaS7JpHrkO/T0OuGwB4rT7Gihb9q/FFQQS/RCCyZ5+i+xPIzUiRNx1eomG+?=
+ =?us-ascii?Q?bnccoq9YO56egOprreAhTyTvY2wwvfzSvYHacoWyasHs15gurAbC5PoXiCqi?=
+ =?us-ascii?Q?H7HIVfPv1i/74aXxcr6AaC6zwnKf12kXbRlxTi7wHR7etHc4Zm4qdWWMB4H+?=
+ =?us-ascii?Q?o2cFMO8OAV6Imbt/QHgsKIFsL69znB4DpH2s8kem86FeH6ABHyjLGjDRLQAK?=
+ =?us-ascii?Q?DLp+O8BAurXtVLHh4fwnSSPxN921DAfBRY4PBCPI8UrVvfkgHOluNcZW5eOE?=
+ =?us-ascii?Q?YyIM0QPY2Y29ffjQEvjx5B4r0I9CSF1Rn9A17c/I4gLHXFvT9D3YHM8oPHQ6?=
+ =?us-ascii?Q?g/ozY9lOSStW8aAHZNtVHeTmFUQfeytgSb8npGiQHR/YQDoP9/O6cTUsYdtE?=
+ =?us-ascii?Q?yAJc72JEeNc1e+bO0qt74k+hrWrzTyTvJDvJTM0qXezQbm3r5J5lRjF4+5f6?=
+ =?us-ascii?Q?dP8ekNFqalWlj18pwGORz3nnHCUcneO49N3oHLQqK/AfwmZmaYco7I5AtaRg?=
+ =?us-ascii?Q?I+PAMvChrhj3XtxRJIhiG+iFPnQpvEetawJJhEiNPlBdAxPGopN9Y1IxLCY5?=
+ =?us-ascii?Q?fzHdURZVROynxwSvDCsCxowHnbcu4LbJLlbHItTgrtpBTQtgyrrXWeHpK6yD?=
+ =?us-ascii?Q?BwIm/BUIHOyO52xchH4N1P5QbMYJ9k0wS20fFKcVHzpXjpj6hGyteE0TSz0p?=
+ =?us-ascii?Q?HBxCahl8MamM+skcypTMH+V1fIAVWJZoA91/ktLMgzXGgMz6qKl0D7MtUo89?=
+ =?us-ascii?Q?CrmnxqgYMkeGjC1ZUa8wgYKODKfUSKNmvO7t18/H5V8FVbdpa4Z4xyscm2Nv?=
+ =?us-ascii?Q?jyYKj4jzBndW4fteJ54yjnyji+y2ex33Ed0+PnG8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a08e4933-d104-44f1-fd48-08ddca82f446
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 07:23:15.1888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GNVlWGnH8Y/RpsTtRgetFgMWVd7l1+Im92L7ZiXMNhQQz3En7IQj40YBNXs5gQ7/Jeen/FJshZp71SIGDpD2Wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6915
 
-Modified the checkpatch script to ensure that commit tags (e.g.,
-Signed-off-by, Reviewed-by, Acked-by, Tested-by, etc.) appear in the
-correct order according to kernel conventions [1].
+The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
+acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
 
-checkpatch.pl will now emit a BAD_TAG_ORDER warning when tags are out of
-the expected sequence. Multiple tags of the same type are allowed, but
-they must also follow the order. 'Link:' tags in the changelog are still
-allowed before the tag sequence begins, but once the sequence has started,
-any 'Link:' tags must follow the ordered commit tags. 
+Add HDMI PAI driver on i.MX8MP to make HDMI audio function fully work.
 
-Link: https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#ordering-of-commit-tags # [1]
+changes in v2:
+- address some comments on commit messages
+- add two more commits:
+  add definitions for the bits in IEC958 subframe
+  add API dw_hdmi_set_sample_iec958() for iec958 format
+- use component helper in hdmi_pai and hdmi_tx driver
+- use regmap in hdmi_pai driver.
+- add clocks in binding doc
 
-Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
----
- Documentation/dev-tools/checkpatch.rst |  6 ++++
- scripts/checkpatch.pl                  | 40 ++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+Shengjiu Wang (6):
+  dt-bindings: display: imx: add HDMI PAI for i.MX8MP
+  ALSA: Add definitions for the bits in IEC958 subframe
+  drm/bridge: dw-hdmi: Add API dw_hdmi_to_plat_data() to get plat_data
+  drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958() for iec958
+    format
+  drm/bridge: imx: add driver for HDMI TX Parallel Audio Interface
+  arm64: dts: imx8mp: Add hdmi parallel audio interface node
 
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index 76bd0ddb0041..696b42bf4ff5 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -599,6 +599,12 @@ Commit message
- 
-     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
- 
-+  **BAD_TAG_ORDER**
-+    The tags in the commit message are not in the correct order according to
-+    community conventions. Common tags like Signed-off-by, Reviewed-by,
-+    Tested-by, Acked-by, Fixes, Cc, etc., should follow a standardized sequence.
-+
-+    See: https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#ordering-of-commit-tags
- 
- Comparison style
- ----------------
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 664f7b7a622c..267ec02de9ec 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -661,6 +661,24 @@ foreach my $entry (@link_tags) {
- }
- $link_tags_search = "(?:${link_tags_search})";
- 
-+# Ordered commit tags
-+our @commit_tags = (
-+	"Fixes:",
-+	"Reported-by:",
-+	"Closes:",
-+	"Originally-by:",
-+	"Suggested-by:",
-+	"Co-developed-by:",
-+	"Signed-off-by:",
-+	"Tested-by:",
-+	"Reviewed-by",
-+	"Acked-by:",
-+	"Cc:",
-+	"Link:"
-+);
-+our $commit_tag_pattern = join '|', map { quotemeta($_) } @commit_tags;
-+our $commit_tags_regex = qr{(?xi: ^\s*($commit_tag_pattern))};
-+
- our $tracing_logging_tags = qr{(?xi:
- 	[=-]*> |
- 	<[=-]* |
-@@ -2712,6 +2730,8 @@ sub process {
- 
- 	my $checklicenseline = 1;
- 
-+	my $last_matched_tag;
-+
- 	sanitise_line_reset();
- 	my $line;
- 	foreach my $rawline (@rawlines) {
-@@ -3258,6 +3278,26 @@ sub process {
- 			}
- 		}
- 
-+# Check commit tags sorting
-+		if (!$in_header_lines && $line =~ $commit_tags_regex) {
-+			my $tag = $1;
-+			my ($tag_index) = grep { lc($commit_tags[$_]) eq lc($tag) } 0..$#commit_tags;
-+
-+			if ($last_matched_tag &&
-+			    $last_matched_tag->{tag_index} > $tag_index) {
-+				WARN("BAD_TAG_ORDER",
-+				     "Tag '$tag' is out of order. Should come before '$last_matched_tag->{tag}'\n" . $herecurr);
-+			}
-+
-+			# Allow link tags to occur before the commit tags
-+			if (lc($tag) ne "link:" || defined $last_matched_tag) {
-+				$last_matched_tag = {
-+					tag       => $tag,
-+					tag_index => $tag_index,
-+				};
-+			}
-+		}
-+
- # Check email subject for common tools that don't need to be mentioned
- 		if ($in_header_lines &&
- 		    $line =~ /^Subject:.*\b(?:checkpatch|sparse|smatch)\b[^:]/i) {
+ .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    |  12 ++
+ .../display/imx/fsl,imx8mp-hdmi-pai.yaml      |  69 ++++++
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts  |   4 +
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi     |  28 ++-
+ drivers/gpu/drm/bridge/imx/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/imx/Makefile           |   1 +
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c  | 204 ++++++++++++++++++
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c   |  55 +++++
+ .../drm/bridge/synopsys/dw-hdmi-gp-audio.c    |   5 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  18 +-
+ include/drm/bridge/dw_hdmi.h                  |  11 +-
+ include/sound/asoundef.h                      |   9 +
+ 12 files changed, 421 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai.yaml
+ create mode 100644 drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pai.c
+
 -- 
-2.43.0
+2.34.1
 
 
