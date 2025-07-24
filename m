@@ -1,181 +1,120 @@
-Return-Path: <linux-kernel+bounces-744177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7996B1091A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:22:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36E3B1091D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 565187B97E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:21:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6705828FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7359270EAE;
-	Thu, 24 Jul 2025 11:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299AE27144B;
+	Thu, 24 Jul 2025 11:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="V+zTJRhD"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lg6MhERP"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719CC27055A;
-	Thu, 24 Jul 2025 11:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33D7270EAA;
+	Thu, 24 Jul 2025 11:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356162; cv=none; b=ujaKW7d70gbLYpkyDkBqqH/AhWbQOXt7BKlDZ5jxrRQg4SHne0+iKysUmZQk6YKOT+u3A52cW1ep3zTYLOJsV+jyczkcL5y63i5xezVB5Mtn7VKPl/jQj/Dm/n3hoE4JVRMfcHbbhcvGlmo+7T5VxraUA5hJ6pxBH2soE+V2okw=
+	t=1753356274; cv=none; b=LHEEHvi6h/TWxL9dhh8tSl5MaPibRpJSBqt+CLNiz8z9KmV5PmRrfxZoDU/zWacoFK7mlyfNX6Hd/Lf2+422NmTf7tufX7M+1bmfmIWjYTl/5B7yiI4L9zhHqNHnRZoWiFvJlJwRuXexXeKeVHNc79gHVwnZbbIAaZYRqH5wTEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356162; c=relaxed/simple;
-	bh=ncQWBKwI6E8yMwJouaUCSKjj7KYKskxzt07O77RrEYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=fwU+G7NT+Jqj4Wp0YoGsnEQv6jbtDRQziszD9UQc+Tmq6f985vFRS0u3U2fkaHcHR+MGnWHkixwJZsrcdrojgOV58/mdRNfmMl0fW2JC/pz9qrybTlLZHQYeaJ6+nO4OAy8R3Sq0UdcNO0xHxDWc22jhrm0+o8OQYX5eYDiohLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=V+zTJRhD; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [192.168.6.83] (office.icewarp.com [82.113.48.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 25826161193;
-	Thu, 24 Jul 2025 13:22:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1753356157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zk+cD+vGoFFprH1JsPNoZZcojBrn4oW2cTrpdNOuWYI=;
-	b=V+zTJRhD9IxgO6eAU2f73Q6zmgZuL/s30d7j1lY0zcy3d+WBbOZ5HrkgP76c3rBCMTIK+S
-	eEKeiRU20oNV/FfFdSfJcgtS3cxzHp8H6rk6ESmLKYWA1A5e5y58Dha/qdqdzGiQHxbABK
-	dJPUbBfYk42jDWkqvQgkaFi7Sb1Ov/g=
-Message-ID: <623783cf-d1ca-424c-9e71-e14acb9c3204@ixit.cz>
-Date: Thu, 24 Jul 2025 13:22:36 +0200
+	s=arc-20240116; t=1753356274; c=relaxed/simple;
+	bh=nGT4jidtjk1a8V1xMpQRH51rg2i/WWZ3a0k2WsyOw3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sg9k8avM1x/7RmGjkeucYPqReHCDXiPyvH1ehf9czJnsw04+zW8aTdOgNSVG7yhm28HQoQEvk8isDC7pRlLmgzK2GY3sLPpa79F0jIfG3nRmLJ/HtwU3sffeRHdWmwJaDKMtGst2he0OkHEbMLySxCdGKSoqTj1+XI9qHfIeU4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lg6MhERP; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a53359dea5so442272f8f.0;
+        Thu, 24 Jul 2025 04:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753356271; x=1753961071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/chaQOtrwAc8iUspacpGx3XlnJkksuOlQUkOi3ydoks=;
+        b=lg6MhERPRZOiSfkIVkPJ12vCWrICT4pj10CgRvIwqQfGuYelL1wz4s2oCFmXLT8xBh
+         kLxDhHWOMy1G+EfZngXA1lDXcCQk/onLKyfcbTx8UvJXMeE7Nkj06ohNQdYgPFpnwrge
+         TZiyr0pX86TAzyV15HreTgmk5Zi8dqGCN2mfbyEEb7M3Ay0WB+Z67vNU0h7Cg1njAG/s
+         fIkfE1OKoulNdjdaM3O3y9qkcgPE1SdPqMLkHKWb9/5FPn3xXXmXVvA4vkj1z828sdEC
+         jDQl5OD/7uXkN9YS84V3BfU+fQc4lwpoSyLBb60ENz9O5L+VtC+zK62xiAlB/JUB4r7i
+         bfyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753356271; x=1753961071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/chaQOtrwAc8iUspacpGx3XlnJkksuOlQUkOi3ydoks=;
+        b=o5o6Ply0vEgRlFVAU56Ush3LubiPjVODrPOVBJX+Wze6SQaeXVNOhjtC2amJuqCMgT
+         lzbak3Zr4GBBW/hGdbn+xG/GgDn2BbgTUYlKmWJKX51jy1c0aUSyZngX00zDrhKok6De
+         ZvMHdJrJSNtTI+Wi/umhFc89kqfUlQVqkUvH3hnQBcoBN4bMZbYJ/CTe4daag9ta7mu8
+         I5IxmCorrj9YXd6cQHF5/uwpf63NNgp0Xw2Z3opyTqpjyYJ+pkQ/6XjgvluxVA3AWJPq
+         EOyZ2CUN/dpPkRqlMOjC7uQiFPpkQ8v8My0Xsg4Dz8t+t83VUkBpfHCpxLI2gPcxOySa
+         WdAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp7z9QSpQYBlULH7VP6OYT1q5YNGL7kSuPGdyJvBPTwxOIi6a5uA46HbrwpYLKWE6ZFXIlhbmllr7tU1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynlHU9FueHVKF2gZNqGggvnHm8WYZU8eUyJ1nXwpVRec49sEb9
+	siytyo74OoYlSiXVXOjPCdwSQ5wWTcVxjZDPfzaiLU729Fb3VTaxvMZi
+X-Gm-Gg: ASbGncsxRisHPNhKewgzWBpAxTMy6FYRl+zi9TSL/Vc3F+EsH90xNJ79Bce0Xg8k2FG
+	qfuKpDUqxCbEwTnVOaHphqL1cOqEWpNjwBE/Htmqccvaf9shC7ER9HAL7tn0N0RFSFt0iufR3D4
+	X64bRjVfIOKemc7K7hAMZZ1ddp3kgMBzgRXWlq9vXiq+oMpu5I/09Ubjg8FL54ildeEr3Zmkdz7
+	da9ofDosZjHAKClca2kx92avKXyynVid3NPA/BwJo9S8oMaKnNoDVljZMVNRThhj/YUegthc1z2
+	Wi72j3010Tgx4Qf3h64O99OcoahsmS193YHb2UAgqZVU38MtpmQiZcdbJeEgjl+5WhOIiCinfGB
+	BiUU9f6lcEJUv6lt+uNjT
+X-Google-Smtp-Source: AGHT+IGx6vY4OBDv0GI0qirOCTTfwNlLAd70BQpOL4ASVZfSa5T1qQYZyS8mCneRMwPLhBgww6T32g==
+X-Received: by 2002:a05:6000:240c:b0:3a5:2c18:b181 with SMTP id ffacd0b85a97d-3b768f12c24mr5451850f8f.53.1753356271195;
+        Thu, 24 Jul 2025 04:24:31 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fcad22asm1904963f8f.53.2025.07.24.04.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 04:24:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/panel: Kconfig: Fix spelling mistake "pannel" -> "panel"
+Date: Thu, 24 Jul 2025 12:23:58 +0100
+Message-ID: <20250724112358.142351-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] dt-bindings: iio: light: Simplify interrupts property
- in the example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250724111345.47889-5-krzysztof.kozlowski@linaro.org>
- <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andy@kernel.org>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Alexandru Lazar <alazar@startmail.com>,
- linux-arm-kernel@lists.infradead.org, Bjorn Andersson
- <andersson@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
- Angelo Compagnucci <angelo.compagnucci@gmail.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>, =?UTF-8?Q?Ond=C5=99ej_Jirman?=
- <megi@xff.cz>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>,
- Mike Looijmans <mike.looijmans@topic.nl>,
- Puranjay Mohan <puranjay@kernel.org>, Manivannan Sadhasivam
- <mani@kernel.org>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Dan Robertson <dan@dlrobertson.com>, Linus Walleij
- <linus.walleij@linaro.org>, Stefan Popa <stefan.popa@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>,
- Alexandru Tachici <alexandru.tachici@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Lucas Stankus <lucas.p.stankus@gmail.com>, linux-kernel@vger.kernel.org,
- Andreas Klinger <ak@it-klinger.de>, Andy Gross <agross@kernel.org>
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20250724111345.47889-8-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Thank you,
+There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
 
-Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/panel/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 24/07/2025 13:13, Krzysztof Kozlowski wrote:
-> dynaimage,al3010 and dynaimage,al3320a are I2C devices, so their
-> interrupts are not routed to GIC and rarely first interrupt cell is <0>.
-> This looks like copy-paste from some SoC block, so drop it and also for
-> readability use known defines instead of hard-coding interrupt flag.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   .../devicetree/bindings/iio/light/dynaimage,al3010.yaml         | 2 +-
->   .../devicetree/bindings/iio/light/dynaimage,al3320a.yaml        | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> index f1048c30e73e..1472c997c16f 100644
-> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
-> @@ -42,6 +42,6 @@ examples:
->               compatible = "dynaimage,al3010";
->               reg = <0x1c>;
->               vdd-supply = <&vdd_reg>;
-> -            interrupts = <0 99 4>;
-> +            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
->           };
->       };
-> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-> index 8249be99cff9..d06db737cd9e 100644
-> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3320a.yaml
-> @@ -40,6 +40,6 @@ examples:
->               compatible = "dynaimage,al3320a";
->               reg = <0x1c>;
->               vdd-supply = <&vdd_reg>;
-> -            interrupts = <0 99 4>;
-> +            interrupts = <99 IRQ_TYPE_LEVEL_HIGH>;
->           };
->       };
-
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 09b9f7ff9340..af90ca62e57d 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -971,7 +971,7 @@ config DRM_PANEL_STARTEK_KD070FHFID015
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  Say Y here if you want to enable support for STARTEK KD070FHFID015 DSI panel
+-	  based on RENESAS-R69429 controller. The pannel is a 7-inch TFT LCD display
++	  based on RENESAS-R69429 controller. The panel is a 7-inch TFT LCD display
+ 	  with a resolution of 1024 x 600 pixels. It provides a MIPI DSI interface to
+ 	  the host, a built-in LED backlight and touch controller.
+ 
 -- 
-David Heidelberg
+2.50.0
 
 
