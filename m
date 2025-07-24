@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-744608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0DAB10F1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:50:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F75B10F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FCF7AE434
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA96F545BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7962EA482;
-	Thu, 24 Jul 2025 15:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5BA2EB5A6;
+	Thu, 24 Jul 2025 15:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD2GMLMX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lh8NZZbv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630182EAB92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421012EAB6B
 	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372125; cv=none; b=h6JstZMHfrRljxm+T6ojry2isrxwGZ697A6Wu6xoRAHuZ94HfjeZHgIrdNnJuf0JQAsIv/FVhXoh5hQYvAyUmNq2ZjC80sxh65pfS2sfhVp30ISmzD6hreqjKwSEb4HfiPGCE8hctiCfVzVYROD6gb4I+QVjyeNY10fL7rpbMNk=
+	t=1753372125; cv=none; b=mPFxaI7wzWxzKRmn/wt1P6hjeL+1GUzNMMkoWjNDWdXJSS7rvR7Q9R4juM1TADjPMWo2FdMhWfnJePCI8jFRuEhoubyI3RceBQJDVYTrtumj2Qa9KDwQ1dniZWmZ8p+c7u4Um5atQGkEzqzXgm7DhEgKiCCR5ozEMOB4uCJu3Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753372125; c=relaxed/simple;
-	bh=lH1XSXqQUGAtq8HOW5s68WiNc/pAyr9wB95TqUTEN/E=;
+	bh=J6IGtn8Fc/KM2mNRmZhCLjiAF/zyIMOes9oro7xnN4s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bCi4cr3WmldU4g8ABgjK2JAkalCGBXn17MJvkR8NHSlxrbQnyLRZsghpyF4nQwhGa19A3olKIx9sTb95dQ7qYXvJcEeCGWLjBgga3S2ViA3qo0M4ixzJ2LRhFShHtW4g2faaJmc/vF4OYbicBr8RoNqQHjvCy9tu1uwijWYLkz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD2GMLMX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86C2C4CEF9;
+	 MIME-Version; b=t2MNbeV/0h1u4HGfSBFSiyO9/wUbokxMooqRSDzPvZKoVzQrrgTJnuMKG1KT+KTc70YYV7xo1gNhyY28WECwpUHzIHIYDw35mZUmZRvKl/4iAbnJXxltu+eSbYUSB7nAdUl78GLq0zs3Bcq3AmxHio/igvlH4Ag+SQ9512rEo4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lh8NZZbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4DF7C16AAE;
 	Thu, 24 Jul 2025 15:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1753372124;
-	bh=lH1XSXqQUGAtq8HOW5s68WiNc/pAyr9wB95TqUTEN/E=;
+	bh=J6IGtn8Fc/KM2mNRmZhCLjiAF/zyIMOes9oro7xnN4s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AD2GMLMX6lnHDFEIAFLLklPm6wbgXcxaPLx/FrFtHAG4+0aJYPPeWANfhiThSbLVx
-	 pZWbfFfmt+8mxuWHg3TAphxKkw6PQBjJysJB2xKTvbOv1/LIN7K+e5X4Ip9QcASAM/
-	 3/8rUh83+qjT6DZ9k+zFn8xziRyxVJBm0hkh5i4rgvzd9WwOeVPYfWUu1Kp9MLjm44
-	 iIYmrzIFkCdJ262p4BQvGpdSox0V/8yDaZdLjdX1+BHODxmNgNcylHdR8I09kVuJaL
-	 qwkk6IrahFbeLXn1H58No7AKi+P1VI3r2RC5LDsArzFiQ9P0JK1/EujFj7ePSNeGRU
-	 Gddh+HhYragLw==
+	b=lh8NZZbvSMUtdRFKC6IsYBTX5dWy5M6jCdw3UbJi9wBx5/toS3N1iGIHdez8P/8zL
+	 bdjSQ66H2f5t1AaO8ANrCqMs40Xbm05Ca3RMdCAZYahR8fMUJ88I1YpWkpwnGetFrN
+	 4bkcZ7mg/Qr9LUmQzzyVAV+wXspO+EmyH/R3dcI5fhLXq+H+F5qViR1rvYTb1eBuEo
+	 I/ypmP5Gv56LUFy/msGPlCFQBfsQqR5NewdVeFjePWB71GQ4GukFQcNrezP1ik/DA0
+	 MKX5qZZrYZ8UazNbWgDXlpu+lsQfKbHEcWJE27DLRomruI0Y7wlj74uza4p+A7mF1x
+	 85aPoqIKAn7iA==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1ueyBU-000000004B6-2gxo;
+	id 1ueyBU-000000004B9-36Lk;
 	Thu, 24 Jul 2025 17:48:40 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Vinod Koul <vkoul@kernel.org>
@@ -53,9 +53,9 @@ Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
 	linux-phy@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 05/11] phy: qualcomm: ipq806x-usb: drop unused module alias
-Date: Thu, 24 Jul 2025 17:48:17 +0200
-Message-ID: <20250724154823.15998-6-johan@kernel.org>
+Subject: [PATCH 06/11] phy: samsung: exynos5-usbdrd: drop unused module alias
+Date: Thu, 24 Jul 2025 17:48:18 +0200
+Message-ID: <20250724154823.15998-7-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20250724154823.15998-1-johan@kernel.org>
 References: <20250724154823.15998-1-johan@kernel.org>
@@ -72,21 +72,18 @@ platform module alias.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 1 -
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-index 06392ed7c91b..f22c0000479f 100644
---- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-+++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
-@@ -559,7 +559,6 @@ static struct platform_driver qcom_ipq806x_usb_phy_driver = {
- 
- module_platform_driver(qcom_ipq806x_usb_phy_driver);
- 
--MODULE_ALIAS("platform:phy-qcom-ipq806x-usb");
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index 917a76d584f0..804539d26cc7 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -2385,4 +2385,3 @@ module_platform_driver(exynos5_usb3drd_phy);
+ MODULE_DESCRIPTION("Samsung Exynos5 SoCs USB 3.0 DRD controller PHY driver");
+ MODULE_AUTHOR("Vivek Gautam <gautam.vivek@samsung.com>");
  MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Andy Gross <agross@codeaurora.org>");
- MODULE_AUTHOR("Ivan T. Ivanov <iivanov@mm-sol.com>");
+-MODULE_ALIAS("platform:exynos5_usb3drd_phy");
 -- 
 2.49.1
 
