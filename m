@@ -1,87 +1,161 @@
-Return-Path: <linux-kernel+bounces-744036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51D7B10730
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F8EB10737
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69265AC3AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37D51CE639B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FAA25B692;
-	Thu, 24 Jul 2025 09:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730E925B2FF;
+	Thu, 24 Jul 2025 09:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8zjl6KE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KhWEsc1g"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC6125A340;
-	Thu, 24 Jul 2025 09:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695F25A2D8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753351145; cv=none; b=f9WXRI2VttsuPPf4hIZjXnUXWROLxVXcmZOD1ny6dOoSH3TwTicIUxX3DMK18CMc7of1xTQxCAUam7AYLkaGGrjMgj7ItNVEDvgsK0RR1d7Gk6Mo8uUU8pNFpFxO/FPNcslhU8gc7Q3r7b+R+75sUxMbcStqfVEVJO1gNCOXiFM=
+	t=1753351163; cv=none; b=OSrtdB2YAmQI1r6uiG01nU/Bz4OiJ9B0oWnbb5cpRs5qwHrS++IfqVmrM0EXIgsInCD5bAwktOS6n+L/DD4GEd8hG8TKylNoYo2OLf1hoq/kat0XYPVzQ7noPOdLYCAVPEKLrshEXkFItorjhxMFaBDWBemagOuKV3qbtoYDdMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753351145; c=relaxed/simple;
-	bh=7fFKQFGIrQlvsWOC6tbYSk6Z6H86XX2wrDEJxYDP+LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=A+B/LguPYiIt/zrHTauWDhj57z47ajxi1L1HZJL2IjoX6WZk/FQQYAScbhFSZbAP+1wPRbkKH5AHFjbwLiRNrTkWa+5uz9lxzQNDqmrusURhOKx4EB7q5ChBMre3alDyAWHbs62lFUpP7nwan9kZqINky92nXPYGpVSM6XRcfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8zjl6KE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5356C4CEED;
-	Thu, 24 Jul 2025 09:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753351144;
-	bh=7fFKQFGIrQlvsWOC6tbYSk6Z6H86XX2wrDEJxYDP+LQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=o8zjl6KEl0JCh7Esqu59ekgAgshEfKAv907IdfQ8B8683NSLq5R9whL64ZaRZ9vy5
-	 TL8eX/deaBgQQMIDEHCa1KzyG73cTTfib3oQ1sgsv+YMr3vONyR3GheFNQXOgMBlAc
-	 sM4XcIkDa8lp6QxVrK7d+NVZfwEesez3njbccxpK5BrTu0skr0MrtuPofEoL8V0kRl
-	 VFii2MONvPNRPwviidA7ZrY3D3CcoWj0CxZYzEfRRUUg74fgEdr7Fk8Zm6WThW3XnY
-	 qW1/deusJccZphkglar1f7H05eMSYAUqbu/6CCniGAPP4wiQBBP9PCdUWbKe/mNDlT
-	 7yBn6nFT6LQ+A==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uesj5-000000006oO-3bRc;
-	Thu, 24 Jul 2025 11:58:59 +0200
-Date: Thu, 24 Jul 2025 11:58:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] USB serial device id for 6.17-rc1
-Message-ID: <aIID41gVBb1_HmxH@hovoldconsulting.com>
+	s=arc-20240116; t=1753351163; c=relaxed/simple;
+	bh=Mb7Inz480w151UZyKAwiCb96cBzXuYWMullMv0nJPVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VN5t1SQQwl3I3A6VPlNF/f/9o13MMReR7eCePoE9JCMe3XTMhfYaLRfcahg17wHT6Tsh0HNesNVZ5FpjDgeXp5lAnELTepeMSUioAOfmSs18msR43ZWXJFCIdwQ0fng3/i5yaLDFWyB2C8ERns4AtMbNHegXH9gQROUzlye19XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KhWEsc1g; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23dea2e01e4so9768875ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753351161; x=1753955961; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4UaKwh5IJYpiaFnLbein8rzkhfpQ+t8tr+rzAQBDK48=;
+        b=KhWEsc1grTY63HK1UcFYf8BqS42OHR+OEyKqunM+zXKUJXMKhQ9nQgd9MqohK9c5Tx
+         vgD490VqntR4DUJC7aiqa2/W1Oi/Lrhzmq+vCvK4lDhjNewrGgySAGLMDbGmYQ4T8/BH
+         VB5zJDYp9vipZBArme0kU24HRoXthESo4Fv/t+bt1A7JyO21rKwOiw960GH8mzOHC8Eu
+         lnviDg/iBJhdiX7c7KbXM5kPF6CP9uWb1LxzYoSqQgwPbJnThq40o++GcAD29tog92Sc
+         AxHurspKlr5n1CZ6y+hWHKBGEwXH0WjrlwC2OkiG/oRZC62NBhN599geJ16MsSH86tE8
+         iW1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753351161; x=1753955961;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4UaKwh5IJYpiaFnLbein8rzkhfpQ+t8tr+rzAQBDK48=;
+        b=tOIf/w4pAFy9QBfxY21wILosdpZaPNfIuCA2fBEwMcQB0Puby05OlzpgIJL3CnqbmC
+         t/SBYYyunC/i2VOhPewHgVr7ZpTr2cKLEcD+mwk5F2MEENBxnWLpAP0EfS0J60djDxQQ
+         3/9Fprn0RnNzpjaPApvz2GQaDOKiuHXiWr52Fyoq6CSe1ZYzT1hE9XC31wMgXJQoBsHr
+         szB6DVdo06QBgcvZXKvAyB1ixrOJmy3JODB6TdXI8w+AvaFNgGItmSTqDM7zCFRde/xV
+         5k4Bocz+5p99CvwKkgBhFPQhf2aXFis62aYW0TRlU96YRBKf8P5g4jQk16WCnXzNdJy1
+         4IZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUstfr1W5Bny1J4vdTW75LEzCAVoIVVNcJH+hD7CyXIYjgfVbuBJhDNRZ7bI8VfMT7VtfFCxhjUwjfXq0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCvlpO82SU9unhapbrNAHZ1bT5qScqOXePiEKI+M27N+KKCz8I
+	HkVgj9IqFlGBvb5i9hCbAZvwFR9f2cDmYO7oi4V7XPuQmh7lL3T08n6OwXi5jBgThDjgtVmzVze
+	h7OxHTHIb5QmFUc3bEIEDCLCTKotwtyI5w2cbp+5jkA==
+X-Gm-Gg: ASbGnct0m5hbD8+v8miw7ruHqmaytqTgXizOPTPAKBSvehL2eqlYWWC7OzkiwSwSGja
+	CF7f/sLBX9nbZL1IGrvr35/1I3GBDmTuIxcKy5j7NgFpzEmX+AmzELEwNlvXZ7hVKrsY9M7nCoy
+	hhDj1NLx/qRh31Hyq/42hJakCvc+g0o9eZGQFwDitJA5Fssh9Ry5mgaJ/9YMnKQgbNfXMB3+Cu8
+	lC4ieaLrH2OiZ1EtvxVCt6hbBMu8YT0tv/Ll7ru
+X-Google-Smtp-Source: AGHT+IGgBbqETCdYXqkCDv3Xdf3DYFAHcB3/99F/8XFC3iGfdWKp9wQNATBmpOAYkeL/nrq+kCpX+uoUSEHtoaSUEbk=
+X-Received: by 2002:a17:903:3bc7:b0:23e:3249:612e with SMTP id
+ d9443c01a7336-23f981a0b45mr94173785ad.34.1753351161461; Thu, 24 Jul 2025
+ 02:59:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com>
+ <ef216301-a7e6-4c9d-9153-8ce8b0a4111f@app.fastmail.com> <4f506337-3481-41db-a2a4-5b4676f22eda@quicinc.com>
+In-Reply-To: <4f506337-3481-41db-a2a4-5b4676f22eda@quicinc.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 24 Jul 2025 15:29:10 +0530
+X-Gm-Features: Ac12FXwSH-tonDffdzQola6o5OJixZN0fswngpNfmWoStiUzFGt6E6s4psUF8ng
+Message-ID: <CA+G9fYuGdo0MUeF0Du3oAtwzYQZhc999pBrz5x5v9P4qw0UbTQ@mail.gmail.com>
+Subject: Re: arm64 dragonboard 410c Internal error Oops dev_pm_opp_put core_clks_enable
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
+	linux-clk <linux-clk@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, 
+	Linux Media Mailing List <linux-media@vger.kernel.org>, quic_vgarodia@quicinc.com, 
+	quic_dikshita@quicinc.com, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Benjamin Copeland <ben.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+On Wed, 23 Jul 2025 at 18:58, Renjiang Han <quic_renjiang@quicinc.com> wrote:
+>
+> On 7/18/2025 7:28 PM, Arnd Bergmann wrote:
+> > On Fri, Jul 18, 2025, at 13:13, Naresh Kamboju wrote:
+> >> The following Boot regressions are noticed on the Linux
+> >> next-20250708with gcc-13 and clang-20 toolchains for the dragonboard
+> >> 410c device.
+> >> [   12.629924] x5 : 0000000000000002 x4 : 00000000c0000000 x3 :
+> >> 0000000000000001
+> >> [   12.629939] x2 : 0000000000000002 x1 : ffffffffffffffde x0 :
+> >> ffffffffffffffee
+> >> [   12.629956] Call trace:
+> >> [   12.629962]  dev_pm_opp_put+0x24/0x58 (P)
+> >> [   12.629981]  core_clks_enable+0x54/0x148 venus_core
+> >> [   12.630064]  core_power_v1+0x78/0x90 venus_core
+> >> [   12.691130]  venus_runtime_resume+0x6c/0x98 venus_core
+> >> [   12.817608] Code: 910003fd f9000bf3 91004013 aa1303e0 (f9402821)
+> >> All code
+> >> ========
+> >>     0: 910003fd mov x29, sp
+> >>     4: f9000bf3 str x19, [sp, #16]
+> >>     8: 91004013 add x19, x0, #0x10
+> >>     c: aa1303e0 mov x0, x19
+> >>    10:* f9402821 ldr x1, [x1, #80] <-- trapping instruction
+> > It's loading from 'x1', which is an error pointer ffffffffffffffde
+> > (-EISCONN).  The caller was modified by Renjiang Han (added to Cc)
+> > in commit b179234b5e59 ("media: venus: pm_helpers: use opp-table
+> > for the frequency").
+> >
+> > The new version of the code is now
+> >
+> > static int core_clks_enable(struct venus_core *core)
+> >   {
+> >          const struct venus_resources *res = core->res;
+> > +       struct device *dev = core->dev;
+> > +       unsigned long freq = 0;
+> > +       struct dev_pm_opp *opp;
+> >          unsigned int i;
+> >          int ret;
+> >
+> > +       opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+> > +       dev_pm_opp_put(opp);
+> >
+> > Where the 'opp' pointer is the error code and gets passed
+> > into dev_pm_opp_put() without checking for the error condition.
+> Thank you for pointing it out.
+> I have submitted the following patch to fix this issue.
 
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+I have applied this [1] patch set on top of the Linux next tree and
+performed testing. The previously reported regressions [a] are no
+longer observed.
 
-are available in the Git repository at:
+Thank you for providing the fix.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.17-rc1-2
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-for you to fetch changes up to ad1244e1ce18f8c1a5ebad8074bfcf10eacb0311:
+[1] https://lore.kernel.org/linux-arm-msm/20250723-fallback_of_opp_table-v1-1-20a6277fdded@quicinc.com
 
-  USB: serial: option: add Foxconn T99W709 (2025-07-22 16:42:22 +0200)
+Reference link:
+[a] https://lore.kernel.org/all/CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com/
 
-----------------------------------------------------------------
-USB serial device id for 6.17-rc1
+Lava test job link,
+ - https://lkft.validation.linaro.org/scheduler/job/8366971#L2573
 
-Here's a new modem device id.
-
-This has been in linux-next with no reported issues.
-
-----------------------------------------------------------------
-Slark Xiao (1):
-      USB: serial: option: add Foxconn T99W709
-
- drivers/usb/serial/option.c | 2 ++
- 1 file changed, 2 insertions(+)
+--
+Linaro LKFT
+https://lkft.linaro.org
 
