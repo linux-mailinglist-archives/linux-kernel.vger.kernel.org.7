@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-744418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F19B10C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:04:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52ABFB10C9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179F1584809
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51558B03AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193D52ECD1A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E582E173A;
 	Thu, 24 Jul 2025 13:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iClEbVMJ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hDK8xxre"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146D82E0B6E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131802DBF45
 	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365409; cv=none; b=glg9lJdFkLO3rNeLe5NLZNNd2n7lRpGV6dWQdbgSW+oQzSxnfU52lKAS+hTUIhTzXTXqzmlF/bbXcirm5TNwsDb5Go/2zUK0UoCcpcEovY1WWDATd0VzZJFKiso4zjFWohhLg9uqh2USHQUiosMyVbqo+UsJdsu9trxtsyCUl0M=
+	t=1753365408; cv=none; b=qtd7nWHL4QsNIQLkCXAY+pBtb3uQYB3fsS0Wkj6ffbLFbIWN0GToOQlWVFH8zc/+uxc/IF3gVkc5yUfiKOFk/9LoDRpNEy0ZjsJb0DugA19q5aMZQ4kdWKn4ZZJB127a6kc7/lPIS6bwOQoyKh8jUVFreLWJ2UUKL3ikLtEXilQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365409; c=relaxed/simple;
-	bh=4mzNhzQY8HFx0bk+CHpi6+2DgmZYfQ8vHH6EB20MlrE=;
+	s=arc-20240116; t=1753365408; c=relaxed/simple;
+	bh=X7sQWVi2ES5AdRRit9jippI6XjHYlOeEQQ68I6dFb/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRAiuEYRWOhK9bSQ/j+yOzPQOf4YeGs8lcnrDxGiDiSUOc/XKWiXilxw8qfUqkszSbfoSYD7A1MEyGUUQyjhDf+wCHcWJzBPw6XW8QM9N3vMl31niGw8sRRedYDiQAgc2JpXbyyVgzNCPRlVxO1GH/tengWC49vqnVUN3DYuaOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iClEbVMJ; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=uaM4FgMHC/3KOfOf/sCEELA6s+guZfG8RFGqU6e5hp8AOhV77161LX1dwu/NAkIDmMcnPe9wwRejw51XUBRH5OT1LlwTjO7TM20daAmON4wAycGRoFq1B9jwlcpdOPxInaZXHwr3mehv6yohq66YVAOdLv14u7xlwNmBxeDaG+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hDK8xxre; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a588da60dfso649681f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:56:44 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso10996505e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753365403; x=1753970203; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753365404; x=1753970204; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h5mN880WCISqsqqypOE0OCrYzPzbEuiPZ0HVDAJk/kA=;
-        b=iClEbVMJGbk/PyxXaSMMcxMAAqWn6IMjOCGbXGY4SbpO6tWlrOvED9WZH1STFKee6Y
-         hHtDKSjj9AXb/itAOMfu+NlNgcBkRokxFC5lEdIpCJJ+u0F3wh8ftd0RFHgtT2YaraSq
-         ketGNDB0x/WxBU3SwLV8Obj3mnpIWnW4qIcuRREvISdg4EGUpwQhA4rQRanVEWxhschX
-         QLhS77NmD3AasXN5Yqd1WPeHDUyi4MJVAtLajTy+fiY3NdBPLN5juxw4sHLap8dmWM+E
-         K4f+4lYqgXd1aplpdLav6VbqVnXZ3qrRTthuhfvreR8lU17u+Vsgb2/2AhqcfcZPWSjc
-         BIdA==
+        bh=io4h5WAIvfQT3VZkI4AOHF3Wp3PwROfn1AQPtlUH1DA=;
+        b=hDK8xxreujp3pWqlOMBgHmmfxII1+ZylRyCnatQz8Hk0KNv42+sXlYYp46lcSWd523
+         4LuB40mwAABhQX7sjVmSidiHpqHylox331Mjz4+Lchqvwum1GNawBGl4vQ57S7M+BsH+
+         vZkkP2Mv1RO4CpOAvit+S8EBWTHEIOFr3SehSdTDrky7xm0ndHSqS4Cov+H+OZSN1Q92
+         o77CgsrPAOIQ51h59pGKu40MHnFCuMgl6JMJhv6JcB6E3QJZqv1yx31SbUUXPSj0Nv+s
+         NwxZaXNRDj4Xckeql1Mrll1FKb64A8a/27wwvKfM9If0OvfszU/UF6rmMUUqGVbUJG/9
+         acsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753365403; x=1753970203;
+        d=1e100.net; s=20230601; t=1753365404; x=1753970204;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h5mN880WCISqsqqypOE0OCrYzPzbEuiPZ0HVDAJk/kA=;
-        b=SL+vn0LQyoH31fP+gmaSAsinnZQ9CIq4N58iN1izieMTWuT3/R6Pl0qslHgUZC0k+u
-         dg0I4Zm8e2j4DzNHzg8HcdLw2TS7mvi1MOIt2hRkiKvfgLkg3shezy87HRpgOrZf/IMd
-         ColppNKFF2WwAEg6qSfzlm4pJMWvjUjL5UZd8BdZlt1AXFg+3tZbLPNoZtnOVZITvTaS
-         PCWMiAe2fjjKOxniHHXRFlb0jz8SXRWqV90K7AjXqtDsjtOeLfiLhYq3/YW1EBmJ26O1
-         tvJSUdaDSNhMtsZWBtt/YTXchRD7QLK26zeUO/d42N4mXA45+JyHjt43XPPD3khGoaL9
-         lRMw==
-X-Gm-Message-State: AOJu0YzaRJc8O3HmD5UwFysffL7E76AiTcBwgp/8aGPBN14uhLFrM5sA
-	Pmx+wakCg9qLUvvhUUznBMrQigAajRJkqkzUXclke7Ly0W4WtjmvDD/AORPkw13oRNp6xrgojEo
-	tUBQAJXU=
-X-Gm-Gg: ASbGnct67KvZQycR1ksmUQFTZg77dy9X2IzUmQRACmEifAgahzfF/AB4Ruwm8g7+eyg
-	Yk+g135TWstCAoWlvLatWvxaeB2ncBV6Ije6r7FxZkden3ttGei/ZYvpl/Q35AFI5VTWhOBvJrG
-	2zvjpjt4UNAoH2O1pUqp6c8jRt0qOB1d4OgUkOLHU6vqKcCI79NdxgH1+2XAIka+/gFGTOgSosI
-	iY5fand0u5PYfLQsKlf6RSssLsVs6c6bgkXKqyx+i7oiIn4UYRkzEmc/KCjEkDxy69DpmJ70jAU
-	XZPxGR+v1g82TTLxu0q8zs1YT1umJaHgdtxFsymka08BvsykXJuPG1by8cTFTOIgFdW/f3nxUOf
-	UH0ntLo6vqdGAH9D9L3abcXxccSuOpnD1zerv18xe+VGUmb7oJVBrySg2tTeyI54tY48vJ01WA8
-	+vAch0i0H1cmuZbBuVQk1zF90=
-X-Google-Smtp-Source: AGHT+IF4egT06XIAWuc0TJnVdNpe1wQ7sn3xvEGeH8Rc0pzDJnMJjBpN4GYnZW+sz3u5f7Eq0JGLQw==
-X-Received: by 2002:a05:6000:3103:b0:3b5:dc05:79b with SMTP id ffacd0b85a97d-3b768cb0f15mr6041122f8f.14.1753365402888;
-        Thu, 24 Jul 2025 06:56:42 -0700 (PDT)
+        bh=io4h5WAIvfQT3VZkI4AOHF3Wp3PwROfn1AQPtlUH1DA=;
+        b=V/f99wUe3vCQFUaf4S69M6PDpWHcFCOGxuw4Fb5lQASIP0RKLLOruS+h8ToI+EB9t5
+         T0Y+63KM9i0tLsECEMLQS66UC9bBmfpkCXP3LRPEi4y0pBaiO0H7HKs0eQ3Y5hd/R6w/
+         ssfANN5ciF5Ca46XLEOQgXOd7C6LWkeOT2Pd6G4VUqpxHDOwXLl6Pt/ZzF+kTPd3sWth
+         PtU+N5cNU18UrcucQGwuyebSYH/6uv4Ga3UF+8poSvxtnNFI8jHrYY8Ll8H99to5mrR5
+         AISGf2RlHAnvZgZQJ535no2eKGNhiz/Hu2Dag5KKvp7Q8jzXCNJLoqSg51ZIVrqLqlaN
+         Lxwg==
+X-Gm-Message-State: AOJu0YyhazwtDA2KNbHdx92Cqi3qfrH0LqPMJIkkLLBp/Tqn1mOlrxFR
+	uEWoyl0JLogErnK8QxR8fjpmDJa8Cjonf+UUh+YFBF6kWohQKsfbGDIPn1NG3/10kz7ZrHXeTG6
+	TF+e27N4=
+X-Gm-Gg: ASbGncvSusG45SQz6/qtCss9HUQC6/R1i8GDeI30MLMOrLOi0vRudmstiLITK4eW7AB
+	OpWAmxlwTi/OCDwxscIuhci3mygcSK8lwrB/k/3Qolv6PGbM2+wYsKDhxYtdIXUvNfEvKXEc8yD
+	4pFh7eHFDwnWu6lXs6XbI99t/t5vunor2SkOLKrRvKSu3oZiYD/YkproC1ZOzSXM75lmf7JCiBM
+	1oI0/dVokoqXsijqPjA+62hGwkQqCOLlGsC4UWtisCATgF60rK8PL7kXrvOyMxoV4rbPtu5P0ds
+	g84zDedPU1HWZGIktEH8G1VihyKHVPFLJoNvq41uYn7LB/3BFWFDgYo2sGki8ZPzL1GieEz9PfX
+	u//blMTQR7wN0PRluPqQySpUzWrU8Sw4JzRUL2B0VU7hjdUxCfvh/5UDOBoBYNMt0xNo3rFOPxE
+	FJOmmjGVDiiqmk
+X-Google-Smtp-Source: AGHT+IGKgu4NRvfPslcwd+sSrmwQP//isSIOnofkVKYWLLSsjM6dUJOy4a8soeLJ5d7o54vF2kp7ew==
+X-Received: by 2002:a05:600c:1c22:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-45868d31a2bmr69596125e9.18.1753365403699;
+        Thu, 24 Jul 2025 06:56:43 -0700 (PDT)
 Received: from eugen-station.. (cpc148880-bexl9-2-0-cust354.2-3.cable.virginm.net. [82.11.253.99])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054e37dsm20889375e9.14.2025.07.24.06.56.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054e37dsm20889375e9.14.2025.07.24.06.56.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 06:56:42 -0700 (PDT)
+        Thu, 24 Jul 2025 06:56:43 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
@@ -89,9 +89,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	rostedt@goodmis.org,
 	jonechou@google.com,
 	tudor.ambarus@linaro.org
-Subject: [RFC][PATCH v2 23/29] mm/sparse: Register information into Kmemdump
-Date: Thu, 24 Jul 2025 16:55:06 +0300
-Message-ID: <20250724135512.518487-24-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH v2 24/29] kernel/vmcore_info: Register dynamic information into Kmemdump
+Date: Thu, 24 Jul 2025 16:55:07 +0300
+Message-ID: <20250724135512.518487-25-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250724135512.518487-1-eugen.hristev@linaro.org>
 References: <20250724135512.518487-1-eugen.hristev@linaro.org>
@@ -103,80 +103,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Annotate vital static information into kmemdump:
- - mem_section
-
-Information on these variables is stored into dedicated kmemdump section.
-
-Register dynamic information into kmemdump:
- - section
- - mem_section_usage
-
-This information is being allocated for each node, so call
-kmemdump_alloc_size that will allocate an unique kmemdump uid, and
-register the address.
+Register vmcoreinfo information into kmemdump.
+Because the size of the info is computed after all entries are being
+added, there is no point in registering the whole page, rather, call
+the kmemdump registration once everything is in place with the right size.
+A second reason is that the vmcoreinfo is added as a region inside
+the ELF coreimage note, there is no point in having blank space at the end.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- mm/sparse.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ kernel/vmcore_info.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3c012cf83cc2..04b1b679a2ad 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -15,6 +15,7 @@
- #include <linux/swapops.h>
- #include <linux/bootmem_info.h>
- #include <linux/vmstat.h>
+diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
+index e066d31d08f8..d808c5e67f35 100644
+--- a/kernel/vmcore_info.c
++++ b/kernel/vmcore_info.c
+@@ -14,6 +14,7 @@
+ #include <linux/cpuhotplug.h>
+ #include <linux/memblock.h>
+ #include <linux/kmemleak.h>
 +#include <linux/kmemdump.h>
- #include "internal.h"
- #include <asm/dma.h>
  
-@@ -30,6 +31,7 @@ struct mem_section mem_section[NR_SECTION_ROOTS][SECTIONS_PER_ROOT]
- 	____cacheline_internodealigned_in_smp;
- #endif
- EXPORT_SYMBOL(mem_section);
-+KMEMDUMP_VAR_CORE(mem_section, sizeof(mem_section));
+ #include <asm/page.h>
+ #include <asm/sections.h>
+@@ -227,6 +228,8 @@ static int __init crash_save_vmcoreinfo_init(void)
+ 	arch_crash_save_vmcoreinfo();
+ 	update_vmcoreinfo_note();
  
- #ifdef NODE_NOT_IN_PAGE_FLAGS
- /*
-@@ -67,10 +69,11 @@ static noinline struct mem_section __ref *sparse_index_alloc(int nid)
- 				   sizeof(struct mem_section);
++	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_VMCOREINFO,
++			     (void *)vmcoreinfo_data, vmcoreinfo_size);
+ 	return 0;
+ }
  
- 	if (slab_is_available()) {
--		section = kzalloc_node(array_size, GFP_KERNEL, nid);
-+		section = kmemdump_alloc_size(array_size, kzalloc_node,
-+					      array_size, GFP_KERNEL, nid);
- 	} else {
--		section = memblock_alloc_node(array_size, SMP_CACHE_BYTES,
--					      nid);
-+		section = kmemdump_alloc_size(array_size, memblock_alloc_node,
-+					      array_size, SMP_CACHE_BYTES, nid);
- 		if (!section)
- 			panic("%s: Failed to allocate %lu bytes nid=%d\n",
- 			      __func__, array_size, nid);
-@@ -252,7 +255,9 @@ static void __init memblocks_present(void)
- 
- 		size = sizeof(struct mem_section *) * NR_SECTION_ROOTS;
- 		align = 1 << (INTERNODE_CACHE_SHIFT);
--		mem_section = memblock_alloc_or_panic(size, align);
-+		mem_section = kmemdump_alloc_id_size(KMEMDUMP_ID_COREIMAGE_MEMSECT,
-+						     size, memblock_alloc_or_panic,
-+						     size, align);
- 	}
- #endif
- 
-@@ -338,7 +343,8 @@ sparse_early_usemaps_alloc_pgdat_section(struct pglist_data *pgdat,
- 	limit = goal + (1UL << PA_SECTION_SHIFT);
- 	nid = early_pfn_to_nid(goal >> PAGE_SHIFT);
- again:
--	usage = memblock_alloc_try_nid(size, SMP_CACHE_BYTES, goal, limit, nid);
-+	usage = kmemdump_alloc_size(size, memblock_alloc_try_nid, size,
-+				    SMP_CACHE_BYTES, goal, limit, nid);
- 	if (!usage && limit) {
- 		limit = MEMBLOCK_ALLOC_ACCESSIBLE;
- 		goto again;
 -- 
 2.43.0
 
