@@ -1,251 +1,185 @@
-Return-Path: <linux-kernel+bounces-744710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23775B1101D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:03:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3518BB1101F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533285A054D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:03:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CCD217EFA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0752EA723;
-	Thu, 24 Jul 2025 17:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F612EB5C4;
+	Thu, 24 Jul 2025 17:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="16iJlk6i"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDFK7nla"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1E022083;
-	Thu, 24 Jul 2025 17:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753376578; cv=fail; b=QA8cmlYTonPnf651W0dtGiginx9ROqwIRqF4bs+1ivMeFiPq/Xrxu0yAk/yVmLrCkHc8oN8yNd1zDkBtvmFkwDznCZDYY2bZt+9v4PbcKnnAq+yiURKWaC7vD0aMZfr3kPw7rEiozMAU2fPn1ifdKM5hZ0i1Qbtf+6eFGIsSjLo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753376578; c=relaxed/simple;
-	bh=J0JyqbUbiT+TFzBYy8PqLcTNZgZZ5s3pE0j9kaCf2z4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KVaD+dffQDq6cv3bP/EZE058YxcZ+52f0ovR6qU43VhUIpoOvvTfXzJWLTD9x4nAogjpAYHQvssHbtzLol7WqM4y2jhzxEE5s4LWN/Bq+PTkOEiScJ6YAKQnp0sNiNa6l6ricrTm2pE8GKCV8aHO12D/vvdBEnEDfW7O1yebKzQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=16iJlk6i; arc=fail smtp.client-ip=40.107.93.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t2sY9+jgDt0D5Q/TqAYPAb5mOhtm6WWP37Ditm5B03tOiEcdfUQGQ2sANQw7qYyytfkuiUqoY2rANDl7dFIZHEdhgwHMcTRv4z7dyxCtpim6enCKoEOzdqdxoPGK9zfcdOr7GcSgi7n8I/6ok9i7f9K3/M1eEhRyuLEs3um5Iq0wbFfqIaLj5NLH83ypngg0Pq3wlXbVQTpMTGYU8DkIQ7H0nDH4aW8caXNVg+rwY6KZD0j9lscS1fOJ/Or1Rue+mnU1yve6tM16Osr/iVHs86/C9UztboCNgjSPsjKglIIEB/TUO1pq3pYcetJi8W+bzTDJ78ILD9CvLvHRa41QQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qbNEjvNT1cLiAiV9OkGdRiAccNN5bdK0OD7gM3LgheA=;
- b=bVOXew0WyTWY5/YO3uS8a0+McCx8m2I1ZJNqd5Rnk+W3qfT8wT0vps8ZoFmp05FVBzlrR4vLJfgiLMnjv6w5EXzW01GRPTsqBPzvVyhqi6nX9YAb0jbl4HLB4v9GaEhZNXmyQgkN1myCW1r0JKHT2RYvowzIcDgrqeNMT3IgpGq3xBvNozb4wluxEzPsA2CCFA12rqlkqVualIUO/8+bcP/syfwkaro8Gr1pxIFY6NCb1in8GQvM2Obt56YFKcr8C/WY6ibZOHZFk8YZTDQOt+s+NMQZZXIV8Z2/BgRYJPLS0Wb8yHqi9ZvlEud2Ypq6ziKr/8iYCwaEnBrEkw+f3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qbNEjvNT1cLiAiV9OkGdRiAccNN5bdK0OD7gM3LgheA=;
- b=16iJlk6ir9DJEilwlwFiixW2WX8WzPcJktIp7d76RJYHGhTvDHRvfwRFtrN0sZOjnDATxyOxHTKjhzhOq0cjPPMPdgnoWQevzrwaXfzeZsR3qku1iKdgeZ7bhN/U6NSCDERPrSCuKShSsNwK0CqsIqgjvaZW8PNTC5l1iE58O8g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- PH7PR12MB5952.namprd12.prod.outlook.com (2603:10b6:510:1db::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.22; Thu, 24 Jul 2025 17:02:52 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%5]) with mapi id 15.20.8964.021; Thu, 24 Jul 2025
- 17:02:50 +0000
-Message-ID: <536c6bde-fe1c-400b-a8bc-bb40a23ef9fa@amd.com>
-Date: Thu, 24 Jul 2025 12:02:46 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 04/17] CXL/AER: Introduce CXL specific AER driver file
-To: dan.j.williams@intel.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, bhelgaas@google.com,
- shiju.jose@huawei.com, ming.li@zohomail.com,
- Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
- dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
- lukas@wunner.de, Benjamin.Cheatham@amd.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
- <20250626224252.1415009-5-terry.bowman@amd.com>
- <6881896b8570_14c356100de@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <6881896b8570_14c356100de@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA9PR13CA0075.namprd13.prod.outlook.com
- (2603:10b6:806:23::20) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C15822083;
+	Thu, 24 Jul 2025 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753376585; cv=none; b=VMgbXKs8ksGq7y508E6E2haPsTcNXC1u0VLqYxh7oEL1iZ5/yLfu5pX7KAsy4gYspsnXPhGNE98gg0MbESjJwUBPcBCGW0vy0b5Ks/FNKuzQfO1syPcOsF3hcTlowl7kztCfJPeMqWnXZATJCNXVGxKxFITR9To1NJ7ceQ2zHcM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753376585; c=relaxed/simple;
+	bh=iIFcGTqsWi64FA+4X8Vt5ss+eRrTzEKBSs8ulGfYqio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzGbj5aBonvVQL84QHIJiQ7FDmXhxeVtbJEZJukhu0nrvVniahUrQLm0u7AxOAqaS96U23kMQcnD9fNlqSNHGyeaZdgF3EXA7RLIRNvmkKPSy0TbT6UYr1ZncU1pVaeNLEs7M13g0myudPfvtvsdOCqM0+On4fFSMt8cAqqAnoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDFK7nla; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235f9ea8d08so10759575ad.1;
+        Thu, 24 Jul 2025 10:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753376583; x=1753981383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qwJL8vrfuTsFeO1izedEBY4esNoRy60YOKTbu+lV4JY=;
+        b=LDFK7nlaURkNhNsTe3OXeSOEUkuzsxQ54Z0OQzDmMYYtVtfV+CrTlXF5wahFEqjA5c
+         POV1QaSgLWX6fxZH30hVUDdsfXROerYaj1mVv5KRHSgi2rvw1zojHYbRkY4vRe1iGbls
+         YTU6Lca3Tvi2rOJhPk64Vye6SPa7Ur2JqDgvbdxKWxiIMILGVb+uJPwFrL04klckCfVN
+         rdpAq+H/FKgoTTA2nLiErVBWv57NiG6LO8/IuAYTb1KH4Vcr6uIwOSwBf5l0lSPchM1p
+         TgJb8bH5cZQGBZ21GrHuoo+ok7em1jE4R7eXia8VusdUEN4g/9i2i9T1TQ9xSerCXXyE
+         HgIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753376583; x=1753981383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qwJL8vrfuTsFeO1izedEBY4esNoRy60YOKTbu+lV4JY=;
+        b=QwqGi28n1hVB43Bf9dMVhzX1ZbQyp/jXrEPtBX9EUrOH2jtwrug/9MahrKQV/673HU
+         ftrAsOgpWE8JEesN7Hwjc7dMcwo+VHRym7jNIucZ8sbLH7yInRBwEQe+aMv8jJuQXPVA
+         A1deN1fIj5dbaGlIsT71R3sEqnqqX2RpstA+CHC8gl4X8uHxFroOdZ5cQWF+HQpvnWg/
+         yLOqHj5bkW84bmzpypK1T4Xl5v2ZCaQAcy+hGkL1xgxMGqRtkcTL2DG57MFY1u7+hOcu
+         x08+tRm/u7J+wbuK17ZNCxXGHQPWl7W1WZ1LoqZ7P/psiIzhKfT+lVjcJtqgiPYC84tq
+         qSZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYIJDyQcPo7Y4xNkgFK1XYF6tBDPtlwgDTSeM98s0flhiLdd6Gjvo84kHdnsfLTu3Nc58nbNMHjV94rrJ7@vger.kernel.org, AJvYcCUo/I34BbHDAyqbtjV7sfJDwx/mVi9C964fhTg4X8JRN71RBsuqaeynakXwdZuKoQsAgbITNwEeQljigcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf28O6OOkgIgkNXfkFYRdzoUuWm2aBIgvIEwdARAB7WENinKjT
+	qVl050jRjq3hu3dRtbzQRCXzUURtVlXglAN2R3U3IVvEEN+umbbJ4uQr6E3BEg==
+X-Gm-Gg: ASbGncstmu+5c5Mb9X3tGwtPMnSp4i1iPY5WEgI4DKVHNkxJcMjMAJw2lzZSM65MLuY
+	ut4hDAz6oZpRzxGD2kSf0aAUHG+dwwtfVy0lXk/sqM3uLsibPkjk4AYAn85Qjez+sI2k2VRQYC2
+	Mof/slbJ7kcHFErcAJCAGLCy+yrgWZOLVekfEha0TPoaWEk7A1D3S+0Z1XhvE12Ja7j7QFvL70p
+	160XbnoBrEhswr1ufRvUsMFv+hu6GJx6xHlQWhBV0fiAKgpfTQ3MBWhf3KDsB9FcG00zv0d/Zow
+	MpgiGj41lG/+cGnyudkHh9YOVu0jvG/+nxSqfORlFRp6ekVvEfL/03S81Wos/ggsP5m5s0Yq5sR
+	bVf9RKdV5WFH8Gff+SEsA5u1DsiAPWqeBn7A=
+X-Google-Smtp-Source: AGHT+IE038e+1kcoMofDlT1AiHNizN2sCo+hdTNdriW2qg7IRJkKbLtAQVV1ymUwx5UtRSNmZnOrcg==
+X-Received: by 2002:a17:902:cecb:b0:234:9656:7db9 with SMTP id d9443c01a7336-23f981ba33bmr127953255ad.32.1753376582402;
+        Thu, 24 Jul 2025 10:03:02 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48bde61sm19478105ad.109.2025.07.24.10.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 10:03:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 24 Jul 2025 10:03:00 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/crypto: tests: Annotate worker to be on stack
+Message-ID: <57d41f7c-44ea-4097-a7ae-458e785fd694@roeck-us.net>
+References: <20250721231917.3182029-1-linux@roeck-us.net>
+ <20250722031603.GA1298@sol>
+ <a534e0ad-35db-45f5-a1c9-9bd34cd3dafd@roeck-us.net>
+ <20250724162615.GA26800@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|PH7PR12MB5952:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70276acf-412c-43f3-6ea5-08ddcad3ec30
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V0MzYmFjS3pVcG5OQVF2TW1maGQ3aTFqb3A3YlhwekV0bUUzQ3BLNU56VW0z?=
- =?utf-8?B?ejBWQk5xc0pVZHNWSHNIMDNQWW9BWXNYQWFlQ1E4WGpwcmFtQndMK1Y5M0pH?=
- =?utf-8?B?U3hPL243eThZK3ZWVUlvRWxoMmNkYkdwMG81YmUyMys4aFFqZVhLNmZ0ZjBV?=
- =?utf-8?B?SUxQU0JQZ093TUNieWFZdmgrZjRnb3R3QndsczlkcDZsL0huSTB2RHBaRFpl?=
- =?utf-8?B?cElsSGRDY2U0M1QrQUxGdXFnSXpwZGlFaU9HdURWQ2E5U3kyeXVVcTFUMzhK?=
- =?utf-8?B?RFcyZ0tra0NiSWZEWC8ySmx4S0FUUFZQRzk0SkRQd3FVWWtpaGFXVkdkVytX?=
- =?utf-8?B?UFFZY1JENGI1Wjcza0Q0dU5SZDQxNzNFZTZrUkZQa2hQY0NiL3dOeTRNUS9o?=
- =?utf-8?B?eTNJOWVqcFoxK2VianhaUGVWSGthaVV0Zm4rM05QNE9jekdrS2gxK0pzNXhz?=
- =?utf-8?B?SUExZWVTRmZ3WVFoWEZzVmJIOUQrTER4NkFCemRYeHdCaS9lOWZGTCtva2xw?=
- =?utf-8?B?WXVDNEkxMEVlOTcwUUhpM0psL3lHVnhhemI1VHRONHU2MWlFUFZ2RHBoSWtT?=
- =?utf-8?B?ZmFrVDRJQ1NVR3c5RlJyV1R0TjVpTXhCSGorSkY4Y2lnK3k1QkVTZkV4UGZP?=
- =?utf-8?B?NXg5NHBVMXozNEFIWU5yaUJ2YVJySUFIMlRadGFlcDFvRTByT1ZneElRYVlJ?=
- =?utf-8?B?UEdidFpnWEgzZCsvV21ZREFSRlNIQ0JqaE1wOFBBdlI5V25mMEhyS0RsRkdp?=
- =?utf-8?B?MjJEK2RNSFQ5Q3dyUTdjVy9MN0xPY3QvY0l4RXBZbUVkcWZMZTFkcnVicGor?=
- =?utf-8?B?UmpoU3QrUlVPOWFzK0VrVXFMODQ4QnhUOHV5ZEJTQ0ZNMHRqSmpVOHJLT0ty?=
- =?utf-8?B?ZGJTUndMaUxKZkdsbzlEcXVlUG01OUtVVW13VWJ4Qk1mbHZVOWRPdUZsRGZn?=
- =?utf-8?B?Wk5aMmVuZVV4ZCtIMEdCVmJHd0RjWjVHNjhSZmhYVGV4NHNhUzdqZ0w0Zk93?=
- =?utf-8?B?UkIwRGVYQ21ma1UzcUNsbTFSa0tveXZ1bFpRaGpqakxnT3RnU3FWQ08xSi9l?=
- =?utf-8?B?Rkc3d3h6UkNBdG5ya2h2cHlaQ3lkbGsyaTlIVDNReGkyZk5SdnFSSHVxQTNl?=
- =?utf-8?B?emtqdCs5SHBYT2s5WWZiQkJPaDJ5TkxxSkh3Y1d3V3ppOFFkOFc4dUk4QUxN?=
- =?utf-8?B?QTFTWk9udS9xRmNFV2JwSnd3ZE9wdlUvclptREFrWjZ0TFNjRnVwcXJ4eXpt?=
- =?utf-8?B?ajlJaEJOdms3R1FsTjhrOExQQ09HNmsyUkJtSzRZYzZTUlQ3TU5Ib1hPTFVT?=
- =?utf-8?B?ektwTnJuenE3Vmw5Rm9qeEdXR3VoR1NocVMvMXR5V3o2OStsb3JVcjNmVkRG?=
- =?utf-8?B?QWh0clZyVm9LVW5SRGpQbjUyMFd0NDRibVhpcS9pRi9sK0NVNzNmeElrY05N?=
- =?utf-8?B?N09ScFhXMGdjdjBvUS9TT0xheDJ2UkI5NnBFRlFLeEYyK0FKSzdrV2hmcHlv?=
- =?utf-8?B?NlViWEFWeW05eFc1MjFSN1JWaDVXamZXY0t2UmNKbklsbmhSd1VjejFPK2pH?=
- =?utf-8?B?V0x4QXlhMnI1dTRXWXpxUFhLRjUxcFZyNXVtZ3FZclhCTTF2eVpkcVBSejNi?=
- =?utf-8?B?N1F3ZGc0dXAwcE82YnRXS0RuMUt2QkdmRHdPZDB2TUlmUTUwZ1ArcDBYaFAx?=
- =?utf-8?B?T0xoVGpJcENIWmFzblp0N0IzamJGTmh0b0xRMERYaWw3Q2YrOHdXUTBCV0Iz?=
- =?utf-8?B?ZklSRlNQM1gvM0xCWk9LMzFJVVNVUXRHR3lYWG03enJEbGJpc3huRHRxWXYz?=
- =?utf-8?B?bXBMdUdESUxIaEhIeXdYY2RlVFlYbUdqR0VqWXBaTWRPZkFZSWhiZ2dzWk9Z?=
- =?utf-8?B?VWJaQit4amk0REtCRjhtNThyWE1Gc2hKNURTNWJkRGIrdXJBR2RyeDJqRkxj?=
- =?utf-8?B?cUVjZk9kdEN0eklnYnNEZVNOZktoNm9kR0xNMlR6SWNXNnQ0eUhUSkk2Z1FQ?=
- =?utf-8?B?RjlhZUVvUURnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dUhKL09ybDhEait6eEd1Y3FRWnN4TnExMWkwVm9TQkVjY2dYNHB3NEY4Q01T?=
- =?utf-8?B?Mk94bEsxZjlTQUl1NllSTmVTbjFEMVYwTGdJQkVnay9JZFpGN25kdTEzM1Bm?=
- =?utf-8?B?MzhMT0dQRkRjT01ieVJQZVQ0bFVkY09IMjRlVlV5UTlYaUx2OGFTQlVBS1JN?=
- =?utf-8?B?Tm1qeWxRbGFEeFdqd2JKLys1MmtUUVczUWRFQmhLbzMxenpCK2Zia1U5d0FH?=
- =?utf-8?B?UENKY3ZxbEhCbkVCN3dWRmpmKytwSmVqVW82SUdNeEFEdEgxOWExNTYybS92?=
- =?utf-8?B?SGhDd3FtUjd4cWpOdVNYb2trbTRjVlFRNzhWV3ZpamJuSkF1T09PM2MzNzNn?=
- =?utf-8?B?eXBJMlIycHRiUkFFdDZXVnpYakRvaWtHWUZ6YVdkT3hnOXVGTUtGQW5iWkxJ?=
- =?utf-8?B?aE4rUTFBZ3lOV3pydVVDNElPUzZ3SzFXRktLZTEyUEtaTW1pWTg4YURRZ3cx?=
- =?utf-8?B?cDB5RXRwakZvVHNZOGtnSUVxOVlFMTU0K2hnS3VwZHhpUkxIeVJvWVlmV2Vr?=
- =?utf-8?B?cGJsS0tvSFRqTjJ5enJWeUdBdE5vU29MV0lTNGpFbkx1WXNXZjUwUjAwS05T?=
- =?utf-8?B?RTJHZjJzV04vUTM1WlVLSnhjM3dnTFVYNFJWc0ZESUVPZTFpOEZZSlc0Z3I5?=
- =?utf-8?B?T3paOTdVd0l6bFl6YmthQ0pZd2MyVUhyRjJEOGhEYTdudjZuVXd6VWkrOXgw?=
- =?utf-8?B?UkRHZUJua09NYXk0bGdmUXA3eTRmbzZQaUJ4NnF1b1N3cUVDNXRQUlY4Wkdy?=
- =?utf-8?B?MjlHbXhIWWk3Q1ljdlZ0clpnd0JwK1NFSzFBaExRRU1NajdsWCtEa05vL1BX?=
- =?utf-8?B?SkYwNmJ3QzNUdVJ0amtnZFBiU3I0eE9hb3QxUUNOZk1QeE9qTEVLejhSdnNq?=
- =?utf-8?B?VVRUVlFsQTZqWDBoaXpBdm5xZ0N5eEFZMURvWmhGaXVmRkw3ajFoZ0VHSmFL?=
- =?utf-8?B?a3ZYRHFMdUpjR0dJYXpFeElWVDA3QUJxTzd0c2lESE1mcDlzMzZOcmZ0RGd3?=
- =?utf-8?B?RjZaN05ubnNrTjRUdytPd214YWJ6ajdaeG9tUnZhOXMxSlBaUjlUWi9URzdm?=
- =?utf-8?B?Y1BORW1IUGMrWm9mZFp4ekZza1NxZVFvemlLMUJLaVV5dEFzdU9YbE1WakZG?=
- =?utf-8?B?ZitrVllSVW5TKzQyUXR2YUpzVFhQbjc3NXVBMHRIT0JXYUFXOWlHRjllbWdD?=
- =?utf-8?B?MlVNemoxTmVWbS82bEZpdHExa3ZFK2liVHhhQllnSVY0MnVwdDFYNUFLaHp4?=
- =?utf-8?B?UllUMlJwdmlyZVhqS3VkUm1NSkZ6SHYyclJ5RHdBV0RuMERSZ2dVR2JUTWZm?=
- =?utf-8?B?d3NBUzc1UURRWVYwVE1BTGgwc0EvUW8yOEYySUIvRnB1ZDNycDRRQ1FRNTlH?=
- =?utf-8?B?ZTBFUGdENStYQ3NFOWVFbmZITWlhMVo2MTF5YW95VFVnVkZibWlsOWdMaGJD?=
- =?utf-8?B?R1cyTmFPS21MWDhxeVZBTmxiSjZBUkQ4THdNN0tJTCttQjVxUklldW8rS0s0?=
- =?utf-8?B?bDFNeEozT3FicStFMXFvWnhqTGFmYUFUTmdtbE1NSlhpbjFvVUdwYlQyc25y?=
- =?utf-8?B?S0daanZTMkZLM2pLcjEvVFVXYkRHZ25kYjNOL2lVc3drNUVXREdFSEQyVms0?=
- =?utf-8?B?YzJ6ZDREVERMTTdManJ2YmJadGhoNHF0REZxRHFJS0tDY3diZTNkUUZDWHJo?=
- =?utf-8?B?TE5ITld5allHdDhWNjdtc1ZSbE5DN1J3THBGQkhHbjZnSTRNOXdVR2lHM2dh?=
- =?utf-8?B?SWhLbTVoQ0JJQnFmY2E0V25GanllRmRCWDFpWnVya3dNV05vdDBCajAyaDhT?=
- =?utf-8?B?UjNrR1Y4L0lUNlQ1Z2J4ZlZzaVQzWG9nVTBvZ3hPWDA2T1lWSjhtY252MEJC?=
- =?utf-8?B?TG80SitIc2c0RmlRdzBvWjVhU2ZqR0Q1NS9GQTVEOGdBRlZ1OUtxMUtTeDNo?=
- =?utf-8?B?QUVMV3JoWmhPN3lVdWdhb1ZLblpyblFheFZUUEUwRUFZUDQxNURwTEh4RUNq?=
- =?utf-8?B?c0pRTnhkbU12aURUMnRHTWZ5QlgvalhiNXNtL2lwVEV6YkFrZ2VaWDNvbllL?=
- =?utf-8?B?TmRvcGJ0WFZzUEwzUGhhTnl6V09GMXFJQVhjWWhjWDJLeC9valdPbG42aUxv?=
- =?utf-8?Q?HbPfYbLWfOk15DJEYzLigXQnB?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70276acf-412c-43f3-6ea5-08ddcad3ec30
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 17:02:50.8285
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TzBu7tP2dr34Ubes7bnV+3ZihmazxOEbh7lpjmKSZXoygeojAXRfk247/Ot+8lTQCp43m3u+4l8b5v5UnchPiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5952
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724162615.GA26800@sol>
 
+On Thu, Jul 24, 2025 at 09:26:15AM -0700, Eric Biggers wrote:
+> On Thu, Jul 24, 2025 at 07:19:00AM -0700, Guenter Roeck wrote:
+> > On Mon, Jul 21, 2025 at 08:16:03PM -0700, Eric Biggers wrote:
+> > > On Mon, Jul 21, 2025 at 04:19:17PM -0700, Guenter Roeck wrote:
+> > > > The following warning traceback is seen if object debugging is enabled
+> > > > with the new crypto test code.
+> > > > 
+> > > > ODEBUG: object 9000000106237c50 is on stack 9000000106234000, but NOT annotated.
+> > > > ------------[ cut here ]------------
+> > > > WARNING: lib/debugobjects.c:655 at lookup_object_or_alloc.part.0+0x19c/0x1f4, CPU#0: kunit_try_catch/468
+> > > > ...
+> > > > 
+> > > > This also results in a boot stall when running the code in qemu:loongarch.
+> > > > 
+> > > > Initializing the worker with INIT_WORK_ONSTACK() fixes the problem.
+> > > > 
+> > > > Cc: Eric Biggers <ebiggers@kernel.org>
+> > > > Fixes: 950a81224e8b ("lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py")
+> > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > > > ---
+> > > >  lib/crypto/tests/hash-test-template.h | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
+> > > 
+> > 
+> > Unfortunately it turns out that this is insufficient and/or that there
+> > are more problems. With this patch applied and the ext4 unit test crash
+> > fixed in next-20250724, I now see the following crash. I'll try to bisect.
+> > 
+> > Guenter
+> > 
+> > ---
+> > [    9.683061]     KTAP version 1
+> > [    9.683116]     # Subtest: poly1305
+> > [    9.683160]     # module: poly1305_kunit
+> > [    9.683391]     1..12
+> > [    9.686210] BUG: unable to handle page fault for address: ffff923a00a09000
+> > [    9.686349] #PF: supervisor read access in kernel mode
+> > [    9.686399] #PF: error_code(0x0000) - not-present page
+> > [    9.686517] PGD 1000067 P4D 1000067 PUD 1291067 PMD 3248067 PTE 0
+> > [    9.686694] Oops: Oops: 0000 [#1] SMP PTI
+> > [    9.686957] CPU: 0 UID: 0 PID: 565 Comm: kunit_try_catch Tainted: G                 N  6.16.0-rc7-next-20250724-00001-ga9d31cee9308 #1 PREEMPT(voluntary) 
+> > [    9.687093] Tainted: [N]=TEST
+> > [    9.687126] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > [    9.687264] RIP: 0010:poly1305_blocks_avx2+0x47c/0x780
+> > [    9.687352] Code: bd f4 f3 c5 bd f4 d4 c5 7a 6f 46 10 c5 25 d4 de c5 1d d4 e2 c5 fd 6f 50 10 c5 b5 f4 f1 c5 35 f4 c8 c5 0d d4 f6 c4 41 15 d4 e9 <c4> 63 3d 38 46 30 01 48 8d 76 40 c5 ed f4 f1 c5 ed f4 d0 c5 b5 73
+> > [    9.687509] RSP: 0000:ffff923a009fba00 EFLAGS: 00010202
+> > [    9.687565] RAX: ffff923a009fba90 RBX: 0000000000001000 RCX: ffffffffb36df180
+> > [    9.687624] RDX: 0000000000000040 RSI: ffff923a00a08fc0 RDI: ffff923a009fbd18
+> > [    9.687686] RBP: 0000000000001000 R08: 0000000000000001 R09: 0000000000000000
+> > [    9.687744] R10: ffff923a009fbc08 R11: 0ed99de400a62f9c R12: ffff923a00a08000
+> > [    9.687801] R13: ffff923a009fbca8 R14: 0000000000000001 R15: 0000000000001000
+> > [    9.687881] FS:  0000000000000000(0000) GS:ffff8ad208a1a000(0000) knlGS:0000000000000000
+> > [    9.687948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [    9.687998] CR2: ffff923a00a09000 CR3: 000000001e09c000 CR4: 00000000001506f0
+> > [    9.688097] Call Trace:
+> > [    9.688183]  <TASK>
+> > [    9.688331]  ? __poly1305_init_avx+0x172/0x1f0
+> > [    9.688394]  ? kernel_fpu_begin_mask+0xa1/0xf0
+> > [    9.688442]  poly1305_blocks_arch+0x95/0x190
+> > [    9.688493]  poly1305_update+0x6e/0x150
+> > [    9.688534]  poly1305+0x5b/0x90
+> > [    9.688592]  test_hash_test_vectors+0xd1/0x1c0
+> 
+> That's weird.  This crash suggests that the Poly1305 assembly code read
+> past the end of the input data buffer, which is a type of bug the test
+> is designed to detect.  However, I've never gotten this crash when
+> running the test, even on next-20250724 and even on a CPU that uses the
+> poly1305_blocks_avx2() code path.
+> 
 
+Are you running the test while booting or as module ? Sometimes that makes
+a difference.
 
-On 7/23/2025 8:16 PM, dan.j.williams@intel.com wrote:
-> Terry Bowman wrote:
->> The CXL AER error handling logic currently resides in the AER driver file,
->> drivers/pci/pcie/aer.c. CXL specific changes are conditionally compiled
->> using #ifdefs.
->>
->> Improve the AER driver maintainability by separating the CXL specific logic
->> from the AER driver's core functionality and removing the #ifdefs.
->> Introduce drivers/pci/pcie/cxl_aer.c and move the CXL AER logic into the
->> new file.
->>
->> Update the makefile to conditionally compile the CXL file using the
->> existing CONFIG_PCIEAER_CXL Kconfig.
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> ---
-> After reading patch5 I want to qualify my Reviewed-by:...
->
->>  drivers/pci/pci.h          |   8 +++
->>  drivers/pci/pcie/Makefile  |   1 +
->>  drivers/pci/pcie/aer.c     | 138 -------------------------------------
->>  drivers/pci/pcie/cxl_aer.c | 138 +++++++++++++++++++++++++++++++++++++
-> This is a poor name for this file because the functionality only relates to
-> code that supports a dead-end generation of RCH / RCD hardware platforms. 
->
-> I do agree that it should be removed from aer.c so typical PCIe AER
-> maintenance does not need to trip over that cruft.
->
-> Please call it something like rch_aer.c so it is tucked out of the way,
-> sticks out as odd in any future diffstat, and does not confuse from the
-> CXL VH error handling that supports current and future generation
-> hardware.
->
-> Perhaps even move it to its own silent Kconfig symbol with a deprecation
-> warning, something like below, so someone remembers to delete it.
+> Could you provide your kconfig, in case this is kconfig dependent
+> somehow?
+> 
 
-cxl_rch_handle_error_iter() and cxl_rch_handle_error() need to be moved from pci/pcie/cxl_aer.c
-into cxl/core/native_ras.c introduced in this series. There is no RCH or VH handling in cxl_aer.c. 
-cxl_aer.c serves to detect if an error is a CXL error and if it is then it forwards it to the 
-CXL drivers using the kfifo introduced later. I will update the commit message stating more 
-will be added later.
+Configuration file and decoded stacktrace are at
 
-Dave Jiang introduced cxl/core/pci_aer.c I understand the name is still up for possible change.
-The native_ras.c changes in this series is planned to be moved into cxl/core/pci_aer.c for v11. 
-The files were created with the same purpose but we used different filenames and need to converge.
+http://server.roeck-us.net/qemu/crypto/
 
-Let me know if you still want the rename to rch_aer.c.
+Please let me know if you need anything else.
 
--Terry
-
-> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-> index 17919b99fa66..da88358bbb4f 100644
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -58,6 +58,13 @@ config PCIEAER_CXL
->  
->  	  If unsure, say Y.
->  
-> +# Restricted CXL Host (RCH) error handling supports first generation CXL
-> +# hardware and can be deprecated in 7-10 years when only CXL Virtual Host
-> +# (CXL specification version 2+) hardware remains in service
-> +config RCH_AER
-> +	def_bool y
-> +	depends on PCIEAER_CXL
-> +
->  #
->  # PCI Express ECRC
->  #
-
+Thanks,
+Guenter
 
