@@ -1,146 +1,102 @@
-Return-Path: <linux-kernel+bounces-744939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616CEB112C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D152B112C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924E1584B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD2D1CE388F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803862750E7;
-	Thu, 24 Jul 2025 21:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510322E9ECF;
+	Thu, 24 Jul 2025 21:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AOitiZAq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ngv2evMu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96711F4CAC;
-	Thu, 24 Jul 2025 21:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F911FFC5E;
+	Thu, 24 Jul 2025 21:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753391177; cv=none; b=tduda29I6U6oOBX7eSdbzRkpPbikY5XLeQ9dUtYU+pq8Do7z7j6sVMnDswUaD5VO55HsWPzpGWOfh+kn3qNs2czs71RkQtvQ/eSYcynjVOs7tLOq+E7q4xm1k8gWwnBUEwiolnNcClb2G0HWe7w4LzCyTFv7VEwwhj9Vcfh8dGo=
+	t=1753391200; cv=none; b=rE+9SSC4nioCXSNI5OceIcxBn8WXNwafDr8mnFKO+NojvMkNQvGXXy+WV/VyFz+pvlAGrLUbDPDtRQX1aeNuhYJR1vZj8EsO72FgvZAyxPF8ur9MMKZ1Nay7Inn83eTez7nzVzntHLYXknLIyTDe2Pxka9/ctzcSZgWHPmt/O4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753391177; c=relaxed/simple;
-	bh=hwHpG5+mA3GHqkMcpxYmK0TqGblHIbLo8bnBZnxuY2g=;
+	s=arc-20240116; t=1753391200; c=relaxed/simple;
+	bh=QOwacRNEVeeeVrBxgCmz/psw2bKyWXzSMrsEjsiKuUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBnk9jAr+U3vMF2IMFC0LmLm7HJk/tnSBuU/myznXWCusuJaRK/xbTzOk4X2W4PrACMYWvvYibDBCMHqPjAo0wKSFoZrDIM3l+mRXf22iQZVb+t6bb+KNjpBmd1Xf+O4fQz3GNx/ozykwZZEpi1+4vJ5b9QRe27FLCE/pnEdMdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AOitiZAq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 248EE228;
-	Thu, 24 Jul 2025 23:05:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753391134;
-	bh=hwHpG5+mA3GHqkMcpxYmK0TqGblHIbLo8bnBZnxuY2g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nodrkD58rZBIGv5j9VhEZC0LMhP4aq+UkAMPd1fvTLBo5ArkMTr8GbKrhEwfKYEvieNoupTAxIqA7tnVM3QtKCxd7xZagKUaSsc9qh3f/4wWemFKriAk3I5vOEk+cB8HYXvTO+UqcrR7aMY4t9FvMPeva2Bdn11gnBBpDxfZdpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ngv2evMu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2BCC4CEED;
+	Thu, 24 Jul 2025 21:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753391200;
+	bh=QOwacRNEVeeeVrBxgCmz/psw2bKyWXzSMrsEjsiKuUo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AOitiZAqc5TmklBmqM9X4ljeYRfK6bJnZoK4uJEnHVQlBI693r/6UoltoXhb4NKfX
-	 btCTTXy/ETrWEobdfuFWu9O5wjflnnAaHycyRtdoktk5EPd7r0EYfFFOpoxyplOxpf
-	 fuiHdvERFK41XnGmwkGD7s/46IlyBRQhogDJ0APE=
-Date: Fri, 25 Jul 2025 00:06:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	linux@treblig.org, corbet@lwn.net, workflows@vger.kernel.org,
-	josh@joshtriplett.org, linux-doc@vger.kernel.org,
+	b=Ngv2evMu7+AANzGVRNQyPDx9E3xkL1Tk1epokwgyNCsP0stkNt4dlYiIfaZMbmqwa
+	 NKEVzodlMNVgyge1hTsRdSzjHwXK9QNMSHqyco991uvLMMIeuga6YrznroY89kgqzk
+	 5LOhzGsQfZryCxhftaBPTLKuAXa1zhEcXL1UnYBj0ziVKND0IfTBuSDZJiUQ7zEuM0
+	 nhjKuedFAjzxAMtXrvyd2ZLSloYbM1451DE0bnj74f+1txNUorUPE+dvkae3ZWzWvE
+	 F1rCXLvpEsx4E4UJHlOz1Xd5tzTUaF+FIAqDNupbC/L/4V3YUaYKOVGO2v7yKslnOS
+	 mXIJaLx60+VIA==
+Date: Thu, 24 Jul 2025 23:06:36 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <20250724210609.GV11202@pendragon.ideasonboard.com>
-References: <20250724175439.76962-1-linux@treblig.org>
- <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
- <202507241337.F9595E1D@keescook>
+Subject: Re: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
+Message-ID: <ykjehesx7ozh3w42hprewiip2g4uxyhs5c2qdzqhfc2b7z6mj6@foeuy5vgs7wf>
+References: <20250724104148.139559-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tbubr6jh3k2elbwf"
 Content-Disposition: inline
-In-Reply-To: <202507241337.F9595E1D@keescook>
+In-Reply-To: <20250724104148.139559-1-colin.i.king@gmail.com>
 
-On Thu, Jul 24, 2025 at 01:45:35PM -0700, Kees Cook wrote:
-> On Thu, Jul 24, 2025 at 03:07:17PM -0400, Konstantin Ryabitsev wrote:
-> > On Thu, Jul 24, 2025 at 06:54:39PM +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > It seems right to require that code which is automatically
-> > > generated is disclosed in the commit message.
-> > 
-> > I'm not sure that's the case. There is a lot of automatically generated
-> > content being added to the kernel all the time -- such as auto-formatted code,
-> > documentation, and unit tests generated by non-AI tooling. We've not required
-> > indicating this usage before, so I'm not sure it makes sense to start doing it
-> > now.
-> > 
-> > Furthermore, merely indicating the tool doesn't really say anything about how
-> > it was used (e.g. what version, what prompt, what context, etc.) If anything,
-> > this information needs to live in the cover letter of the submission. I would
-> > suggest we investigate encouraging contributors to disclose this there, e.g.:
-> > 
-> > | ---
-> > | This patch series was partially generated with "InsensitiveClod o4 Hokus"
-> > | and then heavily modified to remove the parts where it went completely off
-> > | the deep end.
-> > 
-> > I am also not opposed to having a more standard cover letter footer that would
-> > allow an easier way to query this information via public-inbox services, e.g.:
-> > 
-> > | generated-by: insensitive clod o4 hokus
-> > 
-> > However, I don't really think this belongs in the commit trailers.
 
-I think there's often value in having the information in individual
-patches instead of (or in addition to) the cover letter though, as it's
-common for different patches in a series to be generated differently.
-Standardizing on one option or the other may be overkill at this point
-though. Especially when it comes to code generated by LLMs, how (and if)
-to report that information should be governed by the issues we want to
-address, and I don't think there's a consensus on those yet.
+--tbubr6jh3k2elbwf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
+MIME-Version: 1.0
 
-One issue that is often mentioned is copyright infringement. We go to
-great length today to ensure that code is fit for inclusion in the
-kernel from a legal point of view with the certificate of origin and the
-SoB line. It would seem to make sense to then also report if code was
-geenrated by an LLM per-commit if we want to extend the copyright paper
-trail (for whatever purpose it will be used later).
+Hello,
 
-> I agree; I'm not sure I see a benefit in creating a regularized trailer
-> for this. What automation/tracking is going to key off of it?
+On Thu, Jul 24, 2025 at 11:41:48AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in the PWM_RASPBERRYPI_POE Kconfig,
+> fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-We may find/invent use cases for automation later, in which case we can
-revisit usage of a standardized trailer. I however see an important
-manual use case for the information already: knowing how a patch was
-created helps reviewers. If I'm told a patch was generated by coccinelle
-(especially if the semantic patch is included in the commit message
-too), I will pay attention to different types of mistakes than for a
-manually written patch.
+Thanks, applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+=2E
 
-> It's
-> a detail of patch creation methodology, so the commentary about how
-> something was created is best put in the prose areas, like we already
-> do for Coccinelle or other scripts. It's a bit buried in the Researcher
-> Guidelines[1], but we have explicitly asked for details about tooling:
-> 
->   When sending patches produced from research, the commit logs should
->   contain at least the following details, so that developers have
->   appropriate context for understanding the contribution.
->   ...
->   Specifically include details about any testing, static or dynamic
->   analysis programs, and any other tools or methods used to perform the
->   work.
-> 
-> Maybe that needs to be repeated in SubmittingPatches?
-> 
-> -Kees
-> 
-> [1] https://docs.kernel.org/process/researcher-guidelines.html
+Best regards
+Uwe
 
--- 
-Regards,
+--tbubr6jh3k2elbwf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Laurent Pinchart
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiCoFoACgkQj4D7WH0S
+/k4yXwf/Zz2ZVoaJ2aZ5srlwY+6rTK4Kgx3QRSjsS+9ivfeoixC8tBtaDyGiQSzM
+AFLgOAj3qaLcG6t4X37OWqjdFCv9SxtfIQ5keFXYmBYFICvwQ0HzL7Mj4pklFfAv
+76dkZddpnv+PpiWMw5sbCbLvsvnScGZbOpEaoyHIJBJivbb+jpFJV5Q2tH4tYjaN
+Qk4HINFTwt3oe0Tq6H/i5430M5lzNuuJEOmyqfosLL/XKRsCQOn9Oze6FbC+PAq7
+ZcYkcKr0WEMKy58qNxPvmVHeXl1AYIdKIpHYgNdxZ1Lx6q3MFYgQV6UbJCMM3Txl
+4UiHT4Lf9cF7b2+CHkoKMhEFJXuUPw==
+=el/X
+-----END PGP SIGNATURE-----
+
+--tbubr6jh3k2elbwf--
 
