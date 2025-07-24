@@ -1,193 +1,168 @@
-Return-Path: <linux-kernel+bounces-743416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06138B0FE65
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C069B0FE68
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4DC87B785B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770841C27B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F5B18DB1E;
-	Thu, 24 Jul 2025 01:41:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D27D156661;
-	Thu, 24 Jul 2025 01:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183C419004A;
+	Thu, 24 Jul 2025 01:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AbGqk9l7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478E418786A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753321290; cv=none; b=sk29Ue0d45VHRfpCLMN0f2ABoQNCbIMbfTeqdnzPQIjzCR1NYAKN5Jl49Qac98t8SmD7IY6S2j4h93wHYsBASq69e8FzAz7g9LdFQQufEftL5qsnReTuHenFTJHHf8lzXYptH6I48W0PNGLyHUuO9a0ljLDr91+QyFuyWu/9QFI=
+	t=1753321312; cv=none; b=sgLjkL+SlD48wTMA566cNsoxxcbTRI5Dn3rujp7h63vN1BY5H+sM3j3flj1Cp+CUMDtk5cPwgDcImJDJNwvIIKvitFlI4r7GQAIrndZZNy4sC9W0C68UkKR1EZb9WbgT/GAn79RbEm6L37hueYPzQPKgAfcgJ81eeX5SaTD/faw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753321290; c=relaxed/simple;
-	bh=1BXpZI4scZTyVma5PgiR4xOt+Q2ng527W4S4xuCME2Y=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PVdjCbnTLKx4GvJ1C3Wkx2VmSDdurms7cqmeIczb6JxvW86RdEhmCQMf1gcEIw+YOC2uoj3RKPcT2eziRbrBPZFvMbNKc8pCv0NRzjU+3iA5CCkrI9IG0ytWiQjt/trqcehfUGFASdu618dT2LLI8yNjTK44JhfMv5tycoA4AT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxPOJEj4FoG8swAQ--.57961S3;
-	Thu, 24 Jul 2025 09:41:24 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJCxocJAj4FotAYkAA--.53925S3;
-	Thu, 24 Jul 2025 09:41:22 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic
- code
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20250722094734.4920545b@gandalf.local.home>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
-Date: Thu, 24 Jul 2025 09:39:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1753321312; c=relaxed/simple;
+	bh=tgMrZhqcs6LlFm9tZEm1ilzQvjFnP85Koztg8DHCrg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZevw7gUR1/zY6VTXb9EDUpxvBbc7/T57mBJkPeu7lI8VwJ2GRLCmfjx/d+FxV4YfoyxdKZgxDuX3dZ4Jz+WXMLvjYEqSn5vtoD5pYDTnUJ+o4Seq+wuSxO7+3OWiOczdDwQPiT8aDlsA55TkJYyFulGkn/EUqiJaHEXc32NBBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AbGqk9l7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXToe018072
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:41:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3l5vVTkH19Z282OOXYT7AVaSkeC2Vgr99aP1Mh72ErA=; b=AbGqk9l7JyqEvtLG
+	xPu315+pSjIiJznXNvDVSuZN5drzlf/fsnaMZKwwQcpqSlz/tMOHSd0x1sFIYzOf
+	kgkL0bdLc8gR1JYnazgzgNQvlXd0muA72uIvbPBiDJqmt0grTKMCunivB16vpnMb
+	soTCx99XCWCotjSpe04Qojqt5pUIX/mlPrkmF7rIJR4ZZUyb0vFJ3K5+7/SZHacR
+	Xfk9sT1AQQ5d1WuAu33TSwpaRrznLm3yK1tfkUMmrqoF5UbPwFdaARN4fHrXUPeO
+	sgBo8ed6dK7+bpyGj3F1Xu33Ey+Vca5lyzl8Dvfbg+H/F576z7CiiBgsYTme02Aw
+	9PGGSQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6s6rf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:41:47 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b34fa832869so1215239a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:41:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753321306; x=1753926106;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3l5vVTkH19Z282OOXYT7AVaSkeC2Vgr99aP1Mh72ErA=;
+        b=spQ7nxmLrZITyBbZ8dAxlFPlHmbUtP3a7I0Z3U5LEvhdG3wVmyA7BBndqNL3jtEd6a
+         3jVmoinLtptpt2wLbZcn0q451n+XfWcGOktEUb8kBu2/1OGmJceJhFfXwsb+pSZXztfI
+         1D8ope61s6wh8IkSM8wwJwVSdsQ92czDbiYfLrgnbadH0q3Rql2uQTWlL0hRgW8e/Gro
+         zTsB/hbGMCLcE6KwopYf9Ok0TsK9ucRJccudqjXZ3CRiKfS4CPou6D/Fl79hA/gmp5m2
+         W4pUWxXer6kUmj5bRotD9AqczGuegy/zhg42wj2uNley00UgpOC0aKWvSRrdzYwsfWnc
+         Sbbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7m2J4n1yOtnMIHMcIAqco3nXk5e1Kv10+EXFEFSNKLgGgf1sdVjs+TpXNHrrAE/bcEW0D0ti7htOzkbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3TgQgUFxs5xVlO73VMTbOMWNFlWXyLsI1mxuml2G40DEB8wXv
+	B6zXizLltuqChb/zhXsGurQTUqac0HLrA/wa1lR8qcvckMrq6B+WxnKRXQqn5g/xfIaAJrPLp1w
+	FKLErKOT0mVZfKQJivBAhr/uZcJsdE0FowaV2bbkdyeel8sYXo5nQslcD/bz2yOmG73M=
+X-Gm-Gg: ASbGnctXg+SYyE66yBRKnUcViEdPDGI2R9OzPizuFjMmm87+LRoHlimBr5ge1d79IRx
+	RPomjy8zTnRYY43wFoMlOiy3Di9x5hp1Dc7pIwzm/9gsJjfqh1mZabSda+8lMoBjt2ADoHiAQQp
+	0HU/D9xm8Q0KoHLVldxbuQWGbExZ2SNP0JCKCj+hJtJOyrjzuI+8ZQGUohqKrM/lmAL/Fom8KcY
+	SHiGaxQ0p5qR8MuCSqm6yn3Mo7McnnXNRkZ3i0xqmMvTZO+BFMz/HNMUK/aUqQ2UDGV2ZmAs6Js
+	iPnFGh93IPzfUjPfeHAkXgjHXVNlGfPogODa61aIByE71t+/LishHmy/yRVDBFkaI6offwnIGEg
+	CS0eOT4QezUq2oAIQswa37VV4XUBQMrTJ
+X-Received: by 2002:a05:6a21:7182:b0:220:898b:2ca1 with SMTP id adf61e73a8af0-23d5b6d0d5bmr271125637.21.1753321306547;
+        Wed, 23 Jul 2025 18:41:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEfD+HGAkMnjB5I3dCEWR4gDruV20/UEZdN21kQ2WAho8Z9MdvKFzZRB08ebGbrhWrhU3FYaQ==
+X-Received: by 2002:a05:6a21:7182:b0:220:898b:2ca1 with SMTP id adf61e73a8af0-23d5b6d0d5bmr271093637.21.1753321306071;
+        Wed, 23 Jul 2025 18:41:46 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761d52fe8cbsm189010b3a.111.2025.07.23.18.41.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 18:41:45 -0700 (PDT)
+Message-ID: <1d5f27a4-5407-4cf2-bd52-1ee75a4050ef@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 18:41:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250722094734.4920545b@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] wifi: Fix typos
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+References: <20250723201741.2908456-1-helgaas@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxocJAj4FotAYkAA--.53925S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxAr43urW3Kr17Cr4Uuw4xXwc_yoW5uF4kpF
-	17ArZIgr4xKrs7A34fZwn5Krsxu3s5uFy7t3srWrWkCF48Ar4rGr1qvrWkt3sIy3sYka4x
-	tF1vvryUGayUZ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOiSdUUU
-	UU=
+In-Reply-To: <20250723201741.2908456-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=68818f5b cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=e70TP3dOR9hTogukJ0528Q==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=1XWaLZrsAAAA:8 a=NRXtL9kN6jlbBn24eUgA:9
+ a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: g1YHug1TMoYfj6NhChz-cLgqdQroy4uw
+X-Proofpoint-GUID: g1YHug1TMoYfj6NhChz-cLgqdQroy4uw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDAwOCBTYWx0ZWRfXyjFCZyCRpbKG
+ A+iZgDHcpXwFb+sK9ArmoH60T2CGXQKLfsbBLt03wkEE9CiTcEGmJy1XWhkWIXMB0VjVPxLm1qc
+ +RXS7uoJJFM/yH1KGJq+9aF3tebv0lmRfuzwYxsA6pHd84j5DA7jbgUS8VgxIXTaiZ9fMMOKUD1
+ rfAguDvhSKi3DXbpEu4hYUMjzizr7gBcQgWU64v2cRUL0Prvt2u+AAUkJPzRGN6PK0by1skhF3E
+ 9HW5kwd0uvT13j42oD4DZMbNz93EdLSvHu6q7Vk7Py98jrvJhfEZFackCJZY/cV2R7g0MMKa53D
+ QYMXcND1c4r2glgfINgIrt/pkcUZVEeyAmM01hEFi/kJcHYrQQzBvZwTFoJ457iOCWM8ci2gVwI
+ p2VdOlzoAkpj1cg1yMjXESNlGh8nJJF/52x46H0aG2t5pZnHZ4PAkfVX3wi7tx5cfVdad8wz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507240008
 
-
-
-On 2025/7/22 下午9:47, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+On 7/23/2025 1:17 PM, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> The tracepoint kvm_iocsr is only used by the loongarch architecture. As
-> trace events can take up to 5K of memory, move this tracepoint into the
-> loongarch specific tracing file so that it doesn't waste memory for all
-> other architectures.
+> Fix typos in comments and error messages.
 > 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 > ---
->   arch/loongarch/kvm/trace.h | 35 +++++++++++++++++++++++++++++++++++
->   include/trace/events/kvm.h | 35 -----------------------------------
->   2 files changed, 35 insertions(+), 35 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/trace.h b/arch/loongarch/kvm/trace.h
-> index 145514dab6d5..d73dea8afb74 100644
-> --- a/arch/loongarch/kvm/trace.h
-> +++ b/arch/loongarch/kvm/trace.h
-> @@ -115,6 +115,41 @@ TRACE_EVENT(kvm_exit_gspr,
->   			__entry->inst_word)
->   );
->   
-> +#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
-> +#define KVM_TRACE_IOCSR_READ 1
-> +#define KVM_TRACE_IOCSR_WRITE 2
-> +
-> +#define kvm_trace_symbol_iocsr \
-> +	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-> +	{ KVM_TRACE_IOCSR_READ, "read" }, \
-> +	{ KVM_TRACE_IOCSR_WRITE, "write" }
-> +
-> +TRACE_EVENT(kvm_iocsr,
-> +	TP_PROTO(int type, int len, u64 gpa, void *val),
-> +	TP_ARGS(type, len, gpa, val),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(	u32,	type	)
-> +		__field(	u32,	len	)
-> +		__field(	u64,	gpa	)
-> +		__field(	u64,	val	)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->type		= type;
-> +		__entry->len		= len;
-> +		__entry->gpa		= gpa;
-> +		__entry->val		= 0;
-> +		if (val)
-> +			memcpy(&__entry->val, val,
-> +			       min_t(u32, sizeof(__entry->val), len));
-> +	),
-> +
-> +	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-> +		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
-> +		  __entry->len, __entry->gpa, __entry->val)
-> +);
-> +
->   #define KVM_TRACE_AUX_SAVE		0
->   #define KVM_TRACE_AUX_RESTORE		1
->   #define KVM_TRACE_AUX_ENABLE		2
-> diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
-> index 8b7252b8d751..b282e3a86769 100644
-> --- a/include/trace/events/kvm.h
-> +++ b/include/trace/events/kvm.h
-> @@ -156,41 +156,6 @@ TRACE_EVENT(kvm_mmio,
->   		  __entry->len, __entry->gpa, __entry->val)
->   );
->   
-> -#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
-> -#define KVM_TRACE_IOCSR_READ 1
-> -#define KVM_TRACE_IOCSR_WRITE 2
-> -
-> -#define kvm_trace_symbol_iocsr \
-> -	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-> -	{ KVM_TRACE_IOCSR_READ, "read" }, \
-> -	{ KVM_TRACE_IOCSR_WRITE, "write" }
-> -
-> -TRACE_EVENT(kvm_iocsr,
-> -	TP_PROTO(int type, int len, u64 gpa, void *val),
-> -	TP_ARGS(type, len, gpa, val),
-> -
-> -	TP_STRUCT__entry(
-> -		__field(	u32,	type	)
-> -		__field(	u32,	len	)
-> -		__field(	u64,	gpa	)
-> -		__field(	u64,	val	)
-> -	),
-> -
-> -	TP_fast_assign(
-> -		__entry->type		= type;
-> -		__entry->len		= len;
-> -		__entry->gpa		= gpa;
-> -		__entry->val		= 0;
-> -		if (val)
-> -			memcpy(&__entry->val, val,
-> -			       min_t(u32, sizeof(__entry->val), len));
-> -	),
-> -
-> -	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-> -		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
-> -		  __entry->len, __entry->gpa, __entry->val)
-> -);
-> -
->   #define kvm_fpu_load_symbol	\
->   	{0, "unload"},		\
->   	{1, "load"}
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+>  drivers/net/wireless/ath/ath10k/hw.h          |  8 +++----
+>  drivers/net/wireless/ath/ath5k/reg.h          |  2 +-
+>  .../broadcom/brcm80211/brcmfmac/cfg80211.c    |  6 ++---
+>  .../broadcom/brcm80211/brcmfmac/common.c      |  4 ++--
+>  .../broadcom/brcm80211/brcmfmac/common.h      |  4 ++--
+>  .../broadcom/brcm80211/brcmfmac/core.h        |  2 +-
+>  .../broadcom/brcm80211/brcmfmac/p2p.c         |  4 ++--
+>  .../net/wireless/intel/iwlegacy/commands.h    |  2 +-
+>  .../intel/iwlwifi/fw/api/time-event.h         |  2 +-
+>  drivers/net/wireless/intel/iwlwifi/mvm/d3.c   |  4 ++--
+>  .../net/wireless/intel/iwlwifi/mvm/mac80211.c |  4 ++--
+>  drivers/net/wireless/intel/iwlwifi/mvm/sta.c  |  6 ++---
+>  drivers/net/wireless/intersil/p54/p54spi.c    |  4 ++--
+>  drivers/net/wireless/marvell/libertas/cfg.c   |  4 ++--
+>  drivers/net/wireless/marvell/mwifiex/fw.h     |  4 ++--
+>  .../net/wireless/ralink/rt2x00/rt2800lib.c    |  2 +-
+>  .../net/wireless/ralink/rt2x00/rt2x00dev.c    |  4 ++--
+>  .../net/wireless/ralink/rt2x00/rt2x00queue.c  |  2 +-
+>  drivers/net/wireless/realtek/rtl8xxxu/core.c  |  2 +-
+>  .../wireless/realtek/rtlwifi/rtl8192de/rf.c   |  2 +-
+>  .../wireless/realtek/rtlwifi/rtl8192se/rf.c   |  2 +-
+>  .../wireless/realtek/rtlwifi/rtl8821ae/hw.c   | 22 +++++++++----------
+>  drivers/net/wireless/ti/wl1251/reg.h          |  6 ++---
+>  drivers/net/wireless/ti/wl12xx/reg.h          |  6 ++---
+>  drivers/net/wireless/zydas/zd1211rw/zd_usb.c  |  2 +-
+>  25 files changed, 55 insertions(+), 55 deletions(-)
 
+At a minimum it seems that this should go through wireless-next instead of
+net-next.
+
+Even better would be to split out the patches that have dedicated subordinate
+maintainer trees (such as ath.git for the ath5k and ath10k changes) unless
+Johannes wants to take this entire set.
+
+/jeff
 
