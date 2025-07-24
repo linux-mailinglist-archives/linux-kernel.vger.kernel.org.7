@@ -1,132 +1,136 @@
-Return-Path: <linux-kernel+bounces-743644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9B5B10142
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3570CB10144
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A483B7C0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29EEF7B1DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512A6221736;
-	Thu, 24 Jul 2025 07:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oWGWHEL5"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F512236FD;
+	Thu, 24 Jul 2025 07:04:13 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9921F2382
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62E21F2382
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340643; cv=none; b=jreKJFNBst9b1JjzdyIHnbQYBWevafym34iPHZ/xefLKCt6MKCePugPgiC9GhmZMv2AXpI1QbuD1RDsRKoxnyDHx80YwUUQRv5dtIKeOnycjxwgtiWcxL8m5nZWE7TNRwyeJhLa+HLTwf0nUJnc76V9Q4DR2M2L4+DaVpet3uy8=
+	t=1753340653; cv=none; b=XzKtSbacg4PpXuqk+f06Xx7ig7uQGaTCubHEVRlIpR4TBHAfOX5kUXjwS35pnOks6qmG5MkE/ByqStteqosOHubdjRpSOh3oSxjYDVkSrAn3ZqyTAh8yMDFBJ5eQTm4woEUsbPXEktGWE8uhvVVzbTg+iOTUfXR3i/P8pQDkiNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340643; c=relaxed/simple;
-	bh=QTJ7r7C3ZFO7a5agDautUThWpNI+VJE5Oz9r3BgT+gU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VL4+T4BmMxN8DHuyfAX9VDw7Bqat95KLSJmtkAxYlSidCIr5E7yn2WRIn8IfABn86PLYtPs3aE2rvjVYv4hJBLp5G16/vCKHTKl0K2OcHUv062tz2974aSAAZz+jip5poz79Mj45zcvj2FwBnZy1dBWLKO/khNSFa2xtFrsEBpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oWGWHEL5; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso495650f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 00:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753340640; x=1753945440; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=27meuAR7DraeZHJ6a+OjhaNc/M42e/MMGfGfJFDEHo0=;
-        b=oWGWHEL5k7rUg/QemyPOiqgSygCXc6IxzGIt+1EOCwHX7xujRPPfxZMS3YV3LMT7ib
-         qZGGUBqx0KG0G2IMkQHU0O40ZfIQ6QBIIlmytsEmDL8TKycFMd1xsUfiCxzJDtalgwk/
-         ZKxC3A87fsx6Pz0ONu0wEVHEy+WCONihDWSLtS1UVvbBbal87lXT7/uzhRP8w+TIgysi
-         +RX+Dld4btDaUreh/YlZibZjLuDhRUNT3wp5uAydQg23wRbayHw0M6eAlqu5TmMX6eeb
-         wSnPGA2qTY9MPpDHPjKLbxH4sPWoSOmIsrUXqPkuEiOc1g6RFy1j+W4r9bLBLH+m8VRf
-         lZFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753340640; x=1753945440;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=27meuAR7DraeZHJ6a+OjhaNc/M42e/MMGfGfJFDEHo0=;
-        b=NB/sgeukF+Eu2sQ5omTJiQQF15eeuKlmgQL7K2+DVPCZraF4Hcl/KU4vEPHOBpOFRM
-         GBKuIcIYhimJ9N4O5hlVLUxKVyrcn2fvb/YA2kKQU/nydbqnndYWxIHjOgufX/MpwN02
-         /86O3YiHpyvdaxaHaAmcPDC23Yh8asY0bAphOknQTNMQ0fbDGYc2nFnWNC23il7woKPc
-         mVui6bQCrXNyyawE7FYmppfuwDaGmIBLxxjRMbb794CY5TEl4m2a6xWNoXh+56xaUaKa
-         ibRCVEZaSauTCc/4il1q52LRYNJebfIARSPBB04L4XTg24/bv8gU2dGPBs4S3AnB5zWT
-         KYpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvn/kZlpbHbYpM0ftOoKi2Q1kzb2LxXpUt5owz2n3Y088T8Qpl0hBhm3HbElq3x0PqR6fb0UuYK2vWN6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhzolZdfkgdKrrIV1DCLGEO80y2fPuKJfOaOy7keCbTd6N7p2f
-	ZKJ9fbAtLNdbXaUB+LVxni/govPGMppogzq0ks6bn4T118m3uONluYQNt36yWJPj9W5+4CAPevo
-	Ysoe29ey9JoZFhkyRLQ==
-X-Google-Smtp-Source: AGHT+IEwKScPW/JogOSPYSdhmRfbWJWflQktLJJpf5TzQWj4h0zY5hW7bYqP/Uefc4NUfmbZblwANGYrRFWJFkA=
-X-Received: from wmbez5.prod.google.com ([2002:a05:600c:83c5:b0:456:13a2:2e7e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:40dc:b0:3a5:2e9c:edb with SMTP id ffacd0b85a97d-3b768f27001mr5035044f8f.47.1753340640361;
- Thu, 24 Jul 2025 00:04:00 -0700 (PDT)
-Date: Thu, 24 Jul 2025 07:03:59 +0000
-In-Reply-To: <20250722150110.23565-3-dakr@kernel.org>
+	s=arc-20240116; t=1753340653; c=relaxed/simple;
+	bh=h/ScP4oDhq8irGt/LdHFl95HdTUuOBpD9FntN1yGWh4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=s7/Gl7RZSKHlgehlKgTiZFCAwWbEypjvltpKC8yX6DtWOO5D/PIxQKHdeArg99zJ1N7M36m1+9lokx+V++PNDGMfNNFXAwPEA0DbB6PYLJOk7agsV6ZYuBJEPZTQ8z/ryltstY+3fRP9mi59VB9o4V+WZF2FzmJFflsF+aMtPEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 879A81402FE;
+	Thu, 24 Jul 2025 07:04:10 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id 66A2F8000F;
+	Thu, 24 Jul 2025 07:04:08 +0000 (UTC)
+Message-ID: <7d938f5514c8e4705cab01e776648fd2b6be0edd.camel@perches.com>
+Subject: Re: [PATCH v3] checkpatch: warn about novice phrases in commit
+ messages
+From: Joe Perches <joe@perches.com>
+To: Ignacio =?ISO-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>, Andy
+ Whitcroft <apw@canonical.com>
+Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn
+	 <lukas.bulwahn@gmail.com>, linux-kernel@vger.kernel.org
+Date: Thu, 24 Jul 2025 00:04:07 -0700
+In-Reply-To: <20250724032842.69739-1-ignacio.pena87@gmail.com>
+References: <20250723030257.66560-1-ignacio.pena87@gmail.com>
+	 <20250724032842.69739-1-ignacio.pena87@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722150110.23565-1-dakr@kernel.org> <20250722150110.23565-3-dakr@kernel.org>
-Message-ID: <aIHa31DiaRvNK1Kb@google.com>
-Subject: Re: [PATCH v2 2/3] device: rust: expand documentation for Device
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Rspamd-Queue-Id: 66A2F8000F
+X-Stat-Signature: 9p96rochbuwb36rjmx6mgyni565u1d54
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX199ZmwGBN5Ht/ga45rMsrqFyYM+0hWQevs=
+X-HE-Tag: 1753340648-774483
+X-HE-Meta: U2FsdGVkX1/xz4YYZdYQbECLMHNYsSTsopP/CAN7zeUtK8YRnN23XZ1nsQrem91nt53xtbvMJDa5mNvyWfiJvMYm9TGBdemkgTd5ZdYc6+PawiMFf8uhPGM+3QHicgJTJjo/dsha33KhULZmxBO4GX5K+UdcHEQFx3N250gPKqR2V/Qb7nXBur5xc7ymrVp60kfRjCOViI5qwWUqHyBTqbkSGoAi9ZDde8VdHPo53ieFBQ2godSnr3SJ5UbcYJZ3WBAHFiv56TiPHMoFepbRG9SZ0e883KxlXML+mCbikdRwHA4MggysFRQaWKjni5IqT+8aA26arjmpBaltip68+UBdZ80TafqM5odYr+i5rAOnjTCYvMf4dPBnslNXD/djVlfc1o0R4vNIET0gLfFkZ3Bhsh3FqP7yFwz7qh6bnbKslEtoAWGipU9ELIx5MKacYyzVF7ql//k=
 
-On Tue, Jul 22, 2025 at 05:00:00PM +0200, Danilo Krummrich wrote:
-> The documentation for the generic Device type is outdated and deserves
-> much more detail.
-> 
-> Hence, expand the documentation and cover topics such as device types,
-> device contexts, as well as information on how to use the generic device
-> infrastructure to implement bus and class specific device types.
-> 
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Wed, 2025-07-23 at 23:28 -0400, Ignacio Pe=F1a wrote:
+> Add detection for common phrases that make patches appear less
+> confident. These phrases are often used by newcomers and can make
+> their contributions seem less professional or uncertain.
+>=20
+> The regex uses qr{} syntax as suggested for better readability and
+> potential pre-compilation benefits.
 
-A few nits below, but in general looks good.
+Unneessary paragraph.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>=20
+> Examples of detected phrases:
+> - 'please apply/merge/consider/review'
+> - 'hope this helps'
+> - 'my first patch/contribution'
+> - 'newbie/beginner here'
+> - 'not sure if (this is) correct'
+> - 'sorry if/for'
+>=20
+> This helps newcomers learn the expected communication style in
+> kernel development, where direct and confident communication is
+> preferred.
+>=20
+> Link: https://docs.kernel.org/process/submitting-patches.html#describe-yo=
+ur-changes
+> Suggested-by: Joe Perches <joe@perches.com>
 
-> -/// This structure represents the Rust abstraction for a C `struct device`. This implementation
-> -/// abstracts the usage of an already existing C `struct device` within Rust code that we get
-> -/// passed from the C side.
-> +/// This structure represents the Rust abstraction for a C `struct device`. A [`Device`] can either
-> +/// exist as temporary reference (see also [`Device::from_raw`]), which is only valid within a
-> +/// certain scope or as [`ARef<Device>`], owning a dedicated reference count.
+I did not suggest this.
+I am merely trying to improve the patch and its readability.
+I do not need to have any credit for this.
 
-Doesn't there need to be a comma between "scope" and "or"?
+> Signed-off-by: Ignacio Pe=F1a <ignacio.pena87@gmail.com>
+> ---
+> Changes in v3:
+> - Use qr{} syntax instead of // for the regex (Joe Perches)
+> - Remove comment about the suggestion (Joe Perches)
+> - Drop the SHA enforcement patch based on maintainer feedback
 
-It's possible that I'm confusing the danish and english comma rules, but
-I got confused when reading this.
+This last line should be part of a cover letter to the patch set
+rather than added to this specific patch.
 
-> +/// # Implementing Class Devices
-> +///
-> +/// Class device implementations require less infrastructure and depend slightly more on the
-> +/// specific subsystem.
-> +///
-> +/// An example implementation for a class device could look like this.
-> +///
-> +/// ```ignore
-> +/// #[repr(C)]
-> +/// #[pin_data]
-> +/// pub struct Device<T: class::Driver> {
-> +///     dev: Opaque<bindings::class_device_type>,
-> +///     #[pin]
-> +///     data: T::Data,
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -3266,6 +3266,14 @@ sub process {
+>  			     "A patch subject line should describe the change not the tool th=
+at found it\n" . $herecurr);
+>  		}
+> =20
+> +# Check for novice phrases in commit message
+> +		if ($in_commit_log && !$non_utf8_charset) {
 
-Should the `dev` field not also be pinned?
+You still haven't answered why $!non_utf8_charset is useful.
 
-Alice
+> +			if ($line =3D~ qr{\b(?:please\s+(?:apply|merge|consider|review)|hope\=
+s+this\s+helps|my\s+first\s+(?:patch|contribution)|(?:newbie|beginner)\s+he=
+re|not\s+sure\s+if\s+(?:this\s+is\s+)?correct|sorry\s+(?:if|for))\b}i) {
+
+And this is still not human readable.
+I much prefer describing each phrase on a separate line like:
+
+			my $novice_phrases =3D qr{(?xi:
+				please\s+(?:apply|merge|consider|review) |
+				hope\s+this\s+helps |
+				my\s+first\s+(?:patch|contribution) |
+				(?:newbie|beginner)\s+here |
+				not\s+sure\s+if\s+(?:this\s+is\s+)?correct |
+				sorry\s+(?:if|for)
+			)};
+
+			if ($line =3D~ /\b$novice_phrase\b/) {
+
 
