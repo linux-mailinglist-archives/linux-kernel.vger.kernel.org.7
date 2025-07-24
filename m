@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-743434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCC2B0FEA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE49DB0FEA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 04:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC25C1CC6021
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC9E3A65B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 02:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27A192B75;
-	Thu, 24 Jul 2025 02:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446F219ABC6;
+	Thu, 24 Jul 2025 02:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIq6WftX"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcHhnH6r"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446A42E36EC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A812E36EC;
+	Thu, 24 Jul 2025 02:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753322731; cv=none; b=ssd2AIoERsTKVXQrYyzgxNHempzv7BVCQnbtBdwKGA/57Jj5jA2O0CozwRdwUGEwMKm7qPC8X3YHvSQPutR0bDtmBMbUSeb/gQRojBIa2V51s7nyUkjXNx1aRuDsihm5jWU8KeS7bzyxlIFmTDyXBjbQJE1N0DtJOmhL0BpXmEc=
+	t=1753322797; cv=none; b=ic9QOqp2GS0zjmxWm6OwArywrUtM0O4hMmWfdpgb/Ack+9PZOSwLjP0ZDlRs5Gs9ETvkeNDyk3wyLZlFC4HLB/Z4XnnXnVWiBaTzisO0esLwGgmYhzGU7sbSQvsgM/jTACukJzVcW7Fz9+TiyvHcTKg2eKTryk6Y7/KOQURzTzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753322731; c=relaxed/simple;
-	bh=qoxO/t2HqqWgt0wqaYNeB6LybJXDl4DsUk2bcFlF3Lg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ePm76NVXYZZ1Fp5LiXmc2pMWL0nvdAtU1iFBMbD7eUcIQrl1yn+FzPerEsr+2Hath7AYwnX9jhydmR5+g1ewf+G7zk6S23cRGZD/3B0JjosIcCsJXGEONXWvEinzTblVMM75mazvY5/VWRXhKXWkt4wEw05Lk7Yl/ZexJzkMmgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIq6WftX; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1753322797; c=relaxed/simple;
+	bh=B3JGAcWo200HyVX5Q5xJvSLm4MPu/dGfKpQerivErQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LN6z3grcv8D6faod+Mv9E9vGd7VhDY+gqwTgBrBuVv9OSWWPUIySZ7YkGTGgv1f9VRPXfzxpwTF6nMqVFIHojeYV0f49EQo5m/HsfdBGe7PMv12fhDsjHJErWrT1dNMdJkwmKqTvkHIcVXysJ38vsZtDLEO78q8GFMH3vRXwe4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcHhnH6r; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so80247466b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 19:05:29 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ae73b0a891so9823681cf.1;
+        Wed, 23 Jul 2025 19:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753322728; x=1753927528; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoxO/t2HqqWgt0wqaYNeB6LybJXDl4DsUk2bcFlF3Lg=;
-        b=NIq6WftXDYcLu4WwKDWpLYJ5ZiEUsPmo7YzWRqDvEU8wcduBTJAtptNerAeVwWHX3N
-         vHzBXWOIA7dDlbU60Lfo5KGzq2Wrcf64Oyxf3Joig8fP8t/yGhO+x9xqbThCm34pDmTj
-         X8nb0NpYzSAhitgzki9eH+I3S4pT84CG28n33BdwekTa3cMesme+bC7XHEMdSWN7zi48
-         HBKwD6duNXOIHJJgWqBG/HueWk0ogtNHDRWNQl+rTEQPT/10jBthWn6N3UZFHKZqKRgv
-         cZL80UxBW5TKV02yKNEu7pVXxf7BwlHWZ6lw2qt13dCEMgX+mfSvjyeRxO1aX/1R9QXx
-         t/Wg==
+        d=gmail.com; s=20230601; t=1753322795; x=1753927595; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RxE9+77SrYGASJR1BdtrXrh/vedPtcPXI5TXA9DzLfI=;
+        b=LcHhnH6rLU/Rvn0F6U62NXH9Qf6pY7z4MpLLgr+UHPA8UXEeBz0EWo+NPWw6ajsW1I
+         +JmrxtrrVYXMxAb2nFOOnPFd5mu+M9anS2pXFjo8PsabYRW1npnTd4Oz8TRIXrNiWOkj
+         ydox4lJ9hmLFRKLZwEapXGbCVgPyzChuI60Ku2jfnOCWVpNN6tVxGLxrr6Z4sPGj3V/j
+         tcgXCrOhkpMnONgDOjAJXMjtV8a7+Vjqw/riC3PJfv9TJTMfSjDz2NZ22c+te9WBssU9
+         4I6HQ1o0pyCuCJDXh3glUvl5NrBbsVKcKPk06AGyanCAwiQ6TPtjcsfvjIIEf2WvvVXc
+         enFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753322728; x=1753927528;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qoxO/t2HqqWgt0wqaYNeB6LybJXDl4DsUk2bcFlF3Lg=;
-        b=KwvRH60AuFn2ImZTEZZWuUjYXfDbstfYb9rQh+NbL77ay5BzaBV5GdzQqza0AgWSSe
-         NolneuE5y1N4R4WZyKQIy8MVTnDNlD0ouWc5hrd8b4ltkB3LECv/U3rrJDHG1brRi2rk
-         L+mkycwiDDSe0j5NYN5dN9/YoNwCXauTW5JiF+ur3jNQzd6MH0sQw83N5UIzXVHrHIAw
-         Dk+cKosfrIQf/HAS29gBlcWKa/+pEd7JB71vFPQqrl8JM6Ij/4V/LirBiV1v841vjV+2
-         Oin0NUTYyoaVHLVqvkaxkhZFHfUifNVyycnjqRUBb0y1cBoeP4aAakzqAUZCiDrcAoHm
-         9lrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbDrTRRrlaTa+ZFDJzCIvAuySEonrF5xxAjoYG5S5lRoS65FRSOeptg1/swUVi7REev27q2PLHwmHAkuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXVJ3bhaL8s0REaaxjMUAMnF473LI5rliUQaGGbTiEuGJBRqBh
-	4j7m1CzaPXXZ5hgqYLkT3H+cePaV3bwgGMSXrqhA6T7Me7TcwE3evS77S6XBFrzFV+xFvOJ0JWr
-	pHB32QD/ag7sja/OXaaFvNHS16pQhPjs=
-X-Gm-Gg: ASbGnctSoB8uIg5Zz289Hpybm52HT9ISwSP22IuvIeLRzg7Ty+QMmoxx7vcg2+79DAz
-	umSoT7LkiCLVcBX7CMqq8HigXFWeAdzCf8dP4rIdRZmpOwqbEmrOCqdQa75WNC013NAIxjVAe+S
-	icUX+C/SAFkWKDan+0007lg6SPrkSm3yLe3VnT1Yo7Xr/E+BUvv0unzOqSmS5rvlGYJz+K0+uLm
-	XFgFA==
-X-Google-Smtp-Source: AGHT+IHgT1htUDvnyjVtLqLDcTFKVHnNusF2fxhRiQSaqrcP2J0p2sXCbdzkDOVUVWIgORWkxZdDOuLiMVaW0R7k24s=
-X-Received: by 2002:a17:907:608f:b0:ad8:9466:3344 with SMTP id
- a640c23a62f3a-af2f8d53bd3mr564341966b.43.1753322728253; Wed, 23 Jul 2025
- 19:05:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753322795; x=1753927595;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxE9+77SrYGASJR1BdtrXrh/vedPtcPXI5TXA9DzLfI=;
+        b=TitU5Ru4Z4wwwMZJxqDg79maP7oVPXlZULCIkPf6he2xmIsj8nn8+NzouSI2voTVSG
+         dUgP7zLLLVnSksmMbm9ekN3WfzNrKLR4GnW4NU9NkuLUEb1hkTwDuSj2NNZkuc2J5kSX
+         uP7BUGxr/3CZAMn1SY7t2T7fjcHIzAy+VQFdp4gVpUnTSi2JJV+4ITJUUG5GJK7Eqe9u
+         gMfNS+W1qZMaQsixAqfdEwrDmMYUxTH1UJTUOa9mIhugmZ/XMaqtj+YHFU3CIPtDS44L
+         8CcJvf4fGKMh0QSvB2HQ0qIdST8sIdjqIFPpRNr4jxUaY0ekEctGGj6HDCm4+8aqOMzt
+         jCPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgjV9l1TEj7Pm6JgOpEHbnXI7e7YHSqado1Ao3g3tbVZb+Hmk33iEILDV0l1Hw6rDqyMpQBNl7rJL9BYo=@vger.kernel.org, AJvYcCWRlnTE/auZJyLJrxSCNnGaPB4Y72v6kd8fUwyww2yeCNE3TWrqKMPujYJ2HfSYi59XsFEFUcxKE/NO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSiGAD9Ol41je3/xcCx5pcvNS3wsNiyhxwxVdjyCYOAxFzGFV9
+	ZWSkOXh95NQTyEgqVz0qVpOKv0Kc4SgYpGrRq+gyCwwENYTm9XV8zj9R1lrqdNIX
+X-Gm-Gg: ASbGncvhfCOckyJpyRQ2r+6TG7heoD4kfxmd8nwLp5mXB7Brkx1eymhUNiwnqAVmR6b
+	qBp9uJ8yVKj6lG0wSUhy+bfXaARZQvhkDRWwscglozQ4SRy89XyQuBgjdSkwswihQZu2ajHtlS5
+	R7XjyGhl9jxt+6rSTFID/V9XO5WOwGt0CUfXcpB37IHBgFBhLt+rje8abJuJAO/bYogazr08x4D
+	9D/Iu0tjdRTXe//cVBoRELY2h03ZqlLmXu34jI5npmWLTPj+5cqSjOI8ET3On9f76vtTnim+dgx
+	STJaGx9SP5aKEkIgB2kwuY6SDjyLiikgk+HhdtOTnoBvttwJFBduPBXsgi64D1v6x6n/kyeS4kf
+	GD7CvXi1YUw==
+X-Google-Smtp-Source: AGHT+IE0cQxiz2TamryIIQ2/SiJBdhTuMo5sJTcxTkSDicqObOaxK2kHgRuBWmwr6WL7cV806yn3bA==
+X-Received: by 2002:a05:622a:2b4c:b0:4ab:69e3:420f with SMTP id d75a77b69052e-4ae6dfcca29mr75492801cf.37.1753322795079;
+        Wed, 23 Jul 2025 19:06:35 -0700 (PDT)
+Received: from pc ([165.51.88.28])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae7e355ad6sm4253531cf.28.2025.07.23.19.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 19:06:34 -0700 (PDT)
+Date: Thu, 24 Jul 2025 03:06:31 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH] rtc: twl: Check return value of platform_get_irq()
+Message-ID: <aIGVJ7UV1wzkQ2Bt@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9twUCJj4X-2jf0VG5+A2YN9Gk8hjOAhJ2hxq4SdgZfvtMA@mail.gmail.com>
- <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Thu, 24 Jul 2025 12:05:17 +1000
-X-Gm-Features: Ac12FXwgacPq_LmQOaqm7vLoci_B1iQ_12PFAOVERPpyC75eR6ZSArprlhiTSYw
-Message-ID: <CAPM=9tyCq9kLeYD71oxzvkRzcAEqHjaLKKras_cottvZOogOGw@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 6.16-rc8/final (resend in txt for sure)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 24 Jul 2025 at 11:59, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, 23 Jul 2025 at 17:40, Dave Airlie <airlied@gmail.com> wrote:
-> >
-> > (this time for sure, plain text).
->
-> I knew you could do it! Third time's the charm!
->
-> I hope I don't need to worry about the branch contents as much as I
-> apparently need to worry about your email sending capabilities?
+platform_get_irq() may fail, so check its return value and propagate
+the error in case of failure.
 
-Should be pretty safe, whatever muscle memory I have to send fixes
-pull requests, only seems to work on the weekends.
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+---
+ drivers/rtc/rtc-twl.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Dave.
+diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
+index e6106e67e1f4..992b3e1347f2 100644
+--- a/drivers/rtc/rtc-twl.c
++++ b/drivers/rtc/rtc-twl.c
+@@ -224,8 +224,11 @@ static int twl_rtc_alarm_irq_enable(struct device *dev, unsigned enabled)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct twl_rtc *twl_rtc = dev_get_drvdata(dev);
+-	int irq = platform_get_irq(pdev, 0);
+-	int ret;
++	int irq, ret;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		return irq;
+ 
+ 	if (enabled) {
+ 		ret = set_rtc_irq_bit(twl_rtc,
+-- 
+2.43.0
+
 
