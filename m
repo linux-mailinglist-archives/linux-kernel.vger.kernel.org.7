@@ -1,237 +1,183 @@
-Return-Path: <linux-kernel+bounces-744796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76D0B11113
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D305B1110B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 234DE7BD19C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E2517F479
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCE82EE288;
-	Thu, 24 Jul 2025 18:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A432A2ED848;
+	Thu, 24 Jul 2025 18:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LxTG8CRa"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTEI8MNE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608A22EE27B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DFB26CE2A;
+	Thu, 24 Jul 2025 18:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753382506; cv=none; b=mOv5NepCDbDhjRGp5QPDhCmHoRH/jQKGjdoadBmWDFhV4s8yUZBeO/0YCzvVMlam26Niw7oAQZ4ijILHBqV8WMrGfobaAtN44mxnRpTJdONnAvRqi7VN6/n7vZ9uO+A/i2zql7aPo8QNvZjNKyUEu0V1GTTHFRewpUnyjru5qL4=
+	t=1753382500; cv=none; b=jsKZbllEe/TZatBzXw1xXnZg2Keb76xMahTmaC4XkCUgBaS8de+3Z5yPXiVUgziIPacG03J9a7J/3OMtBA3y0L+vMPiK90pA7rPFt7a7RPzQsWEeTSnbVXsxXIG7vdjQtSI5OvmUYgvZoqgjBnYEAm3eHnRFQ4kWwZpH2EnJzPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753382506; c=relaxed/simple;
-	bh=UOwoGaDOvoje/9q1jcfzkopAP+bmCXpqgcS9RU00fkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XFA2YjpvXpnP23QyWxBhTEueLNm7IiOAjWX3iXQhSv8/w2t3fwj+3Izt62KBbcmd2Q7XyIZlxs4nq340O8ATL4KlB0OSKlwrISuwcwpBLPPLNilJGDX5tynZ/Qtsty3mEtHzlUhLSjGPNTqEY9cRsmy/QkwaVoMEU50TVZtpZ5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LxTG8CRa; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30687111693so214639fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753382502; x=1753987302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1HWlZ2q1kj2IfdBM1XqDySr0QM/i4rMvQ57Io2GLV0=;
-        b=LxTG8CRaRwICQ+enPfg6ghra7oYvS6Iblco9sgqEVtQzt8t6zX9YN+gpqOf+pvkUBb
-         mzxjpftet4NpvBb7YYXq+5MGSR03RcS8qRqa9UTDLzFhjNZe2SbWcXktF3AqPIeL8UAu
-         Uj1pCe/DRd5+KAlNt1gyArow3BYGyABtOIEJE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753382502; x=1753987302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1HWlZ2q1kj2IfdBM1XqDySr0QM/i4rMvQ57Io2GLV0=;
-        b=as/JRIxAj03m2Eem3cS67hDkLpfu6hVZynUZzfD88g2+YrAosaaF8iZ9yf4F9ay7nC
-         Pa2L848/9KQketOoGuh7XCB4cgkYZ1gJNSLnG1x/FM/8F55WKeX3c6/Zydiv88p2D0Uk
-         swuTjGENcNsK7SyYLu32sG091Qg8K+/phUaZnDfRjFaXeAzYwnqEJAFXlVI/ZYfZ6GZN
-         zsqPQ3hY0ICVU8a4iUEDxB4VF359vekX69WYLcRnH0sFPtbwYgbVuOwOx9pqxe3UMD3R
-         kRjo32ko+cYDpAADPGSOZV6D0cDZrnF1pwS+mqRnxT+klRamPg/yUE/At3jQC4KGwbnb
-         SdMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwPZhrjSebFiSgrPZHbU9t/pPPfV7FQ05Ki+HiAqGI0d+A3h0BoLZH3pEss6SCZushUBp0JpAVJxXXA4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrsppdjq6emPEK1Z7FDy4sCgv5z8Tx1QM+RtxirT41rqmUXz6d
-	x/cZElPnEBTF5YX8uG5EEWfgXYpto+yZljSHVrSu6p7+rB4oo5WGdUnEsxBP4pKz3fLMKF1rO6J
-	Pw3fFm7HfrLyIyICBuz5+uIUBsLf8E5gr+smiqhwi
-X-Gm-Gg: ASbGncvCN1Q9qnNtR44nhkJ7AtiKlLieh2RCuugUPOb/TwC8ykmJGlgcvcF0a9uT9Ft
-	YNsX1xrxIXkDnzBH/LNWYp0kO9BMUt+c6RdW+pfvPEzpPvWpzOIb0rBgHRyv4CzyhDVabmUuCdP
-	7kzVELBRHCbVdyOP/IritPNSeMBSbDSDOTwB0CAsCV8nI4YQ14nJbUQo3yBKNo2LdWhHbMeMdCN
-	rdMTpKzzA1yS485hODXyDo31oDYI2YS848E
-X-Google-Smtp-Source: AGHT+IFGOCABTTvB+uzF9wmiyKAOSjp+0YvJguYqvnGbeIpD4kNUAbPp92D+Kc9fHRgycq+ZSZnoA+bqeSnlnTMvEN0=
-X-Received: by 2002:a05:6871:71c5:b0:2b8:f99d:7ce6 with SMTP id
- 586e51a60fabf-306c6f21d67mr1770212fac.3.1753382502323; Thu, 24 Jul 2025
- 11:41:42 -0700 (PDT)
+	s=arc-20240116; t=1753382500; c=relaxed/simple;
+	bh=IrAJV8qmnHwIF1sbkngYGyar5n5RP/TH+eX8V1mvAyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lG6t81Pp2ykgChYpq8dqZd5Wzf76tb5PjzMOTKDh2GIeYN/DBhTEP5FJ+yf8p1APRcDd1D/XKuPLIA9ublyWFF4PrXyZUqLF8wunDS0DNS9r3+ysQHmB2JFXMDwLzC/7Xdlk3OWWoeRA9uHsY9BQZ8BWAR8qBBVJ5AvO9SPbRRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTEI8MNE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D57C4CEF1;
+	Thu, 24 Jul 2025 18:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753382498;
+	bh=IrAJV8qmnHwIF1sbkngYGyar5n5RP/TH+eX8V1mvAyQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eTEI8MNEcMLUiF9MvBHkxWp18WyWAhuc5fcBUfimgY/kfxfBF2v0Xu0Wn5c8UBGTU
+	 Dl5S8WhUNQJZe7UBmc+zpyLO6k0ytQJcQHQeC1VDQSV0DbXu0SPivY/IvbnsgLjfY4
+	 xyV3DvXUavRxjsuIRd7XmIu/TndUSNQa3mT6I5l/SlKm865bJsOcg3a5OzG52eGKLC
+	 nmgXctPiTouYH3nsCIbaaFbtC3AJnp0zaCJWQCkOGuj1wWE+/Ugy1aNRYpqYyJKJf6
+	 mlCGIwtJF+JLqCgrs+lAZo7DH3pmPIGyj0J67jCMnmmTNvJgg93ynFD+UBome6K4hj
+	 Tm1/DAY78iGSw==
+Message-ID: <75172a8b-c398-4646-86d6-5912cad9a48c@kernel.org>
+Date: Thu, 24 Jul 2025 13:41:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1752687069.git.lorenzo.stoakes@oracle.com> <9ae70e1c509d790cf174f16e491975efd9be50b6.1752687069.git.lorenzo.stoakes@oracle.com>
-In-Reply-To: <9ae70e1c509d790cf174f16e491975efd9be50b6.1752687069.git.lorenzo.stoakes@oracle.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 24 Jul 2025 11:41:30 -0700
-X-Gm-Features: Ac12FXycf8JmBrOhOyz1OgvG94mrvgZe6JkSBqJucvHYxI-9914zkEue6RQd-ZA
-Message-ID: <CABi2SkXQsao-S+uy63k6Zc=y4W-pik6XZSzw+05f_Ws_frqZmQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] mm/mseal: rework mseal apply logic
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/9] Adjust fbcon console device detection
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+ "open list:SOUND" <linux-sound@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250724183623.GA2947098@bhelgaas>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250724183623.GA2947098@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Lorenzo,
+On 7/24/2025 1:36 PM, Bjorn Helgaas wrote:
+> On Thu, Jul 17, 2025 at 03:56:58PM -0500, Bjorn Helgaas wrote:
+>> On Thu, Jul 17, 2025 at 12:38:03PM -0500, Mario Limonciello wrote:
+>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>
+>>> Systems with more than one GPU userspace doesn't know which one to be
+>>> used to treat as primary.  The concept of primary is important to be
+>>> able to decide which GPU is used for display and  which is used for
+>>> rendering.  If it's guessed wrong then both GPUs will be kept awake
+>>> burning a lot of power.
+>>>
+>>> Historically it would use the "boot_vga" attribute but this isn't
+>>> present on modern GPUs.
+>>>
+>>> This series started out as changes to VGA arbiter to try to handle a case
+>>> of a system with 2 GPUs that are not VGA devices and avoid changes to
+>>> userspace.  This was discussed but decided not to overload the VGA arbiter
+>>> for non VGA devices.
+>>>
+>>> Instead move the x86 specific detection of framebuffer resources into x86
+>>> specific code that the fbcon can use to properly identify the primary
+>>> device. This code is still called from the VGA arbiter, and the logic does
+>>> not change there. To avoid regression default to VGA arbiter and only fall
+>>> back to looking up with x86 specific detection method.
+>>>
+>>> In order for userspace to also be able to discover which device was the
+>>> primary video display device create a new sysfs file 'boot_display'.
+>>>
+>>> A matching userspace implementation for this file is available here:
+>>> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/39
+>>> Link: https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2038
+>>>
+>>> Dave Airlie has been pinged for a comment on this approach.
+>>> Dave had suggested in the past [1]:
+>>>
+>>> "
+>>>   But yes if that doesn't work, then maybe we need to make the boot_vga
+>>>   flag mean boot_display_gpu, and fix it in the kernel
+>>> "
+>>>
+>>> This was one of the approached tried in earlier revisions and it was
+>>> rejected in favor of creating a new sysfs file (which is what this
+>>> version does).
+>>>
+>>> It is suggested that this series merge entirely through the PCI tree.
+>>>
+>>> Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/merge_requests/37#note_2938602 [1]
+>>>
+>>> v9:
+>>>   * Add more to cover letter
+>>>   * Add bug link to last patch
+>>>   * Update commit message for last patch
+>>>   * Update boot_display documentation description
+>>>
+>>> Mario Limonciello (9):
+>>>    PCI: Add helper for checking if a PCI device is a display controller
+>>>    vfio/pci: Use pci_is_display()
+>>>    vga_switcheroo: Use pci_is_display()
+>>>    iommu/vt-d: Use pci_is_display()
+>>>    ALSA: hda: Use pci_is_display()
+>>>    Fix access to video_is_primary_device() when compiled without
+>>>      CONFIG_VIDEO
+>>>    PCI/VGA: Replace vga_is_firmware_default() with a screen info check
+>>>    fbcon: Use screen info to find primary device
+>>>    PCI: Add a new 'boot_display' attribute
+>>>
+>>>   Documentation/ABI/testing/sysfs-bus-pci |  9 +++++
+>>>   arch/parisc/include/asm/video.h         |  2 +-
+>>>   arch/sparc/include/asm/video.h          |  2 ++
+>>>   arch/x86/include/asm/video.h            |  2 ++
+>>>   arch/x86/video/video-common.c           | 17 ++++++++-
+>>>   drivers/gpu/vga/vga_switcheroo.c        |  2 +-
+>>>   drivers/iommu/intel/iommu.c             |  2 +-
+>>>   drivers/pci/pci-sysfs.c                 | 46 +++++++++++++++++++++++++
+>>>   drivers/pci/vgaarb.c                    | 31 +++--------------
+>>>   drivers/vfio/pci/vfio_pci_igd.c         |  3 +-
+>>>   include/linux/pci.h                     | 15 ++++++++
+>>>   sound/hda/hdac_i915.c                   |  2 +-
+>>>   sound/pci/hda/hda_intel.c               |  4 +--
+>>>   13 files changed, 102 insertions(+), 35 deletions(-)
+>>
+>> Applied to pci/boot-display for v6.17, thanks!
+> 
+> I kept the pci_is_display() changes but deferred the following for now:
+> 
+>    Fix access to video_is_primary_device() when compiled without CONFIG_VIDEO
+>    PCI/VGA: Replace vga_is_firmware_default() with a screen info check
+>    fbcon: Use screen info to find primary device
+>    PCI: Add a new 'boot_display' attribute
+> 
+> I think the boot_display attribute isn't quite baked yet and I don't
+> want to add something when it looks like we're immediately going to
+> change the implementation and maybe the sysfs location.
+> 
+> Bjorn
 
-On Wed, Jul 16, 2025 at 10:38=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> The logic can be simplified - firstly by renaming the inconsistently name=
-d
-> apply_mm_seal() to mseal_apply().
->
-> We then wrap mseal_fixup() into the main loop as the logic is simple enou=
-gh
-> to not require it, equally it isn't a hugely pleasant pattern in mprotect=
-()
-> etc.  so it's not something we want to perpetuate.
->
-> We eliminate the need for invoking vma_iter_end() on each loop by directl=
-y
-> determining if the VMA was merged - the only thing we need concern
-> ourselves with is whether the start/end of the (gapless) range are offset
-> into VMAs.
->
-> This refactoring also avoids the rather horrid 'pass pointer to prev
-> around' pattern used in mprotect() et al.
->
-> No functional change intended.
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Jeff Xu <jeffxu@chromium.org>
+Thanks for the update.
 
-Thanks and regards,
--Jeff
-> ---
->  mm/mseal.c | 67 ++++++++++++++++--------------------------------------
->  1 file changed, 20 insertions(+), 47 deletions(-)
->
-> diff --git a/mm/mseal.c b/mm/mseal.c
-> index 61c07b1369cb..0ab12e09792a 100644
-> --- a/mm/mseal.c
-> +++ b/mm/mseal.c
-> @@ -15,28 +15,6 @@
->  #include <linux/sched.h>
->  #include "internal.h"
->
-> -static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *=
-vma,
-> -               struct vm_area_struct **prev, unsigned long start,
-> -               unsigned long end, vm_flags_t newflags)
-> -{
-> -       int ret =3D 0;
-> -       vm_flags_t oldflags =3D vma->vm_flags;
-> -
-> -       if (newflags =3D=3D oldflags)
-> -               goto out;
-> -
-> -       vma =3D vma_modify_flags(vmi, *prev, vma, start, end, newflags);
-> -       if (IS_ERR(vma)) {
-> -               ret =3D PTR_ERR(vma);
-> -               goto out;
-> -       }
-> -
-> -       vm_flags_set(vma, VM_SEALED);
-> -out:
-> -       *prev =3D vma;
-> -       return ret;
-> -}
-> -
->  /* Does the [start, end) range contain any unmapped memory? */
->  static bool range_contains_unmapped(struct mm_struct *mm,
->                 unsigned long start, unsigned long end)
-> @@ -55,38 +33,33 @@ static bool range_contains_unmapped(struct mm_struct =
-*mm,
->         return prev_end < end;
->  }
->
-> -/*
-> - * Apply sealing.
-> - */
-> -static int apply_mm_seal(unsigned long start, unsigned long end)
-> +static int mseal_apply(struct mm_struct *mm,
-> +               unsigned long start, unsigned long end)
->  {
-> -       unsigned long nstart;
->         struct vm_area_struct *vma, *prev;
-> -       VMA_ITERATOR(vmi, current->mm, start);
-> +       unsigned long curr_start =3D start;
-> +       VMA_ITERATOR(vmi, mm, start);
->
-> +       /* We know there are no gaps so this will be non-NULL. */
->         vma =3D vma_iter_load(&vmi);
-> -       /*
-> -        * Note: check_mm_seal should already checked ENOMEM case.
-> -        * so vma should not be null, same for the other ENOMEM cases.
-> -        */
->         prev =3D vma_prev(&vmi);
->         if (start > vma->vm_start)
->                 prev =3D vma;
->
-> -       nstart =3D start;
->         for_each_vma_range(vmi, vma, end) {
-> -               int error;
-> -               unsigned long tmp;
-> -               vm_flags_t newflags;
-> -
-> -               newflags =3D vma->vm_flags | VM_SEALED;
-> -               tmp =3D vma->vm_end;
-> -               if (tmp > end)
-> -                       tmp =3D end;
-> -               error =3D mseal_fixup(&vmi, vma, &prev, nstart, tmp, newf=
-lags);
-> -               if (error)
-> -                       return error;
-> -               nstart =3D vma_iter_end(&vmi);
-> +               unsigned long curr_end =3D MIN(vma->vm_end, end);
-> +
-> +               if (!(vma->vm_flags & VM_SEALED)) {
-> +                       vma =3D vma_modify_flags(&vmi, prev, vma,
-> +                                       curr_start, curr_end,
-> +                                       vma->vm_flags | VM_SEALED);
-> +                       if (IS_ERR(vma))
-> +                               return PTR_ERR(vma);
-> +                       vm_flags_set(vma, VM_SEALED);
-> +               }
-> +
-> +               prev =3D vma;
-> +               curr_start =3D curr_end;
->         }
->
->         return 0;
-> @@ -185,10 +158,10 @@ int do_mseal(unsigned long start, size_t len_in, un=
-signed long flags)
->          * reaching the max supported VMAs, however, those cases shall
->          * be rare.
->          */
-> -       ret =3D apply_mm_seal(start, end);
-> +       ret =3D mseal_apply(mm, start, end);
->
->  out:
-> -       mmap_write_unlock(current->mm);
-> +       mmap_write_unlock(mm);
->         return ret;
->  }
->
-> --
-> 2.50.1
->
+The patch moving to DRM does have an Acked-by.
+
+At this point do you think there is still a shot at a squashed/rebased 
+version of those for 6.17, or should I rebase and submit the outcome for 
+discussion targeting 6.18 after the merge window?
 
