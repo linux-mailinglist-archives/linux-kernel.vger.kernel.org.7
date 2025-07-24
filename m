@@ -1,77 +1,47 @@
-Return-Path: <linux-kernel+bounces-744844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1D5B11184
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:18:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922BDB11187
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A7B16359F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:18:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC227B53EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AED255F59;
-	Thu, 24 Jul 2025 19:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38A2ECD2C;
+	Thu, 24 Jul 2025 19:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ftgx5yqI"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMilg8s0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D832E1FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98186223716;
+	Thu, 24 Jul 2025 19:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384700; cv=none; b=UQ1kRyaY8K2nFOla8gxThpL3N8Avqj7hDHGar19vXlFQU3GxfO5MGW2YEyz2HlwLQ836CxvSXOBBEhBmVcuZDTUFozVW1AM+nFMEoKDpN+O2sDKpAB10YlhVNxoIBIXDaBX31T1P+2NNRrJz50qPv3Lg1eDu9rNGA6iyD0sBMs8=
+	t=1753384710; cv=none; b=JklaO3GC/zVPQ1JZMWRBeuhgLjz2teG3SAXvXqj06036rUvZi9wZDbvw9JWg+b/nWzEMpyza8qsL8OgVaKomE743nzrW1o13Ne25UumDMaZhTLIzAws8VsGOs1dofg9xKk8JMZcdtcSct5IFmxs8kfywGYEukcmuOxQ0J30xhPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384700; c=relaxed/simple;
-	bh=GuZwGYLI+XKgX3g6bp48oh1cnV8nx+q7GNk1m3f+cv8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QjI6/0mRNsJ+FW4KqO/7TxeNfPJzUnLMtEuobeDa/2r2ZPDFMI77yC1+HbslkNe2RBhwi4o0VPlzlG0dLmze8aq7qR9OYtm4SCh6DBq4go4JMjd3yuutLkg/qep1d02O1q3TyE7qzWApbJXB88u3yWDLS2+vCK48317Er0hHORQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ftgx5yqI; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-73e810dc03bso276443a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1753384698; x=1753989498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/WtHerWg4b/PvYvoi1jOtoBEkjJBfw4DbZ1mKGQlK7E=;
-        b=ftgx5yqIN18G1AGc1GysL2IrVCWXOsbbHTPCnPuLYa6K2QFTCLmtO2PTkeAcjBFDmU
-         uOYZaWrNThU+3JlncyIRXcpuXzRhkO52Tlw2cUc8+6ZGuNc+8QSTNnBUYRQnbY4GHw77
-         S7o3vMvvajCKvEZIuX1zG3dNIgtpimn3qwcno=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753384698; x=1753989498;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/WtHerWg4b/PvYvoi1jOtoBEkjJBfw4DbZ1mKGQlK7E=;
-        b=nRzBhLNjWOu2nrt5zGOoeYjjPEZKoc572KAWu7eGl0e5ly1idbxyfizSGvI4PI5uDm
-         riAvieW2y6quF3iRz31JF/SFK9FsPSfeGGDpZu2q9bniuDDSzKVwoegErCr63++il9OT
-         oVYd6MMPToe6asgS2Jf4Vp5VJY+HFwRTFtFZUhtUmZTiiQEhPZjVDV6SrFiCRGLLcYD9
-         yaSIqxR6O2IVwTyObSYv04kH13MdpTW9UUnvnNHjMnntl12q0oXQ4cfvSxZbJoIl7cHx
-         4Gh5E4D/zzwq7FcbZESiPnj+q5yyLUNM2zwHtSJcQZBnGmUd/f8rC6NPvJdwO+4z6m6g
-         ut9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/FlW7tidYilJqmyMNg4IGkEx4oLH/HCrimIV39M9d83JwrjYtKyczkg7YAhHSJpPs4YDnLArYGY4aymY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6jNQP/944J7lOCX//zfHL2jLUir2uFOuopfNzmKOue3zNPHG+
-	TUe9BY43zOkIwL7TqNRAU4Y/ig/Kb0gQZfeDJtw9XMEqMCuQA5mseCpKtc82buTHSVTF6Sbexpn
-	lhb5x
-X-Gm-Gg: ASbGncvHivHoVPE6OdmsC38GF62x0YEEH5FA9tBHIt3gfC7+OU0oWUX3LyMj2jHQxWM
-	ycKdCVkp2kw1fyy/YMfL/XHAVN3NUIwxXyWBb6FpHoEjARbmoGVcCVrLHMHSdrFGEvNrv9hgiHR
-	H3qXeqG4CEI0Ci6Nu+tN9t41Yc6zK0GnZj3mY6ldTxDOZd5rTjOQQZszegJ5m0PSjoz4k+yNVTr
-	veU7Am8Cso9/kA+wkOmDH1RfGq5inVRxMyJ65RIpXI8akevAX89GmsmqrVEbP+VJ2/2zziS1+wu
-	/e/UpuNIfduPF9vSGGlZplBs7Bc5rZ4qCiOQoS3VZBdV4TcPRVy0gWD8EhH0ll8VgGdxcrfLFzd
-	VMTeXvnsC7uK0bwplltrQTJp8MOotXHNYFw==
-X-Google-Smtp-Source: AGHT+IEUTT6232SQ1StpplGMujNfYLMj8RDUEQUykk/oyYKKyc7meHhp+AdRCjc0bN5C/ycM7Zqn2g==
-X-Received: by 2002:a05:6830:6689:b0:727:345d:3b83 with SMTP id 46e09a7af769-74088ac4c3amr6082385a34.23.1753384697537;
-        Thu, 24 Jul 2025 12:18:17 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7412d18d95fsm361195a34.21.2025.07.24.12.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 12:18:17 -0700 (PDT)
-Message-ID: <ed6f49c8-d47c-4cf9-889a-76f6886e1a86@linuxfoundation.org>
-Date: Thu, 24 Jul 2025 13:18:16 -0600
+	s=arc-20240116; t=1753384710; c=relaxed/simple;
+	bh=96NDcSkGoKkonGb7HasgH/sPNvDPQZGRkcnd/45IH2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPL3D4pXvlunsFrYsg1QI9rsDok/nVRO8Xei6rIg3O4B6IxzxLBF73cyPqeJayWuH0R7hteQeSYFVGYsz0ZG4SmNCGE7Va2UmRgEsvPe5X1Ij6v3SaLAGAqzKatQEoWKHBieC+GpJ8m4jTNgWpeP5Hc8L4C8FBLsna5PlDqBKOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMilg8s0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1030C4CEED;
+	Thu, 24 Jul 2025 19:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753384710;
+	bh=96NDcSkGoKkonGb7HasgH/sPNvDPQZGRkcnd/45IH2g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bMilg8s05Bs20kgd4SoMISyw4h2FnyksR35JPXU/U2RhKi52jl4IkzNhHJlz9E913
+	 EdyVGCRq1LmxtoyAGUs0r0P0ksv3pEZgE1+zFnMpl/ntdaau2s4l9EcJ+yUyGE2z+t
+	 Q43LNVDwA6jXWy+qAviGFxhrXE7xe0fCr+XA/6RaJwUJiAdne9a1StBTuNUsWDTYJ3
+	 b8rg6PTNy7e3v6Q4lZg9CyoWejfpAeq7xd6Y7vkiiHxn459QNTgTY9BVpgkqvM/iHW
+	 hj9T9jhwgS7DhX2G2jO7pEzAhI7fV92LVb88E73QmBpMO5VimiVOUpuzMWFrcLtFgz
+	 OIqQ4/x2VlDXw==
+Message-ID: <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
+Date: Thu, 24 Jul 2025 21:18:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,40 +49,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Code of Conduct violation complaint
-From: Shuah Khan <skhan@linuxfoundation.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "conduct@kernel.org" <conduct@kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
- <aHanGu9nOGOegUg2@duo.ucw.cz>
- <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
+Subject: Re: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
+To: MD Danish Anwar <danishanwar@ti.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Mengyuan Lou
+ <mengyuanlou@net-swift.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Fan Gong <gongfan1@huawei.com>,
+ Lee Trager <lee@trager.us>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-3-danishanwar@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250723080322.3047826-3-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/17/25 10:32, Shuah Khan wrote:
-  
-> Hi Pavel,
-> 
-> The Code of Conduct Committee holds these conversation privately
-> with the people involved. Looks like you cc'ed the mailing list.
-> Respecting your choice, we can continue this conversation publicly.
-> 
-> Chose one or all of these threads to apologize to the developer
-> directly.
+On 23/07/2025 10:03, MD Danish Anwar wrote:
+> This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
 
-If you haven't already done so, chose one or all of these
-threads to apologize to the developer and cc code of conduct list.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-> 
-> https://lore.kernel.org/all/aG2B6UDvk2WB7RWx@duo.ucw.cz/
-> https://lore.kernel.org/all/aG2ClcspT5ESNPGk@duo.ucw.cz/
-> https://lore.kernel.org/all/aG2BjYoCUYUaLGsJ@duo.ucw.cz/
+> support for creating virtual Ethernet devices over RPMSG channels,
+> allowing user-space programs to send and receive messages using a
+> standard Ethernet protocol. The driver includes message handling,
+> probe, and remove functions, along with necessary data structures.
 > 
 
-thanks,
--- Shuah (On behalf of the Code of Conduct Committee)
+
+...
+
+> +
+> +/**
+> + * rpmsg_eth_get_shm_info - Get shared memory info from device tree
+> + * @common: Pointer to rpmsg_eth_common structure
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
+> +{
+> +	struct device_node *peer;
+> +	const __be32 *reg;
+> +	u64 start_address;
+> +	int prop_size;
+> +	int reg_len;
+> +	u64 size;
+> +
+> +	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
+
+
+This is new ABI and I do not see earlier patch documenting it.
+
+You cannot add undocumented ABI... but even if you documented it, I am
+sorry, but I am pretty sure it is wrong. Why are you choosing random
+nodes just because their name by pure coincidence is "virtual-eth-shm"?
+I cannot name my ethernet like that?
+
+Best regards,
+Krzysztof
 
