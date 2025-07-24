@@ -1,142 +1,193 @@
-Return-Path: <linux-kernel+bounces-744969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505FBB11316
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:26:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC18BB1131D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867CC5A644D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1071C27C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F9F2EE980;
-	Thu, 24 Jul 2025 21:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15132EE971;
+	Thu, 24 Jul 2025 21:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYCq2Bn9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Uh0PrygV"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E1C2EE962;
-	Thu, 24 Jul 2025 21:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1302EE979
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392403; cv=none; b=kkFFHZ9XbuSkH3x20np4WgM3IXJ4hdCQO5BRZ/KVD1dWroCPKymLz9IHVlm+56nvjGIvmi0N/izqGdnJEgY8GLZwUZN+msXfGzHpFdx/xveRrKKh3tsk+cRJ9TgfjsTdU08j9ppVQO2tOWMXlwZt1CgPgPqlI6lfsjPZeniULFM=
+	t=1753392432; cv=none; b=pkOL6kLNd/PP1aoRdzYpHopA5xHbgZz8+jrHIiwsBgKOOajO5pTMwkomhT/5TjCN33Qd8hpQ8gql300z8mNg2m69jXw4pGARJ2QEqbnbjQrvEHOxeu61UEJxtv+9O74IropakuEi1QT/8pDGwQ6wtp9s8QW8MKIzghnsh3bIrAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392403; c=relaxed/simple;
-	bh=EfX6aQqkaAynLlfF++u2MHxnMAbP6JMoA+Q8z6ldujQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P14KbbIUEo0OIhCFGKN1FabNjchOT8oDD9KFBL1C8ktNB06FKKYH5FL6ST2djKxBKX4ceIwUbjsZLM8/oIiovsh+1rrq90BXff/k8bQ65mLtM4WrMhUQDyY5OlhWBHVsrb9W7LDf7TI5qdd9LCdP2WbiGTCIl1FJMS/CVMuipsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYCq2Bn9; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753392403; x=1784928403;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EfX6aQqkaAynLlfF++u2MHxnMAbP6JMoA+Q8z6ldujQ=;
-  b=iYCq2Bn9NAe8GZUBLLMoU1CTW8Q1UJ+yKE/i1Zvxr1t3uCsTg2LyT7r5
-   wgqftSUNyuARDyoNKgEtOQki5jMV+RgJTAO4JYBFxBycfLf0I2nntjEsv
-   IHoXdH5/waG5AE/UQ1ul7N1O7UFv0yC18m+r5UQBRQVmNwSzuDRTVbX4r
-   Q22SVbiEYQlOhGqVY686zE/0vXCjN5167X91Lj6qzelCzNhmlEwITueds
-   ETJT6eiF5CJr2sT3cwo6QMsF6ZJwKODJAtWs9EDXh0A4dXGXWOHswthrn
-   noQNmmSYkjpQHvbqVdPRCAXBcIyj9kg+sfZ0+U6oIHb2jHeng/5rcLPot
-   w==;
-X-CSE-ConnectionGUID: 8a6LtsSnT2iTPnsK4uroCg==
-X-CSE-MsgGUID: x848tIYkTKCCx2N3I5TQrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55873279"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="55873279"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 14:26:41 -0700
-X-CSE-ConnectionGUID: iUGxf4nrSSuoV6KIJxKKfA==
-X-CSE-MsgGUID: UNW5t2e0QFSJsUyt8+v7CQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="184134516"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 14:26:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uf3SV-00000000fr7-3O11;
-	Fri, 25 Jul 2025 00:26:35 +0300
-Date: Fri, 25 Jul 2025 00:26:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Gustavo Silva <gustavograzs@gmail.com>,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
-Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
-Message-ID: <aIKlC-HlP3nX-ERA@smile.fi.intel.com>
-References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
- <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
- <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
- <aHYIBReTFqJMtiXW@smile.fi.intel.com>
- <vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
- <aHd2s987EMCdgdrJ@smile.fi.intel.com>
- <20250724162227.065d20a0@jic23-huawei>
+	s=arc-20240116; t=1753392432; c=relaxed/simple;
+	bh=9yo7PAzDWZnWGDhWTQcvkkaMcI5yuLUZBspBv87afKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oaqWxgcLn+IVUd7MjlbAoOta2dfwD9ltkwdxliNhHs47Qb9wmnIiFMqp2WA7VQR2RP5cPW1PAX4JcwexyVefD5MgJ4sPV6XDlmR7wcVW0raNncr2LaIXfIs9z92TRFqOtwF92HeuIcI8GCrtRXoPhVepa44k94YTuAQ1idSsJIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Uh0PrygV; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-701046cfeefso22739836d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753392429; x=1753997229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrQZvefTT8J72h8dUnTdsjaXor2WmZQIMIJXwY4LKOg=;
+        b=Uh0PrygVY/mCdTHTcdOUZsaALA/JD4sqRsUhiX0x4u3R38kw44E0b+x+cAZvc/tHud
+         40VHZypReravUhnHEGSNk5QrQ/7sSct4InVKwI/MZSGI9sDjCzPnZlUXBbiHSA6SoG6j
+         IUP1nF4vqHzKaSuMTaUtJ4FpdWHd0JCcj9vcQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753392429; x=1753997229;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BrQZvefTT8J72h8dUnTdsjaXor2WmZQIMIJXwY4LKOg=;
+        b=DAukP1+JlnI8mZaNRwm35Ev8t6+QvO0hA3i/KNF6Tjx03kZHrW4OnHgZmRwKbHUZzY
+         eQ2K9WP+aDJXBjeP1lEmVhthU8QgtMMQfcuwkYv+donNvBddmH26vhtb5JviJISL1RSZ
+         VuidI/fqEq5HR7/Du+mjF1HHlbxQ7NadCTjr2amvff3dMh2WN2ZousXk9FBKwN4QtKx7
+         NmeKp53U8tz4zSSdYPZ9T1qn0PUwCIUayv9+fqV0oX3lSS8PbPqtIgpc+MgIEyBqlu41
+         J7T+gpclX21xHKppq9PCxHoDMYAgRgkYCxnKOnpwhz82zr6HxABoxEOOCWkTrjJeJrkx
+         8CJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCml+oqvyWKn97uuIW5CYkBun09V+qrkRt4Xwgrfwm+VGxAa9PIz5kqs1Sys/SUORm80unk7zPFS7SYeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2yNF4hts6wlDk5/OAD9VATUa6diT09mv3cKx4Q9EDyn2CafMr
+	hfq3/rswtB7TzimJrInjHNe1eS7Ds8tmxRMlbFVb/TS8rPrCmgyIdnoOQ3KmlSaFAQ==
+X-Gm-Gg: ASbGncvK8QY4eEa7HqLL6PBU5+tZz3Mex7XEwDHgrSJyOsWftCh96/SIqSTtkz/+ySD
+	IEXiH/r/Y9Nd4EQQD/+polBlDvKBSUUovfFCD6KiuF65WEH9VlBwWUBB6lWQhwDTOQjpgTYP9IP
+	YdyfL0vt3/0zuasmL1TLKfnRu0jeqDQkJLFAzDHpLzZCZERtcAan3oc+GLG3q2KxMv/VIuvBfvT
+	s+e+i/uRuHioLVMothaigxjP9T4S93uomBSa+PhjLvdjvS4ed4C0KGLuc8dd8QstjRkR/R47ocq
+	51D7i55g8ib0yUSlxidc7eCX4I3us6XH+XFqEoEcoE9K1WF0BOGkxkKQXNp+ZVOo27CBQNulBMp
+	z1HPyp83BLSlnQa2iBArvWju80Gm23XiGMTRiGox1ZV+9B6sjkog1ojmODHRiGg==
+X-Google-Smtp-Source: AGHT+IH/5Hg4SYzXScd2JZ5u442inXbwL+/GXKWv2N03daX9+cThsM2yzxMXOEyM0Xu49jU1K7FUEw==
+X-Received: by 2002:a05:6214:c22:b0:706:ea6d:e161 with SMTP id 6a1803df08f44-707007167e0mr108054966d6.32.1753392428572;
+        Thu, 24 Jul 2025 14:27:08 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7070fc9d5e3sm18704486d6.53.2025.07.24.14.27.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 14:27:07 -0700 (PDT)
+Message-ID: <f084e692-7fd5-417c-8e49-860c2ce47d33@broadcom.com>
+Date: Thu, 24 Jul 2025 14:27:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724162227.065d20a0@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/16] MAINTAINERS: Include GDB scripts under MEMORY
+ MANAGEMENT entry
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham
+ <kbingham@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Kent Overstreet <kent.overstreet@linux.dev>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Uladzislau Rezki <urezki@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
+ Ilya Leoshkevich <iii@linux.ibm.com>, Etienne Buira <etienne.buira@free.fr>,
+ Antonio Quartulli <antonio@mandelbit.com>, Illia Ostapyshyn
+ <illia@yshyn.com>, "open list:COMMON CLK FRAMEWORK"
+ <linux-clk@vger.kernel.org>,
+ "open list:PER-CPU MEMORY ALLOCATOR" <linux-mm@kvack.org>,
+ "open list:GENERIC PM DOMAINS" <linux-pm@vger.kernel.org>,
+ "open list:KASAN" <kasan-dev@googlegroups.com>,
+ "open list:MAPLE TREE" <maple-tree@lists.infradead.org>,
+ "open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>,
+ "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>
+References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+ <20250625231053.1134589-9-florian.fainelli@broadcom.com>
+ <04116d0f-2815-4583-853e-e4295fb3d014@redhat.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <04116d0f-2815-4583-853e-e4295fb3d014@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 04:22:27PM +0100, Jonathan Cameron wrote:
-> On Wed, 16 Jul 2025 12:53:55 +0300
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> > On Tue, Jul 15, 2025 at 08:55:35PM -0300, Gustavo Silva wrote:
-> > > On Tue, Jul 15, 2025 at 10:49:25AM +0300, Andy Shevchenko wrote:  
-> > > > On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:  
-> > > > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:  
-
-...
-
-> > > > > > +/* 9.81 * 1000000 m/s^2 */
-> > > > > > +#define BMI270_G_MEGA_M_S_2				9810000  
-> > > > > 
-> > > > > I thought this is MICRO...  
-> > > > 
-> > > > Btw, what if we use the device on poles and on equator (or even on orbital
-> > > > station)? I'm wondering if this constant should be defined in units.h or
-> > > > even in uAPI that user space may add a correction if needed.
-> > > >   
-> > > I certainly hadn't thought about these scenarios.
-> > > FWIW, the accelerometer scale values also assume g = 9.81 m/s^2.
-> > > For example, 0.000598 = 2 * 9.81 / 32768  
-> > 
-> > Right, but this should be supplied to user space somehow. OTOH the measure error
-> > may be high enough (what is the precision of the measurements by the way?) that
-> > it will neglect the differences in the 'g' constant.
-> > 
-> > All the details are given in [1].
-> > 
-> > [1]: https://en.wikipedia.org/wiki/Gravity_of_Earth#:~:text=The%20precise%20strength%20of%20Earth's,/s2)%20by%20definition.
+On 6/27/25 10:10, David Hildenbrand wrote:
+> On 26.06.25 01:10, Florian Fainelli wrote:
+>> Include the GDB scripts file under scripts/gdb/linux/ that deal with
+>> memory mamagenement code under the MEMORY MANAGEMENT subsystem since
+>> they parses internal data structures that depend upon that subsystem.
+>>
+>> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> ---
+>>   MAINTAINERS | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index cad5d613cab0..52b37196d024 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15812,6 +15812,10 @@ F:    include/linux/mmu_notifier.h
+>>   F:    include/linux/pagewalk.h
+>>   F:    include/trace/events/ksm.h
+>>   F:    mm/
+>> +F:    scripts/gdb/linux/mm.py
+>> +F:    scripts/gdb/linux/page_owner.py
+>> +F:    scripts/gdb/linux/pgtable.py
+>> +F:    scripts/gdb/linux/slab.py
 > 
-> These sensors don't measure relative to g.
+> Probably they should go to the corresponding sub-sections. At least 
+> slab.py?
+> 
 
-What do they measure? Any links for me to study?
-
-> That's annoying marketing which is why I held firm for m/s^2 for IIO :)
-> So what they measure for a given acceleration does not change depending
-> on where we are on earth. You should use a 'fixed' standard value for
-> conversion from marketing values in g to m/s^2..
-
-Hmm... But shouldn't that marketing value be exposed to user space?
-
+Sounds good, thanks!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Florian
 
