@@ -1,118 +1,289 @@
-Return-Path: <linux-kernel+bounces-743735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D550B102A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:02:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3033B102C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B713A3ABC0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:01:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A89367B6F31
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C73272E5C;
-	Thu, 24 Jul 2025 08:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AAB2741AC;
+	Thu, 24 Jul 2025 08:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8owUmmZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IEbgVI+j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016B2272813
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2411273D9B;
+	Thu, 24 Jul 2025 08:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753344128; cv=none; b=UnSIokRDQ1w7EoB1zLXwSQXm9DQeB2YY0Pkz888TpAhx4m49KaeTH8x/9CNafNZ1ZzwKdgFrW7Eony6SArW3F40iP7cfR8rlFYyOXyBpQ78NXJoF+pLmHIYvnDwqlu/JCIwuXKqOOO0M7ZMX5S4FTYCrMrnABofuZOMriq+uEwU=
+	t=1753344218; cv=none; b=e3n+Hj0q+5jMwJVoAiNBpXeH+NO8TInThlu0wVlxJ6AtfsEmnLD1CcxTP2/b9gZp61kEJarMMxyylrAEE3quZVmOaxczmsrOq4OC3un8gBLhJXb98DPjfZ/xS3jia9w7oeL8a0HhdWH1lmEdW13bStQRYQiznaHJ4/9B9h88Qug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753344128; c=relaxed/simple;
-	bh=fRw8i8MgDaa/zzz+GjX6hF/zrmeBnpKlxypHhTvVhO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I5VxBD3VOulvBK6Y7NQZk5gPW4QJAx99ptD/x9/r+XZGWGbyLTIhGliCB1mK/VXiHj8CcMDuatWH2bD/ByDd7h8vjBi6ju8ACSOy5iQ0JhRYEiZJpltxW8GsWPR5hTyASqGi71hmVpXpNQqdoDylrKjWdTf17Xm59gp9gxQXLpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8owUmmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52509C4CEED;
-	Thu, 24 Jul 2025 08:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753344127;
-	bh=fRw8i8MgDaa/zzz+GjX6hF/zrmeBnpKlxypHhTvVhO8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s8owUmmZeNt0ePvr/wi77YEo5E8/bYUnl+kURZ0+4axx0KbSmu9x5yuiujJ7UvAL1
-	 dDoSrXB1uP4fxehiuINAymABYtwBx1iCWpuJ+SmXM2KkyNj/xuL41IZ27zfC1+DHwG
-	 q2EHIKeGagVkTjtAy2SPYhxSC91aR6gc5iqP5mijB0tGij3XCQZMdxfELyxHqmrlIG
-	 b9xap2n3JOpcgltjDowCCOLkoS5q6coidBwV6Z3lN6HAczyne/mUj+SNAauOEaeUGm
-	 EutRU5qSLDoViVWC3iSBWKitB2gWiwzO8NbgnHOiJtLwvva6TE3oolmSAU8oAfndqG
-	 20bNrQDNWO3xg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1753344218; c=relaxed/simple;
+	bh=s2jdyAWGqMxCgEnjHGJABkamf9p8xg49mdXr9YZZ75k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rLv8LYUu9Sl0wXiPEupBkC9R/wfspOqE1Edpt4Os9QpswErHbdAxAHh9B4iRhfnaDFt3zpZRUqOJChfFTcgItAGSnUA3tjZ64kvIT8Av8odwJEAv7eEbR9PU83d16E3ewSxT0MYp6Ey8qIZXFjXiouWA6oaR5LrLA5jNKyXFurQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IEbgVI+j; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753344217; x=1784880217;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s2jdyAWGqMxCgEnjHGJABkamf9p8xg49mdXr9YZZ75k=;
+  b=IEbgVI+j13ICyuBQcuHIPx2Zo7al+anXkJsvugv8SfEj6WKyUz6UIT41
+   rq5tYY2H/o9jtyu5V2+BGYzD/ag8sZDjF1CcPXNHQbs7ry/o1hYU0a3vg
+   llO3ObsMFF26TXEwMz700N4jkVsTaDzh+UB4dYkSpiePdwaWPUxx3/JkP
+   Y2WqKlICnGBlRp87l3seTizi/nOP4f1yJFtjsM93Ixw1aWTU44VKqNEWU
+   pzFlpCPlPpuFfT+KK2tfKLjlca1T0O6mDYwdzlvcQV73694xgmgmQG44i
+   pECYaMDcf5xUDDJVqHe2pFpZ9/+B/8LtpziFtFs1Oj44/I9++YGtQDEHl
+   Q==;
+X-CSE-ConnectionGUID: YCW/xoULQ5a+0igEBZ1Hyg==
+X-CSE-MsgGUID: KyircDuBQKSoQkk7RWDHZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66991903"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="66991903"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:03:32 -0700
+X-CSE-ConnectionGUID: fd2e5GUFRXKMyjn8T4mAPg==
+X-CSE-MsgGUID: VMwoSz2gTYSXd3SMidpQsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="160340840"
+Received: from savramon-mobl1 (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.60])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:03:27 -0700
+From: Elena Reshetova <elena.reshetova@intel.com>
+To: dave.hansen@intel.com
+Cc: jarkko@kernel.org,
+	seanjc@google.com,
+	kai.huang@intel.com,
+	mingo@kernel.org,
+	linux-sgx@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH 3/3] f2fs: fix to trigger foreground gc during f2fs_map_blocks() in lfs mode
-Date: Thu, 24 Jul 2025 16:01:44 +0800
-Message-ID: <20250724080144.3689181-3-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250724080144.3689181-1-chao@kernel.org>
-References: <20250724080144.3689181-1-chao@kernel.org>
+	x86@kernel.org,
+	asit.k.mallick@intel.com,
+	vincent.r.scarlata@intel.com,
+	chongc@google.com,
+	erdemaktas@google.com,
+	vannapurve@google.com,
+	bondarn@google.com,
+	scott.raynor@intel.com,
+	Elena Reshetova <elena.reshetova@intel.com>
+Subject: [PATCH v9 0/6] Enable automatic SVN updates for SGX enclaves
+Date: Thu, 24 Jul 2025 11:02:09 +0300
+Message-ID: <20250724080313.605676-1-elena.reshetova@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-w/ "mode=lfs" mount option, generic/299 will cause system panic as below:
+**Changes since v8 following reviews by Dave and Jarkko:
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:2835!
-Call Trace:
- <TASK>
- f2fs_allocate_data_block+0x6f4/0xc50
- f2fs_map_blocks+0x970/0x1550
- f2fs_iomap_begin+0xb2/0x1e0
- iomap_iter+0x1d6/0x430
- __iomap_dio_rw+0x208/0x9a0
- f2fs_file_write_iter+0x6b3/0xfa0
- aio_write+0x15d/0x2e0
- io_submit_one+0x55e/0xab0
- __x64_sys_io_submit+0xa5/0x230
- do_syscall_64+0x84/0x2f0
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0010:new_curseg+0x70f/0x720
+ - fix the sgx_inc/dec_usage_count() to not do any
+ actual counting until the later patch when adequate
+ mutex is introduced as suggested by Dave
+ - add an additional patch (patch 1) to redefine
+ existing sgx_(vepc_)open into wrappers to allow
+ the follow up patch to introduce the sgx_inc/dec_usage_count()
+ functions into sgx_(vepc_)open cleanly as suggested
+ by Jarkko. 
 
-The root cause of we run out-of-space is: in f2fs_map_blocks(), f2fs may
-trigger foreground gc only if it allocates any physical block, it will be
-a little bit later when there is multiple threads writing data w/
-aio/dio/bufio method in parallel, since we always use OPU in lfs mode, so
-f2fs_map_blocks() does block allocations aggressively.
+Changes since v7 following reviews by Dave:
 
-In order to fix this issue, let's give a chance to trigger foreground
-gc in prior to block allocation in f2fs_map_blocks().
+ - change sgx_usage_count to be a normal int type
+ and greatly simplify the sgx_inc_usage_count func.
+ This results in requiring a mutex for each sgx_(vepc_)open
+ but given that the mutex is held a short amount of
+ time it should be ok perf-wise.
 
-Fixes: 36abef4e796d ("f2fs: introduce mode=lfs mount option")
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes since v6 following reviews by Kai,Jarkko
+and Dave:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 4e62f7f00b70..ffcaf91c1703 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1573,8 +1573,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 	end = pgofs + maxblocks;
+ - fix sgx_update_svn function description
+ - add maybe_unused for sgx_update_svn in patch 4
+ to silence the warning, remove it in patch 5
+ - add note to patch 1 explaining why the prototype
+ sgx_inc_usage_count returns int and not void
+ - fix the order of return code checks in 
+ sgx_update_svn
+ - cosmetic fixes
  
- next_dnode:
--	if (map->m_may_create)
-+	if (map->m_may_create) {
-+		if (f2fs_lfs_mode(sbi))
-+			f2fs_balance_fs(sbi, true);
- 		f2fs_map_lock(sbi, flag);
-+	}
+Note: I didn't change the sgx_inc/dec_usage_count
+to statics because they are called from a number of
+different code locations and also rely on a static
+sgx_usage_count, which lives naturally in main.c.  
  
- 	/* When reading holes, we need its node page */
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+Changes since v5 following reviews by Ingo, Kai,
+Jarkko and Dave:
+
+ - rebase on x86 tip
+ - patch 1 is fixed to do correct unwinding in
+ case of errors
+ - patch 2: add feature flag to cpuid-deps.c
+ - patch 3: remove unused SGX_EPC_NOT_READY error code
+ - patch 4: fix x86 feature check, return -EAGAIN
+ on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+ expected errors. Comments/style are also fixed.
+ - patch 5: rewrite commit message, add comments inline
+
+Changes since v4 following reviews by Dave and Jarkko:
+
+ - breakdown the single patch into 4 patches as
+ suggested by Dave
+ - fix error unwinding in sgx_(vepc_)open as 
+ suggested by Jarkko
+ - numerous code improvements suggested by Dave
+ - numerous additional code comments and commit
+ message improvements as suggested by Dave
+ - switch to usage of atomic64_t for sgx_usage_count
+ to ensure overflows cannot happen as suggested by Dave
+ - do not return a error case when failing with
+ SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+ by Dave
+
+Changes since v3 following reviews by Kai and Sean:
+
+ - Change the overall approach to the one suggested
+  by Sean and do the EUPDATESVN execution during
+  sgx_open() and sgx_vepc_open().
+  Note, I do not try to do EUPDATESVN during the release()
+  flows since it doesnt save any noticable amount
+  of time during next open flow per underlying EUPDATESVN
+  microcode logic.
+ - In sgx_update_svn() remove the check that we are
+  running under VMM and expect the VMM to instead
+  expose correct CPUID
+ - Move the actual CPUID leaf check out of
+  sgx_update_svn() into sgx_init()
+ - Use existing RDRAND_RETRY_LOOPS define instead of 10
+ - Change the sgx_update_svn() to return 0 only in
+ success cases (or if unsupported)
+ - Various smaller cosmetic fixes
+
+The still to be discussed question is what sgx_update_svn()
+should return in case of various failures. The current version
+follows suggestion by Kai and would return an error (and block
+sgx_(vepc_)open() in all cases, including running out of entropy.
+I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+since in such cases userspace can retry the open() and also
+will get an info about what is actually blocking the EUPDATEVSN
+(and can act on this). However, this is a change in existing API
+and therefore debatable and I would like to hear people's feedback.
+
+Changes since v2 following review by Jarkko:
+
+ - formatting of comments is fixed
+ - change from pr_error to ENCLS_WARN to communicate errors from
+ EUPDATESVN
+ - In case an unknown error is detected (must not happen per spec),
+ make page allocation from EPC fail in order to prevent EPC usage
+
+Changes since v1 following review by Jarkko:
+
+ - first and second patch are squashed together and a better
+   explanation of the change is added into the commit message
+ - third and fourth patch are also combined for better understanding
+   of error code purposes used in 4th patch
+ - implementation of sgx_updatesvn adjusted following Jarkko's 
+   suggestions
+ - minor fixes in both commit messages and code from the review
+ - dropping co-developed-by tag since the code now differs enough
+   from the original submission. However, the reference where the
+   original code came from and credits to original author is kept
+
+Background
+----------
+
+In case an SGX vulnerability is discovered and TCB recovery
+for SGX is triggered, Intel specifies a process that must be
+followed for a given vulnerability. Steps to mitigate can vary
+based on vulnerability type, affected components, etc.
+In some cases, a vulnerability can be mitigated via a runtime
+recovery flow by shutting down all running SGX enclaves,
+clearing enclave page cache (EPC), applying a microcode patch
+that does not require a reboot (via late microcode loading) and
+restarting all SGX enclaves.
+
+
+Problem statement
+-------------------------
+Even when the above-described runtime recovery flow to mitigate the
+SGX vulnerability is followed, the SGX attestation evidence will
+still reflect the security SVN version being equal to the previous
+state of security SVN (containing vulnerability) that created
+and managed the enclave until the runtime recovery event. This
+limitation currently can be only overcome via a platform reboot,
+which negates all the benefits from the rebootless late microcode
+loading and not required in this case for functional or security
+purposes.
+
+
+Proposed solution
+-----------------
+
+SGX architecture introduced  a new instruction called EUPDATESVN [1]
+to Ice Lake. It allows updating security SVN version, given that EPC
+is completely empty. The latter is required for security reasons
+in order to reason that enclave security posture is as secure as the
+security SVN version of the TCB that created it.
+
+This series enables opportunistic execution of EUPDATESVN upon first
+EPC page allocation for a first enclave to be run on the platform.
+
+This series is partly based on the previous work done by Cathy Zhang
+[2], which attempted to enable forceful destruction of all SGX
+enclaves and execution of EUPDATESVN upon successful application of
+any microcode patch. This approach is determined as being too
+intrusive for the running SGX enclaves, especially taking into account
+that it would be performed upon *every* microcode patch application
+regardless if it changes the security SVN version or not (change to the
+security SVN version is a rare event).
+
+Testing
+-------
+
+Tested on EMR machine using kernel-6.16.0_rc7 & sgx selftests.
+Also tested on a Kaby Lake machine without EUPDATESVN support.
+If Google folks in CC can test on their side, it would be greatly appreciated.
+
+
+References
+----------
+
+[1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+[2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+
+Elena Reshetova (6):
+  x86/sgx: Convert sgx_(vepc_)open to __sgx_(vepc_)open
+  x86/sgx: Introduce a counter to count the sgx_(vepc_)open()
+  x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+  x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+  x86/sgx: Implement ENCLS[EUPDATESVN]
+  x86/sgx: Enable automatic SVN updates for SGX enclaves
+
+ arch/x86/include/asm/cpufeatures.h       |  1 +
+ arch/x86/include/asm/sgx.h               | 37 ++++++-----
+ arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+ arch/x86/kernel/cpu/scattered.c          |  1 +
+ arch/x86/kernel/cpu/sgx/driver.c         | 19 +++++-
+ arch/x86/kernel/cpu/sgx/encl.c           |  1 +
+ arch/x86/kernel/cpu/sgx/encls.h          |  5 ++
+ arch/x86/kernel/cpu/sgx/main.c           | 82 ++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h            |  3 +
+ arch/x86/kernel/cpu/sgx/virt.c           | 21 +++++-
+ tools/arch/x86/include/asm/cpufeatures.h |  1 +
+ 11 files changed, 155 insertions(+), 17 deletions(-)
+
 -- 
-2.49.0
+2.45.2
 
 
