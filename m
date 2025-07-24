@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-744995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77428B11393
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B20C5B1139D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B50567E5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB755A2D4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2D2367D3;
-	Thu, 24 Jul 2025 22:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB53F22A808;
+	Thu, 24 Jul 2025 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YupcIv2b"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LxqejKLT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E4022A808;
-	Thu, 24 Jul 2025 22:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C39223BCF5
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 22:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753395011; cv=none; b=iNR7J1hJ7IIi/m9wTxBuRUVetG4od1jA21QYEzzoxU3wc524vd7ru2s9kYofiQfYERv92yQcF6+C7+F17L6TYze7ibwhZhOv/ha3AY6vMYR6KoX51x+h7kIS16trMARqevVQNen+qmR6M7caDU3RKyOdvk2nd2ZD9bT+nV41lws=
+	t=1753395037; cv=none; b=NRPao5WerTRzBJrL5Vw4PnN1SKuh7CimtyJfXZ0FhUl65YirO3jmOOSeZaOUAndWsvbK6Wc5eExKt/mTSkUp8uIHE+ACXMT0x+MElMglkad94Nbvg6hq9+kzzzg4UJhcDXinP6DN50VgtAHle1dKpgQU1mr+0xhOVYoxIaCfmg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753395011; c=relaxed/simple;
-	bh=WiYdv21J0lroPNKayHfH2R/NF65g0CAPVnxQvXnRmHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RAkZcaITuDxTC/jqKvVvoDuEEAoUpQb0nd7VZOOOP5QH1r0k50PT4ibcZotEQiYBwKga2WidVnaVSClKyO0iyqONqVzknhooyW5AqRj2l47nY2QKTl75tzEAheA7gF2svkNQ9BmGFMQmCXQy2eIUH1IK4J4qzFfPK/9Q6SS215s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YupcIv2b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E2DC4CEED;
-	Thu, 24 Jul 2025 22:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753395010;
-	bh=WiYdv21J0lroPNKayHfH2R/NF65g0CAPVnxQvXnRmHs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YupcIv2bv8c0h3TKn6jwzc6uzcJP5aqCBIbZeI166WAVpOea/VNkY4YgtnogpOiiX
-	 6iSvi7EaMbdU7vN/gx/s4fgR+z5R1MHLdis4Pef9rjhKbknkwRBPyDvdw6D8T7DlXN
-	 VkHAfCfytD72WYeSK9iCBzVAwuc1sEvNEl9uw/a+2C6ri8euu8yxUgxaBwvFlXRBvv
-	 kr1Syr7SWihu22oBHnBai908JjApOT4z4QoK666OAVxlNitBg1itw0nC+b5jrYfE7h
-	 FM55E9vcn5Kn+owtg0qEgQ0coDMrRk7s04cPgVZxJPdrVkONVhFF34v8vHYvr+2oHd
-	 YEi2SNYqXEb8A==
-Date: Thu, 24 Jul 2025 17:10:09 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: [GIT PULL] PCI fixes for v6.16
-Message-ID: <20250724221009.GA3059501@bhelgaas>
+	s=arc-20240116; t=1753395037; c=relaxed/simple;
+	bh=TNnLDIq21qsztRWhB2H8GUnroBWBk5YryXZ3YPgkilU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rj+IG49PzoEHaH+pUA32hbBleDRAwUdrPCSmx/1dXMHqDpYpe3M9a7uGIfngqlZ1MRPlb831t3ePAn2FtoiQLhxjm9+jcP3Ll3UzVyzecwQcxxZYpjgCxWYJYWQDkK/X66g57ALBIPfh4LrYainQjVs6zYGWBD/6oUhpZaYsLHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LxqejKLT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D287FC4CEF5;
+	Thu, 24 Jul 2025 22:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1753395036;
+	bh=TNnLDIq21qsztRWhB2H8GUnroBWBk5YryXZ3YPgkilU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LxqejKLTOrjfJlTdd8QtRgq8O3+ZV5i/Xx6TN+4619+k3cK4CbQ+zmWrehnKzGwXu
+	 Lqr060kOgt0mT+KylJQ6A9ONo79h0DQ9kny2ZHtd14LWGv+121HU0b4QHzOK17SDCF
+	 7XlCCxvlNo/iMkPXddeaY7PgWY7tmjQYRvWlO/oU=
+Date: Thu, 24 Jul 2025 15:10:35 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Ye Liu <ye.liu@linux.dev>, Ye Liu <liuye@kylinos.cn>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hung_task: Add detection count to hung task warning
+ message
+Message-Id: <20250724151035.cc2d421d1b1ed20b89be1917@linux-foundation.org>
+In-Reply-To: <bdd8f5de-acd5-4c09-b3a4-ec6af54b396c@linux.dev>
+References: <20250724072326.2031432-1-ye.liu@linux.dev>
+	<bdd8f5de-acd5-4c09-b3a4-ec6af54b396c@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+On Thu, 24 Jul 2025 20:06:52 +0800 Lance Yang <lance.yang@linux.dev> wrote:
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+> 
+> 
+> On 2025/7/24 15:23, Ye Liu wrote:
+> > From: Ye Liu <liuye@kylinos.cn>
+> > 
+> > Add [#N] to hung task warnings to show occurrence count.
+> > This helps quickly identify warning order when multiple
+> > messages appear in logs.
+> 
+> Hmm... once we have this number, what do we do with it?
 
-are available in the Git repository at:
+Yes, adding to the changelog a more comprehensive description of the
+use-cases would help get this patch into Linux.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-4
+> While I totally get the desire for a quick reference number, my thinking
+> is that the hung_task_detect_count counter is the intended and more
+> reliable way for users to check.
 
-for you to fetch changes up to 8c493cc91f3a1102ad2f8c75ae0cf80f0a057488:
+But that's what this patch does?  Confused.
 
-  PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled (2025-07-22 13:36:04 -0500)
+> But like I said before, let's see what Andrew thinks ;)
 
-----------------------------------------------------------------
+Andrew thinks it's a pain when the title of a patch is changed! 
+Fortunately the changelog had a "Link to v1".
 
-- Create pwrctrl devices only when we need them, i.e., when
-  CONFIG_PCI_PWRCTRL is enabled; this allows brcmstb to work around a
-  pwrctrl regression by disabling CONFIG_PCI_PWRCTRL (Manivannan
-  Sadhasivam)
-
-----------------------------------------------------------------
-Manivannan Sadhasivam (1):
-      PCI/pwrctrl: Create pwrctrl devices only when CONFIG_PCI_PWRCTRL is enabled
-
- drivers/pci/probe.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
