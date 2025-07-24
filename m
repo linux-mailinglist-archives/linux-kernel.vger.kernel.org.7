@@ -1,86 +1,96 @@
-Return-Path: <linux-kernel+bounces-743471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACC2B0FF12
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 309BAB0FF13
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D7CAA5A55
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26268967041
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9381D5ADE;
-	Thu, 24 Jul 2025 03:11:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599C01D86DC;
+	Thu, 24 Jul 2025 03:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="PwA/O+oQ"
+Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EA01BF58
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60461BF58
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753326666; cv=none; b=nSpGPvYfb+R7O/tfAaACy9L2YHOIqWitzkhNtJjFmD0S3fSlodOZcjp9AosJ+3QP9CkJ8gsE0MhH6GZcrq1FDZ3067kqfJkDDnGnDKiRBNRaRJ7iUSRj1y+Y/tvS4wf82lzgmQxLxcWFR6uAzlhYLqF2AQN4PbEi/YvNiK9MB0c=
+	t=1753326836; cv=none; b=PGoa9fV0OTmlemeSJV7jkMCyReZSCf4mfRmaB4VqtP2gHIkCYA64EpJjThUp9QeVVT/ZHmpQuDL4ysNoG1UzQa8DtkT9wHLyyFAT4xgW6RTvhSOMuiRLbH/+6Qe2tXwfu5BJwqknyLbCQyah6aHYLQEKkU7cdkW4GY1CJ0FvGuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753326666; c=relaxed/simple;
-	bh=ppkZauOnIMMhCt92cbaCJ2V9NqxRyAGbfYRw230lgDI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oW4Q/0+NAezWQiPoFTnRl1nLfVZlyYaFTLkcA6nuiwd12m9eizRgCslViD4Bh8UyDnFRI0tqoD/qQI+Idr0wjO2VUxccitXt61QFfrFdVF+8CoFUvb0IHpF2i1wK4WooQsOYu+uCfH1eqGALAoq6JUtvhVCC0EdD4qpbs6e2rkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c43c2af72so60863039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 20:11:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753326664; x=1753931464;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2g0g4o9qAgNnn88eBiY/4X8zENzwThbJ1qetXt33sQY=;
-        b=bpKYnCyjC0ZYpmywoFg4eF839eJiSOJ5X0bdH5ZnoGQWnKr+vOGGrHQJ8MuNoXkVbD
-         Rvs3iXwaWkDN7EValRQAIMVnuKBwCd30A+7ZkJRzGzunhCZUjUs1uHc8NZZXyUE3APHu
-         as9107f6R1FP4IdQgQSczWzq5Z1RwDnNKLR4NPXVZJyDq45AJ+458k5rDODqtRLVPeh7
-         FCZxvzc0HrKA2yUqytSscZ0AI823z0Dn92pz0Kc3/mjv18hVVPtjVIAbSQ17VoXHP8vP
-         AaYdIAjYWt6AuA4JvKa4ZQrcqiPcCoz8oNxZPpNUlJYb0g/c9C/JQHIXpt6TZfnhxY3X
-         Fwkg==
-X-Gm-Message-State: AOJu0Yzb1LWKUzc7QWQpPUFahfi3R/Nnsw5uzJA//9X0Ubne3dnlgPeB
-	F11tG3iiowZnqWbfomF6X1oLAwALwnIo7DoAtaXmITba+T7F9jabYuxLMkzyCb5fDIyBubQZdOK
-	cyau7E61Xb760gkesqKbjJJgmlHf3HDkPEOTku/Guwf0FgTJswQ2R7RY4Sbs=
-X-Google-Smtp-Source: AGHT+IGTLEzRUfqLbo9YAniZLfHbfL5HFZhoxDeBigOVp3oH7zPEKxgR0TPIvcYykIWyVI33fSpQwlfMa3j2g96OueRjdwd+/8jH
+	s=arc-20240116; t=1753326836; c=relaxed/simple;
+	bh=ETaR0jx60+vu0q19/QsOIjM2qNNCIyq7MEvAAPhAASw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KE77J0tUv3fQaGJDPWAOPbic5+gqRDJy5afUvBB3KwgkqseYf7N5kuNp1rBkBPe3aXj24bFuIo3S6cmOKJhd3gVhJ0T1z5xaS277z02xh+GYmYXgpbjjrUe9iglM3+gdknVFbJ21k2qRI5RgIHt//WHsuk2L58rf0zpnGeNb/JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=PwA/O+oQ; arc=none smtp.client-ip=61.135.153.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753326828;
+	bh=U0N40smuyfMtWvZDfUHYKVkWYhtRfo4i+EstIKfJOJU=;
+	h=From:Subject:Date:Message-ID;
+	b=PwA/O+oQ+LXcyeP3lTN2MdN0BK/YHP6K3ka/vpB2iERU+Pbtrb19nMZDHw4HyD8ST
+	 nrGEenWisJ9TUP/KwcXEYbNuqcg23Uy0IC5THIDawbrIajv6NQJio6WDZOb/qbaoIp
+	 0d9/Ml3PkcOOtKjUvnIWsXjXXtCb6pMVVxrr0Ysg=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 6881A4E600001E91; Thu, 24 Jul 2025 11:13:44 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 973164457072
+X-SMAIL-UIID: 5A544BCDE61D444382784B8DBBC1B04A-20250724-111344-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] [io-uring?] INFO: task hung in io_wq_put_and_exit (5)
+Date: Thu, 24 Jul 2025 11:13:31 +0800
+Message-ID: <20250724031332.2898-1-hdanton@sina.com>
+In-Reply-To: <6880f54c.050a0220.248954.0000.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0e:0:b0:3e2:93c5:95eb with SMTP id
- e9e14a558f8ab-3e335502d68mr100703495ab.21.1753326664403; Wed, 23 Jul 2025
- 20:11:04 -0700 (PDT)
-Date: Wed, 23 Jul 2025 20:11:04 -0700
-In-Reply-To: <20250724015303.3332384-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6881a448.a00a0220.2f88df.0009.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KASAN: out-of-bounds Read in hfs_bnode_move
-From: syzbot <syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+> Date: Wed, 23 Jul 2025 07:44:28 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12b877d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=415e83411fefd73f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e328767eafd849df0a78
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110b938c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1622a38c580000
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+#syz test
 
-Reported-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
-Tested-by: syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         25fae0b9 Merge tag 'drm-fixes-2025-07-24' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ae40a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=859f36d9ccbeaa3e
-dashboard link: https://syzkaller.appspot.com/bug?extid=41ba9c82bce8d7101765
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=150160a2580000
-
-Note: testing is done by a robot and is best-effort only.
+--- x/io_uring/io-wq.c
++++ y/io_uring/io-wq.c
+@@ -954,7 +954,7 @@ static bool io_wq_worker_wake(struct io_
+ {
+ 	__set_notify_signal(worker->task);
+ 	wake_up_process(worker->task);
+-	return false;
++	return true;
+ }
+ 
+ static void io_run_cancel(struct io_wq_work *work, struct io_wq *wq)
+--
 
