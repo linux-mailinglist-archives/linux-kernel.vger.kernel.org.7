@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-744921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421D8B11280
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA772B11285
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 22:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7272D583DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4661CC5D26
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BC92EB5D3;
-	Thu, 24 Jul 2025 20:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC2C288C8A;
+	Thu, 24 Jul 2025 20:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blFm6qFx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ym7Z8ny0"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9042E371D;
-	Thu, 24 Jul 2025 20:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5EC2E371D;
+	Thu, 24 Jul 2025 20:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753389939; cv=none; b=o3VJ6Ll8fNNlsN9+TsK3CkdpLzYUP5G4KqIhOm1uEIEzZXmro75frbjC3A0WTXhtPBzcvRIgXvaf16FMcmSjVaLs4fka2InsyCQMD2xwLJD88leqYxbMxDRJbN2TIb0rdAAmfLMlwONr6FHz7ma78V2PnIqdvxHfcP4eYSi8QpY=
+	t=1753389994; cv=none; b=LdlebhZaT1DLcFQNgpNlrJKTdfMxVqZGgy+3QI9/cKHI+3jgSHMUinzpR3z0j5a8Grapsc7RS7jquGGWUhtJJq0A4cEidFisketVNmkBhKtiDtuT8P4KHIUh9GG8to0nWimsifGarmEX5HfKUPvgEAZcMJ9ixchvsq4eiFsGfKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753389939; c=relaxed/simple;
-	bh=1UNUrxh+JabgrDadw88PFPT8Lr9IBivQWKHbmIolFrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=faCZowCfFxunKOStIodL7dgVm9D0bVBsFHmdT8JS4SrSop4GK1jNP1n5HXcesVuK2diTZC4CnfL0Yu7hVegN/E1s0ChgZtbNfFV4IZamOdmZ6AOxzx1/420dbRcd5a03/l+Z51m0W2P94aEdHzRCoBR2J5RuzoMLxnehils6WH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blFm6qFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D8DFC4CEED;
-	Thu, 24 Jul 2025 20:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753389936;
-	bh=1UNUrxh+JabgrDadw88PFPT8Lr9IBivQWKHbmIolFrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=blFm6qFxbbU/JXfhg/hhAS7wPJQ0vyWJkow+GO6XN3jYDgRac7yxvAgwEJzeh/zr2
-	 iTCBBcdMgU83QUBp+vxJhIBGp+fM/jgg12n7tJ4tNGqW54cdMcIszcJhdTbyIHPKQ3
-	 Lx8tDjxl99pTy0erofm640EjF2C/Ap+hQKgvqGnoc1tSepXk6bpmFYK6gnbXeNXjHs
-	 M7T+PY9qXai9LAFsVpk4CqQO+TXmkBYWWVmHetgyHCmhT26KOa2cYW1imM/geOS7jU
-	 jwFlKMJNB1oY04LRlAWxlsB+L8SkI+T5MeFPhmT7WubXNIgFzjYJfwL8kyupTtkCFb
-	 lYt3DUXmm9GIw==
-Date: Thu, 24 Jul 2025 13:45:35 -0700
-From: Kees Cook <kees@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux@treblig.org, corbet@lwn.net, workflows@vger.kernel.org,
-	josh@joshtriplett.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <202507241337.F9595E1D@keescook>
-References: <20250724175439.76962-1-linux@treblig.org>
- <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
+	s=arc-20240116; t=1753389994; c=relaxed/simple;
+	bh=yuVbIq/Z+Q8wsJuZLNwT2uhzA5JQZ2Etn/Eyfh9HHLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sE9mGfL56EEej2UmB/tNIx5O/vYGze7ZeypvXSpKBY98BgULr1+hr/EKNnekhSqWGOX6agaUaJeuyIXGqKLDjFXnzLqtWMPu9NZGqKswrvE3aL8UGi3cWJXIx4YerpsMRxd8ZhpzaNqVoJAzhNoXy0bSTfX38O06n4LpzVG79PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ym7Z8ny0; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bp32H3r5HzlgqV4;
+	Thu, 24 Jul 2025 20:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753389990; x=1755981991; bh=Poh04G3fWQ5lclQ5/432jPff
+	3wG00JscgyZFbbI5jE8=; b=ym7Z8ny0lKejZwdLeivMPQRuOMthighRTJ0rxEfZ
+	c4IorQZeTVdHd1R6ESvd6yx3AKD8wtcMhYYM82hjIUgMl6IgqFFXchtis+S7GmRm
+	Kgi0OeRVVIP76GarKdqLBI9cYltoKhW0B4BfXP+hC/2v413gX4mvoQ/2prDV8Zhl
+	FJEg35Ov6XGg6tRuOmFF70r1x44lyPx4ffqW41IwMuEiPCPrsqFs2D57bTWTgtmt
+	tPHZOurYyEU0Zrvkz5azWTr3//0jnaMm2PNY4h/R3PFQHZiRJ3GI//0VPjxFIod/
+	i9xbXIuVCBmtjHnrY5ZPj5d/lAKutQ7mlSSKXPurGDpotg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LmNmYM3UKFSD; Thu, 24 Jul 2025 20:46:30 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bp3294KQLzlgqTx;
+	Thu, 24 Jul 2025 20:46:23 +0000 (UTC)
+Message-ID: <ad9e3921-43ed-4abd-acce-ce46d57f32c8@acm.org>
+Date: Thu, 24 Jul 2025 13:46:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: sd: fix sd shutdown to issue START STOP UNIT
+ command appropriately
+To: Salomon Dushimirimana <salomondush@google.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vishakha Channapattan <vishakhavc@google.com>
+References: <20250724203805.93944-1-salomondush@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250724203805.93944-1-salomondush@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 03:07:17PM -0400, Konstantin Ryabitsev wrote:
-> On Thu, Jul 24, 2025 at 06:54:39PM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > It seems right to require that code which is automatically
-> > generated is disclosed in the commit message.
+On 7/24/25 1:38 PM, Salomon Dushimirimana wrote:
+> Commit aa3998dbeb3a ("ata: libata-scsi: Disable scsi device
+> manage_system_start_stop") enabled libata EH to manage device power mode
+> trasitions for system suspend/resume and removed the flag from
+> ata_scsi_dev_config. However, since the sd_shutdown() function still
+> relies on the manage_system_start_stop flag, a spin-down command is not
+> issued to the disk with command "echo 1 > /sys/block/sdb/device/delete"
 > 
-> I'm not sure that's the case. There is a lot of automatically generated
-> content being added to the kernel all the time -- such as auto-formatted code,
-> documentation, and unit tests generated by non-AI tooling. We've not required
-> indicating this usage before, so I'm not sure it makes sense to start doing it
-> now.
+> sd_shutdown() can be called for both system/runtime start stop
+> operations, so utilize the manage_run_time_start_stop flag set in the
+> ata_scsi_dev_config and issue a spin-down command during disk removal
+> when the system is running. This is in addition to when the system is
+> powering off and manage_shutdown flag is set. The
+> manage_system_start_stop flag will still be used for drivers that still
+> set the flag.
 > 
-> Furthermore, merely indicating the tool doesn't really say anything about how
-> it was used (e.g. what version, what prompt, what context, etc.) If anything,
-> this information needs to live in the cover letter of the submission. I would
-> suggest we investigate encouraging contributors to disclose this there, e.g.:
+> Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+> ---
+>   drivers/scsi/sd.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> | ---
-> | This patch series was partially generated with "InsensitiveClod o4 Hokus"
-> | and then heavily modified to remove the parts where it went completely off
-> | the deep end.
-> 
-> I am also not opposed to having a more standard cover letter footer that would
-> allow an easier way to query this information via public-inbox services, e.g.:
-> 
-> | generated-by: insensitive clod o4 hokus
-> 
-> However, I don't really think this belongs in the commit trailers.
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index eeaa6af294b81..282000c761f8e 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -4173,7 +4173,9 @@ static void sd_shutdown(struct device *dev)
+>   	if ((system_state != SYSTEM_RESTART &&
+>   	     sdkp->device->manage_system_start_stop) ||
+>   	    (system_state == SYSTEM_POWER_OFF &&
+> -	     sdkp->device->manage_shutdown)) {
+> +	     sdkp->device->manage_shutdown) ||
+> +	    (system_state == SYSTEM_RUNNING &&
+> +	     sdkp->device->manage_runtime_start_stop)) {
+>   		sd_printk(KERN_NOTICE, sdkp, "Stopping disk\n");
+>   		sd_start_stop_device(sdkp, 0);
+>   	}
 
-I agree; I'm not sure I see a benefit in creating a regularized trailer
-for this. What automation/tracking is going to key off of it? It's
-a detail of patch creation methodology, so the commentary about how
-something was created is best put in the prose areas, like we already
-do for Coccinelle or other scripts. It's a bit buried in the Researcher
-Guidelines[1], but we have explicitly asked for details about tooling:
+A Fixes: tag is missing.
 
-  When sending patches produced from research, the commit logs should
-  contain at least the following details, so that developers have
-  appropriate context for understanding the contribution.
-  ...
-  Specifically include details about any testing, static or dynamic
-  analysis programs, and any other tools or methods used to perform the
-  work.
+manage_runtime_start_stop is for runtime power management.
+/sys/block/*/device/delete is not related to runtime power management.
+Isn't manage_system_start_stop more appropriate here than
+manage_runtime_start_stop? Shouldn't sd_shutdown() calls triggered by
+writing into /sys/block/*/device/delete already be covered by this
+test: system_state != SYSTEM_RESTART &&
+   sdkp->device->manage_system_start_stop?
 
-Maybe that needs to be repeated in SubmittingPatches?
+Thanks,
 
--Kees
-
-[1] https://docs.kernel.org/process/researcher-guidelines.html
-
--- 
-Kees Cook
+Bart.
 
