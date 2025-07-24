@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-743906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E5FB10537
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:06:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706E0B1053A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184A31896ED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98FB05619DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6166F27510E;
-	Thu, 24 Jul 2025 09:06:24 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647EF210F4A;
-	Thu, 24 Jul 2025 09:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49B2750F4;
+	Thu, 24 Jul 2025 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqgTXMFg"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293272750EF
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753347984; cv=none; b=qSOfKJ+w9baJ6ci97x54J/8pRD0WD44KMrTssFR2pQnrk9LxXD/v6IojqyAELnAWIxUEtj3seyiOWwKNP+L2ARsdSFpW0CuqSuTPR1G0MCgQeWzfXZ3Pg9qAWQ0du9ynVoIBLuoojDaK5x/UoS15DtUS5PtqsuHDmEyQVSgo1fE=
+	t=1753348047; cv=none; b=upgT2w+bsHqD8i8eIQVCaidfCT4WAhy/pcZIrbmFym+YoAtOPS4gjtYYsfA2EMSQa/HdFUa/tCYnq0aeYcUBLmodPwRmBoag7Oe1O0KY9DqVEX1jkjFBKVrnGEvMmjy9NmXg3h8lrtb0DU13fQmWZ9cEJFiTeiczCZAVUJEN4b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753347984; c=relaxed/simple;
-	bh=AcHqFhrAmveChkGt9Q9dhnxeDQVpdCur5t+Cqbhq4Yo=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=J/2Q5TrGzrjQ+wXmgB4ICuQ8hz6ePCrRdA7OLjUXFZMUDwEvdLGbeknuVXnLkWbzvgO+AqY8+WPY1wqw1DcQsRDn3ZPPezIIjO30ZEykmzNa1oQbwTscK1H3NmZec5polzvTL1WqBHuLmkFXGuKrIIqyRPD3R4Giq3oO7RA1+LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxJHB694FoDQoxAQ--.58208S3;
-	Thu, 24 Jul 2025 17:06:02 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJCxdOR294FokHokAA--.57042S3;
-	Thu, 24 Jul 2025 17:05:58 +0800 (CST)
-Subject: Re: [PATCH net-next v2 1/2] net: stmmac: Return early if invalid in
- loongson_dwmac_fix_reset()
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250723100056.6651-1-yangtiezhu@loongson.cn>
- <20250723100056.6651-2-yangtiezhu@loongson.cn>
- <f65deb0d-29d1-4820-95e9-f1dd94967957@lunn.ch>
- <b98a5351-f711-ecb1-75fa-68c69263e950@loongson.cn>
-Message-ID: <5ef8ae99-256e-8ff7-861f-025e7b7cfb6f@loongson.cn>
-Date: Thu, 24 Jul 2025 17:05:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1753348047; c=relaxed/simple;
+	bh=zgMFLUq0fEmtCJ+2Gy519EI1Y1jQDENdFaSS0II49MA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E4mAOJXS3zB/f+HZwEb7FMFDfs4uwyilKnrT8pIOhTq9qatwEUHSl4FDvAm989fy6oRWUMSUsCpLvVu3e/o4RUx25IkduVFrXhexPnLvFupqmb9m/eIdgrIohThlNZ5yQqkMUAEN9LyOs/U1iSEv0QAJY8ZyzSR+tz2fqnSF3EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqgTXMFg; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-52b2290e292so239676e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753348045; x=1753952845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J9U1sLWBdhx1paPNTeFVGeHZUtaOkySwMikmcsZGJ3Y=;
+        b=BqgTXMFgl4tKYuf5WXD2YNxGRBSXs0X9uOugc7m+DBZNMDM7XpjvuMsA6SgL7FBfVv
+         REwvf292/zf65YIXUjLejvUiqCbR9WAspJB1C2+dj2G1C4YdPK5ug43xpC6pBsT7bpk+
+         i6XAf2bAHhzujs4G0BamDOftAffYLcdMEuG2aj/cMw+54KgtnVYa6WQZhkuWSEJwZ6u7
+         6Zl/L3gLRMf1tW0O+tUyggx1aYiq3TLUmG9GE6GqGTd9YWiywUAtta+M2U4EwHqkAs77
+         gwCAUch4XhMvleQ2YaQRRc/gya6H7i6cjY9NrP0tlQBfRPo5Mxe/b3IuXs3x7pNRL9yp
+         wJLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753348045; x=1753952845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J9U1sLWBdhx1paPNTeFVGeHZUtaOkySwMikmcsZGJ3Y=;
+        b=vbH7RqIaqQICrbXXa6Byo+tkMuKmVlWEWLpUgwG6+wR1zF5mYup52sDC3FGOXomA1P
+         /0JpH7VTnIasKF7NKufHI+2u9zvtxb/vyITH17mQN4KbWrCQCXARf/RP50UgsO7JaPZQ
+         PdegZ7ERdh5Qyf2oCwJ+blqHKPbQhE5Au6DzNvpX7LlVgzcVgFfuRA/zUz9W8r5K/ill
+         5AG+Ha97DUChmineDOWfg4ehFuj/zpTefcq3Y/C4jDSPeDOCJl1a2v2wYuOBNXZ8OskM
+         UYZ1egntbfEqGfh0GbBgu0vOjOhhilWYJWcRNbju7tnMikCIwRSdMXCiS1o35U10FQY/
+         dt3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVD6H5KPxw6q1QPMpjL4bCBIeFftpTrsv0uQovtHl+oZRK6I+iHPKmeuZVJjGJhL59UCgeZRRelEg4rcjg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaNunfJLkiHJ9868xBJ+9esnO5dH9WRMJK9+C3A6aTaB4ELlMy
+	gHHOgWsh/ImrXQBd4mS9x6/ekY6Kt4psDR/cZ1lvQn9f4V6CtvsmyCA3Y47Umvr6kjuTBDIezeZ
+	8qaNje9wwJeLZ6A5vEjwIuJjC5ILFtNM=
+X-Gm-Gg: ASbGncuiV2wOqKF+RUIv6K0FXlQHR8vQRyFdAtX4VQFdY1j4RVCOeJD9cg1rqcY2Qkz
+	xmE7SFxpQDsfBnq1HKxzkBI9z5R44Oeq+Q/vvTS/WI19cOqDkj6BHP5+CowQKb0B64d74OGwLoY
+	yGMcv59ZCfsJzWh9dZ8VEqUmvykft4cNM6t5TdOr037qVWiAPnJz35gDE0TG8Cwh8y/Kov7CvBS
+	4+YCh6YfBWGDU0nPg==
+X-Google-Smtp-Source: AGHT+IFKX+YT+nQfMVHoGIbnz5tCTBk3e35DhUZOmmPV1cNhlCz1oWMNfdF0SDe3luc5Mr/mRo1Wv8KWAB38eYODkMM=
+X-Received: by 2002:a05:6102:3f02:b0:4dd:b037:d239 with SMTP id
+ ada2fe7eead31-4fa1512033amr2994569137.14.1753348044722; Thu, 24 Jul 2025
+ 02:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b98a5351-f711-ecb1-75fa-68c69263e950@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxdOR294FokHokAA--.57042S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxWF17GFW7GFy5JF18ZFyxJFc_yoWrJFWkpr
-	WfAa42qryDtr1fJw4Dtw1DZFyrC345K34kWFZ7A3Z3ua1YyFyjqr1YqFWjgr12yr48tF1a
-	qr4Uur1UuF1DJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8uc_3UUUU
-	U==
+References: <20250724085600.4101321-1-xiaqinxin@huawei.com> <20250724085600.4101321-3-xiaqinxin@huawei.com>
+In-Reply-To: <20250724085600.4101321-3-xiaqinxin@huawei.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 24 Jul 2025 17:07:08 +0800
+X-Gm-Features: Ac12FXwc8LEw1HxRHbIlcrvJWyoAZgmuRVg1-3tbipJDJAI81oWi9CrI61ErWbk
+Message-ID: <CAGsJ_4zVR3R7erGP57vxM8vKBARG8BttA=FsCVFjy4QtswcsQw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dma-mapping: benchmark: Add padding to ensure uABI
+ remained consistent
+To: Qinxin Xia <xiaqinxin@huawei.com>, m.szyprowski@samsung.com
+Cc: robin.murphy@arm.com, jonathan.cameron@huawei.com, prime.zeng@huawei.com, 
+	fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/7/24 上午10:26, Tiezhu Yang wrote:
-> On 2025/7/23 下午10:53, Andrew Lunn wrote:
->> On Wed, Jul 23, 2025 at 06:00:55PM +0800, Tiezhu Yang wrote:
->>> If the MAC controller does not connect to any PHY interface, there is a
->>> missing clock, then the DMA reset fails.
+On Thu, Jul 24, 2025 at 4:56=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> w=
+rote:
+>
+> The padding field in the structure was previously reserved to
+> maintain a stable interface for potential new fields, ensuring
+> compatibility with user-space shared data structures.
+> However,it was accidentally removed by tiantao in a prior commit,
+> which may lead to incompatibility between user space and the kernel.
+>
+> This patch reinstates the padding to restore the original structure
+> layout and preserve compatibility.
+>
+> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header fil=
+e for map_benchmark definition")
+> Cc: stable@vger.kernel.org
+> Acked-by: Barry Song <baohua@kernel.org>
+> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
 
-...
+I don=E2=80=99t think these two patches should be part of the same series. =
+This
+one is a bug fix and should be handled separately=E2=80=94ideally picked up=
+ on
+its own and backported to stable.
 
->>> +    if (value & DMA_BUS_MODE_SFT_RESET)
->>> +        return -EINVAL;
->>
->> What happens with this return value? Do you get an error message which
->> gives a hint the PHY clock is missing? Would a netdev_err() make sense
->> here?
-> 
-> Yes, I will use dev_err() rather than netdev_err() (because there is no
-> net_device member here) to do something like this:
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c 
-> b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> index 6d10077666c7..4a7b2b11ecce 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-> @@ -513,8 +513,11 @@ static int loongson_dwmac_fix_reset(void *priv, 
-> void __iomem *ioaddr)
->   {
->          u32 value = readl(ioaddr + DMA_BUS_MODE);
-> 
-> -       if (value & DMA_BUS_MODE_SFT_RESET)
-> +       if (value & DMA_BUS_MODE_SFT_RESET) {
-> +               struct plat_stmmacenet_data *plat = priv;
-> +               dev_err(&plat->pdev->dev, "the PHY clock is missing\n");
->                  return -EINVAL;
-> +       }
-> 
->          value |= DMA_BUS_MODE_SFT_RESET;
->          writel(value, ioaddr + DMA_BUS_MODE);
+Also, the subject should not say "Add"=E2=80=94it should be "Restore". I as=
+sume
+Marek can handle it?
 
-Oops, the above changes can not work well.
+> ---
+>  include/linux/map_benchmark.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.=
+h
+> index 62674c83bde4..2ac2fe52f248 100644
+> --- a/include/linux/map_benchmark.h
+> +++ b/include/linux/map_benchmark.h
+> @@ -27,5 +27,6 @@ struct map_benchmark {
+>         __u32 dma_dir; /* DMA data direction */
+>         __u32 dma_trans_ns; /* time for DMA transmission in ns */
+>         __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a ti=
+me */
+> +       __u8 expansion[76];     /* For future use */
+>  };
+>  #endif /* _KERNEL_DMA_BENCHMARK_H */
+> --
+> 2.33.0
+>
 
-It can not use netdev_err() or dev_err() to print message with device info
-in loongson_dwmac_fix_reset() directly, this is because the type of "priv"
-argument is struct plat_stmmacenet_data and the "pdev" member of "priv" is
-NULL here, it will lead to the fatal error "Unable to handle kernel paging
-request at virtual address" when printing message.
-
-Based on the above analysis, in order to show an error message which gives
-a hint the PHY clock is missing, it is proper to check the return value of
-stmmac_reset() which calls loongson_dwmac_fix_reset().
-
-With this patch, for the normal end user, the computer start faster with
-reducing boot time for 2 seconds on the specified mainboard.
-
-The final changes look something like this:
-
------>8-----
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c 
-b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index e1591e6217d4..6d10077666c7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -513,6 +513,9 @@ static int loongson_dwmac_fix_reset(void *priv, void 
-__iomem *ioaddr)
-  {
-         u32 value = readl(ioaddr + DMA_BUS_MODE);
-
-+       if (value & DMA_BUS_MODE_SFT_RESET)
-+               return -EINVAL;
-+
-         value |= DMA_BUS_MODE_SFT_RESET;
-         writel(value, ioaddr + DMA_BUS_MODE);
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c 
-b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b948df1bff9a..1a2610815847 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3133,6 +3133,9 @@ static int stmmac_init_dma_engine(struct 
-stmmac_priv *priv)
-
-         ret = stmmac_reset(priv, priv->ioaddr);
-         if (ret) {
-+               if (ret == -EINVAL)
-+                       netdev_err(priv->dev, "the PHY clock is missing\n");
-+
-                 netdev_err(priv->dev, "Failed to reset the dma\n");
-                 return ret;
-         }
-
-I will wait for more comments and send v3 after the merge window.
-
-Thanks,
-Tiezhu
-
+Thanks
+Barry
 
