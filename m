@@ -1,135 +1,73 @@
-Return-Path: <linux-kernel+bounces-744850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30879B11192
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:25:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8857B11197
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA3B1CE58D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB191CE591C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E742D8795;
-	Thu, 24 Jul 2025 19:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0972ECE9B;
+	Thu, 24 Jul 2025 19:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWntaSPC"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCPrNc9i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335A3255F59
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1220126A;
+	Thu, 24 Jul 2025 19:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753385139; cv=none; b=r5oRyunEAIXujHLolvWUx2sCvehSvzOK7zHR0CZZViPxkqsHwbcxvBfDOxrxJWF3GyQ8dTt2pXHpGSzyEKoTfp6sdpwDmMYKSDld9XA2QsXTW+eP7iPi5Um9W/qIlpnz44BIH1sVyU6pqYI/O1DFtHzeu+7hOVSbHO0iJ1fWEJU=
+	t=1753385189; cv=none; b=o4ZSnWDSXfDGy3UlrgjakS4OGUYaDOa6Gm3F03OJQdcc2+D76HpJxrFBUiw9c5yqYMx34v3ACfgxqjHJ+Q1uJzKfywtANyNcSP08z9M4kJedAwuyQPNPAfaWfrMc8hLBDiOpfTNZgGL96qA6kWEwen2ckTnkGrVAOib4DZUaAYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753385139; c=relaxed/simple;
-	bh=Wl/MVrfadxWCvbcWuLboGbrjuXmRyvy0BBIFUzsNgX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aQC2jz8cBoONUGzN3WsyNUORdwXVgUHERNTlzjUqi8QMvDlRV9wTm7qMRNYz9jRx6b90EAuJWyBxHHCnURA6MpfnEyGpM40rr/l2Qg15Fdi3mTjQnZP7Fitvi4FGm6YkCYAcdB8fOow/85uzC1RegpkJmKE+X3WEzLs+7dwOQwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWntaSPC; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-612a338aed8so2277162a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753385136; x=1753989936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjrrUXAL6KpzkIM6/6atzGF3H/f1YResH0MiZx9rdi0=;
-        b=GWntaSPCwkJTqg/D8rfptFR5azHnSkPcI7dlSDKhqs3XtYyhRVoDzFSlgvlnccI7uJ
-         nIyV9gTXkoZklhhEBLry40xBEJyzDfxynu+WRNYZJmchXdMJVM4vJgIhm/RjBCl4dAQD
-         XLZB1bNIDZ9Rvv5zobSQJjxyYWwVhDBQsCHeaFnNiR4iNNI33tspikmpckwhJNTrmDSN
-         J7qeHgW5gQimX4xCWuFEeqxb9pVEyFgh8eoEHomsAe/waCGlieyyiX/klr3UtQjJVWDR
-         c3Tz5/w7VDEK4aYcQL7GpXeWm4zvlrqTEG6Phy997TVlG7dBh0H7f9Yzpvj+zroyLd4q
-         TJjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753385136; x=1753989936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjrrUXAL6KpzkIM6/6atzGF3H/f1YResH0MiZx9rdi0=;
-        b=vR3stHJHTUbS7GSVrPg9G50uyEfBZnb2XBOVi+wSbP91JvomZxIcGtJB/9Z9tycBjW
-         mZQ0AA+7EBlXhk6hehM9QvoFZO3pzkMIwOx5JJufQYHB4GUGQg8+LgNAM4w/c5I+2oal
-         bHF0ROPXWlyCNxATdMQBsuwXNFWBl6RwoDXdBm2uvtq0NEFoJ+j1r2l2Cq++4Va8Janx
-         bCgW6nSqTBK7GpXVMUbQ3mM4lDidlrH/hMPWJg+GnSo8RuSqDe9VhUGTcVp0Lx/Uw2ng
-         wkyXQktfSvxpltEupyTs3U6d+8wLSvdCBm/D63wJixuAUKcJJ7eFq5k09PeNVSmfFWwI
-         c6+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVMyoB/zDI9FQcSxT1SN1c/+50I1skAclwGZ7vUlHYwejO5vDaAoUZtQKLWMSsiWtEA/l0C9L/DaQrPVJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPVJIq6cicAVQ9K30aP9SDeOnwUCx2f05Cwjon4vPGEeU94WHG
-	JbxSUMP7WhN2WmiKe3iJ15QrgpsrCJF07oFN03IhECli7PZWdUetGuJUvVRutQ==
-X-Gm-Gg: ASbGncuZD/HjGycSRbl8RM807hdzw7fuAqQbE7Gbbnyy0k37btFgCivP4AXDQgOVJuM
-	oPAwADkhbCBokeztF3PdDnLo8i4QdARnkvV55RyLCvryq/pYXuFqVmm9f5oTznTvJ4ickAOqLaL
-	IW63KaMCH+y86TTC4ojgIu/x8iB87NmhS+rZ2HPfSfP3n0Ch2k3EjBzWFLmMKFOLga2fWKv47QT
-	ku8PKRZLLWEX2XqUP6VqhhXsk+jj2PAuza63f8YQuebMSegjdZCRqyWZgAoldTf7xZin2CkQtwG
-	fsynZGQG3Tw6p79o1hIpFr/lcsfNV+SeUmKjS2cCfWNGGdJMzDDPcMMx6gUwg1a+YxRq375ibtZ
-	FL2jcQTZBAuDMljoVL9mQ0oU5ps2qr+E3fkL59PQx5B4C/aKJfsp7Ybxe1/3Mh8nzVDYOpT4=
-X-Google-Smtp-Source: AGHT+IGpDpA0dhJqXY/Tehkc7V+fIch+YiSFQkfTHsR0tFK0ny2Wg+uQEfflS7ZcZmimB33UjNYdWg==
-X-Received: by 2002:a05:6402:5208:b0:601:ad95:ca6d with SMTP id 4fb4d7f45d1cf-6149b42e234mr7715676a12.8.1753385135711;
-        Thu, 24 Jul 2025 12:25:35 -0700 (PDT)
-Received: from PC01.localdomain (094190205166.static.ipv4.heldenvannu.net. [94.190.205.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614cd0d335csm1199556a12.10.2025.07.24.12.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 12:25:35 -0700 (PDT)
-From: Bruce Qin <bqn9090@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	bqn9090@gmail.com
-Subject: [PATCH v2] staging: rtl8723bs: fix if-statement alignment and line continuation in rtw_ap.c
-Date: Thu, 24 Jul 2025 21:25:33 +0200
-Message-ID: <20250724192533.21141-1-bqn9090@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025072409-promoter-shame-8105@gregkh>
-References: <2025072409-promoter-shame-8105@gregkh>
+	s=arc-20240116; t=1753385189; c=relaxed/simple;
+	bh=xfsvX/sSwdyRpEMZfbnUT8tTJvTmoG3ftDvHhZaSh1Y=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=WrwfzFE4wjKhyex4yHItzWobNNn0j8n14qHYJafSOwT5f9KHwbCqEdta9wcgpgq82ds1yN9SvbFjCQgTE7p2s+z+dNhG1/RZoxIMU625jm1GnZXd/Ma5ZCrS5zHPfk8MHzy7MJU4FsftgR9ZusxaviP8WrXkqCfwQyGSBenIEsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCPrNc9i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A709BC4CEED;
+	Thu, 24 Jul 2025 19:26:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753385188;
+	bh=xfsvX/sSwdyRpEMZfbnUT8tTJvTmoG3ftDvHhZaSh1Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ZCPrNc9i/e+2FAh7K6Z5Apnzd8BU8aSRRdBKLk80TTk2vLg0jBGU30TMffqckvVlD
+	 2yEKH085K8EMCIi6TK/CG+AoshWQ01nPjyXa6o103roGPOBXr0ApOtTsTCQ/1e097v
+	 54+aRGnibXJsguj3RGWpWs+ZEo4lCDE4JrePswSfjhbmn+hb1n6WVK2V84bNJiA0Xz
+	 49+sIdClhCfzscv9FRAKtMwPVVJBNYpKv55lg6mDkMkHMbsmZDMTfNctjmMDGP8z3F
+	 UIuJ3Lr5Woq6MQSVjRhfFiLcvU+2I6Cv4xsHO3Nyi9I3JrkQgnLkyxDxWvgX6I5zkp
+	 YupOwIUkp+ScQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250717-bindings-double-colon-v1-1-c04abc180fcd@fairphone.com>
+References: <20250717-bindings-double-colon-v1-0-c04abc180fcd@fairphone.com> <20250717-bindings-double-colon-v1-1-c04abc180fcd@fairphone.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom: Remove double colon from description
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+To: Abel Vesa <abel.vesa@linaro.org>, Ajit Pandey <quic_ajipan@quicinc.com>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>, David Wronek <david@mainlining.org>, Dmitry Baryshkov <lumag@kernel.org>, Georgi Djakov <djakov@kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>, Iskren Chernev <me@iskren.info>, Jens Reidel <adrian@travitia.xyz>, Jonathan Marek <jonathan@marek.ca>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, Manivannan Sadhasivam <mani@kernel.org>, Martin Botka <martin.botka@somainline.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Priya Kakitapalli <quic_skakitap@quicinc.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Rob Herring <robh@kernel.org>, Robert Marko <robert.markoo@sartura.h
+ r>, Shawn Guo <shawn.guo@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, Vinod Koul <vkoul@kernel.org>, krishna Lanka <quic_vamslank@quicinc.com>
+Date: Thu, 24 Jul 2025 12:26:27 -0700
+Message-ID: <175338518784.3513.15713025865524328468@lazor>
+User-Agent: alot/0.11
 
-This patch fixes several style issues in a multiline if-statement:
+Quoting Luca Weiss (2025-07-16 23:54:44)
+> No double colon is necessary in the description. Fix it for all bindings
+> so future bindings won't have the same copy-paste mistake.
+>=20
+> Reported-by: Rob Herring <robh@kernel.org>
+> Closes: https://lore.kernel.org/lkml/20250625150458.GA1182597-robh@kernel=
+.org/
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-- Moved '&&' to the end of the previous line to follow logical continuation style
-- Fixed indentation to align with the opening parenthesis of the expression
-- Avoided ending a line with an open parenthesis '('
-- Moved closing ')' to the end of the last expression line (as suggested by the maintainer)
-
-These changes improve readability and conform to Linux kernel coding conventions.
-No functional changes.
-
-Signed-off-by: Bruce Qin <bqn9090@gmail.com>
----
-Changes in v2:
-- Moved closing ')' to the previous line as suggested by Greg Kroah-Hartman.
-- Thanks for the review and feedback!
-
- drivers/staging/rtl8723bs/core/rtw_ap.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index 383a6f7c06f4..c652e0cd35f3 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -258,11 +258,9 @@ void expire_timeout_chk(struct adapter *padapter)
- 		} else {
- 			/* TODO: Aging mechanism to digest frames in sleep_q to */
- 			/* avoid running out of xmitframe */
--			if (psta->sleepq_len > (NR_XMITFRAME / pstapriv->asoc_list_cnt)
--				&& padapter->xmitpriv.free_xmitframe_cnt < ((
--					NR_XMITFRAME / pstapriv->asoc_list_cnt
--				) / 2)
--			)
-+			if (psta->sleepq_len > (NR_XMITFRAME / pstapriv->asoc_list_cnt) &&
-+			    padapter->xmitpriv.free_xmitframe_cnt <
-+					((NR_XMITFRAME / pstapriv->asoc_list_cnt) / 2))
- 				wakeup_sta_to_xmit(padapter, psta);
- 		}
- 	}
--- 
-2.43.0
-
+Applied to clk-next
 
