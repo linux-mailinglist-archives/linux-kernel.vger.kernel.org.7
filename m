@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-744464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6FCAB10D54
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:23:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4EFB10D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C795C193A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E117A1D00F05
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C0D2E3394;
-	Thu, 24 Jul 2025 14:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565942DFA4D;
+	Thu, 24 Jul 2025 14:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdJAINky"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mi/ZihYn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B304C81;
-	Thu, 24 Jul 2025 14:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5D92DE71E;
+	Thu, 24 Jul 2025 14:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366426; cv=none; b=Srm48FOb/J3A04n5LwZdvJAqG3RtAwQpHXRP9v3VvRLNKBBjQYOJNn27982oy5Bgh++8LI2OrnAVTET99ra35WIpLEC8KtK7msayr5Ftjnty0/SpB5xhn6FCdXdwNvWRKiMJTf9A+I6KQOTP9VGwELO5I+jrpXuQz0/mSFQ5GD8=
+	t=1753366486; cv=none; b=BQskp6ajsz4DFeVysU3O7/ff2pYNL5Mj+SU2vogM5L54VZuXlHt0S7dSHI8SVhU2Pe2+BjSa1FuRqW+nwNB4tTZlaNRxJCh031URDdkdykkxLMcN5msbKst8xDZayYx1a0XY8gdexQnJYmqN0ll9BaGaDf7GHcXX+wyHKSLQy2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366426; c=relaxed/simple;
-	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
+	s=arc-20240116; t=1753366486; c=relaxed/simple;
+	bh=8NKxaaPSwPV5OcQQaX8d94Ml3pIlsVSJ3hQ5GETn8Hg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bV4yt97wmTqoSRbyOPR4MtLdR2HuLrlndYHP8lSWq+Au7K+RZLp1o+OBr/BzGnwLrhYKbBz4XHpg3XhGDi6hrbnshuQjExeDUWVxDu+tGkzboOyaor+RclDGImeQrvIBBAEGSbwoEStOUo2Ud/WUMKof31vIniR2xEp+UVDzhpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdJAINky; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF99C4CEEF;
-	Thu, 24 Jul 2025 14:13:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lP4DWIHg3ecgxzKPZLfc0pshNHf2dI9/ndhJuiaYUNLHvJ+lX6uO/wue37dEq8EarHG5wMSl8dXMDoaH6Iqmqklkq/4bQv31ps1JposwHLFvbMnLKfm8EwV0KosFcao+7nukJpdRCP8Z9iNI5vttwJrdCKB4ceIFqu+//TSoyoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mi/ZihYn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F808C4CEED;
+	Thu, 24 Jul 2025 14:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753366426;
-	bh=/qxJTTEzh01jlFnrh3Ccjd7LLr6vEXxwGyZG4BhP97g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tdJAINkymtj2thSAy4DIKcO9znbtYUAxdqmuA3eZ06MqVqP+Tmb/aJjntKAV5PQZ2
-	 EFPhmd+7kxybeKkNguIPyVRTtlB6+zODI1Tf7euYKFDpHjquDFAYr9biL+MUrbQGaN
-	 Ek4Zfw8B9uN/Uh/2yNMfzn+0t5XEWr7HlZGc1RYI7TKy8Bd3hhsxvx+kvMorucA5IT
-	 k3Jn4d3nuBKa1sL1YGJO/tazCsGUvT1L4+Hp82vJFNI6ZTbHkFo6GFs+EONBkvbEwQ
-	 Gmm5JuixdjXR18jXx61RYWtmoOQwfWgI1ZX6iYi6hJx8dvOfCYxzGEQjiIyIVDb66J
-	 2WUBYj0Ejvj8Q==
-Date: Thu, 24 Jul 2025 14:13:41 +0000
-From: sergeh@kernel.org
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Yue Haibing <yuehaibing@huawei.com>,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
-	Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] Secure Boot lock down
-Message-ID: <aII_lcRmLr5n70ix@lei>
-References: <1750975839-32463-1-git-send-email-hamzamahfooz@linux.microsoft.com>
- <20250716212925.GA14322@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <CAHC9VhS3qY=+DVYqzkgbHLETUo4KgQ17qr_BC3pn9TeG+cr8Mg@mail.gmail.com>
- <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
+	s=k20201202; t=1753366486;
+	bh=8NKxaaPSwPV5OcQQaX8d94Ml3pIlsVSJ3hQ5GETn8Hg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Mi/ZihYnF9SBNpXyY9aPfLQIZX/YFEuewiGFwj8R1ot7R6787UYJu9FIfChbTZlfP
+	 pKMla2fb0wJHVtblAkxAlf6CThK5/aPDN2/9tgm/aw2WOsLfsu4GMOWDVV7png3MZn
+	 +PFCaSwVdZkqOsgTdr+ETwDMjqNhPA5rSERitYsYCez2KSRO5a8NyCAVyfaF1GiyMk
+	 QWfdjtaucqNLSsx7L6vydAAhjC9VbczNtNIcjSYlS9bcubgoBPrX6+VJuwMF09KoIy
+	 KVF+WDcltcnmlMcHTCi1CJkqlZsOY23r8FGmNmsbDMa9MjlZ1p6d2HJ0XgU2O1u+Sf
+	 4TmzBhYS3LUSg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C79C8CE0990; Thu, 24 Jul 2025 07:14:45 -0700 (PDT)
+Date: Thu, 24 Jul 2025 07:14:45 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
+Subject: Re: [RFC] tools/memory-model: Rule out OOTA
+Message-ID: <2ee683dc-1e7a-48c1-b511-d49481c694ca@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250106214003.504664-1-jonas.oberhauser@huaweicloud.com>
+ <6fb01aea-f7b4-4f38-82b9-fd6c360514fc@paulmck-laptop>
+ <3e98c47c-d354-431f-851f-494df9e6bc78@huaweicloud.com>
+ <32a8f541-f760-44a1-8150-5e3d5ba98f34@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,33 +67,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xfabe3wvdsfkch3yhxmswhootf5vj6suyow5s3ffumcnjkojjz@e7ojgu3s7ion>
+In-Reply-To: <32a8f541-f760-44a1-8150-5e3d5ba98f34@paulmck-laptop>
 
-On Thu, Jul 24, 2025 at 02:59:39PM +0200, Nicolas Bouchinet wrote:
-> Hi Hamza, thanks for your patch.
+On Wed, Jul 23, 2025 at 09:39:05AM -0700, Paul E. McKenney wrote:
+> On Wed, Jul 23, 2025 at 09:26:32AM +0200, Hernan Ponce de Leon wrote:
+> > On 7/23/2025 2:43 AM, Paul E. McKenney wrote:
+> > > On Mon, Jan 06, 2025 at 10:40:03PM +0100, Jonas Oberhauser wrote:
+> > > > The current LKMM allows out-of-thin-air (OOTA), as evidenced in the following
+> > > > example shared on this list a few years ago:
+> > > 
+> > > Apologies for being slow, but I have finally added the litmus tests in
+> > > this email thread to the https://github.com/paulmckrcu/litmus repo.
+> > 
+> > I do not understand some of the comments in the preamble of the tests:
+> > 
+> > (*
+> >  * Result: Never
+> >  *
+> >  * But Sometimes in LKMM as of early 2025, given that 42 is a possible
+> >  * value for things like S19..
+> >  *
+> >  * https://lore.kernel.org/all/20250106214003.504664-1-jonas.oberhauser@huaweicloud.com/
+> >  *)
+> > 
+> > I see that herd7 reports one of the states to be [b]=S16. Is this supposed
+> > to be some kind of symbolic state (i.e., any value is possible)?
 > 
-> Thanks, Paul, for the forward. 
+> Exactly!
 > 
-> Sorry for the delay, we took a bit of time to do some lore archaeology
-> and discuss it with Xiu. 
+> > The value in the "Result" is what we would like the model to say if we would
+> > have a perfect version of dependencies, right?
 > 
-> As you might know, this has already been through debates in 2017 [1]. At
-> that time, the decision was not to merge this behavior. 
-> 
-> Distros have indeed carried downstream patches reflecting this behavior
-> for a long time and have been affected by vulnerabilities like
-> CVE-2025-1272 [2], which is caused by the magic sprinkled in
-> setup_arch(). 
-> 
-> While your implementation looks cleaner to me. One of the points in
-> previous debates was to have a Lockdown side Kconfig knob to enable or
-> not this behavior. It would gate the registration of the Lockdown LSM to
-> the security_lock_kernel_down() hook. 
+> In this case, yes.
 
-Well, but there is a default-n kconfig.  What do you mean by "Lockdown
-side Kconfig knob"?  I'm sure I'm missing something, but not sure
-what...
+I should hasten to add that, compiler optimizations being what they are,
+"perfect" may or may not be attainable, and even if attainable, might
+not be maintainable.
 
-thanks,
--serge
+I am pretty sure that you all already understood that, but I felt the
+need to make it explicit.  ;-)
+
+							Thanx, Paul
 
