@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-744152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8A0B108B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F204B108B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 025F17A886D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:10:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F661CE79D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1F426E153;
-	Thu, 24 Jul 2025 11:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BEF26CE3C;
+	Thu, 24 Jul 2025 11:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZQRW4qh"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UV1fN0XX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4326C3A4;
-	Thu, 24 Jul 2025 11:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D726C397;
+	Thu, 24 Jul 2025 11:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355514; cv=none; b=DEBeKm9r8K1dfmVHLZftnrLq7Ar3Oct1mMD7I64s98n7ncWzLH+gl0igrtPJuQ+7xFNVC+orj8rDX6VBOPDxDP9yAUDhsuN87v/FrSNftJ2TK1wbIFV+aV2wJeknJEN6A4UBmNvzqaYjLy/s4WTh8R1BWjeqtfgR6RscGqpelXc=
+	t=1753355526; cv=none; b=E1ikWcUDk+dfJhlN+JfgL75BBSbkyQ2PXVbJc4mrDgWvlnSF7IAUp4RGJEHct3gdQarrqeiq7AQEU9kRKKA7DvK10m9OElz291uZB777nsdSy1PiU6dmsWP6Lx83R785NocrCQBpsoRJprbyBaJkQCjXD3aS1Bo8axnyo2rSr6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355514; c=relaxed/simple;
-	bh=rW6eweYjEhNfddmRprGQiSK1Ka0W7aGE0mUZqAQYMHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OY7l8jgE5I3oADHMotF+pVxt+gyeCp9EZWlxsCMVvZ+qKCEgJGzg2+EGcsXnDRKjfTZ3hsUBznckmF3LIXJck1TQi1h0Ixm4FA5hDqCKhYiYvG+LQ88jYZHSPqnQ3RLpfo0Eb8H1qFvc5+wAjn1A/AsaXrmuNmMt4ie/s9W3jPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZQRW4qh; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so5258345e9.0;
-        Thu, 24 Jul 2025 04:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355511; x=1753960311; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
-        b=nZQRW4qhnSOMIOAN19ORRYMQUDmJnSw+IGVyQs7XoYfmJa61ZblGakL4QC5jNEnXvz
-         M6J7+DrKOhoLSTySQC+KZzxaoXTVmCsiz459aXmYkxF65frHLMJD4lKAO15dbiGAOeE0
-         NZ5NGqT+xRFmQn7X7x6b/g0t1W4wmn4Mc42W1pKAcEMQSdzVouN5SMYMORkOownsJVBN
-         5+4tS7nfpxFH9nx9KXxiGu+5Wnne2tvAhaKX7myiqGORACt/sKNxxFfxXQyFy5eSWkpF
-         zVvgnNhWuhx21gNMOr9HwxDIkEZydwUPIJ+HZXOPmCEhzP72BPIDUus4KL0M8pRsC5rj
-         UwNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355511; x=1753960311;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
-        b=qBhCeS1OokrH5nBqO/9cFKx1WbGIBSGXQ+9i94cfVP5SaVTMvT5p/cPtqAwDWm1uNi
-         Wp2uJTxSRNWxT6yN06xrhGg+gpsx3D9Ur5SmbtLeSodUV+cEMRMYgcqYs3aUtXr8TOjd
-         xnutSdJlPis9K0G7vNwAY8bI6qcmRNFGHhd4xTJfdgNn9Xrs4NhvohcphYIrZHJcbO8h
-         D0721HvZFINJgeN1F/mTJmzdUOcoQog74wtXf03p9JAeJOcDixcuwLHRcwoh8ikOWHVQ
-         P/4kK9+DIwpEMFfAQAdnyUX9cIgUAF/6luT1GEbv8lr9SPRd7XU391hEYzPRI7QnB6Ga
-         LtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUazdnbHH48NvoNv8ReBX4d8PC2TJIvFhWbb3oMXKSdu05KKQ+IthaBuCz6SWxLO1Z6AqR+7zB6FuiCtQ==@vger.kernel.org, AJvYcCVdPW2m/Hkv32WoPX+5wG3uk+TE4zJHAng5zZ5p+r/WvC3nP8nFgnHGJX+DMKm5gRPi/nrK+6E/bnIEv7PQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJjjqok0dzJewCNpdysisfUMc682tD2RsIyDbOOEasEZrwSj/a
-	sfL88TIIpbssnO7WARZwk5DImeoxpJCGIeH4aD+s/48On4dXBU78/BXT
-X-Gm-Gg: ASbGncsEJJuJ6S3xLh8+d0JZ/SYY+NWDoZyAmput1peHPYxZAGHD7CzT23fsQJMj1gS
-	E4YLmdUofzReeFD/1X2M3da2FMbrQBWDhPOLoMU4Zc97UDHufXU1ZwLrtq1Sg+krfafupyACQs4
-	BYGm4nUpa4FmEhvLNGY5aAxlrI00bmT0zmxZBuxqozvxSwImIa1v6wnpVbF+jd91QC1IOv67y3z
-	dkw80Fb02Jz7R0DeSWTm21NUAqXNCfXkTShokdydFGUzMwHNz9636LIJY9JqX4VrKSxu0pn9i8D
-	CpJfpOJrk0e3rkPSLsky+BR5NhjWQr4SlYeaRcViONM5nevO5eHdphM6CNCUXKhKZfbI8opsoGm
-	eBLQsEbeOo0SzZeluMnkj
-X-Google-Smtp-Source: AGHT+IHMwXOEmt/B+iD3qWA3UbigtYtOjMkSnVDF9plV1h01nJZP8fGi99c3B5hKHH66bYOCZTFXBw==
-X-Received: by 2002:a05:600c:358c:b0:456:11db:2f1e with SMTP id 5b1f17b1804b1-45868ca7563mr60549065e9.15.1753355510864;
-        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532b5asm16008315e9.5.2025.07.24.04.11.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] HID: Kconfig: Fix spelling mistake "enthropy" -> "entropy"
-Date: Thu, 24 Jul 2025 12:11:18 +0100
-Message-ID: <20250724111118.141114-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753355526; c=relaxed/simple;
+	bh=HNHkkKC0N4jIHXpNvr7bCdEn66WfCk+E8NxYfBuqcA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lo3+wTAn3ocrU9aKCg08/3DszH8V3CCI8ECR1w64yqaRDNvnuPPIJRKmGHWxIz+UotgPZURZs2lZHkXaBFv+uh7PzVOPu19CWeaS6Il78A5uX/DsfiZNFponx5aRkB6xZGgHNrw1CCu3adyYYRqF7Krnz0oPKGqi228/37LQgkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UV1fN0XX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8ADC4CEED;
+	Thu, 24 Jul 2025 11:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753355526;
+	bh=HNHkkKC0N4jIHXpNvr7bCdEn66WfCk+E8NxYfBuqcA4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UV1fN0XXaBxI2D1pkJ82aMeHuGE49OlflDhaM8xIeVxBySrE/KqBb1+sOOzKgpP+5
+	 dgc45IcjlxyUH/mb4HXaEEbf2Y3HZiz/eB2PRAuygK925we9XjDa6lNXXp05dQEDxe
+	 qjdg42Z1f2aroKU/2tBqAe/AjEWkG3Op7kLXJMA5DiyP7tEeqpv1/Y55yb1VPGqCwc
+	 ShtsziosVPz4vE2NEx4lGqEPRWD+UiN0B/USg0AnXP2tSZI8tW+dC+rhWOxik40b0O
+	 jHaeLEY+g+Axu2bHEU0Qkou3uYq/KDSMxVwr0VjyO/d1WEbT6W4vC/6RdM4cL/2Ti0
+	 G+1ubdqfBjoZg==
+Date: Thu, 24 Jul 2025 12:11:58 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Andreas Klinger
+ <ak@it-klinger.de>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: proximity: srf08: use stack allocated scan
+ buffer
+Message-ID: <20250724121158.05fb8458@jic23-huawei>
+In-Reply-To: <xnacdjv6bmp2ghh2wcloetec5okl7vbwbihpzsf2b3u4vqyc3z@dobmhdkiruib>
+References: <20250721-iio-use-more-iio_declare_buffer_with_ts-6-v2-1-8b66e5b4e75a@baylibre.com>
+	<xnacdjv6bmp2ghh2wcloetec5okl7vbwbihpzsf2b3u4vqyc3z@dobmhdkiruib>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in the HID_U2FZERO description. Fix it.
+On Tue, 22 Jul 2025 10:10:38 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hid/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Mon, Jul 21, 2025 at 05:21:08PM -0500, David Lechner wrote:
+> > Use a stack allocated scan struct in srf08_trigger_handler(). Since the
+> > scan buffer isn't used outside of this function and doesn't need to be
+> > DMA-safe, it doesn't need to be in struct srf08_data. We can also
+> > eliminate an extra local variable for the return value of
+> > srf08_read_ranging() by using scan.chan directly.
+> >=20
+> > Reviewed-by: Andreas Klinger <ak@it-klinger.de>
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> > Changes in v2:
+> > - Zero-init the scan struct to avoid leaking uninitialized stack to use=
+rspace.
+> > - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_decla=
+re_buffer_with_ts-6-v1-1-25c70b990d6c@baylibre.com
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to the testing branch of iio.git.
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index a57901203aeb..79997553d8f9 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -1243,7 +1243,7 @@ config HID_U2FZERO
- 
- 	  U2F Zero supports custom commands for blinking the LED
- 	  and getting data from the internal hardware RNG.
--	  The internal hardware can be used to feed the enthropy pool.
-+	  The internal hardware can be used to feed the entropy pool.
- 
- 	  U2F Zero only supports blinking its LED, so this driver doesn't
- 	  allow setting the brightness to anything but 1, which will
--- 
-2.50.0
+Thanks,
 
+Jonathan
 
