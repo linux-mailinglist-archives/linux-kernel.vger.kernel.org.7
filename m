@@ -1,80 +1,140 @@
-Return-Path: <linux-kernel+bounces-743491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36777B0FF40
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D7BB0FF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92901C87D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364FE1C8836A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DABF1D5ABA;
-	Thu, 24 Jul 2025 03:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150011E8836;
+	Thu, 24 Jul 2025 03:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nSBctJRV"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FCE136349;
-	Thu, 24 Jul 2025 03:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRCbjb6j"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2403F4C8F;
+	Thu, 24 Jul 2025 03:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753329148; cv=none; b=dqnvZ34LndDoOWw6FaoEqKzNfStyEIhzZfaGRHRw+4WLC+n/XmxMPeez+Pflf9ggYo+1ojzleiZfpt6HtdC6h4HuFXmGzMUKaCXEPXb7ZL6UqwrWK2y3/lJwRRAZZ1ruJApT0VhJgkFQWX5PY7vCkEYAFSrSNGLHhORiN6egxZA=
+	t=1753329193; cv=none; b=CmcZ4OjQvu1gZxf/biZDJ+VLzsjRQ+4jJXHr2mXmOkSdPuwq7ByOfaityuCvK2R83Rcnlr/LGPkBcL+I6JEdVAU2ZmzWEai9nsJ/8LcI3Eve4sLTGxx+Nsq/gJRouL37dOleYdqv0q1XvPfZXsM0Y7SD24DihZuVG+942OecZyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753329148; c=relaxed/simple;
-	bh=9JCjGQpwIKGiEEOWLHPrC5uODc7iTK+iWKX7YBy3zkQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Rl+BxzfmzmX5QvuE9/YpFe6/f+x03h10Wv1S8/UNR2y7Qek/HU+7dY59BeDF8UGl410KZKG4VtqcPkEopovPC7jKOa+An4T2Tgc0WsgUR66zBqeyINaajtxQAMp9Mou6OOvVMfV8p647Bd1kkb2o4wIWkUYIufGWaE1s5b8ZYes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nSBctJRV; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 144E82120398; Wed, 23 Jul 2025 20:52:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 144E82120398
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753329147;
-	bh=9JCjGQpwIKGiEEOWLHPrC5uODc7iTK+iWKX7YBy3zkQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nSBctJRVgL86ELLR9mSun/Pp1xq4KLxdUWKqG+MI3HB5AGGp8XpynM2heS5ddbWy7
-	 5NOmPtjwaFJ859DiUB71U9fpl9jGZi/So14jGjwJel3+tKo6fK6EShoYz3in0lScXg
-	 G4YxGNhCUOBmR8wxWOe1FfB5ciODueEDLAOqIu7A=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-Date: Wed, 23 Jul 2025 20:52:27 -0700
-Message-Id: <1753329147-18384-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
-References: <20250722134345.761035548@linuxfoundation.org>
+	s=arc-20240116; t=1753329193; c=relaxed/simple;
+	bh=fG7ES9NUZdqzG7iujsq4OrDa/4JLEMsH5MKZTxgpCpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTb4Q2Xz8tNfiRwqHj7bwrCMD0jmp9SomqVCr+EiDHVUlTdqKl2xKu7lqa8HJ5c/E84CnWb+k0Wr5ae4G6mDCfOUz722MYks77eRR+jymo90PkgHFYVy6RSA5Raas13vDl4nPL62jOnQfPdjV9QLQmza3bqhmyssOEZ/OBgPtYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRCbjb6j; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b31c978688dso330433a12.1;
+        Wed, 23 Jul 2025 20:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753329191; x=1753933991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0KKNQ336azj7L9GAtgWaz6+RVPsKRcCaE1xp54qrlzk=;
+        b=QRCbjb6jjJO588FQFKstCqvicUUXhxputna13XbBN8wDc5pog0yv6c5fyrbtqiZ8fy
+         LmL8cLlVQd17mExDegjsf9izntc600qUHk8t+QUWFnazQuaDrrp144gzF8RuHfweApHs
+         NXgrUTq5IWKond4ja+Pnk6TE5nqOpLOV5Hpq2MFhr5T2RdynWK2g4860nsgBxv3i0ZBP
+         y5nluF2AE6MycL2JlpfqHvOjB5LVNxf8Ap+m8H1xmQ74dgQwmC7UWlebYCcGZb2yRWXK
+         5MGDu8UMyVpsmaZ44rVijsY9Jzco9JG8G82doH8vKRI2Xh6HWTwG7Z3Nh2cFUjUbGIOH
+         Xvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753329191; x=1753933991;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0KKNQ336azj7L9GAtgWaz6+RVPsKRcCaE1xp54qrlzk=;
+        b=CtZuD1ow1CBPubnLHChVzB/a0ZLVgmMS6uZQciGD1oXS/N4d4mrtpTe1NQMldLMDWl
+         Hv9nZpy7XgZMQaqXxkbLhnr9F9ZMgb58JO/Ks1nhmJP7I8KOBdXeKMA4q3CwEWf4zDFb
+         ynkECh2/z1QQzVJE7vHQXW37KOhbavMd3u2Oy7Su5b7RybStx+DpE4m8L5mCBdhoDTqn
+         kABu/hhUem9pGEyyTXKyQt2NVanMEak2/IMLnejLqaQfw0SEkljpopZ+a4iXJwNYfH+9
+         iBK4Gtd9kKVUN3Wl77s0J3kor4Z5i0Ux4B2NDtFrijbmkMalpdyMD+9U7AkgMqATEqTY
+         mDtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUM+vUfVyDl2UFUr5TUXTBqo6v1Qp/d9I3u3v7LwOdmlhlcx4F7hAhEuWRWnDuBZaYgRmzaa75/@vger.kernel.org, AJvYcCW2chSS8bqzzTd2iu5WP9JMn+UA2XQ6qMOQ35WwSl+xXKrjCeFCpMBvBLqPV4UGjzrr9aywgqk5zyOH@vger.kernel.org, AJvYcCXeKatkspSgUpd8a89eVZ0CsXksK1SMqjE6ig7bjfGmG1mZplAZbaz2racSPAaK768STf6v725wrPIZuv0k@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+Mx/f5LXxUpj20ZiRcgfYEvM1xv+vgIaWRIHQ2yOExyYm2dLK
+	ziOSVV1OKMcwiIWS5qeKGpdmOG+7FpfM41kBs5/YNOcxYmSV1ukWS+dk
+X-Gm-Gg: ASbGncvlbTCjXxSn1K9UBoYmQ3yBMq67BHgwl8PkbnPetgNtptDti1xUfd5YSDUeXHp
+	ElGSHDXQvpINty4HW/w4CtPPG8ImSD9dPPHbhloz2C/eNlxO4VxVfn8UYtb2uu577s2CEwZFcHR
+	74ZabOe07pUJR3ro8cMpmnMqKwAmv5uRHpizSdsc0cSHLCR4RveGZWAd1blouFrNKhLafE/LaGe
+	pjolfMBcD9J5YryENAkn3YFAF/0iu2zjGR9lqFfaIDuKfcT/Rhuzf3E0knn3vlDRkRYUG54UGI8
+	Cud0Aoq5u9x5rKLrCQYaelmrHGl3sJkUz/pyQBY2deTZkYOv3t6h3hnjF0Io3FuoLNixVXBjVko
+	KDY+VE02PWBJ9mxikKgVIhKMb6NBMqLICR1AP9l2K
+X-Google-Smtp-Source: AGHT+IExZBDbOJBbvjhYg17Sb6h/w8Iqg69NparoRP3Ig1+hOYeBA/a0AI00nM+/PJMGcCv4mZlOIw==
+X-Received: by 2002:a17:90b:2e0d:b0:31e:3bbc:e9e6 with SMTP id 98e67ed59e1d1-31e507e61a5mr8183549a91.19.1753329191338;
+        Wed, 23 Jul 2025 20:53:11 -0700 (PDT)
+Received: from localhost.localdomain ([207.34.150.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f883sm4458625ad.13.2025.07.23.20.53.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Jul 2025 20:53:11 -0700 (PDT)
+From: Kyle Hendry <kylehendrydev@gmail.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: noltari@gmail.com,
+	jonas.gorski@gmail.com,
+	Kyle Hendry <kylehendrydev@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/7] net: dsa: b53: mmap: Add bcm63xx EPHY power control
+Date: Wed, 23 Jul 2025 20:52:39 -0700
+Message-ID: <20250724035300.20497-1-kylehendrydev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The kernel, bpf tool, and perf tool builds fine for v6.15.8-rc1 on x86 and arm64 Azure VM.
+The gpio controller on some bcm63xx SoCs has a register for
+controlling functionality of the internal fast ethernet phys.
+These patches allow the b53 driver to enable/disable phy
+power.
 
+The register also contains reset bits which will be set by
+a reset driver in another patch series:
+https://lore.kernel.org/all/20250715234605.36216-1-kylehendrydev@gmail.com/
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+v2 changes:
+- Add more description to dt binding
+- Squash commit adding syscon lookup into where the result is checked
 
+v1: https://lore.kernel.org/netdev/20250716002922.230807-1-kylehendrydev@gmail.com/
 
-Thanks,
-Hardik
+Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
+
+Kyle Hendry (7):
+  net: dsa: b53: Add phy_enable(), phy_disable() methods
+  dt-bindings: net: dsa: b53: Document brcm,gpio-ctrl property
+  net: dsa: b53: Define chip IDs for more bcm63xx SoCs
+  net: dsa: b53: mmap: Add syscon reference and register layout for
+    bcm63268
+  net: dsa: b53: mmap: Add register layout for bcm6318
+  net: dsa: b53: mmap: Add register layout for bcm6368
+  net: dsa: b53: mmap: Implement bcm63xx ephy power control
+
+ .../devicetree/bindings/net/dsa/brcm,b53.yaml |   6 +
+ drivers/net/dsa/b53/b53_common.c              |  27 ++---
+ drivers/net/dsa/b53/b53_mmap.c                | 107 +++++++++++++++++-
+ drivers/net/dsa/b53/b53_priv.h                |  15 ++-
+ 4 files changed, 134 insertions(+), 21 deletions(-)
+
+-- 
+2.43.0
+
 
