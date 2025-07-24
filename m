@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-743997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB9EB106B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:44:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB569B106C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C877189D214
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC31AE530E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1A0252287;
-	Thu, 24 Jul 2025 09:35:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29558255E20;
+	Thu, 24 Jul 2025 09:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pVZZPOr9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lD0kXarl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF71224DCEA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2073C255240
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753349722; cv=none; b=iu54HJFkEhpzfNzg2l8oezfySyK8aeBRrcWOG9oZnao8dFMQKLUCkE+yaKbZFDSbJbh+dod01Nt+R3KKTg3D5TPBsoYdHmMj/UVdkGVNYR8mHVWVnOCOE05O9fKUN5AtEd72mI2HbxCy5lFLU8SJTLJCL3xBrdIzqa2GsGLu/bI=
+	t=1753349777; cv=none; b=euj8TjZLal2jOPwdPXfdqM97Rx693UrzGtnCOSAIDT1aAQp/SethVSMHST4FOadm1VtfpVDG3JKMhVI5YO+Ifv8PPTKtUHU4c4F0rv3Xkx1fuiPlhzp3/h/IeU5tbZgvz3rT6yYELmJtl1hQOZchkIaHYpNFq7OGLhorN7Blg3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753349722; c=relaxed/simple;
-	bh=MwYzkwplxjT8TFeYLLWOUaBok/od1wayyWGfll2r4bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EiKE1qT/ogp1uX2ShJvXeLkUqVo7u9HC3PeRwZavwYKrnlcX2mVa2nDxMa8uolQokD8dGHJwWsUOQ++DJSQ7bJzDh8bY9dWnh60PObIneCG+Gzn+bXaHgy6OnmsfQYQ86kXGWb0KIbvMacNX7gt5h2czvYggw2fvZtXg1YAz45w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bnm4h4SPtz1R8kk;
-	Thu, 24 Jul 2025 17:32:36 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8BD09140109;
-	Thu, 24 Jul 2025 17:35:17 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 24 Jul 2025 17:35:16 +0800
-Message-ID: <c7f7d9b3-2ab3-4ebd-99fb-071733573291@huawei.com>
-Date: Thu, 24 Jul 2025 17:35:16 +0800
+	s=arc-20240116; t=1753349777; c=relaxed/simple;
+	bh=ztMo+M1ZYiDY8s1Tm47cuFM5eK9wC8+ZbhC6nC/Dt+I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mPoSsFfvGPghGGfp7EQvZGdTNYbC+/8khCqAAXGr8aWtxgpua7XQJypRlg48by3OzsiOOw/QR4EPMITeziVnEAAAEVBLGtEzJvwOIM7wG0DgXXlqsgMf7H5ZUU3jH3vNMG90ff5DPeO50p9okGa5jBjhxdhT5u4foYDpj/sSHFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pVZZPOr9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lD0kXarl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753349772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=St8LhG2IloKI6vEQFWiwV2Hz249Z2tbERnS7qMqFGAg=;
+	b=pVZZPOr9b6yTr0WuswDzGYj3d6rmPl/w8kTksCuV26YvOnmesRfdlxcX56+8qXm2dhCtRo
+	T2nBFfCGslePZ4xosDsvpFges80puq8TMZjDOC89Fwred0w3x25SZyfbyQtUmz+jH57vvF
+	QdBSeX+T65CBn//1KT7oPDtIsAgrH+LHr52os4mqjOp+qwXVNfibvXedeqrvvwyPjq+a2x
+	R3U9PJmuO1mNlBmA74kjIH6OWcutf/gtLvPP1lNfi1XqSkIABra34Iqzfvo4piw1bTHkcJ
+	lD0BnpA/N/txY1puyl/x//KPF+lw9rKDICfWqR6Oa09/CIqpJbE8hhgvtjc5iQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753349772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=St8LhG2IloKI6vEQFWiwV2Hz249Z2tbERnS7qMqFGAg=;
+	b=lD0kXarl+6KbeLP2BNsNQyKFeU14dOCFegu7UAE/z6llVEzD3/ehWdjEPhl0A0BGZkMogw
+	RDfLO6rCnKMrOwAg==
+To: =?utf-8?B?6IOh54Sc?= <huk23@m.fudan.edu.cn>
+Cc: =?utf-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>, Peter Zijlstra
+ <peterz@infradead.org>,
+ "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
+ linux-kernel@vger.kernel.org
+Subject: Re: possible deadlock in smp_call_function_many_cond
+In-Reply-To: <C0FEC6BF-BCC8-4301-BBE6-8A49A05D50D6@m.fudan.edu.cn>
+References: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
+ <877c02vejr.ffs@tglx>
+ <C0FEC6BF-BCC8-4301-BBE6-8A49A05D50D6@m.fudan.edu.cn>
+Date: Thu, 24 Jul 2025 11:35:59 +0200
+Message-ID: <87o6taq6bk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dma-mapping: benchmark: Add padding to ensure uABI
- remained consistent
-To: Barry Song <21cnbao@gmail.com>, <m.szyprowski@samsung.com>
-CC: <robin.murphy@arm.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<iommu@lists.linux.dev>
-References: <20250724085600.4101321-1-xiaqinxin@huawei.com>
- <20250724085600.4101321-3-xiaqinxin@huawei.com>
- <CAGsJ_4zVR3R7erGP57vxM8vKBARG8BttA=FsCVFjy4QtswcsQw@mail.gmail.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <CAGsJ_4zVR3R7erGP57vxM8vKBARG8BttA=FsCVFjy4QtswcsQw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 24 2025 at 15:55, =E8=83=A1=E7=84=9C wrote:
 
+Please do not top-post and trim your replies:
 
-On 2025/7/24 17:07:08, Barry Song <21cnbao@gmail.com> wrote:
-> On Thu, Jul 24, 2025 at 4:56 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->>
->> The padding field in the structure was previously reserved to
->> maintain a stable interface for potential new fields, ensuring
->> compatibility with user-space shared data structures.
->> However,it was accidentally removed by tiantao in a prior commit,
->> which may lead to incompatibility between user space and the kernel.
->>
->> This patch reinstates the padding to restore the original structure
->> layout and preserve compatibility.
->>
->> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header file for map_benchmark definition")
->> Cc: stable@vger.kernel.org
->> Acked-by: Barry Song <baohua@kernel.org>
->> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
-> 
-> I don’t think these two patches should be part of the same series. This
-> one is a bug fix and should be handled separately—ideally picked up on
-> its own and backported to stable.
-> 
-> Also, the subject should not say "Add"—it should be "Restore". I assume
-> Marek can handle it?
-> 
->> ---
->>   include/linux/map_benchmark.h | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
->> index 62674c83bde4..2ac2fe52f248 100644
->> --- a/include/linux/map_benchmark.h
->> +++ b/include/linux/map_benchmark.h
->> @@ -27,5 +27,6 @@ struct map_benchmark {
->>          __u32 dma_dir; /* DMA data direction */
->>          __u32 dma_trans_ns; /* time for DMA transmission in ns */
->>          __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
->> +       __u8 expansion[76];     /* For future use */
->>   };
->>   #endif /* _KERNEL_DMA_BENCHMARK_H */
->> --
->> 2.33.0
->>
-> 
-> Thanks
-> Barry
+https://people.kernel.org/tglx/notes-about-netiquette
 
-Ok, I will send a new version to fix it.
-Thanks
+> My guess is that the crash point might be csd_lock_wait(csd) in
+> ~/kernel/smp.c on line 885. Here the other CPUs are notified via IPI
+> to execute flush_tlb_mm_range and enter spin wait. However, it has not
+> yet been determined which CPU performed the operation that caused the
+> IPI to return a timeout.
+
+Guessing is not a proper engineering method :)
+
+> I'll first provide the log that was reproduced in 6.16-rc4. we'll re-veri=
+fy it on rc7.
+
+> [    0.000000][    T0] Linux version 6.16.0-rc4 (qjj@qjj-Standard-PC-Q35-=
+ICH9-2009) (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, GNU ld (GNU Binutils=
+ for Ubuntu) 2.34) #1 SMP PREEMPT_DYNAMIC Wed Jul  2 09:53:03 CST 2025
+>
+> [    0.000000][    T0] Command line: root=3D/dev/sda console=3DttyS0 ftra=
+ce_dump_on_oops hrtimer_expire_entry hrtimer_expire_exit trace_event=3Dipi_=
+entry,ipi_exit,irq_handler_entry,irq_handler_exit
+
+Please remove the silly extra new-lines next time.
+>
+> [    0.427302][    T0] Unknown kernel command line parameters "hrtimer_ex=
+pire_entry hrtimer_expire_exit spec_store_bypass_disable=3Dprctl nbds_max=
+=3D32", will be passed to user space.
+
+                                                                 ^^^^^^^^^^=
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+How is this helpful?
+
 
