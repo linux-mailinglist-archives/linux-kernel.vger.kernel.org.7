@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-745097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357F3B114CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA26B114DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3CCAE1739
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D125A5A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6112924729F;
-	Thu, 24 Jul 2025 23:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPQ45Yo0"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6FD247288;
+	Thu, 24 Jul 2025 23:46:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D212417C3;
-	Thu, 24 Jul 2025 23:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF4323505F;
+	Thu, 24 Jul 2025 23:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400323; cv=none; b=PL4lj7cusPsGREl+c1Lz4G67G1nmIUPuAoeezGe+LsbZlNvvWs73HuqKH5F4DNSA0eJSGZLgRx2FOjCn6LUq9349RvdE1HAR0u/6HiVOgqgrV5/AE405tke/PQayHjbUyAb+N4O8UqknWcgf13fuWGXSjV8CpdbHYaqILgQmeOQ=
+	t=1753400764; cv=none; b=ZnIJhTj3NdHgCwxMJ2ym2qbwEE8xBAlz4zPe6oAD55JDBdSAaaEjc1M6myhhTDng7DI6rqkfvrjdYyADAEwPuvAF7jRaMG9RfWFJhDly+movtXN++u3uXV8lfLkiGxT1xGSIv7J2tR/Byku9VkENiayRqWTeELjMPNvZWTC6Nsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400323; c=relaxed/simple;
-	bh=pXdNxE9tpLip9SvGV3VJ6bsDBur/3UfJOhcasaTCFrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=co5cEVckq5tHdwqIpZJ25PQ0DqakfZ4h/ing/24pwVQwsnsScDWw+NYEnbgnPEAuIYDcZTyLqCit2N48Y47rAbdFAInAeI9AWg2/Afwj85Reik+01+g2+O2l0taYzj6gWk+dFKKV7qeXthcXGx0pPCEaFGrlQYU7PgXxBQCOrCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPQ45Yo0; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73e810dc4cdso731446a34.0;
-        Thu, 24 Jul 2025 16:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753400320; x=1754005120; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pXdNxE9tpLip9SvGV3VJ6bsDBur/3UfJOhcasaTCFrI=;
-        b=dPQ45Yo0Hye6Qe4aJHAQaa8t84zNXO6x+jeMx/3CYydNhrbPFu7Xt97uWqsfaJtQRa
-         CwlYkE4ZunVnjxgcZFPj48+qfchW6OsTjPsd9oPGmQcrfzWyThBCPRi1wTnBM+yAsujv
-         /WCilBizPiFSiAx/lZekTQT3YPW1PBEqL4W1QeYmo2qcydO5TzYSDCFiX8D2xN0rCQV7
-         kGWiwOtGmbTjk3n6aHWD2sMvN8tpQsQOrnA+e4jXVnklf/Tolc9g1kSl38NbvrKUHsFY
-         eD3Sn0KbjdGb2z3PUl7Y+MgApCEC06DIInSHIEr258wQC6x3BVBXX5UZfL/fr462YKNh
-         +1eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753400320; x=1754005120;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pXdNxE9tpLip9SvGV3VJ6bsDBur/3UfJOhcasaTCFrI=;
-        b=t8l3jieddgGxYFcPXWmO2MLNSwaqlTFfsh4ktdDgItGIluozEFZPj4yMozwekSgaVm
-         PJatUROHTvk6bwYVIIAiJQRjJ557BCy4305lHHd8qSByNx08fYn0YrcFeGYWWZc9nA+u
-         oyhBrf/3U1+Ar3gqqH8mjn98fbMxSu2Qx8LMuG+zEpY/8M/W6HwsNah6Ct6CX3GcAsYb
-         a6Z94xrtYzpnKi7tKCUahgfkFx1NzWr7e1NFjdDo4ncYVkS4CgmCAEuLe6EvhaIYDaZ2
-         ULcPn6kjC6yFbhX63710bwYn+3uY0phtFwkU0WS/3GG0KZFXcolJ/dUdHcfxvzOfVL2d
-         fPBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKumMe2jRHNtecVzgoSfyaNxKZ5zWWTJo9278pI7SbNCbyI37QoXhMr5bDX3GP5Bnksago62bdCerADNg1@vger.kernel.org, AJvYcCXanYahU8dehPkjjpiVkEDRIr2z/Yc3znN979fFe+s7cMnhHFvhFzbeUBcDz3TfFHaVBOPdffyUBPUvaFlJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt9BnNuDQerJQuPKytPyrsm6kOlDfsHoiB/YPXtInpfHwCMpX0
-	02ZBKhZ58wrMFZ2t0h4SUwTxO58Oxqy6WyEje5Ym1X3bwtAZwXIS0It8uxWST5kvS3KqapeBU2k
-	W8PmxB+sFHBgCugp/d8xAt/dkGBGkkd1gwNpy
-X-Gm-Gg: ASbGnctFWC5kowBJSIvBGeuYNK82XT30Wp36pj80w8oX221SLL6q9/+6IXvxw1w+F1c
-	oLBBMJMC4Yo0hTIHEmDteF2dCuXCK0yBxpyCFrbFVArC7CAnojIf1e6O3y4SmUC7EVYi/9jjFk6
-	h4khuxdmV8U/N16+CS1rb2KlTnmfmcsnvK+07SZtG61NSfqed3SRdIxcn0Yygnqztkuc3Pej9NU
-	CtLlUNp
-X-Google-Smtp-Source: AGHT+IHy2Ok/9ud9aEQGUDRQM+qWc2wa92UUS6hzjNcs/utKgCV7TVhWcokhr/gmQj9XGNUqz/cnLqWlv7GJ8YaagVU=
-X-Received: by 2002:a05:6870:b12:b0:2e8:f5d4:6077 with SMTP id
- 586e51a60fabf-306c72fea4emr6085604fac.38.1753400320329; Thu, 24 Jul 2025
- 16:38:40 -0700 (PDT)
+	s=arc-20240116; t=1753400764; c=relaxed/simple;
+	bh=9YsPgnjWiFE8FdaTddixtOAuCO18p0RNAZIkar0SXDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GJq3c9+to4+fjhUJFA+h8gqaJjqj84Cr0DsBaYYlxxA9mJyXbETs2rlGU010KTdS6VIl4OdWF6MzA8nPk5+a2dSO1gPSr+3POG/MWtKQw7K36sfnaCm0iSrBnLhdoMMqFpXlCSYgw5DQrDhQwHH50An9VQu85CJzSOA1QtNvPLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 3EE581A0555;
+	Thu, 24 Jul 2025 23:45:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 564AA2000E;
+	Thu, 24 Jul 2025 23:45:53 +0000 (UTC)
+Date: Thu, 24 Jul 2025 19:45:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kees Cook <kees@kernel.org>
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, Konstantin Ryabitsev
+ <konstantin@linuxfoundation.org>, corbet@lwn.net,
+ workflows@vger.kernel.org, josh@joshtriplett.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
+Message-ID: <20250724194556.105803db@gandalf.local.home>
+In-Reply-To: <202507241418.34AFD28C@keescook>
+References: <20250724175439.76962-1-linux@treblig.org>
+	<20250724-alluring-fuzzy-tanuki-6e8282@lemur>
+	<202507241337.F9595E1D@keescook>
+	<aIKhvubVqgeXIlrj@gallifrey>
+	<202507241418.34AFD28C@keescook>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
- <20250724230052.GW2580412@ZenIV>
-In-Reply-To: <20250724230052.GW2580412@ZenIV>
-From: Andrei Vagin <avagin@gmail.com>
-Date: Thu, 24 Jul 2025 16:38:29 -0700
-X-Gm-Features: Ac12FXwyhu4hKnB-sCEEdNMiO11nDVh2Vc7kK1htFygVvQ6qXTEXTXe-sHhe_MI
-Message-ID: <CANaxB-y2MYkrsik-SKsuB6XE1Oe81y1UiTt=m46Fd=7Y=ysAyA@mail.gmail.com>
-Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, criu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 564AA2000E
+X-Stat-Signature: jcmte6d8p7mnsf3r15shzxhp6q18wgfc
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+yNO9VbZbkVyeRZNPi2XKXi8bwscADxmE=
+X-HE-Tag: 1753400753-595998
+X-HE-Meta: U2FsdGVkX19PziNYj9FSpPojIyDzoh8bU6QlLhFo+pNW3MfsqwxWIOojJmLaAjiovssyW07wjHEfRrDHqbQu+DUCY/F1jFPeCK0nF5ZFHkAGivFhHAksQEhB+ufD9I0b77VfqG1Ji5ge69PP7hMqHaKd3eKgaw5kILDXzdrhZFlEgk8QmnWmKmpjW1mw9t3GiZIu9sut8FHTGdfI8yw6F21e4/ivmhiajbm7iN7VevVEdk0d/wvK8wzRD1pBGr0VFoWcEn/aMMSla3/+uxOZ4QIoHRT2xgq+RqZpn8UQEvp8UGjbhnigpYafhaGmHD4qkSBFTiukJRqNx8lmtvwq/DlR42Y8q++rM0T3fqMEIybsPUJM3LelVl8RwgKrVHA9ojACsbod+eIQEWGDOlMwdg==
 
-On Thu, Jul 24, 2025 at 4:00=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Thu, Jul 24, 2025 at 01:02:48PM -0700, Andrei Vagin wrote:
-> > Hi Al and Christian,
-> >
-> > The commit 12f147ddd6de ("do_change_type(): refuse to operate on
-> > unmounted/not ours mounts") introduced an ABI backward compatibility
-> > break. CRIU depends on the previous behavior, and users are now
-> > reporting criu restore failures following the kernel update. This chang=
-e
-> > has been propagated to stable kernels. Is this check strictly required?
->
-> Yes.
->
-> > Would it be possible to check only if the current process has
-> > CAP_SYS_ADMIN within the mount user namespace?
->
-> Not enough, both in terms of permissions *and* in terms of "thou
-> shalt not bugger the kernel data structures - nobody's priveleged
-> enough for that".
->
-> What the hell is CRIU trying to do there?
+On Thu, 24 Jul 2025 14:20:03 -0700
+Kees Cook <kees@kernel.org> wrote:
 
-As usual, CRIU's doing some kind of ritualistic dance to restore a
-container's state. In this specific scenario, it's about restoring a
-mount tree across multiple mount namespaces. Fixing this
-particular issue within CRIU isn't a big deal, the challenge is in
-propagating this fix to all affected users. Given that the kernel change
-has already been merged into stable branches, CRIU will stop
-working for most users.
+> On Thu, Jul 24, 2025 at 09:12:30PM +0000, Dr. David Alan Gilbert wrote:
+> > * Kees Cook (kees@kernel.org) wrote:  
+> > > [...]
+> > > do for Coccinelle or other scripts. It's a bit buried in the Researcher
+> > > Guidelines[1], but we have explicitly asked for details about tooling:
+> > > 
+> > >   When sending patches produced from research, the commit logs should
+> > >   contain at least the following details, so that developers have
+> > >   appropriate context for understanding the contribution.
+> > >   ...
+> > >   Specifically include details about any testing, static or dynamic
+> > >   analysis programs, and any other tools or methods used to perform the
+> > >   work.
+> > > 
+> > > Maybe that needs to be repeated in SubmittingPatches?  
+> > 
+> > 'produced from research' is narrowing things down a bit too much I think
+> > when it's people using the tools as their normal way of working.  
 
-The criu fix is here:
-https://github.com/checkpoint-restore/criu/pull/2695/commits/e91d74a27b723d=
-4dd1f9aceb83601b1b8c2b50a7
+So I did bring this up in the last TAB meeting. I brought it up because I
+found out from reading an LWN[1] article that I received a patch fully
+written in AI without knowledge that it was written with AI. If I had known,
+I would have examined the patch a little more thoroughly, and would have
+discovered a very minor mistake in the patch.
+
+> 
+> Right -- as currently written we have the explicit guideline for
+> "produced from research" and kind of an unwritten rule to detail any
+> complex tools involved for regular development (e.g. Coccinelle,
+> syzkaller, etc). We could generalize the existing statement and repeat
+> it in a better location?
+
+When a patch is generated by Coccinelle, checkpatch or any other tool, it
+should most definitely be mentioned in the change log.
+
+I strongly believe the same goes for AI. Now the argument is where do we
+draw the line? If you are using AI that helps write your code, do you need
+to disclose it every time?
+
+My thought is to treat AI as another developer. If a developer helps you
+like the AI is helping you, would you give that developer credit for that
+work? If so, then you should also give credit to the tooling that's helping
+you.
+
+I suggested adding a new tag to note any tool that has done non-trivial
+work to produce the patch where you give it credit if it has helped you as
+much as another developer that you would give credit to.
+
+-- Steve
+
+
+[1] https://lwn.net/Articles/1026558/
 
