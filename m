@@ -1,218 +1,197 @@
-Return-Path: <linux-kernel+bounces-744097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04847B107F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:42:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33769B107FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B347A3713
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:40:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 253E47A87B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD826980E;
-	Thu, 24 Jul 2025 10:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E3C26A091;
+	Thu, 24 Jul 2025 10:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ij5GF3TL"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="uX/IWNrb"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011035.outbound.protection.outlook.com [52.103.68.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA1267732;
-	Thu, 24 Jul 2025 10:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353724; cv=none; b=ZmT1PIjU3Wn6LB6N/SFM6vMAdhfHIu+JuJPYouqI1yN60W0844t6bM7fyuPJOkkcBmdeQd7ilkZhvkSRAef1CWcYS4vVYyYmEIwGJv0KwaNZtZybebrGnbZALX81NAB89KmVTzIvNKN9veRt9hMebOJGUb0u0DhU5tLDAxWMp4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353724; c=relaxed/simple;
-	bh=mCKEW6/KqNeqo19+vOe+eL12z6sA/4SWr9mucf2bm9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmEnwzKINIt6OqFNKAZxTq52GXGFYRICQ2SDuSmBCd0LsEhBLLQCJtT288BdZtAW3nyIryooWfXnmi3rE3G1f26A5phwm0xzDotJSDbDuh3cIdLLweROkHQZ0mw5Xrkh1WZSeyjYA7De91kImDfqouu9FVmbWpYXe1yJN1Rlw2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ij5GF3TL; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a510432236so606470f8f.0;
-        Thu, 24 Jul 2025 03:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753353721; x=1753958521; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VuhuHbBmeifTsbb3fFBxEKhPdDmR0mlneU3PFRFcuhI=;
-        b=ij5GF3TLEPev2YdGnwATY2WDi2urMNE47z9gZhHoiiP6L9xmA7NcIo5iiuL/mdO+ez
-         THsykfo1HgGXSgQVZmGcv1zQj0icFcXiA0vdbvJynLsKybz7m+Wz+mACePBqOg22BoZc
-         ehE1z6dQkyuPJ0KdJGreflRNyvBPz0FYBnTaYHL7w5SRlpjWXp+cnahfcx7cvM0Gsglf
-         tna/PlfL2oUXtxFJBlmL8kWJt+y9/7Guqka6D3BrLbmWs5Fl93T2HnL2Z1huoHshTiQ6
-         23Mhk5gnPggwCnLCFucNtUvGxxuCzEYNnRzjWcmSoIeHgZK+Pb9L590xaXj2eKLZK1K6
-         qEjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753353721; x=1753958521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuhuHbBmeifTsbb3fFBxEKhPdDmR0mlneU3PFRFcuhI=;
-        b=qTRVT6BXbDxU8ocdgLbKuIVTq5v84W1SuuanG3Tr6/kz4veUdcnktV2LLm8GNHmDD0
-         TrGaJkEy1rdiUvXFE8c02V9dZQuxBfZCOAYrhxkGOrzw8nfI3gVTe9+v2Gpm9/iiQww7
-         SS1+ILvfOylhmAmix62mSfJ8rt0Yecblgiprh/vLZDDOiKHfqcCoXtOI70wEHJcYWJMX
-         MVHmKviy37M0IV+AddvlRyKa1JtynqE9QoWCaGanQBOqnf/3K4cGAlrpzyosU55mGodn
-         E3sfOftRBKMVJy2cueyPXUQ7klghp/37RF+rsn4nLJjHRKon/iDieJivanGlWOYgsOFV
-         da5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+ogRvjlVXOh7F/cU5EphXpbBK/1ndq0JfWlA3ztEcBxktPay1DC57pZZFg53ccn4Y0gcO5PzFtRgUTPw@vger.kernel.org, AJvYcCWtW5IdSNWxOtjWfPthoQjG9fLaFckYl1zmm3D7TMlkfpYxr7HUeU1hh8GJRKyM5RCGK3pgjHH6JY+i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb/S0qDXnf5HzOk2EZy3PXYrC9kJv2l+YI/+g0qu8zCtH3rlTJ
-	5eBlJKFVNWvyda9vVxj1k5omanMukjoABOyJI24II3VfoFSwVBqRy4bW
-X-Gm-Gg: ASbGnct11JZXfZklDAvFBdMVJ5aB9OtAkkt7lcY2v/T3dU36JN2Zn/+8KMfrkbnyIYO
-	rnC1IX4t38GcOhgTwJ6htvGjeY7Dbac6CnUD65u+AS2fu77c/iu1fPCPCejAiDv4fnhrJyA7iwc
-	8fTjidlfMUa0G1pN7NXeXbcC2mH8XX3EAE3/toK3CvfNbzmKFT4O/+SCDClBVANLcuPKhKq0E9g
-	om7bU6iE5Enndfa2DnUSaf+04wp/MPTfS5eKZCxF+hUjPAgTWSDUppwO3ueKYGrs1GIsJOv70Ef
-	YaCRlzKwJq58ec69eg52fyHEOJFQBgeBRgBB+nua5948OUI2i7N0BOOOGuPOSoE39jsWlL+llv2
-	Qk6lxcVhMjeL9MU4sork7XM8LHSdD7n0gjgYh5FrxkLRg9nGHiLb32Q==
-X-Google-Smtp-Source: AGHT+IHev4fUzCaklvZiT4w7bm1C1QbDRx77ancF77FzVoueNZXiu6S14A8hR65jLlLCu51WRc4AXg==
-X-Received: by 2002:a5d:584c:0:b0:3b4:9721:2b1c with SMTP id ffacd0b85a97d-3b768ee078emr4914068f8f.6.1753353720183;
-        Thu, 24 Jul 2025 03:42:00 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870553c78sm15344185e9.15.2025.07.24.03.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:41:59 -0700 (PDT)
-Date: Thu, 24 Jul 2025 12:41:56 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Jorge Marques <jorge.marques@analog.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <7bbopefg4ordtycyoeqijegzzhypqj7w6l7gjkacjl2hz6olce@npzdsv4j6eto>
-References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
- <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
- <20250720232726.GA3055763-robh@kernel.org>
- <20250721-large-daffy-vole-d2d25d@kuoka>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97E26981C;
+	Thu, 24 Jul 2025 10:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753353726; cv=fail; b=geKc4EEOc4cZRGLOGnE6wQyTC62i62nvzEA3LClDwBzPSU/nGDBfJ63s8ri8Xx0bY4XwPtaKwH+86OZ9j0W4lwQMH3kvqWPgxCp3x8paHdNjmB1nICuEoFfb7aTCiJt778BnIe2hGDJ5HrFBT1W+iS/dLXRO9oBaRaiHO0iwBXU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753353726; c=relaxed/simple;
+	bh=MdYcJbOV9e2idYGCYs4nNzOrp02NQfVs2OfhuOrCshM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JMDi7jvSr8tJiWlni9INxPkUALvR1+SVIUvtSuRAcToIBBXS1OEo4G9m8FJNH+/2UxcqrrKluDUveYe1Qjco3ELdtAzFNRia6Gmid6Qj9NKBsaW0VQZ76zVYa9mA5kR8JppVF/qxH9bWSGiT/011z2K+gDe4+MDgriwA7mxZJw4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=uX/IWNrb; arc=fail smtp.client-ip=52.103.68.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vPp1rDdgWgSDW+8p7YxgjaoiWPbmvnBieVDuMGmSfLjHFqe86e3Gxr33Yg1ZNLfkZ5DF1gYbG9qrSDRMvLdSamSJEQZQJGk8f+GI0y/rKvWxqBSruLc1SxrC81yPMPR/bOukOwmzfftnvpN89Sek/2dJmMOkG/HL44CCTPzTRVNlASJFCxDJ+e3pqido27/ZMp+/u/Iz2lTOtYVrWZFw7AQ7kQol7OLlRK1BF7RH+eqFhPTiNZGVDg+1L4+9t6DIjx+Smrq8996+yokDd8ljLmV98tb7DtqMRzLZCa4GhTA4d7f4vMuAUPQp+BINXGvIUmffS5BBtXWDD5beD8qooA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UWFHGfTVIReQhrsA+7zoWDbwMC/rVLU2MQ6NT3LOg2g=;
+ b=dWUk2cuoztLMbdWNu0Q+z0Ja22ZA3ljnQTBFRjB34kLCU0d7U4gv5Vf8oWHB7tRDQM2zSvuiK6AbeU8zfhYYOeqMAS8sOkdwyMgbRtP2KIVA970RA57CDgviDFcffYGs7A4/gtvRgu+18tAGmkX1E0LJNTCA5yVNt9NYkxK+n57yDJc1jLSdpfHUG1WYoPtr0BS3wcV8/j3bQLuSDwDTHSM9uxPVfs7iQwTOmlKpkWHSeZg8CVKNRZIeh9Tv+7HnVRkBQA+Qk/nC+mJN0HEaqUxw4BisUZIB0BoA622oBd12MfcoCivLlgtCKOGEffRuEZVTaI41Q9lt7e42w56SYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UWFHGfTVIReQhrsA+7zoWDbwMC/rVLU2MQ6NT3LOg2g=;
+ b=uX/IWNrbT8JL8PEYfhX8mvc3j9DRMLfCsVwpSsuhx304qkH8PEtNFFjjHfKxZgCs3URzvIMF5m1/lYFj5BfLqZOo7VXKm3Z93px6/CQHQ/bIlN0b6bb0zkobnangxhR+nCsY/RxfRa6vA/Kv/CcgmMx4pKCNuLNUtUzvCye4gPfr1f47aPe8M/3WJS8MW9OsucnqWa83t2juJNFsd5yt+p8JE1cnPE+6L3ghFkJwpfHFaRjMPsD5Xo8VsVNUllnKp17v9O1YGklKXwvGCjALytukN0aMvhtfGMQa0WbjgL0ZbVd0hqWQ8rv+v+7payYdGPUwybMhv7iMQ8CAMzI8mQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB7607.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:b7::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Thu, 24 Jul
+ 2025 10:42:00 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8964.021; Thu, 24 Jul 2025
+ 10:42:00 +0000
+Message-ID:
+ <PN3PR01MB95978770C2DC8D5CDB28426FB85EA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Date: Thu, 24 Jul 2025 16:11:57 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: mention MIT license as a compatible license with
+ GPLv2
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <PN3PR01MB95977C87764A556FFD49FB72B85EA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <2025072459-tweezers-dingbat-b748@gregkh>
+Content-Language: en-US
+From: Aditya Garg <gargaditya08@live.com>
+In-Reply-To: <2025072459-tweezers-dingbat-b748@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA5P287CA0024.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:179::14) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:f7::14)
+X-Microsoft-Original-Message-ID:
+ <6af1eb1e-8b9d-4402-a67d-0fd5a2834664@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-large-daffy-vole-d2d25d@kuoka>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|PN0PR01MB7607:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74a04172-dede-4adb-00b8-08ddca9eb876
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|19110799012|15080799012|8060799015|461199028|5072599009|440099028|51005399003|40105399003|3412199025|12091999003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3hNemxWT0RtZFRESGlncktQQ3B2YU9GNzVMcXJDeFphTnU0ZkZkN09QQ1RI?=
+ =?utf-8?B?WjlRU2NlMnJ5ZGNEZDREZFB5SDdsTzRIajFxWExpZnFjeVRLZVkyR1FYeFFu?=
+ =?utf-8?B?R2lzUklOd3c5ZUZ5cXhUNGk3eVhlRFNBMXdRcUJWQnV0cHJRWW5tNzJGSStZ?=
+ =?utf-8?B?Y1FuK3FSVjdPZmg1UTUxRk5SeVpDUXNlcThQUmlRU1hTWUhkaFlRQWp2Q1po?=
+ =?utf-8?B?MUhBUTd5dnRIMW0rRHcxV0ZFSWRyYVBOM0hiK2FEUzZpOXNGVUxBV2NEY3Bm?=
+ =?utf-8?B?TVlncDk3VHlIamR1QS9TMFpqd2E3V3RmUC8zTkNuZ1RsMGpaN1c1bDAyRyty?=
+ =?utf-8?B?RTVZd29GK0ZuWmdPb0g4ZUMxSEp4RXBSSzBOWmVJKzFyRFI0N1R2SlVlODVI?=
+ =?utf-8?B?ZENOd2dlbXFZbzErMURWMFczWm9QejBKUG5QajVtSjlmTWtERGJnelRQenFp?=
+ =?utf-8?B?QjIza3VxS3NyUG5ocTIwL0g4NHR3UWdpdUNPMllSOFpkR29RZ0I2OFRBV0tS?=
+ =?utf-8?B?cERKN3ZtbEE0YkdPYzN3MmxJUSs4QTk4WFE4RU8yVGsrMU8wWTlydmRML1Vr?=
+ =?utf-8?B?dmE5TmlBS2JWR29kVnRIOU5PVGtYZ2h0ZEpOdnp0bEhWOXVNUmRMb2cyMGJk?=
+ =?utf-8?B?MThvWnhCUlE0cUZEZkZXYVRBTVJOTDVmT0ZLRExzaFIyOHZQWnNvK0N4M1JE?=
+ =?utf-8?B?UUR6Y20rdlY4YVEvTmpBckdDL2JsYnd6QWRUSGhpRXF1V0N3a2dMWXNTc1Rm?=
+ =?utf-8?B?TDBKREViZVE1UG1nRExjZko5MXdLTGYrdWllRytJaEVQNXEvS2pjd3g1cmR5?=
+ =?utf-8?B?QVVVdXM2TWJLMGVQRkpmT05ubkRITUR1dVV4N0pNY0ppcG9US0VYRTZYb2Ix?=
+ =?utf-8?B?dVpwYmdpUiszQUNCOHBRamV4ZFpabnhHNlk2U3U1RSsrei8wSG45K201RVor?=
+ =?utf-8?B?T2hReGMzcktxcGhseEpXdnQxclZsNHRGdzBUOWd5SFZxOFkyZC84UW85M3pE?=
+ =?utf-8?B?V1FYb3BLVUVLaER6eEpYa0k4VVQxbERxQVlDM0pHdjNONG9QVjBES3I1OXVx?=
+ =?utf-8?B?Uk9GeFg2aTc1VnlwTS9sQkhyVmcyQnpsMUNKYVRaNElaUEIyRkpDdGtzT3Mz?=
+ =?utf-8?B?TzdNcVF5U0tock02VDdjdWRjY1FFZ2J5Z2N5TGQyUlFERnBPUjhFUnFIRzJt?=
+ =?utf-8?B?M2I3YUlnblRLbDVCaWxaYmI5NHV2YjgyZ1NEcjY1QzJGSTlYUWJhbTF1TXZH?=
+ =?utf-8?B?WkJlbUZkSlp4SXEwNzYrZ1BpMVpzbU5qa0NmV0JTNUtrWUVHcTlleEt4WXk5?=
+ =?utf-8?B?WjlMcm5RVmtOa2NIa1Nma3VXNFdkcnlYYXpkQ1Bia2p2alNyUW9XTHBNdVBI?=
+ =?utf-8?B?WFRBWjVZUisvM0s2L3Nmazdmc1cydmZtSnRtcGJHVVBZUms3dGtzVElvaFN4?=
+ =?utf-8?B?bSs3bG1TTWU5Q0dQVVQvMHNuNTk0NGlrVzJ6Q1Q1YysrbVZpTDFHNnZFMU5W?=
+ =?utf-8?B?aXVycHpZNzBHbHptd2x4Rzl0YUpDeFZJRnBCY0RMVUxEZ0RFeHQxODhXQ1lv?=
+ =?utf-8?B?VmFLM3U5VVVwdVNGSVA2bVIrTjM5aDFhWkRBcHBXOUd0REY1VFIvS2NpQkNT?=
+ =?utf-8?B?ZE5BbXpOQ3Z3YzhTM3ZXM1dLYXNXMFE9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RDVlN3FWYU1xSUNiWlU1Uk1lbUFFalNHOTlkRnIreE9mWGpqclJJVkpCTFVY?=
+ =?utf-8?B?b05HSUFYT1NxWWkxVWxZL2x6VisyZjBwS3hxbStPME5SVm5ydUQxL3M4K2Qv?=
+ =?utf-8?B?VFlCeTF5MEt0MURHa1pJbVBERHMrNit6YnB0YU1aYThDUW9BbGVtY3RDM3Nv?=
+ =?utf-8?B?cmVHRUJ1K3NHVFZYcmZMY2tYRVBLZWdRZGxUU2JzL0s3WGZ6ak5JaGNGYm8v?=
+ =?utf-8?B?VXpKa0hoSUVySVFiVTdQUFZhUWNXMmd5UUxVRGVKWnRCTG5ZMndyZnM4NWkz?=
+ =?utf-8?B?cS8xYXlXR3hvM1pVQm04cHd4MjY4dDJ4OWQyQ01pN2NodHhiTDdSR1cxTlFI?=
+ =?utf-8?B?UDVKZTNrY1ByaWNDL3BQY2hXVHlMR25ERHpOMmlGL1pyb1VhS2thb2paOVEr?=
+ =?utf-8?B?cVNjeE5NY25WcDhSZ0VwS3RsL2d6RmZNVklxTXFIREQ5QW5MbVVIOG5RVFVi?=
+ =?utf-8?B?RjgzSTZwbkFsd2NIbHoxckRraUtxWFhXd0RZOSthWC8yQ20vb0ZUQXpvbTZR?=
+ =?utf-8?B?RnRZbk5hMVUxZkhoclI4UWpWbnE3VUtISEVEL3BxUTN5QnBZRm5TVGEzRlVK?=
+ =?utf-8?B?TFV0d2ZVanFGR3Q1Rm5oWHZlc09zcm1TbGwySHYyVllZREU2UW0rMTNPY1VJ?=
+ =?utf-8?B?R1ZpNmswdXF2VGVicENnNkFjelFnZHlMSlU3RXhqZlRkNkt0S0h3ZkM5dUE5?=
+ =?utf-8?B?aWFGODJscHRIdGpXc29TSUIvOXh4L0paU01qUThHSCt2TlNlQ29DZTA5d040?=
+ =?utf-8?B?SjdtbitFVVZ1bzVLMTl3U3BPeVRqYVpweVBnQWUrWDUwdktVVWNiZ0RXVHBY?=
+ =?utf-8?B?aDRPTDA3a2lTdkkybHZVbEczQ2N0QytYaklEYWRBOFUvdG5aRmVyTkJUUTFF?=
+ =?utf-8?B?SmFjZUx3VGx3WElPQmxBSkwyZXhNMHJoNGFVcjdTN0NPTHk5MjU0SWhjRzJo?=
+ =?utf-8?B?UU1iWGpIYVIxbjFzTDc0OEJ4QkcxWlNBN0hPaHhPQXV4R1FDU3U1WjNWSm5Z?=
+ =?utf-8?B?bnRWN2FYUTM0VjhPUy9QNFRQUmVsM09lRDlZSnF1SFJuRGM3STRSVFRVVU5n?=
+ =?utf-8?B?Y3VwVVFxVHE1NkpLQzBndnJhVDVVNjhyY2g2c0VxR1h3WmNLa09OZFR3QUE2?=
+ =?utf-8?B?UE9wRTlnb3F3emhQUVRMZlQweFlWMnNzdnVkdVhvVGViOGVEaE4vQmxmL3Vy?=
+ =?utf-8?B?c2lKWXNtazU5OFJLdll0Ym93Mk9DRFdBS0lmT2hHZDFacVZyeDRub2xvVXVO?=
+ =?utf-8?B?Sm1Jdk1RM2swZ0dsZkowSURJcHkzU2ZlQ3VMOXFzREF2Q1FlOGhVTDZaeXdn?=
+ =?utf-8?B?Y1VZUXloY2Vjdkk5TnNCdzZKUDkzRWFtaXViTVpmdGppYmt3Q1ZmdjVJVnlu?=
+ =?utf-8?B?QXdRRmlTRGtOcGlpMDJlbjNoV3pYa1BTWFNnSTVQSTNLelIzMmtZcWY4Y0Rt?=
+ =?utf-8?B?Rk1zeTU1VHhFVmNXekc2UEFWczZqZ0xEMkdqS2R4NmxmM0NoeHY4Z3pHZDNH?=
+ =?utf-8?B?aERHeC9pelhjcHlTTXlnK3IrSWZuUEhCM29XMDllbjRmWlhrek5aYXJCTnNx?=
+ =?utf-8?B?amhCM3NMNFNQZUFWcnJIQUJoOVpqbGY4NHFjTkRyWURLRUtPQnJNUGlidnlx?=
+ =?utf-8?B?RGpjYU5kSjZOUWFDWXVBbVNpZVRMdkRnaGJNZFA1elRGZHFwMkp2RmRKdFU2?=
+ =?utf-8?B?TjRHd25WNHk3eHZsOU5KUUV3eEt3U3JlVllJTFhDUXJnY2gycDdPRXZpdTNp?=
+ =?utf-8?Q?O2iPpdiFzDqbZH/57Lpeerr85jQQPbwHkfQtj/u?=
+X-OriginatorOrg: sct-15-20-8880-26-msonline-outlook-ce67c.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74a04172-dede-4adb-00b8-08ddca9eb876
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 10:42:00.7542
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB7607
 
 
-On Mon, Jul 21, 2025 at 09:37:39AM +0200, Krzysztof Kozlowski wrote:
-> On Sun, Jul 20, 2025 at 06:27:26PM -0500, Rob Herring wrote:
-> > > +description: |
-> > > +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
-> > > +  implementing a subset of the I3C-basic specification. The IP core is tested
-> > > +  on arm, microblaze, and arm64 architectures.
-> > > +
-> > > +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> > > +
-> > > +maintainers:
-> > > +  - Jorge Marques <jorge.marques@analog.com>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: adi,i3c-master-v1
-> > 
-Hi Krzysztof and Rob,
 
-> > If you want to use version numbers, they need to correlate to something 
-> > and you need to document what that is. I don't see anything in the above 
-> > link about a version 1. Kind of feels like you just made it up.
-I will need a week or two before resubmitting the final version style.
-We are in the process of reviewing how we version things in general
-and how to comply with internal guidelines also.
-For the IP Cores, it was already an internal guideline to use semantic
-versioning, and I am making it public here:
+On 24/07/25 4:08 pm, Greg KH wrote:
+> On Thu, Jul 24, 2025 at 10:03:41AM +0000, Aditya Garg wrote:
+>> MIT is a widely used permissive free software license that is compatible
+>> with the GPLv2 license. This change adds it to the list of compatible
+>> licenses with GPLv2 in the kernel documentation.
+> 
+> No, please don't.  This isn't a proper place for talking about the
+> different license interactions.
 
-* https://github.com/analogdevicesinc/hdl/pull/1831 :
-
-  The IP cores typically should follow `Semantic Versioning <https://semver.org/>`
-  ``v<major>.<minor>.<patch>`` format.
-  In summary, a fix increases the patch number, a feature the minor number, and a
-  breaking change the major number. The first stable release version should be
-  higher or equal to v1.0.0.
-  
-  Device tree compatible take the major number prefixed by ``v``, for example,
-  for *axi_my_ip* v1.2.3, the *compatible* is *adi,axi-my-ip-v1* and the
-  *dt-binding* filename is *adi,axi-my-ip.yaml* (no major suffix). Per the last
-  paragraph, *adi,axi-my-ip-v0* is **never** appropriate. Software drivers parse
-  the ``VERSION`` register for feature handling across versions. The patch number
-  shouldn't have to be handled by software drivers, if it seems necessary to,
-  consider incrementing the minor number instead.
-  
-  Due to AMD Xilinx old default IP core version, many IP cores bindings start at
-  1.00.a. For compatibility, the patch value is kept, but should be treated as
-  decimal instead of character.
-
-(I should have had put as a dependency in this patch submission).
-The dt-binding major suffix correlates with the major version it
-supports all v1.xx.xx releases.
-It takes time to get to a final format because versioning may mean
-different things to different people/scopes.
-The PR that bumps the core to v1 is here and should be merged in the
-following week:
-
-  https://github.com/analogdevicesinc/hdl/pull/1724
-
-At the linux level, should I add the following to the
-adi,i3c-master-v1.yml?
-
- +Description: |
- +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
- +  implementing a subset of the I3C-basic specification. The IP core is tested
- +  on arm, microblaze, and arm64 architectures. The IP Core versioning follows
- +  semantic versioning and divergent major versions are not compatible
- +  with this binding.
-
-or create a dedicated file for ADI IP Cores with the guideline?
+Ohk
 
 > 
-> I asked already at v4 to document the naming/versioning, which was a
-> result of one of previous discussions, in the binding description. :/
+>>
+>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+>> ---
+>>  Documentation/process/1.Intro.rst | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/process/1.Intro.rst b/Documentation/process/1.Intro.rst
+>> index 25ca49f7a..c3465e3aa 100644
+>> --- a/Documentation/process/1.Intro.rst
+>> +++ b/Documentation/process/1.Intro.rst
+>> @@ -235,9 +235,9 @@ code must be compatible with version 2 of the GNU General Public License
+>>  (GPLv2), which is the license covering the kernel distribution as a whole.
+>>  In practice, that means that all code contributions are covered either by
+>>  GPLv2 (with, optionally, language allowing distribution under later
+>> -versions of the GPL) or the three-clause BSD license.  Any contributions
+>> -which are not covered by a compatible license will not be accepted into the
+>> -kernel.
+>> +versions of the GPL), the three-clause BSD license or the MIT license.
 > 
-> > 
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    minItems: 1
-> > > +    items:
-> > > +      - description: The AXI interconnect clock, drives the register map.
-> > > +      - description: The I3C controller clock. AXI clock drives all logic if not provided.
-> > 
-> > Is that a description of how the h/w works? The controller clock input 
-> > can literally be left disconnected? If 1 clock source drives both 
-> > inputs, then the binding should reflect that.
->
-It cannot be left disconnected if the IP Core was synthesized for 2
-clock inputs (1). The dt-binding reflects the topology dictated by the
-synthesis parameter.
+> You forgot a ',' anyway :(
 
-(1) https://analogdevicesinc.github.io/hdl/library/i3c_controller/i3c_controller_host_interface.html#configuration-parameters
-    ASYNC_CLK
-
-How about then:
-
-  +      - description: The AXI interconnect clock, drives the register map.
-  +      - description: |
-  +          The IP Core may be synthesized with a second clock input
-  +          called "i3c" to drive the internal logic asynchronously to
-  +          the register map. The absence of this entry reflects the
-  +          topology where the "axi" clock input drives all the internal
-  +          logic. 
-
-> This was explained in reply, but never made as proper explanation to the binding.
-> 
-> Jorge,
-> When you answer to a review about uncertain pieces like that, usually
-> outcome of the discussion must end up also in new patch - either in
-> commit msg or better in the binding itself. I also asked about this -
-> documenting the outcode - in v4.
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Best regards,
-Jorge
+While it is no longer relevant, I wonder where you wanted the comma. Maybe you meant "the three-clause BSD license, or the MIT license"?
 
