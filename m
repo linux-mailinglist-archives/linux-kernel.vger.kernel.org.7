@@ -1,173 +1,283 @@
-Return-Path: <linux-kernel+bounces-744271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275BDB10A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:38:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03711B10A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3AC584B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4AC31C84B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3686B2D4B5F;
-	Thu, 24 Jul 2025 12:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABE62D320D;
+	Thu, 24 Jul 2025 12:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OT7nSb+t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXHP+Iia"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D01F2D29B1
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6410A2D2394;
+	Thu, 24 Jul 2025 12:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360621; cv=none; b=DsmR3lDerR2dUOVfENaJTaHU3F8fas3rOYNdE7Rwy1B+S22DorpAeGQJ0gWKv6X4JrLZoiml0Steq281CYaK7e6G5CByNE0zRrWf0TvTAkdEklLox24QSKmZoKnUjYd8PlMBuWHJV8mfggg9Z6aOx6bNFtj+RHhgrv/dAPo4jhg=
+	t=1753360699; cv=none; b=QcejCKy9+Y2u27H8fhVsGeSo73RDRULVFnFILfnRLqIcT+jM5uOsKh/b4jIDBToIZqgpcriEwdiJOSJtItLAVuMiz95d3k6zown3TZChVdjrpDCpgJUBtoJ0AyR3Ld0ciK9jc02XhtF8v/E3/51ZDxsgoUdLxNnVqdZW6OQL/Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360621; c=relaxed/simple;
-	bh=LcSIW0NY6oVfU7XhBiAcCwSmXdrPSxDV38BCQfAwyXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AbNaRauYj3ig0M/45FMOAzmehB9WZmofIM8MJ4Tt26OjZRkTrPEiVIYWkFnG+O+t6aGqIPH8P6SPCeBf5iP5k5UtqaR7kw7c4NBaiTNExPNosGodz7kJoCD4ttQdAnwREe0uFI5/qn1LiJ6gm8+QC2bQhvMcRD+L5HfqJ/SOWlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OT7nSb+t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9afC2029601
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dSR4gbUU/2tBPcpsP9lRCwcwfrmXksikVD3aXPQ1sts=; b=OT7nSb+tMmsWHalP
-	bvt32Eq5DE67wqxcWNQ7RmlVdqStcAEJFIjE2DJFh+TcX4H4wuzmlNY8+wFQMBHu
-	fHjjjd63XJZ9fnZtWr/Yb4tOKntSmW2GmhE2Xrmklb6qU25PTFD9RqJfMw7B4Lvy
-	GORgShFwNatTr4X70ZqzDU/YpFjkRrBMYxfitQzC/Efda7iKJYgCkBZeWk/MzVyS
-	dpwB4WatGXFuqgXc/srS110j5GcI4rjehJG8KyVFJvDRACxL8dGkbf5YCWn/Qo9j
-	J6W9buqT+4WaYjBTTXEaLeq4HS6zIixg6DrYqJzVqSTk/fHNTFFmzeA6ewEG/QGK
-	CY/Icg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4826t1g1rr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:36:58 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e33e133f42so28468485a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:36:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753360618; x=1753965418;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dSR4gbUU/2tBPcpsP9lRCwcwfrmXksikVD3aXPQ1sts=;
-        b=OQvwENwsKl+fOccSQAuA1kf5AYsR5WFO/Amh7e2OvRZA+rjvQJNw0zl4NETr1I3jW3
-         TJjIDyrgCkijhruR99aeMD5urvVLfv1hlV+Fgtme7PM1qWXkM5rf4thyQQE4OkNMsjgI
-         Ul3BTQD7on86Co5kh8YpOB05ZZvj/hkwsj7jxpQX8z9cGJG+JU5y3+f4kDP6nKNS5iww
-         1tuKoRor0xjrZIKxmMGCjrBn9nPrf/xgK1agPuRRVhz9afzGY9I8QbY4MOkVYlnj+Yu/
-         fi95ySISfsqFntlbhuSPGXAbhjgy0JFf1ssB2a9qChEvJwPc5bDzx3Z7GkMmD6yqjkf2
-         Md3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbP8NW6V9mZujcG8DqP0DuDRIkUtlOeS/DU8WcOm/S7Vn4OyKc/kGH1itBfkvdVfF4hnQaJ5oy8gxK4Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb1W+2ZrBf46fgd65FnLS+B/2jbvWnNhq338x0SI4Ml86pysXq
-	54Q1Tow51xlQNf5Qt3Co15DPUtgkSip5OyE7ZScaorRg+ZnT+8KJOYXOaU41a0PC+2ArOu0qTsW
-	cbNu2UHNH5xvZDrAlIb6njFK7vLGamB/skHrNeZDy3FMLFzdc8Crz9Hol/8Q03G0gt74=
-X-Gm-Gg: ASbGncvEzYX0ZnddGcMJ8NIyVrAuLqxS0IOQKEtm0Qg38spxB2BhXameTeiwdft5hnl
-	utpR2lYjmrqIPvfLairA513KEeeqKayK84UqbG7ut9iUtGCEbfb6L4IWlEe31t/GN0ZQh+icQdL
-	GNf+80hmK7s84B6tndCTdAxR2e0eEXh7K4OR0K7Js2yLLTgWSLAG81nmRMtjMUpTPvm1nkc/3o5
-	wGISSt5VCeIImoxBiJ3Pd4r4IN5EKqCkDdMIKQj1HTVAiSINEwnav2q6RMFGrRYXkjyWI3CAX3c
-	VWephWTQoIcQSVuFx0KWCZbWFWK16V2sujQmr2mexmQ+e+qq55d2TRDEgsd/Uak+9QgDKbkiutW
-	4yORuX+vIbiULjMqcIw==
-X-Received: by 2002:a05:620a:d88:b0:7e2:ee89:205a with SMTP id af79cd13be357-7e62a0e4ff5mr305362185a.5.1753360618062;
-        Thu, 24 Jul 2025 05:36:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtobSdcxMw45bMRgVyfiSZ4iD7n9YDnCcddnf4qk7/DbB2ZWWg10WQWjbeX0X1bWYDwrezTw==
-X-Received: by 2002:a05:620a:d88:b0:7e2:ee89:205a with SMTP id af79cd13be357-7e62a0e4ff5mr305359385a.5.1753360617552;
-        Thu, 24 Jul 2025 05:36:57 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47c496eefsm108992066b.25.2025.07.24.05.36.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 05:36:53 -0700 (PDT)
-Message-ID: <9884efc6-c6c5-49f1-b582-55bba8397521@oss.qualcomm.com>
-Date: Thu, 24 Jul 2025 14:36:49 +0200
+	s=arc-20240116; t=1753360699; c=relaxed/simple;
+	bh=/Fd2dbY46+nBw/SuxVNMWZV5DxNiY31qjK4IwBKCoK8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cVyyaotcsCzrT21tTBmB6tlLDG6qji5UA03PvgGJBLLbuWcyQmSkf77CZoXaq24miLBmznNKhuD11pH598mNii6dtMb0QEYUQ7+mI7WIw/BuI7Dl1Id0hZubCcRH2nkki7+Qz2zFOhH5Y44zDiM1RUBFfYnU5DArNIA3ZskHKj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXHP+Iia; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A25C4CEEF;
+	Thu, 24 Jul 2025 12:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753360697;
+	bh=/Fd2dbY46+nBw/SuxVNMWZV5DxNiY31qjK4IwBKCoK8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GXHP+Iia+nvex6ZfvQnOJUKGaVC0jt2egJEDcpG4gcts8VStSdvav2MlYwBfJyfkt
+	 e34gBQXC8h5VdodRM7RWrvTYdbtaT6NJPCcttxaW25SFNGa9m+rHDby00KQ7FoU5h1
+	 uRYkj1g0m7b1QOvPyIiW1zgwoTiPaRHZYJ1ULO0Bqzue6M2qGyXnv9WlOQixxPYlE0
+	 tNo9Qhn0BExOSv3+1zhYcgA9hUc8SBBHBIguXxgnpWQ00kBc9+jEuhF5ljL8F29bbn
+	 ALvrgD48nHLPb7crkPIZ8LWKuspf9KWfZIrcHYMN1btwGG9VpMWZTuSMQsRW4UtBKf
+	 OFmu0qmifr0Ng==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-613a6e39f52so483977eaf.3;
+        Thu, 24 Jul 2025 05:38:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0eJyDOgmk3yGTAjll9f60b97xfUpY3F6B9sjTkzsAJiAByH+kfFqumRcSq90zBDuuuC4CBkYhDmv27cs=@vger.kernel.org, AJvYcCX7/W4MhbFEsg5EXlUO1gceYft318S+xFCE67oUj+qtlAerQvDfr5L1LPV9pTmo+D3AbvPv2Rw0c48=@vger.kernel.org, AJvYcCXRe9W/asK+JMvVh4TEI+k2kpCJ+fK2w0+DXsGmcpdongRNXcTDBepU1SeCFJMmzlclA80BP0atBoNT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5l5Ok5iHzU6ObePAajXwljfphu2fbijKNnyEYEcNMLwDj+oFj
+	Ep9IiMy3HRVUrz8d15iVs9/VbZ/DU0aG758Y4SK/5OSw+3SW31/xQhjowTDI1I62NiSRH6PV5sf
+	o4tqMgEivHtjJtxvWVgj4To6cHZY+VfQ=
+X-Google-Smtp-Source: AGHT+IEkAmZy5QE7Vk6V7gx+c/efF4IyXjJE6AByaRl+/ROgN+l7w1X3AWDgTR/uKU2aTwOkv1mh3/7/yi998ls2kTo=
+X-Received: by 2002:a05:6820:2004:b0:615:b293:1f17 with SMTP id
+ 006d021491bc7-6187d8f800emr4676536eaf.8.1753360697059; Thu, 24 Jul 2025
+ 05:38:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add initial interconnect (icc_path) Rust abstractions
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-        Benno Lossin <lossin@kernel.org>,
-        Andreas Hindborg <a.hindborg@kernel.org>,
-        Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-        Danilo Krummrich <dakr@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20250722-topic-icc_rs-v1-0-9da731c14603@oss.qualcomm.com>
- <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CANiq72kxcEywL4L6HEqn7AZa-jOBsw08jr+Kvjdwrd+iTOO_uQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: hBeYzsSxlg9iRpzW4xCd5ecjmw7ZDhq_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA5NSBTYWx0ZWRfXwp7DXHXEtNO0
- ytMRfmuuC+/5ZZcaG6c384X3pdUVU8ppnaLWMJ7IZTqm4onEuift/ye3sbMEpIxvOV86ROAAvuj
- VRgaTg84mssCpVfV3HUcC3PjfSMYVdyxEGWuxgdtI9pRPIU4WLPCaeUQRk3hfo2d5mganA1BLNW
- bGmCcPeJhxl7tKBDjFlLI1hNtHZXGW/G+p+X8ETSCMberNsz+Y62KHrAvLsYXxT94gITjaQOJSZ
- Uq4ioh5JYx3xghesgMSWiW1UCeM9lR7Pd5QjvbN6fgwNOA//q1kMI5Wh0buTr6uxu7dcADu2l3L
- g4+gaS+dXKyNBT1FqVL/5VOc/3xj0Tz1bzSZ7SAaVNpeeKEx1kJ5LMpNDA3c9gZFkFDi47wuWqE
- QW3U1wTPZl0ojm/xDM7k3QiXOq20Nr60Pn+9vsiDEiorqCgRyaiwyCzwoy5IJlsKj4/LqPRa
-X-Authority-Analysis: v=2.4 cv=E8/Npbdl c=1 sm=1 tr=0 ts=688228ea cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=1ihfflFO6Zl3b22XxKoA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: hBeYzsSxlg9iRpzW4xCd5ecjmw7ZDhq_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015 phishscore=0
- mlxlogscore=927 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507240095
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Jul 2025 14:38:05 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jTEdWhm-1aYbLtyqo99dJw4kY0PaYUy=_zh+1M+jo3Vw@mail.gmail.com>
+X-Gm-Features: Ac12FXyOWhpG1bIKrnrrOQtS5GKQsc2xVEuW-EisH29LnmbfBKphNrK8Ka_NJOM
+Message-ID: <CAJZ5v0jTEdWhm-1aYbLtyqo99dJw4kY0PaYUy=_zh+1M+jo3Vw@mail.gmail.com>
+Subject: [GIT PULL] ACPI updates for v6.17-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/23/25 12:22 PM, Miguel Ojeda wrote:
-> On Tue, Jul 22, 2025 at 11:14 PM Konrad Dybcio <konradybcio@kernel.org> wrote:
->>
->> icc_path is in essence very similar to `struct clk`, so the newly
->> propsed bindings are understandably based on the corresponding
->> common_clk module.
->> This is the interconnect consumer part, with the corresponding ICC
->> provider changes coming in some near future.
->>
->> I attached a sample driver making use of these, to ease any testing
->> or CI work (as the title says, please don't merge it though).
-> 
-> Thanks!
-> 
-> The usual two main questions for new abstractions are whether the
-> maintainers of the C side want to see this happen (and how will it be
-> maintained etc.) and what users of the abstractions are expected
-> upstream.
+Hi Linus,
 
-I haven't talked to Georgi about this. I can volunteer for
-code-janitoring, but as you can tell I'll still need your oversight
+I'm sending this early because I will be mostly offline next week
+and I'm not planning to add anything to it.
 
-Regarding the users, I don't have any specific promises on a consumer
-of these abstractions in a short term, although the ICC API is rather
-common (especially across the major arm-based SoCs), so it shouldn't be
-long before someone needs it.
+Please pull from the tag
 
-Konrad
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.17-rc1
 
-> 
-> For the first part, some subsystems prefer to maintain it themselves,
-> others prefer to have someone else lead a separate sub-entry in
-> `MAINTAINERS` (e.g. "... [RUST]"), possibly with its own branch too.
-> 
-> Cheers,
-> Miguel
+with top-most commit ea34e67ae7a6318dc775a8d98cf00c3e45bfb7d2
+
+ Merge branch 'acpi-misc'
+
+on top of commit 89be9a83ccf1f88522317ce02f854f30d6115c41
+
+ Linux 6.16-rc7
+
+to receive ACPI updates for 6.17-rc1.
+
+These update APEI (new EINJv2 error injection, assorted fixes), fix the
+ACPI processor driver, update the legacy ACPI /proc interface (multiple
+assorted fixes of minor issues) and several assorted ACPI drivers (minor
+fixes and cleanups):
+
+ - Printing the address in acpi_ex_trace_point() is either incorrect
+   during early kernel boot or not really useful later when pathnames
+   resolve properly, so stop doing it (Mario Limonciello)
+
+ - Address several minor issues in the legacy ACPI proc interface (Andy
+   Shevchenko)
+
+ - Fix acpi_object union initialization in the ACPI processor driver to
+   avoid using memory that contains leftover data (Sebastian Ott)
+
+ - Make the ACPI processor perflib driver take the initial _PPC limit
+   into account as appropriate (Jiayi Li)
+
+ - Fix message formatting in the ACPI processor throttling driver and
+   in the ACPI PCI link driver (Colin Ian King)
+
+ - Clean up general ACPI PM domain handling (Rafael Wysocki)
+
+ - Fix iomem-related sparse warnings in the APEI EINJ driver (Zaid
+   Alali, Tony Luck)
+
+ - Add EINJv2 error injection support to the APEI EINJ driver (Zaid
+   Alali)
+
+ - Fix memory corruption in error_type_set() in the APEI EINJ driver (Dan
+   Carpenter)
+
+ - Fix less than zero comparison on a size_t variable in the APEI EINJ
+   driver (Colin Ian King)
+
+ - Fix check and iounmap of an uninitialized pointer in the APEI EINJ
+   driver (Colin Ian King)
+
+ - Add TAINT_MACHINE_CHECK to the GHES panic path in APEI to improve
+   diagnostics and post-mortem analysis (Breno Leitao)
+
+ - Update APEI reviewer records and other ACPI-related information in
+   MAINTAINERS as well as the contact information in the ACPI ABI
+   documentation (Rafael Wysocki)
+
+ - Fix the handling of synchronous uncorrected memory errors in APEI
+   (Shuai Xue)
+
+ - Remove an AudioDSP-related ID from the ACPI LPSS driver (Andy
+   Shevchenko)
+
+ - Replace sprintf()/scnprintf() with sysfs_emit() in the ACPI fan
+   driver and update a debug message in fan_get_state_acpi4() (Eslam
+   Khafagy, Abdelrahman Fekry, Sumeet Pawnikar)
+
+ - Add Intel Wildcat Lake support to the ACPI DPTF driver (Srinivas
+   Pandruvada)
+
+ - Add more debug information regarding failing firmware updates to the
+   ACPI pfr_update driver (Chen Yu)
+
+ - Reduce the verbosity of the ACPI PRM (platform runtime mechanism)
+   driver to avoid user confusion (Zhu Qiyu)
+
+ - Replace sprintf() with sysfs_emit() in the ACPI TAD (time and alarm
+   device) driver (Sukrut Heroorkar)
+
+ - Enable CONFIG_ACPI_DEBUG by default to make it easier to get ACPI
+   debug messages from OEM platforms (Mario Limonciello)
+
+ - Fix parent device references in ASL examples in the ACPI
+   documentation and fix spelling and style in the gpio-properties
+   documentation in firmware-guide (Andy Shevchenko)
+
+ - Fix typos in ACPI documentation and comments (Bjorn Helgaas)
+
+Thanks!
+
+
+---------------
+
+Abdelrahman Fekry (1):
+      ACPI: fan: Replace sprintf()/scnprintf() with sysfs_emit() in
+show() functions
+
+Andy Shevchenko (8):
+      ACPI: wakeup: Drop unneeded casting for sleep_state
+      ACPI: proc: Use correct format specifier and drop casting
+      ACPI: proc: Remove unused header
+      ACPI: proc: Use str_enabled_disabled() helper
+      ACPI: proc: Prefer to use octal permission
+      Documentation: firmware-guide: gpio-properties: Spelling and style fixes
+      ACPI: LPSS: Remove AudioDSP related ID
+      Documentation: ACPI: Fix parent device references
+
+Breno Leitao (1):
+      ACPI: APEI: GHES: add TAINT_MACHINE_CHECK on GHES panic path
+
+Chen Yu (1):
+      ACPI: pfr_update: Add more debug information when firmware update failed
+
+Colin Ian King (4):
+      ACPI: APEI: EINJ: Fix less than zero comparison on a size_t variable
+      ACPI: APEI: EINJ: Fix check and iounmap of uninitialized pointer p
+      ACPI: processor: throttling: Remove space before newline
+      ACPI/PCI: Remove space before newline
+
+Dan Carpenter (1):
+      ACPI: APEI: EINJ: prevent memory corruption in error_type_set()
+
+Eslam Khafagy (1):
+      ACPI: fan: Replace sprintf() with sysfs_emit()
+
+Jiayi Li (1):
+      ACPI: processor: perflib: Fix initial _PPC limit application
+
+Mario Limonciello (2):
+      ACPI: Enable CONFIG_ACPI_DEBUG by default
+      ACPICA: Decrease `AcpiExTracePoint` verbosity
+
+Rafael J. Wysocki (3):
+      ACPI: PM: Set .detach in acpi_general_pm_domain definition
+      ACPI: APEI: MAINTAINERS: Update reviewers for APEI
+      ACPI/PNP: Use my kernel.org address in MAINTAINERS and ABI docs
+
+Sebastian Ott (1):
+      ACPI: processor: fix acpi_object initialization
+
+Shuai Xue (2):
+      ACPI: APEI: send SIGBUS to current task if synchronous memory
+error not recovered
+      ACPI: APEI: handle synchronous exceptions in task work
+
+Srinivas Pandruvada (1):
+      ACPI: DPTF: Support for Wildcat Lake
+
+Sukrut Heroorkar (1):
+      ACPI: TAD: Replace sprintf() with sysfs_emit()
+
+Sumeet Pawnikar (1):
+      ACPI: fan: Update debug message in fan_get_state_acpi4()
+
+Tony Luck (2):
+      ACPI: APEI: EINJ: Create debugfs files to enter device id and syndrome
+      ACPI: APEI: EINJ: Fix trigger actions
+
+Zaid Alali (6):
+      ACPI: APEI: EINJ: Fix kernel test sparse warnings
+      ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities
+      ACPI: APEI: EINJ: Add einjv2 extension struct
+      ACPI: APEI: EINJ: Discover EINJv2 parameters
+      ACPI: APEI: EINJ: Enable EINJv2 error injections
+      ACPI: APEI: EINJ: Update the documentation for EINJv2 support
+
+Zhu Qiyu (1):
+      ACPI: PRM: Reduce unnecessary printing to avoid user confusion
+
+---------------
+
+ Documentation/ABI/testing/sysfs-bus-acpi           |  18 +-
+ Documentation/ABI/testing/sysfs-firmware-acpi      |   6 +-
+ Documentation/firmware-guide/acpi/apei/einj.rst    |  33 ++
+ .../firmware-guide/acpi/gpio-properties.rst        |  34 +-
+ Documentation/firmware-guide/acpi/i2c-muxes.rst    |   8 +-
+ MAINTAINERS                                        |   9 +-
+ drivers/acpi/Kconfig                               |   1 +
+ drivers/acpi/acpi_processor.c                      |   2 +-
+ drivers/acpi/acpi_tad.c                            |   4 +-
+ drivers/acpi/acpica/extrace.c                      |   4 +-
+ drivers/acpi/apei/apei-internal.h                  |   2 +-
+ drivers/acpi/apei/einj-core.c                      | 386 +++++++++++++++++----
+ drivers/acpi/apei/einj-cxl.c                       |   2 +-
+ drivers/acpi/apei/ghes.c                           |  90 +++--
+ drivers/acpi/bus.c                                 |   2 +-
+ drivers/acpi/device_pm.c                           |   4 +-
+ drivers/acpi/dptf/dptf_power.c                     |   2 +
+ drivers/acpi/dptf/int340x_thermal.c                |   7 +
+ drivers/acpi/fan.h                                 |   1 +
+ drivers/acpi/fan_attr.c                            |   8 +-
+ drivers/acpi/fan_core.c                            |   2 +-
+ drivers/acpi/pci_link.c                            |   2 +-
+ drivers/acpi/pfr_update.c                          |  63 +++-
+ drivers/acpi/prmt.c                                |  26 +-
+ drivers/acpi/proc.c                                |  17 +-
+ drivers/acpi/processor_perflib.c                   |  10 +-
+ drivers/acpi/processor_throttling.c                |   2 +-
+ drivers/acpi/wakeup.c                              |   4 +-
+ drivers/acpi/x86/lpss.c                            |   3 -
+ .../intel/int340x_thermal/int3400_thermal.c        |   1 +
+ .../intel/int340x_thermal/int3403_thermal.c        |   1 +
+ include/acpi/ghes.h                                |   3 -
+ include/linux/mm.h                                 |   1 -
+ mm/memory-failure.c                                |  13 -
+ 34 files changed, 567 insertions(+), 204 deletions(-)
 
