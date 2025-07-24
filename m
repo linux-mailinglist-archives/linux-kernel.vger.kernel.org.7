@@ -1,237 +1,477 @@
-Return-Path: <linux-kernel+bounces-744834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7198BB11164
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:08:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA456B1117C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED73F17310E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:08:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E5E07AF3AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DA02ED14D;
-	Thu, 24 Jul 2025 19:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EC428A405;
+	Thu, 24 Jul 2025 19:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AxghhJcd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="boSq+Jru"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6862ED14C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D12ECD3D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384075; cv=none; b=stHqE/6zA8gbOUTQqeBLSD1GUebr81CMvtNdc5T6SlVLqDqAM4dLl3MsUa+myVvyRaab/RWBiFjqq2KrBIsbDmVtxF1alkNjYxOTpNXAOlVQ8Na0TfgshlN7J/I8VKzyts/LPJKsIB59wz+CPiVB2VRfWkwYBK52P8VPKvefopg=
+	t=1753384509; cv=none; b=Gm06B2ngv68totQLzDZkfa89qWR/asJl/oJA83nI9sjN6cWFvkLRriMDSwpS8j8fwFLFDHcGe0jWvbawJ4KTon3Bh1QwvWvurEZDZ6ZLs6whoE1HpJNuUds+M5jS9ltIVIMFYJvL2kSzeta9nEsrUa4I+hjenxg1F3Yl+Kc2+NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384075; c=relaxed/simple;
-	bh=26XDVP5566GAnWIYeOLHW+dlq96NO4/Osy8Txa6q1gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFKZu3G4XOPv1Rm352HrX+KqayYfke1KYTgVupsWoAAvBGQ6O9Ks6nL1TcBiEPccZ8dRY8ZKihfv23sK/QeThcKPwOAtZMQitkFeLAYce7gNB7WRH2k8PLL8oW87LUZs9ljWA+o0WTbki9kbmfBlm79uK/GUxHQlD+Nan0uvjYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AxghhJcd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OICqq1022078
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:07:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=7gLTH/iPfyYd7ztc/IvTC63q
-	u18XmYjP9dX1gtpz5vw=; b=AxghhJcdmkVlV8A/LFkqNi4x3192Kt+rBYmEFZaS
-	IF7YKhOFYHTyTug3dzCfg2+4qN3KYpuGaXyxbXCUheRyYPklVK/MPsIhEDJ4RJFP
-	TPKy9ekePpdtgXKz4jpf/0rHQlySHIOWR0RHkY5ViBo7wIeLNxHn5TrKBMAER/9q
-	g8tvXBFkD7/RjEil2nODxKfNoo36W/+dNRCJ+Bd2YPL07QY6MJXu0xRadVSOzGnl
-	jXtQ8vpEyIfhZvlKYDnsZ1w0v80Mim1ES1Z90l7Ju2t7zWv/Olfx0JYmukfLw3xk
-	yv8TvWPe1t0RYRZxOiXZro4NPxURKkkWK22cTg+D+sNfEw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48313kmhmr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:07:46 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70713aa9fd6so15343066d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:07:46 -0700 (PDT)
+	s=arc-20240116; t=1753384509; c=relaxed/simple;
+	bh=itEhRIVR9wH0XL59GwhTw36oCEtz/+K23ATwCNdEu10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MXNu8l1HWpzTFWHyZHwPXJyJzIBpPDuu23JvBs3LzVTgokhuIQIdeaTsg2P8B/69aFSHtxvIlMvn9/SfemNnEumgVF2U9BrQMoFCHh8Ty1u7ykgaUugqG7QgXlJ1ZTTY1w2lDc4w6gsuXBIBu3m5k9E7uunCFCzQaqIlOsimzwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=boSq+Jru; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753384505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JroCquJ2N/9P4PgYxL/uw2uhd9P40fm8biIZJBC9nOc=;
+	b=boSq+Jru0iO38lFwrbTw6sIg/3vuZOtmP9naCB0bOzrBsATi6L6r+Zh6a9q1XOKKsyvPrm
+	Bi5dLD2MfzMSK1ov1bklWK7oGiu+74veuGvqkDC869uLRdFfX/C9EcV89C7VqQO1vH4vj8
+	gnBLtewjGB0QNyNA6gsa/cdwfyNUXEg=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-595-EZJw4-iNOMOgBXDiS8mm7A-1; Thu, 24 Jul 2025 15:15:04 -0400
+X-MC-Unique: EZJw4-iNOMOgBXDiS8mm7A-1
+X-Mimecast-MFC-AGG-ID: EZJw4-iNOMOgBXDiS8mm7A_1753384503
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-612be84c047so1664748a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:15:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753384066; x=1753988866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7gLTH/iPfyYd7ztc/IvTC63qu18XmYjP9dX1gtpz5vw=;
-        b=jR/BuiakrfD6AE+W8yZJdUh7o9vbDp2Ylal9TMsTE+9apxkUiOSiJUImYcH/oafn9g
-         dL7AATfYI6BavsC3Pjy4twNcUYhCX30Aqo/a8nJkB4O2veTqJ4VWZQW7B0tEsm+0Q6WL
-         lDjYd4MYR/6t7i4toSn4ttN0R941OA1lpZJb8J7L2PeaQnIVgr7H2BuySt5d7RWNtelL
-         YIYtw6ZFaNcbdHOz2fjbPRdn7GZ6Q5CKEs6R59nYjdZCVo1OTsdHdfDhy1MFA3NkGCgI
-         D16NngO4mhw3hBH6GRZzdS9f47/SuulkYL8ayC19j3a2SuZH9kpQXJPrVFlQ4x7s7RxL
-         7YWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF8bjiUoSczueuJSeVlhh/EaK5kttqVrp6Va59mgfOP5JKU/L1hMQX8HEQIDPVzW8j0+wuambxxrhPurs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXJEiddy1JNEcMq07hNv32kdlwfKEl6EJou1aN0n1JseUoRjZj
-	RQpIgrI6C/hGzyaanFra4ZyHh2oL6jzYLtU4hX3Ljyl11Kw9XoApe7h6MSPnsb8GD+BjvJ0w7tN
-	Y5fZDg6yJHtoPlnU5lL+uISFicm+MNeNdeLpiIqLWvFu9nnHbpTG9JN/F62CnZMnSJls=
-X-Gm-Gg: ASbGnctdhBMSbNP7I1kEOCmsw7SOc1kYkuDJ2q5axO/IfsZf3eqWevHxwYsqxbrPzTd
-	I5hH+48xVH9srOzQiNqzcbFshL2YLrBidWXf4TLCMsPntQf1nhvfBwOAeEKgwUv+pusYp8vNkPD
-	jVn7XQljn6GFyNMS7AKYipQn4hnk88huADSAzMjhF7Irt0sYuzPTZatg662D3IeaovrwTZ8s303
-	hGVIOI4tlmTtA1n3jCYXV6Pb8XgjNjU+7/0HzO3xzsOPBsjNtjG2vUUPj+Ee+84sR8G+f8zL4Hy
-	yu+Ng8KCODTmee+BdXhcU+Nk3CRgEBGgj8ldL0xEnn39lQMThl7vaeETw9Bv3t9OAkD6YgFnx2q
-	JaR+LEXx3Xr4Cq8J5d7QsbWPsns9QsLJ/iP1tPCjC7paj8FHZ5vPY
-X-Received: by 2002:a05:6214:509c:b0:704:8e3c:7b4d with SMTP id 6a1803df08f44-707004b3635mr101404286d6.4.1753384065308;
-        Thu, 24 Jul 2025 12:07:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3ezANv2YxvlF9vrpMbyVqY3MqWwG4tyluV4xdmyQRehKExXlS4PDANRKq0ZCM55RnwD9Y+Q==
-X-Received: by 2002:a05:6214:509c:b0:704:8e3c:7b4d with SMTP id 6a1803df08f44-707004b3635mr101403786d6.4.1753384064736;
-        Thu, 24 Jul 2025 12:07:44 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53b35dd1sm480953e87.65.2025.07.24.12.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 12:07:43 -0700 (PDT)
-Date: Thu, 24 Jul 2025 22:07:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        kernel@oss.qualcomm.com
-Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
-Message-ID: <blexn4zno3azgfbh4vzh7daizy3lbh5s26z6sivtyqgb36phnw@neorhsyqrgz4>
-References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
- <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
- <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
- <159eb27b-fca8-4f7e-b604-ba19d6f9ada7@oss.qualcomm.com>
- <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
- <fd1a9f2f-3314-4aef-a183-9f6439b7db26@oss.qualcomm.com>
- <3cbbace5-eff9-470e-a530-36895d562556@kernel.org>
+        d=1e100.net; s=20230601; t=1753384503; x=1753989303;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JroCquJ2N/9P4PgYxL/uw2uhd9P40fm8biIZJBC9nOc=;
+        b=gL+QDFex/MOG02c3HHDUqiAUAWElZ/BOL9toMSFyVGhUA3qfxnF21DgedKiPsUP+rC
+         p33qOxG2WIt9kjaA6dH8fsWP6KfAf7UhQeQZ5OwR0xjoJ4TqvgykJd52ZtaalPnm3VjF
+         qxcmzHBFgXoWTLZ2dEon/GQd6JrqAaCQWIhsnOjm+AM6JSyFQ0NRn7zELsWWKZW3UjBW
+         Njnt3VuzTY3J9JfVcwXc40DalgY6S0/9AfxPvvIu6KEY3HgH9xJYWq8ddhIH+wK1gT0o
+         Hhy/yHVGtfThgvYMSvxVtBvlGWY8AGazDT/ffyoV4DznKsWOhpPrUBZywy4scAK47Jyj
+         TDfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWx4efAQSwboM2RnBYXnmqIXfUoPjkQpAwN/ZAqXTMNebPVnAaNz2+R9tyM8y6hjklXpiEzVKHr8uUxYFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhiONIuEydYj2Y8rUk4AO64h/nVMk96Qzdc8lBpWJyteNW57nE
+	TRsliATF52gCUIHssfFwqkXpdZDr4qnrx+3O88TFRgv68S+nyDXEpMTCpcYfQF/eMfbkk8V8sOH
+	io34SNl1AIMmgJ2PX3XwB2NJ8QYQ5CwPDR/fgsA3RQM+M5XgO5NVHSdbLASeX/uezYQ==
+X-Gm-Gg: ASbGncu7Pxw8Av7QqGsOkhsPwocpOiY2R6zERr1cYbDPFL8oH3yqGmoTlZrx+3mamdM
+	MtVXCxQG7YmcPxppViZ7NxiV4DizIDtjZXbv0jmjKJiojin/QnKkNxgqrUSWaA2Oc1jkGj6dJ15
+	xx7r0GAI5dpPedlRLOKR5Oc/gohOygavknWG9BkTvNrVfBaEf1kXo51icP18ABz1fsqz6U1FH+0
+	IBOm12McmwAb/Ixb2dWNY2+JLAdpQmwt2RwoberUlTKD7+U4y8BJQY0zv+kpa3ogwPG6LDsS0jl
+	WnrjmuAFy1ZZWFY3ClhAuZhGLGar503hYiE4+28RBhiEamWsjosztWbMf5zRkUkxAaJghAyb8US
+	vp7XZZQEs9VJM8mxVWYBCBdtFyJAuCnyCXdQhVMRJF1sgLslu92IbE0JtPajZGkQNuY4=
+X-Received: by 2002:a17:906:c110:b0:ae3:f524:b51 with SMTP id a640c23a62f3a-af2f66c11afmr841802166b.10.1753384502836;
+        Thu, 24 Jul 2025 12:15:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu0koRqgoAG3Cni1RYCd4sAXADnOmfGnRrtCgM7GWwt7Ol/1KPVQcp4wXhSJm6qyxTuGAPAA==
+X-Received: by 2002:a05:6000:208a:b0:3a5:25e0:1851 with SMTP id ffacd0b85a97d-3b768eb077emr7272886f8f.7.1753384071638;
+        Thu, 24 Jul 2025 12:07:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f01:5500:ba83:3fd7:6836:62f6? (p200300d82f015500ba833fd7683662f6.dip0.t-ipconnect.de. [2003:d8:2f01:5500:ba83:3fd7:6836:62f6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc605cfsm2899678f8f.13.2025.07.24.12.07.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 12:07:51 -0700 (PDT)
+Message-ID: <601e015b-1f61-45e8-9db8-4e0d2bc1505e@redhat.com>
+Date: Thu, 24 Jul 2025 21:07:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cbbace5-eff9-470e-a530-36895d562556@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDE0OCBTYWx0ZWRfX9HekW8/ZEpnb
- ZQsxod+s7rZ89X4nEOGXNzR9K4b0y9enZN43w8DTOHTmTFO0RQ13Ispj/MwbFv+6HcqHmSoB6TW
- sCfmZtHfCkCsSoNbIa3dTtgdBV/HmdDjWynKTIB+wyNkevq5q3T9ZeT9bpUGNMkflhlsmBSM94w
- qY3O3k7fRavWbU8pE8pK6MFdalCb8wU7phc6uVLBs8pMUp/Tfsn7L7hPto8RBIHt873ZUSs/txh
- j0sCE8x3gEe0oX2K2SJMqFosYaX6/XUs83dhVfzuROUu4b954BzULATVQFmY5GODDSf6BtnnEMu
- G8Ae69WrYugRgJ1cHPDKfi87iaOZADpP3MTYQJLAwx7dgrQ7iR59zDFoVL9Tc6aH/ZaDnUJFiUz
- 13pHEJJaKBpc+UGnUOLzXYNzmD7QiHVKnCdrCMq1iGl3lGYlKlnfYBl7tKQ0QflsuDHIOc0t
-X-Proofpoint-ORIG-GUID: tM4uxctdqrx44mGVO-c6136ndyi15bIF
-X-Proofpoint-GUID: tM4uxctdqrx44mGVO-c6136ndyi15bIF
-X-Authority-Analysis: v=2.4 cv=C/TpyRP+ c=1 sm=1 tr=0 ts=68828482 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=PDmsC6A1k5bsBzTUqyEA:9 a=CjuIK1q_8ugA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_04,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 mlxscore=0 clxscore=1015 impostorscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240148
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, SeongJae Park <sj@kernel.org>,
+ Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>
+References: <20250721090942.274650-1-david@redhat.com>
+ <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <3ec01250-0ff3-4d04-9009-7b85b6058e41@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 03:20:29PM +0200, Krzysztof Kozlowski wrote:
-> On 24/07/2025 15:11, Konrad Dybcio wrote:
-> > On 7/24/25 2:51 PM, Krzysztof Kozlowski wrote:
-> >> On 24/07/2025 14:47, Konrad Dybcio wrote:
-> >>> On 7/23/25 10:29 AM, 'Krzysztof Kozlowski' via kernel wrote:
-> >>>> On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
-> >>>>> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
-> >>>>> collectively referred to as lemans. Most notably, the last of them
-> >>>>> has the SAIL (Safety Island) fused off, but remains identical
-> >>>>> otherwise.
-> >>>>>
-> >>>>> In an effort to streamline the codebase, rename the SoC DTSI, moving
-> >>>>> away from less meaningful numerical model identifiers.
-> >>>>>
-> >>>>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> >>>>> ---
-> >>>>>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
-> >>>>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
-> >>>>
-> >>>> No, stop with this rename.
-> >>>>
-> >>>> There is no policy of renaming existing files.
-> >>>
-> >>> There's no policy against renaming existing files either.
-> >>
-> >> There is, because you break all the users. All the distros, bootloaders
-> >> using this DTS, people's scripts.
-> > 
-> > Renames happen every now and then, when new variants are added or
-> > discovered (-oled/lcd, -rev-xyz etc.) and they break things as well.
+On 24.07.25 20:57, Usama Arif wrote:
 > 
-> There is a reason to add new variant. Also it does not break existing
-> users, so not a good example.
+> 
+> On 21/07/2025 10:09, David Hildenbrand wrote:
+>> People want to make use of more THPs, for example, moving from
+>> THP=never to THP=madvise, or from THP=madvise to THP=never.
+>>
+>> While this is great news for every THP desperately waiting to get
+>> allocated out there, apparently there are some workloads that require a
+>> bit of care during that transition: once problems are detected, these
+>> workloads should be started with the old behavior, without making all
+>> other workloads on the system go back to the old behavior as well.
+>>
+>> In essence, the following scenarios are imaginable:
+>>
+>> (1) Switch from THP=none to THP=madvise or THP=always, but keep the old
+>>      behavior (no THP) for selected workloads.
+>>
+>> (2) Stay at THP=none, but have "madvise" or "always" behavior for
+>>      selected workloads.
+>>
+>> (3) Switch from THP=madvise to THP=always, but keep the old behavior
+>>      (THP only when advised) for selected workloads.
+>>
+>> (4) Stay at THP=madvise, but have "always" behavior for selected
+>>      workloads.
+>>
+>> In essence, (2) can be emulated through (1), by setting THP!=none while
+>> disabling THPs for all processes that don't want THPs. It requires
+>> configuring all workloads, but that is a user-space problem to sort out.
+>>
+>> (4) can be emulated through (3) in a similar way.
+>>
+>> Back when (1) was relevant in the past, as people started enabling THPs,
+>> we added PR_SET_THP_DISABLE, so relevant workloads that were not ready
+>> yet (i.e., used by Redis) were able to just disable THPs completely. Redis
+>> still implements the option to use this interface to disable THPs
+>> completely.
+>>
+>> With PR_SET_THP_DISABLE, we added a way to force-disable THPs for a
+>> workload -- a process, including fork+exec'ed process hierarchy.
+>> That essentially made us support (1): simply disable THPs for all workloads
+>> that are not ready for THPs yet, while still enabling THPs system-wide.
+>>
+>> The quest for handling (3) and (4) started, but current approaches
+>> (completely new prctl, options to set other policies per processm,
+>>   alternatives to prctl -- mctrl, cgroup handling) don't look particularly
+>> promising. Likely, the future will use bpf or something similar to
+>> implement better policies, in particular to also make better decisions
+>> about THP sizes to use, but this will certainly take a while as that work
+>> just started.
+>>
+>> Long story short: a simple enable/disable is not really suitable for the
+>> future, so we're not willing to add completely new toggles.
+>>
+>> While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
+>> completely for these processes, this scares many THPs in our system
+>> because they could no longer get allocated where they used to be allocated
+>> for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
+>> problem for relevant workloads, because "not THPs" is certainly worse
+>> than "THPs only when advised".
+>>
+>> Could we simply relax PR_SET_THP_DISABLE, to "disable THPs unless not
+>> explicitly advised by the app through MAD_HUGEPAGE"? *maybe*, but this
+>> would change the documented semantics quite a bit, and the versatility
+>> to use it for debugging purposes, so I am not 100% sure that is what we
+>> want -- although it would certainly be much easier.
+>>
+>> So instead, as an easy way forward for (3) and (4), an option to
+>> make PR_SET_THP_DISABLE disable *less* THPs for a process.
+>>
+>> In essence, this patch:
+>>
+>> (A) Adds PR_THP_DISABLE_EXCEPT_ADVISED, to be used as a flag in arg3
+>>      of prctl(PR_SET_THP_DISABLE) when disabling THPs (arg2 != 0).
+>>
+>>      For now, arg3 was not allowed to be set (-EINVAL). Now it holds
+>>      flags.
+>>
+>> (B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
+>>      PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
+>>
+>>      For now, it would return 1 if THPs were disabled completely. Now
+>>      it essentially returns the set flags as well.
+>>
+>> (C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
+>>      the semantics clearly.
+>>
+>>      Fortunately, there are only two instances outside of prctl() code.
+>>
+>> (D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
+>>      with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
+>>
+>>      Fortunately, we only have to extend vma_thp_disabled().
+>>
+>> (E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
+>>      disabled completely
+>>
+>>      Only indicating that THPs are disabled when they are really disabled
+>>      completely, not only partially.
+>>
+>> The documented semantics in the man page for PR_SET_THP_DISABLE
+>> "is inherited by a child created via fork(2) and is preserved across
+>> execve(2)" is maintained. This behavior, for example, allows for
+>> disabling THPs for a workload through the launching process (e.g.,
+>> systemd where we fork() a helper process to then exec()).
+>>
+>> There is currently not way to prevent that a process will not issue
+>> PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
+>> to PR_SET_THP_DISABLE through another flag if ever required. The known
+>> users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
+>> that is not added for now.
+>>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Mike Rapoport <rppt@kernel.org>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Usama Arif <usamaarif642@gmail.com>
+>> Cc: SeongJae Park <sj@kernel.org>
+>> Cc: Jann Horn <jannh@google.com>
+>> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+>> Cc: Yafang Shao <laoar.shao@gmail.com>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>
+>> ---
+>>
+>> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
+>> think there might be real use cases where we want to disable any THPs --
+>> in particular also around debugging THP-related problems, and
+>> "THP=never" not meaning ... "never" anymore. PR_SET_THP_DISABLE will
+>> also block MADV_COLLAPSE, which can be very helpful. Of course, I thought
+>> of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
+>> I just don't like the semantics.
+>>
+>> "prctl: allow overriding system THP policy to always"[1] proposed
+>> "overriding policies to always", which is just the wrong way around: we
+>> should not add mechanisms to "enable more" when we already have an
+>> interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
+>> weird otherwise.
+>>
+>> "[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
+>> setting the default of the VM_HUGEPAGE, which is similarly the wrong way
+>> around I think now.
+>>
+>> The proposals by Lorenzo to extend process_madvise()[3] and mctrl()[4]
+>> similarly were around the "default for VM_HUGEPAGE" idea, but after the
+>> discussion, I think we should better leave VM_HUGEPAGE untouched.
+>>
+>> Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
+>> we essentially want to say "leave advised regions alone" -- "keep THP
+>> enabled for advised regions",
+>>
+>> The only thing I really dislike about this is using another MMF_* flag,
+>> but well, no way around it -- and seems like we could easily support
+>> more than 32 if we want to, or storing this thp information elsewhere.
+>>
+>> I think this here (modifying an existing toggle) is the only prctl()
+>> extension that we might be willing to accept. In general, I agree like
+>> most others, that prctl() is a very bad interface for that -- but
+>> PR_SET_THP_DISABLE is already there and is getting used.
+>>
+>> Long-term, I think the answer will be something based on bpf[5]. Maybe
+>> in that context, I there could still be value in easily disabling THPs for
+>> selected workloads (esp. debugging purposes).
+>>
+>> Jann raised valid concerns[6] about new flags that are persistent across
+>> exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
+>> consider it having a similar security risk as our existing
+>> PR_SET_THP_DISABLE, but devil is in the detail.
+>>
+>> This is *completely* untested and might be utterly broken. It merely
+>> serves as a PoC of what I think could be done. If this ever goes upstream,
+>> we need some kselftests for it, and extensive tests.
+>>
+>> [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
+>> [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
+>> [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
+>> [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
+>> [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
+>> [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
+>>
+>> ---
+>>   Documentation/filesystems/proc.rst |  5 +--
+>>   fs/proc/array.c                    |  2 +-
+>>   include/linux/huge_mm.h            | 20 ++++++++---
+>>   include/linux/mm_types.h           | 13 +++----
+>>   include/uapi/linux/prctl.h         |  7 ++++
+>>   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
+>>   mm/khugepaged.c                    |  2 +-
+>>   7 files changed, 78 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+>> index 2971551b72353..915a3e44bc120 100644
+>> --- a/Documentation/filesystems/proc.rst
+>> +++ b/Documentation/filesystems/proc.rst
+>> @@ -291,8 +291,9 @@ It's slow but very precise.
+>>    HugetlbPages                size of hugetlb memory portions
+>>    CoreDumping                 process's memory is currently being dumped
+>>                                (killing the process may lead to a corrupted core)
+>> - THP_enabled		     process is allowed to use THP (returns 0 when
+>> -			     PR_SET_THP_DISABLE is set on the process
+>> + THP_enabled                 process is allowed to use THP (returns 0 when
+>> +                             PR_SET_THP_DISABLE is set on the process to disable
+>> +                             THP completely, not just partially)
+>>    Threads                     number of threads
+>>    SigQ                        number of signals queued/max. number for queue
+>>    SigPnd                      bitmap of pending signals for the thread
+>> diff --git a/fs/proc/array.c b/fs/proc/array.c
+>> index d6a0369caa931..c4f91a784104f 100644
+>> --- a/fs/proc/array.c
+>> +++ b/fs/proc/array.c
+>> @@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
+>>   	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
+>>   
+>>   	if (thp_enabled)
+>> -		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
+>> +		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
+>>   	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
+>>   }
+>>   
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index e0a27f80f390d..c4127104d9bc3 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -323,16 +323,26 @@ struct thpsize {
+>>   	(transparent_hugepage_flags &					\
+>>   	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+>>   
+>> +/*
+>> + * Check whether THPs are explicitly disabled through madvise or prctl, or some
+>> + * architectures may disable THP for some mappings, for example, s390 kvm.
+>> + */
+>>   static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+>>   		vm_flags_t vm_flags)
+>>   {
+>> +	/* Are THPs disabled for this VMA? */
+>> +	if (vm_flags & VM_NOHUGEPAGE)
+>> +		return true;
+>> +	/* Are THPs disabled for all VMAs in the whole process? */
+>> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
+>> +		return true;
+>>   	/*
+>> -	 * Explicitly disabled through madvise or prctl, or some
+>> -	 * architectures may disable THP for some mappings, for
+>> -	 * example, s390 kvm.
+>> +	 * Are THPs disabled only for VMAs where we didn't get an explicit
+>> +	 * advise to use them?
+>>   	 */
+>> -	return (vm_flags & VM_NOHUGEPAGE) ||
+>> -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
+>> +	if (vm_flags & VM_HUGEPAGE)
+>> +		return false;
+>> +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
+>>   }
+> 
+> 
+> Hi David,
 
-Sometimes this also causes a rename, so yes, it breaks the users. It not
-frequent, but it's not something unseen.
+Hi!
 
 > 
-> > Same way as (non-uapi) headers move around and break compilation for
-> > external projects as well.
-> 
-> Maybe they should not...
-> 
-> > 
-> >>
-> >>>
-> >>>> It's ridicilous. Just
-> >>>> because you introduced a new naming model for NEW SOC, does not mean you
-> >>>> now going to rename all boards which you already upstreamed.
-> >>>
-> >>> This is a genuine improvement, trying to untangle the mess that you
-> >>> expressed vast discontent about..
-> >>>
-> >>> There will be new boards based on this family of SoCs submitted either
-> >>> way, so I really think it makes sense to solve it once and for all,
-> >>> instead of bikeshedding over it again and again each time you get a new
-> >>> dt-bindings change in your inbox.
-> >>>
-> >>> I understand you're unhappy about patch 6, but the others are
-> >>> basically code janitoring.
-> >>
-> >> Renaming already accepted DTS is not improvement and not untangling
-> >> anything. These names were discussed (for very long time) and agreed on.
-> > 
-> > We did not have clearance to use the real name of the silicon back then,
-> > so this wasn't an option.
-> > 
-> >> What is the point of spending DT maintainers time to discuss the sa8775p
-> >> earlier when year later you come and start reversing things (like in
-> >> patch 6).
-> > 
-> > It's quite obviously a huge mess.. but we have a choice between sitting on
-> > it and complaining, or moving on.
-> > 
-> > I don't really see the need for patch 6, but I think the filename changes
-> > are truly required for sanity going forward.
-> > We don't want to spawn meaningless .dts files NUM_SKUS * NUM_BOARDS times.
-> 
-> Renaming will not change that. You will have still that amount of boards.
+> Over here, with MMF_DISABLE_THP_EXCEPT_ADVISED, MADV_HUGEPAGE will succeed as vm_flags has
+> VM_HUGEPAGE set, but MADV_COLLAPSE will fail to give a hugepage (as VM_HUGEPAGE is not set
+> and MMF_DISABLE_THP_EXCEPT_ADVISED is set) which I feel might not be the right behaviour
+> as MADV_COLLAPSE is "advise" and the prctl flag is PR_THP_DISABLE_EXCEPT_ADVISED?
 
-It's still that amount of boards, but it's much easier to follow what is
-going on with those boards. You might say that I'm biased, but I think
-this is much better than all previous attempts.
+THPs are disabled for these regions, so it's at least consistent with 
+the "disable all", but ...
 
 > 
-> > 
-> > So far these are basically Qualcomm-internal boards, or at the very least
-> > there was zero interest shown from people that weren't contracted to work
-> > on them.
+> This will be checked in multiple places in madvise_collapse: thp_vma_allowable_order,
+> hugepage_vma_revalidate which calls thp_vma_allowable_order and hpage_collapse_scan_pmd
+> which also ends up calling hugepage_vma_revalidate.
+ > > A hacky way would be to save and overwrite vma->vm_flags with 
+VM_HUGEPAGE at the start of madvise_collapse
+> if VM_NOHUGEPAGE is not set, and reset vma->vm_flags to its original value at the end of madvise_collapse
+> (Not something I am recommending, just throwing it out there).
+
+Gah.
+
 > 
-> They committed them to upstream for a reason. This comes with
-> obligations and responsibility, especially for big vendor like Qualcomm.
-> Qualcomm does not want to commit? No problem, don't upstream...
+> Another possibility is to pass the fact that you are in madvise_collapse to these functions
+> as an argument, this might look ugly, although maybe not as ugly as hugepage_vma_revalidate
+> already has collapse control arg, so just need to take care of thp_vma_allowable_orders.
+
+Likely this.
+
 > 
-> 
-> Best regards,
-> Krzysztof
+> Any preference or better suggestions?
+
+What you are asking for is not MMF_DISABLE_THP_EXCEPT_ADVISED as I 
+planned it, but MMF_DISABLE_THP_EXCEPT_ADVISED_OR_MADV_COLLAPSE.
+
+Now, one could consider MADV_COLLAPSE an "advise". (I am not opposed to 
+that change)
+
+Indeed, the right way might be telling vma_thp_disabled() whether we are 
+in collapse.
+
+Can you try implementing that on top of my patch to see how it looks?
 
 -- 
-With best wishes
-Dmitry
+Cheers,
+
+David / dhildenb
+
 
