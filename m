@@ -1,271 +1,201 @@
-Return-Path: <linux-kernel+bounces-743913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3650EB10552
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:12:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D0CB10555
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBDF3AB6A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1311CC3356
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD77279DD8;
-	Thu, 24 Jul 2025 09:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398E2270EB0;
+	Thu, 24 Jul 2025 09:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mmKlWA48"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UD57vQWt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B07278E77;
-	Thu, 24 Jul 2025 09:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D95B280A5C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753348332; cv=none; b=lcEFRy/O1khCS/mM7dbgcz3Rc3Svc+puARaRY3xfh0yk6TClSqcmZ+r+BddG02wjeIkfhJJEgs5cDhgduz4L7GCoTu0+luSVNo44QpWV//Hsc+/KTUihlL4Vut0zo3mJU+eXpw1bXZ5ApjyaUCYShKD6cmUE0iGV2L0R63P2eGM=
+	t=1753348344; cv=none; b=TGLNxbfdhuOVlYfkubtXyPLQn3C35wTnlcctEqkYzFjXxgE8pLaLEw/ctIIX7VlzgxBbPfVnH4QZy0wi3T23Pr/rHdwREcqNJrnYmaMc63Q749mZJ/lvaBi0nrBuhfemIHnrn7l5o7F2YfttwcncwIgJCeepBOuofjTEfZ+xp3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753348332; c=relaxed/simple;
-	bh=2D/eWy3V/JwWoNG/RE9YfWlQJ4L8lzp60VYkFuCkQcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxCoDBSiyPKrqpLDyicqyATmpZeHoS02ifvczPV5yBb/uC7aQfapgFXxULVHeaXaPpEy0JBgVdNnuKYFetqz1LHHWo1M+E992r8tTFi0li7hmoeitXpeWytjcJLt4eEUw0zPnXWqeCH/G0HXEXEV0bxETlHplyISvcz9au2KrGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mmKlWA48; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753348328; x=1784884328;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2D/eWy3V/JwWoNG/RE9YfWlQJ4L8lzp60VYkFuCkQcQ=;
-  b=mmKlWA48r9vnRv4YuJ27EQ4rWpg0QvPhwvaMI68YTZeGDEuZHyvtLkM6
-   ABe2eARLmGMfVw9KvbC+qtUevkWPKuqBK1La51Cs8XQMu/2BNuPq+eD6u
-   ti3QbpNOyRXuBl/WcVSYfJxFFyNWurujBfEegVIoEICEq3DeymfNl7jkz
-   sHj7idJQxTWQS5rORhZniaf0yrESVExklp2N72T63//h7KYQOOScQoYFR
-   lGHy3gDtSLM74VCT7phiZq9EA1ZPT8Ov2oUnhBK/0XFB2EYQszhvtnndP
-   TKFeO2Bb7dt2SrC2rF/xoKy4TzQU0h3BMGWoKAFPVtgI7DBsLUWm2Hz34
-   g==;
-X-CSE-ConnectionGUID: +2Tc+MQDTEq/e+qRWJM7gg==
-X-CSE-MsgGUID: 7Lhh9Fs6Q5aAO0/jcnOOsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66349627"
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="66349627"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 02:12:06 -0700
-X-CSE-ConnectionGUID: nHWgODuEQsqM30KDtuYtLA==
-X-CSE-MsgGUID: hjW/Vu/FQrW8mJrYU/Fv+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
-   d="scan'208";a="160219169"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 24 Jul 2025 02:12:04 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uerzd-000KGT-15;
-	Thu, 24 Jul 2025 09:12:01 +0000
-Date: Thu, 24 Jul 2025 17:11:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	kvm@vger.kernel.org, x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: Re: [PATCH v4 4/4] x86/cpu: <asm/processor.h>: Do not include the
- CPUID API header
-Message-ID: <202507241752.gju4meHj-lkp@intel.com>
-References: <20250723173644.33568-5-darwi@linutronix.de>
+	s=arc-20240116; t=1753348344; c=relaxed/simple;
+	bh=/fGLuzRv9uqIWiBS7OcabfsarJOynyoR55/Y//XLz0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TcWlt/Z54s5WjIjdQhZybw2Iy86iM0n7v/3JlcWoykL+5e6krycqtAI9CBlDGGslOAummyjFR9KKO0El4MqWavr9Stks1XXz6fEQazfs4P32hzkNgnkmIZWRC6F3rWEVUbxPD0LjUfLUMwkEKZFiOuq3qwEM+av8Ao/H47Tq0es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UD57vQWt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753348337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=REaQ47lap51WUskAbR5wjPuC4B6wGSnAM//4iqdNK2w=;
+	b=UD57vQWt768v9jYd3HlR8NlDM7588U8wiUngARCV/NhqVD8KO8B2mR9DT8UCdqobMsTIIy
+	Q+ka3Ib2Uf2BLgcSzEvd1fzR2Uv6zW459PxdpwXMEs8c2+YrOx6ZLDK/ugWyP2PZLasdem
+	VlxAxfJK4k8x7ALK11rsrYdH5Y5wi4A=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-K8TFU65tOsOSv6XWQ1xr4g-1; Thu, 24 Jul 2025 05:12:15 -0400
+X-MC-Unique: K8TFU65tOsOSv6XWQ1xr4g-1
+X-Mimecast-MFC-AGG-ID: K8TFU65tOsOSv6XWQ1xr4g_1753348334
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso4310125e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:12:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753348334; x=1753953134;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REaQ47lap51WUskAbR5wjPuC4B6wGSnAM//4iqdNK2w=;
+        b=B3AuAV7Z8HzSk/14NqtQYwyMump0Y0uiIyi4Hlbxymcd5/zJqAdwcREHrH4zAVnCT2
+         hlUWXI1/8f2SY+FVuyjgTyG1tPdX4YjiKwipqp3XmsA+YLgnm2lThCLPNthkc3/PL+ED
+         AdunknYzM2vExw0mtWOC4jW4N38/39ICGljnkzsw9Gf6anZdjf/TQUtqRVvZOSxd8j9s
+         oIkvZjwn9mOVEmirIr+j+bowZA7Zz6c/j5HYZnFP/JDZjQA341yC9Yp40b4Uq1875cWJ
+         L6Ot1ExnPM9UCUqaKqDKJ65alyhvFSqqM1i/EH23j8ezIvM1wC42u7tSA0D662KL076K
+         Ywpg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8gc+1gX2t1hB0kx8SrKJ8Pmh0qrdjjMOgs4p5/5IjzXdXu5X8nZDPPYLLuL3pFXsSGI1pU5x5bJvHNy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbrirbSYocD/mGMHvBHk58iXEmCOiFkBLGkBEfiLeVrsUMaWSy
+	ke3qCcM8Bwjhg0+JzRk3L/cyKhYfC4n1GP10HBAtQZL+wUYYxacZN8r00Mt3o27b0FXvhtCQwaN
+	qLOa9R0rFLvzSAneunw/Jjel9PSjrSvUo+VXRa4mJtKisKVjbziH6r/JrMj+aVUa1bA==
+X-Gm-Gg: ASbGncsCfyVwiqOXK8kVGl7mENzPGUIF/hEZNSirg9nb6S9QbhyJ/MyORdrMa8+u1wl
+	2J1ZMUMK/LbeZjAgazwz8vB1Fj7+n3f0LKfxzr0esxSV4mgWyYnUFV5EJCjRjHwaruDhGcUT5Yc
+	vyZdaYxpkAnJo8wSJl2SIUwy5EzXDY2FUJ+ftO9OJ4UxGvMSlNBFiWRU5Ymsg1uf63ElTbP69HI
+	PQaFqsJdFDDmwJFBc1RF8DuBqI1hqGGUXNI3crG+HYxiam/qfeTYzqsMfXmKO37yRPy0WY5qC4D
+	ykWnIBfPrAD9tooEzWZyXxnMCt9x72Z81E128vBU74nbfbblwocwPc8EBh+9husWRZJ1Ja2B6Sb
+	bnrjbF/Sy5gqhhiM2G+tcfjBRMwxB2tHvy9jMTLZ+DKdbGXKxJi8ZazDgUQYorvmn
+X-Received: by 2002:a05:600c:8208:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-45868cff3b7mr56742245e9.19.1753348334263;
+        Thu, 24 Jul 2025 02:12:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDzOX6Mhws9A1Omx3HvWOpCb6kzhDOZIa496xO5yTunIpBln3/qRd12dwGwSfKf4IXi3aG7A==
+X-Received: by 2002:a05:600c:8208:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-45868cff3b7mr56741905e9.19.1753348333789;
+        Thu, 24 Jul 2025 02:12:13 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1f:5e00:c941:d6fb:3e30:b42? (p200300d82f1f5e00c941d6fb3e300b42.dip0.t-ipconnect.de. [2003:d8:2f1f:5e00:c941:d6fb:3e30:b42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fcb84e6sm1506388f8f.61.2025.07.24.02.12.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 02:12:13 -0700 (PDT)
+Message-ID: <e9bb93a6-1e95-40e5-ad10-a60d80735432@redhat.com>
+Date: Thu, 24 Jul 2025 11:12:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723173644.33568-5-darwi@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/9] introduce PGTY_mgt_entry page_type
+To: Huan Yang <link@vivo.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Rik van Riel
+ <riel@surriel.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Harry Yoo <harry.yoo@oracle.com>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>, Usama Arif <usamaarif642@gmail.com>,
+ Yu Zhao <yuzhao@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250724084441.380404-1-link@vivo.com>
+ <86516155-f2d9-4e8d-9d27-bdcb59e2d129@redhat.com>
+ <cc560d48-884d-4c8f-9fb0-565d74ad769a@vivo.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <cc560d48-884d-4c8f-9fb0-565d74ad769a@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Ahmed,
+On 24.07.25 11:09, Huan Yang wrote:
+> 
+> 在 2025/7/24 16:59, David Hildenbrand 写道:
+>> On 24.07.25 10:44, Huan Yang wrote:
+>>> Summary
+>>> ==
+>>> This patchset reuses page_type to store migrate entry count during the
+>>> period from migrate entry setup to removal, enabling accelerated VMA
+>>> traversal when removing migrate entries, following a similar 
+>>> principle to
+>>> early termination when folio is unmapped in try_to_migrate.
+>>
+>> I absolutely detest (ab)using page types for that, so no from my side 
+>> unless I am missing something important.
+>>
+>>>
+>>> In my self-constructed test scenario, the migration time can be reduced
+>>
+>> How relevant is that in practice?
+> 
+> IMO, any folio mapped < nr vma in mapping(anon_vma, addresss_space), 
+> will benefit from this.
+> 
+> So, all pages that have been COW-ed by child processes can be skipped.
 
-kernel test robot noticed the following build errors:
+For small anon folios, you could use the anon-exclusive marker to derive 
+"there can only be a single mapping".
 
-[auto build test ERROR on 89be9a83ccf1f88522317ce02f854f30d6115c41]
+It's stored alongside the migration entry.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ahmed-S-Darwish/x86-cpuid-Remove-transitional-asm-cpuid-h-header/20250724-014828
-base:   89be9a83ccf1f88522317ce02f854f30d6115c41
-patch link:    https://lore.kernel.org/r/20250723173644.33568-5-darwi%40linutronix.de
-patch subject: [PATCH v4 4/4] x86/cpu: <asm/processor.h>: Do not include the CPUID API header
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250724/202507241752.gju4meHj-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250724/202507241752.gju4meHj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507241752.gju4meHj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> arch/x86/kvm/svm/sev.c:2939:2: error: call to undeclared function 'cpuid'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    2939 |         cpuid(0x8000001f, &eax, &ebx, &ecx, &edx);
-         |         ^
-   1 error generated.
-
-
-vim +/cpuid +2939 arch/x86/kvm/svm/sev.c
-
-179a8427fcbffe Ashish Kalra          2025-05-12  2904  
-916391a2d1dc22 Tom Lendacky          2020-12-10  2905  void __init sev_hardware_setup(void)
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2906  {
-7aef27f0b2a8a5 Vipin Sharma          2021-03-29  2907  	unsigned int eax, ebx, ecx, edx, sev_asid_count, sev_es_asid_count;
-6f1d5a3513c237 Ashish Kalra          2025-03-24  2908  	struct sev_platform_init_args init_args = {0};
-1dfe571c12cf99 Brijesh Singh         2024-05-01  2909  	bool sev_snp_supported = false;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2910  	bool sev_es_supported = false;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2911  	bool sev_supported = false;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2912  
-80d0f521d59e08 Sean Christopherson   2023-08-24  2913  	if (!sev_enabled || !npt_enabled || !nrips)
-e8126bdaf19400 Sean Christopherson   2021-04-21  2914  		goto out;
-e8126bdaf19400 Sean Christopherson   2021-04-21  2915  
-c532f2903b69b7 Sean Christopherson   2022-01-20  2916  	/*
-c532f2903b69b7 Sean Christopherson   2022-01-20  2917  	 * SEV must obviously be supported in hardware.  Sanity check that the
-c532f2903b69b7 Sean Christopherson   2022-01-20  2918  	 * CPU supports decode assists, which is mandatory for SEV guests to
-770d6aa2e416fd Sean Christopherson   2023-10-18  2919  	 * support instruction emulation.  Ditto for flushing by ASID, as SEV
-770d6aa2e416fd Sean Christopherson   2023-10-18  2920  	 * guests are bound to a single ASID, i.e. KVM can't rotate to a new
-770d6aa2e416fd Sean Christopherson   2023-10-18  2921  	 * ASID to effect a TLB flush.
-c532f2903b69b7 Sean Christopherson   2022-01-20  2922  	 */
-c532f2903b69b7 Sean Christopherson   2022-01-20  2923  	if (!boot_cpu_has(X86_FEATURE_SEV) ||
-770d6aa2e416fd Sean Christopherson   2023-10-18  2924  	    WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_DECODEASSISTS)) ||
-770d6aa2e416fd Sean Christopherson   2023-10-18  2925  	    WARN_ON_ONCE(!boot_cpu_has(X86_FEATURE_FLUSHBYASID)))
-916391a2d1dc22 Tom Lendacky          2020-12-10  2926  		goto out;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2927  
-44e70718df4fc2 Sean Christopherson   2025-02-10  2928  	/*
-44e70718df4fc2 Sean Christopherson   2025-02-10  2929  	 * The kernel's initcall infrastructure lacks the ability to express
-44e70718df4fc2 Sean Christopherson   2025-02-10  2930  	 * dependencies between initcalls, whereas the modules infrastructure
-44e70718df4fc2 Sean Christopherson   2025-02-10  2931  	 * automatically handles dependencies via symbol loading.  Ensure the
-44e70718df4fc2 Sean Christopherson   2025-02-10  2932  	 * PSP SEV driver is initialized before proceeding if KVM is built-in,
-44e70718df4fc2 Sean Christopherson   2025-02-10  2933  	 * as the dependency isn't handled by the initcall infrastructure.
-44e70718df4fc2 Sean Christopherson   2025-02-10  2934  	 */
-44e70718df4fc2 Sean Christopherson   2025-02-10  2935  	if (IS_BUILTIN(CONFIG_KVM_AMD) && sev_module_init())
-44e70718df4fc2 Sean Christopherson   2025-02-10  2936  		goto out;
-44e70718df4fc2 Sean Christopherson   2025-02-10  2937  
-916391a2d1dc22 Tom Lendacky          2020-12-10  2938  	/* Retrieve SEV CPUID information */
-916391a2d1dc22 Tom Lendacky          2020-12-10 @2939  	cpuid(0x8000001f, &eax, &ebx, &ecx, &edx);
-916391a2d1dc22 Tom Lendacky          2020-12-10  2940  
-1edc14599e06fd Tom Lendacky          2020-12-10  2941  	/* Set encryption bit location for SEV-ES guests */
-1edc14599e06fd Tom Lendacky          2020-12-10  2942  	sev_enc_bit = ebx & 0x3f;
-1edc14599e06fd Tom Lendacky          2020-12-10  2943  
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2944  	/* Maximum number of encrypted guests supported simultaneously */
-916391a2d1dc22 Tom Lendacky          2020-12-10  2945  	max_sev_asid = ecx;
-8cb756b7bdcc6e Sean Christopherson   2021-04-21  2946  	if (!max_sev_asid)
-916391a2d1dc22 Tom Lendacky          2020-12-10  2947  		goto out;
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2948  
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2949  	/* Minimum ASID value that should be used for SEV guest */
-916391a2d1dc22 Tom Lendacky          2020-12-10  2950  	min_sev_asid = edx;
-d3d1af85e2c75b Brijesh Singh         2021-04-15  2951  	sev_me_mask = 1UL << (ebx & 0x3f);
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2952  
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2953  	/*
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2954  	 * Initialize SEV ASID bitmaps. Allocate space for ASID 0 in the bitmap,
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2955  	 * even though it's never used, so that the bitmap is indexed by the
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2956  	 * actual ASID.
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2957  	 */
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2958  	nr_asids = max_sev_asid + 1;
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2959  	sev_asid_bitmap = bitmap_zalloc(nr_asids, GFP_KERNEL);
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2960  	if (!sev_asid_bitmap)
-916391a2d1dc22 Tom Lendacky          2020-12-10  2961  		goto out;
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2962  
-bb2baeb214a71c Mingwei Zhang         2021-08-02  2963  	sev_reclaim_asid_bitmap = bitmap_zalloc(nr_asids, GFP_KERNEL);
-f31b88b35f90f6 Sean Christopherson   2021-04-21  2964  	if (!sev_reclaim_asid_bitmap) {
-f31b88b35f90f6 Sean Christopherson   2021-04-21  2965  		bitmap_free(sev_asid_bitmap);
-f31b88b35f90f6 Sean Christopherson   2021-04-21  2966  		sev_asid_bitmap = NULL;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2967  		goto out;
-f31b88b35f90f6 Sean Christopherson   2021-04-21  2968  	}
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2969  
-0aa6b90ef9d75b Ashish Kalra          2024-01-31  2970  	if (min_sev_asid <= max_sev_asid) {
-7aef27f0b2a8a5 Vipin Sharma          2021-03-29  2971  		sev_asid_count = max_sev_asid - min_sev_asid + 1;
-106ed2cad9f7bd Sean Christopherson   2023-06-06  2972  		WARN_ON_ONCE(misc_cg_set_capacity(MISC_CG_RES_SEV, sev_asid_count));
-0aa6b90ef9d75b Ashish Kalra          2024-01-31  2973  	}
-916391a2d1dc22 Tom Lendacky          2020-12-10  2974  	sev_supported = true;
-eaf78265a4ab33 Joerg Roedel          2020-03-24  2975  
-916391a2d1dc22 Tom Lendacky          2020-12-10  2976  	/* SEV-ES support requested? */
-8d364a0792dd95 Sean Christopherson   2021-04-21  2977  	if (!sev_es_enabled)
-916391a2d1dc22 Tom Lendacky          2020-12-10  2978  		goto out;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2979  
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2980  	/*
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2981  	 * SEV-ES requires MMIO caching as KVM doesn't have access to the guest
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2982  	 * instruction stream, i.e. can't emulate in response to a #NPF and
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2983  	 * instead relies on #NPF(RSVD) being reflected into the guest as #VC
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2984  	 * (the guest can then do a #VMGEXIT to request MMIO emulation).
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2985  	 */
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2986  	if (!enable_mmio_caching)
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2987  		goto out;
-0c29397ac1fdd6 Sean Christopherson   2022-08-03  2988  
-916391a2d1dc22 Tom Lendacky          2020-12-10  2989  	/* Does the CPU support SEV-ES? */
-916391a2d1dc22 Tom Lendacky          2020-12-10  2990  	if (!boot_cpu_has(X86_FEATURE_SEV_ES))
-916391a2d1dc22 Tom Lendacky          2020-12-10  2991  		goto out;
-916391a2d1dc22 Tom Lendacky          2020-12-10  2992  
-d922056215617e Ravi Bangoria         2024-05-31  2993  	if (!lbrv) {
-d922056215617e Ravi Bangoria         2024-05-31  2994  		WARN_ONCE(!boot_cpu_has(X86_FEATURE_LBRV),
-d922056215617e Ravi Bangoria         2024-05-31  2995  			  "LBRV must be present for SEV-ES support");
-d922056215617e Ravi Bangoria         2024-05-31  2996  		goto out;
-d922056215617e Ravi Bangoria         2024-05-31  2997  	}
-d922056215617e Ravi Bangoria         2024-05-31  2998  
-916391a2d1dc22 Tom Lendacky          2020-12-10  2999  	/* Has the system been allocated ASIDs for SEV-ES? */
-916391a2d1dc22 Tom Lendacky          2020-12-10  3000  	if (min_sev_asid == 1)
-916391a2d1dc22 Tom Lendacky          2020-12-10  3001  		goto out;
-916391a2d1dc22 Tom Lendacky          2020-12-10  3002  
-7aef27f0b2a8a5 Vipin Sharma          2021-03-29  3003  	sev_es_asid_count = min_sev_asid - 1;
-106ed2cad9f7bd Sean Christopherson   2023-06-06  3004  	WARN_ON_ONCE(misc_cg_set_capacity(MISC_CG_RES_SEV_ES, sev_es_asid_count));
-916391a2d1dc22 Tom Lendacky          2020-12-10  3005  	sev_es_supported = true;
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3006  	sev_snp_supported = sev_snp_enabled && cc_platform_has(CC_ATTR_HOST_SEV_SNP);
-916391a2d1dc22 Tom Lendacky          2020-12-10  3007  
-916391a2d1dc22 Tom Lendacky          2020-12-10  3008  out:
-179a8427fcbffe Ashish Kalra          2025-05-12  3009  	if (sev_enabled) {
-179a8427fcbffe Ashish Kalra          2025-05-12  3010  		init_args.probe = true;
-179a8427fcbffe Ashish Kalra          2025-05-12  3011  		if (sev_platform_init(&init_args))
-179a8427fcbffe Ashish Kalra          2025-05-12  3012  			sev_supported = sev_es_supported = sev_snp_supported = false;
-179a8427fcbffe Ashish Kalra          2025-05-12  3013  		else if (sev_snp_supported)
-179a8427fcbffe Ashish Kalra          2025-05-12  3014  			sev_snp_supported = is_sev_snp_initialized();
-179a8427fcbffe Ashish Kalra          2025-05-12  3015  	}
-179a8427fcbffe Ashish Kalra          2025-05-12  3016  
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3017  	if (boot_cpu_has(X86_FEATURE_SEV))
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3018  		pr_info("SEV %s (ASIDs %u - %u)\n",
-0aa6b90ef9d75b Ashish Kalra          2024-01-31  3019  			sev_supported ? min_sev_asid <= max_sev_asid ? "enabled" :
-0aa6b90ef9d75b Ashish Kalra          2024-01-31  3020  								       "unusable" :
-0aa6b90ef9d75b Ashish Kalra          2024-01-31  3021  								       "disabled",
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3022  			min_sev_asid, max_sev_asid);
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3023  	if (boot_cpu_has(X86_FEATURE_SEV_ES))
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3024  		pr_info("SEV-ES %s (ASIDs %u - %u)\n",
-800173cf7560e0 Thorsten Blum         2024-12-27  3025  			str_enabled_disabled(sev_es_supported),
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3026  			min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3027  	if (boot_cpu_has(X86_FEATURE_SEV_SNP))
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3028  		pr_info("SEV-SNP %s (ASIDs %u - %u)\n",
-800173cf7560e0 Thorsten Blum         2024-12-27  3029  			str_enabled_disabled(sev_snp_supported),
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3030  			min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-6d1bc9754b0407 Alexander Mikhalitsyn 2023-05-22  3031  
-8d364a0792dd95 Sean Christopherson   2021-04-21  3032  	sev_enabled = sev_supported;
-8d364a0792dd95 Sean Christopherson   2021-04-21  3033  	sev_es_enabled = sev_es_supported;
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3034  	sev_snp_enabled = sev_snp_supported;
-1dfe571c12cf99 Brijesh Singh         2024-05-01  3035  
-d1f85fbe836e61 Alexey Kardashevskiy  2023-06-15  3036  	if (!sev_es_enabled || !cpu_feature_enabled(X86_FEATURE_DEBUG_SWAP) ||
-d1f85fbe836e61 Alexey Kardashevskiy  2023-06-15  3037  	    !cpu_feature_enabled(X86_FEATURE_NO_NESTED_DATA_BP))
-d1f85fbe836e61 Alexey Kardashevskiy  2023-06-15  3038  		sev_es_debug_swap_enabled = false;
-ac5c48027bacb1 Paolo Bonzini         2024-04-04  3039  
-ac5c48027bacb1 Paolo Bonzini         2024-04-04  3040  	sev_supported_vmsa_features = 0;
-ac5c48027bacb1 Paolo Bonzini         2024-04-04  3041  	if (sev_es_debug_swap_enabled)
-ac5c48027bacb1 Paolo Bonzini         2024-04-04  3042  		sev_supported_vmsa_features |= SVM_SEV_FEAT_DEBUG_SWAP;
-eaf78265a4ab33 Joerg Roedel          2020-03-24  3043  }
-eaf78265a4ab33 Joerg Roedel          2020-03-24  3044  
+So once you restored that single migration entry, you can just stop the 
+walk.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+
+David / dhildenb
+
 
