@@ -1,179 +1,158 @@
-Return-Path: <linux-kernel+bounces-744506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5707B10DBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CEEB10DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B7B7B8A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33AD17FA9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9182DE710;
-	Thu, 24 Jul 2025 14:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF34A48;
+	Thu, 24 Jul 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nKqqmxhd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="XNJ3Fyu+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J1++5O+R"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E1292906
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6471991DD;
+	Thu, 24 Jul 2025 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367758; cv=none; b=T4Ghu8D7xJOPmkAT/UdCtPBrHf6TH7XtrpFpLN0PpuEhGlK0f7AHQ6fKjoq+NsdVI2/BFjC/Lw3tiMLGbuLbRzDlSa5Ei82VmdGmfjAOMPV9vnS0Csjou9FscW1ws9pHe7ZpW92JqTxABpulDR4JxLuB4zzhgZM6NMgKTI89tDE=
+	t=1753367806; cv=none; b=l9kqb8ET3c4QUZn0nLSgXuF1Pc+9n/Su1o+urmEXyL7E7VSkAdcM2XFMKwzzxmgxK5kujzq2TWe7lMnzUq2zUAvjEQ+euj1CvSeG2ZstYTvU82bKejKgvuBQj2EOgo4+6EcmKADljtrIwgEAGse2EvSflAtrcouPK7CUl+gMnR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367758; c=relaxed/simple;
-	bh=dfJiQYzRwSlcnWAUOhPPgJKtd/pmTmlGFzYmp6BeV/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pt2hRnmIehDkXMmPTLL4rCGqSkUrwiWDO2XcTH7mbG35pRrhsdACvoC1hy76Vsxnpv+6Sx4pjjKhf/GCpn6+gYOr09OkjzK3ks/ZdWDBZrPx2FgYLCoOtPL7WCjYymfKUT+adel2P0tJLv6LgnfzMvdP43rxY/NQzKQuarH4jV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nKqqmxhd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9ZtV6018150
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:35:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GJP5OrXYtaNIwr5c3QE7nQS8J5flRoXRt0htwVVshBo=; b=nKqqmxhdhfF6hIJl
-	JlHtcuALY42H9cVgkN6/8wF1vLCv07fNq1T9kyur2pJBO1u+51WxEHVhzwD5Sy6s
-	aeN7gXGM1t+h+ZEy4BoiLJMyWWdP3XEfUiUZrZXTBImWC7M62ZigRDh7bVq/fCkT
-	CZlk/h8ggAd3NXqsY8kxC7Ceg/Ab7ZNtqzKXOTnNt4dn3NVSEFbSP/DO41BZnvEy
-	2TET/tNm7pCgwYn1hqYYyNO8RXYoVpOMPJylEsQhrkUe2Wb5Z+zxL3urkZ8VSQfL
-	HOhq3Gtegu4wXHwZ+hFdmEUaOQWh6LjCJfrJIlXL0Tf1ThQ9Qm6oG6z+BePA4bXh
-	7Yphqg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6u6ke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:35:54 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-75494e5417bso1208096b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:35:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753367753; x=1753972553;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJP5OrXYtaNIwr5c3QE7nQS8J5flRoXRt0htwVVshBo=;
-        b=SRsqjGlVNyMSRDbSJoN6Ngf9dN9L+ooEkzYNtQsnuvawBDbvyMF5PZ7JINidQF/K7g
-         EWVeCdcVtX+D3V0LHdQaXfqTyKq1h+ZBDV9ubK5GCP8CgFpgLaUAh72IzG+WwXYmau1w
-         TU0Xp+2ZcyW21qPPm7frKw56OifMgE5Tt89liZiLFPLM0TgEoM4db1lDvSgFcF/HLKvd
-         kSlVv+uL+ZoxM9gTXJPnVbWT/RfAc+GMPCjygsQE3SzCDzEJuBqhA7+umMjG7Idhnxbb
-         udYGhR60yRc2K84AUARLYOy7BZMRTZb8IaqECataVl9Djmwpc42x+EsEaOJHMBtMcNo1
-         I1Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqJsNWv+IOAjS22lmo32K+LnmTch+ptsyzEw6UcaUdguo+tQVJh9p4xIZhnxk2MSYNWRjQAT29zspUFJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhilWGkrEWHAMKYulOKgHSsMDl2KhKthkNC6sm9sFaInavMhmd
-	nTJrxcovadg4KnwqHMeXW8X3wNv0WqVXoKlUhenXSg51mO0qB/SzQUmfHZggGpUWuVLDl07vUJU
-	/zaRLE5BJsqDsbWBjShyKTQ8gdrnX6mqRshN2yOWg/GjIP0sqko72xS1R/UBCH+5x2nQ=
-X-Gm-Gg: ASbGncvAvn79VK2Va7vkp1OvFlC9AFtGqK6XbUz2xKcLKMGfw2CtERy8Yv7vzzrF826
-	LhGVbDSUN4SFpYxmaijMW+7hOhm/wgJ9nHjS2eLCsuKpUtyI2DiC+k+3R8JiJGVLRl92FdyYZoC
-	GV9Tmffdm2MaLy3U/TYRxfLlm9UDTVI6lrZHlSuPeV/j5lJkRr+f5Ds4RtlHyxeFxawakRWuO+k
-	R/NAG4EzjryhsL9Zpaxh+qgUWLX5Fc8fAn+PnWWdJx8/AutA1qq6HW4WYS+RLK7+vK9I7lPiGDv
-	QEMXhdgI9ZFrmJJ/jIg1mHlLAJ69scRjiEvC7IYzOik7mC05fAgYT5dOEk/qiA==
-X-Received: by 2002:a05:6a00:8b8c:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-761f0aae747mr2193515b3a.9.1753367753117;
-        Thu, 24 Jul 2025 07:35:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErsxD0US8xYnn5Y59yyRl45GxrphsiOAnuwC/zARlLpy5inA5mS3Yzry3LPCBjaE+Q2UR4zA==
-X-Received: by 2002:a05:6a00:8b8c:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-761f0aae747mr2193469b3a.9.1753367752353;
-        Thu, 24 Jul 2025 07:35:52 -0700 (PDT)
-Received: from [192.168.1.5] ([106.222.235.3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ab41dfe0sm1775131b3a.0.2025.07.24.07.35.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 07:35:52 -0700 (PDT)
-Message-ID: <ac476949-d0e7-4058-ad76-c3cc45691092@oss.qualcomm.com>
-Date: Thu, 24 Jul 2025 20:05:46 +0530
+	s=arc-20240116; t=1753367806; c=relaxed/simple;
+	bh=77TBTh9ABtAAEq3tsuaWocaxu9QneF+toyez+6ZSLQk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KdFMbt2YHpayDgctUgLOpAGwKJWvuOq5n6H9nYE8YLZi+Mhqz8DLzULtK0DkrtGSHQQBETq/PYkiy45fsdlHZl6vo7NYgUrsjvc71ukHRSOiW9Bumoh2ezbWZSVrrKfvQKpp1cdGhHgy80oumjnMWjbz2TSzuCM9PaAho2rcnNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=XNJ3Fyu+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J1++5O+R; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 5376D7A07DF;
+	Thu, 24 Jul 2025 10:36:43 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 24 Jul 2025 10:36:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753367803;
+	 x=1753454203; bh=bM4y6d61jdyy6y1hRa3LUsatLw1ObMUGIZ4gnUWcA/g=; b=
+	XNJ3Fyu+rYjmZimkRlBuiG9TzEoj9/08d2r5q2BLST8mdFLd85Wpz9YzmjTJov8d
+	k2po54+dK4OZtGmAujGXpKMvDk4saH062GBGs+V1NtQSByVPH9rlSQsWeTlR4Lp+
+	Xxu6AjQe0HuqXdi4lACM/IfNv4P7MZdmqXbufmawKym2AmT3hk7I62b4oXdL3ndk
+	ZVYvMkQhETtdi8Oyq/uRzoFQdHTylz8MalnFCDw/jBvKkBIxS1+1CGI4eom6TbCk
+	pevpt2hplnXMzYR3DQcHxE0RqoUEKHdsuOMBvui+9EiZAXKwXoA1WRDIpbjL1pTO
+	VabojYbHQyGcwddYCuucSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753367803; x=
+	1753454203; bh=bM4y6d61jdyy6y1hRa3LUsatLw1ObMUGIZ4gnUWcA/g=; b=J
+	1++5O+R/qmVpGl0ZhHYRRREjo1e6zJhMhFjOklp1c3BWXEB83ZcKbUWXhcQgFO71
+	SJ/fF0vkPpFSxoVlBdllxQihIu0iDOmHjwCpJD/KQMPYk7msClFd4LwBwRpfk8qC
+	/TFLdqd882mklQzkvAr+SXwRXiuchWj6p/XbLAhPp9f2ekFDTNJo36OtKe/N6z4c
+	H2ypIvSfsfGnSEdBGHQK2C0i9n9N2JdEihuze5Vj/jZcFE4BrI6FKS5mpLhDP8vF
+	IPtoVFqasM2pw8MwlYYfc4Gim7X3HwqCdVdnTwgsLJdC+zLh4MFYnR1bKDdMTDTn
+	CoCICxnp4fs2bLXe3RIgA==
+X-ME-Sender: <xms:-kSCaCBR9dn7QvbNGt6M_L8jTVTckt31scXU6lkiibCQVN6Z82QwBA>
+    <xme:-kSCaMhmzAV2qdtzHBOt-1QH0gzp40GUyjZ2iGA6BOW34W34qPLxLElEVUvGS0gcj
+    X4lLwchEphqPA1cWhM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdektdeltdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehkohhitghhih
+    hrohdruggvnhestggrnhhonhhitggrlhdrtghomhdprhgtphhtthhopehgvggvrhhtodhr
+    vghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghnuggvrhdrsh
+    hvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigr
+    lhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghnughrihihrdhshhgvvh
+    gthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:-kSCaGy5D61IbA5CAJE7alxhXNC6XDVTTCIjX2Pi3deCNFmnh8S5eQ>
+    <xmx:-kSCaIMcyeTIDPxrSB9oUhMItlKZZvLL1RODjU2nMY9uo3aFW3tGXw>
+    <xmx:-kSCaFd1cGH4duRpTmxK8Hk5YCbs2No7Mnr1FxfpR6HLjka2697ljw>
+    <xmx:-kSCaNQqbL111HfJ4Ca6XuiHNIwv6yJfvnMhgbZytjlHRurhTbRSjg>
+    <xmx:-0SCaPVTp1iJWZOJfHzoUfC0FReHTz2S0DU_k7cVrQY0jGqbu2XDozm9>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B46B9700065; Thu, 24 Jul 2025 10:36:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm: adreno: a6xx: enable GMU bandwidth voting for
- x1e80100 GPU
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250721-topic-x1e80100-gpu-bwvote-v1-1-946619b0f73a@linaro.org>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250721-topic-x1e80100-gpu-bwvote-v1-1-946619b0f73a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=688244ca cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=pSIa2sKh8ADkebnh61Ypzg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=1B6o04Z4kyHWbw-D5gsA:9
- a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: mVSMip9M0QnuIfv8XSfpjUm-kDBwTIF_
-X-Proofpoint-GUID: mVSMip9M0QnuIfv8XSfpjUm-kDBwTIF_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDExMSBTYWx0ZWRfXzdWIuRvZx2cV
- 7FFyxqE0flhhbvVjv/QqexCGC+qrDh6VFxmeP+gPb3rmLZN3o2ztzYMMUfjpuk0JbBxIWytW0uN
- 1FNnUV9tkalKarpIsh1oN8obLvQivtmUQM8282Ed/93JVwYRWZ9e3Mb62iIHJWio9QNKp2pw7cT
- UyrQfUC/nDHqfr7N+BwSrAgDGVeq+ySkWcaVKu+09uH5JfKMKaDpkxqJx/7VYULM+KNnaz20rPh
- Repo/Ux/qabLKI+OjP7jD/nxpm2cNTI1+Fa6X7eSsa8UVnTiIkKARXhEjnn3aMkZ74jeOV72QD+
- WzdlIsDz3V/jmb9sINt4DeGxTU2dDokJIMd5ANie+yOThdhDhMT2t47Rv3P03TJTZ91Gfhg63QE
- IPz53cKDs07DeCEtUzCr9ThOBDHGFDiDwFvq6wXy2BcGOvMPrZybwZUgy06h2xAS0gbVUgVF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240111
+X-ThreadId: T94b7864e561602ed
+Date: Thu, 24 Jul 2025 16:36:11 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>, "Peng Fan" <peng.fan@nxp.com>,
+ "Lee Jones" <lee@kernel.org>, "Koichiro Den" <koichiro.den@canonical.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <88b2b76f-ab02-4d3d-9503-1122e9c2b538@app.fastmail.com>
+In-Reply-To: <aIDu8McZRsk8xspV@smile.fi.intel.com>
+References: <20250722153634.3683927-1-arnd@kernel.org>
+ <CAMRc=Mejnr8UzN93X=CWcV5jDTt9-U+Nxcm3qb=6uVV0PMiZVQ@mail.gmail.com>
+ <aIDu8McZRsk8xspV@smile.fi.intel.com>
+Subject: Re: [PATCH] gpiolib: make legacy interfaces optional
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/21/2025 6:05 PM, Neil Armstrong wrote:
-> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
-> the Frequency and Power Domain level, but by default we leave the
-> OPP core scale the interconnect ddr path.
-> 
-> Declare the Bus Control Modules (BCMs) and the corresponding parameters
-> in the GPU info struct to allow the GMU to vote for the bandwidth.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index 00e1afd46b81546eec03e22cda9e9a604f6f3b60..b313505e665ba50e46f2c2b7c34925b929a94c31 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -1440,6 +1440,17 @@ static const struct adreno_info a7xx_gpus[] = {
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
->  			.gmu_chipid = 0x7050001,
->  			.gmu_cgc_mode = 0x00020202,
-> +			.bcms = (const struct a6xx_bcm[]) {
-> +				{ .name = "SH0", .buswidth = 16 },
-> +				{ .name = "MC0", .buswidth = 4 },
-> +				{
-> +					.name = "ACV",
-> +					.fixed = true,
-> +					.perfmode = BIT(2),
-> +					.perfmode_bw = 10687500,
+On Wed, Jul 23, 2025, at 16:17, Andy Shevchenko wrote:
+> On Wed, Jul 23, 2025 at 10:39:32AM +0200, Bartosz Golaszewski wrote:
+>> On Tue, Jul 22, 2025 at 5:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.or=
+g> wrote:
+>
+> ...
+>
+>> > +#ifdef CONFIG_GPIOLIB
+>> > +#include <linux/gpio/consumer.h>
+>>=20
+>> I want to queue this ASAP but do we really need this guard here?
+>> consumer.h already guards against !CONFIG_GPIOLIB internally, right?
+>
+> I probably missed something, but I do not understand why we need this =
+include
+> at all in the gpio.h.
 
-This configurations should be similar to X1-45.
+We've been thinning out linux/gpio.h over the years on both the contents
+and the inclusions, but I'm fairly sure that out of the 173 files that
+still include it, the majority actually need the consumer interfaces.
 
--Akhil
+One thing I've considered doing here was to make this file only contain
+two lines
 
-> +				},
-> +				{ /* sentinel */ },
-> +			},
->  		},
->  		.preempt_record_size = 4192 * SZ_1K,
->  		.speedbins = ADRENO_SPEEDBINS(
-> 
-> ---
-> base-commit: 97987520025658f30bb787a99ffbd9bbff9ffc9d
-> change-id: 20250721-topic-x1e80100-gpu-bwvote-9fc4690fe5e3
-> 
-> Best regards,
+#include <linux/gpio/consumer.h>
+#include <linux/gpio/legacy.h>
 
+then then replace all of the remaining users with one or the other
+in order to remove linux/gpio.h completely.
+
+I think both approaches are useful and can be combined, but the
+CONFIG_GPIOLIB_LEGACY patch seems sufficient for now.
+
+If you want to experiment with the other one, you could try
+my whole series and drop the #include <linux/gpio/consumer.h>
+line to find all the instances in allmodconfig builds that should
+use that in place of linux/gpio.h.
+
+      Arnd
 
