@@ -1,246 +1,149 @@
-Return-Path: <linux-kernel+bounces-744484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB76FB10D7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3E6B10D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDFA5AA74AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32ABA169D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52732E2671;
-	Thu, 24 Jul 2025 14:22:14 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C772E3AFF;
+	Thu, 24 Jul 2025 14:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xckxuzj6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F952DE6F2;
-	Thu, 24 Jul 2025 14:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8ED2DEA70
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366934; cv=none; b=dykYjas/Cu6at3E1BnjtXrA79kkVwC0xd5uER8w8mrEiVbyYShKvYRGVgyvFnapv7inDDesNAJLAbYxxuVaySk9dYZcr/o7svUUdC1ofaDGVq51bBKxu79WI+4fSe1Y4k7nITLbDUm0Doi6Tltfaf8FQfHDNyn3NuRIVzhDhgNY=
+	t=1753366805; cv=none; b=glGkWxFrbNaQCDFGrhv5bDQFTgcd/pD87C2gtgPa+xQe/Ezo6jLGZVE2OJ2zXfpWCwFm6Etg8YkA9mZWf7/nMX91ed2MNKJrLnaNtgncQF6Jz2L1y6mYLy6dl00Z8be6uzvTTK1VItXuALXMt7Ry4JY8yGPiYx2Ntta4NfM3ST8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366934; c=relaxed/simple;
-	bh=0ryDMNeP26zjUmSpubUCBH2owgldoHEksLkFZqoF6Pk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e5u5X8Nr8ZspWTZLQSMSahcWI8gMIAoUQ80SaahyTa7BM6cv/khQf3rGMg+gSeDEvn/SAblFpS+bwsagpPk3e3/L+etqwoJSWAynpERBD25uzcMHn46dFKpV/9L2fxR5k+siSBG2h3pEQVuDd1CGNE2fgd5gB3lzfjoOFtQj48Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 93deb6ba689911f0b29709d653e92f7d-20250724
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:9d876e86-2e65-4fcf-892f-de0b556ba897,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:1
-X-CID-INFO: VERSION:1.1.45,REQID:9d876e86-2e65-4fcf-892f-de0b556ba897,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:6493067,CLOUDID:4cd8bb18e87096945995bb35b0809fa0,BulkI
-	D:250724222207IKOVVR9L,BulkQuantity:0,Recheck:0,SF:17|19|24|38|43|66|74|78
-	|81|82|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil
-	,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:
-	0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 93deb6ba689911f0b29709d653e92f7d-20250724
-X-User: duanchenghao@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 656998136; Thu, 24 Jul 2025 22:22:06 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	yangtiezhu@loongson.cn,
-	hengqi.chen@gmail.com,
-	chenhuacai@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	guodongtai@kylinos.cn,
-	duanchenghao@kylinos.cn,
-	youling.tang@linux.dev,
-	jianghaoran@kylinos.cn,
-	vincent.mc.li@gmail.com
-Subject: [PATCH v4 5/5] LoongArch: BPF: Add struct ops support for trampoline
-Date: Thu, 24 Jul 2025 22:19:29 +0800
-Message-Id: <20250724141929.691853-6-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250724141929.691853-1-duanchenghao@kylinos.cn>
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
+	s=arc-20240116; t=1753366805; c=relaxed/simple;
+	bh=RB0MXSL9iAdyQfhytAVo156s7TbriQQimjTjISxShuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdbqzWbHGLvVT8er/ziTwq/6QEPkFM3JKGd4XWmhmz5FgE3aAFbsWTbFho9Qsseox2+kZMYyUMHv9i+sqANN91nNwt1RJ/mpPLv7OLS9AHOwWf20eDGf61zsn3oNqbILiHg61zNaXESwUnq5nmRrjFGkz9wfMdFs99J+HcXIKzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xckxuzj6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O6dpdK028534
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:20:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=A+VdurEKUduQkz+MfAKRObdV
+	YePeVHPl1wVvZbZgeJc=; b=Xckxuzj6GDcsD/3rzVHt9pBnkZoBD/6fEgbaUWmZ
+	7vx1oTdWAS+aSMsCN5L5w3nHLUQzfMNpW8qeh1dk23Y7oR6z2xgwN+CqOndRAaIT
+	FF4Ba2X/m53dxzIWPB8wz2SgsXrk+sogtrC2xcqsHKQZKwL+91Q9lXqK7EArbHdo
+	nr0A/aEIIu6WEnvqgPzI5BUKP1D43Qm8ByGQ1GzTHSLVgVuwpiak/d4ITYRphyOY
+	Z5wTfuQFX948UOU9nFQevWR2ayHkuDYLU0arv/l1zw0eDaEBjUV++XYRykTvmk/R
+	FjigUunVkkwXNhBjDRH75Hgsgjmw6/NiNPuTnEvWqLqIkw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483frk1awx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:20:03 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e33af599bcso164984085a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753366802; x=1753971602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+VdurEKUduQkz+MfAKRObdVYePeVHPl1wVvZbZgeJc=;
+        b=I6g2t+Q+vzXKoQ1Wfk2C/G05hEsUpojwzQqhN99PlrnTm8yBFNt4cuu3NClkQg4UY6
+         GILyAqFiB77YKST7jAKEZ/jrevWX8lHrlpCc7yJ9LIflqptgLNqVIaKWdUMTeV0HlyLj
+         BJVL0q9D7UdB+YNOPLX2gLUeY7lj5IiF7gtSSsHvMw+SgzOYuskRVQsNl5KvdGAdncyg
+         fjSiXpGEYm9lkeOpRg6JP1mrVneQxUdZEezZmXuaZxr4jOuoYINQiIfQVorg2CwSvqtN
+         Gus02IuPba6xuImw3BERBqiIK2xMP9Y3GlBt9bpmdLf2LWkr3TK0WUgxCI7zJNDLASt/
+         IsMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzFAnS7w4bJ7EUXfx9qGEAvSrJQovCS0App6Ky1AbzOkdhXkJxGliq2xV/AlJJQtB7Ec7cB8xRqLLILKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB9x69En/jKTst45kVL7/MFR5zEXY7hH0II9PTutfEkTHSW60S
+	T9ejKlsvyF/TjvnEZdEzdWBU6gSkfgXCTNgL9kgWqU+XOFUBBX+jkQLrJ/bij/TfPfdkjfvVPIH
+	0+j7LH686+ts8CMKQrx2pu9O5XJl+c9cMIJBuT1s+vUSI43pk7aQel8eDHwmIaX6Bq38=
+X-Gm-Gg: ASbGncu8OM2fAlMGLrk9fHABaBYPhL/RXQgi43oiVwyuD5deJXq2ioMGbNL1/hAWCD8
+	16PtHI2+PptVr7fK9CUxxFUwvXkpZ2ZV+mRVLbk5suMJMp3ZkSdBNjzSFCguKEk/v3x2hOSQ4ez
+	njxQYROa4R8meBJ9zDEOmYySo65tTScza36WgMSEpuWov4jsCUwA7X8zLc2bfBohWI+syu7tODv
+	8IEoSrhHRtOHIj3wxce8A6cMQ0jZPXx2AhwCCmb+4kVQSPFZpb+2wbY2/Nb9SC5PXS3o6kblGP/
+	vEyFAnOy6Y5JtYwYDJ8LdO9433FxYB8awo+HUHJlkRwLuJq+7jQn0RksKLkv9HxqHphm4QXB5ta
+	EJX96uws7H4aQCT5Klb8MA/KPAMErPzh6zcheI2nf3Yd6O5+NRQtd
+X-Received: by 2002:a05:620a:a918:b0:7e3:46da:9e1f with SMTP id af79cd13be357-7e62a226f8emr851537185a.56.1753366801519;
+        Thu, 24 Jul 2025 07:20:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu82FQZpsw4p0HB44p5QHytv3oARhOYGPxT+kbfN/+yl6AMnXI5Y2W/WXRiHc3PGuzslrCdA==
+X-Received: by 2002:a05:620a:a918:b0:7e3:46da:9e1f with SMTP id af79cd13be357-7e62a226f8emr851531285a.56.1753366800903;
+        Thu, 24 Jul 2025 07:20:00 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53ca2066sm375867e87.200.2025.07.24.07.19.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 07:19:59 -0700 (PDT)
+Date: Thu, 24 Jul 2025 17:19:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] scsi: ufs: qcom: Drop dead compile guard
+Message-ID: <33dxc5kf4m2luijisbdzsxof5yi4hhrbsrfziqsbsqzm3xkkad@ivhyl5ozuyc6>
+References: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEwOSBTYWx0ZWRfXwbli1B3fjRSX
+ 7gcK7SMI0OuSQGRNYF0x+XbXHeffarUtBqiJrB1OUCTONIKQpI/zihSIR0l77vtErISbIFUSZm7
+ KX+b2DKPDJV8JvGd3BYSBm3JargzG5J95dMaV0HISdpP3Q/5Pp+EHbAYE1xd8l0uiUVVQz/eKlT
+ qPxIBUUT5cvTisWX/t+MfMNdjOy01PJnfmIAf074bLn07bBhZhFy0cNdavjclICAs8uEgsgzlzV
+ 2x9Fcpk6hUEHgjEwsWReM+WGPrMmBCMxk9ilqwttLXShWmS8cLtpWS8dz7Xd/Ffa3HcGzoOO9H0
+ NxHfMQvSJC677y/maM1Y9//98yc0TJuMJCF4Pix6Z+jAemyNouISrFijCHr9bPhc65Z1l9XUpeP
+ Dp85/piPOJ8jESRm7BkbrUy347XGqZ1eeE4Jc5+DgoHMHpK1VEanLWJgCnG+g0OkxfQhsSjV
+X-Proofpoint-GUID: IaS9L7HEkm1aJXqecV93ilb04KwJvwiv
+X-Authority-Analysis: v=2.4 cv=WbsMa1hX c=1 sm=1 tr=0 ts=68824113 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=Ts7gs6oRpwORAAbGo2kA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: IaS9L7HEkm1aJXqecV93ilb04KwJvwiv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 impostorscore=0 mlxlogscore=918 bulkscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1015 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507240109
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+On Thu, Jul 24, 2025 at 02:23:52PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> SCSI_UFSHCD already selects DEVFREQ_GOV_SIMPLE_ONDEMAND, drop the
+> check.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+> Is this something that could be discovered by our existing static
+> checkers?
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
 
-Use BPF_TRAMP_F_INDIRECT flag to detect struct ops and emit proper
-prologue and epilogue for this case.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-With this patch, all of the struct_ops related testcases (except
-struct_ops_multi_pages) passed on LoongArch.
 
-The testcase struct_ops_multi_pages failed is because the actual
-image_pages_cnt is 40 which is bigger than MAX_TRAMP_IMAGE_PAGES.
-
-Before:
-
-  $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-  ...
-  WATCHDOG: test case struct_ops_module/struct_ops_load executes for 10 seconds...
-
-After:
-
-  $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-  ...
-  #15      bad_struct_ops:OK
-  ...
-  #399     struct_ops_autocreate:OK
-  ...
-  #400     struct_ops_kptr_return:OK
-  ...
-  #401     struct_ops_maybe_null:OK
-  ...
-  #402     struct_ops_module:OK
-  ...
-  #404     struct_ops_no_cfi:OK
-  ...
-  #405     struct_ops_private_stack:SKIP
-  ...
-  #406     struct_ops_refcounted:OK
-  Summary: 8/25 PASSED, 3 SKIPPED, 0 FAILED
-
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 71 ++++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 24 deletions(-)
-
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index ac5ce3a28..6a84fb104 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1603,6 +1603,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
- 	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
- 	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
-+	bool is_struct_ops = flags & BPF_TRAMP_F_INDIRECT;
- 	int ret, save_ret;
- 	void *orig_call = func_addr;
- 	u32 **branches = NULL;
-@@ -1678,18 +1679,31 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 
- 	stack_size = round_up(stack_size, 16);
- 
--	/* For the trampoline called from function entry */
--	/* RA and FP for parent function*/
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
--	emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
--	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
--	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
--
--	/* RA and FP for traced function*/
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
--	emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
--	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
--	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	if (!is_struct_ops) {
-+		/*
-+		 * For the trampoline called from function entry,
-+		 * the frame of traced function and the frame of
-+		 * trampoline need to be considered.
-+		 */
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
-+		emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
-+
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
-+		emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	} else {
-+		/*
-+		 * For the trampoline called directly, just handle
-+		 * the frame of trampoline.
-+		 */
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
-+		emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	}
- 
- 	/* callee saved register S1 to pass start time */
- 	emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
-@@ -1779,21 +1793,30 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 
- 	emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
- 
--	/* trampoline called from function entry */
--	emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
--	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
-+	if (!is_struct_ops) {
-+		/* trampoline called from function entry */
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
-+
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
- 
--	emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
--	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
-+		if (flags & BPF_TRAMP_F_SKIP_FRAME)
-+			/* return to parent function */
-+			emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
-+		else
-+			/* return to traced function */
-+			emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
-+	} else {
-+		/* trampoline called directly */
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
- 
--	if (flags & BPF_TRAMP_F_SKIP_FRAME)
--		/* return to parent function */
- 		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
--	else
--		/* return to traced function */
--		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
-+	}
- 
- 	ret = ctx->idx;
- out:
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
