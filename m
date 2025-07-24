@@ -1,150 +1,153 @@
-Return-Path: <linux-kernel+bounces-744227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B974B109CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A05BDB109D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF311CE0F4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46C81CE3A3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B972C325B;
-	Thu, 24 Jul 2025 12:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B232BE7A7;
+	Thu, 24 Jul 2025 12:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="No4s5Z+m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D714F2C08DD;
-	Thu, 24 Jul 2025 12:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="RSV9t1fr"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41B42C08DD;
+	Thu, 24 Jul 2025 12:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753358425; cv=none; b=Vqc7EtOkrUDTWK+Lps4QbcWmc1v/wVlZVWbMxP0sWD8CCYy93FreyBNOzQDTKYM0U/HuuMy9Vdit3q8oDnGw+vUckgP5KBUFhcHMVq3KyIFvPFPMcgYvpmoYFi3PkpfohcqWiKechr6yNHMY55o7zueyd2G0prdRN87IJsOXjSo=
+	t=1753358489; cv=none; b=bKRlcWW5Qy0kRqWNgVZ0ezaozlRoFqHAZHWAQDNbS1/DYoPAmwaTyoR36tdUUDDCLz5TOSfEDoyIfXb/NjrhnoIuEL8HoUoKnA+q8q6kBy4YRY0KbIRP2j57OlUMAjLbUwa2F7h/SViFCaNtC5sr/cusbZYgmbaaEKSiBtYRpyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753358425; c=relaxed/simple;
-	bh=E959aFyB7Fz7wM1ihx+E3PvvcL2j2BmEZFA2aVmLOhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIvqom2jDgMcY+9SlOyel/4UKeKgxK+bbVyz8nSC3rb6oh/wlZ4bYRL744ZHawP652N7vdkNP0gwT9Qdnn8rXqZuvMxItT9R2HW7wNAcNA1g25H8T7uPFfUWQWPyTbVSu2zYsTPxP6dKYE5wV2a5Kx7dJFbDrgGgJp8yu+eccsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=No4s5Z+m; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753358423; x=1784894423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E959aFyB7Fz7wM1ihx+E3PvvcL2j2BmEZFA2aVmLOhc=;
-  b=No4s5Z+muSMzeoJ0O9Dp2FEtkbJDVvTWxK7YSvSmcBnfzna6LO6RiHjE
-   lCMucQTcanfVIF75dXcB7lE6dmwV4Ir017eVlrADMztQtHFRkyOAn7QeE
-   0jO23TprDZW5vVrifOQcPReT66MtbjattOzdj7Am8ifoUp970YjsZ8B9e
-   DtZUwQ0HSmCYIE9hgtAGLCnJcPSvViaaNCQbgxrqG5UZeZDuoK83r6QsS
-   RV9KSrz21de+Jg3z4EOR2v6iYL3Tmi+j7CFBM/x5knfKRRimvygBMusTE
-   xqUqfybuQAozHBJDSuS1pf6h3YDEJxt0iPI2CJAFRsEpjp59HwePSJYc3
-   w==;
-X-CSE-ConnectionGUID: q3b+T8ZHSOep4WtSK2bwqA==
-X-CSE-MsgGUID: fESbx4CKTva3Wt3/d3YATA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55635948"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="55635948"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:00:22 -0700
-X-CSE-ConnectionGUID: um94yLrvQkeieesPNbWB8Q==
-X-CSE-MsgGUID: 58mHhrkeTRuAwGrnTU6UFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="165734118"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 24 Jul 2025 05:00:19 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ueucS-000KP7-03;
-	Thu, 24 Jul 2025 12:00:16 +0000
-Date: Thu, 24 Jul 2025 20:00:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ashish Kalra <Ashish.Kalra@amd.com>, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, thomas.lendacky@amd.com,
-	Sairaj.ArunKodilkar@amd.com, Vasant.Hegde@amd.com,
-	herbert@gondor.apana.org.au
-Cc: oe-kbuild-all@lists.linux.dev, seanjc@google.com, pbonzini@redhat.com,
-	will@kernel.org, robin.murphy@arm.com, john.allen@amd.com,
-	davem@davemloft.net, michael.roth@amd.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] iommu/amd: Add support to remap/unmap IOMMU
- buffers for kdump
-Message-ID: <202507241929.76UExdsw-lkp@intel.com>
-References: <6a48567cd99a0ef915862b3c6590d1415d287870.1753133022.git.ashish.kalra@amd.com>
+	s=arc-20240116; t=1753358489; c=relaxed/simple;
+	bh=w7PbfBqTgMeAz8Q4ObOiOZb3ZgS9tORtq/NJuJ9lQfM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=MFhg28hPGGrzsBHpoJJ1kb07g+IJPrL/Q+MD63RDYHi3/KdERDK/C8rMCc3MN7gFxer8SHoBlHsKAcnKV9ynU3RaQaUOTnRblXbdxj4V4/aPCfeBXYBkNJOcUriIuPoyyVR+lpdwTgyoxCuV9Y+svIfsbfm/A/Jia0909OmXsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=RSV9t1fr reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=0sHiDwJliauha+2ZqYLG22+5Mn4RxXcnn7wzkYD5rxw=; b=R
+	SV9t1fr1yKy0AfQU48621iWwaFqxmsJwJmlGIA0XrCTF3nSF02C2a9iUpJJC0Fo6
+	Rj/IMsWnqp01xaZi1+38bno/9mCEO2+TD6/kYtcmG44XYKnuRzK+ydw4Zc7hgHB1
+	mNXUkAzZ3IuoLYUrMF9B4xyu73BBQ6h1Tq6Z1dtHdY=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-106 (Coremail) ; Thu, 24 Jul 2025 20:00:05 +0800
+ (CST)
+Date: Thu, 24 Jul 2025 20:00:05 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de
+Cc: hjc@rock-chips.com, mripard@kernel.org, naoki@radxa.com,
+	stephen@radxa.com, cristian.ciocaltea@collabora.com,
+	neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com,
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh@kernel.org,
+	sebastian.reichel@collabora.com,
+	"Andy Yan" <andy.yan@rock-chips.com>
+Subject: Re:[PATCH v5 00/10] Add support for RK3588 DisplayPort Controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20250716100440.816351-1-andyshrk@163.com>
+References: <20250716100440.816351-1-andyshrk@163.com>
+X-NTES-SC: AL_Qu2eAf+et0wr4ymQZekfmUkTh+o2Xca5uf0j3YBWOZh+jCDp+QI/WUd7PHfV+c6FAj2WqyCvXhFv2v9ITLdpdJIwy+P6kRHwohgDB5b8O/wqyA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a48567cd99a0ef915862b3c6590d1415d287870.1753133022.git.ashish.kalra@amd.com>
+Message-ID: <3eeb9150.90fb.1983c4e1163.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:aigvCgD3_1hGIIJoZ_QFAA--.53340W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEhaUXmiCGCWvpgACsS
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Ashish,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on herbert-cryptodev-2.6/master]
-[also build test WARNING on herbert-crypto-2.6/master linus/master v6.16-rc7 next-20250724]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Kalra/iommu-amd-Add-support-to-remap-unmap-IOMMU-buffers-for-kdump/20250722-055642
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/6a48567cd99a0ef915862b3c6590d1415d287870.1753133022.git.ashish.kalra%40amd.com
-patch subject: [PATCH v4 1/4] iommu/amd: Add support to remap/unmap IOMMU buffers for kdump
-config: x86_64-randconfig-r133-20250724 (https://download.01.org/0day-ci/archive/20250724/202507241929.76UExdsw-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250724/202507241929.76UExdsw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507241929.76UExdsw-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/iommu/amd/init.c:723:41: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/iommu/amd/init.c:723:41: sparse:     expected void *
-   drivers/iommu/amd/init.c:723:41: sparse:     got void [noderef] __iomem *
->> drivers/iommu/amd/init.c:723:41: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/iommu/amd/init.c:723:41: sparse:     expected void *
-   drivers/iommu/amd/init.c:723:41: sparse:     got void [noderef] __iomem *
->> drivers/iommu/amd/init.c:723:41: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void * @@     got void [noderef] __iomem * @@
-   drivers/iommu/amd/init.c:723:41: sparse:     expected void *
-   drivers/iommu/amd/init.c:723:41: sparse:     got void [noderef] __iomem *
-
-vim +723 drivers/iommu/amd/init.c
-
-   707	
-   708	static inline void *iommu_memremap(unsigned long paddr, size_t size)
-   709	{
-   710		phys_addr_t phys;
-   711	
-   712		if (!paddr)
-   713			return NULL;
-   714	
-   715		/*
-   716		 * Obtain true physical address in kdump kernel when SME is enabled.
-   717		 * Currently, previous kernel with SME enabled and kdump kernel
-   718		 * with SME support disabled is not supported.
-   719		 */
-   720		phys = __sme_clr(paddr);
-   721	
-   722		if (cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
- > 723			return ioremap_encrypted(phys, size);
-   724		else
-   725			return memremap(phys, size, MEMREMAP_WB);
-   726	}
-   727	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+CkhlbGxvIERtaXRyeSwKICAgIENvdWxkIHlvdSBwbGVhc2UgY29udGludWUgdG8gcmV2aWV3IHRo
+aXMgcGF0Y2ggc2VyaWVzIGF0IHlvdXIgY29udmVuaWVuY2U/CiAgICBUaGFuayB5b3UhCgpBdCAy
+MDI1LTA3LTE2IDE4OjA0OjI3LCAiQW5keSBZYW4iIDxhbmR5c2hya0AxNjMuY29tPiB3cm90ZToK
+PkZyb206IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPgo+Cj5UaGVyZSBhcmUg
+dHdvIERXIERQVFggYmFzZWQgRGlzcGxheVBvcnQgQ29udHJvbGxlciBvbiByazM1ODggd2hpY2gK
+PmFyZSBjb21wbGlhbnQgd2l0aCB0aGUgRGlzcGxheVBvcnQgU3BlY2lmaWNhdGlvbiBWZXJzaW9u
+IDEuNCB3aXRoCj50aGUgZm9sbG93aW5nIGZlYXR1cmVzOgo+Cj4qIERpc3BsYXlQb3J0IDEuNGEK
+PiogTWFpbiBMaW5rOiAxLzIvNCBsYW5lcwo+KiBNYWluIExpbmsgU3VwcG9ydCAxLjYyR2Jwcywg
+Mi43R2JwcywgNS40R2JwcyBhbmQgOC4xR2Jwcwo+KiBBVVggY2hhbm5lbCAxTWJwcwo+KiBTaW5n
+bGUgU3RyZWFtIFRyYW5zcG9ydChTU1QpCj4qIE11bHRpc3RyZWFtIFRyYW5zcG9ydCAoTVNUKQo+
+KiBUeXBlLUMgc3VwcG9ydCAoYWx0ZXJuYXRlIG1vZGUpCj4qIEhEQ1AgMi4yLCBIRENQIDEuMwo+
+KiBTdXBwb3J0cyB1cCB0byA4LzEwIGJpdHMgcGVyIGNvbG9yIGNvbXBvbmVudAo+KiBTdXBwb3J0
+cyBSQkcsIFlDYkNyNDo0OjQsIFlDYkNyNDoyOjIsIFlDYkNyNDoyOjAKPiogUGl4ZWwgY2xvY2sg
+dXAgdG8gNTk0TUh6Cj4qIEkyUywgU1BESUYgYXVkaW8gaW50ZXJmYWNlCj4KPlRoZSBjdXJyZW50
+IHZlcnNpb24gb2YgdGhpcyBwYXRjaCBzZXJpZXMgb25seSBzdXBwb3J0cyBiYXNpYyBkaXNwbGF5
+IG91dHB1dHMuCj5JIGNvbmR1Y3RlZCB0ZXN0cyB3aXRoIERQMCBpbiAxMDgwcCBhbmQgNEtANjAg
+WUNiQ3I0OjI6MCBtb2RlczsgdGhlIEFMVC9UeXBlLUMKPm1vZGUgd2FzIHRlc3RlZCBvbiBSb2Nr
+IDVCLCBEUDEgd2FzIHRlc3RlZCBvbiBSb2NrIDUgSVRYIGJ5IFN0ZXBoZW4gYW5kIFBpb3RyLgo+
+SERDUCBhbmQgYXVkaW8gZmVhdHVyZXMgcmVtYWluIHVuaW1wbGVtZW50ZWQuCj5Gb3IgUkszNTg4
+LCBpdCdzIG9ubHkgc3VwcG9ydCBTU1QsIHdoaWxlIGluIHRoZSB1cGNvbWluZyBSSzM1NzYsIGl0
+IGNhbiBzdXBwb3J0Cj5NU1Qgb3V0cHV0Lgo+Cj4KPkNoYW5nZXMgaW4gdjU6Cj4tIFVzZSBkcm1f
+ZHBfcmVhZF9zaW5rX2NvdW50X2NhcCBpbnN0ZWFkIG9mIHRoZSBwcml2YXRlIGltcGxlbWVudGF0
+aW9uLgo+LSBBZGQgTUFJTlRBSU5FUlMgZW50cnkuCj4tIExpbmsgdG8gdjQ6IGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwLzIwMjUwNjE5MDYzOTAwLjcwMDQ5MS0xLWFuZHlz
+aHJrQDE2My5jb20vCj4KPkNoYW5nZXMgaW4gdjQ6Cj4tIERyb3AgdW5uZWNlc3NhcnkgaGVhZGVy
+IGZpbGVzCj4tIFN3aXRjaCB0byBkZXZtX2RybV9icmlkZ2VfYWxsb2MKPi0gRHJvcCB1bnVzZWQg
+ZnVuY3Rpb24KPi0gQWRkIHBsYXRmb3JtX3NldF9kcnZkYXRhCj4tIExpbmsgdG8gdjM6IGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwLzIwMjUwNDAzMDMzNzQ4LjI0NTAwNy0x
+LWFuZHlzaHJrQDE2My5jb20vCj4KPkNoYW5nZXMgaW4gdjM6Cj4tIFJlYmFzZSBvbiBkcm0tbWlz
+Yy1uZXh0Cj4tIFN3aXRjaCB0byBjb21tb24gaGVscGVycyB0byBwb3dlciB1cC9kb3duIGRwIGxp
+bmsKPi0gT25seSBwYXNzIHBhcmFtZXRlcnMgdG8gcGh5IHRoYXQgc2hvdWxkIGJlIHNldAo+LSBG
+aXJzdCBpbnRyb2R1Y2VkIGluIHRoaXMgdmVyc2lvbi4KPi0gRmlyc3QgaW50cm9kdWNlZCBpbiB0
+aGlzIHZlcnNpb24uCj4tIEFkZCBSQTYyMCBpbnRvIGJyaWRnZSBjaGFpbi4KPi0gTGluayB0byB2
+MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAvMjAyNTAzMTIxMDQyMTQu
+NTI1MjQyLTEtYW5keXNocmtAMTYzLmNvbS8KPgo+Q2hhbmdlcyBpbiB2MjoKPi0gTGluayB0byBW
+MTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtcm9ja2NoaXAvMjAyNTAyMjMxMTMwMzYu
+NzQyNTItMS1hbmR5c2hya0AxNjMuY29tLwo+LSBGaXggYSBjaGFyYWN0ZXIgZW5jb2RpbmcgaXNz
+dWUKPi0gRml4IGNvbXBpbGUgZXJyb3Igd2hlbiBidWlsZCBhcyBtb2R1bGUKPi0gQWRkIHBoeSBp
+bml0Cj4tIE9ubHkgdXNlIG9uZSBkd19kcF9saW5rX3RyYWluX3NldAo+LSBpbmxpbmUgZHdfZHBf
+cGh5X3VwZGF0ZV92c19lbXBoCj4tIFVzZSBkcF9zZHAKPi0gQ2hlY2sgcmV0dXJuIHZhbHVlIG9m
+IGRybV9tb2Rlc2V0X2xvY2sKPi0gTWVyZ2UgY29kZSBpbiBhdG9taWNfcHJlX2VuYWJsZS9tb2Rl
+X2ZpeHVwIHRvIGF0b21pY19jaGVjawo+LSBSZXR1cm4gTlVMTCBpZiBjYW4ndCBmaW5kIGEgc3Vw
+cG9ydGVkIG91dHB1dCBmb3JtYXQKPi0gRml4IG1heF9saW5rX3JhdGUgZnJvbSBwbGF0X2RhdGEK
+Pi0gbm8gaW5jbHVkZSB1YXBpIHBhdGgKPi0gc3dpdGNoIHRvIGRybW1fZW5jb2Rlcl9pbml0Cj4t
+IFNvcnQgaW4gYWxwaGFiZXRpY2FsIG9yZGVyCj4KPkFuZHkgWWFuICgxMCk6Cj4gIGR0LWJpbmRp
+bmdzOiBkaXNwbGF5OiByb2NrY2hpcDogQWRkIHNjaGVtYSBmb3IgUkszNTg4IERQVFggQ29udHJv
+bGxlcgo+ICBkcm0vYnJpZGdlOiBzeW5vcHN5czogQWRkIERXIERQVFggQ29udHJvbGxlciBzdXBw
+b3J0IGxpYnJhcnkKPiAgZHJtL3JvY2tjaGlwOiBBZGQgUkszNTg4IERQVFggb3V0cHV0IHN1cHBv
+cnQKPiAgTUFJTlRBSU5FUlM6IEFkZCBlbnRyeSBmb3IgRFcgRFBUWCBDb250cm9sbGVyIGJyaWRn
+ZQo+ICBkdC1iaW5kaW5nczogZGlzcGxheTogc2ltcGxlLWJyaWRnZTogQWRkIHJhNjIwIGNvbXBh
+dGlibGUKPiAgZHJtL2JpcmRnZTogc2ltcGxlLWJyaWRnZTogQWRkIHN1cHBvcnQgZm9yIHJhZHhh
+IHJhNjIwCj4gIGFybTY0OiBkdHM6IHJvY2tjaGlwOiBBZGQgRFAwIGZvciByazM1ODgKPiAgYXJt
+NjQ6IGR0czogcm9ja2NoaXA6IEFkZCBEUDEgZm9yIHJrMzU4OAo+ICBhcm02NDogZHRzOiByb2Nr
+Y2hpcDogRW5hYmxlIERpc3BsYXlQb3J0IGZvciByazM1ODhzIENvb2wgUGkgNEIKPiAgYXJtNjQ6
+IGR0czogcm9ja2NoaXA6IEVuYWJsZSBEUDJIRE1JIGZvciBST0NLIDUgSVRYCj4KPiAuLi4vZGlz
+cGxheS9icmlkZ2Uvc2ltcGxlLWJyaWRnZS55YW1sICAgICAgICAgfCAgICAxICsKPiAuLi4vZGlz
+cGxheS9yb2NrY2hpcC9yb2NrY2hpcCxkdy1kcC55YW1sICAgICAgfCAgMTUwICsrCj4gTUFJTlRB
+SU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAgOCArCj4gYXJjaC9h
+cm02NC9ib290L2R0cy9yb2NrY2hpcC9yazM1ODgtYmFzZS5kdHNpIHwgICAzMCArCj4gLi4uL2Fy
+bTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1leHRyYS5kdHNpIHwgICAzMCArCj4gLi4uL2Jv
+b3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1yb2NrLTUtaXR4LmR0cyAgIHwgICA1OSArCj4gLi4uL2Jv
+b3QvZHRzL3JvY2tjaGlwL3JrMzU4OHMtY29vbHBpLTRiLmR0cyAgIHwgICAzNyArCj4gZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zaW1wbGUtYnJpZGdlLmMgICAgICAgIHwgICAgNSArCj4gZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9LY29uZmlnICAgICAgIHwgICAgNyArCj4gZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9NYWtlZmlsZSAgICAgIHwgICAgMSArCj4gZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1kcC5jICAgICAgIHwgMjA0NCArKysrKysrKysr
+KysrKysrKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9LY29uZmlnICAgICAgICAgICAgICB8
+ICAgIDkgKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9NYWtlZmlsZSAgICAgICAgICAgICB8
+ICAgIDEgKwo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9kd19kcC1yb2NrY2hpcC5jICAgICB8
+ICAxNTAgKysKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jICAg
+fCAgICAxICsKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5oICAg
+fCAgICAxICsKPiBpbmNsdWRlL2RybS9icmlkZ2UvZHdfZHAuaCAgICAgICAgICAgICAgICAgICAg
+fCAgIDIwICsKPiAxNyBmaWxlcyBjaGFuZ2VkLCAyNTU0IGluc2VydGlvbnMoKykKPiBjcmVhdGUg
+bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcm9j
+a2NoaXAvcm9ja2NoaXAsZHctZHAueWFtbAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWRwLmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9ncHUvZHJtL3JvY2tjaGlwL2R3X2RwLXJvY2tjaGlwLmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQg
+aW5jbHVkZS9kcm0vYnJpZGdlL2R3X2RwLmgKPgo+LS0gCj4yLjQzLjAKPgo+YmFzZS1jb21taXQ6
+IDYwODVhNDVhMDY5ZDJhZWFiNmJiM2U1ZjNmZGQzMmUyNTk3MDMxMDYKPmJyYW5jaDogcmszNTg4
+LWRwLXVwc3RyZWFtLXY1Cg==
 
