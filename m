@@ -1,203 +1,178 @@
-Return-Path: <linux-kernel+bounces-743905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9466B10530
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:04:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E5FB10537
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABE7561337
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184A31896ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51C2737EA;
-	Thu, 24 Jul 2025 09:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WE/r3QLd"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8ED12CD88;
-	Thu, 24 Jul 2025 09:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6166F27510E;
+	Thu, 24 Jul 2025 09:06:24 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647EF210F4A;
+	Thu, 24 Jul 2025 09:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753347870; cv=none; b=p1HTizuzyW4EqZmyi8nH1n2TW1kdpWR/ziWHaaB2apEz/Gwj1E1UuPkldGY6uLztOt3OF56XfvZ0TYyuxZAdJHGftqsAxn+NIlVY+MNgwQ5ROYUERP0y5/MRXtGSG1TKDSnM/+JbfiggIhv7Qj5W85tR7yxARAw1V/oQsCdStHE=
+	t=1753347984; cv=none; b=qSOfKJ+w9baJ6ci97x54J/8pRD0WD44KMrTssFR2pQnrk9LxXD/v6IojqyAELnAWIxUEtj3seyiOWwKNP+L2ARsdSFpW0CuqSuTPR1G0MCgQeWzfXZ3Pg9qAWQ0du9ynVoIBLuoojDaK5x/UoS15DtUS5PtqsuHDmEyQVSgo1fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753347870; c=relaxed/simple;
-	bh=b1H6V4I5C65sGeDa6VdyPv44eqGIvJEavaXNwRuYWgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gP0W/gNu2djBsd3lAR7xkvqQ0izvB+5NBHLWyESd46wHk3aixJSLdMlGuHSTnxgJe5yJTUQ2f4FO4qL325m5pGn6fXXIXG20wzTF5aA67g3fZo6Jpdj/oJV2qI15L2uDxzPRYC5scD1Whrv4UErbqxZrzi53qeWpydDT+wOXy18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WE/r3QLd; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B956243202;
-	Thu, 24 Jul 2025 09:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753347865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ljPavOCv9leGeucowkE7pUHl9BhqyYjecFGlLvah4No=;
-	b=WE/r3QLdRYTomMsbIpsnbsFMZDBSxpDyz9MxkoBnetJQIUxuPkK++LhbUiMohPZXDOyh3i
-	mjtbvGUtzgxvPKZkfPziQqGD/tsL/Ym5V71QIi8xwLNijvZTC21i1cgYc/XS/idTgFapCK
-	ZrqRsDR5qd6I8fOa6UH3AHSOrkfNGNPEeV5654nc/+yD+xSVp34P98F7Okuv9ZQHJHg8CO
-	ali0b6O+pbKPrqX0v7qwj1ekPaneJapK/YgRbIxeLWH45WVyDRNxV6dYNK128HOH5e3PAR
-	rxKX4rPNMxqXhDMDH5ALGicL+QxJ2g/K0Y+H7y/jDHFRx5rzmgKsg2f1KkXFGg==
-From: alexandre.belloni@bootlin.com
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: kernel test robot <lkp@intel.com>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] rtc: pcf85063: scope pcf85063_config structures
-Date: Thu, 24 Jul 2025 11:04:19 +0200
-Message-ID: <20250724090420.917705-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753347984; c=relaxed/simple;
+	bh=AcHqFhrAmveChkGt9Q9dhnxeDQVpdCur5t+Cqbhq4Yo=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J/2Q5TrGzrjQ+wXmgB4ICuQ8hz6ePCrRdA7OLjUXFZMUDwEvdLGbeknuVXnLkWbzvgO+AqY8+WPY1wqw1DcQsRDn3ZPPezIIjO30ZEykmzNa1oQbwTscK1H3NmZec5polzvTL1WqBHuLmkFXGuKrIIqyRPD3R4Giq3oO7RA1+LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxJHB694FoDQoxAQ--.58208S3;
+	Thu, 24 Jul 2025 17:06:02 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJCxdOR294FokHokAA--.57042S3;
+	Thu, 24 Jul 2025 17:05:58 +0800 (CST)
+Subject: Re: [PATCH net-next v2 1/2] net: stmmac: Return early if invalid in
+ loongson_dwmac_fix_reset()
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250723100056.6651-1-yangtiezhu@loongson.cn>
+ <20250723100056.6651-2-yangtiezhu@loongson.cn>
+ <f65deb0d-29d1-4820-95e9-f1dd94967957@lunn.ch>
+ <b98a5351-f711-ecb1-75fa-68c69263e950@loongson.cn>
+Message-ID: <5ef8ae99-256e-8ff7-861f-025e7b7cfb6f@loongson.cn>
+Date: Thu, 24 Jul 2025 17:05:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <b98a5351-f711-ecb1-75fa-68c69263e950@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -85
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdektddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoteeftdduqddtudculdduhedmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhenucggtffrrghtthgvrhhnpeejgeehtddtvdekudfglefftdfgffehtdekueegteeutedvvddtgedvveeujeejudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexandre.belloni@bootlin.com
+X-CM-TRANSID:qMiowJCxdOR294FokHokAA--.57042S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWF17GFW7GFy5JF18ZFyxJFc_yoWrJFWkpr
+	WfAa42qryDtr1fJw4Dtw1DZFyrC345K34kWFZ7A3Z3ua1YyFyjqr1YqFWjgr12yr48tF1a
+	qr4Uur1UuF1DJwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8uc_3UUUU
+	U==
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On 2025/7/24 上午10:26, Tiezhu Yang wrote:
+> On 2025/7/23 下午10:53, Andrew Lunn wrote:
+>> On Wed, Jul 23, 2025 at 06:00:55PM +0800, Tiezhu Yang wrote:
+>>> If the MAC controller does not connect to any PHY interface, there is a
+>>> missing clock, then the DMA reset fails.
 
-Fix possible warning:
->> drivers/rtc/rtc-pcf85063.c:566:37: warning: unused variable 'config_rv8063' [-Wunused-const-variable]
-     566 | static const struct pcf85063_config config_rv8063 = {
-         |                                     ^~~~~~~~~~~~~
+...
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507241607.dmz2qrO5-lkp@intel.com/
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-pcf85063.c | 94 +++++++++++++++++++-------------------
- 1 file changed, 47 insertions(+), 47 deletions(-)
+>>> +    if (value & DMA_BUS_MODE_SFT_RESET)
+>>> +        return -EINVAL;
+>>
+>> What happens with this return value? Do you get an error message which
+>> gives a hint the PHY clock is missing? Would a netdev_err() make sense
+>> here?
+> 
+> Yes, I will use dev_err() rather than netdev_err() (because there is no
+> net_device member here) to do something like this:
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c 
+> b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> index 6d10077666c7..4a7b2b11ecce 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> @@ -513,8 +513,11 @@ static int loongson_dwmac_fix_reset(void *priv, 
+> void __iomem *ioaddr)
+>   {
+>          u32 value = readl(ioaddr + DMA_BUS_MODE);
+> 
+> -       if (value & DMA_BUS_MODE_SFT_RESET)
+> +       if (value & DMA_BUS_MODE_SFT_RESET) {
+> +               struct plat_stmmacenet_data *plat = priv;
+> +               dev_err(&plat->pdev->dev, "the PHY clock is missing\n");
+>                  return -EINVAL;
+> +       }
+> 
+>          value |= DMA_BUS_MODE_SFT_RESET;
+>          writel(value, ioaddr + DMA_BUS_MODE);
 
-diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
-index d9b67b959d18..e3b58cdb1eda 100644
---- a/drivers/rtc/rtc-pcf85063.c
-+++ b/drivers/rtc/rtc-pcf85063.c
-@@ -528,53 +528,6 @@ static struct clk *pcf85063_clkout_register_clk(struct pcf85063 *pcf85063)
- }
- #endif
- 
--static const struct pcf85063_config config_pcf85063 = {
--	.regmap = {
--		.reg_bits = 8,
--		.val_bits = 8,
--		.max_register = 0x0a,
--	},
--};
--
--static const struct pcf85063_config config_pcf85063tp = {
--	.regmap = {
--		.reg_bits = 8,
--		.val_bits = 8,
--		.max_register = 0x0a,
--	},
--};
--
--static const struct pcf85063_config config_pcf85063a = {
--	.regmap = {
--		.reg_bits = 8,
--		.val_bits = 8,
--		.max_register = 0x11,
--	},
--	.has_alarms = 1,
--};
--
--static const struct pcf85063_config config_rv8263 = {
--	.regmap = {
--		.reg_bits = 8,
--		.val_bits = 8,
--		.max_register = 0x11,
--	},
--	.has_alarms = 1,
--	.force_cap_7000 = 1,
--};
--
--static const struct pcf85063_config config_rv8063 = {
--	.regmap = {
--		.reg_bits = 8,
--		.val_bits = 8,
--		.max_register = 0x11,
--		.read_flag_mask = BIT(7) | BIT(5),
--		.write_flag_mask = BIT(5),
--	},
--	.has_alarms = 1,
--	.force_cap_7000 = 1,
--};
--
- static int pcf85063_probe(struct device *dev, struct regmap *regmap, int irq,
- 			  const struct pcf85063_config *config)
- {
-@@ -671,6 +624,41 @@ static int pcf85063_probe(struct device *dev, struct regmap *regmap, int irq,
- 
- #if IS_ENABLED(CONFIG_I2C)
- 
-+static const struct pcf85063_config config_pcf85063 = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x0a,
-+	},
-+};
+Oops, the above changes can not work well.
+
+It can not use netdev_err() or dev_err() to print message with device info
+in loongson_dwmac_fix_reset() directly, this is because the type of "priv"
+argument is struct plat_stmmacenet_data and the "pdev" member of "priv" is
+NULL here, it will lead to the fatal error "Unable to handle kernel paging
+request at virtual address" when printing message.
+
+Based on the above analysis, in order to show an error message which gives
+a hint the PHY clock is missing, it is proper to check the return value of
+stmmac_reset() which calls loongson_dwmac_fix_reset().
+
+With this patch, for the normal end user, the computer start faster with
+reducing boot time for 2 seconds on the specified mainboard.
+
+The final changes look something like this:
+
+----->8-----
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c 
+b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+index e1591e6217d4..6d10077666c7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+@@ -513,6 +513,9 @@ static int loongson_dwmac_fix_reset(void *priv, void 
+__iomem *ioaddr)
+  {
+         u32 value = readl(ioaddr + DMA_BUS_MODE);
+
++       if (value & DMA_BUS_MODE_SFT_RESET)
++               return -EINVAL;
 +
-+static const struct pcf85063_config config_pcf85063tp = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x0a,
-+	},
-+};
+         value |= DMA_BUS_MODE_SFT_RESET;
+         writel(value, ioaddr + DMA_BUS_MODE);
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c 
+b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index b948df1bff9a..1a2610815847 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3133,6 +3133,9 @@ static int stmmac_init_dma_engine(struct 
+stmmac_priv *priv)
+
+         ret = stmmac_reset(priv, priv->ioaddr);
+         if (ret) {
++               if (ret == -EINVAL)
++                       netdev_err(priv->dev, "the PHY clock is missing\n");
 +
-+static const struct pcf85063_config config_pcf85063a = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x11,
-+	},
-+	.has_alarms = 1,
-+};
-+
-+static const struct pcf85063_config config_rv8263 = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x11,
-+	},
-+	.has_alarms = 1,
-+	.force_cap_7000 = 1,
-+};
-+
- static const struct i2c_device_id pcf85063_ids[] = {
- 	{ "pca85073a", .driver_data = (kernel_ulong_t)&config_pcf85063a },
- 	{ "pcf85063", .driver_data = (kernel_ulong_t)&config_pcf85063 },
-@@ -743,6 +731,18 @@ static void pcf85063_unregister_driver(void)
- 
- #if IS_ENABLED(CONFIG_SPI_MASTER)
- 
-+static const struct pcf85063_config config_rv8063 = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x11,
-+		.read_flag_mask = BIT(7) | BIT(5),
-+		.write_flag_mask = BIT(5),
-+	},
-+	.has_alarms = 1,
-+	.force_cap_7000 = 1,
-+};
-+
- static const struct spi_device_id rv8063_id[] = {
- 	{ "rv8063" },
- 	{}
--- 
-2.50.1
+                 netdev_err(priv->dev, "Failed to reset the dma\n");
+                 return ret;
+         }
+
+I will wait for more comments and send v3 after the merge window.
+
+Thanks,
+Tiezhu
 
 
