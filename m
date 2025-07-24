@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-743414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66645B0FE61
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:38:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91086B0FE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB5C1C27A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036FF966F01
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D74D187332;
-	Thu, 24 Jul 2025 01:38:16 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72E71917F0;
+	Thu, 24 Jul 2025 01:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="by27WIHR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A49714B08A;
-	Thu, 24 Jul 2025 01:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C73190664;
+	Thu, 24 Jul 2025 01:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753321095; cv=none; b=nz+Sxi2pLAzPmlvjEv5PoI9yliRQ/vhzJH42YgVcs2P/1F8MAmk9V0Fzj6B1vXkM/I/RKUOq5wx8gd6J1O6Rzx98fGH6fhVlYGaSIncRTIH45Nno5XKW01+R2mBtGn4KLJhfgAr5UTmND9qvVwwrSAaY3qwQKOyfYIsovn926WY=
+	t=1753321098; cv=none; b=XqVO2soQcitmmMf0KqmMogy+bPob5qzXxHVc/jwdc/SZuqJ9eCOdrLzMLyCPRdlmriUV1/cYD/mnAI1pgfNaF8wAcnrHpKdqnFzXc5Ucp8GbVOMTqTrSPgjYtzVQYuwUFI5r546z6nWETZ5FFuzVVklG4IVL/u3jYB/78/pLMHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753321095; c=relaxed/simple;
-	bh=E/cu5hc6fvoB3H2h8mHPslJpGH+A+7L3GT/Zsv4qgoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t8VdJ82aWeHril00x7C9kbtNX0N47PHZh8nicBzCK+gLt7pcJQdolaiZmxxlUKoKe3qmI42bok8gl3xjo7PcbU9SElkkO0WIOahgj/675lT4a05r1AhEBesq6+nbYGACbLNo0DWMy7PgBD1BctrRzZ2i5tKHLNGSTUtxNPi2scg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d6d8845c682e11f0b29709d653e92f7d-20250724
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:9d8addc9-c6e2-4086-af87-0c7df1a40a98,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-30
-X-CID-META: VersionHash:6493067,CLOUDID:0a74c468cf89dc1c6f2ad09f5e1d6ec3,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:1,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d6d8845c682e11f0b29709d653e92f7d-20250724
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <jiangyunshui@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1077835242; Thu, 24 Jul 2025 09:38:03 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 01E18E008FAA;
-	Thu, 24 Jul 2025 09:38:01 +0800 (CST)
-X-ns-mid: postfix-68818E77-905892132
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 092B8E008FA2;
-	Thu, 24 Jul 2025 09:37:56 +0800 (CST)
-From: Yunshui Jiang <jiangyunshui@kylinos.cn>
-To: willy@infradead.org
-Cc: alexander.deucher@amd.com,
-	chriistian.koenig@amd.com,
-	jiangyunshui@kylinos.cn,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/amdgpu: use kmalloc_array() instead of kmalloc()
-Date: Thu, 24 Jul 2025 09:37:53 +0800
-Message-ID: <20250724013754.3429608-1-jiangyunshui@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <aE-ML8rLXnLaqHVA@casper.infradead.org>
-References: <aE-ML8rLXnLaqHVA@casper.infradead.org>
+	s=arc-20240116; t=1753321098; c=relaxed/simple;
+	bh=6b7ZaEfMNucJo8hfYKdLp6+YalgcIzuomcomXgSUQSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RS1T0WC1FqE7Cgt4Uvo/i6WVRxcnOOedGlWBZxaA5BXdWfjLTBUhIwoiVpR+A5/cbCN4vTXzMLyNSB1hKy2Qifmi6hgSXMsYXtNCrXc7D/9/j6ZlS3yTODlPcxnrsrxI+5WC/RAyh2DWeC+rGImJO1aklAa8U/R6/KpDsoMCV8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=by27WIHR; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753321096; x=1784857096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6b7ZaEfMNucJo8hfYKdLp6+YalgcIzuomcomXgSUQSY=;
+  b=by27WIHRFHJx2Xdv+MWuddBCjKdPVqZErogg9+ANK+lABam3i4hmNb14
+   l1NJWez8t4gMAiFPM7+WgC5inPJ06gkbhEbrFFr+C1UYKt7P62PZ4Um9x
+   qI/NkEj8bk3+UqWwPRMe4f8bMawGPCnF1CShCTse3PLGlownoWUddt2La
+   l5RPoGCHrngUHEAH3mS19p592ET2gLP8pyfAE8wewxYPEIMsyA5LCF5g5
+   I/d9fPWmQnAArpRUaz51hlWbVMdV2937ToftnqtB0ALc+ieS+bBRZY+I2
+   eaY7xJbLyveZOS7+l/Kw8aoxI3xcb7Gs51lm3FD7nHRgBBbSxZ5m68ZyF
+   w==;
+X-CSE-ConnectionGUID: dEhoQTpQTuaE3dTdpuj8Xg==
+X-CSE-MsgGUID: mCnuH/CXQMWim5O/zYPO6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="66691889"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="66691889"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2025 18:38:16 -0700
+X-CSE-ConnectionGUID: JO8mWtv0Qz+0oLnRDMGiVA==
+X-CSE-MsgGUID: dnv1GQHxQZC82KJiOyHnaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="164125887"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 23 Jul 2025 18:38:13 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uekuR-000JzH-28;
+	Thu, 24 Jul 2025 01:38:11 +0000
+Date: Thu, 24 Jul 2025 09:38:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huisong Li <lihuisong@huawei.com>, rafael@kernel.org, lenb@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
+	zhenglifeng1@huawei.com, yubowen8@huawei.com,
+	liuyonglong@huawei.com, lihuisong@huawei.com
+Subject: Re: [PATCH v2] ACPI: processor: idle: Fix resource leak and
+ potential concurrent in acpi_processor_power_init()
+Message-ID: <202507240807.1ild86sv-lkp@intel.com>
+References: <20250723121034.3685996-1-lihuisong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723121034.3685996-1-lihuisong@huawei.com>
 
-Use kmalloc_array() instead of kmalloc() with multiplication.
-kmalloc_array() is a safer way because of its multiply overflow check.
+Hi Huisong,
 
-Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_ras.c
-index de0944947eaf..12f5a1b9ff8b 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -2563,7 +2563,7 @@ static int amdgpu_ras_badpages_read(struct amdgpu_d=
-evice *adev,
- 		goto out;
- 	}
-=20
--	*bps =3D kmalloc(sizeof(struct ras_badpage) * data->count, GFP_KERNEL);
-+	*bps =3D kmalloc_array(data->count, sizeof(struct ras_badpage), GFP_KER=
-NEL);
- 	if (!*bps) {
- 		ret =3D -ENOMEM;
- 		goto out;
-@@ -2719,7 +2719,7 @@ static int amdgpu_ras_realloc_eh_data_space(struct =
-amdgpu_device *adev,
- 	unsigned int old_space =3D data->count + data->space_left;
- 	unsigned int new_space =3D old_space + pages;
- 	unsigned int align_space =3D ALIGN(new_space, 512);
--	void *bps =3D kmalloc(align_space * sizeof(*data->bps), GFP_KERNEL);
-+	void *bps =3D kmalloc_array(align_space, sizeof(*data->bps), GFP_KERNEL=
-);
-=20
- 	if (!bps) {
- 		return -ENOMEM;
---=20
-2.47.1
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.16-rc7 next-20250723]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Huisong-Li/ACPI-processor-idle-Fix-resource-leak-and-potential-concurrent-in-acpi_processor_power_init/20250723-201246
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20250723121034.3685996-1-lihuisong%40huawei.com
+patch subject: [PATCH v2] ACPI: processor: idle: Fix resource leak and potential concurrent in acpi_processor_power_init()
+config: i386-buildonly-randconfig-001-20250724 (https://download.01.org/0day-ci/archive/20250724/202507240807.1ild86sv-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250724/202507240807.1ild86sv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507240807.1ild86sv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/acpi/processor_core.c:15:
+>> include/acpi/processor.h:452:13: warning: 'acpi_processor_unregister_idle_driver' defined but not used [-Wunused-function]
+     452 | static void acpi_processor_unregister_idle_driver(void)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/acpi/processor.h:448:12: warning: 'acpi_processor_register_idle_driver' defined but not used [-Wunused-function]
+     448 | static int acpi_processor_register_idle_driver(void)
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/acpi_processor_unregister_idle_driver +452 include/acpi/processor.h
+
+   443	
+   444	static inline int acpi_processor_hotplug(struct acpi_processor *pr)
+   445	{
+   446		return -ENODEV;
+   447	}
+ > 448	static int acpi_processor_register_idle_driver(void)
+   449	{
+   450		return -ENODEV;
+   451	}
+ > 452	static void acpi_processor_unregister_idle_driver(void)
+   453	{
+   454	}
+   455	#endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+   456	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
