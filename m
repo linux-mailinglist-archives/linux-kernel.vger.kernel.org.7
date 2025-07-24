@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-744290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEB9B10A8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D83DB10A90
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB3C166FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC9D4E5480
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672902D3EE0;
-	Thu, 24 Jul 2025 12:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDBE2D46C4;
+	Thu, 24 Jul 2025 12:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgXVKLuQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly8SNqXX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18EA1E4A4;
-	Thu, 24 Jul 2025 12:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051E71E4A4;
+	Thu, 24 Jul 2025 12:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361285; cv=none; b=jieTFEMjXDIybe8OU6fLNSHbrvyY7th7EsLkUn/cnFA7j7V/k31o95pEGJ9Dva8tzC+p6eag8dKfDxNR1S6RYLspK6BUh490E/39jatmBUlANwATRtYNH+ehEWK6f6sZ4m1Zm77oIhR9NfyQRXS2Y+jnoaqjH+UTCmrnJIwGFuo=
+	t=1753361310; cv=none; b=Ss2uAfm+b/Qe9Oegr5PNYJyuZrKN1EULEOT352wDnSv3hKUYIG6QHvJt9Ht8BJrbFfJ02yhOON0/hKaKdXHJMwL/GA0UO4BVogDvxKTGZPg/Fm5r/IMJe8y6CpY1JhJEasp6f1FsVA1QAog8cAOtkBB2nsWWaLyci/BzQ+TPhgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361285; c=relaxed/simple;
-	bh=Iq4Zfgan0e05gZ3HYwToOt0i/vXkzvYddxAGBSEawMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6wDNpy0QsiAOLm451bZOMsZi7DzaNLckUhfRlBbpDAHldJFUfJLC1QNKysZViOdT0VPLDAO8gDC2bKQcJ0Ij9xlNNW4dCyriEsLDdmE4IJHhFqt1O5Vp/OEA9Ls2fdX31f0UAZ0y1wxj3TAWk29rzwPnYwlCrv8XNpT5H9L2m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgXVKLuQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3502EC4CEED;
-	Thu, 24 Jul 2025 12:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753361285;
-	bh=Iq4Zfgan0e05gZ3HYwToOt0i/vXkzvYddxAGBSEawMc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BgXVKLuQDcpmiqLMNNGFY8NGFCzIiILodBEfIaCLUCOl1xuVW6KV0CiI/euZi6SPr
-	 +SiZZbAfiq477M9OWwNYdU4AzBkDwwoE+lZjJWsXdL6YZA7UN71HlOsD6Yk3Tvee1T
-	 3YtZREITIFbLbALbsZcyO8d0HalpDIg214kFnt93plG00Q34xMRZlbQGUXNUS2K0sB
-	 7NTNyta/L9Y+FkD0v2qQU2n1dkZOjCrHK7fF2va7GalwPOxoBf3IgkpGAMm/c6qtbZ
-	 fP8JAa4ssgS1UuCowr+k+GCI5kwKUL9nEpv+dcKTVp9rpgxdUAmwDVZzqKYhf+5ILX
-	 B6+IE03tdAsIw==
-Date: Thu, 24 Jul 2025 13:47:58 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, ~lkcamp/patches@lists.sr.ht,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: adc: spear_adc: mask SPEAR_ADC_STATUS channel
- and avg sample before setting register
-Message-ID: <20250724134758.43df3ccc@jic23-huawei>
-In-Reply-To: <aIDoZHBjO4tU3Gkh@smile.fi.intel.com>
-References: <20250717221559.158872-1-rodrigo.gobbi.7@gmail.com>
-	<aIDoZHBjO4tU3Gkh@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753361310; c=relaxed/simple;
+	bh=f6B8tyg4/DD96dDjC8BDeC/T9795XQNZuf4iiTQjIU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P6LhE0KUWQ1Ih1liI+HlwddxbM8XUiILyZVgkeW5srR5UXxQb9uU3dd7zbhQ6Xg9CUQgfIlZeU+rQyaRvo2gyycalhpm7kpVTXmyz6LHWOBcGWUbcD32NHLxhMwMyRduePx8RCr0q92qolkaV/r7OKrfOgi0gbU/PrKtW0+Yfjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly8SNqXX; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753361309; x=1784897309;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=f6B8tyg4/DD96dDjC8BDeC/T9795XQNZuf4iiTQjIU4=;
+  b=ly8SNqXXYW+VCcQ7ID/bRAsAOzs+NLZRdc+4JZstX86GIRMwVlQJwXAT
+   iErDVdQ3FRgv/EDlGfjdD8ClJLDc6wZ+MRDiEZy5W/OSBIWKjDPZNEv5u
+   4uGy0899rwPYZynbSF0JQVg0onqEe6iXZf6H8fualD64TA+7C/BK/9y9T
+   rfTwWK0A6pQKy8Mgdb1H85STKDkgJqwgK2imb4s/CbQEGRhJw8x7Fqt75
+   uTKcsYDfFbQ59Ovg4h7BZClKEMgx/r6At8/atvuX2w/a1T8Ov1fJaSwt9
+   jFo++de2YJ29uTrziqYGBfFTPI+jGjLXPp9CT6v6H+cYX8/sxUPKDGGpr
+   Q==;
+X-CSE-ConnectionGUID: VcNMZ9TKSZmxrH5FL+qK3A==
+X-CSE-MsgGUID: gnwrimpBQP+M4CE3/lYB0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="73253580"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="73253580"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:48:29 -0700
+X-CSE-ConnectionGUID: Ow1Je+GkTqaOxwnNXcDx/w==
+X-CSE-MsgGUID: 6gTtnYi0RQ+zulqJKixC2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="159460392"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.21])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:48:23 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	vannapurve@google.com
+Cc: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	kas@kernel.org,
+	kai.huang@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com
+Subject: [PATCH V5 0/3] x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+Date: Thu, 24 Jul 2025 15:48:08 +0300
+Message-ID: <20250724124811.78326-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
 
-On Wed, 23 Jul 2025 16:49:24 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+Hi
 
-> On Thu, Jul 17, 2025 at 07:13:49PM -0300, Rodrigo Gobbi wrote:
-> > avg sample info is a bit field coded inside the following
-> > bits: 5,6,7 and 8 of a device status register.
-> > 
-> > channel num info the same, but over bits: 1, 2 and 3.
-> > 
-> > mask both values in order to avoid touching other register bits,
-> > since the first info (avg sample), came from dt.  
-> 
-> Is there any issue with a Shift key?
-Sprinkled some capitals.
-> 
-> > Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>  
-> 
-> ...
-> 
-> >  #include <linux/clk.h>
-> >  #include <linux/err.h>
-> >  #include <linux/completion.h>
-> > +#include <linux/bitfield.h>  
-> 
-> While it looks unordered, it's still better to squeeze a new header to the
-> place which organises a longest (but sparse) group of ordered headers. This
-> will reduce churn in the future for the ordering changes.
+Here are 3 small self-explanatory patches related to clearing TDX private
+pages.
 
-The full set is currently:
+Patch 1 and 2 are minor tidy-ups.
 
-#include <linux/mod_devicetable.h>
-#include <linux/module.h>
-#include <linux/platform_device.h>
-#include <linux/property.h>
-#include <linux/interrupt.h>
-#include <linux/device.h>
-#include <linux/kernel.h>
-#include <linux/slab.h>
-#include <linux/io.h>
-#include <linux/clk.h>
-#include <linux/err.h>
-#include <linux/completion.h>
-#include <linux/bitfield.h>
-
-I'll move it to before clk, but that's only a really minor improvement!
+In patch 3, by skipping the clearing step, shutdown time can improve by
+up to 40%.
 
 
-> 
-> >  #include <linux/iio/iio.h>
-> >  #include <linux/iio/sysfs.h>  
-> 
+Changes in V5:
 
+      x86/tdx: Tidy reset_pamt functions
+	New patch
+
+Changes in V4:
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Add and use tdx_quirk_reset_page() for KVM (Sean)
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Add TDX Module Base spec. version (Rick)
+	Add Rick's Rev'd-by
+
+Changes in V3:
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Explain "quirk" rename in commit message (Rick)
+	Explain mb() change in commit message  (Rick)
+	Add Rev'd-by, Ack'd-by tags
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Remove "flush cache" comments (Rick)
+	Update function comment to better relate to "quirk" naming (Rick)
+	Add "via MOVDIR64B" to comment (Xiaoyao)
+	Add Rev'd-by, Ack'd-by tags
+
+Changes in V2 (as requested by Dave):
+
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+	Rename reset_tdx_pages() to tdx_quirk_reset_paddr()
+	Call tdx_quirk_reset_paddr() directly
+
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+	Improve the comment
+
+
+Adrian Hunter (3):
+      x86/tdx: Eliminate duplicate code in tdx_clear_page()
+      x86/tdx: Tidy reset_pamt functions
+      x86/tdx: Skip clearing reclaimed pages unless X86_BUG_TDX_PW_MCE is present
+
+ arch/x86/include/asm/tdx.h  |  2 ++
+ arch/x86/kvm/vmx/tdx.c      | 25 +++----------------------
+ arch/x86/virt/vmx/tdx/tdx.c | 36 +++++++++++++++++++-----------------
+ 3 files changed, 24 insertions(+), 39 deletions(-)
+
+
+Regards
+Adrian
 
