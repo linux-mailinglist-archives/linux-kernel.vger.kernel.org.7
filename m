@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-745078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC78BB1149C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75435B11494
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 01:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0421726EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2091726EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F03242D93;
-	Thu, 24 Jul 2025 23:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25642441A0;
+	Thu, 24 Jul 2025 23:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="HEdsJ+5B";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="UeXuyF0x"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZXItp+O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F442417C3;
-	Thu, 24 Jul 2025 23:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421CD243364;
+	Thu, 24 Jul 2025 23:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753400066; cv=none; b=IFMHRWmodMo5fmpDCwnEx62T2SXUWrwm3rnRNb/3x0LszJJWnOg/DDURlxUBExgvxzuIBf7d0N+r3MSOybJ9GvIyfJxX6ea3q0oG1sCluLXrJ8QqOMFN0wiu5cJVRj4XRErGXry1nwHH0PPeVEarZ4KMIoW7qwxdB4tDFCgOkyQ=
+	t=1753400054; cv=none; b=L+MOYKTfpZcp0K2Lf2KFT5LyoU+46dQPp0+4esX+EtDIjPk3fg4Megt7GCcv23OEOzPqYBFcQP/JAU6xn3WHwCTSRs0dtDpiOXa2Jf9yIc8a0+6mgQsIGlUf2ZdwoQR9XDWljRxi9BnNzQtdSxpRzECYpi2th5hgFbDqoYYdUiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753400066; c=relaxed/simple;
-	bh=DHaKhk7Q7aNey7uhHw3907c5pOFD9XNr0CX/GKMTrmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GYuItUGwMiw93iCvGjA8IfKCWwTY8bh1/HkiU4nMydr8rUsVO9MQrUWQxgpJ9o88+u0gzyRprF6WvZF6daxhSzx0pyrpAR4FrDXjYMx44TNlDyWdOK+11J27w7s9shbojpEhZRLiuzXfqYYv6DYpTQ9Hr662u1cND4hAoLJZD3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=HEdsJ+5B; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=UeXuyF0x; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 1E90C60281; Fri, 25 Jul 2025 01:34:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753400055;
-	bh=DxcPnYvgss5L9/yxk39bT5oq0THwPqr7O/TdLTVsmyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HEdsJ+5BImOlOMKwqRu6FNdi11jUTmWtPVKjJDbV2NPOvmxOLQgZI1R/pQ3rFUQjs
-	 51I0wVwkJ36etLLvNwOh2v5qYdU2f95qqHBMynMHOyX7IQlk7PdA6tZkP34T4UKzgf
-	 nmeaGYDknTHYE8tROnrAGNJe0781D2XkGp9JJkk5L2awxfDC+jYsJiB+IrVf3QBC+t
-	 bsuimiZzKNmc9lPqZF9kjwl0v9fYWPvCmhnAd50BksG+lroiW4FB7kc6PgFGJDI7Of
-	 RrMsQwFJ4uYmE9VBQVp0I4Me9yAYopSJhsVp+qoeIJUsicHfVtep8L9uSTDYyGjYBI
-	 6wjMhI5Ea2hDA==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 3211660264;
-	Fri, 25 Jul 2025 01:34:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1753400052;
-	bh=DxcPnYvgss5L9/yxk39bT5oq0THwPqr7O/TdLTVsmyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UeXuyF0xh7XMUEXc4YiCYGAnYzSKWEy2tJp+Zcf2LKFkphzAeDS2xLXdg48KVPB9R
-	 uIUHZxufE8MO5UXRkM662yg+3Gr3JCqLp+5THRlTO9slvqU9SzOE1mVo0x0yFVJQE7
-	 lQjRUa684+J56I6yxiR6D88uNsI7ETZwaDuERRbTHW/THJSCNKAMCEI9gxO187Vbj0
-	 /UwgpLMuFkqToETSZ3YfY080Aq5yQLpuCfOWfq3YG2lJVY/SQsEM2uMWr9U60tRZ6k
-	 Q1UTpUa77CKrYcbNKuoj2BleG76jLAotTBKQNRxS+ZMtuWnec+HGwMPLD5PBNS44Gk
-	 vCWGXI8/UbFKg==
-Date: Fri, 25 Jul 2025 01:34:08 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Florian Westphal <fw@strlen.de>
-Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
-	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com, netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
-Message-ID: <aILC8COcZTQsj6sG@calendula>
-References: <20250508081313.57914-1-xiafei_xupt@163.com>
- <20250522091954.47067-1-xiafei_xupt@163.com>
- <aIA0kYa1oi6YPQX8@calendula>
- <aIJQqacIH7jAzoEa@strlen.de>
+	s=arc-20240116; t=1753400054; c=relaxed/simple;
+	bh=X17ZBuWwMErqQ/EgVoS7dWb3Cs7Yns8iRBMnXLwlr6w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=azDlGTa0WcrItRB3YUTCNHW/+PjkbPhg+i/mO3JOqVyYd0aTPzeJQWauWX25nT4rK/O4wOmLd+iYUudstleO1qJtiXWbPMqAFn8QOVMKBoPM/qVds6vKEJ0+v1m8AyNXjC6eiDEZ9VWlpJWIXSO8D9G+//+Eot4Iqg4IiSuyTCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZXItp+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A58FC4CEED;
+	Thu, 24 Jul 2025 23:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753400053;
+	bh=X17ZBuWwMErqQ/EgVoS7dWb3Cs7Yns8iRBMnXLwlr6w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JZXItp+OZz1+v6vlrYtxhvnrYW3ao7ef1GOxby6BBLsr/xsbFs70tKOqsNR2NkX3t
+	 ngf//180waByjoafyt1ye7b7JlwLmib/ofEdEEpmkWXPMKi8kkLrgYM2/oxlIkSd1h
+	 Ci1htiV1ZoFg+PGNv8Q5UlXnF3hfByjZNheA0t9hFYHEvQCIiBOtrVVvdfa57Ao5g4
+	 fX0Gn7t6SfZHQkYEDpBbOvmI2+wy1fKTA9mKYNjpRdw+FQCAYOeueTl0G/PBgXluSn
+	 f/ks4VzHxAOOqifBLlDeemCPSkx+uYAKci9reP/2V07VxGnWzc9h06DCRwFwSVZjlF
+	 R91SVMIKxXFYQ==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250704162036.468765-1-fabrizio.castro.jz@renesas.com>
+References: <20250704162036.468765-1-fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 0/3] Add RSPI support for RZ/V2H
+Message-Id: <175340005103.192002.4970048454076941668.b4-ty@kernel.org>
+Date: Fri, 25 Jul 2025 00:34:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aIJQqacIH7jAzoEa@strlen.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On Thu, Jul 24, 2025 at 05:26:33PM +0200, Florian Westphal wrote:
-> Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > > +				net_warn_ratelimited("nf_conntrack: table full in netns %u, dropping packet\n",
-> > > +						     net->ns.inum);
-> > 
-> > This is slightly better, but it still does not say what packet has
-> > been dropped, right?
-> > 
-> > Probably a similar approach to nf_tcp_log_invalid() would better here.
-> >
-> > Thus, nf_log infrastructure could be used as logging hub.
-> > 
-> > Logging the packet probably provides more context information than
-> > simply logging the netns inode number.
+On Fri, 04 Jul 2025 17:20:33 +0100, Fabrizio Castro wrote:
+> This series adds support for the Renesas RZ/V2H RSPI IP.
 > 
-> Hmm, the conntrack table is full, and packet creates a new flow.
-> What would logging the packet tell us what the printk message doesn't?
+> Cheers,
+> Fab
+> 
+> v1->v2:
+> * Addressed build error reported by the kernel test robot.
+> * Addressed comments from Biju in driver patch.
+> * Addressed comments from Mark in driver patch.
+> * The clock patch has been accepted, therefore it's not been included
+>   in this version.
+> * The defconfig patch has been accepted (pending acceptance of the
+>   driver), therefore it's not been included in this version.
+> * The device tree patch has been accepted (pending acceptance of
+>   the dt-bindings patch), therefore it's not been included in this
+>   version.
+> 
+> [...]
 
-I was thinking, does the packet logging exposes already the
-net->ns.inum? IIUC the goal is to find what netns is dropping what
-packet and the reason for the packet drop, not only in this case but
-in every case, to ease finding the needle in the stack. If so, then it
-probably makes sense to consolidate this around nf_log()
-infrastructure.
+Applied to
 
-Anyway, maybe I'm overdoing, I'll be fine with this approach if you
-consider it good enough to improve the situation.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thanks.
+Thanks!
+
+[1/3] spi: dt-bindings: Document the RZ/V2H(P) RSPI
+      commit: 44b91d61c505863b8ae90b7094aee5ca0dce808f
+[2/3] spi: Add driver for the RZ/V2H(P) RSPI IP
+      commit: 8b61c8919dff080d83415523cd68f2fef03ccfc7
+[3/3] MAINTAINERS: Add entries for the RZ/V2H(P) RSPI
+      (no commit info)
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
