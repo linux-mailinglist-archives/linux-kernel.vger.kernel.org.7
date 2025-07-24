@@ -1,259 +1,171 @@
-Return-Path: <linux-kernel+bounces-744841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D52B1117B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC62B1117F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F9C17A045
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228CD17245D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 19:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBEE2EA723;
-	Thu, 24 Jul 2025 19:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688E2ECD17;
+	Thu, 24 Jul 2025 19:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJq1br8H"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T1kKsWBM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FAB274B3C;
-	Thu, 24 Jul 2025 19:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5D71FB3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 19:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753384465; cv=none; b=kq9SkJuxwtSjh+dvUHNBZ3O+I6s7QX6GYL0lVGkbEGJDIrsenukawxMqx5cl8kyjX7JsqiawxiC+YYRK1hKpF7Yd0lRgDrYQ/ddVNhJuONWGJbs4z7DpTTWjFJ2rhtAoWkcNRkkWfr0AX6PdPmf+xJ7hHkkS52gD999+ojWSae8=
+	t=1753384559; cv=none; b=urzjTGdSTREr+dRzLQ6EckrDLGpvvjIQIgebY6bK4WWOUaZuOfD7Hxgbt7KYsqhu3lIaVaJei6VozSpp7OOm83C9Mjbg3giS7d3L2ZXJMECsfhB8fjhBM70pHoUZTKDJ+bFzECvj73WqQ184bkgKb5bvXol4/UmYR55OY+mh5A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753384465; c=relaxed/simple;
-	bh=9JY7p80c86n6GjRiruyjjExy0MOzgPy1y+oe7BuOM1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PrGWy6z6b3ny1MmRTWEGXhzun5YBjQGt9FYP1B1o3XgnR5otb8v3Saoy7h098BmQuERbEQK3W4nhgY67n7BWwik43ZMtPTPNigC+SgmBIVgy4zmJgB5+cy6eMLhw9DFlH2UVlSneN1Z8HLedIK1CKreOwY2xf6IQrJB9YV/11WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJq1br8H; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4abc006bcadso17142071cf.0;
-        Thu, 24 Jul 2025 12:14:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753384463; x=1753989263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2jOSnyBDxczFG/IHSIdGMkE63XZ2hP+zlYXbjMuUNLc=;
-        b=aJq1br8HeFmH4qOa3iZ/UnttxtHLSTMkn4llPcmfZFh8+UfUdHPVwDGnT4hH8SMyh6
-         0ZsjvKv8wcXUyMZ5azjvvqkHjRW8IPZPyt7QBbZM4manHDsML70yAuDd9d8Tb4wVuYbZ
-         YgC9lcuPzyT2Ittj5HBGAb9HHNiRH6EwSwSJ9OpZhIXiiPoxzxq47Qdr55pM4Fr6vBKZ
-         GtOD9iiOwglFRULV97Org+5WmM0aA3hqvfWbZqlEWGpQRNQcIo02OVeCbhxv098vf2H6
-         Ipu9hHPeoAVwBdR8bgM8d/9QVp0YDI8EBp3ULykiJohN603WHH5zpIsU2j4sYw8sTFrd
-         /IVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753384463; x=1753989263;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2jOSnyBDxczFG/IHSIdGMkE63XZ2hP+zlYXbjMuUNLc=;
-        b=QY8gL1z3TC2JyKFGbzCRKffApoYmIYQdei+tWcFJTam374Acv87ftgEfXOZCxERRan
-         eLKjUxlH9H4P/O5qsUmHRaUTWigok2f8eBt+uYFQMxPIIywJQFl1w/j1GxuSXUwGyO5X
-         LFuVSF+PKBNI7eQrniNniU8zSLCGRbMhai1Igif+CaomZW2xE+V1gagdlt5fmV2UKrl8
-         QHL2tev8UyeEB45pK/xA/IK5Xy6zyyMwq8bM9kokbAyCP5LfVc6iVh6rc2xGIgOjd7MV
-         tpCpEuqwuBWVXLY+kiN+5Lm+qglquFo8CXVQh4JAnWbwvMu0djkZgW2hJIr/2d6sQ3dW
-         HBeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvRIS9RgTCIXKFryfYc5uOfVPK/AGpRV+XFfPRkDekGootYxbl8zRtS9QErmBvAdAOh9THmEozctC/mKjF@vger.kernel.org, AJvYcCWZRJRgBHZ5w8R7d7TWbiYolY+euhhgN9TZ78FLPKD51bUKIqCfyWXvFtCgI/PsJ5F3GfTiXs8bEq3mYYLU@vger.kernel.org, AJvYcCXhxVYAtRdcbJRTp1IsDxRjYmDuG3uj/D1OrKYCC1YqyieNKJqhgtTuaJBremKotOkHN7aLcpmIMhKN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkz04Hhe9Ue8tXPWrFR3I74GF0gQUWhE/3mgXcFU7RaJ93O7aT
-	sBBJ/FfUrf2BxHLwxYPJr/mwQPmH+ZZcND2NC3T2nQoW6mgxOTWKwmrQj66a+m3o28OCOJylg90
-	TSxMov2qVX3psSgM9i3SaZQtFQ5UEsJI=
-X-Gm-Gg: ASbGncvbMTyG85acHbkH7wHYOLps6iB9rCb9Vth3Po2pgeMXNyFoR4NVcJs26LV7Ph3
-	IZBwPdQ5lGjOHsZNdpbVMrvfgFFIxslRIsCVym+bZaq8jLXtBQ2IS5eoSZekSG0qNiZMv1EOqld
-	8ApHbsZg57Fiqs7ERpp1UGKx1cWS88uqmT9Jds88Ac8jB3CalHSpdw2fa7MMXz3nGv42eNbE84q
-	Bb47sE=
-X-Google-Smtp-Source: AGHT+IGm06QE4HAxdtDrbkTCJlc3WBllGjE2CLQfWltUi2scOuGwGhLY9rcqQVvFXqhFOXNUBQN8GPgnjRiXL0ZxnAk=
-X-Received: by 2002:a05:622a:2486:b0:4ab:db27:4775 with SMTP id
- d75a77b69052e-4ae6e0370b9mr94057441cf.54.1753384462745; Thu, 24 Jul 2025
- 12:14:22 -0700 (PDT)
+	s=arc-20240116; t=1753384559; c=relaxed/simple;
+	bh=KDENvryqaFfe+ipMBxs4HEr3VYyPiM26hvi5lpcTx/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bqgh8Kwx/xxHLcJ53F2ucNDGFT05sAdqFp0qlr7F2vDmVuYRUkX0jKMqHMDqlJ6Mr9hLgJqolBg58Uo0Frnnw/0kZG5LJN5lEczKUcDAOekKmZaIt4ucM/pu5EI5RWDtoK7KTlULSGV5lAsuc2VKC4YAGJaK8T34/P9hqhdsMlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T1kKsWBM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753384556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rDZbSpivZvNtqNNz2nVMJ9AyhIB6jJidbuEul+8M8EM=;
+	b=T1kKsWBMVlX+YUf6pdnwKNLOnQBErfYC/urNBTy0xTbkZxwX+YNhkAlF3g2IyiE/mx1eHj
+	0x4D+ps+2g7qS8sfzSRgIY+JZUXhHIBoH5PmJszakDzCMvRStdaZpGfQtO2bVadZbt69Zl
+	V1tq2QWW9W8tgKjE8QdgwXBBsPXLu7g=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-399-_7VPjU56PVStwyCwyxYvTQ-1; Thu,
+ 24 Jul 2025 15:15:51 -0400
+X-MC-Unique: _7VPjU56PVStwyCwyxYvTQ-1
+X-Mimecast-MFC-AGG-ID: _7VPjU56PVStwyCwyxYvTQ_1753384549
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2213B1956056;
+	Thu, 24 Jul 2025 19:15:48 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.88.223])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D5C4B1966665;
+	Thu, 24 Jul 2025 19:15:42 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] Partially revert "rust: drm: gem: Implement AlwaysRefCounted for all gem objects automatically"
+Date: Thu, 24 Jul 2025 15:15:18 -0400
+Message-ID: <20250724191523.561314-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYs5AdVM-T2Tf3LciNCwLZEHetcnSkHsjZajVwwpM2HmJw@mail.gmail.com>
- <20250723144637.GW2672070@frogsfrogsfrogs> <CAJnrk1Z7wcB8uKWcrAuRAZ8B-f8SKnOuwtEr-=cHa+ApR_sgXQ@mail.gmail.com>
- <20250723212020.GY2672070@frogsfrogsfrogs> <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
-In-Reply-To: <CAJnrk1bFWRTGnpNhW_9MwSYZw3qPnPXZBeiwtPSrMhCvb9C3qg@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 24 Jul 2025 12:14:10 -0700
-X-Gm-Features: Ac12FXzB5jWOM2jLEHuea3HtXx8QVU4kwGFHqdvioSKikDPZlGiijO3gRX8BQys
-Message-ID: <CAJnrk1byTVJtuOyAyZSVYrusjhA-bW6pxBOQQopgHHbD3cDUHw@mail.gmail.com>
-Subject: Re: next-20250721 arm64 16K and 64K page size WARNING fs fuse file.c
- at fuse_iomap_writeback_range
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, linux-xfs@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <liam.howlett@oracle.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Jul 23, 2025 at 3:37=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Wed, Jul 23, 2025 at 2:20=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
-g> wrote:
-> >
-> > On Wed, Jul 23, 2025 at 11:42:42AM -0700, Joanne Koong wrote:
-> > > On Wed, Jul 23, 2025 at 7:46=E2=80=AFAM Darrick J. Wong <djwong@kerne=
-l.org> wrote:
-> > > >
-> > > > [cc Joanne]
-> > > >
-> > > > On Wed, Jul 23, 2025 at 05:14:28PM +0530, Naresh Kamboju wrote:
-> > > > > Regressions found while running LTP msync04 tests on qemu-arm64 r=
-unning
-> > > > > Linux next-20250721, next-20250722 and next-20250723 with 16K and=
- 64K
-> > > > > page size enabled builds.
-> > > > >
-> > > > > CONFIG_ARM64_64K_PAGES=3Dy ( kernel warning as below )
-> > > > > CONFIG_ARM64_16K_PAGES=3Dy ( kernel warning as below )
-> > > > >
-> > > > > No warning noticed with 4K page size.
-> > > > > CONFIG_ARM64_4K_PAGES=3Dy works as expected
-> > > >
-> > > > You might want to cc Joanne since she's been working on large folio
-> > > > support in fuse.
-> > > >
-> > > > > First seen on the tag next-20250721.
-> > > > > Good: next-20250718
-> > > > > Bad:  next-20250721 to next-20250723
-> > >
-> > > Thanks for the report. Is there a link to the script that mounts the
-> > > fuse server for these tests? I'm curious whether this was mounted as =
-a
-> > > fuseblk filesystem.
-> > >
-> > > > >
-> > > > > Regression Analysis:
-> > > > > - New regression? Yes
-> > > > > - Reproducibility? Yes
-> > > > >
-> > > > > Test regression: next-20250721 arm64 16K and 64K page size WARNIN=
-G fs
-> > > > > fuse file.c at fuse_iomap_writeback_range
-> > > > >
-> > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > > >
-> > > > > ## Test log
-> > > > > ------------[ cut here ]------------
-> > > > > [  343.828105] WARNING: fs/fuse/file.c:2146 at
-> > > > > fuse_iomap_writeback_range+0x478/0x558 [fuse], CPU#0: msync04/419=
-0
-> > > >
-> > > >         WARN_ON_ONCE(len & (PAGE_SIZE - 1));
-> > > >
-> > > > /me speculates that this might be triggered by an attempt to write =
-back
-> > > > some 4k fsblock within a 16/64k base page?
-> > > >
-> > >
-> > > I think this can happen on 4k base pages as well actually. On the
-> > > iomap side, the length passed is always block-aligned and in fuse, we
-> > > set blkbits to be PAGE_SHIFT so theoretically block-aligned is always
-> > > page-aligned, but I missed that if it's a "fuseblk" filesystem, that
-> > > isn't true and the blocksize is initialized to a default size of 512
-> > > or whatever block size is passed in when it's mounted.
-> >
-> > <nod> I think you're correct.
-> >
-> > > I'll send out a patch to remove this line. It doesn't make any
-> > > difference for fuse_iomap_writeback_range() logic whether len is
-> > > page-aligned or not; I had added it as a sanity-check against sketchy
-> > > ranges.
-> > >
-> > > Also, I just noticed that apparently the blocksize can change
-> > > dynamically for an inode in fuse through getattr replies from the
-> > > server (see fuse_change_attributes_common()). This is a problem since
-> > > the iomap uses inode->i_blkbits for reading/writing to the bitmap. I
-> > > think we will have to cache the inode blkbits in the iomap_folio_stat=
-e
-> > > struct unfortunately :( I'll think about this some more and send out =
-a
-> > > patch for this.
-> >
-> > From my understanding of the iomap code, it's possible to do that if yo=
-u
-> > flush and unmap the entire pagecache (whilst holding i_rwsem and
-> > mmap_invalidate_lock) before you change i_blkbits.  Nobody *does* this
-> > so I have no idea if it actually works, however.  Note that even I don'=
-t
-> > implement the flush and unmap bit; I just scream loudly and do nothing:
->
-> lol! i wish I could scream loudly and do nothing too for my case.
->
-> AFAICT, I think I just need to flush and unmap that file and can leave
-> the rest of the files/folios in the pagecache as is? But then if the
-> file has active refcounts on it or has been pinned into memory, can I
-> still unmap and remove it from the page cache? I see the
-> invalidate_inode_pages2() function but my understanding is that the
-> page still stays in the cache if it has has active references, and if
-> the page gets mmaped and there's a page fault on it, it'll end up
-> using the preexisting old page in the page cache.
+I made a very silly mistake with this commit that managed to slip by
+because I forgot to mzke sure rvkms was rebased before testing my work last
+- we can't do blanket implementations like this due to rust's orphan rule.
 
-Never mind, I was mistaken about this. Johannes confirmed that even if
-there's active refcounts on the folio, it'll still get removed from
-the page cache after unmapping and the page cache reference will get
-dropped.
+The code -does- build just fine right now, but it doesn't with the ongoing
+bindings for gem shmem. So, just revert this and we'll introduce a macro
+for implementing AlwaysRefCounted individually for each type of gem
+implementation.
 
-I think I can just do what you suggested and call
-filemap_invalidate_inode() in fuse_change_attributes_common() then if
-the inode blksize gets changed. Thanks for the suggestion!
+Note that we leave the IntoGEMObject since it is true that all gem objects
+are refcounted, so any implementations that are added should be
+implementing AlwaysRefCounted anyhow.
 
->
-> I don't think I really need to have it removed from the page cache so
-> much as just have the ifs state for all the folios in the file freed
-> (after flushing the file) so that it can start over with a new ifs.
-> Ideally we could just flush the file, then iterate through all the
-> folios in the mapping in order of ascending index, and kfree their
-> ->private, but I'm not seeing how we can prevent the case of new
-> writes / a new ifs getting allocated for folios at previous indexes
-> while we're trying to do the iteration/kfreeing.
->
-> >
-> > void fuse_iomap_set_i_blkbits(struct inode *inode, u8 new_blkbits)
-> > {
-> >         trace_fuse_iomap_set_i_blkbits(inode, new_blkbits);
-> >
-> >         if (inode->i_blkbits =3D=3D new_blkbits)
-> >                 return;
-> >
-> >         if (!S_ISREG(inode->i_mode))
-> >                 goto set_it;
-> >
-> >         /*
-> >          * iomap attaches per-block state to each folio, so we cannot a=
-llow
-> >          * the file block size to change if there's anything in the pag=
-e cache.
-> >          * In theory, fuse servers should never be doing this.
-> >          */
-> >         if (inode->i_mapping->nrpages > 0) {
-> >                 WARN_ON(inode->i_blkbits !=3D new_blkbits &&
-> >                         inode->i_mapping->nrpages > 0);
-> >                 return;
-> >         }
-> >
-> > set_it:
-> >         inode->i_blkbits =3D new_blkbits;
-> > }
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/co=
-mmit/?h=3Dfuse-iomap-attrs&id=3Dda9b25d994c1140aae2f5ebf10e54d0872f5c884
-> >
-> > --D
-> >
-> > >
-> > > Thanks,
-> > > Joanne
-> > >
+This reverts commit 38cb08c3fcd3f3b1d0225dcec8ae50fab5751549.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ rust/kernel/drm/gem/mod.rs | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
+
+diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+index 4cd69fa84318c..db65807dbce88 100644
+--- a/rust/kernel/drm/gem/mod.rs
++++ b/rust/kernel/drm/gem/mod.rs
+@@ -54,26 +54,6 @@ pub trait IntoGEMObject: Sized + super::private::Sealed + AlwaysRefCounted {
+     unsafe fn as_ref<'a>(self_ptr: *mut bindings::drm_gem_object) -> &'a Self;
+ }
+ 
+-// SAFETY: All gem objects are refcounted.
+-unsafe impl<T: IntoGEMObject> AlwaysRefCounted for T {
+-    fn inc_ref(&self) {
+-        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
+-        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
+-    }
+-
+-    unsafe fn dec_ref(obj: NonNull<Self>) {
+-        // SAFETY: We either hold the only refcount on `obj`, or one of many - meaning that no one
+-        // else could possibly hold a mutable reference to `obj` and thus this immutable reference
+-        // is safe.
+-        let obj = unsafe { obj.as_ref() }.as_raw();
+-
+-        // SAFETY:
+-        // - The safety requirements guarantee that the refcount is non-zero.
+-        // - We hold no references to `obj` now, making it safe for us to potentially deallocate it.
+-        unsafe { bindings::drm_gem_object_put(obj) };
+-    }
+-}
+-
+ /// Trait which must be implemented by drivers using base GEM objects.
+ pub trait DriverObject: BaseDriverObject<Object<Self>> {
+     /// Parent `Driver` for this object.
+@@ -287,6 +267,22 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
+     }
+ }
+ 
++// SAFETY: Instances of `Object<T>` are always reference-counted.
++unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
++    }
++
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
++        let obj = unsafe { obj.as_ref() };
++
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
++    }
++}
++
+ impl<T: DriverObject> super::private::Sealed for Object<T> {}
+ 
+ impl<T: DriverObject> Deref for Object<T> {
+
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+-- 
+2.50.0
+
 
