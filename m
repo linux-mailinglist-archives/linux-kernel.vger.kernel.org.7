@@ -1,79 +1,106 @@
-Return-Path: <linux-kernel+bounces-744599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105D1B10F0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57718B10F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BBA1883B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:47:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024B9175260
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AB22D193C;
-	Thu, 24 Jul 2025 15:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA0D2D63F1;
+	Thu, 24 Jul 2025 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igiezwh5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6nXUH6c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF44EACD;
-	Thu, 24 Jul 2025 15:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735A3EACD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372008; cv=none; b=kzepY+wwgP2Cue8KD0Rd5i8VhM/ZtQo97J7YltG4ACHih/WiI8G2m1sogotLbBTZotawVkvp+D/lw0u8vtem6xCqnIntdcvVG9pA0Lu6CI/2LnkSUxEYz23Lsktj8fFjDEI612+WMATgQ1O+oTy2w34dEGPG74HYCjqg3yqGxvM=
+	t=1753372122; cv=none; b=HMZtIT3T80wuJGqf1ScXIbcmxTB5gujxca139mt5/sT40qmwlVqucrxmJ8Npka5DCfuDqWjW42ZIU9ONpuasvHzz+cIePkPuGL4Me31ZJ9zckRS4qNarJzEWBEH5PshSyBVG6iteL/K8b8NYux0i/hhEYYIcKG5UdUthObDB5xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753372008; c=relaxed/simple;
-	bh=aUpzQk5F+ilIOEzUj6sp1Y3UrATILLsScrYyimr2cio=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=a2hOJYUZIu2WAGhgPIFnaQZDiEwH2utQUi3W2aj15XccivsD/fktarAv5kLEGKd+X9rY/kU9ds8KAgeISyeJ+I7WQG++LHEHcoo4O2b1CBByGpznazCjYy2o5tqT+eVhE0UwMKrbKOnat1Xi/2Jo37jwBtOWjQgHlGnQ2PCXP/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igiezwh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C84C4CEED;
-	Thu, 24 Jul 2025 15:46:47 +0000 (UTC)
+	s=arc-20240116; t=1753372122; c=relaxed/simple;
+	bh=E9cWd+56yehgJKY/GSciEMexZ/xXlWXUW6cJwWeuDCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e6lajFmEKGm5NM/zEwssYgGPqFjviuTqHSLieEuooIJbdVMthAUQtKpQ2oxsS3cGWhsLvny4X7FX+884GnW4WMMtYzetj6fMDr1wEk15ZwPF28qMSVOWre3fp2FnT6qZhdKOpp7wzyubXv3y2AyJzNfngbsMVH42pnzGeck6ZxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6nXUH6c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEEE8C4CEED;
+	Thu, 24 Jul 2025 15:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753372007;
-	bh=aUpzQk5F+ilIOEzUj6sp1Y3UrATILLsScrYyimr2cio=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=igiezwh5C8BzR9EP4Lp0hAlQriRoSrADvo/x0CxXe1BRddjMVzItKwhDwPEc7UgT0
-	 2OpaQGr+mGeIeVMY2psKbDI6Ofeab/8lTifqJOiEU5bm1gKLbh6CZJQRC80qB70wbW
-	 0KYIz+EJOPaQdfd2kj40Gnxgtcc26nBd5D5K5YQkBbmXh4j70e0HGq+nR8k8JfgEA/
-	 ihEQoissumegwwVyHvyfzbokqym1z3iT9urW7jinQUoDaWj3ura2aVEmWqP+hGWAMf
-	 IcV9VW57oT5Jl2N+cWXbYZB4U1HKn/UyjgsWzQFRq1ZUa03WttqKaIxf1vQkHZAy0v
-	 BkDbpZ0F0UZMQ==
-Date: Thu, 24 Jul 2025 10:46:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Arinzon, David" <darinzon@amazon.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] net: Fix typos
-Message-ID: <20250724154646.GA2939522@bhelgaas>
+	s=k20201202; t=1753372121;
+	bh=E9cWd+56yehgJKY/GSciEMexZ/xXlWXUW6cJwWeuDCM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b6nXUH6cY7SAQnJ2IPceEHNJ0PNktPOb81WmQL3iu2xCje9pPrnUK8vVxZmnSRtXu
+	 6wDyqIp9+Mx+Sv/5YYIpdBdBmlxabyVRxHpf6LClPfHtqgiS/+KrDWMMTLiMiF12Gv
+	 BIKGHxEvXr4DSFNDm86ncNZ/hiCUwCf14Ud/Aa1+LrKhDcuC+1Xag++KQXqCcxiFWP
+	 rRptjkgV9gJsiy104d7kuTfJk3HNas6tT0muTHeHUnGgAVBkItzGWflDUWeR6J/w5C
+	 AdYIIX4kqwKwQvckA42VsqVSFqVYp8Cqrk8LHBE8YrXinVCGvH9Ho7C+xfKMNgLETr
+	 qZirLkkHV4bOw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1ueyBQ-000000004Aq-3Rkt;
+	Thu, 24 Jul 2025 17:48:37 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Justin Chen <justin.chen@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 00/11] phy: drop unused module aliases
+Date: Thu, 24 Jul 2025 17:48:12 +0200
+Message-ID: <20250724154823.15998-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9e2a164eee44c5ba8b5f0b14ca7ee06@amazon.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 05:49:31AM +0000, Arinzon, David wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > Fix typos in comments and error messages.
+When fixing up some device leaks in the TI drivers I noticed that the
+commits introducing the leaks had also converted the drivers to only
+support OF probe.
 
-> ...
-> Reviewed for ENA. Thanks for identifying this typo.
-> Shouldn't think patch be for net-next?
+This series drops the unused platform module alias from the PHY drivers
+that never have supported or no longer supports anything but OF probing.
 
-Thanks.  It is actually based on net-next (56613001dfc9 ("Merge branch
-'mlx5-next' of git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux"))
-but I forgot to mention that in the subject line.
+Johan
 
-> Reviewed-by: David Arinzon <darinzon@amazon.com>
+
+Johan Hovold (11):
+  phy: broadcom: brcm-sata: drop unused module alias
+  phy: broadcom: brcm-usb: drop unused module alias
+  phy: cadence: Sierra: drop unused module alias
+  phy: hisilicon: hi6220-usb: drop unused module alias
+  phy: qualcomm: ipq806x-usb: drop unused module alias
+  phy: samsung: exynos5-usbdrd: drop unused module alias
+  phy: samsung: usb2: drop unused module alias
+  phy: ti: omap-usb2: drop unused module alias
+  phy: ti: ti-pipe3: drop unused module alias
+  phy: ti: dm816x-usb: drop unused module alias
+  phy: ti: omap-control: drop unused module alias
+
+ drivers/phy/broadcom/phy-brcm-sata.c        | 1 -
+ drivers/phy/broadcom/phy-brcm-usb.c         | 1 -
+ drivers/phy/cadence/phy-cadence-sierra.c    | 1 -
+ drivers/phy/hisilicon/phy-hi6220-usb.c      | 1 -
+ drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 1 -
+ drivers/phy/samsung/phy-exynos5-usbdrd.c    | 1 -
+ drivers/phy/samsung/phy-samsung-usb2.c      | 1 -
+ drivers/phy/ti/phy-dm816x-usb.c             | 1 -
+ drivers/phy/ti/phy-omap-control.c           | 1 -
+ drivers/phy/ti/phy-omap-usb2.c              | 1 -
+ drivers/phy/ti/phy-ti-pipe3.c               | 1 -
+ 11 files changed, 11 deletions(-)
+
+-- 
+2.49.1
+
 
