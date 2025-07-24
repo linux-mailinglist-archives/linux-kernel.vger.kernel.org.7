@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-744626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83C1B10F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0223CB10F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84D43B70C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E8EAE175C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422F92EA754;
-	Thu, 24 Jul 2025 15:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF62EA493;
+	Thu, 24 Jul 2025 16:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFQ7k+bK"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nwh1h535"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201A42EA491
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F0A1DF247;
+	Thu, 24 Jul 2025 16:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372792; cv=none; b=gH1euHh71WYZNN353rUMkjysMXD29TOqdJlMpAI9kxJOyjlsWsBe1ek4HPeUzv3ROTAiXelJ5cCcjDcRAYSwyXLlSKLoPpuBTrEw5V5pXCE8getyVj8OysRCptQU0oD5oGuP6xWI9A+nAxp239IIsfVXM0ynDbD3URVI4u/GFJk=
+	t=1753372837; cv=none; b=TV0ZcCJcDJYbeB/uL87UiDzLlD3ZpO1y49Zk0lqdBqJ0/O3trScBAdrkfc1fWjhc5yMkrNg5C5D4NZtUswqvxtfIdwWCpNuVUchgIkjhxWMCbF0fjoRdJZEOclM6dfdLZOZboZROiXn4zwlSqFdesPfkiklNgJB7hcjj2lLeREU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753372792; c=relaxed/simple;
-	bh=tdfuEWOHrsuwB7MdVsH4+bHTxGITRr9givX6D75+UCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G4AP786uqlkkeeEqSz1RWlhKvFeLdFfIHdLDI5uS/bpHMP03iRfoKUvo7bQlP7qP9HQi6z8dxT+j3Nu/RmYA8tBTX/bq6a93JrRq/RA6pEGiYDN+zVasYknqcL291pINJUOSYgHIGZGJxRPMIhU9smbV0HAQ9Zb7pzrG4JyD2Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFQ7k+bK; arc=none smtp.client-ip=209.85.215.171
+	s=arc-20240116; t=1753372837; c=relaxed/simple;
+	bh=FbPmgwrQmhELpPPQh/rwyTALm9IvfeHwHW8BTVv/FLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uju1IYFtd7KKjYSVZ8Ov87nfA5MBJiyoMrNjwZLhyxkPrrcz9k/a80AhnWURU+/PVj/NiU16p7H/3vNxpqwcWahrtLFnlVNa8ZTxD/BpItAWv+P8reN6OWiowZe8Egpx74BCBpMcogClGwVzyDOJgCIHd9y3GLS9fHKVjjjFzMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nwh1h535; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b390136ed88so959189a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:59:50 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3510c22173so134130a12.0;
+        Thu, 24 Jul 2025 09:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753372790; x=1753977590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=;
-        b=CFQ7k+bKR6dgxwpkhgoDQ3jP5ZzXzVazL+cOXeeWhQSxHPxYCrudmw/NFI5VWqIMdE
-         W/FYrMTRvFJYqc2UOdzXvdNWYYxa9ZdmzoPMr7mfKwfjtKdgktpmttvac+ZDe4asoV27
-         3KV8mNkuRfvFnVGoPX4G+auaUV4q07sk5DI0SJDYMZNMQaeswe6QUYtFidwubqTzkK/X
-         UfIAHDBTAqsbR4XzGITLuKSBMCEHEm7OV7UgIHV89kTi6LBrnCFf5Mp7TVaTxmKyYYqb
-         sUTqDLBzp0jvTlIJ2krIYEG4FA11o7NbR63n30U3oMvNiAGYOy39RrzfxeHC+Yb8Ueim
-         9MWg==
+        d=gmail.com; s=20230601; t=1753372835; x=1753977635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FbPmgwrQmhELpPPQh/rwyTALm9IvfeHwHW8BTVv/FLQ=;
+        b=Nwh1h535QPw3DdEuQNdIkiUcXE97ZecNErN9SP7dqyG5Uj8NxI+S/4gjpl7zTTN1t2
+         SLEWK4qBAS547nnu1kJAPdzeEUaWgfxKbQTTEAaQPPCqVoracC8juXICSTd+d2cXVd6R
+         OE/mD0mDu8YjI7a6QSAA8sCQC4F2RrW6EZtfNHtuL5tJmVuhgw5QIR+Ss8jLtztnRGTc
+         GiDTw0yVlxl9obdp4BW1HdbgyrtbO5hloUto941sfTFwdDnyjhPhjTGNUpIK5rxt5dHJ
+         tbd8eMjNJyp3yoKOW6ZPp2J/N5RBL9eG8YefeOW0SsM+xWEUMsaRghBXEAop3Ix6ZLFR
+         vMdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753372790; x=1753977590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=;
-        b=CvVlv3q2dcxdoMvcTrIIy7NeEhUWf4cR3XVcNSJNoWUT6l5pRA8hpZUIQwwFnylYDC
-         HAykxyYoJsYEHsNSJFW1MQQQ3s87N5timL7aNLLvao+FT0FQ2hLIjskXYNhJClt5yxcm
-         TR0SkgsuBBkayP5MtRsFyTrj6Vs1OETsoZg8k66weXUkb2+by2ZDFpeCCVEUBNNP/Cl0
-         Jw0qRKm2EayHFAja5HGsSw/OaZn9Rin/gpDpEW2oHM5NhTrl1eL1q8LZjmnKQVflfdN7
-         0W/7vI8IrjnrISmhbKgB9CNy/l9N6fbi54YuE4dy0DJiJANSZ/gkBc1GVcEeZwtS/eb2
-         2Miw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0qkHVX6IuPY25SGsWnHYwZdk600alPM051eofXNmvYSGoZKzz6F71Fjp/6shxt4LXW9qYVS1CaU0RbQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYZTne/kt4SIyEgj5j6yxeG/A/+Y0vqkBnERKJYYcnJVCq+FAQ
-	DLC+lQJh1VWTKm3061tzEluMQuXy/j5OWZ8p77ZFtT8Qfw0DwMmW9xgJ
-X-Gm-Gg: ASbGncuSzMSLLtLL2OYjHZ9Qc7LleXJuKJnbqjsXn5NHqXya6xTyg2CiZ9OCVQQX2OV
-	qI1QKardC1Rmes3QSm0XZfuDBlwMzOEEunX8cA/m40HvlMTLcUmqZEFeQD86Rz1My/LZzzj9fvQ
-	zy67vj3ZXHR6MxDVjBS8Bp4LbpJ7TjxJo+pPQZFU7xnzJLIkRB51lYMbvN+wDc5G0wtnApylKAD
-	AkqTtNyf52sWNDcZfOFHaWCsobBc7XkoQakD+u1WpVQIGHEMlHAlep3ZJVHjWw3KqiphhIgb109
-	MWQtdbC+QGlz9Z+1Nn2NBdCdHoqnsgfZumY6ubNgvkJNu/Wqv4DN1JfggZRLuyj47K7e/HpnojX
-	c9RSwZnamT8VJjY6mgH4nM/xFidYoEO3anMSleupLcQ3g0QHQv6A=
-X-Google-Smtp-Source: AGHT+IEHPy9G1eCQC0UKeFfiz9xGRT9b/0wCsPG0VhqcmscnBnx5mZqt6oMjqwWw8Ndyu5+wJUkHvg==
-X-Received: by 2002:a05:6a20:7343:b0:1f5:9098:e42e with SMTP id adf61e73a8af0-23d48fb1f73mr12003645637.7.1753372790189;
-        Thu, 24 Jul 2025 08:59:50 -0700 (PDT)
-Received: from localhost ([61.152.143.57])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b3f6c10ab56sm1747924a12.45.2025.07.24.08.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 08:59:49 -0700 (PDT)
-From: "mason.zhang" <masonzhang.linuxer@gmail.com>
-To: chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	masonzhang.linuxer@gmail.com
-Subject: [PATCH] f2fs: add error checking in do_write_page()
-Date: Thu, 24 Jul 2025 23:59:45 +0800
-Message-ID: <20250724155945.206801-1-masonzhang.linuxer@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1753372836; x=1753977636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FbPmgwrQmhELpPPQh/rwyTALm9IvfeHwHW8BTVv/FLQ=;
+        b=K6WSlxYAKA0lk8Zy/sHD8tv9LSOl0IdIDJXAbcK/0EHb+mEj+NIBvMqQB1J6oMB1/5
+         XWhEc72I0+nxdu4801bwY7CzF/G29suG81avDjGFNncOy7D4TgPiRiFWvq25Z0qlrxiG
+         YBXL5gggL0+3t+Li+jAEGnIhd8t5k9asEoYBrrVMPGeaNe2Ji26sDUU7Ft7dTh/PkkF+
+         cHTRQ4OXCbKq1JAahFO1zzD7Xq3u3PR4OiJCQA+FzV3IOsYiM0MygFuLl/tCXZ/KRBUV
+         SQao19JCAf7/Lx8JgOxK7jSyQY3Zqtq1wSXMRWxAQDcPTrXsRmKX1OJJB7PvM4hVlslj
+         ti7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCyYxHtt0zSK45fhtn4yGg2WroA6eK3fMPCH7ajhD7T6g8L9cYJQ4aL95Q5tTV6xOVdJt69TqKhR9MY71a2Q==@vger.kernel.org, AJvYcCVDgPTVuhLffa37cqg0X60zfeavPKLbiTFwUByMRpg3bqnexB0dbCpc7yUcQUqBrKhw5R0CYgWsFjIy4ZY=@vger.kernel.org, AJvYcCW1/WuJPFudFgffNRLbJh57Bhnh1HdxT/TynkC74ukVmIVL2bwn43PSnsekzvLziYFf/8gciZFytmUDZ57qFPM=@vger.kernel.org, AJvYcCXbsJPWF0Zk32ko03lRGZfBgK4+xjF3EwwpqoxuEQxMJlrMavH6fxPDgaXO6bFndB0UA/NgvZTmesJOZJkw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzygaw+Zmw5umUIKtbsavoacMjXSUPYmkiSoM7kLt/ZyblMjA2r
+	sk7mHu10BjN9/KGtT3IZIJ7Tr4sA3h+1LwJjD4/gQuEn2SbXT3al87oUcpKTuEADF11q5VqmIoR
+	oCk+NzL4A8he5j5DZOOAk2zeXfI/djCQ=
+X-Gm-Gg: ASbGnctoS43YjGXmlFecVYRhH/zViXqTOLCj37QsXUXFnVRaoEWOLhcaQbOk6QbY42e
+	56BFGXNrecq1GmQJBPLT1h6p0XAj1vqCCq4th0CT4TEo7vdZTO6WinUAxdzy4tWKPQ5AL4uw/9Z
+	kk3Xxj5nosz1m1OU8yyfqvuNmRZ6s+aIufW2G332khAb2b893hKq/Mdw3AbsRPJBqEISb2tjF2A
+	BODfOrH
+X-Google-Smtp-Source: AGHT+IEixyq95CchIezC/JloLVj0RsN+UyKsKMSCQC6gQRgajTHmeGZRSoEE5SqrPIOpBBTfzaC+/mr6yDfJmFLpCIY=
+X-Received: by 2002:a17:902:cec6:b0:23d:eb95:da15 with SMTP id
+ d9443c01a7336-23f9814bd03mr36628715ad.6.1753372835358; Thu, 24 Jul 2025
+ 09:00:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1753354215.git.legion@kernel.org> <e78d20afcc059cec3cd977ee74a0ec4df06de05b.1753354215.git.legion@kernel.org>
+In-Reply-To: <e78d20afcc059cec3cd977ee74a0ec4df06de05b.1753354215.git.legion@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 24 Jul 2025 18:00:22 +0200
+X-Gm-Features: Ac12FXzX-zdf43RhmmLozngcxIqMNsHW59ozas8iLUbpVV_D5V8Act7CA_O0LmM
+Message-ID: <CANiq72krLSP=xe9tMj5sPaBDmEK09x2J_CsbY5cU0wNAj_ffRw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/10] modpost: Add modname to mod_device_table alias
+To: Alexey Gladkov <legion@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Otherwise, the filesystem may unaware of potential file corruption.
+On Thu, Jul 24, 2025 at 3:50=E2=80=AFPM Alexey Gladkov <legion@kernel.org> =
+wrote:
+>
+> At this point, if a symbol is compiled as part of the kernel,
+> information about which module the symbol belongs to is lost.
+>
+> To save this it is possible to add the module name to the alias name.
+> It's not very pretty, but it's possible for now.
+>
+> Cc: Miguel Ojeda <ojeda@kernel.org>
 
-Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
----
- fs/f2fs/segment.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks for the ping -- Cc'ing as well Andreas who is working on module
+bits lately (but is away right now) and Danilo who maintains the
+modified file:
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ae1223ef648f..ce80ba226aed 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3936,12 +3936,15 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	int seg_type = log_type_to_seg_type(type);
- 	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
- 				seg_type == CURSEG_COLD_DATA);
-+	int err;
- 
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
- 
--	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
--			&fio->new_blkaddr, sum, type, fio)) {
-+	err = f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-+			&fio->new_blkaddr, sum, type, fio);
-+	if (unlikely(err)) {
-+		f2fs_err(fio->sbi, "Failed to allocate data block(%d)", err);
- 		if (fscrypt_inode_uses_fs_layer_crypto(folio->mapping->host))
- 			fscrypt_finalize_bounce_page(&fio->encrypted_page);
- 		folio_end_writeback(folio);
--- 
-2.50.0
+Cc: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
 
+Cheers,
+Miguel
 
