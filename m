@@ -1,161 +1,288 @@
-Return-Path: <linux-kernel+bounces-744499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9427BB10DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F022FB10DA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FBF1C81ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1C91C82FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB6277CA2;
-	Thu, 24 Jul 2025 14:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D142E5428;
+	Thu, 24 Jul 2025 14:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lSMuodqp"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYqGAjnE"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA0AA937;
-	Thu, 24 Jul 2025 14:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C45A937;
+	Thu, 24 Jul 2025 14:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367497; cv=none; b=gYubV1NgJHkG6DCbuTeVNmpSRlGwv7IPgwpL8a7M5mIs64rZkTH99dYSdsaY6DOGQLuvSYidlU0hBc8/K1HTjY7KpoKVEG7yoPcK/8+iIXbbIp6x+lifyNK+Nu4oBwwj2ERR/VGYAlpa5w1ZKeNY5TThMtso5Ghz5zLJM8cRnTo=
+	t=1753367514; cv=none; b=VB4543j8zXwPUm5qjTMemRpZ1g4IQ4I9ME60QMx26yA2RFRWIqwbXngpysjrTj3bFK1LhU1XLLSR1ZPh+BqBmSqpWip9Ow6i8vkDfBwd8b7eTdEZ7xTEzU2/v5RP9nfeC1L+n9IjHVQkXg7IBHM4Sl+q8Yujfa173QoJoRNftIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367497; c=relaxed/simple;
-	bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UZwF9V8SuxGpoAC3qE1nvcnwrDtehgsRX3h9z1vREvhnGy7gXRS6PC3G1bgI1SypBJQsAGxWsr+ZqGF+biRTVOvnYCn6g4ezVWI+DvPEAr4xeNgz8yz0t/YLXLCp69/6v9Lf4kfJRbpfSXsiHOpY4pOvqcOdCbZlGBVFYtEe6tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lSMuodqp; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753367493;
-	bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=lSMuodqp7YZ23b38WJ2oV1WBi/fZCKhs4ma5VVLSiqYHgwSS0IYRYWhNg8xEu9vKv
-	 nT0U1beQPVNKE2vHcuzK7w63mbpITTrT9m7Isp1RE57o00oCk0yx9uslrBaYeStGYo
-	 tmBQSgqbR6UuoQXt3xiQIbALojBr6qlGBmrWH1U1ixxfRqWuo+8tIjqmyPeXKuxUrr
-	 ZlriQmuVFgYsImJ5jAA9v11QpPyZvsGDSg5hlaUeWCq5QZQNngzZZO9XFYAClYFVjA
-	 RD0uW4jl68BclIwhFNNsRD09gw0p9yySbMl9ND/InXNzt28GWYtiuW/QcBQ7Api17G
-	 OsQ7a+70z1xvw==
-Received: from jupiter.universe (dyndsl-091-248-210-114.ewe-ip-backbone.de [91.248.210.114])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5C15917E0B72;
-	Thu, 24 Jul 2025 16:31:33 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 07205480039; Thu, 24 Jul 2025 16:31:33 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 24 Jul 2025 16:31:25 +0200
-Subject: [PATCH] arm64: dts: rockchip: use MAC TX delay for ROCK 4D
+	s=arc-20240116; t=1753367514; c=relaxed/simple;
+	bh=YNBaN3j4mUbkAKTE3TC0ZA98z+X2KPUvinEexHZ9C8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3ZyDVohDQ4NWDswCSKNJzIeUvAdJsJCnCeDYvUKfryzS9+SsIGXXRbkMbuzwEeu8ImJuT3Lt/cKGEMyI0z9tQvrpV5KRfzASQJYoPToGGgih8LO69PAdcDg06TOAvOP0Zn12LeRpR0Q9+0NGoky5Mh2+c9WxvrA7R3EQwTtmSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYqGAjnE; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237311f5a54so8185045ad.2;
+        Thu, 24 Jul 2025 07:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753367512; x=1753972312; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+iwAeIA2+xfwqfXMdMLqDVi+dKWzWoeBjyMMY0H8dWg=;
+        b=mYqGAjnEt/iMaYqopYADC1s3heVyA70tQwAJHNO2Po9OUbWfZCGt1WDAaivHp41KSc
+         qz4nHlDFP5NucwWcYmsbl8yC/FzF6Cgdk63d8w3PSuReFMeBwsgaBDXSD84am5RICXHu
+         UT83SKdN1w5jJ/4J038grzVq6Ips5bD5fbaRzDyKme3tTE3hupd2YlqtxLNkKWxC9Wbk
+         leCmx8idcrJw0/FsVvKaQ5AQmYRuUDh9dTHRU4UFLSF06NBgPzM+8zuDl17Xs4VHpMIj
+         UCHzUyVIT4trfCxVoORy3OR6GXjFb9pB5igQzQj3yrO023vBoG2jWrUBq4/Tt6MY+azr
+         gnJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753367512; x=1753972312;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+iwAeIA2+xfwqfXMdMLqDVi+dKWzWoeBjyMMY0H8dWg=;
+        b=AO6N0BWQqe75TjG/izDB4ewjPTiIKf7Eft9NjSPZgKRvApHYmIW40YT1ZXSAWLqkPV
+         e6nfl1lppC+a2ACBwzAPMsv0LlICbao4R60PeM9lfpJvXGVTODIUR769YTQOd5SaJJFg
+         Bol80Oegt+MKxIRUB01tL+iYvD07Oftq33M/pGzn12Tm8xpW8BDS/mwsCnCaMrFF9e3z
+         qCOn9O4yUu2xXh/0ZCHmFhpwEinXmrQCQlNChqP/8nW6nivO/ISx57IcEzVfkKlaA0lf
+         PXaC1sw6TpDdGBqSxvQRK/52Gy9mcufIUTAv5mfigIzlpNv+4HvBUUpdy4BzV8txaTVR
+         SkmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwDP2rKdkVOiMXSRuzOq/GKS67I/s/eEUi+aCejA4aShM1MHhJn4pnNdHh79+DO/DMWNju4lpyo+EaRLOk@vger.kernel.org, AJvYcCWXVZtW6Z1/ErRtiulJKtOIr+i4FAb3fChZER++ARZ21pvj07rYZmtcd3jB9zEJMw7Yj0X19Eoa1WqLE26paCQs@vger.kernel.org, AJvYcCWiwOZQwpnxyoX/f9fLjm9s4/JLbWFlh9r2/NUS5fxi0pQM18Gz0PqRDP2Jd+ylf+xK92B/DEH1T3s=@vger.kernel.org, AJvYcCXi4ySk/A+wIg6Gy5qayc8rstdPYO6MwL+ehsdsrG5rwolprnNyGl/bb6DpQJWu8uT0eWYS/kEQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX9Pr+1aXzseerMuh5CD8ABGONFbfLM3KkXR2/3OgJSJH0NEQT
+	rNKcXLRlXXKMZTwh5pMHIvU+lwGngRRjA2cAuuuvLQ2dchaNznaswm7N
+X-Gm-Gg: ASbGnctBY8abPoIqabPLOHecSKKF76X9Xjv+rE2HfD4UV0FpcCHEmN6k2jMmrBpYyN9
+	C2d62z2zctBBfU7zEHjLIywYJ2yydfaG1wG2qkkNySGncxNyZd4XlPItu2xMBB80g02ZNGRQLBm
+	yqdA0rNuzrcsJKqpgAaw2t2GZV9rptAEFlJmOYXAOM/YIvHOmYyr5dGB4F3KUdhguGvamI/f/EZ
+	0ajghjvkZYFrArSu19WsX2wJbyrUsIMbWf+A5eZbvgrS3vYcqTCbtMSb6nnfuf0Dn/AtibqtQNX
+	yOwoHhcrRyuH4m5vOs1ZALms7WXxMwMPaSxD8wFhPCWHiAne/QnqRjhaPxkRj+AehukIIpqA4gZ
+	h48x0ZEYhKSAmlIpLhVdrE07vptY5R/bWbnc8Pg==
+X-Google-Smtp-Source: AGHT+IHLcuOpaFWgNJ0bOxXfH7GE7j0MIPGb9iJ4Lc9UbhKtiKFpDukLVJPuav7X8+8Dg+wiDyWhEw==
+X-Received: by 2002:a17:902:e213:b0:23f:ac71:ef0 with SMTP id d9443c01a7336-23fac71127fmr283445ad.43.1753367512273;
+        Thu, 24 Jul 2025 07:31:52 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa48bbeaesm17439635ad.112.2025.07.24.07.31.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 07:31:51 -0700 (PDT)
+Date: Thu, 24 Jul 2025 14:31:43 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
+	Amit Cohen <amcohen@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] selftests: bonding: add test for LACP actor
+ port priority
+Message-ID: <aIJDz3AgQtnzSR59@fedora>
+References: <20250724081632.12921-1-liuhangbin@gmail.com>
+ <20250724081632.12921-4-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-rk3576-rock4d-phy-timings-v1-1-1cdce2b4aca4@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALxDgmgC/x3MTQ5AMBBA4avIrE1C1U9cRSzaGkxEyVSEiLtrL
- L/Few8EEqYAbfKA0MmBNx+Rpwm42fiJkIdoUJkqs1pplKUo6wplc4secJ9vPHhlPwWsrCarrWn
- U6CD2u9DI1//u+vf9AMmpQXtrAAAA
-X-Change-ID: 20250724-rk3576-rock4d-phy-timings-6b4eb4ba82fc
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Andrew Lunn <andrew@lunn.ch>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2874; i=sre@kernel.org;
- h=from:subject:message-id; bh=u9PdAYuALXEVozae3RfJMx3RFx6T5Oe/vgBOyHiZLK8=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGiCQ8ROUfuRfo4mNRUGEaWZbqk0Wkbt8RBEL
- w3/ULol4z1cW4kCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJogkPEAAoJENju1/PI
- O/qaMSUP/13LhvhKXd0+OszgpGriuOkZE/79bCvrU1METdH/ofIq1UZMuht+thZw7M2dZejhYhB
- LNgFfxK3ci+Ffmrt+Wl+m3ZG3fZ4itWPPRtmbS2Lpy3XZk9zsjw4TBZmwoELGT2A7RwQFC+iINr
- gJMEHVDY5UlsnyonFSt8qu5Cy0vymNH+FqIDypFTP6uA6EX6PbpF17QqGlfGCrp2TppxBBKL8X1
- sb9AFtoGFfrBUHwxVvCVPepWzOQdrS3CUHZ5oktAIS+eK6wO2fZoxHKPYwcFS+TxaN1RcJnM5kA
- +M4FbuhevnUybNLdvxvoFevajz5bXo9J9PajrIlGnwXI3sPnVUioeymlPI9q7LLOhXAKMMIyVN2
- kPMyjqTTW8Onfp4akskSaC0mNSNBPmvvvxvFjVdyPf7gJOGrEMuuA4ur9xUxObr4eQrtAuwoCBS
- z/GMx1hWtvPnRZxVpeJXU6ZUNSwQYLyxhnZ/42vKgJjD4NQKzNgsTmldR9w5eoJAJmtZmktunQz
- vfcT1zXSPNC3EuraiEKcS3p1RxUwnJlyCbgOiHhYyNBHmGwRCzeF+4toNmA+YfDRY5SWEcgfbel
- OyF07/JiK8f7u31M2BgdHFbqhXdiHMHMEzHBae8QepHDNONnUWn5P1QbyoQAyxNcykXPVBUmjrl
- GewoN3r2NJh5VXpayUnctgQ==
-X-Developer-Key: i=sre@kernel.org; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724081632.12921-4-liuhangbin@gmail.com>
 
-According to the Ethernet controller device tree binding "rgmii-id"
-means, that the PCB does not have extra long lines to add the required
-delays. This is indeed the case for the ROCK 4D.
+Hi Jakub,
 
-The problem is, that the Rockchip MAC Linux driver interprets the
-interface type differently and abuses the information to configure
-RX and TX delays in the MAC using (vendor) properties 'rx_delay' and
-'tx_delay'.
+Should I drop this selftest as it needs the new iproute2 feature that has
+not applied yet?
 
-When Detlev Casanova upstreamed the ROCK 4D device tree, he used the
-correct description for the board ("rgmii-id"). This results in no delays
-being configured in the MAC. At the same time the PHY will provide
-some delays.
-
-This works to some degree, but is not a stable configuration. All five
-ROCK 4D production boards, which have recently been added to the Collabora
-LAVA lab for CI purposes have trouble with data not getting through
-after a connection has been established.
-
-Using the same delay setup as the vendor device tree fixes the
-functionality (at the cost of not properly following the DT binding).
-As we cannot fix the driver behavior for RK3576 (some other boards
-already depend on this), let's update the ROCK 4D DT instead.
-
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-There is an additional problem, that the link does not come up in the
-first place. This has been handled by the recently merged (and less
-questionable) DT changes [0] combined with a PHY driver patch to trigger
-a PHY reset after the clock has been enabled [1] (I will send a new
-version of that patch after this one). Stable network support on the
-ROCK 4D requires all patches.
-
-[0] https://lore.kernel.org/linux-rockchip/20250704-rk3576-rock4d-phy-handling-fixes-v1-1-1d64130c4139@kernel.org/
-[1] https://lore.kernel.org/netdev/20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org/
----
- arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-index 0388d72076bf79ee4f20ac1d3bc04fe1859f857b..f105ed675d3671e93916c830a9a17dc240ca5fda 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
-@@ -237,7 +237,7 @@ &cpu_l3 {
- &gmac0 {
- 	clock_in_out = "output";
- 	phy-handle = <&rgmii_phy0>;
--	phy-mode = "rgmii-id";
-+	phy-mode = "rgmii-rxid";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&eth0m0_miim
- 		     &eth0m0_tx_bus2
-@@ -246,6 +246,8 @@ &eth0m0_rgmii_clk
- 		     &eth0m0_rgmii_bus
- 		     &ethm0_clk0_25m_out>;
- 	status = "okay";
-+	tx_delay = <0x20>;
-+	rx_delay = <0x00>;
- };
- 
- &gpu {
-
----
-base-commit: e05818ef75bee755fc56811cb54febf4174d7cf2
-change-id: 20250724-rk3576-rock4d-phy-timings-6b4eb4ba82fc
-
-Best regards,
--- 
-Sebastian Reichel <sre@kernel.org>
-
+Thanks
+Hangbin
+On Thu, Jul 24, 2025 at 08:16:32AM +0000, Hangbin Liu wrote:
+> Add a selftest to verify that per-port actor priority (ad_actor_port_prio)
+> is correctly applied and affects aggregator selection as expected.
+> 
+> Move cmd_jq from forwarding/lib.sh to net/lib.sh.
+> 
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+>  .../selftests/drivers/net/bonding/Makefile    |  3 +-
+>  .../drivers/net/bonding/bond_lacp_prio.sh     | 73 +++++++++++++++++++
+>  tools/testing/selftests/net/forwarding/lib.sh | 24 ------
+>  tools/testing/selftests/net/lib.sh            | 24 ++++++
+>  4 files changed, 99 insertions(+), 25 deletions(-)
+>  create mode 100755 tools/testing/selftests/drivers/net/bonding/bond_lacp_prio.sh
+> 
+> diff --git a/tools/testing/selftests/drivers/net/bonding/Makefile b/tools/testing/selftests/drivers/net/bonding/Makefile
+> index 2b10854e4b1e..32617a834a6b 100644
+> --- a/tools/testing/selftests/drivers/net/bonding/Makefile
+> +++ b/tools/testing/selftests/drivers/net/bonding/Makefile
+> @@ -10,7 +10,8 @@ TEST_PROGS := \
+>  	mode-2-recovery-updelay.sh \
+>  	bond_options.sh \
+>  	bond-eth-type-change.sh \
+> -	bond_macvlan_ipvlan.sh
+> +	bond_macvlan_ipvlan.sh \
+> +	bond_lacp_prio.sh
+>  
+>  TEST_FILES := \
+>  	lag_lib.sh \
+> diff --git a/tools/testing/selftests/drivers/net/bonding/bond_lacp_prio.sh b/tools/testing/selftests/drivers/net/bonding/bond_lacp_prio.sh
+> new file mode 100755
+> index 000000000000..a3f939d12143
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/net/bonding/bond_lacp_prio.sh
+> @@ -0,0 +1,73 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Testing if bond lacp per port priority works
+> +
+> +lib_dir=$(dirname "$0")
+> +# shellcheck disable=SC1091
+> +source "$lib_dir"/../../../net/lib.sh
+> +
+> +# create client, switch, backup switch netns
+> +setup_ns c_ns s_ns b_ns
+> +defer cleanup_all_ns
+> +
+> +# setup links
+> +# shellcheck disable=SC2154
+> +ip -n "${c_ns}" link add eth0 type veth peer name eth0 netns "${s_ns}"
+> +ip -n "${c_ns}" link add eth1 type veth peer name eth1 netns "${s_ns}"
+> +# shellcheck disable=SC2154
+> +ip -n "${c_ns}" link add eth2 type veth peer name eth0 netns "${b_ns}"
+> +ip -n "${c_ns}" link add eth3 type veth peer name eth1 netns "${b_ns}"
+> +
+> +ip -n "${c_ns}" link add bond0 type bond mode 802.3ad miimon 100 lacp_rate fast ad_select prio
+> +ip -n "${s_ns}" link add bond0 type bond mode 802.3ad miimon 100 lacp_rate fast
+> +ip -n "${b_ns}" link add bond0 type bond mode 802.3ad miimon 100 lacp_rate fast
+> +
+> +ip -n "${c_ns}" link set eth0 master bond0
+> +ip -n "${c_ns}" link set eth1 master bond0
+> +ip -n "${c_ns}" link set eth2 master bond0
+> +ip -n "${c_ns}" link set eth3 master bond0
+> +ip -n "${s_ns}" link set eth0 master bond0
+> +ip -n "${s_ns}" link set eth1 master bond0
+> +ip -n "${b_ns}" link set eth0 master bond0
+> +ip -n "${b_ns}" link set eth1 master bond0
+> +
+> +ip -n "${c_ns}" link set bond0 up
+> +ip -n "${s_ns}" link set bond0 up
+> +ip -n "${b_ns}" link set bond0 up
+> +
+> +# set ad actor port priority, default 255
+> +ip -n "${c_ns}" link set eth0 type bond_slave ad_actor_port_prio 1000
+> +prio=$(cmd_jq "ip -n ${c_ns} -d -j link show eth0" ".[].linkinfo.info_slave_data.ad_actor_port_prio")
+> +[ "$prio" -ne 1000 ] && RET=1
+> +ip -n "${c_ns}" link set eth2 type bond_slave ad_actor_port_prio 10
+> +prio=$(cmd_jq "ip -n ${c_ns} -d -j link show eth2" ".[].linkinfo.info_slave_data.ad_actor_port_prio")
+> +[ "$prio" -ne 10 ] && RET=1
+> +log_test "bond 802.3ad" "ad_actor_port_prio setting"
+> +
+> +# Trigger link state change to reselect the aggregator
+> +ip -n "${c_ns}" link set eth1 down
+> +ip -n "${c_ns}" link set eth1 up
+> +# the active agg should be connect to switch
+> +bond_agg_id=$(cmd_jq "ip -n ${c_ns} -d -j link show bond0" ".[].linkinfo.info_data.ad_info.aggregator")
+> +eth0_agg_id=$(cmd_jq "ip -n ${c_ns} -d -j link show eth0" ".[].linkinfo.info_slave_data.ad_aggregator_id")
+> +if [ "${bond_agg_id}" -ne "${eth0_agg_id}" ]; then
+> +	RET=1
+> +fi
+> +
+> +# Change the actor port prio and re-test
+> +ip -n "${c_ns}" link set eth0 type bond_slave ad_actor_port_prio 10
+> +ip -n "${c_ns}" link set eth2 type bond_slave ad_actor_port_prio 1000
+> +# Trigger link state change to reselect the aggregator
+> +ip -n "${c_ns}" link set eth1 down
+> +ip -n "${c_ns}" link set eth1 up
+> +# now the active agg should be connect to backup switch
+> +bond_agg_id=$(cmd_jq "ip -n ${c_ns} -d -j link show bond0" ".[].linkinfo.info_data.ad_info.aggregator")
+> +eth2_agg_id=$(cmd_jq "ip -n ${c_ns} -d -j link show eth2" ".[].linkinfo.info_slave_data.ad_aggregator_id")
+> +# shellcheck disable=SC2034
+> +if [ "${bond_agg_id}" -ne "${eth2_agg_id}" ]; then
+> +	RET=1
+> +fi
+> +log_test "bond 802.3ad" "ad_actor_port_prio switch"
+> +
+> +exit "${EXIT_STATUS}"
+> diff --git a/tools/testing/selftests/net/forwarding/lib.sh b/tools/testing/selftests/net/forwarding/lib.sh
+> index 508f3c700d71..09b63c6f3dbd 100644
+> --- a/tools/testing/selftests/net/forwarding/lib.sh
+> +++ b/tools/testing/selftests/net/forwarding/lib.sh
+> @@ -551,30 +551,6 @@ wait_for_dev()
+>          fi
+>  }
+>  
+> -cmd_jq()
+> -{
+> -	local cmd=$1
+> -	local jq_exp=$2
+> -	local jq_opts=$3
+> -	local ret
+> -	local output
+> -
+> -	output="$($cmd)"
+> -	# it the command fails, return error right away
+> -	ret=$?
+> -	if [[ $ret -ne 0 ]]; then
+> -		return $ret
+> -	fi
+> -	output=$(echo $output | jq -r $jq_opts "$jq_exp")
+> -	ret=$?
+> -	if [[ $ret -ne 0 ]]; then
+> -		return $ret
+> -	fi
+> -	echo $output
+> -	# return success only in case of non-empty output
+> -	[ ! -z "$output" ]
+> -}
+> -
+>  pre_cleanup()
+>  {
+>  	if [ "${PAUSE_ON_CLEANUP}" = "yes" ]; then
+> diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
+> index 006fdadcc4b9..4c278829e04c 100644
+> --- a/tools/testing/selftests/net/lib.sh
+> +++ b/tools/testing/selftests/net/lib.sh
+> @@ -616,3 +616,27 @@ wait_local_port_listen()
+>  		sleep 0.1
+>  	done
+>  }
+> +
+> +cmd_jq()
+> +{
+> +	local cmd=$1
+> +	local jq_exp=$2
+> +	local jq_opts=$3
+> +	local ret
+> +	local output
+> +
+> +	output="$($cmd)"
+> +	# it the command fails, return error right away
+> +	ret=$?
+> +	if [[ $ret -ne 0 ]]; then
+> +		return $ret
+> +	fi
+> +	output=$(echo $output | jq -r $jq_opts "$jq_exp")
+> +	ret=$?
+> +	if [[ $ret -ne 0 ]]; then
+> +		return $ret
+> +	fi
+> +	echo $output
+> +	# return success only in case of non-empty output
+> +	[ ! -z "$output" ]
+> +}
+> -- 
+> 2.46.0
+> 
 
