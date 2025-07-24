@@ -1,204 +1,146 @@
-Return-Path: <linux-kernel+bounces-744214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA48B10992
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03279B109A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97711CE11F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13004E3E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A472BD5BB;
-	Thu, 24 Jul 2025 11:50:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF152BE641
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 11:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE442BE637;
+	Thu, 24 Jul 2025 11:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LB7bc/Hb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65E72BD5B5;
+	Thu, 24 Jul 2025 11:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753357850; cv=none; b=pGYItCD3rACBXlTRhh1+7w3eXugZLI1nTeSQkRkgircS1J8ohbK4ugBWUnPwXvCM4Agdu36uhMzI73iAwneeoP4mXFRiXwd+mughY4XL5Z2veD1kh2b0zmVX5WlpNHIyGoJe/BV3KC7eDxNNDg7g3GQWIkjhJqq1BnDSJZbDHvQ=
+	t=1753357968; cv=none; b=pfDf6WePQgcA82JtYgasubleLI3NyvKc5MGH253/O6ZyS4x8mnKy81iCtGrOZ2Oz+oLUB1aal25wkv5jHEq31+iP1CisYvfgymUXf3h1LAw9tfI0eE3NVWSxg9dAR3TeksQuw93Ueq46Tm6VNPas9wMkle1PUPWaJ35WSd7W9zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753357850; c=relaxed/simple;
-	bh=FUJD3RXfJWf1sRUwWCGq3597ygiMPCG4Z9zXMl8xpMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDcgTQ+RyEVCwnFaQpduVm7E9Epw+m4vyhfz06tHXHExEcSRovwJBIYWNd7zB4scbSLS6xC4mv6+d+vnJG2A3nheXi6gJ/syFmclsVD6bapv/cfJH2rgOLA1UY96dPvxm1JNgUsh6qgBAMM+Z4OoFkzIFIZyPZQP7H0xSAcs6yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9D1A1A00;
-	Thu, 24 Jul 2025 04:50:41 -0700 (PDT)
-Received: from [10.1.33.48] (e122027.cambridge.arm.com [10.1.33.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43D513F66E;
-	Thu, 24 Jul 2025 04:50:44 -0700 (PDT)
-Message-ID: <ae1d6b7c-c130-4e03-b387-1dfd55f2d07e@arm.com>
-Date: Thu, 24 Jul 2025 12:50:39 +0100
+	s=arc-20240116; t=1753357968; c=relaxed/simple;
+	bh=skduPBA0XOiRRFwQNtjlPasZ0GUfqz6drj8febfSOhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kla6PgZuAqxM7OdewCFjajlpdjvaKZnUIYcHC+39UAzZmZRAaYp0oUW8bNkeVGOUOqpgd7swmPDAWL9Oed7JluVS55y0QRmELwEP3/yu9aXEMQa76ogOm01dvkFKp1mfXI9aq9kny3d6hC/8LEGLBxxefZzw9ts1ekm1HEdwMew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LB7bc/Hb; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753357967; x=1784893967;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=skduPBA0XOiRRFwQNtjlPasZ0GUfqz6drj8febfSOhY=;
+  b=LB7bc/Hbo81gIBp8JKhBQ6KMocGkhnEEyEr21+TdL8b27T1zyZrqeOuo
+   y/vvK5nTt2HsMXCq85We0HTQB3P/P0hJWrXEB241r+8neVIMaHPxP710K
+   pn6Tkwm14hnBJsSyS/hNU+qDLnmM549B7/ZbdhREuO1kz5G6wVUlm1lUV
+   myh0h9IhIQ6bXFpzCyJ20isX/aiWcl9JuO1bIeg1qSMynOSzF8RYsFZgy
+   cBYAu3N6CRO+DLORslJBoqoDITmz7KEAO8ROJkKAlt2ZgSUzxsW0tweAA
+   2nmAsvI9SjaJxrEsNd1nBOUEqSZfPOM7TscElfUGplh/j78J/vYyNtfOE
+   g==;
+X-CSE-ConnectionGUID: pgf3WXWBSayHguckRosE8g==
+X-CSE-MsgGUID: aM42GNHIRwC6Ju/0gK6tOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="59473460"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="59473460"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 04:52:46 -0700
+X-CSE-ConnectionGUID: gH3texk5RoaLOe2vbIi/aw==
+X-CSE-MsgGUID: lF7KjgBaRhmOljQc+wknEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="164253907"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 04:52:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ueuUx-00000000Yl0-3pfo;
+	Thu, 24 Jul 2025 14:52:31 +0300
+Date: Thu, 24 Jul 2025 14:52:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 01/15] lib: provide kmemdup_const()
+Message-ID: <aIIef0MDcZiElgN1@smile.fi.intel.com>
+References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
+ <20250724-pinctrl-gpio-pinfuncs-v3-1-af4db9302de4@linaro.org>
+ <e1253b8a-4940-417f-b530-09e57c6a8932@lucifer.local>
+ <CAHp75VeWbhuL1pYvEza44Pnb5YUufgY=1WYXSx2nNMJVfcytTA@mail.gmail.com>
+ <5c7edf57-bf13-4633-8348-791e0620cc79@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] drm/panthor: Add support for Mali-Gx20 and
- Mali-Gx25 GPUs
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org, Chia-I Wu <olvaffe@gmail.com>
-References: <20250724092600.3225493-1-karunika.choo@arm.com>
- <20250724092600.3225493-7-karunika.choo@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250724092600.3225493-7-karunika.choo@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5c7edf57-bf13-4633-8348-791e0620cc79@lucifer.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 24/07/2025 10:26, Karunika Choo wrote:
-> This patch adds firmware binary and GPU model naming support for
-> Mali-Gx20 and Mali-Gx25 GPUs.
+On Thu, Jul 24, 2025 at 12:15:11PM +0100, Lorenzo Stoakes wrote:
+> On Thu, Jul 24, 2025 at 01:12:49PM +0200, Andy Shevchenko wrote:
+> > On Thu, Jul 24, 2025 at 1:10 PM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > On Thu, Jul 24, 2025 at 11:24:29AM +0200, Bartosz Golaszewski wrote:
+> > > > +extern const void *kmemdup_const(const void *src, size_t len, gfp_t gfp);
+> > >
+> > > Please drop extern, it's unnecessary.
+> >
+> > It's all over the header. This should be done as a precursor patch and
+> > I know that usually people push back on doing that. I gave up on this.
+> > Kernel is going to rot sooner or later... :-(
 > 
-> The GPU_COHERENCY_FEATURES macros are slightly reworked as the
-> assumption that FEATURE = BIT(PROTOCOL) no longer holds with the
-> introduction of the SHAREABLE_CACHE_SUPPORT, which is BIT(5) on the
-> GPU_COHERENCY_PROTOCOL register. As such, the feature bits are now
-> individually defined. Further changes were also made to enable
-> SHAREABLE_CACHE_SUPPORT if coherency is enabled and the feature is
-> supported.
-> 
-> This patch also fixes a minor bug that incorrectly writes ACE instead of
-> ACE_LITE to GPU_COHERENCY_PROTOCOL if coherency is enabled.
-> 
-> Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> In mm we just update as we go, this is probably the best approach to avoid
+> unnecessary churn.
 
-This patch should really be split up. The bug fix at least should really
-be a separate patch (that way it can be backported).
+I agree on the idea of eliminating it, but also I agree on the consistency over
+redundancy. That's why I prefer to see this done at once for all (in the same
+header) than doing one-by-one. And this approach got a lot of pushes back, while
+the former even more pushed back on the (in)consistency matters.
 
-I'd also prefer the GPU_COHERENCY_SHAREABLE_CACHE_SUPPORT parts to be
-split from the changes adding the new GPU name/firmware. There's no
-actual dependency. Whereas in patch 4 you kind of get away with the uAPI
-change being in with new GPU support because we need the new register
-for the naming (although I think personally I would have split that too).
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c |  3 +--
->  drivers/gpu/drm/panthor/panthor_fw.c     |  2 ++
->  drivers/gpu/drm/panthor/panthor_gpu.c    | 14 ++++++++++++--
->  drivers/gpu/drm/panthor/panthor_hw.c     | 18 ++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_regs.h   |  5 ++++-
->  5 files changed, 37 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 81df49880bd8..b85a744d99f8 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -33,8 +33,7 @@ static int panthor_gpu_coherency_init(struct panthor_device *ptdev)
->  	/* Check if the ACE-Lite coherency protocol is actually supported by the GPU.
->  	 * ACE protocol has never been supported for command stream frontend GPUs.
->  	 */
-> -	if ((gpu_read(ptdev, GPU_COHERENCY_FEATURES) &
-> -		      GPU_COHERENCY_PROT_BIT(ACE_LITE)))
-> +	if (ptdev->gpu_info.coherency_features & GPU_COHERENCY_FEATURE_ACE_LITE)
-
-Also this change shouldn't really be here - it's a valid optimisation
-but completely independent of the other changes.
-
-Thanks,
-Steve
-
->  		return 0;
->  
->  	drm_err(&ptdev->base, "Coherency not supported by the device");
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index fa6e0b48a0b2..9bf06e55eaee 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1405,3 +1405,5 @@ MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch12.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch13.8/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 5e2c3173ae27..e8d8dbeefac7 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -45,8 +45,18 @@ struct panthor_gpu {
->  
->  static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
->  {
-> -	gpu_write(ptdev, GPU_COHERENCY_PROTOCOL,
-> -		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
-> +	u32 coherency_protocol = GPU_COHERENCY_NONE;
-> +
-> +	if (ptdev->coherent) {
-> +		coherency_protocol = GPU_COHERENCY_ACE_LITE;
-> +
-> +		if (ptdev->gpu_info.coherency_features &
-> +		    GPU_COHERENCY_FEATURE_SHAREABLE_CACHE_SUPPORT)
-> +			coherency_protocol |=
-> +				GPU_COHERENCY_SHAREABLE_CACHE_SUPPORT;
-> +	}
-> +
-> +	gpu_write(ptdev, GPU_COHERENCY_PROTOCOL, coherency_protocol);
->  }
->  
->  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index a7583342d797..3fcb69a6f959 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -35,6 +35,24 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  		fallthrough;
->  	case GPU_PROD_ID_MAKE(11, 3):
->  		return "Mali-G615";
-> +	case GPU_PROD_ID_MAKE(12, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G720-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G720";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(12, 1):
-> +		return "Mali-G620";
-> +	case GPU_PROD_ID_MAKE(13, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G925-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G725";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(13, 1):
-> +		return "Mali-G625";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index 8bee76d01bf8..1beb365c0fec 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -111,12 +111,15 @@
->  #define GPU_REVID					0x280
->  
->  #define GPU_COHERENCY_FEATURES				0x300
-> -#define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
-> +#define   GPU_COHERENCY_FEATURE_ACE_LITE		BIT(0)
-> +#define   GPU_COHERENCY_FEATURE_ACE			BIT(1)
-> +#define   GPU_COHERENCY_FEATURE_SHAREABLE_CACHE_SUPPORT	BIT(5)
->  
->  #define GPU_COHERENCY_PROTOCOL				0x304
->  #define   GPU_COHERENCY_ACE_LITE			0
->  #define   GPU_COHERENCY_ACE				1
->  #define   GPU_COHERENCY_NONE				31
-> +#define   GPU_COHERENCY_SHAREABLE_CACHE_SUPPORT		BIT(5)
->  
->  #define MCU_CONTROL					0x700
->  #define MCU_CONTROL_ENABLE				1
 
 
