@@ -1,364 +1,370 @@
-Return-Path: <linux-kernel+bounces-744543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBAEB10E53
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:08:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C622B10E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 889C44E4B62
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0786F1CE684E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A172E973D;
-	Thu, 24 Jul 2025 15:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cz5IHKWM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C0B255240;
-	Thu, 24 Jul 2025 15:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AB12E040C;
+	Thu, 24 Jul 2025 15:08:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0ABC2E973A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753369690; cv=none; b=eisGk37LrfJ+M5EnhyrrqwkfEWV5ISOfQDkR6EESvqzZpQcZQ2ZE8E+/29R0x0AAZAASL/+JD2mUof4iPqcUjslA7kqZBztAF3CJe2vgfIyISyCiK7sv0GL8yXJxax80lZH5+Iwq5WYSKw8IBqTPfbKVOdM3eZHrvikDGrRTrPU=
+	t=1753369693; cv=none; b=NdHAslUArqP/uUgTMSYL067UDNeoR9lipTfIAVRek0RWXLQ31vaC7wNEt7NG64fDrHEnYSl02vG/2s0ytsxFdNZlgJRn4zX4dfO3+zJHxyIj5rB33G1vO10s/IPG9LU4ZnbP9aKmQN4lKio1FTt4A6RECcuQj/KiDLd6owpXiSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753369690; c=relaxed/simple;
-	bh=KCHH0eMuDliYL38Oq6svSPAp5b03jXyE7QuDM0e08R8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UFA0owq1EVMx7cbAB5eMKP8Tj43AlPE1Q6sYUhAoM53Qhs2B2IJze9lanQGjoC7/dQrm0zMfgVumnfGrZi4AU6fYgB6/H6Kz1BE+t82UC72rAZu2jXAbnnHyrfeYMoOA8/YTed5AG5YOW5qyhUCWmucL7/M+PbA/LvNuo42NufM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cz5IHKWM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABACC4CEED;
-	Thu, 24 Jul 2025 15:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753369689;
-	bh=KCHH0eMuDliYL38Oq6svSPAp5b03jXyE7QuDM0e08R8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cz5IHKWMrwsai9HgTjCfdOBZ2GwjDCkhK5KrhJF3ZHmtk/n+8Z8xgf4RaW/pVWrBE
-	 dRtOrObo7KzfknEu54vbj6ajX9Nmp11ObfDEALXOQxwJBOK2XeT2D9SfR1XP3gAZ4Y
-	 6Ux5YVAF6Nmndi1H/mXZRUUVJ5wvsAJH0hQGIQVLuxKTkafQqJl/wBnP3wfZrcH90v
-	 PqyxnT9K69j7fA7KdCXVE6Ep+zAi/I5OJLZwdCsnVL158aM5CGg/QR/2oUzNUbbxS8
-	 MzxCl7VBcKtEMM9am16/bgoxS7ytOuAIGO+nDTCS0uW0OiYaJ5qMrxcafz/+283LtP
-	 to54MUrMKe7UQ==
-Date: Thu, 24 Jul 2025 16:07:59 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-Cc: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
- <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
- <marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
- <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
- <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v3 2/2] iio: imu: smi330: Add driver
-Message-ID: <20250724160759.44d67e88@jic23-huawei>
-In-Reply-To: <AM8PR10MB4721FB1A78F25B204BE3A26ACD5FA@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
-	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
-	<20250706175328.7207d847@jic23-huawei>
-	<AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-	<20250713144214.6ee02f59@jic23-huawei>
-	<AM8PR10MB4721BAD5BD78B8FD0F5C9798CD57A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-	<20250717150440.5067862b@jic23-huawei>
-	<AM8PR10MB4721FB1A78F25B204BE3A26ACD5FA@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753369693; c=relaxed/simple;
+	bh=hPs7kgn0sqUMrvPXcs+ygRaBmiQ6NUqhgNGpub5d/KI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P8e0Z/oRvlgI8+3ze9M+SKZ93JIP7Lf7oZkwebPo8o5g8viRc+N5iiAYm0Ro8gNRDhQBC750z6RFnwK9fZegOauYn6dx/6jJuoaU8Ov2KMQxHsVIbM+mxY4VEvxnNi7Vpf8yuIyAC9v8EoF5Y4ePpVcx964Ahsprq0TUALfmAAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D1571A00;
+	Thu, 24 Jul 2025 08:08:03 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4524E3F6A8;
+	Thu, 24 Jul 2025 08:08:06 -0700 (PDT)
+Message-ID: <eb8a395c-ca21-43d2-a1f9-739dbdc26dc4@arm.com>
+Date: Thu, 24 Jul 2025 16:08:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 20/36] arm_mpam: Probe the hardware features resctrl
+ supports
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250711183648.30766-21-james.morse@arm.com>
+Content-Language: en-US
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <20250711183648.30766-21-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Jul 2025 09:46:47 +0000
-"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
+Hi James,
 
-> Hi Jonathan,
+On 7/11/25 19:36, James Morse wrote:
+> Expand the probing support with the control and monitor types
+> we can use with resctrl.
 > 
-> we find out the reason why the timestamp is invalid in the iio buffer.
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>   drivers/platform/arm64/mpam/mpam_devices.c  | 154 +++++++++++++++++++-
+>   drivers/platform/arm64/mpam/mpam_internal.h |  53 +++++++
+>   2 files changed, 206 insertions(+), 1 deletion(-)
 > 
-> https://elixir.bootlin.com/linux/v6.15.1/source/drivers/iio/industrialio-buffer.c#L1093
-> 
-> In "iio_buffer_update_demux" to copy the timestamp, the address calculation is the root causes.
-> 
-> 1083  in_loc += length;
-> ....
-> 1093  in_loc = roundup(in_loc, length);
-> 
-> When finish to copy the channel data, in_loc is just incremented and used as address of timestamp. This is correct only when the channel direct before timestamp is enabled.
-> 
-> If there is a gap between the last enabled channel and timestamp, then iio core will copy the wrong data.
-> 
-> We have a fix to this issue,
-> 
-> 1093 in_loc = (indio_dev->scan_bytes / sizeof(int64_t) - 1) * length;
+> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
+> index 8646fb85ad09..61911831ab39 100644
+> --- a/drivers/platform/arm64/mpam/mpam_devices.c
+> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
+> @@ -102,7 +102,7 @@ static LLIST_HEAD(mpam_garbage);
+>   
+>   static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
+>   {
+> -	WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
+> +	WARN_ON_ONCE(reg + sizeof(u32) > msc->mapped_hwpage_sz);
+>   	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
+>   
+>   	return readl_relaxed(msc->mapped_hwpage + reg);
+> @@ -131,6 +131,20 @@ static inline void _mpam_write_partsel_reg(struct mpam_msc *msc, u16 reg, u32 va
+>   }
+>   #define mpam_write_partsel_reg(msc, reg, val)  _mpam_write_partsel_reg(msc, MPAMCFG_##reg, val)
+>   
+> +static inline u32 _mpam_read_monsel_reg(struct mpam_msc *msc, u16 reg)
+> +{
+> +	mpam_mon_sel_lock_held(msc);
+> +	return __mpam_read_reg(msc, reg);
+> +}
+> +#define mpam_read_monsel_reg(msc, reg) _mpam_read_monsel_reg(msc, MSMON_##reg)
+> +
+> +static inline void _mpam_write_monsel_reg(struct mpam_msc *msc, u16 reg, u32 val)
+> +{
+> +	mpam_mon_sel_lock_held(msc);
+> +	__mpam_write_reg(msc, reg, val);
+> +}
+> +#define mpam_write_monsel_reg(msc, reg, val)   _mpam_write_monsel_reg(msc, MSMON_##reg, val)
+> +
+>   static u64 mpam_msc_read_idr(struct mpam_msc *msc)
+>   {
+>   	u64 idr_high = 0, idr_low;
+> @@ -645,6 +659,137 @@ static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
+>   	return found;
+>   }
+>   
+> +/*
+> + * IHI009A.a has this nugget: "If a monitor does not support automatic behaviour
+> + * of NRDY, software can use this bit for any purpose" - so hardware might not
+> + * implement this - but it isn't RES0.
+> + *
+> + * Try and see what values stick in this bit. If we can write either value,
+> + * its probably not implemented by hardware.
+> + */
+> +#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result)			\
+> +do {										\
+> +	u32 now;								\
+> +	u64 mon_sel;								\
+> +	bool can_set, can_clear;						\
+> +	struct mpam_msc *_msc = _ris->vmsc->msc;				\
+> +										\
+> +	if (WARN_ON_ONCE(!mpam_mon_sel_inner_lock(_msc))) {			\
+> +		_result = false;						\
+> +		break;								\
+> +	}									\
+> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, 0) |			\
+> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, _ris->ris_idx);		\
+> +	mpam_write_monsel_reg(_msc, CFG_MON_SEL, mon_sel);			\
+> +										\
+> +	mpam_write_monsel_reg(_msc, _mon_reg, MSMON___NRDY);			\
+> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> +	can_set = now & MSMON___NRDY;						\
+> +										\
+> +	mpam_write_monsel_reg(_msc, _mon_reg, 0);				\
+> +	now = mpam_read_monsel_reg(_msc, _mon_reg);				\
+> +	can_clear = !(now & MSMON___NRDY);					\
+> +	mpam_mon_sel_inner_unlock(_msc);					\
+> +										\
+> +	_result = (!can_set || !can_clear);					\
+> +} while (0)
+It is a bit surprising that something that looks like a function 
+modifies a boolean passed by value. Consider continuing the pattern you 
+have above:
+#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg, _result) 
+_mpam_ris_hw_probe_hw_nrdy(_ris, MSMON##_mon_reg, _result)
 
-That looks correct, but I'm not seeing why the roundup above doesn't land us
-in the same place.  I'm not that keen on handling the timestamp even more differently
-to other channels.
+with signature:
+void _mpam_ris_hw_probe_hw_nrdy(struct mpam_msc *msc, u16 reg, bool 
+*hw_managed);
 
+and using the _mpam functions from the new _mpam_ris_hw_probe_hw_nrdy().
 
-If we imagine an active scan with
-2-byte chanel we want, 2 2-byte channels we don't a 2-byte gap and an 8-byte timestamp
-struct scan {
-	u16 wanted;
-	u16 notwanted[2];
-	... gap...
-	aligned_s64 timestamp;
-	
+> +
+> +static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
+> +{
+> +	int err;
+> +	struct mpam_msc *msc = ris->vmsc->msc;
+> +	struct mpam_props *props = &ris->props;
+> +
+> +	lockdep_assert_held(&msc->probe_lock);
+> +	lockdep_assert_held(&msc->part_sel_lock);
+> +
+> +	/* Cache Portion partitioning */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_CPOR_PART, ris->idr)) {
+> +		u32 cpor_features = mpam_read_partsel_reg(msc, CPOR_IDR);
+> +
+> +		props->cpbm_wd = FIELD_GET(MPAMF_CPOR_IDR_CPBM_WD, cpor_features);
+> +		if (props->cpbm_wd)
+> +			mpam_set_feature(mpam_feat_cpor_part, props);
+> +	}
+> +
+> +	/* Memory bandwidth partitioning */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_MBW_PART, ris->idr)) {
+> +		u32 mbw_features = mpam_read_partsel_reg(msc, MBW_IDR);
+> +
+> +		/* portion bitmap resolution */
+> +		props->mbw_pbm_bits = FIELD_GET(MPAMF_MBW_IDR_BWPBM_WD, mbw_features);
+> +		if (props->mbw_pbm_bits &&
+> +		    FIELD_GET(MPAMF_MBW_IDR_HAS_PBM, mbw_features))
+> +			mpam_set_feature(mpam_feat_mbw_part, props);
+> +
+> +		props->bwa_wd = FIELD_GET(MPAMF_MBW_IDR_BWA_WD, mbw_features);
+> +		if (props->bwa_wd && FIELD_GET(MPAMF_MBW_IDR_HAS_MAX, mbw_features))
+> +			mpam_set_feature(mpam_feat_mbw_max, props);
+> +	}
+> +
+> +	/* Performance Monitoring */
+> +	if (FIELD_GET(MPAMF_IDR_HAS_MSMON, ris->idr)) {
+> +		u32 msmon_features = mpam_read_partsel_reg(msc, MSMON_IDR);
+> +
+> +		/*
+> +		 * If the firmware max-nrdy-us property is missing, the
+> +		 * CSU counters can't be used. Should we wait forever?
+> +		 */
+> +		err = device_property_read_u32(&msc->pdev->dev,
+> +					       "arm,not-ready-us",
+> +					       &msc->nrdy_usec);
+> +
+> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_CSU, msmon_features)) {
+> +			u32 csumonidr;
+> +
+> +			csumonidr = mpam_read_partsel_reg(msc, CSUMON_IDR);
+> +			props->num_csu_mon = FIELD_GET(MPAMF_CSUMON_IDR_NUM_MON, csumonidr);
+> +			if (props->num_csu_mon) {
+> +				bool hw_managed;
+> +
+> +				mpam_set_feature(mpam_feat_msmon_csu, props);
+> +
+> +				/* Is NRDY hardware managed? */
+> +				mpam_mon_sel_outer_lock(msc);
+> +				mpam_ris_hw_probe_hw_nrdy(ris, CSU, hw_managed);
+> +				mpam_mon_sel_outer_unlock(msc);
+> +				if (hw_managed)
+> +					mpam_set_feature(mpam_feat_msmon_csu_hw_nrdy, props);
+> +			}
+> +
+> +			/*
+> +			 * Accept the missing firmware property if NRDY appears
+> +			 * un-implemented.
+> +			 */
+> +			if (err && mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, props))
+> +				pr_err_once("Counters are not usable because not-ready timeout was not provided by firmware.");
+> +		}
+> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_MBWU, msmon_features)) {
+> +			bool hw_managed;
+> +			u32 mbwumonidr = mpam_read_partsel_reg(msc, MBWUMON_IDR);
+> +
+> +			props->num_mbwu_mon = FIELD_GET(MPAMF_MBWUMON_IDR_NUM_MON, mbwumonidr);
+> +			if (props->num_mbwu_mon)
+> +				mpam_set_feature(mpam_feat_msmon_mbwu, props);
+> +
+> +			if (FIELD_GET(MPAMF_MBWUMON_IDR_HAS_RWBW, mbwumonidr))
+> +				mpam_set_feature(mpam_feat_msmon_mbwu_rwbw, props);
+> +
+> +			/* Is NRDY hardware managed? */
+> +			mpam_mon_sel_outer_lock(msc);
+> +			mpam_ris_hw_probe_hw_nrdy(ris, MBWU, hw_managed);
+> +			mpam_mon_sel_outer_unlock(msc);
+> +			if (hw_managed)
+> +				mpam_set_feature(mpam_feat_msmon_mbwu_hw_nrdy, props);
+> +
+> +			/*
+> +			 * Don't warn about any missing firmware property for
+> +			 * MBWU NRDY - it doesn't make any sense!
+> +			 */
+> +		}
+> +	}
+> +}
+> +
+>   static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   {
+>   	u64 idr;
+> @@ -665,6 +810,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   
+>   	idr = mpam_msc_read_idr(msc);
+>   	mutex_unlock(&msc->part_sel_lock);
+> +
+>   	msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
+>   
+>   	/* Use these values so partid/pmg always starts with a valid value */
+> @@ -685,6 +831,12 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>   		ris = mpam_get_or_create_ris(msc, ris_idx);
+>   		if (IS_ERR(ris))
+>   			return PTR_ERR(ris);
+> +		ris->idr = idr;
+> +
+> +		mutex_lock(&msc->part_sel_lock);
+> +		__mpam_part_sel(ris_idx, 0, msc);
+> +		mpam_ris_hw_probe(ris);
+> +		mutex_unlock(&msc->part_sel_lock);
+>   	}
+>   
+>   	spin_lock(&partid_max_lock);
+> diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
+> index 42a454d5f914..ae6fd1f62cc4 100644
+> --- a/drivers/platform/arm64/mpam/mpam_internal.h
+> +++ b/drivers/platform/arm64/mpam/mpam_internal.h
+> @@ -136,6 +136,55 @@ static inline void mpam_mon_sel_lock_held(struct mpam_msc *msc)
+>   		lockdep_assert_preemption_enabled();
+>   }
+>   
+> +/*
+> + * When we compact the supported features, we don't care what they are.
+> + * Storing them as a bitmap makes life easy.
+> + */
+> +typedef u16 mpam_features_t;
+> +
+> +/* Bits for mpam_features_t */
+> +enum mpam_device_features {
+> +	mpam_feat_ccap_part = 0,
+> +	mpam_feat_cpor_part,
+> +	mpam_feat_mbw_part,
+> +	mpam_feat_mbw_min,
+> +	mpam_feat_mbw_max,
+> +	mpam_feat_mbw_prop,
+> +	mpam_feat_msmon,
+> +	mpam_feat_msmon_csu,
+> +	mpam_feat_msmon_csu_capture,
+> +	mpam_feat_msmon_csu_hw_nrdy,
+> +	mpam_feat_msmon_mbwu,
+> +	mpam_feat_msmon_mbwu_capture,
+> +	mpam_feat_msmon_mbwu_rwbw,
+> +	mpam_feat_msmon_mbwu_hw_nrdy,
+> +	mpam_feat_msmon_capt,
+> +	MPAM_FEATURE_LAST,
+> +};
+> +#define MPAM_ALL_FEATURES      ((1 << MPAM_FEATURE_LAST) - 1)
+> +
+> +struct mpam_props {
+> +	mpam_features_t		features;
+> +
+> +	u16			cpbm_wd;
+> +	u16			mbw_pbm_bits;
+> +	u16			bwa_wd;
+> +	u16			num_csu_mon;
+> +	u16			num_mbwu_mon;
+> +};
+> +
+> +static inline bool mpam_has_feature(enum mpam_device_features feat,
+> +				    struct mpam_props *props)
+> +{
+> +	return (1 << feat) & props->features;
+> +}
+> +
+> +static inline void mpam_set_feature(enum mpam_device_features feat,
+> +				    struct mpam_props *props)
+> +{
+> +	props->features |= (1 << feat);
+> +}
+> +
+>   struct mpam_class {
+>   	/* mpam_components in this class */
+>   	struct list_head	components;
+> @@ -175,6 +224,8 @@ struct mpam_vmsc {
+>   	/* mpam_msc_ris in this vmsc */
+>   	struct list_head	ris;
+>   
+> +	struct mpam_props	props;
+> +
+>   	/* All RIS in this vMSC are members of this MSC */
+>   	struct mpam_msc		*msc;
+>   
+> @@ -186,6 +237,8 @@ struct mpam_vmsc {
+>   
+>   struct mpam_msc_ris {
+>   	u8			ris_idx;
+> +	u64			idr;
+> +	struct mpam_props	props;
+>   
+>   	cpumask_t		affinity;
+>   
 
-
-Cutting down to the parts that change in_loc only.
-
-	for_each_set_bit(out_ind, buffer->scan_mask, masklength) {
-		in_ind = find_next_bit(indio_dev->active_scan_mask,
-				       masklength, in_ind + 1);
-		while (in_ind != out_ind) {
-... length is the length of current channel
-.. We never enter here in the example.
-			/* Make sure we are aligned */
-			in_loc = roundup(in_loc, length) + length;
-
-			in_ind = find_next_bit(indio_dev->active_scan_mask,
-					       masklength, in_ind + 1);
-		}
-
-... length is the length of the current channel.  Get here on first hit.
-
-		in_loc = roundup(in_loc, length);
-
-		in_loc += length;
-.. in loc = 2
-	}
-	/* Relies on scan_timestamp being last */
-	if (buffer->scan_timestamp) {
-
-... length is 8 ...
-
-		in_loc = roundup(in_loc, length);
-.. I think in_lock = 8?
-		ret = iio_buffer_add_demux(buffer, &p, in_loc, out_loc, length);
-
-	}
-
-Perhaps you can talk through the example that is failing?
-
-> 
-> just not sure, if there will be any side-effects with this fix.
-> 
-> Are you going to fix this finding, or shall we create a new patch for that?
-
-Fine to send the proposed fix but first we need to step through why the
-current code isn't working.
-
-
+-- 
 Thanks,
 
-Jonathan
-
-> 
-> Best regards
-> Jianping Shen
-> 
-> 
-> >>  
-> >> >>  
-> >> >> >> +
-> >> >> >> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
-> >> >> >> +      struct iio_poll_func *pf = p;
-> >> >> >> +      struct iio_dev *indio_dev = pf->indio_dev;
-> >> >> >> +      struct smi330_data *data = iio_priv(indio_dev);
-> >> >> >> +      int ret, chan;
-> >> >> >> +      int i = 0;
-> >> >> >> +
-> >> >> >> +      ret = regmap_bulk_read(data->regmap,  
-> >SMI330_ACCEL_X_REG, data-  
-> >> >> >>buf,
-> >> >> >> +                             ARRAY_SIZE(smi330_channels));
-> >> >> >> +      if (ret)
-> >> >> >> +              goto out;
-> >> >> >> +
-> >> >> >> +      if (*indio_dev->active_scan_mask != SMI330_ALL_CHAN_MSK)  
-> >{  
-> >> >> >> +              iio_for_each_active_channel(indio_dev, chan)
-> >> >> >> +                      data->buf[i++] = data->buf[chan];  
-> >> >> >
-> >> >> >If I follow this correctly you are reading all the channels and
-> >> >> >just copying out the ones you want.  Just let the IIO core do that
-> >> >> >for you by setting iio_dev-  
-> >> >> >>available_scan_masks = {  SMI330_ALL_CHAN_MSK, 0 }; and push the
-> >> >> >>whole  
-> >> >> >buffer every time.  
-> >> >>
-> >> >> For the most frequent use cases, we define available_scan_masks = {  
-> >> >SMI330_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK,  
-> >SMI330_GYRO_XYZ_MSK,  
-> >> >0 }; and push the whole buffer every time.  
-> >> >> From the user space we just enable 3 channels gyro_x, gyro_y, and gyro_z.  
-> >> >Then we enable buffer and expect that only the gyro values and
-> >> >timestamp in iio_buffer. Nevertheless, we have 3 accelerometer values
-> >> >and the timestamp in iio_buffer.
-> >> >  
-> >> >> It seems that the iio core does not take care which channel is
-> >> >> enabled,  just  
-> >> >copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code
-> >> >still needs to take care and just copy the enabled channel value to buffer.
-> >> >
-> >> >Look again at how it works.  If you provide ACC_XYZ_MSK, then your
-> >> >driver has to handle it.
-> >> >available_scan_masks is saying what your driver supports. The driver
-> >> >can check active_scan_mask to find out what is enabled.  So right
-> >> >option here is only { SMI330_ALL_CHAN_MSK, 0, }  In that case the
-> >> >driver never needs to check as there is only one option.
-> >> >
-> >> >Then if any subset of channels is enabled the IIO core copy out just
-> >> >the data that is relevant.
-> >> >
-> >> >  
-> >> >>
-> >> >> Another side effect after using available_scan_masks is that the  
-> >> >active_scan_masks sometimes does not reflect current channel
-> >> >activation status.  
-> >> >>
-> >> >> Is some step missing to properly use available_scan_masks ?  How
-> >> >> can a user  
-> >> >find out from user space which channel combination is defined in
-> >> >available_scan_masks ?
-> >> >
-> >> >Why would userspace want to?  Userspace requested a subset of
-> >> >channels and it gets that subset.  So it if asks for the channels
-> >> >that make up SMI330_ACC_XYZ_MSK, if available_scan_mask == {
-> >> >SMI330_ALL_CHAN_MSK,
-> >> >0 } then the IIO core handling selects SMI330_ALL_CHAN_MSK (smallest
-> >> >available mask that is superset of what we asked for) and sets
-> >> >active_scan_mask to that.  The driver follows what active_scan_mask
-> >> >specifies and passes all channel data via the iio_push_to_buffers*()
-> >> >call. The demux in the IIO core than takes that 'scan' and repacks it
-> >> >so that userspace receives just the data it asked for formatting
-> >> >exactly as the driver would have done it if you had handled each channels  
-> >separately in the driver.  
-> >> >  
-> >>
-> >> Set available_scan_masks = {  SMI330_ALL_CHAN_MSK, 0 } and push the
-> >> whole buffer. iio_push_to_buffers_with_timestamp (indio_dev, data->buf, pf-
-> >>timestamp); We enable the accX, accY, and accZ from userspace. And expect 3  
-> >acc values and the timestamp in iio buffer.  
-> >>
-> >> Raw iio buffer data:
-> >> 00000000: 3c00 d6ff 7510 0000 6100 f3ff 0000 0000  <...u...a.......  
-> >            ACCX ACCY ACCZ PAD_ TIMESTAMP__________
-> >                               4093587712  
-> >> 00000010: 3f00 d2ff 8910 0000 0300 f6ff 0000 0000  ?...............  
-> >                               4143907584  
-> >> 00000020: 4900 dcff 7a10 0000 caff 0100 0000 0000  I...z...........  
-> >                               So this one looks bad.
-> >  
-> >> 00000030: 4c00 d9ff 7910 0000 2f00 f8ff 0000 0000  L...y.../.......  
-> >                               4177473280
-> >  
-> >> 00000040: 4b00 d9ff 8410 0000 1f00 0800 0000 0000  K...............  
-> >                               also bad.  
-> >> 00000050: 4700 daff 7f10 0000 3b00 eeff 0000 0000  G.......;.......
-> >> 00000060: 3f00 d8ff 8410 0000 0c00 0900 0000 0000  ?...............
-> >> 00000070: 4600 d9ff 8010 0000 0e00 0800 0000 0000  F...............
-> >> 00000080: 4700 d7ff 7d10 0000 3400 feff 0000 0000  G...}...4.......
-> >> 00000090: 4b00 d4ff 8010 0000 3e00 1200 0000 0000  K.......>.......
-> >> 000000a0: 4600 d6ff 8d10 0000 4300 0000 0000 0000  F.......C.......
-> >> 000000b0: 4900 d6ff 7710 0000 2500 f0ff 0000 0000  I...w...%.......
-> >>
-> >> Converted value  
-> >I guess this is different data as doesn't seem to line up with the above?
-> >  
-> >> 0.015625 -0.009277 1.024411 589929
-> >> 0.015869 -0.009521 1.040769 4294901719
-> >> 0.020508 -0.008301 1.025632 458712
-> >> 0.018799 -0.006836 1.032956 851960
-> >> 0.019287 -0.009521 1.033201 4294836275
-> >> 0.015625 -0.010498 1.031003 4293328982
-> >> 0.015137 -0.010498 1.031980 4293853176
-> >> 0.015869 -0.009521 1.031492 4293722141
-> >> 0.018555 -0.011475 1.033445 4294311886
-> >>
-> >> The 3 acc values is correct in buffer.  Nevertheless, invalid timestamp. The  
-> >timestamp is actually the value of the gyroscope, which directly followed by acc
-> >values.  
-> >> If we enable the gyroX, gyroY, and gyroZ from userspace, then all the data is  
-> >correct. Since the gyro values are the last 3 values and flowed by timestamp.
-> >
-> >Ok. That's odd and we should debug that.  This code is used in a lot of drivers
-> >so if it is not working correctly we need to figure out why asap and fix it.
-> >  
-> 
-> 
-> 
-> 
-> >However, I'm not seeing what looks to be gyro data in bytes 8-15 etc It isn't the
-> >stable sequence we'd expect for a timestamp though some specific values
-> >might be plausible.
-> >
-> >Looking again at the code, the IIO_DECLARE_BUFFER_WITH_TS() is the wrong
-> >size.  That should not include channel space for the timestamp. That should
-> >make it too big though which shouldn't be a problem.
-> >Also wrong type - should be using __le16 not s16 for the buffer elements given
-> >your channel declarations.
-> >
-> >Please could you add a print to your code alongside the
-> >iio_push_buffer_with_timestamp() to verify that the value in the pf-  
-> >>timestamp is reasonable looking for a timestamp.  
-> >
-> >For reference this is the code that handles the timestamp entry creation in the
-> >demux tables.
-> >https://elixir.b/
-> >ootlin.com%2Flinux%2Fv6.15.1%2Fsource%2Fdrivers%2Fiio%2Findustrialio-
-> >buffer.c%23L1086&data=05%7C02%7CJianping.Shen%40de.bosch.com%7Cf0
-> >9eaf03f8e44dd1e6fe08ddc53ae596%7C0ae51e1907c84e4bbb6d648ee5841
-> >0f4%7C0%7C0%7C638883578931715207%7CUnknown%7CTWFpbGZsb3d8
-> >eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIj
-> >oiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=s53tTw6o%2F2guA
-> >iH3J9jBRd0%2Bj6UmcmgyhtBCuKK1HE0%3D&reserved=0
-> >
-> >Jonathan
-> >
-> >  
-> >>
-> >> Conclusion: Setting available_scan_masks = {  SMI330_ALL_CHAN_MSK, 0 },  
-> >the iio core is able to correct handle the enabled channel data, but not the
-> >timestamp.  
-> >> The working solution for now is that our driver takes care and just copys the  
-> >enabled channel value to buffer without using available_scan_masks.  
-> >>  
-> >> >So the aim is that userspace never knows anything about this.  Just
-> >> >set what channels you want and get that data.
-> >> >
-> >> >Jonathan
-> >> >
-> >> >  
-> >> >>  
-> >> >> >
-> >> >> >The handling the core code is reasonably sophisticated and will
-> >> >> >use bulk copying where appropriate.
-> >> >> >
-> >> >> >If there is a strong reason to not use that, add a comment here so
-> >> >> >we don't have anyone 'fix' this code in future.
-> >> >> >  
-> >> >> >> +      }
-> >> >> >> +
-> >> >> >> +      iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
-> >> >> >> +pf->timestamp);
-> >> >> >> +
-> >> >> >> +out:
-> >> >> >> +      iio_trigger_notify_done(indio_dev->trig);
-> >> >> >> +
-> >> >> >> +      return IRQ_HANDLED;
-> >> >> >> +}  
-> >> >>  
-> >>  
-> 
-> 
+Ben
 
 
