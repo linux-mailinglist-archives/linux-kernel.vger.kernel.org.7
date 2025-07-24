@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-743479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98247B0FF29
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8511B0FF2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA73A173EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756EA1C80AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D401DED5F;
-	Thu, 24 Jul 2025 03:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233431DF269;
+	Thu, 24 Jul 2025 03:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DTJ+MLBW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="JFKjFrQ5"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3B158535;
-	Thu, 24 Jul 2025 03:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF24430
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753327780; cv=none; b=jhKvX/IH5UtuMMs5053lqIQo75rmx61nEKhdVAlsXsnxnKq9BercKSzyOEW8x61ooJ5gb0NXppRsdOkbJAoOfY+cplE0hWEizuUhoMK3Jn07CnHTaPI/8XSzy2ROQx0EhCCd2M3LijlBkMUHNzedah+Flkw8w5VN2yeOa/+ATaI=
+	t=1753328088; cv=none; b=NJ0EXln9dtOZt5Dlbw6pMeEDv4S5/2QDJ/CpMqFpgcStK0CWXAm/K32e7/G6kJ+u0+wGJxBNHqpUfduU1Z0Wlei1JIdJTqyvV/5A0UN5ly7wS4cnvuEirHLC5F67miFz8z+61OHYiE4+lHRBMn7LkHxbwY7DKBXfJnjKnwjFWZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753327780; c=relaxed/simple;
-	bh=mMhy7lBHvKNT/Otl8Zn3g9UW060LUNpNcF/L4SYZxyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lcgzM1N83ovpz60QizQHUk9/oJbR3OnfAuDcxSWabTT2mlnhBt6F8geGcgg+9o8PPGDIRVBopwNhKPgURul2JeuQkC3mMOasDqa1dD6657l/lnu3pXQDyaracO/Yohcy2lohPqGWvqVD+N+Alt9xygFJGgVd1oETX0QK9ZzOZWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DTJ+MLBW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXZWx016006;
-	Thu, 24 Jul 2025 03:29:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mnJDM/0zfvI8HbrY8ldAg1aTC2VsVALZRc/Q4DEWBBw=; b=DTJ+MLBWzzXAUvyr
-	2FEJk5JEfdLWDbCDfO0Ys4xhZ2VXlPGf0cO0ndK2tBmW5a7C2w0ArXabWvbLpgpH
-	yrSyrM4yvMOlPouY8pKsSn1Sa6AMGC52W3TUjA8gxPH4m4QiW07xoYz+Cmp6VFol
-	IZr3TfmG62xU4hXtd9hb/KhCkGitWwy8lO53o7YHm1ZXo8uNrgNgU/+0r+alo5RV
-	d6AsAYPOtFPuWj74y7XBgBXvqqa6u7ScHsP+131mK5/3aaoBauHof7tVmREwoPUd
-	vNRWpDsy1TEKp8xAbXp2Kr4w90gYt4xZIWf944qi9xWmSDZlZGIsuvghaEyyMpNK
-	pzyS2g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483379sdau-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 03:29:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56O3TN7Z011817
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Jul 2025 03:29:23 GMT
-Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 23 Jul
- 2025 20:29:18 -0700
-Message-ID: <91e59f27-27a8-4504-bacb-3e96ef1e6bbd@quicinc.com>
-Date: Thu, 24 Jul 2025 11:29:16 +0800
+	s=arc-20240116; t=1753328088; c=relaxed/simple;
+	bh=6RGZZzwq1RVcl552iNQdR3Qa3UKwnf49Lhs6Z+EddBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=INHNsdMln5DhCrDV+8a65ih4ICYEXnmHa4eJLaFX8rAOGeeZ6kXVnKhaFHnlHJmWXIcZDU9bmgRILp4Vnn7nk2RAEdd0RGGZf/N8+eE+y1NOVEhVWLEk5jL/pF4O2vAXI+Xz9503I3y2OOnQo+g2m8zKZzcbdBhyJqPL3tKIxL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=JFKjFrQ5; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
+	by cmsmtp with ESMTPS
+	id ehHyu8h8gAfjwemj9ua2J7; Thu, 24 Jul 2025 03:34:39 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id emj7utLpa52FNemj8uAeOm; Thu, 24 Jul 2025 03:34:38 +0000
+X-Authority-Analysis: v=2.4 cv=QIduRBLL c=1 sm=1 tr=0 ts=6881a9ce
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=ScgFMeR7n2JIvPbK2CgA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y5LIDLyJPqcD/dy7AI+rdWrOWNWHHviMXkH8I49vgOA=; b=JFKjFrQ5b+Me+O9IIIoHIXBo3j
+	KxYbrSkJglzfidy52guqzu9ZPWWfksstOK8BbBSqhT9ZQPhcfN3riDfsAleC16JAo234FEQQmeOku
+	TvyOpbvixy+AmIH4JGqO1FbMqm6rPDHyXGAnH5lGNaHBLhURn/fLMOkUAfqVIUAkSBLIjCWnxZGLn
+	v6C5nBL/fjigmykfcJ/thUToyxxKx6SoSyJJlSmEL5KDy6o51ZMipRhnfkX4ivJA+P356/ekPRzMA
+	DirDqGUyUgqXy7c8NznbMkCNOLnZALw0798J7EGaVxBfhr98cy0QOl+5HGCdqb3pHtFxZxeuYp8VF
+	0tUu8TsQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:37616 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uemj6-000000006a5-3kZo;
+	Wed, 23 Jul 2025 21:34:36 -0600
+Message-ID: <0a54bcf5-e5ca-4841-abbe-89739243837d@w6rz.net>
+Date: Wed, 23 Jul 2025 20:34:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,94 +68,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm: slub: Introduce one knob to control the track of
- slub object
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-        Harry Yoo
-	<harry.yoo@oracle.com>
-CC: <rientjes@google.com>, <vbabka@suse.cz>, <cl@gentwo.org>,
-        <roman.gushchin@linux.dev>, <surenb@google.com>,
-        <pasha.tatashin@soleen.com>, <akpm@linux-foundation.org>,
-        <corbet@lwn.net>, <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>
-References: <20250723080328.4012263-1-quic_zhenhuah@quicinc.com>
- <aICpMWKNvhveAzth@hyeyoo>
- <aqscos5ivap537qljhqa2pntrxfimfkfuflji62rl2picpvaiv@sams7xovbtn6>
+Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250722134345.761035548@linuxfoundation.org>
 Content-Language: en-US
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-In-Reply-To: <aqscos5ivap537qljhqa2pntrxfimfkfuflji62rl2picpvaiv@sams7xovbtn6>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4xXG-fDMPLxWGgB-1UeLjz1aPROUE_yA
-X-Authority-Analysis: v=2.4 cv=btxMBFai c=1 sm=1 tr=0 ts=6881a893 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=_DfhJVbmsquJgjLii_kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDAxOCBTYWx0ZWRfXx6hatoW5yu3x
- cbraOFVYkOvIPC49/IczoTvBlz3W9LNcClvgfKaDv5Ymos2TB4Ct0MDqSAFhfNF5ZaQc6xh2NyU
- 3bIjmd7jzdNhMoapwuXBf/FbvGmMGmrxyHIER0HLottvsbBledePbp3Wzc9UK7Pm3VccMU8NZjE
- dTRfmCSM2svUUeMsP25eqRNl5jenxht+8O8VcwIAYsbB++RHTTf35H6b+It9OMrMIXjvM5HxVvv
- Cq2fKWGk7ugEZNHjx3B4MU+1z4OZ54dJ07Atr3uoU9IBWx3ifTwJY5FQupqTspQcj4rTk5JqeSS
- hDnGmrDhg1JHFiiE1s045LWGCzTUjma2FtWZzSHNxV3mahmIbcl0Ppb2jTSS9G47tVJ7x/RfEiY
- zpv4oCiDHGTSswtffzs8R+Z+CcmWCuXPvzFZpHjMIH6LYPo1DHHpyaaDIfi8VEGNey4GqEvm
-X-Proofpoint-ORIG-GUID: 4xXG-fDMPLxWGgB-1UeLjz1aPROUE_yA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240018
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uemj6-000000006a5-3kZo
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:37616
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfK/ZfHDuirGZVzgDiGMrGFq/6MqmwNWS7d4gKinp6mgxdDg1cHoz7rjGjBVeT5pnHIbsMQx+ZVFTyJYyie429IiD9e8Bs82O0Y0CXu6MDmUDideYt626
+ BVs5Ak6gOkm0/9Xvn9Z5NDnVIa1Xg50Jeht5exe9e1BPb9IyQVXtbkx6d6hVGn0oXMxb2go1hOmd0kKMzmPEnxRx0+4JthldIRA=
 
+On 7/22/25 06:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.8 release.
+> There are 187 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-On 2025/7/23 19:38, Kent Overstreet wrote:
-> On Wed, Jul 23, 2025 at 06:19:45PM +0900, Harry Yoo wrote:
->> The subject is a bit misleading. I think it should be something like
->> "alloc_tag: add an option to disable slab object accounting".
->>
->> On Wed, Jul 23, 2025 at 04:03:28PM +0800, Zhenhua Huang wrote:
->>> Mem profiling feature tracks both "alloc_slab_page"(page level) and slub
->>> object level allocations. To track object level allocations,
->>> slabobj_ext consumes 16 bytes per object for profiling slub object if
->>> CONFIG_MEMCG is set.
->>> Based on the data I've collected, this overhead accounts for approximately
->>> 5.7% of slub memory usage — a considerable cost.
->>> w/ noslub  slub_debug=-
->>> Slab:              87520 kB
->>> w/o noslub slub_debug=-
->>> Slab:              92812 kB
->>
->> Yes, the cost is not small and I hate that we have to pay 16 bytes of
->> memory overhead for each slab object when both memcg and memory profiling
->> are enabled.
-> 
-> I believe we did something about this for page_obj_ext; the exact
-> pointer compression scheme we went with escapes me at the moment.
-> 
-
-Hi Kent,
-
-I recall that it used page flags for compression — not actual pointers, 
-but rather *idx*. Since every page has a corresponding struct page, that 
-makes this approach feasible. However, it seems this assumption doesn't 
-hold for slab objects.
-
-> We did it for page and not slab because page_obj_ext is a large fixed
-> size overhead and the page allocator is slower anyways, but it's
-> conceivable we could do the same for slub if the memory overhead vs. cpu
-> overhead tradeoff is worth it.
-> 
-> And - pointer compression is a valuable technique in general; coming up
-> with some fast general purpose code (perhaps involving virtual mappings,
-> we're not so limited on virtual address space as we used to be) might be
-> worth someone's time exploring.
-> 
+Tested-by: Ron Economos <re@w6rz.net>
 
 
