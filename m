@@ -1,131 +1,201 @@
-Return-Path: <linux-kernel+bounces-744474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC009B10D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FA4B10D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69D5AA5994
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D29B055EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11172E54A6;
-	Thu, 24 Jul 2025 14:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451DE2DE710;
+	Thu, 24 Jul 2025 14:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W85yFtkF"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pAO4j0QM"
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760B32E336C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E5D2E03E8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366759; cv=none; b=hKbRlYXzAlBb+y2+b4DPfO8h+uyI3JwxKbDWdhB+avQUQggnSQs5J3TSS/GkBozqfuJevIIcMtUPwQZXaHoeAtlPyWnKQD3v6pkYOe6FBRO0qJacVhqfeT5Nu2qhFUACXnMSbcXNvQlpKXVvaAIqJ9ozetgv7l7o51BBcbGkSDs=
+	t=1753366773; cv=none; b=eRZKGoexmOMN4JcRsMVPu1jZf68TimPT/8TxVIWESlyWZlHJ8Kwext98nzbhGbN86CtXhRI7Q30yzCsrCZSyY8bDXUGCQ0VOHgx31yaDjUt5rDCOTmHkMn2xYBqYYpKbZH/E11jo7vt+BFGLxl7tSzammoUZl7CwOJXRsn0T7PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366759; c=relaxed/simple;
-	bh=Eqahkamg13uwXjpD2HqVe8PGEmKJKZBW1G6dF/3Hy5o=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=n+0TwM9uec4qE+VkipkGuCw5gf1wTYidF0O9N7p7LfUAI+WV55QwNcgDAzmKBm5z9cCPXVXfcwkCPlYFpIU69ZbS/R21PCvND3qJgRNfA5T5p5sp4F4H0jx1cYbxsLyfcz1MAqLRuaUVE5R+MAEGA4bCSqFciXc2UmzmN/4BMJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W85yFtkF; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250724141914euoutp02ac10133975d787004224baadf8d2e15d~VNcYXpqpf2412224122euoutp02H
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:19:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250724141914euoutp02ac10133975d787004224baadf8d2e15d~VNcYXpqpf2412224122euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753366754;
-	bh=o9pup7lxdlJYj1WCugUFlZF6W3E8/CCvLfzm1q+9rG4=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=W85yFtkFYdPYyRZBWqH732UUgdM1Vg4EN/qEob9H9+3NcI0zIOKeizA8oG/bTyi3X
-	 Gc9IxLc74G7n22whBz7BEuZOSv3CN1W9w6qQFA+/MsEmTIMHk6RNEKJP8kw8tlQuIE
-	 xjdwU32RqYtQB7b+h2RE50Y0P6rzYDVmZwJQg2s8=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250724141914eucas1p2f939540774533831049ae2739d0702c6~VNcXmfDdn1712417124eucas1p2i;
-	Thu, 24 Jul 2025 14:19:14 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250724141912eusmtip2a2837ab84fc84dd6030dee4cd9397358~VNcWkDDmS0467004670eusmtip2E;
-	Thu, 24 Jul 2025 14:19:12 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Thu, 24 Jul 2025 16:19:01 +0200
-Subject: [PATCH v8 4/4] drm/imagination: Enable PowerVR driver for RISC-V
+	s=arc-20240116; t=1753366773; c=relaxed/simple;
+	bh=lCo6WRWVNB1r4aiUuV/qa5192DxnnHYJ0wSanL20nNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MX4dnRWxzUHKpQ3oVXoE2JY17ghlOecsUH450d8uLulPLhu/aVeZf25Z2QLYq5Ld09+H56YoPz9PrQgPNPPduXdXd3L5ZEumo09aBGxFN25DzZiH4hgpDIfMnYzqwEm7RFy1uFjS64hdrZkdVX9tPJRdQviD70DoIMtIZ0H/ugc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pAO4j0QM; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753366766;
+	bh=RSvb51VVQdBhJJpcVXRwVHwVnQ3ITE/33+ko864gjts=;
+	h=From:Subject:Date:Message-ID;
+	b=pAO4j0QMYRx4KTAt4YcmL6o/qsgYpF0pDXy/slCmX3Fu/As7IdlsztRcI7+rd41cM
+	 FqT/sEPuehWIWaK4HF70Zmm1fqQ+GUcytLkEpwhrUFJykMpdASnujuYKcVmo0N0zij
+	 D75QfJE+JVTS4bABePvZVscc1vFqtY/lGSIs9q/I=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 688240E8000042F8; Thu, 24 Jul 2025 22:19:23 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1904174456631
+X-SMAIL-UIID: DAFF7AD3F0EB493A9750BF7B598FF743-20250724-221923-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0fc08dad8f34563208d5@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_new_lci
+Date: Thu, 24 Jul 2025 22:19:09 +0800
+Message-ID: <20250724141910.3055-1-hdanton@sina.com>
+In-Reply-To: <6881ff19.a00a0220.2f88df.001e.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250724-apr_14_for_sending-v8-4-0714bef83c59@samsung.com>
-In-Reply-To: <20250724-apr_14_for_sending-v8-0-0714bef83c59@samsung.com>
-To: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,  Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
-	<conor+dt@kernel.org>,  Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Drew Fustini <fustini@kernel.org>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org,  Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250724141914eucas1p2f939540774533831049ae2739d0702c6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250724141914eucas1p2f939540774533831049ae2739d0702c6
-X-EPHeader: CA
-X-CMS-RootMailID: 20250724141914eucas1p2f939540774533831049ae2739d0702c6
-References: <20250724-apr_14_for_sending-v8-0-0714bef83c59@samsung.com>
-	<CGME20250724141914eucas1p2f939540774533831049ae2739d0702c6@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 8bit
 
-Several RISC-V boards feature Imagination GPUs that are compatible with
-the PowerVR driver. An example is the IMG BXM-4-64 GPU on the Lichee Pi
-4A board. This commit adjusts the driver's Kconfig dependencies to allow
-the PowerVR driver to be compiled on the RISC-V architecture.
+> Date: Thu, 24 Jul 2025 02:38:33 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1517af22580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=69896dd7b8c4e81e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0fc08dad8f34563208d5
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1317af22580000
 
-By enabling compilation on RISC-V, we expand support for these GPUs,
-providing graphics acceleration capabilities and enhancing hardware
-compatibility on RISC-V platforms.
+#syz test
 
-The RISC-V support is restricted to 64-bit systems (RISCV && 64BIT) as
-the driver currently has an implicit dependency on a 64-bit platform.
-
-Add a dependency on MMU to fix a build warning on RISC-V configurations
-without an MMU.
-
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- drivers/gpu/drm/imagination/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-index 3bfa2ac212dccb73c53bdc2bc259bcba636e7cfc..682dd2633d0c012df18d0f7144d029b67a14d241 100644
---- a/drivers/gpu/drm/imagination/Kconfig
-+++ b/drivers/gpu/drm/imagination/Kconfig
-@@ -3,8 +3,9 @@
+--- x/include/net/rose.h
++++ y/include/net/rose.h
+@@ -98,6 +98,7 @@ struct rose_neigh {
+ 	unsigned short		count;
+ 	unsigned short		use;
+ 	unsigned int		number;
++	atomic_t		ref;
+ 	char			restarted;
+ 	char			dce_mode;
+ 	char			loopback;
+@@ -214,6 +215,7 @@ void rose_link_device_down(struct net_de
+ struct net_device *rose_dev_first(void);
+ struct net_device *rose_dev_get(rose_address *);
+ struct rose_route *rose_route_free_lci(unsigned int, struct rose_neigh *);
++void rose_put_neigh(struct rose_neigh *);
+ struct rose_neigh *rose_get_neigh(rose_address *, unsigned char *,
+ 				  unsigned char *, int);
+ int rose_rt_ioctl(unsigned int, void __user *);
+--- x/net/rose/af_rose.c
++++ y/net/rose/af_rose.c
+@@ -171,6 +171,7 @@ void rose_kill_by_neigh(struct rose_neig
+ 		if (rose->neighbour == neigh) {
+ 			rose_disconnect(s, ENETUNREACH, ROSE_OUT_OF_ORDER, 0);
+ 			rose->neighbour->use--;
++			rose_put_neigh(rose->neighbour);
+ 			rose->neighbour = NULL;
+ 		}
+ 	}
+@@ -383,8 +384,10 @@ void rose_destroy_socket(struct sock *sk
+ 		timer_setup(&sk->sk_timer, rose_destroy_timer, 0);
+ 		sk->sk_timer.expires  = jiffies + 10 * HZ;
+ 		add_timer(&sk->sk_timer);
+-	} else
++	} else {
++		rose_put_neigh(rose_sk(sk)->neighbour);
+ 		sock_put(sk);
++	}
+ }
  
- config DRM_POWERVR
- 	tristate "Imagination Technologies PowerVR (Series 6 and later) & IMG Graphics"
--	depends on ARM64
-+	depends on (ARM64 || RISCV && 64BIT)
- 	depends on DRM
-+	depends on MMU
- 	depends on PM
- 	select DRM_EXEC
- 	select DRM_GEM_SHMEM_HELPER
-
--- 
-2.34.1
-
+ /*
+--- x/net/rose/rose_route.c
++++ y/net/rose/rose_route.c
+@@ -97,6 +97,7 @@ static int __must_check rose_add_node(st
+ 		rose_neigh->dce_mode  = 0;
+ 		rose_neigh->loopback  = 0;
+ 		rose_neigh->number    = rose_neigh_no++;
++		atomic_set(&rose_neigh->ref, 1);
+ 		rose_neigh->restarted = 0;
+ 
+ 		skb_queue_head_init(&rose_neigh->queue);
+@@ -237,7 +238,7 @@ static void rose_remove_neigh(struct ros
+ 		if (rose_neigh->ax25)
+ 			ax25_cb_put(rose_neigh->ax25);
+ 		kfree(rose_neigh->digipeat);
+-		kfree(rose_neigh);
++		rose_put_neigh(rose_neigh);
+ 		return;
+ 	}
+ 
+@@ -247,7 +248,7 @@ static void rose_remove_neigh(struct ros
+ 			if (rose_neigh->ax25)
+ 				ax25_cb_put(rose_neigh->ax25);
+ 			kfree(rose_neigh->digipeat);
+-			kfree(rose_neigh);
++			rose_put_neigh(rose_neigh);
+ 			return;
+ 		}
+ 
+@@ -265,8 +266,10 @@ static void rose_remove_route(struct ros
+ 	if (rose_route->neigh1 != NULL)
+ 		rose_route->neigh1->use--;
+ 
+-	if (rose_route->neigh2 != NULL)
++	if (rose_route->neigh2 != NULL) {
+ 		rose_route->neigh2->use--;
++		rose_put_neigh(rose_route->neigh2);
++	}
+ 
+ 	if ((s = rose_route_list) == rose_route) {
+ 		rose_route_list = rose_route->next;
+@@ -667,6 +670,11 @@ struct rose_route *rose_route_free_lci(u
+ 	return NULL;
+ }
+ 
++void rose_put_neigh(struct rose_neigh *n)
++{
++	if (n && atomic_dec_and_test(&n->ref))
++		kfree(n);
++}
+ /*
+  *	Find a neighbour or a route given a ROSE address.
+  */
+@@ -712,6 +720,8 @@ struct rose_neigh *rose_get_neigh(rose_a
+ 	}
+ 
+ out:
++	if (res)
++		atomic_inc(&res->ref);
+ 	if (!route_frame) spin_unlock_bh(&rose_node_list_lock);
+ 	return res;
+ }
+@@ -1061,6 +1071,7 @@ int rose_route_frame(struct sk_buff *skb
+ 	rose_route->neigh1    = rose_neigh;
+ 	rose_route->lci2      = new_lci;
+ 	rose_route->neigh2    = new_neigh;
++	new_neigh = NULL;
+ 
+ 	rose_route->neigh1->use++;
+ 	rose_route->neigh2->use++;
+@@ -1076,6 +1087,8 @@ int rose_route_frame(struct sk_buff *skb
+ 	res = 1;
+ 
+ out:
++	if (new_neigh)
++		rose_put_neigh(new_neigh);
+ 	spin_unlock_bh(&rose_route_list_lock);
+ 	spin_unlock_bh(&rose_neigh_list_lock);
+ 
+--
 
