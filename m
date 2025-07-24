@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-744138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F81B10871
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:04:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703BBB1087D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AB24E15E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025B41C2557D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E226A1BE;
-	Thu, 24 Jul 2025 11:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E90626B777;
+	Thu, 24 Jul 2025 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmYwwP0L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCIyTMqu"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB702F43;
-	Thu, 24 Jul 2025 11:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7E626B0BE;
+	Thu, 24 Jul 2025 11:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355017; cv=none; b=Cx92u+D14JUmuyX3Hc7AqmvP9IHThsD1mmyAlC/Pii22eo98w0Ha2B7Gm3K6iOS7KoTLNjnh2WpMzPYofsE3G3uRvg1qTURRkkRLm+hh0FjFULD0t7cq2gGI8MNFbhvN+B3fFwaLBPSpmW/4/FP/kpLV1s6JQ+6XvTW8gTZXe0U=
+	t=1753355100; cv=none; b=QCDXDIW70zs+HsQPMU419+ARAspjJgnB09scX+bjLFqUafsNq1VyqIahFQQTEDe3/D9fikLS8W9VZTA6APwf5UO7WSfsHghrCtfALk4NT+R1Hf6ZBAJojZ7K/YBd3OiLjm1ev/Ne1AzzrIO6CAyDGIYsCScWbvmmBZbxT9w7kkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355017; c=relaxed/simple;
-	bh=FB4qQxbauwuEdw7MX721tC+DjFmD6TO78Gayu3O5ISU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eaq3lsoPxJU6Rjsppe1gmrvcFM1tgMUCkpSCUi6JxtSq7h16pB4y3ZJ1t/DCniZ4UVe63tlUiyoBiDu0PJXv2TAO7fyBzDS00xY5FKkGEI5sITmLjOp2whgIyl/aR0f4PcKvteoq/wFGy/gNkWdglOJaij/xmScBRukL1Vpym0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmYwwP0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3D6C4CEED;
-	Thu, 24 Jul 2025 11:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753355017;
-	bh=FB4qQxbauwuEdw7MX721tC+DjFmD6TO78Gayu3O5ISU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RmYwwP0LqiMHdFdVwx9v33yWcWYMoZWF/x6qvfooZkStI1qOrPd5y604YwZ1F1T2x
-	 0r8nIIhhl2a5NTiceHZbIAVFCC9mnstST0UloUBisf0uSO/lGt0q+cS6JE8JuDAbJ2
-	 FWsQ1N9MB579MFs17Jt202aPHdjdN/AP4lxzvmcMwKbYAMuK/LW3L2JcIG5mwEOHcI
-	 vVX27HFa/9TnAv5OGj3oV54jyQ3wcmOyfgEG2oUATKlc7xs+qaHjeYPEadyShrjSkS
-	 O5PbUVeQbuOS91TWus34cxAUerldnGwuuwA3szlj9LWwKnFeEa6aLQdwJ2pgMo1XG+
-	 VA1VJxaF7tRKw==
-Date: Thu, 24 Jul 2025 12:03:29 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2] iio: proximity: isl29501: fix buffered read on
- big-endian systems
-Message-ID: <20250724120329.671dc192@jic23-huawei>
-In-Reply-To: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
-References: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753355100; c=relaxed/simple;
+	bh=igMiFZD+4/xHRfFv0ukEPDyxclLRIIklR7KHCUrrWFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YYAd2jr7GyalGLiQ6X9R3PQSiQTzKvc2rRu2CfXTvZzC/9SSt99k5aaluCkYnOpNTjgZ08QuwNwxN0ONQucAnw9TfaMOJfFSG9GDQdNtzQ7qOnwEZvoZXHj4W/ZGDCMc+K1vvY30TOQtb6MupZho5slgd/VPIJSjgDTIs8HxYHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCIyTMqu; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60cc11b34f6so3498182a12.0;
+        Thu, 24 Jul 2025 04:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753355097; x=1753959897; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hIUwmPHAS5I/CUOP00py81w0hjNzvTvkcVdQbKas/DA=;
+        b=XCIyTMquI3r7gLojxtddyYInXAV4SfPARqR2yceoOrodLKVDvRCX4w33WxWv5pjDsw
+         7Ia0Mt3CSE7abk/9spC/c4ti1rKasxfGeKM3plKA++mvFJ4MrgLBMd8qxgdA9sNHWvr8
+         jMbnmtUxhm5E3aouXJH2mkDCmCQvtCEpSW3djojdtpFbSxJNQs/r/+wrywJsceZ46PK7
+         vsRDCmXjPLEBObnzPBxswk0uT4+07sPJLuxKBbW9ek/W6oWsCHFspJ22U9xSE6/T6x/D
+         grrkIymf2lBG2O7Yl6Ocr+te/VMuaxtcUCPO1DVkYFwOdIw4AFsBkLjRM/jnFzSmKtRQ
+         g47w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753355097; x=1753959897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hIUwmPHAS5I/CUOP00py81w0hjNzvTvkcVdQbKas/DA=;
+        b=IpshgJJOOwV650oitIkovl4DWpFkuwYHzIdSRIv7GXvkrVAGYBZyLWQ4nPFflxFVkV
+         Qp6/sm+jfhwiYMHdePavY9RJ/fKcGbPWiCNXVmhKNm+RlyeKummKiGCSp1GCFXkqPeiC
+         oWSK77Hy9EGihyIR1RA80YbHsLpRNjFLZ4WIOUt5geJOqwsnS7totqxxJuXMjfIMSQxJ
+         K5L2X+o1V3/5L/pMn4hIDS2XfrkOXCzhz6GsowjYL3tTEJoGeunTORH3t3Y8UIYtLQ34
+         r7RmhfcVf84bCt2zYmDPf9mxZhkE0Zk1Q6YgcLs6KLs7f8QsI4j/HnXNGIdVuCUFHM4l
+         vZEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUArrNmZ4+XdX5JoXI+n88C/FIDGoC+nhJS4C0QBXVwL7LCUnAWGXdjgsW9S3BXyVdh+EPvxJfj1FgP3QOg@vger.kernel.org, AJvYcCUMRy9Y9Yc720/fzQEuSuosC9vlju4dhHwCgtbllLiHGsCd3KPasz8YmVIkDPrH4C9xPWvwQjF4LE/4SVEP@vger.kernel.org, AJvYcCVmTc9KNldWG4UivRqnYngbzri1TvoSixIwqNvARo8C2FD+PfKO0YhaRgg2fDDAZq7XlUPm/idoqZh8SA==@vger.kernel.org, AJvYcCVt7Q36Y30H4LMUufi1L1FfxkNx7DSCTHBsA3bE8htyKOl3Wh5kBWaiFdwU3JOOG/Xm84skydKLOLe2d50u3qn4@vger.kernel.org, AJvYcCWIl9DnKDSmF4kQh+YVIwU2S4dlc+ABDuGUceWYE2nhjjSc4BJZSojUUuzl8hQKppG32y2dC3P0Y/ZM/A==@vger.kernel.org, AJvYcCWlNwS0VZzR4pV+LtBbXQ8ItzQoKKL999I+TfQb481KnG1YSJNLmgQygUBv45f7OCxB1cB0xvb/2fteWuHA0GBeOIk=@vger.kernel.org, AJvYcCXndcRMSGA7kj0Ig8jBDjjmHPancsh7rtlwu0Ha0ZPanoZ/hPPMbs9b8dVASXQwsi5qnAn2qQs8CdSR/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5PY1Bz+2XMIPc1vqTR4aTWJhjgoEvmSWRczCRuX8AOYzuiDfZ
+	qwCmiTMxFfK0WftWT7pmvyu0DsWbjbKl2KeUnvLN4RIQBzix9iG8yBqRq2PsaAqb7MwbkHLeyC/
+	YVuLDSRQMwcSCD86N1/31jmzEiA3SIDk=
+X-Gm-Gg: ASbGncv5oKkWXRecSN67NCQXOUPaCyFU4UW4beQIEyTdlt7pAcpt1Q1DqyuK8BtSQbV
+	i3gk5s7gulB+sGm+loZMpGoXCxu/BXXX2Tl+Cwo7kP2Gl3d1xUcmJxXvHLZqhNhqEuvKoVvUWUM
+	AwjcRb+mQ/8fD6PRFTBFtAJkVyxjo5sdokMSKClq9SC1iw+YvCYWLWwIvHRBzWMs8ueC6rDBUja
+	Zs6nz3ftg==
+X-Google-Smtp-Source: AGHT+IHPG9CppWQlW2WG11oa6jW9jIvsCOFaEPh9C4R84HymaGR9H07ZVvtMJ1em3UaqkyymENVRG1C3VhJB+3+pi38=
+X-Received: by 2002:a17:906:478a:b0:ae0:7e95:fb with SMTP id
+ a640c23a62f3a-af4c1e2633dmr202631066b.5.1753355097066; Thu, 24 Jul 2025
+ 04:04:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org> <20250724-pinctrl-gpio-pinfuncs-v3-1-af4db9302de4@linaro.org>
+In-Reply-To: <20250724-pinctrl-gpio-pinfuncs-v3-1-af4db9302de4@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 24 Jul 2025 13:04:20 +0200
+X-Gm-Features: Ac12FXwYO9py2pad9YYkUaWtcE51AjTlJa3erYsopqu9ohpn5SMp_S7iBIXDS4k
+Message-ID: <CAHp75VdoZr0YCm3Pc7F5jOV8Q-H9K+gje2fi71nonHoXq2YPdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] lib: provide kmemdup_const()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 22 Jul 2025 15:54:21 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Thu, Jul 24, 2025 at 11:24=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Provide a function similar to strdup_const() but for copying blocks of
+> memory that are likely to be placed in .rodata.
 
-> Fix passing a u32 value as a u16 buffer scan item. This works on little-
-> endian systems, but not on big-endian systems.
-> 
-> A new local variable is introduced for getting the register value and
-> the array is changed to a struct to make the data layout more explicit
-> rather than just changing the type and having to recalculate the proper
-> length needed for the timestamp.
-> 
-> Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-ok. This probably is the best minimal fix but there is a bunch of other type
-confusion around this in the driver (not as far as I can see actual bugs though).
+Makes sense, one nit-pick below.
 
-Might be good to circle back and make the val parameter of isl29501_register_read()
-a u16 as a follow up.
+...
 
-Applied to my temporary fixes-togreg-for-6.17 branch on iio.git and marked
-for stable.
+>  extern void *kmemdup_noprof(const void *src, size_t len, gfp_t gfp) __re=
+alloc_size(2);
+>  #define kmemdup(...)   alloc_hooks(kmemdup_noprof(__VA_ARGS__))
+>
+> +extern const void *kmemdup_const(const void *src, size_t len, gfp_t gfp)=
+;
 
-Thanks,
+Can we locate this in the similar order to the C-file? I would put it
+before kmemdup_array().
 
-Jonathan
+>  extern void *kvmemdup(const void *src, size_t len, gfp_t gfp) __realloc_=
+size(2);
+>  extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
+>  extern void *kmemdup_array(const void *src, size_t count, size_t element=
+_size, gfp_t gfp)
 
-
-
-> ---
-> Changes in v2:
-> - Use u16 to match channel scan_type and introduce new local u32 variable
->   for getting the register value.
-> - Reword subject and commit message since we now consider this a bug fix.
-> - Fix not zero-initializing the new struct.
-> - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com
-> ---
->  drivers/iio/proximity/isl29501.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
-> index d1510fe2405088adc0998e28aa9f36e0186fafae..f69db6f2f380313b8444ee21399ee3a9faed6f04 100644
-> --- a/drivers/iio/proximity/isl29501.c
-> +++ b/drivers/iio/proximity/isl29501.c
-> @@ -938,12 +938,18 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
->  	struct iio_dev *indio_dev = pf->indio_dev;
->  	struct isl29501_private *isl29501 = iio_priv(indio_dev);
->  	const unsigned long *active_mask = indio_dev->active_scan_mask;
-> -	u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
-> -
-> -	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
-> -		isl29501_register_read(isl29501, REG_DISTANCE, buffer);
-> +	u32 value;
-> +	struct {
-> +		u16 data;
-> +		aligned_s64 ts;
-> +	} scan = { };
+(below left for the context)
 > +
-> +	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask)) {
-> +		isl29501_register_read(isl29501, REG_DISTANCE, &value); 
-> +		scan.data = value;
-> +	}
->  
-> -	iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
->  	iio_trigger_notify_done(indio_dev->trig);
->  
->  	return IRQ_HANDLED;
-> 
-> ---
-> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
-> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
-> 
-> Best regards,
+>  /**
+>   * kmemdup_array - duplicate a given array.
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
