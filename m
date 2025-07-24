@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-744487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAECB10D92
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE4FB10D82
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6B21684CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67E53B5F1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21182E11CA;
-	Thu, 24 Jul 2025 14:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A577B2E175D;
+	Thu, 24 Jul 2025 14:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RAbgc+7H"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K0z4WueD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D641E2DE719
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5472E040A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753367075; cv=none; b=H2VZpK83VRwQbMpEgHOWEP4uVR+jYCYx1cu7nwEupVq7p2OZuwA2K6aXAtfO1MlQQzfJOUISH51pYy3yhwHiF0ZD6UYY7lsPcbhMWirZyp15iR0eUn/T8WBH7pjuUeu1KKi9mgGwJLyypT6gpfZLR3YoDID4z0HPyEFoVTrYKEM=
+	t=1753367097; cv=none; b=LgINY3UVDe6xWtZXnkv3I5FMPbBKsV5vc/n4MB9K/hfckSpxWVKEB5RSxa7sxuYBN5GAooAz33SuWpZN2QklqmGnpTj41Yhn3pmTtK0y3Gn11ugtGvb2D0sRYQS/OTZWrHyjmT+2B80lnXSOnPZOyw8CShCz9Fxo3D6VeQhgw2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753367075; c=relaxed/simple;
-	bh=LkC1cgJKGtDvQAhjzwy5MpcSRJdsTaL50a5baAXwX38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gyp+oHWRJF/fMUHVU2BMRZIyJmuNKbwbb8OWvBRRqreG5fwMVBGAuyq+NBCom4ANxvRmUuzmNycPZqxKg+H+lIofTqdCvZpyCpyVIR0cIz1PVPjMyvvoH44085/0uyhWdo80bi9ltHwNxPcnWWPOMVeTijaeuaMxTkVZAI59qpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RAbgc+7H; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-556373661aaso942180e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753367072; x=1753971872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9uYFs6ImUzbg3uQ5rpuYkRYPBY5IeIE5OmGuHU/2KXc=;
-        b=RAbgc+7H5KfZEMl3vOi6yjMsH9VcEbEVNUXo6waOWRmYSvzlbUKHYD0MhljgyA5C7n
-         blyg6L4o2dNWj4HZvwHnQzT99oiTOhtLc3aJ6lEHUIE75k4aHH4IyCxaWXaNIKy2TrlZ
-         5ko2Xv5yWq+WOXI8jF4oT5/PC6JioPsoUSot6zN7r9lpaav5bV0J9GBnrthLkoUgwcNE
-         JsW4PSsrouffI/MTzrwolbeA8oh2PoNCvAwz2G0suv4xJJknx/XIEoXMxedays+oEVVd
-         7ecVfqPBNv6OXtNFaWoXYjhWmv1dsvWN9stqjRpdCf5Y8UqpI0SIiRY3gj7Oh/KgtYrE
-         lIOQ==
+	s=arc-20240116; t=1753367097; c=relaxed/simple;
+	bh=yMnNEljPS2VbnBAe7RDRoMrtiMmabtrdw1ZABRBlKGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3sFP11MUK2ZFmiuXdHhHK+TSRY6PQWE2qfj63VnsbCeO9+L05tHflFfY/tQdg9265+o/EDVA4kS9BvV/TiPvaqpR6ef7fnPNVHp0l60fJ8nMGmWrjTuXm/Sycl8SRVe2Yi1bdx6o1YPYwLCm3MvsjOeDWKlkIxXYhxIKxlV1rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K0z4WueD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9UbLO022010
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:24:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=PXQaN2D5/hB531+P97VDWMow
+	svbj/zQKvLqKvH8lf7o=; b=K0z4WueD55xwjKU3Se6ihbq/2VCf3zfLo/B7fdSh
+	1j+8LH2ycDmyqho6cCtX6qVdGT5m0yRzXD/rNay5RzD3Pd8rxgtfxnVnMdIIGiXB
+	uxzB8AnxkzvmqrT/TA+pcDVEzwXolofDxs00ccr5mBKEGw835rbVga89a9YLHUu/
+	MD/KsVXTWTRaDk9JsPEnXxHah8TBiG4Nfw5eEgl8dVQKlS2L//1b3/DNSiDc+PrF
+	/m3u/2wrsLQ/XhqeA/a/CJ7usS1LqQieYQB05SD5L6iqQ0IwDQvbl1PI88qvBJXH
+	u/VpcUbhl48QPg89KA1wwpz8GM3PP7vUGEsWA7PSzqvsfQ==
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044drt0s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:24:52 +0000 (GMT)
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4f5ccb416bdso235014137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 07:24:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753367072; x=1753971872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9uYFs6ImUzbg3uQ5rpuYkRYPBY5IeIE5OmGuHU/2KXc=;
-        b=bQRty6Xwegl+eVuYpW4kvwkRxYLXspRuKMH3IZxWzs2/SBcxZ5xfQDKzXLvN6E7Rxc
-         xgTRPeUS4MR3TW9o7ARCyXYq5z/YGJ9F+Y7iSH8fjVM35ZgzfNEId42F4aBRGX9Xd3+B
-         dVQl+N5Dzd8CIHaBhY3ylkwPTS4hLcW0WXj49w2cyeN+xvtVXb6GDESXnFkZSK6cmJao
-         L6VQtdOlKKVayrdUoLKw8tIUK0W3fiO8S6ZAX4z6OomC2YzMqm8DbDYrpSj2mbTmevth
-         qxUi00hr6ANSAGIQ7j757mIcYff4CJKvdrV9kDHOGyobAg2U+mICHDcVWY8LHEvy48Jl
-         ct7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmpQUxuRjg+DWV9lnnX6s4LH9Th6P30icWVgZiTv855QvXR0Bp/4PnAFpRHt3inwWQmpII/oyRo2O2Tvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz89n+Sf8Z1NrfbNXHGdngS/r8tRiX9j2gVJbvNo/wIsiu/noET
-	d/lTGN4vWpIg6DCwZkRHqtNNACQHTePy1RxpLJGixOsAL/GMfHGYbUuzm236908i2niJsxvU3Jp
-	xQ5tynhocoyGAg6l7q+T2g71dMoT5MP8VHasqz6rHtw==
-X-Gm-Gg: ASbGncsjMFKAH1pBmCdfYD24bNXQ0hwBuKbl1ckUDD50Hy6t63BeR2u/PurXKyS5Jy1
-	FQls6pgTN8UDMhIYC6MO5j19ZBMnDbSIfku6zaOxttxnevRLyzatn2z4sdqmnlu6rteI0HxH50d
-	N7PN1qOuk5mDsFk7pT9AIFh55i2jS6yYfRuJCosX+WG4WMKf/mXMy7xhQwHul7ViXBGzhLhqYqh
-	qyPRbJeNC2SruA12N0flzag/XZMVC/h8X34DWY=
-X-Google-Smtp-Source: AGHT+IEjwXFB7CZ/N5EXNvwHZZzddVKutYpP2ET2ny/nwGsfmJfNYNi3SOVPdhlxjJcNdBxyefwRwGoXwjpYGshc1FA=
-X-Received: by 2002:a05:6512:683:b0:553:aadd:1987 with SMTP id
- 2adb3069b0e04-55a513bf637mr2308389e87.30.1753367071796; Thu, 24 Jul 2025
- 07:24:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753367092; x=1753971892;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PXQaN2D5/hB531+P97VDWMowsvbj/zQKvLqKvH8lf7o=;
+        b=uUUqzIM8nO4sKsCu8Z0TvBULa9iYVVH3r9xey9o6tuXa5xoYvUojJ5EPKPw/tw6wNR
+         V3iM3xnCWYmJyPfwvwy8qfASOxvmr72CzCCKnV6ZVx1AXFalMJvR+lKBA2O9WnTBgF2I
+         suc7Th6es2Xrk0h1MsvYQNidTgp1qihgU2HwdOpHCNYDk7qSswr1QEQk0bSK7n8a5F2M
+         nyUlbVmSI+zx+88HqQTTQq63EKdCHxekGM9uTyltDiLya5vQz/xqJjydRmaL1BoCr937
+         KJ501MH4ihfum7nJudvGmjt/0Jjd+5G5Geb9lQ0iiCAaydSW4b3ngvWoXOtFHqmDFM1B
+         4F3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQU84yfWH2TZ0fylgx+6BsVi99+tZQ/S5HR0O0l8Fr5pRvVj4xouHTSWothhy+gNmvsS4piTtbanaUSg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxolwlUZpo047+kHOdBPUmqs5YM5jOP2rbNSg3hVu+vmo8VAfs8
+	CUV+3Qd/0bQtH0CLlcupTugnlwEGStYCYorsNTXqFeL/56QR0GABkl9iStqxKxSjeLLgPJ02e8J
+	RKiqA5+CR7ri8g9u2b8DZsIGp0mnTkAKEZWMlYJeh5DuoEoM/907ucTwIyVsvjI4n+i0=
+X-Gm-Gg: ASbGnct6ZzLelmWhWTX3muOhG+waewWKPLw5K35iAqOg6VMrizLpYeHPsajw/1DOpiX
+	6dOjdrQ9getaXzQCdbFn4LaBAan2Zztbvf+oM99oVpcyxwdDvTovyNqT0nJM42MhQ8xu39a4hvg
+	bzRtI37EjdEaUbJxSfgxwn2NVeWhAqojPFUWBBcNy8u7eE1yJ8TQI8+fWKzAbj2GgNVps3JDhOP
+	aVi3nrmNb6Euz279IHo0ycV5d1qVo6u+2S1vHU07BQIJc08xwrorNGbGCzzoqZ3H6p5jcTdN/aZ
+	jpZ1cqmAhsem8fKDj0ngdxqaxjVmGbCJBAWJcPwpJu51x5N3GoQTWMqjYDnt6vbSJpYkRI9S6vf
+	2jpvB1Y1t9q0xv80BgU/lf3JtS+9NATr8OMdGRQ/3PyIxlxzmPKkr
+X-Received: by 2002:a05:6102:1612:b0:4e9:8f71:bd6e with SMTP id ada2fe7eead31-4fa14d0678amr3840754137.0.1753367091802;
+        Thu, 24 Jul 2025 07:24:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7ps+tMO3iXJTK79wunyZUIPEL7/LqtanKTlXWlbJ0rKzxmD03n3TemWcd8PsIKF5pqv7aDg==
+X-Received: by 2002:a05:6102:1612:b0:4e9:8f71:bd6e with SMTP id ada2fe7eead31-4fa14d0678amr3840727137.0.1753367091417;
+        Thu, 24 Jul 2025 07:24:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b53b22b21sm382703e87.19.2025.07.24.07.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 07:24:50 -0700 (PDT)
+Date: Thu, 24 Jul 2025 17:24:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: srinivas.kandagatla@oss.qualcomm.com, srini@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
+Message-ID: <mwhxikivaxtz5px5e7jkqtuuk2iz457fy5drsnaj32j4o5qqk6@hwkcjso4jpsp>
+References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
+ <276b7977-45d9-4b37-a4f5-1c65802ac267@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722153634.3683927-1-arnd@kernel.org> <CAMRc=Mejnr8UzN93X=CWcV5jDTt9-U+Nxcm3qb=6uVV0PMiZVQ@mail.gmail.com>
- <c9d9eeca-b62a-4105-b65c-bf78158c42df@app.fastmail.com>
-In-Reply-To: <c9d9eeca-b62a-4105-b65c-bf78158c42df@app.fastmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 24 Jul 2025 16:24:17 +0200
-X-Gm-Features: Ac12FXySjq2DCPp7nTSI_XCm4U1HSCz6foMhOKdxkvw-uj6diG2D0UDnGBdWXp4
-Message-ID: <CAMRc=MfxD+qGjamV+rCg766GyuMwVDUe_uOrUGGe=kr83v6Fsg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: make legacy interfaces optional
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Peng Fan <peng.fan@nxp.com>, Lee Jones <lee@kernel.org>, 
-	Koichiro Den <koichiro.den@canonical.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <276b7977-45d9-4b37-a4f5-1c65802ac267@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=BJ6zrEQG c=1 sm=1 tr=0 ts=68824234 cx=c_pps
+ a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=Q3_JIj6pLLKXvGcXXDoA:9 a=CjuIK1q_8ugA:10
+ a=-aSRE8QhW-JAV6biHavz:22
+X-Proofpoint-GUID: u3fZVX_9_Iik1Na5yVG4gQTyloX8sOL3
+X-Proofpoint-ORIG-GUID: u3fZVX_9_Iik1Na5yVG4gQTyloX8sOL3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEwOSBTYWx0ZWRfX5BR15WQ3ZsYc
+ QI7XkzpQTqj1QwRJCgWQsszInYDPGb/Bl5Klj9jQMd9Wn/2Nk/be/GakapwEG7Y9Qa2V+t6gb8E
+ 2KXoL+NavxI2+agy/npTCwwwKWfWLlOmPuArroxXaZqkT2LY1JVox3F3dODYwOUydDPlZXdlhAD
+ Rl7QlLiE44hPHy5ZJNDknGmf43Ib3sKcMf0HCjfLPvTJy+rU4WDgK8StANc14dfmX+wWVFFqBRW
+ 6DVCZ17mIU9qANAKnDgRkrOXpWFN/IClCdSt/1dd/H7jQgv6Ktx9nhyBTtbeVP6TsyKc3LETfF9
+ fiHh2jpjTUQ8DNbD2dvczqcAZSOPKfECmtIQQYV5+GD+vpU2ZIHKaubOJwu8elTdR3u2CyKo68J
+ 4YWBJPwIxcrelV7OLKcaxhA6c7Lp5byMm2GR9+hKz2nPq2x29dg6t4LqaOL/EkvVQQc+YQG0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
+ mlxlogscore=822 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507240109
 
-On Thu, Jul 24, 2025 at 4:22=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Wed, Jul 23, 2025, at 10:39, Bartosz Golaszewski wrote:
-> > On Tue, Jul 22, 2025 at 5:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.org>=
- wrote:
->
-> >>  #include <linux/types.h>
-> >> +#ifdef CONFIG_GPIOLIB
-> >> +#include <linux/gpio/consumer.h>
-> >
-> > I want to queue this ASAP but do we really need this guard here?
-> > consumer.h already guards against !CONFIG_GPIOLIB internally, right?
->
-> I was trying to not change the behavior here. linux/gpio/consumer.h has
-> an #ifdef check but has the #else portion with empty stubs that can
-> be used by any driver that includes it, while drivers that include
-> linux/gpio.h never saw the stub version.
->
->      Arnd
+On Thu, Jul 24, 2025 at 03:31:50PM +0200, Konrad Dybcio wrote:
+> On 7/24/25 3:28 PM, srinivas.kandagatla@oss.qualcomm.com wrote:
+> > From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> > 
+> > Qcom Slimbus controller driver is totally unused and dead code, there is
+> > no point in keeping this driver in the kernel without users.
+> > 
+> > This patch removes the driver along with device tree bindings.
+> > 
+> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> > ---
+> 
+> I *thiiink* this is apq806x code, with 8974 adopting the new hw.
+> 
+> +Dmitry, does you computer history museum require this driver?
 
-Ok, fair enough, let me queue this and we can change it later if needed.
+I never had time to try enabling audio on IFC6410 nor Nexus 7. But if
+the driver would be actually useable there, I'd prefer to keep it.
 
-Bart
+-- 
+With best wishes
+Dmitry
 
