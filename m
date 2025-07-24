@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-744648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05D4B10F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4A8B10F7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884811CC86EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134DA3AA0CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207B02D9EDC;
-	Thu, 24 Jul 2025 16:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28B42EAD06;
+	Thu, 24 Jul 2025 16:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AaW9It/D"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ITXEcKcU"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAC2E543A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE182EA493
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753373806; cv=none; b=Vj451Tg9qPIXAt4lMPxS4Tfp0ijvX5WVxpyiXEGBvta1p1mMxrhW7S70y7dFn2ecyAyP60cWzCTC5Du8lQ1GtU705ccfBHEi+xQH85toxk70gRr2btzRstydE86eN1Xu6x/pFOYj/TtXKvs4ei82YQlxvvtGcC3TVM4FP4Q5miI=
+	t=1753373806; cv=none; b=iMN3ZV82XCOoy8mavlzWNAyLmRMtRsAutid0JcO/KYKGCENeqPCYP2zjDZahYUd2LgJAJJK95kdO0g9hkIMYmlB0xODCtM/U6Vl9RgQz/ViMAazRBNEjTfskdSyfULrcr3uSYCTnuBhSqVUAp1JB37qGTOoPSctil4HB3LPR5JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753373806; c=relaxed/simple;
-	bh=3WzHJu6usC+m56NbD/kjNBsfG5+IwNlwF6onXzUcco4=;
+	bh=bOkwpVY/Gsv62eCQGe3o5VZGmAnmYb8l9xLj4n61gLQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LajBFxDP8nmL3zQbnVWXubKDXUbI6stLfFVVS5hAkHWBJJ4fb9TVRiTH/6Gt94p7jKF78x9AlFnycljfbdzqOKc7DeBCchJeu2lD1kQmsYuI5CgjudbRjkN+3Yv8LujiOnL1FZsNixJ4nkN7YYigtSlSxsZzV6jyQSAESBFqbEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AaW9It/D; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version; b=IOW2p17stOKqrl6GKyQ4oqr6sOE1lv6GUxYbsRH/l0HfG26Sx8qHFbrfWqKt7PuNkZKR3d9Z5VIQZGuGGY1wWBL09E7wlPahUiQeihOBtPLQX7LdXz6E1aA7yISXgQ5uRd5F4XNHETJLIi4LNZvOLRD5ymeIHXddm1f6uqAvXcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ITXEcKcU; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRMEJ013327;
-	Thu, 24 Jul 2025 16:16:31 GMT
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRRdk002850;
+	Thu, 24 Jul 2025 16:16:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=zlpVh
-	IjjBzT+6Fn9XXjvk6E6KUVS/ttRU/9Gcq5Fn+s=; b=AaW9It/D3IoVflUsYj960
-	aBtJ7/mj6XCqTRGfRO2YTxLJovV5s0Niz+Kuh9biyfYkwWLwmj3bQv6zguPgbWDJ
-	NZ9dfbnOM1EgIibrd0Exiol0ylZeFB+ht9UzRvBGzbqRm+2d3sCuUfmAywkH8irM
-	KFs250UJKrciiQ1Nh7RuEgZ742QYCfscZfXVzu1JloX3hNNy9d8tfQ1syvNba0n2
-	qfiEQH96WC7ZVz1IvYy6YsgGtR4MEeI0v/zXjBTUKd2PsIYOkMX36c0WOiTZEDUp
-	xF/uPVuDCBhY79kBKwSBlUmJ50ynVg0qJAdWiENrmYYW4NzYKCkW3qOF1E+B8+qc
-	g==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=iUmhe
+	cKkWU+OIR3wXYc7zBqQzdcel+64iEjdQOLWYtE=; b=ITXEcKcUPBcqkFmN3Ci9U
+	D2LeprRN9gKVIMBjxWy7yS92aTtvwFBniwSuTu/XOIARwXiIvVgD5DgZfBgEXkaF
+	5XjqWj7OidZSojKPsaTFvR+2yQG8XLXWCWtKYXjAoCN34Ek4RleQ7fCMehFNDx8G
+	z42a7MQpl0I+sCnbqKGLx4YhI4aE1QMP+M7NdrOgTxvsolckgufQgYiYXh0tZCjo
+	zpHr+P10ux7aR1pM11lUfa9tPd6s6RBZsjAn9G6K7SggHqdCFTWoMwSJPXRYa1r+
+	xIADoy13zjIuE54hOLApY2Rg2dFKDhKKBI3tT7dYvSrY52TXi9W2hB12/5tc1Lc3
+	Q==
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057r24kw-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 482cwhveb7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 24 Jul 2025 16:16:31 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OEjBWZ014403;
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OEu250014553;
 	Thu, 24 Jul 2025 16:16:30 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfr6-1
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfrg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Thu, 24 Jul 2025 16:16:30 +0000
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNQ034466;
-	Thu, 24 Jul 2025 16:16:29 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNS034466;
+	Thu, 24 Jul 2025 16:16:30 GMT
 Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-6
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-7
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 24 Jul 2025 16:16:29 +0000
+	Thu, 24 Jul 2025 16:16:30 +0000
 From: Prakash Sangappa <prakash.sangappa@oracle.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
         tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
         vineethr@linux.ibm.com, prakash.sangappa@oracle.com
-Subject: [PATCH V7 05/11] sched: Add tracepoint for sched time slice extension
-Date: Thu, 24 Jul 2025 16:16:19 +0000
-Message-ID: <20250724161625.2360309-6-prakash.sangappa@oracle.com>
+Subject: [PATCH V7 06/11] Add API to query supported rseq cs flags
+Date: Thu, 24 Jul 2025 16:16:20 +0000
+Message-ID: <20250724161625.2360309-7-prakash.sangappa@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
 References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
@@ -86,92 +86,70 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adult
  suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2507240123
-X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=68825c5f b=1 cx=c_pps
+X-Proofpoint-GUID: yh9zTwq3BvkqmRkFCyaZ5oPXayHU44RB
+X-Proofpoint-ORIG-GUID: yh9zTwq3BvkqmRkFCyaZ5oPXayHU44RB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX/AGEUbNoFjD3
+ SP0l2aEWqPSzDGkWn4CMnLD1aLv8MWZwTHh4Q8IUpftusBWmzjIY/yDCDDB0s291wkeX9gvT3f3
+ 6e2UrvqgRn7Fwliqtv7XW9TYde1guLDndQvbdwuC5lxN/PKgfqOZw+x4bK4pkAVFfvW9UMxGuci
+ UMfJ8RDo5guoIcf2AML7o0PPDbgTpKLfnQHvdJ/+sB0opvs9cThlK3kBwcCSqYTvCw2VqMfBwET
+ qRk7dPWykOqBveB4UBy5m60xqZfgrdimiGWDL7902MQHGJGAAZE0M+e+3nrBH4xbg72/Wocvjz1
+ k/aNqbmN9dkSbtltg6jlNY89muV+qZZcUzFEe+ktwCv+II9inrCCvTTPxGUIX04QkFdsFcICokE
+ z1E2ARZL7gIeQV9Vwv2kOCXoLAJ7W2MCDkOPZ1VEPZpeRo8JKMgm73FcRyXiaDfRzCxDbNYK
+X-Authority-Analysis: v=2.4 cv=IPoCChvG c=1 sm=1 tr=0 ts=68825c5f b=1 cx=c_pps
  a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=-a2y3q_jHnAO8POPY3MA:9 cc=ntf
+ a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=XZOol5B-I9QkcwWuj0oA:9 cc=ntf
  awl=host:12061
-X-Proofpoint-ORIG-GUID: 0K9-b_ekbaZp7tzzbmWb_F3PnOjsse0F
-X-Proofpoint-GUID: 0K9-b_ekbaZp7tzzbmWb_F3PnOjsse0F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX+5Ma3sl9yiE3
- WJh7AIouj1+j5Or4mYaYq/Yj8BNDAYy4trgpqFVyFAAplmbXvzuh5J8zLFdQUJQPLprnONZy8bu
- vV3fRVIUQdksaDSH109pN738WUgV2VYNp04XrrjlWRNjIylLLybgyunz0ZIyeZKOkHbG3FiR4lq
- ytGPQHD9OiC/ubKzGnMjIwF5sX5s5vLYoLhSDjlWAgUcrpsFwrHl6HN9VT0S2Z8FLIIEp89mVRs
- 5qXwg8Lr4kdYdpr6v25F4dIe0ptr5fTGOSPUFraZDTI2ETubTSBZte9F/DZ91NIfJCfgQWzSdTO
- fQ13zQm9IYj2q53TkXfk7JV9hFq3v4NPWyogRCyRKWZoRdxA4ZNyhBkEMR1SWIFMcAKtGJbx50M
- 4BiWR6iqxnC8ARvfeCPFc8JvlE05JGdRd/Rmd8yrRpPaS3lVbbT8DdnLJiCVZ2FY4zDVxUe+
 
-Trace thread's preemption getting delayed. Which can occur if
-the running thread requested extra time on cpu.  Also, indicate
-the NEED_RESCHED flag, that is set on the thread which gets cleared.
+For the API, add a new flag to sys_rseq 'flags' argument called
+RSEQ_FLAG_QUERY_CS_FLAGS.
+
+When this flag is passed it returns a bit mask of all the supported
+rseq cs flags in the user provided rseq struct's 'flags' member.
 
 Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
 ---
- include/trace/events/sched.h | 31 +++++++++++++++++++++++++++++++
- kernel/entry/common.c        |  2 ++
- 2 files changed, 33 insertions(+)
+ include/uapi/linux/rseq.h |  1 +
+ kernel/rseq.c             | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 4e6b2910cec3..a4846579f377 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -296,6 +296,37 @@ TRACE_EVENT(sched_migrate_task,
- 		  __entry->orig_cpu, __entry->dest_cpu)
- );
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index 015534f064af..44baea9dd10a 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -20,6 +20,7 @@ enum rseq_cpu_id_state {
  
-+/*
-+ * Tracepoint for delayed resched requested by task:
-+ */
-+TRACE_EVENT_CONDITION(sched_delay_resched,
-+
-+	TP_PROTO(struct task_struct *p, unsigned int ti_work_cleared),
-+
-+	TP_ARGS(p, ti_work_cleared),
-+
-+	TP_CONDITION(ti_work_cleared),
-+
-+	TP_STRUCT__entry(
-+		__array( char, comm, TASK_COMM_LEN	)
-+		__field( pid_t, pid			)
-+		__field( int, cpu			)
-+		__field( int, flg			)
-+	),
-+
-+	TP_fast_assign(
-+		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__entry->pid		= p->pid;
-+		__entry->cpu 		= task_cpu(p);
-+		__entry->flg		= ti_work_cleared & (_TIF_NEED_RESCHED |
-+					_TIF_NEED_RESCHED_LAZY);
-+	),
-+
-+	TP_printk("comm=%s pid=%d cpu=%d resched_flg_cleared=0x%x",
-+		__entry->comm, __entry->pid, __entry->cpu, __entry->flg)
-+
-+);
-+
- DECLARE_EVENT_CLASS(sched_process_template,
+ enum rseq_flags {
+ 	RSEQ_FLAG_UNREGISTER = (1 << 0),
++	RSEQ_FLAG_QUERY_CS_FLAGS = (1 << 1),
+ };
  
- 	TP_PROTO(struct task_struct *p),
-diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index 3d2d670980ec..2635fecb83ff 100644
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -12,6 +12,7 @@
- 
- #include "common.h"
- 
-+#include <trace/events/sched.h>
- #define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
- 
-@@ -95,6 +96,7 @@ static inline bool rseq_delay_resched(unsigned long ti_work)
- 
- 	if (__rseq_delay_resched()) {
- 		clear_tsk_need_resched(current);
-+		trace_sched_delay_resched(current, ti_work);
- 		return true;
+ enum rseq_cs_flags_bit {
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 6ca3ca959b66..7f4daeba6d0d 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -550,6 +550,21 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		return 0;
  	}
- 	return false;
+ 
++	/*
++	 * Return supported rseq_cs flags.
++	 */
++	if (flags & RSEQ_FLAG_QUERY_CS_FLAGS) {
++		u32 rseq_csflags = RSEQ_CS_FLAG_DELAY_RESCHED |
++				   RSEQ_CS_FLAG_RESCHEDULED;
++		if (!IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
++			return -EINVAL;
++		if (!rseq)
++			return -EINVAL;
++		if (copy_to_user(&rseq->flags, &rseq_csflags, sizeof(u32)))
++			return -EFAULT;
++		return 0;
++	}
++
+ 	if (unlikely(flags))
+ 		return -EINVAL;
+ 
 -- 
 2.43.5
 
