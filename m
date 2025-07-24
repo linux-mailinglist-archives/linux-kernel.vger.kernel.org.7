@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-744241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9882B109FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AEAB109FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EEAEAE1019
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5771CE58B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3704B2D12E0;
-	Thu, 24 Jul 2025 12:19:31 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7142A2D12E3;
+	Thu, 24 Jul 2025 12:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLe4avPP"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5859D2D0C8A;
-	Thu, 24 Jul 2025 12:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E28F2D0C95;
+	Thu, 24 Jul 2025 12:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753359570; cv=none; b=hcRcsF9zi5+iVSLBfssTVm7KdAXyrK2kKwyFQYkryEraVB5XWdmDAvygkeagB/63JmfuYMld1mIsmsobRQra4Rb163KI18FG1vgKog5D/U+OpVDevlM24VunKhqgvMnwhQdA9r7KoBEgrKqHsSPRu/l7foQ0hkv+V5M5tzehUcI=
+	t=1753359589; cv=none; b=bCrz1Ga78K5CKgXI0cofUd2AlTnHYsL+X67E/WL1zpcJwOAAC4PaMQuTF+5arjpdfMd49Xxq/AhO/CU6M2qxBibfR186dykw2mrpuXYxQqGMKi06DgvA8knIy+/b+zvA4747uT47mjFCDV/hWbvnwyb5xzsjfhgyRVsfayjPgz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753359570; c=relaxed/simple;
-	bh=9WMQgzf1pZnKjl9mHmZEEf14iI8HzpbMzNBECea3/FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9MYnQ3X4tCec4mzaGf8zQnsTwCHkmdEuTkWEMFDy0BtJ/vXsiXL09RYX+MDV63GrCQGXjhwx2Zqh9dMLveBBTuXBGxqCfMczDLsZyFvcjEiWI7iEUfGIjRqLzDWM6vLytEKhP4hWcfdpG3Nn5SdCBm6uMPa/8++6PLn+AWltfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id A885F340FB1;
-	Thu, 24 Jul 2025 12:19:27 +0000 (UTC)
-Date: Thu, 24 Jul 2025 20:19:16 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Guodong Xu <guodong@riscstar.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Alex Elder <elder@riscstar.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH v3 6/8] riscv: dts: spacemit: Add PDMA0 node for K1 SoC
-Message-ID: <20250724121916-GYA748228@gentoo>
-References: <20250714-working_dma_0701_v2-v3-0-8b0f5cd71595@riscstar.com>
- <20250714-working_dma_0701_v2-v3-6-8b0f5cd71595@riscstar.com>
+	s=arc-20240116; t=1753359589; c=relaxed/simple;
+	bh=oKeVGy0RkekyqjulkjS05Gj0xAfuLQtvBA4WtI7tmEg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rxflI1Ixtl06RYz7ps8+2ht13/ydLt2OHBSNookkYT2f30JVKnFMhkzPNcVExgmoxTw439JniRHXjXxq8C1lctM4Do4vrDX4VM+FSefkzrDWcjrOyLMKtoYgAjQF++6x/zWgAbqn5SIyEkfUjRhVa7VGypXJHoDuFYdJgKV9Nm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLe4avPP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23694cec0feso8788805ad.2;
+        Thu, 24 Jul 2025 05:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753359588; x=1753964388; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FStyCwDnIrIXDZFkRPm9oX9c2zmQ9q098S2nJmrXCl0=;
+        b=DLe4avPPzbkTARkHx0ofm+e+sTkSkhq/Ky/hWwMc1JkY4Z75keiU0458qOaiQhDWkC
+         +H153uAkjGId7hwaHiLErbrTd/TOXwivE8B53PyPeBvmaLWKJKsPjNgR0XfZfrcMCLi0
+         bRb2Gh066McEEQis9dc41mHT+K7EVszHr2N3/vPKTJZGvsSwi4SnBX40UyOCtCWcViA6
+         fUTGAhbI6GaDHU7eMnFKsRN1riGxXdXtYACvBfo+xgI4jTzX/4K76l5UDnR/yEZpgJ1l
+         gd1BEVqZcL8LCOTTg3NnGAwYf4q6A0EiA624D+oIioG1W5M8hDb9rBWvG66dFDh0L+tG
+         rLsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753359588; x=1753964388;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FStyCwDnIrIXDZFkRPm9oX9c2zmQ9q098S2nJmrXCl0=;
+        b=Jf0CnR/RZmmdaSxSFbVYpCI9pHLg3vBbYYmMvprWJ+iwORxwIFqGglXTWWbJhIaQF2
+         Aw3QPvqqG59Wc4G4XlFQqeXzhurDGnsA9/beYkRh3+q94vkXz7HOIqiapmGg0ZgIAG58
+         dN4/38FA11etnSXF+segDKjtSwPgX87NMsIhTTTb+ry0BgICYr+J4TXd9lDcTKVwpFVn
+         lBnVgBrkjB4pajqyddxaTNA4ix4wGMFt28jInFJoavsm33ehrpOm6/aov/jiB1GbXepP
+         CLRBD3gJumruzHQOUOQ0gOg1t6J6DGeGqLMLpk+5np5zjzadJBkjwdLwhxTuhKARql34
+         lH9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJEWbtuFVyKppWWEYVK71opAM934YNXodAxjdsNssg55rihsJpJua6OinUR//Uy8UXr8+8huD/csctDxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwojxbM1/iUJnNq5Ew0CBZE/HXRLsjGgRjbgVm2OEawOQNXedHT
+	Su+RWacDlOe0lPGdU/3HdQW9NO10Zi0nx2UEOuzVrfjJGc23WViUfqs3
+X-Gm-Gg: ASbGncv0fHkwk4RbP50Sb+v+pcOFI7riUhdC2OtUc5H6XH+H+40CU81ny7zacZ44Mi1
+	FpF+iWGKUgkkIumtCR5wuLcOebxWnndRKtyGP3kNb/aehcrlJjgB7kgxpd2WzI03DBoOXNQwyyT
+	X9oKNtIEbdK5QEMYLLdXvQVKHBErVpYOOl2r+ltzhXzSTGaZ07os/dizYHk9IcScgLIAn0zfp1x
+	RzRnzBmOj8CszPpYZv43hiZYyUXvahB4OOC3mwRkzZz8pVm2zRwwzp4Tt47uv3jaXWKJUOP4NP1
+	6G2a7l3a2lBk8bWQmQU6SpUDB++P6ixExJPMK2UGLynSy+bgYyiMGYaiZX3H/G7ZJC3rbH2EJgK
+	R5BZxNBkBYnGmxw6WOEwUz1l0weTDIZ9EwnkmHg==
+X-Google-Smtp-Source: AGHT+IGB8N3YZPg7cSXAGWXTZGMzCvsMzBYppYI5nZZWIppb0P3P361AX3A4odPgG7X7AIhDmGi9cg==
+X-Received: by 2002:a17:903:2352:b0:226:38ff:1d6a with SMTP id d9443c01a7336-23f9814697amr88659185ad.7.1753359587669;
+        Thu, 24 Jul 2025 05:19:47 -0700 (PDT)
+Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa491bad7sm14602825ad.214.2025.07.24.05.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 05:19:47 -0700 (PDT)
+From: Pengtao He <hept.hept.hept@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Michal Luczaj <mhal@rbox.co>,
+	Eric Biggers <ebiggers@google.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengtao He <hept.hept.hept@gmail.com>
+Subject: [PATCH net-next v3] net/core: fix wrong return value in __splice_segment
+Date: Thu, 24 Jul 2025 20:19:21 +0800
+Message-ID: <20250724121921.1796-1-hept.hept.hept@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-working_dma_0701_v2-v3-6-8b0f5cd71595@riscstar.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Guodong,
+Return true immediately when the last segment is processed,
+avoid to walking once more in the frags loop.
 
-On 17:39 Mon 14 Jul     , Guodong Xu wrote:
-> Add PDMA0 dma-controller node under dma_bus for SpacemiT K1 SoC.
-> 
-> The PDMA0 node is marked as disabled by default, allowing board-specific
-> device trees to enable it as needed.
-> 
-> Signed-off-by: Guodong Xu <guodong@riscstar.com>
-> ---
-> v3:
-> - adjust pdma0 position, ordering by device address
-> - update properties according to the newly created schema binding
-> v2:
-> - Updated the compatible string.
-> - Rebased. Part of the changes in v1 is now in this patchset:
->    - "riscv: dts: spacemit: Add DMA translation buses for K1"
->    - Link: https://lore.kernel.org/all/20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn/
-> ---
->  arch/riscv/boot/dts/spacemit/k1.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index abde8bb07c95c5a745736a2dd6f0c0e0d7c696e4..46dc002af947893cc2c234ee61e63c371cd966ca 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -660,6 +660,17 @@ dma-bus {
->  			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>,
->  				     <0x1 0x00000000 0x1 0x80000000 0x3 0x00000000>;
->  
-> +			pdma0: dma-controller@d4000000 {
-does K1 has more than one pdma controller? No? as I checked..
-so, I'd suggest simply naming it as 'pdma' - which clear the confusion
-that there will be more than one pdma nodes..
+Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
+---
+v3->v2:
+Reduce once condition evaluation.
+v2->v1:
+Correct the commit message and target tree.
+v1:
+https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmail.com/
+---
+ net/core/skbuff.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> +				compatible = "spacemit,k1-pdma";
-> +				reg = <0x0 0xd4000000 0x0 0x4000>;
-..
-> +				interrupts = <72>;
-for consistency in this dtsi file, I'd suggest moving "interrupts" after "clocks",
-or even after "resets"? leave "clocks & resets" together..
-
-> +				clocks = <&syscon_apmu CLK_DMA>;
-> +				resets = <&syscon_apmu RESET_DMA>;
-> +				dma-channels = <16>;
-> +				#dma-cells= <1>;
-> +				status = "disabled";
-> +			};
-> +
->  			uart0: serial@d4017000 {
->  				compatible = "spacemit,k1-uart",
->  					     "intel,xscale-uart";
-> 
-> -- 
-> 2.43.0
-> 
-
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index ee0274417948..23b776cd9879 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3112,7 +3112,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
+ 		poff += flen;
+ 		plen -= flen;
+ 		*len -= flen;
+-	} while (*len && plen);
++		if (!*len)
++			return true;
++	} while (plen);
+ 
+ 	return false;
+ }
 -- 
-Yixun Lan (dlan)
+2.49.0
+
 
