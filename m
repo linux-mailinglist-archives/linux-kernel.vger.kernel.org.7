@@ -1,154 +1,168 @@
-Return-Path: <linux-kernel+bounces-744361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C027EB10BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC30B10BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B02B5A7B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3D95A507C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3AF2D838A;
-	Thu, 24 Jul 2025 13:34:39 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159D92D838C;
+	Thu, 24 Jul 2025 13:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C/maM2lE"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB51613BC0C;
-	Thu, 24 Jul 2025 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D38F27B51C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753364078; cv=none; b=GddP4x7VQayeZO/VshKBsOB9Fj+Ogf9kXLgY8BBrz/bWcecENqK4KB1xlsskQIoW3Je0/KpEzraMeU1MuXohxhSBUTfJauI3+UTk9OhFVdLBhCC66xL7o4WvZRcAMq3wmakkdgpTgoBdiMaj5zPy+4b3xmIxYCTaD0dFY7bhedY=
+	t=1753364144; cv=none; b=LBNhyDEIxtWxb/jxPfKUtvUG9ETAXiBnvqMZ3d52Jc1Vx/skYek4Cx0KTHe+rqpE6RX/nG5mtKfnKwMFUsYeG2IKY9bQIokvs0j5C+wSOUMC4Ggbwx7NZRJgGcluhzsimIXJty/lxYpID7bBkTFgkIXqjhdfMAjedyNXY3lqfsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753364078; c=relaxed/simple;
-	bh=MVJ3E/91h69I0bmDMezkRZP4rkHbijJOQ6KILSOiZCE=;
+	s=arc-20240116; t=1753364144; c=relaxed/simple;
+	bh=vnOWbdLL57ho3ILUGJIlNNAJitfSpo19bpU1UzcEEmg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5TyZl0Q/3dEAIVMrh+F5EwN6S8zkpA3m/nPOtrkN1yhMDK4zPqNQ2CJ3LaPpijwzi8y1wZPKKv1W/sUNXcbQ95y3JxmQeGjVTKVsluR+pT7WJ+Lkxt3SZs7X8jpFEshXmmiSTE5BBTu7RoEjAqY5dmjkqMaFUHrMlBiG9T2Wp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af2a2a54a95so162762066b.0;
-        Thu, 24 Jul 2025 06:34:36 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VdqvcilLgCKaIqFNWNnAD8I/j/GRAyMzWgrWsVc/7dpnh9Y85K+j0/XkyHUqwOHpW4Rk5k2RaK0gpOaK8NeR/OCfoZxOcub+JhoSuqVIxlcfPp0RcihWxf5qZdJQ5vo+moaS4AYzowKGAIxF424siip8bi0hLPN8L279ngEylbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C/maM2lE; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45600581226so10321715e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1753364139; x=1753968939; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v/783AWBb1WjprdR5FQ53MxE+lFAhfIuN35nrxo6hj4=;
+        b=C/maM2lENVlS076xrfR+87Q7OMuv24LlcqWgnHhWHaRl5xdZVzHnewjm95yI28Sx9D
+         jQltEgQwPXjAO/3wiIKFndgunXFj+GzG5Acn5bq8xZHUq4x21AqblmnQsnACKYydjHy3
+         P69DoxPNJCzAY2uKB0iePfuNwySnFZ1Jb99UhkutWiRuB3Auv0wLNUHEn417O6DNvjeY
+         3yZralpvK05dLeSLGfqgQL2qglk74zvFGmNWiv0MC3zvRPNHvX6LhrizinrlchxRTknM
+         CLjQXSOT2ymzMAzDay+Q2gd+txpP/KzgfYtj0WANRsDdK10nld+lyTU+ircOgtusXNDP
+         FM6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753364075; x=1753968875;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fx+2jC1brmgVu9hs4XiOEifPBnLGokabrEM+R2kq2s=;
-        b=pAH/Z8xdK0+QpGizQ6NuqWHfiFMAaYNv2Tov10c2YcezJaCxR8WlODx/ugavmVPyYR
-         tqd5Vo0UvtLUm6eLDc4Luxbib+gfOx9C7/CktiAxXWZ+wHa6KyJlGvr2GvVaghkxfyDo
-         Pqh0UIAP5Yw8nt5Zuy7vH59gMNumCN6DIj32OhTt+4YGhVrWc9AlSzEDR2qTscH/kYBR
-         KExYk4vlp7rhsjqEB57TkSEgsybWgW+c0Lrd+x9VN9UO7oBARgzYDiH+p8Ch7RR1Kycc
-         RadCJQ1UXAtnUmYIZNdiTtwO2t23EBinzyK4EhwBpCByd9w7VNogEEanIi+Fn/MX4+en
-         IkKw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6cFmtOT5l0dGa5Mlo8J0r2MgHainsQ1B2CKc4GzsqIUTsyEEas8Iv2KIz3fDH7lBbOGtNEyg2MidNcg==@vger.kernel.org, AJvYcCWAG1MdyVBLDOi9Jx5nEvpF0tHcfsSdxV40ssk5M2hHpqqHn6GCr3kLtdT1Y6WveE1gIfXdmP3+i3rL@vger.kernel.org, AJvYcCWco3+clfJrs7fd0vyNbzmXEovTeIOkE70+NXEFtm2eagGvpPBcFvupu1PkRuYpjcmHz57u7z6rSp5A@vger.kernel.org, AJvYcCXtSym/WcXizoM0yWfgrKDp6DJBNRWmWW9HQZ8Nqctp0s2M2e7HWuvY9BHwdqoAhE6XfmUNbyKxCxyo/4TE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyefYRXlDMZXDTr4JRXMpR5b52SOMsZu3uTBl3rjV07HlLCiESl
-	GekYevEwhtVnLYf4cd8lvItm+p/hb3AVLPpX3D+rIN48VVNTGj/5sbUv
-X-Gm-Gg: ASbGnctVAr+M8C9xMzOwxb76ahgBTFuyAlW7lPUnJwcc+27lZoy6RNxQ984C/rfVEjg
-	+csaBqeN0aBY/25B/pKnJxLZHRknFXg0UAeJtFpzTojuzA7RjfgPCzWsJTs10ZyFU/F4UWqm5TT
-	szRmMZ2NCQPzgpVV063ALJKPHrx45Ps2LkrV2msHuMTMxagB4LkLvkbm2FSpsKsfW70YVKtm9gt
-	OLY2zyTEkcOwO7LShWCn9qu3fVfcZzutwrp7TmLq80odssPA4YYoPt2QJ74v0TNAZZKilk8AQDr
-	I/Rx8kN63uyBwXK3i7pYpH1/Vo9PudSfKhmFGcODqaorrbXGLSf8l+7j+pV9Iua95cvCVjGMtKg
-	BbWI8AMxRZg==
-X-Google-Smtp-Source: AGHT+IErTV5E5SvHgukSA8OS+U/Vctcx7DT/kAXhifsJMwbjohYquNlfTpV+af0AGvLRHpjhkGn6qQ==
-X-Received: by 2002:a17:907:e8e:b0:aec:76c6:6ef6 with SMTP id a640c23a62f3a-af2f8d4fc6amr617861566b.50.1753364074854;
-        Thu, 24 Jul 2025 06:34:34 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f861d7bsm111509066b.119.2025.07.24.06.34.33
+        d=1e100.net; s=20230601; t=1753364139; x=1753968939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v/783AWBb1WjprdR5FQ53MxE+lFAhfIuN35nrxo6hj4=;
+        b=h+rFDm0vsIJDNgCtIxDuv5kl/q+NGYaEOO3iJvIU7vdC0iXpLifmTSRWgbGzqC4Mop
+         n7X4cws0TzBZk/jPaHYb+32HGAEyVbKij5UC2o+Ik09hm1/5GfuUlebN4kmScA6QCoPQ
+         DmEGnSEz41zNACgA5eOczHk0QuCQ6AR2OxA6pX/OrZGgo1VrZRAo22rBPkRCOcahzZ4j
+         oKMbVBhOUlhE7RWFmlw4p2a4MPpxa2AVOR4PEz6jqfpWWpH6EVUITD5reVBiXM4vLXnQ
+         2MbZIXwSZ3PaD3mfWVxNCt8BBGCK1YzIzekOB/fORU9KEW97i6dHmOwgOwqvpkVaDQjT
+         NtlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXs8sKHM4RVX9c13vpqThM1EwO3OPE/FgXui7aDQatoYw++q4gyJp6jfKCN4dnaOfZoUc71s2gENSCtzJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/ouVhf/JRRi3ULiP4tt/DCyUeuE9tetwvhhncC+I8eWPvcAFQ
+	oS8erjNR3h+naZfQPBOB6dlw3duompgXNxfkxTBnK/ErxxMNeTb5fiYJjkqNjesrx4n9hqKKJxE
+	ZSGsd
+X-Gm-Gg: ASbGncvkl476k9sbz1JgVL4j3mjhNVM/zEhC5i0pzQoXAQHH2RW+N3Aw7i7N8/TSBl8
+	y4wwiOqtDDf4m9YwDIHwrbii71d89hDBPGyqhb3EX0NRn+0AqmIP3ql4gLyjgfcmFJ8Awptv7fB
+	DXyV0rD4vKHKSxGTND8JAExNl1rEOqWGg6cAaom6Pr5kBb5Jw/rSb7yiXMbrvOnWleZzrl++9b8
+	JdSPpxZAZQJZMz76C2bi7vn3rn6UZFjbNcK4G1JzlemslOsyefkdxdarUTC13IBEnbBNG90jHnp
+	NYiDq9SS0F8DsjUPSOQ9pRyttYacHfg75Ho+cUaJMVjeXfGvGS2g96VRoYP1J7QNkZDvuX7Xzf5
+	88tAT7RvEEo2XokxtfpPdz00tOueKMWJVAvIdamFE+w==
+X-Google-Smtp-Source: AGHT+IGx8P6YHLZgXnJMcaSIRXjWetfkIpZpQUcR+9cauLnkNbDKHnuiJIMh2QcEi9oeQa/G66Ef7w==
+X-Received: by 2002:a05:600c:1c22:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-45868d31a2bmr68939555e9.18.1753364139342;
+        Thu, 24 Jul 2025 06:35:39 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bcbe8sm22164745e9.17.2025.07.24.06.35.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 06:34:34 -0700 (PDT)
-Date: Thu, 24 Jul 2025 06:34:31 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Robert Moore <robert.moore@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, osandov@osandov.com, 
-	konrad.wilk@oracle.com, linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-pci@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
-Message-ID: <4qh2wbcbzdajh2tvki26qe4tqjazmyvbn7v7aqqhkxpitdrexo@ucch4ppo7i4e>
-References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
- <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
+        Thu, 24 Jul 2025 06:35:38 -0700 (PDT)
+Date: Thu, 24 Jul 2025 15:35:37 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
+	chenridong@huawei.com, gaoyingjie@uniontech.com
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+Message-ID: <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
+References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ig26ryr6n357ans5"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
-
-Hello Shuai,
-
-On Thu, Jul 24, 2025 at 04:00:09PM +0800, Shuai Xue wrote:
-> 在 2025/7/23 00:56, Breno Leitao 写道:
-> > Introduce a generic infrastructure for tracking recoverable hardware
-> > errors (HW errors that did not cause a panic) and record them for vmcore
-> > consumption. This aids post-mortem crash analysis tools by preserving
-> > a count and timestamp for the last occurrence of such errors.
-> > 
-> > Add centralized logging for three common sources of recoverable hardware
-> > errors:
-> 
-> The term "recoverable" is highly ambiguous. Even within the x86
-> architecture, different vendors define errors differently. I'm not
-> trying to be pedantic about classification. As far as I know, for 2-bit
-> memory errors detected by scrub, AMD defines them as deferred errors
-> (DE) and handles them with log_error_deferred, while Intel uses
-> machine_check_poll. For 2-bit memory errors consumed by processes,
-> both Intel and AMD use MCE handling via do_machine_check(). Does your
-> HWERR_RECOV_MCE only focus on synchronous UE errors handled in
-> do_machine_check? What makes it special?
-
-I understand that deferred errors (DE) detected by memory scrubbing are
-typically silent and may not significantly impact system stability. In
-other words, I’m not convinced that including DE metrics in crash dumps
-would be helpful for correlating crashes with hardware issues—it might
-just add noise.
-
-Do you think it would be valuable to also log these events within
-log_error_deferred()?
-
-> > -	if (ghes_severity(estatus->error_severity) >= GHES_SEV_PANIC)
-> > +	sev = ghes_severity(estatus->error_severity);
-> > +	if (sev == GHES_SEV_RECOVERABLE || sev ==  GHES_SEV_CORRECTED)
-> > +		hwerr_log_error_type(HWERR_RECOV_GHES);
-> 
-> APEI does not define an error type named GHES. GHES is just a kernel
-> driver name. Many hardware error types can be handled in GHES (see
-> ghes_do_proc), for example, AER is routed by GHES when firmware-first
-> mode is used. As far as I know, firmware-first mode is commonly used in
-> production. Should GHES errors be categorized into AER, memory, and CXL
-> memory instead?
-
-I also considered slicing the data differently initially, but then
-realized it would add more complexity than necessary for my needs.
-
-If you believe we should further subdivide the data, I’m happy to do so.
-
-You’re suggesting a structure like this, which would then map to the
-corresponding CPER_SEC_ sections:
-
-	enum hwerr_error_type {
-	HWERR_RECOV_AER,     // maps to CPER_SEC_PCIE
-	HWERR_RECOV_MCE,     // maps to default MCE + CPER_SEC_PCIE
-	HWERR_RECOV_CXL,     // maps to CPER_SEC_CXL_*
-	HWERR_RECOV_MEMORY,  // maps to CPER_SEC_PLATFORM_MEM
-	}
-
-Additionally, what about events related to CPU, Firmware, or DMA
-errors—for example, CPER_SEC_PROC, CPER_SEC_FW, CPER_SEC_DMAR? Should we
-include those in the classification as well?
+In-Reply-To: <20250722112733.4113237-1-chenridong@huaweicloud.com>
 
 
-Thanks for your review and for the ongoing discussion!
---breno
+--ig26ryr6n357ans5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+MIME-Version: 1.0
+
+Hi Ridong.
+
+On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweiclo=
+ud.com> wrote:
+> CPU0                            CPU1
+> mount perf_event                umount net_prio
+> cgroup1_get_tree                cgroup_kill_sb
+> rebind_subsystems               // root destruction enqueues
+> 				// cgroup_destroy_wq
+> // kill all perf_event css
+>                                 // one perf_event css A is dying
+>                                 // css A offline enqueues cgroup_destroy_=
+wq
+>                                 // root destruction will be executed first
+>                                 css_free_rwork_fn
+>                                 cgroup_destroy_root
+>                                 cgroup_lock_and_drain_offline
+>                                 // some perf descendants are dying
+>                                 // cgroup_destroy_wq max_active =3D 1
+>                                 // waiting for css A to die
+>=20
+> Problem scenario:
+> 1. CPU0 mounts perf_event (rebind_subsystems)
+> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+> 3. A dying perf_event CSS gets queued for offline after root destruction
+> 4. Root destruction waits for offline completion, but offline work is
+>    blocked behind root destruction in cgroup_destroy_wq (max_active=3D1)
+
+What's concerning me is why umount of net_prio hierarhy waits for
+draining of the default hierachy? (Where you then run into conflict with
+perf_event that's implicit_on_dfl.)
+
+IOW why not this:
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *r=
+oot)
+
+        trace_cgroup_destroy_root(root);
+
+-       cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
++       cgroup_lock_and_drain_offline(cgrp);
+
+        BUG_ON(atomic_read(&root->nr_cgrps));
+        BUG_ON(!list_empty(&cgrp->self.children));
+
+Does this correct the LTP scenario?
+
+Thanks,
+Michal
+
+--ig26ryr6n357ans5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaII2pwAKCRB+PQLnlNv4
+CNfYAQCUc2XkchH6ARt6FKuQ6Im+lr37eUpJT5yuMPiiIyFMmQD/fAcBfK9p9YnS
+RbU4g77pcS6SzZf54YpcCZZdzgPkWgo=
+=nDUZ
+-----END PGP SIGNATURE-----
+
+--ig26ryr6n357ans5--
 
