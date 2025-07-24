@@ -1,80 +1,111 @@
-Return-Path: <linux-kernel+bounces-743489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307E2B0FF3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9230B0FF3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 281131C8732C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC101C87D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10201DF98D;
-	Thu, 24 Jul 2025 03:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6610A1DF98D;
+	Thu, 24 Jul 2025 03:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dJnVBTvp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C2A4C8F;
-	Thu, 24 Jul 2025 03:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRo6YXLY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D554C8F;
+	Thu, 24 Jul 2025 03:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753328973; cv=none; b=Q0Jdr9zDDUz2e9g3YkXJbvoH5b81ah/wcBm5XYONp0qalOT9l7OA6ZQJG6L2GMWrE7tgoDI281hedHBkkOEHva8us+TpY1n8/+S8QcGSC4m/cmqUdBCLeV7jfo74231KwA965U2LLo6JthcfyaenU2yDwOcunPesBbskmyGbr9c=
+	t=1753329142; cv=none; b=BJ42vkQJGd0chEy/SsQq9V0aeJwqwf+dSAMIVtw7EHfRCIvhZHj9idneA8w9LUNtH7gIVH9ve2Su1mlyHF4xMLWklcBl3mPmIJKH/oEAAk2jk//7N8vTGFV/6CcQsp8OVU2LqL1rEa0WJXqZZyvY2/8+aAvstpfnhljxoOqmAYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753328973; c=relaxed/simple;
-	bh=pDeP7F16BsjwmoeJizrbHOuK68cJqCQBom5tiGPDMIE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BmMuwRFiiI4/497y1438I8/uytHRmQloNajpY8hv1owFGHkIqCv1d06uB/N2Epf88FeOWc2NU8h8Xm6hCOC6Xs4hhFMCvnEvp3CeQN3lOTrMoAVXuw/tN+nl7u/9/XngY2eBRF5069nmkqB6xqqB8TLWVROGajXLu37/U/yIq8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dJnVBTvp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 92E7E2120394; Wed, 23 Jul 2025 20:49:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 92E7E2120394
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753328971;
-	bh=pDeP7F16BsjwmoeJizrbHOuK68cJqCQBom5tiGPDMIE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dJnVBTvpF4otbsUNFIABaJpLQpxPsUoJzbtILBp4WHlkECnW9D9nk5DMKoOf6xaPV
-	 Cg4k3GKGccNISrjzW/WvItxOvrmzU3LzDmLzYgrLAbiVTQXwWIZScOuSD9aGFMe6vX
-	 m2hT/6LsUIypS13q8NOOX6H22R1puFj8ATgJXJwI=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
-Date: Wed, 23 Jul 2025 20:49:31 -0700
-Message-Id: <1753328971-17760-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
-References: <20250722134340.596340262@linuxfoundation.org>
+	s=arc-20240116; t=1753329142; c=relaxed/simple;
+	bh=0mWtWIzDFZ1wRmE/EGHeHocAoCFvLmNst0CZlSZlvz4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BDf4xKRvVbhflC7Kc4FwbA08y6DsgVeGtL/u8QIShrzXCTJhlq6at9+CrBYTHlUmqZR3hBhLHMjsJAuCi0ZJkXVizlS3ZxlLZqMtQRDC948cij56YECnphtTjVpv9sHUBGs48vQuYavs6+QF2xHzymwkQ72+hSzAIc1qWEzsQ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRo6YXLY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98541C4CEED;
+	Thu, 24 Jul 2025 03:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753329142;
+	bh=0mWtWIzDFZ1wRmE/EGHeHocAoCFvLmNst0CZlSZlvz4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HRo6YXLYiLbMoMl/dLb2EWJ6sMHLHfeLRrnMMW4QdVaZCzfGOXT+8JR0AKpLV+pNf
+	 pXNmWp+xItAQ8Oiw9wItlHlwy01GNUXVjEJqh0xXCgv56zqCM3SReaUTsNJlKpeGv6
+	 zvHW4QxX0atzj+BjYpKaiSS1QqYng4fydHhYZsD2lkkpLMaA/1A8kQfQBvlrAKJwIE
+	 1KHuqlN8tnPXtcp+o1maczSmLoeHT2plrf/iojYUr0nOCiqOFIcMYHeB0Uz0jQXiVN
+	 jis97Ym11o9RbCM5D9H7NNuqx3acGuit5hCM3QVNGVhSxPYZD7iqKBmh5gSJL5v/+5
+	 HmfRi+Y6vO2gA==
+Date: Thu, 24 Jul 2025 12:52:20 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] tracing: Remove "__attribute__()" from the type
+ field of event format
+Message-Id: <20250724125220.49e1cbb559dcd69f630e9af2@kernel.org>
+In-Reply-To: <20250723112329.691ed421@batman.local.home>
+References: <175257695307.1655692.4466186614215884669.stgit@mhiramat.tok.corp.google.com>
+	<175257696222.1655692.4019049819386139160.stgit@mhiramat.tok.corp.google.com>
+	<20250723104030.6ec24dfd@batman.local.home>
+	<20250724001806.2dfd6baf4990f952ee77b6c6@kernel.org>
+	<20250723112329.691ed421@batman.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The kernel, bpf tool, and perf tool builds fine for v6.12.40-rc1 on x86 and arm64 Azure VM.
+On Wed, 23 Jul 2025 11:23:29 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Thu, 24 Jul 2025 00:18:06 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > > So this will add more work during boot up as it is processed on every
+> > > event regardless if it has an eval map or not. But this is only needed
+> > > if CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y is enabled.  
+> > 
+> > Hmm, In this case can we check it in trace_event_update_all()?
+> > If we need to sanitize more word, it is easier to add a condition
+> > there.
+> 
+> If we need to sanitize more words later, then we can open it up to
+> more. But why do this work when it's not needed. We are going from
+> calling this function a 100 times to calling it a 1000 times. That's an
+> order of magnitude, and I'm not sure we want to do that if it's not
+> needed.
+
+OK, then check before calling.
+
+> 
+> > 
+> > Or, maybe we can sanitize it while building the kernel as a part
+> > of post build process.
+> 
+> Ideally, that would be best, but parsing the elf file isn't trivial.
+> 
+> I would say let's just add this conditional for now, and then we can
+> start working on a way to parse all of this at build time.
+
+OK, I'll put this in my TODO list ;)
+
+Thanks!
+
+> 
+> -- Steve
+> 
+> 
 
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
-
-
-Thanks,
-Hardik
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
