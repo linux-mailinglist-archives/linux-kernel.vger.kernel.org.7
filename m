@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-743640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6D8B1013B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:01:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C4AB1013E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067CD1CC5A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:01:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1545167B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D76221FD4;
-	Thu, 24 Jul 2025 07:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F32221FD4;
+	Thu, 24 Jul 2025 07:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1GrbAp9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHhQzT5t"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C54EEA6;
-	Thu, 24 Jul 2025 07:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE931D90DF;
+	Thu, 24 Jul 2025 07:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340487; cv=none; b=vBGb4inNXEg7buFxYTQTm98oDQLl22LNGj/Ld9tz+Q1lqXjNncBzYVRXhWEuIxOWuRGoEQRspXMwGJCT70TqNCvrGRp/ZFD5O3qbQoi1sQHqt9cKnXPjz+igUKhcRW7GugxUqgV1Rk+x1s3Ze4M2BnBTAoW72Ny5A/SeT4xalYA=
+	t=1753340526; cv=none; b=t5CdI4/8Dey94nTQwV1amcYH8p+BQ+oIj84NL82diKK5v4UGSGUIbfyXTfFr+686oHcX8FnbghHzcjsb0wN9vrlKb0+cc9CW8yo0uzCKBMTa/dE6fy9ucMA/tVmDe9mitLULwltPzFP+Drui2IPstMsc48f3jqkDtlg2338jCGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340487; c=relaxed/simple;
-	bh=tuq6Rmgg5VT6PaXnAV5s/mubX6mQSTO5YzbVqh22Nv4=;
+	s=arc-20240116; t=1753340526; c=relaxed/simple;
+	bh=Q1vmtZhAqt5hBWwprbn4CUB66zCHOr4Mx+OTWP+3XfY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rW+mMRtMSSXc0BpYKmGmbM0E0WHu9X2NNyL1bomghxIZvjRD0LItunWn34nmrbRmxicolzcIrWnTTMTmSVnZrGvSv5BKh7EuOvzkpEyrbo1UIk/t9QFR+W2nZe4rbJOStT6a7j7DAnxqGZU/P2J4Fr3levFLygCz9M/peLnSftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1GrbAp9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A56C4CEED;
-	Thu, 24 Jul 2025 07:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753340487;
-	bh=tuq6Rmgg5VT6PaXnAV5s/mubX6mQSTO5YzbVqh22Nv4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t1GrbAp9Ix4dXQayW38sTtqu6z3Z1oo8eNmtzOMA5jeRm5cAT33CsgAvD1VehjLMd
-	 I31FeCAy+yVK7O43klAFYHv4DoAgBay8yjr4uHT5wJwS8alTrQJq1QTnuyKOzW3kkw
-	 mlmH1JGxYAJGDQJCtX+/oT221bW1U+lF9fixSd/syQUdG7iSoUXBsEJge1sCOZPJBb
-	 zyK6PHkSsB7SOq6y7IcO5OhBfupNoA7X/wpXbfRr+3c7hShL4bv5hvPYg+VG53qgDi
-	 dF+5R/johiOYvmSTQh+UKxU9hhPgwT12X94tLKdnGDkEKNSygo0adtbctMrJyY1/Xh
-	 9a/JHqca61d6g==
-Message-ID: <0541891e-2631-43fa-8f3c-a7afb83436b2@kernel.org>
-Date: Thu, 24 Jul 2025 09:01:24 +0200
+	 In-Reply-To:Content-Type; b=VOlXn/rTNp3tzIYFtqiqetA284TEJFdStcJr1kopUc0bX4Hn82Cj1mELdRalqyMBhFTahb5GfILSNzGX7vP5PZn1oU7Zr4uUqVpFxwxkG4/92OeIsYhALkyQ76jBbWw5wVRstdhyJ1YZAuLun9r4g/XgXAvVYX9i6VMq3daAYkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHhQzT5t; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so3922795e9.1;
+        Thu, 24 Jul 2025 00:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753340523; x=1753945323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OlUtBVs7mVLIbrf7opyOhCkogChwruSdb2WYQaTp8x8=;
+        b=IHhQzT5tv8vxbf8sD6m53LbpTHESgtH1SXAUMNK4KsScItaIgGGiWoZs38aW+fcczr
+         Jyl3E6AUcQVBO8BFHGrHzSvLSR4ugo7RoWae9rL7NPzPDYr7tAgMEROacHxNK9aAWdhk
+         3UaSOscXg10DbJ6YRLYc/vvwicRO3FXB0lGYLt+qoSIekjnq1t5U/M4tx2w+kwAjzfEq
+         UyIJBb4bJ5oEv2qOafjbgJwvGpQO9dC4jPyyB/V42EcnBaqF027xRW9mwOdU8eqmMkh3
+         L1iId5isIBqjnO38jH51wtqwEI6/xiLxwd3E7EzKUSP//JhGGXjsqXWXv+i3N4stpFCm
+         Pbhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753340523; x=1753945323;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OlUtBVs7mVLIbrf7opyOhCkogChwruSdb2WYQaTp8x8=;
+        b=NQ6Yombh7U9Y8/aWCd6E3b3G3mwx6GmK9PWh34Ou3lABCSXojEODVLT/yMeNyMGekw
+         MBbWsBPU0n1WsHkRTcjNmSD6SYLqY7zRbSShGbRHLIi98pCZQXjWsg5CDIeqVf0++p1V
+         z00BFO9hrC38NIXaYSSnim6ud6JIVDmmjA0j2qjDc0wcRSFAg43xEhnThrqJYrLNZhH7
+         WnYdXA2Xf6L3WmgYd8R7zs4AoNT6bEvJyFmYMYsX3dCXgaipn3TAgVswldqjS0syOywu
+         f2A5FQppEU29vo/u1MrCMXusG90zZedI2anHVnxczJxGTbjlW+LY/azSJL6K0I7P3/3e
+         GAVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOZzZmug5Z6JQ0DHvfbJOGz/yNFavbvZScVGRw3h3iJpLWDwh51t2+eEKhrfAVYOaporooETWZaSb0in+47GZdo7Y=@vger.kernel.org, AJvYcCWP281iLAlfWEfACXGBub6Ip/yLTLyJALyDKn3+SNu1DmmHeG7UQKa+Ieq7kPodhJbCiseACuXqPZ88/gGT@vger.kernel.org, AJvYcCXNu5G447LyZRKbczoQE4EIrCTNfhwQKq832hBJ2TDSUZAZPEZurOjLsjl6cP92TGzCVyq9PabS4cLG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyspxIFEgyGf0GKpdYFGL6hE2sE5mXyQMYyLnZpeVhjlU2/ixFH
+	Ri6pgPurHVgCSo0BGzqSnf+JlwD12dgO++ohUG4p8y4JzaZDnLM7ZJbs
+X-Gm-Gg: ASbGnct6+//xOcaNdMj3Hu1+Dv5IjtJosyIlPpNzUo9WxpQHx0/B5DP6Ig81rquHb3y
+	sRGcVYHp4HAunUPUMKLV5T6pu2ZCAYaT26ACP/rm3Eo+r3f6PJCpAkYZd3GjXNdj+mpUPKN2sWt
+	1NH5hykt3sOLXicvHcyooXcM+HFEXo7cY5G7Lj9ABO2DUSAK7gZJ8qIZDJMskYmedr6nliH/zPc
+	ycZUrIhvy9xJ6unz52Qi4ZrpHAjr8ICzkCzsoHjXUyw2nmO0xzNHU/rwFVZZthnZwLvzG0gUvvw
+	cYyS+i0NK56xhIRpx20LxMlXUU5VlVTR2yJwdrSMRvt/8RIl6msRV8rXKRb5gszS8sT8WSp0ccu
+	eALa8x07kMF0OAtlIa2tWcwW0XCckbTx/zh0+4mi46/b2vwpr4eV9ZciLuRUqCwF0pNNEfGg+/2
+	bENFTM6kDJqKY=
+X-Google-Smtp-Source: AGHT+IFGy6HODxEH7/PmTdmL1a3/zjPLMsIBH3rq+Xq0Tau9JAc9/MY1EEnrW2AphA2h+4ON6UFPxg==
+X-Received: by 2002:a05:600c:a408:b0:456:1904:27f3 with SMTP id 5b1f17b1804b1-45869e4b95dmr39641815e9.18.1753340522595;
+        Thu, 24 Jul 2025 00:02:02 -0700 (PDT)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586ec79441sm9982835e9.2.2025.07.24.00.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Jul 2025 00:02:02 -0700 (PDT)
+Message-ID: <cf7030d4-a686-4edd-9698-1a9c301d1dd0@gmail.com>
+Date: Thu, 24 Jul 2025 10:02:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,107 +82,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] HID: multitouch: fix slab out-of-bounds access in
- mt_report_fixup()
-To: Qasim Ijaz <qasdev00@gmail.com>, jikos@kernel.org, bentiss@kernel.org
-Cc: envelsavinds@gmail.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250723110036.24439-1-qasdev00@gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: soc: samsung: usi: allow 64-bit
+ address space
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250723110036.24439-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250723-hypnotic-malkoha-of-trust-9efdb6@kuoka>
+ <3e1d7be9-e99f-41c3-8b0d-aaa426aa9de8@gmail.com>
+ <fbe025c9-2688-49f1-bd94-2cb0a1bbc8d2@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <fbe025c9-2688-49f1-bd94-2cb0a1bbc8d2@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23. 07. 25, 13:00, Qasim Ijaz wrote:
-> A malicious HID device can trigger a slab out-of-bounds during
-> mt_report_fixup() by passing in report descriptor smaller than
-> 607 bytes. mt_report_fixup() attempts to patch byte offset 607
-> of the descriptor with 0x25 by first checking if byte offset
-> 607 is 0x15 however it lacks bounds checks to verify if the
-> descriptor is big enough before conducting this check. Fix
-> this bug by ensuring the descriptor size is at least 608
-> bytes before accessing it.
-> 
-> Below is the KASAN splat after the out of bounds access happens:
-> 
-> [   13.671954] ==================================================================
-> [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
-...
-> [...]
-> 
-> Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+On 7/24/25 09:56, Krzysztof Kozlowski wrote:
+> On 23/07/2025 10:21, Ivaylo Ivanov wrote:
+>> On 7/23/25 11:15, Krzysztof Kozlowski wrote:
+>>> On Tue, Jul 22, 2025 at 03:10:36PM +0300, Ivaylo Ivanov wrote:
+>>>> Some device trees, like the exynos2200 one, configure the root node
+>>>> with #address-cells and #size-cells set to 2. However, the usi binding
+>>>> expects 32 bit address space only. Allow these determining properties to
+>>> So if USI expects 32 bit, then why do we allow 64?
+>>>
+>>> Switching this to 2 means you use 64-bit addressing for children
+>> I don't, but the main point was to avoid defining ranges for every single usi
+> I do not understand your "I don't", because you do.
 
-LGTM
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+I meant it in the "I don't _need_ to explicitly use that, but it's _nice_ to have"
+way, so I don't have to clutter the nodes with address translations in ranges.
 
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -1503,6 +1503,14 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->   	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
->   	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
->   	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-> +		if (*size < 608) {
-> +			dev_info(
+Best regards,
+Ivaylo
 
-Except I would not add \n to the line above.
+>  You change the child
+> address space to 64 bit and switch to 36/64 bit DMA. That's the meaning
+> of address cells 2.
+>
+>
+> Best regards,
+> Krzysztof
 
-> +				&hdev->dev,
-> +				"GT7868Q fixup: report descriptor is only %u bytes, skipping\n",
-> +				*size);
-> +			return rdesc;
-> +		}
-> +
->   		if (rdesc[607] == 0x15) {
->   			rdesc[607] = 0x25;
->   			dev_info(
-
-thanks,
--- 
-js
-suse labs
 
