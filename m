@@ -1,156 +1,125 @@
-Return-Path: <linux-kernel+bounces-744803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8391CB11126
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DDAB11128
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 20:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A651C28278
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872104E6CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066C5224228;
-	Thu, 24 Jul 2025 18:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EE8214811;
+	Thu, 24 Jul 2025 18:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bxtP0ehn"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="GRYA+R7v"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D96B19EEC2;
-	Thu, 24 Jul 2025 18:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753383057; cv=pass; b=Ko4/P6CCj//tnZrSNmCDPl7gtzhQXvmdpj73fBx7ZyiEB+5o3Y0vhjrfSB+rP6VQkS4Q4y+Vk9gQgz+XbcRMRQho/TIMKH44h3uTh8mAJSO5sqP1rki5MPEWv4WPUuuKs7GCmExTgpF2TVXnaANa4qRne1b8WS1MpmVf4kI4CR8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753383057; c=relaxed/simple;
-	bh=CatsMGrYaSqiZzxtwSkAxSfGncG9RI2XBUzXsQIDsi0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=fk6YUPJRQdI8E5Hmp3qSPhlHBHRvtUX3/KqO8RJ8FhyS/oPjYgRx8ipTjvD642OXm791ufkOn6LAuxNqQq8614EpqjrNAHQqIUF1zPW/ZiDZe8sdI6It5sMDNhCmTt8TD35Y4YR4vRT3MeQQBrPgco8+Cq9giB2ylLy5UYpbG0Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bxtP0ehn; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753383028; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MpHMTuxUAqb4oRCWw4ibpqbslIYGOdCazZtwvUhou1OXZ8UcOHL1jDnyjOYq6quPVc6X2e3YRCosgbooy4t1O8uXAZHe5+8lFcyIBUYWWllB95jiBTehOKAmGnmjadzWl4oq/dQ6TJHxUm/XH4zVFGFcygOUX53+Ph/GdOTq/H0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753383028; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zUjBE1xSWZ/jaXPPwyRJK69aFYsYjVnhXaqAHUqMFpc=; 
-	b=JRnHo/nfYbYUnJAYa/e+kFNWBF6OinORZmnmc3L1XY64dlJyzq4UiObhqZD9fn/BdPZHEsKB5uzTrOh9c3oDF6NniEOXubLqS6sWVt1P21V/TZvbJEu+rDYO9SyRqCVquLkdbqLFv/vx+XPaP9uzjOhfLi/QjrtwdQvfFTWlbSs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753383028;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=zUjBE1xSWZ/jaXPPwyRJK69aFYsYjVnhXaqAHUqMFpc=;
-	b=bxtP0ehnEfzmHeG/v506SxjsNt1XHDdhkZCojKt2FXUy3LqfTQYc2JJp82Gg9G3R
-	yjjmxBytXehOSTFqGVYzkpG51l/Rhz6paVZBB6s8Mpyb3MMVg91Vf8jKaX1JBTF3Gce
-	aGJcT59TXhv31WDVUj65YkJe9jBWCIj0HEsQrE/k=
-Received: by mx.zohomail.com with SMTPS id 1753383025893371.2668099208014;
-	Thu, 24 Jul 2025 11:50:25 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6242A19EEC2
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 18:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753383094; cv=none; b=sH6J15QohzU1jCwUmYR4Q6UsmIhf39X/WAfmlRJOeHaDpV9nEIn/YK8FS9oVjuiaoA8PD/r4h1VPoLkIXpaXeSQdcuB4tZbcgjtFTnRsnwL7ijqsiCy3Y9nUZ/qT6iiw1DaF3G6YWRR5ag7P2N+3kr94QaOirMEV5UZ2W3ZecQ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753383094; c=relaxed/simple;
+	bh=9NKEhvYdRAJ4FWTGiYoKj2Ww3AowxSsxc1dQxyBeCG8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OySki1FTTLuEq3Tg65QehRi/aw83SSayoslzsY19fyYAAqK5gRQfgoyrj5BiAVbYfXJe28UqpcSRvr5Eq/yXK5uuNXQucVudQsPChExC67LbEACTGiRJVwJVLgJ+FoiFVjw01vIeD/xFshl+U6cu1bcZ35mfFUpFhBbGuznY6mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=GRYA+R7v; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1753383086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=INETfDhMq3ho0Q60P+GXV/uFAEh01ayuK4bO9zYR/ns=;
+	b=GRYA+R7vJlTq3AzhSrftA88pU9Y1cw6OIuQi6mamNuUIQZX1qwndjfVPQ+lqoED+VQRZgB
+	YCEP9B/xrt0qjECHrXk/jdFPe3ruqI838fjusTre+8YuXdvX9MExuZ83O3oxjSuuRZIlnI
+	jycLYjytZmYKbGcndhN1xf1aHmrqMek=
+From: Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v2 0/3] drm/bridge: sii9234: use extcon to detect cable
+ attachment
+Date: Thu, 24 Jul 2025 20:50:50 +0200
+Message-Id: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2 0/3] rust: xarray: add `insert` and `reserve`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
-Date: Thu, 24 Jul 2025 15:50:09 -0300
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org,
- Janne Grunau <j@jannau.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <39015200-6AB5-4331-A679-C0CF6DB4B930@collabora.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIqAgmgC/3WNQQ6CMBBFr0K6tqYzFIuuvIdhoXaASRTMjGkgh
+ Ltb2Lt8L/nvL0ZJmNRcisUIJVYehwx4KMyzvw8dWY6ZDTosAaG2NM3DqN4q8xlLb6NwIrGxhhD
+ 9owKIlcnjj1DL0x6+NZl71u8o8/6TYLNbsnIB4V8ygXUWyQeKDttTCNdO+P0iOSqZZl3XH8iHr
+ yi9AAAA
+X-Change-ID: 20231218-exynos4-sii9234-driver-d817d4b511d5
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
+ linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1559; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=9NKEhvYdRAJ4FWTGiYoKj2Ww3AowxSsxc1dQxyBeCG8=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBogoCg0x8hvkodlf8ALwjY3RHUD2RmAgqs6FmL8
+ kt8p2FtnDmJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaIKAoAAKCRCwB25JC3Fh
+ a2DJCACnYjkp/VkdrAd5XAL2q8gfhbACxnvuQcM/AxVHUR43WFpUl68v+308QtenpZOE28qN9sg
+ llYpwCjtGbYgOykvvcQ7MQDSw8KLF25uW8SkMFJSxCCwVcEaxz+tGBGfG+OFJ4laIedZ07NGSMQ
+ BOQ4K7UYYRCF3qhU68l8uG/vGmXRIfcNCXItjYc+lBG80BYhFqoNZ2cErPV+0EM8ZMRenrMPeMN
+ U9AIqIjkiRvpPHA0Bj3StnqqJw69QkkhghQggESQYg6+DYDtO4YB3zmZWzqkHZOfQBzTAhnmMt9
+ fSDdq72RxJZ5oZq6GP1UBpRAVk8yl8lS3OsY27SgMY1xROVG
+X-Developer-Key: i=henrik@grimler.se; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-Migadu-Flow: FLOW_OUT
 
-Hi Tamir,
+Hi,
 
-> On 13 Jul 2025, at 09:05, Tamir Duberstein <tamird@gmail.com> wrote:
->=20
-> The reservation API is used by asahi; currently they use their own
-> abstractions but intend to use these when available.
->=20
-> Rust Binder intends to use the reservation API as well.
->=20
-> Daniel Almeida mentions a use case for `insert_limit`, but didn't name
-> it specifically.
+This series fixes so HDMI through the sii9234 MHL chip works when
+cable is hotplugged, by making the MHL chip use extcon cable detection
+functions. Patch 3, that actually implements the extcon parts, is heavily
+inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
+cable detection logic to detect MHL") by Maciej Purski.
 
-Here is a patch that tests your code on Tyr [0]. I sadly didn't realize =
-in time
-that you were using impl RangeBounds as an argument to insert_limit(), =
-which is
-even nicer :)
+Before these changes, HDMI only worked if cable was plugged in before
+booting. If no cable was connected, then wlr-randr still showed HDMI
+as connected, with 0x0 px, which confused at least some UIs (phosh)
+and caused problems:
+https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
 
-Our internal tests still pass.
+Tested on exynos4412-i9305.
 
-I also double-checked that the kunit/doctests pass, just in case.
+Best regards,
+Henrik Grimler
 
->=20
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Changes in v2:
-> - Explain the need to disambiguate `Iterator::chain`. (Boqun Feng)
-> - Mention what `Guard::alloc` does in the doc comment. (Miguel Ojeda)
-> - Include new APIs in the module-level example. (Miguel Ojeda)
-> - Mention users of these APIs in the cover letter.
-> - Link to v1: =
-https://lore.kernel.org/r/20250701-xarray-insert-reserve-v1-0-25df2b0d706a=
-@gmail.com
->=20
-> ---
-> Tamir Duberstein (3):
->      rust: xarray: use the prelude
->      rust: xarray: implement Default for AllocKind
->      rust: xarray: add `insert` and `reserve`
->=20
-> include/linux/xarray.h |   2 +
-> lib/xarray.c           |  28 ++-
-> rust/helpers/xarray.c  |   5 +
-> rust/kernel/xarray.rs  | 533 =
-++++++++++++++++++++++++++++++++++++++++++++++---
-> 4 files changed, 536 insertions(+), 32 deletions(-)
-> ---
-> base-commit: 2009a2d5696944d85c34d75e691a6f3884e787c0
-> change-id: 20250701-xarray-insert-reserve-bd811ad46a1d
->=20
-> Best regards,
-> -- =20
-> Tamir Duberstein <tamird@gmail.com>
->=20
->=20
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
+---
+Changes in v2:
+- Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
+- Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
 
-Thanks a lot for working on this. It will definitely be used by us.
+---
+Henrik Grimler (3):
+      drm/bridge: sii9234: fix some typos in comments and messages
+      drm/bridge: sii9234: use dev_err_probe where applicable
+      drm/bridge: sii9234: use extcon cable detection logic to detect MHL
 
+ drivers/gpu/drm/bridge/Kconfig   |   1 +
+ drivers/gpu/drm/bridge/sii9234.c | 121 ++++++++++++++++++++++++++++++++-------
+ 2 files changed, 101 insertions(+), 21 deletions(-)
+---
+base-commit: e48123c607a0db8b9ad02f83c8c3d39918dbda06
+change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
 
-Tested-By: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-By: Daniel Almeida <daniel.almeida@collabora.com>
-
-[0] =
-https://gitlab.freedesktop.org/panfrost/linux/-/commit/791de453eb103af37e3=
-cc6825e042f26d4c76426
-
+Best regards,
+-- 
+Henrik Grimler <henrik@grimler.se>
 
 
