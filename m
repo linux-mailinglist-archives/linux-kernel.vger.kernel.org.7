@@ -1,48 +1,59 @@
-Return-Path: <linux-kernel+bounces-743682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B862B101BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D6CB101BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46E63A44CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738D3581A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396E3253932;
-	Thu, 24 Jul 2025 07:29:14 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90CD255F24;
+	Thu, 24 Jul 2025 07:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HZk7I5do"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF68B2512EE;
-	Thu, 24 Jul 2025 07:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E15257452;
+	Thu, 24 Jul 2025 07:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753342153; cv=none; b=FJeeLa2N6koT3fOxp/d2n/mRrtf7ZnmyCPQOvUf9sVvNbt0aW9d6dhp+CFUepakumsxVgY2Y3jxdcyyR78IuEyqTeMjQdZKogSTV1j4HA/wAQVHXFQep6N9OJleBvojaLPWBcARU2HqymoCfOjzZz6YBEgwGImXDc/SIxZ1coZc=
+	t=1753342162; cv=none; b=Dqjzn1MssIzC4t+zflj0jJJhyxySvfr1xe5LOuhr+exOhSlN+glLrXhx91weM74u1NKysKAIWlYZITdDQ2iiFhKdrj3SVft335YRuOkhqYnm4FWLL+hmmGJbZVuuWisnTXO7Oc5Zbyrfh0F7y/wQEUR70iXp845WdJa9Gg1JoGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753342153; c=relaxed/simple;
-	bh=QHYRVoVA/kw1FfZUki5tl+VYsbcTosH+ZTfCVnrvyPU=;
+	s=arc-20240116; t=1753342162; c=relaxed/simple;
+	bh=i2q1X4v2wQxxKEohFKgZoAdvi42uSXAKH7PFNMJJ9BE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S/1xDlkZoMsE1q+DGoQHM4Y+SxPfgSajd4uREwmJNMC6uDptaK9UcyVC9GDDwfRyIc2eihUiWgYWSK/AB6Cp9Y+PO/LKM1r/UVgmGFjormgxZdWpIi9OI0MJXwGotkQxS/XGxD8ualZzQAjnQdXChjUHR4gHhWYUCNiwN6JNAtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E1F9C68BEB; Thu, 24 Jul 2025 09:28:59 +0200 (CEST)
-Date: Thu, 24 Jul 2025 09:28:59 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Zizhi Wo <wozizhi@huaweicloud.com>,
-	kernel test robot <lkp@intel.com>, viro@zeniv.linux.org.uk,
-	jack@suse.com, axboe@kernel.dk, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH] fs: Add additional checks for block devices during
- mount
-Message-ID: <20250724072859.GA29432@lst.de>
-References: <20250719024403.3452285-1-wozizhi@huawei.com> <202507192025.N75TF4Gp-lkp@intel.com> <b60e4ef2-0128-4e56-a15f-ea85194a3af0@huaweicloud.com> <20250721064712.GA28899@lst.de> <20250723-heizperiode-fotoreporter-2ada7fe78028@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4D0dFj8yBPlXBv0Wh6PKOCociqSuItCuK5nqTNsT+NdOohupFy8qF7NHh4dVgOe+aRNXG3NpBmeIaBTljy1Cu98jSmYoUJiXeCtMib8c443P0W4v2MlkU2Xe2QXcUJawrH4zFDZdIJUO3ktsGHJf3wGVA/oDeKsokUALfz0Xc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HZk7I5do; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6345442A5;
+	Thu, 24 Jul 2025 07:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753342156;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HuSxSBGWYzg8ppmBBZ57GZxUD2NpVmKocyw7538elEk=;
+	b=HZk7I5dom0NaZoXNr7ZUaqCxtTPCZ9rz0oAw0TPqYZch3Bberm1JrviipRsaYO21Rp2/tj
+	Lx/nw65YKNim+MQMGp0GMWNSo61TbL8Q/zQIvl/v3pRAqrA3q1fcOefiLZgiW691X8+G6B
+	ughoeNwQHn9YeB86iUa70KScN23mmKSPuflIZfEearVnbhBqPaa96nIOgGlc0rOawf4kdb
+	ZNonISBCN/9qZUZTNykQMimw7GdCPN0IGGLjtUspiZg36Uf5qS/izBTMEL3mTB2ExZBSP0
+	gPcIp4yhDNdL1+6sbK6f9M9kAsxAxIPSEsH0P34HuZm3gfIyyztCTa3eIoPIOA==
+Date: Thu, 24 Jul 2025 09:29:14 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Helge Deller <deller@gmx.de>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fbdev: atmel_lcdfb: Fix potential NULL dereference
+Message-ID: <2025072407291424126a1b@mail.local>
+References: <aIGg7erPjz1qJQ1F@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,33 +62,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250723-heizperiode-fotoreporter-2ada7fe78028@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <aIGg7erPjz1qJQ1F@pc>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdektddthecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepshgrlhgrhhdrthhrihhkihesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtohhlrghsrdhfvghrrhgvsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohepu
+ ggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehlihhnuhigqdhfsgguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Jul 23, 2025 at 02:51:27PM +0200, Christian Brauner wrote:
-> > You can just add a if (IS_ENABLED(CONFIG_BLOCK)) check around it.
-> > 
-> > 
-> > But the layering here feels wrong.  sget_dev and it's helper operate
-> > purely on the dev_t.  Anything actually dealing with a block device /
-> > gendisk should be in the helpers that otherwise use it.
+On 24/07/2025 03:56:45+0100, Salah Triki wrote:
+> of_match_device() returns NULL in case of failure, so check its return
+> value before casting and accessing to data field in order to prevent NULL
+> dereference.
 > 
-> Either we add a lookup_bdev_alive() variant that checks whether the
-> inode is still hashed when looking up the dev_t and we accept that this
-> deals with the obvious cases and accept that this is racy...
+> Signed-off-by: Salah Triki <salah.triki@gmail.com>
+> ---
+>  drivers/video/fbdev/atmel_lcdfb.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+> index 9dfbc5310210..b1017ac9c73b 100644
+> --- a/drivers/video/fbdev/atmel_lcdfb.c
+> +++ b/drivers/video/fbdev/atmel_lcdfb.c
+> @@ -922,6 +922,7 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+>  	struct device *dev = &sinfo->pdev->dev;
+>  	struct device_node *np =dev->of_node;
+>  	struct device_node *display_np;
+> +	const struct of_device_id *match;
+>  	struct atmel_lcdfb_power_ctrl_gpio *og;
+>  	bool is_gpio_power = false;
+>  	struct fb_videomode fb_vm;
+> @@ -930,8 +931,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+>  	int ret;
+>  	int i;
+>  
+> -	sinfo->config = (struct atmel_lcdfb_config*)
+> -		of_match_device(atmel_lcdfb_dt_ids, dev)->data;
+> +	match = of_match_device(atmel_lcdfb_dt_ids, dev);
+> +	if (!match)
+> +		return -ENODEV;
 
-I don't think racyness matters here.  The block device can die any
-time, and the addition here is just to catch the cases where it might
-have already been dead for a nicer interface.
+This is dead code, it will never happen because atmel_lcdfb_of_init is only
+called from atmel_lcdfb_probe which will only be called when there is a match.
 
-> Or we add lookup_bdev_no_open() that returns the block device with the
-> reference bumped, paired with lookup_bdev_put_no_open(). Afaiu, that
-> would prevent deletion. We could even put this behind a
-> guard(bdev_no_open)(fc->source). The reference count bump shouldn't
-> matter there. Christoph?
+> +
+> +	sinfo->config = (struct atmel_lcdfb_config *)match->data;
+>  
+>  	display_np = of_parse_phandle(np, "display", 0);
+>  	if (!display_np) {
+> -- 
+> 2.43.0
+> 
 
-Nothing prevents deletion, it will only get delayed until after the
-open_mutex critical section.  I still think GD_DEAD is the best check
-here, as it potentially gets set earlier than unshashing the inode,
-but in the end both of the racy checks should be perfectly fine.
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
