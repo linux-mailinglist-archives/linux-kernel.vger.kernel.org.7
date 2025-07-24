@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-744406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383C0B10C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6631B10C63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993813AAD4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4561188B9CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F872E7F04;
-	Thu, 24 Jul 2025 13:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1FB2E92AB;
+	Thu, 24 Jul 2025 13:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARqjK83l"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhHBBf8J"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA42E2F04
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13212E6108
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365397; cv=none; b=sycRZifbfInFLuJX8S6YznFTNYpzruRgcakR/S7QY1wOFJ+QWV0tjHsH3ayJEgTTIbpytCXzA8amywF9QGmI0jpqHMF/T9Ixcr1b9MHcmnIlC+6lDCRi0tU++TU57/cqvwO8nfwdOVR9JKnxDOue4ApafDRqXjFomukTpM/00ew=
+	t=1753365399; cv=none; b=dYxBNGiNvNuBgcRb/v36ob9uAtQuRZIit+5z6YLw+yGR7Ny7T89147YFZhmYGQyhYaJDYjNdmDcWgs+++JwtHhxNbO76y3MKWiejZOopv3JKVeGhjvH/PtOCsB0wt8Ng1Nh5iHbtzUq3oVLCol4DjJEK109BIiBkcOMKJIAUmgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365397; c=relaxed/simple;
-	bh=Yxy1SBIj1dJtqJdo+SY4u8s4+niserlLQYp3eIctd7c=;
+	s=arc-20240116; t=1753365399; c=relaxed/simple;
+	bh=QpOyX3O1zVluz5hSldO4dnPU9Pz5bkE/gs9RkenFruo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h5wRr9IHkBlYEntnViGPPRRaqml3Ozvhn0ezVtRIqP640uYARnnj3pk12bc5KDLCehawi5MJGXa4Q9l3vlhY8VqdonxLqf0bShny/yCLEezGgDVyEDTE0epaGOtJTYY68n8QZIqH5pbnbjU8leeniMdeEdRW6ShXRBAA0WmAiwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ARqjK83l; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=UibORWmlQfeDUfu2LI2oZK5zHxVQop1VSDnnk6otDEf/Z3Cvel8T1HCL45kre3o1AmaymHrHh5jtBPnlv2DtMnob0yfX5t1bI6rkizMuip/rPa451xYuLFLwYv/Dbnvq4cmrXUYvWIYDN+dnK3m5eU1TxHBOt4ks8sh4LMBOkSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NhHBBf8J; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45634205adaso5030405e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:56:34 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-455b00283a5so6422395e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753365393; x=1753970193; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753365394; x=1753970194; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3t+kxQ7dPGtocO2eml/1QU47n2YVx1Ic6Vfv+oiY3pc=;
-        b=ARqjK83lvYxNl8Lne8lZX/A7LtPSOrgVphMfQnIg2EwWyTqXQeJG6JHMqN6ytAYYmh
-         PswH3oHdlWDuPJh8SsW+P3uquLU81BpG58SddVBBy0Nn8UlmV2OzuK68hgaO7EUDF6LJ
-         TEnEdrn82pEYtS/XaaL9kdhATZdZC9Yw/1tiUmuiGTcBB9senuRHJzm2RSlloQfSC0KV
-         7x+0pMdY5UUIr/s/6C3/n1DWlOmWVWTwWt0PTsVKNnVd5GC2vbkt0wmv2vzKtUF+G6LF
-         Oke0h4sskYOveHCn+yARbBb6k9QMauq0FguiI1vkdtqyFqf6DOk2AZaUxJEtoIPheBc7
-         +uWw==
+        bh=/6EjHBZibILbBUp2qJIWYHcXS7kn/hLDSQS+TJg877Y=;
+        b=NhHBBf8Jzh2UWPCgsbFcY8aPFwvtxFOq737cLLsrQCZmRgkKkfwMJqNysXsBL8QsXC
+         qmzgwjtJVYsVGW89ouotrXqKPHH++Kh+n8fzAJGfeTQQgN3xUx8umehWdVe6hxnncmui
+         vMMx7OFls9lkmSMYrkbutgmBveGsrwvyQbxtNkw54UmbUH8TGVbf+pntg0yVwqDgKKpp
+         sW91XbQn7lQRduhAgmkL+m0wfWr/G35EOLGF3ls9tPJArHfaRx2kec+lQcZd5sYG22Ty
+         VQjkDwvKt34FiJcreuIkEXHvXuP69LMFBp1pM/55KiGjJ4nmzQMUSN1xoQGuC6LmZbcE
+         fGNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753365393; x=1753970193;
+        d=1e100.net; s=20230601; t=1753365394; x=1753970194;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3t+kxQ7dPGtocO2eml/1QU47n2YVx1Ic6Vfv+oiY3pc=;
-        b=BX/vgBzRFZiRMddBsI4JD1piw5fMfuFam7XUGh4PgrJ7sRoK8IVbMFB9Sw7tLcyOSL
-         s17v5jN8wRxRHAAp14StR4h1KdQL6obE12btJLg2CXCs8G+qAWDH3I2GcYwLsqQuM4lC
-         gmS3VYLOheTgy/7r2nYCd2NI7yIKa892iKith3InYidG937gKbFFy0/Lv6I3HZikk+oq
-         hR7N9IXH39T89epYbNatzvjrUiOC6xB9buH+nCtZMbjGWP5jjKpvDdKtSQSZl+rxnmPk
-         6q5rJjXzK1UqCToAdNXcLpX4TL85PZSaDto2fz2yHuQQQ3Xwdf4I3rUi+oI/yi63LKs1
-         Nh1g==
-X-Gm-Message-State: AOJu0YzySB+crvr6O+xB8+I6v9n92NyuHMXzfNmaxtuC2g1zv2jzfz9N
-	2vLTCC9Jgn9oiOA3zDlvRMOv0fQqqhjkPefhhvIAcsCOao7NFJQ25DiP4ZYO/va3QiLTUZn7Ujk
-	htfk4N10=
-X-Gm-Gg: ASbGnctGJBJYhRofTxULbmvcwT9nsC92DLEknnrGk5vRYMpc0m9qCEplWAb3kq2cy7U
-	qYCOW2tJy+QLZ6x8s7vUqONnlhAlruSDSqUmeA+WosF2wSws8z7lm1SvEoNCTUYm6wVdtnJTyaU
-	osAZ48Fm54S4SfGVYiXmXzDPerh2qLtSeQRTOaVfGeEYfFtQ91TCdkM0EHhPfMLhChnz3NDuexu
-	v1yYFgCPIoZ4xG0q322p1eLrUwMf1E7S3M0UEMskD+o5mXdhovDBI7s7spLKnlSqiIxFhdOKq9r
-	GIcSVgpnr8DIMwOWmNGMaVaAOJB6GWX46nSh6Ce7Ou52NB33muv1/710A3RpwzYqorInx0huNCB
-	l26/CE4djxgcccwuZ8emdPMF2y44zEc2TyAbkdikbf7Hed4sf4mHOHa3lji31Ca8yYiZ29oIUjq
-	0fKXmbzEKbbqni72ZeMo5lVNw=
-X-Google-Smtp-Source: AGHT+IFgnp7J9pcZF45aCSKJ4GVrrhV0572AUoK1dVlyY1LCSR/mU9Z7mKYUQBRdiPhCDw14ZigOTA==
-X-Received: by 2002:a05:600c:a0c:b0:456:19be:5cc with SMTP id 5b1f17b1804b1-45868ca72d1mr74457525e9.14.1753365392991;
-        Thu, 24 Jul 2025 06:56:32 -0700 (PDT)
+        bh=/6EjHBZibILbBUp2qJIWYHcXS7kn/hLDSQS+TJg877Y=;
+        b=CZrp6fprjPTz1zLhxhdThXJq7p3T01NXwxc/XBt6UF6vXvFVhODKzZ3diHjdXhTDah
+         jZ3vatPBLgitK6TB3jwwPSP1NecThLXnE65r1xbPFuH7yBexKJB8wejnyEURG5dOs9kP
+         q6VTAa2S61YbltL/ec3iWE8KMk6sbufQT+g1TjjOxSa2qEg0Oz0FOc9YUvhiGFUppmcg
+         mYGrobc/9xvDc+D0i7CkaXStvSj0ByEiuAVuo9YAkC+1l60sX3FtymGIAgVVrdg9t/3C
+         urR2eObhCA0rMTA7cBq35qrAfmZ27FPXbuMmJtBBsV0UMBD5gWKZG35icb9f+lbLHaWG
+         X0Zg==
+X-Gm-Message-State: AOJu0YxrxOuzJWQN1T5h0fu/k5FguapJTxV1D5qEENbQdl7A94+2FZno
+	UWbZA4zEqgHsVHOvd/zBbbtdJsrRs+/tx9UmBYf/XDCOJynV0UJSTCZLUfyqazywINQGmxxXm43
+	hD5xAL/k=
+X-Gm-Gg: ASbGnct4QW0TJZomvgueA9R5jDRq8+AT9EE8Cf1Ov824E1MowcJZvt6xiduB/dOeOJB
+	8yCnEMyVyeDqQi2SXu9vp5X8PPX2uy3ju48pkx32KbWKWmVm0dzoby78iaEbcwTqY4+RMcexz6U
+	gczHx76l1v1lYq15GcrZshPPcSOD/BoGL0Yr9SMDtuHzMOa9Y7YMQ/AkvJPcaiOIWpllCPwIU3C
+	UwrXpSStrIs/MumlQUbPxGQYB9s4FRyYQbCrEO3eE+Y0DoxlF7m3yFdENaszuapCB28jLtj9+/7
+	n4/0LK341CXQPwRwt7s3YbZEZGyNsVemGfJVz07LSPfTuP0ZqNHL47C2EEtUHxfYa13K5fvH70a
+	sKj48sk5ZRY2AVMqxL1oUFWAWP71BIjX8Iz0xYUJwHl5CE9DTilqHdVJbLL19GNGzCnV4UJeBrF
+	BmwY8l7M6QTgBx
+X-Google-Smtp-Source: AGHT+IGRlGdpZ28v11nrKuEy26SoaDmKeIQI1w12F1VyMMK6OUtkgi6ZkZkyO989nTl8PB59Q+K5gg==
+X-Received: by 2002:a05:6000:290e:b0:3a6:d7ec:c701 with SMTP id ffacd0b85a97d-3b768f1ab39mr5321094f8f.30.1753365393821;
+        Thu, 24 Jul 2025 06:56:33 -0700 (PDT)
 Received: from eugen-station.. (cpc148880-bexl9-2-0-cust354.2-3.cable.virginm.net. [82.11.253.99])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054e37dsm20889375e9.14.2025.07.24.06.56.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054e37dsm20889375e9.14.2025.07.24.06.56.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 06:56:32 -0700 (PDT)
+        Thu, 24 Jul 2025 06:56:33 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
@@ -89,9 +89,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	rostedt@goodmis.org,
 	jonechou@google.com,
 	tudor.ambarus@linaro.org
-Subject: [RFC][PATCH v2 12/29] timers: Annotate static information into Kmemdump
-Date: Thu, 24 Jul 2025 16:54:55 +0300
-Message-ID: <20250724135512.518487-13-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH v2 13/29] kernel/fork: Annotate static information into Kmemdump
+Date: Thu, 24 Jul 2025 16:54:56 +0300
+Message-ID: <20250724135512.518487-14-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250724135512.518487-1-eugen.hristev@linaro.org>
 References: <20250724135512.518487-1-eugen.hristev@linaro.org>
@@ -104,36 +104,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Annotate vital static information into kmemdump:
- - jiffies_64
+ - nr_threads
 
 Information on these variables is stored into dedicated kmemdump section.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- kernel/time/timer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/fork.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 553fa469d7cc..a5698e3ace2d 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -44,6 +44,7 @@
- #include <linux/compat.h>
- #include <linux/random.h>
- #include <linux/sysctl.h>
+diff --git a/kernel/fork.c b/kernel/fork.c
+index edc6579f736b..ae8ae9b9180b 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -105,6 +105,7 @@
+ #include <uapi/linux/pidfd.h>
+ #include <linux/pidfs.h>
+ #include <linux/tick.h>
 +#include <linux/kmemdump.h>
  
+ #include <asm/pgalloc.h>
  #include <linux/uaccess.h>
- #include <asm/unistd.h>
-@@ -60,7 +61,7 @@
- __visible u64 jiffies_64 __cacheline_aligned_in_smp = INITIAL_JIFFIES;
+@@ -137,6 +138,7 @@
+  */
+ unsigned long total_forks;	/* Handle normal Linux uptimes. */
+ int nr_threads;			/* The idle threads do not count.. */
++KMEMDUMP_VAR_CORE(nr_threads, sizeof(nr_threads));
  
- EXPORT_SYMBOL(jiffies_64);
--
-+KMEMDUMP_VAR_CORE(jiffies_64, sizeof(jiffies_64));
- /*
-  * The timer wheel has LVL_DEPTH array levels. Each level provides an array of
-  * LVL_SIZE buckets. Each level is driven by its own clock and therefore each
+ static int max_threads;		/* tunable limit on nr_threads */
+ 
 -- 
 2.43.0
 
