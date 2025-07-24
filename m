@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-743423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57A6B0FE7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:51:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4E5B0FE7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8A57B84A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1010F587673
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D09F1946DF;
-	Thu, 24 Jul 2025 01:51:48 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C430B4A28;
-	Thu, 24 Jul 2025 01:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A14190664;
+	Thu, 24 Jul 2025 01:53:01 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD04A28
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753321908; cv=none; b=ucwApIg8bIeXO2WU6X9q3rNv+fB0yv05NMtMq6UnSDFQGBKmI0ffaDsFuw4HjdFZxpsyL629mUkWd9ZZZt2vIWuhoty1ogXU2He/pSQdQXutABT9M4Eb83ky4meD7TiTmru6EezZJgbo4zJKo0t1zNGXsUc8kfZKcotaP6vKiQM=
+	t=1753321980; cv=none; b=An5HR5SJMs949XzKh72WQTzYIquIh1kk3EYwbT+5jsnRY/Za78V1vXNy4Y8/sclLs30ycRAG5dPDU1N8vIFsp0H/UXdYCjqLg3WvBdE3HtQY14uLwRbiJoHK0botRagqEZDU7fAaRpW5GsJu4Q+2JaBnR0TjQM/EKtJ50zOSDJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753321908; c=relaxed/simple;
-	bh=5gFsPbAXW59mepTuWRnPPsjYPaC7EOK30HvNtYThJGM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KvDzN6I3tA/BYily+mNDzHsJHUIfnYsiNlixZYCQIdGXUFbGGfRpwJqWe5B162mVVBUJtbQuRc7xk0epy8YAPPePwKHnT1s0Su7+qRxYKn1K8PdAqunUfmYGgeMH5WgwjjT3ryBJKp+BZF6Q38ijo9AYa/2pNOpNhWlHk/ElHx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxG6yukYFoZMwwAQ--.58090S3;
-	Thu, 24 Jul 2025 09:51:42 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJBxzsGrkYFoSQkkAA--.28881S3;
-	Thu, 24 Jul 2025 09:51:41 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic
- code
-To: Steven Rostedt <rostedt@goodmis.org>, Huacai Chen <chenhuacai@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Paolo Bonzini <pbonzini@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20250722094734.4920545b@gandalf.local.home>
- <2c2f5036-c3ae-3904-e940-8a8b71a65957@loongson.cn>
- <20250723214659.064b5d4a@gandalf.local.home>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <15e46f69-f270-0520-1ad4-874448439d2b@loongson.cn>
-Date: Thu, 24 Jul 2025 09:49:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1753321980; c=relaxed/simple;
+	bh=+hdRcW+vANXIi65jGxEz+XmwLLQgAmE1hMZ56CRLIQQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MRFkESh8w4E/BS4hVoTPbQBs4qV3uj1URll+CdkoInyAy52eUCH5gi6p6kMkDgjsetTbGU/YFt/fA3Co2fGev0tURdaTtjV+Yak2KzyM5z3w4XQppvvTntvYPJlr7T+kutPmzZV+Fwl7lbeU1tWeFRbh1j74voq9kZSfZWpTD4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e3a4a835dfso4860475ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:52:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753321978; x=1753926778;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2U5wnocwdcINYeVFrOulMMpjFkOT5Q0pcJeDzB4l8iU=;
+        b=I4d1GdGqH3eMPCTP5Rskd2uZtbPeDdq60r9+QXfX2of2QoRdRGYfi0RiYhehDrlOeZ
+         q9Ms9Rjfl6crAxkxYUpyCGbHKx5SRH6hnraCjdHO8r2gK5vjCuCHOUQL18B4bAqc8oXY
+         NmnJmotm5TWJLsDXYEmPTtyBpoT8BetgIk5vmSdBZDquUlkmaA2N1tj67I0YZKIfYeL7
+         D+GjaqLlmZA+5oKQzJG+ZkRFT3tHYyBtiGyS1BCYglIunV/+8OMfDgV2EKUKsoUCX5cR
+         36Vklf0xBHmwtuhUVkX/MththLzVaGyaPwNP6pNee9FpWzvphr9iVPnwxvlX9mDdD7gK
+         x8Zw==
+X-Gm-Message-State: AOJu0Yy8bNVNpJs45j6ipcaP4HpUWlD2TEsz30cU7IWfnJDipCEsKqPr
+	xcgIMIz0/YhS03V6k9yxgKzV17IrlM0d+WFcwUVhlEWiZ+hu3uN4C+/YTjaV1oufssqKgIcF31a
+	sghEc9B1ff6W8C0j3OSfeRFP2EkFECacyfQo+9Lk5y8WomvetiS4ElHvGpY4=
+X-Google-Smtp-Source: AGHT+IG7SUvBAr+wUgtbHBw+Oxg+gB1evsRB5uNc8DXrFPfL/dtJA+WA4Vhe1S/Uh0H7t0i2UnlTyqxLkW8ZMA7JMMToS9zEaSpW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250723214659.064b5d4a@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxzsGrkYFoSQkkAA--.28881S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUUmYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
-	67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6x
-	ACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E
-	87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0V
-	AS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCF54CYxVAaw2AFwI0_Jrv_JF1l4c8EcI0E
-	c7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw
-	0_GFylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxUcCD7UUUUU
+X-Received: by 2002:a05:6e02:3c04:b0:3e2:98b8:e102 with SMTP id
+ e9e14a558f8ab-3e3455b6f39mr94390345ab.18.1753321978450; Wed, 23 Jul 2025
+ 18:52:58 -0700 (PDT)
+Date: Wed, 23 Jul 2025 18:52:58 -0700
+In-Reply-To: <68811963.050a0220.248954.0005.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688191fa.a00a0220.2f88df.0008.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [hfs?] KASAN: out-of-bounds Read in hfs_bnode_move
+From: syzbot <syzbot+41ba9c82bce8d7101765@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 2025/7/24 上午9:46, Steven Rostedt wrote:
-> On Thu, 24 Jul 2025 09:39:40 +0800
-> Bibo Mao <maobibo@loongson.cn> wrote:
-> 
->>>    #define kvm_fpu_load_symbol	\
->>>    	{0, "unload"},		\
->>>    	{1, "load"}
->>>    
->> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-> 
-> Thanks,
-> 
-> Should this go through the loongarch tree or should I take it?
-Huacai,
+Subject: Re: [syzbot] [hfs?] KASAN: out-of-bounds Read in hfs_bnode_move
+Author: lizhi.xu@windriver.com
 
-What is your point about this?
+#syz test
 
-Regards
-Bibo Mao
-> 
-> Either way works for me.
-> 
-> -- Steve
-> 
-
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index cb823a8a6ba9..58c5cc7adf70 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -134,7 +134,7 @@ void hfs_bnode_move(struct hfs_bnode *node, int dst, int src, int len)
+ 	void *ptr;
+ 
+ 	hfs_dbg(BNODE_MOD, "movebytes: %u,%u,%u\n", dst, src, len);
+-	if (!len)
++	if (len <= 0)
+ 		return;
+ 	src += node->page_offset;
+ 	dst += node->page_offset;
 
