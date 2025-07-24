@@ -1,116 +1,91 @@
-Return-Path: <linux-kernel+bounces-744301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0F2B10AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588F2B10AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8FF41C22091
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA341609CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C684D2D3EE0;
-	Thu, 24 Jul 2025 12:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529AA2D46DA;
+	Thu, 24 Jul 2025 12:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBQT292E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMCKtgTh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4D31E4A4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 12:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BCB2E36F2;
+	Thu, 24 Jul 2025 12:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361460; cv=none; b=dbTxejE+3TTRJ+m5pXuvIdI0iW37Y4sAVM9k1ycr4OjDdIYqeFMq2MNq/jKjMPafLAIStJU8upYTwxYU8kqm0QJ08uDUTHG/4Ur+5V+YxMNxXhRq/dgoxA6HJ4hnE0Mm7R5L0EL+0my8Dx/XSr6wa7AOiN3JZGblofh4PiTKFz0=
+	t=1753361492; cv=none; b=Bpge9SyLD0giw80RQHa1TDdsGcWbyVKN94qlqbaBu/n0hkz1wmIkTeFpZI6OBSuMPfXuYlYlF2rH1MgYGnOK9oA+LwO6LKMMcFB03+ahxBHY8ymKde0WLnTRMKq5yWMnTqFUJKBPqZdLmqHLOYah0s2IE5LuP5Eocg1q87rWYfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361460; c=relaxed/simple;
-	bh=wpyJfM5Cwer3eb3m4ADvdms9YwdATaTcSHsIq7SRT4k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rI1IVNgSij+A5tmyjXXQxMs0WEhHQU+vEFm0rPYhwstGhTCsKGG8jbWcB4RZU/Ey81zKQwClUqVfjECuVsNMMaxKbMbbLNBXOv2a+YI3HDrbzelSxHEgJSc9IeWZwpZ+p/YpX4v2tbXrqJkpI+xFFB4bCRQ1T0rmxssV75J006g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBQT292E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2E0EC4CEED;
-	Thu, 24 Jul 2025 12:50:58 +0000 (UTC)
+	s=arc-20240116; t=1753361492; c=relaxed/simple;
+	bh=3y1PNsPbnB0pOF5i2gWS2cEdMRHLJqBmwjxZghX0ySQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wa1P4Dy+rYqW7YhQmzHSivcSpiZSLPs2Wz/npBo4tptGaV9djN2hoVKoCrJoRyTXz77Ss7AsoCtIW1RS3cjuS9W9bqZftJr8btJQ8b9F3m0gRgwgL6DlIK6QpUrfKzcpB64SZQhWSVx2CYXyjg2Eu3DfwE5DHukIbn2gj2j0N9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMCKtgTh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF41C4CEED;
+	Thu, 24 Jul 2025 12:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753361460;
-	bh=wpyJfM5Cwer3eb3m4ADvdms9YwdATaTcSHsIq7SRT4k=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=pBQT292EYVdBVM+4DG/9130zi279NdyXZf9nAmEoZyudQKiTEkZseaomOyDfz2fTc
-	 xpT5QhDdbdeAL865/nPHAMDTcL2opqHcMufpCCw8fDepXsLcGPjmAP50AkiZXlKC6Q
-	 Wb1r7zZK8e0gDQw+Enf5i47X9wuvanNbi36iGPdLUTn8LCplhmwTVTO/p9IPhQNyYX
-	 5Zc1ZzNGLSrBMXVJDa6HkeNCWP3pnNMCpRZph1+2TvFp/rKeUrnySyA9D8xjs2202S
-	 AcHXcKsknEXjsvUsm6M2a1B/M6u3oIfBRq6cX9Lnv/K5vSS+nREMf+B1/lSWwsSoVt
-	 6klICXevjCyKw==
-Message-ID: <f3f1810b-667b-4b3a-a9fb-606a87097f86@kernel.org>
-Date: Thu, 24 Jul 2025 20:51:04 +0800
+	s=k20201202; t=1753361492;
+	bh=3y1PNsPbnB0pOF5i2gWS2cEdMRHLJqBmwjxZghX0ySQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BMCKtgThAJinRmRuodxqFNoFKMLjluaGP1BCkSy2iEOriC5ksQy0o3Ii8y/3gwJBI
+	 K1+fvHyBKKHNZiO+XuyI1QWd9R+rIguTFaHgax1yqEqv7INU9fvzn4VY6KrcSBF9n5
+	 u6ge6czf+b3e2IvrMDtKFPhYb++TX1hSFWEoNxiU9tVVorXzVlOVbgXJ+gAuT9csVK
+	 XZjZWOE1M0mO50OOPpDNFhkRgSJe62djeuYlvTSCH974IHtx4KmVzzj+3sR+xzo8Mj
+	 x8qgZHH+pcV4wSYW3aWCRh54Ac8wZd3zatNxR4Q3wvsK8TuROvj2RmiRiniYc2sMUq
+	 oWfN0tuVTlCUw==
+Date: Thu, 24 Jul 2025 13:51:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dan.carpenter@linaro.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, Markus.Elfring@web.de, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 1/1] iio: adc: ad4170-4: Correctly update filter_fs
+ after filter type change
+Message-ID: <20250724135125.5dabddb1@jic23-huawei>
+In-Reply-To: <aH4n6kMQAN1zZP_V@smile.fi.intel.com>
+References: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
+	<aH4n6kMQAN1zZP_V@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: vm_unmap_ram() may be called from an
- invalid context
-To: Jan Prusakowski <jprusakowski@google.com>, jaegeuk@kernel.org
-References: <20250724103016.5164-1-jprusakowski@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250724103016.5164-1-jprusakowski@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Jan,
+On Mon, 21 Jul 2025 14:43:38 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-On 2025/7/24 18:30, Jan Prusakowski via Linux-f2fs-devel wrote:
-> When testing F2FS with xfstests using UFS backed virtual disks the
-> kernel complains sometimes that f2fs_release_decomp_mem() calls
-> vm_unmap_ram() from an invalid context.
-
-It will be better to include testcase & crash information in commit
-message.
-
+> On Sun, Jul 20, 2025 at 12:37:24PM -0300, Marcelo Schmitt wrote:
+> > Previously, the driver was directly using the filter type value to update
+> > the filter frequency (filter_fs) configuration. That caused the driver to
+> > switch to the lowest filter_fs configuration (highest sampling frequency)
+> > on every update to the filter type. Correct the filter_fs collateral update
+> > by clamping it to the range of supported values instead of mistakenly
+> > using the filter type to update the filter_fs.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Link: https://lore.kernel.org/linux-iio/c6e54942-5b42-484b-be53-9d4606fd25c4@sabinyo.mountain/  
 > 
-> This patch modifies in_task() check inside f2fs_read_end_io() to also
-> check if interrupts are disabled. This ensures that pages are unmapped
-> asynchronously in an interrupt handler.
+> You mean Closes: here?
 > 
-> Fixes: bff139b (f2fs: handle decompress only post processing in softirq)
-
-./scripts/checkpatch.pl will output below warning message:
-
-WARNING: Please use correct Fixes: style 'Fixes: <12+ chars of sha1> ("<title line>")' - ie: 'Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")'
-
-Please use this instead:
-
-Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
-
+> > Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> > Fixes: 8ab7434734cd ("iio: adc: ad4170-4: Add digital filter and sample frequency config support")
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>  
 > 
-> Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
 
-Code part looks good to me, please feel free to add my RVB tag in next version:
+I picked up v1 and made that a closes tag.  Links to email threads are fine
+(there was a question in v1 on this).
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
-> ---
->   fs/f2fs/data.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index d1a2616d41be..0acc25f996b3 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -280,7 +280,7 @@ static void f2fs_read_end_io(struct bio *bio)
->   {
->   	struct f2fs_sb_info *sbi = F2FS_F_SB(bio_first_folio_all(bio));
->   	struct bio_post_read_ctx *ctx;
-> -	bool intask = in_task();
-> +	bool intask = in_task() && !irqs_disabled();
->   
->   	iostat_update_and_unbind_ctx(bio);
->   	ctx = bio->bi_private;
-
+Applied to the fixes-togreg-for-6.17 branch.
 
