@@ -1,58 +1,48 @@
-Return-Path: <linux-kernel+bounces-744577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10747B10EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:28:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF38EB10EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1113BBC31
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B14A5C2B9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEA52EA75A;
-	Thu, 24 Jul 2025 15:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SrsNP8Pr"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D042EA476;
+	Thu, 24 Jul 2025 15:26:44 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833D42EACE9
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E0D2C15B4;
+	Thu, 24 Jul 2025 15:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753370778; cv=none; b=RfmtxAyVN7AWuA+aqoj+rp8nH19Bmu4MxHzQrYAc+6Ty4zbtehsDavihDGnTa3Kvn98WdDXanxZ1WgLQY4jrmet5ZewZpyip1KZz3Z+6cJqTmywNGBngny7Ec+XWRTWWSge7jwRJh4feL+KUbOtlee7oOXWKgWhOWAnXcOX1S4Q=
+	t=1753370803; cv=none; b=qkHw6nw35dee06ipOaJKPPLr8GUD5FJc9/Yp7DeCk5+xjiOzhLAUtKBtv9tUVEnVxegt3Y3wfbuSzIqCbZX0wvrXt637YIDrJu3TF6WOQ/HE2+DqHX+K97r2OHcTQvayU2ltKJjQMcXBFr+eqw+JFOMnFI8ajno8qRCpQT259f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753370778; c=relaxed/simple;
-	bh=1xV5Fwp5TtgCJdKbpRZ8vKhWuzwiXh7c/R+wfHW3WHc=;
+	s=arc-20240116; t=1753370803; c=relaxed/simple;
+	bh=KPoofKIu8ZQ5Tba3M7ex7oVjXffaPCWYYdd/YIvtyfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oohMZRtKBjD5qSLrJG0MRRxTZWzIW0YYjv45mYr7pXe7VG9pMs5l3YiZNpb8+Gp3VgdrVv1hao3Too19iZVxQ5PfmFH9QILjK89+YmDNX7lnSrzCE1ikgDVn7eaHCcopZuIoveIVyWkJ1lAZzJq0cUOP17Ve1U3Zs+JkKuXbVMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SrsNP8Pr; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=1xV5
-	Fwp5TtgCJdKbpRZ8vKhWuzwiXh7c/R+wfHW3WHc=; b=SrsNP8Prk3gU8tfpxXzS
-	+pOfzvFH9AeEhSXWAqPUKb78X1d13CqlnHuUSiOCyIJ6KglYKPMN0G2KyCKUR7as
-	Apj0L8u5NYPockx+Lc99vvXebmltnYZ8wFKZjIiNSLLK3QH6U9f6YNaBXrOp0/ul
-	pYw8LwMA7aNii+WCQKGRCkSpzdwg6os5kjWQrbELgquoLUksbKlvgrOhcCPXQ+qT
-	56cET/vZU8ZZgeMdrKVn+FLjn56H8uAvE86tCDDuVFKA6fg2U2yd+vnpvHKG/pPx
-	rGXiVngJAgntsaixJQyxjLTsFRaDReQA0YKdNozpZjmSAT4tl1pMVgpADeAWYAnM
-	vA==
-Received: (qmail 2116903 invoked from network); 24 Jul 2025 17:26:11 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Jul 2025 17:26:11 +0200
-X-UD-Smtp-Session: l3s3148p1@tTABcq461tAujnss
-Date: Thu, 24 Jul 2025 17:26:11 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: syzbot <syzbot+4687ab80180e5d724f51@syzkaller.appspotmail.com>
-Cc: andi.shyti@kernel.org, gregkh@linuxfoundation.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] WARNING in osif_xfer/usb_submit_urb
-Message-ID: <aIJQk5ArP19m82td@shikoro>
-References: <681853be.a70a0220.254cdc.0045.GAE@google.com>
- <6882450e.a00a0220.2f88df.002a.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUr6CVAXo5qteLArWs93FWPNZhxD46Ji5llCELlsp9UWlRhaxPSoeekyxE1FWJqY4W0RMmB+PL64U4/oYOdkdKAnHFijF0/nbazEf1ECPn6w3d5nxGo+u5qQA/6jxFTD6pfce2BjdaFU/4xQjHqLjukSFvlYguz19UQBKK9GqoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id D3539602B1; Thu, 24 Jul 2025 17:26:38 +0200 (CEST)
+Date: Thu, 24 Jul 2025 17:26:33 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: lvxiafei <xiafei_xupt@163.com>, coreteam@netfilter.org,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com, netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH V2] netfilter: nf_conntrack: table full detailed log
+Message-ID: <aIJQqacIH7jAzoEa@strlen.de>
+References: <20250508081313.57914-1-xiafei_xupt@163.com>
+ <20250522091954.47067-1-xiafei_xupt@163.com>
+ <aIA0kYa1oi6YPQX8@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +51,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6882450e.a00a0220.2f88df.002a.GAE@google.com>
+In-Reply-To: <aIA0kYa1oi6YPQX8@calendula>
 
-#syz fix: i2c: robotfuzz-osif: disable zero-length read messages
+Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> > +				net_warn_ratelimited("nf_conntrack: table full in netns %u, dropping packet\n",
+> > +						     net->ns.inum);
+> 
+> This is slightly better, but it still does not say what packet has
+> been dropped, right?
+> 
+> Probably a similar approach to nf_tcp_log_invalid() would better here.
+>
+> Thus, nf_log infrastructure could be used as logging hub.
+> 
+> Logging the packet probably provides more context information than
+> simply logging the netns inode number.
+
+Hmm, the conntrack table is full, and packet creates a new flow.
+What would logging the packet tell us what the printk message doesn't?
 
