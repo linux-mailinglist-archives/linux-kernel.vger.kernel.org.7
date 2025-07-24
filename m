@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-744654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5823B10F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA3DB10F79
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 18:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DB0175F5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:18:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41F91CC8507
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 16:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6878A2ED87C;
-	Thu, 24 Jul 2025 16:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6802EB5A5;
+	Thu, 24 Jul 2025 16:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Zm7l2r+g"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="D3XCaRcG"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380AF2ED859
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1BF2D6611
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 16:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753373822; cv=none; b=Xb1KhS8xdOhxh8Kvv50GJuHsLxvTk9imCxRUtPgl8w7pw1gukAP+Qw80KMrTGe/jD4kTPkViml3lwa2P0B5to8Zp05lOX9eqiIZT7H7P3mt0eAAMpsCy9aWLuAe0nCqRL3D9Vgxi8a96QiUTxJ1qHa9IGN3P6YaksKguiS+7mqM=
+	t=1753373805; cv=none; b=Mt8ItzaS9QTnTDCeYuBP0SPzXeVvCJb5gH0mxm/+drce469jKS+cf+3+LppTDK2pM6CqzzcfucGnwB5anTxxXIkkS7KVnPXSYpj9awd2KSz9cYq+frK0cm61itr3nyaT7ZmfbkOQu1Swn2J6n7hMTfZp5oLJUzcPHt+Cop5BIYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753373822; c=relaxed/simple;
-	bh=p7BICrBXt18Q5mn56gsDeVJElBImXEVjdFKPj1y2d+M=;
+	s=arc-20240116; t=1753373805; c=relaxed/simple;
+	bh=ySNhdbxlZCtvk3UaOw/4oDcfE9xjXpX/pKKFwIhPgTQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iSUhtKqrozFgmGlnY2cl9h+uKcWorUXfPuRzJJwAtyN7bBDOByf3sq3Z6Vd/JZhXCpFz+QRerlc+a12cij+v/pgnB/5KumlczC1lKZWCyVkr5zWOkADP+GdntxUXnbS8zEYN0c9gh5Yqbi5UJW974X6cLLBfB0Pqc92T3l6JAEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Zm7l2r+g; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=lpIJtoKvHPI3zpYghgpXFXwV/eain464Nv7OBTa2GGh5c5XQpo/Qs07lTILr9TokFSSDS62IfZZvqaW/ZBn+aQOto3dwS2zMZSEh7XxxS8sP9i8RAVACn1W3um09FE30Bb/ubLgSEkBlY2qJ9eAALaJ39Xr1VORcFn4wtjfnq2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=D3XCaRcG; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODROF0022324;
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODRMf5012041;
 	Thu, 24 Jul 2025 16:16:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=Rxzbr
-	XG6TMluERJ7iS9k/2q5owET8hmYAVD2ax9w6MY=; b=Zm7l2r+gggwMbEXaPpVS4
-	TVikEUtBa02J5iqVZBxK+SwQgSXTZCaoVCYj0aNdXPiTf950cojwymZHn8UuHgpj
-	R5IxUlo8/GdJeuSweo7UV1op6/4fuviO7OS//uobfXnAF6agQZMBUDDqSbxxdN4a
-	SMh5WhYplhfnqoupa2ZpoVQwn9aHh8iIUhJYQ6GDZiswci+lgwuCZvGfRBCvt4Hq
-	XHq6KH6QHXh4orNSKuo5lpSMWlWihsSoHHbzRMLVexUIEZgNidmBaEyC7kZ5uBSK
-	hMXPuXusiUm6fubAJmr7cJH3KqLVpslfMG9EW4qJd4xyxwKgVe++f6HfCzDLaWlK
-	Q==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=WesrW
+	JEEwSKV0UWRGiNQlcTso0BdajliZqP89AEoOs4=; b=D3XCaRcGeGTmAaKQ8OV/J
+	Rv+7DnaPX3jztXIQBo6gZlh5/2vgisBgfDF9PFgBAaklWrhu+AxYIVpvsp47JBkT
+	CWZfynpMGGcwS7OLxYyixnc3fL287B/IbrBJ2YCanPxDxrAteNPw8WtBkBsOO8Vb
+	fzPTF+fbHWn/tL0Rnv3Z4Zx08iFDj3nfVwe0ZOKFbSZSoGd2qg98xwDTZ8xF3msW
+	MJTj3yakAXqeeHnCGxI+voDNKkxos9WZtyiEVPVuovvWsZM0zGkw4LqfDCnPT/pf
+	49Yshd5khwa6siV9CmTnRuem/fXqzH574oxuKgJaJKwAWlRMk0SsSX/21TJvBn/6
+	w==
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805e9syck-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805hpj268-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Thu, 24 Jul 2025 16:16:32 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OFiYlc014492;
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56OFuakO014382;
 	Thu, 24 Jul 2025 16:16:31 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfru-1
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfs3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Thu, 24 Jul 2025 16:16:31 +0000
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNU034466;
-	Thu, 24 Jul 2025 16:16:30 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56OGGRNW034466;
+	Thu, 24 Jul 2025 16:16:31 GMT
 Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-8
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tjcfne-9
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 24 Jul 2025 16:16:30 +0000
+	Thu, 24 Jul 2025 16:16:31 +0000
 From: Prakash Sangappa <prakash.sangappa@oracle.com>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
         tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
         vineethr@linux.ibm.com, prakash.sangappa@oracle.com
-Subject: [PATCH V7 07/11] sched: Add API to indicate not to delay scheduling
-Date: Thu, 24 Jul 2025 16:16:21 +0000
-Message-ID: <20250724161625.2360309-8-prakash.sangappa@oracle.com>
+Subject: [PATCH V7 08/11] sched: Add TIF_NEED_RESCHED_NODELAY infrastructure
+Date: Thu, 24 Jul 2025 16:16:22 +0000
+Message-ID: <20250724161625.2360309-9-prakash.sangappa@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
 References: <20250724161625.2360309-1-prakash.sangappa@oracle.com>
@@ -86,84 +86,158 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adult
  suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2507240123
-X-Authority-Analysis: v=2.4 cv=eqbfzppX c=1 sm=1 tr=0 ts=68825c60 b=1 cx=c_pps
+X-Proofpoint-ORIG-GUID: lYpjFTa0XuRZjUf4EGJ07pJM5NXlDCab
+X-Authority-Analysis: v=2.4 cv=YY+95xRf c=1 sm=1 tr=0 ts=68825c60 b=1 cx=c_pps
  a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=xGzrbLGfahxIBTsCyEoA:9 cc=ntf
+ a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=MrrmpRPCrZFmlHDDrMoA:9 cc=ntf
  awl=host:12061
-X-Proofpoint-GUID: _qVD9nUPXC0Uv4aUR5V7ymW9OJv8kQxb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX5idxh2+P0Di7
- v0ungqGPyA2dkieZ7krOSAN0BH8q3BbDSHDVag0/y+0+XtmWICnnBrv60x8g+GYmxWp5R+OtHxN
- uDChuSzHCqDw6R6kUbDsa1SZaABMxRsxjcKLz4VCZp8kAF3IS3U+L5deO4y0lkfbqSN9Us6u7Gw
- s3yW6YwQOe3Z5M0hty6k3qoe0G/A8pB7fN9RWgkt1/wLTo9WFj5Cy1f1cFL3JT81Zn0vbgKczlU
- rb8D62aHKF2GCK1EUyoJiz3wKrr0TO4taVarmdZiDYmVvAXlFFbfy4tcmKYcFY9yLgnxzdtiGG+
- 1CphUgi8IZk7HM9F9g3gVcbZAz/kRHUY7J7DwXmW9K6ZeBamoCTu9jmZgZd3VYigHGgUdCxdiyH
- sR48IULXEa3Gkk4OZU6bjQmY5KTOEsgeT25zF6xQkOLPRNWLRxL0k8/SNAB/5JO6yRy9KiEE
-X-Proofpoint-ORIG-GUID: _qVD9nUPXC0Uv4aUR5V7ymW9OJv8kQxb
+X-Proofpoint-GUID: lYpjFTa0XuRZjUf4EGJ07pJM5NXlDCab
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMyBTYWx0ZWRfX9SFGq1zSDQr0
+ mdOSPO3Akf9XplJ0f+Cxat7y5Px8xMU2FBBceg83dZC4WPt/0crDs077WyQ69LRgyFNdUHywkdB
+ s/8AL9qre48VTIccZCUHU+G0KjvT1efnW5h3IIknuHCSrhU9RsSQNQLcI/bsNvBaGCwhvdNe25I
+ Zp+D0CrpmKRBVDnbdAde+Fy4ppAXF6WG95URA7r3RBVhreHF1vwMWgULW8WWVyF8n86tkU2zPGl
+ 4YXNiEI1UcPE5i7irAq/z/iU6IZgknRCOL16JCmMjG+lk/39DDpDkJa7zM39qCyRyK5lCbL0CXs
+ 8fbbCAvdYB7Ivm5asixrG1M64/I0BLLlisaJ3KEvIRfqFrMLHnZ7wbJTqyap6C09o+zP1qHfO6V
+ fSnahg53c7C1rM6Y6S+ZoT/Pe0rFPMZfaSv9fzw2xDHdYwO9y0xGlqvzdW9UMvTj4+hm/ByR
 
-Add an API for user threads to request scheduler to not delay
-scheduling it when woken up to run. This is allowed only for RT threads.
+Add basic infrastructure to introduce a bit for nodelay resched.
+This is mainly used by RT threads to indicate it should not be delayed
+to be scheduled, by the thread running on the cpu that has requested
+extending its cpu time slice.
 
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
 ---
- include/linux/sched.h      |  1 +
- include/uapi/linux/prctl.h |  3 +++
- kernel/sys.c               | 18 ++++++++++++++++++
- 3 files changed, 22 insertions(+)
+ include/linux/entry-common.h |  4 ++--
+ include/linux/entry-kvm.h    |  4 ++--
+ include/linux/sched.h        |  3 ++-
+ include/linux/thread_info.h  | 11 ++++++++++-
+ kernel/entry/common.c        |  3 ++-
+ kernel/entry/kvm.c           |  3 ++-
+ kernel/sched/core.c          |  4 ++--
+ 7 files changed, 22 insertions(+), 10 deletions(-)
 
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index 7b258d2510f8..79510895f87a 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -66,8 +66,8 @@
+ #define EXIT_TO_USER_MODE_WORK						\
+ 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
+ 	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
+-	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
+-	 ARCH_EXIT_TO_USER_MODE_WORK)
++	 _TIF_NEED_RESCHED_NODELAY |_TIF_PATCH_PENDING |		\
++	 _TIF_NOTIFY_SIGNAL | ARCH_EXIT_TO_USER_MODE_WORK)
+ 
+ /**
+  * arch_enter_from_user_mode - Architecture specific sanity check for user mode regs
+diff --git a/include/linux/entry-kvm.h b/include/linux/entry-kvm.h
+index 16149f6625e4..eb59f8185f42 100644
+--- a/include/linux/entry-kvm.h
++++ b/include/linux/entry-kvm.h
+@@ -18,8 +18,8 @@
+ 
+ #define XFER_TO_GUEST_MODE_WORK						\
+ 	(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY | _TIF_SIGPENDING | \
+-	 _TIF_NOTIFY_SIGNAL | _TIF_NOTIFY_RESUME |			\
+-	 ARCH_XFER_TO_GUEST_MODE_WORK)
++	 _TIF_NEED_RESCHED_NODELAY | _TIF_NOTIFY_SIGNAL |		\
++	 _TIF_NOTIFY_RESUME | ARCH_XFER_TO_GUEST_MODE_WORK)
+ 
+ struct kvm_vcpu;
+ 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 5c5868c555f0..3e8eb64658d1 100644
+index 3e8eb64658d1..af3bf1923509 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1062,6 +1062,7 @@ struct task_struct {
- #endif
- 	unsigned			in_nf_duplicate:1;
- 	unsigned			rseq_delay_resched:2;
-+	unsigned			sched_nodelay:1;
- #ifdef CONFIG_PREEMPT_RT
- 	struct netdev_xmit		net_xmit;
- #endif
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 6f9912c65595..907300cd4469 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -379,4 +379,7 @@ struct prctl_mm_map {
- # define PR_FUTEX_HASH_GET_SLOTS	2
- # define PR_FUTEX_HASH_GET_IMMUTABLE	3
+@@ -2093,7 +2093,8 @@ static inline void set_tsk_need_resched(struct task_struct *tsk)
  
-+/* TASK sched nodelay request */
-+#define PR_SET_SCHED_NODELAY		79
-+#define PR_GET_SCHED_NODELAY		80
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index a088a6b1ac23..2f8b4512c6e4 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2890,6 +2890,24 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 	case PR_FUTEX_HASH:
- 		error = futex_hash_prctl(arg2, arg3, arg4);
- 		break;
-+	case PR_SET_SCHED_NODELAY:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		if (current->sched_class != &rt_sched_class)
-+			return -EINVAL;
-+		if (arg2)
-+			current->sched_nodelay = 1;
-+		else
-+			current->sched_nodelay = 0;
-+		break;
-+	case PR_GET_SCHED_NODELAY:
-+		if (arg2 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		if (current->sched_class != &rt_sched_class)
-+			return -EINVAL;
-+		error = (current->sched_nodelay == 1);
-+		break;
+ static inline void clear_tsk_need_resched(struct task_struct *tsk)
+ {
+-	atomic_long_andnot(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY,
++	atomic_long_andnot(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |
++			   _TIF_NEED_RESCHED_NODELAY,
+ 			   (atomic_long_t *)&task_thread_info(tsk)->flags);
+ }
+ 
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index dd925d84fa46..ee7fa1f8f242 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -67,6 +67,14 @@ enum syscall_work_bit {
+ #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
+ #endif
+ 
++#ifndef TIF_NEED_RESCHED_NODELAY
++#ifdef CONFIG_ARCH_HAS_PREEMPT_NODELAY
++#error Inconsistent PREEMPT_NODELAY
++#endif
++#define TIF_NEED_RESCHED_NODELAY TIF_NEED_RESCHED
++#define _TIF_NEED_RESCHED_NODELAY _TIF_NEED_RESCHED
++#endif
 +
- 	default:
- 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
- 		error = -EINVAL;
+ #ifdef __KERNEL__
+ 
+ #ifndef arch_set_restart_data
+@@ -205,7 +213,8 @@ static __always_inline bool tif_test_bit(int bit)
+ 
+ static __always_inline bool tif_need_resched(void)
+ {
+-	return tif_test_bit(TIF_NEED_RESCHED);
++	return (tif_test_bit(TIF_NEED_RESCHED) ||
++		    tif_test_bit(TIF_NEED_RESCHED_NODELAY));
+ }
+ 
+ #ifndef CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 2635fecb83ff..15ddf335ad4a 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -118,7 +118,8 @@ __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+ 
+ 		local_irq_enable_exit_to_user(ti_work);
+ 
+-		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY)) {
++		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |
++		    _TIF_NEED_RESCHED_NODELAY)) {
+ 		       if (likely(!irq || !rseq_delay_resched(ti_work)))
+ 			       schedule();
+ 		}
+diff --git a/kernel/entry/kvm.c b/kernel/entry/kvm.c
+index 8485f63863af..f4c10bbb42ac 100644
+--- a/kernel/entry/kvm.c
++++ b/kernel/entry/kvm.c
+@@ -13,7 +13,8 @@ static int xfer_to_guest_mode_work(struct kvm_vcpu *vcpu, unsigned long ti_work)
+ 			return -EINTR;
+ 		}
+ 
+-		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
++		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |
++		    _TIF_NEED_RESCHED_NODELAY))
+ 			schedule();
+ 
+ 		if (ti_work & _TIF_NOTIFY_RESUME)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1ddb45b4b46a..035eec8911c2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1141,13 +1141,13 @@ static void __resched_curr(struct rq *rq, int tif)
+ 
+ 	if (cpu == smp_processor_id()) {
+ 		set_ti_thread_flag(cti, tif);
+-		if (tif == TIF_NEED_RESCHED)
++		if (tif & (TIF_NEED_RESCHED | _TIF_NEED_RESCHED_NODELAY))
+ 			set_preempt_need_resched();
+ 		return;
+ 	}
+ 
+ 	if (set_nr_and_not_polling(cti, tif)) {
+-		if (tif == TIF_NEED_RESCHED)
++		if (tif & (TIF_NEED_RESCHED | _TIF_NEED_RESCHED_NODELAY))
+ 			smp_send_reschedule(cpu);
+ 	} else {
+ 		trace_sched_wake_idle_without_ipi(cpu);
 -- 
 2.43.5
 
