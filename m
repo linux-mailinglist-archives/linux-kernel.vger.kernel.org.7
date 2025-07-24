@@ -1,525 +1,212 @@
-Return-Path: <linux-kernel+bounces-744025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF72B1070B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8946EB10718
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44F611899ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BBFB189C9A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3508D2571DA;
-	Thu, 24 Jul 2025 09:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1B224EF7F;
+	Thu, 24 Jul 2025 09:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C8eauC+7"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tXkLFpum"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F8256C81
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CD257AC8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753350851; cv=none; b=AMkgLocBv5vphekTcB2XzCVL+yf+vO/lsQJblmq1/MWBCnRGLZxadG2V8EellPuVFvK5JdeoNuqfH/oLlFotIrJAuZesszNGSCi0pXtPqCUPuz4PUFkcUHazPAEO5FVisuVn1xuQflT6h+k0NazunqB6FXkOHZEb5/XXomOcMDU=
+	t=1753350974; cv=none; b=LV7IrJUtgMr0oRYnI13PyN+7OV0Yfm2nMiGuFLvrAmGQfmdqTsGTjNYWe13gBzijVObWnSh7HWvYBFKPRVopvAJ8GkNaWNymU3h6WjqzcWmWGwczaUJwjykMlcxBgzrHEnS+j91ARbidiDUXywBQHQqonJ+X2CHioIGtf1UALn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753350851; c=relaxed/simple;
-	bh=WcF6xpokxwzlJrNXM5/RyUhYhU2INZSxrM92z372VH0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T2fbEN/UTG092E+R+su77T/rSZ1bpuXFqjH+LK2hqDIOLYyolyyH4adMlEJQ7zKWDlLJJpGGKt7DZ/P3xm+EJSf5zFGjlVv0nz1CpOaG/k8E1UfESSUG6QwQZChAFual1V+xSYE3solZR7aUtCL4x0e07EmoCphRTUyzYkcVHvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C8eauC+7; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aec46b50f33so125851166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753350846; x=1753955646; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3afnkN64rgkJ4PGIlgJYgq8kxAPT8TglLMcyleOp7QM=;
-        b=C8eauC+7q/n2sCtRJjmx0ubUlR54U+faIhg5WTieG5r3+WWGkZGzMMvUKxLZm4psQh
-         yHQFzBi2zh+ga23B4FXOrkq4kLsuxGu4BYMXvxxQjhHjoQib5d+B+ji9Sod2Gck3xWEK
-         DZEPHDVDp8SOrb+v/jN2XayC+pPzHZq9zYx8zDnG/HatR2FhbEZRzUCEFOo3IHqZSzMK
-         aR8uEFgb8wNEVr5w+/o/MXdLd1pp++Tx19WTIkkXB1r/WRmx1nWGBS86wkyCtATn1B+d
-         +10kkptVUlW1jQS5gFRy6V5lnDEOvs7dYVG3/43bFEqBl2zWb3MqhOcQOOLLhtLZS7Ja
-         IGjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753350846; x=1753955646;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3afnkN64rgkJ4PGIlgJYgq8kxAPT8TglLMcyleOp7QM=;
-        b=V4WYNbgaoiXorlH2u4hkXoSgPo1SLlBbmKelpJDEPXAoWdjkRp/6iK3CJUaFnJDr1M
-         XFCglifXCh1pgXTZiVV/pIXtyS2aGeXiFQ6NzFRX/9p27VyZA7UqPcTwaUbh35nxOe5a
-         ompvsbHenyJwimU404TpQv9UBQ3d6H8VZ/DkSS9OgQAd0CFZkC/dhqcUPORU055GZiZW
-         Uw0kxCcs/BGbCiaPZrxMZGHoQYd/4h/orYlaPzNiEgEXziqjQU9/i4Ga9CAxVeKfOWg/
-         wrhnvhQl+r9UbEOSf/Q0f1zL1tHzsmKkqW+PzmPfP5E9kCv5NcoMFLfGmDReUY+AkECF
-         TZkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP0BZ/o/QpJAhtYZWlrdg683idWMuZti1ybBnCXKg3QeqGJve+T+TIVpwk5gNUYnYpcBn2AQ7DVbRe0Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL1m9oyebFHA5OBB3bI46E/VDZ9ECPmbNTVj56P39yKp7REb96
-	wqThSCTh6Q/D6Re6rrsJK5SvPQdBDIzEXGeaOTtWhIIvEVGANAar2234BUaPABQHHm4=
-X-Gm-Gg: ASbGncs1PETXPSeONeZ1MkYeLjYEUi98w+PPjCXuUMuz82srzJvhJlTcOZsoO6YJ7nt
-	ocETS7H/2d4tPOPmqHqE7wnwPsQFNtRXDqpbhKDGpzuNyvAyCkoqHu+OK27NIizEpTnAG3qyQUe
-	XWQbigKifavI8RFF2K/srrGJrDgKeqD9qvJM9iKGbNrU9QbGmuR5aAiUVsMccIVLhc68Pi5pjQG
-	ge1r9qWI6XkSjbbO5tQ3y+mdFH/S3153EfW9CclC/XyqRWvVTAke17gOU3W9GeN6BMUz4BU/w3K
-	ObSn6kUDD/YJ6tF0c+DcATijWdu9zRRA8eF6aQBNeg+xchkVBhU6aUmgGk/v8vzIxgxHgO4sT5q
-	SFatqyUMtBVreeGtp8rMfEDE77cYKS8ioEiLMwQvMqAPpRCAaKIHnOvYRSWpecWpqqBJO9OKOgm
-	XXejzYdg==
-X-Google-Smtp-Source: AGHT+IFHYymL9oDH+OmJ63UR7HAgIqk6CZwcN+nCiNZRoJ6YszCboGJRFm+lcNwnTOALwkzfBVj61A==
-X-Received: by 2002:a17:907:971a:b0:ae3:67c7:54a6 with SMTP id a640c23a62f3a-af2f865c46bmr576812766b.34.1753350845774;
-        Thu, 24 Jul 2025 02:54:05 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af47f44eab2sm88202166b.84.2025.07.24.02.54.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 02:54:05 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 24 Jul 2025 10:54:00 +0100
-Subject: [PATCH] scsi: ufs: core: move some irq handling back to hardirq
- (with time limit)
+	s=arc-20240116; t=1753350974; c=relaxed/simple;
+	bh=xgv/6RY0aXaXcqVmGsKiJ7rv1l72xkz7t+/1yhSFO+4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=iSvFUFMvd6xZf2ElEcOGeugG+AmLdLyRxYGEJ4JpIQhIV2WZnx/zYVDHRm5haUaWG/cHRmoH4NawWVN31T/i/OpGckezEE8Zqt87YlpWTczaLCiKfIwq7symnjkQ5HMgOaovtTX0TqcEceSHuv13Tb8RVf9tOm1bDybE9mSKQB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tXkLFpum; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250724095610epoutp034b3298c792a8f5e33f846d0721157db6~VJ2sKrnCs0069000690epoutp032
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:56:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250724095610epoutp034b3298c792a8f5e33f846d0721157db6~VJ2sKrnCs0069000690epoutp032
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753350970;
+	bh=u9kGzbP2QPnTerojC0M6PdIstHffL6YDLYBkr55PnyQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=tXkLFpum7mpat6+Q/fQl/+zWboM7qSTARv5MQ60rP2NgdQh2zREwk5x/OgwCJm5al
+	 W+xnSoXjkNWYQYILSlCmiVs99fZHCMVTnvRJm0+q8WftqcM/JbEifzuPxwUWhUKSfK
+	 zTMAgiRRiw42zoNAp9+92fd9twRtNQrgHaxIWP/U=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250724095609epcas5p1f59c0b9b75b092d4b53af00a59df9b79~VJ2rY0ILh1609716097epcas5p1e;
+	Thu, 24 Jul 2025 09:56:09 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bnmbr5q6pz6B9mJ; Thu, 24 Jul
+	2025 09:56:08 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250724095412epcas5p36b38fe9e1b835e731abdbcaf64be1174~VJ0_IgfWj0680206802epcas5p30;
+	Thu, 24 Jul 2025 09:54:12 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250724095409epsmtip2c71016c48766841f9a06c5d7f2a181f8~VJ069jbaJ1922819228epsmtip2E;
+	Thu, 24 Jul 2025 09:54:08 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <neil.armstrong@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
+Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Thu, 24 Jul 2025 15:24:07 +0530
+Message-ID: <000001dbfc80$e85fd690$b91f83b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNAmb2xVkCD/Nw+wC0VRd5AgU5TrgBzoneLbLPVtqQ
+Content-Language: en-in
+X-CMS-MailID: 20250724095412epcas5p36b38fe9e1b835e731abdbcaf64be1174
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250724-ufshcd-hardirq-v1-1-6398a52f8f02@linaro.org>
-X-B4-Tracking: v=1; b=H4sIALcCgmgC/x3MQQqAIBBA0avErBNqLIWuEi1Ex5yN1UgRRHdPW
- r7F/w8UEqYCU/OA0MWFt1zRtw345PJKikM1YIdjZ1GrM5bkg0pOAsuhvNVoohmQRgM12oUi3/9
- wXt73A9nf2U9gAAAA
-X-Change-ID: 20250723-ufshcd-hardirq-c7326f642e56
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, kernel-team@android.com, 
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+	<20250701120706.2219355-2-pritam.sutar@samsung.com>
+	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
+	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
+	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
+	<00ff01dbfac1$ee528860$caf79920$@samsung.com>
+	<9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
+	<000901dbfb90$42873060$c7959120$@samsung.com>
+	<6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org>
+	<2a1901dbfbcf$a21b45e0$e651d1a0$@samsung.com>
 
-Commit 3c7ac40d7322 ("scsi: ufs: core: Delegate the interrupt service
-routine to a threaded IRQ handler") introduced a massive performance
-drop for various work loads on UFSHC versions < 4 due to the extra
-latency introduced by moving all of the IRQ handling into a threaded
-handler. See below for a summary.
+Hi,=20
 
-To resolve this performance drop, move IRQ handling back into hardirq
-context, but apply a time limit which, once expired, will cause the
-remainder of the work to be deferred to the threaded handler.
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar=40samsung.com>
+> Sent: 23 July 2025 06:15 PM
+> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Pritam Manohar Sutar'
+> <pritam.sutar=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzysztof.kozlowski=40linaro.org>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; andre.draszik=40linaro.org;
+> peter.griffin=40linaro.org; neil.armstrong=40linaro.org; kauschluss=40dis=
+root.org;
+> ivo.ivanov.ivanov1=40gmail.com; m.szyprowski=40samsung.com;
+> s.nawrocki=40samsung.com; linux-phy=40lists.infradead.org;
+> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org;
+> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: RE: =5BPATCH v4 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 HS phy compatible
+>=20
+>=20
+>=20
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk=40kernel.org>
+> > Sent: Wednesday, July 23, 2025 2:13 PM
+> > To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof
+> > Kozlowski' <krzysztof.kozlowski=40linaro.org>
+> > Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> =5Bsnip=5D
+> > >>>>> Ok got it. Will change supplies name as below avdd075_usb =3D>
+> > >>>>> avdd075-usb
+> > >>>>> avdd18_usb20 =3D> avdd18-usb20
+> > >>>>> avdd33_usb20 =3D> avdd33-usb20
+> > >>>>>
+> > >>>>> Confirm the above change that is meant in terms of DTS style.
+> > >>>> Yes. I have doubts that actual supplies have suffix usb20. Are
+> > >>>> there more than one avdd18 for this block?
+> > >>>>
+> > >>>
+> > >>> Yes, there are more than one vdd18 supplies for this block.
+> > >>
+> > >> And their names are?
+> > >>
+> > >>>
+> > >>> Re-analysed your comment on adding new supplies.
+> > >>> Going to re-use existing supplies as mentioned below, rather than
+> > >>> introducing new supplies
+> > >>>
+> > >>>   dvdd-usb20-supply   =3D> for 0.75v
+> > >>>   vddh-usb20-supply   =3D> for 1.8v
+> > >>>   vdd33-usb20-supply =3D> for 3.3v
+> > >>
+> > >>
+> > >> You just expect us to guess whether this is correct...
+> > >
+> > > Sorry about not being clear so far.
+> > >
+> > > V920 needs three supplies, 0.75v, 1.8v and 3.3v for USB PHY The
+> > > naming convention used in the schematic are avdd075-usb,
+> > > avdd18_usb20, avdd33_usb20.
+> > >
+> > > However, PHY's user manual just mentions DVDD, VDD33 and VDD18.
+> >
+> >
+> > Then dvdd, vdd33 and vdd18.
+> >
+> > > Since GS101 binding already using supply names similar to what is
+> > mentioned in the PHY user manual.
+> >
+> >
+> > GS101 has USB 2.0 and DP, thus the suffix made some sense. I think you
+> > have only USB 2.0, that's why I question the suffix.
+> >
+> I cross checked the schematic of v920 SADK, this is a combo PHY which
+> support USB-3.0 as well.
+> =40 Pritam
+> Schema should capture all the supplies including USB-3.0, similar to GS10=
+1
+> (which has USB2.0 and DP combo).
+> So that would be as below:
+> dvdd075-usb20-supply
+> vdd18-usb20-supply
+> vdd33-usb20-supply
+> dvdd075-usb30-supply
+> vdd18-usb30-supply
+> please cross check the supply at your end and do the needful.
+>=20
 
-Above commit is trying to avoid unduly delay of other subsystem
-interrupts while the UFS events are being handled. By limiting the
-amount of time spent in hardirq context, we can still ensure that.
+Yes, we have a combo PHY that supports USB20 and USB30 and=20
+need these supplies. Will update the binding accordingly.
 
-The time limit itself was chosen because I have generally seen
-interrupt handling to have been completed within 20 usecs, with the
-occasional spikes of a couple 100 usecs.
+> >
+> > Best regards,
+> > Krzysztof
 
-This commits brings UFS performance roughly back to original
-performance, and should still avoid other subsystem's starvation thanks
-to dealing with these spikes.
+Thank you.
 
-fio results on Pixel 6:
-  read / 1 job     original    after    this commit
-    min IOPS        4,653.60   2,704.40    3,902.80
-    max IOPS        6,151.80   4,847.60    6,103.40
-    avg IOPS        5,488.82   4,226.61    5,314.89
-    cpu % usr           1.85       1.72        1.97
-    cpu % sys          32.46      28.88       33.29
-    bw MB/s            21.46      16.50       20.76
-
-  read / 8 jobs    original    after    this commit
-    min IOPS       18,207.80  11,323.00   17,911.80
-    max IOPS       25,535.80  14,477.40   24,373.60
-    avg IOPS       22,529.93  13,325.59   21,868.85
-    cpu % usr           1.70       1.41        1.67
-    cpu % sys          27.89      21.85       27.23
-    bw MB/s            88.10      52.10       84.48
-
-  write / 1 job    original    after    this commit
-    min IOPS        6,524.20   3,136.00    5,988.40
-    max IOPS        7,303.60   5,144.40    7,232.40
-    avg IOPS        7,169.80   4,608.29    7,014.66
-    cpu % usr           2.29       2.34        2.23
-    cpu % sys          41.91      39.34       42.48
-    bw MB/s            28.02      18.00       27.42
-
-  write / 8 jobs   original    after    this commit
-    min IOPS       12,685.40  13,783.00   12,622.40
-    max IOPS       30,814.20  22,122.00   29,636.00
-    avg IOPS       21,539.04  18,552.63   21,134.65
-    cpu % usr           2.08       1.61        2.07
-    cpu % sys          30.86      23.88       30.64
-    bw MB/s            84.18      72.54       82.62
-
-Closes: https://lore.kernel.org/all/1e06161bf49a3a88c4ea2e7a406815be56114c4f.camel@linaro.org
-Fixes: 3c7ac40d7322 ("scsi: ufs: core: Delegate the interrupt service routine to a threaded IRQ handler")
-Cc: stable@vger.kernel.org
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/ufs/core/ufshcd.c | 192 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 153 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 13f7e0469141619cfc5e180aa730171ff01b8fb1..a117c6a30680f4ece113a7602b61f9f09bd4fda5 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -111,6 +111,9 @@ enum {
- /* bMaxNumOfRTT is equal to two after device manufacturing */
- #define DEFAULT_MAX_NUM_RTT 2
- 
-+/* Time limit in usecs for hardirq context */
-+#define HARDIRQ_TIMELIMIT 20
-+
- /* UFSHC 4.0 compliant HC support this mode. */
- static bool use_mcq_mode = true;
- 
-@@ -5603,14 +5606,31 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
-  * __ufshcd_transfer_req_compl - handle SCSI and query command completion
-  * @hba: per adapter instance
-  * @completed_reqs: bitmask that indicates which requests to complete
-+ * @time_limit: maximum amount of jiffies to spend executing command completion
-+ *
-+ * This completes the individual requests as per @completed_reqs with an
-+ * optional time limit. If a time limit is given and it expired before all
-+ * requests were handled, the return value will indicate which requests have not
-+ * been handled.
-+ *
-+ * Return: Bitmask that indicates which requests have not been completed due to
-+ *time limit expiry.
-  */
--static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
--					unsigned long completed_reqs)
-+static unsigned long __ufshcd_transfer_req_compl(struct ufs_hba *hba,
-+						 unsigned long completed_reqs,
-+						 unsigned long time_limit)
- {
- 	int tag;
- 
--	for_each_set_bit(tag, &completed_reqs, hba->nutrs)
-+	for_each_set_bit(tag, &completed_reqs, hba->nutrs) {
- 		ufshcd_compl_one_cqe(hba, tag, NULL);
-+		__clear_bit(tag, &completed_reqs);
-+		if (time_limit && time_after_eq(jiffies, time_limit))
-+			break;
-+	}
-+
-+	/* any bits still set represent unhandled requests due to timeout */
-+	return completed_reqs;
- }
- 
- /* Any value that is not an existing queue number is fine for this constant. */
-@@ -5633,16 +5653,29 @@ static void ufshcd_clear_polled(struct ufs_hba *hba,
- 	}
- }
- 
--/*
-- * Return: > 0 if one or more commands have been completed or 0 if no
-- * requests have been completed.
-+/**
-+ * ufshcd_poll_impl - handle SCSI and query command completion helper
-+ * @shost: Scsi_Host instance
-+ * @queue_num: The h/w queue number, or UFSHCD_POLL_FROM_INTERRUPT_CONTEXT when
-+ *             invoked from the interrupt handler
-+ * @time_limit: maximum amount of jiffies to spend executing command completion
-+ * @__pending: Pointer to store any still pending requests in case of time limit
-+ *             expiry
-+ *
-+ * This handles completed commands with an optional time limit. If a time limit
-+ * is given and it expires, @__pending will be set to the requests that could
-+ * not be completed in time and are still pending.
-+ *
-+ * Return: true if one or more commands have been completed, false otherwise.
-  */
--static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
-+static int ufshcd_poll_impl(struct Scsi_Host *shost, unsigned int queue_num,
-+			    unsigned long time_limit, unsigned long *__pending)
- {
- 	struct ufs_hba *hba = shost_priv(shost);
- 	unsigned long completed_reqs, flags;
- 	u32 tr_doorbell;
- 	struct ufs_hw_queue *hwq;
-+	unsigned long pending = 0;
- 
- 	if (hba->mcq_enabled) {
- 		hwq = &hba->uhq[queue_num];
-@@ -5656,19 +5689,39 @@ static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
- 	WARN_ONCE(completed_reqs & ~hba->outstanding_reqs,
- 		  "completed: %#lx; outstanding: %#lx\n", completed_reqs,
- 		  hba->outstanding_reqs);
--	if (queue_num == UFSHCD_POLL_FROM_INTERRUPT_CONTEXT) {
--		/* Do not complete polled requests from interrupt context. */
-+	if (time_limit) {
-+		/* Do not complete polled requests from hardirq context. */
- 		ufshcd_clear_polled(hba, &completed_reqs);
- 	}
-+
-+	if (completed_reqs)
-+		pending = __ufshcd_transfer_req_compl(hba, completed_reqs,
-+						      time_limit);
-+
-+	completed_reqs &= ~pending;
- 	hba->outstanding_reqs &= ~completed_reqs;
-+
- 	spin_unlock_irqrestore(&hba->outstanding_lock, flags);
- 
--	if (completed_reqs)
--		__ufshcd_transfer_req_compl(hba, completed_reqs);
-+	if (__pending)
-+		*__pending = pending;
- 
- 	return completed_reqs != 0;
- }
- 
-+/*
-+ * ufshcd_poll - SCSI interface of blk_poll to poll for IO completions
-+ * @shost: Scsi_Host instance
-+ * @queue_num: The h/w queue number
-+ *
-+ * Return: > 0 if one or more commands have been completed or 0 if no
-+ * requests have been completed.
-+ */
-+static int ufshcd_poll(struct Scsi_Host *shost, unsigned int queue_num)
-+{
-+	return ufshcd_poll_impl(shost, queue_num, 0, NULL);
-+}
-+
- /**
-  * ufshcd_mcq_compl_pending_transfer - MCQ mode function. It is
-  * invoked from the error handler context or ufshcd_host_reset_and_restore()
-@@ -5722,13 +5775,19 @@ static void ufshcd_mcq_compl_pending_transfer(struct ufs_hba *hba,
- /**
-  * ufshcd_transfer_req_compl - handle SCSI and query command completion
-  * @hba: per adapter instance
-+ * @time_limit: maximum amount of jiffies to spend executing command completion
-  *
-  * Return:
-- *  IRQ_HANDLED - If interrupt is valid
-- *  IRQ_NONE    - If invalid interrupt
-+ *  IRQ_HANDLED     - If interrupt is valid
-+ *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-+ *                    thread
-+ *  IRQ_NONE        - If invalid interrupt
-  */
--static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
-+static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba,
-+					     unsigned long time_limit)
- {
-+	unsigned long pending;
-+
- 	/* Resetting interrupt aggregation counters first and reading the
- 	 * DOOR_BELL afterward allows us to handle all the completed requests.
- 	 * In order to prevent other interrupts starvation the DB is read once
-@@ -5744,12 +5803,19 @@ static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
- 		return IRQ_HANDLED;
- 
- 	/*
--	 * Ignore the ufshcd_poll() return value and return IRQ_HANDLED since we
--	 * do not want polling to trigger spurious interrupt complaints.
-+	 * Ignore the ufshcd_poll() return value and return IRQ_HANDLED or
-+	 * IRQ_WAKE_THREAD since we do not want polling to trigger spurious
-+	 * interrupt complaints.
- 	 */
--	ufshcd_poll(hba->host, UFSHCD_POLL_FROM_INTERRUPT_CONTEXT);
-+	ufshcd_poll_impl(hba->host, UFSHCD_POLL_FROM_INTERRUPT_CONTEXT,
-+			 time_limit, &pending);
- 
--	return IRQ_HANDLED;
-+	/*
-+	 * If a time limit was set, some requests completions might not have
-+	 * been handled yet and will need to be dealt with in the threaded
-+	 * interrupt handler.
-+	 */
-+	return pending ? IRQ_WAKE_THREAD : IRQ_HANDLED;
- }
- 
- int __ufshcd_write_ee_control(struct ufs_hba *hba, u32 ee_ctrl_mask)
-@@ -6310,7 +6376,7 @@ static void ufshcd_complete_requests(struct ufs_hba *hba, bool force_compl)
- 	if (hba->mcq_enabled)
- 		ufshcd_mcq_compl_pending_transfer(hba, force_compl);
- 	else
--		ufshcd_transfer_req_compl(hba);
-+		ufshcd_transfer_req_compl(hba, 0);
- 
- 	ufshcd_tmc_handler(hba);
- }
-@@ -7012,12 +7078,16 @@ static irqreturn_t ufshcd_handle_mcq_cq_events(struct ufs_hba *hba)
-  * ufshcd_sl_intr - Interrupt service routine
-  * @hba: per adapter instance
-  * @intr_status: contains interrupts generated by the controller
-+ * @time_limit: maximum amount of jiffies to spend executing command completion
-  *
-  * Return:
-- *  IRQ_HANDLED - If interrupt is valid
-- *  IRQ_NONE    - If invalid interrupt
-+ *  IRQ_HANDLED     - If interrupt is valid
-+ *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-+ *                    thread
-+ *  IRQ_NONE        - If invalid interrupt
-  */
--static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
-+static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status,
-+				  unsigned long time_limit)
- {
- 	irqreturn_t retval = IRQ_NONE;
- 
-@@ -7031,7 +7101,7 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
- 		retval |= ufshcd_tmc_handler(hba);
- 
- 	if (intr_status & UTP_TRANSFER_REQ_COMPL)
--		retval |= ufshcd_transfer_req_compl(hba);
-+		retval |= ufshcd_transfer_req_compl(hba, time_limit);
- 
- 	if (intr_status & MCQ_CQ_EVENT_STATUS)
- 		retval |= ufshcd_handle_mcq_cq_events(hba);
-@@ -7040,15 +7110,25 @@ static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
- }
- 
- /**
-- * ufshcd_threaded_intr - Threaded interrupt service routine
-+ * ufshcd_intr_helper - hardirq and threaded interrupt service routine
-  * @irq: irq number
-  * @__hba: pointer to adapter instance
-+ * @time_limit: maximum amount of jiffies to spend executing
-+ *
-+ * Interrupts are initially served from hardirq context with a time limit, but
-+ * if there is more work to be done than can be completed before the limit
-+ * expires, remaining work is delegated to the IRQ thread. This helper does the
-+ * bulk of the work in either case - if @time_limit is set, it is being run from
-+ * hardirq context, otherwise from the threaded interrupt handler.
-  *
-  * Return:
-- *  IRQ_HANDLED - If interrupt is valid
-- *  IRQ_NONE    - If invalid interrupt
-+ *  IRQ_HANDLED     - If interrupt was fully handled
-+ *  IRQ_WAKE_THREAD - If further interrupt processing should be delegated to the
-+ *                    thread
-+ *  IRQ_NONE        - If invalid interrupt
-  */
--static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
-+static irqreturn_t ufshcd_intr_helper(int irq, void *__hba,
-+				      unsigned long time_limit)
- {
- 	u32 last_intr_status, intr_status, enabled_intr_status = 0;
- 	irqreturn_t retval = IRQ_NONE;
-@@ -7062,15 +7142,22 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
- 	 * if the reqs get finished 1 by 1 after the interrupt status is
- 	 * read, make sure we handle them by checking the interrupt status
- 	 * again in a loop until we process all of the reqs before returning.
-+	 * This done until the time limit is exceeded, at which point further
-+	 * processing is delegated to the threaded handler.
- 	 */
--	while (intr_status && retries--) {
-+	while (intr_status && !(retval & IRQ_WAKE_THREAD) && retries--) {
- 		enabled_intr_status =
- 			intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
- 		ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
- 		if (enabled_intr_status)
--			retval |= ufshcd_sl_intr(hba, enabled_intr_status);
-+			retval |= ufshcd_sl_intr(hba, enabled_intr_status,
-+						 time_limit);
- 
- 		intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
-+
-+		if (intr_status && time_limit && time_after_eq(jiffies,
-+							       time_limit))
-+			retval |= IRQ_WAKE_THREAD;
- 	}
- 
- 	if (enabled_intr_status && retval == IRQ_NONE &&
-@@ -7087,6 +7174,20 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
- 	return retval;
- }
- 
-+/**
-+ * ufshcd_threaded_intr - Threaded interrupt service routine
-+ * @irq: irq number
-+ * @__hba: pointer to adapter instance
-+ *
-+ * Return:
-+ *  IRQ_HANDLED - If interrupt was fully handled
-+ *  IRQ_NONE    - If invalid interrupt
-+ */
-+static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
-+{
-+	return ufshcd_intr_helper(irq, __hba, 0);
-+}
-+
- /**
-  * ufshcd_intr - Main interrupt service routine
-  * @irq: irq number
-@@ -7094,20 +7195,33 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
-  *
-  * Return:
-  *  IRQ_HANDLED     - If interrupt is valid
-- *  IRQ_WAKE_THREAD - If handling is moved to threaded handled
-+ *  IRQ_WAKE_THREAD - If handling is moved to threaded handler
-  *  IRQ_NONE        - If invalid interrupt
-  */
- static irqreturn_t ufshcd_intr(int irq, void *__hba)
- {
- 	struct ufs_hba *hba = __hba;
-+	unsigned long time_limit = jiffies +
-+		usecs_to_jiffies(HARDIRQ_TIMELIMIT);
- 
--	/* Move interrupt handling to thread when MCQ & ESI are not enabled */
--	if (!hba->mcq_enabled || !hba->mcq_esi_enabled)
--		return IRQ_WAKE_THREAD;
--
--	/* Directly handle interrupts since MCQ ESI handlers does the hard job */
--	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
--				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
-+	/*
-+	 * Directly handle interrupts when MCQ & ESI are enabled since MCQ
-+	 * ESI handlers do the hard job.
-+	 */
-+	if (hba->mcq_enabled && hba->mcq_esi_enabled)
-+		return ufshcd_sl_intr(hba,
-+				      ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-+				      ufshcd_readl(hba, REG_INTERRUPT_ENABLE),
-+				      0);
-+
-+	/* Otherwise handle interrupt in thread */
-+	if (!time_limit)
-+		/*
-+		 * To deal with jiffies wrapping, we just add one so that other
-+		 * code can reliably detect if a time limit was requested.
-+		 */
-+		time_limit++;
-+	return ufshcd_intr_helper(irq, __hba, time_limit);
- }
- 
- static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
-@@ -7540,7 +7654,7 @@ static int ufshcd_eh_device_reset_handler(struct scsi_cmnd *cmd)
- 				__func__, pos);
- 		}
- 	}
--	__ufshcd_transfer_req_compl(hba, pending_reqs & ~not_cleared_mask);
-+	__ufshcd_transfer_req_compl(hba, pending_reqs & ~not_cleared_mask, 0);
- 
- out:
- 	hba->req_abort_count = 0;
-@@ -7696,7 +7810,7 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
- 		dev_err(hba->dev,
- 		"%s: cmd was completed, but without a notifying intr, tag = %d",
- 		__func__, tag);
--		__ufshcd_transfer_req_compl(hba, 1UL << tag);
-+		__ufshcd_transfer_req_compl(hba, 1UL << tag, 0);
- 		goto release;
- 	}
- 
-
----
-base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
-change-id: 20250723-ufshcd-hardirq-c7326f642e56
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+Regards,
+Pritam
 
 
