@@ -1,84 +1,85 @@
-Return-Path: <linux-kernel+bounces-743410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC09B0FE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380D3B0FE5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970E43B2F02
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334EC3B6ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE1E17F4F6;
-	Thu, 24 Jul 2025 01:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEE514B08A;
+	Thu, 24 Jul 2025 01:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ia/arbf1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEIFRTxt"
 Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC31114B08A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE5188000
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753320901; cv=none; b=J55JaisbwzOnsFRvshMQqKiWmlhlGbaB6G3/GJvgCdCEDI0S8+Hp+Sk1/611sT5pHTxAtnyfzY1CU/fxV+cMzz81f+SiMicSPyz1PWkXvYf3XEf0c2ShoABy/njY4Pc85U9BklD/YyrD2xE7MeaPO6dGxwVtT7Vxj+8ZWJN16tI=
+	t=1753320990; cv=none; b=lR65LIeuHxDwkopmZ5T5b9GX3xbKtnVaeS6yuEB7tKH0m05p0MAvGmDkWlJRH2Utm/IbymxQoGhgNX0UmjOO64av2gfx4UUUnQs10J/OH1s5kCBNbxEdJGOqUl43+KANKFPLNiQgVVE8QS31y1anxu6c6hA9rgrqYSSf4qLzfwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753320901; c=relaxed/simple;
-	bh=5FoabRReTtQOrvmHDY/zeNKeNRxrM0Ydriy60Cu+FWQ=;
+	s=arc-20240116; t=1753320990; c=relaxed/simple;
+	bh=LpjMFbE0AWlFtI4ADPoDe4Yf9xZKpfvqrho3KD5mL8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxlhZv7MBfQzn39tJhpHqKRNZSWb68wbwZ68Xh2BVJqiZC6BOuzB21BJ0bSe9VTtYxrrSi8IPXdn+ibcuq+FJiY+zAYE8dvD5QdQ9RAckF8n/7jmcXv7lFQDkXOAxvmmFd3brxUDugjp/ocSfiGHLsRZtzjsPTJq3BsUjZFoQB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ia/arbf1; arc=none smtp.client-ip=209.85.214.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVRSC3s8m/sr5V8Wte0c6rbktcuDF0UiT+D4lkL6fq24OsTEOcUZe/aixQvHNJan0DB/wQf04ZGy2Pi24/e+EAWd8yQttqCVF4woSDOlrPZkGeVgTzPy/UNTSDQ4SwA6hE5iYxpje0wEX88h8CzvWU4z80PKkvWJFmMBwdFApHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEIFRTxt; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234b440afa7so4611475ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:34:59 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23e210ebd5dso12255885ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:36:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753320899; x=1753925699; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753320987; x=1753925787; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p1+5vRjhFBdqpvtvNPexpKvkTUdRUwrxClPsxcT+ruc=;
-        b=ia/arbf1A0mWigpuC+8Rhmx+WI4tVLLJY6nlTEQlW2XoVfolMhaOuCDHvQKpVJ/9aq
-         Sch5y5ibOKiqHAaHH6B8Vgwtwrzrwb8g0k3OUBmA5OzbfKX/7U0iqusoig17hzDVw441
-         FDZ3u6TpKAbArJ1XJjjFXzPoMCO0e0PEvNxqMVUppGniIc6HLXt43PaSChu6TleX/RQm
-         IH3EPvKD4xCvkQ9DRFgsLn0KqaQXNNWlqHTNfElxExrB4kd/h1He/3xoQvxpYDV2CYms
-         qeEk3cQbt3UE6qj4dLnHh8B4YNiHsODeALoQ31fvmzEWhp1EgT/RKMF+ZciO/sZhQyGz
-         qIdQ==
+        bh=T+wZXwZrMhUJDKmhBPJ6rht7dEKowJUJhM6aMeIhgyo=;
+        b=VEIFRTxttLYae3KbFqNE1SRRlmWH1v0WetUq1cYnz6hjZjwEkht7C1+/El+u/MXQQv
+         gtdJPdIiD4I9cgXEFSQmX2f7Z45iyGb/iMAPWforegr/kequKnqWoHeuJvwB00fnEY/9
+         Wl+hrlPqjB3lUxs1i2z6KSaYTIWepJWnA8TGxWEYzN6SNzjnbNON6wO5rldaLnyuke0J
+         wvbaGWUP5ZFyBv3OCXJ/nBJGVMhGIsiC8u4XrLRG7m6+Q8E/FS/ZNEK/RrWFlKttpRT7
+         5h/f4PdqAk63HXnhr4fRMYgnk9F+2ehJD04bCWGNEv/zd8sFJqyoxQIOoy5BtgK29GHq
+         8fJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753320899; x=1753925699;
+        d=1e100.net; s=20230601; t=1753320987; x=1753925787;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p1+5vRjhFBdqpvtvNPexpKvkTUdRUwrxClPsxcT+ruc=;
-        b=KICprvN7uPb9ywpul/lctpmZ35GRI/uEnJYY24f+gaUzRUXclGSvmV0BsplgTxLo/Q
-         J3kVqSO2S/l3T+dONVgwIh9PNtHiwTRzWAhCS0SXm6CMpmwX9V+dnDUyJprkwZM48YZU
-         f6M30fLr4iSYrh+CfpfQ7gpIIAOWNVU/EwEiMjv5kU6b6Tl6uKAHU5mg8pODL+W5Bt6q
-         KvkSwyhbCrT53+RU9cNrUwbipJ5nQ5jtb/WOHEFVwdN9bGj/mngtE/1o4hGSwB9tPMSo
-         ASxT9l0tLdObnxRfTuVKYIyQsCt0OnFskEO2K24i+o093J95EZkh5gPSBokWFgcwRHKX
-         1zDA==
-X-Gm-Message-State: AOJu0YwZ+wJiGnhr30bK15jR84qB0zLsS72scyL3rMdqmEy+bDH0I7LH
-	VlRdSZIoaKzFabbGv8r6bmhy0LP7v7S/X7ssoq31tEjdJ5UIQRWrf0Tn
-X-Gm-Gg: ASbGnctYQPAddDCVctYvhS35tOeCOC1MGrPLvd1BIESmY/PJ4MPPio2W26XXu2uK24/
-	CbX+Y4Xy3DxX6k049FU4pmefSdXNGt6geAqEMgA9KnaxCkxuZfUCoXt7N1Zrl3ESj4UyBh/Cz4Q
-	pG7fFENEpEU5nKUU9T4BYXFwvKB6T3pOcYen74biiIzUc4vjN4XHG7J3bcjVJDaLnyGZRfCqh2y
-	/hadD5/Oal5YgwK1ADOw9aThFGEEzEdiwaM3nY5gAiG5t8TKBT3Gcntlot5FUVGB3OFcjfwN0An
-	CNH7vQL6bs72UrK0QkN7SAuysGTvtM4WBG+SAb6eiy6C9gpmrYlg+vc0osraoA/S0jWvFz27dRr
-	fIm21BJ+9d33X9xbdcw7puQ==
-X-Google-Smtp-Source: AGHT+IH5vzP9Wws0hvj/AnbFN0SEfcWbMa0mOLQ5a3v16TDU4bpFR+60fq5Velj90Bq3cM8S7HcrfQ==
-X-Received: by 2002:a17:902:d2c9:b0:236:15b7:62e8 with SMTP id d9443c01a7336-23f98194cf0mr65753175ad.25.1753320898783;
-        Wed, 23 Jul 2025 18:34:58 -0700 (PDT)
+        bh=T+wZXwZrMhUJDKmhBPJ6rht7dEKowJUJhM6aMeIhgyo=;
+        b=Fh+j1kahh6XyzeQR6TvXstT3CIjBTrWoXGdBUQ7jNXEvMJ3BTdh4pIzC3gEKFb+bMz
+         7wf415rBcOJT2BbqkvUHWhXKL26rS4JaEIVI0t362MuGLkSBFWeKil1MnHh17tRWVllf
+         dtQZj9SYum1iqitgOVlUJFmpokXo3QKuDr6nZIlMlXoTtr84KBp7sYzAAj1or3NrhzYJ
+         c96IXq2y9GOCbxGYEEh3od/PAWhxUWiTdD9v/24NwTkuuXVSfHpaXTJIvuN+E0jHWo9N
+         BJFQD8kZGztGvSryfiv5aI4yrRtB11Eu13yucKu7RJ5yJxLhGL5e2uLm8iRQzoF12qTy
+         CbiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGBL8z/SbUqAXBjlrgdqEJkbdXJu97r4HY5VQGXWIEvd2DDWVo+cbFILI2B2UIYTxboCA8yKMXRm07SOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+MhlQbL9NzcVda5WBSl8wgBA+VLNyA+zKFrDBawjDv0dQgX+U
+	6CLTAYp44VheA04vLIv2hUGf4rUsK00ldIJp69Mz6eRlheTMY7PtAjdg
+X-Gm-Gg: ASbGnctsMFOBoK+UBuxdX0vFPGmBux9HBIoD1ulGQAXsZd278n+dGe9KoqnqH63oO36
+	8VA2MdoMUdHr52jSb9PEFvhWTiz7fs5Ge81ItAK3BbAsnw0hAkjqCIFqqWnqoAsOHh+IbKNgEMF
+	7wIfo4W+IjmeOPdDmcyPwoTuVMANJkl7rf5OGzlo3Nm0c/QVaYrljNidLIkpCdV+pD3xuZ3kT8o
+	lfXZnXy+MsKE6z1cWZxLWC+wZMdijThFE9k93sR0GEujWu9h8vIyG59KBAVhZ+sPAYkY4p5l6UX
+	jz47tngQOjEcN1t6HKtSSASd5fqaK5GYPHsqaIV+yz55OytxsVOwQblfgfJtg8R0hBSgrVoXSvH
+	JVxMQRdeg3AjzxX4j59cswQ==
+X-Google-Smtp-Source: AGHT+IHGoXE+ack7oNwMlA4/Q2E95WB29LBaEnuKnKG4li283t1OpXFou2wgKtMuM/x5v3fOL3rLXA==
+X-Received: by 2002:a17:903:15c7:b0:232:59b:5923 with SMTP id d9443c01a7336-23fa5d9867cmr2770275ad.23.1753320987089;
+        Wed, 23 Jul 2025 18:36:27 -0700 (PDT)
 Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23fa48f9fa7sm2548235ad.167.2025.07.23.18.34.57
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23fa4786017sm2757755ad.79.2025.07.23.18.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 18:34:58 -0700 (PDT)
-Date: Thu, 24 Jul 2025 09:34:30 +0800
+        Wed, 23 Jul 2025 18:36:26 -0700 (PDT)
+Date: Thu, 24 Jul 2025 09:35:59 +0800
 From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Inochi Amaoto <inochiama@gmail.com>, Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
 	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
 	Marc Zyngier <maz@kernel.org>, Nam Cao <namcao@linutronix.de>
 Subject: Re: Affinity setting problem for emulated MSI on PLIC
-Message-ID: <re3qxwkm3lu7o77kyfswwennqvtpyonlj4zajt5eu7z5zwkosr@mwacqq6bpbk4>
+Message-ID: <lsdrgyvr27saibfibbxrh732icm4ghumx5tuisdv7pvpmqfobi@un7wjzwabygw>
 References: <20250722224513.22125-1-inochiama@gmail.com>
  <87tt32r082.ffs@tglx>
 Precedence: bulk
@@ -123,22 +124,6 @@ On Thu, Jul 24, 2025 at 12:50:05AM +0200, Thomas Gleixner wrote:
 >     How did this obviously disfunctional driver gain Tested-by and other
 >     relevant tags?
 > 
-
-I think the SG2042 pci driver does not support affinity setting, so it
-is ignored. But the detail thing I will cc Chen Wang. I guess he can give
-some details.
-
-For SG2044, I have tested at old version and it worked when submitting.
-And I guess it is because the commit [1], which remove the irq_set_affinity.
-
-[1] https://lore.kernel.org/r/20240723132958.41320-6-marek.vasut+renesas@mailbox.org
-
-IIRC, the worked version I tested has no affinity set and all irqs
-are routed to 0, which is different from the behavior now. Another 
-mysterious things is that NVME is affected. In fact, I have tested
-various PCIe device, include RX550, some PCIe to USB/SATA cards and
-Mellanox CX341 and X550-T2, all of the them are functional.
-
 > > But I wonder whether there is something better to solve this problem?
 > > (The hack I have done is at the end of mail)
 > 
@@ -167,9 +152,6 @@ Mellanox CX341 and X550-T2, all of the them are functional.
 > with the routing bit and the related lock for every mask/unmask
 > operation.
 > 
-
-Right, this is the thing I should update.
-
 > > +static void sg2044_msi_irq_mask(struct irq_data *d)
 > > +{
 > > +	irq_chip_disable_parent(d);
@@ -179,11 +161,6 @@ Right, this is the thing I should update.
 > 
 > There is a reason why there are these different callbacks...
 > 
-
-Yeah, I know. I guess it needs irq_shutdown for this. It is just
-a dirty hack. And I am happy to be told I can do something generic.
-I am pretty feared to do that....
-
 > > +static void sg2044_msi_irq_unmask(struct irq_data *d)
 > > +{
 > > +	irq_chip_enable_parent(d);
@@ -207,11 +184,6 @@ I am pretty feared to do that....
 > interrupt started, which is never invoked as the PCI/MSI chips do not
 > populate that callback. So SG2042 _must_ be affected as well, no?
 > 
-
-I guess it is. This patch is more like something prototype. The things
-about for SG2042 I have not confirmed from Wang. And I think he will
-give some detail for it.
-
 > PCI/MSI interrupts won't ever populate irq_[en|dis]able() because that
 > prevents the core code from lazy masking the interrupt on disable_irq()
 > in order to spare an enable_irq() when no interrupt is raised by the
@@ -226,10 +198,6 @@ give some detail for it.
 > the obvious solution is to populate the irq_startup() and irq_shutdown()
 > callbacks in the PCI layer.
 > 
-
-This is pretty good and I have considered adding startup/shutdown
-callback too, it is OK for me to take this.
-
 > That requires:
 > 
 >    - making the PCI/MSI code populate those callbacks with straight
@@ -260,9 +228,6 @@ callback too, it is OK for me to take this.
 > is uncompiled and untested, you can keep the bugs for yourself and fix
 > them.
 > 
-
-This is a pretty detailed instruction for me. Thanks
-
 > There is a big fat comment in the PLIC driver related section, which is
 > just a notepad to dump my findings and thoughts for posterity. That part
 > was broken before. It is really scary and needs some real scrunity
@@ -276,16 +241,6 @@ This is a pretty detailed instruction for me. Thanks
 > ago without anyone noticing, so there is no rush to fix it. Same for the
 > PLIC muck.
 > 
-
-As it is something pretty niche, many things related to RISC-V
-are not well tested. :/
-
-Anyway, I will try my best to find a solution for this. It is a good
-thing for me to learn something about kernel.
-
-Thanks,
-Inochi
-
 > The generic and PCI/MSI[-X] changes have a value on their own and are
 > sane enough to go forward independent of that, once I come around to
 > split them out with proper change logs unless someone beats me to it.
@@ -605,4 +560,12 @@ Inochi
 >  void irq_chip_disable_parent(struct irq_data *data)
 >  {
 > 
+
+Hi, Wang
+
+Would you like to explain something related to the SG2042?
+I think it is also affected too.
+
+Regars,
+Inochi
 
