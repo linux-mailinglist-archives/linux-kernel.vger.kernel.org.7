@@ -1,187 +1,161 @@
-Return-Path: <linux-kernel+bounces-744057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDB6B1078B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D60B1078D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F06FA7A4E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626C13BD6B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354052609D0;
-	Thu, 24 Jul 2025 10:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EB3262FDC;
+	Thu, 24 Jul 2025 10:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDrsj7RG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0XDZkXz"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDA625FA3B;
-	Thu, 24 Jul 2025 10:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2887F9;
+	Thu, 24 Jul 2025 10:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352094; cv=none; b=DXqUgDrLqVwm6JrOdU4f8Iyhzd4SywT9pS5r3+rgmzPZ4UgQyS1rv+xiTPoUR8AYAvaLY7S6wYd2J+oxPdwP8WV/xZ3yFSe6IvFIFGENDmxsdQkGFL2mQRElhftuxHXcxMmKZW+rwTrfJZ8gUDvin6/yrKdq7vTqnezd/OCsjko=
+	t=1753352205; cv=none; b=OCQDjTjVIFuax5MjR5OgsTusGUg1Tnld5jyWejCm2r9I2+7qQMdonYyQBtq4iUTx/Ld36ydhRgiG/Cb/7xF+QBOFr/JpVxLWMA+I0OlBeIPdFnVAdNXB7+wwBYAQal4OIzpKZFKW6zPWxsxWRa8H2Snob/F4tW2usWkoyfdx+ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352094; c=relaxed/simple;
-	bh=zORcxo3mS6brPEl87DE6MRdiyeVVqdihj/3FCEKbiTM=;
+	s=arc-20240116; t=1753352205; c=relaxed/simple;
+	bh=6QJNDpM0NSkICZZvi+OOhGR48b8nkoDYyIe91De/OqM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSKkmBkuJsCw8rawUtgzccMF6pBcCKZYskU7exrgp0uSDFFQIsyD/Qktm1WSKVDYiWJPh2YUcOosPhnFmXsUu1zLCODN0WB+XR7Y+p9irRDhR3lGq9bvfN0yuoRxN13iXVZzR76YZd/gUnCb357l1NmOKWgKht99NFPXuGWiBdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDrsj7RG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D83C4CEF4;
-	Thu, 24 Jul 2025 10:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753352093;
-	bh=zORcxo3mS6brPEl87DE6MRdiyeVVqdihj/3FCEKbiTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GDrsj7RGaUKmRFe2YmNRj6/sLBAYZIQjaT4lMyvILBdotUjyjjp9PjzGhfiKnPkhb
-	 wdo+ZkLnBwjW8MtDK3qrZT7gMrPKySmosNZNHnzunk3wcRAkiPozCGDIZanfeUFgR1
-	 JifMizySQ87kY9Pm3P9t03L8anZuOJDiarkZFUJ0flEAYrfHrsK18EJ2xknSeOXqRz
-	 kOeRWhTUSd9D/VoqhMCSIepkmo4hSmWSqD2ge6ibK6qHY9ZAPPSgQIbGWpUypKRJcv
-	 guW2Mq5oK6fCWyBpdzQlM/jYkEZrA0jC4Wt0ykT5pBBgdlJdG5Mk+6GNzR10ZpJps1
-	 lO2wqUbfktYPw==
-Date: Thu, 24 Jul 2025 11:14:47 +0100
-From: Lee Jones <lee@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	troymitchell988@gmail.com, guodong@riscstar.com,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/8] mfd: simple-mfd-i2c: specify max_register
-Message-ID: <20250724101447.GY11056@google.com>
-References: <20250710175107.1280221-1-elder@riscstar.com>
- <20250710175107.1280221-3-elder@riscstar.com>
- <20250723095125.GR11056@google.com>
- <877dcf99-107e-4d96-8790-6608976d13ca@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEj+Rj/USbq1oJNflJpTkc09vERs00To3XUXA7L8Igriv5u3gUmo2ebM3quBmJmzmQvYX+XhR/m6gCEDzir5O20SpM5tmJS547AMJLiBE+zqHDMfi/sHoiWS9R/NJLWQ+hkb8l6u8TKwB6ysW8367SM1MHJ/6EO+QvfA6F3xVHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0XDZkXz; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so6727801fa.0;
+        Thu, 24 Jul 2025 03:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753352202; x=1753957002; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7nRXIsxKDx+EHQ+ewmB7GHMOLLLIjUjSDjsF/PUy3dM=;
+        b=L0XDZkXzcOA0uHfvsBEVzFqNgtvGNZycAoy2HAC1wzxJJv9leX8oovkiXC+9n4Erho
+         AFk0h8CR0kErru0d3uHT7bRPaCHPAQ86N4EjYvLmHeVTDdyFGUDRyQiNeIncLzdQqRsN
+         ooEb2JgiONXJLo7z0hJWG7To2dvJOkPigX4SZ7W/hCYKIHy/3PFzNojAOgA4746aSyJg
+         0gdsI4ShkaMavsieklbWHvohs9lEcfLGo3xF4vuAtPCmRTMbR1NNC682K0Oq+At17pN5
+         eNxjqiFV91YRPBXVOLS0TLcVCvi3o2gvVb684zpgmuZL/lQ0LaiKTHNslSMD5TLPgZp0
+         dTYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753352202; x=1753957002;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7nRXIsxKDx+EHQ+ewmB7GHMOLLLIjUjSDjsF/PUy3dM=;
+        b=JoQoFIQlYE3dPlYtVhkxD+Q8DVjcCDny8063aTzehhvGJHOR/Snsj/+50r8Hq8+/RO
+         Iw38MF02vl/Ef+3RFaqJiiFX6IouSsbV3yT0d6dTSQVkoY12RJiAqO4sMKkom0B/8yZd
+         88EGluYCn66niFwGsScT+jpO29coC1xbmCK7Xcm/cRZ7TCADBKACqQ0p8lpMcgUItCXk
+         xKUD4AtzR4eZL2Ks03269NyV6TlwpUF/t6yg7HMvq9O7B+9gAfPvXJ6NNkXT1mhugLbd
+         jrN538dr88zF2wvADVpi1Ko4JrNJ9YzcV2VkX+FVpwVIcnEu6t72gdkYooUSqRSlsPzw
+         fujA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/fo6efBVFG7VkVOYKEyQDszeDXEa5wco+kRCMLuTb+y7Ee4XM9lv7k3QlImZm+hTos0rM8hlxv7xaLA==@vger.kernel.org, AJvYcCWMRYard5sQ0N+pKlNndcWAtoV6eMooBfoOupIjRsKgdF4z9dKTFJtAMvkWVo2Wb/39U+/Sh2CEtbZPfM6U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4+GpOexH4iIUWMd6v4ddUnJyJLC1Dvmn3uK+/3OUwXHx4T8nd
+	rqo5ANoVf6VAZk9BqyjEnOMfL4DpD9l7SBOj81/I86NgiQTmRiyd7WsD
+X-Gm-Gg: ASbGncszA6klyszN9lH7YRD8ryFtAFMKpXLArFh3d7PTujhK8d+cz4/pa4Wua/LEpzG
+	qCsqukxKqEje/c4uLTpMtxVl6hVdgOoD2jv5pgbNcESNj3t4FrGn3lM4yPZ9RTcfN1KVN6f+Tx1
+	CmBoJGJiePMjsau663NHGsF+hPLaMFdqSq3kGlzPIPCUg2fRiB0SRdIHP/5VtbXKr/EmJ/JxHWZ
+	kKaXs6qyaIXwe0/6UK8Nq73JJSWyhfj/yg4DOHdpDGk+XLSmbOZp3t6lo2+tZ/5OSY1/mFhqHln
+	VjE0FoPkQuWPcTyXSMulnSL9WemgIXwszr0Evzo95FbArpfUCaTvGcOuBO413N7/ktDq6K3aRQW
+	oCwcLLfcPWe1Nay9DY/Oh97z87MX7wHmCg9LM5M/uZEzH3Pa/0GinPbtv5SnIDTrNaoNdkIg=
+X-Google-Smtp-Source: AGHT+IHbvep+/IiKtqAaTAeoELx3JXG0DMzJS0uGTSEYeNhDWHmOW1AheiIS7ATEPGIR+vi2q9+ChA==
+X-Received: by 2002:a2e:a58d:0:b0:331:e667:90e5 with SMTP id 38308e7fff4ca-331e667abd6mr1624001fa.18.1753352201916;
+        Thu, 24 Jul 2025 03:16:41 -0700 (PDT)
+Received: from localhost (host-95-193-188-192.mobileonline.telia.com. [95.193.188.192])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-331e08e82ffsm2476901fa.51.2025.07.24.03.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 03:16:41 -0700 (PDT)
+Date: Thu, 24 Jul 2025 12:16:40 +0200
+From: Klara Modin <klarasmodin@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Kanchan Joshi <joshi.k@samsung.com>, 
+	Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Caleb Sander Mateos <csander@purestorage.com>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] block: fix FS_IOC_GETLBMD_CAP parsing in
+ blkdev_common_ioctl()
+Message-ID: <u67ijiie6n2w3crfpuipprrmkocja7bxadlo3sbr47w7hysjgj@rjduhmczwwdz>
+References: <20250711084708.2714436-1-arnd@kernel.org>
+ <szmagqqo6lx36ozaqd5qf72xnzoi4e23jbfehjli6rfbvhps6w@if2cvmlgvmxv>
+ <b6346235-cc66-4ce0-8768-52a1a89fd699@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <877dcf99-107e-4d96-8790-6608976d13ca@riscstar.com>
+In-Reply-To: <b6346235-cc66-4ce0-8768-52a1a89fd699@app.fastmail.com>
 
-On Wed, 23 Jul 2025, Alex Elder wrote:
-
-> On 7/23/25 4:51 AM, Lee Jones wrote:
-> > On Thu, 10 Jul 2025, Alex Elder wrote:
-> > 
-> > > All devices supported by simple MFD use the same 8-bit register 8-bit
-> > > value regmap configuration.  There is an option available for a device
-> > > to specify a custom configuration, but no existing device uses it.
-> > > 
-> > > Rather than specify a "full" regmap configuration to change only
-> > > the max_register value, Lee Jones suggested allowing max_register
-> > > to be specified in the simple_mfd_data structure.  If regmap_config
-> > > and max_register are both supplied, the max_register field is ignored.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > Suggested-by: Lee Jones <lee@kernel.org>
-> > > ---
-> > > v8: - Use regmap_config_8r_8v, modifying it if max_register supplied
-> > > 
-> > >   drivers/mfd/simple-mfd-i2c.c | 8 ++++++--
-> > >   drivers/mfd/simple-mfd-i2c.h | 3 ++-
-> > >   2 files changed, 8 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> > > index 22159913bea03..5138aa72140b5 100644
-> > > --- a/drivers/mfd/simple-mfd-i2c.c
-> > > +++ b/drivers/mfd/simple-mfd-i2c.c
-> > > @@ -24,15 +24,16 @@
-> > >   #include "simple-mfd-i2c.h"
-> > > -static const struct regmap_config regmap_config_8r_8v = {
-> > > +static struct regmap_config regmap_config_8r_8v = {
-> > >   	.reg_bits = 8,
-> > >   	.val_bits = 8,
-> > > +	/* .max_register can be specified in simple_mfd_data */
-> > 
-> > Drop this comment please.
-> > 
-> > >   };
-> > >   static int simple_mfd_i2c_probe(struct i2c_client *i2c)
-> > >   {
-> > >   	const struct simple_mfd_data *simple_mfd_data;
-> > > -	const struct regmap_config *regmap_config;
-> > > +	struct regmap_config *regmap_config;
-> > >   	struct regmap *regmap;
-> > >   	int ret;
-> > > @@ -43,8 +44,11 @@ static int simple_mfd_i2c_probe(struct i2c_client *i2c)
-> > >   		regmap_config = &regmap_config_8r_8v;
-> > >   	else
-> > >   		regmap_config = simple_mfd_data->regmap_config;
-> > > +	if (simple_mfd_data && !simple_mfd_data->regmap_config)
-> > > +		regmap_config->max_register = simple_mfd_data->max_register;
-> > 
-> > If max_register is set in simple_mfd_data, it should take precedence.
+On 2025-07-18 07:56:49 +0200, Arnd Bergmann wrote:
+> On Fri, Jul 18, 2025, at 01:37, Klara Modin wrote:
+>   
+> >> diff --git a/block/ioctl.c b/block/ioctl.c
+> >> index 9ad403733e19..af2e22e5533c 100644
+> >> --- a/block/ioctl.c
+> >> +++ b/block/ioctl.c
+> >> @@ -566,9 +566,11 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
+> >>  			       void __user *argp)
+> >>  {
+> >>  	unsigned int max_sectors;
+> >> +	int ret;
+> >>  
+> >> -	if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
+> >> -		return blk_get_meta_cap(bdev, cmd, argp);
+> >
+> >> +	ret = blk_get_meta_cap(bdev, cmd, argp);
+> >> +	if (ret != -ENOIOCTLCMD)
+> >> +		return ret;
+> >
+> > This check seems to be incomplete. In the case when BLK_DEV_INTEGRITY is
+> > disabled the ioctl can never complete as blk_get_meta_cap will then
+> > always return -EOPNOTSUPP. Or should the !BLK_DEV_INTEGRITY stub be
+> > changed to return -ENOIOCTLCMD instead?
 > 
-> I don't really agree with that.  If simple_mfd_data->regmap_config
-> is provided, why not use the max_register field already available
-> there?
-
-Why would a user add a max_register override to simple_mfd_data if they
-didn't want to use it?
-
-> This is why I said above that I think this feature doesn't add
-> much value.  It provides a second way to specify something, but
-> in the end it complicates the code more than it's worth.
+> Ah, I did miss the stub.
 > 
-> The only time this new simple_mfd_data->max_register field seems
-> to make sense is if it were the only thing provided (without
-> simple_mfd_data->regmap_config being supplied).  In that case,
-> I see the benefit--a null simple_mfd_data->regmap_config means
-> use regmap_config_8r_8v, and overlay it with the max_register
-> value.  The new max_register field avoids defining another huge
-> but mostly empty regmap_config structure.
-
-This is your use-case, right?
-
-> Anyway, back to your original point:  I said in v7 "If both
-> are specified, the max_register value is ignored" and I think
-> that's the simplest.  Specify one or the other--if you want
-> to define things in regmap_config, then that's where you add
-> your max_register.  If you like regmap_config_8r_8v but want
-> to define a max_register value, just provide max_register.
-> 
-> If you insist, I'll do what you say but before I sent another
-> version I wanted to explain my reasoning.
-
-I hear you and I get what you're saying.
-
-I see no use-case where a user would provide both regmap_config AND
-max_register either.  However, I see max_register in simple_mfd_data as
-an override, so I would like it to take precedence please.
-
-> > if (simple_mfd_data && simple_mfd_data->max_register)
-> > 	regmap_config->max_register = simple_mfd_data->max_register;
+> > It makes e.g. cryptsetup fail in my initramfs. Adding -EOPNOTSUPP to the
+> > check fixes it for me:
+> >
+> > diff --git a/block/ioctl.c b/block/ioctl.c
+> > index af2e22e5533c..7d5361fd1b7d 100644
+> > --- a/block/ioctl.c
+> > +++ b/block/ioctl.c
+> > @@ -569,7 +569,7 @@ static int blkdev_common_ioctl(struct block_device 
+> > *bdev, blk_mode_t mode,
+> >  	int ret;
 > > 
-> > >   	regmap = devm_regmap_init_i2c(i2c, regmap_config);
-> > > +	regmap_config->max_register = 0;
+> >  	ret = blk_get_meta_cap(bdev, cmd, argp);
+> > -	if (ret != -ENOIOCTLCMD)
+> > +	if (ret != -EOPNOTSUPP && ret != -ENOIOCTLCMD)
+> >  		return ret;
 > > 
-> > Does max_register definitely have persistence over subsequent calls?
+> >  	switch (cmd) {
 > 
-> It is a global variable.  Isn't that how they work?  When
-> it was read-only there was no concern about that, nor about
-> any possible concurrent access (though I don't think multiple
-> probes can be using this code at once).
+> I think returning -ENOIOCTLCMD from the stub makes more sense,
+> but I don't know what the motivation for the -EOPNOTSUPP was.
 > 
-> We could allocate a new one each time instead.
-> 
-> I think what I offered in v5 was acceptable.  If you're
-> willing to accept that I will be happy to keep discussing
-> (and implementing) the max_register feature.
+>      Arnd
 
-Yes, I'm inclined to agree.
+Should I send a patch changing the stub? At least from reading
+Documentation/driver-api/ioctl.rst it seems clear that only -ENOIOCTLCMD
+or -ENOTTY is correct when the command number is unknown.
 
-Make the call and I will respect your decision.
+I didn't find any particular reason in 9eb22f7fedfc ("fs: add ioctl to
+query metadata and protection info capabilities") for the -EOPNOTSUPP
+return.
 
--- 
-Lee Jones [李琼斯]
+Regards,
+Klara Modin
 
