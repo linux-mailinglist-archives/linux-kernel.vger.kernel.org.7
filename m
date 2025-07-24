@@ -1,130 +1,77 @@
-Return-Path: <linux-kernel+bounces-744080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8300B107CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9046B107C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8743B3595
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F53AC3DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF7126529E;
-	Thu, 24 Jul 2025 10:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923E264A74;
+	Thu, 24 Jul 2025 10:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UcltxR+l"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PC4yZaL1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93901C84D0;
-	Thu, 24 Jul 2025 10:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A18E1362
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753352991; cv=none; b=AGFJo+pJFqDw1lplJsP9FhC8oEQYtKESTHw2sBo0VR8zI7yYvkPC34GdQUvaYPKi43mWM51ZGyU9LMzISGnCk13xnvV9cdrWfNOi+Un5yhZsF5YtGNlb7ktlmgy+lTaUokZbDEIAy4JoA/ZI7a9L88Apr/GMJpzlXfX6gV+aE+o=
+	t=1753352973; cv=none; b=uAv4cdvDtUrwbfng1gQoGDMj2P5XnE4O17dAewtThgS+jM+DNBonPU4y90FC5/qOOt438NVg4rBc4UKd7OmNeMmgWQ2oJXQrMkxWMZyjGjLabMFaE/JPix27yOT9a4lqpdExSG8jQjXyX8tP/r3tUS231xAp55fN0Qq34oW9M88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753352991; c=relaxed/simple;
-	bh=YpjwabtrvrTpAQfGWaKcQKAcqs3OTRvnI+Zze8Cm6Zg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cua7LEbWKhz2vFveKN9UEOVOBDIzgTm16WVlcG89vB7BeWJoSdSDD4uZuok45wwxjwEiXswJfzhbW7TqAQI1YSOrfEzBUnykKAI4EHxvXqW30MWQBhbBs9EJPqaDALfQ/neewaqBVZ88VEj4qkCZQJc+nWjGxd13ydsMFtUGZ6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UcltxR+l; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2352400344aso6754645ad.2;
-        Thu, 24 Jul 2025 03:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753352989; x=1753957789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=go75kCuhuq2zLowfD2sg0fvWZdvcOHw8ao4aGb5tX7o=;
-        b=UcltxR+lBdCUAey+c+/V0g7U260E5W0UshPD3iyF394IXcZ+qsbWPLZ2g2v5AoTekm
-         ODj9sVSNUL7fGSfKigw/I/0E21YrAzyAIkkz1bnHdoiL84T1Cv6ajcu8hLhwEe4dc2vW
-         08dC/jGAuoAOrwB3oWuV7tNIPhhE/N8j9cZUQMrmAzrheaJvvAYTOIE6cfDJagfXOnz2
-         lbb8dUyz8Y4vcTSJFSAcpTrhKwGDXyfaua6ZKtHDG6gOVkLiSC+tkYC0zDVGnk4/LS9F
-         8H+ZQEKEfyDftI2iFVJ7gVLlSrrf6ruA+C386SeiG98Bt30UMq/D7Um8M3coAAjYCg+O
-         6WfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753352989; x=1753957789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=go75kCuhuq2zLowfD2sg0fvWZdvcOHw8ao4aGb5tX7o=;
-        b=MU8DGuFJFLOvtgbXti5ifoiiui/ZMeuE0E2RdCo9sQhJduN6U2qv5AQNIG1zmKC/FZ
-         idFqpynEvgjKPr5W6XzbnvWwKsK+hz/Gh9tt9SLUWMabWqZLJLSTlJV2rAT/X11+uX4a
-         H/nJZe+UUVX33Tsi7JoppyBKnRRYBoc3aeQ8VH8j0zIPdO8NU5v7dUbeOgOaj+qnwfU/
-         90loit/tQ13y9TQlgF6mYTHbdn9qDkJ2G8RniOMpHDF4ra+XrFVQmSms34a9VGIK46jM
-         OBLg5QCi82yedqL8mhvAmdULoOKJNrOEuAryHqxqyM5bhVPyeEOR6XmX3fhEPK5zwGXh
-         x6rA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDRqurodVT4TYFsrgZegX3+Wq9POsoSuwt4zOVckWcA1vkD9KPq93zvACj93Tb7wVGpqiq3gGqZXjCQ6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZlRupd8wHAFOk0E6yvPPXzzcsWas5LTC46VVnLdshqC7YRiyo
-	KZNuvs1i+Xs8alXXvotR9cg/fDxxuBeadalpLE8ENmPMXMmD0OsI86rN
-X-Gm-Gg: ASbGncuMjqhj7+ok6TXe4/2MjfhV+oS+j1m1XOCg1O+5lJjzf2ISBzM6y4HOtQNv/m5
-	F41Q7k9dv4kxhQGqfGh4BV6IzYkVK9rNn+prZITlg4PoQ1Lbejk+UB1PSrftU6km4H2KO5gqWg5
-	qyROsckLSVrUTV29/F/PvTx7tXLHJWLC02AvlyAHqQLKo6C5IqUc6ZcEvrcJT4g8YEHfM0J6LpW
-	zhmTvEgFanGjUzvEzQURkFBWaU4bRFQrY+Ho5lnns5CivOc7WrgNYmgKXHR7ojATj06EF20Vc78
-	lZiAgoX2kOdxbOkatKdN0iOvtxyfqF5a1d5Ql+fbfRShyrrgzIEasN2fFqLdpblSoHiBek2Htpf
-	52cSVeb+nYfBvKO58dGcGL9vw9nlkxoPuA7CCFA==
-X-Google-Smtp-Source: AGHT+IH0WrteCuOt7q0R3GWfqdTnSH0PtK3VeK3mdr0R4Hfn157VsVbABOgDH0/CtI+R/uyOGH1Gsw==
-X-Received: by 2002:a17:902:f650:b0:235:f45f:ed53 with SMTP id d9443c01a7336-23f9820366cmr82654595ad.33.1753352989038;
-        Thu, 24 Jul 2025 03:29:49 -0700 (PDT)
-Received: from C11-068.mioffice.cn ([2408:8607:1b00:c:9e7b:efff:fe4e:6cff])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f8a0sm12468905ad.24.2025.07.24.03.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:29:48 -0700 (PDT)
-From: Pengtao He <hept.hept.hept@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Michal Luczaj <mhal@rbox.co>,
-	Eric Biggers <ebiggers@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pengtao He <hept.hept.hept@gmail.com>
-Subject: [PATCH net-next v2] net/core: fix wrong return value in __splice_segment
-Date: Thu, 24 Jul 2025 18:29:07 +0800
-Message-ID: <20250724102907.12159-1-hept.hept.hept@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1753352973; c=relaxed/simple;
+	bh=4PvlALyP5ZXwYZ3Ea1q3Cs0kpULedbRdnamlm3N+q3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6ihZ1tFn+TN9L7aJOXfFl9Kifh/6KjQljqFJhDoSzQd43XtTiCWzqexdWcgXPSv+AmXOivissHr6uwxFRFLiKa5yEcEnLNR/67+2mbMmSfnjBiWdn0DOsKmiTv16J4BVK+p1WkwqlSuC8dagY9QKTHkF8eEljd7s781lamzp80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PC4yZaL1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6A3C4CEED;
+	Thu, 24 Jul 2025 10:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753352972;
+	bh=4PvlALyP5ZXwYZ3Ea1q3Cs0kpULedbRdnamlm3N+q3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PC4yZaL1gJ8sMgcuCOxEmYqq4UJfpkW/XGLg+LxFNY9SHo1r8FMW3r9hd+XACOld/
+	 YlL/Wu9bt9Ufhi3j3WxMxpzwYoCEs3Esir3qSuyVmvMv60FxybzyBe8Rz2E1nxkhAl
+	 dUWjqKKmnG0NjCeRbphNlFjkjzeuc3JgvOY1AYiZN7ChYojKfqe1E1F9spvKBySiy/
+	 /V4WBEMIPl4mozcs7F/VR3UyK/dxRUQp9jSu9UbqNKgSo2ZOD1TZpGKkegtNzcMB/H
+	 E05XlnS1QOVriHcr6Bmv+DCe2Vr6M7v9B/EYwEu2K3wrJfELHSyv/OiUaCuU2CXuZl
+	 FT1SDGbiCljeQ==
+Date: Thu, 24 Jul 2025 12:29:30 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v8 3/7] timers: Use scoped_guard when setting/clearing
+ the tmigr available flag
+Message-ID: <aIILCj1BSMKPNZ47@localhost.localdomain>
+References: <20250714133050.193108-9-gmonaco@redhat.com>
+ <20250714133050.193108-12-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250714133050.193108-12-gmonaco@redhat.com>
 
-Return true immediately when the last segment is processed,
-avoid to walking once more in the frags loop.
+Le Mon, Jul 14, 2025 at 03:30:54PM +0200, Gabriele Monaco a écrit :
+> Cleanup tmigr_clear_cpu_available() and tmigr_set_cpu_available() to
+> prepare for easier checks on the available flag.
+> 
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 
-Signed-off-by: Pengtao He <hept.hept.hept@gmail.com>
----
-v2->v1:
-Correct the commit message and target tree.
-v1:
-https://lore.kernel.org/netdev/20250723063119.24059-1-hept.hept.hept@gmail.com/
----
- net/core/skbuff.c | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index ee0274417948..cc3339ab829a 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3114,6 +3114,9 @@ static bool __splice_segment(struct page *page, unsigned int poff,
- 		*len -= flen;
- 	} while (*len && plen);
- 
-+	if (!*len)
-+		return true;
-+
- 	return false;
- }
- 
 -- 
-2.49.0
-
+Frederic Weisbecker
+SUSE Labs
 
