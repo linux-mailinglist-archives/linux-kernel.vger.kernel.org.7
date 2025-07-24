@@ -1,108 +1,224 @@
-Return-Path: <linux-kernel+bounces-743406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D2AB0FE50
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAC8B0FE51
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 03:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4984E73A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A45439DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 01:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E01B12BF24;
-	Thu, 24 Jul 2025 01:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsBHUVh7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C987613B58B;
+	Thu, 24 Jul 2025 01:12:35 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893292C86D;
-	Thu, 24 Jul 2025 01:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE4C7263E
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753319447; cv=none; b=QUglOJgJc4bAahlB5jrhA02GzqTQATR+tKC4FKEjlzARgjiwswXylyUUWWG7xqGqX/+Mu5/7YK2S+8qEVt3g6WXLufGKpl1ZjTPAcuLAgq35aAqWPOF4STtL9OI889rEP27Lb6uQ1t7yglpIV5YYvJgtq1iwfDlJbrsfLcf8gkA=
+	t=1753319555; cv=none; b=ATYcz95Kop4dl4sQN80Gnk3sZyDQU6FCzbkuqekEHmrSh5RMjz3DUqGHiwQ+6OYXUz3XLsdV1UKOR5TiyR6tE9TPRsNLa9gEDsQrkL02Je0lnxM+Sz1iStRFhB90+zOzKkkgjR7ywELuFw3WGK50Xg0gPTIqLxHn4jETZs5hCAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753319447; c=relaxed/simple;
-	bh=W4m2ckVc6I3FFkqRkMIqKr81SWJ6nZa/RedrKf6ZJLo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gKIb5IgVJam8XGKmcqNGlpfTTflZe86ptclx20ucKKo09pHifLKKcVfPfRiCjmWPVF1+yK5wajNrQlwxR31oi/b8BFHE6UdP3rgNZDrx64v9SysluYr1lKJs/QH8Qrt5GYS8LJNuyOuL18j/BAUTouQhPzRZJnAflsKxHaYBC1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsBHUVh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1FDC4CEE7;
-	Thu, 24 Jul 2025 01:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753319447;
-	bh=W4m2ckVc6I3FFkqRkMIqKr81SWJ6nZa/RedrKf6ZJLo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WsBHUVh7Y8u5OneqaAcptfPxGb0lLxxw3025Dwcn6sfjNfRRJIw6YmSJEhUQuw3US
-	 N4vKJOXmjIUrTLe5RdZl1pSL9ObJWgHHizcHqnyRt4/lRXO2QabtSu7Oju+y8lLOML
-	 qxnsluCAVPnAS3OPotJH92FnO+B2n+Ku8uXdE8LCPA9ko0dEV+bTJCwo1X4ce997FA
-	 eLCpesy/UTkotmhC1ZIX2RT1nWiADX9b9LWx8YlEwRumHx5qqLMDBXwgkM+FuZ27OW
-	 fvzPmM140Io5dzX5RBdd3kJF+hP8Ngzd02iKGR8etE9Un/ylao19zYXsHfHjT/6esK
-	 5+6/Jja7bSTDQ==
-Date: Thu, 24 Jul 2025 10:10:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ben Hutchings <benh@debian.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] bootconfig: Fix unaligned access when building footer
-Message-Id: <20250724101044.d32c46958f6605ae22016851@kernel.org>
-In-Reply-To: <59abcb9262e97b76bfdf18d6de71c15eb2af8a6e.camel@debian.org>
-References: <aIC-NTw-cdm9ZGFw@decadent.org.uk>
-	<20250724003747.be2a733e2e7fcf8a9e263cc4@kernel.org>
-	<59abcb9262e97b76bfdf18d6de71c15eb2af8a6e.camel@debian.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753319555; c=relaxed/simple;
+	bh=lqOlnOVnMCBJcnU10ptd3smm0+bxv6ZzWJ6vVJuAWXo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lR2l19Z1qd25z3ZruhHZsXcgkZb4+k61NdiowtMBmMsoJA3vm2a5oB8hEuk+x3DIkJVap3AEkGOO4nbmiP0BXyfxuehuQSBpgL8ERHhYjGKrBdnTqghAo9GibE8TsA8Xw2Dl0fcv8MV6a9CjLsMiD0pQnx0Bv0WRfIYT6PbKj5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c1c2a4f9dso85875439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jul 2025 18:12:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753319553; x=1753924353;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yOYCWpFQDKIXlKlj8G4XdmS8Zk1cKrnwk/l3ieNu818=;
+        b=ao2GREwwPCTcsU6zWLj6CUEZLbnyx7IxGr3c3YpeP2xy/W/uHz0VpBDxdw6/KtrOeC
+         m7AumHnjGT+hhS4BWscOma95Gt575VD8EGWE2kIDp878L7FOtvXzEZyjAMqJLaGQ7j+l
+         eo/owh0S8UHfLIAf1RszN6w8Ug49xwu1zwDOHQuz7P/6rxiuycf+HB1Hkqw9+UiLqqFz
+         ykA3HxdT5YEjsRkMaDc4uYp1fXi+5CQI76uiRuteDJGdwu57q0RmI7g9DNZgyeJ4OnLp
+         vFwtqSDMnpTj+PS6fjqyAmKmulPROfBdGgWrUGj/PlPk78TyzqNTyeq2nZjC8sRXUCs7
+         IX1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRlcS+7W1aatY8y+9eua0uEdPZO9oxstExsjNB6G++3glCZGPBOAip8CRu258whPH8nirPQVfUPkU3wno=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3O7i9f+xTBR99AuyM4R2ax/ahVaeoMHSKVsEIbTOY1GELw+3h
+	FYbijR4domnK5ny2fKZgiPrRXUuH3U56rnQ9m969Hy+mxSf+mZAziW5psMCYmg5Z/3EBXrLfxx4
+	NIoR668dFKu0I3pwvFwvUA1n0kenMbWPS3vcEPEJ/YHtiZfXVB0zuMqfVcj4=
+X-Google-Smtp-Source: AGHT+IFPlX5kiopZKNruFJ6w1xYRY4KXSxoUJThUn02QxOBgTd/FDJ5jd1y+kXQbgX6OTn4TYIv8gppRxCVy+HViAUS6sE9mz1Ys
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6b10:b0:87c:541c:44e with SMTP id
+ ca18e2360f4ac-87c6505143emr1072599939f.11.1753319552766; Wed, 23 Jul 2025
+ 18:12:32 -0700 (PDT)
+Date: Wed, 23 Jul 2025 18:12:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68818880.a00a0220.2f88df.0007.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in __build_ro_aux_tree (2)
+From: syzbot <syzbot+7e787e7154eb952a259b@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 23 Jul 2025 22:20:35 +0200
-Ben Hutchings <benh@debian.org> wrote:
+Hello,
 
-> On Thu, 2025-07-24 at 00:37 +0900, Masami Hiramatsu wrote:
-> > On Wed, 23 Jul 2025 12:49:25 +0200
-> > Ben Hutchings <benh@debian.org> wrote:
-> [...]
-> > >  static int apply_xbc(const char *path, const char *xbc_path)
-> > >  {
-> > > -	char *buf, *data, *p;
-> > > +	struct {
-> > > +		uint32_t size;
-> > > +		uint32_t csum;
-> > > +		char magic[BOOTCONFIG_MAGIC_LEN];
-> > > +	} footer;
-> > 
-> > Don't we need __attribute__((__packed__)) for the footer?
-> 
-> I don't see any reason for there to be padding in this structure, since
-> it has an alignment of 4 and the size of each member is a multiple of 4.
-> 
-> I included an assertion that there is no padding:
-> 
-> [...]
-> > > +	memcpy(footer.magic, BOOTCONFIG_MAGIC, BOOTCONFIG_MAGIC_LEN);
-> > > +	static_assert(sizeof(footer) == BOOTCONFIG_FOOTER_SIZE);
-> > > +	memcpy(data + size, &footer, BOOTCONFIG_FOOTER_SIZE);
-> [...]
+syzbot found the following issue on:
 
-OK, if we saw the assertion error, we'll add packed attribute.
-Let me pick it as it is.
+HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ffc38c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e787e7154eb952a259b
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-Thank you!
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-bf61759d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/aa0ef5d6c0be/vmlinux-bf61759d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fc3c9e6a8165/bzImage-bf61759d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7e787e7154eb952a259b@syzkaller.appspotmail.com
+
+ done
+bcachefs (loop0): check_alloc_to_lru_refs...
+bcachefs (loop0): missing fragmentation lru entry
+  u64s 13 type alloc_v4 0:34:0 len 0 ver 0: 
+    gen 0 oldest_gen 0 data_type user
+    journal_seq_nonempty 0
+    journal_seq_empty    0
+    need_discard         0
+    need_inc_gen         0
+    dirty_sectors        16
+    stripe_sectors       0
+    cached_sectors       0
+    stripe               0
+    stripe_redundancy    0
+    io_time[READ]        0
+    io_time[WRITE]       0
+    fragmentation     134217728
+    bp_start          8
+  , fixing
+ done
+bcachefs (loop0): check_snapshot_trees... done
+bcachefs (loop0): check_snapshots... done
+bcachefs (loop0): check_subvols...
+bcachefs (loop0): running recovery pass reconstruct_snapshots (21), currently at check_subvols (24) - rewinding
+bcachefs (loop0): bch2_check_subvols(): error restart_recovery
+bcachefs (loop0): reconstruct_snapshots...
+bcachefs (loop0): snapshot node 4294967295 from tree 4294967295 missing, recreating
+ done
+bcachefs (loop0): check_snapshot_trees... done
+bcachefs (loop0): check_snapshots... done
+bcachefs (loop0): check_subvols...
+bcachefs (loop0): subvolume 1 is not set as snapshot but is not master subvolume, fixing
+ done
+bcachefs (loop0): check_subvol_children... done
+bcachefs (loop0): delete_dead_snapshots... done
+bcachefs (loop0): check_inodes... done
+bcachefs (loop0): check_extents... done
+bcachefs (loop0): check_indirect_extents... done
+bcachefs (loop0): check_dirents... done
+bcachefs (loop0): check_xattrs... done
+bcachefs (loop0): check_root... done
+bcachefs (loop0): check_unreachable_inodes... done
+bcachefs (loop0): check_subvolume_structure... done
+bcachefs (loop0): check_directory_structure... done
+bcachefs (loop0): check_nlinks... done
+bcachefs (loop0): check_rebalance_work... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): set_fs_needs_rebalance... done
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/bset.c:652!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5336 Comm: syz.0.0 Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:make_bfloat fs/bcachefs/bset.c:652 [inline]
+RIP: 0010:__build_ro_aux_tree+0x17e1/0x1800 fs/bcachefs/bset.c:750
+Code: 21 a4 fd be 01 00 00 00 48 c7 c7 20 25 76 8e 48 89 da e8 d2 43 db 00 e9 18 f4 ff ff e8 28 21 a4 fd 90 0f 0b e8 20 21 a4 fd 90 <0f> 0b e8 18 21 a4 fd 90 0f 0b e8 10 21 a4 fd 90 0f 0b 66 66 66 66
+RSP: 0018:ffffc9000d356c60 EFLAGS: 00010246
+RAX: ffffffff841c10b0 RBX: dffffc0000000000 RCX: 0000000000100000
+RDX: ffffc9000e322000 RSI: 00000000000fffff RDI: 0000000000100000
+RBP: ffffc9000d356e30 R08: ffff88800019c880 R09: 0000000000000002
+R10: 000000000000ffff R11: 0000000000000002 R12: ffff888056620191
+R13: 0000000000000130 R14: 0000000000000001 R15: 0000000000000090
+FS:  00007f809202d6c0(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055bd826af168 CR3: 0000000044198000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ bch2_bset_build_aux_tree+0x3f5/0x570 fs/bcachefs/bset.c:787
+ bch2_btree_build_aux_trees fs/bcachefs/btree_io.c:451 [inline]
+ bch2_btree_post_write_cleanup+0x630/0xad0 fs/bcachefs/btree_io.c:2628
+ bch2_btree_node_write_trans+0x17b/0x760 fs/bcachefs/btree_io.c:2676
+ btree_node_write_if_need fs/bcachefs/btree_io.h:167 [inline]
+ __btree_node_flush+0x323/0x430 fs/bcachefs/btree_trans_commit.c:255
+ bch2_btree_node_flush0+0x27/0x40 fs/bcachefs/btree_trans_commit.c:264
+ journal_flush_pins+0x8e3/0xe90 fs/bcachefs/journal_reclaim.c:604
+ journal_flush_pins_or_still_flushing fs/bcachefs/journal_reclaim.c:871 [inline]
+ journal_flush_done+0x112/0x810 fs/bcachefs/journal_reclaim.c:889
+ bch2_journal_flush_pins+0x155/0x250 fs/bcachefs/journal_reclaim.c:921
+ bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
+ bch2_fs_recovery+0x2775/0x3a50 fs/bcachefs/recovery.c:1036
+ bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
+ bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+ do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+ do_mount fs/namespace.c:4239 [inline]
+ __do_sys_mount fs/namespace.c:4450 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f809119014a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f809202ce68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f809202cef0 RCX: 00007f809119014a
+RDX: 000020000000f640 RSI: 000020000000f680 RDI: 00007f809202ceb0
+RBP: 000020000000f640 R08: 00007f809202cef0 R09: 0000000000000180
+R10: 0000000000000180 R11: 0000000000000246 R12: 000020000000f680
+R13: 00007f809202ceb0 R14: 000000000000f63a R15: 0000200000000580
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:make_bfloat fs/bcachefs/bset.c:652 [inline]
+RIP: 0010:__build_ro_aux_tree+0x17e1/0x1800 fs/bcachefs/bset.c:750
+Code: 21 a4 fd be 01 00 00 00 48 c7 c7 20 25 76 8e 48 89 da e8 d2 43 db 00 e9 18 f4 ff ff e8 28 21 a4 fd 90 0f 0b e8 20 21 a4 fd 90 <0f> 0b e8 18 21 a4 fd 90 0f 0b e8 10 21 a4 fd 90 0f 0b 66 66 66 66
+RSP: 0018:ffffc9000d356c60 EFLAGS: 00010246
+RAX: ffffffff841c10b0 RBX: dffffc0000000000 RCX: 0000000000100000
+RDX: ffffc9000e322000 RSI: 00000000000fffff RDI: 0000000000100000
+RBP: ffffc9000d356e30 R08: ffff88800019c880 R09: 0000000000000002
+R10: 000000000000ffff R11: 0000000000000002 R12: ffff888056620191
+R13: 0000000000000130 R14: 0000000000000001 R15: 0000000000000090
+FS:  00007f809202d6c0(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055bd826af168 CR3: 0000000044198000 CR4: 0000000000352ef0
 
 
-> 
-> Ben.
-> 
-> -- 
-> Ben Hutchings - Debian developer, member of kernel, installer and LTS
-> teams
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
