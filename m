@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-744382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00F4B10C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DE2B10C21
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3B37B94F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA123BDF55
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037542DEA84;
-	Thu, 24 Jul 2025 13:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C662DC325;
+	Thu, 24 Jul 2025 13:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqpCqpa8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/rhJZXJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B5E2DEA89;
-	Thu, 24 Jul 2025 13:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883DB18E025;
+	Thu, 24 Jul 2025 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753365039; cv=none; b=afM94P7crHD3lVZBV73J5ZEbs+sbkAhAFkBzrEtn/P1D8NPqWSDhBDfnU7EQR0r8FJzJrEW+H8DLnfAzB8SPsgcA4V1MfrfOc8mFAkPAdMGUkaMDBVJuZnG5SkgC9056oXr35Bshc9rc+koj3hxqzdlJZ/RwDSWr8OunA/rrG4M=
+	t=1753365072; cv=none; b=kQPZavjc+yy/nI4XvhUJoVv0m6q4c7xbIaQcep5cYcOhXbUBLNpYqEn8PN8NyrKVD6PXO21ejANDRF03hqP3tHeka1hpfYaucTAOK+cN8UwprPXXwOsp/rAzWE8TsZ0OBvuuD5IZ0Lsu/hbLyiwHC/aUPZCvDhGwn7D3rAiVkQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753365039; c=relaxed/simple;
-	bh=iJjLNDfFc1+GOOk7iXnO04IQxxZdux2GznFTgHowxBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pitqFfH4EIzopM3wlDs0FW2tlGGSOg3F5rPhcpybmdcSTbTyGTXS1efaQynBEyfIRWEwZSTcAmvr6cDxv6UnQBKSkLH9u6P2JraDr61m4icMK0qvUkwqwrBHtbsMP2bCjz6JG/bohmXrcn89ICiOx1wvcQXF2Yj+dTeJA5o9jhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqpCqpa8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A40C4CEED;
-	Thu, 24 Jul 2025 13:50:35 +0000 (UTC)
+	s=arc-20240116; t=1753365072; c=relaxed/simple;
+	bh=a5F5WdeNr+6UL1FTjKLm8yq2/Q45+2nnNzBSMbUAfjw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hd7rRkyqGmd8mviwF9qh4f8w58rmxnVZaAJXro076xJsTqXXn/iiMjxcN1vvKpX/S1JwBBC/KY/ZN6QCiTne4GN18FuGiVsX2mFfIy6CsfupaIQTrFkWgrccCSEXz93EYhsVF4tTfkg7yC3ZV1VpxpP7vMo9CARcsjzA1ljuPJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/rhJZXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73387C4CEF5;
+	Thu, 24 Jul 2025 13:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753365038;
-	bh=iJjLNDfFc1+GOOk7iXnO04IQxxZdux2GznFTgHowxBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OqpCqpa8IWuCzkJ3Alf+tjYsASPgZIrtdsqjDLkugG365FO7HHKm/9A1Y3rAKIf1I
-	 mrELj6E07kyVhr5+roursPmMQeUhe0cb4TIqEEgZ7c/DT2htlkoshQ8dNKz1JleFtd
-	 G4WYnENA2jclojwypGF2Wwyk4vvZbqRNVWcF3+mGd4+qvSGWlwemCBAmwTkjYJMpTH
-	 krghYq51KSAHWhiu/HjnxfqxQtpog6JnwBKweo6q2kvnhJpfVoqKjuDyv2YH2bY0Fh
-	 k8+HxjJ2sOVGL4X/2YWO6K8emN/kxlCPAygYV5awwPLs9zVuYUyttdJacAF2bj8+g0
-	 3bJNbckxIlSoQ==
-From: Alexey Gladkov <legion@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>
-Cc: linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Alexey Gladkov <legion@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v5 10/10] s390: vmlinux.lds.S: Reorder sections
-Date: Thu, 24 Jul 2025 15:49:47 +0200
-Message-ID: <2860d5a5e7c6279b3836537e20b0fa0c40d2ba0f.1753354215.git.legion@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1753354215.git.legion@kernel.org>
-References: <cover.1753354215.git.legion@kernel.org>
+	s=k20201202; t=1753365072;
+	bh=a5F5WdeNr+6UL1FTjKLm8yq2/Q45+2nnNzBSMbUAfjw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=p/rhJZXJPL+hUu5+jASgQUGlnPJUr1Xc29vibLZ8cNKZe01Mj5RN+KYj7LDB+xhJb
+	 o/hSi4YULMPs3UbgtcGgxe/YDYUPUE8xO8HC5+Jmd0ahq+2sKqaMEivl3B75n/w2sQ
+	 tJaL41C7P/tqlizhqTU9Uq/xra5sXzQCbNBMnnzr+UXC/Uw0f+7ppybFg/Ny7vEvC8
+	 iRMRIWOpswAtwWBK926ekJULZhZcKmwdDTC/Sqteu2FiAd0MNEXULYbRqpCM8ANcGX
+	 JP0Zv3NVzmYt9jbIeeGkxoajWjxhIStbkfPpciaPsAuweTqnEBCI7LztQrWQ6+Nd9/
+	 VQf1lb2KCJLXQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Tudor Ambarus
+ <tudor.ambarus@linaro.org>,  Michael Walle <mwalle@kernel.org>,  Miquel
+ Raynal <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  Krzysztof Kozlowski
+ <krzk@kernel.org>,  linux-spi@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-mtd@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/3] mtd: spi-nor: Add a driver for the VIA/WonderMedia
+ serial flash controller
+In-Reply-To: <CABjd4YyRScBgDbi8Sk0D3vxcmLF8+YBetUdkfhrS_4Y7M+gS1g@mail.gmail.com>
+References: <20250510-wmt-sflash-v1-0-02a1ac6adf12@gmail.com>
+	<20250510-wmt-sflash-v1-2-02a1ac6adf12@gmail.com>
+	<mafs01psu89sx.fsf@kernel.org>
+	<CABjd4YyRScBgDbi8Sk0D3vxcmLF8+YBetUdkfhrS_4Y7M+gS1g@mail.gmail.com>
+Date: Thu, 24 Jul 2025 15:51:08 +0200
+Message-ID: <mafs0h5z1snn7.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Reorder the sections to be placed in the default segment. The
-.vmlinux.info use :NONE to override the default segment and tell the
-linker to not put the section in any segment at all.
+Hi Alexey,
 
->> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' not in segment
->> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' not in segment
->> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modinfo' not in segment
+This email got buried in my inbox somewhere...
 
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506062053.zbkFBEnJ-lkp@intel.com/
-Signed-off-by: Alexey Gladkov <legion@kernel.org>
----
- arch/s390/kernel/vmlinux.lds.S | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On Mon, May 12 2025, Alexey Charkov wrote:
 
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index ff1ddba96352..3f2f90e38808 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -202,6 +202,11 @@ SECTIONS
- 	. = ALIGN(PAGE_SIZE);
- 	_end = . ;
- 
-+	/* Debugging sections.	*/
-+	STABS_DEBUG
-+	DWARF_DEBUG
-+	ELF_DETAILS
-+
- 	/*
- 	 * uncompressed image info used by the decompressor
- 	 * it should match struct vmlinux_info
-@@ -232,11 +237,6 @@ SECTIONS
- #endif
- 	} :NONE
- 
--	/* Debugging sections.	*/
--	STABS_DEBUG
--	DWARF_DEBUG
--	ELF_DETAILS
--
- 	/*
- 	 * Make sure that the .got.plt is either completely empty or it
- 	 * contains only the three reserved double words.
--- 
-2.50.1
+> Hi Pratyush,
+>
+> On Mon, May 12, 2025 at 1:20=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
+>>
+>> Hi Alexey,
+>>
+>> On Sat, May 10 2025, Alexey Charkov wrote:
+>>
+>> > The controller is tailored to SPI NOR flash memory and abstracts away =
+all
+>> > SPI communications behind a small set of MMIO registers and a physical
+>> > memory mapping of the actual chip contents.
+>> >
+>> > It doesn't expose chip probing functions beyond reading the ID though,=
+ so
+>> > use lower level chip opcodes via the "programmable command mode" of the
+>> > controller and the kernel's SPI NOR framework to avoid hard-coding chip
+>> > parameters for each ID the way the vendor kernel does it.
+>> >
+>> > Currently tested on a WonderMedia WM8950 SoC with a Macronix MX25L4005A
+>> > flash chip (APC Rock board), but should work on all VIA/WonderMedia So=
+Cs
+>> >
+>> > Signed-off-by: Alexey Charkov <alchark@gmail.com>
+>> > ---
+>> >  MAINTAINERS                                  |   1 +
+>> >  drivers/mtd/spi-nor/controllers/Kconfig      |  14 +
+>> >  drivers/mtd/spi-nor/controllers/Makefile     |   1 +
+>> >  drivers/mtd/spi-nor/controllers/wmt-sflash.c | 525 ++++++++++++++++++=
++++++++++
+>>
+>> Drivers in drivers/mtd/spi-nor/controllers/ are deprecated, and we want
+>> to eventually get rid of the API. The expected way is for drivers to use
+>> SPI MEM (drivers/spi/spi-mem.c). SPI MEM drivers are usually more
+>> general and not tailored specifically to SPI NOR flashes, so it might be
+>> a bit tricky to write drivers for specialized hardware with it. But I
+>> think the drivers/spi/spi-intel.c driver is written for similar kind of
+>> hardware so it should be possible.
+>
+> Oops. I've had a look at spi-mem, and it seems like it's not a
+> particularly fitting abstraction for this controller.
+>
+> From what I understood, spi-mem primarily expects to be talking SPI
+> opcodes to the controller, and for the controller/driver to bring
+> their own chip probing routines. This controller on the other hand
+> abstracts the opcodes away, and wants someone to tell it what its
+> flash chip can do (the controller itself can only get a chip ID in
+> "normal" mode, and it needs to somehow know the chip size and
+> standard/fast read capability of the chip). So pretty much the
+> opposite, huh.
 
+Does it use SFDP to figure out which opcodes to use? Then it feels very
+similar to intel-spi. See [0] for example. I know this is fitting a
+square peg in a round hole, but if it isn't too painful then it would
+make maintenance on SPI NOR end a bit easier.
+
+Mika (+Cc), you did the conversion of intel-spi to SPI MEM. Maybe you
+can share how painful/easy the conversion was, and if it ended up being
+maintainable?
+
+>
+> In the end, I only need something like spi_nor_detect() and can do the
+> rest directly on top of the MTD framework without touching any SPI
+> opcodes after the detection is done. Is there any other non-deprecated
+> framework that can provide something like this? Maybe physmap? It
+> looks even older than SPI NOR though :)
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/spi/spi-intel.c#n905
+
+--=20
+Regards,
+Pratyush Yadav
 
