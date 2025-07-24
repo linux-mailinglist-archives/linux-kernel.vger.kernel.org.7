@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-743632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BECB10126
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05718B10128
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C561B7B6DD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126D1584E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 06:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFB8220686;
-	Thu, 24 Jul 2025 06:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N2kX8jwu"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AB8226D14;
+	Thu, 24 Jul 2025 06:56:20 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D69186E2E;
-	Thu, 24 Jul 2025 06:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F7224891;
+	Thu, 24 Jul 2025 06:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753340175; cv=none; b=e7+HDrtfML2uQDSsLJT59Tgw6iZnmkHI+V9DrPSczcH3J8MetjtJ/Jhu8gRCDRfAZUsaD0M327Y7TAcXQ21ZikWhX5pSp26CwevnJTbHYj/QOxK5+Q/IPDb8WwNurQHLRZFwuhzqfTj7GwPj+pG7K17U3rQank9EFizznjaoFLc=
+	t=1753340180; cv=none; b=YPDcn+IHlLpzHFY4utmvr34aNGOjP25cO/kAv/AMUwqDQasmrPXLctKurHbnld2ckuyyuW92mL/7qjMmHuw1s2eAF+vJyUHCyB03eTepgPiSO5NJsKzFTxUDnTsiWMr/jG98tiHA4co4F81klDHH6I98Jhcobkc7mImH5seMaWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753340175; c=relaxed/simple;
-	bh=8Xnyn6F3J+6N3ZoAWpn47q9S4V+9YNTWSvrZ3zY3jpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iWz60i71dCYLi0pPfGVoFaCF8NfhDW5A5Z1u8iuVQOVXIW2EA3ZZ4tF+EfVEhL6LOCRLbuPUPdLWxV3GShmcb4bEcnhGI2AlKQp9xpCsJH6i8DfHxh/rO0CKWz/2Zv/6q7L1MzxkD9Ef/LOOEhiBvSB8qxDb4mEHzPZb/gDNu+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N2kX8jwu; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56O6sRss1439614;
-	Thu, 24 Jul 2025 01:54:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753340067;
-	bh=hOc1q4h2DdgZveLq/ie+ow6+3RIYzRAV3p05yW0fvLU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=N2kX8jwuYkhgzG6LEy5g1tNb05z48U8jpcmbH2yHHGPpXqOVJHPaxvqF/BIOdCJLe
-	 yWvdC/2jho+huPaN3rCxyQjMPcOyaMi9dZgnT3IZCCq75cR+ehkRL6lsjpKpxPJEio
-	 npQVk7/rRn79EG1drE+bfpWDIVimcyA/yckGsECU=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56O6sRpN3359445
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 24 Jul 2025 01:54:27 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 24
- Jul 2025 01:54:26 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 24 Jul 2025 01:54:26 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56O6sK9K033297;
-	Thu, 24 Jul 2025 01:54:20 -0500
-Message-ID: <db4e65a7-bdb6-4e96-b9d0-eda4b30e4e71@ti.com>
-Date: Thu, 24 Jul 2025 12:24:19 +0530
+	s=arc-20240116; t=1753340180; c=relaxed/simple;
+	bh=d6EwIeVxZxsVQFHkH3jUKld652EUW7QYzuDNa7bok58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g/u4XXkIQ14+ykiaSJNWumdjFaiBNysopzc8GlC6dph7m89MJRIzNyEfF6WP5xIhe9vEmYbh31eCEO0EsuiRv2uw9HhV3eu8xbIXg/rw7t2c3vWjpw6HiaYX/MC3JPI+8OmtNO7CyZ8Mi/NW/iSBofDGggOUTDLYMY/S48Wx6u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56O6thO3025564;
+	Thu, 24 Jul 2025 15:55:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56O6thHW025561
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 24 Jul 2025 15:55:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
+Date: Thu, 24 Jul 2025 15:55:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,70 +47,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
- RPMSG-ETH Driver
-To: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-        Simon Horman
-	<horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        Mengyuan Lou <mengyuanlou@net-swift.com>,
-        Michael
- Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Fan
- Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
-        Lorenzo Bianconi
-	<lorenzo@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lukas
- Bulwahn <lukas.bulwahn@redhat.com>,
-        Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>,
-        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <cocci@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-References: <20250723080322.3047826-1-danishanwar@ti.com>
- <20250723080322.3047826-2-danishanwar@ti.com>
- <20250723064901.0b7ec997@kernel.org>
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "willy@infradead.org" <willy@infradead.org>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
+ <aH-enGSS7zWq0jFf@casper.infradead.org>
+ <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
+ <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
+ <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
+ <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
+ <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
 Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250723064901.0b7ec997@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
 
-Hi Jakub,
+Then, something like below change?
 
-On 23/07/25 7:19 pm, Jakub Kicinski wrote:
-> On Wed, 23 Jul 2025 13:33:18 +0530 MD Danish Anwar wrote:
->> +   - Vendors must ensure the magic number matches the value expected by the
->> +     Linux driver (see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
->> +     source).
-> 
-> For some reason this trips up make coccicheck:
-> 
-> EXN: Failure("unexpected paren order") in /home/cocci/testing/Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
-> 
-> If I replace the brackets with a comma it works:
-> 
->    - Vendors must ensure the magic number matches the value expected by the
->      Linux driver, see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
->      source.
-> 
-> Could you make that change in the next revision to avoid the problem?
-> 
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -318,6 +318,9 @@ static int hfs_read_inode(struct inode *inode, void *data)
+        struct hfs_iget_data *idata = data;
+        struct hfs_sb_info *hsb = HFS_SB(inode->i_sb);
+        hfs_cat_rec *rec;
++       /* https://developer.apple.com/library/archive/technotes/tn/tn1150.html#CNID */
++       static const u16 bad_cnid_list = (1 << 0) | (1 << 6) | (1 << 7) | (1 << 8) |
++               (1 << 9) | (1 << 10) | (1 << 11) | (1 << 12) | (1 << 13);
 
-Sure. I'll do this change in v2.
+        HFS_I(inode)->flags = 0;
+        HFS_I(inode)->rsrc_inode = NULL;
+@@ -358,6 +361,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                inode->i_op = &hfs_file_inode_operations;
+                inode->i_fop = &hfs_file_operations;
+                inode->i_mapping->a_ops = &hfs_aops;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+                break;
+        case HFS_CDR_DIR:
+                inode->i_ino = be32_to_cpu(rec->dir.DirID);
+@@ -368,6 +373,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+                                      inode_set_atime_to_ts(inode, inode_set_ctime_to_ts(inode, hfs_m_to_utime(rec->dir.MdDat))));
+                inode->i_op = &hfs_dir_inode_operations;
+                inode->i_fop = &hfs_dir_operations;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+                break;
+        default:
+                make_bad_inode(inode);
 
-> Julia, is there an easy way to make coccinelle ignore files which
-> don't end with .c or .h when using --use-patch-diff ?
 
--- 
-Thanks and Regards,
-Danish
+
+But I can't be convinced that above change is sufficient, for if I do
+
++		static u8 serial;
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       inode->i_ino = (serial++) % 16;
+
+instead of
+
++               if (inode->i_ino < HFS_FIRSTUSER_CNID && ((1U << inode->i_ino) & bad_cnid_list))
++                       make_bad_inode(inode);
+
+, the reproducer still hits BUG() for 0, 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 and 15
+because hfs_write_inode() handles only 2, 3 and 4.
+
+        if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+                switch (inode->i_ino) {
+                case HFS_ROOT_CNID:
+                        break;
+                case HFS_EXT_CNID:
+                        hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
+                        return 0;
+                case HFS_CAT_CNID:
+                        hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
+                        return 0;
+                default:
+                        BUG();
+                        return -EIO;
+                }
+        }
+
+Unless this is because I'm modifying in-kernel memory than filesystem image,
+we will have to remove BUG() line.
+
+On 2025/07/24 3:43, Viacheslav Dubeyko wrote:
+> This could be defined in Catalog File (maybe not). I didn't find anything
+> related to this in HFS specification.
+
+https://developer.apple.com/library/archive/technotes/tn/tn1150.html#CNID
+says "the CNID of zero is never used and serves as a nil value." That is,
+I think we can reject inode->i_ino == 0 case.
+
+But I'm not sure for other values up to 15, expect values noted as "introduced
+with HFS Plus". We could filter values in bad_cnid_list bitmap, but filtering
+undefined values might not be sufficient for preserving BUG() line.
 
 
