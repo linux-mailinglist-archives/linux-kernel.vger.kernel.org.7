@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-743532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C174B0FFDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A74BB0FFDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B139612F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2419623F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130BD1F152D;
-	Thu, 24 Jul 2025 05:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0200E1F4C83;
+	Thu, 24 Jul 2025 05:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDf7fPKv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9FOX7LB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C11C2A1BB;
-	Thu, 24 Jul 2025 05:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561CF2A1BB;
+	Thu, 24 Jul 2025 05:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753334177; cv=none; b=LsPMZ0+Ar6+wqLkwd46Xd396+nxJuu+s1LyP09SOY1mwRQCq9naDywIy/mRiUvUGJiFWhH4EulCjFtHt67JH2a7BJQV+OUK3yRUfYiZnhu1dzh4SslVTr8hnpADhzSdfo6f0g5Dev+zOI0ME/3CcX9TEB6g8H7PbOZ4YEYiTMkc=
+	t=1753334295; cv=none; b=oJ31h0ZL8om6imCeydBgcdffLutdugN1FzXjHJbipGODA8vevdk7uoZmbhXtWZbNo3t8sKbXsuABWqJU9znr1/dgr36CrnZep4rhA9owxducBmwx8p+vufdX8baeUGFQzxt0mnEIZlI0Xxew0Z2z3Ys6mKeM9NsbFqWcBltEUSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753334177; c=relaxed/simple;
-	bh=ChjVuI92grVv1Wb2zdKvfkGA/KdPS2ntIBxgSs2cy58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVWbUZAgzcT2bE+xkXEsvaFMoX8KtfVoz+GnPztHDBOas4ZhBg5fSX62mdnm3ZcRnPBO9Yck+iPw3GCgQBMSCS99g1L0fL2q42nXq0FCtOL0t5PAI96i3HF/CVVYBx3kRw6zcxY+QllT8n8rzZ1ZG4aq/mQzkV2qlByHWF2uYz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDf7fPKv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3550AC4CEED;
-	Thu, 24 Jul 2025 05:16:15 +0000 (UTC)
+	s=arc-20240116; t=1753334295; c=relaxed/simple;
+	bh=GbrUnm5CwA+Iub1SElDV2vDitfy2uO0GIXx02fQSgLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rzjP23xYvCIeG3m2cESkclq2oZr316moj2L8Wfg3LoPzN7/crndm8cSu6A/ehWyRbLMnXSV7+QXUGIJdXtDfn18UAQMvPyytFO0FMT8dL2kt27BXVeirTC9kZXxamqrL8gSWcmk1ylXCHpX6WX0oQUSHRf+fz1gSIcJQTE+ESg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9FOX7LB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3738DC4CEED;
+	Thu, 24 Jul 2025 05:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753334177;
-	bh=ChjVuI92grVv1Wb2zdKvfkGA/KdPS2ntIBxgSs2cy58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aDf7fPKvrbph1QdRpdmMP1z3QCXzHu++/Y+tNqfUMDcJkq+/L4GysacmuFXgk22jc
-	 75N8KslaSQq6uIm3+in+iMrdqLIvw/VmhZtRM2ceSHB38C34EpYGPXjg4yk7yRGNEk
-	 u7OaKXHzlJ3uDkLp1MyYQQCwNzrZwzGq40UZjQfWdLFBQtQeeLcdSEyPF10nmLF66Z
-	 MARPPCh2EdnesPU4JwD7wjM6DDnc7WvY68KW7o/XvCKKBAqRRX6xSBdwXsQ1J5NLmq
-	 q7qpZQ1VqnlxyLLFU3uQHkWuSXl3rAkwMYvTXcahJN6NBQbO9qJtN72FaJsksOviPs
-	 U/1ZSxMOu5vfA==
-Date: Thu, 24 Jul 2025 07:16:12 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-tip-commits@vger.kernel.org, Donghoon Yu <hoony.yu@samsung.com>,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	John Stultz <jstultz@google.com>,
-	Will McVicker <willmcvicker@google.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, x86@kernel.org
-Subject: Re: [tip: timers/clocksource] clocksource/drivers/exynos_mct: Don't
- register as a sched_clock on arm64
-Message-ID: <aIHBnFESZwjpXzjr@gmail.com>
-References: <20250620181719.1399856-3-willmcvicker@google.com>
- <175325504976.1420.2666973232153470630.tip-bot2@tip-bot2>
+	s=k20201202; t=1753334295;
+	bh=GbrUnm5CwA+Iub1SElDV2vDitfy2uO0GIXx02fQSgLo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q9FOX7LBQRReG/YAp1CozHoffOFUbgQ2usok82trvfgot4I9n2YHJEPR3AGQXIaHN
+	 McsvU+DdcKDwmWJpYiSB+mTweaqw4XCjGB6/SrbQRobArkB05wbpyRZegFFvNd1AoO
+	 EpYxGgIqoTVvRuRJaFqgdvLHx1TOhmcxhDYydbeHX7AiTnSD+b1mexJtZUNiSR1Lm0
+	 ohMvHZXd62SQ1Mo7vAs3x+qylJaXovujBO6P5rGLbHZ+M+WVkQh15VbDUk8zLkifxo
+	 N85MDlXS37Cp+YmowXyFH44Re/vweksLYPvsW9xrutpjiMxDhwT77tigXZ+PorJMN+
+	 TCDCbCagdPgCQ==
+Message-ID: <aeeb783d-d921-450c-885d-c8e8b328f81b@kernel.org>
+Date: Thu, 24 Jul 2025 07:18:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175325504976.1420.2666973232153470630.tip-bot2@tip-bot2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] genirq: add support for warning on long-running IRQ
+ handlers
+To: Wladislav Wiebe <wladislav.wiebe@nokia.com>, tglx@linutronix.de,
+ corbet@lwn.net, jirislaby@kernel.org
+Cc: akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, bp@alien8.de, arnd@arndb.de,
+ fvdl@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peterz@infradead.org
+References: <20250723182836.1177-1-wladislav.wiebe@nokia.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250723182836.1177-1-wladislav.wiebe@nokia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-* tip-bot2 for Will McVicker <tip-bot2@linutronix.de> wrote:
-
-> The following commit has been merged into the timers/clocksource branch of tip:
+On 23. 07. 25, 20:28, Wladislav Wiebe wrote:
+> Introduce a mechanism to detect and warn about prolonged IRQ handlers.
+> With a new command-line parameter (irqhandler.duration_warn_us=),
+> users can configure the duration threshold in microseconds when a warning
+> in such format should be emitted:
 > 
-> Commit-ID:     394b981382e6198363cf513f6eb6be4c55b22e44
-> Gitweb:        https://git.kernel.org/tip/394b981382e6198363cf513f6eb6be4c55b22e44
-> Author:        Will McVicker <willmcvicker@google.com>
-> AuthorDate:    Fri, 20 Jun 2025 11:17:05 -07:00
-> Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-> CommitterDate: Tue, 15 Jul 2025 13:00:50 +02:00
+> "[CPU14] long duration of IRQ[159:bad_irq_handler [long_irq]], took: 1330 us"
 > 
-> clocksource/drivers/exynos_mct: Don't register as a sched_clock on arm64
-> 
-> The MCT register is unfortunately very slow to access, but importantly
-> does not halt in the c2 idle state. So for ARM64, we can improve
-> performance by not registering the MCT for sched_clock, allowing the
-> system to use the faster ARM architected timer for sched_clock instead.
-> 
-> The MCT is still registered as a clocksource, and a clockevent in order
-> to be a wakeup source for the arch_timer to exit the "c2" idle state.
-> 
-> Since ARM32 SoCs don't have an architected timer, the MCT must continue
-> to be used for sched_clock. Detailed discussion on this topic can be
-> found at [1].
-> 
-> [1] https://lore.kernel.org/linux-samsung-soc/1400188079-21832-1-git-send-email-chirantan@chromium.org/
-> 
-> [Original commit from https://android.googlesource.com/kernel/gs/+/630817f7080e92c5e0216095ff52f6eb8dd00727
-> 
-> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Acked-by: John Stultz <jstultz@google.com>
-> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> Link: https://lore.kernel.org/r/20250620181719.1399856-3-willmcvicker@google.com
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> The implementation uses local_clock() to measure the execution duration of the
+> generic IRQ per-CPU event handler.
+...> +static inline void irqhandler_duration_check(u64 ts_start, 
+unsigned int irq,
+> +					     const struct irqaction *action)
+> +{
+> +	/* Approx. conversion to microseconds */
+> +	u64 delta_us = (local_clock() - ts_start) >> 10;
 
-The whole SOB chain of this commit is messy and has several serious 
-problems:
+Is this a microoptimization -- have you measured what speedup does it 
+bring? IOW is it worth it instead of cleaner "/ NSEC_PER_USEC"?
 
-1)
+Or instead, you could store the diff in irqhandler_duration_threshold_ns 
+(mind that "_ns") and avoid the shift and div completely.
 
-This commit has misattributed authorship: the first SOB is:
+And what about the wrap? Don't you need abs_diff()?
 
-   Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
+thanks,
+-- 
+js
+suse labs
 
-but the Author field is not Donghoon Yu:
-
-   Author:        Will McVicker <willmcvicker@google.com>
-
-2)
-
-The Reviewed-by tag is misapplied:
-
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-
-When someone passes along a patch, it's implicit that they have 
-reviewed it.
-
-3)
-
-There's also a stray Tested-by tag by one of the SOB entries:
-
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-
-When someone passes along a patch, it's implicit that they not only 
-have reviewed the patch, but have also tested it to a certain extent 
-...
-
-4)
-
-Why is the 'Link' tag just in the middle of the SOB chain, instead at the end of it?
-
-
-Presumably this is the proper SOB chain:
-
-> Author:        Donghoon Yu <hoony.yu@samsung.com>
-
-> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Acked-by: John Stultz <jstultz@google.com>
-> Link: https://lore.kernel.org/r/20250620181719.1399856-3-willmcvicker@google.com
-
-Correct?
-
-Thanks,
-
-	Ingo
 
