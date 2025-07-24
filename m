@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-744130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A44B1084E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A717B1084A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CDFA1C207A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867C15A556B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0195526B09F;
-	Thu, 24 Jul 2025 10:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E1626A1D0;
+	Thu, 24 Jul 2025 10:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8rKGJMp"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrQfJWDG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49301D7E4A;
-	Thu, 24 Jul 2025 10:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31385266B59;
+	Thu, 24 Jul 2025 10:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753354710; cv=none; b=SjyctXzJ7LssYAhg57g4hambSb7tlKdPgXnnb2QcoteAzy5D367V6nBI1+aONmmfIxdURh850wALV75RfqgZABdJNuxqdzHXt7AFAwBCMyLwijQumeVgTHJD4ZssnB1kWeEZZ29xLfWY4L+khRWUSyn6kqFEJXpwd55qlFBBals=
+	t=1753354682; cv=none; b=jm09LFp11+abNStMCbtsSLInOYtqOd7LUsXsy9++4riwLG2ZV5/257Dibp9upP0QuoHkOcIF6nRtyPhKM6HTcxVKgDU1pLM9pLwKFhX8LfOumcMnJkuO04URQXH3kqNo5poBiwGGaK65iZYXbfWUv3vE/vGhiStq4RIYNd5tY4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753354710; c=relaxed/simple;
-	bh=wl+SOkF9O3gURIzsMwzVH/kEkZbhPgd5zO2cNyRnC2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFoyTfoclox6vk9IBF6v9Pe152tcqQwAAlgNY1rcaLU8nK9ZOXxPjKpbnT/2PDc24nFUsYD+gAMsLaKLI/fxYAqcs89ZEPicfh9DSxzYWLYDNnIHBvdnEwUvJ7gCdsRgqzDSienqQfVH5thdAw4EN5CwGvMZAA6jCYlLq29e/XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8rKGJMp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-455b002833bso3620025e9.0;
-        Thu, 24 Jul 2025 03:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753354707; x=1753959507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RGecDSfQkRQwOHSUrTvJEbSVKAprJg4maVsG15+73gY=;
-        b=Z8rKGJMpwdy7AVJQ9sCquhdF0kPoQHzXI9PwEks1YogSQC9C0RWUl0IQcxd6lABZ+j
-         mf+NEL/ZvTxp9HlJcz4BMqWbM3IJlHRE90MunDzhWMpjg3RqzXS2ESnijjtkC1tk0PQv
-         1841zMMZHLYHMAPbJABPOwaUT67pYX/xyYI+NTW6nv9tG/QznI6hqIl8/78R4zoNHpJV
-         Xv87sIBeMc9o/Cjj8HQ3CWmhPuYv/Wy9VackRfj+PTLdI4wU1Ca++Q/nJ1bzAW2oN0Kl
-         M7KTi7CyTCJuB0/VvO+uvM302I7mUlVyqCukwj/CzdcLB+A+0yH80e5SglcIItmcFAwt
-         gzbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753354707; x=1753959507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RGecDSfQkRQwOHSUrTvJEbSVKAprJg4maVsG15+73gY=;
-        b=IeMTLJfe2gZ58GbpztalT2fMw6Dd1iuQOIno3hW6JPy1eJFsQAEJXgwsLDE3GTb/xA
-         F0az0NvS5Zdj03qdS2rycyQkJDBE5xIvmUFswS4T6pDuNthN7yK2wbicRCJhYw1RXrBX
-         Jkp6V/qqGeSFtnjAvPYjifYfZGXkaRMDnuDlX2XI4JO31xJVvw+JOeXJOsf83S0y8mju
-         zHbDj6ArpFPmrTa6u8dnBAXaZqiLj9ZusGahsHGKQKs8Adj+9ueXunI7yK8xX6Zee94L
-         MunuileVBbv+mCu0+YmPgm6BLfB/MVnAL2YBCCE/8xRQBLVmgRLKLXpJM09w2knZqXXV
-         MBMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvVUu/jkwPxi7U//Wh64tzg1XbDfh27cY96y+Dtfly+wB0tW6NCDLO3GYpqS3RxQkkstZQ6RyEc3mdUqM=@vger.kernel.org, AJvYcCWJhB/kaVTmkZolO1TlRzkVPKwCm0N7T3gtwtAyn0B5Ik+dZSqFsG5aYvwuzEz0l3t+H54GAnFhYtBf4kPu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp6Z8qB4PS6kvIeDbjSoiz2MEa+TqPCqCxqlX9AJ+Wxdy6Or4e
-	B//xX7K2s6WiaYR74/5UWsTwdOmrAhL27ga8YINywvFRG97/FnXDSKya
-X-Gm-Gg: ASbGncuwOpquEBqH4hEv2hc58z/fwDfVBqYxw8pySb6O0rFDk2iu8c3+gC1nG41RENH
-	jvoD4jzHXAajLES1YFfYeSjljowjKuV2nhb+PcOaYCFAMu9DRktEq7mO0Lho811MUVd6JEvUVZI
-	Giio9ZiptCPUvSagh2Mj3lCWHbCEtga4gcDNw1bLF2uujmwMWocBzfCooGQ8WLozolciOdwPxfn
-	kPhpKAfMx6e3s5qCAeX1Jbds8eZcjktrcw+wsLqhgulz/KO37WCS/fv099EVxSX7sHJPGdSO/zJ
-	a7y3X4ojqy/Fr11BI0+VSiwV/boNgw7p1Y2Qb0s6BWVtifTD95dbZ/wiFOS8uu+WrHYN3d3VTl5
-	Rr1ss5/ZYTiNYECGymzs3
-X-Google-Smtp-Source: AGHT+IEec1gAogEhVNDlKxHHWHB5R0+lqM/g4ZlsnII2um+rpJwBJ/Nvy+vyPcI2BysN3G6ob2NnHw==
-X-Received: by 2002:a05:600c:3e83:b0:456:2000:2f3f with SMTP id 5b1f17b1804b1-45868d53693mr42892935e9.23.1753354706968;
-        Thu, 24 Jul 2025 03:58:26 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705ce781sm15812735e9.31.2025.07.24.03.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:58:26 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-crypto@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] crypto: stm32: Fix spelling mistake "STMicrolectronics" -> "STMicroelectronics"
-Date: Thu, 24 Jul 2025 11:57:54 +0100
-Message-ID: <20250724105754.140400-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753354682; c=relaxed/simple;
+	bh=eyb17T22/TaRAcXNYH9l0wQD4z9L5inSOuklgAZjK+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=miWvLxx7AJz/vaS52jZEGOjnU2s25TGNb5XGRK1r81Zde680YT/e6d805tFeAwYxJ+EWM5SniuWOqsK8LbJPdZA7JCvXilHid19pe4PbBOj/gkVyPCmWb/JJRm/anEB/3thDJuxLWGArDV2hC9CEALLTweMDGBJwCDiIMZGQ3ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrQfJWDG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91BFEC4CEED;
+	Thu, 24 Jul 2025 10:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753354681;
+	bh=eyb17T22/TaRAcXNYH9l0wQD4z9L5inSOuklgAZjK+Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PrQfJWDGCeoCzn0syYnArvj85+EnPkOhQkgLUzcxfVFn18vGbFYKZvzliloRWL6AC
+	 MWVc4K0nanNw55zvqdNcKyfu2lyfTia5sXQba8IVYX1N9fsvZritEdYaRfwwWSmhEW
+	 ceBOTmW5Pvttq8+xEYQPW4lpjOvrEORq23oX/Ox+iB6tdTNnCgLR40MLHIotLXJGSf
+	 eaFCda0Lboth2drF15lDlAKrdB7pwLZu5P41lvPTaHIRqUjIsXJiP8NQEyIxPVTojJ
+	 ARde9wPSsv4xdvVcUls+U6uU88p1Mb6Be4Pz2QHn3s+jK4h6f0+DiqQZ+rY2FiGtLI
+	 3kUC5trAuMQOQ==
+Date: Thu, 24 Jul 2025 11:57:55 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: fix iio_push_to_buffers_with_ts() typo
+Message-ID: <20250724115755.5affb98e@jic23-huawei>
+In-Reply-To: <20250722-iio-fix-iio_push_to_buffer_with_ts-typo-v1-1-6ac9efb856d3@baylibre.com>
+References: <20250722-iio-fix-iio_push_to_buffer_with_ts-typo-v1-1-6ac9efb856d3@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There is a spelling mistake in the module description text. Fix it.
+On Tue, 22 Jul 2025 16:52:38 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/crypto/stm32/stm32-cryp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Replace iio_push_to_buffer_with_ts() with iio_push_to_buffers_with_ts()
+> in some documentation comments in iio.h. The latter is the correct name
+> of the function, the former doesn't exist.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+oops.
 
-diff --git a/drivers/crypto/stm32/stm32-cryp.c b/drivers/crypto/stm32/stm32-cryp.c
-index a89b4c5d62a0..5e82e8a1f71a 100644
---- a/drivers/crypto/stm32/stm32-cryp.c
-+++ b/drivers/crypto/stm32/stm32-cryp.c
-@@ -2781,5 +2781,5 @@ static struct platform_driver stm32_cryp_driver = {
- module_platform_driver(stm32_cryp_driver);
- 
- MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
--MODULE_DESCRIPTION("STMicrolectronics STM32 CRYP hardware driver");
-+MODULE_DESCRIPTION("STMicroelectronics STM32 CRYP hardware driver");
- MODULE_LICENSE("GPL");
--- 
-2.50.0
+Applied to the testing branch of iio.git.
+
+Thanks,
+
+J
+> ---
+>  include/linux/iio/iio.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> index d11668f14a3e17654fcf17a4e853d4b493205019..2f5560646ee49052deaaaae1dd2b92b21c4d4fd5 100644
+> --- a/include/linux/iio/iio.h
+> +++ b/include/linux/iio/iio.h
+> @@ -779,7 +779,7 @@ static inline void *iio_device_get_drvdata(const struct iio_dev *indio_dev)
+>   * them safe for use with non-coherent DMA.
+>   *
+>   * A number of drivers also use this on buffers that include a 64-bit timestamp
+> - * that is used with iio_push_to_buffer_with_ts(). Therefore, in the case where
+> + * that is used with iio_push_to_buffers_with_ts(). Therefore, in the case where
+>   * DMA alignment is not sufficient for proper timestamp alignment, we align to
+>   * 8 bytes instead.
+>   */
+> @@ -794,7 +794,7 @@ static inline void *iio_device_get_drvdata(const struct iio_dev *indio_dev)
+>   * @name: identifier name of the buffer
+>   * @count: number of elements in the buffer
+>   *
+> - * Declares a buffer that is safe to use with iio_push_to_buffer_with_ts(). In
+> + * Declares a buffer that is safe to use with iio_push_to_buffers_with_ts(). In
+>   * addition to allocating enough space for @count elements of @type, it also
+>   * allocates space for a s64 timestamp at the end of the buffer and ensures
+>   * proper alignment of the timestamp.
+> 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250722-iio-fix-iio_push_to_buffer_with_ts-typo-7bf33a1aa365
+> 
+> Best regards,
 
 
