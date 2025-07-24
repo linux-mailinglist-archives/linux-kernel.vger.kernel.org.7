@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-744327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3774B10B13
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDF0B10B23
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5731CE292A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158313AAD30
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2712D5C6E;
-	Thu, 24 Jul 2025 13:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66D2D5C6A;
+	Thu, 24 Jul 2025 13:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4PaeJpx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2gc4jBO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F092BE643;
-	Thu, 24 Jul 2025 13:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F8123D287;
+	Thu, 24 Jul 2025 13:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753362742; cv=none; b=vDHak8HF57c8ZS80X5s2sEU9T21otm5gSkMLYmRTr2voRHDfDJbVHodXqRXeI+3u/jaT1yQLg33/wv675SRqMxXsTMvSC8zQj91Dn+Xalbb4jGYz27WY4cDN22bvgeshNDwaVg2IZ4wr9VvjLa3aZ53QiJhtbyva/PlYQcAeyCc=
+	t=1753362888; cv=none; b=clZDWv+wUUTO1dJ3NtMP8MGRdLr96DbjCoHU26C1Cx7PwZvqu2htwryyk+CnX+7ajTsyknTFAR/ZOA+a4Z3J0CEgFcUUqQn02E7CU11eeB+7Qz72c/XbBM/3g6WmkyrWQogl1MFoa5HuRJKdm6k9VVYpie5QtjZTAbJ5I7+LaWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753362742; c=relaxed/simple;
-	bh=OkPRL57kOfmY931OTFdFQJUDqRwpx+07WG3VjlUybmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AWPMIQM9AN63uzalsOq/kMaPYHfoeTt+n6oryePS+9MW8dugPYgs5ytrZUiW9rCtZZ7PWpo8cW3TZTXFIQmgq2Lq5m/9LPh98liZX5MlA5Oi+sla3JU/CRXhRjZXVqFkBUhuY4oAw1amiYzN5e0tzYTNSvW5M3dovruygogV4pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4PaeJpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D640C4CEED;
-	Thu, 24 Jul 2025 13:12:18 +0000 (UTC)
+	s=arc-20240116; t=1753362888; c=relaxed/simple;
+	bh=AGeksOmyi1eAe26xCazCrUSZ/VFJkDTsgpgfMRQyYok=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=P2ocJWT9K0HfN09KMRyYaaHSmTUzYwLGJ8ih6bRR4fI9Au3UV5fvga06lBh7c8a6mzQ4UOC89XAT3TUkVfsCRJ5tuZj64DHeI/WdDTE5Lvwim6d//PCIHoc8Fkxez+jhffoa1OnXddFuoCMpRorOYfeTUbpj+cyl7MwIJ6PdRL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2gc4jBO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 720B5C4CEED;
+	Thu, 24 Jul 2025 13:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753362742;
-	bh=OkPRL57kOfmY931OTFdFQJUDqRwpx+07WG3VjlUybmQ=;
+	s=k20201202; t=1753362887;
+	bh=AGeksOmyi1eAe26xCazCrUSZ/VFJkDTsgpgfMRQyYok=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M4PaeJpxE6uMFL1q2YUVr2cgXRWLbbkoYrXYlb8yzhRfzMNSrj0WlzLvnn6R+YzX2
-	 WAye9TZdsnJqZV41ogGMSnrJ+4HzCn6/iA0rqJi3WVBiIOIzWbHeGsXpyZwi7GwBjj
-	 xZFyVApBaVjKEEZsdCm9ZhDUhFYHfRN4z4y89Z92KSX7M3ZWdJVTUQBERHM+Jw0QE6
-	 nEhX7CsrCXR3lhyD7HXeGPP04z/FO7pURMf/a2P3a6ACc/nAIw4nBZzB+FPB0Prfu2
-	 UVxQ6vhfolxh9YsdSD1NdWQfVSktIqAWSJiAz88TJlmgWpNe1LIWklhuI8k1D9BMIr
-	 A8BbPpHI18C+Q==
-Date: Thu, 24 Jul 2025 14:12:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4] iio: adc: ad7173: add SPI offload support
-Message-ID: <20250724141215.07319298@jic23-huawei>
-In-Reply-To: <20250710-iio-adc-ad7173-add-spi-offload-support-v4-1-536857c4e043@baylibre.com>
-References: <20250710-iio-adc-ad7173-add-spi-offload-support-v4-1-536857c4e043@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	b=P2gc4jBODFrJVo2+ELoGX1eK3v2kdfZUIiI1glGeEEyy+zT6F0Z0ppQCykf7LMl+p
+	 jf1RkcHHlO5nZtytD3/gL0ybWOiiNv+o00rch7Maf0cmnUEWUb5b4AJ0NBK5GsNixp
+	 VAFOAv71xCIVHWv0KRyJxJqCZxI04T4HqQUHlZeSs6rEDofO/s5Y77e/xjf1OHZltt
+	 uOC0FWg+kqKjFuc7i6pT/LUO6Y9ZJok7QB4GH+8P7hA/t9RQ0bhLr2j+qKVKbXjeko
+	 konfW7X8/Tr44rBvCVemCK3Levay1RgtJ8xSI/F1/f+ZbtKw01Fd/Jc1uEM59GBGdH
+	 xv+Yg/z1rUQnQ==
+Date: Thu, 24 Jul 2025 22:14:44 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools:bootconfig:scripts This file was missing the
+ shebang line, so added it
+Message-Id: <20250724221444.e59014b3cb0ab0123d6393d6@kernel.org>
+In-Reply-To: <20250723235855.7e84eb3b5ed67975e1d16ca3@kernel.org>
+References: <20250722225351.8811-1-unixbhaskar@gmail.com>
+	<20250723235855.7e84eb3b5ed67975e1d16ca3@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Jul 2025 17:22:00 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Wed, 23 Jul 2025 23:58:55 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-> Enable SPI offload support for the AD7173 ADC driver.
+> On Wed, 23 Jul 2025 04:23:01 +0530
+> Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
 > 
-> The scan_type used for SPI offload is assuming that we are using the
-> ad411x_ad717x HDL project [1] which always stores data words in 32-bits.
-> 
-> Link: https://analogdevicesinc.github.io/hdl/projects/ad411x_ad717x/index.html [1]
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-I'm going to be optimistic that we don't have any clashes in this new feature
-patches with the fix I just queued up.
+> > This file was missing the shebang line, so added it.
 
-Applied to the testing branch of iio.git.
+BTW, I will change the title as
 
-thanks,
+tools/bootconfig: scripts/ftrace.sh was missing the shebang line, so added it
 
-Jonathan
+Thanks,
 
-> ---
-> v3 was applied, but then we had to drop the final patch due to a
-> conflicting fix. Here is that patch again with the changes needed to
-> adjust it to the changes in the fix.
+> > 
 > 
-> We'll have to wait for the fix to make it's way back into iio/testing
-> before we can apply this patch, so it will have to sit for a while.
+> Good catch :) 
 > 
-> v4 changes:
-> - Add one more instance of .supports_spi_offload = true,.
-> - Picked up Andy's Reviewed-by tag.
-> ---
->  drivers/iio/adc/ad7173.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Let me pick this.
 > 
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index 9730fda56186afc45f589899e669c41eb538af6b..3886d2f751d0370994ababf72409f4dcb328641d 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -747,6 +747,7 @@ static const struct ad_sigma_delta_info ad7173_sigma_delta_info_4_slots = {
->  	.set_mode = ad7173_set_mode,
->  	.has_registers = true,
->  	.has_named_irqs = true,
-> +	.supports_spi_offload = true,
->  	.addr_shift = 0,
->  	.read_mask = BIT(6),
->  	.status_ch_mask = GENMASK(3, 0),
-> @@ -763,6 +764,7 @@ static const struct ad_sigma_delta_info ad7173_sigma_delta_info_8_slots = {
->  	.set_mode = ad7173_set_mode,
->  	.has_registers = true,
->  	.has_named_irqs = true,
-> +	.supports_spi_offload = true,
->  	.addr_shift = 0,
->  	.read_mask = BIT(6),
->  	.status_ch_mask = GENMASK(3, 0),
-> @@ -779,6 +781,7 @@ static const struct ad_sigma_delta_info ad7173_sigma_delta_info_16_slots = {
->  	.set_mode = ad7173_set_mode,
->  	.has_registers = true,
->  	.has_named_irqs = true,
-> +	.supports_spi_offload = true,
->  	.addr_shift = 0,
->  	.read_mask = BIT(6),
->  	.status_ch_mask = GENMASK(3, 0),
-> @@ -1595,6 +1598,11 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->  		if (st->info->data_reg_only_16bit)
->  			chan_arr[chan_index].scan_type = ad4113_scan_type;
->  
-> +		if (ad_sigma_delta_has_spi_offload(&st->sd)) {
-> +			chan_arr[chan_index].scan_type.storagebits = 32;
-> +			chan_arr[chan_index].scan_type.endianness = IIO_CPU;
-> +		}
-> +
->  		chan_index++;
->  	}
->  
-> @@ -1685,6 +1693,12 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
->  		if (st->info->data_reg_only_16bit)
->  			chan_arr[chan_index].scan_type = ad4113_scan_type;
->  
-> +		/* Assuming SPI offload is ad411x_ad717x HDL project. */
-> +		if (ad_sigma_delta_has_spi_offload(&st->sd)) {
-> +			chan_arr[chan_index].scan_type.storagebits = 32;
-> +			chan_arr[chan_index].scan_type.endianness = IIO_CPU;
-> +		}
-> +
->  		chan_index++;
->  	}
->  	return 0;
+> Thanks!
 > 
-> ---
-> base-commit: f8f559752d573a051a984adda8d2d1464f92f954
-> change-id: 20250620-iio-adc-ad7173-add-spi-offload-support-32a178b666a3
-> prerequisite-change-id: 20250703-iio-adc-ad7173-fix-num_slots-on-most-chips-b982206a20b1:v3
-> prerequisite-patch-id: 350fb675f3e0fe494e0ce4ddf5685d9369ffa11a
+> > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> > ---
+> >  tools/bootconfig/scripts/ftrace.sh | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/tools/bootconfig/scripts/ftrace.sh b/tools/bootconfig/scripts/ftrace.sh
+> > index 186eed923041..cc5250c64699 100644
+> > --- a/tools/bootconfig/scripts/ftrace.sh
+> > +++ b/tools/bootconfig/scripts/ftrace.sh
+> > @@ -1,3 +1,4 @@
+> > +#!/bin/sh
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> > 
+> >  clear_trace() { # reset trace output
+> > --
+> > 2.49.1
+> > 
 > 
-> Best regards,
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
