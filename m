@@ -1,279 +1,279 @@
-Return-Path: <linux-kernel+bounces-744020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEA7B10702
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E574B106E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99379542966
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE2F3B4C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 09:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0C425B1D5;
-	Thu, 24 Jul 2025 09:50:29 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048982550A4;
+	Thu, 24 Jul 2025 09:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hAueWPVh"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5492571C2;
-	Thu, 24 Jul 2025 09:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC12254B09
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 09:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753350629; cv=none; b=Kw07Kh12yjxfsqayZkUn3HWZi8zdWkwTncV1wf8/tmLV5pN+mHIzbs1s+I6JE5xiUUiSrlReV24j9G2UumJrYa4S5nnB5WJ0i2h0d71dqeThuSWExinpedPlZQPHZ+Y4g96mpPl3afTXZ5j0cQRpPdhVQyBtogwlRRHpOcVNG0M=
+	t=1753350551; cv=none; b=fV1HfQAmD8xn2pJ+Q6qLWTn1ywUitQ9iOnO2aaG2tINcX2e+i9XQr6VEfGTof0YUouJkhi+DDdJcQbJP7yVZ+6l7ihtKEN33fosOsmUnrawv/PbSetKmM8VzUMs5c6siMCWJ4TeaePvhvJaFoVbe03xWUM354m+4fziteRGxqQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753350629; c=relaxed/simple;
-	bh=h6Bgo2bklDJST7hHhH+86aEXeQqWnZDVYkoiDw0DffE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V90d2gLzJdMMBwOOxqafQRIBrfU392N1CdPhTtL2hiTvEv7E+gNys8SzgzU41XpCT7ryu50r3JBgxKY2GQp8PkPxOydOL2AoJw82DMQ2S9pCjKTTtxdPVCC/UlIxzVUPl3ExQy3mzEy8lCcFgeXZgnPX8BBpHCYtmqG+/rfdvqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 89C6EB4D0D91;
-	Thu, 24 Jul 2025 11:50:23 +0200 (CEST)
-From: E Shattow <e@freeshell.de>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	E Shattow <e@freeshell.de>,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v1 4/4] riscv: dts: starfive: add Milk-V Mars CM Lite system-on-module
-Date: Thu, 24 Jul 2025 02:48:47 -0700
-Message-ID: <20250724094912.253723-5-e@freeshell.de>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250724094912.253723-1-e@freeshell.de>
-References: <20250724094912.253723-1-e@freeshell.de>
+	s=arc-20240116; t=1753350551; c=relaxed/simple;
+	bh=U+rR1HNut0ExpbrnkcfOSPx36ou1vMZ071sRdAv5Ll0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k+MV5Edz1WM0yeJtFu+cXm0wmm5Nrd23p75VjdLyEJOpNkCRSarXEB8U1w+2XYYLq4n1vqhT0p2Y+J6uz7XoLqd8KBfR604NtVKlQoYKWLrUEBPTEV1hvMFtQ//9WelGOoHLGwhmeHHBjHaR2SafW8WKxjhmDUSXtSQ5CLhc0Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hAueWPVh; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553d771435fso854643e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 02:49:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753350547; x=1753955347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L9FQ9e+6QrSgFWR/zL+SarceeBtqf3W8b4WkgK0vUaU=;
+        b=hAueWPVhBrHcHjcp7sHtqcL7blR0kQ3wezBo4znslxQY3yxLhfO9nbKIqI2zT9ghpv
+         29n+MZ9tWq5FbpOzQwKvShx0J8XSjoRsV+hmW6cKBFb5VoLO9Ge5vXeFPQmpsUjEXI2r
+         /2/+sMoZXFFBVQzQMVwe3HmJu7YMqmKR8cB50=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753350547; x=1753955347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L9FQ9e+6QrSgFWR/zL+SarceeBtqf3W8b4WkgK0vUaU=;
+        b=jEOqpjKtAuDaa9sDkWWSDx0jwyKObd7KuBwW4YXxuTlh1Ui2vcQ8cW0f3PQ+yKrKZY
+         T4ul+wc3YKjV+5yADeYmED0z9MMw/11VSAsogeo7tAgdbfQ1Lx0jxh7YuFnmZzdU8y5/
+         zsaPHThGZQq8VTjAUzQ/mV6Nkszrw9GTo4kG6Xhyh3ktPAm0HYBn8vJzvm+EFnhxXW0y
+         6rsNdxMq9CDj36nsrFWTbmp6tptvN0MQB+W5RW6rBq7D8gG6h6LwgcZYiFEIAY9NOVio
+         +c5CxnvUWlObKLRphLrZygvVMFUYR8grJVx8NHFneha6nLa/pg7sQkEzD8kZ6fXgM/Wj
+         e3Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0yZOzX5Ktr52OYE0TH7rs1dy7xA3bn1jx+AB4Q6fvxqbvphQDjZNomDnu9a6e2wcAVAgLLHuHOzST3I8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQmSCbQIjnm8aliG+gsLTHZ6equ/Fft0lD8XJ1u6NBE53uVwZw
+	qwiEcpg5D+zNvzUBB0vBgisdmaLfNFZ/WiGUqkA0w6YQ3UnpHahDHTtbc7QmrhBmsPeZrPCreGd
+	P/9P/wokH3LTmo7WES041szwbMBK3SXyaBX3lJCQ5
+X-Gm-Gg: ASbGnctnoHQUBRvBtZ9fNYeBXCqrSYzFK33yLeomd6KFr7VuwQIPVBk1txRTbASezyK
+	5fxoZMUYWky/J5x5e87/XmblayiMqwXqMlu382D9gSFVWLboHIh92cQ8EJlA2h4RnJApupjcOKJ
+	vYJymPJHP0JEwgQ8ETOdv6OGksC66unuG0/ZfMisY530YH+EcbG4aKFKMGyvZZcO/MzPBgn6uFb
+	stAI7DyBTXBbIeXr7GoR1mg5x1lpzA2GCE=
+X-Google-Smtp-Source: AGHT+IGzfXywNqkl7ab0cE9pUdYYCcgre/IBfX1N5nV04X+BJ3rA6VLZb3GDp2uT00oIYqG6uR1IPA8f6Im9wahsv0o=
+X-Received: by 2002:a05:6512:3084:b0:558:f694:a65e with SMTP id
+ 2adb3069b0e04-55a513b2e09mr1933097e87.34.1753350547115; Thu, 24 Jul 2025
+ 02:49:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com> <20250724083914.61351-29-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-29-angelogioacchino.delregno@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 24 Jul 2025 17:48:56 +0800
+X-Gm-Features: Ac12FXyvTWPQD4hmzcW0ijsxU85GUvKBlnETlBmcYtQk6_oa7dGsCrwzhdueCNE
+Message-ID: <CAGXv+5FvqKNB5Ufx65p5QnueKgEYwNW20tahVPg-kG5N3t+WGQ@mail.gmail.com>
+Subject: Re: [PATCH 28/38] arm64: dts: mediatek: mt8173: Fix pinctrl node
+ names and cleanup
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de, 
+	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com, 
+	mchehab@kernel.org, matthias.bgg@gmail.com, chunfeng.yun@mediatek.com, 
+	vkoul@kernel.org, kishon@kernel.org, sean.wang@kernel.org, 
+	linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, 
+	andersson@kernel.org, mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, 
+	tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com, 
+	ck.hu@mediatek.com, houlong.wei@mediatek.com, 
+	kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com, 
+	tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com, shane.chien@mediatek.com, 
+	olivia.wen@mediatek.com, granquet@baylibre.com, eugen.hristev@linaro.org, 
+	arnd@arndb.de, sam.shih@mediatek.com, jieyy.yang@mediatek.com, 
+	frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com, 
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Milk-V Mars CM Lite is a System-on-Module based on the Milk-V Mars CM
-without the onboard eMMC storage component populated and configured
-instead for SD3.0 Card Slot on that interface via 100-pin connector.
+On Thu, Jul 24, 2025 at 4:40=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Fix the pinctrl node names to adhere to the bindings, as the main
+> pin node is supposed to be named like "uart0-pins" and the pinmux
+> node named like "pins-bus".
+>
+> While at it, also cleanup all of the MTK_DRIVE_(x)mA by changing
+> that to just the (x) number.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  .../boot/dts/mediatek/mt8173-elm-hana.dtsi    |  34 ++---
+>  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  | 138 +++++++++---------
+>  arch/arm64/boot/dts/mediatek/mt8173-evb.dts   |  60 ++++----
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi      |  28 ++--
+>  4 files changed, 128 insertions(+), 132 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi b/arch/arm=
+64/boot/dts/mediatek/mt8173-elm-hana.dtsi
+> index dfc5c2f0ddef..1004eb8ea52c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
+> @@ -5,6 +5,14 @@
+>
+>  #include "mt8173-elm.dtsi"
+>
+> +&hdmi_mux_pins {
+> +       pins-mux {
+> +               pinmux =3D <MT8173_PIN_98_URTS1__FUNC_GPIO98>;
+> +               bias-pull-up;
+> +               output-high;
+> +       };
+> +};
+> +
 
-Link to Milk-V Mars CM Lite schematics: https://github.com/milkv-mars/mars-files/tree/main/Mars-CM_Hardware_Schematices
-Link to StarFive JH7110 Technical Reference Manual: https://doc-en.rvspace.org/JH7110/TRM/index.html
-Link to Raspberry Pi CM4IO datasheet: https://datasheets.raspberrypi.com/cm4io/cm4io-datasheet.pdf
+Should probably mention that a duplicate path reference was fixed.
 
-Add the devicetree file to make use of StarFive JH7110 common supported
-features PMIC, EEPROM, UART, I2C, GPIO, PCIe, QSPI Flash, PWM, and
-Ethernet. Also configure the eMMC interface mmc0 for SD Card use and
-configure the common SD Card interface mmc1 for onboard SDIO BT+WiFi.
+>  &i2c0 {
+>         clock-frequency =3D <200000>;
+>  };
+> @@ -67,26 +75,16 @@ trackpad2: trackpad@2c {
+>         };
+>  };
+>
+> -&mmc1 {
+> -       wp-gpios =3D <&pio 42 GPIO_ACTIVE_HIGH>;
+> -};
+> -
+> -&pio {
+> -       hdmi_mux_pins: hdmi_mux_pins {
+> -               pins2 {
+> -                       pinmux =3D <MT8173_PIN_98_URTS1__FUNC_GPIO98>;
+> -                       bias-pull-up;
+> -                       output-high;
+> -               };
+> +&mmc1_pins_default {
+> +       pins-wp {
+> +               pinmux =3D <MT8173_PIN_42_DSI_TE__FUNC_GPIO42>;
+> +               input-enable;
+> +               bias-pull-up;
+>         };
+> +};
+>
+> -       mmc1_pins_default: mmc1default {
+> -               pins_wp {
+> -                       pinmux =3D <MT8173_PIN_42_DSI_TE__FUNC_GPIO42>;
+> -                       input-enable;
+> -                       bias-pull-up;
+> -               };
+> -       };
+> +&mmc1 {
+> +       wp-gpios =3D <&pio 42 GPIO_ACTIVE_HIGH>;
+>  };
+>
+>  &touchscreen {
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/bo=
+ot/dts/mediatek/mt8173-elm.dtsi
+> index 0d995b342d46..9ec930058b92 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
 
-Signed-off-by: E Shattow <e@freeshell.de>
----
- arch/riscv/boot/dts/starfive/Makefile         |   1 +
- .../dts/starfive/jh7110-milkv-marscm-lite.dts | 176 ++++++++++++++++++
- 2 files changed, 177 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+[...]
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index 79742617ddab..62b659f89ba7 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-marscm-emmc.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-marscm-lite.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
-new file mode 100644
-index 000000000000..e110146f0b76
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2025 E Shattow <e@freeshell.de>
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/pinctrl/starfive,jh7110-pinctrl.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "jh7110-common.dtsi"
-+
-+/ {
-+	model = "Milk-V Mars CM Lite";
-+	compatible = "milkv,marscm-lite", "starfive,jh7110";
-+
-+	aliases {
-+		i2c1 = &i2c1;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		serial3 = &uart3;
-+	};
-+
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&sysgpio 33 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&gmac0 {
-+	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
-+	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
-+	starfive,tx-use-rgmii-clk;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	status = "disabled";
-+};
-+
-+&i2c6 {
-+	status = "disabled";
-+};
-+
-+&mmc0 {
-+	bus-width = <4>;
-+	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
-+};
-+
-+&mmc0_pins {
-+	pwren-pins {
-+		pinmux = <GPIOMUX(22, GPOUT_HIGH,
-+				      GPOEN_ENABLE,
-+				      GPI_NONE)>;
-+	};
-+};
-+
-+&mmc1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+	non-removable;
-+	status = "okay";
-+
-+	ap6256: wifi@1 {
-+		compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-fmac";
-+		reg = <1>;
-+		interrupt-parent = <&sysgpio>;
-+		interrupts = <34 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wake";
-+		pinctrl-0 = <&wifi_host_wake_irq>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&pcie0 {
-+	status = "okay";
-+};
-+
-+&phy0 {
-+	rx-internal-delay-ps = <1500>;
-+	tx-internal-delay-ps = <1500>;
-+	motorcomm,rx-clk-drv-microamp = <3970>;
-+	motorcomm,rx-data-drv-microamp = <2910>;
-+	motorcomm,tx-clk-10-inverted;
-+	motorcomm,tx-clk-100-inverted;
-+	motorcomm,tx-clk-1000-inverted;
-+	motorcomm,tx-clk-adj-enabled;
-+};
-+
-+&pwm {
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+};
-+
-+&sysgpio {
-+	uart1_pins: uart1-0 {
-+		tx-pins {
-+			pinmux = <GPIOMUX(16, GPOUT_SYS_UART1_TX,
-+					      GPOEN_ENABLE,
-+					      GPI_NONE)>;
-+			bias-disable;
-+			drive-strength = <12>;
-+			input-disable;
-+			input-schmitt-disable;
-+		};
-+
-+		rx-pins {
-+			pinmux = <GPIOMUX(17, GPOUT_LOW,
-+					      GPOEN_DISABLE,
-+					      GPI_SYS_UART1_RX)>;
-+			bias-pull-up;
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+
-+		cts-pins {
-+			pinmux = <GPIOMUX(3, GPOUT_LOW,
-+					     GPOEN_DISABLE,
-+					     GPI_SYS_UART1_CTS)>;
-+			bias-disable;
-+			input-enable;
-+			input-schmitt-enable;
-+		};
-+
-+		rts-pins {
-+			pinmux = <GPIOMUX(2, GPOUT_SYS_UART1_RTS,
-+					     GPOEN_ENABLE,
-+					     GPI_NONE)>;
-+			bias-disable;
-+			input-disable;
-+			input-schmitt-disable;
-+		};
-+	};
-+
-+	usb0_pins: usb0-0 {
-+		vbus-pins {
-+			pinmux = <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
-+					      GPOEN_ENABLE,
-+					      GPI_NONE)>;
-+			bias-disable;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	wifi_host_wake_irq: wifi-host-wake-irq {
-+		wake-pins {
-+			pinmux = <GPIOMUX(34, GPOUT_LOW,
-+					      GPOEN_DISABLE,
-+					      GPI_NONE)>;
-+			input-enable;
-+		};
-+	};
-+};
-+
-+&uart1 {
-+	uart-has-rtscts;
-+	pinctrl-0 = <&uart1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	dr_mode = "host";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usb0_pins>;
-+	status = "okay";
-+};
--- 
-2.50.0
+> -       bt_wake_pins: bt_wake_pins {
+> -               pins1 {
+> +       bt_wake_pins: bt-pins {
 
+Nit: I think the original name is better, because IIRC this is
+using the RX pin as a GPIO interrupt to wake the system from suspend.
+
+> +               pins-wake {
+>                         pinmux =3D <MT8173_PIN_119_KPROW0__FUNC_GPIO119>;
+>                         bias-pull-up;
+>                 };
+>         };
+>
+
+[...]
+
+>
+> -               pins_ds {
+> +               pins-ds {
+>                         pinmux =3D <MT8173_PIN_67_MSDC0_DSL__FUNC_MSDC0_D=
+SL>;
+>                         drive-strength =3D <MTK_DRIVE_10mA>;
+
+Missed one here.
+
+>                         bias-pull-down =3D <MTK_PUPD_SET_R1R0_01>;
+>                 };
+
+[...]
+
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts b/arch/arm64/boo=
+t/dts/mediatek/mt8173-evb.dts
+> index 9fffed0ef4bf..51118a4149d8 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8173-evb.dts
+
+[...]
+
+> @@ -245,20 +245,29 @@ pins_cmd_dat {
+>                         bias-pull-up =3D <MTK_PUPD_SET_R1R0_01>;
+>                 };
+>
+> -               pins_clk {
+> +               pins-clk {
+>                         pinmux =3D <MT8173_PIN_65_MSDC0_CLK__FUNC_MSDC0_C=
+LK>;
+>                         drive-strength =3D <2>;
+>                         bias-pull-down =3D <MTK_PUPD_SET_R1R0_01>;
+>                 };
+>
+> -               pins_rst {
+> +               pins-rst {
+>                         pinmux =3D <MT8173_PIN_68_MSDC0_RST___FUNC_MSDC0_=
+RSTB>;
+>                         bias-pull-up;
+>                 };
+>         };
+>
+> -       mmc1_pins_uhs: mmc1 {
+> -               pins_cmd_dat {
+> +       spi_pins_a: spi0-pins {
+> +               pins-bus {
+> +                       pinmux =3D <MT8173_PIN_69_SPI_CK__FUNC_SPI_CK_0_>=
+,
+> +                               <MT8173_PIN_70_SPI_MI__FUNC_SPI_MI_0_>,
+> +                               <MT8173_PIN_71_SPI_MO__FUNC_SPI_MO_0_>,
+> +                               <MT8173_PIN_72_SPI_CS__FUNC_SPI_CS_0_>;
+> +               };
+> +       };
+> +
+> +       mmc1_pins_uhs: mmc1-uhs-pins {
+
+Wrong order?
+
+> +               pins-cmd-dat {
+>                         pinmux =3D <MT8173_PIN_73_MSDC1_DAT0__FUNC_MSDC1_=
+DAT0>,
+>                                  <MT8173_PIN_74_MSDC1_DAT1__FUNC_MSDC1_DA=
+T1>,
+>                                  <MT8173_PIN_75_MSDC1_DAT2__FUNC_MSDC1_DA=
+T2>,
+
+[...]
+
+Once fixed,
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
