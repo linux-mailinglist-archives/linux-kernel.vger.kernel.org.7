@@ -1,168 +1,178 @@
-Return-Path: <linux-kernel+bounces-744363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC30B10BAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:37:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BDDB10BB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3D95A507C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CA2189089E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 13:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159D92D838C;
-	Thu, 24 Jul 2025 13:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F027B2D9488;
+	Thu, 24 Jul 2025 13:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C/maM2lE"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8DuW1mVW"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D38F27B51C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 13:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C913BC0C;
+	Thu, 24 Jul 2025 13:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753364144; cv=none; b=LBNhyDEIxtWxb/jxPfKUtvUG9ETAXiBnvqMZ3d52Jc1Vx/skYek4Cx0KTHe+rqpE6RX/nG5mtKfnKwMFUsYeG2IKY9bQIokvs0j5C+wSOUMC4Ggbwx7NZRJgGcluhzsimIXJty/lxYpID7bBkTFgkIXqjhdfMAjedyNXY3lqfsc=
+	t=1753364355; cv=none; b=trk88nXrqw0haUHofEFcHgOkqLevii2b3N64T6hbLOjz0B8ey/Y6116mgp1YjTBPmeW/He/v2y2cO/GcRLj8R6Jw1+Z9oa2GIM5uQqtHTTQbKZ1F2zQMQv8b0mBfEZRRtk3Su/9uetYMX4BUgJXx4nR/Xw5mTkvUZibplFLY0tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753364144; c=relaxed/simple;
-	bh=vnOWbdLL57ho3ILUGJIlNNAJitfSpo19bpU1UzcEEmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdqvcilLgCKaIqFNWNnAD8I/j/GRAyMzWgrWsVc/7dpnh9Y85K+j0/XkyHUqwOHpW4Rk5k2RaK0gpOaK8NeR/OCfoZxOcub+JhoSuqVIxlcfPp0RcihWxf5qZdJQ5vo+moaS4AYzowKGAIxF424siip8bi0hLPN8L279ngEylbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C/maM2lE; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45600581226so10321715e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 06:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753364139; x=1753968939; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/783AWBb1WjprdR5FQ53MxE+lFAhfIuN35nrxo6hj4=;
-        b=C/maM2lENVlS076xrfR+87Q7OMuv24LlcqWgnHhWHaRl5xdZVzHnewjm95yI28Sx9D
-         jQltEgQwPXjAO/3wiIKFndgunXFj+GzG5Acn5bq8xZHUq4x21AqblmnQsnACKYydjHy3
-         P69DoxPNJCzAY2uKB0iePfuNwySnFZ1Jb99UhkutWiRuB3Auv0wLNUHEn417O6DNvjeY
-         3yZralpvK05dLeSLGfqgQL2qglk74zvFGmNWiv0MC3zvRPNHvX6LhrizinrlchxRTknM
-         CLjQXSOT2ymzMAzDay+Q2gd+txpP/KzgfYtj0WANRsDdK10nld+lyTU+ircOgtusXNDP
-         FM6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753364139; x=1753968939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v/783AWBb1WjprdR5FQ53MxE+lFAhfIuN35nrxo6hj4=;
-        b=h+rFDm0vsIJDNgCtIxDuv5kl/q+NGYaEOO3iJvIU7vdC0iXpLifmTSRWgbGzqC4Mop
-         n7X4cws0TzBZk/jPaHYb+32HGAEyVbKij5UC2o+Ik09hm1/5GfuUlebN4kmScA6QCoPQ
-         DmEGnSEz41zNACgA5eOczHk0QuCQ6AR2OxA6pX/OrZGgo1VrZRAo22rBPkRCOcahzZ4j
-         oKMbVBhOUlhE7RWFmlw4p2a4MPpxa2AVOR4PEz6jqfpWWpH6EVUITD5reVBiXM4vLXnQ
-         2MbZIXwSZ3PaD3mfWVxNCt8BBGCK1YzIzekOB/fORU9KEW97i6dHmOwgOwqvpkVaDQjT
-         NtlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs8sKHM4RVX9c13vpqThM1EwO3OPE/FgXui7aDQatoYw++q4gyJp6jfKCN4dnaOfZoUc71s2gENSCtzJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ouVhf/JRRi3ULiP4tt/DCyUeuE9tetwvhhncC+I8eWPvcAFQ
-	oS8erjNR3h+naZfQPBOB6dlw3duompgXNxfkxTBnK/ErxxMNeTb5fiYJjkqNjesrx4n9hqKKJxE
-	ZSGsd
-X-Gm-Gg: ASbGncvkl476k9sbz1JgVL4j3mjhNVM/zEhC5i0pzQoXAQHH2RW+N3Aw7i7N8/TSBl8
-	y4wwiOqtDDf4m9YwDIHwrbii71d89hDBPGyqhb3EX0NRn+0AqmIP3ql4gLyjgfcmFJ8Awptv7fB
-	DXyV0rD4vKHKSxGTND8JAExNl1rEOqWGg6cAaom6Pr5kBb5Jw/rSb7yiXMbrvOnWleZzrl++9b8
-	JdSPpxZAZQJZMz76C2bi7vn3rn6UZFjbNcK4G1JzlemslOsyefkdxdarUTC13IBEnbBNG90jHnp
-	NYiDq9SS0F8DsjUPSOQ9pRyttYacHfg75Ho+cUaJMVjeXfGvGS2g96VRoYP1J7QNkZDvuX7Xzf5
-	88tAT7RvEEo2XokxtfpPdz00tOueKMWJVAvIdamFE+w==
-X-Google-Smtp-Source: AGHT+IGx8P6YHLZgXnJMcaSIRXjWetfkIpZpQUcR+9cauLnkNbDKHnuiJIMh2QcEi9oeQa/G66Ef7w==
-X-Received: by 2002:a05:600c:1c22:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-45868d31a2bmr68939555e9.18.1753364139342;
-        Thu, 24 Jul 2025 06:35:39 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bcbe8sm22164745e9.17.2025.07.24.06.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 06:35:38 -0700 (PDT)
-Date: Thu, 24 Jul 2025 15:35:37 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
-	chenridong@huawei.com, gaoyingjie@uniontech.com
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-Message-ID: <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1753364355; c=relaxed/simple;
+	bh=GGKPx34LBUi+sDBe9RnkRVW9eRR9QWY4VywRj+xNMhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mSlrYnzcMWcPbbzuKmMDpI8pmyL8coS9BIM1tWG5CWHZKIJ8Al1XEU8OxAK9tFwM4kp6N6/RTynvLQH2BZUBNcmAAdSqYQMAbgCLelz6W3M49LfNMUcPqd4Qp3Jyms/AwOJ9YK7Kdpf60ie87xRp7wu7+z3GEgMq8BpbXOaJwY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8DuW1mVW; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ODAgol018828;
+	Thu, 24 Jul 2025 15:38:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	w9y6lMVKoGSGbAQ4r7YRTQAIypLEALnPa938lwZnu4s=; b=8DuW1mVWb5Zmz+q0
+	7RKe020XQCaScSNVrCjpPnmByr2ryfDEsJqHwQPObJeuAtdyS46qENjf789qB2Gn
+	Y9jkz0gnExfyBxnDdCXcKF/U1bvmXiPSL0WnENoFzkBrzJOHYylmsIvuGCerLywl
+	ZaA9oZ7lKwFoF195X342XP1lYemLrGWn/qjVkHL6zChh+CpYuigHX7/+E62GiSba
+	SVAHo4H6Hei4POCBjTIbbBtR678I3fMIdBg41DlglPcRw9/urX+wij9vSihPDcRp
+	TxPHyIN2JW2TvS5/OuWkzhrAFqWa9uAwPyPD4tuvxnn6RfeIub6Uo+oLKBm8zZIJ
+	H13+MA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g91e0a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 15:38:57 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4750C4005D;
+	Thu, 24 Jul 2025 15:37:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 594A6763978;
+	Thu, 24 Jul 2025 15:36:56 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Jul
+ 2025 15:36:55 +0200
+Message-ID: <99737d4f-488d-4208-91aa-83ce52957147@foss.st.com>
+Date: Thu, 24 Jul 2025 15:36:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ig26ryr6n357ans5"
-Content-Disposition: inline
-In-Reply-To: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 0/2] Add pinctrl_pm_select_init_state helper
+ function
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+References: <20250723210753.GA2911683@bhelgaas>
+From: Christian Bruel <christian.bruel@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <20250723210753.GA2911683@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
 
 
---ig26ryr6n357ans5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-MIME-Version: 1.0
 
-Hi Ridong.
+On 7/23/25 23:07, Bjorn Helgaas wrote:
+> On Wed, Jul 23, 2025 at 01:32:52PM +0200, Linus Walleij wrote:
+>> On Thu, Jul 17, 2025 at 8:33 AM Christian Bruel
+>> <christian.bruel@foss.st.com> wrote:
+>>
+>>> We have the helper functions pinctrl_pm_select_default_state and
+>>> pinctrl_pm_select_sleep_state.
+>>> This patch adds the missing pinctrl_pm_select_init_state function.
+>>>
+>>> The STM32MP2 needs to set the pinctrl to an initial state during
+>>> pm_resume, just like in probe. To achieve this, the function
+>>> pinctrl_pm_select_init_state is added.
+>>>
+>>> This allows a driver to balance pinctrl_pm_select_sleep_state()
+>>> with pinctrl_pm_select_default_state() and
+>>> pinctrl_pm_select_init_state() in pm_runtime_suspend and pm_runtime_resume.
+>>>
+>>> Christian Bruel (2):
+>>>    pinctrl: Add pinctrl_pm_select_init_state helper function
+>>>    PCI: stm32: use pinctrl_pm_select_init_state() in
+>>>      stm32_pcie_resume_noirq()
+>>
+>> If Bjorn Helgaas is OK with it I can apply this to the pinctrl tree.
+>>
+>> Otherwise I can also just apply patch 1/2, but that doesn't solve
+>> any problem.
+> 
+> The stm32 driver has been posted and is on this branch of the PCI
+> tree:
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dwc-stm32&id=5a972a01e24b
+> 
+> but it's not in mainline (or even in pci/next) yet, so you would only
+> be able to apply patch 2/2 if you took the whole driver, which is
+> probably more than you would want to do.
+> 
+> I haven't put it in pci/next yet because it doesn't build when
+> CONFIG_PINCTRL is not defined:
+> 
+>    https://lore.kernel.org/r/20250716192418.GA2550861@bhelgaas
+> 
+> I don't know enough about pinctrl to know why stm32 needs this when
+> nobody else seems to.  I doubt it's really unique, so maybe it's just
+> not doing the right thing here.
 
-On Tue, Jul 22, 2025 at 11:27:33AM +0000, Chen Ridong <chenridong@huaweiclo=
-ud.com> wrote:
-> CPU0                            CPU1
-> mount perf_event                umount net_prio
-> cgroup1_get_tree                cgroup_kill_sb
-> rebind_subsystems               // root destruction enqueues
-> 				// cgroup_destroy_wq
-> // kill all perf_event css
->                                 // one perf_event css A is dying
->                                 // css A offline enqueues cgroup_destroy_=
-wq
->                                 // root destruction will be executed first
->                                 css_free_rwork_fn
->                                 cgroup_destroy_root
->                                 cgroup_lock_and_drain_offline
->                                 // some perf descendants are dying
->                                 // cgroup_destroy_wq max_active =3D 1
->                                 // waiting for css A to die
->=20
-> Problem scenario:
-> 1. CPU0 mounts perf_event (rebind_subsystems)
-> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
-> 3. A dying perf_event CSS gets queued for offline after root destruction
-> 4. Root destruction waits for offline completion, but offline work is
->    blocked behind root destruction in cgroup_destroy_wq (max_active=3D1)
+The STM32MP2 is unique because the core clock is gated on CLKREQ#. 
+Consequently, it is not possible to access the core registers from DBI 
+when no card is attached, causing the board to freeze. I don't know 
+another platform with this limitation
 
-What's concerning me is why umount of net_prio hierarhy waits for
-draining of the default hierachy? (Where you then run into conflict with
-perf_event that's implicit_on_dfl.)
+To fix this, we use a GPIO to de-assert CLKREQ# during probe and restore 
+the pin to its default AF mode afterward. This works perfectly for 
+probe, but we lack functionality for PM resume unless we explicitly 
+select the state with pinctrl_pm_select_XXX_state().
 
-IOW why not this:
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1346,7 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *r=
-oot)
+For reference, the init_state functionality was introduced in
+https://lkml.org/lkml/2015/10/21/1
 
-        trace_cgroup_destroy_root(root);
+If we prefer not to extend the pinctrl API in patch 1/2, I can fix the 
+case in patch 2/2 only with something like:
 
--       cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-+       cgroup_lock_and_drain_offline(cgrp);
+in stm32_pcie_probe()
+      pinctrl = devm_pinctrl_get(dev);
 
-        BUG_ON(atomic_read(&root->nr_cgrps));
-        BUG_ON(!list_empty(&cgrp->self.children));
+      if(pinctrl!= -ENODEV) // PINCTRL is defined
+           pinctrl_init = pinctrl_lookup_state(stm32_pcie>pinctrl, 
+PINCTRL_STATE_IN
 
-Does this correct the LTP scenario?
+in stm32_pcie_resume_noirq()
+    if (pinctrl) {
+           ret = pinctrl_select_state(stm32_pcie->pinctrl, 
+stm32_pcie->pinctrl_init);
 
-Thanks,
-Michal
+What do you advise ?
 
---ig26ryr6n357ans5
-Content-Type: application/pgp-signature; name="signature.asc"
+thank you
 
------BEGIN PGP SIGNATURE-----
+Christian
 
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaII2pwAKCRB+PQLnlNv4
-CNfYAQCUc2XkchH6ARt6FKuQ6Im+lr37eUpJT5yuMPiiIyFMmQD/fAcBfK9p9YnS
-RbU4g77pcS6SzZf54YpcCZZdzgPkWgo=
-=nDUZ
------END PGP SIGNATURE-----
 
---ig26ryr6n357ans5--
+
+> 
+> Bjorn
+
 
