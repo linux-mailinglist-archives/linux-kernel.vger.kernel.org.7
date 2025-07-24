@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-743884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A08B10502
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:57:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A33CB1052F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 11:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992C3188D3F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 409147BC3B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CD5277CA5;
-	Thu, 24 Jul 2025 08:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E2E277CBA;
+	Thu, 24 Jul 2025 08:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtqYM+bt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GWhEQWWT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1495569D2B;
-	Thu, 24 Jul 2025 08:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3DF274FEA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346941; cv=none; b=IZOY1BaPUGj8fxM156R2HZzbh6zHBF7xuEZVKgFghcXA015jk0lE3rRQRby2eOPQl+X0M+JW3JOtDHyMvbw63vwiI4egL8HAuDggi7QV6wHRhak34u73ukcruZmSpfM7cIzPgaHsbAT2iwN24Q3ETrX3w/pScu1KtaFqx6k4ehs=
+	t=1753347015; cv=none; b=GWQBZSDjKEfV34hPfjy9luPT4qmOY9Rk0DuizAgHyuNqf9cYAnd6jja4gxw/f7+1r0j3uvXdn0vdVBZiDf0CsUXxJLm26xiSvIzyMpIQyBRFOpC0Kc4DBAQVQJiRqI9NawkrLciq0rS3YPSCHJ3SSwy5giJAGvZpBur3dzzHOsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346941; c=relaxed/simple;
-	bh=rzxMStLAEjWZwWfiymoUFIpQH/pUdeR+8sMJTcfv8OE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qVeIwLukSkmzpsrLZxprzixAAtk5KCC/FTPQzKXvH6gwLS+1ljMe7IZIX9EvmJZQodhlRIEfqGck9iovTJw16WiDlz/HzHrqLos0PKVnhLhiMP4kd1fecF1qrQVAJAga011jdKpP1lBxKchiY9fcPriMCZqvb3ZuWoYS4Hrtdz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtqYM+bt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D828BC4CEF4;
-	Thu, 24 Jul 2025 08:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753346940;
-	bh=rzxMStLAEjWZwWfiymoUFIpQH/pUdeR+8sMJTcfv8OE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gtqYM+bt0rJWWmE2lWvgCnN2A3qpmeG0oIFEbqqLFzwujcr8YPsfno7KzJT91vwVY
-	 8j7Aa564MdLlm5pGW1V9Gqta5CO4s++D5C9id1bs2bmf+7rgn7TtG+rpzHItOOxIAY
-	 27KBdW5WhEBTO8xpkkFs9HbfchUFOWfJu+cbMPkvk3kE65MqL2nylmXI5+22IWexnK
-	 /QLhCmPQXlXXRITRyCRoekNFCbBwGsF8MNmcE2tcaK6RES+u0yJK5lC8T2wlEpPDu6
-	 C4vjr6jLAHasL+37oQOTN4zh7ul4Ph0Pac7aZ7uIrR2K/1UmjZtq5J6BZCQRcx69fG
-	 8xCphYvvBRQ0w==
-From: Lee Jones <lee@kernel.org>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Lee Jones <lee@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
- Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-In-Reply-To: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
-References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
-Subject: Re: (subset) [PATCH v7 00/10] Apple Mac System Management
- Controller
-Message-Id: <175334693659.1935861.13683239351116261977.b4-ty@kernel.org>
-Date: Thu, 24 Jul 2025 09:48:56 +0100
+	s=arc-20240116; t=1753347015; c=relaxed/simple;
+	bh=N1heBisScPzwwpeBakWl3fC2NJleG26Iq9i2cBbg2mE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAHH43jXiXxxH+e6vYDALv6N27k6X+LxVc+U7pn44MAXMH3KIwk3iZom8TAICnVB8Bd6s371thpkTr2+9oqffttd0WkaeEbMWtwKFhnPI5wBB6n5/aqwqi25P8cSiuUHheAYQB8Nsr2W2V9M0BjvdYc8mCNUfNGMLh/lknciXqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GWhEQWWT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753347014; x=1784883014;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=N1heBisScPzwwpeBakWl3fC2NJleG26Iq9i2cBbg2mE=;
+  b=GWhEQWWTa4ZDmhWNJHZ4i9b0YJMnGyVODMwNgFAtZIaud5zUKE5XisNK
+   qisrOiUCfFv48ryxoe+AGHMTJzQMbeNTRK4fLsJV3Wbf9oq6pgWgZD/G7
+   PWW+ujvI/96g5+fibYFo+wDiEs6wfi2VwAN9cgJ683xiRKrWBy0/zKmyP
+   boTMAZWxcAsQdXbek4PowtqOC5MvvtFtRnMhy7QzR8bbnIOgcJ9RpjqdS
+   8AkdzEHfY1UsK5ZpEmyIPyJ3ROsp+SkHJSPOWpDT1Hhmugcz/GDRzOZ3+
+   wF8QarHbgpInvaECnT6xK4D4fSD7y+oD/VdFk1QSq4t9Rpk6SNnxw0eFV
+   Q==;
+X-CSE-ConnectionGUID: qojOrUtrQzy5o380OOD/nw==
+X-CSE-MsgGUID: hprZBspeQwKGS4Q7KGqV1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="67082565"
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="67082565"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:50:14 -0700
+X-CSE-ConnectionGUID: 5bqA0Lq6TZqsSOOc/k9Otg==
+X-CSE-MsgGUID: v7LXT/36SAmy91vsLc5Z8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,336,1744095600"; 
+   d="scan'208";a="191012243"
+Received: from geumanao-mobl3.amr.corp.intel.com (HELO [10.245.86.244]) ([10.245.86.244])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 01:50:12 -0700
+Message-ID: <73d6e78c-a360-40d7-9123-e00d47ee2a7a@linux.intel.com>
+Date: Thu, 24 Jul 2025 10:50:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+User-Agent: Mozilla Thunderbird
+Subject: Re: [git pull] drm fixes for 6.16-rc8/final (resend in txt for sure)
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <CAPM=9twUCJj4X-2jf0VG5+A2YN9Gk8hjOAhJ2hxq4SdgZfvtMA@mail.gmail.com>
+ <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
+Content-Language: en-US
+From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <CAHk-=wgLQ+EPeV+JzrvkPWt2jeteqwsRkf-X61jjfV8pefgXeg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 10 Jun 2025 15:29:41 +0000, Sven Peter wrote:
-> This series adds support for the System Management Controller found in
-> Apple Silicon devices which we model as a mfd. It also includes support
-> for the GPIO block and the power/reset block as sub-devices.
+Hi,
+
+On 7/24/2025 3:59 AM, Linus Torvalds wrote:
+> On Wed, 23 Jul 2025 at 17:40, Dave Airlie <airlied@gmail.com> wrote:
+>>
+>> (this time for sure, plain text).
 > 
-> Changes between v6 and v7:
->   - Rebased on 6.16-rc1
->   - Dropped mfd- prefix from the macsmc driver name
->   - Removed the check if the MBSE key exists in the reboot driver since
->     we can rely on the device tree now
->   - Changed my mail address to kernel.org
+> I knew you could do it! Third time's the charm!
 > 
-> [...]
+> I hope I don't need to worry about the branch contents as much as I
+> apparently need to worry about your email sending capabilities?
+> 
+>             Linus
 
-Applied, thanks!
+Linux is one of the greatest software projects of all time and that's because of the people who build it.
 
-[01/10] dt-bindings: gpio: Add Apple Mac SMC GPIO block
-        commit: 0f0a7bd04e7e00cef6da5f4955749d6f1fc27b32
-[02/10] dt-bindings: power: reboot: Add Apple Mac SMC Reboot Controller
-        commit: 51bb1f6d4694cd84491847ea59eb194311b7d7f8
-[03/10] dt-bindings: mfd: Add Apple Mac System Management Controller
-        commit: dbad719958e162ac021716c223ba9df9071bca55
-[04/10] soc: apple: rtkit: Make shmem_destroy optional
-        commit: ba9ae011e8373b1ff34aa4175c79288013de7fc8
-[05/10] mfd: Add Apple Silicon System Management Controller
-        commit: e038d985c9823a12cd64fa077d0c5aca2c644b67
-[06/10] gpio: Add new gpio-macsmc driver for Apple Macs
-        commit: 9b21051b0885912f5bb2cc9d4f95c6fca697da4d
-[07/10] power: reset: macsmc-reboot: Add driver for rebooting via Apple SMC
-        commit: 819687eb28e501d21dabd6a3f52454638a815071
+Linus, please don't set this example. Such behavior propagates down and makes the community miserable.
 
---
-Lee Jones [李琼斯]
-
+Regards,
+Jacek
 
