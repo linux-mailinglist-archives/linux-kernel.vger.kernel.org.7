@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-744279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFDA9B10A73
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:41:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F92B10A68
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18251CE00EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07885436BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF052D3A60;
-	Thu, 24 Jul 2025 12:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C03271457;
+	Thu, 24 Jul 2025 12:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jWn51Vc2"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE50C2D372F;
-	Thu, 24 Jul 2025 12:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QaQNRK3Q"
+Received: from mail-m32121.qiye.163.com (mail-m32121.qiye.163.com [220.197.32.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D72D29B1;
+	Thu, 24 Jul 2025 12:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753360878; cv=none; b=nSb0fUDfjUNPsufQUVw5WuRhi9xyJCV5/1k0Ha9jDPUMIieZCedUbeZHooC5oXVkb6M0WSxrL4C/jSDeHt20OIzRhEVq8JeaIp+avwj62fv0P+Rb8IslpF6/N2yaMtBhmdepDNQY6iQx/lakn05cg9vhrezcW+nDgT3npyvbgRA=
+	t=1753360777; cv=none; b=UlpS8MFmlx5MkgCSJNBM+iGloh2K4Y1/COjGI6av/pJJOZX1nF3CWKlrLbeX+vRXVvQx8804b0zaEcAJDbjeJ4IKypAsXHLmwnyppW0ZzbvV9/eXGs/7BhAu5UrIvxL6sTBKoMVSh8wahtVYYjgsKGWOgbfKonJOMy2r2+U8Kn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753360878; c=relaxed/simple;
-	bh=1wVxn+mTLzWPG3baEb7/Dr1ogBzjVZqcLlpZam049Ms=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lOI8bynt8DiYww7P98cMkAPBP/8E38B1LIE5Z4HByePUL+GPfOwjc6VEOHChnCtpQCIPZsATiUzpuZU/2KmDb5oq6RbKqmaeWxmmytYiyfD1kprowhu3eJ1LDMtm3Zmeb50gasPAynnmNouPXJFBzRGd6ge42kPOIHeEOtLLVlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jWn51Vc2; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Zl
-	c6/SAN3mXOw2kV24g78sQnlu6LMHoK+teDO96CRyU=; b=jWn51Vc2imLtJ0sFIr
-	fFTLh9m6az99d3HBETM/Sk2LMJEHZJBkYAnxX9liWQPXcU5PUqM/cEiet0EpEW+V
-	CQuqcbF/fDqEolMjA+k1wZATTf8GGSVWPL2R/ev58NrMq97ncUf8GNvPvp42/tLy
-	5GzYOaEtK2aDpgO4PhtHTkkgI=
-Received: from vbox.. (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgCX9u_PKYJoBIO7Ag--.46530S2;
-	Thu, 24 Jul 2025 20:40:48 +0800 (CST)
-From: Li kunyu <likunyu10@163.com>
-To: jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
+	s=arc-20240116; t=1753360777; c=relaxed/simple;
+	bh=Bc8Dpcjbg42WAE07UJNo2a4cH1Xlm64jzkwIyqufsmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EU/rERquL5gRZ0oDLuW/APiOtUdpJWdFtRMJNBxHU3H9qGWcMkFKp74w1v0BYfKgUlHe/eOdwDkWy1cWEGP32jtyyA3o83uBHB/ZUyHH0pIo8+oOAaqJNn1OUn6uygi+ZYnviLlHZn4jIIsoJBl6JBH43mciMKaoVInN/vayqF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QaQNRK3Q; arc=none smtp.client-ip=220.197.32.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d1c343f2;
+	Thu, 24 Jul 2025 16:03:31 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Li kunyu <likunyu10@163.com>
-Subject: [PATCH] kernel/livepatch/core: Fixed the issue of parsing failure caused by symbols carrying '-' generated by the kpatch software
-Date: Mon, 21 Jul 2025 04:50:59 +0800
-Message-ID: <20250720205059.138877-1-likunyu10@163.com>
-X-Mailer: git-send-email 2.47.3
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 07/14] drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
+Date: Thu, 24 Jul 2025 16:02:57 +0800
+Message-Id: <20250724080304.3572457-8-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,80 +76,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgCX9u_PKYJoBIO7Ag--.46530S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr43uw4xKr4xGF4kCw1UGFg_yoW8tF1xpr
-	WrA345Zw4xJ342gF4fJr45Cr15Jwn7Xa18Ka9rJr1kAw43Z34rAr4kWFWY9as8JryfGayY
-	qF4SyFWFk34kJ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uq1vhUUUUU=
-X-CM-SenderInfo: poln30d1xriqqrwthudrp/xtbBzwyUpGiCJfk-7wAAsV
+X-HM-Tid: 0a983b757bb003a3kunmbbba7af29f23
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU9DHlZIGhlLHh0fTktJHUxWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=QaQNRK3QEGCcr5kiHPuIHkgcxwxZtAhGh7KZXSv29zNte3URKg0wUa9bu8qS6hgxowGmIX2YTVbButpC/J9K2Z3HPT2yA2mYWAZHB7urymGWtCPNZaP+dRgl2zAj/qFwGwE3S2a6au3+M1/bGIaZ3AOXecsrea6VUDG39HzcFvU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=elZsTON64Rbs8eA/23hDRwUKSVNerPscCvmr/a9VXzY=;
+	h=date:mime-version:subject:message-id:from;
 
-A possible issue with the kpatch software was discovered during testing
-in the 6.6 and above kernel:
-livepatch: symbol .klp.sym.vmlinux-bringup_idt_table,5438511 has an
-incorrectly formatted name.
+The &analogix_dp_plat_data.skip_connector related check can be replaced
+by &analogix_dp_plat_data.bridge.
 
-The "-" between ".vmlinux-bringup_idt_table" cannot be parsed in the
-current kernel. Of course, this is a problem generated by the kpatch
-software.
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Perhaps, we could adopt the approach in the patch to skip the error
-symbols compiled by kpatch.
+------
 
-Signed-off-by: Li kunyu <likunyu10@163.com>
+Changes in v3:
+- Squash the Exynos side commit and the Analogix side commit together.
 ---
- kernel/livepatch/core.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_dp.c                 | 1 -
+ include/drm/bridge/analogix_dp.h                   | 1 -
+ 3 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 0e73fac55f8e..74b07a1b6c1f 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -199,6 +199,7 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
- 	unsigned long sympos, addr;
- 	bool sym_vmlinux;
- 	bool sec_vmlinux = !strcmp(sec_objname, "vmlinux");
-+	bool reload = false;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 0106e7e0f093..8ce7ceb70be4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1050,7 +1050,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+ 		return -EINVAL;
+ 	}
  
- 	/*
- 	 * Since the field widths for sym_objname and sym_name in the sscanf()
-@@ -227,12 +228,32 @@ static int klp_resolve_symbols(Elf_Shdr *sechdrs, const char *strtab,
- 			     ".klp.sym.%55[^.].%511[^,],%lu",
- 			     sym_objname, sym_name, &sympos);
- 		if (cnt != 3) {
--			pr_err("symbol %s has an incorrectly formatted name\n",
--			       strtab + sym->st_name);
--			return -EINVAL;
-+			if (strchr(strtab + sym->st_name, '-')) {
-+				memset(sym_objname, 0, strlen(sym_objname));
-+				memset(sym_name, 0, strlen(sym_name));
-+				cnt = sscanf(strtab + sym->st_name,
-+					     ".klp.sym.%55[^-]-%511[^,],%lu",
-+					     sym_objname, sym_name, &sympos);
-+				if (cnt != 3) {
-+					pr_err("symbol %s has an incorrectly formatted name, " \
-+						"cnt=%d, sym_objname:%s, sym_name:%s\n",
-+						strtab + sym->st_name, cnt, sym_objname, sym_name);
-+					return -EINVAL;
-+				}
-+				reload = true;
-+				sympos = 1;
-+			} else {
-+
-+				pr_err("symbol %s has an incorrectly formatted name\n",
-+					strtab + sym->st_name);
-+				return -EINVAL;
-+			}
- 		}
+-	if (!dp->plat_data->skip_connector) {
++	if (!dp->plat_data->bridge) {
+ 		connector = &dp->connector;
+ 		connector->polled = DRM_CONNECTOR_POLL_HPD;
  
--		sym_vmlinux = !strcmp(sym_objname, "vmlinux");
-+		if (!reload)
-+			sym_vmlinux = !strcmp(sym_objname, "vmlinux");
-+		else
-+			sym_vmlinux = sec_vmlinux;
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 004ab9db5216..d8bea1a00815 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -234,7 +234,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.attach = exynos_dp_bridge_attach;
+ 	dp->plat_data.get_modes = exynos_dp_get_modes;
+-	dp->plat_data.skip_connector = !!bridge;
  
- 		/*
- 		 * Prevent module-specific KLP rela sections from referencing
+ out:
+ 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index 15cb6b706e9f..202e5eafb2cc 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -30,7 +30,6 @@ struct analogix_dp_plat_data {
+ 	struct drm_bridge *bridge;
+ 	struct drm_encoder *encoder;
+ 	struct drm_connector *connector;
+-	bool skip_connector;
+ 
+ 	int (*power_on)(struct analogix_dp_plat_data *);
+ 	int (*power_off)(struct analogix_dp_plat_data *);
 -- 
-2.47.3
+2.34.1
 
 
