@@ -1,118 +1,135 @@
-Return-Path: <linux-kernel+bounces-744108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431D5B10815
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:49:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB72FB1080E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDBF1CE60B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:49:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55107BB3B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B3D26B75C;
-	Thu, 24 Jul 2025 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3zlI7h5"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F75213E7B;
-	Thu, 24 Jul 2025 10:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB34A1339A4;
+	Thu, 24 Jul 2025 10:47:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702926A1B5;
+	Thu, 24 Jul 2025 10:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753354099; cv=none; b=XZkwU7j5YGRuZFTlFQgaNUTGw5a5IKT4Rz3limi3wOTNpNMpVDSWJ7Q2TfRCOWniiMTMJOuxXQrqhvFWrHzyTZ+9OhF+eHmAKmXjE+Sxlsop8boVwN2AbLp5ZqobFktIMnqNc20f3p3qMwmSg7Q2uIyvd/VmbV+G7jPUN07lE/E=
+	t=1753354075; cv=none; b=DLh15wYQjduAzA7YASNhnGjZl3KT+A9QXUkoA/+mgiJ6J8awL7L1qLNFCQ8vZ2okm+mktIW4FPThTrL5eIXYRDy3JHf4+SO3fBhtgpvgDf/avHTE//EMBHAPDyNdePtwSfAuFDaR7DmB5Hv/VUMtBYsl25SJBiT1UiuAQzLWyWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753354099; c=relaxed/simple;
-	bh=0r+c0H4Oa2YbTVXkH21anzADfU6e0RpmuRgOU1H3T2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tubkJxdftsp7zmyRyiu0Nc3DWT5gYUMCSz5IIKnHqjmxAXvo1E9xte+KDmF2EQE7x/j+tV2bgMx6GDh2qRwN8oOCUQkchBXt5tmFX6FXWhKm0Zvv5NumNyEr7SVkUnG6V8N+w+nlpvgiy+n49qLhJ1RINq8MqtXRA7vOnnIR4Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3zlI7h5; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso749526f8f.1;
-        Thu, 24 Jul 2025 03:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753354096; x=1753958896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=epKJDnncojFJAB4/ScTCie0+aqU1iYFXS7qoGiODn9g=;
-        b=R3zlI7h5epS8H+mQ/lpNJKw++EOlWH2ZLNdTDDniyFNwD4+eTVDOy/Z0BE8DubD3w8
-         GK66/bp3QMqi3cxlRPDBXwa94tl22/aq3hfo2aDgCHdCYO1INkjPPeIUdJwAroiMX2QP
-         aArZ/WGsQmTJbvdB0ShyZD0Y9LJaeZS5hJlRgstnfueOqBW3BKy56k8CsjbZeLmZ5/Pu
-         kJPwkPeoQUQnthaFfwKFl3UiTRUbZPP4D7wARe8SyoO9gDMd6Kqm9Os1IDe1lseWlCio
-         OKgN16F/0zgdJ3wBfQD0hQssxRCkkSGxVgNeBfNWdJwxUEZt1q/vgKJJCMkMLAEAzKyJ
-         4YKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753354096; x=1753958896;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=epKJDnncojFJAB4/ScTCie0+aqU1iYFXS7qoGiODn9g=;
-        b=npDtMrWrR1V7bMHxNafbgEDsQO+RTqHpRMa3BBIQwjkSnMD1+mbhFhyWeajKnP0S0y
-         kZMzFgvgmmaF6LfWG+R71rwWfEFLQVtcfUzy8Xhd4KlYGRMHkp63IkTYQLYmSDFNLyDf
-         sUgYb2MmA8E0eucshXp0u4siaK+/QO/4F0UJ+dyGrsjfzbv1o8/E79TKQrvcvIlzdNM/
-         Gz2VcNF8Ip9MUdV1QPs/2ChllFjSoaoJyqX8jmGWWxsy26y44uiZ70YUaSd9JelGyGEw
-         R0BhwhPvuHnwn007W8dLgx/O89WgziUq1pF1dp0wHHeewimNEwq8fOLPa1Qg9E0NT/8R
-         lMkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrHlXWWUMJjN/rCMR75YUbGuVQ6Z3VE1ZYXGO4gCMZKY7ISvjkq3dlFHhBPTfI1n5g8TU5OMOARQw=@vger.kernel.org, AJvYcCVJhSbxFmFNoKlcgQRgjp8hhI5YQe7O0XUfIQx4hre7wx+XbcEzYg2O+jFgNBow3yeQEqFajya8gBbuEsU9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3u0qTn1CyQAfFpk3DUHS+tNamkyZ4156nu1YeoUpg/eMDVuxf
-	5C+ifA7sGa+sDZ1sZbuySo5IaI7nRFWJqA2L+rOuQyWGeQd9SYkLBEQb
-X-Gm-Gg: ASbGnctlQPXUGNH2W0DrsSu/wi5VRK9e+0LVePzgLMbkmfD/Y4XinojAtNqPuSTD707
-	Ol2sm8p+oLH1PWo0EWBr4sxx+IUOjix1ULxp6Ll/bhDAZZo7aLsCifYaN2jH77XkCvJEEm05p9m
-	tOVqC7ofa8LHf9ZjowDjrRvxsOuiP6BoKFVKGWdGluWKS1idD0lJf2srPnOTSnHfumb8m/ypSX3
-	LXyFOUhCSvBRrybBHTkHwWRhCuOB+2fIjKtIJ3dMzl7qX67kRWe1motfq/02LhtTeZF6vGxo5vD
-	oAoYlyU6sCQRw9tyfl7jlDbs6LapQrfDNP5f+XSoNSLpf2ut/4Y3pfFpi65VLp+jZoQadzbBKBd
-	8kUHi/j4aZb6p/x/SjPbh
-X-Google-Smtp-Source: AGHT+IHkldGVGsG0ep8JlAtN9rxk5nIv0yCoIjsz2etjlXZP5GLYxklMv9H0B7ipr0Tyun6POO86Xg==
-X-Received: by 2002:a5d:584e:0:b0:3a5:57b7:cd7b with SMTP id ffacd0b85a97d-3b768eedf78mr4968159f8f.22.1753354095752;
-        Thu, 24 Jul 2025 03:48:15 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fcad29dsm1759726f8f.49.2025.07.24.03.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:48:15 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: magnetometer: Fix spelling mistake "Magenetometer" -> "Magnetometer"
-Date: Thu, 24 Jul 2025 11:47:43 +0100
-Message-ID: <20250724104743.139892-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753354075; c=relaxed/simple;
+	bh=za0tp7BwBrUVSU6SuraZ5F3wSLucXvJIf5emTmKp+Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bv6KZKzMl1Y/0zaqN1J65PLCpnxZlNBDFGoPx8cF5AoR9xUm2pOr8HgEV4YrKmo+6/JbUlWEnmuMb3XlFREGXQvdAIPRKx4rz0lYKe5B05gXcQM7urj3ptYBR091bB0dgPxaoRRK7LOcMJG6OAdGzKb3lLacFuGZkab7O6zJXaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA4951A00;
+	Thu, 24 Jul 2025 03:47:46 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7B6C3F5A1;
+	Thu, 24 Jul 2025 03:47:47 -0700 (PDT)
+Date: Thu, 24 Jul 2025 11:47:44 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>
+Subject: Re: [PATCH v9 36/43] arm64: RME: Initialize PMCR.N with number
+ counter supported by RMM
+Message-ID: <20250724104744.GC2753450@e124191.cambridge.arm.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+ <20250611104844.245235-37-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611104844.245235-37-steven.price@arm.com>
 
-There is a spelling mistake in the HID_SENSOR_MAGNETOMETER_3D Kconfig,
-fix it.
+On Wed, Jun 11, 2025 at 11:48:33AM +0100, Steven Price wrote:
+> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> 
+> Provide an accurate number of available PMU counters to userspace when
+> setting up a Realm.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/magnetometer/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Joey Gouly <joey.gouly@arm.com>
 
-diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
-index 3debf1320ad1..c7809e5aa3a4 100644
---- a/drivers/iio/magnetometer/Kconfig
-+++ b/drivers/iio/magnetometer/Kconfig
-@@ -123,7 +123,7 @@ config HID_SENSOR_MAGNETOMETER_3D
- 	select IIO_BUFFER
- 	select HID_SENSOR_IIO_COMMON
- 	select HID_SENSOR_IIO_TRIGGER
--	tristate "HID Magenetometer 3D"
-+	tristate "HID Magnetometer 3D"
- 	help
- 	  Say yes here to build support for the HID SENSOR
- 	  Magnetometer 3D.
--- 
-2.50.0
-
+> ---
+>  arch/arm64/include/asm/kvm_rme.h | 1 +
+>  arch/arm64/kvm/pmu-emul.c        | 3 +++
+>  arch/arm64/kvm/rme.c             | 5 +++++
+>  3 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index c8564d5aaff4..ee10fc3c1f3d 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -93,6 +93,7 @@ struct realm_rec {
+>  void kvm_init_rme(void);
+>  u32 kvm_realm_ipa_limit(void);
+>  u32 kvm_realm_vgic_nr_lr(void);
+> +u8 kvm_realm_max_pmu_counters(void);
+>  
+>  u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
+>  
+> diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+> index 83f957ed0b80..0afe93bc5527 100644
+> --- a/arch/arm64/kvm/pmu-emul.c
+> +++ b/arch/arm64/kvm/pmu-emul.c
+> @@ -1014,6 +1014,9 @@ u8 kvm_arm_pmu_get_max_counters(struct kvm *kvm)
+>  {
+>  	struct arm_pmu *arm_pmu = kvm->arch.arm_pmu;
+>  
+> +	if (kvm_is_realm(kvm))
+> +		return kvm_realm_max_pmu_counters();
+> +
+>  	/*
+>  	 * PMUv3 requires that all event counters are capable of counting any
+>  	 * event, though the same may not be true of non-PMUv3 hardware.
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index bf814f45a387..a31920e05cf7 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -87,6 +87,11 @@ u32 kvm_realm_vgic_nr_lr(void)
+>  	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS);
+>  }
+>  
+> +u8 kvm_realm_max_pmu_counters(void)
+> +{
+> +	return u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS);
+> +}
+> +
+>  u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val)
+>  {
+>  	u32 bps = u64_get_bits(rmm_feat_reg0, RMI_FEATURE_REGISTER_0_NUM_BPS);
+> -- 
+> 2.43.0
+> 
 
