@@ -1,188 +1,218 @@
-Return-Path: <linux-kernel+bounces-744096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78DD5B107F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:42:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04847B107F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480D01CE39DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:42:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B347A3713
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3232267B00;
-	Thu, 24 Jul 2025 10:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD826980E;
+	Thu, 24 Jul 2025 10:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LDj68H2m"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ij5GF3TL"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52552286A1
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA1267732;
+	Thu, 24 Jul 2025 10:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353716; cv=none; b=HSs7Y4hvIuqkG6TJJrhfbtGraYdzj6bj9ibtG7RIGHwtFfHv/7C3nifBxJVz4BKggHunpg7czWjbx7BlPAFTP/wvR3C4a1OxKscXyx7ifeYPq1Dzq8MOmM0V/mYCUtOzwk0mdyuaJ8E49qwik85oQ/0QZUzRfx+l8UbetESjK6Q=
+	t=1753353724; cv=none; b=ZmT1PIjU3Wn6LB6N/SFM6vMAdhfHIu+JuJPYouqI1yN60W0844t6bM7fyuPJOkkcBmdeQd7ilkZhvkSRAef1CWcYS4vVYyYmEIwGJv0KwaNZtZybebrGnbZALX81NAB89KmVTzIvNKN9veRt9hMebOJGUb0u0DhU5tLDAxWMp4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353716; c=relaxed/simple;
-	bh=45mxVuaLRc67oFbJfFBmp3p91vP0zbO/KNdSVJZ7lHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oh4LlgQW62xkXV7mOQX08sY9QO3mLLIAdPGzaJX8mVUs9bbjlQII1Ghqj8Hv+ydBCInaP8S1JbiDLms20nNnC5BFzdivqQaq+nUkxgp3pA2sn0o5t/hB++8sCpGnS6wRiWFJJRo/FjH4ts0EmoSAvn2IGNF+RK6O5sw8DovdRt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LDj68H2m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9Ve4l015228
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:41:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	h8c+hQ4SGUWWF7MgOg6CDaNDYEfThSf+pDJc/IkTmMk=; b=LDj68H2mJ4QU76gx
-	FeTWzxShk0rMghYpScaiJEVC/Hkazps/jGjeXKM4grfNDy5/1H/rtlpJOFpOvR5Y
-	nrion1dPZidgS4tbrARhgsPTJwVLLHbQiR+N2B97b1Gs6RafWrgNuLZVNWPTk3jx
-	ZPlQdxwo5KhnIwdNm4BqgzeVxuIfht6m1qvMIDXofak6ONSjYalhKqCOLXZgPqM1
-	Z+UeFH+LB6N8+qmkoDy+IrBtL7AEiYDCvnBIk/ZdkZ1Yfyluns/TV2fNVu0AZgZH
-	qNbfVwK9UpDm1dUfqVqpZ+4WvMu/AlA6XdpshwXXwPm7NWlsOam4rjNwTzxaM9Yc
-	oZU9jw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483379tj0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 10:41:53 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7070970cb2aso15272576d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 03:41:53 -0700 (PDT)
+	s=arc-20240116; t=1753353724; c=relaxed/simple;
+	bh=mCKEW6/KqNeqo19+vOe+eL12z6sA/4SWr9mucf2bm9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmEnwzKINIt6OqFNKAZxTq52GXGFYRICQ2SDuSmBCd0LsEhBLLQCJtT288BdZtAW3nyIryooWfXnmi3rE3G1f26A5phwm0xzDotJSDbDuh3cIdLLweROkHQZ0mw5Xrkh1WZSeyjYA7De91kImDfqouu9FVmbWpYXe1yJN1Rlw2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ij5GF3TL; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a510432236so606470f8f.0;
+        Thu, 24 Jul 2025 03:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753353721; x=1753958521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VuhuHbBmeifTsbb3fFBxEKhPdDmR0mlneU3PFRFcuhI=;
+        b=ij5GF3TLEPev2YdGnwATY2WDi2urMNE47z9gZhHoiiP6L9xmA7NcIo5iiuL/mdO+ez
+         THsykfo1HgGXSgQVZmGcv1zQj0icFcXiA0vdbvJynLsKybz7m+Wz+mACePBqOg22BoZc
+         ehE1z6dQkyuPJ0KdJGreflRNyvBPz0FYBnTaYHL7w5SRlpjWXp+cnahfcx7cvM0Gsglf
+         tna/PlfL2oUXtxFJBlmL8kWJt+y9/7Guqka6D3BrLbmWs5Fl93T2HnL2Z1huoHshTiQ6
+         23Mhk5gnPggwCnLCFucNtUvGxxuCzEYNnRzjWcmSoIeHgZK+Pb9L590xaXj2eKLZK1K6
+         qEjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753353712; x=1753958512;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h8c+hQ4SGUWWF7MgOg6CDaNDYEfThSf+pDJc/IkTmMk=;
-        b=D0UCTsCf1b/nK09nIwUNpGQpvRZiawrlFvuYi08/Gh+2QJqqj5o9jEY4vb6utx/Pph
-         Jfv12iakAyLpQySLsUCjCu/3ZE9xN35vf4cfx7kcYq2MS3i31e884qpNRDIpDhj4CsvA
-         nTFcDWUTUYXdA1XXFAzELUOof8uX1BgaVXUdjDOIztIJGKt57CIwJizOyq4J50jKOFo/
-         Dw5YBc5Zb8SSr+24mE5ZMg7Woqm/PFk/64LJCF0xz6WuIwEZL/6Pskeo+xqQGZU5Qm5Z
-         JjmS9pSpSPxGvsxCI3Hj8mCED6aLp8NZ1EceT6bpH1PuPxvLz1/kE8Bxlea4umrQF7j/
-         Wp+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYN7DAkQDUirf7WkE9iwDb/d+NG154e9xBC640rPMnDj+0tDlFRINR7uGD92SH/nCUTvCUqt6wkLgZwZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0M3fFiwGgFBpx925OJNvhq/YYkzZGknNy3WvPreawmuYJc7Cg
-	t4Ax67knh61Ow7t0w3iSVvvUmM74e20hlE/TOa4CaDfReQc0edR5plKxlHdO14KqVLWmfvTVhYT
-	lj9DYzleqm4louUQVZJeqH50TijW7OZBC0bOeQQN0GRMgmshxD/C6ynjB4bOH3eKnqlg=
-X-Gm-Gg: ASbGncs7pjFb9Cxf0Q3HVTDFY9up72EX2sVOwUIIc3fH0/wYvKnMwb/R1bAj4ziQz+x
-	o4dXkbayy35Xvwoe3um5cbyly+uPawDtGRAvZXbi6C1M+cTbq1oDMHsuP/Wwiqa6b6CA6UK/lz0
-	ixWfDflQVkDh1c6tXfj2Bz9Kl+pqEUCcWH3idSMawdNqqzfc2DEVzlQQsqszzCfVqnCgwkR2xss
-	7QzbycsBi8aJyZm6m6JOMuIo2y7FGYL+j/6guzHFuuskFUnlrnUpYpT8s3d4C/5tMnb3KJ/Jily
-	OUA6/CSqzPZgzS/VN5rq4/aNj3FHkdAh+eTespX0METpxLpWW4Rysg474P6hqpeGxYY=
-X-Received: by 2002:ad4:5cef:0:b0:704:8aeb:f918 with SMTP id 6a1803df08f44-7070058cecfmr82340606d6.6.1753353711785;
-        Thu, 24 Jul 2025 03:41:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuJmYhWmwFTrg+fHs/E5rNOHK9w/JHH2Isep7h44OroNrmgC7EQsO7iUpSdkEZcKrPa8GQCA==
-X-Received: by 2002:ad4:5cef:0:b0:704:8aeb:f918 with SMTP id 6a1803df08f44-7070058cecfmr82340216d6.6.1753353711191;
-        Thu, 24 Jul 2025 03:41:51 -0700 (PDT)
-Received: from [192.168.68.118] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b76fcc2b8asm1790768f8f.74.2025.07.24.03.41.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 03:41:50 -0700 (PDT)
-Message-ID: <f6c837cd-97de-4908-9d8b-c12d6cc4cfe0@oss.qualcomm.com>
-Date: Thu, 24 Jul 2025 11:41:49 +0100
+        d=1e100.net; s=20230601; t=1753353721; x=1753958521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VuhuHbBmeifTsbb3fFBxEKhPdDmR0mlneU3PFRFcuhI=;
+        b=qTRVT6BXbDxU8ocdgLbKuIVTq5v84W1SuuanG3Tr6/kz4veUdcnktV2LLm8GNHmDD0
+         TrGaJkEy1rdiUvXFE8c02V9dZQuxBfZCOAYrhxkGOrzw8nfI3gVTe9+v2Gpm9/iiQww7
+         SS1+ILvfOylhmAmix62mSfJ8rt0Yecblgiprh/vLZDDOiKHfqcCoXtOI70wEHJcYWJMX
+         MVHmKviy37M0IV+AddvlRyKa1JtynqE9QoWCaGanQBOqnf/3K4cGAlrpzyosU55mGodn
+         E3sfOftRBKMVJy2cueyPXUQ7klghp/37RF+rsn4nLJjHRKon/iDieJivanGlWOYgsOFV
+         da5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVA+ogRvjlVXOh7F/cU5EphXpbBK/1ndq0JfWlA3ztEcBxktPay1DC57pZZFg53ccn4Y0gcO5PzFtRgUTPw@vger.kernel.org, AJvYcCWtW5IdSNWxOtjWfPthoQjG9fLaFckYl1zmm3D7TMlkfpYxr7HUeU1hh8GJRKyM5RCGK3pgjHH6JY+i@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb/S0qDXnf5HzOk2EZy3PXYrC9kJv2l+YI/+g0qu8zCtH3rlTJ
+	5eBlJKFVNWvyda9vVxj1k5omanMukjoABOyJI24II3VfoFSwVBqRy4bW
+X-Gm-Gg: ASbGnct11JZXfZklDAvFBdMVJ5aB9OtAkkt7lcY2v/T3dU36JN2Zn/+8KMfrkbnyIYO
+	rnC1IX4t38GcOhgTwJ6htvGjeY7Dbac6CnUD65u+AS2fu77c/iu1fPCPCejAiDv4fnhrJyA7iwc
+	8fTjidlfMUa0G1pN7NXeXbcC2mH8XX3EAE3/toK3CvfNbzmKFT4O/+SCDClBVANLcuPKhKq0E9g
+	om7bU6iE5Enndfa2DnUSaf+04wp/MPTfS5eKZCxF+hUjPAgTWSDUppwO3ueKYGrs1GIsJOv70Ef
+	YaCRlzKwJq58ec69eg52fyHEOJFQBgeBRgBB+nua5948OUI2i7N0BOOOGuPOSoE39jsWlL+llv2
+	Qk6lxcVhMjeL9MU4sork7XM8LHSdD7n0gjgYh5FrxkLRg9nGHiLb32Q==
+X-Google-Smtp-Source: AGHT+IHev4fUzCaklvZiT4w7bm1C1QbDRx77ancF77FzVoueNZXiu6S14A8hR65jLlLCu51WRc4AXg==
+X-Received: by 2002:a5d:584c:0:b0:3b4:9721:2b1c with SMTP id ffacd0b85a97d-3b768ee078emr4914068f8f.6.1753353720183;
+        Thu, 24 Jul 2025 03:42:00 -0700 (PDT)
+Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870553c78sm15344185e9.15.2025.07.24.03.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 03:41:59 -0700 (PDT)
+Date: Thu, 24 Jul 2025 12:41:56 +0200
+From: Jorge Marques <gastmaier@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Jorge Marques <jorge.marques@analog.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: i3c: Add adi-i3c-master
+Message-ID: <7bbopefg4ordtycyoeqijegzzhypqj7w6l7gjkacjl2hz6olce@npzdsv4j6eto>
+References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
+ <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
+ <20250720232726.GA3055763-robh@kernel.org>
+ <20250721-large-daffy-vole-d2d25d@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/23] arm64: dts: qcom: sc7180: use dedicated elite-audio
- dtsi
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250723222737.35561-1-srinivas.kandagatla@oss.qualcomm.com>
- <20250723222737.35561-14-srinivas.kandagatla@oss.qualcomm.com>
- <aIHi5uPxAtYARc7O@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <aIHi5uPxAtYARc7O@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: f1dthKSxlFYemb8bem9mBEPOMwwolMCm
-X-Authority-Analysis: v=2.4 cv=btxMBFai c=1 sm=1 tr=0 ts=68820df1 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=xLGpAxj0MuNPjuNy5_YA:9
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA3OCBTYWx0ZWRfX7hPnPb1LkdZp
- HykYSGiVtzOtlsqsiLck58plBFTTeEZZOcVbjHPxQ8Xv2WtwLHf+FT1b1+1kNyjGSIjuDf67kqi
- iMFVO/4oao/4sI7gRJghHhGWlNbpG2+HihZl2S/aIT8gdWPdA1NPLN1ov/QD16nxCgjEFVrcz73
- U7k6Wyizhbav7hvUW/bKM7G6qbGr03INEIwRGyC76+M0qt+Y89deu+LBGAuQyyQ/iM5M9wo9Y5S
- 2iPXl0X8ZLUrecSWIGbkRGGmY/vx+72pfciHJji4owwDyKrDajronWWCI2YsqoP3SaWYOv6JPWz
- g7/YzfbiUIQopHAcqHgQCUUPOgm+FNVJM6D39V5B+WbqIDTyHQntNBzIhpYRf8SO5sBXTZfucq7
- EErLEZWQzDikJ9x1p5D+S1fJ/Nt41gNeG/utx9zGbvV22HXQN7JbjVwAjG6ZYcb3fsE/GyzD
-X-Proofpoint-ORIG-GUID: f1dthKSxlFYemb8bem9mBEPOMwwolMCm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=666 impostorscore=0 mlxscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-large-daffy-vole-d2d25d@kuoka>
 
-On 7/24/25 8:38 AM, Stephan Gerhold wrote:
-> On Wed, Jul 23, 2025 at 11:27:27PM +0100, srinivas.kandagatla@oss.qualcomm.com wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>
->> Make use of elite-audio.dtsi and remove the gpr nodes from SoC dtsi.
->> This move removes duplication.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  .../boot/dts/qcom/sc7180-acer-aspire1.dts     |  1 +
->>  arch/arm64/boot/dts/qcom/sc7180-audio.dtsi    |  8 +++
->>  arch/arm64/boot/dts/qcom/sc7180-idp.dts       |  1 +
->>  arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
->>  arch/arm64/boot/dts/qcom/sc7180.dtsi          | 56 +------------------
->>  arch/arm64/boot/dts/qcom/sm7125.dtsi          |  1 +
->>  6 files changed, 13 insertions(+), 55 deletions(-)
->>  create mode 100644 arch/arm64/boot/dts/qcom/sc7180-audio.dtsi
->>
->> [...]
->> diff --git a/arch/arm64/boot/dts/qcom/sc7180-audio.dtsi b/arch/arm64/boot/dts/qcom/sc7180-audio.dtsi
->> new file mode 100644
->> index 000000000000..d6d41ba93195
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sc7180-audio.dtsi
->> @@ -0,0 +1,8 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +#include "elite-audio.dtsi"
->> +&q6asmdai{
->> +	iommus = <&apps_smmu 0x1001 0x0>;
->> +};
->> [...]
->> diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
->> index 74ab321d3333..0e267b9fdefc 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
->> @@ -13,6 +13,7 @@
->>  #include <dt-bindings/sound/sc7180-lpass.h>
->>  
->>  #include "sc7180.dtsi"
->> +#include "sc7180-audio.dtsi"
->>  #include "sc7180-firmware-tfa.dtsi"
->>  /* PMICs depend on spmi_bus label and so must come after sc7180.dtsi */
->>  #include "pm6150.dtsi"
+
+On Mon, Jul 21, 2025 at 09:37:39AM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Jul 20, 2025 at 06:27:26PM -0500, Rob Herring wrote:
+> > > +description: |
+> > > +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
+> > > +  implementing a subset of the I3C-basic specification. The IP core is tested
+> > > +  on arm, microblaze, and arm64 architectures.
+> > > +
+> > > +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
+> > > +
+> > > +maintainers:
+> > > +  - Jorge Marques <jorge.marques@analog.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: adi,i3c-master-v1
+> > 
+Hi Krzysztof and Rob,
+
+> > If you want to use version numbers, they need to correlate to something 
+> > and you need to document what that is. I don't see anything in the above 
+> > link about a version 1. Kind of feels like you just made it up.
+I will need a week or two before resubmitting the final version style.
+We are in the process of reviewing how we version things in general
+and how to comply with internal guidelines also.
+For the IP Cores, it was already an internal guideline to use semantic
+versioning, and I am making it public here:
+
+* https://github.com/analogdevicesinc/hdl/pull/1831 :
+
+  The IP cores typically should follow `Semantic Versioning <https://semver.org/>`
+  ``v<major>.<minor>.<patch>`` format.
+  In summary, a fix increases the patch number, a feature the minor number, and a
+  breaking change the major number. The first stable release version should be
+  higher or equal to v1.0.0.
+  
+  Device tree compatible take the major number prefixed by ``v``, for example,
+  for *axi_my_ip* v1.2.3, the *compatible* is *adi,axi-my-ip-v1* and the
+  *dt-binding* filename is *adi,axi-my-ip.yaml* (no major suffix). Per the last
+  paragraph, *adi,axi-my-ip-v0* is **never** appropriate. Software drivers parse
+  the ``VERSION`` register for feature handling across versions. The patch number
+  shouldn't have to be handled by software drivers, if it seems necessary to,
+  consider incrementing the minor number instead.
+  
+  Due to AMD Xilinx old default IP core version, many IP cores bindings start at
+  1.00.a. For compatibility, the patch value is kept, but should be treated as
+  decimal instead of character.
+
+(I should have had put as a dependency in this patch submission).
+The dt-binding major suffix correlates with the major version it
+supports all v1.xx.xx releases.
+It takes time to get to a final format because versioning may mean
+different things to different people/scopes.
+The PR that bumps the core to v1 is here and should be merged in the
+following week:
+
+  https://github.com/analogdevicesinc/hdl/pull/1724
+
+At the linux level, should I add the following to the
+adi,i3c-master-v1.yml?
+
+ +Description: |
+ +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
+ +  implementing a subset of the I3C-basic specification. The IP core is tested
+ +  on arm, microblaze, and arm64 architectures. The IP Core versioning follows
+ +  semantic versioning and divergent major versions are not compatible
+ +  with this binding.
+
+or create a dedicated file for ADI IP Cores with the guideline?
+
 > 
-> ChromeOS on SC7180 uses ADSP bypass, so explicitly including
-> elite-audio.dtsi for Trogdor is a bit unexpected. It doesn't use those
-> nodes at all.
-From DT PoV nothing changed, its same as before, for ADSP bypass the DSP
-services will never be up.
-
-
---srini
+> I asked already at v4 to document the naming/versioning, which was a
+> result of one of previous discussions, in the binding description. :/
 > 
-> Thanks,
-> Stephan
+> > 
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    minItems: 1
+> > > +    items:
+> > > +      - description: The AXI interconnect clock, drives the register map.
+> > > +      - description: The I3C controller clock. AXI clock drives all logic if not provided.
+> > 
+> > Is that a description of how the h/w works? The controller clock input 
+> > can literally be left disconnected? If 1 clock source drives both 
+> > inputs, then the binding should reflect that.
+>
+It cannot be left disconnected if the IP Core was synthesized for 2
+clock inputs (1). The dt-binding reflects the topology dictated by the
+synthesis parameter.
 
+(1) https://analogdevicesinc.github.io/hdl/library/i3c_controller/i3c_controller_host_interface.html#configuration-parameters
+    ASYNC_CLK
+
+How about then:
+
+  +      - description: The AXI interconnect clock, drives the register map.
+  +      - description: |
+  +          The IP Core may be synthesized with a second clock input
+  +          called "i3c" to drive the internal logic asynchronously to
+  +          the register map. The absence of this entry reflects the
+  +          topology where the "axi" clock input drives all the internal
+  +          logic. 
+
+> This was explained in reply, but never made as proper explanation to the binding.
+> 
+> Jorge,
+> When you answer to a review about uncertain pieces like that, usually
+> outcome of the discussion must end up also in new patch - either in
+> commit msg or better in the binding itself. I also asked about this -
+> documenting the outcode - in v4.
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Jorge
 
