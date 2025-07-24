@@ -1,250 +1,391 @@
-Return-Path: <linux-kernel+bounces-743529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0027B0FFD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:14:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D67B0FFCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 07:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70C2961190
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090B99610F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 05:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE882045AD;
-	Thu, 24 Jul 2025 05:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B681F8EEC;
+	Thu, 24 Jul 2025 05:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TlxDxHyL"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="boQFFCIU";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="g+CjIYZi"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6061225D6;
-	Thu, 24 Jul 2025 05:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A3F1863E
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 05:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753334057; cv=fail; b=UMYw7kFR/gfo+sbfsUcj2xy1KHbojBJyugsvCtB6+imXKOQCWrUaYuy9pLPrXYAk92b2i00adxm9IMA9Qkj2OMe08G37Axsglje9Zdu2JBQLlPcohlIyx8NIYsiA4iO9Z5pEdsNYwm0vyZwF8+ZBAT0uk9+2HgJASfxQJhfX2nA=
+	t=1753334038; cv=fail; b=gegBfFY9Z9TwFQwYxF3pfabl9E+QfYSKXcEFhm4IPkr2OInQWYx9PB13wt5upHWhQ5V+bfQOWtbYCMi6y7msJ9MWEX2bxw5cXENJ4qBa7OWwESxClQHz6I/QQTghsIaXu76dvR66Zbiy0R7CyITOzEvlweLeBtaJVRcmO+m1eOI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753334057; c=relaxed/simple;
-	bh=oqtdbfnb2MiipJVgC0bDZXpZ8MESyIRdpmB/iFupNRE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tuaCEhUfjhOh6usldp082Na7YyW1SnY60lPITRfXTdwjDuFqO0bK4aADS2RYjqgQAq1rZbS2VGk2CI/dcuNy/K1LmQUJvoK+jIK/Xs7jc/4Klp33/2W82e48qPIKlJRdSk4/z/bBWmfl0q8IBj5CnAyCN7UzjOp5o3VSUSg7Tt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TlxDxHyL; arc=fail smtp.client-ip=40.107.94.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1753334038; c=relaxed/simple;
+	bh=9fBk7QpEOlQBHefK60jykmB2eUjpG23qJSrC1crKRbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q++ctTswxWCIAc8yp4POwWDIdKrj8k1ZmzP+JLkKlD9z/eYRJwmfE5rMpR0kLzhhdEUaUXYMVRq6eTwnq0etlrRHJDM9gAjGCZvFIhi0OMtl8fHV4yw4oSB3xtpOkYHi/cuV8zYRMLfl08dq1+0po41HSfseWFLIUT0qPemwYhs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=boQFFCIU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=g+CjIYZi; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NLQwLh026822;
+	Thu, 24 Jul 2025 05:13:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=7tm5sRUKNKcgqMouXQ3EH1xhGvfaryCLw87u/hkzof0=; b=
+	boQFFCIUy7ixggii1UhPbw+zu6YXabzVOI4Z0IQ++Fx0x69Y2+Lo8/yICdo9ByT7
+	VlTD8qgABBQn60s+YUytSYKWUVnb7aWJyLgW4yr881FDHDPaQY5Js0G2q5rKumeG
+	FXYNgLoosDjFAPO/YP+y+mejQS9vPP6nzdNWIZUf1CkzQxyTzmVB/+X5cnQNm4r1
+	YIiUvCf7VoBfb7AjqRd9qMZZlldBIc3C+JTHZ7YG1LVNw9ELEZI/kp058oQHcy7j
+	WfIMj1+X8htMBzzQkqt/p1TQ+xGVtJQRFCAsPRK7ZTA+Va93l3QM5/SmNRrH10Qp
+	sXP5DmAdGHDW/ojM6FaT+A==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 482cwhub6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 05:13:46 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56O4EjgY010405;
+	Thu, 24 Jul 2025 05:13:45 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2052.outbound.protection.outlook.com [40.107.223.52])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801tbdq01-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 05:13:45 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hwBkiiXllmWk1XHvJKeHQy4HBWozfpL0I3ZyOFcH8OlC0LC7lV0477VxUDwnTi6jiuJqq6J7Ezp55n4bIAePGvWPoBqQOOwgkYjME/4gSsdJiY2yij5fSgtmcK1tKLCFOuBcqrKRNe3T4e0CyQG9HzxoNgsxMXyICC3rhHKWS+8BvU9fYf+JhzTGlKrRaP9vuPyeRLcJSRavzDKgIxPR15UIgA2bILnbRzrzi88ee2zqq/4e4mKyGl51vB1jAPn5r+mt7R3zGCqy1rxWLtI6iO4q0VeMC53/8NR4ZgUgFA1MHuF0syQp1fnhlc3Q3J7BsZ7QsoluJ+KTBh/YWKoF7A==
+ b=Kjd+FDnG5+21ds1hr39+pAs4G+aJO1d7rIpO8uYAxOrQKKB/s/uH9tJS04klho2zw6gsCmqf3ASJFcUfdTR11p4434ec58BmUWWuVQysfQ0AIgk0yHYarxE3QKs3jgkO7WBX5s8FmbJIcwKPg5orJniMMbHWiUHo9WuJ+z/JZPc6lana7w0xOS2Q+h9KHoi9kMGKIfdaXakPB3XI0R921V9WnIgZq3VEl64kb63WS5kugxokf02njUwo7HpQeIK82mZ1Ov9YyxykkWjIc4MwbhrxrlCxb+xCWP0xiMWhcBQRQH7dvMEed86psLy2+MXeGYgtUh+tpx799XG/5jLNlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YKs0Lht37tDkgh1CwlEgyh+w4IjGVI5XfasdtSsIgt0=;
- b=yyamMlTfWfBcRZTSXysFdVEvn3bekNR0C0CctUWZRgF6l/EKqCdycS9Qol+CiRByi89LLY7rjcIcG/sHsCOgNj2rfuswX5PXi6JxMNHwE2Q7kjiJUWlGv6adGi054P5EfLaObGCvQ4hNniafTeLPhZC0s3KgI9P7iLQmXd4WhLgaoYkhIAciE98gBxsJYLoN1/bp4joYlcNwp3CL7NUe29fexkAhfHkFGjZ311PYFXHBLeU8+LOKZnSWcrcjkKrvxJ2ZQtlUYIz98MR7vaOgN/1hDgmRcl3rjoeBpTWJHgz1vJ7uW1vcWzf2DivGvw82VvstNDXen6/O0osC9vG6iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=7tm5sRUKNKcgqMouXQ3EH1xhGvfaryCLw87u/hkzof0=;
+ b=B8UDkSMubbSxDITMYAtDIk3xYAyo9DouGiNT4PgOlR1+tKveUNVkgXJu2OOHrgNO7/LVWiP61wW0I8ZWelySyKT+1u+1jYTtA0JAnj8Hq7Y+qDk45v3dlvz8X4lxlqDJcAc7C0AoNSM+f4Zg6J7w9m4AXitj4+o+yvpFxQK7vx/NwIHhDbboga+Q8vUQcumYBN7fcNcv3PShfEFPCskbW2YTiEfellM7YFe1YeCk+0pBePEN7KBQQG48dIvhbag8jkkXJw8lWqiv2qi5N59GKpyui2AWwhCVCSu1gjbbFf7MVs8WcwNfBspex0HAhvf2yJ5+2Snw/A6UuQOu9s+6Xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YKs0Lht37tDkgh1CwlEgyh+w4IjGVI5XfasdtSsIgt0=;
- b=TlxDxHyL+XiwFcZV1oioOTwmVrUhESF3dlYh5AKWHGsQ+/L35Ly1ID+jaRqjnBC7m4MdnAoPZ+A94nymM8hlB4rGbYFV/6KTFDHRbgnXY/QLTpY5wu7GDFPGMDdXhDZXeLiiZDM236cdT4gBpvcrgc9/WYeEXsACdG60mg/UvGE=
-Received: from SJ0PR05CA0025.namprd05.prod.outlook.com (2603:10b6:a03:33b::30)
- by CY8PR12MB7657.namprd12.prod.outlook.com (2603:10b6:930:9d::14) with
+ bh=7tm5sRUKNKcgqMouXQ3EH1xhGvfaryCLw87u/hkzof0=;
+ b=g+CjIYZiLhYumCy/Ax8DB+mAzoeCIIJDWGTdc5lpq/WXWpFuU1xHwBB7jnzA2k+qY5CTs0c+ZtVywb5I8xxz50+5K/N1gi44445e8TiNkFu9FUIW2GAQQT1tjWVYCpCwm8xbms/HRDA+l55kQh6+s29W3S45b6xwU7MEqQZgKIk=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH7PR10MB5673.namprd10.prod.outlook.com (2603:10b6:510:125::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Thu, 24 Jul
- 2025 05:14:10 +0000
-Received: from SJ5PEPF000001CE.namprd05.prod.outlook.com
- (2603:10b6:a03:33b:cafe::70) by SJ0PR05CA0025.outlook.office365.com
- (2603:10b6:a03:33b::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.5 via Frontend Transport; Thu,
- 24 Jul 2025 05:14:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CE.mail.protection.outlook.com (10.167.242.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.20 via Frontend Transport; Thu, 24 Jul 2025 05:14:10 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Jul
- 2025 00:14:06 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Jul
- 2025 00:14:05 -0500
-Received: from xhdharinik40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 24 Jul 2025 00:14:03 -0500
-From: Ajay Neeli <ajay.neeli@amd.com>
-To: <git@amd.com>, <andi.shyti@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <michal.simek@amd.com>, <srinivas.goud@amd.com>,
-	<radhey.shyam.pandey@amd.com>, Ajay Neeli <ajay.neeli@amd.com>
-Subject: [PATCH v2] i2c: cadence: Add shutdown handler
-Date: Thu, 24 Jul 2025 10:42:43 +0530
-Message-ID: <20250724051243.22051-1-ajay.neeli@amd.com>
-X-Mailer: git-send-email 2.17.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.42; Thu, 24 Jul
+ 2025 05:13:41 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.019; Thu, 24 Jul 2025
+ 05:13:41 +0000
+Date: Thu, 24 Jul 2025 06:13:39 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Jann Horn <jannh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] hard-to-hit mm_struct UAF due to insufficiently careful
+ vma_refcount_put() wrt SLAB_TYPESAFE_BY_RCU
+Message-ID: <b798c84e-f3fd-486d-ad70-c827385a558a@lucifer.local>
+References: <CAG48ez0-deFbVH=E3jbkWx=X3uVbd8nWeo6kbJPQ0KoUD+m2tA@mail.gmail.com>
+ <6df9812c-96a5-41be-8b0e-5fff95ec757c@lucifer.local>
+ <CAG48ez1A17JC7Q35jmurY+Co0t_a78bPy9eRWRim7xJy9oLCvA@mail.gmail.com>
+ <3a233a85-3a94-422e-87be-591f93acbac7@lucifer.local>
+ <CAG48ez36AcGBy8_wo09WEHz98Dp44yKZ_FiVtFt8tcV9WiHafA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez36AcGBy8_wo09WEHz98Dp44yKZ_FiVtFt8tcV9WiHafA@mail.gmail.com>
+X-ClientProxiedBy: LO2P265CA0315.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a4::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: ajay.neeli@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CE:EE_|CY8PR12MB7657:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89cd68bc-56b9-4552-a4c9-08ddca70ec3b
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB5673:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2a6e4c9-4bcd-4ad2-977c-08ddca70dabf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oqr4wcQ0JbDfhAfFC4OpPDaPZynVW1jODlFctNeRi9/yowo6QOoFtaIonIuu?=
- =?us-ascii?Q?y2XUGOiA+JHUi+DO5Wl87trKTm6xj5EHeXHDDy9tll9McOP1OXW7pQIIHGNq?=
- =?us-ascii?Q?ZQ41Wh4YVljyXXN1OsEQPi2l5iO6hm6iQErHGdspjxxNKDuRyjga34kMLi6N?=
- =?us-ascii?Q?s2oy633wfrLQz19TLyC+8WNlo55ByeW2gsWl1o3CXBbFEle3CPomd5OTrm98?=
- =?us-ascii?Q?4jtRuzum3uNRsmk3TV78mh3qg/NTsp5tdfUm9JxkQ0lW8CVh/TLH3YTd4UwT?=
- =?us-ascii?Q?BWUW14MY6gBzZ9hgBvQNr8DiZ3AmUrsYdna8Ovb7T5/XJqWJ4rIaBkiZJ4cB?=
- =?us-ascii?Q?4O9FN2Gt2jWDey448HS/ydhnZp/78kmh8TrN/KfrfUIxUvhgA2cNtpV3Zyk9?=
- =?us-ascii?Q?9v4ib0MZIHd/OwgKjbhRm6SCAmjfYBi9oLo91w9Es45sUVw+RYx837Mcqbz9?=
- =?us-ascii?Q?eBMD+M6Mr+IXzyJwFLttVrLEnvLaxzJDK86EcJuzYxVaIrIw7TiVPJc+bGGL?=
- =?us-ascii?Q?Pt4H4ioUHbmue5cWgUym6rpkfTMxb0ZX6bmvR6LUIb+AL/g/UVLhyrqQwrq6?=
- =?us-ascii?Q?Geh7ECmXnyVSC9U0d0FKRatwceC5ohsUMxGA9w86virIr4uz55GHE4FtaHlN?=
- =?us-ascii?Q?RLzLrl7VGDOYNXeKhrmh8NV4/Mypb7iWnMiYkmIgJuGiHG3JR1ZqfeZ94OlF?=
- =?us-ascii?Q?AOnBwx7rKxolumLpNt/st2yALbIqt3Gho8ywt80YE7AjWhQUR/PDBrFosQBu?=
- =?us-ascii?Q?2sXpvFlB35JoLK9JgXk1WiVEWmUvpYOr5/gSXCPwPTO/T2XqE+v5RDIwDyqD?=
- =?us-ascii?Q?CI8thUb6bq50r3L9htb1JdKyD/49amsD27DFiBfclhioQLUpwt8Zb4UsHJ2q?=
- =?us-ascii?Q?2xs8oGUk7J8PX8yr5OSgKyVV3HDL9sRHm8prQfvSfYeGwCY9cGVpD1ePUD3L?=
- =?us-ascii?Q?uSF/CUCr6VcXtolBfpUqRmEMTwpX3CyWbG/LZC03N286Ia1qnJusPcqxjlf4?=
- =?us-ascii?Q?36EkLdi/f5N4RDjd4AHvlozhGnfMZ4hP+SwUXn5yEtAMBw1tBHd8uPaSrXyh?=
- =?us-ascii?Q?LNR0LSBWWb/NWXlnUdMM6BAxxop8LzXeyLYZZ82HxVL9RzOjQIQ2BlygYXqT?=
- =?us-ascii?Q?s4iI2RQMD/+VDACDaegfXKflRQFXOLdmgAwN1Gi8ZSx9OOrvRlsGbl36hivw?=
- =?us-ascii?Q?VPgUxzWbIablVITlKCtxhx5sJZICdu1EeXoaQhPxcuODt38FMLLb5GYfufbG?=
- =?us-ascii?Q?xyBftiguojDQJTm7EAuqwM6mpJughpZ//yaQIiKnVw5kCe8i/vTSXhqWkpMt?=
- =?us-ascii?Q?c0Ydzhn9go3pl2Jtqnt0qJ22BJ9agVYt799UckmGQOKJ88mEevWjThI8shps?=
- =?us-ascii?Q?8y/wttFnPRAobdD145mLZA6jvY+qdsZd6MewL/GDAqduSBVVLw/+qvJsPnGZ?=
- =?us-ascii?Q?xOwqSHzNxwg93lii4Ozj4L20YJiOoYXSRPKdOQCz6V/4CYb6ImiLxBOe8O+N?=
- =?us-ascii?Q?N7ML8VExuc3p/mBT7Z7US1IonEswCjzR/0MY?=
+	=?utf-8?B?alA1T29WQkMyWDljVkl0MCtCMGNHY1ZHTEUyUTZLdGtPN0RKTGlOeXppYmZr?=
+ =?utf-8?B?bmFqcU15MGlRRjYwek1Mek56dElPYk05ekVTNGc4SHE2czBtZDhXcFZHM1NH?=
+ =?utf-8?B?VU5SUmJDOXlocVpreXRtcTY3bU1xMURvTHBtNElVSjBNU0dHWVBnbHFsV1BV?=
+ =?utf-8?B?SStlU0dpQndMMFFQaWYySUNvZ3Fmc0xMTnZ1UzJVR0lleVBkakdYTmo2MGwy?=
+ =?utf-8?B?NzhNVEJkZHdwVlVRSWI4TGlJUVhmcGZyWk1oZ2hEUFRIaEUyaEg1Z01qREdY?=
+ =?utf-8?B?VHZqeE41eFRoYkNKbXJ0RFN5eDRTOGpMZnVmT1dGTWhoVndZWEhkOVZaMFJ1?=
+ =?utf-8?B?Si8raGs5OGJIR0NEbjhBZzVDNDU4OFpBTWtRL0lPd3NJZXNZcENsNjBhbnQ1?=
+ =?utf-8?B?dnRUOStvRVcwWWxDb0kzWFR6UGpYVXAveGp2K2dVdzN1TUE2MGQwZ3h1Y3ZI?=
+ =?utf-8?B?cHNtN2pQTkIybjNZZVdCWWJXMWpjNlVKcFNUV1FTK3BQbkNLY2p2NkFqMHBU?=
+ =?utf-8?B?SGFqR2dYempLQWNiaGpDTmd4Zjlqd1JnYmtWNjg5a2IyRlRMTUw0ek5BYWpB?=
+ =?utf-8?B?ditwQW5GNkg1VEJWYlloQWRtVW9pdk9NaFFWVjF5YlZjZjZuZTFKaFBmajNI?=
+ =?utf-8?B?cktEUlpLcGkxb0VOT0hPZHhoWTRoRm04UlBUanVPWHlGVlZtOUx1U0czandT?=
+ =?utf-8?B?aXF5ZjNxa1VpTjJkOSs3LytsdGUwakkyUXJ3VnhCcCsybGFOMmk4dWxxcDA0?=
+ =?utf-8?B?eTdOaUloTEtoVXJQc3J0NVl5dDZEYnQvbmNzS3Yxd1FJVmlyUE1nbm50dDY0?=
+ =?utf-8?B?dkxuenBUbUlkSDNQeStWcE5MODlLS016Z0Y2MU4rL2xZSWQvSU1hOU1nam8y?=
+ =?utf-8?B?OFE4WE5KejVZWHg2TG9PZWhxWjJ4Q1pERFgwQi80SFVQWDFZZWIvUzdUQzBJ?=
+ =?utf-8?B?ekZsSE14emsyMks3YXAzczROV3p5Z1IzVGNueDFuQVRmWFhDT1dZdW5UMGlW?=
+ =?utf-8?B?bUpHOXdrWUlkSnVLZDZqNVhNYkxqL25uNHdGR1pSMk9EUWdXa0VPNkNVbU82?=
+ =?utf-8?B?MDRxci9Fcmg0SXY2WVc1ZnBUSG41NkNqSTJzS0pyUitnMkRLTG9lZHJjY3py?=
+ =?utf-8?B?ZGtrOWFJYmc3cjdnMlpZdStuT3lTTHgxQlhkMjRFZXRRUnVFemxUNXVLbzVm?=
+ =?utf-8?B?d2kyZUZtMlJpQlNueFBONWU0QmxuczBUbDY5WXdZMG9QT3oydm55dWRyWFBL?=
+ =?utf-8?B?aEREbDFkRndqNVBmekNLYXZra3FsOGdzd0tmVlJnR3RESW96b2FBaFZDalZs?=
+ =?utf-8?B?ZXVXb3FqbzEyTlRWamZYd3VVNnVRQ2hWVVpRd0xua1dBb25mSlYwaDZuNWlR?=
+ =?utf-8?B?S2JpbTVMTnRxZFd3UGZYQStPOWd6L1RmRlpOczBkYlBNalJscjVRNEI5dkVu?=
+ =?utf-8?B?WWo5eTBZRFg2Wi95cjJXU0FLOVdRYldSclV2cmxDQnlSTStjN1VwOFZ5cGlG?=
+ =?utf-8?B?ei9yQjJDcWtCWEQ5cUplOG1GaUpJcDUzS05HelFrRlBUcXVrc0p6YnIydkM4?=
+ =?utf-8?B?NjNvS01uVUx0WHd1ZWFUVGJXTUpUdUlFclFEVVBDU1BwUFdYQ2xqekRUWEk3?=
+ =?utf-8?B?NkcxNk1iTzlOTnJCbDBmM1lHRVRVb3Q1U3hXQ2daRTZDM1hwc0xLNFJ3Rzdt?=
+ =?utf-8?B?WDR5dnE4QmdSSEpvRDRiZ3BIaDE3LzlpMEJjVFJqWlpOSlVqMEw0N3lQbUtr?=
+ =?utf-8?B?cXVXMXN5SllOb0tKd2NvVnA4UE9sRWhBUmpGY3JGL25xUFo1U21GY29tMTMr?=
+ =?utf-8?B?MWFHTU9ydHd0T1k0bzhXaHliTVBKZ2RuK2FmaVZPM2NXb3VpVGxVY1M2emlj?=
+ =?utf-8?B?TWtBbjFkREN6UFgrSlNHTVhzcFdqSE9ZNEs3d2YrYkpwWEYwVEF5a2xWMDk3?=
+ =?utf-8?Q?Sj+1IaHxCSA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 05:14:10.3604
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VE9yOGxHSnZlSitJSU9aa254MzMxYjQrRVlINGMrb2JWakZXSUd0ZncvQzda?=
+ =?utf-8?B?VThubmpzWlVZWEt0aDY1T0FQQXhJQmhNZHdzd2czNlNXSUtiZzBQeHRVQUg1?=
+ =?utf-8?B?SlBmTkgxcVQyQnBDeEFXM1V2Y21BNnVnOUtxMVFuNzQ4TEFIY0hzVndWRm80?=
+ =?utf-8?B?MmhxTTBCVGUzRjY4a0VSSkJnYUJsYVpsdUE5TVFIZ0krdHp6MkhFQ21iaUlO?=
+ =?utf-8?B?cVlLQVMwWmxmQU1KODhTZmx5dytqQVo1ZU5rMmlnV0ljMTdYUXFaWjJJMGNM?=
+ =?utf-8?B?YUxiekRqWHE5YVkxRFhoOFdhZ2RSN1ZXTkcxK0ZuZjJ5WXZQZnZBd3JsY1RT?=
+ =?utf-8?B?RU93LzdoNmVORDRnUW1hUFJWZ1V4em1yUktyZit2c21lZ0pHMUU0M3JaS1RE?=
+ =?utf-8?B?Z3dTMWZFVGdPUzVGSkIwSTNBMTFTb1hraVpSc05rQUlDdmg0RG1LcHBtRzhT?=
+ =?utf-8?B?OVQ2eFZhcjJCZ01xOERhUUIxbXQ2UlRxa041bUtBR213YlFrY0x6MVYrMnBy?=
+ =?utf-8?B?MVhHU043Nm5WSitjdXpITXlDd2o0UXV6OE1KSzVmYlRpbmxlMDRtcmhGV3hE?=
+ =?utf-8?B?ODhDWkU3SzdnVEFYUGlVUjBqVkpsR3Z5d3VLazRhSlRDSEc0ZGlpNnVFdC91?=
+ =?utf-8?B?cmMxam5jVC9vVlFacWFFVE42aUh6ekVKVUM2RGJUaFRja0lyczc1NVdDdVdn?=
+ =?utf-8?B?SU5vTGI2emNlbm84bGs1NlcyeE5aeTIzNytEUHVKZEU5Ky8zdUFwNXJjLzVR?=
+ =?utf-8?B?aWdqdmxlMmpQMHllK0hRTkFoUWtvR0hxcE4wUndzNUxNS1FZeFMxbFR1QTVs?=
+ =?utf-8?B?OEVIKzU2dy82RHJSVXloamxXcTJ0elU4ZXo1QU5XTm00UHVMTnRDbzF3Vmh0?=
+ =?utf-8?B?T1hEVGNKcC9iaWhoVXIrUnVuSG1DajFIamlmZUxtNTJ6M21UUGhTZnpvdHg1?=
+ =?utf-8?B?REpSdzVtdXhsZ1N6SDZkQmJpWDNLWGJSTUZDQkFROUJqK0w1Ym01elZRbm1v?=
+ =?utf-8?B?anF0SkVlejVlMzM2VnhyRTFZWGNJU3kxZVl5UzdxTnZrU3FTR3dVQmV1RUNz?=
+ =?utf-8?B?VVNaclVGVG9jUGgxT1NxS0gyM3BFY3ZwNkVtYWNxNysxWlREcXRSMmRKQy9r?=
+ =?utf-8?B?Y0ZWZHhSaWxseDh3NkxQQW1oL3UzZWJ2dkM3Yld1Z1dwY0NFR0VDS3RxMGVD?=
+ =?utf-8?B?bUwzZ2NLNFhzaHk5Rkh3d3V1ZnJHVndUcHlBMThKZGZOV1VJc1c2a1lRTUtY?=
+ =?utf-8?B?UVhIam54bHY2VmdOcE9XVy8xelFBRUg2WVB6S1hMTDB3YVJ0bitYY1dxTmI5?=
+ =?utf-8?B?STZIUmUxVG15WUxGMHJLMDgxOHlRSDNlNmxEeTRaZUtra0dUdFF0QWFEM2xS?=
+ =?utf-8?B?RzIydTZydkZvZ29oa2VQSHlDbHdOSDNrV2NLenBpU3BLTTBDMkVYWWIreDNq?=
+ =?utf-8?B?Ris5MTBlc0E0a1FScWlISlRFSmhQQ0FkOXYxRlQzQk1QV25ub0Q1dmYzbkR2?=
+ =?utf-8?B?b0kwd2xkZ3AxV1NSSDNmOE0yYTVjWVJVRDFiUURxVTlodkpGdGtEaGlkSGE5?=
+ =?utf-8?B?OFp3QlVOQ3h5UXN2MC84blBNV0JUQTRGYnIycFlidUV2QUZERHJiYXU3TlRP?=
+ =?utf-8?B?NjB1Wjc1OEpSN3daWWJBZENRckdUU2FiZzdjbFg5WXFpK2tUSk1JVTFBSVdv?=
+ =?utf-8?B?TW9VdFNrNTkyQkVoTnpFMHgwSDlXdTQ5RVlTNDRVb3hpc3IxMnZoUGI3Ritm?=
+ =?utf-8?B?c1VkWkJlemFZeTVGbjgyVEE1QzZLZTZNVC9JM0UrUmlzcGtYN0RGRlZ0KzZP?=
+ =?utf-8?B?M1o0QVJTcnU4MkVWdlRjRGNXOUZPV1J6V0FzU3JrLzlDV2R0SVFqMTRRSTJZ?=
+ =?utf-8?B?LzU5dlpRa1Jmd3FjNDNScFdMajE0UDNSaDRXdlI4Ylp3dE1kT0VjQzl2c2pO?=
+ =?utf-8?B?TmNwcFhOeExIRy9oTEt1cTBZZ0E5SUhNem1PV09WRVZaWDhFcE9LVGdlbmY1?=
+ =?utf-8?B?R3BCcGxmeVZuNis1Q3JCTzVNTVAvbzRLSjNqWEpvTlN5U0ZtaStyL080L3Fr?=
+ =?utf-8?B?VFZYZVQ1WlJCLy90aUwxTnJRRWxiUXFGL2JJV2ZzdldmYklSMlBLUUUyUGFK?=
+ =?utf-8?B?dlYwRGRaRXpucWtFejY2VVBCdHo4ZXRzQVByTjBJR3FCMlBYVnFDZ1FqTTFr?=
+ =?utf-8?B?ZFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	IZghH5kN5UFET0FmxDhDZtr5HzVi5w3KYx/6gM5yUIwWcTOC5pW4xdsVvEadgyhsjK7hJ4egsxxt0glLdRCoEue0vt2bfDtjiTUKzcbEOwgI0vQADI9D1FA4kYkh+8vjlz7+XezReObZGr7BKodDg1nLrgcaxRGai1OvQAjhJPTpYZgQ1RjSdft7JtpognLARjTd1sxAvpDjsoIj+f5YpQ+iJTtpNVfRnjfRO3yS51iRJc3/1sFeLEQHSuKyUlHD1sjX+rs+eOlzF95eTQ2TqPVwuj781mhV2jLKVEXFKZWRP6EDEpw2IeXgbTRh52DAxWJBePuGDvdG2VM/v8yVMyQ44/vZTQowIwcLK6v33Kb3OPqRWlJltB/jCj1wRRGU5uvxviZ5Jq64gMPEXL7fPEUniO9Fb/C3KHSYp7PU9meZvd0YfWsQRnO9QRWdC/V6vFa7jznzKcy88xvaDVuUwA6tOXKNG+iN7f5K+ow29F+QQcB5MdgKADZMSErac+g+KOdJbOwc7Hk9tTJxWfkxDWUO6bWxddOK9+eEcynjVRRl/QQkamLoSFoL530mytqO3XzGEtIsVk+juSBvs2JcZLYQWTVu7TLfp4qVjoesAhs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2a6e4c9-4bcd-4ad2-977c-08ddca70dabf
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 05:13:41.2331
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89cd68bc-56b9-4552-a4c9-08ddca70ec3b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7657
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5Owk3xQqI7G67q0S37iavs837et8TWNvSPVefem46kq12B6ifOc01Y8GP9YZrHeEOLYi4VeuOF1mgcOrC16OdbH1foDSkYpIZNybuekP+UU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5673
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-23_03,2025-07-23_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507240032
+X-Proofpoint-GUID: 4nm1rxqt7bUeXZ4COBf9yDrHlUQxjzPn
+X-Proofpoint-ORIG-GUID: 4nm1rxqt7bUeXZ4COBf9yDrHlUQxjzPn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDAzMSBTYWx0ZWRfX8Ax5wBtLllCh
+ gIwJSFsw+pGGMnCRHhzIZ7Dazh7/GGJhI3S/BOaAuumM1JqMIi5ozU88REwKZK8Oew2Y7lcs6jF
+ 0mH3ZutjRJYB9CWmBUl+r12MJ5R+UvsHf4dh6fMi7V2jAlPCTPiFIkiik/K0+Lgx0zTBX5KzYwC
+ aFD6hsDcRs4B7rpk3eszHTSuvNAMuvjcAbHyZRqiUy26ew8reiJcBUAKlnWb8hJae9E/x9ocGJe
+ KvK/tp1CHLTarnV2iDvumDyJ/NlghvWOx+oTZBQAEz/QMOXNSA37KV/y1ICdq42HfEWYVobDzWl
+ jKVkM4xE/UX3Wriaqt27vSa2KD9KaQZujNdgYBPcM1un75xUFDReuG0IDISG9DCff2NS/31NjUJ
+ 3nItRnEDP+h0xZSwVAaURlhBj6pFX9VJrJCPdPS9xiQV72O/ZQxa3HxUgYBBbeSQx3SGW9Xf
+X-Authority-Analysis: v=2.4 cv=IPoCChvG c=1 sm=1 tr=0 ts=6881c10a cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=yPCof4ZbAAAA:8 a=7yn845ouWORMtootedAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
 
-Implement shutdown function for Cadence I2C driver to suspend the bus
-during system "reboot" or "shutdown".
+On Wed, Jul 23, 2025 at 09:43:35PM +0200, Jann Horn wrote:
+> Sorry, while typing up this mail I realized I didn't have this stuff
+> particularly straight in my head myself when writing my previous mails
+> about this...
+>
+> On Wed, Jul 23, 2025 at 8:45 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> > On Wed, Jul 23, 2025 at 08:30:30PM +0200, Jann Horn wrote:
+> > > On Wed, Jul 23, 2025 at 8:14 PM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > On Wed, Jul 23, 2025 at 06:26:53PM +0200, Jann Horn wrote:
+> > > > > There's a racy UAF in `vma_refcount_put()` when called on the
+> > > > > `lock_vma_under_rcu()` path because `SLAB_TYPESAFE_BY_RCU` is used
+> > > > > without sufficient protection against concurrent object reuse:
+> > > > >
+> > > > > lock_vma_under_rcu() looks up a VMA locklessly with mas_walk() under
+> > > > > rcu_read_lock(). At that point, the VMA may be concurrently freed, and
+> > > > > it can be recycled by another process. vma_start_read() then
+> > > > > increments the vma->vm_refcnt (if it is in an acceptable range), and
+> > > > > if this succeeds, vma_start_read() can return a reycled VMA. (As a
+> > > > > sidenote, this goes against what the surrounding comments above
+> > > > > vma_start_read() and in lock_vma_under_rcu() say - it would probably
+> > > > > be cleaner to perform the vma->vm_mm check inside vma_start_read().)
+> > > > >
+> > > > > In this scenario where the VMA has been recycled, lock_vma_under_rcu()
+> > > > > will then detect the mismatching ->vm_mm pointer and drop the VMA
+> > > > > through vma_end_read(), which calls vma_refcount_put().
+> > > >
+> > > > So in _correctly_ identifying the recycling, we then hit a problem. Fun!
+> > > >
+> > > > > vma_refcount_put() does this:
+> > > > >
+> > > > > ```
+> > > > > static inline void vma_refcount_put(struct vm_area_struct *vma)
+> > > > > {
+> > > > >         /* Use a copy of vm_mm in case vma is freed after we drop vm_refcnt */
+> > > > >         struct mm_struct *mm = vma->vm_mm;
+> > > >
+> > > > Are we at a point where we _should_ be looking at a VMA with vma->vm_mm ==
+> > > > current->mm here?
+> > >
+> > > Well, you _hope_ to be looking at a VMA with vma->vm_mm==current->mm,
+> > > but if you lose a race it is intentional that you can end up with
+> > > another MM's VMA here.
 
-Interrupts are disabled in the handler to avoid spurious events when the
-driver is in slave mode.
+Right I get the SLAB_TYPESAFE_BY_RCU thing, what I'm saying overall is 'can we
+detect that we lost the race by knowing what mm this should be'...
 
-Signed-off-by: Ajay Neeli <ajay.neeli@amd.com>
----
-Changes in V2:
-Disable interrupts
----
- drivers/i2c/busses/i2c-cadence.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+>
+> (I forgot: The mm passed to lock_vma_under_rcu() is potentially
+> different from current->mm if we're coming from uffd_mfill_lock(),
+> which would be intentional and desired, but that's not relevant here.
+> Sorry for making things more confusing.)
 
-diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
-index 8df63aa..e0a56df 100644
---- a/drivers/i2c/busses/i2c-cadence.c
-+++ b/drivers/i2c/busses/i2c-cadence.c
-@@ -192,6 +192,7 @@ enum cdns_i2c_slave_state {
-  * @transfer_size:	The maximum number of bytes in one transfer
-  * @atomic:		Mode of transfer
-  * @err_status_atomic:	Error status in atomic mode
-+ * @irq:		IRQ Number
-  */
- struct cdns_i2c {
- 	struct device		*dev;
-@@ -224,6 +225,7 @@ struct cdns_i2c {
- 	unsigned int transfer_size;
- 	bool atomic;
- 	int err_status_atomic;
-+	int irq;
- };
- 
- struct cdns_platform_data {
-@@ -1495,7 +1497,7 @@ static int cdns_i2c_probe(struct platform_device *pdev)
- {
- 	struct resource *r_mem;
- 	struct cdns_i2c *id;
--	int ret, irq;
-+	int ret;
- 	const struct of_device_id *match;
- 
- 	id = devm_kzalloc(&pdev->dev, sizeof(*id), GFP_KERNEL);
-@@ -1526,9 +1528,9 @@ static int cdns_i2c_probe(struct platform_device *pdev)
- 	if (IS_ERR(id->membase))
- 		return PTR_ERR(id->membase);
- 
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	id->irq = platform_get_irq(pdev, 0);
-+	if (id->irq < 0)
-+		return id->irq;
- 
- 	id->adap.owner = THIS_MODULE;
- 	id->adap.dev.of_node = pdev->dev.of_node;
-@@ -1590,10 +1592,10 @@ static int cdns_i2c_probe(struct platform_device *pdev)
- 		goto err_clk_notifier_unregister;
- 	}
- 
--	ret = devm_request_irq(&pdev->dev, irq, cdns_i2c_isr, 0,
-+	ret = devm_request_irq(&pdev->dev, id->irq, cdns_i2c_isr, 0,
- 				 DRIVER_NAME, id);
- 	if (ret) {
--		dev_err(&pdev->dev, "cannot get irq %d\n", irq);
-+		dev_err(&pdev->dev, "cannot get irq %d\n", id->irq);
- 		goto err_clk_notifier_unregister;
- 	}
- 	cdns_i2c_init(id);
-@@ -1636,6 +1638,23 @@ static void cdns_i2c_remove(struct platform_device *pdev)
- 	reset_control_assert(id->reset);
- }
- 
-+/**
-+ * cdns_i2c_shutdown - Shutdown the i2c device
-+ * @pdev:	Handle to the platform device structure
-+ *
-+ * This function handles shutdown sequence
-+ */
-+static void cdns_i2c_shutdown(struct platform_device *pdev)
-+{
-+	struct cdns_i2c *id = platform_get_drvdata(pdev);
-+
-+	/* Disable interrupts */
-+	disable_irq(id->irq);
-+
-+	/* Initiate failure of client i2c transfers */
-+	i2c_mark_adapter_suspended(&id->adap);
-+}
-+
- static struct platform_driver cdns_i2c_drv = {
- 	.driver = {
- 		.name  = DRIVER_NAME,
-@@ -1644,6 +1663,7 @@ static void cdns_i2c_remove(struct platform_device *pdev)
- 	},
- 	.probe  = cdns_i2c_probe,
- 	.remove = cdns_i2c_remove,
-+	.shutdown = cdns_i2c_shutdown,
- };
- 
- module_platform_driver(cdns_i2c_drv);
--- 
-1.8.3.1
+...and because of this, no we can't. I hate how uffd is implemented.
 
+But even so, even if we could, it would SUCK as it would leave us with a
+_requirement_ that this had to be current->mm or a race-recycled thing.
+
+Stuff like mshare also wants to pull out assumptions about current->mm, so
+we don't really want to be doing this anywhere even if we could.
+
+So moot really.
+
+>
+> > > > Or can we not safely assume this?
+> > >
+> > > No.
+> >
+> > What code paths lead to vma_refcount_put() with a foreign mm?
+>
+> Calls to vma_refcount_put() from vma_start_read() or from
+> lock_vma_under_rcu() can have an MM different from the mm that was
+> passed to lock_vma_under_rcu().
+>
+> Basically, lock_vma_under_rcu() locklessly looks up a VMA in the maple
+> tree of the provided MM; and so immediately after the maple tree
+> lookup, before we grab any sort of reference on the VMA, the VMA can
+> be freed, and reallocated by another process. If we then essentially
+> read-lock this VMA which is used by another MM (by incrementing its
+> refcount), waiters in that other MM might start waiting for us; and in
+> that case, when we notice we got the wrong VMA and bail out, we have
+> to wake those waiters up again after unlocking the VMA by dropping its
+> refcount.
+
+Thanks for the explanation but I _think_ I understood this bit, what I
+meant was 'except for cases where slab recycled the VMA' :), as in
+_intentionally_ vma->vm_mm != current->mm.
+
+You've answered above re: uffd.
+
+>
+> > I mean maybe it's an unsafe assumption.
+> >
+> > I realise we are doing stuff for _reasons_, but I sort of HATE that we have
+> > put ourselves in a position where we might always see a recycled VMA and
+> > rely on a very very complicated seqnum-based locking mechanism to make sure
+> > this doesn't happen.
+>
+> Yes, that is pretty much the definition of SLAB_TYPESAFE_BY_RCU. ^^
+> You get higher data cache hit rates in exchange for complicated "grab
+> some kinda stable object reference and then recheck if we got the
+> right one" stuff, though it is less annoying when dealing with a
+> normal refcount or spinlock or such rather than this kind of
+> open-coded sleepable read-write semaphore.
+
+Yes, and again I should have more closely scrutinised the original
+series... or at least more closely _understood_ it. Entirely my fault,
+though due to workload more than anything (hey guess I need to work some
+more weekends :)
+
+I understand we're doing this trade-off for a reason. But we're asking for
+problems here.
+
+>
+> > It feels like we've made ourselves a challenging bed and uncomfy bed...
+> >
+> > >
+> > > > Because if we can, can we not check for that here?
+> > > >
+> > > > Do we need to keep the old mm around to wake up waiters if we're happily
+> > > > freeing it anyway?
+> > >
+> > > Well, we don't know if the MM has already been freed, or if it is
+> > > still alive and well and has writers who are stuck waiting for our
+> > > wakeup.
+> >
+> > But the mm we're talking about here is some recycled one from another
+> > thread?
+>
+> The MM is not recycled, the VMA is recycled.
+
+Yeah sorry it was late, this is what I meant.
+
+VMA is recycled, so different mm.
+
+>
+> > Right so, we have:
+> >
+> > 'mm we meant to get' (which apparently can't be assumed to be current->mm)
+> > 'mm we actually got' (which may or may not be freed at any time)
+> >
+> > The _meant to get_ one might have eternal waiters. Or might not even need
+> > to be woken up.
+> >
+> > I don't see why keeping the 'actually got' one around really helps us? Am I
+> > missing something?
+>
+> We basically have taken a read lock on a VMA that is part of the
+> "actually got" MM, and so we may have caused writers from that MM to
+> block and sleep, and since we did that we have to wake them back up
+> and say "sorry, locked the wrong object, please continue".
+
+OK I think this is the crux of it then, and what I've been missing here -
+we have taken a read lock _by mistake_ in effect on the recycled mm, which
+may end up to be a spurious one that we need to immediately drop, but
+because of this we might have waiters that could wait forever.
+
+OK I get it. But to safely reference the mm here we need to be assured it
+stays around because in case of this not being true, we have nothing to
+prevent that mm going away right?
 
