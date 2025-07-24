@@ -1,164 +1,184 @@
-Return-Path: <linux-kernel+bounces-744307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26EEB10ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED3BB10AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 14:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29F4188D062
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CA016880C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 12:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC2A2D5427;
-	Thu, 24 Jul 2025 12:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE962D4B7C;
+	Thu, 24 Jul 2025 12:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bf6yVMhO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTvtEbZ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DDE2D3ED7;
-	Thu, 24 Jul 2025 12:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C202836BF;
+	Thu, 24 Jul 2025 12:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753361646; cv=none; b=SlEkQ5XYbSeKdF/yfESdColid7Ou+e1cnqC7iTyrUDM2iTXadSRtF3WNSq40ex3zUsJAYmC+rJvvpI+Whr/6aFGS/EcIekmaXbMGL1ltu4gfHU84ugosxxAQjdh1NlwCtEizWqif8AD+Qkx9A9KVXBsOwqFNZnVAhhmtXDYsYSw=
+	t=1753361697; cv=none; b=N0yQRq7TLqPSkE0UQz7FhhSPTEiSwZCcUprtEUczi4RTE8qNxhFgyW+SdqDrrYcYMhnk673h4NGGcTNxcqDFldi2FEGneZ4vIfMsS9GSnhGdYdA8SZXBTPNn2VZGI2IdG9qxClYQBjAGWhdrNMlhBlSkITQOkrM61RmGHdy+Wsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753361646; c=relaxed/simple;
-	bh=o/HNMzmoL5jVJLbw/YCLhzRdjr7O65GLHlcUxrOksEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XPHrbQkIcAeOnKyZKorDQQ4OiCEyT1WBajs+3c7x4QwlSv8svdNIOA+f03t2K796rhhopZSdJq6I/Icp/YK6dB/NAgYlkGWRMeJdtXFtJfNfraiHRA80qOMSalxzTXLt0ZXPkEndkmK2Vu64TqjMQuDLv1ZBo2vqCy7abGQ7ny4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bf6yVMhO; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753361645; x=1784897645;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=o/HNMzmoL5jVJLbw/YCLhzRdjr7O65GLHlcUxrOksEQ=;
-  b=Bf6yVMhOeRIsghxSHSJD5FMRjub9HB4iu4YJ/RGj4MrUgJOjdXfuBpJU
-   APoF/Vaw26XH3Idypn8KvSxOAdgDxXF/EFXOzkDbipk5LqO86dN5PFO06
-   8Fbp3jm99ZN0P+wtSxWLiv8IwyfiiUoYlJuqTkjyjGUracDtcXzD33gYg
-   UXWVzwrZitgOZ8yeqtJflDcWSth932KXOHUUlBPSKoLquwu7ugy9JaTsA
-   TFirSTXOokNxWn4Yc9ukAcfVfVbIQaTGI5gQLmmvuMMQvS0SeuYD1GdF9
-   w7q+VO5cARmMWyrIvYcHpmwN26/1BKaQmZpSQDZwbmlj9fz83c1oDF3V3
-   Q==;
-X-CSE-ConnectionGUID: tIwSoiWlSt2K79Q+plyrhA==
-X-CSE-MsgGUID: xG6kZDVHQCqP7EbY0igc2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="55778212"
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="55778212"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:54:04 -0700
-X-CSE-ConnectionGUID: MvuiZzvORyu+oi7jI86Kdg==
-X-CSE-MsgGUID: 8PZcJ1kUTCmTpJpYRniPwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
-   d="scan'208";a="159981097"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.18])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 05:54:00 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Kyung Min Park <kyung.min.park@intel.com>,
-	Tony Luck <tony.luck@intel.com>
-Cc: xin3.li@intel.com,
-	maciej.wieczor-retman@intel.com,
-	Farrah Chen <farrah.chen@intel.com>,
-	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] x86: Clear feature bits disabled at compile-time
-Date: Thu, 24 Jul 2025 14:53:46 +0200
-Message-ID: <20250724125346.2792543-1-maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1753361697; c=relaxed/simple;
+	bh=sp5ZCZ1GPq3m4+63AHbRNpdon7xPTVdteDhqlssT8mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rd2cvo/6F+c2t6FmFULNNf+qTDbj94tYEAp8+2I9vkz3QHHVMxmBjL/FTh4ilc8aS1CKKu9qxJmqVdDBUuybHmPw4uKMDk0gFvV0Ym8Z7CwR0sFSCRYeji7MdThdZszdA/qKDEef+4SQej7jd8TkK6LqZuZom/fI+Z2oTHywAPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTvtEbZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5534EC4CEED;
+	Thu, 24 Jul 2025 12:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753361696;
+	bh=sp5ZCZ1GPq3m4+63AHbRNpdon7xPTVdteDhqlssT8mc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HTvtEbZ4fVPI63NBgAzGc6Z/SeUE2W6+iCih6OS5w0LbYA9Swv+Fx6hsdCW/0ltCJ
+	 EHTX96h00Sm0t0szqBO2OH4kcxWWttCkjn6vxoPkB2m0PkyHXc8gZaPt7YN5EG9NqK
+	 zvWVmlSpmij4ilZokkjNeny7eFk1sUhVpL69OSrQfq49dI5tGLDwRWbGdOeeCvG7Cq
+	 pn8yY+BUdswSUpk12PIrudCj1BVpq5iK/6NH1J3IPeT4FNgZm8+gMRSPcUPul1KjP9
+	 Oe2r3YptT/lB/aBCOeNI5m9Wj0HjQxMkQsXmRUShhxyrBKAjSGCLcU1HFwQZrP03yX
+	 CPwe1Iptj6I1g==
+Date: Thu, 24 Jul 2025 13:54:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] iio: adc: ti-adc12138: Simplify with
+ devm_clk_get_enabled()
+Message-ID: <20250724135450.36f9a65f@jic23-huawei>
+In-Reply-To: <20250713-iio-clk-get-enabled-v1-1-70abc1f9ce6c@linaro.org>
+References: <20250713-iio-clk-get-enabled-v1-0-70abc1f9ce6c@linaro.org>
+	<20250713-iio-clk-get-enabled-v1-1-70abc1f9ce6c@linaro.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-If some config options are disabled during compile time, they still are
-enumerated in macros that use the x86_capability bitmask - cpu_has() or
-this_cpu_has().
+On Sun, 13 Jul 2025 17:59:55 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-The features are also visible in /proc/cpuinfo even though they are not
-enabled - which is contrary to what the documentation states about the
-file. Examples of such feature flags are lam, fred, sgx, ibrs_enhanced,
-split_lock_detect, user_shstk, avx_vnni and enqcmd.
+> Driver is getting clock and almost immediately enabling it, with the
+> devm_request_irq() as the only relevant code executed between, thus the
+> probe path and cleanups can be simplified with devm_clk_get_enabled().
+> 
+> Move devm_request_irq() earlier, so the interrupt handler will be
+> registered before clock is enabled.  This might be important in case
+> regulator supplies are enabled by other device driver and this device
+> raises interrupt immediately after clock sarts ticking.
+> 
+> The change does not reverse cleanup paths - first regulator will be
+> disabled, then clock and finally interrupt handler freed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Add a DISABLED_MASK_INITIALIZER macro that creates an initializer list
-filled with DISABLED_MASKx bitmasks.
+Seems no one cares (or is paying attention) about the ordering change
+and we both think it is fine so applied to the testing branch of iio.git
+for 6.18. I'll rebase on rc1 once available
 
-Initialize the cpu_caps_cleared array with the autogenerated disabled
-bitmask.
+Thanks,
 
-Fixes: ea4e3bef4c94 ("Documentation/x86: Add documentation for /proc/cpuinfo feature flags")
-Reported-by: Farrah Chen <farrah.chen@intel.com>
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: <stable@vger.kernel.org>
----
-Changelog v4:
-- Fix macro name to match with the patch message.
-- Add Peter's SoB.
+Jonathan
 
-Changelog v3:
-- Remove Fixes: tags, keep only one at the point where the documentation
-  changed and promised feature bits wouldn't show up if they're not
-  enabled.
-- Don't use a helper to initialize cpu_caps_cleared, just statically
-  initialize it.
-- Remove changes to cpu_caps_set.
-- Rewrite patch message to account for changes.
-
-Changelog v2:
-- Redo the patch to utilize a more generic solution, not just fix the
-  LAM and FRED feature bits.
-- Note more feature flags that shouldn't be present.
-- Add fixes and cc tags.
-
- arch/x86/kernel/cpu/common.c       | 3 ++-
- arch/x86/tools/cpufeaturemasks.awk | 6 ++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 77afca95cced..a9040038ad9d 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -704,7 +704,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
- }
- 
- /* Aligned to unsigned long to avoid split lock in atomic bitmap ops */
--__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
-+__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long)) =
-+	DISABLED_MASK_INITIALIZER;
- __u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(sizeof(unsigned long));
- 
- #ifdef CONFIG_X86_32
-diff --git a/arch/x86/tools/cpufeaturemasks.awk b/arch/x86/tools/cpufeaturemasks.awk
-index 173d5bf2d999..1eabbc69f50d 100755
---- a/arch/x86/tools/cpufeaturemasks.awk
-+++ b/arch/x86/tools/cpufeaturemasks.awk
-@@ -84,5 +84,11 @@ END {
- 		printf "\t) & (1U << ((x) & 31)))\n\n";
- 	}
- 
-+		printf "\n#define DISABLED_MASK_INITIALIZER\t\t\t\\";
-+		printf "\n\t{\t\t\t\t\t\t\\";
-+		for (i = 0; i < ncapints; i++)
-+			printf "\n\t\tDISABLED_MASK%d,\t\t\t\\", i;
-+		printf "\n\t}\n\n";
-+
- 	printf "#endif /* _ASM_X86_CPUFEATUREMASKS_H */\n";
- }
--- 
-2.49.0
+> 
+> ---
+> 
+> Not tested on hardware.
+> ---
+>  drivers/iio/adc/ti-adc12138.c | 30 +++++++++++-------------------
+>  1 file changed, 11 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ti-adc12138.c b/drivers/iio/adc/ti-adc12138.c
+> index 9dc465a10ffc8d9f596e34215af685999235d690..e5ec4b073daae33d0e51cf21a3520f0ab2184828 100644
+> --- a/drivers/iio/adc/ti-adc12138.c
+> +++ b/drivers/iio/adc/ti-adc12138.c
+> @@ -38,15 +38,13 @@ enum {
+>  struct adc12138 {
+>  	struct spi_device *spi;
+>  	unsigned int id;
+> -	/* conversion clock */
+> -	struct clk *cclk;
+>  	/* positive analog voltage reference */
+>  	struct regulator *vref_p;
+>  	/* negative analog voltage reference */
+>  	struct regulator *vref_n;
+>  	struct mutex lock;
+>  	struct completion complete;
+> -	/* The number of cclk periods for the S/H's acquisition time */
+> +	/* The number of conversion clock periods for the S/H's acquisition time */
+>  	unsigned int acquisition_time;
+>  	/*
+>  	 * Maximum size needed: 16x 2 bytes ADC data + 8 bytes timestamp.
+> @@ -400,6 +398,7 @@ static int adc12138_probe(struct spi_device *spi)
+>  {
+>  	struct iio_dev *indio_dev;
+>  	struct adc12138 *adc;
+> +	struct clk *cclk;
+>  	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
+> @@ -435,9 +434,14 @@ static int adc12138_probe(struct spi_device *spi)
+>  	if (ret)
+>  		adc->acquisition_time = 10;
+>  
+> -	adc->cclk = devm_clk_get(&spi->dev, NULL);
+> -	if (IS_ERR(adc->cclk))
+> -		return PTR_ERR(adc->cclk);
+> +	ret = devm_request_irq(&spi->dev, spi->irq, adc12138_eoc_handler,
+> +			       IRQF_TRIGGER_RISING, indio_dev->name, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	cclk = devm_clk_get_enabled(&spi->dev, NULL);
+> +	if (IS_ERR(cclk))
+> +		return PTR_ERR(cclk);
+>  
+>  	adc->vref_p = devm_regulator_get(&spi->dev, "vref-p");
+>  	if (IS_ERR(adc->vref_p))
+> @@ -454,18 +458,9 @@ static int adc12138_probe(struct spi_device *spi)
+>  			return ret;
+>  	}
+>  
+> -	ret = devm_request_irq(&spi->dev, spi->irq, adc12138_eoc_handler,
+> -			       IRQF_TRIGGER_RISING, indio_dev->name, indio_dev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = clk_prepare_enable(adc->cclk);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret = regulator_enable(adc->vref_p);
+>  	if (ret)
+> -		goto err_clk_disable;
+> +		return ret;
+>  
+>  	if (!IS_ERR(adc->vref_n)) {
+>  		ret = regulator_enable(adc->vref_n);
+> @@ -496,8 +491,6 @@ static int adc12138_probe(struct spi_device *spi)
+>  		regulator_disable(adc->vref_n);
+>  err_vref_p_disable:
+>  	regulator_disable(adc->vref_p);
+> -err_clk_disable:
+> -	clk_disable_unprepare(adc->cclk);
+>  
+>  	return ret;
+>  }
+> @@ -512,7 +505,6 @@ static void adc12138_remove(struct spi_device *spi)
+>  	if (!IS_ERR(adc->vref_n))
+>  		regulator_disable(adc->vref_n);
+>  	regulator_disable(adc->vref_p);
+> -	clk_disable_unprepare(adc->cclk);
+>  }
+>  
+>  static const struct of_device_id adc12138_dt_ids[] = {
+> 
 
 
