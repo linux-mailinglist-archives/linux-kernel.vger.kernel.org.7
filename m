@@ -1,278 +1,245 @@
-Return-Path: <linux-kernel+bounces-743871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-743872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12A8B104E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F823B104EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 10:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB714E5FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4B04E6942
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 08:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD7527584E;
-	Thu, 24 Jul 2025 08:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CA827BF80;
+	Thu, 24 Jul 2025 08:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EcsQUE6o"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="S7sFuc+w"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850782750FC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CE3274B4D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753346516; cv=none; b=lNnwPNBXq2UqlM7s91exANHLMgqjEfmv/cF2ImUG1OrXaIOSjP2mwAqSGjdeqTXrbSeFXMgkGuv1OxPuTboZEWeODuEyolv6L7a0s847WNu81C5HtQAnvPz1UjfSQeKlebQ6ZAp309wHFY/KCnR3+zDpxvJvoYrJO6ttAQP/wvw=
+	t=1753346557; cv=none; b=hUO1hZHsL1Y9OZv6T+1dpJt82fZKvaCNpjLCfzTveRWJChcCXTR7BU0Jmvn7TMK+LPmsl2AdUbtTKlRDWZ3FisBosBLW4e4WUeAgoiLpyxnC7aQ4VaQr39C1eiLSKrJFcyK1bqXpCdelA1BmXneujMggPTphgnL1Qa8hFLBqNXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753346516; c=relaxed/simple;
-	bh=rnF+oib9L2Skeeylwk63DB1XU4v0B5lhktdPZQZmpLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CzPjIu4J9aPw/LhBP2+eFESVS+pHsXArBw9hgdwX40v/S49XsEZXnK+jb1vPvqmNAbMI2ZoRywylAfSMh+gdoAZ0g0FqBLOPjYBXCF1WnzTiQn2SD+ENSgd5U/i0j6Nu+dRMmu2uosDcxSCuvq9TMu0Nqjad1of1K3fCzKaS/dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EcsQUE6o; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56NMXU8H031272
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NcSQxl+jVI7Me55KCzMwMtBdepNG4E+Ro3RKSYD+KgE=; b=EcsQUE6oQbOB6gV6
-	fW/e8YgGlrgDCPe8iUIYyzlH1uzn9SPmPUnU+2ZfPKsBW6tH/Ck9pAdfr2SipWGI
-	gnTv2/ZWNtn+tLNtKoYxPtE6JxXssP9L8/dSb9jGG3/8x5j5zQlAN/5odq9Er/Rx
-	zMRa1rAYymBg7RREKjyl+ovZLSChN5CHnMQW843I4B/Z1etqA2DbAEHgrhM54sCv
-	4bcgBT+Sq45J0Gqh6tAxnzz49whXpnbEWATBkH6ME4EjmlmsdQcFo1GR3pOubVLF
-	fq6DjTVR3fugEK1hc0j4RPdQK3F1aNuPaw59RKl82uoGm0QJJi6CdqirS4ZjwAUA
-	PtF60g==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048vecx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:41:53 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2c37558eccso563837a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 01:41:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753346513; x=1753951313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NcSQxl+jVI7Me55KCzMwMtBdepNG4E+Ro3RKSYD+KgE=;
-        b=NtbRwIlLD3C8no4tppA2HjeP+7Q5o9tjTPqhNMUuAFYd4FO47xQTWoMQUgZIoeqhNO
-         MyXGSRKupv3hz7UShkroLDUhTsW9ac2TsB7fP9W8+rQsCrBVFy+5GE2O6JQr+2+CVI2n
-         quKr2A1TEhhYBJT6B+z+PWJglPHmyiEuMRyvU61G22CG1GY29USJ+VnCMU2hUWW/Fpsi
-         ZWydzBWzq7iiM0Vrwo2AElzK9h9lLjM/AuYJKf7NtzJnxllYs6t8d0tHTouSut5xuYxX
-         B7uve6XuZ9v2QXpIikle7nu0ifJvA5LySLoA6SCqcDklJdAaU4RSdMYZ4cFWrgJTwFMK
-         YJAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUObDe0bLv3pN88GyRvqhIo15OOo7AGIFXGO6jHuYiZehcwqOy8NV6usWmXqHEoyJqRFYJm7bDJrGzAKts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJSglui14KO/u7qen7BnLnjz7A+Uf/Agd4lC/HGKs3h2+hj2U/
-	L9z35XDFAjgoeQaCF6I+ffWGqIX1XaZ3GqUfU48YcPUu1vxNiNoyv1S7e9F2lRJNhO7VwkmTvSh
-	a/C9/NKOWod9KaA4bncuSzWZMidNZL1CQUFG0tYbhw2GQE7l0FhbBfkpQMSCUdk9ZQgFND0jLaa
-	4FboGA8o3Ys7jb0h7OgJ99CbjgOVVEbePsNi/kBAC4hg==
-X-Gm-Gg: ASbGncvmoLJQOxTvOIbPCkpLni9Tzvo/Sl2bLea47Eu2M/N24YctL5ers9LbiMD3i00
-	T4vRn5578+VnVPwWzf/ZNGNy/wqi6+EyLZRwhAFLynSvi8qtnu4Rf6KXUrplgE341ardkjsujRN
-	z3j4JYQiRxYI0ZPS2yul6eX5nOBAPDAUY0dBc=
-X-Received: by 2002:a17:903:40ce:b0:234:ef42:5d6d with SMTP id d9443c01a7336-23f98160d78mr85101355ad.23.1753346512454;
-        Thu, 24 Jul 2025 01:41:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSyCdU8c5GLoMY06XIHDleMAFGJhzG6lduNlXjRkOM6bAsMFhgLYqcBatDA4hvNaRMBi5/zQqFRDpuPCkf3pg=
-X-Received: by 2002:a17:903:40ce:b0:234:ef42:5d6d with SMTP id
- d9443c01a7336-23f98160d78mr85100995ad.23.1753346512006; Thu, 24 Jul 2025
- 01:41:52 -0700 (PDT)
+	s=arc-20240116; t=1753346557; c=relaxed/simple;
+	bh=4ov1H0hzj8aJ62VVlU7FnHVBA9C0gzXGbPZYySiNC9U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tGz0Ac4oNs7Co72xtkOvwqqIhMr+WzfZkcEpGSxufNUvz4HbOZqX15yioGCgyfBNKIYgPoFl5XsBh8HjSzZ1mrCX6dOpg2IOiznUVmJeVc7iM0LNXUhU+npi59zgbCQzsloqAiGX0NQUMgymjOzS9ED4XegxGfG85kBMy2OubyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=S7sFuc+w; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56O8gUSa9169289, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1753346550; bh=i+9FHegRog5uPaRC+MlJ7wHIrI2XZgOhzCa5s5b1IM0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=S7sFuc+wtiGE8zT/Avxlxe6/P3/30riEiYeHcdhPwXOsA1wt/rxuWUa+EsueQXuii
+	 ZhR4OeBGtAYkurl1sicYIHdFcM5WUvktyWmXaTvwoVKwa/grX5JlDxB3+o50Qrm3st
+	 gy0/GtPXbR6IJWBgmuhngHHtXjxvuKDYKSNl0T/mtTnb3UxbE5BdbAgkq5Hijpgq8v
+	 Xxs6G1Yo+q5Foeja9ozOvJFLa+mi+6SRlz4KCUfD1u/2k0sP64DeK9TPCvENpmWetr
+	 OJXRbMoM9c4siioopYJsNhABWOJ/juPQCm7B6KxDOuBnmFt5PzSsCnhy6FHKlvxIUk
+	 Ha2KW9L9AbMwQ==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56O8gUSa9169289
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Jul 2025 16:42:30 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 24 Jul 2025 16:42:30 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 24 Jul 2025 16:42:29 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::8461:d6ec:c854:f9f4]) by
+ RTEXMBS03.realtek.com.tw ([fe80::8461:d6ec:c854:f9f4%2]) with mapi id
+ 15.01.2507.035; Thu, 24 Jul 2025 16:42:29 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Mande Imran Ahmed <immu.ahmed1905@gmail.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        "rtl8821cerfe2@gmail.com" <rtl8821cerfe2@gmail.com>,
+        Bernie Huang <phhuang@realtek.com>,
+        Damon Chen <damon.chen@realtek.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net:realtek:use sysfs_emit() instead of scnprintf() for sysfs consistency
+Thread-Topic: [PATCH] net:realtek:use sysfs_emit() instead of scnprintf() for
+ sysfs consistency
+Thread-Index: AQHb/F77uipCH/1W9kat5J+TgxiIm7RA7abg
+Date: Thu, 24 Jul 2025 08:42:29 +0000
+Message-ID: <a28456f5b8d2477785493c6081f24401@realtek.com>
+References: <20250724055018.15878-1-immu.ahmed1905@gmail.com>
+In-Reply-To: <20250724055018.15878-1-immu.ahmed1905@gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-2-quic_rdwivedi@quicinc.com> <2ihbf52nryduic5vzlqdldzgx2fe4zidt4hzcugurqsuosiawq@qs66zxptpmqf>
- <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
-In-Reply-To: <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Thu, 24 Jul 2025 11:41:40 +0300
-X-Gm-Features: Ac12FXzMKMuF_0OUA3EGJwZLmjVM8hRhGRUkVzF5il0fHysdmUBOWLdVHSEcSgQ
-Message-ID: <CAO9ioeWLLW1UgJfByBAXp9-v81AqmRV9Acs5Eae9k4Gkr1U0MA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and rate limiting
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: JF9Ll_a1IVQNEOSKa-ZIPUidQyeVcnJJ
-X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=6881f1d1 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=COk6AnOGAAAA:8 a=kyiDCW8mUpRo50OuNtQA:9 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDA2MiBTYWx0ZWRfX8uPj4cjOGEjn
- B0xuzTZ5Ty66tI/4TQg+DhDrY//ACw0c69jhpcA4fuJs1IV06rdAA8UZKYyxFh3czJbMTWALUKy
- 7V8CW/RJPkDTMvE7KHJCn6I7R8rWV97stG+lpgclFYGYMvp8UJspNDBuYV9EjltOCBazZZRd+OF
- dQIL/HGKMiiVqtAWJm+uMDyPf+cpBKiUd/2xlBzBUInxY4eY4FsmKdICENVsoV4VyAWH3Bodakg
- OdOPKXH9BkA5hhPn7KFbd4dwShAn8exwQfMD58UnWea1UJGNvlnvgcjCHKhNXFU2FpsUdI/wLQO
- /z8dkt/rSvxNgAmsh0by8dhiSylffTcppW25q19otLqC8caixegg0wvO934WJQPwU6+Mk9vU/L8
- HRfU+a2xabnLvgTKDJ4tnO73e1eka5M6GyOuKJggXa9Su0aV91Rwg3xFuOexePjw89DyFZDG
-X-Proofpoint-ORIG-GUID: JF9Ll_a1IVQNEOSKa-ZIPUidQyeVcnJJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-24_01,2025-07-23_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507240062
 
-On Thu, 24 Jul 2025 at 10:35, Ram Kumar Dwivedi
-<quic_rdwivedi@quicinc.com> wrote:
->
->
->
-> On 23-Jul-25 12:24 AM, Dmitry Baryshkov wrote:
-> > On Tue, Jul 22, 2025 at 09:41:01PM +0530, Ram Kumar Dwivedi wrote:
-> >> Add optional device tree properties to limit Tx/Rx gear and rate durin=
-g UFS
-> >> initialization. Parse these properties in ufs_qcom_init() and apply th=
-em to
-> >> host->host_params to enforce platform-specific constraints.
-> >>
-> >> Use this mechanism to cap the maximum gear or rate on platforms with
-> >> hardware limitations, such as those required by some automotive custom=
-ers
-> >> using SA8155. Preserve the default behavior if the properties are not
-> >> specified in the device tree.
-> >>
-> >> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> >> ---
-> >>  drivers/ufs/host/ufs-qcom.c | 28 ++++++++++++++++++++++------
-> >>  1 file changed, 22 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> >> index 4bbe4de1679b..5e7fd3257aca 100644
-> >> --- a/drivers/ufs/host/ufs-qcom.c
-> >> +++ b/drivers/ufs/host/ufs-qcom.c
-> >> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_=
-hba *hba)
-> >>       * If the HS-G5 PHY gear is used, update host_params->hs_rate to =
-Rate-A,
-> >>       * so that the subsequent power mode change shall stick to Rate-A=
-.
-> >>       */
-> >> -    if (host->hw_ver.major =3D=3D 0x5) {
-> >> -            if (host->phy_gear =3D=3D UFS_HS_G5)
-> >> -                    host_params->hs_rate =3D PA_HS_MODE_A;
-> >> -            else
-> >> -                    host_params->hs_rate =3D PA_HS_MODE_B;
-> >> -    }
-> >> +    if (host->hw_ver.major =3D=3D 0x5 && host->phy_gear =3D=3D UFS_HS=
-_G5)
-> >> +            host_params->hs_rate =3D PA_HS_MODE_A;
-> >
-> > Why? This doesn't seem related.
->
-> Hi Dmitry,
->
-> I have refactored the patch to put this part in a separate patch in lates=
-t patchset.
->
-> Thanks,
-> Ram.
->
-> >
-> >>
-> >>      mode =3D host_params->hs_rate =3D=3D PA_HS_MODE_B ? PHY_MODE_UFS_=
-HS_B : PHY_MODE_UFS_HS_A;
-> >>
-> >> @@ -1096,6 +1092,25 @@ static void ufs_qcom_set_phy_gear(struct ufs_qc=
-om_host *host)
-> >>      }
-> >>  }
-> >>
-> >> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
-> >> +{
-> >> +    struct ufs_host_params *host_params =3D &host->host_params;
-> >> +    struct device_node *np =3D host->hba->dev->of_node;
-> >> +    u32 hs_gear, hs_rate =3D 0;
-> >> +
-> >> +    if (!np)
-> >> +            return;
-> >> +
-> >> +    if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
-> >
-> > These are generic properties, so they need to be handled in a generic
-> > code path.
->
-> Hi Dmitry,
->
->
-> Below is the probe path for the UFS-QCOM platform driver:
->
-> ufs_qcom_probe
->   =E2=94=94=E2=94=80 ufshcd_platform_init
->        =E2=94=94=E2=94=80 ufshcd_init
->             =E2=94=94=E2=94=80 ufs_qcom_init
->                  =E2=94=94=E2=94=80 ufs_qcom_set_host_params
->                       =E2=94=94=E2=94=80 ufshcd_init_host_params (initial=
-ized with default values)
->                            =E2=94=94=E2=94=80 ufs_qcom_get_hs_gear (overr=
-ides gear based on controller capability)
->                                 =E2=94=94=E2=94=80 ufs_qcom_set_phy_gear =
-(further overrides based on controller limitations)
->
->
-> The reason I added the logic in ufs-qcom.c is that even if it's placed in=
- ufshcd-platform.c, the values get overridden in ufs-qcom.c.
-> If you prefer, I can move the parsing logic API to ufshcd-platform.c but =
-still it needs to be called from ufs-qcom.c.
+Mande Imran Ahmed <immu.ahmed1905@gmail.com> wrote:
+>=20
+> Update the Realtek rtw89 wireless driver to replace scnprintf() with
+> sysfs_emit() for formatting sysfs attribute output, in line with the reco=
+mmendations from
+> Documentation/filesystems/sysfs.rst.
+>=20
+> This change enhances the safety and correctness of sysfs handling, promot=
+es consistency
+> throughout the kernel, and aids long-term maintainability.
+>=20
+> Functionality verified using ping, iperf, and connection tests to ensure =
+stability after the
+> change.
+>=20
+> Signed-off-by: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/phy.c |  8 +++----
+> drivers/net/wireless/realtek/rtw89/sar.c | 30 ++++++++++++------------
+>  2 files changed, 19 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/phy.c
+> b/drivers/net/wireless/realtek/rtw89/phy.c
+> index 76a2e26d4a10..a58aefb51fb5 100644
+> --- a/drivers/net/wireless/realtek/rtw89/phy.c
+> +++ b/drivers/net/wireless/realtek/rtw89/phy.c
+> @@ -2087,19 +2087,19 @@ EXPORT_SYMBOL(rtw89_phy_ant_gain_pwr_offset);
+>  int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf, size_t buf=
+sz,
+>                          const struct rtw89_chan *chan)  {
+> -       char *p =3D buf, *end =3D buf + bufsz;
+> +       char *p =3D buf;
+>         s8 offset_patha, offset_pathb;
+>=20
+>         if (!rtw89_can_apply_ant_gain(rtwdev, chan->band_type)) {
+> -               p +=3D scnprintf(p, end - p, "no DAG is applied\n");
+> +               p +=3D sysfs_emit(p, "no DAG is applied\n");
+>                 goto out;
+>         }
+>=20
+>         offset_patha =3D rtw89_phy_ant_gain_query(rtwdev, RF_PATH_A, chan=
+->freq);
+>         offset_pathb =3D rtw89_phy_ant_gain_query(rtwdev, RF_PATH_B, chan=
+->freq);
+>=20
+> -       p +=3D scnprintf(p, end - p, "ChainA offset: %d dBm\n", offset_pa=
+tha);
+> -       p +=3D scnprintf(p, end - p, "ChainB offset: %d dBm\n", offset_pa=
+thb);
+> +       p +=3D sysfs_emit(p, "ChainA offset: %d dBm\n", offset_patha);
+> +       p +=3D sysfs_emit(p, "ChainB offset: %d dBm\n", offset_pathb);
+>=20
+>  out:
+>         return p - buf;
+> diff --git a/drivers/net/wireless/realtek/rtw89/sar.c b/drivers/net/wirel=
+ess/realtek/rtw89/sar.c
+> index 517b66022f18..80eacada6911 100644
+> --- a/drivers/net/wireless/realtek/rtw89/sar.c
+> +++ b/drivers/net/wireless/realtek/rtw89/sar.c
+> @@ -318,7 +318,7 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *b=
+uf, size_t bufsz,
+>         /* its members are protected by rtw89_sar_set_src() */
+>         const struct rtw89_sar_handler *sar_hdl =3D &rtw89_sar_handlers[s=
+rc];
+>         const u8 fct_mac =3D rtwdev->chip->txpwr_factor_mac;
+> -       char *p =3D buf, *end =3D buf + bufsz;
+> +       char *p =3D buf;
+>         int ret;
+>         s32 cfg;
+>         u8 fct;
+> @@ -326,17 +326,17 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char =
+*buf, size_t
+> bufsz,
+>         lockdep_assert_wiphy(rtwdev->hw->wiphy);
+>=20
+>         if (src =3D=3D RTW89_SAR_SOURCE_NONE) {
+> -               p +=3D scnprintf(p, end - p, "no SAR is applied\n");
+> +               p +=3D sysfs_emit(p, "no SAR is applied\n");
+>                 goto out;
+>         }
+>=20
+> -       p +=3D scnprintf(p, end - p, "source: %d (%s)\n", src,
+> +       p +=3D sysfs_emit(p, "source: %d (%s)\n", src,
+>                        sar_hdl->descr_sar_source);
+>=20
+>         ret =3D sar_hdl->query_sar_config(rtwdev, sar_parm, &cfg);
+>         if (ret) {
+> -               p +=3D scnprintf(p, end - p, "config: return code: %d\n",=
+ ret);
+> -               p +=3D scnprintf(p, end - p,
+> +               p +=3D sysfs_emit(p, "config: return code: %d\n", ret);
+> +               p +=3D sysfs_emit(p,
+>                                "assign: max setting: %d (unit: 1/%lu dBm)=
+\n",
+>                                RTW89_SAR_TXPWR_MAC_MAX, BIT(fct_mac));
+>                 goto out;
+> @@ -344,10 +344,10 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char =
+*buf, size_t
+> bufsz,
+>=20
+>         fct =3D sar_hdl->txpwr_factor_sar;
+>=20
+> -       p +=3D scnprintf(p, end - p, "config: %d (unit: 1/%lu dBm)\n", cf=
+g,
+> +       p +=3D sysfs_emit(p, "config: %d (unit: 1/%lu dBm)\n", cfg,
+>                        BIT(fct));
+>=20
+> -       p +=3D scnprintf(p, end - p, "support different configs by antenn=
+a: %s\n",
+> +       p +=3D sysfs_emit(p, "support different configs by antenna: %s\n"=
+,
+>                        str_yes_no(rtwdev->chip->support_sar_by_ant));
+>  out:
+>         return p - buf;
+> @@ -356,24 +356,24 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char =
+*buf, size_t
+> bufsz,  int rtw89_print_tas(struct rtw89_dev *rtwdev, char *buf, size_t b=
+ufsz)  {
+>         struct rtw89_tas_info *tas =3D &rtwdev->tas;
+> -       char *p =3D buf, *end =3D buf + bufsz;
+> +       char *p =3D buf;
+>=20
+>         if (!rtw89_tas_is_active(rtwdev)) {
+> -               p +=3D scnprintf(p, end - p, "no TAS is applied\n");
+> +               p +=3D sysfs_emit(p, "no TAS is applied\n");
+>                 goto out;
+>         }
+>=20
+> -       p +=3D scnprintf(p, end - p, "State: %s\n",
+> +       p +=3D sysfs_emit(p, "State: %s\n",
+>                        rtw89_tas_state_str(tas->state));
+> -       p +=3D scnprintf(p, end - p, "Average time: %d\n",
+> +       p +=3D sysfs_emit(p, "Average time: %d\n",
+>                        tas->window_size * 2);
+> -       p +=3D scnprintf(p, end - p, "SAR gap: %d dBm\n",
+> +       p +=3D sysfs_emit(p, "SAR gap: %d dBm\n",
+>                        RTW89_TAS_SAR_GAP >> RTW89_TAS_FACTOR);
+> -       p +=3D scnprintf(p, end - p, "DPR gap: %d dBm\n",
+> +       p +=3D sysfs_emit(p, "DPR gap: %d dBm\n",
+>                        RTW89_TAS_DPR_GAP >> RTW89_TAS_FACTOR);
+> -       p +=3D scnprintf(p, end - p, "DPR ON offset: %d dBm\n",
+> +       p +=3D sysfs_emit(p, "DPR ON offset: %d dBm\n",
+>                        RTW89_TAS_DPR_ON_OFFSET >> RTW89_TAS_FACTOR);
+> -       p +=3D scnprintf(p, end - p, "DPR OFF offset: %d dBm\n",
+> +       p +=3D sysfs_emit(p, "DPR OFF offset: %d dBm\n",
+>                        RTW89_TAS_DPR_OFF_OFFSET >> RTW89_TAS_FACTOR);
+>=20
+>  out:
+> --
+> 2.43.0
 
-I was thinking about ufshcd_init() or similar function.
+(1.) buffer might not just be allocated with PAGE_SIZE
+(2.) the pointer passed to leaf function might not point to the head of all=
+ocated buffer
 
->
-> Thanks,
-> Ram.
->
->
-> >
-> > Also, the patch with bindings should preceed driver and DT changes.
->
-> Hi Dmitry,
->
-> I have reordered the patch series to place the DT binding change as the f=
-irst patch in latest patchset.
->
-> Thanks,
-> Ram.
->
->
-> >
-> >> +            host_params->hs_tx_gear =3D hs_gear;
-> >> +            host_params->hs_rx_gear =3D hs_gear;
-> >> +            host->phy_gear =3D hs_gear;
-> >> +    }
-> >> +
-> >> +    if (!of_property_read_u32(np, "limit-rate", &hs_rate))
-> >> +            host_params->hs_rate =3D hs_rate;
-> >> +}
-> >> +
-> >>  static void ufs_qcom_set_host_params(struct ufs_hba *hba)
-> >>  {
-> >>      struct ufs_qcom_host *host =3D ufshcd_get_variant(hba);
-> >> @@ -1337,6 +1352,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
-> >>      ufs_qcom_advertise_quirks(hba);
-> >>      ufs_qcom_set_host_params(hba);
-> >>      ufs_qcom_set_phy_gear(host);
-> >> +    ufs_qcom_parse_limits(host);
-> >>
-> >>      err =3D ufs_qcom_ice_init(host);
-> >>      if (err)
-> >> --
-> >> 2.50.1
-> >>
-> >
->
+Will the above cause some problems ?
 
-
---=20
-With best wishes
-Dmitry
+For (2.), maybe need to tweak them with sysfs_emit_at() instead of sysfs_em=
+it(). !?
 
