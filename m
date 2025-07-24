@@ -1,147 +1,164 @@
-Return-Path: <linux-kernel+bounces-744619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC58B10F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E1CB10F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 17:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3661E567569
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C8D587179
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 15:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12AD2EA724;
-	Thu, 24 Jul 2025 15:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE2E2EA723;
+	Thu, 24 Jul 2025 15:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvIf4E+k"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mea3kXsu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685EB2EA475;
-	Thu, 24 Jul 2025 15:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3632F2D63F1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753372599; cv=none; b=GB8vFImqQ19aW4bKMjv49H5XP0qLFH64j/dwZKLNvURfSPvX41cexNzgEnpKtGbzFu8qRRZCEF3OyQSEYFDUYg2FO9pbNYizCVW4CAPHy7ruEmyVocc1UmEMKcGRVmDlfdjQVFkdxAwf6FCY5x8l/Q3UuSwiZ7fG6RRX7A+UURU=
+	t=1753372622; cv=none; b=nzQdOohwlqt1XqrqCLhQw8DxQy7xcMtvfBFTvHrIm+PaEmsawbRCD288yEaU1Yd5B/hFKGiaaSf6cSM7/y+rC7i5B9qI2wHNGl5zlGonw8d6DNTRw6d10cGxLlVxsuq9ZRbjDflhshQIHWWsa4Y1/FDAqA3GngkzBESFYsnRf+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753372599; c=relaxed/simple;
-	bh=n76rYzvR5HNLYrbPk+c3jxWWr0EO3aJ5upUChLy8z2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jNQXxUUJiylEwxixdCUak7ZaTPAyiBUBmeTgU5qySglx4JtImM2iA63rYetPepl7ItXHU0p+EPJTY4Q1HUGotxogX/KrfdZ583KaIwX0nYuIDhSI301UlY1Bm4aw7O14riW7IUpIcCmD1h3gYB+9e7HnyLQ+OzHhmKA/tonkXZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvIf4E+k; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4563a57f947so11515935e9.1;
-        Thu, 24 Jul 2025 08:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753372596; x=1753977396; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=o83zBJBstcF/Wy1xzbweztussHtlTkiwf5UO9FXpsOo=;
-        b=GvIf4E+kYisEsNbMxPkXeVaIwjai4jAMPCKvc9AEcZsJD4ctxlr1/K1aH4O7f9uDey
-         KdLAFG4YMmS13R+pqJZ6nI1aof7SVv9bbXmjhvqNMdD4oa2ffv8AcMc84NUrWXI0jFp/
-         1cb8DUFFKX14tMdPKPyphHAQoVBCS1Om6nF2J+QuRBMouzRgq032GRmJrNsCMceQnPZ0
-         iK9dDyJ94t66QAn2XhtYOauOAbpljnuiyTIOlOi7xzxZE1HL0RsdcauOLQ2p7agGEJd3
-         iB9e9FBBaASOxayoTkXvb5c31hoD4kwz2ey4I4lcNnxxshHT4ejDX1yRMzcrBgwpgqnu
-         8olA==
+	s=arc-20240116; t=1753372622; c=relaxed/simple;
+	bh=QUF20TEbvg5FnS+B3mFsBfe9lLi8WAEgPd7pDJJeuP8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZkHxF1KMU1OfLegTbmeDaq18qMmibBnZRFgt+L61l53quuX+xphFSFBYbcVLJ8O5+7b9f0UF4pROKStTORqFZPAYZJmmK3jRygOkuOXyHH5NRnXBTY2wa+Qpjha+vrNWCeSI7zWKs/DcpSNVVGIdFtEZ3s3Ju1yWNZBDq/BMoH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mea3kXsu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56O9ncqk005783
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:57:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Qr7A9PQNxrHiZR7GDwUr0PvXzP9qInDp+hj
+	8sDBe6cw=; b=mea3kXsuOJ/v1eN4aiSwNqkB7cNhLX/i9iN2M6UtAq0Gs0xvxKb
+	znb/FZoX3dSW7EIBmhM0E/EOC8iPJRSnod33hKj1mR6qX1Vp9ShTXqqxn1Xn54F0
+	Kv/24q8WGoDEDZZoCeSWkaj4ZuJua+8VoxKuIdazkjJJSus5uBQrOcNvG5MD7Bry
+	QQeyI1Mp+r0uVRgVAlK4Gy5MkIgZeMqTvOroJCDJTOO8D7XKOtXc8kX2pRxhUL1l
+	v+KSxWT2OdUbGrV5dVXU9vawXM0pqExu8xj0kJPP4XXRqe5KuqtUqeCzaLQLx6Xv
+	A1kQZpyi+LtJUH3cOQCGSnCr1OlWv2jJhlg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047qhawv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 15:56:59 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2fcbd76b61so1633602a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 08:56:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753372596; x=1753977396;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o83zBJBstcF/Wy1xzbweztussHtlTkiwf5UO9FXpsOo=;
-        b=icDkSNfTuxupG/KLiBnMG0p1r7lqGeSCR3aTeJIVmbbCTmsVQWlQGjbinCn55mkHon
-         4SOcrH64ACu/UAeMNCH7pEuM94kQ+5usd8MX/Cvmj5zFxFYdQcwGvL/3vNCmul8wK+Mz
-         3gVHf95Jnv0mHkS4qhG6hjSrcsO32KcRHauYnhlCmH/BLZu/7VyvrJd+bUkEVSatDFY7
-         SlOhJWHejmEidAnzd46QviwJ6Y4NwOJ9kdF5qpSSTNqF8eVLZl3DCF8Ug7tu4WdahHnJ
-         0f3gD8zuVmWTg1UvDmn35RxwJpu1oqi4L9SPqnj44NPeb1YJ4k+iHh+i/yYPRYrcfYaS
-         li2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVmIp9vo6/cEYtWOG94RKnUj6YQRh4y3jsFrgoiV8PRCRJOACoiB5nABSIQOw7bEt57ldQ/Imnk@vger.kernel.org, AJvYcCWvnzsruqrbALnDrEh9nPeG000vCqGAIfSWYMmoOiL5zg4pl0z66ts0tgo5Zwa+XzmTpR04ay7rTqyDRg==@vger.kernel.org, AJvYcCXWiabaYt5dXQfNlIbDftfPID9iK+PZQGm7zfp/JFmeq1nkwYmPySq0yBKH/I5odYvTILbm1gAtu4LOUZAA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx83bukv4dA/27RcLqnXH0aF9x0XWB407cEHs5F3uigtlrFlgrW
-	0wPPO2O7L38RaFx9P61Vfp7s8ptLqoQAv11KMGDHCCIuYX4GOAvies6Z
-X-Gm-Gg: ASbGnctHPXeMWDJXn2rg3G/KDRnfW9rDjLP+4Qw6YNK/Qa9eaOLHCuxkp+CIBSg4Cxh
-	Msa6658GJKNuyYlfntMl8LDh8Hh/VRCpmOleQ6dFrRW76tAqqglfw4v9RBmxHTAvdbd5lvPD4N+
-	6ocCiI0XXMIO7fFH/vd5FjlzvZ8DlqGEF37ttZ/dD497u+O2QBZF46u1KQxcgQ6tFZpZQOn4Vxm
-	0/pzIT+BaS62gaqrXkkkIBy5tT/ARS0l50j7MB3TiZSgs90otpeHSmAc+leRGY46RBY3arp5eaQ
-	yZ8pqfp+SQldUrUyFCfONqa6iycFiM/SYZO4Vzw2T1RnvqO8XfX7i9hBcjP2vNH8hyALP/4imIH
-	yZY71OBU0x/p2u1oSVKg=
-X-Google-Smtp-Source: AGHT+IF/PPPu8+0Yui0YAUCGbDmi7ENIGHLe1rI53uFn9cp4lRPNHcQL31rkdGhAah7Q9SeG8Yhmbg==
-X-Received: by 2002:a05:600c:8b54:b0:456:f22:ca49 with SMTP id 5b1f17b1804b1-4587048a0famr25142945e9.0.1753372595287;
-        Thu, 24 Jul 2025 08:56:35 -0700 (PDT)
-Received: from gmail.com ([2a02:c7c:f4f0:900:2f51:41cb:ec3a:df63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc72665sm2641398f8f.25.2025.07.24.08.56.34
+        d=1e100.net; s=20230601; t=1753372619; x=1753977419;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qr7A9PQNxrHiZR7GDwUr0PvXzP9qInDp+hj8sDBe6cw=;
+        b=Qx0pPpC29/b5bLvCg8co+OLsPyIHs/QwvZ+vcHHFXJ4ba+JV2jucPkBxJbVlbxHv0V
+         ulvwymwu22Xd0SS4vybkBAyKOpQiJBeGek6jNZg6mTrJzJpcwtrNaP6ts0s6cTUq4mUB
+         3TNbnbtnZ7TYp8vt153780ieniwIbCwiBph/k4gHupmoUD4goCIDK+BHwA6fHU23SaQU
+         JI7vT26XF4JurAohAAJzXuzzuO+jd9TWr/5nrtEWMnKqK8z2k84mYDhiBU4LavfMBHGz
+         VCr0UX5M9KuzVCnReMNSE9j8AK5YM9KD2dtbNvhUVHIf8XbDb+3kcRCkSnnPpZVgtiNT
+         L4jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuJyGKv78zCVEtZFPV3CbmrsNHS7fL0333hfEOMUgk0EAYxpsyfZwgaWy18B7wptTZ7QxA3dEoUuFNnk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2BU98kXN7haynIUji8PXByvn3P6Y8mX48fsb1I53XREsmgCoD
+	ao+t+ZtQ/rIwYGq/qL78GqHu+8BP4gWlvpQL9s93CPIhwJBSXnR74lFDF1se00AmSx/dUzB9qvM
+	hcuqIRNTEkPKSLSpQ3Y30hCocuk+wFhxBwqX3swrzOqeNSTRZu8ey5TzMHWJjK1DCYGY=
+X-Gm-Gg: ASbGncvaEC0yRVT9eR0/nkLwxxmQsuU6KpUU2ftvw9BWPu3a8YrhXm/6ofEMUxAVQyI
+	WlWT6i0X5WLJYQr9KsGBbmF3xRLgYiug8kn+470GoFDkr6M6u8QSUBraVuetZVE5dgGM/ZzyvLQ
+	MbBKZLXBPTFezlAtNBKRWQ/ef0MkYIdld73uNRW4ShR6XzcMURqWpBCIxqgWZIjVJkggxl9Jlyp
+	WsDNp0oAazQursV60TsdIp4IJT9bKZ7tHqF0a679BduuKpvLEBgVUXzOxZinFzm56a6xvuS3qfU
+	c6l2u2rLUVazX0PjS+Lx29nkAbetSegNtwbty4CiI+IVfJWUA0qgE/ACgJWLTmrHX7v9nr4wJCD
+	r
+X-Received: by 2002:a05:6a20:12c6:b0:238:e4d8:2bba with SMTP id adf61e73a8af0-23d4913b9d8mr13041360637.35.1753372618770;
+        Thu, 24 Jul 2025 08:56:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGD1FmFQQ9CRMiZyxPjL9yZQTW9Zc1Ud29qAqsHHY5goVdN+TXdgLfi+rYDIe45NT/+izd+vA==
+X-Received: by 2002:a05:6a20:12c6:b0:238:e4d8:2bba with SMTP id adf61e73a8af0-23d4913b9d8mr13041318637.35.1753372618328;
+        Thu, 24 Jul 2025 08:56:58 -0700 (PDT)
+Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b05e8498sm1988516b3a.98.2025.07.24.08.56.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 08:56:34 -0700 (PDT)
-Date: Thu, 24 Jul 2025 16:56:26 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] HID: multitouch: fix integer overflow in set_abs()
-Message-ID: <aIJXqs-U8vDpYv0S@gmail.com>
-References: <20250723173659.59327-1-qasdev00@gmail.com>
- <914ff45b-2260-42c0-9ccf-a3efd667d4f5@kernel.org>
+        Thu, 24 Jul 2025 08:56:58 -0700 (PDT)
+From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com,
+        kernel@oss.qualcomm.com
+Subject: [PATCH v3 0/2] Enable audio on qcs9075-evk board
+Date: Thu, 24 Jul 2025 21:26:30 +0530
+Message-Id: <20250724155632.236675-1-mohammad.rafi.shaik@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <914ff45b-2260-42c0-9ccf-a3efd667d4f5@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI0MDEyMSBTYWx0ZWRfX1r0HHeYoRiSf
+ m2shuiEYhmZ/ClqD2KLPfgdt9JAmseW2eKmAj+goXasUoCWOhSmpHltpOQ3mtcBOp0SCGKpiXeG
+ q0udT9SCkiZeYpDOI9yw3eShM9q644LVCfFATXoOVj7zi1ZRHjQWhObXIYFGBCzyugFoCY4H4uJ
+ SvmwcbQhys1/78SSlck/LYqFihu4I5+E7GpCPj6a2xXF3yZkgAJSDxb0+nEPa9b2x2tkihJuMoq
+ 7STEsrg7bJ+72OY74Ag7M/WGSnWPVXDvF3VFITFoxxlQ5FVW74L0OGQLfv1P/bdXqlsH0mNY4nI
+ Cv0HWFdb9Q7VpHEbzfbcOYjS4tmSqWUt8RxOxq52jJuZgNJPvg8ujYrF5WQKhP6m6Qlsi2QqiJl
+ GOa861ZJeIT6nqlK725YsS6Talkte2xdAVsGSd0qMpRP8gytwxonupB+DJQL4XRIcoB+dquy
+X-Proofpoint-ORIG-GUID: Hm7Nx8g58Y2s-D303RzNVy3F37XWFXwa
+X-Proofpoint-GUID: Hm7Nx8g58Y2s-D303RzNVy3F37XWFXwa
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=688257cc cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=YkB-U3mbqUf8DnNMcaUA:9 a=_Vgx9l1VpLgwpw_dHYaR:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-24_02,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=942 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507240121
 
-On Thu, Jul 24, 2025 at 08:58:40AM +0200, Jiri Slaby wrote:
-> On 23. 07. 25, 19:36, Qasim Ijaz wrote:
-> > It is possible for a malicious HID device to trigger a signed integer
-> > overflow (undefined behaviour) in set_abs() in the following expression
-> > by supplying bogus logical maximum and minimum values:
-> > 	
-> > 	int fuzz = snratio ? (fmax - fmin) / snratio : 0;
-> > 
-> > For example, if the logical_maximum is INT_MAX and logical_minimum is -1
-> > then (fmax - fmin) resolves to INT_MAX + 1, which does not fit in a 32-bit
-> > signed int, so the subtraction overflows.
-> 
-> The question is if it matters with -fwrapv?
+Enable audio support on qcs9075-evk board.
 
-Ah yea thanks for bringing this up Jiri. I think you might be correct,
-after doing some research it looks like the kernel enables -fno‑strict‑overflow 
-which implies -fwrapv which leads to wrap around instead of UB If I undestand
-correctly. So with that in mind this patch probably doesn't do anything
-useful, do you agree?
+Introduce HS (High-Speed) MI2S pin control support.
+The I2S max98357a speaker amplifier is connected via HS0 and I2S
+microphones utilize the HS2 interface.
 
-Thanks
-qasim.
-> 
-> > Fix this by computing the
-> > difference in a 64 bit context.
-> > 
-> > Fixes: 5519cab477b6 ("HID: hid-multitouch: support for PixCir-based panels")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> > ---
-> >   drivers/hid/hid-multitouch.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> > index 22c6314a8843..687638ed6d0f 100644
-> > --- a/drivers/hid/hid-multitouch.c
-> > +++ b/drivers/hid/hid-multitouch.c
-> > @@ -540,7 +540,8 @@ static void set_abs(struct input_dev *input, unsigned int code,
-> >   {
-> >   	int fmin = field->logical_minimum;
-> >   	int fmax = field->logical_maximum;
-> > -	int fuzz = snratio ? (fmax - fmin) / snratio : 0;
-> > +	s64 diff = (s64)fmax - (s64)fmin;
-> > +	int fuzz = snratio ? (int)div_s64(diff, snratio) : 0;
-> >   	input_set_abs_params(input, code, fmin, fmax, fuzz, 0);
-> >   	input_abs_set_res(input, code, hidinput_calc_abs_res(field, code));
-> >   }
-> 
-> -- 
-> js
-> suse labs
-> 
+DT-Binding link for sound compatible:
+https://lore.kernel.org/linux-sound/20250519083244.4070689-3-mohammad.rafi.shaik@oss.qualcomm.com/
+
+---
+This patch series depends on patch series:
+https://lore.kernel.org/linux-arm-msm/20250530092850.631831-1-quic_wasimn@quicinc.com/
+---
+
+changes in [v3]:
+	- Updated link-name from HS0 MI2S to HS1 MI2S and sorted nodes in order.
+	- Link to V2 : https://lore.kernel.org/linux-arm-msm/20250616070405.4113564-1-mohammad.rafi.shaik@oss.qualcomm.com/
+
+changes in [v2]:
+	- Updated commit message as suggested by Dmitry Baryshkov.
+	- Link to V1 : https://lore.kernel.org/linux-arm-msm/20250525155356.2081362-1-mohammad.rafi.shaik@oss.qualcomm.com/
+
+Mohammad Rafi Shaik (2):
+  arm64: dts: qcom: sa8775p: Add gpr node
+  arm64: dts: qcom: qcs9075-evk: Add sound card
+
+ .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 52 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 54 +++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+
+
+base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
+prerequisite-patch-id: 853eaf437b81f6fa9bd6d36e6ed5350acaf73017
+prerequisite-patch-id: 6d9fd3e0257f120cff342c287774454aad2be2e8
+prerequisite-patch-id: 736cbcd47d5e7cfcc53fcaa7da920eac757ce487
+prerequisite-patch-id: 4eddce6daeaa125f14380586c759f8cb8997c601
+prerequisite-patch-id: baac180e8715b5cf2922f79346440d92569704f6
+prerequisite-patch-id: 65730290d31f18e66e2ba0dfdeb1844d7442c272
+-- 
+2.34.1
+
 
