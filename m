@@ -1,382 +1,301 @@
-Return-Path: <linux-kernel+bounces-744965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA03B11309
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:23:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94992B1130B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F11237BE897
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5795A632D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59073B661;
-	Thu, 24 Jul 2025 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DB22EE5F6;
+	Thu, 24 Jul 2025 21:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jZ5Qi4LG"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NPymv53s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PXD2VdYh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA42D26C383
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 21:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ECC19CC02;
+	Thu, 24 Jul 2025 21:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753392201; cv=none; b=DvN+VFEZ/oiM4IP7mgpQpkYoNobQOPdf8OFvzDiRxg1Wx/SUKnG0qX2xTZdXMtN5Gl/JOXC1Mipv6eSDVAm2Lt8MY6VNfYJL+IPJFHbq6tSF9OEfuqnzqO5lXwKys79Ru7rPK17jXkyU+p1Wp/hjoPbPmLyO/e/lMq2rww6htmM=
+	t=1753392272; cv=none; b=sIjX8pMVJyV0ikCKRy0oHqbeWOOP68ZwD7rUhY0FgTt6ThtATTx5dse96sB+yDnENSxn1UptdyNycuknRf1475TqdveCvhzWQkI53/tWVuna8NsNDnc7a6PHXxVHkLyvJjSHiHrXNiKVCd2Xy+okpaJuEbHDFUQIIxu6h5e72mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753392201; c=relaxed/simple;
-	bh=AWa3QljlTQI2w6CzFs/GJMnKM1od+dLR+KMOmwq2NRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gEmizUu915HNO8th4w4LqdiKNKM9eFZWmnJsfwZZPGYYp+7JELY32Xi4hn2gW2jZbdy3Qcb1pr96C1Jv1eD6xZJbuqB2k74tN5KK7QZHsCphXKdHgBPSfssJvaKbBzWrbzcFWi+qp49aMIq/p/MFsarBWvbH7bmWHAn+H5mv/4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jZ5Qi4LG; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-237f18108d2so65195ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 14:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753392199; x=1753996999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNnTJ5darf1pQDB2vsYeV7FJpreNa9uOT82oPg1Gxp8=;
-        b=jZ5Qi4LG9byWLV2CFlBI6eNDIxXIsnTNhRI/EvwTF56DPpWAT5cLUQooVsFfJG+NjX
-         AU31WoPK2QdXqz/QcjdAU6WFnzSLCs2yzmzxvNEEgu9Ug4MigGnJVpQ/lqPNehQnmQ6a
-         XCvRJ+M33c4fpO9p6CwJ0lLP83gQd26UtGNCBFzSzrT5G2Dkn5iE+5WB8ae/iOjFdSBS
-         jL4aEjekadOsZSumx9HbPlePhuPt9AbAVqZyIbl6RjNZmPgAwyatykA/lRWwyAkAcm/M
-         NvWtElxtpZ2p164pQFy36ym7oj1/yGG0owJRf0v+nml2HAopav+vJjUkNzzGq0iUriLI
-         /BsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753392199; x=1753996999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TNnTJ5darf1pQDB2vsYeV7FJpreNa9uOT82oPg1Gxp8=;
-        b=kLu23pdmI9yDfLwmsY1RANBpoZVWtLFcj31+x688Kvq9BSdSWsboy8ryTPbcLZ4jQc
-         tNPY3wsMg8Twuwt4SFlB72T0G8WSy6IXDgFi6gWmtUUwzoCVtPpYo9iJN0zE2GpqtELW
-         6wi+d5qg8oRdEF7wSrGdDfUvawlHp6qsRRmkTFXA/vF1AHMIoQeUI/2REEvFCuUXWTUW
-         Mk2dlrvH7IzKmcDJyZgYwbLD61Gllq49h5W0AUV8ICzegON0LL+6NEql7IjJovU69nMl
-         cVavXiX2tU2pFytO2SZ6zpV573SEBSONEEEzcM3j9RYxj/SRirrp5IR6cmqjS9grBi+0
-         2a2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ9AH0d+ZD1SSBhl5ZBdcVgZU/xk1qgIkUetbX/PqCPZIt+1hMUdcYlvhMldVsVKmC2dD14rADodrWmNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVLJp8QJb14lnycffZ2w8s3XoEhjv2o4SPwsXrkmE9y3Fx/fNU
-	S3izoxPqtvYNF3MwFNW10SpGv6yJIBiQ8H4Ggf1DmhlRVuB8wx8fsCbqNzIEghTNIZBeTDAVEno
-	KzLlbgLkQki7jVaUDfXBz8zH1RiRvJuGDdDfgr/8E
-X-Gm-Gg: ASbGncviJ+O8DMligX+9ewnbaMpFA9sZoNS8zmgcXaL8q+AyxhJPIy3S8YZdE4NxqvN
-	PiWywmmwhKckxWQ5qBtFwutL9GJ2Sanpe8GK87mOEpwZotjgwSXJSZujME6bNI4c7z8eSVv4HlU
-	YtohUQ7/W0j0jXMMoXShxRdrVglKF2Ybp7fJDK8GK1hMaBq7qJdmulnn/MnngaRbj8vgLhwJ+Me
-	/wWK9SQG6Ft4qXtDSMh+pCuyVFotfomWVhgZrfg42RiYlzP
-X-Google-Smtp-Source: AGHT+IHP4CcY56s6tdK30PaY3+VQezaoZk4lvk+rDg73ia56t/qWWvkH19hG/XzNRK1ErwjJSSAFdSL4fYDkuZlCRh0=
-X-Received: by 2002:a17:903:32ce:b0:231:f6bc:5c84 with SMTP id
- d9443c01a7336-23fada5b364mr924205ad.8.1753392198670; Thu, 24 Jul 2025
- 14:23:18 -0700 (PDT)
+	s=arc-20240116; t=1753392272; c=relaxed/simple;
+	bh=KguKvvLK2VzgJB5dRPx+wLpGlNbpY5YaknHMYN6mpz4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MwH5ijFFwa/06thzYLo8r1laE2SaxNZiMsgEXRDjfmfRiTdnAw9iVSs5o4QlrPPloqipX4xWWW+EzDGqbWh5QcDlWzjFvrGkgTW++uU9C8Rq4XNveosEP7eZFBtG47lYgA18D2jrf0hiDwajXW3M2NVpadSImNzZmR9yZmQaVnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NPymv53s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PXD2VdYh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753392268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5f3Me3VyZ4SyGfnSQGjSC+YJQXU81TJGWtYBMM6n3tM=;
+	b=NPymv53sm20UBxi9o0hICcgZ5JuFkT3/fiCEmUZpClcOMAlmoTBRQGXx/IkLXYjr2bqg/8
+	jwSrFHhX2tRZDZ2fmDEOIQbb0whIeiuxLA1gNey1M10I370j0iDxzHAsRRo3bcCwTC1hYq
+	fAUbtHkyy98MsjwL1Z9HmSvNORuTtbc+4nWcrXJcIKcJgnJCdeLj9pqVLMwTkmvTSL/9al
+	Mdp53nmoNk2EKoRiUhAVwE39a3SqYiNUNci6H41EqqeLjH8fhHefmAsQz9jMFOLrIhcpch
+	ffIBeMNIAc3VU1+1Fa7IXWaaH+idOaiZ86Widvuw8Ffbu/UYjryI4skqfBlgIw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753392268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5f3Me3VyZ4SyGfnSQGjSC+YJQXU81TJGWtYBMM6n3tM=;
+	b=PXD2VdYhuD7b3zeATYRL/i1KswhPkPpzRTiEV+NvHpRuY/BGuj/1ol6VpSXnKv/28rX48R
+	S9D2PBfCu5JliZBw==
+To: Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, will@kernel.org, miriam.rachel.korenblit@intel.com,
+ linux-wireless@vger.kernel.org, Petr Mladek <pmladek@suse.com>, John
+ Ogness <jogness@linutronix.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Tejun Heo
+ <tj@kernel.org>, Simona Vetter <simona@ffwll.ch>
+Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
+ often on thinkpad X220
+In-Reply-To: <dd50a074-0988-4a4d-a78f-7862e87dbab0@redhat.com>
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz> <aID6XPLXuGo+ViTm@duo.ucw.cz>
+ <aIEC4t2EICdgomZV@duo.ucw.cz> <874iv2stk3.ffs@tglx> <87zfcurexx.ffs@tglx>
+ <aIJqC/0ZPhgaNdkf@duo.ucw.cz>
+ <71548e22-9f3c-469e-a59d-f921da59d927@redhat.com>
+ <dd50a074-0988-4a4d-a78f-7862e87dbab0@redhat.com>
+Date: Thu, 24 Jul 2025 23:24:26 +0200
+Message-ID: <877bzxqo39.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721054903.39833-1-byungchul@sk.com> <CAHS8izM11fxu6jHZw5VJsHXeZ+Tk+6ZBGDk0vHiOoHyXZoOvOg@mail.gmail.com>
- <20250723044610.GA80428@system.software.com>
-In-Reply-To: <20250723044610.GA80428@system.software.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 24 Jul 2025 14:23:05 -0700
-X-Gm-Features: Ac12FXz-gExQLTDVuATyXHwkSGv0B-njaHRD7KrjKadlfvJJk-4Hay1UO-wB7MU
-Message-ID: <CAHS8izMO0LO1uKu0peSAC8Sixes06KLfKJvyQnAOiLfDqZd5+Q@mail.gmail.com>
-Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
- page type
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, 
-	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, 
-	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch, 
-	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org, 
-	kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com, 
-	baolin.wang@linux.alibaba.com, toke@redhat.com, asml.silence@gmail.com, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 9:46=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
-rote:
+On Thu, Jul 24 2025 at 13:55, Waiman Long wrote:
+> On 7/24/25 1:51 PM, Waiman Long wrote:
+>>> [=C2=A0=C2=A0 54.284095] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> [=C2=A0=C2=A0 54.284097] WARNING: inconsistent lock state
+>>> [=C2=A0=C2=A0 54.284100] 6.16.0-rc7+ #305 Tainted: G S
+>>> [=C2=A0=C2=A0 54.284104] --------------------------------
+>>> [=C2=A0=C2=A0 54.284105] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} =
+usage.
+>>> [=C2=A0=C2=A0 54.284108] wpa_supplicant/2940 [HC0[0]:SC0[0]:HE0:SE1] ta=
+kes:
+>>> [=C2=A0=C2=A0 54.284114] ffffffff86263fe0 (console_owner){+.?.}-{0:0}, =
+at:=20
+>>> console_lock_spinning_enable+0x3d/0x60
+>>
+>> The lockdep warning just means that console_owner_lock is acquired=20
+>> both in softirq context and in task context with interrupt enabled.=20
+>> That can leads to deadlock. So the remedy is to always take=20
+>> console_owner_lock with interrupt disabled, i.e. with=20
+>> raw_spin_lock_irqsave/raw_spin_lock_irqrestore.
 >
-> On Tue, Jul 22, 2025 at 03:17:15PM -0700, Mina Almasry wrote:
-> > On Sun, Jul 20, 2025 at 10:49=E2=80=AFPM Byungchul Park <byungchul@sk.c=
-om> wrote:
-> > >
-> > > Hi,
-> > >
-> > > I focused on converting the existing APIs accessing ->pp_magic field =
-to
-> > > page type APIs.  However, yes.  Additional works would better be
-> > > considered on top like:
-> > >
-> > >    1. Adjust how to store and retrieve dma index.  Maybe network guys
-> > >       can work better on top.
-> > >
-> > >    2. Move the sanity check for page pool in mm/page_alloc.c to on fr=
-ee.
-> > >
-> > >    Byungchul
-> > >
-> > > ---8<---
-> > > From 7d207a1b3e9f4ff2a72f5b54b09e3ed0c4aaaca3 Mon Sep 17 00:00:00 200=
-1
-> > > From: Byungchul Park <byungchul@sk.com>
-> > > Date: Mon, 21 Jul 2025 14:05:20 +0900
-> > > Subject: [PATCH] mm, page_pool: introduce a new page type for page po=
-ol in page type
-> > >
-> > > ->pp_magic field in struct page is current used to identify if a page
-> > > belongs to a page pool.  However, page type e.i. PGTY_netpp can be us=
-ed
-> > > for that purpose.
-> > >
-> > > Use the page type APIs e.g. PageNetpp(), __SetPageNetpp(), and
-> > > __ClearPageNetpp() instead, and remove the existing APIs accessing
-> > > ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
-> > > netmem_clear_pp_magic() since they are totally replaced.
-> > >
-> > > This work was inspired by the following link by Pavel:
-> > >
-> > > [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@=
-gmail.com/
-> > >
-> > > Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> > > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> > > ---
-> > >  .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
-> > >  include/linux/mm.h                            | 28 ++---------------=
---
-> > >  include/linux/page-flags.h                    |  6 ++++
-> > >  include/net/netmem.h                          |  2 +-
-> > >  mm/page_alloc.c                               |  4 +--
-> > >  net/core/netmem_priv.h                        | 16 ++---------
-> > >  net/core/page_pool.c                          | 10 +++++--
-> > >  7 files changed, 24 insertions(+), 44 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drive=
-rs/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> > > index 5d51600935a6..def274f5c1ca 100644
-> > > --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> > > @@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xd=
-psq *sq,
-> > >                                 xdpi =3D mlx5e_xdpi_fifo_pop(xdpi_fif=
-o);
-> > >                                 page =3D xdpi.page.page;
-> > >
-> > > -                               /* No need to check page_pool_page_is=
-_pp() as we
-> > > +                               /* No need to check PageNetpp() as we
-> > >                                  * know this is a page_pool page.
-> > >                                  */
-> > >                                 page_pool_recycle_direct(pp_page_to_n=
-mdesc(page)->pp,
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index ae50c1641bed..736061749535 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -4135,10 +4135,9 @@ int arch_lock_shadow_stack_status(struct task_=
-struct *t, unsigned long status);
-> > >   * DMA mapping IDs for page_pool
-> > >   *
-> > >   * When DMA-mapping a page, page_pool allocates an ID (from an xarra=
-y) and
-> > > - * stashes it in the upper bits of page->pp_magic. We always want to=
- be able to
-> > > - * unambiguously identify page pool pages (using page_pool_page_is_p=
-p()). Non-PP
-> > > - * pages can have arbitrary kernel pointers stored in the same field=
- as pp_magic
-> > > - * (since it overlaps with page->lru.next), so we must ensure that w=
-e cannot
-> > > + * stashes it in the upper bits of page->pp_magic. Non-PP pages can =
-have
-> > > + * arbitrary kernel pointers stored in the same field as pp_magic (s=
-ince
-> > > + * it overlaps with page->lru.next), so we must ensure that we canno=
-t
-> > >   * mistake a valid kernel pointer with any of the values we write in=
-to this
-> > >   * field.
-> > >   *
-> > > @@ -4168,25 +4167,4 @@ int arch_lock_shadow_stack_status(struct task_=
-struct *t, unsigned long status);
-> > >
-> > >  #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_S=
-HIFT - 1, \
-> > >                                   PP_DMA_INDEX_SHIFT)
-> > > -
-> > > -/* Mask used for checking in page_pool_page_is_pp() below. page->pp_=
-magic is
-> > > - * OR'ed with PP_SIGNATURE after the allocation in order to preserve=
- bit 0 for
-> > > - * the head page of compound page and bit 1 for pfmemalloc page, as =
-well as the
-> > > - * bits used for the DMA index. page_is_pfmemalloc() is checked in
-> > > - * __page_pool_put_page() to avoid recycling the pfmemalloc page.
-> > > - */
-> > > -#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
-> > > -
-> > > -#ifdef CONFIG_PAGE_POOL
-> > > -static inline bool page_pool_page_is_pp(const struct page *page)
-> > > -{
-> > > -       return (page->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
-> > > -}
-> > > -#else
-> > > -static inline bool page_pool_page_is_pp(const struct page *page)
-> > > -{
-> > > -       return false;
-> > > -}
-> > > -#endif
-> > > -
-> > >  #endif /* _LINUX_MM_H */
-> > > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> > > index 4fe5ee67535b..906ba7c9e372 100644
-> > > --- a/include/linux/page-flags.h
-> > > +++ b/include/linux/page-flags.h
-> > > @@ -957,6 +957,7 @@ enum pagetype {
-> > >         PGTY_zsmalloc           =3D 0xf6,
-> > >         PGTY_unaccepted         =3D 0xf7,
-> > >         PGTY_large_kmalloc      =3D 0xf8,
-> > > +       PGTY_netpp              =3D 0xf9,
-> > >
-> > >         PGTY_mapcount_underflow =3D 0xff
-> > >  };
-> > > @@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
-> > >  PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
-> > >  FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
-> > >
-> > > +/*
-> > > + * Marks page_pool allocated pages.
-> > > + */
-> > > +PAGE_TYPE_OPS(Netpp, netpp, netpp)
-> > > +
-> > >  /**
-> > >   * PageHuge - Determine if the page belongs to hugetlbfs
-> > >   * @page: The page to test.
-> > > diff --git a/include/net/netmem.h b/include/net/netmem.h
-> > > index f7dacc9e75fd..3667334e16e7 100644
-> > > --- a/include/net/netmem.h
-> > > +++ b/include/net/netmem.h
-> > > @@ -298,7 +298,7 @@ static inline struct net_iov *__netmem_clear_lsb(=
-netmem_ref netmem)
-> > >   */
-> > >  #define pp_page_to_nmdesc(p)                                        =
-   \
-> > >  ({                                                                  =
-   \
-> > > -       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));            =
-   \
-> > > +       DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));                       =
-   \
-> > >         __pp_page_to_nmdesc(p);                                      =
-   \
-> > >  })
-> > >
-> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > index 2ef3c07266b3..71c7666e48a9 100644
-> > > --- a/mm/page_alloc.c
-> > > +++ b/mm/page_alloc.c
-> > > @@ -898,7 +898,7 @@ static inline bool page_expected_state(struct pag=
-e *page,
-> > >  #ifdef CONFIG_MEMCG
-> > >                         page->memcg_data |
-> > >  #endif
-> > > -                       page_pool_page_is_pp(page) |
-> > > +                       PageNetpp(page) |
-> > >                         (page->flags & check_flags)))
-> > >                 return false;
-> > >
-> > > @@ -925,7 +925,7 @@ static const char *page_bad_reason(struct page *p=
-age, unsigned long flags)
-> > >         if (unlikely(page->memcg_data))
-> > >                 bad_reason =3D "page still charged to cgroup";
-> > >  #endif
-> > > -       if (unlikely(page_pool_page_is_pp(page)))
-> > > +       if (unlikely(PageNetpp(page)))
-> > >                 bad_reason =3D "page_pool leak";
-> > >         return bad_reason;
-> > >  }
-> > > diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-> > > index cd95394399b4..39a97703d9ed 100644
-> > > --- a/net/core/netmem_priv.h
-> > > +++ b/net/core/netmem_priv.h
-> > > @@ -8,21 +8,11 @@ static inline unsigned long netmem_get_pp_magic(net=
-mem_ref netmem)
-> > >         return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_M=
-ASK;
-> > >  }
-> > >
-> > > -static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned lo=
-ng pp_magic)
-> > > -{
-> > > -       __netmem_clear_lsb(netmem)->pp_magic |=3D pp_magic;
-> > > -}
-> > > -
-> > > -static inline void netmem_clear_pp_magic(netmem_ref netmem)
-> > > -{
-> > > -       WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_IN=
-DEX_MASK);
-> > > -
-> > > -       __netmem_clear_lsb(netmem)->pp_magic =3D 0;
-> > > -}
-> > > -
-> > >  static inline bool netmem_is_pp(netmem_ref netmem)
-> > >  {
-> > > -       return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) =3D=3D P=
-P_SIGNATURE;
-> > > +       if (netmem_is_net_iov(netmem))
-> > > +               return true;
-> >
-> > As Pavel alludes, this is dubious, and at least it's difficult to
-> > reason about it.
-> >
-> > There could be net_iovs that are not attached to pp, and should not be
-> > treated as pp memory. These are in the devmem (and future net_iov) tx
-> > paths.
-> >
-> > We need a way to tell if a net_iov is pp or not. A couple of options:
-> >
-> > 1. We could have it such that if net_iov->pp is set, then the
-> > netmem_is_pp =3D=3D true, otherwise false.
-> > 2. We could implement a page-flags equivalent for net_iov.
-> >
-> > Option #1 is simpler and is my preferred. To do that properly, you need=
- to:
-> >
-> > 1. Make sure everywhere net_iovs are allocated that pp=3DNULL in the
-> > non-pp case and pp=3Dnon NULL in the pp case. those callsites are
-> > net_devmem_bind_dmabuf (devmem rx & tx path), io_zcrx_create_area
-> > (io_uring rx path).
-> >
-> > 2. Change netmem_is_pp to check net_iov->pp in the net_iov case.
->
-> Good idea, but I'm not sure if I could work on it without consuming your
-> additional review efforts.  Can anyone add net_iov_is_pp() helper?
->
+> I suppose that this lock can also be acquired in hardirq context. So a=20
+> similar HARDIRQ warning can be printed if that happens first.
 
-Things did indeed get busy for me with work work the past week and I
-still need to look at your merged netmem desc series, but I'm happy to
-review whenever I can.
+None of this makes any sense whatsoever.
 
-> Or use the page type, Netpp, as an additional way to identify if it's a
-> pp page for system memory, keeping the current way using ->pp_magic.
-> So the page type, Netpp, is used for system memory, and ->pp_magic is
-> used for net_iov.  The clean up for ->pp_magic can be done if needed.
->
+Both invocations of console_lock_spinning_enable() are within a hard
+interrupt disabled section.
 
-IMO I would like to avoid deviations like this, especially since
-->pp_magic is in the netmem_desc struct that is now shared between
-page and net_iov. I'd rather both use pp_magic or both not, but that
-may just be me.
+		printk_safe_enter_irqsave(flags);
+		console_lock_spinning_enable();
 
+The lockdep map which is printed here is not console_owner_lock,
+it's console_owner, which is a software managed lockdep_map:
 
---=20
+static struct lockdep_map console_owner_dep_map =3D {
+	.name =3D "console_owner"
+};
+
+It's touched in console_lock_spinning_enable(),
+console_lock_spinning_disable_and_check() and console_trylock_spinning().
+
+In all cases with interrupts disabled and all sites use
+printk_safe_enter_irqsave() which internally uses local_irq_save().
+
+Now lets go back to the initial report, which is further down:
+
+[   54.285777] raw_local_irq_restore() called with IRQs enabled
+[   54.285788] WARNING: CPU: 3 PID: 2940 at kernel/locking/irqflag-debug.c:=
+10 warn_bogus_irq_restore+0x25/0x30
+[   54.285801] Modules linked in:
+[   54.285807] CPU: 3 UID: 0 PID: 2940 Comm: wpa_supplicant Tainted: G S   =
+               6.16.0-rc7+ #305 PREEMPT(voluntary)=20
+[   54.285814] Tainted: [S]=3DCPU_OUT_OF_SPEC
+[   54.285817] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 )=
+ 10/12/2016
+[   54.285820] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
+[   54.285828] Code: 90 90 90 90 90 80 3d c2 5f e3 00 00 74 05 c3 cc cc cc =
+cc 55 48 c7 c7 98 2f fa 85 c6 05 ac 5f e3 00 01 48 89 e5 e8 db 23 be fe <0f=
+> 0b
+5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
+[   54.285834] RSP: 0018:ffffc90001acb690 EFLAGS: 00010282
+[   54.285839] RAX: 0000000000000000 RBX: ffffffff863ed460 RCX: 00000000000=
+00000
+[   54.285843] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 00000000fff=
+fffff
+[   54.285847] RBP: ffffc90001acb690 R08: 0000000000000000 R09: 00000000000=
+00000
+[   54.285850] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000000=
+00001
+[   54.285853] R13: ffffc90001acb72b R14: 0000000000000200 R15: 00000000000=
+00000
+[   54.285857] FS:  00007f79e08da1c0(0000) GS:ffff88828fcf5000(0000) knlGS:=
+0000000000000000
+[   54.285862] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   54.285865] CR2: 000055b73b455000 CR3: 000000010b07e005 CR4: 00000000000=
+606b0
+[   54.285869] Call Trace:
+[   54.285872]  <TASK>
+[   54.285874]  console_flush_all+0x47d/0x4d0
+[   54.285880]  ? console_flush_all+0x43/0x4d0
+[   54.285885]  ? console_flush_all+0x2d2/0x4d0
+[   54.285892]  console_unlock+0x55/0x100
+[   54.285924]  ieee80211_mgd_auth+0x2a3/0x5e0
+[   54.285934]  ? __this_cpu_preempt_check+0x13/0x20
+[   54.285940]  ieee80211_auth+0x13/0x20
+
+I asked for decoding that console_flush_all+0x47d/0x4d0 line, but I'm
+100% sure now that it is line 3128 in console_emit_next_record() which
+is inlined into console_flush_all()
+
+     printk_safe_exit_irqrestore(flags);
+
+Pavel, can you confirm that?
+
+But let's look at the other stack trace in the lockdep splat which is
+way more interesting:
+
+	       stack backtrace:
+[   54.284433] CPU: 3 UID: 0 PID: 2940 Comm: wpa_supplicant Tainted: G S   =
+               6.16.0-rc7+ #305 PREEMPT(voluntary)=20
+[   54.284441] Tainted: [S]=3DCPU_OUT_OF_SPEC
+[   54.284443] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.43 )=
+ 10/12/2016
+[   54.284446] Call Trace:
+[   54.284448]  <TASK>
+[   54.284450]  dump_stack_lvl+0x88/0xd0
+[   54.284458]  dump_stack+0x10/0x20
+[   54.284463]  print_usage_bug.part.0+0x237/0x2d0
+[   54.284470]  mark_lock.part.0+0xa9c/0xfb0
+[   54.284479]  mark_held_locks+0x4d/0x80
+[   54.284486]  lockdep_hardirqs_on_prepare+0xff/0x1c0
+[   54.284493]  trace_hardirqs_on+0x5a/0xe0
+[   54.284500]  _raw_spin_unlock_irq+0x23/0x60
+[   54.284505]  __flush_work+0x3b4/0x550
+[   54.284513]  ? __timer_delete+0x2f/0xd0
+[   54.284519]  ? timer_delete+0xb/0x20
+[   54.284524]  ? try_to_grab_pending+0x12a/0x320
+[   54.284534]  cancel_delayed_work_sync+0x65/0x70
+[   54.284539]  fbcon_cursor+0xbe/0x160
+[   54.284548]  hide_cursor+0x2c/0xc0
+[   54.284553]  vt_console_print+0x45e/0x470
+[   54.284560]  console_flush_all+0x301/0x4d0
+[   54.284565]  ? console_flush_all+0x2d2/0x4d0
+[   54.284569]  ? console_flush_all+0x43/0x4d0
+[   54.284572]  ? console_flush_all+0x2d2/0x4d0
+[   54.284579]  console_unlock+0x55/0x100
+[   54.284584]  vprintk_emit+0x15b/0x3a0
+[   54.284590]  vprintk_default+0x18/0x20
+[   54.284595]  vprintk+0x9/0x10
+[   54.284600]  _printk+0x52/0x70
+[   54.284608]  ieee80211_mgd_auth+0x2a3/0x5e0
+[   54.284619]  ? __this_cpu_preempt_check+0x13/0x20
+[   54.284625]  ieee80211_auth+0x13/0x20
+
+That's the same call chain as the above which complains about the
+already enabled interrupt.
+
+So the lockdep splat is telling us that the raw_spin_unlock_irq() in the
+workqueue code is making console_owner unsafe.
+
+Now let's look where this comes from:
+
+        console_flush_all+0x301/0x4d0
+
+invokes
+
+        vt_console_print+0x45e/0x470
+
+via
+
+        console_emit_next_record()
+        ...
+           printk_safe_enter_irqsave(flags);
+           ...
+           con->write(con, outbuf, pmsg.outbuf_len);
+
+Again decoding console_flush_all+0x301/0x4d0 should confirm that.
+
+Now that ends up in cancel_delayed_work_sync() via hide_cursor() ->
+fbcon_cursor().
+
+cancel_delayed_work_sync() has a might_sleep() in it _and_
+__flush_work() uses raw_spin_[un]lock_irq() as it requires to be invoked
+in thread or in some cases in BH context.
+
+vt_console_print() is the write() callback of the VT console driver. As
+that is a legacy console, it can't do that.
+
+Only the new NBCON variants are allowed to sleep in their write()
+callbacks because they are running in their own printer thread
+context. For atomic printouts in case of emergency they can have a
+write_atomic() callback. If they don't then printing is not attempted,
+but that's not relevant for vt_console_print() obviously.
+
+So lets look at that call chain further
+
+   vt_console_print()
+     hide_cursor()
+      vc->vc_sw->con_cursor(vc, false); --> fbcon_cursor()
+
+      fbcon_cursor()
+        if (vc->vc_cursor_type & CUR_SW)
+           fbcon_del_cursor_work(info)
+             cancel_delayed_work_sync(&ops->cursor_work);
+
+Here we are.
+
+Now I checked whether this is a recent change, but I have to say it has
+been that way for a long time. It's a very interesting question why this
+never popped up before.
+
+The only explanation I have so far is that the code path in
+cancel_delayed_work_sync() which uses [un]lock_irq() is only reached,
+when the works is executed at that point.
+
+Unfortunatly the might_sleep() check in __cancel_work_sync() is after
+the point which determines that.
+
+So it's a matter of debug options being enabled and the probability of
+hitting a work which is actually executed to trip over this problem.
+
+I have no fix for that, but at least there should be some clues now
+where to tackle this.
+
+It's definitely not a printk bug. The culprit was hiding in plain sight
+for a long time in the fbcon_console code.
+
 Thanks,
-Mina
+
+        tglx
+
+
+
+
+
+=20=20=20=20=20=20=20=20
+
 
