@@ -1,771 +1,293 @@
-Return-Path: <linux-kernel+bounces-744959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-744954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DEBB112F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:19:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B46B112EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 23:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE6C07B49B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3D41CE3978
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Jul 2025 21:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29DA2EE61F;
-	Thu, 24 Jul 2025 21:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A522ECD39;
+	Thu, 24 Jul 2025 21:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zbxliPql"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2043.outbound.protection.outlook.com [40.107.236.43])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L1AN0Bfc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837152ECD39;
-	Thu, 24 Jul 2025 21:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753391942; cv=fail; b=P9yqtRFyqUtP4nm1ouVRAbA0l+sYJrEydak7tZN5SJeKlsmzmg5K7ZtKHdErLgyFf0NEaLXx9hSwLCLuvCY/+qt8a5jyJTpMOFicsbztv6ApfyMl0c1li7xRi8BOdDyT70oZG9QWFZ/WV94xnAryCUq3KygEgTu7MJRdksKCJHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753391942; c=relaxed/simple;
-	bh=IH3TsbbuFS7c/JWx1GMv93WQCFHEWCZs9iZS4pMIAec=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZPBmpb76wMcdVgHsuiw6mCn1Bf8To+94PZlhQN0ATkbTLvHYID3mWqpeYaoPZk570Vo/DEFHpsE2YRczrIw+o2GnpJMxsYc1kB+ZAlFLv9xcs2DNgLFINNRTZQVf1w3pnPx30zDpUhM1E/w3A5RZwzUwRp6G+5krxM26aMUI2Gk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zbxliPql; arc=fail smtp.client-ip=40.107.236.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ln1AmmOzNHzedoqM3oTR6NeYBlCfJCyNF55tYxA7AlF9k41wDVehS3+Lin974mPfsfXsYXAju2mWvhvJhak3JVEdMGJlLmuPxHtc8GTSqoSPrTvkQRDLw6pww3BQWIlUD6LxcJfVO8htWrnwPTbKUnxJE9I52fcNTTGYO7OXfGSlpPdWYDasQoUIc1LCic1xHwbOkKSXiuvfTMfv+wdDKCGE4wmkm4XwMBVuhqKeI6gP+gR0fz06H+GLpXjnyBt4mwR3V8hFGpqRKw8ghdVP9WO+4YuwO0GpFnMZv6Q+32rkFjgpVoRDLhQt1sCTmRkEe55tdu+r7tGYjT0Ubzr//w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LDZ7dkw1sMwEBp28UPLalIasHkeJZjISeWLiKbKHqqs=;
- b=AIQJHJX6ieZQnuuV8Rx0OL94+RRip8VM0GoK/lVPW+//gm/qvhQZDzok0XNJyeExBRKbhOlorBrHPaqYknD04RLH4c0E2wAi1XBsEyudQzwO0KAmiykaCLK5+dc6eq6R8dXzqTVk4bsoGFsC9l+80CCYfPeqziv9n49+s7b/oc6gpm32DJWeYNOSe1zxQ/gU3dXTt3pucD+vd2EP3Hmic98/LBbuow0vpwaAHpceNOHzKgCp3Y1Ih/0LI/ZbVsMFesTfoNLti1fw5PPaVfZc83bo8l9qNV5tItbVjkuRNpK3goJblrGToDt9Rq66AG/u5pxzxTilK+sYidg5ofNbOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LDZ7dkw1sMwEBp28UPLalIasHkeJZjISeWLiKbKHqqs=;
- b=zbxliPqlKASyzShfoeR44u3KngxKIO8wOHcTGtvGfMEJBuD8fcDbG/Uuf52NNeXQzuvaJlzJwetc2yS6sXwxbbfTgIESY99l3UO3K6NkiJZxBXxq42rqlTTOP20sGR+Ji8TU1ZmlOw4yr1OcYzEy49UR/Un6xRo9vp5n3xkP2zU=
-Received: from PH8PR07CA0029.namprd07.prod.outlook.com (2603:10b6:510:2cf::27)
- by IA0PR12MB8304.namprd12.prod.outlook.com (2603:10b6:208:3dc::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Thu, 24 Jul
- 2025 21:18:54 +0000
-Received: from SJ1PEPF000026C7.namprd04.prod.outlook.com
- (2603:10b6:510:2cf:cafe::9f) by PH8PR07CA0029.outlook.office365.com
- (2603:10b6:510:2cf::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.22 via Frontend Transport; Thu,
- 24 Jul 2025 21:18:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000026C7.mail.protection.outlook.com (10.167.244.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.20 via Frontend Transport; Thu, 24 Jul 2025 21:18:53 +0000
-Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 24 Jul
- 2025 16:17:17 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <thomas.lendacky@amd.com>, <john.allen@amd.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC: <seanjc@google.com>, <pbonzini@redhat.com>, <michael.roth@amd.com>,
-	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] crypto: ccp - Add AMD Seamless Firmware Servicing (SFS) driver
-Date: Thu, 24 Jul 2025 21:16:28 +0000
-Message-ID: <82acbf87e782c482ebd8d80092b5ad47d1f4b854.1753389962.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1753389962.git.ashish.kalra@amd.com>
-References: <cover.1753389962.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2CB190664;
+	Thu, 24 Jul 2025 21:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753391842; cv=none; b=EI8G9ON6Rjk39w2cs81Cujyo9NP9SSXqemHKkRZTeEXEm0Mdr6luVTd+wkA5eoZ0wZqxTSVZXkHnEWOcglKCyFlJv02hYWEPz8n4ddiZibsuruUh+i/Th+5ePz2jFvOjGZl6Ankf1BmvWmunEkfIC1FRke9rr4FwK61N/JqmuSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753391842; c=relaxed/simple;
+	bh=dMcqNpYFvGiOeZS5D2G0TGmeaDlMP7iujjEM/KpLxNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRt4t9dKeKvRy5KGPa2/QxhWQCxcbhwLJo1NYFMhkmVfdWKLxru9kGd8Z0hEhXhf+NH023E8f69n+OWbp2aKWA+wP8AHibVeUL4WSwxGr3hGfTHnVuYJP3LksIHKKDV94C2401gIfOkETyQA5UVEeFxbObJoqWqs40Lid9D6/lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L1AN0Bfc; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753391840; x=1784927840;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dMcqNpYFvGiOeZS5D2G0TGmeaDlMP7iujjEM/KpLxNw=;
+  b=L1AN0Bfc5WBWZ5JqMMR247ovWoYq/MgGF8itmk5dTDcTkrqGibqATONm
+   2ZekkY2B5eZuxXRAQnDQMMdKzv7CzTRHUvn4qLY+0E1Lb1LQ1I0SvF/wa
+   U9UW8NUEAFooylwgnEE11mKMPsvKX9L4/5IpPqY2Xi5Nr2sv03RbtNkvZ
+   neAQruIDherh+vLopc+Kauby3+H1HXOBjfyG3ymzqVghtL8KvLPPmNE6v
+   K4JgpOKD+YUzh/fCR7EA/eHRWp/UYW1qP4/gCNYNtAuBa85c1yzTZUVBB
+   mRLf2SpMCMQKM7DldbxwrnkGjcpAKrRqjwpt5dQEApIDMbR+bYRaJZR/c
+   A==;
+X-CSE-ConnectionGUID: K8f+NltiR/SAITs9F7nO4Q==
+X-CSE-MsgGUID: CPcFwzFuQwm+oMxjk3KW7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11501"; a="54937777"
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="54937777"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 14:17:17 -0700
+X-CSE-ConnectionGUID: mjOlSJpRSXGDgZd6U/FW+w==
+X-CSE-MsgGUID: VyuvgU6bRAmNGvEEtJ/jtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,337,1744095600"; 
+   d="scan'208";a="184132675"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2025 14:17:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uf3JM-00000000fk1-49Uz;
+	Fri, 25 Jul 2025 00:17:08 +0300
+Date: Fri, 25 Jul 2025 00:17:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Message-ID: <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C7:EE_|IA0PR12MB8304:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27c797f4-5668-4d0a-e1b5-08ddcaf7b156
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7/ULLg8EuaqOFhD+XnAWJT/UCDrZP2jxWWVSOvqX1hLltF4mZglcNJXRjtnF?=
- =?us-ascii?Q?HbXpyJSGHWgsWpuOW5cuunQj7nXqFTbJtRdJnnMmeFH06IXvRUhhS33sxIeh?=
- =?us-ascii?Q?eDNWjocnWv3INdzNy9DNfpNTC7o75UDq00y15AourE5zWGkhPGkt6NC7ISiF?=
- =?us-ascii?Q?JUwpxlv69yIWmmK9v+BMSbfVjkLe5pLo3syy0QbhxJU3uFjFuGvuq1X7xKxf?=
- =?us-ascii?Q?IoApzS4FVf4lSiLoLVBRlN8jdzSTWGMrPxVMbH9nPt9Fbyd/A4pmfujI0PRd?=
- =?us-ascii?Q?hDfWxXD98YxhbSsbDCxY4Tbh+ABr5pKzEybI3mrw9cnUED3T6RIluarh9Y38?=
- =?us-ascii?Q?LI9idyVEME4Km3756skBkxV4aW75Q6Ep8DM4uNlidR5HMsquh6P6SPr53jtn?=
- =?us-ascii?Q?KZKZk+/HKn9aIHEuMpaOdvWoy2iq/FOW1Vd6Ub4Jdzbt9x1yWJPr8Ta99AdL?=
- =?us-ascii?Q?RwntK3LAgXh21HfEpAt5JzdgZpDSOdz8Dj20J8BvJlXlntgwmhfckZJ8U5hZ?=
- =?us-ascii?Q?tbpONgaBOS9AabtU6x+2scR1mqKNdjzjvLRWYxt1T68P7U3UJGcmT49bZogP?=
- =?us-ascii?Q?JZE/hYxHENjQ1eSteiW49SM4WSqUMf2xqFF+0pp1rClxKepQZreuJGoSlc8M?=
- =?us-ascii?Q?GVZg9X1KlHT+0t27x6ofTlFqBFcjRxCz8N1yqmsd2oZQG4fAhtiXLcbWgRLp?=
- =?us-ascii?Q?C/4Dzsh5qDCfh7LPvVRuHasDdKc/ZVUw6n0skC13IFkoBvTkLCPfEbG7GsGR?=
- =?us-ascii?Q?FXgVPLcObXgNN/bjy+mC19l5gRtRA8QwlrrIgT+hcEhlHcERAAKt8hFIWL/Y?=
- =?us-ascii?Q?STN6QvRgDXTIKRVCbEUy8+Rw/e8gQZuG31e2MvswpXYu+SwoeSqNo6i5sOco?=
- =?us-ascii?Q?fG+4OWYFARW1pq7GL13ton4qq7UFb/WoRz4ciTG976bMaLET/bVhZhXE4M/+?=
- =?us-ascii?Q?veFAPBC6tluxVcXZUfiNbspuWm/gDGjf/x3CX2BG+/MFRBf4oiRSCHvRHxUm?=
- =?us-ascii?Q?lLAG0enCohNz6Kq/YUpUcaAMmff52+GcL8Kv64E3jXwUy4ws8cUgbXgVE9mB?=
- =?us-ascii?Q?+wR6EP44fGsZFvqpBdQOxVScCrKaNNhZyiXEfNuf0KzwUlWShkXpB8brzGio?=
- =?us-ascii?Q?UVnqYbzE3D6br1P+35rNSNilAmSDwue7+mEbMWVCwg/M1JVFmeT9jk51lLdu?=
- =?us-ascii?Q?If6URFj9jFSPd0VZfd+Mg5+3ZtaGOnCe9n+nV2SCEs6neS4JnIbhdFhXrjj7?=
- =?us-ascii?Q?b6lXvPz1r3kmyanPD29XYEeINUYuPSv+4jfm3jCjrGJvTWviwNT03o8opXT0?=
- =?us-ascii?Q?jzv0oY9Jrh9+iJ/z3bbquAuZBOOQ18iL+W1g+hnboK9tGNG7C357Y/JQ0V7T?=
- =?us-ascii?Q?m81WDua9NptcWsb5lWJhnm6jBmDzIjH5iAG3a/2p2fiMjWejr55c/roSk9vk?=
- =?us-ascii?Q?g/HzVWIYxR7JUrlgfMOtj0XWTqlWtCDseVrdPmIaI/ZxhP6kCueIF4X92jTp?=
- =?us-ascii?Q?oNEgPYb7ZA8P9ZFnJCVj1tk/OeGr0Ga60L8OJ81wkVvG5KpSjiSYPvcdcA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2025 21:18:53.6138
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27c797f4-5668-4d0a-e1b5-08ddcaf7b156
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8304
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+On Thu, Jul 24, 2025 at 04:17:05PM +0530, Hardevsinh Palaniya wrote:
+> Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.
+> 
+> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an
+> active array size of 1920 x 1080.
+> 
+> The following features are supported:
+> - Manual exposure an gain control support
+> - vblank/hblank control support
+> - Test pattern support control
+> - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)
 
-AMD Seamless Firmware Servicing (SFS) is a secure method to allow
-non-persistent updates to running firmware and settings without
-requiring BIOS reflash and/or system reset.
+...
 
-SFS does not address anything that runs on the x86 processors and
-it can be used to update ASP firmware, modules, register settings
-and update firmware for other microprocessors like TMPM, etc.
+>  MAINTAINERS                |    9 +
 
-SFS driver support adds ioctl support to communicate the SFS
-commands to the ASP/PSP by using the TEE mailbox interface.
+This should be started as part of patch 1 as in between you will have a
+dangling file, which is not recorded in MAINTAINERS.
 
-The Seamless Firmware Servicing (SFS) driver is added as a
-PSP sub-device.
+...
 
-For detailed information, please look at the SFS specifications:
-https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58604.pdf
+> + * Inspired from ov8858, imx219, imx283 camera drivers
 
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
----
- drivers/crypto/ccp/Makefile         |   3 +-
- drivers/crypto/ccp/psp-dev.c        |  20 ++
- drivers/crypto/ccp/psp-dev.h        |   8 +-
- drivers/crypto/ccp/sfs.c            | 316 ++++++++++++++++++++++++++++
- drivers/crypto/ccp/sfs.h            |  53 +++++
- include/linux/psp-platform-access.h |   2 +
- include/uapi/linux/psp-sfs.h        |  87 ++++++++
- 7 files changed, 487 insertions(+), 2 deletions(-)
- create mode 100644 drivers/crypto/ccp/sfs.c
- create mode 100644 drivers/crypto/ccp/sfs.h
- create mode 100644 include/uapi/linux/psp-sfs.h
+Missing period at the end.
 
-diff --git a/drivers/crypto/ccp/Makefile b/drivers/crypto/ccp/Makefile
-index 394484929dae..9b876bfb1289 100644
---- a/drivers/crypto/ccp/Makefile
-+++ b/drivers/crypto/ccp/Makefile
-@@ -13,7 +13,8 @@ ccp-$(CONFIG_CRYPTO_DEV_SP_PSP) += psp-dev.o \
-                                    tee-dev.o \
-                                    platform-access.o \
-                                    dbc.o \
--                                   hsti.o
-+                                   hsti.o \
-+				   sfs.o
- 
- obj-$(CONFIG_CRYPTO_DEV_CCP_CRYPTO) += ccp-crypto.o
- ccp-crypto-objs := ccp-crypto-main.o \
-diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-index 1c5a7189631e..8c4ad225ad67 100644
---- a/drivers/crypto/ccp/psp-dev.c
-+++ b/drivers/crypto/ccp/psp-dev.c
-@@ -17,6 +17,7 @@
- #include "psp-dev.h"
- #include "sev-dev.h"
- #include "tee-dev.h"
-+#include "sfs.h"
- #include "platform-access.h"
- #include "dbc.h"
- #include "hsti.h"
-@@ -182,6 +183,17 @@ static int psp_check_tee_support(struct psp_device *psp)
- 	return 0;
- }
- 
-+static int psp_check_sfs_support(struct psp_device *psp)
-+{
-+	/* Check if device supports SFS feature */
-+	if (!psp->capability.sev) {
-+		dev_dbg(psp->dev, "psp does not support SFS\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
- static int psp_init(struct psp_device *psp)
- {
- 	int ret;
-@@ -198,6 +210,12 @@ static int psp_init(struct psp_device *psp)
- 			return ret;
- 	}
- 
-+	if (!psp_check_sfs_support(psp)) {
-+		ret = sfs_dev_init(psp);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (psp->vdata->platform_access) {
- 		ret = platform_access_dev_init(psp);
- 		if (ret)
-@@ -302,6 +320,8 @@ void psp_dev_destroy(struct sp_device *sp)
- 
- 	tee_dev_destroy(psp);
- 
-+	sfs_dev_destroy(psp);
-+
- 	dbc_dev_destroy(psp);
- 
- 	platform_access_dev_destroy(psp);
-diff --git a/drivers/crypto/ccp/psp-dev.h b/drivers/crypto/ccp/psp-dev.h
-index e43ce87ede76..268c83f298cb 100644
---- a/drivers/crypto/ccp/psp-dev.h
-+++ b/drivers/crypto/ccp/psp-dev.h
-@@ -32,7 +32,8 @@ union psp_cap_register {
- 		unsigned int sev			:1,
- 			     tee			:1,
- 			     dbc_thru_ext		:1,
--			     rsvd1			:4,
-+			     sfs			:1,
-+			     rsvd1			:3,
- 			     security_reporting		:1,
- 			     fused_part			:1,
- 			     rsvd2			:1,
-@@ -68,6 +69,7 @@ struct psp_device {
- 	void *tee_data;
- 	void *platform_access_data;
- 	void *dbc_data;
-+	void *sfs_data;
- 
- 	union psp_cap_register capability;
- };
-@@ -118,12 +120,16 @@ struct psp_ext_request {
-  * @PSP_SUB_CMD_DBC_SET_UID:		Set UID for DBC
-  * @PSP_SUB_CMD_DBC_GET_PARAMETER:	Get parameter from DBC
-  * @PSP_SUB_CMD_DBC_SET_PARAMETER:	Set parameter for DBC
-+ * @PSP_SUB_CMD_SFS_GET_FW_VERS:	Get firmware versions for ASP and other MP
-+ * @PSP_SUB_CMD_SFS_UPDATE:		Command to load, verify and execute SFS package
-  */
- enum psp_sub_cmd {
- 	PSP_SUB_CMD_DBC_GET_NONCE	= PSP_DYNAMIC_BOOST_GET_NONCE,
- 	PSP_SUB_CMD_DBC_SET_UID		= PSP_DYNAMIC_BOOST_SET_UID,
- 	PSP_SUB_CMD_DBC_GET_PARAMETER	= PSP_DYNAMIC_BOOST_GET_PARAMETER,
- 	PSP_SUB_CMD_DBC_SET_PARAMETER	= PSP_DYNAMIC_BOOST_SET_PARAMETER,
-+	PSP_SUB_CMD_SFS_GET_FW_VERS	= PSP_SFS_GET_FW_VERSIONS,
-+	PSP_SUB_CMD_SFS_UPDATE		= PSP_SFS_UPDATE,
- };
- 
- int psp_extended_mailbox_cmd(struct psp_device *psp, unsigned int timeout_msecs,
-diff --git a/drivers/crypto/ccp/sfs.c b/drivers/crypto/ccp/sfs.c
-new file mode 100644
-index 000000000000..cbca01a884e1
---- /dev/null
-+++ b/drivers/crypto/ccp/sfs.c
-@@ -0,0 +1,316 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * AMD Secure Processor Seamless Firmware Servicing support.
-+ *
-+ * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Ashish Kalra <ashish.kalra@amd.com>
-+ */
-+
-+#include <linux/firmware.h>
-+
-+#include "sfs.h"
-+#include "sev-dev.h"
-+
-+#define SFS_DEFAULT_TIMEOUT		(10 * MSEC_PER_SEC)
-+#define SFS_MAX_PAYLOAD_SIZE		(2 * 1024 * 1024)
-+#define ORDER_2MB 9
-+
-+/* SFS Status values */
-+#define SFS_SUCCESS			0x00
-+#define SFS_INVALID_TOTAL_SIZE		0x02
-+#define SFS_INVALID_PKG_SIZE		0x04
-+#define SFS_DISABLED			0x05
-+#define SFS_INVALID_CUST_SIGN		0x06
-+#define SFS_INVALID_AMD_SIGN		0x07
-+#define SFS_INTERNAL_ERROR		0x08
-+#define SFS_CUST_SIGN_NOT_ALLOWED	0x09
-+#define SFS_INVALID_BASE_PATCH_LVL	0x0A
-+#define SFS_INVALID_CURR_PATCH_LVL	0x0B
-+#define SFS_INVALID_NEW_PATCH_LVL	0x0C
-+#define SFS_INVALID_SUBCOMMAND		0x0D
-+#define SFS_PROTECTION_FAIL		0x0E
-+#define SFS_BUSY			0x0F
-+#define SFS_FW_VERSION_MISMATCH	0x10
-+#define SFS_SYS_VERSION_MISMATCH	0x11
-+#define SFS_SEV_STILL_INITIALIZED	0x12
-+
-+static bool sfs_initialized;
-+
-+static int send_sfs_cmd(struct psp_sfs_device *sfs_dev, int msg)
-+{
-+	int ret;
-+
-+	*sfs_dev->result = 0;
-+	sfs_dev->command_hdr->ext_req.header.sub_cmd_id = msg;
-+
-+	ret = psp_extended_mailbox_cmd(sfs_dev->psp,
-+					SFS_DEFAULT_TIMEOUT,
-+					(struct psp_ext_request *)sfs_dev->command_hdr);
-+	if (ret == -EIO) {
-+		dev_dbg(sfs_dev->dev,
-+			 "msg 0x%x failed with PSP error: 0x%x\n",
-+			 msg, *sfs_dev->result);
-+		dev_dbg(sfs_dev->dev,
-+			 "msg 0x%x extended status: 0x%x\n",
-+			 msg, *(u32 *)sfs_dev->payload);
-+	}
-+
-+	return ret;
-+}
-+
-+static int send_sfs_get_fw_versions(struct psp_sfs_device *sfs_dev)
-+{
-+	int ret;
-+
-+	sfs_dev->payload_size = &sfs_dev->command_hdr->ext_req.header.payload_size;
-+	sfs_dev->result = &sfs_dev->command_hdr->ext_req.header.status;
-+	sfs_dev->payload = &sfs_dev->command_hdr->ext_req.buf;
-+	sfs_dev->pkg_hdr = (void *)sfs_dev->command_hdr + PAGE_SIZE;
-+	sfs_dev->header_size = sizeof(struct psp_ext_req_buffer_hdr);
-+
-+	/*
-+	 * SFS_GET_FW_VERSIONS command needs the output buffer to be
-+	 * initialized to 0xC7 in every byte.
-+	 */
-+	memset(sfs_dev->pkg_hdr, 0xc7, PAGE_SIZE);
-+	*sfs_dev->payload_size = 2 * PAGE_SIZE;
-+
-+	ret = send_sfs_cmd(sfs_dev, PSP_SFS_GET_FW_VERSIONS);
-+
-+	return ret;
-+}
-+
-+static int send_sfs_update_package(struct psp_sfs_device *sfs_dev, char *payload_name)
-+{
-+	char payload_path[PAYLOAD_NAME_SIZE];
-+	const struct firmware *firmware;
-+	unsigned long package_size;
-+	int ret;
-+
-+	sprintf(payload_path, "amd/%s", payload_name);
-+
-+	ret = firmware_request_nowarn(&firmware, payload_path, sfs_dev->dev);
-+	if (ret < 0) {
-+		dev_warn(sfs_dev->dev, "firmware request fail %d\n", ret);
-+		return -ENOENT;
-+	}
-+
-+	/* SFS Update Package should be 64KB aligned */
-+	package_size = ALIGN(firmware->size + PAGE_SIZE, 0x10000U);
-+
-+	/*
-+	 * SFS command buffer is a pre-allocated 2MB buffer, fail update package
-+	 * if SFS payload is larger than the pre-allocated command buffer.
-+	 */
-+	if (package_size > SFS_MAX_PAYLOAD_SIZE) {
-+		dev_warn(sfs_dev->dev,
-+			 "SFS payload size %ld larger than maximum supported payload size of 2MB\n",
-+			 package_size);
-+		return -ENOMEM;
-+	}
-+
-+	sfs_dev->payload_size = &sfs_dev->command_hdr->ext_req.header.payload_size;
-+	sfs_dev->result = &sfs_dev->command_hdr->ext_req.header.status;
-+	sfs_dev->payload = &sfs_dev->command_hdr->ext_req.buf;
-+	sfs_dev->pkg_hdr = (void *)sfs_dev->command_hdr + PAGE_SIZE;
-+	sfs_dev->header_size = sizeof(struct psp_ext_req_buffer_hdr);
-+
-+	/*
-+	 * Copy firmware data to a kernel allocated contiguous
-+	 * memory region.
-+	 */
-+	memcpy(sfs_dev->pkg_hdr, firmware->data, firmware->size);
-+	*sfs_dev->payload_size = package_size;
-+
-+	ret = send_sfs_cmd(sfs_dev, PSP_SFS_UPDATE);
-+
-+	release_firmware(firmware);
-+	return ret;
-+}
-+
-+static long sfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-+{
-+	struct psp_device *psp_master = psp_get_master_device();
-+	void __user *argp = (void __user *)arg;
-+	char payload_name[PAYLOAD_NAME_SIZE];
-+	struct psp_sfs_device *sfs_dev;
-+	int ret;
-+
-+	if (!psp_master || !psp_master->sfs_data)
-+		return -ENODEV;
-+	sfs_dev = psp_master->sfs_data;
-+
-+	if (!sfs_initialized)
-+		return -EINVAL;
-+
-+	mutex_lock(&sfs_dev->ioctl_mutex);
-+
-+	switch (cmd) {
-+	case SFSIOCFWVERS:
-+		dev_dbg(sfs_dev->dev, "in SFSIOCFWVERS\n");
-+
-+		ret = send_sfs_get_fw_versions(sfs_dev);
-+		if (ret && ret != -EIO)
-+			goto unlock;
-+		/*
-+		 * return SFS status and extended status back to userspace
-+		 * if PSP status indicated command error.
-+		 */
-+		if (copy_to_user(argp, sfs_dev->pkg_hdr, PAGE_SIZE))
-+			ret = -EFAULT;
-+		if (copy_to_user(argp + PAGE_SIZE, sfs_dev->result, sizeof(u32)))
-+			ret = -EFAULT;
-+		if (copy_to_user(argp + PAGE_SIZE + sizeof(u32), sfs_dev->payload, sizeof(u32)))
-+			ret = -EFAULT;
-+		break;
-+	case SFSIOCUPDATEPKG:
-+		dev_dbg(sfs_dev->dev, "in SFSIOCUPDATEPKG\n");
-+
-+		if (copy_from_user(payload_name, argp, PAYLOAD_NAME_SIZE)) {
-+			ret = -EFAULT;
-+			goto unlock;
-+		}
-+
-+		ret = send_sfs_update_package(sfs_dev, payload_name);
-+		if (ret && ret != -EIO)
-+			goto unlock;
-+		/*
-+		 * return SFS status and extended status back to userspace
-+		 * if PSP status indicated command error.
-+		 */
-+		if (copy_to_user(argp + PAYLOAD_NAME_SIZE, sfs_dev->result, sizeof(u32)))
-+			ret = -EFAULT;
-+		if (copy_to_user(argp + PAYLOAD_NAME_SIZE + sizeof(u32), sfs_dev->payload,
-+				 sizeof(u32)))
-+			ret = -EFAULT;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+unlock:
-+	mutex_unlock(&sfs_dev->ioctl_mutex);
-+
-+	return ret;
-+}
-+
-+static const struct file_operations sfs_fops = {
-+	.owner	= THIS_MODULE,
-+	.unlocked_ioctl = sfs_ioctl,
-+};
-+
-+void sfs_dev_destroy(struct psp_device *psp)
-+{
-+	struct psp_sfs_device *sfs_dev = psp->sfs_data;
-+	int ret;
-+
-+	if (!sfs_dev)
-+		return;
-+
-+	/*
-+	 * TODO: free pre-allocated 2MB command buffer,
-+	 * if SEV-SNP is initialized the command buffer has
-+	 * been marked HV_Fixed and HV_Fixed pages remain
-+	 * in that state till system reset, they cannot be
-+	 * released back to the page allocator.
-+	 *
-+	 */
-+	snp_delete_hypervisor_fixed_pages_list(page_to_pfn(sfs_dev->page) << PAGE_SHIFT);
-+
-+	ret = set_memory_wb((unsigned long)page_address(sfs_dev->page), 512);
-+	if (ret)
-+		dev_dbg(sfs_dev->dev, "set memory wb failed\n");
-+
-+	sfs_initialized = false;
-+	misc_deregister(&sfs_dev->char_dev);
-+	mutex_destroy(&sfs_dev->ioctl_mutex);
-+	psp->sfs_data = NULL;
-+}
-+
-+int sfs_dev_init(struct psp_device *psp)
-+{
-+	struct device *dev = psp->dev;
-+	struct psp_sfs_device *sfs_dev;
-+	struct page *page;
-+	u64 cmd_buf_paddr;
-+	int ret;
-+
-+	/*
-+	 * SFS feature support can be detected on multiple devices but the SFS
-+	 * FW commands must be issued on the master. During probe, we do not
-+	 * know the master hence we create /dev/sfs on the first device probe.
-+	 */
-+	if (sfs_initialized)
-+		return 0;
-+
-+	sfs_dev = devm_kzalloc(dev, sizeof(*sfs_dev), GFP_KERNEL);
-+	if (!sfs_dev)
-+		return -ENOMEM;
-+
-+	BUILD_BUG_ON(sizeof(struct sfs_command) > PAGE_SIZE);
-+
-+	/*
-+	 * Pre-allocate static 2MB command buffer for all SFS commands.
-+	 */
-+	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, ORDER_2MB);
-+	if (!page)
-+		return -ENOMEM;
-+	sfs_dev->page = page;
-+	sfs_dev->command_hdr = page_address(page);
-+	cmd_buf_paddr = page_to_pfn(sfs_dev->page) << PAGE_SHIFT;
-+
-+	/*
-+	 * If SEV-SNP is enabled the SFS command buffer needs to
-+	 * transitioned to HV_Fixed page state.
-+	 */
-+	dev_dbg(sfs_dev->dev, "cmdbuf page pa 0x%llx to be marked as HV_Fixed\n",
-+		cmd_buf_paddr);
-+
-+	ret = snp_insert_hypervisor_fixed_pages_list(cmd_buf_paddr, 512);
-+	if (ret) {
-+		dev_dbg(sfs_dev->dev, "cmdbuf page failed insertion in HV-Fixed page list\n");
-+		goto cleanup_cmd_buf;
-+	}
-+
-+	/*
-+	 * Buffers used for communication with different processors, x86 to ASP
-+	 * in this case must be mapped as non-cacheable.
-+	 */
-+	ret = set_memory_uc((unsigned long)page_address(page), 512);
-+	if (ret) {
-+		dev_dbg(sfs_dev->dev, "set memory uc failed\n");
-+		goto cleanup_cmd_buf_after_hv_fixed;
-+	}
-+
-+	dev_dbg(sfs_dev->dev, "cmdbuf page va 0x%lx marked as UnCacheable\n",
-+		(unsigned long)sfs_dev->command_hdr);
-+
-+	psp->sfs_data = sfs_dev;
-+	sfs_dev->dev = dev;
-+	sfs_dev->psp = psp;
-+
-+	dev_dbg(sfs_dev->dev, "seamless firmware serviving support is available\n");
-+
-+	sfs_dev->char_dev.minor = MISC_DYNAMIC_MINOR;
-+	sfs_dev->char_dev.name = "sfs";
-+	sfs_dev->char_dev.fops = &sfs_fops;
-+	sfs_dev->char_dev.mode = 0600;
-+	ret = misc_register(&sfs_dev->char_dev);
-+	if (ret)
-+		goto cleanup_cmd_buf_after_hv_fixed;
-+
-+	mutex_init(&sfs_dev->ioctl_mutex);
-+	sfs_initialized = true;
-+
-+	return 0;
-+
-+cleanup_cmd_buf_after_hv_fixed:
-+	snp_delete_hypervisor_fixed_pages_list(cmd_buf_paddr);
-+cleanup_cmd_buf:
-+	__free_pages(page, ORDER_2MB);
-+	psp->sfs_data = NULL;
-+	devm_kfree(dev, sfs_dev);
-+
-+	return ret;
-+}
-diff --git a/drivers/crypto/ccp/sfs.h b/drivers/crypto/ccp/sfs.h
-new file mode 100644
-index 000000000000..89b7792af076
---- /dev/null
-+++ b/drivers/crypto/ccp/sfs.h
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * AMD Platform Security Processor (PSP) Seamless Firmware (SFS) Support.
-+ *
-+ * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Ashish Kalra <ashish.kalra@amd.com>
-+ */
-+
-+#ifndef __SFS_H__
-+#define __SFS_H__
-+
-+#include <uapi/linux/psp-sfs.h>
-+
-+#include <linux/device.h>
-+#include <linux/miscdevice.h>
-+#include <linux/psp-sev.h>
-+#include <linux/psp-platform-access.h>
-+#include <linux/set_memory.h>
-+
-+#include <asm/sev.h>
-+
-+#include "psp-dev.h"
-+
-+struct psp_sfs_device {
-+	struct device *dev;
-+	struct psp_device *psp;
-+
-+	struct sfs_command *command_hdr;
-+
-+	struct mutex ioctl_mutex;
-+
-+	struct miscdevice char_dev;
-+
-+	struct page *page;
-+
-+	/* used to abstract communication path */
-+	u32	header_size;
-+	u32	*payload_size;
-+	u32	*result;
-+	void	*payload;
-+	void	*pkg_hdr;
-+};
-+
-+struct sfs_command {
-+	struct psp_ext_request ext_req;
-+};
-+
-+void sfs_dev_destroy(struct psp_device *psp);
-+int sfs_dev_init(struct psp_device *psp);
-+void sfs_pci_init(void);
-+
-+#endif /* __SFS_H__ */
-diff --git a/include/linux/psp-platform-access.h b/include/linux/psp-platform-access.h
-index 1504fb012c05..540abf7de048 100644
---- a/include/linux/psp-platform-access.h
-+++ b/include/linux/psp-platform-access.h
-@@ -7,6 +7,8 @@
- 
- enum psp_platform_access_msg {
- 	PSP_CMD_NONE			= 0x0,
-+	PSP_SFS_GET_FW_VERSIONS,
-+	PSP_SFS_UPDATE,
- 	PSP_CMD_HSTI_QUERY		= 0x14,
- 	PSP_I2C_REQ_BUS_CMD		= 0x64,
- 	PSP_DYNAMIC_BOOST_GET_NONCE,
-diff --git a/include/uapi/linux/psp-sfs.h b/include/uapi/linux/psp-sfs.h
-new file mode 100644
-index 000000000000..e752fa041683
---- /dev/null
-+++ b/include/uapi/linux/psp-sfs.h
-@@ -0,0 +1,87 @@
-+/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
-+/*
-+ * Userspace interface for AMD Seamless Firmware Servicing (SFS)
-+ *
-+ * Copyright (C) 2023-2025 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Ashish Kalra <ashish.kalra@amd.com>
-+ */
-+
-+#ifndef __PSP_SFS_USER_H__
-+#define __PSP_SFS_USER_H__
-+
-+#include <linux/types.h>
-+
-+/**
-+ * SFS: AMD Seamless Firmware Support (SFS) interface
-+ */
-+
-+#define PAYLOAD_NAME_SIZE		64
-+#define TEE_EXT_CMD_BUFFER_SIZE	4096
-+
-+/**
-+ * struct sfs_user_get_fw_versions - get current level of base firmware (output).
-+ * @blob:                  current level of base firmware for ASP and patch levels (input/output).
-+ * @sfs_status:            32-bit SFS status value (output).
-+ * @sfs_extended_status:   32-bit SFS extended status value (output).
-+ */
-+struct sfs_user_get_fw_versions {
-+	__u8	blob[TEE_EXT_CMD_BUFFER_SIZE];
-+	__u32	sfs_status;
-+	__u32	sfs_extended_status;
-+} __packed;
-+
-+/**
-+ * struct sfs_user_update_package - update SFS package (input).
-+ * @payload_name:          name of SFS package to load, verify and execute (input).
-+ * @sfs_status:            32-bit SFS status value (output).
-+ * @sfs_extended_status:   32-bit SFS extended status value (output).
-+ */
-+struct sfs_user_update_package {
-+	char	payload_name[PAYLOAD_NAME_SIZE];
-+	__u32	sfs_status;
-+	__u32	sfs_extended_status;
-+} __packed;
-+
-+/**
-+ * Seamless Firmware Support (SFS) IOC
-+ *
-+ * possible return codes for all SFS IOCTLs:
-+ *  0:          success
-+ *  -EINVAL:    invalid input
-+ *  -E2BIG:     excess data passed
-+ *  -EFAULT:    failed to copy to/from userspace
-+ *  -EBUSY:     mailbox in recovery or in use
-+ *  -ENODEV:    driver not bound with PSP device
-+ *  -EACCES:    request isn't authorized
-+ *  -EINVAL:    invalid parameter
-+ *  -ETIMEDOUT: request timed out
-+ *  -EAGAIN:    invalid request for state machine
-+ *  -ENOENT:    not implemented
-+ *  -ENFILE:    overflow
-+ *  -EPERM:     invalid signature
-+ *  -EIO:       unknown error
-+ */
-+#define SFS_IOC_TYPE	'S'
-+
-+/**
-+ * SFSIOCFWVERS - returns blob containing FW versions
-+ *                ASP provides the current level of Base Firmware for the ASP
-+ *                and the other microprocessors as well as current patch
-+ *                level(s).
-+ */
-+#define SFSIOCFWVERS	_IOWR(SFS_IOC_TYPE, 0x1, struct sfs_user_get_fw_versions)
-+
-+/**
-+ * SFSIOCUPDATEPKG - updates package/payload
-+ *                   ASP loads, verifies and executes the SFS package.
-+ *                   By default, the SFS package/payload is loaded from
-+ *                   /lib/firmware/amd, but alternative firmware loading
-+ *                   path can be specified using kernel parameter
-+ *                   firmware_class.path or the firmware loading path
-+ *                   can be customized using sysfs file:
-+ *                   /sys/module/firmware_class/parameters/path.
-+ */
-+#define SFSIOCUPDATEPKG	_IOWR(SFS_IOC_TYPE, 0x2, struct sfs_user_update_package)
-+
-+#endif /* __PSP_SFS_USER_H__ */
+...
+
+> +#include <linux/array_size.h>
+
++ bitops.h
+
+> +#include <linux/clk.h>
+> +#include <linux/container_of.h>
+> +#include <linux/delay.h>
+> +#include <linux/device/devres.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/units.h>
+> +#include <linux/types.h>
+
+> +#include <vdso/time64.h>
+
+We do not include vdso in the (regular) drivers. Use linux/time.h.
+
+...
+
+> +struct ov2735 {
+> +	struct device *dev;
+
+Do you need this? Can't it be derived from regmap cci below?
+
+> +	struct regmap *cci;
+> +	struct v4l2_subdev sd;
+> +	struct media_pad pad;
+
+> +	struct i2c_client *client;
+
+Do you need this?
+
+> +	struct clk *xclk;
+> +	struct gpio_desc *reset_gpio;
+> +	struct gpio_desc *enable_gpio;
+> +	struct regulator_bulk_data supplies[ARRAY_SIZE(ov2735_supply_name)];
+> +
+> +	/* V4L2 Controls */
+> +	struct v4l2_ctrl_handler handler;
+> +	struct v4l2_ctrl *link_freq;
+> +	struct v4l2_ctrl *pixel_rate;
+> +	struct v4l2_ctrl *hblank;
+> +	struct v4l2_ctrl *vblank;
+> +	struct v4l2_ctrl *gain;
+> +	struct v4l2_ctrl *exposure;
+> +	struct v4l2_ctrl *test_pattern;
+> +
+> +	u32 link_freq_index;
+> +
+> +	u8 current_page;
+> +	struct mutex page_lock;
+> +};
+
+...
+
+> +static int ov2735_page_access(struct ov2735 *ov2735,
+> +			      u32 reg, void *val, int *err, bool is_read)
+> +{
+> +	u8 page = (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;
+
+' & 0xff' part is redundant.
+
+> +	u32 addr = reg & ~CCI_REG_PRIVATE_MASK;
+> +	int ret = 0;
+
+How is this assignment being used?
+
+> +	if (err && *err)
+> +		return *err;
+> +
+> +	mutex_lock(&ov2735->page_lock);
+> +
+> +	/* Perform page access before read/write */
+> +	if (ov2735->current_page != page) {
+> +		ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, err);
+> +		if (ret)
+> +			goto err_mutex_unlock;
+> +		ov2735->current_page = page;
+> +	}
+> +
+> +	if (is_read)
+> +		ret = cci_read(ov2735->cci, addr, (u64 *)val, err);
+> +	else
+> +		ret = cci_write(ov2735->cci, addr, *(u64 *)val, err);
+
+Do you really need this castings?
+
+> +
+> +err_mutex_unlock:
+> +	mutex_unlock(&ov2735->page_lock);
+> +	return ret;
+
+Hmm... Wouldn't be cleanup.h helpful here?
+
+> +}
+
+...
+
+> +static int ov2735_write(struct ov2735 *ov2735, u32 reg, u64 val, int *err)
+> +{
+> +	return ov2735_page_access(ov2735, reg, (void *)&val, err, false);
+
+Why casting?
+
+> +}
+
+...
+
+> +static int ov2735_set_pll_ctrl(struct ov2735 *ov2735)
+> +{
+> +	struct ov2735_pll_parameters *pll_parameters;
+> +	u8 pll_ctrl;
+> +	u8 pll_outdiv;
+> +	int ret = 0;
+> +
+> +	pll_parameters = &pll_configs[ov2735->link_freq_index];
+> +
+> +	/* BIT[7]: pll_clk_sel, BIT[6:2]: pll_nc, BIT[1:0]: pll_mc */
+> +	pll_ctrl = ((pll_parameters->pll_nc << 2) |
+> +		    (pll_parameters->pll_mc << 0)) & OV2735_REG_PLL_ENABLE;
+
+Logically better to wrap like this (yes, I know that it's slightly longer than 80):
+
+	pll_ctrl = ((pll_parameters->pll_nc << 2) | (pll_parameters->pll_mc << 0)) &
+		   OV2735_REG_PLL_ENABLE;
+
+> +	pll_outdiv = pll_parameters->pll_outdiv;
+> +
+> +	ov2735_write(ov2735, OV2735_REG_PLL_CTRL, pll_ctrl, &ret);
+
+> +	ov2735_write(ov2735, OV2735_REG_PLL_OUTDIV, pll_outdiv, &ret);
+> +
+> +	return ret;
+> +}
+
+...
+
+> +	/* Apply format settings. */
+
+> +	/* Apply customized values from user */
+
+Define a single style for one-line comments and use it everywhere consistently.
+
+> +		goto error_power_off;
+
+...
+
+> +	devm_pm_runtime_set_active_enabled(ov2735->dev);
+> +	devm_pm_runtime_get_noresume(ov2735->dev);
+
+No error checks? What's the point to use devm and what will happen if the first
+fails, for example?
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
