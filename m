@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-746454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F190B126D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BC6B126DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Jul 2025 00:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9481054888B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD2316CC32
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 22:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F5E2561D9;
-	Fri, 25 Jul 2025 22:26:15 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BC32561D9;
+	Fri, 25 Jul 2025 22:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phPiCYiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F9427470;
-	Fri, 25 Jul 2025 22:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B5C4A3C;
+	Fri, 25 Jul 2025 22:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753482375; cv=none; b=J9ONpRFKj57OuTIyZcf05lCrqWKOxL00BHMl5z2mtpM1aM9XucFPNz2m4vOfX6IltoBbRvbGCx2Hhf1gnLK47tzGdG9AshAAi3RsTFKodSEbNnpWZyyYL/OrMuSCncgEeX3uyrsXrqTBRhjTfjHWMAV1H33GhgPXpKiC90vpuME=
+	t=1753482500; cv=none; b=MVatbKEhBRNCWWRXhjToShUamONVRqfQMUJLV/HUrg7sKsyAxTA8CYo3x6sSl0cROzpRIBih1kddqsp0og6RmdJB5c/wggxAILUKyZ3+TO/f/+aR4J4MaT+SuUch7OQxSF+OmEu3+Vhw8ss4ZcyXaGbZov2WLLzWE9zpUW91EbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753482375; c=relaxed/simple;
-	bh=1Ouogr5eJHIWMu2QC0ejR/77YxHSVCSsalGYUgc2+xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pxfGH7dn0pPLaZv7ImKOAmyjZRV8YPqGtLhhgn6UUe4lwvp4Z3tYXVUHLUdJYzFb8OgR9ksAcBEA1+u263W8sOqVuXUNYK3pt9x4C6rZ9xS10O00uUvaHtQFTdu+eBfacFPu1/ptUcGunPjzz7DwCxtcG88eJ3M82pY7/eWp/uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56PMPtAD052355;
-	Sat, 26 Jul 2025 07:25:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56PMPtRN052352
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 26 Jul 2025 07:25:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <971671b3-fa79-4ac1-8929-e578c8fcb32e@I-love.SAKURA.ne.jp>
-Date: Sat, 26 Jul 2025 07:25:54 +0900
+	s=arc-20240116; t=1753482500; c=relaxed/simple;
+	bh=IA/3Rq/lSRQOIAbyCx490JQ2nR5mykmx1PNVdvpm3YE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyjzoNRl2sz1Gl0RkeqiaX2HWXEHOf0oeEJsK4KR0dU0KUACl7VOsknlvgbo7WFUAboK7um+byp6wb0arXtqnqxKTLrAO5P7Zas5/CN33057EB9/Z2LtxAO5oiICCtPrEd75aVMKvfCWO4CDn2idPsWr1vk5KwT7YFpS8L5RIGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phPiCYiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F479C4CEE7;
+	Fri, 25 Jul 2025 22:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753482497;
+	bh=IA/3Rq/lSRQOIAbyCx490JQ2nR5mykmx1PNVdvpm3YE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=phPiCYiEjwPtja53/yXoBS4mduXjOJx8hils6W/D7BjugYsE9rwrPaO6w+0QNpox4
+	 DnBYTipdalJCfft1DmElQKAzQl65t9rfVm3r2FHQlm/2oehAeiz2VBy+MlPKuyfhqw
+	 70SYpcd3C3RQZ/FepwHu5/IqQ2AJUkju7piYcseo+w8ugnVKJIjo31eOwH3i4kCKei
+	 W6xnHWj7XYykUEkZq7To61Xcd+l9Sis4xBNGoEgJQouDvLkUuu/aIGrFxCJQ6wt3ol
+	 I1RSqksnEGK0LeT7dEp2gspKN8raK+9+NjJUAYMZrDQc3ONz1v+XuyhJEnUT5vioeq
+	 RCswNWQAUBcCw==
+Date: Fri, 25 Jul 2025 18:28:10 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: dan.j.williams@intel.com
+Cc: Jakub Kicinski <kuba@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, corbet@lwn.net,
+	josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+Message-ID: <aIQE-hkg5ehHaSZi@lappy>
+References: <20250725175358.1989323-1-sashal@kernel.org>
+ <20250725114114.3b13e7b1@kernel.org>
+ <20250725150046.3adb556c@gandalf.local.home>
+ <20250725125906.1db40a7f@kernel.org>
+ <6883ea58b5685_134cc71006e@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
- <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
- <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
- <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
- <aH-enGSS7zWq0jFf@casper.infradead.org>
- <9ac7574508df0f96d220cc9c2f51d3192ffff568.camel@ibm.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
- <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
- <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
- <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <da34b1af424c855519b3e926c7bc891a338c327c.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <da34b1af424c855519b3e926c7bc891a338c327c.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <6883ea58b5685_134cc71006e@dwillia2-xfh.jf.intel.com.notmuch>
 
-On 2025/07/26 2:45, Viacheslav Dubeyko wrote:
-> If we manage the inode IDs properly in hfs_read_inode(), then hfs_write_inode()
-> never will receive the invalid inode ID. I don't see the point to remove the
-> BUG() in hfs_write_inode().
+On Fri, Jul 25, 2025 at 01:34:32PM -0700, dan.j.williams@intel.com wrote:
+>Jakub Kicinski wrote:
+>[..]
+>> To be clear, it's not my main point, my main point is that
+>> the information is of no proven use right now. As long as
+>> committer follows the BKP of adding Link: https://patch.msgid.link/...
+>> we can find the metadata later.
+>>
+>> We never found the need to attach the exact version of smatch / sparse
+>> / cocci that found the bug or "wrote" a patch. Let us not overreact to
+>> the AI tools.
+>>
+>> > Also, I would argue that it would be useful in the change log as if there's
+>> > a bug in the generated code, you know who or *what* to blame. Especially if
+>> > there is a pattern to be found.
+>>
+>> This touches on explainability of AI. Perhaps the metadata would be
+>> interesting for XAI research... not sure that's enough to be lugging
+>> those tags in git history.
+>
+>Agree. The "who to blame" is "Author:". They signed DCO they are
+>responsible for debugging what went wrong in any stage of the
+>development of a patch per usual. We have a long history of debugging
+>tool problems without tracking tool versions in git history.
 
-As long as we don't check that rec.dir.DirID is HFS_ROOT_CNID at hfs_fill_super(), 
-hfs_write_inode() shall receive the invalid inode ID upon unmount operation.
+And it would be great to avoid the potential "it wasn't me, it was the
+AI!" or "whoops I don't know how that exploitable issue ended up in my
+patch, must have been the AI".
 
+-- 
+Thanks,
+Sasha
 
