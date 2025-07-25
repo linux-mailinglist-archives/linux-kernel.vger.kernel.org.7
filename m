@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-745994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFCDB1216C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C93B1216E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E103567DB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75CC5188F0B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF382EE985;
-	Fri, 25 Jul 2025 16:00:47 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF572EE998;
+	Fri, 25 Jul 2025 16:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DOitb12f"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E43BBF2;
-	Fri, 25 Jul 2025 16:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753459247; cv=none; b=RCojA2wZ6w75PAWpzfpvnEspj9ZCyQxPYuEBumo4BXb6xx5pVGya4wqEIxTZVD/KVC8R+dR81gg8H90e2y0iUecwZZZLDih8Cmp3G0NCvE2hIeImwNckhl8fx1lgljagquOxF9U5SWcnJpPfX41LdIhGRcI3MnQai3SfZWPsZ1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753459247; c=relaxed/simple;
-	bh=prWjr9K00ZJsUjWTg+rkTJ++BeLBUFWBiznOta/T9qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WJVYc7+JiFReP65BvpE3YeWoPWFb6tpvnvYNvbuNhaCXe4E9r9fEo26bfBQy5wNbS1sJZv8HFZ13F2MZJ7Lc3S3bKaO2rqoMfxmKoCgkcoQrtPBWDvw8RO6/ddpB9UITsMhqPa72uNf+1vfELjr6mOlnOvrfjzyQ6MMlq9xsNxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23c703c471dso35004935ad.0;
-        Fri, 25 Jul 2025 09:00:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753459244; x=1754064044;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lXTvfXdoxQ19/qhuhRtwnHTLCuTQzyU8uZOOVdFHHus=;
-        b=aNOgpBLTS8ZJkdn5DMBucM4kihihM/EbqyP+LNd8nNtQeW0bJbH1Pw8sl9tVfMdErm
-         YF480t0HY+1tQjHyfL5JJi+wyVz8d2l49yV8wPen4UmQGb/P+3o+BplGDezqT9BPxJYX
-         5+WmQab2/9aGD0LStDu1HaW2+KYKJTtM65OHFRKR2+p/jzzjFsRaoEW+jgqz6KlRP347
-         bUgwk6uiEOMr6yHbBK0cgnVNFuiUET/qwN1Ph1bg4nSWyROCMuxvXewo/esKw3YiW7wM
-         G1UX0oQuXR5EX9XUf+C7wgjYxjrBsl8gqz1Lf4O0mr2xEr8LjzwzQ1FgDvV6e7IufsZt
-         vWPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2PFtfnEZnRmwznK71tZ4Tnsm2pO7pkYoypb7Vq9q5au2HtFiFeSPNwbJPknH4liL8UoH41uPReZmuoh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycqeW9/fb6W4B3h6ItHn1ZMzR86/2EwO0/k6aYyzo1jifOArmX
-	yTrIJSlmcN4wHCl+kQyDDBM2NfzeLK5TZxcIbU8+qfBbljo1yCtcbSfHSP6H
-X-Gm-Gg: ASbGncvBqZLmI67iTZ0lOsWgRxuqJIdZfLVhcyoYSS9AJX1JdQXsoiBKskI9kvVhMAM
-	p/LRrGVR/QTVrHe0LpXCeUZtL5Pmtl7mZGP/UTm96Pp4p+4UGcXX16W4l1AQjJnmcV38HoW/Bbe
-	7uIZsFJ//HSxFN9afgmBjqyBG8ia6YQ53cOn+vYJdIYUHm3sXim2IzBV8yk6LR/qFg8mdVquR7U
-	mvOHRgxnDLrxVc9P3rYxfGQ2mVi33rkjmiTBdMMf0d4HSACDU+0s4INj7c+uOkksSs367c321Zs
-	H516Qb1DieASBziUhCIPWgHFkyIFeTDHGFbYtMIyRHhDH5/BzE02TFyp18m8O8S5H1TE3zvxt/F
-	//djP0ypoM8VV+q+fxCWJ5/Snbe4Dq/jzy4/BSKJguMo1vk69d03gevXqdpk=
-X-Google-Smtp-Source: AGHT+IGOc/H3S/zpYhauczdcRY51PHmmK5Azhoc2BTLiyaUiDWayJtq7f2oFqLVsO2eBcCEHnURX0Q==
-X-Received: by 2002:a17:902:ef51:b0:231:c89f:4e94 with SMTP id d9443c01a7336-23fa5dac07dmr104253075ad.21.1753459244097;
-        Fri, 25 Jul 2025 09:00:44 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23fbe512eadsm417215ad.129.2025.07.25.09.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 09:00:43 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org,
-	Ido Schimmel <idosch@nvidia.com>
-Subject: [PATCH net v3] vrf: Drop existing dst reference in vrf_ip6_input_dst
-Date: Fri, 25 Jul 2025 09:00:43 -0700
-Message-ID: <20250725160043.350725-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989782BB17;
+	Fri, 25 Jul 2025 16:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753459449; cv=fail; b=dgNqQqL9Xt0LdIslhDOZNhzEgbUeWmOt78FxLVanB28HgGcTmtCqseF5/eXb8Pl91Zzo48Yysip8PgjqZtI4BxmRV/rtTbdNhlW2d0QmKOywBcuKhj88ZWyFEtfI+j0dM9caqPTPU2kuITBKCX5/CO8jGnbBZa/XnzHUpEu1jrw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753459449; c=relaxed/simple;
+	bh=LwkALrNXflbuCzH4705AYomAX5TL0kfB704r1SgkBdc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLmqsjdDXxP63sTJq7XZ00c8Xx5MktSOGH5LIkUx9tg1qydmNQK9/4/KZ8Txzv3EcvgdvpULN3+FiN/sw1hOFhkDX/hveKUpZnKogLaf+JpuXkIACvWb6c0ntcD85enrPJj4sjv2HDGYNfvqofTE4Fcra5bvRM1U9MWlZH6MY+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DOitb12f; arc=fail smtp.client-ip=40.107.236.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QgWNVlbRk9YidnlCROEc43djdo43jVDcDYO9J4y6XPb6qWYGgRIPrr4z+a7n1uECPgW3eKNXA7mWUXju9k75vxy/vgewySMQ3K8e0DxmU7FZ2It5jjHUau/ztjs0ZVZFaPuEoz/H9fWiaE/yCkQM81NlVPfC+ezivIz4ZNZ98s8221WHKnfNB7jN5wZWySjOE1LY/FQvReUdkFN8DoHG3KJojg+aZqfAiM6g+3T9QfYdHWGr4V9zdBJIbQyZF9zpayhigTAY1a7vLiw4k8753m48bcPSCD0OS+cukp7HlYFeFUSZBs5nYSkNAESi9mItJYhCgGupqVavrwHzapapMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IXuJBt8uESMxPtma12oy3ryy0D/QoFBH9o+obC74e1E=;
+ b=YDmJpPjztS9j0FhzYpJU26Ueb6kTm51+qCwGSUkjOqEhiyVWb/F4gRbLgeoF76Mt2oiAJ7WuzV/ovXXMHDp1+cX65sXpjSLhCb9p8DS2vqNNt2MqGNax4n1ZyD4P7EaAv5NSLMiqqPoDhUbd3HQTLR58lPE+MM4Tz3NofTi1mvISkh8KvqDAyeOAYU6sXudSXYerii9KiJUfkowCzui4oU8FMXsFNqoyeVCNBXf8o94yXxuCBcDn/SBoGYDNeVp3KHHOrV+gD5FnASlfK6Ywc6hUFRthmfs/IfRh97K7cpfSDWJkCwnjRgaPSRVTAZJzLqiUCvu3KPCtrQrqDjfyCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IXuJBt8uESMxPtma12oy3ryy0D/QoFBH9o+obC74e1E=;
+ b=DOitb12fdwa9Z+Xx7LRMj6gipvVHwy3e/n80yQm/xitOxcFSAVBnXd/wkdxTTaGalBdIcZykq9Kkrz/OkRFBMzeACkyl1e30RSN18WF2PjRbKP25UesPp2MpbmjeMbhkGGGNQns+Lz5RHtLH5Vssezgv25k3WK8kf/rRSZY6xWXyXG59dpeLF1wHCH2GGoAEA6Cm6kbEyaeH4UWK/aJlevFOxDHCmhQc2yguDa4ycwvdA3N1Rs033pFeoFSGNUb37wKuyhNkN1p4k/Mef4yXKL0OOPEp89pDOnYYVGSB6mFgKbpud/krXmsByWxD5Xwv+M8o9g2wC1KP6p9RcNevXw==
+Received: from BL1P222CA0022.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::27)
+ by IA1PR12MB8310.namprd12.prod.outlook.com (2603:10b6:208:3ff::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.23; Fri, 25 Jul
+ 2025 16:04:04 +0000
+Received: from BN3PEPF0000B072.namprd04.prod.outlook.com
+ (2603:10b6:208:2c7:cafe::ca) by BL1P222CA0022.outlook.office365.com
+ (2603:10b6:208:2c7::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.24 via Frontend Transport; Fri,
+ 25 Jul 2025 16:04:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN3PEPF0000B072.mail.protection.outlook.com (10.167.243.117) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.20 via Frontend Transport; Fri, 25 Jul 2025 16:04:03 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
+ 2025 09:03:41 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 25 Jul
+ 2025 09:03:41 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 25 Jul 2025 09:03:40 -0700
+Date: Fri, 25 Jul 2025 09:03:39 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+CC: <jgg@nvidia.com>, <will@kernel.org>, <joro@8bytes.org>,
+	<robin.murphy@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
+ get_viommu_size
+Message-ID: <aIOq2ysFPfZsNUix@Asurada-Nvidia>
+References: <20250721200444.1740461-1-nicolinc@nvidia.com>
+ <20250721200444.1740461-3-nicolinc@nvidia.com>
+ <aIDlsUvF2Xbdelvx@google.com>
+ <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
+ <aIEwzM7mKUI8-h9U@google.com>
+ <aIKd1owebUNQeN1-@google.com>
+ <aIKqaGMMpsIuAVab@Asurada-Nvidia>
+ <aIMR6xxR3Jdpy8kX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aIMR6xxR3Jdpy8kX@google.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B072:EE_|IA1PR12MB8310:EE_
+X-MS-Office365-Filtering-Correlation-Id: b00a2cb5-0501-4c5c-b677-08ddcb94e038
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Tym/+y54IxzZ3gRwPP192A/sbKKZNPEeU25WIqr6/myEp3XQKbC0kUac0Lob?=
+ =?us-ascii?Q?RWHPjPmBekPmVuwv3884IBN7P+VPuOvuyibj67S4JIB855RCMuW4HgI7Nal3?=
+ =?us-ascii?Q?ZRSwNjNZcFGf8FnY/bYn/ScKlRTWn7Y+O0bd8QbfI0tHVoyiaUGMvwgCsGEa?=
+ =?us-ascii?Q?kLSNrUHo/en/mgfDE4nRij7giHPdpBy2puPRVrrbFhxvSbpB6FpecvmbdS3K?=
+ =?us-ascii?Q?aTU9tjvRoKIlRMT2IYw6NrOPjqx+1iDx/ZA/QMm6pukiB4LWVc7YDCcSus/S?=
+ =?us-ascii?Q?8orYNZgdj39UZJtp4egDyGfHXRMmdNkD+ZAhRO+tk2P5ut+cuEYiXY5gtFBr?=
+ =?us-ascii?Q?j97TaXl5sSAoIiyVQ/hfbkFrE65uCsbEtFI0LhjHUe6W8Nrupa7u1YeDFEJj?=
+ =?us-ascii?Q?9JiSLt3KpYE1jZN0ofm/TXX8THkOddBebsw0IDbBHhhfVfC5BfB7Vin57cOg?=
+ =?us-ascii?Q?HhnxkmWunsFB3YHuOVKncRYp0D9r7EHkrEA0jrLG4lxKyxNZe9yYXyQXay5y?=
+ =?us-ascii?Q?/vQGHZaBNcAGEevolU/pg0DzvRe31MBfLcBV/oDrREUPnAdTpcOHxaagCa3n?=
+ =?us-ascii?Q?vDVfzKky9dLnqb45dujbvxlGqrjSeIEIPFZfY9ydso/tSXV1rU+6xsAkQTj0?=
+ =?us-ascii?Q?il6VWclPZ5GuWGoJIc2Pg2EbFf2lCJmKTsTxxtx6mmvIPpqBwWHKIuscLzKh?=
+ =?us-ascii?Q?/glQbG5ve4PFkDwaP9DQa3ouG0CRMqsoyb6xIwNNSlqTjUW0aWx9OnX0rvgl?=
+ =?us-ascii?Q?l/ejyRtlm2eGZ7tzPsMEgKVETNeaXkXdVV2P88TN8dyjdcZAXNHbKKP2m2A8?=
+ =?us-ascii?Q?jkMgq8oxk+1cGYNTePh3A/b+u8aWbD7WNuNlMIqiYKoA9tesPyQO6xG2+KNF?=
+ =?us-ascii?Q?3hXP4901fFaTa5BaUkz5T0QPhlEstK+e9XcKkhAp6/lQFY4u248/OGlvAndY?=
+ =?us-ascii?Q?Djjpp6XsJba4D+q0igMWeQVTLkEtgUbJxnnmwpSJpJg+Vor4NBPmHBOvB49N?=
+ =?us-ascii?Q?EJ5i5tCnpo6NG+J4AqDA+JV1CcaMxbqbCtLSvkMzJFl+8/RHaBJ2nyig7hUU?=
+ =?us-ascii?Q?11Jk6fW46FF7PzsuT6mfFpr1NnAxN+01nPtak0APrkPGs7pZwCsvBiuztWCv?=
+ =?us-ascii?Q?h4c1kA954C2BfjiNt8galkLDTXKVJVQ8vzk6A4WdIH+7WVhJCjtSkGZCmsqS?=
+ =?us-ascii?Q?8JGTvqsYRTMyEJ9Eiwj17iPx13Y7uaDFg7xiKHRSRcIcHZprR0pPzTjAUy33?=
+ =?us-ascii?Q?Ez8SQ/nnfi0/UBHqUvPRD3G8Ufkl2pzX2VkCZxcU/QMIXxYOf2Sn5+KNfkXl?=
+ =?us-ascii?Q?/ePBDHGnxq3KUZ+BLkTj9XcAlrKfDvFqrI/kwRK3qplQNAfJ1v1x9x94C+Fw?=
+ =?us-ascii?Q?9QwfeD3qugeZLkRKDHx01q0jpDdEHCGxFXghH08wrUbmCcP9s0K4MwKw+0lK?=
+ =?us-ascii?Q?TXoyoG7ekAwFOnY/6s95YyJEuKYKriG/oN4WUAClxcMqZl/mGDjQXY5yfkJp?=
+ =?us-ascii?Q?aEWKNnqmOS+vWeRwy6mNo0rv4FIOgPmU6Lzl?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 16:04:03.2095
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b00a2cb5-0501-4c5c-b677-08ddcb94e038
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B072.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8310
 
-Commit ff3fbcdd4724 ("selftests: tc: Add generic erspan_opts matching support
-for tc-flower") started triggering the following kmemleak warning:
+On Fri, Jul 25, 2025 at 05:11:07AM +0000, Pranjal Shrivastava wrote:
+> On Thu, Jul 24, 2025 at 02:49:28PM -0700, Nicolin Chen wrote:
+> I'm agreeing with all of it, it's just that the comment says something 
+> was rejected in by the size op, which raises confusion as to why we're
+> in the init op. The init op rejecting something due to data corruption
+> is a different thing..
+> 
+> I totally get the point about data corruption, i.e.:
+> 
+> size op -> returned something valid
+> <data corruption>
+> init op -> rejecting corrupted type
+> 
+> Wheras I was just trying to understand a case where as per the comment:
+> "Unsupported type was rejected in tegra241_cmdqv_get_vintf_size()", 
+> i.e. ->size op returned 0, yet we ended up calling the init op
 
-unreferenced object 0xffff888015fb0e00 (size 512):
-  comm "softirq", pid 0, jiffies 4294679065
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 40 d2 85 9e ff ff ff ff  ........@.......
-    41 69 59 9d ff ff ff ff 00 00 00 00 00 00 00 00  AiY.............
-  backtrace (crc 30b71e8b):
-    __kmalloc_noprof+0x359/0x460
-    metadata_dst_alloc+0x28/0x490
-    erspan_rcv+0x4f1/0x1160 [ip_gre]
-    gre_rcv+0x217/0x240 [ip_gre]
-    gre_rcv+0x1b8/0x400 [gre]
-    ip_protocol_deliver_rcu+0x31d/0x3a0
-    ip_local_deliver_finish+0x37d/0x620
-    ip_local_deliver+0x174/0x460
-    ip_rcv+0x52b/0x6b0
-    __netif_receive_skb_one_core+0x149/0x1a0
-    process_backlog+0x3c8/0x1390
-    __napi_poll.constprop.0+0xa1/0x390
-    net_rx_action+0x59b/0xe00
-    handle_softirqs+0x22b/0x630
-    do_softirq+0xb1/0xf0
-    __local_bh_enable_ip+0x115/0x150
+Is the updated one in v4 fine to you?
 
-vrf_ip6_input_dst unconditionally sets skb dst entry, add a call to
-skb_dst_drop to drop any existing entry.
+/*
+ * Unsupported type should be rejected by tegra241_cmdqv_get_vintf_size.
+ * Seeing one here indicates a kernel bug or some data corruption.
+ */
 
-Cc: David Ahern <dsahern@kernel.org>
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
-Fixes: 9ff74384600a ("net: vrf: Handle ipv6 multicast and link-local addresses")
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
---
-v3: fix commit id
-v2: repost without the skb_dst_check
----
- drivers/net/vrf.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
-index 9a4beea6ee0c..3ccd649913b5 100644
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -1302,6 +1302,8 @@ static void vrf_ip6_input_dst(struct sk_buff *skb, struct net_device *vrf_dev,
- 	struct net *net = dev_net(vrf_dev);
- 	struct rt6_info *rt6;
- 
-+	skb_dst_drop(skb);
-+
- 	rt6 = vrf_ip6_route_lookup(net, vrf_dev, &fl6, ifindex, skb,
- 				   RT6_LOOKUP_F_HAS_SADDR | RT6_LOOKUP_F_IFACE);
- 	if (unlikely(!rt6))
--- 
-2.50.1
-
+Nicolin
 
