@@ -1,213 +1,167 @@
-Return-Path: <linux-kernel+bounces-745438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20133B119D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF0DB11A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 10:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B881C841DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA7816DEC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46D92BF3E0;
-	Fri, 25 Jul 2025 08:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF552BE7B2;
+	Fri, 25 Jul 2025 08:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N53jtd+A"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mNaxeKzo"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C62BE7AC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462BF2BE65D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753432412; cv=none; b=rn96Bo55ZZdaadA9NL8PoGL83O2Iv4tSUk27u/5mKmr7VTVMgJBhiy6oIfdQxT+7zLmogDUXB6Wmcb1lg56aq4hQJJDugaivnk/uEIdk+ublMPIwrHVsRGztuQinlNudvusXlo8ObJblXwaXM47Lf8dk6FIkAlBxoDaLcPR6A04=
+	t=1753432545; cv=none; b=lUbwQ4nekfQ+RhJWf6S9wMZ9h5sbb3Y1RWk/1waGY+BBCxmyzI5NGEUb8FzgW6lX6j6dYXwDq0a6BpjkPmngfOsa3CjyMDj8H81dicfATM/tgmZ9QOeK/BsK8tHKansxFGI49I0zHcWUmhlKb86N+Z1K185R4nAgv2QJi44RgFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753432412; c=relaxed/simple;
-	bh=iAj/HA7WjS9k1PkGV+APIrGnyZCllylzuaEm7LCr5JA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tFnNr/JmFIkt8Vys+JgrqpBHeAVrMCdlay84dYjz6d/yHpJ5f69Yt9jf0LKy+1WuS7PcQap6qhI0453ZQKfVfwfyCUvTJpu/ZS8DP/+vYMh+7tLY8Lkqz1oMl8KkCLTsACFdrDdYuRuHHHsfMFTpmLI/N861/0O/kODXnGPTbDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N53jtd+A; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56OLmbwf009406
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6ICDsXa1i4umW3fubthp861yBxgmGCWIxplYWJoaFxA=; b=N53jtd+AjsC96xmd
-	idbHzzLPyFEZlXIl7CjAM3sZylXpbE7E3fU8GkbacRJiu/zkFTvQ2TEVDpII95Pf
-	3Mb/hRPBuhsk89riNvZSXD99qpvvJlVDnnSOPV/HPmzS8Zt17wNModzMuhwr+KZK
-	1D65IUzJu6OLjQcUAQp4pknEpQTny04Ca/JXOZgKUDWwaMtWyK87uRxgSVrApE1o
-	f/lDrzLl1y7Pf/RwWAbjm78wCAO8yyuBx56bH7Txg92FAAcwdDEBAkwOj4Ncfvx2
-	V6+z4YQF0eLTHb1AKM2CygG14Dc8/3MzzIaGtDudT7t0+qvRL0LBLh/7WBoxOu0X
-	hlIb6Q==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 483w2t1cw3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 08:33:30 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2349fe994a9so15779265ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:33:30 -0700 (PDT)
+	s=arc-20240116; t=1753432545; c=relaxed/simple;
+	bh=l32ZnZnJaY8M12UcGDnVxfUY50z/wxHD+58gB924aYA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=e8voh+9JqrmJvetDwCyUTJzbKgtvUOq6qvlGKeVPiRLyCDzpTDIYYVO6FyWvB4qfL2Qfp47wLxgRt7NEPSAk5lR7AdG8MdIcZO9+uwUhSnZj0jiGYG/I3HTHsMRil3k6Rh4iS5bmGRh3SE3mM+UVS4q2DKj5IdvNAMH2QjlzAe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mNaxeKzo; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so19663865e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 01:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753432541; x=1754037341; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gin53vNvFupvLdVYbgZj+tpdzrgweTRWwLmZPfysc/4=;
+        b=mNaxeKzoFQt+It6T1us4CjJODAwkIJLRZg3i4AA/kzYT7bkgUNED6PsL6qhwC7s+8u
+         62Kp1VYg+X/1dlk1esXxVUaXoSpeoRLIES1l/b4ZKjGOBuOxpMMsoWZMLNVhJkObaxy4
+         tA1tkH1DuqHVX+ELoxbOrWe+DhVbQAH8HvJR5C2+rjTs8ZXPWI1vAG7Cpa3xFBYzavqP
+         72h0kjpWOPYxC+NAI8Q/XlZqBf6yF+QQPv2Na+5xYC69hM9ucKqdKXb5SpT3r7od8E1Y
+         xAyGURwqM3FWUblxf0uuPagKIl0GO4pHUGOQEFC1V0t/3nm3QAoNrlKryhIpUmSeoWpf
+         rouQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753432409; x=1754037209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ICDsXa1i4umW3fubthp861yBxgmGCWIxplYWJoaFxA=;
-        b=BofLRhJeUozM8VmDwWe8//VTIgmSqWSG+aWShAlbs0o3ukSbJfUvbf/f+NOzQkG7lU
-         nUsDLfwl5NkKRG+OFaVE1od9dS/TLLXINnzxN6g21znp0ZTAb7nabyhEtl1OhXoaeehh
-         MfzXQfMCxmrwIZi7T1LQdJJMO9RY+zvWqAl7W+38jwHZl0eUE01AQwj9z/ReEwVFaOj/
-         4V5L4Q7NgBWr7ORsBaxTClSOb4PN8by4tUNYFrNsRxl17nARkrPX5rO26HKHFf7+fJJn
-         XkudQPFnQ6HQ9LXJjvIo/p6A2V/x1NPHxcX513SrqRgk3t8QND+EpDKU4riCSpnTeJzP
-         WCZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0pljgN85wiRFjirOsOMBrkfz2r40Ik71jPcODmY0NcsfVaDiDdOlpZcK+XjVrGziJqqczhSWJc0g5ke0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS/L6bz0LPhFGi+MSCWirvdond4sXWLypj0Q46i7VAfzwo/TRi
-	MvW5ssFm6ph88jucjB4cA832HC8fF6WhrXp7HcpOjUzWaXzxh4MEYusCDxEX6lY5wZGL2Z2zxxj
-	ri0U59DDjRFKUEcllEgrEbtuToTA6oq0prMItlRajr/jiSD2zCJ426qq41yEPM7pd1hM=
-X-Gm-Gg: ASbGncuoQAPe0e5fIApyHes+BGmuLStIKSMcMl6noFGhgWk+FprkYVUdCboJYpkVhPf
-	ZzwH0GZDYjMNyBoS0zKVmUF/ncG1rJegSuTuHOaCZeosOUd4gZXJejKBpZrOp70Pof4mynWgW3n
-	z3XqY2YuBC3WKQ7qscOaGri2efve0b3t2ISuX9K1Wd1sefHRIAEMhLB4wuCBz0+7c9qyqECHoEh
-	22rqgHxWTVCZ5IiWdhDJf4zFj4sV9h+ldFDr5GicUjrc03h8WGhzGGSS7mbgh91fLwNNidF0rYR
-	YKuWOOA+OZeb9/dSuoMB/Qk/X6uG1BTfNi+rO51tCm+nYyWcpUJqrA6xWQbKTB4E8xccLeIDp4/
-	yDAHymDfV86xuIuemTFtCk7LrniA=
-X-Received: by 2002:a17:903:1446:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23fb306bcbfmr20011675ad.12.1753432408844;
-        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6QKgVlPsDnhyH4/3bWd30JezGiz7hl/u2XgQDaPgHXQ2Rv+qt9nGM1FqaF52FEEqfpxQ3kA==
-X-Received: by 2002:a17:903:1446:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23fb306bcbfmr20011505ad.12.1753432408399;
-        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
-Received: from [10.133.33.78] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fa475f35asm31914825ad.28.2025.07.25.01.33.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 01:33:28 -0700 (PDT)
-Message-ID: <cd7930c3-4cba-4806-8653-8d7eecb278f5@oss.qualcomm.com>
-Date: Fri, 25 Jul 2025 16:33:24 +0800
+        d=1e100.net; s=20230601; t=1753432541; x=1754037341;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gin53vNvFupvLdVYbgZj+tpdzrgweTRWwLmZPfysc/4=;
+        b=hkF+vWpn0wrsxeVgeOELnYdmDoj4Zaxr3Q9OHydx3pDNtI+LcytnMdXiVVJt8OWtro
+         aOb56uyPy8JTOb6L7HNYjvBjS0NYDWsiUjX10ygGwHJ3GGV9EtxJgOQVYB1a8Ew/GSiV
+         FdE9WrzWMFdAXiai1fZj/E+ocl+cV45KWQjlf6M/oqez1Ncri2iZUbL6jRXNHCw2NOFp
+         PFVlpmghvH8jYHprl7gVdijQwBqieJJYXp8YdECqvL2CZ/tg+HlmrvV/rxZ6BIvniFo0
+         tEjUL8vEQse0uC0MMxkWZTMJUaWUSg0c6i5S3K1758rZG3UapXaKT/yOpMtP6ki/Eed0
+         T7AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfuZaJlU9YNvc8L8KnOHoNapdk1BagAJDpMFanK5rkJSlL6u2tWwJI9KHG3VOt9SMXbYHb43q5Mly3K1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVy9UsZA1giR8asxXwVzz+TE4K3fF277U8Qp0h2Th1r9zpxcPE
+	LHiR/bgsqEZ9QfpbttsthhK/tFCPFyz4n7ldzRY890S0YGfnCW5TNHq62oqLmQbcLGM=
+X-Gm-Gg: ASbGnct3txPz4dRpemvBwQt8WK0z+zWRJs56YOf63XCKfxHVT0DaiibGdU8TRuu/MCy
+	Fg62RzF3yro27Bp6kMVguGQ6WlZB/PSLfZvasP4Jv1YGy5zBwqsqKM5IjgP+GL9gADbsLli8cHv
+	bgnMTi4QoLdQXykL01Bh46FTr9LQcrG1RHESLKrwC+8UK8DMulhwp79S1EwRQLJPs+z1Ggx7mnt
+	kprPxttqM2Q8DxXXn+xS/QCVBVTAymqf6PLXDVb8lPUxNpUEfpc3bbwy4jKUfHvmJr7+AEF6O+K
+	X/IeAqhKYMQjDTMvvZaK8v3TBCZP/5l2pfNoPvJ4wcpxMmB8EGtb9LIn90oYv9VWZkTw9jQLpRv
+	PjWIBTR5Z3ICguqSxG5cI0DRoF88pJ+BUiMIy4zRnGA8=
+X-Google-Smtp-Source: AGHT+IEzQYuqh/IiTLBym5ZDC66c7FjRpcqseufFtGSPwdvaTCU6VfbvjsMwyUs7AAIP+rVKjPrSUQ==
+X-Received: by 2002:a05:600c:1c86:b0:456:1fd9:c8f0 with SMTP id 5b1f17b1804b1-458762fd0bamr9033325e9.2.1753432541475;
+        Fri, 25 Jul 2025 01:35:41 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45870532b43sm46236695e9.2.2025.07.25.01.35.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 01:35:41 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Fri, 25 Jul 2025 10:35:39 +0200
+Subject: [PATCH v2] drm/msm: adreno: a6xx: enable GMU bandwidth voting for
+ x1e80100 GPU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] power: supply: core: Add resistance power supply
- property
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
- <20250530-qcom_battmgr_update-v2-1-9e377193a656@oss.qualcomm.com>
- <b7m55sjc2rtvtelvez6sxnjvdostvxmfjhhsr4uxhyhh4bxrcd@xmioz2bsgis2>
- <e9160bb8-2b5c-4c30-b60f-520decde851e@oss.qualcomm.com>
- <fb3ielhucosims237ikv4jfp3oq6fu5ftgt2mvenj6pjmzrpqo@vip3r6qew32p>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <fb3ielhucosims237ikv4jfp3oq6fu5ftgt2mvenj6pjmzrpqo@vip3r6qew32p>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=BMKzrEQG c=1 sm=1 tr=0 ts=6883415a cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=cfvObpv82JsDPSYmetEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: i4Wt8knffdUwcjMr2oFdY8bra6eAR6FF
-X-Proofpoint-GUID: i4Wt8knffdUwcjMr2oFdY8bra6eAR6FF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDA3MiBTYWx0ZWRfX7/4/C8fcW6p9
- jd99d1zcGr4IVY9vp4nGnbNPLJlBA9nhgJqxmNNYG62eOiz1dcffgMarFfl1QSZyEh7oF5YJY8v
- t1IgPW3mv92Fl64Sz1KdOvi4wJf9W9zMVlzCGGcHqGQPR4NjTtl/8MrhS7W2HlxyZ6wGILGhZSF
- /Vv+VkmSZx0wZTPpZL/ycudk7StTJrZnUNRe2jBc7duWQkGoVpWgLisH2nVakiDAFWgk6Z6mPXi
- 77pROtOyBk9QNLaZXtQgBojNWkyM7V+CTWhHpYdz1txL9M6MeWZ4Pc7ArsYCESsWgrYnymu9klF
- bl9xy3eNA2PmHzqz8KziKT7zDPAJkr4P4zaCpzEKpsDV+gao5GikN/0+LB9HvcQGiRomgHofDzm
- QjCd4QC+vxFEseV52vSQ67itUChxPKOw+omwx+/OTovqaSQt3tgOG+IoEZokdTsmy7Ue82RY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507250072
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250725-topic-x1e80100-gpu-bwvote-v2-1-58d2fbb6a127@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANpBg2gC/42NTQ6CMBBGr0K6dsxM+bOuvIdhATiFSQwlLVYM4
+ e5WTuDyveR736YCe+GgrtmmPEcJ4qYE+pSpfmyngUEeiZVGXWKtCRY3Sw8r8QUJEYb5Bd07uoX
+ B2L6oDFouOVdpP3u2sh7te5N4lLA4/zmuIv3sP9VIQGCKqiLToa3z9vaUqfXu7Pygmn3fv7l1r
+ BTDAAAA
+X-Change-ID: 20250721-topic-x1e80100-gpu-bwvote-9fc4690fe5e3
+To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1740;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=l32ZnZnJaY8M12UcGDnVxfUY50z/wxHD+58gB924aYA=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBog0HcXl/+HuB6p30tUGDOC33y4lXB1W9Xm5oJMOIv
+ xyAFKvSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaINB3AAKCRB33NvayMhJ0fsDD/
+ 90a7IXGUNpSxgZkerFUhsDwKgwUNxi5jH1qs5zw7JfiQZyWepyqKo3ISc/nwXG9yWxiA+mFDaMI1Ga
+ sJLMSK2XmjwYnjX4rbjyEoU/fQxGbMUBls6oap0wJ6QGgUa0kITwGfhVAzVGg061Lq3v6jyDaykmKz
+ c6q4uoc0okIsStrXp/zh2cRQxOXhupQKqyTfUQttIlDQjMJMUrxrvqZ8fOt6vBa9F7DOIEIzZ1f78L
+ LWLp/vRw39KQPansEC0acd8c9vy0HszDQcrqOSrb9H1sk9X4t1JneFl/nrrVP1t4pnWeAPevkqb3NR
+ H9dSoxENH7MbnEY0ki1hM1QP9f1YgW3WzhV15ZbHWqmsFg/WSuK5IEEiLM3iaoeO/5WaxF7cwIka+X
+ nzxKXVIL+jXuJ/STHy/GK17zzp7aOgDkWOtqNXMVPXRMjmDkVZ8mZ6mWXFbzEoM21pXr2yqHPvT5qf
+ g62BeJ3S4PQMrDHfZQsTPAYi85lS2PFsIYYObgqYYViR0jRprp65ke+og6BXHwWObI8ZTLHY6T29uV
+ aKUIwcbTGkCijsfL4iwz/kNPgwWITjG7tqAtB7z9VsEetNzwH3qnc3732zVjAyTMO14Fbau4a97jBf
+ rVxAfGIaUyXqAZ34J3poo7wP6JgwlqgbyYjMA1EP2aXm8wO4OylutaIdCjPg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
+the Frequency and Power Domain level, but by default we leave the
+OPP core scale the interconnect ddr path.
 
-On 7/7/2025 8:15 AM, Sebastian Reichel wrote:
-> Hi,
->
-> On Mon, Jun 30, 2025 at 04:28:14PM +0800, Fenglin Wu wrote:
->> On 6/22/2025 9:26 AM, Sebastian Reichel wrote:
->>> On Fri, May 30, 2025 at 03:35:06PM +0800, Fenglin Wu via B4 Relay wrote:
->>>> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>>>
->>>> Some battery drivers provide the ability to export resistance as a
->>>> parameter. Add resistance power supply property for that purpose.
->>> This is missing some information and the naming is bad.
->>>
->>> Which resistance (I suppose battery internal resistance)?
->>>
->>> That is heavily dependent on the battery temperature. So this needs
->>> to document if this is for the current temperature or for some
->>> specific one.
->>>
->>> -- Sebastian
->> This is battery internal resistance calculated by battery management system,
->> using the real-time temperature measured by the thermistor inside the
->> battery pack.
->>
->> I can update the name to something like "rt_internal_resistance" and update
->> the description accordingly.
-> Your message is kind of mixed signal to me.
->
-> If the BMS needs the thermistor to calculate the internal
-> resistance, it means the data is either not real-time, but
-> just adopting some fixed value to the current temperature,
-> or the internal resistance is adopted from the current
-> temperature to some fixed temperature.
->
-> My expectation would be, that the BMS instead actually measures the
-> internal resistance via ohm's and law and Kirchhoff's voltage law.
-> So please make sure to understand what data is actually provided by
-> the BMS for a proper ABI description.
->
-> Depending on the description I think 'internal_resistance' is a good
-> name.
->
-> Greetings,
->
-> -- Sebastian
+Declare the Bus Control Modules (BCMs) and the corresponding parameters
+in the GPU info struct to allow the GMU to vote for the bandwidth.
 
-Hi Sebastian,
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Used proper ACV perfmode bit/freq
+- Link to v1: https://lore.kernel.org/r/20250721-topic-x1e80100-gpu-bwvote-v1-1-946619b0f73a@linaro.org
+---
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Sorry for causing the confusion. I will try to clear it by explaining 
-how the battery resistance is calculated in Qcom BMS.
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index 00e1afd46b81546eec03e22cda9e9a604f6f3b60..892f98b1f2ae582268adebd758437ff60456cdd5 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1440,6 +1440,17 @@ static const struct adreno_info a7xx_gpus[] = {
+ 			.pwrup_reglist = &a7xx_pwrup_reglist,
+ 			.gmu_chipid = 0x7050001,
+ 			.gmu_cgc_mode = 0x00020202,
++			.bcms = (const struct a6xx_bcm[]) {
++				{ .name = "SH0", .buswidth = 16 },
++				{ .name = "MC0", .buswidth = 4 },
++				{
++					.name = "ACV",
++					.fixed = true,
++					.perfmode = BIT(3),
++					.perfmode_bw = 16500000,
++				},
++				{ /* sentinel */ },
++			},
+ 		},
+ 		.preempt_record_size = 4192 * SZ_1K,
+ 		.speedbins = ADRENO_SPEEDBINS(
 
-In Qcom BMS, it uses the Equivalent Series Resistance (ESR) parameter to 
-represent the battery’s real-time internal resistance. ESR changes 
-dynamically depending on factors like the battery’s state of charge 
-(SoC), temperature, charging or discharging status. To estimate ESR 
-accurately under different conditions, the BMS uses data obtained from 
-characterizing representative battery samples, mapping ESR values across 
-various temperatures and SoC levels under charging or discharging 
-status. The characterization process with those battery samples on test 
-bench would use ohm's law to calculate the battery resistance I think. 
-These data points serve as a reference for real-time resistance 
-estimation. During operation, the BMS software refers to this data and 
-adjusts ESR values according to real-time inputs, especially 
-temperature, which is typically measured by a thermistor inside the 
-battery pack.
+---
+base-commit: 97987520025658f30bb787a99ffbd9bbff9ffc9d
+change-id: 20250721-topic-x1e80100-gpu-bwvote-9fc4690fe5e3
 
-I can use 'internal_resistance' if you think this is good to represent 
-this ESR parameter.
-
-Thanks
-
-Fenglin
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
