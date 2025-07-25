@@ -1,135 +1,316 @@
-Return-Path: <linux-kernel+bounces-745347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72255B118C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3283B118C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD701886B9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F38E18928BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64031289E13;
-	Fri, 25 Jul 2025 06:59:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AF2289E36;
+	Fri, 25 Jul 2025 06:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dQRsPsFz"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014E21096F;
-	Fri, 25 Jul 2025 06:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9417A1AC88A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426765; cv=none; b=nyLTjamkTPCpVTJycFgvK+cCQqbMQJOoeJrk7rliEOS1sKfGzaKJ5esyWOwFfv7RzdQBNhCLMxYj8NSfluKgr5QeVksY21C8T7TOSqCR7mxPDILYmmdb2iAp2aDz+FM1iAhNBj4iOvmSLmn1DqaN9AFSlaK18hIOGqKz6jtT0BM=
+	t=1753426790; cv=none; b=s5UkY92kIUzlw2D27McFhz3Gg6+PV44MjFRNDYUdD21wN2ejaEgnnGYPyVjWFgUjHf0i4ApSZgUdVh8uuuLVmptzNODyTsFC1kbAHtYAJuZW2YlKF7Xgvphiv4mjqccNBbn1vw3pFw21CPRXDmYXKFWaZEgJ+lkjbflO6EtVZjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426765; c=relaxed/simple;
-	bh=xBDeOPeKaVA7rwGNxmHPNH2SOW6pZyMRKqU/vbkDMtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhyinhlB4LTeYDgA5kEXn2ldOOIO1n6AD0pQD/xteTud3i3PPKGJ/KPrZ/4KerGUlVw8U/5kKOxd7xvyvp60Vnbrn7YVwq1WsfKp9Jl7QI6ZItwPFPUsIq2tbmUJi49uaiY/wjk+NdQEMIC5rOYXcFMwWrXPs6PYY/xfuuDsBVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7BCC4CEE7;
-	Fri, 25 Jul 2025 06:59:23 +0000 (UTC)
-Date: Fri, 25 Jul 2025 08:59:22 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, 
-	Matt Coster <matt.coster@imgtec.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Drew Fustini <fustini@kernel.org>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v8 2/4] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-Message-ID: <20250725-gainful-saluki-of-mathematics-3c0dd0@kuoka>
-References: <20250724-apr_14_for_sending-v8-0-0714bef83c59@samsung.com>
- <CGME20250724141911eucas1p17071ea620f183faff7ca00cad25cf824@eucas1p1.samsung.com>
- <20250724-apr_14_for_sending-v8-2-0714bef83c59@samsung.com>
+	s=arc-20240116; t=1753426790; c=relaxed/simple;
+	bh=M0OXB0ted4yUGEY1m2IRAEhPczqv3B5NhgGPsP0IjHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cPByZTDV6yARVUjEy3rJhgVXfoQGCdX0PZY8pUggmUP2kLK5WV78btbjmO4LL138BT+PDOI8VPlffyTlWbdZKVV4ZFKucewBWCdr/JK+RzwoD+RPq4kIUrZXhxMhHDlL3ppO52BAA67GR5MY8mNCKq0FVKBYPkb38LezE5HJMew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dQRsPsFz; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74b56b1d301so1269322b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 23:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1753426788; x=1754031588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tjib0N0C/5W1FPgGnxKMNcyA430T8Vj0E1zwB3+Uks4=;
+        b=dQRsPsFzxbnsuISX614uBcRGDdoge86rSlkKY9WTIU/qsTs5XYIcQP3AOCVxNt1Pys
+         ln+oAicc+AtfJXSF0tmJIvOKmNd/EgWOExbuXVnObwrUtFwcm2Zn2E0xZJiPutfBQlTs
+         dAhvyBrxe85dibRb5NPQd3EVMg8sq9fQmHVdewakaSv2b1NioNxvfiZ5O3FRWQLxS+u5
+         OMZyS5szobRT/4kpPtUbrLVLzxERNGPvxMpMM3T1Q2JKpkzcDsNbCBj9GSVxU51DJ4Jr
+         36s/kBZsVw+AgFlwvHGEeu+f/hLPDzn3DR5wb+RArtFncJgMgKgdZ1U6DdJIdO8SMxS7
+         natg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753426788; x=1754031588;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tjib0N0C/5W1FPgGnxKMNcyA430T8Vj0E1zwB3+Uks4=;
+        b=w0HiAKz2JmU43ncj1SWtLBkIuKBTf4oIqoSY3n7SCN8c+KCOsP1pw6Q5A0dKLkjvlE
+         NhjS0a3E4hCNd+cQUgXKW15ExgMjgMmvehZHuX9Y20PyKpn2G7aTAnHUZyR4r5dFRbxg
+         +CiX9/AZE5gvotKwViiiMeOmTKDPXHj1ob5Ya1BqTaB38Zy9OCHYOlo7b8UebrGCDnCN
+         ZIqDB83oRzl31iTCYXfRSM1ZJSFSlOILy2nJl4xrRhF5kN8HaLlfDIntENEhkPfnIOpJ
+         ZNpZXG7Uc9t0b+8Igkmq9MA/VOyOQ1gtgcIXdV1rnuVRawgEsbcmKzcxaJ12wf8++abe
+         CUvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVcTu+jwh+1TZZzaI3l7Xv6GpdCYcYEo00ys7mW2ZLxQe01cHdBTTGeCrALGHbWeTjTENiJI7QVxuR00=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9znRRrSym0YyJw1zNjGtrU2KDUv94sdMl7UBIMNNL6fAOLpF1
+	2fpKucyFJ7YHRHN6OCZBJJP1ZYjExj7rRzUdWdUVxpLep9HeDnIZt58ZUtVOHp8FqzE=
+X-Gm-Gg: ASbGncv9oL4LnsFoK2gsfpnNyyfhOo3GnahG3pOym2YA8Muzat4kQiYDeV7FvEwkGRu
+	jJUqgFasIHMZNW+SNKqFALjtPRliV7XsAEMhfHM+97umX3DlygYAUvl+iHf2EaVwIvffEaiUAow
+	tKMKg2t9oX+kPZ5bckhCWTosl23FFmmjfLV/IMIaT7xDmb3k0Kd0sscaOZWq+TfY26LmceoauD9
+	9Jo7+0qOy3BT6L2oSvtkKmm84x/R/VYiHWNEKeyjsjhjJgbECDGcDzkEocTtudrnlMPugf7BIBR
+	awOUXJuFgwkf3oHSpFo4l3b2o6+OzJs9q8PGZDqF7v2JUNAJCA+Nm/wvSi4qV+uut3FMCu4Ii53
+	IhQZleqohnxfLu1dREQgUpSL2hXgDhXLQFf0VdGfwX4dPQi4PJ2g=
+X-Google-Smtp-Source: AGHT+IGDFWL1llphxSV+WXzXHCIbvfIXfDSzx0etwKEoCZ3cJSqZYmwVfE2aHNC7StMOBKVLL67KQQ==
+X-Received: by 2002:a05:6a00:2e1c:b0:739:50c0:b3fe with SMTP id d2e1a72fcca58-763328614ebmr1758142b3a.8.1753426787734;
+        Thu, 24 Jul 2025 23:59:47 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.228])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b06199a8sm3147099b3a.112.2025.07.24.23.59.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 24 Jul 2025 23:59:47 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com,
+	farman@linux.ibm.com
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	jgg@ziepe.ca,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	peterx@redhat.com
+Subject: Re: [PATCH v4 2/5] vfio/type1: optimize vfio_pin_pages_remote()
+Date: Fri, 25 Jul 2025 14:59:37 +0800
+Message-ID: <20250725065937.65848-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250724105608.73b05a24.alex.williamson@redhat.com>
+References: <20250724105608.73b05a24.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250724-apr_14_for_sending-v8-2-0714bef83c59@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 24, 2025 at 04:18:59PM +0200, Michal Wilczynski wrote:
-> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
-> specific GPU compatible string.
+On Thu, 24 Jul 2025 10:56:08 -0600, alex.williamson@redhat.com wrote:
+ 
+> On Thu, 24 Jul 2025 10:40:38 +0800
+> lizhe.67@bytedance.com wrote:
 > 
-> The thead,th1520-gpu compatible, along with its full chain
-> img,img-bxm-4-64, and img,img-rogue, is added to the
-> list of recognized GPU types.
+> > On Wed, 23 Jul 2025 10:41:34 -0400, farman@linux.ibm.com wrote:
+> >  
+> > > On Wed, 2025-07-23 at 15:09 +0800, lizhe.67@bytedance.com wrote:  
+> > > > On Tue, 22 Jul 2025 12:32:59 -0400, farman@linux.ibm.com wrote:
+> > > >    
+> > > > > On Thu, 2025-07-10 at 16:53 +0800, lizhe.67@bytedance.com wrote:  
+> > > > > > From: Li Zhe <lizhe.67@bytedance.com>
+> > > > > > 
+> > > > > > When vfio_pin_pages_remote() is called with a range of addresses that
+> > > > > > includes large folios, the function currently performs individual
+> > > > > > statistics counting operations for each page. This can lead to significant
+> > > > > > performance overheads, especially when dealing with large ranges of pages.
+> > > > > > Batch processing of statistical counting operations can effectively enhance
+> > > > > > performance.
+> > > > > > 
+> > > > > > In addition, the pages obtained through longterm GUP are neither invalid
+> > > > > > nor reserved. Therefore, we can reduce the overhead associated with some
+> > > > > > calls to function is_invalid_reserved_pfn().
+> > > > > > 
+> > > > > > The performance test results for completing the 16G VFIO IOMMU DMA mapping
+> > > > > > are as follows.
+> > > > > > 
+> > > > > > Base(v6.16-rc4):
+> > > > > > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > > > > > VFIO MAP DMA in 0.047 s (340.2 GB/s)
+> > > > > > ------- AVERAGE (MAP_POPULATE) --------
+> > > > > > VFIO MAP DMA in 0.280 s (57.2 GB/s)
+> > > > > > ------- AVERAGE (HUGETLBFS) --------
+> > > > > > VFIO MAP DMA in 0.052 s (310.5 GB/s)
+> > > > > > 
+> > > > > > With this patch:
+> > > > > > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > > > > > VFIO MAP DMA in 0.027 s (602.1 GB/s)
+> > > > > > ------- AVERAGE (MAP_POPULATE) --------
+> > > > > > VFIO MAP DMA in 0.257 s (62.4 GB/s)
+> > > > > > ------- AVERAGE (HUGETLBFS) --------
+> > > > > > VFIO MAP DMA in 0.031 s (517.4 GB/s)
+> > > > > > 
+> > > > > > For large folio, we achieve an over 40% performance improvement.
+> > > > > > For small folios, the performance test results indicate a
+> > > > > > slight improvement.
+> > > > > > 
+> > > > > > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+> > > > > > Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
+> > > > > > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> > > > > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > > > > ---
+> > > > > >  drivers/vfio/vfio_iommu_type1.c | 83 ++++++++++++++++++++++++++++-----
+> > > > > >  1 file changed, 71 insertions(+), 12 deletions(-)  
+> > > > > 
+> > > > > Hi,
+> > > > > 
+> > > > > Our CI started flagging some crashes running vfio-ccw regressions on the -next kernel beginning with
+> > > > > next-20250717, and bisect points to this particular commit.
+> > > > > 
+> > > > > I can reproduce by cherry-picking this series onto 6.16-rc7, so it's not something else lurking.
+> > > > > Without panic_on_warn, I get a handful of warnings from vfio_remove_dma() (after starting/stopping
+> > > > > guests with an mdev attached), before eventually triggering a BUG() in vfio_dma_do_unmap() running a
+> > > > > hotplug test. I've attached an example of a WARNING before the eventual BUG below. I can help debug
+> > > > > this if more doc is needed, but admit I haven't looked at this patch in any detail yet.
+> > > > > 
+> > > > > Thanks,
+> > > > > Eric
+> > > > > 
+> > > > > [  215.671885] ------------[ cut here ]------------
+> > > > > [  215.671893] WARNING: CPU: 10 PID: 6210 at drivers/vfio/vfio_iommu_type1.c:1204
+> > > > > vfio_remove_dma+0xda/0xf0 [vfio_iommu_type1]
+> > > > > [  215.671902] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> > > > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> > > > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> > > > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> > > > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> > > > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> > > > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> > > > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> > > > > [  215.671946] CPU: 10 UID: 107 PID: 6210 Comm: qemu-system-s39 Kdump: loaded Not tainted 6.16.0-
+> > > > > rc7-00005-g4ff8295d8d61 #79 NONE 
+> > > > > [  215.671950] Hardware name: IBM 3906 M05 780 (LPAR)
+> > > > > [  215.671951] Krnl PSW : 0704c00180000000 000002482f7ee55e (vfio_remove_dma+0xde/0xf0
+> > > > > [vfio_iommu_type1])
+> > > > > [  215.671956]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+> > > > > [  215.671959] Krnl GPRS: 006d010100000000 000000009d8a4c40 000000008f3b1c80 0000000092ffad20
+> > > > > [  215.671961]            0000000090b57880 006e010100000000 000000008f3b1c80 000000008f3b1cc8
+> > > > > [  215.671963]            0000000085b3ff00 000000008f3b1cc0 000000008f3b1c80 0000000092ffad20
+> > > > > [  215.671964]            000003ff867acfa8 000000008f3b1ca0 000001c8b36c3be0 000001c8b36c3ba8
+> > > > > [  215.671972] Krnl Code: 000002482f7ee550: c0e53ff9fcc8	brasl	%r14,00000248af72dee0
+> > > > >            000002482f7ee556: a7f4ffcf		brc	15,000002482f7ee4f4
+> > > > >           #000002482f7ee55a: af000000		mc	0,0  
+> > > > >           >000002482f7ee55e: a7f4ffa9		brc	15,000002482f7ee4b0  
+> > > > >            000002482f7ee562: 0707		bcr	0,%r7
+> > > > >            000002482f7ee564: 0707		bcr	0,%r7
+> > > > >            000002482f7ee566: 0707		bcr	0,%r7
+> > > > >            000002482f7ee568: 0707		bcr	0,%r7
+> > > > > [  215.672006] Call Trace:
+> > > > > [  215.672008]  [<000002482f7ee55e>] vfio_remove_dma+0xde/0xf0 [vfio_iommu_type1] 
+> > > > > [  215.672013]  [<000002482f7f03de>] vfio_iommu_type1_detach_group+0x3de/0x5f0 [vfio_iommu_type1] 
+> > > > > [  215.672016]  [<000002482f7d4c4e>] vfio_group_detach_container+0x5e/0x180 [vfio] 
+> > > > > [  215.672023]  [<000002482f7d2ce0>] vfio_group_fops_release+0x50/0x90 [vfio] 
+> > > > > [  215.672027]  [<00000248af25e1ee>] __fput+0xee/0x2e0 
+> > > > > [  215.672031]  [<00000248aef19f18>] task_work_run+0x88/0xd0 
+> > > > > [  215.672036]  [<00000248aeef559a>] do_exit+0x18a/0x4e0 
+> > > > > [  215.672042]  [<00000248aeef5ab0>] do_group_exit+0x40/0xc0 
+> > > > > [  215.672045]  [<00000248aeef5b5e>] __s390x_sys_exit_group+0x2e/0x30 
+> > > > > [  215.672048]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> > > > > [  215.672054]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> > > > > [  215.672058] Last Breaking-Event-Address:
+> > > > > [  215.672059]  [<000002482f7ee4aa>] vfio_remove_dma+0x2a/0xf0 [vfio_iommu_type1]
+> > > > > [  215.672062] ---[ end trace 0000000000000000 ]---
+> > > > > [  219.861940] ------------[ cut here ]------------
+> > > > > 
+> > > > > ...
+> > > > > 
+> > > > > [  241.164333] ------------[ cut here ]------------
+> > > > > [  241.164340] kernel BUG at drivers/vfio/vfio_iommu_type1.c:1480!
+> > > > > [  241.164358] monitor event: 0040 ilc:2 [#1]SMP 
+> > > > > [  241.164363] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> > > > > vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> > > > > cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> > > > > s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> > > > > vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> > > > > zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> > > > > sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> > > > > configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> > > > > [  241.164399] CPU: 14 UID: 107 PID: 6581 Comm: qemu-system-s39 Kdump: loaded Tainted: G        W  
+> > > > > 6.16.0-rc7-00005-g4ff8295d8d61 #79 NONE 
+> > > > > [  241.164403] Tainted: [W]=WARN
+> > > > > [  241.164404] Hardware name: IBM 3906 M05 780 (LPAR)
+> > > > > [  241.164406] Krnl PSW : 0704e00180000000 000002482f7f132a (vfio_dma_do_unmap+0x4aa/0x4b0
+> > > > > [vfio_iommu_type1])
+> > > > > [  241.164413]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+> > > > > [  241.164415] Krnl GPRS: 0000000000000000 000000000000000b 0000000040000000 000000008cfdcb40
+> > > > > [  241.164418]            0000000000001001 0000000000000001 0000000000000000 0000000040000000
+> > > > > [  241.164419]            0000000000000000 0000000000000000 00000001fbe7f140 000000008cfdcb40
+> > > > > [  241.164421]            000003ff97dacfa8 0000000000000000 00000000871582c0 000001c8b4177cd0
+> > > > > [  241.164428] Krnl Code: 000002482f7f131e: a7890000		lghi	%r8,0
+> > > > >            000002482f7f1322: a7f4feeb		brc	15,000002482f7f10f8
+> > > > >           #000002482f7f1326: af000000		mc	0,0  
+> > > > >           >000002482f7f132a: 0707		bcr	0,%r7  
+> > > > >            000002482f7f132c: 0707		bcr	0,%r7
+> > > > >            000002482f7f132e: 0707		bcr	0,%r7
+> > > > >            000002482f7f1330: c0040000803c	brcl	0,000002482f8013a8
+> > > > >            000002482f7f1336: eb6ff0480024	stmg	%r6,%r15,72(%r15)
+> > > > > [  241.164458] Call Trace:
+> > > > > [  241.164459]  [<000002482f7f132a>] vfio_dma_do_unmap+0x4aa/0x4b0 [vfio_iommu_type1] 
+> > > > > [  241.164463]  [<000002482f7f1d08>] vfio_iommu_type1_ioctl+0x1c8/0x370 [vfio_iommu_type1] 
+> > > > > [  241.164466]  [<00000248af27704e>] vfs_ioctl+0x2e/0x70 
+> > > > > [  241.164471]  [<00000248af278610>] __s390x_sys_ioctl+0xe0/0x100 
+> > > > > [  241.164474]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> > > > > [  241.164477]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> > > > > [  241.164481] Last Breaking-Event-Address:
+> > > > > [  241.164482]  [<000002482f7f1238>] vfio_dma_do_unmap+0x3b8/0x4b0 [vfio_iommu_type1]
+> > > > > [  241.164486] Kernel panic - not syncing: Fatal exception: panic_on_oops  
+> > > > 
+> > > > Thanks for the report. After a review of this commit, it appears that
+> > > > only the changes to vfio_find_vpfn() could plausibly account for the
+> > > > observed issue (I cannot be absolutely certain). Could you kindly test
+> > > > whether the issue persists after applying the following patch?  
+> > > 
+> > > Hi Zhe,
+> > > 
+> > > Thank you for the quick patch! I applied this and ran through a few cycles of the previously-
+> > > problematic tests, and things are holding up great.
+> > > 
+> > > It's probably a fixup to the commit here, but FWIW:
+> > > 
+> > > Tested-by: Eric Farman <farman@linux.ibm.com>
+> > > 
+> > > Thanks,
+> > > Eric  
+> > 
+> > Thank you for your feedback. Also I anticipate that this fix-up patch
+> > will leave the optimizations introduced in the original submission
+> > essentially unaffected.
 > 
-> While the BXM-4-64 GPU IP is designed with two distinct power domains,
-> the TH1520 SoC integrates it with only a single, unified power gate that
-> is controllable by the kernel.
+> Hi Zhe,
 > 
-> To model this reality correctly while keeping the binding accurate for
-> other devices, add conditional constraints to the `allOf` section:
->  - An if block for thead,th1520-gpu enforces a maximum of one
->    power domain and disallows the power-domain-names property.
+> Thanks for the fix.  Could you please send this as a formal follow-on
+> fix path with Eric's Tested-by and documenting the issue?  Thanks,
 
-Why?
+Hi Alex,
 
-This solves nothing, because you did not change the meaning of power
-domain entry.
+I will prepare and resend a fix-up patch.
 
->  - A separate if block applies to other B-series GPUs
->    img,img-bxm-4-64 and img,img-bxs-4-64. A not clause within this
->    block excludes the thead,th1520-gpu compatible, ensuring this rule
->    requires a minimum of two power domains only for non TH1520 B-series
->    GPU's.
-> 
-> This makes the binding strict and correct for both the specific TH1520
-> implementation and for other SoCs that use the B-series Rogue GPUs.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 32 +++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..2c5c278b730145a983d1ddfa4014b3c5046bcd52 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -21,6 +21,11 @@ properties:
->            # work with newer dts.
->            - const: img,img-axe
->            - const: img,img-rogue
-> +      - items:
-> +          - enum:
-> +              - thead,th1520-gpu
-> +          - const: img,img-bxm-4-64
-> +          - const: img,img-rogue
->        - items:
->            - enum:
->                - ti,j721s2-gpu
-> @@ -84,11 +89,29 @@ allOf:
->          compatible:
->            contains:
->              const: img,img-rogue
-> +      not:
+In my view, the root cause is not this patchset itself; rather, it
+appears that some kernel-space drivers invoke
+vfio_device_container_pin_pages() with an iova that is not
+PAGE_SIZE-aligned (I am not entirely certain. Hi Eric, could you please
+help verify this?). Our current patchset changes vfio_find_vpfn()
+from exact-iova matching to the interval [iova, iova + PAGE_SIZE).
+When vfio_unpin_page_external() removes a struct vfio_pfn, it may
+locate the wrong vpfn. This leaves the vpfn red-black tree non-empty,
+triggering the WARN and BUG reported in the issue. How about we correct
+this logic first, and then reassess whether an alignment check should
+be added inside vfio_device_container_pin_pages().
 
-Previous patch was completely different!
+Please correct me if I am wrong.
 
-You cannot keep tags when you completely rewrite the patch. Drop all
-reviews and all acks.
+Thanks,
+Zhe
 
-Above code is confusing and not correct, you just stuffed multiple if
-causes.
-
-Best regards,
-Krzysztof
-
+> > > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > > @@ -344,7 +344,7 @@ static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
+> > > >  
+> > > >  static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> > > >  {
+> > > > -       return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
+> > > > +       return vfio_find_vpfn_range(dma, iova, iova + 1);
+> > > >  }  
+> > 
 
