@@ -1,185 +1,148 @@
-Return-Path: <linux-kernel+bounces-745369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A88B118F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:13:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6BCB118E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7211C27840
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CBB16C3D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBC829AAF3;
-	Fri, 25 Jul 2025 07:12:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4330B291C3B;
+	Fri, 25 Jul 2025 07:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vEY7oeG+"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22138291C36;
-	Fri, 25 Jul 2025 07:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE74F1F1311;
+	Fri, 25 Jul 2025 07:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753427547; cv=none; b=h8fKty51fXPAt+JkgwT+FC4uUM4ialXxvRPicgW/3/N6hCNX/K6ufY3s4LkTQAZn5njSyN6gb586xx1LtGAkOrp7+N+DI8wJew22X3o+4KGZd6tw2SDZF6/c9fEkULhAI3HhMfflrWwiAXQkdAe65egAjq/UwHTVE553L2FCA30=
+	t=1753427401; cv=none; b=ECdUs7knAHm7spQhDcGBcc+sShbhTD+zxPRMiMArW5KHazdQ2w3GxMv8Cm0dQx2KSi/Ddym8S6p4+bHEC8v2zIuZXhtAVrjCeOJuiJr8rVWOPLLIoXOFu2NvaFhUo0vS3lFobTrN+pkKyRAbLvAQGala3uXvj0BkCK6aXRrh334=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753427547; c=relaxed/simple;
-	bh=4m21/tOaaQuK9P5OB3BkYbzOAtN//6qSdsCq/Pg9FOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kPTrLYOQgbD/SRlaPj9HLyH3S27GdqgytmsAQuwoW/BI6wzvgGGHR5YvssxTG3ouSxgjZEwdLUtMZm9Apn66oXawotZkJM++3V2fUfH51ZAKnXSNYxMIaOKmJFBUc0hqNh1ad2ZNZxsurBaR1tYNCcPrCchkO1/BEwc4PXuac3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bpJwS4zNNzYQvBW;
-	Fri, 25 Jul 2025 15:12:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 63E8A1A0DEA;
-	Fri, 25 Jul 2025 15:12:23 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3QBFRLoNonnivBQ--.56345S7;
-	Fri, 25 Jul 2025 15:12:23 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: jack@suse.cz,
-	dlemoal@kernel.org,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH 3/3] blk-ioc: convert to use ioc_lookup_icq_rcu()
-Date: Fri, 25 Jul 2025 15:05:47 +0800
-Message-Id: <20250725070547.3953398-4-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250725070547.3953398-1-yukuai1@huaweicloud.com>
-References: <20250725070547.3953398-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1753427401; c=relaxed/simple;
+	bh=JL30bk1jn1jV9pISqgo+bWdb/5RDGbJ7aIr53ikjD6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PAkZSrYxsD+3hLDT9Jwz6D0ULPbNJkscx9VakEkk/BQHphQOeGFJm56lDthZ4SCzgGewLz5hc3nDbm6PYPj28yYWOGXpGB0+2LNVjzN7upfz+DZP987mNBhq5Xq8lLUMV6dw53zA8zU1Wm9gCWEvJiEZCRCX43xP7BskAC/isG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vEY7oeG+; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56P61XZi009176;
+	Fri, 25 Jul 2025 09:09:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	LzqH02+hJ/0E8n+RTM+yEwFitfKa/gSQdkGVRRTXJhc=; b=vEY7oeG+pNnop6/X
+	Y9urlffHn9wPzkQ2Is/FDs6FmFPNXT3zTb3jyMz3lmY7QPMwpHHlMXBmXHaer/PU
+	0K0P0ulWgakiEqWGw1l11dPWR/0Is+mSEQnefGwkZ3l/7cXUl6SA3HJ2CRdoyG1I
+	FdmL8tUHYqCtB98XPDPWNBGYyLXEwDmWXM7P+PtbfkAkPayNHbYAgdZ3XfNJ2Zbc
+	CmgC/QaDxklOmCvKhJ7nMI4NpBlPKOB2X2y39VEgc7AEaz1kO+m3wWAhQP0OsPLr
+	FY38beWUv0pV94PWCAt8crCejpNCdBfw4cLvaHFaeaNLHLfxgTQP0XVsBJXJZTO6
+	L/feBQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 483w5rsn0e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Jul 2025 09:09:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4812F40044;
+	Fri, 25 Jul 2025 09:07:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8B10578175F;
+	Fri, 25 Jul 2025 09:06:35 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 25 Jul
+ 2025 09:06:34 +0200
+Message-ID: <ce0cb3ba-2373-479f-a8f3-3a89ffb0a1b1@foss.st.com>
+Date: Fri, 25 Jul 2025 09:06:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/20] dt-bindings: memory: factorise LPDDR props into
+ SDRAM props
+To: Julius Werner <jwerner@chromium.org>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250723-ddrperfm-upstream-v4-0-1aa53ca319f4@foss.st.com>
+ <20250723-ddrperfm-upstream-v4-5-1aa53ca319f4@foss.st.com>
+ <CAODwPW_kex5Agqxg_i-XC308scEpUJU0me55G7iZ8nB9LC0acg@mail.gmail.com>
+ <204401b4-b483-47e2-ae73-0994b39bd30c@foss.st.com>
+ <CAODwPW9drKEAMfQvQHV8eMTyf5KCHB4SN400JiUs0pgjoXy=sw@mail.gmail.com>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <CAODwPW9drKEAMfQvQHV8eMTyf5KCHB4SN400JiUs0pgjoXy=sw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3QBFRLoNonnivBQ--.56345S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF1DAFy5CF1ktr1fCr4rZrb_yoW5Cw45pF
-	WagFsIyrW0gr47urykJ3ZrZrn3W3WUCr47tan3tw4Fkr92krnavF10yryIqFyS9rW8AFs0
-	qr18KrWDAr18uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUHWlkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_02,2025-07-24_01,2025-03-28_01
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi Julius,
 
-Now ioc_lookup_icq() is only called from bfq_prepare_request() from
-IO issue path, if it's the first time current issue IO to the disk,
-'queue_lock' will be held to creat new icq, otherwise it's safe to
-use the new helper. Noted if multiple task share one ioc, and
-ioc_create_icq() raced, queue_lock is used to serialize them and only
-the first one can succeed inserting icq to ioc.
+On 7/25/25 00:33, Julius Werner wrote:
+>>> I don't think this will identify a part unambiguously, I would expect
+>>> the DDR revision ID to be specific to the part number. (In fact, we're
+>>> also not sure whether manufacturer+revision identifies LPDDR parts
+>>> unambiguously for every vendor, we just didn't have anything more to
+>>> work with there.) I would suggest to use either `ddrX-YYYY,AAA...,ZZ`
+>>> or `ddrX-YYYY,ZZ,AAA...` (where AAA... is the part number string from
+>>> SPD 329-348 without the trailing spaces). The first version looks a
+>>> bit more natural but it might get confusing on the off chance that
+>>> someone uses a comma in a part number string.
+>>
+>> The first one seems better indeed.
+>> If the manufacturer put a comma in the part number we should handle it
+>> at a software level to me and if it is a devicetree error it is up to
+>> the devicetree writer to fix it.
+>> What do you think ?
 
-Also remove ioc_lookup_icq() that is not used now.
+I meant exactly what you are stating below :-)
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-ioc.c | 44 ++++----------------------------------------
- block/blk.h     |  1 -
- 2 files changed, 4 insertions(+), 41 deletions(-)
+> 
+> Not sure what you mean by "handle it at a software level"? Using comma
+> characters in the part number is not illegal according to the SPD
+> spec, as far as I can tell.
+> 
+> That said, it is still possible to disambiguate this as long as the
+> revision number is always there, you just have to look for the last
+> comma from the end (so e.g. the string `ddr4-1234,some,part,567,89`
+> could be unambiguously parsed as manufacturer ID 0x1234, part number
+> `some,part,567` and revision ID 0x89, the parsing code just needs to
+> be a bit careful). So maybe this is not actually a problem.
 
-diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-index 4945b48dfdb6..27dd65957853 100644
---- a/block/blk-ioc.c
-+++ b/block/blk-ioc.c
-@@ -307,42 +307,6 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
- }
- 
- #ifdef CONFIG_BLK_ICQ
--/**
-- * ioc_lookup_icq - lookup io_cq from ioc
-- * @q: the associated request_queue
-- *
-- * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
-- * with @q->queue_lock held.
-- */
--struct io_cq *ioc_lookup_icq(struct request_queue *q)
--{
--	struct io_context *ioc = current->io_context;
--	struct io_cq *icq;
--
--	lockdep_assert_held(&q->queue_lock);
--
--	/*
--	 * icq's are indexed from @ioc using radix tree and hint pointer,
--	 * both of which are protected with RCU.  All removals are done
--	 * holding both q and ioc locks, and we're holding q lock - if we
--	 * find a icq which points to us, it's guaranteed to be valid.
--	 */
--	rcu_read_lock();
--	icq = rcu_dereference(ioc->icq_hint);
--	if (icq && icq->q == q)
--		goto out;
--
--	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
--	if (icq && icq->q == q)
--		rcu_assign_pointer(ioc->icq_hint, icq);	/* allowed to race */
--	else
--		icq = NULL;
--out:
--	rcu_read_unlock();
--	return icq;
--}
--EXPORT_SYMBOL(ioc_lookup_icq);
--
- /**
-  * ioc_lookup_icq_rcu - lookup io_cq from ioc in io path
-  * @q: the associated request_queue
-@@ -420,7 +384,7 @@ static struct io_cq *ioc_create_icq(struct request_queue *q)
- 			et->ops.init_icq(icq);
- 	} else {
- 		kmem_cache_free(et->icq_cache, icq);
--		icq = ioc_lookup_icq(q);
-+		icq = ioc_lookup_icq_rcu(q);
- 		if (!icq)
- 			printk(KERN_ERR "cfq: icq link failed!\n");
- 	}
-@@ -454,9 +418,9 @@ struct io_cq *ioc_find_get_icq(struct request_queue *q)
- 	} else {
- 		get_io_context(ioc);
- 
--		spin_lock_irq(&q->queue_lock);
--		icq = ioc_lookup_icq(q);
--		spin_unlock_irq(&q->queue_lock);
-+		rcu_read_lock();
-+		icq = ioc_lookup_icq_rcu(q);
-+		rcu_read_unlock();
- 	}
- 
- 	if (!icq) {
-diff --git a/block/blk.h b/block/blk.h
-index ef31b3ec1c69..3c078e517d59 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -460,7 +460,6 @@ static inline void req_set_nomerge(struct request_queue *q, struct request *req)
-  * Internal io_context interface
-  */
- struct io_cq *ioc_find_get_icq(struct request_queue *q);
--struct io_cq *ioc_lookup_icq(struct request_queue *q);
- struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q);
- #ifdef CONFIG_BLK_ICQ
- void ioc_clear_queue(struct request_queue *q);
--- 
-2.39.2
-
+Best regards,
+Clément
 
