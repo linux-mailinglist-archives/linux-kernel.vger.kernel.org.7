@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-745493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB82FB11AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CA3B11AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B698C177C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9785B17EB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC9A2D028A;
-	Fri, 25 Jul 2025 09:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C92D12E0;
+	Fri, 25 Jul 2025 09:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A+PongbX"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS1Cr/ED"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15AC253932
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 09:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DE6253358;
+	Fri, 25 Jul 2025 09:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753435122; cv=none; b=HMcKsArJmaq5a3NijFTNVlWi5RybR9r7lTPLMfC2n9b7YucfkcS5s4VYF7QT8Bq6L7Dbzq/XX4B+otOgSFESfZPedcsxWLqbCxUF1fv6ODWffGR5Zb6XzDCRW/3FSt2d2lsP3hYrdSenKQu57Tk6sGUkF8z1t+ENyOVoJpFtWC4=
+	t=1753435129; cv=none; b=K8VMWEtPZct8qO3yfWNFdVvYRuWzlPmUQ+RN+elnRLI33VyomV0gaFJ9upvQqcGIlwJOit33pPtm84XTKvgtz35AEe4s/zMHzIJCM0UXbaz9r9K+W4428H7ym3dC0DSpttYJrdB1R9+74m9nVuk1xe/p9tjTZQi7TkYgLBE6zlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753435122; c=relaxed/simple;
-	bh=xpef2y2maBnIdrYwyhOyyrKOl5EEcqRqvsYz90m6gd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FClbnPFBm0IOGbHg/SralcLL5uIXb8Ug/mYyuWb6P5X60lFgtu6VcI2qvJUzmEn+yc0bFLYI4ucMpHVrCWe8HvJJFT4QAjwvAGpNN/cOr2qGiXuQ1SWdv3ecoERq29nuKJLw4xUvbD/Xy8j5cnb3VvbrHvDfEgjItQBOFAAD4MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A+PongbX; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4562b2d98bcso27345e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 02:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753435119; x=1754039919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rx1cvWLmG31uLnbCDZX1np35fkcLxkLr007ob70MLnA=;
-        b=A+PongbX3p6F5vV3Y8nPX7NDUJis/U5Z6z/e2eCdkuIA2JJsEV6A0vNz41Yj/sw3WJ
-         bi+ajPClBlc0mMuIf+aQtEO4FK+b/uGUrZ2qWZP6hKSX4WMGh/EtZcYwwURdnHiFIHK0
-         wpNxp/NI4Rwtv5/NlAOfeHNFPC1zHiJz8waoRQ/cBwsPKt03fO6wAedz9AaUiWb+PtI6
-         bRVIoutD9L/NTyJpRrvB2sHPsjE4tyxGEbxDYte2aYhXPOt22L61FgK2sWyk+DtY0bzs
-         2244N0c1btwUPCRrAEhoesVbS7XATw6GoMC3rgyAB4q3UnHaXFuaObXH2fT156U92W3L
-         /gwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753435119; x=1754039919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rx1cvWLmG31uLnbCDZX1np35fkcLxkLr007ob70MLnA=;
-        b=q64Nzw42JYusmdgJw1aGfNYJvTG3QYgje8zR8w1J6T4GqlXDzc4aAOEicfhLb0pJfW
-         95uHDVvqhhRzHvoXtphA5Yv3K8LNJIzi25XTrmsYWZEATK6+0K8p45YVJ7UUIGgYCpPB
-         XGeQad39Vm4Gr+t7mlmooQTFDzLXCTVNl9tr+25NPoFKXnuO5Yhuz90Ow6kC3mKkazsi
-         jp05Febb/w7V9YvaCQG+22Z88qFzysRkjILcrOqFmMUl9m09+U7Bl6RElzd3Huo/VOem
-         1J+bGsImbYUcPC0M/UAHKOHv4szX6V3pt/g74NE5jYGFDBWYYJzlO7DnvbIA6UCvMSK7
-         g/8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWtdQvizBrvgxvj+dqnK1GytJrL8RTlA14L5XYuQK94dPaz0khRIolo+fsMLH6J686VHc2OSkrSMMfEzJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjXrophslelqDJ9oN6hEFvjqcuMp1T9sccGPGpj5qNDOkdFRgZ
-	6PHaXd5FUg5eUllGwg3w7kQ5pmiSWTGhhul3J8LCEIV708gFWjIqC8gNrCTmiAUTqQ==
-X-Gm-Gg: ASbGncsoSxw4mXG/uNh5yQArhRT5G6eLnfnATBWYOFvpV4sbkNIWMw5g03wnlPxde59
-	gaNZSLjUhcGEi9/YYa/uiQT7Zc8Bv2jNUx0dFSacAP/dwmf8+UyF+uOIbVEnzBKx4oL29zmXFhQ
-	w3dsWJo6gTw8ZjibAscidkuuYVU3MZvBub0Lh3hJ9HoTEoaud+ZIhlErWHblH5Wf55AkJC8beXs
-	KDuTxEKyuZerY5k+ESYzSnYNSqA3zIchDQcxNXcUSiRZROFBu3DVF5K5RCxgjd1PrYMaM0mxT1X
-	IgoP3PQ6mt9ZP91P3ONakGi7FHC5qGJizx+TKjeG1+kV3UdD5yUr2gcQ26ZwJnLWs/83+XyIci5
-	QSFmRKLsPQpQqS+xgEs3luIu4xLLZvHw5LQeXNURZTzoN/PNiZ2WuB125c7LX++Yhw7Rb
-X-Google-Smtp-Source: AGHT+IG/k0Q54xhpN2oIpbKY4vSeV5TCdZSBuTuoauwrucxpglZQHZulK/b5JzyYYm2oFY7AoMBuLw==
-X-Received: by 2002:a05:600c:548b:b0:455:fb2e:95e9 with SMTP id 5b1f17b1804b1-458730cfd06mr1447805e9.6.1753435119066;
-        Fri, 25 Jul 2025 02:18:39 -0700 (PDT)
-Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705c4dbdsm49065635e9.25.2025.07.25.02.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 02:18:38 -0700 (PDT)
-Date: Fri, 25 Jul 2025 09:18:35 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Pranjal Shrivastava <praan@google.com>, jgg@nvidia.com, will@kernel.org,
-	joro@8bytes.org, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
- get_viommu_size
-Message-ID: <aINL66r_1NO3Nx-f@google.com>
-References: <20250721200444.1740461-1-nicolinc@nvidia.com>
- <20250721200444.1740461-3-nicolinc@nvidia.com>
- <aIDlsUvF2Xbdelvx@google.com>
- <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
- <aIEwzM7mKUI8-h9U@google.com>
- <aIKd1owebUNQeN1-@google.com>
- <aIKqaGMMpsIuAVab@Asurada-Nvidia>
+	s=arc-20240116; t=1753435129; c=relaxed/simple;
+	bh=C/vj4RZTq2pSr7/gxvxbNzEGaJrLA54lCtzbtr9s3kU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f2ev+xWOSPTgl43GxJheDS5aOzATPDU+GuikufV4RJb6HVmjRm7ELd6gxOqoc9Ak+1wyFgMsLvh5k+5Q2YY2UUsP/lZNbKposcu4YsfQa2EJCxu6Onzw5VrkfhQ9pMLzJg9c6lI7cNgVMX/82whwU9uTHN3ZIaqQE9+rUr7w7XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS1Cr/ED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76107C4CEE7;
+	Fri, 25 Jul 2025 09:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753435128;
+	bh=C/vj4RZTq2pSr7/gxvxbNzEGaJrLA54lCtzbtr9s3kU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cS1Cr/EDN8L0ywx4fZGGHRVrqUnFynVtIhE8GvZDLhEo02TwMlNfVwuSKWdsIuDFc
+	 V8NVA+hjsvGbxyiWRylVl+hcDte8NSwdxYOkil1hCymqnsAP4PySDPVchcUbMSQ01j
+	 41TlQLNAGRQOxOoARD69EHL60yLu+LAdJ8MxjbYdX3r4FuoTLH68UvBgTYT6Uamy1p
+	 3gwa+rsXXnwJ7W8LafU1Uqik02lHplIZ9K5xjB+/+/JOtg45zD3DmfAIQuVzc/dCit
+	 MiH7f0ecF+l1+YHLVmZu/pOwqnZ/LTnUHY6UbwPliE0cFzBBtccwwx1+oAVpKAclTv
+	 DzxPMjHoQ56fQ==
+Message-ID: <3f03b1c0-94a2-4081-adb0-aac4f42ee430@kernel.org>
+Date: Fri, 25 Jul 2025 11:18:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIKqaGMMpsIuAVab@Asurada-Nvidia>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250724-hamoa_initial-v2-0-91b00c882d11@oss.qualcomm.com>
+ <20250724-hamoa_initial-v2-4-91b00c882d11@oss.qualcomm.com>
+ <d55f79ed-0bec-4045-8bc6-9005d19f865d@kernel.org>
+ <cf84a8ef-9f4e-4f13-b41e-9525e21a913b@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <cf84a8ef-9f4e-4f13-b41e-9525e21a913b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nicolin,
+On 25/07/2025 11:01, Yijie Yang wrote:
+> 
+> wcn7850_pmu: wcn7850-pmu@xxxx {
+>      compatible = "qcom,wcn7850-pmu";
+>      reg = <0x...>;
+>      vdd-supply = <&dummy_reg>;
+>      vddaon-supply = <&dummy_reg>;
+>      vdddig-supply = <&dummy_reg>;
+>      vddrfa1p2-supply = <&dummy_reg>;
+>      vddrfa1p8-supply = <&dummy_reg>;
+> };
+> This approach ensures the DTB passes schema checks while keeping the 
+> implementation clean and consistent with the actual platform setup. Do 
+> you think this is appropriate?
 
-On Thu, Jul 24, 2025 at 02:49:28PM -0700, Nicolin Chen wrote:
-> On Thu, Jul 24, 2025 at 08:55:50PM +0000, Pranjal Shrivastava wrote:
-> > On Wed, Jul 23, 2025 at 06:58:20PM +0000, Pranjal Shrivastava wrote:
-> > > On Wed, Jul 23, 2025 at 11:05:26AM -0700, Nicolin Chen wrote:
-> > > > On Wed, Jul 23, 2025 at 01:37:53PM +0000, Pranjal Shrivastava wrote:
-> > > > > On Mon, Jul 21, 2025 at 01:04:44PM -0700, Nicolin Chen wrote:
-> > > > > > @@ -1273,6 +1279,10 @@ tegra241_cmdqv_init_vintf_user(struct arm_vsmmu *vsmmu,
-> > > > > >  	phys_addr_t page0_base;
-> > > > > >  	int ret;
-> > > > > >  
-> > > > > > +	/* Unsupported type was rejected in tegra241_cmdqv_get_vintf_size() */
-> > 
-> > Sorry, if this wasn't clear in the previous comment. I meant this
-> > comment must be updated, the "unsupported type" wasn't rejected in
-> > vintf_size, rather the type got corrupted which brought us here.
-> 
-> Any unsupported type would be indeed rejected by the init op
-> callback. There is nothing wrong with that statement.
-> 
-> It indicates that we shouldn't see an unsupported type here,
-> unless some serious kernel bug like data corruption happens,
-> which is implied by the WARN_ON itself.
-> 
-> > Had the
-> > vintf_size rejected it, we wouldn't be calling the init op.
-> 
-> A data corruption could happen any time, not related to the
-> init op. A concurrent buggy thread can overwrite the vIOMMU
-> object when a write access to its adjacent memory overflows.
+No. There is no dummy regulator in the hardware, so you cannot add it to
+the DTS.
 
-Can you please elaborate on that, as memory corruption can happen
-any time event after the next check and there is no way to defend
-against that?
-
-Thanks,
-Mostafa
-
-> 
-> Nicolin
+Best regards,
+Krzysztof
 
