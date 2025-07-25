@@ -1,375 +1,200 @@
-Return-Path: <linux-kernel+bounces-745244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C52B11724
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9D3B11733
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C0C188D31F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00546AE35B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 03:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14E1239E77;
-	Fri, 25 Jul 2025 03:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF8A23A997;
+	Fri, 25 Jul 2025 03:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aTJlMP3g"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2088.outbound.protection.outlook.com [40.107.237.88])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hsulU1AP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E932E3718;
-	Fri, 25 Jul 2025 03:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753414746; cv=fail; b=kgIj+xkQpW2Hi5uAp5wOsIdmHUhYfXGAsxvL5BWJng4/mgZ4REZRYi4EFwj7ID9McY3cDTUBggxpOYkd5mR67tsi0aVtY6nHOXZNn7SdlX+N8umY0GfwP0xUG9i0NPHvnZtUd1D+bQvVWu2Zx6v6xrYiAEe7esFYU/wtCt2/3lQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753414746; c=relaxed/simple;
-	bh=uPlMycLTqJ/3+U1jNE8+OR2vv1kRXmGYPpg++niknIQ=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=bVAR6vmulGhFMlea5uZYCGqPh5Xyze17IpImCHlYQ0kH6Q8ctvko3fHloQAlfrw4+HcqtB+9b/tiwC1ET8DiBupCpebczwtenqWrma7ZFoxYwmDByRlGi71B7p/myrANAutkWailc6dwE4oBA0v4Ran+jHQNO18g0fpAX4yFzjs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aTJlMP3g; arc=fail smtp.client-ip=40.107.237.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NLD3s04ZfJLnRzoCenlX+2mwfxaCNjkNV5My8KmjGKBBvGdXDSygCjC+yZf23Zodl3JMUigIHd+4+x4Oi3c3DaJalGa+3b6xi4nIO7d8yM0xi17sF1SQiTD459EEVRfPQAlTB/WJadXBLLu29BlBnFwLKSpeEQ9J+a4+yvtSQxvrwQM0GlawAhoS25usoE3qgfvxau0lvsula0Ca/fDTMbNejfwHSWQjFvhDaOZ3LCZrcJyy5TGxXxaZ0lStkrIK+kAb99++59NWGpdPU4/eiGChrt6Xg4CsJ/+j+difgHux9vkP4/9UfP5WhShCnD6G34gkRd21xdFknUYCMegsuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=59TvI6tj6GC414ET551NlbhQTfsDprNIfdv3eKSnQpA=;
- b=vz1RJjo6+lPeR+BGBCd/Qgucg0HpJ9cQqQymwzG2vNnbQL/yrHvnWz7EyBw+4jpEp3KhW2/S57nLDz7n/UGpdE7U2aVsBKmonj3VjHSdY1TtdTwCkqoZ4sK66PreqI4MfoB/cyojmZHwQ8uFZNDVayhKT+Xn6wyg3D8NFL0cdGbAys/AzZixC+x3uK2zcKEkQnt7AKnW+Uz2CRZ8cqUFOJ84aKL8JzOfm/xiZGQi8GCZTcWCq7kbltdeCI4LyVjpeHoHw8jVo5V0VmJjQkxrxnGevM+dvcQbhb9PSsJDcpQzp6dtDtUvv2ISKnRabMbkU1DNd3LygsEsttOLmFa2tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=59TvI6tj6GC414ET551NlbhQTfsDprNIfdv3eKSnQpA=;
- b=aTJlMP3gQbPpCw3DQ69DhM0uzKUBO7bEdYylTg+4UWHLMcQ5jvLGkOso0eG0SrNHlgPYlcIGrjj/Ym89S5ityybZpQaAqGIel9d14qoou1e7dnKOFF03CrznOfNo3UCffjucG+CdYWWMzEmc1AY3gbAb7nJINw5JLvGrZhsF5Cs5s6aIN2V83ORpeEb12nK4q+c9ImwPr7pg0QpawnQdr8rn7wHCG0fwA8jn88pK6jO1SzVYsOI9r7cYXLw9ciSivQO+BNO9vYsP4e0t+klFKhRpBanH6BcpS/yyRab7spGIKr/UlZtZOnzQ1JxMGMNGxvJU7UVgTPORU2HhnKF2lw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CY1PR12MB9603.namprd12.prod.outlook.com (2603:10b6:930:108::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Fri, 25 Jul
- 2025 03:39:01 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.019; Fri, 25 Jul 2025
- 03:39:01 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Jul 2025 12:38:57 +0900
-Message-Id: <DBKTNE4OF0IB.3C32NVHQ9UKQ3@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH 1/3] rust: add `num` module with `PowerOfTwo` type
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250620-num-v1-0-7ec3d3fb06c9@nvidia.com>
- <20250620-num-v1-1-7ec3d3fb06c9@nvidia.com>
- <DASWS1A63LYM.399CKUDL4Z7UC@kernel.org>
-In-Reply-To: <DASWS1A63LYM.399CKUDL4Z7UC@kernel.org>
-X-ClientProxiedBy: TYCP286CA0234.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::6) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3F8236431
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 03:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753414986; cv=none; b=lhfsILvtXweaOfO7R5OTZp7Y6FssFggZ3aya8gPcfzA7h5+UkxFHy4mku9gDdj7Qsz1NzEFst1L1EpInYGu0VwfaLX7F2oPkI8lMZPiizRS4Qxe2Rm4fWqxzwa++iTIlUxyNpbX6QlDCUtyz6Y6ZkCz+1P4xWVXVqWi37ZTiQ9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753414986; c=relaxed/simple;
+	bh=EYW/y1fwu5T+yqts+Bpy6dphKw7A/rXhOamx61AqAGo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myn/p1n+SpbS6yRRJlwjizX7AudT60Ly/an6io80OuW037uWHLymgLVt1lwVED4YrG3qluae3/Z97tmo8n88XN2i6cEtpjMe2AUMzkwhaYrVPgQ5ZDEu0+BCOBGPL8Jo1FnFRmQvvSKOMdjUc6VTTnVSBEoqkgRA0pCMucnInic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hsulU1AP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753414983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JmT/ORzg0P1lBg635/k0jST+Uw1Ny6cPps1AZuQQysQ=;
+	b=hsulU1APBbSsa0Oc85dGnbOIewo4Sgd/AWHzZq+ppcIJeDDLX6X7qHQjyGquRrHsxU5uWB
+	SbQobmt/CZefiGxgKmwzB/mAs/pdfxjQ8mJLRG3PEXN+R3K9TBPsBiWoIrluNiq4lS6Y57
+	hN+QidY2Pqfzc7IPrngcifZLTRq33ZU=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-376-gX-uO6WDNN2uqe8jdDAixw-1; Thu, 24 Jul 2025 23:43:00 -0400
+X-MC-Unique: gX-uO6WDNN2uqe8jdDAixw-1
+X-Mimecast-MFC-AGG-ID: gX-uO6WDNN2uqe8jdDAixw_1753414979
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-32b32ce581bso6891641fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jul 2025 20:43:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753414979; x=1754019779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JmT/ORzg0P1lBg635/k0jST+Uw1Ny6cPps1AZuQQysQ=;
+        b=KZ7I9ImtYO9LLscnwQ2ny10F9bNAWcr1FbQwAI3gjdzr2eTUx9OjfwhQCQDnS/hbYF
+         xgcWvi2eo2voMUW6AX0lN3Jlnto7ryDqM8WnFb+OeZo9X1oYlbT8Ck6+VFmfsRKLyyrC
+         kIFY3KS1bcmiTUEgdu53RxFzz2064VD3NzixEafhY70E/72qy5zGb38O84WOGE8rJZV7
+         ZFyMWCahw2nEYpnpz3TnfA/NCSCOTWCrS6lcXaF/UQekuSAc609VCCtDbJliH0A4lULC
+         +/Lljss5fLKWrtc7k5PGPILNGC5ASOS+Zs2rT/bOMD31xWytGFeGOKuk6FxcmmTBJgFV
+         jWbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWX184H+69vwdeBZ/1cAkw/7ft+wZsGJyPmnilWXnHtrHja2gDFPVZ50N/JtY4z5GuVflXVVyyeST+Sosw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN2m9T5AAcFukN/J374BPObsEPlQwR3MfnYIApVp7e1TRbgBKy
+	62bglqUCBqLifUL0uA/RnHo8+0ioRvsL5Bt23/UDmOjgsju5i76GbwXhhOzJB6Ts/4j9Px4zZx+
+	GysNBZRGv1kJp+7V4aRhvHSd2ixnZPdl/pmLdcrWz4ZwyKO7yASQuu5OdeMdJI2614Aov4WVcYD
+	XnyHzREw6KDgUIgnOLs+A7MeMueOfl5OcSRP2IwHKV
+X-Gm-Gg: ASbGncv8LAIdToq6U9tO/hmXPQibOM1TSH+zr2sOaRMTrsmmJiEn2UdtORRo+nYfV4h
+	trIhOvPEO1eb+E+oF6hpPXi2G9Q/eTvi4s86Axr4pFyL1cE5RgW1yGBOJ+w5PdmGKjpW0/WOl85
+	ij5jtt2Fm9evft5cMDQWM1kQ==
+X-Received: by 2002:a2e:b8d2:0:b0:32b:78ce:be8e with SMTP id 38308e7fff4ca-331ee7ff19cmr1287061fa.32.1753414978995;
+        Thu, 24 Jul 2025 20:42:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4YEQa+EOQb1BXl05be8PP0uoJ9yTAnU5IBjXbn4Pml9bhqsvSe6/FSlvFTpOWnC363qchUy3SyM0LBktBwFM=
+X-Received: by 2002:a2e:b8d2:0:b0:32b:78ce:be8e with SMTP id
+ 38308e7fff4ca-331ee7ff19cmr1286981fa.32.1753414978556; Thu, 24 Jul 2025
+ 20:42:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY1PR12MB9603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ecf53fb-bddf-44e7-bedb-08ddcb2ccb2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?azVZaVh3c2I1VWtZZytwT2p1N1lTVzVINjVyMi9pSmp0K1lUN3BSQXRaSEZ0?=
- =?utf-8?B?cUpZbHg4Z1I4MXp2ZU15L0hsSGEwcXV3R29hdVAveXlZbmZsWitaVVIveDhU?=
- =?utf-8?B?eVcxeHVneEZHREtmejh0SDduZFJuVE0zeHFrZ2xCZ01DMjZ5V25pSUZNTHlp?=
- =?utf-8?B?V3RnSHdueEJ6QkpDUSsxK0d0YUswUzdJU2YyampqN2MzTTVOTlExTmJlL1Bq?=
- =?utf-8?B?MFhXRlplMlBxNCttZVMzYjVLdTU2eHZsTGIxbzJqdTZOVFhIV21NWHJDZnl1?=
- =?utf-8?B?OTZQOVhsaldzQVlRTnBCa1JWRWxEY0gwNnJMcmxrc0QyRWoybnBqS1pITWZx?=
- =?utf-8?B?MFFuUEk2NnZkT3JvMklJbktGa2c1eGhrY1VLRkxVUDRiZGpwUWpGL25YeERo?=
- =?utf-8?B?L0lhRDdBcDR2K1QyL0loeno4TEk3UFhJOW5OZFVyN2ZyVTJCUU1vSlZQcVRJ?=
- =?utf-8?B?TVBkb1RHWmpJLzArcGZNalkwWko1THlQWlBrYytqQ0xhQ3N1L1p0SWtnRlRF?=
- =?utf-8?B?MXoybi9wK3JxNnJySHJHejV0QzN0MUVQdkRPQ1N2bG5hK25uSEM1a2NtbUxS?=
- =?utf-8?B?NktlYURQY0txeG56QTZpMWJwY1lQQytDN2RkZ0hYNCt4NnVyTE9DVTJjOTZ4?=
- =?utf-8?B?b0FTenRRQjgrcE5FdUVzbWZqSnhHbHR0NWdZUDNWcllteVBoQlJxa0g2S0Ux?=
- =?utf-8?B?WlE0T1RadFRHYzRpWHhhalZkUG50bkh4MVZiZktkM0ZPZ1hlYzdTYW51SkJY?=
- =?utf-8?B?a0UyS3NTeHZoNmpUTnJrbWhtQ3hZOEgzc0FIaTRudzRWanBKcVhwWHY5cFRp?=
- =?utf-8?B?cElIenhjZGJsWElvQnV1cDlPbU5POUlJdEdPNUE3S013R0UyWHExMWw4UTQz?=
- =?utf-8?B?QkNnU01ORXNZaGZBdk16Zjl5aDFycUFIeDNxWmxnanZ4dEIzU2lib2UzOTha?=
- =?utf-8?B?THF0bEpMZ0RWVTZuTjYvcDlYV1A3RStIK2NHdEc4OG54dDc4VjNoMHM2d2Iy?=
- =?utf-8?B?TzdBWWJHNUJXdHFrVEhrTUZBRHFBSnhxNUlFUFlVS3R5ZG1pNGdDenZqQlFn?=
- =?utf-8?B?OFI4ajNDZDNGc2srSHBoOVhLUnJJdmR6dXNYNlZUVzBScWdRZldoR2k1UDlS?=
- =?utf-8?B?ZDByR0tHT1VNMG9ITDNZYXBGY1YyZDlMT3ZjdmIzajYwMFN0ZVVSaWsrSzZ1?=
- =?utf-8?B?VHJmK3pWVE1CUCtVbnVjVUt0a0xFbmdpeGlQajBnWFBsYW43M09MSVVheTgw?=
- =?utf-8?B?MnlHa0lEV05SYVNXT3VNTmlpV29ZUGxRTjNRUS9jMjVVSE9RUWlkNHJpQ2R2?=
- =?utf-8?B?YXRldDBXMUFvV3VEbk5QbnRDaVYwdS9LaG0vYUcybzNuR0cwWGtZQ3BVSndp?=
- =?utf-8?B?WWhRaElTcDF4RC9nMGdPcDZrSnNqVHQyL3h1bXVDZjc2akxJUVh4MC93U0w0?=
- =?utf-8?B?ZXhVdE8yeFd6SGkrOWtDL3lwRWJXYU1BV3RJR2VySnVPbDY2c2N5L1pnaDQz?=
- =?utf-8?B?ZEYyL01kRjlhdVNkQjRaWWc1QWp3eHNGbWcwb1JqMGMzVXJCZFJTYmE0WDZZ?=
- =?utf-8?B?ejdXRm1HbnFBcWhETWxNZXFja0lPUmhMY1FXYlRuOHdmSjJZQ0F5cllOZlhO?=
- =?utf-8?B?TXJBaWdUb0lXT1RxRzZGbDlhUHVvU0xuL01tL3Y5VHJkMjVRV241eW52enpG?=
- =?utf-8?B?S2I3TGVBazYyZnJZNDhjeVh4L1dSdDNjZGxWVUxzc3UvOUVXZmN1L2hIZUpa?=
- =?utf-8?B?c2VsRGZUQXJERWN0QWp3NVNieG4xMkNtVkJqdnM0OEZQeFJoYXBLSTlmMGJY?=
- =?utf-8?B?ZTlhRmNzdTFUbk00K2dLZWZnZWY3YjAxMTdudHBXcFNXakc2Unc3bFpMS1RQ?=
- =?utf-8?B?UWZRYnE2TnV6T3BDZllRTTc3K3R2dU1MSHZKMUJOeTk1SjRUYUU0RFJ1OVRZ?=
- =?utf-8?B?eXVVNm1SYXdmSEFjS2o2NGdXNlhzejZnQUw5RGtVUm4wdHd1eWd5djUwc0Yv?=
- =?utf-8?B?VkNJSklTR3hRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bmcvNHczOXNDaTQ0aVNyRGxjNlhUc0NyTEd3QmZwTEYvSzJjWjhxY1hwZ240?=
- =?utf-8?B?cHByWkJaZGVvNTF5cHNYY3p2QU0zTVNBdjd3UFVZZEJnUitXLzFrL25hYy9C?=
- =?utf-8?B?ekcyNG5HMlloTzdRQWlyNnpGUldtSzNJTDFScHk0N3RTczMwRWY0OXQrT2ZD?=
- =?utf-8?B?M3phWm9IalFLUUdCellKbjRPMkdZMFZGUlRmcGZBdVozd253SmVZY21rRUlp?=
- =?utf-8?B?eXVtdStST2xOSy9CbnljdEdDQUE1eVJ6TGJnOGpsVEdtUXk0NXBFaldyT0dz?=
- =?utf-8?B?SThJZjJHY0U5clJjV3pLMXpIMDNQYWtnRmQyMlRMRGpzS2FSMU1RK3FSZm1m?=
- =?utf-8?B?QjN1VmJiK0xDUklPQ2JMMGlJaDI2U1RYRGIweGhpZ09MTUlkc2lMT1lzMEhj?=
- =?utf-8?B?YmJBQ3Q5ck9KY2tOWGxncCsybzdNaVlYUW9wS1lqT09RenM4S3pwS0FjWC95?=
- =?utf-8?B?aVlhOWxFRTZHZjRiWk5sdXArMUh5cjNHVmZWRVNiMDc4M24vYlFUTHR2cDFL?=
- =?utf-8?B?WkErdEo3QTNKYlgzMDllL09MNmkrSFRReU9la0dTZ2h4NHdTN01BVUZaL1lR?=
- =?utf-8?B?aytWWjE5a1Voc21kSjhxanljNGMzSVhuUmZUaWtVV2llenA1Ly92Q25yNCtF?=
- =?utf-8?B?S000aDl4SGc4eUpDNjI2ZXFxM0RiRyt2WStiem1SWWU3aTRlUjFqTkRLOGV5?=
- =?utf-8?B?NlVDcDZkSjBCN3pGNG1pdnJKdXlKcE5uTDE2VkdDMHFFZHRiNE9iWENGVGFw?=
- =?utf-8?B?MTRMaEg0alZqV0twczI1UUw1QXIrNUVwZEQ1dk9MeXdkWGJNWHE1N0IrSzht?=
- =?utf-8?B?bUM4MGk2bkEzRzJacm90SFlGVkpFVDdzZ3puS3Y4Um8xdkdUdVBFWFFUaXRE?=
- =?utf-8?B?bUprdng2RWpROEZUdEhLVlJQWTFEODQ0anFPdjMxZlZ6b3NaZHhQL0pMMGtC?=
- =?utf-8?B?SEw1Z2tJbEJ5T2pLdVQzbmlyNkR6VVVqQlRuKzBzR1VJNGVwSFQ3QjNMekda?=
- =?utf-8?B?NmVGVStjNHBnMlRjK3NEUlVPcWxQdmhXVnJ0RkVTSDhGZDFpemFxdlU4bks1?=
- =?utf-8?B?UkdEZExQd1JHN1JHYVluYU1sb3lkdFJURHg2RTZZR2pFb0psMUxaVUh4dm1Z?=
- =?utf-8?B?RjIyMUlEWkNFU05VaG96aHpUMEJuYTBFSVBBdGJ4M0RMdlhHaXB1R0lXa0J4?=
- =?utf-8?B?VWw2QWlUa2ZHcnFtSExmcENyVURSYXhxUGJaOHZwYVpRNE8vUm95V1h2a1Jv?=
- =?utf-8?B?Q3BTb3hxY1F0SkZOeWZqOGx4aDVyQzlIVUtmNmlsZUtVY1ltazVzOXFEYUUy?=
- =?utf-8?B?aDNYbUwxOVQvRlkrMllqMEp1eVlEVnZ3SFNBL0tSckZvVDc0YTBuZVRPTks1?=
- =?utf-8?B?bG5aNnNGWEVwK2w0ZUlERW9DUGp0d0kzZlFCMGxXRU5hVGRuVzg2MHl1alA4?=
- =?utf-8?B?MUNJZDVLQXRDVTcxQXM0ZFlPdER4eUxENlF5ZDhORzNoQzVVUCtFSTRHWU4w?=
- =?utf-8?B?L2MreEVQeGdKaFF2dzBJRmlPbFhXT1ZKbStGbVNncXIxdlRpQlhQVmg0YTM1?=
- =?utf-8?B?c3k4bjB3QVpvVWZVRXBwZWx1MFUxS3FvdjUrNHBXdVhxOG54UDZSSjMyL21h?=
- =?utf-8?B?VkVPNVNBdEtsMzBpcVQzQURzSDBnMG1ua2tHRUVhU3hLOGZ4U01COFFVMWtW?=
- =?utf-8?B?UzRlRUZjT3BleW1pZ3R2YmVadTN1STR6Y0t5Tkg5R29XNUluc0ZBcmkrK0p1?=
- =?utf-8?B?T1JFbDZCNzhkeGJYc2xMa3pKek1haHZLS3o5a3JVN0xTSWJhSjNtTGRIY3Jh?=
- =?utf-8?B?Uy9WTEF3YlYyaHNQSGQzb0cwQzJVSEk5ZTBDL292MDlNVzZwUU5FVHlBRUQw?=
- =?utf-8?B?bXlBdTlMUXhlSnFyRlhCQ2xoT1FTTnlWMnJkOU9BbGQ0MWtSZ1NBOFlaN2R3?=
- =?utf-8?B?bHhQU1VYZXdKckdkRytSTkwxMjlVbStHOEV5OThtamxkdkZhOWFvdk4yaEpK?=
- =?utf-8?B?cXdtZEx0V1p0MThKUWFOWmk4aUkwOXl1ZlhGMXlMeE9tcFFIUWRGNFg1T2FI?=
- =?utf-8?B?bkdBdWlncnZRVUx5UkFlWDh1ZmFJWHJPMlRzZDBuZnU4OW1PdjZHRTU2eTEy?=
- =?utf-8?B?VlozNDY4RXNmZFFYbVk0akJLc2oxY3duaHNaZXhNTHg5M3hHWmhjazhYMUhF?=
- =?utf-8?Q?in53PSZxZA9A1PM5kDSYR5F30YQUJtcGj+GsNb/St8Qc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ecf53fb-bddf-44e7-bedb-08ddcb2ccb2e
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 03:39:00.8373
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QFQHNNPEkAKcJZKo64rS3H04DtXbREaAVeHkeZ6weV+LT++fRPyZ6aji4o0xPjXyoi9/jfJpqMl6Kwsg2PAL+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9603
+References: <20250707012711.376844-1-yukuai1@huaweicloud.com> <20250707012711.376844-5-yukuai1@huaweicloud.com>
+In-Reply-To: <20250707012711.376844-5-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Fri, 25 Jul 2025 11:42:47 +0800
+X-Gm-Features: Ac12FXyOOKyHA7wp5OFT5LnhP7iR9jh1hN7dKn8UFtQrbCgR_dwXzkwUJs2-acg
+Message-ID: <CALTww2-71P6Z0zxOeWJhu3bJ5AkKNqP0K+6M1djmBG=mZg38_w@mail.gmail.com>
+Subject: Re: [PATCH v5 04/15] md/md-bitmap: merge md_bitmap_group into bitmap_operations
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
+	yukuai3@huawei.com, dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	johnny.chenyi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Benno,
+On Mon, Jul 7, 2025 at 9:35=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
+ote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Now that all bitmap implementations are internal, it doesn't make sense
+> to export md_bitmap_group anymore.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md-bitmap.c | 5 ++++-
+>  drivers/md/md-bitmap.h | 2 ++
+>  drivers/md/md.c        | 6 +++++-
+>  drivers/md/md.h        | 1 -
+>  4 files changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+> index fc7282304b00..0ba1da35aa84 100644
+> --- a/drivers/md/md-bitmap.c
+> +++ b/drivers/md/md-bitmap.c
+> @@ -2990,7 +2990,8 @@ static struct attribute *md_bitmap_attrs[] =3D {
+>         &max_backlog_used.attr,
+>         NULL
+>  };
+> -const struct attribute_group md_bitmap_group =3D {
+> +
+> +static struct attribute_group md_bitmap_group =3D {
+>         .name =3D "bitmap",
+>         .attrs =3D md_bitmap_attrs,
+>  };
+> @@ -3026,6 +3027,8 @@ static struct bitmap_operations bitmap_ops =3D {
+>         .copy_from_slot         =3D bitmap_copy_from_slot,
+>         .set_pages              =3D bitmap_set_pages,
+>         .free                   =3D md_bitmap_free,
+> +
+> +       .group                  =3D &md_bitmap_group,
+>  };
+>
+>  void mddev_set_bitmap_ops(struct mddev *mddev)
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index 28c1f1c1cc83..0ceb9e97d21f 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -100,6 +100,8 @@ struct bitmap_operations {
+>                               sector_t *hi, bool clear_bits);
+>         void (*set_pages)(void *data, unsigned long pages);
+>         void (*free)(void *data);
+> +
+> +       struct attribute_group *group;
+>  };
+>
+>  /* the bitmap API */
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index bda3ef814d97..7ed95e5e43fc 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -5749,7 +5749,6 @@ static const struct attribute_group md_redundancy_g=
+roup =3D {
+>
+>  static const struct attribute_group *md_attr_groups[] =3D {
+>         &md_default_group,
+> -       &md_bitmap_group,
+>         NULL,
+>  };
+>
+> @@ -5996,6 +5995,11 @@ struct mddev *md_alloc(dev_t dev, char *name)
+>                 return ERR_PTR(error);
+>         }
+>
+> +       if (mddev->bitmap_ops && mddev->bitmap_ops->group)
+> +               if (sysfs_create_group(&mddev->kobj, mddev->bitmap_ops->g=
+roup))
+> +                       pr_warn("md: cannot register extra bitmap attribu=
+tes for %s\n",
+> +                               mdname(mddev));
+> +
+>         kobject_uevent(&mddev->kobj, KOBJ_ADD);
+>         mddev->sysfs_state =3D sysfs_get_dirent_safe(mddev->kobj.sd, "arr=
+ay_state");
+>         mddev->sysfs_level =3D sysfs_get_dirent_safe(mddev->kobj.sd, "lev=
+el");
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 67b365621507..d6fba4240f97 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -796,7 +796,6 @@ struct md_sysfs_entry {
+>         ssize_t (*show)(struct mddev *, char *);
+>         ssize_t (*store)(struct mddev *, const char *, size_t);
+>  };
+> -extern const struct attribute_group md_bitmap_group;
+>
+>  static inline struct kernfs_node *sysfs_get_dirent_safe(struct kernfs_no=
+de *sd, char *name)
+>  {
+> --
+> 2.39.2
+>
+>
 
-Sorry, took some time to come back to this!
+Looks good to me.
+Reviewed-by: Xiao Ni <xni@redhat.com>
 
-On Sun Jun 22, 2025 at 5:11 PM JST, Benno Lossin wrote:
-> On Fri Jun 20, 2025 at 3:14 PM CEST, Alexandre Courbot wrote:
->> +/// An unsigned integer which is guaranteed to be a power of 2.
->> +///
->> +/// # Invariants
->> +///
->> +/// The stored value is guaranteed to be a power of two.
->> +#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
->> +#[repr(transparent)]
->> +pub struct PowerOfTwo<T>(T);
->> +
->> +macro_rules! power_of_two_impl {
->> +    ($($t:ty),+) =3D> {
->> +        $(
->> +            impl PowerOfTwo<$t> {
->
-> I tried to use this type in a doctest like this:
->
->     use kernel::num::PowerOfTwo;
->   =20
->     fn new(x: usize) -> PowerOfTwo<usize> {
->         PowerOfTwo::new(1 << x)
->     }
->
-> And it doesn't compile :(
->
->     error[E0034]: multiple applicable items in scope
->         --> rust/doctests_kernel_generated.rs:4930:17
->          |
->     4930 |     PowerOfTwo::new(1 << x)
->          |                 ^^^ multiple `new` found
->          |
->          =3D note: candidate #1 is defined in an impl for the type `Power=
-OfTwo<u128>`
->          =3D note: candidate #2 is defined in an impl for the type `Power=
-OfTwo<u16>`
->          =3D note: candidate #3 is defined in an impl for the type `Power=
-OfTwo<u32>`
->          =3D note: candidate #4 is defined in an impl for the type `Power=
-OfTwo<u64>`
->          =3D note: and 2 others
->    =20
->     error: aborting due to 1 previous error
->
-> The problem is that the function `new` exists 6 times for each of the
-> integer types. You can write `PowerOfTwo::<usize>::new()` instead, but
-> that's annoying...
-
-This should go away as we switch to the non-generic `Alignment` type
-thankfully.
-
->
-> We probably need an `Integer` trait and then do
->
->     impl<I: Integer> PowerOfTwo<I> {
->         pub const fn new(value: I) -> Self;
->     }
->
->> +                /// Validates that `v` is a power of two at build-time,=
- and returns it wrapped into
->> +                /// [`PowerOfTwo`].
->> +                ///
->> +                /// A build error is triggered if `v` cannot be asserte=
-d to be a power of two.
->> +                ///
->> +                /// # Examples
->> +                ///
->> +                /// ```
->> +                /// use kernel::num::PowerOfTwo;
->> +                ///
->> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
-($t), ">::new(16);")]
->> +                /// assert_eq!(v.value(), 16);
->> +                /// ```
->> +                #[inline(always)]
->> +                pub const fn new(v: $t) -> Self {
->> +                    build_assert!(v.count_ones() =3D=3D 1);
->
-> Why not `v.is_power_of_two()`?
-
-Why not indeed. :) Fixed.
-
->
->> +                    Self(v)
->
-> Missing `// INVARIANT` comment.
-
-Added (and in other places as well).
-
->
->> +                }
->> +
->> +                /// Validates that `v` is a power of two at runtime, an=
-d returns it wrapped into
->> +                /// [`PowerOfTwo`].
->> +                ///
->> +                /// [`None`] is returned if `v` was not a power of two.
->> +                ///
->> +                /// # Examples
->> +                ///
->> +                /// ```
->> +                /// use kernel::num::PowerOfTwo;
->> +                ///
->> +                #[doc =3D concat!(
->> +                    "assert_eq!(PowerOfTwo::<",
->> +                    stringify!($t),
->> +                    ">::try_new(16), Some(PowerOfTwo::<",
->> +                    stringify!($t),
->> +                    ">::new(16)));"
->> +                )]
->> +                #[doc =3D concat!(
->> +                    "assert_eq!(PowerOfTwo::<",
->> +                    stringify!($t),
->> +                    ">::try_new(15), None);"
->> +                )]
->> +                /// ```
->> +                #[inline(always)]
->> +                pub const fn try_new(v: $t) -> Option<Self> {
->
-> Maybe `new_checked` is a better name, since it doesn't return a result?
-
-Definitely.
-
->
->> +                    match v.count_ones() {
->
-> Why not `is_power_of_two()`?
-
-Fixed, thanks.
-
->
->> +                        1 =3D> Some(Self(v)),
->
-> Missing `// INVARIANT` comment.
->
->> +                        _ =3D> None,
->> +                    }
->> +                }
->> +
->> +                /// Returns the value of this instance.
->> +                ///
->> +                /// It is guaranteed to be a power of two.
->> +                ///
->> +                /// # Examples
->> +                ///
->> +                /// ```
->> +                /// use kernel::num::PowerOfTwo;
->> +                ///
->> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
-($t), ">::new(16);")]
->> +                /// assert_eq!(v.value(), 16);
->> +                /// ```
->> +                #[inline(always)]
->> +                pub const fn value(self) -> $t {
->> +                    self.0
->
-> Let's add:
->
->     if !self.0.is_power_of_two() {
->         core::hint::unreachable_unchecked()
->     }
->     self.0
-
-Sure. Is it to enable compiler optimizations by making assumptions about
-the returned value?
-
->
->> +                }
->> +
->> +                /// Returns the mask corresponding to `self.value() - 1=
-`.
->> +                ///
->> +                /// # Examples
->> +                ///
->> +                /// ```
->> +                /// use kernel::num::PowerOfTwo;
->> +                ///
->> +                #[doc =3D concat!("let v =3D PowerOfTwo::<", stringify!=
-($t), ">::new(0x10);")]
->> +                /// assert_eq!(v.mask(), 0xf);
->> +                /// ```
->> +                #[inline(always)]
->> +                pub const fn mask(self) -> $t {
->> +                    self.0.wrapping_sub(1)
->
-> Then use `self.value().wrapping_sub(1)` here instead to also propagate
-> the information.
-
-Ack.
 
