@@ -1,150 +1,151 @@
-Return-Path: <linux-kernel+bounces-745873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EF0B11FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:15:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D6DB11FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 16:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7DF5648A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0FA7BB7B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A2222DA1F;
-	Fri, 25 Jul 2025 14:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32501E8337;
+	Fri, 25 Jul 2025 14:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="3GNcyl+V"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmtd1oVz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518671FC0E2
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 14:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042381C5D59;
+	Fri, 25 Jul 2025 14:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753452889; cv=none; b=S/xMFk1Vbs6EEtjizBeV+lqlFPLnhQPpYNpnVvw1rX8IldZUE3+5wJ1XeHTzev/KZVNWgluBy3ztzm9tQrop22fgpwnufuOZGbJPAVRYieSVfYD/U7mPJRAdycP326jMASS7z0VmXIZQ2YRdUzOQ8PWSdNoh4H1SFidW5HicXLU=
+	t=1753452927; cv=none; b=aEc4qzwTuMUjqX+Gq+hjW2dnCX4oKcdswh8Do11vPug5CvyGphf7sQgA/lrNHRuRBGxNyQtwL8T+1pieiJBdnHZHwcewEQeAxv13qnOIYDCsMFbyuf4ze+lykguLB8Dv4QW6jwsBuzAFTuqHdwKbzrshQcDY5b31bfX9DMst/fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753452889; c=relaxed/simple;
-	bh=rNyAWlp56eBFvy36oX5YiZlPyIt11W/cxbD2Iyf2S4s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=PZn+Z7AWO/DIbI9Q0X44j2ETZjgCKiap+JTXwb2G4OXe5379y1XrB+wm4egpohxLjZNtMe3N+9yFyO7/aZgFZNmuG7YQTufof1n3ijp2+2hVlRk+kYVwe4HR8evH+3VYDpngRBNurAiizBOC8S7KcUUIiWEDe9wff74i6LSHZhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=3GNcyl+V; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-60c5b8ee2d9so4456320a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1753452886; x=1754057686; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSkJyTrv6R3uiwv3q2J4zn3hDj1JQ7Rtyl+OeDRudNc=;
-        b=3GNcyl+VN56MLlLZZiFVdso3FYTMvxLqn0YicT4yjc3jDsdFduc6k8L2aJz+z7EMyB
-         MwmZZxlrU27kgawqJRkZm2zoQP2golw0YdBQEdxJg3OpVk1uIXLgbBiO2YEe9ssCeyfq
-         NEE3TiphHbKz1lK+XfH2G1qBUvZKPPaJv/znEj++VkWiLz9kiBcbgwmdKXKc/juZaz6n
-         UkHw63EKc8v0nhrOsyDsAZvXu1g8aeI0CtC6L22yQcvO5DjQdju5F0hof5CO4JJFhDKR
-         1va/awzeHy9uwa5YGsdaj0I5nvvekY+MC7BvqIZtc30xXJ7j4vpvZDgX2T5xHDb0Qfib
-         /0tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753452886; x=1754057686;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iSkJyTrv6R3uiwv3q2J4zn3hDj1JQ7Rtyl+OeDRudNc=;
-        b=C5L7jG+Pd6KrZ9GBuXZqHbc3L5g8iRKEZOTAp33wjF62RA6zx++LXSqrOwtCZbFZUR
-         ZWqBrjL6k6jHUrAqD9VX8A5ZFR0Xkzpe46yRkehkWIQ5ziThWlumocBl+S4OxLZES58Y
-         V2OHLRIuOvDtAVCljhg6dpqvHR8SdltvvMgNtuPbIuG2Zz0lGKx0AVc7024359ooIx7n
-         wseTExEi6s1eAxSsZzEmyHbsl2KLbh5aRTteUXpybrwwMX8W5G4IPFfKaF2NsJ4Mzbwa
-         LbRNGKDIkmhXQstOnFLgU/tYZAQyr0WZ8nkgymB4z5IsYkt4vIjWAsfZJt4ysTQ1oBXE
-         clcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvXBrSzZZ6JRa/O2GTQDTh2xAvfyKkalna5oBX7njGR/YoRrvF/3mH1+YYRq1KpqfPctuSxjQgGT1o7AI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz22p/Pm1Rm9FhHlarTcQOtnD52B/dqVAQxVMsjFLwK0i3pD09s
-	oe/ODm5tP7QnzCneMELNczFHg58hq3d6W+cyeOey/OwJyVQpbPG07QMXJ8Oyb5iD1XY=
-X-Gm-Gg: ASbGncviKs+Nh5LDLpdGV+8xzC1Xmo1quPQTYNJrgXkaWCgyvTSvkKNNUpmt5VDzP+M
-	coRRoUwdzd/v9/NBMpfDdqdpjuhpAb6Un045YGS4LIPg0MFiceF22tuoV8TXwUc6PMG+WDwRIbZ
-	y+TyGKlLzUAokEu+iPypdKx5O1I9Tw+u23jdS5XjqZSxAhmZJ+KbR8QMR7C2HDqUkdrO06Yd+Z6
-	GlSbKx6nb3LmiD3yXzKw1xpNz+Jd1paZLuool07aw6Hhf9ggtOg9wqC/2DckGjKGQmHTU5u7xMp
-	lHG9jrSynnTBirOgPRv54Pw+pu9vEFAGtCXwNMe394v2bzXMCl/qVAW9ZJdDQUkldQ7WpdhPh/b
-	jkYRImWwcGCgSOcilrqT7332oTskn8Jlhe+//coJ71dVJj5yv3Fc2kYhtkTEzCSXaUjM=
-X-Google-Smtp-Source: AGHT+IGz463msOz8qJcurxvgKtRb5VKMVkS2t8llkd59+2lECxEEVtdl6gBW3cfbqM7OYO38KYCWFg==
-X-Received: by 2002:a05:6402:3595:b0:604:e440:1d0b with SMTP id 4fb4d7f45d1cf-614f1a88810mr1744941a12.4.1753452885513;
-        Fri, 25 Jul 2025 07:14:45 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-614d907a40csm1635236a12.15.2025.07.25.07.14.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 07:14:45 -0700 (PDT)
+	s=arc-20240116; t=1753452927; c=relaxed/simple;
+	bh=klj31ndNyAWRbK84pKxL4JoG8gx4CjB4V3j2sfODoUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUpXGeebA7PpuMKF6Q+ODQUOmL3KhBd91m4kHUoOpPUV/Rd+jWPebDPi0w5NDG3VwzcSTPF/5VdorFK/OfayLgaZl7sIcFuMF/7SHldQDkWeFsTPZ2vAeUV75Icdv2HSFDR2NXF66lSJH2vt47U0cVmgXMQ6ymvPzJFuy7vacoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmtd1oVz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 086CEC4CEE7;
+	Fri, 25 Jul 2025 14:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753452926;
+	bh=klj31ndNyAWRbK84pKxL4JoG8gx4CjB4V3j2sfODoUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jmtd1oVzWi1NM63TDozl7apju5daWm6U3OWjyBWY29WQR6kAljjan0nSZI+9J3mIh
+	 XekGDZvq8Rl3GzVNxEseDghIuBpxtvatGakpY0BIThktlCaQZx8l1CUBYttjp/YRUr
+	 0DPuB3mfNOJ504RorGftZcbTTiT/nifETC+S/G1BUwZhzUQ/85Rw6KIqYx43X/5Q+K
+	 BaoelOTWIX/M4gZQJJtF8OuSDsLtdTxugSCyEbV6IXkmVaG5AfH2b9SG0iI6CWsO4v
+	 gDBG/ZaqBK7mxij7XPn1LTzEPd1HjM0fhWHuTnVhXZ/GvCclzVDa4/NQS01oxbpFEV
+	 5J+CNfLss2LVg==
+Date: Fri, 25 Jul 2025 16:15:23 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
+Message-ID: <20250725-holistic-ambrosial-jellyfish-f41f6b@houat>
+References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
+ <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-4-48920b9cf369@bootlin.com>
+ <20250710-daffy-mini-booby-574fca@houat>
+ <20250714123240.16d8dcb1@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ujxl4547qfzdg32k"
+Content-Disposition: inline
+In-Reply-To: <20250714123240.16d8dcb1@booty>
+
+
+--ujxl4547qfzdg32k
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Jul 2025 16:14:44 +0200
-Message-Id: <DBL766O111UP.1IBG5Q30DCEQS@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
- <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 06/14] dt-bindings: mailbox: qcom-ipcc: document the
- SM7635 Inter-Processor Communication Controller
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Will Deacon"
- <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>, "Joerg Roedel"
- <joro@8bytes.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Manivannan Sadhasivam" <mani@kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Vinod Koul" <vkoul@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>, "Robert Marko"
- <robimarko@gmail.com>, "Das Srinagesh" <quic_gurus@quicinc.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, "Jassi Brar" <jassisinghbrar@gmail.com>,
- "Amit Kucheria" <amitk@kernel.org>, "Thara Gopinath"
- <thara.gopinath@gmail.com>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Zhang Rui" <rui.zhang@intel.com>, "Lukasz Luba" <lukasz.luba@arm.com>,
- "Ulf Hansson" <ulf.hansson@linaro.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250625-sm7635-fp6-initial-v1-0-d9cd322eac1b@fairphone.com>
- <20250625-sm7635-fp6-initial-v1-6-d9cd322eac1b@fairphone.com>
-In-Reply-To: <20250625-sm7635-fp6-initial-v1-6-d9cd322eac1b@fairphone.com>
+Subject: Re: [PATCH 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
+MIME-Version: 1.0
 
-Hi Jassi,
+On Mon, Jul 14, 2025 at 12:32:40PM +0200, Luca Ceresoli wrote:
+> Hi Maxime,
+>=20
+> On Thu, 10 Jul 2025 09:13:46 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > On Wed, Jul 09, 2025 at 06:48:03PM +0200, Luca Ceresoli wrote:
+> > > Use drm_bridge_chain_get_last_bridge() instead of open coding a loop =
+with
+> > > two invocations of drm_bridge_get_next_bridge() per iteration.
+> > >=20
+> > > Besides being cleaner and more efficient, this change is necessary in
+> > > preparation for drm_bridge_get_next_bridge() to get a reference to the
+> > > returned bridge.
+> > >=20
+> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > ---
+> > >  drivers/gpu/drm/omapdrm/omap_drv.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/oma=
+pdrm/omap_drv.c
+> > > index 054b71dba6a75b8c42198c4b102a093f43a675a2..3bbcec01428a6f290afdf=
+a40ef6f79629539a584 100644
+> > > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> > > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> > > @@ -378,12 +378,12 @@ static int omap_display_id(struct omap_dss_devi=
+ce *output)
+> > >  	struct device_node *node =3D NULL;
+> > > =20
+> > >  	if (output->bridge) {
+> > > -		struct drm_bridge *bridge =3D output->bridge;
+> > > -
+> > > -		while (drm_bridge_get_next_bridge(bridge))
+> > > -			bridge =3D drm_bridge_get_next_bridge(bridge);
+> > > +		struct drm_bridge *bridge =3D
+> > > +			drm_bridge_chain_get_last_bridge(output->bridge->encoder);
+> > > =20
+> > >  		node =3D bridge->of_node;
+> > > +
+> > > +		drm_bridge_put(bridge); =20
+> >=20
+> > Any reason you're not using __free(drm_bridge_put) here?
+>=20
+> Just because the code is simple enough that an explicit
+> drm_bridge_put() is clearly sufficient.
+>=20
+> Do you think __free() should be used even in such trivial cases?
 
-On Wed Jun 25, 2025 at 11:23 AM CEST, Luca Weiss wrote:
-> Document the Inter-Processor Communication Controller on the SM7635 Platf=
-orm.
->
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+It's a matter of opinion at this point :)
 
-I see you picked up this patch[0], but "qcom,sm7635-ipcc" should be
-dropped. Only "qcom,milos-ipcc" from v2 should land.
+It' makes it a bit easier and consistent so that's why I raised it, but
+if you feel like it's too much, that's fine by me as well.
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/com=
-mit/?id=3D872798f61d8bfea857e54aa17baa7b0d3ee24b65
+Maxime
 
-Regards
-Luca
+--ujxl4547qfzdg32k
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/D=
-ocumentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> index f69c0ec5d19d3dd726a42d86f8a77433267fdf28..6e86ec36a82254ebd73c3067d=
-e495795c36c6bee 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> @@ -34,6 +34,7 @@ properties:
->            - qcom,sdx75-ipcc
->            - qcom,sm6350-ipcc
->            - qcom,sm6375-ipcc
-> +          - qcom,sm7635-ipcc
->            - qcom,sm8250-ipcc
->            - qcom,sm8350-ipcc
->            - qcom,sm8450-ipcc
+-----BEGIN PGP SIGNATURE-----
 
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIORdwAKCRAnX84Zoj2+
+dkjMAX9SOg3FKwN1N8vMVORyYMoULmzu5wxDDXKKuSFHlgdamHXhi0r6BnbBR3mn
+Sr9UCrgBgJp8VMm91YNpmrlTp7YUpyrHZ7jGDOzb9ZihsYt9H+HB4JkLsHM6RPAL
+oj/UGiAoCw==
+=jgOt
+-----END PGP SIGNATURE-----
+
+--ujxl4547qfzdg32k--
 
