@@ -1,87 +1,122 @@
-Return-Path: <linux-kernel+bounces-745699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9D5B11D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B5AB11D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 13:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABAE3AA0E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 825E13B2023
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 11:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541262E5B3E;
-	Fri, 25 Jul 2025 11:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204EF2E8884;
+	Fri, 25 Jul 2025 11:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Yfra4dTY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9sPIwOC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39670239E6B;
-	Fri, 25 Jul 2025 11:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5942E5B3F;
+	Fri, 25 Jul 2025 11:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753441766; cv=none; b=TBv7gXRiq2TEuxcN0noZEq/LEU7Kufp7cD1+2m0WnuL4gqCg31P6Eg4LUebYzCIvD9C4C+UDFLrydbQxiD0dwXA31L/7SYtfm741Vw/PipIlyx66vCZDDqgqLKZY98lKhQm04Nx4z6rDp7h+a1ds6IFQ3sxksZmgOooMZu4H4JY=
+	t=1753441767; cv=none; b=EnFkMrn8DBKgI7/m+B7ba36AyBYiJpX9ytkhkyEOxY9crjkmspOyIyj3eo6dLbx1OqOYS811VpSMR1JL52JRpJzuJzT2+0mektQg0JRIz4a68XsqcT4ih6QOocT9yIoiMt3fD/Rto6hWNKV0dnflRwe06eJwnIOtn1wnRavIbiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753441766; c=relaxed/simple;
-	bh=DD9a8m0nnLeBvtdQn9yRpVCKbVg6ku18qIQ0e2NYX2I=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=HEBvXk9km7nRFRKsC1K5sG/8bO+r/Tc/4nTFg7ETEjR+1qoAnsEu0cr9Azkq0iZ4Vg11iI2zVYmgydBvivyxCvaWuDHLhqSawCDmuYN7qQ3bI/QfE//T9bSekt1FjBiuOiSNuH+4xXjJ5JvGX2Khj4LnIR6QwdMG+WP5URMNuz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Yfra4dTY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:42d3:9d3c:5909:7714])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 35B929CA;
-	Fri, 25 Jul 2025 13:08:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1753441724;
-	bh=DD9a8m0nnLeBvtdQn9yRpVCKbVg6ku18qIQ0e2NYX2I=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Yfra4dTYCpYEurSs1VX9mxKAISYSLd25+1s+GwCAYMqTn76AoJYXfEbtmXtzuTeWZ
-	 I7JOnIekZMKHCjgjn36xQWfr9TNV3VE/Su5J+WUnDWTCf0sZrJwW0ol0hkl3xupo4/
-	 O2rufElKrQMkQGE/7HCl9k5ZYhEWdFEygTGdKlfY=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753441767; c=relaxed/simple;
+	bh=KbANwn4NmNO7jNz4SGe7SAKLtyBDL4GI6/j143/N1/E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F29d/5RLYPdyo/VHqw5G8d5sxlk/UqVWlO1Z0920kEOWzKeV7ooDjZa8naTSJiMbuF5y8NCiXabPWdMHGJs19r0JIMXn/GDAWZzDEVazbTyAcNuosLzEGnaUbn2+Yy/Uxz5eovM4f4YSly0otZZvKpSoaMSI2ZKQ9XhftNKzzas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9sPIwOC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD64DC4CEE7;
+	Fri, 25 Jul 2025 11:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753441766;
+	bh=KbANwn4NmNO7jNz4SGe7SAKLtyBDL4GI6/j143/N1/E=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=W9sPIwOCB5dNs2yTE7GskZjS3l63MyPbMenDtqb2FOXjCWml2zp9FjDmsmuJ+QGEn
+	 6yo9aMmWsR4WinMQt4VBv2eXbOD7modh25V/zbZ7tXfAt2qiFTEK0FzRI0MPMSxtnV
+	 LiHjfmIw4C2CTVY4dIKYaKs+DE6SOsEU/Rb4Mczs8Mw41I3S2Tp/JEyrgDeGNpfWMc
+	 XZ3owU0So9alJvD6pMSFMKuAijgYcqRpURpLZyOUeK+g7yv4874xrgKAzwZVEwzlRb
+	 mDu6wcPrA9iOkKgFydnEk7ZQJw8EPW4spzrmdY14hLh9sxQCa9fjCZ6Z5BlsiMumxL
+	 QPXqWBwUEpPZw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C88D7C87FCD;
+	Fri, 25 Jul 2025 11:09:26 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH 0/4] backlight: add new max25014 backlight driver
+Date: Fri, 25 Jul 2025 13:09:22 +0200
+Message-Id: <20250725-max25014-v1-0-0e8cce92078e@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <m3h5z2vw12.fsf@t19.piap.pl>
-References: <m3h5zbxkc6.fsf@t19.piap.pl> <m38qknx939.fsf@t19.piap.pl> <175308758352.3134829.9472501038683860006@localhost> <m31pq9y98z.fsf@t19.piap.pl> <175326599663.2811177.16620980968274114885@localhost> <m3h5z2vw12.fsf@t19.piap.pl>
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
-From: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Heiko Stuebner <heiko@sntech.de>, Paul Elder <paul.elder@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>
-Date: Fri, 25 Jul 2025 13:09:20 +0200
-Message-ID: <175344176070.2811177.10693943493658922992@localhost>
-User-Agent: alot/0.12.dev8+g2c003385c862.d20250602
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOJlg2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMyMz3dzECiDL0ETXxMjA3NTSMNUwMc1UCai8oCg1LbMCbFR0bG0tAB3
+ YAxhaAAAA
+X-Change-ID: 20250626-max25014-4207591e1af5
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>, 
+ "Maud Spierings maudspierings"@gocontroll.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753441765; l=1452;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=KbANwn4NmNO7jNz4SGe7SAKLtyBDL4GI6/j143/N1/E=;
+ b=PjTusrgPlZupmtwnWn9StKXy2DkRV3eFf5M+adbF+rEkvyz1mG3L2XP9PPZrorFH+PUwg5zR7
+ EKaU2GeBddlCmwwgOer6BZEklYbXnOarE4DYHFsHnMYmH89T2htQs71
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-Hi Krzysztof,
+The Maxim MAX25014 is an automotive grade backlight driver IC. Its
+datasheet can be found at [1].
 
-Quoting Krzysztof Ha=C5=82asa (2025-07-24 10:21:45)
-> Hi Stefan,
->=20
-> > Just a quick heads up. I ran the tester and so far no unexpected
-> > results. I'll run it from time to time after a reboot to see if I ever
-> > hit that condition.
->=20
-> Is your camera(s) connected to the first CSI?
-> I cannot reproduce the problem on csi0, it seems only csi1 is
-> affected. It would be consistent with NXP's workaround commit text.
+With its integrated boost controller, it can power 4 channels (led
+strings) and has a number of different modes using pwm and or i2c.
+Currently implemented is only i2c control.
 
-Yes in that case it is connected to csi0. I sometimes have cases where
-one is connected to csi1. I'll rerun the test when I use tha device
-again.
+link: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX25014.pdf [1]
+
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Maud Spierings (4):
+      dt-bindings: backlight: Add max25014 bindings
+      backlight: add max25014atg backlight
+      arm64: dts: freescale: moduline-display-av101hdt-a10: add backlight
+      arm64: dts: freescale: moduline-display-av123z7m-n17: add backlight
+
+ .../bindings/leds/backlight/maxim,max25014.yaml    |  78 ++++
+ MAINTAINERS                                        |   7 +
+ ...x8p-ml81-moduline-display-106-av101hdt-a10.dtso |  21 +
+ ...x8p-ml81-moduline-display-106-av123z7m-n17.dtso |  19 +-
+ drivers/video/backlight/Kconfig                    |   7 +
+ drivers/video/backlight/Makefile                   |   1 +
+ drivers/video/backlight/max25014.c                 | 449 +++++++++++++++++++++
+ include/linux/platform_data/max25014.h             |  24 ++
+ 8 files changed, 605 insertions(+), 1 deletion(-)
+---
+base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+change-id: 20250626-max25014-4207591e1af5
 
 Best regards,
-Stefan
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
 
-> --=20
-> Krzysztof "Chris" Ha=C5=82asa
->=20
-> Sie=C4=87 Badawcza =C5=81ukasiewicz
-> Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-> Al. Jerozolimskie 202, 02-486 Warszawa
+
 
