@@ -1,153 +1,133 @@
-Return-Path: <linux-kernel+bounces-746104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62726B1232C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BF7B1232F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D3F1CE528D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:47:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2186C4E3A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9472EFDA4;
-	Fri, 25 Jul 2025 17:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574DC2EFDA9;
+	Fri, 25 Jul 2025 17:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clwxhrUj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IICHEsNd"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A690F2EFD98;
-	Fri, 25 Jul 2025 17:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E124291C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753465624; cv=none; b=SEXE+CRBeuesSHVet3BqF6aR/vl0y+NK1CJeum+vLkxTyI0t/N5+tBZFBjdOBT8cg3yLPDZam0XY5cIZVukPeN69JeP1ukK7pTpQQnR7IO6faXr9WbwvbOuTqov5c3iVuZUrsG908iNGStyklUqW8SnnEyNSLdC0I8s9xDQoRvw=
+	t=1753465647; cv=none; b=Of63kNyM2OZG55J7ReAolKxkeTj/kuWBRXCLe8j/kTIBkMtkpcEdVmBX5C7f+S+0+wabpszuFwoHeyFhw5I96+9U6kq5Jjgf/PsTw3hcqSAhjbVdnH3fU6yj76e/eQTPbnQfe2KiqjhjYZL6UyvQ/KpwlPtB0vLCQLv449HLsoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753465624; c=relaxed/simple;
-	bh=1W6zleCtArLTe9hdYn50/LtRqMpq5z8txkrpYLZe7y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iSqh2K0zDEAcn1/URnYoOYIhSzgm/V0SyNjJRimsMHIlyqEK2xhg86PJbjmEW2oiEJkCD4Z81K9Uh2wBAembxInOUhSVZMA2FEHfC1B1G/0Y3ax90OBHiI7l2ZIPzTg1Z4Tpg6czkVmTinnhUUsC2aRYf6j6p2SXztc+S0xl2tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clwxhrUj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B466C4CEE7;
-	Fri, 25 Jul 2025 17:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753465624;
-	bh=1W6zleCtArLTe9hdYn50/LtRqMpq5z8txkrpYLZe7y0=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=clwxhrUjZtI25IKuGbeE9ssglevOZKtXT7CfByUOE64r/9zSxgMcsZxaplGSfRdTc
-	 5qKHVSxvBrUAsW5iHF/VPZOQa6nJ0hCH3B9IVGFhRSZiKBYuGgHdmtICPRUtBmuMpD
-	 nRSMSHGacXrB6Ht1qrPuj+aiP9ufh2rOFHG4uv+nNHLRffbZ+sev7DO4x8nL7v1gmI
-	 bLGYncM07V497YatisD28ooAsuUoodjagm9nylsG+6XIuV5rGYjNi0tkglwnHeof3b
-	 lsGn1e+Kphu+Nsfrtn4DPYGsHoBRynzR4EPCsYa+Dd2TDrq9whoovS9Um4EnHPH2OW
-	 M0QF0odxti9nw==
-Message-ID: <d3265e82-3ddb-4396-b1f7-4c69d4b9b7f6@kernel.org>
-Date: Sat, 26 Jul 2025 01:46:58 +0800
+	s=arc-20240116; t=1753465647; c=relaxed/simple;
+	bh=9/9IGptpLwsFSnxB182Zg/p4chccFKhXUqIIQR5aytk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRvc8KnEbFSVy/OI4lVmcpl18NQTKfqeY/HpXi+MmT01XL/rAMWEln64Nfzc1gXKG63gaHwGCaWR0nLhenkIkGazZ1DkDaB8nxEw6KF8cTOXrE/i7QF67HN7zOB60Li5Q2i0CC/bAzNp7NPcglcwEsC/j0vImt/8TGJb2hfzXu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IICHEsNd; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23dd9ae5aacso11935ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 10:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753465645; x=1754070445; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nb42As4a1Tt2TakmJwcUkP/IrOzz7ol8ZmDuilSE7QY=;
+        b=IICHEsNdsuF+tsQCHp129l7z3NEfSJdgrzrsVXusp3893JyEzTsNWJjvhiQvL0ErvV
+         QN0PedlPWS+FDkS2sY/AWdmZwR5ANL24/UWZp5TByoFVAXfZKtMyDpdLnyH8fRABOcxr
+         2OkO0oF7/hxvr4ah6g9H/uexXY9WcPErlc00QGPXXyB/9jzRUO54Wu6UB+Z6KppW29eJ
+         +1b6gBNPXWIZ04BM8QYB/yvcgKv++0hlrv74T8Hto0pyzMDNHRlGXK9T8bgGjYbsn+Of
+         rSkhWPoizPMDtkZfWXA52K8XdYEQonYBfvnMYPMWxmKBUQyLaH+ITkupk4lAz9Xl9ShQ
+         3zjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753465645; x=1754070445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nb42As4a1Tt2TakmJwcUkP/IrOzz7ol8ZmDuilSE7QY=;
+        b=R01j8lXA5+tPCvruul5LRSkEwSDd9978qAS3egu5h/fr3LIY2PcVpQeY15AwtANH9m
+         ZQxU00R58/qw1y3PpnIu/RxIe2KNndlQF2pLrbEnGhiowqjqYT1n/Y3n9cG43PzcRNcR
+         Gl/J7pBADM58La0H53YzE7/KytdCl/cxpq26Fq7QAB6EI9DMJniXCQn+qJV1xinjSxwE
+         EP6lyvITYzHv8dEO254NccmjpEsCzhbLOHV/r9GPmlsOc40WH6P4C/5HZRRWfQMP4qiw
+         5hAja+LMw2+57E5YUyNxEJswJ2ihEgzoyq9rP2jgZPWW5s9nSLQpeCMGD/UCuV7JSNl0
+         /ilQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkOg6HYYLsYNfkOz74gPr4u+g+H41py1F7gNP8qexzX+KoURDC11QJtGMmFyRkLYbF4Pd7XDPaGNnrhA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2/ZjOnQ5Wzk2yjJgwREURLFwxxqEYlJhTmrGGD6lDkH98fFyU
+	cNAuB/eQHGypucBVW2aUBAg1ARetJJMIe/4VCc928bVBgnEG3AacyyYXBTFcdVHXzw==
+X-Gm-Gg: ASbGncvyj9Lifn3TQv6ao1ZQc+4dinrfSmjnmoyEyb/oRLNbV/vcdTOgboeqyklsfWz
+	U0+CIpuLhsFzRXfG85VijMk6C/nvDVp/pxL5CrUYMHF00oYtJEUe4TlcdRrLecjPHNdLkXeo375
+	ulaJ5rBrKjN/kVrB6k9aZArD2Kn91+hkmL401YxaPGKsDj/VFSbkHybWsF0Zn9PEr0K4P6vq0dO
+	gJ6OP6FHHqzAoPeMS0VK3jonqBngSnQcOZYJ3YYU+iidBPaY13ieyxE1Quu2pB6JOuGjKbQX5nc
+	WK9GFvxJvfdk+oc0/Bu2eKpX7sRO2FullBvpBkXoenFOZxwCa2VFIqAJ7YYRB8QaJWDV58ORGre
+	7dezo5tHqlcVKB5j4+Wn890QEBsIxTBVilcdM5B988B8LqILuwQhQy36v
+X-Google-Smtp-Source: AGHT+IH6CzP73NhGeAVCvr5tnhQ0xcNucVsA1Zx6VNhDEe6MGsxi7hQ/IPtgDO+K7Qiu3C7e0YT0ug==
+X-Received: by 2002:a17:902:e889:b0:235:e1fa:1fbc with SMTP id d9443c01a7336-23fbf677572mr113455ad.0.1753465644867;
+        Fri, 25 Jul 2025 10:47:24 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe537f8asm1791005ad.167.2025.07.25.10.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Jul 2025 10:47:24 -0700 (PDT)
+Date: Fri, 25 Jul 2025 17:47:19 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, will@kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iommu/arm-smmu-v3: Replace vsmmu_size/type with
+ get_viommu_size
+Message-ID: <aIPDJyuSVpqMV8sn@google.com>
+References: <20250721200444.1740461-1-nicolinc@nvidia.com>
+ <20250721200444.1740461-3-nicolinc@nvidia.com>
+ <aIDlsUvF2Xbdelvx@google.com>
+ <aIEkZoTOSlQ0nMKd@Asurada-Nvidia>
+ <aIEwzM7mKUI8-h9U@google.com>
+ <aIKd1owebUNQeN1-@google.com>
+ <aIKqaGMMpsIuAVab@Asurada-Nvidia>
+ <aIMR6xxR3Jdpy8kX@google.com>
+ <aIOq2ysFPfZsNUix@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH 1/3] blk-ioc: add a new helper ioc_lookup_icq_rcu()
-To: Jan Kara <jack@suse.cz>, Damien Le Moal <dlemoal@kernel.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250725070547.3953398-1-yukuai1@huaweicloud.com>
- <20250725070547.3953398-2-yukuai1@huaweicloud.com>
- <3653febf-0c36-48ca-9d51-7cf93e5b25f1@kernel.org>
- <3up6wgkarspq7zo34pe72zd5a5lygdo2sokbstxc63fajrl3gw@tpk3ihmc7k7l>
-Content-Language: en-US
-From: Yu Kuai <yukuai@kernel.org>
-In-Reply-To: <3up6wgkarspq7zo34pe72zd5a5lygdo2sokbstxc63fajrl3gw@tpk3ihmc7k7l>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIOq2ysFPfZsNUix@Asurada-Nvidia>
 
-Hi,
+On Fri, Jul 25, 2025 at 09:03:39AM -0700, Nicolin Chen wrote:
+> On Fri, Jul 25, 2025 at 05:11:07AM +0000, Pranjal Shrivastava wrote:
+> > On Thu, Jul 24, 2025 at 02:49:28PM -0700, Nicolin Chen wrote:
+> > I'm agreeing with all of it, it's just that the comment says something 
+> > was rejected in by the size op, which raises confusion as to why we're
+> > in the init op. The init op rejecting something due to data corruption
+> > is a different thing..
+> > 
+> > I totally get the point about data corruption, i.e.:
+> > 
+> > size op -> returned something valid
+> > <data corruption>
+> > init op -> rejecting corrupted type
+> > 
+> > Wheras I was just trying to understand a case where as per the comment:
+> > "Unsupported type was rejected in tegra241_cmdqv_get_vintf_size()", 
+> > i.e. ->size op returned 0, yet we ended up calling the init op
+> 
+> Is the updated one in v4 fine to you?
+> 
+> /*
+>  * Unsupported type should be rejected by tegra241_cmdqv_get_vintf_size.
+>  * Seeing one here indicates a kernel bug or some data corruption.
+>  */
 
-在 2025/7/25 20:03, Jan Kara 写道:
-> On Fri 25-07-25 19:21:06, Damien Le Moal wrote:
->> On 7/25/25 16:05, Yu Kuai wrote:
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> ioc_lookup_icq() is used by bfq to lookup bfqq from IO path, the helper
->>> have to be protected by queue_lock, which is too heavy. Hence add a new
->>> helper that is lookless, this is safe because both request_queue and ioc
->>> can be pinged by IO that is still issuing.
->>>
->>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>> ---
->>>   block/blk-ioc.c | 34 ++++++++++++++++++++++++++++++++++
->>>   block/blk.h     |  1 +
->>>   2 files changed, 35 insertions(+)
->>>
->>> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
->>> index ce82770c72ab..4945b48dfdb6 100644
->>> --- a/block/blk-ioc.c
->>> +++ b/block/blk-ioc.c
->>> @@ -343,6 +343,40 @@ struct io_cq *ioc_lookup_icq(struct request_queue *q)
->>>   }
->>>   EXPORT_SYMBOL(ioc_lookup_icq);
->>>   
->>> +/**
->>> + * ioc_lookup_icq_rcu - lookup io_cq from ioc in io path
->>> + * @q: the associated request_queue
->>> + *
->>> + * Look up io_cq associated with @ioc - @q pair from @ioc. Must be called from
->>> + * io issue path, either return NULL if current issue io to @q for the first
->>> + * time, or return a valid icq.
->>> + */
->>> +struct io_cq *ioc_lookup_icq_rcu(struct request_queue *q)
->>> +{
->>> +	struct io_context *ioc = current->io_context;
->>> +	struct io_cq *icq;
->>> +
->>> +	WARN_ON_ONCE(percpu_ref_is_zero(&q->q_usage_counter));
->> I do not think this is necessary.
-This is used to indicate this is from IO issue path, I can remove it.
->>> +
->>> +	if (!ioc)
->>> +		return NULL;
->>> +
->>> +	icq = rcu_dereference(ioc->icq_hint);
->>> +	if (icq && icq->q == q)
->>> +		return icq;
->>> +
->>> +	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
->>> +	if (!icq)
->>> +		return NULL;
->>> +
->>> +	if (WARN_ON_ONCE(icq->q != q))
->>> +		return NULL;
->>> +
->>> +	rcu_assign_pointer(ioc->icq_hint, icq);
->>> +	return icq;
->>> +}
->>> +EXPORT_SYMBOL(ioc_lookup_icq_rcu);
->> Patch 2 calls this function with the rcu_read_lock() held. Why not move that rcu
->> read lock here inside this function ? That is how ioc_lookup_icq() was doing
->> things, with code that is more compact than this.
->>
->> And since ioc_lookup_icq() was already using RCU, it seems that the only change
->> you need is to remove the "lockdep_assert_held(&q->queue_lock);" from that
->> function to endup with the same above functionality. So why all the churn ?
-> Yes, I agree, just dropping the assert and updating callers should be fine.
-Yes, this is much simpler.
->> Another question is: is it safe to call radix_tree_lookup() without any lock
->> held ? What if this races with a radix tree insertion ? (I may be wrong here as
->> I am not familiar with that code).
-> Yes, radix_tree_lookup() is fine to call with just rcu protection.
+Yes, v4 looks fine.. but I was just trying to understand if the comment
+was wrong, didn't necessarily need a re-spin just for that comment :)
+Thanks for accommodating it though.
 
-The insertion is protected by queue_lock, and look up is fine with rcu 
-protection.
-
-Thanks,
-Kuai
-
->
-> 								Honza
-
+> 
+> Nicolin
 
