@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-745132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3FBB11572
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:55:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA823B11575
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 02:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48991CC82D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A306A7B35B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 00:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB934166F1A;
-	Fri, 25 Jul 2025 00:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0809317A2EB;
+	Fri, 25 Jul 2025 00:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="T9iFiWIa"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+66ThVd"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD99BA3D;
-	Fri, 25 Jul 2025 00:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F50DBA3D;
+	Fri, 25 Jul 2025 00:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753404941; cv=none; b=FZAbRtChTuN36Nyht6ZFbC9Vr1PDQN1zoRG12QWM5qTP1WSNhHfMHDarRzW55s+hBzNp8/iCPSxOal+ZVrNnAu8Pqw9GrqMDnAZpAIG9tk2YbIoB4VIKJfdJbaLF8AEqw3E1zj6cNR7sGy0myFA8XD9uFaoRSk7AvDBnrbuYP5M=
+	t=1753404957; cv=none; b=EHbHF8dazwT+wihZo0nhD3d/dCtylBdMFRk5sVY8vtby5+JcJVur9ka7LcyY8ur/Bac3n5ACVZNcUueCS3ahTkvvt6HnZ6VVe5kLXXZtxWFQiWh4OeVFz3Kvhil1TfM/IeLIcCfm6q8Anr48tEn73Zx2VPg1b4QfXoyekbacjow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753404941; c=relaxed/simple;
-	bh=KvxN5DHjZGSXEwli5Su3Qm7vJiM8XvRrYqw6i3BZUkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDJiPLaAfHLD6/K0OTjawtb3wYw6cO8jnvzCB2uX9iQuIY5QE+G9c2M+cbnUZM22Mp5LsJ8NGyoQPORyxpgNrgjaCqjBDrwEhEA2Mp4pqr747mjIhWBYH+g10AuCvd/e9nLga6Mp6YKlyRRYtCeW4TRcz4+Tq2T/P0vjd5wv0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=T9iFiWIa; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=StlREuo1scS0BfmCy3StaAeIUyCF5tPTsycVVaKcV94=; b=T9iFiWIagMi1C/Et
-	gM5OuOyS+mMLiTMpLXVy/Qq4acvvgpRuwIiZCX6tEUSHgEeW2JA7f9gIJhOXXYgct4xOPzOhG9d7r
-	FIfobPC6NrE5FHXJLlY4YbnKbQrO94NmDu+HqdjC3oTiOtJNgjuLmsvWczVoY62ziePsTOWjxVOOH
-	UWNUsdlAJDg1Gt0clsjjx/Fpav8+UWOTRQI43YD4Zc76/CmG2mY0jKYc3ALgNCPgkff60OktqBMfH
-	OeSYxHIkpAjRV+DlouvgOtU2CN9CW6soAJ0yaXjGBI8STCqTP5DSXLrXZGkVayFf+jlYPjltBhBxQ
-	NeOQ9dgdYkzISq5rLw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uf6ie-000WVV-0z;
-	Fri, 25 Jul 2025 00:55:28 +0000
-Date: Fri, 25 Jul 2025 00:55:28 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	corbet@lwn.net, workflows@vger.kernel.org, josh@joshtriplett.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs: submitting-patches: (AI?) Tool disclosure tag
-Message-ID: <aILWAELwozskfIgj@gallifrey>
-References: <20250724175439.76962-1-linux@treblig.org>
- <20250724-alluring-fuzzy-tanuki-6e8282@lemur>
- <202507241337.F9595E1D@keescook>
- <aIKhvubVqgeXIlrj@gallifrey>
- <202507241418.34AFD28C@keescook>
- <20250724194556.105803db@gandalf.local.home>
- <202507241651.5E9C803C70@keescook>
+	s=arc-20240116; t=1753404957; c=relaxed/simple;
+	bh=4XKAPmBz5foqruO2Dh8PkM1dkEV+GUMjPtrD/uVwcN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZTtTGhs3Yg9nF0WhXQi9rg20rHOL7jKEmlp/P226AuAR5D1Zny8M0gox9EgicgtMrYCl1W/jSSevYSMuzvKHU+QRaAUgAY6u5JulgN8pAeGPh7lU8oOjj33j0BM5/kD8qfo67lVEpBSTbJ2NmRg+r0KgHoGwGQ8KVYbaqXB2bSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+66ThVd; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-75ce8f8a3a1so1059797b3a.3;
+        Thu, 24 Jul 2025 17:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753404955; x=1754009755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=05L76JUv0m8cSj0GnLUPHaR0uDq+xtojF9hghogAtK8=;
+        b=V+66ThVdD3VEBW4lKcSrlvgUSpdNOf2aJSDbhqBCeuagrK8w3P4hlUTOpfm3Pn1x9+
+         /dNFJkz4PaQUO8v2I1clJHNQ8ldS779r5zqWovWuruBoYoG75j+8k5BxiMSPIYxBDB3E
+         NiLLf55T/CSa1XAOhfpVTovQLEB5e06I3ycQZ0xlYZpP09ImaQYkQ1WJHXFArNfXrVhO
+         Xeu/PFo1G/ubCYjrfJ2TzyCTPxekvJve5qEg8ekaN4vFzDrCdEV0Ev2Ouzn1giAzfYAA
+         JsDVIfcsfioQM6KEkSVnSrrGnqk6kljZP/jDbJWzeZUXfRKhnkMyH/kyP12zboZih1pz
+         wR7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753404955; x=1754009755;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=05L76JUv0m8cSj0GnLUPHaR0uDq+xtojF9hghogAtK8=;
+        b=buMAMfUTJ6NHCxqNWGkoPFVT9IygtB0IJbZtNU8ytd0KwbMwiZssJLbc0/ZXiupCvV
+         lNOdoNE1kVjenr/QPHUFi7PNC22fYcI+w4cI31gpv/tyKn+lJszfzZOVFqNW+97KNyko
+         rzgEGbcPSQ7d1xLCJPrJKaww7pB/sQnzS6GYnJiBMtFbA4KX59D65Bu7c32sVHIL/ukH
+         hsBUX4xJhnaRlTmnBt331n7SmPF14LTyJMo0sMO8S+n1uFFOrkJbOgwPIkA3zkXWPH4y
+         +Ds/2zBrwySaP42aHgmJSQCDJcirmFoLFV1bgwVYl4FFP7olK9jtas3ROF51q0+Opncz
+         M+iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ4vr7a06lzfUmARMudVgu1ZDVmz0mm1vrTxv9c/fmRSkLwtj6tGN6OEOcGK4atcDvsdB9jcOIrL7asvs+@vger.kernel.org, AJvYcCVJPPY3TcdxjSMH4laNbNkjkqMaevoeWvNuv3qSQ/pooLm5faUcdIU4vaGmxhny0+4JMNPpBMJdcQFO6n2vhERktHHJug==@vger.kernel.org, AJvYcCVfaEM0/HaHl/6Am4RZ8YXK0A8j4eBONBiagNJ88B0jh4dtT2TOnV/5Z1eYv6srrGYkhazNp2uHrqfn7w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAIPWb8OGq1PPVgx+RxDVkqssGLtkrXkuh2H5xcNtfGZESnYf4
+	oFCKOdf7gyuh3/CagOgTpJgOSFQYKvwB/zg2NRlr7wLS9s+uW0lL1LbS
+X-Gm-Gg: ASbGncsQ2aiZDZ0wq0yPQKVSJ6MsRms5b+qraD6/CCS4NMYdDgtV/eKF7L7vRycpL+L
+	EMAnBbStO2f2291AsFUMnk0F7XWtS/H+YXSxETwlo/wOBncradN6WBS0kpoVO4nDZ9Xh5HulSEd
+	+2AWmIn3T4rbunZMQihFRDvLFqk7btNMKYzpPu38601J7MX/oOQg9En4SeAgPvhmI4UX4Bmj5zc
+	ZhFSHBtBDP8d0B/LG5GjhYMQBN6gLsLPf8ZuVJ9T3GMQIC/u2XpZoOL9R6y7+v+R7SBMbZccwKC
+	nCO09kTTte+/QlZ5CUC9T+2qlzRhOvp8Gx+4yHh9uJuciyeVDD/sree1eVSpii+6zZEJZ8Eq2zf
+	wf4KmGUqqmc6HVMY3nh8Ck1AZQrG7YHR9D5OiJ5xg2E2yes02Y6wWe4zYUQwwno19f81kEDHrBI
+	mQFA==
+X-Google-Smtp-Source: AGHT+IHefCJLhghOF3i/bSPjuFKzeNgPYQQcyIIZeKOqjv5d28FkNFbsjHITfXX8bgJ9RD+Fo7gl3w==
+X-Received: by 2002:a05:6a00:8c6:b0:75f:b4aa:3774 with SMTP id d2e1a72fcca58-76338f86c2emr136684b3a.21.1753404955279;
+        Thu, 24 Jul 2025 17:55:55 -0700 (PDT)
+Received: from bliptop (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761b0626831sm2598423b3a.125.2025.07.24.17.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 17:55:54 -0700 (PDT)
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hansg@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: [PATCH 0/4] Add Ayn EC Platform Driver
+Date: Thu, 24 Jul 2025 17:55:50 -0700
+Message-ID: <20250725005550.65152-1-derekjohn.clark@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <202507241651.5E9C803C70@keescook>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 00:53:00 up 88 days,  9:06,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Kees Cook (kees@kernel.org) wrote:
-> On Thu, Jul 24, 2025 at 07:45:56PM -0400, Steven Rostedt wrote:
-> > My thought is to treat AI as another developer. If a developer helps you
-> > like the AI is helping you, would you give that developer credit for that
-> > work? If so, then you should also give credit to the tooling that's helping
-> > you.
-> > 
-> > I suggested adding a new tag to note any tool that has done non-trivial
-> > work to produce the patch where you give it credit if it has helped you as
-> > much as another developer that you would give credit to.
-> 
-> We've got tags to choose from already in that case:
-> 
-> Suggested-by: LLM
+Adds platform driver for Ayn Loki and Tactoy Zeenix handheld devices.
+Tactoy devices are rebranded Ayn devices with minor modifications to the
+DMI. The device EC had multiple features implemented by this driver,
+including a PWN fan with manual and EC controlled automatic modes as
+well as a user deviced fan curve mode, temperature sensors, and chassis
+RGB control.
 
-For me, 'Suggested-by:' seems fine for where an LLM has
-responded to a 'suggest improvements to this function'.
+This driver implements PWN fan and temperature control via a hwmon
+interface, and an RGB chassis interface via a multicolor LED class
+device. I attempted to break the driver up into four logical patches.
+Patch 1 adds PWM fan control via a hwmon interface. Patch 2 expands the
+hwmon interface by adding the temperature sensors. Patch 3 adds the
+chassis RGB interface through the leds subsystem. Patch for adds ABI
+documentation for the sysfs entries that aren't provided by the standard
+interfaces, but are needed to fully control the device.
 
-> or
-> 
-> Co-developed-by: LLM <not@human.with.legal.standing>
-> Signed-off-by: LLM <not@human.with.legal.standing>
-> 
-> The latter seems ... not good, as it implies DCO SoB from a thing that
-> can't and hasn't acknowledged the DCO.
+Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+Derek J. Clark (4):
+  platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
+  platform/x86: (ayn-ec) Add Temperature Sensors
+  platform/x86: (ayn-ec) Add RGB Interface
+  platform/x86: (ayn-ec) Add Ayn EC Platform Documentation
 
-Yeh, the Co-developed-by:  isn't terrible,  but in both that and the
-Suggested-by: is there a standard for how you would refer to the tool?
-IMHO it should not have an email address there otherwise it'll confuse tools 
-into cc'ing them.
+ .../ABI/testing/sysfs-platform-ayn-ec         |  59 ++
+ MAINTAINERS                                   |   7 +
+ drivers/platform/x86/Kconfig                  |  14 +
+ drivers/platform/x86/Makefile                 |   3 +
+ drivers/platform/x86/ayn-ec.c                 | 967 ++++++++++++++++++
+ 5 files changed, 1050 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-ayn-ec
+ create mode 100644 drivers/platform/x86/ayn-ec.c
 
-Dave
-
-> 
-> -- 
-> Kees Cook
-> 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.50.0
+
 
