@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-746061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE0DB122AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:07:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670DCB122B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A167F7B8B43
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFEF3B2C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D752EFDB4;
-	Fri, 25 Jul 2025 17:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76732F002F;
+	Fri, 25 Jul 2025 17:06:11 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6952EF9D5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC742F002D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 17:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753463166; cv=none; b=N3u/4YKOYHW/o1bcbovkoKwf3a8+EuDSG292doa+FvFnvdzueG+6s5kdCFv8s+MVm/FA0iadow7XBs06wnRzrump6zmBInN1rAbo8STHpOk3ScgCwNv8XeX643eZWFXWYRZ+xZFCy6fFgK1ArOEqgdAsqOa+3y6yFB1+xIrtRPY=
+	t=1753463171; cv=none; b=WU7ZOLdA2ZvBeGTnf0y9pMGSRkxApnOvLFTUHbDLyhhvvNGKULtADMTsYIe47QvZmUz3vaZC7KV8FkprVao5sRtrP5M57Dd3ncA+6Nb25OfHawUkx/i04XDLFLP0oqhOR8a1tWPnbQTU1FkHlGerPjoE47VC3hGIURb3GcupyS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753463166; c=relaxed/simple;
-	bh=sUnMmghG3K0XmTiWULZ2zPSu0EwKFFvlidAFa+7DMkM=;
+	s=arc-20240116; t=1753463171; c=relaxed/simple;
+	bh=ITvJ6lMFD1xw/B2qWPbt4VKgy3bbvo+Oc3DRBMhfu5Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPWh1m5IiUV1H7ANXaXDprbSAr0FurU6frJ04gOiwOm/cK12t8BfKWfzKeLsgFA3AigiIO9Ap/olkwhXchRnUKB9v8l3rBZg6BApJupepqwxGpvRh4uhVjYszG4vsqdviq9CRkwgSGEV8dCjEEj0J3MA0t4JgO91KjqMUjjXWm8=
+	 In-Reply-To:Content-Type; b=AT4rkmFGZj+30ONK2W1aYsdggsaDzdjlFmFO/a6iz3/pGAZS08JasbFWs8YtkA+vrk+QfCUk/bgaRAlygGEUNLAaJ9N6l1AFwGqsHbXnfU6r174/oWy+iIz07+kqLPRdhGMJGh7K+ktsC3jb8Wi9TcbuOd0edrRYiqagJugtiiM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01C1E176C;
-	Fri, 25 Jul 2025 10:05:58 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 899C22C3E;
+	Fri, 25 Jul 2025 10:06:02 -0700 (PDT)
 Received: from [10.1.197.43] (eglon.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A0BC3F66E;
-	Fri, 25 Jul 2025 10:06:00 -0700 (PDT)
-Message-ID: <1097d0cf-deb7-4247-93eb-2fe8b23dbd6c@arm.com>
-Date: Fri, 25 Jul 2025 18:05:58 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29A163F66E;
+	Fri, 25 Jul 2025 10:06:05 -0700 (PDT)
+Message-ID: <733018f5-3d1c-4238-849c-e253a778c81f@arm.com>
+Date: Fri, 25 Jul 2025 18:06:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,59 +43,149 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH 05/36] ACPI / PPTT: Add a helper to fill a cpumask
  from a processor container
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
  Rohit Mathew <rohit.mathew@arm.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
  <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
  Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
+ "shameerali.kolothum.thodi@huawei.com"
+ <shameerali.kolothum.thodi@huawei.com>,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "amitsinght@marvell.com" <amitsinght@marvell.com>,
  David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
  Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
  Sudeep Holla <sudeep.holla@arm.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
  <20250711183648.30766-6-james.morse@arm.com>
- <20250722152807.000069d3@huawei.com>
+ <OSZPR01MB8798B26E19F73A1468FB85408B51A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
 Content-Language: en-GB
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250722152807.000069d3@huawei.com>
+In-Reply-To: <OSZPR01MB8798B26E19F73A1468FB85408B51A@OSZPR01MB8798.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Jonathan,
+Hi Shaopeng,
 
-On 22/07/2025 15:28, Jonathan Cameron wrote:
-> On Fri, 11 Jul 2025 18:36:17 +0000
-> James Morse <james.morse@arm.com> wrote:
+On 17/07/2025 08:58, Shaopeng Tan (Fujitsu) wrote:
+> Hello James,
 > 
 >> The PPTT describes CPUs and caches, as well as processor containers.
 >> The ACPI table for MPAM describes the set of CPUs that can access an MSC
 >> with the UID of a processor container.
 >>
->> Add a helper to find the processor container by its id, then walk
->> the possible CPUs to fill a cpumask with the CPUs that have this
->> processor container as a parent.
+>> Add a helper to find the processor container by its id, then walk the possible
+>> CPUs to fill a cpumask with the CPUs that have this processor container as a
+>> parent.
+
+>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c index
+>> 54676e3d82dd..13619b1b821b 100644
+>> --- a/drivers/acpi/pptt.c
+>> +++ b/drivers/acpi/pptt.c
+>> @@ -298,6 +298,99 @@ static struct acpi_pptt_processor
 
 >> +/**
->> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+>> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs
+>> in a
 >> + *                                       processor containers
 >> + * @acpi_cpu_id:	The UID of the processor container.
 >> + * @cpus		The resulting CPU mask.
+>> + *
+>> + * Find the specified Processor Container, and fill @cpus with all the
+>> +cpus
+>> + * below it.
+>> + *
+>> + * Not all 'Processor' entries in the PPTT are either a CPU or a
+>> +Processor
+>> + * Container, they may exist purely to describe a Private resource.
+>> +CPUs
+>> + * have to be leaves, so a Processor Container is a non-leaf that has
+>> +the
+>> + * 'ACPI Processor ID valid' flag set.
+>> + *
+>> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+>> + */
+>> +int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+>> +{
+>> +	struct acpi_pptt_processor *cpu_node;
+>> +	struct acpi_table_header *table_hdr;
+>> +	struct acpi_subtable_header *entry;
+>> +	bool leaf_flag, has_leaf_flag = false;
+>> +	unsigned long table_end;
+>> +	acpi_status status;
+>> +	u32 proc_sz;
+>> +	int ret = 0;
+>> +
+>> +	cpumask_clear(cpus);
+>> +
+>> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table_hdr);
+>> +	if (ACPI_FAILURE(status))
+>> +		return 0;
 
-> Missing colon.
-> 
-> From a W=1 build (and hence kernel-doc warning).
+> If pptt table cannot be got,  should -ENODEV be returned?
 
-Thanks!
+In general its not an error for the PPTT to be missing, there are plenty of platforms
+where that is the case. I think in this case the caller has to be working with some
+information that means there has to be a PPTT, so this isn't an error that needs handling.
 
-W=1 spews so much output I tend to rely on the kbuild robot to report if I'm making it worse!
+In MPAM's case, the ACPI table references things in the PPTT, if that table were missing
+the platform description is unusable. I don't think this is something we need to help
+debug - just ensure we don't cause a panic() that would make it harder to debug!
 
+
+>> +	if (table_hdr->revision > 1)
+>> +		has_leaf_flag = true;
+>> +
+>> +	table_end = (unsigned long)table_hdr + table_hdr->length;
+>> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+>> +			     sizeof(struct acpi_table_pptt));
+>> +	proc_sz = sizeof(struct acpi_pptt_processor);
+>> +	while ((unsigned long)entry + proc_sz <= table_end) {
+>> +		cpu_node = (struct acpi_pptt_processor *)entry;
+>> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+>> +		    cpu_node->flags &
+>> ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
+>> +			leaf_flag = cpu_node->flags &
+>> ACPI_PPTT_ACPI_LEAF_NODE;
+>> +			if ((has_leaf_flag && !leaf_flag) ||
+>> +			    (!has_leaf_flag
+>> && !acpi_pptt_leaf_node(table_hdr, cpu_node))) {
+>> +				if (cpu_node->acpi_processor_id ==
+>> acpi_cpu_id)
+>> +					acpi_pptt_get_child_cpus(table_hdr,
+>> cpu_node, cpus);
+>> +			}
+>> +		}
+>> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+>> +				     entry->length);
+>> +	}
+>> +
+>> +	acpi_put_table(table_hdr);
+>> +
+>> +	return ret;
+
+> Only 0 is returned here.
+
+Good spot! I think this allocated memory in the past, it can probably be made 'void',
+which will make your above point easier too.
+
+
+> There is no action to be taken when the mask is incomplete.
+
+I don't think there needs to be. General callers should be using cacheinfo for this
+information. This only exists as the MPAM driver needs to know about the topology of the
+system before 'all' the CPUs are online. (which could be never).
+
+
+Thanks,
 
 James
 
