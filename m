@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-745978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F210B12123
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A763FB12124
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 17:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628D0AC76D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56321CC5330
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 15:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2182D2EE975;
-	Fri, 25 Jul 2025 15:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2278C170826;
+	Fri, 25 Jul 2025 15:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ICcacUBM"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nWi+22jj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2wlev3Mb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6DA2264DB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F162EE987
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 15:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753458230; cv=none; b=GCge8EobIAY+In96lzm0SaNkMunaKuIVab7paKIQgBCKImIgq1/m9KzekKB8/RbR6O8cHQ9N68NjwidhdvgrkV28UZ3KwiLs+BzyVlYFAH/zoOmiXVO/p32u9yd7Ooa2nTdqH1hm+SroTW5T0BfEt1G7/b/2ebym3DfqZGTZUAM=
+	t=1753458308; cv=none; b=nPbfxQ2bTzg9vYvZk1Og5JEzB10HXOlgSBzOroij9gGaSt8OqCKJketfksORktiD6w6L3WnV/17f9GlYf9YL6zoZZ1js+GJVyo53QEbeIdvIx/gG5/XPcq505BI9VcTDkvwrQuYuh8mdZtUo8HLHaOLTB7sG45ZCWgv6TGEfNjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753458230; c=relaxed/simple;
-	bh=AGJrMrC5GgDrciuEXkM5ywtIb5dq9WZZRsYzDkf8Yrg=;
+	s=arc-20240116; t=1753458308; c=relaxed/simple;
+	bh=ENJE94gAKBn4rYfbHDvsOYQ2vda2+iFCm68UABQzqmI=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aIunQ3/g/iYneIu+JSZqnuT9Nqr1od0m2VYD0SFtwoXgvLyIuiGPDTbzwZMZ1DvpKEO7VfmeByayhSzwY/Bb2bI/6mzpIPGxB925X3NzhP3NGrk5MgcXZraaPlpmLiCHbKjVyb3orez8SijC/T3bG89/Q8m4YYFs4sMJeS8h1L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ICcacUBM; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3A1F343979;
-	Fri, 25 Jul 2025 15:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753458225;
+	 MIME-Version:Content-Type; b=W09LtKIeRiJLwnRsiD/im+vUEkHn8kgv2an0T3Mh/5NdXCjwc7wJpIi90dtoITv2cqax8tCGyWRwolwidWPB2oP0kVrV1bBPF3d2DDm8CkhVPyoQLDfMryQ4brVeUyIUzknQ+THVmA/ruM/iaJvSpZpKAdFRa8G0I5FsfxMULeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nWi+22jj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2wlev3Mb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753458305;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AGJrMrC5GgDrciuEXkM5ywtIb5dq9WZZRsYzDkf8Yrg=;
-	b=ICcacUBMNsofq5G/8w66CrwZcfEtyXK1bYPPWz62hLo1wI1cIcnzLxJL7j7oQSkusQk8RV
-	UcYq3BrsADr1HjqdsLTgangW8lcUEA2w+MuEnKmd5MpdfrbaSobiLIx3C4q2oCa5U+wSAn
-	BR2kcZNWLaKT7pSzVYFr/TptYLX5teTmHZIis+3mH08f+kHMP0diAMiosNaKcuA9IZYOb3
-	YN7ItV/IIb/KQ0fH4s55Nt2WYTrpl9l0qV1QGqaeGJ+eF0sEdEzSMZegYaLmby8e1GNMe9
-	pIbyuHnGdurskVd5dshqm2B8RtobP3GIJHLGgZZm5M8SVLSoAH5eNQbnC1w8lQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: <Balamanikandan.Gunasundar@microchip.com>
-Cc: <alexander.sverdlin@siemens.com>,  <bbrezillon@kernel.org>,
-  <linux-mtd@lists.infradead.org>,  <richard@nod.at>,  <vigneshr@ti.com>,
-  <Nicolas.Ferre@microchip.com>,  <alexandre.belloni@bootlin.com>,
-  <claudiu.beznea@tuxon.dev>,  <linux-arm-kernel@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: nand: raw: atmel: Respect tAR, tCLR in read setup
- timing
-In-Reply-To: <24142dc4-a3a9-4d17-bc85-913cc9a56261@microchip.com>
-	(Balamanikandan Gunasundar's message of "Tue, 22 Jul 2025 09:51:43
-	+0000")
-References: <20250701133333.3871085-1-alexander.sverdlin@siemens.com>
-	<24142dc4-a3a9-4d17-bc85-913cc9a56261@microchip.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Fri, 25 Jul 2025 17:43:44 +0200
-Message-ID: <87jz3ws2bz.fsf@bootlin.com>
+	bh=zfNlU9QkQSDk6X3acZW9Zv6watdmS4XLb2lpyLgX3PU=;
+	b=nWi+22jj/D7vpJ3jHZNLznk1KJL9waj+gQWBvee9c3DCDjBGRQxnd34ePojIYdP6v+eVKG
+	yG5tj6U0W7XvzcafeahhiJ7DsZKZL6kJKmzMVL+Ks4v2x2urTkyCLbR1OnkDjrqoOl6sj+
+	VnOF6P3Ga+8BpoAwTI8VywKIdWY0K+7xbhld/p0uekv7pnRBIEx6fFFyji+bMunGgJuuVR
+	URcoNjbaLEWjMDmaTrtJMO4834tjUkaAgIjqQOLkccuir0WvwA/yq2VibB7phjMZHWuSQX
+	g2prDMKR6GuQEP0js+MSZVdBI+cCC7zeSkfA3PhRO2hIPyB1B09Vv+ZLZ/v7ww==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753458305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zfNlU9QkQSDk6X3acZW9Zv6watdmS4XLb2lpyLgX3PU=;
+	b=2wlev3Mb1+z/3Pnnum1fsrCZ/wKE+6fI5t7UzhlvwaPmKxn6SEQEbGzJg3YvvNkBEQ1RKj
+	qNo7Fzzu1wV4ZADg==
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
+ ltp@lists.linux.it, oliver.sang@intel.com
+Subject: Re: [tip:locking/futex] [futex]  56180dd20c:
+ BUG:sleeping_function_called_from_invalid_context_at_kernel/nsproxy.c
+In-Reply-To: <aINKAQt3qcj2s38N@xsang-OptiPlex-9020>
+References: <202507231021.dcf24373-lkp@intel.com> <87a54usty4.ffs@tglx>
+ <aINKAQt3qcj2s38N@xsang-OptiPlex-9020>
+Date: Fri, 25 Jul 2025 17:45:04 +0200
+Message-ID: <87seikp94v.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdekfeelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopeeurghlrghmrghnihhkrghnuggrnhdrifhunhgrshhunhgurghrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhvvghrughlihhnsehsihgvmhgvnhhsrdgtohhmpdhrtghpthhtohepsggsrhgviihilhhlohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhou
- gdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopefpihgtohhlrghsrdfhvghrrhgvsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain
 
-Hi Bala,
+Oliver!
 
-On 22/07/2025 at 09:51:43 GMT, <Balamanikandan.Gunasundar@microchip.com> wr=
-ote:
-
-> Hi,
+On Fri, Jul 25 2025 at 17:10, Oliver Sang wrote:
+> On Wed, Jul 23, 2025 at 07:22:43PM +0200, Thomas Gleixner wrote:
+>> > [  286.673775][   C97] BUG: sleeping function called from invalid context at kernel/nsproxy.c:233   <---- (1)
+>> > [  286.673784][   C97] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6748, name: oom03
+>> > [  286.673787][   C97] preempt_count: 7ffffffe, expected: 0
+>> 
+>> Ooops. That's a corrupted preempt counter, which has underflown twice.
+>> 
+>> Can you please enable CONFIG_DEBUG_PREEMPT, so we can see where this
+>> happens?
 >
-> This change looks good to me. But it didn't apply in any of my trees. Am=
-=20
-> i missing some thing?
->
-> However I got this patch modified and tested in few of our boards.
+> after enable CONFIG_DEBUG_PREEMPT, the config is as attached
+> config-6.16.0-rc5-00002-g56180dd20c19
 
-Stable is missing, and I took the opportunity to report a nit, hence
-this patch was marked done on my side, waiting for v2.
+Thank you for trying, but I just realized that it tells us only when it
+underflows, but we don't see where the actual extra decrement happens
+before that.
+
+Can you please enable CONFIG_PREEMPT_TRACER and add
+
+'trace_event=preemptirq:preempt_disable,preemptirq:preempt_enable ftrace_dump_on_oops'
+
+to the kernel command line. The latter will dump the recorded
+preempt_enable/disable events and we can pinpoint the function which is
+responsible for that.
 
 Thanks,
-Miqu=C3=A8l
+
+        tglx
+
+
 
