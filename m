@@ -1,140 +1,211 @@
-Return-Path: <linux-kernel+bounces-745776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73038B11E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:25:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472D2B11E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 14:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831B31CC1B41
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4AA3B8034
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 12:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9956F2472B9;
-	Fri, 25 Jul 2025 12:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C80B247297;
+	Fri, 25 Jul 2025 12:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="20mdoutg"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="boxoPOsd"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A217F4F6
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C951A247287
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753446353; cv=none; b=Kt91G2fiorRjK5Ir+G+IvAxkZC9vSfzMI6HvRCJZDO4tCsnmGYinU0WXcSU7Rk5NmDrxZ7SrQRq8M3z+YaIVMpFajbSeZAGay//LwETUVRTfkwIdYbs5h7WX2AJKStiyhHrc3uoYvEhex9ec45vWOKZ/Pb0hfUdqUlBoyjd2/vM=
+	t=1753446443; cv=none; b=T+AblCyV5rPv8NfWZi4wzesEpl2Ua+8MSUXDL8UvqHlxEtrd1evY5joO9ozHnjHfKrNt3JnJSSa4ie1wzAZxZCfCZN6/g1/K0YaHIF2u/JfTFmPqKSsSxqdxk3f7vJSY937uaBq9q7WpuGnYl+Ow27hMZ5we7RIHAieTTb+2W50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753446353; c=relaxed/simple;
-	bh=LOYLkjbXhcH+ilHZffi4sjyHur7OymnIgTTNEtoZ1k0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tjzb/LZXdD6OQSYzo4t+mXhu31JlXNYr3jdehG+FEgfE15rctpMZoB+3xnsNOOe7b5aSjo2xq620aNxuCvQ+KC5fD6Ul8ry9WBwVXgDI/B8Pdvx32ZxXr9/SeRgZQgppr/ejl1si15su72nAdoM/mVRvZWfjiMK9K3JWcRRKfuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=20mdoutg; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-606f507ede7so3296416a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:25:51 -0700 (PDT)
+	s=arc-20240116; t=1753446443; c=relaxed/simple;
+	bh=7y2jb6GkOxJ7n0h6bbRCBTz+o/AxMfRSADbIZa8A7TE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FbfdYApkg5K7P8z86dtll3EpTMVuaVkZ+wxGK+TZtfcrKtojIGFeGa9RTKYrKg8ukBKDV+Gye/BbLQYnyrur8XF9us2QLNtBZeBL63bTR8+trNcRc33eURnQhgNP4T8dleQ/l4Nr4n7+fPEVZ/9RSWYbilGnT+xbe2PZ4AeVcCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=boxoPOsd; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3e293a3b426so23968275ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 05:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753446350; x=1754051150; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TXj3Xdys3QrrKKgv1sa3/X9PqgLaz4asqSAvalf0x2Q=;
-        b=20mdoutgifmUs9uc3Hd20LH1Fpd9RPmy7Monov9hgtJWvfhvwNN0E/m6UBTP5u1QDZ
-         5PqOqHv9Xhg+x73oHoy0FUaYI103y85Mk1xagYkBIzkjYM0IFEDBcrx80yVJbjS1bxdX
-         bxV4xWwIjgHUZhS687k1INajTkEJgIe8jnmCF6VpKitHHNPyt7kPOozVydUArCBm31rV
-         T3MzAg6rqOrgWO7SL5bhL3jL/26hDbWqzNJLhzjxLt1/clVwI+0ZU11wRkUBeJ3HRGF7
-         nobggw0t27eb4XpB+/KBJT+LkOCXwepgIMevl+OeVpjHGO0J8Bxknzmhcfja8nXgGR8E
-         15UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753446350; x=1754051150;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753446441; x=1754051241; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TXj3Xdys3QrrKKgv1sa3/X9PqgLaz4asqSAvalf0x2Q=;
-        b=P576Lxowu4ZUx3KK9kqXDu/K03qrP+cH6ODvwIsv+jluAg+6Cz1IznNpuqXjAg9o9Q
-         sm1VOAU4Z5lZTYLSgEok9CAzSSMLyYK5gbtW83BTn9fE0rX/3sLLov2wE6keEqBI1DEe
-         3ECIRfb2wULBA5HG8Q7mUSlzk3ck/+Zy9IAXN2anTwAxxDXk2eESnq5R3jPqUK2K+6z9
-         lH1ZNGDL79u11U9aQ1NrRwWzWoX6zbavubCoDx390AJ6JIeF4bwRvk21kIIBnZb/aAdo
-         VI+j5UKU2YF9VwlV6WZT2eyf/sSWMnFV/9yFtMfWaZGlLkl0ja6KBBi+Q9aVG2b64Fcx
-         Z5EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL32I4UeYtbxoAcTAp72IcIAWXPBsRjqi4vooJ29U4Q6gk05ZN21DOnJPocg4OYGhtY+Fl67NWOlqO7hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHvywjebKrPPPN6GR9M68h5pmdTAdp6+kNFNDKNqxNTq5fY+Gb
-	W/VId0RjiX3NHI0MCHVOQ9P+D/bsXcC44FEWYJrjtQ3kQFJslKuPKtq+cDkmPOqeCk+woqr9CU7
-	tZxC0DcgZyA==
-X-Google-Smtp-Source: AGHT+IFFSWIcFtjKAeMMISoRrrjPhKRBubbppj2Y6256RlC6tXLX6FooJI+2421lfUE9azd/4D6RMX+RCT/e
-X-Received: from edbcn2.prod.google.com ([2002:a05:6402:ca2:b0:60c:3df6:79ae])
- (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:254f:b0:608:8204:c600
- with SMTP id 4fb4d7f45d1cf-614f1bdda7fmr1679938a12.3.1753446349802; Fri, 25
- Jul 2025 05:25:49 -0700 (PDT)
-Date: Fri, 25 Jul 2025 12:25:42 +0000
+        bh=A/mBvaMsi9x4Ax/J09iijgNlpW3/r7uWvIizFrxl++U=;
+        b=boxoPOsdR7d09gyhumRtSEy2pLk5UTNddDeFSgX0DA8epMxfcIvRZ2E8Bh9rqD5L6s
+         Egqai46UdEZ5y1LAxBAI3yYUkPn7/su6jIkLIPrWREjauJemXZNpqyuPh9TsIj8SiZ2C
+         9aWBwTckXIAcwOAWdHFxLxrcZNwoxB3EBgxY8tFNrmfrZ3R7pi1F+z+jwgOweY7HcRd6
+         OQ/tZdU24yflDmQaBWit68ZabtddguLIUzD9s1gxRgYjBldTyB9FtP7/pc/TxpToYI41
+         MeiFB9lIXb0nEC9P4enmvfAYl9yMdGu7hUTFljaomoZEWBZSwIbszBonl03ewhBd1gQj
+         TAjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753446441; x=1754051241;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/mBvaMsi9x4Ax/J09iijgNlpW3/r7uWvIizFrxl++U=;
+        b=wUmnBjZDY2apOMDDl41m3YMF1r6rX/whDHUEFxZKxt/mQTgYiAleaLx41alVgPXk1l
+         amvcmm0vk65Xku73EamxzBwYFFTywzD3BF399714HCzf0aJDLIbMhZtIUT/veuOYnPsZ
+         daCGR2hNziiDBaK/IktHEtQAsCmD0HO8FXMsiVrtaHhrHPGF29Q3qoetIrIi4Dzn8ptN
+         iAFm0YQYxLwsL+38yjigu98FP4TrR3A80PbMdPBcCXBcE7cwUByUecz27Oc9vzuyw5Ce
+         GiPUVt/UDO0KoZRA1dKZJ0eqAil8oizVB9VC45T+2YKjJZ2HFWc+Mu3a1aPR/2YN3VpT
+         +NQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU21xblP8rQ/uOzZCPrveKZZzAdqDhXDt9LcTopyr+h/H7fPwk4erYPDEuCutCOrFdxAFdw0QbZGmI27qQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqpPV1+lccKmGTLQjV0PRq5sNxlz2xc2m/nVkSjTTYiS5ZvJQi
+	FkICB1CZro4bIqeQ1hIaCPgzhIADKi+lIjCSMSuUu1R4A87+hF46kZzFtA6Pr7p26/4=
+X-Gm-Gg: ASbGncvkNcHXqzG30zLHZG/HQ14DZsPWMtm1fMpw5ChCVSzn8rEMxBlU1GBymxfghjB
+	pmHAVWaQ86gSGqV+/9jQBbZCw8/NJsKgEEUdnNG/hS2TntYSA4mfIrxVpOKWA61QjvoYGemIG8h
+	1sB5Ewp+Uit/GDFpaQxoScT2/VVgWG9MZEuZoy28akAaJpYn7MG0NeQSRps+FiaHinoYa0jzu5x
+	7TyFHG7kir9lbWJ4ZlItYxS1XMIyyop/0lHa6fl5iqyBWUIl0E5OMoTZfBlpnnI+Wu3qmMborJE
+	PkK7FZ5QvF7oLwUQbhFlQqXjh1G8l/Q+mV5miAwPDoaaSo1KgpwFS1PP+4lFjL5XT/IJ8pocRWt
+	YuKoECd2e/T2k2kqp5oaaIv6DVlUYRs8NkQ==
+X-Google-Smtp-Source: AGHT+IFpJvG04PuJm5q96eMexOibQMJOXrzeJLswA3Q+kKbIfnRtQOm28/7c/YDY/oduCAUIYURw7A==
+X-Received: by 2002:a92:cd81:0:b0:3e2:9fa7:a60a with SMTP id e9e14a558f8ab-3e3c52414bfmr27234165ab.3.1753446440729;
+        Fri, 25 Jul 2025 05:27:20 -0700 (PDT)
+Received: from [10.211.55.5] ([199.59.116.160])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e3b7248082sm12856165ab.60.2025.07.25.05.27.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Jul 2025 05:27:20 -0700 (PDT)
+Message-ID: <bcab3c8d-af99-44c7-a994-b5e0e5c39c7f@riscstar.com>
+Date: Fri, 25 Jul 2025 07:27:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250725122542.2633334-1-czapiga@google.com>
-Subject: [PATCH v3] spi: intel: Allow writeable MTD partition with module param
-From: Jakub Czapiga <czapiga@google.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Konrad Adamczyk <konrada@google.com>, 
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jakub Czapiga <czapiga@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/8] riscv: dts: spacemit: enable the i2c8 adapter
+To: Yixun Lan <dlan@gentoo.org>
+Cc: lee@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+ alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mat.jonczyk@o2.pl, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ linux.amoon@gmail.com, troymitchell988@gmail.com, guodong@riscstar.com,
+ linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250724202511.499288-1-elder@riscstar.com>
+ <20250724202511.499288-7-elder@riscstar.com>
+ <20250724211113-GYA748868@gentoo>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250724211113-GYA748868@gentoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The MTD device is blocked from writing to the SPI-NOR chip if any region
-of it is write-protected, even if "writeable=1" module parameter is set.
+On 7/24/25 4:11 PM, Yixun Lan wrote:
+> Hi Alex,
+> 
+> On 15:25 Thu 24 Jul     , Alex Elder wrote:
+>> Define properties for the I2C adapter that provides access to the
+>> SpacemiT P1 PMIC.  Enable this adapter on the Banana Pi BPI-F3.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 15 +++++++++++++++
+>>   arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi    |  7 +++++++
+>>   arch/riscv/boot/dts/spacemit/k1.dtsi            | 11 +++++++++++
+>>   3 files changed, 33 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> index fe22c747c5012..7c9f91c88e01a 100644
+>> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+>> @@ -40,6 +40,21 @@ &emmc {
+>>   	status = "okay";
+>>   };
+>>   
+>> +&i2c8 {
+>> +	pinctrl-0 = <&i2c8_cfg>;
+>> +	pinctrl-names = "default";
+> ..
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+> I think these two can be moved into dtsi, as they are
+> common and fixed properties for the i2c controller
 
-Add ability to bypass this behaviour by introducing new module parameter
-"ignore_protestion_status" which allows to rely on the write protection
-mechanism of SPI-NOR chip itself, which most modern chips (since
-the 1990'+) have already implemented.
+You're right.  I will update this in v10, which I will
+send later today.  I'd like to hear from Lee before I
+prepare that though.
 
-Any erase/write operations performed on the write-protected section will
-be rejected by the chip.
+>> +	status = "okay";
+>> +
+>> +	pmic@41 {
+>> +		compatible = "spacemit,p1";
+>> +		reg = <0x41>;
+>> +		interrupts = <64>;
+> ..
+>> +		status = "okay";
+> status property here can be dropped as enabled by default
 
-Signed-off-by: Jakub Czapiga <czapiga@google.com>
----
-v1 -> v2:
-v2 -> v3:
- - Fix typo in the macro name.
+OK.
 
- drivers/spi/spi-intel.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+>> +	};
+>> +};
+>> +
+>>   &uart0 {
+>>   	pinctrl-names = "default";
+>>   	pinctrl-0 = <&uart0_2_cfg>;
+>> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+>> index 3810557374228..96d7a46d4bf77 100644
+>> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+>> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+>> @@ -11,6 +11,13 @@
+>>   #define K1_GPIO(x)	(x / 32) (x % 32)
+>>   
+>>   &pinctrl {
+>> +	i2c8_cfg: i2c8-cfg {
+>> +		i2c8-0-pins {
+>> +			pinmux = <K1_PADCONF(93, 0)>,	/* PWR_SCL */
+>> +				 <K1_PADCONF(94, 0)>;	/* PWR_SDA */
+>> +		};
+>> +	};
+>> +
+>>   	uart0_2_cfg: uart0-2-cfg {
+>>   		uart0-2-pins {
+>>   			pinmux = <K1_PADCONF(68, 2)>,
+>> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> index abde8bb07c95c..2a5a132d5a774 100644
+>> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+>> @@ -459,6 +459,17 @@ pwm7: pwm@d401bc00 {
+>>   			status = "disabled";
+>>   		};
+>>   
+>> +		i2c8: i2c@d401d800 {
+>> +			compatible = "spacemit,k1-i2c";
+>> +			reg = <0x0 0xd401d800 0x0 0x38>;
+> ..
+>> +			interrupts = <19>;
+> I'd suggest to move interrupts property after clock, see my similar
+> comment
+> https://lore.kernel.org/all/20250724121916-GYA748228@gentoo/
 
-diff --git a/drivers/spi/spi-intel.c b/drivers/spi/spi-intel.c
-index 5d5a546c62ea..13bbb2133507 100644
---- a/drivers/spi/spi-intel.c
-+++ b/drivers/spi/spi-intel.c
-@@ -189,6 +189,11 @@ struct intel_spi_mem_op {
- static bool writeable;
- module_param(writeable, bool, 0);
- MODULE_PARM_DESC(writeable, "Enable write access to SPI flash chip (default=0)");
-+static bool ignore_protection_status;
-+module_param(ignore_protection_status, bool, 0);
-+MODULE_PARM_DESC(
-+	ignore_protection_status,
-+	"Do not block SPI flash chip write access even if it is write-protected (default=0)");
- 
- static void intel_spi_dump_regs(struct intel_spi *ispi)
- {
-@@ -1248,13 +1253,15 @@ static void intel_spi_fill_partition(struct intel_spi *ispi,
- 			continue;
- 
- 		/*
--		 * If any of the regions have protection bits set, make the
--		 * whole partition read-only to be on the safe side.
-+		 * If any of the regions have protection bits set and
-+		 * the ignore protection status parameter is not set,
-+		 * make the whole partition read-only to be on the safe side.
- 		 *
- 		 * Also if the user did not ask the chip to be writeable
- 		 * mask the bit too.
- 		 */
--		if (!writeable || intel_spi_is_protected(ispi, base, limit)) {
-+		if (!writeable || (!ignore_protection_status &&
-+				   intel_spi_is_protected(ispi, base, limit))) {
- 			part->mask_flags |= MTD_WRITEABLE;
- 			ispi->protected = true;
- 		}
--- 
-2.50.1.552.g942d659e1b-goog
+OK.
+
+					-Alex
+
+> 
+>> +			clocks = <&syscon_apbc CLK_TWSI8>,
+>> +				 <&syscon_apbc CLK_TWSI8_BUS>;
+>> +			clock-names = "func", "bus";
+>> +			clock-frequency = <400000>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>>   		pinctrl: pinctrl@d401e000 {
+>>   			compatible = "spacemit,k1-pinctrl";
+>>   			reg = <0x0 0xd401e000 0x0 0x400>;
+>> -- 
+>> 2.43.0
+>>
+> 
 
 
