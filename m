@@ -1,80 +1,56 @@
-Return-Path: <linux-kernel+bounces-745340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD1EB118A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDBFB118B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 08:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A055A2554
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF7C3BDF46
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 06:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7EB2882DD;
-	Fri, 25 Jul 2025 06:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EPDJGlE6"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50031DED4A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 06:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E59289E07;
+	Fri, 25 Jul 2025 06:50:53 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98AD1DED4A;
+	Fri, 25 Jul 2025 06:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753426112; cv=none; b=H22xd8BE68mxe4MDNITCKya8964jlKrU5mBZpHibfurU4CXDHrS95cd736x9zcy07UcIoxBEDip6fzGO/wFJFdETkgvKomlnOTYiIG+rfDX1q0RAMxy7XoFzhUC/QjWz5RtWmiztX6fNNXtYJmikxb2L7x1x3acGJYdlkCEOrTQ=
+	t=1753426252; cv=none; b=Qqje8qKtu7ZPeihvA1vNVyj4s4sk1330Jut7D+3PbO4m7C4eTvTxujkaO/2fwWaV9SWFFgFsJvWl1hlJugRbwVuUEwa0S76egAXet1xjKLVMSWFDjDPf1HfJtSz3vM9Ewtf8p1Qz9DCPjGHtyWDBMYR/TWHkKIq3G84itexoPho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753426112; c=relaxed/simple;
-	bh=gOWsQwtUIOAeo2hv0/Zu/AML+5so3HiXSwhErIXWrjw=;
+	s=arc-20240116; t=1753426252; c=relaxed/simple;
+	bh=OO3pXYvp4Ujbu5BgmfsSaLZ7wyst5VWJXR1l2BfHnTE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VcK5McsY7S7W/B8wimgP/OkIyJOAxNV3N/kkXX5poI8qqpdkaDEQHa3RHsAo3AqS8duBa8Zsv+EDurxiis32PDoVLobt0B6Zivv696yHa069QXUFFcmWkz8Lf4ZXln4okoa/DDxQgCWE5/emxYI1mZ9rtDb6ZIqP6pkuOCKBUxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EPDJGlE6; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CD68940E01FD;
-	Fri, 25 Jul 2025 06:48:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8SyFssLLXW6E; Fri, 25 Jul 2025 06:48:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753426095; bh=Lv0U0rCLx73jF5ldM8hNqeOnIEhjOB/QBj4YEAU9vw8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EPDJGlE6MxXdUhEMoSlE7hsyJdLiDt0uUl5MyNaeoYud7Byc01ju5QQMbYwAV7qdW
-	 FmE5zrS5GRvWq6/tODTWVsd+TRNZX2hJLvfyPlWh7FfjA2nYDAb7Srx7jcRNFGAIcO
-	 u9u9jilQznggHr/9bffirSRNWXswvGVyCFidXzY9HFNcilaofp7FNDAFSVgAITb9w9
-	 Ywlc6JGIJpR4DoMb4Py2BaTSNOz9EyMVbxmbZmBFvsbCufv6tqocZRm0YE9JJYPWI9
-	 o48cGL7Qas9vZQXpTeJue5bNvhHI/JQ4sAGdGqty4ASRNj6uvzSMsky1cif5Gfi77j
-	 X8GT+hWNHDfo8jPLwfwMHam3aFvpx0GlZhVhb3WA8eRnP1nZgTBF7aePEXfgQrj+IP
-	 y5sjeo+CwCElJB94AG/s0F7ajMtDh1yWWqHhe7B6IZjC7AZSdQxHRgW4fGYWBJ8vEo
-	 SwHcXFj+o43/zv+xjULX0i4af2CLSwSAhtHWE99MOHPrb+dqtpZyokPrJ/NF4LiVrH
-	 +vabhRPSfyCDnN9d6ERXMaLkcLCazbgOxY5S+pTPnCN4hKr2KhmiKTmDYOuSUFTRLH
-	 t8Pr9DFaNfe7/rdvAt0BNMymYEdS9ZE00a2O0TKxuEE5LJ51MHUTg3WA8RPnCcxbkV
-	 l/nB6TeyhXZTO2337bLMMcFg=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 44EAF40E025A;
-	Fri, 25 Jul 2025 06:48:08 +0000 (UTC)
-Date: Fri, 25 Jul 2025 08:50:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
-	David Arcari <darcari@redhat.com>
-Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
-Message-ID: <20250725065009.GAaIMpIVgAKi0kMBVv@renoirsky.local>
-References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
- <20250722165615.GCaH_CryG7kNrAS4O6@renoirsky.local>
- <20250723183426.GA1158000@yaz-khff2.amd.com>
- <27E487FE-EC8D-42AC-B259-F8A18776C802@alien8.de>
- <aIKehTDgP-Nu36ol@google.com>
- <3cc16f7d-c650-43f2-b0ca-d99c427cd69b@amd.com>
- <aIKmeclza-9TDe4U@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wdh28ry0BxmfwmhYsYu4yzMGa+jTcMhr8GS6DNhI4J/vUccqmn3SUGqX1x4VwfDyrXIgQmmV8wH8oZpMMf3fv+ln29KAnkrd0YIHNhb97OsZQumqseLS0txx0/UQ+KxQtvJMp23/YN4DyjHhXhrGgYXpdWUUr44+xF2zcL5pUZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-64-68832943f8b9
+Date: Fri, 25 Jul 2025 15:50:38 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	toke@redhat.com, asml.silence@gmail.com, bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool
+ in page type
+Message-ID: <20250725065038.GA58004@system.software.com>
+References: <20250721054903.39833-1-byungchul@sk.com>
+ <CAHS8izM11fxu6jHZw5VJsHXeZ+Tk+6ZBGDk0vHiOoHyXZoOvOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,50 +59,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aIKmeclza-9TDe4U@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izM11fxu6jHZw5VJsHXeZ+Tk+6ZBGDk0vHiOoHyXZoOvOg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzH9/09dzr73YW+5Kkza7V5yMP2sRltZr5/ME9jHv7gpt/czZXc
+	KWXMcS0xF3nuOhwpqba4qCtqVCLWLkcc4Ti6eUhStJ7IXTH999r7+/m+X58/PgKtbGDHCdr4
+	nZI+Xq1TcTJG9jX40rRFkSbNzDNZs8FaXMRBYXcyXHnrYMFaUIrgR08zDwOVdQg6a+9z8KWm
+	A0HOxS4arM5UBn4W99LQUuflodC+DDx5PgZuHyyjwXv0AQfm1D4aKnvaeDjgyKfAWmLkobE0
+	g4WTvbk0lBnf8vCkwsrBm6IBFnzVZgbqLVcZaD9VS4MnIwbqbGOg61ErgtriMgq6jpzjoCmr
+	goITLhsH71M9CFw1XgZO9adzkL0/A0Fft7+t7dgPFrLvveFjokhN6zea3Lj6giLuqocUKbe8
+	5onNnkhK8qPIYbeLJvaCQxyxdxznyatntzny4GwfQ8rfzSPljk6KmE1tHPne8pIh36qauBUh
+	G2TzYyWdNknSz1iwWaZxfPaxCU3jk2+dbWeMyBZ6GAUJWJyDvXWF/D82PXShADPiVGx0ltAB
+	5sQI7Hb3DPIoMRJfrspkA0yLp3mckzYywCHiBtxorKQCLBcBP2347O8RBKW4B183zx2KFbg+
+	6wMz9DUC95930YERWgzDV34LQ/EkbLqZPWgKEldiz9cTg+OjxSn4Tul9f7vMv+UHATszq/6u
+	PBbfzXczx5DCMkxhGaaw/FdYhilsiClASm18Upxaq5szXZMSr02evmV7nB35jyxvb/9GB+po
+	XF2NRAGpguUk4oBGyaqTDClx1QgLtGqUvPmaP5LHqlN2S/rtm/SJOslQjcIERhUqn9W1K1Yp
+	blXvlLZJUoKk//dKCUHjjCjXULCmYh+bkNJIpw9cszY1+DY/VbWuc1gOvtM7cfhAWr7pV8v6
+	pRMuUN57nSNX/WrY7eoOjVwyOc1zWhUthRelj/ieo5z7WDErsyesnvsUs1C5vELxfMF1+6v3
+	USG9itypoBsfvtVswNHznzsX+3Yk3gxbsiLn46K1Y4Ineprb96oYg0YdHUXrDeo/3knTkmAD
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzH9/09d1x+Ev1WNnZYymOj7eOZMb6zeZ6H2Zpu+nG37o7dVTq0
+	HZc8Vqgs12VncaVMuqiLHuxKlFG7RESX0B9JkqRck65m+u+19+f9eX3++XCkTz7tzyk1UaJW
+	I1fJGAkl2bzMOG9tkFGxsCJhOpjzbzOQ1x8L2a12Gsy5RQh6B5pZGCqrRvCj6gkDXyp7EGRd
+	7yPBXBdPwc/83yR8rm5jIc+2CVzWdgpKTxeT0Jb8lIHEeDcJZQNdLJy05xBgLjSwUJlZQ0N9
+	URINqb9vklBsaGWh4YGZgZbbQzS0OxIpqDHdoqA7rYoEV9JqqLZMgb5nnQiq8osJ6LuQyUDj
+	1QcEpDgtDHyMdyFwVrZRkDZ4hoGME0kI3P3Dtq6LvTRkPG5hV8/BlZ3fSHzv1hsCN5XXErjE
+	9J7FFls0LswJxueanCS25Z5lsK3nMovfvSpl8NN0N4VLPizBJfYfBE40djH4++e3FP5W3shs
+	9d0rWR4hqpQxonbBynCJwt7RTh9unBr7ML2bMiCL3znkxQn8YsFY60QepvhZgqGukPQwwwcK
+	TU0DI+zLBwk3yi/RHib5K6yQleDt4Un8XqHeUEZ4WMqD8PJ5x7CH43z440JBYuhoPFGoufqJ
+	Gl0NFAavOUlPheQDhOw/3Gg8TTDezxi55MVvE1xfU0bqk/kZwqOiJ8RF5G0aYzKNMZn+m0xj
+	TBZE5SJfpSZGLVeqQufrIhV6jTJ2/v5DahsafiNr3OAlO+pt2OBAPIdk46U48KTCh5bH6PRq
+	BxI4UuYrbb47HEkj5PqjovbQPm20StQ5UABHyfykG3eL4T78QXmUGCmKh0XtvynBefkbkP+W
+	9XXWzdv73Sd6HAUxCdaObevUEluC3ntXryv1V9aiAI3sV05ryzP1UdbUrg0Ln41I1dyUNSHs
+	jj3JElf2uInXl67q335/3ql66864irDyIfexlBUz7xyJOA9X+LDkG1sOdIbUvp5amBk04cW0
+	g+5Jj6eb9Kq5X1JnqVx+4sy8NBmlU8hDgkmtTv4XDIkYeUIDAAA=
+X-CFilter-Loop: Reflected
 
-On Thu, Jul 24, 2025 at 02:32:41PM -0700, Sean Christopherson wrote:
-> Not necessarily.  There are a variety of use cases for doing nearly-full passthrough
-> of bare metal state into a VM, e.g. to deprivilege the "main" OS, interpose and/or
-> isolate select resources, etc.  I don't think it's too far fetched to imagine one
-> or more such use cases exposing this range of MMIO to the guest _and_ also setting
-> the HYPERVISOR bit in CPUID.
+On Tue, Jul 22, 2025 at 03:17:15PM -0700, Mina Almasry wrote:
+> On Sun, Jul 20, 2025 at 10:49 PM Byungchul Park <byungchul@sk.com> wrote:
+> > diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+> > index cd95394399b4..39a97703d9ed 100644
+> > --- a/net/core/netmem_priv.h
+> > +++ b/net/core/netmem_priv.h
+> > @@ -8,21 +8,11 @@ static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
+> >         return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
+> >  }
+> >
+> > -static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
+> > -{
+> > -       __netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
+> > -}
+> > -
+> > -static inline void netmem_clear_pp_magic(netmem_ref netmem)
+> > -{
+> > -       WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
+> > -
+> > -       __netmem_clear_lsb(netmem)->pp_magic = 0;
+> > -}
+> > -
+> >  static inline bool netmem_is_pp(netmem_ref netmem)
+> >  {
+> > -       return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
+> > +       if (netmem_is_net_iov(netmem))
+> > +               return true;
+> 
+> As Pavel alludes, this is dubious, and at least it's difficult to
+> reason about it.
+> 
+> There could be net_iovs that are not attached to pp, and should not be
+> treated as pp memory. These are in the devmem (and future net_iov) tx
+> paths.
+> 
+> We need a way to tell if a net_iov is pp or not. A couple of options:
+> 
+> 1. We could have it such that if net_iov->pp is set, then the
+> netmem_is_pp == true, otherwise false.
+> 2. We could implement a page-flags equivalent for net_iov.
+> 
+> Option #1 is simpler and is my preferred. To do that properly, you need to:
+> 
+> 1. Make sure everywhere net_iovs are allocated that pp=NULL in the
+> non-pp case and pp=non NULL in the pp case. those callsites are
+> net_devmem_bind_dmabuf (devmem rx & tx path), io_zcrx_create_area
 
-What would be that use case?
+A few seconds reviewing the code, fortunately netmem_set_pp(pool) and
+netmem_or_pp_magic(PP_SIGNATURE) are always called paired, and
+netmem_set_pp(NULL) and netmem_clear_pp_magic() are always called paired
+too.
 
-To tell the guest why the hypervisor rebooted?
+And there's no code to directly assign a value to ->pp and ->pp_magic,
+except in net_devmem_alloc_dmabuf() but that is also safe because always
+followed by page_pool_set_pp_info().
 
-Sounds weird to me but virt does weird things sometimes. :-P
+Even though I think it's already equivalent between checking
+'->pp != NULL' and '->pp_magic == PP_SIGNATURE' with the current code,
+more consideration for better code should be always welcome.
 
-> But whether or not there's a legitimate use case is beside the point.  I'm not
-> arguing this is at all useful for VMs.  I'm arguing _against_ splattering
-> X86_FEATURE_HYPERVISOR checks all over the place just because an error was first
-> (or only) observed while running in a VM.
+As you mentioned, at net_devmem_bind_dmabuf() and io_zcrx_create_area(),
+it'd better initialize ->pp and ->pp_magic like:
 
-We use X86_FEATURE_HYPERVISOR to gate purely-hw-only features behind it.
-Because they don't make any sense for guests. Just like this one.
+--
+diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+index 00d0064b22a5..8f2051b2c505 100644
+--- a/io_uring/zcrx.c
++++ b/io_uring/zcrx.c
+@@ -430,6 +430,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+ 		area->freelist[i] = i;
+ 		atomic_set(&area->user_refs[i], 0);
+ 		niov->type = NET_IOV_IOURING;
++		page_pool_clear_pp_info(net_iov_to_netmem(niov));
+ 	}
+ 
+ 	area->free_count = nr_iovs;
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index b3a62ca0df65..5d017c9f4986 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -285,6 +285,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+ 			niov = &owner->area.niovs[i];
+ 			niov->type = NET_IOV_DMABUF;
+ 			niov->owner = &owner->area;
++			page_pool_clear_pp_info(net_iov_to_netmem(niov));
+ 			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
+ 						      net_devmem_get_dma_addr(niov));
+ 			if (direction == DMA_TO_DEVICE)
+--
 
-And even if this one makes sense for some virt scenario, we want those
-folks to *actually* explain why removing the HV check for that feature
-makes sense. And why the kernel needs to support it.
+Do you think it works for using ->pp to check if a niov is pp?
 
-Just like loading microcode in a guest, for example. There's a reason we
-don't do that. And when some day, someone appears and wants to do that,
-I would like there to be an explicit patch removing that HV check in the
-loader and explaining *why* it is doing so.
-
-And until that day, that feature is hw-only. Just like this one.
-
-And yeah, I know you don't like X86_FEATURE_HYPERVISOR but I would like
-to save some of my sanity when looking at a bug report which says that
-the reboot reason reporting is talking crap, only to find out that a HV
-underneath is doing something silly, muddying up the waters.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+	Byungchul
 
