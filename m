@@ -1,203 +1,135 @@
-Return-Path: <linux-kernel+bounces-745397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B10EB1195D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AFBB1195E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 09:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C005A0A0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC511CE20B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478FF2264BA;
-	Fri, 25 Jul 2025 07:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ovdWbjDI"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE4E2288D5;
+	Fri, 25 Jul 2025 07:47:22 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250E41A8F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4231F582F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 07:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753429617; cv=none; b=ZpID+ThugfAc7ZTn+/27DFSGrEB7BZ10s11HB73k4sEPQ24O9I4XG3C+WrNHlTwSDUEeliDsgI82vm9a9tDGOQGG4/IDlhET587ZKY4kskeOduzIfbvqV4zdn66kr9Uyf6Xm9wc6sAHxlfcJYE6MwQdGSvJMoaondjhN/LCRBX4=
+	t=1753429641; cv=none; b=XKdL/TjXziIjjglPeJRRC/vf9x7ENWC7w1SR1EAaaEmVbxy7pv+u8fql+fSdUnCLgzBd+Il5o638VWiUEhUPeVt3wmxWXlShmy0a0sUptbMZm/B0LTY0piVj4WZZf89Pgs3Qws8rbm38+GnOlT3SqFRskSeU8Vr5YAQsQC5RyE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753429617; c=relaxed/simple;
-	bh=34DD8H2+Z6KlSIaicPMNy3O9pkf5PxLSFzAJOpGsKbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SwDTmu1+EU4zX1nkgdNc1EX73sxB69vVjhXbSU+qaHxKC+eWATVrMiDMHUTeQVpWWrer0sctLtzIpTKsJfhQQ08ylysn/SAjSvw7s0yroK37vliiX0xwgWApXzyYfFZffbo8tHG5LfBREOXGoPauNXBeDAQDUEG6Y9ulMSnln2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ovdWbjDI; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-451d6ade159so12713815e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753429614; x=1754034414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=836wKJCS1zkb/cl0er8y0E0+FHJwc8OMFKAP6VyLp+k=;
-        b=ovdWbjDINCzIoL9aG1ePJ5c6/+SjnPdf8Kshag/L5jkNbj3/09KX4yhNDzSX7GgAFU
-         S3mrn6+cPSc98urycADOxnV69vx3WG1wVPuCC141B6YlXivjVE7UYArL++0XkhLuBUry
-         slW3IvNJttE0+L4LR6TL70Y7lYS9PrtA3eOSpWkte9n+pHf+5J1jsTDBMBwCdXJJyc1Z
-         rREcgnMz12fw+seDpayyhSizplyzMOi+VvTittMBdnrH00PtAgFNDtYDIrqdYqQ/CDK4
-         FR5k8i9xjGyBo36AYVEhcyGGqNvSj8f1EG8mDHSFooMXa0ZPYB9Kh2UnaTsA/jWIKt36
-         97OA==
+	s=arc-20240116; t=1753429641; c=relaxed/simple;
+	bh=8ngk64fa6FkvmUq2CM0GJ+Ox+uQSwrPzsdk/GC4hxqs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Dw8/lf0zHnB/lf4MfumtLWNM7eE/qlHMoOSbC0AR5Oaiu2zvXtW2Oe6sMqeP+xWoFdZwgEMUdSEJoyJBkCM8ZTOducPoT3h+TnLLtO115M1iTOHCnqN9kr/lQsgGC/DBE2wWtXs/m/8TQ0kAZY8/+aE4zp7XkjBTvMnykwc9Vx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87c306a1b38so184134439f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 00:47:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753429614; x=1754034414;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=836wKJCS1zkb/cl0er8y0E0+FHJwc8OMFKAP6VyLp+k=;
-        b=jRM0X3z81KWOgVZUA/a40yEfFntlUJSuJ/wsZa/zXgeIQgJDNIn0uZ/UI5aXvEuweT
-         5O2bzgLWGopO7j7Xzuz5hOWVflsMUVdDv4uHYNLQhXo7+1By7nVLXk6gviXqC0NGUc3X
-         iubkA/ZSN9kXgG1aFQK5EUFRPxEGkKlU/Z4VxM4TVu6oB7odrrVXm1K0schWsmNDCPl5
-         wEw0WsZaryuEnteoZDyG34z8ytQP2Gh9Xz++UR1LP7rKK9/Av6k9nFb5ub9MVnilQYS/
-         XVOVd5Ra+DdKAU0fMPE+/80LE12fKWeXFD/PqNGndPlGKFnOn6BBVsFKrvvWViIefBe7
-         IZGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnQ26KRcks38E/okR6njW84LF4TsWgp4ppFyoxuMBvNrfN1DugGYkwER/5ar9Djsf2LR97tXEAxuGnRDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvqZKOVYRiDqZnDfe1KT71NfTHic17PmkGtnO0p5Fe+t06rGwA
-	2FxKmpdZ5icf+Hm5nIKJmMyKwwWBY8wfFyyoEFWGabZRccm0NI6n8os/TybidgSIdwNlTreQh8+
-	1vpVcU08=
-X-Gm-Gg: ASbGncth5dbv1/qbjCroEo4BS3QXYRgKdzGa+R/WQxs30YDjSfVEdQsgFQFaal0yvyZ
-	yiKbSaQEGtArhQc33bhnxAYoopRgi7f/2FkXHH9VtZh7pXUVaHcKuzgcOQco8nLdRKxnK8jghjH
-	d3ahV36Z2eEfAuFH7MBEJEoeUK1KH6ZFg4ss84tQpCSh+ahPcuXehUYn6/0ltlO5yVKn0q9VkJU
-	eXOh0/f5uk6vA23gY0gpp0SjtxiRIG2gNH7seUaXUBh8VY8EXvsXm+CIGMHasw17NvegaDilfCI
-	4NOLXW2Ko4CKHiI4ZyAIAkeJaE1qS7h90ZIpLJOD0ohHv97Wqyii2MXSXpTOJfbCEyYsBz7Ndvh
-	i2+CfUSDKK9AAqZe4MtziPEt+lOBjGqWpKg==
-X-Google-Smtp-Source: AGHT+IFmX2Q2h8loW9vaQcV9TVyMRQYZUnDzAWrlOvz28hhJWNeZiXzEXKGA8gZBkEHjSlAi/xPQ1Q==
-X-Received: by 2002:a05:600c:64c7:b0:456:24db:2efb with SMTP id 5b1f17b1804b1-4587631e23dmr7043865e9.15.1753429614087;
-        Fri, 25 Jul 2025 00:46:54 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3c3c:6b37:9b23:6049])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b76fc60595sm4313345f8f.4.2025.07.25.00.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Jul 2025 00:46:53 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: remove legacy GPIO line value setter callbacks
-Date: Fri, 25 Jul 2025 09:46:50 +0200
-Message-ID: <20250725074651.14002-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1753429639; x=1754034439;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tJSl+eIQF8BpKc2MZsJf/Bs1fdUt7/D3YqcKYlW+EGI=;
+        b=DDR51qMRwmxV2rZfCaMaa7qrKjceTkW4gaej+utLPwgHsFPHNp31ex8Z5diupCO/XO
+         sGwyGctw1e7VEwKlMouBWI0Rssp4JzZLKubH3id95yTxBOYrUM+KpyVKQoG1hEygjggl
+         HO1nCUByW7RGJodqfVLVzCJg5BnzEhECeu/MELicp4HMgmmyTKKOL7YfZvOq5KWGr0Td
+         2eNKBvh085lvfqncHKPxpS22C4sYzgyEGqrbqncedkASVJcdTuIJdxHTdRaOzVs8pRp9
+         MMkZzofFPo6J/22UqYnGIMY5mDbMEsDRcJy1w8hfQ6qLgkoHkUR7LL5wWNXe1W1f3TQd
+         BDOA==
+X-Gm-Message-State: AOJu0YxLBikL28rdGMhdWzNhAu2QcQ+/rNhCbe+Oo9sj2j60ZoMZj10q
+	k4E2ZfjnhlCrQY25wlVwosidlp1NCQThf7NMNaXN87A4Zd266XvYorlcyLk+vTpL3ha7vQAUlh/
+	DtNR9g1CdQ4vxrp1lERLufZPR5ydLEasxlz/rbEJpAT95FCWmARVq0IcsYy0=
+X-Google-Smtp-Source: AGHT+IFA68EyJflJs4YnJWA/6fBAC9J+D0ODiWbp9NJ78cOoatryVjaiUB1hGj2m+UilPL1+fm++ozJSpD9z2T1lZJlkIjJ8fUEE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c06:b0:3e2:aadb:2be8 with SMTP id
+ e9e14a558f8ab-3e3c531027emr10949785ab.15.1753429639499; Fri, 25 Jul 2025
+ 00:47:19 -0700 (PDT)
+Date: Fri, 25 Jul 2025 00:47:19 -0700
+In-Reply-To: <686db3ea.050a0220.1ffab7.0028.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68833687.a00a0220.2f88df.0040.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
+From: syzbot <syzbot+a6ffe86390c8a6afc818@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-With no more users of the legacy GPIO line value setters - .set() and
-.set_multiple() - we can now remove them from the kernel.
+***
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Note that this patch may trigger build bot error reports as it's not
-valid until all GPIO drivers are converted upstream treewide.I intend to
-wait until all relevant trees are upstream and then send this patch on
-top during the upcoming merge window.
+Subject: Re: [syzbot] [rdma?] KASAN: slab-use-after-free Read in ucma_create_uevent
+Author: lizhi.xu@windriver.com
 
-I have a second patch[1] that I will probably send directly to Torvalds
-as it's almost 4000 lines of diff. It renames the callbacks back to their
-original names.
+#syz test
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git/commit/?h=gpio/devel&id=e27a47cfa1fdbfa754664ae3dbac450008831fa0
-
- drivers/gpio/gpiolib.c      | 27 ++++++---------------------
- include/linux/gpio/driver.h |  7 -------
- 2 files changed, 6 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a93d2a9355e2..9ac4c23d656a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1037,11 +1037,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	int base = 0;
- 	int ret;
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 6e700b974033..89c444c6f317 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -109,6 +109,7 @@ struct ucma_multicast {
+ 	u8			join_state;
+ 	struct list_head	list;
+ 	struct sockaddr_storage	addr;
++	atomic_t		ref;
+ };
  
--	/* Only allow one set() and one set_multiple(). */
--	if ((gc->set && gc->set_rv) ||
--	    (gc->set_multiple && gc->set_multiple_rv))
--		return -EINVAL;
--
- 	/*
- 	 * First: allocate and populate the internal stat container, and
- 	 * set up the struct device.
-@@ -2891,19 +2886,14 @@ static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
- 
- 	lockdep_assert_held(&gc->gpiodev->srcu);
- 
--	if (WARN_ON(unlikely(!gc->set && !gc->set_rv)))
-+	if (WARN_ON(unlikely(!gc->set_rv)))
- 		return -EOPNOTSUPP;
- 
--	if (gc->set_rv) {
--		ret = gc->set_rv(gc, offset, value);
--		if (ret > 0)
--			ret = -EBADE;
-+	ret = gc->set_rv(gc, offset, value);
-+	if (ret > 0)
-+		ret = -EBADE;
- 
--		return ret;
--	}
--
--	gc->set(gc, offset, value);
--	return 0;
-+	return ret;
+ struct ucma_event {
+@@ -257,6 +258,12 @@ static void ucma_copy_ud_event(struct ib_device *device,
+ 	dst->qkey = src->qkey;
  }
  
- static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
-@@ -2919,7 +2909,7 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- 	 * output-only, but if there is then not even a .set() operation it
- 	 * is pretty tricky to drive the output line.
- 	 */
--	if (!guard.gc->set && !guard.gc->set_rv && !guard.gc->direction_output) {
-+	if (!guard.gc->set_rv && !guard.gc->direction_output) {
- 		gpiod_warn(desc,
- 			   "%s: missing set() and direction_output() operations\n",
- 			   __func__);
-@@ -3673,11 +3663,6 @@ static int gpiochip_set_multiple(struct gpio_chip *gc,
- 		return ret;
- 	}
++static void ucma_put_mc(struct ucma_multicast *mc)
++{
++	if (mc && atomic_dec_and_test(&mc->ref))
++		kfree(mc);
++}
++
+ static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
+ 					     struct rdma_cm_event *event)
+ {
+@@ -274,6 +281,7 @@ static struct ucma_event *ucma_create_uevent(struct ucma_context *ctx,
+ 			     event->param.ud.private_data;
+ 		uevent->resp.uid = uevent->mc->uid;
+ 		uevent->resp.id = uevent->mc->id;
++		ucma_put_mc(uevent->mc);
+ 		break;
+ 	default:
+ 		uevent->resp.uid = ctx->uid;
+@@ -1471,6 +1479,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 	mc->ctx = ctx;
+ 	mc->join_state = join_state;
+ 	mc->uid = cmd->uid;
++	atomic_set(&mc->ref, 1);
+ 	memcpy(&mc->addr, addr, cmd->addr_size);
  
--	if (gc->set_multiple) {
--		gc->set_multiple(gc, mask, bits);
--		return 0;
--	}
--
- 	/* set outputs if the corresponding mask bit is set */
- 	for_each_set_bit(i, mask, gc->ngpio) {
- 		ret = gpiochip_set(gc, i, test_bit(i, bits));
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 4b984e8f8fcd..90567dde7d8e 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -347,8 +347,6 @@ struct gpio_irq_chip {
-  * @get: returns value for signal "offset", 0=low, 1=high, or negative error
-  * @get_multiple: reads values for multiple signals defined by "mask" and
-  *	stores them in "bits", returns 0 on success or negative error
-- * @set: **DEPRECATED** - please use set_rv() instead
-- * @set_multiple: **DEPRECATED** - please use set_multiple_rv() instead
-  * @set_rv: assigns output value for signal "offset", returns 0 on success or
-  *          negative error value
-  * @set_multiple_rv: assigns output values for multiple signals defined by
-@@ -445,11 +443,6 @@ struct gpio_chip {
- 	int			(*get_multiple)(struct gpio_chip *gc,
- 						unsigned long *mask,
- 						unsigned long *bits);
--	void			(*set)(struct gpio_chip *gc,
--						unsigned int offset, int value);
--	void			(*set_multiple)(struct gpio_chip *gc,
--						unsigned long *mask,
--						unsigned long *bits);
- 	int			(*set_rv)(struct gpio_chip *gc,
- 					  unsigned int offset,
- 					  int value);
--- 
-2.48.1
-
+ 	xa_lock(&multicast_table);
+@@ -1489,6 +1498,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 	mutex_unlock(&ctx->mutex);
+ 	if (ret)
+ 		goto err_xa_erase;
++	atomic_inc(&mc->ref);
+ 
+ 	resp.id = mc->id;
+ 	if (copy_to_user(u64_to_user_ptr(cmd->response),
+@@ -1513,7 +1523,7 @@ static ssize_t ucma_process_join(struct ucma_file *file,
+ 	__xa_erase(&multicast_table, mc->id);
+ err_free_mc:
+ 	xa_unlock(&multicast_table);
+-	kfree(mc);
++	ucma_put_mc(mc);
+ err_put_ctx:
+ 	ucma_put_ctx(ctx);
+ 	return ret;
 
