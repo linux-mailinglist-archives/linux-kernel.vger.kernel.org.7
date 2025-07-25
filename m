@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-746204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672FBB1242D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:40:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF142B1242E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD80D5A5B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9182418979B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876C1257459;
-	Fri, 25 Jul 2025 18:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64C62586E8;
+	Fri, 25 Jul 2025 18:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bo7pXPfT"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdnHZJoe"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1ED2522B4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5B1257AD1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753468732; cv=none; b=gfKwGQ5+HG3Woht1nOrclniZqQzC5+wJ7yj6VtU/DkMC5g2CVDWA9hA6oZ6dE1Hirm5MNCHHfaATWeYjMZ8H6dEQ4KoJFEk0D2XxG+dJRPbeT6d3FwB6dzPbFocdwlh7QNan2qDcXE98e2aDOWcXbGvhFQJJlWs/0u85FbXU4xo=
+	t=1753468736; cv=none; b=QNAzzL1KsIDcxUFL30oHsjP4afaTrJarCmC8hFMaKU43ZwKhYE6VkjXfwg1wos921VsIomYwU1eH737ho3GOu/h3Ia4bdtWmEJ/TdpgbDcW5umlA+lRtTlflyRHF9asfmaMNRpRYUvVlb8U/B+mRYRpXeqRzdK+MAYHNs4gCdeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753468732; c=relaxed/simple;
-	bh=w3B6eMOHBjLahJirDSZ+qk4aNUA7eTY19kZ8xkUuHVM=;
+	s=arc-20240116; t=1753468736; c=relaxed/simple;
+	bh=HNdw2Y2WCnhZqIPQ+M+4zVLBT3PzyW7Ihk8KCE6gAxo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Gmlz4R6+l5gOweFVS9/lghr4ZnQzG8FANB+O5I2JpiejL3w3YomcZwF+yTHxAvK8GKKBhAqeGrfKgtVBdf6WxjWzOVXuNRu/ubXn2CiswIXhmHlw2wCEtaygRPXelmHQAyUPRO7A2ImfAKTKMLKNDxGuxXON/T49d0mnupzG/Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bo7pXPfT; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=rfgXhJuC8dNydpYreaqBXd5Pz5xSS5Vrh0zvtEW9h8K+Za43rO9/+GLlC6Rq56h5ufzASVF/uEP+cHlLZq3RTAvqQA+pf8B9hHVNOvxu615vaI4/E8xUYjSrwnLcyLSiAp4qpozlxtJzBTAKvbsyHgYuLwMG3s/SnWy19TnXzsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gdnHZJoe; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b34abbcdcf3so1801895a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:38:51 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so1977566a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753468731; x=1754073531; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753468733; x=1754073533; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0tolIyg+onFM/Vs+iMbCZXFo1uDxs6ZbvglnTYfZXx4=;
-        b=bo7pXPfTobvcrzBD3cgapZj5+D3Wngc1hLfOycdqLMGC/ZxLFvuxcm6txF2Y381sVv
-         XMBNk2jqL9Jj7ah+LP9BUksnUTVHVmdxFzxRmhX98try20g6P+s2wb0wEqEzq22EQJ0+
-         ReqcW6Ub6NqGSP2m7LP3HgpdLLqwS9BwKep3CbJ7wWwA0H3slUaZzYg+So6lxIUCawbP
-         mX4/TiMvdG+g0B1LQdt/c1Ee4hGowyuE8bhLWT4NYFociJeJqWTbFB3A1FnZVwAlKb1l
-         G7Eyv1EYgBeYcRRBV6ecS0yNYsQUXN3kheGBbMYTstGu0n6SrW1xNxUSJsTwhv1LryIq
-         cifQ==
+        bh=BtHJWM2gXUsv6xzq7C6P5vZ0vTx2NB+Xsxgc7a7A5cA=;
+        b=gdnHZJoesypWylctChe9EPLBCzsFtbH8dKVQyz8KKzzhmSmFKrKW1eIzlAmq9Sflx9
+         RSh3T8V4sVMTiXuDqhK6d8HUOSAqE8/7BXK14Uy4A5CvbIuImoma4ZPo0BTVsOLfey7g
+         z0+LqPzwq4w15rUYwUdMAkXoqv5fg3Os5jyuDp9wp1h4jAcZVZ/fTdYT36po+5ZI5XpX
+         xPALA2Hvuh+9Ly2OUjNWQdxYbm0j1h69IHpa/fzLWCs/7S8Md89/OLF3PIJaVY5Y5Er8
+         ynYFnpzoPrx9kwAKHiRtNYFv28uzUlzcAJ3F+I4YMoOHlPDScW4FyEN9HmrvD8ALxTTS
+         jMzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753468731; x=1754073531;
+        d=1e100.net; s=20230601; t=1753468733; x=1754073533;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0tolIyg+onFM/Vs+iMbCZXFo1uDxs6ZbvglnTYfZXx4=;
-        b=t41jKl23+bm5F7qaOz6EhlmL/ArzrqVGrPGhjdtiIblPZw6ed8x3jV8Q7J4JYe6u73
-         lTd9ZnhLqCi9xZ//7VXNmbY0N+v4FFXDD1lKxBnqtP7K8g7WGboGPYJZTr6AnGUeICvH
-         lHOODRzY+mFQjaF27GziLfO/OuxQw37x8NKW0sxLlZNAEhjQXwYpEB1NpAesZEanFpRZ
-         1b3EMA2fh54/uXIZh2x/wmP/f4QX/q691McjBXp/X6jeP0Lk3j0ySe7XjBJhjZ2KkTEW
-         ja/1JMqQQ7flkByaD4ikn7LxghoKrub1SgmdxDGfQB1jlDLtFxlJi6T1opES470Ry06c
-         xVpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+t11g73Z80yTtURDh8VQ4pnNiB4Jd8L3S1hvdpl/sOQlf2zbs2QGV17oWeUAHwW81KVJ4VN21lb9+GBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUnhyi808VKVU4YtJvOUbiYip8an6MaRBUQOtFcbrTDavLE/DC
-	LCC+9XZ6cz5uX206HdU895m7XgBLd8Q1NafFaQX7l3ey3CKPiZU0sJ2su/+LZNrNk+bkLR8Zx4G
-	1okt8ED31e/ckrg==
-X-Google-Smtp-Source: AGHT+IFQW/i8kOUdRjsXpgwamCzbOi/bLorIQ5DSxgTzYw6hRRyy4AJJJQkz2Dq9WZFz5qrLnV3cEr6OV1P+8g==
-X-Received: from pga13.prod.google.com ([2002:a05:6a02:4f8d:b0:b3b:cf3d:91f])
+        bh=BtHJWM2gXUsv6xzq7C6P5vZ0vTx2NB+Xsxgc7a7A5cA=;
+        b=B6JDJNpeFOD9IP1UcKjpC7Yme/PU9ZtLACfjyjg47zdLgPHYRHGuKFcpe3UkBUvVGX
+         Kh/1NEL0oVKU6clE2HW9lj4D8bKeoleHB99qskFm1Bxovs9VDoUS28ZhDgZbqc+A/zuB
+         SAOCi+iyzH+3S1Zdy+C18WHHs97Rbtc3b2ta2VSfqDAjjwcvG8NncZRCiiAasjl3krTm
+         FhPfHqhB2gKvBv5JO7DrE2Ld8Ls48rZfS5cfFO3p+Dy+EgrsLHWwUYZXeUbUKVSL/WMc
+         pPivrg6kA4/uoBImzbf2+5euue59eCIiqce6MDplpt+EJx2YT476+3UGaGjJbzm2kd4n
+         z9hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyvy2KFpIkPVOsYYPFYTPDmc2UgpJ6+M6KGRCYS3Ayu3x3SuW0Jrv7bL8Dz/oHWE1Egxef1/uxzTQPD4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4wesv/z/gXw4GrveiNxzn/lUZoQWMiZqh8nUYnIQfVBqQ7yIw
+	Jdx/o2DPRH6Val9RJTn574Z63qPBcRKuCabJ1EWDULkacashwJPVFnG+fs7fNdltbuIGvWz8VyK
+	Yd9d0DAiGRzoqkg==
+X-Google-Smtp-Source: AGHT+IHehI44CPZIxqVRMYAOdwAyVvBYGJhn1tV9DCg+jG+3LDBGdiqqf60J1xPbMKfHKRoH4sberB1zlyk2rg==
+X-Received: from plbmm6.prod.google.com ([2002:a17:903:a06:b0:236:9738:9180])
  (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:2445:b0:232:36e3:9a4e with SMTP id adf61e73a8af0-23d701f8204mr5451980637.40.1753468730810;
- Fri, 25 Jul 2025 11:38:50 -0700 (PDT)
-Date: Fri, 25 Jul 2025 18:37:47 +0000
+ 2002:a17:903:234c:b0:237:f7f8:7453 with SMTP id d9443c01a7336-23fb313a5d9mr48044665ad.51.1753468732937;
+ Fri, 25 Jul 2025 11:38:52 -0700 (PDT)
+Date: Fri, 25 Jul 2025 18:37:48 +0000
 In-Reply-To: <20250725183811.409580-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,79 +73,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250725183811.409580-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.50.1.470.g6ba607880d-goog
-Message-ID: <20250725183811.409580-5-cmllamas@google.com>
-Subject: [PATCH v19 4/5] binder: add transaction_report feature entry
+Message-ID: <20250725183811.409580-6-cmllamas@google.com>
+Subject: [PATCH v19 5/5] binder: add tracepoint for netlink reports
 From: Carlos Llamas <cmllamas@google.com>
 To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
 	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Yu-Ting Tseng <yutingtseng@google.com>, Li Li <dualli@google.com>, 
-	Ba Jing <bajing@cmss.chinamobile.com>
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
 Cc: Tiffany Yang <ynaffit@google.com>, John Stultz <jstultz@google.com>, 
 	Shai Barack <shayba@google.com>, "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Li Li <dualli@google.com>
+Add a tracepoint to capture the same details that are being sent through
+the generic netlink interface during transaction failures. This provides
+a useful debugging tool to observe the events independently from the
+netlink listeners.
 
-Add "transaction_report" to the binderfs feature list, to help userspace
-determine if the "BINDER_CMD_REPORT" generic netlink api is supported by
-the binder driver.
-
-Signed-off-by: Li Li <dualli@google.com>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- drivers/android/binderfs.c                                | 8 ++++++++
- .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/android/binder.c       |  2 ++
+ drivers/android/binder_trace.h | 37 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 4f827152d18e..f74a7e380261 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -59,6 +59,7 @@ struct binder_features {
- 	bool oneway_spam_detection;
- 	bool extended_error;
- 	bool freeze_notification;
-+	bool transaction_report;
- };
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 0d37eca514f9..695c1631703b 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3014,6 +3014,8 @@ static void binder_netlink_report(struct binder_proc *proc,
+ 				BINDER_NLGRP_REPORT))
+ 		return;
  
- static const struct constant_table binderfs_param_stats[] = {
-@@ -76,6 +77,7 @@ static struct binder_features binder_features = {
- 	.oneway_spam_detection = true,
- 	.extended_error = true,
- 	.freeze_notification = true,
-+	.transaction_report = true,
- };
- 
- static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
-@@ -616,6 +618,12 @@ static int init_binder_features(struct super_block *sb)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-+	dentry = binderfs_create_file(dir, "transaction_report",
-+				      &binder_features_fops,
-+				      &binder_features.transaction_report);
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
++	trace_binder_netlink_report(context, t, data_size, error);
 +
- 	return 0;
- }
+ 	skb = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
+ 	if (!skb)
+ 		return;
+diff --git a/drivers/android/binder_trace.h b/drivers/android/binder_trace.h
+index 97a78e5623db..fa5eb61cf580 100644
+--- a/drivers/android/binder_trace.h
++++ b/drivers/android/binder_trace.h
+@@ -402,6 +402,43 @@ TRACE_EVENT(binder_return,
+ 			  "unknown")
+ );
  
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 81db85a5cc16..39a68078a79b 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
- 		"oneway_spam_detection",
- 		"extended_error",
- 		"freeze_notification",
-+		"transaction_report",
- 	};
++TRACE_EVENT(binder_netlink_report,
++	TP_PROTO(const char *context,
++		 struct binder_transaction *t,
++		 u32 data_size,
++		 u32 error),
++	TP_ARGS(context, t, data_size, error),
++	TP_STRUCT__entry(
++		__field(const char *, context)
++		__field(u32, error)
++		__field(int, from_pid)
++		__field(int, from_tid)
++		__field(int, to_pid)
++		__field(int, to_tid)
++		__field(bool, is_reply)
++		__field(unsigned int, flags)
++		__field(unsigned int, code)
++		__field(size_t, data_size)
++	),
++	TP_fast_assign(
++		__entry->context = context;
++		__entry->error = error;
++		__entry->from_pid = t->from_pid;
++		__entry->from_tid = t->from_tid;
++		__entry->to_pid = t->to_proc ? t->to_proc->pid : 0;
++		__entry->to_tid = t->to_thread ? t->to_thread->pid : 0;
++		__entry->is_reply = t->is_reply;
++		__entry->flags = t->flags;
++		__entry->code = t->code;
++		__entry->data_size = data_size;
++	),
++	TP_printk("from %d:%d to %d:%d context=%s error=%d is_reply=%d flags=0x%x code=0x%x size=%zu",
++		  __entry->from_pid, __entry->from_tid,
++		  __entry->to_pid, __entry->to_tid,
++		  __entry->context, __entry->error, __entry->is_reply,
++		  __entry->flags, __entry->code, __entry->data_size)
++);
++
+ #endif /* _BINDER_TRACE_H */
  
- 	change_mountns(_metadata);
+ #undef TRACE_INCLUDE_PATH
 -- 
 2.50.1.470.g6ba607880d-goog
 
