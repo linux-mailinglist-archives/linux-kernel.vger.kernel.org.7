@@ -1,155 +1,140 @@
-Return-Path: <linux-kernel+bounces-745281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-745283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC801B117D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:14:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E0DB117D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 07:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2081760BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF4258703A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 05:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8991242917;
-	Fri, 25 Jul 2025 05:13:57 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF4C1EA7CF;
+	Fri, 25 Jul 2025 05:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRZz3FCl"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0B824167E;
-	Fri, 25 Jul 2025 05:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D508029A2;
+	Fri, 25 Jul 2025 05:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753420437; cv=none; b=dvKqdlJbTLz7KqWuGBy15MFrHjc4hO4JZqp7Aw7GlHcLyOjK/jn6msAdKSLLNYfo/oFg5VsbHZdIow4utUovp82NHeLsOlmZo3MWXxdh7vRE1tGx1cuvYOSkgnAtjpTt5qEH1IiHZcmCWlF55OcFubfIwhZhh68SSguNT742M40=
+	t=1753420739; cv=none; b=bGncg25INIJ4OUv7tfDZImcdMHzzmUOPQ8RB0OTu38i03oP1aloS4AH41MICGURfvSAqdBQ/V6vg/9EjE4chPvHYdCd5lCrVDegIZO7DoQgeQOnKGTOPs+xs1P1B7LZm2z6pG3+XKN9xigKSM781xdygIRZbRHXF8CqHd9OKYw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753420437; c=relaxed/simple;
-	bh=MTohbHtoS3tPetcP5TamR+xSxsE0DuHzDGHmpEqyA4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=espp0PUSKWuFgAhj35NjitY74NHmmnHMUDfWr2hCABBhnsMHQaABYOaPTfflWVwTLRHaFv92hozoJQQ/AV4w6w4PB8XguZoqKXUaTWuskOr/ukY1ikjseo/0RyAubl9kiiv7fmi3r0sXtfToGU2+JFzsEvpz2iXqWjlFdUVETgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.54] (unknown [98.97.27.28])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 655D2B4D0045;
-	Fri, 25 Jul 2025 07:13:49 +0200 (CEST)
-Message-ID: <43c5908c-c478-4e00-b1e5-955296e4ec24@freeshell.de>
-Date: Thu, 24 Jul 2025 22:13:47 -0700
+	s=arc-20240116; t=1753420739; c=relaxed/simple;
+	bh=FuTOrNphQ87GZdTd1ZusU/upsjz8QNLi/l8+5ihUqRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kaL6BK5sNjqYASJvm1pfBW85qNdZE7QhskSyVgYmi+xnaeSG/c752o3+GToVtbA9xaejyY976yNcaWK178BIo04p6SwF7wvFl2hzajg4cUG7S50NHK4U/10tjv1kdVbQzlpnPKOb75b20GcKGo9aw/WYBAxHcvaMDXERifKn7DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRZz3FCl; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-75ce8f8a3a1so1129099b3a.3;
+        Thu, 24 Jul 2025 22:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753420737; x=1754025537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwlCoX9n3S+W1I2p1kc9IDkLp+xJ/GgTuu9b7/n8qiY=;
+        b=dRZz3FClb8A57RtmdDx01J17YDbfXgaqnH03KO9Fx9A32Vv47IvMBcdO6c1N4WsgA2
+         wNKmQc6Pm+zj50XV6++XAE8atC8EYE/C2zItSeP4v/AJWjGhCkEk7/EYfMqY4shv/z4G
+         HoKiMTPxMBj6vWLCYUDrO0IMrlHAFivEG1O5fjyi37y6PMJGOH6ZanoNG+k6hZrEEXDD
+         bzlVoTp4vrZjIrogEXkhbno1sDBzKbMC5tAWRDr/FvZxEil05lMfbGeo1iS5PqURyogN
+         X7oTUatVThV0IC4VyOzMW+msYWBI+MclGel2BUom/l2N0d+Wg20DFdI5rbz1+5cPGrdr
+         EIPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753420737; x=1754025537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwlCoX9n3S+W1I2p1kc9IDkLp+xJ/GgTuu9b7/n8qiY=;
+        b=CRKd5rIrkn6xRiEgBY3i4IYYULuo5oxq1jFxoB4v/iS9XPPBxFS2oLN39CSvuz+VgP
+         ET7ZJ+tErfeqsZgSc2gTSLnBB0sqY7FCW9nWmQ+iXNW0XNTaR0ENssc0r2oLyb1wClTR
+         +70RN+eO3Z6AQjmciPValEXKujhPAYA9rykTQLDFijEYaJjHExkKXoo0GFPs2WBBgfKZ
+         KLncae9WiYX5Gt+Q68s7LYZjci8FehXo+QQsNr3Ce5jym2lP9hO4aTTPhzPILfXAvoDM
+         FTa2dtLQBF6zGN8dBDefBqT7VNl6gDat2pYU4OxQ7H3YAdQwHnXWiBUKM8aM06vs6nXr
+         B4bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7B/Fgp2tQMFOow3F1TVQCX95/aU57UNEiZKuOFUTd1VC9nhu1YqMDrHFafrC98z8cywglJNzMCsas@vger.kernel.org, AJvYcCXmOSEjkgMRRNy6DftKfOzmzI8v8Plps5vuyVRzxV7vxlLPe+Dz/FC8BDV8isfNyMY3vdbE1W1Qae3L3k3u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe2TgBRY/z/z7EWNKg6s1SocD+U7gctUHJgLHepmORYu0+qBu6
+	wr8qcqZXp25x32Zd+dDsYPBrReoZzjU5Cgu8MSFIK3sjA4qncWstJlTu
+X-Gm-Gg: ASbGncuIdVMZaEWebuadn1Cr3jcr0Ex3eWUQIQyaxl0puGGJ/xk2QQJ7le7MBUyRVvg
+	nDHkGggbS3JYcHrwE586YtuVGkuPlgbsexCSWdVSZ1OmzAMLvjkRI68CxVFXtcnvtoxWzgYnfwC
+	oS7ITehgmsBNRT3ko2a0AbktmYltadlRBV1diVb2GsrmMa+NnRDJTBK3pwhtgOf9ArB5IgX+wDe
+	PnXof7V/AkhGDZCDMW1rHFu1sYzvMGNh+cmZBIKOIHWf3NvQL4fvMq5C+nr26kbG/PgsFL1QnJJ
+	VESTVNHfAlzTUwpEIsWEntmw0Hou110Q4T15E68v6Y0vfwy1srFeG2jXuvhVxn7BKsjsYI7Uaqh
+	9qv5wYgEYuYPPoJPNhK6reZAhaxLao0O0r+Qr4CxjSs5Uoi2Y++xP4enxYItI05HoTsVcRMQ8T0
+	8=
+X-Google-Smtp-Source: AGHT+IFPixTsfdXK9p29I79UGfIgXeOO9MD+/pKk+rfiR7TaXdWeo4fQpMcFgUkv1hBHXBF3FZnWGw==
+X-Received: by 2002:aa7:88c6:0:b0:748:f80c:b398 with SMTP id d2e1a72fcca58-763382d8395mr881883b3a.15.1753420737003;
+        Thu, 24 Jul 2025 22:18:57 -0700 (PDT)
+Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-761ae15838csm2966301b3a.43.2025.07.24.22.18.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 22:18:56 -0700 (PDT)
+Date: Thu, 24 Jul 2025 22:18:53 -0700
+From: Tao Ren <rentao.bupt@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Tao Ren <taoren@meta.com>
+Subject: Re: [PATCH v3 10/13] ARM: dts: aspeed: Add Facebook Fuji-data64
+ (AST2600) Board
+Message-ID: <aIMTvUyHGd/ikKY9@localhost.localdomain>
+References: <20250723233013.142337-1-rentao.bupt@gmail.com>
+ <20250723233013.142337-11-rentao.bupt@gmail.com>
+ <d09667e5-992e-4ced-ae30-7a4116a72c62@lunn.ch>
+ <aIGGdbIX9HaV4dB/@localhost.localdomain>
+ <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: starfive: jh7110-common: drop no-sdio
- property from mmc1
-To: Conor Dooley <conor@kernel.org>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, William Qiu <william.qiu@starfivetech.com>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250724075600.239522-1-e@freeshell.de>
- <20250724-equal-limb-2922f240961e@spud>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <20250724-equal-limb-2922f240961e@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <769d6817-ee97-4a23-b013-29bc875a00cb@lunn.ch>
 
-Hi Conor,
-
-On 7/24/25 09:51, Conor Dooley wrote:
-> On Thu, Jul 24, 2025 at 12:55:53AM -0700, E Shattow wrote:
->> Drop no-sdio property avoids a delete-property on variant board dts
->> having an SDIO wireless module connected to mmc1.
+On Thu, Jul 24, 2025 at 02:53:39PM +0200, Andrew Lunn wrote:
+> On Wed, Jul 23, 2025 at 06:03:49PM -0700, Tao Ren wrote:
+> > On Thu, Jul 24, 2025 at 02:03:20AM +0200, Andrew Lunn wrote:
+> > > > +&mac3 {
+> > > > +	status = "okay";
+> > > > +	phy-mode = "rgmii";
+> > > 
+> > > Does the PCB have extra long clock lines to implement the 2ns delay?
+> > > 
+> > > 	Andrew
+> > 
+> > Hi Andrew,
+> > 
+> > Thank you for catching it. I didn't notice the settings because the file
+> > is copied from the exiting fuji.dts with minor changes.
+> > 
+> > The delay is currently introduced on MAC side (by manually setting SCU
+> > registers), but I guess I can update phy-mode to "rgmii-id" so the delay
+> > can be handled by the PHY?
 > 
-> I'm struggling to understand why this change is correct.
+> That would be good, if it works. The problem with the current code is
+> that those SCU registers are not set as part of the MAC driver, so it
+> is hard to know what value they have.
 > 
-> If there are specific boards that have wireless modules connected
-> instead of using sdcards, how come the no-sdio property isn't moved to the
-> the boards that do have sdcard slots?
+> 	Andrew
 
-Why is 'no-sdio' property there to begin with...
+Hi Andrew,
 
-> The property was added for the visionfive 2, and only on mmc1, so should
-> it be retained for boards that match the visionfive 2 in terms of how
-> they use mmc?
+I set phy-mode to rgmii-id (letting BCM54616S handle RX/TX delay) and
+cleared SCU350 (MAC3/4 RGMII delay) register, but somehow BMC is not
+reachable over ethernet.
 
-Ref.:
-https://lore.kernel.org/lkml/20221207131731.1291517-4-william.qiu@starfivetech.com/
+Let me see if I missed other settings. I will drop the mac entry from v4
+if I cannot make it work by next Monday.
 
-My theory is VisionFive2 board hardware can support connecting up some
-SDIO module there with ready-made available adapters, it may be possible
-(if unusual) that would work? SDIO is 4-wide and some voltage
-requirements, and a couple of GPIO, so I'm aware that's a stretch of a
-statement but it could be done without soldering. I wouldn't expect it,
-but why restrict this everywhere inheriting from jh7110-common.dtsi with
-'no-sdio' and then (needs testing!) if it doesn't matter one way or the
-other for VisionFive2 just drop it I think as being inaccurate/unnecessary?
+Thanks,
 
-JH7110 CPU supports two interfaces of SDIO3.0/eMMC so it's not clear to
-me if there's some reason for 'no-sdio' property to be there. Does
-allowing SDIO (?) break eMMC and SD Card devices, is it destructive?
-
-Not knowing what 'no-sdio' does technically I dropped the property and
-tested with the hardware I do have. The 'no-sdio' property
-present/absent does not appear to do anything user-impactful on Pine64
-Star64 that has SD Card slot on mmc1, and as would be expected on Milk-V
-Mars CM Lite WiFi when there's an SDIO module at mmc1 it then fails to
-initialize if 'no-sdio' property is present.
-
-> 
-> Could you add an explanation for why removing this entirely is the right
-> thing to do, rather than only removing it for these variant boards?
-
-Yes, I can rephrase a bit like "relax no-sdio restriction on mmc1 for
-jh7110 boards", or else reconsider the approach. I was going to approach
-with `/delete-property/ no-sdio;` later elsewhere but after testing on
-Pine64 Star64 with similar configuration to VisionFive2 mmc interfaces,
-and knowing that Milk-V Mars CM Lite WiFi detects AP6256 SDIO peripheral
-at mmc1 when this property is dropped (and with a few additional
-things)... I prefer to reduce the problems that would need to be avoided.
-
-I have done all the testing I can do with hardware I have. As-is it's
-just like I wrote, we'll have to solicit some testing feedback on that
-and wait to learn what this does for the other boards.
-
-Aside, anyone want to chime in what is the utility of 'no-sdio'
-property, how do you know from a schematic if it is appropriate, can it
-be simply dropped as I suggest for JH7110 boards?
-
-> 
-> Cheers,
-> Conor.
-
-Thank you for reviewing! -E
-
-> 
->>
->> Signed-off-by: E Shattow <e@freeshell.de>
->> ---
->>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->> index 2eaf01775ef5..a315113840e5 100644
->> --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->> +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
->> @@ -299,7 +299,6 @@ &mmc1 {
->>  	assigned-clock-rates = <50000000>;
->>  	bus-width = <4>;
->>  	bootph-pre-ram;
->> -	no-sdio;
->>  	no-mmc;
->>  	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
->>  	disable-wp;
->>
->> base-commit: 28fa0dcb571ab8f3be4d919f0e20e01d4e44bcb1
->> -- 
->> 2.50.0
->>
-
+Tao
 
