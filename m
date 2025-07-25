@@ -1,129 +1,466 @@
-Return-Path: <linux-kernel+bounces-746254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86876B1249F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:11:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4E9B124AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 21:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D181702EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:11:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A65227BC9AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 19:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2A3259C84;
-	Fri, 25 Jul 2025 19:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3ADC258CD4;
+	Fri, 25 Jul 2025 19:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnS9beiT"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="fP1xgZjI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816EE237164
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 19:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753470665; cv=none; b=QTsqg/3uTSjBUyCGbxH8649+cGDaT52zwL2WeE8/Wq2GDEZ/fJ/mnMj6biXTetXX85y8PJdWHeOUawfyEkFUxe52LPBFlpxRKbxOEE4cb7n/hUenOoUoS5pQtuf8xOb/sL50v1aiJy/XKioXZ19eUxxL5rWs6xranC/EoV7ZWWo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753470665; c=relaxed/simple;
-	bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZiCaw022dj7G9tIhDA5it9EvxSP8nj3DiMzi/Hlf2ZRthMsiqS5ZsBp55LWJd3eqki5ku1Mwmx44fQRy3TwqMtVl3F1pOuNaaoQ/+zoCCcg3lTAd07PSVy8GHV/NaxhEgyRvu3Cg0Eq7v/uNT2TJV7B1wrG3dCK/yk6ZEy9iEvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnS9beiT; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-611d32903d5so2120a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 12:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753470662; x=1754075462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
-        b=DnS9beiT7uXsPw3bRisI+ErVdWds8WtJYyqV1d5E2WN2ZE0H2wuraqH+6Dl88gV9Nx
-         IqqgSxSFfnH1JEtdCymc9KolcD+WMl9AOtqvqx+sLOAS5P7FxKyHPltmWPOtq+VIvnpC
-         D8HlKLGnF3KG9cEcP3MbZrtG6WtdQTdF4FwHrV7rGNvGJvRZwUJcVQYuBrKswmlivJSI
-         p4U7orPNmLOGN88jwxyzKOss11JcJBKZgTvRnYmDX3mpvRtHJCaYHfxfwG3Sws5gNekF
-         dswdqL0KSeD08UVsbSFKzLgtR60KvO5BYuvUoCDiLHJwTc6tTZJb4bQIfpKNrTBEfugc
-         IFag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753470662; x=1754075462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ohbQ5KF8b/EeqfVu3tRLb4Pn8KVgHa3I47YPvi58yJM=;
-        b=Vea/0qLx5NnKxdmQO4e9vDh59UGXBKablKFH1DVCFk2cuLsqd4hCpqwFbUnZGepSbt
-         9xG3oU8pBG5Yt9zyGPxaq2epDPWhq2YV5U1Y96X1c+uXenZFqD46Xqm9kP45JUFL9QjO
-         UG5nZ9xLWXUoa4HQAAoEcoLkOd5DGMe85sOBUn54sOgc2PbG06+OqTJ/ZuCzT1AAYJns
-         qXMx9HKSz9qJ8eaJyx4+cxdlkgoh4yVD01k0qXajD+0q8BqX9Z99VqcovU0Jh6n3QVHc
-         NA0qel+9ikcK317ONf9PvyVjmYNu8Aprz8LuV22mmbTEac075rvRcl/eU5+YcjEzUQvW
-         c0bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgdT9Fxmp+LtfKlZ261r6SdQSZjP8ZzfRQYO3mAXU3i8A3tKX1SRTvtVpTk8iK7Eky0Zwz8miFv0fPR44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvv4zzsOCFO9UJPZpjTH+bkH155iT9GR7nQ80iArIp6SPWZKJD
-	wgLr8n0UgGF066KaFnldwiG5cZEmhqbDkYpnXM5cY0I9rqQBBDcG+/Pen48FYeDIZ1Jjgp6Hkm/
-	OM/B2a3HMaw7TggsB8DrA9ZDm/TGg8RBqyNtV+FAU
-X-Gm-Gg: ASbGncuIGls6x7xWIVc/qlWzrP7nYLdS98XgFp+40KW/KQL2GkP4ZAw5BP/esy4/DEM
-	OeWh+OpGzviXulCK1Q0TrTupugTksL3tydB6YbvYtY7WQ5xma7qqc8w138JaK14J7bNOfrvzFkL
-	7A5jrMIvGZi9UFk1LRhu9S56jivYZ2XIQ8zv7uRrVQ1RSfQS86L2FLlzAwRan6GTvrTsSf8DEGm
-	WIfmePMFjrjPUn8Lazgp95yJaJnDWyyFxE=
-X-Google-Smtp-Source: AGHT+IFnM9lb8v0yhy+r9g7LlejQ85g1+jN80aPjt0EXGFDmgpf5XaZMiO20Q6d8dkFVzoj7t44+LzAH3gV+dXXjqTY=
-X-Received: by 2002:a05:6402:2088:b0:607:bd2:4757 with SMTP id
- 4fb4d7f45d1cf-61505ca9e53mr18025a12.1.1753470661523; Fri, 25 Jul 2025
- 12:11:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9460237164;
+	Fri, 25 Jul 2025 19:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753470783; cv=pass; b=px2S2sX0r8FI4VEFkeHrwpSi+yDj95ymVNW9e5DHBJzsKHBRJNLq87bOpXBC7pEduJDSctyGgqiKaR/07/MS2z15mfHcrNizaQhG/whu/N1gsnQ5al7vZaV7o6NXxCvXWB+Se6kL9JoTz/0GR54qSiKGktZrBW3Luw5LB2u1tis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753470783; c=relaxed/simple;
+	bh=3VnMG1k4X1TkKALvQkkBp3daPEuqKS3s14ob6/plYkg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lgNR4iRUduwv20Q3ju57vc8BNSJgjR4QDzgeZAetxyo+X894ZTcV2vUkotRnb/NDcqdykLp+e13fhbPoXHD3naDQQ2v7JRm23FLCJCgLWBytTlk4fWeOBrlFT/JFuN1IfxHuDQ0+KwhCTg28oXDdYpkQN5ScyISE4hiS8bUCqI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=fP1xgZjI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753470764; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=M9s+XJhLm8l1HdhbjRVscC2FdmfNgDKaHh/9aUu0+wKR0Z1THwsdQzibJnJO0zTLLHgb4lCKOz6tCtxtYAND+LTbgw2O3dFMwDU/HRwg3fyib8wJuxTf0TL4FkOy56vBsAStmkNtp+OEoKyqc3J0kxkqQX5WxxLvQzwfdRrWMnM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753470764; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=m22KG+X/O5hh2kyJ99La7fVjdSugOC1q3OjwAeZLFc4=; 
+	b=LzYg18BYPQfniLFxigPFts5wXrFWLKK2jX2Jh67TKqcjJBo/h9qmPFtNEjsMY6CEyTBJNdhcLM+YTa59Iw/d3NfYh7UbELewi0th3d+avvAHoAUUZcRFS0648+747QhlQBPJqa3mQgl3UvuSCs7iRFPgdtE1wuxZZv35ZPQ64Io=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753470764;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=m22KG+X/O5hh2kyJ99La7fVjdSugOC1q3OjwAeZLFc4=;
+	b=fP1xgZjI4cbIIYLhnJW30Il2R3tYtjSH/S9iT8J/eI/fyGC3i5UjCtkiFCVWEMUX
+	usiT8yYllts3uQbdj7x9800OvEeQ3rzZZwBxFnZOnf3hCwFWnhgMRa93fGXU0qusXyQ
+	FkUwJSzOb6ceSlnzQEmbqniJv0w4Lx0exbvFHqHI=
+Received: by mx.zohomail.com with SMTPS id 1753470761484508.6718281688985;
+	Fri, 25 Jul 2025 12:12:41 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1752232673.git.lorenzo.stoakes@oracle.com>
- <8f41e72b0543953d277e96d5e67a52f287cdbac3.1752232673.git.lorenzo.stoakes@oracle.com>
- <CAG48ez0KjHHAWsJo76GuuYYaFCH=3n7axN2ryxy7-Vabp5JA-Q@mail.gmail.com> <892e3e49-dbcd-4c1f-9966-c004d63f52df@lucifer.local>
-In-Reply-To: <892e3e49-dbcd-4c1f-9966-c004d63f52df@lucifer.local>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 25 Jul 2025 21:10:25 +0200
-X-Gm-Features: Ac12FXzH0kaDd1FSHQ6rjBvK5l93OfpQZvkg8iFQz3nK0xtBEz9RE_fXG7JCCE8
-Message-ID: <CAG48ez3qB7W3JqjrkkQ3SRdQNza3Q9noqkgmBg=3F_8vhwQ4gQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] mm/mremap: permit mremap() move of multiple VMAs
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 17/19] gpu: nova-core: register: add support for
+ register arrays
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250718-nova-regs-v2-17-7b6a762aa1cd@nvidia.com>
+Date: Fri, 25 Jul 2025 16:12:27 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <D0DDB132-68E8-43D0-B7EB-AA607C9BB72F@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-17-7b6a762aa1cd@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Fri, Jul 25, 2025 at 7:28=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> On Fri, Jul 25, 2025 at 07:11:49PM +0200, Jann Horn wrote:
-> > On Fri, Jul 11, 2025 at 1:38=E2=80=AFPM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > > Note that any failures encountered will result in a partial move. Sin=
-ce an
-> > > mremap() can fail at any time, this might result in only some of the =
-VMAs
-> > > being moved.
-> > >
-> > > Note that failures are very rare and typically require an out of a me=
-mory
-> > > condition or a mapping limit condition to be hit, assuming the VMAs b=
-eing
-> > > moved are valid.
-> >
-> > Hrm. So if userspace tries to move a series of VMAs with mremap(), and
-> > the operation fails, and userspace assumes the old syscall semantics,
-> > userspace could assume that its memory is still at the old address,
-> > when that's actually not true; and if userspace tries to access it
-> > there, userspace UAF happens?
->
-> At 6pm on the last day of the cycle? :) dude :) this long week gets ever
-> longer...
+Hi Alex,
 
-To be clear, I very much do not expect you to instantly reply to
-random patch review mail I send you late on a Friday evening. :P
+> On 18 Jul 2025, at 04:26, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> Having registers that can be interpreted identically in a contiguous =
+I/O
+> area (or at least, following a given stride) is a common way to =
+organize
+> registers, and is used by NVIDIA hardware. Thus, add a way to simply =
+and
+> safely declare such a layout using the register!() macro.
+>=20
+> Build-time bound-checking is effective for array accesses performed =
+with
+> a constant. For cases where the index cannot be known at compile time,
+> `try_` variants of the accessors are also made available that return
+> `EINVAL` if the access is out-of-bounds.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> drivers/gpu/nova-core/gpu.rs         |   2 +-
+> drivers/gpu/nova-core/regs.rs        |  15 +--
+> drivers/gpu/nova-core/regs/macros.rs | 195 =
++++++++++++++++++++++++++++++++++++
+> 3 files changed, 204 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/gpu/nova-core/gpu.rs =
+b/drivers/gpu/nova-core/gpu.rs
+> index =
+72d40b0124f0c1a2a381484172c289af523511df..325484ecdaf03d4dcdc4ac2aecc10ca7=
+63f442db 100644
+> --- a/drivers/gpu/nova-core/gpu.rs
+> +++ b/drivers/gpu/nova-core/gpu.rs
+> @@ -221,7 +221,7 @@ fn run_fwsec_frts(
+>         fwsec_frts.run(dev, falcon, bar)?;
+>=20
+>         // SCRATCH_E contains the error code for FWSEC-FRTS.
+> -        let frts_status =3D =
+regs::NV_PBUS_SW_SCRATCH_0E::read(bar).frts_err_code();
+> +        let frts_status =3D =
+regs::NV_PBUS_SW_SCRATCH_0E_FRTS_ERR::read(bar).frts_err_code();
+>         if frts_status !=3D 0 {
+>             dev_err!(
+>                 dev,
+> diff --git a/drivers/gpu/nova-core/regs.rs =
+b/drivers/gpu/nova-core/regs.rs
+> index =
+35d796b744e933ad70245b50e6eff861b429c519..0c857842b31f9ca5d842ee5b1e5841de=
+480d1f1f 100644
+> --- a/drivers/gpu/nova-core/regs.rs
+> +++ b/drivers/gpu/nova-core/regs.rs
+> @@ -44,8 +44,10 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
+>=20
+> // PBUS
+>=20
+> -// TODO[REGA]: this is an array of registers.
+> -register!(NV_PBUS_SW_SCRATCH_0E@0x00001438  {
+> +register!(NV_PBUS_SW_SCRATCH @ 0x00001400[64]  {});
+> +
+> +register!(NV_PBUS_SW_SCRATCH_0E_FRTS_ERR =3D> =
+NV_PBUS_SW_SCRATCH[0xe],
+> +    "scratch register 0xe used as FRTS firmware error code" {
+>     31:16   frts_err_code as u16;
+> });
+>=20
+> @@ -123,13 +125,12 @@ pub(crate) fn higher_bound(self) -> u64 {
+>     0:0     read_protection_level0 as bool, "Set after FWSEC lowers =
+its protection level";
+> });
+>=20
+> -// TODO[REGA]: This is an array of registers.
+> -register!(NV_PGC6_AON_SECURE_SCRATCH_GROUP_05 @ 0x00118234 {
+> -    31:0    value as u32;
+> -});
+> +// OpenRM defines this as a register array, but doesn't specify its =
+size and only uses its first
+> +// element. Be conservative until we know the actual size or need to =
+use more registers.
+> +register!(NV_PGC6_AON_SECURE_SCRATCH_GROUP_05 @ 0x00118234[1] {});
+>=20
+> register!(
+> -    NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_0_GFW_BOOT =3D> =
+NV_PGC6_AON_SECURE_SCRATCH_GROUP_05,
+> +    NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_0_GFW_BOOT =3D> =
+NV_PGC6_AON_SECURE_SCRATCH_GROUP_05[0],
+>     "Scratch group 05 register 0 used as GFW boot progress indicator" =
+{
+>         7:0    progress as u8, "Progress of GFW boot (0xff means =
+completed)";
+>     }
+> diff --git a/drivers/gpu/nova-core/regs/macros.rs =
+b/drivers/gpu/nova-core/regs/macros.rs
+> index =
+3465fb302ce921ca995ecbb71b83efe1c9a62a1d..0b5ccc50967b1deb02cf927142d5f422=
+141e780d 100644
+> --- a/drivers/gpu/nova-core/regs/macros.rs
+> +++ b/drivers/gpu/nova-core/regs/macros.rs
+> @@ -162,6 +162,57 @@ pub(crate) trait RegisterBase<T> {
+> /// // Start the aliased `CPU0`.
+> /// CPU_CTL_ALIAS::alter(bar, &CPU0, |r| r.set_alias_start(true));
+> /// ```
+> +///
+> +/// ## Arrays of registers
+> +///
+> +/// Some I/O areas contain consecutive values that can be interpreted =
+in the same way. These areas
+> +/// can be defined as an array of identical registers, allowing them =
+to be accessed by index with
+> +/// compile-time or runtime bound checking. Simply define their =
+address as `Address[Size]`, and add
+> +/// an `idx` parameter to their `read`, `write` and `alter` methods:
+> +///
+> +/// ```no_run
+> +/// # fn no_run() -> Result<(), Error> {
+> +/// # fn get_scratch_idx() -> usize {
+> +/// #   0x15
+> +/// # }
+> +/// // Array of 64 consecutive registers with the same layout =
+starting at offset `0x80`.
+> +/// register!(SCRATCH @ 0x00000080[64], "Scratch registers" {
+> +///     31:0    value as u32;
+> +/// });
+> +///
+> +/// // Read scratch register 0, i.e. I/O address `0x80`.
+> +/// let scratch_0 =3D SCRATCH::read(bar, 0).value();
+> +/// // Read scratch register 15, i.e. I/O address `0x80 + (15 * 4)`.
+> +/// let scratch_15 =3D SCRATCH::read(bar, 15).value();
 
-> Otherwise for mapping limit we likely hit it right away. I moved all the
-> checks up front for standard VMA/param errors.
+Ahhhhh, maybe this is what I have been looking for all along.
 
-Ah, I missed that part.
+Alright, this is great! :)
+
+> +///
+> +/// // This is out of bounds and won't build.
+> +/// // let scratch_128 =3D SCRATCH::read(bar, 128).value();
+> +///
+> +/// // Runtime-obtained array index.
+> +/// let scratch_idx =3D get_scratch_idx();
+> +/// // Access on a runtime index returns an error if it is =
+out-of-bounds.
+> +/// let some_scratch =3D SCRATCH::try_read(bar, =
+scratch_idx)?.value();
+
+Awesome.
+
+> +///
+> +/// // Alias to a particular register in an array.
+> +/// // Here `SCRATCH[8]` is used to convey the firmware exit code.
+> +/// register!(FIRMWARE_STATUS =3D> SCRATCH[8], "Firmware exit status =
+code" {
+> +///     7:0     status as u8;
+> +/// });
+> +///
+> +/// let status =3D FIRMWARE_STATUS::read(bar).status();
+> +///
+> +/// // Non-contiguous register arrays can be defined by adding a =
+stride parameter.
+> +/// // Here, each of the 16 registers of the array are separated by 8 =
+bytes, meaning that the
+> +/// // registers of the two declarations below are interleaved.
+> +/// register!(SCRATCH_INTERLEAVED_0 @ 0x000000c0[16 ; 8], "Scratch =
+registers bank 0" {
+> +///     31:0    value as u32;
+> +/// });
+> +/// register!(SCRATCH_INTERLEAVED_1 @ 0x000000c4[16 ; 8], "Scratch =
+registers bank 1" {
+> +///     31:0    value as u32;
+> +/// });
+> +/// # Ok(())
+> +/// # }
+> +/// ```
+> macro_rules! register {
+>     // Creates a register at a fixed offset of the MMIO space.
+>     ($name:ident @ $offset:literal $(, $comment:literal)? { =
+$($fields:tt)* } ) =3D> {
+> @@ -187,6 +238,35 @@ macro_rules! register {
+>         register!(@io_relative $name @ $base [ $alias::OFFSET ]);
+>     };
+>=20
+> +    // Creates an array of registers at a fixed offset of the MMIO =
+space.
+> +    (
+> +        $name:ident @ $offset:literal [ $size:expr ; $stride:expr ] =
+$(, $comment:literal)? {
+> +            $($fields:tt)*
+> +        }
+> +    ) =3D> {
+> +        static_assert!(::core::mem::size_of::<u32>() <=3D $stride);
+
+Perhaps a TODO here would be nice, since you=E2=80=99ll want to change =
+it when/if
+this macros get to support non-u32 types (which is apparently on the =
+roadmap
+IIUC).
+
+> +        register!(@core $name $(, $comment)? { $($fields)* } );
+> +        register!(@io_array $name @ $offset [ $size ; $stride ]);
+> +    };
+> +
+> +    // Shortcut for contiguous array of registers (stride =3D=3D size =
+of element).
+> +    (
+> +        $name:ident @ $offset:literal [ $size:expr ] $(, =
+$comment:literal)? {
+> +            $($fields:tt)*
+> +        }
+> +    ) =3D> {
+> +        register!($name @ $offset [ $size ; =
+::core::mem::size_of::<u32>() ] $(, $comment)? {
+
+Same here.
+
+> +            $($fields)*
+> +        } );
+> +    };
+> +
+> +    // Creates an alias of register `idx` of array of registers =
+`alias` with its own fields.
+> +    ($name:ident =3D> $alias:ident [ $idx:expr ] $(, =
+$comment:literal)? { $($fields:tt)* }) =3D> {
+> +        static_assert!($idx < $alias::SIZE);
+> +        register!(@core $name $(, $comment)? { $($fields)* } );
+> +        register!(@io_fixed $name @ $alias::OFFSET + $idx * =
+$alias::STRIDE );
+
+Why is this @io_fixed?
+
+> +    };
+> +
+>     // All rules below are helpers.
+>=20
+>     // Defines the wrapper `$name` type, as well as its relevant =
+implementations (`Debug`,
+> @@ -520,4 +600,119 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
+>             }
+>         }
+>     };
+> +
+> +    // Generates the IO accessors for an array of registers.
+> +    (@io_array $name:ident @ $offset:literal [ $size:expr ; =
+$stride:expr ]) =3D> {
+> +        #[allow(dead_code)]
+> +        impl $name {
+> +            pub(crate) const OFFSET: usize =3D $offset;
+> +            pub(crate) const SIZE: usize =3D $size;
+> +            pub(crate) const STRIDE: usize =3D $stride;
+> +
+> +            /// Read the array register at index `idx` from its =
+address in `io`.
+> +            #[inline(always)]
+> +            pub(crate) fn read<const SIZE: usize, T>(
+> +                io: &T,
+> +                idx: usize,
+> +            ) -> Self where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +            {
+> +                build_assert!(idx < Self::SIZE);
+> +
+> +                let offset =3D Self::OFFSET + (idx * Self::STRIDE);
+> +                let value =3D io.read32(offset);
+> +
+> +                Self(value)
+> +            }
+> +
+> +            /// Write the value contained in `self` to the array =
+register with index `idx` in `io`.
+> +            #[inline(always)]
+> +            pub(crate) fn write<const SIZE: usize, T>(
+> +                self,
+> +                io: &T,
+> +                idx: usize
+> +            ) where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +            {
+> +                build_assert!(idx < Self::SIZE);
+> +
+> +                let offset =3D Self::OFFSET + (idx * Self::STRIDE);
+> +
+> +                io.write32(self.0, offset);
+> +            }
+> +
+> +            /// Read the array register at index `idx` in `io` and =
+run `f` on its value to obtain a
+> +            /// new value to write back.
+> +            #[inline(always)]
+> +            pub(crate) fn alter<const SIZE: usize, T, F>(
+> +                io: &T,
+> +                idx: usize,
+> +                f: F,
+> +            ) where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +                F: ::core::ops::FnOnce(Self) -> Self,
+> +            {
+> +                let reg =3D f(Self::read(io, idx));
+> +                reg.write(io, idx);
+> +            }
+> +
+> +            /// Read the array register at index `idx` from its =
+address in `io`.
+> +            ///
+> +            /// The validity of `idx` is checked at run-time, and =
+`EINVAL` is returned is the
+> +            /// access was out-of-bounds.
+> +            #[inline(always)]
+> +            pub(crate) fn try_read<const SIZE: usize, T>(
+> +                io: &T,
+> +                idx: usize,
+> +            ) -> ::kernel::error::Result<Self> where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +            {
+> +                if idx < Self::SIZE {
+> +                    Ok(Self::read(io, idx))
+> +                } else {
+> +                    Err(EINVAL)
+> +                }
+> +            }
+> +
+> +            /// Write the value contained in `self` to the array =
+register with index `idx` in `io`.
+> +            ///
+> +            /// The validity of `idx` is checked at run-time, and =
+`EINVAL` is returned is the
+> +            /// access was out-of-bounds.
+> +            #[inline(always)]
+> +            pub(crate) fn try_write<const SIZE: usize, T>(
+> +                self,
+> +                io: &T,
+> +                idx: usize,
+> +            ) -> ::kernel::error::Result where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +            {
+> +                if idx < Self::SIZE {
+> +                    Ok(self.write(io, idx))
+> +                } else {
+> +                    Err(EINVAL)
+> +                }
+> +            }
+> +
+> +            /// Read the array register at index `idx` in `io` and =
+run `f` on its value to obtain a
+> +            /// new value to write back.
+> +            ///
+> +            /// The validity of `idx` is checked at run-time, and =
+`EINVAL` is returned is the
+> +            /// access was out-of-bounds.
+> +            #[inline(always)]
+> +            pub(crate) fn try_alter<const SIZE: usize, T, F>(
+> +                io: &T,
+> +                idx: usize,
+> +                f: F,
+> +            ) -> ::kernel::error::Result where
+> +                T: ::core::ops::Deref<Target =3D =
+::kernel::io::Io<SIZE>>,
+> +                F: ::core::ops::FnOnce(Self) -> Self,
+> +            {
+> +                if idx < Self::SIZE {
+> +                    Ok(Self::alter(io, idx, f))
+> +                } else {
+> +                    Err(EINVAL)
+> +                }
+> +            }
+> +        }
+> +    };
+> }
+>=20
+> --=20
+> 2.50.1
+>=20
+
+Assuming that the @io_fixed stuff is correct:
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+=E2=80=94 Daniel
+
 
