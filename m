@@ -1,204 +1,590 @@
-Return-Path: <linux-kernel+bounces-746153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B5CB123B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:23:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89578B123B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BBD816959F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:23:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766341CE0148
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB016242938;
-	Fri, 25 Jul 2025 18:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2180C24468D;
+	Fri, 25 Jul 2025 18:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dc3F547n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VX3EZVjY"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC068F6E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9D41C8FBA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753467797; cv=none; b=oVFt3Cqf8m3XlhIQTBxikImrssSwiOOHjCeSQOMSlvrrexIWnVIhTMr1locwd4XcMoXVsWLDA1WeGabGHFQJJ3T7P+8LAluCUZ5ary6/o3J8oo0rUC7QbAbOFHUiYmEeEy2L1F0IclaaOKCb6slt8FPZqAs+JNE7WKz+ZYCmT08=
+	t=1753467869; cv=none; b=jzEgvuO4HSv1VCBg5EGpHLmGUt0vUEZiNIRP0iKJx/Jax4r9n6BVXaPxGGg2sIhkD23e2MBWDpX6PrgZRjgqyRSl3QY9CYuB0qXDuW4HDOinb513mfgCgKf0OJyF3FJSt9oOepO79/Jh8Dm/KMOg2YXIxbdPADJr/7x8VSj/yU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753467797; c=relaxed/simple;
-	bh=r7tcOmJMLeLiXh+D6d+kurXynhXG1dwBJ/XS9evG7Bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixOTAcCdszmPr1raf0rMjFC0lecHUsRCQd3QHLD8079c7o56AUcfcQp6aObJQtvCQ9Sl1QvcYZyjsN3C6icms0nZ3wjO8mezabNoFWNCjiHVG2N3E6gEIQPjclx76vdzXThWn12L9aCl2eBLLTO8RAa7OD/OGThT2pVSVx6kUJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dc3F547n; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753467790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3mXykL/F/ZsfIcI+5pjRPHMMuGt9p/dtOhJ8qI8ma+I=;
-	b=Dc3F547n/aWSngsHibUh6B9R4wEh4JXExrMUUbqyHyeFTGxNcJHtmg3ygSEkdTqghSz0VV
-	29h0fMDbM0y8oCN9DSqtSYMy/ZN9BThTX0cAB+/k6JhACMSXK/5cRrpYEaL6Y0IdVxjBwX
-	NwkIhSOTmM0UiVlX83V4EVdKv1mP0HA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-Wvo2td2iN8mEAu4R1fiTpA-1; Fri, 25 Jul 2025 14:23:08 -0400
-X-MC-Unique: Wvo2td2iN8mEAu4R1fiTpA-1
-X-Mimecast-MFC-AGG-ID: Wvo2td2iN8mEAu4R1fiTpA_1753467787
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f3796779so1354381f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:23:08 -0700 (PDT)
+	s=arc-20240116; t=1753467869; c=relaxed/simple;
+	bh=S/Qm/x7xGIne4UBx7olHUeOYt0k5dA4vR/1jFmfAzb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WaxF/eYMrx4hA+ZVJibaFoU9hlOlgdENIjeaH18IfI1/cBmYeiPya3EcOBUUIQdZc1uA/MPXX0FhFY0wo9/B4bo8NRdo6MCvnymr9n4cRu74jwGfp+fxtnuWStB4swZburG/zb6YeAoO2/KYa+Qxay1OVdeKL/hrxu5oFZcnN58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VX3EZVjY; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e3ca89a34bso17805ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753467866; x=1754072666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8EUe3sj9UTKJEWOeBpDqD3kZ8JWbDPKaoaCnMHljn3s=;
+        b=VX3EZVjYbNa6B7IUeS+lIIwcQOW0WWFrqHiuIAaT2s49JGoayDDWe1HLrtN4G30cK7
+         hV/HrsaCGWIhGZoKj691nldMD5TE+94JYs3++HuTFST/5oAp6KZfL8jjUA421Gm7fSwJ
+         +GlrEWbsdlVqZgnafGPOPzR6W7vGoGRJqhip0LaGnmO58uAFGeBIkskEM9p5LUxnAv4P
+         d3khmYX6kIzd294412BjLnJhUxgYmnmM/cDIzz1Ci5BoMLFnvXOv7Faa6JlTjUqJhE/P
+         wByAbMC+Q2rlGTdgSXRV5qNw3HZns+XQRqfeGQUz/xkC3/FuqAMBFTrzptZNcMWV8vzm
+         AWrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753467787; x=1754072587;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3mXykL/F/ZsfIcI+5pjRPHMMuGt9p/dtOhJ8qI8ma+I=;
-        b=WMR56l1ZY/eXYu6fduLiHFaf25ftUl3V6zzoL2S6SwUNSREvhdH+zlUg+NfkJ39zUG
-         vd/vBqWER3dOdau4hsqcZ1n4OcLgRrXSgZoxfo8wofilyDEG0ia6I0fzBJ8jqMJHffqx
-         AUSGLnL3ykrKKGyVrNeQ44zRAtPu9nKVoKWw2xtUPYQoeWPmGeCZOUWaFh7dKcTVVYii
-         lAuZtZ12vlniztKlOyaxT9jiqJ77DgYDThfLt9Htvsnc/xa84ojlwOon5edz8h+payO1
-         H0p9vpqNJxXhl3UwnwCTNUANmY71JfhuoxU9OAL5uSDAJlk8jtRrfOTIggqMVqwkXaue
-         vQ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNJ+R6hvqf3cIw1py3CyizpjYt5lg9eXZvFdOJ3FGy0V4f00txMvMWZJkQFs/eD0OWH28jAqsF1SZdEQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC2TaqHYgj+cHIu2qJSOQQv8UDGktvDjA1iiyFzgBtDAwACvk8
-	Qz2oo8NdN7sZ0GaiY/Kz72WLcWY49SWaLhiqgkR5ss87zZLjT5oJz6T/EL/8IiwGAiaFsOyex6r
-	VU+wZWZa9rSFwYGg2ZBaljChKjXNmhQUGGADPLNZgFrfIWDoWfC69MuxqsjhuVc0lGw==
-X-Gm-Gg: ASbGnctuYrphwIoalx52WxmE4WVbYwyOnUgs0Tv1seCKVV2BgGeG4Jj3KAB4us2cVpC
-	iZQsSgpboBi6u1pulGrRqIwYz3s0LxV9bIEz1rA6ZfKIy2+GLzrZTap+dDCkUlaUmJz/0oW56Zn
-	UhG6Fe+eI1WqsEx7E5/Gh57eSU+VRFTmWHBMvZmpFVoU66skxAbzUCT7Vy3JoCg/qIX8wlAlduz
-	+u0yM7kCRKqrFBCxvoQWxyQgPxxNjqTrA31ij2in6nKDPjFVkzk/zxniYRhyGaH4cpW3/satkph
-	jgZI8/oKjSmK6fkAcsIQ36FCK3oRL4lfMSK5gNG+YOU1+Iqa1KHAF6I+L4G+X39RH1piXz1R7du
-	I/vtFplnazZKuhgZv0Z0vvqirPmNhwxoMLq4SsilkG06YB6xhQkmoB5MPq2FawafJ
-X-Received: by 2002:a5d:548b:0:b0:3b7:7865:44a with SMTP id ffacd0b85a97d-3b77865059fmr1349066f8f.46.1753467787384;
-        Fri, 25 Jul 2025 11:23:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9ZyDRXU7hDTQHV67zP/BJ6+oks9r39nLAiVs6AH4du+89qS89MMKpY9Q9iqAlOzaotxa3yw==
-X-Received: by 2002:a5d:548b:0:b0:3b7:7865:44a with SMTP id ffacd0b85a97d-3b77865059fmr1349045f8f.46.1753467786882;
-        Fri, 25 Jul 2025 11:23:06 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f36:e800:2f2e:cb5:13f6:f884? (p200300d82f36e8002f2e0cb513f6f884.dip0.t-ipconnect.de. [2003:d8:2f36:e800:2f2e:cb5:13f6:f884])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb9c01sm556520f8f.19.2025.07.25.11.23.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Jul 2025 11:23:06 -0700 (PDT)
-Message-ID: <a2a3b527-8ed0-45e0-be15-85ec4ef1afa1@redhat.com>
-Date: Fri, 25 Jul 2025 20:23:04 +0200
+        d=1e100.net; s=20230601; t=1753467866; x=1754072666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8EUe3sj9UTKJEWOeBpDqD3kZ8JWbDPKaoaCnMHljn3s=;
+        b=Be10II5xkUMVl9KCeHmzOnTSU6Y8YAURApoM8vTJJPulEyZZ9GEmK1I04f37Cfygrv
+         38FNjtN5ZQ+mTz1gVUqsSddepYP6BSpLJIeeNh1hb9eMu69FYlIi2z1enLTaZGW/8oQg
+         c1lUGYyGTegM8LJCDbJ0m9KMhfgKE9dZ+VwbBxviU1eDKo+MkPM684YkuV3bEy31M+kv
+         lyWGeSRCV2FK+qCMJD7V6+zoQrUl1tHA5FIjPiJeZa/9UL8wzqN1MmuFaHiYFFBrYHOy
+         IWNXsulejE4i/pxKcxAS/TiEB4nqqb8TweIt8YYRtzD+wrt95SxmUzmLLw5Ez75Fd1j7
+         v3qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkBr1BzEmuGZuiQJi5x3J9OazJyC79lERqeXcJF4iKo7kpZHm2KYP0PVWgfYaxJNt/+jUwcigRn/nLpUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAEz0G+O9Nzl1zQjMUUuQ19Owp/gXaA4SRVuG6ePwcFwQp345+
+	bUVSm0kwabqcjCyYNatbeUcODOh0vuiU0Br5j1wfEI8gVuB3qJLwdZqyezvDHhyhtEnV60ZKDbI
+	qB49/L82E1Jyn9IKZLLVJWhcPywjLsmA1bkUXVsl9
+X-Gm-Gg: ASbGnctKd9wXsIvWv6ifeIr7tzjVuhreBAFW7HB3ZKURNsDcf31NCZ/ECEGxGNMt7HJ
+	64Ft3OnZx6h1MOMcsmMDvC36eBwYrj/cI/2JBDGvUqB7hX4MSZbek/D/k75RbujP2S3GRd/U+t5
+	OWBdxqLyZcQyb7L/lA+J65A3cDSt90u5q9ejOYfZxCf89hPcY1oks3k9qataBz5RugYjwD1luMN
+	5PkQ79Ksvjqcrg+G2nXSZlBKiZQM0lqztj0
+X-Google-Smtp-Source: AGHT+IEPUAz+pI4iGdF50K82QfyHo5qUUwjXAAe4KtMSUwgIEhF3QT3oZ6jka0tXiyafLGDhpY+HqQO9Mb3QXwIHnhs=
+X-Received: by 2002:a05:6e02:348d:b0:3dd:be3e:7b0 with SMTP id
+ e9e14a558f8ab-3e3cc0e32b4mr168985ab.13.1753467865609; Fri, 25 Jul 2025
+ 11:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add missing headers to mempory policy &
- migration section
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, kernel-team@meta.com
-References: <20250725181745.2494226-1-joshua.hahnjy@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250725181745.2494226-1-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250723232217.516179-1-irogers@google.com> <20250723232217.516179-12-irogers@google.com>
+ <k56ukpfv77qhoblfagz6naux5mo65hgj4m3ubivq4uz3mar7f4@r4fp25smfbme>
+In-Reply-To: <k56ukpfv77qhoblfagz6naux5mo65hgj4m3ubivq4uz3mar7f4@r4fp25smfbme>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 25 Jul 2025 11:24:14 -0700
+X-Gm-Features: Ac12FXzjEA9MplD8yAzhDZaxI9-AAc1vxtRXBOa-rWrJp77v1jeeoWmGgPkEZGw
+Message-ID: <CAP-5=fWeC-xtGd6Ht_fgtZR5tpRFP26tCMTYB=Co0FxD5a8o-A@mail.gmail.com>
+Subject: Re: [PATCH v8 11/16] perf ilist: Add new python ilist command
+To: Xu Yang <xu.yang_2@nxp.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Collin Funk <collin.funk1@gmail.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25.07.25 20:17, Joshua Hahn wrote:
-> On Fri, 25 Jul 2025 20:03:09 +0200 David Hildenbrand <david@redhat.com> wrote:
-> 
->> On 25.07.25 19:56, Joshua Hahn wrote:
->>> These two files currently do not belong to any section.
->>> The memory policy & migration section seems to be a good home for them!
->>>
->>> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->>> ---
->>>    MAINTAINERS | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index a8bebd0886df..dec8db8b5cc7 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -15838,7 +15838,9 @@ S:	Maintained
->>>    W:	http://www.linux-mm.org
->>>    T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->>>    F:	include/linux/mempolicy.h
->>> +F:	include/uapi/linux/mempolicy.h
->>
->> That one is already on that secion on the mm/mm-new branch
-> 
-> Hi David,
-> 
-> Thank you for getting back so quickly : -)
+On Thu, Jul 24, 2025 at 10:37=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
+>
+> Hi Ian,
+>
+> On Wed, Jul 23, 2025 at 04:22:12PM -0700, Ian Rogers wrote:
+> > The perf ilist command is a textual app [1] similar to perf list. In
+> > the top-left pane a tree of PMUs is displayed. Selecting a PMU expands
+> > the events within it. Selecting an event displays the `perf list`
+> > style event information in the top-right pane.
+> >
+> > When an event is selected it is opened and the counters on each CPU
+> > the event is for are periodically read. The bottom of the screen
+> > contains a scrollable set of sparklines showing the events in total
+> > and on each CPU. Scrolling below the sparklines shows the same data as
+> > raw counts. The sparklines are small graphs where the height of the
+> > bar is in relation to maximum of the other counts in the graph.
+> >
+> > By default the counts are read with an interval of 0.1 seconds (10
+> > times per second). A -I/--interval command line option allows the
+> > interval to be changed. The oldest read counts are dropped when the
+> > counts fill the line causing the sparkline to move from right to left.
+> >
+> > A search box can be pulled up with the 's' key. 'n' and 'p' iterate
+> > through the search results. As some PMUs have hundreds of events a 'c'
+> > key will collapse the events in the current PMU to make navigating the
+> > PMUs easier.
+> >
+> > [1] https://textual.textualize.io/
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/python/ilist.py | 392 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 392 insertions(+)
+> >  create mode 100755 tools/perf/python/ilist.py
+> >
+> > diff --git a/tools/perf/python/ilist.py b/tools/perf/python/ilist.py
+> > new file mode 100755
+> > index 000000000000..b21f4c93247e
+> > --- /dev/null
+> > +++ b/tools/perf/python/ilist.py
+> > @@ -0,0 +1,392 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > +"""Interactive perf list."""
+> > +
+> > +import argparse
+> > +from typing import Any, Dict, Tuple
+> > +import perf
+> > +from textual import on
+> > +from textual.app import App, ComposeResult
+> > +from textual.binding import Binding
+> > +from textual.containers import Horizontal, HorizontalGroup, Vertical, =
+VerticalScroll
+> > +from textual.command import SearchIcon
+> > +from textual.screen import ModalScreen
+> > +from textual.widgets import Button, Footer, Header, Input, Label, Spar=
+kline, Static, Tree
+> > +from textual.widgets.tree import TreeNode
+> > +
+> > +class ErrorScreen(ModalScreen[bool]):
+> > +    """Pop up dialog for errors."""
+> > +
+> > +    CSS=3D"""
+> > +    ErrorScreen {
+> > +        align: center middle;
+> > +    }
+> > +    """
+> > +    def __init__(self, error: str):
+> > +        self.error =3D error
+> > +        super().__init__()
+> > +
+> > +    def compose(self) -> ComposeResult:
+> > +        yield Button(f"Error: {self.error}", variant=3D"primary", id=
+=3D"error")
+> > +
+> > +    def on_button_pressed(self, event: Button.Pressed) -> None:
+> > +        self.dismiss(True)
+> > +
+> > +
+> > +class SearchScreen(ModalScreen[str]):
+> > +    """Pop up dialog for search."""
+> > +
+> > +    CSS=3D"""
+> > +    SearchScreen Horizontal {
+> > +        align: center middle;
+> > +        margin-top: 1;
+> > +    }
+> > +    SearchScreen Input {
+> > +        width: 1fr;
+> > +    }
+> > +    """
+> > +    def compose(self) -> ComposeResult:
+> > +        yield Horizontal(SearchIcon(), Input(placeholder=3D"Event name=
+"))
+> > +
+> > +    def on_input_submitted(self, event: Input.Submitted) -> None:
+> > +        """Handle the user pressing Enter in the input field."""
+> > +        self.dismiss(event.value)
+> > +
+> > +
+> > +class Counter(HorizontalGroup):
+> > +    """Two labels for a CPU and its counter value."""
+> > +
+> > +    CSS=3D"""
+> > +    Label {
+> > +        gutter: 1;
+> > +    }
+> > +    """
+> > +
+> > +    def __init__(self, cpu: int) -> None:
+> > +        self.cpu =3D cpu
+> > +        super().__init__()
+> > +
+> > +    def compose(self) -> ComposeResult:
+> > +        label =3D f"cpu{self.cpu}" if self.cpu >=3D 0 else "total"
+> > +        yield Label(label + " ")
+> > +        yield Label("0", id=3Df"counter_{label}")
+> > +
+> > +
+> > +class CounterSparkline(HorizontalGroup):
+> > +    """A Sparkline for a performance counter."""
+> > +
+> > +    def __init__(self, cpu: int) -> None:
+> > +        self.cpu =3D cpu
+> > +        super().__init__()
+> > +
+> > +    def compose(self) -> ComposeResult:
+> > +        label =3D f"cpu{self.cpu}" if self.cpu >=3D 0 else "total"
+> > +        yield Label(label)
+> > +        yield Sparkline([], summary_function=3Dmax, id=3Df"sparkline_{=
+label}")
+> > +
+> > +
+> > +class IListApp(App):
+> > +    TITLE =3D "Interactive Perf List"
+> > +
+> > +    BINDINGS =3D [
+> > +        Binding(key=3D"s", action=3D"search", description=3D"Search",
+> > +                tooltip=3D"Search events and PMUs"),
+> > +        Binding(key=3D"n", action=3D"next", description=3D"Next",
+> > +                tooltip=3D"Next search result or item"),
+> > +        Binding(key=3D"p", action=3D"prev", description=3D"Previous",
+> > +                tooltip=3D"Previous search result or item"),
+> > +        Binding(key=3D"c", action=3D"collapse", description=3D"Collaps=
+e",
+> > +                tooltip=3D"Collapse the current PMU"),
+> > +        Binding(key=3D"^q", action=3D"quit", description=3D"Quit",
+> > +                tooltip=3D"Quit the app"),
+> > +    ]
+> > +
+> > +    CSS =3D """
+> > +        /* Make the 'total' sparkline a different color. */
+> > +        #sparkline_total > .sparkline--min-color {
+> > +            color: $accent;
+> > +        }
+> > +        #sparkline_total > .sparkline--max-color {
+> > +            color: $accent 30%;
+> > +        }
+> > +        /*
+> > +         * Make the active_search initially not displayed with the tex=
+t in
+> > +         * the middle of the line.
+> > +         */
+> > +        #active_search {
+> > +            display: none;
+> > +            width: 100%;
+> > +            text-align: center;
+> > +        }
+> > +    """
+> > +
+> > +    def __init__(self, interval: float) -> None:
+> > +        self.interval =3D interval
+> > +        self.evlist =3D None
+> > +        self.search_results: list[TreeNode[str]] =3D []
+> > +        self.cur_search_result: TreeNode[str] | None =3D None
+> > +        super().__init__()
+> > +
+> > +
+> > +
+>
+> Nit: could you keep consistent blank line code style? Because I see 3
+> blank line here and 2 or 1 blank line elsewhere.
+>
+> Refer to:
+> https://peps.python.org/pep-0008/#blank-lines
 
-:)
+Thanks Xu, strange pylint/mypy missed this. I can fix in a v9 as per
+pep8. It is a shame we have non pep8 python formatted code in the
+tree. I'm responsible for the 2-char indent in jevents.py as that's
+Google's house style :-(
 
-> 
-> Unfortunately, I can't seem to find this file in MAINTAINERS in mm-new.
-> Perhaps I am not looking correctly? Apologies in advance if that is the case.
-> My HEAD for mm-new points to dd811f4553a9512501205ba8e58ef1a6af4cb291, for
-> your reference.
+Ian
 
-Sorry, I was completely wrong ... I got confused by the other 
-mempolicy.h file that Lorenzo also recently touched in here as part of 
-the MISC section.
 
-Sorry for the noise, I shall stop working for today and enjoy the 
-weekend (and hope you will do as well)
+Ian
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Thanks,
+> Xu Yang
+>
+> > +    def expand_and_select(self, node: TreeNode[Any]) -> None:
+> > +        """Expand select a node in the tree."""
+> > +        if node.parent:
+> > +            node.parent.expand()
+> > +            if node.parent.parent:
+> > +                node.parent.parent.expand()
+> > +        node.expand()
+> > +        node.tree.select_node(node)
+> > +        node.tree.scroll_to_node(node)
+> > +
+> > +
+> > +    def set_searched_tree_node(self, previous: bool) -> None:
+> > +        """Set the cur_search_result node to either the next or previo=
+us."""
+> > +        l =3D len(self.search_results)
+> > +
+> > +        if l < 1:
+> > +            tree: Tree[str] =3D self.query_one("#pmus", Tree)
+> > +            if previous:
+> > +                tree.action_cursor_up()
+> > +            else:
+> > +                tree.action_cursor_down()
+> > +            return
+> > +
+> > +        if self.cur_search_result:
+> > +            idx =3D self.search_results.index(self.cur_search_result)
+> > +            if previous:
+> > +                idx =3D idx - 1 if idx > 0 else l - 1
+> > +            else:
+> > +                idx =3D idx + 1 if idx < l - 1 else 0
+> > +        else:
+> > +            idx =3D l - 1 if previous else 0
+> > +
+> > +        node =3D self.search_results[idx]
+> > +        if node =3D=3D self.cur_search_result:
+> > +            return
+> > +
+> > +        self.cur_search_result =3D node
+> > +        self.expand_and_select(node)
+> > +
+> > +    def action_search(self) -> None:
+> > +        """Search was chosen."""
+> > +        def set_initial_focus(event: str | None) -> None:
+> > +            """Sets the focus after the SearchScreen is dismissed."""
+> > +
+> > +            search_label =3D self.query_one("#active_search", Label)
+> > +            search_label.display =3D True if event else False
+> > +            if not event:
+> > +                return
+> > +            event =3D event.lower()
+> > +            search_label.update(f'Searching for events matching "{even=
+t}"')
+> > +
+> > +            tree: Tree[str] =3D self.query_one("#pmus", Tree)
+> > +            def find_search_results(event: str, node: TreeNode[str], \
+> > +                                    cursor_seen: bool =3D False, \
+> > +                                    match_after_cursor: TreeNode[str] =
+| None =3D None) \
+> > +                    -> Tuple[bool, TreeNode[str] | None]:
+> > +                """Find nodes that match the search remembering the on=
+e after the cursor."""
+> > +                if not cursor_seen and node =3D=3D tree.cursor_node:
+> > +                    cursor_seen =3D True
+> > +                if node.data and event in node.data:
+> > +                    if cursor_seen and not match_after_cursor:
+> > +                        match_after_cursor =3D node
+> > +                    self.search_results.append(node)
+> > +
+> > +                if node.children:
+> > +                    for child in node.children:
+> > +                        (cursor_seen, match_after_cursor) =3D \
+> > +                            find_search_results(event, child, cursor_s=
+een, match_after_cursor)
+> > +                return (cursor_seen, match_after_cursor)
+> > +
+> > +            self.search_results.clear()
+> > +            (_ , self.cur_search_result) =3D find_search_results(event=
+, tree.root)
+> > +            if len(self.search_results) < 1:
+> > +                self.push_screen(ErrorScreen(f"Failed to find pmu/even=
+t {event}"))
+> > +                search_label.display =3D False
+> > +            elif self.cur_search_result:
+> > +                self.expand_and_select(self.cur_search_result)
+> > +            else:
+> > +                self.set_searched_tree_node(previous=3DFalse)
+> > +
+> > +        self.push_screen(SearchScreen(), set_initial_focus)
+> > +
+> > +
+> > +    def action_next(self) -> None:
+> > +        """Next was chosen."""
+> > +        self.set_searched_tree_node(previous=3DFalse)
+> > +
+> > +
+> > +    def action_prev(self) -> None:
+> > +        """Previous was chosen."""
+> > +        self.set_searched_tree_node(previous=3DTrue)
+> > +
+> > +
+> > +    def action_collapse(self) -> None:
+> > +        """Collapse the potentially large number of events under a PMU=
+."""
+> > +        tree: Tree[str] =3D self.query_one("#pmus", Tree)
+> > +        node =3D tree.cursor_node
+> > +        if node and node.parent and node.parent.parent:
+> > +            node.parent.collapse_all()
+> > +            node.tree.scroll_to_node(node.parent)
+> > +
+> > +
+> > +    def update_counts(self) -> None:
+> > +        """Called every interval to update counts."""
+> > +        if not self.evlist:
+> > +            return
+> > +
+> > +        def update_count(cpu: int, count: int):
+> > +            # Update the raw count display.
+> > +            counter: Label =3D self.query(f"#counter_cpu{cpu}" if cpu =
+>=3D 0 else "#counter_total")
+> > +            if not counter:
+> > +                return
+> > +            counter =3D counter.first(Label)
+> > +            counter.update(str(count))
+> > +
+> > +            # Update the sparkline.
+> > +            line: Sparkline =3D self.query(f"#sparkline_cpu{cpu}" if c=
+pu >=3D 0 else "#sparkline_total")
+> > +            if not line:
+> > +                return
+> > +            line =3D line.first(Sparkline)
+> > +            # If there are more events than the width, remove the fron=
+t event.
+> > +            if len(line.data) > line.size.width:
+> > +                line.data.pop(0)
+> > +            line.data.append(count)
+> > +            line.mutate_reactive(Sparkline.data)
+> > +
+> > +        # Update the total and each CPU counts, assume there's just 1 =
+evsel.
+> > +        total =3D 0
+> > +        self.evlist.disable()
+> > +        for evsel in self.evlist:
+> > +            for cpu in evsel.cpus():
+> > +                aggr =3D 0
+> > +                for thread in evsel.threads():
+> > +                    counts =3D evsel.read(cpu, thread)
+> > +                    aggr +=3D counts.val
+> > +                update_count(cpu, aggr)
+> > +                total +=3D aggr
+> > +        update_count(-1, total)
+> > +        self.evlist.enable()
+> > +
+> > +
+> > +    def on_mount(self) -> None:
+> > +        """When App starts set up periodic event updating."""
+> > +        self.update_counts()
+> > +        self.set_interval(self.interval, self.update_counts)
+> > +
+> > +
+> > +    def set_pmu_and_event(self, pmu: str, event: str) -> None:
+> > +        """Updates the event/description and starts the counters."""
+> > +        # Remove previous event information.
+> > +        if self.evlist:
+> > +            self.evlist.disable()
+> > +            self.evlist.close()
+> > +            lines =3D self.query(CounterSparkline)
+> > +            for line in lines:
+> > +                line.remove()
+> > +            lines =3D self.query(Counter)
+> > +            for line in lines:
+> > +                line.remove()
+> > +
+> > +        def pmu_event_description(pmu: str, event: str) -> str:
+> > +            """Find and format event description for {pmu}/{event}/.""=
+"
+> > +            def get_info(info: Dict[str, str], key: str):
+> > +                return (info[key] + "\n") if key in info else ""
+> > +
+> > +            for p in perf.pmus():
+> > +                if p.name() !=3D pmu:
+> > +                    continue
+> > +                for info in p.events():
+> > +                    if "name" not in info or info["name"] !=3D event:
+> > +                        continue
+> > +
+> > +                    desc =3D get_info(info, "topic")
+> > +                    desc +=3D get_info(info, "event_type_desc")
+> > +                    desc +=3D get_info(info, "desc")
+> > +                    desc +=3D get_info(info, "long_desc")
+> > +                    desc +=3D get_info(info, "encoding_desc")
+> > +                    return desc
+> > +            return "description"
+> > +
+> > +        # Parse event, update event text and description.
+> > +        full_name =3D event if event.startswith(pmu) or ':' in event e=
+lse f"{pmu}/{event}/"
+> > +        self.query_one("#event_name", Label).update(full_name)
+> > +        self.query_one("#event_description", Static).update(pmu_event_=
+description(pmu, event))
+> > +
+> > +        # Open the event.
+> > +        try:
+> > +            self.evlist =3D perf.parse_events(full_name)
+> > +            if self.evlist:
+> > +                self.evlist.open()
+> > +                self.evlist.enable()
+> > +        except:
+> > +            self.evlist =3D None
+> > +
+> > +        if not self.evlist:
+> > +            self.push_screen(ErrorScreen(f"Failed to open {full_name}"=
+))
+> > +            return
+> > +
+> > +        # Add spark lines for all the CPUs. Note, must be done after
+> > +        # open so that the evlist CPUs have been computed by propagate
+> > +        # maps.
+> > +        lines =3D self.query_one("#lines")
+> > +        line =3D CounterSparkline(cpu=3D-1)
+> > +        lines.mount(line)
+> > +        for cpu in self.evlist.all_cpus():
+> > +            line =3D CounterSparkline(cpu)
+> > +            lines.mount(line)
+> > +        line =3D Counter(cpu=3D-1)
+> > +        lines.mount(line)
+> > +        for cpu in self.evlist.all_cpus():
+> > +            line =3D Counter(cpu)
+> > +            lines.mount(line)
+> > +
+> > +
+> > +    def compose(self) -> ComposeResult:
+> > +        """Draws the app."""
+> > +        def pmu_event_tree() -> Tree:
+> > +            """Create tree of PMUs with events under."""
+> > +            tree: Tree[str] =3D Tree("PMUs", id=3D"pmus")
+> > +            tree.root.expand()
+> > +            for pmu in perf.pmus():
+> > +                pmu_name =3D pmu.name().lower()
+> > +                pmu_node =3D tree.root.add(pmu_name, data=3Dpmu_name)
+> > +                try:
+> > +                    for event in sorted(pmu.events(), key=3Dlambda x: =
+x["name"]):
+> > +                        if "name" in event:
+> > +                            e =3D event["name"].lower()
+> > +                            if "alias" in event:
+> > +                                pmu_node.add_leaf(f'{e} ({event["alias=
+"]})', data=3De)
+> > +                            else:
+> > +                                pmu_node.add_leaf(e, data=3De)
+> > +                except:
+> > +                    # Reading events may fail with EPERM, ignore.
+> > +                    pass
+> > +            return tree
+> > +
+> > +        yield Header(id=3D"header")
+> > +        yield Horizontal(Vertical(pmu_event_tree(), id=3D"events"),
+> > +                         Vertical(Label("event name", id=3D"event_name=
+"),
+> > +                                  Static("description", markup=3DFalse=
+, id=3D"event_description"),
+> > +                                  ))
+> > +        yield Label(id=3D"active_search")
+> > +        yield VerticalScroll(id=3D"lines")
+> > +        yield Footer(id=3D"footer")
+> > +
+> > +
+> > +    @on(Tree.NodeSelected)
+> > +    def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> =
+None:
+> > +        """Called when a tree node is selected, selecting the event.""=
+"
+> > +        if event.node.parent and event.node.parent.parent:
+> > +            assert event.node.parent.data is not None
+> > +            assert event.node.data is not None
+> > +            self.set_pmu_and_event(event.node.parent.data, event.node.=
+data)
+> > +
+> > +
+> > +if __name__ =3D=3D "__main__":
+> > +    ap =3D argparse.ArgumentParser()
+> > +    ap.add_argument('-I', '--interval', help=3D"Counter update interva=
+l in seconds", default=3D0.1)
+> > +    args =3D ap.parse_args()
+> > +    app =3D IListApp(float(args.interval))
+> > +    app.run()
+> > --
+> > 2.50.0.727.gbf7dc18ff4-goog
+> >
 
