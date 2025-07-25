@@ -1,165 +1,254 @@
-Return-Path: <linux-kernel+bounces-746209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-746210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D87B12435
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:41:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1344BB1243A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 20:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840EC1892CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB57BAC6A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Jul 2025 18:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB0524FBFF;
-	Fri, 25 Jul 2025 18:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21347248F4F;
+	Fri, 25 Jul 2025 18:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H5c/o9Ke"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KyF3+Nby";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LWPfGzwu"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3138C248F4F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753468890; cv=none; b=OA+KpP05jGBJOCWfkv3aRuapofU+jSa5ZPhL1wV053Dn6JUmTNsYTzl74gh+AbQdHkTLppd9iCr2SdVcijiYtETOo3AmKlTRWu2Ekh16JEdM9PbgHCxIgr1rjnRhKMzeAbGqAUnhv+v6XY7JfKFopxL1cUzb2QSXTDqR4XXuQGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753468890; c=relaxed/simple;
-	bh=BRTNiKl6IlSe0CohaBcJ1cajXOvS2gPI0ttmISg+tPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=izKGmwSr/l5ZD8S2ZqVaEXOE3oRRB/H8+KOxsq0kaB99DzLX3a5Bl+vP5G787tbDPwx/Nm3/cPeBfm5VgbBpRrMJmwvFbvwcguPRXUIYFUShzG9crJSoRgLhlAgMKitVPdgW9ixMFwoC5fhfP5RkBWeUMkPTKIjHqYNTm7BaVzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H5c/o9Ke; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72c02e22d96so150219a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 11:41:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE92472AB
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Jul 2025 18:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753468897; cv=fail; b=OlPk0Zv+x3QdaTmewC7HVHBaS0l1fxPKFNP4QWN9btFZwOB9xLcDMPSRCJ72Kwg7OZgiHaeakP+pM5GPnLVVZ0EWwxu7w7d7TY5JZU8WF4CXx8j3B9jmUErySFlabZmeprxdxQ8osrEW3Tzl6l9P1BNKpTlBkEnK0Rc/2AoD9cc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753468897; c=relaxed/simple;
+	bh=Ze5T3BxgiYFm1Q+dHqMdSVDb/Aa5N5bHklyz1EGSLZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BGEhPNFTXVOVS0OajgFtrobInoEiEELjGLkkc77J8oh6da0P7JhUM8xg2ecLSCYIzMPuWOUemJX2AHnJh8zIC9LzUAO7k03j7Tr5SUDeowDF56jnRMsMUe8YzJFZJBMrlsAvabqqNy4zAFvX+Y243x+NRpS8J1n7/CXVLnaYZGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KyF3+Nby; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LWPfGzwu; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56PGC6MR007398;
+	Fri, 25 Jul 2025 18:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=YYSg+pGwV5fLhXP8j9
+	NbDYXRysE4ntKglIkbR62/83g=; b=KyF3+NbyjZIyyKBgeK2TNVCO3XuP6KcSTx
+	4keVNWecx/YrpG3HDEX2RIJF5TofVjfeTsBJAcWQHxrO2Yv7fdPvWFvPo6Ls9vbU
+	w4goA8l1OD+xcMxAAA5GECqOOwYWCGFWM6Qn0LoqcyMdO6wjM6ISKe3TP50LfG5y
+	sbW5uqDiwiOqJPAwv1CM3tPEFJGzzvoJhFuKwx39uDs/bSGzK3BrQVuJ9l3p5h/6
+	+cuhDibQXOvZT2RGW8ngSDfzVAgF+u/TdYITACaiPVrZqEKyciX0fD4oasPDA1RD
+	rOICdQ1tEQTmEGUqYIzOTsv7bQdZoKrkbNRKyI8OGn9QQJrZX7jw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 483w1k9ntj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 18:41:21 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56PHsotY038403;
+	Fri, 25 Jul 2025 18:41:21 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tdf3n3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Jul 2025 18:41:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mx9H5QglU3JvmBgvx5vH2QEbRAKM06JgGZzms9vX4jQbdSku19M+w+qa8jG7KCo8pzNcNyfWd0s2f/dVwvaaVdYDAkT6m1mL+5SClhQAC6mMUoOFpOO7ZvtLxZXKrFqvJQ96p7DumCuTaQRD6yvA1za2nldkLJWDt2g5dX1eJAxaWZ0YgGahlr2SnoYK0ZumWr8uhzM+SlKDYly45CzpIg/nApkvQ5zq3j2MJTk5B+z4BrH2iUwKns/LO4/RtjSuiQ7+Ysn+G29eZviMxVW06hczfSndl5o86oyAIfnnxmtkXzvTRkk7HYCp/uNRoIpmHgY6SDt3cGa1G9UuuYCoIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YYSg+pGwV5fLhXP8j9NbDYXRysE4ntKglIkbR62/83g=;
+ b=DNNFYdoJzrIlIsiTvixkCBrEVZ21rGT0c9ixlHi3y4e7J4jEjnOHSIkO6XE79vCN9VI1DZPwa09jKXYzV0r3eiIs3DEnElwX4f9erCJ6NNjGfMB8fHfne84w/QyKCidtPAw5qGRZp3Kr1vhufqHbMyV9fttqi2Nej95EI6iVSYqF0Mg/Ea2VtpdpTKmtR82GFpvSABRfAT6yCItJNTzNx+vYGsNmlnB0yetfjoCHfWwASaiovClQuSemnSZeYHLq1iKDeaPX3qyGix64gqkFTVOVVq2hXQQhXJVwMo66L2GwiOdN5jzXgneav2XhNk7YlKOdD/TM/MNT9hCKpXbqdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753468888; x=1754073688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V2Rpb7FR3nTf+1NUVClXeCPQAamkonhV1DyVh3/yazQ=;
-        b=H5c/o9KeXx4dVWrR64YFx5+VY44P69SmV/mb1SrHL18ycxs8zudXJPHGRc6CxiSZz6
-         ia2cIdQCCZ3o/8O+DQ40Q56z0dU2ITbnshR9DRB3fm04L7wXl9Zlyz9oOhGqCzUy3Y88
-         oBtlhciW9Rah7jobrrY5qZoRu3B6xUW1j9Ovg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753468888; x=1754073688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V2Rpb7FR3nTf+1NUVClXeCPQAamkonhV1DyVh3/yazQ=;
-        b=odGI5it11EaeB9PpWMjFYUdPV/G20CEgroiiSQ5oTPDN1iJzb3z4s9cUeEsosgTw0a
-         HuE7pyHCjA37qnbtzBT5H/tzxrxYY84pKgmCOHbVjYDD1KHUKnzFyYC7/flaxROIxq/O
-         p0x5N9YoMXqjmtGFDyEP3uDBuRENhcN3/rD4mpWDeKRkEJukmC7kGVJ4P8AFHnZ2BycE
-         jxCqQHWG9gLwA7Yxa9zrTOM4oXFzDRgJdvpwKxPudAhhy9cNwuRt/3Z9MER2Rt7ddGnG
-         Yeu6Ki1iZBdd0ev5CdGjYmrQhBsw7B7XvpfTYTkXhs4K5U/g1zcmBEFrqD8Dz2eiLj1e
-         /3vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxEGnOi7kg4VshTjWrfchQqtpCJzv/1wERyV6uGZt/WbfTyPpOb7eSgWxBrmW+iTpCPbJE4ftOfo+yNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBZbKUcioXlXQrYtLACLCKtGNomj2rI2VTcEm6jAhn+kG5T5CM
-	1D8oUoZd+6hRPXol1h4I4NtdGzgEEd3wunTI1FOMJKABZIU2hanjIDDonBWa+UPvoCjcl4aJICY
-	RInuXyWlaGIY+fghPsj228G+i0lVliU6CwnelPZeb
-X-Gm-Gg: ASbGncs5bv/QLH5eyc3LiAIghteDC8bJ63fCok09DiylgTagn9WqKsaUO7sIipyhjMR
-	R2+uZmAD17IYCqeC7aRaESfCtCr6jIdcH/kgfNvrH21kGmjBxyaYhoVpUiBuW9QIPOj6bGT1xbi
-	zXWCkEqE1SuF5cznwgr7pHaJi5+kojAeTsz4PMU9kfaZxw9rsEKzjkBrIGXaH2rGq6r5pj3hNku
-	N+MXZ6u86kgvs+FN7+cec6NNHJpjV714yYNuA==
-X-Google-Smtp-Source: AGHT+IEFU8NJPmbYkF/oI9KZMdUcX0Ny+72Vd74Lmwe1/0YjVojIvVz6a6+Qnd8NCCAE48yauMCrRlYLd1qXP5jE+Xw=
-X-Received: by 2002:a05:6871:286:b0:2c1:5011:56e2 with SMTP id
- 586e51a60fabf-3070189dd2bmr789116fac.3.1753468888290; Fri, 25 Jul 2025
- 11:41:28 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YYSg+pGwV5fLhXP8j9NbDYXRysE4ntKglIkbR62/83g=;
+ b=LWPfGzwuHIxdee6LWMvnIlwUXY25QOSAdSb6EFbCq94K1hZ0EJdmvLZatDAc9TxWhNrywhLJVZF4x/9EvKgcuId2ywmxQuLt/jlIVkQMt6yCVUgN/TaS4n3jmFXM1YvKYqYvDHTWqEeQGroyz7BZyDzQdm4Ni7uCRC6IRQtFHMs=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ5PPF8CB762A0C.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7b7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Fri, 25 Jul
+ 2025 18:41:18 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8964.023; Fri, 25 Jul 2025
+ 18:41:18 +0000
+Date: Fri, 25 Jul 2025 19:41:16 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v4 4/5] mm/mseal: simplify and rename VMA gap check
+Message-ID: <d85b3d55-09dc-43ba-8204-b48267a96751@lucifer.local>
+References: <cover.1753431105.git.lorenzo.stoakes@oracle.com>
+ <dd50984eff1e242b5f7f0f070a3360ef760e06b8.1753431105.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd50984eff1e242b5f7f0f070a3360ef760e06b8.1753431105.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO4P302CA0004.GBRP302.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c2::9) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1753431105.git.lorenzo.stoakes@oracle.com>
- <492a98d9189646e92c8f23f4cce41ed323fe01df.1753431105.git.lorenzo.stoakes@oracle.com>
- <CABi2SkVSjRV_zz0mhuRF3t3UJM_x=+gct1jbV=qd7eNMPBbvkQ@mail.gmail.com> <a1691645-18ce-4e7f-846a-a5b498df948d@lucifer.local>
-In-Reply-To: <a1691645-18ce-4e7f-846a-a5b498df948d@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 25 Jul 2025 11:41:15 -0700
-X-Gm-Features: Ac12FXzzRYItdebvqb0dwqotR9zarn6x23i_7sZkKKOiMnKZOphccisVFs5oxdI
-Message-ID: <CABi2SkVuS21VgXXB80bs20=fg6+Bqm_LfQjknZhqRMGYYv7-BA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] mm/mseal: update madvise() logic
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ5PPF8CB762A0C:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f4cbee1-2005-4051-78c8-08ddcbaad7f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?P+20FedJHXXNVCSGI8DlrWLiZR8UePGVhuNTdAQXPswFBI/b2JRbsbLMDm+i?=
+ =?us-ascii?Q?RxilbB2nzUdfCghmIdyKsWrv1fVtjUZbdUgRVDi8tpOFEWt2WwM/xZunUpxt?=
+ =?us-ascii?Q?c9kDGK6vOaurg30vsmWTnUzxQjX665Qt2Ur1Y1EBOu/xnjOilXO9cukj8Tod?=
+ =?us-ascii?Q?ReYc9UyRDT3d7CbhrWcC9mpeK5D/H3P5iQZHToi9F1OecTlsVYEn7EoD0NRE?=
+ =?us-ascii?Q?c9JiY2AvhPzyHpzJO2Q2cAbHCzPC9FG1DuDy/RkapHDHwmZcoymJTe5/iKU6?=
+ =?us-ascii?Q?ytLuzWftexVf/6M5N3ojfD6cb8Kcnp7Y5ii/OOG/aDmwLUQ4S3++fcFuhCX6?=
+ =?us-ascii?Q?Z7BKdNeGyl7jQxL6Izu4DhJJfbwF4b1A0O9CRt/ng3LU0ebkf986yLTAupPM?=
+ =?us-ascii?Q?xOuvTj4zeOvchDwJNT5E6exAkHrBd7+x+7Oh01w5CeGdeyyivHBia2hJ1GM1?=
+ =?us-ascii?Q?mr9Ed2r0pX1cqHvXAUGPiYL4VLyE/pKeC4ygVPco7Ev6yKTeyLUe708npml2?=
+ =?us-ascii?Q?dVu6AAlv2+arr2WVtMnes/T1UTOHDrOtPKupYFAgCALiW6a00hxUCK1oQ7TN?=
+ =?us-ascii?Q?c/WnF1konlQ+lutbFjpD7afTGB8OlE7PHgarNzvW4DA2pQnijUDnIho3QG8Q?=
+ =?us-ascii?Q?/iOaNRa/78nTREMZjR9264pXp4Qrld2zqmKDcYUaWqMrd3RFskz4eviaWUWG?=
+ =?us-ascii?Q?l9PsNtaIx9py0on+8nmUDrA89DobgWoqSQOU2dWGiWZNDuBQMaLK8FN0pmD4?=
+ =?us-ascii?Q?BlCyoYg+hzbYd0sfirt0IuFnbqW4s8TPohY9W5rS+m23JXZ/MSldiuJ/Mcfz?=
+ =?us-ascii?Q?MM82Jb3mjNCPH4t/UZA8XlfTAZ2Twp2fVtVMj3G0dPAnewK8G/gnVECSunmZ?=
+ =?us-ascii?Q?uw5HFo3j/8TBvSW9c3/oTDCs936x0pj8L7OkvKIYm2/pRbkcX/JfwpXYQyOk?=
+ =?us-ascii?Q?JU4HaVbRXqrgELMb/eJv5BvIont/QFLaDnzsouJubnXPuBpMio4/nYaDFfuc?=
+ =?us-ascii?Q?hizSxLkQkLfB5nafmQloqbDQfZPfudV8s7Y6H1r4WeSRyuFNZf7cpQccKfo7?=
+ =?us-ascii?Q?rBG0UOMDeMez9zUoh+sa64vbJCKVr3BLQ+UvPCl8F7aMUtYFySWPAxQ26iaX?=
+ =?us-ascii?Q?ZywaiePgJmfF8WDRSB4xf2lCIJw+lTV387SPqDob64rPw0agzVhVM0wLkuIX?=
+ =?us-ascii?Q?YmOtzFK15EcLGNITm1IOXtw5TAVxE5DRWBfUbRdjLI5iiezJGcqw4kz89feo?=
+ =?us-ascii?Q?DeJQwRD8OMCMIwlW4gJEhqQHl0fiPCJfpR2iwK1YjksMw3YTw8Iw8Z3d80BG?=
+ =?us-ascii?Q?+dCEp+MmHh4D0WWFdocK5/eJKyfvCQwXX0xUGKlNmyedGaV0VAH65ilBiXmQ?=
+ =?us-ascii?Q?vRkR65GZOh2Q3MRsohu/LgyrRQswZCMBDn3jhx1ydWfz0bkiyfzlRaEUdrak?=
+ =?us-ascii?Q?Hs/98tgi1GM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qe4LkI+1kN4ssCcsEy5swRTpl9Rrb6MfrYzYzNM8/3lzni2hzlBh64L+TucB?=
+ =?us-ascii?Q?NgxSkJHtJb7PS99a/k6JCg6G8KWt/o1VnZNWEvOZXxHHWxQjMoCVGymqlAgx?=
+ =?us-ascii?Q?oPYhGN/9LsPu9f9MAfadFCoV4iC5zbBlDcuTmwqhWZKU14/ura1VTmRbw2wh?=
+ =?us-ascii?Q?hgDRthelmUt1qbfnZeG61yZ6cbOlPo/p5Xp6l3tnZYrxfRzlzWN7stuWifsS?=
+ =?us-ascii?Q?Yirii4j7v5UnPOsOuRO1YLCEPysbeflOXl1QvY+CWLNcmN3+7HH+EmAy2FUw?=
+ =?us-ascii?Q?ar1pZ0URt+OAPQbuQ0VlsU3F2laI6VucMXd5PqqSL1RPCMCEpe58q/kVDfzI?=
+ =?us-ascii?Q?qatB1Nv6Wlt0sAS7rf9WnrewBxdR7PllLniDVK1uhGJm7IHGE7pE3d6+nKku?=
+ =?us-ascii?Q?dHhCXtKZzH5L4KUVzB/ARJKkYfXpxvdQ2s4x+mG/l//ToyurOt/eFPIjADxg?=
+ =?us-ascii?Q?n0xLcPfFK05iTc7V+Wqqb48T90cT1LmSD6DstYSJ90ZwHClz1u2Wo029aUcp?=
+ =?us-ascii?Q?GZlhmVcPZFSDMoukeC51UrXGb14E1m+/BqPd1gfsjMKj8GiUhYKhCqO4metg?=
+ =?us-ascii?Q?KR7CoWdolNxfKj+ECC7Th1m/W0/iInMfthyxACDnSCXZm3cPoHtM/eoNcq2H?=
+ =?us-ascii?Q?r6iFpd9P6JwwFxcogy6aZsoyQQ8Wvi1/FhMQGkwHVFykvfPXfpOIBE0TREaS?=
+ =?us-ascii?Q?JQL/ORaW7cmk+wFIeqAUkxcKZyZm1d0gszQBBojnbdlpTp8oe+UzoxotBeim?=
+ =?us-ascii?Q?oUnVCdAan4YZ0OE86hwZ1vyDXF1K8D563Zd8WQBAn4rf6aFjD1u+hhpLMq4r?=
+ =?us-ascii?Q?PCNpulhwBjPiAcPGe+ChQXCdJs7BgE8/8al81zqWMvj2IumUQls6knw6PzTD?=
+ =?us-ascii?Q?plJRbqw/q4L+DWgAxWsepE70ndcIeQKiC64lc8g+sFmRtAvebYf+XN4lBMhP?=
+ =?us-ascii?Q?LrVl9Uajm/quL9jEVOdUIZzviJCmLjZenPk8PiOoHg2YBUC4rOwLliSiVsOg?=
+ =?us-ascii?Q?w3OvGkJZPJw4JcI9XLhYaM1qJzHuhHJbxwJH8FFl6hsdXr7PJpSw9mEL1Fu+?=
+ =?us-ascii?Q?lSi61mIoHZsRe52H706BJmTJU+ajNMyEgtwtjdjTYdCZLEPINyuZiJMZusEH?=
+ =?us-ascii?Q?CzmoxL0kr4MPVqvVy+WDhhhVAz8LqzWfFg4SHNKdwNeEagVaon346fmVn0HK?=
+ =?us-ascii?Q?Y9y63RogTs6QALH69SoHNCv+J37kiVANl3Tlq7THChWlzjC+D09oQegJaExq?=
+ =?us-ascii?Q?qgDL3XkaVrMPdQcJz5PNKQei3cHOrKQFK9OFY+nVvpUCpvTWD7T4wbyF9a6r?=
+ =?us-ascii?Q?QfslePh5LZM3bCYfTr8U6+zLBUizQo1byMf+efqmauHIgNVnmoDNgjM0XaJX?=
+ =?us-ascii?Q?zmCsAY96HmmwgMHUch2K9BIFXkSvVxgik+qpxsLArPweo5lXE1KH8kCn4IP9?=
+ =?us-ascii?Q?rFTd88KNkxr0gYqn29EB6WrhCNDQCro7B/hZi/kluf26swWH5+6c3rbKtVAF?=
+ =?us-ascii?Q?OfBiZZ11oW2jKLYAaMYsuckVWugk75Mzf5AFTtr7BLT4uitkH4kBDuRwjW30?=
+ =?us-ascii?Q?Ta4NliZjLmU++ol+/lmkhtLUyMg3f9ZZ+9QyNSin/I1u7VSyaQEjikLfarTv?=
+ =?us-ascii?Q?sQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	HpzENBCaCZwnCZgFSVm3EvMMG9wBsP0wQ6G1jhmoNRh+qEFyUAHisIzASD92BNVVN5xPhu6Q7wIivnPiOevby5mtDrI7cQV9giLUjPwZ/Mg0yrHUOMT+T0XuPsw95XHzxlThWozClGOabtkWvgRhJrIb57sGi9jgA0rx5YqWF8nLTwuvttnEZA0ujyXz/35I1oPKz/XOIpXTJUny0iUyAfhMWAvsCAZBcgN7cKqL7uPgKA/cGNUsqFSCznx5dEPhTVzDBOBj6pHlwSR0th+tbIT3JMarkRoaWXv2ALKBtqB3UKK4gsllDNmn16kNR4hIgQb7coO0vUtyy/kAaHXoQeoGOw6uKk3P3H1To3I8CRHMONOHuKpbNxRDKkVXQSiuczr/mI12H0dV0gm/tqru90S5cnZehNmfThS5l2V0FQ9mjaCNzmESuTubDJIrDX4xGHg/D9vRxFhNtK7mACBFFaILWWtIAhrT21l5SbLQ3OzrU5vd3nZLogl8KXKq4NAtP5YoJDqqe4Rhc9lZBgwf2DZS9w8dSZDOfAiqeoIVdkWzuAutklQYgDKAuygDiQSIm+vNacDthGuc5qGAYj7X/EsW/QAiR6hCuSdZefpXum8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f4cbee1-2005-4051-78c8-08ddcbaad7f7
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2025 18:41:18.5230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TD5z8XZgh4jpGixF/N00e1qtagK1kp1AoLw7gxMTWokYh8oR/ZFmB42JhA2QaFmzzFBrXz4BXjrgrYMdZxTAZJfbiXed3ZIApHW5wVV7ycw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8CB762A0C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-25_05,2025-07-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507250159
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI1MDE1OSBTYWx0ZWRfX7k78QY6DCoMZ
+ P2iYPg38W+GmUCAh/H3yIwEPvDhwiPLy0QuqUXOJZnLKoO6AFDUTapIWPLbgxqbmoIvJgOKLENP
+ hTxGNK0yTIp6e5Pey687VYHv4QCjFidOhsxwYzv6Poi2HTEpQ8D+pOQ6Y0q7kAnKRA5M1fDxn03
+ 0NsWlGaCotkr0zLjO/8GTZ1SsRhVxQB2tnyB9lbcfxJsLci0kpKhsQejXTK/w9aq/VKe7W3nMdv
+ qFMtpxwi5n0QjrKRABFduW66sszixArk7dR00fpvDZh3TMw+WCAQPRThvGYlmS2RLZr8RhItAmN
+ n1tzCIgyw37qpeAyhBUwi4xh9Ps+DZyFe8TYV81RxXErLRe8YcKBLQRoHJaT2CDkGj8IDOnY6FQ
+ vuoDjBNVSj74eSEinJYGzGhZNwP4iSUVl0MgCKXXB2+WnJjJ0lwrE8P1p9LFpPqzLpCm8/TY
+X-Proofpoint-ORIG-GUID: LoZlWmW8mj3D8ZeupoR1Z8UylQgbCaFk
+X-Proofpoint-GUID: LoZlWmW8mj3D8ZeupoR1Z8UylQgbCaFk
+X-Authority-Analysis: v=2.4 cv=JIQ7s9Kb c=1 sm=1 tr=0 ts=6883cfd1 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=yPCof4ZbAAAA:8 a=mwLXZKzjd4ue-Yc61lQA:9 a=CjuIK1q_8ugA:10 cc=ntf
+ awl=host:12062
 
-Hi Lorenzo,
+Hi Andrew,
+
+Can you apply the attached trivial fix-patch which adds a clarifying comment to
+mm/mseal.c.
+
+Thanks, Lorenzo
 
 
-On Fri, Jul 25, 2025 at 10:54=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Fri, Jul 25, 2025 at 10:28:57AM -0700, Jeff Xu wrote:
->
-> > > -static bool is_ro_anon(struct vm_area_struct *vma)
-> > > -{
-> > > -       /* check anonymous mapping. */
-> > > -       if (vma->vm_file || vma->vm_flags & VM_SHARED)
-> > > -               return false;
-> >
-> > In this patch, the check for anonymous mapping are replaced with:
-> >
-> >  if (!vma_is_anonymous(vma))
-> >       return true;
-> >
-> > vma_is_anonymous()  is implemented as following:
-> > static inline bool vma_is_anonymous(struct vm_area_struct *vma)
-> > {
-> >    return !vma->vm_ops;
-> > }
-> >
-> > I'm curious to know if those two checks have the exact same scope.
-> >
-> > The original intention is only file-backed mapping can allow
-> > destructive madvise while sealed. I want to make sure that we don't
-> > accidentally increase the scope.
-> >
-> > Thanks and regards,
-> > -Jeff
->
-> Thanks, that's a good question.
->
-> So for a function to be mmap()'d and file-backed, vm_ops _must_ be
-> supplied.
->
-This says that all file-backed mappings must have vm_ops set, but what
-about the reverse? Are mappings with vm_ops always file-backed?
+----8<----
+From bf8211317183353b3652baac1af1d35555733d2b Mon Sep 17 00:00:00 2001
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date: Fri, 25 Jul 2025 19:23:50 +0100
+Subject: [PATCH] mm/mseal: add comment explaining why we disallow gaps on
+ mseal()
 
-> You can see this in the fault-handler:
->
-> do_pte_mising()
-> -> do_fault()
-> if anon -> fault anon otherwise fault file-backed
->
-> So if this were not the case, you'd have file-backed mappings going into
-> the the anonymous fault handler logic.
->
-> This covers off MAP_PRIVATE mappings of file-backed mappings too, as this
-> is handled in do_fault() by:
->
->         } else if (!(vmf->flags & FAULT_FLAG_WRITE))
->                 ret =3D do_read_fault(vmf);
->         else if (!(vma->vm_flags & VM_SHARED))
->                 ret =3D do_cow_fault(vmf);
->
-> That does the CoW fault handling.
->
-> So the vma_is_anonymous_check() here should have the same semantics.
->
-Just to be extra careful, does the reverse hold true as well?
+This explains the semantics clearly, the 'why' of the situation.
 
-In anycase, if you are confident about this, please do state this
-change in the commit description that vma->vm_file and VM_SHARED flag
-check is replaced by vma_is_anonymous_check(), which is expected to be
-a non-functional change.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ mm/mseal.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thanks and regards,
--Jeff
+diff --git a/mm/mseal.c b/mm/mseal.c
+index 1059322add34..d140f569c4c3 100644
+--- a/mm/mseal.c
++++ b/mm/mseal.c
+@@ -37,6 +37,18 @@ static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	return ret;
+ }
 
-> Cheers, Lorenzo
++/*
++ * mseal() disallows an input range which contain unmapped ranges (VMA holes).
++ *
++ * It disallows unmapped regions from start to end whether they exist at the
++ * start, in the middle, or at the end of the range, or any combination thereof.
++ *
++ * This is because after sealng a range, there's nothing to stop memory mapping
++ * of ranges in the remaining gaps later, meaning that the user might then
++ * wrongly consider the entirety of the mseal()'d range to be sealed when it
++ * in fact isn't.
++ */
++
+ /*
+  * Does the [start, end) range contain any unmapped memory?
+  *
+--
+2.50.1
 
